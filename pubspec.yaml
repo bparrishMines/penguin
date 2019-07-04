@@ -1,0 +1,4 @@
+name: penguin
+
+dependencies:
+  args: ^1.5.2
