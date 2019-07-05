@@ -7,10 +7,11 @@ import 'dart:io';
 import 'package:args/args.dart';
 import 'package:path/path.dart' as path;
 
+import 'java.dart';
 import 'penguin_option.dart';
 
-void main(List<String> args) {
-  final ArgParser parser = new ArgParser();
+void main(List<String> args) async {
+  final ArgParser parser = new ArgParser(usageLineLength: 140);
 
   for (PenguinOption option in PenguinOption.values) {
     if (option.isFlag) {
@@ -20,6 +21,16 @@ void main(List<String> args) {
         help: option.help,
         negatable: option.negatable,
         callback: option.callback,
+      );
+    } else if (option.isMultiple != null && option.isMultiple) {
+      parser.addMultiOption(
+        option.name,
+        abbr: option.abbr,
+        help: option.help,
+        defaultsTo: option.defaultsTo,
+        callback: option.callback,
+        valueHelp: option.valueHelp,
+        splitCommas: option.splitCommas,
       );
     } else {
       parser.addOption(
@@ -54,10 +65,53 @@ void main(List<String> args) {
     results[PenguinOption.directory.name],
   ));
 
-  _runFlutterCreate(directory, results[PenguinOption.projectName.name]);
+  final int flutterCreateCode = _runFlutterCreate(
+    directory: directory,
+    projectName: results[PenguinOption.projectName.name],
+    org: results[PenguinOption.org.name],
+  );
+
+  if (flutterCreateCode != 0) exit(64);
+
+  final List<Directory> androidDirectories = <Directory>[];
+  if (results.wasParsed(PenguinOption.android.name)) {
+    for (String dir in results[PenguinOption.android.name]) {
+      androidDirectories.add(
+        Directory(path.join(Directory.current.path, dir)),
+      );
+    }
+  }
+
+  final List<File> androidFiles = <File>[];
+  if (androidDirectories.isNotEmpty) {
+    for (Directory dir in androidDirectories) {
+      final bool recursive = results[PenguinOption.recursive.name];
+      final List<FileSystemEntity> entities = dir.listSync(
+        recursive: recursive,
+      );
+
+      for (FileSystemEntity entity in entities) {
+        if (entity is File) {
+          final File file = entity;
+
+          if (file.path.endsWith('.java')) {
+            androidFiles.add(file);
+          }
+        }
+      }
+    }
+  }
+
+  final List<JavaClass> androidClasses = _getClasses(androidFiles);
+
+  //final Directory androidPluginDir = Directory()
 }
 
-void _runFlutterCreate(Directory directory, String projectName) {
+int _runFlutterCreate({Directory directory, String projectName, String org}) {
+  assert(directory != null);
+  assert(projectName != null);
+  assert(org != null);
+
   final ProcessResult result = Process.runSync(
     'flutter',
     <String>[
@@ -66,9 +120,31 @@ void _runFlutterCreate(Directory directory, String projectName) {
       'plugin',
       '--project-name',
       projectName,
+      '--org',
+      org,
       directory.path,
     ],
   );
+
   print(result.stdout);
   print(result.stderr);
+  return exitCode;
+}
+
+List<JavaClass> _getClasses(List<File> files) {
+  final List<JavaClass> classes = <JavaClass>[];
+
+  for (File file in files) {
+    for (String line in file.readAsLinesSync()) {
+      final RegExp exp = RegExp(r'class\s(\w+)');
+
+      final RegExpMatch match = exp.firstMatch(line);
+      if (match != null) {
+        final JavaClass javaClass = JavaClass()..name = match.group(1);
+        classes.add(javaClass);
+      }
+    }
+  }
+
+  return classes;
 }
