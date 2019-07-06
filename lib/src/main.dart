@@ -65,6 +65,7 @@ void main(List<String> args) async {
     results[PenguinOption.directory.name],
   ));
 
+  /*
   final int flutterCreateCode = _runFlutterCreate(
     directory: directory,
     projectName: results[PenguinOption.projectName.name],
@@ -72,7 +73,7 @@ void main(List<String> args) async {
   );
 
   if (flutterCreateCode != 0) exit(64);
-
+  */
   final List<Directory> androidDirectories = <Directory>[];
   if (results.wasParsed(PenguinOption.android.name)) {
     for (String dir in results[PenguinOption.android.name]) {
@@ -102,9 +103,30 @@ void main(List<String> args) async {
     }
   }
 
-  final List<JavaClass> androidClasses = _getClasses(androidFiles);
+  final JavaLibrary library = _createLibrary(androidFiles);
 
-  //final Directory androidPluginDir = Directory()
+  final String org = results[PenguinOption.org.name];
+
+  final Directory pluginAndroidDir = Directory(path.join(
+    directory.path,
+    'android/src/main/java',
+    org.replaceAll('.', '/'),
+    results[PenguinOption.projectName.name],
+  ));
+
+  if (!pluginAndroidDir.existsSync()) {
+    print('Directory for android code does not exit.');
+    exit(64);
+  }
+
+  final Directory pluginLibDir = Directory(path.join(directory.path, 'lib'));
+
+  if (!pluginLibDir.existsSync()) {
+    print('Directory for dart code does not exit.');
+    exit(64);
+  }
+
+
 }
 
 int _runFlutterCreate({Directory directory, String projectName, String org}) {
@@ -131,7 +153,7 @@ int _runFlutterCreate({Directory directory, String projectName, String org}) {
   return exitCode;
 }
 
-List<JavaClass> _getClasses(List<File> files) {
+JavaLibrary _createLibrary(List<File> files) {
   final List<JavaClass> classes = <JavaClass>[];
 
   for (File file in files) {
@@ -140,11 +162,12 @@ List<JavaClass> _getClasses(List<File> files) {
 
       final RegExpMatch match = exp.firstMatch(line);
       if (match != null) {
-        final JavaClass javaClass = JavaClass()..name = match.group(1);
+        final JavaClass javaClass = JavaClass(match.group(1));
         classes.add(javaClass);
       }
     }
   }
 
-  return classes;
+  final JavaLibrary library = JavaLibrary()..classes = classes;
+  return library;
 }
