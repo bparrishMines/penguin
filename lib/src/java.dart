@@ -1,3 +1,5 @@
+import 'dart:io';
+
 class JavaClass {
   JavaClass(this.name) : assert(name != null);
   final String name;
@@ -20,6 +22,15 @@ class PluginLibrary {
       : classes = classes ?? const <PluginClass>[];
 
   final List<PluginClass> classes;
+
+  Map<File, String> asDartLibrary() {
+    final Map<File, String> files = <File, String>{};
+
+    for (PluginClass c in classes) {
+
+    }
+    return null;
+  }
 }
 
 abstract class InputLibrary {

@@ -125,8 +125,6 @@ void main(List<String> args) async {
     print('Directory for dart code does not exit.');
     exit(64);
   }
-
-
 }
 
 int _runFlutterCreate({Directory directory, String projectName, String org}) {
@@ -163,6 +161,7 @@ JavaLibrary _createLibrary(List<File> files) {
       final RegExpMatch match = exp.firstMatch(line);
       if (match != null) {
         final JavaClass javaClass = JavaClass(match.group(1));
+        print(match.group(1));
         classes.add(javaClass);
       }
     }
