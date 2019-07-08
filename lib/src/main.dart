@@ -125,6 +125,16 @@ void main(List<String> args) async {
     print('Directory for dart code does not exit.');
     exit(64);
   }
+
+  final Map<File, String> dartLibrary =
+      library.asPluginLibrary().asDartLibrary();
+
+  for (MapEntry<File, String> entry in dartLibrary.entries) {
+    final File dartFile = File(path.join(pluginLibDir.path, entry.key.path));
+    dartFile
+      ..createSync(recursive: true)
+      ..writeAsStringSync(entry.value);
+  }
 }
 
 int _runFlutterCreate({Directory directory, String projectName, String org}) {
@@ -161,7 +171,6 @@ JavaLibrary _createLibrary(List<File> files) {
       final RegExpMatch match = exp.firstMatch(line);
       if (match != null) {
         final JavaClass javaClass = JavaClass(match.group(1));
-        print(match.group(1));
         classes.add(javaClass);
       }
     }
