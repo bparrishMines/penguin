@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'dart.dart';
+import 'dart_library.dart';
 
 abstract class InputLibrary {
   DartLibrary createDartLibrary();

@@ -7,7 +7,7 @@ import 'dart:io';
 import 'package:args/args.dart';
 import 'package:path/path.dart' as path;
 
-import 'java.dart';
+import 'java_library.dart';
 import 'penguin_option.dart';
 
 void main(List<String> args) async {
@@ -131,6 +131,23 @@ void main(List<String> args) async {
   for (MapEntry<File, String> entry in dartLibrary.entries) {
     final File dartFile = File(path.join(pluginLibDir.path, entry.key.path));
     dartFile
+      ..createSync(recursive: true)
+      ..writeAsStringSync(entry.value);
+  }
+
+  final Map<File, String> androidLibrary = library
+      .createAndroidLibrary(
+        org: results[PenguinOption.org.name],
+        pluginName: results[PenguinOption.projectName.name],
+      )
+      .asFiles();
+
+  for (MapEntry<File, String> entry in androidLibrary.entries) {
+    final File androidFile = File(
+      path.join(pluginAndroidDir.path, entry.key.path),
+    );
+
+    androidFile
       ..createSync(recursive: true)
       ..writeAsStringSync(entry.value);
   }

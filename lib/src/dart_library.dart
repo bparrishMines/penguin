@@ -37,9 +37,9 @@ class DartLibrary extends OutputLibrary {
     return buffer.toString();
   }
 
-  String _classToString(DartClass pluginClass) {
+  String _classToString(DartClass dartClass) {
     return '''
-class ${pluginClass.name} {}
+class ${dartClass.name} {}
     ''';
   }
 }
