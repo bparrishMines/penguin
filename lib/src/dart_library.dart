@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:path/path.dart' as path;
+
 import 'library.dart';
 
 class DartLibrary extends OutputLibrary {
@@ -41,6 +43,10 @@ class DartLibrary extends OutputLibrary {
     return '''
 class ${dartClass.name} {}
     ''';
+  }
+
+  static Directory getDartDirectory(Directory pluginDir) {
+    return Directory(path.join(pluginDir.path, 'lib'));
   }
 }
 

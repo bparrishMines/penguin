@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:path/path.dart' as path;
+
 import 'library.dart';
 
 class AndroidLibrary extends OutputLibrary {
@@ -26,6 +28,19 @@ package $package;
 
 class ${androidClass.name} {}
     ''';
+  }
+
+  static Directory getAndroidDirectory({
+    Directory pluginDir,
+    String organization,
+    String pluginName,
+  }) {
+    return Directory(path.join(
+      pluginDir.path,
+      'android/src/main/java',
+      organization.replaceAll('.', '/'),
+      pluginName,
+    ));
   }
 }
 
