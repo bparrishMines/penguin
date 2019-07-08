@@ -89,7 +89,7 @@ void main(List<String> args) async {
       recursive: results[PenguinOption.recursive.name],
     );
 
-    javaLibrary = _createLibrary(javaFiles);
+    javaLibrary = JavaLibrary.fromFiles(javaFiles);
   }
 
   final PluginCreator creator = PluginCreator(
@@ -131,25 +131,6 @@ int _runFlutterCreate({Directory directory, String projectName, String org}) {
   print(result.stdout);
   print(result.stderr);
   return exitCode;
-}
-
-JavaLibrary _createLibrary(List<File> files) {
-  final List<JavaClass> classes = <JavaClass>[];
-
-  for (File file in files) {
-    for (String line in file.readAsLinesSync()) {
-      final RegExp exp = RegExp(r'class\s(\w+)');
-
-      final RegExpMatch match = exp.firstMatch(line);
-      if (match != null) {
-        final JavaClass javaClass = JavaClass(match.group(1));
-        classes.add(javaClass);
-      }
-    }
-  }
-
-  final JavaLibrary library = JavaLibrary()..classes = classes;
-  return library;
 }
 
 List<File> _getAllJavaFiles({List<Directory> directories, bool recursive}) {

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'android_library.dart';
 import 'library.dart';
 import 'dart_library.dart';
@@ -8,6 +10,27 @@ class JavaClass {
 }
 
 class JavaLibrary extends InputLibrary {
+  JavaLibrary();
+
+  factory JavaLibrary.fromFiles(List<File> files) {
+    final List<JavaClass> classes = <JavaClass>[];
+
+    for (File file in files) {
+      for (String line in file.readAsLinesSync()) {
+        final RegExp exp = RegExp(r'class\s(\w+)');
+
+        final RegExpMatch match = exp.firstMatch(line);
+        if (match != null) {
+          final JavaClass javaClass = JavaClass(match.group(1));
+          classes.add(javaClass);
+        }
+      }
+    }
+
+    final JavaLibrary library = JavaLibrary()..classes = classes;
+    return library;
+  }
+
   List<JavaClass> classes;
 
   @override
