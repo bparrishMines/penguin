@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'common.dart';
+import 'library.dart';
 
 class AndroidLibrary extends OutputLibrary {
   const AndroidLibrary({this.classes, this.package});

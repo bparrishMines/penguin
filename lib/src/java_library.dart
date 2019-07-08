@@ -1,5 +1,5 @@
 import 'android_library.dart';
-import 'common.dart';
+import 'library.dart';
 import 'dart_library.dart';
 
 class JavaClass {

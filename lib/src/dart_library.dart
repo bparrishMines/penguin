@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'common.dart';
+import 'library.dart';
 
 class DartLibrary extends OutputLibrary {
   const DartLibrary({List<DartClass> classes})
