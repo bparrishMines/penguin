@@ -15,7 +15,8 @@ class JavaLibrary extends InputLibrary {
     for (File file in files) {
       final String fileString = file.readAsStringSync().replaceAll('\n', ' ');
 
-      print(_parseClass(fileString));
+      final String classStr = _parseClass(fileString);
+      print(_parseClassName(classStr));
     }
     /*
     for (File file in files) {
@@ -69,6 +70,16 @@ class JavaLibrary extends InputLibrary {
     if (match == null) return null;
 
     return match.group(0);
+  }
+
+  static String _parseClassName(String string) {
+    final RegExp exp = RegExp(r'class\s+(\w+)');
+
+    final RegExpMatch match = exp.firstMatch(string);
+
+    if (match == null) return null;
+
+    return match.group(1);
   }
 }
 
