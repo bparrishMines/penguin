@@ -126,8 +126,7 @@ void main(List<String> args) async {
     exit(64);
   }
 
-  final Map<File, String> dartLibrary =
-      library.asPluginLibrary().asDartLibrary();
+  final Map<File, String> dartLibrary = library.createDartLibrary().asFiles();
 
   for (MapEntry<File, String> entry in dartLibrary.entries) {
     final File dartFile = File(path.join(pluginLibDir.path, entry.key.path));
