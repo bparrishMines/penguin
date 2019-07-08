@@ -92,6 +92,8 @@ void main(List<String> args) async {
     javaLibrary = JavaLibrary.fromFiles(javaFiles);
   }
 
+  exit(0);
+
   final PluginCreator creator = PluginCreator(
     pluginName: results[PenguinOption.projectName.name],
     javaLibrary: javaLibrary,
