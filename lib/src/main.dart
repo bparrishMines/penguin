@@ -84,7 +84,8 @@ void main(List<String> args) async {
   final YamlMap yaml = loadYaml(file.readAsStringSync());
 
   _createLibraryFile(yaml, dartDir, results[PenguinOption.projectName.name]);
-  _createClassFiles(yaml, dartDir);
+  _createChannelFile(yaml, dartDir, results[PenguinOption.projectName.name]);
+  _createClassFiles(yaml, dartDir, results[PenguinOption.projectName.name]);
 }
 
 int _runFlutterCreate({Directory directory, String projectName, String org}) {
@@ -111,7 +112,28 @@ int _runFlutterCreate({Directory directory, String projectName, String org}) {
   return exitCode;
 }
 
-void _createClassFiles(YamlMap yaml, Directory dartDir) {
+void _createChannelFile(YamlMap yaml, Directory dartDir, String projectName) {
+  final File channelFile = File(path.join(dartDir.path, 'src/channel.dart'));
+
+  channelFile.createSync(recursive: true);
+  channelFile.writeAsStringSync('part of $projectName;\n\n');
+
+  final String channelName = yaml['channel'];
+
+  final Field field = Field((FieldBuilder builder) {
+    builder.name = 'channel';
+    builder.modifier = FieldModifier.constant;
+    builder.type = Reference('MethodChannel');
+    builder.assignment = Code('MethodChannel(\'$channelName\')');
+    builder.annotations.add(refer('visibleForTesting'));
+  });
+
+  final DartEmitter emitter = DartEmitter();
+  final String content = DartFormatter().format('${field.accept(emitter)}');
+  channelFile.writeAsStringSync(content, mode: FileMode.append);
+}
+
+void _createClassFiles(YamlMap yaml, Directory dartDir, String projectName) {
   final YamlMap classes = yaml['classes'];
 
   if (classes == null) return;
@@ -120,15 +142,16 @@ void _createClassFiles(YamlMap yaml, Directory dartDir) {
   final DartFormatter formatter = DartFormatter();
 
   for (String className in classes.keys) {
-    final Class dartClass = _createClass(className, classes[className]);
-
-    final String content = formatter.format('${dartClass.accept(emitter)}');
-
     final String filename = '${_camelCaseToSnakeCase(className)}.dart';
     final File classFile = File(path.join(dartDir.path, 'src/', filename));
 
     classFile.createSync(recursive: true);
-    classFile.writeAsString(content);
+    classFile.writeAsStringSync('part of $projectName;\n\n');
+
+    final Class dartClass = _createClass(className, classes[className]);
+
+    final String content = formatter.format('${dartClass.accept(emitter)}');
+    classFile.writeAsString(content, mode: FileMode.append);
   }
 }
 
@@ -155,7 +178,7 @@ String _camelCaseToSnakeCase(String str) {
 }
 
 void _createLibraryFile(YamlMap yaml, Directory dartDir, String projectName) {
-  final File libraryFile = File('${path.join(dartDir.path, projectName)}.dart');
+  final File libraryFile = File(path.join(dartDir.path, '$projectName.dart'));
 
   libraryFile.writeAsStringSync('library $projectName;\n\n');
 
@@ -185,6 +208,8 @@ void _createLibraryFile(YamlMap yaml, Directory dartDir, String projectName) {
   for (String className in classes.keys) {
     sink.writeln('part \'src/${_camelCaseToSnakeCase(className)}.dart\';');
   }
+
+  sink.writeln('part \'src/channel.dart\';');
 
   sink.close();
 }
