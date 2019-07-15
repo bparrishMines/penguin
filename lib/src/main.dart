@@ -11,6 +11,9 @@ import 'penguin_option.dart';
 import 'package:yaml/yaml.dart';
 import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
+import 'package:json_serializable/json_serializable.dart';
+
+import 'plugin.dart';
 
 void main(List<String> args) async {
   final ArgParser parser = new ArgParser(usageLineLength: 140);
@@ -77,15 +80,22 @@ void main(List<String> args) async {
   if (flutterCreateCode != 0) exit(64);
   */
 
+  /*
   final Directory dartDir = Directory(path.join(pluginDir.path, 'lib/'));
 
+  */
   final File file =
       File(path.join(Directory.current.path, 'tool/penguin.yaml'));
-  final YamlMap yaml = loadYaml(file.readAsStringSync());
+  final Plugin plugin = Plugin.parse(file.readAsStringSync());
 
+  print(plugin.toJson());
+
+
+  /*
   _createLibraryFile(yaml, dartDir, results[PenguinOption.projectName.name]);
   _createChannelFile(yaml, dartDir, results[PenguinOption.projectName.name]);
   _createClassFiles(yaml, dartDir, results[PenguinOption.projectName.name]);
+  */
 }
 
 int _runFlutterCreate({Directory directory, String projectName, String org}) {
@@ -112,6 +122,7 @@ int _runFlutterCreate({Directory directory, String projectName, String org}) {
   return exitCode;
 }
 
+/*
 void _createChannelFile(YamlMap yaml, Directory dartDir, String projectName) {
   final File channelFile = File(path.join(dartDir.path, 'src/channel.dart'));
 
@@ -158,6 +169,34 @@ void _createClassFiles(YamlMap yaml, Directory dartDir, String projectName) {
 Class _createClass(String className, YamlMap classYaml) {
   return Class((ClassBuilder builder) {
     builder.name = className;
+
+    final YamlMap methods = classYaml['methods'];
+
+    if (methods != null) {
+      for (String methodName in methods.keys) {
+        final YamlMap methodYaml = methods[methodName];
+
+        builder.methods.add(
+          Method((MethodBuilder builder) {
+            builder.name = methodName;
+
+            final String modifier = methodYaml['modifier'];
+
+            if (modifier != null) {
+              switch (modifier) {
+                case 'async':
+                  builder.modifier = MethodModifier.async;
+                  break;
+                default:
+                  throw UnimplementedError();
+              }
+            }
+
+            builder.returns = refer('Future<void>');
+          }),
+        );
+      }
+    }
   });
 }
 
@@ -213,3 +252,4 @@ void _createLibraryFile(YamlMap yaml, Directory dartDir, String projectName) {
 
   sink.close();
 }
+*/

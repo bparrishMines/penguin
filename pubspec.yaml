@@ -6,3 +6,9 @@ dependencies:
   yaml: ^2.1.16
   code_builder: ^3.2.0
   dart_style: ^1.2.9
+  json_annotation: ^2.4.0
+  checked_yaml: ^1.0.1
+
+dev_dependencies:
+  json_serializable: ^3.0.0
+  build_runner: ^1.0.0

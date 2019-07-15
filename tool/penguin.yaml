@@ -1,12 +1,18 @@
-channel: 'io.plugins/apple'
+channel: "io.plugins/apple"
 
 classes:
-  Trace:
+  - class:
+    name: "Trace"
     methods:
-      start:
-        return: void
+      - method:
+        name: start
+      - method:
+        name: stop
 
-  HttpMetric:
+  - class:
+    name: "HttpMetric"
     methods:
-      stop:
-        return: void
+      - method:
+        name: start
+      - method:
+        name: stop
