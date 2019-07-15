@@ -7,11 +7,10 @@ import 'dart:io';
 import 'package:args/args.dart';
 import 'package:path/path.dart' as path;
 
-import 'android_library.dart';
-import 'dart_library.dart';
-import 'java_library.dart';
 import 'penguin_option.dart';
-import 'plugin_creator.dart';
+import 'package:yaml/yaml.dart';
+import 'package:code_builder/code_builder.dart';
+import 'package:dart_style/dart_style.dart';
 
 void main(List<String> args) async {
   final ArgParser parser = new ArgParser(usageLineLength: 140);
@@ -78,37 +77,14 @@ void main(List<String> args) async {
   if (flutterCreateCode != 0) exit(64);
   */
 
-  JavaLibrary javaLibrary;
-  if (results.wasParsed(PenguinOption.android.name)) {
-    final List<Directory> javaDirectories = _getAllDirectories(
-      results[PenguinOption.android.name],
-    );
+  final Directory dartDir = Directory(path.join(pluginDir.path, 'lib/'));
 
-    final List<File> javaFiles = _getAllJavaFiles(
-      directories: javaDirectories,
-      recursive: results[PenguinOption.recursive.name],
-    );
+  final File file =
+      File(path.join(Directory.current.path, 'tool/penguin.yaml'));
+  final YamlMap yaml = loadYaml(file.readAsStringSync());
 
-    javaLibrary = JavaLibrary.fromFiles(javaFiles);
-  }
-
-  exit(0);
-
-  final PluginCreator creator = PluginCreator(
-    pluginName: results[PenguinOption.projectName.name],
-    javaLibrary: javaLibrary,
-    organization: results[PenguinOption.org.name],
-  );
-
-  final Directory androidDir = AndroidLibrary.getAndroidDirectory(
-    pluginDir: pluginDir,
-    organization: results[PenguinOption.org.name],
-    pluginName: results[PenguinOption.projectName.name],
-  );
-  _writeToFiles(androidDir, creator.getAndroidFiles());
-
-  final Directory dartDir = DartLibrary.getDartDirectory(pluginDir);
-  _writeToFiles(dartDir, creator.getDartFiles());
+  _createLibraryFile(yaml, dartDir, results[PenguinOption.projectName.name]);
+  _createClassFiles(yaml, dartDir);
 }
 
 int _runFlutterCreate({Directory directory, String projectName, String org}) {
@@ -135,46 +111,80 @@ int _runFlutterCreate({Directory directory, String projectName, String org}) {
   return exitCode;
 }
 
-List<File> _getAllJavaFiles({List<Directory> directories, bool recursive}) {
-  final List<File> files = <File>[];
+void _createClassFiles(YamlMap yaml, Directory dartDir) {
+  final YamlMap classes = yaml['classes'];
 
-  for (Directory dir in directories) {
-    final List<FileSystemEntity> entities = dir.listSync(recursive: recursive);
+  if (classes == null) return;
 
-    for (FileSystemEntity entity in entities) {
-      if (entity is File) {
-        final File file = entity;
+  final DartEmitter emitter = DartEmitter();
+  final DartFormatter formatter = DartFormatter();
 
-        if (file.path.endsWith('.java')) {
-          files.add(file);
-        }
-      }
-    }
+  for (String className in classes.keys) {
+    final Class dartClass = _createClass(className, classes[className]);
+
+    final String content = formatter.format('${dartClass.accept(emitter)}');
+
+    final String filename = '${_camelCaseToSnakeCase(className)}.dart';
+    final File classFile = File(path.join(dartDir.path, 'src/', filename));
+
+    classFile.createSync(recursive: true);
+    classFile.writeAsString(content);
   }
-
-  return files;
 }
 
-List<Directory> _getAllDirectories(List<String> paths) {
-  final List<Directory> directories = <Directory>[];
-
-  for (String dir in paths) {
-    directories.add(
-      Directory(path.join(Directory.current.path, dir)),
-    );
-  }
-
-  return directories;
+Class _createClass(String className, YamlMap classYaml) {
+  return Class((ClassBuilder builder) {
+    builder.name = className;
+  });
 }
 
-void _writeToFiles(Directory directory, Map<File, String> files) {
-  for (MapEntry<File, String> entry in files.entries) {
-    final File file = File(
-      path.join(directory.path, entry.key.path),
-    );
+String _camelCaseToSnakeCase(String str) {
+  final RegExp regExp = RegExp(r'([A-Z][a-z]*)');
 
-    file
-      ..createSync(recursive: true)
-      ..writeAsStringSync(entry.value);
+  final StringBuffer buffer = StringBuffer();
+
+  final List<Match> matches = regExp.allMatches(str).toList();
+  for (int i = 0; i < matches.length; i++) {
+    final String word = matches[i].group(0).toLowerCase();
+    buffer.write(word);
+
+    if (i < matches.length - 1) buffer.write('_');
   }
+
+  return buffer.toString();
+}
+
+void _createLibraryFile(YamlMap yaml, Directory dartDir, String projectName) {
+  final File libraryFile = File('${path.join(dartDir.path, projectName)}.dart');
+
+  libraryFile.writeAsStringSync('library $projectName;\n\n');
+
+  final Library library = Library((LibraryBuilder builder) {
+    builder.directives.addAll(<Directive>[
+      Directive((DirectiveBuilder builder) {
+        builder.type = DirectiveType.import;
+        builder.url = 'package:flutter/services.dart';
+      }),
+      Directive((DirectiveBuilder builder) {
+        builder.type = DirectiveType.import;
+        builder.url = 'package:flutter/foundation.dart';
+      }),
+    ]);
+  });
+
+  final DartEmitter emitter = DartEmitter();
+  final String content = DartFormatter().format('${library.accept(emitter)}');
+
+  libraryFile.writeAsStringSync(content, mode: FileMode.append);
+
+  final YamlMap classes = yaml['classes'];
+  if (classes == Null) return;
+
+  final IOSink sink = libraryFile.openWrite(mode: FileMode.append);
+  sink.writeln();
+  for (String className in classes.keys) {
+    sink.writeln('part \'src/${_camelCaseToSnakeCase(className)}.dart\';');
+  }
+
+  sink.close();
 }
