@@ -122,16 +122,12 @@ class Field {
   Field(
     this.name, {
     String type,
-    FieldModifier modifier,
     bool static,
   })  : type = type ?? 'dynamic',
         static = static ?? false,
-        modifier = modifier ?? FieldModifier.var$,
         assert(name != null);
 
   final String name;
-
-  final FieldModifier modifier;
 
   final bool static;
 

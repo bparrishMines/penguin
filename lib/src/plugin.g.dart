@@ -115,8 +115,6 @@ Field _$FieldFromJson(Map json) {
   return $checkedNew('Field', json, () {
     final val = Field($checkedConvert(json, 'name', (v) => v as String),
         type: $checkedConvert(json, 'type', (v) => v as String),
-        modifier: $checkedConvert(json, 'modifier',
-            (v) => _$enumDecodeNullable(_$FieldModifierEnumMap, v)),
         static: $checkedConvert(json, 'static', (v) => v as bool));
     return val;
   });
@@ -124,33 +122,6 @@ Field _$FieldFromJson(Map json) {
 
 Map<String, dynamic> _$FieldToJson(Field instance) => <String, dynamic>{
       'name': instance.name,
-      'modifier': _$FieldModifierEnumMap[instance.modifier],
       'static': instance.static,
       'type': instance.type
     };
-
-T _$enumDecode<T>(Map<T, dynamic> enumValues, dynamic source) {
-  if (source == null) {
-    throw ArgumentError('A value must be provided. Supported values: '
-        '${enumValues.values.join(', ')}');
-  }
-  return enumValues.entries
-      .singleWhere((e) => e.value == source,
-          orElse: () => throw ArgumentError(
-              '`$source` is not one of the supported values: '
-              '${enumValues.values.join(', ')}'))
-      .key;
-}
-
-T _$enumDecodeNullable<T>(Map<T, dynamic> enumValues, dynamic source) {
-  if (source == null) {
-    return null;
-  }
-  return _$enumDecode<T>(enumValues, source);
-}
-
-const _$FieldModifierEnumMap = <FieldModifier, dynamic>{
-  FieldModifier.var$: r'var$',
-  FieldModifier.final$: r'final$',
-  FieldModifier.constant: 'constant'
-};

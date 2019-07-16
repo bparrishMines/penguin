@@ -1,3 +1,4 @@
+import 'package:built_collection/src/list.dart';
 import 'package:code_builder/code_builder.dart' as cb;
 
 import 'plugin.dart';
@@ -94,7 +95,7 @@ class PluginCreator {
         builder.constructors.addAll(
           _createConstructors(dartClass.name, dartClass.constructors),
         );
-        builder.fields.addAll(_createFields(dartClass.fields));
+        builder.methods.addAll(_createFields(dartClass.name, dartClass.fields));
 
         builder.fields.add(_handle);
       });
@@ -200,19 +201,28 @@ class PluginCreator {
     return retParameters;
   }
 
-  List<cb.Field> _createFields(List<Field> fields) {
-    final List<cb.Field> retFields = <cb.Field>[];
+  List<cb.Method> _createFields(String className, List<Field> fields) {
+    final List<cb.Method> retMethods = <cb.Method>[];
 
     for (Field field in fields) {
-      final cb.Field codeField = cb.Field((cb.FieldBuilder builder) {
+      final cb.Method codeMethod = cb.Method((cb.MethodBuilder builder) {
         builder.name = field.name;
-        builder.type = cb.refer(field.type);
+        builder.type = cb.MethodType.getter;
+        builder.returns = cb.refer('Future<${field.type}>');
+        builder.type = cb.MethodType.getter;
+
+        builder.body = cb.Code('''
+            return Channel.channel.invokeMethod<void>(
+              '$className#${field.name}',
+              <String, dynamic>{'handle': _handle},
+            );
+          ''');
       });
 
-      retFields.add(codeField);
+      retMethods.add(codeMethod);
     }
 
-    return retFields;
+    return retMethods;
   }
 
   static final cb.Field _handle = cb.Field((cb.FieldBuilder builder) {

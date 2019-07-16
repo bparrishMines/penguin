@@ -31,6 +31,7 @@ classes:
       - field:
         name: instance
         type: FirebasePerformance
+        static: true
     methods:
       - method:
         name: isPerformanceCollectionEnabled
@@ -41,3 +42,20 @@ classes:
           - required_parameter:
             name: enable
             type: bool
+      - method:
+        name: newTrace
+        returns: Trace
+        required_parameters:
+          - required_parameter:
+            name: name
+            type: String
+      - method:
+        name: newHttpMetric
+        returns: HttpMetric
+        required_paramters:
+          - required_parameter:
+              name: url
+              type: String
+          - required_parameter:
+              name: httpMethod
+              type: HttpMethod
