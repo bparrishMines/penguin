@@ -41,6 +41,12 @@ Class _$ClassFromJson(Map json) {
             'constructors',
             (v) => (v as List)
                 ?.map((e) => e == null ? null : Constructor.fromJson(e as Map))
+                ?.toList()),
+        fields: $checkedConvert(
+            json,
+            'fields',
+            (v) => (v as List)
+                ?.map((e) => e == null ? null : Field.fromJson(e as Map))
                 ?.toList()));
     return val;
   });
@@ -49,13 +55,13 @@ Class _$ClassFromJson(Map json) {
 Map<String, dynamic> _$ClassToJson(Class instance) => <String, dynamic>{
       'name': instance.name,
       'methods': instance.methods,
-      'constructors': instance.constructors
+      'constructors': instance.constructors,
+      'fields': instance.fields
     };
 
 Method _$MethodFromJson(Map json) {
   return $checkedNew('Method', json, () {
-    final val = Method(
-        name: $checkedConvert(json, 'name', (v) => v as String),
+    final val = Method($checkedConvert(json, 'name', (v) => v as String),
         returns: $checkedConvert(json, 'returns', (v) => v as String),
         requiredParameters: $checkedConvert(
             json,
@@ -85,7 +91,8 @@ Map<String, dynamic> _$MethodToJson(Method instance) => <String, dynamic>{
 
 Constructor _$ConstructorFromJson(Map json) {
   return $checkedNew('Constructor', json, () {
-    final val = Constructor($checkedConvert(json, 'private', (v) => v as bool));
+    final val = Constructor(
+        private: $checkedConvert(json, 'private', (v) => v as bool));
     return val;
   });
 }
@@ -95,8 +102,7 @@ Map<String, dynamic> _$ConstructorToJson(Constructor instance) =>
 
 Parameter _$ParameterFromJson(Map json) {
   return $checkedNew('Parameter', json, () {
-    final val = Parameter(
-        name: $checkedConvert(json, 'name', (v) => v as String),
+    final val = Parameter($checkedConvert(json, 'name', (v) => v as String),
         type: $checkedConvert(json, 'type', (v) => v as String));
     return val;
   });
@@ -104,3 +110,47 @@ Parameter _$ParameterFromJson(Map json) {
 
 Map<String, dynamic> _$ParameterToJson(Parameter instance) =>
     <String, dynamic>{'name': instance.name, 'type': instance.type};
+
+Field _$FieldFromJson(Map json) {
+  return $checkedNew('Field', json, () {
+    final val = Field($checkedConvert(json, 'name', (v) => v as String),
+        type: $checkedConvert(json, 'type', (v) => v as String),
+        modifier: $checkedConvert(json, 'modifier',
+            (v) => _$enumDecodeNullable(_$FieldModifierEnumMap, v)),
+        static: $checkedConvert(json, 'static', (v) => v as bool));
+    return val;
+  });
+}
+
+Map<String, dynamic> _$FieldToJson(Field instance) => <String, dynamic>{
+      'name': instance.name,
+      'modifier': _$FieldModifierEnumMap[instance.modifier],
+      'static': instance.static,
+      'type': instance.type
+    };
+
+T _$enumDecode<T>(Map<T, dynamic> enumValues, dynamic source) {
+  if (source == null) {
+    throw ArgumentError('A value must be provided. Supported values: '
+        '${enumValues.values.join(', ')}');
+  }
+  return enumValues.entries
+      .singleWhere((e) => e.value == source,
+          orElse: () => throw ArgumentError(
+              '`$source` is not one of the supported values: '
+              '${enumValues.values.join(', ')}'))
+      .key;
+}
+
+T _$enumDecodeNullable<T>(Map<T, dynamic> enumValues, dynamic source) {
+  if (source == null) {
+    return null;
+  }
+  return _$enumDecode<T>(enumValues, source);
+}
+
+const _$FieldModifierEnumMap = <FieldModifier, dynamic>{
+  FieldModifier.var$: r'var$',
+  FieldModifier.final$: r'final$',
+  FieldModifier.constant: 'constant'
+};

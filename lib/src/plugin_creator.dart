@@ -88,15 +88,13 @@ class PluginCreator {
 
       final cb.Class builderClass = cb.Class((cb.ClassBuilder builder) {
         builder.name = dartClass.name;
-
-        if (dartClass.methods != null) {
-          builder.methods.addAll(
-            _createMethods(dartClass.name, dartClass.methods),
-          );
-        }
-
+        builder.methods.addAll(
+          _createMethods(dartClass.name, dartClass.methods),
+        );
         builder.constructors.addAll(
-            _createConstructors(dartClass.name, dartClass.constructors));
+          _createConstructors(dartClass.name, dartClass.constructors),
+        );
+        builder.fields.addAll(_createFields(dartClass.fields));
 
         builder.fields.add(_handle);
       });
@@ -148,7 +146,7 @@ class PluginCreator {
   ) {
     final List<cb.Constructor> retConstructors = <cb.Constructor>[];
 
-    if (constructors == null) {
+    if (constructors.isEmpty) {
       retConstructors.add(cb.Constructor(
         (cb.ConstructorBuilder builder) {
           builder.body = cb.Code('''
@@ -200,6 +198,21 @@ class PluginCreator {
     }
 
     return retParameters;
+  }
+
+  List<cb.Field> _createFields(List<Field> fields) {
+    final List<cb.Field> retFields = <cb.Field>[];
+
+    for (Field field in fields) {
+      final cb.Field codeField = cb.Field((cb.FieldBuilder builder) {
+        builder.name = field.name;
+        builder.type = cb.refer(field.type);
+      });
+
+      retFields.add(codeField);
+    }
+
+    return retFields;
   }
 
   static final cb.Field _handle = cb.Field((cb.FieldBuilder builder) {
