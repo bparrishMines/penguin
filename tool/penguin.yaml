@@ -52,10 +52,10 @@ classes:
       - method:
         name: newHttpMetric
         returns: HttpMetric
-        required_paramters:
+        required_parameters:
           - required_parameter:
-              name: url
-              type: String
+            name: url
+            type: String
           - required_parameter:
-              name: httpMethod
-              type: HttpMethod
+            name: httpMethod
+            type: HttpMethod

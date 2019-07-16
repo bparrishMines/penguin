@@ -112,9 +112,9 @@ class PluginCreator {
     final List<cb.Method> retMethods = <cb.Method>[];
 
     for (Method method in methods) {
+      print(method);
       final List<Parameter> allParameters =
-          (method.requiredParameters ?? <Parameter>[]) +
-              (method.optionalParameters ?? <Parameter>[]);
+          method.requiredParameters + method.optionalParameters;
 
       final StringBuffer allParameterBuffer = StringBuffer();
       for (Parameter parameter in allParameters) {
@@ -214,7 +214,7 @@ class PluginCreator {
         builder.body = cb.Code('''
             return Channel.channel.invokeMethod<void>(
               '$className#${field.name}',
-              <String, dynamic>{'handle': _handle},
+              ${field.static ? '' : "<String, dynamic>{'handle': _handle},"}
             );
           ''');
       });
