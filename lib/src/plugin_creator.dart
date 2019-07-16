@@ -13,6 +13,8 @@ class PluginCreator {
     'package:flutter/foundation.dart',
   ];
 
+  String get _libraryPartOfDirective => 'part of ${plugin.name};';
+
   final cb.DartEmitter _emitter = cb.DartEmitter();
 
   String libraryAsString() {
@@ -45,13 +47,31 @@ class PluginCreator {
     return buffer.toString();
   }
 
+  String channelAsString() {
+    final StringBuffer buffer = StringBuffer();
+
+    buffer.writeln('$_libraryPartOfDirective\n');
+
+    final cb.Field field = cb.Field((cb.FieldBuilder builder) {
+      builder.name = 'channel';
+      builder.modifier = cb.FieldModifier.constant;
+      builder.type = cb.Reference('MethodChannel');
+      builder.assignment = cb.Code('MethodChannel(\'${plugin.channel}\')');
+      builder.annotations.add(cb.refer('visibleForTesting'));
+    });
+
+    buffer.writeln('${field.accept(_emitter)}');
+
+    return buffer.toString();
+  }
+
   Map<String, String> classesAsStrings() {
     final Map<String, String> classes = <String, String>{};
 
     for (Class dartClass in plugin.classes) {
       final StringBuffer buffer = StringBuffer();
 
-      buffer.writeln('part of ${plugin.name};\n');
+      buffer.writeln('$_libraryPartOfDirective\n');
 
       final cb.Class builderClass = cb.Class((cb.ClassBuilder builder) {
         builder.name = dartClass.name;

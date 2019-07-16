@@ -86,7 +86,7 @@ void main(List<String> args) async {
 
   _createLibraryFile(creator, dartDir, results[PenguinOption.projectName.name]);
   _createClassFiles(creator, dartDir);
-  //_createChannelFile(yaml, dartDir, results[PenguinOption.projectName.name]);
+  _createChannelFile(creator, dartDir, results[PenguinOption.projectName.name]);
 }
 
 int _runFlutterCreate({Directory directory, String projectName, String org}) {
@@ -113,28 +113,13 @@ int _runFlutterCreate({Directory directory, String projectName, String org}) {
   return exitCode;
 }
 
-/*
-void _createChannelFile(YamlMap yaml, Directory dartDir, String projectName) {
+void _createChannelFile(PluginCreator creator, Directory dartDir, String projectName) {
   final File channelFile = File(path.join(dartDir.path, 'src/channel.dart'));
 
   channelFile.createSync(recursive: true);
-  channelFile.writeAsStringSync('part of $projectName;\n\n');
-
-  final String channelName = yaml['channel'];
-
-  final Field field = Field((FieldBuilder builder) {
-    builder.name = 'channel';
-    builder.modifier = FieldModifier.constant;
-    builder.type = Reference('MethodChannel');
-    builder.assignment = Code('MethodChannel(\'$channelName\')');
-    builder.annotations.add(refer('visibleForTesting'));
-  });
-
-  final DartEmitter emitter = DartEmitter();
-  final String content = DartFormatter().format('${field.accept(emitter)}');
-  channelFile.writeAsStringSync(content, mode: FileMode.append);
+  channelFile.writeAsStringSync(creator.channelAsString());
 }
-*/
+
 void _createClassFiles(PluginCreator creator, Directory dartDir) {
   final Map<String, String> classes = creator.classesAsStrings();
 
