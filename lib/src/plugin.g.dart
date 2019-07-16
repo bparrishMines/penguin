@@ -8,7 +8,9 @@ part of 'plugin.dart';
 
 Plugin _$PluginFromJson(Map json) {
   return $checkedNew('Plugin', json, () {
-    final val = Plugin($checkedConvert(json, 'channel', (v) => v as String),
+    final val = Plugin(
+        name: $checkedConvert(json, 'name', (v) => v as String),
+        channel: $checkedConvert(json, 'channel', (v) => v as String),
         classes: $checkedConvert(
             json,
             'classes',
@@ -19,8 +21,11 @@ Plugin _$PluginFromJson(Map json) {
   });
 }
 
-Map<String, dynamic> _$PluginToJson(Plugin instance) =>
-    <String, dynamic>{'channel': instance.channel, 'classes': instance.classes};
+Map<String, dynamic> _$PluginToJson(Plugin instance) => <String, dynamic>{
+      'name': instance.name,
+      'channel': instance.channel,
+      'classes': instance.classes
+    };
 
 Class _$ClassFromJson(Map json) {
   return $checkedNew('Class', json, () {

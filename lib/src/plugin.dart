@@ -5,11 +5,13 @@ part 'plugin.g.dart';
 
 @JsonSerializable()
 class Plugin {
-  Plugin(this.channel, {this.classes});
+  Plugin({this.name, this.channel, this.classes});
 
   factory Plugin.parse(String yaml) {
     return checkedYamlDecode<Plugin>(yaml, (Map map) => Plugin.fromJson(map));
   }
+
+  final String name;
 
   final String channel;
 

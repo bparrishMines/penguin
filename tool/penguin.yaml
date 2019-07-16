@@ -1,3 +1,5 @@
+name: apple
+
 channel: "io.plugins/apple"
 
 classes:
