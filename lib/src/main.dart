@@ -87,6 +87,7 @@ void main(List<String> args) async {
   _createLibraryFile(creator, dartDir, results[PenguinOption.projectName.name]);
   _createClassFiles(creator, dartDir);
   _createChannelFile(creator, dartDir, results[PenguinOption.projectName.name]);
+  _createPubspecFile(creator, pluginDir);
 }
 
 int _runFlutterCreate({Directory directory, String projectName, String org}) {
@@ -139,4 +140,9 @@ void _createLibraryFile(
 ) {
   final File libraryFile = File(path.join(dartDir.path, '$projectName.dart'));
   libraryFile.writeAsStringSync(creator.libraryAsString());
+}
+
+void _createPubspecFile(PluginCreator creator, Directory pluginDir) {
+  final File pubspecFile = File(path.join(pluginDir.path, 'pubspec.yaml'));
+  pubspecFile.writeAsStringSync(creator.pubspecAsString());
 }

@@ -8,6 +8,8 @@ dependencies:
   dart_style: ^1.2.9
   json_annotation: ^2.4.0
   checked_yaml: ^1.0.1
+  pubspec_parse: ^0.1.4
+  pub_semver: ^1.4.2
 
 dev_dependencies:
   json_serializable: ^3.0.0

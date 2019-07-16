@@ -1,5 +1,6 @@
-import 'package:built_collection/src/list.dart';
 import 'package:code_builder/code_builder.dart' as cb;
+import 'package:pub_semver/pub_semver.dart';
+import 'package:pubspec_parse/pubspec_parse.dart';
 
 import 'plugin.dart';
 import 'utils.dart';
@@ -112,7 +113,6 @@ class PluginCreator {
     final List<cb.Method> retMethods = <cb.Method>[];
 
     for (Method method in methods) {
-      print(method);
       final List<Parameter> allParameters =
           method.requiredParameters + method.optionalParameters;
 
@@ -231,4 +231,109 @@ class PluginCreator {
     builder.type = cb.Reference('int');
     builder.assignment = cb.Code('Channel.nextHandle++');
   });
+
+  String pubspecAsString() {
+    final String upperCaseName =
+        plugin.name[0].toUpperCase() + plugin.name.substring(1);
+
+    final Pubspec pubspec = Pubspec(
+      plugin.name,
+      description: 'A new flutter plugin project.',
+      version: Version.parse('0.0.1'),
+      homepage: '',
+      environment: <String, VersionConstraint>{
+        'sdk': VersionConstraint.compatibleWith(
+          Version.parse('2.1.0'),
+        ),
+        'flutter': VersionConstraint.compatibleWith(
+          Version.parse('1.0.0'),
+        ),
+      },
+      dependencies: <String, Dependency>{
+        'flutter': SdkDependency('flutter'),
+        'json_annotation': HostedDependency(
+          version: VersionConstraint.compatibleWith(
+            Version.parse('2.4.0'),
+          ),
+        ),
+      },
+      devDependencies: <String, Dependency>{
+        'flutter_test': SdkDependency('flutter'),
+        'json_serializable': HostedDependency(
+          version: VersionConstraint.compatibleWith(
+            Version.parse('3.0.0'),
+          ),
+        ),
+        'build_runner': HostedDependency(
+          version: VersionConstraint.compatibleWith(
+            Version.parse('1.0.0'),
+          ),
+        ),
+      },
+      flutter: <String, dynamic>{
+        'plugin': <String, dynamic>{
+          'androidPackage': plugin.channel.replaceAll('/', '.'),
+          'pluginClass': '${upperCaseName}Plugin',
+        }
+      },
+    );
+
+    return '''
+### Generated file
+name: ${pubspec.name}
+description: ${pubspec.description}
+homepage: ${pubspec.homepage}
+version: ${pubspec.version}
+
+environment:${_pubspecMapString(pubspec.environment)}
+
+dependencies:${_pubspecMapString(pubspec.dependencies)}
+
+dev_dependencies:${_pubspecMapString(pubspec.devDependencies)}
+
+flutter: ${_flutterToString(pubspec.flutter)}
+###
+    ''';
+  }
+
+  String _pubspecMapString(Map<String, dynamic> values) {
+    final StringBuffer buffer = StringBuffer();
+
+    for (MapEntry<String, dynamic> entry in values.entries) {
+      buffer.writeln();
+      if (entry.value is VersionConstraint) {
+        buffer.write('  ${entry.key}: ${entry.value}');
+      } else if (entry.value is SdkDependency) {
+        final SdkDependency dep = entry.value;
+        buffer.write('  ${entry.key}: \n    sdk: ${dep.sdk}');
+      } else if (entry.value is PathDependency) {
+        final PathDependency dep = entry.value;
+        buffer.write('  ${entry.key}: \n    path: ${dep.path}');
+      } else if (entry.value is HostedDependency) {
+        final HostedDependency dep = entry.value;
+        buffer.write('  ${entry.key}: ${dep.version}');
+      } else {
+        throw UnimplementedError(
+          'Not available for type: ${entry.value.runtimeType}',
+        );
+      }
+    }
+
+    return buffer.toString();
+  }
+
+  String _flutterToString(Map<String, dynamic> source) {
+    final StringBuffer buffer = StringBuffer();
+
+    buffer.writeln();
+    for (MapEntry<String, dynamic> entry in source.entries) {
+      buffer.writeln('  ${entry.key}:');
+
+      for (MapEntry<dynamic, dynamic> entry in entry.value.entries) {
+        buffer.writeln('    ${entry.key}: ${entry.value}');
+      }
+    }
+
+    return buffer.toString();
+  }
 }
