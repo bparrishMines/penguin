@@ -73,16 +73,6 @@ class PluginCreator {
       ]);
     });
 
-    /*
-    final cb.Field field = cb.Field((cb.FieldBuilder builder) {
-      builder.name = 'channel';
-      builder.modifier = cb.FieldModifier.constant;
-      builder.type = cb.Reference('MethodChannel');
-      builder.assignment = cb.Code('MethodChannel(\'${plugin.channel}\')');
-      builder.annotations.add(cb.refer('visibleForTesting'));
-    });
-    */
-
     buffer.writeln('${dartClass.accept(_emitter)}');
 
     return buffer.toString();
@@ -98,7 +88,16 @@ class PluginCreator {
 
       final cb.Class builderClass = cb.Class((cb.ClassBuilder builder) {
         builder.name = dartClass.name;
-        builder.methods.addAll(_createMethods(dartClass.methods));
+
+        if (dartClass.methods != null) {
+          builder.methods.addAll(
+            _createMethods(dartClass.name, dartClass.methods),
+          );
+        }
+
+        builder.constructors.addAll(
+            _createConstructors(dartClass.name, dartClass.constructors));
+
         builder.fields.add(_handle);
       });
 
@@ -110,13 +109,31 @@ class PluginCreator {
     return classes;
   }
 
-  List<cb.Method> _createMethods(List<Method> methods) {
+  List<cb.Method> _createMethods(String className, List<Method> methods) {
     final List<cb.Method> retMethods = <cb.Method>[];
 
     for (Method method in methods) {
+      final List<Parameter> allParameters =
+          (method.requiredParameters ?? <Parameter>[]) +
+              (method.optionalParameters ?? <Parameter>[]);
+
+      final StringBuffer allParameterBuffer = StringBuffer();
+      for (Parameter parameter in allParameters) {
+        allParameterBuffer.write('\'${parameter.name}\': ${parameter.name},');
+      }
+
       final cb.Method codeMethod = cb.Method((cb.MethodBuilder builder) {
         builder.name = method.name;
-        builder.body = cb.Code('');
+        builder.returns = cb.refer('Future<${method.returns ?? 'void'}>');
+        builder.requiredParameters.addAll(
+          _createParameters(method.requiredParameters),
+        );
+        builder.body = cb.Code('''
+          return Channel.channel.invokeMethod<${method.returns ?? 'void'}>(
+            '$className#${method.name}',
+            <String, dynamic>{'handle': _handle, ${allParameterBuffer.toString()}}
+          );
+        ''');
       });
 
       retMethods.add(codeMethod);
@@ -125,8 +142,68 @@ class PluginCreator {
     return retMethods;
   }
 
+  List<cb.Constructor> _createConstructors(
+    String className,
+    List<Constructor> constructors,
+  ) {
+    final List<cb.Constructor> retConstructors = <cb.Constructor>[];
+
+    if (constructors == null) {
+      retConstructors.add(cb.Constructor(
+        (cb.ConstructorBuilder builder) {
+          builder.body = cb.Code('''
+            Channel.channel.invokeMethod<void>(
+              '$className()',
+              <String, dynamic>{'handle': _handle},
+            );
+          ''');
+        },
+      ));
+
+      return retConstructors;
+    }
+
+    for (Constructor constructor in constructors) {
+      final cb.Constructor codeConstruct = cb.Constructor(
+        (cb.ConstructorBuilder builder) {
+          /*
+          builder.name = constructor.name;
+          builder.returns = cb.refer('Future<${method.returns ?? 'void'}>');
+          builder.body = cb.Code('''
+          return Channel.channel.invokeMethod<${method.returns ?? 'void'}>(
+            '$className#${method.name}',
+            <String, dynamic>{'handle': _handle},
+          );
+        ''');
+        */
+        },
+      );
+
+      retConstructors.add(codeConstruct);
+    }
+
+    return retConstructors;
+  }
+
+  List<cb.Parameter> _createParameters(List<Parameter> parameters) {
+    final List<cb.Parameter> retParameters = <cb.Parameter>[];
+    if (parameters == null) return retParameters;
+
+    for (Parameter parameter in parameters) {
+      final cb.Parameter codeParam =
+          cb.Parameter((cb.ParameterBuilder builder) {
+        builder.name = parameter.name;
+        builder.type = cb.refer(parameter.type);
+      });
+
+      retParameters.add(codeParam);
+    }
+
+    return retParameters;
+  }
+
   static final cb.Field _handle = cb.Field((cb.FieldBuilder builder) {
-    builder.name = 'handle';
+    builder.name = '_handle';
     builder.modifier = cb.FieldModifier.final$;
     builder.type = cb.Reference('int');
     builder.assignment = cb.Code('Channel.nextHandle++');

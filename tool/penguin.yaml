@@ -10,11 +10,30 @@ classes:
         name: start
       - method:
         name: stop
+        returns: void
 
   - class:
     name: "HttpMetric"
+    constructors:
+      - constructor:
+        private: true
     methods:
       - method:
         name: start
+        returns: void
       - method:
         name: stop
+        returns: void
+
+  - class:
+    name: "FirebasePerformance"
+    methods:
+      - method:
+        name: isPerformanceCollectionEnabled
+        returns: bool
+      - method:
+        name: setPerformanceCollectionEnabled
+        required_parameters:
+          - required_parameter:
+            name: enable
+            type: bool
