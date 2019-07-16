@@ -52,6 +52,28 @@ class PluginCreator {
 
     buffer.writeln('$_libraryPartOfDirective\n');
 
+    final cb.Class dartClass = cb.Class((cb.ClassBuilder builder) {
+      builder.name = 'Channel';
+      builder.fields.addAll([
+        cb.Field((cb.FieldBuilder builder) {
+          builder.name = 'channel';
+          builder.modifier = cb.FieldModifier.constant;
+          builder.static = true;
+          builder.type = cb.Reference('MethodChannel');
+          builder.assignment = cb.Code('MethodChannel(\'${plugin.channel}\')');
+          builder.annotations.add(cb.refer('visibleForTesting'));
+        }),
+        cb.Field((cb.FieldBuilder builder) {
+          builder.name = 'nextHandle';
+          builder.static = true;
+          builder.type = cb.Reference('int');
+          builder.assignment = cb.Code('0');
+          builder.annotations.add(cb.refer('visibleForTesting'));
+        })
+      ]);
+    });
+
+    /*
     final cb.Field field = cb.Field((cb.FieldBuilder builder) {
       builder.name = 'channel';
       builder.modifier = cb.FieldModifier.constant;
@@ -59,8 +81,9 @@ class PluginCreator {
       builder.assignment = cb.Code('MethodChannel(\'${plugin.channel}\')');
       builder.annotations.add(cb.refer('visibleForTesting'));
     });
+    */
 
-    buffer.writeln('${field.accept(_emitter)}');
+    buffer.writeln('${dartClass.accept(_emitter)}');
 
     return buffer.toString();
   }
@@ -76,6 +99,7 @@ class PluginCreator {
       final cb.Class builderClass = cb.Class((cb.ClassBuilder builder) {
         builder.name = dartClass.name;
         builder.methods.addAll(_createMethods(dartClass.methods));
+        builder.fields.add(_handle);
       });
 
       buffer.writeln('${builderClass.accept(_emitter)}');
@@ -92,6 +116,7 @@ class PluginCreator {
     for (Method method in methods) {
       final cb.Method codeMethod = cb.Method((cb.MethodBuilder builder) {
         builder.name = method.name;
+        builder.body = cb.Code('');
       });
 
       retMethods.add(codeMethod);
@@ -99,4 +124,11 @@ class PluginCreator {
 
     return retMethods;
   }
+
+  static final cb.Field _handle = cb.Field((cb.FieldBuilder builder) {
+    builder.name = 'handle';
+    builder.modifier = cb.FieldModifier.final$;
+    builder.type = cb.Reference('int');
+    builder.assignment = cb.Code('Channel.nextHandle++');
+  });
 }
