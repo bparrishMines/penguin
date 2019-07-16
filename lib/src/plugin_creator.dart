@@ -210,7 +210,7 @@ class PluginCreator {
         builder.type = cb.MethodType.getter;
         builder.returns = cb.refer('Future<${field.type}>');
         builder.type = cb.MethodType.getter;
-
+        builder.static = field.static;
         builder.body = cb.Code('''
             return Channel.channel.invokeMethod<void>(
               '$className#${field.name}',
