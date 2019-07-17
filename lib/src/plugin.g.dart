@@ -99,7 +99,9 @@ Method _$MethodFromJson(Map json) {
                     ?.map(
                         (e) => e == null ? null : Parameter.fromJson(e as Map))
                     ?.toList()) ??
-            []);
+            [],
+        type: $checkedConvert(
+            json, 'type', (v) => _$enumDecodeNullable(_$MethodTypeEnumMap, v)));
     return val;
   }, fieldKeyMap: const {
     'requiredParameters': 'required_parameters',
@@ -120,8 +122,34 @@ Map<String, dynamic> _$MethodToJson(Method instance) {
   val['returns'] = instance.returns;
   val['required_parameters'] = instance.requiredParameters;
   val['optional_parameters'] = instance.optionalParameters;
+  val['type'] = _$MethodTypeEnumMap[instance.type];
   return val;
 }
+
+T _$enumDecode<T>(Map<T, dynamic> enumValues, dynamic source) {
+  if (source == null) {
+    throw ArgumentError('A value must be provided. Supported values: '
+        '${enumValues.values.join(', ')}');
+  }
+  return enumValues.entries
+      .singleWhere((e) => e.value == source,
+          orElse: () => throw ArgumentError(
+              '`$source` is not one of the supported values: '
+              '${enumValues.values.join(', ')}'))
+      .key;
+}
+
+T _$enumDecodeNullable<T>(Map<T, dynamic> enumValues, dynamic source) {
+  if (source == null) {
+    return null;
+  }
+  return _$enumDecode<T>(enumValues, source);
+}
+
+const _$MethodTypeEnumMap = <MethodType, dynamic>{
+  MethodType.getter: 'getter',
+  MethodType.setter: 'setter'
+};
 
 Constructor _$ConstructorFromJson(Map json) {
   return $checkedNew('Constructor', json, () {

@@ -1,4 +1,5 @@
 import 'package:checked_yaml/checked_yaml.dart';
+import 'package:code_builder/code_builder.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'plugin.g.dart';
@@ -61,6 +62,7 @@ class Method {
     this.returns,
     this.requiredParameters,
     this.optionalParameters,
+    this.type,
   });
 
   @JsonKey(required: true, disallowNullValue: true)
@@ -74,6 +76,8 @@ class Method {
 
   @JsonKey(defaultValue: const <Parameter>[])
   final List<Parameter> optionalParameters;
+
+  final MethodType type;
 
   factory Method.fromJson(Map json) => _$MethodFromJson(json);
 

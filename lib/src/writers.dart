@@ -57,7 +57,10 @@ class MethodWriter extends Writer<Method, cb.Method> {
     final ParameterWriter paramWriter = ParameterWriter(plugin);
 
     final cb.Method codeMethod = cb.Method((cb.MethodBuilder builder) {
+      final bool hasMethodType = method.type != null;
+
       builder.name = method.name;
+      if (hasMethodType) builder.type = method.type;
       builder.requiredParameters.addAll(
         paramWriter.writeAll(method.requiredParameters),
       );
@@ -66,15 +69,17 @@ class MethodWriter extends Writer<Method, cb.Method> {
       );
 
       if (structure == ClassStructure.unspecifiedPublic) {
-        builder.returns = cb.refer(method.returns);
+        if (!hasMethodType) builder.returns = cb.refer(method.returns);
         builder.body = cb.Code('return ${method.returns}();');
       } else if (structure == ClassStructure.unspecifiedPrivate) {
-        builder.returns = cb.refer(method.returns);
+        if (!hasMethodType) builder.returns = cb.refer(method.returns);
         builder.body = cb.Code(
           'return ${method.returns}._({${allParameterBuffer.toString()}});',
         );
       } else {
-        builder.returns = cb.refer('Future<${method.returns}>');
+        if (!hasMethodType) {
+          builder.returns = cb.refer('Future<${method.returns}>');
+        }
         builder.body = cb.Code(
           '''
           return Channel.channel.invokeMethod<${method.returns}>(

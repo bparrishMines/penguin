@@ -59,10 +59,32 @@ classes:
     methods:
       - method:
         name: start
-        returns: void
       - method:
         name: stop
-        returns: void
+      - method:
+        name: setHttpResponseCode
+        required_parameters:
+          - required_parameter:
+            name: httpResponseCode
+            type: int
+      - method:
+        name: setRequestPayloadSize
+        required_parameters:
+          - required_parameter:
+            name: requestPayloadSize
+            type: int
+      - method:
+        name: setResponseContentType
+        required_parameters:
+          - required_parameter:
+            name: responseConentType
+            type: String
+      - method:
+        name: setResponsePayloadSize
+        required_parameters:
+          - required_parameter:
+            name: responsePayloadSize
+            type: int
 
   - class:
     name: "FirebasePerformance"
