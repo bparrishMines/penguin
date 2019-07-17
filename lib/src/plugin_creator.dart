@@ -2,9 +2,9 @@ import 'package:code_builder/code_builder.dart' as cb;
 import 'package:pub_semver/pub_semver.dart';
 import 'package:pubspec_parse/pubspec_parse.dart';
 
-import 'class_structure.dart';
 import 'plugin.dart';
 import 'utils.dart';
+import 'writer.dart';
 
 class PluginCreator {
   PluginCreator(this.plugin);
@@ -84,162 +84,22 @@ class PluginCreator {
   Map<String, String> classesAsStrings() {
     final Map<String, String> classes = <String, String>{};
 
-    for (Class dartClass in plugin.classes) {
+    for (Class theClass in plugin.classes) {
       final StringBuffer buffer = StringBuffer();
-      final ClassStructure structure = getClassStructure(plugin, dartClass);
+      final ClassStructure structure = ClassStructure.unspecifiedPrivate;
 
       buffer.writeln('$_libraryPartOfDirective\n');
 
-      final cb.Class builderClass = cb.Class((cb.ClassBuilder builder) {
-        builder.name = dartClass.name;
-        builder.methods.addAll(
-          _createMethods(dartClass.name, dartClass.methods),
-        );
+      final cb.Class codeClass =
+          ClassWriter(plugin, structure, theClass.name).write(theClass);
 
-        builder.constructors.addAll(
-          _createConstructors(
-              structure, dartClass.name, dartClass.constructors),
-        );
-        builder.methods.addAll(_createFields(dartClass.name, dartClass.fields));
+      buffer.writeln('${codeClass.accept(_emitter)}');
 
-        builder.fields.add(_handle);
-      });
-
-      buffer.writeln('${builderClass.accept(_emitter)}');
-
-      classes[dartClass.name] = buffer.toString();
+      classes[theClass.name] = buffer.toString();
     }
 
     return classes;
   }
-
-  List<cb.Method> _createMethods(String className, List<Method> methods) {
-    final List<cb.Method> retMethods = <cb.Method>[];
-
-    for (Method method in methods) {
-      final List<Parameter> allParameters =
-          method.requiredParameters + method.optionalParameters;
-
-      final StringBuffer allParameterBuffer = StringBuffer();
-      for (Parameter parameter in allParameters) {
-        allParameterBuffer.write('\'${parameter.name}\': ${parameter.name},');
-      }
-
-      final cb.Method codeMethod = cb.Method((cb.MethodBuilder builder) {
-        builder.name = method.name;
-        builder.returns = cb.refer('Future<${method.returns ?? 'void'}>');
-        builder.requiredParameters.addAll(
-          _createParameters(method.requiredParameters),
-        );
-        builder.body = cb.Code('''
-          return Channel.channel.invokeMethod<${method.returns ?? 'void'}>(
-            '$className#${method.name}',
-            <String, dynamic>{'handle': _handle, ${allParameterBuffer.toString()}}
-          );
-        ''');
-      });
-
-      retMethods.add(codeMethod);
-    }
-
-    return retMethods;
-  }
-
-  List<cb.Constructor> _createConstructors(
-    ClassStructure structure,
-    String className,
-    List<Constructor> constructors,
-  ) {
-    final List<cb.Constructor> retConstructors = <cb.Constructor>[];
-
-    if (structure == ClassStructure.unspecifiedPublic ||
-        structure == ClassStructure.unspecifiedPrivate) {
-      retConstructors.add(
-        cb.Constructor((cb.ConstructorBuilder builder) {
-          if (structure == ClassStructure.unspecifiedPrivate) {
-            builder.name = '_';
-          }
-          builder.body = cb.Code('''
-            Channel.channel.invokeMethod<void>(
-              '$className()',
-              <String, dynamic>{'handle': _handle},
-            );
-          ''');
-        }),
-      );
-
-      return retConstructors;
-    }
-
-    for (Constructor constructor in constructors) {
-      final cb.Constructor codeConstruct = cb.Constructor(
-        (cb.ConstructorBuilder builder) {
-          /*
-          builder.name = constructor.name;
-          builder.returns = cb.refer('Future<${method.returns ?? 'void'}>');
-          builder.body = cb.Code('''
-          return Channel.channel.invokeMethod<${method.returns ?? 'void'}>(
-            '$className#${method.name}',
-            <String, dynamic>{'handle': _handle},
-          );
-        ''');
-        */
-        },
-      );
-
-      retConstructors.add(codeConstruct);
-    }
-
-    return retConstructors;
-  }
-
-  List<cb.Parameter> _createParameters(List<Parameter> parameters) {
-    final List<cb.Parameter> retParameters = <cb.Parameter>[];
-    if (parameters == null) return retParameters;
-
-    for (Parameter parameter in parameters) {
-      final cb.Parameter codeParam =
-          cb.Parameter((cb.ParameterBuilder builder) {
-        builder.name = parameter.name;
-        builder.type = cb.refer(parameter.type);
-      });
-
-      retParameters.add(codeParam);
-    }
-
-    return retParameters;
-  }
-
-  List<cb.Method> _createFields(String className, List<Field> fields) {
-    final List<cb.Method> retMethods = <cb.Method>[];
-
-    for (Field field in fields) {
-      final cb.Method codeMethod = cb.Method((cb.MethodBuilder builder) {
-        builder.name = field.name;
-        builder.type = cb.MethodType.getter;
-        builder.returns = cb.refer('Future<${field.type}>');
-        builder.type = cb.MethodType.getter;
-        builder.static = field.static;
-        builder.body = cb.Code('''
-            return Channel.channel.invokeMethod<void>(
-              '$className#${field.name}',
-              ${field.static ? '' : "<String, dynamic>{'handle': _handle},"}
-            );
-          ''');
-      });
-
-      retMethods.add(codeMethod);
-    }
-
-    return retMethods;
-  }
-
-  static final cb.Field _handle = cb.Field((cb.FieldBuilder builder) {
-    builder.name = '_handle';
-    builder.modifier = cb.FieldModifier.final$;
-    builder.type = cb.Reference('int');
-    builder.assignment = cb.Code('Channel.nextHandle++');
-  });
 
   String pubspecAsString() {
     final String upperCaseName =
