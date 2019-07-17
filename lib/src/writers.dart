@@ -1,7 +1,7 @@
 part of 'writer.dart';
 
 class FieldWriter extends Writer<Field, cb.Method> {
-  FieldWriter(Plugin plugin, this.className) : super(plugin);
+  const FieldWriter(Plugin plugin, this.className) : super(plugin);
 
   final String className;
 
@@ -19,7 +19,7 @@ class FieldWriter extends Writer<Field, cb.Method> {
         builder.body = cb.Code('return ${field.type}();');
       } else if (structure == ClassStructure.unspecifiedPrivate) {
         builder.returns = cb.refer(field.type);
-        builder.body = cb.Code('return ${field.type}._();');
+        builder.body = cb.Code('return ${field.type}._(<dynamic, dynamic>{});');
       } else {
         builder.returns = cb.refer('Future<${field.type}>');
         builder.body = cb.Code(
@@ -38,7 +38,7 @@ class FieldWriter extends Writer<Field, cb.Method> {
 }
 
 class MethodWriter extends Writer<Method, cb.Method> {
-  MethodWriter(Plugin plugin, this.className) : super(plugin);
+  const MethodWriter(Plugin plugin, this.className) : super(plugin);
 
   final String className;
 
@@ -70,7 +70,9 @@ class MethodWriter extends Writer<Method, cb.Method> {
         builder.body = cb.Code('return ${method.returns}();');
       } else if (structure == ClassStructure.unspecifiedPrivate) {
         builder.returns = cb.refer(method.returns);
-        builder.body = cb.Code('return ${method.returns}._();');
+        builder.body = cb.Code(
+          'return ${method.returns}._({${allParameterBuffer.toString()}});',
+        );
       } else {
         builder.returns = cb.refer('Future<${method.returns}>');
         builder.body = cb.Code(
@@ -89,7 +91,7 @@ class MethodWriter extends Writer<Method, cb.Method> {
 }
 
 class ParameterWriter extends Writer<Parameter, cb.Parameter> {
-  ParameterWriter(Plugin plugin) : super(plugin);
+  const ParameterWriter(Plugin plugin) : super(plugin);
 
   @override
   cb.Parameter write(Parameter parameter) {
@@ -103,7 +105,7 @@ class ParameterWriter extends Writer<Parameter, cb.Parameter> {
 }
 
 class ClassWriter extends Writer<Class, cb.Class> {
-  ClassWriter(Plugin plugin, this.className) : super(plugin);
+  const ClassWriter(Plugin plugin, this.className) : super(plugin);
 
   final String className;
 
@@ -111,13 +113,14 @@ class ClassWriter extends Writer<Class, cb.Class> {
   cb.Class write(Class theClass) {
     final ClassStructure structure = _structureFromClass(theClass);
 
+    final MethodWriter methodWriter = MethodWriter(plugin, className);
+    final FieldWriter fieldWriter = FieldWriter(plugin, className);
+
     final ConstructorWriter constructorWriter = ConstructorWriter(
       plugin,
       className,
       structure,
     );
-    final MethodWriter methodWriter = MethodWriter(plugin, className);
-    final FieldWriter fieldWriter = FieldWriter(plugin, className);
 
     final cb.Class codeClass = cb.Class((cb.ClassBuilder builder) {
       builder.name = theClass.name;
@@ -144,7 +147,7 @@ class ClassWriter extends Writer<Class, cb.Class> {
 }
 
 class ConstructorWriter extends Writer<Constructor, cb.Constructor> {
-  ConstructorWriter(Plugin plugin, this.className, this.structure)
+  const ConstructorWriter(Plugin plugin, this.className, this.structure)
       : super(plugin);
 
   final String className;
@@ -166,12 +169,20 @@ class ConstructorWriter extends Writer<Constructor, cb.Constructor> {
         (cb.ConstructorBuilder builder) {
           if (structure == ClassStructure.unspecifiedPrivate) {
             builder.name = '_';
+
+            final ParameterWriter writer = ParameterWriter(plugin);
+            builder.requiredParameters.add(
+              writer.write(Parameter('source', type: 'Map')),
+            );
           }
           builder.body = cb.Code(
             '''
             Channel.channel.invokeMethod<void>(
               '$className()',
-              <String, dynamic>{'handle': _handle},
+              <String, dynamic>{
+                'handle': _handle,
+                ${structure == ClassStructure.unspecifiedPublic ? '' : "'source': source"},
+              },
             );
             ''',
           );

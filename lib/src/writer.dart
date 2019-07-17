@@ -34,7 +34,7 @@ enum ClassStructure {
 }
 
 abstract class Writer<T, K> {
-  Writer(this.plugin);
+  const Writer(this.plugin);
 
   final Plugin plugin;
 
