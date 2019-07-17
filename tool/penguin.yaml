@@ -4,6 +4,12 @@ channel: "io.plugins/apple"
 
 classes:
   - class:
+    name: "Potato"
+    methods:
+      - method:
+        name: throwIt
+
+  - class:
     name: "Trace"
     methods:
       - method:
@@ -14,9 +20,6 @@ classes:
 
   - class:
     name: "HttpMetric"
-    constructors:
-      - constructor:
-        private: true
     methods:
       - method:
         name: start

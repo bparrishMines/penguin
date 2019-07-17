@@ -93,8 +93,10 @@ class PluginCreator {
         builder.methods.addAll(
           _createMethods(dartClass.name, dartClass.methods),
         );
+
+        final _ConstructorType type = _getConstructorType(plugin, dartClass);
         builder.constructors.addAll(
-          _createConstructors(dartClass.name, dartClass.constructors),
+          _createConstructors(type, dartClass.name, dartClass.constructors),
         );
         builder.methods.addAll(_createFields(dartClass.name, dartClass.fields));
 
@@ -142,22 +144,27 @@ class PluginCreator {
   }
 
   List<cb.Constructor> _createConstructors(
+    _ConstructorType type,
     String className,
     List<Constructor> constructors,
   ) {
     final List<cb.Constructor> retConstructors = <cb.Constructor>[];
 
-    if (constructors.isEmpty) {
-      retConstructors.add(cb.Constructor(
-        (cb.ConstructorBuilder builder) {
+    if (type == _ConstructorType.onlyDefault ||
+        type == _ConstructorType.onlyDefaultPrivate) {
+      retConstructors.add(
+        cb.Constructor((cb.ConstructorBuilder builder) {
+          if (type == _ConstructorType.onlyDefaultPrivate) {
+            builder.name = '_';
+          }
           builder.body = cb.Code('''
             Channel.channel.invokeMethod<void>(
               '$className()',
               <String, dynamic>{'handle': _handle},
             );
           ''');
-        },
-      ));
+        }),
+      );
 
       return retConstructors;
     }
@@ -336,4 +343,38 @@ flutter: ${_flutterToString(pubspec.flutter)}
 
     return buffer.toString();
   }
+
+  _ConstructorType _getConstructorType(Plugin plugin, Class theClass) {
+    if (theClass.constructors.isEmpty) {
+      for (Class dClass in plugin.classes) {
+        for (Method method in dClass.methods) {
+          if (method.returns == theClass.name) {
+            return _ConstructorType.onlyDefaultPrivate;
+          }
+        }
+      }
+
+      return _ConstructorType.onlyDefault;
+    }
+  }
+}
+
+enum _ConstructorType {
+  /// When the only constructor is the default constructor.
+  ///
+  /// This occurs when there is no specified constructor and no methods that
+  /// reference this class.
+  onlyDefault,
+
+  /// When the only constructor is a default private constructor.
+  ///
+  /// This occurs when there is no specified constructor, but there are methods
+  /// from other classes that return this class.
+  onlyDefaultPrivate,
+
+  /// When only private constructors are specified.
+  specifiedOnlyPrivate,
+
+  /// When one or more public constructors are specified.
+  specifiedPublic,
 }
