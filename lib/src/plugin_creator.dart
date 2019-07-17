@@ -14,6 +14,7 @@ class PluginCreator {
   static const List<String> _libraryImports = <String>[
     'package:flutter/services.dart',
     'package:flutter/foundation.dart',
+    'package:json_annotation/json_annotation.dart',
   ];
 
   String get _libraryPartOfDirective => 'part of ${plugin.name};';

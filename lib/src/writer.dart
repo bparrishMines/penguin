@@ -49,6 +49,16 @@ abstract class Writer<T, K> {
     return null;
   }
 
+  ClassStructure _tryGetClassStructure(String className) {
+    final Class theClass = _classFromString(className);
+
+    if (theClass != null) {
+      return _structureFromClass(theClass);
+    }
+
+    return null;
+  }
+
   ClassStructure _structureFromClass(Class theClass) {
     assert(theClass != null);
 

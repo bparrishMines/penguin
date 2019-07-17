@@ -7,11 +7,7 @@ class FieldWriter extends Writer<Field, cb.Method> {
 
   @override
   cb.Method write(Field field) {
-    final Class theClass = _classFromString(field.type);
-    ClassStructure structure;
-    if (theClass != null) {
-      structure = _structureFromClass(theClass);
-    }
+    final ClassStructure structure = _tryGetClassStructure(field.type);
 
     final cb.Method codeMethod = cb.Method((cb.MethodBuilder builder) {
       builder.name = field.name;
@@ -56,11 +52,7 @@ class MethodWriter extends Writer<Method, cb.Method> {
       allParameterBuffer.write('\'${parameter.name}\': ${parameter.name},');
     }
 
-    final Class theClass = _classFromString(method.returns);
-    ClassStructure structure;
-    if (theClass != null) {
-      structure = _structureFromClass(theClass);
-    }
+    final ClassStructure structure = _tryGetClassStructure(method.returns);
 
     final ParameterWriter paramWriter = ParameterWriter(plugin);
 
@@ -133,13 +125,17 @@ class ClassWriter extends Writer<Class, cb.Class> {
       if (structure == ClassStructure.unspecifiedPrivate ||
           structure == ClassStructure.unspecifiedPublic) {
         builder.constructors.add(constructorWriter.defaultConstructor);
+        builder.fields.add(_handle);
+      } else if (structure == ClassStructure.specifiedDefaultWithParameters) {
+        builder.annotations.add(cb.refer('JsonSerializable()'));
+      } else if (structure ==
+          ClassStructure.specifiedNonDefaultWithParameters) {
+      } else if (structure == ClassStructure.specifiedWithoutParameters) {
       } else {
         builder.constructors.addAll(
           constructorWriter.writeAll(theClass.constructors),
         );
       }
-
-      builder.fields.add(_handle);
 
       builder.methods.addAll(fieldWriter.writeAll(theClass.fields));
       builder.methods.addAll(methodWriter.writeAll(theClass.methods));
@@ -193,7 +189,7 @@ class ConstructorWriter extends Writer<Constructor, cb.Constructor> {
               '$className()',
               <String, dynamic>{'handle': _handle},
             );
-          ''',
+            ''',
           );
         },
       );

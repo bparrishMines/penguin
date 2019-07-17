@@ -11,6 +11,11 @@ classes:
 
   - class:
     name: "Trace"
+    fields:
+      - field:
+        name: name
+        type: String
+        static: false
     methods:
       - method:
         name: start

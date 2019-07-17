@@ -5,19 +5,19 @@ part 'plugin.g.dart';
 
 @JsonSerializable()
 class Plugin {
-  Plugin({this.name, this.channel, List<Class> classes})
-      : classes = classes ?? <Class>[],
-        assert(name != null),
-        assert(channel != null);
+  Plugin({this.name, this.channel, this.classes});
 
   factory Plugin.parse(String yaml) {
     return checkedYamlDecode<Plugin>(yaml, (Map map) => Plugin.fromJson(map));
   }
 
+  @JsonKey(required: true, disallowNullValue: true)
   final String name;
 
+  @JsonKey(required: true, disallowNullValue: true)
   final String channel;
 
+  @JsonKey(defaultValue: const <Class>[])
   final List<Class> classes;
 
   factory Plugin.fromJson(Map json) => _$PluginFromJson(json);
@@ -30,22 +30,18 @@ class Plugin {
 
 @JsonSerializable()
 class Class {
-  Class(
-    this.name, {
-    List<Method> methods,
-    List<Constructor> constructors,
-    List<Field> fields,
-  })  : methods = methods ?? const <Method>[],
-        constructors = constructors ?? const <Constructor>[],
-        fields = fields ?? const <Field>[],
-        assert(name != null);
+  Class(this.name, {this.methods, this.constructors, this.fields});
 
+  @JsonKey(required: true, disallowNullValue: true)
   final String name;
 
+  @JsonKey(defaultValue: const <Method>[])
   final List<Method> methods;
 
+  @JsonKey(defaultValue: const <Constructor>[])
   final List<Constructor> constructors;
 
+  @JsonKey(defaultValue: const <Field>[])
   final List<Field> fields;
 
   factory Class.fromJson(Map json) => _$ClassFromJson(json);
@@ -60,20 +56,21 @@ class Class {
 class Method {
   Method(
     this.name, {
-    String returns,
-    List<Parameter> requiredParameters,
-    List<Parameter> optionalParameters,
-  })  : returns = returns ?? 'void',
-        requiredParameters = requiredParameters ?? const <Parameter>[],
-        optionalParameters = optionalParameters ?? const <Parameter>[],
-        assert(name != null);
+    this.returns,
+    this.requiredParameters,
+    this.optionalParameters,
+  }) ;
 
+  @JsonKey(required: true, disallowNullValue: true)
   final String name;
 
+  @JsonKey(defaultValue: 'void')
   final String returns;
 
+  @JsonKey(defaultValue: const <Parameter>[])
   final List<Parameter> requiredParameters;
 
+  @JsonKey(defaultValue: const <Parameter>[])
   final List<Parameter> optionalParameters;
 
   factory Method.fromJson(Map json) => _$MethodFromJson(json);
@@ -87,18 +84,19 @@ class Method {
 @JsonSerializable()
 class Constructor {
   Constructor({
-    List<Parameter> requiredParameters,
-    List<Parameter> optionalParameters,
-    String name,
-  })  : requiredParameters = requiredParameters ?? const <Parameter>[],
-        optionalParameters = optionalParameters ?? const <Parameter>[],
-        name = name ?? '',
+    this.name,
+    this.requiredParameters,
+    this.optionalParameters,
+  })  :
         assert(!name.startsWith('_'));
 
+  @JsonKey(defaultValue: const <Parameter>[])
   final List<Parameter> requiredParameters;
 
+  @JsonKey(defaultValue: const <Parameter>[])
   final List<Parameter> optionalParameters;
 
+  @JsonKey(defaultValue: '')
   final String name;
 
   factory Constructor.fromJson(Map json) => _$ConstructorFromJson(json);
@@ -111,12 +109,12 @@ class Constructor {
 
 @JsonSerializable()
 class Parameter {
-  Parameter(this.name, {String type})
-      : type = type ?? 'dynamic',
-        assert(name != null);
+  Parameter(this.name, {this.type});
 
+  @JsonKey(required: true, disallowNullValue: true)
   final String name;
 
+  @JsonKey(defaultValue: 'dynamic')
   final String type;
 
   factory Parameter.fromJson(Map json) => _$ParameterFromJson(json);
@@ -131,16 +129,17 @@ class Parameter {
 class Field {
   Field(
     this.name, {
-    String type,
-    bool static,
-  })  : type = type ?? 'dynamic',
-        static = static ?? false,
-        assert(name != null);
+    this.type,
+    this.static,
+  });
 
+  @JsonKey(required: true, disallowNullValue: true)
   final String name;
 
+  @JsonKey(defaultValue: false)
   final bool static;
 
+  @JsonKey(defaultValue: 'dynamic')
   final String type;
 
   factory Field.fromJson(Map json) => _$FieldFromJson(json);
