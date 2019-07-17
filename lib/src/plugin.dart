@@ -30,7 +30,7 @@ class Plugin {
 
 @JsonSerializable()
 class Class {
-  Class(this.name, {this.methods, this.constructors, this.fields});
+  Class(this.name, {this.methods, this.fields});
 
   @JsonKey(required: true, disallowNullValue: true)
   final String name;
@@ -38,8 +38,10 @@ class Class {
   @JsonKey(defaultValue: const <Method>[])
   final List<Method> methods;
 
+  /*
   @JsonKey(defaultValue: const <Constructor>[])
   final List<Constructor> constructors;
+  */
 
   @JsonKey(defaultValue: const <Field>[])
   final List<Field> fields;
@@ -59,7 +61,7 @@ class Method {
     this.returns,
     this.requiredParameters,
     this.optionalParameters,
-  }) ;
+  });
 
   @JsonKey(required: true, disallowNullValue: true)
   final String name;
@@ -83,12 +85,8 @@ class Method {
 
 @JsonSerializable()
 class Constructor {
-  Constructor({
-    this.name,
-    this.requiredParameters,
-    this.optionalParameters,
-  })  :
-        assert(!name.startsWith('_'));
+  Constructor({this.name, this.requiredParameters, this.optionalParameters})
+      : assert(!name.startsWith('_'));
 
   @JsonKey(defaultValue: const <Parameter>[])
   final List<Parameter> requiredParameters;
@@ -127,11 +125,7 @@ class Parameter {
 
 @JsonSerializable()
 class Field {
-  Field(
-    this.name, {
-    this.type,
-    this.static,
-  });
+  Field(this.name, {this.type, this.static});
 
   @JsonKey(required: true, disallowNullValue: true)
   final String name;
@@ -148,45 +142,4 @@ class Field {
 
   @override
   String toString() => toJson().toString();
-}
-
-class Pace implements _Pace {
-  Pace._(this._pace);
-
-  factory Pace._fromJson(Map json) {
-    return Pace._(_$_PaceFromJson(json));
-  }
-
-  final _Pace _pace;
-
-  @override
-  void apple() => _pace.apple();
-
-  @override
-  String get name => _pace.name;
-
-  @override
-  Map _toJson() => _pace._toJson();
-
-  /*
-  @override
-  String apple() {
-    return super.apple();
-  }
-  */
-}
-
-@JsonSerializable()
-class _Pace {
-  _Pace(this.name);
-
-  factory _Pace.fromJson(Map json) => _$_PaceFromJson(json);
-
-  Map _toJson() => _$_PaceToJson(this);
-
-  final String name;
-
-  void apple() {
-    print('apple');
-  }
 }

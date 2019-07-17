@@ -21,6 +21,7 @@ enum ClassStructure {
   /// methods from other classes that return this class.
   unspecifiedPrivate,
 
+  /*
   /// When one or more public constructors are specified, but no default constructor.
   specifiedNonDefaultWithParameters,
 
@@ -29,6 +30,7 @@ enum ClassStructure {
 
   /// When no constructor with parameters is specified.
   specifiedWithoutParameters,
+  */
 }
 
 abstract class Writer<T, K> {
@@ -62,38 +64,21 @@ abstract class Writer<T, K> {
   ClassStructure _structureFromClass(Class theClass) {
     assert(theClass != null);
 
-    if (theClass.constructors.isEmpty) {
-      for (Class dClass in plugin.classes) {
-        for (Method method in dClass.methods) {
-          if (method.returns == theClass.name) {
-            return ClassStructure.unspecifiedPrivate;
-          }
-        }
-
-        for (Field field in dClass.fields) {
-          if (field.type == theClass.name) {
-            return ClassStructure.unspecifiedPrivate;
-          }
+    for (Class dClass in plugin.classes) {
+      for (Method method in dClass.methods) {
+        if (method.returns == theClass.name) {
+          return ClassStructure.unspecifiedPrivate;
         }
       }
 
-      return ClassStructure.unspecifiedPublic;
-    }
-
-    bool hasParameters = false;
-    for (Constructor constructor in theClass.constructors) {
-      if (_hasParameters(constructor) && constructor.name.isEmpty) {
-        return ClassStructure.specifiedDefaultWithParameters;
+      for (Field field in dClass.fields) {
+        if (field.type == theClass.name) {
+          return ClassStructure.unspecifiedPrivate;
+        }
       }
-
-      if (_hasParameters(constructor)) hasParameters = true;
     }
 
-    if (!hasParameters) {
-      return ClassStructure.specifiedWithoutParameters;
-    } else {
-      return ClassStructure.specifiedNonDefaultWithParameters;
-    }
+    return ClassStructure.unspecifiedPublic;
   }
 
   bool _hasParameters(dynamic object) =>

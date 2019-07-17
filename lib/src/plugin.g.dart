@@ -52,14 +52,6 @@ Class _$ClassFromJson(Map json) {
                     ?.map((e) => e == null ? null : Method.fromJson(e as Map))
                     ?.toList()) ??
             [],
-        constructors: $checkedConvert(
-                json,
-                'constructors',
-                (v) => (v as List)
-                    ?.map((e) =>
-                        e == null ? null : Constructor.fromJson(e as Map))
-                    ?.toList()) ??
-            [],
         fields: $checkedConvert(
                 json,
                 'fields',
@@ -82,7 +74,6 @@ Map<String, dynamic> _$ClassToJson(Class instance) {
 
   writeNotNull('name', instance.name);
   val['methods'] = instance.methods;
-  val['constructors'] = instance.constructors;
   val['fields'] = instance.fields;
   return val;
 }
@@ -215,13 +206,3 @@ Map<String, dynamic> _$FieldToJson(Field instance) {
   val['type'] = instance.type;
   return val;
 }
-
-_Pace _$_PaceFromJson(Map json) {
-  return $checkedNew('_Pace', json, () {
-    final val = _Pace($checkedConvert(json, 'name', (v) => v as String));
-    return val;
-  });
-}
-
-Map<String, dynamic> _$_PaceToJson(_Pace instance) =>
-    <String, dynamic>{'name': instance.name};

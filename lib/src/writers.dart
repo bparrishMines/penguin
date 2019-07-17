@@ -7,12 +7,12 @@ class FieldWriter extends Writer<Field, cb.Method> {
 
   @override
   cb.Method write(Field field) {
-    final ClassStructure structure = _tryGetClassStructure(field.type);
-
     final cb.Method codeMethod = cb.Method((cb.MethodBuilder builder) {
       builder.name = field.name;
       builder.type = cb.MethodType.getter;
       builder.static = field.static;
+
+      final ClassStructure structure = _tryGetClassStructure(className);
 
       if (structure == ClassStructure.unspecifiedPublic) {
         builder.returns = cb.refer(field.type);
@@ -124,17 +124,8 @@ class ClassWriter extends Writer<Class, cb.Class> {
 
       if (structure == ClassStructure.unspecifiedPrivate ||
           structure == ClassStructure.unspecifiedPublic) {
-        builder.constructors.add(constructorWriter.defaultConstructor);
+        builder.constructors.add(constructorWriter.write(null));
         builder.fields.add(_handle);
-      } else if (structure == ClassStructure.specifiedDefaultWithParameters) {
-        builder.annotations.add(cb.refer('JsonSerializable()'));
-      } else if (structure ==
-          ClassStructure.specifiedNonDefaultWithParameters) {
-      } else if (structure == ClassStructure.specifiedWithoutParameters) {
-      } else {
-        builder.constructors.addAll(
-          constructorWriter.writeAll(theClass.constructors),
-        );
       }
 
       builder.methods.addAll(fieldWriter.writeAll(theClass.fields));
@@ -162,23 +153,16 @@ class ConstructorWriter extends Writer<Constructor, cb.Constructor> {
 
   @override
   cb.Constructor write(Constructor constructor) {
-    final cb.Constructor codeConstructor = cb.Constructor(
-      (cb.ConstructorBuilder builder) {
-        builder.body = cb.Code(
-          '''
-          Channel.channel.invokeMethod<void>(
-            '$className()',
-            <String, dynamic>{'handle': _handle},
-          );
-          ''',
-        );
-      },
-    );
+    switch (structure) {
+      case ClassStructure.unspecifiedPublic:
+      case ClassStructure.unspecifiedPrivate:
+        return _defaultConstructor;
+    }
 
-    return codeConstructor;
+    return null; // Unreachable
   }
 
-  cb.Constructor get defaultConstructor => cb.Constructor(
+  cb.Constructor get _defaultConstructor => cb.Constructor(
         (cb.ConstructorBuilder builder) {
           if (structure == ClassStructure.unspecifiedPrivate) {
             builder.name = '_';

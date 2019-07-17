@@ -4,24 +4,22 @@ channel: "io.plugins/apple"
 
 classes:
   - class:
-    name: "Potato"
-    methods:
-      - method:
-        name: throwIt
-
-  - class:
     name: "Trace"
-    fields:
-      - field:
-        name: name
-        type: String
-        static: false
     methods:
       - method:
         name: start
       - method:
         name: stop
         returns: void
+      - method:
+        name: incrementMetric
+        required_parameters:
+          - required_parameter:
+            name: name
+            type: String
+          - required_parameter:
+            name: value
+            type: int
 
   - class:
     name: "HttpMetric"
