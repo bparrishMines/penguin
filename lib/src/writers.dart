@@ -7,20 +7,34 @@ class FieldWriter extends Writer<Field, cb.Method> {
 
   @override
   cb.Method write(Field field) {
+    final Class theClass = _classFromString(field.type);
+    ClassStructure structure;
+    if (theClass != null) {
+      structure = _structureFromClass(theClass);
+    }
+
     final cb.Method codeMethod = cb.Method((cb.MethodBuilder builder) {
       builder.name = field.name;
       builder.type = cb.MethodType.getter;
-      builder.returns = cb.refer('Future<${field.type}>');
-      builder.type = cb.MethodType.getter;
       builder.static = field.static;
-      builder.body = cb.Code(
-        '''
-        return Channel.channel.invokeMethod<void>(
-          '${className}#${field.name}',
-          ${field.static ? '' : "<String, dynamic>{'handle': _handle},"}
-        );
+
+      if (structure == ClassStructure.unspecifiedPublic) {
+        builder.returns = cb.refer(field.type);
+        builder.body = cb.Code('return ${field.type}();');
+      } else if (structure == ClassStructure.unspecifiedPrivate) {
+        builder.returns = cb.refer(field.type);
+        builder.body = cb.Code('return ${field.type}._();');
+      } else {
+        builder.returns = cb.refer('Future<${field.type}>');
+        builder.body = cb.Code(
+          '''
+          return Channel.channel.invokeMethod<void>(
+            '${className}#${field.name}',
+            ${field.static ? '' : "<String, dynamic>{'handle': _handle},"}
+          );
           ''',
-      );
+        );
+      }
     });
 
     return codeMethod;
@@ -42,25 +56,40 @@ class MethodWriter extends Writer<Method, cb.Method> {
       allParameterBuffer.write('\'${parameter.name}\': ${parameter.name},');
     }
 
+    final Class theClass = _classFromString(method.returns);
+    ClassStructure structure;
+    if (theClass != null) {
+      structure = _structureFromClass(theClass);
+    }
+
     final ParameterWriter paramWriter = ParameterWriter(plugin);
 
     final cb.Method codeMethod = cb.Method((cb.MethodBuilder builder) {
       builder.name = method.name;
-      builder.returns = cb.refer('Future<${method.returns ?? 'void'}>');
       builder.requiredParameters.addAll(
         paramWriter.writeAll(method.requiredParameters),
       );
       builder.optionalParameters.addAll(
         paramWriter.writeAll(method.optionalParameters),
       );
-      builder.body = cb.Code(
-        '''
-        return Channel.channel.invokeMethod<${method.returns ?? 'void'}>(
-          '$className#${method.name}',
-          <String, dynamic>{'handle': _handle, ${allParameterBuffer.toString()}}
+
+      if (structure == ClassStructure.unspecifiedPublic) {
+        builder.returns = cb.refer(method.returns);
+        builder.body = cb.Code('return ${method.returns}();');
+      } else if (structure == ClassStructure.unspecifiedPrivate) {
+        builder.returns = cb.refer(method.returns);
+        builder.body = cb.Code('return ${method.returns}._();');
+      } else {
+        builder.returns = cb.refer('Future<${method.returns}>');
+        builder.body = cb.Code(
+          '''
+          return Channel.channel.invokeMethod<${method.returns}>(
+            '$className#${method.name}',
+            <String, dynamic>{'handle': _handle, ${allParameterBuffer.toString()}}
+          );
+          ''',
         );
-        ''',
-      );
+      }
     });
 
     return codeMethod;
@@ -82,18 +111,18 @@ class ParameterWriter extends Writer<Parameter, cb.Parameter> {
 }
 
 class ClassWriter extends Writer<Class, cb.Class> {
-  ClassWriter(Plugin plugin, this.structure, this.className) : super(plugin);
-
-  final ClassStructure structure;
+  ClassWriter(Plugin plugin, this.className) : super(plugin);
 
   final String className;
 
   @override
   cb.Class write(Class theClass) {
+    final ClassStructure structure = _structureFromClass(theClass);
+
     final ConstructorWriter constructorWriter = ConstructorWriter(
       plugin,
-      structure,
       className,
+      structure,
     );
     final MethodWriter methodWriter = MethodWriter(plugin, className);
     final FieldWriter fieldWriter = FieldWriter(plugin, className);
@@ -101,9 +130,14 @@ class ClassWriter extends Writer<Class, cb.Class> {
     final cb.Class codeClass = cb.Class((cb.ClassBuilder builder) {
       builder.name = theClass.name;
 
-      builder.constructors.addAll(
-        constructorWriter.writeAll(theClass.constructors),
-      );
+      if (structure == ClassStructure.unspecifiedPrivate ||
+          structure == ClassStructure.unspecifiedPublic) {
+        builder.constructors.add(constructorWriter.defaultConstructor);
+      } else {
+        builder.constructors.addAll(
+          constructorWriter.writeAll(theClass.constructors),
+        );
+      }
 
       builder.fields.add(_handle);
 
@@ -123,20 +157,17 @@ class ClassWriter extends Writer<Class, cb.Class> {
 }
 
 class ConstructorWriter extends Writer<Constructor, cb.Constructor> {
-  ConstructorWriter(Plugin plugin, this.structure, this.className)
+  ConstructorWriter(Plugin plugin, this.className, this.structure)
       : super(plugin);
 
-  final ClassStructure structure;
-
   final String className;
+
+  final ClassStructure structure;
 
   @override
   cb.Constructor write(Constructor constructor) {
     final cb.Constructor codeConstructor = cb.Constructor(
       (cb.ConstructorBuilder builder) {
-        if (structure == ClassStructure.unspecifiedPrivate) {
-          builder.name = '_';
-        }
         builder.body = cb.Code(
           '''
           Channel.channel.invokeMethod<void>(
@@ -150,4 +181,20 @@ class ConstructorWriter extends Writer<Constructor, cb.Constructor> {
 
     return codeConstructor;
   }
+
+  cb.Constructor get defaultConstructor => cb.Constructor(
+        (cb.ConstructorBuilder builder) {
+          if (structure == ClassStructure.unspecifiedPrivate) {
+            builder.name = '_';
+          }
+          builder.body = cb.Code(
+            '''
+            Channel.channel.invokeMethod<void>(
+              '$className()',
+              <String, dynamic>{'handle': _handle},
+            );
+          ''',
+          );
+        },
+      );
 }

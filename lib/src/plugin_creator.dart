@@ -129,7 +129,6 @@ class PluginCreator {
 
       final cb.Class codeClass = ClassWriter(
         plugin,
-        ClassStructure.unspecifiedPrivate,
         theClass.name,
       ).write(theClass);
 
