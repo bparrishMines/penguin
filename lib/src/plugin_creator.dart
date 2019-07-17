@@ -2,6 +2,7 @@ import 'package:code_builder/code_builder.dart' as cb;
 import 'package:pub_semver/pub_semver.dart';
 import 'package:pubspec_parse/pubspec_parse.dart';
 
+import 'class_structure.dart';
 import 'plugin.dart';
 import 'utils.dart';
 
@@ -85,6 +86,7 @@ class PluginCreator {
 
     for (Class dartClass in plugin.classes) {
       final StringBuffer buffer = StringBuffer();
+      final ClassStructure structure = getClassStructure(plugin, dartClass);
 
       buffer.writeln('$_libraryPartOfDirective\n');
 
@@ -94,9 +96,9 @@ class PluginCreator {
           _createMethods(dartClass.name, dartClass.methods),
         );
 
-        final _ConstructorType type = _getConstructorType(plugin, dartClass);
         builder.constructors.addAll(
-          _createConstructors(type, dartClass.name, dartClass.constructors),
+          _createConstructors(
+              structure, dartClass.name, dartClass.constructors),
         );
         builder.methods.addAll(_createFields(dartClass.name, dartClass.fields));
 
@@ -144,17 +146,17 @@ class PluginCreator {
   }
 
   List<cb.Constructor> _createConstructors(
-    _ConstructorType type,
+    ClassStructure structure,
     String className,
     List<Constructor> constructors,
   ) {
     final List<cb.Constructor> retConstructors = <cb.Constructor>[];
 
-    if (type == _ConstructorType.onlyDefault ||
-        type == _ConstructorType.onlyDefaultPrivate) {
+    if (structure == ClassStructure.unspecifiedPublic ||
+        structure == ClassStructure.unspecifiedPrivate) {
       retConstructors.add(
         cb.Constructor((cb.ConstructorBuilder builder) {
-          if (type == _ConstructorType.onlyDefaultPrivate) {
+          if (structure == ClassStructure.unspecifiedPrivate) {
             builder.name = '_';
           }
           builder.body = cb.Code('''
@@ -343,38 +345,4 @@ flutter: ${_flutterToString(pubspec.flutter)}
 
     return buffer.toString();
   }
-
-  _ConstructorType _getConstructorType(Plugin plugin, Class theClass) {
-    if (theClass.constructors.isEmpty) {
-      for (Class dClass in plugin.classes) {
-        for (Method method in dClass.methods) {
-          if (method.returns == theClass.name) {
-            return _ConstructorType.onlyDefaultPrivate;
-          }
-        }
-      }
-
-      return _ConstructorType.onlyDefault;
-    }
-  }
-}
-
-enum _ConstructorType {
-  /// When the only constructor is the default constructor.
-  ///
-  /// This occurs when there is no specified constructor and no methods that
-  /// reference this class.
-  onlyDefault,
-
-  /// When the only constructor is a default private constructor.
-  ///
-  /// This occurs when there is no specified constructor, but there are methods
-  /// from other classes that return this class.
-  onlyDefaultPrivate,
-
-  /// When only private constructors are specified.
-  specifiedOnlyPrivate,
-
-  /// When one or more public constructors are specified.
-  specifiedPublic,
 }

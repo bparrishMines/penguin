@@ -92,13 +92,32 @@ Map<String, dynamic> _$MethodToJson(Method instance) => <String, dynamic>{
 Constructor _$ConstructorFromJson(Map json) {
   return $checkedNew('Constructor', json, () {
     final val = Constructor(
-        private: $checkedConvert(json, 'private', (v) => v as bool));
+        requiredParameters: $checkedConvert(
+            json,
+            'required_parameters',
+            (v) => (v as List)
+                ?.map((e) => e == null ? null : Parameter.fromJson(e as Map))
+                ?.toList()),
+        optionalParameters: $checkedConvert(
+            json,
+            'optional_parameters',
+            (v) => (v as List)
+                ?.map((e) => e == null ? null : Parameter.fromJson(e as Map))
+                ?.toList()),
+        name: $checkedConvert(json, 'name', (v) => v as String));
     return val;
+  }, fieldKeyMap: const {
+    'requiredParameters': 'required_parameters',
+    'optionalParameters': 'optional_parameters'
   });
 }
 
 Map<String, dynamic> _$ConstructorToJson(Constructor instance) =>
-    <String, dynamic>{'private': instance.private};
+    <String, dynamic>{
+      'required_parameters': instance.requiredParameters,
+      'optional_parameters': instance.optionalParameters,
+      'name': instance.name
+    };
 
 Parameter _$ParameterFromJson(Map json) {
   return $checkedNew('Parameter', json, () {
@@ -125,3 +144,13 @@ Map<String, dynamic> _$FieldToJson(Field instance) => <String, dynamic>{
       'static': instance.static,
       'type': instance.type
     };
+
+_Pace _$_PaceFromJson(Map json) {
+  return $checkedNew('_Pace', json, () {
+    final val = _Pace($checkedConvert(json, 'name', (v) => v as String));
+    return val;
+  });
+}
+
+Map<String, dynamic> _$_PaceToJson(_Pace instance) =>
+    <String, dynamic>{'name': instance.name};

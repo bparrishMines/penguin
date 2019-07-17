@@ -1,5 +1,4 @@
 import 'package:checked_yaml/checked_yaml.dart';
-import 'package:code_builder/code_builder.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'plugin.g.dart';
@@ -37,7 +36,7 @@ class Class {
     List<Constructor> constructors,
     List<Field> fields,
   })  : methods = methods ?? const <Method>[],
-        constructors = const <Constructor>[],
+        constructors = constructors ?? const <Constructor>[],
         fields = fields ?? const <Field>[],
         assert(name != null);
 
@@ -87,9 +86,20 @@ class Method {
 
 @JsonSerializable()
 class Constructor {
-  Constructor({bool private}) : private = private ?? false;
+  Constructor({
+    List<Parameter> requiredParameters,
+    List<Parameter> optionalParameters,
+    String name,
+  })  : requiredParameters = requiredParameters ?? const <Parameter>[],
+        optionalParameters = optionalParameters ?? const <Parameter>[],
+        name = name ?? '',
+        assert(!name.startsWith('_'));
 
-  final bool private;
+  final List<Parameter> requiredParameters;
+
+  final List<Parameter> optionalParameters;
+
+  final String name;
 
   factory Constructor.fromJson(Map json) => _$ConstructorFromJson(json);
 
@@ -139,4 +149,45 @@ class Field {
 
   @override
   String toString() => toJson().toString();
+}
+
+class Pace implements _Pace {
+  Pace._(this._pace);
+
+  factory Pace._fromJson(Map json) {
+    return Pace._(_$_PaceFromJson(json));
+  }
+
+  final _Pace _pace;
+
+  @override
+  void apple() => _pace.apple();
+
+  @override
+  String get name => _pace.name;
+
+  @override
+  Map _toJson() => _pace._toJson();
+
+  /*
+  @override
+  String apple() {
+    return super.apple();
+  }
+  */
+}
+
+@JsonSerializable()
+class _Pace {
+  _Pace(this.name);
+
+  factory _Pace.fromJson(Map json) => _$_PaceFromJson(json);
+
+  Map _toJson() => _$_PaceToJson(this);
+
+  final String name;
+
+  void apple() {
+    print('apple');
+  }
 }
