@@ -13,3 +13,18 @@ String camelCaseToSnakeCase(String str) {
 
   return buffer.toString();
 }
+
+String snakeCaseToCamelCase(String str) {
+  final RegExp regExp = RegExp(r'([a-z]+)_*');
+
+  final StringBuffer buffer = StringBuffer();
+
+  final List<Match> matches = regExp.allMatches(str).toList();
+  for (int i = 0; i < matches.length; i++) {
+    final String match = matches[i].group(1);
+    final String word = match[0].toUpperCase() + match.substring(1);
+    buffer.write(word);
+  }
+
+  return buffer.toString();
+}

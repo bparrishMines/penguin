@@ -20,23 +20,85 @@ class PluginCreator {
 
   final cb.DartEmitter _emitter = cb.DartEmitter();
 
+  cb.Class get _channelClass => cb.Class((cb.ClassBuilder builder) {
+        builder.name = 'Channel';
+        builder.fields.addAll([
+          cb.Field((cb.FieldBuilder builder) {
+            builder.name = 'channel';
+            builder.modifier = cb.FieldModifier.constant;
+            builder.static = true;
+            builder.type = cb.Reference('MethodChannel');
+            builder.assignment =
+                cb.Code('MethodChannel(\'${plugin.channel}\')');
+            builder.annotations.add(cb.refer('visibleForTesting'));
+          }),
+          cb.Field((cb.FieldBuilder builder) {
+            builder.name = 'nextHandle';
+            builder.static = true;
+            builder.type = cb.Reference('int');
+            builder.assignment = cb.Code('0');
+            builder.annotations.add(cb.refer('visibleForTesting'));
+          })
+        ]);
+      });
+
+  cb.Library get _library => cb.Library((cb.LibraryBuilder builder) {
+        for (String libraryImport in _libraryImports) {
+          builder.directives.add(
+            cb.Directive((cb.DirectiveBuilder builder) {
+              builder.type = cb.DirectiveType.import;
+              builder.url = libraryImport;
+            }),
+          );
+        }
+      });
+
+  Pubspec get _pubspec => Pubspec(
+        plugin.name,
+        description: 'A new flutter plugin project.',
+        version: Version.parse('0.0.1'),
+        homepage: '',
+        environment: <String, VersionConstraint>{
+          'sdk': VersionConstraint.compatibleWith(
+            Version.parse('2.1.0'),
+          ),
+          'flutter': VersionConstraint.compatibleWith(
+            Version.parse('1.0.0'),
+          ),
+        },
+        dependencies: <String, Dependency>{
+          'flutter': SdkDependency('flutter'),
+          'json_annotation': HostedDependency(
+            version: VersionConstraint.compatibleWith(
+              Version.parse('2.4.0'),
+            ),
+          ),
+        },
+        devDependencies: <String, Dependency>{
+          'flutter_test': SdkDependency('flutter'),
+          'json_serializable': HostedDependency(
+            version: VersionConstraint.compatibleWith(
+              Version.parse('3.0.0'),
+            ),
+          ),
+          'build_runner': HostedDependency(
+            version: VersionConstraint.compatibleWith(
+              Version.parse('1.0.0'),
+            ),
+          ),
+        },
+        flutter: <String, dynamic>{
+          'plugin': <String, dynamic>{
+            'androidPackage': plugin.channel.replaceAll('/', '.'),
+            'pluginClass': '${snakeCaseToCamelCase(plugin.name)}Plugin',
+          }
+        },
+      );
+
   String libraryAsString() {
     final StringBuffer buffer = new StringBuffer();
-
     buffer.writeln('library ${plugin.name};\n');
-
-    final cb.Library library = cb.Library((cb.LibraryBuilder builder) {
-      for (String libraryImport in _libraryImports) {
-        builder.directives.add(
-          cb.Directive((cb.DirectiveBuilder builder) {
-            builder.type = cb.DirectiveType.import;
-            builder.url = libraryImport;
-          }),
-        );
-      }
-    });
-
-    buffer.writeln('${library.accept(_emitter)}');
+    buffer.writeln('${_library.accept(_emitter)}');
     buffer.writeln();
 
     for (Class dartClass in plugin.classes) {
@@ -52,32 +114,8 @@ class PluginCreator {
 
   String channelAsString() {
     final StringBuffer buffer = StringBuffer();
-
     buffer.writeln('$_libraryPartOfDirective\n');
-
-    final cb.Class dartClass = cb.Class((cb.ClassBuilder builder) {
-      builder.name = 'Channel';
-      builder.fields.addAll([
-        cb.Field((cb.FieldBuilder builder) {
-          builder.name = 'channel';
-          builder.modifier = cb.FieldModifier.constant;
-          builder.static = true;
-          builder.type = cb.Reference('MethodChannel');
-          builder.assignment = cb.Code('MethodChannel(\'${plugin.channel}\')');
-          builder.annotations.add(cb.refer('visibleForTesting'));
-        }),
-        cb.Field((cb.FieldBuilder builder) {
-          builder.name = 'nextHandle';
-          builder.static = true;
-          builder.type = cb.Reference('int');
-          builder.assignment = cb.Code('0');
-          builder.annotations.add(cb.refer('visibleForTesting'));
-        })
-      ]);
-    });
-
-    buffer.writeln('${dartClass.accept(_emitter)}');
-
+    buffer.writeln('${_channelClass.accept(_emitter)}');
     return buffer.toString();
   }
 
@@ -86,12 +124,14 @@ class PluginCreator {
 
     for (Class theClass in plugin.classes) {
       final StringBuffer buffer = StringBuffer();
-      final ClassStructure structure = ClassStructure.unspecifiedPrivate;
 
       buffer.writeln('$_libraryPartOfDirective\n');
 
-      final cb.Class codeClass =
-          ClassWriter(plugin, structure, theClass.name).write(theClass);
+      final cb.Class codeClass = ClassWriter(
+        plugin,
+        ClassStructure.unspecifiedPrivate,
+        theClass.name,
+      ).write(theClass);
 
       buffer.writeln('${codeClass.accept(_emitter)}');
 
@@ -102,53 +142,9 @@ class PluginCreator {
   }
 
   String pubspecAsString() {
-    final String upperCaseName =
-        plugin.name[0].toUpperCase() + plugin.name.substring(1);
-
-    final Pubspec pubspec = Pubspec(
-      plugin.name,
-      description: 'A new flutter plugin project.',
-      version: Version.parse('0.0.1'),
-      homepage: '',
-      environment: <String, VersionConstraint>{
-        'sdk': VersionConstraint.compatibleWith(
-          Version.parse('2.1.0'),
-        ),
-        'flutter': VersionConstraint.compatibleWith(
-          Version.parse('1.0.0'),
-        ),
-      },
-      dependencies: <String, Dependency>{
-        'flutter': SdkDependency('flutter'),
-        'json_annotation': HostedDependency(
-          version: VersionConstraint.compatibleWith(
-            Version.parse('2.4.0'),
-          ),
-        ),
-      },
-      devDependencies: <String, Dependency>{
-        'flutter_test': SdkDependency('flutter'),
-        'json_serializable': HostedDependency(
-          version: VersionConstraint.compatibleWith(
-            Version.parse('3.0.0'),
-          ),
-        ),
-        'build_runner': HostedDependency(
-          version: VersionConstraint.compatibleWith(
-            Version.parse('1.0.0'),
-          ),
-        ),
-      },
-      flutter: <String, dynamic>{
-        'plugin': <String, dynamic>{
-          'androidPackage': plugin.channel.replaceAll('/', '.'),
-          'pluginClass': '${upperCaseName}Plugin',
-        }
-      },
-    );
+    final Pubspec pubspec = _pubspec;
 
     return '''
-### Generated file
 name: ${pubspec.name}
 description: ${pubspec.description}
 homepage: ${pubspec.homepage}
@@ -160,8 +156,7 @@ dependencies:${_pubspecMapString(pubspec.dependencies)}
 
 dev_dependencies:${_pubspecMapString(pubspec.devDependencies)}
 
-flutter: ${_flutterToString(pubspec.flutter)}
-###
+flutter: ${_pubspecFlutterToString(pubspec.flutter)}
     ''';
   }
 
@@ -191,7 +186,7 @@ flutter: ${_flutterToString(pubspec.flutter)}
     return buffer.toString();
   }
 
-  String _flutterToString(Map<String, dynamic> source) {
+  String _pubspecFlutterToString(Map<String, dynamic> source) {
     final StringBuffer buffer = StringBuffer();
 
     buffer.writeln();
