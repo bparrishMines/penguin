@@ -12,7 +12,7 @@ class FieldWriter extends Writer<Field, cb.Method> {
       builder.type = cb.MethodType.getter;
       builder.static = field.static;
 
-      final ClassStructure structure = _tryGetClassStructure(className);
+      final ClassStructure structure = _tryGetClassStructure(field.type);
 
       if (structure == ClassStructure.unspecifiedPublic) {
         builder.returns = cb.refer(field.type);
@@ -24,7 +24,7 @@ class FieldWriter extends Writer<Field, cb.Method> {
         builder.returns = cb.refer('Future<${field.type}>');
         builder.body = cb.Code(
           '''
-          return Channel.channel.invokeMethod<void>(
+          return Channel.channel.invokeMethod<${field.type}>(
             '${className}#${field.name}',
             ${field.static ? '' : "<String, dynamic>{'handle': _handle},"}
           );

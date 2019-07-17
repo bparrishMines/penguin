@@ -5,6 +5,11 @@ channel: "io.plugins/apple"
 classes:
   - class:
     name: "Trace"
+    fields:
+      - field:
+        name: maxTraceNameLength
+        type: int
+        static: true
     methods:
       - method:
         name: start
@@ -20,9 +25,37 @@ classes:
           - required_parameter:
             name: value
             type: int
+      - method:
+        name: setMetric
+        required_parameters:
+          - required_parameter:
+            name: name
+            type: String
+          - required_parameter:
+            name: value
+            type: int
+      - method:
+        name: getMetric
+        required_parameters:
+          - required_parameter:
+            name: name
+            type: String
 
   - class:
     name: "HttpMetric"
+    fields:
+      - field:
+        name: httpResponseCode
+        type: int
+      - field:
+        name: requestPayloadSize
+        type: int
+      - field:
+        name: responseContentType
+        type: String
+      - field:
+        name: responsePayloadSize
+        type: int
     methods:
       - method:
         name: start
