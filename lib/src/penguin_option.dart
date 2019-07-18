@@ -49,6 +49,15 @@ class PenguinOption implements Option {
     isFlag: false,
   );
 
+  static PenguinOption pluginYaml = PenguinOption._(
+    name: 'plugin-yaml',
+    abbr: 'p',
+    help: 'Directory of the of plugin.yaml.',
+    defaultsTo: './',
+    valueHelp: 'path',
+    isFlag: false,
+  );
+
   /*
   static PenguinOption android = PenguinOption._(
     name: 'android',
@@ -87,6 +96,7 @@ class PenguinOption implements Option {
     usage,
     //projectName,
     directory,
+    pluginYaml,
     //android,
     //recursive,
     //org,

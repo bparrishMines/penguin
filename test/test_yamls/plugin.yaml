@@ -4,6 +4,16 @@ channel: "test.tester/test"
 
 classes:
   - class:
+    name: "HelloWorld"
+    methods:
+      - method:
+        name: call
+        optional_parameters:
+          - optional_parameter:
+            name: 'optionalParam'
+            type: 'String'
+
+  - class:
     name: "Trace"
     fields:
       - field:

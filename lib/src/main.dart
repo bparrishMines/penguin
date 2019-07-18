@@ -10,7 +10,6 @@ import 'package:path/path.dart' as path;
 import 'penguin_option.dart';
 import 'plugin.dart';
 import 'plugin_creator.dart';
-import 'utils.dart';
 
 void main(List<String> args) async {
   final ArgParser parser = new ArgParser(usageLineLength: 140);
@@ -77,9 +76,14 @@ void main(List<String> args) async {
   if (flutterCreateCode != 0) exit(64);
   */
 
-  final File file =
-      File(path.join(Directory.current.path, 'tool/penguin.yaml'));
-  final Plugin plugin = Plugin.parse(file.readAsStringSync());
+  final File pluginYaml = File(
+    path.join(
+      Directory.current.path,
+      results[PenguinOption.pluginYaml.name],
+      'plugin.yaml',
+    ),
+  );
+  final Plugin plugin = Plugin.parse(pluginYaml.readAsStringSync());
 
   final PluginCreator creator = PluginCreator(plugin);
 
@@ -124,5 +128,7 @@ _createPluginFiles(PluginCreator creator, Directory pluginDir) {
 
 void _createPubspecFile(PluginCreator creator, Directory pluginDir) {
   final File pubspecFile = File(path.join(pluginDir.path, 'pubspec.yaml'));
+
+  pubspecFile.createSync(recursive: true);
   pubspecFile.writeAsStringSync(creator.pubspecAsString());
 }
