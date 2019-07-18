@@ -114,7 +114,11 @@ int _runFlutterCreate({Directory directory, String projectName, String org}) {
   return exitCode;
 }
 
-void _createChannelFile(PluginCreator creator, Directory dartDir, String projectName) {
+void _createChannelFile(
+  PluginCreator creator,
+  Directory dartDir,
+  String projectName,
+) {
   final File channelFile = File(path.join(dartDir.path, 'src/channel.dart'));
 
   channelFile.createSync(recursive: true);

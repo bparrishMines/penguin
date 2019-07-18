@@ -84,4 +84,45 @@ abstract class Writer<T, K> {
   bool _hasParameters(dynamic object) =>
       object.optionalParameters.isNotEmpty ||
       object.requiredParameters.isNotEmpty;
+
+  cb.InvokeExpression _invokeMethodExpression({
+    String type = 'void',
+    String className,
+    String methodName,
+    bool hasHandle = false,
+    Map<String, cb.Expression> arguments = const <String, cb.Expression>{},
+  }) {
+    if (hasHandle) {
+      Map<String, cb.Expression> newMap =
+          Map<String, cb.Expression>.from(arguments);
+      newMap['handle'] = cb.refer('_handle');
+      arguments = newMap;
+    }
+
+    return cb.InvokeExpression.newOf(
+      cb.refer('Channel').property('channel').property('invokeMethod'),
+      <cb.Expression>[
+        cb.literalString('$className#$methodName'),
+        cb.literalMap(arguments, cb.refer('String'), cb.refer('dynamic'))
+      ],
+      <String, cb.Expression>{},
+      <cb.Reference>[cb.refer(type)],
+    );
+  }
+
+  cb.InvokeExpression _constructorExpression({
+    String className,
+    String name = '',
+    bool private = false,
+    List<cb.Expression> positionalArguments = const <cb.Expression>[],
+    Map<String, cb.Expression> namedArguments = const <String, cb.Expression>{},
+  }) {
+    return cb.InvokeExpression.newOf(
+      cb.refer(className),
+      positionalArguments,
+      namedArguments,
+      <cb.Reference>[],
+      private ? '_$name' : name,
+    );
+  }
 }
