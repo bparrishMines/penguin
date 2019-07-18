@@ -82,12 +82,9 @@ void main(List<String> args) async {
   final Plugin plugin = Plugin.parse(file.readAsStringSync());
 
   final PluginCreator creator = PluginCreator(plugin);
-  final Directory dartDir = Directory(path.join(pluginDir.path, 'lib/'));
 
-  _createLibraryFile(creator, dartDir, results[PenguinOption.projectName.name]);
-  _createClassFiles(creator, dartDir);
-  _createChannelFile(creator, dartDir, results[PenguinOption.projectName.name]);
   _createPubspecFile(creator, pluginDir);
+  _createPluginFiles(creator, pluginDir);
 }
 
 int _runFlutterCreate({Directory directory, String projectName, String org}) {
@@ -114,36 +111,15 @@ int _runFlutterCreate({Directory directory, String projectName, String org}) {
   return exitCode;
 }
 
-void _createChannelFile(
-  PluginCreator creator,
-  Directory dartDir,
-  String projectName,
-) {
-  final File channelFile = File(path.join(dartDir.path, 'src/channel.dart'));
+_createPluginFiles(PluginCreator creator, Directory pluginDir) {
+  final Map<String, String> files = creator.pluginAsStrings();
 
-  channelFile.createSync(recursive: true);
-  channelFile.writeAsStringSync(creator.channelAsString());
-}
-
-void _createClassFiles(PluginCreator creator, Directory dartDir) {
-  final Map<String, String> classes = creator.classesAsStrings();
-
-  for (String className in classes.keys) {
-    final String filename = '${camelCaseToSnakeCase(className)}.dart';
-    final File classFile = File(path.join(dartDir.path, 'src/', filename));
+  for (String filePath in files.keys) {
+    final File classFile = File(path.join(pluginDir.path, 'lib', filePath));
 
     classFile.createSync(recursive: true);
-    classFile.writeAsStringSync(classes[className]);
+    classFile.writeAsStringSync(files[filePath]);
   }
-}
-
-void _createLibraryFile(
-  PluginCreator creator,
-  Directory dartDir,
-  String projectName,
-) {
-  final File libraryFile = File(path.join(dartDir.path, '$projectName.dart'));
-  libraryFile.writeAsStringSync(creator.libraryAsString());
 }
 
 void _createPubspecFile(PluginCreator creator, Directory pluginDir) {

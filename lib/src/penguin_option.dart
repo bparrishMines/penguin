@@ -28,6 +28,7 @@ class PenguinOption implements Option {
     isFlag: true,
   );
 
+  /*
   static PenguinOption projectName = PenguinOption._(
     name: 'project-name',
     abbr: 'n',
@@ -37,6 +38,7 @@ class PenguinOption implements Option {
     defaultsTo: 'new_plugin',
     isFlag: false,
   );
+  */
 
   static PenguinOption directory = PenguinOption._(
     name: 'directory',
@@ -47,6 +49,7 @@ class PenguinOption implements Option {
     isFlag: false,
   );
 
+  /*
   static PenguinOption android = PenguinOption._(
     name: 'android',
     abbr: 'a',
@@ -55,7 +58,9 @@ class PenguinOption implements Option {
     isMultiple: true,
     splitCommas: true,
   );
+  */
 
+  /*
   static PenguinOption recursive = PenguinOption._(
     name: 'recursive',
     abbr: 'r',
@@ -63,7 +68,9 @@ class PenguinOption implements Option {
     help: 'Search within directories when looking for native library files.',
     negatable: true,
   );
+  */
 
+  /*
   static PenguinOption org = PenguinOption._(
     name: 'org',
     abbr: 'o',
@@ -74,14 +81,15 @@ class PenguinOption implements Option {
         'as prefix in the iOS bundle identifier.',
     defaultsTo: 'com.example',
   );
+  */
 
   static List<PenguinOption> values = <PenguinOption>[
     usage,
-    projectName,
+    //projectName,
     directory,
-    android,
-    recursive,
-    org,
+    //android,
+    //recursive,
+    //org,
   ];
 
   @override

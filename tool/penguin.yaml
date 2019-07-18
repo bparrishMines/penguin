@@ -1,6 +1,6 @@
-name: apple
+name: test_plugin
 
-channel: "io.plugins/apple"
+channel: "test.tester/test"
 
 classes:
   - class:

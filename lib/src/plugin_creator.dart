@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:code_builder/code_builder.dart' as cb;
+import 'package:path/path.dart' as path;
 import 'package:pub_semver/pub_semver.dart';
 import 'package:pubspec_parse/pubspec_parse.dart';
 
@@ -16,6 +19,8 @@ class PluginCreator {
     'package:flutter/foundation.dart',
     'package:json_annotation/json_annotation.dart',
   ];
+
+  static final Directory _classFileDir = Directory('src/');
 
   String get _libraryPartOfDirective => 'part of ${plugin.name};';
 
@@ -96,31 +101,35 @@ class PluginCreator {
         },
       );
 
-  String libraryAsString() {
+  String _libraryAsString() {
     final StringBuffer buffer = new StringBuffer();
     buffer.writeln('library ${plugin.name};\n');
     buffer.writeln('${_library.accept(_emitter)}');
     buffer.writeln();
 
     for (Class dartClass in plugin.classes) {
-      buffer.writeln(
-        'part \'src/${camelCaseToSnakeCase(dartClass.name)}.dart\';',
+      final String classPath = path.join(
+        _classFileDir.path,
+        '${camelCaseToSnakeCase(dartClass.name)}.dart',
       );
+
+      buffer.writeln('part \'$classPath\';');
     }
 
-    buffer.writeln('part \'src/channel.dart\';');
+    buffer
+        .writeln('part \'${path.join(_classFileDir.path, 'channel.dart')}\';');
 
     return buffer.toString();
   }
 
-  String channelAsString() {
+  String _channelAsString() {
     final StringBuffer buffer = StringBuffer();
     buffer.writeln('$_libraryPartOfDirective\n');
     buffer.writeln('${_channelClass.accept(_emitter)}');
     return buffer.toString();
   }
 
-  Map<String, String> classesAsStrings() {
+  Map<String, String> pluginAsStrings() {
     final Map<String, String> classes = <String, String>{};
 
     for (Class theClass in plugin.classes) {
@@ -135,8 +144,19 @@ class PluginCreator {
 
       buffer.writeln('${codeClass.accept(_emitter)}');
 
-      classes[theClass.name] = buffer.toString();
+      final String filename = path.join(
+        _classFileDir.path,
+        '${camelCaseToSnakeCase(theClass.name)}.dart',
+      );
+      classes[filename] = buffer.toString();
     }
+
+    final String channelFilename = path.join(
+      _classFileDir.path,
+      'channel.dart',
+    );
+    classes[channelFilename] = _channelAsString();
+    classes['${plugin.name}.dart'] = _libraryAsString();
 
     return classes;
   }

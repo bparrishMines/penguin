@@ -39,11 +39,12 @@ class FieldWriter extends Writer<Field, cb.Method> {
           );
         });
       } else {
-        builder.returns =
-            cb.TypeReference((cb.TypeReferenceBuilder builder) {
-              builder.symbol = 'Future';
-              builder.types.add(cb.refer(field.type));
-            },);
+        builder.returns = cb.TypeReference(
+          (cb.TypeReferenceBuilder builder) {
+            builder.symbol = 'Future';
+            builder.types.add(cb.refer(field.type));
+          },
+        );
         builder.body = cb.Block((cb.BlockBuilder builder) {
           builder.addExpression(_invokeMethodExpression(
             type: field.type,
@@ -89,11 +90,12 @@ class MethodWriter extends Writer<Method, cb.Method> {
             builder.returns = cb.refer(method.returns);
             break;
           default:
-            builder.returns =
-                cb.TypeReference((cb.TypeReferenceBuilder builder) {
-              builder.symbol = 'Future';
-              builder.types.add(cb.refer(method.returns));
-            },);
+            builder.returns = cb.TypeReference(
+              (cb.TypeReferenceBuilder builder) {
+                builder.symbol = 'Future';
+                builder.types.add(cb.refer(method.returns));
+              },
+            );
         }
       }
 
