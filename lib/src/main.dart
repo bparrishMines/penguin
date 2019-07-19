@@ -83,12 +83,15 @@ void main(List<String> args) async {
       'plugin.yaml',
     ),
   );
-  final Plugin plugin = Plugin.parse(pluginYaml.readAsStringSync());
 
+  final String yaml = pluginYaml.readAsStringSync();
+
+  final Plugin plugin = Plugin.parse(yaml);
   final PluginCreator creator = PluginCreator(plugin);
 
   _createPubspecFile(creator, pluginDir);
   _createPluginFiles(creator, pluginDir);
+  _createJavaFiles(yaml);
 }
 
 int _runFlutterCreate({Directory directory, String projectName, String org}) {
@@ -131,4 +134,15 @@ void _createPubspecFile(PluginCreator creator, Directory pluginDir) {
 
   pubspecFile.createSync(recursive: true);
   pubspecFile.writeAsStringSync(creator.pubspecAsString());
+}
+
+void _createJavaFiles(String yaml) {
+  final String genAndroidCodeScript = 'tool/android-gen/compile_and_run.sh';
+  final ProcessResult result = Process.runSync(
+    genAndroidCodeScript,
+    <String>[yaml],
+  );
+
+  print(result.stdout);
+  print(result.stderr);
 }

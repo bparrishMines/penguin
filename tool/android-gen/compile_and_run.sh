@@ -1,3 +1,6 @@
 #!/usr/bin/env bash
-javac -sourcepath src -classpath classes:lib/* src/* -d classes
-java -classpath classes:lib/* GenAndroidCode
+
+android_gen=tool/android-gen
+
+javac -sourcepath $android_gen/src -classpath $android_gen/classes:$android_gen/lib/* $android_gen/src/* -d $android_gen/classes
+java -classpath $android_gen/classes:$android_gen/lib/* GenAndroidCode "$@"
