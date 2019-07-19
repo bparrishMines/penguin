@@ -137,12 +137,29 @@ void _createPubspecFile(PluginCreator creator, Directory pluginDir) {
 }
 
 void _createJavaFiles(String yaml) {
+  final Map<String, String> replacements = <String, String>{
+    'plugin:': '!Plugin',
+    'class:': '!Class',
+    'method:': '!Method',
+    'required_parameter:': '!Parameter',
+    'optional_parameter:': '!Parameter',
+    'field:': '!Field',
+    'static:': 'isStatic:',
+  };
+
+  for (MapEntry<String, String> entry in replacements.entries) {
+    yaml = yaml.replaceAll(entry.key, entry.value);
+  }
+
   final String genAndroidCodeScript = 'tool/android-gen/compile_and_run.sh';
+
   final ProcessResult result = Process.runSync(
     genAndroidCodeScript,
     <String>[yaml],
   );
 
   print(result.stdout);
-  print(result.stderr);
+  if (result.exitCode != 0) {
+    print(stderr);
+  }
 }
