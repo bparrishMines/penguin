@@ -6,14 +6,16 @@ import objects.Class;
 import javax.lang.model.element.Modifier;
 
 public class ClassWriter extends Writer<Class, JavaFile> {
-  static public final String CLASS_PREFIX = "Flutter";
+  private final String channel;
+  private final String pluginName;
+  private final String packageName;
+  private final String classPrefix;
 
-  final String channel;
-  final String pluginName;
-
-  public ClassWriter(String channel, String pluginName) {
+  public ClassWriter(String channel, String pluginName, String packageName, String classPrefix) {
     this.channel = channel;
     this.pluginName = pluginName;
+    this.packageName = packageName;
+    this.classPrefix = classPrefix;
   }
 
   @Override
@@ -23,13 +25,10 @@ public class ClassWriter extends Writer<Class, JavaFile> {
     final String wrappedObjectName = aClass.name.toLowerCase();
     final MethodWriter methodWriter = new MethodWriter(wrappedObjectName);
 
-    final TypeSpec.Builder classBuilder = TypeSpec.classBuilder(CLASS_PREFIX + aClass.name)
+    final TypeSpec.Builder classBuilder = TypeSpec.classBuilder(classPrefix + aClass.name)
         .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
         .addField(className, wrappedObjectName, Modifier.FINAL, Modifier.PRIVATE)
         .addMethods(methodWriter.writeAll(aClass.methods));
-
-    String packageName = channel.replace('/', '.');
-    packageName = packageName + '.' + pluginName.replace("_", "");
 
     final JavaFile.Builder builder = JavaFile.builder(packageName, classBuilder.build());
 
