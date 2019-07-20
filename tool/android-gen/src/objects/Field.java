@@ -1,3 +1,5 @@
+package objects;
+
 public class Field {
   public String name;
   public boolean isStatic;

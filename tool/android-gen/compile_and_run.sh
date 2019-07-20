@@ -2,5 +2,5 @@
 
 android_gen=tool/android-gen
 
-javac -sourcepath $android_gen/src -classpath $android_gen/classes:$android_gen/lib/* $android_gen/src/* -d $android_gen/classes
+javac -d $android_gen/classes -classpath $android_gen/classes:$android_gen/lib/* $(find $android_gen -name '*.java')
 java -classpath $android_gen/classes:$android_gen/lib/* GenAndroidCode "$@"

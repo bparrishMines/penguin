@@ -138,12 +138,12 @@ void _createPubspecFile(PluginCreator creator, Directory pluginDir) {
 
 void _createJavaFiles(String yaml) {
   final Map<String, String> replacements = <String, String>{
-    'plugin:': '!Plugin',
-    'class:': '!Class',
-    'method:': '!Method',
-    'required_parameter:': '!Parameter',
-    'optional_parameter:': '!Parameter',
-    'field:': '!Field',
+    'plugin:': '!objects.Plugin',
+    'class:': '!objects.Class',
+    'method:': '!objects.Method',
+    'required_parameter:': '!objects.Parameter',
+    'optional_parameter:': '!objects.Parameter',
+    'field:': '!objects.Field',
     'static:': 'isStatic:',
   };
 
@@ -159,7 +159,5 @@ void _createJavaFiles(String yaml) {
   );
 
   print(result.stdout);
-  if (result.exitCode != 0) {
-    print(stderr);
-  }
+  print(result.stderr);
 }

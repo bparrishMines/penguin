@@ -1,6 +1,6 @@
-import com.esotericsoftware.yamlbeans.YamlConfig;
 import com.esotericsoftware.yamlbeans.YamlException;
 import com.esotericsoftware.yamlbeans.YamlReader;
+import objects.Plugin;
 
 /**
  * Main
@@ -14,6 +14,10 @@ public class GenAndroidCode {
     final Plugin plugin;
     try {
       plugin = reader.read(Plugin.class);
+      final PluginCreator creator = new PluginCreator(plugin);
+      final String output = creator.create();
+
+      System.out.println(output);
     } catch (YamlException e) {
       System.out.println(e.toString());
     }
