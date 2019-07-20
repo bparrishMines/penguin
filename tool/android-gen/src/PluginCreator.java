@@ -19,7 +19,7 @@ public class PluginCreator {
 
     final Map<String, String> filesAndStrings = new HashMap<>();
     for (int i = 0; i < files.size(); i++) {
-      final String filename = plugin.classes.get(i).name + ".java";
+      final String filename = ClassWriter.CLASS_PREFIX + plugin.classes.get(i).name + ".java";
       filesAndStrings.put(filename, files.get(i).toString());
     }
 

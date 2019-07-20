@@ -2,5 +2,5 @@ package objects;
 
 public class Parameter {
   public String name;
-  public String type;
+  public String type = "Object";
 }

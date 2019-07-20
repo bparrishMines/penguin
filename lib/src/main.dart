@@ -145,6 +145,9 @@ void _createJavaFiles(String yaml) {
     'optional_parameter:': '!objects.Parameter',
     'field:': '!objects.Field',
     'static:': 'isStatic:',
+    'int': 'Integer',
+    'bool': 'Boolean',
+    'double': 'Double',
   };
 
   for (MapEntry<String, String> entry in replacements.entries) {
