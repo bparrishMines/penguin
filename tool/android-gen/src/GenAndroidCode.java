@@ -2,6 +2,8 @@ import com.esotericsoftware.yamlbeans.YamlException;
 import com.esotericsoftware.yamlbeans.YamlReader;
 import objects.Plugin;
 
+import java.util.Map;
+
 /**
  * Main
  */
@@ -15,9 +17,13 @@ public class GenAndroidCode {
     try {
       plugin = reader.read(Plugin.class);
       final PluginCreator creator = new PluginCreator(plugin);
-      final String output = creator.create();
+      final Map<String, String> filesAndStrings = creator.filesAndStrings();
 
-      System.out.println(output);
+      for (Map.Entry<String, String> entry : filesAndStrings.entrySet()) {
+        System.out.println(entry.getKey());
+        System.out.println(entry.getValue());
+      }
+
     } catch (YamlException e) {
       System.out.println(e.toString());
     }

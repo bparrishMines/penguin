@@ -31,10 +31,13 @@ class Plugin {
 
 @JsonSerializable()
 class Class {
-  Class(this.name, {this.methods, this.fields});
+  Class(this.name, this.javaPackage, {this.methods, this.fields});
 
   @JsonKey(required: true, disallowNullValue: true)
   final String name;
+
+  @JsonKey(required: true, disallowNullValue: true)
+  final String javaPackage;
 
   @JsonKey(defaultValue: const <Method>[])
   final List<Method> methods;

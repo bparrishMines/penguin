@@ -5,6 +5,7 @@ channel: "test.tester/test"
 classes:
   - class:
     name: "HelloWorld"
+    java_package: com.helloworld
     methods:
       - method:
         name: call
@@ -15,6 +16,7 @@ classes:
 
   - class:
     name: "Trace"
+    java_package: com.google.firebase.perf.metrics
     fields:
       - field:
         name: maxTraceNameLength
@@ -53,6 +55,7 @@ classes:
 
   - class:
     name: "HttpMetric"
+    java_package: com.google.firebase.perf.metrics
     fields:
       - field:
         name: httpResponseCode
@@ -98,6 +101,7 @@ classes:
 
   - class:
     name: "FirebasePerformance"
+    java_package: com.google.firebase.perf
     fields:
       - field:
         name: instance

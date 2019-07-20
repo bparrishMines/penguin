@@ -43,8 +43,10 @@ Map<String, dynamic> _$PluginToJson(Plugin instance) {
 Class _$ClassFromJson(Map json) {
   return $checkedNew('Class', json, () {
     $checkKeys(json,
-        requiredKeys: const ['name'], disallowNullValues: const ['name']);
+        requiredKeys: const ['name', 'java_package'],
+        disallowNullValues: const ['name', 'java_package']);
     final val = Class($checkedConvert(json, 'name', (v) => v as String),
+        $checkedConvert(json, 'java_package', (v) => v as String),
         methods: $checkedConvert(
                 json,
                 'methods',
@@ -60,7 +62,7 @@ Class _$ClassFromJson(Map json) {
                     ?.toList()) ??
             []);
     return val;
-  });
+  }, fieldKeyMap: const {'javaPackage': 'java_package'});
 }
 
 Map<String, dynamic> _$ClassToJson(Class instance) {
@@ -73,6 +75,7 @@ Map<String, dynamic> _$ClassToJson(Class instance) {
   }
 
   writeNotNull('name', instance.name);
+  writeNotNull('java_package', instance.javaPackage);
   val['methods'] = instance.methods;
   val['fields'] = instance.fields;
   return val;
