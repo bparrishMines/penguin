@@ -4,6 +4,7 @@ import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.MethodSpec;
 import creator.ClassStructure;
 import objects.Plugin;
+import objects.PluginClass;
 import objects.PluginMethod;
 import objects.PluginParameter;
 
@@ -12,18 +13,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MethodWriter extends Writer<PluginMethod, MethodSpec> {
-  static private final String RETURNED_VALUE_NAME = "returnedValue";
-
   private final Plugin plugin;
   private final String wrappedObjectName;
   private final String packageName;
   private final ClassName mainPluginClassName;
+  private final String classPrefix;
 
-  MethodWriter(Plugin plugin, String wrappedObjectName, String packageName, ClassName mainPluginClassName) {
+  MethodWriter(
+      Plugin plugin,
+      String wrappedObjectName,
+      String packageName,
+      ClassName mainPluginClassName,
+      String classPrefix
+  ) {
     this.plugin = plugin;
     this.wrappedObjectName = wrappedObjectName;
     this.packageName = packageName;
     this.mainPluginClassName = mainPluginClassName;
+    this.classPrefix = classPrefix;
   }
 
   @Override
@@ -56,13 +63,16 @@ public class MethodWriter extends Writer<PluginMethod, MethodSpec> {
 
       if (structure == null) {
         final ClassName returnType = ClassName.bestGuess(method.returns);
-        builder.addStatement("final $T $N = " + methodCallString, returnType, RETURNED_VALUE_NAME, wrappedObjectName, method.name)
-            .addStatement("result.success($N)", RETURNED_VALUE_NAME);
+        builder.addStatement("final $T value = " + methodCallString, returnType, wrappedObjectName, method.name)
+            .addStatement("result.success(value)");
       } else {
-        final ClassName name = ClassName.get(packageName, method.returns);
+        final ClassName handlerName = ClassName.get(packageName,  classPrefix + method.returns);
+        final PluginClass pluginClass = ClassStructure.classFromString(plugin, method.returns);
+        final ClassName wrappedName = ClassName.get(pluginClass.java_package, pluginClass.name);
 
         builder.addStatement("final $T handle = call.argument($S)", Integer.class, "handle")
-            .addStatement("final $T handler = " + methodCallString, name, wrappedObjectName, method.name)
+            .addStatement("final $T value = " + methodCallString, wrappedName, wrappedObjectName, method.name)
+            .addStatement("final $T handler = $T(handle, value)", handlerName, handlerName)
             .addStatement("$T.addHandler(handle, handler)", mainPluginClassName);
       }
     }

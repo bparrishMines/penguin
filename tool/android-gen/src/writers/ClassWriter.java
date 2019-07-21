@@ -22,16 +22,18 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
 
   @Override
   public JavaFile write(PluginClass aClass) {
-    final ClassName className = ClassName.get(aClass.java_package, aClass.name);
+    final ClassName wrappedName = ClassName.get(aClass.java_package, aClass.name);
 
     final String wrappedObjectName = aClass.name.toLowerCase();
-    final MethodWriter methodWriter = new MethodWriter(plugin, wrappedObjectName, packageName, mainPluginClassName);
+    final MethodWriter methodWriter = new MethodWriter(plugin, wrappedObjectName, packageName, mainPluginClassName, classPrefix);
+    final FieldWriter fieldWriter = new FieldWriter(plugin, wrappedObjectName, packageName, mainPluginClassName, classPrefix);
 
     final TypeSpec.Builder classBuilder = TypeSpec.classBuilder(classPrefix + aClass.name)
         .addModifiers(Modifier.FINAL)
         .addField(Integer.class, "handle", Modifier.PRIVATE, Modifier.FINAL)
-        .addField(className, wrappedObjectName, Modifier.FINAL, Modifier.PRIVATE)
-        .addMethods(methodWriter.writeAll(aClass.methods));
+        .addField(wrappedName, wrappedObjectName, Modifier.FINAL, Modifier.PRIVATE)
+        .addMethods(methodWriter.writeAll(aClass.methods))
+        .addMethods(fieldWriter.writeAll(aClass.fields));
 
     final ClassStructure structure = ClassStructure.structureFromClass(plugin, aClass);
     switch (structure) {
@@ -39,13 +41,13 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
         classBuilder.addMethod(MethodSpec.constructorBuilder()
             .addParameter(Integer.class, "handle")
             .addStatement("this.handle = handle")
-            .addStatement("this.$N = new $T()", wrappedObjectName, className)
+            .addStatement("this.$N = new $T()", wrappedObjectName, wrappedName)
             .build());
         break;
       case UNSPECIFIED_PRIVATE:
         classBuilder.addMethod(MethodSpec.constructorBuilder()
             .addParameter(Integer.class, "handle")
-            .addParameter(className, wrappedObjectName)
+            .addParameter(wrappedName, wrappedObjectName)
             .addStatement("this.handle = handle")
             .addStatement("this.$N = $N", wrappedObjectName, wrappedObjectName)
             .build());
