@@ -1,6 +1,8 @@
 import com.squareup.javapoet.*;
 import objects.Plugin;
 import objects.PluginClass;
+import objects.PluginField;
+import objects.PluginMethod;
 import writer.ClassWriter;
 import writer.PluginClassNames;
 
@@ -85,38 +87,61 @@ public class PluginCreator {
             .addParameter(Integer.class, "handle")
             .addStatement("return handlers.get(handle)")
             .build())
-        .addMethod(MethodSpec.methodBuilder("onMethodCall")
-            .addAnnotation(Override.class)
-            .addModifiers(Modifier.PUBLIC)
-            .addParameter(PluginClassNames.METHOD_CALL.name, "call")
-            .addParameter(PluginClassNames.RESULT.name, "result")
-            .beginControlFlow("switch(call.method)")
-            .addStatement("case ")
-            .endControlFlow()
-            .build());
+        .addMethod(buildOnMethodCall(className));
 
     final JavaFile.Builder builder = JavaFile.builder(packageName, classBuilder.build());
 
     return builder.build().toString();
   }
 
-  private CodeBlock buildConstructorCaseStatments() {
-    final CodeBlock.Builder builder = CodeBlock.builder();
+  private MethodSpec buildOnMethodCall(String className) {
+    final MethodSpec.Builder builder = MethodSpec.methodBuilder("onMethodCall")
+        .addAnnotation(Override.class)
+        .addModifiers(Modifier.PUBLIC)
+        .addParameter(PluginClassNames.METHOD_CALL.name, "call")
+        .addParameter(PluginClassNames.RESULT.name, "result")
+        .addStatement("final $T handle = call.argument($S)", Integer.class, "handle")
+        .beginControlFlow("switch(call.method)");
 
     for (PluginClass aClass : plugin.classes) {
-      final ClassName name = ClassName.get(packageName, CLASS_PREFIX + plugin.name);
+      final ClassStructure structure = ClassStructure.structureFromClass(plugin, aClass);
+      final ClassName name = ClassName.get(packageName, CLASS_PREFIX + aClass.name);
 
-      builder.addStatement("case \"$T\"", name);
-      //builder.addStatement("new $T()")
+      switch(structure) {
+        case UNSPECIFIED_PRIVATE:
+          continue;
+        case UNSPECIFIED_PUBLIC:
+          builder.addCode("case \"$T()\":\n", name);
+          builder.addCode(CodeBlock.builder().indent().build());
+          builder.addStatement("final $T handler = new $T()", name, name);
+          builder.addStatement("$N.addHandler(handle, handler)", className);
+          builder.addStatement("break");
+          builder.addCode(CodeBlock.builder().unindent().build());
+          break;
+      }
     }
 
-    return builder.build();
+    builder.addCode("default:\n")
+        .addCode(CodeBlock.builder().indent().build())
+        .beginControlFlow("if (handle == null)")
+        .addStatement("result.notImplemented()")
+        .addStatement("return")
+        .endControlFlow()
+        .addStatement("final $T handler = getHandler(handle)", PluginClassNames.METHOD_CALL_HANDLER.name)
+        .beginControlFlow("if (handler == null)")
+        .addStatement("result.notImplemented()")
+        .addStatement("return")
+        .endControlFlow()
+        .addStatement("handler.onMethodCall(call, result)")
+        .addCode(CodeBlock.builder().unindent().build());
+
+    return builder.endControlFlow().build();
   }
 
   private String snakeCaseToCamelCase(String str) {
     final Matcher matcher = Pattern.compile("([a-z]+)_*").matcher(str);
 
-    final StringBuffer buffer = new StringBuffer();
+    final StringBuilder buffer = new StringBuilder();
     while (matcher.find()) {
       final String match = matcher.group(1);
       buffer.append(match.substring(0, 1).toUpperCase());
