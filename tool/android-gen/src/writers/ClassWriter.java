@@ -35,6 +35,13 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
         .addField(Integer.class, "handle", Modifier.PRIVATE, Modifier.FINAL)
         .addField(wrappedName, wrappedObjectName, Modifier.FINAL, Modifier.PRIVATE);
 
+    for (PluginField field : aClass.fields) {
+      if (field.isStatic) {
+        classBuilder.addMethod(buildOnStaticMethodCall(aClass));
+        break;
+      }
+    }
+
     classBuilder.addMethod(buildOnMethodCall(aClass))
         .addMethods(fieldWriter.writeAll(aClass.fields))
         .addMethods(methodWriter.writeAll(aClass.methods));
@@ -71,21 +78,48 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
         .addParameter(PluginClassNames.RESULT.name, "result")
         .beginControlFlow("switch(call.method)");
 
-    final ClassName name = ClassName.get(packageName, aClass.name);
     for (PluginField field : aClass.fields) {
-      builder.addCode("case \"$T#$N\":\n", name, field.name)
-          .addCode(CodeBlock.builder().indent().build())
-          .addStatement("$N(call, result)", field.name)
-          .addStatement("break")
-          .addCode(CodeBlock.builder().unindent().build());
+      if (!field.isStatic) {
+        builder.addCode("case \"$N#$N\":\n", aClass.name, field.name)
+            .addCode(CodeBlock.builder().indent().build())
+            .addStatement("$N(call, result)", field.name)
+            .addStatement("break")
+            .addCode(CodeBlock.builder().unindent().build());
+      }
     }
 
     for (PluginMethod method : aClass.methods) {
-      builder.addCode("case \"$T\"#$N:\n", name, method.name)
+      builder.addCode("case \"$N\"#$N:\n", aClass.name, method.name)
           .addCode(CodeBlock.builder().indent().build())
           .addStatement("$N(call, result)", method.name)
           .addStatement("break")
           .addCode(CodeBlock.builder().unindent().build());
+    }
+
+    builder.addCode("default:\n")
+        .addCode(CodeBlock.builder().indent().build())
+        .addStatement("result.notImplemented()")
+        .addCode(CodeBlock.builder().unindent().build());
+
+    return builder.endControlFlow().build();
+  }
+
+  private MethodSpec buildOnStaticMethodCall(PluginClass aClass) {
+    final MethodSpec.Builder builder = MethodSpec.methodBuilder("onStaticMethodCall")
+        .addAnnotation(Override.class)
+        .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
+        .addParameter(PluginClassNames.METHOD_CALL.name, "call")
+        .addParameter(PluginClassNames.RESULT.name, "result")
+        .beginControlFlow("switch(call.method)");
+
+    for (PluginField field : aClass.fields) {
+      if (field.isStatic) {
+        builder.addCode("case \"$N#$N\":\n", aClass.name, field.name)
+            .addCode(CodeBlock.builder().indent().build())
+            .addStatement("$N(call, result)", field.name)
+            .addStatement("break")
+            .addCode(CodeBlock.builder().unindent().build());
+      }
     }
 
     builder.addCode("default:\n")

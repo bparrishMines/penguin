@@ -3,6 +3,8 @@ package creator;
 import com.squareup.javapoet.*;
 import objects.Plugin;
 import objects.PluginClass;
+import objects.PluginField;
+import objects.PluginMethod;
 import writers.ClassWriter;
 import writers.PluginClassNames;
 
@@ -123,10 +125,9 @@ public class PluginCreator {
       final ClassStructure structure = ClassStructure.structureFromClass(plugin, aClass);
       final ClassName name = ClassName.get(packageName, CLASS_PREFIX + aClass.name);
 
-      // TODO(Static methods)
       switch(structure) {
         case UNSPECIFIED_PRIVATE:
-          continue;
+          break;
         case UNSPECIFIED_PUBLIC:
           builder.addCode("case \"$T()\":\n", name);
           builder.addCode(CodeBlock.builder().indent().build());
@@ -135,6 +136,16 @@ public class PluginCreator {
           builder.addStatement("break");
           builder.addCode(CodeBlock.builder().unindent().build());
           break;
+      }
+
+      for (PluginField field : aClass.fields) {
+        if (field.isStatic) {
+          builder.addCode("case \"$T#$N\":\n", name, field.name)
+              .addCode(CodeBlock.builder().indent().build())
+              .addStatement("$T.onStaticMethodCall(call, result)", name)
+              .addStatement("break")
+              .addCode(CodeBlock.builder().unindent().build());
+        }
       }
     }
 
