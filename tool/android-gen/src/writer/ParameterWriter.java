@@ -2,11 +2,11 @@ package writer;
 
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
-import objects.Parameter;
+import objects.PluginParameter;
 
-public class ParameterWriter extends Writer<Parameter, CodeBlock> {
+public class ParameterWriter extends Writer<PluginParameter, CodeBlock> {
   @Override
-  public CodeBlock write(Parameter parameter) {
+  public CodeBlock write(PluginParameter parameter) {
     final CodeBlock.Builder builder = CodeBlock.builder();
 
     final ClassName className = ClassName.bestGuess(parameter.type);

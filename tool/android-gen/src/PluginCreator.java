@@ -1,7 +1,8 @@
-import com.squareup.javapoet.JavaFile;
-import com.squareup.javapoet.TypeSpec;
+import com.squareup.javapoet.*;
 import objects.Plugin;
+import objects.PluginClass;
 import writer.ClassWriter;
+import writer.PluginClassNames;
 
 import javax.lang.model.element.Modifier;
 import java.util.HashMap;
@@ -39,12 +40,77 @@ public class PluginCreator {
   }
 
   private String pluginFileString() {
-    final TypeSpec.Builder classBuilder = TypeSpec.classBuilder(snakeCaseToCamelCase(plugin.name))
-        .addModifiers(Modifier.PUBLIC, Modifier.FINAL);
+    final String className = snakeCaseToCamelCase(plugin.name);
+
+    final ClassName sparseArray = ClassName.get("android.util", "SparseArray");
+    final ParameterizedTypeName handlerArray = ParameterizedTypeName.get(sparseArray, PluginClassNames.METHOD_CALL_HANDLER.name);
+
+    final TypeSpec.Builder classBuilder = TypeSpec.classBuilder(className)
+        .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
+        .addField(FieldSpec.builder(String.class, "CHANNEL_NAME")
+            .addModifiers(Modifier.FINAL, Modifier.STATIC)
+            .initializer("$S", plugin.channel)
+            .build())
+        .addField(FieldSpec.builder(handlerArray, "handlers")
+            .addModifiers(Modifier.FINAL, Modifier.STATIC)
+            .initializer("new $T<>()", sparseArray)
+            .build())
+        .addField(PluginClassNames.REGISTRAR.name, "registrar", Modifier.PRIVATE, Modifier.STATIC)
+        .addField(PluginClassNames.METHOD_CHANNEL.name, "channel", Modifier.PRIVATE, Modifier.STATIC)
+        .addMethod(MethodSpec.methodBuilder("registerWith")
+            .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+            .addParameter(PluginClassNames.REGISTRAR.name, "registrar")
+            .addStatement("$T.registrar = registrar", ClassName.get(packageName, className))
+            .addStatement("channel = new $T(registrar.messenger(), CHANNEL_NAME)", PluginClassNames.METHOD_CHANNEL.name)
+            .addStatement("channel.setMethodCallHandler(new $T())", ClassName.get(packageName, className))
+            .build())
+        .addMethod(MethodSpec.methodBuilder("addHandler")
+            .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+            .addParameter(Integer.class, "handle", Modifier.FINAL)
+            .addParameter(PluginClassNames.METHOD_CALL_HANDLER.name, "handler", Modifier.FINAL)
+            .beginControlFlow("if (handlers.get(handle) != null)")
+            .addStatement("final $T message = $T.format($S, handle)", String.class, String.class, "Object for handle already exists: %s")
+            .addStatement("throw new $T(message)", ClassName.get(IllegalArgumentException.class))
+            .endControlFlow()
+            .addStatement("handlers.put(handle, handler)")
+            .build())
+        .addMethod(MethodSpec.methodBuilder("removeHandler")
+            .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+            .addParameter(Integer.class, "handle")
+            .addStatement("handlers.remove(handle)")
+            .build())
+        .addMethod(MethodSpec.methodBuilder("getHandler")
+            .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+            .returns(PluginClassNames.METHOD_CALL_HANDLER.name)
+            .addParameter(Integer.class, "handle")
+            .addStatement("return handlers.get(handle)")
+            .build())
+        .addMethod(MethodSpec.methodBuilder("onMethodCall")
+            .addAnnotation(Override.class)
+            .addModifiers(Modifier.PUBLIC)
+            .addParameter(PluginClassNames.METHOD_CALL.name, "call")
+            .addParameter(PluginClassNames.RESULT.name, "result")
+            .beginControlFlow("switch(call.method)")
+            .addStatement("case ")
+            .endControlFlow()
+            .build());
 
     final JavaFile.Builder builder = JavaFile.builder(packageName, classBuilder.build());
 
     return builder.build().toString();
+  }
+
+  private CodeBlock buildConstructorCaseStatments() {
+    final CodeBlock.Builder builder = CodeBlock.builder();
+
+    for (PluginClass aClass : plugin.classes) {
+      final ClassName name = ClassName.get(packageName, CLASS_PREFIX + plugin.name);
+
+      builder.addStatement("case \"$T\"", name);
+      //builder.addStatement("new $T()")
+    }
+
+    return builder.build();
   }
 
   private String snakeCaseToCamelCase(String str) {

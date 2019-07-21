@@ -2,17 +2,14 @@ package writer;
 
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.MethodSpec;
-import objects.Method;
-import objects.Parameter;
+import objects.PluginMethod;
+import objects.PluginParameter;
 
 import javax.lang.model.element.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MethodWriter extends Writer<Method, MethodSpec> {
-  static private final ClassName METHOD_CALL = ClassName.get("io.flutter.plugin.common", "MethodCall");
-  static private final ClassName RESULT = ClassName.get("io.flutter.plugin.common.MethodChannel", "Result");
-
+public class MethodWriter extends Writer<PluginMethod, MethodSpec> {
   static private final String RETURNED_VALUE_NAME = "returnedValue";
 
   final String wrappedObjectName;
@@ -22,20 +19,20 @@ public class MethodWriter extends Writer<Method, MethodSpec> {
   }
 
   @Override
-  public MethodSpec write(Method method) {
+  public MethodSpec write(PluginMethod method) {
     final MethodSpec.Builder builder = MethodSpec.methodBuilder(method.name)
         .addModifiers(Modifier.PRIVATE, Modifier.FINAL)
-        .addParameter(METHOD_CALL, "call", Modifier.FINAL)
-        .addParameter(RESULT, "result", Modifier.FINAL);
+        .addParameter(PluginClassNames.METHOD_CALL.name, "call", Modifier.FINAL)
+        .addParameter(PluginClassNames.RESULT.name, "result", Modifier.FINAL);
 
     final ParameterWriter parameterWriter = new ParameterWriter();
 
-    final List<Parameter> allParameters = new ArrayList<>();
+    final List<PluginParameter> allParameters = new ArrayList<>();
     allParameters.addAll(method.required_parameters);
     allParameters.addAll(method.optional_parameters);
 
     final List<String> allParameterNames = new ArrayList<>();
-    for (Parameter parameter : allParameters) {
+    for (PluginParameter parameter : allParameters) {
       builder.addStatement(parameterWriter.write(parameter));
       allParameterNames.add(parameter.name);
     }

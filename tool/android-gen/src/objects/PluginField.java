@@ -1,6 +1,7 @@
 package objects;
 
-public class Parameter {
+public class PluginField {
   public String name;
+  public boolean isStatic = false;
   public String type = "Object";
 }
