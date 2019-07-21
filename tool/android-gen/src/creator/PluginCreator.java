@@ -1,10 +1,10 @@
+package creator;
+
 import com.squareup.javapoet.*;
 import objects.Plugin;
 import objects.PluginClass;
-import objects.PluginField;
-import objects.PluginMethod;
-import writer.ClassWriter;
-import writer.PluginClassNames;
+import writers.ClassWriter;
+import writers.PluginClassNames;
 
 import javax.lang.model.element.Modifier;
 import java.util.HashMap;
@@ -18,16 +18,32 @@ public class PluginCreator {
 
   private final Plugin plugin;
   private final String packageName;
+  private final ClassName mainPluginClassName;
+
+  private static String snakeCaseToCamelCase(String str) {
+    final Matcher matcher = Pattern.compile("([a-z]+)_*").matcher(str);
+
+    final StringBuilder buffer = new StringBuilder();
+    while (matcher.find()) {
+      final String match = matcher.group(1);
+      buffer.append(match.substring(0, 1).toUpperCase());
+      buffer.append(match.substring(1));
+    }
+
+    return buffer.toString();
+  }
 
   public PluginCreator(Plugin plugin) {
     this.plugin = plugin;
 
     final String packageFromChannel = plugin.channel.replace('/', '.');
     this.packageName = packageFromChannel + '.' + plugin.name.replace("_", "");
+
+    this.mainPluginClassName = ClassName.get(packageName, snakeCaseToCamelCase(plugin.name));
   }
 
   public Map<String, String> filesAndStrings() {
-    final ClassWriter writer = new ClassWriter(plugin.channel, plugin.name, packageName, CLASS_PREFIX);
+    final ClassWriter writer = new ClassWriter(plugin, packageName, CLASS_PREFIX, mainPluginClassName);
     final List<JavaFile> files = writer.writeAll(plugin.classes);
 
     final Map<String, String> filesAndStrings = new HashMap<>();
@@ -42,12 +58,12 @@ public class PluginCreator {
   }
 
   private String pluginFileString() {
-    final String className = snakeCaseToCamelCase(plugin.name);
+    //final String className = snakeCaseToCamelCase(plugin.name);
 
     final ClassName sparseArray = ClassName.get("android.util", "SparseArray");
     final ParameterizedTypeName handlerArray = ParameterizedTypeName.get(sparseArray, PluginClassNames.METHOD_CALL_HANDLER.name);
 
-    final TypeSpec.Builder classBuilder = TypeSpec.classBuilder(className)
+    final TypeSpec.Builder classBuilder = TypeSpec.classBuilder(mainPluginClassName.simpleName())
         .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
         .addField(FieldSpec.builder(String.class, "CHANNEL_NAME")
             .addModifiers(Modifier.FINAL, Modifier.STATIC)
@@ -62,9 +78,9 @@ public class PluginCreator {
         .addMethod(MethodSpec.methodBuilder("registerWith")
             .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
             .addParameter(PluginClassNames.REGISTRAR.name, "registrar")
-            .addStatement("$T.registrar = registrar", ClassName.get(packageName, className))
+            .addStatement("$T.registrar = registrar", ClassName.get(packageName, mainPluginClassName.simpleName()))
             .addStatement("channel = new $T(registrar.messenger(), CHANNEL_NAME)", PluginClassNames.METHOD_CHANNEL.name)
-            .addStatement("channel.setMethodCallHandler(new $T())", ClassName.get(packageName, className))
+            .addStatement("channel.setMethodCallHandler(new $T())", ClassName.get(packageName, mainPluginClassName.simpleName()))
             .build())
         .addMethod(MethodSpec.methodBuilder("addHandler")
             .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
@@ -87,7 +103,7 @@ public class PluginCreator {
             .addParameter(Integer.class, "handle")
             .addStatement("return handlers.get(handle)")
             .build())
-        .addMethod(buildOnMethodCall(className));
+        .addMethod(buildOnMethodCall(mainPluginClassName.simpleName()));
 
     final JavaFile.Builder builder = JavaFile.builder(packageName, classBuilder.build());
 
@@ -107,13 +123,14 @@ public class PluginCreator {
       final ClassStructure structure = ClassStructure.structureFromClass(plugin, aClass);
       final ClassName name = ClassName.get(packageName, CLASS_PREFIX + aClass.name);
 
+      // TODO(Static methods)
       switch(structure) {
         case UNSPECIFIED_PRIVATE:
           continue;
         case UNSPECIFIED_PUBLIC:
           builder.addCode("case \"$T()\":\n", name);
           builder.addCode(CodeBlock.builder().indent().build());
-          builder.addStatement("final $T handler = new $T()", name, name);
+          builder.addStatement("final $T handler = new $T(handle)", name, name);
           builder.addStatement("$N.addHandler(handle, handler)", className);
           builder.addStatement("break");
           builder.addCode(CodeBlock.builder().unindent().build());
@@ -136,18 +153,5 @@ public class PluginCreator {
         .addCode(CodeBlock.builder().unindent().build());
 
     return builder.endControlFlow().build();
-  }
-
-  private String snakeCaseToCamelCase(String str) {
-    final Matcher matcher = Pattern.compile("([a-z]+)_*").matcher(str);
-
-    final StringBuilder buffer = new StringBuilder();
-    while (matcher.find()) {
-      final String match = matcher.group(1);
-      buffer.append(match.substring(0, 1).toUpperCase());
-      buffer.append(match.substring(1));
-    }
-
-    return buffer.toString();
   }
 }

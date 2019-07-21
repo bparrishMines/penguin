@@ -1,5 +1,6 @@
 import com.esotericsoftware.yamlbeans.YamlException;
 import com.esotericsoftware.yamlbeans.YamlReader;
+import creator.PluginCreator;
 import objects.Plugin;
 
 import java.util.Map;

@@ -1,6 +1,4 @@
-package writer;
-
-import objects.PluginClass;
+package writers;
 
 import java.util.ArrayList;
 import java.util.List;

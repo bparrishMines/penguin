@@ -1,3 +1,5 @@
+package creator;
+
 import objects.Plugin;
 import objects.PluginClass;
 import objects.PluginField;
