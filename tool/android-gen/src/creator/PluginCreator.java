@@ -14,7 +14,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class PluginCreator {
-  static public final String CLASS_PREFIX = "Flutter";
+  static private final String CLASS_PREFIX = "Flutter";
 
   private final Plugin plugin;
   private final String packageName;
