@@ -73,8 +73,9 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
 
     final ClassName name = ClassName.get(packageName, aClass.name);
     for (PluginField field : aClass.fields) {
-      builder.addCode("case \"$T\"#$N:\n", name, field.name)
+      builder.addCode("case \"$T#$N\":\n", name, field.name)
           .addCode(CodeBlock.builder().indent().build())
+          .addStatement("$N(call, result)", field.name)
           .addStatement("break")
           .addCode(CodeBlock.builder().unindent().build());
     }
@@ -82,6 +83,7 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
     for (PluginMethod method : aClass.methods) {
       builder.addCode("case \"$T\"#$N:\n", name, method.name)
           .addCode(CodeBlock.builder().indent().build())
+          .addStatement("$N(call, result)", method.name)
           .addStatement("break")
           .addCode(CodeBlock.builder().unindent().build());
     }
