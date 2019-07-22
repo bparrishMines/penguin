@@ -89,7 +89,7 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
     }
 
     for (PluginMethod method : aClass.methods) {
-      builder.addCode("case \"$N\"#$N:\n", aClass.name, method.name)
+      builder.addCode("case \"$N#$N\":\n", aClass.name, method.name)
           .addCode(CodeBlock.builder().indent().build())
           .addStatement("$N(call, result)", method.name)
           .addStatement("break")

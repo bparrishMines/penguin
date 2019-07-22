@@ -14,29 +14,28 @@ class FieldWriter extends Writer<Field, cb.Method> {
 
       final ClassStructure structure = _tryGetClassStructure(field.type);
 
-      if (structure == ClassStructure.unspecifiedPublic) {
+      if (structure == ClassStructure.unspecifiedPrivate) {
         builder.returns = cb.refer(field.type);
         builder.body = cb.Block((cb.BlockBuilder builder) {
-          builder.addExpression(
-            _constructorExpression(className: field.type).returned,
-          );
-        });
-      } else if (structure == ClassStructure.unspecifiedPrivate) {
-        builder.returns = cb.refer(field.type);
-        builder.body = cb.Block((cb.BlockBuilder builder) {
+          final String valueName = field.type.toLowerCase();
+
           builder.addExpression(
             _constructorExpression(
               className: field.type,
               private: true,
-              positionalArguments: <cb.Expression>[
-                cb.literalMap(
-                  <dynamic, dynamic>{},
-                  cb.refer('String'),
-                  cb.refer('dynamic'),
-                )
-              ],
-            ).returned,
+            ).assignFinal(valueName, cb.refer(field.type)),
           );
+
+          builder.addExpression(_invokeMethodExpression(
+            className: className,
+            methodName: field.name,
+            hasHandle: false,
+            arguments: <String, cb.Expression>{
+              '${valueName}Handle': cb.refer(valueName).property('_handle'),
+            },
+          ));
+
+          builder.addExpression(cb.refer(valueName).returned);
         });
       } else {
         builder.returns = cb.TypeReference(
@@ -107,21 +106,26 @@ class MethodWriter extends Writer<Method, cb.Method> {
         paramWriter.writeAll(method.optionalParameters),
       );
 
-      if (structure == ClassStructure.unspecifiedPublic) {
+      if (structure == ClassStructure.unspecifiedPrivate) {
         builder.body = cb.Block((cb.BlockBuilder builder) {
-          builder.addExpression(
-            _constructorExpression(className: method.returns).returned,
-          );
-        });
-      } else if (structure == ClassStructure.unspecifiedPrivate) {
-        builder.body = cb.Block((cb.BlockBuilder builder) {
+          final String valueName = method.returns.toLowerCase();
+
           builder.addExpression(_constructorExpression(
             className: method.returns,
             private: true,
-            positionalArguments: <cb.Expression>[
-              cb.literalMap(mappedParamExpressions)
-            ],
-          ).returned);
+          ).assignFinal(valueName, cb.refer(method.returns)));
+
+          mappedParamExpressions['${valueName}Handle'] =
+              cb.refer(valueName).property('_handle');
+
+          builder.addExpression(_invokeMethodExpression(
+            className: className,
+            methodName: method.name,
+            hasHandle: true,
+            arguments: mappedParamExpressions,
+          ));
+
+          builder.addExpression(cb.refer(valueName).returned);
         });
       } else {
         builder.body = cb.Block((cb.BlockBuilder builder) {
@@ -217,27 +221,20 @@ class ConstructorWriter extends Writer<Constructor, cb.Constructor> {
 
   cb.Constructor get _defaultConstructor => cb.Constructor(
         (cb.ConstructorBuilder builder) {
-          final Map<String, cb.Expression> values = <String, cb.Expression>{};
-
           if (structure == ClassStructure.unspecifiedPrivate) {
             builder.name = '_';
-
-            final ParameterWriter writer = ParameterWriter(plugin);
-            builder.requiredParameters.add(
-              writer.write(Parameter('source', type: 'Map')),
-            );
-
-            values['source'] = cb.refer('source');
+          } else if (structure == ClassStructure.unspecifiedPublic) {
+            builder.body = cb.Block((cb.BlockBuilder builder) {
+              builder.addExpression(_invokeMethodExpression(
+                className: className,
+                methodName: '()',
+                arguments: <String, cb.Expression>{
+                  '${className.toLowerCase()}Handle': cb.refer('_handle'),
+                },
+                useHashTag: false,
+              ));
+            });
           }
-
-          builder.body = cb.Block((cb.BlockBuilder builder) {
-            builder.addExpression(_invokeMethodExpression(
-              className: className,
-              methodName: '()',
-              hasHandle: true,
-              arguments: values,
-            ));
-          });
         },
       );
 }

@@ -90,6 +90,7 @@ abstract class Writer<T, K> {
     String className,
     String methodName,
     bool hasHandle = false,
+    bool useHashTag = true,
     Map<String, cb.Expression> arguments = const <String, cb.Expression>{},
   }) {
     if (hasHandle) {
@@ -102,7 +103,7 @@ abstract class Writer<T, K> {
     return cb.InvokeExpression.newOf(
       cb.refer('Channel').property('channel').property('invokeMethod'),
       <cb.Expression>[
-        cb.literalString('$className#$methodName'),
+        cb.literalString('$className${useHashTag ? '#' : ''}$methodName'),
         cb.literalMap(arguments, cb.refer('String'), cb.refer('dynamic'))
       ],
       <String, cb.Expression>{},

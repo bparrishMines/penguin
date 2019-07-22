@@ -70,7 +70,7 @@ public class MethodWriter extends Writer<PluginMethod, MethodSpec> {
         final PluginClass pluginClass = ClassStructure.classFromString(plugin, method.returns);
         final ClassName wrappedName = ClassName.get(pluginClass.java_package, pluginClass.name);
 
-        builder.addStatement("final $T handle = call.argument($S)", Integer.class, "handle")
+        builder.addStatement("final $T handle = call.argument($S)", Integer.class, method.returns.toLowerCase() + "Handle")
             .addStatement("final $T value = " + methodCallString, wrappedName, wrappedObjectName, method.name)
             .addStatement("final $T handler = $T(handle, value)", handlerName, handlerName)
             .addStatement("$T.addHandler(handle, handler)", mainPluginClassName);

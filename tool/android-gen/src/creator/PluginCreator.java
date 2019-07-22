@@ -118,20 +118,20 @@ public class PluginCreator {
         .addModifiers(Modifier.PUBLIC)
         .addParameter(PluginClassNames.METHOD_CALL.name, "call")
         .addParameter(PluginClassNames.RESULT.name, "result")
-        .addStatement("final $T handle = call.argument($S)", Integer.class, "handle")
         .beginControlFlow("switch(call.method)");
 
     for (PluginClass aClass : plugin.classes) {
       final ClassStructure structure = ClassStructure.structureFromClass(plugin, aClass);
-      final ClassName name = ClassName.get(packageName, CLASS_PREFIX + aClass.name);
+      final ClassName wrapperName = ClassName.get(packageName, CLASS_PREFIX + aClass.name);
 
       switch(structure) {
         case UNSPECIFIED_PRIVATE:
           break;
         case UNSPECIFIED_PUBLIC:
-          builder.addCode("case \"$T()\":\n", name);
+          builder.addCode("case \"$N()\":\n", aClass.name);
           builder.addCode(CodeBlock.builder().indent().build());
-          builder.addStatement("final $T handler = new $T(handle)", name, name);
+          builder.addStatement("final $T handle = call.argument($S)", Integer.class, aClass.name.toLowerCase() + "Handle");
+          builder.addStatement("final $T handler = new $T(handle)", wrapperName, wrapperName);
           builder.addStatement("$N.addHandler(handle, handler)", className);
           builder.addStatement("break");
           builder.addCode(CodeBlock.builder().unindent().build());
@@ -140,9 +140,9 @@ public class PluginCreator {
 
       for (PluginField field : aClass.fields) {
         if (field.isStatic) {
-          builder.addCode("case \"$T#$N\":\n", name, field.name)
+          builder.addCode("case \"$N#$N\":\n", aClass.name, field.name)
               .addCode(CodeBlock.builder().indent().build())
-              .addStatement("$T.onStaticMethodCall(call, result)", name)
+              .addStatement("$T.onStaticMethodCall(call, result)", wrapperName)
               .addStatement("break")
               .addCode(CodeBlock.builder().unindent().build());
         }
@@ -151,6 +151,7 @@ public class PluginCreator {
 
     builder.addCode("default:\n")
         .addCode(CodeBlock.builder().indent().build())
+        .addStatement("final $T handle = call.argument($S)", Integer.class, "handle")
         .beginControlFlow("if (handle == null)")
         .addStatement("result.notImplemented()")
         .addStatement("return")
