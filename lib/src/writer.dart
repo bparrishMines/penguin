@@ -81,14 +81,10 @@ abstract class Writer<T, K> {
     return ClassStructure.unspecifiedPublic;
   }
 
-  bool _hasParameters(dynamic object) =>
-      object.optionalParameters.isNotEmpty ||
-      object.requiredParameters.isNotEmpty;
-
   cb.InvokeExpression _invokeMethodExpression({
     String type = 'void',
     String className,
-    String methodName,
+    String methodName = '',
     bool hasHandle = false,
     bool useHashTag = true,
     Map<String, cb.Expression> arguments = const <String, cb.Expression>{},
