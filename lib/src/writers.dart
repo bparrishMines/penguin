@@ -50,16 +50,80 @@ abstract class Writer<T, K> {
 }
 
 class FieldWriter extends Writer<Field, cb.Method> {
-  const FieldWriter(Plugin plugin, this.className) : super(plugin);
+  const FieldWriter({Plugin plugin, this.className, this.implSuffix})
+      : assert(className != null),
+        assert(implSuffix != null),
+        super(plugin);
 
   final String className;
+  final String implSuffix;
 
   @override
   cb.Method write(Field field) {
+    final Class theClass = _classFromString(field.type);
+
+    void addNameAndParams(cb.MethodBuilder builder) {
+      builder
+        ..name = field.name
+        ..type = cb.MethodType.getter
+        ..static = field.static;
+    }
+
+    if (theClass == null) {
+      return cb.Method((cb.MethodBuilder builder) {
+        addNameAndParams(builder);
+
+        builder.returns = cb.TypeReference((cb.TypeReferenceBuilder builder) {
+          builder
+            ..symbol = 'Future'
+            ..types.add(cb.refer(field.type))
+            ..url = 'dart:async';
+        });
+        builder.body = cb.Block((cb.BlockBuilder builder) {
+          builder.addExpression(_invokeMethodExpression(
+            type: cb.refer(field.type),
+            className: className,
+            methodName: field.name,
+            hasHandle: true,
+          ).returned);
+        });
+      });
+    } else {
+      final cb.Reference returnRef = cb.refer(
+        field.type,
+        theClass.details.file,
+      );
+      final String returnName = field.type.toLowerCase();
+
+      return cb.Method((cb.MethodBuilder builder) {
+        addNameAndParams(builder);
+
+        builder.returns = returnRef;
+        builder.body = cb.Block((cb.BlockBuilder builder) {
+          builder.addExpression(
+            cb
+                .refer('${field.type}$implSuffix')
+                .call(<cb.Expression>[]).assignFinal(returnName),
+          );
+
+          builder.addExpression(_invokeMethodExpression(
+            type: returnRef,
+            className: className,
+            methodName: field.type,
+            hasHandle: !field.static,
+          ));
+
+          builder.addExpression(cb.refer(returnName).returned);
+        });
+      });
+    }
+    /*
     final cb.Method codeMethod = cb.Method((cb.MethodBuilder builder) {
       builder.name = field.name;
       builder.type = cb.MethodType.getter;
       builder.static = field.static;
+
+
 
       /*
       final ClassStructure structure = _tryGetClassStructure(field.type);
@@ -106,6 +170,7 @@ class FieldWriter extends Writer<Field, cb.Method> {
     });
 
     return codeMethod;
+    */
   }
 }
 
@@ -234,12 +299,19 @@ class ClassWriter extends Writer<Class, cb.Library> {
       implSuffix: _implSuffix,
     );
 
+    final FieldWriter fieldWriter = FieldWriter(
+      plugin: plugin,
+      className: theClass.name,
+      implSuffix: _implSuffix,
+    );
+
     final cb.Library library = cb.Library((cb.LibraryBuilder builder) {
       builder.body.add(cb.Class((cb.ClassBuilder classBuilder) {
         classBuilder
           ..name = theClass.name
           ..abstract = theClass.details.constructorType == ConstructorType.none
           ..fields.add(_handle)
+          ..methods.addAll(fieldWriter.writeAll(theClass.fields))
           ..methods.addAll(methodWriter.writeAll(theClass.methods));
       }));
 
