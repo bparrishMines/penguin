@@ -116,60 +116,6 @@ class FieldWriter extends Writer<Field, cb.Method> {
         });
       });
     }
-    /*
-    final cb.Method codeMethod = cb.Method((cb.MethodBuilder builder) {
-      builder.name = field.name;
-      builder.type = cb.MethodType.getter;
-      builder.static = field.static;
-
-
-
-      /*
-      final ClassStructure structure = _tryGetClassStructure(field.type);
-
-      if (structure == ClassStructure.unspecifiedPrivate) {
-        builder.returns = cb.refer(field.type);
-        builder.body = cb.Block((cb.BlockBuilder builder) {
-          final String valueName = field.type.toLowerCase();
-
-          builder.addExpression(
-            _constructorExpression(
-              className: field.type,
-              private: true,
-            ).assignFinal(valueName, cb.refer(field.type)),
-          );
-
-          builder.addExpression(_invokeMethodExpression(
-            className: className,
-            methodName: field.name,
-            hasHandle: false,
-            arguments: <String, cb.Expression>{
-              '${valueName}Handle': cb.refer(valueName).property('_handle'),
-            },
-          ));
-
-          builder.addExpression(cb.refer(valueName).returned);
-        });
-      } else {
-        builder.returns = cb.TypeReference(
-          (cb.TypeReferenceBuilder builder) {
-            builder.symbol = 'Future';
-            builder.types.add(cb.refer(field.type));
-          },
-        );
-        builder.body = cb.Block((cb.BlockBuilder builder) {
-          builder.addExpression(_invokeMethodExpression(
-            type: field.type,
-            className: className,
-            methodName: field.name,
-            hasHandle: !field.static,
-          ).returned);
-        });
-      }*/
-    });
-
-    return codeMethod;
-    */
   }
 }
 
