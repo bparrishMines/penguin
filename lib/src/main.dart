@@ -160,6 +160,6 @@ void _createJavaFiles(String yaml) {
     <String>[yaml],
   );
 
-  print(result.stdout);
-  print(result.stderr);
+  //print(result.stdout);
+  //print(result.stderr);
 }

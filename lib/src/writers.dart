@@ -148,6 +148,7 @@ class MethodWriter extends Writer<Method, cb.Method> {
     }
 
     if (theClass == null) {
+      print(className);
       return cb.Method((cb.MethodBuilder builder) {
         addNameAndParams(builder);
 
