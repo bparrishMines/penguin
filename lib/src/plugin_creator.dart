@@ -26,13 +26,50 @@ class ClassDetails {
 }
 
 class PluginCreator {
-  PluginCreator(this.plugin);
+  PluginCreator(this.plugin) : assert(plugin != null) {
+    initialize();
+  }
 
   final Plugin plugin;
 
-  final cb.DartEmitter _emitter = cb.DartEmitter(cb.Allocator());
+  void initialize() {
+    final Set<String> allClassNames = plugin.classes
+        .map<String>(
+          (Class theClass) => theClass.name,
+        )
+        .toSet();
 
-  cb.Library get _channelLibrary => cb.Library((cb.LibraryBuilder builder) =>
+    final Set<String> referencedClasses = <String>{};
+    for (Class theClass in plugin.classes) {
+      for (Method method in theClass.methods) {
+        // TODO check for static methods when implemented
+        if (theClass.name != method.returns &&
+            allClassNames.contains(method.returns)) {
+          referencedClasses.add(method.returns);
+        }
+      }
+
+      for (Field field in theClass.fields) {
+        if ((field.static || theClass.name != field.type) &&
+            allClassNames.contains(field.type)) {
+          referencedClasses.add(field.type);
+        }
+      }
+    }
+
+    for (Class theClass in plugin.classes) {
+      // TODO correctly set constructor type once constructor is reimplemented
+      theClass.details = ClassDetails(
+        ConstructorType.none,
+        referencedClasses.contains(theClass.name),
+        '${camelCaseToSnakeCase(theClass.name)}.dart',
+      );
+    }
+  }
+
+  static final cb.DartEmitter _emitter = cb.DartEmitter(cb.Allocator());
+
+  cb.Library get _channelClass => cb.Library((cb.LibraryBuilder builder) =>
       builder.body.add(cb.Class((cb.ClassBuilder builder) {
         builder.name = 'Channel';
         builder.fields.addAll([
@@ -98,7 +135,7 @@ class PluginCreator {
         },
       );
 
-  String _channelAsString() => '${_channelLibrary.accept(_emitter)}';
+  String _channelAsString() => '${_channelClass.accept(_emitter)}';
 
   Map<String, String> pluginAsStrings() {
     final Map<String, String> classes = <String, String>{};

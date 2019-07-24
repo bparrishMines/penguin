@@ -4,6 +4,7 @@ import 'plugin.dart';
 
 part 'writers.dart';
 
+/*
 /// This decides the structure of a generated class.
 ///
 /// It depends solely on what [Constructor]s are defined and whether the [Class]
@@ -32,6 +33,7 @@ enum ClassStructure {
   specifiedWithoutParameters,
   */
 }
+*/
 
 abstract class Writer<T, K> {
   const Writer(this.plugin);
@@ -51,6 +53,7 @@ abstract class Writer<T, K> {
     return null;
   }
 
+  /*
   ClassStructure _tryGetClassStructure(String className) {
     final Class theClass = _classFromString(className);
 
@@ -80,6 +83,7 @@ abstract class Writer<T, K> {
 
     return ClassStructure.unspecifiedPublic;
   }
+  */
 
   cb.InvokeExpression _invokeMethodExpression({
     String type = 'void',

@@ -52,6 +52,7 @@ class NodeStructure {
   }
 
   void _initialize() {
+    /*
     for (Class theClass in plugin.classes) {
       final ClassNode node = ClassNode(theClass);
       _classNodes[theClass.name] = node;
@@ -73,6 +74,7 @@ class NodeStructure {
         }
       }
     }
+    */
 
     for (Class theClass in plugin.classes) {
       for (Method method in theClass.methods) {
@@ -130,6 +132,7 @@ class CreatorNode implements Node {
   String toString() => returner.name;
 }
 
+/*
 // TODO(bparrishMines): This is a copy from Writer class
 ClassStructure _structureFromClass(Plugin plugin, Class theClass) {
   assert(theClass != null);
@@ -150,3 +153,4 @@ ClassStructure _structureFromClass(Plugin plugin, Class theClass) {
 
   return ClassStructure.unspecifiedPublic;
 }
+*/

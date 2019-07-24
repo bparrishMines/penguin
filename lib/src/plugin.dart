@@ -2,6 +2,8 @@ import 'package:checked_yaml/checked_yaml.dart';
 import 'package:code_builder/code_builder.dart';
 import 'package:json_annotation/json_annotation.dart';
 
+import 'plugin_creator.dart';
+
 part 'plugin.g.dart';
 
 @JsonSerializable()
@@ -44,6 +46,14 @@ class Class {
 
   @JsonKey(defaultValue: const <Field>[])
   final List<Field> fields;
+
+  ClassDetails _details;
+
+  ClassDetails get details => _details;
+  set details(ClassDetails details) {
+    assert(_details == null);
+    _details = details;
+  }
 
   factory Class.fromJson(Map json) => _$ClassFromJson(json);
 

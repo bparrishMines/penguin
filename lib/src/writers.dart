@@ -12,6 +12,7 @@ class FieldWriter extends Writer<Field, cb.Method> {
       builder.type = cb.MethodType.getter;
       builder.static = field.static;
 
+      /*
       final ClassStructure structure = _tryGetClassStructure(field.type);
 
       if (structure == ClassStructure.unspecifiedPrivate) {
@@ -52,7 +53,7 @@ class FieldWriter extends Writer<Field, cb.Method> {
             hasHandle: !field.static,
           ).returned);
         });
-      }
+      }*/
     });
 
     return codeMethod;
@@ -75,7 +76,7 @@ class MethodWriter extends Writer<Method, cb.Method> {
       mappedParamExpressions[parameter.name] = cb.refer(parameter.name);
     }
 
-    final ClassStructure structure = _tryGetClassStructure(method.returns);
+    //final ClassStructure structure = _tryGetClassStructure(method.returns);
 
     final ParameterWriter paramWriter = ParameterWriter(plugin);
 
@@ -83,6 +84,7 @@ class MethodWriter extends Writer<Method, cb.Method> {
       if (method.type != null) {
         builder.type = method.type;
       } else {
+        /*
         switch (structure) {
           case ClassStructure.unspecifiedPublic:
           case ClassStructure.unspecifiedPrivate:
@@ -96,6 +98,7 @@ class MethodWriter extends Writer<Method, cb.Method> {
               },
             );
         }
+        */
       }
 
       builder.name = method.name;
@@ -106,6 +109,7 @@ class MethodWriter extends Writer<Method, cb.Method> {
         paramWriter.writeAll(method.optionalParameters),
       );
 
+      /*
       if (structure == ClassStructure.unspecifiedPrivate) {
         builder.body = cb.Block((cb.BlockBuilder builder) {
           final String valueName = method.returns.toLowerCase();
@@ -138,6 +142,7 @@ class MethodWriter extends Writer<Method, cb.Method> {
           ).returned);
         });
       }
+      */
     });
 
     return codeMethod;
@@ -165,7 +170,7 @@ class ClassWriter extends Writer<Class, cb.Class> {
 
   @override
   cb.Class write(Class theClass) {
-    final ClassStructure structure = _structureFromClass(theClass);
+    //final ClassStructure structure = _structureFromClass(theClass);
 
     final MethodWriter methodWriter = MethodWriter(plugin, className);
     final FieldWriter fieldWriter = FieldWriter(plugin, className);
@@ -173,10 +178,12 @@ class ClassWriter extends Writer<Class, cb.Class> {
     final cb.Class codeClass = cb.Class((cb.ClassBuilder builder) {
       builder.name = theClass.name;
 
+      /*
       if (structure == ClassStructure.unspecifiedPrivate ||
           structure == ClassStructure.unspecifiedPublic) {
         builder.fields.add(_handle);
       }
+      */
 
       builder.methods.addAll(fieldWriter.writeAll(theClass.fields));
       builder.methods.addAll(methodWriter.writeAll(theClass.methods));
