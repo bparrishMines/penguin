@@ -27,7 +27,7 @@ public class FieldWriter extends Writer<PluginField, MethodSpec> {
   @Override
   public MethodSpec write(PluginField field) {
     final MethodSpec.Builder builder = MethodSpec.methodBuilder(field.name);
-    if (field.isStatic) builder.addModifiers(Modifier.STATIC);
+    if (field.is_static) builder.addModifiers(Modifier.STATIC);
 
     final ClassStructure structure = ClassStructure.tryGetClassStructure(plugin, field.type);
 

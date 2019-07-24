@@ -4,7 +4,6 @@ import com.squareup.javapoet.*;
 import objects.Plugin;
 import objects.PluginClass;
 import objects.PluginField;
-import objects.PluginMethod;
 import writers.ClassWriter;
 import writers.PluginClassNames;
 
@@ -139,7 +138,7 @@ public class PluginCreator {
       }
 
       for (PluginField field : aClass.fields) {
-        if (field.isStatic) {
+        if (field.is_static) {
           builder.addCode("case \"$N#$N\":\n", aClass.name, field.name)
               .addCode(CodeBlock.builder().indent().build())
               .addStatement("$T.onStaticMethodCall(call, result)", wrapperName)

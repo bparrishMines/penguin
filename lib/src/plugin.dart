@@ -49,6 +49,7 @@ class Class {
 
   ClassDetails _details;
 
+  @JsonKey(ignore: true)
   ClassDetails get details => _details;
   set details(ClassDetails details) {
     assert(_details == null);
@@ -71,6 +72,7 @@ class Method {
     this.requiredParameters,
     this.optionalParameters,
     this.type,
+    this.isStatic,
   });
 
   @JsonKey(required: true, disallowNullValue: true)
@@ -86,6 +88,9 @@ class Method {
   final List<Parameter> optionalParameters;
 
   final MethodType type;
+
+  @JsonKey(defaultValue: false)
+  final bool isStatic;
 
   factory Method.fromJson(Map json) => _$MethodFromJson(json);
 
@@ -115,13 +120,13 @@ class Parameter {
 
 @JsonSerializable()
 class Field {
-  Field(this.name, {this.type, this.static});
+  Field(this.name, {this.type, this.isStatic});
 
   @JsonKey(required: true, disallowNullValue: true)
   final String name;
 
   @JsonKey(defaultValue: false)
-  final bool static;
+  final bool isStatic;
 
   @JsonKey(defaultValue: 'dynamic')
   final String type;

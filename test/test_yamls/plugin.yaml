@@ -21,7 +21,7 @@ classes:
       - field:
         name: maxTraceNameLength
         type: int
-        static: true
+        isStatic: true
     methods:
       - method:
         name: start
@@ -106,7 +106,7 @@ classes:
       - field:
         name: instance
         type: FirebasePerformance
-        static: true
+        isStatic: true
     methods:
       - method:
         name: isPerformanceCollectionEnabled

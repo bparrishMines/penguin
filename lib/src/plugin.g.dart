@@ -104,11 +104,14 @@ Method _$MethodFromJson(Map json) {
                     ?.toList()) ??
             [],
         type: $checkedConvert(
-            json, 'type', (v) => _$enumDecodeNullable(_$MethodTypeEnumMap, v)));
+            json, 'type', (v) => _$enumDecodeNullable(_$MethodTypeEnumMap, v)),
+        isStatic:
+            $checkedConvert(json, 'is_static', (v) => v as bool) ?? false);
     return val;
   }, fieldKeyMap: const {
     'requiredParameters': 'required_parameters',
-    'optionalParameters': 'optional_parameters'
+    'optionalParameters': 'optional_parameters',
+    'isStatic': 'is_static'
   });
 }
 
@@ -126,6 +129,7 @@ Map<String, dynamic> _$MethodToJson(Method instance) {
   val['required_parameters'] = instance.requiredParameters;
   val['optional_parameters'] = instance.optionalParameters;
   val['type'] = _$MethodTypeEnumMap[instance.type];
+  val['is_static'] = instance.isStatic;
   return val;
 }
 
@@ -184,9 +188,10 @@ Field _$FieldFromJson(Map json) {
         requiredKeys: const ['name'], disallowNullValues: const ['name']);
     final val = Field($checkedConvert(json, 'name', (v) => v as String),
         type: $checkedConvert(json, 'type', (v) => v as String) ?? 'dynamic',
-        static: $checkedConvert(json, 'static', (v) => v as bool) ?? false);
+        isStatic:
+            $checkedConvert(json, 'is_static', (v) => v as bool) ?? false);
     return val;
-  });
+  }, fieldKeyMap: const {'isStatic': 'is_static'});
 }
 
 Map<String, dynamic> _$FieldToJson(Field instance) {
@@ -199,7 +204,7 @@ Map<String, dynamic> _$FieldToJson(Field instance) {
   }
 
   writeNotNull('name', instance.name);
-  val['static'] = instance.static;
+  val['is_static'] = instance.isStatic;
   val['type'] = instance.type;
   return val;
 }

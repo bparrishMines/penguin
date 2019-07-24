@@ -36,7 +36,7 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
         .addField(wrappedName, wrappedObjectName, Modifier.FINAL, Modifier.PRIVATE);
 
     for (PluginField field : aClass.fields) {
-      if (field.isStatic) {
+      if (field.is_static) {
         classBuilder.addMethod(buildOnStaticMethodCall(aClass));
         break;
       }
@@ -79,7 +79,7 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
         .beginControlFlow("switch(call.method)");
 
     for (PluginField field : aClass.fields) {
-      if (!field.isStatic) {
+      if (!field.is_static) {
         builder.addCode("case \"$N#$N\":\n", aClass.name, field.name)
             .addCode(CodeBlock.builder().indent().build())
             .addStatement("$N(call, result)", field.name)
@@ -113,7 +113,7 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
         .beginControlFlow("switch(call.method)");
 
     for (PluginField field : aClass.fields) {
-      if (field.isStatic) {
+      if (field.is_static) {
         builder.addCode("case \"$N#$N\":\n", aClass.name, field.name)
             .addCode(CodeBlock.builder().indent().build())
             .addStatement("$N(call, result)", field.name)

@@ -144,7 +144,6 @@ void _createJavaFiles(String yaml) {
     'required_parameter:': '!objects.PluginParameter',
     'optional_parameter:': '!objects.PluginParameter',
     'field:': '!objects.PluginField',
-    'static:': 'isStatic:',
     'int': 'Integer',
     'bool': 'Boolean',
     'double': 'Double',

@@ -42,15 +42,14 @@ class PluginCreator {
     final Set<String> referencedClasses = <String>{};
     for (Class theClass in plugin.classes) {
       for (Method method in theClass.methods) {
-        // TODO check for static methods when implemented
-        if (theClass.name != method.returns &&
+        if ((method.isStatic || theClass.name != method.returns) &&
             allClassNames.contains(method.returns)) {
           referencedClasses.add(method.returns);
         }
       }
 
       for (Field field in theClass.fields) {
-        if ((field.static || theClass.name != field.type) &&
+        if ((field.isStatic || theClass.name != field.type) &&
             allClassNames.contains(field.type)) {
           referencedClasses.add(field.type);
         }

@@ -66,7 +66,7 @@ class FieldWriter extends Writer<Field, cb.Method> {
       builder
         ..name = field.name
         ..type = cb.MethodType.getter
-        ..static = field.static;
+        ..static = field.isStatic;
     }
 
     if (theClass == null) {
@@ -84,7 +84,7 @@ class FieldWriter extends Writer<Field, cb.Method> {
             type: cb.refer(field.type),
             className: className,
             methodName: field.name,
-            hasHandle: !field.static,
+            hasHandle: !field.isStatic,
           ).returned);
         });
       });
@@ -109,7 +109,7 @@ class FieldWriter extends Writer<Field, cb.Method> {
             type: returnRef,
             className: className,
             methodName: field.name,
-            hasHandle: !field.static,
+            hasHandle: !field.isStatic,
           ));
 
           builder.addExpression(cb.refer(returnName).returned);
@@ -138,6 +138,7 @@ class MethodWriter extends Writer<Method, cb.Method> {
     void addNameAndParams(cb.MethodBuilder builder) {
       builder
         ..name = method.name
+        ..static = method.isStatic
         ..requiredParameters.addAll(
           _paramWriter.writeAll(method.requiredParameters),
         )
@@ -161,7 +162,7 @@ class MethodWriter extends Writer<Method, cb.Method> {
             type: cb.refer(method.returns),
             className: className,
             methodName: method.name,
-            hasHandle: true,
+            hasHandle: !method.isStatic,
             arguments: _mappedParams(method),
           ).returned);
         });
@@ -187,7 +188,7 @@ class MethodWriter extends Writer<Method, cb.Method> {
             type: returnRef,
             className: className,
             methodName: method.name,
-            hasHandle: true,
+            hasHandle: !method.isStatic,
             arguments: _mappedParams(method),
           ));
 
@@ -259,9 +260,14 @@ class ClassWriter extends Writer<Class, cb.Library> {
           ..methods.addAll(methodWriter.writeAll(theClass.methods));
       }));
 
+      final Set<String> addedClass = <String>{};
+
       for (Method method in theClass.methods) {
         final Class methodClass = _classFromString(method.returns);
-        if (methodClass != null) {
+
+        if (methodClass != null && !addedClass.contains(methodClass.name)) {
+          addedClass.add(methodClass.name);
+
           final cb.Reference reference = method.returns == theClass.name
               ? cb.refer(method.returns)
               : cb.refer(method.returns, methodClass.details.file);
@@ -276,7 +282,10 @@ class ClassWriter extends Writer<Class, cb.Library> {
 
       for (Field field in theClass.fields) {
         final Class fieldClass = _classFromString(field.type);
-        if (fieldClass != null) {
+
+        if (fieldClass != null && !addedClass.contains(fieldClass.name)) {
+          addedClass.add(fieldClass.name);
+
           final cb.Reference reference = field.type == theClass.name
               ? cb.refer(field.type)
               : cb.refer(field.type, fieldClass.details.file);
