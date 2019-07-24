@@ -1,63 +1,60 @@
-import 'dart:io';
-
 import 'package:code_builder/code_builder.dart' as cb;
-import 'package:path/path.dart' as path;
 import 'package:pub_semver/pub_semver.dart';
 import 'package:pubspec_parse/pubspec_parse.dart';
 
 import 'plugin.dart';
+import 'references.dart';
 import 'utils.dart';
 import 'writer.dart';
+
+enum ConstructorType { none, noDefault, onlyDefault, withDefault }
+
+class ClassDetails {
+  ClassDetails(this.constructorType, this.isReferenced, this.file)
+      : assert(constructorType != null),
+        assert(isReferenced != null),
+        assert(file != null);
+
+  /// Enum detailing what constructors the class has
+  final ConstructorType constructorType;
+
+  /// Referenced by another class method or
+  final bool isReferenced;
+
+  /// File of the class
+  final String file;
+}
 
 class PluginCreator {
   PluginCreator(this.plugin);
 
   final Plugin plugin;
 
-  static const List<String> _libraryImports = <String>[
-    'package:flutter/services.dart',
-    'package:flutter/foundation.dart',
-    'package:json_annotation/json_annotation.dart',
-  ];
+  final cb.DartEmitter _emitter = cb.DartEmitter(cb.Allocator());
 
-  static final Directory _classFileDir = Directory('src/');
-
-  String get _libraryPartOfDirective => 'part of ${plugin.name};';
-
-  final cb.DartEmitter _emitter = cb.DartEmitter();
-
-  cb.Class get _channelClass => cb.Class((cb.ClassBuilder builder) {
+  cb.Library get _channelLibrary => cb.Library((cb.LibraryBuilder builder) =>
+      builder.body.add(cb.Class((cb.ClassBuilder builder) {
         builder.name = 'Channel';
         builder.fields.addAll([
           cb.Field((cb.FieldBuilder builder) {
             builder.name = 'channel';
             builder.modifier = cb.FieldModifier.constant;
             builder.static = true;
-            builder.type = cb.Reference('MethodChannel');
-            builder.assignment =
-                cb.Code('MethodChannel(\'${plugin.channel}\')');
-            builder.annotations.add(cb.refer('visibleForTesting'));
+            builder.type = References.methodChannel;
+            builder.assignment = References.methodChannel.call(
+              <cb.Expression>[cb.literalString(plugin.channel)],
+            ).code;
+            builder.annotations.add(References.visibleForTesting);
           }),
           cb.Field((cb.FieldBuilder builder) {
             builder.name = 'nextHandle';
             builder.static = true;
-            builder.type = cb.Reference('int');
+            builder.type = cb.refer('int');
             builder.assignment = cb.Code('0');
-            builder.annotations.add(cb.refer('visibleForTesting'));
+            builder.annotations.add(References.visibleForTesting);
           })
         ]);
-      });
-
-  cb.Library get _library => cb.Library((cb.LibraryBuilder builder) {
-        for (String libraryImport in _libraryImports) {
-          builder.directives.add(
-            cb.Directive((cb.DirectiveBuilder builder) {
-              builder.type = cb.DirectiveType.import;
-              builder.url = libraryImport;
-            }),
-          );
-        }
-      });
+      })));
 
   Pubspec get _pubspec => Pubspec(
         plugin.name,
@@ -101,62 +98,22 @@ class PluginCreator {
         },
       );
 
-  String _libraryAsString() {
-    final StringBuffer buffer = new StringBuffer();
-    buffer.writeln('library ${plugin.name};\n');
-    buffer.writeln('${_library.accept(_emitter)}');
-    buffer.writeln();
-
-    for (Class dartClass in plugin.classes) {
-      final String classPath = path.join(
-        _classFileDir.path,
-        '${camelCaseToSnakeCase(dartClass.name)}.dart',
-      );
-
-      buffer.writeln('part \'$classPath\';');
-    }
-
-    buffer
-        .writeln('part \'${path.join(_classFileDir.path, 'channel.dart')}\';');
-
-    return buffer.toString();
-  }
-
-  String _channelAsString() {
-    final StringBuffer buffer = StringBuffer();
-    buffer.writeln('$_libraryPartOfDirective\n');
-    buffer.writeln('${_channelClass.accept(_emitter)}');
-    return buffer.toString();
-  }
+  String _channelAsString() => '${_channelLibrary.accept(_emitter)}';
 
   Map<String, String> pluginAsStrings() {
     final Map<String, String> classes = <String, String>{};
 
+    classes['channel.dart'] = _channelAsString();
+
     for (Class theClass in plugin.classes) {
-      final StringBuffer buffer = StringBuffer();
-
-      buffer.writeln('$_libraryPartOfDirective\n');
-
       final cb.Class codeClass = ClassWriter(
         plugin,
         theClass.name,
       ).write(theClass);
 
-      buffer.writeln('${codeClass.accept(_emitter)}');
-
-      final String filename = path.join(
-        _classFileDir.path,
-        '${camelCaseToSnakeCase(theClass.name)}.dart',
-      );
-      classes[filename] = buffer.toString();
+      final String filename = '${camelCaseToSnakeCase(theClass.name)}.dart';
+      classes[filename] = '${codeClass.accept(_emitter)}';
     }
-
-    final String channelFilename = path.join(
-      _classFileDir.path,
-      'channel.dart',
-    );
-    classes[channelFilename] = _channelAsString();
-    classes['${plugin.name}.dart'] = _libraryAsString();
 
     return classes;
   }

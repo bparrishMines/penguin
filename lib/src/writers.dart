@@ -170,18 +170,11 @@ class ClassWriter extends Writer<Class, cb.Class> {
     final MethodWriter methodWriter = MethodWriter(plugin, className);
     final FieldWriter fieldWriter = FieldWriter(plugin, className);
 
-    final ConstructorWriter constructorWriter = ConstructorWriter(
-      plugin,
-      className,
-      structure,
-    );
-
     final cb.Class codeClass = cb.Class((cb.ClassBuilder builder) {
       builder.name = theClass.name;
 
       if (structure == ClassStructure.unspecifiedPrivate ||
           structure == ClassStructure.unspecifiedPublic) {
-        builder.constructors.add(constructorWriter.write(null));
         builder.fields.add(_handle);
       }
 
@@ -198,43 +191,4 @@ class ClassWriter extends Writer<Class, cb.Class> {
     builder.type = cb.Reference('int');
     builder.assignment = cb.Code('Channel.nextHandle++');
   });
-}
-
-class ConstructorWriter extends Writer<Constructor, cb.Constructor> {
-  const ConstructorWriter(Plugin plugin, this.className, this.structure)
-      : super(plugin);
-
-  final String className;
-
-  final ClassStructure structure;
-
-  @override
-  cb.Constructor write(Constructor constructor) {
-    switch (structure) {
-      case ClassStructure.unspecifiedPublic:
-      case ClassStructure.unspecifiedPrivate:
-        return _defaultConstructor;
-    }
-
-    return null; // Unreachable
-  }
-
-  cb.Constructor get _defaultConstructor => cb.Constructor(
-        (cb.ConstructorBuilder builder) {
-          if (structure == ClassStructure.unspecifiedPrivate) {
-            builder.name = '_';
-          } else if (structure == ClassStructure.unspecifiedPublic) {
-            builder.body = cb.Block((cb.BlockBuilder builder) {
-              builder.addExpression(_invokeMethodExpression(
-                className: className,
-                methodName: '()',
-                arguments: <String, cb.Expression>{
-                  '${className.toLowerCase()}Handle': cb.refer('_handle'),
-                },
-                useHashTag: false,
-              ));
-            });
-          }
-        },
-      );
 }

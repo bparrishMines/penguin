@@ -42,11 +42,6 @@ class Class {
   @JsonKey(defaultValue: const <Method>[])
   final List<Method> methods;
 
-  /*
-  @JsonKey(defaultValue: const <Constructor>[])
-  final List<Constructor> constructors;
-  */
-
   @JsonKey(defaultValue: const <Field>[])
   final List<Field> fields;
 
@@ -85,28 +80,6 @@ class Method {
   factory Method.fromJson(Map json) => _$MethodFromJson(json);
 
   Map toJson() => _$MethodToJson(this);
-
-  @override
-  String toString() => toJson().toString();
-}
-
-@JsonSerializable()
-class Constructor {
-  Constructor({this.name, this.requiredParameters, this.optionalParameters})
-      : assert(!name.startsWith('_'));
-
-  @JsonKey(defaultValue: const <Parameter>[])
-  final List<Parameter> requiredParameters;
-
-  @JsonKey(defaultValue: const <Parameter>[])
-  final List<Parameter> optionalParameters;
-
-  @JsonKey(defaultValue: '')
-  final String name;
-
-  factory Constructor.fromJson(Map json) => _$ConstructorFromJson(json);
-
-  Map toJson() => _$ConstructorToJson(this);
 
   @override
   String toString() => toJson().toString();

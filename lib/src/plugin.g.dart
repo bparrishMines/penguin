@@ -154,40 +154,6 @@ const _$MethodTypeEnumMap = <MethodType, dynamic>{
   MethodType.setter: 'setter'
 };
 
-Constructor _$ConstructorFromJson(Map json) {
-  return $checkedNew('Constructor', json, () {
-    final val = Constructor(
-        name: $checkedConvert(json, 'name', (v) => v as String) ?? '',
-        requiredParameters: $checkedConvert(
-                json,
-                'required_parameters',
-                (v) => (v as List)
-                    ?.map(
-                        (e) => e == null ? null : Parameter.fromJson(e as Map))
-                    ?.toList()) ??
-            [],
-        optionalParameters: $checkedConvert(
-                json,
-                'optional_parameters',
-                (v) => (v as List)
-                    ?.map(
-                        (e) => e == null ? null : Parameter.fromJson(e as Map))
-                    ?.toList()) ??
-            []);
-    return val;
-  }, fieldKeyMap: const {
-    'requiredParameters': 'required_parameters',
-    'optionalParameters': 'optional_parameters'
-  });
-}
-
-Map<String, dynamic> _$ConstructorToJson(Constructor instance) =>
-    <String, dynamic>{
-      'required_parameters': instance.requiredParameters,
-      'optional_parameters': instance.optionalParameters,
-      'name': instance.name
-    };
-
 Parameter _$ParameterFromJson(Map json) {
   return $checkedNew('Parameter', json, () {
     $checkKeys(json,
