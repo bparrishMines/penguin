@@ -84,15 +84,14 @@ class FieldWriter extends Writer<Field, cb.Method> {
             type: cb.refer(field.type),
             className: className,
             methodName: field.name,
-            hasHandle: true,
+            hasHandle: !field.static,
           ).returned);
         });
       });
     } else {
-      final cb.Reference returnRef = cb.refer(
-        field.type,
-        theClass.details.file,
-      );
+      final cb.Reference returnRef = field.type == className
+          ? cb.refer(field.type)
+          : cb.refer(field.type, theClass.details.file);
       final String returnName = field.type.toLowerCase();
 
       return cb.Method((cb.MethodBuilder builder) {
@@ -102,14 +101,14 @@ class FieldWriter extends Writer<Field, cb.Method> {
         builder.body = cb.Block((cb.BlockBuilder builder) {
           builder.addExpression(
             cb
-                .refer('${field.type}$implSuffix')
+                .refer('_${field.type}$implSuffix')
                 .call(<cb.Expression>[]).assignFinal(returnName),
           );
 
           builder.addExpression(_invokeMethodExpression(
             type: returnRef,
             className: className,
-            methodName: field.type,
+            methodName: field.name,
             hasHandle: !field.static,
           ));
 
@@ -222,10 +221,9 @@ class MethodWriter extends Writer<Method, cb.Method> {
         });
       });
     } else {
-      final cb.Reference returnRef = cb.refer(
-        method.returns,
-        theClass.details.file,
-      );
+      final cb.Reference returnRef = method.returns == className
+          ? cb.refer(method.returns)
+          : cb.refer(method.returns, theClass.details.file);
       final String returnName = method.returns.toLowerCase();
 
       return cb.Method((cb.MethodBuilder builder) {
@@ -235,7 +233,7 @@ class MethodWriter extends Writer<Method, cb.Method> {
         builder.body = cb.Block((cb.BlockBuilder builder) {
           builder.addExpression(
             cb
-                .refer('${method.returns}$implSuffix')
+                .refer('_${method.returns}$implSuffix')
                 .call(<cb.Expression>[]).assignFinal(returnName),
           );
 
@@ -318,10 +316,29 @@ class ClassWriter extends Writer<Class, cb.Library> {
       for (Method method in theClass.methods) {
         final Class methodClass = _classFromString(method.returns);
         if (methodClass != null) {
+          final cb.Reference reference = method.returns == theClass.name
+              ? cb.refer(method.returns)
+              : cb.refer(method.returns, methodClass.details.file);
+
           builder.body.add(cb.Class((cb.ClassBuilder classBuilder) {
             classBuilder
-              ..name = '${method.returns}$_implSuffix'
-              ..extend = cb.refer(methodClass.name, methodClass.details.file);
+              ..name = '_${method.returns}$_implSuffix'
+              ..extend = reference;
+          }));
+        }
+      }
+
+      for (Field field in theClass.fields) {
+        final Class fieldClass = _classFromString(field.type);
+        if (fieldClass != null) {
+          final cb.Reference reference = field.type == theClass.name
+              ? cb.refer(field.type)
+              : cb.refer(field.type, fieldClass.details.file);
+
+          builder.body.add(cb.Class((cb.ClassBuilder classBuilder) {
+            classBuilder
+              ..name = '_${field.type}$_implSuffix'
+              ..extend = reference;
           }));
         }
       }
