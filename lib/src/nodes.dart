@@ -1,5 +1,5 @@
 import 'package:penguin/src/plugin.dart';
-import 'package:penguin/src/writer.dart';
+import 'package:penguin/src/writers.dart';
 
 class NodeStructure {
   NodeStructure(this.plugin) {

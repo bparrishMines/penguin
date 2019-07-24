@@ -12,4 +12,6 @@ class References {
     'visibleForTesting',
     'package:flutter/foundation.dart',
   );
+
+  static final channel = refer('Channel', 'channel.dart');
 }

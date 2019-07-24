@@ -5,7 +5,7 @@ import 'package:pubspec_parse/pubspec_parse.dart';
 import 'plugin.dart';
 import 'references.dart';
 import 'utils.dart';
-import 'writer.dart';
+import 'writers.dart';
 
 enum ConstructorType { none, noDefault, onlyDefault, withDefault }
 
@@ -142,14 +142,10 @@ class PluginCreator {
 
     classes['channel.dart'] = _channelAsString();
 
+    final ClassWriter writer = ClassWriter(plugin);
     for (Class theClass in plugin.classes) {
-      final cb.Class codeClass = ClassWriter(
-        plugin,
-        theClass.name,
-      ).write(theClass);
-
-      final String filename = '${camelCaseToSnakeCase(theClass.name)}.dart';
-      classes[filename] = '${codeClass.accept(_emitter)}';
+      final cb.Library codeClass = writer.write(theClass);
+      classes[theClass.details.file] = '${codeClass.accept(_emitter)}';
     }
 
     return classes;
