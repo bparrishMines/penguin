@@ -14,4 +14,13 @@ class References {
   );
 
   static final channel = refer('Channel', 'channel.dart');
+
+  static future(Reference type) {
+    return TypeReference((TypeReferenceBuilder builder) {
+      builder
+        ..symbol = 'Future'
+        ..types.add(type)
+        ..url = 'dart:async';
+    });
+  }
 }

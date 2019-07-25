@@ -73,12 +73,7 @@ class FieldWriter extends Writer<Field, cb.Method> {
       return cb.Method((cb.MethodBuilder builder) {
         addNameAndParams(builder);
 
-        builder.returns = cb.TypeReference((cb.TypeReferenceBuilder builder) {
-          builder
-            ..symbol = 'Future'
-            ..types.add(cb.refer(field.type))
-            ..url = 'dart:async';
-        });
+        builder.returns = References.future(cb.refer(field.type));
         builder.body = cb.Block((cb.BlockBuilder builder) {
           builder.addExpression(_invokeMethodExpression(
             type: cb.refer(field.type),
@@ -151,12 +146,7 @@ class MethodWriter extends Writer<Method, cb.Method> {
       return cb.Method((cb.MethodBuilder builder) {
         addNameAndParams(builder);
 
-        builder.returns = cb.TypeReference((cb.TypeReferenceBuilder builder) {
-          builder
-            ..symbol = 'Future'
-            ..types.add(cb.refer(method.returns))
-            ..url = 'dart:async';
-        });
+        builder.returns = References.future(cb.refer(method.returns));
         builder.body = cb.Block((cb.BlockBuilder builder) {
           builder.addExpression(_invokeMethodExpression(
             type: cb.refer(method.returns),
@@ -171,6 +161,7 @@ class MethodWriter extends Writer<Method, cb.Method> {
       final cb.Reference returnRef = method.returns == className
           ? cb.refer(method.returns)
           : cb.refer(method.returns, theClass.details.file);
+
       final String returnName = method.returns.toLowerCase();
 
       return cb.Method((cb.MethodBuilder builder) {
@@ -260,46 +251,50 @@ class ClassWriter extends Writer<Class, cb.Library> {
           ..methods.addAll(methodWriter.writeAll(theClass.methods));
       }));
 
-      final Set<String> addedClass = <String>{};
-
-      for (Method method in theClass.methods) {
-        final Class methodClass = _classFromString(method.returns);
-
-        if (methodClass != null && !addedClass.contains(methodClass.name)) {
-          addedClass.add(methodClass.name);
-
-          final cb.Reference reference = method.returns == theClass.name
-              ? cb.refer(method.returns)
-              : cb.refer(method.returns, methodClass.details.file);
-
-          builder.body.add(cb.Class((cb.ClassBuilder classBuilder) {
-            classBuilder
-              ..name = '_${method.returns}$_implSuffix'
-              ..extend = reference;
-          }));
-        }
-      }
-
-      for (Field field in theClass.fields) {
-        final Class fieldClass = _classFromString(field.type);
-
-        if (fieldClass != null && !addedClass.contains(fieldClass.name)) {
-          addedClass.add(fieldClass.name);
-
-          final cb.Reference reference = field.type == theClass.name
-              ? cb.refer(field.type)
-              : cb.refer(field.type, fieldClass.details.file);
-
-          builder.body.add(cb.Class((cb.ClassBuilder classBuilder) {
-            classBuilder
-              ..name = '_${field.type}$_implSuffix'
-              ..extend = reference;
-          }));
-        }
-      }
+      _addImplClasses(builder, theClass);
     });
 
     return library;
+  }
+
+  void _addImplClasses(cb.LibraryBuilder builder, Class theClass) {
+    final Set<String> addedClass = <String>{};
+
+    for (Method method in theClass.methods) {
+      final Class methodClass = _classFromString(method.returns);
+
+      if (methodClass != null && !addedClass.contains(methodClass.name)) {
+        addedClass.add(methodClass.name);
+
+        final cb.Reference reference = method.returns == theClass.name
+            ? cb.refer(method.returns)
+            : cb.refer(method.returns, methodClass.details.file);
+
+        builder.body.add(cb.Class((cb.ClassBuilder classBuilder) {
+          classBuilder
+            ..name = '_${method.returns}$_implSuffix'
+            ..extend = reference;
+        }));
+      }
+    }
+
+    for (Field field in theClass.fields) {
+      final Class fieldClass = _classFromString(field.type);
+
+      if (fieldClass != null && !addedClass.contains(fieldClass.name)) {
+        addedClass.add(fieldClass.name);
+
+        final cb.Reference reference = field.type == theClass.name
+            ? cb.refer(field.type)
+            : cb.refer(field.type, fieldClass.details.file);
+
+        builder.body.add(cb.Class((cb.ClassBuilder classBuilder) {
+          classBuilder
+            ..name = '_${field.type}$_implSuffix'
+            ..extend = reference;
+        }));
+      }
+    }
   }
 
   static final cb.Field _handle = cb.Field((cb.FieldBuilder builder) {
