@@ -1,7 +1,6 @@
 import 'package:code_builder/code_builder.dart' as cb;
 
 import 'plugin.dart';
-import 'plugin_creator.dart';
 import 'references.dart';
 
 abstract class Writer<T, K> {
@@ -44,7 +43,7 @@ abstract class Writer<T, K> {
         cb.literalMap(arguments, cb.refer('String'), cb.refer('dynamic'))
       ],
       <String, cb.Expression>{},
-      <cb.Reference>[type],
+      <cb.Reference>[type ?? cb.refer('void')],
     );
   }
 }
@@ -101,7 +100,6 @@ class FieldWriter extends Writer<Field, cb.Method> {
           );
 
           builder.addExpression(_invokeMethodExpression(
-            type: returnRef,
             className: className,
             methodName: field.name,
             hasHandle: !field.isStatic,
@@ -176,11 +174,10 @@ class MethodWriter extends Writer<Method, cb.Method> {
           );
 
           builder.addExpression(_invokeMethodExpression(
-            type: returnRef,
             className: className,
             methodName: method.name,
             hasHandle: !method.isStatic,
-            arguments: _mappedParams(method),
+            arguments: _mappedParams(method, returnName),
           ));
 
           builder.addExpression(cb.refer(returnName).returned);
@@ -189,7 +186,7 @@ class MethodWriter extends Writer<Method, cb.Method> {
     }
   }
 
-  Map<String, cb.Expression> _mappedParams(Method method) {
+  Map<String, cb.Expression> _mappedParams(Method method, [String returnName]) {
     final List<Parameter> allParameters =
         method.requiredParameters + method.optionalParameters;
 
@@ -198,6 +195,71 @@ class MethodWriter extends Writer<Method, cb.Method> {
     for (Parameter parameter in allParameters) {
       paramExpressions[parameter.name] = cb.refer(parameter.name);
     }
+
+    if (returnName != null) {
+      paramExpressions['${returnName}Handle'] =
+          cb.refer(returnName).property('_handle');
+    }
+
+    return paramExpressions;
+  }
+}
+
+class ConstructorWriter extends Writer<Constructor, cb.Constructor> {
+  ConstructorWriter(Plugin plugin, this.className)
+      : assert(className != null),
+        super(plugin) {
+    _paramWriter = ParameterWriter(plugin);
+  }
+
+  final String className;
+  ParameterWriter _paramWriter;
+
+  @override
+  cb.Constructor write(Constructor constructor) {
+    return cb.Constructor((cb.ConstructorBuilder builder) {
+      builder
+        ..name = constructor.name
+        ..requiredParameters.addAll(
+          _paramWriter.writeAll(constructor.requiredParameters),
+        )
+        ..optionalParameters.addAll(
+          _paramWriter.writeAll(constructor.optionalParameters),
+        )
+        ..body = cb.Block((cb.BlockBuilder builder) {
+          builder.addExpression(_invokeMethodExpression(
+            className: className,
+            methodName: _getMethodCallMethod(constructor),
+            arguments: _mappedParams(constructor),
+            useHashTag: false,
+          ));
+        });
+    });
+  }
+
+  String _getMethodCallMethod(Constructor constructor) {
+    final List<Parameter> allParameters =
+        constructor.requiredParameters + constructor.optionalParameters;
+
+    final Iterable<String> parameterTypes = allParameters.map<String>(
+      (Parameter parameter) => parameter.type,
+    );
+
+    return '(${parameterTypes.join(',')})';
+  }
+
+  Map<String, cb.Expression> _mappedParams(Constructor constructor) {
+    final List<Parameter> allParameters =
+        constructor.requiredParameters + constructor.optionalParameters;
+
+    final Map<String, cb.Expression> paramExpressions =
+        <String, cb.Expression>{};
+    for (Parameter parameter in allParameters) {
+      paramExpressions[parameter.name] = cb.refer(parameter.name);
+    }
+
+    final String handleName = className.toLowerCase();
+    paramExpressions['${handleName}Handle'] = cb.refer('_handle');
 
     return paramExpressions;
   }
@@ -241,11 +303,17 @@ class ClassWriter extends Writer<Class, cb.Library> {
       implSuffix: _implSuffix,
     );
 
+    final ConstructorWriter constructWriter = ConstructorWriter(
+      plugin,
+      theClass.name,
+    );
+
     final cb.Library library = cb.Library((cb.LibraryBuilder builder) {
       builder.body.add(cb.Class((cb.ClassBuilder classBuilder) {
         classBuilder
           ..name = theClass.name
-          ..abstract = theClass.details.constructorType == ConstructorType.none
+          ..abstract = !theClass.details.hasConstructor
+          ..constructors.addAll(constructWriter.writeAll(theClass.constructors))
           ..fields.add(_handle)
           ..methods.addAll(fieldWriter.writeAll(theClass.fields))
           ..methods.addAll(methodWriter.writeAll(theClass.methods));

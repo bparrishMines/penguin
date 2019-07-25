@@ -10,13 +10,14 @@ import 'writers.dart';
 enum ConstructorType { none, noDefault, onlyDefault, withDefault }
 
 class ClassDetails {
-  ClassDetails(this.constructorType, this.isReferenced, this.file)
-      : assert(constructorType != null),
+  ClassDetails(this.hasConstructor, this.isReferenced, this.file)
+      : assert(hasConstructor != null),
         assert(isReferenced != null),
         assert(file != null);
 
-  /// Enum detailing what constructors the class has
-  final ConstructorType constructorType;
+  ///// Enum detailing what constructors the class has
+  //final ConstructorType constructorType;
+  final bool hasConstructor;
 
   /// Referenced by another class method or
   final bool isReferenced;
@@ -57,9 +58,8 @@ class PluginCreator {
     }
 
     for (Class theClass in plugin.classes) {
-      // TODO correctly set constructor type once constructor is reimplemented
       theClass.details = ClassDetails(
-        ConstructorType.none,
+        theClass.constructors.isNotEmpty,
         referencedClasses.contains(theClass.name),
         '${camelCaseToSnakeCase(theClass.name)}.dart',
       );
