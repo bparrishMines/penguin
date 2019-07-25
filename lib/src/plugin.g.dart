@@ -60,6 +60,13 @@ Class _$ClassFromJson(Map json) {
                 (v) => (v as List)
                     ?.map((e) => e == null ? null : Field.fromJson(e as Map))
                     ?.toList()) ??
+            [],
+        constructors: $checkedConvert(
+                json,
+                'constructors',
+                (v) => (v as List)
+                    ?.map((e) => e == null ? null : Constructor.fromJson(e as Map))
+                    ?.toList()) ??
             []);
     return val;
   }, fieldKeyMap: const {'javaPackage': 'java_package'});
@@ -78,6 +85,7 @@ Map<String, dynamic> _$ClassToJson(Class instance) {
   writeNotNull('java_package', instance.javaPackage);
   val['methods'] = instance.methods;
   val['fields'] = instance.fields;
+  val['constructors'] = instance.constructors;
   return val;
 }
 
@@ -208,3 +216,37 @@ Map<String, dynamic> _$FieldToJson(Field instance) {
   val['type'] = instance.type;
   return val;
 }
+
+Constructor _$ConstructorFromJson(Map json) {
+  return $checkedNew('Constructor', json, () {
+    final val = Constructor(
+        name: $checkedConvert(json, 'name', (v) => v as String) ?? '',
+        requiredParameters: $checkedConvert(
+                json,
+                'required_parameters',
+                (v) => (v as List)
+                    ?.map(
+                        (e) => e == null ? null : Parameter.fromJson(e as Map))
+                    ?.toList()) ??
+            [],
+        optionalParameters: $checkedConvert(
+                json,
+                'optional_parameters',
+                (v) => (v as List)
+                    ?.map(
+                        (e) => e == null ? null : Parameter.fromJson(e as Map))
+                    ?.toList()) ??
+            []);
+    return val;
+  }, fieldKeyMap: const {
+    'requiredParameters': 'required_parameters',
+    'optionalParameters': 'optional_parameters'
+  });
+}
+
+Map<String, dynamic> _$ConstructorToJson(Constructor instance) =>
+    <String, dynamic>{
+      'name': instance.name,
+      'required_parameters': instance.requiredParameters,
+      'optional_parameters': instance.optionalParameters
+    };

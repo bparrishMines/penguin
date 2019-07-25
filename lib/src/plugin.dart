@@ -33,7 +33,7 @@ class Plugin {
 
 @JsonSerializable()
 class Class {
-  Class(this.name, this.javaPackage, {this.methods, this.fields});
+  Class(this.name, this.javaPackage, {this.methods, this.fields, this.constructors,});
 
   @JsonKey(required: true, disallowNullValue: true)
   final String name;
@@ -46,6 +46,9 @@ class Class {
 
   @JsonKey(defaultValue: const <Field>[])
   final List<Field> fields;
+
+  @JsonKey(defaultValue: const <Constructor>[])
+  final List<Constructor> constructors;
 
   ClassDetails _details;
 
@@ -134,6 +137,27 @@ class Field {
   factory Field.fromJson(Map json) => _$FieldFromJson(json);
 
   Map toJson() => _$FieldToJson(this);
+
+  @override
+  String toString() => toJson().toString();
+}
+
+@JsonSerializable()
+class Constructor {
+  Constructor({this.name, this.requiredParameters, this.optionalParameters});
+
+  @JsonKey(defaultValue: '')
+  final String name;
+
+  @JsonKey(defaultValue: const <Parameter>[])
+  final List<Parameter> requiredParameters;
+
+  @JsonKey(defaultValue: const <Parameter>[])
+  final List<Parameter> optionalParameters;
+
+  factory Constructor.fromJson(Map json) => _$ConstructorFromJson(json);
+
+  Map toJson() => _$ConstructorToJson(this);
 
   @override
   String toString() => toJson().toString();
