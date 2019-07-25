@@ -32,7 +32,7 @@ abstract class Writer<T, K> {
     if (hasHandle) {
       Map<String, cb.Expression> newMap =
           Map<String, cb.Expression>.from(arguments);
-      newMap['handle'] = cb.refer('_handle');
+      newMap['handle'] = cb.refer('handle');
       arguments = newMap;
     }
 
@@ -198,7 +198,7 @@ class MethodWriter extends Writer<Method, cb.Method> {
 
     if (returnName != null) {
       paramExpressions['${returnName}Handle'] =
-          cb.refer(returnName).property('_handle');
+          cb.refer(returnName).property('handle');
     }
 
     return paramExpressions;
@@ -259,7 +259,7 @@ class ConstructorWriter extends Writer<Constructor, cb.Constructor> {
     }
 
     final String handleName = className.toLowerCase();
-    paramExpressions['${handleName}Handle'] = cb.refer('_handle');
+    paramExpressions['${handleName}Handle'] = cb.refer('handle');
 
     return paramExpressions;
   }
@@ -366,7 +366,7 @@ class ClassWriter extends Writer<Class, cb.Library> {
   }
 
   static final cb.Field _handle = cb.Field((cb.FieldBuilder builder) {
-    builder.name = '_handle';
+    builder.name = 'handle';
     builder.modifier = cb.FieldModifier.final$;
     builder.type = cb.Reference('int');
     builder.assignment = References.channel.property('nextHandle++').code;
