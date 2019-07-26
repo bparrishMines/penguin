@@ -2,30 +2,28 @@ package writers;
 
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
+import com.squareup.javapoet.ParameterSpec;
 import objects.Plugin;
+import objects.PluginClass;
 import objects.PluginParameter;
 
+import javax.lang.model.element.Modifier;
 import java.util.List;
 
-public class ParameterWriter extends Writer<List<PluginParameter>, CodeBlock> {
+public class ParameterWriter extends Writer<PluginParameter, ParameterSpec> {
   ParameterWriter(Plugin plugin) {
     super(plugin);
   }
 
   @Override
-  public CodeBlock write(List<PluginParameter> parameters) {
-    final CodeBlock.Builder builder = CodeBlock.builder();
+  public ParameterSpec write(PluginParameter parameter) {
+    final PluginClass pluginClass = classFromString(parameter.type);
 
-    for (PluginParameter parameter : parameters) {
-      final ClassName className = ClassName.bestGuess(parameter.type);
-      builder.add("final $T $N = call.argument($S)", className, parameter.name, parameter.name);
+    if (pluginClass == null) {
+      final ClassName paramClassName = ClassName.bestGuess(parameter.type);
+      return ParameterSpec.builder(paramClassName, parameter.name, Modifier.FINAL).build();
+    } else {
+      return ParameterSpec.builder(pluginClass.details.wrappedClassName, parameter.name, Modifier.FINAL).build();
     }
-
-    return builder.build();
-  }
-
-  @Override
-  public List<CodeBlock> writeAll(List<List<PluginParameter>> objects) {
-    throw new UnsupportedOperationException();
   }
 }

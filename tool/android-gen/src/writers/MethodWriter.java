@@ -9,13 +9,11 @@ import javax.lang.model.element.Modifier;
 public class MethodWriter extends Writer<Object, MethodSpec> {
   private final ClassName mainPluginClassName;
   private final PluginClass pluginClass;
-  private final ParameterWriter parameterWriter;
 
   MethodWriter(Plugin plugin, PluginClass pluginClass, ClassName mainPluginClassName) {
     super(plugin);
     this.mainPluginClassName = mainPluginClassName;
     this.pluginClass = pluginClass;
-    this.parameterWriter = new ParameterWriter(plugin);
   }
 
   @Override
@@ -26,6 +24,13 @@ public class MethodWriter extends Writer<Object, MethodSpec> {
         .addModifiers(Modifier.PRIVATE, Modifier.FINAL)
         .addParameter(PluginClassNames.METHOD_CALL.name, "call", Modifier.FINAL)
         .addParameter(PluginClassNames.RESULT.name, "result", Modifier.FINAL);
+
+    if (fieldOrMethod instanceof PluginMethod) {
+      final PluginMethod method = (PluginMethod) fieldOrMethod;
+      if (method.getAllParameterNames().size() > 0) {
+        builder.addStatement(extractParametersFromMethodCall(method.getAllParameters()));
+      }
+    }
 
     final Boolean isStatic = Plugin.isStatic(fieldOrMethod);
     final String name = Plugin.name(fieldOrMethod);

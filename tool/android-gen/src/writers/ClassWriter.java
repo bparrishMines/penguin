@@ -31,7 +31,9 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
     }
 
     final MethodWriter methodWriter = new MethodWriter(plugin, aClass, mainPluginClassName);
+    final ConstructorWriter constructorWriter = new ConstructorWriter(plugin, aClass);
     classBuilder.addMethod(buildOnMethodCall(aClass))
+        .addMethods(constructorWriter.writeAll(aClass.constructors))
         .addMethods(methodWriter.writeAll(aClass.getFieldsAndMethods()));
 
     if (aClass.details.isReferenced) {
@@ -93,7 +95,7 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
       builder.addCode("case \"$N(" + allParameterTypesString + ")\":\n", aClass.name)
           .addCode(CodeBlock.builder().indent().build())
           .addStatement("final $T handle = call.argument($S)", Integer.class, aClass.details.wrappedObjectName + "Handle")
-          .addStatement(writer.write(constructor.getAllParameters()))
+          .addStatement(extractParametersFromMethodCall(constructor.getAllParameters()))
           .addStatement("final $T handler = $T(handle, " + allParameterNamesString + ")", aClass.details.wrapperClassName, aClass.details.wrapperClassName)
           .addStatement("$T.addHandler(handle, handler)", mainPluginClassName)
           .addStatement("break")
