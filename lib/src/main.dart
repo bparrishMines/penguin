@@ -161,5 +161,5 @@ void _createJavaFiles(String yaml) {
   );
 
   //print(result.stdout);
-  //print(result.stderr);
+  print(result.stderr);
 }
