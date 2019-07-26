@@ -2,19 +2,13 @@ package writers;
 
 import com.squareup.javapoet.*;
 import objects.*;
-
 import javax.lang.model.element.Modifier;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ClassWriter extends Writer<PluginClass, JavaFile> {
-  private final Plugin plugin;
-  private final String packageName;
   private final ClassName mainPluginClassName;
 
-  public ClassWriter(Plugin plugin, String packageName, ClassName mainPluginClassName) {
-    this.plugin = plugin;
-    this.packageName = packageName;
+  public ClassWriter(Plugin plugin, ClassName mainPluginClassName) {
+    super(plugin);
     this.mainPluginClassName = mainPluginClassName;
   }
 
@@ -36,7 +30,9 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
       }
     }
 
-    classBuilder.addMethod(buildOnMethodCall(aClass));
+    final MethodWriter methodWriter = new MethodWriter(plugin, aClass, mainPluginClassName);
+    classBuilder.addMethod(buildOnMethodCall(aClass))
+        .addMethods(methodWriter.writeAll(aClass.getFieldsAndMethods()));
 
     if (aClass.details.isReferenced) {
       classBuilder.addMethod(MethodSpec.constructorBuilder()
@@ -88,7 +84,7 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
         .addParameter(PluginClassNames.RESULT.name, "result")
         .beginControlFlow("switch(call.method)");
 
-    final ParameterWriter writer = new ParameterWriter();
+    final ParameterWriter writer = new ParameterWriter(plugin);
     for (PluginConstructor constructor : aClass.constructors) {
 
       final String allParameterTypesString = String.join(",", constructor.getAllParameterTypes());

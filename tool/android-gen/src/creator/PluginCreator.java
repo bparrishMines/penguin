@@ -54,7 +54,7 @@ public class PluginCreator {
   }
 
   public Map<String, String> filesAndStrings() {
-    final ClassWriter writer = new ClassWriter(plugin, packageName, mainPluginClassName);
+    final ClassWriter writer = new ClassWriter(plugin, mainPluginClassName);
     final List<JavaFile> files = writer.writeAll(plugin.classes);
 
     final Map<String, String> filesAndStrings = new HashMap<>();

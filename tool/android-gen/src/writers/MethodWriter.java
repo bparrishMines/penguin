@@ -2,81 +2,65 @@ package writers;
 
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.MethodSpec;
-import objects.Plugin;
-import objects.PluginClass;
-import objects.PluginMethod;
-import objects.PluginParameter;
+import objects.*;
 
 import javax.lang.model.element.Modifier;
-import java.util.ArrayList;
-import java.util.List;
 
-public class MethodWriter extends Writer<PluginMethod, MethodSpec> {
-  private final Plugin plugin;
-  private final String wrappedObjectName;
-  private final String packageName;
+public class MethodWriter extends Writer<Object, MethodSpec> {
   private final ClassName mainPluginClassName;
-  private final String classPrefix;
+  private final PluginClass pluginClass;
+  private final ParameterWriter parameterWriter;
 
-  MethodWriter(
-      Plugin plugin,
-      String wrappedObjectName,
-      String packageName,
-      ClassName mainPluginClassName,
-      String classPrefix
-  ) {
-    this.plugin = plugin;
-    this.wrappedObjectName = wrappedObjectName;
-    this.packageName = packageName;
+  MethodWriter(Plugin plugin, PluginClass pluginClass, ClassName mainPluginClassName) {
+    super(plugin);
     this.mainPluginClassName = mainPluginClassName;
-    this.classPrefix = classPrefix;
+    this.pluginClass = pluginClass;
+    this.parameterWriter = new ParameterWriter(plugin);
   }
 
   @Override
-  public MethodSpec write(PluginMethod method) {
-    final MethodSpec.Builder builder = MethodSpec.methodBuilder(method.name)
+  public MethodSpec write(Object fieldOrMethod) {
+    assert fieldOrMethod instanceof PluginField || fieldOrMethod instanceof PluginMethod;
+
+    final MethodSpec.Builder builder = MethodSpec.methodBuilder(Plugin.name(fieldOrMethod))
         .addModifiers(Modifier.PRIVATE, Modifier.FINAL)
         .addParameter(PluginClassNames.METHOD_CALL.name, "call", Modifier.FINAL)
         .addParameter(PluginClassNames.RESULT.name, "result", Modifier.FINAL);
 
-    final ParameterWriter parameterWriter = new ParameterWriter();
+    final Boolean isStatic = Plugin.isStatic(fieldOrMethod);
+    final String name = Plugin.name(fieldOrMethod);
+    final String returnType = Plugin.returnType(fieldOrMethod);
 
-    final List<PluginParameter> allParameters = new ArrayList<>();
-    allParameters.addAll(method.required_parameters);
-    allParameters.addAll(method.optional_parameters);
+    if (isStatic) builder.addModifiers(Modifier.STATIC);
 
-    final List<String> allParameterNames = new ArrayList<>();
-    for (PluginParameter parameter : allParameters) {
-      //builder.addStatement(parameterWriter.write(parameter));
-      allParameterNames.add(parameter.name);
+    final String callString;
+    if (fieldOrMethod instanceof PluginMethod) {
+      final PluginMethod method = (PluginMethod) fieldOrMethod;
+      final String allParameterNamesString = String.join(", ", method.getAllParameterNames());
+      callString = "$N.$N(" + allParameterNamesString + ")";
+    } else {
+      callString = "$N.$N";
     }
 
-    final String allParametersString = String.join(", ", allParameterNames);
-    final String methodCallString = "$N.$N(" + allParametersString + ")";
+    final String callerName = isStatic ? pluginClass.details.wrappedClassName.simpleName() : pluginClass.details.wrappedObjectName;
 
-    /*
-    if (method.returns.equals("void")) {
-      builder.addStatement(methodCallString, wrappedObjectName, method.name);
+    if (returnType.equals("void") || returnType.equals("Object")) {
+      builder.addStatement(callString, callerName, name);
       builder.addStatement("result.success(null)");
     } else {
-      final ClassStructure structure = ClassStructure.tryGetClassStructure(plugin, method.returns);
+      final PluginClass returnClass = classFromString(returnType);
 
-      if (structure == null) {
-        final ClassName returnType = ClassName.bestGuess(method.returns);
-        builder.addStatement("final $T value = " + methodCallString, returnType, wrappedObjectName, method.name)
+      if (returnClass == null) {
+        final ClassName returnClassName = ClassName.bestGuess(returnType);
+        builder.addStatement("final $T value = " + callString, returnClassName, callerName, name)
             .addStatement("result.success(value)");
       } else {
-        final ClassName handlerName = ClassName.get(packageName,  classPrefix + method.returns);
-        final PluginClass pluginClass = ClassStructure.classFromString(plugin, method.returns);
-        final ClassName wrappedName = ClassName.get(pluginClass.java_package, pluginClass.name);
-
-        builder.addStatement("final $T handle = call.argument($S)", Integer.class, method.returns.toLowerCase() + "Handle")
-            .addStatement("final $T value = " + methodCallString, wrappedName, wrappedObjectName, method.name)
-            .addStatement("final $T handler = $T(handle, value)", handlerName, handlerName)
+        builder.addStatement("final $T handle = call.argument($S)", Integer.class, returnClass.details.wrappedObjectName + "Handle")
+            .addStatement("final $T value = " + callString, returnClass.details.wrappedClassName, callerName, name)
+            .addStatement("final $T handler = $T(handle, value)", returnClass.details.wrapperClassName, returnClass.details.wrapperClassName)
             .addStatement("$T.addHandler(handle, handler)", mainPluginClassName);
       }
     }
-    */
 
     return builder.build();
   }
