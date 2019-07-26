@@ -7,16 +7,12 @@ import 'references.dart';
 import 'utils.dart';
 import 'writers.dart';
 
-enum ConstructorType { none, noDefault, onlyDefault, withDefault }
-
 class ClassDetails {
   ClassDetails(this.hasConstructor, this.isReferenced, this.file)
       : assert(hasConstructor != null),
         assert(isReferenced != null),
         assert(file != null);
 
-  ///// Enum detailing what constructors the class has
-  //final ConstructorType constructorType;
   final bool hasConstructor;
 
   /// Referenced by another class method or

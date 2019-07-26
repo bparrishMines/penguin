@@ -147,6 +147,7 @@ void _createJavaFiles(String yaml) {
     'int': 'Integer',
     'bool': 'Boolean',
     'double': 'Double',
+    'constructor:': '!objects.PluginConstructor',
   };
 
   for (MapEntry<String, String> entry in replacements.entries) {
@@ -160,6 +161,6 @@ void _createJavaFiles(String yaml) {
     <String>[yaml],
   );
 
-  //print(result.stdout);
+  print(result.stdout);
   print(result.stderr);
 }

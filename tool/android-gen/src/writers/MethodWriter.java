@@ -2,7 +2,6 @@ package writers;
 
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.MethodSpec;
-import creator.ClassStructure;
 import objects.Plugin;
 import objects.PluginClass;
 import objects.PluginMethod;
@@ -48,13 +47,14 @@ public class MethodWriter extends Writer<PluginMethod, MethodSpec> {
 
     final List<String> allParameterNames = new ArrayList<>();
     for (PluginParameter parameter : allParameters) {
-      builder.addStatement(parameterWriter.write(parameter));
+      //builder.addStatement(parameterWriter.write(parameter));
       allParameterNames.add(parameter.name);
     }
 
     final String allParametersString = String.join(", ", allParameterNames);
     final String methodCallString = "$N.$N(" + allParametersString + ")";
 
+    /*
     if (method.returns.equals("void")) {
       builder.addStatement(methodCallString, wrappedObjectName, method.name);
       builder.addStatement("result.success(null)");
@@ -76,6 +76,7 @@ public class MethodWriter extends Writer<PluginMethod, MethodSpec> {
             .addStatement("$T.addHandler(handle, handler)", mainPluginClassName);
       }
     }
+    */
 
     return builder.build();
   }

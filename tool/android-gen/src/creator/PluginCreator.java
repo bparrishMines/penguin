@@ -1,18 +1,13 @@
 package creator;
 
 import com.squareup.javapoet.*;
-import objects.Plugin;
-import objects.PluginClass;
-import objects.PluginField;
+import objects.*;
+import utils.StringUtils;
 import writers.ClassWriter;
 import writers.PluginClassNames;
 
 import javax.lang.model.element.Modifier;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.*;
 
 public class PluginCreator {
   static private final String CLASS_PREFIX = "Flutter";
@@ -21,26 +16,41 @@ public class PluginCreator {
   private final String packageName;
   private final ClassName mainPluginClassName;
 
-  private static String snakeCaseToCamelCase(String str) {
-    final Matcher matcher = Pattern.compile("([a-z]+)_*").matcher(str);
-
-    final StringBuilder buffer = new StringBuilder();
-    while (matcher.find()) {
-      final String match = matcher.group(1);
-      buffer.append(match.substring(0, 1).toUpperCase());
-      buffer.append(match.substring(1));
-    }
-
-    return buffer.toString();
-  }
-
   public PluginCreator(Plugin plugin) {
     this.plugin = plugin;
 
     final String packageFromChannel = plugin.channel.replace('/', '.');
     this.packageName = packageFromChannel + '.' + plugin.name.replace("_", "");
 
-    this.mainPluginClassName = ClassName.get(packageName, snakeCaseToCamelCase(plugin.name));
+    this.mainPluginClassName = ClassName.get(packageName, StringUtils.snakeCaseToCamelCase(plugin.name));
+
+    setupClassDetails();
+  }
+
+  private void setupClassDetails() {
+    final Set<String> allClassNames = new HashSet<>();
+    for (PluginClass theClass : plugin.classes) {
+      allClassNames.add(theClass.name);
+    }
+
+    final Set<String> referencedClasses = new HashSet<>();
+    for (PluginClass theClass : plugin.classes) {
+      for (Object fieldOrMethod : theClass.getFieldsAndMethods()) {
+        final Boolean isStatic = Plugin.isStatic(fieldOrMethod);
+        final String returnType = Plugin.returnType(fieldOrMethod);
+        if ((isStatic || !theClass.name.equals(returnType)) && allClassNames.contains(returnType)) {
+          referencedClasses.add(returnType);
+        }
+      }
+    }
+
+    for (PluginClass theClass : plugin.classes) {
+      theClass.details = new ClassDetails(
+          !theClass.constructors.isEmpty(),
+          referencedClasses.contains(theClass.name),
+          ClassName.get(theClass.java_package, theClass.name),
+          ClassName.get(packageName, CLASS_PREFIX + theClass.name), theClass.name.toLowerCase());
+    }
   }
 
   public Map<String, String> filesAndStrings() {
@@ -49,18 +59,16 @@ public class PluginCreator {
 
     final Map<String, String> filesAndStrings = new HashMap<>();
     for (int i = 0; i < files.size(); i++) {
-      final String filename = CLASS_PREFIX + plugin.classes.get(i).name + ".java";
+      final String filename = plugin.classes.get(i).details.wrapperClassName.simpleName() + ".java";
       filesAndStrings.put(filename, files.get(i).toString());
     }
 
-    filesAndStrings.put(snakeCaseToCamelCase(plugin.name) + ".java", pluginFileString());
+    filesAndStrings.put(StringUtils.snakeCaseToCamelCase(plugin.name) + ".java", pluginFileString());
 
     return filesAndStrings;
   }
 
   private String pluginFileString() {
-    //final String className = snakeCaseToCamelCase(plugin.name);
-
     final ClassName sparseArray = ClassName.get("android.util", "SparseArray");
     final ParameterizedTypeName handlerArray = ParameterizedTypeName.get(sparseArray, PluginClassNames.METHOD_CALL_HANDLER.name);
 
@@ -120,28 +128,21 @@ public class PluginCreator {
         .beginControlFlow("switch(call.method)");
 
     for (PluginClass aClass : plugin.classes) {
-      final ClassStructure structure = ClassStructure.structureFromClass(plugin, aClass);
-      final ClassName wrapperName = ClassName.get(packageName, CLASS_PREFIX + aClass.name);
+      for (PluginConstructor constructor : aClass.constructors) {
+        final String allParametersString = String.join(",", constructor.getAllParameterTypes());
 
-      switch(structure) {
-        case UNSPECIFIED_PRIVATE:
-          break;
-        case UNSPECIFIED_PUBLIC:
-          builder.addCode("case \"$N()\":\n", aClass.name);
-          builder.addCode(CodeBlock.builder().indent().build());
-          builder.addStatement("final $T handle = call.argument($S)", Integer.class, aClass.name.toLowerCase() + "Handle");
-          builder.addStatement("final $T handler = new $T(handle)", wrapperName, wrapperName);
-          builder.addStatement("$N.addHandler(handle, handler)", className);
-          builder.addStatement("break");
-          builder.addCode(CodeBlock.builder().unindent().build());
-          break;
+        builder.addCode("case \"$N(" + allParametersString + ")\":\n", aClass.name)
+            .addCode(CodeBlock.builder().indent().build())
+            .addStatement("$T.onStaticMethodCall(call, result)", aClass.details.wrapperClassName)
+            .addStatement("break")
+            .addCode(CodeBlock.builder().unindent().build());
       }
 
-      for (PluginField field : aClass.fields) {
-        if (field.is_static) {
-          builder.addCode("case \"$N#$N\":\n", aClass.name, field.name)
+      for (Object fieldOrMethod : aClass.getFieldsAndMethods()) {
+        if (Plugin.isStatic(fieldOrMethod)) {
+          builder.addCode("case \"$N#$N\":\n", aClass.name, Plugin.name(fieldOrMethod))
               .addCode(CodeBlock.builder().indent().build())
-              .addStatement("$T.onStaticMethodCall(call, result)", wrapperName)
+              .addStatement("$T.onStaticMethodCall(call, result)", aClass.details.wrapperClassName)
               .addStatement("break")
               .addCode(CodeBlock.builder().unindent().build());
         }

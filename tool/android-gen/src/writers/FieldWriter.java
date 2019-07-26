@@ -2,7 +2,6 @@ package writers;
 
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.MethodSpec;
-import creator.ClassStructure;
 import objects.Plugin;
 import objects.PluginClass;
 import objects.PluginField;
@@ -29,6 +28,7 @@ public class FieldWriter extends Writer<PluginField, MethodSpec> {
     final MethodSpec.Builder builder = MethodSpec.methodBuilder(field.name);
     if (field.is_static) builder.addModifiers(Modifier.STATIC);
 
+    /*
     final ClassStructure structure = ClassStructure.tryGetClassStructure(plugin, field.type);
 
     if (structure == null) {
@@ -45,6 +45,7 @@ public class FieldWriter extends Writer<PluginField, MethodSpec> {
           .addStatement("final $T handler = $T(handle, value)", handlerName, handlerName)
           .addStatement("$T.addHandler(handle, handler)", mainPluginClassName);
     }
+    */
 
     return builder.build();
   }

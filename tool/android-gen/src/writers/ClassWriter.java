@@ -1,13 +1,11 @@
 package writers;
 
 import com.squareup.javapoet.*;
-import creator.ClassStructure;
-import objects.Plugin;
-import objects.PluginClass;
-import objects.PluginField;
-import objects.PluginMethod;
+import objects.*;
 
 import javax.lang.model.element.Modifier;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClassWriter extends Writer<PluginClass, JavaFile> {
   private final Plugin plugin;
@@ -24,6 +22,40 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
 
   @Override
   public JavaFile write(PluginClass aClass) {
+    final TypeSpec.Builder classBuilder = TypeSpec.classBuilder(classPrefix + aClass.name)
+        .addModifiers(Modifier.FINAL)
+        .addField(Integer.class, "handle", Modifier.PRIVATE, Modifier.FINAL)
+        .addField(aClass.details.wrappedClassName, aClass.details.wrappedObjectName, Modifier.FINAL, Modifier.PRIVATE);
+
+    if (aClass.details.hasConstructor) {
+      classBuilder.addMethod(buildOnStaticMethodCall(aClass));
+    } else {
+      for (PluginField field : aClass.fields) {
+        if (field.is_static) {
+          classBuilder.addMethod(buildOnStaticMethodCall(aClass));
+          break;
+        }
+      }
+    }
+
+    classBuilder.addMethod(buildOnMethodCall(aClass));
+
+    if (aClass.details.isReferenced) {
+      classBuilder.addMethod(MethodSpec.constructorBuilder()
+          .addParameter(Integer.class, "handle")
+          .addParameter(aClass.details.wrappedClassName, aClass.details.wrappedObjectName)
+          .addStatement("this.handle = handle")
+          .addStatement("this.$N = $N", aClass.details.wrappedObjectName, aClass.details.wrappedObjectName)
+          .build());
+    }
+
+    final JavaFile.Builder builder = JavaFile.builder(
+        aClass.details.wrapperClassName.packageName(),
+        classBuilder.build());
+
+    return builder.build();
+
+    /*
     final ClassName wrappedName = ClassName.get(aClass.java_package, aClass.name);
 
     final String wrappedObjectName = aClass.name.toLowerCase();
@@ -68,6 +100,7 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
     final JavaFile.Builder builder = JavaFile.builder(packageName, classBuilder.build());
 
     return builder.build();
+    */
   }
 
   private MethodSpec buildOnMethodCall(PluginClass aClass) {
@@ -78,22 +111,14 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
         .addParameter(PluginClassNames.RESULT.name, "result")
         .beginControlFlow("switch(call.method)");
 
-    for (PluginField field : aClass.fields) {
-      if (!field.is_static) {
-        builder.addCode("case \"$N#$N\":\n", aClass.name, field.name)
+    for (Object fieldOrMethod : aClass.getFieldsAndMethods()) {
+      if (!Plugin.isStatic(fieldOrMethod)) {
+        builder.addCode("case \"$N#$N\":\n", aClass.name, Plugin.name(fieldOrMethod))
             .addCode(CodeBlock.builder().indent().build())
-            .addStatement("$N(call, result)", field.name)
+            .addStatement("$N(call, result)", Plugin.name(fieldOrMethod))
             .addStatement("break")
             .addCode(CodeBlock.builder().unindent().build());
       }
-    }
-
-    for (PluginMethod method : aClass.methods) {
-      builder.addCode("case \"$N#$N\":\n", aClass.name, method.name)
-          .addCode(CodeBlock.builder().indent().build())
-          .addStatement("$N(call, result)", method.name)
-          .addStatement("break")
-          .addCode(CodeBlock.builder().unindent().build());
     }
 
     builder.addCode("default:\n")
@@ -112,11 +137,30 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
         .addParameter(PluginClassNames.RESULT.name, "result")
         .beginControlFlow("switch(call.method)");
 
-    for (PluginField field : aClass.fields) {
-      if (field.is_static) {
-        builder.addCode("case \"$N#$N\":\n", aClass.name, field.name)
+    final ParameterWriter writer = new ParameterWriter();
+    for (PluginConstructor constructor : aClass.constructors) {
+      final List<String> allParameterTypes = new ArrayList<>();
+      for (PluginParameter parameter : constructor.getAllParameters()) {
+        allParameterTypes.add(parameter.type);
+      }
+
+      final String allParametersString = String.join(",", allParameterTypes);
+
+      builder.addCode("case \"$N(" + allParametersString + ")\":\n", aClass.name)
+          .addCode(CodeBlock.builder().indent().build());
+
+      builder.addStatement(writer.write(constructor.getAllParameters()));
+
+      builder.addStatement("$T(" + allParametersString + ")", aClass.details.wrapperClassName)
+          .addStatement("break")
+          .addCode(CodeBlock.builder().unindent().build());
+    }
+
+    for (Object fieldOrMethod : aClass.getFieldsAndMethods()) {
+      if (Plugin.isStatic(fieldOrMethod)) {
+        builder.addCode("case \"$N#$N\":\n", aClass.name, Plugin.name(fieldOrMethod))
             .addCode(CodeBlock.builder().indent().build())
-            .addStatement("$N(call, result)", field.name)
+            .addStatement("$N(call, result)", Plugin.name(fieldOrMethod))
             .addStatement("break")
             .addCode(CodeBlock.builder().unindent().build());
       }
