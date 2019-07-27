@@ -8,7 +8,7 @@ part 'plugin.g.dart';
 
 @JsonSerializable()
 class Plugin {
-  Plugin({this.name, this.channel, this.classes});
+  Plugin({this.name, this.organization, this.classes});
 
   factory Plugin.parse(String yaml) {
     return checkedYamlDecode<Plugin>(yaml, (Map map) => Plugin.fromJson(map));
@@ -17,8 +17,8 @@ class Plugin {
   @JsonKey(required: true, disallowNullValue: true)
   final String name;
 
-  @JsonKey(required: true, disallowNullValue: true)
-  final String channel;
+  @JsonKey(defaultValue: 'com.example')
+  final String organization;
 
   @JsonKey(defaultValue: const <Class>[])
   final List<Class> classes;

@@ -9,11 +9,12 @@ part of 'plugin.dart';
 Plugin _$PluginFromJson(Map json) {
   return $checkedNew('Plugin', json, () {
     $checkKeys(json,
-        requiredKeys: const ['name', 'channel'],
-        disallowNullValues: const ['name', 'channel']);
+        requiredKeys: const ['name'], disallowNullValues: const ['name']);
     final val = Plugin(
         name: $checkedConvert(json, 'name', (v) => v as String),
-        channel: $checkedConvert(json, 'channel', (v) => v as String),
+        organization:
+            $checkedConvert(json, 'organization', (v) => v as String) ??
+                'com.example',
         classes: $checkedConvert(
                 json,
                 'classes',
@@ -35,7 +36,7 @@ Map<String, dynamic> _$PluginToJson(Plugin instance) {
   }
 
   writeNotNull('name', instance.name);
-  writeNotNull('channel', instance.channel);
+  val['organization'] = instance.organization;
   val['classes'] = instance.classes;
   return val;
 }

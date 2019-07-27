@@ -74,7 +74,9 @@ class PluginCreator {
             builder.static = true;
             builder.type = References.methodChannel;
             builder.assignment = References.methodChannel.call(
-              <cb.Expression>[cb.literalString(plugin.channel)],
+              <cb.Expression>[
+                cb.literalString('${plugin.organization}/${plugin.name}'),
+              ],
             ).code;
             builder.annotations.add(References.visibleForTesting);
           }),
@@ -124,7 +126,7 @@ class PluginCreator {
         },
         flutter: <String, dynamic>{
           'plugin': <String, dynamic>{
-            'androidPackage': plugin.channel.replaceAll('/', '.'),
+            'androidPackage': '${plugin.organization}.${plugin.name}',
             'pluginClass': '${snakeCaseToCamelCase(plugin.name)}Plugin',
           }
         },

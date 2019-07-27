@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Plugin {
   public String name;
-  public String channel;
+  public String organization = "com.example";
   public List<PluginClass> classes = new ArrayList<>();
 
   static public Boolean isStatic(Object fieldOrMethod) {

@@ -18,11 +18,8 @@ public class PluginCreator {
 
   public PluginCreator(Plugin plugin) {
     this.plugin = plugin;
-
-    final String packageFromChannel = plugin.channel.replace('/', '.');
-    this.packageName = packageFromChannel + '.' + plugin.name.replace("_", "");
-
-    this.mainPluginClassName = ClassName.get(packageName, StringUtils.snakeCaseToCamelCase(plugin.name));
+    this.packageName = plugin.organization + "." + plugin.name;
+    this.mainPluginClassName = ClassName.get(packageName, StringUtils.snakeCaseToCamelCase(plugin.name) + "Plugin");
 
     setupClassDetails();
   }
@@ -63,7 +60,7 @@ public class PluginCreator {
       filesAndStrings.put(filename, files.get(i).toString());
     }
 
-    filesAndStrings.put(StringUtils.snakeCaseToCamelCase(plugin.name) + ".java", pluginFileString());
+    filesAndStrings.put(mainPluginClassName.simpleName() + "Plugin.java", pluginFileString());
 
     return filesAndStrings;
   }
@@ -76,7 +73,7 @@ public class PluginCreator {
         .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
         .addField(FieldSpec.builder(String.class, "CHANNEL_NAME")
             .addModifiers(Modifier.FINAL, Modifier.STATIC)
-            .initializer("$S", plugin.channel)
+            .initializer("$S", plugin.organization + "/" + plugin.name)
             .build())
         .addField(FieldSpec.builder(handlerArray, "handlers")
             .addModifiers(Modifier.FINAL, Modifier.STATIC)
