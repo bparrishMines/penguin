@@ -21,16 +21,15 @@ public class MethodWriter extends Writer<Object, MethodSpec> {
     assert fieldOrMethod instanceof PluginField || fieldOrMethod instanceof PluginMethod;
 
     final MethodSpec.Builder builder = MethodSpec.methodBuilder(Plugin.name(fieldOrMethod))
-        .addModifiers(Modifier.PRIVATE, Modifier.FINAL)
-        .addParameter(PluginClassNames.METHOD_CALL.name, "call", Modifier.FINAL)
-        .addParameter(PluginClassNames.RESULT.name, "result", Modifier.FINAL);
+        .addModifiers(Modifier.PRIVATE, Modifier.FINAL);
 
-    if (fieldOrMethod instanceof PluginMethod) {
-      final PluginMethod method = (PluginMethod) fieldOrMethod;
-      if (method.getAllParameterNames().size() > 0) {
-        builder.addStatement(extractParametersFromMethodCall(method.getAllParameters()));
-      }
+    final PluginClass returnClass = classFromString(Plugin.returnType(fieldOrMethod));
+    if ((fieldOrMethod instanceof PluginMethod && ((PluginMethod) fieldOrMethod).getAllParameterNames().size() > 0) ||
+        returnClass != null) {
+      builder.addParameter(PluginClassNames.METHOD_CALL.name, "call", Modifier.FINAL);
     }
+
+    builder.addParameter(PluginClassNames.RESULT.name, "result", Modifier.FINAL);
 
     final Boolean isStatic = Plugin.isStatic(fieldOrMethod);
     final String name = Plugin.name(fieldOrMethod);
@@ -53,8 +52,6 @@ public class MethodWriter extends Writer<Object, MethodSpec> {
       builder.addStatement(callString, callerName, name);
       builder.addStatement("result.success(null)");
     } else {
-      final PluginClass returnClass = classFromString(returnType);
-
       if (returnClass == null) {
         final ClassName returnClassName = ClassName.bestGuess(returnType);
         builder.addStatement("final $T value = " + callString, returnClassName, callerName, name)
@@ -63,7 +60,8 @@ public class MethodWriter extends Writer<Object, MethodSpec> {
         builder.addStatement("final $T handle = call.argument($S)", Integer.class, returnClass.details.wrappedObjectName + "Handle")
             .addStatement("final $T value = " + callString, returnClass.details.wrappedClassName, callerName, name)
             .addStatement("final $T handler = $T(handle, value)", returnClass.details.wrapperClassName, returnClass.details.wrapperClassName)
-            .addStatement("$T.addHandler(handle, handler)", mainPluginClassName);
+            .addStatement("$T.addHandler(handle, handler)", mainPluginClassName)
+            .addStatement("result.success(null)");
       }
     }
 

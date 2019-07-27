@@ -63,10 +63,17 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
     for (Object fieldOrMethod : aClass.getFieldsAndMethods()) {
       if (!Plugin.isStatic(fieldOrMethod)) {
         builder.addCode("case \"$N#$N\":\n", aClass.name, Plugin.name(fieldOrMethod))
-            .addCode(CodeBlock.builder().indent().build())
-            .addStatement("$N(call, result)", Plugin.name(fieldOrMethod))
-            .addStatement("break")
-            .addCode(CodeBlock.builder().unindent().build());
+            .addCode(CodeBlock.builder().indent().build());
+
+        final PluginClass returnClass = classFromString(Plugin.returnType(fieldOrMethod));
+        if ((fieldOrMethod instanceof PluginMethod && ((PluginMethod) fieldOrMethod).getAllParameterNames().size() > 0) ||
+            returnClass != null) {
+          builder.addStatement("$N(call, result)", Plugin.name(fieldOrMethod));
+        } else {
+          builder.addStatement("$N(result)", Plugin.name(fieldOrMethod));
+        }
+
+        builder.addStatement("break").addCode(CodeBlock.builder().unindent().build());
       }
     }
 
@@ -105,10 +112,17 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
     for (Object fieldOrMethod : aClass.getFieldsAndMethods()) {
       if (Plugin.isStatic(fieldOrMethod)) {
         builder.addCode("case \"$N#$N\":\n", aClass.name, Plugin.name(fieldOrMethod))
-            .addCode(CodeBlock.builder().indent().build())
-            .addStatement("$N(call, result)", Plugin.name(fieldOrMethod))
-            .addStatement("break")
-            .addCode(CodeBlock.builder().unindent().build());
+            .addCode(CodeBlock.builder().indent().build());
+
+        final PluginClass returnClass = classFromString(Plugin.returnType(fieldOrMethod));
+        if ((fieldOrMethod instanceof PluginMethod && ((PluginMethod) fieldOrMethod).getAllParameterNames().size() > 0) ||
+            returnClass != null) {
+          builder.addStatement("$N(call, result)", Plugin.name(fieldOrMethod));
+        } else {
+          builder.addStatement("$N(result)", Plugin.name(fieldOrMethod));
+        }
+
+        builder.addStatement("break").addCode(CodeBlock.builder().unindent().build());
       }
     }
 
