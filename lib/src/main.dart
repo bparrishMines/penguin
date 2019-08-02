@@ -61,21 +61,6 @@ void main(List<String> args) async {
     exit(64);
   }
 
-  final Directory pluginDir = Directory(path.join(
-    Directory.current.path,
-    results[PenguinOption.directory.name],
-  ));
-
-  /*
-  final int flutterCreateCode = _runFlutterCreate(
-    directory: pluginDir,
-    projectName: results[PenguinOption.projectName.name],
-    org: results[PenguinOption.org.name],
-  );
-
-  if (flutterCreateCode != 0) exit(64);
-  */
-
   final File pluginYaml = File(
     path.join(
       Directory.current.path,
@@ -87,6 +72,21 @@ void main(List<String> args) async {
   final String yaml = pluginYaml.readAsStringSync();
 
   final Plugin plugin = Plugin.parse(yaml);
+
+  final Directory pluginDir = Directory(path.join(
+    Directory.current.path,
+    results[PenguinOption.directory.name],
+    plugin.name,
+  ));
+
+  final int flutterCreateCode = _runFlutterCreate(
+    directory: pluginDir,
+    projectName: plugin.name,
+    org: plugin.organization,
+  );
+
+  if (flutterCreateCode != 0) exit(2);
+
   final PluginCreator creator = PluginCreator(plugin);
 
   _createPubspecFile(creator, pluginDir);
@@ -115,7 +115,7 @@ int _runFlutterCreate({Directory directory, String projectName, String org}) {
 
   print(result.stdout);
   print(result.stderr);
-  return exitCode;
+  return result.exitCode;
 }
 
 _createPluginFiles(PluginCreator creator, Directory pluginDir) {
