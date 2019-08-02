@@ -62,8 +62,6 @@ class PluginCreator {
     }
   }
 
-  static final cb.DartEmitter _emitter = cb.DartEmitter(cb.Allocator());
-
   cb.Library get _channelClass => cb.Library((cb.LibraryBuilder builder) =>
       builder.body.add(cb.Class((cb.ClassBuilder builder) {
         builder.name = 'Channel';
@@ -90,49 +88,7 @@ class PluginCreator {
         ]);
       })));
 
-  Pubspec get _pubspec => Pubspec(
-        plugin.name,
-        description: 'A new flutter plugin project.',
-        version: Version.parse('0.0.1'),
-        homepage: '',
-        environment: <String, VersionConstraint>{
-          'sdk': VersionConstraint.compatibleWith(
-            Version.parse('2.1.0'),
-          ),
-          'flutter': VersionConstraint.compatibleWith(
-            Version.parse('1.0.0'),
-          ),
-        },
-        dependencies: <String, Dependency>{
-          'flutter': SdkDependency('flutter'),
-          'json_annotation': HostedDependency(
-            version: VersionConstraint.compatibleWith(
-              Version.parse('2.4.0'),
-            ),
-          ),
-        },
-        devDependencies: <String, Dependency>{
-          'flutter_test': SdkDependency('flutter'),
-          'json_serializable': HostedDependency(
-            version: VersionConstraint.compatibleWith(
-              Version.parse('3.0.0'),
-            ),
-          ),
-          'build_runner': HostedDependency(
-            version: VersionConstraint.compatibleWith(
-              Version.parse('1.0.0'),
-            ),
-          ),
-        },
-        flutter: <String, dynamic>{
-          'plugin': <String, dynamic>{
-            'androidPackage': '${plugin.organization}.${plugin.name}',
-            'pluginClass': '${snakeCaseToCamelCase(plugin.name)}Plugin',
-          }
-        },
-      );
-
-  String _channelAsString() => '${_channelClass.accept(_emitter)}';
+  String _channelAsString() => '${_channelClass.accept(_createEmitter())}';
 
   Map<String, String> pluginAsStrings() {
     final Map<String, String> classes = <String, String>{};
@@ -142,9 +98,11 @@ class PluginCreator {
     final ClassWriter writer = ClassWriter(plugin);
     for (Class theClass in plugin.classes) {
       final cb.Library codeClass = writer.write(theClass);
-      classes[theClass.details.file] = '${codeClass.accept(_emitter)}';
+      classes[theClass.details.file] = '${codeClass.accept(_createEmitter())}';
     }
 
     return classes;
   }
+
+  cb.DartEmitter _createEmitter() => cb.DartEmitter(cb.Allocator());
 }
