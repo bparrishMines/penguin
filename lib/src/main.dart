@@ -89,7 +89,6 @@ void main(List<String> args) async {
 
   final PluginCreator creator = PluginCreator(plugin);
 
-  _createPubspecFile(creator, pluginDir);
   _createPluginFiles(creator, pluginDir);
   _createJavaFiles(yaml, pluginDir, plugin);
 }
@@ -127,13 +126,6 @@ _createPluginFiles(PluginCreator creator, Directory pluginDir) {
     classFile.createSync(recursive: true);
     classFile.writeAsStringSync(files[filePath]);
   }
-}
-
-void _createPubspecFile(PluginCreator creator, Directory pluginDir) {
-  final File pubspecFile = File(path.join(pluginDir.path, 'pubspec.yaml'));
-
-  pubspecFile.createSync(recursive: true);
-  pubspecFile.writeAsStringSync(creator.pubspecAsString());
 }
 
 void _createJavaFiles(String yaml, Directory pluginDir, Plugin plugin) {
