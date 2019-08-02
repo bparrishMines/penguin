@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-android_gen=tool/android-gen
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-javac -d $android_gen/classes -classpath $android_gen/classes:$android_gen/lib/* $(find $android_gen -name '*.java')
-java -classpath $android_gen/classes:$android_gen/lib/* GenAndroidCode "$@"
+javac -d $SCRIPT_DIR/classes -classpath $SCRIPT_DIR/classes:$SCRIPT_DIR/lib/* $(find $SCRIPT_DIR -name '*.java')
+java -classpath $SCRIPT_DIR/classes:$SCRIPT_DIR/lib/* GenAndroidCode "$@"

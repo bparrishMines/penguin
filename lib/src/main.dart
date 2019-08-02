@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:args/args.dart';
@@ -155,12 +154,21 @@ void _createJavaFiles(String yaml, Directory pluginDir, Plugin plugin) {
     yaml = yaml.replaceAll(entry.key, entry.value);
   }
 
-  final String genAndroidCodeScript = 'tool/android-gen/compile_and_run.sh';
+  final Directory appDir = Directory(Platform.script.path).parent.parent;
+
+  final String genAndroidCodeScript = path.join(
+    appDir.path,
+    'tool',
+    'android-gen',
+    'compile_and_run.sh',
+  );
 
   final ProcessResult result = Process.runSync(
     genAndroidCodeScript,
     <String>[yaml],
   );
+
+  print(result.stderr);
 
   final String output = result.stdout;
 
@@ -179,6 +187,4 @@ void _createJavaFiles(String yaml, Directory pluginDir, Plugin plugin) {
     classFile.createSync(recursive: true);
     classFile.writeAsStringSync(files[i + 1]);
   }
-
-  print(result.stderr);
 }

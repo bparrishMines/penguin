@@ -28,18 +28,6 @@ class PenguinOption implements Option {
     isFlag: true,
   );
 
-  /*
-  static PenguinOption projectName = PenguinOption._(
-    name: 'project-name',
-    abbr: 'n',
-    valueHelp: 'name',
-    help:
-        'The project name for this new Flutter project. This must be a valid dart package name.',
-    defaultsTo: 'new_plugin',
-    isFlag: false,
-  );
-  */
-
   static PenguinOption directory = PenguinOption._(
     name: 'directory',
     abbr: 'd',
@@ -58,48 +46,10 @@ class PenguinOption implements Option {
     isFlag: false,
   );
 
-  /*
-  static PenguinOption android = PenguinOption._(
-    name: 'android',
-    abbr: 'a',
-    isFlag: false,
-    help: "Directories containing android '.java' files.",
-    isMultiple: true,
-    splitCommas: true,
-  );
-  */
-
-  /*
-  static PenguinOption recursive = PenguinOption._(
-    name: 'recursive',
-    abbr: 'r',
-    isFlag: true,
-    help: 'Search within directories when looking for native library files.',
-    negatable: true,
-  );
-  */
-
-  /*
-  static PenguinOption org = PenguinOption._(
-    name: 'org',
-    abbr: 'o',
-    isFlag: false,
-    help:
-        'The organization responsible for your new Flutter project, in reverse '
-        'domain name notation. This string is used in Java package names and '
-        'as prefix in the iOS bundle identifier.',
-    defaultsTo: 'com.example',
-  );
-  */
-
   static List<PenguinOption> values = <PenguinOption>[
     usage,
-    //projectName,
     directory,
     pluginYaml,
-    //android,
-    //recursive,
-    //org,
   ];
 
   @override
