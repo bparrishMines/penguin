@@ -2,9 +2,6 @@
 # To update generated code, run `pub run build_runner build`
 targets:
   $default:
-    sources:
-      include:
-        - tool/**
     builders:
       json_serializable:
         generate_for:
