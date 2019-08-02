@@ -154,6 +154,8 @@ void _createJavaFiles(String yaml, Directory pluginDir, Plugin plugin) {
     yaml = yaml.replaceAll(entry.key, entry.value);
   }
 
+  print(Platform.script.path);
+
   final Directory appDir = Directory(Platform.script.path).parent.parent;
 
   final String genAndroidCodeScript = path.join(
