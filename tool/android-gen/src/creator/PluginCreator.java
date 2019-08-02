@@ -60,7 +60,7 @@ public class PluginCreator {
       filesAndStrings.put(filename, files.get(i).toString());
     }
 
-    filesAndStrings.put(mainPluginClassName.simpleName() + "Plugin.java", pluginFileString());
+    filesAndStrings.put(mainPluginClassName.simpleName() + ".java", pluginFileString());
 
     return filesAndStrings;
   }

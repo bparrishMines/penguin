@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:args/args.dart';
@@ -91,7 +92,7 @@ void main(List<String> args) async {
 
   _createPubspecFile(creator, pluginDir);
   _createPluginFiles(creator, pluginDir);
-  _createJavaFiles(yaml);
+  _createJavaFiles(yaml, pluginDir, plugin);
 }
 
 int _runFlutterCreate({Directory directory, String projectName, String org}) {
@@ -136,7 +137,7 @@ void _createPubspecFile(PluginCreator creator, Directory pluginDir) {
   pubspecFile.writeAsStringSync(creator.pubspecAsString());
 }
 
-void _createJavaFiles(String yaml) {
+void _createJavaFiles(String yaml, Directory pluginDir, Plugin plugin) {
   final Map<String, String> replacements = <String, String>{
     'plugin:': '!objects.Plugin',
     'class:': '!objects.PluginClass',
@@ -161,6 +162,23 @@ void _createJavaFiles(String yaml) {
     <String>[yaml],
   );
 
-  print(result.stdout);
+  final String output = result.stdout;
+
+  final List<String> files = output.split('@!!#%@#');
+
+  final Directory javaFileDir = Directory(path.joinAll(<String>[
+    pluginDir.path,
+    'android/src/main/java',
+    ...plugin.organization.split('.'),
+    plugin.name,
+  ]));
+
+  for (int i = 0; i < files.length; i += 2) {
+    final File classFile = File(path.join(javaFileDir.path, files[i]));
+
+    classFile.createSync(recursive: true);
+    classFile.writeAsStringSync(files[i + 1]);
+  }
+
   print(result.stderr);
 }

@@ -3,12 +3,15 @@ import com.esotericsoftware.yamlbeans.YamlReader;
 import creator.PluginCreator;
 import objects.Plugin;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
  * Main
  */
 public class GenAndroidCode {
+  private static final String SEPERATOR = "@!!#%@#";
   public static void main(String[] args) {
     final String yaml = args[0];
 
@@ -20,9 +23,15 @@ public class GenAndroidCode {
       final PluginCreator creator = new PluginCreator(plugin);
       final Map<String, String> filesAndStrings = creator.filesAndStrings();
 
-      for (Map.Entry<String, String> entry : filesAndStrings.entrySet()) {
-        System.out.println(entry.getKey());
-        System.out.println(entry.getValue());
+      final List<Map.Entry<String, String>> entryList = new ArrayList<>(filesAndStrings.entrySet());
+      for (int i = 0; i < entryList.size(); i++) {
+        System.out.print(entryList.get(i).getKey());
+        System.out.print(SEPERATOR);
+        System.out.print(entryList.get(i).getValue());
+
+        if (i < entryList.size() - 1) {
+          System.out.print(SEPERATOR);
+        }
       }
 
     } catch (YamlException e) {
