@@ -1,6 +1,6 @@
 package dev.fruit.fruit_picker;
 
-import dev.fruit.fruits.Strawberry;
+import dev.fruit.fruit_picker.fruitlibrary.fruits.Strawberry;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
@@ -21,8 +21,7 @@ final class FlutterStrawberry implements MethodCallHandler {
     switch(call.method) {
       case "Strawberry()":
         final Integer handle = call.argument("strawberryHandle");
-        ;
-        final FlutterStrawberry handler = new FlutterStrawberry(handle, );
+        final FlutterStrawberry handler = new FlutterStrawberry(handle);
         FruitPickerPlugin.addHandler(handle, handler);
         break;
       case "Strawberry#averageNumberOfSeeds":

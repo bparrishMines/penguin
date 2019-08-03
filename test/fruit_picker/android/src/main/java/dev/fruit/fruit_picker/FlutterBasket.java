@@ -1,8 +1,8 @@
 package dev.fruit.fruit_picker;
 
-import dev.fruit.container.Basket;
-import dev.fruit.fruits.Apple;
-import dev.fruit.fruits.Banana;
+import dev.fruit.fruit_picker.fruitlibrary.container.Basket;
+import dev.fruit.fruit_picker.fruitlibrary.fruits.Apple;
+import dev.fruit.fruit_picker.fruitlibrary.fruits.Banana;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
@@ -23,8 +23,7 @@ final class FlutterBasket implements MethodCallHandler {
     switch(call.method) {
       case "Basket()":
         final Integer handle = call.argument("basketHandle");
-        ;
-        final FlutterBasket handler = new FlutterBasket(handle, );
+        final FlutterBasket handler = new FlutterBasket(handle);
         FruitPickerPlugin.addHandler(handle, handler);
         break;
       case "Basket#ripestBanana":

@@ -43,7 +43,9 @@ public class MethodWriter extends Writer<Object, MethodSpec> {
       final String allParameterNamesString = String.join(", ", method.getAllParameterNames());
       callString = "$N.$N(" + allParameterNamesString + ")";
 
-      extractParametersFromMethodCall(method.getAllParameters());
+      if (method.getAllParameters().size() > 0) {
+        builder.addStatement(extractParametersFromMethodCall(method.getAllParameters()));
+      }
     } else {
       callString = "$N.$N";
     }

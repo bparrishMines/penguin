@@ -1,6 +1,6 @@
 package dev.fruit.fruit_picker;
 
-import dev.fruit.fruits.Orange;
+import dev.fruit.fruit_picker.fruitlibrary.fruits.Orange;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
@@ -42,6 +42,7 @@ final class FlutterOrange implements MethodCallHandler {
   }
 
   private void squeeze(final MethodCall call, final Result result) {
+    final Double pressure = call.argument("pressure");
     orange.squeeze(pressure);
     result.success(null);
   }

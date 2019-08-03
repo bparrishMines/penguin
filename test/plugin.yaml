@@ -5,7 +5,7 @@ organization: "dev.fruit"
 classes:
   - class:
     name: Basket
-    java_package: dev.fruit.container
+    java_package: dev.fruit.fruit_picker.fruitlibrary.container
     constructors:
       - constructor:
         is_default: true 
@@ -21,7 +21,7 @@ classes:
 
   - class:
     name: Apple
-    java_package: dev.fruit.fruits
+    java_package: dev.fruit.fruit_picker.fruitlibrary.fruits
     methods:
       - method:
         name: areApplesGood
@@ -30,7 +30,7 @@ classes:
 
   - class:
     name: Banana
-    java_package: dev.fruit.fruits
+    java_package: dev.fruit.fruit_picker.fruitlibrary.fruits
     fields:
       - field:
         name: length
@@ -39,7 +39,7 @@ classes:
 
   - class:
     name: Orange
-    java_package: dev.fruit.fruits
+    java_package: dev.fruit.fruit_picker.fruitlibrary.fruits
     constructors:
       - constructor:
         required_parameters:
@@ -55,7 +55,7 @@ classes:
             type: double
 
   - class:
-    java_package: dev.fruit.fruits
+    java_package: dev.fruit.fruit_picker.fruitlibrary.fruits
     constructors:
       - constructor:
         is_default: true 
@@ -67,7 +67,7 @@ classes:
         type: int
 
   - class:
-    java_package: dev.fruit.nada
+    java_package: dev.fruit.fruit_picker.fruitlibrary.nada
     constructors:
       - constructor:
         is_default: true 

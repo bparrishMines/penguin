@@ -95,15 +95,23 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
 
     final ParameterWriter writer = new ParameterWriter(plugin);
     for (PluginConstructor constructor : aClass.constructors) {
+      final boolean hasParameters = constructor.getAllParameters().size() > 0;
 
       final String allParameterTypesString = String.join(",", constructor.getAllParameterTypes());
-      final String allParameterNamesString = String.join(", ", constructor.getAllParameterNames());
+      String allParameterNamesString = String.join(", ", constructor.getAllParameterNames());
+      if (hasParameters) {
+        allParameterNamesString = ", " + allParameterNamesString;
+      }
 
       builder.addCode("case \"$N(" + allParameterTypesString + ")\":\n", aClass.name)
           .addCode(CodeBlock.builder().indent().build())
-          .addStatement("final $T handle = call.argument($S)", Integer.class, aClass.details.wrappedObjectName + "Handle")
-          .addStatement(extractParametersFromMethodCall(constructor.getAllParameters()))
-          .addStatement("final $T handler = new $T(handle, " + allParameterNamesString + ")", aClass.details.wrapperClassName, aClass.details.wrapperClassName)
+          .addStatement("final $T handle = call.argument($S)", Integer.class, aClass.details.wrappedObjectName + "Handle");
+
+      if (hasParameters) {
+        builder.addStatement(extractParametersFromMethodCall(constructor.getAllParameters()));
+      }
+
+      builder.addStatement("final $T handler = new $T(handle" + allParameterNamesString + ")", aClass.details.wrapperClassName, aClass.details.wrapperClassName)
           .addStatement("$T.addHandler(handle, handler)", mainPluginClassName)
           .addStatement("break")
           .addCode(CodeBlock.builder().unindent().build());

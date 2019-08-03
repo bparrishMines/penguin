@@ -1,6 +1,6 @@
 package dev.fruit.fruit_picker;
 
-import dev.fruit.fruits.Apple;
+import dev.fruit.fruit_picker.fruitlibrary.fruits.Apple;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;

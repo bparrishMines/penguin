@@ -1,6 +1,6 @@
 package dev.fruit.fruit_picker;
 
-import dev.fruit.nada.Empty;
+import dev.fruit.fruit_picker.fruitlibrary.nada.Empty;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
@@ -21,8 +21,7 @@ final class FlutterEmpty implements MethodCallHandler {
     switch(call.method) {
       case "Empty()":
         final Integer handle = call.argument("emptyHandle");
-        ;
-        final FlutterEmpty handler = new FlutterEmpty(handle, );
+        final FlutterEmpty handler = new FlutterEmpty(handle);
         FruitPickerPlugin.addHandler(handle, handler);
         break;
       default:
