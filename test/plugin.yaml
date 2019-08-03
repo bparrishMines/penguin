@@ -1,0 +1,64 @@
+name: fruit_picker
+
+organization: "dev.fruit"
+
+classes:
+  - class:
+    name: Basket
+    java_package: dev.fruit.container
+    methods:
+      - method:
+        name: takeApple
+        returns: Apple
+    fields:
+      - field:
+        name: ripestBanana
+        is_static: true
+        type: Banana
+
+  - class:
+    name: Apple
+    java_package: dev.fruit.fruits
+    constructors:
+      - constructor:
+        is_default: true
+    methods:
+      - method:
+        name: areApplesGood
+        is_static: true
+        returns: bool
+
+  - class:
+    name: Banana
+    java_package: dev.fruit.fruits
+    fields:
+      - field:
+        name: length
+        type: double
+        is_static: false
+
+  - class:
+    name: Orange
+    java_package: dev.fruit.fruits
+    constructors:
+      - constructor:
+        required_parameters:
+          - required_parameter:
+            name: juiciness
+            type: double
+    methods:
+      - method:
+        name: squeeze
+        required_parameters:
+          - required_parameter:
+            name: pressure
+            type: double
+
+  - class:
+    java_package: dev.fruit.fruits
+    name: Strawberry
+    fields:
+      - field:
+        name: averageNumberOfSeeds
+        is_static: true
+        type: int

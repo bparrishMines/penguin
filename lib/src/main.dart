@@ -160,7 +160,10 @@ void _createJavaFiles(String yaml, Directory pluginDir, Plugin plugin) {
     <String>[yaml],
   );
 
-  print(result.stderr);
+  if (result.exitCode != 0) {
+    print(result.stderr);
+    exit(2);
+  }
 
   final String output = result.stdout;
 

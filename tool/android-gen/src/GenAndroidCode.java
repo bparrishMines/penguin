@@ -35,7 +35,9 @@ public class GenAndroidCode {
       }
 
     } catch (YamlException e) {
-      System.out.println(e.toString());
+      System.err.println(e.toString());
+      System.err.println(yaml);
+      System.exit(2);
     }
   }
 }

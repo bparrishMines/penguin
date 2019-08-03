@@ -221,7 +221,9 @@ Map<String, dynamic> _$FieldToJson(Field instance) {
 Constructor _$ConstructorFromJson(Map json) {
   return $checkedNew('Constructor', json, () {
     final val = Constructor(
-        name: $checkedConvert(json, 'name', (v) => v as String) ?? '',
+        isDefault:
+            $checkedConvert(json, 'is_default', (v) => v as bool) ?? false,
+        name: $checkedConvert(json, 'name', (v) => v as String),
         requiredParameters: $checkedConvert(
                 json,
                 'required_parameters',
@@ -240,6 +242,7 @@ Constructor _$ConstructorFromJson(Map json) {
             []);
     return val;
   }, fieldKeyMap: const {
+    'isDefault': 'is_default',
     'requiredParameters': 'required_parameters',
     'optionalParameters': 'optional_parameters'
   });
@@ -248,6 +251,7 @@ Constructor _$ConstructorFromJson(Map json) {
 Map<String, dynamic> _$ConstructorToJson(Constructor instance) =>
     <String, dynamic>{
       'name': instance.name,
+      'is_default': instance.isDefault,
       'required_parameters': instance.requiredParameters,
       'optional_parameters': instance.optionalParameters
     };

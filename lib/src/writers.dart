@@ -202,7 +202,6 @@ class ConstructorWriter extends Writer<Constructor, cb.Constructor> {
   cb.Constructor write(Constructor constructor) {
     return cb.Constructor((cb.ConstructorBuilder builder) {
       builder
-        ..name = constructor.name
         ..requiredParameters.addAll(
           _paramWriter.writeAll(constructor.requiredParameters),
         )
@@ -217,6 +216,10 @@ class ConstructorWriter extends Writer<Constructor, cb.Constructor> {
             useHashTag: false,
           ));
         });
+
+      if (constructor.name != null) {
+        builder.name = constructor.name;
+      }
     });
   }
 

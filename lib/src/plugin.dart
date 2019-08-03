@@ -33,7 +33,13 @@ class Plugin {
 
 @JsonSerializable()
 class Class {
-  Class(this.name, this.javaPackage, {this.methods, this.fields, this.constructors,});
+  Class(
+    this.name,
+    this.javaPackage, {
+    this.methods,
+    this.fields,
+    this.constructors,
+  });
 
   @JsonKey(required: true, disallowNullValue: true)
   final String name;
@@ -144,10 +150,24 @@ class Field {
 
 @JsonSerializable()
 class Constructor {
-  Constructor({this.name, this.requiredParameters, this.optionalParameters});
+  Constructor({
+    this.isDefault,
+    this.name,
+    this.requiredParameters,
+    this.optionalParameters,
+  }) : assert((isDefault &&
+                name == null &&
+                requiredParameters.isEmpty &&
+                optionalParameters.isEmpty) ||
+            (!isDefault &&
+                (name != null ||
+                    requiredParameters.isNotEmpty ||
+                    optionalParameters.isNotEmpty)));
 
-  @JsonKey(defaultValue: '')
   final String name;
+
+  @JsonKey(defaultValue: false)
+  final bool isDefault;
 
   @JsonKey(defaultValue: const <Parameter>[])
   final List<Parameter> requiredParameters;
