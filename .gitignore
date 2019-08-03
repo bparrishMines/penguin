@@ -3,6 +3,8 @@
 
 tmp/
 
+*.class
+
 # Files and directories created by pub
 .dart_tool/
 .packages
@@ -27,3 +29,8 @@ doc/api/
 
 out/
 *.DS_STORE
+
+# Only include plugin.yaml, test library, and test driver tests.
+test/*
+!test/plugin.yaml
+!test/fruit_picker/android/src/main/java/dev/fruit/fruit_picker/fruitlibrary/*
