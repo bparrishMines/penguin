@@ -20,8 +20,7 @@ public class ParameterWriter extends Writer<PluginParameter, ParameterSpec> {
     final PluginClass pluginClass = classFromString(parameter.type);
 
     if (pluginClass == null) {
-      final ClassName paramClassName = ClassName.bestGuess(parameter.type);
-      return ParameterSpec.builder(paramClassName, parameter.name, Modifier.FINAL).build();
+      return ParameterSpec.builder(bestGuess(parameter.type), parameter.name, Modifier.FINAL).build();
     } else {
       return ParameterSpec.builder(pluginClass.details.wrappedClassName, parameter.name, Modifier.FINAL).build();
     }

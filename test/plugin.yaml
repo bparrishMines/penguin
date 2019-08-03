@@ -62,3 +62,7 @@ classes:
         name: averageNumberOfSeeds
         is_static: true
         type: int
+
+  - class:
+    java_package: dev.fruit.nada
+    name: Empty

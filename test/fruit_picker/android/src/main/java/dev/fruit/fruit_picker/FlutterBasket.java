@@ -14,7 +14,6 @@ final class FlutterBasket implements MethodCallHandler {
 
   private final Basket basket;
 
-  @Override
   void onStaticMethodCall(MethodCall call, Result result) {
     switch(call.method) {
       case "Basket#ripestBanana":

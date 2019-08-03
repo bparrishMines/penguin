@@ -22,7 +22,6 @@ final class FlutterApple implements MethodCallHandler {
     this.apple = apple;
   }
 
-  @Override
   void onStaticMethodCall(MethodCall call, Result result) {
     switch(call.method) {
       case "Apple()":

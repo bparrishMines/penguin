@@ -38,14 +38,27 @@ abstract class Writer<T, K> {
     return null;
   }
 
-  final CodeBlock extractParametersFromMethodCall(List<PluginParameter> parameters) {
+  static CodeBlock extractParametersFromMethodCall(List<PluginParameter> parameters) {
     final CodeBlock.Builder builder = CodeBlock.builder();
 
     for (PluginParameter parameter : parameters) {
-      final ClassName className = ClassName.bestGuess(parameter.type);
+      final ClassName className = bestGuess(parameter.type);
       builder.add("final $T $N = call.argument($S)", className, parameter.name, parameter.name);
     }
 
     return builder.build();
+  }
+
+  static ClassName bestGuess(String classNameString) {
+    switch (classNameString) {
+      case "int":
+        return ClassName.bestGuess("Integer");
+      case "bool":
+        return ClassName.bestGuess("Boolean");
+      case "double":
+        return ClassName.bestGuess("Double");
+    }
+
+    return ClassName.bestGuess(classNameString);
   }
 }

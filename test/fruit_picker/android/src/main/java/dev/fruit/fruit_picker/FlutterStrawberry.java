@@ -12,7 +12,6 @@ final class FlutterStrawberry implements MethodCallHandler {
 
   private final Strawberry strawberry;
 
-  @Override
   void onStaticMethodCall(MethodCall call, Result result) {
     switch(call.method) {
       case "Strawberry#averageNumberOfSeeds":

@@ -17,10 +17,9 @@ final class FlutterOrange implements MethodCallHandler {
     this.orange = new Orange(juiciness);
   }
 
-  @Override
   void onStaticMethodCall(MethodCall call, Result result) {
     switch(call.method) {
-      case "Orange(Double)":
+      case "Orange(double)":
         final Integer handle = call.argument("orangeHandle");
         final Double juiciness = call.argument("juiciness");
         final FlutterOrange handler = new FlutterOrange(handle, juiciness);
@@ -43,7 +42,6 @@ final class FlutterOrange implements MethodCallHandler {
   }
 
   private void squeeze(final MethodCall call, final Result result) {
-    final Double pressure = call.argument("pressure");
     orange.squeeze(pressure);
     result.success(null);
   }

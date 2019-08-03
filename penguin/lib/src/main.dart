@@ -136,9 +136,6 @@ void _createJavaFiles(String yaml, Directory pluginDir, Plugin plugin) {
     'required_parameter:': '!objects.PluginParameter',
     'optional_parameter:': '!objects.PluginParameter',
     'field:': '!objects.PluginField',
-    'int': 'Integer',
-    'bool': 'Boolean',
-    'double': 'Double',
     'constructor:': '!objects.PluginConstructor',
   };
 

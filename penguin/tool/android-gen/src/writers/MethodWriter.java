@@ -43,10 +43,7 @@ public class MethodWriter extends Writer<Object, MethodSpec> {
       final String allParameterNamesString = String.join(", ", method.getAllParameterNames());
       callString = "$N.$N(" + allParameterNamesString + ")";
 
-      for (PluginParameter parameter : method.getAllParameters()) {
-        final ClassName parameterClassName = ClassName.bestGuess(parameter.type);
-        builder.addStatement("final $T $N = call.argument($S)", parameterClassName, parameter.name, parameter.name);
-      }
+      extractParametersFromMethodCall(method.getAllParameters());
     } else {
       callString = "$N.$N";
     }
@@ -58,8 +55,7 @@ public class MethodWriter extends Writer<Object, MethodSpec> {
       builder.addStatement("result.success(null)");
     } else {
       if (returnClass == null) {
-        final ClassName returnClassName = ClassName.bestGuess(returnType);
-        builder.addStatement("final $T value = " + callString, returnClassName, callerName, name)
+        builder.addStatement("final $T value = " + callString, bestGuess(returnType), callerName, name)
             .addStatement("result.success(value)");
       } else {
         builder.addStatement("final $T handle = call.argument($S)", Integer.class, returnClass.details.wrappedObjectName + "Handle")

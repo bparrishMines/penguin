@@ -54,7 +54,7 @@ public final class FruitPickerPlugin implements MethodCallHandler {
       case "Apple#areApplesGood":
         FlutterApple.onStaticMethodCall(call, result);
         break;
-      case "Orange(Double)":
+      case "Orange(double)":
         FlutterOrange.onStaticMethodCall(call, result);
         break;
       case "Strawberry#averageNumberOfSeeds":

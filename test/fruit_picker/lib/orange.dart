@@ -1,6 +1,16 @@
-import 'channel.dart';import 'dart:async';class Orange {Orange(double juiciness) { Channel.channel.invokeMethod<void>('Orange(double)', <String, dynamic>{'juiciness': juiciness, 'orangeHandle': handle}); }
+import 'channel.dart';
+import 'dart:async';
 
-final int handle = Channel.nextHandle++;
+class Orange {
+  Orange(double juiciness) {
+    Channel.channel.invokeMethod<void>('Orange(double)',
+        <String, dynamic>{'juiciness': juiciness, 'orangeHandle': handle});
+  }
 
-Future<void> squeeze(double pressure) { return  Channel.channel.invokeMethod<void>('Orange#squeeze', <String, dynamic>{'pressure': pressure, 'handle': handle}); } 
- }
+  final int handle = Channel.nextHandle++;
+
+  Future<void> squeeze(double pressure) {
+    return Channel.channel.invokeMethod<void>('Orange#squeeze',
+        <String, dynamic>{'pressure': pressure, 'handle': handle});
+  }
+}
