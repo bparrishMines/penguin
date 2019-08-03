@@ -21,7 +21,7 @@ public class MethodWriter extends Writer<Object, MethodSpec> {
     assert fieldOrMethod instanceof PluginField || fieldOrMethod instanceof PluginMethod;
 
     final MethodSpec.Builder builder = MethodSpec.methodBuilder(Plugin.name(fieldOrMethod))
-        .addModifiers(Modifier.PRIVATE, Modifier.FINAL);
+        .addModifiers(Modifier.PRIVATE);
 
     final PluginClass returnClass = classFromString(Plugin.returnType(fieldOrMethod));
     if ((fieldOrMethod instanceof PluginMethod && ((PluginMethod) fieldOrMethod).getAllParameterNames().size() > 0) ||
@@ -59,7 +59,7 @@ public class MethodWriter extends Writer<Object, MethodSpec> {
       } else {
         builder.addStatement("final $T handle = call.argument($S)", Integer.class, returnClass.details.wrappedObjectName + "Handle")
             .addStatement("final $T value = " + callString, returnClass.details.wrappedClassName, callerName, name)
-            .addStatement("final $T handler = $T(handle, value)", returnClass.details.wrapperClassName, returnClass.details.wrapperClassName)
+            .addStatement("final $T handler = new $T(handle, value)", returnClass.details.wrapperClassName, returnClass.details.wrapperClassName)
             .addStatement("$T.addHandler(handle, handler)", mainPluginClassName)
             .addStatement("result.success(null)");
       }

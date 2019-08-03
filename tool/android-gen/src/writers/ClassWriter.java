@@ -16,6 +16,7 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
   public JavaFile write(PluginClass aClass) {
     final TypeSpec.Builder classBuilder = TypeSpec.classBuilder(aClass.details.wrapperClassName.simpleName())
         .addModifiers(Modifier.FINAL)
+        .addSuperinterface(PluginClassNames.METHOD_CALL_HANDLER.name)
         .addField(Integer.class, "handle", Modifier.PRIVATE, Modifier.FINAL)
         .addField(aClass.details.wrappedClassName, aClass.details.wrappedObjectName, Modifier.FINAL, Modifier.PRIVATE);
 
@@ -88,7 +89,7 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
   private MethodSpec buildOnStaticMethodCall(PluginClass aClass) {
     final MethodSpec.Builder builder = MethodSpec.methodBuilder("onStaticMethodCall")
         .addAnnotation(Override.class)
-        .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
+        .addModifiers(Modifier.STATIC)
         .addParameter(PluginClassNames.METHOD_CALL.name, "call")
         .addParameter(PluginClassNames.RESULT.name, "result")
         .beginControlFlow("switch(call.method)");
@@ -103,7 +104,7 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
           .addCode(CodeBlock.builder().indent().build())
           .addStatement("final $T handle = call.argument($S)", Integer.class, aClass.details.wrappedObjectName + "Handle")
           .addStatement(extractParametersFromMethodCall(constructor.getAllParameters()))
-          .addStatement("final $T handler = $T(handle, " + allParameterNamesString + ")", aClass.details.wrapperClassName, aClass.details.wrapperClassName)
+          .addStatement("final $T handler = new $T(handle, " + allParameterNamesString + ")", aClass.details.wrapperClassName, aClass.details.wrapperClassName)
           .addStatement("$T.addHandler(handle, handler)", mainPluginClassName)
           .addStatement("break")
           .addCode(CodeBlock.builder().unindent().build());
