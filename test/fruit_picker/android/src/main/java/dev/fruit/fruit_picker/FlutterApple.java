@@ -12,24 +12,13 @@ final class FlutterApple implements MethodCallHandler {
 
   private final Apple apple;
 
-  private FlutterApple(final Integer handle) {
-    this.handle = handle;
-    this.apple = new Apple();
-  }
-
   FlutterApple(Integer handle, Apple apple) {
     this.handle = handle;
     this.apple = apple;
   }
 
-  void onStaticMethodCall(MethodCall call, Result result) {
+  static void onStaticMethodCall(MethodCall call, Result result) {
     switch(call.method) {
-      case "Apple()":
-        final Integer handle = call.argument("appleHandle");
-        ;
-        final FlutterApple handler = new FlutterApple(handle, );
-        FruitPickerPlugin.addHandler(handle, handler);
-        break;
       case "Apple#areApplesGood":
         areApplesGood(result);
         break;

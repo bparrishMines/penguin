@@ -45,11 +45,11 @@ public final class FruitPickerPlugin implements MethodCallHandler {
   @Override
   public void onMethodCall(MethodCall call, Result result) {
     switch(call.method) {
-      case "Basket#ripestBanana":
+      case "Basket()":
         FlutterBasket.onStaticMethodCall(call, result);
         break;
-      case "Apple()":
-        FlutterApple.onStaticMethodCall(call, result);
+      case "Basket#ripestBanana":
+        FlutterBasket.onStaticMethodCall(call, result);
         break;
       case "Apple#areApplesGood":
         FlutterApple.onStaticMethodCall(call, result);
@@ -57,8 +57,14 @@ public final class FruitPickerPlugin implements MethodCallHandler {
       case "Orange(double)":
         FlutterOrange.onStaticMethodCall(call, result);
         break;
+      case "Strawberry()":
+        FlutterStrawberry.onStaticMethodCall(call, result);
+        break;
       case "Strawberry#averageNumberOfSeeds":
         FlutterStrawberry.onStaticMethodCall(call, result);
+        break;
+      case "Empty()":
+        FlutterEmpty.onStaticMethodCall(call, result);
         break;
       default:
         final Integer handle = call.argument("handle");

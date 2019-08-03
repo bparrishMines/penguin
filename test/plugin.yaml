@@ -6,6 +6,9 @@ classes:
   - class:
     name: Basket
     java_package: dev.fruit.container
+    constructors:
+      - constructor:
+        is_default: true 
     methods:
       - method:
         name: takeApple
@@ -19,9 +22,6 @@ classes:
   - class:
     name: Apple
     java_package: dev.fruit.fruits
-    constructors:
-      - constructor:
-        is_default: true
     methods:
       - method:
         name: areApplesGood
@@ -56,6 +56,9 @@ classes:
 
   - class:
     java_package: dev.fruit.fruits
+    constructors:
+      - constructor:
+        is_default: true 
     name: Strawberry
     fields:
       - field:
@@ -65,4 +68,7 @@ classes:
 
   - class:
     java_package: dev.fruit.nada
+    constructors:
+      - constructor:
+        is_default: true 
     name: Empty

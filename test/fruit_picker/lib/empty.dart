@@ -1,5 +1,5 @@
-import 'channel.dart';
+import 'channel.dart';class Empty {Empty() { Channel.channel.invokeMethod<void>('Empty()', <String, dynamic>{'emptyHandle': handle}); }
 
-abstract class Empty {
-  final int handle = Channel.nextHandle++;
-}
+final int handle = Channel.nextHandle++;
+
+ }

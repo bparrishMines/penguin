@@ -17,7 +17,7 @@ final class FlutterOrange implements MethodCallHandler {
     this.orange = new Orange(juiciness);
   }
 
-  void onStaticMethodCall(MethodCall call, Result result) {
+  static void onStaticMethodCall(MethodCall call, Result result) {
     switch(call.method) {
       case "Orange(double)":
         final Integer handle = call.argument("orangeHandle");

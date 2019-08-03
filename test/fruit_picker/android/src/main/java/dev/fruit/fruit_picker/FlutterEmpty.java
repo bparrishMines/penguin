@@ -12,6 +12,24 @@ final class FlutterEmpty implements MethodCallHandler {
 
   private final Empty empty;
 
+  private FlutterEmpty(final Integer handle) {
+    this.handle = handle;
+    this.empty = new Empty();
+  }
+
+  static void onStaticMethodCall(MethodCall call, Result result) {
+    switch(call.method) {
+      case "Empty()":
+        final Integer handle = call.argument("emptyHandle");
+        ;
+        final FlutterEmpty handler = new FlutterEmpty(handle, );
+        FruitPickerPlugin.addHandler(handle, handler);
+        break;
+      default:
+        result.notImplemented();
+    }
+  }
+
   @Override
   public void onMethodCall(MethodCall call, Result result) {
     switch(call.method) {

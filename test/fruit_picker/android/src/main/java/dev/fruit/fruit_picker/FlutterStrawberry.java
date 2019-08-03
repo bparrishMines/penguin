@@ -12,8 +12,19 @@ final class FlutterStrawberry implements MethodCallHandler {
 
   private final Strawberry strawberry;
 
-  void onStaticMethodCall(MethodCall call, Result result) {
+  private FlutterStrawberry(final Integer handle) {
+    this.handle = handle;
+    this.strawberry = new Strawberry();
+  }
+
+  static void onStaticMethodCall(MethodCall call, Result result) {
     switch(call.method) {
+      case "Strawberry()":
+        final Integer handle = call.argument("strawberryHandle");
+        ;
+        final FlutterStrawberry handler = new FlutterStrawberry(handle, );
+        FruitPickerPlugin.addHandler(handle, handler);
+        break;
       case "Strawberry#averageNumberOfSeeds":
         averageNumberOfSeeds(result);
         break;

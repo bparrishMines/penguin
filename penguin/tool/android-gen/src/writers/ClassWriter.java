@@ -88,6 +88,7 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
 
   private MethodSpec buildOnStaticMethodCall(PluginClass aClass) {
     final MethodSpec.Builder builder = MethodSpec.methodBuilder("onStaticMethodCall")
+        .addModifiers(Modifier.STATIC)
         .addParameter(PluginClassNames.METHOD_CALL.name, "call")
         .addParameter(PluginClassNames.RESULT.name, "result")
         .beginControlFlow("switch(call.method)");

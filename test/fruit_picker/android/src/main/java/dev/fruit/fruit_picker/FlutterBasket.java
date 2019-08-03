@@ -14,8 +14,19 @@ final class FlutterBasket implements MethodCallHandler {
 
   private final Basket basket;
 
-  void onStaticMethodCall(MethodCall call, Result result) {
+  private FlutterBasket(final Integer handle) {
+    this.handle = handle;
+    this.basket = new Basket();
+  }
+
+  static void onStaticMethodCall(MethodCall call, Result result) {
     switch(call.method) {
+      case "Basket()":
+        final Integer handle = call.argument("basketHandle");
+        ;
+        final FlutterBasket handler = new FlutterBasket(handle, );
+        FruitPickerPlugin.addHandler(handle, handler);
+        break;
       case "Basket#ripestBanana":
         ripestBanana(call, result);
         break;
