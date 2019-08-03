@@ -176,7 +176,14 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
     final Map<String, cb.Expression> paramExpressions =
         <String, cb.Expression>{};
     for (Parameter parameter in allParameters) {
-      paramExpressions[parameter.name] = cb.refer(parameter.name);
+      final Class aClass = _classFromString(parameter.type);
+
+      if (aClass != null) {
+        paramExpressions['${parameter.name.toLowerCase()}Handle'] =
+            cb.refer(parameter.name).property('handle');
+      } else {
+        paramExpressions[parameter.name] = cb.refer(parameter.name);
+      }
     }
 
     if (returnName != null) {
@@ -241,7 +248,14 @@ class ConstructorWriter extends Writer<Constructor, cb.Constructor> {
     final Map<String, cb.Expression> paramExpressions =
         <String, cb.Expression>{};
     for (Parameter parameter in allParameters) {
-      paramExpressions[parameter.name] = cb.refer(parameter.name);
+      final Class aClass = _classFromString(parameter.type);
+
+      if (aClass != null) {
+        paramExpressions['${parameter.name.toLowerCase()}Handle'] =
+            cb.refer(parameter.name).property('handle');
+      } else {
+        paramExpressions[parameter.name] = cb.refer(parameter.name);
+      }
     }
 
     final String handleName = className.toLowerCase();

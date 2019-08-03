@@ -18,7 +18,7 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
         .addModifiers(Modifier.FINAL)
         .addSuperinterface(PluginClassNames.METHOD_CALL_HANDLER.name)
         .addField(Integer.class, "handle", Modifier.PRIVATE, Modifier.FINAL)
-        .addField(aClass.details.wrappedClassName, aClass.details.wrappedObjectName, Modifier.FINAL, Modifier.PRIVATE);
+        .addField(aClass.details.wrappedClassName, aClass.details.wrappedObjectName, Modifier.FINAL, Modifier.PUBLIC);
 
     if (aClass.details.hasConstructor) {
       classBuilder.addMethod(buildOnStaticMethodCall(aClass));
@@ -103,17 +103,18 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
         allParameterNamesString = ", " + allParameterNamesString;
       }
 
-      builder.addCode("case \"$N(" + allParameterTypesString + ")\":\n", aClass.name)
+      builder.beginControlFlow("case \"$N(" + allParameterTypesString + ")\":", aClass.name)
           .addCode(CodeBlock.builder().indent().build())
           .addStatement("final $T handle = call.argument($S)", Integer.class, aClass.details.wrappedObjectName + "Handle");
 
       if (hasParameters) {
-        builder.addStatement(extractParametersFromMethodCall(constructor.getAllParameters()));
+        builder.addCode(extractParametersFromMethodCall(constructor.getAllParameters(), mainPluginClassName));
       }
 
       builder.addStatement("final $T handler = new $T(handle" + allParameterNamesString + ")", aClass.details.wrapperClassName, aClass.details.wrapperClassName)
           .addStatement("$T.addHandler(handle, handler)", mainPluginClassName)
           .addStatement("break")
+          .endControlFlow()
           .addCode(CodeBlock.builder().unindent().build());
     }
 

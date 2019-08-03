@@ -9,10 +9,23 @@ classes:
     constructors:
       - constructor:
         is_default: true 
+      - constructor:
+        name: appleBasket
+        required_parameters:
+          - required_parameter:
+            name: apple
+            type: Apple 
+        
     methods:
       - method:
         name: takeApple
         returns: Apple
+      - method:
+        name: addApple
+        required_parameters:
+          - required_parameter:
+            name: apple
+            type: Apple 
     fields:
       - field:
         name: ripestBanana

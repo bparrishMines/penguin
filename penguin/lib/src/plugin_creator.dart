@@ -1,6 +1,4 @@
 import 'package:code_builder/code_builder.dart' as cb;
-import 'package:pub_semver/pub_semver.dart';
-import 'package:pubspec_parse/pubspec_parse.dart';
 
 import 'plugin.dart';
 import 'references.dart';
@@ -15,7 +13,7 @@ class ClassDetails {
 
   final bool hasConstructor;
 
-  /// Referenced by another class method or
+  /// Referenced by a method or field
   final bool isReferenced;
 
   /// File of the class

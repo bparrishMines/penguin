@@ -7,7 +7,6 @@ import 'package:fruit_picker/apple.dart';
 import 'package:fruit_picker/banana.dart';
 import 'package:fruit_picker/orange.dart';
 import 'package:fruit_picker/strawberry.dart';
-import 'package:fruit_picker/empty.dart';
 
 void main() {
   final Completer<String> completer = Completer<String>();
@@ -20,6 +19,13 @@ void main() {
 
       setUp(() {
         basket = Basket();
+      });
+
+      test('$Basket(Apple)', () async {
+        final Basket basket = Basket();
+        final Apple apple = basket.takeApple();
+        Basket.appleBasket(apple);
+        await pumpEventQueue();
       });
 
       test('takeApple', () async {

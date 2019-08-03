@@ -38,18 +38,36 @@ abstract class Writer<T, K> {
     return null;
   }
 
-  static CodeBlock extractParametersFromMethodCall(List<PluginParameter> parameters) {
+  CodeBlock extractParametersFromMethodCall(List<PluginParameter> parameters, ClassName mainPluginClassName) {
     final CodeBlock.Builder builder = CodeBlock.builder();
 
     for (PluginParameter parameter : parameters) {
-      final ClassName className = bestGuess(parameter.type);
-      builder.add("final $T $N = call.argument($S)", className, parameter.name, parameter.name);
+      final PluginClass pluginClass = classFromString(parameter.type);
+
+      if (pluginClass != null) {
+        final String handleName = parameter.name.toLowerCase() + "Handle";
+        builder.addStatement("final $T $N = call.argument($S)", Integer.class, pluginClass.details.wrappedObjectName + "Handle", handleName)
+            .addStatement("final $T $N = ($T) $T.getHandler($N)",
+                pluginClass.details.wrapperClassName,
+                pluginClass.details.wrapperClassName.simpleName().toLowerCase(),
+                pluginClass.details.wrapperClassName,
+                mainPluginClassName,
+                handleName)
+            .addStatement("final $T $N = $N.$N",
+                pluginClass.details.wrappedClassName,
+                parameter.name,
+                pluginClass.details.wrapperClassName.simpleName().toLowerCase(),
+                pluginClass.details.wrappedObjectName);
+      } else {
+        final ClassName className = bestGuess(parameter.type);
+        builder.addStatement("final $T $N = call.argument($S)", className, parameter.name, parameter.name);
+      }
     }
 
     return builder.build();
   }
 
-  static ClassName bestGuess(String classNameString) {
+  ClassName bestGuess(String classNameString) {
     switch (classNameString) {
       case "int":
         return ClassName.bestGuess("Integer");
