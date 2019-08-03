@@ -129,7 +129,7 @@ class Parameter {
 
 @JsonSerializable()
 class Field {
-  Field(this.name, {this.type, this.isStatic});
+  Field(this.name, {this.type, this.isStatic, this.mutable});
 
   @JsonKey(required: true, disallowNullValue: true)
   final String name;
@@ -139,6 +139,9 @@ class Field {
 
   @JsonKey(defaultValue: 'dynamic')
   final String type;
+
+  @JsonKey(defaultValue: false)
+  final bool mutable;
 
   factory Field.fromJson(Map json) => _$FieldFromJson(json);
 

@@ -48,6 +48,81 @@ abstract class Writer<T, K> {
   }
 }
 
+class FieldWriter extends Writer<Field, List<cb.Method>> {
+  FieldWriter(Plugin plugin, this.className, this.implSuffix)
+      : assert(className != null),
+        assert(implSuffix != null),
+        super(plugin) {
+    _methodWriter = MethodWriter(
+      plugin: plugin,
+      className: className,
+      implSuffix: implSuffix,
+    );
+  }
+
+  final String className;
+  final String implSuffix;
+  MethodWriter _methodWriter;
+
+  @override
+  List<cb.Method> write(Field field) {
+    if (!field.mutable) return <cb.Method>[_methodWriter.write(field)];
+
+    final List<cb.Method> methods = <cb.Method>[];
+
+    final cb.Reference variableRef = cb.refer('_${field.name}');
+
+    final Class theClass = _classFromString(field.type);
+
+    methods.addAll(<cb.Method>[
+      cb.Method((cb.MethodBuilder builder) {
+        builder
+          ..name = field.name
+          ..type = cb.MethodType.getter
+          ..static = field.isStatic
+          ..lambda = true
+          ..body = variableRef.code
+          ..returns = theClass == null
+              ? cb.refer(field.type)
+              : cb.refer(theClass.name, theClass.details.file);
+      }),
+      cb.Method((cb.MethodBuilder builder) {
+        builder
+          ..name = field.name
+          ..type = cb.MethodType.setter
+          ..static = field.isStatic
+          ..requiredParameters.add(
+            cb.Parameter((cb.ParameterBuilder paramBuilder) {
+              paramBuilder
+                ..name = field.name
+                ..type = cb.refer(field.type);
+            }),
+          )
+          ..body = cb.Block((cb.BlockBuilder builder) {
+            Map<String, cb.Expression> arguments = <String, cb.Expression>{};
+
+            if (theClass != null) {
+              arguments['${field.name.toLowerCase()}Handle'] =
+                  cb.refer(field.name).property('handle');
+            } else {
+              arguments[field.name] = variableRef;
+            }
+
+            builder
+              ..addExpression(_invokeMethodExpression(
+                  className: className,
+                  methodName: field.name,
+                  hasHandle: !field.isStatic,
+                  arguments: arguments))
+              ..addExpression(variableRef.assign(cb.refer(field.name)));
+          });
+      }),
+    ]);
+
+    return methods;
+  }
+}
+
 class MethodWriter extends Writer<dynamic, cb.Method> {
   MethodWriter({Plugin plugin, this.className, this.implSuffix})
       : assert(className != null),
@@ -297,6 +372,12 @@ class ClassWriter extends Writer<Class, cb.Library> {
       implSuffix: _implSuffix,
     );
 
+    final FieldWriter fieldWriter = FieldWriter(
+      plugin,
+      theClass.name,
+      _implSuffix,
+    );
+
     final ConstructorWriter constructWriter = ConstructorWriter(
       plugin,
       theClass.name,
@@ -309,7 +390,10 @@ class ClassWriter extends Writer<Class, cb.Library> {
           ..abstract = !theClass.details.hasConstructor
           ..constructors.addAll(constructWriter.writeAll(theClass.constructors))
           ..fields.add(_handle)
-          ..methods.addAll(methodWriter.writeAll(theClass.fields))
+          ..fields.addAll(_getMutableFields(theClass))
+          ..methods.addAll(
+            fieldWriter.writeAll(theClass.fields).expand((_) => _),
+          )
           ..methods.addAll(methodWriter.writeAll(theClass.methods));
 
         if (theClass.details.hasConstructor && theClass.details.isReferenced) {
@@ -327,6 +411,28 @@ class ClassWriter extends Writer<Class, cb.Library> {
     (cb.ConstructorBuilder builder) => builder.name = 'internal',
   );
 
+  List<cb.Field> _getMutableFields(Class theClass) {
+    final List<cb.Field> fields = <cb.Field>[];
+    for (Field field in theClass.fields) {
+      if (!field.mutable) continue;
+
+      final Class theClass = _classFromString(field.type);
+
+      fields.add(
+        cb.Field((cb.FieldBuilder builder) {
+          builder
+            ..name = '_${field.name}'
+            ..static = field.isStatic
+            ..type = theClass == null
+                ? cb.refer(field.type)
+                : cb.refer(theClass.name, theClass.details.file);
+        }),
+      );
+    }
+
+    return fields;
+  }
+
   void _addImplClasses(cb.LibraryBuilder builder, Class theClass) {
     final Set<String> addedClass = <String>{};
 
@@ -339,6 +445,7 @@ class ClassWriter extends Writer<Class, cb.Library> {
       if (returner is Method) {
         returnType = returner.returns;
       } else if (returner is Field) {
+        if (returner.mutable) continue;
         returnType = returner.type;
       }
 

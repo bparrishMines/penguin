@@ -15,7 +15,6 @@ classes:
           - required_parameter:
             name: apple
             type: Apple 
-        
     methods:
       - method:
         name: takeApple
@@ -31,6 +30,11 @@ classes:
         name: ripestBanana
         is_static: true
         type: Banana
+      - field:
+        name: favoritePeach
+        is_static: true
+        type: Peach
+        mutable: true
 
   - class:
     name: Apple
@@ -108,3 +112,15 @@ classes:
           - required_parameter:
             name: addIce
             type: bool
+
+  - class:
+    name: Peach
+    java_package: dev.fruit.fruit_picker.fruitlibrary.fruits
+    constructors:
+      - constructor:
+        is_default: true
+    fields:
+      - field:
+        name: isRipe
+        type: bool
+        mutable: true

@@ -44,7 +44,7 @@ class PluginCreator {
       }
 
       for (Field field in theClass.fields) {
-        if ((field.isStatic || theClass.name != field.type) &&
+        if (!field.mutable && (field.isStatic || theClass.name != field.type) &&
             allClassNames.contains(field.type)) {
           referencedClasses.add(field.type);
         }
