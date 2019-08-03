@@ -34,3 +34,4 @@ out/
 test/*
 !test/plugin.yaml
 !test/fruit_picker/android/src/main/java/dev/fruit/fruit_picker/fruitlibrary/*
+!test/fruit_picker/example/test_driver/*
