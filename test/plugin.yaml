@@ -85,3 +85,26 @@ classes:
       - constructor:
         is_default: true 
     name: Empty
+
+  - class:
+    name: Lemon
+    java_package: dev.fruit.fruit_picker.fruitlibrary.fruits
+    constructors:
+      - constructor:
+        required_parameters:
+          - required_parameter:
+            name: color
+            type: String
+          - required_parameter:
+            name: sourness
+            type: double
+    methods:
+      - method:
+        name: makeLemonade
+        required_parameters:
+          - required_parameter:
+            name: addSugar
+            type: bool
+          - required_parameter:
+            name: addIce
+            type: bool
