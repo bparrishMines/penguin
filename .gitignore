@@ -26,3 +26,4 @@ doc/api/
 *.iml
 
 out/
+*.DS_STORE

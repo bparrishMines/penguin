@@ -3,7 +3,8 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 
 class FruitPicker {
-  static const MethodChannel _channel = const MethodChannel('fruit_picker');
+  static const MethodChannel _channel =
+      const MethodChannel('fruit_picker');
 
   static Future<String> get platformVersion async {
     final String version = await _channel.invokeMethod('getPlatformVersion');
