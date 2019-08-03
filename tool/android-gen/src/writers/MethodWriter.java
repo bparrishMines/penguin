@@ -42,6 +42,10 @@ public class MethodWriter extends Writer<Object, MethodSpec> {
       final PluginMethod method = (PluginMethod) fieldOrMethod;
       final String allParameterNamesString = String.join(", ", method.getAllParameterNames());
       callString = "$N.$N(" + allParameterNamesString + ")";
+
+      for (PluginParameter parameter : method.getAllParameters()) {
+        builder.addStatement("final $T $N = call.argument($S)", parameter.type, parameter.name, parameter.name);
+      }
     } else {
       callString = "$N.$N";
     }
