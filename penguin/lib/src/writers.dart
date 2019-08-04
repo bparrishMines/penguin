@@ -46,27 +46,55 @@ abstract class Writer<T, K> {
       <cb.Reference>[type ?? cb.refer('void')],
     );
   }
+
+  Map<String, cb.Expression> _mappedParams(
+    dynamic constructorFieldOrMethod,
+    String varName,
+  ) {
+    assert(constructorFieldOrMethod is Constructor ||
+        constructorFieldOrMethod is Method ||
+        constructorFieldOrMethod is Field);
+
+    final Map<String, cb.Expression> paramExpressions =
+        <String, cb.Expression>{};
+
+    if (constructorFieldOrMethod is Constructor ||
+        constructorFieldOrMethod is Method) {
+      for (Parameter parameter in constructorFieldOrMethod.allParameters) {
+        final Class aClass = _classFromString(parameter.type);
+
+        if (aClass != null) {
+          paramExpressions['${parameter.name.toLowerCase()}Handle'] =
+              cb.refer(parameter.name).property('handle');
+        } else {
+          paramExpressions[parameter.name] = cb.refer(parameter.name);
+        }
+      }
+    }
+
+    final String handleName = '${varName.toLowerCase()}Handle';
+    if (constructorFieldOrMethod is Constructor) {
+      paramExpressions[handleName] = cb.refer('handle');
+    } else if (_classFromString(varName) != null) {
+      paramExpressions[handleName] =
+          cb.refer(varName.toLowerCase()).property('handle');
+    }
+
+    return paramExpressions;
+  }
 }
 
 class FieldWriter extends Writer<Field, List<cb.Method>> {
-  FieldWriter(Plugin plugin, this.className, this.implSuffix)
-      : assert(className != null),
-        assert(implSuffix != null),
-        super(plugin) {
-    _methodWriter = MethodWriter(
-      plugin: plugin,
-      className: className,
-      implSuffix: implSuffix,
-    );
-  }
+  FieldWriter(Plugin plugin, this.className, this.methodWriter)
+      : assert(methodWriter != null),
+        super(plugin);
 
   final String className;
-  final String implSuffix;
-  MethodWriter _methodWriter;
+  final MethodWriter methodWriter;
 
   @override
   List<cb.Method> write(Field field) {
-    if (!field.mutable) return <cb.Method>[_methodWriter.write(field)];
+    if (!field.mutable) return <cb.Method>[methodWriter.write(field)];
 
     final List<cb.Method> methods = <cb.Method>[];
 
@@ -131,56 +159,39 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
     _paramWriter = ParameterWriter(plugin);
   }
 
-  @override
-  cb.Method write(dynamic methodCreator) {
-    assert(methodCreator is Method || methodCreator is Field);
-
-    if (methodCreator is Method) {
-      return _writeFor(
-        name: methodCreator.name,
-        returnType: methodCreator.returns,
-        isStatic: methodCreator.isStatic,
-        requiredParameters: methodCreator.requiredParameters,
-        optionalParameters: methodCreator.optionalParameters,
-      );
-    }
-
-    final Field field = methodCreator;
-    return _writeFor(
-      name: field.name,
-      returnType: field.type,
-      isStatic: field.isStatic,
-      isField: true,
-    );
-  }
-
   final String className;
   final String implSuffix;
   ParameterWriter _paramWriter;
 
-  cb.Method _writeFor({
-    String name,
-    String returnType,
-    bool isStatic = false,
-    List<Parameter> requiredParameters = const <Parameter>[],
-    List<Parameter> optionalParameters = const <Parameter>[],
-    bool isField = false,
-  }) {
+  @override
+  cb.Method write(dynamic fieldOrMethod) {
+    final String returnType = Plugin.returnType(fieldOrMethod);
+
     final Class theClass = _classFromString(returnType);
+
+    final cb.InvokeExpression invokeMethodExpression = _invokeMethodExpression(
+      type: theClass == null ? cb.refer(returnType) : null,
+      className: className,
+      methodName: fieldOrMethod.name,
+      hasHandle: !fieldOrMethod.isStatic,
+      arguments: _mappedParams(fieldOrMethod, returnType),
+    );
 
     void addNameAndParams(cb.MethodBuilder builder) {
       builder
-        ..name = name
-        ..static = isStatic
-        ..requiredParameters.addAll(
-          _paramWriter.writeAll(requiredParameters),
-        )
-        ..optionalParameters.addAll(
-          _paramWriter.writeAll(optionalParameters),
-        );
+        ..name = fieldOrMethod.name
+        ..static = fieldOrMethod.isStatic;
 
-      if (isField) {
+      if (fieldOrMethod is Field) {
         builder.type = cb.MethodType.getter;
+      } else {
+        builder
+          ..requiredParameters.addAll(
+            _paramWriter.writeAll(fieldOrMethod.requiredParameters),
+          )
+          ..optionalParameters.addAll(
+            _paramWriter.writeAll(fieldOrMethod.optionalParameters),
+          );
       }
     }
 
@@ -190,17 +201,7 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
 
         builder.returns = References.future(cb.refer(returnType));
         builder.body = cb.Block((cb.BlockBuilder builder) {
-          builder.addExpression(_invokeMethodExpression(
-            type: cb.refer(returnType),
-            className: className,
-            methodName: name,
-            hasHandle: !isStatic,
-            arguments: _mappedParams(
-              returnType: returnType,
-              requiredParameters: requiredParameters,
-              optionalParameters: optionalParameters,
-            ),
-          ).returned);
+          builder.addExpression(invokeMethodExpression.returned);
         });
       });
     } else {
@@ -208,7 +209,7 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
           ? cb.refer(returnType)
           : cb.refer(returnType, theClass.details.file);
 
-      final String returnName = returnType.toLowerCase();
+      final String varName = returnType.toLowerCase();
 
       return cb.Method((cb.MethodBuilder builder) {
         addNameAndParams(builder);
@@ -218,55 +219,15 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
           builder.addExpression(
             cb
                 .refer('_${returnType}$implSuffix')
-                .call(<cb.Expression>[]).assignFinal(returnName),
+                .call(<cb.Expression>[]).assignFinal(varName),
           );
 
-          builder.addExpression(_invokeMethodExpression(
-            className: className,
-            methodName: name,
-            hasHandle: !isStatic,
-            arguments: _mappedParams(
-              returnType: returnType,
-              requiredParameters: requiredParameters,
-              optionalParameters: optionalParameters,
-              returnName: returnName,
-            ),
-          ));
+          builder.addExpression(invokeMethodExpression);
 
-          builder.addExpression(cb.refer(returnName).returned);
+          builder.addExpression(cb.refer(varName).returned);
         });
       });
     }
-  }
-
-  Map<String, cb.Expression> _mappedParams({
-    String returnType,
-    List<Parameter> requiredParameters = const <Parameter>[],
-    List<Parameter> optionalParameters = const <Parameter>[],
-    String returnName,
-  }) {
-    final List<Parameter> allParameters =
-        requiredParameters + optionalParameters;
-
-    final Map<String, cb.Expression> paramExpressions =
-        <String, cb.Expression>{};
-    for (Parameter parameter in allParameters) {
-      final Class aClass = _classFromString(parameter.type);
-
-      if (aClass != null) {
-        paramExpressions['${parameter.name.toLowerCase()}Handle'] =
-            cb.refer(parameter.name).property('handle');
-      } else {
-        paramExpressions[parameter.name] = cb.refer(parameter.name);
-      }
-    }
-
-    if (returnName != null) {
-      paramExpressions['${returnName}Handle'] =
-          cb.refer(returnName).property('handle');
-    }
-
-    return paramExpressions;
   }
 }
 
@@ -294,7 +255,7 @@ class ConstructorWriter extends Writer<Constructor, cb.Constructor> {
           builder.addExpression(_invokeMethodExpression(
             className: className,
             methodName: _getMethodCallMethod(constructor),
-            arguments: _mappedParams(constructor),
+            arguments: _mappedParams(constructor, className),
             useHashTag: false,
           ));
         });
@@ -314,29 +275,6 @@ class ConstructorWriter extends Writer<Constructor, cb.Constructor> {
     );
 
     return '(${parameterTypes.join(',')})';
-  }
-
-  Map<String, cb.Expression> _mappedParams(Constructor constructor) {
-    final List<Parameter> allParameters =
-        constructor.requiredParameters + constructor.optionalParameters;
-
-    final Map<String, cb.Expression> paramExpressions =
-        <String, cb.Expression>{};
-    for (Parameter parameter in allParameters) {
-      final Class aClass = _classFromString(parameter.type);
-
-      if (aClass != null) {
-        paramExpressions['${parameter.name.toLowerCase()}Handle'] =
-            cb.refer(parameter.name).property('handle');
-      } else {
-        paramExpressions[parameter.name] = cb.refer(parameter.name);
-      }
-    }
-
-    final String handleName = className.toLowerCase();
-    paramExpressions['${handleName}Handle'] = cb.refer('handle');
-
-    return paramExpressions;
   }
 }
 
@@ -375,7 +313,7 @@ class ClassWriter extends Writer<Class, cb.Library> {
     final FieldWriter fieldWriter = FieldWriter(
       plugin,
       theClass.name,
-      _implSuffix,
+      methodWriter,
     );
 
     final ConstructorWriter constructWriter = ConstructorWriter(
@@ -436,18 +374,10 @@ class ClassWriter extends Writer<Class, cb.Library> {
   void _addImplClasses(cb.LibraryBuilder builder, Class theClass) {
     final Set<String> addedClass = <String>{};
 
-    final List<dynamic> allReturners = List<dynamic>()
-      ..addAll(theClass.methods)
-      ..addAll(theClass.fields);
+    for (dynamic fieldOrMethod in theClass.fieldsAndMethods) {
+      if (Plugin.mutable(fieldOrMethod)) continue;
 
-    for (dynamic returner in allReturners) {
-      String returnType;
-      if (returner is Method) {
-        returnType = returner.returns;
-      } else if (returner is Field) {
-        if (returner.mutable) continue;
-        returnType = returner.type;
-      }
+      final String returnType = Plugin.returnType(fieldOrMethod);
 
       final Class returnClass = _classFromString(returnType);
 

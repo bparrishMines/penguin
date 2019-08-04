@@ -2,7 +2,7 @@ import 'package:code_builder/code_builder.dart' as cb;
 
 import 'plugin.dart';
 import 'references.dart';
-import 'utils.dart';
+import 'string_utils.dart';
 import 'writers.dart';
 
 class ClassDetails {
@@ -36,17 +36,10 @@ class PluginCreator {
 
     final Set<String> referencedClasses = <String>{};
     for (Class theClass in plugin.classes) {
-      for (Method method in theClass.methods) {
-        if ((method.isStatic || theClass.name != method.returns) &&
-            allClassNames.contains(method.returns)) {
-          referencedClasses.add(method.returns);
-        }
-      }
-
-      for (Field field in theClass.fields) {
-        if (!field.mutable && (field.isStatic || theClass.name != field.type) &&
-            allClassNames.contains(field.type)) {
-          referencedClasses.add(field.type);
+      for (dynamic fieldOrMethod in theClass.fieldsAndMethods) {
+        if (!Plugin.mutable(fieldOrMethod) &&
+            allClassNames.contains(Plugin.returnType(fieldOrMethod))) {
+          referencedClasses.add(Plugin.returnType(fieldOrMethod));
         }
       }
     }
@@ -55,7 +48,7 @@ class PluginCreator {
       theClass.details = ClassDetails(
         theClass.constructors.isNotEmpty,
         referencedClasses.contains(theClass.name),
-        '${camelCaseToSnakeCase(theClass.name)}.dart',
+        '${StringUtils.camelCaseToSnakeCase(theClass.name)}.dart',
       );
     }
   }

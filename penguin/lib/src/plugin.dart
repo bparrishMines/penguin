@@ -23,6 +23,18 @@ class Plugin {
   @JsonKey(defaultValue: const <Class>[])
   final List<Class> classes;
 
+  static String returnType(dynamic fieldOrMethod) {
+    assert(fieldOrMethod is Field || fieldOrMethod is Method);
+    if (fieldOrMethod is Field) return fieldOrMethod.type;
+    return fieldOrMethod.returns;
+  }
+
+  static bool mutable(dynamic fieldOrMethod) {
+    assert(fieldOrMethod is Field || fieldOrMethod is Method);
+    if (fieldOrMethod is Field) return fieldOrMethod.mutable;
+    return false;
+  }
+
   factory Plugin.fromJson(Map json) => _$PluginFromJson(json);
 
   Map toJson() => _$PluginToJson(this);
@@ -65,6 +77,11 @@ class Class {
     _details = details;
   }
 
+  @JsonKey(ignore: true)
+  List<dynamic> get fieldsAndMethods => List<dynamic>.unmodifiable(
+        <dynamic>[...fields, ...methods],
+      );
+
   factory Class.fromJson(Map json) => _$ClassFromJson(json);
 
   Map toJson() => _$ClassToJson(this);
@@ -74,27 +91,21 @@ class Class {
 }
 
 @JsonSerializable()
-class Method {
+class Method extends ParameterHolder {
   Method(
     this.name, {
     this.returns,
-    this.requiredParameters,
-    this.optionalParameters,
+    List<Parameter> requiredParameters,
+    List<Parameter> optionalParameters,
     this.type,
     this.isStatic,
-  });
+  }) : super(requiredParameters, optionalParameters);
 
   @JsonKey(required: true, disallowNullValue: true)
   final String name;
 
   @JsonKey(defaultValue: 'void')
   final String returns;
-
-  @JsonKey(defaultValue: const <Parameter>[])
-  final List<Parameter> requiredParameters;
-
-  @JsonKey(defaultValue: const <Parameter>[])
-  final List<Parameter> optionalParameters;
 
   final MethodType type;
 
@@ -152,31 +163,26 @@ class Field {
 }
 
 @JsonSerializable()
-class Constructor {
+class Constructor extends ParameterHolder {
   Constructor({
     this.isDefault,
     this.name,
-    this.requiredParameters,
-    this.optionalParameters,
-  }) : assert((isDefault &&
+    List<Parameter> requiredParameters,
+    List<Parameter> optionalParameters,
+  })  : assert((isDefault &&
                 name == null &&
                 requiredParameters.isEmpty &&
                 optionalParameters.isEmpty) ||
             (!isDefault &&
                 (name != null ||
                     requiredParameters.isNotEmpty ||
-                    optionalParameters.isNotEmpty)));
+                    optionalParameters.isNotEmpty))),
+        super(requiredParameters, optionalParameters);
 
   final String name;
 
   @JsonKey(defaultValue: false)
   final bool isDefault;
-
-  @JsonKey(defaultValue: const <Parameter>[])
-  final List<Parameter> requiredParameters;
-
-  @JsonKey(defaultValue: const <Parameter>[])
-  final List<Parameter> optionalParameters;
 
   factory Constructor.fromJson(Map json) => _$ConstructorFromJson(json);
 
@@ -184,4 +190,19 @@ class Constructor {
 
   @override
   String toString() => toJson().toString();
+}
+
+class ParameterHolder {
+  ParameterHolder(this.requiredParameters, this.optionalParameters)
+      : allParameters = List<Parameter>.unmodifiable(
+          <Parameter>[...requiredParameters, ...optionalParameters],
+        );
+
+  final List<Parameter> allParameters;
+
+  @JsonKey(defaultValue: const <Parameter>[])
+  final List<Parameter> requiredParameters;
+
+  @JsonKey(defaultValue: const <Parameter>[])
+  final List<Parameter> optionalParameters;
 }

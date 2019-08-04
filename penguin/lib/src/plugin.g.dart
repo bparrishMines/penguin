@@ -125,7 +125,10 @@ Method _$MethodFromJson(Map json) {
 }
 
 Map<String, dynamic> _$MethodToJson(Method instance) {
-  final val = <String, dynamic>{};
+  final val = <String, dynamic>{
+    'required_parameters': instance.requiredParameters,
+    'optional_parameters': instance.optionalParameters,
+  };
 
   void writeNotNull(String key, dynamic value) {
     if (value != null) {
@@ -135,8 +138,6 @@ Map<String, dynamic> _$MethodToJson(Method instance) {
 
   writeNotNull('name', instance.name);
   val['returns'] = instance.returns;
-  val['required_parameters'] = instance.requiredParameters;
-  val['optional_parameters'] = instance.optionalParameters;
   val['type'] = _$MethodTypeEnumMap[instance.type];
   val['is_static'] = instance.isStatic;
   return val;
@@ -251,8 +252,8 @@ Constructor _$ConstructorFromJson(Map json) {
 
 Map<String, dynamic> _$ConstructorToJson(Constructor instance) =>
     <String, dynamic>{
-      'name': instance.name,
-      'is_default': instance.isDefault,
       'required_parameters': instance.requiredParameters,
-      'optional_parameters': instance.optionalParameters
+      'optional_parameters': instance.optionalParameters,
+      'name': instance.name,
+      'is_default': instance.isDefault
     };

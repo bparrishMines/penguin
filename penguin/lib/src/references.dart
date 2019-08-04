@@ -15,7 +15,7 @@ class References {
 
   static final channel = refer('Channel', 'channel.dart');
 
-  static future(Reference type) {
+  static TypeReference future(Reference type) {
     return TypeReference((TypeReferenceBuilder builder) {
       builder
         ..symbol = 'Future'
