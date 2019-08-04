@@ -46,7 +46,7 @@ abstract class Writer<T, K> {
 
       if (pluginClass != null) {
         final String handleName = parameter.name.toLowerCase() + "Handle";
-        builder.addStatement("final $T $N = call.argument($S)", Integer.class, pluginClass.details.wrappedObjectName + "Handle", handleName)
+        builder.addStatement("final $T $N = call.argument($S)", Integer.class, handleName, handleName)
             .addStatement("final $T $N = ($T) $T.getHandler($N)",
                 pluginClass.details.wrapperClassName,
                 pluginClass.details.wrapperClassName.simpleName().toLowerCase(),

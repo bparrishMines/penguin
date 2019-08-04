@@ -68,7 +68,7 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
 
         final PluginClass returnClass = classFromString(Plugin.returnType(fieldOrMethod));
         if ((fieldOrMethod instanceof PluginMethod && ((PluginMethod) fieldOrMethod).getAllParameterNames().size() > 0) ||
-            returnClass != null) {
+            returnClass != null || (fieldOrMethod instanceof PluginField && ((PluginField) fieldOrMethod).mutable)) {
           builder.addStatement("$N(call, result)", Plugin.name(fieldOrMethod));
         } else {
           builder.addStatement("$N(result)", Plugin.name(fieldOrMethod));
@@ -125,7 +125,7 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
 
         final PluginClass returnClass = classFromString(Plugin.returnType(fieldOrMethod));
         if ((fieldOrMethod instanceof PluginMethod && ((PluginMethod) fieldOrMethod).getAllParameterNames().size() > 0) ||
-            returnClass != null) {
+            returnClass != null || (fieldOrMethod instanceof PluginField && ((PluginField) fieldOrMethod).mutable)) {
           builder.addStatement("$N(call, result)", Plugin.name(fieldOrMethod));
         } else {
           builder.addStatement("$N(result)", Plugin.name(fieldOrMethod));

@@ -8,6 +8,7 @@ import 'package:fruit_picker/banana.dart';
 import 'package:fruit_picker/orange.dart';
 import 'package:fruit_picker/strawberry.dart';
 import 'package:fruit_picker/lemon.dart';
+import 'package:fruit_picker/peach.dart';
 
 void main() {
   final Completer<String> completer = Completer<String>();
@@ -31,6 +32,19 @@ void main() {
 
       test('takeApple', () async {
         final Apple apple = basket.takeApple();
+        await pumpEventQueue();
+      });
+
+      test('favoritePeach', () async {
+        final Peach peach = Basket.favoritePeach;
+
+        expect(peach, isNull);
+
+        final Peach newPeach = Peach();
+        Basket.favoritePeach = newPeach;
+
+        expect(Basket.favoritePeach, newPeach);
+
         await pumpEventQueue();
       });
     });
@@ -93,6 +107,24 @@ void main() {
 
       test('makeLemonade', () {
         expect(lemon.makeLemonade(true, false), completes);
+      });
+    });
+
+    group('$Peach', () {
+      Peach peach;
+
+      setUp(() {
+        peach = Peach();
+      });
+
+      test('isRipe', () async {
+        peach.isRipe = true;
+        expect(peach.isRipe, isTrue);
+
+        peach.isRipe = false;
+        expect(peach.isRipe, isFalse);
+
+        await pumpEventQueue();
       });
     });
   });

@@ -5,6 +5,9 @@ import com.squareup.javapoet.MethodSpec;
 import objects.*;
 
 import javax.lang.model.element.Modifier;
+import java.lang.reflect.Parameter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MethodWriter extends Writer<Object, MethodSpec> {
   private final ClassName mainPluginClassName;
@@ -25,7 +28,7 @@ public class MethodWriter extends Writer<Object, MethodSpec> {
 
     final PluginClass returnClass = classFromString(Plugin.returnType(fieldOrMethod));
     if ((fieldOrMethod instanceof PluginMethod && ((PluginMethod) fieldOrMethod).getAllParameterNames().size() > 0) ||
-        returnClass != null) {
+        returnClass != null || (fieldOrMethod instanceof PluginField && ((PluginField) fieldOrMethod).mutable)) {
       builder.addParameter(PluginClassNames.METHOD_CALL.name, "call", Modifier.FINAL);
     }
 
@@ -47,18 +50,32 @@ public class MethodWriter extends Writer<Object, MethodSpec> {
         builder.addCode(extractParametersFromMethodCall(method.getAllParameters(), mainPluginClassName));
       }
     } else {
+      final PluginField field = (PluginField) fieldOrMethod;
+      if (field.mutable) {
+        final List<PluginParameter> parameters = new ArrayList<>();
+
+        final PluginParameter valueParam = new PluginParameter();
+        valueParam.type = field.type;
+        valueParam.name = field.name;
+        parameters.add(valueParam);
+
+        builder.addCode(extractParametersFromMethodCall(parameters, mainPluginClassName));
+      }
       callString = "$N.$N";
     }
 
     final String callerName = isStatic ? pluginClass.details.wrappedClassName.simpleName() : pluginClass.details.wrappedObjectName;
 
-    if (returnType.equals("void") || returnType.equals("Object")) {
+    if (fieldOrMethod instanceof PluginField && ((PluginField) fieldOrMethod).mutable) {
+      builder.addStatement(callString + " = $N", callerName, name, ((PluginField) fieldOrMethod).name)
+          .addStatement("result.success(null)");
+    } else if (returnType.equals("void") || returnType.equals("Object")) {
       builder.addStatement(callString, callerName, name);
       builder.addStatement("result.success(null)");
     } else {
       if (returnClass == null) {
         builder.addStatement("final $T value = " + callString, bestGuess(returnType), callerName, name)
-            .addStatement("result.success(value)");
+              .addStatement("result.success(value)");
       } else {
         builder.addStatement("final $T handle = call.argument($S)", Integer.class, returnClass.details.wrappedObjectName + "Handle")
             .addStatement("final $T value = " + callString, returnClass.details.wrappedClassName, callerName, name)
