@@ -216,10 +216,13 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
 
         builder.returns = returnRef;
         builder.body = cb.Block((cb.BlockBuilder builder) {
+          final cb.Expression constructor = !theClass.details.hasConstructor
+              ? cb.refer('_${returnType}$implSuffix')
+              : cb
+                  .refer('$returnType', theClass.details.file)
+                  .property('internal');
           builder.addExpression(
-            cb
-                .refer('_${returnType}$implSuffix')
-                .call(<cb.Expression>[]).assignFinal(varName),
+            constructor.call(<cb.Expression>[]).assignFinal(varName),
           );
 
           builder.addExpression(invokeMethodExpression);

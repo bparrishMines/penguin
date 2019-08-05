@@ -11,7 +11,9 @@ public class Basket {
 
   public Basket() {}
 
-  public Basket(Apple apple) {}
+  public Basket(Apple apple) {
+    assert apple != null;
+  }
 
   public Apple takeApple() {
     return new Apple();
