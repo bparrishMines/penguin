@@ -2,9 +2,7 @@ package writers;
 
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
-import objects.Plugin;
-import objects.PluginClass;
-import objects.PluginParameter;
+import objects.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +36,7 @@ abstract class Writer<T, K> {
     return null;
   }
 
-  CodeBlock extractParametersFromMethodCall(List<PluginParameter> parameters, ClassName mainPluginClassName) {
+  final CodeBlock extractParametersFromMethodCall(List<PluginParameter> parameters, ClassName mainPluginClassName) {
     final CodeBlock.Builder builder = CodeBlock.builder();
 
     for (PluginParameter parameter : parameters) {
@@ -54,10 +52,10 @@ abstract class Writer<T, K> {
                 mainPluginClassName,
                 handleName)
             .addStatement("final $T $N = $N.$N",
-                pluginClass.details.wrappedClassName,
+                pluginClass.details.className,
                 parameter.name,
                 pluginClass.details.wrapperClassName.simpleName().toLowerCase(),
-                pluginClass.details.wrappedObjectName);
+                pluginClass.details.variableName);
       } else {
         final ClassName className = bestGuess(parameter.type);
         builder.addStatement("final $T $N = call.argument($S)", className, parameter.name, parameter.name);
@@ -67,7 +65,7 @@ abstract class Writer<T, K> {
     return builder.build();
   }
 
-  ClassName bestGuess(String classNameString) {
+  final ClassName bestGuess(String classNameString) {
     switch (classNameString) {
       case "int":
         return ClassName.bestGuess("Integer");
@@ -78,5 +76,17 @@ abstract class Writer<T, K> {
     }
 
     return ClassName.bestGuess(classNameString);
+  }
+
+  final boolean methodCallHasArguments(Object fieldOrMethod) {
+    assert fieldOrMethod instanceof PluginField || fieldOrMethod instanceof PluginMethod;
+
+    if (fieldOrMethod instanceof PluginMethod && !Plugin.method(fieldOrMethod).getAllParameters().isEmpty()) {
+      return true;
+    } else if (Plugin.mutable(fieldOrMethod)) {
+      return true;
+    } else {
+      return classFromString(Plugin.returnType(fieldOrMethod)) != null;
+    }
   }
 }

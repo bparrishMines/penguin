@@ -9,23 +9,23 @@ public class ClassDetails {
   public final boolean isReferenced;
 
   /// Classname of the class
-  public final ClassName wrappedClassName;
+  public final ClassName className;
 
   /// Classname of wrapper
   public final ClassName wrapperClassName;
 
   // Name of the wrapped object in the class
-  public final String wrappedObjectName;
+  public final String variableName;
 
   ClassDetails(boolean hasConstructor,
                boolean isReferenced,
-               ClassName wrappedClassName,
+               ClassName className,
                ClassName wrapperClassName,
-               String wrappedObjectName) {
+               String variableName) {
     this.hasConstructor = hasConstructor;
     this.isReferenced = isReferenced;
-    this.wrappedClassName = wrappedClassName;
+    this.className = className;
     this.wrapperClassName = wrapperClassName;
-    this.wrappedObjectName = wrappedObjectName;
+    this.variableName = variableName;
   }
 }

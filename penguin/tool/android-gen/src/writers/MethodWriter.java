@@ -5,7 +5,6 @@ import com.squareup.javapoet.MethodSpec;
 import objects.*;
 
 import javax.lang.model.element.Modifier;
-import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,9 +25,7 @@ public class MethodWriter extends Writer<Object, MethodSpec> {
     final MethodSpec.Builder builder = MethodSpec.methodBuilder(Plugin.name(fieldOrMethod))
         .addModifiers(Modifier.PRIVATE);
 
-    final PluginClass returnClass = classFromString(Plugin.returnType(fieldOrMethod));
-    if ((fieldOrMethod instanceof PluginMethod && ((PluginMethod) fieldOrMethod).getAllParameterNames().size() > 0) ||
-        returnClass != null || (fieldOrMethod instanceof PluginField && ((PluginField) fieldOrMethod).mutable)) {
+    if (methodCallHasArguments(fieldOrMethod)) {
       builder.addParameter(PluginClassNames.METHOD_CALL.name, "call", Modifier.FINAL);
     }
 
@@ -42,21 +39,19 @@ public class MethodWriter extends Writer<Object, MethodSpec> {
 
     final String callString;
     if (fieldOrMethod instanceof PluginMethod) {
-      final PluginMethod method = (PluginMethod) fieldOrMethod;
-      final String allParameterNamesString = String.join(", ", method.getAllParameterNames());
+      final String allParameterNamesString = String.join(", ", Plugin.method(fieldOrMethod).getAllParameterNames());
       callString = "$N.$N(" + allParameterNamesString + ")";
 
-      if (method.getAllParameters().size() > 0) {
-        builder.addCode(extractParametersFromMethodCall(method.getAllParameters(), mainPluginClassName));
+      if (!Plugin.method(fieldOrMethod).getAllParameters().isEmpty()) {
+        builder.addCode(extractParametersFromMethodCall(Plugin.method(fieldOrMethod).getAllParameters(), mainPluginClassName));
       }
     } else {
-      final PluginField field = (PluginField) fieldOrMethod;
-      if (field.mutable) {
+      if (Plugin.field(fieldOrMethod).mutable) {
         final List<PluginParameter> parameters = new ArrayList<>();
 
         final PluginParameter valueParam = new PluginParameter();
-        valueParam.type = field.type;
-        valueParam.name = field.name;
+        valueParam.type = Plugin.returnType(fieldOrMethod);
+        valueParam.name = Plugin.name(fieldOrMethod);
         parameters.add(valueParam);
 
         builder.addCode(extractParametersFromMethodCall(parameters, mainPluginClassName));
@@ -64,21 +59,22 @@ public class MethodWriter extends Writer<Object, MethodSpec> {
       callString = "$N.$N";
     }
 
-    final String callerName = isStatic ? pluginClass.details.wrappedClassName.simpleName() : pluginClass.details.wrappedObjectName;
+    final String callerName = isStatic ? pluginClass.details.className.simpleName() : pluginClass.details.variableName;
 
-    if (fieldOrMethod instanceof PluginField && ((PluginField) fieldOrMethod).mutable) {
-      builder.addStatement(callString + " = $N", callerName, name, ((PluginField) fieldOrMethod).name)
+    if (Plugin.mutable(fieldOrMethod)) {
+      builder.addStatement(callString + " = $N", callerName, name, Plugin.name(fieldOrMethod))
           .addStatement("result.success(null)");
     } else if (returnType.equals("void") || returnType.equals("Object")) {
       builder.addStatement(callString, callerName, name);
       builder.addStatement("result.success(null)");
     } else {
+      final PluginClass returnClass = classFromString(Plugin.returnType(fieldOrMethod));
       if (returnClass == null) {
         builder.addStatement("final $T value = " + callString, bestGuess(returnType), callerName, name)
               .addStatement("result.success(value)");
       } else {
-        builder.addStatement("final $T handle = call.argument($S)", Integer.class, returnClass.details.wrappedObjectName + "Handle")
-            .addStatement("final $T value = " + callString, returnClass.details.wrappedClassName, callerName, name)
+        builder.addStatement("final $T handle = call.argument($S)", Integer.class, returnClass.details.variableName + "Handle")
+            .addStatement("final $T value = " + callString, returnClass.details.className, callerName, name)
             .addStatement("final $T handler = new $T(handle, value)", returnClass.details.wrapperClassName, returnClass.details.wrapperClassName)
             .addStatement("$T.addHandler(handle, handler)", mainPluginClassName)
             .addStatement("result.success(null)");

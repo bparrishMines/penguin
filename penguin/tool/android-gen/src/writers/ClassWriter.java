@@ -18,7 +18,7 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
         .addModifiers(Modifier.FINAL)
         .addSuperinterface(PluginClassNames.METHOD_CALL_HANDLER.name)
         .addField(Integer.class, "handle", Modifier.PRIVATE, Modifier.FINAL)
-        .addField(aClass.details.wrappedClassName, aClass.details.wrappedObjectName, Modifier.FINAL, Modifier.PUBLIC);
+        .addField(aClass.details.className, aClass.details.variableName, Modifier.FINAL, Modifier.PUBLIC);
 
     if (aClass.details.hasConstructor) {
       classBuilder.addMethod(buildOnStaticMethodCall(aClass));
@@ -40,9 +40,9 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
     if (aClass.details.isReferenced) {
       classBuilder.addMethod(MethodSpec.constructorBuilder()
           .addParameter(Integer.class, "handle")
-          .addParameter(aClass.details.wrappedClassName, aClass.details.wrappedObjectName)
+          .addParameter(aClass.details.className, aClass.details.variableName)
           .addStatement("this.handle = handle")
-          .addStatement("this.$N = $N", aClass.details.wrappedObjectName, aClass.details.wrappedObjectName)
+          .addStatement("this.$N = $N", aClass.details.variableName, aClass.details.variableName)
           .build());
     }
 
@@ -66,9 +66,7 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
         builder.addCode("case \"$N#$N\":\n", aClass.name, Plugin.name(fieldOrMethod))
             .addCode(CodeBlock.builder().indent().build());
 
-        final PluginClass returnClass = classFromString(Plugin.returnType(fieldOrMethod));
-        if ((fieldOrMethod instanceof PluginMethod && ((PluginMethod) fieldOrMethod).getAllParameterNames().size() > 0) ||
-            returnClass != null || (fieldOrMethod instanceof PluginField && ((PluginField) fieldOrMethod).mutable)) {
+        if (methodCallHasArguments(fieldOrMethod)) {
           builder.addStatement("$N(call, result)", Plugin.name(fieldOrMethod));
         } else {
           builder.addStatement("$N(result)", Plugin.name(fieldOrMethod));
@@ -93,9 +91,8 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
         .addParameter(PluginClassNames.RESULT.name, "result")
         .beginControlFlow("switch(call.method)");
 
-    final ParameterWriter writer = new ParameterWriter(plugin);
     for (PluginConstructor constructor : aClass.constructors) {
-      final boolean hasParameters = constructor.getAllParameters().size() > 0;
+      final boolean hasParameters = !constructor.getAllParameters().isEmpty();
 
       final String allParameterTypesString = String.join(",", constructor.getAllParameterTypes());
       String allParameterNamesString = String.join(", ", constructor.getAllParameterNames());
@@ -105,7 +102,7 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
 
       builder.beginControlFlow("case \"$N(" + allParameterTypesString + ")\":", aClass.name)
           .addCode(CodeBlock.builder().indent().build())
-          .addStatement("final $T handle = call.argument($S)", Integer.class, aClass.details.wrappedObjectName + "Handle");
+          .addStatement("final $T handle = call.argument($S)", Integer.class, aClass.details.variableName + "Handle");
 
       if (hasParameters) {
         builder.addCode(extractParametersFromMethodCall(constructor.getAllParameters(), mainPluginClassName));
@@ -123,9 +120,7 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
         builder.addCode("case \"$N#$N\":\n", aClass.name, Plugin.name(fieldOrMethod))
             .addCode(CodeBlock.builder().indent().build());
 
-        final PluginClass returnClass = classFromString(Plugin.returnType(fieldOrMethod));
-        if ((fieldOrMethod instanceof PluginMethod && ((PluginMethod) fieldOrMethod).getAllParameterNames().size() > 0) ||
-            returnClass != null || (fieldOrMethod instanceof PluginField && ((PluginField) fieldOrMethod).mutable)) {
+        if (methodCallHasArguments(fieldOrMethod)) {
           builder.addStatement("$N(call, result)", Plugin.name(fieldOrMethod));
         } else {
           builder.addStatement("$N(result)", Plugin.name(fieldOrMethod));

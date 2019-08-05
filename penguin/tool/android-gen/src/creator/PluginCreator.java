@@ -35,7 +35,7 @@ public class PluginCreator {
       for (Object fieldOrMethod : theClass.getFieldsAndMethods()) {
         final Boolean isStatic = Plugin.isStatic(fieldOrMethod);
         final String returnType = Plugin.returnType(fieldOrMethod);
-        if ((isStatic || !theClass.name.equals(returnType)) && allClassNames.contains(returnType)) {
+        if (!Plugin.mutable(fieldOrMethod) && allClassNames.contains(returnType)) {
           referencedClasses.add(returnType);
         }
       }

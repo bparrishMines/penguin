@@ -26,7 +26,7 @@ public class ConstructorWriter extends Writer<PluginConstructor, MethodSpec> {
         .addParameter(Integer.class, "handle", Modifier.FINAL)
         .addParameters(parameterWriter.writeAll(constructor.getAllParameters()))
         .addStatement("this.handle = handle")
-        .addStatement("this.$N = new $T(" + allParameterNamesString + ")", pluginClass.details.wrappedObjectName, pluginClass.details.wrappedClassName)
+        .addStatement("this.$N = new $T(" + allParameterNamesString + ")", pluginClass.details.variableName, pluginClass.details.className)
         .build();
   }
 }

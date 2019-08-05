@@ -13,9 +13,9 @@ public class Plugin {
 
     if (fieldOrMethod instanceof PluginField) {
       return ((PluginField) fieldOrMethod).is_static;
-    } else  {
-      return ((PluginMethod) fieldOrMethod).is_static;
     }
+
+    return ((PluginMethod) fieldOrMethod).is_static;
   }
 
   static public String returnType(Object fieldOrMethod) {
@@ -23,9 +23,9 @@ public class Plugin {
 
     if (fieldOrMethod instanceof PluginField) {
       return ((PluginField) fieldOrMethod).type;
-    } else  {
-      return ((PluginMethod) fieldOrMethod).returns;
     }
+
+    return ((PluginMethod) fieldOrMethod).returns;
   }
 
   static public String name(Object fieldOrMethod) {
@@ -33,9 +33,29 @@ public class Plugin {
 
     if (fieldOrMethod instanceof PluginField) {
       return ((PluginField) fieldOrMethod).name;
-    } else  {
-      return ((PluginMethod) fieldOrMethod).name;
     }
+
+    return ((PluginMethod) fieldOrMethod).name;
+  }
+
+  static public boolean mutable(Object fieldOrMethod) {
+    assert fieldOrMethod instanceof PluginField || fieldOrMethod instanceof PluginMethod;
+
+    if (fieldOrMethod instanceof PluginField) {
+      return ((PluginField) fieldOrMethod).mutable;
+    }
+
+    return false;
+  }
+
+  static public PluginMethod method(Object method) {
+    assert method instanceof PluginMethod;
+    return (PluginMethod) method;
+  }
+
+  static public PluginField field(Object field) {
+    assert field instanceof PluginField;
+    return (PluginField) field;
   }
 
   public static abstract class ParameterHolder {

@@ -22,12 +22,12 @@ class ClassDetails {
 
 class PluginCreator {
   PluginCreator(this.plugin) : assert(plugin != null) {
-    initialize();
+    setupClassDetails();
   }
 
   final Plugin plugin;
 
-  void initialize() {
+  void setupClassDetails() {
     final Set<String> allClassNames = plugin.classes
         .map<String>(
           (Class theClass) => theClass.name,
