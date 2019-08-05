@@ -35,6 +35,11 @@ void main() {
         await pumpEventQueue();
       });
 
+      test('ripestBanana', () async {
+        final Banana banana = Basket.ripestBanana;
+        await pumpEventQueue();
+      });
+
       test('favoritePeach', () async {
         final Peach peach = Basket.favoritePeach;
 
@@ -45,6 +50,16 @@ void main() {
 
         expect(Basket.favoritePeach, newPeach);
 
+        await pumpEventQueue();
+      });
+
+      test('addApple', () {
+        final Apple apple = basket.takeApple();
+        expect(basket.addApple(apple), completes);
+      });
+
+      test('takeOrange', () async {
+        final Orange orange = basket.takeOrange();
         await pumpEventQueue();
       });
     });
@@ -107,6 +122,10 @@ void main() {
 
       test('makeLemonade', () {
         expect(lemon.makeLemonade(true, false), completes);
+      });
+
+      test('isBigger', () {
+        expect(lemon.isBigger(Orange(32.0)), completion(isFalse));
       });
     });
 

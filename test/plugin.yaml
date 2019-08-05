@@ -25,6 +25,9 @@ classes:
           - required_parameter:
             name: apple
             type: Apple 
+      - method:
+        name: takeOrange
+        returns: Orange
     fields:
       - field:
         name: ripestBanana
@@ -112,6 +115,13 @@ classes:
           - required_parameter:
             name: addIce
             type: bool
+      - method:
+        name: isBigger
+        required_parameters:
+          - required_parameter:
+            name: anOrange
+            type: Orange
+        returns: bool
 
   - class:
     name: Peach
