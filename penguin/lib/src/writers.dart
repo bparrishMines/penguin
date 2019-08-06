@@ -326,6 +326,45 @@ class ParameterWriter extends Writer<Parameter, cb.Parameter> {
   }
 }
 
+class ImplClassWriter extends Writer<Class, cb.Class> {
+  ImplClassWriter(Plugin plugin, this.implSuffix)
+      : assert(implSuffix != null),
+        super(plugin);
+
+  final String implSuffix;
+
+  @override
+  cb.Class write(Class theClass) {
+    assert(theClass.details.isReferenced && !theClass.details.hasConstructor);
+
+    return cb.Class((cb.ClassBuilder classBuilder) {
+      classBuilder
+        ..name = '_${theClass.name}$implSuffix'
+        ..extend = cb.refer(theClass.name, theClass.details.file);
+
+      if (theClass.details.hasInitializedFields) {
+        classBuilder.constructors.add(cb.Constructor(
+          (cb.ConstructorBuilder builder) {
+            builder
+              ..requiredParameters.add(
+                cb.Parameter((cb.ParameterBuilder builder) {
+                  builder.name = 'source';
+                  builder.type = cb.refer('Map');
+                }),
+              )
+              ..initializers.add(
+                cb
+                    .refer('super')
+                    .property('internal')
+                    .call(<cb.Expression>[cb.refer('source')]).code,
+              );
+          },
+        ));
+      }
+    });
+  }
+}
+
 class ClassWriter extends Writer<Class, cb.Library> {
   const ClassWriter(Plugin plugin) : super(plugin);
 
@@ -352,31 +391,49 @@ class ClassWriter extends Writer<Class, cb.Library> {
       theClass.name,
     );
 
+    final ImplClassWriter implClassWriter = ImplClassWriter(
+      plugin,
+      _implSuffix,
+    );
+
+    final List<Class> implClasses = theClass.fieldsAndMethods
+        .map<String>(
+          (dynamic fieldOrMethod) => Plugin.returnType(fieldOrMethod),
+        )
+        .map<Class>((String type) => _classFromString(type))
+        .where(
+          (Class theClass) =>
+              theClass != null && !theClass.details.hasConstructor,
+        )
+        .toList();
+
     final cb.Library library = cb.Library((cb.LibraryBuilder builder) {
-      builder.body.add(cb.Class((cb.ClassBuilder classBuilder) {
-        classBuilder
-          ..name = theClass.name
-          ..abstract = !theClass.details.hasConstructor
-          ..constructors.addAll(constructWriter.writeAll(theClass.constructors))
-          ..fields.add(_getHandle(theClass.details.hasInitializedFields))
-          ..fields.addAll(fieldWriter.writeAll(theClass.fields.where(
-            (Field field) {
-              return field.mutable || field.initialized;
-            },
-          ).toList()))
-          ..methods.addAll(
-            methodFieldWriter.writeAll(theClass.fields).expand((_) => _),
-          )
-          ..methods.addAll(methodWriter.writeAll(theClass.methods));
+      builder.body.addAll(<cb.Class>[
+        cb.Class((cb.ClassBuilder classBuilder) {
+          classBuilder
+            ..name = theClass.name
+            ..abstract = !theClass.details.hasConstructor
+            ..constructors
+                .addAll(constructWriter.writeAll(theClass.constructors))
+            ..fields.add(_handle(theClass.details.hasInitializedFields))
+            ..fields.addAll(fieldWriter.writeAll(theClass.fields.where(
+              (Field field) {
+                return field.mutable || field.initialized;
+              },
+            ).toList()))
+            ..methods.addAll(
+              methodFieldWriter.writeAll(theClass.fields).expand((_) => _),
+            )
+            ..methods.addAll(methodWriter.writeAll(theClass.methods));
 
-        if ((theClass.details.hasConstructor &&
-                theClass.details.isReferenced) ||
-            theClass.details.hasInitializedFields) {
-          classBuilder.constructors.add(_internalConstructor(theClass));
-        }
-      }));
-
-      _addImplClasses(builder, theClass);
+          if ((theClass.details.hasConstructor &&
+                  theClass.details.isReferenced) ||
+              theClass.details.hasInitializedFields) {
+            classBuilder.constructors.add(_internalConstructor(theClass));
+          }
+        }),
+        ...implClassWriter.writeAll(implClasses),
+      ]);
     });
 
     return library;
@@ -422,47 +479,7 @@ class ClassWriter extends Writer<Class, cb.Library> {
     );
   }
 
-  void _addImplClasses(cb.LibraryBuilder builder, Class theClass) {
-    final Set<String> addedClass = <String>{};
-
-    for (dynamic fieldOrMethod in theClass.fieldsAndMethods) {
-      if (Plugin.mutable(fieldOrMethod)) continue;
-
-      final String returnType = Plugin.returnType(fieldOrMethod);
-
-      final Class returnClass = _classFromString(returnType);
-
-      if (returnClass != null && !addedClass.contains(returnClass.name)) {
-        addedClass.add(returnClass.name);
-
-        final cb.Reference reference = returnType == theClass.name
-            ? cb.refer(returnType)
-            : cb.refer(returnType, returnClass.details.file);
-
-        builder.body.add(cb.Class((cb.ClassBuilder classBuilder) {
-          classBuilder
-            ..name = '_${returnType}$_implSuffix'
-            ..extend = reference;
-
-          if (returnClass.details.hasConstructor &&
-              returnClass.details.isReferenced) {
-            classBuilder.constructors.add(cb.Constructor(
-              (cb.ConstructorBuilder builder) {
-                builder.initializers.add(
-                  cb
-                      .refer('super')
-                      .property('internal')
-                      .call(<cb.Expression>[if (true) cb.refer('Map')]).code,
-                );
-              },
-            ));
-          }
-        }));
-      }
-    }
-  }
-
-  cb.Field _getHandle(bool hasInitializedFields) {
+  cb.Field _handle(bool hasInitializedFields) {
     return cb.Field((cb.FieldBuilder builder) {
       builder
         ..name = 'handle'

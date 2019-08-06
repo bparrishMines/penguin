@@ -28,6 +28,9 @@ classes:
       - method:
         name: takeOrange
         returns: Orange
+      - method:
+        name: takeGrape
+        returns: Grape
     fields:
       - field:
         name: ripestBanana
