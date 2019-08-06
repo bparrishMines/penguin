@@ -28,7 +28,10 @@ abstract class Writer<T, K> {
     bool hasHandle = false,
     bool useHashTag = true,
     Map<String, cb.Expression> arguments = const <String, cb.Expression>{},
+    bool mapMethod = false,
   }) {
+    if (mapMethod && type != null) throw ArgumentError();
+
     if (hasHandle) {
       Map<String, cb.Expression> newMap =
           Map<String, cb.Expression>.from(arguments);
@@ -37,20 +40,25 @@ abstract class Writer<T, K> {
     }
 
     return cb.InvokeExpression.newOf(
-      References.channel.property('channel').property('invokeMethod'),
+      References.channel
+          .property('channel')
+          .property(mapMethod ? 'invokeMapMethod' : 'invokeMethod'),
       <cb.Expression>[
         cb.literalString('$className${useHashTag ? '#' : ''}$methodName'),
         cb.literalMap(arguments, cb.refer('String'), cb.refer('dynamic'))
       ],
       <String, cb.Expression>{},
-      <cb.Reference>[type ?? cb.refer('void')],
+      mapMethod
+          ? <cb.Reference>[cb.refer('String'), cb.refer('dynamic')]
+          : <cb.Reference>[type ?? cb.refer('void')],
     );
   }
 
   Map<String, cb.Expression> _mappedParams(
     dynamic constructorFieldOrMethod,
-    String varName,
-  ) {
+    String returnedType, {
+    bool hasInitializedFields = false,
+  }) {
     assert(constructorFieldOrMethod is Constructor ||
         constructorFieldOrMethod is Method ||
         constructorFieldOrMethod is Field);
@@ -72,12 +80,14 @@ abstract class Writer<T, K> {
       }
     }
 
-    final String handleName = '${varName.toLowerCase()}Handle';
+    final String handleName = '${returnedType.toLowerCase()}Handle';
+    final Class returnedClass = _classFromString(returnedType);
     if (constructorFieldOrMethod is Constructor) {
       paramExpressions[handleName] = cb.refer('handle');
-    } else if (_classFromString(varName) != null) {
+    } else if (returnedClass != null &&
+        !returnedClass.details.hasInitializedFields) {
       paramExpressions[handleName] =
-          cb.refer(varName.toLowerCase()).property('handle');
+          cb.refer(returnedType.toLowerCase()).property('handle');
     }
 
     return paramExpressions;
@@ -199,12 +209,12 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
     final Class theClass = _classFromString(returnType);
 
     final cb.InvokeExpression invokeMethodExpression = _invokeMethodExpression(
-      type: theClass == null ? cb.refer(returnType) : null,
-      className: className,
-      methodName: fieldOrMethod.name,
-      hasHandle: !fieldOrMethod.isStatic,
-      arguments: _mappedParams(fieldOrMethod, returnType),
-    );
+        type: theClass == null ? cb.refer(returnType) : null,
+        className: className,
+        methodName: fieldOrMethod.name,
+        hasHandle: !fieldOrMethod.isStatic,
+        arguments: _mappedParams(fieldOrMethod, returnType),
+        mapMethod: theClass != null && theClass.details.hasInitializedFields);
 
     void addNameAndParams(cb.MethodBuilder builder) {
       builder
@@ -243,21 +253,45 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
       return cb.Method((cb.MethodBuilder builder) {
         addNameAndParams(builder);
 
-        builder.returns = returnRef;
-        builder.body = cb.Block((cb.BlockBuilder builder) {
-          final cb.Expression constructor = !theClass.details.hasConstructor
-              ? cb.refer('_${returnType}$implSuffix')
-              : cb
-                  .refer('$returnType', theClass.details.file)
-                  .property('internal');
-          builder.addExpression(
-            constructor.call(<cb.Expression>[]).assignFinal(varName),
-          );
+        builder.returns = theClass.details.hasInitializedFields
+            ? References.future(returnRef)
+            : returnRef;
 
-          builder.addExpression(invokeMethodExpression);
+        if (theClass.details.hasInitializedFields) {
+          builder.modifier = cb.MethodModifier.async;
+          builder.body = cb.Block((cb.BlockBuilder builder) {
+            final cb.Expression constructor = !theClass.details.hasConstructor
+                ? cb.refer('_${returnType}$implSuffix')
+                : cb
+                    .refer(returnType, theClass.details.file)
+                    .property('internal');
 
-          builder.addExpression(cb.refer(varName).returned);
-        });
+            builder.addExpression(
+              invokeMethodExpression.awaited
+                  .assignFinal('source', cb.refer('Map')),
+            );
+
+            builder.addExpression(
+              constructor.call(<cb.Expression>[cb.refer('source')]).returned,
+            );
+          });
+        } else {
+          builder.body = cb.Block((cb.BlockBuilder builder) {
+            final cb.Expression constructor = !theClass.details.hasConstructor
+                ? cb.refer('_${returnType}$implSuffix')
+                : cb
+                    .refer(returnType, theClass.details.file)
+                    .property('internal');
+            builder.addExpression(
+              constructor
+                  .call(<cb.Expression>[]).assignFinal(varName, returnRef),
+            );
+
+            builder.addExpression(invokeMethodExpression);
+
+            builder.addExpression(cb.refer(varName).returned);
+          });
+        }
       });
     }
   }
