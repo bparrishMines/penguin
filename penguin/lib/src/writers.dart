@@ -435,6 +435,7 @@ class ClassWriter extends Writer<Class, cb.Library> {
           (dynamic fieldOrMethod) => Plugin.returnType(fieldOrMethod),
         )
         .map<Class>((String type) => _classFromString(type))
+        .toSet()
         .where(
           (Class theClass) =>
               theClass != null && !theClass.details.hasConstructor,

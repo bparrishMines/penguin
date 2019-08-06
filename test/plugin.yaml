@@ -41,6 +41,11 @@ classes:
         is_static: true
         type: Peach
         mutable: true
+      - field:
+        name: aGreenGrape
+        is_static: true
+        type: Grape
+        mutable: true
 
   - class:
     name: Apple
