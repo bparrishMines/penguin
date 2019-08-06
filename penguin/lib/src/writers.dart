@@ -358,7 +358,7 @@ class ClassWriter extends Writer<Class, cb.Library> {
           ..name = theClass.name
           ..abstract = !theClass.details.hasConstructor
           ..constructors.addAll(constructWriter.writeAll(theClass.constructors))
-          ..fields.add(_handle)
+          ..fields.add(_getHandle(theClass.details.hasInitializedFields))
           ..fields.addAll(fieldWriter.writeAll(theClass.fields.where(
             (Field field) {
               return field.mutable || field.initialized;
@@ -389,12 +389,19 @@ class ClassWriter extends Writer<Class, cb.Library> {
 
         if (!theClass.details.hasInitializedFields) return;
 
-        builder.requiredParameters.add(
-          cb.Parameter((cb.ParameterBuilder builder) {
-            builder.name = 'source';
-            builder.type = cb.refer('Map');
-          }),
-        );
+        builder
+          ..requiredParameters.add(
+            cb.Parameter((cb.ParameterBuilder builder) {
+              builder.name = 'source';
+              builder.type = cb.refer('Map');
+            }),
+          )
+          ..initializers.add(cb
+              .refer('handle')
+              .assign(
+                cb.refer('source').index(cb.literalString('handle')),
+              )
+              .code);
 
         final Iterable<Field> initializedFields =
             theClass.fields.where((Field field) => field.initialized);
@@ -414,28 +421,6 @@ class ClassWriter extends Writer<Class, cb.Library> {
       },
     );
   }
-
-//  List<cb.Field> _getFields(Class theClass) {
-//    final List<cb.Field> fields = <cb.Field>[];
-//    for (Field field in theClass.fields) {
-//      if (!field.mutable) continue;
-//
-//      final Class theClass = _classFromString(field.type);
-//
-//      fields.add(
-//        cb.Field((cb.FieldBuilder builder) {
-//          builder
-//            ..name = '_${field.name}'
-//            ..static = field.isStatic
-//            ..type = theClass == null
-//                ? cb.refer(field.type)
-//                : cb.refer(theClass.name, theClass.details.file);
-//        }),
-//      );
-//    }
-//
-//    return fields;
-//  }
 
   void _addImplClasses(cb.LibraryBuilder builder, Class theClass) {
     final Set<String> addedClass = <String>{};
@@ -477,11 +462,18 @@ class ClassWriter extends Writer<Class, cb.Library> {
     }
   }
 
-  static final cb.Field _handle = cb.Field((cb.FieldBuilder builder) {
-    builder.name = 'handle';
-    builder.modifier = cb.FieldModifier.final$;
-    builder.type = cb.Reference('String');
-    builder.assignment =
-        References.channel.property('nextHandle').call(<cb.Expression>[]).code;
-  });
+  cb.Field _getHandle(bool hasInitializedFields) {
+    return cb.Field((cb.FieldBuilder builder) {
+      builder
+        ..name = 'handle'
+        ..modifier = cb.FieldModifier.final$
+        ..type = cb.Reference('String');
+
+      if (!hasInitializedFields) {
+        builder.assignment = References.channel
+            .property('nextHandle')
+            .call(<cb.Expression>[]).code;
+      }
+    });
+  }
 }
