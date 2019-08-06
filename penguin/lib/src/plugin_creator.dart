@@ -6,10 +6,15 @@ import 'string_utils.dart';
 import 'writers.dart';
 
 class ClassDetails {
-  ClassDetails(this.hasConstructor, this.isReferenced, this.file)
-      : assert(hasConstructor != null),
+  ClassDetails({
+    this.hasConstructor,
+    this.isReferenced,
+    this.file,
+    this.hasInitializedFields,
+  })  : assert(hasConstructor != null),
         assert(isReferenced != null),
-        assert(file != null);
+        assert(file != null),
+        assert(hasInitializedFields != null);
 
   final bool hasConstructor;
 
@@ -18,6 +23,8 @@ class ClassDetails {
 
   /// File of the class
   final String file;
+
+  final bool hasInitializedFields;
 }
 
 class PluginCreator {
@@ -46,9 +53,12 @@ class PluginCreator {
 
     for (Class theClass in plugin.classes) {
       theClass.details = ClassDetails(
-        theClass.constructors.isNotEmpty,
-        referencedClasses.contains(theClass.name),
-        '${StringUtils.camelCaseToSnakeCase(theClass.name)}.dart',
+        hasConstructor: theClass.constructors.isNotEmpty,
+        isReferenced: referencedClasses.contains(theClass.name),
+        file: '${StringUtils.camelCaseToSnakeCase(theClass.name)}.dart',
+        hasInitializedFields: theClass.fields.any(
+          (Field field) => field.initialized,
+        ),
       );
     }
   }

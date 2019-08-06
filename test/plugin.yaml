@@ -134,3 +134,17 @@ classes:
         name: isRipe
         type: bool
         mutable: true
+
+  - class:
+    name: Grape
+    java_package: dev.fruit.fruit_picker.fruitlibrary.fruits
+    fields:
+      - field:
+        name: hasSeed
+        type: bool
+        initialized: true
+      - field:
+        name: color
+        type: String
+        initialized: true
+        mutable: true 

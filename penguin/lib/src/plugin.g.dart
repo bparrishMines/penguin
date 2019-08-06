@@ -199,7 +199,9 @@ Field _$FieldFromJson(Map json) {
     final val = Field($checkedConvert(json, 'name', (v) => v as String),
         type: $checkedConvert(json, 'type', (v) => v as String) ?? 'dynamic',
         isStatic: $checkedConvert(json, 'is_static', (v) => v as bool) ?? false,
-        mutable: $checkedConvert(json, 'mutable', (v) => v as bool) ?? false);
+        mutable: $checkedConvert(json, 'mutable', (v) => v as bool) ?? false,
+        initialized:
+            $checkedConvert(json, 'initialized', (v) => v as bool) ?? false);
     return val;
   }, fieldKeyMap: const {'isStatic': 'is_static'});
 }
@@ -217,6 +219,7 @@ Map<String, dynamic> _$FieldToJson(Field instance) {
   val['is_static'] = instance.isStatic;
   val['type'] = instance.type;
   val['mutable'] = instance.mutable;
+  val['initialized'] = instance.initialized;
   return val;
 }
 
