@@ -88,6 +88,11 @@ public class PluginCreator {
             .addStatement("channel = new $T(registrar.messenger(), CHANNEL_NAME)", PluginClassNames.METHOD_CHANNEL.name)
             .addStatement("channel.setMethodCallHandler(new $T())", ClassName.get(packageName, mainPluginClassName.simpleName()))
             .build())
+        .addMethod(MethodSpec.methodBuilder("getNextHandle")
+            .addModifiers(Modifier.STATIC)
+            .returns(String.class)
+            .addStatement("return $T.format($T.getDefault(), $S, new $T().getTime())", String.class, Locale.class, "android%d", Date.class)
+            .build())
         .addMethod(MethodSpec.methodBuilder("addHandler")
             .addModifiers(Modifier.STATIC)
             .addParameter(String.class, "handle", Modifier.FINAL)
@@ -109,14 +114,14 @@ public class PluginCreator {
             .addParameter(String.class, "handle")
             .addStatement("return handlers.get(handle)")
             .build())
-        .addMethod(buildOnMethodCall(mainPluginClassName.simpleName()));
+        .addMethod(buildOnMethodCall());
 
     final JavaFile.Builder builder = JavaFile.builder(packageName, classBuilder.build());
 
     return builder.build().toString();
   }
 
-  private MethodSpec buildOnMethodCall(String className) {
+  private MethodSpec buildOnMethodCall() {
     final MethodSpec.Builder builder = MethodSpec.methodBuilder("onMethodCall")
         .addAnnotation(Override.class)
         .addModifiers(Modifier.PUBLIC)
