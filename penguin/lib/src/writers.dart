@@ -417,7 +417,8 @@ class ClassWriter extends Writer<Class, cb.Library> {
   static final cb.Field _handle = cb.Field((cb.FieldBuilder builder) {
     builder.name = 'handle';
     builder.modifier = cb.FieldModifier.final$;
-    builder.type = cb.Reference('int');
-    builder.assignment = References.channel.property('nextHandle++').code;
+    builder.type = cb.Reference('String');
+    builder.assignment =
+        References.channel.property('nextHandle').call(<cb.Expression>[]).code;
   });
 }

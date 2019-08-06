@@ -23,7 +23,7 @@ public class ConstructorWriter extends Writer<PluginConstructor, MethodSpec> {
 
     return MethodSpec.constructorBuilder()
         .addModifiers(Modifier.PRIVATE)
-        .addParameter(Integer.class, "handle", Modifier.FINAL)
+        .addParameter(String.class, "handle", Modifier.FINAL)
         .addParameters(parameterWriter.writeAll(constructor.getAllParameters()))
         .addStatement("this.handle = handle")
         .addStatement("this.$N = new $T(" + allParameterNamesString + ")", pluginClass.details.variableName, pluginClass.details.className)

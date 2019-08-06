@@ -55,28 +55,32 @@ class PluginCreator {
 
   cb.Library get _channelClass => cb.Library((cb.LibraryBuilder builder) =>
       builder.body.add(cb.Class((cb.ClassBuilder builder) {
-        builder.name = 'Channel';
-        builder.fields.addAll([
-          cb.Field((cb.FieldBuilder builder) {
-            builder.name = 'channel';
-            builder.modifier = cb.FieldModifier.constant;
-            builder.static = true;
-            builder.type = References.methodChannel;
-            builder.assignment = References.methodChannel.call(
-              <cb.Expression>[
-                cb.literalString('${plugin.organization}/${plugin.name}'),
-              ],
-            ).code;
-            builder.annotations.add(References.visibleForTesting);
-          }),
-          cb.Field((cb.FieldBuilder builder) {
-            builder.name = 'nextHandle';
-            builder.static = true;
-            builder.type = cb.refer('int');
-            builder.assignment = cb.Code('0');
-            builder.annotations.add(References.visibleForTesting);
-          })
-        ]);
+        builder
+          ..name = 'Channel'
+          ..fields.add(
+            cb.Field((cb.FieldBuilder builder) {
+              builder.name = 'channel';
+              builder.modifier = cb.FieldModifier.constant;
+              builder.static = true;
+              builder.type = References.methodChannel;
+              builder.assignment = References.methodChannel.call(
+                <cb.Expression>[
+                  cb.literalString('${plugin.organization}/${plugin.name}'),
+                ],
+              ).code;
+              builder.annotations.add(References.visibleForTesting);
+            }),
+          )
+          ..methods.add(cb.Method((cb.MethodBuilder builder) {
+            builder
+              ..name = 'nextHandle'
+              ..static = true
+              ..returns = cb.refer('String')
+              ..annotations.add(References.visibleForTesting)
+              ..body = cb
+                  .literalString('dart\${DateTime.now().toIso8601String()}')
+                  .code;
+          }));
       })));
 
   String _channelAsString() => '${_channelClass.accept(_createEmitter())}';

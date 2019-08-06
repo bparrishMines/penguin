@@ -17,7 +17,7 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
     final TypeSpec.Builder classBuilder = TypeSpec.classBuilder(aClass.details.wrapperClassName.simpleName())
         .addModifiers(Modifier.FINAL)
         .addSuperinterface(PluginClassNames.METHOD_CALL_HANDLER.name)
-        .addField(Integer.class, "handle", Modifier.PRIVATE, Modifier.FINAL)
+        .addField(String.class, "handle", Modifier.PRIVATE, Modifier.FINAL)
         .addField(aClass.details.className, aClass.details.variableName, Modifier.FINAL, Modifier.PUBLIC);
 
     if (aClass.details.hasConstructor) {
@@ -39,7 +39,7 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
 
     if (aClass.details.isReferenced) {
       classBuilder.addMethod(MethodSpec.constructorBuilder()
-          .addParameter(Integer.class, "handle")
+          .addParameter(String.class, "handle")
           .addParameter(aClass.details.className, aClass.details.variableName)
           .addStatement("this.handle = handle")
           .addStatement("this.$N = $N", aClass.details.variableName, aClass.details.variableName)
@@ -102,7 +102,7 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
 
       builder.beginControlFlow("case \"$N(" + allParameterTypesString + ")\":", aClass.name)
           .addCode(CodeBlock.builder().indent().build())
-          .addStatement("final $T handle = call.argument($S)", Integer.class, aClass.details.variableName + "Handle");
+          .addStatement("final $T handle = call.argument($S)", String.class, aClass.details.variableName + "Handle");
 
       if (hasParameters) {
         builder.addCode(extractParametersFromMethodCall(constructor.getAllParameters(), mainPluginClassName));

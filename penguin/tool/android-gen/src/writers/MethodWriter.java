@@ -73,7 +73,7 @@ public class MethodWriter extends Writer<Object, MethodSpec> {
         builder.addStatement("final $T value = " + callString, bestGuess(returnType), callerName, name)
               .addStatement("result.success(value)");
       } else {
-        builder.addStatement("final $T handle = call.argument($S)", Integer.class, returnClass.details.variableName + "Handle")
+        builder.addStatement("final $T handle = call.argument($S)", String.class, returnClass.details.variableName + "Handle")
             .addStatement("final $T value = " + callString, returnClass.details.className, callerName, name)
             .addStatement("final $T handler = new $T(handle, value)", returnClass.details.wrapperClassName, returnClass.details.wrapperClassName)
             .addStatement("$T.addHandler(handle, handler)", mainPluginClassName)

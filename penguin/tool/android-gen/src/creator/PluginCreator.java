@@ -33,7 +33,6 @@ public class PluginCreator {
     final Set<String> referencedClasses = new HashSet<>();
     for (PluginClass theClass : plugin.classes) {
       for (Object fieldOrMethod : theClass.getFieldsAndMethods()) {
-        final Boolean isStatic = Plugin.isStatic(fieldOrMethod);
         final String returnType = Plugin.returnType(fieldOrMethod);
         if (!Plugin.mutable(fieldOrMethod) && allClassNames.contains(returnType)) {
           referencedClasses.add(returnType);
@@ -66,8 +65,8 @@ public class PluginCreator {
   }
 
   private String pluginFileString() {
-    final ClassName sparseArray = ClassName.get("android.util", "SparseArray");
-    final ParameterizedTypeName handlerArray = ParameterizedTypeName.get(sparseArray, PluginClassNames.METHOD_CALL_HANDLER.name);
+    final ClassName hashMap = ClassName.get("java.util", "HashMap");
+    final ParameterizedTypeName handlerMap = ParameterizedTypeName.get(hashMap, ClassName.bestGuess("String"), PluginClassNames.METHOD_CALL_HANDLER.name);
 
     final TypeSpec.Builder classBuilder = TypeSpec.classBuilder(mainPluginClassName.simpleName())
         .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
@@ -76,9 +75,9 @@ public class PluginCreator {
             .addModifiers(Modifier.PRIVATE, Modifier.FINAL, Modifier.STATIC)
             .initializer("$S", plugin.organization + "/" + plugin.name)
             .build())
-        .addField(FieldSpec.builder(handlerArray, "handlers")
+        .addField(FieldSpec.builder(handlerMap, "handlers")
             .addModifiers(Modifier.PRIVATE, Modifier.FINAL, Modifier.STATIC)
-            .initializer("new $T<>()", sparseArray)
+            .initializer("new $T<>()", hashMap)
             .build())
         .addField(PluginClassNames.REGISTRAR.name, "registrar", Modifier.PRIVATE, Modifier.STATIC)
         .addField(PluginClassNames.METHOD_CHANNEL.name, "channel", Modifier.PRIVATE, Modifier.STATIC)
@@ -91,7 +90,7 @@ public class PluginCreator {
             .build())
         .addMethod(MethodSpec.methodBuilder("addHandler")
             .addModifiers(Modifier.STATIC)
-            .addParameter(Integer.class, "handle", Modifier.FINAL)
+            .addParameter(String.class, "handle", Modifier.FINAL)
             .addParameter(PluginClassNames.METHOD_CALL_HANDLER.name, "handler", Modifier.FINAL)
             .beginControlFlow("if (handlers.get(handle) != null)")
             .addStatement("final $T message = $T.format($S, handle)", String.class, String.class, "Object for handle already exists: %s")
@@ -101,13 +100,13 @@ public class PluginCreator {
             .build())
         .addMethod(MethodSpec.methodBuilder("removeHandler")
             .addModifiers(Modifier.STATIC)
-            .addParameter(Integer.class, "handle")
+            .addParameter(String.class, "handle")
             .addStatement("handlers.remove(handle)")
             .build())
         .addMethod(MethodSpec.methodBuilder("getHandler")
             .addModifiers(Modifier.STATIC)
             .returns(PluginClassNames.METHOD_CALL_HANDLER.name)
-            .addParameter(Integer.class, "handle")
+            .addParameter(String.class, "handle")
             .addStatement("return handlers.get(handle)")
             .build())
         .addMethod(buildOnMethodCall(mainPluginClassName.simpleName()));
@@ -149,7 +148,7 @@ public class PluginCreator {
 
     builder.addCode("default:\n")
         .addCode(CodeBlock.builder().indent().build())
-        .addStatement("final $T handle = call.argument($S)", Integer.class, "handle")
+        .addStatement("final $T handle = call.argument($S)", String.class, "handle")
         .beginControlFlow("if (handle == null)")
         .addStatement("result.notImplemented()")
         .addStatement("return")
