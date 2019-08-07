@@ -11,6 +11,7 @@ class ClassDetails {
     this.isReferenced,
     this.file,
     this.hasInitializedFields,
+    this.isInitializedField,
   })  : assert(hasConstructor != null),
         assert(isReferenced != null),
         assert(file != null),
@@ -25,6 +26,8 @@ class ClassDetails {
   final String file;
 
   final bool hasInitializedFields;
+
+  final bool isInitializedField;
 }
 
 class PluginCreator {
@@ -42,11 +45,18 @@ class PluginCreator {
         .toSet();
 
     final Set<String> referencedClasses = <String>{};
+    final Set<String> initializedClasses = <String>{};
     for (Class theClass in plugin.classes) {
       for (dynamic fieldOrMethod in theClass.fieldsAndMethods) {
-        if (!Plugin.mutable(fieldOrMethod) &&
-            allClassNames.contains(Plugin.returnType(fieldOrMethod))) {
-          referencedClasses.add(Plugin.returnType(fieldOrMethod));
+        final String returnType = Plugin.returnType(fieldOrMethod);
+        if (!allClassNames.contains(returnType)) continue;
+
+        if (!Plugin.mutable(fieldOrMethod)) {
+          referencedClasses.add(returnType);
+        }
+
+        if (Plugin.initialized(fieldOrMethod)) {
+          initializedClasses.add(returnType);
         }
       }
     }
@@ -59,6 +69,7 @@ class PluginCreator {
         hasInitializedFields: theClass.fields.any(
           (Field field) => field.initialized,
         ),
+        isInitializedField: initializedClasses.contains(theClass.name),
       );
     }
   }

@@ -386,11 +386,12 @@ class ParameterWriter extends Writer<Parameter, cb.Parameter> {
 }
 
 class ImplClassWriter extends Writer<Class, cb.Class> {
-  ImplClassWriter(Plugin plugin, this.implSuffix)
+  ImplClassWriter(Plugin plugin, this.implSuffix, this.parentClass)
       : assert(implSuffix != null),
         super(plugin);
 
   final String implSuffix;
+  final Class parentClass;
 
   @override
   cb.Class write(Class theClass) {
@@ -401,7 +402,10 @@ class ImplClassWriter extends Writer<Class, cb.Class> {
         ..name = '_${theClass.name}$implSuffix'
         ..extend = cb.refer(theClass.name, theClass.details.file);
 
-      if (theClass.details.hasInitializedFields) {
+      if (theClass.details.hasInitializedFields ||
+          (theClass.details.isInitializedField &&
+              parentClass.fieldsAndMethods.any((dynamic fieldOrMethod) =>
+                  Plugin.initialized(fieldOrMethod)))) {
         classBuilder.constructors.add(cb.Constructor(
           (cb.ConstructorBuilder builder) {
             builder
@@ -450,10 +454,8 @@ class ClassWriter extends Writer<Class, cb.Library> {
       theClass,
     );
 
-    final ImplClassWriter implClassWriter = ImplClassWriter(
-      plugin,
-      _implSuffix,
-    );
+    final ImplClassWriter implClassWriter =
+        ImplClassWriter(plugin, _implSuffix, theClass);
 
     final List<Class> implClasses = theClass.fieldsAndMethods
         .map<String>(
@@ -475,7 +477,10 @@ class ClassWriter extends Writer<Class, cb.Library> {
             ..abstract = !theClass.details.hasConstructor
             ..constructors
                 .addAll(constructWriter.writeAll(theClass.constructors))
-            ..fields.add(_handle(theClass.details.hasInitializedFields))
+            ..fields.add(_handle(
+              theClass.details.hasInitializedFields,
+              theClass.details.isInitializedField,
+            ))
             ..fields.addAll(fieldWriter.writeAll(theClass.fields.where(
               (Field field) {
                 return field.mutable || field.initialized;
@@ -486,9 +491,17 @@ class ClassWriter extends Writer<Class, cb.Library> {
             )
             ..methods.addAll(methodWriter.writeAll(theClass.methods));
 
+          if (!theClass.details.hasConstructor &&
+              theClass.details.isInitializedField) {
+            classBuilder.constructors.add(
+              _abstractDefaultConstructor(theClass),
+            );
+          }
+
           if ((theClass.details.hasConstructor &&
                   theClass.details.isReferenced) ||
-              theClass.details.hasInitializedFields) {
+              theClass.details.hasInitializedFields ||
+              theClass.details.isInitializedField) {
             classBuilder.constructors.add(_internalConstructor(theClass));
           }
         }),
@@ -504,7 +517,10 @@ class ClassWriter extends Writer<Class, cb.Library> {
       (cb.ConstructorBuilder builder) {
         builder.name = 'internal';
 
-        if (!theClass.details.hasInitializedFields) return;
+        if (!theClass.details.hasInitializedFields &&
+            !theClass.details.isInitializedField) {
+          return;
+        }
 
         builder
           ..requiredParameters.add(
@@ -527,10 +543,18 @@ class ClassWriter extends Writer<Class, cb.Library> {
           (Field field) {
             final String fieldName =
                 field.mutable ? '_${field.name}' : field.name;
-            return cb
-                .refer(fieldName)
-                .assign(cb.refer('source').index(cb.literalString(field.name)))
-                .code;
+
+            final cb.Expression mapAccess =
+                cb.refer('source').index(cb.literalString(field.name));
+
+            final Class varClass = _classFromString(field.type);
+            final cb.Expression value = varClass == null
+                ? mapAccess
+                : cb
+                    .refer('_${field.type}$_implSuffix')
+                    .call(<cb.Expression>[mapAccess]);
+
+            return cb.refer(fieldName).assign(value).code;
           },
         );
 
@@ -539,14 +563,25 @@ class ClassWriter extends Writer<Class, cb.Library> {
     );
   }
 
-  cb.Field _handle(bool hasInitializedFields) {
+  cb.Constructor _abstractDefaultConstructor(Class theClass) {
+    return cb.Constructor((cb.ConstructorBuilder builder) {
+      builder.initializers.add(cb
+          .refer('handle')
+          .assign(
+            References.channel.property('nextHandle').call(<cb.Expression>[]),
+          )
+          .code);
+    });
+  }
+
+  cb.Field _handle(bool hasInitializedFields, bool isInitializedField) {
     return cb.Field((cb.FieldBuilder builder) {
       builder
         ..name = 'handle'
         ..modifier = cb.FieldModifier.final$
         ..type = cb.Reference('String');
 
-      if (!hasInitializedFields) {
+      if (!hasInitializedFields && !isInitializedField) {
         builder.assignment = References.channel
             .property('nextHandle')
             .call(<cb.Expression>[]).code;

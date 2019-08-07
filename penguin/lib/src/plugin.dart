@@ -35,6 +35,12 @@ class Plugin {
     return false;
   }
 
+  static bool initialized(dynamic fieldOrMethod) {
+    assert(fieldOrMethod is Field || fieldOrMethod is Method);
+    if (fieldOrMethod is Field) return fieldOrMethod.initialized;
+    return false;
+  }
+
   factory Plugin.fromJson(Map json) => _$PluginFromJson(json);
 
   Map toJson() => _$PluginToJson(this);
