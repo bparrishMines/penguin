@@ -10,6 +10,8 @@ import 'package:fruit_picker/strawberry.dart';
 import 'package:fruit_picker/lemon.dart';
 import 'package:fruit_picker/peach.dart';
 import 'package:fruit_picker/grape.dart';
+import 'package:fruit_picker/apricot.dart';
+import 'package:fruit_picker/pear.dart';
 
 void main() {
   final Completer<String> completer = Completer<String>();
@@ -82,16 +84,19 @@ void main() {
         expect(Basket.aGreenGrape.color, 'pink');
         await pumpEventQueue();
       });
+
+      test('takeApricot', () async {
+        final Apricot apricot = await basket.takeApricot();
+        expect(apricot.shape, 'square');
+      });
+
+      test('sweetestPear', () async {
+        final Pear pear = await basket.sweetestPear;
+        expect(pear.closestApple, isNotNull);
+      });
     });
 
     group('$Apple', () {
-      Apple apple;
-
-      setUp(() {
-        final Basket basket = Basket();
-        apple = basket.takeApple();
-      });
-
       test('areApplesGood', () async {
         expect(Apple.areApplesGood(), completion(true));
       });
@@ -122,12 +127,6 @@ void main() {
     });
 
     group('$Strawberry', () {
-      Strawberry strawberry;
-
-      setUp(() {
-        strawberry = Strawberry();
-      });
-
       test('seeds', () {
         expect(Strawberry.averageNumberOfSeeds, completion(50));
       });
@@ -167,12 +166,25 @@ void main() {
       });
     });
 
-    group('$Grape', () {
-      Grape grape;
+    group('$Apricot', () {
+      test('shape from constructor', () {
+        final Apricot apricot = Apricot();
+        expect(apricot.shape, isNull);
+      });
+    });
+
+    group('$Pear', () {
+      Pear pear;
 
       setUp(() async {
-        final Basket basket = Basket();
-        grape = await basket.takeGrape();
+        pear = await Basket().sweetestPear;
+      });
+
+      test('closestApple', () {
+        final Apple apple = Basket().takeApple();
+        pear.closestApple = apple;
+
+        expect(pear.closestApple, equals(apple));
       });
     });
   });
