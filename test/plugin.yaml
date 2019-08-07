@@ -31,6 +31,9 @@ classes:
       - method:
         name: takeGrape
         returns: Grape
+      - method:
+        name: takeApricot
+        returns: Apricot
     fields:
       - field:
         name: ripestBanana
@@ -159,3 +162,25 @@ classes:
         type: String
         initialized: true
         mutable: true 
+
+  - class:
+    name: Apricot
+    java_package: dev.fruit.fruit_picker.fruitlibrary.fruits
+    constructors:
+      - constructor:
+        is_default: true
+    fields:
+      - field:
+        name: shape
+        type: String
+        initialized: true
+
+  - class:
+    name: Pear
+    java_package: dev.fruit.fruit_picker.fruitlibrary.fruits
+    fields:
+      - field:
+        name: closestApple
+        mutable: true
+        type: Apple
+        initialized: true

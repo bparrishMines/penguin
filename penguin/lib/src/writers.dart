@@ -298,13 +298,13 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
 }
 
 class ConstructorWriter extends Writer<Constructor, cb.Constructor> {
-  ConstructorWriter(Plugin plugin, this.className)
-      : assert(className != null),
+  ConstructorWriter(Plugin plugin, this.theClass)
+      : assert(theClass != null),
         super(plugin) {
     _paramWriter = ParameterWriter(plugin);
   }
 
-  final String className;
+  final Class theClass;
   ParameterWriter _paramWriter;
 
   @override
@@ -319,12 +319,37 @@ class ConstructorWriter extends Writer<Constructor, cb.Constructor> {
         )
         ..body = cb.Block((cb.BlockBuilder builder) {
           builder.addExpression(_invokeMethodExpression(
-            className: className,
+            className: theClass.name,
             methodName: _getMethodCallMethod(constructor.allParameters),
-            arguments: _mappedParams(constructor, className),
+            arguments: _mappedParams(constructor, theClass.name),
             useHashTag: false,
           ));
         });
+
+      if (theClass.details.hasInitializedFields) {
+        final Iterable<Field> initializedFields =
+            theClass.fields.where((Field field) => field.initialized);
+
+        final Iterable<cb.Code> initializers = initializedFields.map<cb.Code>(
+          (Field field) {
+            final String fieldName =
+                field.mutable ? '_${field.name}' : field.name;
+            return cb.refer(fieldName).assign(cb.literalNull).code;
+          },
+        );
+
+        builder.initializers.addAll(<cb.Code>[
+          cb
+              .refer('handle')
+              .assign(
+                References.channel
+                    .property('nextHandle')
+                    .call(<cb.Expression>[]),
+              )
+              .code,
+          ...initializers,
+        ]);
+      }
 
       if (constructor.name != null) {
         builder.name = constructor.name;
@@ -422,7 +447,7 @@ class ClassWriter extends Writer<Class, cb.Library> {
 
     final ConstructorWriter constructWriter = ConstructorWriter(
       plugin,
-      theClass.name,
+      theClass,
     );
 
     final ImplClassWriter implClassWriter = ImplClassWriter(
