@@ -2,6 +2,7 @@ package writers;
 
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.ParameterizedTypeName;
 import objects.*;
 
 import javax.lang.model.element.Modifier;
@@ -26,10 +27,10 @@ public class MethodWriter extends Writer<Object, MethodSpec> {
         .addModifiers(Modifier.PRIVATE);
 
     if (methodCallHasArguments(fieldOrMethod)) {
-      builder.addParameter(PluginClassNames.METHOD_CALL.name, "call", Modifier.FINAL);
+      builder.addParameter(CommonClassNames.METHOD_CALL.name, "call", Modifier.FINAL);
     }
 
-    builder.addParameter(PluginClassNames.RESULT.name, "result", Modifier.FINAL);
+    builder.addParameter(CommonClassNames.RESULT.name, "result", Modifier.FINAL);
 
     final Boolean isStatic = Plugin.isStatic(fieldOrMethod);
     final String name = Plugin.name(fieldOrMethod);
@@ -46,7 +47,7 @@ public class MethodWriter extends Writer<Object, MethodSpec> {
         builder.addCode(extractParametersFromMethodCall(Plugin.method(fieldOrMethod).getAllParameters(), mainPluginClassName));
       }
     } else {
-      if (Plugin.field(fieldOrMethod).mutable) {
+      if (Plugin.mutable(fieldOrMethod)) {
         final List<PluginParameter> parameters = new ArrayList<>();
 
         final PluginParameter valueParam = new PluginParameter();
@@ -73,11 +74,29 @@ public class MethodWriter extends Writer<Object, MethodSpec> {
         builder.addStatement("final $T value = " + callString, bestGuess(returnType), callerName, name)
               .addStatement("result.success(value)");
       } else {
-        builder.addStatement("final $T handle = call.argument($S)", String.class, returnClass.details.variableName + "Handle")
-            .addStatement("final $T value = " + callString, returnClass.details.className, callerName, name)
-            .addStatement("final $T handler = new $T(handle, value)", returnClass.details.wrapperClassName, returnClass.details.wrapperClassName)
-            .addStatement("$T.addHandler(handle, handler)", mainPluginClassName)
-            .addStatement("result.success(null)");
+        if (!returnClass.details.hasInitializedFields) {
+          builder.addStatement("final $T handle = call.argument($S)", String.class, returnClass.details.variableName + "Handle");
+        } else {
+          builder.addStatement("final $T handle = $T.getNextHandle()", String.class, mainPluginClassName);
+        }
+        builder.addStatement("final $T value = " + callString, returnClass.details.className, callerName, name)
+          .addStatement("final $T handler = new $T(handle, value)", returnClass.details.wrapperClassName, returnClass.details.wrapperClassName)
+          .addStatement("$T.addHandler(handle, handler)", mainPluginClassName);
+
+        if (!returnClass.details.hasInitializedFields) {
+          builder.addStatement("result.success(null)");
+        } else {
+          builder.addStatement("final $T<$T, $T> initializers = new $T<>()",
+              CommonClassNames.HASH_MAP.name, String.class, Object.class, CommonClassNames.HASH_MAP.name);
+
+          builder.addStatement("initializers.put($S, handle)", "handle");
+
+          for (Object field : returnClass.getFieldsAndMethods().stream().filter(Plugin::initialized).toArray()) {
+            builder.addStatement("initializers.put($S, value.$N)", Plugin.name(field), Plugin.name(field));
+          }
+
+          builder.addStatement("result.success(initializers)");
+        }
       }
     }
 

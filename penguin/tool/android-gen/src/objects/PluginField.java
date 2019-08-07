@@ -5,4 +5,5 @@ public class PluginField {
   public boolean is_static = false;
   public String type = "Object";
   public boolean mutable = false;
+  public boolean initialized = false;
 }

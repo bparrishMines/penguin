@@ -48,6 +48,16 @@ public class Plugin {
     return false;
   }
 
+  static public boolean initialized(Object fieldOrMethod) {
+    assert fieldOrMethod instanceof PluginField || fieldOrMethod instanceof PluginMethod;
+
+    if (fieldOrMethod instanceof PluginField) {
+      return ((PluginField) fieldOrMethod).initialized;
+    }
+
+    return false;
+  }
+
   static public PluginMethod method(Object method) {
     assert method instanceof PluginMethod;
     return (PluginMethod) method;

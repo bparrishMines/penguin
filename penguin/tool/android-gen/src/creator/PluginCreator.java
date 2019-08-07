@@ -4,7 +4,7 @@ import com.squareup.javapoet.*;
 import objects.*;
 import utils.StringUtils;
 import writers.ClassWriter;
-import writers.PluginClassNames;
+import writers.CommonClassNames;
 
 import javax.lang.model.element.Modifier;
 import java.util.*;
@@ -45,7 +45,9 @@ public class PluginCreator {
           !theClass.constructors.isEmpty(),
           referencedClasses.contains(theClass.name),
           ClassName.get(theClass.java_package, theClass.name),
-          ClassName.get(packageName, CLASS_PREFIX + theClass.name), theClass.name.toLowerCase());
+          ClassName.get(packageName, CLASS_PREFIX + theClass.name),
+          theClass.name.toLowerCase(),
+          theClass.getFieldsAndMethods().stream().anyMatch(Plugin::initialized));
     }
   }
 
@@ -65,27 +67,29 @@ public class PluginCreator {
   }
 
   private String pluginFileString() {
-    final ClassName hashMap = ClassName.get("java.util", "HashMap");
-    final ParameterizedTypeName handlerMap = ParameterizedTypeName.get(hashMap, ClassName.bestGuess("String"), PluginClassNames.METHOD_CALL_HANDLER.name);
+    final ParameterizedTypeName handlerMap = ParameterizedTypeName.get(
+        CommonClassNames.HASH_MAP.name,
+        ClassName.bestGuess("String"),
+        CommonClassNames.METHOD_CALL_HANDLER.name);
 
     final TypeSpec.Builder classBuilder = TypeSpec.classBuilder(mainPluginClassName.simpleName())
         .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
-        .addSuperinterface(PluginClassNames.METHOD_CALL_HANDLER.name)
+        .addSuperinterface(CommonClassNames.METHOD_CALL_HANDLER.name)
         .addField(FieldSpec.builder(String.class, "CHANNEL_NAME")
             .addModifiers(Modifier.PRIVATE, Modifier.FINAL, Modifier.STATIC)
             .initializer("$S", plugin.organization + "/" + plugin.name)
             .build())
         .addField(FieldSpec.builder(handlerMap, "handlers")
             .addModifiers(Modifier.PRIVATE, Modifier.FINAL, Modifier.STATIC)
-            .initializer("new $T<>()", hashMap)
+            .initializer("new $T<>()", CommonClassNames.HASH_MAP.name)
             .build())
-        .addField(PluginClassNames.REGISTRAR.name, "registrar", Modifier.PRIVATE, Modifier.STATIC)
-        .addField(PluginClassNames.METHOD_CHANNEL.name, "channel", Modifier.PRIVATE, Modifier.STATIC)
+        .addField(CommonClassNames.REGISTRAR.name, "registrar", Modifier.PRIVATE, Modifier.STATIC)
+        .addField(CommonClassNames.METHOD_CHANNEL.name, "channel", Modifier.PRIVATE, Modifier.STATIC)
         .addMethod(MethodSpec.methodBuilder("registerWith")
             .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-            .addParameter(PluginClassNames.REGISTRAR.name, "registrar")
+            .addParameter(CommonClassNames.REGISTRAR.name, "registrar")
             .addStatement("$T.registrar = registrar", ClassName.get(packageName, mainPluginClassName.simpleName()))
-            .addStatement("channel = new $T(registrar.messenger(), CHANNEL_NAME)", PluginClassNames.METHOD_CHANNEL.name)
+            .addStatement("channel = new $T(registrar.messenger(), CHANNEL_NAME)", CommonClassNames.METHOD_CHANNEL.name)
             .addStatement("channel.setMethodCallHandler(new $T())", ClassName.get(packageName, mainPluginClassName.simpleName()))
             .build())
         .addMethod(MethodSpec.methodBuilder("getNextHandle")
@@ -96,7 +100,7 @@ public class PluginCreator {
         .addMethod(MethodSpec.methodBuilder("addHandler")
             .addModifiers(Modifier.STATIC)
             .addParameter(String.class, "handle", Modifier.FINAL)
-            .addParameter(PluginClassNames.METHOD_CALL_HANDLER.name, "handler", Modifier.FINAL)
+            .addParameter(CommonClassNames.METHOD_CALL_HANDLER.name, "handler", Modifier.FINAL)
             .beginControlFlow("if (handlers.get(handle) != null)")
             .addStatement("final $T message = $T.format($S, handle)", String.class, String.class, "Object for handle already exists: %s")
             .addStatement("throw new $T(message)", ClassName.get(IllegalArgumentException.class))
@@ -110,7 +114,7 @@ public class PluginCreator {
             .build())
         .addMethod(MethodSpec.methodBuilder("getHandler")
             .addModifiers(Modifier.STATIC)
-            .returns(PluginClassNames.METHOD_CALL_HANDLER.name)
+            .returns(CommonClassNames.METHOD_CALL_HANDLER.name)
             .addParameter(String.class, "handle")
             .addStatement("return handlers.get(handle)")
             .build())
@@ -125,8 +129,8 @@ public class PluginCreator {
     final MethodSpec.Builder builder = MethodSpec.methodBuilder("onMethodCall")
         .addAnnotation(Override.class)
         .addModifiers(Modifier.PUBLIC)
-        .addParameter(PluginClassNames.METHOD_CALL.name, "call")
-        .addParameter(PluginClassNames.RESULT.name, "result")
+        .addParameter(CommonClassNames.METHOD_CALL.name, "call")
+        .addParameter(CommonClassNames.RESULT.name, "result")
         .beginControlFlow("switch(call.method)");
 
     for (PluginClass aClass : plugin.classes) {
@@ -158,7 +162,7 @@ public class PluginCreator {
         .addStatement("result.notImplemented()")
         .addStatement("return")
         .endControlFlow()
-        .addStatement("final $T handler = getHandler(handle)", PluginClassNames.METHOD_CALL_HANDLER.name)
+        .addStatement("final $T handler = getHandler(handle)", CommonClassNames.METHOD_CALL_HANDLER.name)
         .beginControlFlow("if (handler == null)")
         .addStatement("result.notImplemented()")
         .addStatement("return")

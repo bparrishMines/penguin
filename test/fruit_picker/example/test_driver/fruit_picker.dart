@@ -9,6 +9,7 @@ import 'package:fruit_picker/orange.dart';
 import 'package:fruit_picker/strawberry.dart';
 import 'package:fruit_picker/lemon.dart';
 import 'package:fruit_picker/peach.dart';
+import 'package:fruit_picker/grape.dart';
 
 void main() {
   final Completer<String> completer = Completer<String>();
@@ -60,6 +61,25 @@ void main() {
 
       test('takeOrange', () async {
         final Orange orange = basket.takeOrange();
+        await pumpEventQueue();
+      });
+
+      test('takeGrape', () async {
+        final Grape grape = await basket.takeGrape();
+        expect(grape.color, "yellow");
+        expect(grape.hasSeed, isTrue);
+      });
+
+      test('aRedGrape', () async {
+        final Grape grape = await basket.aRedGrape;
+        expect(grape.color, "red");
+        expect(grape.hasSeed, isFalse);
+      });
+
+      test('aGreenGrape', () async {
+        final Grape grape = await basket.aRedGrape;
+        Basket.aGreenGrape = grape..color = 'pink';
+        expect(Basket.aGreenGrape.color, 'pink');
         await pumpEventQueue();
       });
     });
@@ -144,6 +164,15 @@ void main() {
         expect(peach.isRipe, isFalse);
 
         await pumpEventQueue();
+      });
+    });
+
+    group('$Grape', () {
+      Grape grape;
+
+      setUp(() async {
+        final Basket basket = Basket();
+        grape = await basket.takeGrape();
       });
     });
   });

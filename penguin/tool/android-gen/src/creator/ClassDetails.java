@@ -17,15 +17,18 @@ public class ClassDetails {
   // Name of the wrapped object in the class
   public final String variableName;
 
+  public final boolean hasInitializedFields;
+
   ClassDetails(boolean hasConstructor,
                boolean isReferenced,
                ClassName className,
                ClassName wrapperClassName,
-               String variableName) {
+               String variableName, boolean hasInitializedFields) {
     this.hasConstructor = hasConstructor;
     this.isReferenced = isReferenced;
     this.className = className;
     this.wrapperClassName = wrapperClassName;
     this.variableName = variableName;
+    this.hasInitializedFields = hasInitializedFields;
   }
 }

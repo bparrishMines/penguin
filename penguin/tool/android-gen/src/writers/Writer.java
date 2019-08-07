@@ -16,7 +16,7 @@ abstract class Writer<T, K> {
 
   public abstract K write(T object);
 
-  public final List<K> writeAll(List<T> objects) {
+  public final List<K> writeAll(Iterable<T> objects) {
     final ArrayList<K> list = new ArrayList<>();
 
     for (T object : objects) {
@@ -40,22 +40,22 @@ abstract class Writer<T, K> {
     final CodeBlock.Builder builder = CodeBlock.builder();
 
     for (PluginParameter parameter : parameters) {
-      final PluginClass pluginClass = classFromString(parameter.type);
+      final PluginClass parameterClass = classFromString(parameter.type);
 
-      if (pluginClass != null) {
+      if (parameterClass != null) {
         final String handleName = parameter.name.toLowerCase() + "Handle";
         builder.addStatement("final $T $N = call.argument($S)", String.class, handleName, handleName)
             .addStatement("final $T $N = ($T) $T.getHandler($N)",
-                pluginClass.details.wrapperClassName,
-                pluginClass.details.wrapperClassName.simpleName().toLowerCase(),
-                pluginClass.details.wrapperClassName,
+                parameterClass.details.wrapperClassName,
+                parameterClass.details.wrapperClassName.simpleName().toLowerCase(),
+                parameterClass.details.wrapperClassName,
                 mainPluginClassName,
                 handleName)
             .addStatement("final $T $N = $N.$N",
-                pluginClass.details.className,
+                parameterClass.details.className,
                 parameter.name,
-                pluginClass.details.wrapperClassName.simpleName().toLowerCase(),
-                pluginClass.details.variableName);
+                parameterClass.details.wrapperClassName.simpleName().toLowerCase(),
+                parameterClass.details.variableName);
       } else {
         final ClassName className = bestGuess(parameter.type);
         builder.addStatement("final $T $N = call.argument($S)", className, parameter.name, parameter.name);
@@ -86,7 +86,8 @@ abstract class Writer<T, K> {
     } else if (Plugin.mutable(fieldOrMethod)) {
       return true;
     } else {
-      return classFromString(Plugin.returnType(fieldOrMethod)) != null;
+      final PluginClass returnClass = classFromString(Plugin.returnType(fieldOrMethod));
+      return returnClass != null && !returnClass.details.hasInitializedFields;
     }
   }
 }

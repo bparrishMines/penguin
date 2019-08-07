@@ -3,6 +3,9 @@ package writers;
 import com.squareup.javapoet.*;
 import objects.*;
 import javax.lang.model.element.Modifier;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ClassWriter extends Writer<PluginClass, JavaFile> {
   private final ClassName mainPluginClassName;
@@ -16,7 +19,7 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
   public JavaFile write(PluginClass aClass) {
     final TypeSpec.Builder classBuilder = TypeSpec.classBuilder(aClass.details.wrapperClassName.simpleName())
         .addModifiers(Modifier.FINAL)
-        .addSuperinterface(PluginClassNames.METHOD_CALL_HANDLER.name)
+        .addSuperinterface(CommonClassNames.METHOD_CALL_HANDLER.name)
         .addField(String.class, "handle", Modifier.PRIVATE, Modifier.FINAL)
         .addField(aClass.details.className, aClass.details.variableName, Modifier.FINAL, Modifier.PUBLIC);
 
@@ -35,7 +38,9 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
     final ConstructorWriter constructorWriter = new ConstructorWriter(plugin, aClass);
     classBuilder.addMethod(buildOnMethodCall(aClass))
         .addMethods(constructorWriter.writeAll(aClass.constructors))
-        .addMethods(methodWriter.writeAll(aClass.getFieldsAndMethods()));
+        .addMethods(methodWriter.writeAll(aClass.getFieldsAndMethods()
+            .stream().filter(fieldOrMethod -> !Plugin.initialized(fieldOrMethod) || Plugin.mutable(fieldOrMethod))
+            .collect(Collectors.toList())));
 
     if (aClass.details.isReferenced) {
       classBuilder.addMethod(MethodSpec.constructorBuilder()
@@ -57,11 +62,14 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
     final MethodSpec.Builder builder = MethodSpec.methodBuilder("onMethodCall")
         .addAnnotation(Override.class)
         .addModifiers(Modifier.PUBLIC)
-        .addParameter(PluginClassNames.METHOD_CALL.name, "call")
-        .addParameter(PluginClassNames.RESULT.name, "result")
+        .addParameter(CommonClassNames.METHOD_CALL.name, "call")
+        .addParameter(CommonClassNames.RESULT.name, "result")
         .beginControlFlow("switch(call.method)");
 
-    for (Object fieldOrMethod : aClass.getFieldsAndMethods()) {
+    final List<Object> fieldsAndMethods = aClass.getFieldsAndMethods()
+        .stream().filter(fieldOrMethod -> !Plugin.initialized(fieldOrMethod) || Plugin.mutable(fieldOrMethod))
+        .collect(Collectors.toList());
+    for (Object fieldOrMethod : fieldsAndMethods) {
       if (!Plugin.isStatic(fieldOrMethod)) {
         builder.addCode("case \"$N#$N\":\n", aClass.name, Plugin.name(fieldOrMethod))
             .addCode(CodeBlock.builder().indent().build());
@@ -87,8 +95,8 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
   private MethodSpec buildOnStaticMethodCall(PluginClass aClass) {
     final MethodSpec.Builder builder = MethodSpec.methodBuilder("onStaticMethodCall")
         .addModifiers(Modifier.STATIC)
-        .addParameter(PluginClassNames.METHOD_CALL.name, "call")
-        .addParameter(PluginClassNames.RESULT.name, "result")
+        .addParameter(CommonClassNames.METHOD_CALL.name, "call")
+        .addParameter(CommonClassNames.RESULT.name, "result")
         .beginControlFlow("switch(call.method)");
 
     for (PluginConstructor constructor : aClass.constructors) {
@@ -108,7 +116,9 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
         builder.addCode(extractParametersFromMethodCall(constructor.getAllParameters(), mainPluginClassName));
       }
 
-      builder.addStatement("final $T handler = new $T(handle" + allParameterNamesString + ")", aClass.details.wrapperClassName, aClass.details.wrapperClassName)
+      builder.addStatement("final $T handler = new $T(handle" + allParameterNamesString + ")",
+          aClass.details.wrapperClassName,
+          aClass.details.wrapperClassName)
           .addStatement("$T.addHandler(handle, handler)", mainPluginClassName)
           .addStatement("break")
           .endControlFlow()
