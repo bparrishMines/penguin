@@ -1,5 +1,6 @@
 package writers;
 
+import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.MethodSpec;
 import objects.Plugin;
 import objects.PluginClass;
@@ -10,11 +11,13 @@ import javax.lang.model.element.Modifier;
 public class ConstructorWriter extends Writer<PluginConstructor, MethodSpec> {
   private final ParameterWriter parameterWriter;
   private final PluginClass pluginClass;
+  private final ClassName mainPluginClassName;
 
-  ConstructorWriter(Plugin plugin, PluginClass pluginClass) {
+  ConstructorWriter(Plugin plugin, PluginClass pluginClass, ClassName mainPluginClassName) {
     super(plugin);
     this.parameterWriter = new ParameterWriter(plugin);
     this.pluginClass = pluginClass;
+    this.mainPluginClassName = mainPluginClassName;
   }
 
   @Override
@@ -27,6 +30,7 @@ public class ConstructorWriter extends Writer<PluginConstructor, MethodSpec> {
         .addParameters(parameterWriter.writeAll(constructor.getAllParameters()))
         .addStatement("this.handle = handle")
         .addStatement("this.$N = new $T(" + allParameterNamesString + ")", pluginClass.details.variableName, pluginClass.details.className)
+        .addStatement("$T.addHandler(handle, this)", mainPluginClassName)
         .build();
   }
 }

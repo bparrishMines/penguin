@@ -19,16 +19,19 @@ public class ClassDetails {
 
   public final boolean hasInitializedFields;
 
+  public final boolean isInitializedField;
+
   ClassDetails(boolean hasConstructor,
                boolean isReferenced,
                ClassName className,
                ClassName wrapperClassName,
-               String variableName, boolean hasInitializedFields) {
+               String variableName, boolean hasInitializedFields, boolean isInitializedField) {
     this.hasConstructor = hasConstructor;
     this.isReferenced = isReferenced;
     this.className = className;
     this.wrapperClassName = wrapperClassName;
     this.variableName = variableName;
     this.hasInitializedFields = hasInitializedFields;
+    this.isInitializedField = isInitializedField;
   }
 }

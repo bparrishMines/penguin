@@ -3,7 +3,6 @@ package writers;
 import com.squareup.javapoet.*;
 import objects.*;
 import javax.lang.model.element.Modifier;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,7 +34,7 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
     }
 
     final MethodWriter methodWriter = new MethodWriter(plugin, aClass, mainPluginClassName);
-    final ConstructorWriter constructorWriter = new ConstructorWriter(plugin, aClass);
+    final ConstructorWriter constructorWriter = new ConstructorWriter(plugin, aClass, mainPluginClassName);
     classBuilder.addMethod(buildOnMethodCall(aClass))
         .addMethods(constructorWriter.writeAll(aClass.constructors))
         .addMethods(methodWriter.writeAll(aClass.getFieldsAndMethods()
@@ -48,7 +47,12 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
           .addParameter(aClass.details.className, aClass.details.variableName)
           .addStatement("this.handle = handle")
           .addStatement("this.$N = $N", aClass.details.variableName, aClass.details.variableName)
+          .addStatement("$T.addHandler(handle, this)", mainPluginClassName)
           .build());
+    }
+
+    if (aClass.details.hasInitializedFields || aClass.details.isInitializedField) {
+      classBuilder.addMethod(buildSerializeInitializers(aClass));
     }
 
     final JavaFile.Builder builder = JavaFile.builder(
@@ -116,10 +120,8 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
         builder.addCode(extractParametersFromMethodCall(constructor.getAllParameters(), mainPluginClassName));
       }
 
-      builder.addStatement("final $T handler = new $T(handle" + allParameterNamesString + ")",
-          aClass.details.wrapperClassName,
+      builder.addStatement("new $T(handle" + allParameterNamesString + ")",
           aClass.details.wrapperClassName)
-          .addStatement("$T.addHandler(handle, handler)", mainPluginClassName)
           .addStatement("break")
           .endControlFlow()
           .addCode(CodeBlock.builder().unindent().build());
@@ -146,5 +148,38 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
         .addCode(CodeBlock.builder().unindent().build());
 
     return builder.endControlFlow().build();
+  }
+
+  private MethodSpec buildSerializeInitializers(PluginClass initClass) {
+    final MethodSpec.Builder builder = MethodSpec.methodBuilder("serializeInitializers")
+        .returns(CommonClassNames.HASH_MAP.name)
+        .addStatement("final $T<$T, $T> initializers = new $T<>()",
+            CommonClassNames.HASH_MAP.name,
+            String.class,
+            Object.class,
+            CommonClassNames.HASH_MAP.name)
+        .addStatement("initializers.put($S, handle)", "handle");
+
+    for (Object field : initClass.getFieldsAndMethods().stream().filter(Plugin::initialized).toArray()) {
+      final String fieldName = Plugin.name(field);
+
+      final PluginClass typeClass = classFromString(Plugin.returnType(field));
+
+      if (typeClass == null) {
+        builder.addStatement("initializers.put($S, $N.$N)", fieldName, initClass.details.variableName, fieldName);
+      } else {
+        builder.addStatement("final $T $N = new $T(handle, $N.$N)",
+            typeClass.details.wrapperClassName,
+            fieldName,
+            typeClass.details.wrapperClassName,
+            initClass.details.variableName,
+            fieldName)
+            .addStatement("initializers.put($S, $N.serializeInitializers())", fieldName, fieldName);
+      }
+    }
+
+    builder.addStatement("return initializers");
+
+    return builder.build();
   }
 }

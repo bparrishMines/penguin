@@ -36,6 +36,9 @@ classes:
         returns: Apricot
     fields:
       - field:
+        name: sweetestPear
+        type: Pear
+      - field:
         name: ripestBanana
         is_static: true
         type: Banana

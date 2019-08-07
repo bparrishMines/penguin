@@ -31,11 +31,18 @@ public class PluginCreator {
     }
 
     final Set<String> referencedClasses = new HashSet<>();
+    final Set<String> initializedFields = new HashSet<>();
     for (PluginClass theClass : plugin.classes) {
       for (Object fieldOrMethod : theClass.getFieldsAndMethods()) {
         final String returnType = Plugin.returnType(fieldOrMethod);
-        if (!Plugin.mutable(fieldOrMethod) && allClassNames.contains(returnType)) {
+        if (!allClassNames.contains(Plugin.returnType(fieldOrMethod))) continue;
+
+        if (!Plugin.mutable(fieldOrMethod)) {
           referencedClasses.add(returnType);
+        }
+
+        if (Plugin.initialized(fieldOrMethod)) {
+          initializedFields.add(returnType);
         }
       }
     }
@@ -47,7 +54,8 @@ public class PluginCreator {
           ClassName.get(theClass.java_package, theClass.name),
           ClassName.get(packageName, CLASS_PREFIX + theClass.name),
           theClass.name.toLowerCase(),
-          theClass.getFieldsAndMethods().stream().anyMatch(Plugin::initialized));
+          theClass.getFieldsAndMethods().stream().anyMatch(Plugin::initialized),
+          initializedFields.contains(theClass.name));
     }
   }
 

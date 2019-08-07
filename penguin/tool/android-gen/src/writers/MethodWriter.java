@@ -79,23 +79,17 @@ public class MethodWriter extends Writer<Object, MethodSpec> {
         } else {
           builder.addStatement("final $T handle = $T.getNextHandle()", String.class, mainPluginClassName);
         }
-        builder.addStatement("final $T value = " + callString, returnClass.details.className, callerName, name)
-          .addStatement("final $T handler = new $T(handle, value)", returnClass.details.wrapperClassName, returnClass.details.wrapperClassName)
-          .addStatement("$T.addHandler(handle, handler)", mainPluginClassName);
+
+        builder.addStatement("final $T value = " + callString, returnClass.details.className, callerName, name);
 
         if (!returnClass.details.hasInitializedFields) {
+          builder.addStatement("new $T(handle, value)", returnClass.details.wrapperClassName);
           builder.addStatement("result.success(null)");
         } else {
-          builder.addStatement("final $T<$T, $T> initializers = new $T<>()",
-              CommonClassNames.HASH_MAP.name, String.class, Object.class, CommonClassNames.HASH_MAP.name);
-
-          builder.addStatement("initializers.put($S, handle)", "handle");
-
-          for (Object field : returnClass.getFieldsAndMethods().stream().filter(Plugin::initialized).toArray()) {
-            builder.addStatement("initializers.put($S, value.$N)", Plugin.name(field), Plugin.name(field));
-          }
-
-          builder.addStatement("result.success(initializers)");
+          builder.addStatement("final $T handler = new $T(handle, value)",
+              returnClass.details.wrapperClassName,
+              returnClass.details.wrapperClassName);
+          builder.addStatement("result.success(handler.serializeInitializers())");
         }
       }
     }
