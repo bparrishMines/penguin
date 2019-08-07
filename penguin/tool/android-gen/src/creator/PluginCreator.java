@@ -103,7 +103,7 @@ public class PluginCreator {
         .addMethod(MethodSpec.methodBuilder("getNextHandle")
             .addModifiers(Modifier.STATIC)
             .returns(String.class)
-            .addStatement("return $T.format($T.getDefault(), $S, new $T().getTime())", String.class, Locale.class, "android%d", Date.class)
+            .addStatement("return $T.randomUUID().toString()", UUID.class)
             .build())
         .addMethod(MethodSpec.methodBuilder("addHandler")
             .addModifiers(Modifier.STATIC)

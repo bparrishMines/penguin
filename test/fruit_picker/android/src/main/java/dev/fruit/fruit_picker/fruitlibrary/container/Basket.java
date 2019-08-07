@@ -45,4 +45,16 @@ public class Basket {
     apricot.shape = "square";
     return apricot;
   }
+
+  public Grape addAndTakeSomeFruit(Apple aGoodApple, Apricot aDecentApricot, Apple anotherGoodApple) {
+    assert aGoodApple != null;
+    assert aDecentApricot != null;
+    assert anotherGoodApple != null;
+
+    final Grape grape = new Grape();
+    grape.hasSeed = false;
+    grape.color = "orange";
+
+    return grape;
+  }
 }

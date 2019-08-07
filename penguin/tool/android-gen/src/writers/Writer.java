@@ -44,17 +44,18 @@ abstract class Writer<T, K> {
 
       if (parameterClass != null) {
         final String handleName = parameter.name.toLowerCase() + "Handle";
+        final String wrapperVarName = parameter.name.toLowerCase() + parameterClass.details.wrapperClassName.simpleName().toLowerCase();
         builder.addStatement("final $T $N = call.argument($S)", String.class, handleName, handleName)
             .addStatement("final $T $N = ($T) $T.getHandler($N)",
                 parameterClass.details.wrapperClassName,
-                parameterClass.details.wrapperClassName.simpleName().toLowerCase(),
+                wrapperVarName,
                 parameterClass.details.wrapperClassName,
                 mainPluginClassName,
                 handleName)
             .addStatement("final $T $N = $N.$N",
                 parameterClass.details.className,
                 parameter.name,
-                parameterClass.details.wrapperClassName.simpleName().toLowerCase(),
+                wrapperVarName,
                 parameterClass.details.variableName);
       } else {
         final ClassName className = bestGuess(parameter.type);

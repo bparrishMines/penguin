@@ -94,6 +94,17 @@ void main() {
         final Pear pear = await basket.sweetestPear;
         expect(pear.closestApple, isNotNull);
       });
+
+      test('addAndTakeSomeFruit', () async {
+        final Grape grape = await basket.addAndTakeSomeFruit(
+          basket.takeApple(),
+          Apricot(),
+          basket.takeApple(),
+        );
+
+        expect(grape.hasSeed, isFalse);
+        expect(grape.color, 'orange');
+      });
     });
 
     group('$Apple', () {

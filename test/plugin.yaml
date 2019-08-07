@@ -34,6 +34,19 @@ classes:
       - method:
         name: takeApricot
         returns: Apricot
+      - method:
+        name: addAndTakeSomeFruit
+        returns: Grape
+        required_parameters:
+          - required_parameter:
+            name: aGoodApple
+            type: Apple
+          - required_parameter:
+            name: aDecentApricot
+            type: Apricot
+          - required_parameter:
+            name: anotherGoodApple
+            type: Apple
     fields:
       - field:
         name: sweetestPear
