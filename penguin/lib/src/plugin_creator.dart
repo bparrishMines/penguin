@@ -110,6 +110,7 @@ class PluginCreator {
     final Map<String, String> classes = <String, String>{};
 
     classes['channel.dart'] = _channelAsString();
+    classes['method_call_invoker.dart'] = _methodCallInvoker;
 
     final ClassWriter writer = ClassWriter(plugin);
     for (Class theClass in plugin.classes) {
@@ -121,4 +122,59 @@ class PluginCreator {
   }
 
   cb.DartEmitter _createEmitter() => cb.DartEmitter(cb.Allocator());
+
+  static final String _methodCallInvoker = '''
+import 'dart:async';
+
+import 'package:flutter/services.dart';
+
+import 'channel.dart';
+
+abstract class MethodCallInvoker {
+  static Future<dynamic> invoke(
+    MethodCallInvokerNode edgeNode,
+    MethodCall call,
+  ) {
+    final List<MethodCall> methodCalls = <MethodCall>[];
+    methodCalls.add(call);
+
+    MethodCallInvokerNode currentNode = edgeNode;
+    while (true) {
+      if (currentNode == null) break;
+      methodCalls.add(currentNode.methodCall);
+      currentNode = currentNode.parent;
+    }
+
+    return Channel.channel.invokeMethod<dynamic>(
+      'Invoke',
+      serializeMethodCalls(methodCalls.reversed).toList(),
+    );
+  }
+
+  static Iterable<Map<String, dynamic>> serializeMethodCalls(
+    Iterable<MethodCall> methodCalls,
+  ) {
+    return methodCalls.map<Map<String, dynamic>>(
+      (MethodCall methodCall) => <String, dynamic>{
+        'method': methodCall.method,
+        'arguments': methodCall.arguments,
+      },
+    );
+  }
+}
+
+class MethodCallInvokerNode {
+  const MethodCallInvokerNode(
+    this.methodCall, [
+    this.parent,
+    this.type = NodeType.regular,
+  ]);
+
+  final MethodCall methodCall;
+  final NodeType type;
+  final MethodCallInvokerNode parent;
+}
+
+enum NodeType { regular, opener, closer }
+''';
 }
