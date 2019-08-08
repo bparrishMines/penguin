@@ -191,14 +191,14 @@ class MethodFieldWriter extends Writer<Field, List<cb.Method>> {
 }
 
 class MethodWriter extends Writer<dynamic, cb.Method> {
-  MethodWriter({Plugin plugin, this.className, this.implSuffix})
-      : assert(className != null),
+  MethodWriter({Plugin plugin, this.nameOfParentClass, this.implSuffix})
+      : assert(nameOfParentClass != null),
         assert(implSuffix != null),
         super(plugin) {
     _paramWriter = ParameterWriter(plugin);
   }
 
-  final String className;
+  final String nameOfParentClass;
   final String implSuffix;
   ParameterWriter _paramWriter;
 
@@ -210,7 +210,7 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
 
     final cb.InvokeExpression invokeMethodExpression = _invokeMethodExpression(
         type: theClass == null ? cb.refer(returnType) : null,
-        className: className,
+        className: nameOfParentClass,
         methodName: fieldOrMethod.name,
         hasHandle: !fieldOrMethod.isStatic,
         arguments: _mappedParams(fieldOrMethod, returnType),
@@ -244,7 +244,7 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
         });
       });
     } else {
-      final cb.Reference returnRef = returnType == className
+      final cb.Reference returnRef = returnType == nameOfParentClass
           ? cb.refer(returnType)
           : cb.refer(returnType, theClass.details.file);
 
@@ -257,15 +257,13 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
             ? References.future(returnRef)
             : returnRef;
 
+        final cb.Expression constructor = !theClass.details.hasConstructor
+            ? cb.refer('_${returnType}$implSuffix')
+            : returnRef.property('internal');
+
         if (theClass.details.hasInitializedFields) {
           builder.modifier = cb.MethodModifier.async;
           builder.body = cb.Block((cb.BlockBuilder builder) {
-            final cb.Expression constructor = !theClass.details.hasConstructor
-                ? cb.refer('_${returnType}$implSuffix')
-                : cb
-                    .refer(returnType, theClass.details.file)
-                    .property('internal');
-
             builder.addExpression(
               invokeMethodExpression.awaited
                   .assignFinal('source', cb.refer('Map')),
@@ -277,11 +275,6 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
           });
         } else {
           builder.body = cb.Block((cb.BlockBuilder builder) {
-            final cb.Expression constructor = !theClass.details.hasConstructor
-                ? cb.refer('_${returnType}$implSuffix')
-                : cb
-                    .refer(returnType, theClass.details.file)
-                    .property('internal');
             builder.addExpression(
               constructor
                   .call(<cb.Expression>[]).assignFinal(varName, returnRef),
@@ -437,7 +430,7 @@ class ClassWriter extends Writer<Class, cb.Library> {
   cb.Library write(Class theClass) {
     final MethodWriter methodWriter = MethodWriter(
       plugin: plugin,
-      className: theClass.name,
+      nameOfParentClass: theClass.name,
       implSuffix: _implSuffix,
     );
 
@@ -477,6 +470,7 @@ class ClassWriter extends Writer<Class, cb.Library> {
             ..abstract = !theClass.details.hasConstructor
             ..constructors
                 .addAll(constructWriter.writeAll(theClass.constructors))
+            ..fields.add(_invokerNode)
             ..fields.add(_handle(
               theClass.details.hasInitializedFields,
               theClass.details.isInitializedField,
@@ -588,4 +582,10 @@ class ClassWriter extends Writer<Class, cb.Library> {
       }
     });
   }
+
+  static cb.Field get _invokerNode => cb.Field((cb.FieldBuilder builder) {
+        builder
+          ..name = '_invokerNode'
+          ..type = References.methodCallInvokerNode;
+      });
 }

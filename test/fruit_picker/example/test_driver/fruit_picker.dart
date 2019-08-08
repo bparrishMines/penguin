@@ -105,6 +105,11 @@ void main() {
         expect(grape.hasSeed, isFalse);
         expect(grape.color, 'orange');
       });
+
+      test('basketWithBanana', () async {
+        Basket.basketWithBananas(Basket.ripestBanana, Basket.ripestBanana);
+        await pumpEventQueue();
+      });
     });
 
     group('$Apple', () {

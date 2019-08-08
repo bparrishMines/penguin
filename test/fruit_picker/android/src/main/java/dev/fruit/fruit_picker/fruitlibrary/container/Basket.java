@@ -21,6 +21,10 @@ public class Basket {
     assert apple != null;
   }
 
+  public static Basket basketWithBananas(Banana firstBanana, Banana secondBanana) {
+    return new Basket();
+  }
+
   public Apple takeApple() {
     return new Apple();
   }

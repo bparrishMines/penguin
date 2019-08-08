@@ -47,6 +47,17 @@ classes:
           - required_parameter:
             name: anotherGoodApple
             type: Apple
+      - method:
+        name: basketWithBananas
+        returns: Basket
+        is_static: true
+        required_parameters:
+        - required_parameter:
+          name: firstBanana
+          type: Banana
+        - required_parameter:
+          name: secondBanana
+          type: Banana
     fields:
       - field:
         name: sweetestPear
