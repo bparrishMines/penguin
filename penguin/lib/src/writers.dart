@@ -542,27 +542,17 @@ class ParameterWriter extends Writer<Parameter, cb.Parameter> {
 }
 
 class ImplClassWriter extends Writer<Class, cb.Class> {
-  ImplClassWriter(Plugin plugin, this.implSuffix, this.parentClass)
-      : assert(implSuffix != null),
-        super(plugin);
-
-  final String implSuffix;
-  final Class parentClass;
+  ImplClassWriter(Plugin plugin) : super(plugin);
 
   @override
   cb.Class write(Class theClass) {
-    assert(theClass.details.isReferenced && !theClass.details.hasConstructor);
+    if (theClass.details.hasConstructor) throw ArgumentError();
 
     return cb.Class((cb.ClassBuilder classBuilder) {
       classBuilder
-        ..name = '_${theClass.name}$implSuffix'
-        ..extend = cb.refer(theClass.name, theClass.details.file);
-
-      if (theClass.details.hasInitializedFields ||
-          (theClass.details.isInitializedField &&
-              parentClass.fieldsAndMethods.any((dynamic fieldOrMethod) =>
-                  Plugin.initialized(fieldOrMethod)))) {
-        classBuilder.constructors.add(cb.Constructor(
+        ..name = '_${theClass.name}Impl'
+        ..extend = cb.refer(theClass.name, theClass.details.file)
+        ..constructors.add(cb.Constructor(
           (cb.ConstructorBuilder builder) {
             builder
               ..requiredParameters.addAll(<cb.Parameter>[
@@ -583,15 +573,12 @@ class ImplClassWriter extends Writer<Class, cb.Class> {
               );
           },
         ));
-      }
     });
   }
 }
 
 class ClassWriter extends Writer<Class, cb.Library> {
   ClassWriter(Plugin plugin) : super(plugin);
-
-  //static final String _implSuffix = 'Impl';
 
   @override
   cb.Library write(Class theClass) {
@@ -703,6 +690,19 @@ class ClassWriter extends Writer<Class, cb.Library> {
       parameterWriter: parameterWriter,
     );
 
+    final Iterable<Class> implClasses = theClass.fieldsAndMethods
+        .map<String>(
+          (dynamic fieldOrMethod) => Plugin.returnType(fieldOrMethod),
+        )
+        .map<Class>((String type) => _classFromString(type))
+        .toSet()
+        .where(
+          (Class theClass) =>
+              theClass != null && !theClass.details.hasConstructor,
+        );
+
+    final ImplClassWriter implClassWriter = ImplClassWriter(plugin);
+
     return cb.Library((cb.LibraryBuilder builder) {
       builder.body.addAll(<cb.Class>[
         cb.Class((cb.ClassBuilder classBuilder) {
@@ -753,6 +753,7 @@ class ClassWriter extends Writer<Class, cb.Library> {
             )
             ..methods.addAll(methodWriter.writeAll(theClass.methods));
         }),
+        ...implClassWriter.writeAll(implClasses),
       ]);
     });
   }
