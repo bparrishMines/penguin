@@ -120,46 +120,35 @@ abstract class Writer<T, K> {
     );
   }
 
-  Map<String, cb.Expression> _mappedParams(
-    dynamic constructorFieldOrMethod,
-    String returnedType, {
-    bool hasInitializedFields = false,
-  }) {
-    assert(constructorFieldOrMethod is Constructor ||
-        constructorFieldOrMethod is Method ||
-        constructorFieldOrMethod is Field);
-
+  Map<String, cb.Expression> _mappedParams(List<Parameter> parameters) {
     final Map<String, cb.Expression> paramExpressions =
         <String, cb.Expression>{};
 
-    if (constructorFieldOrMethod is Constructor ||
-        constructorFieldOrMethod is Method) {
-      for (Parameter parameter in constructorFieldOrMethod.allParameters) {
-        final Class aClass = _classFromString(parameter.type);
+    for (Parameter parameter in parameters) {
+      final Class aClass = _classFromString(parameter.type);
 
-        if (aClass != null) {
-          paramExpressions['${parameter.name.toLowerCase()}Handle'] =
-              cb.refer(parameter.name).property('handle');
-        } else {
-          paramExpressions[parameter.name] = cb.refer(parameter.name);
-        }
+      if (aClass != null) {
+        paramExpressions['${parameter.name.toLowerCase()}Handle'] =
+            cb.refer(parameter.name).property('handle');
+      } else {
+        paramExpressions[parameter.name] = cb.refer(parameter.name);
       }
     }
 
-    if (constructorFieldOrMethod is! Constructor &&
-        !constructorFieldOrMethod.isStatic) {
-      paramExpressions['handle'] = cb.refer('handle');
-    }
+//    if (addHandle) {
+//      paramExpressions['handle'] = cb.refer('handle');
+//    }
 
-    final String handleName = '${returnedType.toLowerCase()}Handle';
-    final Class returnedClass = _classFromString(returnedType);
-    if (constructorFieldOrMethod is Constructor) {
-      paramExpressions[handleName] = cb.refer('handle');
-    } else if (returnedClass != null &&
-        !returnedClass.details.hasInitializedFields) {
-      paramExpressions[handleName] =
-          cb.refer(returnedType.toLowerCase()).property('handle');
-    }
+//    var returnedType;
+//    final String handleName = '${returnedType.toLowerCase()}Handle';
+//    final Class returnedClass = _classFromString(returnedType);
+//    if (fieldMethodOrConstructor is Constructor) {
+//      paramExpressions[handleName] = cb.refer('handle');
+//    } else if (returnedClass != null &&
+//        !returnedClass.details.hasInitializedFields) {
+//      paramExpressions[handleName] =
+//          cb.refer(returnedType.toLowerCase()).property('handle');
+//    }
 
     return paramExpressions;
   }
@@ -276,7 +265,6 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
 
   @override
   cb.Method write(dynamic fieldOrMethod) {
-
     return null;
 //    final String returnType = Plugin.returnType(fieldOrMethod);
 //
@@ -450,9 +438,9 @@ class ConstructorWriter extends Writer<Constructor, cb.Constructor> {
             .addAll(parameterWriter.writeAll(constructor.allParameters))
         ..body = cb.Block((cb.BlockBuilder builder) {
           builder.addExpression(
-              cb.refer('invokerNode').assign(_invokerNodeExpression(
+              cb.refer('_invokerNode').assign(_invokerNodeExpression(
                     '${nameOfParentClass}${_getMethodCallMethod(constructor.allParameters)}',
-                    arguments: _mappedParams(constructor, nameOfParentClass),
+                    arguments: _mappedConstructorParams(constructor),
                     parameters: constructor.allParameters,
                   )));
         })
@@ -473,6 +461,17 @@ class ConstructorWriter extends Writer<Constructor, cb.Constructor> {
     );
 
     return '(${parameterTypes.join(',')})';
+  }
+
+  Map<String, cb.Expression> _mappedConstructorParams(Constructor constructor) {
+    final Map<String, cb.Expression> paramExpressions = _mappedParams(
+      constructor.allParameters,
+    );
+
+    final String handleName = '${nameOfParentClass.toLowerCase()}Handle';
+    paramExpressions[handleName] = cb.refer('handle');
+
+    return paramExpressions;
   }
 }
 
@@ -680,7 +679,7 @@ class ClassWriter extends Writer<Class, cb.Library> {
             ..fields.addAll(<cb.Field>[
               cb.Field((cb.FieldBuilder builder) {
                 builder
-                  ..name = 'invokerNode'
+                  ..name = '_invokerNode'
                   ..type = References.methodCallInvokerNode;
               }),
               cb.Field((cb.FieldBuilder builder) {
@@ -689,7 +688,15 @@ class ClassWriter extends Writer<Class, cb.Library> {
                   ..type = cb.refer('String')
                   ..modifier = cb.FieldModifier.final$;
               }),
-            ]);
+            ])
+            ..methods.add(cb.Method((cb.MethodBuilder builder) {
+              builder
+                ..name = 'invokerNode'
+                ..type = cb.MethodType.getter
+                ..lambda = true
+                ..body = cb.refer('_invokerNode').code
+                ..returns = References.methodCallInvokerNode;
+            }));
         }),
       ]);
     });
@@ -719,21 +726,15 @@ class ClassWriter extends Writer<Class, cb.Library> {
                 })
               ])
               ..initializers.addAll(<cb.Code>[
-                cb.refer('invokerNode').assign(cb.refer('creatorNode')).code,
+                cb.refer('_invokerNode').assign(cb.refer('creatorNode')).code,
                 cb
                     .refer('handle')
                     .assign(
-                      cb
-                          .refer('source')
-                          .index(cb.literalString('handle'))
-                          .notEqualTo(cb.literalNull)
-                          .conditional(
-                              cb
-                                  .refer('source')
-                                  .index(cb.literalString('handle')),
-                              References.channel
-                                  .property('nextHandle')
-                                  .call(<cb.Expression>[])),
+                      cb.refer('source').notEqualTo(cb.literalNull).conditional(
+                          cb.refer('source').index(cb.literalString('handle')),
+                          References.channel
+                              .property('nextHandle')
+                              .call(<cb.Expression>[])),
                     )
                     .code,
                 ...initializers,

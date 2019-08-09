@@ -24,29 +24,42 @@ class Plugin {
   final List<Class> classes;
 
   static String returnType(dynamic fieldOrMethod) {
-    assert(fieldOrMethod is Field || fieldOrMethod is Method);
+    if (fieldOrMethod is! Field && fieldOrMethod is! Method) {
+      throw ArgumentError();
+    }
+
     if (fieldOrMethod is Field) return fieldOrMethod.type;
     return fieldOrMethod.returns;
   }
 
   static bool mutable(dynamic fieldOrMethod) {
-    assert(fieldOrMethod is Field || fieldOrMethod is Method);
+    if (fieldOrMethod is! Field && fieldOrMethod is! Method) {
+      throw ArgumentError();
+    }
+
     if (fieldOrMethod is Field) return fieldOrMethod.mutable;
     return false;
   }
 
   static bool initialized(dynamic fieldOrMethod) {
-    assert(fieldOrMethod is Field || fieldOrMethod is Method);
-    if (fieldOrMethod is Field) return fieldOrMethod.initialized;
-    return false;
-  }
-
-  static List<Parameter> parameters(dynamic fieldOrMethod) {
     if (fieldOrMethod is! Field && fieldOrMethod is! Method) {
       throw ArgumentError();
     }
 
-    if (fieldOrMethod is Method) return fieldOrMethod.allParameters;
+    if (fieldOrMethod is Field) return fieldOrMethod.initialized;
+    return false;
+  }
+
+  static List<Parameter> parameters(dynamic fieldMethodOrConstructor) {
+    if (fieldMethodOrConstructor is! Field &&
+        fieldMethodOrConstructor is! Method &&
+        fieldMethodOrConstructor is! Constructor) {
+      throw ArgumentError();
+    }
+
+    if (fieldMethodOrConstructor is ParameterHolder) {
+      return fieldMethodOrConstructor.allParameters;
+    }
 
     return <Parameter>[];
   }
