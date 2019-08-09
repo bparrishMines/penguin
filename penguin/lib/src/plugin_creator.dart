@@ -132,7 +132,7 @@ import 'package:flutter/services.dart';
 import 'channel.dart';
 
 abstract class MethodCallInvoker {
-  static Future<dynamic> invoke(
+  static Future<T> invoke<T>(
     List<MethodCallInvokerNode> edgeNodes,
     MethodCall call,
   ) {
@@ -153,7 +153,7 @@ abstract class MethodCallInvoker {
       call,
     ];
 
-    return Channel.channel.invokeMethod<dynamic>(
+    return Channel.channel.invokeMethod<T>(
       'Invoke',
       _serializeMethodCalls(methodCalls).toList(),
     );
