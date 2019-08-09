@@ -56,9 +56,11 @@ abstract class Writer<T, K> {
     String method, {
     Map<String, cb.Expression> arguments,
     List<Parameter> parameters,
+    bool includeSelfInvokerNode,
   }) {
     arguments ??= <String, cb.Expression>{};
     parameters ??= <Parameter>[];
+    includeSelfInvokerNode ??= true;
 
     return References.methodCallInvokerNode.call(<cb.Expression>[
       References.methodCall.call(<cb.Expression>[
@@ -67,7 +69,7 @@ abstract class Writer<T, K> {
       ]),
       cb.literalList(
         <cb.Expression>[
-          cb.refer('invokerNode'),
+          if (includeSelfInvokerNode) cb.refer('invokerNode'),
           ..._getParameterNodeList(parameters),
         ],
         References.methodCallInvokerNode,
@@ -77,9 +79,12 @@ abstract class Writer<T, K> {
 
   cb.Expression _invokerExpression(
     String method, {
-    Map<String, cb.Expression> arguments = const <String, cb.Expression>{},
-    List<Parameter> parameters = const <Parameter>[],
+    Map<String, cb.Expression> arguments,
+    List<Parameter> parameters,
   }) {
+    arguments ??= <String, cb.Expression>{};
+    parameters ??= <Parameter>[];
+
     return References.methodCallInvoker.property('invoke').call(<cb.Expression>[
       cb.literalList(
         <cb.Expression>[
@@ -96,10 +101,8 @@ abstract class Writer<T, K> {
   }
 
   cb.InvokeExpression _invokeMethodExpression({
+    String method,
     cb.Reference type,
-    String className,
-    String methodName = '',
-    bool useHashTag = true,
     Map<String, cb.Expression> arguments = const <String, cb.Expression>{},
     bool mapMethod = false,
   }) {
@@ -110,7 +113,7 @@ abstract class Writer<T, K> {
           .property('channel')
           .property(mapMethod ? 'invokeMapMethod' : 'invokeMethod'),
       <cb.Expression>[
-        cb.literalString('$className${useHashTag ? '#' : ''}$methodName'),
+        cb.literalString(method),
         cb.literalMap(arguments, cb.refer('String'), cb.refer('dynamic'))
       ],
       <String, cb.Expression>{},
@@ -134,21 +137,6 @@ abstract class Writer<T, K> {
         paramExpressions[parameter.name] = cb.refer(parameter.name);
       }
     }
-
-//    if (addHandle) {
-//      paramExpressions['handle'] = cb.refer('handle');
-//    }
-
-//    var returnedType;
-//    final String handleName = '${returnedType.toLowerCase()}Handle';
-//    final Class returnedClass = _classFromString(returnedType);
-//    if (fieldMethodOrConstructor is Constructor) {
-//      paramExpressions[handleName] = cb.refer('handle');
-//    } else if (returnedClass != null &&
-//        !returnedClass.details.hasInitializedFields) {
-//      paramExpressions[handleName] =
-//          cb.refer(returnedType.toLowerCase()).property('handle');
-//    }
 
     return paramExpressions;
   }
@@ -238,8 +226,8 @@ class MethodFieldWriter extends Writer<Field, List<cb.Method>> {
             builder
               ..addExpression(field.isStatic
                   ? _invokeMethodExpression(
-                      className: nameOfParentClass,
-                      methodName: field.name,
+                      //className: nameOfParentClass,
+                      //methodName: field.name,
                       arguments: arguments)
                   : _invokerNodeExpression('$nameOfParentClass#${field.name}',
                       arguments: arguments))
@@ -253,9 +241,11 @@ class MethodFieldWriter extends Writer<Field, List<cb.Method>> {
 }
 
 class MethodWriter extends Writer<dynamic, cb.Method> {
-  MethodWriter({Plugin plugin, this.nameOfParentClass, this.parameterWriter})
+  MethodWriter(Plugin plugin, {this.nameOfParentClass, this.parameterWriter})
       : super(plugin) {
-    if (nameOfParentClass == null || parameterWriter == null) {
+    if (nameOfParentClass == null ||
+        parameterWriter == null ||
+        parameterWriter == null) {
       throw ArgumentError();
     }
   }
@@ -265,7 +255,171 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
 
   @override
   cb.Method write(dynamic fieldOrMethod) {
-    return null;
+    final String name = fieldOrMethod.name;
+    final String returnType = Plugin.returnType(fieldOrMethod);
+    final bool static = fieldOrMethod.isStatic;
+    final Class returnedClass = _classFromString(returnType);
+    final List<Parameter> parameters = Plugin.parameters(fieldOrMethod);
+    final String invokeMethod = '$nameOfParentClass#$name';
+
+//    final bool useInvoker = !static;
+//    final bool returnMethodInvocation =
+//        !recognizedClass && !(returnType == 'void' && !static);
+//    final bool returnObject = recognizedClass;
+//    final bool setInvokerNode = returnType == 'void' && !static;
+//    final bool createNewNode = recognizedClass;
+//    final bool newNodeHasParents = recognizedClass && !static;
+//    final bool sourceIsNull = recognizedClass && static;
+//    final bool retrieveSource =
+//        recognizedClass && returnedClass.details.hasInitializedFields;
+//    final bool isGetter = fieldOrMethod is Field;
+
+    final bool recognizedClass = returnedClass != null;
+    cb.Reference returnRef;
+    if (recognizedClass) {
+      returnRef = returnType == nameOfParentClass
+          ? cb.refer(returnType)
+          : cb.refer(returnType, returnedClass.details.file);
+    } else {
+      returnRef = cb.refer(returnType);
+    }
+
+//    if (useFutureInTypeRef) {
+//      returnRef = References.future(returnRef);
+//    }
+
+    final bool returnsVoid = returnType == 'void';
+    final bool setNode = recognizedClass || (returnsVoid && !static);
+    final bool includeSelfInvokerNode = !static;
+
+    cb.Expression nodeExpression;
+    if (setNode) {
+      nodeExpression = _invokerNodeExpression(
+        invokeMethod,
+        arguments: _mappedMethodParams(fieldOrMethod),
+        parameters: parameters,
+        includeSelfInvokerNode: includeSelfInvokerNode,
+      );
+    }
+
+    //final bool returnsUnrecognizedClass = !recognizedClass && !returnsVoid;
+    final bool hasInitializedTypes =
+        recognizedClass && returnedClass.details.hasInitializedFields;
+
+    final bool invokeChannel = static;
+    cb.Expression invokeChannelExpression;
+    if (invokeChannel) {
+      invokeChannelExpression = _invokeMethodExpression(
+        method: invokeMethod,
+        arguments: _mappedMethodParams(fieldOrMethod),
+        type: recognizedClass ? null : returnRef,
+        mapMethod: hasInitializedTypes,
+      );
+    }
+
+    final bool useInvoker = !static && (!recognizedClass || hasInitializedTypes);
+    cb.Expression invokerExpression;
+    if (useInvoker) {
+      invokerExpression = _invokerExpression(
+        invokeMethod,
+        arguments: _mappedMethodParams(fieldOrMethod),
+        parameters: parameters,
+      );
+    }
+
+    final bool createsObject = recognizedClass;
+    final bool mapIsNull = createsObject && !hasInitializedTypes;
+    cb.Expression objectExpression;
+    if (createsObject && mapIsNull) {
+      objectExpression = _getConstructor(
+              returnedClass, returnedClass.name == nameOfParentClass)
+          .call(<cb.Expression>[cb.refer('newNode'), cb.literalNull]);
+    } else if (createsObject) {
+      objectExpression = _getConstructor(
+              returnedClass, returnedClass.name == nameOfParentClass)
+          .call(<cb.Expression>[cb.refer('newNode'), cb.refer('source')]);
+    }
+
+//    cb.Expression invocationExpression;
+//    if (returnMethodInvocation && useInvoker) {
+//      invocationExpression = _invokerExpression(
+//        '$name#$returnType',
+//        arguments: _mappedMethodParams(fieldOrMethod),
+//        parameters: parameters,
+//      );
+//    } else if (returnMethodInvocation) {
+//      invocationExpression = _invokeMethodExpression(
+//        method: '$name#$returnType',
+//        type: returnObject ? null : typeRef,
+//        arguments: _mappedMethodParams(fieldOrMethod),
+//        mapMethod: retrieveSource,
+//      );
+//    }
+//
+//    if (setInvokerNode) {
+//    } else if (createNewNode) {}
+
+    //cb.Expression nodeExpression = _
+
+    return cb.Method((cb.MethodBuilder builder) {
+      final bool useFutureInTypeRef = !recognizedClass || hasInitializedTypes;
+      final bool setNodeToNewNode = recognizedClass;
+      final bool returnNullFuture = returnsVoid && !static;
+      final bool returnChannelInvoke = invokeChannel && !recognizedClass;
+      final bool returnInvokerInvoke = useInvoker && !recognizedClass;
+      final bool retrieveObjectJson = recognizedClass && hasInitializedTypes;
+
+      if (fieldOrMethod is Field) {
+        builder.type = cb.MethodType.getter;
+      }
+
+      if (hasInitializedTypes) {
+        builder.modifier = cb.MethodModifier.async;
+      }
+
+      builder
+        ..name = name
+        ..static = static
+        ..requiredParameters.addAll(parameterWriter.writeAll(parameters))
+        ..returns =
+            useFutureInTypeRef ? References.future(returnRef) : returnRef
+        ..body = cb.Block((cb.BlockBuilder builder) {
+          if (setNode && setNodeToNewNode) {
+            builder.addExpression(nodeExpression.assignFinal(
+                'newNode', References.methodCallInvokerNode));
+          } else if (setNode) {
+            builder
+                .addExpression(cb.refer('_invokerNode').assign(nodeExpression));
+          }
+
+          if (retrieveObjectJson && useInvoker) {
+            builder.addExpression(
+              invokerExpression.awaited.assignFinal('source', cb.refer('Map')),
+            );
+          } else if (retrieveObjectJson) {
+            builder.addExpression(
+              invokeChannelExpression.awaited.assignFinal('source', cb.refer('Map')),
+            );
+          }
+
+          if (recognizedClass && createsObject && mapIsNull) {
+            builder.addExpression(
+                objectExpression.assignFinal('value', returnRef));
+          }
+
+          if (recognizedClass && createsObject && !mapIsNull) {
+            builder.addExpression(objectExpression.returned);
+          } else if (returnNullFuture) {
+            builder.addExpression(References.future(cb.refer('void'))
+                .property('value')
+                .call(<cb.Expression>[]).returned);
+          } else if (returnChannelInvoke) {
+            builder.addExpression(invokeChannelExpression.returned);
+          } else if (returnInvokerInvoke) {
+            builder.addExpression(invokerExpression.returned);
+          }
+        });
+    });
 //    final String returnType = Plugin.returnType(fieldOrMethod);
 //
 //    final Class theClass = _classFromString(returnType);
@@ -378,6 +532,28 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
 //      });
 //    }
   }
+
+  Map<String, cb.Expression> _mappedMethodParams(dynamic fieldOrMethod) {
+    final Map<String, cb.Expression> paramExpressions = _mappedParams(
+      Plugin.parameters(fieldOrMethod),
+    );
+
+    if (!fieldOrMethod.isStatic) {
+      paramExpressions['handle'] = cb.refer('handle');
+    }
+
+    final Class returnedClass = _classFromString(
+      Plugin.returnType(fieldOrMethod),
+    );
+
+    if (returnedClass != null && !returnedClass.details.hasInitializedFields) {
+      final String handleName = '${returnedClass.name.toLowerCase()}Handle';
+      paramExpressions[handleName] =
+          cb.refer(returnedClass.name.toLowerCase()).property('handle');
+    }
+
+    return paramExpressions;
+  }
 }
 
 class InitializerWriter extends Writer<Field, cb.Code> {
@@ -442,6 +618,7 @@ class ConstructorWriter extends Writer<Constructor, cb.Constructor> {
                     '${nameOfParentClass}${_getMethodCallMethod(constructor.allParameters)}',
                     arguments: _mappedConstructorParams(constructor),
                     parameters: constructor.allParameters,
+                    includeSelfInvokerNode: true,
                   )));
         })
         ..initializers.add(cb
@@ -655,6 +832,12 @@ class ClassWriter extends Writer<Class, cb.Library> {
       parameterWriter: parameterWriter,
     );
 
+    final MethodWriter methodWriter = MethodWriter(
+      plugin,
+      nameOfParentClass: theClass.name,
+      parameterWriter: parameterWriter,
+    );
+
     return cb.Library((cb.LibraryBuilder builder) {
       builder.body.addAll(<cb.Class>[
         cb.Class((cb.ClassBuilder classBuilder) {
@@ -696,7 +879,14 @@ class ClassWriter extends Writer<Class, cb.Library> {
                 ..lambda = true
                 ..body = cb.refer('_invokerNode').code
                 ..returns = References.methodCallInvokerNode;
-            }));
+            }))
+            ..methods.addAll(
+              methodWriter.writeAll(
+                theClass.fields.where((Field field) =>
+                    !Plugin.mutable(field) && !Plugin.initialized(field)),
+              ),
+            )
+            ..methods.addAll(methodWriter.writeAll(theClass.methods));
         }),
       ]);
     });
