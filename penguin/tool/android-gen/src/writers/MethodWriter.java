@@ -24,13 +24,12 @@ public class MethodWriter extends Writer<Object, MethodSpec> {
     assert fieldOrMethod instanceof PluginField || fieldOrMethod instanceof PluginMethod;
 
     final MethodSpec.Builder builder = MethodSpec.methodBuilder(Plugin.name(fieldOrMethod))
-        .addModifiers(Modifier.PRIVATE);
+        .addModifiers(Modifier.PRIVATE)
+        .returns(Object.class);
 
     if (methodCallHasArguments(fieldOrMethod)) {
       builder.addParameter(CommonClassNames.METHOD_CALL.name, "call", Modifier.FINAL);
     }
-
-    builder.addParameter(CommonClassNames.RESULT.name, "result", Modifier.FINAL);
 
     final Boolean isStatic = Plugin.isStatic(fieldOrMethod);
     final String name = Plugin.name(fieldOrMethod);
@@ -64,15 +63,15 @@ public class MethodWriter extends Writer<Object, MethodSpec> {
 
     if (Plugin.mutable(fieldOrMethod)) {
       builder.addStatement(callString + " = $N", callerName, name, Plugin.name(fieldOrMethod))
-          .addStatement("result.success(null)");
+          .addStatement("return null");
     } else if (returnType.equals("void") || returnType.equals("Object")) {
       builder.addStatement(callString, callerName, name);
-      builder.addStatement("result.success(null)");
+      builder.addStatement("return null");
     } else {
       final PluginClass returnClass = classFromString(Plugin.returnType(fieldOrMethod));
       if (returnClass == null) {
         builder.addStatement("final $T value = " + callString, bestGuess(returnType), callerName, name)
-              .addStatement("result.success(value)");
+              .addStatement("return value");
       } else {
         if (!returnClass.details.hasInitializedFields) {
           builder.addStatement("final $T handle = call.argument($S)", String.class, returnClass.details.variableName + "Handle");
@@ -84,12 +83,12 @@ public class MethodWriter extends Writer<Object, MethodSpec> {
 
         if (!returnClass.details.hasInitializedFields) {
           builder.addStatement("new $T(handle, value)", returnClass.details.wrapperClassName);
-          builder.addStatement("result.success(null)");
+          builder.addStatement("return null");
         } else {
-          builder.addStatement("final $T handler = new $T(handle, value)",
+          builder.addStatement("final $T wrapper = new $T(handle, value)",
               returnClass.details.wrapperClassName,
               returnClass.details.wrapperClassName);
-          builder.addStatement("result.success(handler.serializeInitializers())");
+          builder.addStatement("return wrapper.serializeInitializers()");
         }
       }
     }

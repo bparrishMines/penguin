@@ -30,7 +30,7 @@ public class ConstructorWriter extends Writer<PluginConstructor, MethodSpec> {
         .addParameters(parameterWriter.writeAll(constructor.getAllParameters()))
         .addStatement("this.handle = handle")
         .addStatement("this.$N = new $T(" + allParameterNamesString + ")", pluginClass.details.variableName, pluginClass.details.className)
-        .addStatement("$T.addHandler(handle, this)", mainPluginClassName)
+        .addStatement("$T.addInvokerWrapper(handle, this)", mainPluginClassName)
         .build();
   }
 }

@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:fruit_picker/basket.dart';
 import 'package:fruit_picker/apple.dart';
 import 'package:fruit_picker/banana.dart';
+import 'package:fruit_picker/channel.dart';
 import 'package:fruit_picker/orange.dart';
 import 'package:fruit_picker/strawberry.dart';
 import 'package:fruit_picker/lemon.dart';
@@ -19,6 +20,10 @@ void main() {
   tearDownAll(() => completer.complete(null));
 
   group('fruit_picker plugin', () {
+//    test('notImplemented', () async {
+//      await Channel.channel.invokeMethod('NotAMethod');
+//    });
+
     group('$Basket', () {
       Basket basket;
 
@@ -80,6 +85,9 @@ void main() {
 
       test('aGreenGrape', () async {
         final Grape grape = await basket.aRedGrape;
+        expect(grape.color, 'red');
+        expect(grape.hasSeed, false);
+
         Basket.aGreenGrape = grape..color = 'pink';
         expect(Basket.aGreenGrape.color, 'pink');
         await pumpEventQueue();

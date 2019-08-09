@@ -46,7 +46,7 @@ abstract class Writer<T, K> {
         final String handleName = parameter.name.toLowerCase() + "Handle";
         final String wrapperVarName = parameter.name.toLowerCase() + parameterClass.details.wrapperClassName.simpleName().toLowerCase();
         builder.addStatement("final $T $N = call.argument($S)", String.class, handleName, handleName)
-            .addStatement("final $T $N = ($T) $T.getHandler($N)",
+            .addStatement("final $T $N = ($T) $T.getWrapper($N)",
                 parameterClass.details.wrapperClassName,
                 wrapperVarName,
                 parameterClass.details.wrapperClassName,

@@ -8,17 +8,21 @@ import java.util.stream.Collectors;
 
 public class ClassWriter extends Writer<PluginClass, JavaFile> {
   private final ClassName mainPluginClassName;
+  private final ClassName flutterWrapperClassName;
+  private final ClassName notImplementedClassName;
 
-  public ClassWriter(Plugin plugin, ClassName mainPluginClassName) {
+  public ClassWriter(Plugin plugin, ClassName mainPluginClassName, ClassName flutterWrapperClassName, ClassName notImplementedClassName) {
     super(plugin);
     this.mainPluginClassName = mainPluginClassName;
+    this.flutterWrapperClassName = flutterWrapperClassName;
+    this.notImplementedClassName = notImplementedClassName;
   }
 
   @Override
   public JavaFile write(PluginClass aClass) {
     final TypeSpec.Builder classBuilder = TypeSpec.classBuilder(aClass.details.wrapperClassName.simpleName())
         .addModifiers(Modifier.FINAL)
-        .addSuperinterface(CommonClassNames.METHOD_CALL_HANDLER.name)
+        .addSuperinterface(flutterWrapperClassName)
         .addField(String.class, "handle", Modifier.PRIVATE, Modifier.FINAL)
         .addField(aClass.details.className, aClass.details.variableName, Modifier.FINAL, Modifier.PUBLIC);
 
@@ -47,7 +51,7 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
           .addParameter(aClass.details.className, aClass.details.variableName)
           .addStatement("this.handle = handle")
           .addStatement("this.$N = $N", aClass.details.variableName, aClass.details.variableName)
-          .addStatement("$T.addHandler(handle, this)", mainPluginClassName)
+          .addStatement("$T.addInvokerWrapper(handle, this)", mainPluginClassName)
           .build());
     }
 
@@ -67,7 +71,7 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
         .addAnnotation(Override.class)
         .addModifiers(Modifier.PUBLIC)
         .addParameter(CommonClassNames.METHOD_CALL.name, "call")
-        .addParameter(CommonClassNames.RESULT.name, "result")
+        .returns(Object.class)
         .beginControlFlow("switch(call.method)");
 
     final List<Object> fieldsAndMethods = aClass.getFieldsAndMethods()
@@ -79,18 +83,18 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
             .addCode(CodeBlock.builder().indent().build());
 
         if (methodCallHasArguments(fieldOrMethod)) {
-          builder.addStatement("$N(call, result)", Plugin.name(fieldOrMethod));
+          builder.addStatement("return $N(call)", Plugin.name(fieldOrMethod));
         } else {
-          builder.addStatement("$N(result)", Plugin.name(fieldOrMethod));
+          builder.addStatement("return $N()", Plugin.name(fieldOrMethod));
         }
 
-        builder.addStatement("break").addCode(CodeBlock.builder().unindent().build());
+        builder.addCode(CodeBlock.builder().unindent().build());
       }
     }
 
     builder.addCode("default:\n")
         .addCode(CodeBlock.builder().indent().build())
-        .addStatement("result.notImplemented()")
+        .addStatement("return new $T()", notImplementedClassName)
         .addCode(CodeBlock.builder().unindent().build());
 
     return builder.endControlFlow().build();
@@ -100,7 +104,7 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
     final MethodSpec.Builder builder = MethodSpec.methodBuilder("onStaticMethodCall")
         .addModifiers(Modifier.STATIC)
         .addParameter(CommonClassNames.METHOD_CALL.name, "call")
-        .addParameter(CommonClassNames.RESULT.name, "result")
+        .returns(Object.class)
         .beginControlFlow("switch(call.method)");
 
     for (PluginConstructor constructor : aClass.constructors) {
@@ -122,7 +126,7 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
 
       builder.addStatement("new $T(handle" + allParameterNamesString + ")",
           aClass.details.wrapperClassName)
-          .addStatement("break")
+          .addStatement("return null")
           .endControlFlow()
           .addCode(CodeBlock.builder().unindent().build());
     }
@@ -133,18 +137,18 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
             .addCode(CodeBlock.builder().indent().build());
 
         if (methodCallHasArguments(fieldOrMethod)) {
-          builder.addStatement("$N(call, result)", Plugin.name(fieldOrMethod));
+          builder.addStatement("return $N(call)", Plugin.name(fieldOrMethod));
         } else {
-          builder.addStatement("$N(result)", Plugin.name(fieldOrMethod));
+          builder.addStatement("return $N()", Plugin.name(fieldOrMethod));
         }
 
-        builder.addStatement("break").addCode(CodeBlock.builder().unindent().build());
+        builder.addCode(CodeBlock.builder().unindent().build());
       }
     }
 
     builder.addCode("default:\n")
         .addCode(CodeBlock.builder().indent().build())
-        .addStatement("result.notImplemented()")
+        .addStatement("return new $T()", notImplementedClassName)
         .addCode(CodeBlock.builder().unindent().build());
 
     return builder.endControlFlow().build();

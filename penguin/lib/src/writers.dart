@@ -217,11 +217,15 @@ class MutableFieldWriter extends Writer<Field, List<cb.Method>> {
           ..body = cb.Block((cb.BlockBuilder builder) {
             Map<String, cb.Expression> arguments = <String, cb.Expression>{};
 
+            if (!field.isStatic) {
+              arguments['handle'] = cb.refer('handle');
+            }
+
             if (fieldClass != null) {
               arguments['${field.name.toLowerCase()}Handle'] =
                   cb.refer(field.name).property('handle');
             } else {
-              arguments[field.name] = variableRef;
+              arguments[field.name] = cb.refer(field.name);
             }
 
             final String method = '$nameOfParentClass#${field.name}';
