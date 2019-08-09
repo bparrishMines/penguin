@@ -8,6 +8,11 @@ class References {
     'package:flutter/services.dart',
   );
 
+  static final methodCall = refer(
+    'MethodCall',
+    'package:flutter/services.dart',
+  );
+
   static final visibleForTesting = refer(
     'visibleForTesting',
     'package:flutter/foundation.dart',

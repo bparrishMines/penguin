@@ -41,6 +41,16 @@ class Plugin {
     return false;
   }
 
+  static List<Parameter> parameters(dynamic fieldOrMethod) {
+    if (fieldOrMethod is! Field && fieldOrMethod is! Method) {
+      throw ArgumentError();
+    }
+
+    if (fieldOrMethod is Method) return fieldOrMethod.allParameters;
+
+    return <Parameter>[];
+  }
+
   factory Plugin.fromJson(Map json) => _$PluginFromJson(json);
 
   Map toJson() => _$PluginToJson(this);

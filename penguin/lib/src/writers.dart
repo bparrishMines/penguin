@@ -4,13 +4,15 @@ import 'plugin.dart';
 import 'references.dart';
 
 abstract class Writer<T, K> {
-  const Writer(this.plugin) : assert(plugin != null);
+  Writer(this.plugin) {
+    if (plugin == null) throw ArgumentError();
+  }
 
   final Plugin plugin;
 
   K write(T object);
 
-  List<K> writeAll(List<T> objects) =>
+  Iterable<K> writeAll(Iterable<T> objects) =>
       objects.map<K>((T object) => write(object)).toList();
 
   Class _classFromString(String className) {
@@ -21,23 +23,87 @@ abstract class Writer<T, K> {
     return null;
   }
 
+  cb.Expression _getConstructor(
+    Class classOfConstructor,
+    bool isSelfFileReference,
+  ) {
+    final bool hasConstructor = classOfConstructor.details.hasConstructor;
+
+    if (hasConstructor && isSelfFileReference) {
+      return cb.refer(classOfConstructor.name).property('internal');
+    } else if (hasConstructor) {
+      return cb
+          .refer(classOfConstructor.name, classOfConstructor.details.file)
+          .property('internal');
+    } else {
+      return cb.refer('_${classOfConstructor.name}Impl');
+    }
+  }
+
+  List<cb.Expression> _getParameterNodeList(Iterable<Parameter> parameters) {
+    final List<cb.Expression> parameterNodeList = <cb.Expression>[];
+    for (Parameter parameter in parameters) {
+      final Class parameterClass = _classFromString(parameter.type);
+      if (parameterClass == null) continue;
+
+      parameterNodeList.add(cb.refer(parameter.name).property('invokerNode'));
+    }
+
+    return parameterNodeList;
+  }
+
+  cb.Expression _invokerNodeExpression(
+    String method, {
+    Map<String, cb.Expression> arguments,
+    List<Parameter> parameters,
+  }) {
+    arguments ??= <String, cb.Expression>{};
+    parameters ??= <Parameter>[];
+
+    return References.methodCallInvokerNode.call(<cb.Expression>[
+      References.methodCall.call(<cb.Expression>[
+        cb.literalString(method),
+        cb.literalMap(arguments, cb.refer('String'), cb.refer('dynamic')),
+      ]),
+      cb.literalList(
+        <cb.Expression>[
+          cb.refer('invokerNode'),
+          ..._getParameterNodeList(parameters),
+        ],
+        References.methodCallInvokerNode,
+      ),
+    ]);
+  }
+
+  cb.Expression _invokerExpression(
+    String method, {
+    Map<String, cb.Expression> arguments = const <String, cb.Expression>{},
+    List<Parameter> parameters = const <Parameter>[],
+  }) {
+    return References.methodCallInvoker.property('invoke').call(<cb.Expression>[
+      cb.literalList(
+        <cb.Expression>[
+          cb.refer('invokerNode'),
+          ..._getParameterNodeList(parameters),
+        ],
+        References.methodCallInvokerNode,
+      ),
+      References.methodCall.call(<cb.Expression>[
+        cb.literalString(method),
+        cb.literalMap(arguments, cb.refer('String'), cb.refer('dynamic')),
+      ]),
+    ]);
+  }
+
   cb.InvokeExpression _invokeMethodExpression({
     cb.Reference type,
     String className,
     String methodName = '',
-    bool hasHandle = false,
     bool useHashTag = true,
     Map<String, cb.Expression> arguments = const <String, cb.Expression>{},
     bool mapMethod = false,
   }) {
     if (mapMethod && type != null) throw ArgumentError();
-
-    if (hasHandle) {
-      Map<String, cb.Expression> newMap =
-          Map<String, cb.Expression>.from(arguments);
-      newMap['handle'] = cb.refer('handle');
-      arguments = newMap;
-    }
 
     return cb.InvokeExpression.newOf(
       References.channel
@@ -80,6 +146,11 @@ abstract class Writer<T, K> {
       }
     }
 
+    if (constructorFieldOrMethod is! Constructor &&
+        !constructorFieldOrMethod.isStatic) {
+      paramExpressions['handle'] = cb.refer('handle');
+    }
+
     final String handleName = '${returnedType.toLowerCase()}Handle';
     final Class returnedClass = _classFromString(returnedType);
     if (constructorFieldOrMethod is Constructor) {
@@ -120,11 +191,11 @@ class FieldWriter extends Writer<Field, cb.Field> {
 
 // For writing fields that require method logic
 class MethodFieldWriter extends Writer<Field, List<cb.Method>> {
-  MethodFieldWriter(Plugin plugin, this.className, this.methodWriter)
+  MethodFieldWriter(Plugin plugin, this.nameOfParentClass, this.methodWriter)
       : assert(methodWriter != null),
         super(plugin);
 
-  final String className;
+  final String nameOfParentClass;
   final MethodWriter methodWriter;
 
   @override
@@ -176,11 +247,13 @@ class MethodFieldWriter extends Writer<Field, List<cb.Method>> {
             }
 
             builder
-              ..addExpression(_invokeMethodExpression(
-                  className: className,
-                  methodName: field.name,
-                  hasHandle: !field.isStatic,
-                  arguments: arguments))
+              ..addExpression(field.isStatic
+                  ? _invokeMethodExpression(
+                      className: nameOfParentClass,
+                      methodName: field.name,
+                      arguments: arguments)
+                  : _invokerNodeExpression('$nameOfParentClass#${field.name}',
+                      arguments: arguments))
               ..addExpression(variableRef.assign(cb.refer(field.name)));
           });
       }),
@@ -191,162 +264,206 @@ class MethodFieldWriter extends Writer<Field, List<cb.Method>> {
 }
 
 class MethodWriter extends Writer<dynamic, cb.Method> {
-  MethodWriter({Plugin plugin, this.nameOfParentClass, this.implSuffix})
-      : assert(nameOfParentClass != null),
-        assert(implSuffix != null),
-        super(plugin) {
-    _paramWriter = ParameterWriter(plugin);
+  MethodWriter({Plugin plugin, this.nameOfParentClass, this.parameterWriter})
+      : super(plugin) {
+    if (nameOfParentClass == null || parameterWriter == null) {
+      throw ArgumentError();
+    }
   }
 
   final String nameOfParentClass;
-  final String implSuffix;
-  ParameterWriter _paramWriter;
+  final ParameterWriter parameterWriter;
 
   @override
   cb.Method write(dynamic fieldOrMethod) {
-    final String returnType = Plugin.returnType(fieldOrMethod);
 
-    final Class theClass = _classFromString(returnType);
+    return null;
+//    final String returnType = Plugin.returnType(fieldOrMethod);
+//
+//    final Class theClass = _classFromString(returnType);
+//
+//    cb.Expression invokeMethodExpression;
+//    if (fieldOrMethod.isStatic) {
+//      invokeMethodExpression = _invokeMethodExpression(
+//        type: theClass == null ? cb.refer(returnType) : null,
+//        className: nameOfParentClass,
+//        methodName: fieldOrMethod.name,
+//        arguments: _mappedParams(fieldOrMethod, returnType),
+//        mapMethod: theClass != null && theClass.details.hasInitializedFields,
+//      );
+//    } else if (returnType == 'void' ||
+//        (theClass != null && !theClass.details.hasInitializedFields)) {
+//      invokeMethodExpression = _invokerNodeExpression(
+//        '$nameOfParentClass#${fieldOrMethod.name}',
+//        arguments: _mappedParams(fieldOrMethod, returnType),
+//        parameters: Plugin.parameters(fieldOrMethod),
+//      );
+//    } else {
+//      invokeMethodExpression = _invokerExpression(
+//          '$nameOfParentClass#${fieldOrMethod.name}',
+//          arguments: _mappedParams(fieldOrMethod, returnType),
+//          parameters: Plugin.parameters(fieldOrMethod));
+//    }
+//
+//    void addNameAndParams(cb.MethodBuilder builder) {
+//      builder
+//        ..name = fieldOrMethod.name
+//        ..static = fieldOrMethod.isStatic;
+//
+//      if (fieldOrMethod is Field) {
+//        builder.type = cb.MethodType.getter;
+//      } else {
+//        builder
+//          ..requiredParameters.addAll(
+//            _paramWriter.writeAll(fieldOrMethod.requiredParameters),
+//          )
+//          ..optionalParameters.addAll(
+//            _paramWriter.writeAll(fieldOrMethod.optionalParameters),
+//          );
+//      }
+//    }
+//
+//    if (theClass == null) {
+//      return cb.Method((cb.MethodBuilder builder) {
+//        addNameAndParams(builder);
+//
+//        builder.returns = References.future(cb.refer(returnType));
+//        builder.body = cb.Block((cb.BlockBuilder builder) {
+//          if (returnType != 'void') {
+//            builder.addExpression(invokeMethodExpression.returned);
+//          } else {
+//            builder.addExpression(invokeMethodExpression);
+//            builder.addExpression(
+//              References.future(cb.refer('void'))
+//                  .property('value')
+//                  .call(<cb.Expression>[]).returned,
+//            );
+//          }
+//        });
+//      });
+//    } else {
+//      final cb.Reference returnRef = returnType == nameOfParentClass
+//          ? cb.refer(returnType)
+//          : cb.refer(returnType, theClass.details.file);
+//
+//      final String varName = returnType.toLowerCase();
+//
+//      return cb.Method((cb.MethodBuilder builder) {
+//        addNameAndParams(builder);
+//
+//        builder.returns = theClass.details.hasInitializedFields
+//            ? References.future(returnRef)
+//            : returnRef;
+//
+//        final List<cb.Expression> constructorParams = <cb.Expression>[
+//          cb.refer('invokerNode'),
+//          if (theClass.details.hasInitializedFields) cb.refer('source'),
+//        ];
+//
+//        final cb.Expression constructor = !theClass.details.hasConstructor
+//            ? cb.refer('_${returnType}$implSuffix').call(constructorParams)
+//            : returnRef.property('internal').call(constructorParams);
+//
+//        if (theClass.details.hasInitializedFields) {
+//          builder.modifier = cb.MethodModifier.async;
+//          builder.body = cb.Block((cb.BlockBuilder builder) {
+//            builder.addExpression(
+//              invokeMethodExpression.awaited
+//                  .assignFinal('source', cb.refer('Map')),
+//            );
+//
+//            builder.addExpression(
+//              constructor.returned,
+//            );
+//          });
+//        } else {
+//          builder.body = cb.Block((cb.BlockBuilder builder) {
+//            builder.addExpression(
+//              constructor.assignFinal(varName, returnRef),
+//            );
+//
+//            builder.addExpression(invokeMethodExpression);
+//
+//            builder.addExpression(cb.refer(varName).returned);
+//          });
+//        }
+//      });
+//    }
+  }
+}
 
-    final cb.InvokeExpression invokeMethodExpression = _invokeMethodExpression(
-        type: theClass == null ? cb.refer(returnType) : null,
-        className: nameOfParentClass,
-        methodName: fieldOrMethod.name,
-        hasHandle: !fieldOrMethod.isStatic,
-        arguments: _mappedParams(fieldOrMethod, returnType),
-        mapMethod: theClass != null && theClass.details.hasInitializedFields);
+class InitializerWriter extends Writer<Field, cb.Code> {
+  InitializerWriter(
+    Plugin plugin,
+    this.nameOfParentClass,
+    this.setNull,
+  ) : super(plugin) {
+    if (nameOfParentClass == null || setNull == null) throw ArgumentError();
+  }
 
-    void addNameAndParams(cb.MethodBuilder builder) {
-      builder
-        ..name = fieldOrMethod.name
-        ..static = fieldOrMethod.isStatic;
+  final String nameOfParentClass;
+  final bool setNull;
 
-      if (fieldOrMethod is Field) {
-        builder.type = cb.MethodType.getter;
-      } else {
-        builder
-          ..requiredParameters.addAll(
-            _paramWriter.writeAll(fieldOrMethod.requiredParameters),
-          )
-          ..optionalParameters.addAll(
-            _paramWriter.writeAll(fieldOrMethod.optionalParameters),
-          );
-      }
-    }
+  @override
+  cb.Code write(Field field) {
+    final String fieldName = field.mutable ? '_${field.name}' : field.name;
 
-    if (theClass == null) {
-      return cb.Method((cb.MethodBuilder builder) {
-        addNameAndParams(builder);
-
-        builder.returns = References.future(cb.refer(returnType));
-        builder.body = cb.Block((cb.BlockBuilder builder) {
-          builder.addExpression(invokeMethodExpression.returned);
-        });
-      });
+    if (setNull) {
+      return cb.refer(fieldName).assign(cb.literalNull).code;
     } else {
-      final cb.Reference returnRef = returnType == nameOfParentClass
-          ? cb.refer(returnType)
-          : cb.refer(returnType, theClass.details.file);
+      final cb.Expression sourceAccess =
+          cb.refer('source').index(cb.literalString(field.name));
 
-      final String varName = returnType.toLowerCase();
+      final Class fieldClass = _classFromString(field.type);
+      final cb.Expression value = fieldClass == null
+          ? sourceAccess
+          : _getConstructor(fieldClass, fieldClass.name == nameOfParentClass)
+              .call(<cb.Expression>[cb.refer('creatorNode'), sourceAccess]);
 
-      return cb.Method((cb.MethodBuilder builder) {
-        addNameAndParams(builder);
-
-        builder.returns = theClass.details.hasInitializedFields
-            ? References.future(returnRef)
-            : returnRef;
-
-        final cb.Expression constructor = !theClass.details.hasConstructor
-            ? cb.refer('_${returnType}$implSuffix')
-            : returnRef.property('internal');
-
-        if (theClass.details.hasInitializedFields) {
-          builder.modifier = cb.MethodModifier.async;
-          builder.body = cb.Block((cb.BlockBuilder builder) {
-            builder.addExpression(
-              invokeMethodExpression.awaited
-                  .assignFinal('source', cb.refer('Map')),
-            );
-
-            builder.addExpression(
-              constructor.call(<cb.Expression>[cb.refer('source')]).returned,
-            );
-          });
-        } else {
-          builder.body = cb.Block((cb.BlockBuilder builder) {
-            builder.addExpression(
-              constructor
-                  .call(<cb.Expression>[]).assignFinal(varName, returnRef),
-            );
-
-            builder.addExpression(invokeMethodExpression);
-
-            builder.addExpression(cb.refer(varName).returned);
-          });
-        }
-      });
+      return cb.refer(fieldName).assign(value).code;
     }
   }
 }
 
 class ConstructorWriter extends Writer<Constructor, cb.Constructor> {
-  ConstructorWriter(Plugin plugin, this.theClass)
-      : assert(theClass != null),
-        super(plugin) {
-    _paramWriter = ParameterWriter(plugin);
+  ConstructorWriter(
+    Plugin plugin, {
+    this.nameOfParentClass,
+    this.initializers,
+    this.parameterWriter,
+  }) : super(plugin) {
+    if (nameOfParentClass == null ||
+        initializers == null ||
+        parameterWriter == null) throw ArgumentError();
   }
 
-  final Class theClass;
-  ParameterWriter _paramWriter;
+  final String nameOfParentClass;
+  final Iterable<cb.Code> initializers;
+  final ParameterWriter parameterWriter;
 
   @override
   cb.Constructor write(Constructor constructor) {
     return cb.Constructor((cb.ConstructorBuilder builder) {
+      if (constructor.name != null) builder.name = constructor.name;
       builder
-        ..requiredParameters.addAll(
-          _paramWriter.writeAll(constructor.requiredParameters),
-        )
-        ..optionalParameters.addAll(
-          _paramWriter.writeAll(constructor.optionalParameters),
-        )
+        ..requiredParameters
+            .addAll(parameterWriter.writeAll(constructor.allParameters))
         ..body = cb.Block((cb.BlockBuilder builder) {
-          builder.addExpression(_invokeMethodExpression(
-            className: theClass.name,
-            methodName: _getMethodCallMethod(constructor.allParameters),
-            arguments: _mappedParams(constructor, theClass.name),
-            useHashTag: false,
-          ));
-        });
-
-      if (theClass.details.hasInitializedFields) {
-        final Iterable<Field> initializedFields =
-            theClass.fields.where((Field field) => field.initialized);
-
-        final Iterable<cb.Code> initializers = initializedFields.map<cb.Code>(
-          (Field field) {
-            final String fieldName =
-                field.mutable ? '_${field.name}' : field.name;
-            return cb.refer(fieldName).assign(cb.literalNull).code;
-          },
-        );
-
-        builder.initializers.addAll(<cb.Code>[
-          cb
-              .refer('handle')
-              .assign(
-                References.channel
-                    .property('nextHandle')
-                    .call(<cb.Expression>[]),
-              )
-              .code,
-          ...initializers,
-        ]);
-      }
-
-      if (constructor.name != null) {
-        builder.name = constructor.name;
-      }
+          builder.addExpression(
+              cb.refer('invokerNode').assign(_invokerNodeExpression(
+                    '${nameOfParentClass}${_getMethodCallMethod(constructor.allParameters)}',
+                    arguments: _mappedParams(constructor, nameOfParentClass),
+                    parameters: constructor.allParameters,
+                  )));
+        })
+        ..initializers.add(cb
+            .refer('handle')
+            .assign(
+              References.channel.property('nextHandle').call(<cb.Expression>[]),
+            )
+            .code)
+        ..initializers.addAll(initializers);
+      //..in
     });
   }
 
@@ -360,18 +477,23 @@ class ConstructorWriter extends Writer<Constructor, cb.Constructor> {
 }
 
 class ParameterWriter extends Writer<Parameter, cb.Parameter> {
-  const ParameterWriter(Plugin plugin) : super(plugin);
+  ParameterWriter(Plugin plugin, this.nameOfParentClass) : super(plugin) {
+    if (nameOfParentClass == null) throw ArgumentError();
+  }
+
+  final String nameOfParentClass;
 
   @override
   cb.Parameter write(Parameter parameter) {
-    final Class theClass = _classFromString(parameter.type);
+    final Class parameterClass = _classFromString(parameter.type);
 
     final cb.Parameter codeParam = cb.Parameter((cb.ParameterBuilder builder) {
       builder
         ..name = parameter.name
-        ..type = theClass == null
-            ? cb.refer(parameter.type)
-            : cb.refer(parameter.type, theClass.details.file);
+        ..type =
+            parameterClass == null || parameterClass.name == nameOfParentClass
+                ? cb.refer(parameter.type)
+                : cb.refer(parameter.type, parameterClass.details.file);
     });
 
     return codeParam;
@@ -402,17 +524,21 @@ class ImplClassWriter extends Writer<Class, cb.Class> {
         classBuilder.constructors.add(cb.Constructor(
           (cb.ConstructorBuilder builder) {
             builder
-              ..requiredParameters.add(
+              ..requiredParameters.addAll(<cb.Parameter>[
+                cb.Parameter((cb.ParameterBuilder builder) {
+                  builder.name = 'creatorNode';
+                  builder.type = References.methodCallInvokerNode;
+                }),
                 cb.Parameter((cb.ParameterBuilder builder) {
                   builder.name = 'source';
                   builder.type = cb.refer('Map');
                 }),
-              )
+              ])
               ..initializers.add(
-                cb
-                    .refer('super')
-                    .property('internal')
-                    .call(<cb.Expression>[cb.refer('source')]).code,
+                cb.refer('super').property('internal').call(<cb.Expression>[
+                  cb.refer('creatorNode'),
+                  cb.refer('source')
+                ]).code,
               );
           },
         ));
@@ -422,170 +548,198 @@ class ImplClassWriter extends Writer<Class, cb.Class> {
 }
 
 class ClassWriter extends Writer<Class, cb.Library> {
-  const ClassWriter(Plugin plugin) : super(plugin);
+  ClassWriter(Plugin plugin) : super(plugin);
 
-  static final String _implSuffix = 'Impl';
+  //static final String _implSuffix = 'Impl';
 
   @override
   cb.Library write(Class theClass) {
-    final MethodWriter methodWriter = MethodWriter(
-      plugin: plugin,
-      nameOfParentClass: theClass.name,
-      implSuffix: _implSuffix,
-    );
+//    final MethodWriter methodWriter = MethodWriter(
+//      plugin: plugin,
+//      nameOfParentClass: theClass.name,
+//      implSuffix: _implSuffix,
+//    );
+//
+//    final MethodFieldWriter methodFieldWriter = MethodFieldWriter(
+//      plugin,
+//      theClass.name,
+//      methodWriter,
+//    );
+//
+//    final FieldWriter fieldWriter = FieldWriter(plugin);
+//
+//    final ConstructorWriter constructWriter = ConstructorWriter(
+//      plugin,
+//      theClass,
+//    );
+//
+//    final ImplClassWriter implClassWriter =
+//        ImplClassWriter(plugin, _implSuffix, theClass);
+//
+//    final List<Class> implClasses = theClass.fieldsAndMethods
+//        .map<String>(
+//          (dynamic fieldOrMethod) => Plugin.returnType(fieldOrMethod),
+//        )
+//        .map<Class>((String type) => _classFromString(type))
+//        .toSet()
+//        .where(
+//          (Class theClass) =>
+//              theClass != null && !theClass.details.hasConstructor,
+//        )
+//        .toList();
+//
+//    final cb.Library library = cb.Library((cb.LibraryBuilder builder) {
+//      builder.body.addAll(<cb.Class>[
+//        cb.Class((cb.ClassBuilder classBuilder) {
+//          classBuilder
+//            ..name = theClass.name
+//            ..abstract = !theClass.details.hasConstructor
+//            ..constructors
+//                .addAll(constructWriter.writeAll(theClass.constructors))
+//            ..fields.add(_invokerNode)
+//            ..fields.add(_handle(
+//              theClass.details.hasInitializedFields,
+//              theClass.details.isInitializedField,
+//            ))
+//            ..fields.addAll(fieldWriter.writeAll(theClass.fields.where(
+//              (Field field) {
+//                return field.mutable || field.initialized;
+//              },
+//            ).toList()))
+//            ..methods.addAll(
+//              methodFieldWriter.writeAll(theClass.fields).expand((_) => _),
+//            )
+//            ..methods.addAll(methodWriter.writeAll(theClass.methods));
+//
+//          if (!theClass.details.hasConstructor &&
+//              (theClass.details.isInitializedField ||
+//                  theClass.details.isReferenced)) {
+//            classBuilder.constructors.add(
+//              _abstractDefaultConstructor(theClass),
+//            );
+//          }
+//
+//          if ((theClass.details.hasConstructor &&
+//                  theClass.details.isReferenced) ||
+//              theClass.details.hasInitializedFields ||
+//              theClass.details.isInitializedField) {
+//            classBuilder.constructors.add(_internalConstructor(theClass));
+//          }
+//        }),
+//        ...implClassWriter.writeAll(implClasses),
+//      ]);
+//    });
+//    return cb.Library((cb.LibraryBuilder builder) {
+//      builder.body.addAll(<cb.Class>[
+//        cb.Class((cb.ClassBuilder classBuilder)
+//      {
+//        classBuilder
+//          ..name = theClass.name;
+//      },)])});
 
-    final MethodFieldWriter methodFieldWriter = MethodFieldWriter(
+    final ParameterWriter parameterWriter = ParameterWriter(
       plugin,
       theClass.name,
-      methodWriter,
     );
 
-    final FieldWriter fieldWriter = FieldWriter(plugin);
+    final InitializerWriter constructorInitWriter =
+        InitializerWriter(plugin, theClass.name, true);
+    final InitializerWriter internalConstructorInitWriter =
+        InitializerWriter(plugin, theClass.name, false);
 
-    final ConstructorWriter constructWriter = ConstructorWriter(
+    final ConstructorWriter constructorWriter = ConstructorWriter(
       plugin,
-      theClass,
+      nameOfParentClass: theClass.name,
+      initializers: constructorInitWriter.writeAll(theClass.fields.where(
+        (Field field) => field.initialized,
+      )),
+      parameterWriter: parameterWriter,
     );
 
-    final ImplClassWriter implClassWriter =
-        ImplClassWriter(plugin, _implSuffix, theClass);
-
-    final List<Class> implClasses = theClass.fieldsAndMethods
-        .map<String>(
-          (dynamic fieldOrMethod) => Plugin.returnType(fieldOrMethod),
-        )
-        .map<Class>((String type) => _classFromString(type))
-        .toSet()
-        .where(
-          (Class theClass) =>
-              theClass != null && !theClass.details.hasConstructor,
-        )
-        .toList();
-
-    final cb.Library library = cb.Library((cb.LibraryBuilder builder) {
+    return cb.Library((cb.LibraryBuilder builder) {
       builder.body.addAll(<cb.Class>[
         cb.Class((cb.ClassBuilder classBuilder) {
           classBuilder
             ..name = theClass.name
             ..abstract = !theClass.details.hasConstructor
-            ..constructors
-                .addAll(constructWriter.writeAll(theClass.constructors))
-            ..fields.add(_invokerNode)
-            ..fields.add(_handle(
-              theClass.details.hasInitializedFields,
-              theClass.details.isInitializedField,
-            ))
-            ..fields.addAll(fieldWriter.writeAll(theClass.fields.where(
-              (Field field) {
-                return field.mutable || field.initialized;
-              },
-            ).toList()))
-            ..methods.addAll(
-              methodFieldWriter.writeAll(theClass.fields).expand((_) => _),
+            ..constructors.addAll(
+              _getConstructors(
+                  constructors: constructorWriter.writeAll(
+                    theClass.constructors,
+                  ),
+                  initializers: internalConstructorInitWriter.writeAll(
+                    theClass.fields.where(
+                      (Field field) => field.initialized,
+                    ),
+                  ),
+                  hasInternalConstructor:
+                      theClass.details.hasInitializedFields ||
+                          theClass.details.isInitializedField ||
+                          theClass.details.isReferenced),
             )
-            ..methods.addAll(methodWriter.writeAll(theClass.methods));
-
-          if (!theClass.details.hasConstructor &&
-              theClass.details.isInitializedField) {
-            classBuilder.constructors.add(
-              _abstractDefaultConstructor(theClass),
-            );
-          }
-
-          if ((theClass.details.hasConstructor &&
-                  theClass.details.isReferenced) ||
-              theClass.details.hasInitializedFields ||
-              theClass.details.isInitializedField) {
-            classBuilder.constructors.add(_internalConstructor(theClass));
-          }
+            ..fields.addAll(<cb.Field>[
+              cb.Field((cb.FieldBuilder builder) {
+                builder
+                  ..name = 'invokerNode'
+                  ..type = References.methodCallInvokerNode;
+              }),
+              cb.Field((cb.FieldBuilder builder) {
+                builder
+                  ..name = 'handle'
+                  ..type = cb.refer('String')
+                  ..modifier = cb.FieldModifier.final$;
+              }),
+            ]);
         }),
-        ...implClassWriter.writeAll(implClasses),
       ]);
     });
-
-    return library;
   }
 
-  cb.Constructor _internalConstructor(Class theClass) {
-    return cb.Constructor(
-      (cb.ConstructorBuilder builder) {
-        builder.name = 'internal';
-
-        if (!theClass.details.hasInitializedFields &&
-            !theClass.details.isInitializedField) {
-          return;
-        }
-
-        builder
-          ..requiredParameters.add(
-            cb.Parameter((cb.ParameterBuilder builder) {
-              builder.name = 'source';
-              builder.type = cb.refer('Map');
-            }),
-          )
-          ..initializers.add(cb
-              .refer('handle')
-              .assign(
-                cb.refer('source').index(cb.literalString('handle')),
-              )
-              .code);
-
-        final Iterable<Field> initializedFields =
-            theClass.fields.where((Field field) => field.initialized);
-
-        final Iterable<cb.Code> initializers = initializedFields.map<cb.Code>(
-          (Field field) {
-            final String fieldName =
-                field.mutable ? '_${field.name}' : field.name;
-
-            final cb.Expression mapAccess =
-                cb.refer('source').index(cb.literalString(field.name));
-
-            final Class varClass = _classFromString(field.type);
-            final cb.Expression value = varClass == null
-                ? mapAccess
-                : cb
-                    .refer('_${field.type}$_implSuffix')
-                    .call(<cb.Expression>[mapAccess]);
-
-            return cb.refer(fieldName).assign(value).code;
+  List<cb.Constructor> _getConstructors({
+    Iterable<cb.Constructor> constructors,
+    Iterable<cb.Code> initializers,
+    bool hasInternalConstructor,
+  }) {
+    return <cb.Constructor>[
+      ...constructors,
+      if (hasInternalConstructor)
+        cb.Constructor(
+          (cb.ConstructorBuilder builder) {
+            builder
+              ..name = 'internal'
+              ..requiredParameters.addAll(<cb.Parameter>[
+                cb.Parameter((cb.ParameterBuilder builder) {
+                  builder
+                    ..name = 'creatorNode'
+                    ..type = References.methodCallInvokerNode;
+                }),
+                cb.Parameter((cb.ParameterBuilder builder) {
+                  builder.name = 'source';
+                  builder.type = cb.refer('Map');
+                })
+              ])
+              ..initializers.addAll(<cb.Code>[
+                cb.refer('invokerNode').assign(cb.refer('creatorNode')).code,
+                cb
+                    .refer('handle')
+                    .assign(
+                      cb
+                          .refer('source')
+                          .index(cb.literalString('handle'))
+                          .notEqualTo(cb.literalNull)
+                          .conditional(
+                              cb
+                                  .refer('source')
+                                  .index(cb.literalString('handle')),
+                              References.channel
+                                  .property('nextHandle')
+                                  .call(<cb.Expression>[])),
+                    )
+                    .code,
+                ...initializers,
+              ]);
           },
-        );
-
-        builder.initializers.addAll(initializers);
-      },
-    );
+        )
+    ];
   }
-
-  cb.Constructor _abstractDefaultConstructor(Class theClass) {
-    return cb.Constructor((cb.ConstructorBuilder builder) {
-      builder.initializers.add(cb
-          .refer('handle')
-          .assign(
-            References.channel.property('nextHandle').call(<cb.Expression>[]),
-          )
-          .code);
-    });
-  }
-
-  cb.Field _handle(bool hasInitializedFields, bool isInitializedField) {
-    return cb.Field((cb.FieldBuilder builder) {
-      builder
-        ..name = 'handle'
-        ..modifier = cb.FieldModifier.final$
-        ..type = cb.Reference('String');
-
-      if (!hasInitializedFields && !isInitializedField) {
-        builder.assignment = References.channel
-            .property('nextHandle')
-            .call(<cb.Expression>[]).code;
-      }
-    });
-  }
-
-  static cb.Field get _invokerNode => cb.Field((cb.FieldBuilder builder) {
-        builder
-          ..name = '_invokerNode'
-          ..type = References.methodCallInvokerNode;
-      });
 }

@@ -125,6 +125,7 @@ class PluginCreator {
 
   static final String _methodCallInvoker = '''
 import 'dart:async';
+import 'dart:collection';
 
 import 'package:flutter/services.dart';
 
@@ -132,26 +133,48 @@ import 'channel.dart';
 
 abstract class MethodCallInvoker {
   static Future<dynamic> invoke(
-    MethodCallInvokerNode edgeNode,
+    List<MethodCallInvokerNode> edgeNodes,
     MethodCall call,
   ) {
-    final List<MethodCall> methodCalls = <MethodCall>[];
-    methodCalls.add(call);
-
-    MethodCallInvokerNode currentNode = edgeNode;
-    while (true) {
-      if (currentNode == null) break;
-      methodCalls.add(currentNode.methodCall);
-      currentNode = currentNode.parent;
+    final List<MethodCallInvokerNode> allNodes = <MethodCallInvokerNode>[];
+    for (MethodCallInvokerNode edgeNode in edgeNodes) {
+      allNodes.addAll(_getMethodCalls(edgeNode));
     }
+
+    final List<MethodCallInvokerNode> uniqueNodes =
+        LinkedHashSet<MethodCallInvokerNode>.from(allNodes).toList();
+
+    uniqueNodes.sort((MethodCallInvokerNode a, MethodCallInvokerNode b) =>
+        a.timestamp.compareTo(b.timestamp));
+
+    final List<MethodCall> methodCalls = <MethodCall>[
+      ...uniqueNodes
+          .map<MethodCall>((MethodCallInvokerNode node) => node.methodCall),
+      call,
+    ];
 
     return Channel.channel.invokeMethod<dynamic>(
       'Invoke',
-      serializeMethodCalls(methodCalls.reversed).toList(),
+      _serializeMethodCalls(methodCalls).toList(),
     );
   }
 
-  static Iterable<Map<String, dynamic>> serializeMethodCalls(
+  static List<MethodCallInvokerNode> _getMethodCalls(
+    MethodCallInvokerNode currentNode,
+  ) {
+    if (currentNode == null) return <MethodCallInvokerNode>[];
+
+    final List<MethodCallInvokerNode> nodes = <MethodCallInvokerNode>[];
+    nodes.add(currentNode);
+
+    for (MethodCallInvokerNode node in currentNode.parents) {
+      nodes.addAll(_getMethodCalls(node));
+    }
+
+    return nodes;
+  }
+
+  static Iterable<Map<String, dynamic>> _serializeMethodCalls(
     Iterable<MethodCall> methodCalls,
   ) {
     return methodCalls.map<Map<String, dynamic>>(
@@ -164,15 +187,16 @@ abstract class MethodCallInvoker {
 }
 
 class MethodCallInvokerNode {
-  const MethodCallInvokerNode(
+  MethodCallInvokerNode(
     this.methodCall, [
-    this.parent,
+    this.parents,
     this.type = NodeType.regular,
   ]);
 
   final MethodCall methodCall;
   final NodeType type;
-  final MethodCallInvokerNode parent;
+  final List<MethodCallInvokerNode> parents;
+  final int timestamp = DateTime.now().millisecondsSinceEpoch;
 }
 
 enum NodeType { regular, opener, closer }
