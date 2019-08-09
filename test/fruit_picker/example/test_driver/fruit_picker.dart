@@ -90,7 +90,7 @@ void main() {
 
         Basket.aGreenGrape = grape..color = 'pink';
         expect(Basket.aGreenGrape.color, 'pink');
-        await pumpEventQueue();
+        expect(pumpEventQueue(), completes);
       });
 
       test('takeApricot', () async {

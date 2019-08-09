@@ -174,6 +174,9 @@ public class PluginCreator {
             CommonClassNames.METHOD_CALL.name,
             CommonClassNames.METHOD_CALL.name)
         .addStatement("value = onMethodCall(methodCall)")
+        .beginControlFlow("if (value instanceof $T)", notImplementedClassName)
+        .addStatement("return new $T()", notImplementedClassName)
+        .endControlFlow()
         .endControlFlow()
         .addStatement("invokerWrappers.clear()")
         .addStatement("return value")
