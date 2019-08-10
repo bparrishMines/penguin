@@ -231,7 +231,7 @@ class MutableFieldWriter extends Writer<Field, List<cb.Method>> {
             final String method = '$nameOfParentClass#${field.name}';
             builder.addExpression(_invokerNodeExpression(method,
                 arguments: arguments,
-                includeSelfInvokerNode: false,
+                includeSelfInvokerNode: !field.isStatic,
                 parameters: <Parameter>[
                   Parameter(field.name, type: field.type),
                 ]).assignFinal('newNode', References.methodCallInvokerNode));
