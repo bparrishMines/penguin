@@ -99,11 +99,6 @@ public class PluginCreator {
             .addStatement("channel = new $T(registrar.messenger(), CHANNEL_NAME)", CommonClassNames.METHOD_CHANNEL.name)
             .addStatement("channel.setMethodCallHandler(new $T())", ClassName.get(packageName, mainPluginClassName.simpleName()))
             .build())
-        .addMethod(MethodSpec.methodBuilder("getNextHandle")
-            .addModifiers(Modifier.STATIC)
-            .returns(String.class)
-            .addStatement("return $T.randomUUID().toString()", UUID.class)
-            .build())
         .addMethod(buildAddWrapperMethod("addWrapper", "wrappers"))
         .addMethod(buildAddWrapperMethod("addInvokerWrapper", "invokerWrappers"))
         .addMethod(MethodSpec.methodBuilder("removeWrapper")
@@ -124,12 +119,14 @@ public class PluginCreator {
             .addModifiers(Modifier.PUBLIC)
             .addParameter(CommonClassNames.METHOD_CALL.name, "call")
             .addParameter(CommonClassNames.RESULT.name, "result")
+            .addStatement("invokerWrappers.clear()")
             .addStatement("final $T value = onMethodCall(call)", Object.class)
             .beginControlFlow("if (value instanceof $T)", notImplementedClassName)
             .addStatement("result.notImplemented()")
             .addStatement("return")
             .endControlFlow()
             .addStatement("result.success(value)")
+            .addStatement("invokerWrappers.clear()")
             .build())
         .addMethod(buildOnMethodCall());
 
@@ -178,7 +175,6 @@ public class PluginCreator {
         .addStatement("return new $T()", notImplementedClassName)
         .endControlFlow()
         .endControlFlow()
-        .addStatement("invokerWrappers.clear()")
         .addStatement("return value")
         .addCode(CodeBlock.builder().unindent().build());
 

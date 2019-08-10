@@ -88,7 +88,7 @@ abstract class Writer<T, K> {
       return true;
     } else {
       final PluginClass returnClass = classFromString(Plugin.returnType(fieldOrMethod));
-      return returnClass != null && !returnClass.details.hasInitializedFields;
+      return returnClass != null;
     }
   }
 }

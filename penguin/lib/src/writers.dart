@@ -338,7 +338,6 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
 
     cb.Expression invokeChannelExpression;
     if (_structureIsAny(s, [
-      MethodStructure.staticUninitialized,
       MethodStructure.staticInitializers,
       MethodStructure.staticPrimitive,
       MethodStructure.staticReturnsVoid,
@@ -354,11 +353,15 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
     if (_structureIsAny(s, [
       MethodStructure.initializers,
       MethodStructure.primitive,
+      MethodStructure.staticUninitialized,
     ])) {
-      invokerExpression = _invokerExpression(invokeMethod,
-          arguments: _mappedMethodParams(fieldOrMethod),
-          parameters: parameters,
-          type: returnedClass != null ? null : cb.refer(returnType));
+      invokerExpression = _invokerExpression(
+        invokeMethod,
+        arguments: _mappedMethodParams(fieldOrMethod),
+        parameters: parameters,
+        type: returnedClass != null ? null : cb.refer(returnType),
+        includeSelfInvokerNode: s != MethodStructure.staticUninitialized
+      );
     }
 
     cb.Expression objectExpression;
@@ -441,7 +444,7 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
               builder.addExpression(handleExpression);
               builder.addExpression(nodeExpression.assignFinal(
                   'newNode', References.methodCallInvokerNode));
-              builder.addExpression(invokeChannelExpression);
+              builder.addExpression(invokerExpression);
               builder.addExpression(objectExpression.returned);
             } else if (s == MethodStructure.unInitialized) {
               builder.addExpression(handleExpression);
@@ -535,7 +538,11 @@ class InitializerWriter extends Writer<Field, cb.Code> {
       final cb.Expression value = fieldClass == null
           ? sourceAccess
           : _getConstructor(fieldClass, fieldClass.name == nameOfParentClass)
-              .call(<cb.Expression>[cb.refer('creatorNode'), cb.refer('handle'), sourceAccess]);
+              .call(<cb.Expression>[
+              cb.refer('creatorNode'),
+              cb.literalString('\$handle+${field.name}'),
+              sourceAccess
+            ]);
 
       return cb.refer(fieldName).assign(value).code;
     }

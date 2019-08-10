@@ -172,11 +172,11 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
       if (typeClass == null) {
         builder.addStatement("initializers.put($S, $N.$N)", fieldName, initClass.details.variableName, fieldName);
       } else {
-        builder.addStatement("final $T $N = new $T($T.getNextHandle(), $N.$N)",
+        builder.addStatement("final $T $N = new $T(handle + $S, $N.$N)",
             typeClass.details.wrapperClassName,
             fieldName,
             typeClass.details.wrapperClassName,
-            mainPluginClassName,
+            fieldName,
             initClass.details.variableName,
             fieldName)
             .addStatement("initializers.put($S, $N.serializeInitializers())", fieldName, fieldName);
