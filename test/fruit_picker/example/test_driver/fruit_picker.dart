@@ -159,7 +159,7 @@ void main() {
 
       test('areApplesBetterThanThis', () {
         final Apricot apricot = Apricot();
-        expect(Apple.areApplesBetterThanThis(apricot), completion(false));
+        expect(Apple.areApplesBetterThanThis(apricot), completion(true));
       });
     });
 
