@@ -77,35 +77,35 @@ abstract class Writer<T, K> {
     ]);
   }
 
-  cb.Expression _invokerExpression(
-    String method, {
-    Map<String, cb.Expression> arguments,
-    List<Parameter> parameters,
-    bool includeSelfInvokerNode,
-    cb.Reference type,
-  }) {
-    arguments ??= <String, cb.Expression>{};
-    parameters ??= <Parameter>[];
-    includeSelfInvokerNode ??= true;
-
-    return References.methodCallInvoker.property('invoke').call(<cb.Expression>[
-      cb.literalList(
-        <cb.Expression>[
-          if (includeSelfInvokerNode) cb.refer('invokerNode'),
-          ..._getParameterNodeList(parameters),
-        ],
-        References.methodCallInvokerNode,
-      ),
-      References.methodCall.call(
-        <cb.Expression>[
-          cb.literalString(method),
-          cb.literalMap(arguments, cb.refer('String'), cb.refer('dynamic')),
-        ],
-      ),
-    ], <String, cb.Expression>{}, <cb.Reference>[
-      if (type != null) type
-    ]);
-  }
+//  cb.Expression _invokerExpression(
+//    String method, {
+//    Map<String, cb.Expression> arguments,
+//    List<Parameter> parameters,
+//    bool includeSelfInvokerNode,
+//    cb.Reference type,
+//  }) {
+//    arguments ??= <String, cb.Expression>{};
+//    parameters ??= <Parameter>[];
+//    includeSelfInvokerNode ??= true;
+//
+//    return References.methodCallInvoker.property('invoke').call(<cb.Expression>[
+//      cb.literalList(
+//        <cb.Expression>[
+//          if (includeSelfInvokerNode) cb.refer('invokerNode'),
+//          ..._getParameterNodeList(parameters),
+//        ],
+//        References.methodCallInvokerNode,
+//      ),
+//      References.methodCall.call(
+//        <cb.Expression>[
+//          cb.literalString(method),
+//          cb.literalMap(arguments, cb.refer('String'), cb.refer('dynamic')),
+//        ],
+//      ),
+//    ], <String, cb.Expression>{}, <cb.Reference>[
+//      if (type != null) type
+//    ]);
+//  }
 
 //  cb.InvokeExpression _invokeMethodExpression({
 //    String method,
@@ -229,20 +229,20 @@ class MutableFieldWriter extends Writer<Field, List<cb.Method>> {
             }
 
             final String method = '$nameOfParentClass#${field.name}';
-            builder
-              ..addExpression(field.isStatic
-                  ? _invokerExpression(method,
-                      arguments: arguments,
-                      includeSelfInvokerNode: false,
-                      parameters: <Parameter>[
-                          Parameter(field.name, type: field.type),
-                        ])
-                  : cb.refer('_invokerNode').assign(_invokerNodeExpression(
-                        method,
-                        arguments: arguments,
-                        includeSelfInvokerNode: true,
-                      )))
-              ..addExpression(variableRef.assign(cb.refer(field.name)));
+            builder.addExpression(_invokerNodeExpression(method,
+                arguments: arguments,
+                includeSelfInvokerNode: false,
+                parameters: <Parameter>[
+                  Parameter(field.name, type: field.type),
+                ]).assignFinal('newNode', References.methodCallInvokerNode));
+            if (field.isStatic) {
+              builder.addExpression(
+                  cb.refer('newNode').property('invoke').call([]));
+            } else {
+              builder.addExpression(
+                  cb.refer('_invokerNode').assign(cb.refer('newNode')));
+            }
+            builder.addExpression(variableRef.assign(cb.refer(field.name)));
           });
       }),
     ]);
@@ -318,19 +318,22 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
           .call(<cb.Expression>[]).assignFinal('newHandle', cb.refer('String'));
     }
 
-    cb.Expression nodeExpression;
-    if (_structureIsAny(s, [
-      MethodStructure.returnsVoid,
-      MethodStructure.initializers,
-      MethodStructure.staticInitializers,
+    cb.Expression nodeExpression = _invokerNodeExpression(
+      invokeMethod,
+      arguments: _mappedMethodParams(fieldOrMethod),
+      parameters: parameters,
+      includeSelfInvokerNode: !static,
+    ).assignFinal('newNode', References.methodCallInvokerNode);
+
+    cb.Expression invokeNodeExpression;
+    if (!_structureIsAny(s, [
       MethodStructure.unInitialized,
-      MethodStructure.staticUninitialized,
+      MethodStructure.returnsVoid,
     ])) {
-      nodeExpression = _invokerNodeExpression(
-        invokeMethod,
-        arguments: _mappedMethodParams(fieldOrMethod),
-        parameters: parameters,
-        includeSelfInvokerNode: !static,
+      invokeNodeExpression = cb.refer('newNode').property('invoke').call(
+        [],
+        {},
+        <cb.Reference>[if (returnedClass == null) cb.refer(returnType)],
       );
     }
 
@@ -347,19 +350,15 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
 //          mapMethod: s == MethodStructure.staticInitializers);
 //    }
 
-    cb.Expression invokerExpression;
-    if (!_structureIsAny(s, [
-      MethodStructure.unInitialized,
-      MethodStructure.returnsVoid
-    ])) {
-      invokerExpression = _invokerExpression(
-        invokeMethod,
-        arguments: _mappedMethodParams(fieldOrMethod),
-        parameters: parameters,
-        type: returnedClass != null ? null : cb.refer(returnType),
-        includeSelfInvokerNode: !static
-      );
-    }
+//    cb.Expression invokerExpression;
+//    if (!_structureIsAny(
+//        s, [MethodStructure.unInitialized, MethodStructure.returnsVoid])) {
+//      invokerExpression = _invokerExpression(invokeMethod,
+//          arguments: _mappedMethodParams(fieldOrMethod),
+//          parameters: parameters,
+//          type: returnedClass != null ? null : cb.refer(returnType),
+//          includeSelfInvokerNode: !static);
+//    }
 
     cb.Expression objectExpression;
     if (_structureIsAny(s, [
@@ -411,44 +410,82 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
             : returnRef
         ..body = cb.Block(
           (cb.BlockBuilder builder) {
-            if (s == MethodStructure.staticReturnsVoid) {
-              builder.addExpression(invokerExpression.returned);
-            } else if (s == MethodStructure.returnsVoid) {
-              builder.addExpression(
-                  cb.refer('_invokerNode').assign(nodeExpression));
-              builder.addExpression(References.future(cb.refer('void'))
-                  .property('value')
-                  .call(<cb.Expression>[]).returned);
-            } else if (s == MethodStructure.staticPrimitive) {
-              builder.addExpression(invokerExpression.returned);
-            } else if (s == MethodStructure.primitive) {
-              builder.addExpression(invokerExpression.returned);
-            } else if (s == MethodStructure.staticInitializers) {
-              builder.addExpression(handleExpression);
-              builder.addExpression(nodeExpression.assignFinal(
-                  'newNode', References.methodCallInvokerNode));
-              builder.addExpression(invokerExpression.awaited
-                  .assignFinal('source', cb.refer('Map')));
-              builder.addExpression(objectExpression.returned);
-            } else if (s == MethodStructure.initializers) {
-              builder.addExpression(handleExpression);
-              builder.addExpression(nodeExpression.assignFinal(
-                  'newNode', References.methodCallInvokerNode));
-              builder.addExpression(invokerExpression.awaited
-                  .assignFinal('source', cb.refer('Map')));
-              builder.addExpression(objectExpression.returned);
-            } else if (s == MethodStructure.staticUninitialized) {
-              builder.addExpression(handleExpression);
-              builder.addExpression(nodeExpression.assignFinal(
-                  'newNode', References.methodCallInvokerNode));
-              builder.addExpression(invokerExpression);
-              builder.addExpression(objectExpression.returned);
-            } else if (s == MethodStructure.unInitialized) {
-              builder.addExpression(handleExpression);
-              builder.addExpression(nodeExpression.assignFinal(
-                  'newNode', References.methodCallInvokerNode));
-              builder.addExpression(objectExpression.returned);
+            switch (s) {
+              case MethodStructure.staticReturnsVoid:
+              case MethodStructure.staticPrimitive:
+              case MethodStructure.primitive:
+                builder.addExpression(nodeExpression);
+                builder.addExpression(invokeNodeExpression.returned);
+                break;
+              case MethodStructure.returnsVoid:
+                builder.addExpression(nodeExpression);
+                builder.addExpression(
+                    cb.refer('_invokerNode').assign(cb.refer('newNode')));
+                builder.addExpression(References.future(cb.refer('void'))
+                    .property('value')
+                    .call(<cb.Expression>[]).returned);
+                break;
+              case MethodStructure.initializers:
+              case MethodStructure.staticInitializers:
+                builder.addExpression(handleExpression);
+                builder.addExpression(nodeExpression);
+                builder.addExpression(invokeNodeExpression.awaited
+                    .assignFinal('source', cb.refer('Map')));
+                builder.addExpression(objectExpression.returned);
+                break;
+              case MethodStructure.unInitialized:
+                builder.addExpression(handleExpression);
+                builder.addExpression(nodeExpression);
+                builder.addExpression(objectExpression.returned);
+                break;
+              case MethodStructure.staticUninitialized:
+                builder.addExpression(handleExpression);
+                builder.addExpression(nodeExpression);
+                builder.addExpression(invokeNodeExpression);
+                builder.addExpression(objectExpression.returned);
+                break;
+              case MethodStructure.returnsVoidPersistence:
+                // TODO: Handle this case.
+                break;
             }
+//            if (s == MethodStructure.staticReturnsVoid) {
+//              builder.addExpression(invokerExpression.returned);
+//            } else if (s == MethodStructure.returnsVoid) {
+//              builder.addExpression(
+//                  cb.refer('_invokerNode').assign(nodeExpression));
+//              builder.addExpression(References.future(cb.refer('void'))
+//                  .property('value')
+//                  .call(<cb.Expression>[]).returned);
+//            } else if (s == MethodStructure.staticPrimitive) {
+//              builder.addExpression(invokerExpression.returned);
+//            } else if (s == MethodStructure.primitive) {
+//              builder.addExpression(invokerExpression.returned);
+//            } else if (s == MethodStructure.staticInitializers) {
+//              builder.addExpression(handleExpression);
+//              builder.addExpression(nodeExpression.assignFinal(
+//                  'newNode', References.methodCallInvokerNode));
+//              builder.addExpression(invokerExpression.awaited
+//                  .assignFinal('source', cb.refer('Map')));
+//              builder.addExpression(objectExpression.returned);
+//            } else if (s == MethodStructure.initializers) {
+//              builder.addExpression(handleExpression);
+//              builder.addExpression(nodeExpression.assignFinal(
+//                  'newNode', References.methodCallInvokerNode));
+//              builder.addExpression(invokerExpression.awaited
+//                  .assignFinal('source', cb.refer('Map')));
+//              builder.addExpression(objectExpression.returned);
+//            } else if (s == MethodStructure.staticUninitialized) {
+//              builder.addExpression(handleExpression);
+//              builder.addExpression(nodeExpression.assignFinal(
+//                  'newNode', References.methodCallInvokerNode));
+//              builder.addExpression(invokerExpression);
+//              builder.addExpression(objectExpression.returned);
+//            } else if (s == MethodStructure.unInitialized) {
+//              builder.addExpression(handleExpression);
+//              builder.addExpression(nodeExpression.assignFinal(
+//                  'newNode', References.methodCallInvokerNode));
+//              builder.addExpression(objectExpression.returned);
+//            }
           },
         );
     });

@@ -131,61 +131,6 @@ import 'package:flutter/services.dart';
 
 import 'channel.dart';
 
-abstract class MethodCallInvoker {
-  static Future<T> invoke<T>(
-    List<MethodCallInvokerNode> edgeNodes,
-    MethodCall call,
-  ) {
-    final List<MethodCallInvokerNode> allNodes = <MethodCallInvokerNode>[];
-    for (MethodCallInvokerNode edgeNode in edgeNodes) {
-      allNodes.addAll(_getMethodCalls(edgeNode));
-    }
-
-    final List<MethodCallInvokerNode> uniqueNodes =
-        LinkedHashSet<MethodCallInvokerNode>.from(allNodes).toList();
-
-    uniqueNodes.sort((MethodCallInvokerNode a, MethodCallInvokerNode b) =>
-        a.timestamp.compareTo(b.timestamp));
-
-    final List<MethodCall> methodCalls = <MethodCall>[
-      ...uniqueNodes
-          .map<MethodCall>((MethodCallInvokerNode node) => node.methodCall),
-      call,
-    ];
-
-    return Channel.channel.invokeMethod<T>(
-      'Invoke',
-      _serializeMethodCalls(methodCalls).toList(),
-    );
-  }
-
-  static List<MethodCallInvokerNode> _getMethodCalls(
-    MethodCallInvokerNode currentNode,
-  ) {
-    if (currentNode == null) return <MethodCallInvokerNode>[];
-
-    final List<MethodCallInvokerNode> nodes = <MethodCallInvokerNode>[];
-    nodes.add(currentNode);
-
-    for (MethodCallInvokerNode node in currentNode.parents) {
-      nodes.addAll(_getMethodCalls(node));
-    }
-
-    return nodes;
-  }
-
-  static Iterable<Map<String, dynamic>> _serializeMethodCalls(
-    Iterable<MethodCall> methodCalls,
-  ) {
-    return methodCalls.map<Map<String, dynamic>>(
-      (MethodCall methodCall) => <String, dynamic>{
-        'method': methodCall.method,
-        'arguments': methodCall.arguments,
-      },
-    );
-  }
-}
-
 class MethodCallInvokerNode {
   MethodCallInvokerNode(
     this.methodCall, [
@@ -197,6 +142,56 @@ class MethodCallInvokerNode {
   final NodeType type;
   final List<MethodCallInvokerNode> parents;
   final int timestamp = DateTime.now().microsecondsSinceEpoch;
+
+  Future<T> invoke<T>() {
+    final List<MethodCallInvokerNode> allNodes = <MethodCallInvokerNode>[];
+    for (MethodCallInvokerNode parentNode in parents) {
+      allNodes.addAll(getMethodCalls(parentNode));
+    }
+
+    final List<MethodCallInvokerNode> uniqueNodes =
+        LinkedHashSet<MethodCallInvokerNode>.from(allNodes).toList();
+
+    uniqueNodes.sort((MethodCallInvokerNode a, MethodCallInvokerNode b) =>
+        a.timestamp.compareTo(b.timestamp));
+
+    final List<MethodCall> methodCalls = <MethodCall>[
+      ...uniqueNodes
+          .map<MethodCall>((MethodCallInvokerNode node) => node.methodCall),
+      methodCall,
+    ];
+
+    return Channel.channel.invokeMethod<T>(
+      'Invoke',
+      serializeMethodCalls(methodCalls).toList(),
+    );
+  }
+
+  List<MethodCallInvokerNode> getMethodCalls(
+    MethodCallInvokerNode currentNode,
+  ) {
+    if (currentNode == null) return <MethodCallInvokerNode>[];
+
+    final List<MethodCallInvokerNode> nodes = <MethodCallInvokerNode>[];
+    nodes.add(currentNode);
+
+    for (MethodCallInvokerNode node in currentNode.parents) {
+      nodes.addAll(getMethodCalls(node));
+    }
+
+    return nodes;
+  }
+
+  Iterable<Map<String, dynamic>> serializeMethodCalls(
+    Iterable<MethodCall> methodCalls,
+  ) {
+    return methodCalls.map<Map<String, dynamic>>(
+      (MethodCall methodCall) => <String, dynamic>{
+        'method': methodCall.method,
+        'arguments': methodCall.arguments,
+      },
+    );
+  }
 }
 
 enum NodeType { regular, opener, closer }

@@ -20,11 +20,6 @@ class References {
 
   static final channel = refer('Channel', 'channel.dart');
 
-  static final methodCallInvoker = refer(
-    'MethodCallInvoker',
-    'method_call_invoker.dart',
-  );
-
   static final methodCallInvokerNode = refer(
     'MethodCallInvokerNode',
     'method_call_invoker.dart',
