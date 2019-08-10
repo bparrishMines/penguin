@@ -254,8 +254,12 @@ classes:
     methods:
       - method:
         name: startEating
+        opener: true
       - method:
         name: stopEating
+        closer: true
+      - method:
+        name: takeSmallBite
 
   - class:
     name: Cherry

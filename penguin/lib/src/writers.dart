@@ -207,7 +207,6 @@ enum MethodStructure {
   staticInitializers,
   unInitialized,
   staticUninitialized,
-  returnsVoidPersistence,
 }
 
 class MethodWriter extends Writer<dynamic, cb.Method> {
@@ -236,6 +235,7 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
     final Class returnedClass = _classFromString(returnType);
     final List<Parameter> parameters = Plugin.parameters(fieldOrMethod);
     final String invokeMethod = '$nameOfParentClass#$name';
+    final bool opener = Plugin.opener(fieldOrMethod);
 
     final MethodStructure s = _getMethodStructure(
       returnType == 'void',
@@ -266,7 +266,7 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
     ).assignFinal('newNode', References.methodCallInvokerNode);
 
     cb.Expression invokeNodeExpression;
-    if (!_structureIsAny(s, [
+    if (opener || !_structureIsAny(s, [
       MethodStructure.unInitialized,
       MethodStructure.returnsVoid,
     ])) {
@@ -338,9 +338,15 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
                 builder.addExpression(nodeExpression);
                 builder.addExpression(
                     cb.refer('_invokerNode').assign(cb.refer('newNode')));
-                builder.addExpression(References.future(cb.refer('void'))
-                    .property('value')
-                    .call(<cb.Expression>[]).returned);
+                if (opener) {
+                  builder.addExpression(invokeNodeExpression.returned);
+                } else {
+                  builder.addExpression(References
+                      .future(cb.refer('void'))
+                      .property('value')
+                      .call(<cb.Expression>[])
+                      .returned);
+                }
                 break;
               case MethodStructure.initializers:
               case MethodStructure.staticInitializers:
@@ -353,6 +359,9 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
               case MethodStructure.unInitialized:
                 builder.addExpression(handleExpression);
                 builder.addExpression(nodeExpression);
+                if (opener) {
+                  builder.addExpression(invokeNodeExpression);
+                }
                 builder.addExpression(objectExpression.returned);
                 break;
               case MethodStructure.staticUninitialized:
@@ -360,9 +369,6 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
                 builder.addExpression(nodeExpression);
                 builder.addExpression(invokeNodeExpression);
                 builder.addExpression(objectExpression.returned);
-                break;
-              case MethodStructure.returnsVoidPersistence:
-                // TODO: Handle this case.
                 break;
             }
           },

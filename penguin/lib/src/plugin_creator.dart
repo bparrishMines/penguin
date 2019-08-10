@@ -134,9 +134,9 @@ import 'channel.dart';
 class MethodCallInvokerNode {
   MethodCallInvokerNode(
     this.methodCall, [
-    this.parents,
+    List<MethodCallInvokerNode> parents,
     this.type = NodeType.regular,
-  ]);
+  ]) : parents = List.unmodifiable(parents);
 
   final MethodCall methodCall;
   final NodeType type;
@@ -146,7 +146,7 @@ class MethodCallInvokerNode {
   Future<T> invoke<T>() {
     final List<MethodCallInvokerNode> allNodes = <MethodCallInvokerNode>[];
     for (MethodCallInvokerNode parentNode in parents) {
-      allNodes.addAll(getMethodCalls(parentNode));
+      allNodes.addAll(_getMethodCalls(parentNode));
     }
 
     final List<MethodCallInvokerNode> uniqueNodes =
@@ -163,26 +163,28 @@ class MethodCallInvokerNode {
 
     return Channel.channel.invokeMethod<T>(
       'Invoke',
-      serializeMethodCalls(methodCalls).toList(),
+      _serializeMethodCalls(methodCalls).toList(),
     );
   }
 
-  List<MethodCallInvokerNode> getMethodCalls(
+  List<MethodCallInvokerNode> _getMethodCalls(
     MethodCallInvokerNode currentNode,
   ) {
-    if (currentNode == null) return <MethodCallInvokerNode>[];
+    if (currentNode == null || type == NodeType.opener) {
+      return <MethodCallInvokerNode>[];
+    }
 
     final List<MethodCallInvokerNode> nodes = <MethodCallInvokerNode>[];
     nodes.add(currentNode);
 
     for (MethodCallInvokerNode node in currentNode.parents) {
-      nodes.addAll(getMethodCalls(node));
+      nodes.addAll(_getMethodCalls(node));
     }
 
     return nodes;
   }
 
-  Iterable<Map<String, dynamic>> serializeMethodCalls(
+  Iterable<Map<String, dynamic>> _serializeMethodCalls(
     Iterable<MethodCall> methodCalls,
   ) {
     return methodCalls.map<Map<String, dynamic>>(
