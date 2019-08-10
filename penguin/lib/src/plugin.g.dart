@@ -114,8 +114,9 @@ Method _$MethodFromJson(Map json) {
             [],
         type: $checkedConvert(
             json, 'type', (v) => _$enumDecodeNullable(_$MethodTypeEnumMap, v)),
-        isStatic:
-            $checkedConvert(json, 'is_static', (v) => v as bool) ?? false);
+        isStatic: $checkedConvert(json, 'is_static', (v) => v as bool) ?? false,
+        opener: $checkedConvert(json, 'opener', (v) => v as bool) ?? false,
+        closer: $checkedConvert(json, 'closer', (v) => v as bool) ?? false);
     return val;
   }, fieldKeyMap: const {
     'requiredParameters': 'required_parameters',
@@ -140,6 +141,8 @@ Map<String, dynamic> _$MethodToJson(Method instance) {
   val['returns'] = instance.returns;
   val['type'] = _$MethodTypeEnumMap[instance.type];
   val['is_static'] = instance.isStatic;
+  val['opener'] = instance.opener;
+  val['closer'] = instance.closer;
   return val;
 }
 

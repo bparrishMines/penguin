@@ -260,6 +260,7 @@ enum MethodStructure {
   staticInitializers,
   unInitialized,
   staticUninitialized,
+  returnsVoidPersistence,
 }
 
 class MethodWriter extends Writer<dynamic, cb.Method> {
@@ -329,10 +330,7 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
         invokeMethod,
         arguments: _mappedMethodParams(fieldOrMethod),
         parameters: parameters,
-        includeSelfInvokerNode: !_structureIsAny(s, [
-          MethodStructure.staticInitializers,
-          MethodStructure.staticUninitialized,
-        ]),
+        includeSelfInvokerNode: !static,
       );
     }
 
@@ -360,7 +358,7 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
         arguments: _mappedMethodParams(fieldOrMethod),
         parameters: parameters,
         type: returnedClass != null ? null : cb.refer(returnType),
-        includeSelfInvokerNode: s != MethodStructure.staticUninitialized
+        includeSelfInvokerNode: !static
       );
     }
 

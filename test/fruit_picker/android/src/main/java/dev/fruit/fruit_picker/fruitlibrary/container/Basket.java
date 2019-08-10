@@ -25,6 +25,10 @@ public class Basket {
     return new Basket();
   }
 
+  public static void destroyBasket(Basket apricotBasket) {
+    assert apricotBasket != null;
+  }
+
   public Apple takeApple() {
     return new Apple();
   }

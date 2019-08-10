@@ -17,6 +17,13 @@ classes:
             type: Apple 
     methods:
       - method:
+        name: destroyBasket
+        is_static: true
+        required_parameters:
+          - required_parameter:
+            name: apricotBasket
+            type: Basket
+      - method:
         name: takeApple
         returns: Apple
       - method:
@@ -88,6 +95,14 @@ classes:
         name: areApplesGood
         is_static: true
         returns: bool
+      - method:
+        name: areApplesBetterThanThis
+        is_static: true
+        returns: bool
+        required_parameters:
+          - required_parameter:
+            name: apricot
+            type: Apricot
 
   - class:
     name: Banana
@@ -205,9 +220,30 @@ classes:
   - class:
     name: Pear
     java_package: dev.fruit.fruit_picker.fruitlibrary.fruits
+    methods:
+      - method:
+        name: aPearForAnApple
+        is_static: true
+        returns: Pear
+        required_parameters:
+          - required_parameter:
+            name: apple
+            type: Apple
     fields:
       - field:
         name: closestApple
         mutable: true
         type: Apple
         initialized: true
+
+  - class:
+    name: Pineapple
+    java_package: dev.fruit.fruit_picker.fruitlibrary.fruits
+    constructors:
+      - constructor:
+        is_default: true
+    methods:
+      - method:
+        name: startEating
+      - method:
+        name: stopEating

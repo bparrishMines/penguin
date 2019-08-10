@@ -146,11 +146,20 @@ void main() {
         Basket.basketWithBananas(Basket.ripestBanana, Basket.ripestBanana);
         await pumpEventQueue();
       });
+
+      test('destroyBasket', () {
+        expect(Basket.destroyBasket(Basket()), completes);
+      });
     });
 
     group('$Apple', () {
       test('areApplesGood', () async {
         expect(Apple.areApplesGood(), completion(true));
+      });
+
+      test('areApplesBetterThanThis', () {
+        final Apricot apricot = Apricot();
+        expect(Apple.areApplesBetterThanThis(apricot), completion(false));
       });
     });
 
@@ -237,6 +246,13 @@ void main() {
         pear.closestApple = apple;
 
         expect(pear.closestApple, equals(apple));
+        expect(pear.closestApple, isNotNull);
+      });
+
+      test('aPearForAnApple', () async {
+        final Apple apple = Basket().takeApple();
+        final Pear pear = await Pear.aPearForAnApple(apple);
+        expect(pear.closestApple, isNotNull);
       });
     });
   });

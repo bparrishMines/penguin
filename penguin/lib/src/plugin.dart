@@ -128,7 +128,11 @@ class Method extends ParameterHolder {
     List<Parameter> optionalParameters,
     this.type,
     this.isStatic,
-  }) : super(requiredParameters, optionalParameters);
+        this.opener,
+        this.closer,
+  }) : super(requiredParameters, optionalParameters) {
+    if (isStatic && (opener || closer)) throw ArgumentError();
+  }
 
   @JsonKey(required: true, disallowNullValue: true)
   final String name;
@@ -140,6 +144,12 @@ class Method extends ParameterHolder {
 
   @JsonKey(defaultValue: false)
   final bool isStatic;
+
+  @JsonKey(defaultValue: false)
+  final bool opener;
+
+  @JsonKey(defaultValue: false)
+  final bool closer;
 
   factory Method.fromJson(Map json) => _$MethodFromJson(json);
 

@@ -196,7 +196,7 @@ class MethodCallInvokerNode {
   final MethodCall methodCall;
   final NodeType type;
   final List<MethodCallInvokerNode> parents;
-  final int timestamp = DateTime.now().millisecondsSinceEpoch;
+  final int timestamp = DateTime.now().microsecondsSinceEpoch;
 }
 
 enum NodeType { regular, opener, closer }
