@@ -4,7 +4,7 @@ public class Pear {
   public Apple closestApple = new Apple();
 
   public static Pear aPearForAnApple(Apple apple) {
-    assert apple != null;
+    if (apple == null) throw new IllegalArgumentException();
     return new Pear();
   }
 }

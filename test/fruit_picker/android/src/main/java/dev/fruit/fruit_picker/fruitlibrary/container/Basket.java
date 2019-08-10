@@ -3,10 +3,12 @@ package dev.fruit.fruit_picker.fruitlibrary.container;
 import dev.fruit.fruit_picker.fruitlibrary.fruits.Apple;
 import dev.fruit.fruit_picker.fruitlibrary.fruits.Apricot;
 import dev.fruit.fruit_picker.fruitlibrary.fruits.Banana;
+import dev.fruit.fruit_picker.fruitlibrary.fruits.Cherry;
 import dev.fruit.fruit_picker.fruitlibrary.fruits.Grape;
 import dev.fruit.fruit_picker.fruitlibrary.fruits.Orange;
 import dev.fruit.fruit_picker.fruitlibrary.fruits.Peach;
 import dev.fruit.fruit_picker.fruitlibrary.fruits.Pear;
+import dev.fruit.fruit_picker.fruitlibrary.fruits.Seed;
 
 public class Basket {
   public static Banana ripestBanana = new Banana();
@@ -22,11 +24,13 @@ public class Basket {
   }
 
   public static Basket basketWithBananas(Banana firstBanana, Banana secondBanana) {
+    if (firstBanana == null) throw new IllegalArgumentException();
+    if (secondBanana == null) throw new IllegalArgumentException();
     return new Basket();
   }
 
   public static void destroyBasket(Basket apricotBasket) {
-    assert apricotBasket != null;
+    if (apricotBasket == null) throw new IllegalArgumentException();
   }
 
   public Apple takeApple() {
@@ -38,7 +42,7 @@ public class Basket {
   }
 
   public void addApple(Apple apple) {
-    assert apple != null;
+    if (apple == null) throw new IllegalArgumentException();
   }
 
   public Grape takeGrape() {
@@ -55,14 +59,22 @@ public class Basket {
   }
 
   public Grape addAndTakeSomeFruit(Apple aGoodApple, Apricot aDecentApricot, Apple anotherGoodApple) {
-    assert aGoodApple != null;
-    assert aDecentApricot != null;
-    assert anotherGoodApple != null;
+    if (aGoodApple == null) throw new IllegalArgumentException();
+    if (aDecentApricot == null) throw new IllegalArgumentException();
+    if (anotherGoodApple == null) throw new IllegalArgumentException();
 
     final Grape grape = new Grape();
     grape.hasSeed = false;
     grape.color = "orange";
 
     return grape;
+  }
+
+  public Cherry getCherry() {
+    return new Cherry(new Seed());
+  }
+
+  public void saveSeed(Seed seed) {
+    if (seed == null) throw new IllegalArgumentException();
   }
 }

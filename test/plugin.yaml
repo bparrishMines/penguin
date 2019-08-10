@@ -17,6 +17,15 @@ classes:
             type: Apple 
     methods:
       - method:
+        name: getCherry
+        returns: Cherry
+      - method:
+        name: saveSeed
+        required_parameters:
+          - required_parameter:
+            name: seed
+            type: Seed
+      - method:
         name: destroyBasket
         is_static: true
         required_parameters:
@@ -247,3 +256,27 @@ classes:
         name: startEating
       - method:
         name: stopEating
+
+  - class:
+    name: Cherry
+    java_package: dev.fruit.fruit_picker.fruitlibrary.fruits
+    constructors:
+      - constructor:
+        required_parameters:
+          - required_parameter:
+            name: seed
+            type: Seed
+    fields:
+      - field:
+        name: seed
+        type: Seed
+        initialized: true
+    
+  - class:
+    name: Seed
+    java_package: dev.fruit.fruit_picker.fruitlibrary.fruits
+    fields:
+      - field:
+        name: length
+        type: double
+        initialized: true

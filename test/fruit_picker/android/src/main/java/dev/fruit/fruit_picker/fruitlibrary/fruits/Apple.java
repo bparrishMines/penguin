@@ -6,7 +6,7 @@ public class Apple {
   }
 
   public static Boolean areApplesBetterThanThis(Apricot apricot) {
-    assert apricot != null;
+    if (apricot == null) throw new IllegalArgumentException();
     return true;
   }
 }

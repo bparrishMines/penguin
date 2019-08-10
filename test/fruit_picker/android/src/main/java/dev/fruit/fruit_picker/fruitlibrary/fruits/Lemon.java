@@ -2,16 +2,17 @@ package dev.fruit.fruit_picker.fruitlibrary.fruits;
 
 public class Lemon {
   public Lemon(String color, Double sourness) {
-    assert color != null;
-    assert sourness != null;
+    if (color == null) throw new IllegalArgumentException();
+    if (sourness == null) throw new IllegalArgumentException();
   }
 
   public void makeLemonade(Boolean addSugar, Boolean addIce) {
-    assert addSugar != null;
-    assert addIce != null;
+    if (addSugar == null) throw new IllegalArgumentException();
+    if (addIce == null) throw new IllegalArgumentException();
   }
 
   public Boolean isBigger(Orange anOrange) {
+    if (anOrange == null) throw new IllegalArgumentException();
     return false;
   }
 }
