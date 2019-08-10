@@ -260,6 +260,7 @@ classes:
         closer: true
       - method:
         name: takeSmallBite
+        returns: bool
 
   - class:
     name: Cherry

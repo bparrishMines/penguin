@@ -121,7 +121,7 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
           .addStatement("final $T handle = call.argument($S)", String.class, aClass.details.variableName + "Handle");
 
       if (hasParameters) {
-        builder.addCode(extractParametersFromMethodCall(constructor.getAllParameters(), mainPluginClassName));
+        builder.addCode(extractParametersFromMethodCall(constructor.getAllParameters(), mainPluginClassName).build());
       }
 
       builder.addStatement("new $T(handle" + allParameterNamesString + ")",

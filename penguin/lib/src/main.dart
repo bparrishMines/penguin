@@ -90,7 +90,7 @@ void main(List<String> args) async {
   final PluginCreator creator = PluginCreator(plugin);
 
   _createPluginFiles(creator, pluginDir);
-  //_createJavaFiles(yaml, pluginDir, plugin);
+  _createJavaFiles(yaml, pluginDir, plugin);
 }
 
 int _runFlutterCreate({Directory directory, String projectName, String org}) {

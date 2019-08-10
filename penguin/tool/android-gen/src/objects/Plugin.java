@@ -63,9 +63,14 @@ public class Plugin {
     return (PluginMethod) method;
   }
 
-  static public PluginField field(Object field) {
-    assert field instanceof PluginField;
-    return (PluginField) field;
+  static public List<PluginParameter> parameters(Object fieldOrParameterHolder) {
+    assert fieldOrParameterHolder instanceof PluginField || fieldOrParameterHolder instanceof ParameterHolder;
+
+    if (fieldOrParameterHolder instanceof ParameterHolder) {
+      return ((ParameterHolder) fieldOrParameterHolder).allParameters;
+    }
+
+    return new ArrayList<>();
   }
 
   public static abstract class ParameterHolder {

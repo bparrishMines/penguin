@@ -6,4 +6,8 @@ public class Pineapple {
 
   public void stopEating() {
   }
+
+  public boolean takeSmallBite() {
+    return false;
+  }
 }

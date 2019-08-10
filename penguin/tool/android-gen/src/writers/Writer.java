@@ -36,7 +36,7 @@ abstract class Writer<T, K> {
     return null;
   }
 
-  final CodeBlock extractParametersFromMethodCall(List<PluginParameter> parameters, ClassName mainPluginClassName) {
+  final CodeBlock.Builder extractParametersFromMethodCall(List<PluginParameter> parameters, ClassName mainPluginClassName) {
     final CodeBlock.Builder builder = CodeBlock.builder();
 
     for (PluginParameter parameter : parameters) {
@@ -63,7 +63,7 @@ abstract class Writer<T, K> {
       }
     }
 
-    return builder.build();
+    return builder;
   }
 
   final ClassName bestGuess(String classNameString) {
