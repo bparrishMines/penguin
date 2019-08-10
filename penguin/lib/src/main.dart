@@ -79,18 +79,18 @@ void main(List<String> args) async {
     plugin.name,
   ));
 
-  final int flutterCreateCode = _runFlutterCreate(
-    directory: pluginDir,
-    projectName: plugin.name,
-    org: plugin.organization,
-  );
-
-  if (flutterCreateCode != 0) exit(2);
+//  final int flutterCreateCode = _runFlutterCreate(
+//    directory: pluginDir,
+//    projectName: plugin.name,
+//    org: plugin.organization,
+//  );
+//
+//  if (flutterCreateCode != 0) exit(2);
 
   final PluginCreator creator = PluginCreator(plugin);
 
   _createPluginFiles(creator, pluginDir);
-  _createJavaFiles(yaml, pluginDir, plugin);
+  //_createJavaFiles(yaml, pluginDir, plugin);
 }
 
 int _runFlutterCreate({Directory directory, String projectName, String org}) {

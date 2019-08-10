@@ -20,6 +20,7 @@ void main() {
   tearDownAll(() => completer.complete(null));
 
   group('fruit_picker plugin', () {
+    // TODO(me): Create test to get not implemented when invoking or not invoking
 //    test('notImplemented', () async {
 //      await Channel.channel.invokeMethod('NotAMethod');
 //    });
