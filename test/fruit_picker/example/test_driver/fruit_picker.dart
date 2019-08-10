@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/services.dart';
 import 'package:flutter_driver/driver_extension.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fruit_picker/basket.dart';
@@ -20,10 +21,36 @@ void main() {
   tearDownAll(() => completer.complete(null));
 
   group('fruit_picker plugin', () {
-    // TODO(me): Create test to get not implemented when invoking or not invoking
-//    test('notImplemented', () async {
-//      await Channel.channel.invokeMethod('NotAMethod');
-//    });
+    test('$MissingPluginException thrown when method is missing', () async {
+      expect(
+        () => Channel.channel.invokeMethod('NotAMethod'),
+        throwsA(isInstanceOf<MissingPluginException>()),
+      );
+    });
+
+    test(
+      '$MissingPluginException thrown when Invoker method is missing',
+      () async {
+        expect(
+          () => Channel.channel.invokeMethod(
+            'Invoke',
+            <Map<String, dynamic>>[
+              <String, dynamic>{
+                'method': 'Not a method',
+                'arguments': <String, dynamic>{},
+              },
+              <String, dynamic>{
+                'method': 'Basket()',
+                'arguments': <String, dynamic>{
+                  'basketHandle': 'oppa',
+                }
+              }
+            ],
+          ),
+          throwsA(isInstanceOf<MissingPluginException>()),
+        );
+      },
+    );
 
     group('$Basket', () {
       Basket basket;
