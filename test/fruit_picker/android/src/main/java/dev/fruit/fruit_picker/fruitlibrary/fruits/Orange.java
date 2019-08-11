@@ -8,4 +8,8 @@ public class Orange {
   public void squeeze(Double pressure) {
     if (pressure == null) throw new IllegalArgumentException();
   }
+
+  public Object getDiameter() {
+    return 3_147_483_647L;
+  }
 }

@@ -147,6 +147,9 @@ classes:
           - required_parameter:
             name: pressure
             type: double
+      - method:
+        name: getDiameter
+        returns: int
 
   - class:
     java_package: dev.fruit.fruit_picker.fruitlibrary.fruits

@@ -77,9 +77,8 @@ public class MethodWriter extends Writer<Object, MethodSpec> {
           .addCode(allocationCode)
           .addStatement("return null");
     } else if (returnClass == null) {
-      builder.addStatement("final $T value = " + callString, bestGuess(returnType), callerName, name)
-          .addCode(allocationCode)
-          .addStatement("return value");
+      builder.addCode(allocationCode)
+          .addStatement("return " + callString, callerName, name);
     } else if (!returnClass.details.hasInitializedFields) {
       builder.addStatement("new $T(handle, value)", returnClass.details.wrapperClassName)
           .addCode(allocationCode)

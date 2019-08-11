@@ -3,19 +3,19 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:flutter_driver/driver_extension.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fruit_picker/basket.dart';
-import 'package:fruit_picker/apple.dart';
-import 'package:fruit_picker/banana.dart';
-import 'package:fruit_picker/channel.dart';
-import 'package:fruit_picker/orange.dart';
-import 'package:fruit_picker/strawberry.dart';
-import 'package:fruit_picker/lemon.dart';
-import 'package:fruit_picker/peach.dart';
-import 'package:fruit_picker/grape.dart';
-import 'package:fruit_picker/apricot.dart';
-import 'package:fruit_picker/pear.dart';
-import 'package:fruit_picker/cherry.dart';
-import 'package:fruit_picker/pineapple.dart';
+import 'package:fruit_picker/android/basket.dart';
+import 'package:fruit_picker/android/apple.dart';
+import 'package:fruit_picker/android/banana.dart';
+import 'package:fruit_picker/android/channel.dart';
+import 'package:fruit_picker/android/orange.dart';
+import 'package:fruit_picker/android/strawberry.dart';
+import 'package:fruit_picker/android/lemon.dart';
+import 'package:fruit_picker/android/peach.dart';
+import 'package:fruit_picker/android/grape.dart';
+import 'package:fruit_picker/android/apricot.dart';
+import 'package:fruit_picker/android/pear.dart';
+import 'package:fruit_picker/android/cherry.dart';
+import 'package:fruit_picker/android/pineapple.dart';
 
 void main() {
   final Completer<String> completer = Completer<String>();
@@ -280,6 +280,10 @@ void main() {
 
       test('squeeze', () {
         expect(orange.squeeze(13), completes);
+      });
+
+      test('getDiameter', () async {
+        expect(orange.getDiameter(), completion(3147483647));
       });
     });
 
