@@ -70,6 +70,13 @@ public class Plugin {
     return false;
   }
 
+  static public boolean disposer(Object fieldOrMethod) {
+    assert fieldOrMethod instanceof PluginField || fieldOrMethod instanceof PluginMethod;
+
+    if (fieldOrMethod instanceof PluginMethod) return ((PluginMethod) fieldOrMethod).disposer;
+    return false;
+  }
+
   static public List<PluginParameter> parameters(Object fieldOrParameterHolder) {
     assert fieldOrParameterHolder instanceof PluginField || fieldOrParameterHolder instanceof ParameterHolder;
 

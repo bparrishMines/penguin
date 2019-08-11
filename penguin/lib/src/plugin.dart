@@ -59,6 +59,15 @@ class Plugin {
     return false;
   }
 
+  static bool disposer(dynamic fieldOrMethod) {
+    if (fieldOrMethod is! Field && fieldOrMethod is! Method) {
+      throw ArgumentError();
+    }
+
+    if (fieldOrMethod is Method) return fieldOrMethod.disposer;
+    return false;
+  }
+
   static List<Parameter> parameters(dynamic fieldMethodOrConstructor) {
     if (fieldMethodOrConstructor is! Field &&
         fieldMethodOrConstructor is! Method &&

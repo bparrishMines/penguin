@@ -175,6 +175,47 @@ void main() {
         expect(pineapple.startEating(), completes);
         expect(pineapple.startEating(), completes);
       });
+
+      test('takeSmallBite', () {
+        expect(pineapple.takeSmallBite(), completion(isFalse));
+      });
+
+      test('Returns a value after allocation', () {
+        pineapple.startEating();
+        expect(pineapple.takeSmallBite(), completion(isFalse));
+      });
+
+      test('stopEating', () {
+        expect(pineapple.startEating(), completes);
+        expect(pineapple.stopEating(), completes);
+
+        expect(
+          () => pineapple.startEating(),
+          throwsA(isInstanceOf<AssertionError>()),
+        );
+
+        expect(
+          () => pineapple.stopEating(),
+          throwsA(isInstanceOf<AssertionError>()),
+        );
+
+        expect(
+          () => pineapple.startEating(),
+          throwsA(isInstanceOf<AssertionError>()),
+        );
+
+        expect(
+          () => pineapple.takeSmallBite(),
+          throwsA(isInstanceOf<AssertionError>()),
+        );
+      });
+
+      test('doILikePineapple', () {
+        expect(
+          Pineapple.doILikePineapple(),
+          completion('Not on pizza! But in general, yes.'),
+        );
+      });
     });
 
     group('$Apple', () {

@@ -261,6 +261,10 @@ classes:
       - method:
         name: takeSmallBite
         returns: bool
+      - method:
+        name: doILikePineapple
+        returns: String
+        is_static: true
 
   - class:
     name: Cherry

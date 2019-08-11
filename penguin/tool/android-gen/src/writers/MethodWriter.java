@@ -50,15 +50,17 @@ public class MethodWriter extends Writer<Object, MethodSpec> {
 
     final String callerName = isStatic ? pluginClass.details.className.simpleName() : pluginClass.details.variableName;
 
-    final CodeBlock openerCode;
+    final CodeBlock allocationCode;
     if (Plugin.allocator(fieldOrMethod)) {
-      openerCode = CodeBlock.builder()
+      allocationCode = CodeBlock.builder()
           .beginControlFlow("if (!$T.allocated(handle))", mainPluginClassName)
           .addStatement("$T.addWrapper(handle, this)", mainPluginClassName)
           .endControlFlow()
           .build();
+    } else if (Plugin.disposer(fieldOrMethod)) {
+      allocationCode = CodeBlock.builder().addStatement("$T.removeWrapper(handle)", mainPluginClassName).build();
     } else {
-      openerCode = CodeBlock.builder().build();
+      allocationCode = CodeBlock.builder().build();
     }
 
     if (returnClass != null && (fieldOrMethod instanceof PluginMethod || !Plugin.mutable(fieldOrMethod))) {
@@ -68,25 +70,25 @@ public class MethodWriter extends Writer<Object, MethodSpec> {
 
     if (Plugin.mutable(fieldOrMethod)) {
       builder.addStatement(callString + " = $N", callerName, name, Plugin.name(fieldOrMethod))
-          .addCode(openerCode)
+          .addCode(allocationCode)
           .addStatement("return null");
     } else if (returnType.equals("void") || returnType.equals("Object")) {
       builder.addStatement(callString, callerName, name)
-          .addCode(openerCode)
+          .addCode(allocationCode)
           .addStatement("return null");
     } else if (returnClass == null) {
       builder.addStatement("final $T value = " + callString, bestGuess(returnType), callerName, name)
-          .addCode(openerCode)
+          .addCode(allocationCode)
           .addStatement("return value");
     } else if (!returnClass.details.hasInitializedFields) {
       builder.addStatement("new $T(handle, value)", returnClass.details.wrapperClassName)
-          .addCode(openerCode)
+          .addCode(allocationCode)
           .addStatement("return null");
     } else {
       builder.addStatement("final $T wrapper = new $T(handle, value)",
           returnClass.details.wrapperClassName,
           returnClass.details.wrapperClassName)
-          .addCode(openerCode)
+          .addCode(allocationCode)
           .addStatement("return wrapper.serializeInitializers()");
     }
 

@@ -6,16 +6,22 @@ import 'string_utils.dart';
 import 'writers.dart';
 
 class ClassDetails {
-  ClassDetails({
-    this.hasConstructor,
-    this.isReferenced,
-    this.file,
-    this.hasInitializedFields,
-    this.isInitializedField,
-  })  : assert(hasConstructor != null),
-        assert(isReferenced != null),
-        assert(file != null),
-        assert(hasInitializedFields != null);
+  ClassDetails(
+      {this.hasConstructor,
+      this.isReferenced,
+      this.file,
+      this.hasInitializedFields,
+      this.isInitializedField,
+      this.hasDisposer}) {
+    if (hasConstructor == null ||
+        isReferenced == null ||
+        file == null ||
+        hasInitializedFields == null ||
+        isInitializedField == null ||
+        hasDisposer == null) {
+      throw ArgumentError();
+    }
+  }
 
   final bool hasConstructor;
 
@@ -28,6 +34,8 @@ class ClassDetails {
   final bool hasInitializedFields;
 
   final bool isInitializedField;
+
+  final bool hasDisposer;
 }
 
 class PluginCreator {
@@ -70,6 +78,7 @@ class PluginCreator {
           (Field field) => field.initialized,
         ),
         isInitializedField: initializedClasses.contains(theClass.name),
+        hasDisposer: theClass.methods.any((Method method) => method.disposer),
       );
     }
   }
