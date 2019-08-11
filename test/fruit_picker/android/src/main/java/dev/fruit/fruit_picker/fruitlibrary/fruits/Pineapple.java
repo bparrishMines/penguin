@@ -14,4 +14,8 @@ public class Pineapple {
   public boolean takeSmallBite() {
     return false;
   }
+
+  public Boolean save() {
+    return true;
+  }
 }

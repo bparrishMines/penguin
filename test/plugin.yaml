@@ -265,6 +265,10 @@ classes:
         name: doILikePineapple
         returns: String
         is_static: true
+      - method:
+        name: save
+        returns: bool
+        allocator: true
 
   - class:
     name: Cherry

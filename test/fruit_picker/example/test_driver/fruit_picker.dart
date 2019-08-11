@@ -208,12 +208,28 @@ void main() {
           () => pineapple.takeSmallBite(),
           throwsA(isInstanceOf<AssertionError>()),
         );
+
+        expect(
+          () => pineapple.save(),
+          throwsA(isInstanceOf<AssertionError>()),
+        );
       });
 
       test('doILikePineapple', () {
         expect(
           Pineapple.doILikePineapple(),
           completion('Not on pizza! But in general, yes.'),
+        );
+      });
+
+      test('save', () {
+        expect(pineapple.save(), completion(isTrue));
+        expect(pineapple.takeSmallBite(), completion(isFalse));
+        expect(pineapple.stopEating(), completes);
+
+        expect(
+          () => pineapple.startEating(),
+          throwsA(isInstanceOf<AssertionError>()),
         );
       });
     });
