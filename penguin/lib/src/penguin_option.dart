@@ -31,17 +31,18 @@ class PenguinOption implements Option {
   static PenguinOption directory = PenguinOption._(
     name: 'directory',
     abbr: 'd',
-    help: 'Output path for plugin.',
+    help: 'Root directory of the plugin.',
     defaultsTo: './',
     valueHelp: 'path',
     isFlag: false,
   );
 
-  static PenguinOption pluginYaml = PenguinOption._(
-    name: 'plugin-yaml',
-    abbr: 'p',
-    help: 'Directory of the of plugin.yaml.',
-    defaultsTo: './',
+  static PenguinOption libraryDirectory = PenguinOption._(
+    name: 'lib-directory',
+    abbr: 'l',
+    help: 'Directory of the library created from the yaml file. '
+     'This is releative to the lib/ folder in the plugin root directory.',
+    defaultsTo: './src',
     valueHelp: 'path',
     isFlag: false,
   );
@@ -49,7 +50,7 @@ class PenguinOption implements Option {
   static List<PenguinOption> values = <PenguinOption>[
     usage,
     directory,
-    pluginYaml,
+    libraryDirectory,
   ];
 
   @override

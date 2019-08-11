@@ -56,7 +56,7 @@ void main(List<String> args) async {
   if (results[PenguinOption.usage.name]) {
     print(parser.usage);
     exit(0);
-  } else if (results.rest.isNotEmpty) {
+  } else if (results.rest.length != 1) {
     print(parser.usage);
     exit(64);
   }
@@ -64,8 +64,7 @@ void main(List<String> args) async {
   final File pluginYaml = File(
     path.join(
       Directory.current.path,
-      results[PenguinOption.pluginYaml.name],
-      'plugin.yaml',
+      results.rest.first,
     ),
   );
 
@@ -89,7 +88,15 @@ void main(List<String> args) async {
 
   final PluginCreator creator = PluginCreator(plugin);
 
-  _createPluginFiles(creator, pluginDir);
+  final Directory libraryDirectory = Directory(path.join(
+    Directory.current.path,
+    results[PenguinOption.directory.name],
+    plugin.name,
+    'lib',
+    results[PenguinOption.libraryDirectory.name],
+  ));
+
+  _createPluginFiles(creator, libraryDirectory);
   _createJavaFiles(yaml, pluginDir, plugin);
 }
 
@@ -121,7 +128,7 @@ _createPluginFiles(PluginCreator creator, Directory pluginDir) {
   final Map<String, String> files = creator.pluginAsStrings();
 
   for (String filePath in files.keys) {
-    final File classFile = File(path.join(pluginDir.path, 'lib', filePath));
+    final File classFile = File(path.join(pluginDir.path, filePath));
 
     classFile.createSync(recursive: true);
     classFile.writeAsStringSync(files[filePath]);
