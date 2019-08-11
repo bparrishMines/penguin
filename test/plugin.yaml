@@ -254,10 +254,10 @@ classes:
     methods:
       - method:
         name: startEating
-        opener: true
+        allocator: true
       - method:
         name: stopEating
-        closer: true
+        disposer: true
       - method:
         name: takeSmallBite
         returns: bool

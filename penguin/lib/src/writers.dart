@@ -57,10 +57,12 @@ abstract class Writer<T, K> {
     Map<String, cb.Expression> arguments,
     List<Parameter> parameters,
     bool includeSelfInvokerNode,
+    String nodeType,
   }) {
     arguments ??= <String, cb.Expression>{};
     parameters ??= <Parameter>[];
     includeSelfInvokerNode ??= true;
+    nodeType ??= 'regular';
 
     return References.methodCallInvokerNode.call(<cb.Expression>[
       References.methodCall.call(<cb.Expression>[
@@ -74,6 +76,7 @@ abstract class Writer<T, K> {
         ],
         References.methodCallInvokerNode,
       ),
+      References.nodeType.property(nodeType),
     ]);
   }
 
@@ -235,7 +238,7 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
     final Class returnedClass = _classFromString(returnType);
     final List<Parameter> parameters = Plugin.parameters(fieldOrMethod);
     final String invokeMethod = '$nameOfParentClass#$name';
-    final bool opener = Plugin.opener(fieldOrMethod);
+    final bool allocator = Plugin.allocator(fieldOrMethod);
 
     final MethodStructure s = _getMethodStructure(
       returnType == 'void',
@@ -263,13 +266,15 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
       arguments: _mappedMethodParams(fieldOrMethod),
       parameters: parameters,
       includeSelfInvokerNode: !static,
+      nodeType: Plugin.allocator(fieldOrMethod) ? 'allocator' : null,
     ).assignFinal('newNode', References.methodCallInvokerNode);
 
     cb.Expression invokeNodeExpression;
-    if (opener || !_structureIsAny(s, [
-      MethodStructure.unInitialized,
-      MethodStructure.returnsVoid,
-    ])) {
+    if (allocator ||
+        !_structureIsAny(s, [
+          MethodStructure.unInitialized,
+          MethodStructure.returnsVoid,
+        ])) {
       invokeNodeExpression = cb.refer('newNode').property('invoke').call(
         [],
         {},
@@ -338,14 +343,12 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
                 builder.addExpression(nodeExpression);
                 builder.addExpression(
                     cb.refer('_invokerNode').assign(cb.refer('newNode')));
-                if (opener) {
+                if (allocator) {
                   builder.addExpression(invokeNodeExpression.returned);
                 } else {
-                  builder.addExpression(References
-                      .future(cb.refer('void'))
+                  builder.addExpression(References.future(cb.refer('void'))
                       .property('value')
-                      .call(<cb.Expression>[])
-                      .returned);
+                      .call(<cb.Expression>[]).returned);
                 }
                 break;
               case MethodStructure.initializers:
@@ -359,9 +362,7 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
               case MethodStructure.unInitialized:
                 builder.addExpression(handleExpression);
                 builder.addExpression(nodeExpression);
-                if (opener) {
-                  builder.addExpression(invokeNodeExpression);
-                }
+                if (allocator) builder.addExpression(invokeNodeExpression);
                 builder.addExpression(objectExpression.returned);
                 break;
               case MethodStructure.staticUninitialized:

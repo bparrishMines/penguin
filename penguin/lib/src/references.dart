@@ -25,6 +25,8 @@ class References {
     'method_call_invoker.dart',
   );
 
+  static final nodeType = refer('NodeType', 'method_call_invoker.dart');
+
   static TypeReference future(Reference type) {
     return TypeReference((TypeReferenceBuilder builder) {
       builder

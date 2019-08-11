@@ -50,12 +50,12 @@ class Plugin {
     return false;
   }
 
-  static bool opener(dynamic fieldOrMethod) {
+  static bool allocator(dynamic fieldOrMethod) {
     if (fieldOrMethod is! Field && fieldOrMethod is! Method) {
       throw ArgumentError();
     }
 
-    if (fieldOrMethod is Method) return fieldOrMethod.opener;
+    if (fieldOrMethod is Method) return fieldOrMethod.allocator;
     return false;
   }
 
@@ -137,10 +137,10 @@ class Method extends ParameterHolder {
     List<Parameter> optionalParameters,
     this.type,
     this.isStatic,
-        this.opener,
-        this.closer,
+    this.allocator,
+    this.disposer,
   }) : super(requiredParameters, optionalParameters) {
-    if (isStatic && (opener || closer)) throw ArgumentError();
+    if (isStatic && (allocator || disposer)) throw ArgumentError();
   }
 
   @JsonKey(required: true, disallowNullValue: true)
@@ -155,10 +155,10 @@ class Method extends ParameterHolder {
   final bool isStatic;
 
   @JsonKey(defaultValue: false)
-  final bool opener;
+  final bool allocator;
 
   @JsonKey(defaultValue: false)
-  final bool closer;
+  final bool disposer;
 
   factory Method.fromJson(Map json) => _$MethodFromJson(json);
 

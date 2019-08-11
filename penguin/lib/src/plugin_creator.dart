@@ -161,6 +161,8 @@ class MethodCallInvokerNode {
       methodCall,
     ];
 
+    print(methodCalls.map((call) => call.method));
+
     return Channel.channel.invokeMethod<T>(
       'Invoke',
       _serializeMethodCalls(methodCalls).toList(),
@@ -170,7 +172,7 @@ class MethodCallInvokerNode {
   List<MethodCallInvokerNode> _getMethodCalls(
     MethodCallInvokerNode currentNode,
   ) {
-    if (currentNode == null || type == NodeType.opener) {
+    if (currentNode == null || currentNode.type == NodeType.allocator) {
       return <MethodCallInvokerNode>[];
     }
 
@@ -196,6 +198,6 @@ class MethodCallInvokerNode {
   }
 }
 
-enum NodeType { regular, opener, closer }
+enum NodeType { regular, allocator, disposer }
 ''';
 }

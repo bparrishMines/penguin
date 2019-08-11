@@ -5,6 +5,6 @@ public class PluginMethod extends Plugin.ParameterHolder {
   public String returns = "void";
   public String type;
   public boolean is_static = false;
-  public boolean opener = false;
-  public boolean closer = false;
+  public boolean allocator = false;
+  public boolean disposer = false;
 }

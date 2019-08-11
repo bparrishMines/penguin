@@ -15,7 +15,7 @@ import 'package:fruit_picker/grape.dart';
 import 'package:fruit_picker/apricot.dart';
 import 'package:fruit_picker/pear.dart';
 import 'package:fruit_picker/cherry.dart';
-import 'package:fruit_picker/seed.dart';
+import 'package:fruit_picker/pineapple.dart';
 
 void main() {
   final Completer<String> completer = Completer<String>();
@@ -161,6 +161,19 @@ void main() {
       test('saveSeed', () async {
         final Cherry cherry = await basket.getCherry();
         expect(basket.saveSeed(cherry.seed), completes);
+      });
+    });
+
+    group('$Pineapple', () {
+      Pineapple pineapple;
+
+      setUp(() {
+        pineapple = Pineapple();
+      });
+
+      test('startEating', () {
+        expect(pineapple.startEating(), completes);
+        expect(pineapple.startEating(), completes);
       });
     });
 

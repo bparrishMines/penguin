@@ -63,6 +63,13 @@ public class Plugin {
     return (PluginMethod) method;
   }
 
+  static public boolean allocator(Object fieldOrMethod) {
+    assert fieldOrMethod instanceof PluginField || fieldOrMethod instanceof PluginMethod;
+
+    if (fieldOrMethod instanceof PluginMethod) return ((PluginMethod) fieldOrMethod).allocator;
+    return false;
+  }
+
   static public List<PluginParameter> parameters(Object fieldOrParameterHolder) {
     assert fieldOrParameterHolder instanceof PluginField || fieldOrParameterHolder instanceof ParameterHolder;
 
