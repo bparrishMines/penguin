@@ -61,6 +61,13 @@ void main() {
         basket = Basket();
       });
 
+      test('$Basket(List<String>)', () async {
+        final Basket basket = Basket.nicknames(<String>['Mr. Basket']);
+        final Grape grape = await basket.aRedGrape;
+        expect(grape.color, "red");
+        expect(grape.hasSeed, isFalse);
+      });
+
       test('$Basket(Apple)', () async {
         final Basket basket = Basket();
         final Apple apple = basket.takeApple();

@@ -23,7 +23,13 @@ public class Basket {
   public Basket() { }
 
   public Basket(Apple apple) {
-    assert apple != null;
+    if (apple == null) throw new IllegalArgumentException();
+  }
+
+  public Basket(List<String> nicknames) {
+    if (nicknames.size() > 1 || !nicknames.get(0).equals("Mr. Basket")) {
+      throw new IllegalArgumentException();
+    }
   }
 
   public static Basket basketWithBananas(Banana firstBanana, Banana secondBanana) {

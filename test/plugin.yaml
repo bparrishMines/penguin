@@ -15,6 +15,12 @@ classes:
           - required_parameter:
             name: apple
             type: Apple 
+      - constructor:
+        name: nicknames
+        required_parameters:
+          - required_parameter:
+            name: basketNicknames
+            type: List<String>
     methods:
       - method:
         name: namesOfAllMyBananas
