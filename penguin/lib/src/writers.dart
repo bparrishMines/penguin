@@ -23,6 +23,11 @@ abstract class Writer<T, K> {
     return null;
   }
 
+  String _tryParseTypeFromList(String type) {
+    final Match match = RegExp(r'List<(\w+)>').firstMatch(type);
+    return match?.group(1);
+  }
+
   cb.Expression _getConstructor(
     Class classOfConstructor,
     bool isSelfFileReference,
@@ -246,6 +251,7 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
     final String invokeMethod = '$nameOfParentClass#$name';
     final bool handlesAllocation =
         Plugin.allocator(fieldOrMethod) || Plugin.disposer(fieldOrMethod);
+    final String listType = _tryParseTypeFromList(returnType);
 
     final MethodStructure s = _getMethodStructure(
       returnType == 'void',
@@ -261,9 +267,9 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
       returnRef = cb.refer(returnType, returnedClass.details.file);
     }
 
-    cb.Expression diposerAssert;
+    cb.Expression disposerAssert;
     if (parentClassHasDisposer && !static) {
-      diposerAssert = cb.refer('assert').call(<cb.Expression>[
+      disposerAssert = cb.refer('assert').call(<cb.Expression>[
         cb
             .refer('invokerNode')
             .property('type')
@@ -300,10 +306,17 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
           MethodStructure.unInitialized,
           MethodStructure.returnsVoid,
         ])) {
-      invokeNodeExpression = cb.refer('newNode').property('invoke').call(
+      invokeNodeExpression = cb
+          .refer('newNode')
+          .property(
+            listType != null ? 'invokeList' : 'invoke',
+          )
+          .call(
         [],
         {},
-        <cb.Reference>[if (returnedClass == null) cb.refer(returnType)],
+        <cb.Reference>[
+          if (returnedClass == null) cb.refer(listType ?? returnType),
+        ],
       );
     }
 
@@ -360,12 +373,12 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
             case MethodStructure.staticReturnsVoid:
             case MethodStructure.staticPrimitive:
             case MethodStructure.primitive:
-              if (diposerAssert != null) builder.addExpression(diposerAssert);
+              if (disposerAssert != null) builder.addExpression(disposerAssert);
               builder.addExpression(nodeExpression);
               builder.addExpression(invokeNodeExpression.returned);
               break;
             case MethodStructure.returnsVoid:
-              if (diposerAssert != null) builder.addExpression(diposerAssert);
+              if (disposerAssert != null) builder.addExpression(disposerAssert);
               builder.addExpression(nodeExpression);
               builder.addExpression(
                   cb.refer('_invokerNode').assign(cb.refer('newNode')));
@@ -379,7 +392,7 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
               break;
             case MethodStructure.initializers:
             case MethodStructure.staticInitializers:
-              if (diposerAssert != null) builder.addExpression(diposerAssert);
+              if (disposerAssert != null) builder.addExpression(disposerAssert);
               builder.addExpression(handleExpression);
               builder.addExpression(nodeExpression);
               builder.addExpression(invokeNodeExpression.awaited
@@ -387,7 +400,7 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
               builder.addExpression(objectExpression.returned);
               break;
             case MethodStructure.unInitialized:
-              if (diposerAssert != null) builder.addExpression(diposerAssert);
+              if (disposerAssert != null) builder.addExpression(disposerAssert);
               builder.addExpression(handleExpression);
               builder.addExpression(nodeExpression);
               if (handlesAllocation) {

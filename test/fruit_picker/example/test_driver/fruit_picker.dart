@@ -91,6 +91,13 @@ void main() {
         await pumpEventQueue();
       });
 
+      test('namesOfAllMyBananas', () {
+        expect(
+          basket.namesOfAllMyBananas(),
+          completion(containsAllInOrder(<String>['charlie', 'wanda'])),
+        );
+      });
+
       test('addApple', () {
         final Apple apple = basket.takeApple();
         expect(basket.addApple(apple), completes);

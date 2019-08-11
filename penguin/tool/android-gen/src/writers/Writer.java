@@ -2,10 +2,14 @@ package writers;
 
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.CodeBlock;
+import com.squareup.javapoet.ParameterizedTypeName;
+import com.squareup.javapoet.TypeName;
 import objects.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 abstract class Writer<T, K> {
   final Plugin plugin;
@@ -58,7 +62,7 @@ abstract class Writer<T, K> {
                 wrapperVarName,
                 parameterClass.details.variableName);
       } else {
-        final ClassName className = bestGuess(parameter.type);
+        final TypeName className = bestGuess(parameter.type);
         builder.addStatement("final $T $N = call.argument($S)", className, parameter.name, parameter.name);
       }
     }
@@ -66,7 +70,7 @@ abstract class Writer<T, K> {
     return builder;
   }
 
-  final ClassName bestGuess(String classNameString) {
+  final TypeName bestGuess(String classNameString) {
     switch (classNameString) {
       case "int":
         return ClassName.bestGuess("Integer");
@@ -74,6 +78,13 @@ abstract class Writer<T, K> {
         return ClassName.bestGuess("Boolean");
       case "double":
         return ClassName.bestGuess("Double");
+    }
+
+    final String listType = tryParseTypeFromList(classNameString);
+    if (listType != null) {
+      return ParameterizedTypeName.get(
+          CommonClassNames.LIST.name,
+          bestGuess(listType));
     }
 
     return ClassName.bestGuess(classNameString);
@@ -90,5 +101,11 @@ abstract class Writer<T, K> {
       final PluginClass returnClass = classFromString(Plugin.returnType(fieldOrMethod));
       return returnClass != null;
     }
+  }
+
+  private String tryParseTypeFromList(String type) {
+    final Matcher matcher = Pattern.compile("List<(\\w+)>").matcher(type);
+    if (matcher.find()) return matcher.group(1);
+    return null;
   }
 }

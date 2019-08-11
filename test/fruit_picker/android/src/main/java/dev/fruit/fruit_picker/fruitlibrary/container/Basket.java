@@ -1,5 +1,8 @@
 package dev.fruit.fruit_picker.fruitlibrary.container;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import dev.fruit.fruit_picker.fruitlibrary.fruits.Apple;
 import dev.fruit.fruit_picker.fruitlibrary.fruits.Apricot;
 import dev.fruit.fruit_picker.fruitlibrary.fruits.Banana;
@@ -76,5 +79,12 @@ public class Basket {
 
   public void saveSeed(Seed seed) {
     if (seed == null) throw new IllegalArgumentException();
+  }
+
+  public List<String> namesOfAllMyBananas() {
+    final List<String> bananas = new ArrayList<>();
+    bananas.add("charlie");
+    bananas.add("wanda");
+    return bananas;
   }
 }

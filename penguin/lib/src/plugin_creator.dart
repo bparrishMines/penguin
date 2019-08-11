@@ -178,6 +178,12 @@ class MethodCallInvokerNode {
     );
   }
 
+  Future<List<T>> invokeList<T>() {
+    final Completer<List<T>> completer = Completer<List<T>>();
+    invoke<List<dynamic>>().then((_) => completer.complete(_?.cast<T>()));
+    return completer.future;
+  }
+
   List<MethodCallInvokerNode> _getMethodCalls(
     MethodCallInvokerNode currentNode,
   ) {

@@ -9,7 +9,8 @@ public enum CommonClassNames {
   REGISTRAR(ClassName.get("io.flutter.plugin.common.PluginRegistry", "Registrar")),
   METHOD_CHANNEL(ClassName.get("io.flutter.plugin.common", "MethodChannel")),
   HASH_MAP(ClassName.get("java.util", "HashMap")),
-  ARRAY_LIST(ClassName.get("java.util", "ArrayList"));
+  ARRAY_LIST(ClassName.get("java.util", "ArrayList")),
+  LIST(ClassName.get("java.util", "List"));
 
   public final ClassName name;
 

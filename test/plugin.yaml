@@ -17,6 +17,9 @@ classes:
             type: Apple 
     methods:
       - method:
+        name: namesOfAllMyBananas
+        returns: List<String>
+      - method:
         name: getCherry
         returns: Cherry
       - method:
