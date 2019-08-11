@@ -52,7 +52,11 @@ public class MethodWriter extends Writer<Object, MethodSpec> {
 
     final CodeBlock openerCode;
     if (Plugin.allocator(fieldOrMethod)) {
-      openerCode = CodeBlock.builder().addStatement("$T.addWrapper(handle, this)", mainPluginClassName).build();
+      openerCode = CodeBlock.builder()
+          .beginControlFlow("if (!$T.allocated(handle))", mainPluginClassName)
+          .addStatement("$T.addWrapper(handle, this)", mainPluginClassName)
+          .endControlFlow()
+          .build();
     } else {
       openerCode = CodeBlock.builder().build();
     }
@@ -85,7 +89,7 @@ public class MethodWriter extends Writer<Object, MethodSpec> {
           .addCode(openerCode)
           .addStatement("return wrapper.serializeInitializers()");
     }
-    
+
     return builder.build();
   }
 
