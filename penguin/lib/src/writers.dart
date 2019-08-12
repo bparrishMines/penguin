@@ -229,11 +229,13 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
     this.nameOfParentClass,
     this.parameterWriter,
     this.parentClassHasDisposer,
+    this.parentClassHasAllocator,
   }) : super(plugin) {
     if (nameOfParentClass == null ||
         parameterWriter == null ||
         parameterWriter == null ||
-        parentClassHasDisposer == null) {
+        parentClassHasDisposer == null ||
+        parentClassHasAllocator == null) {
       throw ArgumentError();
     }
   }
@@ -241,6 +243,7 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
   final String nameOfParentClass;
   final ParameterWriter parameterWriter;
   final bool parentClassHasDisposer;
+  final bool parentClassHasAllocator;
 
   @override
   cb.Method write(dynamic fieldOrMethod) {
@@ -325,6 +328,7 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
 
     cb.Expression invokeNodeExpression;
     if (handlesAllocation ||
+        (s == MethodStructure.returnsVoid && parentClassHasDisposer) ||
         !_structureIsAny(s, [
           MethodStructure.unInitialized,
           MethodStructure.returnsVoid,
@@ -397,8 +401,14 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
             case MethodStructure.returnsVoid:
               if (disposerAssert != null) builder.addExpression(disposerAssert);
               builder.addExpression(nodeExpression);
-              builder.addExpression(
-                  cb.refer('_invokerNode').assign(cb.refer('newNode')));
+              if (parentClassHasAllocator && !Plugin.disposer(fieldOrMethod)) {
+                builder.addExpression(cb.refer(
+                  'if (invokerNode.type != NodeType.allocator) _invokerNode = newNode',
+                ));
+              } else {
+                builder.addExpression(
+                    cb.refer('_invokerNode').assign(cb.refer('newNode')));
+              }
               if (handlesAllocation) {
                 builder.addExpression(invokeNodeExpression.returned);
               } else {
@@ -694,6 +704,7 @@ class ClassWriter extends Writer<Class, cb.Library> {
       nameOfParentClass: theClass.name,
       parameterWriter: parameterWriter,
       parentClassHasDisposer: theClass.details.hasDisposer,
+      parentClassHasAllocator: theClass.details.hasAllocator,
     );
 
     final FieldWriter fieldWriter = FieldWriter(plugin, theClass.name);

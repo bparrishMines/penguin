@@ -12,13 +12,13 @@ class ClassDetails {
       this.file,
       this.hasInitializedFields,
       this.isInitializedField,
-      this.hasDisposer}) {
+      this.hasDisposer, this.hasAllocator,}) {
     if (hasConstructor == null ||
         isReferenced == null ||
         file == null ||
         hasInitializedFields == null ||
         isInitializedField == null ||
-        hasDisposer == null) {
+        hasDisposer == null || hasAllocator == null) {
       throw ArgumentError();
     }
   }
@@ -36,6 +36,8 @@ class ClassDetails {
   final bool isInitializedField;
 
   final bool hasDisposer;
+
+  final bool hasAllocator;
 }
 
 class PluginCreator {
@@ -79,6 +81,7 @@ class PluginCreator {
         ),
         isInitializedField: initializedClasses.contains(theClass.name),
         hasDisposer: theClass.methods.any((Method method) => method.disposer),
+        hasAllocator: theClass.methods.any((Method method) => method.allocator),
       );
     }
   }
@@ -169,8 +172,6 @@ class MethodCallInvokerNode {
           .map<MethodCall>((MethodCallInvokerNode node) => node.methodCall),
       methodCall,
     ];
-
-    print(methodCalls.map((call) => call.method));
 
     return Channel.channel.invokeMethod<T>(
       'Invoke',
