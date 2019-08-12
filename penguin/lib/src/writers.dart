@@ -28,6 +28,12 @@ abstract class Writer<T, K> {
     return match?.group(1);
   }
 
+  List<String> _tryParseTypesFromMap(String type) {
+    final Match match = RegExp(r'Map<(\w+)\s*,\s*(\w+)>').firstMatch(type);
+    if (match == null || match.groupCount != 2) return null;
+    return <String>[match.group(1), match.group(2)];
+  }
+
   cb.Expression _getConstructor(
     Class classOfConstructor,
     bool isSelfFileReference,
@@ -252,6 +258,7 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
     final bool handlesAllocation =
         Plugin.allocator(fieldOrMethod) || Plugin.disposer(fieldOrMethod);
     final String listType = _tryParseTypeFromList(returnType);
+    final List<String> mapTypes = _tryParseTypesFromMap(returnType);
 
     final MethodStructure s = _getMethodStructure(
       returnType == 'void',
@@ -300,23 +307,33 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
       nodeType: nodeType,
     ).assignFinal('newNode', References.methodCallInvokerNode);
 
+    List<cb.Reference> types = <cb.Reference>[];
+    String invokeMethodName;
+    if (listType != null) {
+      invokeMethodName = 'invokeList';
+      types.add(cb.refer(listType));
+    } else if (mapTypes != null) {
+      invokeMethodName = 'invokeMap';
+      types.add(cb.refer(mapTypes[0]));
+      types.add(cb.refer(mapTypes[1]));
+    } else if (returnedClass == null) {
+      invokeMethodName = 'invoke';
+      types.add(cb.refer(returnType));
+    } else {
+      invokeMethodName = 'invoke';
+    }
+
     cb.Expression invokeNodeExpression;
     if (handlesAllocation ||
         !_structureIsAny(s, [
           MethodStructure.unInitialized,
           MethodStructure.returnsVoid,
         ])) {
-      invokeNodeExpression = cb
-          .refer('newNode')
-          .property(
-            listType != null ? 'invokeList' : 'invoke',
-          )
-          .call(
+      invokeNodeExpression =
+          cb.refer('newNode').property(invokeMethodName).call(
         [],
         {},
-        <cb.Reference>[
-          if (returnedClass == null) cb.refer(listType ?? returnType),
-        ],
+        types,
       );
     }
 

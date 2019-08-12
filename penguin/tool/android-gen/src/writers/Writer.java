@@ -81,10 +81,11 @@ abstract class Writer<T, K> {
     }
 
     final String listType = tryParseTypeFromList(classNameString);
+    final String[] mapTypes = tryParseTypesFromMap(classNameString);
     if (listType != null) {
-      return ParameterizedTypeName.get(
-          CommonClassNames.LIST.name,
-          bestGuess(listType));
+      return ParameterizedTypeName.get(CommonClassNames.LIST.name, bestGuess(listType));
+    } else if (mapTypes != null) {
+      return ParameterizedTypeName.get(CommonClassNames.MAP.name, bestGuess(mapTypes[0]), bestGuess(mapTypes[1]));
     }
 
     return ClassName.bestGuess(classNameString);
@@ -106,6 +107,12 @@ abstract class Writer<T, K> {
   private String tryParseTypeFromList(String type) {
     final Matcher matcher = Pattern.compile("List<(\\w+)>").matcher(type);
     if (matcher.find()) return matcher.group(1);
+    return null;
+  }
+
+  private String[] tryParseTypesFromMap(String type) {
+    final Matcher matcher = Pattern.compile("Map<(\\w+)\\s*,\\s*(\\w+)>").matcher(type);
+    if (matcher.find()) return new String[]{matcher.group(1), matcher.group(2)};
     return null;
   }
 }

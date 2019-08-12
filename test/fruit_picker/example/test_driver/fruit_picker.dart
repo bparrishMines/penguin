@@ -288,8 +288,28 @@ void main() {
     });
 
     group('$Strawberry', () {
+      Strawberry strawberry;
+
+      setUp(() {
+        strawberry = Strawberry();
+      });
+
+      test('giveMeAMap', () {
+        final Strawberry strawberry = Strawberry.giveMeAMap(<bool, double>{
+          true: 0,
+          false: 1,
+        });
+      });
+
       test('seeds', () {
         expect(Strawberry.averageNumberOfSeeds, completion(50));
+      });
+
+      test('namingSucksSoHereIsAMap', () {
+        expect(
+          strawberry.namingSucksSoHereIsAMap(),
+          completion(allOf(containsPair('one', 1), containsPair('two', 2))),
+        );
       });
     });
 

@@ -155,8 +155,18 @@ classes:
     java_package: dev.fruit.fruit_picker.fruitlibrary.fruits
     constructors:
       - constructor:
-        is_default: true 
+        is_default: true
+      - constructor:
+        name: giveMeAMap
+        required_parameters:
+          - required_parameter:
+            name: aMap
+            type: Map<bool, double>
     name: Strawberry
+    methods:
+      - method:
+        name: namingSucksSoHereIsAMap
+        returns: Map<String, int>
     fields:
       - field:
         name: averageNumberOfSeeds

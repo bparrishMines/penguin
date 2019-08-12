@@ -184,6 +184,14 @@ class MethodCallInvokerNode {
     return completer.future;
   }
 
+  Future<Map<T, S>> invokeMap<T, S>() {
+    final Completer<Map<T, S>> completer = Completer<Map<T, S>>();
+    invoke<Map<dynamic, dynamic>>().then(
+      (_) => completer.complete(_?.cast<T, S>()),
+    );
+    return completer.future;
+  }
+
   List<MethodCallInvokerNode> _getMethodCalls(
     MethodCallInvokerNode currentNode,
   ) {
