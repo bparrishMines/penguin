@@ -262,6 +262,7 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
         Plugin.allocator(fieldOrMethod) || Plugin.disposer(fieldOrMethod);
     final String listType = _tryParseTypeFromList(returnType);
     final List<String> mapTypes = _tryParseTypesFromMap(returnType);
+    final bool allocator = Plugin.allocator(fieldOrMethod);
 
     final MethodStructure s = _getMethodStructure(
       returnType == 'void',
@@ -288,6 +289,13 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
       ]);
     }
 
+    cb.Expression updateNode;
+    if (parentClassHasAllocator && !static) {
+      updateNode = cb
+          .refer('_updateInvokerNode')
+          .call(<cb.Expression>[cb.refer('newNode')]);
+    }
+
     cb.Expression handleExpression;
     if (returnedClass != null) {
       handleExpression = References.channel
@@ -302,7 +310,7 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
       nodeType = 'disposer';
     }
 
-    cb.Expression nodeExpression = _invokerNodeExpression(
+    cb.Expression newNodeExpression = _invokerNodeExpression(
       invokeMethod,
       arguments: _mappedMethodParams(fieldOrMethod),
       parameters: parameters,
@@ -344,6 +352,11 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
         {},
         types,
       );
+    }
+
+    cb.Expression setNodeExpression;
+    if (allocator || _structureIsAny(s, [MethodStructure.returnsVoid])) {
+      setNodeExpression = cb.refer('_invokerNode').assign(cb.refer('newNode'));
     }
 
     cb.Expression objectExpression;
@@ -400,33 +413,34 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
             case MethodStructure.staticPrimitive:
             case MethodStructure.primitive:
               if (disposerAssert != null) builder.addExpression(disposerAssert);
-              builder.addExpression(nodeExpression);
+              builder.addExpression(newNodeExpression);
+              if (updateNode != null) builder.addExpression(updateNode);
               builder.addExpression(invokeNodeExpression.returned);
               break;
             case MethodStructure.returnsVoid:
               if (disposerAssert != null) builder.addExpression(disposerAssert);
-              builder.addExpression(nodeExpression);
-              if (parentClassHasAllocator && !Plugin.disposer(fieldOrMethod)) {
+              builder.addExpression(newNodeExpression);
+              if (updateNode != null) builder.addExpression(updateNode);
+              if (!handlesAllocation && parentClassHasAllocator) {
                 builder.addExpression(cb.refer(
-                  'if (invokerNode.type != NodeType.allocator) _invokerNode = newNode',
+                  'if (invokerNode.type != NodeType.allocator) return Future<void>.value()',
                 ));
-              } else {
-                builder.addExpression(
-                    cb.refer('_invokerNode').assign(cb.refer('newNode')));
               }
-              if (handlesAllocation) {
+              if (parentClassHasAllocator) {
                 builder.addExpression(invokeNodeExpression.returned);
               } else {
+                builder.addExpression(setNodeExpression);
                 builder.addExpression(References.future(cb.refer('void'))
                     .property('value')
-                    .call(<cb.Expression>[]).returned);
+                    .call([]).returned);
               }
               break;
             case MethodStructure.initializers:
             case MethodStructure.staticInitializers:
               if (disposerAssert != null) builder.addExpression(disposerAssert);
               builder.addExpression(handleExpression);
-              builder.addExpression(nodeExpression);
+              builder.addExpression(newNodeExpression);
+              if (updateNode != null) builder.addExpression(updateNode);
               builder.addExpression(invokeNodeExpression.awaited
                   .assignFinal('source', cb.refer('Map')));
               builder.addExpression(objectExpression.returned);
@@ -434,16 +448,15 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
             case MethodStructure.unInitialized:
               if (disposerAssert != null) builder.addExpression(disposerAssert);
               builder.addExpression(handleExpression);
-              builder.addExpression(nodeExpression);
-              if (handlesAllocation) {
-                builder.addExpression(invokeNodeExpression);
-              }
+              builder.addExpression(newNodeExpression);
+              if (updateNode != null) builder.addExpression(updateNode);
               builder.addExpression(objectExpression.returned);
               break;
             case MethodStructure.staticUninitialized:
               builder.addExpression(handleExpression);
-              builder.addExpression(nodeExpression);
+              builder.addExpression(newNodeExpression);
               builder.addExpression(invokeNodeExpression);
+              if (updateNode != null) builder.addExpression(updateNode);
               builder.addExpression(objectExpression.returned);
               break;
           }
@@ -791,10 +804,37 @@ class ClassWriter extends Writer<Class, cb.Library> {
                     !Plugin.mutable(field) && !Plugin.initialized(field)),
               ),
             )
-            ..methods.addAll(methodWriter.writeAll(theClass.methods));
+            ..methods.addAll([
+              ...methodWriter.writeAll(theClass.methods),
+              if (theClass.details.hasAllocator) _updateNodeMethod(),
+            ]);
         }),
         ...implClassWriter.writeAll(implClasses),
       ]);
+    });
+  }
+
+  cb.Method _updateNodeMethod() {
+    return cb.Method((cb.MethodBuilder builder) {
+      builder
+        ..name = '_updateInvokerNode'
+        ..returns = cb.refer('void')
+        ..requiredParameters.add(cb.Parameter(
+          (cb.ParameterBuilder paramBuilder) {
+            paramBuilder
+              ..name = 'newNode'
+              ..type = References.methodCallInvokerNode;
+          },
+        ))
+        ..body = cb.Code(
+          '''
+if (newNode.type != NodeType.disposer && 
+    _invokerNode.type == NodeType.allocator) {
+  return;
+}
+_invokerNode = newNode;
+''',
+        );
     });
   }
 

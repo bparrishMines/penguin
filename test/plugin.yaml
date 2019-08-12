@@ -282,7 +282,6 @@ classes:
         disposer: true
       - method:
         name: takeSmallBite
-        returns: bool
       - method:
         name: doILikePineapple
         returns: String

@@ -191,12 +191,12 @@ void main() {
       });
 
       test('takeSmallBite', () {
-        expect(pineapple.takeSmallBite(), completion(isFalse));
+        expect(pineapple.takeSmallBite(), completes);
       });
 
       test('Returns a value after allocation', () {
         pineapple.startEating();
-        expect(pineapple.takeSmallBite(), completion(isFalse));
+        expect(pineapple.takeSmallBite(), completes);
       });
 
       test('stopEating', () {
@@ -238,7 +238,7 @@ void main() {
 
       test('save', () {
         expect(pineapple.save(), completion(isTrue));
-        expect(pineapple.takeSmallBite(), completion(isFalse));
+        expect(pineapple.takeSmallBite(), completes);
         expect(pineapple.stopEating(), completes);
 
         expect(
