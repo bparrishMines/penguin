@@ -322,8 +322,13 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
     } else if (returnedClass == null) {
       invokeMethodName = 'invoke';
       types.add(cb.refer(returnType));
+    } else if (returnedClass.details.hasInitializedFields) {
+      invokeMethodName = 'invokeMap';
+      types.add(cb.refer('String'));
+      types.add(cb.refer('dynamic'));
     } else {
       invokeMethodName = 'invoke';
+      types.add(cb.refer('void'));
     }
 
     cb.Expression invokeNodeExpression;
