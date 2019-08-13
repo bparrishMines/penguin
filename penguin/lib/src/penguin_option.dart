@@ -47,10 +47,19 @@ class PenguinOption implements Option {
     isFlag: false,
   );
 
+  static PenguinOption create = PenguinOption._(
+    name: 'create',
+    abbr: 'c',
+    help: 'Run flutter create.',
+    negatable: true,
+    isFlag: true,
+  );
+
   static List<PenguinOption> values = <PenguinOption>[
     usage,
     directory,
     libraryDirectory,
+    create,
   ];
 
   @override

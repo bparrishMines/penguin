@@ -78,13 +78,15 @@ void main(List<String> args) async {
     plugin.name,
   ));
 
-  final int flutterCreateCode = _runFlutterCreate(
-    directory: pluginDir,
-    projectName: plugin.name,
-    org: plugin.organization,
-  );
+  if (results[PenguinOption.create.name]) {
+    final int flutterCreateCode = _runFlutterCreate(
+      directory: pluginDir,
+      projectName: plugin.name,
+      org: plugin.organization,
+    );
 
-  if (flutterCreateCode != 0) exit(2);
+    if (flutterCreateCode != 0) exit(2);
+  }
 
   final PluginCreator creator = PluginCreator(plugin);
 
@@ -124,7 +126,7 @@ int _runFlutterCreate({Directory directory, String projectName, String org}) {
   return result.exitCode;
 }
 
-_createPluginFiles(PluginCreator creator, Directory pluginDir) {
+void _createPluginFiles(PluginCreator creator, Directory pluginDir) {
   final Map<String, String> files = creator.pluginAsStrings();
 
   for (String filePath in files.keys) {
@@ -136,6 +138,23 @@ _createPluginFiles(PluginCreator creator, Directory pluginDir) {
 }
 
 void _createJavaFiles(String yaml, Directory pluginDir, Plugin plugin) {
+  final Directory androidDir = Directory(path.join(pluginDir.path, 'android'));
+  Directory javaFileDir = androidDir
+      .listSync(recursive: true, followLinks: false)
+      .firstWhere((FileSystemEntity entity) =>
+          entity is Directory &&
+          (path.basename(entity.path) == plugin.name ||
+              path.basename(entity.path) == plugin.name.replaceAll('_', '')));
+
+  if (javaFileDir == null) {
+    javaFileDir = Directory(path.joinAll(<String>[
+      pluginDir.path,
+      'android/src/main/java',
+      ...plugin.organization.split('.'),
+      plugin.name,
+    ]));
+  }
+
   final Map<String, String> replacements = <String, String>{
     'plugin:': '!objects.Plugin',
     'class:': '!objects.PluginClass',
@@ -145,6 +164,7 @@ void _createJavaFiles(String yaml, Directory pluginDir, Plugin plugin) {
     'field:': '!objects.PluginField',
     'constructor:': '!objects.PluginConstructor',
     'constant:': '!objects.PluginConstant',
+    plugin.name: path.basename(javaFileDir.path),
   };
 
   for (MapEntry<String, String> entry in replacements.entries) {
@@ -173,13 +193,6 @@ void _createJavaFiles(String yaml, Directory pluginDir, Plugin plugin) {
   final String output = result.stdout;
 
   final List<String> files = output.split('@!!#%@#');
-
-  final Directory javaFileDir = Directory(path.joinAll(<String>[
-    pluginDir.path,
-    'android/src/main/java',
-    ...plugin.organization.split('.'),
-    plugin.name,
-  ]));
 
   for (int i = 0; i < files.length; i += 2) {
     final File classFile = File(path.join(javaFileDir.path, files[i]));
