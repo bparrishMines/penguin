@@ -908,7 +908,7 @@ _invokerNode = newNode;
                 cb.Parameter((cb.ParameterBuilder builder) {
                   builder
                     ..name = 'handle'
-                    ..type = cb.refer('String');
+                    ..toThis = true;
                 }),
                 cb.Parameter((cb.ParameterBuilder builder) {
                   builder.name = 'source';
@@ -917,7 +917,6 @@ _invokerNode = newNode;
               ])
               ..initializers.addAll(<cb.Code>[
                 cb.refer('_invokerNode').assign(cb.refer('creatorNode')).code,
-                cb.refer('handle').assign(cb.refer('handle')).code,
                 ...initializers,
               ]);
           },

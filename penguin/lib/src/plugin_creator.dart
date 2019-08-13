@@ -167,11 +167,10 @@ class MethodCallInvokerNode {
     uniqueNodes.sort((MethodCallInvokerNode a, MethodCallInvokerNode b) =>
         a.timestamp.compareTo(b.timestamp));
 
-    final List<MethodCall> methodCalls = <MethodCall>[
-      ...uniqueNodes
-          .map<MethodCall>((MethodCallInvokerNode node) => node.methodCall),
-      methodCall,
-    ];
+    final List<MethodCall> methodCalls = uniqueNodes
+        .map<MethodCall>((MethodCallInvokerNode node) => node.methodCall)
+        .toList()
+          ..add(methodCall);
 
     return Channel.channel.invokeMethod<T>(
       'Invoke',
