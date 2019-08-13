@@ -13,11 +13,6 @@ class References {
     'package:flutter/services.dart',
   );
 
-  static final visibleForTesting = refer(
-    'visibleForTesting',
-    'package:flutter/foundation.dart',
-  );
-
   static final channel = refer('Channel', 'channel.dart');
 
   static final methodCallInvokerNode = refer(

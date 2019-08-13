@@ -101,7 +101,6 @@ class PluginCreator {
                   cb.literalString('${plugin.organization}/${plugin.name}'),
                 ],
               ).code;
-              builder.annotations.add(References.visibleForTesting);
             }),
           )
           ..methods.add(cb.Method((cb.MethodBuilder builder) {
@@ -109,7 +108,6 @@ class PluginCreator {
               ..name = 'nextHandle'
               ..static = true
               ..returns = cb.refer('String')
-              ..annotations.add(References.visibleForTesting)
               ..body = cb
                   .literalString('dart\${DateTime.now().toIso8601String()}')
                   .code;
