@@ -813,12 +813,14 @@ class ClassWriter extends Writer<Class, cb.Library> {
                     ..name = '_invokerNode'
                     ..type = References.methodCallInvokerNode;
                 }),
-                cb.Field((cb.FieldBuilder builder) {
-                  builder
-                    ..name = 'handle'
-                    ..type = cb.refer('String')
-                    ..modifier = cb.FieldModifier.final$;
-                }),
+                if (theClass.details.hasConstructor ||
+                    theClass.details.isReferenced)
+                  cb.Field((cb.FieldBuilder builder) {
+                    builder
+                      ..name = 'handle'
+                      ..type = cb.refer('String')
+                      ..modifier = cb.FieldModifier.final$;
+                  }),
                 ...fieldWriter.writeAll(theClass.fields.where(
                   (Field field) {
                     return field.mutable || field.initialized;
@@ -844,6 +846,14 @@ class ClassWriter extends Writer<Class, cb.Library> {
                 ),
               )
               ..methods.addAll([
+                if (!theClass.details.hasConstructor &&
+                    !theClass.details.isReferenced)
+                  cb.Method((cb.MethodBuilder builder) {
+                    builder
+                      ..name = 'handle'
+                      ..returns = cb.refer('String')
+                      ..type = cb.MethodType.getter;
+                  }),
                 ...methodWriter.writeAll(theClass.methods),
                 if (theClass.details.hasAllocator) _updateNodeMethod(),
               ]);

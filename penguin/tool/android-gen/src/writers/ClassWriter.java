@@ -3,6 +3,7 @@ package writers;
 import com.squareup.javapoet.*;
 import objects.*;
 import javax.lang.model.element.Modifier;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,10 +22,8 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
   @Override
   public JavaFile write(PluginClass aClass) {
     final TypeSpec.Builder classBuilder = TypeSpec.classBuilder(aClass.details.wrapperClassName.simpleName())
-        .addModifiers(Modifier.FINAL)
         .addSuperinterface(flutterWrapperClassName)
-        .addField(String.class, "handle", Modifier.PRIVATE, Modifier.FINAL)
-        .addField(aClass.details.className, aClass.details.variableName, Modifier.FINAL, Modifier.PUBLIC);
+        .addFields(getWrapperFields(aClass, aClass.details.hasConstructor || aClass.details.isReferenced));
 
     if (aClass.details.hasConstructor) {
       classBuilder.addMethod(buildOnStaticMethodCall(aClass));
@@ -186,5 +185,24 @@ public class ClassWriter extends Writer<PluginClass, JavaFile> {
     builder.addStatement("return initializers");
 
     return builder.build();
+  }
+
+  private List<FieldSpec> getWrapperFields(PluginClass aClass, boolean areFinal) {
+    final List<FieldSpec> wrapperFields = new ArrayList<>();
+
+    if (areFinal) {
+      wrapperFields.add(FieldSpec.builder(String.class, "handle", Modifier.PRIVATE, Modifier.FINAL).build());
+      wrapperFields.add(FieldSpec.builder(aClass.details.className,
+          aClass.details.variableName,
+          Modifier.FINAL,
+          Modifier.PUBLIC).build());
+    } else {
+      wrapperFields.add(FieldSpec.builder(String.class, "handle", Modifier.PRIVATE).build());
+      wrapperFields.add(FieldSpec.builder(aClass.details.className,
+          aClass.details.variableName,
+          Modifier.PUBLIC).build());
+    }
+
+    return wrapperFields;
   }
 }

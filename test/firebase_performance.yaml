@@ -167,5 +167,43 @@ classes:
           - required_parameter:
             name: traceName
             type: String
-
-
+  - class:
+    name: HttpMethod
+    java_package: com.google.firebase.perf.FirebasePerformance
+    constants:
+      - constant:
+        name: connect
+        type: String
+        literal_value: 'CONNECT'
+      - constant:
+        name: delete
+        type: String
+        literal_value: 'DELETE'
+      - constant:
+        name: get
+        type: String
+        literal_value: 'GET'
+      - constant:
+        name: head
+        type: String
+        literal_value: 'HEAD'
+      - constant:
+        name: options
+        type: String
+        literal_value: 'OPTIONS'
+      - constant:
+        name: patch
+        type: String
+        literal_value: 'PATCH'
+      - constant:
+        name: post
+        type: String
+        literal_value: 'POST'
+      - constant:
+        name: put
+        type: String
+        literal_value: 'PUT'
+      - constant:
+        name: trace
+        type: String
+        literal_value: 'TRACE'

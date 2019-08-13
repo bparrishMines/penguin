@@ -8,6 +8,7 @@ import writers.CommonClassNames;
 
 import javax.lang.model.element.Modifier;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class PluginCreator {
   static private final String CLASS_PREFIX = "Flutter";
@@ -61,6 +62,10 @@ public class PluginCreator {
           theClass.getFieldsAndMethods().stream().anyMatch(Plugin::initialized),
           initializedFields.contains(theClass.name));
     }
+
+    plugin.classes = plugin.classes.stream().filter(aClass->aClass.details.hasConstructor ||
+        aClass.details.isReferenced ||
+        !aClass.getFieldsAndMethods().isEmpty()).collect(Collectors.toList());
   }
 
   public Map<String, String> filesAndStrings() {
