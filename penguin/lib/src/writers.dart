@@ -4,11 +4,12 @@ import 'plugin.dart';
 import 'references.dart';
 
 abstract class Writer<T, K> {
-  Writer(this.plugin) {
-    if (plugin == null) throw ArgumentError();
+  Writer(this.plugin, this.nameOfParentClass) {
+    if (plugin == null || nameOfParentClass == null) throw ArgumentError();
   }
 
   final Plugin plugin;
+  final String nameOfParentClass;
 
   K write(T object);
 
@@ -111,11 +112,8 @@ abstract class Writer<T, K> {
 }
 
 class FieldWriter extends Writer<Field, cb.Field> {
-  FieldWriter(Plugin plugin, this.nameOfParentClass) : super(plugin) {
-    if (nameOfParentClass == null) throw ArgumentError();
-  }
-
-  final String nameOfParentClass;
+  FieldWriter(Plugin plugin, String nameOfParentClass)
+      : super(plugin, nameOfParentClass);
 
   @override
   cb.Field write(Field field) {
@@ -139,9 +137,8 @@ class FieldWriter extends Writer<Field, cb.Field> {
 }
 
 class MutableFieldWriter extends Writer<Field, List<cb.Method>> {
-  MutableFieldWriter(Plugin plugin, this.nameOfParentClass) : super(plugin);
-
-  final String nameOfParentClass;
+  MutableFieldWriter(Plugin plugin, String nameOfParentClass)
+      : super(plugin, nameOfParentClass);
 
   @override
   List<cb.Method> write(Field field) {
@@ -225,14 +222,13 @@ enum MethodStructure {
 
 class MethodWriter extends Writer<dynamic, cb.Method> {
   MethodWriter(
-    Plugin plugin, {
-    this.nameOfParentClass,
+    Plugin plugin,
+    String nameOfParentClass, {
     this.parameterWriter,
     this.parentClassHasDisposer,
     this.parentClassHasAllocator,
-  }) : super(plugin) {
-    if (nameOfParentClass == null ||
-        parameterWriter == null ||
+  }) : super(plugin, nameOfParentClass) {
+    if (parameterWriter == null ||
         parameterWriter == null ||
         parentClassHasDisposer == null ||
         parentClassHasAllocator == null) {
@@ -240,7 +236,6 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
     }
   }
 
-  final String nameOfParentClass;
   final ParameterWriter parameterWriter;
   final bool parentClassHasDisposer;
   final bool parentClassHasAllocator;
@@ -520,15 +515,11 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
 }
 
 class InitializerWriter extends Writer<Field, cb.Code> {
-  InitializerWriter(
-    Plugin plugin,
-    this.nameOfParentClass,
-    this.setNull,
-  ) : super(plugin) {
-    if (nameOfParentClass == null || setNull == null) throw ArgumentError();
+  InitializerWriter(Plugin plugin, String nameOfParentClass, this.setNull)
+      : super(plugin, nameOfParentClass) {
+    if (setNull == null) throw ArgumentError();
   }
 
-  final String nameOfParentClass;
   final bool setNull;
 
   @override
@@ -558,17 +549,16 @@ class InitializerWriter extends Writer<Field, cb.Code> {
 
 class ConstructorWriter extends Writer<Constructor, cb.Constructor> {
   ConstructorWriter(
-    Plugin plugin, {
-    this.nameOfParentClass,
+    Plugin plugin,
+    String nameOfParentClass, {
     this.initializers,
     this.parameterWriter,
-  }) : super(plugin) {
+  }) : super(plugin, nameOfParentClass) {
     if (nameOfParentClass == null ||
         initializers == null ||
         parameterWriter == null) throw ArgumentError();
   }
 
-  final String nameOfParentClass;
   final Iterable<cb.Code> initializers;
   final ParameterWriter parameterWriter;
 
@@ -620,11 +610,8 @@ class ConstructorWriter extends Writer<Constructor, cb.Constructor> {
 }
 
 class ParameterWriter extends Writer<Parameter, cb.Parameter> {
-  ParameterWriter(Plugin plugin, this.nameOfParentClass) : super(plugin) {
-    if (nameOfParentClass == null) throw ArgumentError();
-  }
-
-  final String nameOfParentClass;
+  ParameterWriter(Plugin plugin, String nameOfParentClass)
+      : super(plugin, nameOfParentClass);
 
   @override
   cb.Parameter write(Parameter parameter) {
@@ -644,11 +631,8 @@ class ParameterWriter extends Writer<Parameter, cb.Parameter> {
 }
 
 class ImplClassWriter extends Writer<Class, cb.Class> {
-  ImplClassWriter(Plugin plugin, this.nameOfParentClass) : super(plugin) {
-    if (nameOfParentClass == null) throw ArgumentError();
-  }
-
-  final String nameOfParentClass;
+  ImplClassWriter(Plugin plugin, String nameOfParentClass)
+      : super(plugin, nameOfParentClass);
 
   @override
   cb.Class write(Class theClass) {
@@ -693,8 +677,52 @@ class ImplClassWriter extends Writer<Class, cb.Class> {
   }
 }
 
+class ConstantWriter extends Writer<Constant, cb.Field> {
+  ConstantWriter(Plugin plugin, String nameOfParentClass)
+      : super(plugin, nameOfParentClass);
+
+  @override
+  cb.Field write(Constant constant) {
+    final Class constantClass = _classFromString(constant.type);
+    final cb.Code assignment = constant.type == 'String'
+        ? cb.literalString(constant.literalValue).code
+        : cb.Code(constant.literalValue);
+    return cb.Field((cb.FieldBuilder builder) {
+      builder
+        ..name = constant.name
+        ..static = true
+        ..assignment = assignment
+        ..modifier = cb.FieldModifier.final$
+        ..type =
+            constantClass == null || constantClass.name == nameOfParentClass
+                ? cb.refer(constant.type)
+                : cb.refer(constantClass.name, constantClass.details.file);
+    });
+  }
+}
+
+class DirectiveWriter extends Writer<Constant, Iterable<cb.Directive>> {
+  DirectiveWriter(Plugin plugin, String nameOfParentClass)
+      : super(plugin, nameOfParentClass);
+
+  @override
+  Iterable<cb.Directive> write(Constant constant) {
+    final List<Class> recognizedClasses = <Class>[];
+    for (Class pluginClass in plugin.classes) {
+      if (pluginClass.name == nameOfParentClass) continue;
+      if (constant.literalValue.contains('${pluginClass.name}(')) {
+        recognizedClasses.add(_classFromString(plugin.name));
+      }
+    }
+
+    return recognizedClasses.map<cb.Directive>(
+      (Class aClass) => cb.Directive.import(aClass.details.file),
+    );
+  }
+}
+
 class ClassWriter extends Writer<Class, cb.Library> {
-  ClassWriter(Plugin plugin) : super(plugin);
+  ClassWriter(Plugin plugin) : super(plugin, '');
 
   @override
   cb.Library write(Class theClass) {
@@ -710,7 +738,7 @@ class ClassWriter extends Writer<Class, cb.Library> {
 
     final ConstructorWriter constructorWriter = ConstructorWriter(
       plugin,
-      nameOfParentClass: theClass.name,
+      theClass.name,
       initializers: constructorInitWriter.writeAll(theClass.fields.where(
         (Field field) => field.initialized,
       )),
@@ -719,7 +747,7 @@ class ClassWriter extends Writer<Class, cb.Library> {
 
     final MethodWriter methodWriter = MethodWriter(
       plugin,
-      nameOfParentClass: theClass.name,
+      theClass.name,
       parameterWriter: parameterWriter,
       parentClassHasDisposer: theClass.details.hasDisposer,
       parentClassHasAllocator: theClass.details.hasAllocator,
@@ -748,69 +776,80 @@ class ClassWriter extends Writer<Class, cb.Library> {
       theClass.name,
     );
 
+    final ConstantWriter constantWriter = ConstantWriter(plugin, theClass.name);
+    final DirectiveWriter directiveWriter = DirectiveWriter(
+      plugin,
+      theClass.name,
+    );
+
     return cb.Library((cb.LibraryBuilder builder) {
-      builder.body.addAll(<cb.Class>[
-        cb.Class((cb.ClassBuilder classBuilder) {
-          classBuilder
-            ..name = theClass.name
-            ..abstract = !theClass.details.hasConstructor
-            ..constructors.addAll(
-              _getConstructors(
-                  constructors: constructorWriter.writeAll(
-                    theClass.constructors,
-                  ),
-                  initializers: internalConstructorInitWriter.writeAll(
-                    theClass.fields.where(
-                      (Field field) => field.initialized,
+      builder
+        ..directives.addAll(
+            directiveWriter.writeAll(theClass.constants).expand((_) => _))
+        ..body.addAll(<cb.Class>[
+          cb.Class((cb.ClassBuilder classBuilder) {
+            classBuilder
+              ..name = theClass.name
+              ..abstract = !theClass.details.hasConstructor
+              ..constructors.addAll(
+                _getConstructors(
+                    constructors: constructorWriter.writeAll(
+                      theClass.constructors,
                     ),
-                  ),
-                  hasInternalConstructor:
-                      theClass.details.hasInitializedFields ||
-                          theClass.details.isInitializedField ||
-                          theClass.details.isReferenced),
-            )
-            ..fields.addAll(<cb.Field>[
-              cb.Field((cb.FieldBuilder builder) {
+                    initializers: internalConstructorInitWriter.writeAll(
+                      theClass.fields.where(
+                        (Field field) => field.initialized,
+                      ),
+                    ),
+                    hasInternalConstructor:
+                        theClass.details.hasInitializedFields ||
+                            theClass.details.isInitializedField ||
+                            theClass.details.isReferenced),
+              )
+              ..fields.addAll(<cb.Field>[
+                ...constantWriter.writeAll(theClass.constants),
+                cb.Field((cb.FieldBuilder builder) {
+                  builder
+                    ..name = '_invokerNode'
+                    ..type = References.methodCallInvokerNode;
+                }),
+                cb.Field((cb.FieldBuilder builder) {
+                  builder
+                    ..name = 'handle'
+                    ..type = cb.refer('String')
+                    ..modifier = cb.FieldModifier.final$;
+                }),
+                ...fieldWriter.writeAll(theClass.fields.where(
+                  (Field field) {
+                    return field.mutable || field.initialized;
+                  },
+                )),
+              ])
+              ..methods.addAll(mutableFieldWriter
+                  .writeAll(
+                      theClass.fields.where((Field field) => field.mutable))
+                  .expand((_) => _))
+              ..methods.add(cb.Method((cb.MethodBuilder builder) {
                 builder
-                  ..name = '_invokerNode'
-                  ..type = References.methodCallInvokerNode;
-              }),
-              cb.Field((cb.FieldBuilder builder) {
-                builder
-                  ..name = 'handle'
-                  ..type = cb.refer('String')
-                  ..modifier = cb.FieldModifier.final$;
-              }),
-              ...fieldWriter.writeAll(theClass.fields.where(
-                (Field field) {
-                  return field.mutable || field.initialized;
-                },
-              )),
-            ])
-            ..methods.addAll(mutableFieldWriter
-                .writeAll(theClass.fields.where((Field field) => field.mutable))
-                .expand((_) => _))
-            ..methods.add(cb.Method((cb.MethodBuilder builder) {
-              builder
-                ..name = 'invokerNode'
-                ..type = cb.MethodType.getter
-                ..lambda = true
-                ..body = cb.refer('_invokerNode').code
-                ..returns = References.methodCallInvokerNode;
-            }))
-            ..methods.addAll(
-              methodWriter.writeAll(
-                theClass.fields.where((Field field) =>
-                    !Plugin.mutable(field) && !Plugin.initialized(field)),
-              ),
-            )
-            ..methods.addAll([
-              ...methodWriter.writeAll(theClass.methods),
-              if (theClass.details.hasAllocator) _updateNodeMethod(),
-            ]);
-        }),
-        ...implClassWriter.writeAll(implClasses),
-      ]);
+                  ..name = 'invokerNode'
+                  ..type = cb.MethodType.getter
+                  ..lambda = true
+                  ..body = cb.refer('_invokerNode').code
+                  ..returns = References.methodCallInvokerNode;
+              }))
+              ..methods.addAll(
+                methodWriter.writeAll(
+                  theClass.fields.where((Field field) =>
+                      !Plugin.mutable(field) && !Plugin.initialized(field)),
+                ),
+              )
+              ..methods.addAll([
+                ...methodWriter.writeAll(theClass.methods),
+                if (theClass.details.hasAllocator) _updateNodeMethod(),
+              ]);
+          }),
+          ...implClassWriter.writeAll(implClasses),
+        ]);
     });
   }
 

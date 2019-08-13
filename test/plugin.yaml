@@ -140,6 +140,11 @@ classes:
           - required_parameter:
             name: juiciness
             type: double
+    constants:
+      - constant:
+        name: orangio
+        type: Orange
+        literal_value: Orange(13.0)
     methods:
       - method:
         name: squeeze
@@ -192,6 +197,11 @@ classes:
           - required_parameter:
             name: sourness
             type: double
+    constants:
+      - constant:
+        name: goodNameForALemon
+        type: String
+        literal_value: 'Dr. Sour'
     methods:
       - method:
         name: makeLemonade

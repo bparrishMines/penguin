@@ -144,6 +144,7 @@ void _createJavaFiles(String yaml, Directory pluginDir, Plugin plugin) {
     'optional_parameter:': '!objects.PluginParameter',
     'field:': '!objects.PluginField',
     'constructor:': '!objects.PluginConstructor',
+    'constant:': '!objects.PluginConstant',
   };
 
   for (MapEntry<String, String> entry in replacements.entries) {

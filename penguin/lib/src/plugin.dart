@@ -98,6 +98,7 @@ class Class {
     this.methods,
     this.fields,
     this.constructors,
+    this.constants,
   });
 
   @JsonKey(required: true, disallowNullValue: true)
@@ -114,6 +115,9 @@ class Class {
 
   @JsonKey(defaultValue: const <Constructor>[])
   final List<Constructor> constructors;
+
+  @JsonKey(defaultValue: const <Constant>[])
+  final List<Constant> constants;
 
   ClassDetails _details;
 
@@ -250,6 +254,32 @@ class Constructor extends ParameterHolder {
 
   @override
   String toString() => toJson().toString();
+}
+
+@JsonSerializable()
+class Constant {
+  Constant(
+    this.name, {
+    this.type,
+    this.literalValue,
+  }) {
+    if (type == null || literalValue == null || name == null) {
+      throw ArgumentError();
+    }
+  }
+
+  @JsonKey(required: true, disallowNullValue: true)
+  final String type;
+
+  @JsonKey(required: true, disallowNullValue: true)
+  final String literalValue;
+
+  @JsonKey(required: true, disallowNullValue: true)
+  final String name;
+
+  factory Constant.fromJson(Map json) => _$ConstantFromJson(json);
+
+  Map toJson() => _$ConstantToJson(this);
 }
 
 class ParameterHolder {

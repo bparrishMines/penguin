@@ -11,6 +11,7 @@ public class PluginClass {
   public List<PluginMethod> methods = new ArrayList<>();
   public List<PluginField> fields = new ArrayList<>();
   public List<PluginConstructor> constructors = new ArrayList<>();
+  public List<PluginConstant> constants = new ArrayList<>();
   public ClassDetails details;
 
   public List<Object> getFieldsAndMethods() {

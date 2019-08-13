@@ -55,20 +55,17 @@ Class _$ClassFromJson(Map json) {
                     ?.map((e) => e == null ? null : Method.fromJson(e as Map))
                     ?.toList()) ??
             [],
-        fields: $checkedConvert(
-                json,
-                'fields',
-                (v) => (v as List)
-                    ?.map((e) => e == null ? null : Field.fromJson(e as Map))
-                    ?.toList()) ??
-            [],
+        fields:
+            $checkedConvert(json, 'fields', (v) => (v as List)?.map((e) => e == null ? null : Field.fromJson(e as Map))?.toList()) ??
+                [],
         constructors: $checkedConvert(
                 json,
                 'constructors',
                 (v) => (v as List)
                     ?.map((e) => e == null ? null : Constructor.fromJson(e as Map))
                     ?.toList()) ??
-            []);
+            [],
+        constants: $checkedConvert(json, 'constants', (v) => (v as List)?.map((e) => e == null ? null : Constant.fromJson(e as Map))?.toList()) ?? []);
     return val;
   }, fieldKeyMap: const {'javaPackage': 'java_package'});
 }
@@ -87,6 +84,7 @@ Map<String, dynamic> _$ClassToJson(Class instance) {
   val['methods'] = instance.methods;
   val['fields'] = instance.fields;
   val['constructors'] = instance.constructors;
+  val['constants'] = instance.constants;
   return val;
 }
 
@@ -264,3 +262,31 @@ Map<String, dynamic> _$ConstructorToJson(Constructor instance) =>
       'name': instance.name,
       'is_default': instance.isDefault
     };
+
+Constant _$ConstantFromJson(Map json) {
+  return $checkedNew('Constant', json, () {
+    $checkKeys(json,
+        requiredKeys: const ['type', 'literal_value', 'name'],
+        disallowNullValues: const ['type', 'literal_value', 'name']);
+    final val = Constant($checkedConvert(json, 'name', (v) => v as String),
+        type: $checkedConvert(json, 'type', (v) => v as String),
+        literalValue:
+            $checkedConvert(json, 'literal_value', (v) => v as String));
+    return val;
+  }, fieldKeyMap: const {'literalValue': 'literal_value'});
+}
+
+Map<String, dynamic> _$ConstantToJson(Constant instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('type', instance.type);
+  writeNotNull('literal_value', instance.literalValue);
+  writeNotNull('name', instance.name);
+  return val;
+}
