@@ -177,6 +177,11 @@ classes:
         name: averageNumberOfSeeds
         is_static: true
         type: int
+      - field:
+        name: numberOfLeaves
+        type: int
+        mutable: true
+        force: true
 
   - class:
     java_package: dev.fruit.fruit_picker.fruitlibrary.nada
@@ -244,7 +249,12 @@ classes:
         name: color
         type: String
         initialized: true
-        mutable: true 
+        mutable: true
+      - field:
+        name: nearbyGrape
+        mutable: true
+        type: Grape
+        force: true
 
   - class:
     name: Apricot

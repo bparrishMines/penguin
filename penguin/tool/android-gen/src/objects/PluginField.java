@@ -6,4 +6,5 @@ public class PluginField {
   public String type = "Object";
   public boolean mutable = false;
   public boolean initialized = false;
+  public boolean force = false;
 }

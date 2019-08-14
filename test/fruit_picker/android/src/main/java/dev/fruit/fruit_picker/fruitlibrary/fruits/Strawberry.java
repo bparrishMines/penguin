@@ -5,6 +5,7 @@ import java.util.Map;
 
 public class Strawberry {
   public static Integer averageNumberOfSeeds = 50;
+  public Integer numberOfLeaves;
 
   public Strawberry() {}
 

@@ -248,6 +248,20 @@ void main() {
       });
     });
 
+    group('$Grape', () {
+      Grape grape;
+
+      setUp(() async {
+        grape = await Basket().aRedGrape;
+      });
+
+      test('nearbyGrape', () async {
+        grape.nearbyGrape = grape;
+        expect(grape.nearbyGrape, grape);
+        await pumpEventQueue();
+      });
+    });
+
     group('$Apple', () {
       test('areApplesGood', () async {
         expect(Apple.areApplesGood(), completion(true));
@@ -310,6 +324,12 @@ void main() {
           strawberry.namingSucksSoHereIsAMap(),
           completion(allOf(containsPair('one', 1), containsPair('two', 2))),
         );
+      });
+
+      test('numberOfLeaves', () async {
+        strawberry.numberOfLeaves = 14;
+        expect(strawberry.numberOfLeaves, 14);
+        await pumpEventQueue();
       });
     });
 

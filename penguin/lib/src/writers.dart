@@ -193,6 +193,10 @@ class MutableFieldWriter extends Writer<Field, List<cb.Method>> {
                 parameters: <Parameter>[
                   Parameter(field.name, type: field.type),
                 ]).assignFinal('newNode', References.methodCallInvokerNode));
+            if (field.force) {
+              builder.addExpression(
+                  cb.refer('newNode').property('invoke').call([]));
+            }
             if (field.isStatic) {
               builder.addExpression(
                   cb.refer('newNode').property('invoke').call([]));
@@ -336,6 +340,7 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
 
     cb.Expression invokeNodeExpression;
     if (handlesAllocation ||
+        fieldOrMethod.force ||
         (s == MethodStructure.returnsVoid && parentClassHasDisposer) ||
         !_structureIsAny(s, [
           MethodStructure.unInitialized,
@@ -422,6 +427,9 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
                 ));
               }
               if (parentClassHasAllocator) {
+                builder.addExpression(invokeNodeExpression.returned);
+              } else if (fieldOrMethod.force) {
+                builder.addExpression(setNodeExpression);
                 builder.addExpression(invokeNodeExpression.returned);
               } else {
                 builder.addExpression(setNodeExpression);

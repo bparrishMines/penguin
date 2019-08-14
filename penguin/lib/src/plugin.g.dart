@@ -115,7 +115,8 @@ Method _$MethodFromJson(Map json) {
         isStatic: $checkedConvert(json, 'is_static', (v) => v as bool) ?? false,
         allocator:
             $checkedConvert(json, 'allocator', (v) => v as bool) ?? false,
-        disposer: $checkedConvert(json, 'disposer', (v) => v as bool) ?? false);
+        disposer: $checkedConvert(json, 'disposer', (v) => v as bool) ?? false,
+        force: $checkedConvert(json, 'force', (v) => v as bool) ?? false);
     return val;
   }, fieldKeyMap: const {
     'requiredParameters': 'required_parameters',
@@ -142,6 +143,7 @@ Map<String, dynamic> _$MethodToJson(Method instance) {
   val['is_static'] = instance.isStatic;
   val['allocator'] = instance.allocator;
   val['disposer'] = instance.disposer;
+  val['force'] = instance.force;
   return val;
 }
 
@@ -203,7 +205,8 @@ Field _$FieldFromJson(Map json) {
         isStatic: $checkedConvert(json, 'is_static', (v) => v as bool) ?? false,
         mutable: $checkedConvert(json, 'mutable', (v) => v as bool) ?? false,
         initialized:
-            $checkedConvert(json, 'initialized', (v) => v as bool) ?? false);
+            $checkedConvert(json, 'initialized', (v) => v as bool) ?? false,
+        force: $checkedConvert(json, 'force', (v) => v as bool) ?? false);
     return val;
   }, fieldKeyMap: const {'isStatic': 'is_static'});
 }
@@ -222,6 +225,7 @@ Map<String, dynamic> _$FieldToJson(Field instance) {
   val['type'] = instance.type;
   val['mutable'] = instance.mutable;
   val['initialized'] = instance.initialized;
+  val['force'] = instance.force;
   return val;
 }
 

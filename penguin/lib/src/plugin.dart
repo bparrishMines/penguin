@@ -152,8 +152,11 @@ class Method extends ParameterHolder {
     this.isStatic,
     this.allocator,
     this.disposer,
+    this.force,
   }) : super(requiredParameters, optionalParameters) {
     if (isStatic && (allocator || disposer)) throw ArgumentError();
+    if (force && isStatic) throw ArgumentError();
+    // Error if force && returns field with no initializers
   }
 
   @JsonKey(required: true, disallowNullValue: true)
@@ -172,6 +175,9 @@ class Method extends ParameterHolder {
 
   @JsonKey(defaultValue: false)
   final bool disposer;
+
+  @JsonKey(defaultValue: false)
+  final bool force;
 
   factory Method.fromJson(Map json) => _$MethodFromJson(json);
 
@@ -201,7 +207,16 @@ class Parameter {
 
 @JsonSerializable()
 class Field {
-  Field(this.name, {this.type, this.isStatic, this.mutable, this.initialized});
+  Field(
+    this.name, {
+    this.type,
+    this.isStatic,
+    this.mutable,
+    this.initialized,
+    this.force,
+  }) {
+    if (force == true && (!mutable || isStatic)) throw ArgumentError();
+  }
 
   @JsonKey(required: true, disallowNullValue: true)
   final String name;
@@ -217,6 +232,9 @@ class Field {
 
   @JsonKey(defaultValue: false)
   final bool initialized;
+
+  @JsonKey(defaultValue: false)
+  final bool force;
 
   factory Field.fromJson(Map json) => _$FieldFromJson(json);
 

@@ -155,6 +155,7 @@ classes:
             type: String
       - method:
         name: setPerformanceCollectionEnabled
+        force: true
         required_parameters:
           - required_parameter:
             name: enable
