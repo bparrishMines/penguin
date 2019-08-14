@@ -21,7 +21,13 @@ public class PluginCreator {
 
   public PluginCreator(Plugin plugin) {
     this.plugin = plugin;
-    this.packageName = plugin.organization + "." + plugin.name;
+
+    if (plugin.java_dir == null) {
+      this.packageName = plugin.organization + "." + plugin.name;
+    } else {
+      this.packageName = plugin.java_dir.replaceAll("/", ".");
+    }
+
     this.mainPluginClassName = ClassName.get(packageName, StringUtils.snakeCaseToCamelCase(plugin.name) + "Plugin");
     this.flutterWrapperClassName = ClassName.get(packageName, "FlutterWrapper");
     this.notImplementedClassName = ClassName.get(packageName, "FlutterWrapper","MethodNotImplemented");

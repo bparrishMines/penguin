@@ -6,6 +6,7 @@ import java.util.List;
 public class Plugin {
   public String name;
   public String organization = "com.example";
+  public String java_dir;
   public List<PluginClass> classes = new ArrayList<>();
 
   static public Boolean isStatic(Object fieldOrMethod) {

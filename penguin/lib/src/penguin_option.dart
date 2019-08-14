@@ -43,7 +43,7 @@ class PenguinOption implements Option {
     help: 'Directory of the library created from the yaml file. '
      'This is releative to the lib/ folder in the plugin root directory.',
     defaultsTo: './src',
-    valueHelp: 'path',
+    valueHelp: 'root-directory/lib/<path>',
     isFlag: false,
   );
 
@@ -55,11 +55,21 @@ class PenguinOption implements Option {
     isFlag: true,
   );
 
+  static PenguinOption java = PenguinOption._(
+    name: 'java',
+    abbr: 'j',
+    help: 'Directory of the generated java code relative to the plugin java directory. '
+        'Defaults to <organization>/<plugin-name>.',
+    valueHelp: 'root-directory/android/src/main/java/<path>',
+    isFlag: false,
+  );
+
   static List<PenguinOption> values = <PenguinOption>[
     usage,
     directory,
     libraryDirectory,
     create,
+    java,
   ];
 
   @override

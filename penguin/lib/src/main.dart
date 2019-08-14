@@ -99,7 +99,7 @@ void main(List<String> args) async {
   ));
 
   _createPluginFiles(creator, libraryDirectory);
-  _createJavaFiles(yaml, pluginDir, plugin);
+  _createJavaFiles(yaml, pluginDir, plugin, results[PenguinOption.java.name]);
 }
 
 int _runFlutterCreate({Directory directory, String projectName, String org}) {
@@ -137,23 +137,19 @@ void _createPluginFiles(PluginCreator creator, Directory pluginDir) {
   }
 }
 
-void _createJavaFiles(String yaml, Directory pluginDir, Plugin plugin) {
-  final Directory androidDir = Directory(path.join(pluginDir.path, 'android'));
-  Directory javaFileDir = androidDir
-      .listSync(recursive: true, followLinks: false)
-      .firstWhere((FileSystemEntity entity) =>
-          entity is Directory &&
-          (path.basename(entity.path) == plugin.name ||
-              path.basename(entity.path) == plugin.name.replaceAll('_', '')));
-
-  if (javaFileDir == null) {
-    javaFileDir = Directory(path.joinAll(<String>[
-      pluginDir.path,
-      'android/src/main/java',
-      ...plugin.organization.split('.'),
-      plugin.name,
-    ]));
-  }
+void _createJavaFiles(
+  String yaml,
+  Directory pluginDir,
+  Plugin plugin,
+  String javaDirectory,
+) {
+  Directory javaFileDir = Directory(path.joinAll(<String>[
+    pluginDir.path,
+    'android/src/main/java',
+    if (javaDirectory != null) javaDirectory,
+    if (javaDirectory == null) ...plugin.organization.split('.'),
+    if (javaDirectory == null) plugin.name,
+  ]));
 
   final Map<String, String> replacements = <String, String>{
     'plugin:': '!objects.Plugin',
@@ -164,12 +160,15 @@ void _createJavaFiles(String yaml, Directory pluginDir, Plugin plugin) {
     'field:': '!objects.PluginField',
     'constructor:': '!objects.PluginConstructor',
     'constant:': '!objects.PluginConstant',
-    plugin.name: path.basename(javaFileDir.path),
   };
 
   for (MapEntry<String, String> entry in replacements.entries) {
     yaml = yaml.replaceAll(entry.key, entry.value);
   }
+
+  yaml =
+      'java_dir: ${javaFileDir.path.substring(javaFileDir.path.indexOf('java') + 5)}\n' +
+          yaml;
 
   final Directory appDir = Directory(Platform.script.path).parent.parent;
 
