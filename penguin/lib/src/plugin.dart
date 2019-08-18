@@ -68,6 +68,24 @@ class Plugin {
     return false;
   }
 
+  static bool updater(dynamic fieldOrMethod) {
+    if (fieldOrMethod is! Field && fieldOrMethod is! Method) {
+      throw ArgumentError();
+    }
+
+    if (fieldOrMethod is Method) return fieldOrMethod.updater;
+    return false;
+  }
+
+  static bool force(dynamic fieldOrMethod) {
+    if (fieldOrMethod is! Field && fieldOrMethod is! Method) {
+      throw ArgumentError();
+    }
+
+    if (fieldOrMethod is Method) return fieldOrMethod.force;
+    return false;
+  }
+
   static List<Parameter> parameters(dynamic fieldMethodOrConstructor) {
     if (fieldMethodOrConstructor is! Field &&
         fieldMethodOrConstructor is! Method &&
@@ -153,14 +171,24 @@ class Method extends ParameterHolder {
     this.allocator,
     this.disposer,
     this.force,
+    this.updated,
+    this.updater,
+    this.initialized,
   }) : super(requiredParameters, optionalParameters) {
     if (isStatic && (allocator || disposer)) throw ArgumentError();
     if (force && isStatic) throw ArgumentError();
+    if (updated && returns == 'void') throw ArgumentError();
     // Error if force && returns field with no initializers
   }
 
   @JsonKey(required: true, disallowNullValue: true)
   final String name;
+
+  @JsonKey(defaultValue: false)
+  final bool updater;
+
+  @JsonKey(defaultValue: false)
+  final bool updated;
 
   @JsonKey(defaultValue: 'void')
   final String returns;
@@ -178,6 +206,9 @@ class Method extends ParameterHolder {
 
   @JsonKey(defaultValue: false)
   final bool force;
+
+  @JsonKey(defaultValue: false)
+  final bool initialized;
 
   factory Method.fromJson(Map json) => _$MethodFromJson(json);
 
@@ -214,12 +245,16 @@ class Field {
     this.mutable,
     this.initialized,
     this.force,
+    this.updated,
   }) {
     if (force == true && (!mutable || isStatic)) throw ArgumentError();
   }
 
   @JsonKey(required: true, disallowNullValue: true)
   final String name;
+
+  @JsonKey(defaultValue: false)
+  final bool updated;
 
   @JsonKey(defaultValue: false)
   final bool isStatic;

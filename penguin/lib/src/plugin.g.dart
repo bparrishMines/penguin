@@ -116,7 +116,11 @@ Method _$MethodFromJson(Map json) {
         allocator:
             $checkedConvert(json, 'allocator', (v) => v as bool) ?? false,
         disposer: $checkedConvert(json, 'disposer', (v) => v as bool) ?? false,
-        force: $checkedConvert(json, 'force', (v) => v as bool) ?? false);
+        force: $checkedConvert(json, 'force', (v) => v as bool) ?? false,
+        updated: $checkedConvert(json, 'updated', (v) => v as bool) ?? false,
+        updater: $checkedConvert(json, 'updater', (v) => v as bool) ?? false,
+        initialized:
+            $checkedConvert(json, 'initialized', (v) => v as bool) ?? false);
     return val;
   }, fieldKeyMap: const {
     'requiredParameters': 'required_parameters',
@@ -138,12 +142,15 @@ Map<String, dynamic> _$MethodToJson(Method instance) {
   }
 
   writeNotNull('name', instance.name);
+  val['updater'] = instance.updater;
+  val['updated'] = instance.updated;
   val['returns'] = instance.returns;
   val['type'] = _$MethodTypeEnumMap[instance.type];
   val['is_static'] = instance.isStatic;
   val['allocator'] = instance.allocator;
   val['disposer'] = instance.disposer;
   val['force'] = instance.force;
+  val['initialized'] = instance.initialized;
   return val;
 }
 
@@ -206,7 +213,8 @@ Field _$FieldFromJson(Map json) {
         mutable: $checkedConvert(json, 'mutable', (v) => v as bool) ?? false,
         initialized:
             $checkedConvert(json, 'initialized', (v) => v as bool) ?? false,
-        force: $checkedConvert(json, 'force', (v) => v as bool) ?? false);
+        force: $checkedConvert(json, 'force', (v) => v as bool) ?? false,
+        updated: $checkedConvert(json, 'updated', (v) => v as bool) ?? false);
     return val;
   }, fieldKeyMap: const {'isStatic': 'is_static'});
 }
@@ -221,6 +229,7 @@ Map<String, dynamic> _$FieldToJson(Field instance) {
   }
 
   writeNotNull('name', instance.name);
+  val['updated'] = instance.updated;
   val['is_static'] = instance.isStatic;
   val['type'] = instance.type;
   val['mutable'] = instance.mutable;

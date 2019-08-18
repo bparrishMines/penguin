@@ -1,7 +1,7 @@
 import 'package:code_builder/code_builder.dart';
 
 class References {
-  References._(Reference reference);
+  References._();
 
   static final methodChannel = refer(
     'MethodChannel',
@@ -30,4 +30,15 @@ class References {
         ..url = 'dart:async';
     });
   }
+
+  static TypeReference completer(Reference type) {
+    return TypeReference((TypeReferenceBuilder builder) {
+      builder
+        ..symbol = 'Completer'
+        ..types.add(type)
+        ..url = 'dart:async';
+    });
+  }
+
+  static final standardMap = refer('Map<String, dynamic>');
 }

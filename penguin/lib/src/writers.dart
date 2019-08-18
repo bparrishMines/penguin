@@ -64,7 +64,7 @@ abstract class Writer<T, K> {
     return parameterNodeList;
   }
 
-  cb.Expression _invokerNodeExpression(
+  cb.Expression _createNodeExpression(
     String method, {
     Map<String, cb.Expression> arguments,
     List<Parameter> parameters,
@@ -187,7 +187,7 @@ class MutableFieldWriter extends Writer<Field, List<cb.Method>> {
             }
 
             final String method = '$nameOfParentClass#${field.name}';
-            builder.addExpression(_invokerNodeExpression(method,
+            builder.addExpression(_createNodeExpression(method,
                 arguments: arguments,
                 includeSelfInvokerNode: !field.isStatic,
                 parameters: <Parameter>[
@@ -213,16 +213,15 @@ class MutableFieldWriter extends Writer<Field, List<cb.Method>> {
   }
 }
 
-enum MethodStructure {
-  staticReturnsVoid,
-  returnsVoid,
-  primitive,
-  staticPrimitive,
-  initializers,
-  staticInitializers,
-  unInitialized,
-  staticUninitialized,
-}
+//class UpdatedWriter extends Writer<Method, cb.Field> {
+//  UpdatedWriter(Plugin plugin, String nameOfParentClass)
+//      : super(plugin, nameOfParentClass);
+//
+//  @override
+//  cb.Field write(Method method) {
+//    if (!method.updated) return null;
+//  }
+//}
 
 class MethodWriter extends Writer<dynamic, cb.Method> {
   MethodWriter(
@@ -254,145 +253,162 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
     final String name = fieldOrMethod.name;
     final String returnType = Plugin.returnType(fieldOrMethod);
     final bool static = fieldOrMethod.isStatic;
-    final Class returnedClass = _classFromString(returnType);
     final List<Parameter> parameters = Plugin.parameters(fieldOrMethod);
-    final String invokeMethod = '$nameOfParentClass#$name';
-    final bool handlesAllocation =
-        Plugin.allocator(fieldOrMethod) || Plugin.disposer(fieldOrMethod);
-    final String listType = _tryParseTypeFromList(returnType);
-    final List<String> mapTypes = _tryParseTypesFromMap(returnType);
+    final Class returnedClass = _classFromString(returnType);
+////    final bool handlesAllocation =
+////        Plugin.allocator(fieldOrMethod) || Plugin.disposer(fieldOrMethod);
+//    final String listType = _tryParseTypeFromList(returnType);
+//    final List<String> mapTypes = _tryParseTypesFromMap(returnType);
     final bool allocator = Plugin.allocator(fieldOrMethod);
-
-    final MethodStructure s = _getMethodStructure(
-      returnType == 'void',
-      static,
-      returnedClass != null,
-      returnedClass != null && returnedClass.details.hasInitializedFields,
+    final bool returnsVoid = returnType == 'void';
+    final bool disposer = Plugin.disposer(fieldOrMethod);
+    final bool updater = Plugin.updater(fieldOrMethod);
+    final bool forced = Plugin.force(fieldOrMethod);
+    final bool primitive = returnedClass == null && returnType != 'void';
+    final bool initializers = !returnsVoid &&
+        !primitive &&
+        returnedClass.details.hasInitializedFields;
+//
+////    final MethodStructure s = _getMethodStructure(
+////      returnType == 'void',
+////      static,
+////      returnedClass != null,
+////      returnedClass != null && returnedClass.details.hasInitializedFields,
+////    );
+//
+    final cb.Reference returnRef = _returnRef(returnType, initializers);
+    final cb.Expression createCompleter = _createCompleter(returnType);
+    final cb.Expression newNodeExpression = _newNodeExpression(fieldOrMethod);
+    final cb.Expression setNodeExpression = _setNodeExpression();
+    final cb.Expression emptyFutureExpression = _emptyFutureExpression();
+    final cb.Expression invokeNodeExpression = _invokeExpression(
+      returnType,
+      updater,
     );
+    final cb.Expression resultExpression = _resultExpression();
+    final cb.Expression newHandleExpression = _newHandleExpression();
 
-    cb.Reference returnRef;
-    if (returnedClass == null || returnType == nameOfParentClass) {
-      returnRef = cb.refer(returnType);
-    } else {
-      returnRef = cb.refer(returnType, returnedClass.details.file);
-    }
-
-    cb.Expression disposerAssert;
-    if (parentClassHasDisposer && !static) {
-      disposerAssert = cb.refer('assert').call(<cb.Expression>[
-        cb
-            .refer('invokerNode')
-            .property('type')
-            .notEqualTo(References.nodeType.property('disposer')),
-        cb.literalString('This object has been disposed.'),
-      ]);
-    }
-
-    cb.Expression updateNode;
-    if (parentClassHasAllocator && !static) {
-      updateNode = cb
-          .refer('_updateInvokerNode')
-          .call(<cb.Expression>[cb.refer('newNode')]);
-    }
-
-    cb.Expression handleExpression;
-    if (returnedClass != null) {
-      handleExpression = References.channel
-          .property('nextHandle')
-          .call(<cb.Expression>[]).assignFinal('newHandle', cb.refer('String'));
-    }
-
-    String nodeType;
-    if (Plugin.allocator(fieldOrMethod)) {
-      nodeType = 'allocator';
-    } else if (Plugin.disposer(fieldOrMethod)) {
-      nodeType = 'disposer';
-    }
-
-    cb.Expression newNodeExpression = _invokerNodeExpression(
-      invokeMethod,
-      arguments: _mappedMethodParams(fieldOrMethod),
-      parameters: parameters,
-      includeSelfInvokerNode: !static,
-      nodeType: nodeType,
-    ).assignFinal('newNode', References.methodCallInvokerNode);
-
-    List<cb.Reference> types = <cb.Reference>[];
-    String invokeMethodName;
-    if (listType != null) {
-      invokeMethodName = 'invokeList';
-      types.add(cb.refer(listType));
-    } else if (mapTypes != null) {
-      invokeMethodName = 'invokeMap';
-      types.add(cb.refer(mapTypes[0]));
-      types.add(cb.refer(mapTypes[1]));
-    } else if (returnedClass == null) {
-      invokeMethodName = 'invoke';
-      types.add(cb.refer(returnType));
-    } else if (returnedClass.details.hasInitializedFields) {
-      invokeMethodName = 'invokeMap';
-      types.add(cb.refer('String'));
-      types.add(cb.refer('dynamic'));
-    } else {
-      invokeMethodName = 'invoke';
-      types.add(cb.refer('void'));
-    }
-
-    cb.Expression invokeNodeExpression;
-    if (handlesAllocation ||
-        fieldOrMethod.force ||
-        (s == MethodStructure.returnsVoid && parentClassHasDisposer) ||
-        !_structureIsAny(s, [
-          MethodStructure.unInitialized,
-          MethodStructure.returnsVoid,
-        ])) {
-      invokeNodeExpression =
-          cb.refer('newNode').property(invokeMethodName).call(
-        [],
-        {},
-        types,
-      );
-    }
-
-    cb.Expression setNodeExpression;
-    if (allocator || _structureIsAny(s, [MethodStructure.returnsVoid])) {
-      setNodeExpression = cb.refer('_invokerNode').assign(cb.refer('newNode'));
-    }
-
-    cb.Expression objectExpression;
-    if (_structureIsAny(s, [
-      MethodStructure.unInitialized,
-      MethodStructure.staticUninitialized,
-    ])) {
-      objectExpression = _getConstructor(
-              returnedClass, returnedClass.name == nameOfParentClass)
-          .call(
-        <cb.Expression>[
-          cb.refer('newNode'),
-          cb.refer('newHandle'),
-          cb.literalNull,
-        ],
-      );
-    } else if (_structureIsAny(s, [
-      MethodStructure.initializers,
-      MethodStructure.staticInitializers,
-    ])) {
-      objectExpression = _getConstructor(
-              returnedClass, returnedClass.name == nameOfParentClass)
-          .call(
-        <cb.Expression>[
-          cb.refer('newNode'),
-          cb.refer('newHandle'),
-          cb.refer('source'),
-        ],
-      );
-    }
+//
+////    cb.Expression disposerAssert;
+////    if (parentClassHasDisposer && !static) {
+//    cb.Expression disposerAssert = cb.refer('assert').call(<cb.Expression>[
+//      cb
+//          .refer('invokerNode')
+//          .property('type')
+//          .notEqualTo(References.nodeType.property('disposer')),
+//      cb.literalString('This object has been disposed.'),
+//    ]);
+////    }
+//
+////    cb.Expression updateNode;
+////    if (parentClassHasAllocator && !static) {
+//    cb.Expression updateNode = cb
+//        .refer('_updateInvokerNode')
+//        .call(<cb.Expression>[cb.refer('newNode')]);
+////    }
+//
+////    cb.Expression handleExpression;
+////    if (returnedClass != null) {
+//    cb.Expression handleExpression = References.channel
+//        .property('nextHandle')
+//        .call(<cb.Expression>[]).assignFinal('newHandle', cb.refer('String'));
+////    }
+//
+//    String nodeType;
+//    if (Plugin.allocator(fieldOrMethod)) {
+//      nodeType = 'allocator';
+//    } else if (Plugin.disposer(fieldOrMethod)) {
+//      nodeType = 'disposer';
+//    }
+//
+//    cb.Expression newNodeExpression = _invokerNodeExpression(
+//      invokeMethod,
+//      arguments: _mappedMethodParams(fieldOrMethod),
+//      parameters: parameters,
+//      includeSelfInvokerNode: !static,
+//      nodeType: nodeType,
+//    ).assignFinal('newNode', References.methodCallInvokerNode);
+//
+//    List<cb.Reference> types = <cb.Reference>[];
+//    String invokeMethodName;
+//    if (listType != null) {
+//      invokeMethodName = 'invokeList';
+//      types.add(cb.refer(listType));
+//    } else if (mapTypes != null) {
+//      invokeMethodName = 'invokeMap';
+//      types.add(cb.refer(mapTypes[0]));
+//      types.add(cb.refer(mapTypes[1]));
+//    } else if (returnedClass == null) {
+//      invokeMethodName = 'invoke';
+//      types.add(cb.refer(returnType));
+//    } else if (returnedClass.details.hasInitializedFields) {
+//      invokeMethodName = 'invokeMap';
+//      types.add(cb.refer('String'));
+//      types.add(cb.refer('dynamic'));
+//    } else {
+//      invokeMethodName = 'invoke';
+//      types.add(cb.refer('void'));
+//    }
+//
+////    cb.Expression invokeNodeExpression;
+////    if (handlesAllocation ||
+////        fieldOrMethod.force ||
+////        (s == MethodStructure.returnsVoid && parentClassHasDisposer) ||
+////        !_structureIsAny(s, [
+////          MethodStructure.unInitialized,
+////          MethodStructure.returnsVoid,
+////        ])) {
+//    cb.Expression invokeNodeExpression =
+//        cb.refer('newNode').property(invokeMethodName).call(
+//      [],
+//      {},
+//      types,
+//    );
+////    }
+//
+////    cb.Expression setNodeExpression;
+////    if (allocator || _structureIsAny(s, [MethodStructure.returnsVoid])) {
+//    cb.Expression setNodeExpression =
+//        cb.refer('_invokerNode').assign(cb.refer('newNode'));
+////    }
+//
+//    cb.Expression emptyFutureExpression =
+//        References.future(cb.refer('void')).property('value').call([]).returned;
+//
+//    cb.Expression objectExpression;
+////    if (_structureIsAny(s, [
+////      MethodStructure.unInitialized,
+////      MethodStructure.staticUninitialized,
+////    ])) {
+//    if (returnedClass != null && returnedClass.details.hasInitializedFields) {
+//      objectExpression = _getConstructor(
+//              returnedClass, returnedClass.name == nameOfParentClass)
+//          .call(
+//        <cb.Expression>[
+//          cb.refer('newNode'),
+//          cb.refer('newHandle'),
+//          cb.literalNull,
+//        ],
+//      );
+////    } else if (_structureIsAny(s, [
+////      MethodStructure.initializers,
+////      MethodStructure.staticInitializers,
+////    ])) {
+//    } else {
+//      objectExpression = _getConstructor(
+//              returnedClass, returnedClass.name == nameOfParentClass)
+//          .call(
+//        <cb.Expression>[
+//          cb.refer('newNode'),
+//          cb.refer('newHandle'),
+//          cb.refer('source'),
+//        ],
+//      );
+//    }
+////      );
+////    }
 
     return cb.Method((cb.MethodBuilder builder) {
-      if (returnedClass != null && returnedClass.details.hasInitializedFields) {
-        builder.modifier = cb.MethodModifier.async;
-      }
-
       if (fieldOrMethod is Field) {
         builder.type = cb.MethodType.getter;
       }
@@ -401,68 +417,117 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
         ..name = name
         ..static = static
         ..requiredParameters.addAll(parameterWriter.writeAll(parameters))
-        ..returns = !_structureIsAny(s, [
-          MethodStructure.unInitialized,
-          MethodStructure.staticUninitialized,
-        ])
-            ? References.future(returnRef)
-            : returnRef
+        ..returns = returnRef
         ..body = cb.Block((cb.BlockBuilder builder) {
-          switch (s) {
-            case MethodStructure.staticReturnsVoid:
-            case MethodStructure.staticPrimitive:
-            case MethodStructure.primitive:
-              if (disposerAssert != null) builder.addExpression(disposerAssert);
-              builder.addExpression(newNodeExpression);
-              if (updateNode != null) builder.addExpression(updateNode);
-              builder.addExpression(invokeNodeExpression.returned);
-              break;
-            case MethodStructure.returnsVoid:
-              if (disposerAssert != null) builder.addExpression(disposerAssert);
-              builder.addExpression(newNodeExpression);
-              if (updateNode != null) builder.addExpression(updateNode);
-              if (!handlesAllocation && parentClassHasAllocator) {
-                builder.addExpression(cb.refer(
-                  'if (invokerNode.type != NodeType.allocator) return Future<void>.value()',
-                ));
-              }
-              if (parentClassHasAllocator) {
-                builder.addExpression(invokeNodeExpression.returned);
-              } else if (fieldOrMethod.force) {
-                builder.addExpression(setNodeExpression);
-                builder.addExpression(invokeNodeExpression.returned);
-              } else {
-                builder.addExpression(setNodeExpression);
-                builder.addExpression(References.future(cb.refer('void'))
-                    .property('value')
-                    .call([]).returned);
-              }
-              break;
-            case MethodStructure.initializers:
-            case MethodStructure.staticInitializers:
-              if (disposerAssert != null) builder.addExpression(disposerAssert);
-              builder.addExpression(handleExpression);
-              builder.addExpression(newNodeExpression);
-              if (updateNode != null) builder.addExpression(updateNode);
-              builder.addExpression(invokeNodeExpression.awaited
-                  .assignFinal('source', cb.refer('Map')));
-              builder.addExpression(objectExpression.returned);
-              break;
-            case MethodStructure.unInitialized:
-              if (disposerAssert != null) builder.addExpression(disposerAssert);
-              builder.addExpression(handleExpression);
-              builder.addExpression(newNodeExpression);
-              if (updateNode != null) builder.addExpression(updateNode);
-              builder.addExpression(objectExpression.returned);
-              break;
-            case MethodStructure.staticUninitialized:
-              builder.addExpression(handleExpression);
-              builder.addExpression(newNodeExpression);
-              builder.addExpression(invokeNodeExpression);
-              if (updateNode != null) builder.addExpression(updateNode);
-              builder.addExpression(objectExpression.returned);
-              break;
+          if (returnsVoid && static) {
+            builder
+              ..addExpression(newNodeExpression)
+              ..addExpression(invokeNodeExpression.returned);
+          } else if (returnsVoid && updater) {
+            builder
+              ..addExpression(createCompleter)
+              ..addExpression(newNodeExpression)
+              ..addExpression(invokeNodeExpression);
+            builder.addExpression(emptyFutureExpression);
+          } else if (returnsVoid && allocator) {
+            builder
+              ..addExpression(newNodeExpression)
+              ..addExpression(invokeNodeExpression.returned);
+          } else if (returnsVoid && forced) {
+            builder
+              ..addExpression(newNodeExpression)
+              ..addExpression(invokeNodeExpression.returned);
+          } else if (returnsVoid && disposer) {
+            builder
+              ..addExpression(newNodeExpression)
+              ..addExpression(invokeNodeExpression.returned);
+          } else if (returnsVoid) {
+            builder
+              ..addExpression(newNodeExpression)
+              ..addExpression(setNodeExpression)
+              ..addExpression(emptyFutureExpression);
           }
+
+          if (primitive && static) {
+            builder
+              ..addExpression(newNodeExpression)
+              ..addExpression(invokeNodeExpression.returned);
+          } else if (primitive && updater) {
+            builder
+              ..addExpression(createCompleter)
+              ..addExpression(newNodeExpression)
+              ..addExpression(invokeNodeExpression);
+            builder.addExpression(resultExpression);
+          } else if (primitive) {
+            builder
+              ..addExpression(newNodeExpression)
+              ..addExpression(invokeNodeExpression.returned);
+          }
+
+          if (initializers && static) {
+            builder
+              ..addExpression(newHandleExpression)
+              ..addExpression(newNodeExpression)
+              ..addExpression(invokeNodeExpression.awaited
+                  .assignFinal('source', References.standardMap))
+              ..addExpression(invokeNodeExpression.returned);
+          }
+          //if ()
+//          switch (s) {
+//            case MethodStructure.staticReturnsVoid:
+//            case MethodStructure.staticPrimitive:
+//            case MethodStructure.primitive:
+//              if (disposerAssert != null) builder.addExpression(disposerAssert);
+//              builder.addExpression(newNodeExpression);
+//              if (updateNode != null) builder.addExpression(updateNode);
+//              builder.addExpression(invokeNodeExpression.returned);
+//              break;
+//            case MethodStructure.returnsVoid:
+//              if (disposerAssert != null) builder.addExpression(disposerAssert);
+//              builder.addExpression(newNodeExpression);
+//              if (updateNode != null) builder.addExpression(updateNode);
+//              if (!handlesAllocation && parentClassHasAllocator) {
+//                builder.addExpression(cb.refer(
+//                  'if (invokerNode.type != NodeType.allocator) return Future<void>.value()',
+//                ));
+//              }
+//              if (parentClassHasAllocator) {
+//                builder.addExpression(invokeNodeExpression.returned);
+//              } else if (fieldOrMethod.force) {
+//                builder.addExpression(setNodeExpression);
+//                builder.addExpression(invokeNodeExpression.returned);
+//              } else {
+//                builder.addExpression(setNodeExpression);
+//                builder.addExpression(References.future(cb.refer('void'))
+//                    .property('value')
+//                    .call([]).returned);
+//              }
+//              break;
+//            case MethodStructure.initializers:
+//            case MethodStructure.staticInitializers:
+//              if (disposerAssert != null) builder.addExpression(disposerAssert);
+//              builder.addExpression(handleExpression);
+//              builder.addExpression(newNodeExpression);
+//              if (updateNode != null) builder.addExpression(updateNode);
+//              builder.addExpression(invokeNodeExpression.awaited
+//                  .assignFinal('source', cb.refer('Map')));
+//              builder.addExpression(objectExpression.returned);
+//              break;
+//            case MethodStructure.unInitialized:
+//              if (disposerAssert != null) builder.addExpression(disposerAssert);
+//              builder.addExpression(handleExpression);
+//              builder.addExpression(newNodeExpression);
+//              if (updateNode != null) builder.addExpression(updateNode);
+//              builder.addExpression(objectExpression.returned);
+//              break;
+//            case MethodStructure.staticUninitialized:
+//              builder.addExpression(handleExpression);
+//              builder.addExpression(newNodeExpression);
+//              builder.addExpression(invokeNodeExpression);
+//              if (updateNode != null) builder.addExpression(updateNode);
+//              builder.addExpression(objectExpression.returned);
+//              break;
+//          }
         });
     });
   }
@@ -488,37 +553,182 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
     return paramExpressions;
   }
 
-  MethodStructure _getMethodStructure(
-    bool returnsVoid,
-    bool isStatic,
-    bool recognizedClass,
-    bool hasInitializers,
-  ) {
-    if (isStatic && returnsVoid)
-      return MethodStructure.staticReturnsVoid;
-    else if (!isStatic && returnsVoid)
-      return MethodStructure.returnsVoid;
-    else if (isStatic && !recognizedClass)
-      return MethodStructure.staticPrimitive;
-    else if (!isStatic && !recognizedClass)
-      return MethodStructure.primitive;
-    else if (isStatic && recognizedClass && hasInitializers)
-      return MethodStructure.staticInitializers;
-    else if (!isStatic && recognizedClass && hasInitializers)
-      return MethodStructure.initializers;
-    else if (isStatic && recognizedClass && !hasInitializers)
-      return MethodStructure.staticUninitialized;
-    else if (!isStatic && recognizedClass && !hasInitializers)
-      return MethodStructure.unInitialized;
-    else
-      throw ArgumentError();
+  List<cb.Expression> _updateMethodExpressions() {
+    final Class parentClass = _classFromString(nameOfParentClass);
+    final List<dynamic> updatedMethods = parentClass.fieldsAndMethods
+        .where((fieldOrMethod) => fieldOrMethod.updated)
+        .toList();
+
+    final List<cb.Expression> updateMethodExpressions = <cb.Expression>[];
+    for (dynamic fieldOrMethod in updatedMethods) {
+      final String methodName = fieldOrMethod.name;
+
+      final cb.Expression sourceAccess =
+          cb.refer('source').index(cb.literalString(methodName));
+
+      updateMethodExpressions.add(
+        cb.refer('_$methodName').assign(sourceAccess),
+      );
+    }
+
+    return updateMethodExpressions;
   }
 
-  bool _structureIsAny(
-    MethodStructure structure,
-    Iterable<MethodStructure> structures,
-  ) {
-    return structures.any((MethodStructure element) => structure == element);
+  cb.Reference _returnRef(String returnType, bool initializers) {
+    final Class returnedClass = _classFromString(returnType);
+
+    cb.Reference returnRef;
+    if (returnedClass == null || returnType == nameOfParentClass) {
+      returnRef = cb.refer(returnType);
+    } else {
+      returnRef = cb.refer(returnType, returnedClass.details.file);
+    }
+
+    if (returnedClass == null || initializers) {
+      return returnRef = References.future(returnRef);
+    }
+
+    return returnRef;
+  }
+
+  cb.Expression _createCompleter(String returnType) {
+    final Class returnedClass = _classFromString(returnType);
+
+    cb.Reference completerRef;
+    if (returnedClass == null || returnType == nameOfParentClass) {
+      completerRef = References.completer(cb.refer(returnType));
+    } else {
+      completerRef = References.completer(cb.refer(
+        returnType,
+        returnedClass.details.file,
+      ));
+    }
+
+    return completerRef
+        .call(<cb.Expression>[]).assignFinal('completer', completerRef);
+  }
+
+  cb.Expression _newNodeExpression(dynamic fieldOrMethod) {
+    String nodeType;
+    if (Plugin.allocator(fieldOrMethod)) {
+      nodeType = 'allocator';
+    } else if (Plugin.disposer(fieldOrMethod)) {
+      nodeType = 'disposer';
+    }
+
+    return _createNodeExpression(
+      '$nameOfParentClass#${fieldOrMethod.name}',
+      arguments: _mappedMethodParams(fieldOrMethod),
+      parameters: Plugin.parameters(fieldOrMethod),
+      includeSelfInvokerNode: !fieldOrMethod.isStatic,
+      nodeType: nodeType,
+    ).assignFinal('newNode', References.methodCallInvokerNode);
+  }
+
+  cb.Expression _setNodeExpression() {
+    return cb.refer('_invokerNode').assign(cb.refer('newNode'));
+  }
+
+  cb.Expression _emptyFutureExpression() {
+    return References.future(cb.refer('void'))
+        .property('value')
+        .call([]).returned;
+  }
+
+  cb.Expression _resultExpression() {
+    return cb.refer('source').index(cb.literalString('result')).returned;
+  }
+
+  cb.Expression _invokeExpression(String returnType, bool updater) {
+    final String listType = _tryParseTypeFromList(returnType);
+    final List<String> mapTypes = _tryParseTypesFromMap(returnType);
+    final Class returnedClass = _classFromString(returnType);
+
+    List<cb.Reference> types = <cb.Reference>[];
+    String invokeMethodName;
+    if (listType != null) {
+      invokeMethodName = 'invokeList';
+      types.add(cb.refer(listType));
+    } else if (mapTypes != null) {
+      invokeMethodName = 'invokeMap';
+      types.add(cb.refer(mapTypes[0]));
+      types.add(cb.refer(mapTypes[1]));
+    } else if (returnedClass == null && !updater) {
+      invokeMethodName = 'invoke';
+      types.add(cb.refer(returnType));
+    } else if (updater || returnedClass.details.hasInitializedFields) {
+      invokeMethodName = 'invokeMap';
+      types.add(cb.refer('String'));
+      types.add(cb.refer('dynamic'));
+    } else {
+      invokeMethodName = 'invoke';
+      types.add(cb.refer('void'));
+    }
+
+    if (!updater) {
+      return cb.refer('newNode').property(invokeMethodName).call(
+        [],
+        {},
+        types,
+      );
+    } else {
+      return cb
+          .refer('newNode')
+          .property(invokeMethodName)
+          .call(
+            [],
+            {},
+            types,
+          )
+          .property('then')
+          .call(<cb.Expression>[_updaterExpression()]);
+    }
+  }
+
+  cb.Expression _updaterExpression() {
+    return MethodExpression(cb.Method(
+      (cb.MethodBuilder builder) {
+        builder
+          ..name = ''
+          ..requiredParameters
+              .add(cb.Parameter((cb.ParameterBuilder paramBuilder) {
+            paramBuilder
+              ..name = 'source'
+              ..type = References.standardMap;
+          }))
+          ..body = cb.Block((cb.BlockBuilder blockBuilder) {
+            for (cb.Expression expression in _updateMethodExpressions()) {
+              blockBuilder.addExpression(expression);
+            }
+          });
+      },
+    ));
+  }
+
+  cb.Expression _newHandleExpression() {
+    return References.channel
+        .property('nextHandle')
+        .call(<cb.Expression>[]).assignFinal('newHandle', cb.refer('String'));
+  }
+
+  cb.Expression _completerFuture(String returnType) {
+    return cb.refer('completer').property('future').returned;
+  }
+
+  cb.Expression _completerComplete(String returnType) {
+    _getConstructor(returnedClass, returnedClass.name == nameOfParentClass)
+        .call(
+      <cb.Expression>[
+        cb.refer('newNode'),
+        cb.refer('newHandle'),
+        cb.refer('source'),
+      ],
+    );
+
+    return cb.refer('completer').property('complete').call(<cb.Expression>[
+      if (primitive) cb.refer('source').index(cb.literalString('result')),
+      if (initializers) cb.refer('source').index(cb.literalString('result'))
+    ]);
   }
 }
 
@@ -579,7 +789,7 @@ class ConstructorWriter extends Writer<Constructor, cb.Constructor> {
             .addAll(parameterWriter.writeAll(constructor.allParameters))
         ..body = cb.Block((cb.BlockBuilder builder) {
           builder.addExpression(
-              cb.refer('_invokerNode').assign(_invokerNodeExpression(
+              cb.refer('_invokerNode').assign(_createNodeExpression(
                     '${nameOfParentClass}${_getMethodCallMethod(constructor.allParameters)}',
                     arguments: _mappedConstructorParams(constructor),
                     parameters: constructor.allParameters,
@@ -930,5 +1140,16 @@ _invokerNode = newNode;
           },
         )
     ];
+  }
+}
+
+class MethodExpression extends cb.Expression {
+  MethodExpression(this.method);
+
+  final cb.Method method;
+
+  @override
+  R accept<R>(cb.ExpressionVisitor<R> visitor, [R context]) {
+    return method.accept(visitor, context);
   }
 }
