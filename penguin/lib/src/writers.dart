@@ -435,23 +435,32 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
             builder
               ..addExpression(newNodeExpression)
               ..addExpression(invokeNodeExpression.returned);
+          } else if (returnsVoid && updater && (allocator || disposer)) {
+            builder
+              ..addExpression(createCompleter)
+              ..addExpression(newNodeExpression)
+              ..addExpression(setNodeExpression)
+              ..addExpression(invokeNodeExpression)
+              ..addExpression(completerFuture);
           } else if (returnsVoid && updater) {
             builder
               ..addExpression(createCompleter)
               ..addExpression(newNodeExpression)
               ..addExpression(invokeNodeExpression)
               ..addExpression(completerFuture);
-          } else if (returnsVoid && allocator) {
+          } else if (returnsVoid && forced && (allocator || disposer)) {
             builder
               ..addExpression(newNodeExpression)
+              ..addExpression(setNodeExpression)
               ..addExpression(invokeNodeExpression.returned);
           } else if (returnsVoid && forced) {
             builder
               ..addExpression(newNodeExpression)
               ..addExpression(invokeNodeExpression.returned);
-          } else if (returnsVoid && disposer) {
+          } else if (returnsVoid && (allocator || disposer)) {
             builder
               ..addExpression(newNodeExpression)
+              ..addExpression(setNodeExpression)
               ..addExpression(invokeNodeExpression.returned);
           } else if (returnsVoid) {
             builder
@@ -464,13 +473,25 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
             builder
               ..addExpression(newNodeExpression)
               ..addExpression(invokeNodeExpression.returned);
+          } else if (primitive && updater && (allocator || disposer)) {
+            builder
+              ..addExpression(createCompleter)
+              ..addExpression(newNodeExpression)
+              ..addExpression(setNodeExpression)
+              ..addExpression(invokeNodeExpression)
+              ..addExpression(completerFuture);
           } else if (primitive && updater) {
             builder
               ..addExpression(createCompleter)
               ..addExpression(newNodeExpression)
               ..addExpression(invokeNodeExpression)
               ..addExpression(completerFuture);
-          } else if (primitive) {
+          } else if (primitive && (allocator || disposer)) {
+            builder
+              ..addExpression(newNodeExpression)
+              ..addExpression(setNodeExpression)
+              ..addExpression(invokeNodeExpression.returned);
+          }else if (primitive) {
             builder
               ..addExpression(newNodeExpression)
               ..addExpression(invokeNodeExpression.returned);
@@ -483,6 +504,14 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
               ..addExpression(newNodeExpression)
               ..addExpression(invokeNodeExpression)
               ..addExpression(completerFuture);
+          } else if (initializers && updater && (allocator || disposer)) {
+            builder
+              ..addExpression(createCompleter)
+              ..addExpression(newHandleExpression)
+              ..addExpression(newNodeExpression)
+              ..addExpression(setNodeExpression)
+              ..addExpression(invokeNodeExpression)
+              ..addExpression(completerFuture);
           } else if (initializers && updater) {
             builder
               ..addExpression(createCompleter)
@@ -490,7 +519,15 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
               ..addExpression(newNodeExpression)
               ..addExpression(invokeNodeExpression)
               ..addExpression(completerFuture);
-          } else if (initializers) {
+          } else if (initializers && (allocator || disposer)) {
+            builder
+              ..addExpression(createCompleter)
+              ..addExpression(newHandleExpression)
+              ..addExpression(newNodeExpression)
+              ..addExpression(setNodeExpression)
+              ..addExpression(invokeNodeExpression)
+              ..addExpression(completerFuture);
+          }else if (initializers) {
             builder
               ..addExpression(createCompleter)
               ..addExpression(newHandleExpression)
@@ -508,6 +545,14 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
                 returnedClass,
                 cb.literalNull,
               ).returned);
+          } else if (uninitialized && updater && (allocator || disposer)) {
+            builder
+              ..addExpression(createCompleter)
+              ..addExpression(newHandleExpression)
+              ..addExpression(newNodeExpression)
+              ..addExpression(setNodeExpression)
+              ..addExpression(invokeNodeExpression)
+              ..addExpression(completerFuture);
           } else if (uninitialized && updater) {
             builder
               ..addExpression(createCompleter)
@@ -515,7 +560,17 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
               ..addExpression(newNodeExpression)
               ..addExpression(invokeNodeExpression)
               ..addExpression(completerFuture);
-          } else if (uninitialized) {
+          } else if (uninitialized &&  (allocator || disposer)) {
+            builder
+              ..addExpression(newHandleExpression)
+              ..addExpression(newNodeExpression)
+              ..addExpression(setNodeExpression)
+              ..addExpression(invokeNodeExpression)
+              ..addExpression(_newObjectExpression(
+                returnedClass,
+                cb.literalNull,
+              ).returned);
+          }else if (uninitialized) {
             builder
               ..addExpression(newHandleExpression)
               ..addExpression(newNodeExpression)
