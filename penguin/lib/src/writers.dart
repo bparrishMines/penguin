@@ -276,6 +276,7 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
     final bool initializers =
         returnedClass != null && returnedClass.details.hasInitializedFields;
     final bool uninitialized = returnedClass != null && !initializers;
+    final bool updated = fieldOrMethod.updated;
 //
 ////    final MethodStructure s = _getMethodStructure(
 ////      returnType == 'void',
@@ -299,6 +300,8 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
     );
     final cb.Expression newHandleExpression = _newHandleExpression();
     final cb.Expression completerFuture = _completerFuture(returnType);
+    final cb.Expression disposerAssert = _disposerAssert();
+    final cb.Expression disposerReturn = _disposerReturn(name);
 
 //
 ////    cb.Expression disposerAssert;
@@ -431,6 +434,14 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
         ..requiredParameters.addAll(parameterWriter.writeAll(parameters))
         ..returns = returnRef
         ..body = cb.Block((cb.BlockBuilder builder) {
+          if (parentClassHasDisposer && updated && !static) {
+            builder
+              ..addExpression(disposerReturn)
+              ..addExpression(disposerAssert);
+          } else if (parentClassHasDisposer && !static) {
+            builder..addExpression(disposerAssert);
+          }
+
           if (returnsVoid && static) {
             builder
               ..addExpression(newNodeExpression)
@@ -462,7 +473,13 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
               ..addExpression(newNodeExpression)
               ..addExpression(setNodeExpression)
               ..addExpression(invokeNodeExpression.returned);
-          } else if (returnsVoid) {
+          } else if (returnsVoid && parentClassHasAllocator) {
+            builder
+              ..addExpression(newNodeExpression)
+              ..addExpression(_allocatorCheckInvoke())
+              ..addExpression(setNodeExpression)
+              ..addExpression(emptyFutureExpression);
+          }else if (returnsVoid) {
             builder
               ..addExpression(newNodeExpression)
               ..addExpression(setNodeExpression)
@@ -491,7 +508,7 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
               ..addExpression(newNodeExpression)
               ..addExpression(setNodeExpression)
               ..addExpression(invokeNodeExpression.returned);
-          }else if (primitive) {
+          } else if (primitive) {
             builder
               ..addExpression(newNodeExpression)
               ..addExpression(invokeNodeExpression.returned);
@@ -527,7 +544,7 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
               ..addExpression(setNodeExpression)
               ..addExpression(invokeNodeExpression)
               ..addExpression(completerFuture);
-          }else if (initializers) {
+          } else if (initializers) {
             builder
               ..addExpression(createCompleter)
               ..addExpression(newHandleExpression)
@@ -560,7 +577,7 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
               ..addExpression(newNodeExpression)
               ..addExpression(invokeNodeExpression)
               ..addExpression(completerFuture);
-          } else if (uninitialized &&  (allocator || disposer)) {
+          } else if (uninitialized && (allocator || disposer)) {
             builder
               ..addExpression(newHandleExpression)
               ..addExpression(newNodeExpression)
@@ -570,7 +587,7 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
                 returnedClass,
                 cb.literalNull,
               ).returned);
-          }else if (uninitialized) {
+          } else if (uninitialized) {
             builder
               ..addExpression(newHandleExpression)
               ..addExpression(newNodeExpression)
@@ -662,6 +679,22 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
     return paramExpressions;
   }
 
+  cb.Expression _disposerAssert() {
+    return cb.refer('assert').call(<cb.Expression>[
+      cb
+          .refer('invokerNode')
+          .property('type')
+          .notEqualTo(References.nodeType.property('disposer')),
+      cb.literalString('This object has been disposed.'),
+    ]);
+  }
+
+  cb.Expression _disposerReturn(String methodName) {
+    return cb.refer(
+      'if (_invokerNode.type == NodeType.disposer && _$methodName != null) return _$methodName',
+    );
+  }
+
   List<cb.Expression> _updateMethodExpressions() {
     final Class parentClass = _classFromString(nameOfParentClass);
     final List<dynamic> updatedMethods = parentClass.fieldsAndMethods
@@ -732,6 +765,12 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
       includeSelfInvokerNode: !fieldOrMethod.isStatic,
       nodeType: nodeType,
     ).assignFinal('newNode', References.methodCallInvokerNode);
+  }
+
+  cb.Expression _allocatorCheckInvoke() {
+    return cb.refer(
+      'if (invokerNode.type == NodeType.allocator) newNode.invoke<void>()',
+    );
   }
 
   cb.Expression _setNodeExpression() {
