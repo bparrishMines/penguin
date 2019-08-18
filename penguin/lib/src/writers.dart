@@ -115,7 +115,7 @@ abstract class Writer<T, K> {
   }
 
   bool _isInitializedClass(String type) {
-    return _classFromString(type)?.details?.hasInitializedFields;
+    return _classFromString(type)?.details?.hasInitializedFields ?? false;
   }
 }
 
@@ -273,9 +273,9 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
     final bool updater = Plugin.updater(fieldOrMethod);
     final bool forced = Plugin.force(fieldOrMethod);
     final bool primitive = returnedClass == null && returnType != 'void';
-    final bool initializers = !returnsVoid &&
-        !primitive &&
-        returnedClass.details.hasInitializedFields;
+    final bool initializers =
+        returnedClass != null && returnedClass.details.hasInitializedFields;
+    final bool uninitialized = returnedClass != null && !initializers;
 //
 ////    final MethodStructure s = _getMethodStructure(
 ////      returnType == 'void',
@@ -284,7 +284,11 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
 ////      returnedClass != null && returnedClass.details.hasInitializedFields,
 ////    );
 //
-    final cb.Reference returnRef = _returnRef(returnType, initializers);
+    final cb.Reference returnRef = _returnRef(
+      returnType,
+      initializers,
+      updater,
+    );
     final cb.Expression createCompleter = _createCompleter(returnType);
     final cb.Expression newNodeExpression = _newNodeExpression(fieldOrMethod);
     final cb.Expression setNodeExpression = _setNodeExpression();
@@ -293,7 +297,6 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
       returnType,
       updater,
     );
-    final cb.Expression resultExpression = _resultExpression();
     final cb.Expression newHandleExpression = _newHandleExpression();
     final cb.Expression completerFuture = _completerFuture(returnType);
 
@@ -437,7 +440,7 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
               ..addExpression(createCompleter)
               ..addExpression(newNodeExpression)
               ..addExpression(invokeNodeExpression)
-                ..addExpression(completerFuture);
+              ..addExpression(completerFuture);
           } else if (returnsVoid && allocator) {
             builder
               ..addExpression(newNodeExpression)
@@ -475,12 +478,54 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
 
           if (initializers && static) {
             builder
+              ..addExpression(createCompleter)
               ..addExpression(newHandleExpression)
               ..addExpression(newNodeExpression)
-              ..addExpression(invokeNodeExpression.awaited
-                  .assignFinal('source', References.standardMap))
-              ..addExpression(invokeNodeExpression.returned);
+              ..addExpression(invokeNodeExpression)
+              ..addExpression(completerFuture);
+          } else if (initializers && updater) {
+            builder
+              ..addExpression(createCompleter)
+              ..addExpression(newHandleExpression)
+              ..addExpression(newNodeExpression)
+              ..addExpression(invokeNodeExpression)
+              ..addExpression(completerFuture);
+          } else if (initializers) {
+            builder
+              ..addExpression(createCompleter)
+              ..addExpression(newHandleExpression)
+              ..addExpression(newNodeExpression)
+              ..addExpression(invokeNodeExpression)
+              ..addExpression(completerFuture);
           }
+
+          if (uninitialized && static) {
+            builder
+              ..addExpression(newHandleExpression)
+              ..addExpression(newNodeExpression)
+              ..addExpression(invokeNodeExpression)
+              ..addExpression(_newObjectExpression(
+                returnedClass,
+                cb.literalNull,
+              ).returned);
+          } else if (uninitialized && updater) {
+            builder
+              ..addExpression(createCompleter)
+              ..addExpression(newHandleExpression)
+              ..addExpression(newNodeExpression)
+              ..addExpression(invokeNodeExpression)
+              ..addExpression(completerFuture);
+          } else if (uninitialized) {
+            builder
+              ..addExpression(newHandleExpression)
+              ..addExpression(newNodeExpression)
+              ..addExpression(invokeNodeExpression)
+              ..addExpression(_newObjectExpression(
+                returnedClass,
+                cb.literalNull,
+              ).returned);
+          }
+
           //if ()
 //          switch (s) {
 //            case MethodStructure.staticReturnsVoid:
@@ -583,7 +628,7 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
     return updateMethodExpressions;
   }
 
-  cb.Reference _returnRef(String returnType, bool initializers) {
+  cb.Reference _returnRef(String returnType, bool initializers, bool updater) {
     final Class returnedClass = _classFromString(returnType);
 
     cb.Reference returnRef;
@@ -593,7 +638,7 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
       returnRef = cb.refer(returnType, returnedClass.details.file);
     }
 
-    if (returnedClass == null || initializers) {
+    if (returnedClass == null || initializers || updater) {
       return returnRef = References.future(returnRef);
     }
 
@@ -644,10 +689,6 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
         .call([]).returned;
   }
 
-  cb.Expression _resultExpression() {
-    return cb.refer('source').index(cb.literalString('result')).returned;
-  }
-
   cb.Expression _invokeExpression(String returnType, bool updater) {
     final String listType = _tryParseTypeFromList(returnType);
     final List<String> mapTypes = _tryParseTypesFromMap(returnType);
@@ -665,7 +706,7 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
     } else if (returnedClass == null && !updater) {
       invokeMethodName = 'invoke';
       types.add(cb.refer(returnType));
-    } else if (updater || returnedClass.details.hasInitializedFields) {
+    } else if (updater || _isInitializedClass(returnType)) {
       invokeMethodName = 'invokeMap';
       types.add(cb.refer('String'));
       types.add(cb.refer('dynamic'));
@@ -674,7 +715,7 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
       types.add(cb.refer('void'));
     }
 
-    if (!updater) {
+    if (!updater && !_isInitializedClass(returnType)) {
       return cb.refer('newNode').property(invokeMethodName).call(
         [],
         {},
@@ -684,17 +725,13 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
       return cb
           .refer('newNode')
           .property(invokeMethodName)
-          .call(
-            [],
-            {},
-            types,
-          )
+          .call([], {}, types)
           .property('then')
-          .call(<cb.Expression>[_updaterExpression(returnType)]);
+          .call(<cb.Expression>[_returnedMapExpression(returnType, updater)]);
     }
   }
 
-  cb.Expression _updaterExpression(String returnType) {
+  cb.Expression _returnedMapExpression(String returnType, updater) {
     return MethodExpression(cb.Method(
       (cb.MethodBuilder builder) {
         builder
@@ -706,8 +743,10 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
               ..type = References.standardMap;
           }))
           ..body = cb.Block((cb.BlockBuilder blockBuilder) {
-            for (cb.Expression expression in _updateMethodExpressions()) {
-              blockBuilder.addExpression(expression);
+            if (updater) {
+              for (cb.Expression expression in _updateMethodExpressions()) {
+                blockBuilder.addExpression(expression);
+              }
             }
             blockBuilder.addExpression(_completerComplete(returnType));
           });
@@ -733,16 +772,20 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
 
     return cb.refer('completer').property('complete').call(<cb.Expression>[
       if (_isPrimitive(returnType)) source,
-      if (returnedClass != null)
-        _getConstructor(returnedClass, returnedClass.name == nameOfParentClass)
-            .call(
-          <cb.Expression>[
-            cb.refer('newNode'),
-            cb.refer('newHandle'),
-            source,
-          ],
-        ),
+      if (returnedClass != null) _newObjectExpression(returnedClass, source),
     ]);
+  }
+
+  cb.Expression _newObjectExpression(
+    Class returnedClass,
+    cb.Expression source,
+  ) {
+    return _getConstructor(
+      returnedClass,
+      returnedClass.name == nameOfParentClass,
+    ).call(
+      <cb.Expression>[cb.refer('newNode'), cb.refer('newHandle'), source],
+    );
   }
 }
 
