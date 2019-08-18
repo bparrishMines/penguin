@@ -65,7 +65,7 @@ class PluginCreator {
           referencedClasses.add(returnType);
         }
 
-        if (Plugin.initialized(fieldOrMethod)) {
+        if (fieldOrMethod.initialized) {
           initializedClasses.add(returnType);
         }
       }

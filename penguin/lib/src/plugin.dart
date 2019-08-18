@@ -41,15 +41,6 @@ class Plugin {
     return false;
   }
 
-  static bool initialized(dynamic fieldOrMethod) {
-    if (fieldOrMethod is! Field && fieldOrMethod is! Method) {
-      throw ArgumentError();
-    }
-
-    if (fieldOrMethod is Field) return fieldOrMethod.initialized;
-    return false;
-  }
-
   static bool allocator(dynamic fieldOrMethod) {
     if (fieldOrMethod is! Field && fieldOrMethod is! Method) {
       throw ArgumentError();
@@ -74,6 +65,15 @@ class Plugin {
     }
 
     if (fieldOrMethod is Method) return fieldOrMethod.updater;
+    return false;
+  }
+
+  static bool updated(dynamic fieldOrMethod) {
+    if (fieldOrMethod is! Field && fieldOrMethod is! Method) {
+      throw ArgumentError();
+    }
+
+    if (fieldOrMethod is Method) return fieldOrMethod.updated;
     return false;
   }
 

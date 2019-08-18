@@ -117,29 +117,57 @@ abstract class Writer<T, K> {
   bool _isInitializedClass(String type) {
     return _classFromString(type)?.details?.hasInitializedFields ?? false;
   }
+
+  cb.Reference _getTypeReference(String type) {
+    return _isPrimitive(type) || type == 'void' || type == nameOfParentClass
+        ? cb.refer(type)
+        : cb.refer(type, _classFromString(type).details.file);
+  }
 }
 
-class FieldWriter extends Writer<Field, cb.Field> {
+// Methods and mutable/initialized fields
+class FieldWriter extends Writer<dynamic, cb.Field> {
   FieldWriter(Plugin plugin, String nameOfParentClass)
       : super(plugin, nameOfParentClass);
 
   @override
-  cb.Field write(Field field) {
-    if (!field.mutable && !field.initialized) throw ArgumentError();
+  cb.Field write(dynamic fieldOrMethod) {
+    final bool mutable = Plugin.mutable(fieldOrMethod);
 
-    final Class theClass = _classFromString(field.type);
+    if (!mutable && !fieldOrMethod.initialized && !fieldOrMethod.updated) {
+      throw ArgumentError();
+    }
+
+    final String returnType = Plugin.returnType(fieldOrMethod);
 
     return cb.Field((cb.FieldBuilder builder) {
       builder
-        ..name = field.mutable ? '_${field.name}' : field.name
-        ..static = field.isStatic
-        ..type = theClass == null || theClass.name == nameOfParentClass
-            ? cb.refer(field.type)
-            : cb.refer(theClass.name, theClass.details.file);
+        ..name = mutable || fieldOrMethod is Method
+            ? '_${fieldOrMethod.name}'
+            : fieldOrMethod.name
+        ..static = fieldOrMethod.isStatic
+        ..type = _getTypeReference(returnType);
 
-      if (!field.mutable) {
+      if (!mutable && !fieldOrMethod.updated) {
         builder.modifier = cb.FieldModifier.final$;
       }
+    });
+  }
+}
+
+class InitializedMethodWriter extends Writer<Method, cb.Method> {
+  InitializedMethodWriter(Plugin plugin, String nameOfParentClass)
+      : super(plugin, nameOfParentClass);
+
+  @override
+  cb.Method write(Method method) {
+    if (!method.initialized) throw ArgumentError();
+    return cb.Method((cb.MethodBuilder builder) {
+      builder
+        ..name = method.name
+        ..lambda = true
+        ..returns = _getTypeReference(method.returns)
+        ..body = cb.refer('_${method.name}').code;
     });
   }
 }
@@ -254,7 +282,7 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
   @override
   cb.Method write(dynamic fieldOrMethod) {
     if (fieldOrMethod is Field &&
-        (Plugin.mutable(fieldOrMethod) || Plugin.initialized(fieldOrMethod))) {
+        (Plugin.mutable(fieldOrMethod) || fieldOrMethod.initialized)) {
       throw ArgumentError();
     }
 
@@ -301,7 +329,7 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
     final cb.Expression newHandleExpression = _newHandleExpression();
     final cb.Expression completerFuture = _completerFuture(returnType);
     final cb.Expression disposerAssert = _disposerAssert();
-    final cb.Expression disposerReturn = _disposerReturn(name);
+    final cb.Expression disposerReturn = _disposerReturn(name, returnType, primitive || initializers);
 
 //
 ////    cb.Expression disposerAssert;
@@ -435,9 +463,7 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
         ..returns = returnRef
         ..body = cb.Block((cb.BlockBuilder builder) {
           if (parentClassHasDisposer && updated && !static) {
-            builder
-              ..addExpression(disposerReturn)
-              ..addExpression(disposerAssert);
+            builder.addExpression(disposerReturn);
           } else if (parentClassHasDisposer && !static) {
             builder..addExpression(disposerAssert);
           }
@@ -479,7 +505,7 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
               ..addExpression(_allocatorCheckInvoke())
               ..addExpression(setNodeExpression)
               ..addExpression(emptyFutureExpression);
-          }else if (returnsVoid) {
+          } else if (returnsVoid) {
             builder
               ..addExpression(newNodeExpression)
               ..addExpression(setNodeExpression)
@@ -689,10 +715,16 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
     ]);
   }
 
-  cb.Expression _disposerReturn(String methodName) {
-    return cb.refer(
-      'if (_invokerNode.type == NodeType.disposer && _$methodName != null) return _$methodName',
-    );
+  cb.Expression _disposerReturn(String methodName, String returnType, bool useFuture) {
+    if (useFuture) {
+      return cb.refer(
+        'if (_invokerNode.type == NodeType.disposer) return Future<$returnType>.value(_$methodName)',
+      );
+    } else {
+      return cb.refer(
+        'if (_invokerNode.type == NodeType.disposer) return _$methodName',
+      );
+    }
   }
 
   List<cb.Expression> _updateMethodExpressions() {
@@ -769,7 +801,7 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
 
   cb.Expression _allocatorCheckInvoke() {
     return cb.refer(
-      'if (invokerNode.type == NodeType.allocator) newNode.invoke<void>()',
+      'if (invokerNode.type == NodeType.allocator) return newNode.invoke<void>()',
     );
   }
 
@@ -883,7 +915,7 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
   }
 }
 
-class InitializerWriter extends Writer<Field, cb.Code> {
+class InitializerWriter extends Writer<dynamic, cb.Code> {
   InitializerWriter(Plugin plugin, String nameOfParentClass, this.setNull)
       : super(plugin, nameOfParentClass) {
     if (setNull == null) throw ArgumentError();
@@ -892,22 +924,32 @@ class InitializerWriter extends Writer<Field, cb.Code> {
   final bool setNull;
 
   @override
-  cb.Code write(Field field) {
-    final String fieldName = field.mutable ? '_${field.name}' : field.name;
+  cb.Code write(dynamic fieldOrMethod) {
+    if (fieldOrMethod is! Field && fieldOrMethod is! Method) {
+      throw ArgumentError();
+    } else if (!fieldOrMethod.initialized) {
+      throw ArgumentError();
+    }
+
+    final String fieldName =
+        Plugin.mutable(fieldOrMethod) || fieldOrMethod is Method
+            ? '_${fieldOrMethod.name}'
+            : fieldOrMethod.name;
 
     if (setNull) {
       return cb.refer(fieldName).assign(cb.literalNull).code;
     } else {
       final cb.Expression sourceAccess =
-          cb.refer('source').index(cb.literalString(field.name));
+          cb.refer('source').index(cb.literalString(fieldOrMethod.name));
 
-      final Class fieldClass = _classFromString(field.type);
+      final Class fieldClass =
+          _classFromString(Plugin.returnType(fieldOrMethod));
       final cb.Expression value = fieldClass == null
           ? sourceAccess
           : _getConstructor(fieldClass, fieldClass.name == nameOfParentClass)
               .call(<cb.Expression>[
               cb.refer('creatorNode'),
-              cb.literalString('\$handle+${field.name}'),
+              cb.literalString('\$handle+${fieldOrMethod.name}'),
               sourceAccess
             ]);
 
@@ -1108,8 +1150,9 @@ class ClassWriter extends Writer<Class, cb.Library> {
     final ConstructorWriter constructorWriter = ConstructorWriter(
       plugin,
       theClass.name,
-      initializers: constructorInitWriter.writeAll(theClass.fields.where(
-        (Field field) => field.initialized,
+      initializers:
+          constructorInitWriter.writeAll(theClass.fieldsAndMethods.where(
+        (dynamic fieldOrMethod) => fieldOrMethod.initialized,
       )),
       parameterWriter: parameterWriter,
     );
@@ -1121,6 +1164,9 @@ class ClassWriter extends Writer<Class, cb.Library> {
       parentClassHasDisposer: theClass.details.hasDisposer,
       parentClassHasAllocator: theClass.details.hasAllocator,
     );
+
+    final InitializedMethodWriter initializedMethodWriter =
+        InitializedMethodWriter(plugin, theClass.name);
 
     final FieldWriter fieldWriter = FieldWriter(plugin, theClass.name);
 
@@ -1166,8 +1212,8 @@ class ClassWriter extends Writer<Class, cb.Library> {
                       theClass.constructors,
                     ),
                     initializers: internalConstructorInitWriter.writeAll(
-                      theClass.fields.where(
-                        (Field field) => field.initialized,
+                      theClass.fieldsAndMethods.where(
+                        (dynamic fieldOrMethod) => fieldOrMethod.initialized,
                       ),
                     ),
                     hasInternalConstructor:
@@ -1190,9 +1236,11 @@ class ClassWriter extends Writer<Class, cb.Library> {
                       ..type = cb.refer('String')
                       ..modifier = cb.FieldModifier.final$;
                   }),
-                ...fieldWriter.writeAll(theClass.fields.where(
-                  (Field field) {
-                    return field.mutable || field.initialized;
+                ...fieldWriter.writeAll(theClass.fieldsAndMethods.where(
+                  (dynamic fieldOrMethod) {
+                    return Plugin.mutable(fieldOrMethod) ||
+                        fieldOrMethod.initialized ||
+                        fieldOrMethod.updated;
                   },
                 )),
               ])
@@ -1210,11 +1258,15 @@ class ClassWriter extends Writer<Class, cb.Library> {
               }))
               ..methods.addAll(
                 methodWriter.writeAll(
-                  theClass.fields.where((Field field) =>
-                      !Plugin.mutable(field) && !Plugin.initialized(field)),
+                  theClass.fieldsAndMethods.where((dynamic fieldOrMethod) =>
+                      !Plugin.mutable(fieldOrMethod) &&
+                      !fieldOrMethod.initialized),
                 ),
               )
               ..methods.addAll([
+                ...initializedMethodWriter.writeAll(
+                  theClass.methods.where((Method method) => method.initialized),
+                ),
                 if (!theClass.details.hasConstructor &&
                     !theClass.details.isReferenced)
                   cb.Method((cb.MethodBuilder builder) {
@@ -1223,7 +1275,6 @@ class ClassWriter extends Writer<Class, cb.Library> {
                       ..returns = cb.refer('String')
                       ..type = cb.MethodType.getter;
                   }),
-                ...methodWriter.writeAll(theClass.methods),
                 if (theClass.details.hasAllocator) _updateNodeMethod(),
               ]);
           }),
