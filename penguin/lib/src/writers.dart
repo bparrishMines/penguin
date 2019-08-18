@@ -109,6 +109,14 @@ abstract class Writer<T, K> {
 
     return paramExpressions;
   }
+
+  bool _isPrimitive(String type) {
+    return _classFromString(type) == null;
+  }
+
+  bool _isInitializedClass(String type) {
+    return _classFromString(type)?.details?.hasInitializedFields;
+  }
 }
 
 class FieldWriter extends Writer<Field, cb.Field> {
@@ -287,6 +295,7 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
     );
     final cb.Expression resultExpression = _resultExpression();
     final cb.Expression newHandleExpression = _newHandleExpression();
+    final cb.Expression completerFuture = _completerFuture(returnType);
 
 //
 ////    cb.Expression disposerAssert;
@@ -427,8 +436,8 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
             builder
               ..addExpression(createCompleter)
               ..addExpression(newNodeExpression)
-              ..addExpression(invokeNodeExpression);
-            builder.addExpression(emptyFutureExpression);
+              ..addExpression(invokeNodeExpression)
+                ..addExpression(completerFuture);
           } else if (returnsVoid && allocator) {
             builder
               ..addExpression(newNodeExpression)
@@ -456,8 +465,8 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
             builder
               ..addExpression(createCompleter)
               ..addExpression(newNodeExpression)
-              ..addExpression(invokeNodeExpression);
-            builder.addExpression(resultExpression);
+              ..addExpression(invokeNodeExpression)
+              ..addExpression(completerFuture);
           } else if (primitive) {
             builder
               ..addExpression(newNodeExpression)
@@ -681,11 +690,11 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
             types,
           )
           .property('then')
-          .call(<cb.Expression>[_updaterExpression()]);
+          .call(<cb.Expression>[_updaterExpression(returnType)]);
     }
   }
 
-  cb.Expression _updaterExpression() {
+  cb.Expression _updaterExpression(String returnType) {
     return MethodExpression(cb.Method(
       (cb.MethodBuilder builder) {
         builder
@@ -700,6 +709,7 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
             for (cb.Expression expression in _updateMethodExpressions()) {
               blockBuilder.addExpression(expression);
             }
+            blockBuilder.addExpression(_completerComplete(returnType));
           });
       },
     ));
@@ -716,18 +726,22 @@ class MethodWriter extends Writer<dynamic, cb.Method> {
   }
 
   cb.Expression _completerComplete(String returnType) {
-    _getConstructor(returnedClass, returnedClass.name == nameOfParentClass)
-        .call(
-      <cb.Expression>[
-        cb.refer('newNode'),
-        cb.refer('newHandle'),
-        cb.refer('source'),
-      ],
-    );
+    final Class returnedClass = _classFromString(returnType);
+
+    final cb.Expression source =
+        cb.refer('source').index(cb.literalString('result'));
 
     return cb.refer('completer').property('complete').call(<cb.Expression>[
-      if (primitive) cb.refer('source').index(cb.literalString('result')),
-      if (initializers) cb.refer('source').index(cb.literalString('result'))
+      if (_isPrimitive(returnType)) source,
+      if (returnedClass != null)
+        _getConstructor(returnedClass, returnedClass.name == nameOfParentClass)
+            .call(
+          <cb.Expression>[
+            cb.refer('newNode'),
+            cb.refer('newHandle'),
+            source,
+          ],
+        ),
     ]);
   }
 }
