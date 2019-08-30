@@ -15,5 +15,5 @@ dev_dependencies:
   build_runner: ^1.6.7
   flutter_test:
     sdk: flutter
-  todo_reporter_generator:
-    path: ../todo_reporter_generator/
+  penguin_generator:
+    path: ../penguin_generator/

@@ -12,6 +12,6 @@ class ClassGenerator extends GeneratorForAnnotation<Class> {
     BuildStep buildStep,
   ) {
     final String javaPackage = annotation.read('javaPackage').literalValue;
-    return "// $javaPackage 67 penguin";
+    return "// $javaPackage 67 penguin gen";
   }
 }
