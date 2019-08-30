@@ -1,9 +1,8 @@
 import 'dart:async';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:build/src/builder/build_step.dart';
+import 'package:penguin/penguin.dart';
 import 'package:source_gen/source_gen.dart';
-
-import 'package:todo_reporter/todo_reporter.dart';
 
 class ClassGenerator extends GeneratorForAnnotation<Class> {
   @override
@@ -13,6 +12,6 @@ class ClassGenerator extends GeneratorForAnnotation<Class> {
     BuildStep buildStep,
   ) {
     final String javaPackage = annotation.read('javaPackage').literalValue;
-    return "// $javaPackage 67";
+    return "// $javaPackage 67 penguin";
   }
 }

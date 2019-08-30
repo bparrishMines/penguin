@@ -1,6 +1,6 @@
 import 'package:test/test.dart';
 
-import 'package:todo_reporter/todo_reporter.dart';
+import 'package:todo_reporter/penguin.dart';
 
 void main() {
   group('Todo annotation', () {

@@ -6,6 +6,6 @@ part of 'second_todo.dart';
 // ClassGenerator
 // **************************************************************************
 
-// com.potample 67
+// com.potample 67 penguin
 
-// com.example 67
+// com.example 67 penguin

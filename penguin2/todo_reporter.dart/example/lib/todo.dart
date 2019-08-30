@@ -1,4 +1,4 @@
-import 'package:todo_reporter/todo_reporter.dart';
+import 'package:penguin/penguin.dart';
 
 part "todo.g.dart";
 

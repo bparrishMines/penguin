@@ -1,3 +1,3 @@
-library todo_reporter;
+library penguin;
 
 export 'src/penguin.dart';

@@ -8,8 +8,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  todo_reporter:
-    path: ../todo_reporter/
+  penguin:
+    path: ../penguin/
 
 dev_dependencies:
   build_runner: ^1.6.7

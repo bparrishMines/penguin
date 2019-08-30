@@ -1,7 +1,7 @@
 targets:
   $default:
     builders:
-      todo_reporter_generator|todo_reporter:
+      todo_reporter_generator|penguin:
         enabled: true
 
 builders:
