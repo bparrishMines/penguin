@@ -2,13 +2,10 @@ import 'package:todo_reporter/todo_reporter.dart';
 
 part "second_todo.g.dart";
 
-@Todo('Second todo to be implemented')
+@PenguinClass(javaPackage: 'com.potample')
 class SecondTodo {}
 
-@Todo(
-  'More and more todos',
-  todoUrl: 'https://stackoverflow.com',
-)
+@PenguinClass(javaPackage: 'com.example')
 class MoreTodos {
   final String something;
 
