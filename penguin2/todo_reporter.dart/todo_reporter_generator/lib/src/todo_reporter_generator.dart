@@ -5,7 +5,7 @@ import 'package:source_gen/source_gen.dart';
 
 import 'package:todo_reporter/todo_reporter.dart';
 
-class TodoReporterGenerator extends GeneratorForAnnotation<PenguinClass> {
+class ClassGenerator extends GeneratorForAnnotation<Class> {
   @override
   FutureOr<String> generateForAnnotatedElement(
     Element element,
@@ -13,6 +13,6 @@ class TodoReporterGenerator extends GeneratorForAnnotation<PenguinClass> {
     BuildStep buildStep,
   ) {
     final String javaPackage = annotation.read('javaPackage').literalValue;
-    return "// $javaPackage";
+    return "// $javaPackage 67";
   }
 }

@@ -2,10 +2,10 @@ import 'package:todo_reporter/todo_reporter.dart';
 
 part "second_todo.g.dart";
 
-@PenguinClass(javaPackage: 'com.potample')
+@Class(javaPackage: 'com.potample')
 class SecondTodo {}
 
-@PenguinClass(javaPackage: 'com.example')
+@Class(javaPackage: 'com.example')
 class MoreTodos {
   final String something;
 

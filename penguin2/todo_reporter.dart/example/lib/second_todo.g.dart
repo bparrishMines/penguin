@@ -3,9 +3,9 @@
 part of 'second_todo.dart';
 
 // **************************************************************************
-// TodoReporterGenerator
+// ClassGenerator
 // **************************************************************************
 
-// com.potample
+// com.potample 67
 
-// com.example
+// com.example 67

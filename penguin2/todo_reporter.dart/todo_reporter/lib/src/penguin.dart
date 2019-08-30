@@ -5,9 +5,13 @@
 //  const To do(this.name, {this.todoUrl}) : assert(name != null);
 //}
 
-class PenguinClass {
-  const PenguinClass({this.javaPackage, this.name});
+class Class {
+  const Class({this.javaPackage, this.name});
 
   final String javaPackage;
   final String name;
+}
+
+class Potato {
+  const Potato();
 }
