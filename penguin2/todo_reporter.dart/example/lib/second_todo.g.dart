@@ -6,6 +6,14 @@ part of 'second_todo.dart';
 // ClassGenerator
 // **************************************************************************
 
-// com.potample 67 penguin gen
+// CLASS
+class _$SecondTodo {
+  _$SecondTodo(this.$uniqueId);
 
-// com.example 67 penguin gen
+  final String $uniqueId;
+
+  MethodCall _$doSomething() {
+    return MethodCall('SecondTodo#doSomething');
+  }
+}
+// end CLASS

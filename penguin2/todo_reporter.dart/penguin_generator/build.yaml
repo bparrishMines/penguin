@@ -5,7 +5,7 @@ targets:
         enabled: true
 
 builders:
-  todo_reporter:
+  class:
     target: ":penguin_generator"
     import: "package:penguin_generator/builder.dart"
     builder_factories: ["classBuilder"]

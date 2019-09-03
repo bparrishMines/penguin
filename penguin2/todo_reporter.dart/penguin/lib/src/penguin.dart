@@ -6,12 +6,11 @@
 //}
 
 class Class {
-  const Class({this.javaPackage, this.name});
+  const Class({this.javaPackage});
 
   final String javaPackage;
-  final String name;
 }
 
-class Potato {
-  const Potato();
+class Method {
+  const Method();
 }

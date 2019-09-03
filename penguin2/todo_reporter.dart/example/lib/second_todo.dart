@@ -1,13 +1,22 @@
+import 'dart:async';
+
+import 'package:flutter/services.dart';
 import 'package:penguin/penguin.dart';
 
 part "second_todo.g.dart";
 
 @Class(javaPackage: 'com.potample')
-class SecondTodo {}
+class SecondTodo extends _$SecondTodo {
+  SecondTodo._(String $uniqueId) : super($uniqueId);
 
-@Class(javaPackage: 'com.example')
-class MoreTodos {
-  final String something;
+  @Method()
+  Future<void> doSomething() {
+    final MethodCall call = _$doSomething();
+    MethodChannel channel = MethodChannel('');
+    return channel.invokeMethod(call.method, call.arguments);
+  }
 
-  const MoreTodos(this.something);
+  Future<void> doSomethingElse() {
+    return null;
+  }
 }
