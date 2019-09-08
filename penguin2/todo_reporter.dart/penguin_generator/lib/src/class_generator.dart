@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:analyzer/dart/element/element.dart';
+import 'package:build/build.dart';
 import 'package:build/src/builder/build_step.dart';
+import 'package:glob/glob.dart';
 import 'package:penguin/penguin.dart';
 import 'package:penguin_generator/src/templates.dart';
 import 'package:source_gen/source_gen.dart';
@@ -14,7 +16,7 @@ class ClassGenerator extends GeneratorForAnnotation<Class> {
     Element element,
     ConstantReader annotation,
     BuildStep buildStep,
-  ) {
+  ) async {
     if (element.kind != ElementKind.CLASS) throw ArgumentError();
     final ClassElement classElement = element as ClassElement;
 

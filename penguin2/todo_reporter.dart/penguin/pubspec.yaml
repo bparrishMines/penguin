@@ -1,13 +1,16 @@
 name: penguin
 description: Keep track of all your TODOs.
 version: 1.0.0
-author: Jorge Coca <jcocaramos@gmail.com>
+author: <jcocaramos@gmail.com>
 homepage: https://github.com/jorgecoca/todo_reporter.dart
 
 environment:
   sdk: ">=2.0.0 <3.0.0"
+  flutter: ^1.7.8
 
 dependencies:
+  flutter:
+    sdk: flutter
 
 dev_dependencies:
   test: 1.3.4
