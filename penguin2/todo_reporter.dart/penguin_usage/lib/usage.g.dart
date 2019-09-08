@@ -13,7 +13,10 @@ class _$Usage1 {
   final String $uniqueId;
 
   MethodCall _$method() {
-    return MethodCall('Usage1#method');
+    return MethodCall(
+      'Usage1#method',
+      <String, String>{'uniqueId': $uniqueId},
+    );
   }
 
   Future<List<dynamic>> _$invoke(List<MethodCall> methodCalls) {

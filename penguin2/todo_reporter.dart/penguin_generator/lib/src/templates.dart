@@ -121,7 +121,10 @@ class _$__className__ {
   // METHODS
   // METHOD
   MethodCall _$__methodName__() {
-    return MethodCall('__className__#__methodName__');
+    return MethodCall(
+      '__className__#__methodName__',
+       <String, String>{'uniqueId': $uniqueId},
+    );
   }
   // end METHOD
   // end METHODS
@@ -172,5 +175,9 @@ public interface FlutterWrapper {
   Object onMethodCall(MethodCall call);
   static class MethodNotImplemented {}
 }
+''');
+
+  static const _Template javaCentral = _Template._(r'''
+  
 ''');
 }
