@@ -15,6 +15,11 @@ class Usage1 extends _$Usage1 {
       );
 
   void m() {
-    _$invoke(PenguinUsage.channel, [_$method(), _$method()]);
+    _$invoke([_$method(), _$method()]);
   }
+}
+
+@Class('yolo polo')
+class Usage2 extends _$Usage2 {
+  Usage2() : super('uniqueId');
 }

@@ -9,6 +9,7 @@ environment:
   flutter: ^1.7.8
 
 dependencies:
+  pubspec_parse: ^0.1.5
   build: ^1.1.6
   source_gen: ^0.9.4+4
   glob: ^1.1.7

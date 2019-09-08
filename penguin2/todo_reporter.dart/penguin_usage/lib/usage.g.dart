@@ -16,10 +16,7 @@ class _$Usage1 {
     return MethodCall('Usage1#method');
   }
 
-  Future<List<dynamic>> _$invoke(
-    MethodChannel channel,
-    List<MethodCall> methodCalls,
-  ) {
+  Future<List<dynamic>> _$invoke(List<MethodCall> methodCalls) {
     final List<Map<String, dynamic>> calls = methodCalls
         .map<Map<String, dynamic>>(
           (MethodCall methodCall) => <String, dynamic>{
@@ -29,7 +26,28 @@ class _$Usage1 {
         )
         .toList();
 
-    return channel.invokeListMethod('Invoke', calls);
+    return MethodChannel('yolo polo').invokeListMethod('Invoke', calls);
+  }
+}
+// end CLASS
+
+// CLASS
+class _$Usage2 {
+  _$Usage2(this.$uniqueId);
+
+  final String $uniqueId;
+
+  Future<List<dynamic>> _$invoke(List<MethodCall> methodCalls) {
+    final List<Map<String, dynamic>> calls = methodCalls
+        .map<Map<String, dynamic>>(
+          (MethodCall methodCall) => <String, dynamic>{
+            'method': methodCall.method,
+            'arguments': methodCall.arguments,
+          },
+        )
+        .toList();
+
+    return MethodChannel('yolo polo').invokeListMethod('Invoke', calls);
   }
 }
 // end CLASS

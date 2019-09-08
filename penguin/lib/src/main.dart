@@ -99,7 +99,7 @@ void main(List<String> args) async {
   ));
 
   _createPluginFiles(creator, libraryDirectory);
-  //_createJavaFiles(yaml, pluginDir, plugin, results[PenguinOption.java.name]);
+  _createJavaFiles(yaml, pluginDir, plugin, results[PenguinOption.java.name]);
 }
 
 int _runFlutterCreate({Directory directory, String projectName, String org}) {
