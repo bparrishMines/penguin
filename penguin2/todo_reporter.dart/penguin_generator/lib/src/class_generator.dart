@@ -21,6 +21,30 @@ class ClassGenerator extends GeneratorForAnnotation<Class> {
     if (element.kind != ElementKind.CLASS) throw ArgumentError();
     final ClassElement classElement = element as ClassElement;
 
+    createJava(classElement);
+    return createDart(classElement, annotation);
+  }
+
+  String createDart(ClassElement classElement, ConstantReader annotation) {
+    final DartTemplateCreator dartCreator = DartTemplateCreator();
+
+    final Iterable<String> methods = classElement.methods
+        .where((_) => _methodAnnotation.hasAnnotationOfExact(_))
+        .map<String>(
+          (MethodElement methodElement) => dartCreator.createMethod(
+            methodName: methodElement.name,
+            className: classElement.name,
+          ),
+        );
+
+    return dartCreator.createFile(
+      methods: methods,
+      className: classElement.name,
+      channelName: annotation.read('channel').stringValue,
+    );
+  }
+
+  void createJava(ClassElement classElement) {
     final File pubspecFile = File('pubspec.yaml');
     final Pubspec pubspec = Pubspec.parse(pubspecFile.readAsStringSync());
     final String androidPackage = pubspec.flutter['plugin']['androidPackage'];
@@ -28,51 +52,34 @@ class ClassGenerator extends GeneratorForAnnotation<Class> {
       path.join('android/src/main/java', androidPackage.replaceAll('.', '/')),
     );
     final File generatedFile = File(
-      path.join(androidDirectory.path, 'Flutter${element.name}.java'),
+      path.join(androidDirectory.path, 'Flutter${classElement.name}.java'),
     );
 
     final File wrapperFile = File(
       path.join(androidDirectory.path, 'FlutterWrapper.java'),
     );
+
+    final JavaTemplateCreator javaCreator = JavaTemplateCreator();
+
     wrapperFile.writeAsStringSync(
-      Templates.javaWrapper
-          .replaceAll(TemplateIdentifiers.package, androidPackage),
+      javaCreator.createCentral(package: androidPackage),
     );
 
-    generatedFile.writeAsStringSync(
-      Templates.java
-          .replaceAll(TemplateIdentifiers.className, element.name)
-          .replaceAll(TemplateIdentifiers.package, androidPackage)
-          .replaceAll(
-            TemplateIdentifiers.variableName,
-            element.name.toLowerCase(),
+    final Iterable<String> methods = classElement.methods
+        .where((_) => _methodAnnotation.hasAnnotationOfExact(_))
+        .map<String>(
+          (MethodElement methodElement) => javaCreator.createMethod(
+            methodName: methodElement.name,
+            className: classElement.name,
+            variableName: classElement.name.toLowerCase(),
           ),
-    );
-
-    final Iterable<MethodElement> methodElements = classElement.methods
-        .where((_) => _methodAnnotation.hasAnnotationOfExact(_));
-
-    return Templates.dart
-        .replaceAll(TemplateIdentifiers.className, element.name)
-        .replaceAll(
-          TemplateIdentifiers.channelName,
-          annotation.read('channel').stringValue,
-        )
-        .replaceAll(
-          RegExp(r'// METHODS.*// end METHODS', multiLine: true, dotAll: true),
-          methods(classElement.name, methodElements),
         );
-  }
 
-  String methods(String className, Iterable<MethodElement> elements) {
-    final StringBuffer methods = StringBuffer();
-
-    for (MethodElement element in elements) {
-      methods.writeln(Templates.getMethod(Templates.dart)
-          .replaceAll(TemplateIdentifiers.methodName, element.name)
-          .replaceAll(TemplateIdentifiers.className, className));
-    }
-
-    return methods.toString();
+    generatedFile.writeAsStringSync(javaCreator.createFile(
+      methods: methods,
+      className: classElement.name,
+      package: androidPackage,
+      variableName: classElement.name.toLowerCase(),
+    ));
   }
 }
