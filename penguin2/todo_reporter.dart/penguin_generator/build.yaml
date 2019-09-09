@@ -5,19 +5,11 @@ targets:
         enabled: true
 
 builders:
-  class:
+  dart:
     target: ":penguin_generator"
     import: "package:penguin_generator/builder.dart"
-    builder_factories: ["classBuilder"]
-    build_extensions: {".dart": [".class.g.part"]}
-    auto_apply: dependents
-    build_to: cache
-    applies_builders: ["source_gen|combining_builder"]
-
-  central:
-    import: "package:penguin_generator/builder.dart"
-    builder_factories: ["centralBuilder"]
-    build_extensions: {r"$lib$": ["all_files.txt"]}
+    builder_factories: ["dartBuilder"]
+    build_extensions: {r".dart": [".penguin.g.dart"]}
     auto_apply: dependents
     build_to: source
     applies_builders: ["source_gen|combining_builder"]

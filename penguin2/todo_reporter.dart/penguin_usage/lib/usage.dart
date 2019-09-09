@@ -2,7 +2,7 @@ import 'package:flutter/services.dart';
 import 'package:penguin/penguin.dart';
 import 'package:penguin_usage/penguin_usage.dart';
 
-part 'usage.g.dart';
+part 'usage.penguin.g.dart';
 
 @Class('yolo polo')
 class Usage1 extends _$Usage1 {

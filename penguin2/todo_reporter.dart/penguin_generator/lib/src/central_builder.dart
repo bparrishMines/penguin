@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:build/build.dart';
 import 'package:glob/glob.dart';
 import 'package:path/path.dart' as p;
@@ -10,6 +12,8 @@ class CentralBuilder implements Builder {
   static final _allFilesInLib = Glob('lib/**.dart');
 
   static AssetId _allFileOutput(BuildStep buildStep) {
+    var g = Glob('android/**.java');
+    print(g.listSync());
     return new AssetId(
       buildStep.inputId.package,
       p.join('lib', 'all_files.txt'),

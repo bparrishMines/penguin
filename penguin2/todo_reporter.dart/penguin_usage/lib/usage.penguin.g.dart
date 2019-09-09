@@ -1,24 +1,26 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'usage.dart';
+// **************************************************************************
+// PenguinGenerator
+// **************************************************************************
 
-// **************************************************************************
-// ClassGenerator
-// **************************************************************************
+part of 'usage.dart';
 
 // CLASS
 class _$Usage1 {
   _$Usage1(this.$uniqueId);
-
+  
   final String $uniqueId;
-
+  
+  
   MethodCall _$method() {
     return MethodCall(
       'Usage1#method',
-      <String, String>{'uniqueId': $uniqueId},
+       <String, String>{'uniqueId': $uniqueId},
     );
   }
-
+  
+  
   Future<List<dynamic>> _$invoke(List<MethodCall> methodCalls) {
     final List<Map<String, dynamic>> calls = methodCalls
         .map<Map<String, dynamic>>(
@@ -37,9 +39,11 @@ class _$Usage1 {
 // CLASS
 class _$Usage2 {
   _$Usage2(this.$uniqueId);
-
+  
   final String $uniqueId;
-
+  
+  
+  
   Future<List<dynamic>> _$invoke(List<MethodCall> methodCalls) {
     final List<Map<String, dynamic>> calls = methodCalls
         .map<Map<String, dynamic>>(
@@ -54,3 +58,4 @@ class _$Usage2 {
   }
 }
 // end CLASS
+

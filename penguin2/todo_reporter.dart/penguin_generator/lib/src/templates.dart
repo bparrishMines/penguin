@@ -16,8 +16,7 @@ class DartTemplateCreator extends _TemplateCreator {
       <Pattern, String>{
         _Replacement.className.name: className,
         _Replacement.channelName.name: channelName,
-        RegExp(r'// METHODS.*// end METHODS', multiLine: true, dotAll: true):
-            methods.join('\n'),
+        _TemplateCreator._methodBlocks: methods.join('\n'),
       },
     );
   }
@@ -48,8 +47,7 @@ class JavaTemplateCreator extends _TemplateCreator {
     return _replace(
       template.value,
       <Pattern, String>{
-        RegExp(r'// METHODS.*// end METHODS', multiLine: true, dotAll: true):
-            methods.join('\n'),
+        _TemplateCreator._methodBlocks: methods.join('\n'),
         _Replacement.className.name: className,
         _Replacement.package.name: package,
         _Replacement.variableName.name: variableName,
@@ -69,16 +67,22 @@ class JavaTemplateCreator extends _TemplateCreator {
 }
 
 abstract class _TemplateCreator {
+  static final RegExp _methodBlocks = RegExp(
+    r'// METHODS.*// end METHODS',
+    multiLine: true,
+    dotAll: true,
+  );
+
+  static final RegExp _methodBlock = RegExp(
+    r'// METHOD$(.*)// end METHOD$',
+    multiLine: true,
+    dotAll: true,
+  );
+
   _Template get template;
 
   String _getMethod(String input) {
-    final RegExp methodRegExp = RegExp(
-      r'// METHOD$(.*)// end METHOD$',
-      multiLine: true,
-      dotAll: true,
-    );
-
-    return methodRegExp.firstMatch(input).group(1);
+    return _methodBlock.firstMatch(input).group(1);
   }
 
   // TODO: Speedup with replaceAllMapped
