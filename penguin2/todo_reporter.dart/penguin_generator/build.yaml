@@ -13,3 +13,12 @@ builders:
     auto_apply: dependents
     build_to: source
     applies_builders: ["source_gen|combining_builder"]
+
+  android:
+    target: ":penguin_generator"
+    import: "package:penguin_generator/builder.dart"
+    builder_factories: ["androidBuilder"]
+    build_extensions: {r".dart": [".java"]}
+    auto_apply: dependents
+    build_to: source
+    applies_builders: ["source_gen|combining_builder"]
