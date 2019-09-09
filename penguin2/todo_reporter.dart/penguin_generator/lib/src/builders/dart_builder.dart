@@ -10,11 +10,6 @@ import 'platform_builder.dart';
 
 class DartBuilder extends PlatformBuilder {
   @override
-  Map<String, List<String>> get buildExtensions => {
-        r'.dart': const ['.penguin.g.dart'],
-      };
-
-  @override
   FutureOr<String> generateForClass(ClassElement element, Class theClass) {
     final DartTemplateCreator dartCreator = DartTemplateCreator();
 

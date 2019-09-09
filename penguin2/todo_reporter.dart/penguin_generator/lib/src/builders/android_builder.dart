@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
+import 'package:path/path.dart' as p;
 import 'package:penguin/penguin.dart';
 import 'package:pubspec_parse/pubspec_parse.dart';
 
@@ -10,11 +11,6 @@ import '../templates.dart';
 import 'platform_builder.dart';
 
 class AndroidBuilder extends PlatformBuilder {
-  @override
-  Map<String, List<String>> get buildExtensions => {
-        r'.dart': const ['.java'],
-      };
-
   @override
   FutureOr<String> generateForClass(ClassElement element, Class theClass) {
     final JavaTemplateCreator javaCreator = JavaTemplateCreator();
@@ -42,7 +38,7 @@ class AndroidBuilder extends PlatformBuilder {
     return classes;
   }
 
-  String get _androidPackage {
+  static String get _androidPackage {
     final File pubspecFile = File('pubspec.yaml');
     final Pubspec pubspec = Pubspec.parse(pubspecFile.readAsStringSync());
     return pubspec.flutter['plugin']['androidPackage'];
@@ -50,4 +46,17 @@ class AndroidBuilder extends PlatformBuilder {
 
   @override
   String get extension => '.java';
+}
+
+class AndroidMoveBuilder extends MoveBuilder {
+  AndroidMoveBuilder() : super(<String>['.java']);
+
+  @override
+  String get outputDirectory => p.join('android/src/main/java',
+      AndroidBuilder._androidPackage.replaceAll('.', '/'));
+
+  @override
+  String outputFilename(AssetId input) {
+    return p.basenameWithoutExtension(input.path) + 'Generated.java';
+  }
 }

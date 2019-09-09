@@ -9,7 +9,7 @@ builders:
     target: ":penguin_generator"
     import: "package:penguin_generator/builder.dart"
     builder_factories: ["dartBuilder"]
-    build_extensions: {r".dart": [".penguin.g.dart"]}
+    build_extensions: {".dart": [".penguin.g.dart"]}
     auto_apply: dependents
     build_to: source
     applies_builders: ["source_gen|combining_builder"]
@@ -18,7 +18,13 @@ builders:
     target: ":penguin_generator"
     import: "package:penguin_generator/builder.dart"
     builder_factories: ["androidBuilder"]
-    build_extensions: {r".dart": [".java"]}
+    build_extensions: {".dart": [".java"]}
     auto_apply: dependents
-    build_to: source
-    applies_builders: ["source_gen|combining_builder"]
+    build_to: cache
+    applies_builders: ["source_gen|combining_builder", ":android_move"]
+
+post_process_builders:
+  android_move:
+    import: "package:penguin_generator/builder.dart"
+    builder_factory: "androidMoveBuilder"
+    input_extensions: [".java"]

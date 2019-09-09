@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
@@ -23,6 +24,11 @@ abstract class PlatformBuilder extends Builder {
 // PenguinGenerator
 // **************************************************************************
 ''';
+
+  @override
+  Map<String, List<String>> get buildExtensions => {
+        r'.dart': <String>[extension],
+      };
 
   @override
   Future<void> build(BuildStep buildStep) async {
@@ -62,5 +68,30 @@ abstract class PlatformBuilder extends Builder {
 
   Class _convertAnnotationToClass(ConstantReader annotation) {
     return Class(annotation.read('channel').stringValue);
+  }
+}
+
+abstract class MoveBuilder extends FileDeletingBuilder {
+  MoveBuilder(List<String> inputExtensions) : super(inputExtensions);
+
+  String outputFilename(AssetId input);
+  String get outputDirectory;
+
+  @override
+  FutureOr<Null> build(PostProcessBuildStep buildStep) async {
+    if (!buildStep.inputId.path.contains('lib')) return null;
+    final AssetId input = buildStep.inputId;
+
+    final AssetId outputAsset = AssetId(
+      buildStep.inputId.package,
+      p.join(outputDirectory, outputFilename(input)),
+    );
+
+    final String outputContent = await buildStep.readInputAsString();
+
+    File(outputAsset.path).writeAsStringSync(outputContent);
+    await buildStep.writeAsString(outputAsset, outputContent);
+
+    return super.build(buildStep);
   }
 }
