@@ -22,7 +22,7 @@ class DartBuilder extends PlatformBuilder {
           ),
         );
 
-    return dartCreator.createFile(
+    return dartCreator.createClass(
       methods: methods,
       className: element.name,
       channelName: theClass.channel,
@@ -31,7 +31,11 @@ class DartBuilder extends PlatformBuilder {
 
   @override
   FutureOr<String> generateForFile(AssetId asset, List<String> classes) {
-    return 'part of \'${p.basename(asset.path)}\';\n\n${classes.join('\n')}';
+    final DartTemplateCreator dartCreator = DartTemplateCreator();
+    return dartCreator.createFile(
+      classes: classes,
+      libraryName: p.basenameWithoutExtension(asset.path),
+    );
   }
 
   @override

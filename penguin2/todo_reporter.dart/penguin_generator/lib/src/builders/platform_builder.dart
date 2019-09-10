@@ -39,7 +39,7 @@ abstract class PlatformBuilder extends Builder {
 
     final LibraryReader library = LibraryReader(await buildStep.inputLibrary);
 
-    final List<String> classOutput = <String>[];
+    final List<String> classes = <String>[];
     for (AnnotatedElement element in library.annotatedWith(classAnnotation)) {
       final ClassElement classElement = element.element as ClassElement;
       final String output = generateForClass(
@@ -47,15 +47,15 @@ abstract class PlatformBuilder extends Builder {
         _convertAnnotationToClass(element.annotation),
       );
 
-      classOutput.add(output);
+      classes.add(output);
     }
 
-    if (classOutput.isEmpty) return;
+    if (classes.isEmpty) return;
 
     final AssetId outputAsset = input.changeExtension(extension);
 
-    final String fileOutput = '$_fileHeader\n'
-        '${generateForFile(input, classOutput)}\n';
+    final String fileOutput = '$_fileHeader'
+        '${generateForFile(input, classes)}\n';
 
     await buildStep.writeAsString(outputAsset, fileOutput);
   }
@@ -76,15 +76,9 @@ abstract class MoveBuilder extends FileDeletingBuilder {
     if (!buildStep.inputId.path.startsWith('lib')) return null;
     final AssetId input = buildStep.inputId;
 
-    final AssetId outputAsset = AssetId(
-      input.package,
-      p.join(outputDirectory, outputFilename(input)),
-    );
-
+    final String outputPath = p.join(outputDirectory, outputFilename(input));
     final String outputContent = await buildStep.readInputAsString();
-
-    File(outputAsset.path).writeAsStringSync(outputContent);
-    await buildStep.writeAsString(outputAsset, outputContent);
+    File(outputPath).writeAsStringSync(outputContent);
 
     return super.build(buildStep);
   }

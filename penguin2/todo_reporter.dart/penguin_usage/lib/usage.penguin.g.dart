@@ -3,10 +3,9 @@
 // **************************************************************************
 // PenguinGenerator
 // **************************************************************************
-
 part of 'usage.dart';
 
-// CLASS
+
 class _$Usage1 {
   _$Usage1(this.$uniqueId);
   
@@ -34,9 +33,8 @@ class _$Usage1 {
     return MethodChannel('yolo polo').invokeListMethod('Invoke', calls);
   }
 }
-// end CLASS
-  
-// CLASS
+
+
 class _$Usage2 {
   _$Usage2(this.$uniqueId);
   
@@ -57,5 +55,5 @@ class _$Usage2 {
     return MethodChannel('yolo polo').invokeListMethod('Invoke', calls);
   }
 }
-// end CLASS
+
   

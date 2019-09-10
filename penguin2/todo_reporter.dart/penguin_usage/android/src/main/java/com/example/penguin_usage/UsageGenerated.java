@@ -3,14 +3,13 @@
 // **************************************************************************
 // PenguinGenerator
 // **************************************************************************
-
 package com.example.penguin_usage;
 
 import io.flutter.plugin.common.MethodCall;
 not
 real
 
-public class usage {
+public class UsageGenerated {
   
   static class Usage1 {
     private final String handle;
