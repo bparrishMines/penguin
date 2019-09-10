@@ -18,7 +18,7 @@ builders:
     target: ":penguin_generator"
     import: "package:penguin_generator/builder.dart"
     builder_factories: ["androidBuilder"]
-    build_extensions: {".dart": [".java"]}
+    build_extensions: {".dart": [".android"]}
     auto_apply: dependents
     build_to: cache
     applies_builders: ["source_gen|combining_builder", ":android_move"]
@@ -27,4 +27,4 @@ post_process_builders:
   android_move:
     import: "package:penguin_generator/builder.dart"
     builder_factory: "androidMoveBuilder"
-    input_extensions: [".java"]
+    input_extensions: [".android"]

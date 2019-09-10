@@ -45,11 +45,11 @@ class AndroidBuilder extends PlatformBuilder {
   }
 
   @override
-  String get extension => '.java';
+  String get extension => '.android';
 }
 
 class AndroidMoveBuilder extends MoveBuilder {
-  AndroidMoveBuilder() : super(<String>['.java']);
+  AndroidMoveBuilder() : super(<String>['.android']);
 
   @override
   String get outputDirectory => p.join('android/src/main/java',
@@ -57,6 +57,6 @@ class AndroidMoveBuilder extends MoveBuilder {
 
   @override
   String outputFilename(AssetId input) {
-    return p.basenameWithoutExtension(input.path) + 'Generated.java';
+    return p.basename(input.changeExtension('.java').path);
   }
 }

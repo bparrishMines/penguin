@@ -52,13 +52,7 @@ abstract class PlatformBuilder extends Builder {
 
     if (classOutput.isEmpty) return;
 
-    final AssetId outputAsset = AssetId(
-      input.package,
-      p.join(
-        p.dirname(input.path),
-        p.basenameWithoutExtension(input.path) + extension,
-      ),
-    );
+    final AssetId outputAsset = input.changeExtension(extension);
 
     final String fileOutput = '$_fileHeader\n'
         '${generateForFile(input, classOutput.join('\n'))}\n';
@@ -79,11 +73,11 @@ abstract class MoveBuilder extends FileDeletingBuilder {
 
   @override
   FutureOr<Null> build(PostProcessBuildStep buildStep) async {
-    if (!buildStep.inputId.path.contains('lib')) return null;
+    if (!buildStep.inputId.path.startsWith('lib')) return null;
     final AssetId input = buildStep.inputId;
 
     final AssetId outputAsset = AssetId(
-      buildStep.inputId.package,
+      input.package,
       p.join(outputDirectory, outputFilename(input)),
     );
 
