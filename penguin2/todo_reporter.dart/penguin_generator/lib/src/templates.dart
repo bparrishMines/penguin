@@ -24,7 +24,7 @@ class _$__className__ {
   // end METHOD
   // end METHODS
   
-  Future<List<dynamic>> _$invoke(List<MethodCall> methodCalls) {
+  Future<List<dynamic>> _$invoke(MethodChannel channel, List<MethodCall> methodCalls) {
     final List<Map<String, dynamic>> calls = methodCalls
         .map<Map<String, dynamic>>(
           (MethodCall methodCall) => <String, dynamic>{
@@ -34,7 +34,7 @@ class _$__className__ {
         )
         .toList();
 
-    return MethodChannel('__channelName__').invokeListMethod('Invoke', calls);
+    return channel.invokeListMethod('Invoke', calls);
   }
 }
 // end CLASS
@@ -47,7 +47,7 @@ package __package__;
 import io.flutter.plugin.common.MethodCall;
 // IMPORTS
 // IMPORT
-import __classPackage__.__className__;
+import __classPackage__;
 // end IMPORT
 // end IMPORTS
 
@@ -81,10 +81,6 @@ public interface FlutterWrapper {
   static class MethodNotImplemented {}
 }
 ''');
-
-  static const _Template javaCentral = _Template._(r'''
-  
-''');
 }
 
 class DartTemplateCreator extends _TemplateCreator {
@@ -101,13 +97,11 @@ class DartTemplateCreator extends _TemplateCreator {
   String createClass({
     Iterable<String> methods,
     String className,
-    String channelName,
   }) {
     return _replaceClass(
       <Pattern, String>{
         _Block.methods.exp: methods.join('\n'),
         _Replacement.className.name: className,
-        _Replacement.channelName.name: channelName,
       },
     );
   }
@@ -152,10 +146,9 @@ class JavaTemplateCreator extends _TemplateCreator {
     });
   }
 
-  String createImport({String classPackage, String className}) {
+  String createImport({String classPackage}) {
     return _replaceImport(<Pattern, String>{
       _Replacement.classPackage.name: classPackage,
-      _Replacement.className.name: className,
     });
   }
 

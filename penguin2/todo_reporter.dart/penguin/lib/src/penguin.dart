@@ -1,32 +1,60 @@
-//class T odo {
-//  final String name;
-//  final String todoUrl;
-//
-//  const T odo(this.name, {this.todoUrl}) : assert(name != null);
-//}
-
-//import 'package:flutter/services.dart';
+import 'package:source_gen/source_gen.dart';
 
 class Class {
-  const Class(this.channel) : assert(channel != null);
+  const Class(this.platform) : assert(platform != null);
 
-  final String channel;
+  final Platform platform;
+
+  static Class fromConstantReader(ConstantReader reader) =>
+      Class(Platform.fromConstantReader(reader.read('platform')));
 }
 
 class Method {
   const Method();
+  static Method fromConstantReader(ConstantReader reader) => Method();
 }
 
-class Callback {
-  Callback(this.channel);
+abstract class Platform {
+  const Platform();
 
-  final String channel;
+  String get name;
+
+  static Platform fromConstantReader(ConstantReader reader) {
+    final String platform = reader.read('name').stringValue;
+
+    if (platform == 'android') {
+      return AndroidPlatform.fromConstantReader(reader);
+    }
+
+    throw UnsupportedError('$platform platform is not supported!');
+  }
 }
 
-// For every android file add to central file channel Class for method calls?
+class AndroidPlatform extends Platform {
+  const AndroidPlatform(this.type) : assert(type != null);
 
-// Each class with callback gets its own methodchannel?
-// No method channel requires binarymessenger
+  final AndroidType type;
 
-// Platform side doesn't matter
-// Reflection for everything except callbacks?
+  @override
+  final String name = 'android';
+
+  static AndroidPlatform fromConstantReader(ConstantReader reader) {
+    return AndroidPlatform(
+      AndroidType.fromConstantReader(reader.read('type')),
+    );
+  }
+}
+
+class AndroidType {
+  const AndroidType(this.package, this.name);
+
+  final String package;
+  final String name;
+
+  static AndroidType fromConstantReader(ConstantReader reader) {
+    return AndroidType(
+      reader.read('package').stringValue,
+      reader.read('name').stringValue,
+    );
+  }
+}

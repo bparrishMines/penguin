@@ -12,23 +12,30 @@ import '../templates.dart';
 import 'platform_builder.dart';
 
 class AndroidBuilder extends PlatformBuilder {
+  final Set<String> imports = <String>{};
+
   @override
   FutureOr<String> generateForClass(ClassElement element, Class theClass) {
     final JavaTemplateCreator javaCreator = JavaTemplateCreator();
+
+    final AndroidPlatform platform = theClass.platform as AndroidPlatform;
+    imports.add(javaCreator.createImport(
+      classPackage: platform.type.package,
+    ));
 
     final Iterable<String> methods = element.methods
         .where((_) => PlatformBuilder.methodAnnotation.hasAnnotationOfExact(_))
         .map<String>(
           (MethodElement methodElement) => javaCreator.createMethod(
             methodName: methodElement.name,
-            variableName: element.name.toLowerCase(),
+            variableName: platform.type.name.toLowerCase(),
           ),
         );
 
     return javaCreator.createClass(
       methods: methods,
-      className: element.name,
-      variableName: element.name.toLowerCase(),
+      className: platform.type.name,
+      variableName: platform.type.name.toLowerCase(),
     );
   }
 
@@ -39,7 +46,7 @@ class AndroidBuilder extends PlatformBuilder {
     final JavaTemplateCreator javaCreator = JavaTemplateCreator();
     return javaCreator.createFile(
       classes: classes,
-      imports: ['not', 'real'],
+      imports: imports,
       package: _androidPackage,
       libraryName: '${libraryName.pascalCase}Generated',
     );

@@ -42,9 +42,10 @@ abstract class PlatformBuilder extends Builder {
     final List<String> classes = <String>[];
     for (AnnotatedElement element in library.annotatedWith(classAnnotation)) {
       final ClassElement classElement = element.element as ClassElement;
+
       final String output = generateForClass(
         classElement,
-        _convertAnnotationToClass(element.annotation),
+        Class.fromConstantReader(element.annotation),
       );
 
       classes.add(output);
@@ -53,15 +54,10 @@ abstract class PlatformBuilder extends Builder {
     if (classes.isEmpty) return;
 
     final AssetId outputAsset = input.changeExtension(extension);
-
     final String fileOutput = '$_fileHeader'
         '${generateForFile(input, classes)}\n';
 
     await buildStep.writeAsString(outputAsset, fileOutput);
-  }
-
-  Class _convertAnnotationToClass(ConstantReader annotation) {
-    return Class(annotation.read('channel').stringValue);
   }
 }
 

@@ -20,7 +20,7 @@ class _$Usage1 {
   }
   
   
-  Future<List<dynamic>> _$invoke(List<MethodCall> methodCalls) {
+  Future<List<dynamic>> _$invoke(MethodChannel channel, List<MethodCall> methodCalls) {
     final List<Map<String, dynamic>> calls = methodCalls
         .map<Map<String, dynamic>>(
           (MethodCall methodCall) => <String, dynamic>{
@@ -30,7 +30,7 @@ class _$Usage1 {
         )
         .toList();
 
-    return MethodChannel('yolo polo').invokeListMethod('Invoke', calls);
+    return channel.invokeListMethod('Invoke', calls);
   }
 }
 
@@ -42,7 +42,7 @@ class _$Usage2 {
   
   
   
-  Future<List<dynamic>> _$invoke(List<MethodCall> methodCalls) {
+  Future<List<dynamic>> _$invoke(MethodChannel channel, List<MethodCall> methodCalls) {
     final List<Map<String, dynamic>> calls = methodCalls
         .map<Map<String, dynamic>>(
           (MethodCall methodCall) => <String, dynamic>{
@@ -52,7 +52,7 @@ class _$Usage2 {
         )
         .toList();
 
-    return MethodChannel('yolo polo').invokeListMethod('Invoke', calls);
+    return channel.invokeListMethod('Invoke', calls);
   }
 }
 

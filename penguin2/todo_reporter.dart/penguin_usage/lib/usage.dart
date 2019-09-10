@@ -4,7 +4,7 @@ import 'package:penguin_usage/penguin_usage.dart';
 
 part 'usage.penguin.g.dart';
 
-@Class('yolo polo')
+@Class(AndroidPlatform(AndroidType('start.now', 'Banana')))
 class Usage1 extends _$Usage1 {
   Usage1() : super('uniqueId');
 
@@ -15,11 +15,11 @@ class Usage1 extends _$Usage1 {
       );
 
   void m() {
-    _$invoke([_$method(), _$method()]);
+    _$invoke(null, [_$method(), _$method()]);
   }
 }
 
-@Class('yolo polo')
+@Class(AndroidPlatform(AndroidType('start.now', 'Apple')))
 class Usage2 extends _$Usage2 {
   Usage2() : super('uniqueId');
 }

@@ -25,7 +25,6 @@ class DartBuilder extends PlatformBuilder {
     return dartCreator.createClass(
       methods: methods,
       className: element.name,
-      channelName: theClass.channel,
     );
   }
 

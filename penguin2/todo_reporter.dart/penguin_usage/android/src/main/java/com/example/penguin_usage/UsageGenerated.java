@@ -6,26 +6,27 @@
 package com.example.penguin_usage;
 
 import io.flutter.plugin.common.MethodCall;
-not
-real
+
+import start.now;
+
 
 public class UsageGenerated {
   
-  static class Usage1 {
+  static class Banana {
     private final String handle;
-    public final Usage1 usage1;
+    public final Banana banana;
 
     
     Object method() {
-      return usage1.method();
+      return banana.method();
     }
     
   }
   
 
-  static class Usage2 {
+  static class Apple {
     private final String handle;
-    public final Usage2 usage2;
+    public final Apple apple;
 
     
   }

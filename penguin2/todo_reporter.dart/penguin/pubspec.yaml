@@ -9,8 +9,4 @@ environment:
   flutter: ^1.7.8
 
 dependencies:
-  flutter:
-    sdk: flutter
-
-dev_dependencies:
-  test: 1.3.4
+  source_gen: ^0.9.4+4
