@@ -35,7 +35,7 @@ class _$Usage1 {
   }
 }
 // end CLASS
-
+  
 // CLASS
 class _$Usage2 {
   _$Usage2(this.$uniqueId);
@@ -58,4 +58,4 @@ class _$Usage2 {
   }
 }
 // end CLASS
-
+  

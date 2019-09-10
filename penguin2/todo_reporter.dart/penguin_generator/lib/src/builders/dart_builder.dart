@@ -30,8 +30,8 @@ class DartBuilder extends PlatformBuilder {
   }
 
   @override
-  FutureOr<String> generateForFile(AssetId asset, String classes) {
-    return 'part of \'${p.basename(asset.path)}\';\n\n$classes';
+  FutureOr<String> generateForFile(AssetId asset, List<String> classes) {
+    return 'part of \'${p.basename(asset.path)}\';\n\n${classes.join('\n')}';
   }
 
   @override

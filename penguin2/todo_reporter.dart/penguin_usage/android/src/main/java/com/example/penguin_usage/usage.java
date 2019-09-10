@@ -7,30 +7,29 @@
 package com.example.penguin_usage;
 
 import io.flutter.plugin.common.MethodCall;
+not
+real
 
-// CLASS
-class FlutterUsage1 implements FlutterWrapper {
-  private final String handle;
-  public final Usage1 usage1;
+public class usage {
   
+  static class Usage1 {
+    private final String handle;
+    public final Usage1 usage1;
+
+    
+    Object method() {
+      return usage1.method();
+    }
+    
+  }
   
-  Object method() {
-    return usage1.method();
+
+  static class Usage2 {
+    private final String handle;
+    public final Usage2 usage2;
+
+    
   }
   
 }
-// end CLASS
-
-package com.example.penguin_usage;
-
-import io.flutter.plugin.common.MethodCall;
-
-// CLASS
-class FlutterUsage2 implements FlutterWrapper {
-  private final String handle;
-  public final Usage2 usage2;
   
-  
-}
-// end CLASS
-

@@ -61,25 +61,25 @@ class ClassGenerator extends GeneratorForAnnotation<Class> {
 
     final JavaTemplateCreator javaCreator = JavaTemplateCreator();
 
-    wrapperFile.writeAsStringSync(
-      javaCreator.createCentral(package: androidPackage),
-    );
+//    wrapperFile.writeAsStringSync(
+//      javaCreator.createCentral(package: androidPackage),
+//    );
 
-    final Iterable<String> methods = classElement.methods
-        .where((_) => _methodAnnotation.hasAnnotationOfExact(_))
-        .map<String>(
-          (MethodElement methodElement) => javaCreator.createMethod(
-            methodName: methodElement.name,
-            className: classElement.name,
-            variableName: classElement.name.toLowerCase(),
-          ),
-        );
+//    final Iterable<String> methods = classElement.methods
+//        .where((_) => _methodAnnotation.hasAnnotationOfExact(_))
+//        .map<String>(
+//          (MethodElement methodElement) => javaCreator.createMethod(
+//            methodName: methodElement.name,
+//            className: classElement.name,
+//            variableName: classElement.name.toLowerCase(),
+//          ),
+//        );
 
-    generatedFile.writeAsStringSync(javaCreator.createFile(
-      methods: methods,
-      className: classElement.name,
-      package: androidPackage,
-      variableName: classElement.name.toLowerCase(),
-    ));
+//    generatedFile.writeAsStringSync(javaCreator.createFile(
+//      methods: methods,
+//      className: classElement.name,
+//      package: androidPackage,
+//      variableName: classElement.name.toLowerCase(),
+//    ));
   }
 }

@@ -9,7 +9,7 @@ import 'package:source_gen/source_gen.dart';
 
 abstract class PlatformBuilder extends Builder {
   FutureOr<String> generateForClass(ClassElement element, Class theClass);
-  FutureOr<String> generateForFile(AssetId asset, String classes);
+  FutureOr<String> generateForFile(AssetId asset, List<String> classes);
   String get extension;
 
   static const TypeChecker classAnnotation =
@@ -55,7 +55,7 @@ abstract class PlatformBuilder extends Builder {
     final AssetId outputAsset = input.changeExtension(extension);
 
     final String fileOutput = '$_fileHeader\n'
-        '${generateForFile(input, classOutput.join('\n'))}\n';
+        '${generateForFile(input, classOutput)}\n';
 
     await buildStep.writeAsString(outputAsset, fileOutput);
   }

@@ -20,22 +20,26 @@ class AndroidBuilder extends PlatformBuilder {
         .map<String>(
           (MethodElement methodElement) => javaCreator.createMethod(
             methodName: methodElement.name,
-            className: element.name,
             variableName: element.name.toLowerCase(),
           ),
         );
 
-    return javaCreator.createFile(
+    return javaCreator.createClass(
       methods: methods,
       className: element.name,
-      package: _androidPackage,
       variableName: element.name.toLowerCase(),
     );
   }
 
   @override
-  FutureOr<String> generateForFile(AssetId asset, String classes) {
-    return classes;
+  FutureOr<String> generateForFile(AssetId asset, List<String> classes) {
+    final JavaTemplateCreator javaCreator = JavaTemplateCreator();
+    return javaCreator.createFile(
+      classes: classes,
+      imports: ['not', 'real'],
+      package: _androidPackage,
+      libraryName: p.basenameWithoutExtension(asset.path),
+    );
   }
 
   static String get _androidPackage {
