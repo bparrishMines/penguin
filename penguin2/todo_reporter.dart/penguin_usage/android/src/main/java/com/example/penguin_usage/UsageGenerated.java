@@ -23,7 +23,6 @@ public class UsageGenerated {
     
   }
   
-
   static class Apple {
     private final String handle;
     public final Apple apple;

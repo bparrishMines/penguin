@@ -100,7 +100,7 @@ class DartTemplateCreator extends _TemplateCreator {
   }) {
     return _replaceClass(
       <Pattern, String>{
-        _Block.methods.exp: methods.join('\n'),
+        _Block.methods.exp: methods.join(),
         _Replacement.className.name: className,
       },
     );
@@ -113,7 +113,7 @@ class DartTemplateCreator extends _TemplateCreator {
     return _replace(
       template.value,
       <Pattern, String>{
-        _Block.classes.exp: classes.join('\n'),
+        _Block.classes.exp: classes.join(),
         _Replacement.libraryName.name: libraryName,
       },
     );
@@ -140,7 +140,7 @@ class JavaTemplateCreator extends _TemplateCreator {
     String variableName,
   }) {
     return _replaceClass(<Pattern, String>{
-      _Block.methods.exp: methods.join('\n'),
+      _Block.methods.exp: methods.join(),
       _Replacement.className.name: className,
       _Replacement.variableName.name: variableName,
     });
@@ -159,8 +159,8 @@ class JavaTemplateCreator extends _TemplateCreator {
     String libraryName,
   }) {
     return _replace(template.value, <Pattern, String>{
-      _Block.imports.exp: imports.join('\n'),
-      _Block.classes.exp: classes.join('\n'),
+      _Block.imports.exp: imports.join(),
+      _Block.classes.exp: classes.join(),
       _Replacement.package.name: package,
       _Replacement.libraryName.name: libraryName,
     });
@@ -209,7 +209,7 @@ class _Block {
   final RegExp exp;
 
   static final _Block methods = _Block(RegExp(
-    r'// METHODS$(.*)// end METHODS',
+    r'// METHODS$.(.*)// end METHODS',
     multiLine: true,
     dotAll: true,
   ));

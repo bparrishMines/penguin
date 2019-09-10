@@ -10,26 +10,31 @@ import 'platform_builder.dart';
 
 class DartBuilder extends PlatformBuilder {
   @override
-  FutureOr<String> generateForClass(ClassElement element, Class theClass) {
-    final DartTemplateCreator dartCreator = DartTemplateCreator();
+  FutureOr<String> generateForMethod(
+    Class theClass,
+    MethodElement methodElement,
+    Method method,
+  ) {
+    return DartTemplateCreator().createMethod(
+      methodName: methodElement.name,
+      className: methodElement.enclosingElement.name,
+    );
+  }
 
-    final Iterable<String> methods = element.methods
-        .where((_) => PlatformBuilder.methodAnnotation.hasAnnotationOfExact(_))
-        .map<String>(
-          (MethodElement methodElement) => dartCreator.createMethod(
-            methodName: methodElement.name,
-            className: element.name,
-          ),
-        );
-
-    return dartCreator.createClass(
+  @override
+  FutureOr<String> generateForClass(
+    ClassElement element,
+    Class theClass,
+    Iterable<String> methods,
+  ) {
+    return DartTemplateCreator().createClass(
       methods: methods,
       className: element.name,
     );
   }
 
   @override
-  FutureOr<String> generateForFile(AssetId asset, List<String> classes) {
+  FutureOr<String> generateForFile(AssetId asset, Iterable<String> classes) {
     final DartTemplateCreator dartCreator = DartTemplateCreator();
     return dartCreator.createFile(
       classes: classes,

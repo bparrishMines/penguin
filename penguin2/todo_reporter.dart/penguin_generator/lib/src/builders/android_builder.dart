@@ -15,22 +15,31 @@ class AndroidBuilder extends PlatformBuilder {
   final Set<String> imports = <String>{};
 
   @override
-  FutureOr<String> generateForClass(ClassElement element, Class theClass) {
+  FutureOr<String> generateForMethod(
+    Class theClass,
+    MethodElement methodElement,
+    Method method,
+  ) {
+    final AndroidPlatform platform = theClass.platform as AndroidPlatform;
+
+    return JavaTemplateCreator().createMethod(
+      methodName: methodElement.name,
+      variableName: platform.type.name.toLowerCase(),
+    );
+  }
+
+  @override
+  FutureOr<String> generateForClass(
+    ClassElement element,
+    Class theClass,
+    Iterable<String> methods,
+  ) {
     final JavaTemplateCreator javaCreator = JavaTemplateCreator();
 
     final AndroidPlatform platform = theClass.platform as AndroidPlatform;
     imports.add(javaCreator.createImport(
       classPackage: platform.type.package,
     ));
-
-    final Iterable<String> methods = element.methods
-        .where((_) => PlatformBuilder.methodAnnotation.hasAnnotationOfExact(_))
-        .map<String>(
-          (MethodElement methodElement) => javaCreator.createMethod(
-            methodName: methodElement.name,
-            variableName: platform.type.name.toLowerCase(),
-          ),
-        );
 
     return javaCreator.createClass(
       methods: methods,
@@ -40,11 +49,9 @@ class AndroidBuilder extends PlatformBuilder {
   }
 
   @override
-  FutureOr<String> generateForFile(AssetId asset, List<String> classes) {
+  FutureOr<String> generateForFile(AssetId asset, Iterable<String> classes) {
     final ReCase libraryName = ReCase(p.basenameWithoutExtension(asset.path));
-
-    final JavaTemplateCreator javaCreator = JavaTemplateCreator();
-    return javaCreator.createFile(
+    return JavaTemplateCreator().createFile(
       classes: classes,
       imports: imports,
       package: _androidPackage,

@@ -34,7 +34,6 @@ class _$Usage1 {
   }
 }
 
-
 class _$Usage2 {
   _$Usage2(this.$uniqueId);
   
