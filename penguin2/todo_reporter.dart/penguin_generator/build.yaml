@@ -23,6 +23,24 @@ builders:
     build_to: cache
     applies_builders: ["source_gen|combining_builder", ":android_move"]
 
+  read:
+    target: ":penguin_generator"
+    import: "package:penguin_generator/builder.dart"
+    builder_factories: ["readBuilder"]
+    build_extensions: {".dart": ["none"]}
+    auto_apply: dependents
+    runs_before: [":write"]
+    applies_builders: ["source_gen|combining_builder"]
+
+  write:
+    target: ":penguin_generator"
+    import: "package:penguin_generator/builder.dart"
+    builder_factories: ["writeBuilder"]
+    build_extensions: {r"$lib$": ["channel.android"]}
+    auto_apply: dependents
+    build_to: cache
+    applies_builders: ["source_gen|combining_builder", ":android_move"]
+
 post_process_builders:
   android_move:
     import: "package:penguin_generator/builder.dart"

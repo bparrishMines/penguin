@@ -82,3 +82,13 @@ class AndroidMoveBuilder extends MoveBuilder {
     return '${libraryName.pascalCase}Generated.java';
   }
 }
+
+class AndroidChannelBuilder extends AggregateBuilder {
+  @override
+  String get filename => 'channel.android';
+
+  @override
+  FutureOr<String> build(List<ClassInfo> classes) {
+    return '// #yolo';
+  }
+}

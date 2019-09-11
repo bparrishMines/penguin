@@ -13,8 +13,13 @@ import start.now;
 public class UsageGenerated {
   
   static class Banana {
-    private final String handle;
+    private final String uniqueId;
     public final Banana banana;
+
+    Banana(String uniqueId, Banana banana) {
+      this.uniqueId = uniqueId;
+      this.banana = banana;
+    }
 
     
     Object method() {
@@ -24,8 +29,13 @@ public class UsageGenerated {
   }
   
   static class Apple {
-    private final String handle;
+    private final String uniqueId;
     public final Apple apple;
+
+    Apple(String uniqueId, Apple apple) {
+      this.uniqueId = uniqueId;
+      this.apple = apple;
+    }
 
     
   }

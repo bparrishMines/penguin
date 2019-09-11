@@ -23,3 +23,7 @@ class Usage1 extends _$Usage1 {
 class Usage2 extends _$Usage2 {
   Usage2() : super('uniqueId');
 }
+
+// channel.penguin.g.dart; ChannelGenerated.android
+// channelName -> penguin_usage
+// global builder option to change channel?
