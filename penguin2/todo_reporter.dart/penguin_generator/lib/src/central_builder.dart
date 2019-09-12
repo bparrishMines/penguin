@@ -12,8 +12,6 @@ class CentralBuilder implements Builder {
   static final _allFilesInLib = Glob('lib/**.dart');
 
   static AssetId _allFileOutput(BuildStep buildStep) {
-    var g = Glob('android/**.java');
-    print(g.listSync());
     return new AssetId(
       buildStep.inputId.package,
       p.join('lib', 'all_files.txt'),
@@ -32,14 +30,6 @@ class CentralBuilder implements Builder {
     final files = <String>[];
     await for (AssetId input in buildStep.findAssets(_allFilesInLib)) {
       if (input.path.endsWith('.g.dart')) continue;
-
-      final LibraryReader reader =
-      LibraryReader(await buildStep.resolver.libraryFor(input));
-
-      for (AnnotatedElement element in reader.annotatedWith(classAnnotation)) {
-        print(element.element.name);
-      }
-
       files.add(input.path);
     }
     final output = _allFileOutput(buildStep);

@@ -1,5 +1,7 @@
 import 'package:build/build.dart';
 import 'package:penguin_generator/src/builders/platform_builder.dart';
+import 'package:penguin_generator/src/central_builder.dart';
+import 'package:source_gen/builder.dart';
 
 import 'src/builders/android_builder.dart';
 import 'src/builders/dart_builder.dart';
@@ -16,4 +18,5 @@ import 'src/builders/dart_builder.dart';
 //PostProcessBuilder androidMoveBuilder(BuilderOptions options) =>
 //    AndroidMoveBuilder();
 
-Builder readBuilder(BuilderOptions options) => ReadBuilder();
+Builder readBuilder(BuilderOptions options) => ReadInfoBuilder();
+Builder combineBuilder(BuilderOptions options) => CombineInfoBuilder();

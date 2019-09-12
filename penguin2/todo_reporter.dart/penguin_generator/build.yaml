@@ -11,8 +11,19 @@ builders:
     builder_factories: ["readBuilder"]
     build_extensions: {".dart": [".penguin.g.info"]}
     auto_apply: dependents
+    runs_before: [':combine']
     build_to: source
     applies_builders: ["source_gen|combining_builder"]
+
+  combine:
+    target: ":penguin_generator"
+    import: "package:penguin_generator/builder.dart"
+    builder_factories: ["combineBuilder"]
+    build_extensions: {"$lib$": ["penguin.g.all_info"]}
+    auto_apply: dependents
+    build_to: source
+    applies_builders: ["source_gen|combining_builder"]
+
 #  dart:
 #    target: ":penguin_generator"
 #    import: "package:penguin_generator/builder.dart"

@@ -5,6 +5,7 @@ import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
 import 'package:path/path.dart' as p;
 import 'package:penguin/penguin.dart';
+import 'package:penguin_generator/src/info.dart';
 import 'package:pubspec_parse/pubspec_parse.dart';
 import 'package:recase/recase.dart';
 

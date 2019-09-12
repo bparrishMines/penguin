@@ -209,7 +209,7 @@ const TypeChecker _methodAnnotation = const TypeChecker.fromRuntime(Method);
 //  }
 //}
 
-class ReadBuilder extends Builder {
+class ReadInfoBuilder extends Builder {
   static const String extension = '.penguin.g.info';
   @override
   FutureOr<void> build(BuildStep buildStep) async {
@@ -253,3 +253,88 @@ class ReadBuilder extends Builder {
         '.dart': <String>[extension],
       };
 }
+
+class CombineInfoBuilder extends Builder {
+  static const String filename = 'penguin.g.all_info';
+  static final Glob _allFiles = Glob('lib/**${ReadInfoBuilder.extension}');
+
+  @override
+  FutureOr<void> build(BuildStep buildStep) async {
+    final List<ClassInfo> classes = <ClassInfo>[];
+
+    await for (AssetId input in buildStep.findAssets(_allFiles)) {
+      final String info = await buildStep.readAsString(input);
+      classes.addAll(
+        jsonDecode(info).map<ClassInfo>(
+          (dynamic json) => ClassInfo.fromJson(json),
+        ),
+      );
+    }
+
+    if (classes.isNotEmpty) {
+      buildStep.writeAsString(
+        AssetId(buildStep.inputId.package, p.join('lib', filename)),
+        jsonEncode(classes
+            .map<Map<String, dynamic>>(
+              (ClassInfo info) => info.toJson(),
+            )
+            .toList()),
+      );
+    }
+  }
+
+  @override
+  Map<String, List<String>> get buildExtensions => <String, List<String>>{
+        r'$lib$': <String>[filename],
+      };
+}
+
+//class WriteBuilder extends PostProcessBuilder {
+//  String get filename;
+//  String get directory;
+//  FutureOr<String> buildFile(List<ClassInfo> classes);
+//
+//  static final Glob _allFiles = Glob('lib/**${ReadBuilder.extension}');
+//
+//  @override
+//  FutureOr<void> build(PostProcessBuildStep buildStep) {
+//    buildStep.
+//    // TODO: implement build
+//    return null;
+//  }
+//
+//  @override
+//  // TODO: implement inputExtensions
+//  Iterable<String> get inputExtensions => null;
+
+//  @override
+//  FutureOr<void> build(BuildStep buildStep) async {
+//    final List<ClassInfo> classes = <ClassInfo>[];
+//
+//    await for (AssetId input in buildStep.findAssets(_allFiles)) {
+//      final String info = await buildStep.readAsString(input);
+//      classes.addAll(
+//        jsonDecode(info).map<ClassInfo>(
+//          (dynamic json) => ClassInfo.fromJson(json),
+//        ),
+//      );
+//    }
+//
+//    if (classes.isNotEmpty) {
+//      buildStep.writeAsString(
+//        AssetId(buildStep.inputId.package, directory),
+//        buildFile(classes),
+//      );
+//    }
+//  }
+
+//  @override
+//  Map<String, List<String>> get buildExtensions => <String, List<String>>{
+//        r'$lib$': <String>[filename],
+//      };
+//}
+
+//// DeleteBuilder
+//abstract class CleanupBuilder extends FileDeletingBuilder {
+//  CleanupBuilder() : super(<String>[ReadBuilder.extension]);
+//}
