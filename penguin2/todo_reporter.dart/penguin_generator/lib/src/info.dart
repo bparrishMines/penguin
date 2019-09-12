@@ -1,0 +1,37 @@
+import 'package:json_annotation/json_annotation.dart';
+import 'package:penguin/penguin.dart';
+
+part 'info.g.dart';
+
+@JsonSerializable()
+class ClassInfo {
+  const ClassInfo({this.aClass, this.methods});
+
+  factory ClassInfo.fromJson(Map json) => _$ClassInfoFromJson(json);
+
+  @JsonKey(required: true, disallowNullValue: true)
+  final Class aClass;
+
+  @JsonKey(required: true, disallowNullValue: true)
+  final Iterable<MethodInfo> methods;
+
+  Map toJson() => _$ClassInfoToJson(this);
+
+  @override
+  String toString() => toJson().toString();
+}
+
+@JsonSerializable()
+class MethodInfo {
+  const MethodInfo(this.method);
+
+  factory MethodInfo.fromJson(Map json) => _$MethodInfoFromJson(json);
+
+  @JsonKey(required: true, disallowNullValue: true)
+  final Method method;
+
+  Map toJson() => _$MethodInfoToJson(this);
+
+  @override
+  String toString() => toJson().toString();
+}
