@@ -1,29 +1,24 @@
 import 'package:flutter/services.dart';
 import 'package:penguin/penguin.dart';
+import 'package:penguin_usage/penguin.g.dart';
 import 'package:penguin_usage/penguin_usage.dart';
 
-part 'usage.penguin.g.dart';
-
 @Class(AndroidPlatform(AndroidType('start.now', 'Banana')))
-class Usage1 extends _$Usage1 {
+class Usage1 extends $Usage1 {
   Usage1() : super('uniqueId');
 
   @Method()
   Future<void> method() => PenguinUsage.channel.invokeMethod(
-        _$method().method,
-        _$method().arguments,
+        $method().method,
+        $method().arguments,
       );
 
   void m() {
-    _$invoke(null, [_$method(), _$method()]);
+    $invoke(null, [$method(), $method()]);
   }
 }
 
 @Class(AndroidPlatform(AndroidType('start.now', 'Apple')))
-class Usage2 extends _$Usage2 {
+class Usage2 extends $Usage2 {
   Usage2() : super('uniqueId');
 }
-
-// channel.penguin.g.dart; ChannelGenerated.android
-// channelName -> penguin_usage
-// global builder option to change channel?

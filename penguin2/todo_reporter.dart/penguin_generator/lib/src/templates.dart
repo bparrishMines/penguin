@@ -3,17 +3,19 @@ class _Template {
 
   final String value;
 
-  static const _Template dart = _Template._(r'''
+  static const _Template methodChannel = _Template._(r'''
+import 'package:flutter/services.dart';
+
 // CLASSES
 // CLASS
-class _$__className__ {
-  _$__className__(this.$uniqueId);
+class $__className__ {
+  $__className__(this.$uniqueId);
   
   final String $uniqueId;
   
   // METHODS
   // METHOD
-  MethodCall _$__methodName__() {
+  MethodCall $__methodName__() {
     return MethodCall(
       '__className__#__methodName__',
        <String, String>{'uniqueId': $uniqueId},
@@ -21,22 +23,25 @@ class _$__className__ {
   }
   // end METHOD
   // end METHODS
-  
-  Future<List<dynamic>> _$invoke(MethodChannel channel, List<MethodCall> methodCalls) {
-    final List<Map<String, dynamic>> calls = methodCalls
-        .map<Map<String, dynamic>>(
-          (MethodCall methodCall) => <String, dynamic>{
-            'method': methodCall.method,
-            'arguments': methodCall.arguments,
-          },
-        )
-        .toList();
-
-    return channel.invokeListMethod('Invoke', calls);
-  }
 }
 // end CLASS
 // end CLASSES
+
+Future<List<dynamic>> $invoke(
+  MethodChannel channel,
+  List<MethodCall> methodCalls,
+) {
+  final List<Map<String, dynamic>> calls = methodCalls
+      .map<Map<String, dynamic>>(
+        (MethodCall methodCall) => <String, dynamic>{
+          'method': methodCall.method,
+          'arguments': methodCall.arguments,
+        },
+      )
+      .toList();
+
+  return channel.invokeListMethod('Invoke', calls);
+}
   ''');
 
   static const _Template android = _Template._(r'''
@@ -238,7 +243,7 @@ public interface FlutterWrapper {
 
 class MethodChannelTemplateCreator extends _TemplateCreator {
   @override
-  _Template get template => _Template.dart;
+  _Template get template => _Template.methodChannel;
 
   String createMethod({String className, String methodName}) {
     return _replaceMethod(<Pattern, String>{

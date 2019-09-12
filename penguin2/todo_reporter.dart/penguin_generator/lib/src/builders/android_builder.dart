@@ -104,7 +104,7 @@ class AndroidBuilder extends PlatformBuilder {
           classPackage:
               (classInfo.aClass.platform as AndroidPlatform).type.package,
         ),
-      ),
+      ).toSet(),
       classes: classes.map<String>(
         (ClassInfo classInfo) => creator.createClass(
           methods: classInfo.methods.map<String>(

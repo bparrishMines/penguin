@@ -4,8 +4,6 @@ import io.flutter.plugin.common.MethodCall;
 
 import start.now;
 
-import start.now;
-
 
 public class ChannelGenerated {
   
