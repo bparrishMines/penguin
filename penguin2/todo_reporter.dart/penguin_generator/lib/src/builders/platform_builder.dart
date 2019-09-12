@@ -254,9 +254,12 @@ class ReadInfoBuilder extends Builder {
       };
 }
 
-class CombineInfoBuilder extends Builder {
-  static const String filename = 'penguin.g.all_info';
+class WriteBuilder extends Builder {
+  WriteBuilder(this.platformBuilders);
+
   static final Glob _allFiles = Glob('lib/**${ReadInfoBuilder.extension}');
+
+  final List<PlatformBuilder> platformBuilders;
 
   @override
   FutureOr<void> build(BuildStep buildStep) async {
@@ -271,23 +274,109 @@ class CombineInfoBuilder extends Builder {
       );
     }
 
-    if (classes.isNotEmpty) {
-      buildStep.writeAsString(
-        AssetId(buildStep.inputId.package, p.join('lib', filename)),
-        jsonEncode(classes
-            .map<Map<String, dynamic>>(
-              (ClassInfo info) => info.toJson(),
-            )
-            .toList()),
+    if (classes.isEmpty) return;
+    for (PlatformBuilder builder in platformBuilders) {
+      await buildStep.writeAsString(
+        AssetId(buildStep.inputId.package, p.join('lib', builder.filename)),
+        builder.build(classes),
       );
     }
+
+    print('here');
+    print(File('lib/ChannelGenerated.java').existsSync());
+
+//    if (classes.isNotEmpty) {
+//      buildStep.writeAsString(
+//        AssetId(buildStep.inputId.package, p.join('android', filename)),
+//        jsonEncode(classes
+//            .map<Map<String, dynamic>>(
+//              (ClassInfo info) => info.toJson(),
+//            )
+//            .toList()),
+//      );
+//    }
   }
 
   @override
   Map<String, List<String>> get buildExtensions => <String, List<String>>{
-        r'$lib$': <String>[filename],
+        r'$lib$': platformBuilders
+            .map<String>((builder) => builder.filename)
+            .toList(),
       };
 }
+
+class MoveBuilder extends FileDeletingBuilder {
+  MoveBuilder(this.platformBuilders)
+      : super(platformBuilders
+            .map<String>((builder) => builder.filename)
+            .toList());
+
+  final List<PlatformBuilder> platformBuilders;
+
+  @override
+  FutureOr<Null> build(PostProcessBuildStep buildStep) async {
+    final PlatformBuilder builder = platformBuilders.firstWhere(
+      (PlatformBuilder builder) =>
+          builder.filename == p.basename(buildStep.inputId.path),
+    );
+
+    print(builder.directory);
+    print(builder.filename);
+    //print(await buildStep.readInputAsString());
+//    await buildStep.writeAsString(
+//      AssetId(
+//        buildStep.inputId.package,
+//        p.join(builder.directory, builder.filename),
+//      ),
+//      await buildStep.readInputAsString(),
+//    );
+
+    //return super.build(buildStep);
+  }
+}
+
+abstract class PlatformBuilder {
+  String get filename;
+  String get directory;
+  String build(List<ClassInfo> classes);
+}
+
+//class WriteBuilder extends Builder {
+//
+//  final List<PlatformBuilder> platformBuilders;
+//
+//  @override
+//  FutureOr<void> build(BuildStep buildStep) {
+//    // TODO: implement build
+//    return null;
+//  }
+//
+//  @override
+//  // TODO: implement buildExtensions
+//  Map<String, List<String>> get buildExtensions => null;
+//
+//}
+//
+//WriteBuilder(this.platformBuilders)
+//: super(<String>[CombineInfoBuilder.filename]);
+//
+//final List<PlatformBuilder> platformBuilders;
+//
+//@override
+//FutureOr<Null> build(PostProcessBuildStep buildStep) async {
+//  print(await buildStep.readInputAsString());
+//  return super.build(buildStep);
+//}
+//
+//class PlatformBuilder extends FileDeletingBuilder {
+//  PlatformBuilder() : super(<String>[CombineInfoBuilder.filename]);
+//
+//  @override
+//  FutureOr<Null> build(PostProcessBuildStep buildStep) async {
+//    print(await buildStep.readInputAsString());
+//    return super.build(buildStep);
+//  }
+//}
 
 //class WriteBuilder extends PostProcessBuilder {
 //  String get filename;

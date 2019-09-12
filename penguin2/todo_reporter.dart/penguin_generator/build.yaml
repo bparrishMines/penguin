@@ -11,18 +11,24 @@ builders:
     builder_factories: ["readBuilder"]
     build_extensions: {".dart": [".penguin.g.info"]}
     auto_apply: dependents
-    runs_before: [':combine']
+    runs_before: [':write']
     build_to: source
     applies_builders: ["source_gen|combining_builder"]
 
-  combine:
+  write:
     target: ":penguin_generator"
     import: "package:penguin_generator/builder.dart"
-    builder_factories: ["combineBuilder"]
-    build_extensions: {"$lib$": ["penguin.g.all_info"]}
+    builder_factories: ["writeBuilder"]
+    build_extensions: {"$lib$": ["ChannelGenerated.java"]}
     auto_apply: dependents
-    build_to: source
+    build_to: cache
     applies_builders: ["source_gen|combining_builder"]
+
+#post_process_builders:
+#  move:
+#    import: "package:penguin_generator/builder.dart"
+#    builder_factory: "moveBuilder"
+#    input_extensions: ["ChannelGenerated.java"]
 
 #  dart:
 #    target: ":penguin_generator"

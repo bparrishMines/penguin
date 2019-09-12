@@ -19,4 +19,8 @@ import 'src/builders/dart_builder.dart';
 //    AndroidMoveBuilder();
 
 Builder readBuilder(BuilderOptions options) => ReadInfoBuilder();
-Builder combineBuilder(BuilderOptions options) => CombineInfoBuilder();
+Builder writeBuilder(BuilderOptions options) =>
+    WriteBuilder(<PlatformBuilder>[AndroidBuilder()]);
+PostProcessBuilder moveBuilder(BuilderOptions options) =>
+    MoveBuilder(<PlatformBuilder>[AndroidBuilder()]);
+//PostProcessBuilder androidBuilder(BuilderOptions options) => AndroidBuilder();

@@ -93,3 +93,17 @@ import 'platform_builder.dart';
 //    return '// #yolo';
 //  }
 //}
+
+class AndroidBuilder extends PlatformBuilder {
+  @override
+  String build(List<ClassInfo> classes) {
+    return '// Android';
+  }
+
+  @override
+  String get directory => 'android/src/main/java/com/example/penguin_usage';
+
+  @override
+  String get filename => 'ChannelGenerated.java';
+
+}
