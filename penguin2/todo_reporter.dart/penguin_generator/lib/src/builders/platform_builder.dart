@@ -257,7 +257,7 @@ class ReadInfoBuilder extends Builder {
 class WriteBuilder extends Builder {
   WriteBuilder(this.platformBuilders);
 
-  static final Glob _allFiles = Glob('lib/**${ReadInfoBuilder.extension}');
+  static final Glob _allInfoFiles = Glob('lib/**${ReadInfoBuilder.extension}');
 
   final List<PlatformBuilder> platformBuilders;
 
@@ -265,7 +265,7 @@ class WriteBuilder extends Builder {
   FutureOr<void> build(BuildStep buildStep) async {
     final List<ClassInfo> classes = <ClassInfo>[];
 
-    await for (AssetId input in buildStep.findAssets(_allFiles)) {
+    await for (AssetId input in buildStep.findAssets(_allInfoFiles)) {
       final String info = await buildStep.readAsString(input);
       classes.addAll(
         jsonDecode(info).map<ClassInfo>(
@@ -276,64 +276,47 @@ class WriteBuilder extends Builder {
 
     if (classes.isEmpty) return;
     for (PlatformBuilder builder in platformBuilders) {
-      await buildStep.writeAsString(
-        AssetId(buildStep.inputId.package, p.join('lib', builder.filename)),
-        builder.build(classes),
-      );
+      File(p.join(builder.directory, builder.filename))
+          .writeAsStringSync(builder.build(classes));
     }
-
-    print('here');
-    print(File('lib/ChannelGenerated.java').existsSync());
-
-//    if (classes.isNotEmpty) {
-//      buildStep.writeAsString(
-//        AssetId(buildStep.inputId.package, p.join('android', filename)),
-//        jsonEncode(classes
-//            .map<Map<String, dynamic>>(
-//              (ClassInfo info) => info.toJson(),
-//            )
-//            .toList()),
-//      );
-//    }
   }
 
   @override
   Map<String, List<String>> get buildExtensions => <String, List<String>>{
         r'$lib$': platformBuilders
-            .map<String>((builder) => builder.filename)
+            .map<String>(
+              (PlatformBuilder builder) =>
+                  p.join(builder.directory, builder.filename),
+            )
             .toList(),
       };
 }
 
-class MoveBuilder extends FileDeletingBuilder {
-  MoveBuilder(this.platformBuilders)
-      : super(platformBuilders
-            .map<String>((builder) => builder.filename)
-            .toList());
-
-  final List<PlatformBuilder> platformBuilders;
-
-  @override
-  FutureOr<Null> build(PostProcessBuildStep buildStep) async {
-    final PlatformBuilder builder = platformBuilders.firstWhere(
-      (PlatformBuilder builder) =>
-          builder.filename == p.basename(buildStep.inputId.path),
-    );
-
-    print(builder.directory);
-    print(builder.filename);
-    //print(await buildStep.readInputAsString());
+//class MoveBuilder extends FileDeletingBuilder {
+//  MoveBuilder(this.platformBuilders) : super(['.txt']);
+//
+//  final List<PlatformBuilder> platformBuilders;
+//
+//  @override
+//  FutureOr<Null> build(PostProcessBuildStep buildStep) async {
+//    if (p.basename(buildStep.inputId.path) != 'apple.txt') return;
+//    print(buildStep.inputId.path);
+//    //final PlatformBuilder builder = platformBuilders[0];
+//
 //    await buildStep.writeAsString(
 //      AssetId(
 //        buildStep.inputId.package,
-//        p.join(builder.directory, builder.filename),
+//        p.join(
+//          'android/src/main/java/com/example/penguin_usage',
+//          'apple.java',
+//        ),
 //      ),
 //      await buildStep.readInputAsString(),
 //    );
-
-    //return super.build(buildStep);
-  }
-}
+//
+//    //return super.build(buildStep);
+//  }
+//}
 
 abstract class PlatformBuilder {
   String get filename;

@@ -105,5 +105,4 @@ class AndroidBuilder extends PlatformBuilder {
 
   @override
   String get filename => 'ChannelGenerated.java';
-
 }

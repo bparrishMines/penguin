@@ -19,16 +19,10 @@ builders:
     target: ":penguin_generator"
     import: "package:penguin_generator/builder.dart"
     builder_factories: ["writeBuilder"]
-    build_extensions: {"$lib$": ["ChannelGenerated.java"]}
+    build_extensions: {"$lib$": ["nada"]}
     auto_apply: dependents
-    build_to: cache
+    build_to: source
     applies_builders: ["source_gen|combining_builder"]
-
-#post_process_builders:
-#  move:
-#    import: "package:penguin_generator/builder.dart"
-#    builder_factory: "moveBuilder"
-#    input_extensions: ["ChannelGenerated.java"]
 
 #  dart:
 #    target: ":penguin_generator"
