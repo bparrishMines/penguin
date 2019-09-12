@@ -5,9 +5,12 @@ part 'info.g.dart';
 
 @JsonSerializable()
 class ClassInfo {
-  const ClassInfo({this.aClass, this.methods});
+  const ClassInfo({this.name, this.aClass, this.methods});
 
   factory ClassInfo.fromJson(Map json) => _$ClassInfoFromJson(json);
+
+  @JsonKey(required: true, disallowNullValue: true)
+  final String name;
 
   @JsonKey(required: true, disallowNullValue: true)
   final Class aClass;
@@ -23,9 +26,12 @@ class ClassInfo {
 
 @JsonSerializable()
 class MethodInfo {
-  const MethodInfo(this.method);
+  const MethodInfo({this.name, this.method});
 
   factory MethodInfo.fromJson(Map json) => _$MethodInfoFromJson(json);
+
+  @JsonKey(required: true, disallowNullValue: true)
+  final String name;
 
   @JsonKey(required: true, disallowNullValue: true)
   final Method method;

@@ -222,6 +222,7 @@ class ReadInfoBuilder extends Builder {
         .annotatedWith(_classAnnotation)
         .map<ClassInfo>(
           (AnnotatedElement element) => ClassInfo(
+            name: element.element.name,
             aClass: Class.fromConstantReader(element.annotation),
             methods: (element.element as ClassElement)
                 .methods
@@ -229,7 +230,8 @@ class ReadInfoBuilder extends Builder {
                     _methodAnnotation.hasAnnotationOfExact(element))
                 .map<MethodInfo>(
                   (MethodElement element) => MethodInfo(
-                    Method.fromConstantReader(
+                    name: element.name,
+                    method: Method.fromConstantReader(
                       ConstantReader(
                         _methodAnnotation.firstAnnotationOfExact(element),
                       ),

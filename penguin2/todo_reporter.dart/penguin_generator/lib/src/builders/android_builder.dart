@@ -97,11 +97,47 @@ import 'platform_builder.dart';
 class AndroidBuilder extends PlatformBuilder {
   @override
   String build(List<ClassInfo> classes) {
-    return '// Android';
+    final AndroidTemplateCreator creator = AndroidTemplateCreator();
+    return creator.createFile(
+      imports: classes.map<String>(
+        (ClassInfo classInfo) => creator.createImport(
+          classPackage:
+              (classInfo.aClass.platform as AndroidPlatform).type.package,
+        ),
+      ),
+      classes: classes.map<String>(
+        (ClassInfo classInfo) => creator.createClass(
+          methods: classInfo.methods.map<String>(
+            (MethodInfo methodInfo) => creator.createMethod(
+              methodName: methodInfo.name,
+              variableName: (classInfo.aClass.platform as AndroidPlatform)
+                  .type
+                  .name
+                  .toLowerCase(),
+            ),
+          ),
+          className: (classInfo.aClass.platform as AndroidPlatform).type.name,
+          variableName: (classInfo.aClass.platform as AndroidPlatform)
+              .type
+              .name
+              .toLowerCase(),
+        ),
+      ),
+      package: _androidPackage,
+    );
+  }
+
+  static String get _androidPackage {
+    final File pubspecFile = File('pubspec.yaml');
+    final Pubspec pubspec = Pubspec.parse(pubspecFile.readAsStringSync());
+    return pubspec.flutter['plugin']['androidPackage'];
   }
 
   @override
-  String get directory => 'android/src/main/java/com/example/penguin_usage';
+  String get directory =>
+      p.joinAll(<String>['android', 'src', 'main', 'java']..addAll(
+          _androidPackage.split('.'),
+        ));
 
   @override
   String get filename => 'ChannelGenerated.java';

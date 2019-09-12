@@ -4,8 +4,6 @@ class _Template {
   final String value;
 
   static const _Template dart = _Template._(r'''
-part of '__libraryName__.dart';
-
 // CLASSES
 // CLASS
 class _$__className__ {
@@ -41,7 +39,7 @@ class _$__className__ {
 // end CLASSES
   ''');
 
-  static const _Template java = _Template._(r'''
+  static const _Template android = _Template._(r'''
 package __package__;
 
 import io.flutter.plugin.common.MethodCall;
@@ -51,7 +49,7 @@ import __classPackage__;
 // end IMPORT
 // end IMPORTS
 
-public class __libraryName__ {
+public class ChannelGenerated {
   // CLASSES
   // CLASS
   static class __className__ {
@@ -238,7 +236,7 @@ public interface FlutterWrapper {
 ''');
 }
 
-class DartTemplateCreator extends _TemplateCreator {
+class MethodChannelTemplateCreator extends _TemplateCreator {
   @override
   _Template get template => _Template.dart;
 
@@ -261,23 +259,17 @@ class DartTemplateCreator extends _TemplateCreator {
     );
   }
 
-  String createFile({
-    Iterable<String> classes,
-    String libraryName,
-  }) {
+  String createFile({Iterable<String> classes}) {
     return _replace(
       template.value,
-      <Pattern, String>{
-        _Block.classes.exp: classes.join(),
-        _Replacement.libraryName.name: libraryName,
-      },
+      <Pattern, String>{_Block.classes.exp: classes.join()},
     );
   }
 }
 
-class JavaTemplateCreator extends _TemplateCreator {
+class AndroidTemplateCreator extends _TemplateCreator {
   @override
-  _Template get template => _Template.java;
+  _Template get template => _Template.android;
 
   String createMethod({
     String methodName,
@@ -311,13 +303,11 @@ class JavaTemplateCreator extends _TemplateCreator {
     Iterable<String> imports,
     Iterable<String> classes,
     String package,
-    String libraryName,
   }) {
     return _replace(template.value, <Pattern, String>{
       _Block.imports.exp: imports.join(),
       _Block.classes.exp: classes.join(),
       _Replacement.package.name: package,
-      _Replacement.libraryName.name: libraryName,
     });
   }
 }
@@ -411,5 +401,4 @@ class _Replacement {
   static final _Replacement variableName = _Replacement('__variableName__');
   static final _Replacement package = _Replacement('__package__');
   static final _Replacement classPackage = _Replacement('__classPackage__');
-  static final _Replacement libraryName = _Replacement('__libraryName__');
 }

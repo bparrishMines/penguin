@@ -4,6 +4,7 @@ import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
 import 'package:path/path.dart' as p;
 import 'package:penguin/penguin.dart';
+import 'package:penguin_generator/src/info.dart';
 
 import '../templates.dart';
 import 'platform_builder.dart';
@@ -45,3 +46,29 @@ import 'platform_builder.dart';
 //  @override
 //  String get extension => '.penguin.g.dart';
 //}
+
+class FlutterBuilder extends PlatformBuilder {
+  @override
+  String build(List<ClassInfo> classes) {
+    final MethodChannelTemplateCreator creator = MethodChannelTemplateCreator();
+    return creator.createFile(
+      classes: classes.map<String>(
+        (ClassInfo classInfo) => creator.createClass(
+          methods: classInfo.methods.map<String>(
+            (MethodInfo methodInfo) => creator.createMethod(
+              className: classInfo.name,
+              methodName: methodInfo.name,
+            ),
+          ),
+          className: classInfo.name,
+        ),
+      ),
+    );
+  }
+
+  @override
+  String get directory => 'lib';
+
+  @override
+  String get filename => 'penguin.g.dart';
+}

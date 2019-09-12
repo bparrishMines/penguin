@@ -8,9 +8,10 @@ part of 'info.dart';
 
 ClassInfo _$ClassInfoFromJson(Map<String, dynamic> json) {
   $checkKeys(json,
-      requiredKeys: const ['aClass', 'methods'],
-      disallowNullValues: const ['aClass', 'methods']);
+      requiredKeys: const ['name', 'aClass', 'methods'],
+      disallowNullValues: const ['name', 'aClass', 'methods']);
   return ClassInfo(
+    name: json['name'] as String,
     aClass: json['aClass'] == null
         ? null
         : Class.fromJson(json['aClass'] as Map<String, dynamic>),
@@ -28,6 +29,7 @@ Map<String, dynamic> _$ClassInfoToJson(ClassInfo instance) {
     }
   }
 
+  writeNotNull('name', instance.name);
   writeNotNull('aClass', instance.aClass);
   writeNotNull('methods', instance.methods?.toList());
   return val;
@@ -35,9 +37,11 @@ Map<String, dynamic> _$ClassInfoToJson(ClassInfo instance) {
 
 MethodInfo _$MethodInfoFromJson(Map<String, dynamic> json) {
   $checkKeys(json,
-      requiredKeys: const ['method'], disallowNullValues: const ['method']);
+      requiredKeys: const ['name', 'method'],
+      disallowNullValues: const ['name', 'method']);
   return MethodInfo(
-    json['method'] == null
+    name: json['name'] as String,
+    method: json['method'] == null
         ? null
         : Method.fromJson(json['method'] as Map<String, dynamic>),
   );
@@ -52,6 +56,7 @@ Map<String, dynamic> _$MethodInfoToJson(MethodInfo instance) {
     }
   }
 
+  writeNotNull('name', instance.name);
   writeNotNull('method', instance.method);
   return val;
 }
