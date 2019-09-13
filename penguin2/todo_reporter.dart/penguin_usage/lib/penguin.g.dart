@@ -1,23 +1,29 @@
 import 'package:flutter/services.dart';
 
+
 class $Usage1 {
   $Usage1(this.$uniqueId);
-
+  
   final String $uniqueId;
-
+  
+  
   MethodCall $method() {
     return MethodCall(
       'Usage1#method',
-      <String, String>{'uniqueId': $uniqueId},
+       <String, String>{'uniqueId': $uniqueId},
     );
   }
+  
 }
 
 class $Usage2 {
   $Usage2(this.$uniqueId);
-
+  
   final String $uniqueId;
+  
+  
 }
+
 
 Future<List<dynamic>> $invoke(
   MethodChannel channel,
@@ -34,3 +40,4 @@ Future<List<dynamic>> $invoke(
 
   return channel.invokeListMethod('Invoke', calls);
 }
+  

@@ -47,23 +47,97 @@ Future<List<dynamic>> $invoke(
   static const _Template android = _Template._(r'''
 package __package__;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Locale;
 import io.flutter.plugin.common.MethodCall;
+import io.flutter.plugin.common.MethodChannel;
+import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
+import io.flutter.plugin.common.MethodChannel.Result;
 // IMPORTS
 // IMPORT
 import __classPackage__;
 // end IMPORT
 // end IMPORTS
 
-public class ChannelGenerated {
+public class ChannelGenerated implements MethodCallHandler {
+  private final HashMap<String, FlutterWrapper> allocatedWrappers = new HashMap<>();
+  private final HashMap<String, FlutterWrapper> tempWrappers = new HashMap<>();
+  
+  private void addWrapper(
+      final String uniqueId, final FlutterWrapper wrapper, HashMap<String, FlutterWrapper> wrapperMap) {
+    if (wrapperMap.get(uniqueId) != null) {
+      final String message = String.format("Object for uniqueId already exists: %s", uniqueId);
+      throw new IllegalArgumentException(message);
+    }
+    wrapperMap.put(uniqueId, wrapper);
+  }
+
+  private void removeWrapper(String uniqueId) {
+    allocatedWrappers.remove(uniqueId);
+  }
+
+  private Boolean isAllocated(final String uniqueId) {
+    return allocatedWrappers.containsKey(uniqueId);
+  }
+
+  private FlutterWrapper getWrapper(String uniqueId) {
+    final FlutterWrapper wrapper = allocatedWrappers.get(uniqueId);
+    if (wrapper != null) return wrapper;
+    return tempWrappers.get(uniqueId);
+  }
+  
+  @Override
+  public void onMethodCall(MethodCall call, Result result) {
+    try {
+      final Object value = onMethodCall(call);
+      result.success(value);
+    } catch (WrapperNotFoundException e) {
+      e.printStackTrace();
+    } catch (NoUniqueIdException e) {
+      e.printStackTrace();
+    } finally {
+      tempWrappers.clear();
+    }
+  }
+  
+  public Object onMethodCall(MethodCall call) throws NoUniqueIdException, WrapperNotFoundException {
+    switch(call.method) {
+      case "Invoke":
+        Object value = null;
+        final ArrayList<HashMap<String, Object>> allMethodCallData = (ArrayList<HashMap<String, Object>>) call.arguments;
+        for(HashMap<String, Object> methodCallData : allMethodCallData) {
+          final String method = (String) methodCallData.get("method");;
+          final HashMap<String, Object> arguments = (HashMap<String, Object>) methodCallData.get("arguments");
+          final MethodCall methodCall = new MethodCall(method, arguments);
+          value = onMethodCall(methodCall);
+        }
+        return value;
+      default:
+        final String uniqueId = call.argument("uniqueId");
+        if (uniqueId == null) throw new NoUniqueIdException(call.method);
+        
+        final FlutterWrapper wrapper = getWrapper(uniqueId);
+        if (wrapper == null) throw new WrapperNotFoundException(uniqueId);
+        
+        return wrapper.onMethodCall(call);
+    }
+  }
+
   // CLASSES
   // CLASS
-  static class __className__ {
-    private final String uniqueId;
-    public final __className__ __variableName__;
+  private class __className__ extends FlutterWrapper {
+    private final __className__ __variableName__;
 
     __className__(String uniqueId, __className__ __variableName__) {
-      this.uniqueId = uniqueId;
+      super(uniqueId);
       this.__variableName__ = __variableName__;
+      addWrapper(uniqueId, this, tempWrappers);
+    }
+    
+    @Override
+    public Object onMethodCall(MethodCall call) {
+      return null;
     }
 
     // METHODS
@@ -76,6 +150,42 @@ public class ChannelGenerated {
   }
   // end CLASS
   // end CLASSES
+
+  private abstract class FlutterWrapper {
+    private final String uniqueId;
+    
+    FlutterWrapper(String uniqueId) {
+      this.uniqueId = uniqueId;
+    }
+
+    abstract Object onMethodCall(MethodCall call);
+
+    private void allocate() {
+      addWrapper(uniqueId, this, allocatedWrappers);
+    }
+
+    private void deallocate() {
+      removeWrapper(uniqueId);
+    }
+  }
+  
+  private class NotImplementedException extends Exception {
+    NotImplementedException(String method) {
+      super(String.format(Locale.getDefault(),"No implementation for %s.", method));
+    }
+  }
+  
+  private class NoUniqueIdException extends Exception {
+    NoUniqueIdException(String method) {
+      super(String.format("MethodCall was made without a unique handle for %s.", method));
+    }
+  }
+  
+  private class WrapperNotFoundException extends Exception {
+    WrapperNotFoundException(String uniqueId) {
+      super(String.format("Could not find FlutterWrapper with uniqueId %s.", uniqueId));
+    }
+  }
 }
   ''');
 
@@ -153,6 +263,34 @@ public final class FruitPickerPlugin implements MethodCallHandler, FlutterWrappe
     result.success(value);
     invokerWrappers.clear();
   }
+  
+  public Object onMethodCall(MethodCall call) {
+    switch(call.method) {
+      case "Invoke":
+        Object value = null;
+        final ArrayList<HashMap<String, Object>> allMethodCallData = (ArrayList<HashMap<String, Object>>) call.arguments;
+        for(HashMap<String, Object> methodCallData : allMethodCallData) {
+          final String method = (String) methodCallData.get("method");;
+          final HashMap<String, Object> arguments = (HashMap<String, Object>) methodCallData.get("arguments");
+          final MethodCall methodCall = new MethodCall(method, arguments);
+          value = onMethodCall(methodCall);
+          if (value instanceof FlutterWrapper.MethodNotImplemented) {
+            return new FlutterWrapper.MethodNotImplemented();
+          }
+        }
+        return value;
+      default:
+        final String handle = call.argument("handle");
+        if (handle == null) {
+          return new FlutterWrapper.MethodNotImplemented();
+        }
+        final FlutterWrapper wrapper = getWrapper(handle);
+        if (wrapper == null) {
+          return new FlutterWrapper.MethodNotImplemented();
+        }
+        return wrapper.onMethodCall(call);
+    }
+  }
 
   @Override
   public Object onMethodCall(MethodCall call) {
@@ -228,17 +366,6 @@ public final class FruitPickerPlugin implements MethodCallHandler, FlutterWrappe
   }
 }
   ''');
-
-  static const _Template javaWrapper = _Template._(r''' 
-package __package__;
-
-import io.flutter.plugin.common.MethodCall;
-
-public interface FlutterWrapper {
-  Object onMethodCall(MethodCall call);
-  static class MethodNotImplemented {}
-}
-''');
 }
 
 class MethodChannelTemplateCreator extends _TemplateCreator {
