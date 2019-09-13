@@ -1,11 +1,25 @@
-import 'package:flutter/services.dart';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+// **************************************************************************
+// PenguinGenerator
+// **************************************************************************
+  import 'package:flutter/services.dart';
 
 
 class $Usage1 {
   $Usage1(this.$uniqueId);
-  
+
   final String $uniqueId;
+
   
+  MethodCall $Usage1Default() {
+    return MethodCall(
+      'Usage1()', 
+      <String, String>{'uniqueId': $uniqueId},
+    );
+  }
+  
+
   
   MethodCall $method() {
     return MethodCall(
@@ -18,9 +32,11 @@ class $Usage1 {
 
 class $Usage2 {
   $Usage2(this.$uniqueId);
-  
+
   final String $uniqueId;
+
   
+
   
 }
 

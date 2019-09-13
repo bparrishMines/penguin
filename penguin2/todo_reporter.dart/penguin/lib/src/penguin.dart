@@ -39,6 +39,16 @@ class Method {
   String toString() => toJson().toString();
 }
 
+@JsonSerializable()
+class Constructor {
+  const Constructor();
+  factory Constructor.fromJson(Map json) => _$ConstructorFromJson(json);
+  static Constructor fromConstantReader(ConstantReader reader) => Constructor();
+  Map toJson() => _$ConstructorToJson(this);
+  @override
+  String toString() => toJson().toString();
+}
+
 abstract class Platform {
   const Platform(this.name);
 

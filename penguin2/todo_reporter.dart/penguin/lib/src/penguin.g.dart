@@ -33,6 +33,13 @@ Method _$MethodFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$MethodToJson(Method instance) => <String, dynamic>{};
 
+Constructor _$ConstructorFromJson(Map<String, dynamic> json) {
+  return Constructor();
+}
+
+Map<String, dynamic> _$ConstructorToJson(Constructor instance) =>
+    <String, dynamic>{};
+
 AndroidPlatform _$AndroidPlatformFromJson(Map<String, dynamic> json) {
   $checkKeys(json,
       requiredKeys: const ['type'], disallowNullValues: const ['type']);

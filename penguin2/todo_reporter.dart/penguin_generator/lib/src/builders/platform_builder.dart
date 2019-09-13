@@ -13,6 +13,8 @@ import '../info.dart';
 
 const TypeChecker _classAnnotation = const TypeChecker.fromRuntime(Class);
 const TypeChecker _methodAnnotation = const TypeChecker.fromRuntime(Method);
+const TypeChecker _constructorAnnotation =
+    const TypeChecker.fromRuntime(Constructor);
 
 //abstract class PlatformBuilder extends Builder {
 //  FutureOr<String> generateForClass(
@@ -224,6 +226,22 @@ class ReadInfoBuilder extends Builder {
           (AnnotatedElement element) => ClassInfo(
             name: element.element.name,
             aClass: Class.fromConstantReader(element.annotation),
+            constructors: (element.element as ClassElement)
+                .constructors
+                .where((ConstructorElement constructorElement) =>
+                    _constructorAnnotation
+                        .hasAnnotationOfExact(constructorElement))
+                .map<ConstructorInfo>(
+                  (ConstructorElement constructorElement) => ConstructorInfo(
+                    name: constructorElement.name,
+                    constructor: Constructor.fromConstantReader(
+                      ConstantReader(
+                        _constructorAnnotation
+                            .firstAnnotationOfExact(constructorElement),
+                      ),
+                    ),
+                  ),
+                ),
             methods: (element.element as ClassElement)
                 .methods
                 .where((MethodElement element) =>
@@ -259,6 +277,14 @@ class ReadInfoBuilder extends Builder {
 class WriteBuilder extends Builder {
   WriteBuilder(this.platformBuilders);
 
+  static final String _fileHeader = r'''
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+// **************************************************************************
+// PenguinGenerator
+// **************************************************************************
+  ''';
+
   static final Glob _allInfoFiles = Glob('lib/**${ReadInfoBuilder.extension}');
 
   final List<PlatformBuilder> platformBuilders;
@@ -279,7 +305,7 @@ class WriteBuilder extends Builder {
     if (classes.isEmpty) return;
     for (PlatformBuilder builder in platformBuilders) {
       File(p.join(builder.directory, builder.filename))
-          .writeAsStringSync(builder.build(classes));
+          .writeAsStringSync(_fileHeader + builder.build(classes));
     }
   }
 

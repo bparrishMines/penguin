@@ -5,6 +5,7 @@ import 'package:penguin_usage/penguin_usage.dart';
 
 @Class(AndroidPlatform(AndroidType('start.now', 'Banana')))
 class Usage1 extends $Usage1 {
+  @Constructor()
   Usage1() : super('uniqueId');
 
   @Method()

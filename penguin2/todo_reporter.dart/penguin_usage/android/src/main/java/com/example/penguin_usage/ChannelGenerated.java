@@ -1,4 +1,9 @@
-package com.example.penguin_usage;
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+// **************************************************************************
+// PenguinGenerator
+// **************************************************************************
+  package com.example.penguin_usage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,6 +17,42 @@ import start.now;
 
 
 public class ChannelGenerated implements MethodCallHandler {
+  private abstract class FlutterWrapper {
+    private final String uniqueId;
+    
+    FlutterWrapper(String uniqueId) {
+      this.uniqueId = uniqueId;
+    }
+
+    abstract Object onMethodCall(MethodCall call);
+
+    private void allocate() {
+      addWrapper(uniqueId, this, allocatedWrappers);
+    }
+
+    private void deallocate() {
+      removeWrapper(uniqueId);
+    }
+  }
+  
+  private class NotImplementedException extends Exception {
+    NotImplementedException(String method) {
+      super(String.format(Locale.getDefault(),"No implementation for %s.", method));
+    }
+  }
+  
+  private class NoUniqueIdException extends Exception {
+    NoUniqueIdException(String method) {
+      super(String.format("MethodCall was made without a unique handle for %s.", method));
+    }
+  }
+  
+  private class WrapperNotFoundException extends Exception {
+    WrapperNotFoundException(String uniqueId) {
+      super(String.format("Could not find FlutterWrapper with uniqueId %s.", uniqueId));
+    }
+  }
+  
   private final HashMap<String, FlutterWrapper> allocatedWrappers = new HashMap<>();
   private final HashMap<String, FlutterWrapper> tempWrappers = new HashMap<>();
   
@@ -114,41 +155,5 @@ public class ChannelGenerated implements MethodCallHandler {
     
   }
   
-
-  private abstract class FlutterWrapper {
-    private final String uniqueId;
-    
-    FlutterWrapper(String uniqueId) {
-      this.uniqueId = uniqueId;
-    }
-
-    abstract Object onMethodCall(MethodCall call);
-
-    private void allocate() {
-      addWrapper(uniqueId, this, allocatedWrappers);
-    }
-
-    private void deallocate() {
-      removeWrapper(uniqueId);
-    }
-  }
-  
-  private class NotImplementedException extends Exception {
-    NotImplementedException(String method) {
-      super(String.format(Locale.getDefault(),"No implementation for %s.", method));
-    }
-  }
-  
-  private class NoUniqueIdException extends Exception {
-    NoUniqueIdException(String method) {
-      super(String.format("MethodCall was made without a unique handle for %s.", method));
-    }
-  }
-  
-  private class WrapperNotFoundException extends Exception {
-    WrapperNotFoundException(String uniqueId) {
-      super(String.format("Could not find FlutterWrapper with uniqueId %s.", uniqueId));
-    }
-  }
 }
   
