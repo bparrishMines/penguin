@@ -3,7 +3,6 @@ package com.example.penguin_usage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
-
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
@@ -44,27 +43,27 @@ public class ChannelGenerated implements MethodCallHandler {
     try {
       final Object value = onMethodCall(call);
       result.success(value);
-    } catch (WrapperNotFoundException e) {
-      e.printStackTrace();
-    } catch (NoUniqueIdException e) {
-      e.printStackTrace();
+    } catch (WrapperNotFoundException exception) {
+      result.error(exception.getClass().getSimpleName(), exception.getMessage(), null);
+    } catch (NoUniqueIdException exception) {
+      result.error(exception.getClass().getSimpleName(), exception.getMessage(), null);
     } finally {
       tempWrappers.clear();
     }
   }
   
-  public Object onMethodCall(MethodCall call) throws NoUniqueIdException, WrapperNotFoundException {
+  private Object onMethodCall(MethodCall call) throws NoUniqueIdException, WrapperNotFoundException {
     switch(call.method) {
-      case "Invoke":
-        Object value = null;
+      case "MultiInvoke":
         final ArrayList<HashMap<String, Object>> allMethodCallData = (ArrayList<HashMap<String, Object>>) call.arguments;
+        final ArrayList<Object> resultData = new ArrayList<>(allMethodCallData.size());
         for(HashMap<String, Object> methodCallData : allMethodCallData) {
           final String method = (String) methodCallData.get("method");;
           final HashMap<String, Object> arguments = (HashMap<String, Object>) methodCallData.get("arguments");
           final MethodCall methodCall = new MethodCall(method, arguments);
-          value = onMethodCall(methodCall);
+          resultData.add(onMethodCall(methodCall));
         }
-        return value;
+        return resultData;
       default:
         final String uniqueId = call.argument("uniqueId");
         if (uniqueId == null) throw new NoUniqueIdException(call.method);
@@ -75,6 +74,7 @@ public class ChannelGenerated implements MethodCallHandler {
         return wrapper.onMethodCall(call);
     }
   }
+
   
   private class Banana extends FlutterWrapper {
     private final Banana banana;
