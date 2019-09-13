@@ -24,7 +24,7 @@ public class ChannelGenerated implements MethodCallHandler {
       this.uniqueId = uniqueId;
     }
 
-    abstract Object onMethodCall(MethodCall call);
+    abstract Object onMethodCall(MethodCall call) throws NotImplementedException;
 
     private void allocate() {
       addWrapper(uniqueId, this, allocatedWrappers);
@@ -105,6 +105,7 @@ public class ChannelGenerated implements MethodCallHandler {
           resultData.add(onMethodCall(methodCall));
         }
         return resultData;
+      // FIXXXXXXXXXXXXX
       default:
         final String uniqueId = call.argument("uniqueId");
         if (uniqueId == null) throw new NoUniqueIdException(call.method);
@@ -117,18 +118,33 @@ public class ChannelGenerated implements MethodCallHandler {
   }
 
   
-  private class Banana extends FlutterWrapper {
+  private class BananaWrapper extends FlutterWrapper {
     private final Banana banana;
 
-    Banana(String uniqueId, Banana banana) {
+    BananaWrapper(String uniqueId, Banana banana) {
       super(uniqueId);
       this.banana = banana;
       addWrapper(uniqueId, this, tempWrappers);
     }
     
+    
+    private BananaWrapper(final String uniqueId) {
+      super(uniqueId);
+      this.banana = new Banana();
+      addWrapper(uniqueId, this, tempWrappers);
+    }
+    
+    
     @Override
-    public Object onMethodCall(MethodCall call) {
-      return null;
+    public Object onMethodCall(MethodCall call) throws NotImplementedException {
+      switch(call.method) {
+        
+        case "Banana#method":
+          return method();
+        
+        default:
+          throw new NotImplementedException(call.method);
+      }
     }
 
     
@@ -138,18 +154,24 @@ public class ChannelGenerated implements MethodCallHandler {
     
   }
   
-  private class Apple extends FlutterWrapper {
+  private class AppleWrapper extends FlutterWrapper {
     private final Apple apple;
 
-    Apple(String uniqueId, Apple apple) {
+    AppleWrapper(String uniqueId, Apple apple) {
       super(uniqueId);
       this.apple = apple;
       addWrapper(uniqueId, this, tempWrappers);
     }
     
+    
+    
     @Override
-    public Object onMethodCall(MethodCall call) {
-      return null;
+    public Object onMethodCall(MethodCall call) throws NotImplementedException {
+      switch(call.method) {
+        
+        default:
+          throw new NotImplementedException(call.method);
+      }
     }
 
     

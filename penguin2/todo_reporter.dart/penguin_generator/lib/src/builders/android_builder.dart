@@ -99,14 +99,26 @@ class AndroidBuilder extends PlatformBuilder {
   String build(List<ClassInfo> classes) {
     final AndroidTemplateCreator creator = AndroidTemplateCreator();
     return creator.createFile(
-      imports: classes.map<String>(
-        (ClassInfo classInfo) => creator.createImport(
-          classPackage:
-              (classInfo.aClass.platform as AndroidPlatform).type.package,
-        ),
-      ).toSet(),
+      imports: classes
+          .map<String>(
+            (ClassInfo classInfo) => creator.createImport(
+              classPackage:
+                  (classInfo.aClass.platform as AndroidPlatform).type.package,
+            ),
+          )
+          .toSet(),
       classes: classes.map<String>(
         (ClassInfo classInfo) => creator.createClass(
+          constructors: classInfo.constructors.map<String>(
+            (ConstructorInfo constructorInfo) => creator.createConstructor(
+              className:
+                  (classInfo.aClass.platform as AndroidPlatform).type.name,
+              variableName: (classInfo.aClass.platform as AndroidPlatform)
+                  .type
+                  .name
+                  .toLowerCase(),
+            ),
+          ),
           methods: classInfo.methods.map<String>(
             (MethodInfo methodInfo) => creator.createMethod(
               methodName: methodInfo.name,
@@ -116,6 +128,13 @@ class AndroidBuilder extends PlatformBuilder {
                   .toLowerCase(),
             ),
           ),
+          methodCalls: classInfo.methods.map<String>(
+            (MethodInfo methodInfo) => creator.createMethodCall(
+              className:
+                  (classInfo.aClass.platform as AndroidPlatform).type.name,
+              methodName: methodInfo.name,
+            ),
+          ),
           className: (classInfo.aClass.platform as AndroidPlatform).type.name,
           variableName: (classInfo.aClass.platform as AndroidPlatform)
               .type
@@ -123,6 +142,7 @@ class AndroidBuilder extends PlatformBuilder {
               .toLowerCase(),
         ),
       ),
+      staticMethodCalls: <String>['// FIXXXXXXXXXXXXX'],
       package: _androidPackage,
     );
   }

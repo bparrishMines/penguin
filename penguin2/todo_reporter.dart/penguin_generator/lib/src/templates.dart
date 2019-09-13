@@ -79,7 +79,7 @@ public class ChannelGenerated implements MethodCallHandler {
       this.uniqueId = uniqueId;
     }
 
-    abstract Object onMethodCall(MethodCall call);
+    abstract Object onMethodCall(MethodCall call) throws NotImplementedException;
 
     private void allocate() {
       addWrapper(uniqueId, this, allocatedWrappers);
@@ -160,6 +160,14 @@ public class ChannelGenerated implements MethodCallHandler {
           resultData.add(onMethodCall(methodCall));
         }
         return resultData;
+      // STATICMETHODCALLS
+      // STATICMETHODCALL
+      case "__className__()": {
+          new __className__Wrapper(call.argument("uniqueId"));
+          return null;
+        }
+      // end STATICMETHODCALL
+      // end STATICMETHODCALLS
       default:
         final String uniqueId = call.argument("uniqueId");
         if (uniqueId == null) throw new NoUniqueIdException(call.method);
@@ -173,18 +181,37 @@ public class ChannelGenerated implements MethodCallHandler {
 
   // CLASSES
   // CLASS
-  private class __className__ extends FlutterWrapper {
+  private class __className__Wrapper extends FlutterWrapper {
     private final __className__ __variableName__;
 
-    __className__(String uniqueId, __className__ __variableName__) {
+    __className__Wrapper(String uniqueId, __className__ __variableName__) {
       super(uniqueId);
       this.__variableName__ = __variableName__;
       addWrapper(uniqueId, this, tempWrappers);
     }
     
+    // CONSTRUCTORS
+    // CONSTRUCTOR
+    private __className__Wrapper(final String uniqueId) {
+      super(uniqueId);
+      this.__variableName__ = new __className__();
+      addWrapper(uniqueId, this, tempWrappers);
+    }
+    // end CONSTRUCTOR
+    // end CONSTRUCTORS
+    
     @Override
-    public Object onMethodCall(MethodCall call) {
-      return null;
+    public Object onMethodCall(MethodCall call) throws NotImplementedException {
+      switch(call.method) {
+        // METHODCALLS
+        // METHODCALL
+        case "__className__#__methodName__":
+          return __methodName__();
+        // end METHODCALL
+        // end METHODCALLS
+        default:
+          throw new NotImplementedException(call.method);
+      }
     }
 
     // METHODS
@@ -255,12 +282,16 @@ class AndroidTemplateCreator extends _TemplateCreator {
   }
 
   String createClass({
+    Iterable<String> constructors,
     Iterable<String> methods,
+    Iterable<String> methodCalls,
     String className,
     String variableName,
   }) {
     return _replaceClass(<Pattern, String>{
+      _Block.constructors.exp: constructors.join(),
       _Block.methods.exp: methods.join(),
+      _Block.methodCalls.exp: methodCalls.join(),
       _Replacement.className.name: className,
       _Replacement.variableName.name: variableName,
     });
@@ -275,12 +306,34 @@ class AndroidTemplateCreator extends _TemplateCreator {
   String createFile({
     Iterable<String> imports,
     Iterable<String> classes,
+    Iterable<String> staticMethodCalls,
     String package,
   }) {
     return _replace(template.value, <Pattern, String>{
       _Block.imports.exp: imports.join(),
       _Block.classes.exp: classes.join(),
+      _Block.staticMethodCalls.exp: staticMethodCalls.join(),
       _Replacement.package.name: package,
+    });
+  }
+
+  String createConstructor({String className, String variableName}) {
+    return _replaceConstructor(<Pattern, String>{
+      _Replacement.className.name: className,
+      _Replacement.variableName.name: variableName,
+    });
+  }
+
+  String createMethodCall({String className, String methodName}) {
+    return _replaceMethodCall(<Pattern, String>{
+      _Replacement.className.name: className,
+      _Replacement.methodName.name: methodName,
+    });
+  }
+
+  String createStaticMethodCall({String className}) {
+    return _replaceStaticMethodCall(<Pattern, String>{
+      _Replacement.className.name: className,
     });
   }
 }
@@ -302,6 +355,14 @@ abstract class _TemplateCreator {
 
   String _getConstructor(String input) {
     return _Block.constructor.exp.firstMatch(input).group(1);
+  }
+
+  String _getMethodCall(String input) {
+    return _Block.methodCall.exp.firstMatch(input).group(1);
+  }
+
+  String _getStaticMethodCall(String input) {
+    return _Block.staticMethodCall.exp.firstMatch(input).group(1);
   }
 
   // TODO: Speedup with replaceAllMapped
@@ -326,6 +387,14 @@ abstract class _TemplateCreator {
 
   String _replaceConstructor(Map<Pattern, String> replacements) {
     return _replace(_getConstructor(template.value), replacements);
+  }
+
+  String _replaceMethodCall(Map<Pattern, String> replacements) {
+    return _replace(_getMethodCall(template.value), replacements);
+  }
+
+  String _replaceStaticMethodCall(Map<Pattern, String> replacements) {
+    return _replace(_getStaticMethodCall(template.value), replacements);
   }
 }
 
@@ -378,6 +447,30 @@ class _Block {
 
   static final _Block constructor = _Block(RegExp(
     r'// CONSTRUCTOR$(.*)// end CONSTRUCTOR$',
+    multiLine: true,
+    dotAll: true,
+  ));
+
+  static final _Block methodCalls = _Block(RegExp(
+    r'// METHODCALLS$(.*)// end METHODCALLS$',
+    multiLine: true,
+    dotAll: true,
+  ));
+
+  static final _Block methodCall = _Block(RegExp(
+    r'// METHODCALL$(.*)// end METHODCALL$',
+    multiLine: true,
+    dotAll: true,
+  ));
+
+  static final _Block staticMethodCalls = _Block(RegExp(
+    r'// STATICMETHODCALLS$(.*)// end STATICMETHODCALLS$',
+    multiLine: true,
+    dotAll: true,
+  ));
+
+  static final _Block staticMethodCall = _Block(RegExp(
+    r'// STATICMETHODCALL$(.*)// end STATICMETHODCALL$',
     multiLine: true,
     dotAll: true,
   ));
