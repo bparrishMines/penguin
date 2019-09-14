@@ -8,12 +8,12 @@ environment:
   sdk: ">=2.1.0 <3.0.0"
 
 dependencies:
-  penguin:
-    path: ../penguin/
   flutter:
     sdk: flutter
 
 dev_dependencies:
+  penguin:
+    path: ../penguin/
   build_runner: ^1.6.7
   penguin_generator:
     path: ../penguin_generator/

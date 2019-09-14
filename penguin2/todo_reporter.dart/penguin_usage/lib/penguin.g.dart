@@ -82,5 +82,5 @@ Future<List<dynamic>> $invoke(
       )
       .toList();
 
-  return channel.invokeListMethod('Invoke', calls);
+  return channel.invokeListMethod('MultiInvoke', calls);
 }

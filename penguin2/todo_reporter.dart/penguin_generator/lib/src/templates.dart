@@ -65,7 +65,7 @@ Future<List<dynamic>> $invoke(
       )
       .toList();
 
-  return channel.invokeListMethod('Invoke', calls);
+  return channel.invokeListMethod('MultiInvoke', calls);
 }
 ''');
 
@@ -516,6 +516,7 @@ class _Replacement {
   static final _Replacement variableName = _Replacement('__variableName__');
   static final _Replacement package = _Replacement('__package__');
   static final _Replacement classPackage = _Replacement('__classPackage__');
-  static final _Replacement platformClassName =
-      _Replacement('__platformClassName__');
+  static final _Replacement platformClassName = _Replacement(
+    '__platformClassName__',
+  );
 }
