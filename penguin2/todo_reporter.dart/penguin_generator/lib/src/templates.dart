@@ -34,6 +34,20 @@ class $__className__ {
   }
   // end METHOD
   // end METHODS
+  
+  MethodCall $allocate() {
+    return MethodCall(
+      '__platformClassName__#allocate',
+       <String, String>{'uniqueId': $uniqueId},
+    );
+  }
+  
+  MethodCall $deallocate() {
+    return MethodCall(
+      '__platformClassName__#deallocate',
+       <String, String>{'uniqueId': $uniqueId},
+    );
+  }
 }
 // end CLASS
 // end CLASSES
@@ -62,7 +76,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 import io.flutter.plugin.common.MethodCall;
-import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 // IMPORTS
@@ -81,12 +94,12 @@ public class ChannelGenerated implements MethodCallHandler {
 
     abstract Object onMethodCall(MethodCall call) throws NotImplementedException;
 
-    private void allocate() {
+    void allocate() {
       if (isAllocated(uniqueId)) return;
       addWrapper(uniqueId, this, allocatedWrappers);
     }
 
-    private void deallocate() {
+    void deallocate() {
       removeWrapper(uniqueId);
     }
   }
@@ -126,7 +139,6 @@ public class ChannelGenerated implements MethodCallHandler {
   }
 
   private Boolean isAllocated(final String uniqueId) {
-    if (isAllocated(uniqueId)) return;
     return allocatedWrappers.containsKey(uniqueId);
   }
 
@@ -207,6 +219,12 @@ public class ChannelGenerated implements MethodCallHandler {
     @Override
     public Object onMethodCall(MethodCall call) throws NotImplementedException {
       switch(call.method) {
+        case "__platformClassName__#allocate":
+          allocate();
+          return null;
+        case "__platformClassName__#deallocate":
+          deallocate();
+          return null;
         // METHODCALLS
         // METHODCALL
         case "__platformClassName__#__methodName__":
@@ -247,12 +265,14 @@ class MethodChannelTemplateCreator extends _TemplateCreator {
     Iterable<String> constructors,
     Iterable<String> methods,
     String className,
+    String platformClassName,
   }) {
     return _replaceClass(
       <Pattern, String>{
         _Block.constructors.exp: constructors.join(),
         _Block.methods.exp: methods.join(),
         _Replacement.className.name: className,
+        _Replacement.platformClassName.name: platformClassName,
       },
     );
   }

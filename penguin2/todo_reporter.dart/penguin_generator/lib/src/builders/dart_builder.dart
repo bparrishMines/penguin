@@ -67,6 +67,7 @@ class FlutterBuilder extends PlatformBuilder {
             ),
           ),
           className: classInfo.name,
+          platformClassName: (classInfo.aClass.platform as AndroidPlatform).type.name,
         ),
       ),
     );

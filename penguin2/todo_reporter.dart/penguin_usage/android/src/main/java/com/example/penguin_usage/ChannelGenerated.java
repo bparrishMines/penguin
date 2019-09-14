@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 import io.flutter.plugin.common.MethodCall;
-import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 
@@ -26,12 +25,12 @@ public class ChannelGenerated implements MethodCallHandler {
 
     abstract Object onMethodCall(MethodCall call) throws NotImplementedException;
 
-    private void allocate() {
+    void allocate() {
       if (isAllocated(uniqueId)) return;
       addWrapper(uniqueId, this, allocatedWrappers);
     }
 
-    private void deallocate() {
+    void deallocate() {
       removeWrapper(uniqueId);
     }
   }
@@ -71,6 +70,7 @@ public class ChannelGenerated implements MethodCallHandler {
   }
 
   private Boolean isAllocated(final String uniqueId) {
+    if (isAllocated(uniqueId)) return;
     return allocatedWrappers.containsKey(uniqueId);
   }
 
@@ -129,7 +129,7 @@ public class ChannelGenerated implements MethodCallHandler {
   private class BananaWrapper extends FlutterWrapper {
     private final Banana banana;
 
-    BananaWrapper(String uniqueId, Banana banana) {
+    private BananaWrapper(String uniqueId, Banana banana) {
       super(uniqueId);
       this.banana = banana;
       addWrapper(uniqueId, this, tempWrappers);
@@ -146,6 +146,12 @@ public class ChannelGenerated implements MethodCallHandler {
     @Override
     public Object onMethodCall(MethodCall call) throws NotImplementedException {
       switch(call.method) {
+        case "Banana#allocate":
+          allocate();
+          return null;
+        case "Banana#deallocate":
+          deallocate();
+          return null;
         
         case "Banana#method":
           return method();
@@ -165,7 +171,7 @@ public class ChannelGenerated implements MethodCallHandler {
   private class AppleWrapper extends FlutterWrapper {
     private final Apple apple;
 
-    AppleWrapper(String uniqueId, Apple apple) {
+    private AppleWrapper(String uniqueId, Apple apple) {
       super(uniqueId);
       this.apple = apple;
       addWrapper(uniqueId, this, tempWrappers);
@@ -176,6 +182,12 @@ public class ChannelGenerated implements MethodCallHandler {
     @Override
     public Object onMethodCall(MethodCall call) throws NotImplementedException {
       switch(call.method) {
+        case "Apple#allocate":
+          allocate();
+          return null;
+        case "Apple#deallocate":
+          deallocate();
+          return null;
         
         default:
           throw new NotImplementedException(call.method);
