@@ -80,7 +80,7 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 // IMPORTS
 // IMPORT
-import __classPackage__;
+import __classPackage__.__platformClassName__;
 // end IMPORT
 // end IMPORTS
 
@@ -239,7 +239,8 @@ public class ChannelGenerated implements MethodCallHandler {
     // METHODS
     // METHOD
     Object __methodName__() {
-      return __variableName__.__methodName__();
+      __variableName__.__methodName__();
+      return null;
     }
     // end METHOD
     // end METHODS
@@ -324,9 +325,10 @@ class AndroidTemplateCreator extends _TemplateCreator {
     });
   }
 
-  String createImport({String classPackage}) {
+  String createImport({String classPackage, String platformClassName}) {
     return _replaceImport(<Pattern, String>{
       _Replacement.classPackage.name: classPackage,
+      _Replacement.platformClassName.name: platformClassName,
     });
   }
 

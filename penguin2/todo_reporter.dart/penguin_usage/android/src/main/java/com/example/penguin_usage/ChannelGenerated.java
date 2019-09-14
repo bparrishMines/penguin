@@ -12,7 +12,9 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 
-import start.now;
+import com.example.penguin_usage.test_package.TestClass;
+
+import com.example.penguin_usage.test_package.TestClassTwo;
 
 
 public class ChannelGenerated implements MethodCallHandler {
@@ -70,7 +72,6 @@ public class ChannelGenerated implements MethodCallHandler {
   }
 
   private Boolean isAllocated(final String uniqueId) {
-    if (isAllocated(uniqueId)) return;
     return allocatedWrappers.containsKey(uniqueId);
   }
 
@@ -109,8 +110,8 @@ public class ChannelGenerated implements MethodCallHandler {
         }
         return resultData;
       
-      case "Banana()": {
-          new BananaWrapper((String) call.argument("uniqueId"));
+      case "TestClass()": {
+          new TestClassWrapper((String) call.argument("uniqueId"));
           return null;
         }
       
@@ -126,19 +127,19 @@ public class ChannelGenerated implements MethodCallHandler {
   }
 
   
-  private class BananaWrapper extends FlutterWrapper {
-    private final Banana banana;
+  private class TestClassWrapper extends FlutterWrapper {
+    private final TestClass testclass;
 
-    private BananaWrapper(String uniqueId, Banana banana) {
+    TestClassWrapper(String uniqueId, TestClass testclass) {
       super(uniqueId);
-      this.banana = banana;
+      this.testclass = testclass;
       addWrapper(uniqueId, this, tempWrappers);
     }
 
     
-    private BananaWrapper(final String uniqueId) {
+    private TestClassWrapper(final String uniqueId) {
       super(uniqueId);
-      this.banana = new Banana();
+      this.testclass = new TestClass();
       addWrapper(uniqueId, this, tempWrappers);
     }
     
@@ -146,15 +147,15 @@ public class ChannelGenerated implements MethodCallHandler {
     @Override
     public Object onMethodCall(MethodCall call) throws NotImplementedException {
       switch(call.method) {
-        case "Banana#allocate":
+        case "TestClass#allocate":
           allocate();
           return null;
-        case "Banana#deallocate":
+        case "TestClass#deallocate":
           deallocate();
           return null;
         
-        case "Banana#method":
-          return method();
+        case "TestClass#aMethod":
+          return aMethod();
         
         default:
           throw new NotImplementedException(call.method);
@@ -162,18 +163,19 @@ public class ChannelGenerated implements MethodCallHandler {
     }
 
     
-    Object method() {
-      return banana.method();
+    Object aMethod() {
+      testclass.aMethod();
+      return null;
     }
     
   }
   
-  private class AppleWrapper extends FlutterWrapper {
-    private final Apple apple;
+  private class TestClassTwoWrapper extends FlutterWrapper {
+    private final TestClassTwo testclasstwo;
 
-    private AppleWrapper(String uniqueId, Apple apple) {
+    TestClassTwoWrapper(String uniqueId, TestClassTwo testclasstwo) {
       super(uniqueId);
-      this.apple = apple;
+      this.testclasstwo = testclasstwo;
       addWrapper(uniqueId, this, tempWrappers);
     }
 
@@ -182,10 +184,10 @@ public class ChannelGenerated implements MethodCallHandler {
     @Override
     public Object onMethodCall(MethodCall call) throws NotImplementedException {
       switch(call.method) {
-        case "Apple#allocate":
+        case "TestClassTwo#allocate":
           allocate();
           return null;
-        case "Apple#deallocate":
+        case "TestClassTwo#deallocate":
           deallocate();
           return null;
         

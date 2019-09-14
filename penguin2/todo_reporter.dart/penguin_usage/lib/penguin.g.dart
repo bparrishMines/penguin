@@ -5,36 +5,41 @@
 // **************************************************************************
 import 'package:flutter/services.dart';
 
+
 class $Usage1 {
   $Usage1(this.$uniqueId);
 
   final String $uniqueId;
 
+  
   MethodCall $Usage1Default() {
     return MethodCall(
-      'Banana()',
+      'TestClass()',
       <String, String>{'uniqueId': $uniqueId},
     );
   }
+  
 
-  MethodCall $method() {
+  
+  MethodCall $aMethod() {
     return MethodCall(
-      'Banana#method',
-      <String, String>{'uniqueId': $uniqueId},
+      'TestClass#aMethod',
+       <String, String>{'uniqueId': $uniqueId},
     );
   }
-
+  
+  
   MethodCall $allocate() {
     return MethodCall(
-      'Banana#allocate',
-      <String, String>{'uniqueId': $uniqueId},
+      'TestClass#allocate',
+       <String, String>{'uniqueId': $uniqueId},
     );
   }
-
+  
   MethodCall $deallocate() {
     return MethodCall(
-      'Banana#deallocate',
-      <String, String>{'uniqueId': $uniqueId},
+      'TestClass#deallocate',
+       <String, String>{'uniqueId': $uniqueId},
     );
   }
 }
@@ -44,20 +49,25 @@ class $Usage2 {
 
   final String $uniqueId;
 
+  
+
+  
+  
   MethodCall $allocate() {
     return MethodCall(
-      'Apple#allocate',
-      <String, String>{'uniqueId': $uniqueId},
+      'TestClassTwo#allocate',
+       <String, String>{'uniqueId': $uniqueId},
     );
   }
-
+  
   MethodCall $deallocate() {
     return MethodCall(
-      'Apple#deallocate',
-      <String, String>{'uniqueId': $uniqueId},
+      'TestClassTwo#deallocate',
+       <String, String>{'uniqueId': $uniqueId},
     );
   }
 }
+
 
 Future<List<dynamic>> $invoke(
   MethodChannel channel,

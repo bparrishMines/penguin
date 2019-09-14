@@ -104,6 +104,8 @@ class AndroidBuilder extends PlatformBuilder {
             (ClassInfo classInfo) => creator.createImport(
               classPackage:
                   (classInfo.aClass.platform as AndroidPlatform).type.package,
+              platformClassName:
+                  (classInfo.aClass.platform as AndroidPlatform).type.name,
             ),
           )
           .toSet(),
