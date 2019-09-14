@@ -111,7 +111,7 @@ class AndroidBuilder extends PlatformBuilder {
         (ClassInfo classInfo) => creator.createClass(
           constructors: classInfo.constructors.map<String>(
             (ConstructorInfo constructorInfo) => creator.createConstructor(
-              className:
+              platformClassName:
                   (classInfo.aClass.platform as AndroidPlatform).type.name,
               variableName: (classInfo.aClass.platform as AndroidPlatform)
                   .type
@@ -130,19 +130,27 @@ class AndroidBuilder extends PlatformBuilder {
           ),
           methodCalls: classInfo.methods.map<String>(
             (MethodInfo methodInfo) => creator.createMethodCall(
-              className:
+              platformClassName:
                   (classInfo.aClass.platform as AndroidPlatform).type.name,
               methodName: methodInfo.name,
             ),
           ),
-          className: (classInfo.aClass.platform as AndroidPlatform).type.name,
+          platformClassName:
+              (classInfo.aClass.platform as AndroidPlatform).type.name,
           variableName: (classInfo.aClass.platform as AndroidPlatform)
               .type
               .name
               .toLowerCase(),
         ),
       ),
-      staticMethodCalls: <String>['// FIXXXXXXXXXXXXX'],
+      staticMethodCalls: classes.expand<String>(
+        (ClassInfo classInfo) => classInfo.constructors.map<String>(
+          (ConstructorInfo constructorInfo) => creator.createStaticMethodCall(
+            platformClassName:
+                (classInfo.aClass.platform as AndroidPlatform).type.name,
+          ),
+        ),
+      ),
       package: _androidPackage,
     );
   }

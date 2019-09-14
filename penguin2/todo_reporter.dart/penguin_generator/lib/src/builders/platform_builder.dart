@@ -283,7 +283,7 @@ class WriteBuilder extends Builder {
 // **************************************************************************
 // PenguinGenerator
 // **************************************************************************
-  ''';
+''';
 
   static final Glob _allInfoFiles = Glob('lib/**${ReadInfoBuilder.extension}');
 

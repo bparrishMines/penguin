@@ -3,7 +3,7 @@
 // **************************************************************************
 // PenguinGenerator
 // **************************************************************************
-  package com.example.penguin_usage;
+package com.example.penguin_usage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,6 +27,7 @@ public class ChannelGenerated implements MethodCallHandler {
     abstract Object onMethodCall(MethodCall call) throws NotImplementedException;
 
     private void allocate() {
+      if (isAllocated(uniqueId)) return;
       addWrapper(uniqueId, this, allocatedWrappers);
     }
 
@@ -34,28 +35,28 @@ public class ChannelGenerated implements MethodCallHandler {
       removeWrapper(uniqueId);
     }
   }
-  
+
   private class NotImplementedException extends Exception {
     NotImplementedException(String method) {
       super(String.format(Locale.getDefault(),"No implementation for %s.", method));
     }
   }
-  
+
   private class NoUniqueIdException extends Exception {
     NoUniqueIdException(String method) {
       super(String.format("MethodCall was made without a unique handle for %s.", method));
     }
   }
-  
+
   private class WrapperNotFoundException extends Exception {
     WrapperNotFoundException(String uniqueId) {
       super(String.format("Could not find FlutterWrapper with uniqueId %s.", uniqueId));
     }
   }
-  
+
   private final HashMap<String, FlutterWrapper> allocatedWrappers = new HashMap<>();
   private final HashMap<String, FlutterWrapper> tempWrappers = new HashMap<>();
-  
+
   private void addWrapper(
       final String uniqueId, final FlutterWrapper wrapper, HashMap<String, FlutterWrapper> wrapperMap) {
     if (wrapperMap.get(uniqueId) != null) {
@@ -78,7 +79,7 @@ public class ChannelGenerated implements MethodCallHandler {
     if (wrapper != null) return wrapper;
     return tempWrappers.get(uniqueId);
   }
-  
+
   @Override
   public void onMethodCall(MethodCall call, Result result) {
     try {
@@ -88,12 +89,14 @@ public class ChannelGenerated implements MethodCallHandler {
       result.error(exception.getClass().getSimpleName(), exception.getMessage(), null);
     } catch (NoUniqueIdException exception) {
       result.error(exception.getClass().getSimpleName(), exception.getMessage(), null);
+    } catch (NotImplementedException exception) {
+      result.notImplemented();
     } finally {
       tempWrappers.clear();
     }
   }
-  
-  private Object onMethodCall(MethodCall call) throws NoUniqueIdException, WrapperNotFoundException {
+
+  private Object onMethodCall(MethodCall call) throws NoUniqueIdException, WrapperNotFoundException, NotImplementedException {
     switch(call.method) {
       case "MultiInvoke":
         final ArrayList<HashMap<String, Object>> allMethodCallData = (ArrayList<HashMap<String, Object>>) call.arguments;
@@ -105,14 +108,19 @@ public class ChannelGenerated implements MethodCallHandler {
           resultData.add(onMethodCall(methodCall));
         }
         return resultData;
-      // FIXXXXXXXXXXXXX
+      
+      case "Banana()": {
+          new BananaWrapper((String) call.argument("uniqueId"));
+          return null;
+        }
+      
       default:
         final String uniqueId = call.argument("uniqueId");
         if (uniqueId == null) throw new NoUniqueIdException(call.method);
-        
+
         final FlutterWrapper wrapper = getWrapper(uniqueId);
         if (wrapper == null) throw new WrapperNotFoundException(uniqueId);
-        
+
         return wrapper.onMethodCall(call);
     }
   }
@@ -126,7 +134,7 @@ public class ChannelGenerated implements MethodCallHandler {
       this.banana = banana;
       addWrapper(uniqueId, this, tempWrappers);
     }
-    
+
     
     private BananaWrapper(final String uniqueId) {
       super(uniqueId);
@@ -134,7 +142,7 @@ public class ChannelGenerated implements MethodCallHandler {
       addWrapper(uniqueId, this, tempWrappers);
     }
     
-    
+
     @Override
     public Object onMethodCall(MethodCall call) throws NotImplementedException {
       switch(call.method) {
@@ -162,9 +170,9 @@ public class ChannelGenerated implements MethodCallHandler {
       this.apple = apple;
       addWrapper(uniqueId, this, tempWrappers);
     }
+
     
-    
-    
+
     @Override
     public Object onMethodCall(MethodCall call) throws NotImplementedException {
       switch(call.method) {
@@ -178,4 +186,3 @@ public class ChannelGenerated implements MethodCallHandler {
   }
   
 }
-  

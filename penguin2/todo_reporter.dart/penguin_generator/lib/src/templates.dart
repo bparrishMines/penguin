@@ -17,7 +17,7 @@ class $__className__ {
   // CONSTRUCTOR
   MethodCall $__className__Default() {
     return MethodCall(
-      '__className__()', 
+      '__platformClassName__()',
       <String, String>{'uniqueId': $uniqueId},
     );
   }
@@ -28,7 +28,7 @@ class $__className__ {
   // METHOD
   MethodCall $__methodName__() {
     return MethodCall(
-      '__className__#__methodName__',
+      '__platformClassName__#__methodName__',
        <String, String>{'uniqueId': $uniqueId},
     );
   }
@@ -53,7 +53,7 @@ Future<List<dynamic>> $invoke(
 
   return channel.invokeListMethod('Invoke', calls);
 }
-  ''');
+''');
 
   static const _Template android = _Template._(r'''
 package __package__;
@@ -82,6 +82,7 @@ public class ChannelGenerated implements MethodCallHandler {
     abstract Object onMethodCall(MethodCall call) throws NotImplementedException;
 
     private void allocate() {
+      if (isAllocated(uniqueId)) return;
       addWrapper(uniqueId, this, allocatedWrappers);
     }
 
@@ -89,28 +90,28 @@ public class ChannelGenerated implements MethodCallHandler {
       removeWrapper(uniqueId);
     }
   }
-  
+
   private class NotImplementedException extends Exception {
     NotImplementedException(String method) {
       super(String.format(Locale.getDefault(),"No implementation for %s.", method));
     }
   }
-  
+
   private class NoUniqueIdException extends Exception {
     NoUniqueIdException(String method) {
       super(String.format("MethodCall was made without a unique handle for %s.", method));
     }
   }
-  
+
   private class WrapperNotFoundException extends Exception {
     WrapperNotFoundException(String uniqueId) {
       super(String.format("Could not find FlutterWrapper with uniqueId %s.", uniqueId));
     }
   }
-  
+
   private final HashMap<String, FlutterWrapper> allocatedWrappers = new HashMap<>();
   private final HashMap<String, FlutterWrapper> tempWrappers = new HashMap<>();
-  
+
   private void addWrapper(
       final String uniqueId, final FlutterWrapper wrapper, HashMap<String, FlutterWrapper> wrapperMap) {
     if (wrapperMap.get(uniqueId) != null) {
@@ -125,6 +126,7 @@ public class ChannelGenerated implements MethodCallHandler {
   }
 
   private Boolean isAllocated(final String uniqueId) {
+    if (isAllocated(uniqueId)) return;
     return allocatedWrappers.containsKey(uniqueId);
   }
 
@@ -133,7 +135,7 @@ public class ChannelGenerated implements MethodCallHandler {
     if (wrapper != null) return wrapper;
     return tempWrappers.get(uniqueId);
   }
-  
+
   @Override
   public void onMethodCall(MethodCall call, Result result) {
     try {
@@ -143,12 +145,14 @@ public class ChannelGenerated implements MethodCallHandler {
       result.error(exception.getClass().getSimpleName(), exception.getMessage(), null);
     } catch (NoUniqueIdException exception) {
       result.error(exception.getClass().getSimpleName(), exception.getMessage(), null);
+    } catch (NotImplementedException exception) {
+      result.notImplemented();
     } finally {
       tempWrappers.clear();
     }
   }
-  
-  private Object onMethodCall(MethodCall call) throws NoUniqueIdException, WrapperNotFoundException {
+
+  private Object onMethodCall(MethodCall call) throws NoUniqueIdException, WrapperNotFoundException, NotImplementedException {
     switch(call.method) {
       case "MultiInvoke":
         final ArrayList<HashMap<String, Object>> allMethodCallData = (ArrayList<HashMap<String, Object>>) call.arguments;
@@ -162,8 +166,8 @@ public class ChannelGenerated implements MethodCallHandler {
         return resultData;
       // STATICMETHODCALLS
       // STATICMETHODCALL
-      case "__className__()": {
-          new __className__Wrapper(call.argument("uniqueId"));
+      case "__platformClassName__()": {
+          new __platformClassName__Wrapper((String) call.argument("uniqueId"));
           return null;
         }
       // end STATICMETHODCALL
@@ -171,41 +175,41 @@ public class ChannelGenerated implements MethodCallHandler {
       default:
         final String uniqueId = call.argument("uniqueId");
         if (uniqueId == null) throw new NoUniqueIdException(call.method);
-        
+
         final FlutterWrapper wrapper = getWrapper(uniqueId);
         if (wrapper == null) throw new WrapperNotFoundException(uniqueId);
-        
+
         return wrapper.onMethodCall(call);
     }
   }
 
   // CLASSES
   // CLASS
-  private class __className__Wrapper extends FlutterWrapper {
-    private final __className__ __variableName__;
+  private class __platformClassName__Wrapper extends FlutterWrapper {
+    private final __platformClassName__ __variableName__;
 
-    __className__Wrapper(String uniqueId, __className__ __variableName__) {
+    __platformClassName__Wrapper(String uniqueId, __platformClassName__ __variableName__) {
       super(uniqueId);
       this.__variableName__ = __variableName__;
       addWrapper(uniqueId, this, tempWrappers);
     }
-    
+
     // CONSTRUCTORS
     // CONSTRUCTOR
-    private __className__Wrapper(final String uniqueId) {
+    private __platformClassName__Wrapper(final String uniqueId) {
       super(uniqueId);
-      this.__variableName__ = new __className__();
+      this.__variableName__ = new __platformClassName__();
       addWrapper(uniqueId, this, tempWrappers);
     }
     // end CONSTRUCTOR
     // end CONSTRUCTORS
-    
+
     @Override
     public Object onMethodCall(MethodCall call) throws NotImplementedException {
       switch(call.method) {
         // METHODCALLS
         // METHODCALL
-        case "__className__#__methodName__":
+        case "__platformClassName__#__methodName__":
           return __methodName__();
         // end METHODCALL
         // end METHODCALLS
@@ -225,16 +229,16 @@ public class ChannelGenerated implements MethodCallHandler {
   // end CLASS
   // end CLASSES
 }
-  ''');
+''');
 }
 
 class MethodChannelTemplateCreator extends _TemplateCreator {
   @override
   _Template get template => _Template.methodChannel;
 
-  String createMethod({String className, String methodName}) {
+  String createMethod({String platformClassName, String methodName}) {
     return _replaceMethod(<Pattern, String>{
-      _Replacement.className.name: className,
+      _Replacement.platformClassName.name: platformClassName,
       _Replacement.methodName.name: methodName,
     });
   }
@@ -260,9 +264,12 @@ class MethodChannelTemplateCreator extends _TemplateCreator {
     );
   }
 
-  String createConstructor({String className}) {
+  String createConstructor({String platformClassName, String className}) {
     return _replaceConstructor(
-      <Pattern, String>{_Replacement.className.name: className},
+      <Pattern, String>{
+        _Replacement.platformClassName.name: platformClassName,
+        _Replacement.className.name: className
+      },
     );
   }
 }
@@ -285,14 +292,14 @@ class AndroidTemplateCreator extends _TemplateCreator {
     Iterable<String> constructors,
     Iterable<String> methods,
     Iterable<String> methodCalls,
-    String className,
+    String platformClassName,
     String variableName,
   }) {
     return _replaceClass(<Pattern, String>{
       _Block.constructors.exp: constructors.join(),
       _Block.methods.exp: methods.join(),
       _Block.methodCalls.exp: methodCalls.join(),
-      _Replacement.className.name: className,
+      _Replacement.platformClassName.name: platformClassName,
       _Replacement.variableName.name: variableName,
     });
   }
@@ -317,23 +324,23 @@ class AndroidTemplateCreator extends _TemplateCreator {
     });
   }
 
-  String createConstructor({String className, String variableName}) {
+  String createConstructor({String platformClassName, String variableName}) {
     return _replaceConstructor(<Pattern, String>{
-      _Replacement.className.name: className,
+      _Replacement.platformClassName.name: platformClassName,
       _Replacement.variableName.name: variableName,
     });
   }
 
-  String createMethodCall({String className, String methodName}) {
+  String createMethodCall({String platformClassName, String methodName}) {
     return _replaceMethodCall(<Pattern, String>{
-      _Replacement.className.name: className,
+      _Replacement.platformClassName.name: platformClassName,
       _Replacement.methodName.name: methodName,
     });
   }
 
-  String createStaticMethodCall({String className}) {
+  String createStaticMethodCall({String platformClassName}) {
     return _replaceStaticMethodCall(<Pattern, String>{
-      _Replacement.className.name: className,
+      _Replacement.platformClassName.name: platformClassName,
     });
   }
 }
@@ -487,4 +494,6 @@ class _Replacement {
   static final _Replacement variableName = _Replacement('__variableName__');
   static final _Replacement package = _Replacement('__package__');
   static final _Replacement classPackage = _Replacement('__classPackage__');
+  static final _Replacement platformClassName =
+      _Replacement('__platformClassName__');
 }

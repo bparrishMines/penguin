@@ -57,11 +57,12 @@ class FlutterBuilder extends PlatformBuilder {
           constructors: classInfo.constructors.map<String>(
             (ConstructorInfo constructorInfo) => creator.createConstructor(
               className: classInfo.name,
+              platformClassName: (classInfo.aClass.platform as AndroidPlatform).type.name,
             ),
           ),
           methods: classInfo.methods.map<String>(
             (MethodInfo methodInfo) => creator.createMethod(
-              className: classInfo.name,
+              platformClassName: (classInfo.aClass.platform as AndroidPlatform).type.name,
               methodName: methodInfo.name,
             ),
           ),

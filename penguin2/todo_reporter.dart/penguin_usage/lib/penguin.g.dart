@@ -3,7 +3,7 @@
 // **************************************************************************
 // PenguinGenerator
 // **************************************************************************
-  import 'package:flutter/services.dart';
+import 'package:flutter/services.dart';
 
 
 class $Usage1 {
@@ -14,7 +14,7 @@ class $Usage1 {
   
   MethodCall $Usage1Default() {
     return MethodCall(
-      'Usage1()', 
+      'Banana()',
       <String, String>{'uniqueId': $uniqueId},
     );
   }
@@ -23,7 +23,7 @@ class $Usage1 {
   
   MethodCall $method() {
     return MethodCall(
-      'Usage1#method',
+      'Banana#method',
        <String, String>{'uniqueId': $uniqueId},
     );
   }
@@ -56,4 +56,3 @@ Future<List<dynamic>> $invoke(
 
   return channel.invokeListMethod('Invoke', calls);
 }
-  
