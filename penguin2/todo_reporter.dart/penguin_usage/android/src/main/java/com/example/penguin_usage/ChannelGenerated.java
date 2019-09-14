@@ -164,8 +164,7 @@ public class ChannelGenerated implements MethodCallHandler {
 
     
     Object aMethod() {
-      testClass.aMethod();
-      return null;
+      return testClass.aMethod();
     }
     
   }

@@ -37,6 +37,7 @@ class AndroidBuilder extends PlatformBuilder {
           ),
           methods: classInfo.methods.map<String>(
             (MethodInfo methodInfo) => creator.createMethod(
+              ReturnType.supported,
               methodName: methodInfo.name,
               variableName: ReCase(
                 (classInfo.aClass.platform as AndroidPlatform).type.name,

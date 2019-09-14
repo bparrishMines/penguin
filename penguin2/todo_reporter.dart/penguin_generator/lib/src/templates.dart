@@ -237,12 +237,17 @@ public class ChannelGenerated implements MethodCallHandler {
     }
 
     // METHODS
-    // METHOD
+    // METHOD returns:void
     Object __methodName__() {
       __variableName__.__methodName__();
       return null;
     }
-    // end METHOD
+    // end METHOD returns:void
+    // METHOD returns:supported
+    Object __methodName__() {
+      return __variableName__.__methodName__();
+    }
+    // end METHOD returns:supported
     // end METHODS
   }
   // end CLASS
@@ -256,10 +261,13 @@ class MethodChannelTemplateCreator extends _TemplateCreator {
   _Template get template => _Template.methodChannel;
 
   String createMethod({String platformClassName, String methodName}) {
-    return _replaceMethod(<Pattern, String>{
-      _Replacement.platformClassName.name: platformClassName,
-      _Replacement.methodName.name: methodName,
-    });
+    return _replace(
+      _Block.method.exp.firstMatch(template.value).group(1),
+      <Pattern, String>{
+        _Replacement.platformClassName.name: platformClassName,
+        _Replacement.methodName.name: methodName,
+      },
+    );
   }
 
   String createClass({
@@ -299,14 +307,18 @@ class AndroidTemplateCreator extends _TemplateCreator {
   @override
   _Template get template => _Template.android;
 
-  String createMethod({
+  String createMethod(
+    ReturnType returnType, {
     String methodName,
     String variableName,
   }) {
-    return _replaceMethod(<Pattern, String>{
-      _Replacement.methodName.name: methodName,
-      _Replacement.variableName.name: variableName,
-    });
+    return _replace(
+      _Block.channelMethod(returnType).exp.firstMatch(template.value).group(1),
+      <Pattern, String>{
+        _Replacement.methodName.name: methodName,
+        _Replacement.variableName.name: variableName,
+      },
+    );
   }
 
   String createClass({
@@ -367,12 +379,14 @@ class AndroidTemplateCreator extends _TemplateCreator {
   }
 }
 
+enum ReturnType { $void, supported }
+
 abstract class _TemplateCreator {
   _Template get template;
 
-  String _getMethod(String input) {
-    return _Block.method.exp.firstMatch(input).group(1);
-  }
+//  String _getMethod(String input) {
+//    return _Block.method.exp.firstMatch(input).group(1);
+//  }
 
   String _getImport(String input) {
     return _Block.import.exp.firstMatch(input).group(1);
@@ -406,9 +420,9 @@ abstract class _TemplateCreator {
     return _replace(_getClass(template.value), replacements);
   }
 
-  String _replaceMethod(Map<Pattern, String> replacements) {
-    return _replace(_getMethod(template.value), replacements);
-  }
+//  String _replaceMethod(Map<Pattern, String> replacements) {
+//    return _replace(_getMethod(template), replacements);
+//  }
 
   String _replaceImport(Map<Pattern, String> replacements) {
     return _replace(_getImport(template.value), replacements);
@@ -443,6 +457,27 @@ class _Block {
     multiLine: true,
     dotAll: true,
   ));
+
+  // For Android and iOS
+  static _Block channelMethod(ReturnType type) {
+    final List<String> configs = <String>[];
+    switch (type) {
+      case ReturnType.$void:
+        configs.add('returns:void');
+        break;
+      case ReturnType.supported:
+        configs.add('returns:supported');
+        break;
+    }
+
+    final String joinConfigs = configs.join(' ');
+
+    return _Block(RegExp(
+      '// METHOD $joinConfigs\$(.*)// end METHOD $joinConfigs\$',
+      multiLine: true,
+      dotAll: true,
+    ));
+  }
 
   static final _Block imports = _Block(RegExp(
     r'// IMPORTS$(.*)// end IMPORTS',
