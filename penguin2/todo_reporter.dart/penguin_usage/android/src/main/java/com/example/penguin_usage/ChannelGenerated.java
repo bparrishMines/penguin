@@ -128,18 +128,18 @@ public class ChannelGenerated implements MethodCallHandler {
 
   
   private class TestClassWrapper extends FlutterWrapper {
-    private final TestClass testclass;
+    private final TestClass testClass;
 
-    TestClassWrapper(String uniqueId, TestClass testclass) {
+    TestClassWrapper(String uniqueId, TestClass testClass) {
       super(uniqueId);
-      this.testclass = testclass;
+      this.testClass = testClass;
       addWrapper(uniqueId, this, tempWrappers);
     }
 
     
     private TestClassWrapper(final String uniqueId) {
       super(uniqueId);
-      this.testclass = new TestClass();
+      this.testClass = new TestClass();
       addWrapper(uniqueId, this, tempWrappers);
     }
     
@@ -164,18 +164,18 @@ public class ChannelGenerated implements MethodCallHandler {
 
     
     Object aMethod() {
-      testclass.aMethod();
+      testClass.aMethod();
       return null;
     }
     
   }
   
   private class TestClassTwoWrapper extends FlutterWrapper {
-    private final TestClassTwo testclasstwo;
+    private final TestClassTwo testClassTwo;
 
-    TestClassTwoWrapper(String uniqueId, TestClassTwo testclasstwo) {
+    TestClassTwoWrapper(String uniqueId, TestClassTwo testClassTwo) {
       super(uniqueId);
-      this.testclasstwo = testclasstwo;
+      this.testClassTwo = testClassTwo;
       addWrapper(uniqueId, this, tempWrappers);
     }
 
