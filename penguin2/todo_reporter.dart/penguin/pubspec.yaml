@@ -9,7 +9,6 @@ environment:
 
 dependencies:
   json_annotation: ^3.0.0
-  source_gen: ^0.9.4+4
 
 dev_dependencies:
   json_serializable: ^3.2.0

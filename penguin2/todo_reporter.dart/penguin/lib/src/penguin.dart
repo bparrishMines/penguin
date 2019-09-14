@@ -1,5 +1,4 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:source_gen/source_gen.dart';
 
 part 'penguin.g.dart';
 
@@ -17,9 +16,6 @@ class Class {
   )
   final Platform platform;
 
-  static Class fromConstantReader(ConstantReader reader) =>
-      Class(Platform.fromConstantReader(reader.read('platform')));
-
   static Platform _platformFromJson(Map json) => AndroidPlatform.fromJson(json);
   static Map _platformToJson(Platform platform) => platform.toJson();
 
@@ -33,7 +29,6 @@ class Class {
 class Method {
   const Method();
   factory Method.fromJson(Map json) => _$MethodFromJson(json);
-  static Method fromConstantReader(ConstantReader reader) => Method();
   Map toJson() => _$MethodToJson(this);
   @override
   String toString() => toJson().toString();
@@ -43,7 +38,6 @@ class Method {
 class Constructor {
   const Constructor();
   factory Constructor.fromJson(Map json) => _$ConstructorFromJson(json);
-  static Constructor fromConstantReader(ConstantReader reader) => Constructor();
   Map toJson() => _$ConstructorToJson(this);
   @override
   String toString() => toJson().toString();
@@ -53,16 +47,6 @@ abstract class Platform {
   const Platform(this.name);
 
   final String name;
-
-  static Platform fromConstantReader(ConstantReader reader) {
-    final String platform = reader.read('name').stringValue;
-
-    if (platform == 'android') {
-      return AndroidPlatform.fromConstantReader(reader);
-    }
-
-    throw UnsupportedError('$platform platform is not supported!');
-  }
 
   Map toJson();
 }
@@ -75,12 +59,6 @@ class AndroidPlatform extends Platform {
 
   @JsonKey(required: true, disallowNullValue: true)
   final AndroidType type;
-
-  static AndroidPlatform fromConstantReader(ConstantReader reader) {
-    return AndroidPlatform(
-      AndroidType.fromConstantReader(reader.read('type')),
-    );
-  }
 
   Map toJson() => _$AndroidPlatformToJson(this);
 
@@ -99,13 +77,6 @@ class AndroidType {
 
   @JsonKey(required: true, disallowNullValue: true)
   final String name;
-
-  static AndroidType fromConstantReader(ConstantReader reader) {
-    return AndroidType(
-      reader.read('package').stringValue,
-      reader.read('name').stringValue,
-    );
-  }
 
   Map toJson() => _$AndroidTypeToJson(this);
 

@@ -7,6 +7,7 @@ import 'package:build/build.dart';
 import 'package:glob/glob.dart';
 import 'package:path/path.dart' as p;
 import 'package:penguin/penguin.dart';
+import 'package:penguin_generator/src/builders/annotation_utils.dart';
 import 'package:source_gen/source_gen.dart';
 
 import '../info.dart';
@@ -37,7 +38,7 @@ class ReadInfoBuilder extends Builder {
         .map<ClassInfo>(
           (AnnotatedElement element) => ClassInfo(
             name: element.element.name,
-            aClass: Class.fromConstantReader(element.annotation),
+            aClass: AnnotationUtils.classFromConstantReader(element.annotation),
             constructors: (element.element as ClassElement)
                 .constructors
                 .where((ConstructorElement constructorElement) =>
@@ -46,7 +47,7 @@ class ReadInfoBuilder extends Builder {
                 .map<ConstructorInfo>(
                   (ConstructorElement constructorElement) => ConstructorInfo(
                     name: constructorElement.name,
-                    constructor: Constructor.fromConstantReader(
+                    constructor: AnnotationUtils.constructorFromConstantReader(
                       ConstantReader(
                         _constructorAnnotation
                             .firstAnnotationOfExact(constructorElement),
@@ -61,7 +62,7 @@ class ReadInfoBuilder extends Builder {
                 .map<MethodInfo>(
                   (MethodElement element) => MethodInfo(
                     name: element.name,
-                    method: Method.fromConstantReader(
+                    method: AnnotationUtils.methodFromConstantReader(
                       ConstantReader(
                         _methodAnnotation.firstAnnotationOfExact(element),
                       ),
