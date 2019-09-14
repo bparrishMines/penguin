@@ -157,6 +157,9 @@ public class ChannelGenerated implements MethodCallHandler {
         case "TestClass#aMethod":
           return aMethod();
         
+        case "TestClass#getStringMethod":
+          return getStringMethod();
+        
         default:
           throw new NotImplementedException(call.method);
       }
@@ -164,7 +167,12 @@ public class ChannelGenerated implements MethodCallHandler {
 
     
     Object aMethod() {
-      return testClass.aMethod();
+      testClass.aMethod();
+      return null;
+    }
+    
+    Object getStringMethod() {
+      return testClass.getStringMethod();
     }
     
   }

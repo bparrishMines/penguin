@@ -28,6 +28,13 @@ class $Usage1 {
     );
   }
   
+  MethodCall $getStringMethod() {
+    return MethodCall(
+      'TestClass#getStringMethod',
+       <String, String>{'uniqueId': $uniqueId},
+    );
+  }
+  
   
   MethodCall $allocate() {
     return MethodCall(

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:analyzer/dart/element/element.dart';
+import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
 import 'package:glob/glob.dart';
 import 'package:path/path.dart' as p;
@@ -57,11 +58,19 @@ class ReadInfoBuilder extends Builder {
                 ),
             methods: (element.element as ClassElement)
                 .methods
-                .where((MethodElement element) =>
-                    _methodAnnotation.hasAnnotationOfExact(element))
+                .where(
+                  (MethodElement element) =>
+                      _methodAnnotation.hasAnnotationOfExact(element),
+                )
                 .map<MethodInfo>(
                   (MethodElement element) => MethodInfo(
                     name: element.name,
+                    returnType: element.returnType.isDartAsyncFuture ||
+                            element.returnType.isDartAsyncFutureOr
+                        ? (element.returnType as ParameterizedType)
+                            .typeArguments[0]
+                            .toString()
+                        : element.returnType.toString(),
                     method: AnnotationUtils.methodFromConstantReader(
                       ConstantReader(
                         _methodAnnotation.firstAnnotationOfExact(element),

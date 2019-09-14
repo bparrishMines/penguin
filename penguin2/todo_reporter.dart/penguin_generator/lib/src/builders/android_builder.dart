@@ -12,6 +12,7 @@ import 'platform_builder.dart';
 class AndroidBuilder extends PlatformBuilder {
   @override
   String build(List<ClassInfo> classes) {
+    classes.forEach((_) => _.methods.forEach((_) => print(_.returnType)));
     final AndroidTemplateCreator creator = AndroidTemplateCreator();
     return creator.createFile(
       imports: classes
@@ -37,7 +38,7 @@ class AndroidBuilder extends PlatformBuilder {
           ),
           methods: classInfo.methods.map<String>(
             (MethodInfo methodInfo) => creator.createMethod(
-              ReturnType.supported,
+              _parseReturnType(methodInfo.returnType),
               methodName: methodInfo.name,
               variableName: ReCase(
                 (classInfo.aClass.platform as AndroidPlatform).type.name,
@@ -68,6 +69,21 @@ class AndroidBuilder extends PlatformBuilder {
       ),
       package: _androidPackage,
     );
+  }
+
+  ReturnType _parseReturnType(String returnType) {
+    switch (returnType) {
+      case 'int':
+      case 'double':
+      case 'num':
+      case 'bool':
+      case 'String':
+        return ReturnType.supported;
+      case 'void':
+        return ReturnType.$void;
+      default:
+        return ReturnType.$void;
+    }
   }
 
   static String get _androidPackage {

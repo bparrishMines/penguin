@@ -40,13 +40,14 @@ Map<String, dynamic> _$ClassInfoToJson(ClassInfo instance) {
 
 MethodInfo _$MethodInfoFromJson(Map<String, dynamic> json) {
   $checkKeys(json,
-      requiredKeys: const ['name', 'method'],
-      disallowNullValues: const ['name', 'method']);
+      requiredKeys: const ['name', 'returnType', 'method'],
+      disallowNullValues: const ['name', 'returnType', 'method']);
   return MethodInfo(
     name: json['name'] as String,
     method: json['method'] == null
         ? null
         : Method.fromJson(json['method'] as Map<String, dynamic>),
+    returnType: json['returnType'] as String,
   );
 }
 
@@ -60,6 +61,7 @@ Map<String, dynamic> _$MethodInfoToJson(MethodInfo instance) {
   }
 
   writeNotNull('name', instance.name);
+  writeNotNull('returnType', instance.returnType);
   writeNotNull('method', instance.method);
   return val;
 }

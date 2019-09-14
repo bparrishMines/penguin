@@ -4,4 +4,8 @@ public class TestClass {
   public void aMethod() {
 
   }
+
+  public String getStringMethod() {
+    return "Hello, World.";
+  }
 }

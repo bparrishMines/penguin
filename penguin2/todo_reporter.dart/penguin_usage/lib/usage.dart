@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:penguin/penguin.dart';
@@ -11,20 +12,34 @@ import 'package:penguin_usage/penguin_usage.dart';
 )
 class Usage1 extends $Usage1 {
   @Constructor()
-  Usage1() : super(Random().nextDouble().toString());
+  Usage1() : super(Random().nextDouble().toString()) {
+    $invoke(
+      PenguinUsage.channel,
+      [$Usage1Default(), $allocate()],
+    );
+  }
 
   @Method()
   Future<void> aMethod() async {
     await $invoke(
       PenguinUsage.channel,
-      [$Usage1Default(), $aMethod(), $allocate(), $deallocate()],
+      [$aMethod()],
     );
+  }
+
+  @Method()
+  Future<String> getStringMethod() async {
+    final List<dynamic> value = await $invoke(
+      PenguinUsage.channel,
+      [$getStringMethod()],
+    );
+    return value[0];
   }
 
   Future<void> anotherMethod() async {
     print(await $invoke(
       PenguinUsage.channel,
-      [$Usage1Default(), $aMethod(), $aMethod()],
+      [$aMethod(), $aMethod()],
     ));
   }
 }

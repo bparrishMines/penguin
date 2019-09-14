@@ -28,6 +28,7 @@ class _MyAppState extends State<MyApp> {
               print(usage1.$uniqueId);
               await usage1.aMethod();
               await usage1.anotherMethod();
+              print(await usage1.getStringMethod());
             },
             child: const Text('Click Me'),
           ),

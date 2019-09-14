@@ -29,12 +29,15 @@ class ClassInfo {
 
 @JsonSerializable()
 class MethodInfo {
-  const MethodInfo({this.name, this.method});
+  const MethodInfo({this.name, this.method, this.returnType});
 
   factory MethodInfo.fromJson(Map json) => _$MethodInfoFromJson(json);
 
   @JsonKey(required: true, disallowNullValue: true)
   final String name;
+
+  @JsonKey(required: true, disallowNullValue: true)
+  final String returnType;
 
   @JsonKey(required: true, disallowNullValue: true)
   final Method method;
