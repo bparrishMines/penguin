@@ -6,40 +6,46 @@ class _Template {
   static const _Template methodChannel = _Template._(r'''
 import 'package:flutter/services.dart';
 
-// CLASSES
-// CLASS
+%%CLASSES%%
+%%CLASS%%
 class $__className__ {
   $__className__(this.$uniqueId);
 
   final String $uniqueId;
 
-  // CONSTRUCTORS
-  // CONSTRUCTOR
+  %%CONSTRUCTORS%%
+  %%CONSTRUCTOR%%
   MethodCall $__className__Default() {
     return MethodCall(
       '__platformClassName__()',
       <String, String>{'uniqueId': $uniqueId},
     );
   }
-  // end CONSTRUCTOR
-  // end CONSTRUCTORS
+  %%CONSTRUCTOR%%
+  %%CONSTRUCTORS%%
 
-  // METHODS
-  // METHOD
+  %%METHODS%%
+  %%METHOD%%
   MethodCall $__methodName__(
-  // PARAMETERS
-  // PARAMETER
+  %%PARAMETERS%%
+  %%PARAMETER%%
   __parameterType__ __parameterName__
-  // end PARAMETER
-  // end PARAMETERS
+  %%PARAMETER%%
+  %%PARAMETERS%%
   ) {
     return MethodCall(
       '__platformClassName__#__methodName__',
-       <String, String>{'uniqueId': $uniqueId},
+       <String, String>{'uniqueId': $uniqueId,
+       %%PARAMETERS%%
+       %%PARAMETER%%
+       '__parameterName__': __parameterName__,
+       %%PARAMETER%%
+       %%PARAMETERS%%
+       },
     );
   }
-  // end METHOD
-  // end METHODS
+  %%METHOD%%
+  %%METHODS%%
   
   MethodCall $allocate() {
     return MethodCall(
@@ -55,8 +61,8 @@ class $__className__ {
     );
   }
 }
-// end CLASS
-// end CLASSES
+%%CLASS%%
+%%CLASSES%%
 
 Future<List<dynamic>> $invoke(
   MethodChannel channel,
@@ -84,11 +90,11 @@ import java.util.Locale;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
-// IMPORTS
-// IMPORT
+%%IMPORTS%%
+%%IMPORT%%
 import __classPackage__.__platformClassName__;
-// end IMPORT
-// end IMPORTS
+%%IMPORT%%
+%%IMPORTS%%
 
 public class ChannelGenerated implements MethodCallHandler {
   private abstract class FlutterWrapper {
@@ -176,20 +182,20 @@ public class ChannelGenerated implements MethodCallHandler {
         final ArrayList<HashMap<String, Object>> allMethodCallData = (ArrayList<HashMap<String, Object>>) call.arguments;
         final ArrayList<Object> resultData = new ArrayList<>(allMethodCallData.size());
         for(HashMap<String, Object> methodCallData : allMethodCallData) {
-          final String method = (String) methodCallData.get("method");;
+          final String method = (String) methodCallData.get("method");
           final HashMap<String, Object> arguments = (HashMap<String, Object>) methodCallData.get("arguments");
           final MethodCall methodCall = new MethodCall(method, arguments);
           resultData.add(onMethodCall(methodCall));
         }
         return resultData;
-      // STATICMETHODCALLS
-      // STATICMETHODCALL
+      %%STATICMETHODCALLS%%
+      %%STATICMETHODCALL%%
       case "__platformClassName__()": {
           new __platformClassName__Wrapper((String) call.argument("uniqueId"));
           return null;
         }
-      // end STATICMETHODCALL
-      // end STATICMETHODCALLS
+      %%STATICMETHODCALL%%
+      %%STATICMETHODCALLS%%
       default:
         final String uniqueId = call.argument("uniqueId");
         if (uniqueId == null) throw new NoUniqueIdException(call.method);
@@ -201,8 +207,8 @@ public class ChannelGenerated implements MethodCallHandler {
     }
   }
 
-  // CLASSES
-  // CLASS
+  %%CLASSES%%
+  %%CLASS%%
   private class __platformClassName__Wrapper extends FlutterWrapper {
     private final __platformClassName__ __variableName__;
 
@@ -212,15 +218,15 @@ public class ChannelGenerated implements MethodCallHandler {
       addWrapper(uniqueId, this, tempWrappers);
     }
 
-    // CONSTRUCTORS
-    // CONSTRUCTOR
+    %%CONSTRUCTORS%%
+    %%CONSTRUCTOR%%
     private __platformClassName__Wrapper(final String uniqueId) {
       super(uniqueId);
       this.__variableName__ = new __platformClassName__();
       addWrapper(uniqueId, this, tempWrappers);
     }
-    // end CONSTRUCTOR
-    // end CONSTRUCTORS
+    %%CONSTRUCTOR%%
+    %%CONSTRUCTORS%%
 
     @Override
     public Object onMethodCall(MethodCall call) throws NotImplementedException {
@@ -231,33 +237,33 @@ public class ChannelGenerated implements MethodCallHandler {
         case "__platformClassName__#deallocate":
           deallocate();
           return null;
-        // METHODCALLS
-        // METHODCALL
+        %%METHODCALLS%%
+        %%METHODCALL%%
         case "__platformClassName__#__methodName__":
           return __methodName__();
-        // end METHODCALL
-        // end METHODCALLS
+        %%METHODCALL%%
+        %%METHODCALLS%%
         default:
           throw new NotImplementedException(call.method);
       }
     }
 
-    // METHODS
-    // METHOD returns:void
+    %%METHODS%%
+    %%METHOD returns:void%%
     Object __methodName__() {
       __variableName__.__methodName__();
       return null;
     }
-    // end METHOD returns:void
-    // METHOD returns:supported
+    %%METHOD returns:void%%
+    %%METHOD returns:supported%%
     Object __methodName__() {
       return __variableName__.__methodName__();
     }
-    // end METHOD returns:supported
-    // end METHODS
+    %%METHOD returns:supported%%
+    %%METHODS%%
   }
-  // end CLASS
-  // end CLASSES
+  %%CLASS%%
+  %%CLASSES%%
 }
 ''');
 }
@@ -402,9 +408,9 @@ enum ReturnType { $void, supported }
 abstract class _TemplateCreator {
   _Template get template;
 
-//  String _getMethod(String input) {
-//    return _Block.method.exp.firstMatch(input).group(1);
-//  }
+// String _getMethod(String input) {
+//  return _Block.method.exp.firstMatch(input).group(1);
+// }
 
   String _getImport(String input) {
     return _Block.import.exp.firstMatch(input).group(1);
@@ -442,9 +448,9 @@ abstract class _TemplateCreator {
     return _replace(_getClass(template.value), replacements);
   }
 
-//  String _replaceMethod(Map<Pattern, String> replacements) {
-//    return _replace(_getMethod(template), replacements);
-//  }
+// String _replaceMethod(Map<Pattern, String> replacements) {
+//   return _replace(_getMethod(template), replacements);
+// }
 
   String _replaceImport(Map<Pattern, String> replacements) {
     return _replace(_getImport(template.value), replacements);
@@ -468,23 +474,26 @@ abstract class _TemplateCreator {
 }
 
 class _Block {
-  _Block(this.exp);
+  _Block(this.identifier, [this.config])
+      : exp = config == null
+            ? RegExp(
+                '%%$identifier%%(.*?)%%$identifier%%',
+                multiLine: true,
+                dotAll: true,
+              )
+            : RegExp(
+                '%%$identifier $config%%(.*?)%%$identifier $config%%',
+                multiLine: true,
+                dotAll: true,
+              );
 
   final RegExp exp;
+  final String identifier;
+  final String config;
 
-  static final _Block methods = _Block(RegExp(
-    r'// METHODS$.(.*)// end METHODS',
-    multiLine: true,
-    dotAll: true,
-  ));
-
-  static final _Block method = _Block(RegExp(
-    r'// METHOD$(.*)// end METHOD$',
-    multiLine: true,
-    dotAll: true,
-  ));
-
-  // For Android and iOS
+  static final _Block methods = _Block('METHODS');
+  static final _Block method = _Block('METHOD');
+//  For Android and iOS
   static _Block channelMethod(ReturnType type) {
     final List<String> configs = <String>[];
     switch (type) {
@@ -497,85 +506,26 @@ class _Block {
     }
 
     final String joinConfigs = configs.join(' ');
-
-    return _Block(RegExp(
-      '// METHOD $joinConfigs\$(.*)// end METHOD $joinConfigs\$',
-      multiLine: true,
-      dotAll: true,
-    ));
+    return _Block(method.identifier, joinConfigs);
   }
 
-  static final _Block imports = _Block(RegExp(
-    r'// IMPORTS$(.*)// end IMPORTS',
-    multiLine: true,
-    dotAll: true,
-  ));
+  static final _Block imports = _Block('IMPORTS');
+  static final _Block import = _Block('IMPORT');
 
-  static final _Block import = _Block(RegExp(
-    r'// IMPORT$(.*)// end IMPORT$',
-    multiLine: true,
-    dotAll: true,
-  ));
+  static final _Block classes = _Block('CLASSES');
+  static final _Block aClass = _Block('CLASS');
 
-  static final _Block classes = _Block(RegExp(
-    r'// CLASSES$(.*)// end CLASSES',
-    multiLine: true,
-    dotAll: true,
-  ));
+  static final _Block constructors = _Block('CONSTRUCTORS');
+  static final _Block constructor = _Block('CONSTRUCTOR');
 
-  static final _Block aClass = _Block(RegExp(
-    r'// CLASS$(.*)// end CLASS$',
-    multiLine: true,
-    dotAll: true,
-  ));
+  static final _Block methodCalls = _Block('METHODCALLS');
+  static final _Block methodCall = _Block('METHODCALL');
 
-  static final _Block constructors = _Block(RegExp(
-    r'// CONSTRUCTORS$(.*)// end CONSTRUCTORS$',
-    multiLine: true,
-    dotAll: true,
-  ));
+  static final _Block staticMethodCalls = _Block('STATICMETHODCALLS');
+  static final _Block staticMethodCall = _Block('STATICMETHODCALL');
 
-  static final _Block constructor = _Block(RegExp(
-    r'// CONSTRUCTOR$(.*)// end CONSTRUCTOR$',
-    multiLine: true,
-    dotAll: true,
-  ));
-
-  static final _Block methodCalls = _Block(RegExp(
-    r'// METHODCALLS$(.*)// end METHODCALLS$',
-    multiLine: true,
-    dotAll: true,
-  ));
-
-  static final _Block methodCall = _Block(RegExp(
-    r'// METHODCALL$(.*)// end METHODCALL$',
-    multiLine: true,
-    dotAll: true,
-  ));
-
-  static final _Block staticMethodCalls = _Block(RegExp(
-    r'// STATICMETHODCALLS$(.*)// end STATICMETHODCALLS$',
-    multiLine: true,
-    dotAll: true,
-  ));
-
-  static final _Block staticMethodCall = _Block(RegExp(
-    r'// STATICMETHODCALL$(.*)// end STATICMETHODCALL$',
-    multiLine: true,
-    dotAll: true,
-  ));
-
-  static final _Block parameters = _Block(RegExp(
-    r'// PARAMETERS$(.*)// end PARAMETERS$',
-    multiLine: true,
-    dotAll: true,
-  ));
-
-  static final _Block parameter = _Block(RegExp(
-    r'// PARAMETER$(.*)// end PARAMETER$',
-    multiLine: true,
-    dotAll: true,
-  ));
+  static final _Block parameters = _Block('PARAMETERS');
+  static final _Block parameter = _Block('PARAMETER');
 }
 
 class _Replacement {

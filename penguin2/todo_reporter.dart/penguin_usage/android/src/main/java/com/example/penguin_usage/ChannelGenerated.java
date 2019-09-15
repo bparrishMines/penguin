@@ -103,7 +103,7 @@ public class ChannelGenerated implements MethodCallHandler {
         final ArrayList<HashMap<String, Object>> allMethodCallData = (ArrayList<HashMap<String, Object>>) call.arguments;
         final ArrayList<Object> resultData = new ArrayList<>(allMethodCallData.size());
         for(HashMap<String, Object> methodCallData : allMethodCallData) {
-          final String method = (String) methodCallData.get("method");;
+          final String method = (String) methodCallData.get("method");
           final HashMap<String, Object> arguments = (HashMap<String, Object>) methodCallData.get("arguments");
           final MethodCall methodCall = new MethodCall(method, arguments);
           resultData.add(onMethodCall(methodCall));

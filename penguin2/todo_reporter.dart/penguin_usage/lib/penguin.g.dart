@@ -5,50 +5,71 @@
 // **************************************************************************
 import 'package:flutter/services.dart';
 
+
 class $Usage1 {
   $Usage1(this.$uniqueId);
 
   final String $uniqueId;
 
+  
   MethodCall $Usage1Default() {
     return MethodCall(
       'TestClass()',
       <String, String>{'uniqueId': $uniqueId},
     );
   }
+  
 
-  MethodCall $aMethod() {
+  
+  MethodCall $aMethod(
+  
+  ) {
     return MethodCall(
       'TestClass#aMethod',
-      <String, String>{'uniqueId': $uniqueId},
+       <String, String>{'uniqueId': $uniqueId,
+       
+       },
     );
   }
-
-  MethodCall $getStringMethod() {
+  
+  MethodCall $getStringMethod(
+  
+  ) {
     return MethodCall(
       'TestClass#getStringMethod',
-      <String, String>{'uniqueId': $uniqueId},
+       <String, String>{'uniqueId': $uniqueId,
+       
+       },
     );
   }
-
-  MethodCall $addTwo(int value) {
+  
+  MethodCall $addTwo(
+  
+  int value
+  
+  ) {
     return MethodCall(
       'TestClass#addTwo',
-      <String, String>{'uniqueId': $uniqueId},
+       <String, String>{'uniqueId': $uniqueId,
+       
+  int value
+  
+       },
     );
   }
-
+  
+  
   MethodCall $allocate() {
     return MethodCall(
       'TestClass#allocate',
-      <String, String>{'uniqueId': $uniqueId},
+       <String, String>{'uniqueId': $uniqueId},
     );
   }
-
+  
   MethodCall $deallocate() {
     return MethodCall(
       'TestClass#deallocate',
-      <String, String>{'uniqueId': $uniqueId},
+       <String, String>{'uniqueId': $uniqueId},
     );
   }
 }
@@ -58,20 +79,25 @@ class $Usage2 {
 
   final String $uniqueId;
 
+  
+
+  
+  
   MethodCall $allocate() {
     return MethodCall(
       'TestClassTwo#allocate',
-      <String, String>{'uniqueId': $uniqueId},
+       <String, String>{'uniqueId': $uniqueId},
     );
   }
-
+  
   MethodCall $deallocate() {
     return MethodCall(
       'TestClassTwo#deallocate',
-      <String, String>{'uniqueId': $uniqueId},
+       <String, String>{'uniqueId': $uniqueId},
     );
   }
 }
+
 
 Future<List<dynamic>> $invoke(
   MethodChannel channel,
