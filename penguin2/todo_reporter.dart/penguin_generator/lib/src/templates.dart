@@ -35,12 +35,12 @@ class $__className__ {
   ) {
     return MethodCall(
       '__platformClassName__#__methodName__',
-       <String, String>{'uniqueId': $uniqueId,
-       %%PARAMETERS%%
-       %%PARAMETER%%
+       <String, dynamic>{'uniqueId': $uniqueId,
+       %%METHODCALLPARAMS%%
+       %%METHODCALLPARAM%%
        '__parameterName__': __parameterName__,
-       %%PARAMETER%%
-       %%PARAMETERS%%
+       %%METHODCALLPARAM%%
+       %%METHODCALLPARAMS%%
        },
     );
   }
@@ -274,6 +274,7 @@ class MethodChannelTemplateCreator extends _TemplateCreator {
 
   String createMethod({
     Iterable<String> parameters,
+    Iterable<String> methodCallParams,
     String platformClassName,
     String methodName,
   }) {
@@ -281,6 +282,7 @@ class MethodChannelTemplateCreator extends _TemplateCreator {
       _Block.method.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
         _Block.parameters.exp: parameters.join(','),
+        _Block.methodCallParams.exp: methodCallParams.join(),
         _Replacement.platformClassName.name: platformClassName,
         _Replacement.methodName.name: methodName,
       },
@@ -292,6 +294,15 @@ class MethodChannelTemplateCreator extends _TemplateCreator {
       _Block.parameter.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
         _Replacement.parameterType.name: parameterType,
+        _Replacement.parameterName.name: parameterName,
+      },
+    );
+  }
+
+  String createMethodCallParam({String parameterName}) {
+    return _replace(
+      _Block.methodCallParam.exp.firstMatch(template.value).group(1),
+      <Pattern, String>{
         _Replacement.parameterName.name: parameterName,
       },
     );
@@ -494,6 +505,9 @@ class _Block {
 
   static final _Block parameters = _Block('PARAMETERS');
   static final _Block parameter = _Block('PARAMETER');
+
+  static final _Block methodCallParams = _Block('METHODCALLPARAMS');
+  static final _Block methodCallParam = _Block('METHODCALLPARAM');
 }
 
 class _Replacement {

@@ -26,6 +26,11 @@ class FlutterBuilder extends PlatformBuilder {
                   parameterName: parameterInfo.name,
                 ),
               ),
+              methodCallParams: methodInfo.parameters.map<String>(
+                (ParameterInfo parameterInfo) => creator.createMethodCallParam(
+                  parameterName: parameterInfo.name,
+                ),
+              ),
               platformClassName:
                   (classInfo.aClass.platform as AndroidPlatform).type.name,
               methodName: methodInfo.name,
