@@ -288,10 +288,13 @@ class MethodChannelTemplateCreator extends _TemplateCreator {
   }
 
   String createParameter({String parameterType, String parameterName}) {
-    return _replaceParameter(<Pattern, String>{
-      _Replacement.parameterType.name: parameterType,
-      _Replacement.parameterName.name: parameterName,
-    });
+    return _replace(
+      _Block.parameter.exp.firstMatch(template.value).group(1),
+      <Pattern, String>{
+        _Replacement.parameterType.name: parameterType,
+        _Replacement.parameterName.name: parameterName,
+      },
+    );
   }
 
   String createClass({
@@ -300,7 +303,8 @@ class MethodChannelTemplateCreator extends _TemplateCreator {
     String className,
     String platformClassName,
   }) {
-    return _replaceClass(
+    return _replace(
+      _Block.aClass.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
         _Block.constructors.exp: constructors.join(),
         _Block.methods.exp: methods.join(),
@@ -318,7 +322,8 @@ class MethodChannelTemplateCreator extends _TemplateCreator {
   }
 
   String createConstructor({String platformClassName, String className}) {
-    return _replaceConstructor(
+    return _replace(
+      _Block.constructor.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
         _Replacement.platformClassName.name: platformClassName,
         _Replacement.className.name: className
@@ -352,20 +357,26 @@ class AndroidTemplateCreator extends _TemplateCreator {
     String platformClassName,
     String variableName,
   }) {
-    return _replaceClass(<Pattern, String>{
-      _Block.constructors.exp: constructors.join(),
-      _Block.methods.exp: methods.join(),
-      _Block.methodCalls.exp: methodCalls.join(),
-      _Replacement.platformClassName.name: platformClassName,
-      _Replacement.variableName.name: variableName,
-    });
+    return _replace(
+      _Block.aClass.exp.firstMatch(template.value).group(1),
+      <Pattern, String>{
+        _Block.constructors.exp: constructors.join(),
+        _Block.methods.exp: methods.join(),
+        _Block.methodCalls.exp: methodCalls.join(),
+        _Replacement.platformClassName.name: platformClassName,
+        _Replacement.variableName.name: variableName,
+      },
+    );
   }
 
   String createImport({String classPackage, String platformClassName}) {
-    return _replaceImport(<Pattern, String>{
-      _Replacement.classPackage.name: classPackage,
-      _Replacement.platformClassName.name: platformClassName,
-    });
+    return _replace(
+      _Block.import.exp.firstMatch(template.value).group(1),
+      <Pattern, String>{
+        _Replacement.classPackage.name: classPackage,
+        _Replacement.platformClassName.name: platformClassName,
+      },
+    );
   }
 
   String createFile({
@@ -374,32 +385,44 @@ class AndroidTemplateCreator extends _TemplateCreator {
     Iterable<String> staticMethodCalls,
     String package,
   }) {
-    return _replace(template.value, <Pattern, String>{
-      _Block.imports.exp: imports.join(),
-      _Block.classes.exp: classes.join(),
-      _Block.staticMethodCalls.exp: staticMethodCalls.join(),
-      _Replacement.package.name: package,
-    });
+    return _replace(
+      template.value,
+      <Pattern, String>{
+        _Block.imports.exp: imports.join(),
+        _Block.classes.exp: classes.join(),
+        _Block.staticMethodCalls.exp: staticMethodCalls.join(),
+        _Replacement.package.name: package,
+      },
+    );
   }
 
   String createConstructor({String platformClassName, String variableName}) {
-    return _replaceConstructor(<Pattern, String>{
-      _Replacement.platformClassName.name: platformClassName,
-      _Replacement.variableName.name: variableName,
-    });
+    return _replace(
+      _Block.constructor.exp.firstMatch(template.value).group(1),
+      <Pattern, String>{
+        _Replacement.platformClassName.name: platformClassName,
+        _Replacement.variableName.name: variableName,
+      },
+    );
   }
 
   String createMethodCall({String platformClassName, String methodName}) {
-    return _replaceMethodCall(<Pattern, String>{
-      _Replacement.platformClassName.name: platformClassName,
-      _Replacement.methodName.name: methodName,
-    });
+    return _replace(
+      _Block.methodCall.exp.firstMatch(template.value).group(1),
+      <Pattern, String>{
+        _Replacement.platformClassName.name: platformClassName,
+        _Replacement.methodName.name: methodName,
+      },
+    );
   }
 
   String createStaticMethodCall({String platformClassName}) {
-    return _replaceStaticMethodCall(<Pattern, String>{
-      _Replacement.platformClassName.name: platformClassName,
-    });
+    return _replace(
+      _Block.staticMethodCall.exp.firstMatch(template.value).group(1),
+      <Pattern, String>{
+        _Replacement.platformClassName.name: platformClassName,
+      },
+    );
   }
 }
 
@@ -408,68 +431,12 @@ enum ReturnType { $void, supported }
 abstract class _TemplateCreator {
   _Template get template;
 
-// String _getMethod(String input) {
-//  return _Block.method.exp.firstMatch(input).group(1);
-// }
-
-  String _getImport(String input) {
-    return _Block.import.exp.firstMatch(input).group(1);
-  }
-
-  String _getClass(String input) {
-    return _Block.aClass.exp.firstMatch(input).group(1);
-  }
-
-  String _getConstructor(String input) {
-    return _Block.constructor.exp.firstMatch(input).group(1);
-  }
-
-  String _getMethodCall(String input) {
-    return _Block.methodCall.exp.firstMatch(input).group(1);
-  }
-
-  String _getStaticMethodCall(String input) {
-    return _Block.staticMethodCall.exp.firstMatch(input).group(1);
-  }
-
-  String _getParameter(String input) {
-    return _Block.parameter.exp.firstMatch(input).group(1);
-  }
-
   // TODO: Speedup with replaceAllMapped
   String _replace(String value, Map<Pattern, String> replacements) {
     for (MapEntry<Pattern, String> entry in replacements.entries) {
       value = value.replaceAll(entry.key, entry.value);
     }
     return value;
-  }
-
-  String _replaceClass(Map<Pattern, String> replacements) {
-    return _replace(_getClass(template.value), replacements);
-  }
-
-// String _replaceMethod(Map<Pattern, String> replacements) {
-//   return _replace(_getMethod(template), replacements);
-// }
-
-  String _replaceImport(Map<Pattern, String> replacements) {
-    return _replace(_getImport(template.value), replacements);
-  }
-
-  String _replaceConstructor(Map<Pattern, String> replacements) {
-    return _replace(_getConstructor(template.value), replacements);
-  }
-
-  String _replaceMethodCall(Map<Pattern, String> replacements) {
-    return _replace(_getMethodCall(template.value), replacements);
-  }
-
-  String _replaceStaticMethodCall(Map<Pattern, String> replacements) {
-    return _replace(_getStaticMethodCall(template.value), replacements);
-  }
-
-  String _replaceParameter(Map<Pattern, String> replacements) {
-    return _replace(_getParameter(template.value), replacements);
   }
 }
 
@@ -493,7 +460,8 @@ class _Block {
 
   static final _Block methods = _Block('METHODS');
   static final _Block method = _Block('METHOD');
-//  For Android and iOS
+
+  //  For Android and iOS
   static _Block channelMethod(ReturnType type) {
     final List<String> configs = <String>[];
     switch (type) {
