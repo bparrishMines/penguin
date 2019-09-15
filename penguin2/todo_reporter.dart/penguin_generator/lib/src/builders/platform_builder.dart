@@ -64,6 +64,12 @@ class ReadInfoBuilder extends Builder {
                 )
                 .map<MethodInfo>(
                   (MethodElement element) => MethodInfo(
+                    parameters: element.parameters.map<ParameterInfo>(
+                      (ParameterElement parameterElement) => ParameterInfo(
+                        type: parameterElement.type.toString(),
+                        name: parameterElement.name,
+                      ),
+                    ),
                     name: element.name,
                     returnType: element.returnType.isDartAsyncFuture ||
                             element.returnType.isDartAsyncFutureOr

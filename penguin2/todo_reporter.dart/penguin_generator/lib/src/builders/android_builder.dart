@@ -12,7 +12,6 @@ import 'platform_builder.dart';
 class AndroidBuilder extends PlatformBuilder {
   @override
   String build(List<ClassInfo> classes) {
-    classes.forEach((_) => _.methods.forEach((_) => print(_.returnType)));
     final AndroidTemplateCreator creator = AndroidTemplateCreator();
     return creator.createFile(
       imports: classes

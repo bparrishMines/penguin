@@ -26,7 +26,13 @@ class $__className__ {
 
   // METHODS
   // METHOD
-  MethodCall $__methodName__() {
+  MethodCall $__methodName__(
+  // PARAMETERS
+  // PARAMETER
+  __parameterType__ __parameterName__
+  // end PARAMETER
+  // end PARAMETERS
+  ) {
     return MethodCall(
       '__platformClassName__#__methodName__',
        <String, String>{'uniqueId': $uniqueId},
@@ -260,14 +266,26 @@ class MethodChannelTemplateCreator extends _TemplateCreator {
   @override
   _Template get template => _Template.methodChannel;
 
-  String createMethod({String platformClassName, String methodName}) {
+  String createMethod({
+    Iterable<String> parameters,
+    String platformClassName,
+    String methodName,
+  }) {
     return _replace(
       _Block.method.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
+        _Block.parameters.exp: parameters.join(','),
         _Replacement.platformClassName.name: platformClassName,
         _Replacement.methodName.name: methodName,
       },
     );
+  }
+
+  String createParameter({String parameterType, String parameterName}) {
+    return _replaceParameter(<Pattern, String>{
+      _Replacement.parameterType.name: parameterType,
+      _Replacement.parameterName.name: parameterName,
+    });
   }
 
   String createClass({
@@ -408,6 +426,10 @@ abstract class _TemplateCreator {
     return _Block.staticMethodCall.exp.firstMatch(input).group(1);
   }
 
+  String _getParameter(String input) {
+    return _Block.parameter.exp.firstMatch(input).group(1);
+  }
+
   // TODO: Speedup with replaceAllMapped
   String _replace(String value, Map<Pattern, String> replacements) {
     for (MapEntry<Pattern, String> entry in replacements.entries) {
@@ -438,6 +460,10 @@ abstract class _TemplateCreator {
 
   String _replaceStaticMethodCall(Map<Pattern, String> replacements) {
     return _replace(_getStaticMethodCall(template.value), replacements);
+  }
+
+  String _replaceParameter(Map<Pattern, String> replacements) {
+    return _replace(_getParameter(template.value), replacements);
   }
 }
 
@@ -538,6 +564,18 @@ class _Block {
     multiLine: true,
     dotAll: true,
   ));
+
+  static final _Block parameters = _Block(RegExp(
+    r'// PARAMETERS$(.*)// end PARAMETERS$',
+    multiLine: true,
+    dotAll: true,
+  ));
+
+  static final _Block parameter = _Block(RegExp(
+    r'// PARAMETER$(.*)// end PARAMETER$',
+    multiLine: true,
+    dotAll: true,
+  ));
 }
 
 class _Replacement {
@@ -554,4 +592,6 @@ class _Replacement {
   static final _Replacement platformClassName = _Replacement(
     '__platformClassName__',
   );
+  static final _Replacement parameterName = _Replacement('__parameterName__');
+  static final _Replacement parameterType = _Replacement('__parameterType__');
 }

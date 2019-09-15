@@ -29,7 +29,7 @@ class ClassInfo {
 
 @JsonSerializable()
 class MethodInfo {
-  const MethodInfo({this.name, this.method, this.returnType});
+  const MethodInfo({this.name, this.method, this.returnType, this.parameters});
 
   factory MethodInfo.fromJson(Map json) => _$MethodInfoFromJson(json);
 
@@ -41,6 +41,9 @@ class MethodInfo {
 
   @JsonKey(required: true, disallowNullValue: true)
   final Method method;
+
+  @JsonKey(required: true, disallowNullValue: true)
+  final Iterable<ParameterInfo> parameters;
 
   Map toJson() => _$MethodInfoToJson(this);
 
@@ -61,6 +64,21 @@ class ConstructorInfo {
   final Constructor constructor;
 
   Map toJson() => _$ConstructorInfoToJson(this);
+
+  @override
+  String toString() => toJson().toString();
+}
+
+@JsonSerializable()
+class ParameterInfo {
+  ParameterInfo({this.type, this.name});
+
+  factory ParameterInfo.fromJson(Map json) => _$ParameterInfoFromJson(json);
+
+  final String type;
+  final String name;
+
+  Map toJson() => _$ParameterInfoToJson(this);
 
   @override
   String toString() => toJson().toString();

@@ -40,14 +40,16 @@ Map<String, dynamic> _$ClassInfoToJson(ClassInfo instance) {
 
 MethodInfo _$MethodInfoFromJson(Map<String, dynamic> json) {
   $checkKeys(json,
-      requiredKeys: const ['name', 'returnType', 'method'],
-      disallowNullValues: const ['name', 'returnType', 'method']);
+      requiredKeys: const ['name', 'returnType', 'method', 'parameters'],
+      disallowNullValues: const ['name', 'returnType', 'method', 'parameters']);
   return MethodInfo(
     name: json['name'] as String,
     method: json['method'] == null
         ? null
         : Method.fromJson(json['method'] as Map<String, dynamic>),
     returnType: json['returnType'] as String,
+    parameters: (json['parameters'] as List)?.map((e) =>
+        e == null ? null : ParameterInfo.fromJson(e as Map<String, dynamic>)),
   );
 }
 
@@ -63,6 +65,7 @@ Map<String, dynamic> _$MethodInfoToJson(MethodInfo instance) {
   writeNotNull('name', instance.name);
   writeNotNull('returnType', instance.returnType);
   writeNotNull('method', instance.method);
+  writeNotNull('parameters', instance.parameters?.toList());
   return val;
 }
 
@@ -91,3 +94,16 @@ Map<String, dynamic> _$ConstructorInfoToJson(ConstructorInfo instance) {
   writeNotNull('constructor', instance.constructor);
   return val;
 }
+
+ParameterInfo _$ParameterInfoFromJson(Map<String, dynamic> json) {
+  return ParameterInfo(
+    type: json['type'] as String,
+    name: json['name'] as String,
+  );
+}
+
+Map<String, dynamic> _$ParameterInfoToJson(ParameterInfo instance) =>
+    <String, dynamic>{
+      'type': instance.type,
+      'name': instance.name,
+    };

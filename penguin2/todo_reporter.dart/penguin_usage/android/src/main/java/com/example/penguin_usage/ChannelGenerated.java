@@ -160,6 +160,9 @@ public class ChannelGenerated implements MethodCallHandler {
         case "TestClass#getStringMethod":
           return getStringMethod();
         
+        case "TestClass#addTwo":
+          return addTwo();
+        
         default:
           throw new NotImplementedException(call.method);
       }
@@ -173,6 +176,10 @@ public class ChannelGenerated implements MethodCallHandler {
     
     Object getStringMethod() {
       return testClass.getStringMethod();
+    }
+    
+    Object addTwo() {
+      return testClass.addTwo();
     }
     
   }
