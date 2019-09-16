@@ -40,9 +40,12 @@ class $__className__ {
       '__platformClassName__#__methodName__',
        <String, dynamic>{'uniqueId': $uniqueId,
        %%METHODCALLPARAMS%%
-       %%METHODCALLPARAM%%
+       %%METHODCALLPARAM type:supported%%
        '__parameterName__': __parameterName__,
-       %%METHODCALLPARAM%%
+       %%METHODCALLPARAM type:supported%%
+       %%METHODCALLPARAM type:wrapper%%
+       '__parameterName__': __parameterName__.$uniqueId,
+       %%METHODCALLPARAM type:wrapper%%
        %%METHODCALLPARAMS%%
        },
     );
@@ -327,9 +330,15 @@ class MethodChannelTemplateCreator extends _TemplateCreator {
     );
   }
 
-  String createMethodCallParam({String parameterName}) {
+  String createMethodCallParam(
+    MethodChannelType channelType, {
+    String parameterName,
+  }) {
     return _replace(
-      _Block.methodCallParam.exp.firstMatch(template.value).group(1),
+      _Block.methodCallParam(channelType)
+          .exp
+          .firstMatch(template.value)
+          .group(1),
       <Pattern, String>{
         _Replacement.parameterName.name: parameterName,
       },
@@ -534,8 +543,7 @@ class _Block {
         break;
     }
 
-    final String joinConfigs = configs.join(' ');
-    return _Block(method.identifier, joinConfigs);
+    return _Block(method.identifier, configs.join(' '));
   }
 
   // Android and iOS
@@ -552,8 +560,7 @@ class _Block {
         throw ArgumentError.value(type, 'type', 'Not supported for parameters');
     }
 
-    final String joinConfigs = configs.join(' ');
-    return _Block(parameter.identifier, joinConfigs);
+    return _Block(parameter.identifier, configs.join(' '));
   }
 
   static final _Block imports = _Block('IMPORTS');
@@ -574,8 +581,27 @@ class _Block {
   static final _Block parameters = _Block('PARAMETERS');
   static final _Block parameter = _Block('PARAMETER');
 
+  static _Block methodCallParam(MethodChannelType type) {
+    final List<String> configs = <String>[];
+    switch (type) {
+      case MethodChannelType.wrapper:
+        configs.add('type:wrapper');
+        break;
+      case MethodChannelType.supported:
+        configs.add('type:supported');
+        break;
+      case MethodChannelType.$void:
+        throw ArgumentError.value(
+          type,
+          'type',
+          'Not supported for MethodCall parameters.',
+        );
+    }
+
+    return _Block('METHODCALLPARAM', configs.join(' '));
+  }
+
   static final _Block methodCallParams = _Block('METHODCALLPARAMS');
-  static final _Block methodCallParam = _Block('METHODCALLPARAM');
 }
 
 class _Replacement {

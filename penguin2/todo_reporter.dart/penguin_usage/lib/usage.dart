@@ -62,7 +62,10 @@ class Usage1 extends $Usage1 {
 
   @Method()
   Future<String> getUsage2(Usage2 usage2) {
-
+    return PenguinUsage.channel.invokeMethod(
+      $getUsage2(usage2).method,
+      $getUsage2(usage2).arguments,
+    );
   }
 
   Future<void> anotherMethod() async {
@@ -80,5 +83,11 @@ class Usage1 extends $Usage1 {
   ),
 ))
 class Usage2 extends $Usage2 {
-  Usage2() : super(Random().nextDouble().toString());
+  @Constructor()
+  Usage2() : super(Random().nextDouble().toString()) {
+    $invoke(
+      PenguinUsage.channel,
+      [$Usage2Default(), $allocate()],
+    );
+  }
 }

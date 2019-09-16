@@ -115,6 +115,11 @@ public class ChannelGenerated implements MethodCallHandler {
           return null;
         }
       
+      case "TestClassTwo()": {
+          new TestClassTwoWrapper((String) call.argument("uniqueId"));
+          return null;
+        }
+      
       default:
         final String uniqueId = call.argument("uniqueId");
         if (uniqueId == null) throw new NoUniqueIdException(call.method);
@@ -236,6 +241,12 @@ public class ChannelGenerated implements MethodCallHandler {
       addWrapper(uniqueId, this, tempWrappers);
     }
 
+    
+    private TestClassTwoWrapper(final String uniqueId) {
+      super(uniqueId);
+      this.testClassTwo = new TestClassTwo();
+      addWrapper(uniqueId, this, tempWrappers);
+    }
     
 
     @Override
