@@ -30,6 +30,7 @@ class _MyAppState extends State<MyApp> {
               await usage1.anotherMethod();
               print(await usage1.getStringMethod());
               print(await usage1.addTwo(14));
+              print(await usage1.divide(100, 10));
             },
             child: const Text('Click Me'),
           ),

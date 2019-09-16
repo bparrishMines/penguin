@@ -12,4 +12,8 @@ public class TestClass {
   public int addTwo(int value) {
     return value += 2;
   }
+
+  public double divide(int one, int two) {
+    return one / two;
+  }
 }

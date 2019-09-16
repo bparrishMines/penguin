@@ -44,6 +44,14 @@ class Usage1 extends $Usage1 {
     );
   }
 
+  @Method()
+  Future<double> divide(int one, int two) {
+    return PenguinUsage.channel.invokeMethod(
+      $divide(one, two).method,
+      $divide(one, two).arguments,
+    );
+  }
+
   Future<void> anotherMethod() async {
     print(await $invoke(
       PenguinUsage.channel,

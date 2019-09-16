@@ -91,7 +91,7 @@ public class ChannelGenerated implements MethodCallHandler {
     } catch (NoUniqueIdException exception) {
       result.error(exception.getClass().getSimpleName(), exception.getMessage(), null);
     } catch (NotImplementedException exception) {
-      result.notImplemented();
+      result.error(exception.getClass().getSimpleName(), exception.getMessage(), null);
     } finally {
       tempWrappers.clear();
     }
@@ -163,6 +163,9 @@ public class ChannelGenerated implements MethodCallHandler {
         case "TestClass#addTwo":
           return addTwo(call);
         
+        case "TestClass#divide":
+          return divide(call);
+        
         default:
           throw new NotImplementedException(call.method);
       }
@@ -186,6 +189,16 @@ public class ChannelGenerated implements MethodCallHandler {
       return testClass.addTwo(
       
       call.argument("value") == null ? null : (Integer) call.argument("value")
+      
+      );
+    }
+    
+    Object divide(MethodCall call) {
+      return testClass.divide(
+      
+      call.argument("one") == null ? null : (Integer) call.argument("one")
+      ,
+      call.argument("two") == null ? null : (Integer) call.argument("two")
       
       );
     }
