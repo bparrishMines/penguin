@@ -95,7 +95,7 @@ class ReadInfoBuilder extends Builder {
     }
   }
 
-  TypeInfo _toTypeInfo(DartType type) => type is ParameterizedType
+  TypeInfo _toTypeInfo(DartType type) => type is ParameterizedType && type.typeArguments.isNotEmpty
       ? ParameterizedTypeInfo(
           name: type.name,
           isFuture: type.isDartAsyncFuture,
