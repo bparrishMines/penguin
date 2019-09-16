@@ -91,7 +91,7 @@ class AndroidBuilder extends PlatformBuilder {
     } else if (info.isBool) {
       return 'Boolean';
     } else if (info.isList && _parseReturnType(info) == ReturnType.supported) {
-      return 'List<${_convertType(info.typeArguments.first)}>';
+      return 'ArrayList<${_convertType(info.typeArguments.first)}>';
     } else if (info.isMap && _parseReturnType(info) == ReturnType.supported) {
       final List<TypeInfo> infos = info.typeArguments.toList();
       return 'HashMap<${_convertType(infos[0])}, ${_convertType(infos[1])}>';
