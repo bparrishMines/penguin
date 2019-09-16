@@ -130,7 +130,8 @@ TypeInfo _$TypeInfoFromJson(Map<String, dynamic> json) {
     'isString',
     'isSymbol',
     'isDynamic',
-    'isVoid'
+    'isVoid',
+    'isWrapper'
   ], disallowNullValues: const [
     'typeArguments',
     'isFuture',
@@ -148,7 +149,8 @@ TypeInfo _$TypeInfoFromJson(Map<String, dynamic> json) {
     'isString',
     'isSymbol',
     'isDynamic',
-    'isVoid'
+    'isVoid',
+    'isWrapper'
   ]);
   return TypeInfo(
     name: json['name'] as String,
@@ -170,6 +172,7 @@ TypeInfo _$TypeInfoFromJson(Map<String, dynamic> json) {
     isVoid: json['isVoid'] as bool,
     typeArguments: (json['typeArguments'] as List)?.map(
         (e) => e == null ? null : TypeInfo.fromJson(e as Map<String, dynamic>)),
+    isWrapper: json['isWrapper'] as bool,
   );
 }
 
@@ -200,5 +203,6 @@ Map<String, dynamic> _$TypeInfoToJson(TypeInfo instance) {
   writeNotNull('isSymbol', instance.isSymbol);
   writeNotNull('isDynamic', instance.isDynamic);
   writeNotNull('isVoid', instance.isVoid);
+  writeNotNull('isWrapper', instance.isWrapper);
   return val;
 }

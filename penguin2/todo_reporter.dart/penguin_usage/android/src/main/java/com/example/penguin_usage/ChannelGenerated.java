@@ -169,6 +169,9 @@ public class ChannelGenerated implements MethodCallHandler {
         case "TestClass#getList":
           return getList(call);
         
+        case "TestClass#getUsage2":
+          return getUsage2(call);
+        
         default:
           throw new NotImplementedException(call.method);
       }
@@ -210,6 +213,14 @@ public class ChannelGenerated implements MethodCallHandler {
       return testClass.getList(
       
       call.argument("addThese") == null ? null : (HashMap<Integer, Integer>) call.argument("addThese")
+      
+      );
+    }
+    
+    Object getUsage2(MethodCall call) {
+      return testClass.getUsage2(
+      
+      ((TestClassTwoWrapper) getWrapper((String) call.argument("usage2"))).testClassTwo
       
       );
     }

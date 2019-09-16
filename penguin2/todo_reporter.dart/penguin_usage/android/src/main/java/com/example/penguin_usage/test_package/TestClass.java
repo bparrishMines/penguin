@@ -29,4 +29,8 @@ public class TestClass {
     }
     return values;
   }
+
+  public Object getUsage2(TestClassTwo usage2) {
+    return "Thank you for a: " + usage2.getClass().getSimpleName();
+  }
 }

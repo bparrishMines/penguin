@@ -37,11 +37,15 @@ class AndroidBuilder extends PlatformBuilder {
           ),
           methods: classInfo.methods.map<String>(
             (MethodInfo methodInfo) => creator.createMethod(
-              _parseReturnType(methodInfo.returnType),
+              _getChannelType(methodInfo.returnType),
               parameters: methodInfo.parameters.map<String>(
                 (ParameterInfo parameterInfo) => creator.createParameter(
-                  parameterType: _convertType(parameterInfo.type),
+                  _getChannelType(parameterInfo.type),
+                  parameterType: _convertType(parameterInfo.type, classes),
                   parameterName: parameterInfo.name,
+                  variableName:
+                      ReCase(_convertType(parameterInfo.type, classes))
+                          .camelCase,
                 ),
               ),
               methodName: methodInfo.name,
@@ -77,7 +81,7 @@ class AndroidBuilder extends PlatformBuilder {
   }
 
   // TODO: handle longs (Actually,... this should be an override)
-  String _convertType(TypeInfo info) {
+  String _convertType(TypeInfo info, [List<ClassInfo> classes]) {
     if (info.isDynamic || info.isObject) {
       return 'Object';
     } else if (info.isString) {
@@ -90,23 +94,31 @@ class AndroidBuilder extends PlatformBuilder {
       return 'Number';
     } else if (info.isBool) {
       return 'Boolean';
-    } else if (info.isList && _parseReturnType(info) == ReturnType.supported) {
+    } else if (info.isList &&
+        _getChannelType(info) == MethodChannelType.supported) {
       return 'ArrayList<${_convertType(info.typeArguments.first)}>';
-    } else if (info.isMap && _parseReturnType(info) == ReturnType.supported) {
+    } else if (info.isMap &&
+        _getChannelType(info) == MethodChannelType.supported) {
       final List<TypeInfo> infos = info.typeArguments.toList();
       return 'HashMap<${_convertType(infos[0])}, ${_convertType(infos[1])}>';
+    } else if (info.isWrapper) {
+      return (classes
+              .firstWhere((ClassInfo classInfo) => classInfo.name == info.name)
+              .aClass
+              .platform as AndroidPlatform)
+          .type.name;
     }
 
     throw ArgumentError();
   }
 
-  ReturnType _parseReturnType(TypeInfo info) {
+  MethodChannelType _getChannelType(TypeInfo info) {
     if (info.isMap ||
         info.isList &&
             info.typeArguments.every(
-              (_) => _parseReturnType(_) == ReturnType.supported,
+              (_) => _getChannelType(_) == MethodChannelType.supported,
             )) {
-      return ReturnType.supported;
+      return MethodChannelType.supported;
     } else if (info.isDynamic ||
         info.isObject ||
         info.isString ||
@@ -114,9 +126,11 @@ class AndroidBuilder extends PlatformBuilder {
         info.isInt ||
         info.isDouble ||
         info.isBool) {
-      return ReturnType.supported;
+      return MethodChannelType.supported;
     } else if (info.isVoid) {
-      return ReturnType.$void;
+      return MethodChannelType.$void;
+    } else if (info.isWrapper) {
+      return MethodChannelType.wrapper;
     }
 
     throw ArgumentError();

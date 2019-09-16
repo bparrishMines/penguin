@@ -105,6 +105,7 @@ class TypeInfo {
     this.isDynamic,
     this.isVoid,
     this.typeArguments,
+    this.isWrapper,
   });
 
   factory TypeInfo.fromJson(Map json) => _$TypeInfoFromJson(json);
@@ -191,6 +192,9 @@ class TypeInfo {
   /// Return `true` if this type represents the type 'void'.
   @JsonKey(required: true, disallowNullValue: true)
   final bool isVoid;
+
+  @JsonKey(required: true, disallowNullValue: true)
+  final bool isWrapper;
 
   Map toJson() => _$TypeInfoToJson(this);
 

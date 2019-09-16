@@ -60,6 +60,11 @@ class Usage1 extends $Usage1 {
     );
   }
 
+  @Method()
+  Future<String> getUsage2(Usage2 usage2) {
+
+  }
+
   Future<void> anotherMethod() async {
     print(await $invoke(
       PenguinUsage.channel,

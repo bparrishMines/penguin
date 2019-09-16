@@ -253,9 +253,12 @@ public class ChannelGenerated implements MethodCallHandler {
     Object __methodName__(MethodCall call) {
       __variableName__.__methodName__(
       %%PARAMETERS%%
-      %%PARAMETER%%
+      %%PARAMETER type:supported%%
       call.argument("__parameterName__") == null ? null : (__parameterType__) call.argument("__parameterName__")
-      %%PARAMETER%%
+      %%PARAMETER type:supported%%
+      %%PARAMETER type:wrapper%%
+      ((__parameterType__Wrapper) getWrapper((String) call.argument("__parameterName__"))).__variableName__
+      %%PARAMETER type:wrapper%%
       %%PARAMETERS%%
       );
       return null;
@@ -265,9 +268,12 @@ public class ChannelGenerated implements MethodCallHandler {
     Object __methodName__(MethodCall call) {
       return __variableName__.__methodName__(
       %%PARAMETERS%%
-      %%PARAMETER%%
-      (__parameterType__) call.argument("__parameterName__")
-      %%PARAMETER%%
+      %%PARAMETER type:supported%%
+      call.argument("__parameterName__") == null ? null : (__parameterType__) call.argument("__parameterName__")
+      %%PARAMETER type:supported%%
+      %%PARAMETER type:wrapper%%
+      ((__parameterType__Wrapper) getWrapper((String) call.argument("__parameterName__"))).__variableName__
+      %%PARAMETER type:wrapper%%
       %%PARAMETERS%%
       );
     }
@@ -360,7 +366,7 @@ class AndroidTemplateCreator extends _TemplateCreator {
   _Template get template => _Template.android;
 
   String createMethod(
-    ReturnType returnType, {
+    MethodChannelType returnType, {
     Iterable<String> parameters,
     String methodName,
     String variableName,
@@ -375,10 +381,19 @@ class AndroidTemplateCreator extends _TemplateCreator {
     );
   }
 
-  String createParameter({String parameterType, String parameterName}) {
+  String createParameter(
+    MethodChannelType channelType, {
+    String variableName,
+    String parameterType,
+    String parameterName,
+  }) {
     return _replace(
-      _Block.parameter.exp.firstMatch(template.value).group(1),
+      _Block.channelParameter(channelType)
+          .exp
+          .firstMatch(template.value)
+          .group(1),
       <Pattern, String>{
+        _Replacement.variableName.name: variableName,
         _Replacement.parameterType.name: parameterType,
         _Replacement.parameterName.name: parameterName,
       },
@@ -461,7 +476,7 @@ class AndroidTemplateCreator extends _TemplateCreator {
   }
 }
 
-enum ReturnType { $void, supported }
+enum MethodChannelType { $void, supported, wrapper }
 
 abstract class _TemplateCreator {
   _Template get template;
@@ -497,19 +512,38 @@ class _Block {
   static final _Block method = _Block('METHOD');
 
   //  For Android and iOS
-  static _Block channelMethod(ReturnType type) {
+  static _Block channelMethod(MethodChannelType type) {
     final List<String> configs = <String>[];
     switch (type) {
-      case ReturnType.$void:
+      case MethodChannelType.$void:
+      case MethodChannelType.wrapper:
         configs.add('returns:void');
         break;
-      case ReturnType.supported:
+      case MethodChannelType.supported:
         configs.add('returns:supported');
         break;
     }
 
     final String joinConfigs = configs.join(' ');
     return _Block(method.identifier, joinConfigs);
+  }
+
+  // Android and iOS
+  static _Block channelParameter(MethodChannelType type) {
+    final List<String> configs = <String>[];
+    switch (type) {
+      case MethodChannelType.wrapper:
+        configs.add('type:wrapper');
+        break;
+      case MethodChannelType.supported:
+        configs.add('type:supported');
+        break;
+      case MethodChannelType.$void:
+        throw ArgumentError.value(type, 'type', 'Not supported for parameters');
+    }
+
+    final String joinConfigs = configs.join(' ');
+    return _Block(parameter.identifier, joinConfigs);
   }
 
   static final _Block imports = _Block('IMPORTS');

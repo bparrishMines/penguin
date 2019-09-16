@@ -92,6 +92,21 @@ class $Usage1 {
     );
   }
   
+  MethodCall $getUsage2(
+  
+  Usage2 usage2
+  
+  ) {
+    return MethodCall(
+      'TestClass#getUsage2',
+       <String, dynamic>{'uniqueId': $uniqueId,
+       
+       'usage2': usage2,
+       
+       },
+    );
+  }
+  
   
   MethodCall $allocate() {
     return MethodCall(

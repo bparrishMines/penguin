@@ -67,15 +67,30 @@ class ReadInfoBuilder extends Builder {
                     parameters: element.parameters.map<ParameterInfo>(
                       (ParameterElement parameterElement) => ParameterInfo(
                         name: parameterElement.name,
-                        type: _toTypeInfo(parameterElement.type),
+                        type: _toTypeInfo(
+                          parameterElement.type,
+                          _classAnnotation.hasAnnotationOfExact(
+                            parameterElement.type.element,
+                          ),
+                        ),
                       ),
                     ),
                     name: element.name,
                     returnType: element.returnType.isDartAsyncFuture ||
                             element.returnType.isDartAsyncFutureOr
-                        ? _toTypeInfo((element.returnType as ParameterizedType)
-                            .typeArguments[0])
-                        : _toTypeInfo(element.returnType),
+                        ? _toTypeInfo(
+                            (element.returnType as ParameterizedType)
+                                .typeArguments[0],
+                            _classAnnotation.hasAnnotationOfExact(
+                              element.returnType.element,
+                            ),
+                          )
+                        : _toTypeInfo(
+                            element.returnType,
+                            _classAnnotation.hasAnnotationOfExact(
+                              element.returnType.element,
+                            ),
+                          ),
                     method: AnnotationUtils.methodFromConstantReader(
                       ConstantReader(
                         _methodAnnotation.firstAnnotationOfExact(element),
@@ -95,12 +110,12 @@ class ReadInfoBuilder extends Builder {
     }
   }
 
-  TypeInfo _toTypeInfo(DartType type) => TypeInfo(
+  TypeInfo _toTypeInfo(DartType type, bool isWrapper) => TypeInfo(
         name: type.toString(),
         typeArguments:
             type is ParameterizedType && type.typeArguments.isNotEmpty
                 ? type.typeArguments
-                    .map<TypeInfo>((DartType type) => _toTypeInfo(type))
+                    .map<TypeInfo>((DartType type) => _toTypeInfo(type, false))
                 : <TypeInfo>[],
         isFuture: type.isDartAsyncFuture,
         isFutureOr: type.isDartAsyncFutureOr,
@@ -118,6 +133,7 @@ class ReadInfoBuilder extends Builder {
         isSymbol: type.isDartCoreSymbol,
         isDynamic: type.isDynamic,
         isVoid: type.isVoid,
+        isWrapper: isWrapper,
       );
 
   @override
