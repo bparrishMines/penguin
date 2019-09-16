@@ -170,7 +170,7 @@ public class ChannelGenerated implements MethodCallHandler {
     } catch (NoUniqueIdException exception) {
       result.error(exception.getClass().getSimpleName(), exception.getMessage(), null);
     } catch (NotImplementedException exception) {
-      result.notImplemented();
+      result.error(exception.getClass().getSimpleName(), exception.getMessage(), null);
     } finally {
       tempWrappers.clear();
     }

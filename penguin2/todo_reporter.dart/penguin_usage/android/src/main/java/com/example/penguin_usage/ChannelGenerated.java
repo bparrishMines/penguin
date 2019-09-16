@@ -183,7 +183,11 @@ public class ChannelGenerated implements MethodCallHandler {
     }
     
     Object addTwo(MethodCall call) {
-      return testClass.addTwo(call.argument("value") == null ? null : (Integer) call.argument("value"));
+      return testClass.addTwo(
+      
+      call.argument("value") == null ? null : (Integer) call.argument("value")
+      
+      );
     }
     
   }
