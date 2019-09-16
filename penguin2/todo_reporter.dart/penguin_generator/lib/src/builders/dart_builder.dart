@@ -22,7 +22,7 @@ class FlutterBuilder extends PlatformBuilder {
             (MethodInfo methodInfo) => creator.createMethod(
               parameters: methodInfo.parameters.map<String>(
                 (ParameterInfo parameterInfo) => creator.createParameter(
-                  parameterType: parameterInfo.type,
+                  parameterType: parameterInfo.type.name,
                   parameterName: parameterInfo.name,
                 ),
               ),

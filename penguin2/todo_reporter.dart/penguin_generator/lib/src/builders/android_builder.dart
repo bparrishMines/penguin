@@ -38,6 +38,12 @@ class AndroidBuilder extends PlatformBuilder {
           methods: classInfo.methods.map<String>(
             (MethodInfo methodInfo) => creator.createMethod(
               _parseReturnType(methodInfo.returnType),
+              parameters: methodInfo.parameters.map<String>(
+                (ParameterInfo parameterInfo) => creator.createParameter(
+                  parameterType: _convertType(parameterInfo.type),
+                  parameterName: parameterInfo.name,
+                ),
+              ),
               methodName: methodInfo.name,
               variableName: ReCase(
                 (classInfo.aClass.platform as AndroidPlatform).type.name,
@@ -70,19 +76,39 @@ class AndroidBuilder extends PlatformBuilder {
     );
   }
 
-  ReturnType _parseReturnType(String returnType) {
-    switch (returnType) {
-      case 'int':
-      case 'double':
-      case 'num':
-      case 'bool':
-      case 'String':
-        return ReturnType.supported;
-      case 'void':
-        return ReturnType.$void;
-      default:
-        return ReturnType.$void;
+  // TODO: handle longs (Actually,... this should be an override)
+  String _convertType(TypeInfo info) {
+    if (info.isDynamic || info.isObject) {
+      return 'Object';
+    } else if (info.isString) {
+      return 'String';
+    } else if (info.isInt) {
+      return 'Integer';
+    } else if (info.isDouble) {
+      return 'Double';
+    } else if (info.isNum) {
+      return 'Number';
+    } else if (info.isBool) {
+      return 'Boolean';
     }
+    
+    throw ArgumentError();
+  }
+
+  ReturnType _parseReturnType(TypeInfo info) {
+    if (info.isVoid) {
+      return ReturnType.$void;
+    } else if (info.isDynamic ||
+        info.isObject ||
+        info.isString ||
+        info.isNum ||
+        info.isInt ||
+        info.isDouble ||
+        info.isBool) {
+      return ReturnType.supported;
+    }
+
+    throw ArgumentError();
   }
 
   static String get _androidPackage {
@@ -92,10 +118,11 @@ class AndroidBuilder extends PlatformBuilder {
   }
 
   @override
-  String get directory =>
-      p.joinAll(<String>['android', 'src', 'main', 'java']..addAll(
-          _androidPackage.split('.'),
-        ));
+  String get directory => p.joinAll(
+        <String>['android', 'src', 'main', 'java']..addAll(
+            _androidPackage.split('.'),
+          ),
+      );
 
   @override
   String get filename => 'ChannelGenerated.java';

@@ -8,4 +8,8 @@ public class TestClass {
   public String getStringMethod() {
     return "Hello, World.";
   }
+
+  public int addTwo(int value) {
+    return value += 2;
+  }
 }

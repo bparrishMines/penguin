@@ -66,17 +66,16 @@ class ReadInfoBuilder extends Builder {
                   (MethodElement element) => MethodInfo(
                     parameters: element.parameters.map<ParameterInfo>(
                       (ParameterElement parameterElement) => ParameterInfo(
-                        type: parameterElement.type.toString(),
                         name: parameterElement.name,
+                        type: _toTypeInfo(parameterElement.type),
                       ),
                     ),
                     name: element.name,
                     returnType: element.returnType.isDartAsyncFuture ||
                             element.returnType.isDartAsyncFutureOr
-                        ? (element.returnType as ParameterizedType)
-                            .typeArguments[0]
-                            .toString()
-                        : element.returnType.toString(),
+                        ? _toTypeInfo((element.returnType as ParameterizedType)
+                            .typeArguments[0])
+                        : _toTypeInfo(element.returnType),
                     method: AnnotationUtils.methodFromConstantReader(
                       ConstantReader(
                         _methodAnnotation.firstAnnotationOfExact(element),
@@ -95,6 +94,26 @@ class ReadInfoBuilder extends Builder {
       );
     }
   }
+
+  TypeInfo _toTypeInfo(DartType type) => TypeInfo(
+        name: type.toString(),
+        isFuture: type.isDartAsyncFuture,
+        isFutureOr: type.isDartAsyncFutureOr,
+        isBool: type.isDartCoreBool,
+        isDouble: type.isDartCoreDouble,
+        isFunction: type.isDartCoreFunction,
+        isInt: type.isDartCoreInt,
+        isList: type.isDartCoreList,
+        isMap: type.isDartCoreMap,
+        isNull: type.isDartCoreNull,
+        isNum: type.isDartCoreNum,
+        isObject: type.isDartCoreObject,
+        isSet: type.isDartCoreSet,
+        isString: type.isDartCoreString,
+        isSymbol: type.isDartCoreSymbol,
+        isDynamic: type.isDynamic,
+        isVoid: type.isVoid,
+      );
 
   @override
   Map<String, List<String>> get buildExtensions => <String, List<String>>{

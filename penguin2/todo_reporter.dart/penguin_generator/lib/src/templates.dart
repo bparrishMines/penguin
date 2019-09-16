@@ -240,7 +240,7 @@ public class ChannelGenerated implements MethodCallHandler {
         %%METHODCALLS%%
         %%METHODCALL%%
         case "__platformClassName__#__methodName__":
-          return __methodName__();
+          return __methodName__(call);
         %%METHODCALL%%
         %%METHODCALLS%%
         default:
@@ -250,14 +250,26 @@ public class ChannelGenerated implements MethodCallHandler {
 
     %%METHODS%%
     %%METHOD returns:void%%
-    Object __methodName__() {
-      __variableName__.__methodName__();
+    Object __methodName__(MethodCall call) {
+      __variableName__.__methodName__(
+      %%PARAMETERS%%
+      %%PARAMETER%%
+      call.argument("__parameterName__") == null ? null : (__parameterType__) call.argument("__parameterName__")
+      %%PARAMETER%%
+      %%PARAMETERS%%
+      );
       return null;
     }
     %%METHOD returns:void%%
     %%METHOD returns:supported%%
-    Object __methodName__() {
-      return __variableName__.__methodName__();
+    Object __methodName__(MethodCall call) {
+      return __variableName__.__methodName__(
+      %%PARAMETERS%%
+      %%PARAMETER%%
+      (__parameterType__) call.argument("__parameterName__")
+      %%PARAMETER%%
+      %%PARAMETERS%%
+      );
     }
     %%METHOD returns:supported%%
     %%METHODS%%
@@ -349,14 +361,26 @@ class AndroidTemplateCreator extends _TemplateCreator {
 
   String createMethod(
     ReturnType returnType, {
+    Iterable<String> parameters,
     String methodName,
     String variableName,
   }) {
     return _replace(
       _Block.channelMethod(returnType).exp.firstMatch(template.value).group(1),
       <Pattern, String>{
+        _Block.parameters.exp: parameters.join(','),
         _Replacement.methodName.name: methodName,
         _Replacement.variableName.name: variableName,
+      },
+    );
+  }
+
+  String createParameter({String parameterType, String parameterName}) {
+    return _replace(
+      _Block.parameter.exp.firstMatch(template.value).group(1),
+      <Pattern, String>{
+        _Replacement.parameterType.name: parameterType,
+        _Replacement.parameterName.name: parameterName,
       },
     );
   }
