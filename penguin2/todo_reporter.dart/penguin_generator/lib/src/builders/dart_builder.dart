@@ -22,6 +22,9 @@ class FlutterBuilder extends PlatformBuilder {
             (MethodInfo methodInfo) => creator.createMethod(
               parameters: methodInfo.parameters.map<String>(
                 (ParameterInfo parameterInfo) => creator.createParameter(
+                  parameterInfo.type.isWrapper
+                      ? MethodChannelType.wrapper
+                      : MethodChannelType.supported,
                   parameterType: parameterInfo.type.name,
                   parameterName: parameterInfo.name,
                 ),

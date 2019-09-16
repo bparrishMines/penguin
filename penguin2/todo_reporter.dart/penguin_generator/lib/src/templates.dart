@@ -28,9 +28,12 @@ class $__className__ {
   %%METHOD%%
   MethodCall $__methodName__(
   %%PARAMETERS%%
-  %%PARAMETER%%
+  %%PARAMETER type:supported%%
   __parameterType__ __parameterName__
-  %%PARAMETER%%
+  %%PARAMETER type:supported%%
+  %%PARAMETER type:wrapper%%
+  $__parameterType__ __parameterName__
+  %%PARAMETER type:wrapper%%
   %%PARAMETERS%%
   ) {
     return MethodCall(
@@ -307,9 +310,16 @@ class MethodChannelTemplateCreator extends _TemplateCreator {
     );
   }
 
-  String createParameter({String parameterType, String parameterName}) {
+  String createParameter(
+    MethodChannelType channelType, {
+    String parameterType,
+    String parameterName,
+  }) {
     return _replace(
-      _Block.parameter.exp.firstMatch(template.value).group(1),
+      _Block.channelParameter(channelType)
+          .exp
+          .firstMatch(template.value)
+          .group(1),
       <Pattern, String>{
         _Replacement.parameterType.name: parameterType,
         _Replacement.parameterName.name: parameterName,
