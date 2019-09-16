@@ -52,6 +52,14 @@ class Usage1 extends $Usage1 {
     );
   }
 
+  @Method()
+  Future<List<String>> getList(Map<int, int> addThese) {
+    return PenguinUsage.channel.invokeListMethod(
+      $getList(addThese).method,
+      $getList(addThese).arguments,
+    );
+  }
+
   Future<void> anotherMethod() async {
     print(await $invoke(
       PenguinUsage.channel,

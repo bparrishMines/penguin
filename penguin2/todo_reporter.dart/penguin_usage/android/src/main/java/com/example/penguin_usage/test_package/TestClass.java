@@ -1,5 +1,10 @@
 package com.example.penguin_usage.test_package;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class TestClass {
   public void aMethod() {
 
@@ -15,5 +20,13 @@ public class TestClass {
 
   public double divide(int one, int two) {
     return one / two;
+  }
+
+  public List<String> getList(HashMap<Integer, Integer> integerIntegerHashMap) {
+    final List<String> values = new ArrayList<>();
+    for (Map.Entry<Integer, Integer> entry : integerIntegerHashMap.entrySet()) {
+      values.add("" + (entry.getKey() + entry.getValue()));
+    }
+    return values;
   }
 }

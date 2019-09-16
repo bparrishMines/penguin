@@ -104,9 +104,13 @@ class TypeInfo {
     this.isSymbol,
     this.isDynamic,
     this.isVoid,
+    this.typeArguments,
   });
 
   factory TypeInfo.fromJson(Map json) => _$TypeInfoFromJson(json);
+
+  @JsonKey(required: true, disallowNullValue: true)
+  final Iterable<TypeInfo> typeArguments;
 
   final String name;
 
@@ -189,80 +193,6 @@ class TypeInfo {
   final bool isVoid;
 
   Map toJson() => _$TypeInfoToJson(this);
-
-  @override
-  String toString() => toJson().toString();
-}
-
-@JsonSerializable()
-class ParameterizedTypeInfo implements TypeInfo {
-  ParameterizedTypeInfo({
-    this.name,
-    this.isFuture,
-    this.isFutureOr,
-    this.isList,
-    this.isMap,
-    this.typeArguments,
-  });
-
-  factory ParameterizedTypeInfo.fromJson(Map json) =>
-      _$ParameterizedTypeInfoFromJson(json);
-
-  @JsonKey(required: true, disallowNullValue: true)
-  final Iterable<TypeInfo> typeArguments;
-
-  @JsonKey(required: true, disallowNullValue: true)
-  final String name;
-
-  @JsonKey(required: true, disallowNullValue: true)
-  final bool isFuture;
-
-  @JsonKey(required: true, disallowNullValue: true)
-  final bool isFutureOr;
-
-  @JsonKey(required: true, disallowNullValue: true)
-  final bool isList;
-
-  @JsonKey(required: true, disallowNullValue: true)
-  final bool isMap;
-
-  @override
-  bool get isBool => false;
-
-  @override
-  bool get isDouble => false;
-
-  @override
-  bool get isDynamic => false;
-
-  @override
-  bool get isFunction => false;
-
-  @override
-  bool get isInt => false;
-
-  @override
-  bool get isNull => false;
-
-  @override
-  bool get isNum => false;
-
-  @override
-  bool get isObject => false;
-
-  @override
-  bool get isSet => false;
-
-  @override
-  bool get isString => false;
-
-  @override
-  bool get isSymbol => false;
-
-  @override
-  bool get isVoid => false;
-
-  Map toJson() => _$ParameterizedTypeInfoToJson(this);
 
   @override
   String toString() => toJson().toString();
