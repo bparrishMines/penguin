@@ -110,101 +110,159 @@ class TypeInfo {
 
   final String name;
 
-  @JsonKey(required: true, disallowNullValue: true)
-
   /// Return `true` if this type represents the type 'Future' defined in the
   /// dart:async library.
-  final bool isFuture;
-
   @JsonKey(required: true, disallowNullValue: true)
+  final bool isFuture;
 
   /// Return `true` if this type represents the type 'FutureOr<T>' defined in
   /// the dart:async library.
-  final bool isFutureOr;
-
   @JsonKey(required: true, disallowNullValue: true)
+  final bool isFutureOr;
 
   /// Return `true` if this type represents the type 'bool' defined in the
   /// dart:core library.
-  final bool isBool;
-
   @JsonKey(required: true, disallowNullValue: true)
+  final bool isBool;
 
   /// Return `true` if this type represents the type 'double' defined in the
   /// dart:core library.
-  final bool isDouble;
-
   @JsonKey(required: true, disallowNullValue: true)
+  final bool isDouble;
 
   /// Return `true` if this type represents the type 'Function' defined in the
   /// dart:core library.
-  final bool isFunction;
-
   @JsonKey(required: true, disallowNullValue: true)
+  final bool isFunction;
 
   /// Return `true` if this type represents the type 'int' defined in the
   /// dart:core library.
-  final bool isInt;
-
   @JsonKey(required: true, disallowNullValue: true)
+  final bool isInt;
 
   /// Returns `true` if this type represents the type 'List' defined in the
   /// dart:core library.
-  final bool isList;
-
   @JsonKey(required: true, disallowNullValue: true)
+  final bool isList;
 
   /// Returns `true` if this type represents the type 'Map' defined in the
   /// dart:core library.
-  final bool isMap;
-
   @JsonKey(required: true, disallowNullValue: true)
+  final bool isMap;
 
   /// Return `true` if this type represents the type 'Null' defined in the
   /// dart:core library.
-  final bool isNull;
-
   @JsonKey(required: true, disallowNullValue: true)
+  final bool isNull;
 
   /// Return `true` if this type represents the type 'num' defined in the
   /// dart:core library.
-  final bool isNum;
-
   @JsonKey(required: true, disallowNullValue: true)
+  final bool isNum;
 
   /// Return `true` if this type represents the type `Object` defined in the
   /// dart:core library.
-  final bool isObject;
-
   @JsonKey(required: true, disallowNullValue: true)
+  final bool isObject;
 
   /// Returns `true` if this type represents the type 'Set' defined in the
   /// dart:core library.
-  final bool isSet;
-
   @JsonKey(required: true, disallowNullValue: true)
+  final bool isSet;
 
   /// Return `true` if this type represents the type 'String' defined in the
   /// dart:core library.
-  final bool isString;
-
   @JsonKey(required: true, disallowNullValue: true)
+  final bool isString;
 
   /// Returns `true` if this type represents the type 'Symbol' defined in the
   /// dart:core library.
+  @JsonKey(required: true, disallowNullValue: true)
   final bool isSymbol;
 
-  @JsonKey(required: true, disallowNullValue: true)
-
   /// Return `true` if this type represents the type 'dynamic'.
+  @JsonKey(required: true, disallowNullValue: true)
   final bool isDynamic;
 
-  @JsonKey(required: true, disallowNullValue: true)
-
   /// Return `true` if this type represents the type 'void'.
+  @JsonKey(required: true, disallowNullValue: true)
   final bool isVoid;
 
   Map toJson() => _$TypeInfoToJson(this);
+
+  @override
+  String toString() => toJson().toString();
+}
+
+@JsonSerializable()
+class ParameterizedTypeInfo implements TypeInfo {
+  ParameterizedTypeInfo({
+    this.name,
+    this.isFuture,
+    this.isFutureOr,
+    this.isList,
+    this.isMap,
+    this.typeArguments,
+  });
+
+  factory ParameterizedTypeInfo.fromJson(Map json) =>
+      _$ParameterizedTypeInfoFromJson(json);
+
+  @JsonKey(required: true, disallowNullValue: true)
+  final Iterable<TypeInfo> typeArguments;
+
+  @JsonKey(required: true, disallowNullValue: true)
+  final String name;
+
+  @JsonKey(required: true, disallowNullValue: true)
+  final bool isFuture;
+
+  @JsonKey(required: true, disallowNullValue: true)
+  final bool isFutureOr;
+
+  @JsonKey(required: true, disallowNullValue: true)
+  final bool isList;
+
+  @JsonKey(required: true, disallowNullValue: true)
+  final bool isMap;
+
+  @override
+  bool get isBool => false;
+
+  @override
+  bool get isDouble => false;
+
+  @override
+  bool get isDynamic => false;
+
+  @override
+  bool get isFunction => false;
+
+  @override
+  bool get isInt => false;
+
+  @override
+  bool get isNull => false;
+
+  @override
+  bool get isNum => false;
+
+  @override
+  bool get isObject => false;
+
+  @override
+  bool get isSet => false;
+
+  @override
+  bool get isString => false;
+
+  @override
+  bool get isSymbol => false;
+
+  @override
+  bool get isVoid => false;
+
+  Map toJson() => _$ParameterizedTypeInfoToJson(this);
 
   @override
   String toString() => toJson().toString();

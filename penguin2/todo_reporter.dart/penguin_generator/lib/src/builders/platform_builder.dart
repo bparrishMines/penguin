@@ -95,25 +95,35 @@ class ReadInfoBuilder extends Builder {
     }
   }
 
-  TypeInfo _toTypeInfo(DartType type) => TypeInfo(
-        name: type.toString(),
-        isFuture: type.isDartAsyncFuture,
-        isFutureOr: type.isDartAsyncFutureOr,
-        isBool: type.isDartCoreBool,
-        isDouble: type.isDartCoreDouble,
-        isFunction: type.isDartCoreFunction,
-        isInt: type.isDartCoreInt,
-        isList: type.isDartCoreList,
-        isMap: type.isDartCoreMap,
-        isNull: type.isDartCoreNull,
-        isNum: type.isDartCoreNum,
-        isObject: type.isDartCoreObject,
-        isSet: type.isDartCoreSet,
-        isString: type.isDartCoreString,
-        isSymbol: type.isDartCoreSymbol,
-        isDynamic: type.isDynamic,
-        isVoid: type.isVoid,
-      );
+  TypeInfo _toTypeInfo(DartType type) => type is ParameterizedType
+      ? ParameterizedTypeInfo(
+          name: type.name,
+          isFuture: type.isDartAsyncFuture,
+          isFutureOr: type.isDartAsyncFutureOr,
+          isList: type.isDartCoreList,
+          isMap: type.isDartCoreMap,
+          typeArguments: type.typeArguments
+              .map<TypeInfo>((DartType type) => _toTypeInfo(type)),
+        )
+      : TypeInfo(
+          name: type.toString(),
+          isFuture: type.isDartAsyncFuture,
+          isFutureOr: type.isDartAsyncFutureOr,
+          isBool: type.isDartCoreBool,
+          isDouble: type.isDartCoreDouble,
+          isFunction: type.isDartCoreFunction,
+          isInt: type.isDartCoreInt,
+          isList: type.isDartCoreList,
+          isMap: type.isDartCoreMap,
+          isNull: type.isDartCoreNull,
+          isNum: type.isDartCoreNum,
+          isObject: type.isDartCoreObject,
+          isSet: type.isDartCoreSet,
+          isString: type.isDartCoreString,
+          isSymbol: type.isDartCoreSymbol,
+          isDynamic: type.isDynamic,
+          isVoid: type.isVoid,
+        );
 
   @override
   Map<String, List<String>> get buildExtensions => <String, List<String>>{

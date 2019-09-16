@@ -198,3 +198,50 @@ Map<String, dynamic> _$TypeInfoToJson(TypeInfo instance) {
   writeNotNull('isVoid', instance.isVoid);
   return val;
 }
+
+ParameterizedTypeInfo _$ParameterizedTypeInfoFromJson(
+    Map<String, dynamic> json) {
+  $checkKeys(json, requiredKeys: const [
+    'typeArguments',
+    'name',
+    'isFuture',
+    'isFutureOr',
+    'isList',
+    'isMap'
+  ], disallowNullValues: const [
+    'typeArguments',
+    'name',
+    'isFuture',
+    'isFutureOr',
+    'isList',
+    'isMap'
+  ]);
+  return ParameterizedTypeInfo(
+    name: json['name'] as String,
+    isFuture: json['isFuture'] as bool,
+    isFutureOr: json['isFutureOr'] as bool,
+    isList: json['isList'] as bool,
+    isMap: json['isMap'] as bool,
+    typeArguments: (json['typeArguments'] as List)?.map(
+        (e) => e == null ? null : TypeInfo.fromJson(e as Map<String, dynamic>)),
+  );
+}
+
+Map<String, dynamic> _$ParameterizedTypeInfoToJson(
+    ParameterizedTypeInfo instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('typeArguments', instance.typeArguments?.toList());
+  writeNotNull('name', instance.name);
+  writeNotNull('isFuture', instance.isFuture);
+  writeNotNull('isFutureOr', instance.isFutureOr);
+  writeNotNull('isList', instance.isList);
+  writeNotNull('isMap', instance.isMap);
+  return val;
+}
