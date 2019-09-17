@@ -174,6 +174,9 @@ public class ChannelGenerated implements MethodCallHandler {
         case "TestClass#getList":
           return getList(call);
         
+        case "TestClass#giveUsage2":
+          return giveUsage2(call);
+        
         case "TestClass#getUsage2":
           return getUsage2(call);
         
@@ -222,12 +225,20 @@ public class ChannelGenerated implements MethodCallHandler {
       );
     }
     
-    Object getUsage2(MethodCall call) {
-      return testClass.getUsage2(
+    Object giveUsage2(MethodCall call) {
+      return testClass.giveUsage2(
       
       ((TestClassTwoWrapper) getWrapper((String) call.argument("usage2"))).testClassTwo
       
       );
+    }
+    
+    Object getUsage2(MethodCall call) {
+      new TestClassTwoWrapper((String) call.argument("$newUniqueId"),
+      testClass.getUsage2(
+      
+      ));
+      return null;
     }
     
   }

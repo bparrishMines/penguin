@@ -37,10 +37,10 @@ class AndroidBuilder extends PlatformBuilder {
           ),
           methods: classInfo.methods.map<String>(
             (MethodInfo methodInfo) => creator.createMethod(
-              _getChannelType(methodInfo.returnType),
+              getChannelType(methodInfo.returnType),
               parameters: methodInfo.parameters.map<String>(
                 (ParameterInfo parameterInfo) => creator.createParameter(
-                  _getChannelType(parameterInfo.type),
+                  getChannelType(parameterInfo.type),
                   parameterType: _convertType(parameterInfo.type, classes),
                   parameterName: parameterInfo.name,
                   variableName:
@@ -98,10 +98,10 @@ class AndroidBuilder extends PlatformBuilder {
     } else if (info.isBool) {
       return 'Boolean';
     } else if (info.isList &&
-        _getChannelType(info) == MethodChannelType.supported) {
+        getChannelType(info) == MethodChannelType.supported) {
       return 'ArrayList<${_convertType(info.typeArguments.first)}>';
     } else if (info.isMap &&
-        _getChannelType(info) == MethodChannelType.supported) {
+        getChannelType(info) == MethodChannelType.supported) {
       final List<TypeInfo> infos = info.typeArguments.toList();
       return 'HashMap<${_convertType(infos[0])}, ${_convertType(infos[1])}>';
     } else if (info.isWrapper) {
@@ -116,32 +116,8 @@ class AndroidBuilder extends PlatformBuilder {
     throw ArgumentError.value(
       info.toString(),
       'info',
-      'Unsupported value for info',
+      'Can\'t convert to Android type for info',
     );
-  }
-
-  MethodChannelType _getChannelType(TypeInfo info) {
-    if (info.isMap ||
-        info.isList &&
-            info.typeArguments.every(
-              (_) => _getChannelType(_) == MethodChannelType.supported,
-            )) {
-      return MethodChannelType.supported;
-    } else if (info.isDynamic ||
-        info.isObject ||
-        info.isString ||
-        info.isNum ||
-        info.isInt ||
-        info.isDouble ||
-        info.isBool) {
-      return MethodChannelType.supported;
-    } else if (info.isVoid) {
-      return MethodChannelType.$void;
-    } else if (info.isWrapper) {
-      return MethodChannelType.wrapper;
-    }
-
-    throw ArgumentError();
   }
 
   static String get _androidPackage {

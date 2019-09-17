@@ -30,7 +30,11 @@ public class TestClass {
     return values;
   }
 
-  public Object getUsage2(TestClassTwo usage2) {
+  public TestClassTwo getUsage2() {
+    return new TestClassTwo();
+  }
+
+  public String giveUsage2(TestClassTwo usage2) {
     return "Thank you for a: " + usage2.getClass().getSimpleName();
   }
 }

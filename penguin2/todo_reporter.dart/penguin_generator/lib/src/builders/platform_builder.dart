@@ -8,10 +8,11 @@ import 'package:build/build.dart';
 import 'package:glob/glob.dart';
 import 'package:path/path.dart' as p;
 import 'package:penguin/penguin.dart';
-import 'package:penguin_generator/src/builders/annotation_utils.dart';
 import 'package:source_gen/source_gen.dart';
 
+import 'annotation_utils.dart';
 import '../info.dart';
+import '../templates.dart';
 
 const TypeChecker _classAnnotation = const TypeChecker.fromRuntime(Class);
 const TypeChecker _methodAnnotation = const TypeChecker.fromRuntime(Method);
@@ -22,6 +23,35 @@ abstract class PlatformBuilder {
   String get filename;
   String get directory;
   String build(List<ClassInfo> classes);
+
+  // For passing methods over MethodChannel
+  MethodChannelType getChannelType(TypeInfo info) {
+    if (info.isMap ||
+        info.isList &&
+            info.typeArguments.every(
+              (_) => getChannelType(_) == MethodChannelType.supported,
+            )) {
+      return MethodChannelType.supported;
+    } else if (info.isDynamic ||
+        info.isObject ||
+        info.isString ||
+        info.isNum ||
+        info.isInt ||
+        info.isDouble ||
+        info.isBool) {
+      return MethodChannelType.supported;
+    } else if (info.isVoid) {
+      return MethodChannelType.$void;
+    } else if (info.isWrapper) {
+      return MethodChannelType.wrapper;
+    }
+
+    throw ArgumentError.value(
+      info.toString(),
+      'info',
+      'Can\'t find $MethodChannelType for info',
+    );
+  }
 }
 
 class ReadInfoBuilder extends Builder {
@@ -34,6 +64,21 @@ class ReadInfoBuilder extends Builder {
 
     final LibraryReader reader = LibraryReader(await buildStep.inputLibrary);
 
+//    if (buildStep.inputId.path.endsWith('/usage.dart')) {
+//      ClassElement element =
+//          reader
+//              .annotatedWith(_classAnnotation)
+//              .skip(2)
+//              .first
+//              .element;
+//      print(element is TypeParameterizedElement);
+//      print(element.typeParameters);
+//      TypeParameterElement tpe = element.typeParameters[0];
+//      print(tpe.name);
+//      print(element.isSimplyBounded);
+//      print(tpe.type.bound);
+//      print(tpe.type.isDartCoreInt);
+//    }
     final List<ClassInfo> allClassInfo = reader
         .annotatedWith(_classAnnotation)
         .map<ClassInfo>(
@@ -67,12 +112,7 @@ class ReadInfoBuilder extends Builder {
                     parameters: element.parameters.map<ParameterInfo>(
                       (ParameterElement parameterElement) => ParameterInfo(
                         name: parameterElement.name,
-                        type: _toTypeInfo(
-                          parameterElement.type,
-                          _classAnnotation.hasAnnotationOfExact(
-                            parameterElement.type.element,
-                          ),
-                        ),
+                        type: _toTypeInfo(parameterElement.type),
                       ),
                     ),
                     name: element.name,
@@ -81,16 +121,8 @@ class ReadInfoBuilder extends Builder {
                         ? _toTypeInfo(
                             (element.returnType as ParameterizedType)
                                 .typeArguments[0],
-                            _classAnnotation.hasAnnotationOfExact(
-                              element.returnType.element,
-                            ),
                           )
-                        : _toTypeInfo(
-                            element.returnType,
-                            _classAnnotation.hasAnnotationOfExact(
-                              element.returnType.element,
-                            ),
-                          ),
+                        : _toTypeInfo(element.returnType),
                     method: AnnotationUtils.methodFromConstantReader(
                       ConstantReader(
                         _methodAnnotation.firstAnnotationOfExact(element),
@@ -110,12 +142,12 @@ class ReadInfoBuilder extends Builder {
     }
   }
 
-  TypeInfo _toTypeInfo(DartType type, bool isWrapper) => TypeInfo(
+  TypeInfo _toTypeInfo(DartType type) => TypeInfo(
         name: type.toString(),
         typeArguments:
             type is ParameterizedType && type.typeArguments.isNotEmpty
                 ? type.typeArguments
-                    .map<TypeInfo>((DartType type) => _toTypeInfo(type, false))
+                    .map<TypeInfo>((DartType type) => _toTypeInfo(type))
                 : <TypeInfo>[],
         isFuture: type.isDartAsyncFuture,
         isFutureOr: type.isDartAsyncFutureOr,
@@ -133,7 +165,8 @@ class ReadInfoBuilder extends Builder {
         isSymbol: type.isDartCoreSymbol,
         isDynamic: type.isDynamic,
         isVoid: type.isVoid,
-        isWrapper: isWrapper,
+        isWrapper:
+            !type.isVoid && _classAnnotation.hasAnnotationOfExact(type.element),
       );
 
   @override

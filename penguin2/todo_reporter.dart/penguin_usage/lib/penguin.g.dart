@@ -92,16 +92,29 @@ class $Usage1 {
     );
   }
   
-  MethodCall $getUsage2(
+  MethodCall $giveUsage2(
   
   $Usage2 usage2
   
   ) {
     return MethodCall(
-      'TestClass#getUsage2',
+      'TestClass#giveUsage2',
        <String, dynamic>{'uniqueId': $uniqueId,
        
        'usage2': usage2.$uniqueId,
+       
+       },
+    );
+  }
+  
+  MethodCall $getUsage2(
+  String $newUniqueId,
+  
+  ) {
+    return MethodCall(
+      'TestClass#getUsage2',
+       <String, dynamic>{'uniqueId': $uniqueId,
+       r'$newUniqueId': $newUniqueId,
        
        },
     );

@@ -61,10 +61,18 @@ class Usage1 extends $Usage1 {
   }
 
   @Method()
-  Future<String> getUsage2(Usage2 usage2) {
+  Future<String> giveUsage2(Usage2 usage2) {
     return PenguinUsage.channel.invokeMethod(
-      $getUsage2(usage2).method,
-      $getUsage2(usage2).arguments,
+      $giveUsage2(usage2).method,
+      $giveUsage2(usage2).arguments,
+    );
+  }
+
+  @Method()
+  Future<Usage2> getUsage2() {
+    return PenguinUsage.channel.invokeMethod(
+      $getUsage2('woeifj').method,
+      $getUsage2('woeifj').arguments,
     );
   }
 
@@ -95,15 +103,15 @@ class Usage2 extends $Usage2 {
 //@Class(AndroidPlatform(
 //  AndroidType(
 //    'com.example.penguin_usage.test_package',
-//    'TestClassTwo',
+//    'TestGenericClass',
 //  ),
 //))
-//class GenericUsage extends $GenericUsage {
+//class GenericUsage<int, String> {
 //  @Constructor()
-//  GenericUsage() : super(Random().nextDouble().toString()) {
-//    $invoke(
-//      PenguinUsage.channel,
-//      [$GenericUsageDefault(), $allocate()],
-//    );
+//  GenericUsage() {
+////    $invoke(
+////      PenguinUsage.channel,
+////      [$GenericUsageDefault(), $allocate()],
+////    );
 //  }
 //}

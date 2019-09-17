@@ -25,7 +25,7 @@ class $__className__ {
   %%CONSTRUCTORS%%
 
   %%METHODS%%
-  %%METHOD%%
+  %%METHOD returns:void%%
   MethodCall $__methodName__(
   %%PARAMETERS%%
   %%PARAMETER type:supported%%
@@ -50,7 +50,61 @@ class $__className__ {
        },
     );
   }
-  %%METHOD%%
+  %%METHOD returns:void%%
+  %%METHOD returns:supported%%
+  MethodCall $__methodName__(
+  %%PARAMETERS%%
+  %%PARAMETER type:supported%%
+  __parameterType__ __parameterName__
+  %%PARAMETER type:supported%%
+  %%PARAMETER type:wrapper%%
+  $__parameterType__ __parameterName__
+  %%PARAMETER type:wrapper%%
+  %%PARAMETERS%%
+  ) {
+    return MethodCall(
+      '__platformClassName__#__methodName__',
+       <String, dynamic>{'uniqueId': $uniqueId,
+       %%METHODCALLPARAMS%%
+       %%METHODCALLPARAM type:supported%%
+       '__parameterName__': __parameterName__,
+       %%METHODCALLPARAM type:supported%%
+       %%METHODCALLPARAM type:wrapper%%
+       '__parameterName__': __parameterName__.$uniqueId,
+       %%METHODCALLPARAM type:wrapper%%
+       %%METHODCALLPARAMS%%
+       },
+    );
+  }
+  %%METHOD returns:supported%%
+  %%METHOD returns:wrapper%%
+  MethodCall $__methodName__(
+  String $newUniqueId,
+  %%PARAMETERS%%
+  %%PARAMETER type:supported%%
+  __parameterType__ __parameterName__
+  %%PARAMETER type:supported%%
+  %%PARAMETER type:wrapper%%
+  $__parameterType__ __parameterName__
+  %%PARAMETER type:wrapper%%
+  %%PARAMETERS%%
+  ) {
+    return MethodCall(
+      '__platformClassName__#__methodName__',
+       <String, dynamic>{'uniqueId': $uniqueId,
+       r'$newUniqueId': $newUniqueId,
+       %%METHODCALLPARAMS%%
+       %%METHODCALLPARAM type:supported%%
+       '__parameterName__': __parameterName__,
+       %%METHODCALLPARAM type:supported%%
+       %%METHODCALLPARAM type:wrapper%%
+       '__parameterName__': __parameterName__.$uniqueId,
+       %%METHODCALLPARAM type:wrapper%%
+       %%METHODCALLPARAMS%%
+       },
+    );
+  }
+  %%METHOD returns:wrapper%%
   %%METHODS%%
   
   MethodCall $allocate() {
@@ -286,7 +340,7 @@ public class ChannelGenerated implements MethodCallHandler {
     %%METHOD returns:supported%%
     %%METHOD returns:wrapper%%
     Object __methodName__(MethodCall call) {
-      new __returnType__Wrapper((String) call.argument("newUniqueId"),
+      new __returnType__Wrapper((String) call.argument("$newUniqueId"),
       __variableName__.__methodName__(
       %%PARAMETERS%%
       %%PARAMETER type:supported%%
@@ -312,14 +366,18 @@ class MethodChannelTemplateCreator extends _TemplateCreator {
   @override
   _Template get template => _Template.methodChannel;
 
-  String createMethod({
+  String createMethod(
+    MethodChannelType returnTypeChannelType, {
     Iterable<String> parameters,
     Iterable<String> methodCallParams,
     String platformClassName,
     String methodName,
   }) {
     return _replace(
-      _Block.method.exp.firstMatch(template.value).group(1),
+      _Block.channelMethod(returnTypeChannelType)
+          .exp
+          .firstMatch(template.value)
+          .group(1),
       <Pattern, String>{
         _Block.parameters.exp: parameters.join(','),
         _Block.methodCallParams.exp: methodCallParams.join(),
