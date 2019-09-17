@@ -189,6 +189,11 @@ public class ChannelGenerated implements MethodCallHandler {
       );
       return null;
     }
+
+    Object aMethod(MethodCall call) {
+      new AppleWrapper((String) call.argument("newUniqueId"), variableName.methodName);
+      return null;
+    }
     
     Object getStringMethod(MethodCall call) {
       return testClass.getStringMethod(

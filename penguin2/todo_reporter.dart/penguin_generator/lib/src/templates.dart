@@ -284,6 +284,22 @@ public class ChannelGenerated implements MethodCallHandler {
       );
     }
     %%METHOD returns:supported%%
+    %%METHOD returns:wrapper%%
+    Object __methodName__(MethodCall call) {
+      new __returnType__Wrapper((String) call.argument("newUniqueId"),
+      __variableName__.__methodName__(
+      %%PARAMETERS%%
+      %%PARAMETER type:supported%%
+      call.argument("__parameterName__") == null ? null : (__parameterType__) call.argument("__parameterName__")
+      %%PARAMETER type:supported%%
+      %%PARAMETER type:wrapper%%
+      ((__parameterType__Wrapper) getWrapper((String) call.argument("__parameterName__"))).__variableName__
+      %%PARAMETER type:wrapper%%
+      %%PARAMETERS%%
+      ));
+      return null;
+    }
+    %%METHOD returns:wrapper%%
     %%METHODS%%
   }
   %%CLASS%%
@@ -385,15 +401,20 @@ class AndroidTemplateCreator extends _TemplateCreator {
   _Template get template => _Template.android;
 
   String createMethod(
-    MethodChannelType returnType, {
+    MethodChannelType returnTypeChannelType, {
     Iterable<String> parameters,
+    String returnType,
     String methodName,
     String variableName,
   }) {
     return _replace(
-      _Block.channelMethod(returnType).exp.firstMatch(template.value).group(1),
+      _Block.channelMethod(returnTypeChannelType)
+          .exp
+          .firstMatch(template.value)
+          .group(1),
       <Pattern, String>{
         _Block.parameters.exp: parameters.join(','),
+        _Replacement.returnType.name: returnType,
         _Replacement.methodName.name: methodName,
         _Replacement.variableName.name: variableName,
       },
@@ -535,11 +556,13 @@ class _Block {
     final List<String> configs = <String>[];
     switch (type) {
       case MethodChannelType.$void:
-      case MethodChannelType.wrapper:
         configs.add('returns:void');
         break;
       case MethodChannelType.supported:
         configs.add('returns:supported');
+        break;
+      case MethodChannelType.wrapper:
+        configs.add('returns:wrapper');
         break;
     }
 
@@ -620,4 +643,5 @@ class _Replacement {
   );
   static final _Replacement parameterName = _Replacement('__parameterName__');
   static final _Replacement parameterType = _Replacement('__parameterType__');
+  static final _Replacement returnType = _Replacement('__returnType__');
 }

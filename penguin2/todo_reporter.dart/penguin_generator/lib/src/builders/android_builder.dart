@@ -48,6 +48,7 @@ class AndroidBuilder extends PlatformBuilder {
                           .camelCase,
                 ),
               ),
+              returnType: _convertType(methodInfo.returnType, classes),
               methodName: methodInfo.name,
               variableName: ReCase(
                 (classInfo.aClass.platform as AndroidPlatform).type.name,
@@ -106,7 +107,8 @@ class AndroidBuilder extends PlatformBuilder {
               .firstWhere((ClassInfo classInfo) => classInfo.name == info.name)
               .aClass
               .platform as AndroidPlatform)
-          .type.name;
+          .type
+          .name;
     }
 
     throw ArgumentError();
