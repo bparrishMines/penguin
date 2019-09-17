@@ -83,7 +83,9 @@ class AndroidBuilder extends PlatformBuilder {
 
   // TODO: handle longs (Actually,... this should be an override)
   String _convertType(TypeInfo info, [List<ClassInfo> classes]) {
-    if (info.isDynamic || info.isObject) {
+    if (info.isVoid) {
+      return 'void';
+    } else if (info.isDynamic || info.isObject) {
       return 'Object';
     } else if (info.isString) {
       return 'String';
@@ -111,7 +113,11 @@ class AndroidBuilder extends PlatformBuilder {
           .name;
     }
 
-    throw ArgumentError();
+    throw ArgumentError.value(
+      info.toString(),
+      'info',
+      'Unsupported value for info',
+    );
   }
 
   MethodChannelType _getChannelType(TypeInfo info) {

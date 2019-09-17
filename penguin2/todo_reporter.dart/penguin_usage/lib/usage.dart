@@ -91,3 +91,19 @@ class Usage2 extends $Usage2 {
     );
   }
 }
+
+//@Class(AndroidPlatform(
+//  AndroidType(
+//    'com.example.penguin_usage.test_package',
+//    'TestClassTwo',
+//  ),
+//))
+//class GenericUsage extends $GenericUsage {
+//  @Constructor()
+//  GenericUsage() : super(Random().nextDouble().toString()) {
+//    $invoke(
+//      PenguinUsage.channel,
+//      [$GenericUsageDefault(), $allocate()],
+//    );
+//  }
+//}

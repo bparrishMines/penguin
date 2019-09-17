@@ -5,17 +5,17 @@ targets:
         enabled: true
 
 builders:
-  read:
+  read_builder:
     target: ":penguin_generator"
     import: "package:penguin_generator/builder.dart"
     builder_factories: ["readBuilder"]
     build_extensions: {".dart": [".penguin.g.info"]}
     auto_apply: dependents
-    runs_before: [':write']
+    runs_before: [':write_builder']
     build_to: source
     applies_builders: ["source_gen|combining_builder"]
 
-  write:
+  write_builder:
     target: ":penguin_generator"
     import: "package:penguin_generator/builder.dart"
     builder_factories: ["writeBuilder"]
