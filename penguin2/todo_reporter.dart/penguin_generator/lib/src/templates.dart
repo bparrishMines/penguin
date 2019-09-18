@@ -8,10 +8,8 @@ import 'package:flutter/services.dart';
 
 %%CLASSES%%
 %%CLASS%%
-class $__className__ {
-  $__className__(this.$uniqueId);
-
-  final String $uniqueId;
+class $__className__ extends $Wrapper {
+  $__className__(String $uniqueId) : super($uniqueId);
 
   %%CONSTRUCTORS%%
   %%CONSTRUCTOR%%
@@ -34,6 +32,9 @@ class $__className__ {
   %%PARAMETER type:wrapper%%
   $__parameterType__ __parameterName__
   %%PARAMETER type:wrapper%%
+  %%PARAMETER type:typeParameter%%
+  dynamic __parameterName__
+  %%PARAMETER type:typeParameter%%
   %%PARAMETERS%%
   ) {
     return MethodCall(
@@ -46,6 +47,10 @@ class $__className__ {
        %%METHODCALLPARAM type:wrapper%%
        '__parameterName__': __parameterName__.$uniqueId,
        %%METHODCALLPARAM type:wrapper%%
+       %%METHODCALLPARAM type:typeParameter%%
+       if (__parameterName__ is $Wrapper) '__parameterName__': __parameterName__.$uniqueId,
+       if (__parameterName__ is! $Wrapper) '__parameterName__': __parameterName__,
+       %%METHODCALLPARAM type:typeParameter%%
        %%METHODCALLPARAMS%%
        },
     );
@@ -60,6 +65,9 @@ class $__className__ {
   %%PARAMETER type:wrapper%%
   $__parameterType__ __parameterName__
   %%PARAMETER type:wrapper%%
+  %%PARAMETER type:typeParameter%%
+  dynamic __parameterName__
+  %%PARAMETER type:typeParameter%%
   %%PARAMETERS%%
   ) {
     return MethodCall(
@@ -72,6 +80,10 @@ class $__className__ {
        %%METHODCALLPARAM type:wrapper%%
        '__parameterName__': __parameterName__.$uniqueId,
        %%METHODCALLPARAM type:wrapper%%
+       %%METHODCALLPARAM type:typeParameter%%
+       if (__parameterName__ is $Wrapper) '__parameterName__': __parameterName__.$uniqueId,
+       if (__parameterName__ !is $Wrapper) '__parameterName__': __parameterName__,
+       %%METHODCALLPARAM type:typeParameter%%
        %%METHODCALLPARAMS%%
        },
     );
@@ -87,6 +99,9 @@ class $__className__ {
   %%PARAMETER type:wrapper%%
   $__parameterType__ __parameterName__
   %%PARAMETER type:wrapper%%
+  %%PARAMETER type:typeParameter%%
+  dynamic __parameterName__
+  %%PARAMETER type:typeParameter%%
   %%PARAMETERS%%
   ) {
     return MethodCall(
@@ -100,11 +115,50 @@ class $__className__ {
        %%METHODCALLPARAM type:wrapper%%
        '__parameterName__': __parameterName__.$uniqueId,
        %%METHODCALLPARAM type:wrapper%%
+       %%METHODCALLPARAM type:typeParameter%%
+       if (__parameterName__ is $Wrapper) '__parameterName__': __parameterName__.$uniqueId,
+       if (__parameterName__ !is $Wrapper) '__parameterName__': __parameterName__,
+       %%METHODCALLPARAM type:typeParameter%%
        %%METHODCALLPARAMS%%
        },
     );
   }
   %%METHOD returns:wrapper%%
+  %%METHOD returns:typeParameter%%
+  MethodCall $__methodName__(
+  String $newUniqueId,
+  %%PARAMETERS%%
+  %%PARAMETER type:supported%%
+  __parameterType__ __parameterName__
+  %%PARAMETER type:supported%%
+  %%PARAMETER type:wrapper%%
+  $__parameterType__ __parameterName__
+  %%PARAMETER type:wrapper%%
+  %%PARAMETER type:typeParameter%%
+  dynamic __parameterName__
+  %%PARAMETER type:typeParameter%%
+  %%PARAMETERS%%
+  ) {
+    return MethodCall(
+      '__platformClassName__#__methodName__',
+       <String, dynamic>{'uniqueId': $uniqueId,
+       r'$newUniqueId': $newUniqueId,
+       %%METHODCALLPARAMS%%
+       %%METHODCALLPARAM type:supported%%
+       '__parameterName__': __parameterName__,
+       %%METHODCALLPARAM type:supported%%
+       %%METHODCALLPARAM type:wrapper%%
+       '__parameterName__': __parameterName__.$uniqueId,
+       %%METHODCALLPARAM type:wrapper%%
+       %%METHODCALLPARAM type:typeParameter%%
+       if (__parameterName__ is $Wrapper) '__parameterName__': __parameterName__.$uniqueId,
+       if (__parameterName__ !is $Wrapper) '__parameterName__': __parameterName__,
+       %%METHODCALLPARAM type:typeParameter%%
+       %%METHODCALLPARAMS%%
+       },
+    );
+  }
+  %%METHOD returns:typeParameter%%
   %%METHODS%%
   
   MethodCall $allocate() {
@@ -123,6 +177,26 @@ class $__className__ {
 }
 %%CLASS%%
 %%CLASSES%%
+
+class $Wrapper {
+  $Wrapper(this.$uniqueId);
+
+  final String $uniqueId;
+
+  MethodCall $allocate() {
+    return MethodCall(
+      '${this.runtimeType}#allocate',
+      <String, String>{'uniqueId': $uniqueId},
+    );
+  }
+
+  MethodCall $deallocate() {
+    return MethodCall(
+      '${this.runtimeType}#deallocate',
+      <String, String>{'uniqueId': $uniqueId},
+    );
+  }
+}
 
 Future<List<dynamic>> $invoke(
   MethodChannel channel,
@@ -144,6 +218,8 @@ Future<List<dynamic>> $invoke(
   static const _Template android = _Template._(r'''
 package __package__;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
@@ -319,6 +395,9 @@ public class ChannelGenerated implements MethodCallHandler {
       %%PARAMETER type:wrapper%%
       ((__parameterType__Wrapper) getWrapper((String) call.argument("__parameterName__"))).__variableName__
       %%PARAMETER type:wrapper%%
+      %%PARAMETER type:typeParameter%%
+      (String) call.argument("__parameterName__")
+      %%PARAMETER type:typeParameter%%
       %%PARAMETERS%%
       );
       return null;
@@ -349,11 +428,53 @@ public class ChannelGenerated implements MethodCallHandler {
       %%PARAMETER type:wrapper%%
       ((__parameterType__Wrapper) getWrapper((String) call.argument("__parameterName__"))).__variableName__
       %%PARAMETER type:wrapper%%
+      %%PARAMETER type:typeParameter%%
+      (String) call.argument("__parameterName__")
+      %%PARAMETER type:typeParameter%%
       %%PARAMETERS%%
       ));
       return null;
     }
     %%METHOD returns:wrapper%%
+    %%METHOD returns:typeParameter%%
+    Object __methodName__(MethodCall call) {
+      final Object result = __variableName__.__methodName__(
+      %%PARAMETERS%%
+      %%PARAMETER type:supported%%
+      call.argument("__parameterName__") == null ? null : (__parameterType__) call.argument("__parameterName__")
+      %%PARAMETER type:supported%%
+      %%PARAMETER type:wrapper%%
+      ((__parameterType__Wrapper) getWrapper((String) call.argument("__parameterName__"))).__variableName__
+      %%PARAMETER type:wrapper%%
+      %%PARAMETER type:typeParameter%%
+      (String) call.argument("__parameterName__")
+      %%PARAMETER type:typeParameter%%
+      %%PARAMETERS%%
+      );
+      if (result == null) return null;
+      
+      final Class wrapperClass;
+      try {
+        wrapperClass = Class.forName(result.getClass() + "Wrapper");
+      } catch (ClassNotFoundException e) {
+        return result;
+      }
+
+      try {
+        final Constructor constructor = wrapperClass.getConstructor(String.class, result.getClass());
+        constructor.newInstance(call.argument("$newUniqueId"), result);
+      } catch (NoSuchMethodException e) {
+        e.printStackTrace();
+      } catch (IllegalAccessException e) {
+        e.printStackTrace();
+      } catch (InstantiationException e) {
+        e.printStackTrace();
+      } catch (InvocationTargetException e) {
+        e.printStackTrace();
+      }
+      return null;
+    }
+    %%METHOD returns:typeParameter%%
     %%METHODS%%
   }
   %%CLASS%%
@@ -574,7 +695,7 @@ class AndroidTemplateCreator extends _TemplateCreator {
   }
 }
 
-enum MethodChannelType { $void, supported, wrapper }
+enum MethodChannelType { $void, supported, wrapper, typeParameter }
 
 abstract class _TemplateCreator {
   _Template get template;
@@ -622,6 +743,9 @@ class _Block {
       case MethodChannelType.wrapper:
         configs.add('returns:wrapper');
         break;
+      case MethodChannelType.typeParameter:
+        configs.add('returns:typeParameter');
+        break;
     }
 
     return _Block(method.identifier, configs.join(' '));
@@ -636,6 +760,9 @@ class _Block {
         break;
       case MethodChannelType.supported:
         configs.add('type:supported');
+        break;
+      case MethodChannelType.typeParameter:
+        configs.add('type:typeParameter');
         break;
       case MethodChannelType.$void:
         throw ArgumentError.value(type, 'type', 'Not supported for parameters');
@@ -670,6 +797,9 @@ class _Block {
         break;
       case MethodChannelType.supported:
         configs.add('type:supported');
+        break;
+      case MethodChannelType.typeParameter:
+        configs.add('type:typeParameter');
         break;
       case MethodChannelType.$void:
         throw ArgumentError.value(

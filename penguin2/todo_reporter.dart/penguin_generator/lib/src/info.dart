@@ -5,9 +5,12 @@ part 'info.g.dart';
 
 @JsonSerializable()
 class ClassInfo {
-  const ClassInfo({this.name, this.aClass, this.constructors, this.methods});
+  const ClassInfo({this.typeParameters, this.name, this.aClass, this.constructors, this.methods});
 
   factory ClassInfo.fromJson(Map json) => _$ClassInfoFromJson(json);
+
+  @JsonKey(required: true, disallowNullValue: true)
+  final Iterable<TypeInfo> typeParameters;
 
   @JsonKey(required: true, disallowNullValue: true)
   final String name;
@@ -106,6 +109,7 @@ class TypeInfo {
     this.isVoid,
     this.typeArguments,
     this.isWrapper,
+    this.isTypeParameter,
   });
 
   factory TypeInfo.fromJson(Map json) => _$TypeInfoFromJson(json);
@@ -195,6 +199,12 @@ class TypeInfo {
 
   @JsonKey(required: true, disallowNullValue: true)
   final bool isWrapper;
+
+  /// The type introduced by a type parameter.
+  ///
+  /// i.e. T is a type parameter in List<T>.
+  @JsonKey(required: true, disallowNullValue: true)
+  final bool isTypeParameter;
 
   Map toJson() => _$TypeInfoToJson(this);
 

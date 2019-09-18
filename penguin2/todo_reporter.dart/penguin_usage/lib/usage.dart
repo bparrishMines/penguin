@@ -100,18 +100,34 @@ class Usage2 extends $Usage2 {
   }
 }
 
-//@Class(AndroidPlatform(
-//  AndroidType(
-//    'com.example.penguin_usage.test_package',
-//    'TestGenericClass',
-//  ),
-//))
-//class GenericUsage<int, String> {
-//  @Constructor()
-//  GenericUsage() {
-////    $invoke(
-////      PenguinUsage.channel,
-////      [$GenericUsageDefault(), $allocate()],
-////    );
-//  }
-//}
+@Class(AndroidPlatform(
+  AndroidType(
+    'com.example.penguin_usage.test_package',
+    'TestGenericClass',
+  ),
+))
+class GenericUsage<T> extends $GenericUsage {
+  @Constructor()
+  GenericUsage() : super(Random().nextDouble().toString()) {
+    $invoke(
+      PenguinUsage.channel,
+      [$GenericUsageDefault(), $allocate()],
+    );
+  }
+
+  @Method()
+  Future<void> setValue(T value) {
+    return PenguinUsage.channel.invokeMethod(
+      $setValue(value).method,
+      $setValue(value).arguments,
+    );
+  }
+
+  @Method()
+  Future<T> get() {
+    return PenguinUsage.channel.invokeMethod(
+      $get(null).method,
+      $get(null).arguments,
+    );
+  }
+}

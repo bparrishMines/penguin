@@ -7,10 +7,22 @@ part of 'info.dart';
 // **************************************************************************
 
 ClassInfo _$ClassInfoFromJson(Map<String, dynamic> json) {
-  $checkKeys(json,
-      requiredKeys: const ['name', 'aClass', 'constructors', 'methods'],
-      disallowNullValues: const ['name', 'aClass', 'constructors', 'methods']);
+  $checkKeys(json, requiredKeys: const [
+    'typeParameters',
+    'name',
+    'aClass',
+    'constructors',
+    'methods'
+  ], disallowNullValues: const [
+    'typeParameters',
+    'name',
+    'aClass',
+    'constructors',
+    'methods'
+  ]);
   return ClassInfo(
+    typeParameters: (json['typeParameters'] as List)?.map(
+        (e) => e == null ? null : TypeInfo.fromJson(e as Map<String, dynamic>)),
     name: json['name'] as String,
     aClass: json['aClass'] == null
         ? null
@@ -31,6 +43,7 @@ Map<String, dynamic> _$ClassInfoToJson(ClassInfo instance) {
     }
   }
 
+  writeNotNull('typeParameters', instance.typeParameters?.toList());
   writeNotNull('name', instance.name);
   writeNotNull('aClass', instance.aClass);
   writeNotNull('constructors', instance.constructors?.toList());
@@ -131,7 +144,8 @@ TypeInfo _$TypeInfoFromJson(Map<String, dynamic> json) {
     'isSymbol',
     'isDynamic',
     'isVoid',
-    'isWrapper'
+    'isWrapper',
+    'isTypeParameter'
   ], disallowNullValues: const [
     'typeArguments',
     'isFuture',
@@ -150,7 +164,8 @@ TypeInfo _$TypeInfoFromJson(Map<String, dynamic> json) {
     'isSymbol',
     'isDynamic',
     'isVoid',
-    'isWrapper'
+    'isWrapper',
+    'isTypeParameter'
   ]);
   return TypeInfo(
     name: json['name'] as String,
@@ -173,6 +188,7 @@ TypeInfo _$TypeInfoFromJson(Map<String, dynamic> json) {
     typeArguments: (json['typeArguments'] as List)?.map(
         (e) => e == null ? null : TypeInfo.fromJson(e as Map<String, dynamic>)),
     isWrapper: json['isWrapper'] as bool,
+    isTypeParameter: json['isTypeParameter'] as bool,
   );
 }
 
@@ -204,5 +220,6 @@ Map<String, dynamic> _$TypeInfoToJson(TypeInfo instance) {
   writeNotNull('isDynamic', instance.isDynamic);
   writeNotNull('isVoid', instance.isVoid);
   writeNotNull('isWrapper', instance.isWrapper);
+  writeNotNull('isTypeParameter', instance.isTypeParameter);
   return val;
 }

@@ -5,6 +5,8 @@
 // **************************************************************************
 package com.example.penguin_usage;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
@@ -15,6 +17,8 @@ import io.flutter.plugin.common.MethodChannel.Result;
 import com.example.penguin_usage.test_package.TestClass;
 
 import com.example.penguin_usage.test_package.TestClassTwo;
+
+import com.example.penguin_usage.test_package.TestGenericClass;
 
 
 public class ChannelGenerated implements MethodCallHandler {
@@ -117,6 +121,11 @@ public class ChannelGenerated implements MethodCallHandler {
       
       case "TestClassTwo()": {
           new TestClassTwoWrapper((String) call.argument("uniqueId"));
+          return null;
+        }
+      
+      case "TestGenericClass()": {
+          new TestGenericClassWrapper((String) call.argument("uniqueId"));
           return null;
         }
       
@@ -275,6 +284,84 @@ public class ChannelGenerated implements MethodCallHandler {
       }
     }
 
+    
+  }
+  
+  private class TestGenericClassWrapper extends FlutterWrapper {
+    private final TestGenericClass testGenericClass;
+
+    TestGenericClassWrapper(String uniqueId, TestGenericClass testGenericClass) {
+      super(uniqueId);
+      this.testGenericClass = testGenericClass;
+      addWrapper(uniqueId, this, tempWrappers);
+    }
+
+    
+    private TestGenericClassWrapper(final String uniqueId) {
+      super(uniqueId);
+      this.testGenericClass = new TestGenericClass();
+      addWrapper(uniqueId, this, tempWrappers);
+    }
+    
+
+    @Override
+    public Object onMethodCall(MethodCall call) throws NotImplementedException {
+      switch(call.method) {
+        case "TestGenericClass#allocate":
+          allocate();
+          return null;
+        case "TestGenericClass#deallocate":
+          deallocate();
+          return null;
+        
+        case "TestGenericClass#setValue":
+          return setValue(call);
+        
+        case "TestGenericClass#get":
+          return get(call);
+        
+        default:
+          throw new NotImplementedException(call.method);
+      }
+    }
+
+    
+    Object setValue(MethodCall call) {
+      testGenericClass.setValue(
+      
+      (String) call.argument("value")
+      
+      );
+      return null;
+    }
+    
+    Object get(MethodCall call) {
+      final Object result = testGenericClass.get(
+      
+      );
+      if (result == null) return null;
+      
+      final Class wrapperClass;
+      try {
+        wrapperClass = Class.forName(result.getClass() + "Wrapper");
+      } catch (ClassNotFoundException e) {
+        return result;
+      }
+
+      try {
+        final Constructor constructor = wrapperClass.getConstructor(String.class, result.getClass());
+        constructor.newInstance(call.argument("$newUniqueId"), result);
+      } catch (NoSuchMethodException e) {
+        e.printStackTrace();
+      } catch (IllegalAccessException e) {
+        e.printStackTrace();
+      } catch (InstantiationException e) {
+        e.printStackTrace();
+      } catch (InvocationTargetException e) {
+        e.printStackTrace();
+      }
+      return null;
+    }
     
   }
   

@@ -23,18 +23,14 @@ class FlutterBuilder extends PlatformBuilder {
               getChannelType(methodInfo.returnType),
               parameters: methodInfo.parameters.map<String>(
                 (ParameterInfo parameterInfo) => creator.createParameter(
-                  parameterInfo.type.isWrapper
-                      ? MethodChannelType.wrapper
-                      : MethodChannelType.supported,
+                  getChannelType(parameterInfo.type),
                   parameterType: parameterInfo.type.name,
                   parameterName: parameterInfo.name,
                 ),
               ),
               methodCallParams: methodInfo.parameters.map<String>(
                 (ParameterInfo parameterInfo) => creator.createMethodCallParam(
-                  parameterInfo.type.isWrapper
-                      ? MethodChannelType.wrapper
-                      : MethodChannelType.supported,
+                  getChannelType(parameterInfo.type),
                   parameterName: parameterInfo.name,
                 ),
               ),

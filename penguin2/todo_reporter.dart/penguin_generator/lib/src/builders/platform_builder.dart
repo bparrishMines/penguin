@@ -44,6 +44,8 @@ abstract class PlatformBuilder {
       return MethodChannelType.$void;
     } else if (info.isWrapper) {
       return MethodChannelType.wrapper;
+    } else if (info.isTypeParameter) {
+      return MethodChannelType.typeParameter;
     }
 
     throw ArgumentError.value(
@@ -71,6 +73,9 @@ class ReadInfoBuilder extends Builder {
 //              .skip(2)
 //              .first
 //              .element;
+//      print(element.name);
+//      TypeParameterType a;
+//      print(element.typeParameters[0].type)
 //      print(element is TypeParameterizedElement);
 //      print(element.typeParameters);
 //      TypeParameterElement tpe = element.typeParameters[0];
@@ -79,6 +84,8 @@ class ReadInfoBuilder extends Builder {
 //      print(tpe.type.bound);
 //      print(tpe.type.isDartCoreInt);
 //    }
+//    throw ArgumentError();
+
     final List<ClassInfo> allClassInfo = reader
         .annotatedWith(_classAnnotation)
         .map<ClassInfo>(
@@ -130,6 +137,11 @@ class ReadInfoBuilder extends Builder {
                     ),
                   ),
                 ),
+            typeParameters:
+                (element.element as ClassElement).typeParameters.map<TypeInfo>(
+                      (TypeParameterElement typeParameterElement) =>
+                          _toTypeInfo(typeParameterElement.type),
+                    ),
           ),
         )
         .toList();
@@ -167,6 +179,7 @@ class ReadInfoBuilder extends Builder {
         isVoid: type.isVoid,
         isWrapper:
             !type.isVoid && _classAnnotation.hasAnnotationOfExact(type.element),
+        isTypeParameter: type is TypeParameterType,
       );
 
   @override

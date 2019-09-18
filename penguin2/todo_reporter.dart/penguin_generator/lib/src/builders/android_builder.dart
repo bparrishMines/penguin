@@ -81,7 +81,7 @@ class AndroidBuilder extends PlatformBuilder {
     );
   }
 
-  // TODO: handle longs (Actually,... this should be an override)
+  // TODO: handle longs (Actually.... this should be an override)
   String _convertType(TypeInfo info, [List<ClassInfo> classes]) {
     if (info.isVoid) {
       return 'void';
@@ -111,6 +111,8 @@ class AndroidBuilder extends PlatformBuilder {
               .platform as AndroidPlatform)
           .type
           .name;
+    } else if (info.isTypeParameter) {
+      return 'Object';
     }
 
     throw ArgumentError.value(
