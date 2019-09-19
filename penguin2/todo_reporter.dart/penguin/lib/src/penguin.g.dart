@@ -66,7 +66,7 @@ Map<String, dynamic> _$AndroidPlatformToJson(AndroidPlatform instance) {
 AndroidType _$AndroidTypeFromJson(Map<String, dynamic> json) {
   $checkKeys(json,
       requiredKeys: const ['package', 'name'],
-      disallowNullValues: const ['package', 'name']);
+      disallowNullValues: const ['name']);
   return AndroidType(
     json['package'] as String,
     json['name'] as String,
@@ -74,7 +74,9 @@ AndroidType _$AndroidTypeFromJson(Map<String, dynamic> json) {
 }
 
 Map<String, dynamic> _$AndroidTypeToJson(AndroidType instance) {
-  final val = <String, dynamic>{};
+  final val = <String, dynamic>{
+    'package': instance.package,
+  };
 
   void writeNotNull(String key, dynamic value) {
     if (value != null) {
@@ -82,7 +84,6 @@ Map<String, dynamic> _$AndroidTypeToJson(AndroidType instance) {
     }
   }
 
-  writeNotNull('package', instance.package);
   writeNotNull('name', instance.name);
   return val;
 }

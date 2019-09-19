@@ -15,6 +15,13 @@ class AndroidBuilder extends PlatformBuilder {
     final AndroidTemplateCreator creator = AndroidTemplateCreator();
     return creator.createFile(
       imports: classes
+          .where((ClassInfo classInfo) =>
+              (classInfo.aClass.platform as AndroidPlatform).type.package !=
+                  null &&
+              (classInfo.aClass.platform as AndroidPlatform)
+                  .type
+                  .package
+                  .isNotEmpty)
           .map<String>(
             (ClassInfo classInfo) => creator.createImport(
               classPackage:

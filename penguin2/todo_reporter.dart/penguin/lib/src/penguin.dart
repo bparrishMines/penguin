@@ -72,7 +72,7 @@ class AndroidType {
 
   factory AndroidType.fromJson(Map json) => _$AndroidTypeFromJson(json);
 
-  @JsonKey(required: true, disallowNullValue: true)
+  @JsonKey(required: true)
   final String package;
 
   @JsonKey(required: true, disallowNullValue: true)

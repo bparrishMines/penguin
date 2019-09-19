@@ -129,15 +129,13 @@ class GenericUsage<T> extends $GenericUsage<T> {
   FutureOr<T> get() {
     if (runtimeType.toString() == 'GenericUsage<Usage1>') {
       final String id = Random().nextDouble().toString();
-      PenguinUsage.channel.invokeMethod(
-        $get(id).method,
-        $get(id).arguments,
-      );
+      PenguinUsage.channel.invokeMethod($get(id).method, $get(id).arguments);
 
       final Usage1 u = Usage1._fromUniqueId(id);
       $invoke(PenguinUsage.channel, [$get(id), u.$allocate()]);
       return u as T;
     }
+
     return PenguinUsage.channel.invokeMethod(
       $get(null).method,
       $get(null).arguments,
