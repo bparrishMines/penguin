@@ -32,10 +32,11 @@ class _MyAppState extends State<MyApp> {
               print(await usage1.addTwo(14));
               print(await usage1.divide(100, 10));
               print(await usage1.getList(<int, int>{1: 2, 800: 4000}));
+              await usage1.getUsage2();
               print(await usage1.giveUsage2(Usage2()));
 
               final GenericUsage<String> genericUsage = GenericUsage<String>();
-              genericUsage.setValue('Hello, World!');
+              genericUsage.setValue('Hello, my friend!');
               print(await genericUsage.get());
             },
             child: const Text('Click Me'),

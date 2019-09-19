@@ -23,8 +23,9 @@ class $__className__ extends $Wrapper {
   %%CONSTRUCTORS%%
 
   %%METHODS%%
-  %%METHOD returns:void%%
+  %%METHOD%%
   MethodCall $__methodName__(
+  String $newUniqueId,
   %%PARAMETERS%%
   %%PARAMETER type:supported%%
   __parameterType__ __parameterName__
@@ -40,6 +41,7 @@ class $__className__ extends $Wrapper {
     return MethodCall(
       '__platformClassName__#__methodName__',
        <String, dynamic>{'uniqueId': $uniqueId,
+       r'$newUniqueId': $newUniqueId,
        %%METHODCALLPARAMS%%
        %%METHODCALLPARAM type:supported%%
        '__parameterName__': __parameterName__,
@@ -55,110 +57,7 @@ class $__className__ extends $Wrapper {
        },
     );
   }
-  %%METHOD returns:void%%
-  %%METHOD returns:supported%%
-  MethodCall $__methodName__(
-  %%PARAMETERS%%
-  %%PARAMETER type:supported%%
-  __parameterType__ __parameterName__
-  %%PARAMETER type:supported%%
-  %%PARAMETER type:wrapper%%
-  $__parameterType__ __parameterName__
-  %%PARAMETER type:wrapper%%
-  %%PARAMETER type:typeParameter%%
-  dynamic __parameterName__
-  %%PARAMETER type:typeParameter%%
-  %%PARAMETERS%%
-  ) {
-    return MethodCall(
-      '__platformClassName__#__methodName__',
-       <String, dynamic>{'uniqueId': $uniqueId,
-       %%METHODCALLPARAMS%%
-       %%METHODCALLPARAM type:supported%%
-       '__parameterName__': __parameterName__,
-       %%METHODCALLPARAM type:supported%%
-       %%METHODCALLPARAM type:wrapper%%
-       '__parameterName__': __parameterName__.$uniqueId,
-       %%METHODCALLPARAM type:wrapper%%
-       %%METHODCALLPARAM type:typeParameter%%
-       if (__parameterName__ is $Wrapper) '__parameterName__': __parameterName__.$uniqueId,
-       if (__parameterName__ !is $Wrapper) '__parameterName__': __parameterName__,
-       %%METHODCALLPARAM type:typeParameter%%
-       %%METHODCALLPARAMS%%
-       },
-    );
-  }
-  %%METHOD returns:supported%%
-  %%METHOD returns:wrapper%%
-  MethodCall $__methodName__(
-  String $newUniqueId,
-  %%PARAMETERS%%
-  %%PARAMETER type:supported%%
-  __parameterType__ __parameterName__
-  %%PARAMETER type:supported%%
-  %%PARAMETER type:wrapper%%
-  $__parameterType__ __parameterName__
-  %%PARAMETER type:wrapper%%
-  %%PARAMETER type:typeParameter%%
-  dynamic __parameterName__
-  %%PARAMETER type:typeParameter%%
-  %%PARAMETERS%%
-  ) {
-    return MethodCall(
-      '__platformClassName__#__methodName__',
-       <String, dynamic>{'uniqueId': $uniqueId,
-       r'$newUniqueId': $newUniqueId,
-       %%METHODCALLPARAMS%%
-       %%METHODCALLPARAM type:supported%%
-       '__parameterName__': __parameterName__,
-       %%METHODCALLPARAM type:supported%%
-       %%METHODCALLPARAM type:wrapper%%
-       '__parameterName__': __parameterName__.$uniqueId,
-       %%METHODCALLPARAM type:wrapper%%
-       %%METHODCALLPARAM type:typeParameter%%
-       if (__parameterName__ is $Wrapper) '__parameterName__': __parameterName__.$uniqueId,
-       if (__parameterName__ !is $Wrapper) '__parameterName__': __parameterName__,
-       %%METHODCALLPARAM type:typeParameter%%
-       %%METHODCALLPARAMS%%
-       },
-    );
-  }
-  %%METHOD returns:wrapper%%
-  %%METHOD returns:typeParameter%%
-  MethodCall $__methodName__(
-  String $newUniqueId,
-  %%PARAMETERS%%
-  %%PARAMETER type:supported%%
-  __parameterType__ __parameterName__
-  %%PARAMETER type:supported%%
-  %%PARAMETER type:wrapper%%
-  $__parameterType__ __parameterName__
-  %%PARAMETER type:wrapper%%
-  %%PARAMETER type:typeParameter%%
-  dynamic __parameterName__
-  %%PARAMETER type:typeParameter%%
-  %%PARAMETERS%%
-  ) {
-    return MethodCall(
-      '__platformClassName__#__methodName__',
-       <String, dynamic>{'uniqueId': $uniqueId,
-       r'$newUniqueId': $newUniqueId,
-       %%METHODCALLPARAMS%%
-       %%METHODCALLPARAM type:supported%%
-       '__parameterName__': __parameterName__,
-       %%METHODCALLPARAM type:supported%%
-       %%METHODCALLPARAM type:wrapper%%
-       '__parameterName__': __parameterName__.$uniqueId,
-       %%METHODCALLPARAM type:wrapper%%
-       %%METHODCALLPARAM type:typeParameter%%
-       if (__parameterName__ is $Wrapper) '__parameterName__': __parameterName__.$uniqueId,
-       if (__parameterName__ !is $Wrapper) '__parameterName__': __parameterName__,
-       %%METHODCALLPARAM type:typeParameter%%
-       %%METHODCALLPARAMS%%
-       },
-    );
-  }
-  %%METHOD returns:typeParameter%%
+  %%METHOD%%
   %%METHODS%%
   
   MethodCall $allocate() {
@@ -385,41 +284,22 @@ public class ChannelGenerated implements MethodCallHandler {
     }
 
     %%METHODS%%
-    %%METHOD returns:void%%
+    %%METHOD%%
     Object __methodName__(MethodCall call) {
-      __variableName__.__methodName__(
-      %%PARAMETERS%%
-      %%PARAMETER type:supported%%
-      call.argument("__parameterName__") == null ? null : (__parameterType__) call.argument("__parameterName__")
-      %%PARAMETER type:supported%%
-      %%PARAMETER type:wrapper%%
-      ((__parameterType__Wrapper) getWrapper((String) call.argument("__parameterName__"))).__variableName__
-      %%PARAMETER type:wrapper%%
-      %%PARAMETER type:typeParameter%%
-      (String) call.argument("__parameterName__")
-      %%PARAMETER type:typeParameter%%
-      %%PARAMETERS%%
-      );
-      return null;
-    }
-    %%METHOD returns:void%%
-    %%METHOD returns:supported%%
-    Object __methodName__(MethodCall call) {
-      return __variableName__.__methodName__(
-      %%PARAMETERS%%
-      %%PARAMETER type:supported%%
-      call.argument("__parameterName__") == null ? null : (__parameterType__) call.argument("__parameterName__")
-      %%PARAMETER type:supported%%
-      %%PARAMETER type:wrapper%%
-      ((__parameterType__Wrapper) getWrapper((String) call.argument("__parameterName__"))).__variableName__
-      %%PARAMETER type:wrapper%%
-      %%PARAMETERS%%
-      );
-    }
-    %%METHOD returns:supported%%
-    %%METHOD returns:wrapper%%
-    Object __methodName__(MethodCall call) {
+      %%PREMETHODCALLS%%
+      %%PREMETHODCALL returns:void%%
+      %%PREMETHODCALL returns:void%%
+      %%PREMETHODCALL returns:supported%%
+      return
+      %%PREMETHODCALL returns:supported%%
+      %%PREMETHODCALL returns:wrapper%%
       new __returnType__Wrapper((String) call.argument("$newUniqueId"),
+      %%PREMETHODCALL returns:wrapper%%
+      %%PREMETHODCALL returns:typeParameter%%
+      final Object result = 
+      %%PREMETHODCALL returns:typeParameter%%
+      %%PREMETHODCALLS%%
+      
       __variableName__.__methodName__(
       %%PARAMETERS%%
       %%PARAMETER type:supported%%
@@ -432,25 +312,21 @@ public class ChannelGenerated implements MethodCallHandler {
       (String) call.argument("__parameterName__")
       %%PARAMETER type:typeParameter%%
       %%PARAMETERS%%
-      ));
+      )
+      %%POSTMETHODCALLS%%
+      %%POSTMETHODCALL returns:void%%
+      ;
       return null;
-    }
-    %%METHOD returns:wrapper%%
-    %%METHOD returns:typeParameter%%
-    Object __methodName__(MethodCall call) {
-      final Object result = __variableName__.__methodName__(
-      %%PARAMETERS%%
-      %%PARAMETER type:supported%%
-      call.argument("__parameterName__") == null ? null : (__parameterType__) call.argument("__parameterName__")
-      %%PARAMETER type:supported%%
-      %%PARAMETER type:wrapper%%
-      ((__parameterType__Wrapper) getWrapper((String) call.argument("__parameterName__"))).__variableName__
-      %%PARAMETER type:wrapper%%
-      %%PARAMETER type:typeParameter%%
-      (String) call.argument("__parameterName__")
-      %%PARAMETER type:typeParameter%%
-      %%PARAMETERS%%
+      %%POSTMETHODCALL returns:void%%
+      %%POSTMETHODCALL returns:supported%%
+      ;
+      %%POSTMETHODCALL returns:supported%%
+      %%POSTMETHODCALL returns:wrapper%%
       );
+      return null;
+      %%POSTMETHODCALL returns:wrapper%%
+      %%POSTMETHODCALL returns:typeParameter%%
+      ;
       if (result == null) return null;
       
       final Class wrapperClass;
@@ -473,8 +349,10 @@ public class ChannelGenerated implements MethodCallHandler {
         e.printStackTrace();
       }
       return null;
+      %%POSTMETHODCALL returns:typeParameter%%
+      %%POSTMETHODCALLS%%
     }
-    %%METHOD returns:typeParameter%%
+    %%METHOD%%
     %%METHODS%%
   }
   %%CLASS%%
@@ -495,10 +373,7 @@ class MethodChannelTemplateCreator extends _TemplateCreator {
     String methodName,
   }) {
     return _replace(
-      _Block.channelMethod(returnTypeChannelType)
-          .exp
-          .firstMatch(template.value)
-          .group(1),
+      _Block.method.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
         _Block.parameters.exp: parameters.join(','),
         _Block.methodCallParams.exp: methodCallParams.join(),
@@ -587,11 +462,18 @@ class AndroidTemplateCreator extends _TemplateCreator {
     String variableName,
   }) {
     return _replace(
-      _Block.channelMethod(returnTypeChannelType)
-          .exp
-          .firstMatch(template.value)
-          .group(1),
+      _Block.method.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
+        _Block.preMethodCalls.exp:
+            _Block.channelPreMethodCall(returnTypeChannelType)
+                .exp
+                .firstMatch(template.value)
+                .group(1),
+        _Block.postMethodCalls.exp:
+            _Block.channelPostMethodCall(returnTypeChannelType)
+                .exp
+                .firstMatch(template.value)
+                .group(1),
         _Block.parameters.exp: parameters.join(','),
         _Replacement.returnType.name: returnType,
         _Replacement.methodName.name: methodName,
@@ -730,8 +612,10 @@ class _Block {
   static final _Block methods = _Block('METHODS');
   static final _Block method = _Block('METHOD');
 
+  static final _Block preMethodCalls = _Block('PREMETHODCALLS');
+
   //  For Android and iOS
-  static _Block channelMethod(MethodChannelType type) {
+  static _Block channelPreMethodCall(MethodChannelType type) {
     final List<String> configs = <String>[];
     switch (type) {
       case MethodChannelType.$void:
@@ -748,7 +632,30 @@ class _Block {
         break;
     }
 
-    return _Block(method.identifier, configs.join(' '));
+    return _Block('PREMETHODCALL', configs.join(' '));
+  }
+
+  static final _Block postMethodCalls = _Block('POSTMETHODCALLS');
+
+  //  For Android and iOS
+  static _Block channelPostMethodCall(MethodChannelType type) {
+    final List<String> configs = <String>[];
+    switch (type) {
+      case MethodChannelType.$void:
+        configs.add('returns:void');
+        break;
+      case MethodChannelType.supported:
+        configs.add('returns:supported');
+        break;
+      case MethodChannelType.wrapper:
+        configs.add('returns:wrapper');
+        break;
+      case MethodChannelType.typeParameter:
+        configs.add('returns:typeParameter');
+        break;
+    }
+
+    return _Block('POSTMETHODCALL', configs.join(' '));
   }
 
   // Android and iOS
@@ -832,4 +739,5 @@ class _Replacement {
   static final _Replacement parameterName = _Replacement('__parameterName__');
   static final _Replacement parameterType = _Replacement('__parameterType__');
   static final _Replacement returnType = _Replacement('__returnType__');
+  static final _Replacement typeParameters = _Replacement('__typeParameters__');
 }

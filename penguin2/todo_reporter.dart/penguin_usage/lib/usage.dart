@@ -23,7 +23,7 @@ class Usage1 extends $Usage1 {
   Future<void> aMethod() async {
     await $invoke(
       PenguinUsage.channel,
-      [$aMethod()],
+      [$aMethod(null)],
     );
   }
 
@@ -31,7 +31,7 @@ class Usage1 extends $Usage1 {
   Future<String> getStringMethod() async {
     final List<dynamic> value = await $invoke(
       PenguinUsage.channel,
-      [$getStringMethod()],
+      [$getStringMethod(null)],
     );
     return value[0];
   }
@@ -39,32 +39,32 @@ class Usage1 extends $Usage1 {
   @Method()
   Future<int> addTwo(int value) {
     return PenguinUsage.channel.invokeMethod(
-      $addTwo(value).method,
-      $addTwo(value).arguments,
+      $addTwo(null, value).method,
+      $addTwo(null, value).arguments,
     );
   }
 
   @Method()
   Future<double> divide(int one, int two) {
     return PenguinUsage.channel.invokeMethod(
-      $divide(one, two).method,
-      $divide(one, two).arguments,
+      $divide(null, one, two).method,
+      $divide(null, one, two).arguments,
     );
   }
 
   @Method()
   Future<List<String>> getList(Map<int, int> addThese) {
     return PenguinUsage.channel.invokeListMethod(
-      $getList(addThese).method,
-      $getList(addThese).arguments,
+      $getList(null, addThese).method,
+      $getList(null, addThese).arguments,
     );
   }
 
   @Method()
   Future<String> giveUsage2(Usage2 usage2) {
     return PenguinUsage.channel.invokeMethod(
-      $giveUsage2(usage2).method,
-      $giveUsage2(usage2).arguments,
+      $giveUsage2(null, usage2).method,
+      $giveUsage2(null, usage2).arguments,
     );
   }
 
@@ -79,7 +79,7 @@ class Usage1 extends $Usage1 {
   Future<void> anotherMethod() async {
     print(await $invoke(
       PenguinUsage.channel,
-      [$aMethod(), $aMethod()],
+      [$aMethod(null), $aMethod(null)],
     ));
   }
 }
@@ -118,8 +118,8 @@ class GenericUsage<T> extends $GenericUsage {
   @Method()
   Future<void> setValue(T value) {
     return PenguinUsage.channel.invokeMethod(
-      $setValue(value).method,
-      $setValue(value).arguments,
+      $setValue(null, value).method,
+      $setValue(null, value).arguments,
     );
   }
 

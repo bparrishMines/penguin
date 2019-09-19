@@ -15,60 +15,70 @@ class $Usage1 extends $Wrapper {
     );
   }
 
-  MethodCall $aMethod() {
+  MethodCall $aMethod(
+    String $newUniqueId,
+  ) {
     return MethodCall(
       'TestClass#aMethod',
       <String, dynamic>{
         'uniqueId': $uniqueId,
+        r'$newUniqueId': $newUniqueId,
       },
     );
   }
 
-  MethodCall $getStringMethod() {
+  MethodCall $getStringMethod(
+    String $newUniqueId,
+  ) {
     return MethodCall(
       'TestClass#getStringMethod',
       <String, dynamic>{
         'uniqueId': $uniqueId,
+        r'$newUniqueId': $newUniqueId,
       },
     );
   }
 
-  MethodCall $addTwo(int value) {
+  MethodCall $addTwo(String $newUniqueId, int value) {
     return MethodCall(
       'TestClass#addTwo',
       <String, dynamic>{
         'uniqueId': $uniqueId,
+        r'$newUniqueId': $newUniqueId,
         'value': value,
       },
     );
   }
 
-  MethodCall $divide(int one, int two) {
+  MethodCall $divide(String $newUniqueId, int one, int two) {
     return MethodCall(
       'TestClass#divide',
       <String, dynamic>{
         'uniqueId': $uniqueId,
+        r'$newUniqueId': $newUniqueId,
         'one': one,
         'two': two,
       },
     );
   }
 
-  MethodCall $getList(Map<int, int> addThese) {
+  MethodCall $getList(String $newUniqueId, Map<int, int> addThese) {
     return MethodCall(
       'TestClass#getList',
       <String, dynamic>{
         'uniqueId': $uniqueId,
+        r'$newUniqueId': $newUniqueId,
         'addThese': addThese,
       },
     );
   }
 
-  MethodCall $giveUsage2($Usage2 usage2) {
+  MethodCall $giveUsage2(String $newUniqueId, $Usage2 usage2) {
     return MethodCall(
       'TestClass#giveUsage2',
       <String, dynamic>{
         'uniqueId': $uniqueId,
+        r'$newUniqueId': $newUniqueId,
         'usage2': usage2.$uniqueId,
       },
     );
@@ -136,18 +146,21 @@ class $GenericUsage extends $Wrapper {
     );
   }
 
-  MethodCall $setValue(dynamic value) {
+  MethodCall $setValue(String $newUniqueId, dynamic value) {
     return MethodCall(
       'TestGenericClass#setValue',
       <String, dynamic>{
         'uniqueId': $uniqueId,
+        r'$newUniqueId': $newUniqueId,
         if (value is $Wrapper) 'value': value.$uniqueId,
         if (value is! $Wrapper) 'value': value,
       },
     );
   }
 
-  MethodCall $get(String $newUniqueId) {
+  MethodCall $get(
+    String $newUniqueId,
+  ) {
     return MethodCall(
       'TestGenericClass#get',
       <String, dynamic>{

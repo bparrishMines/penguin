@@ -196,58 +196,105 @@ public class ChannelGenerated implements MethodCallHandler {
 
     
     Object aMethod(MethodCall call) {
+      
+      
+      
       testClass.aMethod(
       
-      );
+      )
+      
+      ;
       return null;
+      
     }
     
     Object getStringMethod(MethodCall call) {
-      return testClass.getStringMethod(
       
-      );
+      return
+      
+      
+      testClass.getStringMethod(
+      
+      )
+      
+      ;
+      
     }
     
     Object addTwo(MethodCall call) {
-      return testClass.addTwo(
+      
+      return
+      
+      
+      testClass.addTwo(
       
       call.argument("value") == null ? null : (Integer) call.argument("value")
       
-      );
+      )
+      
+      ;
+      
     }
     
     Object divide(MethodCall call) {
-      return testClass.divide(
+      
+      return
+      
+      
+      testClass.divide(
       
       call.argument("one") == null ? null : (Integer) call.argument("one")
       ,
       call.argument("two") == null ? null : (Integer) call.argument("two")
       
-      );
+      )
+      
+      ;
+      
     }
     
     Object getList(MethodCall call) {
-      return testClass.getList(
+      
+      return
+      
+      
+      testClass.getList(
       
       call.argument("addThese") == null ? null : (HashMap<Integer, Integer>) call.argument("addThese")
       
-      );
+      )
+      
+      ;
+      
     }
     
     Object giveUsage2(MethodCall call) {
-      return testClass.giveUsage2(
+      
+      return
+      
+      
+      testClass.giveUsage2(
       
       ((TestClassTwoWrapper) getWrapper((String) call.argument("usage2"))).testClassTwo
       
-      );
+      )
+      
+      ;
+      
     }
     
     Object getUsage2(MethodCall call) {
+      
       new TestClassTwoWrapper((String) call.argument("$newUniqueId"),
+      
+      
       testClass.getUsage2(
       
-      ));
+      )
+      
+      );
       return null;
+      
     }
     
   }
@@ -327,18 +374,30 @@ public class ChannelGenerated implements MethodCallHandler {
 
     
     Object setValue(MethodCall call) {
+      
+      
+      
       testGenericClass.setValue(
       
       (String) call.argument("value")
       
-      );
+      )
+      
+      ;
       return null;
+      
     }
     
     Object get(MethodCall call) {
-      final Object result = testGenericClass.get(
       
-      );
+      final Object result = 
+      
+      
+      testGenericClass.get(
+      
+      )
+      
+      ;
       if (result == null) return null;
       
       final Class wrapperClass;
@@ -361,6 +420,7 @@ public class ChannelGenerated implements MethodCallHandler {
         e.printStackTrace();
       }
       return null;
+      
     }
     
   }
