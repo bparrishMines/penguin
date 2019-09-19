@@ -66,26 +66,6 @@ class ReadInfoBuilder extends Builder {
 
     final LibraryReader reader = LibraryReader(await buildStep.inputLibrary);
 
-//    if (buildStep.inputId.path.endsWith('/usage.dart')) {
-//      ClassElement element =
-//          reader
-//              .annotatedWith(_classAnnotation)
-//              .skip(2)
-//              .first
-//              .element;
-//      print(element.name);
-//      TypeParameterType a;
-//      print(element.typeParameters[0].type)
-//      print(element is TypeParameterizedElement);
-//      print(element.typeParameters);
-//      TypeParameterElement tpe = element.typeParameters[0];
-//      print(tpe.name);
-//      print(element.isSimplyBounded);
-//      print(tpe.type.bound);
-//      print(tpe.type.isDartCoreInt);
-//    }
-//    throw ArgumentError();
-
     final List<ClassInfo> allClassInfo = reader
         .annotatedWith(_classAnnotation)
         .map<ClassInfo>(

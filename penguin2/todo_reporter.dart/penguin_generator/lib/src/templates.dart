@@ -16,7 +16,7 @@ class $__className__ extends $Wrapper {
   MethodCall $__className__Default() {
     return MethodCall(
       '__platformClassName__()',
-      <String, String>{'uniqueId': $uniqueId},
+      <String, String>{r'$uniqueId': $uniqueId},
     );
   }
   %%CONSTRUCTOR%%
@@ -40,7 +40,7 @@ class $__className__ extends $Wrapper {
   ) {
     return MethodCall(
       '__platformClassName__#__methodName__',
-       <String, dynamic>{'uniqueId': $uniqueId,
+       <String, dynamic>{r'$uniqueId': $uniqueId,
        r'$newUniqueId': $newUniqueId,
        %%METHODCALLPARAMS%%
        %%METHODCALLPARAM type:supported%%
@@ -60,39 +60,30 @@ class $__className__ extends $Wrapper {
   %%METHOD%%
   %%METHODS%%
   
-  MethodCall $allocate() {
-    return MethodCall(
-      '__platformClassName__#allocate',
-       <String, String>{'uniqueId': $uniqueId},
-    );
-  }
-  
-  MethodCall $deallocate() {
-    return MethodCall(
-      '__platformClassName__#deallocate',
-       <String, String>{'uniqueId': $uniqueId},
-    );
-  }
+  @override
+  String get $platformClassName => '__platformClassName__';
 }
 %%CLASS%%
 %%CLASSES%%
 
-class $Wrapper {
+abstract class $Wrapper {
   $Wrapper(this.$uniqueId);
 
   final String $uniqueId;
+  
+  String get $platformClassName;
 
   MethodCall $allocate() {
     return MethodCall(
-      '${this.runtimeType}#allocate',
-      <String, String>{'uniqueId': $uniqueId},
+      '${$platformClassName}#allocate',
+      <String, String>{r'$uniqueId': $uniqueId},
     );
   }
 
   MethodCall $deallocate() {
     return MethodCall(
-      '${this.runtimeType}#deallocate',
-      <String, String>{'uniqueId': $uniqueId},
+      '${$platformClassName}#deallocate',
+      <String, String>{r'$uniqueId': $uniqueId},
     );
   }
 }
@@ -133,21 +124,21 @@ import __classPackage__.__platformClassName__;
 
 public class ChannelGenerated implements MethodCallHandler {
   private abstract class FlutterWrapper {
-    private final String uniqueId;
+    private final String $uniqueId;
     
-    FlutterWrapper(String uniqueId) {
-      this.uniqueId = uniqueId;
+    FlutterWrapper(String $uniqueId) {
+      this.$uniqueId = $uniqueId;
     }
 
     abstract Object onMethodCall(MethodCall call) throws NotImplementedException;
 
     void allocate() {
-      if (isAllocated(uniqueId)) return;
-      addWrapper(uniqueId, this, allocatedWrappers);
+      if (isAllocated($uniqueId)) return;
+      addWrapper($uniqueId, this, allocatedWrappers);
     }
 
     void deallocate() {
-      removeWrapper(uniqueId);
+      removeWrapper($uniqueId);
     }
   }
 
@@ -226,17 +217,17 @@ public class ChannelGenerated implements MethodCallHandler {
       %%STATICMETHODCALLS%%
       %%STATICMETHODCALL%%
       case "__platformClassName__()": {
-          new __platformClassName__Wrapper((String) call.argument("uniqueId"));
+          new __platformClassName__Wrapper((String) call.argument("$uniqueId"));
           return null;
         }
       %%STATICMETHODCALL%%
       %%STATICMETHODCALLS%%
       default:
-        final String uniqueId = call.argument("uniqueId");
-        if (uniqueId == null) throw new NoUniqueIdException(call.method);
+        final String $uniqueId = call.argument("$uniqueId");
+        if ($uniqueId == null) throw new NoUniqueIdException(call.method);
 
-        final FlutterWrapper wrapper = getWrapper(uniqueId);
-        if (wrapper == null) throw new WrapperNotFoundException(uniqueId);
+        final FlutterWrapper wrapper = getWrapper($uniqueId);
+        if (wrapper == null) throw new WrapperNotFoundException($uniqueId);
 
         return wrapper.onMethodCall(call);
     }
@@ -245,20 +236,20 @@ public class ChannelGenerated implements MethodCallHandler {
   %%CLASSES%%
   %%CLASS%%
   private class __platformClassName__Wrapper extends FlutterWrapper {
-    private final __platformClassName__ __variableName__;
+    private final __platformClassName__ $value;
 
-    __platformClassName__Wrapper(String uniqueId, __platformClassName__ __variableName__) {
-      super(uniqueId);
-      this.__variableName__ = __variableName__;
-      addWrapper(uniqueId, this, tempWrappers);
+    __platformClassName__Wrapper(String $uniqueId, __platformClassName__ $value) {
+      super($uniqueId);
+      this.$value = $value;
+      addWrapper($uniqueId, this, tempWrappers);
     }
 
     %%CONSTRUCTORS%%
     %%CONSTRUCTOR%%
-    private __platformClassName__Wrapper(final String uniqueId) {
-      super(uniqueId);
-      this.__variableName__ = new __platformClassName__();
-      addWrapper(uniqueId, this, tempWrappers);
+    private __platformClassName__Wrapper(final String $uniqueId) {
+      super($uniqueId);
+      this.$value = new __platformClassName__();
+      addWrapper($uniqueId, this, tempWrappers);
     }
     %%CONSTRUCTOR%%
     %%CONSTRUCTORS%%
@@ -300,13 +291,13 @@ public class ChannelGenerated implements MethodCallHandler {
       %%PREMETHODCALL returns:typeParameter%%
       %%PREMETHODCALLS%%
       
-      __variableName__.__methodName__(
+      $value.__methodName__(
       %%PARAMETERS%%
       %%PARAMETER type:supported%%
       call.argument("__parameterName__") == null ? null : (__parameterType__) call.argument("__parameterName__")
       %%PARAMETER type:supported%%
       %%PARAMETER type:wrapper%%
-      ((__parameterType__Wrapper) getWrapper((String) call.argument("__parameterName__"))).__variableName__
+      ((__parameterType__Wrapper) getWrapper((String) call.argument("__parameterName__"))).$value
       %%PARAMETER type:wrapper%%
       %%PARAMETER type:typeParameter%%
       (String) call.argument("__parameterName__")
@@ -477,7 +468,6 @@ class AndroidTemplateCreator extends _TemplateCreator {
         _Block.parameters.exp: parameters.join(','),
         _Replacement.returnType.name: returnType,
         _Replacement.methodName.name: methodName,
-        _Replacement.variableName.name: variableName,
       },
     );
   }
@@ -494,7 +484,6 @@ class AndroidTemplateCreator extends _TemplateCreator {
           .firstMatch(template.value)
           .group(1),
       <Pattern, String>{
-        _Replacement.variableName.name: variableName,
         _Replacement.parameterType.name: parameterType,
         _Replacement.parameterName.name: parameterName,
       },
@@ -515,7 +504,6 @@ class AndroidTemplateCreator extends _TemplateCreator {
         _Block.methods.exp: methods.join(),
         _Block.methodCalls.exp: methodCalls.join(),
         _Replacement.platformClassName.name: platformClassName,
-        _Replacement.variableName.name: variableName,
       },
     );
   }
@@ -552,7 +540,6 @@ class AndroidTemplateCreator extends _TemplateCreator {
       _Block.constructor.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
         _Replacement.platformClassName.name: platformClassName,
-        _Replacement.variableName.name: variableName,
       },
     );
   }
@@ -730,7 +717,6 @@ class _Replacement {
   static final _Replacement methodName = _Replacement('__methodName__');
   static final _Replacement className = _Replacement('__className__');
   static final _Replacement channelName = _Replacement('__channelName__');
-  static final _Replacement variableName = _Replacement('__variableName__');
   static final _Replacement package = _Replacement('__package__');
   static final _Replacement classPackage = _Replacement('__classPackage__');
   static final _Replacement platformClassName = _Replacement(
