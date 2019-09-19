@@ -11,6 +11,9 @@ class FlutterBuilder extends PlatformBuilder {
     return creator.createFile(
       classes: classes.map<String>(
         (ClassInfo classInfo) => creator.createClass(
+          typeParameters: classInfo.typeParameters.map<String>(
+            (TypeInfo info) => info.name,
+          ),
           constructors: classInfo.constructors.map<String>(
             (ConstructorInfo constructorInfo) => creator.createConstructor(
               className: classInfo.name,

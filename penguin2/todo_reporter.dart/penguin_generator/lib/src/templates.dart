@@ -8,7 +8,7 @@ import 'package:flutter/services.dart';
 
 %%CLASSES%%
 %%CLASS%%
-class $__className__ extends $Wrapper {
+class $__className____typeParameters__ extends $Wrapper {
   $__className__(String $uniqueId) : super($uniqueId);
 
   %%CONSTRUCTORS%%
@@ -34,7 +34,7 @@ class $__className__ extends $Wrapper {
   $__parameterType__ __parameterName__
   %%PARAMETER type:wrapper%%
   %%PARAMETER type:typeParameter%%
-  dynamic __parameterName__
+  __parameterType__ __parameterName__
   %%PARAMETER type:typeParameter%%
   %%PARAMETERS%%
   ) {
@@ -131,6 +131,7 @@ public class ChannelGenerated implements MethodCallHandler {
     }
 
     abstract Object onMethodCall(MethodCall call) throws NotImplementedException;
+    abstract Object $getValue();
 
     void allocate() {
       if (isAllocated($uniqueId)) return;
@@ -238,7 +239,7 @@ public class ChannelGenerated implements MethodCallHandler {
   private class __platformClassName__Wrapper extends FlutterWrapper {
     private final __platformClassName__ $value;
 
-    __platformClassName__Wrapper(String $uniqueId, __platformClassName__ $value) {
+    public __platformClassName__Wrapper(String $uniqueId, __platformClassName__ $value) {
       super($uniqueId);
       this.$value = $value;
       addWrapper($uniqueId, this, tempWrappers);
@@ -273,6 +274,11 @@ public class ChannelGenerated implements MethodCallHandler {
           throw new NotImplementedException(call.method);
       }
     }
+    
+    @Override
+    public Object $getValue() {
+      return $value;
+    }
 
     %%METHODS%%
     %%METHOD%%
@@ -300,7 +306,7 @@ public class ChannelGenerated implements MethodCallHandler {
       ((__parameterType__Wrapper) getWrapper((String) call.argument("__parameterName__"))).$value
       %%PARAMETER type:wrapper%%
       %%PARAMETER type:typeParameter%%
-      (String) call.argument("__parameterName__")
+      getWrapper((String) call.argument("value")) == null ? call.argument("value") : getWrapper((String) call.argument("value")).$getValue()
       %%PARAMETER type:typeParameter%%
       %%PARAMETERS%%
       )
@@ -319,17 +325,17 @@ public class ChannelGenerated implements MethodCallHandler {
       %%POSTMETHODCALL returns:typeParameter%%
       ;
       if (result == null) return null;
-      
+
       final Class wrapperClass;
       try {
-        wrapperClass = Class.forName(result.getClass() + "Wrapper");
+        wrapperClass = Class.forName(String.format("__package__.ChannelGenerated$%sWrapper", result.getClass().getSimpleName()));
       } catch (ClassNotFoundException e) {
         return result;
       }
 
       try {
-        final Constructor constructor = wrapperClass.getConstructor(String.class, result.getClass());
-        constructor.newInstance(call.argument("$newUniqueId"), result);
+        final Constructor constructor = wrapperClass.getConstructor(ChannelGenerated.class, String.class, result.getClass());
+        constructor.newInstance(ChannelGenerated.this, call.argument("$newUniqueId"), result);
       } catch (NoSuchMethodException e) {
         e.printStackTrace();
       } catch (IllegalAccessException e) {
@@ -407,6 +413,7 @@ class MethodChannelTemplateCreator extends _TemplateCreator {
   }
 
   String createClass({
+    Iterable<String> typeParameters,
     Iterable<String> constructors,
     Iterable<String> methods,
     String className,
@@ -415,6 +422,8 @@ class MethodChannelTemplateCreator extends _TemplateCreator {
     return _replace(
       _Block.aClass.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
+        _Replacement.typeParameters.name:
+            typeParameters.isEmpty ? '' : '<${typeParameters.join(', ')}>',
         _Block.constructors.exp: constructors.join(),
         _Block.methods.exp: methods.join(),
         _Replacement.className.name: className,
@@ -451,6 +460,7 @@ class AndroidTemplateCreator extends _TemplateCreator {
     String returnType,
     String methodName,
     String variableName,
+    String package,
   }) {
     return _replace(
       _Block.method.exp.firstMatch(template.value).group(1),
@@ -468,6 +478,7 @@ class AndroidTemplateCreator extends _TemplateCreator {
         _Block.parameters.exp: parameters.join(','),
         _Replacement.returnType.name: returnType,
         _Replacement.methodName.name: methodName,
+        _Replacement.package.name: package,
       },
     );
   }

@@ -19,6 +19,8 @@ class Usage1 extends $Usage1 {
     );
   }
 
+  Usage1._fromUniqueId(String uniqueId) : super(uniqueId);
+
   @Method()
   Future<void> aMethod() async {
     await $invoke(
@@ -106,7 +108,7 @@ class Usage2 extends $Usage2 {
     'TestGenericClass',
   ),
 ))
-class GenericUsage<T> extends $GenericUsage {
+class GenericUsage<T> extends $GenericUsage<T> {
   @Constructor()
   GenericUsage() : super(Random().nextDouble().toString()) {
     $invoke(
@@ -124,7 +126,18 @@ class GenericUsage<T> extends $GenericUsage {
   }
 
   @Method()
-  Future<T> get() {
+  FutureOr<T> get() {
+    if (runtimeType.toString() == 'GenericUsage<Usage1>') {
+      final String id = Random().nextDouble().toString();
+      PenguinUsage.channel.invokeMethod(
+        $get(id).method,
+        $get(id).arguments,
+      );
+
+      final Usage1 u = Usage1._fromUniqueId(id);
+      $invoke(PenguinUsage.channel, [$get(id), u.$allocate()]);
+      return u as T;
+    }
     return PenguinUsage.channel.invokeMethod(
       $get(null).method,
       $get(null).arguments,
