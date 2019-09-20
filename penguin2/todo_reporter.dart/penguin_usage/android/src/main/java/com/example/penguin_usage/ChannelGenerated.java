@@ -10,6 +10,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
+
+import io.flutter.Log;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
@@ -22,10 +24,12 @@ import com.example.penguin_usage.test_package.TestGenericClass;
 
 
 public class ChannelGenerated implements MethodCallHandler {
-  private abstract class FlutterWrapper {
-    private final String $uniqueId;
+  private static abstract class FlutterWrapper {
+    final ChannelGenerated $channelGenerated;
+    final String $uniqueId;
     
-    FlutterWrapper(String $uniqueId) {
+    FlutterWrapper(ChannelGenerated $channelGenerated, String $uniqueId) {
+      this.$channelGenerated = $channelGenerated;
       this.$uniqueId = $uniqueId;
     }
 
@@ -33,28 +37,28 @@ public class ChannelGenerated implements MethodCallHandler {
     abstract Object $getValue();
 
     void allocate() {
-      if (isAllocated($uniqueId)) return;
-      addWrapper($uniqueId, this, allocatedWrappers);
+      if ($channelGenerated.isAllocated($uniqueId)) return;
+      $channelGenerated.addWrapper($uniqueId, this, $channelGenerated.allocatedWrappers);
     }
 
     void deallocate() {
-      removeWrapper($uniqueId);
+      $channelGenerated.removeWrapper($uniqueId);
     }
   }
 
-  private class NotImplementedException extends Exception {
+  private static class NotImplementedException extends Exception {
     NotImplementedException(String method) {
       super(String.format(Locale.getDefault(),"No implementation for %s.", method));
     }
   }
 
-  private class NoUniqueIdException extends Exception {
+  private static class NoUniqueIdException extends Exception {
     NoUniqueIdException(String method) {
       super(String.format("MethodCall was made without a unique handle for %s.", method));
     }
   }
 
-  private class WrapperNotFoundException extends Exception {
+  private static class WrapperNotFoundException extends Exception {
     WrapperNotFoundException(String uniqueId) {
       super(String.format("Could not find FlutterWrapper with uniqueId %s.", uniqueId));
     }
@@ -116,17 +120,17 @@ public class ChannelGenerated implements MethodCallHandler {
         return resultData;
       
       case "TestClass()": {
-          new TestClassWrapper((String) call.argument("$uniqueId"));
+          new TestClassWrapper(this, (String) call.argument("$uniqueId"));
           return null;
         }
       
       case "TestClassTwo()": {
-          new TestClassTwoWrapper((String) call.argument("$uniqueId"));
+          new TestClassTwoWrapper(this, (String) call.argument("$uniqueId"));
           return null;
         }
       
       case "TestGenericClass()": {
-          new TestGenericClassWrapper((String) call.argument("$uniqueId"));
+          new TestGenericClassWrapper(this, (String) call.argument("$uniqueId"));
           return null;
         }
       
@@ -142,20 +146,20 @@ public class ChannelGenerated implements MethodCallHandler {
   }
 
   
-  private class TestClassWrapper extends FlutterWrapper {
+  private static class TestClassWrapper extends FlutterWrapper {
     private final TestClass $value;
 
-    public TestClassWrapper(String $uniqueId, TestClass $value) {
-      super($uniqueId);
+    public TestClassWrapper(ChannelGenerated $channelGenerated, String $uniqueId, TestClass $value) {
+      super($channelGenerated, $uniqueId);
       this.$value = $value;
-      addWrapper($uniqueId, this, tempWrappers);
+      $channelGenerated.addWrapper($uniqueId, this, $channelGenerated.tempWrappers);
     }
 
     
-    private TestClassWrapper(final String $uniqueId) {
-      super($uniqueId);
+    private TestClassWrapper(ChannelGenerated $channelGenerated, final String $uniqueId) {
+      super($channelGenerated, $uniqueId);
       this.$value = new TestClass();
-      addWrapper($uniqueId, this, tempWrappers);
+      $channelGenerated.addWrapper($uniqueId, this, $channelGenerated.tempWrappers);
     }
     
 
@@ -281,7 +285,7 @@ public class ChannelGenerated implements MethodCallHandler {
       
       $value.giveUsage2(
       
-      ((TestClassTwoWrapper) getWrapper((String) call.argument("usage2"))).$value
+      ((TestClassTwoWrapper) $channelGenerated.getWrapper((String) call.argument("usage2"))).$value
       
       )
       
@@ -291,7 +295,7 @@ public class ChannelGenerated implements MethodCallHandler {
     
     Object getUsage2(MethodCall call) {
       
-      new TestClassTwoWrapper((String) call.argument("$newUniqueId"),
+      new TestClassTwoWrapper($channelGenerated, (String) call.argument("$newUniqueId"),
       
       
       $value.getUsage2(
@@ -305,20 +309,20 @@ public class ChannelGenerated implements MethodCallHandler {
     
   }
   
-  private class TestClassTwoWrapper extends FlutterWrapper {
+  private static class TestClassTwoWrapper extends FlutterWrapper {
     private final TestClassTwo $value;
 
-    public TestClassTwoWrapper(String $uniqueId, TestClassTwo $value) {
-      super($uniqueId);
+    public TestClassTwoWrapper(ChannelGenerated $channelGenerated, String $uniqueId, TestClassTwo $value) {
+      super($channelGenerated, $uniqueId);
       this.$value = $value;
-      addWrapper($uniqueId, this, tempWrappers);
+      $channelGenerated.addWrapper($uniqueId, this, $channelGenerated.tempWrappers);
     }
 
     
-    private TestClassTwoWrapper(final String $uniqueId) {
-      super($uniqueId);
+    private TestClassTwoWrapper(ChannelGenerated $channelGenerated, final String $uniqueId) {
+      super($channelGenerated, $uniqueId);
       this.$value = new TestClassTwo();
-      addWrapper($uniqueId, this, tempWrappers);
+      $channelGenerated.addWrapper($uniqueId, this, $channelGenerated.tempWrappers);
     }
     
 
@@ -345,20 +349,20 @@ public class ChannelGenerated implements MethodCallHandler {
     
   }
   
-  private class TestGenericClassWrapper extends FlutterWrapper {
+  private static class TestGenericClassWrapper extends FlutterWrapper {
     private final TestGenericClass $value;
 
-    public TestGenericClassWrapper(String $uniqueId, TestGenericClass $value) {
-      super($uniqueId);
+    public TestGenericClassWrapper(ChannelGenerated $channelGenerated, String $uniqueId, TestGenericClass $value) {
+      super($channelGenerated, $uniqueId);
       this.$value = $value;
-      addWrapper($uniqueId, this, tempWrappers);
+      $channelGenerated.addWrapper($uniqueId, this, $channelGenerated.tempWrappers);
     }
 
     
-    private TestGenericClassWrapper(final String $uniqueId) {
-      super($uniqueId);
+    private TestGenericClassWrapper(ChannelGenerated $channelGenerated, final String $uniqueId) {
+      super($channelGenerated, $uniqueId);
       this.$value = new TestGenericClass();
-      addWrapper($uniqueId, this, tempWrappers);
+      $channelGenerated.addWrapper($uniqueId, this, $channelGenerated.tempWrappers);
     }
     
 
@@ -395,7 +399,7 @@ public class ChannelGenerated implements MethodCallHandler {
       
       $value.setValue(
       
-      getWrapper((String) call.argument("value")) == null ? call.argument("value") : getWrapper((String) call.argument("value")).$getValue()
+      $channelGenerated.getWrapper((String) call.argument("value")) == null ? call.argument("value") : $channelGenerated.getWrapper((String) call.argument("value")).$getValue()
       
       )
       
@@ -418,6 +422,7 @@ public class ChannelGenerated implements MethodCallHandler {
 
       final Class wrapperClass;
       try {
+        Log.d("handle", TestClass.class.getName());
         wrapperClass = Class.forName(String.format("com.example.penguin_usage.ChannelGenerated$%sWrapper", result.getClass().getSimpleName()));
       } catch (ClassNotFoundException e) {
         return result;
@@ -425,7 +430,7 @@ public class ChannelGenerated implements MethodCallHandler {
 
       try {
         final Constructor constructor = wrapperClass.getConstructor(ChannelGenerated.class, String.class, result.getClass());
-        constructor.newInstance(ChannelGenerated.this, call.argument("$newUniqueId"), result);
+        constructor.newInstance($channelGenerated, call.argument("$newUniqueId"), result);
       } catch (NoSuchMethodException e) {
         e.printStackTrace();
       } catch (IllegalAccessException e) {

@@ -123,10 +123,12 @@ import __classPackage__.__platformClassName__;
 %%IMPORTS%%
 
 public class ChannelGenerated implements MethodCallHandler {
-  private abstract class FlutterWrapper {
-    private final String $uniqueId;
+  private static abstract class FlutterWrapper {
+    final ChannelGenerated $channelGenerated;
+    final String $uniqueId;
     
-    FlutterWrapper(String $uniqueId) {
+    FlutterWrapper(ChannelGenerated $channelGenerated, String $uniqueId) {
+      this.$channelGenerated = $channelGenerated;
       this.$uniqueId = $uniqueId;
     }
 
@@ -134,28 +136,28 @@ public class ChannelGenerated implements MethodCallHandler {
     abstract Object $getValue();
 
     void allocate() {
-      if (isAllocated($uniqueId)) return;
-      addWrapper($uniqueId, this, allocatedWrappers);
+      if ($channelGenerated.isAllocated($uniqueId)) return;
+      $channelGenerated.addWrapper($uniqueId, this, $channelGenerated.allocatedWrappers);
     }
 
     void deallocate() {
-      removeWrapper($uniqueId);
+      $channelGenerated.removeWrapper($uniqueId);
     }
   }
 
-  private class NotImplementedException extends Exception {
+  private static class NotImplementedException extends Exception {
     NotImplementedException(String method) {
       super(String.format(Locale.getDefault(),"No implementation for %s.", method));
     }
   }
 
-  private class NoUniqueIdException extends Exception {
+  private static class NoUniqueIdException extends Exception {
     NoUniqueIdException(String method) {
       super(String.format("MethodCall was made without a unique handle for %s.", method));
     }
   }
 
-  private class WrapperNotFoundException extends Exception {
+  private static class WrapperNotFoundException extends Exception {
     WrapperNotFoundException(String uniqueId) {
       super(String.format("Could not find FlutterWrapper with uniqueId %s.", uniqueId));
     }
@@ -218,7 +220,7 @@ public class ChannelGenerated implements MethodCallHandler {
       %%STATICMETHODCALLS%%
       %%STATICMETHODCALL%%
       case "__platformClassName__()": {
-          new __platformClassName__Wrapper((String) call.argument("$uniqueId"));
+          new __platformClassName__Wrapper(this, (String) call.argument("$uniqueId"));
           return null;
         }
       %%STATICMETHODCALL%%
@@ -236,21 +238,21 @@ public class ChannelGenerated implements MethodCallHandler {
 
   %%CLASSES%%
   %%CLASS%%
-  private class __platformClassName__Wrapper extends FlutterWrapper {
+  private static class __platformClassName__Wrapper extends FlutterWrapper {
     private final __platformClassName__ $value;
 
-    public __platformClassName__Wrapper(String $uniqueId, __platformClassName__ $value) {
-      super($uniqueId);
+    public __platformClassName__Wrapper(ChannelGenerated $channelGenerated, String $uniqueId, __platformClassName__ $value) {
+      super($channelGenerated, $uniqueId);
       this.$value = $value;
-      addWrapper($uniqueId, this, tempWrappers);
+      $channelGenerated.addWrapper($uniqueId, this, $channelGenerated.tempWrappers);
     }
 
     %%CONSTRUCTORS%%
     %%CONSTRUCTOR%%
-    private __platformClassName__Wrapper(final String $uniqueId) {
-      super($uniqueId);
+    private __platformClassName__Wrapper(ChannelGenerated $channelGenerated, final String $uniqueId) {
+      super($channelGenerated, $uniqueId);
       this.$value = new __platformClassName__();
-      addWrapper($uniqueId, this, tempWrappers);
+      $channelGenerated.addWrapper($uniqueId, this, $channelGenerated.tempWrappers);
     }
     %%CONSTRUCTOR%%
     %%CONSTRUCTORS%%
@@ -290,7 +292,7 @@ public class ChannelGenerated implements MethodCallHandler {
       return
       %%PREMETHODCALL returns:supported%%
       %%PREMETHODCALL returns:wrapper%%
-      new __returnType__Wrapper((String) call.argument("$newUniqueId"),
+      new __returnType__Wrapper($channelGenerated, (String) call.argument("$newUniqueId"),
       %%PREMETHODCALL returns:wrapper%%
       %%PREMETHODCALL returns:typeParameter%%
       final Object result = 
@@ -303,10 +305,10 @@ public class ChannelGenerated implements MethodCallHandler {
       call.argument("__parameterName__") == null ? null : (__parameterType__) call.argument("__parameterName__")
       %%PARAMETER type:supported%%
       %%PARAMETER type:wrapper%%
-      ((__parameterType__Wrapper) getWrapper((String) call.argument("__parameterName__"))).$value
+      ((__parameterType__Wrapper) $channelGenerated.getWrapper((String) call.argument("__parameterName__"))).$value
       %%PARAMETER type:wrapper%%
       %%PARAMETER type:typeParameter%%
-      getWrapper((String) call.argument("value")) == null ? call.argument("value") : getWrapper((String) call.argument("value")).$getValue()
+      $channelGenerated.getWrapper((String) call.argument("value")) == null ? call.argument("value") : $channelGenerated.getWrapper((String) call.argument("value")).$getValue()
       %%PARAMETER type:typeParameter%%
       %%PARAMETERS%%
       )
@@ -335,7 +337,7 @@ public class ChannelGenerated implements MethodCallHandler {
 
       try {
         final Constructor constructor = wrapperClass.getConstructor(ChannelGenerated.class, String.class, result.getClass());
-        constructor.newInstance(ChannelGenerated.this, call.argument("$newUniqueId"), result);
+        constructor.newInstance($channelGenerated, call.argument("$newUniqueId"), result);
       } catch (NoSuchMethodException e) {
         e.printStackTrace();
       } catch (IllegalAccessException e) {
