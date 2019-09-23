@@ -10,8 +10,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
-
-import io.flutter.Log;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
@@ -120,18 +118,15 @@ public class ChannelGenerated implements MethodCallHandler {
         return resultData;
       
       case "TestClass()": {
-          new TestClassWrapper(this, (String) call.argument("$uniqueId"));
-          return null;
+          return TestClassWrapper.onStaticMethodCall(this, call);
         }
       
       case "TestClassTwo()": {
-          new TestClassTwoWrapper(this, (String) call.argument("$uniqueId"));
-          return null;
+          return TestClassTwoWrapper.onStaticMethodCall(this, call);
         }
       
       case "TestGenericClass()": {
-          new TestGenericClassWrapper(this, (String) call.argument("$uniqueId"));
-          return null;
+          return TestGenericClassWrapper.onStaticMethodCall(this, call);
         }
       
       default:
@@ -162,6 +157,19 @@ public class ChannelGenerated implements MethodCallHandler {
       $channelGenerated.addWrapper($uniqueId, this, $channelGenerated.tempWrappers);
     }
     
+    
+    static Object onStaticMethodCall(ChannelGenerated $channelGenerated, MethodCall call) throws NotImplementedException {
+      switch(call.method) {
+        
+        case "TestClass()": {
+            new TestClassWrapper($channelGenerated, (String) call.argument("$uniqueId"));
+            return null;
+          }
+        
+        default:
+          throw new NotImplementedException(call.method);
+      }
+    }
 
     @Override
     public Object onMethodCall(MethodCall call) throws NotImplementedException {
@@ -325,6 +333,19 @@ public class ChannelGenerated implements MethodCallHandler {
       $channelGenerated.addWrapper($uniqueId, this, $channelGenerated.tempWrappers);
     }
     
+    
+    static Object onStaticMethodCall(ChannelGenerated $channelGenerated, MethodCall call) throws NotImplementedException {
+      switch(call.method) {
+        
+        case "TestClassTwo()": {
+            new TestClassTwoWrapper($channelGenerated, (String) call.argument("$uniqueId"));
+            return null;
+          }
+        
+        default:
+          throw new NotImplementedException(call.method);
+      }
+    }
 
     @Override
     public Object onMethodCall(MethodCall call) throws NotImplementedException {
@@ -365,6 +386,19 @@ public class ChannelGenerated implements MethodCallHandler {
       $channelGenerated.addWrapper($uniqueId, this, $channelGenerated.tempWrappers);
     }
     
+    
+    static Object onStaticMethodCall(ChannelGenerated $channelGenerated, MethodCall call) throws NotImplementedException {
+      switch(call.method) {
+        
+        case "TestGenericClass()": {
+            new TestGenericClassWrapper($channelGenerated, (String) call.argument("$uniqueId"));
+            return null;
+          }
+        
+        default:
+          throw new NotImplementedException(call.method);
+      }
+    }
 
     @Override
     public Object onMethodCall(MethodCall call) throws NotImplementedException {
@@ -422,7 +456,6 @@ public class ChannelGenerated implements MethodCallHandler {
 
       final Class wrapperClass;
       try {
-        Log.d("handle", TestClass.class.getName());
         wrapperClass = Class.forName(String.format("com.example.penguin_usage.ChannelGenerated$%sWrapper", result.getClass().getSimpleName()));
       } catch (ClassNotFoundException e) {
         return result;

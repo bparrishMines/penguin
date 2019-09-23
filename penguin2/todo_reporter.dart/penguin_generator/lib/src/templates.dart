@@ -217,14 +217,18 @@ public class ChannelGenerated implements MethodCallHandler {
           resultData.add(onMethodCall(methodCall));
         }
         return resultData;
-      %%STATICMETHODCALLS%%
-      %%STATICMETHODCALL%%
+      %%STATICREDIRECTS%%
+      %%STATICREDIRECT redirect:constructor%%
       case "__platformClassName__()": {
-          new __platformClassName__Wrapper(this, (String) call.argument("$uniqueId"));
-          return null;
+          return __platformClassName__Wrapper.onStaticMethodCall(this, call);
         }
-      %%STATICMETHODCALL%%
-      %%STATICMETHODCALLS%%
+      %%STATICREDIRECT redirect:constructor%%
+      %%STATICREDIRECT redirect:method%%
+      case "__platformClassName__#__methodName__": {
+          return __platformClassName__Wrapper.onStaticMethodCall(this, call);
+        }
+      %%STATICREDIRECT redirect:method%%
+      %%STATICREDIRECTS%%
       default:
         final String $uniqueId = call.argument("$uniqueId");
         if ($uniqueId == null) throw new NoUniqueIdException(call.method);
@@ -256,6 +260,26 @@ public class ChannelGenerated implements MethodCallHandler {
     }
     %%CONSTRUCTOR%%
     %%CONSTRUCTORS%%
+    
+    static Object onStaticMethodCall(ChannelGenerated $channelGenerated, MethodCall call) throws NotImplementedException {
+      switch(call.method) {
+        %%STATICMETHODCALLS%%
+        %%STATICMETHODCALL redirect:constructor%%
+        case "__platformClassName__()": {
+            new __platformClassName__Wrapper($channelGenerated, (String) call.argument("$uniqueId"));
+            return null;
+          }
+        %%STATICMETHODCALL redirect:constructor%%
+        %%STATICMETHODCALL redirect:method%%
+        case "__platformClassName__#__methodName__": {
+            return __platformClassName__Wrapper.__methodName__(call);
+          }
+        %%STATICMETHODCALL redirect:method%%
+        %%STATICMETHODCALLS%%
+        default:
+          throw new NotImplementedException(call.method);
+      }
+    }
 
     @Override
     public Object onMethodCall(MethodCall call) throws NotImplementedException {
@@ -507,6 +531,7 @@ class AndroidTemplateCreator extends _TemplateCreator {
     Iterable<String> constructors,
     Iterable<String> methods,
     Iterable<String> methodCalls,
+    Iterable<String> staticMethodCalls,
     String platformClassName,
     String variableName,
   }) {
@@ -516,6 +541,7 @@ class AndroidTemplateCreator extends _TemplateCreator {
         _Block.constructors.exp: constructors.join(),
         _Block.methods.exp: methods.join(),
         _Block.methodCalls.exp: methodCalls.join(),
+        _Block.staticMethodCalls.exp: staticMethodCalls.join(),
         _Replacement.platformClassName.name: platformClassName,
       },
     );
@@ -531,10 +557,27 @@ class AndroidTemplateCreator extends _TemplateCreator {
     );
   }
 
+  String createStaticRedirect(
+    MethodChannelStaticRedirect redirect, {
+    String platformClassName,
+    String methodName,
+  }) {
+    return _replace(
+      _Block.channelStaticRedirect(redirect)
+          .exp
+          .firstMatch(template.value)
+          .group(1),
+      <Pattern, String>{
+        _Replacement.platformClassName.name: platformClassName,
+        _Replacement.methodName.name: methodName,
+      },
+    );
+  }
+
   String createFile({
     Iterable<String> imports,
     Iterable<String> classes,
-    Iterable<String> staticMethodCalls,
+    Iterable<String> staticRedirects,
     String package,
   }) {
     return _replace(
@@ -542,7 +585,7 @@ class AndroidTemplateCreator extends _TemplateCreator {
       <Pattern, String>{
         _Block.imports.exp: imports.join(),
         _Block.classes.exp: classes.join(),
-        _Block.staticMethodCalls.exp: staticMethodCalls.join(),
+        _Block.staticRedirects.exp: staticRedirects.join(),
         _Replacement.package.name: package,
       },
     );
@@ -567,17 +610,26 @@ class AndroidTemplateCreator extends _TemplateCreator {
     );
   }
 
-  String createStaticMethodCall({String platformClassName}) {
+  String createStaticMethodCall(
+    MethodChannelStaticRedirect redirect, {
+    String platformClassName,
+    String methodName,
+  }) {
     return _replace(
-      _Block.staticMethodCall.exp.firstMatch(template.value).group(1),
+      _Block.channelStaticMethodCall(redirect)
+          .exp
+          .firstMatch(template.value)
+          .group(1),
       <Pattern, String>{
         _Replacement.platformClassName.name: platformClassName,
+        _Replacement.methodName.name: methodName,
       },
     );
   }
 }
 
 enum MethodChannelType { $void, supported, wrapper, typeParameter }
+enum MethodChannelStaticRedirect { constructor, method }
 
 abstract class _TemplateCreator {
   _Template get template;
@@ -690,8 +742,37 @@ class _Block {
   static final _Block methodCalls = _Block('METHODCALLS');
   static final _Block methodCall = _Block('METHODCALL');
 
+  static final _Block staticRedirects = _Block('STATICREDIRECTS');
+  static _Block channelStaticRedirect(MethodChannelStaticRedirect redirect) {
+    final List<String> configs = <String>[];
+
+    switch (redirect) {
+      case MethodChannelStaticRedirect.constructor:
+        configs.add('redirect:constructor');
+        break;
+      case MethodChannelStaticRedirect.method:
+        configs.add('redirect:methed');
+        break;
+    }
+
+    return _Block('STATICREDIRECT', configs.join(' '));
+  }
+
   static final _Block staticMethodCalls = _Block('STATICMETHODCALLS');
-  static final _Block staticMethodCall = _Block('STATICMETHODCALL');
+  static _Block channelStaticMethodCall(MethodChannelStaticRedirect redirect) {
+    final List<String> configs = <String>[];
+
+    switch (redirect) {
+      case MethodChannelStaticRedirect.constructor:
+        configs.add('redirect:constructor');
+        break;
+      case MethodChannelStaticRedirect.method:
+        configs.add('redirect:methed');
+        break;
+    }
+
+    return _Block('STATICMETHODCALL', configs.join(' '));
+  }
 
   static final _Block parameters = _Block('PARAMETERS');
   static final _Block parameter = _Block('PARAMETER');

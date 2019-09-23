@@ -33,6 +33,14 @@ class AndroidBuilder extends PlatformBuilder {
           .toSet(),
       classes: classes.map<String>(
         (ClassInfo classInfo) => creator.createClass(
+          staticMethodCalls: classInfo.constructors.map<String>(
+            (ConstructorInfo constructorInfo) => creator.createStaticMethodCall(
+              MethodChannelStaticRedirect.constructor,
+              platformClassName:
+                  (classInfo.aClass.platform as AndroidPlatform).type.name,
+              methodName: '',
+            ),
+          ),
           constructors: classInfo.constructors.map<String>(
             (ConstructorInfo constructorInfo) => creator.createConstructor(
               platformClassName:
@@ -77,11 +85,13 @@ class AndroidBuilder extends PlatformBuilder {
           ).camelCase,
         ),
       ),
-      staticMethodCalls: classes.expand<String>(
+      staticRedirects: classes.expand<String>(
         (ClassInfo classInfo) => classInfo.constructors.map<String>(
-          (ConstructorInfo constructorInfo) => creator.createStaticMethodCall(
+          (ConstructorInfo constructorInfo) => creator.createStaticRedirect(
+            MethodChannelStaticRedirect.constructor,
             platformClassName:
                 (classInfo.aClass.platform as AndroidPlatform).type.name,
+            methodName: '',
           ),
         ),
       ),
