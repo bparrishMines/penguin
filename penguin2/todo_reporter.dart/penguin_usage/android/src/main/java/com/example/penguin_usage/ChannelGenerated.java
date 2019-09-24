@@ -129,6 +129,10 @@ public class ChannelGenerated implements MethodCallHandler {
           return TestGenericClassWrapper.onStaticMethodCall(this, call);
         }
       
+      case "TestClass#arePenguinsAwesome": {
+          return TestClassWrapper.onStaticMethodCall(this, call);
+        }
+      
       default:
         final String $uniqueId = call.argument("$uniqueId");
         if ($uniqueId == null) throw new NoUniqueIdException(call.method);
@@ -166,6 +170,10 @@ public class ChannelGenerated implements MethodCallHandler {
             return null;
           }
         
+        case "TestClass#arePenguinsAwesome": {
+            return TestClassWrapper.arePenguinsAwesome(call);
+          }
+        
         default:
           throw new NotImplementedException(call.method);
       }
@@ -201,9 +209,6 @@ public class ChannelGenerated implements MethodCallHandler {
         
         case "TestClass#getUsage2":
           return getUsage2(call);
-        
-        case "TestClass#arePenguinsAwesome":
-          return arePenguinsAwesome(call);
         
         default:
           throw new NotImplementedException(call.method);

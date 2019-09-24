@@ -40,6 +40,7 @@ class _MyAppState extends State<MyApp> {
               final GenericUsage<Usage1> g = GenericUsage<Usage1>()..setValue(Usage1());
               final Usage1 newG = await g.get();
               print(await newG.addTwo(2));
+              print(await Usage1.arePenguinsAwesome());
             },
             child: const Text('Click Me'),
           ),

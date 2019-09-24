@@ -759,7 +759,7 @@ class _Block {
         configs.add('redirect:constructor');
         break;
       case MethodChannelStaticRedirect.method:
-        configs.add('redirect:methed');
+        configs.add('redirect:method');
         break;
     }
 
@@ -775,7 +775,7 @@ class _Block {
         configs.add('redirect:constructor');
         break;
       case MethodChannelStaticRedirect.method:
-        configs.add('redirect:methed');
+        configs.add('redirect:method');
         break;
     }
 

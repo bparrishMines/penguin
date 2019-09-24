@@ -33,14 +33,29 @@ class AndroidBuilder extends PlatformBuilder {
           .toSet(),
       classes: classes.map<String>(
         (ClassInfo classInfo) => creator.createClass(
-          staticMethodCalls: classInfo.constructors.map<String>(
-            (ConstructorInfo constructorInfo) => creator.createStaticMethodCall(
-              MethodChannelStaticRedirect.constructor,
-              platformClassName:
-                  (classInfo.aClass.platform as AndroidPlatform).type.name,
-              methodName: '',
+          staticMethodCalls: <String>[
+            ...classInfo.constructors.map<String>(
+              (ConstructorInfo constructorInfo) =>
+                  creator.createStaticMethodCall(
+                MethodChannelStaticRedirect.constructor,
+                platformClassName:
+                    (classInfo.aClass.platform as AndroidPlatform).type.name,
+                methodName: '',
+              ),
             ),
-          ),
+            ...classInfo.methods
+                .where((MethodInfo methodInfo) => methodInfo.isStatic)
+                .map<String>(
+                  (MethodInfo methodInfo) => creator.createStaticMethodCall(
+                    MethodChannelStaticRedirect.method,
+                    platformClassName:
+                        (classInfo.aClass.platform as AndroidPlatform)
+                            .type
+                            .name,
+                    methodName: methodInfo.name,
+                  ),
+                ),
+          ],
           constructors: classInfo.constructors.map<String>(
             (ConstructorInfo constructorInfo) => creator.createConstructor(
               platformClassName:
@@ -74,13 +89,15 @@ class AndroidBuilder extends PlatformBuilder {
               ).camelCase,
             ),
           ),
-          methodCalls: classInfo.methods.map<String>(
-            (MethodInfo methodInfo) => creator.createMethodCall(
-              platformClassName:
-                  (classInfo.aClass.platform as AndroidPlatform).type.name,
-              methodName: methodInfo.name,
-            ),
-          ),
+          methodCalls: classInfo.methods
+              .where((MethodInfo methodInfo) => !methodInfo.isStatic)
+              .map<String>(
+                (MethodInfo methodInfo) => creator.createMethodCall(
+                  platformClassName:
+                      (classInfo.aClass.platform as AndroidPlatform).type.name,
+                  methodName: methodInfo.name,
+                ),
+              ),
           platformClassName:
               (classInfo.aClass.platform as AndroidPlatform).type.name,
           variableName: ReCase(
@@ -88,16 +105,30 @@ class AndroidBuilder extends PlatformBuilder {
           ).camelCase,
         ),
       ),
-      staticRedirects: classes.expand<String>(
-        (ClassInfo classInfo) => classInfo.constructors.map<String>(
-          (ConstructorInfo constructorInfo) => creator.createStaticRedirect(
-            MethodChannelStaticRedirect.constructor,
-            platformClassName:
-                (classInfo.aClass.platform as AndroidPlatform).type.name,
-            methodName: '',
+      staticRedirects: <String>[
+        ...classes.expand<String>(
+          (ClassInfo classInfo) => classInfo.constructors.map<String>(
+            (ConstructorInfo constructorInfo) => creator.createStaticRedirect(
+              MethodChannelStaticRedirect.constructor,
+              platformClassName:
+                  (classInfo.aClass.platform as AndroidPlatform).type.name,
+              methodName: '',
+            ),
           ),
         ),
-      ),
+        ...classes.expand<String>(
+          (ClassInfo classInfo) => classInfo.methods
+              .where((MethodInfo methodInfo) => methodInfo.isStatic)
+              .map<String>(
+                (MethodInfo methodInfo) => creator.createStaticRedirect(
+                  MethodChannelStaticRedirect.method,
+                  platformClassName:
+                      (classInfo.aClass.platform as AndroidPlatform).type.name,
+                  methodName: methodInfo.name,
+                ),
+              ),
+        )
+      ],
       package: _androidPackage,
     );
   }
