@@ -6,6 +6,10 @@ import java.util.List;
 import java.util.Map;
 
 public class TestClass {
+  public static Object arePenguinsAwesome() {
+    return true;
+  }
+
   public void aMethod() {
 
   }

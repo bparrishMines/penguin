@@ -53,6 +53,9 @@ class AndroidBuilder extends PlatformBuilder {
           methods: classInfo.methods.map<String>(
             (MethodInfo methodInfo) => creator.createMethod(
               getChannelType(methodInfo.returnType),
+              methodInfo.isStatic,
+              platformClassName:
+                  (classInfo.aClass.platform as AndroidPlatform).type.name,
               package: _androidPackage,
               parameters: methodInfo.parameters.map<String>(
                 (ParameterInfo parameterInfo) => creator.createParameter(

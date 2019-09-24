@@ -202,6 +202,9 @@ public class ChannelGenerated implements MethodCallHandler {
         case "TestClass#getUsage2":
           return getUsage2(call);
         
+        case "TestClass#arePenguinsAwesome":
+          return arePenguinsAwesome(call);
+        
         default:
           throw new NotImplementedException(call.method);
       }
@@ -213,7 +216,7 @@ public class ChannelGenerated implements MethodCallHandler {
     }
 
     
-    Object aMethod(MethodCall call) {
+     Object aMethod(MethodCall call) {
       
       
       
@@ -226,7 +229,7 @@ public class ChannelGenerated implements MethodCallHandler {
       
     }
     
-    Object getStringMethod(MethodCall call) {
+     Object getStringMethod(MethodCall call) {
       
       return
       
@@ -239,7 +242,7 @@ public class ChannelGenerated implements MethodCallHandler {
       
     }
     
-    Object addTwo(MethodCall call) {
+     Object addTwo(MethodCall call) {
       
       return
       
@@ -254,7 +257,7 @@ public class ChannelGenerated implements MethodCallHandler {
       
     }
     
-    Object divide(MethodCall call) {
+     Object divide(MethodCall call) {
       
       return
       
@@ -271,7 +274,7 @@ public class ChannelGenerated implements MethodCallHandler {
       
     }
     
-    Object getList(MethodCall call) {
+     Object getList(MethodCall call) {
       
       return
       
@@ -286,7 +289,7 @@ public class ChannelGenerated implements MethodCallHandler {
       
     }
     
-    Object giveUsage2(MethodCall call) {
+     Object giveUsage2(MethodCall call) {
       
       return
       
@@ -301,7 +304,7 @@ public class ChannelGenerated implements MethodCallHandler {
       
     }
     
-    Object getUsage2(MethodCall call) {
+     Object getUsage2(MethodCall call) {
       
       new TestClassTwoWrapper($channelGenerated, (String) call.argument("$newUniqueId"),
       
@@ -312,6 +315,19 @@ public class ChannelGenerated implements MethodCallHandler {
       
       );
       return null;
+      
+    }
+    
+    static Object arePenguinsAwesome(MethodCall call) {
+      
+      return
+      
+      
+      TestClass.arePenguinsAwesome(
+      
+      )
+      
+      ;
       
     }
     
@@ -427,7 +443,7 @@ public class ChannelGenerated implements MethodCallHandler {
     }
 
     
-    Object setValue(MethodCall call) {
+     Object setValue(MethodCall call) {
       
       
       
@@ -442,7 +458,7 @@ public class ChannelGenerated implements MethodCallHandler {
       
     }
     
-    Object get(MethodCall call) {
+     Object get(MethodCall call) {
       
       final Object result = 
       

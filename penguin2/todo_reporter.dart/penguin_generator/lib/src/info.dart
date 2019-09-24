@@ -32,7 +32,7 @@ class ClassInfo {
 
 @JsonSerializable()
 class MethodInfo {
-  const MethodInfo({this.name, this.method, this.returnType, this.parameters});
+  const MethodInfo({this.isStatic, this.name, this.method, this.returnType, this.parameters});
 
   factory MethodInfo.fromJson(Map json) => _$MethodInfoFromJson(json);
 
@@ -44,6 +44,9 @@ class MethodInfo {
 
   @JsonKey(required: true, disallowNullValue: true)
   final Method method;
+
+  @JsonKey(required: true, disallowNullValue: true)
+  final bool isStatic;
 
   @JsonKey(required: true, disallowNullValue: true)
   final Iterable<ParameterInfo> parameters;

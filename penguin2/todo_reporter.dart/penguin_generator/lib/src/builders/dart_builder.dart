@@ -24,6 +24,7 @@ class FlutterBuilder extends PlatformBuilder {
           methods: classInfo.methods.map<String>(
             (MethodInfo methodInfo) => creator.createMethod(
               getChannelType(methodInfo.returnType),
+              methodInfo.isStatic,
               parameters: methodInfo.parameters.map<String>(
                 (ParameterInfo parameterInfo) => creator.createParameter(
                   getChannelType(parameterInfo.type),

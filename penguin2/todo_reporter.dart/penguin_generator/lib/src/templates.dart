@@ -24,7 +24,7 @@ class $__className____typeParameters__ extends $Wrapper {
 
   %%METHODS%%
   %%METHOD%%
-  MethodCall $__methodName__(
+  static MethodCall $__methodName__(
   String $newUniqueId,
   %%PARAMETERS%%
   %%PARAMETER type:supported%%
@@ -308,7 +308,7 @@ public class ChannelGenerated implements MethodCallHandler {
 
     %%METHODS%%
     %%METHOD%%
-    Object __methodName__(MethodCall call) {
+    static Object __methodName__(MethodCall call) {
       %%PREMETHODCALLS%%
       %%PREMETHODCALL returns:void%%
       %%PREMETHODCALL returns:void%%
@@ -323,7 +323,7 @@ public class ChannelGenerated implements MethodCallHandler {
       %%PREMETHODCALL returns:typeParameter%%
       %%PREMETHODCALLS%%
       
-      $value.__methodName__(
+      __methodCallerName__.__methodName__(
       %%PARAMETERS%%
       %%PARAMETER type:supported%%
       call.argument("__parameterName__") == null ? null : (__parameterType__) call.argument("__parameterName__")
@@ -389,7 +389,8 @@ class MethodChannelTemplateCreator extends _TemplateCreator {
   _Template get template => _Template.methodChannel;
 
   String createMethod(
-    MethodChannelType returnTypeChannelType, {
+    MethodChannelType returnTypeChannelType,
+    bool isStatic, {
     Iterable<String> parameters,
     Iterable<String> methodCallParams,
     String platformClassName,
@@ -398,6 +399,8 @@ class MethodChannelTemplateCreator extends _TemplateCreator {
     return _replace(
       _Block.method.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
+        if (!isStatic) 'static': '',
+        if (isStatic) r"r'$uniqueId': $uniqueId,": '',
         _Block.parameters.exp: parameters.join(','),
         _Block.methodCallParams.exp: methodCallParams.join(),
         _Replacement.platformClassName.name: platformClassName,
@@ -481,16 +484,21 @@ class AndroidTemplateCreator extends _TemplateCreator {
   _Template get template => _Template.android;
 
   String createMethod(
-    MethodChannelType returnTypeChannelType, {
+    MethodChannelType returnTypeChannelType,
+    bool isStatic, {
     Iterable<String> parameters,
     String returnType,
     String methodName,
+    String platformClassName,
     String variableName,
     String package,
   }) {
     return _replace(
       _Block.method.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
+        if (!isStatic) 'static': '',
+        _Replacement.methodCallerName.name:
+            isStatic ? platformClassName : r'$value',
         _Block.preMethodCalls.exp:
             _Block.channelPreMethodCall(returnTypeChannelType)
                 .exp
@@ -820,4 +828,6 @@ class _Replacement {
   static final _Replacement parameterType = _Replacement('__parameterType__');
   static final _Replacement returnType = _Replacement('__returnType__');
   static final _Replacement typeParameters = _Replacement('__typeParameters__');
+  static final _Replacement methodCallerName =
+      _Replacement('__methodCallerName__');
 }

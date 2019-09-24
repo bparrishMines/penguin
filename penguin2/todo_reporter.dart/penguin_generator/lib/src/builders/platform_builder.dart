@@ -95,24 +95,25 @@ class ReadInfoBuilder extends Builder {
                       _methodAnnotation.hasAnnotationOfExact(element),
                 )
                 .map<MethodInfo>(
-                  (MethodElement element) => MethodInfo(
-                    parameters: element.parameters.map<ParameterInfo>(
+                  (MethodElement methodElement) => MethodInfo(
+                    isStatic: methodElement.isStatic,
+                    parameters: methodElement.parameters.map<ParameterInfo>(
                       (ParameterElement parameterElement) => ParameterInfo(
                         name: parameterElement.name,
                         type: _toTypeInfo(parameterElement.type),
                       ),
                     ),
-                    name: element.name,
-                    returnType: element.returnType.isDartAsyncFuture ||
-                            element.returnType.isDartAsyncFutureOr
+                    name: methodElement.name,
+                    returnType: methodElement.returnType.isDartAsyncFuture ||
+                            methodElement.returnType.isDartAsyncFutureOr
                         ? _toTypeInfo(
-                            (element.returnType as ParameterizedType)
+                            (methodElement.returnType as ParameterizedType)
                                 .typeArguments[0],
                           )
-                        : _toTypeInfo(element.returnType),
+                        : _toTypeInfo(methodElement.returnType),
                     method: AnnotationUtils.methodFromConstantReader(
                       ConstantReader(
-                        _methodAnnotation.firstAnnotationOfExact(element),
+                        _methodAnnotation.firstAnnotationOfExact(methodElement),
                       ),
                     ),
                   ),

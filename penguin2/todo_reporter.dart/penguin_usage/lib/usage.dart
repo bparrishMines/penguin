@@ -84,6 +84,14 @@ class Usage1 extends $Usage1 {
       [$aMethod(null), $aMethod(null)],
     ));
   }
+
+  @Method()
+  static Future<bool> arePenguinsAwesome() {
+    return PenguinUsage.channel.invokeMethod(
+      $Usage1.$arePenguinsAwesome(null).method,
+      $Usage1.$arePenguinsAwesome(null).arguments,
+    );
+  }
 }
 
 @Class(AndroidPlatform(
