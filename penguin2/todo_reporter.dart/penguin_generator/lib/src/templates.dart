@@ -101,7 +101,7 @@ Future<List<dynamic>> $invoke(
       )
       .toList();
 
-  return channel.invokeListMethod('MultiInvoke', calls);
+  return channel.invokeListMethod<dynamic>('MultiInvoke', calls);
 }
 ''');
 
@@ -272,7 +272,7 @@ public class ChannelGenerated implements MethodCallHandler {
         %%STATICMETHODCALL redirect:constructor%%
         %%STATICMETHODCALL redirect:method%%
         case "__platformClassName__#__methodName__": {
-            return __platformClassName__Wrapper.__methodName__(call);
+            return __platformClassName__Wrapper.__methodName__($channelGenerated, call);
           }
         %%STATICMETHODCALL redirect:method%%
         %%STATICMETHODCALLS%%
@@ -308,7 +308,7 @@ public class ChannelGenerated implements MethodCallHandler {
 
     %%METHODS%%
     %%METHOD%%
-    static Object __methodName__(MethodCall call) {
+    static Object __methodName__(ChannelGenerated $channelGenerated, MethodCall call) {
       %%PREMETHODCALLS%%
       %%PREMETHODCALL returns:void%%
       %%PREMETHODCALL returns:void%%
@@ -497,6 +497,7 @@ class AndroidTemplateCreator extends _TemplateCreator {
       _Block.method.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
         if (!isStatic) 'static': '',
+        if (!isStatic) r'ChannelGenerated $channelGenerated,': '',
         _Replacement.methodCallerName.name:
             isStatic ? platformClassName : r'$value',
         _Block.preMethodCalls.exp:
