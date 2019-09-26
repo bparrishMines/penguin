@@ -199,9 +199,10 @@ class WriteBuilder extends Builder {
 
     if (classes.isEmpty) return;
     for (PlatformBuilder builder in platformBuilders) {
-      final String filename = p.join(builder.directory, builder.filename);
-      print('Outputting: $filename');
-      File(filename).writeAsStringSync(_fileHeader + builder.build(classes));
+      await buildStep.writeAsString(
+        AssetId(buildStep.inputId.package, p.join('lib', builder.filename)),
+        _fileHeader + builder.build(classes),
+      );
     }
   }
 
@@ -209,8 +210,7 @@ class WriteBuilder extends Builder {
   Map<String, List<String>> get buildExtensions => <String, List<String>>{
         r'$lib$': platformBuilders
             .map<String>(
-              (PlatformBuilder builder) =>
-                  p.join(builder.directory, builder.filename),
+              (PlatformBuilder builder) => builder.filename,
             )
             .toList(),
       };

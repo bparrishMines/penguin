@@ -11,11 +11,13 @@ builders:
     builder_factories: ["readBuilder"]
     build_extensions: {".dart": [".penguin.g.info"]}
     build_to: cache
+    runs_before: [":write_builder"]
     auto_apply: dependents
-    applies_builders: [":write_builder"]
 
   write_builder:
     target: ":penguin_generator"
     import: "package:penguin_generator/builder.dart"
     builder_factories: ["writeBuilder"]
-    build_extensions: {r"$lib$": ["nada"]}
+    build_extensions: {r"$lib$": ["penguin.g.dart", "ChannelGenerated.java"]}
+    build_to: source
+    auto_apply: dependents
