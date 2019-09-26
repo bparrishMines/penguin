@@ -1,3 +1,4 @@
+import 'package:dart_style/dart_style.dart';
 import 'package:penguin/penguin.dart';
 import 'package:penguin_generator/src/info.dart';
 
@@ -8,7 +9,7 @@ class FlutterBuilder extends PlatformBuilder {
   @override
   String build(List<ClassInfo> classes) {
     final MethodChannelTemplateCreator creator = MethodChannelTemplateCreator();
-    return creator.createFile(
+    return DartFormatter().format(creator.createFile(
       classes: classes.map<String>(
         (ClassInfo classInfo) => creator.createClass(
           typeParameters: classInfo.typeParameters.map<String>(
@@ -48,7 +49,7 @@ class FlutterBuilder extends PlatformBuilder {
               (classInfo.aClass.platform as AndroidPlatform).type.name,
         ),
       ),
-    );
+    ));
   }
 
   @override
