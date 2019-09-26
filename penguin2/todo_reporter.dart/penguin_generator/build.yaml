@@ -2,7 +2,7 @@ targets:
   $default:
     builders:
       penguin_generator|penguin:
-        enabled: true
+        enabled: false
 
 builders:
   read_builder:
@@ -10,16 +10,12 @@ builders:
     import: "package:penguin_generator/builder.dart"
     builder_factories: ["readBuilder"]
     build_extensions: {".dart": [".penguin.g.info"]}
+    build_to: cache
     auto_apply: dependents
-    runs_before: [':write_builder']
-    build_to: source
-    applies_builders: ["source_gen|combining_builder"]
+    applies_builders: [":write_builder"]
 
   write_builder:
     target: ":penguin_generator"
     import: "package:penguin_generator/builder.dart"
     builder_factories: ["writeBuilder"]
-    build_extensions: {"$lib$": ["nada"]}
-    auto_apply: dependents
-    build_to: source
-    applies_builders: ["source_gen|combining_builder"]
+    build_extensions: {r"$lib$": ["nada"]}

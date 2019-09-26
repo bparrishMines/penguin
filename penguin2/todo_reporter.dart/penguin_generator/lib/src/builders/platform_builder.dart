@@ -199,8 +199,9 @@ class WriteBuilder extends Builder {
 
     if (classes.isEmpty) return;
     for (PlatformBuilder builder in platformBuilders) {
-      File(p.join(builder.directory, builder.filename))
-          .writeAsStringSync(_fileHeader + builder.build(classes));
+      final String filename = p.join(builder.directory, builder.filename);
+      print('Outputting: $filename');
+      File(filename).writeAsStringSync(_fileHeader + builder.build(classes));
     }
   }
 
