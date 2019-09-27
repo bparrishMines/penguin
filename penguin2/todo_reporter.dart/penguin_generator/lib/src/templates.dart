@@ -88,11 +88,23 @@ abstract class $Wrapper {
   }
 }
 
-Future<List<dynamic>> $invoke(
+Future<T> $invoke<T>(MethodChannel channel, MethodCall call) {
+  return channel.invokeMethod<T>(call.method, call.arguments);
+}
+
+Future<List<T>> $invokeList<T>(MethodChannel channel, MethodCall call) {
+  return channel.invokeListMethod<T>(call.method, call.arguments);
+}
+
+Future<Map<S, T>> $invokeMap<S, T>(MethodChannel channel, MethodCall call) {
+  return channel.invokeMapMethod<S, T>(call.method, call.arguments);
+}
+
+Future<List<dynamic>> $invokeAll(
   MethodChannel channel,
   List<MethodCall> methodCalls,
 ) {
-  final List<Map<String, dynamic>> calls = methodCalls
+  final List<Map<String, dynamic>> serializedCalls = methodCalls
       .map<Map<String, dynamic>>(
         (MethodCall methodCall) => <String, dynamic>{
           'method': methodCall.method,
@@ -101,8 +113,12 @@ Future<List<dynamic>> $invoke(
       )
       .toList();
 
-  return channel.invokeListMethod<dynamic>('MultiInvoke', calls);
+  return channel.invokeListMethod<dynamic>('MultiInvoke', serializedCalls);
 }
+
+bool _isTypeOf<ThisType, OfType>() =>
+    _Instance<ThisType>() is _Instance<OfType>;
+class _Instance<T> {}
 ''');
 
   static const _Template android = _Template._(r'''
