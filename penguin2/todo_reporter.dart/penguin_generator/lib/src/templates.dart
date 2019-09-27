@@ -25,18 +25,18 @@ class $__className____typeParameters__ extends $Wrapper {
   %%METHODS%%
   %%METHOD%%
   static MethodCall $__methodName__(
-  String $newUniqueId,
   %%PARAMETERS%%
   %%PARAMETER type:supported%%
-  __parameterType__ __parameterName__
+  __parameterType__ __parameterName__,
   %%PARAMETER type:supported%%
   %%PARAMETER type:wrapper%%
-  $__parameterType__ __parameterName__
+  $__parameterType__ __parameterName__,
   %%PARAMETER type:wrapper%%
   %%PARAMETER type:typeParameter%%
-  __parameterType__ __parameterName__
+  __parameterType__ __parameterName__,
   %%PARAMETER type:typeParameter%%
   %%PARAMETERS%%
+  [String $newUniqueId,]
   ) {
     return MethodCall(
       '__platformClassName__#__methodName__',
@@ -417,7 +417,7 @@ class MethodChannelTemplateCreator extends _TemplateCreator {
       <Pattern, String>{
         if (!isStatic) 'static': '',
         if (isStatic) r"r'$uniqueId': $uniqueId,": '',
-        _Block.parameters.exp: parameters.join(','),
+        _Block.parameters.exp: parameters.join(),
         _Block.methodCallParams.exp: methodCallParams.join(),
         _Replacement.platformClassName.name: platformClassName,
         _Replacement.methodName.name: methodName,
