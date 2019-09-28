@@ -43,6 +43,15 @@ class Constructor {
   String toString() => toJson().toString();
 }
 
+@JsonSerializable()
+class Field {
+  const Field();
+  factory Field.fromJson(Map json) => _$FieldFromJson(json);
+  Map toJson() => _$FieldToJson(this);
+  @override
+  String toString() => toJson().toString();
+}
+
 abstract class Platform {
   const Platform(this.name);
 

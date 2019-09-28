@@ -16,6 +16,7 @@ import '../templates.dart';
 
 const TypeChecker _classAnnotation = const TypeChecker.fromRuntime(Class);
 const TypeChecker _methodAnnotation = const TypeChecker.fromRuntime(Method);
+const TypeChecker _fieldAnnotation = const TypeChecker.fromRuntime(Field);
 const TypeChecker _constructorAnnotation =
     const TypeChecker.fromRuntime(Constructor);
 
@@ -114,6 +115,30 @@ class ReadInfoBuilder extends Builder {
                     method: AnnotationUtils.methodFromConstantReader(
                       ConstantReader(
                         _methodAnnotation.firstAnnotationOfExact(methodElement),
+                      ),
+                    ),
+                  ),
+                ),
+            fields: (element.element as ClassElement)
+                .fields
+                .where(
+                  (FieldElement fieldElement) =>
+                      _fieldAnnotation.hasAnnotationOfExact(fieldElement),
+                )
+                .map<FieldInfo>(
+                  (FieldElement fieldElement) => FieldInfo(
+                    isStatic: fieldElement.isStatic,
+                    name: fieldElement.name,
+                    returnType: fieldElement.type.isDartAsyncFuture ||
+                            fieldElement.type.isDartAsyncFutureOr
+                        ? _toTypeInfo(
+                            (fieldElement.type as ParameterizedType)
+                                .typeArguments[0],
+                          )
+                        : _toTypeInfo(fieldElement.type),
+                    field: AnnotationUtils.fieldFromConstantReader(
+                      ConstantReader(
+                        _fieldAnnotation.firstAnnotationOfExact(fieldElement),
                       ),
                     ),
                   ),

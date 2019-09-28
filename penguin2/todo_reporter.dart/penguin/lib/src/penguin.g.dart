@@ -40,6 +40,12 @@ Constructor _$ConstructorFromJson(Map<String, dynamic> json) {
 Map<String, dynamic> _$ConstructorToJson(Constructor instance) =>
     <String, dynamic>{};
 
+Field _$FieldFromJson(Map<String, dynamic> json) {
+  return Field();
+}
+
+Map<String, dynamic> _$FieldToJson(Field instance) => <String, dynamic>{};
+
 AndroidPlatform _$AndroidPlatformFromJson(Map<String, dynamic> json) {
   $checkKeys(json,
       requiredKeys: const ['type'], disallowNullValues: const ['type']);

@@ -21,6 +21,21 @@ class $__className____typeParameters__ extends $Wrapper {
   }
   %%CONSTRUCTOR%%
   %%CONSTRUCTORS%%
+  
+  %%FIELDS%%
+  %%FIELD%%
+  static MethodCall $__fieldName__({__fieldType__ __fieldName__, String $newUniqueId,}) {
+    return MethodCall(
+      '__platformClassName__.__fieldName__',
+      <String, dynamic>{
+        r'$uniqueId': $uniqueId,
+        r'$newUniqueId': $newUniqueId,
+        '__fieldName__': __fieldName__,
+      },
+    );
+  }
+  %%FIELD%%
+  %%FIELDS%%
 
   %%METHODS%%
   %%METHOD%%
@@ -405,7 +420,6 @@ class MethodChannelTemplateCreator extends _TemplateCreator {
   _Template get template => _Template.methodChannel;
 
   String createMethod(
-    MethodChannelType returnTypeChannelType,
     bool isStatic, {
     Iterable<String> parameters,
     Iterable<String> methodCallParams,
@@ -421,6 +435,24 @@ class MethodChannelTemplateCreator extends _TemplateCreator {
         _Block.methodCallParams.exp: methodCallParams.join(),
         _Replacement.platformClassName.name: platformClassName,
         _Replacement.methodName.name: methodName,
+      },
+    );
+  }
+
+  String createField(
+    bool isStatic, {
+    String platformClassName,
+    String fieldName,
+    String fieldType,
+  }) {
+    return _replace(
+      _Block.field.exp.firstMatch(template.value).group(1),
+      <Pattern, String>{
+        if (!isStatic) 'static': '',
+        if (isStatic) r"r'$uniqueId': $uniqueId,": '',
+        _Replacement.platformClassName.name: platformClassName,
+        _Replacement.fieldName.name: fieldName,
+        _Replacement.fieldType.name: fieldType,
       },
     );
   }
@@ -461,6 +493,7 @@ class MethodChannelTemplateCreator extends _TemplateCreator {
     Iterable<String> typeParameters,
     Iterable<String> constructors,
     Iterable<String> methods,
+    Iterable<String> fields,
     String className,
     String platformClassName,
   }) {
@@ -472,6 +505,7 @@ class MethodChannelTemplateCreator extends _TemplateCreator {
         _Block.constructors.exp: constructors.join(),
         _Block.methods.exp: methods.join(),
         _Replacement.className.name: className,
+        _Block.fields.exp: fields.join(),
         _Replacement.platformClassName.name: platformClassName,
       },
     );
@@ -802,6 +836,9 @@ class _Block {
   static final _Block parameters = _Block('PARAMETERS');
   static final _Block parameter = _Block('PARAMETER');
 
+  static final _Block fields = _Block('FIELDS');
+  static final _Block field = _Block('FIELD');
+
   static _Block methodCallParam(MethodChannelType type) {
     final List<String> configs = <String>[];
     switch (type) {
@@ -847,4 +884,6 @@ class _Replacement {
   static final _Replacement typeParameters = _Replacement('__typeParameters__');
   static final _Replacement methodCallerName =
       _Replacement('__methodCallerName__');
+  static final _Replacement fieldName = _Replacement('__fieldName__');
+  static final _Replacement fieldType = _Replacement('__fieldType__');
 }

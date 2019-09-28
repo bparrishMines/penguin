@@ -5,7 +5,14 @@ part 'info.g.dart';
 
 @JsonSerializable()
 class ClassInfo {
-  const ClassInfo({this.typeParameters, this.name, this.aClass, this.constructors, this.methods});
+  const ClassInfo({
+    this.typeParameters,
+    this.name,
+    this.aClass,
+    this.constructors,
+    this.methods,
+    this.fields,
+  });
 
   factory ClassInfo.fromJson(Map json) => _$ClassInfoFromJson(json);
 
@@ -24,6 +31,9 @@ class ClassInfo {
   @JsonKey(required: true, disallowNullValue: true)
   final Iterable<MethodInfo> methods;
 
+  @JsonKey(required: true, disallowNullValue: true)
+  final Iterable<FieldInfo> fields;
+
   Map toJson() => _$ClassInfoToJson(this);
 
   @override
@@ -32,7 +42,12 @@ class ClassInfo {
 
 @JsonSerializable()
 class MethodInfo {
-  const MethodInfo({this.isStatic, this.name, this.method, this.returnType, this.parameters});
+  const MethodInfo(
+      {this.isStatic,
+      this.name,
+      this.method,
+      this.returnType,
+      this.parameters});
 
   factory MethodInfo.fromJson(Map json) => _$MethodInfoFromJson(json);
 
@@ -52,6 +67,30 @@ class MethodInfo {
   final Iterable<ParameterInfo> parameters;
 
   Map toJson() => _$MethodInfoToJson(this);
+
+  @override
+  String toString() => toJson().toString();
+}
+
+@JsonSerializable()
+class FieldInfo {
+  const FieldInfo({this.isStatic, this.name, this.field, this.returnType});
+
+  factory FieldInfo.fromJson(Map json) => _$FieldInfoFromJson(json);
+
+  @JsonKey(required: true, disallowNullValue: true)
+  final String name;
+
+  @JsonKey(required: true, disallowNullValue: true)
+  final TypeInfo returnType;
+
+  @JsonKey(required: true, disallowNullValue: true)
+  final Field field;
+
+  @JsonKey(required: true, disallowNullValue: true)
+  final bool isStatic;
+
+  Map toJson() => _$FieldInfoToJson(this);
 
   @override
   String toString() => toJson().toString();

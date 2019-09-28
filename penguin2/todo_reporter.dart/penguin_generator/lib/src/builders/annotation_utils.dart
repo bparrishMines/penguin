@@ -14,6 +14,10 @@ class AnnotationUtils {
     return Method();
   }
 
+  static Field fieldFromConstantReader(ConstantReader reader) {
+    return Field();
+  }
+
   static Platform _platformFromConstantReader(ConstantReader reader) {
     final String platform = reader.read('name').stringValue;
 

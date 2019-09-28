@@ -24,7 +24,6 @@ class FlutterBuilder extends PlatformBuilder {
           ),
           methods: classInfo.methods.map<String>(
             (MethodInfo methodInfo) => creator.createMethod(
-              getChannelType(methodInfo.returnType),
               methodInfo.isStatic,
               parameters: methodInfo.parameters.map<String>(
                 (ParameterInfo parameterInfo) => creator.createParameter(
@@ -42,6 +41,15 @@ class FlutterBuilder extends PlatformBuilder {
               platformClassName:
                   (classInfo.aClass.platform as AndroidPlatform).type.name,
               methodName: methodInfo.name,
+            ),
+          ),
+          fields: classInfo.fields.map<String>(
+            (FieldInfo fieldInfo) => creator.createField(
+              fieldInfo.isStatic,
+              platformClassName:
+                  (classInfo.aClass.platform as AndroidPlatform).type.name,
+              fieldName: fieldInfo.name,
+              fieldType: fieldInfo.returnType.name,
             ),
           ),
           className: classInfo.name,

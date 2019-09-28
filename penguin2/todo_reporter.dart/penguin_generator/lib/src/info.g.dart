@@ -12,13 +12,15 @@ ClassInfo _$ClassInfoFromJson(Map<String, dynamic> json) {
     'name',
     'aClass',
     'constructors',
-    'methods'
+    'methods',
+    'fields'
   ], disallowNullValues: const [
     'typeParameters',
     'name',
     'aClass',
     'constructors',
-    'methods'
+    'methods',
+    'fields'
   ]);
   return ClassInfo(
     typeParameters: (json['typeParameters'] as List)?.map(
@@ -31,6 +33,8 @@ ClassInfo _$ClassInfoFromJson(Map<String, dynamic> json) {
         e == null ? null : ConstructorInfo.fromJson(e as Map<String, dynamic>)),
     methods: (json['methods'] as List)?.map((e) =>
         e == null ? null : MethodInfo.fromJson(e as Map<String, dynamic>)),
+    fields: (json['fields'] as List)?.map((e) =>
+        e == null ? null : FieldInfo.fromJson(e as Map<String, dynamic>)),
   );
 }
 
@@ -48,6 +52,7 @@ Map<String, dynamic> _$ClassInfoToJson(ClassInfo instance) {
   writeNotNull('aClass', instance.aClass);
   writeNotNull('constructors', instance.constructors?.toList());
   writeNotNull('methods', instance.methods?.toList());
+  writeNotNull('fields', instance.fields?.toList());
   return val;
 }
 
@@ -93,6 +98,38 @@ Map<String, dynamic> _$MethodInfoToJson(MethodInfo instance) {
   writeNotNull('method', instance.method);
   writeNotNull('isStatic', instance.isStatic);
   writeNotNull('parameters', instance.parameters?.toList());
+  return val;
+}
+
+FieldInfo _$FieldInfoFromJson(Map<String, dynamic> json) {
+  $checkKeys(json,
+      requiredKeys: const ['name', 'returnType', 'field', 'isStatic'],
+      disallowNullValues: const ['name', 'returnType', 'field', 'isStatic']);
+  return FieldInfo(
+    isStatic: json['isStatic'] as bool,
+    name: json['name'] as String,
+    field: json['field'] == null
+        ? null
+        : Field.fromJson(json['field'] as Map<String, dynamic>),
+    returnType: json['returnType'] == null
+        ? null
+        : TypeInfo.fromJson(json['returnType'] as Map<String, dynamic>),
+  );
+}
+
+Map<String, dynamic> _$FieldInfoToJson(FieldInfo instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('name', instance.name);
+  writeNotNull('returnType', instance.returnType);
+  writeNotNull('field', instance.field);
+  writeNotNull('isStatic', instance.isStatic);
   return val;
 }
 
