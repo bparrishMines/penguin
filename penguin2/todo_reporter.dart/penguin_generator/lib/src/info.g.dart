@@ -111,7 +111,7 @@ FieldInfo _$FieldInfoFromJson(Map<String, dynamic> json) {
     field: json['field'] == null
         ? null
         : Field.fromJson(json['field'] as Map<String, dynamic>),
-    returnType: json['returnType'] == null
+    type: json['returnType'] == null
         ? null
         : TypeInfo.fromJson(json['returnType'] as Map<String, dynamic>),
   );
@@ -127,7 +127,7 @@ Map<String, dynamic> _$FieldInfoToJson(FieldInfo instance) {
   }
 
   writeNotNull('name', instance.name);
-  writeNotNull('returnType', instance.returnType);
+  writeNotNull('returnType', instance.type);
   writeNotNull('field', instance.field);
   writeNotNull('isStatic', instance.isStatic);
   return val;

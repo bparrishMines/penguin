@@ -129,7 +129,7 @@ class ReadInfoBuilder extends Builder {
                   (FieldElement fieldElement) => FieldInfo(
                     isStatic: fieldElement.isStatic,
                     name: fieldElement.name,
-                    returnType: fieldElement.type.isDartAsyncFuture ||
+                    type: fieldElement.type.isDartAsyncFuture ||
                             fieldElement.type.isDartAsyncFutureOr
                         ? _toTypeInfo(
                             (fieldElement.type as ParameterizedType)

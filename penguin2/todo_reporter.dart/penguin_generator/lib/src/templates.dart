@@ -24,13 +24,37 @@ class $__className____typeParameters__ extends $Wrapper {
   
   %%FIELDS%%
   %%FIELD%%
-  static MethodCall $__fieldName__({__fieldType__ __fieldName__, String $newUniqueId,}) {
+  static MethodCall $__fieldName__({
+    %%FIELDSETTERS%%
+    %%FIELDSETTER type:supported%%
+    __fieldType__ __fieldName__,
+    %%FIELDSETTER type:supported%%
+    %%FIELDSETTER type:wrapper%%
+    $__fieldType__ __fieldName__,
+    %%FIELDSETTER type:wrapper%%
+    %%FIELDSETTER type:typeParameter%%
+    __fieldType__ __fieldName__,
+    %%FIELDSETTER type:typeParameter%%
+    %%FIELDSETTERS%%
+    String $newUniqueId,
+  }) {
     return MethodCall(
       '__platformClassName__.__fieldName__',
       <String, dynamic>{
         r'$uniqueId': $uniqueId,
         r'$newUniqueId': $newUniqueId,
+        %%FIELDSETTERPARAMS%%
+        %%FIELDSETTERPARAM type:supported%%
         '__fieldName__': __fieldName__,
+        %%FIELDSETTERPARAM type:supported%%
+        %%FIELDSETTERPARAM type:wrapper%%
+        '__fieldName__': __fieldName__.$uniqueId,
+        %%FIELDSETTERPARAM type:wrapper%%
+        %%FIELDSETTERPARAM type:typeParameter%%
+        if (__fieldName__ is $Wrapper) '__fieldName__': __fieldName__.$uniqueId,
+        if (__fieldName__ is! $Wrapper) '__fieldName__': __fieldName__,
+        %%FIELDSETTERPARAM type:typeParameter%%
+        %%FIELDSETTERPARAMS%%
       },
     );
   }
@@ -444,6 +468,8 @@ class MethodChannelTemplateCreator extends _TemplateCreator {
     String platformClassName,
     String fieldName,
     String fieldType,
+    String fieldSetterParam,
+    String fieldSetter,
   }) {
     return _replace(
       _Block.field.exp.firstMatch(template.value).group(1),
@@ -453,6 +479,25 @@ class MethodChannelTemplateCreator extends _TemplateCreator {
         _Replacement.platformClassName.name: platformClassName,
         _Replacement.fieldName.name: fieldName,
         _Replacement.fieldType.name: fieldType,
+        _Block.fieldSetterParams.exp: fieldSetterParam,
+        _Block.fieldSetters.exp: fieldSetter,
+      },
+    );
+  }
+
+  String createFieldSetter(
+    MethodChannelType channelType, {
+    String fieldType,
+    String fieldName,
+  }) {
+    return _replace(
+      _Block.channelFieldSetter(channelType)
+          .exp
+          .firstMatch(template.value)
+          .group(1),
+      <Pattern, String>{
+        _Replacement.fieldType.name: fieldType,
+        _Replacement.fieldName.name: fieldName,
       },
     );
   }
@@ -470,6 +515,19 @@ class MethodChannelTemplateCreator extends _TemplateCreator {
       <Pattern, String>{
         _Replacement.parameterType.name: parameterType,
         _Replacement.parameterName.name: parameterName,
+      },
+    );
+  }
+
+  String createFieldSetterParam(MethodChannelType channelType,
+      {String fieldName}) {
+    return _replace(
+      _Block.channelFieldSetterParam(channelType)
+          .exp
+          .firstMatch(template.value)
+          .group(1),
+      <Pattern, String>{
+        _Replacement.fieldName.name: fieldName,
       },
     );
   }
@@ -724,7 +782,6 @@ class _Block {
   static final _Block method = _Block('METHOD');
 
   static final _Block preMethodCalls = _Block('PREMETHODCALLS');
-
   //  For Android and iOS
   static _Block channelPreMethodCall(MethodChannelType type) {
     final List<String> configs = <String>[];
@@ -836,9 +893,34 @@ class _Block {
   static final _Block parameters = _Block('PARAMETERS');
   static final _Block parameter = _Block('PARAMETER');
 
+  static final _Block fieldSetters = _Block('FIELDSETTERS');
+  static _Block channelFieldSetter(MethodChannelType type) {
+    final List<String> configs = <String>[];
+    switch (type) {
+      case MethodChannelType.wrapper:
+        configs.add('type:wrapper');
+        break;
+      case MethodChannelType.supported:
+        configs.add('type:supported');
+        break;
+      case MethodChannelType.typeParameter:
+        configs.add('type:typeParameter');
+        break;
+      case MethodChannelType.$void:
+        throw ArgumentError.value(
+          type,
+          'type',
+          'Not supported for MethodCall parameters.',
+        );
+    }
+
+    return _Block('FIELDSETTER', configs.join(' '));
+  }
+
   static final _Block fields = _Block('FIELDS');
   static final _Block field = _Block('FIELD');
 
+  static final _Block methodCallParams = _Block('METHODCALLPARAMS');
   static _Block methodCallParam(MethodChannelType type) {
     final List<String> configs = <String>[];
     switch (type) {
@@ -862,7 +944,29 @@ class _Block {
     return _Block('METHODCALLPARAM', configs.join(' '));
   }
 
-  static final _Block methodCallParams = _Block('METHODCALLPARAMS');
+  static final _Block fieldSetterParams = _Block('FIELDSETTERPARAMS');
+  static _Block channelFieldSetterParam(MethodChannelType type) {
+    final List<String> configs = <String>[];
+    switch (type) {
+      case MethodChannelType.wrapper:
+        configs.add('type:wrapper');
+        break;
+      case MethodChannelType.supported:
+        configs.add('type:supported');
+        break;
+      case MethodChannelType.typeParameter:
+        configs.add('type:typeParameter');
+        break;
+      case MethodChannelType.$void:
+        throw ArgumentError.value(
+          type,
+          'type',
+          'Not supported for MethodCall parameters.',
+        );
+    }
+
+    return _Block('FIELDSETTERPARAM', configs.join(' '));
+  }
 }
 
 class _Replacement {

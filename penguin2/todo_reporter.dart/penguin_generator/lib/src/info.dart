@@ -74,7 +74,7 @@ class MethodInfo {
 
 @JsonSerializable()
 class FieldInfo {
-  const FieldInfo({this.isStatic, this.name, this.field, this.returnType});
+  const FieldInfo({this.isStatic, this.name, this.field, this.type});
 
   factory FieldInfo.fromJson(Map json) => _$FieldInfoFromJson(json);
 
@@ -82,7 +82,7 @@ class FieldInfo {
   final String name;
 
   @JsonKey(required: true, disallowNullValue: true)
-  final TypeInfo returnType;
+  final TypeInfo type;
 
   @JsonKey(required: true, disallowNullValue: true)
   final Field field;

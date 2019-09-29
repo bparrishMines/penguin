@@ -49,7 +49,16 @@ class FlutterBuilder extends PlatformBuilder {
               platformClassName:
                   (classInfo.aClass.platform as AndroidPlatform).type.name,
               fieldName: fieldInfo.name,
-              fieldType: fieldInfo.returnType.name,
+              fieldType: fieldInfo.type.name,
+              fieldSetterParam: creator.createFieldSetterParam(
+                getChannelType(fieldInfo.type),
+                fieldName: fieldInfo.name,
+              ),
+              fieldSetter: creator.createFieldSetter(
+                getChannelType(fieldInfo.type),
+                fieldType: fieldInfo.type.name,
+                fieldName: fieldInfo.name,
+              ),
             ),
           ),
           className: classInfo.name,
