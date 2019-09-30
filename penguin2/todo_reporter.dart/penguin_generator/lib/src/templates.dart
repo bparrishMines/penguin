@@ -26,15 +26,15 @@ class $__className____typeParameters__ extends $Wrapper {
   %%FIELD%%
   static MethodCall $__fieldName__({
     %%FIELDSETTERS%%
-    %%FIELDSETTER type:supported%%
+    %%FIELDSETTER methodChannel:supported%%
     __fieldType__ __fieldName__,
-    %%FIELDSETTER type:supported%%
-    %%FIELDSETTER type:wrapper%%
+    %%FIELDSETTER methodChannel:supported%%
+    %%FIELDSETTER methodChannel:wrapper%%
     $__fieldType__ __fieldName__,
-    %%FIELDSETTER type:wrapper%%
-    %%FIELDSETTER type:typeParameter%%
+    %%FIELDSETTER methodChannel:wrapper%%
+    %%FIELDSETTER methodChannel:typeParameter%%
     __fieldType__ __fieldName__,
-    %%FIELDSETTER type:typeParameter%%
+    %%FIELDSETTER methodChannel:typeParameter%%
     %%FIELDSETTERS%%
     String $newUniqueId,
   }) {
@@ -44,16 +44,16 @@ class $__className____typeParameters__ extends $Wrapper {
         r'$uniqueId': $uniqueId,
         r'$newUniqueId': $newUniqueId,
         %%FIELDSETTERPARAMS%%
-        %%FIELDSETTERPARAM type:supported%%
+        %%FIELDSETTERPARAM methodChannel:supported%%
         '__fieldName__': __fieldName__,
-        %%FIELDSETTERPARAM type:supported%%
-        %%FIELDSETTERPARAM type:wrapper%%
+        %%FIELDSETTERPARAM methodChannel:supported%%
+        %%FIELDSETTERPARAM methodChannel:wrapper%%
         '__fieldName__': __fieldName__.$uniqueId,
-        %%FIELDSETTERPARAM type:wrapper%%
-        %%FIELDSETTERPARAM type:typeParameter%%
+        %%FIELDSETTERPARAM methodChannel:wrapper%%
+        %%FIELDSETTERPARAM methodChannel:typeParameter%%
         if (__fieldName__ is $Wrapper) '__fieldName__': __fieldName__.$uniqueId,
         if (__fieldName__ is! $Wrapper) '__fieldName__': __fieldName__,
-        %%FIELDSETTERPARAM type:typeParameter%%
+        %%FIELDSETTERPARAM methodChannel:typeParameter%%
         %%FIELDSETTERPARAMS%%
       },
     );
@@ -65,15 +65,15 @@ class $__className____typeParameters__ extends $Wrapper {
   %%METHOD%%
   static MethodCall $__methodName__(
   %%PARAMETERS%%
-  %%PARAMETER type:supported%%
+  %%PARAMETER methodChannel:supported%%
   __parameterType__ __parameterName__,
-  %%PARAMETER type:supported%%
-  %%PARAMETER type:wrapper%%
+  %%PARAMETER methodChannel:supported%%
+  %%PARAMETER methodChannel:wrapper%%
   $__parameterType__ __parameterName__,
-  %%PARAMETER type:wrapper%%
-  %%PARAMETER type:typeParameter%%
+  %%PARAMETER methodChannel:wrapper%%
+  %%PARAMETER methodChannel:typeParameter%%
   __parameterType__ __parameterName__,
-  %%PARAMETER type:typeParameter%%
+  %%PARAMETER methodChannel:typeParameter%%
   %%PARAMETERS%%
   [String $newUniqueId,]
   ) {
@@ -82,16 +82,16 @@ class $__className____typeParameters__ extends $Wrapper {
        <String, dynamic>{r'$uniqueId': $uniqueId,
        r'$newUniqueId': $newUniqueId,
        %%METHODCALLPARAMS%%
-       %%METHODCALLPARAM type:supported%%
+       %%METHODCALLPARAM methodChannel:supported%%
        '__parameterName__': __parameterName__,
-       %%METHODCALLPARAM type:supported%%
-       %%METHODCALLPARAM type:wrapper%%
+       %%METHODCALLPARAM methodChannel:supported%%
+       %%METHODCALLPARAM methodChannel:wrapper%%
        '__parameterName__': __parameterName__.$uniqueId,
-       %%METHODCALLPARAM type:wrapper%%
-       %%METHODCALLPARAM type:typeParameter%%
+       %%METHODCALLPARAM methodChannel:wrapper%%
+       %%METHODCALLPARAM methodChannel:typeParameter%%
        if (__parameterName__ is $Wrapper) '__parameterName__': __parameterName__.$uniqueId,
        if (__parameterName__ is! $Wrapper) '__parameterName__': __parameterName__,
-       %%METHODCALLPARAM type:typeParameter%%
+       %%METHODCALLPARAM methodChannel:typeParameter%%
        %%METHODCALLPARAMS%%
        },
     );
@@ -273,21 +273,21 @@ public class ChannelGenerated implements MethodCallHandler {
         }
         return resultData;
       %%STATICREDIRECTS%%
-      %%STATICREDIRECT redirect:constructor%%
+      %%STATICREDIRECT classMember:constructor%%
       case "__platformClassName__()": {
           return __platformClassName__Wrapper.onStaticMethodCall(this, call);
         }
-      %%STATICREDIRECT redirect:constructor%%
-      %%STATICREDIRECT redirect:method%%
+      %%STATICREDIRECT classMember:constructor%%
+      %%STATICREDIRECT classMember:method%%
       case "__platformClassName__#__methodName__": {
           return __platformClassName__Wrapper.onStaticMethodCall(this, call);
         }
-      %%STATICREDIRECT redirect:method%%
-      %%STATICREDIRECT redirect:field%%
+      %%STATICREDIRECT classMember:method%%
+      %%STATICREDIRECT classMember:field%%
       case "__platformClassName__.__fieldName__": {
           return __platformClassName__Wrapper.onStaticMethodCall(this, call);
         }
-      %%STATICREDIRECT redirect:field%%
+      %%STATICREDIRECT classMember:field%%
       %%STATICREDIRECTS%%
       default:
         final String $uniqueId = call.argument("$uniqueId");
@@ -324,22 +324,22 @@ public class ChannelGenerated implements MethodCallHandler {
     static Object onStaticMethodCall(ChannelGenerated $channelGenerated, MethodCall call) throws NotImplementedException {
       switch(call.method) {
         %%STATICMETHODCALLS%%
-        %%STATICMETHODCALL redirect:constructor%%
+        %%STATICMETHODCALL classMember:constructor%%
         case "__platformClassName__()": {
             new __platformClassName__Wrapper($channelGenerated, (String) call.argument("$uniqueId"));
             return null;
           }
-        %%STATICMETHODCALL redirect:constructor%%
-        %%STATICMETHODCALL redirect:method%%
+        %%STATICMETHODCALL classMember:constructor%%
+        %%STATICMETHODCALL classMember:method%%
         case "__platformClassName__#__methodName__": {
             return __platformClassName__Wrapper.__methodName__($channelGenerated, call);
           }
-        %%STATICMETHODCALL redirect:method%%
-        %%STATICMETHODCALL redirect:field%%
+        %%STATICMETHODCALL classMember:method%%
+        %%STATICMETHODCALL classMember:field%%
         case "__platformClassName__.__fieldName__": {
             return __platformClassName__Wrapper.__fieldName__($channelGenerated, call);
           }
-        %%STATICMETHODCALL redirect:field%%
+        %%STATICMETHODCALL classMember:field%%
         %%STATICMETHODCALLS%%
         default:
           throw new NotImplementedException(call.method);
@@ -356,14 +356,14 @@ public class ChannelGenerated implements MethodCallHandler {
           deallocate();
           return null;
         %%METHODCALLS%%
-        %%METHODCALL call:method%%
+        %%METHODCALL classMember:method%%
         case "__platformClassName__#__methodName__":
           return __methodName__(call);
-        %%METHODCALL call:method%%
-        %%METHODCALL call:field%%
+        %%METHODCALL classMember:method%%
+        %%METHODCALL classMember:field%%
         case "__platformClassName__.__fieldName__":
           return __fieldName__(call);
-        %%METHODCALL call:field%%
+        %%METHODCALL classMember:field%%
         %%METHODCALLS%%
         default:
           throw new NotImplementedException(call.method);
@@ -381,40 +381,40 @@ public class ChannelGenerated implements MethodCallHandler {
       if (call.argument("__fieldName__") != null) {
         __methodCallerName__.__fieldName__ =
         %%FIELDSETTERS%%
-        %%FIELDSETTER type:supported%%
+        %%FIELDSETTER methodChannel:supported%%
         call.argument("__fieldName__") != null ? (__fieldType__) call.argument("__fieldName__") : null;
-        %%FIELDSETTER type:supported%%
-        %%FIELDSETTER type:wrapper%%
+        %%FIELDSETTER methodChannel:supported%%
+        %%FIELDSETTER methodChannel:wrapper%%
         call.argument("__fieldName__") != null ? ((__fieldType__Wrapper) $channelGenerated.getWrapper((String) call.argument("__fieldName__"))).$value : null;
-        %%FIELDSETTER type:wrapper%%
-        %%FIELDSETTER type:typeParameter%%
+        %%FIELDSETTER methodChannel:wrapper%%
+        %%FIELDSETTER methodChannel:typeParameter%%
         call.argument("__fieldName__") != null && call.argument("__fieldName__") instanceOf String && $channelGenerated.getWrapper((String) call.argument("__fieldName__")) != null ? $channelGenerated.getWrapper((String) call.argument("__fieldName__")).$getValue() : call.argument("__fieldName__");
-        %%FIELDSETTER type:typeParameter%%
+        %%FIELDSETTER methodChannel:typeParameter%%
         %%FIELDSETTERS%%
       } 
       
       %%PREFIELDACCESSES%%
-      %%PREFIELDACCESS type:supported%%
+      %%PREFIELDACCESS methodChannel:supported%%
       return
-      %%PREFIELDACCESS type:supported%%
-      %%PREFIELDACCESS type:wrapper%%
+      %%PREFIELDACCESS methodChannel:supported%%
+      %%PREFIELDACCESS methodChannel:wrapper%%
       new __fieldType__Wrapper($channelGenerated, (String) call.argument("$newUniqueId"), 
-      %%PREFIELDACCESS type:wrapper%%
-      %%PREFIELDACCESS type:typeParameter%%
+      %%PREFIELDACCESS methodChannel:wrapper%%
+      %%PREFIELDACCESS methodChannel:typeParameter%%
       final Object result = 
-      %%PREFIELDACCESS type:typeParameter%%
+      %%PREFIELDACCESS methodChannel:typeParameter%%
       %%PREFIELDACCESSES%%
       __methodCallerName__.__fieldName__
       
       %%POSTFIELDACCESSES%%
-      %%POSTFIELDACCESS type:supported%%
+      %%POSTFIELDACCESS methodChannel:supported%%
       ;
-      %%POSTFIELDACCESS type:supported%%
-      %%POSTFIELDACCESS type:wrapper%%
+      %%POSTFIELDACCESS methodChannel:supported%%
+      %%POSTFIELDACCESS methodChannel:wrapper%%
       );
       return null;
-      %%POSTFIELDACCESS type:wrapper%%
-      %%POSTFIELDACCESS type:typeParameter%%
+      %%POSTFIELDACCESS methodChannel:wrapper%%
+      %%POSTFIELDACCESS methodChannel:typeParameter%%
       ;
       if (result == null) return null;
 
@@ -438,7 +438,7 @@ public class ChannelGenerated implements MethodCallHandler {
         e.printStackTrace();
       }
       return null;
-      %%POSTFIELDACCESS type:typeParameter%%
+      %%POSTFIELDACCESS methodChannel:typeParameter%%
       %%POSTFIELDACCESSES%%
     }
     %%FIELD%%
@@ -448,45 +448,45 @@ public class ChannelGenerated implements MethodCallHandler {
     %%METHOD%%
     static Object __methodName__(ChannelGenerated $channelGenerated, MethodCall call) {
       %%PREMETHODCALLS%%
-      %%PREMETHODCALL returns:void%%
-      %%PREMETHODCALL returns:void%%
-      %%PREMETHODCALL returns:supported%%
+      %%PREMETHODCALL methodChannel:void%%
+      %%PREMETHODCALL methodChannel:void%%
+      %%PREMETHODCALL methodChannel:supported%%
       return
-      %%PREMETHODCALL returns:supported%%
-      %%PREMETHODCALL returns:wrapper%%
+      %%PREMETHODCALL methodChannel:supported%%
+      %%PREMETHODCALL methodChannel:wrapper%%
       new __returnType__Wrapper($channelGenerated, (String) call.argument("$newUniqueId"),
-      %%PREMETHODCALL returns:wrapper%%
-      %%PREMETHODCALL returns:typeParameter%%
+      %%PREMETHODCALL methodChannel:wrapper%%
+      %%PREMETHODCALL methodChannel:typeParameter%%
       final Object result = 
-      %%PREMETHODCALL returns:typeParameter%%
+      %%PREMETHODCALL methodChannel:typeParameter%%
       %%PREMETHODCALLS%%
       
       __methodCallerName__.__methodName__(
       %%PARAMETERS%%
-      %%PARAMETER type:supported%%
+      %%PARAMETER methodChannel:supported%%
       call.argument("__parameterName__") == null ? null : (__parameterType__) call.argument("__parameterName__")
-      %%PARAMETER type:supported%%
-      %%PARAMETER type:wrapper%%
+      %%PARAMETER methodChannel:supported%%
+      %%PARAMETER methodChannel:wrapper%%
       ((__parameterType__Wrapper) $channelGenerated.getWrapper((String) call.argument("__parameterName__"))).$value
-      %%PARAMETER type:wrapper%%
-      %%PARAMETER type:typeParameter%%
+      %%PARAMETER methodChannel:wrapper%%
+      %%PARAMETER methodChannel:typeParameter%%
       $channelGenerated.getWrapper((String) call.argument("value")) == null ? call.argument("value") : $channelGenerated.getWrapper((String) call.argument("value")).$getValue()
-      %%PARAMETER type:typeParameter%%
+      %%PARAMETER methodChannel:typeParameter%%
       %%PARAMETERS%%
       )
       %%POSTMETHODCALLS%%
-      %%POSTMETHODCALL returns:void%%
+      %%POSTMETHODCALL methodChannel:void%%
       ;
       return null;
-      %%POSTMETHODCALL returns:void%%
-      %%POSTMETHODCALL returns:supported%%
+      %%POSTMETHODCALL methodChannel:void%%
+      %%POSTMETHODCALL methodChannel:supported%%
       ;
-      %%POSTMETHODCALL returns:supported%%
-      %%POSTMETHODCALL returns:wrapper%%
+      %%POSTMETHODCALL methodChannel:supported%%
+      %%POSTMETHODCALL methodChannel:wrapper%%
       );
       return null;
-      %%POSTMETHODCALL returns:wrapper%%
-      %%POSTMETHODCALL returns:typeParameter%%
+      %%POSTMETHODCALL methodChannel:wrapper%%
+      %%POSTMETHODCALL methodChannel:typeParameter%%
       ;
       if (result == null) return null;
 
@@ -510,7 +510,7 @@ public class ChannelGenerated implements MethodCallHandler {
         e.printStackTrace();
       }
       return null;
-      %%POSTMETHODCALL returns:typeParameter%%
+      %%POSTMETHODCALL methodChannel:typeParameter%%
       %%POSTMETHODCALLS%%
     }
     %%METHOD%%
@@ -539,7 +539,7 @@ class MethodChannelTemplateCreator extends _TemplateCreator {
         if (!isStatic) 'static': '',
         if (isStatic) r"r'$uniqueId': $uniqueId,": '',
         _Block.parameters.exp: parameters.join(),
-        _Block.methodCallParams.exp: methodCallParams.join(),
+        _MethodChannelBlock.methodCallParams.exp: methodCallParams.join(),
         _Replacement.platformClassName.name: platformClassName,
         _Replacement.methodName.name: methodName,
       },
@@ -574,7 +574,7 @@ class MethodChannelTemplateCreator extends _TemplateCreator {
     String fieldName,
   }) {
     return _replace(
-      _Block.channelFieldSetter(channelType)
+      _MethodChannelBlock.fieldSetter(channelType)
           .exp
           .firstMatch(template.value)
           .group(1),
@@ -591,7 +591,7 @@ class MethodChannelTemplateCreator extends _TemplateCreator {
     String parameterName,
   }) {
     return _replace(
-      _Block.channelParameter(channelType)
+      _MethodChannelBlock.parameter(channelType)
           .exp
           .firstMatch(template.value)
           .group(1),
@@ -605,7 +605,7 @@ class MethodChannelTemplateCreator extends _TemplateCreator {
   String createFieldSetterParam(MethodChannelType channelType,
       {String fieldName}) {
     return _replace(
-      _Block.channelFieldSetterParam(channelType)
+      _MethodChannelBlock.fieldSetterParam(channelType)
           .exp
           .firstMatch(template.value)
           .group(1),
@@ -620,7 +620,7 @@ class MethodChannelTemplateCreator extends _TemplateCreator {
     String parameterName,
   }) {
     return _replace(
-      _Block.methodCallParam(channelType)
+      _MethodChannelBlock.methodCallParam(channelType)
           .exp
           .firstMatch(template.value)
           .group(1),
@@ -693,15 +693,17 @@ class AndroidTemplateCreator extends _TemplateCreator {
           RegExp(r'if\s*(.*?)\s*{.*?}', multiLine: true, dotAll: true): '',
         _Replacement.methodCallerName.name:
             isStatic ? platformClassName : r'$value',
-        _Block.preFieldAccesses.exp: _Block.channelPreFieldAccess(channelType)
-            .exp
-            .firstMatch(template.value)
-            .group(1),
-        _Block.postFieldAccesses.exp: _Block.channelPostFieldAccess(channelType)
-            .exp
-            .firstMatch(template.value)
-            .group(1),
-        _Block.fieldSetters.exp: _Block.channelFieldSetter(channelType)
+        _Block.preFieldAccesses.exp:
+            _MethodChannelBlock.preFieldAccess(channelType)
+                .exp
+                .firstMatch(template.value)
+                .group(1),
+        _Block.postFieldAccesses.exp:
+            _MethodChannelBlock.postFieldAccess(channelType)
+                .exp
+                .firstMatch(template.value)
+                .group(1),
+        _Block.fieldSetters.exp: _MethodChannelBlock.fieldSetter(channelType)
             .exp
             .firstMatch(template.value)
             .group(1),
@@ -731,12 +733,12 @@ class AndroidTemplateCreator extends _TemplateCreator {
         _Replacement.methodCallerName.name:
             isStatic ? platformClassName : r'$value',
         _Block.preMethodCalls.exp:
-            _Block.channelPreMethodCall(returnTypeChannelType)
+            _MethodChannelBlock.preMethodCall(returnTypeChannelType)
                 .exp
                 .firstMatch(template.value)
                 .group(1),
         _Block.postMethodCalls.exp:
-            _Block.channelPostMethodCall(returnTypeChannelType)
+            _MethodChannelBlock.postMethodCall(returnTypeChannelType)
                 .exp
                 .firstMatch(template.value)
                 .group(1),
@@ -749,13 +751,13 @@ class AndroidTemplateCreator extends _TemplateCreator {
   }
 
   String createParameter(
-    MethodChannelType channelType, {
+    MethodChannelType methodChannel, {
     String variableName,
     String parameterType,
     String parameterName,
   }) {
     return _replace(
-      _Block.channelParameter(channelType)
+      _MethodChannelBlock.parameter(methodChannel)
           .exp
           .firstMatch(template.value)
           .group(1),
@@ -780,8 +782,8 @@ class AndroidTemplateCreator extends _TemplateCreator {
       <Pattern, String>{
         _Block.constructors.exp: constructors.join(),
         _Block.methods.exp: methods.join(),
-        _Block.methodCalls.exp: methodCalls.join(),
-        _Block.staticMethodCalls.exp: staticMethodCalls.join(),
+        _MethodChannelBlock.methodCalls.exp: methodCalls.join(),
+        _MethodChannelBlock.staticMethodCalls.exp: staticMethodCalls.join(),
         _Block.fields.exp: fields.join(),
         _Replacement.platformClassName.name: platformClassName,
       },
@@ -799,13 +801,13 @@ class AndroidTemplateCreator extends _TemplateCreator {
   }
 
   String createStaticRedirect(
-    MethodChannelStaticRedirect redirect, {
+    ClassMemberType classMember, {
     String platformClassName,
     String methodName,
     String fieldName,
   }) {
     return _replace(
-      _Block.channelStaticRedirect(redirect)
+      _MethodChannelBlock.staticRedirect(classMember)
           .exp
           .firstMatch(template.value)
           .group(1),
@@ -844,13 +846,16 @@ class AndroidTemplateCreator extends _TemplateCreator {
   }
 
   String createMethodCall(
-    MethodChannelStaticRedirect redirect, {
+    ClassMemberType classMember, {
     String platformClassName,
     String methodName,
     String fieldName,
   }) {
     return _replace(
-      _Block.methodCall(redirect).exp.firstMatch(template.value).group(1),
+      _MethodChannelBlock.methodCall(classMember)
+          .exp
+          .firstMatch(template.value)
+          .group(1),
       <Pattern, String>{
         _Replacement.platformClassName.name: platformClassName,
         if (methodName != null) _Replacement.methodName.name: methodName,
@@ -860,13 +865,13 @@ class AndroidTemplateCreator extends _TemplateCreator {
   }
 
   String createStaticMethodCall(
-    MethodChannelStaticRedirect redirect, {
+    ClassMemberType classMember, {
     String platformClassName,
     String methodName,
     String fieldName,
   }) {
     return _replace(
-      _Block.channelStaticMethodCall(redirect)
+      _MethodChannelBlock.staticMethodCall(classMember)
           .exp
           .firstMatch(template.value)
           .group(1),
@@ -880,9 +885,7 @@ class AndroidTemplateCreator extends _TemplateCreator {
 }
 
 enum MethodChannelType { $void, supported, wrapper, typeParameter }
-
-// TODO(bparrishMines): Rename to ClassMemberType so it can be used for static and non-static calls
-enum MethodChannelStaticRedirect { constructor, method, field }
+enum ClassMemberType { constructor, method, field }
 
 abstract class _TemplateCreator {
   _Template get template;
@@ -897,7 +900,7 @@ abstract class _TemplateCreator {
 
 class _Block {
   _Block(this.identifier, [this.config])
-      : exp = config == null
+      : exp = config == null || config.isEmpty
             ? RegExp(
                 '%%$identifier%%(.*?)%%$identifier%%',
                 multiLine: true,
@@ -917,112 +920,12 @@ class _Block {
   static final _Block method = _Block('METHOD');
 
   static final _Block preMethodCalls = _Block('PREMETHODCALLS');
-  //  For Android and iOS
-  static _Block channelPreMethodCall(MethodChannelType type) {
-    final List<String> configs = <String>[];
-    switch (type) {
-      case MethodChannelType.$void:
-        configs.add('returns:void');
-        break;
-      case MethodChannelType.supported:
-        configs.add('returns:supported');
-        break;
-      case MethodChannelType.wrapper:
-        configs.add('returns:wrapper');
-        break;
-      case MethodChannelType.typeParameter:
-        configs.add('returns:typeParameter');
-        break;
-    }
-
-    return _Block('PREMETHODCALL', configs.join(' '));
-  }
 
   static final _Block postMethodCalls = _Block('POSTMETHODCALLS');
-  //  For Android and iOS
-  static _Block channelPostMethodCall(MethodChannelType type) {
-    final List<String> configs = <String>[];
-    switch (type) {
-      case MethodChannelType.$void:
-        configs.add('returns:void');
-        break;
-      case MethodChannelType.supported:
-        configs.add('returns:supported');
-        break;
-      case MethodChannelType.wrapper:
-        configs.add('returns:wrapper');
-        break;
-      case MethodChannelType.typeParameter:
-        configs.add('returns:typeParameter');
-        break;
-    }
-
-    return _Block('POSTMETHODCALL', configs.join(' '));
-  }
 
   static final _Block preFieldAccesses = _Block('PREFIELDACCESSES');
-  //  For Android and iOS
-  static _Block channelPreFieldAccess(MethodChannelType type) {
-    final List<String> configs = <String>[];
-    switch (type) {
-      case MethodChannelType.supported:
-        configs.add('type:supported');
-        break;
-      case MethodChannelType.wrapper:
-        configs.add('type:wrapper');
-        break;
-      case MethodChannelType.typeParameter:
-        configs.add('type:typeParameter');
-        break;
-      case MethodChannelType.$void:
-        throw ArgumentError.value(
-            type, 'type', 'Not supported for pre field access');
-    }
-
-    return _Block('PREFIELDACCESS', configs.join(' '));
-  }
 
   static final _Block postFieldAccesses = _Block('POSTFIELDACCESSES');
-  //  For Android and iOS
-  static _Block channelPostFieldAccess(MethodChannelType type) {
-    final List<String> configs = <String>[];
-    switch (type) {
-      case MethodChannelType.supported:
-        configs.add('type:supported');
-        break;
-      case MethodChannelType.wrapper:
-        configs.add('type:wrapper');
-        break;
-      case MethodChannelType.typeParameter:
-        configs.add('type:typeParameter');
-        break;
-      case MethodChannelType.$void:
-        throw ArgumentError.value(
-            type, 'type', 'Not supported for post field access');
-    }
-
-    return _Block('POSTFIELDACCESS', configs.join(' '));
-  }
-
-  // Android and iOS
-  static _Block channelParameter(MethodChannelType type) {
-    final List<String> configs = <String>[];
-    switch (type) {
-      case MethodChannelType.wrapper:
-        configs.add('type:wrapper');
-        break;
-      case MethodChannelType.supported:
-        configs.add('type:supported');
-        break;
-      case MethodChannelType.typeParameter:
-        configs.add('type:typeParameter');
-        break;
-      case MethodChannelType.$void:
-        throw ArgumentError.value(type, 'type', 'Not supported for parameters');
-    }
-
-    return _Block(parameter.identifier, configs.join(' '));
-  }
 
   static final _Block imports = _Block('IMPORTS');
   static final _Block import = _Block('IMPORT');
@@ -1033,143 +936,103 @@ class _Block {
   static final _Block constructors = _Block('CONSTRUCTORS');
   static final _Block constructor = _Block('CONSTRUCTOR');
 
-  static final _Block methodCalls = _Block('METHODCALLS');
-  static _Block methodCall(MethodChannelStaticRedirect redirect) {
-    final List<String> configs = <String>[];
-
-    switch (redirect) {
-      case MethodChannelStaticRedirect.method:
-        configs.add('call:method');
-        break;
-      case MethodChannelStaticRedirect.field:
-        configs.add('call:field');
-        break;
-      case MethodChannelStaticRedirect.constructor:
-        throw ArgumentError.value(
-          redirect,
-          'redirect',
-          'Not supported for non-static method call.',
-        );
-    }
-
-    return _Block('METHODCALL', configs.join(' '));
-  }
-
   static final _Block staticRedirects = _Block('STATICREDIRECTS');
-  static _Block channelStaticRedirect(MethodChannelStaticRedirect redirect) {
-    final List<String> configs = <String>[];
-
-    switch (redirect) {
-      case MethodChannelStaticRedirect.constructor:
-        configs.add('redirect:constructor');
-        break;
-      case MethodChannelStaticRedirect.method:
-        configs.add('redirect:method');
-        break;
-      case MethodChannelStaticRedirect.field:
-        configs.add('redirect:field');
-        break;
-    }
-
-    return _Block('STATICREDIRECT', configs.join(' '));
-  }
-
-  static final _Block staticMethodCalls = _Block('STATICMETHODCALLS');
-  static _Block channelStaticMethodCall(MethodChannelStaticRedirect redirect) {
-    final List<String> configs = <String>[];
-
-    switch (redirect) {
-      case MethodChannelStaticRedirect.constructor:
-        configs.add('redirect:constructor');
-        break;
-      case MethodChannelStaticRedirect.method:
-        configs.add('redirect:method');
-        break;
-      case MethodChannelStaticRedirect.field:
-        configs.add('redirect:field');
-        break;
-    }
-
-    return _Block('STATICMETHODCALL', configs.join(' '));
-  }
 
   static final _Block parameters = _Block('PARAMETERS');
   static final _Block parameter = _Block('PARAMETER');
 
   static final _Block fieldSetters = _Block('FIELDSETTERS');
-  static _Block channelFieldSetter(MethodChannelType type) {
-    final List<String> configs = <String>[];
-    switch (type) {
-      case MethodChannelType.wrapper:
-        configs.add('type:wrapper');
-        break;
-      case MethodChannelType.supported:
-        configs.add('type:supported');
-        break;
-      case MethodChannelType.typeParameter:
-        configs.add('type:typeParameter');
-        break;
-      case MethodChannelType.$void:
-        throw ArgumentError.value(
-          type,
-          'type',
-          'Not supported for field setter.',
-        );
-    }
-
-    return _Block('FIELDSETTER', configs.join(' '));
-  }
 
   static final _Block fields = _Block('FIELDS');
   static final _Block field = _Block('FIELD');
 
-  static final _Block methodCallParams = _Block('METHODCALLPARAMS');
-  static _Block methodCallParam(MethodChannelType type) {
-    final List<String> configs = <String>[];
-    switch (type) {
-      case MethodChannelType.wrapper:
-        configs.add('type:wrapper');
-        break;
-      case MethodChannelType.supported:
-        configs.add('type:supported');
-        break;
-      case MethodChannelType.typeParameter:
-        configs.add('type:typeParameter');
-        break;
-      case MethodChannelType.$void:
-        throw ArgumentError.value(
-          type,
-          'type',
-          'Not supported for MethodCall parameters.',
-        );
-    }
-
-    return _Block('METHODCALLPARAM', configs.join(' '));
-  }
-
   static final _Block fieldSetterParams = _Block('FIELDSETTERPARAMS');
-  static _Block channelFieldSetterParam(MethodChannelType type) {
+}
+
+class _MethodChannelBlock extends _Block {
+  _MethodChannelBlock(
+    String identifier, {
+    MethodChannelType methodChannel,
+    ClassMemberType classMember,
+  }) : super(identifier, createConfig(methodChannel, classMember));
+
+  static String createConfig(
+    MethodChannelType methodChannel,
+    ClassMemberType classMember,
+  ) {
     final List<String> configs = <String>[];
-    switch (type) {
+    switch (methodChannel) {
       case MethodChannelType.wrapper:
-        configs.add('type:wrapper');
+        configs.add('methodChannel:wrapper');
         break;
       case MethodChannelType.supported:
-        configs.add('type:supported');
+        configs.add('methodChannel:supported');
         break;
       case MethodChannelType.typeParameter:
-        configs.add('type:typeParameter');
+        configs.add('methodChannel:typeParameter');
         break;
       case MethodChannelType.$void:
-        throw ArgumentError.value(
-          type,
-          'type',
-          'Not supported for field setter MethodCall parameter.',
-        );
+        configs.add('methodChannel:void');
+        break;
     }
 
-    return _Block('FIELDSETTERPARAM', configs.join(' '));
+    switch (classMember) {
+      case ClassMemberType.constructor:
+        configs.add('classMember:constructor');
+        break;
+      case ClassMemberType.method:
+        configs.add('classMember:method');
+        break;
+      case ClassMemberType.field:
+        configs.add('classMember:field');
+        break;
+    }
+
+    return configs.join(' ');
   }
+
+  static _MethodChannelBlock fieldSetterParam(
+          MethodChannelType methodChannel) =>
+      _MethodChannelBlock('FIELDSETTERPARAM', methodChannel: methodChannel);
+
+  static final _MethodChannelBlock methodCallParams =
+      _MethodChannelBlock('METHODCALLPARAMS');
+  static _MethodChannelBlock methodCallParam(MethodChannelType methodChannel) =>
+      _MethodChannelBlock('METHODCALLPARAM', methodChannel: methodChannel);
+
+  static _MethodChannelBlock fieldSetter(MethodChannelType methodChannel) =>
+      _MethodChannelBlock('FIELDSETTER', methodChannel: methodChannel);
+
+  static final _MethodChannelBlock staticMethodCalls =
+      _MethodChannelBlock('STATICMETHODCALLS');
+  static _MethodChannelBlock staticMethodCall(ClassMemberType classMember) =>
+      _MethodChannelBlock('STATICMETHODCALL', classMember: classMember);
+
+  static _MethodChannelBlock staticRedirect(ClassMemberType classMember) =>
+      _MethodChannelBlock('STATICREDIRECT', classMember: classMember);
+
+  static final _MethodChannelBlock methodCalls =
+      _MethodChannelBlock('METHODCALLS');
+  static _MethodChannelBlock methodCall(ClassMemberType classMember) =>
+      _MethodChannelBlock('METHODCALL', classMember: classMember);
+
+  static _MethodChannelBlock parameter(MethodChannelType methodChannel) =>
+      _MethodChannelBlock(
+        _Block.parameter.identifier,
+        methodChannel: methodChannel,
+      );
+
+  static _MethodChannelBlock postFieldAccess(MethodChannelType methodChannel) =>
+      _MethodChannelBlock('POSTFIELDACCESS', methodChannel: methodChannel);
+
+  static _MethodChannelBlock preFieldAccess(MethodChannelType methodChannel) =>
+      _MethodChannelBlock('PREFIELDACCESS', methodChannel: methodChannel);
+
+  static _MethodChannelBlock postMethodCall(MethodChannelType methodChannel) =>
+      _MethodChannelBlock('POSTMETHODCALL', methodChannel: methodChannel);
+
+  static _MethodChannelBlock preMethodCall(MethodChannelType methodChannel) =>
+      _MethodChannelBlock('PREMETHODCALL', methodChannel: methodChannel);
 }
 
 class _Replacement {

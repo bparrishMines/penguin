@@ -39,7 +39,7 @@ class AndroidBuilder extends PlatformBuilder {
             ...classInfo.constructors.map<String>(
               (ConstructorInfo constructorInfo) =>
                   creator.createStaticMethodCall(
-                MethodChannelStaticRedirect.constructor,
+                ClassMemberType.constructor,
                 platformClassName:
                     (classInfo.aClass.platform as AndroidPlatform).type.name,
                 methodName: '',
@@ -49,7 +49,7 @@ class AndroidBuilder extends PlatformBuilder {
                 .where((MethodInfo methodInfo) => methodInfo.isStatic)
                 .map<String>(
                   (MethodInfo methodInfo) => creator.createStaticMethodCall(
-                    MethodChannelStaticRedirect.method,
+                    ClassMemberType.method,
                     platformClassName:
                         (classInfo.aClass.platform as AndroidPlatform)
                             .type
@@ -108,7 +108,7 @@ class AndroidBuilder extends PlatformBuilder {
                 .where((MethodInfo methodInfo) => !methodInfo.isStatic)
                 .map<String>(
                   (MethodInfo methodInfo) => creator.createMethodCall(
-                    MethodChannelStaticRedirect.method,
+                    ClassMemberType.method,
                     platformClassName:
                         (classInfo.aClass.platform as AndroidPlatform)
                             .type
@@ -120,7 +120,7 @@ class AndroidBuilder extends PlatformBuilder {
                 .where((FieldInfo fieldInfo) => !fieldInfo.isStatic)
                 .map<String>(
                   (FieldInfo fieldInfo) => creator.createMethodCall(
-                    MethodChannelStaticRedirect.field,
+                    ClassMemberType.field,
                     platformClassName:
                         (classInfo.aClass.platform as AndroidPlatform)
                             .type
@@ -140,7 +140,7 @@ class AndroidBuilder extends PlatformBuilder {
         ...classes.expand<String>(
           (ClassInfo classInfo) => classInfo.constructors.map<String>(
             (ConstructorInfo constructorInfo) => creator.createStaticRedirect(
-              MethodChannelStaticRedirect.constructor,
+              ClassMemberType.constructor,
               platformClassName:
                   (classInfo.aClass.platform as AndroidPlatform).type.name,
               methodName: '',
@@ -152,7 +152,7 @@ class AndroidBuilder extends PlatformBuilder {
               .where((MethodInfo methodInfo) => methodInfo.isStatic)
               .map<String>(
                 (MethodInfo methodInfo) => creator.createStaticRedirect(
-                  MethodChannelStaticRedirect.method,
+                  ClassMemberType.method,
                   platformClassName:
                       (classInfo.aClass.platform as AndroidPlatform).type.name,
                   methodName: methodInfo.name,
@@ -164,7 +164,7 @@ class AndroidBuilder extends PlatformBuilder {
               .where((FieldInfo fieldInfo) => fieldInfo.isStatic)
               .map<String>(
                 (FieldInfo fieldInfo) => creator.createStaticRedirect(
-                  MethodChannelStaticRedirect.field,
+                  ClassMemberType.field,
                   platformClassName:
                       (classInfo.aClass.platform as AndroidPlatform).type.name,
                   fieldName: fieldInfo.name,
