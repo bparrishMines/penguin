@@ -127,6 +127,7 @@ class ReadInfoBuilder extends Builder {
                 )
                 .map<FieldInfo>(
                   (FieldElement fieldElement) => FieldInfo(
+                    isMutable: fieldElement.isPublic && !fieldElement.isFinal,
                     isStatic: fieldElement.isStatic,
                     name: fieldElement.name,
                     type: fieldElement.type.isDartAsyncFuture ||

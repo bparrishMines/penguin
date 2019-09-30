@@ -102,18 +102,29 @@ Map<String, dynamic> _$MethodInfoToJson(MethodInfo instance) {
 }
 
 FieldInfo _$FieldInfoFromJson(Map<String, dynamic> json) {
-  $checkKeys(json,
-      requiredKeys: const ['name', 'returnType', 'field', 'isStatic'],
-      disallowNullValues: const ['name', 'returnType', 'field', 'isStatic']);
+  $checkKeys(json, requiredKeys: const [
+    'name',
+    'type',
+    'field',
+    'isStatic',
+    'isMutable'
+  ], disallowNullValues: const [
+    'name',
+    'type',
+    'field',
+    'isStatic',
+    'isMutable'
+  ]);
   return FieldInfo(
+    isMutable: json['isMutable'] as bool,
     isStatic: json['isStatic'] as bool,
     name: json['name'] as String,
     field: json['field'] == null
         ? null
         : Field.fromJson(json['field'] as Map<String, dynamic>),
-    type: json['returnType'] == null
+    type: json['type'] == null
         ? null
-        : TypeInfo.fromJson(json['returnType'] as Map<String, dynamic>),
+        : TypeInfo.fromJson(json['type'] as Map<String, dynamic>),
   );
 }
 
@@ -127,9 +138,10 @@ Map<String, dynamic> _$FieldInfoToJson(FieldInfo instance) {
   }
 
   writeNotNull('name', instance.name);
-  writeNotNull('returnType', instance.type);
+  writeNotNull('type', instance.type);
   writeNotNull('field', instance.field);
   writeNotNull('isStatic', instance.isStatic);
+  writeNotNull('isMutable', instance.isMutable);
   return val;
 }
 

@@ -94,7 +94,8 @@ class AndroidBuilder extends PlatformBuilder {
           fields: classInfo.fields.map<String>(
             (FieldInfo fieldInfo) => creator.createField(
               getChannelType(fieldInfo.type),
-              fieldInfo.isStatic,
+              isStatic: fieldInfo.isStatic,
+              isMutable: fieldInfo.isMutable,
               fieldType: _convertType(fieldInfo.type, classes),
               fieldName: fieldInfo.name,
               package: _androidPackage,

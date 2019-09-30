@@ -661,8 +661,9 @@ class AndroidTemplateCreator extends _TemplateCreator {
   _Template get template => _Template.android;
 
   String createField(
-    MethodChannelType channelType,
-    bool isStatic, {
+    MethodChannelType channelType, {
+    bool isStatic,
+    bool isMutable,
     String fieldType,
     String fieldName,
     String package,
@@ -674,6 +675,8 @@ class AndroidTemplateCreator extends _TemplateCreator {
       <Pattern, String>{
         if (!isStatic) 'static': '',
         if (!isStatic) r'ChannelGenerated $channelGenerated,': '',
+        if (!isMutable)
+          RegExp(r'if\s*(.*?)\s*{.*?}', multiLine: true, dotAll: true): '',
         _Replacement.methodCallerName.name:
             isStatic ? platformClassName : r'$value',
         _Block.preFieldAccesses.exp: _Block.channelPreFieldAccess(channelType)
@@ -698,6 +701,7 @@ class AndroidTemplateCreator extends _TemplateCreator {
   String createMethod(
     MethodChannelType returnTypeChannelType,
     bool isStatic, {
+    bool isMutable,
     Iterable<String> parameters,
     String returnType,
     String methodName,
