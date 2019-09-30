@@ -10,6 +10,8 @@ import '../templates.dart';
 import 'platform_builder.dart';
 
 class AndroidBuilder extends PlatformBuilder {
+  static String _androidPackageCache;
+
   @override
   String build(List<ClassInfo> classes) {
     final AndroidTemplateCreator creator = AndroidTemplateCreator();
@@ -87,6 +89,17 @@ class AndroidBuilder extends PlatformBuilder {
               variableName: ReCase(
                 (classInfo.aClass.platform as AndroidPlatform).type.name,
               ).camelCase,
+            ),
+          ),
+          fields: classInfo.fields.map<String>(
+            (FieldInfo fieldInfo) => creator.createField(
+              getChannelType(fieldInfo.type),
+              fieldInfo.isStatic,
+              fieldType: _convertType(fieldInfo.type, classes),
+              fieldName: fieldInfo.name,
+              package: _androidPackage,
+              platformClassName:
+                  (classInfo.aClass.platform as AndroidPlatform).type.name,
             ),
           ),
           methodCalls: classInfo.methods
@@ -175,9 +188,11 @@ class AndroidBuilder extends PlatformBuilder {
   }
 
   static String get _androidPackage {
+    if (_androidPackageCache != null) return _androidPackageCache;
+
     final File pubspecFile = File('pubspec.yaml');
     final Pubspec pubspec = Pubspec.parse(pubspecFile.readAsStringSync());
-    return pubspec.flutter['plugin']['androidPackage'];
+    return _androidPackageCache = pubspec.flutter['plugin']['androidPackage'];
   }
 
   @override

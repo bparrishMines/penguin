@@ -360,6 +360,75 @@ public class ChannelGenerated implements MethodCallHandler {
     public Object $getValue() {
       return $value;
     }
+    
+    %%FIELDS%%
+    %%FIELD%%
+    static private Object __fieldName__(ChannelGenerated $channelGenerated, MethodCall call) {
+      if (call.argument("__fieldName__") != null) {
+        __methodCallerName__.__fieldName__ =
+        %%FIELDSETTERS%%
+        %%FIELDSETTER type:supported%%
+        call.argument("__fieldName__") != null ? (__fieldType__) call.argument("__fieldName__") : null;
+        %%FIELDSETTER type:supported%%
+        %%FIELDSETTER type:wrapper%%
+        call.argument("__fieldName__") != null ? ((__fieldType__Wrapper) $channelGenerated.getWrapper((String) call.argument("__fieldName__"))).$value : null;
+        %%FIELDSETTER type:wrapper%%
+        %%FIELDSETTER type:typeParameter%%
+        call.argument("__fieldName__") != null && call.argument("__fieldName__") instanceOf String && $channelGenerated.getWrapper((String) call.argument("__fieldName__")) != null ? $channelGenerated.getWrapper((String) call.argument("__fieldName__")).$getValue() : call.argument("__fieldName__");
+        %%FIELDSETTER type:typeParameter%%
+        %%FIELDSETTERS%%
+      } 
+      
+      %%PREFIELDACCESSES%%
+      %%PREFIELDACCESS type:supported%%
+      return
+      %%PREFIELDACCESS type:supported%%
+      %%PREFIELDACCESS type:wrapper%%
+      new __fieldType__Wrapper($channelGenerated, (String) call.argument("$newUniqueId"), 
+      %%PREFIELDACCESS type:wrapper%%
+      %%PREFIELDACCESS type:typeParameter%%
+      final Object result = 
+      %%PREFIELDACCESS type:typeParameter%%
+      %%PREFIELDACCESSES%%
+      __methodCallerName__.__fieldName__
+      
+      %%POSTFIELDACCESSES%%
+      %%POSTFIELDACCESS type:supported%%
+      ;
+      %%POSTFIELDACCESS type:supported%%
+      %%POSTFIELDACCESS type:wrapper%%
+      );
+      return null;
+      %%POSTFIELDACCESS type:wrapper%%
+      %%POSTFIELDACCESS type:typeParameter%%
+      ;
+      if (result == null) return null;
+
+      final Class wrapperClass;
+      try {
+        wrapperClass = Class.forName(String.format("__package__.ChannelGenerated$%sWrapper", result.getClass().getSimpleName()));
+      } catch (ClassNotFoundException e) {
+        return result;
+      }
+
+      try {
+        final Constructor constructor = wrapperClass.getConstructor(ChannelGenerated.class, String.class, result.getClass());
+        constructor.newInstance($channelGenerated, call.argument("$newUniqueId"), result);
+      } catch (NoSuchMethodException e) {
+        e.printStackTrace();
+      } catch (IllegalAccessException e) {
+        e.printStackTrace();
+      } catch (InstantiationException e) {
+        e.printStackTrace();
+      } catch (InvocationTargetException e) {
+        e.printStackTrace();
+      }
+      return null;
+      %%POSTFIELDACCESS type:typeParameter%%
+      %%POSTFIELDACCESSES%%
+    }
+    %%FIELD%%
+    %%FIELDS%%
 
     %%METHODS%%
     %%METHOD%%
@@ -591,6 +660,41 @@ class AndroidTemplateCreator extends _TemplateCreator {
   @override
   _Template get template => _Template.android;
 
+  String createField(
+    MethodChannelType channelType,
+    bool isStatic, {
+    String fieldType,
+    String fieldName,
+    String package,
+    String platformClassName,
+    String fieldSetter,
+  }) {
+    return _replace(
+      _Block.field.exp.firstMatch(template.value).group(1),
+      <Pattern, String>{
+        if (!isStatic) 'static': '',
+        if (!isStatic) r'ChannelGenerated $channelGenerated,': '',
+        _Replacement.methodCallerName.name:
+            isStatic ? platformClassName : r'$value',
+        _Block.preFieldAccesses.exp: _Block.channelPreFieldAccess(channelType)
+            .exp
+            .firstMatch(template.value)
+            .group(1),
+        _Block.postFieldAccesses.exp: _Block.channelPostFieldAccess(channelType)
+            .exp
+            .firstMatch(template.value)
+            .group(1),
+        _Block.fieldSetters.exp: _Block.channelFieldSetter(channelType)
+            .exp
+            .firstMatch(template.value)
+            .group(1),
+        _Replacement.fieldType.name: fieldType,
+        _Replacement.fieldName.name: fieldName,
+        _Replacement.package.name: package,
+      },
+    );
+  }
+
   String createMethod(
     MethodChannelType returnTypeChannelType,
     bool isStatic, {
@@ -649,6 +753,7 @@ class AndroidTemplateCreator extends _TemplateCreator {
     Iterable<String> methods,
     Iterable<String> methodCalls,
     Iterable<String> staticMethodCalls,
+    Iterable<String> fields,
     String platformClassName,
     String variableName,
   }) {
@@ -659,6 +764,7 @@ class AndroidTemplateCreator extends _TemplateCreator {
         _Block.methods.exp: methods.join(),
         _Block.methodCalls.exp: methodCalls.join(),
         _Block.staticMethodCalls.exp: staticMethodCalls.join(),
+        _Block.fields.exp: fields.join(),
         _Replacement.platformClassName.name: platformClassName,
       },
     );
@@ -804,7 +910,6 @@ class _Block {
   }
 
   static final _Block postMethodCalls = _Block('POSTMETHODCALLS');
-
   //  For Android and iOS
   static _Block channelPostMethodCall(MethodChannelType type) {
     final List<String> configs = <String>[];
@@ -824,6 +929,50 @@ class _Block {
     }
 
     return _Block('POSTMETHODCALL', configs.join(' '));
+  }
+
+  static final _Block preFieldAccesses = _Block('PREFIELDACCESSES');
+  //  For Android and iOS
+  static _Block channelPreFieldAccess(MethodChannelType type) {
+    final List<String> configs = <String>[];
+    switch (type) {
+      case MethodChannelType.supported:
+        configs.add('type:supported');
+        break;
+      case MethodChannelType.wrapper:
+        configs.add('type:wrapper');
+        break;
+      case MethodChannelType.typeParameter:
+        configs.add('type:typeParameter');
+        break;
+      case MethodChannelType.$void:
+        throw ArgumentError.value(
+            type, 'type', 'Not supported for pre field access');
+    }
+
+    return _Block('PREFIELDACCESS', configs.join(' '));
+  }
+
+  static final _Block postFieldAccesses = _Block('POSTFIELDACCESSES');
+  //  For Android and iOS
+  static _Block channelPostFieldAccess(MethodChannelType type) {
+    final List<String> configs = <String>[];
+    switch (type) {
+      case MethodChannelType.supported:
+        configs.add('type:supported');
+        break;
+      case MethodChannelType.wrapper:
+        configs.add('type:wrapper');
+        break;
+      case MethodChannelType.typeParameter:
+        configs.add('type:typeParameter');
+        break;
+      case MethodChannelType.$void:
+        throw ArgumentError.value(
+            type, 'type', 'Not supported for post field access');
+    }
+
+    return _Block('POSTFIELDACCESS', configs.join(' '));
   }
 
   // Android and iOS
@@ -910,7 +1059,7 @@ class _Block {
         throw ArgumentError.value(
           type,
           'type',
-          'Not supported for MethodCall parameters.',
+          'Not supported for field setter.',
         );
     }
 
@@ -961,7 +1110,7 @@ class _Block {
         throw ArgumentError.value(
           type,
           'type',
-          'Not supported for MethodCall parameters.',
+          'Not supported for field setter MethodCall parameter.',
         );
     }
 
