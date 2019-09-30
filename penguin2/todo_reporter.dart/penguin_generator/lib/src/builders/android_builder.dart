@@ -103,15 +103,32 @@ class AndroidBuilder extends PlatformBuilder {
                   (classInfo.aClass.platform as AndroidPlatform).type.name,
             ),
           ),
-          methodCalls: classInfo.methods
-              .where((MethodInfo methodInfo) => !methodInfo.isStatic)
-              .map<String>(
-                (MethodInfo methodInfo) => creator.createMethodCall(
-                  platformClassName:
-                      (classInfo.aClass.platform as AndroidPlatform).type.name,
-                  methodName: methodInfo.name,
+          methodCalls: <String>[
+            ...classInfo.methods
+                .where((MethodInfo methodInfo) => !methodInfo.isStatic)
+                .map<String>(
+                  (MethodInfo methodInfo) => creator.createMethodCall(
+                    MethodChannelStaticRedirect.method,
+                    platformClassName:
+                        (classInfo.aClass.platform as AndroidPlatform)
+                            .type
+                            .name,
+                    methodName: methodInfo.name,
+                  ),
                 ),
-              ),
+            ...classInfo.fields
+                .where((FieldInfo fieldInfo) => !fieldInfo.isStatic)
+                .map<String>(
+                  (FieldInfo fieldInfo) => creator.createMethodCall(
+                    MethodChannelStaticRedirect.field,
+                    platformClassName:
+                        (classInfo.aClass.platform as AndroidPlatform)
+                            .type
+                            .name,
+                    fieldName: fieldInfo.name,
+                  ),
+                ),
+          ],
           platformClassName:
               (classInfo.aClass.platform as AndroidPlatform).type.name,
           variableName: ReCase(
@@ -141,7 +158,19 @@ class AndroidBuilder extends PlatformBuilder {
                   methodName: methodInfo.name,
                 ),
               ),
-        )
+        ),
+        ...classes.expand<String>(
+          (ClassInfo classInfo) => classInfo.fields
+              .where((FieldInfo fieldInfo) => fieldInfo.isStatic)
+              .map<String>(
+                (FieldInfo fieldInfo) => creator.createStaticRedirect(
+                  MethodChannelStaticRedirect.field,
+                  platformClassName:
+                      (classInfo.aClass.platform as AndroidPlatform).type.name,
+                  fieldName: fieldInfo.name,
+                ),
+              ),
+        ),
       ],
       package: _androidPackage,
     );

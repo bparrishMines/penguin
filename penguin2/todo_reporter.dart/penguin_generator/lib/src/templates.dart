@@ -283,6 +283,11 @@ public class ChannelGenerated implements MethodCallHandler {
           return __platformClassName__Wrapper.onStaticMethodCall(this, call);
         }
       %%STATICREDIRECT redirect:method%%
+      %%STATICREDIRECT redirect:field%%
+      case "__platformClassName__.__fieldName__": {
+          return __platformClassName__Wrapper.onStaticMethodCall(this, call);
+        }
+      %%STATICREDIRECT redirect:field%%
       %%STATICREDIRECTS%%
       default:
         final String $uniqueId = call.argument("$uniqueId");
@@ -330,6 +335,11 @@ public class ChannelGenerated implements MethodCallHandler {
             return __platformClassName__Wrapper.__methodName__($channelGenerated, call);
           }
         %%STATICMETHODCALL redirect:method%%
+        %%STATICMETHODCALL redirect:field%%
+        case "__platformClassName__.__fieldName__": {
+            return __platformClassName__Wrapper.__fieldName__($channelGenerated, call);
+          }
+        %%STATICMETHODCALL redirect:field%%
         %%STATICMETHODCALLS%%
         default:
           throw new NotImplementedException(call.method);
@@ -346,10 +356,14 @@ public class ChannelGenerated implements MethodCallHandler {
           deallocate();
           return null;
         %%METHODCALLS%%
-        %%METHODCALL%%
+        %%METHODCALL call:method%%
         case "__platformClassName__#__methodName__":
           return __methodName__(call);
-        %%METHODCALL%%
+        %%METHODCALL call:method%%
+        %%METHODCALL call:field%%
+        case "__platformClassName__.__fieldName__":
+          return __fieldName__(call);
+        %%METHODCALL call:field%%
         %%METHODCALLS%%
         default:
           throw new NotImplementedException(call.method);
@@ -788,6 +802,7 @@ class AndroidTemplateCreator extends _TemplateCreator {
     MethodChannelStaticRedirect redirect, {
     String platformClassName,
     String methodName,
+    String fieldName,
   }) {
     return _replace(
       _Block.channelStaticRedirect(redirect)
@@ -796,7 +811,8 @@ class AndroidTemplateCreator extends _TemplateCreator {
           .group(1),
       <Pattern, String>{
         _Replacement.platformClassName.name: platformClassName,
-        _Replacement.methodName.name: methodName,
+        if (methodName != null) _Replacement.methodName.name: methodName,
+        if (fieldName != null) _Replacement.fieldName.name: fieldName,
       },
     );
   }
@@ -827,12 +843,18 @@ class AndroidTemplateCreator extends _TemplateCreator {
     );
   }
 
-  String createMethodCall({String platformClassName, String methodName}) {
+  String createMethodCall(
+    MethodChannelStaticRedirect redirect, {
+    String platformClassName,
+    String methodName,
+    String fieldName,
+  }) {
     return _replace(
-      _Block.methodCall.exp.firstMatch(template.value).group(1),
+      _Block.methodCall(redirect).exp.firstMatch(template.value).group(1),
       <Pattern, String>{
         _Replacement.platformClassName.name: platformClassName,
-        _Replacement.methodName.name: methodName,
+        if (methodName != null) _Replacement.methodName.name: methodName,
+        if (fieldName != null) _Replacement.fieldName.name: fieldName,
       },
     );
   }
@@ -841,6 +863,7 @@ class AndroidTemplateCreator extends _TemplateCreator {
     MethodChannelStaticRedirect redirect, {
     String platformClassName,
     String methodName,
+    String fieldName,
   }) {
     return _replace(
       _Block.channelStaticMethodCall(redirect)
@@ -849,19 +872,21 @@ class AndroidTemplateCreator extends _TemplateCreator {
           .group(1),
       <Pattern, String>{
         _Replacement.platformClassName.name: platformClassName,
-        _Replacement.methodName.name: methodName,
+        if (methodName != null) _Replacement.methodName.name: methodName,
+        if (fieldName != null) _Replacement.fieldName.name: fieldName,
       },
     );
   }
 }
 
 enum MethodChannelType { $void, supported, wrapper, typeParameter }
-enum MethodChannelStaticRedirect { constructor, method }
+
+// TODO(bparrishMines): Rename to ClassMemberType so it can be used for static and non-static calls
+enum MethodChannelStaticRedirect { constructor, method, field }
 
 abstract class _TemplateCreator {
   _Template get template;
 
-  // TODO: Speedup with replaceAllMapped
   String _replace(String value, Map<Pattern, String> replacements) {
     for (MapEntry<Pattern, String> entry in replacements.entries) {
       value = value.replaceAll(entry.key, entry.value);
@@ -1009,7 +1034,26 @@ class _Block {
   static final _Block constructor = _Block('CONSTRUCTOR');
 
   static final _Block methodCalls = _Block('METHODCALLS');
-  static final _Block methodCall = _Block('METHODCALL');
+  static _Block methodCall(MethodChannelStaticRedirect redirect) {
+    final List<String> configs = <String>[];
+
+    switch (redirect) {
+      case MethodChannelStaticRedirect.method:
+        configs.add('call:method');
+        break;
+      case MethodChannelStaticRedirect.field:
+        configs.add('call:field');
+        break;
+      case MethodChannelStaticRedirect.constructor:
+        throw ArgumentError.value(
+          redirect,
+          'redirect',
+          'Not supported for non-static method call.',
+        );
+    }
+
+    return _Block('METHODCALL', configs.join(' '));
+  }
 
   static final _Block staticRedirects = _Block('STATICREDIRECTS');
   static _Block channelStaticRedirect(MethodChannelStaticRedirect redirect) {
@@ -1021,6 +1065,9 @@ class _Block {
         break;
       case MethodChannelStaticRedirect.method:
         configs.add('redirect:method');
+        break;
+      case MethodChannelStaticRedirect.field:
+        configs.add('redirect:field');
         break;
     }
 
@@ -1037,6 +1084,9 @@ class _Block {
         break;
       case MethodChannelStaticRedirect.method:
         configs.add('redirect:method');
+        break;
+      case MethodChannelStaticRedirect.field:
+        configs.add('redirect:field');
         break;
     }
 
