@@ -48,10 +48,10 @@ class $__className____typeParameters__ extends $Wrapper {
         '__fieldName__': __fieldName__,
         %%FIELDSETTERPARAM methodChannel:supported%%
         %%FIELDSETTERPARAM methodChannel:wrapper%%
-        '__fieldName__': __fieldName__.$uniqueId,
+        '__fieldName__': __fieldName__?.$uniqueId,
         %%FIELDSETTERPARAM methodChannel:wrapper%%
         %%FIELDSETTERPARAM methodChannel:typeParameter%%
-        if (__fieldName__ is $Wrapper) '__fieldName__': __fieldName__.$uniqueId,
+        if (__fieldName__ is $Wrapper) '__fieldName__': __fieldName__?.$uniqueId,
         if (__fieldName__ is! $Wrapper) '__fieldName__': __fieldName__,
         %%FIELDSETTERPARAM methodChannel:typeParameter%%
         %%FIELDSETTERPARAMS%%
@@ -86,10 +86,10 @@ class $__className____typeParameters__ extends $Wrapper {
        '__parameterName__': __parameterName__,
        %%METHODCALLPARAM methodChannel:supported%%
        %%METHODCALLPARAM methodChannel:wrapper%%
-       '__parameterName__': __parameterName__.$uniqueId,
+       '__parameterName__': __parameterName__?.$uniqueId,
        %%METHODCALLPARAM methodChannel:wrapper%%
        %%METHODCALLPARAM methodChannel:typeParameter%%
-       if (__parameterName__ is $Wrapper) '__parameterName__': __parameterName__.$uniqueId,
+       if (__parameterName__ is $Wrapper) '__parameterName__': __parameterName__?.$uniqueId,
        if (__parameterName__ is! $Wrapper) '__parameterName__': __parameterName__,
        %%METHODCALLPARAM methodChannel:typeParameter%%
        %%METHODCALLPARAMS%%
@@ -388,7 +388,7 @@ public class ChannelGenerated implements MethodCallHandler {
         call.argument("__fieldName__") != null ? ((__fieldType__Wrapper) $channelGenerated.getWrapper((String) call.argument("__fieldName__"))).$value : null;
         %%FIELDSETTER methodChannel:wrapper%%
         %%FIELDSETTER methodChannel:typeParameter%%
-        call.argument("__fieldName__") != null && call.argument("__fieldName__") instanceOf String && $channelGenerated.getWrapper((String) call.argument("__fieldName__")) != null ? $channelGenerated.getWrapper((String) call.argument("__fieldName__")).$getValue() : call.argument("__fieldName__");
+        call.argument("__fieldName__") != null && call.argument("__fieldName__") instanceof String && $channelGenerated.getWrapper((String) call.argument("__fieldName__")) != null ? $channelGenerated.getWrapper((String) call.argument("__fieldName__")).$getValue() : call.argument("__fieldName__");
         %%FIELDSETTER methodChannel:typeParameter%%
         %%FIELDSETTERS%%
       } 
@@ -464,13 +464,13 @@ public class ChannelGenerated implements MethodCallHandler {
       __methodCallerName__.__methodName__(
       %%PARAMETERS%%
       %%PARAMETER methodChannel:supported%%
-      call.argument("__parameterName__") == null ? null : (__parameterType__) call.argument("__parameterName__")
+      call.argument("__parameterName__") != null ? (__parameterType__) call.argument("__parameterName__") : null
       %%PARAMETER methodChannel:supported%%
       %%PARAMETER methodChannel:wrapper%%
-      ((__parameterType__Wrapper) $channelGenerated.getWrapper((String) call.argument("__parameterName__"))).$value
+      call.argument("__parameterName__") != null ? ((__parameterType__Wrapper) $channelGenerated.getWrapper((String) call.argument("__parameterName__"))).$value : null
       %%PARAMETER methodChannel:wrapper%%
       %%PARAMETER methodChannel:typeParameter%%
-      $channelGenerated.getWrapper((String) call.argument("value")) == null ? call.argument("value") : $channelGenerated.getWrapper((String) call.argument("value")).$getValue()
+      call.argument("__parameterName__") != null && call.argument("__parameterName__") instanceof String && call.$channelGenerated.getWrapper((String) call.argument("__parameterName__")) != null ? $channelGenerated.getWrapper((String) call.argument("__parameterName__")).$getValue() : call.argument("__parameterName__") 
       %%PARAMETER methodChannel:typeParameter%%
       %%PARAMETERS%%
       )
