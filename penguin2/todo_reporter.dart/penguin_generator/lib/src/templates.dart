@@ -187,7 +187,7 @@ public class ChannelGenerated implements MethodCallHandler {
       this.$uniqueId = $uniqueId;
     }
 
-    abstract Object onMethodCall(MethodCall call) throws NotImplementedException;
+    abstract Object onMethodCall(MethodCall call) throws Exception;
     abstract Object $getValue();
 
     void allocate() {
@@ -222,7 +222,9 @@ public class ChannelGenerated implements MethodCallHandler {
   private final HashMap<String, FlutterWrapper> tempWrappers = new HashMap<>();
 
   private void addWrapper(
-      final String uniqueId, final FlutterWrapper wrapper, HashMap<String, FlutterWrapper> wrapperMap) {
+      final String uniqueId,
+      final FlutterWrapper wrapper,
+      HashMap<String, FlutterWrapper> wrapperMap) {
     if (wrapperMap.get(uniqueId) != null) {
       final String message = String.format("Object for uniqueId already exists: %s", uniqueId);
       throw new IllegalArgumentException(message);
@@ -249,18 +251,14 @@ public class ChannelGenerated implements MethodCallHandler {
     try {
       final Object value = onMethodCall(call);
       result.success(value);
-    } catch (WrapperNotFoundException exception) {
-      result.error(exception.getClass().getSimpleName(), exception.getMessage(), null);
-    } catch (NoUniqueIdException exception) {
-      result.error(exception.getClass().getSimpleName(), exception.getMessage(), null);
-    } catch (NotImplementedException exception) {
+    } catch (Exception exception) {
       result.error(exception.getClass().getSimpleName(), exception.getMessage(), null);
     } finally {
       tempWrappers.clear();
     }
   }
 
-  private Object onMethodCall(MethodCall call) throws NoUniqueIdException, WrapperNotFoundException, NotImplementedException {
+  private Object onMethodCall(MethodCall call) throws Exception {
     switch(call.method) {
       case "MultiInvoke":
         final ArrayList<HashMap<String, Object>> allMethodCallData = (ArrayList<HashMap<String, Object>>) call.arguments;
@@ -321,7 +319,7 @@ public class ChannelGenerated implements MethodCallHandler {
     %%CONSTRUCTOR%%
     %%CONSTRUCTORS%%
     
-    static Object onStaticMethodCall(ChannelGenerated $channelGenerated, MethodCall call) throws NotImplementedException {
+    static Object onStaticMethodCall(ChannelGenerated $channelGenerated, MethodCall call) throws Exception {
       switch(call.method) {
         %%STATICMETHODCALLS%%
         %%STATICMETHODCALL classMember:constructor%%
@@ -347,7 +345,7 @@ public class ChannelGenerated implements MethodCallHandler {
     }
 
     @Override
-    public Object onMethodCall(MethodCall call) throws NotImplementedException {
+    public Object onMethodCall(MethodCall call) throws Exception {
       switch(call.method) {
         case "__platformClassName__#allocate":
           allocate();
@@ -377,7 +375,7 @@ public class ChannelGenerated implements MethodCallHandler {
     
     %%FIELDS%%
     %%FIELD%%
-    static private Object __fieldName__(ChannelGenerated $channelGenerated, MethodCall call) {
+    static private Object __fieldName__(ChannelGenerated $channelGenerated, MethodCall call) throws Exception {
       if (call.argument("__fieldName__") != null) {
         __methodCallerName__.__fieldName__ =
         %%FIELDSETTERS%%
@@ -446,7 +444,7 @@ public class ChannelGenerated implements MethodCallHandler {
 
     %%METHODS%%
     %%METHOD%%
-    static Object __methodName__(ChannelGenerated $channelGenerated, MethodCall call) {
+    static Object __methodName__(ChannelGenerated $channelGenerated, MethodCall call) throws Exception {
       %%PREMETHODCALLS%%
       %%PREMETHODCALL methodChannel:void%%
       %%PREMETHODCALL methodChannel:void%%
