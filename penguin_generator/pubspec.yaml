@@ -16,7 +16,9 @@ dependencies:
   source_gen: ^0.9.4+4
   glob: ^1.1.7
   penguin:
-    path: ../penguin/
+    git:
+      url: git://github.com/bparrishMines/penguin.git
+      path: penguin
   
 dev_dependencies:
   json_serializable: ^3.2.0
