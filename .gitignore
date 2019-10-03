@@ -27,11 +27,4 @@ doc/api/
 
 *.iml
 
-out/
 *.DS_STORE
-
-# Only include plugin.yaml, test library, and test driver tests.
-test/*
-!test/plugin.yaml
-!test/fruit_picker/android/src/main/java/dev/fruit/fruit_picker/fruitlibrary/fruits/*
-!test/fruit_picker/example/test_driver/*
