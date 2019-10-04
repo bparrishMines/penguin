@@ -243,7 +243,7 @@ class WriteBuilder extends Builder {
               (Type type) =>
                   classInfo.aClass.platform.runtimeType == type.runtimeType,
             ),
-          ),
+          ).toList(),
           PlatformBuilderBuildStep._(buildStep),
         ),
       ),
