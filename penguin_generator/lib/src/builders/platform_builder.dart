@@ -1,29 +1,46 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
 import 'package:glob/glob.dart';
 import 'package:path/path.dart' as p;
-import 'package:penguin/penguin.dart';
 import 'package:source_gen/source_gen.dart';
 
 import 'annotation_utils.dart';
 import '../info.dart';
 import '../templates.dart';
 
-const TypeChecker _classAnnotation = const TypeChecker.fromRuntime(Class);
-const TypeChecker _methodAnnotation = const TypeChecker.fromRuntime(Method);
-const TypeChecker _fieldAnnotation = const TypeChecker.fromRuntime(Field);
-const TypeChecker _constructorAnnotation =
-    const TypeChecker.fromRuntime(Constructor);
+class PlatformBuilderBuildStep {
+  PlatformBuilderBuildStep._(this._buildStep) {}
+
+  static final String _fileHeader = r'''
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+// **************************************************************************
+// PenguinGenerator
+// **************************************************************************
+''';
+
+  final BuildStep _buildStep;
+
+  Future<void> writeAsString(String filename, String content) {
+    return _buildStep.writeAsString(
+      AssetId(_buildStep.inputId.package, p.join('lib', filename)),
+      _fileHeader + content,
+    );
+  }
+}
 
 abstract class PlatformBuilder {
-  String get filename;
-  String get directory;
-  String build(List<ClassInfo> classes);
+  Iterable<String> get filenames;
+  // Platform annotation for the builder (e.g. AndroidPlatform)
+  Iterable<Type> get platformTypes;
+  Future<void> build(
+    List<ClassInfo> classes,
+    PlatformBuilderBuildStep buildStep,
+  );
 
   // For passing methods over MethodChannel
   MethodChannelType getChannelType(TypeInfo info) {
@@ -68,7 +85,7 @@ class ReadInfoBuilder extends Builder {
     final LibraryReader reader = LibraryReader(await buildStep.inputLibrary);
 
     final List<ClassInfo> allClassInfo = reader
-        .annotatedWith(_classAnnotation)
+        .annotatedWith(AnnotationUtils.classAnnotation)
         .map<ClassInfo>(
           (AnnotatedElement element) => ClassInfo(
             name: element.element.name,
@@ -76,14 +93,14 @@ class ReadInfoBuilder extends Builder {
             constructors: (element.element as ClassElement)
                 .constructors
                 .where((ConstructorElement constructorElement) =>
-                    _constructorAnnotation
+                    AnnotationUtils.constructorAnnotation
                         .hasAnnotationOfExact(constructorElement))
                 .map<ConstructorInfo>(
                   (ConstructorElement constructorElement) => ConstructorInfo(
                     name: constructorElement.name,
                     constructor: AnnotationUtils.constructorFromConstantReader(
                       ConstantReader(
-                        _constructorAnnotation
+                        AnnotationUtils.constructorAnnotation
                             .firstAnnotationOfExact(constructorElement),
                       ),
                     ),
@@ -92,8 +109,8 @@ class ReadInfoBuilder extends Builder {
             methods: (element.element as ClassElement)
                 .methods
                 .where(
-                  (MethodElement element) =>
-                      _methodAnnotation.hasAnnotationOfExact(element),
+                  (MethodElement element) => AnnotationUtils.methodAnnotation
+                      .hasAnnotationOfExact(element),
                 )
                 .map<MethodInfo>(
                   (MethodElement methodElement) => MethodInfo(
@@ -114,7 +131,8 @@ class ReadInfoBuilder extends Builder {
                         : _toTypeInfo(methodElement.returnType),
                     method: AnnotationUtils.methodFromConstantReader(
                       ConstantReader(
-                        _methodAnnotation.firstAnnotationOfExact(methodElement),
+                        AnnotationUtils.methodAnnotation
+                            .firstAnnotationOfExact(methodElement),
                       ),
                     ),
                   ),
@@ -122,8 +140,8 @@ class ReadInfoBuilder extends Builder {
             fields: (element.element as ClassElement)
                 .fields
                 .where(
-                  (FieldElement fieldElement) =>
-                      _fieldAnnotation.hasAnnotationOfExact(fieldElement),
+                  (FieldElement fieldElement) => AnnotationUtils.fieldAnnotation
+                      .hasAnnotationOfExact(fieldElement),
                 )
                 .map<FieldInfo>(
                   (FieldElement fieldElement) => FieldInfo(
@@ -139,7 +157,8 @@ class ReadInfoBuilder extends Builder {
                         : _toTypeInfo(fieldElement.type),
                     field: AnnotationUtils.fieldFromConstantReader(
                       ConstantReader(
-                        _fieldAnnotation.firstAnnotationOfExact(fieldElement),
+                        AnnotationUtils.fieldAnnotation
+                            .firstAnnotationOfExact(fieldElement),
                       ),
                     ),
                   ),
@@ -184,8 +203,8 @@ class ReadInfoBuilder extends Builder {
         isSymbol: type.isDartCoreSymbol,
         isDynamic: type.isDynamic,
         isVoid: type.isVoid,
-        isWrapper:
-            !type.isVoid && _classAnnotation.hasAnnotationOfExact(type.element),
+        isWrapper: !type.isVoid &&
+            AnnotationUtils.classAnnotation.hasAnnotationOfExact(type.element),
         isTypeParameter: type is TypeParameterType,
       );
 
@@ -197,14 +216,6 @@ class ReadInfoBuilder extends Builder {
 
 class WriteBuilder extends Builder {
   WriteBuilder(this.platformBuilders);
-
-  static final String _fileHeader = r'''
-// GENERATED CODE - DO NOT MODIFY BY HAND
-
-// **************************************************************************
-// PenguinGenerator
-// **************************************************************************
-''';
 
   static final Glob _allInfoFiles = Glob('lib/**${ReadInfoBuilder.extension}');
 
@@ -224,20 +235,25 @@ class WriteBuilder extends Builder {
     }
 
     if (classes.isEmpty) return;
-    for (PlatformBuilder builder in platformBuilders) {
-      await buildStep.writeAsString(
-        AssetId(buildStep.inputId.package, p.join('lib', builder.filename)),
-        _fileHeader + builder.build(classes),
-      );
-    }
+    await Future.wait<void>(
+      platformBuilders.map<Future<void>>(
+        (PlatformBuilder builder) => builder.build(
+          classes.where(
+            (ClassInfo classInfo) => builder.platformTypes.any(
+              (Type type) =>
+                  classInfo.aClass.platform.runtimeType == type.runtimeType,
+            ),
+          ),
+          PlatformBuilderBuildStep._(buildStep),
+        ),
+      ),
+    );
   }
 
   @override
   Map<String, List<String>> get buildExtensions => <String, List<String>>{
         r'$lib$': platformBuilders
-            .map<String>(
-              (PlatformBuilder builder) => builder.filename,
-            )
+            .expand<String>((PlatformBuilder builder) => builder.filenames)
             .toList(),
       };
 }

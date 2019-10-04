@@ -13,38 +13,146 @@ class AndroidBuilder extends PlatformBuilder {
   static String _androidPackageCache;
 
   @override
-  String build(List<ClassInfo> classes) {
+  Future<String> build(
+    List<ClassInfo> classes,
+    PlatformBuilderBuildStep buildStep,
+  ) {
     final AndroidTemplateCreator creator = AndroidTemplateCreator();
-    return creator.createFile(
-      imports: classes
-          .where((ClassInfo classInfo) =>
-              (classInfo.aClass.platform as AndroidPlatform).type.package !=
-              _androidPackage)
-          .map<String>(
-            (ClassInfo classInfo) => creator.createImport(
-              classPackage:
-                  (classInfo.aClass.platform as AndroidPlatform).type.package,
-              platformClassName:
+    return buildStep.writeAsString(
+      'ChannelGenerated.java',
+      creator.createFile(
+        imports: classes
+            .where((ClassInfo classInfo) =>
+                (classInfo.aClass.platform as AndroidPlatform).type.package !=
+                _androidPackage)
+            .map<String>(
+              (ClassInfo classInfo) => creator.createImport(
+                classPackage:
+                    (classInfo.aClass.platform as AndroidPlatform).type.package,
+                platformClassName:
+                    (classInfo.aClass.platform as AndroidPlatform).type.name,
+              ),
+            )
+            .toSet(),
+        classes: classes.map<String>(
+          (ClassInfo classInfo) => creator.createClass(
+            staticMethodCalls: <String>[
+              ...classInfo.constructors.map<String>(
+                (ConstructorInfo constructorInfo) =>
+                    creator.createStaticMethodCall(
+                  ClassMemberType.constructor,
+                  platformClassName:
+                      (classInfo.aClass.platform as AndroidPlatform).type.name,
+                  methodName: '',
+                ),
+              ),
+              ...classInfo.methods
+                  .where((MethodInfo methodInfo) => methodInfo.isStatic)
+                  .map<String>(
+                    (MethodInfo methodInfo) => creator.createStaticMethodCall(
+                      ClassMemberType.method,
+                      platformClassName:
+                          (classInfo.aClass.platform as AndroidPlatform)
+                              .type
+                              .name,
+                      methodName: methodInfo.name,
+                    ),
+                  ),
+            ],
+            constructors: classInfo.constructors.map<String>(
+              (ConstructorInfo constructorInfo) => creator.createConstructor(
+                platformClassName:
+                    (classInfo.aClass.platform as AndroidPlatform).type.name,
+                variableName: ReCase(
                   (classInfo.aClass.platform as AndroidPlatform).type.name,
+                ).camelCase,
+              ),
             ),
-          )
-          .toSet(),
-      classes: classes.map<String>(
-        (ClassInfo classInfo) => creator.createClass(
-          staticMethodCalls: <String>[
-            ...classInfo.constructors.map<String>(
-              (ConstructorInfo constructorInfo) =>
-                  creator.createStaticMethodCall(
+            methods: classInfo.methods.map<String>(
+              (MethodInfo methodInfo) => creator.createMethod(
+                getChannelType(methodInfo.returnType),
+                methodInfo.isStatic,
+                platformClassName:
+                    (classInfo.aClass.platform as AndroidPlatform).type.name,
+                package: _androidPackage,
+                parameters: methodInfo.parameters.map<String>(
+                  (ParameterInfo parameterInfo) => creator.createParameter(
+                    getChannelType(parameterInfo.type),
+                    parameterType: _convertType(parameterInfo.type, classes),
+                    parameterName: parameterInfo.name,
+                    variableName:
+                        ReCase(_convertType(parameterInfo.type, classes))
+                            .camelCase,
+                  ),
+                ),
+                returnType: _convertType(methodInfo.returnType, classes),
+                methodName: methodInfo.name,
+                variableName: ReCase(
+                  (classInfo.aClass.platform as AndroidPlatform).type.name,
+                ).camelCase,
+              ),
+            ),
+            fields: classInfo.fields.map<String>(
+              (FieldInfo fieldInfo) => creator.createField(
+                getChannelType(fieldInfo.type),
+                isStatic: fieldInfo.isStatic,
+                isMutable: fieldInfo.isMutable,
+                fieldType: _convertType(fieldInfo.type, classes),
+                fieldName: fieldInfo.name,
+                package: _androidPackage,
+                platformClassName:
+                    (classInfo.aClass.platform as AndroidPlatform).type.name,
+              ),
+            ),
+            methodCalls: <String>[
+              ...classInfo.methods
+                  .where((MethodInfo methodInfo) => !methodInfo.isStatic)
+                  .map<String>(
+                    (MethodInfo methodInfo) => creator.createMethodCall(
+                      ClassMemberType.method,
+                      platformClassName:
+                          (classInfo.aClass.platform as AndroidPlatform)
+                              .type
+                              .name,
+                      methodName: methodInfo.name,
+                    ),
+                  ),
+              ...classInfo.fields
+                  .where((FieldInfo fieldInfo) => !fieldInfo.isStatic)
+                  .map<String>(
+                    (FieldInfo fieldInfo) => creator.createMethodCall(
+                      ClassMemberType.field,
+                      platformClassName:
+                          (classInfo.aClass.platform as AndroidPlatform)
+                              .type
+                              .name,
+                      fieldName: fieldInfo.name,
+                    ),
+                  ),
+            ],
+            platformClassName:
+                (classInfo.aClass.platform as AndroidPlatform).type.name,
+            variableName: ReCase(
+              (classInfo.aClass.platform as AndroidPlatform).type.name,
+            ).camelCase,
+          ),
+        ),
+        staticRedirects: <String>[
+          ...classes.expand<String>(
+            (ClassInfo classInfo) => classInfo.constructors.map<String>(
+              (ConstructorInfo constructorInfo) => creator.createStaticRedirect(
                 ClassMemberType.constructor,
                 platformClassName:
                     (classInfo.aClass.platform as AndroidPlatform).type.name,
                 methodName: '',
               ),
             ),
-            ...classInfo.methods
+          ),
+          ...classes.expand<String>(
+            (ClassInfo classInfo) => classInfo.methods
                 .where((MethodInfo methodInfo) => methodInfo.isStatic)
                 .map<String>(
-                  (MethodInfo methodInfo) => creator.createStaticMethodCall(
+                  (MethodInfo methodInfo) => creator.createStaticRedirect(
                     ClassMemberType.method,
                     platformClassName:
                         (classInfo.aClass.platform as AndroidPlatform)
@@ -53,69 +161,12 @@ class AndroidBuilder extends PlatformBuilder {
                     methodName: methodInfo.name,
                   ),
                 ),
-          ],
-          constructors: classInfo.constructors.map<String>(
-            (ConstructorInfo constructorInfo) => creator.createConstructor(
-              platformClassName:
-                  (classInfo.aClass.platform as AndroidPlatform).type.name,
-              variableName: ReCase(
-                (classInfo.aClass.platform as AndroidPlatform).type.name,
-              ).camelCase,
-            ),
           ),
-          methods: classInfo.methods.map<String>(
-            (MethodInfo methodInfo) => creator.createMethod(
-              getChannelType(methodInfo.returnType),
-              methodInfo.isStatic,
-              platformClassName:
-                  (classInfo.aClass.platform as AndroidPlatform).type.name,
-              package: _androidPackage,
-              parameters: methodInfo.parameters.map<String>(
-                (ParameterInfo parameterInfo) => creator.createParameter(
-                  getChannelType(parameterInfo.type),
-                  parameterType: _convertType(parameterInfo.type, classes),
-                  parameterName: parameterInfo.name,
-                  variableName:
-                      ReCase(_convertType(parameterInfo.type, classes))
-                          .camelCase,
-                ),
-              ),
-              returnType: _convertType(methodInfo.returnType, classes),
-              methodName: methodInfo.name,
-              variableName: ReCase(
-                (classInfo.aClass.platform as AndroidPlatform).type.name,
-              ).camelCase,
-            ),
-          ),
-          fields: classInfo.fields.map<String>(
-            (FieldInfo fieldInfo) => creator.createField(
-              getChannelType(fieldInfo.type),
-              isStatic: fieldInfo.isStatic,
-              isMutable: fieldInfo.isMutable,
-              fieldType: _convertType(fieldInfo.type, classes),
-              fieldName: fieldInfo.name,
-              package: _androidPackage,
-              platformClassName:
-                  (classInfo.aClass.platform as AndroidPlatform).type.name,
-            ),
-          ),
-          methodCalls: <String>[
-            ...classInfo.methods
-                .where((MethodInfo methodInfo) => !methodInfo.isStatic)
+          ...classes.expand<String>(
+            (ClassInfo classInfo) => classInfo.fields
+                .where((FieldInfo fieldInfo) => fieldInfo.isStatic)
                 .map<String>(
-                  (MethodInfo methodInfo) => creator.createMethodCall(
-                    ClassMemberType.method,
-                    platformClassName:
-                        (classInfo.aClass.platform as AndroidPlatform)
-                            .type
-                            .name,
-                    methodName: methodInfo.name,
-                  ),
-                ),
-            ...classInfo.fields
-                .where((FieldInfo fieldInfo) => !fieldInfo.isStatic)
-                .map<String>(
-                  (FieldInfo fieldInfo) => creator.createMethodCall(
+                  (FieldInfo fieldInfo) => creator.createStaticRedirect(
                     ClassMemberType.field,
                     platformClassName:
                         (classInfo.aClass.platform as AndroidPlatform)
@@ -124,51 +175,10 @@ class AndroidBuilder extends PlatformBuilder {
                     fieldName: fieldInfo.name,
                   ),
                 ),
-          ],
-          platformClassName:
-              (classInfo.aClass.platform as AndroidPlatform).type.name,
-          variableName: ReCase(
-            (classInfo.aClass.platform as AndroidPlatform).type.name,
-          ).camelCase,
-        ),
-      ),
-      staticRedirects: <String>[
-        ...classes.expand<String>(
-          (ClassInfo classInfo) => classInfo.constructors.map<String>(
-            (ConstructorInfo constructorInfo) => creator.createStaticRedirect(
-              ClassMemberType.constructor,
-              platformClassName:
-                  (classInfo.aClass.platform as AndroidPlatform).type.name,
-              methodName: '',
-            ),
           ),
-        ),
-        ...classes.expand<String>(
-          (ClassInfo classInfo) => classInfo.methods
-              .where((MethodInfo methodInfo) => methodInfo.isStatic)
-              .map<String>(
-                (MethodInfo methodInfo) => creator.createStaticRedirect(
-                  ClassMemberType.method,
-                  platformClassName:
-                      (classInfo.aClass.platform as AndroidPlatform).type.name,
-                  methodName: methodInfo.name,
-                ),
-              ),
-        ),
-        ...classes.expand<String>(
-          (ClassInfo classInfo) => classInfo.fields
-              .where((FieldInfo fieldInfo) => fieldInfo.isStatic)
-              .map<String>(
-                (FieldInfo fieldInfo) => creator.createStaticRedirect(
-                  ClassMemberType.field,
-                  platformClassName:
-                      (classInfo.aClass.platform as AndroidPlatform).type.name,
-                  fieldName: fieldInfo.name,
-                ),
-              ),
-        ),
-      ],
-      package: _androidPackage,
+        ],
+        package: _androidPackage,
+      ),
     );
   }
 
@@ -222,12 +232,7 @@ class AndroidBuilder extends PlatformBuilder {
   }
 
   @override
-  String get directory => p.joinAll(
-        <String>['android', 'src', 'main', 'java']..addAll(
-            _androidPackage.split('.'),
-          ),
-      );
+  Iterable<String> get filenames => <String>['ChannelGenerated.java'];
 
-  @override
-  String get filename => 'ChannelGenerated.java';
+  Iterable<Type> get platformTypes => <Type>[AndroidPlatform];
 }

@@ -18,6 +18,6 @@ builders:
     target: ":penguin_generator"
     import: "package:penguin_generator/builder.dart"
     builder_factories: ["writeBuilder"]
-    build_extensions: {r"$lib$": ["penguin.g.dart", "ChannelGenerated.java"]}
+    build_extensions: {r"$lib$": ["android.penguin.g.dart", "ios.penguin.g.dart", "ChannelGenerated.java"]}
     build_to: source
     auto_apply: dependents
