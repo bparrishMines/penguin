@@ -7,7 +7,7 @@ import 'platform_builder.dart';
 
 class DartMethodChannelBuilder extends PlatformBuilder {
   @override
-  Future<String> build(
+  Future<void> build(
     List<ClassInfo> classes,
     PlatformBuilderBuildStep buildStep,
   ) {

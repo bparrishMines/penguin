@@ -238,12 +238,15 @@ class WriteBuilder extends Builder {
     await Future.wait<void>(
       platformBuilders.map<Future<void>>(
         (PlatformBuilder builder) => builder.build(
-          classes.where(
-            (ClassInfo classInfo) => builder.platformTypes.any(
-              (Type type) =>
-                  classInfo.aClass.platform.runtimeType == type.runtimeType,
-            ),
-          ).toList(),
+          classes
+              .where(
+                (ClassInfo classInfo) => builder.platformTypes.any(
+                  (Type type) =>
+                      classInfo.aClass.platform.runtimeType.toString() ==
+                      type.toString(),
+                ),
+              )
+              .toList(),
           PlatformBuilderBuildStep._(buildStep),
         ),
       ),

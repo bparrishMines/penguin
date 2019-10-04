@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:path/path.dart' as p;
 import 'package:penguin/penguin.dart';
 import 'package:penguin_generator/src/info.dart';
 import 'package:pubspec_parse/pubspec_parse.dart';
@@ -13,7 +12,7 @@ class AndroidBuilder extends PlatformBuilder {
   static String _androidPackageCache;
 
   @override
-  Future<String> build(
+  Future<void> build(
     List<ClassInfo> classes,
     PlatformBuilderBuildStep buildStep,
   ) {
