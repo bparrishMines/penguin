@@ -4,14 +4,15 @@ import 'package:test/test.dart';
 
 void main() {
   group('penguin_generator', () {
-    setUp(() {
+    setUpAll(() {
       final ProcessResult createResult = Process.runSync('flutter', <String>[
         'create',
         '--project-name=test_plugin',
         '--no-with-driver-test',
         '--template=plugin',
         '--androidx',
-        'test_plugin',
+        '--android-language=java',
+        'test/test_plugin',
       ]);
       print(createResult.stdout);
       print(createResult.stderr);

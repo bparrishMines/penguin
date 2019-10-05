@@ -32,7 +32,7 @@ doc/api/
 # Penguin Generator test plugin files
 penguin_generator/test/test_plugin/*
 !penguin_generator/test/test_plugin/plugin.yaml
-!penguin_generator/test/test_plugin/android/src/main/java/com/example/test_plugin/TestPlugin.java	
-!penguin_generator/test/test_plugin/android/src/main/java/com/example/test_plugin/test_library/	
-!penguin_generator/test/test_plugin/example/test_driver/
-!penguin_generator/test/test_plugin/lib/
+!penguin_generator/test/test_plugin/android/src/main/java/com/example/test_plugin/TestPlugin.java
+!penguin_generator/test/test_plugin/android/src/main/java/com/example/test_plugin/test_library/*
+!penguin_generator/test/test_plugin/example/test_driver/test_plugin_test.dart
+!penguin_generator/test/test_plugin/lib/test_plugin.dart
