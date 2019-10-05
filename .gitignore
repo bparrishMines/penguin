@@ -28,3 +28,11 @@ doc/api/
 *.iml
 
 *.DS_STORE
+
+# Penguin Generator test plugin files
+penguin_generator/test/
+!penguin_generator/test/test_plugin/plugin.yaml
+!penguin_generator/test/test_plugin/android/src/main/java/com/example/test_plugin/TestPlugin.java	
+!penguin_generator/test/test_plugin/android/src/main/java/com/example/test_plugin/test_library/	
+!penguin_generator/test/test_plugin/example/test_driver/
+!penguin_generator/test/test_plugin/lib/
