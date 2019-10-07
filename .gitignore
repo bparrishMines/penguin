@@ -30,5 +30,9 @@ doc/api/
 *.DS_STORE
 
 # Penguin Generator test plugin files
-penguin_generator/test/test_plugin/*
-!penguin_generator/test/test_plugin/pubspec.yaml
+#penguin_generator/test/test_plugin/*
+#!penguin_generator/test/test_plugin/pubspec.yaml
+#!penguin_generator/test/test_plugin/android/src/main/java/com/example/test_plugin/TestPlugin.java
+#!penguin_generator/test/test_plugin/lib/test_plugin.dart
+#!penguin_generator/test/test_plugin/example/test_driver/test_plugin.dart
+#!penguin_generator/test/test_plugin/example/test_driver/test_plugin_test.dart
