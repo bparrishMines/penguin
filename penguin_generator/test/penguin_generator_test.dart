@@ -12,6 +12,7 @@ void main() {
         '--template=plugin',
         '--androidx',
         '--android-language=java',
+        '--ios-language=objc',
         'test/test_plugin',
       ]);
       print(createResult.stdout);
