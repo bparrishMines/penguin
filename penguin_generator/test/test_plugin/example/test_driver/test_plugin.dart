@@ -15,7 +15,11 @@ void main() {
 
   group('test_plugin', () {
     test('noParametersMethod', () {
-      expect(AndroidTestClass1().noParametersMethod(), completes);
+      expect(AndroidTestClass1().noParametersMethod(), completion(72));
+    });
+
+    test('singleParameterMethod', () {
+      expect(AndroidTestClass1().singleParameterMethod('Hello'), completion('Hello, World!'));
     });
   });
 }
