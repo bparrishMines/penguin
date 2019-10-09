@@ -19,13 +19,11 @@ class AndroidTestClass1 {
   final $AndroidTestClass1 _testClass = $AndroidTestClass1(_randomId());
 
   @Method()
-  Future<void> noParametersMethod() async {
-    final List<dynamic> results = await $invokeAll(
+  Future<void> noParametersMethod() {
+    return $invoke<void>(
       _channel,
-      <MethodCall>[
-        _testClass.$AndroidTestClass1Default(),
-        _testClass.$noParametersMethod()
-      ],
+      _testClass.$AndroidTestClass1Default(),
+      _testClass.$noParametersMethod(),
     );
   }
 }

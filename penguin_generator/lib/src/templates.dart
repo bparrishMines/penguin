@@ -4,6 +4,8 @@ class _Template {
   final String value;
 
   static const _Template methodChannel = _Template._(r'''
+import 'dart:async';
+
 import 'package:flutter/services.dart';
 
 %%CLASSES%%
@@ -21,7 +23,7 @@ class $__className____typeParameters__ extends $Wrapper {
   }
   %%CONSTRUCTOR%%
   %%CONSTRUCTORS%%
-  
+
   %%FIELDS%%
   %%FIELD%%
   static MethodCall $__fieldName__({
@@ -127,21 +129,84 @@ abstract class $Wrapper {
   }
 }
 
-Future<T> $invoke<T>(MethodChannel channel, MethodCall call) {
-  return channel.invokeMethod<T>(call.method, call.arguments);
+Future<T> $invoke<T>(
+  MethodChannel channel,
+  MethodCall call, [
+  MethodCall call2,
+  MethodCall call3,
+  MethodCall call4,
+  MethodCall call5,
+  MethodCall call6,
+  MethodCall call7,
+  MethodCall call8,
+  MethodCall call9,
+]) {
+  final Completer<T> completer = Completer<T>();
+
+  $invokeAll(
+    channel,
+    <MethodCall>[call, call2, call3, call4, call5, call6, call7, call8, call9]
+        .where((MethodCall call) => call != null),
+  ).then(
+    (List<dynamic> results) => completer.complete(results.last),
+  );
+
+  return completer.future;
 }
 
-Future<List<T>> $invokeList<T>(MethodChannel channel, MethodCall call) {
-  return channel.invokeListMethod<T>(call.method, call.arguments);
+Future<List<T>> $invokeList<T>(
+  MethodChannel channel,
+  MethodCall call, [
+  MethodCall call2,
+  MethodCall call3,
+  MethodCall call4,
+  MethodCall call5,
+  MethodCall call6,
+  MethodCall call7,
+  MethodCall call8,
+  MethodCall call9,
+]) {
+  final Completer<List<T>> completer = Completer<List<T>>();
+
+  $invokeAll(
+    channel,
+    <MethodCall>[call, call2, call3, call4, call5, call6, call7, call8, call9]
+        .where((MethodCall call) => call != null),
+  ).then(
+    (List<dynamic> results) => completer.complete(results.last.cast<T>()),
+  );
+
+  return completer.future;
 }
 
-Future<Map<S, T>> $invokeMap<S, T>(MethodChannel channel, MethodCall call) {
-  return channel.invokeMapMethod<S, T>(call.method, call.arguments);
+Future<Map<S, T>> $invokeMap<S, T>(
+  MethodChannel channel,
+  MethodCall call, [
+  MethodCall call2,
+  MethodCall call3,
+  MethodCall call4,
+  MethodCall call5,
+  MethodCall call6,
+  MethodCall call7,
+  MethodCall call8,
+  MethodCall call9,
+]) {
+  final Completer<Map<S, T>> completer = Completer<Map<S, T>>();
+
+  $invokeAll(
+    channel,
+    <MethodCall>[call, call2, call3, call4, call5, call6, call7, call8, call9]
+        .where((MethodCall call) => call != null),
+  ).then(
+    (List<dynamic> results) => completer.complete(results.last.cast<S, T>()),
+  );
+
+  return completer.future;
 }
 
 Future<List<dynamic>> $invokeAll(
   MethodChannel channel,
-  List<MethodCall> methodCalls,
+  Iterable<MethodCall> methodCalls,
 ) {
   final List<Map<String, dynamic>> serializedCalls = methodCalls
       .map<Map<String, dynamic>>(
