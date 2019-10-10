@@ -24,6 +24,10 @@ void main() {
         expect(AndroidTestClass1().singleParameterMethod('Hello'),
             completion('Hello, World!'));
       });
+
+      test('returnVoid', () {
+        expect(AndroidTestClass1().returnVoid(), completes);
+      });
     }, skip: !Platform.isAndroid);
   });
 }

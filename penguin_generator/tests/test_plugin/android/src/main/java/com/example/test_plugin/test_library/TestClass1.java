@@ -8,4 +8,6 @@ public class TestClass1 {
   public String singleParameterMethod(String value) {
     return value + ", World!";
   }
+
+  public void returnVoid() {}
 }

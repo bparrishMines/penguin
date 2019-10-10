@@ -19,6 +19,15 @@ class AndroidTestClass1 {
   final $AndroidTestClass1 _testClass = $AndroidTestClass1(_randomId());
 
   @Method()
+  Future<void> returnVoid() {
+    return $invoke<void>(
+      _channel,
+      _testClass.$AndroidTestClass1Default(),
+      _testClass.$returnVoid(),
+    );
+  }
+
+  @Method()
   Future<int> noParametersMethod() {
     return $invoke<int>(
       _channel,

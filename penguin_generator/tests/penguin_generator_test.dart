@@ -17,7 +17,7 @@ void main() {
           '--androidx',
           '--android-language=java',
           '--ios-language=objc',
-          p.join('test', 'test_plugin'),
+          p.join('tests', 'test_plugin'),
         ])),
         isTrue,
       );
@@ -33,7 +33,7 @@ void main() {
             'build_runner',
             'build',
           ],
-          workingDirectory: p.join('test', 'test_plugin'),
+          workingDirectory: p.join('tests', 'test_plugin'),
         )),
         isTrue,
       );
@@ -45,7 +45,7 @@ void main() {
       final Process driverTestProcess = await Process.start(
         'flutter',
         <String>['drive', p.join('test_driver', 'test_plugin.dart')],
-        workingDirectory: p.join('test', 'test_plugin', 'example'),
+        workingDirectory: p.join('tests', 'test_plugin', 'example'),
       );
 
       bool testsPassed = false;
@@ -56,7 +56,7 @@ void main() {
       stderr.addStream(driverTestProcess.stderr);
 
       expect(await driverTestProcess.exitCode == 0 && testsPassed, isTrue);
-    }, timeout: Timeout(Duration(minutes: 2)));
+    }, timeout: Timeout(Duration(minutes: 4)));
   });
 }
 
@@ -68,10 +68,10 @@ Future<bool> _printProcess(Process process) async {
 }
 
 Future<File> _moveAndroidGeneratedCode() =>
-    File(p.join('test', 'test_plugin', 'lib', 'ChannelGenerated.java')).copy(
+    File(p.join('tests', 'test_plugin', 'lib', 'ChannelGenerated.java')).copy(
       p.joinAll(
         <String>[
-          'test',
+          'tests',
           'test_plugin',
           'android',
           'src',
