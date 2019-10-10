@@ -28,6 +28,44 @@ void main() {
       test('returnVoid', () {
         expect(AndroidTestClass1().returnVoid(), completes);
       });
+
+      test('returnObject', () {
+        expect(AndroidTestClass1().returnObject(), completion('Hello'));
+      });
+
+      test('returnDynamic', () {
+        expect(AndroidTestClass1().returnDynamic(), completion(3));
+      });
+
+      test('returnString', () {
+        expect(AndroidTestClass1().returnString(), completion('Amigo'));
+      });
+
+      test('returnInt', () {
+        expect(AndroidTestClass1().returnInt(), completion(69));
+      });
+
+      test('returnDouble', () {
+        expect(AndroidTestClass1().returnDouble(), completion(70.0));
+      });
+
+      test('returnBool', () {
+        expect(AndroidTestClass1().returnBool(), completion(false));
+      });
+
+      test('returnList', () {
+        expect(
+          AndroidTestClass1().returnList(),
+          completion(<double>[1.0, 2.0]),
+        );
+      });
+
+      test('returnMap', () {
+        expect(
+          AndroidTestClass1().returnMap(),
+          completion(<String, int>{'one': 1, 'two': 2}),
+        );
+      });
     }, skip: !Platform.isAndroid);
   });
 }

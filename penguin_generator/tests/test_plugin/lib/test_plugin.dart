@@ -28,6 +28,78 @@ class AndroidTestClass1 {
   }
 
   @Method()
+  Future<Object> returnObject() {
+    return $invoke<Object>(
+      _channel,
+      _testClass.$AndroidTestClass1Default(),
+      _testClass.$returnObject(),
+    );
+  }
+
+  @Method()
+  Future<dynamic> returnDynamic() {
+    return $invoke<dynamic>(
+      _channel,
+      _testClass.$AndroidTestClass1Default(),
+      _testClass.$returnDynamic(),
+    );
+  }
+
+  @Method()
+  Future<String> returnString() {
+    return $invoke<String>(
+      _channel,
+      _testClass.$AndroidTestClass1Default(),
+      _testClass.$returnString(),
+    );
+  }
+
+  @Method()
+  Future<int> returnInt() {
+    return $invoke<int>(
+      _channel,
+      _testClass.$AndroidTestClass1Default(),
+      _testClass.$returnInt(),
+    );
+  }
+
+  @Method()
+  Future<double> returnDouble() {
+    return $invoke<double>(
+      _channel,
+      _testClass.$AndroidTestClass1Default(),
+      _testClass.$returnDouble(),
+    );
+  }
+
+  @Method()
+  Future<bool> returnBool() {
+    return $invoke<bool>(
+      _channel,
+      _testClass.$AndroidTestClass1Default(),
+      _testClass.$returnBool(),
+    );
+  }
+
+  @Method()
+  Future<List<double>> returnList() {
+    return $invokeList<double>(
+      _channel,
+      _testClass.$AndroidTestClass1Default(),
+      _testClass.$returnList(),
+    );
+  }
+
+  @Method()
+  Future<Map<String, int>> returnMap() {
+    return $invokeMap<String, int>(
+      _channel,
+      _testClass.$AndroidTestClass1Default(),
+      _testClass.$returnMap(),
+    );
+  }
+
+  @Method()
   Future<int> noParametersMethod() {
     return $invoke<int>(
       _channel,
