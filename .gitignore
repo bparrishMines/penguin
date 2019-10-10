@@ -32,4 +32,4 @@ doc/api/
 *.DS_STORE
 
 # Penguin Generator test plugin files
-penguin_generator/test/test_plugin/**
+penguin_generator/tests/test_plugin/**
