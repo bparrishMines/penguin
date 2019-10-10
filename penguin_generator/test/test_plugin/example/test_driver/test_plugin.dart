@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter_driver/driver_extension.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -14,12 +15,15 @@ void main() {
   tearDownAll(() => completer.complete(null));
 
   group('test_plugin', () {
-    test('noParametersMethod', () {
-      expect(AndroidTestClass1().noParametersMethod(), completion(72));
-    });
+    group('android', () {
+      test('noParametersMethod', () {
+        expect(AndroidTestClass1().noParametersMethod(), completion(72));
+      });
 
-    test('singleParameterMethod', () {
-      expect(AndroidTestClass1().singleParameterMethod('Hello'), completion('Hello, World!'));
-    });
+      test('singleParameterMethod', () {
+        expect(AndroidTestClass1().singleParameterMethod('Hello'),
+            completion('Hello, World!'));
+      });
+    }, skip: !Platform.isAndroid);
   });
 }
