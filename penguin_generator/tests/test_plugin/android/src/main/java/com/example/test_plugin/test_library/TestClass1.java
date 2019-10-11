@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 public class TestClass1 {
+  public static int staticField = 12;
   public Object objectField = "32";
   public Object dynamicField = 42;
   public String stringField = "Macintosh";
@@ -22,6 +23,10 @@ public class TestClass1 {
     map.put("true", 1.0);
     map.put("false", 0.0);
     mapField = map;
+  }
+
+  public static int staticMethod() {
+    return 13;
   }
 
   public int noParametersMethod() {

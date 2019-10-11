@@ -20,6 +20,17 @@ class AndroidTestClass1 {
 
   final List<MethodCall> _setters = <MethodCall>[];
 
+  @Method()
+  static Future<int> staticMethod() {
+    return $invoke<int>(_channel, $AndroidTestClass1.$staticMethod());
+  }
+
+  @Field()
+  static Future<int> get staticField => $invoke<int>(
+        _channel,
+        $AndroidTestClass1.$staticField(),
+      );
+
   @Field()
   Future<Object> get objectField => $invoke<Object>(
         _channel,
@@ -74,24 +85,24 @@ class AndroidTestClass1 {
 
   @Field()
   Future<bool> get boolField => $invoke<bool>(
-    _channel,
-    _testClass.$AndroidTestClass1Default(),
-    [_testClass.$boolField()],
-  );
+        _channel,
+        _testClass.$AndroidTestClass1Default(),
+        [_testClass.$boolField()],
+      );
 
   @Field()
   Future<List<bool>> get listField => $invokeList<bool>(
-    _channel,
-    _testClass.$AndroidTestClass1Default(),
-    [_testClass.$listField()],
-  );
+        _channel,
+        _testClass.$AndroidTestClass1Default(),
+        [_testClass.$listField()],
+      );
 
   @Field()
   Future<Map<String, double>> get mapField => $invokeMap<String, double>(
-    _channel,
-    _testClass.$AndroidTestClass1Default(),
-    [_testClass.$mapField()],
-  );
+        _channel,
+        _testClass.$AndroidTestClass1Default(),
+        [_testClass.$mapField()],
+      );
 
   @Method()
   Future<void> returnVoid() {

@@ -16,6 +16,14 @@ void main() {
 
   group('test_plugin', () {
     group('android', () {
+      test('staticField', () {
+        expect(AndroidTestClass1.staticField, completion(12));
+      });
+
+      test('staticMethod', () {
+        expect(AndroidTestClass1.staticMethod(), completion(13));
+      });
+
       test('objectField', () {
         expect(AndroidTestClass1().objectField, completion('32'));
 
