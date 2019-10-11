@@ -132,21 +132,13 @@ abstract class $Wrapper {
 Future<T> $invoke<T>(
   MethodChannel channel,
   MethodCall call, [
-  MethodCall call2,
-  MethodCall call3,
-  MethodCall call4,
-  MethodCall call5,
-  MethodCall call6,
-  MethodCall call7,
-  MethodCall call8,
-  MethodCall call9,
+  Iterable<MethodCall> following = const <MethodCall>[],
 ]) {
   final Completer<T> completer = Completer<T>();
 
   $invokeAll(
     channel,
-    <MethodCall>[call, call2, call3, call4, call5, call6, call7, call8, call9]
-        .where((MethodCall call) => call != null),
+    <MethodCall>[call, ...following].where((MethodCall call) => call != null),
   ).then(
     (List<dynamic> results) => completer.complete(results.last),
   );
@@ -157,21 +149,13 @@ Future<T> $invoke<T>(
 Future<List<T>> $invokeList<T>(
   MethodChannel channel,
   MethodCall call, [
-  MethodCall call2,
-  MethodCall call3,
-  MethodCall call4,
-  MethodCall call5,
-  MethodCall call6,
-  MethodCall call7,
-  MethodCall call8,
-  MethodCall call9,
+  Iterable<MethodCall> following = const <MethodCall>[],
 ]) {
   final Completer<List<T>> completer = Completer<List<T>>();
 
   $invokeAll(
     channel,
-    <MethodCall>[call, call2, call3, call4, call5, call6, call7, call8, call9]
-        .where((MethodCall call) => call != null),
+    <MethodCall>[call, ...following].where((MethodCall call) => call != null),
   ).then(
     (List<dynamic> results) => completer.complete(results.last.cast<T>()),
   );
@@ -182,21 +166,13 @@ Future<List<T>> $invokeList<T>(
 Future<Map<S, T>> $invokeMap<S, T>(
   MethodChannel channel,
   MethodCall call, [
-  MethodCall call2,
-  MethodCall call3,
-  MethodCall call4,
-  MethodCall call5,
-  MethodCall call6,
-  MethodCall call7,
-  MethodCall call8,
-  MethodCall call9,
+  Iterable<MethodCall> following = const <MethodCall>[],
 ]) {
   final Completer<Map<S, T>> completer = Completer<Map<S, T>>();
 
   $invokeAll(
     channel,
-    <MethodCall>[call, call2, call3, call4, call5, call6, call7, call8, call9]
-        .where((MethodCall call) => call != null),
+    <MethodCall>[call, ...following].where((MethodCall call) => call != null),
   ).then(
     (List<dynamic> results) => completer.complete(results.last.cast<S, T>()),
   );

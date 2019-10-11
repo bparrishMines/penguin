@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 public class TestClass1 {
+  public Object objectField = "32";
+  
   public int noParametersMethod() {
     return 72;
   }

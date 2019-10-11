@@ -16,6 +16,14 @@ void main() {
 
   group('test_plugin', () {
     group('android', () {
+      test('objectField', () {
+        expect(AndroidTestClass1().objectField, completion('32'));
+
+        final AndroidTestClass1 class1 = AndroidTestClass1();
+        class1.objectField = '64';
+        expect(class1.objectField, completion('64'));
+      });
+
       test('noParametersMethod', () {
         expect(AndroidTestClass1().noParametersMethod(), completion(72));
       });

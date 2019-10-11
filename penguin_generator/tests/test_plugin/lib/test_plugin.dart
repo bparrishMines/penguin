@@ -18,12 +18,31 @@ class AndroidTestClass1 {
 
   final $AndroidTestClass1 _testClass = $AndroidTestClass1(_randomId());
 
+  final List<MethodCall> _setters = <MethodCall>[];
+
+  @Field()
+  Future<Object> get objectField => $invoke<Object>(
+        _channel,
+        _testClass.$AndroidTestClass1Default(),
+        [..._setters, _testClass.$objectField()],
+      );
+
+  @Field()
+  set objectField(FutureOr<Object> objectField) {
+    _setters.add(_testClass.$objectField(objectField: objectField));
+    $invoke<Object>(
+      _channel,
+      _testClass.$AndroidTestClass1Default(),
+      [_testClass.$objectField(objectField: objectField)],
+    );
+  }
+
   @Method()
   Future<void> returnVoid() {
     return $invoke<void>(
       _channel,
       _testClass.$AndroidTestClass1Default(),
-      _testClass.$returnVoid(),
+      [_testClass.$returnVoid()],
     );
   }
 
@@ -32,7 +51,7 @@ class AndroidTestClass1 {
     return $invoke<Object>(
       _channel,
       _testClass.$AndroidTestClass1Default(),
-      _testClass.$returnObject(),
+      [_testClass.$returnObject()],
     );
   }
 
@@ -41,7 +60,7 @@ class AndroidTestClass1 {
     return $invoke<dynamic>(
       _channel,
       _testClass.$AndroidTestClass1Default(),
-      _testClass.$returnDynamic(),
+      [_testClass.$returnDynamic()],
     );
   }
 
@@ -50,7 +69,7 @@ class AndroidTestClass1 {
     return $invoke<String>(
       _channel,
       _testClass.$AndroidTestClass1Default(),
-      _testClass.$returnString(),
+      [_testClass.$returnString()],
     );
   }
 
@@ -59,7 +78,7 @@ class AndroidTestClass1 {
     return $invoke<int>(
       _channel,
       _testClass.$AndroidTestClass1Default(),
-      _testClass.$returnInt(),
+      [_testClass.$returnInt()],
     );
   }
 
@@ -68,7 +87,7 @@ class AndroidTestClass1 {
     return $invoke<double>(
       _channel,
       _testClass.$AndroidTestClass1Default(),
-      _testClass.$returnDouble(),
+      [_testClass.$returnDouble()],
     );
   }
 
@@ -77,7 +96,7 @@ class AndroidTestClass1 {
     return $invoke<bool>(
       _channel,
       _testClass.$AndroidTestClass1Default(),
-      _testClass.$returnBool(),
+      [_testClass.$returnBool()],
     );
   }
 
@@ -86,7 +105,7 @@ class AndroidTestClass1 {
     return $invokeList<double>(
       _channel,
       _testClass.$AndroidTestClass1Default(),
-      _testClass.$returnList(),
+      [_testClass.$returnList()],
     );
   }
 
@@ -95,7 +114,7 @@ class AndroidTestClass1 {
     return $invokeMap<String, int>(
       _channel,
       _testClass.$AndroidTestClass1Default(),
-      _testClass.$returnMap(),
+      [_testClass.$returnMap()],
     );
   }
 
@@ -104,7 +123,7 @@ class AndroidTestClass1 {
     return $invoke<int>(
       _channel,
       _testClass.$AndroidTestClass1Default(),
-      _testClass.$noParametersMethod(),
+      [_testClass.$noParametersMethod()],
     );
   }
 
@@ -113,7 +132,7 @@ class AndroidTestClass1 {
     return $invoke<String>(
       _channel,
       _testClass.$AndroidTestClass1Default(),
-      _testClass.$singleParameterMethod(value),
+      [_testClass.$singleParameterMethod(value)],
     );
   }
 }

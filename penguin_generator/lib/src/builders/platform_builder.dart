@@ -137,32 +137,69 @@ class ReadInfoBuilder extends Builder {
                     ),
                   ),
                 ),
-            fields: (element.element as ClassElement)
-                .fields
-                .where(
-                  (FieldElement fieldElement) => AnnotationUtils.fieldAnnotation
-                      .hasAnnotationOfExact(fieldElement),
-                )
-                .map<FieldInfo>(
-                  (FieldElement fieldElement) => FieldInfo(
-                    isMutable: fieldElement.isPublic && !fieldElement.isFinal,
-                    isStatic: fieldElement.isStatic,
-                    name: fieldElement.name,
-                    type: fieldElement.type.isDartAsyncFuture ||
-                            fieldElement.type.isDartAsyncFutureOr
-                        ? _toTypeInfo(
-                            (fieldElement.type as ParameterizedType)
-                                .typeArguments[0],
-                          )
-                        : _toTypeInfo(fieldElement.type),
-                    field: AnnotationUtils.fieldFromConstantReader(
-                      ConstantReader(
-                        AnnotationUtils.fieldAnnotation
-                            .firstAnnotationOfExact(fieldElement),
+            fields: [
+              ...(element.element as ClassElement)
+                  .fields
+                  .where(
+                    (FieldElement fieldElement) => AnnotationUtils
+                        .fieldAnnotation
+                        .hasAnnotationOfExact(fieldElement),
+                  )
+                  .map<FieldInfo>(
+                    (FieldElement fieldElement) => FieldInfo(
+                      isMutable: fieldElement.isPublic && !fieldElement.isFinal,
+                      isStatic: fieldElement.isStatic,
+                      name: fieldElement.name,
+                      type: fieldElement.type.isDartAsyncFuture ||
+                              fieldElement.type.isDartAsyncFutureOr
+                          ? _toTypeInfo(
+                              (fieldElement.type as ParameterizedType)
+                                  .typeArguments[0],
+                            )
+                          : _toTypeInfo(fieldElement.type),
+                      field: AnnotationUtils.fieldFromConstantReader(
+                        ConstantReader(
+                          AnnotationUtils.fieldAnnotation
+                              .firstAnnotationOfExact(fieldElement),
+                        ),
                       ),
                     ),
                   ),
-                ),
+              ...(element.element as ClassElement)
+                  .accessors
+                  .where(
+                    (PropertyAccessorElement accessorElement) => AnnotationUtils
+                        .fieldAnnotation
+                        .hasAnnotationOfExact(accessorElement),
+                  )
+                  .where(
+                    (PropertyAccessorElement accessorElement) =>
+                        accessorElement.isSetter ||
+                        (accessorElement.isGetter &&
+                            accessorElement.correspondingSetter == null),
+                  )
+                  .map<FieldInfo>(
+                    (PropertyAccessorElement accessorElement) => FieldInfo(
+                      isMutable: accessorElement.isSetter,
+                      isStatic: accessorElement.isStatic,
+                      name: accessorElement.name.replaceAll('=', ''),
+                      type: accessorElement.variable.type.isDartAsyncFuture ||
+                              accessorElement.variable.type.isDartAsyncFutureOr
+                          ? _toTypeInfo(
+                              (accessorElement.variable.type
+                                      as ParameterizedType)
+                                  .typeArguments[0],
+                            )
+                          : _toTypeInfo(accessorElement.variable.type),
+                      field: AnnotationUtils.fieldFromConstantReader(
+                        ConstantReader(
+                          AnnotationUtils.fieldAnnotation
+                              .firstAnnotationOfExact(accessorElement),
+                        ),
+                      ),
+                    ),
+                  ),
+            ],
             typeParameters:
                 (element.element as ClassElement).typeParameters.map<TypeInfo>(
                       (TypeParameterElement typeParameterElement) =>
