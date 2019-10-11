@@ -46,6 +46,16 @@ Field _$FieldFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$FieldToJson(Field instance) => <String, dynamic>{};
 
+Platform _$PlatformFromJson(Map<String, dynamic> json) {
+  return Platform(
+    json['name'] as String,
+  );
+}
+
+Map<String, dynamic> _$PlatformToJson(Platform instance) => <String, dynamic>{
+      'name': instance.name,
+    };
+
 AndroidPlatform _$AndroidPlatformFromJson(Map<String, dynamic> json) {
   $checkKeys(json,
       requiredKeys: const ['type'], disallowNullValues: const ['type']);

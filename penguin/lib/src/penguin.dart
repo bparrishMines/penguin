@@ -17,7 +17,7 @@ class Class {
   final Platform platform;
 
   static Platform _platformFromJson(Map json) {
-    switch(json['name']) {
+    switch (json['name']) {
       case AndroidPlatform._platformName:
         return AndroidPlatform.fromJson(json);
       case IosPlatform._platformName:
@@ -66,12 +66,14 @@ class Field {
   String toString() => toJson().toString();
 }
 
-abstract class Platform {
+@JsonSerializable()
+class Platform {
   const Platform(this.name);
 
+  @JsonKey()
   final String name;
 
-  Map toJson();
+  Map toJson() => _$PlatformToJson(this);
 }
 
 @JsonSerializable()
@@ -85,7 +87,7 @@ class AndroidPlatform extends Platform {
   @JsonKey(required: true, disallowNullValue: true)
   final AndroidType type;
 
-  Map toJson() => _$AndroidPlatformToJson(this);
+  Map toJson() => _$AndroidPlatformToJson(this)..addAll(super.toJson());
 
   @override
   String toString() => toJson().toString();
@@ -121,7 +123,7 @@ class IosPlatform extends Platform {
   final IosType type;
 
   @override
-  Map toJson() => _$IosPlatformToJson(this);
+  Map toJson() => _$IosPlatformToJson(this)..addAll(super.toJson());
 
   @override
   String toString() => toJson().toString();
