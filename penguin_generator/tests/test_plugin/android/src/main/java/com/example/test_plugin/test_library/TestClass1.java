@@ -1,6 +1,7 @@
 package com.example.test_plugin.test_library;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,15 @@ public class TestClass1 {
   public double doubleField = 44.0;
   public Number numField = 0;
   public boolean boolField = true;
+  public List<Boolean> listField = Arrays.asList(true, false, true);
+  public Map<String, Double> mapField;
+
+  public TestClass1() {
+    final HashMap<String, Double> map = new HashMap<>(2);
+    map.put("true", 1.0);
+    map.put("false", 0.0);
+    mapField = map;
+  }
 
   public int noParametersMethod() {
     return 72;

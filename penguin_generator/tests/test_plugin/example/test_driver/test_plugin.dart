@@ -48,6 +48,20 @@ void main() {
         expect(AndroidTestClass1().boolField, completion(true));
       });
 
+      test('listField', () {
+        expect(
+          AndroidTestClass1().listField,
+          completion(<bool>[true, false, true]),
+        );
+      });
+
+      test('mapField', () {
+        expect(
+          AndroidTestClass1().mapField,
+          completion(<String, double>{'true': 1.0, 'false': 0.0}),
+        );
+      });
+
       test('noParametersMethod', () {
         expect(AndroidTestClass1().noParametersMethod(), completion(72));
       });

@@ -79,6 +79,20 @@ class AndroidTestClass1 {
     [_testClass.$boolField()],
   );
 
+  @Field()
+  Future<List<bool>> get listField => $invokeList<bool>(
+    _channel,
+    _testClass.$AndroidTestClass1Default(),
+    [_testClass.$listField()],
+  );
+
+  @Field()
+  Future<Map<String, double>> get mapField => $invokeMap<String, double>(
+    _channel,
+    _testClass.$AndroidTestClass1Default(),
+    [_testClass.$mapField()],
+  );
+
   @Method()
   Future<void> returnVoid() {
     return $invoke<void>(
