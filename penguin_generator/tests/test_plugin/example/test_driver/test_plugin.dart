@@ -24,6 +24,30 @@ void main() {
         expect(class1.objectField, completion('64'));
       });
 
+      test('dynamicField', () {
+        expect(AndroidTestClass1().dynamicField, completion(42));
+      });
+
+      test('stringField', () {
+        expect(AndroidTestClass1().stringField, completion('Macintosh'));
+      });
+
+      test('intField', () {
+        expect(AndroidTestClass1().intField, completion(43));
+      });
+
+      test('doubleField', () {
+        expect(AndroidTestClass1().doubleField, completion(44.0));
+      });
+
+      test('numField', () {
+        expect(AndroidTestClass1().numField, completion(0));
+      });
+
+      test('boolField', () {
+        expect(AndroidTestClass1().boolField, completion(true));
+      });
+
       test('noParametersMethod', () {
         expect(AndroidTestClass1().noParametersMethod(), completion(72));
       });

@@ -37,6 +37,48 @@ class AndroidTestClass1 {
     );
   }
 
+  @Field()
+  Future<dynamic> get dynamicField => $invoke<dynamic>(
+        _channel,
+        _testClass.$AndroidTestClass1Default(),
+        [_testClass.$dynamicField()],
+      );
+
+  @Field()
+  Future<String> get stringField => $invoke<String>(
+        _channel,
+        _testClass.$AndroidTestClass1Default(),
+        [_testClass.$stringField()],
+      );
+
+  @Field()
+  Future<int> get intField => $invoke<int>(
+        _channel,
+        _testClass.$AndroidTestClass1Default(),
+        [_testClass.$intField()],
+      );
+
+  @Field()
+  Future<double> get doubleField => $invoke<double>(
+        _channel,
+        _testClass.$AndroidTestClass1Default(),
+        [_testClass.$doubleField()],
+      );
+
+  @Field()
+  Future<num> get numField => $invoke<num>(
+        _channel,
+        _testClass.$AndroidTestClass1Default(),
+        [_testClass.$numField()],
+      );
+
+  @Field()
+  Future<bool> get boolField => $invoke<bool>(
+    _channel,
+    _testClass.$AndroidTestClass1Default(),
+    [_testClass.$boolField()],
+  );
+
   @Method()
   Future<void> returnVoid() {
     return $invoke<void>(

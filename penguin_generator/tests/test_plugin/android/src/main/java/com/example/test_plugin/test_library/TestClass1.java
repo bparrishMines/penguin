@@ -7,7 +7,13 @@ import java.util.Map;
 
 public class TestClass1 {
   public Object objectField = "32";
-  
+  public Object dynamicField = 42;
+  public String stringField = "Macintosh";
+  public int intField = 43;
+  public double doubleField = 44.0;
+  public Number numField = 0;
+  public boolean boolField = true;
+
   public int noParametersMethod() {
     return 72;
   }
