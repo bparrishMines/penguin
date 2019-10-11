@@ -372,3 +372,12 @@ class AndroidTemplateCreator extends TemplateCreator {
     );
   }
 }
+
+class IosTemplateCreator extends TemplateCreator {
+  String createFile() {
+    return '';
+  }
+
+  @override
+  Template get template => Template.ios;
+}

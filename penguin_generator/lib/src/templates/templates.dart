@@ -6,6 +6,10 @@ class Template {
 
   final String value;
 
+  static const Template ios = Template._(r'''
+  
+''');
+
   static const Template dartMethodChannel = Template._(r'''
 import 'dart:async';
 

@@ -32,6 +32,8 @@ class AnnotationUtils {
 
     if (platform == 'android') {
       return _androidPlatformFromConstantReader(reader);
+    } else if (platform == 'ios') {
+      return _iosPlatformFromConstantReader(reader);
     }
 
     throw UnsupportedError('$platform platform is not supported!');
@@ -48,6 +50,19 @@ class AnnotationUtils {
     return AndroidType(
       reader.read('package').stringValue,
       reader.read('name').stringValue,
+    );
+  }
+
+  static IosPlatform _iosPlatformFromConstantReader(ConstantReader reader) {
+    return IosPlatform(
+      _iosTypeFromConstantReader(reader.read('type')),
+    );
+  }
+
+  static IosType _iosTypeFromConstantReader(ConstantReader reader) {
+    return IosType(
+      reader.read('name').stringValue,
+      import: reader.read('import').stringValue,
     );
   }
 }
