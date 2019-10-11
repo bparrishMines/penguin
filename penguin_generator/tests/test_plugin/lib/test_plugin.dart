@@ -208,3 +208,8 @@ class AndroidTestClass1 {
   AndroidType('com.example.test_plugin.test_library', 'TestClass2'),
 ))
 class AndroidTestClass2 {}
+
+@Class(IosPlatform(
+  IosType('TestClass1'),
+))
+class IosTestClass1 {}

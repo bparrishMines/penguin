@@ -13,9 +13,16 @@ class IosBuilder extends PlatformBuilder {
     List<ClassInfo> classes,
     PlatformBuilderBuildStep buildStep,
   ) async {
+    if (classes.isEmpty) return;
+
     final IosTemplateCreator creator = IosTemplateCreator();
-    buildStep.writeAsString('ChannelHandler+Generated.h', _headerFile);
-    buildStep.writeAsString('ChannelHandler+Generated.m', creator.createFile());
+    await Future.wait<void>(<Future<void>>[
+      buildStep.writeAsString('ChannelHandler+Generated.h', _headerFile),
+      buildStep.writeAsString(
+        'ChannelHandler+Generated.m',
+        creator.createFile(),
+      ),
+    ]);
   }
 
   @override

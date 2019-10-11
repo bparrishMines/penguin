@@ -62,7 +62,9 @@ class AnnotationUtils {
   static IosType _iosTypeFromConstantReader(ConstantReader reader) {
     return IosType(
       reader.read('name').stringValue,
-      import: reader.read('import').stringValue,
+      import: reader.peek('import') != null
+          ? reader.read('import').stringValue
+          : null,
     );
   }
 }

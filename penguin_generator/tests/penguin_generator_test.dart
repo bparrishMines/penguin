@@ -39,7 +39,10 @@ void main() {
       );
 
       print('Moving platform specific files...');
-      await Future.wait<File>(<Future<File>>[_moveAndroidGeneratedCode()]);
+      await Future.wait<File>(<Future<File>>[
+        _moveAndroidGeneratedCode(),
+        ..._moveIosGeneratedCode(),
+      ]);
 
       print('Running test_driver...');
       final Process driverTestProcess = await Process.start(
@@ -84,3 +87,30 @@ Future<File> _moveAndroidGeneratedCode() =>
         ],
       ),
     );
+
+List<Future<File>> _moveIosGeneratedCode() => <Future<File>>[
+      File(p.join('tests', 'test_plugin', 'lib', 'ChannelHandler+Generated.h'))
+          .copy(
+        p.joinAll(
+          <String>[
+            'tests',
+            'test_plugin',
+            'ios',
+            'Classes',
+            'ChannelHandler+Generated.h',
+          ],
+        ),
+      ),
+      File(p.join('tests', 'test_plugin', 'lib', 'ChannelHandler+Generated.m'))
+          .copy(
+        p.joinAll(
+          <String>[
+            'tests',
+            'test_plugin',
+            'ios',
+            'Classes',
+            'ChannelHandler+Generated.m',
+          ],
+        ),
+      ),
+    ];

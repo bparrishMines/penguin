@@ -17,6 +17,8 @@ class AndroidBuilder extends PlatformBuilder {
     List<ClassInfo> classes,
     PlatformBuilderBuildStep buildStep,
   ) {
+    if (classes.isEmpty) return Future<void>.value();
+
     final AndroidTemplateCreator creator = AndroidTemplateCreator();
     return buildStep.writeAsString(
       'ChannelGenerated.java',
