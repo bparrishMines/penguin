@@ -93,3 +93,42 @@ Map<String, dynamic> _$AndroidTypeToJson(AndroidType instance) {
   writeNotNull('name', instance.name);
   return val;
 }
+
+IosPlatform _$IosPlatformFromJson(Map<String, dynamic> json) {
+  $checkKeys(json, requiredKeys: const ['type']);
+  return IosPlatform(
+    json['type'] == null
+        ? null
+        : IosType.fromJson(json['type'] as Map<String, dynamic>),
+  );
+}
+
+Map<String, dynamic> _$IosPlatformToJson(IosPlatform instance) =>
+    <String, dynamic>{
+      'type': instance.type,
+    };
+
+IosType _$IosTypeFromJson(Map<String, dynamic> json) {
+  $checkKeys(json,
+      requiredKeys: const ['import', 'name'],
+      disallowNullValues: const ['name']);
+  return IosType(
+    json['name'] as String,
+    import: json['import'] as String,
+  );
+}
+
+Map<String, dynamic> _$IosTypeToJson(IosType instance) {
+  final val = <String, dynamic>{
+    'import': instance.import,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('name', instance.name);
+  return val;
+}

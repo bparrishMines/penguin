@@ -16,7 +16,21 @@ class Class {
   )
   final Platform platform;
 
-  static Platform _platformFromJson(Map json) => AndroidPlatform.fromJson(json);
+  static Platform _platformFromJson(Map json) {
+    switch(json['name']) {
+      case AndroidPlatform._platformName:
+        return AndroidPlatform.fromJson(json);
+      case IosPlatform._platformName:
+        return IosPlatform.fromJson(json);
+    }
+
+    throw ArgumentError.value(
+      json.toString(),
+      'json',
+      'Json doesn\'t contain a valid platform name',
+    );
+  }
+
   static Map _platformToJson(Platform platform) => platform.toJson();
 
   Map toJson() => _$ClassToJson(this);
@@ -62,7 +76,9 @@ abstract class Platform {
 
 @JsonSerializable()
 class AndroidPlatform extends Platform {
-  const AndroidPlatform(this.type) : super('android');
+  const AndroidPlatform(this.type) : super(_platformName);
+
+  static const String _platformName = 'android';
 
   factory AndroidPlatform.fromJson(Map json) => _$AndroidPlatformFromJson(json);
 
@@ -88,6 +104,42 @@ class AndroidType {
   final String name;
 
   Map toJson() => _$AndroidTypeToJson(this);
+
+  @override
+  String toString() => toJson().toString();
+}
+
+@JsonSerializable()
+class IosPlatform extends Platform {
+  const IosPlatform(this.type) : super(_platformName);
+
+  static const String _platformName = 'ios';
+
+  factory IosPlatform.fromJson(Map json) => _$IosPlatformFromJson(json);
+
+  @JsonKey(required: true)
+  final IosType type;
+
+  @override
+  Map toJson() => _$IosPlatformToJson(this);
+
+  @override
+  String toString() => toJson().toString();
+}
+
+@JsonSerializable()
+class IosType {
+  const IosType(this.name, {this.import});
+
+  factory IosType.fromJson(Map json) => _$IosTypeFromJson(json);
+
+  @JsonKey(required: true, nullable: true)
+  final String import;
+
+  @JsonKey(required: true, disallowNullValue: true)
+  final String name;
+
+  Map toJson() => _$IosTypeToJson(this);
 
   @override
   String toString() => toJson().toString();
