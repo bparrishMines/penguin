@@ -2,7 +2,7 @@ import 'package:dart_style/dart_style.dart';
 import 'package:penguin/penguin.dart';
 import 'package:penguin_generator/src/info.dart';
 
-import '../templates.dart';
+import '../templates/template_creator.dart';
 import 'platform_builder.dart';
 
 class DartMethodChannelBuilder extends PlatformBuilder {

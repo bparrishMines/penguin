@@ -1,9 +1,12 @@
-class _Template {
-  const _Template._(this.value);
+enum MethodChannelType { $void, supported, wrapper, typeParameter }
+enum ClassMemberType { constructor, method, field }
+
+class Template {
+  const Template._(this.value);
 
   final String value;
 
-  static const _Template methodChannel = _Template._(r'''
+  static const Template dartMethodChannel = Template._(r'''
 import 'dart:async';
 
 import 'package:flutter/services.dart';
@@ -201,7 +204,7 @@ bool _isTypeOf<ThisType, OfType>() =>
 class _Instance<T> {}
 ''');
 
-  static const _Template android = _Template._(r'''
+  static const Template android = Template._(r'''
 package __package__;
 
 import java.lang.reflect.Constructor;
@@ -561,384 +564,8 @@ public class ChannelGenerated implements MethodCallHandler {
 ''');
 }
 
-class MethodChannelTemplateCreator extends _TemplateCreator {
-  @override
-  _Template get template => _Template.methodChannel;
-
-  String createMethod(
-    bool isStatic, {
-    Iterable<String> parameters,
-    Iterable<String> methodCallParams,
-    String platformClassName,
-    String methodName,
-  }) {
-    return _replace(
-      _Block.method.exp.firstMatch(template.value).group(1),
-      <Pattern, String>{
-        if (!isStatic) 'static': '',
-        if (isStatic) r"r'$uniqueId': $uniqueId,": '',
-        _Block.parameters.exp: parameters.join(),
-        _MethodChannelBlock.methodCallParams.exp: methodCallParams.join(),
-        _Replacement.platformClassName.name: platformClassName,
-        _Replacement.methodName.name: methodName,
-      },
-    );
-  }
-
-  String createField(
-    bool isStatic, {
-    String platformClassName,
-    String fieldName,
-    String fieldType,
-    String fieldSetterParam,
-    String fieldSetter,
-  }) {
-    return _replace(
-      _Block.field.exp.firstMatch(template.value).group(1),
-      <Pattern, String>{
-        if (!isStatic) 'static': '',
-        if (isStatic) r"r'$uniqueId': $uniqueId,": '',
-        _Replacement.platformClassName.name: platformClassName,
-        _Replacement.fieldName.name: fieldName,
-        _Replacement.fieldType.name: fieldType,
-        _Block.fieldSetterParams.exp: fieldSetterParam,
-        _Block.fieldSetters.exp: fieldSetter,
-      },
-    );
-  }
-
-  String createFieldSetter(
-    MethodChannelType channelType, {
-    String fieldType,
-    String fieldName,
-  }) {
-    return _replace(
-      _MethodChannelBlock.fieldSetter(channelType)
-          .exp
-          .firstMatch(template.value)
-          .group(1),
-      <Pattern, String>{
-        _Replacement.fieldType.name: fieldType,
-        _Replacement.fieldName.name: fieldName,
-      },
-    );
-  }
-
-  String createParameter(
-    MethodChannelType channelType, {
-    String parameterType,
-    String parameterName,
-  }) {
-    return _replace(
-      _MethodChannelBlock.parameter(channelType)
-          .exp
-          .firstMatch(template.value)
-          .group(1),
-      <Pattern, String>{
-        _Replacement.parameterType.name: parameterType,
-        _Replacement.parameterName.name: parameterName,
-      },
-    );
-  }
-
-  String createFieldSetterParam(MethodChannelType channelType,
-      {String fieldName}) {
-    return _replace(
-      _MethodChannelBlock.fieldSetterParam(channelType)
-          .exp
-          .firstMatch(template.value)
-          .group(1),
-      <Pattern, String>{
-        _Replacement.fieldName.name: fieldName,
-      },
-    );
-  }
-
-  String createMethodCallParam(
-    MethodChannelType channelType, {
-    String parameterName,
-  }) {
-    return _replace(
-      _MethodChannelBlock.methodCallParam(channelType)
-          .exp
-          .firstMatch(template.value)
-          .group(1),
-      <Pattern, String>{
-        _Replacement.parameterName.name: parameterName,
-      },
-    );
-  }
-
-  String createClass({
-    Iterable<String> typeParameters,
-    Iterable<String> constructors,
-    Iterable<String> methods,
-    Iterable<String> fields,
-    String className,
-    String platformClassName,
-  }) {
-    return _replace(
-      _Block.aClass.exp.firstMatch(template.value).group(1),
-      <Pattern, String>{
-        _Replacement.typeParameters.name:
-            typeParameters.isEmpty ? '' : '<${typeParameters.join(', ')}>',
-        _Block.constructors.exp: constructors.join(),
-        _Block.methods.exp: methods.join(),
-        _Replacement.className.name: className,
-        _Block.fields.exp: fields.join(),
-        _Replacement.platformClassName.name: platformClassName,
-      },
-    );
-  }
-
-  String createFile({Iterable<String> classes}) {
-    return _replace(
-      template.value,
-      <Pattern, String>{_Block.classes.exp: classes.join()},
-    );
-  }
-
-  String createConstructor({String platformClassName, String className}) {
-    return _replace(
-      _Block.constructor.exp.firstMatch(template.value).group(1),
-      <Pattern, String>{
-        _Replacement.platformClassName.name: platformClassName,
-        _Replacement.className.name: className
-      },
-    );
-  }
-}
-
-class AndroidTemplateCreator extends _TemplateCreator {
-  @override
-  _Template get template => _Template.android;
-
-  String createField(
-    MethodChannelType channelType, {
-    bool isStatic,
-    bool isMutable,
-    String fieldType,
-    String fieldName,
-    String package,
-    String platformClassName,
-    String fieldSetter,
-  }) {
-    return _replace(
-      _Block.field.exp.firstMatch(template.value).group(1),
-      <Pattern, String>{
-        if (!isStatic) 'static': '',
-        if (!isStatic) r'ChannelGenerated $channelGenerated,': '',
-        if (!isMutable)
-          RegExp(r'if\s*(.*?)\s*{.*?}', multiLine: true, dotAll: true): '',
-        _Replacement.methodCallerName.name:
-            isStatic ? platformClassName : r'$value',
-        _Block.preFieldAccesses.exp:
-            _MethodChannelBlock.preFieldAccess(channelType)
-                .exp
-                .firstMatch(template.value)
-                .group(1),
-        _Block.postFieldAccesses.exp:
-            _MethodChannelBlock.postFieldAccess(channelType)
-                .exp
-                .firstMatch(template.value)
-                .group(1),
-        _Block.fieldSetters.exp: _MethodChannelBlock.fieldSetter(channelType)
-            .exp
-            .firstMatch(template.value)
-            .group(1),
-        _Replacement.fieldType.name: fieldType,
-        _Replacement.fieldName.name: fieldName,
-        _Replacement.package.name: package,
-      },
-    );
-  }
-
-  String createMethod(
-    MethodChannelType returnTypeChannelType,
-    bool isStatic, {
-    bool isMutable,
-    Iterable<String> parameters,
-    String returnType,
-    String methodName,
-    String platformClassName,
-    String variableName,
-    String package,
-  }) {
-    return _replace(
-      _Block.method.exp.firstMatch(template.value).group(1),
-      <Pattern, String>{
-        if (!isStatic) 'static': '',
-        if (!isStatic) r'ChannelGenerated $channelGenerated,': '',
-        _Replacement.methodCallerName.name:
-            isStatic ? platformClassName : r'$value',
-        _Block.preMethodCalls.exp:
-            _MethodChannelBlock.preMethodCall(returnTypeChannelType)
-                .exp
-                .firstMatch(template.value)
-                .group(1),
-        _Block.postMethodCalls.exp:
-            _MethodChannelBlock.postMethodCall(returnTypeChannelType)
-                .exp
-                .firstMatch(template.value)
-                .group(1),
-        _Block.parameters.exp: parameters.join(','),
-        _Replacement.returnType.name: returnType,
-        _Replacement.methodName.name: methodName,
-        _Replacement.package.name: package,
-      },
-    );
-  }
-
-  String createParameter(
-    MethodChannelType methodChannel, {
-    String variableName,
-    String parameterType,
-    String parameterName,
-  }) {
-    return _replace(
-      _MethodChannelBlock.parameter(methodChannel)
-          .exp
-          .firstMatch(template.value)
-          .group(1),
-      <Pattern, String>{
-        _Replacement.parameterType.name: parameterType,
-        _Replacement.parameterName.name: parameterName,
-      },
-    );
-  }
-
-  String createClass({
-    Iterable<String> constructors,
-    Iterable<String> methods,
-    Iterable<String> methodCalls,
-    Iterable<String> staticMethodCalls,
-    Iterable<String> fields,
-    String platformClassName,
-    String variableName,
-  }) {
-    return _replace(
-      _Block.aClass.exp.firstMatch(template.value).group(1),
-      <Pattern, String>{
-        _Block.constructors.exp: constructors.join(),
-        _Block.methods.exp: methods.join(),
-        _MethodChannelBlock.methodCalls.exp: methodCalls.join(),
-        _MethodChannelBlock.staticMethodCalls.exp: staticMethodCalls.join(),
-        _Block.fields.exp: fields.join(),
-        _Replacement.platformClassName.name: platformClassName,
-      },
-    );
-  }
-
-  String createImport({String classPackage, String platformClassName}) {
-    return _replace(
-      _Block.import.exp.firstMatch(template.value).group(1),
-      <Pattern, String>{
-        _Replacement.classPackage.name: classPackage,
-        _Replacement.platformClassName.name: platformClassName,
-      },
-    );
-  }
-
-  String createStaticRedirect(
-    ClassMemberType classMember, {
-    String platformClassName,
-    String methodName,
-    String fieldName,
-  }) {
-    return _replace(
-      _MethodChannelBlock.staticRedirect(classMember)
-          .exp
-          .firstMatch(template.value)
-          .group(1),
-      <Pattern, String>{
-        _Replacement.platformClassName.name: platformClassName,
-        if (methodName != null) _Replacement.methodName.name: methodName,
-        if (fieldName != null) _Replacement.fieldName.name: fieldName,
-      },
-    );
-  }
-
-  String createFile({
-    Iterable<String> imports,
-    Iterable<String> classes,
-    Iterable<String> staticRedirects,
-    String package,
-  }) {
-    return _replace(
-      template.value,
-      <Pattern, String>{
-        _Block.imports.exp: imports.join(),
-        _Block.classes.exp: classes.join(),
-        _Block.staticRedirects.exp: staticRedirects.join(),
-        _Replacement.package.name: package,
-      },
-    );
-  }
-
-  String createConstructor({String platformClassName, String variableName}) {
-    return _replace(
-      _Block.constructor.exp.firstMatch(template.value).group(1),
-      <Pattern, String>{
-        _Replacement.platformClassName.name: platformClassName,
-      },
-    );
-  }
-
-  String createMethodCall(
-    ClassMemberType classMember, {
-    String platformClassName,
-    String methodName,
-    String fieldName,
-  }) {
-    return _replace(
-      _MethodChannelBlock.methodCall(classMember)
-          .exp
-          .firstMatch(template.value)
-          .group(1),
-      <Pattern, String>{
-        _Replacement.platformClassName.name: platformClassName,
-        if (methodName != null) _Replacement.methodName.name: methodName,
-        if (fieldName != null) _Replacement.fieldName.name: fieldName,
-      },
-    );
-  }
-
-  String createStaticMethodCall(
-    ClassMemberType classMember, {
-    String platformClassName,
-    String methodName,
-    String fieldName,
-  }) {
-    return _replace(
-      _MethodChannelBlock.staticMethodCall(classMember)
-          .exp
-          .firstMatch(template.value)
-          .group(1),
-      <Pattern, String>{
-        _Replacement.platformClassName.name: platformClassName,
-        if (methodName != null) _Replacement.methodName.name: methodName,
-        if (fieldName != null) _Replacement.fieldName.name: fieldName,
-      },
-    );
-  }
-}
-
-enum MethodChannelType { $void, supported, wrapper, typeParameter }
-enum ClassMemberType { constructor, method, field }
-
-abstract class _TemplateCreator {
-  _Template get template;
-
-  String _replace(String value, Map<Pattern, String> replacements) {
-    for (MapEntry<Pattern, String> entry in replacements.entries) {
-      value = value.replaceAll(entry.key, entry.value);
-    }
-    return value;
-  }
-}
-
-class _Block {
-  _Block(this.identifier, [this.config])
+class Block {
+  Block(this.identifier, [this.config])
       : exp = config == null || config.isEmpty
             ? RegExp(
                 '%%$identifier%%(.*?)%%$identifier%%',
@@ -955,41 +582,41 @@ class _Block {
   final String identifier;
   final String config;
 
-  static final _Block methods = _Block('METHODS');
-  static final _Block method = _Block('METHOD');
+  static final Block methods = Block('METHODS');
+  static final Block method = Block('METHOD');
 
-  static final _Block preMethodCalls = _Block('PREMETHODCALLS');
+  static final Block preMethodCalls = Block('PREMETHODCALLS');
 
-  static final _Block postMethodCalls = _Block('POSTMETHODCALLS');
+  static final Block postMethodCalls = Block('POSTMETHODCALLS');
 
-  static final _Block preFieldAccesses = _Block('PREFIELDACCESSES');
+  static final Block preFieldAccesses = Block('PREFIELDACCESSES');
 
-  static final _Block postFieldAccesses = _Block('POSTFIELDACCESSES');
+  static final Block postFieldAccesses = Block('POSTFIELDACCESSES');
 
-  static final _Block imports = _Block('IMPORTS');
-  static final _Block import = _Block('IMPORT');
+  static final Block imports = Block('IMPORTS');
+  static final Block import = Block('IMPORT');
 
-  static final _Block classes = _Block('CLASSES');
-  static final _Block aClass = _Block('CLASS');
+  static final Block classes = Block('CLASSES');
+  static final Block aClass = Block('CLASS');
 
-  static final _Block constructors = _Block('CONSTRUCTORS');
-  static final _Block constructor = _Block('CONSTRUCTOR');
+  static final Block constructors = Block('CONSTRUCTORS');
+  static final Block constructor = Block('CONSTRUCTOR');
 
-  static final _Block staticRedirects = _Block('STATICREDIRECTS');
+  static final Block staticRedirects = Block('STATICREDIRECTS');
 
-  static final _Block parameters = _Block('PARAMETERS');
-  static final _Block parameter = _Block('PARAMETER');
+  static final Block parameters = Block('PARAMETERS');
+  static final Block parameter = Block('PARAMETER');
 
-  static final _Block fieldSetters = _Block('FIELDSETTERS');
+  static final Block fieldSetters = Block('FIELDSETTERS');
 
-  static final _Block fields = _Block('FIELDS');
-  static final _Block field = _Block('FIELD');
+  static final Block fields = Block('FIELDS');
+  static final Block field = Block('FIELD');
 
-  static final _Block fieldSetterParams = _Block('FIELDSETTERPARAMS');
+  static final Block fieldSetterParams = Block('FIELDSETTERPARAMS');
 }
 
-class _MethodChannelBlock extends _Block {
-  _MethodChannelBlock(
+class MethodChannelBlock extends Block {
+  MethodChannelBlock(
     String identifier, {
     MethodChannelType methodChannel,
     ClassMemberType classMember,
@@ -1030,69 +657,68 @@ class _MethodChannelBlock extends _Block {
     return configs.join(' ');
   }
 
-  static _MethodChannelBlock fieldSetterParam(
-          MethodChannelType methodChannel) =>
-      _MethodChannelBlock('FIELDSETTERPARAM', methodChannel: methodChannel);
+  static MethodChannelBlock fieldSetterParam(MethodChannelType methodChannel) =>
+      MethodChannelBlock('FIELDSETTERPARAM', methodChannel: methodChannel);
 
-  static final _MethodChannelBlock methodCallParams =
-      _MethodChannelBlock('METHODCALLPARAMS');
-  static _MethodChannelBlock methodCallParam(MethodChannelType methodChannel) =>
-      _MethodChannelBlock('METHODCALLPARAM', methodChannel: methodChannel);
+  static final MethodChannelBlock methodCallParams =
+      MethodChannelBlock('METHODCALLPARAMS');
+  static MethodChannelBlock methodCallParam(MethodChannelType methodChannel) =>
+      MethodChannelBlock('METHODCALLPARAM', methodChannel: methodChannel);
 
-  static _MethodChannelBlock fieldSetter(MethodChannelType methodChannel) =>
-      _MethodChannelBlock('FIELDSETTER', methodChannel: methodChannel);
+  static MethodChannelBlock fieldSetter(MethodChannelType methodChannel) =>
+      MethodChannelBlock('FIELDSETTER', methodChannel: methodChannel);
 
-  static final _MethodChannelBlock staticMethodCalls =
-      _MethodChannelBlock('STATICMETHODCALLS');
-  static _MethodChannelBlock staticMethodCall(ClassMemberType classMember) =>
-      _MethodChannelBlock('STATICMETHODCALL', classMember: classMember);
+  static final MethodChannelBlock staticMethodCalls =
+      MethodChannelBlock('STATICMETHODCALLS');
+  static MethodChannelBlock staticMethodCall(ClassMemberType classMember) =>
+      MethodChannelBlock('STATICMETHODCALL', classMember: classMember);
 
-  static _MethodChannelBlock staticRedirect(ClassMemberType classMember) =>
-      _MethodChannelBlock('STATICREDIRECT', classMember: classMember);
+  static MethodChannelBlock staticRedirect(ClassMemberType classMember) =>
+      MethodChannelBlock('STATICREDIRECT', classMember: classMember);
 
-  static final _MethodChannelBlock methodCalls =
-      _MethodChannelBlock('METHODCALLS');
-  static _MethodChannelBlock methodCall(ClassMemberType classMember) =>
-      _MethodChannelBlock('METHODCALL', classMember: classMember);
+  static final MethodChannelBlock methodCalls =
+      MethodChannelBlock('METHODCALLS');
+  static MethodChannelBlock methodCall(ClassMemberType classMember) =>
+      MethodChannelBlock('METHODCALL', classMember: classMember);
 
-  static _MethodChannelBlock parameter(MethodChannelType methodChannel) =>
-      _MethodChannelBlock(
-        _Block.parameter.identifier,
+  static MethodChannelBlock parameter(MethodChannelType methodChannel) =>
+      MethodChannelBlock(
+        Block.parameter.identifier,
         methodChannel: methodChannel,
       );
 
-  static _MethodChannelBlock postFieldAccess(MethodChannelType methodChannel) =>
-      _MethodChannelBlock('POSTFIELDACCESS', methodChannel: methodChannel);
+  static MethodChannelBlock postFieldAccess(MethodChannelType methodChannel) =>
+      MethodChannelBlock('POSTFIELDACCESS', methodChannel: methodChannel);
 
-  static _MethodChannelBlock preFieldAccess(MethodChannelType methodChannel) =>
-      _MethodChannelBlock('PREFIELDACCESS', methodChannel: methodChannel);
+  static MethodChannelBlock preFieldAccess(MethodChannelType methodChannel) =>
+      MethodChannelBlock('PREFIELDACCESS', methodChannel: methodChannel);
 
-  static _MethodChannelBlock postMethodCall(MethodChannelType methodChannel) =>
-      _MethodChannelBlock('POSTMETHODCALL', methodChannel: methodChannel);
+  static MethodChannelBlock postMethodCall(MethodChannelType methodChannel) =>
+      MethodChannelBlock('POSTMETHODCALL', methodChannel: methodChannel);
 
-  static _MethodChannelBlock preMethodCall(MethodChannelType methodChannel) =>
-      _MethodChannelBlock('PREMETHODCALL', methodChannel: methodChannel);
+  static MethodChannelBlock preMethodCall(MethodChannelType methodChannel) =>
+      MethodChannelBlock('PREMETHODCALL', methodChannel: methodChannel);
 }
 
-class _Replacement {
-  const _Replacement(this.name);
+class Replacement {
+  const Replacement(this.name);
 
   final String name;
 
-  static final _Replacement methodName = _Replacement('__methodName__');
-  static final _Replacement className = _Replacement('__className__');
-  static final _Replacement channelName = _Replacement('__channelName__');
-  static final _Replacement package = _Replacement('__package__');
-  static final _Replacement classPackage = _Replacement('__classPackage__');
-  static final _Replacement platformClassName = _Replacement(
+  static final Replacement methodName = Replacement('__methodName__');
+  static final Replacement className = Replacement('__className__');
+  static final Replacement channelName = Replacement('__channelName__');
+  static final Replacement package = Replacement('__package__');
+  static final Replacement classPackage = Replacement('__classPackage__');
+  static final Replacement platformClassName = Replacement(
     '__platformClassName__',
   );
-  static final _Replacement parameterName = _Replacement('__parameterName__');
-  static final _Replacement parameterType = _Replacement('__parameterType__');
-  static final _Replacement returnType = _Replacement('__returnType__');
-  static final _Replacement typeParameters = _Replacement('__typeParameters__');
-  static final _Replacement methodCallerName =
-      _Replacement('__methodCallerName__');
-  static final _Replacement fieldName = _Replacement('__fieldName__');
-  static final _Replacement fieldType = _Replacement('__fieldType__');
+  static final Replacement parameterName = Replacement('__parameterName__');
+  static final Replacement parameterType = Replacement('__parameterType__');
+  static final Replacement returnType = Replacement('__returnType__');
+  static final Replacement typeParameters = Replacement('__typeParameters__');
+  static final Replacement methodCallerName =
+      Replacement('__methodCallerName__');
+  static final Replacement fieldName = Replacement('__fieldName__');
+  static final Replacement fieldType = Replacement('__fieldType__');
 }

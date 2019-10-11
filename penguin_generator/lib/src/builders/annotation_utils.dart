@@ -2,11 +2,14 @@ import 'package:penguin/penguin.dart';
 import 'package:source_gen/source_gen.dart';
 
 class AnnotationUtils {
-  static const TypeChecker classAnnotation = const TypeChecker.fromRuntime(Class);
-  static const TypeChecker methodAnnotation = const TypeChecker.fromRuntime(Method);
-  static const TypeChecker fieldAnnotation = const TypeChecker.fromRuntime(Field);
+  static const TypeChecker classAnnotation =
+      const TypeChecker.fromRuntime(Class);
+  static const TypeChecker methodAnnotation =
+      const TypeChecker.fromRuntime(Method);
+  static const TypeChecker fieldAnnotation =
+      const TypeChecker.fromRuntime(Field);
   static const TypeChecker constructorAnnotation =
-   const TypeChecker.fromRuntime(Constructor);
+      const TypeChecker.fromRuntime(Constructor);
 
   static Class classFromConstantReader(ConstantReader reader) {
     return Class(_platformFromConstantReader(reader.read('platform')));

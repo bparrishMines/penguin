@@ -5,8 +5,9 @@ import 'package:penguin_generator/src/info.dart';
 import 'package:pubspec_parse/pubspec_parse.dart';
 import 'package:recase/recase.dart';
 
-import '../templates.dart';
 import 'platform_builder.dart';
+import '../templates/templates.dart';
+import '../templates/template_creator.dart';
 
 class AndroidBuilder extends PlatformBuilder {
   static String _androidPackageCache;
