@@ -32,6 +32,8 @@ class Template {
 - (instancetype _Nonnull)initWithHandler:(ChannelHandler *_Nonnull)handler
                                 uniqueId:(NSString *_Nonnull)uniqueId;
 - (NSObject *)handleMethodCall:(FlutterMethodCall *_Nonnull)call;
++ (NSObject *)handleStaticMethodCall:(ChannelHandler *_Nonnull)handler
+                                call:(FlutterMethodCall *_Nonnull)call;
 - (void)$allocate;
 - (void)$deallocate;
 @end
@@ -71,6 +73,38 @@ class Template {
   return [NSException exceptionWithName:@"NotImplementedException"
       reason:[NSString stringWithFormat:@"MethodCall was made without a unique handle for %@.", uniqueId]
                                userInfo:nil];
+}
+@end
+
+@implementation FlutterWrapper
+- (instancetype _Nonnull)initWithHandler:(ChannelHandler *_Nonnull)handler
+                                uniqueId:(NSString *_Nonnull)uniqueId {
+  self = [super init];
+  if (self) {
+    _$handler = handler;
+    _$uniqueId = uniqueId;
+  }
+  [_$handler addTempWrapper:_$uniqueId wrapper:self];
+  return self;
+}
+
++ (NSObject *)handleStaticMethodCall:(ChannelHandler *_Nonnull)handler
+                                call:(FlutterMethodCall *_Nonnull)call {
+  [self doesNotRecognizeSelector:_cmd];
+  return nil;
+}
+
+- (NSObject *)handleMethodCall:(FlutterMethodCall *_Nonnull)call {
+  [self doesNotRecognizeSelector:_cmd];
+  return nil;
+}
+
+- (void)$allocate {
+  [_$handler addAllocatedWrapper:_$uniqueId wrapper:self];
+}
+
+- (void)$deallocate {
+  [_$handler removeAllocatedWrapper:_$uniqueId];
 }
 @end
 
