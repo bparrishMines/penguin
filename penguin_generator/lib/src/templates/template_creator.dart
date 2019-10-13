@@ -374,8 +374,29 @@ class AndroidTemplateCreator extends TemplateCreator {
 }
 
 class IosTemplateCreator extends TemplateCreator {
-  String createFile() {
-    return template.value;
+  String createFile({
+    Iterable<String> imports,
+    Iterable<String> classes,
+    Iterable<String> staticRedirects,
+  }) {
+    return _replace(
+      template.value,
+      <Pattern, String>{
+        Block.imports.exp: imports.join(),
+        //Block.classes.exp: classes.join(),
+        //Block.staticRedirects.exp: staticRedirects.join(),
+        //Replacement.package.name: package,
+      },
+    );
+  }
+
+  String createImport({String classPackage}) {
+    return _replace(
+      Block.import.exp.firstMatch(template.value).group(1),
+      <Pattern, String>{
+        Replacement.classPackage.name: classPackage,
+      },
+    );
   }
 
   @override

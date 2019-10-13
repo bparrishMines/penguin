@@ -9,6 +9,7 @@ class IosBuilder extends PlatformBuilder {
 #import <Flutter/Flutter.h>
 
 @interface ChannelHandler : NSObject
+- (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result;
 @end
 ''';
 
@@ -24,7 +25,18 @@ class IosBuilder extends PlatformBuilder {
       buildStep.writeAsString('ChannelHandler+Generated.h', _headerFile),
       buildStep.writeAsString(
         'ChannelHandler+Generated.m',
-        creator.createFile(),
+        creator.createFile(
+          imports: classes
+              .where((ClassInfo classInfo) =>
+                  (classInfo.aClass.platform as IosPlatform).type.import !=
+                  null)
+              .map<String>(
+                (ClassInfo classInfo) => creator.createImport(
+                  classPackage:
+                      (classInfo.aClass.platform as IosPlatform).type.import,
+                ),
+              ),
+        ),
       ),
     ]);
   }

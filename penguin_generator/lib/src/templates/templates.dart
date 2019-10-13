@@ -8,6 +8,11 @@ class Template {
 
   static const Template ios = Template._(r'''
 #import "ChannelHandler+Generated.h"
+%%IMPORTS%%
+%%IMPORT%%
+#import __classPackage__;
+%%IMPORT%%
+%%IMPORTS%%
 
 @interface NotImplementedException : NSException
 + (NSException *)exceptionWithMethod:(NSString *)methodName;
@@ -42,7 +47,6 @@ class Template {
 - (void)removeAllocatedWrapper:(NSString *)uniqueId;
 - (BOOL)isAllocated:(NSString *)uniqueId;
 - (FlutterWrapper *)getWrapper:(NSString *)uniqueId;
-- (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result;
 - (NSObject *)handleMethodCall:(FlutterMethodCall *)call;
 @end
 
