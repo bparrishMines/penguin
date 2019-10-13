@@ -375,7 +375,7 @@ class AndroidTemplateCreator extends TemplateCreator {
 
 class IosTemplateCreator extends TemplateCreator {
   String createFile() {
-    return '';
+    return template.value;
   }
 
   @override

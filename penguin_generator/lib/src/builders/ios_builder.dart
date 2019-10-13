@@ -6,6 +6,10 @@ import '../templates/template_creator.dart';
 
 class IosBuilder extends PlatformBuilder {
   static const String _headerFile = r'''
+#import <Flutter/Flutter.h>
+
+@interface ChannelHandler : NSObject
+@end
 ''';
 
   @override
