@@ -27,8 +27,6 @@ class Template {
 @end
 
 @interface FlutterWrapper : NSObject
-@property ChannelHandler *$handler;
-@property NSString *$uniqueId;
 - (instancetype _Nonnull)initWithHandler:(ChannelHandler *_Nonnull)handler
                                 uniqueId:(NSString *_Nonnull)uniqueId;
 - (NSObject *)handleMethodCall:(FlutterMethodCall *_Nonnull)call;
@@ -76,15 +74,19 @@ class Template {
 }
 @end
 
-@implementation FlutterWrapper
+@implementation FlutterWrapper {
+  @public
+  ChannelHandler *$handler;
+  NSString *$uniqueId;
+}
 - (instancetype _Nonnull)initWithHandler:(ChannelHandler *_Nonnull)handler
                                 uniqueId:(NSString *_Nonnull)uniqueId {
   self = [super init];
   if (self) {
-    _$handler = handler;
-    _$uniqueId = uniqueId;
+    $handler = handler;
+    $uniqueId = uniqueId;
   }
-  [_$handler addTempWrapper:_$uniqueId wrapper:self];
+  [$handler addTempWrapper:$uniqueId wrapper:self];
   return self;
 }
 
@@ -100,11 +102,11 @@ class Template {
 }
 
 - (void)$allocate {
-  [_$handler addAllocatedWrapper:_$uniqueId wrapper:self];
+  [$handler addAllocatedWrapper:$uniqueId wrapper:self];
 }
 
 - (void)$deallocate {
-  [_$handler removeAllocatedWrapper:_$uniqueId];
+  [$handler removeAllocatedWrapper:$uniqueId];
 }
 @end
 
@@ -194,12 +196,55 @@ class Template {
 
 %%CLASSES%%
 %%CLASS%%
-@interface __platformClassName__ : FlutterWrapper
+@interface __platformClassName__Wrapper : FlutterWrapper
+@property __platformClassName__ *$value;
 @end
-@implementation __platformClassName__
+@implementation __platformClassName__Wrapper
+- (instancetype _Nonnull)initWithHandler:(ChannelHandler *_Nonnull)handler
+                                uniqueId:(NSString *_Nonnull)uniqueId
+                                value:(__platformClassName__ *_Nonnull)value {
+  self = [[__platformClassName__Wrapper alloc] initWithHandler:handler uniqueId:uniqueId value:value];
+  if (self) {
+    _$value = value;
+  }
+  return self;
+}
+
+%%CONSTRUCTORS%%
+%%CONSTRUCTOR%%
+- (instancetype _Nonnull)initWithHandler:(ChannelHandler *_Nonnull)handler
+                                uniqueId:(NSString *_Nonnull)uniqueId {
+  self = [[__platformClassName__Wrapper alloc] initWithHandler:handler uniqueId:uniqueId];
+  if (self) {
+    _$value = [[__platformClassName__ alloc] init];
+  }
+  return self;
+}
+%%CONSTRUCTOR%%
+%%CONSTRUCTORS%%
+
 + (NSObject *)handleStaticMethodCall:(ChannelHandler *_Nonnull)handler
                                 call:(FlutterMethodCall *_Nonnull)call {
-  return nil;
+  %%STATICMETHODCALLS%%
+  %%STATICMETHODCALL classMember:constructor%%
+  if ([@"__platformClassName__()" isEqualToString:call.method]) {
+    [[__platformClassName__Wrapper alloc] initWithHandler:handler uniqueId:call.arguments[@"$uniqueId"]];
+    return nil;
+  }
+  %%STATICMETHODCALL classMember:constructor%%
+  %%STATICMETHODCALL classMember:method%%
+  if ([@"__platformClassName__#__methodName__" isEqualToString:call.method]) {
+    return [__platformClassName__Wrapper __methodName__:handler call:call];
+  }
+  %%STATICMETHODCALL classMember:method%%
+  %%STATICMETHODCALL classMember:field%%
+  if ([@"__platformClassName__.__fieldName__" isEqualToString:call.method]) {
+    return [__platformClassName__Wrapper __fieldName__:handler call:call];
+  }
+  %%STATICMETHODCALL classMember:field%%
+  %%STATICMETHODCALLS%%
+  
+  @throw [NotImplementedException exceptionWithMethod:call.method];
 }
 
 - (NSObject *)handleMethodCall:(FlutterMethodCall *_Nonnull)call {

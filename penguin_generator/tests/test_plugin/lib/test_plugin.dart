@@ -214,6 +214,9 @@ class AndroidTestClass2 {}
   IosType('TestClass1'),
 ))
 class IosTestClass1 {
+  @Constructor()
+  IosTestClass1();
+
   final i.$IosTestClass1 _testClass = i.$IosTestClass1(_randomId());
 
   final List<MethodCall> _setters = <MethodCall>[];

@@ -39,6 +39,48 @@ class IosBuilder extends PlatformBuilder {
               ),
           classes: classes.map<String>(
             (ClassInfo classInfo) => creator.createClass(
+                staticMethodCalls: <String>[
+                  ...classInfo.constructors.map<String>(
+                    (ConstructorInfo constructorInfo) =>
+                        creator.createStaticMethodCall(
+                      ClassMemberType.constructor,
+                      platformClassName:
+                          (classInfo.aClass.platform as IosPlatform).type.name,
+                    ),
+                  ),
+                  ...classInfo.methods
+                      .where((MethodInfo methodInfo) => methodInfo.isStatic)
+                      .map<String>(
+                        (MethodInfo methodInfo) =>
+                            creator.createStaticMethodCall(
+                          ClassMemberType.method,
+                          platformClassName:
+                              (classInfo.aClass.platform as IosPlatform)
+                                  .type
+                                  .name,
+                          methodName: methodInfo.name,
+                        ),
+                      ),
+                  ...classInfo.fields
+                      .where((FieldInfo fieldInfo) => fieldInfo.isStatic)
+                      .map<String>(
+                        (FieldInfo fieldInfo) => creator.createStaticMethodCall(
+                          ClassMemberType.field,
+                          platformClassName:
+                              (classInfo.aClass.platform as IosPlatform)
+                                  .type
+                                  .name,
+                          fieldName: fieldInfo.name,
+                        ),
+                      ),
+                ],
+                constructors: classInfo.constructors.map<String>(
+                  (ConstructorInfo constructorInfo) =>
+                      creator.createConstructor(
+                    platformClassName:
+                        (classInfo.aClass.platform as IosPlatform).type.name,
+                  ),
+                ),
                 platformClassName:
                     (classInfo.aClass.platform as IosPlatform).type.name,
                 methodCalls: <String>[
