@@ -211,7 +211,7 @@ class AndroidTestClass1 {
 class AndroidTestClass2 {}
 
 @Class(IosPlatform(
-  IosType('TestClass1'),
+  IosType('TestClass1', import: '"TestPlugin.h"'),
 ))
 class IosTestClass1 {
   @Constructor()

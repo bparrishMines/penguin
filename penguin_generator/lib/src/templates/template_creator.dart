@@ -377,15 +377,33 @@ class IosTemplateCreator extends TemplateCreator {
   String createFile({
     Iterable<String> imports,
     Iterable<String> classes,
-    //Iterable<String> staticRedirects,
+    Iterable<String> staticRedirects,
   }) {
     return _replace(
       template.value,
       <Pattern, String>{
         Block.imports.exp: imports.join(),
         Block.classes.exp: classes.join(),
-        //Block.staticRedirects.exp: staticRedirects.join(),
-        //Replacement.package.name: package,
+        Block.staticRedirects.exp: staticRedirects.join(),
+      },
+    );
+  }
+
+  String createStaticRedirect(
+    ClassMemberType classMember, {
+    String platformClassName,
+    String methodName,
+    String fieldName,
+  }) {
+    return _replace(
+      MethodChannelBlock.staticRedirect(classMember)
+          .exp
+          .firstMatch(template.value)
+          .group(1),
+      <Pattern, String>{
+        Replacement.platformClassName.name: platformClassName,
+        if (methodName != null) Replacement.methodName.name: methodName,
+        if (fieldName != null) Replacement.fieldName.name: fieldName,
       },
     );
   }
@@ -413,7 +431,8 @@ class IosTemplateCreator extends TemplateCreator {
         Block.constructors.exp: constructors.join(),
         //Block.methods.exp: methods.join(),
         MethodChannelBlock.methodCalls.exp: methodCalls.join(),
-        MethodChannelBlock.staticMethodCalls.exp: staticMethodCalls.join('else'),
+        MethodChannelBlock.staticMethodCalls.exp:
+            staticMethodCalls.join('else'),
         //Block.fields.exp: fields.join(),
         Replacement.platformClassName.name: platformClassName,
       },

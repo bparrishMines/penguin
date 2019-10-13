@@ -37,78 +37,114 @@ class IosBuilder extends PlatformBuilder {
                       (classInfo.aClass.platform as IosPlatform).type.import,
                 ),
               ),
-          classes: classes.map<String>(
-            (ClassInfo classInfo) => creator.createClass(
-                staticMethodCalls: <String>[
-                  ...classInfo.constructors.map<String>(
-                    (ConstructorInfo constructorInfo) =>
-                        creator.createStaticMethodCall(
-                      ClassMemberType.constructor,
+          staticRedirects: <String>[
+            ...classes.expand<String>(
+              (ClassInfo classInfo) => classInfo.constructors.map<String>(
+                (ConstructorInfo constructorInfo) =>
+                    creator.createStaticRedirect(
+                  ClassMemberType.constructor,
+                  platformClassName:
+                      (classInfo.aClass.platform as IosPlatform).type.name,
+                  methodName: '',
+                ),
+              ),
+            ),
+            ...classes.expand<String>(
+              (ClassInfo classInfo) => classInfo.methods
+                  .where((MethodInfo methodInfo) => methodInfo.isStatic)
+                  .map<String>(
+                    (MethodInfo methodInfo) => creator.createStaticRedirect(
+                      ClassMemberType.method,
                       platformClassName:
                           (classInfo.aClass.platform as IosPlatform).type.name,
+                      methodName: methodInfo.name,
                     ),
                   ),
-                  ...classInfo.methods
-                      .where((MethodInfo methodInfo) => methodInfo.isStatic)
-                      .map<String>(
-                        (MethodInfo methodInfo) =>
-                            creator.createStaticMethodCall(
-                          ClassMemberType.method,
-                          platformClassName:
-                              (classInfo.aClass.platform as IosPlatform)
-                                  .type
-                                  .name,
-                          methodName: methodInfo.name,
-                        ),
-                      ),
-                  ...classInfo.fields
-                      .where((FieldInfo fieldInfo) => fieldInfo.isStatic)
-                      .map<String>(
-                        (FieldInfo fieldInfo) => creator.createStaticMethodCall(
-                          ClassMemberType.field,
-                          platformClassName:
-                              (classInfo.aClass.platform as IosPlatform)
-                                  .type
-                                  .name,
-                          fieldName: fieldInfo.name,
-                        ),
-                      ),
-                ],
-                constructors: classInfo.constructors.map<String>(
+            ),
+            ...classes.expand<String>(
+              (ClassInfo classInfo) => classInfo.fields
+                  .where((FieldInfo fieldInfo) => fieldInfo.isStatic)
+                  .map<String>(
+                    (FieldInfo fieldInfo) => creator.createStaticRedirect(
+                      ClassMemberType.field,
+                      platformClassName:
+                          (classInfo.aClass.platform as IosPlatform).type.name,
+                      fieldName: fieldInfo.name,
+                    ),
+                  ),
+            ),
+          ],
+          classes: classes.map<String>(
+            (ClassInfo classInfo) => creator.createClass(
+              staticMethodCalls: <String>[
+                ...classInfo.constructors.map<String>(
                   (ConstructorInfo constructorInfo) =>
-                      creator.createConstructor(
+                      creator.createStaticMethodCall(
+                    ClassMemberType.constructor,
                     platformClassName:
                         (classInfo.aClass.platform as IosPlatform).type.name,
                   ),
                 ),
-                platformClassName:
-                    (classInfo.aClass.platform as IosPlatform).type.name,
-                methodCalls: <String>[
-                  ...classInfo.methods
-                      .where((MethodInfo methodInfo) => !methodInfo.isStatic)
-                      .map<String>(
-                        (MethodInfo methodInfo) => creator.createMethodCall(
-                          ClassMemberType.method,
-                          platformClassName:
-                              (classInfo.aClass.platform as IosPlatform)
-                                  .type
-                                  .name,
-                          methodName: methodInfo.name,
-                        ),
+                ...classInfo.methods
+                    .where((MethodInfo methodInfo) => methodInfo.isStatic)
+                    .map<String>(
+                      (MethodInfo methodInfo) => creator.createStaticMethodCall(
+                        ClassMemberType.method,
+                        platformClassName:
+                            (classInfo.aClass.platform as IosPlatform)
+                                .type
+                                .name,
+                        methodName: methodInfo.name,
                       ),
-                  ...classInfo.fields
-                      .where((FieldInfo fieldInfo) => !fieldInfo.isStatic)
-                      .map<String>(
-                        (FieldInfo fieldInfo) => creator.createMethodCall(
-                          ClassMemberType.field,
-                          platformClassName:
-                              (classInfo.aClass.platform as IosPlatform)
-                                  .type
-                                  .name,
-                          fieldName: fieldInfo.name,
-                        ),
+                    ),
+                ...classInfo.fields
+                    .where((FieldInfo fieldInfo) => fieldInfo.isStatic)
+                    .map<String>(
+                      (FieldInfo fieldInfo) => creator.createStaticMethodCall(
+                        ClassMemberType.field,
+                        platformClassName:
+                            (classInfo.aClass.platform as IosPlatform)
+                                .type
+                                .name,
+                        fieldName: fieldInfo.name,
                       ),
-                ]),
+                    ),
+              ],
+              constructors: classInfo.constructors.map<String>(
+                (ConstructorInfo constructorInfo) => creator.createConstructor(
+                  platformClassName:
+                      (classInfo.aClass.platform as IosPlatform).type.name,
+                ),
+              ),
+              platformClassName:
+                  (classInfo.aClass.platform as IosPlatform).type.name,
+              methodCalls: <String>[
+                ...classInfo.methods
+                    .where((MethodInfo methodInfo) => !methodInfo.isStatic)
+                    .map<String>(
+                      (MethodInfo methodInfo) => creator.createMethodCall(
+                        ClassMemberType.method,
+                        platformClassName:
+                            (classInfo.aClass.platform as IosPlatform)
+                                .type
+                                .name,
+                        methodName: methodInfo.name,
+                      ),
+                    ),
+                ...classInfo.fields
+                    .where((FieldInfo fieldInfo) => !fieldInfo.isStatic)
+                    .map<String>(
+                      (FieldInfo fieldInfo) => creator.createMethodCall(
+                        ClassMemberType.field,
+                        platformClassName:
+                            (classInfo.aClass.platform as IosPlatform)
+                                .type
+                                .name,
+                        fieldName: fieldInfo.name,
+                      ),
+                    ),
+              ],
+            ),
           ),
         ),
       ),

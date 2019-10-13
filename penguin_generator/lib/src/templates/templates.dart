@@ -10,7 +10,7 @@ class Template {
 #import "ChannelHandler+Generated.h"
 %%IMPORTS%%
 %%IMPORT%%
-#import __classPackage__;
+#import __classPackage__
 %%IMPORT%%
 %%IMPORTS%%
 
@@ -110,90 +110,6 @@ class Template {
 }
 @end
 
-@implementation ChannelHandler
-- (instancetype)init {
-  self = [super init];
-  if (self) {
-    _allocatedWrappers = [NSMutableDictionary dictionary];
-    _tempWrappers = [NSMutableDictionary dictionary];
-  }
-  return self;
-}
-
-- (void)addWrapper:(NSString *)uniqueId
-           wrapper:(FlutterWrapper *)wrapper
- wrapperDictionary:(NSMutableDictionary *)wrapperDictionary {
-  if ([wrapperDictionary objectForKey:uniqueId] != nil) {
-    NSException *exception = [NSException
-       exceptionWithName:@"IllegalArgumentException"
-                  reason:[NSString stringWithFormat:@"Object for uniqueId already exists: %@", uniqueId]
-                userInfo:nil];
-    @throw exception;
-  }
-  wrapperDictionary[uniqueId] = wrapper;
-}
-
-- (void)addTempWrapper:(NSString *)uniqueId wrapper:(FlutterWrapper *)wrapper {
-  [self addWrapper:uniqueId wrapper:wrapper wrapperDictionary:_tempWrappers];
-}
-
-- (void)addAllocatedWrapper:(NSString *)uniqueId wrapper:(FlutterWrapper *)wrapper {
-  [self addWrapper:uniqueId wrapper:wrapper wrapperDictionary:_allocatedWrappers];
-}
-
-- (void)removeAllocatedWrapper:(NSString *)uniqueId {
-  [_allocatedWrappers removeObjectForKey:uniqueId];
-}
-
-- (BOOL)isAllocated:(NSString *)uniqueId {
-  return [_allocatedWrappers objectForKey:uniqueId] != nil;
-}
-
-- (FlutterWrapper *)getWrapper:(NSString *)uniqueId {
-  FlutterWrapper *wrapper = [_allocatedWrappers objectForKey:uniqueId];
-  if (wrapper != nil) return wrapper;
-  return [_tempWrappers objectForKey:uniqueId];
-}
-
-- (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
-  @try {
-    NSObject *object = [self handleMethodCall:call];
-    result(object);
-  }
-  @catch(NSException *exception) {
-    result([FlutterError errorWithCode:exception.name message:exception.reason details:nil]);
-  }
-}
-
-- (NSObject *)handleMethodCall:(FlutterMethodCall *)call {
-  if ([@"MultiInvoke" isEqualToString:call.method]) {
-    NSArray<NSDictionary*> *allMethodCalls = call.arguments;
-    NSMutableArray<NSObject *> *resultData = [NSMutableArray array];
-    for (NSDictionary *methodCallData in allMethodCalls) {
-      NSString *method = methodCallData[@"method"];
-      NSDictionary *arguments = methodCallData[@"arguments"];
-      
-      FlutterMethodCall *methodCall = [FlutterMethodCall
-         methodCallWithMethodName:method
-                        arguments:arguments];
-                        
-      [resultData addObject:methodCall];
-    }
-    
-    return resultData;
-  }
-  
-  NSString *uniqueId = call.arguments[@"uniqueId"];
-  if (uniqueId == nil) {
-    @throw [NoUniqueIdException exceptionWithMethod:call.method];
-  } else if ([self getWrapper:uniqueId] == nil) {
-    @throw [WrapperNotFoundException exceptionWithUniqueId:uniqueId];
-  }
-  
-  return [[self getWrapper:uniqueId] handleMethodCall:call];
-}
-@end
-
 %%CLASSES%%
 %%CLASS%%
 @interface __platformClassName__Wrapper : FlutterWrapper
@@ -269,6 +185,107 @@ class Template {
 @end
 %%CLASS%%
 %%CLASSES%%
+
+@implementation ChannelHandler
+- (instancetype)init {
+  self = [super init];
+  if (self) {
+    _allocatedWrappers = [NSMutableDictionary dictionary];
+    _tempWrappers = [NSMutableDictionary dictionary];
+  }
+  return self;
+}
+
+- (void)addWrapper:(NSString *)uniqueId
+           wrapper:(FlutterWrapper *)wrapper
+ wrapperDictionary:(NSMutableDictionary *)wrapperDictionary {
+  if ([wrapperDictionary objectForKey:uniqueId] != nil) {
+    NSException *exception = [NSException
+       exceptionWithName:@"IllegalArgumentException"
+                  reason:[NSString stringWithFormat:@"Object for uniqueId already exists: %@", uniqueId]
+                userInfo:nil];
+    @throw exception;
+  }
+  wrapperDictionary[uniqueId] = wrapper;
+}
+
+- (void)addTempWrapper:(NSString *)uniqueId wrapper:(FlutterWrapper *)wrapper {
+  [self addWrapper:uniqueId wrapper:wrapper wrapperDictionary:_tempWrappers];
+}
+
+- (void)addAllocatedWrapper:(NSString *)uniqueId wrapper:(FlutterWrapper *)wrapper {
+  [self addWrapper:uniqueId wrapper:wrapper wrapperDictionary:_allocatedWrappers];
+}
+
+- (void)removeAllocatedWrapper:(NSString *)uniqueId {
+  [_allocatedWrappers removeObjectForKey:uniqueId];
+}
+
+- (BOOL)isAllocated:(NSString *)uniqueId {
+  return [_allocatedWrappers objectForKey:uniqueId] != nil;
+}
+
+- (FlutterWrapper *)getWrapper:(NSString *)uniqueId {
+  FlutterWrapper *wrapper = [_allocatedWrappers objectForKey:uniqueId];
+  if (wrapper != nil) return wrapper;
+  return [_tempWrappers objectForKey:uniqueId];
+}
+
+- (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
+  @try {
+    NSObject *object = [self handleMethodCall:call];
+    result(object);
+  }
+  @catch(NSException *exception) {
+    result([FlutterError errorWithCode:exception.name message:exception.reason details:nil]);
+  }
+}
+
+- (NSObject *)handleMethodCall:(FlutterMethodCall *)call {
+  if ([@"MultiInvoke" isEqualToString:call.method]) {
+    NSArray<NSDictionary*> *allMethodCalls = call.arguments;
+    NSMutableArray<NSObject *> *resultData = [NSMutableArray array];
+    for (NSDictionary *methodCallData in allMethodCalls) {
+      NSString *method = methodCallData[@"method"];
+      NSDictionary *arguments = methodCallData[@"arguments"];
+      
+      FlutterMethodCall *methodCall = [FlutterMethodCall
+         methodCallWithMethodName:method
+                        arguments:arguments];
+                        
+      [resultData addObject:methodCall];
+    }
+    
+    return resultData;
+  }
+  %%STATICREDIRECTS%%
+  %%STATICREDIRECT classMember:constructor%%
+  else if ([@"__platformClassName__()" isEqualToString:call.method]) {
+    return [__platformClassName__Wrapper handleStaticMethodCall:self call:call];
+  }
+  %%STATICREDIRECT classMember:constructor%%
+  %%STATICREDIRECT classMember:method%%
+  else if ([@"__platformClassName__#__methodName__" isEqualToString:call.method]) {
+    return [__platformClassName__Wrapper handleStaticMethodCall:self call:call];
+  }
+  %%STATICREDIRECT classMember:method%%
+  %%STATICREDIRECT classMember:field%%
+  else if ([@"__platformClassName__.__fieldName__" isEqualToString:call.method]) {
+    return [__platformClassName__Wrapper handleStaticMethodCall:self call:call];
+  }
+  %%STATICREDIRECT classMember:field%%
+  %%STATICREDIRECTS%%
+  
+  NSString *uniqueId = call.arguments[@"uniqueId"];
+  if (uniqueId == nil) {
+    @throw [NoUniqueIdException exceptionWithMethod:call.method];
+  } else if ([self getWrapper:uniqueId] == nil) {
+    @throw [WrapperNotFoundException exceptionWithUniqueId:uniqueId];
+  }
+  
+  return [[self getWrapper:uniqueId] handleMethodCall:call];
+}
+@end
 ''');
 
   static const Template dartMethodChannel = Template._(r'''
