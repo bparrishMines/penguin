@@ -2,6 +2,7 @@ import 'package:penguin/penguin.dart';
 
 import 'platform_builder.dart';
 import '../info.dart';
+import '../templates/templates.dart';
 import '../templates/template_creator.dart';
 
 class IosBuilder extends PlatformBuilder {
@@ -36,6 +37,37 @@ class IosBuilder extends PlatformBuilder {
                       (classInfo.aClass.platform as IosPlatform).type.import,
                 ),
               ),
+          classes: classes.map<String>(
+            (ClassInfo classInfo) => creator.createClass(
+                platformClassName:
+                    (classInfo.aClass.platform as IosPlatform).type.name,
+                methodCalls: <String>[
+                  ...classInfo.methods
+                      .where((MethodInfo methodInfo) => !methodInfo.isStatic)
+                      .map<String>(
+                        (MethodInfo methodInfo) => creator.createMethodCall(
+                          ClassMemberType.method,
+                          platformClassName:
+                              (classInfo.aClass.platform as IosPlatform)
+                                  .type
+                                  .name,
+                          methodName: methodInfo.name,
+                        ),
+                      ),
+                  ...classInfo.fields
+                      .where((FieldInfo fieldInfo) => !fieldInfo.isStatic)
+                      .map<String>(
+                        (FieldInfo fieldInfo) => creator.createMethodCall(
+                          ClassMemberType.field,
+                          platformClassName:
+                              (classInfo.aClass.platform as IosPlatform)
+                                  .type
+                                  .name,
+                          fieldName: fieldInfo.name,
+                        ),
+                      ),
+                ]),
+          ),
         ),
       ),
     ]);

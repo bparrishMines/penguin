@@ -191,6 +191,39 @@ class Template {
   return [[self getWrapper:uniqueId] handleMethodCall:call];
 }
 @end
+
+%%CLASSES%%
+%%CLASS%%
+@interface __platformClassName__ : FlutterWrapper
+@end
+@implementation __platformClassName__
++ (NSObject *)handleStaticMethodCall:(ChannelHandler *_Nonnull)handler
+                                call:(FlutterMethodCall *_Nonnull)call {
+  return nil;
+}
+
+- (NSObject *)handleMethodCall:(FlutterMethodCall *_Nonnull)call {
+  if ([@"__platformClassName__#allocate" isEqualToString:call.method]) {
+  
+  } else if ([@"__platformClassName__#deallocate" isEqualToString:call.method]) {
+  
+  }
+  %%METHODCALLS%%
+  %%METHODCALL classMember:method%%
+  else if ([@"__platformClassName__#__methodName__" isEqualToString:call.method]) {
+    return [self __methodName__:call];
+  }
+  %%METHODCALL classMember:method%%
+  %%METHODCALL classMember:field%%
+  else if ([@"__platformClassName__.__fieldName__" isEqualToString:call.method]) {
+    return [self __fieldName__:call];
+  }
+  %%METHODCALL classMember:field%%
+  %%METHODCALLS%%
+}
+@end
+%%CLASS%%
+%%CLASSES%%
 ''');
 
   static const Template dartMethodChannel = Template._(r'''
