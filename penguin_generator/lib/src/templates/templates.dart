@@ -93,12 +93,12 @@ class Template {
 + (NSObject *)handleStaticMethodCall:(ChannelHandler *_Nonnull)handler
                                 call:(FlutterMethodCall *_Nonnull)call {
   [self doesNotRecognizeSelector:_cmd];
-  return nil;
+  return [NSNull null];
 }
 
 - (NSObject *)handleMethodCall:(FlutterMethodCall *_Nonnull)call {
   [self doesNotRecognizeSelector:_cmd];
-  return nil;
+  return [NSNull null];
 }
 
 - (void)$allocate {
@@ -119,7 +119,7 @@ class Template {
 - (instancetype _Nonnull)initWithHandler:(ChannelHandler *_Nonnull)handler
                                 uniqueId:(NSString *_Nonnull)uniqueId
                                 value:(__platformClassName__ *_Nonnull)value {
-  self = [[__platformClassName__Wrapper alloc] initWithHandler:handler uniqueId:uniqueId value:value];
+  self = [super initWithHandler:handler uniqueId:uniqueId];
   if (self) {
     _$value = value;
   }
@@ -130,7 +130,7 @@ class Template {
 %%CONSTRUCTOR%%
 - (instancetype _Nonnull)initWithHandler:(ChannelHandler *_Nonnull)handler
                                 uniqueId:(NSString *_Nonnull)uniqueId {
-  self = [[__platformClassName__Wrapper alloc] initWithHandler:handler uniqueId:uniqueId];
+  self = [super initWithHandler:handler uniqueId:uniqueId];
   if (self) {
     _$value = [[__platformClassName__ alloc] init];
   }
@@ -145,7 +145,7 @@ class Template {
   %%STATICMETHODCALL classMember:constructor%%
   if ([@"__platformClassName__()" isEqualToString:call.method]) {
     [[__platformClassName__Wrapper alloc] initWithHandler:handler uniqueId:call.arguments[@"$uniqueId"]];
-    return nil;
+    return [NSNull null];
   }
   %%STATICMETHODCALL classMember:constructor%%
   %%STATICMETHODCALL classMember:method%%
@@ -181,7 +181,51 @@ class Template {
   }
   %%METHODCALL classMember:field%%
   %%METHODCALLS%%
+  
+  @throw [NotImplementedException exceptionWithMethod:call.method];
 }
+
+%%METHODS%%
+%%METHOD%%
++ (NSObject *)__methodName__:(ChannelHandler *)$handler call:(FlutterMethodCall *)call {
+  %%PREMETHODCALLS%%
+  %%PREMETHODCALL methodChannel:void%%
+  %%PREMETHODCALL methodChannel:void%%
+  %%PREMETHODCALL methodChannel:supported%%
+  return
+  %%PREMETHODCALL methodChannel:supported%%
+  %%PREMETHODCALL methodChannel:wrapper%%
+  [__returnType__Wrapper initWithHandler:$handler uniqueId:call.arguments[@"uniqueId"] value:
+  %%PREMETHODCALL methodChannel:wrapper%%
+  %%PREMETHODCALLS%%
+  
+  [__methodCallerName__ __methodName__
+  %%PARAMETERS%%
+  %%PARAMETER methodChannel:supported%%
+  __parameterName__:call.arguments[@"__parameterName__"]
+  %%PARAMETER methodChannel:supported%%
+  %%PARAMETER methodChannel:wrapper%%
+  __parameterName__:[$handler getWrapper:call.arguments[@"__parameterName__"]
+  %%PARAMETER methodChannel:wrapper%%
+  %%PARAMETERS%%
+  ]
+  
+  %%POSTMETHODCALLS%%
+  %%POSTMETHODCALL methodChannel:void%%
+  ;
+  return [NSNull null];
+  %%POSTMETHODCALL methodChannel:void%%
+  %%POSTMETHODCALL methodChannel:supported%%
+  ;
+  %%POSTMETHODCALL methodChannel:supported%%
+  %%POSTMETHODCALL methodChannel:wrapper%%
+  ];
+  return [NSNull null];
+  %%POSTMETHODCALL methodChannel:wrapper%%
+  %%POSTMETHODCALLS%%
+}
+%%METHOD%%
+%%METHODS%%
 @end
 %%CLASS%%
 %%CLASSES%%
@@ -253,7 +297,7 @@ class Template {
          methodCallWithMethodName:method
                         arguments:arguments];
                         
-      [resultData addObject:methodCall];
+      [resultData addObject:[self handleMethodCall:methodCall]];
     }
     
     return resultData;
@@ -276,7 +320,7 @@ class Template {
   %%STATICREDIRECT classMember:field%%
   %%STATICREDIRECTS%%
   
-  NSString *uniqueId = call.arguments[@"uniqueId"];
+  NSString *uniqueId = call.arguments[@"$uniqueId"];
   if (uniqueId == nil) {
     @throw [NoUniqueIdException exceptionWithMethod:call.method];
   } else if ([self getWrapper:uniqueId] == nil) {

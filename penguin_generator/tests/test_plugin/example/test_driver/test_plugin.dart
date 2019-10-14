@@ -121,5 +121,16 @@ void main() {
         );
       });
     }, skip: !Platform.isAndroid);
+
+    group('ios', () {
+      test('noParametersMethod', () {
+        expect(IosTestClass1().noParametersMethod(), completion(4));
+      });
+
+      test('singleParameterMethod', () {
+        expect(IosTestClass1().singleParameterMethod('four'),
+            completion('fourtwo'));
+      });
+    }, skip: !Platform.isIOS);
   });
 }

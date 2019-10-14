@@ -419,7 +419,7 @@ class IosTemplateCreator extends TemplateCreator {
 
   String createClass({
     Iterable<String> constructors,
-    //Iterable<String> methods,
+    Iterable<String> methods,
     Iterable<String> methodCalls,
     Iterable<String> staticMethodCalls,
     //Iterable<String> fields,
@@ -429,12 +429,62 @@ class IosTemplateCreator extends TemplateCreator {
       Block.aClass.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
         Block.constructors.exp: constructors.join(),
-        //Block.methods.exp: methods.join(),
+        Block.methods.exp: methods.join(),
         MethodChannelBlock.methodCalls.exp: methodCalls.join(),
         MethodChannelBlock.staticMethodCalls.exp:
             staticMethodCalls.join('else'),
         //Block.fields.exp: fields.join(),
         Replacement.platformClassName.name: platformClassName,
+      },
+    );
+  }
+
+  String createParameter(
+    MethodChannelType methodChannel, {
+    String parameterName,
+  }) {
+    return _replace(
+      MethodChannelBlock.parameter(methodChannel)
+          .exp
+          .firstMatch(template.value)
+          .group(1),
+      <Pattern, String>{
+        Replacement.parameterName.name: parameterName,
+      },
+    );
+  }
+
+  String createMethod(
+    MethodChannelType returnTypeChannelType,
+    bool isStatic, {
+    Iterable<String> parameters,
+    String returnType,
+    String methodName,
+    String platformClassName,
+  }) {
+    return _replace(
+      Block.method.exp.firstMatch(template.value).group(1),
+      <Pattern, String>{
+        if (!isStatic) '+': '-',
+        if (!isStatic) r':(ChannelHandler *)$handler call': '',
+        Replacement.methodCallerName.name:
+            isStatic ? platformClassName : r'_$value',
+        Block.preMethodCalls.exp:
+            MethodChannelBlock.preMethodCall(returnTypeChannelType)
+                .exp
+                .firstMatch(template.value)
+                .group(1),
+        Block.postMethodCalls.exp:
+            MethodChannelBlock.postMethodCall(returnTypeChannelType)
+                .exp
+                .firstMatch(template.value)
+                .group(1),
+        Block.parameters.exp: parameters.join().replaceFirst(
+              RegExp('.+?:'),
+              ':',
+            ),
+        Replacement.returnType.name: returnType,
+        Replacement.methodName.name: methodName,
       },
     );
   }

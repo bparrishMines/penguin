@@ -218,32 +218,23 @@ class IosTestClass1 {
   IosTestClass1();
 
   final i.$IosTestClass1 _testClass = i.$IosTestClass1(_randomId());
-
   final List<MethodCall> _setters = <MethodCall>[];
 
-  @Field()
-  Future<Object> get objectField => a.$invoke<Object>(
-        _channel,
-        _testClass.$IosTestClass1Default(),
-        [..._setters, _testClass.$objectField()],
-      );
-
-  @Field()
-  set objectField(FutureOr<Object> objectField) {
-    _setters.add(_testClass.$objectField(objectField: objectField));
-    a.$invoke<Object>(
+  @Method()
+  Future<int> noParametersMethod() {
+    return a.$invoke<int>(
       _channel,
       _testClass.$IosTestClass1Default(),
-      [_testClass.$objectField(objectField: objectField)],
+      [_testClass.$noParametersMethod()],
     );
   }
 
   @Method()
-  Future<void> returnVoid() {
-    return a.$invoke<void>(
+  Future<String> singleParameterMethod(String value) {
+    return a.$invoke<String>(
       _channel,
       _testClass.$IosTestClass1Default(),
-      [_testClass.$returnVoid()],
+      [_testClass.$singleParameterMethod(value)],
     );
   }
 }

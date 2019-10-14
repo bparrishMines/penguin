@@ -4,4 +4,6 @@
 @end
 
 @interface TestClass1 : NSObject
+- (NSNumber *)noParametersMethod;
+- (NSString *)singleParameterMethod:(NSString *)value;
 @end
