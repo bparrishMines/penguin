@@ -77,9 +77,6 @@ class AndroidBuilder extends PlatformBuilder {
               (ConstructorInfo constructorInfo) => creator.createConstructor(
                 platformClassName:
                     (classInfo.aClass.platform as AndroidPlatform).type.name,
-                variableName: ReCase(
-                  (classInfo.aClass.platform as AndroidPlatform).type.name,
-                ).camelCase,
               ),
             ),
             methods: classInfo.methods.map<String>(
@@ -94,16 +91,10 @@ class AndroidBuilder extends PlatformBuilder {
                     getChannelType(parameterInfo.type),
                     parameterType: _convertType(parameterInfo.type, classes),
                     parameterName: parameterInfo.name,
-                    variableName:
-                        ReCase(_convertType(parameterInfo.type, classes))
-                            .camelCase,
                   ),
                 ),
                 returnType: _convertType(methodInfo.returnType, classes),
                 methodName: methodInfo.name,
-                variableName: ReCase(
-                  (classInfo.aClass.platform as AndroidPlatform).type.name,
-                ).camelCase,
               ),
             ),
             fields: classInfo.fields.map<String>(
@@ -146,9 +137,6 @@ class AndroidBuilder extends PlatformBuilder {
             ],
             platformClassName:
                 (classInfo.aClass.platform as AndroidPlatform).type.name,
-            variableName: ReCase(
-              (classInfo.aClass.platform as AndroidPlatform).type.name,
-            ).camelCase,
           ),
         ),
         staticRedirects: <String>[

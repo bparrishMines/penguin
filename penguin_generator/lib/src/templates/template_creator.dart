@@ -211,7 +211,6 @@ class AndroidTemplateCreator extends TemplateCreator {
     String returnType,
     String methodName,
     String platformClassName,
-    String variableName,
     String package,
   }) {
     return _replace(
@@ -241,7 +240,6 @@ class AndroidTemplateCreator extends TemplateCreator {
 
   String createParameter(
     MethodChannelType methodChannel, {
-    String variableName,
     String parameterType,
     String parameterName,
   }) {
@@ -264,7 +262,6 @@ class AndroidTemplateCreator extends TemplateCreator {
     Iterable<String> staticMethodCalls,
     Iterable<String> fields,
     String platformClassName,
-    String variableName,
   }) {
     return _replace(
       Block.aClass.exp.firstMatch(template.value).group(1),
@@ -325,7 +322,7 @@ class AndroidTemplateCreator extends TemplateCreator {
     );
   }
 
-  String createConstructor({String platformClassName, String variableName}) {
+  String createConstructor({String platformClassName}) {
     return _replace(
       Block.constructor.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
