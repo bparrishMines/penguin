@@ -221,6 +221,87 @@ class IosTestClass1 {
   final List<MethodCall> _setters = <MethodCall>[];
 
   @Method()
+  Future<void> returnVoid() {
+    return a.$invoke<void>(
+      _channel,
+      _testClass.$IosTestClass1Default(),
+      [_testClass.$returnVoid()],
+    );
+  }
+
+  @Method()
+  Future<Object> returnObject() {
+    return a.$invoke<Object>(
+      _channel,
+      _testClass.$IosTestClass1Default(),
+      [_testClass.$returnObject()],
+    );
+  }
+
+  @Method()
+  Future<dynamic> returnDynamic() {
+    return a.$invoke<dynamic>(
+      _channel,
+      _testClass.$IosTestClass1Default(),
+      [_testClass.$returnDynamic()],
+    );
+  }
+
+  @Method()
+  Future<String> returnString() {
+    return a.$invoke<String>(
+      _channel,
+      _testClass.$IosTestClass1Default(),
+      [_testClass.$returnString()],
+    );
+  }
+
+  @Method()
+  Future<int> returnInt() {
+    return a.$invoke<int>(
+      _channel,
+      _testClass.$IosTestClass1Default(),
+      [_testClass.$returnInt()],
+    );
+  }
+
+  @Method()
+  Future<double> returnDouble() {
+    return a.$invoke<double>(
+      _channel,
+      _testClass.$IosTestClass1Default(),
+      [_testClass.$returnDouble()],
+    );
+  }
+
+  @Method()
+  Future<bool> returnBool() {
+    return a.$invoke<bool>(
+      _channel,
+      _testClass.$IosTestClass1Default(),
+      [_testClass.$returnBool()],
+    );
+  }
+
+  @Method()
+  Future<List<double>> returnList() {
+    return a.$invokeList<double>(
+      _channel,
+      _testClass.$IosTestClass1Default(),
+      [_testClass.$returnList()],
+    );
+  }
+
+  @Method()
+  Future<Map<String, int>> returnMap() {
+    return a.$invokeMap<String, int>(
+      _channel,
+      _testClass.$IosTestClass1Default(),
+      [_testClass.$returnMap()],
+    );
+  }
+
+  @Method()
   Future<int> noParametersMethod() {
     return a.$invoke<int>(
       _channel,

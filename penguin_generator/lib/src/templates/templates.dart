@@ -279,9 +279,10 @@ class Template {
   @try {
     NSObject *object = [self handleMethodCall:call];
     result(object);
-  }
-  @catch(NSException *exception) {
+  } @catch(NSException *exception) {
     result([FlutterError errorWithCode:exception.name message:exception.reason details:nil]);
+  } @finally {
+    [_tempWrappers removeAllObjects];
   }
 }
 
