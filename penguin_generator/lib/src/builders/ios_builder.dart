@@ -167,46 +167,6 @@ class IosBuilder extends PlatformBuilder {
     ]);
   }
 
-//  String _convertType(TypeInfo info, [List<ClassInfo> classes]) {
-//    if (info.isVoid) {
-//      return 'void';
-//    } else if (info.isDynamic || info.isObject) {
-//      return 'NSObject *';
-//    } else if (info.isString) {
-//      return 'NString *';
-//    } else if (info.isInt) {
-//      return 'NSNumber *';
-//    } else if (info.isDouble) {
-//      return 'NSNumber *';
-//    } else if (info.isNum) {
-//      return 'NSNumber *';
-//    } else if (info.isBool) {
-//      return 'NSNumber *';
-//    } else if (info.isList &&
-//        getChannelType(info) == MethodChannelType.supported) {
-//      return 'NSArray<${_convertType(info.typeArguments.first)}> *';
-//    } else if (info.isMap &&
-//        getChannelType(info) == MethodChannelType.supported) {
-//      final List<TypeInfo> infos = info.typeArguments.toList();
-//      return 'NSDictionary<${_convertType(infos[0])}, ${_convertType(infos[1])}> *';
-//    } else if (info.isWrapper) {
-//      return (classes
-//              .firstWhere((ClassInfo classInfo) => classInfo.name == info.name)
-//              .aClass
-//              .platform as IosPlatform)
-//          .type
-//          .name;
-//    } else if (info.isTypeParameter) {
-//      return 'NSObject *';
-//    }
-//
-//    throw ArgumentError.value(
-//      info.toString(),
-//      'info',
-//      'Can\'t convert to Android type for info',
-//    );
-//  }
-
   @override
   Iterable<String> get filenames => <String>[
         'ChannelHandler+Generated.h',

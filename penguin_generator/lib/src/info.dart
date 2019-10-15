@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:meta/meta.dart';
 import 'package:penguin/penguin.dart';
 
 part 'info.g.dart';
@@ -42,12 +43,13 @@ class ClassInfo {
 
 @JsonSerializable()
 class MethodInfo {
-  const MethodInfo(
-      {this.isStatic,
-      this.name,
-      this.method,
-      this.returnType,
-      this.parameters});
+  const MethodInfo({
+    this.isStatic,
+    this.name,
+    this.method,
+    this.returnType,
+    this.parameters,
+  });
 
   factory MethodInfo.fromJson(Map json) => _$MethodInfoFromJson(json);
 
@@ -74,7 +76,13 @@ class MethodInfo {
 
 @JsonSerializable()
 class FieldInfo {
-  const FieldInfo({this.isMutable, this.isStatic, this.name, this.field, this.type,});
+  const FieldInfo({
+    this.isMutable,
+    this.isStatic,
+    this.name,
+    this.field,
+    this.type,
+  });
 
   factory FieldInfo.fromJson(Map json) => _$FieldInfoFromJson(json);
 
@@ -155,6 +163,7 @@ class TypeInfo {
     this.typeArguments,
     this.isWrapper,
     this.isTypeParameter,
+    @required this.isPrimitive,
   });
 
   factory TypeInfo.fromJson(Map json) => _$TypeInfoFromJson(json);
@@ -250,6 +259,12 @@ class TypeInfo {
   /// i.e. T is a type parameter in List<T>.
   @JsonKey(required: true, disallowNullValue: true)
   final bool isTypeParameter;
+
+  /// This is a primitive type on the platform side.
+  ///
+  /// e.g. int on ios
+  @JsonKey(required: true, disallowNullValue: true)
+  final bool isPrimitive;
 
   Map toJson() => _$TypeInfoToJson(this);
 

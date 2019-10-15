@@ -1,13 +1,14 @@
 name: penguin_generator
 description: A new flutter package project.
 version: 1.0.0
-author: Jorge Coca <jcocaramos@gmail.com>
-homepage: https://github.com/jorgecoca/todo_reporter.dart
+author: Maurice Parrish <bparr2450@gmail.com>
+homepage: https://github.com/bparrishMines/penguin
 
 environment:
   sdk: ">=2.2.2 <3.0.0"
 
 dependencies:
+  meta: ^1.1.7
   dart_style: ^1.3.0
   json_annotation: ^3.0.0
   recase: 2.0.1

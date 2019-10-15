@@ -10,6 +10,8 @@ class AnnotationUtils {
       const TypeChecker.fromRuntime(Field);
   static const TypeChecker constructorAnnotation =
       const TypeChecker.fromRuntime(Constructor);
+  static const TypeChecker primitiveAnnotation =
+      const TypeChecker.fromRuntime(Primitive);
 
   static Class classFromConstantReader(ConstantReader reader) {
     return Class(_platformFromConstantReader(reader.read('platform')));
