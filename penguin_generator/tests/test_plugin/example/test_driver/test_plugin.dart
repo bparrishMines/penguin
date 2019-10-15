@@ -123,6 +123,48 @@ void main() {
     }, skip: !Platform.isAndroid);
 
     group('ios', () {
+      test('returnVoid', () {
+        expect(IosTestClass1().returnVoid(), completes);
+      });
+
+      test('returnObject', () {
+        expect(IosTestClass1().returnObject(), completion('PoPo'));
+      });
+
+      test('returnDynamic', () {
+        expect(IosTestClass1().returnDynamic(), completion(45));
+      });
+
+      test('returnString', () {
+        expect(IosTestClass1().returnString(), completion('PoPo?'));
+      });
+
+      test('returnInt', () {
+        expect(IosTestClass1().returnInt(), completion(12));
+      });
+
+      test('returnDouble', () {
+        expect(IosTestClass1().returnDouble(), completion(70.0));
+      });
+
+      test('returnBool', () {
+        expect(IosTestClass1().returnBool(), completion(true));
+      });
+
+      test('returnList', () {
+        expect(
+          IosTestClass1().returnList(),
+          completion(<double>[3.0, 4.0]),
+        );
+      });
+
+      test('returnMap', () {
+        expect(
+          IosTestClass1().returnMap(),
+          completion(<String, int>{'three': 3, 'four': 4}),
+        );
+      });
+
       test('noParametersMethod', () {
         expect(IosTestClass1().noParametersMethod(), completion(4));
       });
