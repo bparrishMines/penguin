@@ -146,3 +146,9 @@ class IosType {
   @override
   String toString() => toJson().toString();
 }
+
+const Primitive primitive = const Primitive._();
+
+class Primitive {
+  const Primitive._();
+}
