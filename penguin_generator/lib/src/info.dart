@@ -163,7 +163,7 @@ class TypeInfo {
     this.typeArguments,
     this.isWrapper,
     this.isTypeParameter,
-    @required this.isPrimitive,
+    @required this.isNativeInt32,
   });
 
   factory TypeInfo.fromJson(Map json) => _$TypeInfoFromJson(json);
@@ -260,11 +260,8 @@ class TypeInfo {
   @JsonKey(required: true, disallowNullValue: true)
   final bool isTypeParameter;
 
-  /// This is a primitive type on the platform side.
-  ///
-  /// e.g. int on ios
   @JsonKey(required: true, disallowNullValue: true)
-  final bool isPrimitive;
+  final bool isNativeInt32;
 
   Map toJson() => _$TypeInfoToJson(this);
 

@@ -86,22 +86,22 @@ class ReadInfoBuilder extends Builder {
     final LibraryReader reader = LibraryReader(await buildStep.inputLibrary);
 
     final List<ClassInfo> allClassInfo = reader
-        .annotatedWith(AnnotationUtils.classAnnotation)
+        .annotatedWith(Annotation.$class)
         .map<ClassInfo>(
           (AnnotatedElement element) => ClassInfo(
             name: element.element.name,
             aClass: AnnotationUtils.classFromConstantReader(element.annotation),
             constructors: (element.element as ClassElement)
                 .constructors
-                .where((ConstructorElement constructorElement) =>
-                    AnnotationUtils.constructorAnnotation
-                        .hasAnnotationOfExact(constructorElement))
+                .where((ConstructorElement constructorElement) => Annotation
+                    .constructor
+                    .hasAnnotationOfExact(constructorElement))
                 .map<ConstructorInfo>(
                   (ConstructorElement constructorElement) => ConstructorInfo(
                     name: constructorElement.name,
                     constructor: AnnotationUtils.constructorFromConstantReader(
                       ConstantReader(
-                        AnnotationUtils.constructorAnnotation
+                        Annotation.constructor
                             .firstAnnotationOfExact(constructorElement),
                       ),
                     ),
@@ -110,8 +110,8 @@ class ReadInfoBuilder extends Builder {
             methods: (element.element as ClassElement)
                 .methods
                 .where(
-                  (MethodElement element) => AnnotationUtils.methodAnnotation
-                      .hasAnnotationOfExact(element),
+                  (MethodElement element) =>
+                      Annotation.method.hasAnnotationOfExact(element),
                 )
                 .map<MethodInfo>(
                   (MethodElement methodElement) => MethodInfo(
@@ -121,8 +121,7 @@ class ReadInfoBuilder extends Builder {
                         name: parameterElement.name,
                         type: _toTypeInfo(
                           parameterElement.type,
-                          isPrimitive: AnnotationUtils.primitiveAnnotation
-                              .hasAnnotationOfExact(parameterElement),
+                          parameterElement,
                         ),
                       ),
                     ),
@@ -132,18 +131,15 @@ class ReadInfoBuilder extends Builder {
                         ? _toTypeInfo(
                             (methodElement.returnType as ParameterizedType)
                                 .typeArguments[0],
-                            isPrimitive: AnnotationUtils.primitiveAnnotation
-                                .hasAnnotationOfExact(methodElement),
+                            methodElement,
                           )
                         : _toTypeInfo(
                             methodElement.returnType,
-                            isPrimitive: AnnotationUtils.primitiveAnnotation
-                                .hasAnnotationOfExact(methodElement),
+                            methodElement,
                           ),
                     method: AnnotationUtils.methodFromConstantReader(
                       ConstantReader(
-                        AnnotationUtils.methodAnnotation
-                            .firstAnnotationOfExact(methodElement),
+                        Annotation.method.firstAnnotationOfExact(methodElement),
                       ),
                     ),
                   ),
@@ -152,9 +148,8 @@ class ReadInfoBuilder extends Builder {
               ...(element.element as ClassElement)
                   .fields
                   .where(
-                    (FieldElement fieldElement) => AnnotationUtils
-                        .fieldAnnotation
-                        .hasAnnotationOfExact(fieldElement),
+                    (FieldElement fieldElement) =>
+                        Annotation.field.hasAnnotationOfExact(fieldElement),
                   )
                   .map<FieldInfo>(
                     (FieldElement fieldElement) => FieldInfo(
@@ -166,18 +161,15 @@ class ReadInfoBuilder extends Builder {
                           ? _toTypeInfo(
                               (fieldElement.type as ParameterizedType)
                                   .typeArguments[0],
-                              isPrimitive: AnnotationUtils.primitiveAnnotation
-                                  .hasAnnotationOfExact(fieldElement),
+                              fieldElement,
                             )
                           : _toTypeInfo(
                               fieldElement.type,
-                              isPrimitive: AnnotationUtils.primitiveAnnotation
-                                  .hasAnnotationOfExact(fieldElement),
+                              fieldElement,
                             ),
                       field: AnnotationUtils.fieldFromConstantReader(
                         ConstantReader(
-                          AnnotationUtils.fieldAnnotation
-                              .firstAnnotationOfExact(fieldElement),
+                          Annotation.field.firstAnnotationOfExact(fieldElement),
                         ),
                       ),
                     ),
@@ -185,9 +177,8 @@ class ReadInfoBuilder extends Builder {
               ...(element.element as ClassElement)
                   .accessors
                   .where(
-                    (PropertyAccessorElement accessorElement) => AnnotationUtils
-                        .fieldAnnotation
-                        .hasAnnotationOfExact(accessorElement),
+                    (PropertyAccessorElement accessorElement) =>
+                        Annotation.field.hasAnnotationOfExact(accessorElement),
                   )
                   .where(
                     (PropertyAccessorElement accessorElement) =>
@@ -206,29 +197,27 @@ class ReadInfoBuilder extends Builder {
                               (accessorElement.variable.type
                                       as ParameterizedType)
                                   .typeArguments[0],
-                              isPrimitive: AnnotationUtils.primitiveAnnotation
-                                  .hasAnnotationOfExact(accessorElement),
+                              accessorElement,
                             )
                           : _toTypeInfo(
                               accessorElement.variable.type,
-                              isPrimitive: AnnotationUtils.primitiveAnnotation
-                                  .hasAnnotationOfExact(accessorElement),
+                              accessorElement,
                             ),
                       field: AnnotationUtils.fieldFromConstantReader(
                         ConstantReader(
-                          AnnotationUtils.fieldAnnotation
+                          Annotation.field
                               .firstAnnotationOfExact(accessorElement),
                         ),
                       ),
                     ),
                   ),
             ],
-            typeParameters:
-                (element.element as ClassElement).typeParameters.map<TypeInfo>(
-                      (TypeParameterElement typeParameterElement) =>
-                          _toTypeInfo(typeParameterElement.type,
-                              isPrimitive: false),
-                    ),
+            typeParameters: (element.element as ClassElement)
+                .typeParameters
+                .map<TypeInfo>(
+                  (TypeParameterElement typeParameterElement) => _toTypeInfo(
+                      typeParameterElement.type, typeParameterElement),
+                ),
           ),
         )
         .toList();
@@ -241,14 +230,14 @@ class ReadInfoBuilder extends Builder {
     }
   }
 
-  TypeInfo _toTypeInfo(DartType type, {@required bool isPrimitive}) => TypeInfo(
+  TypeInfo _toTypeInfo(DartType type, Element element) => TypeInfo(
         name: type.toString(),
         typeArguments:
             type is ParameterizedType && type.typeArguments.isNotEmpty
                 ? type.typeArguments.map<TypeInfo>(
                     (DartType type) => _toTypeInfo(
                       type,
-                      isPrimitive: isPrimitive,
+                      element,
                     ),
                   )
                 : <TypeInfo>[],
@@ -269,9 +258,9 @@ class ReadInfoBuilder extends Builder {
         isDynamic: type.isDynamic,
         isVoid: type.isVoid,
         isWrapper: !type.isVoid &&
-            AnnotationUtils.classAnnotation.hasAnnotationOfExact(type.element),
+            Annotation.$class.hasAnnotationOfExact(type.element),
         isTypeParameter: type is TypeParameterType,
-        isPrimitive: isPrimitive,
+        isNativeInt32: Annotation.int32Annotation.hasAnnotationOfExact(element),
       );
 
   @override
