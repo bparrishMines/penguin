@@ -147,8 +147,115 @@ class IosType {
   String toString() => toJson().toString();
 }
 
-const Primitive primitive = const Primitive._();
+const Int8 int8 = const Int8._();
+const Int16 int16 = const Int16._();
+const Int32 int32 = const Int32._();
+const Int64 int64 = const Int64._();
+const IntPtr intPtr = const IntPtr._();
+const Float float = const Float._();
+const Double nativeDouble = const Double._();
+const Bool nativeBool = const Bool._();
 
-class Primitive {
-  const Primitive._();
+/// [NativeType]'s subtypes represent a native type in C.
+///
+/// [NativeType]'s subtypes are not constructible in the Dart code and serve
+/// purely as markers in type signatures.
+abstract class NativeType {
+  const NativeType();
+}
+
+/// Represents a native signed 8 bit integer in C.
+///
+/// [Int8] is not constructible in the Dart code and serves purely as marker in
+/// type signatures.
+class Int8 extends NativeType {
+  const Int8._();
+}
+
+/// Represents a native signed 16 bit integer in C.
+///
+/// [Int16] is not constructible in the Dart code and serves purely as marker in
+/// type signatures.
+class Int16 extends NativeType {
+  const Int16._();
+}
+
+/// Represents a native signed 32 bit integer in C.
+///
+/// [Int32] is not constructible in the Dart code and serves purely as marker in
+/// type signatures.
+class Int32 extends NativeType {
+  const Int32._();
+}
+
+/// Represents a native signed 64 bit integer in C.
+///
+/// [Int64] is not constructible in the Dart code and serves purely as marker in
+/// type signatures.
+class Int64 extends NativeType {
+  const Int64._();
+}
+
+/// Represents a native unsigned 8 bit integer in C.
+///
+/// [Uint8] is not constructible in the Dart code and serves purely as marker in
+/// type signatures.
+class Uint8 extends NativeType {
+  const Uint8._();
+}
+
+/// Represents a native unsigned 16 bit integer in C.
+///
+/// [Uint16] is not constructible in the Dart code and serves purely as marker
+/// in type signatures.
+class Uint16 extends NativeType {
+  const Uint16._();
+}
+
+/// Represents a native unsigned 32 bit integer in C.
+///
+/// [Uint32] is not constructible in the Dart code and serves purely as marker
+/// in type signatures.
+class Uint32 extends NativeType {
+  const Uint32._();
+}
+
+/// Represents a native unsigned 64 bit integer in C.
+///
+/// [Uint64] is not constructible in the Dart code and serves purely as marker
+/// in type signatures.
+class Uint64 extends NativeType {
+  const Uint64._();
+}
+
+/// Represents a native pointer-sized integer in C.
+///
+/// [IntPtr] is not constructible in the Dart code and serves purely as marker
+/// in type signatures.
+class IntPtr extends NativeType {
+  const IntPtr._();
+}
+
+/// Represents a native 32 bit float in C.
+///
+/// [Float] is not constructible in the Dart code and serves purely as marker
+/// in type signatures.
+class Float extends NativeType {
+  const Float._();
+}
+
+/// Represents a native 64 bit double in C.
+///
+/// [Double] is not constructible in the Dart code and serves purely as marker
+/// in type signatures.
+class Double extends NativeType {
+  const Double._();
+}
+
+/// Represents a BOOL in Obj-c.
+///
+/// [Bool] is not constructible in the Dart code and serves purely as marker
+/// in type signatures.
+class Bool extends NativeType {
+  const Bool._();
 }
