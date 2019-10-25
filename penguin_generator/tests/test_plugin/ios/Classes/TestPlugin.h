@@ -11,6 +11,7 @@
 - (NSObject *)returnDynamic;
 - (NSString *)returnString;
 - (NSNumber *)returnInt;
+- (int)returnInt32;
 - (NSNumber *)returnDouble;
 - (NSNumber *)returnBool;
 - (NSArray *)returnList;

@@ -265,6 +265,16 @@ class IosTestClass1 {
     );
   }
 
+  @int32
+  @Method()
+  Future<int> returnInt32() {
+    return a.$invoke<int>(
+      _channel,
+      _testClass.$IosTestClass1Default(),
+      [_testClass.$returnInt32()],
+    );
+  }
+
   @Method()
   Future<double> returnDouble() {
     return a.$invoke<double>(

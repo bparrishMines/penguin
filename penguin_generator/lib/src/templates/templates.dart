@@ -1,4 +1,4 @@
-enum MethodChannelType { $void, supported, wrapper, typeParameter }
+enum MethodChannelType { $void, supported, wrapper, primitive, typeParameter }
 enum ClassMemberType { constructor, method, field }
 
 class Template {
@@ -197,6 +197,9 @@ class Template {
   %%PREMETHODCALL methodChannel:wrapper%%
   [__returnType__Wrapper initWithHandler:$handler uniqueId:call.arguments[@"uniqueId"] value:
   %%PREMETHODCALL methodChannel:wrapper%%
+  %%PREMETHODCALL methodChannel:primitive%%
+  return @(
+  %%PREMETHODCALL methodChannel:primitive%%
   %%PREMETHODCALLS%%
   
   [__methodCallerName__ __methodName__
@@ -222,6 +225,9 @@ class Template {
   ];
   return [NSNull null];
   %%POSTMETHODCALL methodChannel:wrapper%%
+  %%POSTMETHODCALL methodChannel:primitive%%
+  );
+  %%POSTMETHODCALL methodChannel:primitive%%
   %%POSTMETHODCALLS%%
 }
 %%METHOD%%
@@ -966,6 +972,9 @@ class MethodChannelBlock extends Block {
         break;
       case MethodChannelType.$void:
         configs.add('methodChannel:void');
+        break;
+      case MethodChannelType.primitive:
+        configs.add('methodChannel:primitive');
         break;
     }
 

@@ -28,6 +28,10 @@
   return @(12);
 }
 
+- (int)returnInt32 {
+  return 56;
+}
+
 - (NSNumber *)returnDouble {
   return @(70.0F);
 }

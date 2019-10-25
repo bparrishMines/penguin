@@ -143,6 +143,10 @@ void main() {
         expect(IosTestClass1().returnInt(), completion(12));
       });
 
+      test('returnInt32', () {
+        expect(IosTestClass1().returnInt32(), completion(56));
+      });
+
       test('returnDouble', () {
         expect(IosTestClass1().returnDouble(), completion(70.0));
       });

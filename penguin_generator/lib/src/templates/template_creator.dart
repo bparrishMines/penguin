@@ -1,3 +1,4 @@
+import 'package:meta/meta.dart';
 import 'package:penguin_generator/src/templates/templates.dart';
 
 abstract class TemplateCreator {
@@ -454,10 +455,10 @@ class IosTemplateCreator extends TemplateCreator {
   String createMethod(
     MethodChannelType returnTypeChannelType,
     bool isStatic, {
-    Iterable<String> parameters,
-    String returnType,
-    String methodName,
-    String platformClassName,
+    @required Iterable<String> parameters,
+    @required String returnType,
+    @required String methodName,
+    @required String platformClassName,
   }) {
     return _replace(
       Block.method.exp.firstMatch(template.value).group(1),
