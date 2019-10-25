@@ -32,6 +32,7 @@ void main() {
             'run',
             'build_runner',
             'build',
+            '-v',
           ],
           workingDirectory: p.join('tests', 'test_plugin'),
         )),

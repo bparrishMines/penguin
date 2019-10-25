@@ -126,6 +126,9 @@ class IosBuilder extends PlatformBuilder {
                     (ParameterInfo parameterInfo) => creator.createParameter(
                       getChannelType(parameterInfo.type),
                       parameterName: parameterInfo.name,
+                      primitiveConvertMethod: _getPrimitiveConvertMethod(
+                        parameterInfo.type,
+                      ),
                     ),
                   ),
                   returnType: methodInfo.returnType.name,
@@ -165,6 +168,14 @@ class IosBuilder extends PlatformBuilder {
         ),
       ),
     ]);
+  }
+
+  String _getPrimitiveConvertMethod(TypeInfo info) {
+    if (info.isNativeInt32) {
+      return 'intValue';
+    }
+
+    return null;
   }
 
   @override

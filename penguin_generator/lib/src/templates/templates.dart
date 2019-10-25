@@ -210,6 +210,9 @@ class Template {
   %%PARAMETER methodChannel:wrapper%%
   __parameterName__:[$handler getWrapper:call.arguments[@"__parameterName__"]
   %%PARAMETER methodChannel:wrapper%%
+  %%PARAMETER methodChannel:primitive%%
+  __parameterName__:[call.arguments[@"__parameterName__"] __primitiveConvertMethod__]
+  %%PARAMETER methodChannel:primitive%%
   %%PARAMETERS%%
   ]
   
@@ -409,6 +412,9 @@ class $__className____typeParameters__ extends $Wrapper {
   %%PARAMETER methodChannel:wrapper%%
   $__parameterType__ __parameterName__,
   %%PARAMETER methodChannel:wrapper%%
+  %%PARAMETER methodChannel:primitive%%
+  __parameterType__ __parameterName__,
+  %%PARAMETER methodChannel:primitive%%
   %%PARAMETER methodChannel:typeParameter%%
   __parameterType__ __parameterName__,
   %%PARAMETER methodChannel:typeParameter%%
@@ -426,6 +432,9 @@ class $__className____typeParameters__ extends $Wrapper {
        %%METHODCALLPARAM methodChannel:wrapper%%
        '__parameterName__': __parameterName__?.$uniqueId,
        %%METHODCALLPARAM methodChannel:wrapper%%
+       %%METHODCALLPARAM methodChannel:primitive%%
+       '__parameterName__': __parameterName__,
+       %%METHODCALLPARAM methodChannel:primitive%%
        %%METHODCALLPARAM methodChannel:typeParameter%%
        if (__parameterName__ is $Wrapper) '__parameterName__': __parameterName__?.$uniqueId,
        if (__parameterName__ is! $Wrapper) '__parameterName__': __parameterName__,
@@ -1057,4 +1066,6 @@ class Replacement {
       Replacement('__methodCallerName__');
   static final Replacement fieldName = Replacement('__fieldName__');
   static final Replacement fieldType = Replacement('__fieldType__');
+  static final Replacement primitiveConvertMethod =
+      Replacement('__primitiveConvertMethod__');
 }

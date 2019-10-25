@@ -177,6 +177,10 @@ void main() {
         expect(IosTestClass1().singleParameterMethod('four'),
             completion('fourtwo'));
       });
+
+      test('allParameterTypesMethod', () {
+        expect(IosTestClass1().allParameterTypesMethod(41), completion('41'));
+      });
     }, skip: !Platform.isIOS);
   });
 }

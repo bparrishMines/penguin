@@ -328,4 +328,13 @@ class IosTestClass1 {
       [_testClass.$singleParameterMethod(value)],
     );
   }
+
+  @Method()
+  Future<String> allParameterTypesMethod(@int32 int intValue) {
+    return a.$invoke<String>(
+      _channel,
+      _testClass.$IosTestClass1Default(),
+      [_testClass.$allParameterTypesMethod(intValue)],
+    );
+  }
 }

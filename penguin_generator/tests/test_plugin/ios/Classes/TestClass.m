@@ -8,6 +8,10 @@
   return [value stringByAppendingString:@"two"];
 }
 
+- (NSString *)allParameterTypesMethod:(int)intValue {
+  return [NSString stringWithFormat:@"%d", intValue];
+}
+
 - (void)returnVoid {
   return;
 }

@@ -439,7 +439,8 @@ class IosTemplateCreator extends TemplateCreator {
 
   String createParameter(
     MethodChannelType methodChannel, {
-    String parameterName,
+    @required String parameterName,
+    @required String primitiveConvertMethod,
   }) {
     return _replace(
       MethodChannelBlock.parameter(methodChannel)
@@ -448,6 +449,8 @@ class IosTemplateCreator extends TemplateCreator {
           .group(1),
       <Pattern, String>{
         Replacement.parameterName.name: parameterName,
+        if (primitiveConvertMethod != null)
+          Replacement.primitiveConvertMethod.name: primitiveConvertMethod,
       },
     );
   }

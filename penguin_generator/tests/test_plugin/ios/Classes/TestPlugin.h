@@ -6,6 +6,7 @@
 @interface TestClass1 : NSObject
 - (NSNumber *)noParametersMethod;
 - (NSString *)singleParameterMethod:(NSString *)value;
+- (NSString *)allParameterTypesMethod:(int)intValue;
 - (void)returnVoid;
 - (NSObject *)returnObject;
 - (NSObject *)returnDynamic;
