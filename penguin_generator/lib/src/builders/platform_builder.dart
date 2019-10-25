@@ -51,8 +51,8 @@ abstract class PlatformBuilder {
               (_) => getChannelType(_) == MethodChannelType.supported,
             )) {
       return MethodChannelType.supported;
-    }
-    if (info.isNativeInt32) {
+    } else if (info.isNativeInt32) {
+      // We must check for primitive before supported because a type will be both.
       return MethodChannelType.primitive;
     } else if (info.isDynamic ||
         info.isObject ||
