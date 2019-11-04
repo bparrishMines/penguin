@@ -31,7 +31,7 @@ class AndroidBuilder extends PlatformBuilder {
                 classPackage:
                     (classInfo.aClass.platform as AndroidPlatform).type.package,
                 platformClassName:
-                    (classInfo.aClass.platform as AndroidPlatform).type.name,
+                    (classInfo.aClass.platform as AndroidPlatform).type.names.last,
               ),
             )
             .toSet(),
@@ -43,7 +43,7 @@ class AndroidBuilder extends PlatformBuilder {
                     creator.createStaticMethodCall(
                   ClassMemberType.constructor,
                   platformClassName:
-                      (classInfo.aClass.platform as AndroidPlatform).type.name,
+                      (classInfo.aClass.platform as AndroidPlatform).type.names.last,
                   methodName: '',
                 ),
               ),
@@ -55,7 +55,7 @@ class AndroidBuilder extends PlatformBuilder {
                       platformClassName:
                           (classInfo.aClass.platform as AndroidPlatform)
                               .type
-                              .name,
+                              .names.last,
                       methodName: methodInfo.name,
                     ),
                   ),
@@ -67,7 +67,7 @@ class AndroidBuilder extends PlatformBuilder {
                       platformClassName:
                           (classInfo.aClass.platform as AndroidPlatform)
                               .type
-                              .name,
+                              .names.last,
                       fieldName: fieldInfo.name,
                     ),
                   ),
@@ -75,7 +75,7 @@ class AndroidBuilder extends PlatformBuilder {
             constructors: classInfo.constructors.map<String>(
               (ConstructorInfo constructorInfo) => creator.createConstructor(
                 platformClassName:
-                    (classInfo.aClass.platform as AndroidPlatform).type.name,
+                    (classInfo.aClass.platform as AndroidPlatform).type.names.last,
               ),
             ),
             methods: classInfo.methods.map<String>(
@@ -83,7 +83,7 @@ class AndroidBuilder extends PlatformBuilder {
                 getChannelType(methodInfo.returnType),
                 methodInfo.isStatic,
                 platformClassName:
-                    (classInfo.aClass.platform as AndroidPlatform).type.name,
+                    (classInfo.aClass.platform as AndroidPlatform).type.names.last,
                 package: _androidPackage,
                 parameters: methodInfo.parameters.map<String>(
                   (ParameterInfo parameterInfo) => creator.createParameter(
@@ -105,7 +105,7 @@ class AndroidBuilder extends PlatformBuilder {
                 fieldName: fieldInfo.name,
                 package: _androidPackage,
                 platformClassName:
-                    (classInfo.aClass.platform as AndroidPlatform).type.name,
+                    (classInfo.aClass.platform as AndroidPlatform).type.names.last,
               ),
             ),
             methodCalls: <String>[
@@ -117,7 +117,7 @@ class AndroidBuilder extends PlatformBuilder {
                       platformClassName:
                           (classInfo.aClass.platform as AndroidPlatform)
                               .type
-                              .name,
+                              .names.last,
                       methodName: methodInfo.name,
                     ),
                   ),
@@ -129,13 +129,13 @@ class AndroidBuilder extends PlatformBuilder {
                       platformClassName:
                           (classInfo.aClass.platform as AndroidPlatform)
                               .type
-                              .name,
+                              .names.last,
                       fieldName: fieldInfo.name,
                     ),
                   ),
             ],
             platformClassName:
-                (classInfo.aClass.platform as AndroidPlatform).type.name,
+                (classInfo.aClass.platform as AndroidPlatform).type.names.last,
           ),
         ),
         staticRedirects: <String>[
@@ -144,7 +144,7 @@ class AndroidBuilder extends PlatformBuilder {
               (ConstructorInfo constructorInfo) => creator.createStaticRedirect(
                 ClassMemberType.constructor,
                 platformClassName:
-                    (classInfo.aClass.platform as AndroidPlatform).type.name,
+                    (classInfo.aClass.platform as AndroidPlatform).type.names.last,
                 methodName: '',
               ),
             ),
@@ -158,7 +158,7 @@ class AndroidBuilder extends PlatformBuilder {
                     platformClassName:
                         (classInfo.aClass.platform as AndroidPlatform)
                             .type
-                            .name,
+                            .names.last,
                     methodName: methodInfo.name,
                   ),
                 ),
@@ -172,7 +172,7 @@ class AndroidBuilder extends PlatformBuilder {
                     platformClassName:
                         (classInfo.aClass.platform as AndroidPlatform)
                             .type
-                            .name,
+                            .names.last,
                     fieldName: fieldInfo.name,
                   ),
                 ),
@@ -212,7 +212,7 @@ class AndroidBuilder extends PlatformBuilder {
               .aClass
               .platform as AndroidPlatform)
           .type
-          .name;
+          .names.last;
     } else if (info.isTypeParameter) {
       return 'Object';
     }

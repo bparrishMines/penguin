@@ -52,7 +52,13 @@ class AnnotationUtils {
   static AndroidType _androidTypeFromConstantReader(ConstantReader reader) {
     return AndroidType(
       reader.read('package').stringValue,
-      reader.read('name').stringValue,
+      reader
+          .read('names')
+          .listValue
+          .map<String>(
+            (object) => object.toStringValue(),
+          )
+          .toList(),
     );
   }
 
