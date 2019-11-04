@@ -11,6 +11,12 @@ public class TestPlugin {
   /** Plugin registration. */
   public static void registerWith(Registrar registrar) {
     final MethodChannel channel = new MethodChannel(registrar.messenger(), "test_plugin");
-    channel.setMethodCallHandler(new ChannelGenerated());
+    final ChannelGenerated channelGenerated = new ChannelGenerated();
+    final ChannelGenerated.ActivityWrapper wrapper = new ChannelGenerated.ActivityWrapper(
+        channelGenerated,
+        "activity",
+        registrar.activity());
+    channelGenerated.addAllocatedWrapper("activity", wrapper);
+    channel.setMethodCallHandler(channelGenerated);
   }
 }

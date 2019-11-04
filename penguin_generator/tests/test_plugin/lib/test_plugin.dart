@@ -11,6 +11,15 @@ const MethodChannel _channel = const MethodChannel('test_plugin');
 String _randomId() => Random().nextDouble().toString();
 
 @Class(AndroidPlatform(
+  AndroidType('android.app', <String>['Activity']),
+))
+class AndroidActivity {
+  AndroidActivity() : activity = a.$AndroidActivity('activity');
+
+  final a.$AndroidActivity activity;
+}
+
+@Class(AndroidPlatform(
   AndroidType('com.example.test_plugin.test_library', <String>['TestClass1']),
 ))
 class AndroidTestClass1 {

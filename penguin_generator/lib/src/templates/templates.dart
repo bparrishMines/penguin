@@ -581,11 +581,11 @@ public class ChannelGenerated implements MethodCallHandler {
     }
   }
 
-  private static abstract class FlutterWrapper implements PlatformView {
+  public static abstract class FlutterWrapper implements PlatformView {
     final ChannelGenerated $channelGenerated;
     final String $uniqueId;
     
-    FlutterWrapper(ChannelGenerated $channelGenerated, String $uniqueId) {
+    private FlutterWrapper(ChannelGenerated $channelGenerated, String $uniqueId) {
       this.$channelGenerated = $channelGenerated;
       this.$uniqueId = $uniqueId;
     }
@@ -599,7 +599,7 @@ public class ChannelGenerated implements MethodCallHandler {
     }
 
     void deallocate() {
-      $channelGenerated.removeWrapper($uniqueId);
+      $channelGenerated.removeAllocatedWrapper($uniqueId);
     }
     
     @Override
@@ -649,8 +649,12 @@ public class ChannelGenerated implements MethodCallHandler {
     }
     wrapperMap.put(uniqueId, wrapper);
   }
+  
+  public void addAllocatedWrapper(final String uniqueId, final FlutterWrapper wrapper) {
+    addWrapper(uniqueId, wrapper, allocatedWrappers);
+  }
 
-  private void removeWrapper(String uniqueId) {
+  public void removeAllocatedWrapper(String uniqueId) {
     allocatedWrappers.remove(uniqueId);
   }
 
@@ -719,7 +723,7 @@ public class ChannelGenerated implements MethodCallHandler {
   %%CLASSES%%
   %%CLASS%%
   @RequiresApi(api = __api__)
-  private static class __wrapperName__Wrapper extends FlutterWrapper {
+  public static class __wrapperName__Wrapper extends FlutterWrapper {
     private final __platformClassName__ $value;
 
     public __wrapperName__Wrapper(ChannelGenerated $channelGenerated, String $uniqueId, __platformClassName__ $value) {
