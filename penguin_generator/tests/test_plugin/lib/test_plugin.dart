@@ -13,10 +13,10 @@ String _randomId() => Random().nextDouble().toString();
 @Class(AndroidPlatform(
   AndroidType('android.app', <String>['Activity']),
 ))
-class AndroidActivity {
-  AndroidActivity() : activity = a.$AndroidActivity('activity');
+class _AndroidActivity {
+  _AndroidActivity() : activity = a.$_AndroidActivity('activity');
 
-  final a.$AndroidActivity activity;
+  final a.$_AndroidActivity activity;
 }
 
 @Class(AndroidPlatform(
