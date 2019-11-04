@@ -81,11 +81,11 @@ Map<String, dynamic> _$AndroidPlatformToJson(AndroidPlatform instance) {
 
 AndroidType _$AndroidTypeFromJson(Map<String, dynamic> json) {
   $checkKeys(json,
-      requiredKeys: const ['package', 'name'],
-      disallowNullValues: const ['name']);
+      requiredKeys: const ['package', 'names'],
+      disallowNullValues: const ['names']);
   return AndroidType(
     json['package'] as String,
-    json['name'] as String,
+    (json['names'] as List)?.map((e) => e as String)?.toList(),
   );
 }
 
@@ -100,7 +100,7 @@ Map<String, dynamic> _$AndroidTypeToJson(AndroidType instance) {
     }
   }
 
-  writeNotNull('name', instance.name);
+  writeNotNull('names', instance.names);
   return val;
 }
 
@@ -116,6 +116,18 @@ IosPlatform _$IosPlatformFromJson(Map<String, dynamic> json) {
 Map<String, dynamic> _$IosPlatformToJson(IosPlatform instance) =>
     <String, dynamic>{
       'type': instance.type,
+    };
+
+AndroidApi _$AndroidApiFromJson(Map<String, dynamic> json) {
+  $checkKeys(json, requiredKeys: const ['api']);
+  return AndroidApi(
+    json['api'] as int,
+  );
+}
+
+Map<String, dynamic> _$AndroidApiToJson(AndroidApi instance) =>
+    <String, dynamic>{
+      'api': instance.api,
     };
 
 IosType _$IosTypeFromJson(Map<String, dynamic> json) {

@@ -95,7 +95,7 @@ class AndroidPlatform extends Platform {
 
 @JsonSerializable()
 class AndroidType {
-  const AndroidType(this.package, this.name);
+  const AndroidType(this.package, this.names);
 
   factory AndroidType.fromJson(Map json) => _$AndroidTypeFromJson(json);
 
@@ -103,7 +103,7 @@ class AndroidType {
   final String package;
 
   @JsonKey(required: true, disallowNullValue: true)
-  final String name;
+  final List<String> names;
 
   Map toJson() => _$AndroidTypeToJson(this);
 
@@ -124,6 +124,21 @@ class IosPlatform extends Platform {
 
   @override
   Map toJson() => _$IosPlatformToJson(this)..addAll(super.toJson());
+
+  @override
+  String toString() => toJson().toString();
+}
+
+@JsonSerializable()
+class AndroidApi {
+  const AndroidApi(this.api);
+
+  factory AndroidApi.fromJson(Map json) => _$AndroidApiFromJson(json);
+
+  @JsonKey(required: true, nullable: false)
+  final int api;
+
+  Map toJson() => _$AndroidApiToJson(this);
 
   @override
   String toString() => toJson().toString();
