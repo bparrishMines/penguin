@@ -120,6 +120,14 @@ void main() {
           completion(<String, int>{'one': 1, 'two': 2}),
         );
       });
+
+      test('nestedClassField', () {
+        expect(AndroidNestedClass().nestedClassField, completion(4));
+      });
+
+      test('nestedClassMethod', () {
+        expect(AndroidNestedClass().nestedClassMethod(), completion(5));
+      });
     }, skip: !Platform.isAndroid);
 
     group('ios', () {

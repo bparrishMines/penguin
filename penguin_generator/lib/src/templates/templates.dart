@@ -658,18 +658,18 @@ public class ChannelGenerated implements MethodCallHandler {
         return resultData;
       %%STATICREDIRECTS%%
       %%STATICREDIRECT classMember:constructor%%
-      case "__platformClassName__()": {
-          return __platformClassName__Wrapper.onStaticMethodCall(this, call);
+      case "__wrapperName__()": {
+          return __wrapperName__Wrapper.onStaticMethodCall(this, call);
         }
       %%STATICREDIRECT classMember:constructor%%
       %%STATICREDIRECT classMember:method%%
-      case "__platformClassName__#__methodName__": {
-          return __platformClassName__Wrapper.onStaticMethodCall(this, call);
+      case "__wrapperName__#__methodName__": {
+          return __wrapperName__Wrapper.onStaticMethodCall(this, call);
         }
       %%STATICREDIRECT classMember:method%%
       %%STATICREDIRECT classMember:field%%
-      case "__platformClassName__.__fieldName__": {
-          return __platformClassName__Wrapper.onStaticMethodCall(this, call);
+      case "__wrapperName__.__fieldName__": {
+          return __wrapperName__Wrapper.onStaticMethodCall(this, call);
         }
       %%STATICREDIRECT classMember:field%%
       %%STATICREDIRECTS%%
@@ -686,10 +686,10 @@ public class ChannelGenerated implements MethodCallHandler {
 
   %%CLASSES%%
   %%CLASS%%
-  private static class __platformClassName__Wrapper extends FlutterWrapper {
+  private static class __wrapperName__Wrapper extends FlutterWrapper {
     private final __platformClassName__ $value;
 
-    public __platformClassName__Wrapper(ChannelGenerated $channelGenerated, String $uniqueId, __platformClassName__ $value) {
+    public __wrapperName__Wrapper(ChannelGenerated $channelGenerated, String $uniqueId, __platformClassName__ $value) {
       super($channelGenerated, $uniqueId);
       this.$value = $value;
       $channelGenerated.addWrapper($uniqueId, this, $channelGenerated.tempWrappers);
@@ -697,7 +697,7 @@ public class ChannelGenerated implements MethodCallHandler {
 
     %%CONSTRUCTORS%%
     %%CONSTRUCTOR%%
-    private __platformClassName__Wrapper(ChannelGenerated $channelGenerated, final String $uniqueId) {
+    private __wrapperName__Wrapper(ChannelGenerated $channelGenerated, final String $uniqueId) {
       super($channelGenerated, $uniqueId);
       this.$value = new __platformClassName__();
       $channelGenerated.addWrapper($uniqueId, this, $channelGenerated.tempWrappers);
@@ -709,19 +709,19 @@ public class ChannelGenerated implements MethodCallHandler {
       switch(call.method) {
         %%STATICMETHODCALLS%%
         %%STATICMETHODCALL classMember:constructor%%
-        case "__platformClassName__()": {
-            new __platformClassName__Wrapper($channelGenerated, (String) call.argument("$uniqueId"));
+        case "__wrapperName__()": {
+            new __wrapperName__Wrapper($channelGenerated, (String) call.argument("$uniqueId"));
             return null;
           }
         %%STATICMETHODCALL classMember:constructor%%
         %%STATICMETHODCALL classMember:method%%
-        case "__platformClassName__#__methodName__": {
-            return __platformClassName__Wrapper.__methodName__($channelGenerated, call);
+        case "__wrapperName__#__methodName__": {
+            return __wrapperName__Wrapper.__methodName__($channelGenerated, call);
           }
         %%STATICMETHODCALL classMember:method%%
         %%STATICMETHODCALL classMember:field%%
-        case "__platformClassName__.__fieldName__": {
-            return __platformClassName__Wrapper.__fieldName__($channelGenerated, call);
+        case "__wrapperName__.__fieldName__": {
+            return __wrapperName__Wrapper.__fieldName__($channelGenerated, call);
           }
         %%STATICMETHODCALL classMember:field%%
         %%STATICMETHODCALLS%%
@@ -741,11 +741,11 @@ public class ChannelGenerated implements MethodCallHandler {
           return null;
         %%METHODCALLS%%
         %%METHODCALL classMember:method%%
-        case "__platformClassName__#__methodName__":
+        case "__wrapperName__#__methodName__":
           return __methodName__(call);
         %%METHODCALL classMember:method%%
         %%METHODCALL classMember:field%%
-        case "__platformClassName__.__fieldName__":
+        case "__wrapperName__.__fieldName__":
           return __fieldName__(call);
         %%METHODCALL classMember:field%%
         %%METHODCALLS%%
@@ -1068,4 +1068,5 @@ class Replacement {
   static final Replacement fieldType = Replacement('__fieldType__');
   static final Replacement primitiveConvertMethod =
       Replacement('__primitiveConvertMethod__');
+  static final Replacement wrapperName = Replacement('__wrapperName__');
 }

@@ -257,12 +257,13 @@ class AndroidTemplateCreator extends TemplateCreator {
   }
 
   String createClass({
-    Iterable<String> constructors,
-    Iterable<String> methods,
-    Iterable<String> methodCalls,
-    Iterable<String> staticMethodCalls,
-    Iterable<String> fields,
-    String platformClassName,
+    @required Iterable<String> constructors,
+    @required Iterable<String> methods,
+    @required Iterable<String> methodCalls,
+    @required Iterable<String> staticMethodCalls,
+    @required Iterable<String> fields,
+    @required String platformClassName,
+    @required String wrapperName,
   }) {
     return _replace(
       Block.aClass.exp.firstMatch(template.value).group(1),
@@ -273,6 +274,7 @@ class AndroidTemplateCreator extends TemplateCreator {
         MethodChannelBlock.staticMethodCalls.exp: staticMethodCalls.join(),
         Block.fields.exp: fields.join(),
         Replacement.platformClassName.name: platformClassName,
+        Replacement.wrapperName.name: wrapperName,
       },
     );
   }
@@ -289,7 +291,7 @@ class AndroidTemplateCreator extends TemplateCreator {
 
   String createStaticRedirect(
     ClassMemberType classMember, {
-    String platformClassName,
+    @required String wrapperName,
     String methodName,
     String fieldName,
   }) {
@@ -299,7 +301,7 @@ class AndroidTemplateCreator extends TemplateCreator {
           .firstMatch(template.value)
           .group(1),
       <Pattern, String>{
-        Replacement.platformClassName.name: platformClassName,
+        Replacement.wrapperName.name: wrapperName,
         if (methodName != null) Replacement.methodName.name: methodName,
         if (fieldName != null) Replacement.fieldName.name: fieldName,
       },
@@ -323,18 +325,22 @@ class AndroidTemplateCreator extends TemplateCreator {
     );
   }
 
-  String createConstructor({String platformClassName}) {
+  String createConstructor({
+    @required String platformClassName,
+    @required String wrapperName,
+  }) {
     return _replace(
       Block.constructor.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
         Replacement.platformClassName.name: platformClassName,
+        Replacement.wrapperName.name: wrapperName,
       },
     );
   }
 
   String createMethodCall(
     ClassMemberType classMember, {
-    String platformClassName,
+    @required String wrapperName,
     String methodName,
     String fieldName,
   }) {
@@ -344,7 +350,7 @@ class AndroidTemplateCreator extends TemplateCreator {
           .firstMatch(template.value)
           .group(1),
       <Pattern, String>{
-        Replacement.platformClassName.name: platformClassName,
+        Replacement.wrapperName.name: wrapperName,
         if (methodName != null) Replacement.methodName.name: methodName,
         if (fieldName != null) Replacement.fieldName.name: fieldName,
       },
@@ -353,7 +359,7 @@ class AndroidTemplateCreator extends TemplateCreator {
 
   String createStaticMethodCall(
     ClassMemberType classMember, {
-    String platformClassName,
+    @required String wrapperName,
     String methodName,
     String fieldName,
   }) {
@@ -363,7 +369,7 @@ class AndroidTemplateCreator extends TemplateCreator {
           .firstMatch(template.value)
           .group(1),
       <Pattern, String>{
-        Replacement.platformClassName.name: platformClassName,
+        Replacement.wrapperName.name: wrapperName,
         if (methodName != null) Replacement.methodName.name: methodName,
         if (fieldName != null) Replacement.fieldName.name: fieldName,
       },

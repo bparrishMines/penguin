@@ -206,6 +206,33 @@ class AndroidTestClass1 {
 }
 
 @Class(AndroidPlatform(
+  AndroidType(
+    'com.example.test_plugin.test_library',
+    <String>['TestClass1', 'NestedTestClass'],
+  ),
+))
+class AndroidNestedClass {
+  @Constructor()
+  AndroidNestedClass();
+
+  final a.$AndroidNestedClass _testClass = a.$AndroidNestedClass(_randomId());
+
+  @Field()
+  Future<int> get nestedClassField => a.$invoke<int>(
+        _channel,
+        _testClass.$AndroidNestedClassDefault(),
+        [_testClass.$nestedClassField()],
+      );
+
+  @Method()
+  Future<int> nestedClassMethod() => a.$invoke<int>(
+        _channel,
+        _testClass.$AndroidNestedClassDefault(),
+        [_testClass.$nestedClassMethod()],
+      );
+}
+
+@Class(AndroidPlatform(
   AndroidType('com.example.test_plugin.test_library', <String>['TestClass2']),
 ))
 class AndroidTestClass2 {}

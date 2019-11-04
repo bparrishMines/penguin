@@ -78,4 +78,11 @@ public class TestClass1 {
     map.put("two", 2);
     return map;
   }
+
+  public static class NestedTestClass {
+    public int nestedClassField = 4;
+    public int nestedClassMethod() {
+      return 5;
+    }
+  }
 }

@@ -48,7 +48,7 @@ class DartMethodChannelBuilder extends PlatformBuilder {
                       platformClassName:
                           (classInfo.aClass.platform as AndroidPlatform)
                               .type
-                              .names.last,
+                              .names.join(),
                     ),
                   ),
                   methods: classInfo.methods.map<String>(
@@ -72,7 +72,7 @@ class DartMethodChannelBuilder extends PlatformBuilder {
                       platformClassName:
                           (classInfo.aClass.platform as AndroidPlatform)
                               .type
-                              .names.last,
+                              .names.join(),
                       methodName: methodInfo.name,
                     ),
                   ),
@@ -82,7 +82,7 @@ class DartMethodChannelBuilder extends PlatformBuilder {
                       platformClassName:
                           (classInfo.aClass.platform as AndroidPlatform)
                               .type
-                              .names.last,
+                              .names.join(),
                       fieldName: fieldInfo.name,
                       fieldType: fieldInfo.type.name,
                       fieldSetterParam: creator.createFieldSetterParam(
@@ -98,7 +98,7 @@ class DartMethodChannelBuilder extends PlatformBuilder {
                   ),
                   className: classInfo.name,
                   platformClassName:
-                      (classInfo.aClass.platform as AndroidPlatform).type.names.last,
+                      (classInfo.aClass.platform as AndroidPlatform).type.names.join('.'),
                 ),
               ),
         ),
