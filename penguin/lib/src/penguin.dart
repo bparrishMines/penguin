@@ -4,7 +4,7 @@ part 'penguin.g.dart';
 
 @JsonSerializable()
 class Class {
-  const Class(this.platform);
+  const Class(this.platform, {this.androidApi});
 
   factory Class.fromJson(Map json) => _$ClassFromJson(json);
 
@@ -15,6 +15,9 @@ class Class {
     toJson: _platformToJson,
   )
   final Platform platform;
+
+  @JsonKey(nullable: true)
+  final AndroidApi androidApi;
 
   static Platform _platformFromJson(Map json) {
     switch (json['name']) {

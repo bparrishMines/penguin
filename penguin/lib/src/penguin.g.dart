@@ -11,6 +11,9 @@ Class _$ClassFromJson(Map<String, dynamic> json) {
       requiredKeys: const ['platform'], disallowNullValues: const ['platform']);
   return Class(
     Class._platformFromJson(json['platform'] as Map),
+    androidApi: json['androidApi'] == null
+        ? null
+        : AndroidApi.fromJson(json['androidApi'] as Map<String, dynamic>),
   );
 }
 
@@ -24,6 +27,7 @@ Map<String, dynamic> _$ClassToJson(Class instance) {
   }
 
   writeNotNull('platform', Class._platformToJson(instance.platform));
+  val['androidApi'] = instance.androidApi;
   return val;
 }
 
