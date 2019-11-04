@@ -549,6 +549,8 @@ class _Instance<T> {}
   static const Template android = Template._(r'''
 package __package__;
 
+import android.content.Context;
+import android.view.View;
 import androidx.annotation.RequiresApi;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -558,6 +560,9 @@ import java.util.Locale;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
+import io.flutter.plugin.common.StandardMessageCodec;
+import io.flutter.plugin.platform.PlatformView;
+import io.flutter.plugin.platform.PlatformViewFactory;
 %%IMPORTS%%
 %%IMPORT%%
 import __classPackage__.__platformClassName__;
@@ -565,7 +570,18 @@ import __classPackage__.__platformClassName__;
 %%IMPORTS%%
 
 public class ChannelGenerated implements MethodCallHandler {
-  private static abstract class FlutterWrapper {
+  private class $ViewFactoryGenerated extends PlatformViewFactory {
+    $ViewFactoryGenerated() {
+      super(StandardMessageCodec.INSTANCE);
+    }
+
+    @Override
+    public PlatformView create(Context context, int viewId, Object args) {
+      return getWrapper((String) args);
+    }
+  }
+
+  private static abstract class FlutterWrapper implements PlatformView {
     final ChannelGenerated $channelGenerated;
     final String $uniqueId;
     
@@ -584,6 +600,16 @@ public class ChannelGenerated implements MethodCallHandler {
 
     void deallocate() {
       $channelGenerated.removeWrapper($uniqueId);
+    }
+    
+    @Override
+    public View getView() {
+      return (View) $getValue();
+    }
+
+    @Override
+    public void dispose() {
+      // Do nothing
     }
   }
 
@@ -607,6 +633,11 @@ public class ChannelGenerated implements MethodCallHandler {
 
   private final HashMap<String, FlutterWrapper> allocatedWrappers = new HashMap<>();
   private final HashMap<String, FlutterWrapper> tempWrappers = new HashMap<>();
+  private final $ViewFactoryGenerated viewFactory = new $ViewFactoryGenerated();
+  
+  public PlatformViewFactory getPlatformViewFactory() {
+    return viewFactory;
+  }
 
   private void addWrapper(
       final String uniqueId,
