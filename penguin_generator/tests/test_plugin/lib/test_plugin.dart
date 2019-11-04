@@ -232,9 +232,12 @@ class AndroidNestedClass {
       );
 }
 
-@Class(AndroidPlatform(
-  AndroidType('com.example.test_plugin.test_library', <String>['TestClass2']),
-))
+@Class(
+  AndroidPlatform(
+    AndroidType('com.example.test_plugin.test_library', <String>['TestClass2']),
+  ),
+  androidApi: AndroidApi(21),
+)
 class AndroidTestClass2 {}
 
 @Class(IosPlatform(

@@ -40,6 +40,7 @@ class AndroidBuilder extends PlatformBuilder {
             .toSet(),
         classes: classes.map<String>(
           (ClassInfo classInfo) => creator.createClass(
+            api: classInfo.aClass.androidApi?.api?.toString(),
             staticMethodCalls: <String>[
               ...classInfo.constructors.map<String>(
                 (ConstructorInfo constructorInfo) =>
@@ -171,11 +172,10 @@ class AndroidBuilder extends PlatformBuilder {
             (ClassInfo classInfo) => classInfo.constructors.map<String>(
               (ConstructorInfo constructorInfo) => creator.createStaticRedirect(
                 ClassMemberType.constructor,
-                wrapperName:
-                    (classInfo.aClass.platform as AndroidPlatform)
-                        .type
-                        .names
-                        .join(),
+                wrapperName: (classInfo.aClass.platform as AndroidPlatform)
+                    .type
+                    .names
+                    .join(),
                 methodName: '',
               ),
             ),
@@ -186,11 +186,10 @@ class AndroidBuilder extends PlatformBuilder {
                 .map<String>(
                   (MethodInfo methodInfo) => creator.createStaticRedirect(
                     ClassMemberType.method,
-                    wrapperName:
-                        (classInfo.aClass.platform as AndroidPlatform)
-                            .type
-                            .names
-                            .join(),
+                    wrapperName: (classInfo.aClass.platform as AndroidPlatform)
+                        .type
+                        .names
+                        .join(),
                     methodName: methodInfo.name,
                   ),
                 ),
@@ -201,11 +200,10 @@ class AndroidBuilder extends PlatformBuilder {
                 .map<String>(
                   (FieldInfo fieldInfo) => creator.createStaticRedirect(
                     ClassMemberType.field,
-                    wrapperName:
-                        (classInfo.aClass.platform as AndroidPlatform)
-                            .type
-                            .names
-                            .join(),
+                    wrapperName: (classInfo.aClass.platform as AndroidPlatform)
+                        .type
+                        .names
+                        .join(),
                     fieldName: fieldInfo.name,
                   ),
                 ),

@@ -264,6 +264,7 @@ class AndroidTemplateCreator extends TemplateCreator {
     @required Iterable<String> fields,
     @required String platformClassName,
     @required String wrapperName,
+    String api,
   }) {
     return _replace(
       Block.aClass.exp.firstMatch(template.value).group(1),
@@ -275,6 +276,8 @@ class AndroidTemplateCreator extends TemplateCreator {
         Block.fields.exp: fields.join(),
         Replacement.platformClassName.name: platformClassName,
         Replacement.wrapperName.name: wrapperName,
+        if (api == null) r'@RequiresApi(api = __api__)': '',
+        if (api != null) Replacement.api.name: api,
       },
     );
   }

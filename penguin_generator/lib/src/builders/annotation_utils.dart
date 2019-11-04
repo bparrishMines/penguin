@@ -15,7 +15,12 @@ class Annotation {
 
 class AnnotationUtils {
   static Class classFromConstantReader(ConstantReader reader) {
-    return Class(_platformFromConstantReader(reader.read('platform')));
+    return Class(
+      _platformFromConstantReader(reader.read('platform')),
+      androidApi: reader.peek('androidApi') == null
+          ? null
+          : _androidApiFromConstantReader(reader.read('androidApi')),
+    );
   }
 
   static Constructor constructorFromConstantReader(ConstantReader reader) {
@@ -28,6 +33,10 @@ class AnnotationUtils {
 
   static Field fieldFromConstantReader(ConstantReader reader) {
     return Field();
+  }
+
+  static AndroidApi _androidApiFromConstantReader(ConstantReader reader) {
+    return AndroidApi(reader.read('api').intValue);
   }
 
   static Platform _platformFromConstantReader(ConstantReader reader) {

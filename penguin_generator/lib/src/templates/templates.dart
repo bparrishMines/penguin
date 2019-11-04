@@ -549,6 +549,7 @@ class _Instance<T> {}
   static const Template android = Template._(r'''
 package __package__;
 
+import androidx.annotation.RequiresApi;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -686,6 +687,7 @@ public class ChannelGenerated implements MethodCallHandler {
 
   %%CLASSES%%
   %%CLASS%%
+  @RequiresApi(api = __api__)
   private static class __wrapperName__Wrapper extends FlutterWrapper {
     private final __platformClassName__ $value;
 
@@ -1069,4 +1071,5 @@ class Replacement {
   static final Replacement primitiveConvertMethod =
       Replacement('__primitiveConvertMethod__');
   static final Replacement wrapperName = Replacement('__wrapperName__');
+  static final Replacement api = Replacement('__api__');
 }
