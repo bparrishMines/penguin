@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:penguin/penguin.dart';
 
@@ -14,9 +15,32 @@ String _randomId() => Random().nextDouble().toString();
   AndroidType('android.app', <String>['Activity']),
 ))
 class _AndroidActivity {
-  _AndroidActivity() : activity = a.$_AndroidActivity('activity');
+  _AndroidActivity() : _activity = a.$_AndroidActivity('activity');
 
-  final a.$_AndroidActivity activity;
+  final a.$_AndroidActivity _activity;
+}
+
+@Class(AndroidPlatform(
+  AndroidType('android.widget', <String>['TextView']),
+))
+class AndroidTextView extends StatelessWidget {
+  AndroidTextView() : _textView = a.$AndroidTextView('textView');
+
+  final a.$AndroidTextView _textView;
+
+  @Method()
+  Future<void> setText(String text) {
+    return a.$invoke<void>(_channel, _textView.$setText(text));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AndroidView(
+      viewType: '${_channel.name}/view',
+      creationParams: _textView.$uniqueId,
+      creationParamsCodec: const StandardMessageCodec(),
+    );
+  }
 }
 
 @Class(AndroidPlatform(
