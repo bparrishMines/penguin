@@ -33,6 +33,7 @@ void main() {
             'build_runner',
             'build',
             '-v',
+            '--delete-conflicting-outputs',
           ],
           workingDirectory: p.join('tests', 'test_plugin'),
         )),

@@ -5,7 +5,6 @@ import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
 import 'package:glob/glob.dart';
-import 'package:meta/meta.dart';
 import 'package:path/path.dart' as p;
 import 'package:source_gen/source_gen.dart';
 
@@ -106,6 +105,16 @@ class ReadInfoBuilder extends Builder {
                       ConstantReader(
                         Annotation.constructor
                             .firstAnnotationOfExact(constructorElement),
+                      ),
+                    ),
+                    parameters:
+                        constructorElement.parameters.map<ParameterInfo>(
+                      (ParameterElement parameterElement) => ParameterInfo(
+                        name: parameterElement.name,
+                        type: _toTypeInfo(
+                          parameterElement.type,
+                          parameterElement,
+                        ),
                       ),
                     ),
                   ),

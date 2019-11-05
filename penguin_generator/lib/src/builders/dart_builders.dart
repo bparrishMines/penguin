@@ -44,11 +44,13 @@ class DartMethodChannelBuilder extends PlatformBuilder {
                   constructors: classInfo.constructors.map<String>(
                     (ConstructorInfo constructorInfo) =>
                         creator.createConstructor(
+                      constructorName: constructorInfo.name,
                       className: classInfo.name,
                       platformClassName:
                           (classInfo.aClass.platform as AndroidPlatform)
                               .type
-                              .names.join(),
+                              .names
+                              .join(),
                     ),
                   ),
                   methods: classInfo.methods.map<String>(
@@ -72,7 +74,8 @@ class DartMethodChannelBuilder extends PlatformBuilder {
                       platformClassName:
                           (classInfo.aClass.platform as AndroidPlatform)
                               .type
-                              .names.join(),
+                              .names
+                              .join(),
                       methodName: methodInfo.name,
                     ),
                   ),
@@ -82,7 +85,8 @@ class DartMethodChannelBuilder extends PlatformBuilder {
                       platformClassName:
                           (classInfo.aClass.platform as AndroidPlatform)
                               .type
-                              .names.join(),
+                              .names
+                              .join(),
                       fieldName: fieldInfo.name,
                       fieldType: fieldInfo.type.name,
                       fieldSetterParam: creator.createFieldSetterParam(
@@ -98,7 +102,10 @@ class DartMethodChannelBuilder extends PlatformBuilder {
                   ),
                   className: classInfo.name,
                   platformClassName:
-                      (classInfo.aClass.platform as AndroidPlatform).type.names.join('.'),
+                      (classInfo.aClass.platform as AndroidPlatform)
+                          .type
+                          .names
+                          .join('.'),
                 ),
               ),
         ),
@@ -126,6 +133,7 @@ class DartMethodChannelBuilder extends PlatformBuilder {
                   constructors: classInfo.constructors.map<String>(
                     (ConstructorInfo constructorInfo) =>
                         creator.createConstructor(
+                      constructorName: constructorInfo.name,
                       className: classInfo.name,
                       platformClassName:
                           (classInfo.aClass.platform as IosPlatform).type.name,

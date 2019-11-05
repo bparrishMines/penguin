@@ -109,7 +109,11 @@ class FieldInfo {
 
 @JsonSerializable()
 class ConstructorInfo {
-  const ConstructorInfo({this.name, this.constructor});
+  const ConstructorInfo({
+    this.name,
+    this.constructor,
+    @required this.parameters,
+  });
 
   factory ConstructorInfo.fromJson(Map json) => _$ConstructorInfoFromJson(json);
 
@@ -118,6 +122,9 @@ class ConstructorInfo {
 
   @JsonKey(required: true, disallowNullValue: true)
   final Constructor constructor;
+
+  @JsonKey(required: true, disallowNullValue: true)
+  final Iterable<ParameterInfo> parameters;
 
   Map toJson() => _$ConstructorInfoToJson(this);
 

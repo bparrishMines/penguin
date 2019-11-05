@@ -50,7 +50,7 @@ class AndroidBuilder extends PlatformBuilder {
                       .type
                       .names
                       .join(),
-                  methodName: '',
+                  constructorName: constructorInfo.name,
                 ),
               ),
               ...classInfo.methods
@@ -82,6 +82,14 @@ class AndroidBuilder extends PlatformBuilder {
             ],
             constructors: classInfo.constructors.map<String>(
               (ConstructorInfo constructorInfo) => creator.createConstructor(
+                constructorName: constructorInfo.name,
+                parameters: constructorInfo.parameters.map<String>(
+                  (ParameterInfo parameterInfo) => creator.createParameter(
+                    getChannelType(parameterInfo.type),
+                    parameterType: _convertType(parameterInfo.type, classes),
+                    parameterName: parameterInfo.name,
+                  ),
+                ),
                 wrapperName: (classInfo.aClass.platform as AndroidPlatform)
                     .type
                     .names
@@ -172,6 +180,7 @@ class AndroidBuilder extends PlatformBuilder {
             (ClassInfo classInfo) => classInfo.constructors.map<String>(
               (ConstructorInfo constructorInfo) => creator.createStaticRedirect(
                 ClassMemberType.constructor,
+                constructorName: constructorInfo.name,
                 wrapperName: (classInfo.aClass.platform as AndroidPlatform)
                     .type
                     .names

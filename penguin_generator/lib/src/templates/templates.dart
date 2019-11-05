@@ -354,9 +354,9 @@ class $__className____typeParameters__ extends $Wrapper {
 
   %%CONSTRUCTORS%%
   %%CONSTRUCTOR%%
-  MethodCall $__className__Default() {
+  MethodCall $__className____dartConstructorName__() {
     return MethodCall(
-      '__platformClassName__()',
+      '__platformClassName__(__constructorName__)',
       <String, String>{r'$uniqueId': $uniqueId},
     );
   }
@@ -694,7 +694,7 @@ public class ChannelGenerated implements MethodCallHandler {
         return resultData;
       %%STATICREDIRECTS%%
       %%STATICREDIRECT classMember:constructor%%
-      case "__wrapperName__()": {
+      case "__wrapperName__(__constructorName__)": {
           return __wrapperName__Wrapper.onStaticMethodCall(this, call);
         }
       %%STATICREDIRECT classMember:constructor%%
@@ -732,22 +732,40 @@ public class ChannelGenerated implements MethodCallHandler {
       $channelGenerated.addWrapper($uniqueId, this, $channelGenerated.tempWrappers);
     }
 
-    %%CONSTRUCTORS%%
-    %%CONSTRUCTOR%%
-    private __wrapperName__Wrapper(ChannelGenerated $channelGenerated, final String $uniqueId) {
+    private __wrapperName__Wrapper(final ChannelGenerated $channelGenerated, final String $uniqueId, final MethodCall call) {
       super($channelGenerated, $uniqueId);
-      this.$value = new __platformClassName__();
+      switch(call.method) {
+        %%CONSTRUCTORS%%
+        %%CONSTRUCTOR%%
+        case "__wrapperName__(__constructorName__)":
+          this.$value = new __platformClassName__(
+          %%PARAMETERS%%
+          %%PARAMETER methodChannel:supported%%
+          call.argument("__parameterName__") != null ? (__parameterType__) call.argument("__parameterName__") : null
+          %%PARAMETER methodChannel:supported%%
+          %%PARAMETER methodChannel:wrapper%%
+          call.argument("__parameterName__") != null ? ((__parameterType__Wrapper) $channelGenerated.getWrapper((String) call.argument("__parameterName__"))).$value : null
+          %%PARAMETER methodChannel:wrapper%%
+          %%PARAMETER methodChannel:typeParameter%%
+          call.argument("__parameterName__") != null && call.argument("__parameterName__") instanceof String && call.$channelGenerated.getWrapper((String) call.argument("__parameterName__")) != null ? $channelGenerated.getWrapper((String) call.argument("__parameterName__")).$getValue() : call.argument("__parameterName__") 
+          %%PARAMETER methodChannel:typeParameter%%
+          %%PARAMETERS%%
+          );
+          break; 
+        %%CONSTRUCTOR%%
+        %%CONSTRUCTORS%%
+        default:
+          this.$value = null;
+      }
       $channelGenerated.addWrapper($uniqueId, this, $channelGenerated.tempWrappers);
     }
-    %%CONSTRUCTOR%%
-    %%CONSTRUCTORS%%
     
     static Object onStaticMethodCall(ChannelGenerated $channelGenerated, MethodCall call) throws Exception {
       switch(call.method) {
         %%STATICMETHODCALLS%%
         %%STATICMETHODCALL classMember:constructor%%
-        case "__wrapperName__()": {
-            new __wrapperName__Wrapper($channelGenerated, (String) call.argument("$uniqueId"));
+        case "__wrapperName__(__constructorName__)": {
+            new __wrapperName__Wrapper($channelGenerated, (String) call.argument("$uniqueId"), call);
             return null;
           }
         %%STATICMETHODCALL classMember:constructor%%
@@ -1107,4 +1125,6 @@ class Replacement {
       Replacement('__primitiveConvertMethod__');
   static final Replacement wrapperName = Replacement('__wrapperName__');
   static final Replacement api = Replacement('__api__');
+  static final Replacement constructorName = Replacement('__constructorName__');
+  static final Replacement dartConstructorName = Replacement('__dartConstructorName__');
 }

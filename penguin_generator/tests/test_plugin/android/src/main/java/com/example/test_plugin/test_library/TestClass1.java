@@ -17,12 +17,17 @@ public class TestClass1 {
   public boolean boolField = true;
   public List<Boolean> listField = Arrays.asList(true, false, true);
   public Map<String, Double> mapField;
+  public String constructorValue;
 
   public TestClass1() {
     final HashMap<String, Double> map = new HashMap<>(2);
     map.put("true", 1.0);
     map.put("false", 0.0);
     mapField = map;
+  }
+
+  public TestClass1(String constructorValue) {
+    this.constructorValue = constructorValue;
   }
 
   public static int staticMethod() {

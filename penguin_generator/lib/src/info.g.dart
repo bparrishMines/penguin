@@ -147,13 +147,15 @@ Map<String, dynamic> _$FieldInfoToJson(FieldInfo instance) {
 
 ConstructorInfo _$ConstructorInfoFromJson(Map<String, dynamic> json) {
   $checkKeys(json,
-      requiredKeys: const ['name', 'constructor'],
-      disallowNullValues: const ['name', 'constructor']);
+      requiredKeys: const ['name', 'constructor', 'parameters'],
+      disallowNullValues: const ['name', 'constructor', 'parameters']);
   return ConstructorInfo(
     name: json['name'] as String,
     constructor: json['constructor'] == null
         ? null
         : Constructor.fromJson(json['constructor'] as Map<String, dynamic>),
+    parameters: (json['parameters'] as List)?.map((e) =>
+        e == null ? null : ParameterInfo.fromJson(e as Map<String, dynamic>)),
   );
 }
 
@@ -168,6 +170,7 @@ Map<String, dynamic> _$ConstructorInfoToJson(ConstructorInfo instance) {
 
   writeNotNull('name', instance.name);
   writeNotNull('constructor', instance.constructor);
+  writeNotNull('parameters', instance.parameters?.toList());
   return val;
 }
 
