@@ -354,10 +354,41 @@ class $__className____typeParameters__ extends $Wrapper {
 
   %%CONSTRUCTORS%%
   %%CONSTRUCTOR%%
-  MethodCall $__className____dartConstructorName__() {
+  MethodCall $__className____dartConstructorName__(
+  %%PARAMETERS%%
+  %%PARAMETER methodChannel:supported%%
+  __parameterType__ __parameterName__,
+  %%PARAMETER methodChannel:supported%%
+  %%PARAMETER methodChannel:wrapper%%
+  $__parameterType__ __parameterName__,
+  %%PARAMETER methodChannel:wrapper%%
+  %%PARAMETER methodChannel:primitive%%
+  __parameterType__ __parameterName__,
+  %%PARAMETER methodChannel:primitive%%
+  %%PARAMETER methodChannel:typeParameter%%
+  __parameterType__ __parameterName__,
+  %%PARAMETER methodChannel:typeParameter%%
+  %%PARAMETERS%%
+  ) {
     return MethodCall(
       '__platformClassName__(__constructorName__)',
-      <String, String>{r'$uniqueId': $uniqueId},
+      <String, String>{r'$uniqueId': $uniqueId,
+       %%METHODCALLPARAMS%%
+       %%METHODCALLPARAM methodChannel:supported%%
+       '__parameterName__': __parameterName__,
+       %%METHODCALLPARAM methodChannel:supported%%
+       %%METHODCALLPARAM methodChannel:wrapper%%
+       '__parameterName__': __parameterName__?.$uniqueId,
+       %%METHODCALLPARAM methodChannel:wrapper%%
+       %%METHODCALLPARAM methodChannel:primitive%%
+       '__parameterName__': __parameterName__,
+       %%METHODCALLPARAM methodChannel:primitive%%
+       %%METHODCALLPARAM methodChannel:typeParameter%%
+       if (__parameterName__ is $Wrapper) '__parameterName__': __parameterName__?.$uniqueId,
+       if (__parameterName__ is! $Wrapper) '__parameterName__': __parameterName__,
+       %%METHODCALLPARAM methodChannel:typeParameter%%
+       %%METHODCALLPARAMS%%
+      },
     );
   }
   %%CONSTRUCTOR%%

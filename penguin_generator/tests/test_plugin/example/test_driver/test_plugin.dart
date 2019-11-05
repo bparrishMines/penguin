@@ -16,6 +16,13 @@ void main() {
 
   group('test_plugin', () {
     group('android', () {
+      test('namedConstructor', () {
+        expect(
+          AndroidTestClass1.namedConstructor('Amigo').constructorValue,
+          completion('Amigo'),
+        );
+      });
+
       test('staticField', () {
         expect(AndroidTestClass1.staticField, completion(12));
       });

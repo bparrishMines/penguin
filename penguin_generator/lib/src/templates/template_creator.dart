@@ -153,6 +153,8 @@ class MethodChannelTemplateCreator extends TemplateCreator {
     String platformClassName,
     String className,
     @required String constructorName,
+    @required Iterable<String> parameters,
+    @required Iterable<String> methodCallParams,
   }) {
     return _replace(
       Block.constructor.exp.firstMatch(template.value).group(1),
@@ -162,6 +164,8 @@ class MethodChannelTemplateCreator extends TemplateCreator {
         Replacement.constructorName.name: constructorName,
         Replacement.dartConstructorName.name:
             constructorName.isEmpty ? r'$Default' : constructorName,
+        Block.parameters.exp: parameters.join(),
+        MethodChannelBlock.methodCallParams.exp: methodCallParams.join(),
       },
     );
   }

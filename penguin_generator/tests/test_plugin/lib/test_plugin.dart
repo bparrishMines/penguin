@@ -51,12 +51,15 @@ class AndroidTestClass1 {
   AndroidTestClass1();
 
   @Constructor()
-  AndroidTestClass1.namedConstructor(String constructorValue);
+  AndroidTestClass1.namedConstructor(String constructorValue)
+      : _constructorValue = constructorValue;
+
+  String _constructorValue;
 
   @Field()
   Future<String> get constructorValue => a.$invoke<String>(
         _channel,
-        _testClass.$AndroidTestClass1$Default(),
+        _testClass.$AndroidTestClass1namedConstructor(_constructorValue),
         [_testClass.$constructorValue()],
       );
 

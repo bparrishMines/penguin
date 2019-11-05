@@ -44,6 +44,21 @@ class DartMethodChannelBuilder extends PlatformBuilder {
                   constructors: classInfo.constructors.map<String>(
                     (ConstructorInfo constructorInfo) =>
                         creator.createConstructor(
+                      parameters: constructorInfo.parameters.map<String>(
+                        (ParameterInfo parameterInfo) =>
+                            creator.createParameter(
+                          getChannelType(parameterInfo.type),
+                          parameterType: parameterInfo.type.name,
+                          parameterName: parameterInfo.name,
+                        ),
+                      ),
+                      methodCallParams: constructorInfo.parameters.map<String>(
+                        (ParameterInfo parameterInfo) =>
+                            creator.createMethodCallParam(
+                          getChannelType(parameterInfo.type),
+                          parameterName: parameterInfo.name,
+                        ),
+                      ),
                       constructorName: constructorInfo.name,
                       className: classInfo.name,
                       platformClassName:
@@ -133,6 +148,21 @@ class DartMethodChannelBuilder extends PlatformBuilder {
                   constructors: classInfo.constructors.map<String>(
                     (ConstructorInfo constructorInfo) =>
                         creator.createConstructor(
+                      parameters: constructorInfo.parameters.map<String>(
+                        (ParameterInfo parameterInfo) =>
+                            creator.createParameter(
+                          getChannelType(parameterInfo.type),
+                          parameterType: parameterInfo.type.name,
+                          parameterName: parameterInfo.name,
+                        ),
+                      ),
+                      methodCallParams: constructorInfo.parameters.map<String>(
+                        (ParameterInfo parameterInfo) =>
+                            creator.createMethodCallParam(
+                          getChannelType(parameterInfo.type),
+                          parameterName: parameterInfo.name,
+                        ),
+                      ),
                       constructorName: constructorInfo.name,
                       className: classInfo.name,
                       platformClassName:
