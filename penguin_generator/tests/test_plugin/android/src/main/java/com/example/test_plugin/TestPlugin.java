@@ -10,21 +10,13 @@ public class TestPlugin {
   public static void registerWith(Registrar registrar) {
     final MethodChannel channel = new MethodChannel(registrar.messenger(), "test_plugin");
     final ChannelGenerated channelGenerated = new ChannelGenerated();
+    channel.setMethodCallHandler(channelGenerated);
 
     final ChannelGenerated.ActivityWrapper activityWrapper = new ChannelGenerated.ActivityWrapper(
         channelGenerated,
         "activity",
         registrar.activity());
-    final ChannelGenerated.TextViewWrapper textViewWrapper = new ChannelGenerated.TextViewWrapper(
-        channelGenerated,
-        "textView",
-        new TextView(registrar.activity()));
-
     channelGenerated.addAllocatedWrapper("activity", activityWrapper);
-    channelGenerated.addAllocatedWrapper("textView", textViewWrapper);
-
-    channel.setMethodCallHandler(channelGenerated);
-
     registrar
         .platformViewRegistry()
         .registerViewFactory(

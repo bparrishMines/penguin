@@ -23,21 +23,48 @@ class _AndroidActivity {
 @Class(AndroidPlatform(
   AndroidType('android.widget', <String>['TextView']),
 ))
-class AndroidTextView extends StatelessWidget {
-  AndroidTextView() : _textView = a.$AndroidTextView('textView');
+class AndroidTextView extends StatefulWidget {
+  @Constructor()
+  AndroidTextView._(this._activity) : text = null;
 
-  final a.$AndroidTextView _textView;
+  AndroidTextView._text(this._activity, this.text);
+
+  factory AndroidTextView(String text) =>
+      AndroidTextView._text(_AndroidActivity(), text);
+
+  final a.$AndroidTextView _textView = a.$AndroidTextView(_randomId());
+  final _AndroidActivity _activity;
+  final String text;
 
   @Method()
-  Future<void> setText(String text) {
-    return a.$invoke<void>(_channel, _textView.$setText(text));
+  void setText(String text) {}
+
+  @override
+  State<StatefulWidget> createState() => _AndroidTextViewState();
+}
+
+class _AndroidTextViewState extends State<AndroidTextView> {
+  @override
+  void initState() {
+    super.initState();
+    a.$invokeAll(_channel, [
+      widget._textView.$AndroidTextView_(widget._activity._activity),
+      widget._textView.$allocate(),
+    ]);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    a.$invoke<void>(_channel, widget._textView.$deallocate());
   }
 
   @override
   Widget build(BuildContext context) {
+    a.$invoke<void>(_channel, widget._textView.$setText(widget.text));
     return AndroidView(
       viewType: '${_channel.name}/view',
-      creationParams: _textView.$uniqueId,
+      creationParams: widget._textView.$uniqueId,
       creationParamsCodec: const StandardMessageCodec(),
     );
   }
