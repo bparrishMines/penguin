@@ -15,56 +15,56 @@ String _randomId() => Random().nextDouble().toString();
   AndroidType('android.app', <String>['Activity']),
 ))
 class _AndroidActivity {
-  _AndroidActivity() : _activity = a.$_AndroidActivity('activity');
+  _AndroidActivity() : activity = a.$_AndroidActivity('activity');
 
-  final a.$_AndroidActivity _activity;
+  final a.$_AndroidActivity activity;
+}
+
+class AndroidTextView extends StatefulWidget {
+  AndroidTextView(this.text);
+
+  final String text;
+
+  @override
+  State<StatefulWidget> createState() =>
+      _AndroidTextViewState(_AndroidActivity());
 }
 
 @Class(AndroidPlatform(
   AndroidType('android.widget', <String>['TextView']),
 ))
-class AndroidTextView extends StatefulWidget {
+class _AndroidTextViewState extends State<AndroidTextView> {
   @Constructor()
-  AndroidTextView._(this._activity) : text = null;
+  _AndroidTextViewState(this._activity);
 
-  AndroidTextView._text(this._activity, this.text);
-
-  factory AndroidTextView(String text) =>
-      AndroidTextView._text(_AndroidActivity(), text);
-
-  final a.$AndroidTextView _textView = a.$AndroidTextView(_randomId());
   final _AndroidActivity _activity;
-  final String text;
+  a.$_AndroidTextViewState _textView;
 
   @Method()
   void setText(String text) {}
 
   @override
-  State<StatefulWidget> createState() => _AndroidTextViewState();
-}
-
-class _AndroidTextViewState extends State<AndroidTextView> {
-  @override
   void initState() {
     super.initState();
+    _textView = a.$_AndroidTextViewState(_randomId());
     a.$invokeAll(_channel, [
-      widget._textView.$AndroidTextView_(widget._activity._activity),
-      widget._textView.$allocate(),
+      _textView.$_AndroidTextViewState$Default(_activity.activity),
+      _textView.$allocate(),
     ]);
   }
 
   @override
   void dispose() {
     super.dispose();
-    a.$invoke<void>(_channel, widget._textView.$deallocate());
+    a.$invoke<void>(_channel, _textView.$deallocate());
   }
 
   @override
   Widget build(BuildContext context) {
-    a.$invoke<void>(_channel, widget._textView.$setText(widget.text));
+    a.$invoke<void>(_channel, _textView.$setText(widget.text));
     return AndroidView(
       viewType: '${_channel.name}/view',
-      creationParams: widget._textView.$uniqueId,
+      creationParams: _textView.$uniqueId,
       creationParamsCodec: const StandardMessageCodec(),
     );
   }
