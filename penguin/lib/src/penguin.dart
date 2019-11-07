@@ -44,8 +44,13 @@ class Class {
 
 @JsonSerializable()
 class Method {
-  const Method();
+  const Method({this.callback = false});
+
   factory Method.fromJson(Map json) => _$MethodFromJson(json);
+
+  @JsonKey(required: true, defaultValue: false, disallowNullValue: true)
+  final bool callback;
+
   Map toJson() => _$MethodToJson(this);
   @override
   String toString() => toJson().toString();

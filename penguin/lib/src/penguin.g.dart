@@ -32,10 +32,25 @@ Map<String, dynamic> _$ClassToJson(Class instance) {
 }
 
 Method _$MethodFromJson(Map<String, dynamic> json) {
-  return Method();
+  $checkKeys(json,
+      requiredKeys: const ['callback'], disallowNullValues: const ['callback']);
+  return Method(
+    callback: json['callback'] as bool ?? false,
+  );
 }
 
-Map<String, dynamic> _$MethodToJson(Method instance) => <String, dynamic>{};
+Map<String, dynamic> _$MethodToJson(Method instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('callback', instance.callback);
+  return val;
+}
 
 Constructor _$ConstructorFromJson(Map<String, dynamic> json) {
   return Constructor();
