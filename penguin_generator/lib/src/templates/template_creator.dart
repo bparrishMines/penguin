@@ -175,11 +175,15 @@ class AndroidTemplateCreator extends TemplateCreator {
   @override
   Template get template => Template.android;
 
-  String createCallback({@required String methodName}) {
+  String createCallback({
+    @required String methodName,
+    @required Iterable<String> callbackParams,
+  }) {
     return _replace(
       Block.callback.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
         Replacement.methodName.name: methodName,
+        MethodChannelBlock.callbackParams().exp: callbackParams.join(),
       },
     );
   }
@@ -387,6 +391,22 @@ class AndroidTemplateCreator extends TemplateCreator {
         if (fieldName != null) Replacement.fieldName.name: fieldName,
       },
     );
+  }
+
+  String createCallbackParam(
+    MethodChannelType methodChannelType, {
+    @required String parameterName,
+    String wrapperName,
+  }) {
+    return _replace(
+        MethodChannelBlock.callbackParam(methodChannelType)
+            .exp
+            .firstMatch(template.value)
+            .group(1),
+        <Pattern, String>{
+          Replacement.parameterName.name: parameterName,
+          if (wrapperName != null) Replacement.wrapperName.name: wrapperName,
+        });
   }
 
   String createStaticMethodCall(

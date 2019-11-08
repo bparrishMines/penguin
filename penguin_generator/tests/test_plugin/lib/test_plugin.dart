@@ -179,9 +179,7 @@ class AndroidTestClass1 {
       );
 
   @Method(callback: true)
-  Future<void> callbackMethod(AndroidTestClass2 wrapper, String supported) {
-
-  }
+  Future<void> callbackMethod(AndroidTestClass3 wrapper, String supported) {}
 
   @Method()
   Future<void> returnVoid() {
@@ -317,6 +315,13 @@ class AndroidNestedClass {
   androidApi: AndroidApi(21),
 )
 class AndroidTestClass2 {}
+
+@Class(
+  AndroidPlatform(
+    AndroidType('com.example.test_plugin.test_library', <String>['TestClass3']),
+  ),
+)
+class AndroidTestClass3 {}
 
 @Class(IosPlatform(
   IosType('TestClass1', import: '"TestPlugin.h"'),

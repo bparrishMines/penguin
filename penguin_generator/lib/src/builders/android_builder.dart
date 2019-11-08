@@ -106,6 +106,17 @@ class AndroidBuilder extends PlatformBuilder {
                     .map<String>(
                       (MethodInfo methodInfo) => creator.createCallback(
                         methodName: methodInfo.name,
+                        callbackParams: methodInfo.parameters.map<String>(
+                          (ParameterInfo parameterInfo) =>
+                              creator.createCallbackParam(
+                            getChannelType(parameterInfo.type),
+                            wrapperName: getChannelType(parameterInfo.type) !=
+                                    MethodChannelType.wrapper
+                                ? null
+                                : _convertType(parameterInfo.type, classes),
+                            parameterName: parameterInfo.name,
+                          ),
+                        ),
                       ),
                     ),
               ),

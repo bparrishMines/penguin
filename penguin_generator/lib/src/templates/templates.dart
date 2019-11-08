@@ -588,7 +588,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.UUID;
 import io.flutter.plugin.common.MethodCall;
+import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.StandardMessageCodec;
@@ -665,6 +667,15 @@ public class ChannelGenerated implements MethodCallHandler {
   private final HashMap<String, FlutterWrapper> allocatedWrappers = new HashMap<>();
   private final HashMap<String, FlutterWrapper> tempWrappers = new HashMap<>();
   private final $ViewFactoryGenerated viewFactory = new $ViewFactoryGenerated();
+  private final MethodChannel callbackChannel;
+  
+  public ChannelGenerated() {
+    this.callbackChannel = null;
+  }
+  
+  public ChannelGenerated(MethodChannel callbackChannel) {
+    this.callbackChannel = callbackChannel;
+  }
   
   public PlatformViewFactory getPlatformViewFactory() {
     return viewFactory;
@@ -784,17 +795,23 @@ public class ChannelGenerated implements MethodCallHandler {
           ) {
             %%CALLBACKS%%
             %%CALLBACK%%
-            public void __methodName__(TestClass2 wrapper, String supported) {
-              //final Map<String, Object> $arguments = new HashMap<>();
-              //$arguments.put("$uniqueId", $uniqueId);
+            @Override
+            public void __methodName__(TestClass3 wrapper, String supported) {
+              final HashMap<String, Object> $arguments = new HashMap<>();
+              $arguments.put("$uniqueId", $uniqueId);
 
-              //final String $wrapperId = UUID.randomUUID().toString();
-              //$channelGenerated.addAllocatedWrapper($wrapperId, new TestClass2Wrapper($channelGenerated, $wrapperId, wrapper));
-              //$arguments.put("wrapper", $wrapperId);
-
-              //$arguments.put("supported", supported);
+              %%CALLBACKPARAMS%%
+              %%CALLBACKPARAM methodChannel:wrapper%%
+              final String $__parameterName__Id = UUID.randomUUID().toString();
+              $channelGenerated.addAllocatedWrapper($__parameterName__Id, new __wrapperName__Wrapper($channelGenerated, $__parameterName__Id, __parameterName__));
+              $arguments.put("__parameterName__", $__parameterName__Id);
+              %%CALLBACKPARAM methodChannel:wrapper%%
+              %%CALLBACKPARAM methodChannel:supported%%
+              $arguments.put("__parameterName__", __parameterName__);
+              %%CALLBACKPARAM methodChannel:supported%%
+              %%CALLBACKPARAMS%%
               
-              //$channelGenerated.channel.invokeMethod("callbackMethod", $arguments);
+              $channelGenerated.callbackChannel.invokeMethod("callbackMethod", $arguments);
             }
             %%CALLBACK%%
             %%CALLBACKS%%
@@ -1149,6 +1166,12 @@ class MethodChannelBlock extends Block {
 
   static MethodChannelBlock preMethodCall(MethodChannelType methodChannel) =>
       MethodChannelBlock('PREMETHODCALL', methodChannel: methodChannel);
+
+  static MethodChannelBlock callbackParam(MethodChannelType methodChannel) =>
+      MethodChannelBlock('CALLBACKPARAM', methodChannel: methodChannel);
+
+  static MethodChannelBlock callbackParams() =>
+      MethodChannelBlock('CALLBACKPARAMS');
 }
 
 class Replacement {
@@ -1177,5 +1200,6 @@ class Replacement {
   static final Replacement wrapperName = Replacement('__wrapperName__');
   static final Replacement api = Replacement('__api__');
   static final Replacement constructorName = Replacement('__constructorName__');
-  static final Replacement dartConstructorName = Replacement('__dartConstructorName__');
+  static final Replacement dartConstructorName =
+      Replacement('__dartConstructorName__');
 }

@@ -91,7 +91,7 @@ public class TestClass1 {
     }
   }
 
-  public void callbackMethod(TestClass2 wrapper, String supported) {
+  public void callbackMethod(TestClass3 wrapper, String supported) {
 
   }
 }
