@@ -113,7 +113,8 @@ class AndroidBuilder extends PlatformBuilder {
                             wrapperName: getChannelType(parameterInfo.type) !=
                                     MethodChannelType.wrapper
                                 ? null
-                                : _convertType(parameterInfo.type, classes),
+                                : _convertType(parameterInfo.type, classes)
+                                    .replaceAll(('.'), ''),
                             parameterName: parameterInfo.name,
                           ),
                         ),
