@@ -8,7 +8,9 @@ import 'package:penguin/penguin.dart';
 import 'android.penguin.g.dart' as a;
 import 'ios.penguin.g.dart' as i;
 
-const MethodChannel _channel = const MethodChannel('test_plugin');
+final a.CallbackHandler callbackHandler = a.CallbackHandler();
+final MethodChannel _channel = MethodChannel('test_plugin')
+  ..setMethodCallHandler(callbackHandler.methodCallHandler);
 String _randomId() => Random().nextDouble().toString();
 
 @Class(AndroidPlatform(
@@ -75,11 +77,29 @@ class _AndroidTextViewState extends State<AndroidTextView> {
 ))
 class AndroidTestClass1 {
   @Constructor()
-  AndroidTestClass1();
+  AndroidTestClass1() {
+    _testClass = a.$AndroidTestClass1(
+      _randomId(),
+      $callbackMethod$Callback:
+          (a.$AndroidTestClass3 wrapper, String supported) {
+        callbackMethod(AndroidTestClass3(), supported);
+      },
+    );
+  }
 
   @Constructor()
   AndroidTestClass1.namedConstructor(String constructorValue)
-      : _constructorValue = constructorValue;
+      : _constructorValue = constructorValue {
+    _testClass = a.$AndroidTestClass1(
+      _randomId(),
+      $callbackMethod$Callback:
+          (a.$AndroidTestClass3 wrapper, String supported) {
+        assert(wrapper != null);
+        assert(wrapper.uniqueId != null);
+        callbackMethod(AndroidTestClass3(), supported);
+      },
+    );
+  }
 
   String _constructorValue;
 
@@ -90,7 +110,7 @@ class AndroidTestClass1 {
         [_testClass.$constructorValue()],
       );
 
-  final a.$AndroidTestClass1 _testClass = a.$AndroidTestClass1(_randomId());
+  a.$AndroidTestClass1 _testClass;
 
   final List<MethodCall> _setters = <MethodCall>[];
 
@@ -179,7 +199,20 @@ class AndroidTestClass1 {
       );
 
   @Method(callback: true)
-  Future<void> callbackMethod(AndroidTestClass3 wrapper, String supported) {}
+  Future<void> callbackMethod(AndroidTestClass3 wrapper, String supported) {
+    print(supported);
+    callbackHandler.removeWrapper(_testClass);
+  }
+
+  @Method()
+  Future<void> callCallbackMethod() {
+    callbackHandler.addWrapper(_testClass);
+    return a.invoke<void>(
+      _channel,
+      _testClass.$AndroidTestClass1$Default(),
+      [_testClass.$callCallbackMethod()],
+    );
+  }
 
   @Method()
   Future<void> returnVoid() {

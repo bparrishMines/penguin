@@ -77,6 +77,13 @@ void main() {
         );
       });
 
+      test('callbackMethod', () async {
+        final MockAndroidTestClass1 mockClass = MockAndroidTestClass1();
+        await mockClass.callCallbackMethod();
+        await Future.delayed(Duration(seconds: 1));
+        expect(mockClass.callbackValue, 'I love callbacks.');
+      });
+
       test('noParametersMethod', () {
         expect(AndroidTestClass1().noParametersMethod(), completion(72));
       });
@@ -198,4 +205,17 @@ void main() {
       });
     }, skip: !Platform.isIOS);
   });
+}
+
+class MockAndroidTestClass1 extends AndroidTestClass1 {
+  String callbackValue;
+
+  @override
+  Future<void> callbackMethod(
+    AndroidTestClass3 wrapper,
+    String supported,
+  ) async {
+    super.callbackMethod(wrapper, supported);
+    callbackValue = supported;
+  }
 }

@@ -179,11 +179,13 @@ class AndroidTemplateCreator extends TemplateCreator {
     @required String methodName,
     @required Iterable<String> callbackChannelParams,
     @required Iterable<String> callbackParams,
+    @required String wrapperName,
   }) {
     return _replace(
       Block.callback.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
         Replacement.methodName.name: methodName,
+        Replacement.wrapperName.name: wrapperName,
         MethodChannelBlock.callbackChannelParams().exp:
             callbackChannelParams.join(),
         Block.callbackParams.exp: callbackParams.join(','),

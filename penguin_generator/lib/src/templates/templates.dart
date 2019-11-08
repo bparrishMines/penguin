@@ -350,7 +350,25 @@ import 'package:flutter/services.dart';
 %%CLASSES%%
 %%CLASS%%
 class $__className____typeParameters__ extends Wrapper {
-  $__className__(String uniqueId) : super(uniqueId);
+  $__className__(String uniqueId, {this.$callbackMethod$Callback}) : super(uniqueId);
+  
+  final void Function($AndroidTestClass3 wrapper, String value)
+      $callbackMethod$Callback;
+      
+  @override
+  String get platformClassName => '__platformClassName__';
+  
+  @override
+  Future<dynamic> onMethodCall(MethodCall call) async {
+    switch (call.method) {
+      case 'TestClass1#callbackMethod':
+        $callbackMethod$Callback(
+          $AndroidTestClass3(call.arguments['wrapper']),
+          call.arguments['supported'],
+        );
+        break;
+    }
+  }
 
   %%CONSTRUCTORS%%
   %%CONSTRUCTOR%%
@@ -476,9 +494,6 @@ class $__className____typeParameters__ extends Wrapper {
   }
   %%METHOD%%
   %%METHODS%%
-  
-  @override
-  String get platformClassName => '__platformClassName__';
 }
 %%CLASS%%
 %%CLASSES%%
@@ -508,6 +523,7 @@ abstract class Wrapper {
   final String uniqueId;
   
   String get platformClassName;
+  Future<dynamic> onMethodCall(MethodCall call);
 
   MethodCall allocate() {
     return MethodCall(
@@ -522,8 +538,6 @@ abstract class Wrapper {
       <String, String>{r'$uniqueId': uniqueId},
     );
   }
-  
-  Future<dynamic> onMethodCall(MethodCall call) {}
 }
 
 Future<T> invoke<T>(
@@ -838,7 +852,7 @@ public class ChannelGenerated implements MethodCallHandler {
               %%CALLBACKCHANNELPARAM methodChannel:supported%%
               %%CALLBACKCHANNELPARAMS%%
               
-              $channelGenerated.callbackChannel.invokeMethod("callbackMethod", $arguments);
+              $channelGenerated.callbackChannel.invokeMethod("__wrapperName__#callbackMethod", $arguments);
             }
             %%CALLBACK%%
             %%CALLBACKS%%
@@ -1197,7 +1211,8 @@ class MethodChannelBlock extends Block {
   static MethodChannelBlock preMethodCall(MethodChannelType methodChannel) =>
       MethodChannelBlock('PREMETHODCALL', methodChannel: methodChannel);
 
-  static MethodChannelBlock callbackChannelParam(MethodChannelType methodChannel) =>
+  static MethodChannelBlock callbackChannelParam(
+          MethodChannelType methodChannel) =>
       MethodChannelBlock('CALLBACKCHANNELPARAM', methodChannel: methodChannel);
 
   static MethodChannelBlock callbackChannelParams() =>

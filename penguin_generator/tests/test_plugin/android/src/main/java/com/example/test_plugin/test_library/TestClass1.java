@@ -91,6 +91,10 @@ public class TestClass1 {
     }
   }
 
+  public void callCallbackMethod() {
+    callbackMethod(new TestClass3(), "I love callbacks.");
+  }
+
   public void callbackMethod(TestClass3 wrapper, String supported) {
 
   }
