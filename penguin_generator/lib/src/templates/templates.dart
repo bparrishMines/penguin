@@ -483,6 +483,25 @@ class $__className____typeParameters__ extends $Wrapper {
 %%CLASS%%
 %%CLASSES%%
 
+class CallbackHandler {
+  CallbackHandler() {
+    _methodCallHandler = (MethodCall call) {
+      return _wrappers[call.arguments[r'$uniqueId']].onMethodCall(call);
+    };
+  }
+
+  final Map<String, $Wrapper> _wrappers = <String, $Wrapper>{};
+  Future<dynamic> Function(MethodCall call) _methodCallHandler;
+
+  Future<dynamic> Function(MethodCall call) get methodCallHandler =>
+      _methodCallHandler;
+
+  void addWrapper($Wrapper wrapper) => _wrappers[wrapper.$uniqueId] = wrapper;
+
+  $Wrapper removeWrapper($Wrapper wrapper) =>
+      _wrappers.remove(wrapper.$uniqueId);
+}
+
 abstract class $Wrapper {
   $Wrapper(this.$uniqueId);
 
@@ -503,6 +522,8 @@ abstract class $Wrapper {
       <String, String>{r'$uniqueId': $uniqueId},
     );
   }
+  
+  Future<dynamic> onMethodCall(MethodCall call) {}
 }
 
 Future<T> $invoke<T>(
