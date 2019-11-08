@@ -796,20 +796,22 @@ public class ChannelGenerated implements MethodCallHandler {
             %%CALLBACKS%%
             %%CALLBACK%%
             @Override
-            public void __methodName__(TestClass3 wrapper, String supported) {
+            public void __methodName__(
+            TestClass3 wrapper, String supported
+            ) {
               final HashMap<String, Object> $arguments = new HashMap<>();
               $arguments.put("$uniqueId", $uniqueId);
 
-              %%CALLBACKPARAMS%%
-              %%CALLBACKPARAM methodChannel:wrapper%%
+              %%CALLBACKCHANNELPARAMS%%
+              %%CALLBACKCHANNELPARAM methodChannel:wrapper%%
               final String $__parameterName__Id = UUID.randomUUID().toString();
               $channelGenerated.addAllocatedWrapper($__parameterName__Id, new __wrapperName__Wrapper($channelGenerated, $__parameterName__Id, __parameterName__));
               $arguments.put("__parameterName__", $__parameterName__Id);
-              %%CALLBACKPARAM methodChannel:wrapper%%
-              %%CALLBACKPARAM methodChannel:supported%%
+              %%CALLBACKCHANNELPARAM methodChannel:wrapper%%
+              %%CALLBACKCHANNELPARAM methodChannel:supported%%
               $arguments.put("__parameterName__", __parameterName__);
-              %%CALLBACKPARAM methodChannel:supported%%
-              %%CALLBACKPARAMS%%
+              %%CALLBACKCHANNELPARAM methodChannel:supported%%
+              %%CALLBACKCHANNELPARAMS%%
               
               $channelGenerated.callbackChannel.invokeMethod("callbackMethod", $arguments);
             }
@@ -1167,11 +1169,11 @@ class MethodChannelBlock extends Block {
   static MethodChannelBlock preMethodCall(MethodChannelType methodChannel) =>
       MethodChannelBlock('PREMETHODCALL', methodChannel: methodChannel);
 
-  static MethodChannelBlock callbackParam(MethodChannelType methodChannel) =>
-      MethodChannelBlock('CALLBACKPARAM', methodChannel: methodChannel);
+  static MethodChannelBlock callbackChannelParam(MethodChannelType methodChannel) =>
+      MethodChannelBlock('CALLBACKCHANNELPARAM', methodChannel: methodChannel);
 
-  static MethodChannelBlock callbackParams() =>
-      MethodChannelBlock('CALLBACKPARAMS');
+  static MethodChannelBlock callbackChannelParams() =>
+      MethodChannelBlock('CALLBACKCHANNELPARAMS');
 }
 
 class Replacement {

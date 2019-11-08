@@ -183,7 +183,7 @@ class AndroidTemplateCreator extends TemplateCreator {
       Block.callback.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
         Replacement.methodName.name: methodName,
-        MethodChannelBlock.callbackParams().exp: callbackParams.join(),
+        MethodChannelBlock.callbackChannelParams().exp: callbackParams.join(),
       },
     );
   }
@@ -399,7 +399,7 @@ class AndroidTemplateCreator extends TemplateCreator {
     String wrapperName,
   }) {
     return _replace(
-        MethodChannelBlock.callbackParam(methodChannelType)
+        MethodChannelBlock.callbackChannelParam(methodChannelType)
             .exp
             .firstMatch(template.value)
             .group(1),
