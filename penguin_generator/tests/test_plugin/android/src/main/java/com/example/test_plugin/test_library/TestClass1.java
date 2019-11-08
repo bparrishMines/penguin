@@ -90,4 +90,8 @@ public class TestClass1 {
       return 5;
     }
   }
+
+  public void callbackMethod(TestClass2 wrapper, String supported) {
+
+  }
 }

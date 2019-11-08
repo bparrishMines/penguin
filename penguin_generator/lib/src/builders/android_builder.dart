@@ -99,6 +99,15 @@ class AndroidBuilder extends PlatformBuilder {
                         .type
                         .names
                         .join('.'),
+                callbacks: classInfo.methods
+                    .where(
+                      (MethodInfo methodInfo) => methodInfo.method.callback,
+                    )
+                    .map<String>(
+                      (MethodInfo methodInfo) => creator.createCallback(
+                        methodName: methodInfo.name,
+                      ),
+                    ),
               ),
             ),
             methods: classInfo.methods.map<String>(

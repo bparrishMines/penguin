@@ -175,6 +175,15 @@ class AndroidTemplateCreator extends TemplateCreator {
   @override
   Template get template => Template.android;
 
+  String createCallback({@required String methodName}) {
+    return _replace(
+      Block.callback.exp.firstMatch(template.value).group(1),
+      <Pattern, String>{
+        Replacement.methodName.name: methodName,
+      },
+    );
+  }
+
   String createField(
     MethodChannelType channelType, {
     bool isStatic,
@@ -347,6 +356,7 @@ class AndroidTemplateCreator extends TemplateCreator {
     @required String wrapperName,
     @required String constructorName,
     @required Iterable<String> parameters,
+    @required Iterable<String> callbacks,
   }) {
     return _replace(
       Block.constructor.exp.firstMatch(template.value).group(1),
@@ -355,6 +365,7 @@ class AndroidTemplateCreator extends TemplateCreator {
         Replacement.wrapperName.name: wrapperName,
         Replacement.constructorName.name: constructorName,
         Block.parameters.exp: parameters.join(','),
+        Block.callbacks.exp: callbacks.join(),
       },
     );
   }

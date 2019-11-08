@@ -781,7 +781,24 @@ public class ChannelGenerated implements MethodCallHandler {
           call.argument("__parameterName__") != null && call.argument("__parameterName__") instanceof String && call.$channelGenerated.getWrapper((String) call.argument("__parameterName__")) != null ? $channelGenerated.getWrapper((String) call.argument("__parameterName__")).$getValue() : call.argument("__parameterName__") 
           %%PARAMETER methodChannel:typeParameter%%
           %%PARAMETERS%%
-          ) {};
+          ) {
+            %%CALLBACKS%%
+            %%CALLBACK%%
+            public void __methodName__(TestClass2 wrapper, String supported) {
+              //final Map<String, Object> $arguments = new HashMap<>();
+              //$arguments.put("$uniqueId", $uniqueId);
+
+              //final String $wrapperId = UUID.randomUUID().toString();
+              //$channelGenerated.addAllocatedWrapper($wrapperId, new TestClass2Wrapper($channelGenerated, $wrapperId, wrapper));
+              //$arguments.put("wrapper", $wrapperId);
+
+              //$arguments.put("supported", supported);
+              
+              //$channelGenerated.channel.invokeMethod("callbackMethod", $arguments);
+            }
+            %%CALLBACK%%
+            %%CALLBACKS%%
+          };
           break; 
         %%CONSTRUCTOR%%
         %%CONSTRUCTORS%%
@@ -1036,6 +1053,9 @@ class Block {
   static final Block parameter = Block('PARAMETER');
 
   static final Block fieldSetters = Block('FIELDSETTERS');
+
+  static final Block callback = Block('CALLBACK');
+  static final Block callbacks = Block('CALLBACKS');
 
   static final Block fields = Block('FIELDS');
   static final Block field = Block('FIELD');

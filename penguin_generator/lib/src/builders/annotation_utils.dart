@@ -28,7 +28,7 @@ class AnnotationUtils {
   }
 
   static Method methodFromConstantReader(ConstantReader reader) {
-    return Method();
+    return Method(callback: reader.read('callback').boolValue);
   }
 
   static Field fieldFromConstantReader(ConstantReader reader) {

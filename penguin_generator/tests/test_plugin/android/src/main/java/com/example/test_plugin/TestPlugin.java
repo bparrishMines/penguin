@@ -1,6 +1,5 @@
 package com.example.test_plugin;
 
-import android.widget.TextView;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
 

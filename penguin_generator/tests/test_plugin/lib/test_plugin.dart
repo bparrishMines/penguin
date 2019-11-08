@@ -178,6 +178,11 @@ class AndroidTestClass1 {
         [_testClass.$mapField()],
       );
 
+  @Method(callback: true)
+  Future<void> callbackMethod(AndroidTestClass2 wrapper, String supported) {
+
+  }
+
   @Method()
   Future<void> returnVoid() {
     return a.$invoke<void>(
