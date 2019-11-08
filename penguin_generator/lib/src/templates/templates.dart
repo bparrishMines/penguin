@@ -349,8 +349,8 @@ import 'package:flutter/services.dart';
 
 %%CLASSES%%
 %%CLASS%%
-class $__className____typeParameters__ extends $Wrapper {
-  $__className__(String $uniqueId) : super($uniqueId);
+class $__className____typeParameters__ extends Wrapper {
+  $__className__(String uniqueId) : super(uniqueId);
 
   %%CONSTRUCTORS%%
   %%CONSTRUCTOR%%
@@ -372,20 +372,20 @@ class $__className____typeParameters__ extends $Wrapper {
   ) {
     return MethodCall(
       '__platformClassName__(__constructorName__)',
-      <String, String>{r'$uniqueId': $uniqueId,
+      <String, String>{r'$uniqueId': uniqueId,
        %%METHODCALLPARAMS%%
        %%METHODCALLPARAM methodChannel:supported%%
        '__parameterName__': __parameterName__,
        %%METHODCALLPARAM methodChannel:supported%%
        %%METHODCALLPARAM methodChannel:wrapper%%
-       '__parameterName__': __parameterName__?.$uniqueId,
+       '__parameterName__': __parameterName__?.uniqueId,
        %%METHODCALLPARAM methodChannel:wrapper%%
        %%METHODCALLPARAM methodChannel:primitive%%
        '__parameterName__': __parameterName__,
        %%METHODCALLPARAM methodChannel:primitive%%
        %%METHODCALLPARAM methodChannel:typeParameter%%
-       if (__parameterName__ is $Wrapper) '__parameterName__': __parameterName__?.$uniqueId,
-       if (__parameterName__ is! $Wrapper) '__parameterName__': __parameterName__,
+       if (__parameterName__ is Wrapper) '__parameterName__': __parameterName__?.uniqueId,
+       if (__parameterName__ is! Wrapper) '__parameterName__': __parameterName__,
        %%METHODCALLPARAM methodChannel:typeParameter%%
        %%METHODCALLPARAMS%%
       },
@@ -413,18 +413,18 @@ class $__className____typeParameters__ extends $Wrapper {
     return MethodCall(
       '__platformClassName__.__fieldName__',
       <String, dynamic>{
-        r'$uniqueId': $uniqueId,
+        r'$uniqueId': uniqueId,
         r'$newUniqueId': $newUniqueId,
         %%FIELDSETTERPARAMS%%
         %%FIELDSETTERPARAM methodChannel:supported%%
         '__fieldName__': __fieldName__,
         %%FIELDSETTERPARAM methodChannel:supported%%
         %%FIELDSETTERPARAM methodChannel:wrapper%%
-        '__fieldName__': __fieldName__?.$uniqueId,
+        '__fieldName__': __fieldName__?.uniqueId,
         %%FIELDSETTERPARAM methodChannel:wrapper%%
         %%FIELDSETTERPARAM methodChannel:typeParameter%%
-        if (__fieldName__ is $Wrapper) '__fieldName__': __fieldName__?.$uniqueId,
-        if (__fieldName__ is! $Wrapper) '__fieldName__': __fieldName__,
+        if (__fieldName__ is Wrapper) '__fieldName__': __fieldName__?.uniqueId,
+        if (__fieldName__ is! Wrapper) '__fieldName__': __fieldName__,
         %%FIELDSETTERPARAM methodChannel:typeParameter%%
         %%FIELDSETTERPARAMS%%
       },
@@ -454,21 +454,21 @@ class $__className____typeParameters__ extends $Wrapper {
   ) {
     return MethodCall(
       '__platformClassName__#__methodName__',
-       <String, dynamic>{r'$uniqueId': $uniqueId,
+       <String, dynamic>{r'$uniqueId': uniqueId,
        r'$newUniqueId': $newUniqueId,
        %%METHODCALLPARAMS%%
        %%METHODCALLPARAM methodChannel:supported%%
        '__parameterName__': __parameterName__,
        %%METHODCALLPARAM methodChannel:supported%%
        %%METHODCALLPARAM methodChannel:wrapper%%
-       '__parameterName__': __parameterName__?.$uniqueId,
+       '__parameterName__': __parameterName__?.uniqueId,
        %%METHODCALLPARAM methodChannel:wrapper%%
        %%METHODCALLPARAM methodChannel:primitive%%
        '__parameterName__': __parameterName__,
        %%METHODCALLPARAM methodChannel:primitive%%
        %%METHODCALLPARAM methodChannel:typeParameter%%
-       if (__parameterName__ is $Wrapper) '__parameterName__': __parameterName__?.$uniqueId,
-       if (__parameterName__ is! $Wrapper) '__parameterName__': __parameterName__,
+       if (__parameterName__ is Wrapper) '__parameterName__': __parameterName__?.uniqueId,
+       if (__parameterName__ is! Wrapper) '__parameterName__': __parameterName__,
        %%METHODCALLPARAM methodChannel:typeParameter%%
        %%METHODCALLPARAMS%%
        },
@@ -478,7 +478,7 @@ class $__className____typeParameters__ extends $Wrapper {
   %%METHODS%%
   
   @override
-  String get $platformClassName => '__platformClassName__';
+  String get platformClassName => '__platformClassName__';
 }
 %%CLASS%%
 %%CLASSES%%
@@ -490,50 +490,50 @@ class CallbackHandler {
     };
   }
 
-  final Map<String, $Wrapper> _wrappers = <String, $Wrapper>{};
+  final Map<String, Wrapper> _wrappers = <String, Wrapper>{};
   Future<dynamic> Function(MethodCall call) _methodCallHandler;
 
   Future<dynamic> Function(MethodCall call) get methodCallHandler =>
       _methodCallHandler;
 
-  void addWrapper($Wrapper wrapper) => _wrappers[wrapper.$uniqueId] = wrapper;
+  void addWrapper(Wrapper wrapper) => _wrappers[wrapper.uniqueId] = wrapper;
 
-  $Wrapper removeWrapper($Wrapper wrapper) =>
-      _wrappers.remove(wrapper.$uniqueId);
+  Wrapper removeWrapper(Wrapper wrapper) =>
+      _wrappers.remove(wrapper.uniqueId);
 }
 
-abstract class $Wrapper {
-  $Wrapper(this.$uniqueId);
+abstract class Wrapper {
+  Wrapper(this.uniqueId);
 
-  final String $uniqueId;
+  final String uniqueId;
   
-  String get $platformClassName;
+  String get platformClassName;
 
-  MethodCall $allocate() {
+  MethodCall allocate() {
     return MethodCall(
-      '${$platformClassName}#allocate',
-      <String, String>{r'$uniqueId': $uniqueId},
+      '${platformClassName}#allocate',
+      <String, String>{r'$uniqueId': uniqueId},
     );
   }
 
-  MethodCall $deallocate() {
+  MethodCall deallocate() {
     return MethodCall(
-      '${$platformClassName}#deallocate',
-      <String, String>{r'$uniqueId': $uniqueId},
+      '${platformClassName}#deallocate',
+      <String, String>{r'$uniqueId': uniqueId},
     );
   }
   
   Future<dynamic> onMethodCall(MethodCall call) {}
 }
 
-Future<T> $invoke<T>(
+Future<T> invoke<T>(
   MethodChannel channel,
   MethodCall call, [
   Iterable<MethodCall> following = const <MethodCall>[],
 ]) {
   final Completer<T> completer = Completer<T>();
 
-  $invokeAll(
+  invokeAll(
     channel,
     <MethodCall>[call, ...following].where((MethodCall call) => call != null),
   ).then(
@@ -543,14 +543,14 @@ Future<T> $invoke<T>(
   return completer.future;
 }
 
-Future<List<T>> $invokeList<T>(
+Future<List<T>> invokeList<T>(
   MethodChannel channel,
   MethodCall call, [
   Iterable<MethodCall> following = const <MethodCall>[],
 ]) {
   final Completer<List<T>> completer = Completer<List<T>>();
 
-  $invokeAll(
+  invokeAll(
     channel,
     <MethodCall>[call, ...following].where((MethodCall call) => call != null),
   ).then(
@@ -560,14 +560,14 @@ Future<List<T>> $invokeList<T>(
   return completer.future;
 }
 
-Future<Map<S, T>> $invokeMap<S, T>(
+Future<Map<S, T>> invokeMap<S, T>(
   MethodChannel channel,
   MethodCall call, [
   Iterable<MethodCall> following = const <MethodCall>[],
 ]) {
   final Completer<Map<S, T>> completer = Completer<Map<S, T>>();
 
-  $invokeAll(
+  invokeAll(
     channel,
     <MethodCall>[call, ...following].where((MethodCall call) => call != null),
   ).then(
@@ -577,7 +577,7 @@ Future<Map<S, T>> $invokeMap<S, T>(
   return completer.future;
 }
 
-Future<List<dynamic>> $invokeAll(
+Future<List<dynamic>> invokeAll(
   MethodChannel channel,
   Iterable<MethodCall> methodCalls,
 ) {

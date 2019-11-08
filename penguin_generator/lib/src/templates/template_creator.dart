@@ -27,7 +27,7 @@ class MethodChannelTemplateCreator extends TemplateCreator {
       Block.method.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
         if (!isStatic) 'static': '',
-        if (isStatic) r"r'$uniqueId': $uniqueId,": '',
+        if (isStatic) r"r'$uniqueId': uniqueId,": '',
         Block.parameters.exp: parameters.join(),
         MethodChannelBlock.methodCallParams.exp: methodCallParams.join(),
         Replacement.platformClassName.name: platformClassName,
@@ -48,7 +48,7 @@ class MethodChannelTemplateCreator extends TemplateCreator {
       Block.field.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
         if (!isStatic) 'static': '',
-        if (isStatic) r"r'$uniqueId': $uniqueId,": '',
+        if (isStatic) r"r'$uniqueId': uniqueId,": '',
         Replacement.platformClassName.name: platformClassName,
         Replacement.fieldName.name: fieldName,
         Replacement.fieldType.name: fieldType,

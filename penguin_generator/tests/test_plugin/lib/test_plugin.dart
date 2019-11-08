@@ -47,24 +47,24 @@ class _AndroidTextViewState extends State<AndroidTextView> {
   void initState() {
     super.initState();
     _textView = a.$_AndroidTextViewState(_randomId());
-    a.$invokeAll(_channel, [
+    a.invokeAll(_channel, [
       _textView.$_AndroidTextViewState$Default(_activity.activity),
-      _textView.$allocate(),
+      _textView.allocate(),
     ]);
   }
 
   @override
   void dispose() {
     super.dispose();
-    a.$invoke<void>(_channel, _textView.$deallocate());
+    a.invoke<void>(_channel, _textView.deallocate());
   }
 
   @override
   Widget build(BuildContext context) {
-    a.$invoke<void>(_channel, _textView.$setText(widget.text));
+    a.invoke<void>(_channel, _textView.$setText(widget.text));
     return AndroidView(
       viewType: '${_channel.name}/view',
-      creationParams: _textView.$uniqueId,
+      creationParams: _textView.uniqueId,
       creationParamsCodec: const StandardMessageCodec(),
     );
   }
@@ -84,7 +84,7 @@ class AndroidTestClass1 {
   String _constructorValue;
 
   @Field()
-  Future<String> get constructorValue => a.$invoke<String>(
+  Future<String> get constructorValue => a.invoke<String>(
         _channel,
         _testClass.$AndroidTestClass1namedConstructor(_constructorValue),
         [_testClass.$constructorValue()],
@@ -96,17 +96,17 @@ class AndroidTestClass1 {
 
   @Method()
   static Future<int> staticMethod() {
-    return a.$invoke<int>(_channel, a.$AndroidTestClass1.$staticMethod());
+    return a.invoke<int>(_channel, a.$AndroidTestClass1.$staticMethod());
   }
 
   @Field()
-  static Future<int> get staticField => a.$invoke<int>(
+  static Future<int> get staticField => a.invoke<int>(
         _channel,
         a.$AndroidTestClass1.$staticField(),
       );
 
   @Field()
-  Future<Object> get objectField => a.$invoke<Object>(
+  Future<Object> get objectField => a.invoke<Object>(
         _channel,
         _testClass.$AndroidTestClass1$Default(),
         [..._setters, _testClass.$objectField()],
@@ -115,7 +115,7 @@ class AndroidTestClass1 {
   @Field()
   set objectField(FutureOr<Object> objectField) {
     _setters.add(_testClass.$objectField(objectField: objectField));
-    a.$invoke<Object>(
+    a.invoke<Object>(
       _channel,
       _testClass.$AndroidTestClass1$Default(),
       [_testClass.$objectField(objectField: objectField)],
@@ -123,56 +123,56 @@ class AndroidTestClass1 {
   }
 
   @Field()
-  Future<dynamic> get dynamicField => a.$invoke<dynamic>(
+  Future<dynamic> get dynamicField => a.invoke<dynamic>(
         _channel,
         _testClass.$AndroidTestClass1$Default(),
         [_testClass.$dynamicField()],
       );
 
   @Field()
-  Future<String> get stringField => a.$invoke<String>(
+  Future<String> get stringField => a.invoke<String>(
         _channel,
         _testClass.$AndroidTestClass1$Default(),
         [_testClass.$stringField()],
       );
 
   @Field()
-  Future<int> get intField => a.$invoke<int>(
+  Future<int> get intField => a.invoke<int>(
         _channel,
         _testClass.$AndroidTestClass1$Default(),
         [_testClass.$intField()],
       );
 
   @Field()
-  Future<double> get doubleField => a.$invoke<double>(
+  Future<double> get doubleField => a.invoke<double>(
         _channel,
         _testClass.$AndroidTestClass1$Default(),
         [_testClass.$doubleField()],
       );
 
   @Field()
-  Future<num> get numField => a.$invoke<num>(
+  Future<num> get numField => a.invoke<num>(
         _channel,
         _testClass.$AndroidTestClass1$Default(),
         [_testClass.$numField()],
       );
 
   @Field()
-  Future<bool> get boolField => a.$invoke<bool>(
+  Future<bool> get boolField => a.invoke<bool>(
         _channel,
         _testClass.$AndroidTestClass1$Default(),
         [_testClass.$boolField()],
       );
 
   @Field()
-  Future<List<bool>> get listField => a.$invokeList<bool>(
+  Future<List<bool>> get listField => a.invokeList<bool>(
         _channel,
         _testClass.$AndroidTestClass1$Default(),
         [_testClass.$listField()],
       );
 
   @Field()
-  Future<Map<String, double>> get mapField => a.$invokeMap<String, double>(
+  Future<Map<String, double>> get mapField => a.invokeMap<String, double>(
         _channel,
         _testClass.$AndroidTestClass1$Default(),
         [_testClass.$mapField()],
@@ -183,7 +183,7 @@ class AndroidTestClass1 {
 
   @Method()
   Future<void> returnVoid() {
-    return a.$invoke<void>(
+    return a.invoke<void>(
       _channel,
       _testClass.$AndroidTestClass1$Default(),
       [_testClass.$returnVoid()],
@@ -192,7 +192,7 @@ class AndroidTestClass1 {
 
   @Method()
   Future<Object> returnObject() {
-    return a.$invoke<Object>(
+    return a.invoke<Object>(
       _channel,
       _testClass.$AndroidTestClass1$Default(),
       [_testClass.$returnObject()],
@@ -201,7 +201,7 @@ class AndroidTestClass1 {
 
   @Method()
   Future<dynamic> returnDynamic() {
-    return a.$invoke<dynamic>(
+    return a.invoke<dynamic>(
       _channel,
       _testClass.$AndroidTestClass1$Default(),
       [_testClass.$returnDynamic()],
@@ -210,7 +210,7 @@ class AndroidTestClass1 {
 
   @Method()
   Future<String> returnString() {
-    return a.$invoke<String>(
+    return a.invoke<String>(
       _channel,
       _testClass.$AndroidTestClass1$Default(),
       [_testClass.$returnString()],
@@ -219,7 +219,7 @@ class AndroidTestClass1 {
 
   @Method()
   Future<int> returnInt() {
-    return a.$invoke<int>(
+    return a.invoke<int>(
       _channel,
       _testClass.$AndroidTestClass1$Default(),
       [_testClass.$returnInt()],
@@ -228,7 +228,7 @@ class AndroidTestClass1 {
 
   @Method()
   Future<double> returnDouble() {
-    return a.$invoke<double>(
+    return a.invoke<double>(
       _channel,
       _testClass.$AndroidTestClass1$Default(),
       [_testClass.$returnDouble()],
@@ -237,7 +237,7 @@ class AndroidTestClass1 {
 
   @Method()
   Future<bool> returnBool() {
-    return a.$invoke<bool>(
+    return a.invoke<bool>(
       _channel,
       _testClass.$AndroidTestClass1$Default(),
       [_testClass.$returnBool()],
@@ -246,7 +246,7 @@ class AndroidTestClass1 {
 
   @Method()
   Future<List<double>> returnList() {
-    return a.$invokeList<double>(
+    return a.invokeList<double>(
       _channel,
       _testClass.$AndroidTestClass1$Default(),
       [_testClass.$returnList()],
@@ -255,7 +255,7 @@ class AndroidTestClass1 {
 
   @Method()
   Future<Map<String, int>> returnMap() {
-    return a.$invokeMap<String, int>(
+    return a.invokeMap<String, int>(
       _channel,
       _testClass.$AndroidTestClass1$Default(),
       [_testClass.$returnMap()],
@@ -264,7 +264,7 @@ class AndroidTestClass1 {
 
   @Method()
   Future<int> noParametersMethod() {
-    return a.$invoke<int>(
+    return a.invoke<int>(
       _channel,
       _testClass.$AndroidTestClass1$Default(),
       [_testClass.$noParametersMethod()],
@@ -273,7 +273,7 @@ class AndroidTestClass1 {
 
   @Method()
   Future<String> singleParameterMethod(String value) {
-    return a.$invoke<String>(
+    return a.invoke<String>(
       _channel,
       _testClass.$AndroidTestClass1$Default(),
       [_testClass.$singleParameterMethod(value)],
@@ -294,14 +294,14 @@ class AndroidNestedClass {
   final a.$AndroidNestedClass _testClass = a.$AndroidNestedClass(_randomId());
 
   @Field()
-  Future<int> get nestedClassField => a.$invoke<int>(
+  Future<int> get nestedClassField => a.invoke<int>(
         _channel,
         _testClass.$AndroidNestedClass$Default(),
         [_testClass.$nestedClassField()],
       );
 
   @Method()
-  Future<int> nestedClassMethod() => a.$invoke<int>(
+  Future<int> nestedClassMethod() => a.invoke<int>(
         _channel,
         _testClass.$AndroidNestedClass$Default(),
         [_testClass.$nestedClassMethod()],
@@ -335,7 +335,7 @@ class IosTestClass1 {
 
   @Method()
   Future<void> returnVoid() {
-    return a.$invoke<void>(
+    return a.invoke<void>(
       _channel,
       _testClass.$IosTestClass1$Default(),
       [_testClass.$returnVoid()],
@@ -344,7 +344,7 @@ class IosTestClass1 {
 
   @Method()
   Future<Object> returnObject() {
-    return a.$invoke<Object>(
+    return a.invoke<Object>(
       _channel,
       _testClass.$IosTestClass1$Default(),
       [_testClass.$returnObject()],
@@ -353,7 +353,7 @@ class IosTestClass1 {
 
   @Method()
   Future<dynamic> returnDynamic() {
-    return a.$invoke<dynamic>(
+    return a.invoke<dynamic>(
       _channel,
       _testClass.$IosTestClass1$Default(),
       [_testClass.$returnDynamic()],
@@ -362,7 +362,7 @@ class IosTestClass1 {
 
   @Method()
   Future<String> returnString() {
-    return a.$invoke<String>(
+    return a.invoke<String>(
       _channel,
       _testClass.$IosTestClass1$Default(),
       [_testClass.$returnString()],
@@ -371,7 +371,7 @@ class IosTestClass1 {
 
   @Method()
   Future<int> returnInt() {
-    return a.$invoke<int>(
+    return a.invoke<int>(
       _channel,
       _testClass.$IosTestClass1$Default(),
       [_testClass.$returnInt()],
@@ -381,7 +381,7 @@ class IosTestClass1 {
   @int32
   @Method()
   Future<int> returnInt32() {
-    return a.$invoke<int>(
+    return a.invoke<int>(
       _channel,
       _testClass.$IosTestClass1$Default(),
       [_testClass.$returnInt32()],
@@ -390,7 +390,7 @@ class IosTestClass1 {
 
   @Method()
   Future<double> returnDouble() {
-    return a.$invoke<double>(
+    return a.invoke<double>(
       _channel,
       _testClass.$IosTestClass1$Default(),
       [_testClass.$returnDouble()],
@@ -399,7 +399,7 @@ class IosTestClass1 {
 
   @Method()
   Future<bool> returnBool() {
-    return a.$invoke<bool>(
+    return a.invoke<bool>(
       _channel,
       _testClass.$IosTestClass1$Default(),
       [_testClass.$returnBool()],
@@ -408,7 +408,7 @@ class IosTestClass1 {
 
   @Method()
   Future<List<double>> returnList() {
-    return a.$invokeList<double>(
+    return a.invokeList<double>(
       _channel,
       _testClass.$IosTestClass1$Default(),
       [_testClass.$returnList()],
@@ -417,7 +417,7 @@ class IosTestClass1 {
 
   @Method()
   Future<Map<String, int>> returnMap() {
-    return a.$invokeMap<String, int>(
+    return a.invokeMap<String, int>(
       _channel,
       _testClass.$IosTestClass1$Default(),
       [_testClass.$returnMap()],
@@ -426,7 +426,7 @@ class IosTestClass1 {
 
   @Method()
   Future<int> noParametersMethod() {
-    return a.$invoke<int>(
+    return a.invoke<int>(
       _channel,
       _testClass.$IosTestClass1$Default(),
       [_testClass.$noParametersMethod()],
@@ -435,7 +435,7 @@ class IosTestClass1 {
 
   @Method()
   Future<String> singleParameterMethod(String value) {
-    return a.$invoke<String>(
+    return a.invoke<String>(
       _channel,
       _testClass.$IosTestClass1$Default(),
       [_testClass.$singleParameterMethod(value)],
@@ -444,7 +444,7 @@ class IosTestClass1 {
 
   @Method()
   Future<String> allParameterTypesMethod(@int32 int intValue) {
-    return a.$invoke<String>(
+    return a.invoke<String>(
       _channel,
       _testClass.$IosTestClass1$Default(),
       [_testClass.$allParameterTypesMethod(intValue)],
