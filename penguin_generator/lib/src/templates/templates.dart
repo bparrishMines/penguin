@@ -797,7 +797,11 @@ public class ChannelGenerated implements MethodCallHandler {
             %%CALLBACK%%
             @Override
             public void __methodName__(
-            TestClass3 wrapper, String supported
+            %%CALLBACKPARAMS%%
+            %%CALLBACKPARAM%%
+            __parameterType__ __parameterName__
+            %%CALLBACKPARAM%%
+            %%CALLBACKPARAMS%%
             ) {
               final HashMap<String, Object> $arguments = new HashMap<>();
               $arguments.put("$uniqueId", $uniqueId);
@@ -1080,6 +1084,9 @@ class Block {
   static final Block field = Block('FIELD');
 
   static final Block fieldSetterParams = Block('FIELDSETTERPARAMS');
+
+  static final Block callbackParams = Block('CALLBACKPARAMS');
+  static final Block callbackParam = Block('CALLBACKPARAM');
 }
 
 class MethodChannelBlock extends Block {

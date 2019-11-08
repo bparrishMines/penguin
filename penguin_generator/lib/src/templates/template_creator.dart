@@ -177,13 +177,29 @@ class AndroidTemplateCreator extends TemplateCreator {
 
   String createCallback({
     @required String methodName,
+    @required Iterable<String> callbackChannelParams,
     @required Iterable<String> callbackParams,
   }) {
     return _replace(
       Block.callback.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
         Replacement.methodName.name: methodName,
-        MethodChannelBlock.callbackChannelParams().exp: callbackParams.join(),
+        MethodChannelBlock.callbackChannelParams().exp:
+            callbackChannelParams.join(),
+        Block.callbackParams.exp: callbackParams.join(','),
+      },
+    );
+  }
+
+  String createCallbackParam({
+    @required String parameterName,
+    @required String parameterType,
+  }) {
+    return _replace(
+      Block.callbackParam.exp.firstMatch(template.value).group(1),
+      <Pattern, String>{
+        Replacement.parameterType.name: parameterType,
+        Replacement.parameterName.name: parameterName,
       },
     );
   }
@@ -393,7 +409,7 @@ class AndroidTemplateCreator extends TemplateCreator {
     );
   }
 
-  String createCallbackParam(
+  String createCallbackChannelParam(
     MethodChannelType methodChannelType, {
     @required String parameterName,
     String wrapperName,
