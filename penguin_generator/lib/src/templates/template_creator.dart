@@ -16,6 +16,39 @@ class MethodChannelTemplateCreator extends TemplateCreator {
   @override
   Template get template => Template.dartMethodChannel;
 
+  String createCallback({
+    @required String methodName,
+    @required Iterable<String> callbackChannelParams,
+    @required String wrapperName,
+  }) {
+    return _replace(
+      Block.callback.exp.firstMatch(template.value).group(1),
+      <Pattern, String>{
+        Replacement.methodName.name: methodName,
+        Replacement.wrapperName.name: wrapperName,
+        MethodChannelBlock.callbackChannelParams().exp:
+            callbackChannelParams.join(),
+      },
+    );
+  }
+
+  String createCallbackChannelParam(
+    MethodChannelType methodChannelType, {
+    @required String parameterName,
+    String className,
+  }) {
+    return _replace(
+      MethodChannelBlock.callbackChannelParam(methodChannelType)
+          .exp
+          .firstMatch(template.value)
+          .group(1),
+      <Pattern, String>{
+        Replacement.parameterName.name: parameterName,
+        if (className != null) Replacement.className.name: className,
+      },
+    );
+  }
+
   String createMethod(
     bool isStatic, {
     Iterable<String> parameters,
@@ -121,12 +154,13 @@ class MethodChannelTemplateCreator extends TemplateCreator {
   }
 
   String createClass({
-    Iterable<String> typeParameters,
-    Iterable<String> constructors,
-    Iterable<String> methods,
-    Iterable<String> fields,
-    String className,
-    String platformClassName,
+    @required Iterable<String> typeParameters,
+    @required Iterable<String> constructors,
+    @required Iterable<String> methods,
+    @required Iterable<String> fields,
+    @required Iterable<String> callbacks,
+    @required String className,
+    @required String platformClassName,
   }) {
     return _replace(
       Block.aClass.exp.firstMatch(template.value).group(1),
@@ -138,6 +172,7 @@ class MethodChannelTemplateCreator extends TemplateCreator {
         Replacement.className.name: className,
         Block.fields.exp: fields.join(),
         Replacement.platformClassName.name: platformClassName,
+        Block.callbacks.exp: callbacks.join()
       },
     );
   }

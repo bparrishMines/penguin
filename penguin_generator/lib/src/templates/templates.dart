@@ -351,22 +351,32 @@ import 'package:flutter/services.dart';
 %%CLASS%%
 class $__className____typeParameters__ extends Wrapper {
   $__className__(String uniqueId, {this.$callbackMethod$Callback}) : super(uniqueId);
-  
+
   final void Function($AndroidTestClass3 wrapper, String value)
       $callbackMethod$Callback;
-      
+
   @override
   String get platformClassName => '__platformClassName__';
-  
+
   @override
   Future<dynamic> onMethodCall(MethodCall call) async {
     switch (call.method) {
-      case 'TestClass1#callbackMethod':
+      %%CALLBACKS%%
+      %%CALLBACK%%      
+      case '__wrapperName__#__methodName__':
         $callbackMethod$Callback(
-          $AndroidTestClass3(call.arguments['wrapper']),
-          call.arguments['supported'],
+          %%CALLBACKCHANNELPARAMS%%
+          %%CALLBACKCHANNELPARAM methodChannel:wrapper%%
+          $__className__(call.arguments['__parameterName__']),
+          %%CALLBACKCHANNELPARAM methodChannel:wrapper%%
+          %%CALLBACKCHANNELPARAM methodChannel:supported%%
+          call.arguments['__parameterName__'],
+          %%CALLBACKCHANNELPARAM methodChannel:supported%%
+          %%CALLBACKCHANNELPARAMS%%
         );
         break;
+      %%CALLBACK%%
+      %%CALLBACKS%%
     }
   }
 

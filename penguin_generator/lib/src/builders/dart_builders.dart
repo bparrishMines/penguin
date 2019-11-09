@@ -1,6 +1,7 @@
 import 'package:dart_style/dart_style.dart';
 import 'package:penguin/penguin.dart';
 import 'package:penguin_generator/src/info.dart';
+import 'package:penguin_generator/src/templates/templates.dart';
 
 import '../templates/template_creator.dart';
 import 'platform_builder.dart';
@@ -41,6 +42,32 @@ class DartMethodChannelBuilder extends PlatformBuilder {
                   typeParameters: classInfo.typeParameters.map<String>(
                     (TypeInfo info) => info.name,
                   ),
+                  callbacks: classInfo.methods
+                      .where(
+                        (MethodInfo methodInfo) => methodInfo.method.callback,
+                      )
+                      .map<String>(
+                        (MethodInfo methodInfo) => creator.createCallback(
+                          methodName: methodInfo.name,
+                          wrapperName:
+                              (classInfo.aClass.platform as AndroidPlatform)
+                                  .type
+                                  .names
+                                  .join(),
+                          callbackChannelParams:
+                              methodInfo.parameters.map<String>(
+                            (ParameterInfo parameterInfo) =>
+                                creator.createCallbackChannelParam(
+                              getChannelType(parameterInfo.type),
+                              className: getChannelType(parameterInfo.type) ==
+                                      MethodChannelType.wrapper
+                                  ? parameterInfo.type.name
+                                  : null,
+                              parameterName: parameterInfo.name,
+                            ),
+                          ),
+                        ),
+                      ),
                   constructors: classInfo.constructors.map<String>(
                     (ConstructorInfo constructorInfo) =>
                         creator.createConstructor(
@@ -145,6 +172,32 @@ class DartMethodChannelBuilder extends PlatformBuilder {
                   typeParameters: classInfo.typeParameters.map<String>(
                     (TypeInfo info) => info.name,
                   ),
+                  callbacks: classInfo.methods
+                      .where(
+                        (MethodInfo methodInfo) => methodInfo.method.callback,
+                      )
+                      .map<String>(
+                        (MethodInfo methodInfo) => creator.createCallback(
+                          methodName: methodInfo.name,
+                          wrapperName:
+                              (classInfo.aClass.platform as AndroidPlatform)
+                                  .type
+                                  .names
+                                  .join(),
+                          callbackChannelParams:
+                              methodInfo.parameters.map<String>(
+                            (ParameterInfo parameterInfo) =>
+                                creator.createCallbackChannelParam(
+                              getChannelType(parameterInfo.type),
+                              className: getChannelType(parameterInfo.type) ==
+                                      MethodChannelType.wrapper
+                                  ? parameterInfo.type.name
+                                  : null,
+                              parameterName: parameterInfo.name,
+                            ),
+                          ),
+                        ),
+                      ),
                   constructors: classInfo.constructors.map<String>(
                     (ConstructorInfo constructorInfo) =>
                         creator.createConstructor(
