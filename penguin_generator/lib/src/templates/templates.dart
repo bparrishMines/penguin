@@ -350,10 +350,28 @@ import 'package:flutter/services.dart';
 %%CLASSES%%
 %%CLASS%%
 class $__className____typeParameters__ extends Wrapper {
-  $__className__(String uniqueId, {this.$callbackMethod$Callback}) : super(uniqueId);
+  $__className__(String uniqueId, 
+  %%CALLBACKINITIALIZERS%%
+  %%CALLBACKINITIALIZER%%
+  this.$__methodName__$Callback,
+  %%CALLBACKINITIALIZER%%
+  %%CALLBACKINITIALIZERS%%
+  ) : super(uniqueId);
 
-  final void Function($AndroidTestClass3 wrapper, String value)
-      $callbackMethod$Callback;
+  %%CALLBACKVARIABLES%%
+  %%CALLBACKVARIABLE%%
+  final void Function(
+    %%CALLBACKVARIABLEPARAMS%%
+    %%CALLBACKVARIABLEPARAM methodChannel:wrapper%%
+    $__parameterType__ __parameterName__,
+    %%CALLBACKVARIABLEPARAM methodChannel:wrapper%%
+    %%CALLBACKVARIABLEPARAM methodChannel:supported%%
+    __parameterType__ __parameterName__,
+    %%CALLBACKVARIABLEPARAM methodChannel:supported%%
+    %%CALLBACKVARIABLEPARAMS%%
+  ) $__methodName__$Callback;
+  %%CALLBACKVARIABLE%%
+  %%CALLBACKVARIABLES%%
 
   @override
   String get platformClassName => '__platformClassName__';
@@ -1227,6 +1245,25 @@ class MethodChannelBlock extends Block {
 
   static MethodChannelBlock callbackChannelParams() =>
       MethodChannelBlock('CALLBACKCHANNELPARAMS');
+
+  static MethodChannelBlock callbackVariable() =>
+      MethodChannelBlock('CALLBACKVARIABLE');
+
+  static MethodChannelBlock callbackVariables() =>
+      MethodChannelBlock('CALLBACKVARIABLES');
+
+  static MethodChannelBlock callbackInitializers() =>
+      MethodChannelBlock('CALLBACKINITIALIZERS');
+
+  static MethodChannelBlock callbackInitializer() =>
+      MethodChannelBlock('CALLBACKINITIALIZER');
+
+  static MethodChannelBlock callbackVariableParam(
+          MethodChannelType methodChannel) =>
+      MethodChannelBlock('CALLBACKVARIABLEPARAM', methodChannel: methodChannel);
+
+  static MethodChannelBlock callbackVariableParams() =>
+      MethodChannelBlock('CALLBACKVARIABLEPARAMS');
 }
 
 class Replacement {

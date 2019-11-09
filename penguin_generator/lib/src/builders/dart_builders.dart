@@ -39,6 +39,35 @@ class DartMethodChannelBuilder extends PlatformBuilder {
                   classInfo.aClass.platform is AndroidPlatform)
               .map<String>(
                 (ClassInfo classInfo) => creator.createClass(
+                  callbackInitializers: classInfo.methods
+                      .where(
+                        (MethodInfo methodInfo) => methodInfo.method.callback,
+                      )
+                      .map<String>(
+                        (MethodInfo methodInfo) =>
+                            creator.createCallbackInitializer(
+                          methodName: methodInfo.name,
+                        ),
+                      ),
+                  callbackVariables: classInfo.methods
+                      .where(
+                        (MethodInfo methodInfo) => methodInfo.method.callback,
+                      )
+                      .map<String>(
+                        (MethodInfo methodInfo) =>
+                            creator.createCallbackVariable(
+                          methodName: methodInfo.name,
+                          callbackVariableParams:
+                              methodInfo.parameters.map<String>(
+                            (ParameterInfo parameterInfo) =>
+                                creator.createCallbackVariableParam(
+                              getChannelType(parameterInfo.type),
+                              parameterType: parameterInfo.type.name,
+                              parameterName: parameterInfo.name,
+                            ),
+                          ),
+                        ),
+                      ),
                   typeParameters: classInfo.typeParameters.map<String>(
                     (TypeInfo info) => info.name,
                   ),
@@ -169,6 +198,35 @@ class DartMethodChannelBuilder extends PlatformBuilder {
                   classInfo.aClass.platform is IosPlatform)
               .map<String>(
                 (ClassInfo classInfo) => creator.createClass(
+                  callbackInitializers: classInfo.methods
+                      .where(
+                        (MethodInfo methodInfo) => methodInfo.method.callback,
+                      )
+                      .map<String>(
+                        (MethodInfo methodInfo) =>
+                            creator.createCallbackInitializer(
+                          methodName: methodInfo.name,
+                        ),
+                      ),
+                  callbackVariables: classInfo.methods
+                      .where(
+                        (MethodInfo methodInfo) => methodInfo.method.callback,
+                      )
+                      .map<String>(
+                        (MethodInfo methodInfo) =>
+                            creator.createCallbackVariable(
+                          methodName: methodInfo.name,
+                          callbackVariableParams:
+                              methodInfo.parameters.map<String>(
+                            (ParameterInfo parameterInfo) =>
+                                creator.createCallbackVariableParam(
+                              getChannelType(parameterInfo.type),
+                              parameterType: parameterInfo.type.name,
+                              parameterName: parameterInfo.name,
+                            ),
+                          ),
+                        ),
+                      ),
                   typeParameters: classInfo.typeParameters.map<String>(
                     (TypeInfo info) => info.name,
                   ),
