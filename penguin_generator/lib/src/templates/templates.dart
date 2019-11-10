@@ -360,7 +360,7 @@ class $__className____typeParameters__ extends Wrapper {
 
   %%CALLBACKVARIABLES%%
   %%CALLBACKVARIABLE%%
-  final void Function(
+  final List<MethodCall> Function(
     %%CALLBACKVARIABLEPARAMS%%
     %%CALLBACKVARIABLEPARAM methodChannel:wrapper%%
     $__parameterType__ __parameterName__,
@@ -377,12 +377,12 @@ class $__className____typeParameters__ extends Wrapper {
   String get platformClassName => '__platformClassName__';
 
   @override
-  Future<dynamic> onMethodCall(MethodCall call) async {
+  List<MethodCall> onMethodCall(MethodCall call) {
     switch (call.method) {
       %%CALLBACKS%%
       %%CALLBACK%%      
       case '__wrapperName__#__methodName__':
-        $callbackMethod$Callback(
+        return $callbackMethod$Callback(
           %%CALLBACKCHANNELPARAMS%%
           %%CALLBACKCHANNELPARAM methodChannel:wrapper%%
           $__className__(call.arguments['__parameterName__']),
@@ -396,6 +396,7 @@ class $__className____typeParameters__ extends Wrapper {
       %%CALLBACK%%
       %%CALLBACKS%%
     }
+    return null;
   }
 
   %%CONSTRUCTORS%%
@@ -528,8 +529,18 @@ class $__className____typeParameters__ extends Wrapper {
 
 class CallbackHandler {
   CallbackHandler() {
-    _methodCallHandler = (MethodCall call) {
-      return _wrappers[call.arguments[r'$uniqueId']].onMethodCall(call);
+    _methodCallHandler = (MethodCall call) async {
+      final List<MethodCall> result =
+          _wrappers[call.arguments[r'$uniqueId']].onMethodCall(call);
+      if (result == null) return null;
+      return result
+          .map<Map<String, dynamic>>(
+            (MethodCall methodCall) => <String, dynamic>{
+              'method': methodCall.method,
+              'arguments': methodCall.arguments,
+            },
+          )
+          .toList();
     };
   }
 
@@ -551,18 +562,18 @@ abstract class Wrapper {
   final String uniqueId;
   
   String get platformClassName;
-  Future<dynamic> onMethodCall(MethodCall call);
+  List<MethodCall> onMethodCall(MethodCall call);
 
   MethodCall allocate() {
     return MethodCall(
-      '${platformClassName}#allocate',
+      '$platformClassName#allocate',
       <String, String>{r'$uniqueId': uniqueId},
     );
   }
 
   MethodCall deallocate() {
     return MethodCall(
-      '${platformClassName}#deallocate',
+      '$platformClassName#deallocate',
       <String, String>{r'$uniqueId': uniqueId},
     );
   }
@@ -872,7 +883,7 @@ public class ChannelGenerated implements MethodCallHandler {
               %%CALLBACKCHANNELPARAMS%%
               %%CALLBACKCHANNELPARAM methodChannel:wrapper%%
               final String $__parameterName__Id = UUID.randomUUID().toString();
-              $channelGenerated.addAllocatedWrapper($__parameterName__Id, new __wrapperName__Wrapper($channelGenerated, $__parameterName__Id, __parameterName__));
+              new __wrapperName__Wrapper($channelGenerated, $__parameterName__Id, __parameterName__);
               $arguments.put("__parameterName__", $__parameterName__Id);
               %%CALLBACKCHANNELPARAM methodChannel:wrapper%%
               %%CALLBACKCHANNELPARAM methodChannel:supported%%
@@ -880,7 +891,24 @@ public class ChannelGenerated implements MethodCallHandler {
               %%CALLBACKCHANNELPARAM methodChannel:supported%%
               %%CALLBACKCHANNELPARAMS%%
               
-              $channelGenerated.callbackChannel.invokeMethod("__wrapperName__#callbackMethod", $arguments);
+              $channelGenerated.callbackChannel.invokeMethod("__wrapperName__#callbackMethod", $arguments, new Result() {
+                @Override
+                public void success(Object result) {
+                  if (result != null && result != this) {
+                    $channelGenerated.onMethodCall(new MethodCall("MultiInvoke", null), this);
+                  }
+                }
+
+                @Override
+                public void error(String errorCode, String errorMessage, Object errorDetails) {
+                  throw new RuntimeException(errorCode + errorMessage);
+                }
+
+                @Override
+                public void notImplemented() {
+                  // Do nothing
+                }
+              });  
             }
             %%CALLBACK%%
             %%CALLBACKS%%

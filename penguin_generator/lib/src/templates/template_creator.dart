@@ -172,7 +172,7 @@ class MethodChannelTemplateCreator extends TemplateCreator {
   }
 
   String createFieldSetterParam(MethodChannelType channelType,
-      {String fieldName}) {
+      {String fieldName,}) {
     return _replace(
       MethodChannelBlock.fieldSetterParam(channelType)
           .exp

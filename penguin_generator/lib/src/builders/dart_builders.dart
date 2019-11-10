@@ -176,7 +176,7 @@ class DartMethodChannelBuilder extends PlatformBuilder {
                       (classInfo.aClass.platform as AndroidPlatform)
                           .type
                           .names
-                          .join('.'),
+                          .join(),
                 ),
               ),
         ),

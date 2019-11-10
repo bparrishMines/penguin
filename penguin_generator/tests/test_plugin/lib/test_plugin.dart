@@ -83,6 +83,7 @@ class AndroidTestClass1 {
       $callbackMethod$Callback:
           (a.$AndroidTestClass3 wrapper, String supported) {
         callbackMethod(AndroidTestClass3(), supported);
+        return <MethodCall>[wrapper.allocate()];
       },
     );
   }
@@ -97,6 +98,7 @@ class AndroidTestClass1 {
         assert(wrapper != null);
         assert(wrapper.uniqueId != null);
         callbackMethod(AndroidTestClass3(), supported);
+        return <MethodCall>[wrapper.allocate()];
       },
     );
   }
@@ -199,7 +201,8 @@ class AndroidTestClass1 {
       );
 
   @Method(callback: true)
-  Future<void> callbackMethod(AndroidTestClass3 wrapper, String supported) {
+  Future<void> callbackMethod(
+      AndroidTestClass3 wrapper, String supported) async {
     print(supported);
     callbackHandler.removeWrapper(_testClass);
   }
