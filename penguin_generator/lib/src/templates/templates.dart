@@ -888,7 +888,7 @@ public class ChannelGenerated implements MethodCallHandler {
               %%CALLBACKCHANNELPARAMS%%
               %%CALLBACKCHANNELPARAM methodChannel:wrapper%%
               final String $__parameterName__Id = UUID.randomUUID().toString();
-              $channelGenerated.addAllocatedWrapper($wrapperId, new __wrapperName__Wrapper($channelGenerated, $__parameterName__Id, __parameterName__));
+              $channelGenerated.addAllocatedWrapper($__parameterName__Id, new __wrapperName__Wrapper($channelGenerated, $__parameterName__Id, __parameterName__));
               $arguments.put("__parameterName__", $__parameterName__Id);
               %%CALLBACKCHANNELPARAM methodChannel:wrapper%%
               %%CALLBACKCHANNELPARAM methodChannel:supported%%
