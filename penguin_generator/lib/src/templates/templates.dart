@@ -883,7 +883,7 @@ public class ChannelGenerated implements MethodCallHandler {
               %%CALLBACKCHANNELPARAMS%%
               %%CALLBACKCHANNELPARAM methodChannel:wrapper%%
               final String $__parameterName__Id = UUID.randomUUID().toString();
-              new __wrapperName__Wrapper($channelGenerated, $__parameterName__Id, __parameterName__);
+              $channelGenerated.addAllocatedWrapper($wrapperId, new __wrapperName__Wrapper($channelGenerated, $__parameterName__Id, __parameterName__));
               $arguments.put("__parameterName__", $__parameterName__Id);
               %%CALLBACKCHANNELPARAM methodChannel:wrapper%%
               %%CALLBACKCHANNELPARAM methodChannel:supported%%
@@ -894,19 +894,21 @@ public class ChannelGenerated implements MethodCallHandler {
               $channelGenerated.callbackChannel.invokeMethod("__wrapperName__#callbackMethod", $arguments, new Result() {
                 @Override
                 public void success(Object result) {
-                  if (result != null && result != this) {
-                    $channelGenerated.onMethodCall(new MethodCall("MultiInvoke", null), this);
+                  try {
+                    $channelGenerated.onMethodCall(new MethodCall("MultiInvoke", result));
+                  } catch (Exception e) {
+                    e.printStackTrace();
                   }
                 }
 
                 @Override
                 public void error(String errorCode, String errorMessage, Object errorDetails) {
-                  throw new RuntimeException(errorCode + errorMessage);
+                  throw new RuntimeException();
                 }
 
                 @Override
                 public void notImplemented() {
-                  // Do nothing
+                  throw new RuntimeException();
                 }
               });  
             }

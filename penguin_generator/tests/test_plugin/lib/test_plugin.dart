@@ -82,8 +82,10 @@ class AndroidTestClass1 {
       _randomId(),
       $callbackMethod$Callback:
           (a.$AndroidTestClass3 wrapper, String supported) {
+        assert(wrapper != null);
+        assert(wrapper.uniqueId != null);
         callbackMethod(AndroidTestClass3(), supported);
-        return <MethodCall>[wrapper.allocate()];
+        return <MethodCall>[wrapper.deallocate()];
       },
     );
   }
@@ -98,7 +100,7 @@ class AndroidTestClass1 {
         assert(wrapper != null);
         assert(wrapper.uniqueId != null);
         callbackMethod(AndroidTestClass3(), supported);
-        return <MethodCall>[wrapper.allocate()];
+        return <MethodCall>[wrapper.deallocate()];
       },
     );
   }
