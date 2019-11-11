@@ -382,7 +382,7 @@ class $__className____typeParameters__ extends Wrapper {
       %%CALLBACKS%%
       %%CALLBACK%%      
       case '__wrapperName__#__methodName__':
-        return $callbackMethod$Callback(
+        return $__methodName__$Callback(
           %%CALLBACKCHANNELPARAMS%%
           %%CALLBACKCHANNELPARAM methodChannel:wrapper%%
           $__className__(call.arguments['__parameterName__']),
