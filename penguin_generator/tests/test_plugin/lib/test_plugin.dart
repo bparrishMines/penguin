@@ -352,7 +352,10 @@ class AndroidNestedClass {
   ),
   androidApi: AndroidApi(21),
 )
-class AndroidTestClass2 {}
+class AndroidTestClass2 {
+  @Constructor()
+  AndroidTestClass2();
+}
 
 @Class(
   AndroidPlatform(

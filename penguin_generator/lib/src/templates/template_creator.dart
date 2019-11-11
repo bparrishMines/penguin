@@ -171,8 +171,10 @@ class MethodChannelTemplateCreator extends TemplateCreator {
     );
   }
 
-  String createFieldSetterParam(MethodChannelType channelType,
-      {String fieldName,}) {
+  String createFieldSetterParam(
+    MethodChannelType channelType, {
+    String fieldName,
+  }) {
     return _replace(
       MethodChannelBlock.fieldSetterParam(channelType)
           .exp
@@ -426,6 +428,7 @@ class AndroidTemplateCreator extends TemplateCreator {
     ClassMemberType classMember, {
     @required String wrapperName,
     String constructorName,
+    String api,
     String methodName,
     String fieldName,
   }) {
@@ -436,6 +439,7 @@ class AndroidTemplateCreator extends TemplateCreator {
           .group(1),
       <Pattern, String>{
         Replacement.wrapperName.name: wrapperName,
+        Replacement.api.name: api != null ? api : '16',
         if (constructorName != null)
           Replacement.constructorName.name: constructorName,
         if (methodName != null) Replacement.methodName.name: methodName,
@@ -476,6 +480,12 @@ class AndroidTemplateCreator extends TemplateCreator {
         Replacement.constructorName.name: constructorName,
         Block.parameters.exp: parameters.join(','),
         Block.callbacks.exp: callbacks.join(),
+        if (callbacks.isEmpty)
+          RegExp(
+            r'{.*}',
+            multiLine: true,
+            dotAll: true,
+          ): '',
       },
     );
   }
@@ -556,7 +566,7 @@ class IosTemplateCreator extends TemplateCreator {
 
   String createStaticRedirect(
     ClassMemberType classMember, {
-    String platformClassName,
+    @required String platformClassName,
     String methodName,
     String fieldName,
   }) {

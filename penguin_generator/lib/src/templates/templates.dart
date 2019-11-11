@@ -655,6 +655,7 @@ class _Instance<T> {}
 package __package__;
 
 import android.content.Context;
+import android.os.Build;
 import android.view.View;
 import androidx.annotation.RequiresApi;
 import java.lang.reflect.Constructor;
@@ -811,7 +812,11 @@ public class ChannelGenerated implements MethodCallHandler {
       %%STATICREDIRECTS%%
       %%STATICREDIRECT classMember:constructor%%
       case "__wrapperName__(__constructorName__)": {
-          return __wrapperName__Wrapper.onStaticMethodCall(this, call);
+          if (Build.VERSION.SDK_INT >= __api__) {
+            return __wrapperName__Wrapper.onStaticMethodCall(this, call);
+          } else {
+            throw new UnsupportedOperationException("This operation requires api __api__ and above");
+          }
         }
       %%STATICREDIRECT classMember:constructor%%
       %%STATICREDIRECT classMember:method%%

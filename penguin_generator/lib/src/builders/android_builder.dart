@@ -218,11 +218,13 @@ class AndroidBuilder extends PlatformBuilder {
               (ConstructorInfo constructorInfo) => creator.createStaticRedirect(
                 ClassMemberType.constructor,
                 constructorName: constructorInfo.name,
+                api: classInfo.aClass.androidApi != null
+                    ? classInfo.aClass.androidApi.api.toString()
+                    : null,
                 wrapperName: (classInfo.aClass.platform as AndroidPlatform)
                     .type
                     .names
                     .join(),
-                methodName: '',
               ),
             ),
           ),
