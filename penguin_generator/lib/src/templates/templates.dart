@@ -791,7 +791,7 @@ public class ChannelGenerated implements MethodCallHandler {
       final Object value = onMethodCall(call);
       result.success(value);
     } catch (Exception exception) {
-      result.error(exception.getClass().getSimpleName(), exception.getMessage(), Thread.currentThread().getStackTrace());
+      result.error(exception.getClass().getSimpleName(), exception.getMessage(), android.util.Log.getStackTraceString(exception));
       exception.printStackTrace();
     } finally {
       tempWrappers.clear();
