@@ -149,6 +149,17 @@ void main() {
       test('nestedClassMethod', () {
         expect(AndroidNestedClass().nestedClassMethod(), completion(5));
       });
+
+      test('passParameters', () {
+        expect(
+          AndroidTestClass1().passParameters(
+            23,
+            AndroidTestClass3(),
+            AndroidNestedClass(),
+          ),
+          completes,
+        );
+      });
     }, skip: !Platform.isAndroid);
 
     group('ios', () {

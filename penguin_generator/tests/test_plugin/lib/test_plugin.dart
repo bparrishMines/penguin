@@ -348,6 +348,27 @@ class AndroidTestClass1 {
       [_testClass.$singleParameterMethod(value)],
     );
   }
+
+  @Method()
+  Future<void> passParameters(
+    int primitive,
+    AndroidTestClass3 wrapper,
+    AndroidNestedClass nested,
+  ) {
+    return a.invoke<void>(
+      _channel,
+      wrapper._androidTestClass3.$AndroidTestClass3$Default(),
+      <MethodCall>[
+        nested._testClass.$AndroidNestedClass$Default(),
+        _testClass.$AndroidTestClass1$Default(),
+        _testClass.$passParameters(
+          primitive,
+          wrapper._androidTestClass3,
+          nested._testClass,
+        ),
+      ],
+    );
+  }
 }
 
 @Class(AndroidPlatform(
@@ -393,7 +414,13 @@ class AndroidTestClass2 {
     AndroidType('com.example.test_plugin.test_library', <String>['TestClass3']),
   ),
 )
-class AndroidTestClass3 {}
+class AndroidTestClass3 {
+  @Constructor()
+  AndroidTestClass3();
+
+  final a.$AndroidTestClass3 _androidTestClass3 =
+      a.$AndroidTestClass3(_randomId());
+}
 
 @Class(IosPlatform(
   IosType('TestClass1', import: '"TestPlugin.h"'),

@@ -99,6 +99,10 @@ public class TestClass1 {
 
   }
 
+  public void passParameters(int primitive, TestClass3 wrapper, NestedTestClass nested) {
+    // Do nothing
+  }
+
   public enum TestEnum {
     ONE, TWO;
 
