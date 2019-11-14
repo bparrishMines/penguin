@@ -298,13 +298,12 @@ class AndroidTemplateCreator extends TemplateCreator {
 
   String createField(
     MethodChannelType channelType, {
-    bool isStatic,
-    bool isMutable,
-    String fieldType,
-    String fieldName,
-    String package,
-    String platformClassName,
-    String fieldSetter,
+    @required bool isStatic,
+    @required bool isMutable,
+    @required String fieldType,
+    @required String fieldName,
+    @required String package,
+    @required String platformClassName,
   }) {
     return _replace(
       Block.field.exp.firstMatch(template.value).group(1),

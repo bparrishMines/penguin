@@ -16,6 +16,13 @@ void main() {
 
   group('test_plugin', () {
     group('android', () {
+      group('enum', () {
+        test('enumMethod', () {
+          expect(AndroidTestEnum.ONE.enumMethod(), completion(2));
+          expect(AndroidTestEnum.ONE.enumMethod(), completion(2));
+        });
+      });
+
       test('namedConstructor', () {
         expect(
           AndroidTestClass1.namedConstructor('Amigo').constructorValue,

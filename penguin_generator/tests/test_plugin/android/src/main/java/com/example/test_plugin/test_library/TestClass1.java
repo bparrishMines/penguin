@@ -12,7 +12,7 @@ public class TestClass1 {
   public Object dynamicField = 42;
   public String stringField = "Macintosh";
   public int intField = 43;
-  public double doubleField = 44.0;
+  public final double doubleField = 44.0;
   public Number numField = 0;
   public boolean boolField = true;
   public List<Boolean> listField = Arrays.asList(true, false, true);
@@ -97,5 +97,13 @@ public class TestClass1 {
 
   public void callbackMethod(TestClass3 wrapper, String supported) {
 
+  }
+
+  public enum TestEnum {
+    ONE, TWO;
+
+    public int enumMethod() {
+      return 2;
+    }
   }
 }
