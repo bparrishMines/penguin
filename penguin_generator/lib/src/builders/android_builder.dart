@@ -86,7 +86,9 @@ class AndroidBuilder extends PlatformBuilder {
                 parameters: constructorInfo.parameters.map<String>(
                   (ParameterInfo parameterInfo) => creator.createParameter(
                     getChannelType(parameterInfo.type),
-                    parameterType: _convertType(parameterInfo.type, classes),
+                    parameterType: _convertType(parameterInfo.type, classes)
+                        .split('.')
+                        .join(),
                     parameterName: parameterInfo.name,
                   ),
                 ),
@@ -118,7 +120,7 @@ class AndroidBuilder extends PlatformBuilder {
                             parameterType: _convertType(
                               parameterInfo.type,
                               classes,
-                            ),
+                            ).split('.').join(),
                           ),
                         ),
                         callbackChannelParams:
@@ -152,7 +154,8 @@ class AndroidBuilder extends PlatformBuilder {
                   (ParameterInfo parameterInfo) => creator.createParameter(
                     getChannelType(parameterInfo.type),
                     parameterType: _convertType(parameterInfo.type, classes)
-                        .splitMapJoin('.'),
+                        .split('.')
+                        .join(),
                     parameterName: parameterInfo.name,
                   ),
                 ),
@@ -166,7 +169,7 @@ class AndroidBuilder extends PlatformBuilder {
                 isStatic: fieldInfo.isStatic,
                 isMutable: fieldInfo.isMutable,
                 fieldType:
-                    _convertType(fieldInfo.type, classes).splitMapJoin('.'),
+                    _convertType(fieldInfo.type, classes).split('.').join(),
                 fieldName: fieldInfo.name,
                 package: _androidPackage,
                 platformClassName:
