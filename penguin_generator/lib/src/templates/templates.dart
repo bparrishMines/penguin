@@ -552,8 +552,9 @@ class CallbackHandler {
 
   void addWrapper(Wrapper wrapper) => _wrappers[wrapper.uniqueId] = wrapper;
 
-  Wrapper removeWrapper(Wrapper wrapper) =>
-      _wrappers.remove(wrapper.uniqueId);
+  Wrapper removeWrapper(Wrapper wrapper) => _wrappers.remove(wrapper.uniqueId);
+
+  void clearAll() => _wrappers.clear();
 }
 
 abstract class Wrapper {
