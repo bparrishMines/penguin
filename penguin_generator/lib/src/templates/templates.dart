@@ -350,7 +350,7 @@ import 'package:flutter/services.dart';
 %%CLASSES%%
 %%CLASS%%
 class $__className____typeParameters__ extends Wrapper {
-  $__className__(String uniqueId, 
+  const $__className__(String uniqueId, 
   %%CALLBACKINITIALIZERS%%
   %%CALLBACKINITIALIZER%%
   this.$__methodName__$Callback,
@@ -558,7 +558,7 @@ class CallbackHandler {
 }
 
 abstract class Wrapper {
-  Wrapper(this.uniqueId);
+  const Wrapper(this.uniqueId);
 
   final String uniqueId;
   
