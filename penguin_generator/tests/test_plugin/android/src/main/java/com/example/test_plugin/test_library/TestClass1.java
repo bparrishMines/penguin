@@ -99,7 +99,7 @@ public class TestClass1 {
 
   }
 
-  public void passParameters(int primitive, TestClass3 wrapper, NestedTestClass nested) {
+  public void passParameters(int primitive, TestClass3 wrapper, NestedTestClass nested, AbstractTestClass abstractClass) {
     // Do nothing
   }
 

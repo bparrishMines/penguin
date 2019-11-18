@@ -86,8 +86,7 @@ class AndroidBuilder extends PlatformBuilder {
                 parameters: constructorInfo.parameters.map<String>(
                   (ParameterInfo parameterInfo) => creator.createParameter(
                     getChannelType(parameterInfo.type),
-                    parameterType: _convertType(parameterInfo.type, classes)
-                        .replaceAll('.', ''),
+                    parameterType: _convertType(parameterInfo.type, classes),
                     parameterName: parameterInfo.name,
                   ),
                 ),
@@ -152,8 +151,7 @@ class AndroidBuilder extends PlatformBuilder {
                 parameters: methodInfo.parameters.map<String>(
                   (ParameterInfo parameterInfo) => creator.createParameter(
                     getChannelType(parameterInfo.type),
-                    parameterType: _convertType(parameterInfo.type, classes)
-                        .replaceAll('.', ''),
+                    parameterType: _convertType(parameterInfo.type, classes),
                     parameterName: parameterInfo.name,
                   ),
                 ),
@@ -166,8 +164,7 @@ class AndroidBuilder extends PlatformBuilder {
                 getChannelType(fieldInfo.type),
                 isStatic: fieldInfo.isStatic,
                 isMutable: fieldInfo.isMutable,
-                fieldType:
-                    _convertType(fieldInfo.type, classes).replaceAll('.', ''),
+                fieldType: _convertType(fieldInfo.type, classes),
                 fieldName: fieldInfo.name,
                 package: _androidPackage,
                 platformClassName:

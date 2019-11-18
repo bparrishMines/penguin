@@ -867,7 +867,7 @@ public class ChannelGenerated implements MethodCallHandler {
           call.argument("__parameterName__") != null ? (__parameterType__) call.argument("__parameterName__") : null
           %%PARAMETER methodChannel:supported%%
           %%PARAMETER methodChannel:wrapper%%
-          call.argument("__parameterName__") != null ? ((__parameterType__Wrapper) $channelGenerated.getWrapper((String) call.argument("__parameterName__"))).$value : null
+          call.argument("__parameterName__") != null ? (__parameterType__) $channelGenerated.getWrapper((String) call.argument("__parameterName__")).$getValue() : null
           %%PARAMETER methodChannel:wrapper%%
           %%PARAMETER methodChannel:typeParameter%%
           call.argument("__parameterName__") != null && call.argument("__parameterName__") instanceof String && call.$channelGenerated.getWrapper((String) call.argument("__parameterName__")) != null ? $channelGenerated.getWrapper((String) call.argument("__parameterName__")).$getValue() : call.argument("__parameterName__") 
@@ -995,7 +995,7 @@ public class ChannelGenerated implements MethodCallHandler {
         call.argument("__fieldName__") != null ? (__fieldType__) call.argument("__fieldName__") : null;
         %%FIELDSETTER methodChannel:supported%%
         %%FIELDSETTER methodChannel:wrapper%%
-        call.argument("__fieldName__") != null ? ((__fieldType__Wrapper) $channelGenerated.getWrapper((String) call.argument("__fieldName__"))).$value : null;
+        call.argument("__fieldName__") != null ? (__fieldType__) $channelGenerated.getWrapper((String) call.argument("__fieldName__")).$getValue() : null;
         %%FIELDSETTER methodChannel:wrapper%%
         %%FIELDSETTER methodChannel:typeParameter%%
         call.argument("__fieldName__") != null && call.argument("__fieldName__") instanceof String && $channelGenerated.getWrapper((String) call.argument("__fieldName__")) != null ? $channelGenerated.getWrapper((String) call.argument("__fieldName__")).$getValue() : call.argument("__fieldName__");
@@ -1077,7 +1077,7 @@ public class ChannelGenerated implements MethodCallHandler {
       call.argument("__parameterName__") != null ? (__parameterType__) call.argument("__parameterName__") : null
       %%PARAMETER methodChannel:supported%%
       %%PARAMETER methodChannel:wrapper%%
-      call.argument("__parameterName__") != null ? ((__parameterType__Wrapper) $channelGenerated.getWrapper((String) call.argument("__parameterName__"))).$value : null
+      call.argument("__parameterName__") != null ? (__parameterType__) $channelGenerated.getWrapper((String) call.argument("__parameterName__")).$getValue() : null
       %%PARAMETER methodChannel:wrapper%%
       %%PARAMETER methodChannel:typeParameter%%
       call.argument("__parameterName__") != null && call.argument("__parameterName__") instanceof String && call.$channelGenerated.getWrapper((String) call.argument("__parameterName__")) != null ? $channelGenerated.getWrapper((String) call.argument("__parameterName__")).$getValue() : call.argument("__parameterName__") 

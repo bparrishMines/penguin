@@ -16,6 +16,16 @@ String _randomId() => Random().nextDouble().toString();
 @Class(
   AndroidPlatform(
     AndroidType(
+      'com.example.test_plugin.test_library',
+      <String>['AbstractTestClass'],
+    ),
+  ),
+)
+class AndroidAbstractClass {}
+
+@Class(
+  AndroidPlatform(
+    AndroidType(
       'com.example.test_plugin.test_library.TestClass1',
       <String>['TestEnum'],
     ),
@@ -354,17 +364,24 @@ class AndroidTestClass1 {
     int primitive,
     AndroidTestClass3 wrapper,
     AndroidNestedClass nested,
+    AndroidAbstractClass abstractClass,
   ) {
     return a.invoke<void>(
       _channel,
       wrapper._androidTestClass3.$AndroidTestClass3$Default(),
       <MethodCall>[
+        (abstractClass as AndroidTestClass3)
+            ._androidTestClass3
+            .$AndroidTestClass3$Default(),
         nested._testClass.$AndroidNestedClass$Default(),
         _testClass.$AndroidTestClass1$Default(),
         _testClass.$passParameters(
           primitive,
           wrapper._androidTestClass3,
           nested._testClass,
+          a.$AndroidAbstractClass(
+            (abstractClass as AndroidTestClass3)._androidTestClass3.uniqueId,
+          ),
         ),
       ],
     );
@@ -414,7 +431,7 @@ class AndroidTestClass2 {
     AndroidType('com.example.test_plugin.test_library', <String>['TestClass3']),
   ),
 )
-class AndroidTestClass3 {
+class AndroidTestClass3 extends AndroidAbstractClass {
   @Constructor()
   AndroidTestClass3();
 

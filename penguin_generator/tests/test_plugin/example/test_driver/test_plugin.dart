@@ -156,6 +156,7 @@ void main() {
             23,
             AndroidTestClass3(),
             AndroidNestedClass(),
+            AndroidTestClass3(),
           ),
           completes,
         );
