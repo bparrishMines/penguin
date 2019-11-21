@@ -42,17 +42,6 @@ class AndroidBuilder extends PlatformBuilder {
           (ClassInfo classInfo) => creator.createClass(
             api: classInfo.aClass.androidApi?.api?.toString(),
             staticMethodCalls: <String>[
-              ...classInfo.constructors.map<String>(
-                (ConstructorInfo constructorInfo) =>
-                    creator.createStaticMethodCall(
-                  ClassMemberType.constructor,
-                  wrapperName: (classInfo.aClass.platform as AndroidPlatform)
-                      .type
-                      .names
-                      .join(),
-                  constructorName: constructorInfo.name,
-                ),
-              ),
               ...classInfo.methods
                   .where((MethodInfo methodInfo) => methodInfo.isStatic)
                   .map<String>(

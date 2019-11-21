@@ -12,14 +12,13 @@ public class TestPlugin {
     channel.setMethodCallHandler(channelGenerated);
 
     final ChannelGenerated.ActivityWrapper activityWrapper = new ChannelGenerated.ActivityWrapper(
-        channelGenerated,
+        channelGenerated.wrapperManager,
         "activity",
         registrar.activity());
-    channelGenerated.addAllocatedWrapper("activity", activityWrapper);
+
+    channelGenerated.wrapperManager.addAllocatedWrapper(activityWrapper);
     registrar
         .platformViewRegistry()
-        .registerViewFactory(
-            "test_plugin/view",
-            channelGenerated.getPlatformViewFactory());
+        .registerViewFactory("test_plugin/view", channelGenerated.viewFactory);
   }
 }
