@@ -112,10 +112,10 @@ class Template {
 
 %%CLASSES%%
 %%CLASS%%
-@interface __platformClassName__Wrapper : Wrapper
+@interface $__platformClassName__ : Wrapper
 @property __platformClassName__ *$value;
 @end
-@implementation __platformClassName__Wrapper
+@implementation $__platformClassName__
 - (instancetype _Nonnull)initWithHandler:(ChannelHandler *_Nonnull)handler
                                 uniqueId:(NSString *_Nonnull)uniqueId
                                 value:(__platformClassName__ *_Nonnull)value {
@@ -144,18 +144,18 @@ class Template {
   %%STATICMETHODCALLS%%
   %%STATICMETHODCALL classMember:constructor%%
   if ([@"__platformClassName__()" isEqualToString:call.method]) {
-    [[__platformClassName__Wrapper alloc] initWithHandler:handler uniqueId:call.arguments[@"$uniqueId"]];
+    [[$__platformClassName__ alloc] initWithHandler:handler uniqueId:call.arguments[@"$uniqueId"]];
     return [NSNull null];
   }
   %%STATICMETHODCALL classMember:constructor%%
   %%STATICMETHODCALL classMember:method%%
   if ([@"__platformClassName__#__methodName__" isEqualToString:call.method]) {
-    return [__platformClassName__Wrapper __methodName__:handler call:call];
+    return [$__platformClassName__ __methodName__:handler call:call];
   }
   %%STATICMETHODCALL classMember:method%%
   %%STATICMETHODCALL classMember:field%%
   if ([@"__platformClassName__.__fieldName__" isEqualToString:call.method]) {
-    return [__platformClassName__Wrapper __fieldName__:handler call:call];
+    return [$__platformClassName__ __fieldName__:handler call:call];
   }
   %%STATICMETHODCALL classMember:field%%
   %%STATICMETHODCALLS%%
@@ -315,17 +315,17 @@ class Template {
   %%STATICREDIRECTS%%
   %%STATICREDIRECT classMember:constructor%%
   else if ([@"__platformClassName__()" isEqualToString:call.method]) {
-    return [__platformClassName__Wrapper handleStaticMethodCall:self call:call];
+    return [$__platformClassName__ handleStaticMethodCall:self call:call];
   }
   %%STATICREDIRECT classMember:constructor%%
   %%STATICREDIRECT classMember:method%%
   else if ([@"__platformClassName__#__methodName__" isEqualToString:call.method]) {
-    return [__platformClassName__Wrapper handleStaticMethodCall:self call:call];
+    return [$__platformClassName__ handleStaticMethodCall:self call:call];
   }
   %%STATICREDIRECT classMember:method%%
   %%STATICREDIRECT classMember:field%%
   else if ([@"__platformClassName__.__fieldName__" isEqualToString:call.method]) {
-    return [__platformClassName__Wrapper handleStaticMethodCall:self call:call];
+    return [$__platformClassName__ handleStaticMethodCall:self call:call];
   }
   %%STATICREDIRECT classMember:field%%
   %%STATICREDIRECTS%%
