@@ -9,7 +9,7 @@ public class TestPlugin {
   public static void registerWith(Registrar registrar) {
     final MethodChannel channel = new MethodChannel(registrar.messenger(), "test_plugin");
     final ChannelGenerated channelGenerated = new ChannelGenerated(channel);
-    channel.setMethodCallHandler(channelGenerated);
+    channel.setMethodCallHandler(channelGenerated.methodCallHandler);
 
     final ChannelGenerated.ActivityWrapper activityWrapper = new ChannelGenerated.ActivityWrapper(
         channelGenerated.wrapperManager,

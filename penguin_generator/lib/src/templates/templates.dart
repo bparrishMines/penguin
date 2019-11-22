@@ -678,9 +678,17 @@ import __classPackage__.__platformClassName__;
 %%IMPORT%%
 %%IMPORTS%%
 
-public class ChannelGenerated implements MethodCallHandler {
-  private class $ViewFactoryGenerated extends PlatformViewFactory {
-    $ViewFactoryGenerated() {
+public class ChannelGenerated {
+  public final PlatformViewFactory viewFactory = new ViewFactoryImpl();
+  public final WrapperManager wrapperManager = new WrapperManager();
+  public final MethodCallHandler methodCallHandler;
+  
+  public ChannelGenerated(MethodChannel callbackChannel) {
+    methodCallHandler = new MethodCallHandlerImpl(callbackChannel);
+  }
+  
+  private class ViewFactoryImpl extends PlatformViewFactory {
+    ViewFactoryImpl() {
       super(StandardMessageCodec.INSTANCE);
     }
 
@@ -693,11 +701,76 @@ public class ChannelGenerated implements MethodCallHandler {
       }
     }
   }
+  
+  private class MethodCallHandlerImpl implements MethodCallHandler {
+    private final MethodChannel callbackChannel;
 
-  public static abstract class FlutterWrapper implements PlatformView {
+    private MethodCallHandlerImpl(MethodChannel callbackChannel) {
+      this.callbackChannel = callbackChannel;
+    }
+    
+    @Override
+    public void onMethodCall(MethodCall call, Result result) {
+      try {
+        final Object value = onMethodCall(call);
+        result.success(value);
+      } catch (Exception exception) {
+        result.error(exception.getClass().getSimpleName(), exception.getMessage(), android.util.Log.getStackTraceString(exception));
+      } finally {
+        wrapperManager.clearTemporaryWrappers();
+      }
+    }
+  
+    private Object onMethodCall(MethodCall call) throws Exception {
+      switch(call.method) {
+        case "MultiInvoke":
+          final ArrayList<HashMap<String, Object>> allMethodCallData = (ArrayList<HashMap<String, Object>>) call.arguments;
+          final ArrayList<Object> resultData = new ArrayList<>(allMethodCallData.size());
+          for(HashMap<String, Object> methodCallData : allMethodCallData) {
+            final String method = (String) methodCallData.get("method");
+            final HashMap<String, Object> arguments = (HashMap<String, Object>) methodCallData.get("arguments");
+            final MethodCall methodCall = new MethodCall(method, arguments);
+            resultData.add(onMethodCall(methodCall));
+          }
+          return resultData;
+        %%STATICREDIRECTS%%
+        %%STATICREDIRECT classMember:constructor%%
+        case "__wrapperName__(__constructorName__)": {
+            if (Build.VERSION.SDK_INT >= __api__) {
+              new __wrapperName__Wrapper(this, wrapperManager, callbackChannel, call);
+              return null;
+            } else {
+              throw new UnsupportedOperationException("This operation requires api __api__ and above");
+            }
+          }
+        %%STATICREDIRECT classMember:constructor%%
+        %%STATICREDIRECT classMember:method%%
+        case "__wrapperName__#__methodName__": {
+            return __wrapperName__Wrapper.onStaticMethodCall(wrapperManager, call);
+          }
+        %%STATICREDIRECT classMember:method%%
+        %%STATICREDIRECT classMember:field%%
+        case "__wrapperName__.__fieldName__": {
+            return __wrapperName__Wrapper.onStaticMethodCall(wrapperManager, call);
+          }
+        %%STATICREDIRECT classMember:field%%
+        %%STATICREDIRECTS%%
+        default:
+          final String $uniqueId = call.argument("$uniqueId");
+          if ($uniqueId == null) throw new NoUniqueIdException(call.method);
+  
+          final Wrapper wrapper = wrapperManager.getWrapper($uniqueId);
+          if (wrapper == null) throw new WrapperNotFoundException($uniqueId);
+  
+          return wrapper.onMethodCall(wrapperManager, call);
+      }
+    }
+  }
+
+  public static abstract class Wrapper implements PlatformView {
     final String $uniqueId;
     
-    private FlutterWrapper(String uniqueId) {
+    private Wrapper(String uniqueId) {
       this.$uniqueId = uniqueId;
     }
 
@@ -728,10 +801,10 @@ public class ChannelGenerated implements MethodCallHandler {
       // Do nothing
     }
 
-    private final HashMap<String, FlutterWrapper> allocatedWrappers = new HashMap<>();
-    private final HashMap<String, FlutterWrapper> temporaryWrappers = new HashMap<>();
+    private final HashMap<String, Wrapper> allocatedWrappers = new HashMap<>();
+    private final HashMap<String, Wrapper> temporaryWrappers = new HashMap<>();
     
-    public void addAllocatedWrapper(final FlutterWrapper wrapper) {
+    public void addAllocatedWrapper(final Wrapper wrapper) {
       addWrapper(wrapper, allocatedWrappers);
     }
 
@@ -739,12 +812,12 @@ public class ChannelGenerated implements MethodCallHandler {
       allocatedWrappers.remove(uniqueId);
     }
 
-    private void addTemporaryWrapper(final FlutterWrapper wrapper) {
+    private void addTemporaryWrapper(final Wrapper wrapper) {
       addWrapper(wrapper, temporaryWrappers);
     }
 
-    private void addWrapper(final FlutterWrapper wrapper, HashMap<String, FlutterWrapper> wrapperMap) {
-      final FlutterWrapper existingWrapper;
+    private void addWrapper(final Wrapper wrapper, HashMap<String, Wrapper> wrapperMap) {
+      final Wrapper existingWrapper;
       try {
         existingWrapper = getWrapper(wrapper.$uniqueId);
       } catch (WrapperNotFoundException exception) {
@@ -758,7 +831,7 @@ public class ChannelGenerated implements MethodCallHandler {
       }
     }
 
-    private FlutterWrapper getWrapper(String uniqueId) throws WrapperNotFoundException {
+    private Wrapper getWrapper(String uniqueId) throws WrapperNotFoundException {
       if (allocatedWrappers.containsKey(uniqueId)) return allocatedWrappers.get(uniqueId);
       if (temporaryWrappers.containsKey(uniqueId)) return temporaryWrappers.get(uniqueId);
       throw new WrapperNotFoundException(uniqueId);
@@ -783,79 +856,14 @@ public class ChannelGenerated implements MethodCallHandler {
 
   private static class WrapperNotFoundException extends Exception {
     WrapperNotFoundException(String uniqueId) {
-      super(String.format("Could not find FlutterWrapper with uniqueId %s.", uniqueId));
-    }
-  }
-
-  public final $ViewFactoryGenerated viewFactory = new $ViewFactoryGenerated();
-  public final WrapperManager wrapperManager = new WrapperManager();
-  private final MethodChannel callbackChannel;
-  
-  public ChannelGenerated(MethodChannel callbackChannel) {
-    this.callbackChannel = callbackChannel;
-  }
-
-  @Override
-  public void onMethodCall(MethodCall call, Result result) {
-    try {
-      final Object value = onMethodCall(call);
-      result.success(value);
-    } catch (Exception exception) {
-      result.error(exception.getClass().getSimpleName(), exception.getMessage(), android.util.Log.getStackTraceString(exception));
-    } finally {
-      wrapperManager.clearTemporaryWrappers();
-    }
-  }
-
-  private Object onMethodCall(MethodCall call) throws Exception {
-    switch(call.method) {
-      case "MultiInvoke":
-        final ArrayList<HashMap<String, Object>> allMethodCallData = (ArrayList<HashMap<String, Object>>) call.arguments;
-        final ArrayList<Object> resultData = new ArrayList<>(allMethodCallData.size());
-        for(HashMap<String, Object> methodCallData : allMethodCallData) {
-          final String method = (String) methodCallData.get("method");
-          final HashMap<String, Object> arguments = (HashMap<String, Object>) methodCallData.get("arguments");
-          final MethodCall methodCall = new MethodCall(method, arguments);
-          resultData.add(onMethodCall(methodCall));
-        }
-        return resultData;
-      %%STATICREDIRECTS%%
-      %%STATICREDIRECT classMember:constructor%%
-      case "__wrapperName__(__constructorName__)": {
-          if (Build.VERSION.SDK_INT >= __api__) {
-            new __wrapperName__Wrapper(this, wrapperManager, callbackChannel, call);
-            return null;
-          } else {
-            throw new UnsupportedOperationException("This operation requires api __api__ and above");
-          }
-        }
-      %%STATICREDIRECT classMember:constructor%%
-      %%STATICREDIRECT classMember:method%%
-      case "__wrapperName__#__methodName__": {
-          return __wrapperName__Wrapper.onStaticMethodCall(wrapperManager, call);
-        }
-      %%STATICREDIRECT classMember:method%%
-      %%STATICREDIRECT classMember:field%%
-      case "__wrapperName__.__fieldName__": {
-          return __wrapperName__Wrapper.onStaticMethodCall(wrapperManager, call);
-        }
-      %%STATICREDIRECT classMember:field%%
-      %%STATICREDIRECTS%%
-      default:
-        final String $uniqueId = call.argument("$uniqueId");
-        if ($uniqueId == null) throw new NoUniqueIdException(call.method);
-
-        final FlutterWrapper wrapper = wrapperManager.getWrapper($uniqueId);
-        if (wrapper == null) throw new WrapperNotFoundException($uniqueId);
-
-        return wrapper.onMethodCall(wrapperManager, call);
+      super(String.format("Could not find Wrapper with uniqueId %s.", uniqueId));
     }
   }
 
   %%CLASSES%%
   %%CLASS%%
   @RequiresApi(api = __api__)
-  public static class __wrapperName__Wrapper extends FlutterWrapper {
+  public static class __wrapperName__Wrapper extends Wrapper {
     private final __platformClassName__ $value;
 
     public __wrapperName__Wrapper(final WrapperManager wrapperManager, final String uniqueId, final __platformClassName__ value) {
@@ -864,7 +872,7 @@ public class ChannelGenerated implements MethodCallHandler {
       wrapperManager.addTemporaryWrapper(this);
     }
 
-    private __wrapperName__Wrapper(final ChannelGenerated channelGenerated, final WrapperManager wrapperManager, final MethodChannel callbackChannel, final MethodCall call) throws Exception {
+    private __wrapperName__Wrapper(final MethodCallHandlerImpl methodCallHandler, final WrapperManager wrapperManager, final MethodChannel callbackChannel, final MethodCall call) throws Exception {
       super((String) call.argument("$uniqueId"));
       switch(call.method) {
         %%CONSTRUCTORS%%
@@ -911,7 +919,7 @@ public class ChannelGenerated implements MethodCallHandler {
                 @Override
                 public void success(Object result) {
                   try {
-                    channelGenerated.onMethodCall(new MethodCall("MultiInvoke", result));
+                    methodCallHandler.onMethodCall(new MethodCall("MultiInvoke", result));
                   } catch (Exception exception) {
                     exception.printStackTrace();
                   }
