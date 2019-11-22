@@ -26,7 +26,7 @@ class Template {
 + (NSException *)exceptionWithUniqueId:(NSString *)uniqueId;
 @end
 
-@interface Wrapper : NSObject
+@interface Wrapper ()
 - (instancetype _Nonnull)initWithHandler:(ChannelHandler *_Nonnull)handler
                                 uniqueId:(NSString *_Nonnull)uniqueId;
 - (NSObject *)handleMethodCall:(FlutterMethodCall *_Nonnull)call;

@@ -9,6 +9,15 @@ class IosBuilder extends PlatformBuilder {
   static const String _headerFile = r'''
 #import <Flutter/Flutter.h>
 
+@interface Wrapper : NSObject
+@end
+
+@interface WrapperManager : NSObject
+- (void)addTempWrapper:(NSString *)uniqueId wrapper:(Wrapper *)wrapper;
+- (void)addAllocatedWrapper:(NSString *)uniqueId wrapper:(Wrapper *)wrapper;
+- (void)removeAllocatedWrapper:(NSString *)uniqueId;
+@end
+
 @interface ChannelHandler : NSObject
 - (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result;
 @end
