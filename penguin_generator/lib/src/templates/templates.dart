@@ -26,7 +26,7 @@ class Template {
 + (NSException *)exceptionWithUniqueId:(NSString *)uniqueId;
 @end
 
-@interface FlutterWrapper : NSObject
+@interface Wrapper : NSObject
 - (instancetype _Nonnull)initWithHandler:(ChannelHandler *_Nonnull)handler
                                 uniqueId:(NSString *_Nonnull)uniqueId;
 - (NSObject *)handleMethodCall:(FlutterMethodCall *_Nonnull)call;
@@ -37,16 +37,16 @@ class Template {
 @end
 
 @interface ChannelHandler ()
-@property NSMutableDictionary<NSString*, FlutterWrapper*> *allocatedWrappers;
-@property NSMutableDictionary<NSString*, FlutterWrapper*> *tempWrappers;
+@property NSMutableDictionary<NSString*, Wrapper*> *allocatedWrappers;
+@property NSMutableDictionary<NSString*, Wrapper*> *tempWrappers;
 - (void)addWrapper:(NSString *)uniqueId
-           wrapper:(FlutterWrapper *)wrapper
+           wrapper:(Wrapper *)wrapper
  wrapperDictionary:(NSMutableDictionary *)wrapperDictionary;
-- (void)addTempWrapper:(NSString *)uniqueId wrapper:(FlutterWrapper *)wrapper;
-- (void)addAllocatedWrapper:(NSString *)uniqueId wrapper:(FlutterWrapper *)wrapper;
+- (void)addTempWrapper:(NSString *)uniqueId wrapper:(Wrapper *)wrapper;
+- (void)addAllocatedWrapper:(NSString *)uniqueId wrapper:(Wrapper *)wrapper;
 - (void)removeAllocatedWrapper:(NSString *)uniqueId;
 - (BOOL)isAllocated:(NSString *)uniqueId;
-- (FlutterWrapper *)getWrapper:(NSString *)uniqueId;
+- (Wrapper *)getWrapper:(NSString *)uniqueId;
 - (NSObject *)handleMethodCall:(FlutterMethodCall *)call;
 @end
 
@@ -60,7 +60,7 @@ class Template {
 
 @implementation NoUniqueIdException
 + (NSException *)exceptionWithMethod:(NSString *)methodName {
-  return [NSException exceptionWithName:@"NotImplementedException"
+  return [NSException exceptionWithName:@"NoUniqueIdException"
                                  reason:[NSString stringWithFormat:@"MethodCall was made without a unique handle for %@.", methodName]
                                userInfo:nil];
 }
@@ -68,13 +68,13 @@ class Template {
 
 @implementation WrapperNotFoundException
 + (NSException *)exceptionWithUniqueId:(NSString *)uniqueId {
-  return [NSException exceptionWithName:@"NotImplementedException"
+  return [NSException exceptionWithName:@"WrapperNotFoundException"
       reason:[NSString stringWithFormat:@"MethodCall was made without a unique handle for %@.", uniqueId]
                                userInfo:nil];
 }
 @end
 
-@implementation FlutterWrapper {
+@implementation Wrapper {
   @public
   ChannelHandler *$handler;
   NSString *$uniqueId;
@@ -112,7 +112,7 @@ class Template {
 
 %%CLASSES%%
 %%CLASS%%
-@interface __platformClassName__Wrapper : FlutterWrapper
+@interface __platformClassName__Wrapper : Wrapper
 @property __platformClassName__ *$value;
 @end
 @implementation __platformClassName__Wrapper
@@ -250,7 +250,7 @@ class Template {
 }
 
 - (void)addWrapper:(NSString *)uniqueId
-           wrapper:(FlutterWrapper *)wrapper
+           wrapper:(Wrapper *)wrapper
  wrapperDictionary:(NSMutableDictionary *)wrapperDictionary {
   if ([wrapperDictionary objectForKey:uniqueId] != nil) {
     NSException *exception = [NSException
@@ -262,11 +262,11 @@ class Template {
   wrapperDictionary[uniqueId] = wrapper;
 }
 
-- (void)addTempWrapper:(NSString *)uniqueId wrapper:(FlutterWrapper *)wrapper {
+- (void)addTempWrapper:(NSString *)uniqueId wrapper:(Wrapper *)wrapper {
   [self addWrapper:uniqueId wrapper:wrapper wrapperDictionary:_tempWrappers];
 }
 
-- (void)addAllocatedWrapper:(NSString *)uniqueId wrapper:(FlutterWrapper *)wrapper {
+- (void)addAllocatedWrapper:(NSString *)uniqueId wrapper:(Wrapper *)wrapper {
   [self addWrapper:uniqueId wrapper:wrapper wrapperDictionary:_allocatedWrappers];
 }
 
@@ -278,8 +278,8 @@ class Template {
   return [_allocatedWrappers objectForKey:uniqueId] != nil;
 }
 
-- (FlutterWrapper *)getWrapper:(NSString *)uniqueId {
-  FlutterWrapper *wrapper = [_allocatedWrappers objectForKey:uniqueId];
+- (Wrapper *)getWrapper:(NSString *)uniqueId {
+  Wrapper *wrapper = [_allocatedWrappers objectForKey:uniqueId];
   if (wrapper != nil) return wrapper;
   return [_tempWrappers objectForKey:uniqueId];
 }
