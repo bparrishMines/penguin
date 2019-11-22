@@ -897,31 +897,35 @@ public class ChannelGenerated {
             public void __methodName__(
             %%CALLBACKPARAMS%%
             %%CALLBACKPARAM%%
-            __parameterType__ __parameterName__
+            __parameterType__ $__parameterName__
             %%CALLBACKPARAM%%
             %%CALLBACKPARAMS%%
             ) {
-              final HashMap<String, Object> $arguments = new HashMap<>();
-              $arguments.put("$uniqueId", $uniqueId);
+              final HashMap<String, Object> arguments = new HashMap<>();
+              final ArrayList<Wrapper> wrappers = new ArrayList<>();
+              arguments.put("$uniqueId", $uniqueId);
 
               %%CALLBACKCHANNELPARAMS%%
               %%CALLBACKCHANNELPARAM methodChannel:wrapper%%
-              final String $__parameterName__Id = UUID.randomUUID().toString();
-              wrapperManager.addAllocatedWrapper(new $__wrapperName__(wrapperManager, $__parameterName__Id, __parameterName__));
-              $arguments.put("__parameterName__", $__parameterName__Id);
+              final String $$__parameterName__Id = UUID.randomUUID().toString();
+              wrappers.add(new $__wrapperName__(wrapperManager, $$__parameterName__Id, $__parameterName__));
+              arguments.put("__parameterName__", $$__parameterName__Id);
               %%CALLBACKCHANNELPARAM methodChannel:wrapper%%
               %%CALLBACKCHANNELPARAM methodChannel:supported%%
-              $arguments.put("__parameterName__", __parameterName__);
+              arguments.put("__parameterName__", $__parameterName__);
               %%CALLBACKCHANNELPARAM methodChannel:supported%%
               %%CALLBACKCHANNELPARAMS%%
               
-              callbackChannel.invokeMethod("__wrapperName__#__methodName__", $arguments, new Result() {
+              callbackChannel.invokeMethod("__wrapperName__#__methodName__", arguments, new Result() {
                 @Override
                 public void success(Object result) {
                   try {
+                    for (final Wrapper wrapper : wrappers) wrapperManager.addTemporaryWrapper(wrapper);
                     methodCallHandler.onMethodCall(new MethodCall("MultiInvoke", result));
                   } catch (Exception exception) {
                     exception.printStackTrace();
+                  } finally {
+                    wrapperManager.clearTemporaryWrappers();
                   }
                 }
 

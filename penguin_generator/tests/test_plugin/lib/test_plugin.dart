@@ -125,8 +125,8 @@ class AndroidTestClass1 {
           (a.$AndroidTestClass3 wrapper, String supported) {
         assert(wrapper != null);
         assert(wrapper.uniqueId != null);
-        callbackMethod(AndroidTestClass3(), supported);
-        return <MethodCall>[wrapper.deallocate()];
+        callbackMethod(AndroidTestClass3._(wrapper), supported);
+        return <MethodCall>[wrapper.allocate(), wrapper.deallocate()];
       },
     );
   }
@@ -140,8 +140,8 @@ class AndroidTestClass1 {
           (a.$AndroidTestClass3 wrapper, String supported) {
         assert(wrapper != null);
         assert(wrapper.uniqueId != null);
-        callbackMethod(AndroidTestClass3(), supported);
-        return <MethodCall>[wrapper.deallocate()];
+        callbackMethod(AndroidTestClass3._(wrapper), supported);
+        return <MethodCall>[wrapper.allocate(), wrapper.deallocate()];
       },
     );
   }
@@ -433,10 +433,11 @@ class AndroidTestClass2 {
 )
 class AndroidTestClass3 extends AndroidAbstractClass {
   @Constructor()
-  AndroidTestClass3();
+  AndroidTestClass3() : _androidTestClass3 = a.$AndroidTestClass3(_randomId());
 
-  final a.$AndroidTestClass3 _androidTestClass3 =
-      a.$AndroidTestClass3(_randomId());
+  AndroidTestClass3._(this._androidTestClass3);
+
+  final a.$AndroidTestClass3 _androidTestClass3;
 }
 
 @Class(IosPlatform(
