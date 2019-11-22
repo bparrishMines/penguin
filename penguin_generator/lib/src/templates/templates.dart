@@ -737,7 +737,7 @@ public class ChannelGenerated {
         %%STATICREDIRECT classMember:constructor%%
         case "__wrapperName__(__constructorName__)": {
             if (Build.VERSION.SDK_INT >= __api__) {
-              new __wrapperName__Wrapper(this, wrapperManager, callbackChannel, call);
+              new $__wrapperName__(this, wrapperManager, callbackChannel, call);
               return null;
             } else {
               throw new UnsupportedOperationException("This operation requires api __api__ and above");
@@ -746,12 +746,12 @@ public class ChannelGenerated {
         %%STATICREDIRECT classMember:constructor%%
         %%STATICREDIRECT classMember:method%%
         case "__wrapperName__#__methodName__": {
-            return __wrapperName__Wrapper.onStaticMethodCall(wrapperManager, call);
+            return $__wrapperName__.onStaticMethodCall(wrapperManager, call);
           }
         %%STATICREDIRECT classMember:method%%
         %%STATICREDIRECT classMember:field%%
         case "__wrapperName__.__fieldName__": {
-            return __wrapperName__Wrapper.onStaticMethodCall(wrapperManager, call);
+            return $__wrapperName__.onStaticMethodCall(wrapperManager, call);
           }
         %%STATICREDIRECT classMember:field%%
         %%STATICREDIRECTS%%
@@ -767,7 +767,7 @@ public class ChannelGenerated {
     }
   }
 
-  public static abstract class Wrapper implements PlatformView {
+  private static abstract class Wrapper implements PlatformView {
     final String $uniqueId;
     
     private Wrapper(String uniqueId) {
@@ -797,12 +797,12 @@ public class ChannelGenerated {
   }
   
   public class WrapperManager {
+    private final HashMap<String, Wrapper> allocatedWrappers = new HashMap<>();
+    private final HashMap<String, Wrapper> temporaryWrappers = new HashMap<>();
+
     private WrapperManager() {
       // Do nothing
     }
-
-    private final HashMap<String, Wrapper> allocatedWrappers = new HashMap<>();
-    private final HashMap<String, Wrapper> temporaryWrappers = new HashMap<>();
     
     public void addAllocatedWrapper(final Wrapper wrapper) {
       addWrapper(wrapper, allocatedWrappers);
@@ -863,16 +863,16 @@ public class ChannelGenerated {
   %%CLASSES%%
   %%CLASS%%
   @RequiresApi(api = __api__)
-  public static class __wrapperName__Wrapper extends Wrapper {
+  public static class $__wrapperName__ extends Wrapper {
     private final __platformClassName__ $value;
 
-    public __wrapperName__Wrapper(final WrapperManager wrapperManager, final String uniqueId, final __platformClassName__ value) {
+    public $__wrapperName__(final WrapperManager wrapperManager, final String uniqueId, final __platformClassName__ value) {
       super(uniqueId);
       this.$value = value;
       wrapperManager.addTemporaryWrapper(this);
     }
 
-    private __wrapperName__Wrapper(final MethodCallHandlerImpl methodCallHandler, final WrapperManager wrapperManager, final MethodChannel callbackChannel, final MethodCall call) throws Exception {
+    private $__wrapperName__(final MethodCallHandlerImpl methodCallHandler, final WrapperManager wrapperManager, final MethodChannel callbackChannel, final MethodCall call) throws Exception {
       super((String) call.argument("$uniqueId"));
       switch(call.method) {
         %%CONSTRUCTORS%%
@@ -907,7 +907,7 @@ public class ChannelGenerated {
               %%CALLBACKCHANNELPARAMS%%
               %%CALLBACKCHANNELPARAM methodChannel:wrapper%%
               final String $__parameterName__Id = UUID.randomUUID().toString();
-              wrapperManager.addAllocatedWrapper(new __wrapperName__Wrapper(wrapperManager, $__parameterName__Id, __parameterName__));
+              wrapperManager.addAllocatedWrapper(new $__wrapperName__(wrapperManager, $__parameterName__Id, __parameterName__));
               $arguments.put("__parameterName__", $__parameterName__Id);
               %%CALLBACKCHANNELPARAM methodChannel:wrapper%%
               %%CALLBACKCHANNELPARAM methodChannel:supported%%
@@ -953,12 +953,12 @@ public class ChannelGenerated {
         %%STATICMETHODCALLS%%
         %%STATICMETHODCALL classMember:method%%
         case "__wrapperName__#__methodName__": {
-            return __wrapperName__Wrapper.__methodName__(wrapperManager, call);
+            return $__wrapperName__.__methodName__(wrapperManager, call);
           }
         %%STATICMETHODCALL classMember:method%%
         %%STATICMETHODCALL classMember:field%%
         case "__wrapperName__.__fieldName__": {
-            return __wrapperName__Wrapper.__fieldName__(wrapperManager, call);
+            return $__wrapperName__.__fieldName__(wrapperManager, call);
           }
         %%STATICMETHODCALL classMember:field%%
         %%STATICMETHODCALLS%%
@@ -1019,7 +1019,7 @@ public class ChannelGenerated {
       return
       %%PREFIELDACCESS methodChannel:supported%%
       %%PREFIELDACCESS methodChannel:wrapper%%
-      new __fieldType__Wrapper(wrapperManager, (String) call.argument("$newUniqueId"), 
+      new $__fieldType__(wrapperManager, (String) call.argument("$newUniqueId"), 
       %%PREFIELDACCESS methodChannel:wrapper%%
       %%PREFIELDACCESS methodChannel:typeParameter%%
       final Object result = 
