@@ -23,7 +23,7 @@
 }
 
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
-  [_handler handleMethodCall:call result:result];
+  [_handler.methodCallHandler onMethodCall:call result:result];
 }
 
 @end

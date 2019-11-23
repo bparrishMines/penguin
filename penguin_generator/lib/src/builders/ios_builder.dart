@@ -24,7 +24,6 @@ class IosBuilder extends PlatformBuilder {
 @interface ChannelHandler : NSObject
 @property WrapperManager *wrapperManager;
 @property MethodCallHandler *methodCallHandler;
-- (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result;
 @end
 ''';
 
