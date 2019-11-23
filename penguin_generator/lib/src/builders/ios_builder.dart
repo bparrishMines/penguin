@@ -13,12 +13,17 @@ class IosBuilder extends PlatformBuilder {
 @end
 
 @interface WrapperManager : NSObject
-- (void)addTemporaryWrapper:(NSString *)uniqueId wrapper:(Wrapper *)wrapper;
-- (void)addAllocatedWrapper:(NSString *)uniqueId wrapper:(Wrapper *)wrapper;
+- (void)addAllocatedWrapper:(Wrapper *)wrapper;
 - (void)removeAllocatedWrapper:(NSString *)uniqueId;
 @end
 
+@interface MethodCallHandler : NSObject
+- (void)onMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result;
+@end
+
 @interface ChannelHandler : NSObject
+@property WrapperManager *wrapperManager;
+@property MethodCallHandler *methodCallHandler;
 - (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result;
 @end
 ''';

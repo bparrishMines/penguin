@@ -37,6 +37,14 @@ class Template {
 - (void)$deallocate;
 @end
 
+@interface WrapperManager ()
+@property NSMutableDictionary<NSString*, Wrapper*> *allocatedWrappers;
+@property NSMutableDictionary<NSString*, Wrapper*> *temporaryWrappers;
+- (void)addTemporaryWrapper:(Wrapper *)wrapper;
+- (Wrapper *)getWrapper:(NSString *)uniqueId;
+- (void)clearTemporaryWrappers;
+@end
+
 @interface ChannelHandler ()
 @property NSMutableDictionary<NSString*, Wrapper*> *allocatedWrappers;
 @property NSMutableDictionary<NSString*, Wrapper*> *tempWrappers;
@@ -254,6 +262,8 @@ class Template {
 - (instancetype)init {
   self = [super init];
   if (self) {
+    _wrapperManager = [[WrapperManager alloc] init];
+    _methodCallHandler = [[MethodCallHandler alloc] init];
     _allocatedWrappers = [NSMutableDictionary dictionary];
     _tempWrappers = [NSMutableDictionary dictionary];
   }
@@ -349,6 +359,59 @@ class Template {
   }
   
   return [[self getWrapper:uniqueId] handleMethodCall:call];
+}
+@end
+
+@implementation WrapperManager
+- (instancetype)init {
+  self = [super init];
+  if (self) {
+    _allocatedWrappers = [NSMutableDictionary dictionary];
+    _temporaryWrappers = [NSMutableDictionary dictionary];
+  }
+  return self;
+}
+
+- (void)addAllocatedWrapper:(Wrapper *)wrapper {
+  [self addWrapper:wrapper wrapperDictionary:_allocatedWrappers];
+}
+
+- (void)removeAllocatedWrapper:(NSString *)uniqueId {
+  [_allocatedWrappers removeObjectForKey:uniqueId];
+}
+
+- (void)addTemporaryWrapper:(Wrapper *)wrapper {
+  [self addWrapper:wrapper wrapperDictionary:_temporaryWrappers];
+}
+
+- (void)addWrapper:(Wrapper *)wrapper wrapperDictionary:(NSMutableDictionary *)wrapperDictionary {
+  Wrapper *existingWrapper;
+  @try {
+    existingWrapper = [self getWrapper:wrapper->$uniqueId];
+  } @catch (WrapperNotFoundException *exception) {
+    [wrapperDictionary setObject:wrapper forKey:wrapper->$uniqueId];
+    return;
+  }
+  
+  if ([existingWrapper getValue] != [wrapper getValue]) {
+    @throw [NSException exceptionWithName:NSInvalidArgumentException reason:[NSString stringWithFormat:@"Object for uniqueId already exists: %@", wrapper->$uniqueId] userInfo:nil];
+  }
+}
+
+- (Wrapper *)getWrapper:(NSString *)uniqueId {
+  if ([_allocatedWrappers objectForKey:uniqueId] != nil) return [_allocatedWrappers objectForKey:uniqueId];
+  if ([_temporaryWrappers objectForKey:uniqueId] != nil) return [_temporaryWrappers objectForKey:uniqueId];
+  @throw [WrapperNotFoundException exceptionWithUniqueId:uniqueId];
+}
+
+- (void)clearTemporaryWrappers {
+  [_temporaryWrappers removeAllObjects];
+}
+@end
+
+@implementation MethodCallHandler
+- (void)onMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
+  
 }
 @end
 ''');
