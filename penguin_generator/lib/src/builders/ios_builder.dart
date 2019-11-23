@@ -13,7 +13,7 @@ class IosBuilder extends PlatformBuilder {
 @end
 
 @interface WrapperManager : NSObject
-- (void)addTempWrapper:(NSString *)uniqueId wrapper:(Wrapper *)wrapper;
+- (void)addTemporaryWrapper:(NSString *)uniqueId wrapper:(Wrapper *)wrapper;
 - (void)addAllocatedWrapper:(NSString *)uniqueId wrapper:(Wrapper *)wrapper;
 - (void)removeAllocatedWrapper:(NSString *)uniqueId;
 @end

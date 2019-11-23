@@ -645,7 +645,7 @@ class IosTemplateCreator extends TemplateCreator {
         if (!isStatic) '+': '-',
         if (!isStatic) r':(ChannelHandler *)$handler call': '',
         Replacement.methodCallerName.name:
-            isStatic ? platformClassName : r'_$value',
+            isStatic ? platformClassName : r'_value',
         Block.preMethodCalls.exp:
             MethodChannelBlock.preMethodCall(returnTypeChannelType)
                 .exp

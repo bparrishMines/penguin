@@ -32,6 +32,7 @@ class Template {
 - (NSObject *)handleMethodCall:(FlutterMethodCall *_Nonnull)call;
 + (NSObject *)handleStaticMethodCall:(ChannelHandler *_Nonnull)handler
                                 call:(FlutterMethodCall *_Nonnull)call;
+- (NSObject *)getValue;
 - (void)$allocate;
 - (void)$deallocate;
 @end
@@ -101,6 +102,11 @@ class Template {
   return [NSNull null];
 }
 
+- (NSObject *)getValue {
+  [self doesNotRecognizeSelector:_cmd];
+  return [NSNull null];
+}
+
 - (void)$allocate {
   [$handler addAllocatedWrapper:$uniqueId wrapper:self];
 }
@@ -113,15 +119,16 @@ class Template {
 %%CLASSES%%
 %%CLASS%%
 @interface $__platformClassName__ : Wrapper
-@property __platformClassName__ *$value;
+@property __platformClassName__ *value;
 @end
+
 @implementation $__platformClassName__
 - (instancetype _Nonnull)initWithHandler:(ChannelHandler *_Nonnull)handler
                                 uniqueId:(NSString *_Nonnull)uniqueId
                                 value:(__platformClassName__ *_Nonnull)value {
   self = [super initWithHandler:handler uniqueId:uniqueId];
   if (self) {
-    _$value = value;
+    _value = value;
   }
   return self;
 }
@@ -132,7 +139,7 @@ class Template {
                                 uniqueId:(NSString *_Nonnull)uniqueId {
   self = [super initWithHandler:handler uniqueId:uniqueId];
   if (self) {
-    _$value = [[__platformClassName__ alloc] init];
+    _value = [[__platformClassName__ alloc] init];
   }
   return self;
 }
@@ -235,6 +242,10 @@ class Template {
 }
 %%METHOD%%
 %%METHODS%%
+
+- (NSObject *)getValue {
+  return _value;
+}
 @end
 %%CLASS%%
 %%CLASSES%%
@@ -289,7 +300,7 @@ class Template {
     NSObject *object = [self handleMethodCall:call];
     result(object);
   } @catch(NSException *exception) {
-    result([FlutterError errorWithCode:exception.name message:exception.reason details:nil]);
+    result([FlutterError errorWithCode:exception.name message:exception.reason details:[NSThread callStackSymbols]]);
   } @finally {
     [_tempWrappers removeAllObjects];
   }
