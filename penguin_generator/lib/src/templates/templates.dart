@@ -30,7 +30,7 @@ class Template {
 - (instancetype _Nonnull)initWithWrapperManager:(WrapperManager *_Nonnull)wrapperManager
                                 uniqueId:(NSString *_Nonnull)uniqueId;
 - (NSObject *)handleMethodCall:(FlutterMethodCall *_Nonnull)call;
-+ (NSObject *)handleStaticMethodCall:(WrapperManager *_Nonnull)wrapperManager
++ (NSObject *)onStaticMethodCall:(WrapperManager *_Nonnull)wrapperManager
                                 call:(FlutterMethodCall *_Nonnull)call;
 - (NSObject *)getValue;
 - (void)$allocate;
@@ -90,7 +90,7 @@ class Template {
   return self;
 }
 
-+ (NSObject *)handleStaticMethodCall:(WrapperManager *_Nonnull)wrapperManager
++ (NSObject *)onStaticMethodCall:(WrapperManager *_Nonnull)wrapperManager
                                 call:(FlutterMethodCall *_Nonnull)call {
   [self doesNotRecognizeSelector:_cmd];
   return [NSNull null];
@@ -145,7 +145,7 @@ class Template {
 %%CONSTRUCTOR%%
 %%CONSTRUCTORS%%
 
-+ (NSObject *)handleStaticMethodCall:(WrapperManager *_Nonnull)wrapperManager
++ (NSObject *)onStaticMethodCall:(WrapperManager *_Nonnull)wrapperManager
                                 call:(FlutterMethodCall *_Nonnull)call {
   %%STATICMETHODCALLS%%
   %%STATICMETHODCALL classMember:constructor%%
@@ -347,17 +347,17 @@ class Template {
   %%STATICREDIRECTS%%
   %%STATICREDIRECT classMember:constructor%%
   else if ([@"__platformClassName__()" isEqualToString:call.method]) {
-    return [$__platformClassName__ handleStaticMethodCall:_wrapperManager call:call];
+    return [$__platformClassName__ onStaticMethodCall:_wrapperManager call:call];
   }
   %%STATICREDIRECT classMember:constructor%%
   %%STATICREDIRECT classMember:method%%
   else if ([@"__platformClassName__#__methodName__" isEqualToString:call.method]) {
-    return [$__platformClassName__ handleStaticMethodCall:_wrapperManager call:call];
+    return [$__platformClassName__ onStaticMethodCall:_wrapperManager call:call];
   }
   %%STATICREDIRECT classMember:method%%
   %%STATICREDIRECT classMember:field%%
   else if ([@"__platformClassName__.__fieldName__" isEqualToString:call.method]) {
-    return [$__platformClassName__ handleStaticMethodCall:_wrapperManager call:call];
+    return [$__platformClassName__ onStaticMethodCall:_wrapperManager call:call];
   }
   %%STATICREDIRECT classMember:field%%
   %%STATICREDIRECTS%%
