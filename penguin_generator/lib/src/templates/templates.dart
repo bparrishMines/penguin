@@ -29,12 +29,13 @@ class Template {
 @interface Wrapper ()
 - (instancetype _Nonnull)initWithWrapperManager:(WrapperManager *_Nonnull)wrapperManager
                                 uniqueId:(NSString *_Nonnull)uniqueId;
-- (NSObject *)onMethodCall:(FlutterMethodCall *_Nonnull)call;
+- (NSObject *)onMethodCall:(WrapperManager *_Nonnull)wrapperManager
+                      call:(FlutterMethodCall *_Nonnull)call;
 + (NSObject *)onStaticMethodCall:(WrapperManager *_Nonnull)wrapperManager
-                                call:(FlutterMethodCall *_Nonnull)call;
+                            call:(FlutterMethodCall *_Nonnull)call;
 - (NSObject *)getValue;
-- (void)$allocate;
-- (void)$deallocate;
+- (void)$allocate:(WrapperManager *)wrapperManager;
+- (void)$deallocate:(WrapperManager *)wrapperManager;
 @end
 
 @interface WrapperManager ()
@@ -76,17 +77,15 @@ class Template {
 
 @implementation Wrapper {
   @public
-  WrapperManager *$wrapperManager;
   NSString *$uniqueId;
 }
 - (instancetype _Nonnull)initWithWrapperManager:(WrapperManager *_Nonnull)wrapperManager
                                 uniqueId:(NSString *_Nonnull)uniqueId {
   self = [super init];
   if (self) {
-    $wrapperManager = wrapperManager;
     $uniqueId = uniqueId;
   }
-  [$wrapperManager addTemporaryWrapper:self];
+  [wrapperManager addTemporaryWrapper:self];
   return self;
 }
 
@@ -96,7 +95,7 @@ class Template {
   return [NSNull null];
 }
 
-- (NSObject *)onMethodCall:(FlutterMethodCall *_Nonnull)call {
+- (NSObject *)onMethodCall:(WrapperManager *_Nonnull)wrapperManager call:(FlutterMethodCall *_Nonnull)call {
   [self doesNotRecognizeSelector:_cmd];
   return [NSNull null];
 }
@@ -106,12 +105,12 @@ class Template {
   return [NSNull null];
 }
 
-- (void)$allocate {
-  [$wrapperManager addAllocatedWrapper:self];
+- (void)$allocate:(WrapperManager *)wrapperManager {
+  [wrapperManager addAllocatedWrapper:self];
 }
 
-- (void)$deallocate {
-  [$wrapperManager removeAllocatedWrapper:$uniqueId];
+- (void)$deallocate:(WrapperManager *)wrapperManager {
+  [wrapperManager removeAllocatedWrapper:$uniqueId];
 }
 @end
 
@@ -169,16 +168,16 @@ class Template {
   @throw [NotImplementedException exceptionWithMethod:call.method];
 }
 
-- (NSObject *)onMethodCall:(FlutterMethodCall *_Nonnull)call {
+- (NSObject *)onMethodCall:(WrapperManager *)wrapperManager call:(FlutterMethodCall *_Nonnull)call {
   if ([@"__platformClassName__#allocate" isEqualToString:call.method]) {
-  
+    [self $allocate:wrapperManager];
   } else if ([@"__platformClassName__#deallocate" isEqualToString:call.method]) {
-  
+    [self $deallocate:wrapperManager];
   }
   %%METHODCALLS%%
   %%METHODCALL classMember:method%%
   else if ([@"__platformClassName__#__methodName__" isEqualToString:call.method]) {
-    return [self __methodName__:call];
+    return [self __methodName__:wrapperManager call:call];
   }
   %%METHODCALL classMember:method%%
   %%METHODCALL classMember:field%%
@@ -193,7 +192,7 @@ class Template {
 
 %%METHODS%%
 %%METHOD%%
-+ (NSObject *)__methodName__:(ChannelHandler *)$handler call:(FlutterMethodCall *)call {
++ (NSObject *)__methodName__:(WrapperManager *)wrapperManager call:(FlutterMethodCall *)call {
   %%PREMETHODCALLS%%
   %%PREMETHODCALL methodChannel:void%%
   %%PREMETHODCALL methodChannel:void%%
@@ -369,7 +368,7 @@ class Template {
     @throw [WrapperNotFoundException exceptionWithUniqueId:uniqueId];
   }
 
-  return [[_wrapperManager getWrapper:uniqueId] onMethodCall:call];
+  return [[_wrapperManager getWrapper:uniqueId] onMethodCall:_wrapperManager call:call];
 }
 @end
 ''');
@@ -919,7 +918,7 @@ public class ChannelGenerated {
           call.argument("__parameterName__") != null ? (__parameterType__) wrapperManager.getWrapper((String) call.argument("__parameterName__")).$getValue() : null
           %%PARAMETER methodChannel:wrapper%%
           %%PARAMETER methodChannel:typeParameter%%
-          call.argument("__parameterName__") != null && call.argument("__parameterName__") instanceof String && call.$wrapperManager.getWrapper((String) call.argument("__parameterName__")) != null ? $wrapperManager.getWrapper((String) call.argument("__parameterName__")).$getValue() : call.argument("__parameterName__") 
+          call.argument("__parameterName__") != null && call.argument("__parameterName__") instanceof String && call.wrapperManager.getWrapper((String) call.argument("__parameterName__")) != null ? wrapperManager.getWrapper((String) call.argument("__parameterName__")).$getValue() : call.argument("__parameterName__") 
           %%PARAMETER methodChannel:typeParameter%%
           %%PARAMETERS%%
           ) {
@@ -1045,7 +1044,7 @@ public class ChannelGenerated {
         call.argument("__fieldName__") != null ? (__fieldType__) wrapperManager.getWrapper((String) call.argument("__fieldName__")).$getValue() : null;
         %%FIELDSETTER methodChannel:wrapper%%
         %%FIELDSETTER methodChannel:typeParameter%%
-        call.argument("__fieldName__") != null && call.argument("__fieldName__") instanceof String && wrapperManager.getWrapper((String) call.argument("__fieldName__")) != null ? $wrapperManager.getWrapper((String) call.argument("__fieldName__")).$getValue() : call.argument("__fieldName__");
+        call.argument("__fieldName__") != null && call.argument("__fieldName__") instanceof String && wrapperManager.getWrapper((String) call.argument("__fieldName__")) != null ? wrapperManager.getWrapper((String) call.argument("__fieldName__")).$getValue() : call.argument("__fieldName__");
         %%FIELDSETTER methodChannel:typeParameter%%
         %%FIELDSETTERS%%
       } 
@@ -1084,7 +1083,7 @@ public class ChannelGenerated {
 
       try {
         final Constructor constructor = wrapperClass.getConstructor(ChannelGenerated.class, String.class, result.getClass());
-        constructor.newInstance($wrapperManager, call.argument("$newUniqueId"), result);
+        constructor.newInstance(wrapperManager, call.argument("$newUniqueId"), result);
       } catch (NoSuchMethodException e) {
         e.printStackTrace();
       } catch (IllegalAccessException e) {
@@ -1156,7 +1155,7 @@ public class ChannelGenerated {
 
       try {
         final Constructor constructor = wrapperClass.getConstructor(ChannelGenerated.class, String.class, result.getClass());
-        constructor.newInstance($wrapperManager, call.argument("$newUniqueId"), result);
+        constructor.newInstance(wrapperManager, call.argument("$newUniqueId"), result);
       } catch (NoSuchMethodException e) {
         e.printStackTrace();
       } catch (IllegalAccessException e) {
