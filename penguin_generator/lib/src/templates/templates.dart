@@ -794,11 +794,7 @@ public class ChannelGenerated {
         default:
           final String $uniqueId = call.argument("$uniqueId");
           if ($uniqueId == null) throw new NoUniqueIdException(call.method);
-  
-          final Wrapper wrapper = wrapperManager.getWrapper($uniqueId);
-          if (wrapper == null) throw new WrapperNotFoundException($uniqueId);
-  
-          return wrapper.onMethodCall(wrapperManager, call);
+          return wrapperManager.getWrapper($uniqueId).onMethodCall(wrapperManager, call);
       }
     }
   }
