@@ -29,7 +29,7 @@ class Template {
 @interface Wrapper ()
 - (instancetype _Nonnull)initWithWrapperManager:(WrapperManager *_Nonnull)wrapperManager
                                 uniqueId:(NSString *_Nonnull)uniqueId;
-- (NSObject *)handleMethodCall:(FlutterMethodCall *_Nonnull)call;
+- (NSObject *)onMethodCall:(FlutterMethodCall *_Nonnull)call;
 + (NSObject *)onStaticMethodCall:(WrapperManager *_Nonnull)wrapperManager
                                 call:(FlutterMethodCall *_Nonnull)call;
 - (NSObject *)getValue;
@@ -96,7 +96,7 @@ class Template {
   return [NSNull null];
 }
 
-- (NSObject *)handleMethodCall:(FlutterMethodCall *_Nonnull)call {
+- (NSObject *)onMethodCall:(FlutterMethodCall *_Nonnull)call {
   [self doesNotRecognizeSelector:_cmd];
   return [NSNull null];
 }
@@ -169,7 +169,7 @@ class Template {
   @throw [NotImplementedException exceptionWithMethod:call.method];
 }
 
-- (NSObject *)handleMethodCall:(FlutterMethodCall *_Nonnull)call {
+- (NSObject *)onMethodCall:(FlutterMethodCall *_Nonnull)call {
   if ([@"__platformClassName__#allocate" isEqualToString:call.method]) {
   
   } else if ([@"__platformClassName__#deallocate" isEqualToString:call.method]) {
@@ -369,7 +369,7 @@ class Template {
     @throw [WrapperNotFoundException exceptionWithUniqueId:uniqueId];
   }
 
-  return [[_wrapperManager getWrapper:uniqueId] handleMethodCall:call];
+  return [[_wrapperManager getWrapper:uniqueId] onMethodCall:call];
 }
 @end
 ''');
