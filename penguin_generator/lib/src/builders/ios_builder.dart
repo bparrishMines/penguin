@@ -90,14 +90,6 @@ class IosBuilder extends PlatformBuilder {
           classes: classes.map<String>(
             (ClassInfo classInfo) => creator.createClass(
               staticMethodCalls: <String>[
-                ...classInfo.constructors.map<String>(
-                  (ConstructorInfo constructorInfo) =>
-                      creator.createStaticMethodCall(
-                    ClassMemberType.constructor,
-                    platformClassName:
-                        (classInfo.aClass.platform as IosPlatform).type.name,
-                  ),
-                ),
                 ...classInfo.methods
                     .where((MethodInfo methodInfo) => methodInfo.isStatic)
                     .map<String>(

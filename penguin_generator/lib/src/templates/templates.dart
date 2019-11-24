@@ -28,7 +28,9 @@ class Template {
 
 @interface Wrapper ()
 - (instancetype _Nonnull)initWithWrapperManager:(WrapperManager *_Nonnull)wrapperManager
-                                uniqueId:(NSString *_Nonnull)uniqueId;
+                                       uniqueId:(NSString *_Nonnull)uniqueId;
+- (instancetype _Nonnull)initWithWrapperManager:(WrapperManager *_Nonnull)wrapperManager
+                                           call:(FlutterMethodCall *_Nonnull)call;
 - (NSObject *)onMethodCall:(WrapperManager *_Nonnull)wrapperManager
                       call:(FlutterMethodCall *_Nonnull)call;
 + (NSObject *)onStaticMethodCall:(WrapperManager *_Nonnull)wrapperManager
@@ -80,13 +82,19 @@ class Template {
   NSString *$uniqueId;
 }
 - (instancetype _Nonnull)initWithWrapperManager:(WrapperManager *_Nonnull)wrapperManager
-                                uniqueId:(NSString *_Nonnull)uniqueId {
+                                       uniqueId:(NSString *_Nonnull)uniqueId {
   self = [super init];
   if (self) {
     $uniqueId = uniqueId;
   }
   [wrapperManager addTemporaryWrapper:self];
   return self;
+}
+
+- (instancetype _Nonnull)initWithWrapperManager:(WrapperManager *_Nonnull)wrapperManager
+                                           call:(FlutterMethodCall *_Nonnull)call {
+  [self doesNotRecognizeSelector:_cmd];
+  return nil;
 }
 
 + (NSObject *)onStaticMethodCall:(WrapperManager *_Nonnull)wrapperManager
@@ -131,28 +139,25 @@ class Template {
   return self;
 }
 
-%%CONSTRUCTORS%%
-%%CONSTRUCTOR%%
 - (instancetype _Nonnull)initWithWrapperManager:(WrapperManager *_Nonnull)wrapperManager
-                                uniqueId:(NSString *_Nonnull)uniqueId {
-  self = [super initWithWrapperManager:wrapperManager uniqueId:uniqueId];
-  if (self) {
-    _value = [[__platformClassName__ alloc] init];
+                                           call:(FlutterMethodCall *_Nonnull)call {
+  self = [super initWithWrapperManager:wrapperManager uniqueId:call.arguments[@"$uniqueId"]];
+  if (!self) return self;
+  
+  %%CONSTRUCTORS%%
+  %%CONSTRUCTOR%%
+  if ([@"__platformClassName__()" isEqualToString:call.method]) {
+    _value = [[__platformClassName__ alloc] init];  
   }
+  %%CONSTRUCTOR%%
+  %%CONSTRUCTORS%%
+  
   return self;
 }
-%%CONSTRUCTOR%%
-%%CONSTRUCTORS%%
 
 + (NSObject *)onStaticMethodCall:(WrapperManager *_Nonnull)wrapperManager
-                                call:(FlutterMethodCall *_Nonnull)call {
+                            call:(FlutterMethodCall *_Nonnull)call {
   %%STATICMETHODCALLS%%
-  %%STATICMETHODCALL classMember:constructor%%
-  if ([@"__platformClassName__()" isEqualToString:call.method]) {
-    [[$__platformClassName__ alloc] initWithWrapperManager:wrapperManager uniqueId:call.arguments[@"$uniqueId"]];
-    return [NSNull null];
-  }
-  %%STATICMETHODCALL classMember:constructor%%
   %%STATICMETHODCALL classMember:method%%
   if ([@"__platformClassName__#__methodName__" isEqualToString:call.method]) {
     return [$__platformClassName__ __methodName__:handler call:call];
@@ -346,7 +351,8 @@ class Template {
   %%STATICREDIRECTS%%
   %%STATICREDIRECT classMember:constructor%%
   else if ([@"__platformClassName__()" isEqualToString:call.method]) {
-    return [$__platformClassName__ onStaticMethodCall:_wrapperManager call:call];
+    [[$__platformClassName__ alloc] initWithWrapperManager:_wrapperManager call:call];
+    return [NSNull null];
   }
   %%STATICREDIRECT classMember:constructor%%
   %%STATICREDIRECT classMember:method%%
