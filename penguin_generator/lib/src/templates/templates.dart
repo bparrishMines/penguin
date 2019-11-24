@@ -125,7 +125,7 @@ class Template {
 
 %%CLASSES%%
 %%CLASS%%
-@interface $__platformClassName__ : Wrapper
+@interface $__platformClassName__ ()
 @property __platformClassName__ *value;
 @end
 
@@ -144,7 +144,7 @@ class Template {
                                            call:(FlutterMethodCall *_Nonnull)call {
   self = [super initWithWrapperManager:wrapperManager uniqueId:call.arguments[@"$uniqueId"]];
   if (!self) return self;
-  
+
   %%CONSTRUCTORS%%
   %%CONSTRUCTOR%%
   if ([@"__platformClassName__()" isEqualToString:call.method]) {

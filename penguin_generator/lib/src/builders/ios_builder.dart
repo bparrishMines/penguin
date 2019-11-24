@@ -13,7 +13,7 @@ class IosBuilder extends PlatformBuilder {
 @end
 
 @interface WrapperManager : NSObject
-- (void)addAllocatedWrapper:(Wrapper *)wrapper;
+- (void)addAllocatedWrapper:(Wrapper *_Nonnull)wrapper;
 - (void)removeAllocatedWrapper:(NSString *)uniqueId;
 @end
 
@@ -25,6 +25,15 @@ class IosBuilder extends PlatformBuilder {
 @property WrapperManager *wrapperManager;
 @property MethodCallHandler *methodCallHandler;
 @end
+
+%%CLASSES%%
+%%CLASS%%
+@interface $__platformClassName__ : Wrapper
+- (instancetype _Nonnull)initWithWrapperManager:(WrapperManager *_Nonnull)wrapperManager 
+                                           call:(FlutterMethodCall *_Nonnull)call;
+@end
+%%CLASS%%
+%%CLASSES%%
 ''';
 
   @override
@@ -36,7 +45,16 @@ class IosBuilder extends PlatformBuilder {
 
     final IosTemplateCreator creator = IosTemplateCreator();
     await Future.wait<void>(<Future<void>>[
-      buildStep.writeAsString('ChannelHandler+Generated.h', _headerFile),
+      buildStep.writeAsString(
+        'ChannelHandler+Generated.h',
+        IosTemplateCreator.createHeaderFile(
+          headerTemplate: _headerFile,
+          platformClassNames: classes.map<String>(
+            (ClassInfo classInfo) =>
+                (classInfo.aClass.platform as IosPlatform).type.name,
+          ),
+        ),
+      ),
       buildStep.writeAsString(
         'ChannelHandler+Generated.m',
         creator.createFile(

@@ -4,7 +4,7 @@ import 'package:penguin_generator/src/templates/templates.dart';
 abstract class TemplateCreator {
   Template get template;
 
-  String _replace(String value, Map<Pattern, String> replacements) {
+  static String _replace(String value, Map<Pattern, String> replacements) {
     for (MapEntry<Pattern, String> entry in replacements.entries) {
       value = value.replaceAll(entry.key, entry.value);
     }
@@ -20,7 +20,7 @@ class MethodChannelTemplateCreator extends TemplateCreator {
     @required String methodName,
     @required Iterable<String> callbackVariableParams,
   }) {
-    return _replace(
+    return TemplateCreator._replace(
       MethodChannelBlock.callbackVariable()
           .exp
           .firstMatch(template.value)
@@ -38,7 +38,7 @@ class MethodChannelTemplateCreator extends TemplateCreator {
     @required String parameterType,
     @required String parameterName,
   }) {
-    return _replace(
+    return TemplateCreator._replace(
       MethodChannelBlock.callbackVariableParam(methodChannel)
           .exp
           .firstMatch(template.value)
@@ -51,7 +51,7 @@ class MethodChannelTemplateCreator extends TemplateCreator {
   }
 
   String createCallbackInitializer({@required String methodName}) {
-    return _replace(
+    return TemplateCreator._replace(
       MethodChannelBlock.callbackInitializer()
           .exp
           .firstMatch(template.value)
@@ -67,7 +67,7 @@ class MethodChannelTemplateCreator extends TemplateCreator {
     @required Iterable<String> callbackChannelParams,
     @required String wrapperName,
   }) {
-    return _replace(
+    return TemplateCreator._replace(
       Block.callback.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
         Replacement.methodName.name: methodName,
@@ -83,7 +83,7 @@ class MethodChannelTemplateCreator extends TemplateCreator {
     @required String parameterName,
     String className,
   }) {
-    return _replace(
+    return TemplateCreator._replace(
       MethodChannelBlock.callbackChannelParam(methodChannelType)
           .exp
           .firstMatch(template.value)
@@ -102,7 +102,7 @@ class MethodChannelTemplateCreator extends TemplateCreator {
     String platformClassName,
     String methodName,
   }) {
-    return _replace(
+    return TemplateCreator._replace(
       Block.method.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
         if (!isStatic) 'static': '',
@@ -123,7 +123,7 @@ class MethodChannelTemplateCreator extends TemplateCreator {
     String fieldSetterParam,
     String fieldSetter,
   }) {
-    return _replace(
+    return TemplateCreator._replace(
       Block.field.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
         if (!isStatic) 'static': '',
@@ -142,7 +142,7 @@ class MethodChannelTemplateCreator extends TemplateCreator {
     String fieldType,
     String fieldName,
   }) {
-    return _replace(
+    return TemplateCreator._replace(
       MethodChannelBlock.fieldSetter(channelType)
           .exp
           .firstMatch(template.value)
@@ -159,7 +159,7 @@ class MethodChannelTemplateCreator extends TemplateCreator {
     String parameterType,
     String parameterName,
   }) {
-    return _replace(
+    return TemplateCreator._replace(
       MethodChannelBlock.parameter(channelType)
           .exp
           .firstMatch(template.value)
@@ -175,7 +175,7 @@ class MethodChannelTemplateCreator extends TemplateCreator {
     MethodChannelType channelType, {
     String fieldName,
   }) {
-    return _replace(
+    return TemplateCreator._replace(
       MethodChannelBlock.fieldSetterParam(channelType)
           .exp
           .firstMatch(template.value)
@@ -190,7 +190,7 @@ class MethodChannelTemplateCreator extends TemplateCreator {
     MethodChannelType channelType, {
     String parameterName,
   }) {
-    return _replace(
+    return TemplateCreator._replace(
       MethodChannelBlock.methodCallParam(channelType)
           .exp
           .firstMatch(template.value)
@@ -212,7 +212,7 @@ class MethodChannelTemplateCreator extends TemplateCreator {
     @required String className,
     @required String platformClassName,
   }) {
-    return _replace(
+    return TemplateCreator._replace(
       Block.aClass.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
         Replacement.typeParameters.name:
@@ -233,7 +233,7 @@ class MethodChannelTemplateCreator extends TemplateCreator {
   }
 
   String createFile({Iterable<String> classes}) {
-    return _replace(
+    return TemplateCreator._replace(
       template.value,
       <Pattern, String>{Block.classes.exp: classes.join()},
     );
@@ -246,7 +246,7 @@ class MethodChannelTemplateCreator extends TemplateCreator {
     @required Iterable<String> parameters,
     @required Iterable<String> methodCallParams,
   }) {
-    return _replace(
+    return TemplateCreator._replace(
       Block.constructor.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
         Replacement.platformClassName.name: platformClassName,
@@ -271,7 +271,7 @@ class AndroidTemplateCreator extends TemplateCreator {
     @required Iterable<String> callbackParams,
     @required String wrapperName,
   }) {
-    return _replace(
+    return TemplateCreator._replace(
       Block.callback.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
         Replacement.methodName.name: methodName,
@@ -287,7 +287,7 @@ class AndroidTemplateCreator extends TemplateCreator {
     @required String parameterName,
     @required String parameterType,
   }) {
-    return _replace(
+    return TemplateCreator._replace(
       Block.callbackParam.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
         Replacement.parameterType.name: parameterType,
@@ -305,7 +305,7 @@ class AndroidTemplateCreator extends TemplateCreator {
     @required String package,
     @required String platformClassName,
   }) {
-    return _replace(
+    return TemplateCreator._replace(
       Block.field.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
         if (!isStatic) 'static': '',
@@ -345,7 +345,7 @@ class AndroidTemplateCreator extends TemplateCreator {
     String platformClassName,
     String package,
   }) {
-    return _replace(
+    return TemplateCreator._replace(
       Block.method.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
         if (!isStatic) 'static': '',
@@ -375,7 +375,7 @@ class AndroidTemplateCreator extends TemplateCreator {
     String parameterType,
     String parameterName,
   }) {
-    return _replace(
+    return TemplateCreator._replace(
       MethodChannelBlock.parameter(methodChannel)
           .exp
           .firstMatch(template.value)
@@ -397,7 +397,7 @@ class AndroidTemplateCreator extends TemplateCreator {
     @required String wrapperName,
     String api,
   }) {
-    return _replace(
+    return TemplateCreator._replace(
       Block.aClass.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
         Block.constructors.exp: constructors.join(),
@@ -414,7 +414,7 @@ class AndroidTemplateCreator extends TemplateCreator {
   }
 
   String createImport({String classPackage, String platformClassName}) {
-    return _replace(
+    return TemplateCreator._replace(
       Block.import.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
         Replacement.classPackage.name: classPackage,
@@ -431,7 +431,7 @@ class AndroidTemplateCreator extends TemplateCreator {
     String methodName,
     String fieldName,
   }) {
-    return _replace(
+    return TemplateCreator._replace(
       MethodChannelBlock.staticRedirect(classMember)
           .exp
           .firstMatch(template.value)
@@ -453,7 +453,7 @@ class AndroidTemplateCreator extends TemplateCreator {
     Iterable<String> staticRedirects,
     String package,
   }) {
-    return _replace(
+    return TemplateCreator._replace(
       template.value,
       <Pattern, String>{
         Block.imports.exp: imports.join(),
@@ -471,7 +471,7 @@ class AndroidTemplateCreator extends TemplateCreator {
     @required Iterable<String> parameters,
     @required Iterable<String> callbacks,
   }) {
-    return _replace(
+    return TemplateCreator._replace(
       Block.constructor.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
         Replacement.platformClassName.name: platformClassName,
@@ -495,7 +495,7 @@ class AndroidTemplateCreator extends TemplateCreator {
     String methodName,
     String fieldName,
   }) {
-    return _replace(
+    return TemplateCreator._replace(
       MethodChannelBlock.methodCall(classMember)
           .exp
           .firstMatch(template.value)
@@ -513,7 +513,7 @@ class AndroidTemplateCreator extends TemplateCreator {
     @required String parameterName,
     String wrapperName,
   }) {
-    return _replace(
+    return TemplateCreator._replace(
         MethodChannelBlock.callbackChannelParam(methodChannelType)
             .exp
             .firstMatch(template.value)
@@ -531,7 +531,7 @@ class AndroidTemplateCreator extends TemplateCreator {
     String methodName,
     String fieldName,
   }) {
-    return _replace(
+    return TemplateCreator._replace(
       MethodChannelBlock.staticMethodCall(classMember)
           .exp
           .firstMatch(template.value)
@@ -548,12 +548,36 @@ class AndroidTemplateCreator extends TemplateCreator {
 }
 
 class IosTemplateCreator extends TemplateCreator {
+  static String createHeaderFile({
+    @required String headerTemplate,
+    @required Iterable<String> platformClassNames,
+  }) {
+    return TemplateCreator._replace(
+      headerTemplate,
+      <Pattern, String>{
+        Block.classes.exp: platformClassNames
+            .map<String>(
+              (String platformClassName) => TemplateCreator._replace(
+                Block.aClass.exp.firstMatch(headerTemplate).group(1),
+                <Pattern, String>{
+                  Replacement.platformClassName.name: platformClassName,
+                },
+              ),
+            )
+            .join()
+      },
+    );
+  }
+
+  @override
+  Template get template => Template.ios;
+
   String createFile({
     Iterable<String> imports,
     Iterable<String> classes,
     Iterable<String> staticRedirects,
   }) {
-    return _replace(
+    return TemplateCreator._replace(
       template.value,
       <Pattern, String>{
         Block.imports.exp: imports.join(),
@@ -569,7 +593,7 @@ class IosTemplateCreator extends TemplateCreator {
     String methodName,
     String fieldName,
   }) {
-    return _replace(
+    return TemplateCreator._replace(
       MethodChannelBlock.staticRedirect(classMember)
           .exp
           .firstMatch(template.value)
@@ -583,7 +607,7 @@ class IosTemplateCreator extends TemplateCreator {
   }
 
   String createConstructor({String platformClassName}) {
-    return _replace(
+    return TemplateCreator._replace(
       Block.constructor.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
         Replacement.platformClassName.name: platformClassName,
@@ -599,7 +623,7 @@ class IosTemplateCreator extends TemplateCreator {
     //Iterable<String> fields,
     String platformClassName,
   }) {
-    return _replace(
+    return TemplateCreator._replace(
       Block.aClass.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
         Block.constructors.exp: constructors.join(),
@@ -618,7 +642,7 @@ class IosTemplateCreator extends TemplateCreator {
     @required String parameterName,
     @required String primitiveConvertMethod,
   }) {
-    return _replace(
+    return TemplateCreator._replace(
       MethodChannelBlock.parameter(methodChannel)
           .exp
           .firstMatch(template.value)
@@ -639,7 +663,7 @@ class IosTemplateCreator extends TemplateCreator {
     @required String methodName,
     @required String platformClassName,
   }) {
-    return _replace(
+    return TemplateCreator._replace(
       Block.method.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
         if (!isStatic) '+': '-',
@@ -672,7 +696,7 @@ class IosTemplateCreator extends TemplateCreator {
     String methodName,
     String fieldName,
   }) {
-    return _replace(
+    return TemplateCreator._replace(
       MethodChannelBlock.methodCall(classMember)
           .exp
           .firstMatch(template.value)
@@ -691,7 +715,7 @@ class IosTemplateCreator extends TemplateCreator {
     String methodName,
     String fieldName,
   }) {
-    return _replace(
+    return TemplateCreator._replace(
       MethodChannelBlock.staticMethodCall(classMember)
           .exp
           .firstMatch(template.value)
@@ -705,14 +729,11 @@ class IosTemplateCreator extends TemplateCreator {
   }
 
   String createImport({String classPackage}) {
-    return _replace(
+    return TemplateCreator._replace(
       Block.import.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
         Replacement.classPackage.name: classPackage,
       },
     );
   }
-
-  @override
-  Template get template => Template.ios;
 }
