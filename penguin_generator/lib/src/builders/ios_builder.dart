@@ -8,29 +8,35 @@ import '../templates/template_creator.dart';
 class IosBuilder extends PlatformBuilder {
   static const String _headerFile = r'''
 #import <Flutter/Flutter.h>
+%%IMPORTS%%
+%%IMPORT%%
+#import __classPackage__
+%%IMPORT%%
+%%IMPORTS%%
 
 @interface Wrapper : NSObject
 @end
 
 @interface WrapperManager : NSObject
 - (void)addAllocatedWrapper:(Wrapper *_Nonnull)wrapper;
-- (void)removeAllocatedWrapper:(NSString *)uniqueId;
+- (void)removeAllocatedWrapper:(NSString *_Nonnull)uniqueId;
 @end
 
 @interface MethodCallHandler : NSObject
-- (void)onMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result;
+- (void)onMethodCall:(FlutterMethodCall *_Nonnull)call result:(FlutterResult _Nonnull)result;
 @end
 
 @interface ChannelHandler : NSObject
-@property WrapperManager *wrapperManager;
-@property MethodCallHandler *methodCallHandler;
+@property WrapperManager *_Nonnull wrapperManager;
+@property MethodCallHandler *_Nonnull methodCallHandler;
 @end
 
 %%CLASSES%%
 %%CLASS%%
 @interface $__platformClassName__ : Wrapper
-- (instancetype _Nonnull)initWithWrapperManager:(WrapperManager *_Nonnull)wrapperManager 
-                                           call:(FlutterMethodCall *_Nonnull)call;
+- (instancetype _Nonnull)initWithWrapperManager:(WrapperManager *_Nonnull)wrapperManager
+                                uniqueId:(NSString *_Nonnull)uniqueId
+                                value:(__platformClassName__ *_Nullable)value;
 @end
 %%CLASS%%
 %%CLASSES%%
@@ -49,6 +55,14 @@ class IosBuilder extends PlatformBuilder {
         'ChannelHandler+Generated.h',
         IosTemplateCreator.createHeaderFile(
           headerTemplate: _headerFile,
+          classPackages: classes
+              .where((ClassInfo classInfo) =>
+                  (classInfo.aClass.platform as IosPlatform).type.import !=
+                  null)
+              .map<String>(
+                (ClassInfo classInfo) =>
+                    (classInfo.aClass.platform as IosPlatform).type.import,
+              ),
           platformClassNames: classes.map<String>(
             (ClassInfo classInfo) =>
                 (classInfo.aClass.platform as IosPlatform).type.name,
@@ -58,16 +72,6 @@ class IosBuilder extends PlatformBuilder {
       buildStep.writeAsString(
         'ChannelHandler+Generated.m',
         creator.createFile(
-          imports: classes
-              .where((ClassInfo classInfo) =>
-                  (classInfo.aClass.platform as IosPlatform).type.import !=
-                  null)
-              .map<String>(
-                (ClassInfo classInfo) => creator.createImport(
-                  classPackage:
-                      (classInfo.aClass.platform as IosPlatform).type.import,
-                ),
-              ),
           staticRedirects: <String>[
             ...classes.expand<String>(
               (ClassInfo classInfo) => classInfo.constructors.map<String>(

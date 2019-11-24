@@ -550,11 +550,22 @@ class AndroidTemplateCreator extends TemplateCreator {
 class IosTemplateCreator extends TemplateCreator {
   static String createHeaderFile({
     @required String headerTemplate,
+    @required Iterable<String> classPackages,
     @required Iterable<String> platformClassNames,
   }) {
     return TemplateCreator._replace(
       headerTemplate,
       <Pattern, String>{
+        Block.imports.exp: classPackages
+            .map<String>(
+              (String classPackage) => TemplateCreator._replace(
+                Block.import.exp.firstMatch(headerTemplate).group(1),
+                <Pattern, String>{
+                  Replacement.classPackage.name: classPackage,
+                },
+              ),
+            )
+            .join(),
         Block.classes.exp: platformClassNames
             .map<String>(
               (String platformClassName) => TemplateCreator._replace(
@@ -564,7 +575,7 @@ class IosTemplateCreator extends TemplateCreator {
                 },
               ),
             )
-            .join()
+            .join(),
       },
     );
   }
@@ -573,14 +584,12 @@ class IosTemplateCreator extends TemplateCreator {
   Template get template => Template.ios;
 
   String createFile({
-    Iterable<String> imports,
-    Iterable<String> classes,
-    Iterable<String> staticRedirects,
+    @required Iterable<String> classes,
+    @required Iterable<String> staticRedirects,
   }) {
     return TemplateCreator._replace(
       template.value,
       <Pattern, String>{
-        Block.imports.exp: imports.join(),
         Block.classes.exp: classes.join(),
         Block.staticRedirects.exp: staticRedirects.join(),
       },
@@ -724,15 +733,6 @@ class IosTemplateCreator extends TemplateCreator {
         Replacement.platformClassName.name: platformClassName,
         if (methodName != null) Replacement.methodName.name: methodName,
         if (fieldName != null) Replacement.fieldName.name: fieldName,
-      },
-    );
-  }
-
-  String createImport({String classPackage}) {
-    return TemplateCreator._replace(
-      Block.import.exp.firstMatch(template.value).group(1),
-      <Pattern, String>{
-        Replacement.classPackage.name: classPackage,
       },
     );
   }

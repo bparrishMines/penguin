@@ -8,11 +8,6 @@ class Template {
 
   static const Template ios = Template._(r'''
 #import "ChannelHandler+Generated.h"
-%%IMPORTS%%
-%%IMPORT%%
-#import __classPackage__
-%%IMPORT%%
-%%IMPORTS%%
 
 @interface NotImplementedException : NSException
 - (instancetype _Nonnull)initWithMethod:(NSString *)methodName;
@@ -132,7 +127,7 @@ class Template {
 @implementation $__platformClassName__
 - (instancetype _Nonnull)initWithWrapperManager:(WrapperManager *_Nonnull)wrapperManager
                                 uniqueId:(NSString *_Nonnull)uniqueId
-                                value:(__platformClassName__ *_Nonnull)value {
+                                value:(__platformClassName__ *_Nullable)value {
   self = [super initWithWrapperManager:wrapperManager uniqueId:uniqueId];
   if (self) {
     _value = value;
