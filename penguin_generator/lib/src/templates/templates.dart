@@ -15,15 +15,15 @@ class Template {
 %%IMPORTS%%
 
 @interface NotImplementedException : NSException
-+ (NSException *)exceptionWithMethod:(NSString *)methodName;
+- (instancetype _Nonnull)initWithMethod:(NSString *)methodName;
 @end
 
 @interface NoUniqueIdException : NSException
-+ (NSException *)exceptionWithMethod:(NSString *)methodName;
+- (instancetype _Nonnull)initWithMethod:(NSString *)methodName;
 @end
 
 @interface WrapperNotFoundException : NSException
-+ (NSException *)exceptionWithUniqueId:(NSString *)uniqueId;
+- (instancetype _Nonnull)initWithUniqueId:(NSString *)uniqueId;
 @end
 
 @interface Wrapper ()
@@ -54,26 +54,27 @@ class Template {
 @end
 
 @implementation NotImplementedException 
-+ (NSException *)exceptionWithMethod:(NSString *)methodName {
-  return [NSException exceptionWithName:@"NotImplementedException"
-                                 reason:[NSString stringWithFormat:@"No implementation for %@.", methodName]
-                               userInfo:nil];
+- (instancetype _Nonnull)initWithMethod:(NSString *)methodName {
+  return self = [super initWithName:@"NotImplementedException"
+                             reason:[NSString stringWithFormat:@"No implementation for %@.", methodName]
+                           userInfo:nil];
 }
 @end
 
 @implementation NoUniqueIdException
-+ (NSException *)exceptionWithMethod:(NSString *)methodName {
-  return [NSException exceptionWithName:@"NoUniqueIdException"
-                                 reason:[NSString stringWithFormat:@"MethodCall was made without a unique handle for %@.", methodName]
-                               userInfo:nil];
+- (instancetype _Nonnull)initWithMethod:(NSString *)methodName {
+  return self = [super initWithName:@"NoUniqueIdException"
+                             reason:[NSString stringWithFormat:@"MethodCall was made without a unique handle for %@.", methodName]
+                           userInfo:nil];
 }
 @end
 
 @implementation WrapperNotFoundException
-+ (NSException *)exceptionWithUniqueId:(NSString *)uniqueId {
-  return [NSException exceptionWithName:@"WrapperNotFoundException"
-      reason:[NSString stringWithFormat:@"MethodCall was made without a unique handle for %@.", uniqueId]
-                               userInfo:nil];
+- (instancetype _Nonnull)initWithUniqueId:(NSString *)uniqueId {
+  return self = [super initWithName:@"WrapperNotFoundException"
+                             reason:[NSString
+                   stringWithFormat:@"MethodCall was made without a unique handle for %@.", uniqueId]
+                          userInfo:nil];
 }
 @end
 
@@ -170,7 +171,7 @@ class Template {
   %%STATICMETHODCALL classMember:field%%
   %%STATICMETHODCALLS%%
   
-  @throw [NotImplementedException exceptionWithMethod:call.method];
+  @throw [[NotImplementedException alloc] initWithMethod:call.method];
 }
 
 - (NSObject *)onMethodCall:(WrapperManager *)wrapperManager call:(FlutterMethodCall *_Nonnull)call {
@@ -192,7 +193,7 @@ class Template {
   %%METHODCALL classMember:field%%
   %%METHODCALLS%%
   
-  @throw [NotImplementedException exceptionWithMethod:call.method];
+  @throw [[NotImplementedException alloc] initWithMethod:call.method];
 }
 
 %%METHODS%%
@@ -290,7 +291,7 @@ class Template {
   Wrapper *existingWrapper;
   @try {
     existingWrapper = [self getWrapper:wrapper->$uniqueId];
-  } @catch (NSException *exception) {
+  } @catch (WrapperNotFoundException *exception) {
     [wrapperDictionary setObject:wrapper forKey:wrapper->$uniqueId];
     return;
   }
@@ -303,7 +304,7 @@ class Template {
 - (Wrapper *)getWrapper:(NSString *)uniqueId {
   if ([_allocatedWrappers objectForKey:uniqueId] != nil) return [_allocatedWrappers objectForKey:uniqueId];
   if ([_temporaryWrappers objectForKey:uniqueId] != nil) return [_temporaryWrappers objectForKey:uniqueId];
-  @throw [WrapperNotFoundException exceptionWithUniqueId:uniqueId];
+  @throw [[WrapperNotFoundException alloc] initWithUniqueId:uniqueId];
 }
 
 - (void)clearTemporaryWrappers {
@@ -369,9 +370,7 @@ class Template {
   
   NSString *uniqueId = call.arguments[@"$uniqueId"];
   if (uniqueId == nil) {
-    @throw [NoUniqueIdException exceptionWithMethod:call.method];
-  } else if ([_wrapperManager getWrapper:uniqueId] == nil) {
-    @throw [WrapperNotFoundException exceptionWithUniqueId:uniqueId];
+    @throw [[NoUniqueIdException alloc] initWithMethod:call.method];
   }
 
   return [[_wrapperManager getWrapper:uniqueId] onMethodCall:_wrapperManager call:call];
