@@ -133,19 +133,6 @@ void main() {
 //        expect(mockClass.callbackValue, 'I love callbacks.');
 //      });
 //
-//      test('noParametersMethod', () {
-//        expect(AndroidTestClass1().noParametersMethod(), completion(72));
-//      });
-//
-//      test('singleParameterMethod', () {
-//        expect(AndroidTestClass1().singleParameterMethod('Hello'),
-//            completion('Hello, World!'));
-//      });
-//
-//      test('returnVoid', () {
-//        expect(AndroidTestClass1().returnVoid(), completes);
-//      });
-//
 //      test('returnObject', () {
 //        expect(AndroidTestClass1().returnObject(), completion('Hello'));
 //      });
@@ -154,35 +141,6 @@ void main() {
 //        expect(AndroidTestClass1().returnDynamic(), completion(3));
 //      });
 //
-//      test('returnString', () {
-//        expect(AndroidTestClass1().returnString(), completion('Amigo'));
-//      });
-//
-//      test('returnInt', () {
-//        expect(AndroidTestClass1().returnInt(), completion(69));
-//      });
-//
-//      test('returnDouble', () {
-//        expect(AndroidTestClass1().returnDouble(), completion(70.0));
-//      });
-//
-//      test('returnBool', () {
-//        expect(AndroidTestClass1().returnBool(), completion(false));
-//      });
-//
-//      test('returnList', () {
-//        expect(
-//          AndroidTestClass1().returnList(),
-//          completion(<double>[1.0, 2.0]),
-//        );
-//      });
-//
-//      test('returnMap', () {
-//        expect(
-//          AndroidTestClass1().returnMap(),
-//          completion(<String, int>{'one': 1, 'two': 2}),
-//        );
-//      });
 //
 //      test('nestedClassField', () {
 //        expect(AndroidNestedClass().nestedClassField, completion(4));
@@ -206,9 +164,6 @@ void main() {
 //    }, skip: !Platform.isAndroid);
 //
 //    group('ios', () {
-//      test('returnVoid', () {
-//        expect(IosTestClass1().returnVoid(), completes);
-//      });
 //
 //      test('returnObject', () {
 //        expect(IosTestClass1().returnObject(), completion('PoPo'));
@@ -218,47 +173,8 @@ void main() {
 //        expect(IosTestClass1().returnDynamic(), completion(45));
 //      });
 //
-//      test('returnString', () {
-//        expect(IosTestClass1().returnString(), completion('PoPo?'));
-//      });
-//
-//      test('returnInt', () {
-//        expect(IosTestClass1().returnInt(), completion(12));
-//      });
-//
 //      test('returnInt32', () {
 //        expect(IosTestClass1().returnInt32(), completion(56));
-//      });
-//
-//      test('returnDouble', () {
-//        expect(IosTestClass1().returnDouble(), completion(70.0));
-//      });
-//
-//      test('returnBool', () {
-//        expect(IosTestClass1().returnBool(), completion(true));
-//      });
-//
-//      test('returnList', () {
-//        expect(
-//          IosTestClass1().returnList(),
-//          completion(<double>[3.0, 4.0]),
-//        );
-//      });
-//
-//      test('returnMap', () {
-//        expect(
-//          IosTestClass1().returnMap(),
-//          completion(<String, int>{'three': 3, 'four': 4}),
-//        );
-//      });
-//
-//      test('noParametersMethod', () {
-//        expect(IosTestClass1().noParametersMethod(), completion(4));
-//      });
-//
-//      test('singleParameterMethod', () {
-//        expect(IosTestClass1().singleParameterMethod('four'),
-//            completion('fourtwo'));
 //      });
 //
 //      test('allParameterTypesMethod', () {

@@ -34,13 +34,6 @@ public class TestClass1 {
 //    return 13;
 //  }
 //
-//  public int noParametersMethod() {
-//    return 72;
-//  }
-//
-//  public String singleParameterMethod(String value) {
-//    return value + ", World!";
-//  }
 
   public void returnVoid() {
 

@@ -17,13 +17,6 @@
   return @(70.0F);
 }
 
-//- (NSNumber *)noParametersMethod {
-//  return [NSNumber numberWithInt:4];
-//}
-//- (NSString *)singleParameterMethod:(NSString *)value {
-//  return [value stringByAppendingString:@"two"];
-//}
-//
 //- (NSString *)allParameterTypesMethod:(int)intValue {
 //  return [NSString stringWithFormat:@"%d", intValue];
 //}
