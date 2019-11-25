@@ -78,6 +78,15 @@ class _AndroidTextViewState extends State<AndroidTextView> {
 class AndroidTestClass1 extends TestClass1 {
   @Constructor()
   AndroidTestClass1();
+
+  @Method()
+  Future<void> parameterMethod(String supported, int primitive) {
+    return android.invoke<void>(
+      _channel,
+      _constructorMethodCall,
+      <MethodCall>[_android.$parameterMethod(supported, primitive)],
+    );
+  }
 }
 
 @Class(IosPlatform(
@@ -86,6 +95,15 @@ class AndroidTestClass1 extends TestClass1 {
 class IosTestClass1 extends TestClass1 {
   @Constructor()
   IosTestClass1();
+
+  @Method()
+  Future<void> parameterMethod(String supported, @int32 int primitive) {
+    return android.invoke<void>(
+      _channel,
+      _constructorMethodCall,
+      <MethodCall>[_ios.$parameterMethod(supported, primitive)],
+    );
+  }
 
   @Method()
   @int32

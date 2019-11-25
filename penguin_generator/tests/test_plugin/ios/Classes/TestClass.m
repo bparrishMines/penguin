@@ -17,9 +17,11 @@
   return @(70.0F);
 }
 
-//- (NSString *)allParameterTypesMethod:(int)intValue {
-//  return [NSString stringWithFormat:@"%d", intValue];
-//}
+- (void)parameterMethod:(NSString *)supported primitive:(int)primitive {
+  if ([supported isEqual:[NSNull null]]) {
+    @throw [NSException exceptionWithName:NSInvalidArgumentException reason:nil userInfo:nil];
+  }
+}
 
 - (NSObject *)returnObject {
   return @"Hello";

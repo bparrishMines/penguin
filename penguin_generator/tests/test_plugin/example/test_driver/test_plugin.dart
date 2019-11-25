@@ -67,6 +67,20 @@ void main() {
     test('returnInt32', () {
       expect((testClass as IosTestClass1).returnInt32(), completion(56));
     }, skip: !Platform.isIOS);
+
+    test('parameterMethod', () {
+      if (Platform.isAndroid) {
+        expect(
+          (testClass as AndroidTestClass1).parameterMethod('woeif', 32),
+          completes,
+        );
+      } else if (Platform.isIOS) {
+        expect(
+          (testClass as IosTestClass1).parameterMethod('woeif', 32),
+          completes,
+        );
+      }
+    });
   });
 //  group('test_plugin', () {
 //    group('android', () {

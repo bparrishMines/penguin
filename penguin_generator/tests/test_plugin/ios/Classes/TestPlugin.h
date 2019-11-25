@@ -4,7 +4,7 @@
 @end
 
 @interface TestClass1 : NSObject
-//- (NSString *)allParameterTypesMethod:(int)intValue;
+- (void)parameterMethod:(NSString *)supported primitive:(int)primitive;
 - (void)returnVoid;
 - (NSObject *)returnObject;
 - (NSObject *)returnDynamic;

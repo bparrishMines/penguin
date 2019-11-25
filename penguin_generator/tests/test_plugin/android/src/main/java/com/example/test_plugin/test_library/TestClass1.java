@@ -76,6 +76,10 @@ public class TestClass1 {
     map.put("two", 2);
     return map;
   }
+
+  public void parameterMethod(String s, Integer integer) {
+    if (s == null || integer == null) throw new IllegalArgumentException();
+  }
 //
 //  public static class NestedTestClass {
 //    public int nestedClassField = 4;
