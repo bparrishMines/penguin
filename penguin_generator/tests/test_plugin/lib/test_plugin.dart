@@ -111,7 +111,7 @@ class AndroidTestClass1 extends TestClass1 {
   @Method()
   Future<void> parameterMethod(
     String supported,
-    int primitive,
+    @int64 int primitive,
     AndroidTestClass2 wrapper,
     AndroidNestedClass nested,
   ) {
