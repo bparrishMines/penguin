@@ -121,6 +121,14 @@ class ReadInfoBuilder extends Builder {
                 ),
             methods: (element.element as ClassElement)
                 .methods
+                .followedBy(
+                  (element.element as ClassElement)
+                      .allSupertypes
+                      .expand<MethodElement>(
+                        (InterfaceType interfaceType) =>
+                            interfaceType.element.methods,
+                      ),
+                )
                 .where(
                   (MethodElement element) =>
                       Annotation.method.hasAnnotationOfExact(element),
@@ -159,6 +167,14 @@ class ReadInfoBuilder extends Builder {
             fields: [
               ...(element.element as ClassElement)
                   .fields
+                  .followedBy(
+                    (element.element as ClassElement)
+                        .allSupertypes
+                        .expand<FieldElement>(
+                          (InterfaceType interfaceType) =>
+                              interfaceType.element.fields,
+                        ),
+                  )
                   .where(
                     (FieldElement fieldElement) =>
                         Annotation.field.hasAnnotationOfExact(fieldElement),
@@ -188,6 +204,14 @@ class ReadInfoBuilder extends Builder {
                   ),
               ...(element.element as ClassElement)
                   .accessors
+                  .followedBy(
+                    (element.element as ClassElement)
+                        .allSupertypes
+                        .expand<PropertyAccessorElement>(
+                          (InterfaceType interfaceType) =>
+                              interfaceType.element.accessors,
+                        ),
+                  )
                   .where(
                     (PropertyAccessorElement accessorElement) =>
                         Annotation.field.hasAnnotationOfExact(accessorElement),

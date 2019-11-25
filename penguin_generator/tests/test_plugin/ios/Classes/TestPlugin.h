@@ -4,17 +4,17 @@
 @end
 
 @interface TestClass1 : NSObject
-- (NSNumber *)noParametersMethod;
-- (NSString *)singleParameterMethod:(NSString *)value;
-- (NSString *)allParameterTypesMethod:(int)intValue;
+//- (NSNumber *)noParametersMethod;
+//- (NSString *)singleParameterMethod:(NSString *)value;
+//- (NSString *)allParameterTypesMethod:(int)intValue;
 - (void)returnVoid;
-- (NSObject *)returnObject;
-- (NSObject *)returnDynamic;
-- (NSString *)returnString;
-- (NSNumber *)returnInt;
-- (int)returnInt32;
-- (NSNumber *)returnDouble;
-- (NSNumber *)returnBool;
-- (NSArray *)returnList;
-- (NSDictionary *)returnMap;
+//- (NSObject *)returnObject;
+//- (NSObject *)returnDynamic;
+//- (NSString *)returnString;
+//- (NSNumber *)returnInt;
+//- (int)returnInt32;
+//- (NSNumber *)returnDouble;
+//- (NSNumber *)returnBool;
+//- (NSArray *)returnList;
+//- (NSDictionary *)returnMap;
 @end

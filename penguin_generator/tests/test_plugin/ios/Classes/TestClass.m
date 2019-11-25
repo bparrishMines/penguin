@@ -1,54 +1,54 @@
 #import "TestPlugin.h"
 
 @implementation TestClass1
-- (NSNumber *)noParametersMethod {
-  return [NSNumber numberWithInt:4];
-}
-- (NSString *)singleParameterMethod:(NSString *)value {
-  return [value stringByAppendingString:@"two"];
-}
-
-- (NSString *)allParameterTypesMethod:(int)intValue {
-  return [NSString stringWithFormat:@"%d", intValue];
-}
+//- (NSNumber *)noParametersMethod {
+//  return [NSNumber numberWithInt:4];
+//}
+//- (NSString *)singleParameterMethod:(NSString *)value {
+//  return [value stringByAppendingString:@"two"];
+//}
+//
+//- (NSString *)allParameterTypesMethod:(int)intValue {
+//  return [NSString stringWithFormat:@"%d", intValue];
+//}
 
 - (void)returnVoid {
   return;
 }
 
-- (NSObject *)returnObject {
-  return @"PoPo";
-}
-
-- (NSObject *)returnDynamic {
-  return @45;
-}
-
-- (NSString *)returnString {
-  return @"PoPo?";
-}
-
-- (NSNumber *)returnInt {
-  return @(12);
-}
-
-- (int)returnInt32 {
-  return 56;
-}
-
-- (NSNumber *)returnDouble {
-  return @(70.0F);
-}
-
-- (NSNumber *)returnBool {
-  return [NSNumber numberWithBool:YES];
-}
-
-- (NSArray *)returnList {
-  return @[@(3.0), @(4.0)];
-}
-
-- (NSDictionary *)returnMap {
-  return @{@"three": @3, @"four": @4};
-}
+//- (NSObject *)returnObject {
+//  return @"PoPo";
+//}
+//
+//- (NSObject *)returnDynamic {
+//  return @45;
+//}
+//
+//- (NSString *)returnString {
+//  return @"PoPo?";
+//}
+//
+//- (NSNumber *)returnInt {
+//  return @(12);
+//}
+//
+//- (int)returnInt32 {
+//  return 56;
+//}
+//
+//- (NSNumber *)returnDouble {
+//  return @(70.0F);
+//}
+//
+//- (NSNumber *)returnBool {
+//  return [NSNumber numberWithBool:YES];
+//}
+//
+//- (NSArray *)returnList {
+//  return @[@(3.0), @(4.0)];
+//}
+//
+//- (NSDictionary *)returnMap {
+//  return @{@"three": @3, @"four": @4};
+//}
 @end

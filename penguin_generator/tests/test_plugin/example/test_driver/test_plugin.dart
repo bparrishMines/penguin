@@ -15,7 +15,16 @@ void main() {
   tearDownAll(() => completer.complete(null));
 
   group('test_plugin', () {
+    TestClass1 testClass;
 
+    setUpAll(() {
+      print('Platform: ${Platform.isAndroid ? 'Android' : 'Ios'}');
+      testClass = Platform.isAndroid ? AndroidTestClass1() : IosTestClass1();
+    });
+
+    test('returnVoid', () {
+      expect(testClass.returnVoid(), completes);
+    });
   });
 //  group('test_plugin', () {
 //    group('android', () {

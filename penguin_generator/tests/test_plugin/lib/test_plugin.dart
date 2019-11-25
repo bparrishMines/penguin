@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math';
+import 'dart:io' as io;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
@@ -7,6 +8,9 @@ import 'package:penguin/penguin.dart';
 
 import 'android.penguin.g.dart' as android;
 import 'ios.penguin.g.dart' as ios;
+
+final MethodChannel _channel = MethodChannel('test_plugin');
+String _randomId() => Random().nextDouble().toString();
 
 @Class(AndroidPlatform(
   AndroidType('android.app', <String>['Activity']),
@@ -18,13 +22,40 @@ class _AndroidActivity {
       android.$_AndroidActivity('activity');
 }
 
-@Class(IosPlatform(
-  IosType('TestClass1', import: '"TestPlugin.h"'),
-))
 @Class(AndroidPlatform(
   AndroidType('com.example.test_plugin.test_library', <String>['TestClass1']),
 ))
-class TestClass1 {}
+class AndroidTestClass1 extends TestClass1 {
+  @Constructor()
+  AndroidTestClass1();
+}
+
+@Class(IosPlatform(
+  IosType('TestClass1', import: '"TestPlugin.h"'),
+))
+class IosTestClass1 extends TestClass1 {
+  @Constructor()
+  IosTestClass1();
+}
+
+abstract class TestClass1 {
+  final android.$AndroidTestClass1 _android =
+      android.$AndroidTestClass1(_randomId());
+  final ios.$IosTestClass1 _ios = ios.$IosTestClass1(_randomId());
+
+  @Method()
+  Future<void> returnVoid() {
+    return android.invoke<void>(
+      _channel,
+      io.Platform.isAndroid
+          ? _android.$AndroidTestClass1$Default()
+          : _ios.$IosTestClass1$Default(),
+      <MethodCall>[
+        io.Platform.isAndroid ? _android.$returnVoid() : _ios.$returnVoid(),
+      ],
+    );
+  }
+}
 
 //final a.CallbackHandler callbackHandler = a.CallbackHandler();
 //final MethodChannel _channel = MethodChannel('test_plugin')
