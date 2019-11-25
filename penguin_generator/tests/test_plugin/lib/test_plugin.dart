@@ -22,6 +22,56 @@ class _AndroidActivity {
       android.$_AndroidActivity('activity');
 }
 
+class AndroidTextView extends StatefulWidget {
+  AndroidTextView(this.text) : assert(text != null);
+
+  final String text;
+
+  @override
+  State<StatefulWidget> createState() =>
+      _AndroidTextViewState(_AndroidActivity());
+}
+
+@Class(AndroidPlatform(
+  AndroidType('android.widget', <String>['TextView']),
+))
+class _AndroidTextViewState extends State<AndroidTextView> {
+  @Constructor()
+  _AndroidTextViewState(this._activity);
+
+  final _AndroidActivity _activity;
+  android.$_AndroidTextViewState _textView;
+
+  @Method()
+  void setText(String text) {}
+
+  @override
+  void initState() {
+    super.initState();
+    _textView = android.$_AndroidTextViewState(_randomId());
+    android.invokeAll(_channel, [
+      _textView.$_AndroidTextViewState$Default(_activity._activity),
+      _textView.allocate(),
+    ]);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    android.invoke<void>(_channel, _textView.deallocate());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    android.invoke<void>(_channel, _textView.$setText(widget.text));
+    return AndroidView(
+      viewType: '${_channel.name}/view',
+      creationParams: _textView.uniqueId,
+      creationParamsCodec: const StandardMessageCodec(),
+    );
+  }
+}
+
 @Class(AndroidPlatform(
   AndroidType('com.example.test_plugin.test_library', <String>['TestClass1']),
 ))
@@ -126,6 +176,30 @@ abstract class TestClass1 {
       ],
     );
   }
+
+  @Method()
+  Future<Object> returnObject() {
+    return android.invoke<Object>(
+      _channel,
+      _constructorMethodCall,
+      <MethodCall>[
+        io.Platform.isAndroid ? _android.$returnObject() : _ios.$returnObject(),
+      ],
+    );
+  }
+
+  @Method()
+  Future<dynamic> returnDynamic() {
+    return android.invoke<dynamic>(
+      _channel,
+      _constructorMethodCall,
+      <MethodCall>[
+        io.Platform.isAndroid
+            ? _android.$returnDynamic()
+            : _ios.$returnDynamic(),
+      ],
+    );
+  }
 }
 
 //final a.CallbackHandler callbackHandler = a.CallbackHandler();
@@ -174,64 +248,6 @@ abstract class TestClass1 {
 //  }
 //}
 //
-//@Class(AndroidPlatform(
-//  AndroidType('android.app', <String>['Activity']),
-//))
-//class _AndroidActivity {
-//  _AndroidActivity() : activity = a.$_AndroidActivity('activity');
-//
-//  final a.$_AndroidActivity activity;
-//}
-//
-//class AndroidTextView extends StatefulWidget {
-//  AndroidTextView(this.text);
-//
-//  final String text;
-//
-//  @override
-//  State<StatefulWidget> createState() =>
-//      _AndroidTextViewState(_AndroidActivity());
-//}
-//
-//@Class(AndroidPlatform(
-//  AndroidType('android.widget', <String>['TextView']),
-//))
-//class _AndroidTextViewState extends State<AndroidTextView> {
-//  @Constructor()
-//  _AndroidTextViewState(this._activity);
-//
-//  final _AndroidActivity _activity;
-//  a.$_AndroidTextViewState _textView;
-//
-//  @Method()
-//  void setText(String text) {}
-//
-//  @override
-//  void initState() {
-//    super.initState();
-//    _textView = a.$_AndroidTextViewState(_randomId());
-//    a.invokeAll(_channel, [
-//      _textView.$_AndroidTextViewState$Default(_activity.activity),
-//      _textView.allocate(),
-//    ]);
-//  }
-//
-//  @override
-//  void dispose() {
-//    super.dispose();
-//    a.invoke<void>(_channel, _textView.deallocate());
-//  }
-//
-//  @override
-//  Widget build(BuildContext context) {
-//    a.invoke<void>(_channel, _textView.$setText(widget.text));
-//    return AndroidView(
-//      viewType: '${_channel.name}/view',
-//      creationParams: _textView.uniqueId,
-//      creationParamsCodec: const StandardMessageCodec(),
-//    );
-//  }
-//}
 //
 //@Class(AndroidPlatform(
 //  AndroidType('com.example.test_plugin.test_library', <String>['TestClass1']),
@@ -558,133 +574,4 @@ abstract class TestClass1 {
 //  AndroidTestClass3._(this._androidTestClass3);
 //
 //  final a.$AndroidTestClass3 _androidTestClass3;
-//}
-
-//@Class(IosPlatform(
-//  IosType('TestClass1', import: '"TestPlugin.h"'),
-//))
-//class IosTestClass1 {
-//  @Constructor()
-//  IosTestClass1();
-//
-//  final i.$IosTestClass1 _testClass = i.$IosTestClass1(_randomId());
-//  final List<MethodCall> _setters = <MethodCall>[];
-//
-//  @Method()
-//  Future<void> returnVoid() {
-//    return a.invoke<void>(
-//      _channel,
-//      _testClass.$IosTestClass1$Default(),
-//      [_testClass.$returnVoid()],
-//    );
-//  }
-//
-//  @Method()
-//  Future<Object> returnObject() {
-//    return a.invoke<Object>(
-//      _channel,
-//      _testClass.$IosTestClass1$Default(),
-//      [_testClass.$returnObject()],
-//    );
-//  }
-//
-//  @Method()
-//  Future<dynamic> returnDynamic() {
-//    return a.invoke<dynamic>(
-//      _channel,
-//      _testClass.$IosTestClass1$Default(),
-//      [_testClass.$returnDynamic()],
-//    );
-//  }
-//
-//  @Method()
-//  Future<String> returnString() {
-//    return a.invoke<String>(
-//      _channel,
-//      _testClass.$IosTestClass1$Default(),
-//      [_testClass.$returnString()],
-//    );
-//  }
-//
-//  @Method()
-//  Future<int> returnInt() {
-//    return a.invoke<int>(
-//      _channel,
-//      _testClass.$IosTestClass1$Default(),
-//      [_testClass.$returnInt()],
-//    );
-//  }
-//
-//  @int32
-//  @Method()
-//  Future<int> returnInt32() {
-//    return a.invoke<int>(
-//      _channel,
-//      _testClass.$IosTestClass1$Default(),
-//      [_testClass.$returnInt32()],
-//    );
-//  }
-//
-//  @Method()
-//  Future<double> returnDouble() {
-//    return a.invoke<double>(
-//      _channel,
-//      _testClass.$IosTestClass1$Default(),
-//      [_testClass.$returnDouble()],
-//    );
-//  }
-//
-//  @Method()
-//  Future<bool> returnBool() {
-//    return a.invoke<bool>(
-//      _channel,
-//      _testClass.$IosTestClass1$Default(),
-//      [_testClass.$returnBool()],
-//    );
-//  }
-//
-//  @Method()
-//  Future<List<double>> returnList() {
-//    return a.invokeList<double>(
-//      _channel,
-//      _testClass.$IosTestClass1$Default(),
-//      [_testClass.$returnList()],
-//    );
-//  }
-//
-//  @Method()
-//  Future<Map<String, int>> returnMap() {
-//    return a.invokeMap<String, int>(
-//      _channel,
-//      _testClass.$IosTestClass1$Default(),
-//      [_testClass.$returnMap()],
-//    );
-//  }
-//
-//  @Method()
-//  Future<int> noParametersMethod() {
-//    return a.invoke<int>(
-//      _channel,
-//      _testClass.$IosTestClass1$Default(),
-//      [_testClass.$noParametersMethod()],
-//    );
-//  }
-//
-//  @Method()
-//  Future<String> singleParameterMethod(String value) {
-//    return a.invoke<String>(
-//      _channel,
-//      _testClass.$IosTestClass1$Default(),
-//      [_testClass.$singleParameterMethod(value)],
-//    );
-//  }
-//
-//  @Method()
-//  Future<String> allParameterTypesMethod(@int32 int intValue) {
-//    return a.invoke<String>(
-//      _channel,
-//      _testClass.$IosTestClass1$Default(),
-//      [_testClass.$allParameterTypesMethod(intValue)],
-//    );
-//  }
 //}

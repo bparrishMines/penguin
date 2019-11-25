@@ -21,13 +21,13 @@
 //  return [NSString stringWithFormat:@"%d", intValue];
 //}
 
-//- (NSObject *)returnObject {
-//  return @"PoPo";
-//}
-//
-//- (NSObject *)returnDynamic {
-//  return @45;
-//}
+- (NSObject *)returnObject {
+  return @"Hello";
+}
+
+- (NSObject *)returnDynamic {
+  return @3;
+}
 //
 //
 //- (int)returnInt32 {

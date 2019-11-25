@@ -38,15 +38,15 @@ public class TestClass1 {
   public void returnVoid() {
 
   }
-//
-//  public Object returnObject() {
-//    return "Hello";
-//  }
-//
-//  public Object returnDynamic() {
-//    return 3;
-//  }
-//
+
+  public Object returnObject() {
+    return "Hello";
+  }
+
+  public Object returnDynamic() {
+    return 3;
+  }
+
   public String returnString() {
     return "Amigo";
   }

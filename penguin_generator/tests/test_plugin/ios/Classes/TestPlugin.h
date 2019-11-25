@@ -6,8 +6,8 @@
 @interface TestClass1 : NSObject
 //- (NSString *)allParameterTypesMethod:(int)intValue;
 - (void)returnVoid;
-//- (NSObject *)returnObject;
-//- (NSObject *)returnDynamic;
+- (NSObject *)returnObject;
+- (NSObject *)returnDynamic;
 - (NSString *)returnString;
 - (NSNumber *)returnInt;
 //- (int)returnInt32;

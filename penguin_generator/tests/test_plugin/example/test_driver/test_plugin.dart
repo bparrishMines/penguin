@@ -55,6 +55,14 @@ void main() {
         completion(<String, int>{'one': 1, 'two': 2}),
       );
     });
+
+    test('returnObject', () {
+      expect(testClass.returnObject(), completion('Hello'));
+    });
+
+    test('returnDynamic', () {
+      expect(testClass.returnDynamic(), completion(3));
+    });
   });
 //  group('test_plugin', () {
 //    group('android', () {
@@ -133,13 +141,6 @@ void main() {
 //        expect(mockClass.callbackValue, 'I love callbacks.');
 //      });
 //
-//      test('returnObject', () {
-//        expect(AndroidTestClass1().returnObject(), completion('Hello'));
-//      });
-//
-//      test('returnDynamic', () {
-//        expect(AndroidTestClass1().returnDynamic(), completion(3));
-//      });
 //
 //
 //      test('nestedClassField', () {
@@ -164,21 +165,8 @@ void main() {
 //    }, skip: !Platform.isAndroid);
 //
 //    group('ios', () {
-//
-//      test('returnObject', () {
-//        expect(IosTestClass1().returnObject(), completion('PoPo'));
-//      });
-//
-//      test('returnDynamic', () {
-//        expect(IosTestClass1().returnDynamic(), completion(45));
-//      });
-//
 //      test('returnInt32', () {
 //        expect(IosTestClass1().returnInt32(), completion(56));
-//      });
-//
-//      test('allParameterTypesMethod', () {
-//        expect(IosTestClass1().allParameterTypesMethod(41), completion('41'));
 //      });
 //    }, skip: !Platform.isIOS);
 //  });
