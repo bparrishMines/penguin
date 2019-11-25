@@ -26,6 +26,10 @@ public class TestClass1 {
 //    mapField = map;
   }
 
+  public static void staticMethod() {
+
+  }
+
 //  public TestClass1(String constructorValue) {
 //    this.constructorValue = constructorValue;
 //  }

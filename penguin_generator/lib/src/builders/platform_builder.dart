@@ -125,8 +125,10 @@ class ReadInfoBuilder extends Builder {
                   (element.element as ClassElement)
                       .allSupertypes
                       .expand<MethodElement>(
-                        (InterfaceType interfaceType) =>
-                            interfaceType.element.methods,
+                        (InterfaceType interfaceType) => interfaceType
+                            .element.methods
+                            .where((MethodElement methodElement) =>
+                                !methodElement.isStatic),
                       ),
                 )
                 .where(
@@ -171,8 +173,10 @@ class ReadInfoBuilder extends Builder {
                     (element.element as ClassElement)
                         .allSupertypes
                         .expand<FieldElement>(
-                          (InterfaceType interfaceType) =>
-                              interfaceType.element.fields,
+                          (InterfaceType interfaceType) => interfaceType
+                              .element.fields
+                              .where((FieldElement fieldElement) =>
+                                  !fieldElement.isStatic),
                         ),
                   )
                   .where(
@@ -209,7 +213,9 @@ class ReadInfoBuilder extends Builder {
                         .allSupertypes
                         .expand<PropertyAccessorElement>(
                           (InterfaceType interfaceType) =>
-                              interfaceType.element.accessors,
+                              interfaceType.element.accessors.where(
+                                  (PropertyAccessorElement accessorElement) =>
+                                      !accessorElement.isStatic),
                         ),
                   )
                   .where(

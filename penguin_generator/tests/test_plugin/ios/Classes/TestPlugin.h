@@ -7,6 +7,7 @@
 @end
 
 @interface TestClass1 : NSObject
++ (void)staticMethod;
 - (void)parameterMethod:(NSString *)supported primitive:(int)primitive wrapper:(TestClass2 *)wrapper;
 - (void)returnVoid;
 - (NSObject *)returnObject;

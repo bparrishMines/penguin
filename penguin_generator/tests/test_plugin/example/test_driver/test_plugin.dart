@@ -24,6 +24,20 @@ void main() {
       testClass2 = Platform.isAndroid ? AndroidTestClass2() : IosTestClass2();
     });
 
+    test('staticMethod', () {
+      if (Platform.isAndroid) {
+        expect(
+          AndroidTestClass1.staticMethod(),
+          completes,
+        );
+      } else if (Platform.isIOS) {
+        expect(
+          IosTestClass1.staticMethod(),
+          completes,
+        );
+      }
+    });
+
     test('returnVoid', () {
       expect(testClass.returnVoid(), completes);
     });

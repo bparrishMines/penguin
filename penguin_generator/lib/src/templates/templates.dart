@@ -156,12 +156,12 @@ class Template {
   %%STATICMETHODCALLS%%
   %%STATICMETHODCALL classMember:method%%
   if ([@"__platformClassName__#__methodName__" isEqualToString:call.method]) {
-    return [$__platformClassName__ __methodName__:handler call:call];
+    return [$__platformClassName__ __methodName__:wrapperManager call:call];
   }
   %%STATICMETHODCALL classMember:method%%
   %%STATICMETHODCALL classMember:field%%
   if ([@"__platformClassName__.__fieldName__" isEqualToString:call.method]) {
-    return [$__platformClassName__ __fieldName__:handler call:call];
+    return [$__platformClassName__ __fieldName__:wrapperManager call:call];
   }
   %%STATICMETHODCALL classMember:field%%
   %%STATICMETHODCALLS%%
@@ -201,7 +201,7 @@ class Template {
   return
   %%PREMETHODCALL methodChannel:supported%%
   %%PREMETHODCALL methodChannel:wrapper%%
-  [__returnType__Wrapper initWithHandler:$handler uniqueId:call.arguments[@"uniqueId"] value:
+  [$__returnType__ initWithWrapperManager:wrapperManager uniqueId:call.arguments[@"uniqueId"] value:
   %%PREMETHODCALL methodChannel:wrapper%%
   %%PREMETHODCALL methodChannel:primitive%%
   return @(

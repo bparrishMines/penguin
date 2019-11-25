@@ -1,6 +1,10 @@
 #import "TestPlugin.h"
 
 @implementation TestClass1
++ (void)staticMethod {
+  
+}
+
 - (void)returnVoid {
   return;
 }

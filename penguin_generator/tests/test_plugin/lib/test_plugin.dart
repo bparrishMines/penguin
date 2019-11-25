@@ -80,6 +80,16 @@ class AndroidTestClass1 extends TestClass1 {
   AndroidTestClass1();
 
   @Method()
+  static Future<void> staticMethod() {
+    return android.invoke<void>(
+      _channel,
+      io.Platform.isAndroid
+          ? android.$AndroidTestClass1.$staticMethod()
+          : ios.$IosTestClass1.$staticMethod(),
+    );
+  }
+
+  @Method()
   Future<void> parameterMethod(
     String supported,
     int primitive,
@@ -102,6 +112,16 @@ class AndroidTestClass1 extends TestClass1 {
 class IosTestClass1 extends TestClass1 {
   @Constructor()
   IosTestClass1();
+
+  @Method()
+  static Future<void> staticMethod() {
+    return android.invoke<void>(
+      _channel,
+      io.Platform.isAndroid
+          ? android.$AndroidTestClass1.$staticMethod()
+          : ios.$IosTestClass1.$staticMethod(),
+    );
+  }
 
   @Method()
   Future<void> parameterMethod(
