@@ -25,6 +25,18 @@ void main() {
     test('returnVoid', () {
       expect(testClass.returnVoid(), completes);
     });
+
+    test('returnString', () {
+      expect(testClass.returnString(), completion('Amigo'));
+    });
+
+    test('returnInt', () {
+      expect(testClass.returnInt(), completion(69));
+    });
+
+    test('returnDouble', () {
+      expect(testClass.returnDouble(), completion(70.0));
+    });
   });
 //  group('test_plugin', () {
 //    group('android', () {

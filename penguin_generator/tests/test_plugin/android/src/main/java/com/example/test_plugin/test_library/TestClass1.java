@@ -54,17 +54,17 @@ public class TestClass1 {
 //    return 3;
 //  }
 //
-//  public String returnString() {
-//    return "Amigo";
-//  }
-//
-//  public int returnInt() {
-//    return 69;
-//  }
-//
-//  public double returnDouble() {
-//    return 70.0;
-//  }
+  public String returnString() {
+    return "Amigo";
+  }
+
+  public int returnInt() {
+    return 69;
+  }
+
+  public double returnDouble() {
+    return 70.0;
+  }
 //
 //  public boolean returnBool() {
 //    return false;

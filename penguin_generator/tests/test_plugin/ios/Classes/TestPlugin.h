@@ -10,10 +10,10 @@
 - (void)returnVoid;
 //- (NSObject *)returnObject;
 //- (NSObject *)returnDynamic;
-//- (NSString *)returnString;
-//- (NSNumber *)returnInt;
+- (NSString *)returnString;
+- (NSNumber *)returnInt;
 //- (int)returnInt32;
-//- (NSNumber *)returnDouble;
+- (NSNumber *)returnDouble;
 //- (NSNumber *)returnBool;
 //- (NSArray *)returnList;
 //- (NSDictionary *)returnMap;

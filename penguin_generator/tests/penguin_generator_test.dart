@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 
-void main() {
+void main(List<String> arguments) {
   group('penguin_generator', () {
     test('test_plugin test_driver tests', () async {
       print('Running flutter create...');
@@ -47,20 +47,28 @@ void main() {
       ]);
 
       print('Running test_driver...');
-      final Process driverTestProcess = await Process.start(
-        'flutter',
-        <String>['drive', p.join('test_driver', 'test_plugin.dart')],
-        workingDirectory: p.join('tests', 'test_plugin', 'example'),
-      );
+      if (arguments == null || arguments.isEmpty) arguments = <String>['all'];
+      for (String argument in arguments) {
+        final Process driverTestProcess = await Process.start(
+          'flutter',
+          <String>[
+            'drive',
+            '-d',
+            argument,
+            p.join('test_driver', 'test_plugin.dart')
+          ],
+          workingDirectory: p.join('tests', 'test_plugin', 'example'),
+        );
 
-      bool testsPassed = false;
-      driverTestProcess.stdout.transform(utf8.decoder).listen((String data) {
-        if (data.contains('All tests passed!')) testsPassed = true;
-        stdout.write(data);
-      });
-      stderr.addStream(driverTestProcess.stderr);
+        bool testsPassed = false;
+        driverTestProcess.stdout.transform(utf8.decoder).listen((String data) {
+          if (data.contains('All tests passed!')) testsPassed = true;
+          stdout.write(data);
+        });
+        stderr.addStream(driverTestProcess.stderr);
 
-      expect(await driverTestProcess.exitCode == 0 && testsPassed, isTrue);
+        expect(await driverTestProcess.exitCode == 0 && testsPassed, isTrue);
+      }
     }, timeout: Timeout(Duration(minutes: 4)));
   });
 }

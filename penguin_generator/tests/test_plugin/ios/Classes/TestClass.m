@@ -1,6 +1,22 @@
 #import "TestPlugin.h"
 
 @implementation TestClass1
+- (void)returnVoid {
+  return;
+}
+
+- (NSString *)returnString {
+  return @"Amigo";
+}
+
+- (NSNumber *)returnInt {
+  return @(69);
+}
+
+- (NSNumber *)returnDouble {
+  return @(70.0F);
+}
+
 //- (NSNumber *)noParametersMethod {
 //  return [NSNumber numberWithInt:4];
 //}
@@ -12,10 +28,6 @@
 //  return [NSString stringWithFormat:@"%d", intValue];
 //}
 
-- (void)returnVoid {
-  return;
-}
-
 //- (NSObject *)returnObject {
 //  return @"PoPo";
 //}
@@ -24,21 +36,11 @@
 //  return @45;
 //}
 //
-//- (NSString *)returnString {
-//  return @"PoPo?";
-//}
-//
-//- (NSNumber *)returnInt {
-//  return @(12);
-//}
 //
 //- (int)returnInt32 {
 //  return 56;
 //}
 //
-//- (NSNumber *)returnDouble {
-//  return @(70.0F);
-//}
 //
 //- (NSNumber *)returnBool {
 //  return [NSNumber numberWithBool:YES];

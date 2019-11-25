@@ -39,19 +39,57 @@ class IosTestClass1 extends TestClass1 {
 }
 
 abstract class TestClass1 {
+  TestClass1() {
+    _constructorMethodCall = io.Platform.isAndroid
+        ? _android.$AndroidTestClass1$Default()
+        : _ios.$IosTestClass1$Default();
+  }
   final android.$AndroidTestClass1 _android =
       android.$AndroidTestClass1(_randomId());
   final ios.$IosTestClass1 _ios = ios.$IosTestClass1(_randomId());
+
+  MethodCall _constructorMethodCall;
 
   @Method()
   Future<void> returnVoid() {
     return android.invoke<void>(
       _channel,
-      io.Platform.isAndroid
-          ? _android.$AndroidTestClass1$Default()
-          : _ios.$IosTestClass1$Default(),
+      _constructorMethodCall,
       <MethodCall>[
         io.Platform.isAndroid ? _android.$returnVoid() : _ios.$returnVoid(),
+      ],
+    );
+  }
+
+  @Method()
+  Future<String> returnString() {
+    return android.invoke<String>(
+      _channel,
+      _constructorMethodCall,
+      <MethodCall>[
+        io.Platform.isAndroid ? _android.$returnString() : _ios.$returnString(),
+      ],
+    );
+  }
+
+  @Method()
+  Future<int> returnInt() {
+    return android.invoke<int>(
+      _channel,
+      _constructorMethodCall,
+      <MethodCall>[
+        io.Platform.isAndroid ? _android.$returnInt() : _ios.$returnInt(),
+      ],
+    );
+  }
+
+  @Method()
+  Future<double> returnDouble() {
+    return android.invoke<double>(
+      _channel,
+      _constructorMethodCall,
+      <MethodCall>[
+        io.Platform.isAndroid ? _android.$returnDouble() : _ios.$returnDouble(),
       ],
     );
   }
