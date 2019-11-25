@@ -93,6 +93,39 @@ abstract class TestClass1 {
       ],
     );
   }
+
+  @Method()
+  Future<bool> returnBool() {
+    return android.invoke<bool>(
+      _channel,
+      _constructorMethodCall,
+      <MethodCall>[
+        io.Platform.isAndroid ? _android.$returnBool() : _ios.$returnBool(),
+      ],
+    );
+  }
+
+  @Method()
+  Future<List<double>> returnList() {
+    return android.invokeList<double>(
+      _channel,
+      _constructorMethodCall,
+      <MethodCall>[
+        io.Platform.isAndroid ? _android.$returnList() : _ios.$returnList(),
+      ],
+    );
+  }
+
+  @Method()
+  Future<Map<String, int>> returnMap() {
+    return android.invokeMap<String, int>(
+      _channel,
+      _constructorMethodCall,
+      <MethodCall>[
+        io.Platform.isAndroid ? _android.$returnMap() : _ios.$returnMap(),
+      ],
+    );
+  }
 }
 
 //final a.CallbackHandler callbackHandler = a.CallbackHandler();

@@ -37,6 +37,24 @@ void main() {
     test('returnDouble', () {
       expect(testClass.returnDouble(), completion(70.0));
     });
+
+    test('returnBool', () {
+      expect(testClass.returnBool(), completion(false));
+    });
+
+    test('returnList', () {
+      expect(
+        testClass.returnList(),
+        completion(<double>[1.0, 2.0]),
+      );
+    });
+
+    test('returnMap', () {
+      expect(
+        testClass.returnMap(),
+        completion(<String, int>{'one': 1, 'two': 2}),
+      );
+    });
   });
 //  group('test_plugin', () {
 //    group('android', () {

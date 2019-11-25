@@ -14,7 +14,7 @@
 - (NSNumber *)returnInt;
 //- (int)returnInt32;
 - (NSNumber *)returnDouble;
-//- (NSNumber *)returnBool;
-//- (NSArray *)returnList;
-//- (NSDictionary *)returnMap;
+- (NSNumber *)returnBool;
+- (NSArray *)returnList;
+- (NSDictionary *)returnMap;
 @end

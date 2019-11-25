@@ -42,15 +42,15 @@
 //}
 //
 //
-//- (NSNumber *)returnBool {
-//  return [NSNumber numberWithBool:YES];
-//}
-//
-//- (NSArray *)returnList {
-//  return @[@(3.0), @(4.0)];
-//}
-//
-//- (NSDictionary *)returnMap {
-//  return @{@"three": @3, @"four": @4};
-//}
+- (NSNumber *)returnBool {
+  return [NSNumber numberWithBool:NO];
+}
+
+- (NSArray *)returnList {
+  return @[@(1.0), @(2.0)];
+}
+
+- (NSDictionary *)returnMap {
+  return @{@"one": @1, @"two": @2};
+}
 @end
