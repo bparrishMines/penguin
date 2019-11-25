@@ -49,7 +49,7 @@ class _AndroidTextViewState extends State<AndroidTextView> {
   void initState() {
     super.initState();
     _textView = android.$_AndroidTextViewState(_randomId());
-    android.invokeAll(_channel, [
+    android.invokeAll(_channel, <MethodCall>[
       _textView.$_AndroidTextViewState$Default(_activity._activity),
       _textView.allocate(),
     ]);

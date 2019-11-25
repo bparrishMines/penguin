@@ -294,6 +294,10 @@ class Template {
   if ([existingWrapper getValue] != [wrapper getValue]) {
     @throw [NSException exceptionWithName:NSInvalidArgumentException reason:[NSString stringWithFormat:@"Object for uniqueId already exists: %@", wrapper->$uniqueId] userInfo:nil];
   }
+  
+  if ([wrapperDictionary objectForKey:wrapper->$uniqueId] == nil) {
+    [wrapperDictionary setObject:wrapper forKey:wrapper->$uniqueId];
+  }  
 }
 
 - (Wrapper *)getWrapper:(NSString *)uniqueId {
@@ -856,6 +860,8 @@ public class ChannelGenerated {
         final String message = String.format("Object for uniqueId already exists: %s", wrapper.$uniqueId);
         throw new IllegalArgumentException(message);
       }
+      
+      if (!wrapperMap.containsKey(wrapper.$uniqueId)) wrapperMap.put(wrapper.$uniqueId, wrapper);
     }
 
     private Wrapper getWrapper(String uniqueId) throws WrapperNotFoundException {
