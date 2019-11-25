@@ -91,6 +91,7 @@ void main() {
             'woeif',
             32,
             (testClass2 as AndroidTestClass2),
+            AndroidNestedClass(),
           ),
           completes,
         );
@@ -124,10 +125,6 @@ void main() {
 //
 //      test('staticField', () {
 //        expect(AndroidTestClass1.staticField, completion(12));
-//      });
-//
-//      test('staticMethod', () {
-//        expect(AndroidTestClass1.staticMethod(), completion(13));
 //      });
 //
 //      test('objectField', () {
@@ -181,28 +178,6 @@ void main() {
 //        await mockClass.callCallbackMethod();
 //        await Future.delayed(Duration(seconds: 1));
 //        expect(mockClass.callbackValue, 'I love callbacks.');
-//      });
-//
-//
-//
-//      test('nestedClassField', () {
-//        expect(AndroidNestedClass().nestedClassField, completion(4));
-//      });
-//
-//      test('nestedClassMethod', () {
-//        expect(AndroidNestedClass().nestedClassMethod(), completion(5));
-//      });
-//
-//      test('passParameters', () {
-//        expect(
-//          AndroidTestClass1().passParameters(
-//            23,
-//            AndroidTestClass3(),
-//            AndroidNestedClass(),
-//            AndroidTestClass3(),
-//          ),
-//          completes,
-//        );
 //      });
 //    }, skip: !Platform.isAndroid);
 //  });

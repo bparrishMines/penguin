@@ -9,7 +9,9 @@ import 'package:penguin/penguin.dart';
 import 'android.penguin.g.dart' as android;
 import 'ios.penguin.g.dart' as ios;
 
-final MethodChannel _channel = MethodChannel('test_plugin');
+final android.CallbackHandler callbackHandler = android.CallbackHandler();
+final MethodChannel _channel = MethodChannel('test_plugin')
+  ..setMethodCallHandler(callbackHandler.methodCallHandler);
 String _randomId() => Random().nextDouble().toString();
 
 @Class(AndroidPlatform(
@@ -20,6 +22,20 @@ class _AndroidActivity {
 
   final android.$_AndroidActivity _activity =
       android.$_AndroidActivity('activity');
+}
+
+@Class(AndroidPlatform(
+  AndroidType(
+    'com.example.test_plugin.test_library',
+    <String>['TestClass1', 'NestedTestClass'],
+  ),
+))
+class AndroidNestedClass {
+  @Constructor()
+  AndroidNestedClass();
+
+  final android.$AndroidNestedClass _testClass =
+      android.$AndroidNestedClass(_randomId());
 }
 
 class AndroidTextView extends StatefulWidget {
@@ -94,13 +110,20 @@ class AndroidTestClass1 extends TestClass1 {
     String supported,
     int primitive,
     AndroidTestClass2 wrapper,
+    AndroidNestedClass nested,
   ) {
     return android.invoke<void>(
       _channel,
       _constructorMethodCall,
       <MethodCall>[
         wrapper._constructorMethodCall,
-        _android.$parameterMethod(supported, primitive, wrapper._android),
+        nested._testClass.$AndroidNestedClass$Default(),
+        _android.$parameterMethod(
+          supported,
+          primitive,
+          wrapper._android,
+          nested._testClass,
+        ),
       ],
     );
   }
@@ -297,11 +320,6 @@ abstract class TestClass2 {
   MethodCall _constructorMethodCall;
 }
 
-//final a.CallbackHandler callbackHandler = a.CallbackHandler();
-//final MethodChannel _channel = MethodChannel('test_plugin')
-//  ..setMethodCallHandler(callbackHandler.methodCallHandler);
-//String _randomId() => Random().nextDouble().toString();
-//
 //@Class(
 //  AndroidPlatform(
 //    AndroidType(
@@ -490,44 +508,6 @@ abstract class TestClass2 {
 //      [_testClass.$callCallbackMethod()],
 //    );
 //  }
-//}
-//
-//@Class(AndroidPlatform(
-//  AndroidType(
-//    'com.example.test_plugin.test_library',
-//    <String>['TestClass1', 'NestedTestClass'],
-//  ),
-//))
-//class AndroidNestedClass {
-//  @Constructor()
-//  AndroidNestedClass();
-//
-//  final a.$AndroidNestedClass _testClass = a.$AndroidNestedClass(_randomId());
-//
-//  @Field()
-//  Future<int> get nestedClassField => a.invoke<int>(
-//        _channel,
-//        _testClass.$AndroidNestedClass$Default(),
-//        [_testClass.$nestedClassField()],
-//      );
-//
-//  @Method()
-//  Future<int> nestedClassMethod() => a.invoke<int>(
-//        _channel,
-//        _testClass.$AndroidNestedClass$Default(),
-//        [_testClass.$nestedClassMethod()],
-//      );
-//}
-//
-//@Class(
-//  AndroidPlatform(
-//    AndroidType('com.example.test_plugin.test_library', <String>['TestClass2']),
-//  ),
-//  androidApi: AndroidApi(21),
-//)
-//class AndroidTestClass2 {
-//  @Constructor()
-//  AndroidTestClass2();
 //}
 //
 //@Class(

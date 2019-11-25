@@ -33,11 +33,6 @@ public class TestClass1 {
 //  public TestClass1(String constructorValue) {
 //    this.constructorValue = constructorValue;
 //  }
-//
-//  public static int staticMethod() {
-//    return 13;
-//  }
-//
 
   public void returnVoid() {
 
@@ -81,16 +76,15 @@ public class TestClass1 {
     return map;
   }
 
-  public void parameterMethod(String s, Integer integer, TestClass2 wrapper) {
-    if (s == null || integer == null || wrapper == null) throw new IllegalArgumentException();
+  public void parameterMethod(String s, Integer integer, TestClass2 wrapper, NestedTestClass nested) {
+    if (s == null || integer == null || wrapper == null || nested == null) {
+      throw new IllegalArgumentException();
+    }
   }
-//
-//  public static class NestedTestClass {
-//    public int nestedClassField = 4;
-//    public int nestedClassMethod() {
-//      return 5;
-//    }
-//  }
+
+  public static class NestedTestClass {
+
+  }
 //
 //  public void callCallbackMethod() {
 //    callbackMethod(new TestClass3(), "I love callbacks.");
