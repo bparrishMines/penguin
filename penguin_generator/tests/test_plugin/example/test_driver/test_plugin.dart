@@ -63,6 +63,10 @@ void main() {
     test('returnDynamic', () {
       expect(testClass.returnDynamic(), completion(3));
     });
+
+    test('returnInt32', () {
+      expect((testClass as IosTestClass1).returnInt32(), completion(56));
+    }, skip: !Platform.isIOS);
   });
 //  group('test_plugin', () {
 //    group('android', () {
@@ -163,12 +167,6 @@ void main() {
 //        );
 //      });
 //    }, skip: !Platform.isAndroid);
-//
-//    group('ios', () {
-//      test('returnInt32', () {
-//        expect(IosTestClass1().returnInt32(), completion(56));
-//      });
-//    }, skip: !Platform.isIOS);
 //  });
 }
 

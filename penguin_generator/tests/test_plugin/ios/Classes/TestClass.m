@@ -28,13 +28,13 @@
 - (NSObject *)returnDynamic {
   return @3;
 }
-//
-//
-//- (int)returnInt32 {
-//  return 56;
-//}
-//
-//
+
+
+- (int)returnInt32 {
+  return 56;
+}
+
+
 - (NSNumber *)returnBool {
   return [NSNumber numberWithBool:NO];
 }

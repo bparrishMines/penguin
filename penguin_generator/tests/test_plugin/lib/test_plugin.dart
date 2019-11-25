@@ -86,6 +86,16 @@ class AndroidTestClass1 extends TestClass1 {
 class IosTestClass1 extends TestClass1 {
   @Constructor()
   IosTestClass1();
+
+  @Method()
+  @int32
+  Future<int> returnInt32() {
+    return android.invoke<int>(
+      _channel,
+      _constructorMethodCall,
+      <MethodCall>[_ios.$returnInt32()],
+    );
+  }
 }
 
 abstract class TestClass1 {
