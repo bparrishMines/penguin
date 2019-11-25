@@ -38,6 +38,13 @@ void main() {
       }
     });
 
+    test('namedConstructor', () {
+      final TestClass1 testClass = Platform.isAndroid
+          ? AndroidTestClass1.namedConstructor()
+          : IosTestClass1.initNamedConstructor();
+      expect(testClass.returnBool(), completion(isFalse));
+    });
+
     test('returnVoid', () {
       expect(testClass.returnVoid(), completes);
     });

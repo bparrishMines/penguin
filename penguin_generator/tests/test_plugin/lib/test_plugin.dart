@@ -95,6 +95,9 @@ class AndroidTestClass1 extends TestClass1 {
   @Constructor()
   AndroidTestClass1();
 
+  @Constructor()
+  AndroidTestClass1.namedConstructor() : super.namedConstructor();
+
   @Method()
   static Future<void> staticMethod() {
     return android.invoke<void>(
@@ -135,6 +138,9 @@ class AndroidTestClass1 extends TestClass1 {
 class IosTestClass1 extends TestClass1 {
   @Constructor()
   IosTestClass1();
+
+  @Constructor()
+  IosTestClass1.initNamedConstructor() : super.namedConstructor();
 
   @Method()
   static Future<void> staticMethod() {
@@ -201,6 +207,12 @@ abstract class TestClass1 {
   final android.$AndroidTestClass1 _android =
       android.$AndroidTestClass1(_randomId());
   final ios.$IosTestClass1 _ios = ios.$IosTestClass1(_randomId());
+
+  TestClass1.namedConstructor() {
+    _constructorMethodCall = io.Platform.isAndroid
+        ? _android.$AndroidTestClass1namedConstructor()
+        : _ios.$IosTestClass1initNamedConstructor();
+  }
 
   MethodCall _constructorMethodCall;
 

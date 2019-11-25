@@ -142,8 +142,20 @@ class Template {
 
   %%CONSTRUCTORS%%
   %%CONSTRUCTOR%%
-  if ([@"__platformClassName__()" isEqualToString:call.method]) {
-    _value = [[__platformClassName__ alloc] init];  
+  if ([@"__platformClassName__(__constructorSignature__)" isEqualToString:call.method]) {
+    _value = [[__platformClassName__ alloc] __constructorName__
+      %%PARAMETERS%%
+      %%PARAMETER methodChannel:supported%%
+      __parameterName__:call.arguments[@"__parameterName__"]
+      %%PARAMETER methodChannel:supported%%
+      %%PARAMETER methodChannel:wrapper%%
+      __parameterName__:[wrapperManager getWrapper:call.arguments[@"__parameterName__"]]
+      %%PARAMETER methodChannel:wrapper%%
+      %%PARAMETER methodChannel:primitive%%
+      __parameterName__:[call.arguments[@"__parameterName__"] __primitiveConvertMethod__]
+      %%PARAMETER methodChannel:primitive%%
+      %%PARAMETERS%%
+    ];  
   }
   %%CONSTRUCTOR%%
   %%CONSTRUCTORS%%
@@ -350,7 +362,7 @@ class Template {
   }
   %%STATICREDIRECTS%%
   %%STATICREDIRECT classMember:constructor%%
-  else if ([@"__platformClassName__()" isEqualToString:call.method]) {
+  else if ([@"__platformClassName__(__constructorName__)" isEqualToString:call.method]) {
     [[$__platformClassName__ alloc] initWithWrapperManager:_wrapperManager call:call];
     return [NSNull null];
   }
@@ -1379,4 +1391,6 @@ class Replacement {
   static final Replacement constructorName = Replacement('__constructorName__');
   static final Replacement dartConstructorName =
       Replacement('__dartConstructorName__');
+  static final Replacement constructorSignature =
+      Replacement('__constructorSignature__');
 }

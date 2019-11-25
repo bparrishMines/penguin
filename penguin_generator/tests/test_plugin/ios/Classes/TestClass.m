@@ -1,6 +1,10 @@
 #import "TestPlugin.h"
 
 @implementation TestClass1
+- (instancetype _Nonnull)initNamedConstructor {
+  return self = [self init];
+}
+
 + (void)staticMethod {
   
 }

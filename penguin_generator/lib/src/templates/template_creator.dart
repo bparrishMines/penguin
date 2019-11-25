@@ -599,6 +599,7 @@ class IosTemplateCreator extends TemplateCreator {
   String createStaticRedirect(
     ClassMemberType classMember, {
     @required String platformClassName,
+    String constructorName,
     String methodName,
     String fieldName,
   }) {
@@ -609,17 +610,31 @@ class IosTemplateCreator extends TemplateCreator {
           .group(1),
       <Pattern, String>{
         Replacement.platformClassName.name: platformClassName,
+        if (constructorName != null)
+          Replacement.constructorName.name: constructorName,
         if (methodName != null) Replacement.methodName.name: methodName,
         if (fieldName != null) Replacement.fieldName.name: fieldName,
       },
     );
   }
 
-  String createConstructor({String platformClassName}) {
+  String createConstructor({
+    @required String platformClassName,
+    @required String constructorName,
+    @required String constructorSignature,
+    @required Iterable<String> parameters,
+  }) {
     return TemplateCreator._replace(
       Block.constructor.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
         Replacement.platformClassName.name: platformClassName,
+        Replacement.constructorSignature.name: constructorSignature,
+        Replacement.constructorName.name:
+            constructorName.isNotEmpty ? constructorName : 'init',
+        Block.parameters.exp: parameters.join().replaceFirst(
+              RegExp('.+?:'),
+              ':',
+            ),
       },
     );
   }
@@ -635,7 +650,7 @@ class IosTemplateCreator extends TemplateCreator {
     return TemplateCreator._replace(
       Block.aClass.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
-        Block.constructors.exp: constructors.join(),
+        Block.constructors.exp: constructors.join('else'),
         Block.methods.exp: methods.join(),
         MethodChannelBlock.methodCalls.exp: methodCalls.join(),
         MethodChannelBlock.staticMethodCalls.exp:

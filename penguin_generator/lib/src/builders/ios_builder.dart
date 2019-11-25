@@ -78,6 +78,7 @@ class IosBuilder extends PlatformBuilder {
                 (ConstructorInfo constructorInfo) =>
                     creator.createStaticRedirect(
                   ClassMemberType.constructor,
+                  constructorName: constructorInfo.name,
                   platformClassName:
                       (classInfo.aClass.platform as IosPlatform).type.name,
                   methodName: '',
@@ -139,6 +140,17 @@ class IosBuilder extends PlatformBuilder {
               ],
               constructors: classInfo.constructors.map<String>(
                 (ConstructorInfo constructorInfo) => creator.createConstructor(
+                  constructorName: constructorInfo.name,
+                  constructorSignature: constructorInfo.name,
+                  parameters: constructorInfo.parameters.map<String>(
+                    (ParameterInfo parameterInfo) => creator.createParameter(
+                      getChannelType(parameterInfo.type),
+                      parameterName: parameterInfo.name,
+                      primitiveConvertMethod: _getPrimitiveConvertMethod(
+                        parameterInfo.type,
+                      ),
+                    ),
+                  ),
                   platformClassName:
                       (classInfo.aClass.platform as IosPlatform).type.name,
                 ),
