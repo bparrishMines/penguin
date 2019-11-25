@@ -16,10 +16,12 @@ void main() {
 
   group('test_plugin', () {
     TestClass1 testClass;
+    TestClass2 testClass2;
 
     setUpAll(() {
       print('Platform: ${Platform.isAndroid ? 'Android' : 'Ios'}');
       testClass = Platform.isAndroid ? AndroidTestClass1() : IosTestClass1();
+      testClass2 = Platform.isAndroid ? AndroidTestClass2() : IosTestClass2();
     });
 
     test('returnVoid', () {
@@ -71,12 +73,20 @@ void main() {
     test('parameterMethod', () {
       if (Platform.isAndroid) {
         expect(
-          (testClass as AndroidTestClass1).parameterMethod('woeif', 32),
+          (testClass as AndroidTestClass1).parameterMethod(
+            'woeif',
+            32,
+            (testClass2 as AndroidTestClass2),
+          ),
           completes,
         );
       } else if (Platform.isIOS) {
         expect(
-          (testClass as IosTestClass1).parameterMethod('woeif', 32),
+          (testClass as IosTestClass1).parameterMethod(
+            'woeif',
+            32,
+            (testClass2 as IosTestClass2),
+          ),
           completes,
         );
       }

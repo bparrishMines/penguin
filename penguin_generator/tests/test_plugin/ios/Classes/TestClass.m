@@ -17,8 +17,8 @@
   return @(70.0F);
 }
 
-- (void)parameterMethod:(NSString *)supported primitive:(int)primitive {
-  if ([supported isEqual:[NSNull null]]) {
+- (void)parameterMethod:(NSString *)supported primitive:(int)primitive wrapper:(TestClass2 *)wrapper {
+  if ([supported isEqual:[NSNull null]] || [wrapper isEqual:[NSNull null]]) {
     @throw [NSException exceptionWithName:NSInvalidArgumentException reason:nil userInfo:nil];
   }
 }
@@ -48,4 +48,7 @@
 - (NSDictionary *)returnMap {
   return @{@"one": @1, @"two": @2};
 }
+@end
+
+@implementation TestClass2
 @end

@@ -80,11 +80,18 @@ class AndroidTestClass1 extends TestClass1 {
   AndroidTestClass1();
 
   @Method()
-  Future<void> parameterMethod(String supported, int primitive) {
+  Future<void> parameterMethod(
+    String supported,
+    int primitive,
+    AndroidTestClass2 wrapper,
+  ) {
     return android.invoke<void>(
       _channel,
       _constructorMethodCall,
-      <MethodCall>[_android.$parameterMethod(supported, primitive)],
+      <MethodCall>[
+        wrapper._constructorMethodCall,
+        _android.$parameterMethod(supported, primitive, wrapper._android),
+      ],
     );
   }
 }
@@ -97,11 +104,18 @@ class IosTestClass1 extends TestClass1 {
   IosTestClass1();
 
   @Method()
-  Future<void> parameterMethod(String supported, @int32 int primitive) {
+  Future<void> parameterMethod(
+    String supported,
+    @int32 int primitive,
+    IosTestClass2 wrapper,
+  ) {
     return android.invoke<void>(
       _channel,
       _constructorMethodCall,
-      <MethodCall>[_ios.$parameterMethod(supported, primitive)],
+      <MethodCall>[
+        wrapper._constructorMethodCall,
+        _ios.$parameterMethod(supported, primitive, wrapper._ios),
+      ],
     );
   }
 
@@ -114,6 +128,25 @@ class IosTestClass1 extends TestClass1 {
       <MethodCall>[_ios.$returnInt32()],
     );
   }
+}
+
+@Class(
+  AndroidPlatform(
+    AndroidType('com.example.test_plugin.test_library', <String>['TestClass2']),
+  ),
+  androidApi: AndroidApi(21),
+)
+class AndroidTestClass2 extends TestClass2 {
+  @Constructor()
+  AndroidTestClass2();
+}
+
+@Class(IosPlatform(
+  IosType('TestClass2', import: '"TestPlugin.h"'),
+))
+class IosTestClass2 extends TestClass2 {
+  @Constructor()
+  IosTestClass2();
 }
 
 abstract class TestClass1 {
@@ -228,6 +261,20 @@ abstract class TestClass1 {
       ],
     );
   }
+}
+
+abstract class TestClass2 {
+  TestClass2() {
+    _constructorMethodCall = io.Platform.isAndroid
+        ? _android.$AndroidTestClass2$Default()
+        : _ios.$IosTestClass2$Default();
+  }
+
+  final android.$AndroidTestClass2 _android =
+      android.$AndroidTestClass2(_randomId());
+  final ios.$IosTestClass2 _ios = ios.$IosTestClass2(_randomId());
+
+  MethodCall _constructorMethodCall;
 }
 
 //final a.CallbackHandler callbackHandler = a.CallbackHandler();
@@ -421,133 +468,6 @@ abstract class TestClass1 {
 //      _channel,
 //      _testClass.$AndroidTestClass1$Default(),
 //      [_testClass.$callCallbackMethod()],
-//    );
-//  }
-//
-//  @Method()
-//  Future<void> returnVoid() {
-//    return a.invoke<void>(
-//      _channel,
-//      _testClass.$AndroidTestClass1$Default(),
-//      [_testClass.$returnVoid()],
-//    );
-//  }
-//
-//  @Method()
-//  Future<Object> returnObject() {
-//    return a.invoke<Object>(
-//      _channel,
-//      _testClass.$AndroidTestClass1$Default(),
-//      [_testClass.$returnObject()],
-//    );
-//  }
-//
-//  @Method()
-//  Future<dynamic> returnDynamic() {
-//    return a.invoke<dynamic>(
-//      _channel,
-//      _testClass.$AndroidTestClass1$Default(),
-//      [_testClass.$returnDynamic()],
-//    );
-//  }
-//
-//  @Method()
-//  Future<String> returnString() {
-//    return a.invoke<String>(
-//      _channel,
-//      _testClass.$AndroidTestClass1$Default(),
-//      [_testClass.$returnString()],
-//    );
-//  }
-//
-//  @Method()
-//  Future<int> returnInt() {
-//    return a.invoke<int>(
-//      _channel,
-//      _testClass.$AndroidTestClass1$Default(),
-//      [_testClass.$returnInt()],
-//    );
-//  }
-//
-//  @Method()
-//  Future<double> returnDouble() {
-//    return a.invoke<double>(
-//      _channel,
-//      _testClass.$AndroidTestClass1$Default(),
-//      [_testClass.$returnDouble()],
-//    );
-//  }
-//
-//  @Method()
-//  Future<bool> returnBool() {
-//    return a.invoke<bool>(
-//      _channel,
-//      _testClass.$AndroidTestClass1$Default(),
-//      [_testClass.$returnBool()],
-//    );
-//  }
-//
-//  @Method()
-//  Future<List<double>> returnList() {
-//    return a.invokeList<double>(
-//      _channel,
-//      _testClass.$AndroidTestClass1$Default(),
-//      [_testClass.$returnList()],
-//    );
-//  }
-//
-//  @Method()
-//  Future<Map<String, int>> returnMap() {
-//    return a.invokeMap<String, int>(
-//      _channel,
-//      _testClass.$AndroidTestClass1$Default(),
-//      [_testClass.$returnMap()],
-//    );
-//  }
-//
-//  @Method()
-//  Future<int> noParametersMethod() {
-//    return a.invoke<int>(
-//      _channel,
-//      _testClass.$AndroidTestClass1$Default(),
-//      [_testClass.$noParametersMethod()],
-//    );
-//  }
-//
-//  @Method()
-//  Future<String> singleParameterMethod(String value) {
-//    return a.invoke<String>(
-//      _channel,
-//      _testClass.$AndroidTestClass1$Default(),
-//      [_testClass.$singleParameterMethod(value)],
-//    );
-//  }
-//
-//  @Method()
-//  Future<void> passParameters(
-//    int primitive,
-//    AndroidTestClass3 wrapper,
-//    AndroidNestedClass nested,
-//    AndroidAbstractClass abstractClass,
-//  ) {
-//    return a.invoke<void>(
-//      _channel,
-//      wrapper._androidTestClass3.$AndroidTestClass3$Default(),
-//      <MethodCall>[
-//        (abstractClass as AndroidTestClass3)
-//            ._androidTestClass3
-//            .$AndroidTestClass3$Default(),
-//        nested._testClass.$AndroidNestedClass$Default(),
-//        _testClass.$AndroidTestClass1$Default(),
-//        _testClass.$passParameters(
-//          primitive,
-//          wrapper._androidTestClass3,
-//          nested._testClass,
-//          a.$AndroidAbstractClass(
-//            (abstractClass as AndroidTestClass3)._androidTestClass3.uniqueId,
-//          ),
-//        ),
-//      ],
 //    );
 //  }
 //}
