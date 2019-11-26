@@ -160,14 +160,14 @@ class DartMethodChannelBuilder extends PlatformBuilder {
                               .join(),
                       fieldName: fieldInfo.name,
                       fieldType: fieldInfo.type.name,
-                      fieldSetterParam: creator.createFieldSetterParam(
+                      methodCallParam: creator.createMethodCallParam(
                         getChannelType(fieldInfo.type),
-                        fieldName: fieldInfo.name,
+                        parameterName: fieldInfo.name,
                       ),
-                      fieldSetter: creator.createFieldSetter(
+                      parameter: creator.createParameter(
                         getChannelType(fieldInfo.type),
-                        fieldType: fieldInfo.type.name,
-                        fieldName: fieldInfo.name,
+                        parameterType: fieldInfo.type.name,
+                        parameterName: fieldInfo.name,
                       ),
                     ),
                   ),
@@ -310,14 +310,14 @@ class DartMethodChannelBuilder extends PlatformBuilder {
                           (classInfo.aClass.platform as IosPlatform).type.name,
                       fieldName: fieldInfo.name,
                       fieldType: fieldInfo.type.name,
-                      fieldSetterParam: creator.createFieldSetterParam(
+                      methodCallParam: creator.createMethodCallParam(
                         getChannelType(fieldInfo.type),
-                        fieldName: fieldInfo.name,
+                        parameterName: fieldInfo.name,
                       ),
-                      fieldSetter: creator.createFieldSetter(
+                      parameter: creator.createParameter(
                         getChannelType(fieldInfo.type),
-                        fieldType: fieldInfo.type.name,
-                        fieldName: fieldInfo.name,
+                        parameterType: fieldInfo.type.name,
+                        parameterName: fieldInfo.name,
                       ),
                     ),
                   ),

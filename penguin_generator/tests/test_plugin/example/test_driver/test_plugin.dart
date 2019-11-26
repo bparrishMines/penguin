@@ -24,6 +24,10 @@ void main() {
       testClass2 = Platform.isAndroid ? AndroidTestClass2() : IosTestClass2();
     });
 
+    test('intField', () {
+      expect(testClass.intField, completion(43));
+    }, skip: Platform.isIOS);
+
     test('staticMethod', () {
       if (Platform.isAndroid) {
         expect(

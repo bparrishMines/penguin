@@ -97,10 +97,10 @@ class MethodChannelTemplateCreator extends TemplateCreator {
 
   String createMethod(
     bool isStatic, {
-    Iterable<String> parameters,
-    Iterable<String> methodCallParams,
-    String platformClassName,
-    String methodName,
+    @required Iterable<String> parameters,
+    @required Iterable<String> methodCallParams,
+    @required String platformClassName,
+    @required String methodName,
   }) {
     return TemplateCreator._replace(
       Block.method.exp.firstMatch(template.value).group(1),
@@ -117,11 +117,11 @@ class MethodChannelTemplateCreator extends TemplateCreator {
 
   String createField(
     bool isStatic, {
-    String platformClassName,
-    String fieldName,
-    String fieldType,
-    String fieldSetterParam,
-    String fieldSetter,
+    @required String platformClassName,
+    @required String fieldName,
+    @required String fieldType,
+    @required String methodCallParam,
+    @required String parameter,
   }) {
     return TemplateCreator._replace(
       Block.field.exp.firstMatch(template.value).group(1),
@@ -131,33 +131,16 @@ class MethodChannelTemplateCreator extends TemplateCreator {
         Replacement.platformClassName.name: platformClassName,
         Replacement.fieldName.name: fieldName,
         Replacement.fieldType.name: fieldType,
-        Block.fieldSetterParams.exp: fieldSetterParam,
-        Block.fieldSetters.exp: fieldSetter,
-      },
-    );
-  }
-
-  String createFieldSetter(
-    MethodChannelType channelType, {
-    String fieldType,
-    String fieldName,
-  }) {
-    return TemplateCreator._replace(
-      MethodChannelBlock.fieldSetter(channelType)
-          .exp
-          .firstMatch(template.value)
-          .group(1),
-      <Pattern, String>{
-        Replacement.fieldType.name: fieldType,
-        Replacement.fieldName.name: fieldName,
+        Block.parameters.exp: parameter,
+        MethodChannelBlock.methodCallParams.exp: methodCallParam,
       },
     );
   }
 
   String createParameter(
     MethodChannelType channelType, {
-    String parameterType,
-    String parameterName,
+    @required String parameterType,
+    @required String parameterName,
   }) {
     return TemplateCreator._replace(
       MethodChannelBlock.parameter(channelType)
@@ -171,24 +154,9 @@ class MethodChannelTemplateCreator extends TemplateCreator {
     );
   }
 
-  String createFieldSetterParam(
-    MethodChannelType channelType, {
-    String fieldName,
-  }) {
-    return TemplateCreator._replace(
-      MethodChannelBlock.fieldSetterParam(channelType)
-          .exp
-          .firstMatch(template.value)
-          .group(1),
-      <Pattern, String>{
-        Replacement.fieldName.name: fieldName,
-      },
-    );
-  }
-
   String createMethodCallParam(
     MethodChannelType channelType, {
-    String parameterName,
+    @required String parameterName,
   }) {
     return TemplateCreator._replace(
       MethodChannelBlock.methodCallParam(channelType)
@@ -302,6 +270,7 @@ class AndroidTemplateCreator extends TemplateCreator {
     @required bool isMutable,
     @required String fieldType,
     @required String fieldName,
+    @required String parameter,
     @required String package,
     @required String platformClassName,
   }) {
@@ -314,21 +283,18 @@ class AndroidTemplateCreator extends TemplateCreator {
           RegExp(r'if\s*(.*?)\s*{.*?}', multiLine: true, dotAll: true): '',
         Replacement.methodCallerName.name:
             isStatic ? platformClassName : r'$value',
-        Block.preFieldAccesses.exp:
-            MethodChannelBlock.preFieldAccess(channelType)
-                .exp
-                .firstMatch(template.value)
-                .group(1),
-        Block.postFieldAccesses.exp:
-            MethodChannelBlock.postFieldAccess(channelType)
-                .exp
-                .firstMatch(template.value)
-                .group(1),
-        Block.fieldSetters.exp: MethodChannelBlock.fieldSetter(channelType)
+        Block.preMethodCalls.exp: MethodChannelBlock.preMethodCall(channelType)
             .exp
             .firstMatch(template.value)
             .group(1),
-        Replacement.fieldType.name: fieldType,
+        Block.postMethodCalls.exp:
+            MethodChannelBlock.postMethodCall(channelType)
+                .exp
+                .firstMatch(template.value)
+                .group(1),
+        Block.parameters.exp: parameter,
+        Replacement.parameterType.name: fieldType,
+        Replacement.parameterName.name: fieldName,
         Replacement.fieldName.name: fieldName,
         Replacement.package.name: package,
       },
@@ -383,7 +349,8 @@ class AndroidTemplateCreator extends TemplateCreator {
       <Pattern, String>{
         Replacement.parameterType.name: parameterType,
         Replacement.parameterName.name: parameterName,
-        if (primitiveConvertMethod != null) Replacement.primitiveConvertMethod.name: primitiveConvertMethod,
+        if (primitiveConvertMethod != null)
+          Replacement.primitiveConvertMethod.name: primitiveConvertMethod,
       },
     );
   }

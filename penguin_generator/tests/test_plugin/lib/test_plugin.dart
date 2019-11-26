@@ -348,6 +348,13 @@ abstract class TestClass1 {
       ],
     );
   }
+
+  @Field()
+  Future<int> get intField => android.invoke<int>(
+        _channel,
+        _android.$AndroidTestClass1$Default(),
+        [_android.$intField()],
+      );
 }
 
 abstract class TestClass2 {

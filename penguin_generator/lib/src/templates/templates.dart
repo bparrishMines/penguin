@@ -470,17 +470,8 @@ class $__className____typeParameters__ extends Wrapper {
   %%FIELDS%%
   %%FIELD%%
   static MethodCall $__fieldName__({
-    %%FIELDSETTERS%%
-    %%FIELDSETTER methodChannel:supported%%
-    __fieldType__ __fieldName__,
-    %%FIELDSETTER methodChannel:supported%%
-    %%FIELDSETTER methodChannel:wrapper%%
-    $__fieldType__ __fieldName__,
-    %%FIELDSETTER methodChannel:wrapper%%
-    %%FIELDSETTER methodChannel:typeParameter%%
-    __fieldType__ __fieldName__,
-    %%FIELDSETTER methodChannel:typeParameter%%
-    %%FIELDSETTERS%%
+    %%PARAMETERS%%
+    %%PARAMETERS%%
     String $newUniqueId,
   }) {
     return MethodCall(
@@ -488,18 +479,8 @@ class $__className____typeParameters__ extends Wrapper {
       <String, dynamic>{
         r'$uniqueId': uniqueId,
         r'$newUniqueId': $newUniqueId,
-        %%FIELDSETTERPARAMS%%
-        %%FIELDSETTERPARAM methodChannel:supported%%
-        '__fieldName__': __fieldName__,
-        %%FIELDSETTERPARAM methodChannel:supported%%
-        %%FIELDSETTERPARAM methodChannel:wrapper%%
-        '__fieldName__': __fieldName__?.uniqueId,
-        %%FIELDSETTERPARAM methodChannel:wrapper%%
-        %%FIELDSETTERPARAM methodChannel:typeParameter%%
-        if (__fieldName__ is Wrapper) '__fieldName__': __fieldName__?.uniqueId,
-        if (__fieldName__ is! Wrapper) '__fieldName__': __fieldName__,
-        %%FIELDSETTERPARAM methodChannel:typeParameter%%
-        %%FIELDSETTERPARAMS%%
+        %%METHODCALLPARAMS%%
+        %%METHODCALLPARAMS%%
       },
     );
   }
@@ -1023,75 +1004,18 @@ public class ChannelGenerated {
     static private Object __fieldName__(WrapperManager wrapperManager, MethodCall call) throws Exception {
       if (call.argument("__fieldName__") != null) {
         __methodCallerName__.__fieldName__ =
-        %%FIELDSETTERS%%
-        %%FIELDSETTER methodChannel:supported%%
-        call.argument("__fieldName__") != null ? (__fieldType__) call.argument("__fieldName__") : null;
-        %%FIELDSETTER methodChannel:supported%%
-        %%FIELDSETTER methodChannel:primitive%%
-        call.argument("__fieldName__") != null ? (__fieldType__) call.argument("__fieldName__") : null;
-        %%FIELDSETTER methodChannel:primitive%%
-        %%FIELDSETTER methodChannel:wrapper%%
-        call.argument("__fieldName__") != null ? (__fieldType__) wrapperManager.getWrapper((String) call.argument("__fieldName__")).$getValue() : null;
-        %%FIELDSETTER methodChannel:wrapper%%
-        %%FIELDSETTER methodChannel:typeParameter%%
-        call.argument("__fieldName__") != null && call.argument("__fieldName__") instanceof String && wrapperManager.getWrapper((String) call.argument("__fieldName__")) != null ? wrapperManager.getWrapper((String) call.argument("__fieldName__")).$getValue() : call.argument("__fieldName__");
-        %%FIELDSETTER methodChannel:typeParameter%%
-        %%FIELDSETTERS%%
+        %%PARAMETERS%%
+        %%PARAMETERS%%
+        ;
       } 
       
-      %%PREFIELDACCESSES%%
-      %%PREFIELDACCESS methodChannel:supported%%
-      return
-      %%PREFIELDACCESS methodChannel:supported%%
-      %%PREFIELDACCESS methodChannel:primitive%%
-      return
-      %%PREFIELDACCESS methodChannel:primitive%%
-      %%PREFIELDACCESS methodChannel:wrapper%%
-      new $__fieldType__(wrapperManager, (String) call.argument("$newUniqueId"), 
-      %%PREFIELDACCESS methodChannel:wrapper%%
-      %%PREFIELDACCESS methodChannel:typeParameter%%
-      final Object result = 
-      %%PREFIELDACCESS methodChannel:typeParameter%%
-      %%PREFIELDACCESSES%%
+      %%PREMETHODCALLS%%
+      %%PREMETHODCALLS%%
+      
       __methodCallerName__.__fieldName__
       
-      %%POSTFIELDACCESSES%%
-      %%POSTFIELDACCESS methodChannel:supported%%
-      ;
-      %%POSTFIELDACCESS methodChannel:supported%%
-      %%POSTFIELDACCESS methodChannel:primitive%%
-      ;
-      %%POSTFIELDACCESS methodChannel:primitive%%
-      %%POSTFIELDACCESS methodChannel:wrapper%%
-      );
-      return null;
-      %%POSTFIELDACCESS methodChannel:wrapper%%
-      %%POSTFIELDACCESS methodChannel:typeParameter%%
-      ;
-      if (result == null) return null;
-
-      final Class wrapperClass;
-      try {
-        wrapperClass = Class.forName(String.format("__package__.ChannelGenerated$%sWrapper", result.getClass().getSimpleName()));
-      } catch (ClassNotFoundException e) {
-        return result;
-      }
-
-      try {
-        final Constructor constructor = wrapperClass.getConstructor(ChannelGenerated.class, String.class, result.getClass());
-        constructor.newInstance(wrapperManager, call.argument("$newUniqueId"), result);
-      } catch (NoSuchMethodException e) {
-        e.printStackTrace();
-      } catch (IllegalAccessException e) {
-        e.printStackTrace();
-      } catch (InstantiationException e) {
-        e.printStackTrace();
-      } catch (InvocationTargetException e) {
-        e.printStackTrace();
-      }
-      return null;
-      %%POSTFIELDACCESS methodChannel:typeParameter%%
-      %%POSTFIELDACCESSES%%
+      %%POSTMETHODCALLS%%
+      %%POSTMETHODCALLS%%
     }
     %%FIELD%%
     %%FIELDS%%
@@ -1205,12 +1129,7 @@ class Block {
   static final Block method = Block('METHOD');
 
   static final Block preMethodCalls = Block('PREMETHODCALLS');
-
   static final Block postMethodCalls = Block('POSTMETHODCALLS');
-
-  static final Block preFieldAccesses = Block('PREFIELDACCESSES');
-
-  static final Block postFieldAccesses = Block('POSTFIELDACCESSES');
 
   static final Block imports = Block('IMPORTS');
   static final Block import = Block('IMPORT');
@@ -1226,15 +1145,11 @@ class Block {
   static final Block parameters = Block('PARAMETERS');
   static final Block parameter = Block('PARAMETER');
 
-  static final Block fieldSetters = Block('FIELDSETTERS');
-
   static final Block callback = Block('CALLBACK');
   static final Block callbacks = Block('CALLBACKS');
 
   static final Block fields = Block('FIELDS');
   static final Block field = Block('FIELD');
-
-  static final Block fieldSetterParams = Block('FIELDSETTERPARAMS');
 
   static final Block callbackParams = Block('CALLBACKPARAMS');
   static final Block callbackParam = Block('CALLBACKPARAM');
@@ -1285,16 +1200,10 @@ class MethodChannelBlock extends Block {
     return configs.join(' ');
   }
 
-  static MethodChannelBlock fieldSetterParam(MethodChannelType methodChannel) =>
-      MethodChannelBlock('FIELDSETTERPARAM', methodChannel: methodChannel);
-
   static final MethodChannelBlock methodCallParams =
       MethodChannelBlock('METHODCALLPARAMS');
   static MethodChannelBlock methodCallParam(MethodChannelType methodChannel) =>
       MethodChannelBlock('METHODCALLPARAM', methodChannel: methodChannel);
-
-  static MethodChannelBlock fieldSetter(MethodChannelType methodChannel) =>
-      MethodChannelBlock('FIELDSETTER', methodChannel: methodChannel);
 
   static final MethodChannelBlock staticMethodCalls =
       MethodChannelBlock('STATICMETHODCALLS');
@@ -1314,12 +1223,6 @@ class MethodChannelBlock extends Block {
         Block.parameter.identifier,
         methodChannel: methodChannel,
       );
-
-  static MethodChannelBlock postFieldAccess(MethodChannelType methodChannel) =>
-      MethodChannelBlock('POSTFIELDACCESS', methodChannel: methodChannel);
-
-  static MethodChannelBlock preFieldAccess(MethodChannelType methodChannel) =>
-      MethodChannelBlock('PREFIELDACCESS', methodChannel: methodChannel);
 
   static MethodChannelBlock postMethodCall(MethodChannelType methodChannel) =>
       MethodChannelBlock('POSTMETHODCALL', methodChannel: methodChannel);

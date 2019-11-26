@@ -161,6 +161,12 @@ class AndroidBuilder extends PlatformBuilder {
                 isMutable: fieldInfo.isMutable,
                 fieldType: _convertType(fieldInfo.type, classes),
                 fieldName: fieldInfo.name,
+                parameter: creator.createParameter(
+                    getChannelType(fieldInfo.type),
+                    primitiveConvertMethod:
+                        _getPrimitiveConvertMethod(fieldInfo.type),
+                    parameterType: _convertType(fieldInfo.type, classes),
+                    parameterName: fieldInfo.name),
                 package: _androidPackage,
                 platformClassName:
                     (classInfo.aClass.platform as AndroidPlatform)
