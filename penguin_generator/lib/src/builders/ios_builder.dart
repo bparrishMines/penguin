@@ -212,6 +212,8 @@ class IosBuilder extends PlatformBuilder {
   String _getPrimitiveConvertMethod(TypeInfo info) {
     if (info.isNativeInt32) {
       return 'intValue';
+    } else if (info.isNativeInt64) {
+      return 'longValue';
     }
 
     return null;

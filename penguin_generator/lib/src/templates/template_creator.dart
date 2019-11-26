@@ -338,12 +338,11 @@ class AndroidTemplateCreator extends TemplateCreator {
   String createMethod(
     MethodChannelType returnTypeChannelType,
     bool isStatic, {
-    bool isMutable,
-    Iterable<String> parameters,
-    String returnType,
-    String methodName,
-    String platformClassName,
-    String package,
+    @required Iterable<String> parameters,
+    @required String returnType,
+    @required String methodName,
+    @required String platformClassName,
+    @required String package,
   }) {
     return TemplateCreator._replace(
       Block.method.exp.firstMatch(template.value).group(1),
@@ -372,8 +371,9 @@ class AndroidTemplateCreator extends TemplateCreator {
 
   String createParameter(
     MethodChannelType methodChannel, {
-    String parameterType,
-    String parameterName,
+    @required String primitiveConvertMethod,
+    @required String parameterType,
+    @required String parameterName,
   }) {
     return TemplateCreator._replace(
       MethodChannelBlock.parameter(methodChannel)
@@ -383,6 +383,7 @@ class AndroidTemplateCreator extends TemplateCreator {
       <Pattern, String>{
         Replacement.parameterType.name: parameterType,
         Replacement.parameterName.name: parameterName,
+        if (primitiveConvertMethod != null) Replacement.primitiveConvertMethod.name: primitiveConvertMethod,
       },
     );
   }

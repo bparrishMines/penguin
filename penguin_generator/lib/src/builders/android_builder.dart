@@ -75,6 +75,9 @@ class AndroidBuilder extends PlatformBuilder {
                 parameters: constructorInfo.parameters.map<String>(
                   (ParameterInfo parameterInfo) => creator.createParameter(
                     getChannelType(parameterInfo.type),
+                    primitiveConvertMethod: _getPrimitiveConvertMethod(
+                      parameterInfo.type,
+                    ),
                     parameterType: _convertType(parameterInfo.type, classes),
                     parameterName: parameterInfo.name,
                   ),
@@ -140,6 +143,9 @@ class AndroidBuilder extends PlatformBuilder {
                 parameters: methodInfo.parameters.map<String>(
                   (ParameterInfo parameterInfo) => creator.createParameter(
                     getChannelType(parameterInfo.type),
+                    primitiveConvertMethod: _getPrimitiveConvertMethod(
+                      parameterInfo.type,
+                    ),
                     parameterType: _convertType(parameterInfo.type, classes),
                     parameterName: parameterInfo.name,
                   ),
@@ -291,6 +297,16 @@ class AndroidBuilder extends PlatformBuilder {
       'info',
       'Can\'t convert to Android type for info',
     );
+  }
+
+  String _getPrimitiveConvertMethod(TypeInfo info) {
+    if (info.isNativeInt32) {
+      return 'intValue';
+    } else if (info.isNativeInt64) {
+      return 'longValue';
+    }
+
+    return null;
   }
 
   static String get _androidPackage {

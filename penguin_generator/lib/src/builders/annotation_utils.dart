@@ -9,8 +9,8 @@ class Annotation {
   static const TypeChecker field = const TypeChecker.fromRuntime(Field);
   static const TypeChecker constructor =
       const TypeChecker.fromRuntime(Constructor);
-  static const TypeChecker int32Annotation =
-      const TypeChecker.fromRuntime(Int32);
+  static const TypeChecker int32 = const TypeChecker.fromRuntime(PenguinInt32);
+  static const TypeChecker int64 = const TypeChecker.fromRuntime(PenguinInt64);
 }
 
 class AnnotationUtils {

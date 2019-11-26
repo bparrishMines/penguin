@@ -76,8 +76,8 @@ public class TestClass1 {
     return map;
   }
 
-  public void parameterMethod(String s, Integer integer, TestClass2 wrapper, NestedTestClass nested) {
-    if (s == null || integer == null || wrapper == null || nested == null) {
+  public void parameterMethod(String s, Long primitive, TestClass2 wrapper, NestedTestClass nested) {
+    if (s == null || primitive == null || wrapper == null || nested == null) {
       throw new IllegalArgumentException();
     }
   }

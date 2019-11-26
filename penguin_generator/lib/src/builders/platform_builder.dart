@@ -50,7 +50,7 @@ abstract class PlatformBuilder {
               (_) => getChannelType(_) == MethodChannelType.supported,
             )) {
       return MethodChannelType.supported;
-    } else if (info.isNativeInt32) {
+    } else if (info.isNativeInt32 || info.isNativeInt64) {
       // We must check for primitive before supported because a type will be both.
       return MethodChannelType.primitive;
     } else if (info.isDynamic ||
@@ -302,7 +302,8 @@ class ReadInfoBuilder extends Builder {
         isWrapper: !type.isVoid &&
             Annotation.$class.hasAnnotationOfExact(type.element),
         isTypeParameter: type is TypeParameterType,
-        isNativeInt32: Annotation.int32Annotation.hasAnnotationOfExact(element),
+        isNativeInt32: Annotation.int32.hasAnnotationOfExact(element),
+        isNativeInt64: Annotation.int64.hasAnnotationOfExact(element),
       );
 
   @override

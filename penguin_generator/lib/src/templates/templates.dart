@@ -925,15 +925,6 @@ public class ChannelGenerated {
         case "__wrapperName__(__constructorName__)":
           this.$value = new __platformClassName__(
           %%PARAMETERS%%
-          %%PARAMETER methodChannel:supported%%
-          call.argument("__parameterName__") != null ? (__parameterType__) call.argument("__parameterName__") : null
-          %%PARAMETER methodChannel:supported%%
-          %%PARAMETER methodChannel:wrapper%%
-          call.argument("__parameterName__") != null ? (__parameterType__) wrapperManager.getWrapper((String) call.argument("__parameterName__")).$getValue() : null
-          %%PARAMETER methodChannel:wrapper%%
-          %%PARAMETER methodChannel:typeParameter%%
-          call.argument("__parameterName__") != null && call.argument("__parameterName__") instanceof String && call.wrapperManager.getWrapper((String) call.argument("__parameterName__")) != null ? wrapperManager.getWrapper((String) call.argument("__parameterName__")).$getValue() : call.argument("__parameterName__") 
-          %%PARAMETER methodChannel:typeParameter%%
           %%PARAMETERS%%
           ) {
             %%CALLBACKS%%
@@ -959,6 +950,9 @@ public class ChannelGenerated {
               %%CALLBACKCHANNELPARAM methodChannel:supported%%
               arguments.put("__parameterName__", $__parameterName__);
               %%CALLBACKCHANNELPARAM methodChannel:supported%%
+              %%CALLBACKCHANNELPARAM methodChannel:primitive%%
+              arguments.put("__parameterName__", $__parameterName__);
+              %%CALLBACKCHANNELPARAM methodChannel:primitive%%
               %%CALLBACKCHANNELPARAMS%%
               
               callbackChannel.invokeMethod("__wrapperName__#__methodName__", arguments, new Result() {
@@ -1054,6 +1048,9 @@ public class ChannelGenerated {
         %%FIELDSETTER methodChannel:supported%%
         call.argument("__fieldName__") != null ? (__fieldType__) call.argument("__fieldName__") : null;
         %%FIELDSETTER methodChannel:supported%%
+        %%FIELDSETTER methodChannel:primitive%%
+        call.argument("__fieldName__") != null ? (__fieldType__) call.argument("__fieldName__") : null;
+        %%FIELDSETTER methodChannel:primitive%%
         %%FIELDSETTER methodChannel:wrapper%%
         call.argument("__fieldName__") != null ? (__fieldType__) wrapperManager.getWrapper((String) call.argument("__fieldName__")).$getValue() : null;
         %%FIELDSETTER methodChannel:wrapper%%
@@ -1067,6 +1064,9 @@ public class ChannelGenerated {
       %%PREFIELDACCESS methodChannel:supported%%
       return
       %%PREFIELDACCESS methodChannel:supported%%
+      %%PREFIELDACCESS methodChannel:primitive%%
+      return
+      %%PREFIELDACCESS methodChannel:primitive%%
       %%PREFIELDACCESS methodChannel:wrapper%%
       new $__fieldType__(wrapperManager, (String) call.argument("$newUniqueId"), 
       %%PREFIELDACCESS methodChannel:wrapper%%
@@ -1080,6 +1080,9 @@ public class ChannelGenerated {
       %%POSTFIELDACCESS methodChannel:supported%%
       ;
       %%POSTFIELDACCESS methodChannel:supported%%
+      %%POSTFIELDACCESS methodChannel:primitive%%
+      ;
+      %%POSTFIELDACCESS methodChannel:primitive%%
       %%POSTFIELDACCESS methodChannel:wrapper%%
       );
       return null;
@@ -1123,6 +1126,9 @@ public class ChannelGenerated {
       %%PREMETHODCALL methodChannel:supported%%
       return
       %%PREMETHODCALL methodChannel:supported%%
+      %%PREMETHODCALL methodChannel:primitive%%
+      return
+      %%PREMETHODCALL methodChannel:primitive%%
       %%PREMETHODCALL methodChannel:wrapper%%
       new __returnType__Wrapper(wrapperManager, (String) call.argument("$newUniqueId"),
       %%PREMETHODCALL methodChannel:wrapper%%
@@ -1136,6 +1142,9 @@ public class ChannelGenerated {
       %%PARAMETER methodChannel:supported%%
       call.argument("__parameterName__") != null ? (__parameterType__) call.argument("__parameterName__") : null
       %%PARAMETER methodChannel:supported%%
+      %%PARAMETER methodChannel:primitive%%
+      call.argument("__parameterName__") != null ? ((__parameterType__) call.argument("__parameterName__")).__primitiveConvertMethod__() : null
+      %%PARAMETER methodChannel:primitive%%
       %%PARAMETER methodChannel:wrapper%%
       call.argument("__parameterName__") != null ? (__parameterType__) wrapperManager.getWrapper((String) call.argument("__parameterName__")).$getValue() : null
       %%PARAMETER methodChannel:wrapper%%
@@ -1152,6 +1161,9 @@ public class ChannelGenerated {
       %%POSTMETHODCALL methodChannel:supported%%
       ;
       %%POSTMETHODCALL methodChannel:supported%%
+      %%POSTMETHODCALL methodChannel:primitive%%
+      ;
+      %%POSTMETHODCALL methodChannel:primitive%%
       %%POSTMETHODCALL methodChannel:wrapper%%
       );
       return null;
