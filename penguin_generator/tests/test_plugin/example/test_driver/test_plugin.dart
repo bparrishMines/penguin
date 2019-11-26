@@ -28,6 +28,12 @@ void main() {
       expect(testClass.intField, completion(43));
     });
 
+    test('mutableField', () {
+      final TestClass1 mutableTestClass = Platform.isAndroid ? AndroidTestClass1() : IosTestClass1();
+      mutableTestClass.mutableField = 23.4;
+      expect(mutableTestClass.mutableField, completion(23.4));
+    });
+
     test('stringField', () {
       expect(testClass.stringField, completion("Macintosh"));
     });

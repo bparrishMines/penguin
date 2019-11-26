@@ -175,8 +175,10 @@ class Template {
 - (NSObject *)onMethodCall:(WrapperManager *)wrapperManager call:(FlutterMethodCall *_Nonnull)call {
   if ([@"__platformClassName__#allocate" isEqualToString:call.method]) {
     [self $allocate:wrapperManager];
+    return [NSNull null];
   } else if ([@"__platformClassName__#deallocate" isEqualToString:call.method]) {
     [self $deallocate:wrapperManager];
+    return [NSNull null];
   }
   %%METHODCALLS%%
   %%METHODCALL classMember:method%%
@@ -197,12 +199,17 @@ class Template {
 %%FIELDS%%
 %%FIELD%%
 + (NSObject *)__fieldName__:(WrapperManager *)wrapperManager call:(FlutterMethodCall *)call {
+  if (call.arguments[@"__fieldName__"] != nil) {
+    __methodCallerName__.__fieldName__ =
+    %%PARAMETERS%%
+    %%PARAMETERS%%
+    ;
+  }
+  
   %%PREMETHODCALLS%%
   %%PREMETHODCALLS%%
 
   __methodCallerName__.__fieldName__
-  %%PARAMETERS%%
-  %%PARAMETERS%%
 
   %%POSTMETHODCALLS%%
   %%POSTMETHODCALLS%%
@@ -495,6 +502,7 @@ class $__className____typeParameters__ extends Wrapper {
       <String, dynamic>{
         r'$uniqueId': uniqueId,
         r'$newUniqueId': $newUniqueId,
+        if (__fieldName__ != null)
         %%METHODCALLPARAMS%%
         %%METHODCALLPARAMS%%
       },
@@ -1018,12 +1026,12 @@ public class ChannelGenerated {
     %%FIELDS%%
     %%FIELD%%
     static private Object __fieldName__(WrapperManager wrapperManager, MethodCall call) throws Exception {
-      if (call.argument("__fieldName__") != null) {
-        __methodCallerName__.__fieldName__ =
-        %%PARAMETERS%%
-        %%PARAMETERS%%
+      if (((HashMap<String, Object>) call.arguments).containsKey("__fieldName__")) {
+         __methodCallerName__.__fieldName__ =
+         %%PARAMETERS%%
+         %%PARAMETERS%%
         ;
-      } 
+      }
       
       %%PREMETHODCALLS%%
       %%PREMETHODCALLS%%

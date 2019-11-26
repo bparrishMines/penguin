@@ -278,7 +278,6 @@ class AndroidTemplateCreator extends TemplateCreator {
       Block.field.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
         if (!isStatic) 'static': '',
-        if (!isStatic) r'ChannelGenerated $channelGenerated,': '',
         if (!isMutable)
           RegExp(r'if\s*(.*?)\s*{.*?}', multiLine: true, dotAll: true): '',
         Replacement.methodCallerName.name:
@@ -314,7 +313,6 @@ class AndroidTemplateCreator extends TemplateCreator {
       Block.method.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
         if (!isStatic) 'static': '',
-        if (!isStatic) r'ChannelGenerated $channelGenerated,': '',
         Replacement.methodCallerName.name:
             isStatic ? platformClassName : r'$value',
         Block.preMethodCalls.exp:
@@ -682,10 +680,10 @@ class IosTemplateCreator extends TemplateCreator {
   }
 
   String createField(
-    MethodChannelType channelType,
-    bool isStatic, {
-    //@required String parameter,
-    @required String fieldType,
+    MethodChannelType channelType, {
+    @required bool isStatic,
+    @required bool isMutable,
+    @required String parameter,
     @required String fieldName,
     @required String platformClassName,
   }) {
@@ -693,6 +691,8 @@ class IosTemplateCreator extends TemplateCreator {
       Block.field.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
         if (!isStatic) '+': '-',
+        if (!isMutable)
+          RegExp(r'if\s*(.*?)\s*{.*?}', multiLine: true, dotAll: true): '',
         Replacement.methodCallerName.name:
             isStatic ? platformClassName : r'_value',
         Block.preMethodCalls.exp: MethodChannelBlock.preMethodCall(channelType)
@@ -704,8 +704,10 @@ class IosTemplateCreator extends TemplateCreator {
                 .exp
                 .firstMatch(template.value)
                 .group(1),
-        Block.parameters.exp: '',
-        Replacement.returnType.name: fieldType,
+        Block.parameters.exp: parameter.replaceFirst(
+          RegExp('.+?:'),
+          '',
+        ),
         Replacement.methodName.name: fieldName,
         Replacement.fieldName.name: fieldName,
       },

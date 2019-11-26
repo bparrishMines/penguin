@@ -7,11 +7,12 @@ import java.util.List;
 import java.util.Map;
 
 public class TestClass1 {
-  public static List<Boolean> staticField = Arrays.asList(true, false, true);
-  public String stringField = "Macintosh";
-  public int intField = 43;
+  public final static List<Boolean> staticField = Arrays.asList(true, false, true);
+  public final String stringField = "Macintosh";
+  public final int intField = 43;
   public final double doubleField = 44.0;
-  public boolean boolField = true;
+  public final boolean boolField = true;
+  public double mutableField = 56.5;
 
   public TestClass1() { }
 

@@ -255,6 +255,24 @@ abstract class TestClass1 {
 
   List<MethodCall> _constructorMethodCalls;
 
+  @Field()
+  set mutableField(FutureOr<double> value) =>
+      android.invoke<double>(_channel, _constructorMethodCalls[0], [
+        ..._constructorMethodCalls.skip(1).toList(),
+        io.Platform.isAndroid ? _android.allocate() : _ios.allocate(),
+        io.Platform.isAndroid
+            ? _android.$mutableField(mutableField: value)
+            : _ios.$mutableField(mutableField: value),
+      ]);
+
+  @Field()
+  FutureOr<double> get mutableField => android.invoke<double>(
+        _channel,
+        io.Platform.isAndroid
+            ? _android.$mutableField()
+            : _ios.$mutableField(),
+      );
+
   @Method()
   Future<void> returnVoid() {
     return android.invoke<void>(
@@ -366,7 +384,7 @@ abstract class TestClass1 {
   }
 
   @Field()
-  Future<int> get intField =>
+  FutureOr<int> get intField =>
       android.invoke<int>(_channel, _constructorMethodCalls[0], [
         ..._constructorMethodCalls.skip(1).toList(),
         io.Platform.isAndroid ? _android.$intField() : _ios.$intField(),

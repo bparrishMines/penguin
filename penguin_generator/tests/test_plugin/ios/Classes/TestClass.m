@@ -8,6 +8,7 @@
     _stringField = @"Macintosh";
     _doubleField = @(44.0);
     _boolField = @(YES);
+    _mutableField = @55.4;
   }
   return self;
 }
