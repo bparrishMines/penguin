@@ -40,8 +40,17 @@ void main() {
 
     test('namedConstructor', () {
       final TestClass1 testClass = Platform.isAndroid
-          ? AndroidTestClass1.namedConstructor()
-          : IosTestClass1.initNamedConstructor();
+          ? AndroidTestClass1.namedConstructor(
+              'hello',
+              45,
+              (testClass2 as AndroidTestClass2),
+              AndroidNestedClass(),
+            )
+          : IosTestClass1.initNamedConstructor(
+              'goodbye',
+              23,
+              (testClass2 as IosTestClass2),
+            );
       expect(testClass.returnBool(), completion(isFalse));
     });
 

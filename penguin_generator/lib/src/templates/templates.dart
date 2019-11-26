@@ -68,7 +68,7 @@ class Template {
 - (instancetype _Nonnull)initWithUniqueId:(NSString *)uniqueId {
   return self = [super initWithName:@"WrapperNotFoundException"
                              reason:[NSString
-                   stringWithFormat:@"MethodCall was made without a unique handle for %@.", uniqueId]
+                   stringWithFormat:@"Could not find Wrapper with uniqueId %@.", uniqueId]
                           userInfo:nil];
 }
 @end
@@ -145,15 +145,6 @@ class Template {
   if ([@"__platformClassName__(__constructorSignature__)" isEqualToString:call.method]) {
     _value = [[__platformClassName__ alloc] __constructorName__
       %%PARAMETERS%%
-      %%PARAMETER methodChannel:supported%%
-      __parameterName__:call.arguments[@"__parameterName__"]
-      %%PARAMETER methodChannel:supported%%
-      %%PARAMETER methodChannel:wrapper%%
-      __parameterName__:[wrapperManager getWrapper:call.arguments[@"__parameterName__"]]
-      %%PARAMETER methodChannel:wrapper%%
-      %%PARAMETER methodChannel:primitive%%
-      __parameterName__:[call.arguments[@"__parameterName__"] __primitiveConvertMethod__]
-      %%PARAMETER methodChannel:primitive%%
       %%PARAMETERS%%
     ];  
   }
@@ -450,23 +441,11 @@ class $__className____typeParameters__ extends Wrapper {
   %%CONSTRUCTOR%%
   MethodCall $__className____dartConstructorName__(
   %%PARAMETERS%%
-  %%PARAMETER methodChannel:supported%%
-  __parameterType__ __parameterName__,
-  %%PARAMETER methodChannel:supported%%
-  %%PARAMETER methodChannel:wrapper%%
-  $__parameterType__ __parameterName__,
-  %%PARAMETER methodChannel:wrapper%%
-  %%PARAMETER methodChannel:primitive%%
-  __parameterType__ __parameterName__,
-  %%PARAMETER methodChannel:primitive%%
-  %%PARAMETER methodChannel:typeParameter%%
-  __parameterType__ __parameterName__,
-  %%PARAMETER methodChannel:typeParameter%%
   %%PARAMETERS%%
   ) {
     return MethodCall(
       '__platformClassName__(__constructorName__)',
-      <String, String>{r'$uniqueId': uniqueId,
+      <String, dynamic>{r'$uniqueId': uniqueId,
        %%METHODCALLPARAMS%%
        %%METHODCALLPARAM methodChannel:supported%%
        '__parameterName__': __parameterName__,

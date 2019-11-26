@@ -1,7 +1,12 @@
 #import "TestPlugin.h"
 
 @implementation TestClass1
-- (instancetype _Nonnull)initNamedConstructor {
+- (instancetype _Nonnull)initNamedConstructor:(NSString *_Nonnull)supported
+                                    primitive:(int)primitive
+                                      wrapper:(TestClass2 *_Nonnull)wrapper; {
+  if ([supported isEqual:[NSNull null]] || [wrapper isEqual:[NSNull null]]) {
+    @throw [NSException exceptionWithName:NSInvalidArgumentException reason:nil userInfo:nil];
+  }
   return self = [self init];
 }
 

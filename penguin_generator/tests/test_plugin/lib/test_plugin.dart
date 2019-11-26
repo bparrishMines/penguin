@@ -93,18 +93,34 @@ class _AndroidTextViewState extends State<AndroidTextView> {
 ))
 class AndroidTestClass1 extends TestClass1 {
   @Constructor()
-  AndroidTestClass1();
+  AndroidTestClass1() {
+    _constructorMethodCalls = [_android.$AndroidTestClass1$Default()];
+  }
 
   @Constructor()
-  AndroidTestClass1.namedConstructor() : super.namedConstructor();
+  AndroidTestClass1.namedConstructor(
+    String supported,
+    @int64 int primitive,
+    AndroidTestClass2 wrapper,
+    AndroidNestedClass nested,
+  ) {
+    _constructorMethodCalls = [
+      wrapper._android.$AndroidTestClass2$Default(),
+      nested._testClass.$AndroidNestedClass$Default(),
+      _android.$AndroidTestClass1namedConstructor(
+        supported,
+        primitive,
+        wrapper._android,
+        nested._testClass,
+      )
+    ];
+  }
 
   @Method()
   static Future<void> staticMethod() {
     return android.invoke<void>(
       _channel,
-      io.Platform.isAndroid
-          ? android.$AndroidTestClass1.$staticMethod()
-          : ios.$IosTestClass1.$staticMethod(),
+      android.$AndroidTestClass1.$staticMethod(),
     );
   }
 
@@ -117,8 +133,9 @@ class AndroidTestClass1 extends TestClass1 {
   ) {
     return android.invoke<void>(
       _channel,
-      _constructorMethodCall,
+      _constructorMethodCalls[0],
       <MethodCall>[
+        ..._constructorMethodCalls.skip(1).toList(),
         wrapper._constructorMethodCall,
         nested._testClass.$AndroidNestedClass$Default(),
         _android.$parameterMethod(
@@ -137,18 +154,31 @@ class AndroidTestClass1 extends TestClass1 {
 ))
 class IosTestClass1 extends TestClass1 {
   @Constructor()
-  IosTestClass1();
+  IosTestClass1() {
+    _constructorMethodCalls = [_ios.$IosTestClass1$Default()];
+  }
 
   @Constructor()
-  IosTestClass1.initNamedConstructor() : super.namedConstructor();
+  IosTestClass1.initNamedConstructor(
+    String supported,
+    @int32 int primitive,
+    IosTestClass2 wrapper,
+  ) {
+    _constructorMethodCalls = [
+      wrapper._ios.$IosTestClass2$Default(),
+      _ios.$IosTestClass1initNamedConstructor(
+        supported,
+        primitive,
+        wrapper._ios,
+      )
+    ];
+  }
 
   @Method()
   static Future<void> staticMethod() {
     return android.invoke<void>(
       _channel,
-      io.Platform.isAndroid
-          ? android.$AndroidTestClass1.$staticMethod()
-          : ios.$IosTestClass1.$staticMethod(),
+      ios.$IosTestClass1.$staticMethod(),
     );
   }
 
@@ -160,8 +190,9 @@ class IosTestClass1 extends TestClass1 {
   ) {
     return android.invoke<void>(
       _channel,
-      _constructorMethodCall,
+      _constructorMethodCalls[0],
       <MethodCall>[
+        ..._constructorMethodCalls.skip(1).toList(),
         wrapper._constructorMethodCall,
         _ios.$parameterMethod(supported, primitive, wrapper._ios),
       ],
@@ -173,8 +204,11 @@ class IosTestClass1 extends TestClass1 {
   Future<int> returnInt32() {
     return android.invoke<int>(
       _channel,
-      _constructorMethodCall,
-      <MethodCall>[_ios.$returnInt32()],
+      _constructorMethodCalls[0],
+      <MethodCall>[
+        ..._constructorMethodCalls.skip(1).toList(),
+        _ios.$returnInt32()
+      ],
     );
   }
 }
@@ -199,29 +233,19 @@ class IosTestClass2 extends TestClass2 {
 }
 
 abstract class TestClass1 {
-  TestClass1() {
-    _constructorMethodCall = io.Platform.isAndroid
-        ? _android.$AndroidTestClass1$Default()
-        : _ios.$IosTestClass1$Default();
-  }
   final android.$AndroidTestClass1 _android =
       android.$AndroidTestClass1(_randomId());
   final ios.$IosTestClass1 _ios = ios.$IosTestClass1(_randomId());
 
-  TestClass1.namedConstructor() {
-    _constructorMethodCall = io.Platform.isAndroid
-        ? _android.$AndroidTestClass1namedConstructor()
-        : _ios.$IosTestClass1initNamedConstructor();
-  }
-
-  MethodCall _constructorMethodCall;
+  List<MethodCall> _constructorMethodCalls;
 
   @Method()
   Future<void> returnVoid() {
     return android.invoke<void>(
       _channel,
-      _constructorMethodCall,
+      _constructorMethodCalls[0],
       <MethodCall>[
+        ..._constructorMethodCalls.skip(1).toList(),
         io.Platform.isAndroid ? _android.$returnVoid() : _ios.$returnVoid(),
       ],
     );
@@ -231,8 +255,9 @@ abstract class TestClass1 {
   Future<String> returnString() {
     return android.invoke<String>(
       _channel,
-      _constructorMethodCall,
+      _constructorMethodCalls[0],
       <MethodCall>[
+        ..._constructorMethodCalls.skip(1).toList(),
         io.Platform.isAndroid ? _android.$returnString() : _ios.$returnString(),
       ],
     );
@@ -242,8 +267,9 @@ abstract class TestClass1 {
   Future<int> returnInt() {
     return android.invoke<int>(
       _channel,
-      _constructorMethodCall,
+      _constructorMethodCalls[0],
       <MethodCall>[
+        ..._constructorMethodCalls.skip(1).toList(),
         io.Platform.isAndroid ? _android.$returnInt() : _ios.$returnInt(),
       ],
     );
@@ -253,8 +279,9 @@ abstract class TestClass1 {
   Future<double> returnDouble() {
     return android.invoke<double>(
       _channel,
-      _constructorMethodCall,
+      _constructorMethodCalls[0],
       <MethodCall>[
+        ..._constructorMethodCalls.skip(1).toList(),
         io.Platform.isAndroid ? _android.$returnDouble() : _ios.$returnDouble(),
       ],
     );
@@ -264,8 +291,9 @@ abstract class TestClass1 {
   Future<bool> returnBool() {
     return android.invoke<bool>(
       _channel,
-      _constructorMethodCall,
+      _constructorMethodCalls[0],
       <MethodCall>[
+        ..._constructorMethodCalls.skip(1).toList(),
         io.Platform.isAndroid ? _android.$returnBool() : _ios.$returnBool(),
       ],
     );
@@ -275,8 +303,9 @@ abstract class TestClass1 {
   Future<List<double>> returnList() {
     return android.invokeList<double>(
       _channel,
-      _constructorMethodCall,
+      _constructorMethodCalls[0],
       <MethodCall>[
+        ..._constructorMethodCalls.skip(1).toList(),
         io.Platform.isAndroid ? _android.$returnList() : _ios.$returnList(),
       ],
     );
@@ -286,8 +315,9 @@ abstract class TestClass1 {
   Future<Map<String, int>> returnMap() {
     return android.invokeMap<String, int>(
       _channel,
-      _constructorMethodCall,
+      _constructorMethodCalls[0],
       <MethodCall>[
+        ..._constructorMethodCalls.skip(1).toList(),
         io.Platform.isAndroid ? _android.$returnMap() : _ios.$returnMap(),
       ],
     );
@@ -297,8 +327,9 @@ abstract class TestClass1 {
   Future<Object> returnObject() {
     return android.invoke<Object>(
       _channel,
-      _constructorMethodCall,
+      _constructorMethodCalls[0],
       <MethodCall>[
+        ..._constructorMethodCalls.skip(1).toList(),
         io.Platform.isAndroid ? _android.$returnObject() : _ios.$returnObject(),
       ],
     );
@@ -308,8 +339,9 @@ abstract class TestClass1 {
   Future<dynamic> returnDynamic() {
     return android.invoke<dynamic>(
       _channel,
-      _constructorMethodCall,
+      _constructorMethodCalls[0],
       <MethodCall>[
+        ..._constructorMethodCalls.skip(1).toList(),
         io.Platform.isAndroid
             ? _android.$returnDynamic()
             : _ios.$returnDynamic(),

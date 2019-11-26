@@ -7,9 +7,13 @@
 @end
 
 @interface TestClass1 : NSObject
-- (instancetype _Nonnull)initNamedConstructor;
+- (instancetype _Nonnull)initNamedConstructor:(NSString *_Nonnull)supported
+                                    primitive:(int)primitive
+                                      wrapper:(TestClass2 *_Nonnull)wrapper;
 + (void)staticMethod;
-- (void)parameterMethod:(NSString *_Nonnull)supported primitive:(int)primitive wrapper:(TestClass2 *_Nonnull)wrapper;
+- (void)parameterMethod:(NSString *_Nonnull)supported
+              primitive:(int)primitive
+                wrapper:(TestClass2 *_Nonnull)wrapper;
 - (void)returnVoid;
 - (NSObject *_Nonnull)returnObject;
 - (NSObject *_Nonnull)returnDynamic;
