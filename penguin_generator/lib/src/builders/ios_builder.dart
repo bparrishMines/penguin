@@ -174,6 +174,16 @@ class IosBuilder extends PlatformBuilder {
                   methodName: methodInfo.name,
                 ),
               ),
+              fields: classInfo.fields.map<String>(
+                (FieldInfo fieldInfo) => creator.createField(
+                  getChannelType(fieldInfo.type),
+                  fieldInfo.isStatic,
+                  fieldType: fieldInfo.type.name,
+                  fieldName: fieldInfo.name,
+                  platformClassName:
+                      (classInfo.aClass.platform as IosPlatform).type.name,
+                ),
+              ),
               platformClassName:
                   (classInfo.aClass.platform as IosPlatform).type.name,
               methodCalls: <String>[

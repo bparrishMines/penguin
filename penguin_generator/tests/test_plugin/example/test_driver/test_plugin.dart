@@ -26,7 +26,7 @@ void main() {
 
     test('intField', () {
       expect(testClass.intField, completion(43));
-    }, skip: Platform.isIOS);
+    });
 
     test('staticMethod', () {
       if (Platform.isAndroid) {
@@ -161,10 +161,6 @@ void main() {
 //
 //      test('stringField', () {
 //        expect(AndroidTestClass1().stringField, completion('Macintosh'));
-//      });
-//
-//      test('intField', () {
-//        expect(AndroidTestClass1().intField, completion(43));
 //      });
 //
 //      test('doubleField', () {

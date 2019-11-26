@@ -352,8 +352,11 @@ abstract class TestClass1 {
   @Field()
   Future<int> get intField => android.invoke<int>(
         _channel,
-        _android.$AndroidTestClass1$Default(),
-        [_android.$intField()],
+        _constructorMethodCalls[0],
+        [
+          ..._constructorMethodCalls.skip(1).toList(),
+          io.Platform.isAndroid ? _android.$intField() : _ios.$intField(),
+        ],
       );
 }
 

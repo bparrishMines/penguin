@@ -186,13 +186,29 @@ class Template {
   %%METHODCALL classMember:method%%
   %%METHODCALL classMember:field%%
   else if ([@"__platformClassName__.__fieldName__" isEqualToString:call.method]) {
-    return [self __fieldName__:call];
+    return [self __fieldName__:wrapperManager call:call];
   }
   %%METHODCALL classMember:field%%
   %%METHODCALLS%%
   
   @throw [[NotImplementedException alloc] initWithMethod:call.method];
 }
+
+%%FIELDS%%
+%%FIELD%%
++ (NSObject *)__fieldName__:(WrapperManager *)wrapperManager call:(FlutterMethodCall *)call {
+  %%PREMETHODCALLS%%
+  %%PREMETHODCALLS%%
+
+  __methodCallerName__.__fieldName__
+  %%PARAMETERS%%
+  %%PARAMETERS%%
+
+  %%POSTMETHODCALLS%%
+  %%POSTMETHODCALLS%%
+}
+%%FIELD%%
+%%FIELDS%%
 
 %%METHODS%%
 %%METHOD%%

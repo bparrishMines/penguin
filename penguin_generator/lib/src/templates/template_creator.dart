@@ -608,12 +608,12 @@ class IosTemplateCreator extends TemplateCreator {
   }
 
   String createClass({
-    Iterable<String> constructors,
-    Iterable<String> methods,
-    Iterable<String> methodCalls,
-    Iterable<String> staticMethodCalls,
-    //Iterable<String> fields,
-    String platformClassName,
+    @required Iterable<String> constructors,
+    @required Iterable<String> methods,
+    @required Iterable<String> methodCalls,
+    @required Iterable<String> staticMethodCalls,
+    @required Iterable<String> fields,
+    @required String platformClassName,
   }) {
     return TemplateCreator._replace(
       Block.aClass.exp.firstMatch(template.value).group(1),
@@ -623,7 +623,7 @@ class IosTemplateCreator extends TemplateCreator {
         MethodChannelBlock.methodCalls.exp: methodCalls.join(),
         MethodChannelBlock.staticMethodCalls.exp:
             staticMethodCalls.join('else'),
-        //Block.fields.exp: fields.join(),
+        Block.fields.exp: fields.join(),
         Replacement.platformClassName.name: platformClassName,
       },
     );
@@ -659,7 +659,6 @@ class IosTemplateCreator extends TemplateCreator {
       Block.method.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
         if (!isStatic) '+': '-',
-        if (!isStatic) r':(ChannelHandler *)$handler call': '',
         Replacement.methodCallerName.name:
             isStatic ? platformClassName : r'_value',
         Block.preMethodCalls.exp:
@@ -678,6 +677,37 @@ class IosTemplateCreator extends TemplateCreator {
             ),
         Replacement.returnType.name: returnType,
         Replacement.methodName.name: methodName,
+      },
+    );
+  }
+
+  String createField(
+    MethodChannelType channelType,
+    bool isStatic, {
+    //@required String parameter,
+    @required String fieldType,
+    @required String fieldName,
+    @required String platformClassName,
+  }) {
+    return TemplateCreator._replace(
+      Block.field.exp.firstMatch(template.value).group(1),
+      <Pattern, String>{
+        if (!isStatic) '+': '-',
+        Replacement.methodCallerName.name:
+            isStatic ? platformClassName : r'_value',
+        Block.preMethodCalls.exp: MethodChannelBlock.preMethodCall(channelType)
+            .exp
+            .firstMatch(template.value)
+            .group(1),
+        Block.postMethodCalls.exp:
+            MethodChannelBlock.postMethodCall(channelType)
+                .exp
+                .firstMatch(template.value)
+                .group(1),
+        Block.parameters.exp: '',
+        Replacement.returnType.name: fieldType,
+        Replacement.methodName.name: fieldName,
+        Replacement.fieldName.name: fieldName,
       },
     );
   }

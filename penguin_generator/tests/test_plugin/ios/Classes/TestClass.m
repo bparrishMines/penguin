@@ -1,6 +1,14 @@
 #import "TestPlugin.h"
 
 @implementation TestClass1
+- (instancetype _Nonnull)init {
+  self = [super init];
+  if (self) {
+    _intField = @43;
+  }
+  return self;
+}
+
 - (instancetype _Nonnull)initNamedConstructor:(NSString *_Nonnull)supported
                                     primitive:(int)primitive
                                       wrapper:(TestClass2 *_Nonnull)wrapper; {

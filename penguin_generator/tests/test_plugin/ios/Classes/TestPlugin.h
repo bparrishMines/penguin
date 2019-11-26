@@ -10,6 +10,7 @@
 - (instancetype _Nonnull)initNamedConstructor:(NSString *_Nonnull)supported
                                     primitive:(int)primitive
                                       wrapper:(TestClass2 *_Nonnull)wrapper;
+@property NSNumber * _Nonnull intField;
 + (void)staticMethod;
 - (void)parameterMethod:(NSString *_Nonnull)supported
               primitive:(int)primitive
