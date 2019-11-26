@@ -5,6 +5,9 @@
   self = [super init];
   if (self) {
     _intField = @43;
+    _stringField = @"Macintosh";
+    _doubleField = @(44.0);
+    _boolField = @(YES);
   }
   return self;
 }

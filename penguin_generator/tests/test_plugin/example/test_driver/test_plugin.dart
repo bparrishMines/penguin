@@ -28,6 +28,18 @@ void main() {
       expect(testClass.intField, completion(43));
     });
 
+    test('stringField', () {
+      expect(testClass.stringField, completion("Macintosh"));
+    });
+
+    test('doubleField', () {
+      expect(testClass.doubleField, completion(44.0));
+    });
+
+    test('boolField', () {
+      expect(testClass.boolField, completion(isTrue));
+    });
+
     test('staticMethod', () {
       if (Platform.isAndroid) {
         expect(

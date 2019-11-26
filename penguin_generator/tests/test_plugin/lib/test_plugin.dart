@@ -358,6 +358,36 @@ abstract class TestClass1 {
           io.Platform.isAndroid ? _android.$intField() : _ios.$intField(),
         ],
       );
+
+  @Field()
+  Future<String> get stringField => android.invoke<String>(
+    _channel,
+    _constructorMethodCalls[0],
+    [
+      ..._constructorMethodCalls.skip(1).toList(),
+      io.Platform.isAndroid ? _android.$stringField() : _ios.$stringField(),
+    ],
+  );
+
+  @Field()
+  Future<double> get doubleField => android.invoke<double>(
+    _channel,
+    _constructorMethodCalls[0],
+    [
+      ..._constructorMethodCalls.skip(1).toList(),
+      io.Platform.isAndroid ? _android.$doubleField() : _ios.$doubleField(),
+    ],
+  );
+
+  @Field()
+  Future<bool> get boolField => android.invoke<bool>(
+    _channel,
+    _constructorMethodCalls[0],
+    [
+      ..._constructorMethodCalls.skip(1).toList(),
+      io.Platform.isAndroid ? _android.$boolField() : _ios.$boolField(),
+    ],
+  );
 }
 
 abstract class TestClass2 {
@@ -502,13 +532,6 @@ abstract class TestClass2 {
 //        _channel,
 //        _testClass.$AndroidTestClass1$Default(),
 //        [_testClass.$stringField()],
-//      );
-//
-//  @Field()
-//  Future<int> get intField => a.invoke<int>(
-//        _channel,
-//        _testClass.$AndroidTestClass1$Default(),
-//        [_testClass.$intField()],
 //      );
 //
 //  @Field()

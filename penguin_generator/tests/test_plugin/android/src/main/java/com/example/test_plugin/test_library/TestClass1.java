@@ -10,14 +10,13 @@ public class TestClass1 {
 //  public static int staticField = 12;
 //  public Object objectField = "32";
 //  public Object dynamicField = 42;
-//  public String stringField = "Macintosh";
+  public String stringField = "Macintosh";
   public int intField = 43;
-//  public final double doubleField = 44.0;
+  public final double doubleField = 44.0;
 //  public Number numField = 0;
-//  public boolean boolField = true;
+  public boolean boolField = true;
 //  public List<Boolean> listField = Arrays.asList(true, false, true);
 //  public Map<String, Double> mapField;
-//  public String constructorValue;
 
   public TestClass1() {
 //    final HashMap<String, Double> map = new HashMap<>(2);

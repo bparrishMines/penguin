@@ -11,6 +11,9 @@
                                     primitive:(int)primitive
                                       wrapper:(TestClass2 *_Nonnull)wrapper;
 @property NSNumber * _Nonnull intField;
+@property NSString * _Nonnull stringField;
+@property NSNumber * _Nonnull doubleField;
+@property NSNumber * _Nonnull boolField;
 + (void)staticMethod;
 - (void)parameterMethod:(NSString *_Nonnull)supported
               primitive:(int)primitive
