@@ -40,6 +40,20 @@ void main() {
       expect(testClass.boolField, completion(isTrue));
     });
 
+    test('staticfield', () {
+      if (Platform.isAndroid) {
+        expect(
+          AndroidTestClass1.staticField,
+          completion(<bool>[true, false, true]),
+        );
+      } else if (Platform.isIOS) {
+        expect(
+          IosTestClass1.staticField,
+          completion(<bool>[true, false, true]),
+        );
+      }
+    });
+
     test('staticMethod', () {
       if (Platform.isAndroid) {
         expect(

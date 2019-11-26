@@ -7,23 +7,13 @@ import java.util.List;
 import java.util.Map;
 
 public class TestClass1 {
-//  public static int staticField = 12;
-//  public Object objectField = "32";
-//  public Object dynamicField = 42;
+  public static List<Boolean> staticField = Arrays.asList(true, false, true);
   public String stringField = "Macintosh";
   public int intField = 43;
   public final double doubleField = 44.0;
-//  public Number numField = 0;
   public boolean boolField = true;
-//  public List<Boolean> listField = Arrays.asList(true, false, true);
-//  public Map<String, Double> mapField;
 
-  public TestClass1() {
-//    final HashMap<String, Double> map = new HashMap<>(2);
-//    map.put("true", 1.0);
-//    map.put("false", 0.0);
-//    mapField = map;
-  }
+  public TestClass1() { }
 
   public TestClass1(String s, Long primitive, TestClass2 wrapper, NestedTestClass nested) {
     if (s == null || primitive == null || wrapper == null || nested == null) {
@@ -34,10 +24,6 @@ public class TestClass1 {
   public static void staticMethod() {
 
   }
-
-//  public TestClass1(String constructorValue) {
-//    this.constructorValue = constructorValue;
-//  }
 
   public void returnVoid() {
 
@@ -97,10 +83,6 @@ public class TestClass1 {
 //
 //  public void callbackMethod(TestClass3 wrapper, String supported) {
 //
-//  }
-//
-//  public void passParameters(int primitive, TestClass3 wrapper, NestedTestClass nested, AbstractTestClass abstractClass) {
-//    // Do nothing
 //  }
 //
 //  public enum TestEnum {

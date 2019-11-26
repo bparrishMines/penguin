@@ -21,6 +21,10 @@
   return self = [self init];
 }
 
++ (NSArray<NSNumber *> *)staticField {
+  return @[@(YES), @(NO), @(YES)];
+}
+
 + (void)staticMethod {
   
 }

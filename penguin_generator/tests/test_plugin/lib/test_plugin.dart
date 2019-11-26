@@ -116,6 +116,14 @@ class AndroidTestClass1 extends TestClass1 {
     ];
   }
 
+  @Field()
+  static Future<List<bool>> get staticField {
+    return android.invokeList<bool>(
+      _channel,
+      android.$AndroidTestClass1.$staticField(),
+    );
+  }
+
   @Method()
   static Future<void> staticMethod() {
     return android.invoke<void>(
@@ -172,6 +180,14 @@ class IosTestClass1 extends TestClass1 {
         wrapper._ios,
       )
     ];
+  }
+
+  @Field()
+  static Future<List<bool>> get staticField {
+    return android.invokeList<bool>(
+      _channel,
+      ios.$IosTestClass1.$staticField(),
+    );
   }
 
   @Method()
@@ -350,44 +366,32 @@ abstract class TestClass1 {
   }
 
   @Field()
-  Future<int> get intField => android.invoke<int>(
-        _channel,
-        _constructorMethodCalls[0],
-        [
-          ..._constructorMethodCalls.skip(1).toList(),
-          io.Platform.isAndroid ? _android.$intField() : _ios.$intField(),
-        ],
-      );
+  Future<int> get intField =>
+      android.invoke<int>(_channel, _constructorMethodCalls[0], [
+        ..._constructorMethodCalls.skip(1).toList(),
+        io.Platform.isAndroid ? _android.$intField() : _ios.$intField(),
+      ]);
 
   @Field()
-  Future<String> get stringField => android.invoke<String>(
-    _channel,
-    _constructorMethodCalls[0],
-    [
-      ..._constructorMethodCalls.skip(1).toList(),
-      io.Platform.isAndroid ? _android.$stringField() : _ios.$stringField(),
-    ],
-  );
+  Future<String> get stringField =>
+      android.invoke<String>(_channel, _constructorMethodCalls[0], [
+        ..._constructorMethodCalls.skip(1).toList(),
+        io.Platform.isAndroid ? _android.$stringField() : _ios.$stringField(),
+      ]);
 
   @Field()
-  Future<double> get doubleField => android.invoke<double>(
-    _channel,
-    _constructorMethodCalls[0],
-    [
-      ..._constructorMethodCalls.skip(1).toList(),
-      io.Platform.isAndroid ? _android.$doubleField() : _ios.$doubleField(),
-    ],
-  );
+  Future<double> get doubleField =>
+      android.invoke<double>(_channel, _constructorMethodCalls[0], [
+        ..._constructorMethodCalls.skip(1).toList(),
+        io.Platform.isAndroid ? _android.$doubleField() : _ios.$doubleField(),
+      ]);
 
   @Field()
-  Future<bool> get boolField => android.invoke<bool>(
-    _channel,
-    _constructorMethodCalls[0],
-    [
-      ..._constructorMethodCalls.skip(1).toList(),
-      io.Platform.isAndroid ? _android.$boolField() : _ios.$boolField(),
-    ],
-  );
+  Future<bool> get boolField =>
+      android.invoke<bool>(_channel, _constructorMethodCalls[0], [
+        ..._constructorMethodCalls.skip(1).toList(),
+        io.Platform.isAndroid ? _android.$boolField() : _ios.$boolField(),
+      ]);
 }
 
 abstract class TestClass2 {

@@ -14,6 +14,7 @@
 @property NSString * _Nonnull stringField;
 @property NSNumber * _Nonnull doubleField;
 @property NSNumber * _Nonnull boolField;
++ (NSArray<NSNumber *> *_Nonnull)staticField;
 + (void)staticMethod;
 - (void)parameterMethod:(NSString *_Nonnull)supported
               primitive:(int)primitive
