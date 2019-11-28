@@ -168,59 +168,6 @@ void main() {
 //        });
 //      });
 //
-//      test('namedConstructor', () {
-//        expect(
-//          AndroidTestClass1.namedConstructor('Amigo').constructorValue,
-//          completion('Amigo'),
-//        );
-//      });
-//
-//      test('staticField', () {
-//        expect(AndroidTestClass1.staticField, completion(12));
-//      });
-//
-//      test('objectField', () {
-//        expect(AndroidTestClass1().objectField, completion('32'));
-//
-//        final AndroidTestClass1 class1 = AndroidTestClass1();
-//        class1.objectField = '64';
-//        expect(class1.objectField, completion('64'));
-//      });
-//
-//      test('dynamicField', () {
-//        expect(AndroidTestClass1().dynamicField, completion(42));
-//      });
-//
-//      test('stringField', () {
-//        expect(AndroidTestClass1().stringField, completion('Macintosh'));
-//      });
-//
-//      test('doubleField', () {
-//        expect(AndroidTestClass1().doubleField, completion(44.0));
-//      });
-//
-//      test('numField', () {
-//        expect(AndroidTestClass1().numField, completion(0));
-//      });
-//
-//      test('boolField', () {
-//        expect(AndroidTestClass1().boolField, completion(true));
-//      });
-//
-//      test('listField', () {
-//        expect(
-//          AndroidTestClass1().listField,
-//          completion(<bool>[true, false, true]),
-//        );
-//      });
-//
-//      test('mapField', () {
-//        expect(
-//          AndroidTestClass1().mapField,
-//          completion(<String, double>{'true': 1.0, 'false': 0.0}),
-//        );
-//      });
-//
 //      test('callbackMethod', () async {
 //        final MockAndroidTestClass1 mockClass = MockAndroidTestClass1();
 //        await mockClass.callCallbackMethod();

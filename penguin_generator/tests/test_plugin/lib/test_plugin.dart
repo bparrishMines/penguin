@@ -467,136 +467,10 @@ abstract class TestClass2 {
 //  }
 //}
 //
-//
 //@Class(AndroidPlatform(
 //  AndroidType('com.example.test_plugin.test_library', <String>['TestClass1']),
 //))
 //class AndroidTestClass1 {
-//  @Constructor()
-//  AndroidTestClass1() {
-//    _testClass = a.$AndroidTestClass1(
-//      _randomId(),
-//      $callbackMethod$Callback:
-//          (a.$AndroidTestClass3 wrapper, String supported) {
-//        assert(wrapper != null);
-//        assert(wrapper.uniqueId != null);
-//        callbackMethod(AndroidTestClass3._(wrapper), supported);
-//        return <MethodCall>[wrapper.allocate(), wrapper.deallocate()];
-//      },
-//    );
-//  }
-//
-//  @Constructor()
-//  AndroidTestClass1.namedConstructor(String constructorValue)
-//      : _constructorValue = constructorValue {
-//    _testClass = a.$AndroidTestClass1(
-//      _randomId(),
-//      $callbackMethod$Callback:
-//          (a.$AndroidTestClass3 wrapper, String supported) {
-//        assert(wrapper != null);
-//        assert(wrapper.uniqueId != null);
-//        callbackMethod(AndroidTestClass3._(wrapper), supported);
-//        return <MethodCall>[wrapper.allocate(), wrapper.deallocate()];
-//      },
-//    );
-//  }
-//
-//  String _constructorValue;
-//
-//  @Field()
-//  Future<String> get constructorValue => a.invoke<String>(
-//        _channel,
-//        _testClass.$AndroidTestClass1namedConstructor(_constructorValue),
-//        [_testClass.$constructorValue()],
-//      );
-//
-//  a.$AndroidTestClass1 _testClass;
-//
-//  final List<MethodCall> _setters = <MethodCall>[];
-//
-//  @Method()
-//  static Future<int> staticMethod() {
-//    return a.invoke<int>(_channel, a.$AndroidTestClass1.$staticMethod());
-//  }
-//
-//  @Field()
-//  static Future<int> get staticField => a.invoke<int>(
-//        _channel,
-//        a.$AndroidTestClass1.$staticField(),
-//      );
-//
-//  @Field()
-//  Future<Object> get objectField => a.invoke<Object>(
-//        _channel,
-//        _testClass.$AndroidTestClass1$Default(),
-//        [..._setters, _testClass.$objectField()],
-//      );
-//
-//  @Field()
-//  set objectField(FutureOr<Object> objectField) {
-//    _setters.add(_testClass.$objectField(objectField: objectField));
-//    a.invoke<Object>(
-//      _channel,
-//      _testClass.$AndroidTestClass1$Default(),
-//      [_testClass.$objectField(objectField: objectField)],
-//    );
-//  }
-//
-//  @Field()
-//  Future<dynamic> get dynamicField => a.invoke<dynamic>(
-//        _channel,
-//        _testClass.$AndroidTestClass1$Default(),
-//        [_testClass.$dynamicField()],
-//      );
-//
-//  @Field()
-//  Future<String> get stringField => a.invoke<String>(
-//        _channel,
-//        _testClass.$AndroidTestClass1$Default(),
-//        [_testClass.$stringField()],
-//      );
-//
-//  @Field()
-//  Future<double> get doubleField => a.invoke<double>(
-//        _channel,
-//        _testClass.$AndroidTestClass1$Default(),
-//        [_testClass.$doubleField()],
-//      );
-//
-//  @Field()
-//  Future<num> get numField => a.invoke<num>(
-//        _channel,
-//        _testClass.$AndroidTestClass1$Default(),
-//        [_testClass.$numField()],
-//      );
-//
-//  @Field()
-//  Future<bool> get boolField => a.invoke<bool>(
-//        _channel,
-//        _testClass.$AndroidTestClass1$Default(),
-//        [_testClass.$boolField()],
-//      );
-//
-//  @Field()
-//  Future<List<bool>> get listField => a.invokeList<bool>(
-//        _channel,
-//        _testClass.$AndroidTestClass1$Default(),
-//        [_testClass.$listField()],
-//      );
-//
-//  @Field()
-//  Future<Map<String, double>> get mapField => a.invokeMap<String, double>(
-//        _channel,
-//        _testClass.$AndroidTestClass1$Default(),
-//        [_testClass.$mapField()],
-//      );
-//
-//  @Method(callback: true)
-//  Future<void> callbackMethod(
-//      AndroidTestClass3 wrapper, String supported) async {
-//    print(supported);
-//    callbackHandler.removeWrapper(_testClass);
-//  }
 //
 //  @Method()
 //  Future<void> callCallbackMethod() {
@@ -607,18 +481,4 @@ abstract class TestClass2 {
 //      [_testClass.$callCallbackMethod()],
 //    );
 //  }
-//}
-//
-//@Class(
-//  AndroidPlatform(
-//    AndroidType('com.example.test_plugin.test_library', <String>['TestClass3']),
-//  ),
-//)
-//class AndroidTestClass3 extends AndroidAbstractClass {
-//  @Constructor()
-//  AndroidTestClass3() : _androidTestClass3 = a.$AndroidTestClass3(_randomId());
-//
-//  AndroidTestClass3._(this._androidTestClass3);
-//
-//  final a.$AndroidTestClass3 _androidTestClass3;
 //}
