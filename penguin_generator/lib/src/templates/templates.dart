@@ -412,12 +412,15 @@ import 'package:flutter/services.dart';
 %%CLASS%%
 class $__className____typeParameters__ extends Wrapper {
   const $__className__(String uniqueId, 
+  { 
+  List<MethodCall> Function($Context context) onCreateView,
   %%CALLBACKINITIALIZERS%%
   %%CALLBACKINITIALIZER%%
   this.$__methodName__$Callback,
   %%CALLBACKINITIALIZER%%
   %%CALLBACKINITIALIZERS%%
-  ) : super(uniqueId);
+  }
+  ) : super(uniqueId, onCreateView: onCreateView);
 
   %%CALLBACKVARIABLES%%
   %%CALLBACKVARIABLE%%
@@ -561,9 +564,16 @@ class $__className____typeParameters__ extends Wrapper {
 class CallbackHandler {
   CallbackHandler() {
     _methodCallHandler = (MethodCall call) async {
-      final List<MethodCall> result =
-          _wrappers[call.arguments[r'$uniqueId']].onMethodCall(call);
-      if (result == null) return null;
+      List<MethodCall> result;
+      if (call.method == 'CreateView') {
+        result = _wrappers[call.arguments[r'$uniqueId']].onCreateView(
+          $Context(call.arguments[r'context']),
+        );
+      } else {
+        result = _wrappers[call.arguments[r'$uniqueId']].onMethodCall(call);
+      }
+
+      if (result == null) return <MethodCall>[];
       return result
           .map<Map<String, dynamic>>(
             (MethodCall methodCall) => <String, dynamic>{
@@ -589,9 +599,10 @@ class CallbackHandler {
 }
 
 abstract class Wrapper {
-  const Wrapper(this.uniqueId);
+  const Wrapper(this.uniqueId, {this.onCreateView});
 
   final String uniqueId;
+  final List<MethodCall> Function($Context context) onCreateView;
   
   String get platformClassName;
   List<MethodCall> onMethodCall(MethodCall call);

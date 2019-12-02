@@ -15,16 +15,6 @@ final MethodChannel _channel = MethodChannel('test_plugin')
 String _randomId() => Random().nextDouble().toString();
 
 @Class(AndroidPlatform(
-  AndroidType('android.app', <String>['Activity']),
-))
-class _AndroidActivity extends Context {
-  _AndroidActivity();
-
-  final android.$_AndroidActivity _activity =
-      android.$_AndroidActivity('activity');
-}
-
-@Class(AndroidPlatform(
   AndroidType(
     'com.example.test_plugin.test_library',
     <String>['TestClass1', 'NestedTestClass'],
@@ -54,7 +44,6 @@ class _AndroidTextViewState extends State<AndroidTextView> {
   @Constructor()
   _AndroidTextViewState(Context context);
 
-  final _AndroidActivity _activity = _AndroidActivity();
   android.$_AndroidTextViewState _textView;
 
   @Method()
@@ -63,24 +52,26 @@ class _AndroidTextViewState extends State<AndroidTextView> {
   @override
   void initState() {
     super.initState();
-    _textView = android.$_AndroidTextViewState(_randomId());
-    android.invokeAll(_channel, <MethodCall>[
-      _textView.$_AndroidTextViewState$Default(
-        android.$Context(_activity._activity.uniqueId),
-      ),
-      _textView.allocate(),
-    ]);
+    _textView = android.$_AndroidTextViewState(
+      _randomId(),
+      onCreateView: (android.$Context context) {
+        return <MethodCall>[
+          _textView.$_AndroidTextViewState$Default(context),
+          _textView.$setText(widget.text)
+        ];
+      },
+    );
+    callbackHandler.addWrapper(_textView);
   }
 
   @override
   void dispose() {
     super.dispose();
-    android.invoke<void>(_channel, _textView.deallocate());
+    callbackHandler.removeWrapper(_textView);
   }
 
   @override
   Widget build(BuildContext context) {
-    android.invoke<void>(_channel, _textView.$setText(widget.text));
     return AndroidView(
       viewType: '${_channel.name}/view',
       creationParams: _textView.uniqueId,

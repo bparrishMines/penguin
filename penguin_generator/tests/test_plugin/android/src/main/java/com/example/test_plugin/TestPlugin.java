@@ -11,12 +11,6 @@ public class TestPlugin {
     final ChannelGenerated channelGenerated = new ChannelGenerated(channel);
     channel.setMethodCallHandler(channelGenerated.methodCallHandler);
 
-    final ChannelGenerated.$Activity activity = new ChannelGenerated.$Activity(
-        channelGenerated.wrapperManager,
-        "activity",
-        registrar.activity());
-
-    channelGenerated.wrapperManager.addAllocatedWrapper(activity);
     registrar
         .platformViewRegistry()
         .registerViewFactory("test_plugin/view", channelGenerated.viewFactory);
