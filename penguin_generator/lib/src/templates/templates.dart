@@ -703,6 +703,8 @@ import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.StandardMessageCodec;
 import io.flutter.plugin.platform.PlatformView;
 import io.flutter.plugin.platform.PlatformViewFactory;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 %%IMPORTS%%
 %%IMPORT%%
 import __classPackage__.__platformClassName__;
@@ -712,10 +714,11 @@ import __classPackage__.__platformClassName__;
 public class ChannelGenerated {
   public final PlatformViewFactory viewFactory = new ViewFactoryImpl();
   public final WrapperManager wrapperManager = new WrapperManager();
-  public final MethodCallHandler methodCallHandler;
+  public final MethodCallHandler methodCallHandler = new MethodCallHandlerImpl();
+  public final MethodChannel callbackChannel;
   
   public ChannelGenerated(MethodChannel callbackChannel) {
-    methodCallHandler = new MethodCallHandlerImpl(callbackChannel);
+    this.callbackChannel = callbackChannel;
   }
   
   private class ViewFactoryImpl extends PlatformViewFactory {
@@ -724,21 +727,61 @@ public class ChannelGenerated {
     }
 
     @Override
-    public PlatformView create(Context context, int viewId, Object args) {
-      try {
-        return wrapperManager.getWrapper((String) args);
-      } catch (WrapperNotFoundException exception) {
-        throw new RuntimeException(exception.getMessage());
-      }
+    public PlatformView create(final Context context, int viewId, final Object args) {
+      final FrameLayout frameLayout = new FrameLayout(context);
+      
+      final $Context contextWrapper = new $Context(wrapperManager, UUID.randomUUID().toString(), context);
+
+      final HashMap<String, Object> arguments = new HashMap<>();
+      arguments.put("context", contextWrapper.$uniqueId);
+      arguments.put("$uniqueId", args);
+      
+      callbackChannel.invokeMethod("CreateView", arguments, new Result() {
+        @Override
+        public void success(Object result) {
+          try {
+            wrapperManager.addTemporaryWrapper(contextWrapper);
+
+            final MethodCallHandlerImpl handlerImpl = (MethodCallHandlerImpl) methodCallHandler;
+            handlerImpl.onMethodCall(new MethodCall("MultiInvoke", result));
+
+            final View view = wrapperManager.getWrapper((String) args).getView();
+            frameLayout.addView(view,
+                new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+          } catch (Exception exception) {
+            exception.printStackTrace();
+          } finally {
+            wrapperManager.clearTemporaryWrappers();
+          }
+        }
+
+        @Override
+        public void error(String errorCode, String errorMessage, Object errorDetails) {
+          throw new RuntimeException(errorMessage);
+        }
+
+        @Override
+        public void notImplemented() {
+          throw new RuntimeException("notImplemented");
+        }
+      });
+
+      return new PlatformView() {
+        @Override
+        public View getView() {
+          return frameLayout;
+        }
+
+        @Override
+        public void dispose() {
+          // Do nothing
+        }
+      };
     }
   }
   
   private class MethodCallHandlerImpl implements MethodCallHandler {
-    private final MethodChannel callbackChannel;
-
-    private MethodCallHandlerImpl(MethodChannel callbackChannel) {
-      this.callbackChannel = callbackChannel;
-    }
+    private MethodCallHandlerImpl() {}
     
     @Override
     public void onMethodCall(MethodCall call, Result result) {
