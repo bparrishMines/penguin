@@ -39,6 +39,12 @@ class ClassInfo {
 
   @override
   String toString() => toJson().toString();
+
+  @override
+  bool operator ==(other) => toString() == other.toString();
+
+  @override
+  int get hashCode => toString().hashCode;
 }
 
 @JsonSerializable()

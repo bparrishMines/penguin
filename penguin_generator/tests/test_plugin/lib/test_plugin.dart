@@ -17,7 +17,7 @@ String _randomId() => Random().nextDouble().toString();
 @Class(AndroidPlatform(
   AndroidType('android.app', <String>['Activity']),
 ))
-class _AndroidActivity {
+class _AndroidActivity extends Context {
   _AndroidActivity();
 
   final android.$_AndroidActivity _activity =
@@ -44,8 +44,7 @@ class AndroidTextView extends StatefulWidget {
   final String text;
 
   @override
-  State<StatefulWidget> createState() =>
-      _AndroidTextViewState(_AndroidActivity());
+  State<StatefulWidget> createState() => _AndroidTextViewState(null);
 }
 
 @Class(AndroidPlatform(
@@ -53,9 +52,9 @@ class AndroidTextView extends StatefulWidget {
 ))
 class _AndroidTextViewState extends State<AndroidTextView> {
   @Constructor()
-  _AndroidTextViewState(this._activity);
+  _AndroidTextViewState(Context context);
 
-  final _AndroidActivity _activity;
+  final _AndroidActivity _activity = _AndroidActivity();
   android.$_AndroidTextViewState _textView;
 
   @Method()
@@ -66,7 +65,9 @@ class _AndroidTextViewState extends State<AndroidTextView> {
     super.initState();
     _textView = android.$_AndroidTextViewState(_randomId());
     android.invokeAll(_channel, <MethodCall>[
-      _textView.$_AndroidTextViewState$Default(_activity._activity),
+      _textView.$_AndroidTextViewState$Default(
+        android.$Context(_activity._activity.uniqueId),
+      ),
       _textView.allocate(),
     ]);
   }
@@ -268,9 +269,7 @@ abstract class TestClass1 {
   @Field()
   FutureOr<double> get mutableField => android.invoke<double>(
         _channel,
-        io.Platform.isAndroid
-            ? _android.$mutableField()
-            : _ios.$mutableField(),
+        io.Platform.isAndroid ? _android.$mutableField() : _ios.$mutableField(),
       );
 
   @Method()
