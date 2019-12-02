@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'penguin.g.dart';
 
-@Class(AndroidPlatform(AndroidType('android.context', <String>['Context'])))
+@Class(AndroidPlatform(AndroidType('android.content', <String>['Context'])))
 class Context {}
 
 @JsonSerializable()
