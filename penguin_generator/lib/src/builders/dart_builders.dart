@@ -197,15 +197,15 @@ class DartMethodChannelBuilder extends PlatformBuilder {
       'ios.penguin.g.dart',
       DartFormatter().format(
         creator.createFile(
-          platformViewClass: 'CGFrame',
-          platformViewVariable: 'cgFrame',
+          platformViewClass: 'CGRect',
+          platformViewVariable: 'cgRect',
           classes: classes
               .where((ClassInfo classInfo) =>
                   classInfo.aClass.platform is IosPlatform)
               .map<String>(
                 (ClassInfo classInfo) => creator.createClass(
-                  platformViewClass: 'CGFrame',
-                  platformViewVariable: 'cgFrame',
+                  platformViewClass: 'CGRect',
+                  platformViewVariable: 'cgRect',
                   callbackInitializers: classInfo.methods
                       .where(
                         (MethodInfo methodInfo) => methodInfo.method.callback,
