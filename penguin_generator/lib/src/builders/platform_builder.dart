@@ -89,9 +89,11 @@ class ReadInfoBuilder extends Builder {
     if (!await resolver.isLibrary(buildStep.inputId)) return null;
 
     final LibraryReader reader = LibraryReader(await buildStep.inputLibrary);
+    final LibraryReader penguinReader = await _getPenguinReader(resolver);
 
     final List<ClassInfo> allClassInfo = reader
         .annotatedWith(Annotation.$class)
+        .followedBy(penguinReader.annotatedWith(Annotation.$class))
         .map<ClassInfo>(
           (AnnotatedElement element) => _toClassInfo(
             element.element,
@@ -108,6 +110,21 @@ class ReadInfoBuilder extends Builder {
         jsonEncode(allClassInfo),
       );
     }
+  }
+
+  Future<LibraryReader> _getPenguinReader(Resolver resolver) async {
+    final AssetId penguinLibraryAsset = AssetId.resolve(
+      'package:penguin/penguin.dart',
+    );
+    final AssetId penguinAsset = AssetId.resolve(
+      'src/penguin.dart',
+      from: penguinLibraryAsset,
+    );
+
+    final LibraryElement penguinLibrary =
+        await resolver.libraryFor(penguinAsset);
+
+    return LibraryReader(penguinLibrary.library);
   }
 
   ClassInfo _toClassInfo(ClassElement classElement, Class classAnnotation) =>

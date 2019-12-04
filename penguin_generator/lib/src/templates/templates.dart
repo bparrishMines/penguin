@@ -413,7 +413,7 @@ import 'package:flutter/services.dart';
 class $__className____typeParameters__ extends Wrapper {
   const $__className__(String uniqueId, 
   { 
-  List<MethodCall> Function($Context context) onCreateView,
+  List<MethodCall> Function($__platformViewClass__ __platformViewVariable__) onCreateView,
   %%CALLBACKINITIALIZERS%%
   %%CALLBACKINITIALIZER%%
   this.$__methodName__$Callback,
@@ -567,7 +567,7 @@ class CallbackHandler {
       List<MethodCall> result;
       if (call.method == 'CreateView') {
         result = _wrappers[call.arguments[r'$uniqueId']].onCreateView(
-          $Context(call.arguments[r'context']),
+          $__platformViewClass__(call.arguments[r'__platformViewVariable__']),
         );
       } else {
         result = _wrappers[call.arguments[r'$uniqueId']].onMethodCall(call);
@@ -602,7 +602,7 @@ abstract class Wrapper {
   const Wrapper(this.uniqueId, {this.onCreateView});
 
   final String uniqueId;
-  final List<MethodCall> Function($Context context) onCreateView;
+  final List<MethodCall> Function($__platformViewClass__ __platformViewVariable__) onCreateView;
   
   String get platformClassName;
   List<MethodCall> onMethodCall(MethodCall call);
@@ -1365,4 +1365,6 @@ class Replacement {
       Replacement('__dartConstructorName__');
   static final Replacement constructorSignature =
       Replacement('__constructorSignature__');
+  static final Replacement platformViewClass = Replacement('__platformViewClass__');
+  static final Replacement platformViewVariable = Replacement('__platformViewVariable__');
 }

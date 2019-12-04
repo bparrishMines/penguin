@@ -179,6 +179,8 @@ class MethodChannelTemplateCreator extends TemplateCreator {
     @required Iterable<String> callbackVariables,
     @required String className,
     @required String platformClassName,
+    @required String platformViewClass,
+    @required String platformViewVariable,
   }) {
     return TemplateCreator._replace(
       Block.aClass.exp.firstMatch(template.value).group(1),
@@ -196,14 +198,24 @@ class MethodChannelTemplateCreator extends TemplateCreator {
             callbackInitializers.isNotEmpty
                 ? '{' + callbackInitializers.join() + '}'
                 : '',
+        Replacement.platformViewClass.name: platformViewClass,
+        Replacement.platformViewVariable.name: platformViewVariable,
       },
     );
   }
 
-  String createFile({Iterable<String> classes}) {
+  String createFile({
+    @required Iterable<String> classes,
+    @required String platformViewClass,
+    @required String platformViewVariable,
+  }) {
     return TemplateCreator._replace(
       template.value,
-      <Pattern, String>{Block.classes.exp: classes.join()},
+      <Pattern, String>{
+        Block.classes.exp: classes.join(),
+        Replacement.platformViewClass.name: platformViewClass,
+        Replacement.platformViewVariable.name: platformViewVariable,
+      },
     );
   }
 

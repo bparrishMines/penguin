@@ -34,11 +34,15 @@ class DartMethodChannelBuilder extends PlatformBuilder {
       'android.penguin.g.dart',
       DartFormatter().format(
         creator.createFile(
+          platformViewClass: 'Context',
+          platformViewVariable: 'context',
           classes: classes
               .where((ClassInfo classInfo) =>
                   classInfo.aClass.platform is AndroidPlatform)
               .map<String>(
                 (ClassInfo classInfo) => creator.createClass(
+                  platformViewClass: 'Context',
+                  platformViewVariable: 'context',
                   callbackInitializers: classInfo.methods
                       .where(
                         (MethodInfo methodInfo) => methodInfo.method.callback,
@@ -193,11 +197,15 @@ class DartMethodChannelBuilder extends PlatformBuilder {
       'ios.penguin.g.dart',
       DartFormatter().format(
         creator.createFile(
+          platformViewClass: 'CGFrame',
+          platformViewVariable: 'cgFrame',
           classes: classes
               .where((ClassInfo classInfo) =>
                   classInfo.aClass.platform is IosPlatform)
               .map<String>(
                 (ClassInfo classInfo) => creator.createClass(
+                  platformViewClass: 'CGFrame',
+                  platformViewVariable: 'cgFrame',
                   callbackInitializers: classInfo.methods
                       .where(
                         (MethodInfo methodInfo) => methodInfo.method.callback,
