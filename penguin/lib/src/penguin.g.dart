@@ -35,7 +35,7 @@ Method _$MethodFromJson(Map<String, dynamic> json) {
   $checkKeys(json,
       requiredKeys: const ['callback'], disallowNullValues: const ['callback']);
   return Method(
-    callback: json['callback'] as bool ?? false,
+    callback: json['callback'] as bool,
   );
 }
 
@@ -151,11 +151,12 @@ Map<String, dynamic> _$AndroidApiToJson(AndroidApi instance) =>
 
 IosType _$IosTypeFromJson(Map<String, dynamic> json) {
   $checkKeys(json,
-      requiredKeys: const ['import', 'name'],
-      disallowNullValues: const ['name']);
+      requiredKeys: const ['import', 'name', 'isStruct'],
+      disallowNullValues: const ['name', 'isStruct']);
   return IosType(
     json['name'] as String,
     import: json['import'] as String,
+    isStruct: json['isStruct'] as bool,
   );
 }
 
@@ -171,5 +172,6 @@ Map<String, dynamic> _$IosTypeToJson(IosType instance) {
   }
 
   writeNotNull('name', instance.name);
+  writeNotNull('isStruct', instance.isStruct);
   return val;
 }

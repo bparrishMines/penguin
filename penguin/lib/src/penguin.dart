@@ -54,7 +54,7 @@ class Method {
 
   factory Method.fromJson(Map json) => _$MethodFromJson(json);
 
-  @JsonKey(required: true, defaultValue: false, disallowNullValue: true)
+  @JsonKey(required: true, disallowNullValue: true)
   final bool callback;
 
   Map toJson() => _$MethodToJson(this);
@@ -160,7 +160,7 @@ class AndroidApi {
 
 @JsonSerializable()
 class IosType {
-  const IosType(this.name, {this.import});
+  const IosType(this.name, {this.import, this.isStruct = false});
 
   factory IosType.fromJson(Map json) => _$IosTypeFromJson(json);
 
@@ -169,6 +169,9 @@ class IosType {
 
   @JsonKey(required: true, disallowNullValue: true)
   final String name;
+
+  @JsonKey(required: true, disallowNullValue: true)
+  final bool isStruct;
 
   Map toJson() => _$IosTypeToJson(this);
 
