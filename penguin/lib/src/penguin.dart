@@ -5,7 +5,7 @@ part 'penguin.g.dart';
 @Class(AndroidPlatform(AndroidType('android.content', <String>['Context'])))
 class Context {}
 
-@Class(IosPlatform(IosType('CGRect')))
+@Class(IosPlatform(IosType('CGRect', isStruct: true)))
 class CGRect {}
 
 @JsonSerializable()

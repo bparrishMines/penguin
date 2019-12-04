@@ -1,4 +1,4 @@
-enum MethodChannelType { $void, supported, wrapper, primitive, typeParameter }
+enum MethodChannelType { $void, supported, wrapper, primitive, struct, typeParameter }
 enum ClassMemberType { constructor, method, field }
 
 class Template {
@@ -22,6 +22,7 @@ class Template {
 @end
 
 @interface Wrapper ()
+@property NSString *$uniqueId;
 - (instancetype _Nonnull)initWithWrapperManager:(WrapperManager *_Nonnull)wrapperManager
                                        uniqueId:(NSString *_Nonnull)uniqueId;
 - (instancetype _Nonnull)initWithWrapperManager:(WrapperManager *_Nonnull)wrapperManager
@@ -77,11 +78,12 @@ class Template {
   @public
   NSString *$uniqueId;
 }
+
 - (instancetype _Nonnull)initWithWrapperManager:(WrapperManager *_Nonnull)wrapperManager
                                        uniqueId:(NSString *_Nonnull)uniqueId {
   self = [super init];
   if (self) {
-    $uniqueId = uniqueId;
+    _$uniqueId = uniqueId;
   }
   [wrapperManager addTemporaryWrapper:self];
   return self;
@@ -114,7 +116,7 @@ class Template {
 }
 
 - (void)$deallocate:(WrapperManager *)wrapperManager {
-  [wrapperManager removeAllocatedWrapper:$uniqueId];
+  [wrapperManager removeAllocatedWrapper:_$uniqueId];
 }
 @end
 
@@ -311,18 +313,18 @@ class Template {
 - (void)addWrapper:(Wrapper *)wrapper wrapperDictionary:(NSMutableDictionary *)wrapperDictionary {
   Wrapper *existingWrapper;
   @try {
-    existingWrapper = [self getWrapper:wrapper->$uniqueId];
+    existingWrapper = [self getWrapper:wrapper.$uniqueId];
   } @catch (WrapperNotFoundException *exception) {
-    [wrapperDictionary setObject:wrapper forKey:wrapper->$uniqueId];
+    [wrapperDictionary setObject:wrapper forKey:wrapper.$uniqueId];
     return;
   }
   
   if ([existingWrapper getValue] != [wrapper getValue]) {
-    @throw [NSException exceptionWithName:NSInvalidArgumentException reason:[NSString stringWithFormat:@"Object for uniqueId already exists: %@", wrapper->$uniqueId] userInfo:nil];
+    @throw [NSException exceptionWithName:NSInvalidArgumentException reason:[NSString stringWithFormat:@"Object for uniqueId already exists: %@", wrapper.$uniqueId] userInfo:nil];
   }
   
-  if ([wrapperDictionary objectForKey:wrapper->$uniqueId] == nil) {
-    [wrapperDictionary setObject:wrapper forKey:wrapper->$uniqueId];
+  if ([wrapperDictionary objectForKey:wrapper.$uniqueId] == nil) {
+    [wrapperDictionary setObject:wrapper forKey:wrapper.$uniqueId];
   }  
 }
 
@@ -1260,6 +1262,9 @@ class MethodChannelBlock extends Block {
         break;
       case MethodChannelType.primitive:
         configs.add('methodChannel:primitive');
+        break;
+      case MethodChannelType.struct:
+        configs.add('methodChannel:struct');
         break;
     }
 
