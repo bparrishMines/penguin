@@ -241,7 +241,7 @@ class Template {
   __parameterName__:call.arguments[@"__parameterName__"]
   %%PARAMETER methodChannel:supported%%
   %%PARAMETER methodChannel:wrapper%%
-  __parameterName__:[wrapperManager getWrapper:call.arguments[@"__parameterName__"]]
+  __parameterName__:[[wrapperManager getWrapper:call.arguments[@"__parameterName__"]] getValue]
   %%PARAMETER methodChannel:wrapper%%
   %%PARAMETER methodChannel:primitive%%
   __parameterName__:[call.arguments[@"__parameterName__"] __primitiveConvertMethod__]

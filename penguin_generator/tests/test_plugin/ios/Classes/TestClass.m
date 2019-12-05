@@ -16,7 +16,9 @@
 - (instancetype _Nonnull)initNamedConstructor:(NSString *_Nonnull)supported
                                     primitive:(int)primitive
                                       wrapper:(TestClass2 *_Nonnull)wrapper; {
-  if ([supported isEqual:[NSNull null]] || [wrapper isEqual:[NSNull null]]) {
+  if ([supported isEqual:[NSNull null]] ||
+      [wrapper isEqual:[NSNull null]] ||
+      ![wrapper isKindOfClass:[TestClass2 class]]) {
     @throw [NSException exceptionWithName:NSInvalidArgumentException reason:nil userInfo:nil];
   }
   return self = [self init];
@@ -47,7 +49,9 @@
 }
 
 - (void)parameterMethod:(NSString *)supported primitive:(int)primitive wrapper:(TestClass2 *)wrapper {
-  if ([supported isEqual:[NSNull null]] || [wrapper isEqual:[NSNull null]]) {
+  if ([supported isEqual:[NSNull null]] ||
+      [wrapper isEqual:[NSNull null]] ||
+      ![wrapper isKindOfClass:[TestClass2 class]]) {
     @throw [NSException exceptionWithName:NSInvalidArgumentException reason:nil userInfo:nil];
   }
 }
