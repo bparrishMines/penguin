@@ -197,13 +197,15 @@ class IosTestClass1 extends TestClass1 {
     IosTestClass2 wrapper,
     CGRect aStruct,
   ) {
+    final ios.$CGRect rect = ios.$CGRect(_randomId());
     return android.invoke<void>(
       _channel,
       _constructorMethodCalls[0],
       <MethodCall>[
         ..._constructorMethodCalls.skip(1).toList(),
         wrapper._constructorMethodCall,
-        _ios.$parameterMethod(supported, primitive, wrapper._ios, null),
+        rect.$CGRect$Default(),
+        _ios.$parameterMethod(supported, primitive, wrapper._ios, rect),
       ],
     );
   }
