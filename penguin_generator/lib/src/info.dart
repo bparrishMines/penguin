@@ -178,6 +178,7 @@ class TypeInfo {
     this.isTypeParameter,
     @required this.isNativeInt32,
     @required this.isNativeInt64,
+    @required this.isStruct,
   });
 
   factory TypeInfo.fromJson(Map json) => _$TypeInfoFromJson(json);
@@ -279,6 +280,9 @@ class TypeInfo {
 
   @JsonKey(required: true, disallowNullValue: true)
   final bool isNativeInt64;
+
+  @JsonKey(required: true, disallowNullValue: true)
+  final bool isStruct;
 
   Map toJson() => _$TypeInfoToJson(this);
 

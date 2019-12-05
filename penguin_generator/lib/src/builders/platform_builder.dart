@@ -51,6 +51,8 @@ abstract class PlatformBuilder {
               (_) => getChannelType(_) == MethodChannelType.supported,
             )) {
       return MethodChannelType.supported;
+    } else if (info.isStruct) {
+      return MethodChannelType.struct;
     } else if (info.isNativeInt32 || info.isNativeInt64) {
       // We must check for primitive before supported because a type will be both.
       return MethodChannelType.primitive;
@@ -324,10 +326,25 @@ class ReadInfoBuilder extends Builder {
       isDynamic: type.isDynamic,
       isVoid: type.isVoid,
       isWrapper: isWrapper,
+      isStruct:
+          isWrapper && type.element is ClassElement && _isStruct(type.element),
       isTypeParameter: type is TypeParameterType,
       isNativeInt32: Annotation.int32.hasAnnotationOfExact(element),
       isNativeInt64: Annotation.int64.hasAnnotationOfExact(element),
     );
+  }
+
+  bool _isStruct(ClassElement classElement) {
+    final ConstantReader classReader = ConstantReader(
+      Annotation.$class.firstAnnotationOfExact(classElement),
+    );
+
+    final Class annotation = AnnotationUtils.classFromConstantReader(
+      classReader,
+    );
+
+    return annotation.platform is IosPlatform &&
+        (annotation.platform as IosPlatform).type.isStruct;
   }
 
   @override

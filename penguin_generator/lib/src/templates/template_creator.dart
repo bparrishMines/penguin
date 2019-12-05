@@ -529,7 +529,7 @@ class IosTemplateCreator extends TemplateCreator {
   static String createHeaderFile({
     @required String headerTemplate,
     @required Iterable<String> classPackages,
-    @required Iterable<String> platformClassNames,
+    @required Iterable<String> classes,
   }) {
     return TemplateCreator._replace(
       headerTemplate,
@@ -544,16 +544,21 @@ class IosTemplateCreator extends TemplateCreator {
               ),
             )
             .join(),
-        Block.classes.exp: platformClassNames
-            .map<String>(
-              (String platformClassName) => TemplateCreator._replace(
-                Block.aClass.exp.firstMatch(headerTemplate).group(1),
-                <Pattern, String>{
-                  Replacement.platformClassName.name: platformClassName,
-                },
-              ),
-            )
-            .join(),
+        Block.classes.exp: classes.join(),
+      },
+    );
+  }
+
+  static String createHeaderClass({
+    @required String headerTemplate,
+    @required String platformClassName,
+    @required bool isStruct,
+  }) {
+    return TemplateCreator._replace(
+      Block.aClass.exp.firstMatch(headerTemplate).group(1),
+      <Pattern, String>{
+        Replacement.platformClassName.name: platformClassName,
+        Replacement.valueType.name: isStruct ? 'NSValue' : platformClassName,
       },
     );
   }
@@ -624,6 +629,7 @@ class IosTemplateCreator extends TemplateCreator {
     @required Iterable<String> staticMethodCalls,
     @required Iterable<String> fields,
     @required String platformClassName,
+    @required bool isStruct,
   }) {
     return TemplateCreator._replace(
       Block.aClass.exp.firstMatch(template.value).group(1),
@@ -635,6 +641,7 @@ class IosTemplateCreator extends TemplateCreator {
             staticMethodCalls.join('else'),
         Block.fields.exp: fields.join(),
         Replacement.platformClassName.name: platformClassName,
+        Replacement.valueType.name: isStruct ? 'NSValue' : platformClassName,
       },
     );
   }

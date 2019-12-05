@@ -36,7 +36,7 @@ class IosBuilder extends PlatformBuilder {
 @interface $__platformClassName__ : Wrapper
 - (instancetype _Nonnull)initWithWrapperManager:(WrapperManager *_Nonnull)wrapperManager
                                 uniqueId:(NSString *_Nonnull)uniqueId
-                                value:(__platformClassName__ *_Nullable)value;
+                                value:(__valueType__ *_Nullable)value;
 @end
 %%CLASS%%
 %%CLASSES%%
@@ -63,9 +63,14 @@ class IosBuilder extends PlatformBuilder {
                 (ClassInfo classInfo) =>
                     (classInfo.aClass.platform as IosPlatform).type.import,
               ),
-          platformClassNames: classes.map<String>(
-            (ClassInfo classInfo) =>
-                (classInfo.aClass.platform as IosPlatform).type.name,
+          classes: classes.map<String>(
+            (ClassInfo classInfo) => IosTemplateCreator.createHeaderClass(
+              headerTemplate: _headerFile,
+              isStruct:
+                  (classInfo.aClass.platform as IosPlatform).type.isStruct,
+              platformClassName:
+                  (classInfo.aClass.platform as IosPlatform).type.name,
+            ),
           ),
         ),
       ),
@@ -112,6 +117,8 @@ class IosBuilder extends PlatformBuilder {
           ],
           classes: classes.map<String>(
             (ClassInfo classInfo) => creator.createClass(
+              isStruct:
+                  (classInfo.aClass.platform as IosPlatform).type.isStruct,
               staticMethodCalls: <String>[
                 ...classInfo.methods
                     .where((MethodInfo methodInfo) => methodInfo.isStatic)

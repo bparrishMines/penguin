@@ -74,10 +74,7 @@ class Template {
 }
 @end
 
-@implementation Wrapper {
-  @public
-  NSString *$uniqueId;
-}
+@implementation Wrapper
 
 - (instancetype _Nonnull)initWithWrapperManager:(WrapperManager *_Nonnull)wrapperManager
                                        uniqueId:(NSString *_Nonnull)uniqueId {
@@ -123,13 +120,13 @@ class Template {
 %%CLASSES%%
 %%CLASS%%
 @interface $__platformClassName__ ()
-@property __platformClassName__ *value;
+@property __valueType__ *value;
 @end
 
 @implementation $__platformClassName__
 - (instancetype _Nonnull)initWithWrapperManager:(WrapperManager *_Nonnull)wrapperManager
                                 uniqueId:(NSString *_Nonnull)uniqueId
-                                value:(__platformClassName__ *_Nullable)value {
+                                value:(__valueType__ *_Nullable)value {
   self = [super initWithWrapperManager:wrapperManager uniqueId:uniqueId];
   if (self) {
     _value = value;
@@ -234,6 +231,8 @@ class Template {
   %%PREMETHODCALL methodChannel:primitive%%
   return @(
   %%PREMETHODCALL methodChannel:primitive%%
+  %%PREMETHODCALL methodChannel:struct%%
+  %%PREMETHODCALL methodChannel:struct%%
   %%PREMETHODCALLS%%
   
   [__methodCallerName__ __methodName__
@@ -247,6 +246,8 @@ class Template {
   %%PARAMETER methodChannel:primitive%%
   __parameterName__:[call.arguments[@"__parameterName__"] __primitiveConvertMethod__]
   %%PARAMETER methodChannel:primitive%%
+  %%PARAMETER methodChannel:struct%%
+  %%PARAMETER methodChannel:struct%%
   %%PARAMETERS%%
   ]
   
@@ -265,6 +266,8 @@ class Template {
   %%POSTMETHODCALL methodChannel:primitive%%
   );
   %%POSTMETHODCALL methodChannel:primitive%%
+  %%POSTMETHODCALL methodChannel:struct%%
+  %%POSTMETHODCALL methodChannel:struct%%
   %%POSTMETHODCALLS%%
 }
 %%METHOD%%
@@ -434,6 +437,9 @@ class $__className____typeParameters__ extends Wrapper {
     %%CALLBACKVARIABLEPARAM methodChannel:supported%%
     __parameterType__ __parameterName__,
     %%CALLBACKVARIABLEPARAM methodChannel:supported%%
+    %%CALLBACKVARIABLEPARAM methodChannel:struct%%
+    $__parameterType__ __parameterName__,
+    %%CALLBACKVARIABLEPARAM methodChannel:struct%%
     %%CALLBACKVARIABLEPARAMS%%
   ) $__methodName__$Callback;
   %%CALLBACKVARIABLE%%
@@ -453,6 +459,9 @@ class $__className____typeParameters__ extends Wrapper {
           %%CALLBACKCHANNELPARAM methodChannel:wrapper%%
           $__className__(call.arguments['__parameterName__']),
           %%CALLBACKCHANNELPARAM methodChannel:wrapper%%
+          %%CALLBACKCHANNELPARAM methodChannel:struct%%
+          $__className__(call.arguments['__parameterName__']),
+          %%CALLBACKCHANNELPARAM methodChannel:struct%%
           %%CALLBACKCHANNELPARAM methodChannel:supported%%
           call.arguments['__parameterName__'],
           %%CALLBACKCHANNELPARAM methodChannel:supported%%
@@ -481,6 +490,9 @@ class $__className____typeParameters__ extends Wrapper {
        %%METHODCALLPARAM methodChannel:wrapper%%
        '__parameterName__': __parameterName__?.uniqueId,
        %%METHODCALLPARAM methodChannel:wrapper%%
+       %%METHODCALLPARAM methodChannel:struct%%
+       '__parameterName__': __parameterName__?.uniqueId,
+       %%METHODCALLPARAM methodChannel:struct%%
        %%METHODCALLPARAM methodChannel:primitive%%
        '__parameterName__': __parameterName__,
        %%METHODCALLPARAM methodChannel:primitive%%
@@ -526,6 +538,9 @@ class $__className____typeParameters__ extends Wrapper {
   %%PARAMETER methodChannel:wrapper%%
   $__parameterType__ __parameterName__,
   %%PARAMETER methodChannel:wrapper%%
+  %%PARAMETER methodChannel:struct%%
+  $__parameterType__ __parameterName__,
+  %%PARAMETER methodChannel:struct%%
   %%PARAMETER methodChannel:primitive%%
   __parameterType__ __parameterName__,
   %%PARAMETER methodChannel:primitive%%
@@ -546,6 +561,9 @@ class $__className____typeParameters__ extends Wrapper {
        %%METHODCALLPARAM methodChannel:wrapper%%
        '__parameterName__': __parameterName__?.uniqueId,
        %%METHODCALLPARAM methodChannel:wrapper%%
+       %%METHODCALLPARAM methodChannel:struct%%
+       '__parameterName__': __parameterName__?.uniqueId,
+       %%METHODCALLPARAM methodChannel:struct%%
        %%METHODCALLPARAM methodChannel:primitive%%
        '__parameterName__': __parameterName__,
        %%METHODCALLPARAM methodChannel:primitive%%
@@ -1372,4 +1390,5 @@ class Replacement {
       Replacement('__constructorSignature__');
   static final Replacement platformViewClass = Replacement('__platformViewClass__');
   static final Replacement platformViewVariable = Replacement('__platformViewVariable__');
+  static final Replacement valueType = Replacement('__valueType__');
 }

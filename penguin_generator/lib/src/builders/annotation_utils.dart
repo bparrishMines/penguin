@@ -83,6 +83,7 @@ class AnnotationUtils {
       import: reader.peek('import') != null
           ? reader.read('import').stringValue
           : null,
+      isStruct: reader.read('isStruct').boolValue,
     );
   }
 }
