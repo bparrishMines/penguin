@@ -526,6 +526,9 @@ class AndroidTemplateCreator extends TemplateCreator {
 }
 
 class IosTemplateCreator extends TemplateCreator {
+  @override
+  Template get template => Template.ios;
+
   static String createHeaderFile({
     @required String headerTemplate,
     @required Iterable<String> classPackages,
@@ -563,18 +566,17 @@ class IosTemplateCreator extends TemplateCreator {
     );
   }
 
-  @override
-  Template get template => Template.ios;
-
   String createFile({
     @required Iterable<String> classes,
     @required Iterable<String> staticRedirects,
+    @required Iterable<String> structs,
   }) {
     return TemplateCreator._replace(
       template.value,
       <Pattern, String>{
         Block.classes.exp: classes.join(),
         Block.staticRedirects.exp: staticRedirects.join(),
+        Block.structs.exp: structs.join(),
       },
     );
   }
@@ -606,6 +608,7 @@ class IosTemplateCreator extends TemplateCreator {
     @required String constructorName,
     @required String constructorSignature,
     @required Iterable<String> parameters,
+    @required bool isStruct,
   }) {
     return TemplateCreator._replace(
       Block.constructor.exp.firstMatch(template.value).group(1),
@@ -618,6 +621,8 @@ class IosTemplateCreator extends TemplateCreator {
               RegExp('.+?:'),
               ':',
             ),
+        if (isStruct)
+          RegExp(r'_value.*?;', multiLine: true, dotAll: true): '',
       },
     );
   }
@@ -646,9 +651,19 @@ class IosTemplateCreator extends TemplateCreator {
     );
   }
 
+  String createStruct({@required platformClassName}) {
+    return TemplateCreator._replace(
+      Block.struct.exp.firstMatch(template.value).group(1),
+      <Pattern, String>{
+        Replacement.platformClassName.name: platformClassName,
+      },
+    );
+  }
+
   String createParameter(
     MethodChannelType methodChannel, {
     @required String parameterName,
+    @required String parameterType,
     @required String primitiveConvertMethod,
   }) {
     return TemplateCreator._replace(
@@ -658,6 +673,7 @@ class IosTemplateCreator extends TemplateCreator {
           .group(1),
       <Pattern, String>{
         Replacement.parameterName.name: parameterName,
+        Replacement.parameterType.name: parameterType,
         if (primitiveConvertMethod != null)
           Replacement.primitiveConvertMethod.name: primitiveConvertMethod,
       },

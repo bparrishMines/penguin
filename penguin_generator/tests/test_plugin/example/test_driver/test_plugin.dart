@@ -153,6 +153,7 @@ void main() {
             'woeif',
             32,
             (testClass2 as IosTestClass2),
+            null,
           ),
           completes,
         );

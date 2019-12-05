@@ -117,6 +117,18 @@ class Template {
 }
 @end
 
+@implementation  NSValue (Structs)
+%%STRUCTS%%
+%%STRUCT%%
++ (__platformClassName__)get__platformClassName__:(NSValue *)wrapperValue {
+  __platformClassName__ value;
+  [wrapperValue getValue:&value];
+  return value;
+}
+%%STRUCT%%
+%%STRUCTS%%
+@end
+
 %%CLASSES%%
 %%CLASS%%
 @interface $__platformClassName__ ()
@@ -247,6 +259,7 @@ class Template {
   __parameterName__:[call.arguments[@"__parameterName__"] __primitiveConvertMethod__]
   %%PARAMETER methodChannel:primitive%%
   %%PARAMETER methodChannel:struct%%
+  __parameterName__:[NSValue get__parameterType__:[[wrapperManager getWrapper:call.arguments[@"__parameterName__"]] getValue]]
   %%PARAMETER methodChannel:struct%%
   %%PARAMETERS%%
   ]
@@ -1251,6 +1264,9 @@ class Block {
 
   static final Block callbackParams = Block('CALLBACKPARAMS');
   static final Block callbackParam = Block('CALLBACKPARAM');
+
+  static final Block structs = Block('STRUCTS');
+  static final Block struct = Block('STRUCT');
 }
 
 class MethodChannelBlock extends Block {

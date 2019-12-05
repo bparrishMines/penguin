@@ -195,6 +195,7 @@ class IosTestClass1 extends TestClass1 {
     String supported,
     @int32 int primitive,
     IosTestClass2 wrapper,
+    CGRect aStruct,
   ) {
     return android.invoke<void>(
       _channel,
@@ -202,7 +203,7 @@ class IosTestClass1 extends TestClass1 {
       <MethodCall>[
         ..._constructorMethodCalls.skip(1).toList(),
         wrapper._constructorMethodCall,
-        _ios.$parameterMethod(supported, primitive, wrapper._ios),
+        _ios.$parameterMethod(supported, primitive, wrapper._ios, null),
       ],
     );
   }

@@ -15,7 +15,7 @@
 
 - (instancetype _Nonnull)initNamedConstructor:(NSString *_Nonnull)supported
                                     primitive:(int)primitive
-                                      wrapper:(TestClass2 *_Nonnull)wrapper; {
+                                      wrapper:(TestClass2 *_Nonnull)wrapper {
   if ([supported isEqual:[NSNull null]] ||
       [wrapper isEqual:[NSNull null]] ||
       ![wrapper isKindOfClass:[TestClass2 class]]) {
@@ -48,7 +48,10 @@
   return @(70.0F);
 }
 
-- (void)parameterMethod:(NSString *)supported primitive:(int)primitive wrapper:(TestClass2 *)wrapper {
+- (void)parameterMethod:(NSString *)supported
+              primitive:(int)primitive
+                wrapper:(TestClass2 *)wrapper
+                aStruct:(CGRect)aStruct {
   if ([supported isEqual:[NSNull null]] ||
       [wrapper isEqual:[NSNull null]] ||
       ![wrapper isKindOfClass:[TestClass2 class]]) {

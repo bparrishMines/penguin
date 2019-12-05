@@ -263,7 +263,6 @@ class AndroidBuilder extends PlatformBuilder {
     );
   }
 
-  // TODO: handle longs (Actually.... this should be an override)
   String _convertType(TypeInfo info, [List<ClassInfo> classes]) {
     if (info.isVoid) {
       return 'void';

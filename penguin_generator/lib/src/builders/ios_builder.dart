@@ -77,6 +77,17 @@ class IosBuilder extends PlatformBuilder {
       buildStep.writeAsString(
         'ChannelHandler+Generated.m',
         creator.createFile(
+          structs: classes
+              .where(
+                (ClassInfo classInfo) =>
+                    (classInfo.aClass.platform as IosPlatform).type.isStruct,
+              )
+              .map<String>(
+                (ClassInfo classInfo) => creator.createStruct(
+                  platformClassName:
+                      (classInfo.aClass.platform as IosPlatform).type.name,
+                ),
+              ),
           staticRedirects: <String>[
             ...classes.expand<String>(
               (ClassInfo classInfo) => classInfo.constructors.map<String>(
@@ -147,11 +158,13 @@ class IosBuilder extends PlatformBuilder {
               ],
               constructors: classInfo.constructors.map<String>(
                 (ConstructorInfo constructorInfo) => creator.createConstructor(
+                  isStruct: (classInfo.aClass.platform as IosPlatform).type.isStruct,
                   constructorName: constructorInfo.name,
                   constructorSignature: constructorInfo.name,
                   parameters: constructorInfo.parameters.map<String>(
                     (ParameterInfo parameterInfo) => creator.createParameter(
                       getChannelType(parameterInfo.type),
+                      parameterType: _getPlatformClassName(parameterInfo.type, classes),
                       parameterName: parameterInfo.name,
                       primitiveConvertMethod: _getPrimitiveConvertMethod(
                         parameterInfo.type,
@@ -171,6 +184,7 @@ class IosBuilder extends PlatformBuilder {
                   parameters: methodInfo.parameters.map<String>(
                     (ParameterInfo parameterInfo) => creator.createParameter(
                       getChannelType(parameterInfo.type),
+                      parameterType: _getPlatformClassName(parameterInfo.type, classes),
                       parameterName: parameterInfo.name,
                       primitiveConvertMethod: _getPrimitiveConvertMethod(
                         parameterInfo.type,
@@ -189,6 +203,7 @@ class IosBuilder extends PlatformBuilder {
                   fieldName: fieldInfo.name,
                   parameter: creator.createParameter(
                       getChannelType(fieldInfo.type),
+                      parameterType: _getPlatformClassName(fieldInfo.type, classes),
                       primitiveConvertMethod:
                           _getPrimitiveConvertMethod(fieldInfo.type),
                       parameterName: fieldInfo.name),
@@ -239,6 +254,16 @@ class IosBuilder extends PlatformBuilder {
     }
 
     return null;
+  }
+
+  String _getPlatformClassName(TypeInfo info, List<ClassInfo> classes) {
+    if (!info.isWrapper) return 'NSObject'; // Never used.
+    return (classes
+        .firstWhere((ClassInfo classInfo) => classInfo.name == info.name)
+        .aClass
+        .platform as IosPlatform)
+        .type
+        .name;
   }
 
   @override

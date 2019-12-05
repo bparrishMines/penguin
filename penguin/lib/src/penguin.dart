@@ -6,7 +6,10 @@ part 'penguin.g.dart';
 class Context {}
 
 @Class(IosPlatform(IosType('CGRect', isStruct: true)))
-class CGRect {}
+class CGRect {
+  @Constructor()
+  CGRect();
+}
 
 @JsonSerializable()
 class Class {
