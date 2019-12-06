@@ -44,6 +44,15 @@ class Template {
 - (void)clearTemporaryWrappers;
 @end
 
+@interface ViewFactory : NSObject<FlutterPlatformViewFactory>
+- (instancetype _Nonnull)initWithWrapperManager:(WrapperManager *_Nonnull)wrapperManager
+                              methodCallHandler:(MethodCallHandler *_Nonnull)methodCallHandler
+                                callbackChannel:(FlutterMethodChannel *_Nonnull)callbackChannel;
+@property WrapperManager *_Nonnull wrapperManager;
+@property MethodCallHandler *_Nonnull methodCallHandler;
+@property FlutterMethodChannel *_Nonnull callbackChannel;
+@end
+
 @interface MethodCallHandler ()
 @property WrapperManager *wrapperManager;
 - (instancetype _Nonnull)initWithWrapperManager:(WrapperManager *_Nonnull)wrapperManager;
@@ -114,6 +123,10 @@ class Template {
 
 - (void)$deallocate:(WrapperManager *)wrapperManager {
   [wrapperManager removeAllocatedWrapper:_$uniqueId];
+}
+
+- (nonnull UIView *)view {
+  return [self getValue];
 }
 @end
 
@@ -253,7 +266,7 @@ class Template {
   __parameterName__:call.arguments[@"__parameterName__"]
   %%PARAMETER methodChannel:supported%%
   %%PARAMETER methodChannel:wrapper%%
-  __parameterName__:[[wrapperManager getWrapper:call.arguments[@"__parameterName__"]] getValue]
+  __parameterName__:![call.arguments[@"__parameterName__"] isEqual:[NSNull null]] ? [[wrapperManager getWrapper:call.arguments[@"__parameterName__"]] getValue] : nil
   %%PARAMETER methodChannel:wrapper%%
   %%PARAMETER methodChannel:primitive%%
   __parameterName__:[call.arguments[@"__parameterName__"] __primitiveConvertMethod__]
@@ -294,11 +307,15 @@ class Template {
 %%CLASSES%%
 
 @implementation ChannelHandler
-- (instancetype)init {
-  self = [super init];
+- (instancetype _Nonnull)initWithCallbackChannel:(FlutterMethodChannel *_Nonnull)callbackChannel {
+  self = [self init];
   if (self) {
     _wrapperManager = [[WrapperManager alloc] init];
     _methodCallHandler = [[MethodCallHandler alloc] initWithWrapperManager:_wrapperManager];
+    _callbackChannel = callbackChannel;
+    _viewFactory = [[ViewFactory alloc] initWithWrapperManager:_wrapperManager
+                                             methodCallHandler:_methodCallHandler
+                                               callbackChannel:_callbackChannel];
   }
   return self;
 }
@@ -417,6 +434,66 @@ class Template {
   }
 
   return [[_wrapperManager getWrapper:uniqueId] onMethodCall:_wrapperManager call:call];
+}
+@end
+
+@interface PlatformViewFrame : NSObject<FlutterPlatformView>
+@property UIView *frame;
+@end
+
+@implementation PlatformViewFrame
+- (nonnull UIView *)view {
+  return _frame;
+}
+@end
+
+@implementation ViewFactory
+- (instancetype _Nonnull)initWithWrapperManager:(WrapperManager *_Nonnull)wrapperManager
+                              methodCallHandler:(MethodCallHandler *_Nonnull)methodCallHandler
+                                callbackChannel:(FlutterMethodChannel *_Nonnull)callbackChannel {
+  self = [self init];
+  if (self) {
+    _wrapperManager = wrapperManager;
+    _methodCallHandler = methodCallHandler;
+    _callbackChannel = callbackChannel;
+  }
+  
+  return self;
+}
+
+- (nonnull NSObject<FlutterPlatformView> *)createWithFrame:(CGRect)frame
+                                            viewIdentifier:(int64_t)viewId
+                                                 arguments:(id _Nullable)args {
+  __block NSString *uniqueId = args;
+  __block PlatformViewFrame *viewFrame = [[PlatformViewFrame alloc] init];
+  viewFrame.frame = [[UIView alloc] initWithFrame:frame];
+  
+  NSValue *rectValue = [NSValue valueWithBytes:&frame objCType:@encode(CGRect)];
+  __block $CGRect *cgRectWrapper = [[$CGRect alloc] initWithWrapperManager:_wrapperManager
+                                                         uniqueId:[[NSUUID UUID] UUIDString]
+                                                            value:rectValue];
+  
+  NSDictionary *callbackArguments = @{@"cgRect": cgRectWrapper.$uniqueId, @"$uniqueId": args};
+  
+  [_callbackChannel invokeMethod:@"CreateView"
+                       arguments:callbackArguments
+                          result:^(id  _Nullable result) {
+                            [self->_wrapperManager addTemporaryWrapper:cgRectWrapper];
+                            @try {
+                              FlutterMethodCall *methodCall = [FlutterMethodCall methodCallWithMethodName:@"MultiInvoke" arguments:result];
+                              [self->_methodCallHandler onMethodCall:methodCall];
+                              [viewFrame.frame addSubview:[[self->_wrapperManager getWrapper:uniqueId] getValue]];
+                              [[viewFrame.frame subviews][0] sizeToFit];
+                            } @finally {
+                              [self->_wrapperManager clearTemporaryWrappers];
+                            }
+                          }];
+  
+  return viewFrame;
+}
+
+- (NSObject<FlutterMessageCodec>*)createArgsCodec {
+  return [FlutterStandardMessageCodec sharedInstance];
 }
 @end
 ''');

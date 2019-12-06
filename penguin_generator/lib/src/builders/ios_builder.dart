@@ -14,7 +14,7 @@ class IosBuilder extends PlatformBuilder {
 %%IMPORT%%
 %%IMPORTS%%
 
-@interface Wrapper : NSObject
+@interface Wrapper : NSObject<FlutterPlatformView>
 @end
 
 @interface WrapperManager : NSObject
@@ -27,8 +27,11 @@ class IosBuilder extends PlatformBuilder {
 @end
 
 @interface ChannelHandler : NSObject
+- (instancetype _Nonnull)initWithCallbackChannel:(FlutterMethodChannel *_Nonnull)callbackChannel;
 @property WrapperManager *_Nonnull wrapperManager;
 @property MethodCallHandler *_Nonnull methodCallHandler;
+@property id<FlutterPlatformViewFactory> _Nonnull viewFactory;
+@property FlutterMethodChannel *_Nonnull callbackChannel;
 @end
 
 %%CLASSES%%

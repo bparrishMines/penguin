@@ -9,9 +9,13 @@ import 'package:penguin/penguin.dart';
 import 'android.penguin.g.dart' as android;
 import 'ios.penguin.g.dart' as ios;
 
-final android.CallbackHandler callbackHandler = android.CallbackHandler();
+final android.CallbackHandler androidCallbackHandler =
+    android.CallbackHandler();
+final ios.CallbackHandler iosCallbackHandler = ios.CallbackHandler();
 final MethodChannel _channel = MethodChannel('test_plugin')
-  ..setMethodCallHandler(callbackHandler.methodCallHandler);
+  ..setMethodCallHandler(io.Platform.isAndroid
+      ? androidCallbackHandler.methodCallHandler
+      : iosCallbackHandler.methodCallHandler);
 String _randomId() => Random().nextDouble().toString();
 
 @Class(AndroidPlatform(
@@ -28,19 +32,70 @@ class AndroidNestedClass {
       android.$AndroidNestedClass(_randomId());
 }
 
-class AndroidTextView extends StatefulWidget {
-  AndroidTextView(this.text) : assert(text != null);
+class TextView extends StatefulWidget {
+  TextView(this.text) : assert(text != null);
 
   final String text;
 
   @override
-  State<StatefulWidget> createState() => _AndroidTextViewState(null);
+  State<StatefulWidget> createState() {
+    if (io.Platform.isAndroid) return _AndroidTextViewState(null);
+    if (io.Platform.isIOS) return _IosTextViewState(text);
+    throw UnsupportedError('Not Android or iOS');
+  }
+}
+
+@Class(IosPlatform(
+  IosType('UITextView'),
+))
+class _IosTextViewState extends State<TextView> {
+  _IosTextViewState(this.text);
+
+  /// Internal. Only for code gen. DO NOT USE
+  @Constructor()
+  _IosTextViewState.initWithFrame(CGRect frame);
+
+  @Field()
+  String text;
+
+  ios.$_IosTextViewState _textView;
+
+  @override
+  void initState() {
+    super.initState();
+    _textView = ios.$_IosTextViewState(
+      _randomId(),
+      onCreateView: (ios.$CGRect cgRect) {
+        return <MethodCall>[
+          _textView.$_IosTextViewStateinitWithFrame(cgRect),
+          _textView.$text(text: text),
+          _textView.allocate(),
+        ];
+      },
+    );
+    iosCallbackHandler.addWrapper(_textView);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    iosCallbackHandler.removeWrapper(_textView);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return UiKitView(
+      viewType: '${_channel.name}/view',
+      creationParams: _textView.uniqueId,
+      creationParamsCodec: const StandardMessageCodec(),
+    );
+  }
 }
 
 @Class(AndroidPlatform(
   AndroidType('android.widget', <String>['TextView']),
 ))
-class _AndroidTextViewState extends State<AndroidTextView> {
+class _AndroidTextViewState extends State<TextView> {
   @Constructor()
   _AndroidTextViewState(Context context);
 
@@ -57,17 +112,17 @@ class _AndroidTextViewState extends State<AndroidTextView> {
       onCreateView: (android.$Context context) {
         return <MethodCall>[
           _textView.$_AndroidTextViewState$Default(context),
-          _textView.$setText(widget.text)
+          _textView.$setText(widget.text),
         ];
       },
     );
-    callbackHandler.addWrapper(_textView);
+    androidCallbackHandler.addWrapper(_textView);
   }
 
   @override
   void dispose() {
     super.dispose();
-    callbackHandler.removeWrapper(_textView);
+    androidCallbackHandler.removeWrapper(_textView);
   }
 
   @override

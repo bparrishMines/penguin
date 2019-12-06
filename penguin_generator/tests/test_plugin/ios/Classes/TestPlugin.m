@@ -6,10 +6,10 @@
 @end
 
 @implementation TestPlugin
-- (instancetype)init {
+- (instancetype)initWithChannel:(FlutterMethodChannel *)channel {
   self = [super init];
   if (self) {
-    _handler = [[ChannelHandler alloc] init];
+    _handler = [[ChannelHandler alloc] initWithCallbackChannel:channel];
   }
   return self;
 }
@@ -18,8 +18,9 @@
   FlutterMethodChannel* channel = [FlutterMethodChannel
       methodChannelWithName:@"test_plugin"
             binaryMessenger:[registrar messenger]];
-  TestPlugin* instance = [[TestPlugin alloc] init];
+  TestPlugin* instance = [[TestPlugin alloc] initWithChannel:channel];
   [registrar addMethodCallDelegate:instance channel:channel];
+  [registrar registerViewFactory:instance.handler.viewFactory withId:@"test_plugin/view"];
 }
 
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {

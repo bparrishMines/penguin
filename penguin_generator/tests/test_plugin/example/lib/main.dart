@@ -16,9 +16,7 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: const Text('Plugin example app'),
         ),
-        body: Center(
-          child: AndroidTextView('Apple Tart'),
-        ),
+        body: TextView('Apple Tart'),
       ),
     );
   }
