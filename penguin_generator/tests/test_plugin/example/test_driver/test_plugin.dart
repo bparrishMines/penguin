@@ -160,14 +160,6 @@ void main() {
       }
     });
   });
-//  group('test_plugin', () {
-//    group('android', () {
-//      group('enum', () {
-//        test('enumMethod', () {
-//          expect(AndroidTestEnum.ONE.enumMethod(), completion(2));
-//          expect(AndroidTestEnum.ONE.enumMethod(), completion(2));
-//        });
-//      });
 //
 //      test('callbackMethod', () async {
 //        final MockAndroidTestClass1 mockClass = MockAndroidTestClass1();

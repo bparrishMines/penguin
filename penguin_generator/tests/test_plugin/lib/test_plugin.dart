@@ -474,47 +474,6 @@ abstract class TestClass2 {
   MethodCall _constructorMethodCall;
 }
 
-//@Class(
-//  AndroidPlatform(
-//    AndroidType(
-//      'com.example.test_plugin.test_library',
-//      <String>['AbstractTestClass'],
-//    ),
-//  ),
-//)
-//class AndroidAbstractClass {}
-//
-//@Class(
-//  AndroidPlatform(
-//    AndroidType(
-//      'com.example.test_plugin.test_library.TestClass1',
-//      <String>['TestEnum'],
-//    ),
-//  ),
-//)
-//class AndroidTestEnum {
-//  AndroidTestEnum._(this._testEnum);
-//
-//  final a.$AndroidTestEnum _testEnum;
-//
-//  @Field()
-//  static final AndroidTestEnum ONE =
-//      AndroidTestEnum._(a.$AndroidTestEnum(_randomId()));
-//
-//  @Field()
-//  static final AndroidTestEnum TWO =
-//      AndroidTestEnum._(a.$AndroidTestEnum(_randomId()));
-//
-//  @Method()
-//  Future<int> enumMethod() {
-//    return a.invoke<int>(
-//      _channel,
-//      a.$AndroidTestEnum.$ONE($newUniqueId: _testEnum.uniqueId),
-//      <MethodCall>[_testEnum.$enumMethod()],
-//    );
-//  }
-//}
-//
 //@Class(AndroidPlatform(
 //  AndroidType('com.example.test_plugin.test_library', <String>['TestClass1']),
 //))
