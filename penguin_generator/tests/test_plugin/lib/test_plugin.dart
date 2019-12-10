@@ -93,6 +93,18 @@ class _IosTextViewState extends State<TextView> {
 }
 
 @Class(AndroidPlatform(
+  AndroidType('com.example.test_plugin.test_library', <String>['AbstractTestClass']),
+))
+class AbstractClass {
+  
+}
+
+@Class(IosPlatform(IosType('TestProtocol', import: '"TestPlugin.h"')))
+class Protocol {
+  
+}
+
+@Class(AndroidPlatform(
   AndroidType('android.widget', <String>['TextView']),
 ))
 class _AndroidTextViewState extends State<TextView> {

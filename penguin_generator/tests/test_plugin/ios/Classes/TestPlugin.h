@@ -3,6 +3,9 @@
 @interface TestPlugin : NSObject<FlutterPlugin>
 @end
 
+@protocol TestProtocol
+@end
+
 @interface TestClass2 : NSObject
 @end
 
@@ -20,7 +23,7 @@
 - (void)parameterMethod:(NSString *_Nonnull)supported
               primitive:(int)primitive
                 wrapper:(TestClass2 *_Nonnull)wrapper
-                 aStruct:(CGRect)aStruct;
+                aStruct:(CGRect)aStruct;
 - (void)returnVoid;
 - (NSObject *_Nonnull)returnObject;
 - (NSObject *_Nonnull)returnDynamic;

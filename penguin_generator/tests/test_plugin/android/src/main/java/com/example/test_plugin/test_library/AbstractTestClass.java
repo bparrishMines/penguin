@@ -1,4 +1,7 @@
 package com.example.test_plugin.test_library;
 
-public class AbstractTestClass {
+public abstract class AbstractTestClass {
+  public AbstractTestClass() {
+
+  }
 }
