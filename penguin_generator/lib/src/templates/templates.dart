@@ -1,5 +1,13 @@
-enum MethodChannelType { $void, supported, wrapper, primitive, struct, typeParameter }
+enum MethodChannelType {
+  $void,
+  supported,
+  wrapper,
+  primitive,
+  struct,
+  typeParameter
+}
 enum ClassMemberType { constructor, method, field }
+enum Structure { $class, struct, protocol }
 
 class Template {
   const Template._(this.value);
@@ -144,14 +152,27 @@ class Template {
 
 %%CLASSES%%
 %%CLASS%%
-@interface $__platformClassName__ ()
-@property __valueType__ *value;
+@interface $__platformClassName__Impl : NSObject<__platformClassName__>
 @end
 
-@implementation $__platformClassName__
+@implementation $__platformClassName__ {
+  %%VALUETYPES%%
+  %%VALUETYPE structure:class%%
+  __platformClassName__ *
+  %%VALUETYPE structure:class%%
+  %%VALUETYPE structure:struct%%
+  NSValue *
+  %%VALUETYPE structure:struct%%
+  %%VALUETYPE structure:protocol%%
+  id<__platformClassName__>
+  %%VALUETYPE structure:protocol%%
+  %%VALUETYPES%%
+  _value;
+}
+
 - (instancetype _Nonnull)initWithWrapperManager:(WrapperManager *_Nonnull)wrapperManager
                                 uniqueId:(NSString *_Nonnull)uniqueId
-                                value:(__valueType__ *_Nullable)value {
+                                value:(%%VALUETYPES%%%%VALUETYPES%% _Nullable)value {
   self = [super initWithWrapperManager:wrapperManager uniqueId:uniqueId];
   if (self) {
     _value = value;
@@ -299,7 +320,7 @@ class Template {
 %%METHOD%%
 %%METHODS%%
 
-- (NSObject *)getValue {
+- (id)getValue {
   return _value;
 }
 @end
@@ -1351,11 +1372,13 @@ class MethodChannelBlock extends Block {
     String identifier, {
     MethodChannelType methodChannel,
     ClassMemberType classMember,
-  }) : super(identifier, createConfig(methodChannel, classMember));
+    Structure structure,
+  }) : super(identifier, createConfig(methodChannel, classMember, structure));
 
   static String createConfig(
     MethodChannelType methodChannel,
     ClassMemberType classMember,
+    Structure structure,
   ) {
     final List<String> configs = <String>[];
     switch (methodChannel) {
@@ -1388,6 +1411,18 @@ class MethodChannelBlock extends Block {
         break;
       case ClassMemberType.field:
         configs.add('classMember:field');
+        break;
+    }
+
+    switch (structure) {
+      case Structure.$class:
+        configs.add('structure:class');
+        break;
+      case Structure.struct:
+        configs.add('structure:struct');
+        break;
+      case Structure.protocol:
+        configs.add('structure:protocol');
         break;
     }
 
@@ -1449,6 +1484,11 @@ class MethodChannelBlock extends Block {
 
   static MethodChannelBlock callbackVariableParams() =>
       MethodChannelBlock('CALLBACKVARIABLEPARAMS');
+
+  static MethodChannelBlock valueType(Structure structure) =>
+      MethodChannelBlock('VALUETYPE', structure: structure);
+
+  static MethodChannelBlock valueTypes() => MethodChannelBlock('VALUETYPES');
 }
 
 class Replacement {
@@ -1481,7 +1521,8 @@ class Replacement {
       Replacement('__dartConstructorName__');
   static final Replacement constructorSignature =
       Replacement('__constructorSignature__');
-  static final Replacement platformViewClass = Replacement('__platformViewClass__');
-  static final Replacement platformViewVariable = Replacement('__platformViewVariable__');
-  static final Replacement valueType = Replacement('__valueType__');
+  static final Replacement platformViewClass =
+      Replacement('__platformViewClass__');
+  static final Replacement platformViewVariable =
+      Replacement('__platformViewVariable__');
 }

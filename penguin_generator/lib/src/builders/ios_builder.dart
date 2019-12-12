@@ -39,7 +39,19 @@ class IosBuilder extends PlatformBuilder {
 @interface $__platformClassName__ : Wrapper
 - (instancetype _Nonnull)initWithWrapperManager:(WrapperManager *_Nonnull)wrapperManager
                                 uniqueId:(NSString *_Nonnull)uniqueId
-                                value:(__valueType__ *_Nullable)value;
+                                value:(
+                                %%VALUETYPES%%
+                                %%VALUETYPE structure:class%%
+                                __platformClassName__ *
+                                %%VALUETYPE structure:class%%
+                                %%VALUETYPE structure:struct%%
+                                NSValue *
+                                %%VALUETYPE structure:struct%%
+                                %%VALUETYPE structure:protocol%%
+                                id<__platformClassName__>
+                                %%VALUETYPE structure:protocol%%
+                                %%VALUETYPES%%
+                                _Nullable)value;
 @end
 %%CLASS%%
 %%CLASSES%%
@@ -68,9 +80,8 @@ class IosBuilder extends PlatformBuilder {
               ),
           classes: classes.map<String>(
             (ClassInfo classInfo) => IosTemplateCreator.createHeaderClass(
+              _getStructure(classInfo),
               headerTemplate: _headerFile,
-              isStruct:
-                  (classInfo.aClass.platform as IosPlatform).type.isStruct,
               platformClassName:
                   (classInfo.aClass.platform as IosPlatform).type.name,
             ),
@@ -131,8 +142,7 @@ class IosBuilder extends PlatformBuilder {
           ],
           classes: classes.map<String>(
             (ClassInfo classInfo) => creator.createClass(
-              isStruct:
-                  (classInfo.aClass.platform as IosPlatform).type.isStruct,
+              _getStructure(classInfo),
               staticMethodCalls: <String>[
                 ...classInfo.methods
                     .where((MethodInfo methodInfo) => methodInfo.isStatic)
@@ -161,13 +171,15 @@ class IosBuilder extends PlatformBuilder {
               ],
               constructors: classInfo.constructors.map<String>(
                 (ConstructorInfo constructorInfo) => creator.createConstructor(
-                  isStruct: (classInfo.aClass.platform as IosPlatform).type.isStruct,
+                  isStruct:
+                      (classInfo.aClass.platform as IosPlatform).type.isStruct,
                   constructorName: constructorInfo.name,
                   constructorSignature: constructorInfo.name,
                   parameters: constructorInfo.parameters.map<String>(
                     (ParameterInfo parameterInfo) => creator.createParameter(
                       getChannelType(parameterInfo.type),
-                      parameterType: _getPlatformClassName(parameterInfo.type, classes),
+                      parameterType:
+                          _getPlatformClassName(parameterInfo.type, classes),
                       parameterName: parameterInfo.name,
                       primitiveConvertMethod: _getPrimitiveConvertMethod(
                         parameterInfo.type,
@@ -187,7 +199,8 @@ class IosBuilder extends PlatformBuilder {
                   parameters: methodInfo.parameters.map<String>(
                     (ParameterInfo parameterInfo) => creator.createParameter(
                       getChannelType(parameterInfo.type),
-                      parameterType: _getPlatformClassName(parameterInfo.type, classes),
+                      parameterType:
+                          _getPlatformClassName(parameterInfo.type, classes),
                       parameterName: parameterInfo.name,
                       primitiveConvertMethod: _getPrimitiveConvertMethod(
                         parameterInfo.type,
@@ -206,7 +219,8 @@ class IosBuilder extends PlatformBuilder {
                   fieldName: fieldInfo.name,
                   parameter: creator.createParameter(
                       getChannelType(fieldInfo.type),
-                      parameterType: _getPlatformClassName(fieldInfo.type, classes),
+                      parameterType:
+                          _getPlatformClassName(fieldInfo.type, classes),
                       primitiveConvertMethod:
                           _getPrimitiveConvertMethod(fieldInfo.type),
                       parameterName: fieldInfo.name),
@@ -262,11 +276,18 @@ class IosBuilder extends PlatformBuilder {
   String _getPlatformClassName(TypeInfo info, List<ClassInfo> classes) {
     if (!info.isWrapper) return 'NSObject'; // Never used.
     return (classes
-        .firstWhere((ClassInfo classInfo) => classInfo.name == info.name)
-        .aClass
-        .platform as IosPlatform)
+            .firstWhere((ClassInfo classInfo) => classInfo.name == info.name)
+            .aClass
+            .platform as IosPlatform)
         .type
         .name;
+  }
+
+  Structure _getStructure(ClassInfo classInfo) {
+    final IosType type = (classInfo.aClass.platform as IosPlatform).type;
+    if (type.isStruct) return Structure.struct;
+    if (type.isProtocol) return Structure.protocol;
+    return Structure.$class;
   }
 
   @override

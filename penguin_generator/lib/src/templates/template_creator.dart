@@ -552,16 +552,20 @@ class IosTemplateCreator extends TemplateCreator {
     );
   }
 
-  static String createHeaderClass({
+  static String createHeaderClass(
+    Structure structure, {
     @required String headerTemplate,
     @required String platformClassName,
-    @required bool isStruct,
   }) {
     return TemplateCreator._replace(
       Block.aClass.exp.firstMatch(headerTemplate).group(1),
       <Pattern, String>{
+        MethodChannelBlock.valueTypes().exp:
+            MethodChannelBlock.valueType(structure)
+                .exp
+                .firstMatch(headerTemplate)
+                .group(1),
         Replacement.platformClassName.name: platformClassName,
-        Replacement.valueType.name: isStruct ? 'NSValue' : platformClassName,
       },
     );
   }
@@ -621,20 +625,19 @@ class IosTemplateCreator extends TemplateCreator {
               RegExp('.+?:'),
               ':',
             ),
-        if (isStruct)
-          RegExp(r'_value.*?;', multiLine: true, dotAll: true): '',
+        if (isStruct) RegExp(r'_value.*?;', multiLine: true, dotAll: true): '',
       },
     );
   }
 
-  String createClass({
+  String createClass(
+    Structure structure, {
     @required Iterable<String> constructors,
     @required Iterable<String> methods,
     @required Iterable<String> methodCalls,
     @required Iterable<String> staticMethodCalls,
     @required Iterable<String> fields,
     @required String platformClassName,
-    @required bool isStruct,
   }) {
     return TemplateCreator._replace(
       Block.aClass.exp.firstMatch(template.value).group(1),
@@ -645,8 +648,14 @@ class IosTemplateCreator extends TemplateCreator {
         MethodChannelBlock.staticMethodCalls.exp:
             staticMethodCalls.join('else'),
         Block.fields.exp: fields.join(),
+        MethodChannelBlock.valueTypes().exp:
+            MethodChannelBlock.valueType(structure)
+                .exp
+                .firstMatch(template.value)
+                .group(1),
+        if (structure != Structure.protocol)
+          RegExp(r'@interface.*?@end', multiLine: true, dotAll: true): '',
         Replacement.platformClassName.name: platformClassName,
-        Replacement.valueType.name: isStruct ? 'NSValue' : platformClassName,
       },
     );
   }

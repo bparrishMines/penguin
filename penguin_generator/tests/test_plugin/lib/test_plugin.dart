@@ -99,7 +99,7 @@ class AbstractClass {
   
 }
 
-@Class(IosPlatform(IosType('TestProtocol', import: '"TestPlugin.h"')))
+@Class(IosPlatform(IosType('TestProtocol', import: '"TestPlugin.h"', isProtocol: true)))
 class Protocol {
   
 }

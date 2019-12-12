@@ -84,6 +84,7 @@ class AnnotationUtils {
           ? reader.read('import').stringValue
           : null,
       isStruct: reader.read('isStruct').boolValue,
+      isProtocol: reader.read('isProtocol').boolValue,
     );
   }
 }

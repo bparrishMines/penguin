@@ -179,7 +179,16 @@ class TypeInfo {
     @required this.isNativeInt32,
     @required this.isNativeInt64,
     @required this.isStruct,
-  });
+    @required this.isProtocol,
+  }) {
+    if (isStruct && isProtocol) {
+      throw ArgumentError.value(
+        this.toString(),
+        'isProtocol & isStruct',
+        'Type cannot be a struct & a protocol',
+      );
+    }
+  }
 
   factory TypeInfo.fromJson(Map json) => _$TypeInfoFromJson(json);
 
@@ -283,6 +292,9 @@ class TypeInfo {
 
   @JsonKey(required: true, disallowNullValue: true)
   final bool isStruct;
+
+  @JsonKey(required: true, disallowNullValue: true)
+  final bool isProtocol;
 
   Map toJson() => _$TypeInfoToJson(this);
 
