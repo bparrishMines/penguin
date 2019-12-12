@@ -151,13 +151,12 @@ Map<String, dynamic> _$AndroidApiToJson(AndroidApi instance) =>
 
 IosType _$IosTypeFromJson(Map<String, dynamic> json) {
   $checkKeys(json,
-      requiredKeys: const ['import', 'name', 'isStruct', 'isProtocol'],
-      disallowNullValues: const ['name', 'isStruct', 'isProtocol']);
+      requiredKeys: const ['import', 'name', 'isStruct'],
+      disallowNullValues: const ['name', 'isStruct']);
   return IosType(
     json['name'] as String,
     import: json['import'] as String,
     isStruct: json['isStruct'] as bool,
-    isProtocol: json['isProtocol'] as bool,
   );
 }
 
@@ -174,6 +173,5 @@ Map<String, dynamic> _$IosTypeToJson(IosType instance) {
 
   writeNotNull('name', instance.name);
   writeNotNull('isStruct', instance.isStruct);
-  writeNotNull('isProtocol', instance.isProtocol);
   return val;
 }

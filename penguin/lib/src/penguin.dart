@@ -163,7 +163,7 @@ class AndroidApi {
 
 @JsonSerializable()
 class IosType {
-  const IosType(this.name, {this.import, this.isStruct = false, this.isProtocol = false,});
+  const IosType(this.name, {this.import, this.isStruct = false});
 
   factory IosType.fromJson(Map json) => _$IosTypeFromJson(json);
 
@@ -175,9 +175,6 @@ class IosType {
 
   @JsonKey(required: true, disallowNullValue: true)
   final bool isStruct;
-
-  @JsonKey(required: true, disallowNullValue: true)
-  final bool isProtocol;
 
   Map toJson() => _$IosTypeToJson(this);
 
