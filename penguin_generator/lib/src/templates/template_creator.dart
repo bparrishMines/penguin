@@ -568,6 +568,28 @@ class IosTemplateCreator extends TemplateCreator {
     );
   }
 
+  String createCallback({
+    @required String methodName,
+  }) {
+    return TemplateCreator._replace(
+      Block.callback.exp.firstMatch(template.value).group(1),
+      <Pattern, String>{
+        Replacement.methodName.name: methodName,
+      },
+    );
+  }
+
+  String createCallbackSwizzle({
+    @required String methodName,
+  }) {
+    return TemplateCreator._replace(
+      Block.callbackSwizzle.exp.firstMatch(template.value).group(1),
+      <Pattern, String>{
+        Replacement.methodName.name: methodName,
+      },
+    );
+  }
+
   String createFile({
     @required Iterable<String> classes,
     @required Iterable<String> staticRedirects,
@@ -623,10 +645,12 @@ class IosTemplateCreator extends TemplateCreator {
               RegExp('.+?:'),
               ':',
             ),
-        if (structure == Structure.$class) Replacement.implementationName.name: platformClassName,
-        if (structure == Structure.protocol) Replacement.implementationName.name: '\$${platformClassName}Impl',
-          if (structure == Structure.struct)
-            RegExp(r'_value.*?;', multiLine: true, dotAll: true): '',
+        if (structure == Structure.$class)
+          Replacement.implementationName.name: platformClassName,
+        if (structure == Structure.protocol)
+          Replacement.implementationName.name: '\$${platformClassName}Impl',
+        if (structure == Structure.struct)
+          RegExp(r'_value.*?;', multiLine: true, dotAll: true): '',
       },
     );
   }
@@ -638,6 +662,8 @@ class IosTemplateCreator extends TemplateCreator {
     @required Iterable<String> methodCalls,
     @required Iterable<String> staticMethodCalls,
     @required Iterable<String> fields,
+    @required Iterable<String> callbacks,
+    @required Iterable<String> callbackSwizzles,
     @required String platformClassName,
   }) {
     return TemplateCreator._replace(
@@ -649,6 +675,8 @@ class IosTemplateCreator extends TemplateCreator {
         MethodChannelBlock.staticMethodCalls.exp:
             staticMethodCalls.join('else'),
         Block.fields.exp: fields.join(),
+        Block.callbacks.exp: callbacks.join(),
+        Block.callbackSwizzles.exp: callbackSwizzles.join(),
         MethodChannelBlock.valueTypes().exp:
             MethodChannelBlock.valueType(structure)
                 .exp

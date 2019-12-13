@@ -9,6 +9,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  final TestProtocol _testProtocol = TestProtocol();
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -16,8 +18,19 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: const Text('Plugin example app'),
         ),
-        body: TextView('Apple Tart'),
+        body: Column(children: <Widget>[
+          RaisedButton(onPressed: () {
+            _testProtocol.callbackMethod();
+          })
+        ]),
       ),
     );
+  }
+}
+
+class TestProtocol extends IosProtocol {
+  @override
+  void callbackMethod() {
+    super.callbackMethod();
   }
 }

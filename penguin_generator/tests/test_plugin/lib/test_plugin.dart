@@ -109,10 +109,19 @@ abstract class AndroidAbstractClass {
 @Class(IosPlatform(IosType('TestProtocol', import: '"TestPlugin.h"')))
 abstract class IosProtocol {
   @Constructor()
-  IosProtocol();
+  IosProtocol() {
+    android.invokeAll(_channel, <MethodCall>[
+      _protocol.$IosProtocol$Default(),
+      _protocol.allocate(),
+    ]);
+  }
+  
+  final ios.$IosProtocol _protocol = ios.$IosProtocol('me');
 
   @Method(callback: true)
-  void callbackMethod();
+  void callbackMethod() {
+    android.invoke<void>(_channel, _protocol.$callbackMethod());
+  }
 }
 
 @Class(AndroidPlatform(

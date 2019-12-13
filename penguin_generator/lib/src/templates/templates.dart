@@ -15,6 +15,8 @@ class Template {
   final String value;
 
   static const Template ios = Template._(r'''
+#include <objc/message.h>
+  
 #import "ChannelHandler+Generated.h"
 
 @interface NotImplementedException : NSException
@@ -199,6 +201,12 @@ class Template {
   %%CONSTRUCTOR%%
   %%CONSTRUCTORS%%
   
+  %%CALLBACKSWIZZLES%%
+  %%CALLBACKSWIZZLE%%
+  class_replaceMethod([(id)_value class], NSSelectorFromString(@"__methodName__"), class_getMethodImplementation([self class], NSSelectorFromString(@"__methodName__$Callback")), "v@:");
+  %%CALLBACKSWIZZLE%%
+  %%CALLBACKSWIZZLES%%
+  
   return self;
 }
 
@@ -243,6 +251,14 @@ class Template {
   
   @throw [[NotImplementedException alloc] initWithMethod:call.method];
 }
+
+%%CALLBACKS%%
+%%CALLBACK%%
+- (void)__methodName__$Callback {
+  NSLog(@"Calling __methodName__");
+}
+%%CALLBACK%%
+%%CALLBACKS%%
 
 %%FIELDS%%
 %%FIELD%%
@@ -1368,6 +1384,9 @@ class Block {
 
   static final Block structs = Block('STRUCTS');
   static final Block struct = Block('STRUCT');
+
+  static Block callbackSwizzles = Block('CALLBACKSWIZZLES');
+  static Block callbackSwizzle = Block('CALLBACKSWIZZLE');
 }
 
 class MethodChannelBlock extends Block {
@@ -1528,5 +1547,6 @@ class Replacement {
       Replacement('__platformViewClass__');
   static final Replacement platformViewVariable =
       Replacement('__platformViewVariable__');
-  static final Replacement implementationName = Replacement('__implementationName__');
+  static final Replacement implementationName =
+      Replacement('__implementationName__');
 }

@@ -143,6 +143,14 @@ class IosBuilder extends PlatformBuilder {
           classes: classes.map<String>(
             (ClassInfo classInfo) => creator.createClass(
               _getStructure(classInfo),
+              callbacks: classInfo.methods
+                  .where((MethodInfo methodInfo) => methodInfo.method.callback)
+                  .map<String>((MethodInfo methodInfo) =>
+                      creator.createCallback(methodName: methodInfo.name)),
+              callbackSwizzles: classInfo.methods
+                  .where((MethodInfo methodInfo) => methodInfo.method.callback)
+                  .map<String>((MethodInfo methodInfo) => creator
+                      .createCallbackSwizzle(methodName: methodInfo.name)),
               staticMethodCalls: <String>[
                 ...classInfo.methods
                     .where((MethodInfo methodInfo) => methodInfo.isStatic)
