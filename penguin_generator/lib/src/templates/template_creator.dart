@@ -195,9 +195,7 @@ class MethodChannelTemplateCreator extends TemplateCreator {
         Block.callbacks.exp: callbacks.join(),
         MethodChannelBlock.callbackVariables().exp: callbackVariables.join(),
         MethodChannelBlock.callbackInitializers().exp:
-            callbackInitializers.isNotEmpty
-                ? '{' + callbackInitializers.join() + '}'
-                : '',
+            callbackInitializers.isNotEmpty ? callbackInitializers.join() : '',
         Replacement.platformViewClass.name: platformViewClass,
         Replacement.platformViewVariable.name: platformViewVariable,
       },
@@ -607,12 +605,12 @@ class IosTemplateCreator extends TemplateCreator {
     );
   }
 
-  String createConstructor({
+  String createConstructor(
+    Structure structure, {
     @required String platformClassName,
     @required String constructorName,
     @required String constructorSignature,
     @required Iterable<String> parameters,
-    @required bool isStruct,
   }) {
     return TemplateCreator._replace(
       Block.constructor.exp.firstMatch(template.value).group(1),
@@ -625,7 +623,10 @@ class IosTemplateCreator extends TemplateCreator {
               RegExp('.+?:'),
               ':',
             ),
-        if (isStruct) RegExp(r'_value.*?;', multiLine: true, dotAll: true): '',
+        if (structure == Structure.$class) Replacement.implementationName.name: platformClassName,
+        if (structure == Structure.protocol) Replacement.implementationName.name: '\$${platformClassName}Impl',
+          if (structure == Structure.struct)
+            RegExp(r'_value.*?;', multiLine: true, dotAll: true): '',
       },
     );
   }
@@ -654,7 +655,8 @@ class IosTemplateCreator extends TemplateCreator {
                 .firstMatch(template.value)
                 .group(1),
         if (structure != Structure.protocol)
-          RegExp(r'@interface.*?@end', multiLine: true, dotAll: true): '',
+          RegExp(r'@interface.*?@end.*?@implementation.*?@end',
+              multiLine: true, dotAll: true): '',
         Replacement.platformClassName.name: platformClassName,
       },
     );

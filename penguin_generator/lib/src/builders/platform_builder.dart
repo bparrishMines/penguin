@@ -328,9 +328,6 @@ class ReadInfoBuilder extends Builder {
       isWrapper: isWrapper,
       isStruct:
           isWrapper && type.element is ClassElement && _isStruct(type.element),
-      isProtocol: isWrapper &&
-          type.element is ClassElement &&
-          _isProtocol(type.element),
       isTypeParameter: type is TypeParameterType,
       isNativeInt32: Annotation.int32.hasAnnotationOfExact(element),
       isNativeInt64: Annotation.int64.hasAnnotationOfExact(element),
@@ -340,11 +337,6 @@ class ReadInfoBuilder extends Builder {
   bool _isStruct(ClassElement classElement) {
     final Platform platform = _getPlatform(classElement);
     return platform is IosPlatform && platform.type.isStruct;
-  }
-
-  bool _isProtocol(ClassElement classElement) {
-    final Platform platform = _getPlatform(classElement);
-    return platform is IosPlatform && platform.type.isProtocol;
   }
 
   Platform _getPlatform(ClassElement classElement) {

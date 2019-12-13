@@ -171,8 +171,7 @@ class IosBuilder extends PlatformBuilder {
               ],
               constructors: classInfo.constructors.map<String>(
                 (ConstructorInfo constructorInfo) => creator.createConstructor(
-                  isStruct:
-                      (classInfo.aClass.platform as IosPlatform).type.isStruct,
+                  _getStructure(classInfo),
                   constructorName: constructorInfo.name,
                   constructorSignature: constructorInfo.name,
                   parameters: constructorInfo.parameters.map<String>(
@@ -286,7 +285,9 @@ class IosBuilder extends PlatformBuilder {
   Structure _getStructure(ClassInfo classInfo) {
     final IosType type = (classInfo.aClass.platform as IosPlatform).type;
     if (type.isStruct) return Structure.struct;
-    if (type.isProtocol) return Structure.protocol;
+    if (classInfo.methods.any((MethodInfo info) => info.method.callback)) {
+      return Structure.protocol;
+    }
     return Structure.$class;
   }
 

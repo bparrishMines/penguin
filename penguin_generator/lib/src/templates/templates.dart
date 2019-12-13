@@ -4,7 +4,7 @@ enum MethodChannelType {
   wrapper,
   primitive,
   struct,
-  typeParameter
+  typeParameter,
 }
 enum ClassMemberType { constructor, method, field }
 enum Structure { $class, struct, protocol }
@@ -155,6 +155,9 @@ class Template {
 @interface $__platformClassName__Impl : NSObject<__platformClassName__>
 @end
 
+@implementation $__platformClassName__Impl
+@end
+
 @implementation $__platformClassName__ {
   %%VALUETYPES%%
   %%VALUETYPE structure:class%%
@@ -188,7 +191,7 @@ class Template {
   %%CONSTRUCTORS%%
   %%CONSTRUCTOR%%
   if ([@"__platformClassName__(__constructorSignature__)" isEqualToString:call.method]) {
-    _value = [[__platformClassName__ alloc] __constructorName__
+    _value = [[__implementationName__ alloc] __constructorName__
       %%PARAMETERS%%
       %%PARAMETERS%%
     ];  
@@ -1525,4 +1528,5 @@ class Replacement {
       Replacement('__platformViewClass__');
   static final Replacement platformViewVariable =
       Replacement('__platformViewVariable__');
+  static final Replacement implementationName = Replacement('__implementationName__');
 }

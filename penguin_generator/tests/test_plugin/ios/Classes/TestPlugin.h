@@ -4,6 +4,8 @@
 @end
 
 @protocol TestProtocol
+@required
+- (void)callbackMethod;
 @end
 
 @interface TestClass2 : NSObject

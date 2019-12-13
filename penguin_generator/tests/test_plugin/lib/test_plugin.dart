@@ -93,15 +93,26 @@ class _IosTextViewState extends State<TextView> {
 }
 
 @Class(AndroidPlatform(
-  AndroidType('com.example.test_plugin.test_library', <String>['AbstractTestClass']),
+  AndroidType(
+    'com.example.test_plugin.test_library',
+    <String>['AbstractTestClass'],
+  ),
 ))
-class AbstractClass {
-  
+abstract class AndroidAbstractClass {
+  @Constructor()
+  AndroidAbstractClass();
+
+  @Method(callback: true)
+  void callbackMethod();
 }
 
-@Class(IosPlatform(IosType('TestProtocol', import: '"TestPlugin.h"', isProtocol: true)))
-class Protocol {
-  
+@Class(IosPlatform(IosType('TestProtocol', import: '"TestPlugin.h"')))
+abstract class IosProtocol {
+  @Constructor()
+  IosProtocol();
+
+  @Method(callback: true)
+  void callbackMethod();
 }
 
 @Class(AndroidPlatform(
@@ -485,19 +496,3 @@ abstract class TestClass2 {
 
   MethodCall _constructorMethodCall;
 }
-
-//@Class(AndroidPlatform(
-//  AndroidType('com.example.test_plugin.test_library', <String>['TestClass1']),
-//))
-//class AndroidTestClass1 {
-//
-//  @Method()
-//  Future<void> callCallbackMethod() {
-//    callbackHandler.addWrapper(_testClass);
-//    return a.invoke<void>(
-//      _channel,
-//      _testClass.$AndroidTestClass1$Default(),
-//      [_testClass.$callCallbackMethod()],
-//    );
-//  }
-//}

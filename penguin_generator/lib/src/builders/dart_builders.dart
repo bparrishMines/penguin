@@ -246,10 +246,9 @@ class DartMethodChannelBuilder extends PlatformBuilder {
                         (MethodInfo methodInfo) => creator.createCallback(
                           methodName: methodInfo.name,
                           wrapperName:
-                              (classInfo.aClass.platform as AndroidPlatform)
+                              (classInfo.aClass.platform as IosPlatform)
                                   .type
-                                  .names
-                                  .join(),
+                                  .name,
                           callbackChannelParams:
                               methodInfo.parameters.map<String>(
                             (ParameterInfo parameterInfo) =>
