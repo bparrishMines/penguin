@@ -17,11 +17,14 @@ void main() {
   group('test_plugin', () {
     TestClass1 testClass;
     TestClass2 testClass2;
+    dynamic callbackClass;
 
     setUpAll(() {
       print('Platform: ${Platform.isAndroid ? 'Android' : 'Ios'}');
       testClass = Platform.isAndroid ? AndroidTestClass1() : IosTestClass1();
       testClass2 = Platform.isAndroid ? AndroidTestClass2() : IosTestClass2();
+      callbackClass =
+          Platform.isAndroid ? AndroidCallbackClass() : IosCallbackClass();
     });
 
     test('intField', () {
@@ -29,7 +32,8 @@ void main() {
     });
 
     test('mutableField', () {
-      final TestClass1 mutableTestClass = Platform.isAndroid ? AndroidTestClass1() : IosTestClass1();
+      final TestClass1 mutableTestClass =
+          Platform.isAndroid ? AndroidTestClass1() : IosTestClass1();
       mutableTestClass.mutableField = 23.4;
       expect(mutableTestClass.mutableField, completion(23.4));
     });
@@ -159,27 +163,38 @@ void main() {
         );
       }
     });
+
+    test('callbackMethod', () async {
+      expect(callbackClass.callbackCalled, isFalse);
+      callbackClass.callCallbackMethod();
+      await Future<void>.delayed(Duration(seconds: 2));
+      expect(callbackClass.callbackCalled, isTrue);
+    });
   });
-//
-//      test('callbackMethod', () async {
-//        final MockAndroidTestClass1 mockClass = MockAndroidTestClass1();
-//        await mockClass.callCallbackMethod();
-//        await Future.delayed(Duration(seconds: 1));
-//        expect(mockClass.callbackValue, 'I love callbacks.');
-//      });
-//    }, skip: !Platform.isAndroid);
-//  });
 }
 
-//class MockAndroidTestClass1 extends AndroidTestClass1 {
-//  String callbackValue;
-//
-//  @override
-//  Future<void> callbackMethod(
-//    AndroidTestClass3 wrapper,
-//    String supported,
-//  ) async {
-//    super.callbackMethod(wrapper, supported);
-//    callbackValue = supported;
-//  }
-//}
+class AndroidCallbackClass extends AndroidAbstractClass {
+  bool callbackCalled = false;
+
+  @override
+  void callbackMethod() {
+    callbackCalled = true;
+  }
+
+  void callCallbackMethod() {
+    super.callbackMethod();
+  }
+}
+
+class IosCallbackClass extends IosProtocol {
+  bool callbackCalled = false;
+
+  @override
+  void callbackMethod() {
+    callbackCalled = true;
+  }
+
+  void callCallbackMethod() {
+    super.callbackMethod();
+  }
+}

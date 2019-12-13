@@ -100,23 +100,46 @@ class _IosTextViewState extends State<TextView> {
 ))
 abstract class AndroidAbstractClass {
   @Constructor()
-  AndroidAbstractClass();
+  AndroidAbstractClass() {
+    _ref = android.$AndroidAbstractClass('aRef', $callbackMethod$Callback: () {
+      this.callbackMethod();
+      return <MethodCall>[];
+    });
+
+    android.invokeAll(_channel, <MethodCall>[
+      _ref.$AndroidAbstractClass$Default(),
+      _ref.allocate(),
+    ]);
+
+    androidCallbackHandler.addWrapper(_ref);
+  }
+
+  android.$AndroidAbstractClass _ref;
 
   @Method(callback: true)
-  void callbackMethod();
+  void callbackMethod() {
+    android.invoke<void>(_channel, _ref.$callbackMethod());
+  }
 }
 
 @Class(IosPlatform(IosType('TestProtocol', import: '"TestPlugin.h"')))
 abstract class IosProtocol {
   @Constructor()
   IosProtocol() {
+    _protocol = ios.$IosProtocol('aRef', $callbackMethod$Callback: () {
+      callbackMethod();
+      return <MethodCall>[];
+    });
+
     android.invokeAll(_channel, <MethodCall>[
       _protocol.$IosProtocol$Default(),
       _protocol.allocate(),
     ]);
+
+    iosCallbackHandler.addWrapper(_protocol);
   }
-  
-  final ios.$IosProtocol _protocol = ios.$IosProtocol('me');
+
+  ios.$IosProtocol _protocol;
 
   @Method(callback: true)
   void callbackMethod() {
