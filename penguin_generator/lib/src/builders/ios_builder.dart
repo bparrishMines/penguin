@@ -39,6 +39,7 @@ class IosBuilder extends PlatformBuilder {
 @interface $__platformClassName__ : Wrapper
 - (instancetype _Nonnull)initWithWrapperManager:(WrapperManager *_Nonnull)wrapperManager
                                 uniqueId:(NSString *_Nonnull)uniqueId
+                         callbackChannel:(FlutterMethodChannel *_Nullable)callbackChannel
                                 value:(
                                 %%VALUETYPES%%
                                 %%VALUETYPE structure:class%%

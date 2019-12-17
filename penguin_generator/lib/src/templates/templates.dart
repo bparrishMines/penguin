@@ -33,9 +33,12 @@ class Template {
 
 @interface Wrapper ()
 @property NSString *$uniqueId;
+@property FlutterMethodChannel *callbackChannel;
 - (instancetype _Nonnull)initWithWrapperManager:(WrapperManager *_Nonnull)wrapperManager
+                                callbackChannel:(FlutterMethodChannel *_Nullable)callbackChannel
                                        uniqueId:(NSString *_Nonnull)uniqueId;
 - (instancetype _Nonnull)initWithWrapperManager:(WrapperManager *_Nonnull)wrapperManager
+                                callbackChannel:(FlutterMethodChannel *_Nullable)callbackChannel
                                            call:(FlutterMethodCall *_Nonnull)call;
 - (NSObject *)onMethodCall:(WrapperManager *_Nonnull)wrapperManager
                       call:(FlutterMethodCall *_Nonnull)call;
@@ -65,7 +68,9 @@ class Template {
 
 @interface MethodCallHandler ()
 @property WrapperManager *wrapperManager;
-- (instancetype _Nonnull)initWithWrapperManager:(WrapperManager *_Nonnull)wrapperManager;
+@property FlutterMethodChannel *_Nonnull callbackChannel;
+- (instancetype _Nonnull)initWithWrapperManager:(WrapperManager *_Nonnull)wrapperManager
+                                callbackChannel:(FlutterMethodChannel *_Nullable)callbackChannel;
 @end
 
 @implementation NotImplementedException 
@@ -96,9 +101,11 @@ class Template {
 @implementation Wrapper
 
 - (instancetype _Nonnull)initWithWrapperManager:(WrapperManager *_Nonnull)wrapperManager
+                                callbackChannel:(FlutterMethodChannel *_Nullable)callbackChannel
                                        uniqueId:(NSString *_Nonnull)uniqueId {
   self = [super init];
   if (self) {
+    _callbackChannel = callbackChannel;
     _$uniqueId = uniqueId;
   }
   [wrapperManager addTemporaryWrapper:self];
@@ -106,6 +113,7 @@ class Template {
 }
 
 - (instancetype _Nonnull)initWithWrapperManager:(WrapperManager *_Nonnull)wrapperManager
+                                callbackChannel:(FlutterMethodChannel *_Nullable)callbackChannel
                                            call:(FlutterMethodCall *_Nonnull)call {
   [self doesNotRecognizeSelector:_cmd];
   return nil;
@@ -176,9 +184,10 @@ class Template {
 }
 
 - (instancetype _Nonnull)initWithWrapperManager:(WrapperManager *_Nonnull)wrapperManager
-                                uniqueId:(NSString *_Nonnull)uniqueId
-                                value:(%%VALUETYPES%%%%VALUETYPES%% _Nullable)value {
-  self = [super initWithWrapperManager:wrapperManager uniqueId:uniqueId];
+                                       uniqueId:(NSString *_Nonnull)uniqueId
+                                callbackChannel:(FlutterMethodChannel *_Nullable)callbackChannel
+                                          value:(%%VALUETYPES%%%%VALUETYPES%% _Nullable)value {
+  self = [super initWithWrapperManager:wrapperManager callbackChannel:callbackChannel uniqueId:uniqueId];
   if (self) {
     _value = value;
   }
@@ -186,8 +195,9 @@ class Template {
 }
 
 - (instancetype _Nonnull)initWithWrapperManager:(WrapperManager *_Nonnull)wrapperManager
+                                callbackChannel:(FlutterMethodChannel *_Nullable)callbackChannel
                                            call:(FlutterMethodCall *_Nonnull)call {
-  self = [super initWithWrapperManager:wrapperManager uniqueId:call.arguments[@"$uniqueId"]];
+  self = [super initWithWrapperManager:wrapperManager callbackChannel:callbackChannel uniqueId:call.arguments[@"$uniqueId"]];
   if (!self) return self;
 
   %%CONSTRUCTORS%%
@@ -351,7 +361,8 @@ class Template {
   self = [self init];
   if (self) {
     _wrapperManager = [[WrapperManager alloc] init];
-    _methodCallHandler = [[MethodCallHandler alloc] initWithWrapperManager:_wrapperManager];
+    _methodCallHandler = [[MethodCallHandler alloc] initWithWrapperManager:_wrapperManager
+                                                           callbackChannel:callbackChannel];
     _callbackChannel = callbackChannel;
     _viewFactory = [[ViewFactory alloc] initWithWrapperManager:_wrapperManager
                                              methodCallHandler:_methodCallHandler
@@ -413,10 +424,12 @@ class Template {
 @end
 
 @implementation MethodCallHandler
-- (instancetype _Nonnull)initWithWrapperManager:(WrapperManager *_Nonnull)wrapperManager {
+- (instancetype _Nonnull)initWithWrapperManager:(WrapperManager *_Nonnull)wrapperManager
+                                callbackChannel:(FlutterMethodChannel *_Nullable)callbackChannel {
   self = [super init];
   if (self) {
     _wrapperManager = wrapperManager;
+    _callbackChannel = callbackChannel;
   }
   return self;
 }
@@ -452,7 +465,7 @@ class Template {
   %%STATICREDIRECTS%%
   %%STATICREDIRECT classMember:constructor%%
   else if ([@"__platformClassName__(__constructorName__)" isEqualToString:call.method]) {
-    [[$__platformClassName__ alloc] initWithWrapperManager:_wrapperManager call:call];
+    [[$__platformClassName__ alloc] initWithWrapperManager:_wrapperManager callbackChannel:_callbackChannel call:call];
     return [NSNull null];
   }
   %%STATICREDIRECT classMember:constructor%%
@@ -510,8 +523,9 @@ class Template {
   
   NSValue *rectValue = [NSValue valueWithBytes:&frame objCType:@encode(CGRect)];
   __block $CGRect *cgRectWrapper = [[$CGRect alloc] initWithWrapperManager:_wrapperManager
-                                                         uniqueId:[[NSUUID UUID] UUIDString]
-                                                            value:rectValue];
+                                                                  uniqueId:[[NSUUID UUID] UUIDString]
+                                                           callbackChannel:_callbackChannel
+                                                                     value:rectValue];
   
   NSDictionary *callbackArguments = @{@"cgRect": cgRectWrapper.$uniqueId, @"$uniqueId": args};
   
