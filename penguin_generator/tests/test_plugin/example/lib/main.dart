@@ -18,11 +18,7 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: const Text('Plugin example app'),
         ),
-        body: Column(children: <Widget>[
-          RaisedButton(onPressed: () {
-            _testProtocol.callbackMethod();
-          })
-        ]),
+        body: TextView('Apple'),
       ),
     );
   }

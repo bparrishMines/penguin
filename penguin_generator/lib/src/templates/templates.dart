@@ -35,10 +35,8 @@ class Template {
 @property NSString *$uniqueId;
 @property FlutterMethodChannel *callbackChannel;
 - (instancetype _Nonnull)initWithWrapperManager:(WrapperManager *_Nonnull)wrapperManager
-                                callbackChannel:(FlutterMethodChannel *_Nullable)callbackChannel
                                        uniqueId:(NSString *_Nonnull)uniqueId;
 - (instancetype _Nonnull)initWithWrapperManager:(WrapperManager *_Nonnull)wrapperManager
-                                callbackChannel:(FlutterMethodChannel *_Nullable)callbackChannel
                                            call:(FlutterMethodCall *_Nonnull)call;
 - (NSObject *)onMethodCall:(WrapperManager *_Nonnull)wrapperManager
                       call:(FlutterMethodCall *_Nonnull)call;
@@ -101,11 +99,9 @@ class Template {
 @implementation Wrapper
 
 - (instancetype _Nonnull)initWithWrapperManager:(WrapperManager *_Nonnull)wrapperManager
-                                callbackChannel:(FlutterMethodChannel *_Nullable)callbackChannel
                                        uniqueId:(NSString *_Nonnull)uniqueId {
   self = [super init];
   if (self) {
-    _callbackChannel = callbackChannel;
     _$uniqueId = uniqueId;
   }
   [wrapperManager addTemporaryWrapper:self];
@@ -113,7 +109,6 @@ class Template {
 }
 
 - (instancetype _Nonnull)initWithWrapperManager:(WrapperManager *_Nonnull)wrapperManager
-                                callbackChannel:(FlutterMethodChannel *_Nullable)callbackChannel
                                            call:(FlutterMethodCall *_Nonnull)call {
   [self doesNotRecognizeSelector:_cmd];
   return nil;
@@ -164,7 +159,7 @@ class Template {
 %%CLASS%%
 @interface $__platformClassName__Impl : NSObject<__platformClassName__>
 @end
-
+static void *testProtocolKey = &testProtocolKey;
 @implementation $__platformClassName__Impl
 @end
 
@@ -185,9 +180,8 @@ class Template {
 
 - (instancetype _Nonnull)initWithWrapperManager:(WrapperManager *_Nonnull)wrapperManager
                                        uniqueId:(NSString *_Nonnull)uniqueId
-                                callbackChannel:(FlutterMethodChannel *_Nullable)callbackChannel
                                           value:(%%VALUETYPES%%%%VALUETYPES%% _Nullable)value {
-  self = [super initWithWrapperManager:wrapperManager callbackChannel:callbackChannel uniqueId:uniqueId];
+  self = [super initWithWrapperManager:wrapperManager uniqueId:uniqueId];
   if (self) {
     _value = value;
   }
@@ -197,9 +191,10 @@ class Template {
 - (instancetype _Nonnull)initWithWrapperManager:(WrapperManager *_Nonnull)wrapperManager
                                 callbackChannel:(FlutterMethodChannel *_Nullable)callbackChannel
                                            call:(FlutterMethodCall *_Nonnull)call {
-  self = [super initWithWrapperManager:wrapperManager callbackChannel:callbackChannel uniqueId:call.arguments[@"$uniqueId"]];
+  self = [super initWithWrapperManager:wrapperManager uniqueId:call.arguments[@"$uniqueId"]];
   if (!self) return self;
-
+  
+  self.callbackChannel = callbackChannel;
   %%CONSTRUCTORS%%
   %%CONSTRUCTOR%%
   if ([@"__platformClassName__(__constructorSignature__)" isEqualToString:call.method]) {
@@ -214,6 +209,7 @@ class Template {
   %%CALLBACKSWIZZLES%%
   %%CALLBACKSWIZZLE%%
   class_replaceMethod([(id)_value class], NSSelectorFromString(@"__methodName__"), class_getMethodImplementation([self class], NSSelectorFromString(@"__methodName__$Callback")), "v@:");
+  objc_setAssociatedObject(_value, testProtocolKey, self, OBJC_ASSOCIATION_RETAIN);
   %%CALLBACKSWIZZLE%%
   %%CALLBACKSWIZZLES%%
   
@@ -266,6 +262,10 @@ class Template {
 %%CALLBACK%%
 - (void)__methodName__$Callback {
   NSLog(@"Calling __methodName__");
+  $TestProtocol *apple = objc_getAssociatedObject(self, testProtocolKey);
+  FlutterMethodChannel *channel = apple.callbackChannel;
+  NSString *uniqueId = apple.$uniqueId;
+  [channel invokeMethod:@"TestProtocol#callbackMethod" arguments:@{@"$uniqueId": uniqueId}];
 }
 %%CALLBACK%%
 %%CALLBACKS%%
@@ -524,7 +524,6 @@ class Template {
   NSValue *rectValue = [NSValue valueWithBytes:&frame objCType:@encode(CGRect)];
   __block $CGRect *cgRectWrapper = [[$CGRect alloc] initWithWrapperManager:_wrapperManager
                                                                   uniqueId:[[NSUUID UUID] UUIDString]
-                                                           callbackChannel:_callbackChannel
                                                                      value:rectValue];
   
   NSDictionary *callbackArguments = @{@"cgRect": cgRectWrapper.$uniqueId, @"$uniqueId": args};
