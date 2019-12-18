@@ -62,7 +62,7 @@ class IosBuilder extends PlatformBuilder {
     List<ClassInfo> classes,
     PlatformBuilderBuildStep buildStep,
   ) async {
-    if (classes.isEmpty) return;
+    if (classes.isEmpty || classes.length == 1 && classes[0].name == 'CGRect') return;
 
     final IosTemplateCreator creator = IosTemplateCreator();
     await Future.wait<void>(<Future<void>>[

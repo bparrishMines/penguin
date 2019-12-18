@@ -14,10 +14,11 @@ class DartMethodChannelBuilder extends PlatformBuilder {
   ) async {
     final MethodChannelTemplateCreator creator = MethodChannelTemplateCreator();
 
-    final bool hasAndroid = classes.any(
-        (ClassInfo classInfo) => classInfo.aClass.platform is AndroidPlatform);
-    final bool hasIos = classes
-        .any((ClassInfo classInfo) => classInfo.aClass.platform is IosPlatform);
+    final bool hasAndroid = classes.any((ClassInfo classInfo) =>
+        classInfo.aClass.platform is AndroidPlatform &&
+        classInfo.name != 'Context');
+    final bool hasIos = classes.any((ClassInfo classInfo) =>
+        classInfo.aClass.platform is IosPlatform && classInfo.name != 'CGRect');
 
     await Future.wait<void>(<Future<void>>[
       if (hasAndroid) _buildAndroid(buildStep, creator, classes),

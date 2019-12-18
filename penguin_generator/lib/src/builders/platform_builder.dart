@@ -366,7 +366,7 @@ class WriteBuilder extends Builder {
 
   @override
   FutureOr<void> build(BuildStep buildStep) async {
-    final List<ClassInfo> classes = <ClassInfo>[];
+    final Set<ClassInfo> classes = <ClassInfo>{};
 
     await for (AssetId input in buildStep.findAssets(_allInfoFiles)) {
       final String info = await buildStep.readAsString(input);

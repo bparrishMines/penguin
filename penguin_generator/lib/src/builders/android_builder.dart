@@ -16,7 +16,7 @@ class AndroidBuilder extends PlatformBuilder {
     List<ClassInfo> classes,
     PlatformBuilderBuildStep buildStep,
   ) {
-    if (classes.isEmpty) return Future<void>.value();
+    if (classes.isEmpty || classes.length == 1 && classes[0].name == 'Context') return Future<void>.value();
 
     final AndroidTemplateCreator creator = AndroidTemplateCreator();
     return buildStep.writeAsString(
