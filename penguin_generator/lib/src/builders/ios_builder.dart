@@ -145,8 +145,14 @@ class IosBuilder extends PlatformBuilder {
               _getStructure(classInfo),
               callbacks: classInfo.methods
                   .where((MethodInfo methodInfo) => methodInfo.method.callback)
-                  .map<String>((MethodInfo methodInfo) =>
-                      creator.createCallback(methodName: methodInfo.name)),
+                  .map<String>(
+                    (MethodInfo methodInfo) => creator.createCallback(
+                        platformClassName:
+                            (classInfo.aClass.platform as IosPlatform)
+                                .type
+                                .name,
+                        methodName: methodInfo.name),
+                  ),
               callbackSwizzles: classInfo.methods
                   .where((MethodInfo methodInfo) => methodInfo.method.callback)
                   .map<String>((MethodInfo methodInfo) => creator

@@ -569,11 +569,13 @@ class IosTemplateCreator extends TemplateCreator {
   }
 
   String createCallback({
+    @required String platformClassName,
     @required String methodName,
   }) {
     return TemplateCreator._replace(
       Block.callback.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
+        Replacement.platformClassName.name: platformClassName,
         Replacement.methodName.name: methodName,
       },
     );

@@ -19,6 +19,8 @@ class Template {
   
 #import "ChannelHandler+Generated.h"
 
+static void *wrapperCallbackKey = &wrapperCallbackKey;
+
 @interface NotImplementedException : NSException
 - (instancetype _Nonnull)initWithMethod:(NSString *)methodName;
 @end
@@ -159,7 +161,7 @@ class Template {
 %%CLASS%%
 @interface $__platformClassName__Impl : NSObject<__platformClassName__>
 @end
-static void *testProtocolKey = &testProtocolKey;
+
 @implementation $__platformClassName__Impl
 @end
 
@@ -208,8 +210,10 @@ static void *testProtocolKey = &testProtocolKey;
   
   %%CALLBACKSWIZZLES%%
   %%CALLBACKSWIZZLE%%
-  class_replaceMethod([(id)_value class], NSSelectorFromString(@"__methodName__"), class_getMethodImplementation([self class], NSSelectorFromString(@"__methodName__$Callback")), "v@:");
-  objc_setAssociatedObject(_value, testProtocolKey, self, OBJC_ASSOCIATION_RETAIN);
+  class_replaceMethod([(id)_value class], NSSelectorFromString(@"__methodName__"),
+    class_getMethodImplementation([self class], NSSelectorFromString(@"__methodName__$Callback")),
+    class_getInstanceMethod([(id)_value class], NSSelectorFromString(@"__methodName__")));  
+  objc_setAssociatedObject(_value, wrapperCallbackKey, self, OBJC_ASSOCIATION_RETAIN);
   %%CALLBACKSWIZZLE%%
   %%CALLBACKSWIZZLES%%
   
@@ -261,11 +265,8 @@ static void *testProtocolKey = &testProtocolKey;
 %%CALLBACKS%%
 %%CALLBACK%%
 - (void)__methodName__$Callback {
-  NSLog(@"Calling __methodName__");
-  $TestProtocol *apple = objc_getAssociatedObject(self, testProtocolKey);
-  FlutterMethodChannel *channel = apple.callbackChannel;
-  NSString *uniqueId = apple.$uniqueId;
-  [channel invokeMethod:@"TestProtocol#callbackMethod" arguments:@{@"$uniqueId": uniqueId}];
+  $__platformClassName__ *wrapper = objc_getAssociatedObject(self, wrapperCallbackKey);
+  [wrapper.callbackChannel invokeMethod:@"__platformClassName__#__methodName__" arguments:@{@"$uniqueId": wrapper.$uniqueId}];
 }
 %%CALLBACK%%
 %%CALLBACKS%%
