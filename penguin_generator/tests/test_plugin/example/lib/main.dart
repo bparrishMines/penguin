@@ -9,8 +9,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final TestProtocol _testProtocol = TestProtocol();
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -18,7 +16,16 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: const Text('Plugin example app'),
         ),
-        body: TextView('Apple'),
+        body: Column(
+          children: <Widget>[
+            Text('A TextView is below'),
+            Container(
+              width: 200,
+              height: 200,
+              child: TextView('Apple'),
+            ),
+          ],
+        ),
       ),
     );
   }
