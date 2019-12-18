@@ -83,7 +83,8 @@ abstract class PlatformBuilder {
 class ReadInfoBuilder extends Builder {
   static const String extension = '.penguin.g.info';
 
-  final Set<ClassInfo> _externalClasses = <ClassInfo>{};
+  final Set<Element> _allElements = <Element>{};
+  final Set<ClassInfo> _extraClasses = <ClassInfo>{};
 
   @override
   FutureOr<void> build(BuildStep buildStep) async {
@@ -96,13 +97,14 @@ class ReadInfoBuilder extends Builder {
     final List<ClassInfo> allClassInfo = reader
         .annotatedWith(Annotation.$class)
         .followedBy(penguinReader.annotatedWith(Annotation.$class))
-        .map<ClassInfo>(
-          (AnnotatedElement element) => _toClassInfo(
+        .map<ClassInfo>((AnnotatedElement element) {
+          _allElements.add(element.element);
+          return _toClassInfo(
             element.element,
             AnnotationUtils.classFromConstantReader(element.annotation),
-          ),
-        )
-        .followedBy(_externalClasses)
+          );
+        })
+        .followedBy(_extraClasses)
         .toSet()
         .toList();
 
@@ -288,8 +290,10 @@ class ReadInfoBuilder extends Builder {
     final bool isWrapper =
         !type.isVoid && Annotation.$class.hasAnnotationOfExact(type.element);
 
-    if (isWrapper && type.element is ClassElement) {
-      _externalClasses.add(_toClassInfo(
+    if (isWrapper &&
+        type.element is ClassElement &&
+        _allElements.add(type.element)) {
+      _extraClasses.add(_toClassInfo(
         type.element,
         AnnotationUtils.classFromConstantReader(
           ConstantReader(
