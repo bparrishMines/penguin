@@ -11,6 +11,11 @@
 @interface TestClass2 : NSObject
 @end
 
+@interface GenericClass<T> : NSObject
+- (void)add:(T _Nonnull)object;
+- (T _Nullable)get;
+@end
+
 @interface TestClass1 : NSObject
 - (instancetype _Nonnull)initNamedConstructor:(NSString *_Nonnull)supported
                                     primitive:(int)primitive

@@ -528,3 +528,20 @@ abstract class TestClass2 {
 
   MethodCall _constructorMethodCall;
 }
+
+//@Class(AndroidPlatform(AndroidType(
+//  'com.example.test_plugin.test_library',
+//  <String>['GenericClass'],
+//)))
+//class AndroidGenericClass<T> extends GenericClass<T> {}
+//
+//@Class(IosPlatform(IosType('GenericClass', import: '"TestPlugin.h"')))
+//class IosGenericClass<T> extends GenericClass<T> {}
+//
+//abstract class GenericClass<T> {
+//  @Method()
+//  Future<void> add(T object) {}
+//
+//  @Method()
+//  Future<T> get(String id) {}
+//}

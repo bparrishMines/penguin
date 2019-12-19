@@ -88,3 +88,17 @@
 
 @implementation TestClass2
 @end
+
+@implementation GenericClass {
+  id object;
+}
+
+- (void)add:(id)object {
+  if (!object) @throw [NSException exceptionWithName:NSInvalidArgumentException reason:nil userInfo:nil];
+  self->object = object;
+}
+
+- (id)get {
+  return object;
+}
+@end
