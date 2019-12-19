@@ -212,7 +212,7 @@ static void *wrapperCallbackKey = &wrapperCallbackKey;
   %%CALLBACKSWIZZLE%%
   class_replaceMethod([(id)_value class], NSSelectorFromString(@"__methodName__"),
     class_getMethodImplementation([self class], NSSelectorFromString(@"__methodName__$Callback")),
-    class_getInstanceMethod([(id)_value class], NSSelectorFromString(@"__methodName__")));  
+    method_getTypeEncoding(class_getInstanceMethod([(id)_value class], NSSelectorFromString(@"__methodName__"))));  
   objc_setAssociatedObject(_value, wrapperCallbackKey, self, OBJC_ASSOCIATION_RETAIN);
   %%CALLBACKSWIZZLE%%
   %%CALLBACKSWIZZLES%%
