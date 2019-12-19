@@ -306,6 +306,7 @@ class AndroidTemplateCreator extends TemplateCreator {
         Replacement.parameterName.name: fieldName,
         Replacement.fieldName.name: fieldName,
         Replacement.package.name: package,
+        Replacement.returnType.name: fieldType,
       },
     );
   }

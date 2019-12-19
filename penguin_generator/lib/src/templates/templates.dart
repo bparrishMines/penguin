@@ -1275,7 +1275,7 @@ public class ChannelGenerated {
       return
       %%PREMETHODCALL methodChannel:primitive%%
       %%PREMETHODCALL methodChannel:wrapper%%
-      new __returnType__Wrapper(wrapperManager, (String) call.argument("$newUniqueId"),
+      new $__returnType__(wrapperManager, (String) call.argument("$newUniqueId"),
       %%PREMETHODCALL methodChannel:wrapper%%
       %%PREMETHODCALL methodChannel:typeParameter%%
       final Object result = 
