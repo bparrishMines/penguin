@@ -96,11 +96,13 @@ class MethodChannelTemplateCreator extends TemplateCreator {
   }
 
   String createMethod(
-    bool isStatic, {
+    bool isStatic,
+    MethodChannelType returnChannelType, {
     @required Iterable<String> parameters,
     @required Iterable<String> methodCallParams,
     @required String platformClassName,
     @required String methodName,
+    @required String returnType,
   }) {
     return TemplateCreator._replace(
       Block.method.exp.firstMatch(template.value).group(1),
@@ -111,6 +113,10 @@ class MethodChannelTemplateCreator extends TemplateCreator {
         MethodChannelBlock.methodCallParams.exp: methodCallParams.join(),
         Replacement.platformClassName.name: platformClassName,
         Replacement.methodName.name: methodName,
+        Replacement.returnType.name:
+            returnChannelType == MethodChannelType.typeParameter
+                ? returnType
+                : 'void',
       },
     );
   }

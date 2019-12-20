@@ -688,6 +688,7 @@ class $__className____typeParameters__ extends Wrapper {
       '__platformClassName__#__methodName__',
        <String, dynamic>{r'$uniqueId': uniqueId,
        r'$newUniqueId': $newUniqueId,
+       r'$returnTypeisWrapper': _isTypeOf<__returnType__, Wrapper>(),
        %%METHODCALLPARAMS%%
        %%METHODCALLPARAM methodChannel:supported%%
        '__parameterName__': __parameterName__,

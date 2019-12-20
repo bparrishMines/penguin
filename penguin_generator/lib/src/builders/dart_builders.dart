@@ -132,6 +132,8 @@ class DartMethodChannelBuilder extends PlatformBuilder {
                   methods: classInfo.methods.map<String>(
                     (MethodInfo methodInfo) => creator.createMethod(
                       methodInfo.isStatic,
+                      getChannelType(methodInfo.returnType),
+                      returnType: methodInfo.returnType.name,
                       parameters: methodInfo.parameters.map<String>(
                         (ParameterInfo parameterInfo) =>
                             creator.createParameter(
@@ -291,6 +293,8 @@ class DartMethodChannelBuilder extends PlatformBuilder {
                   methods: classInfo.methods.map<String>(
                     (MethodInfo methodInfo) => creator.createMethod(
                       methodInfo.isStatic,
+                      getChannelType(methodInfo.returnType),
+                      returnType: methodInfo.returnType.name,
                       parameters: methodInfo.parameters.map<String>(
                         (ParameterInfo parameterInfo) =>
                             creator.createParameter(
