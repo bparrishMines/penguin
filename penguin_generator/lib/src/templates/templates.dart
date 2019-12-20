@@ -309,6 +309,8 @@ static void *wrapperCallbackKey = &wrapperCallbackKey;
   %%PREMETHODCALL methodChannel:primitive%%
   %%PREMETHODCALL methodChannel:struct%%
   %%PREMETHODCALL methodChannel:struct%%
+  %%PREMETHODCALL methodChannel:typeParameter%%
+  %%PREMETHODCALL methodChannel:typeParameter%%
   %%PREMETHODCALLS%%
   
   [__methodCallerName__ __methodName__
@@ -325,6 +327,8 @@ static void *wrapperCallbackKey = &wrapperCallbackKey;
   %%PARAMETER methodChannel:struct%%
   __parameterName__:[NSValue get__parameterType__:[[wrapperManager getWrapper:call.arguments[@"__parameterName__"]] getValue]]
   %%PARAMETER methodChannel:struct%%
+  %%PARAMETER methodChannel:typeParameter%%
+  %%PARAMETER methodChannel:typeParameter%%
   %%PARAMETERS%%
   ]
   
@@ -345,6 +349,8 @@ static void *wrapperCallbackKey = &wrapperCallbackKey;
   %%POSTMETHODCALL methodChannel:primitive%%
   %%POSTMETHODCALL methodChannel:struct%%
   %%POSTMETHODCALL methodChannel:struct%%
+  %%POSTMETHODCALL methodChannel:typeParameter%%
+  %%POSTMETHODCALL methodChannel:typeParameter%%
   %%POSTMETHODCALLS%%
 }
 %%METHOD%%
@@ -628,22 +634,6 @@ class $__className____typeParameters__ extends Wrapper {
       '__platformClassName__(__constructorName__)',
       <String, dynamic>{r'$uniqueId': uniqueId,
        %%METHODCALLPARAMS%%
-       %%METHODCALLPARAM methodChannel:supported%%
-       '__parameterName__': __parameterName__,
-       %%METHODCALLPARAM methodChannel:supported%%
-       %%METHODCALLPARAM methodChannel:wrapper%%
-       '__parameterName__': __parameterName__?.uniqueId,
-       %%METHODCALLPARAM methodChannel:wrapper%%
-       %%METHODCALLPARAM methodChannel:struct%%
-       '__parameterName__': __parameterName__?.uniqueId,
-       %%METHODCALLPARAM methodChannel:struct%%
-       %%METHODCALLPARAM methodChannel:primitive%%
-       '__parameterName__': __parameterName__,
-       %%METHODCALLPARAM methodChannel:primitive%%
-       %%METHODCALLPARAM methodChannel:typeParameter%%
-       if (__parameterName__ is Wrapper) '__parameterName__': __parameterName__?.uniqueId,
-       if (__parameterName__ is! Wrapper) '__parameterName__': __parameterName__,
-       %%METHODCALLPARAM methodChannel:typeParameter%%
        %%METHODCALLPARAMS%%
       },
     );
@@ -712,8 +702,8 @@ class $__className____typeParameters__ extends Wrapper {
        '__parameterName__': __parameterName__,
        %%METHODCALLPARAM methodChannel:primitive%%
        %%METHODCALLPARAM methodChannel:typeParameter%%
-       if (__parameterName__ is Wrapper) '__parameterName__': __parameterName__?.uniqueId,
-       if (__parameterName__ is! Wrapper) '__parameterName__': __parameterName__,
+       r'__parameterName__$isWrapper':  __parameterName__ is Wrapper,
+       '__parameterName__': __parameterName__ is Wrapper ? __parameterName__?.uniqueId : __parameterName__,
        %%METHODCALLPARAM methodChannel:typeParameter%%
        %%METHODCALLPARAMS%%
        },
@@ -1315,27 +1305,19 @@ public class ChannelGenerated {
       %%POSTMETHODCALL methodChannel:wrapper%%
       %%POSTMETHODCALL methodChannel:typeParameter%%
       ;
-      if (result == null) return null;
+      if (result == null || result instanceof Number || result instanceof String || result instanceof Boolean) {
+        return result;
+      }
 
       final Class wrapperClass;
       try {
-        wrapperClass = Class.forName(String.format("__package__.ChannelGenerated$%sWrapper", result.getClass().getSimpleName()));
+        wrapperClass = Class.forName(String.format("__package__.ChannelGenerated$$%s", result.getClass().getSimpleName()));
       } catch (ClassNotFoundException e) {
         return result;
       }
 
-      try {
-        final Constructor constructor = wrapperClass.getConstructor(ChannelGenerated.class, String.class, result.getClass());
-        constructor.newInstance(wrapperManager, call.argument("$newUniqueId"), result);
-      } catch (NoSuchMethodException e) {
-        e.printStackTrace();
-      } catch (IllegalAccessException e) {
-        e.printStackTrace();
-      } catch (InstantiationException e) {
-        e.printStackTrace();
-      } catch (InvocationTargetException e) {
-        e.printStackTrace();
-      }
+      final Constructor constructor = wrapperClass.getConstructor(WrapperManager.class, String.class, result.getClass());
+      constructor.newInstance(wrapperManager, call.argument("$newUniqueId"), result);
       return null;
       %%POSTMETHODCALL methodChannel:typeParameter%%
       %%POSTMETHODCALLS%%
