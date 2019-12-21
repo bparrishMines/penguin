@@ -2,15 +2,6 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'penguin.g.dart';
 
-@Class(AndroidPlatform(AndroidType('android.content', <String>['Context'])))
-class Context {}
-
-@Class(IosPlatform(IosType('CGRect', isStruct: true)))
-class CGRect {
-  @Constructor()
-  CGRect();
-}
-
 @JsonSerializable()
 class Class {
   const Class(this.platform, {this.androidApi});

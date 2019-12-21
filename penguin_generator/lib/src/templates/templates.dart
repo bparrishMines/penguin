@@ -566,7 +566,7 @@ part of '__filename__';
 class $__className____typeParameters__ extends __wrapperInterface__ {
   const $__className__(String uniqueId, 
   { 
-  List<MethodCall> Function($__platformViewClass__ __platformViewVariable__) onCreateView,
+  List<MethodCall> Function(__platformViewClass__ __platformViewVariable__) onCreateView,
   %%CALLBACKINITIALIZERS%%
   %%CALLBACKINITIALIZER%%
   this.$__methodName__$Callback,
