@@ -196,7 +196,6 @@ class MethodChannelTemplateCreator extends TemplateCreator {
             typeParameters.isEmpty ? '' : '<${typeParameters.join(', ')}>',
         Block.constructors.exp: constructors.join(),
         Block.methods.exp: methods.join(),
-        Replacement.className.name: className,
         Block.fields.exp: fields.join(),
         Replacement.platformClassName.name: platformClassName,
         Block.callbacks.exp: callbacks.join(),
@@ -206,6 +205,7 @@ class MethodChannelTemplateCreator extends TemplateCreator {
         Replacement.platformViewClass.name: platformViewClass,
         Replacement.platformViewVariable.name: platformViewVariable,
         Replacement.wrapperInterface.name: wrapperInterface,
+        Replacement.className.name: className,
       },
     );
   }

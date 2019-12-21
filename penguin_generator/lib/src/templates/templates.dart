@@ -599,19 +599,20 @@ class $__className____typeParameters__ extends __wrapperInterface__ {
       %%CALLBACKS%%
       %%CALLBACK%%      
       case '__wrapperName__#__methodName__':
+        (this as __className__).__methodName__(%%CALLBACKCHANNELPARAMS%%%%CALLBACKCHANNELPARAMS%%);
         return $__methodName__$Callback(
           %%CALLBACKCHANNELPARAMS%%
           %%CALLBACKCHANNELPARAM methodChannel:wrapper%%
-          $__className__(call.arguments['__parameterName__']),
+          __className__.fromUniqueId(call.arguments['__parameterName__']),
           %%CALLBACKCHANNELPARAM methodChannel:wrapper%%
           %%CALLBACKCHANNELPARAM methodChannel:struct%%
-          $__className__(call.arguments['__parameterName__']),
+          __className__.fromUniqueId(call.arguments['__parameterName__']),
           %%CALLBACKCHANNELPARAM methodChannel:struct%%
           %%CALLBACKCHANNELPARAM methodChannel:supported%%
           call.arguments['__parameterName__'],
           %%CALLBACKCHANNELPARAM methodChannel:supported%%
           %%CALLBACKCHANNELPARAMS%%
-        );
+        ) ?? <MethodCall>[];
         break;
       %%CALLBACK%%
       %%CALLBACKS%%
@@ -665,10 +666,10 @@ class $__className____typeParameters__ extends __wrapperInterface__ {
   __parameterType__ __parameterName__,
   %%PARAMETER methodChannel:supported%%
   %%PARAMETER methodChannel:wrapper%%
-  $__parameterType__ __parameterName__,
+  __parameterType__ __parameterName__,
   %%PARAMETER methodChannel:wrapper%%
   %%PARAMETER methodChannel:struct%%
-  $__parameterType__ __parameterName__,
+  __parameterType__ __parameterName__,
   %%PARAMETER methodChannel:struct%%
   %%PARAMETER methodChannel:primitive%%
   __parameterType__ __parameterName__,
@@ -689,17 +690,17 @@ class $__className____typeParameters__ extends __wrapperInterface__ {
        '__parameterName__': __parameterName__,
        %%METHODCALLPARAM methodChannel:supported%%
        %%METHODCALLPARAM methodChannel:wrapper%%
-       '__parameterName__': __parameterName__?.uniqueId,
+       '__parameterName__': (__parameterName__ as Wrapper)?.uniqueId,
        %%METHODCALLPARAM methodChannel:wrapper%%
        %%METHODCALLPARAM methodChannel:struct%%
-       '__parameterName__': __parameterName__?.uniqueId,
+       '__parameterName__': (__parameterName__ as Wrapper)?.uniqueId,
        %%METHODCALLPARAM methodChannel:struct%%
        %%METHODCALLPARAM methodChannel:primitive%%
        '__parameterName__': __parameterName__,
        %%METHODCALLPARAM methodChannel:primitive%%
        %%METHODCALLPARAM methodChannel:typeParameter%%
        r'__parameterName__$isWrapper':  __parameterName__ is Wrapper,
-       '__parameterName__': __parameterName__ is Wrapper ? __parameterName__?.uniqueId : __parameterName__,
+       '__parameterName__': __parameterName__ is Wrapper ? (__parameterName__ as Wrapper)?.uniqueId : __parameterName__,
        %%METHODCALLPARAM methodChannel:typeParameter%%
        %%METHODCALLPARAMS%%
        },

@@ -7,6 +7,8 @@ import 'dart:io';
 
 import 'package:flutter_driver/driver_extension.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:test_plugin/android.dart';
+import 'package:test_plugin/ios.dart';
 import 'package:test_plugin/test_plugin.dart';
 
 void main() {
@@ -22,8 +24,13 @@ void main() {
 
     setUpAll(() {
       print('Platform: ${Platform.isAndroid ? 'Android' : 'Ios'}');
-      testClass = Platform.isAndroid ? AndroidTestClass1() : IosTestClass1();
-      testClass2 = Platform.isAndroid ? AndroidTestClass2() : IosTestClass2();
+      if (Platform.isAndroid) {
+        testClass = AndroidTestClass1();
+        testClass2 = AndroidTestClass2();
+      } else if (Platform.isIOS) {
+        testClass = IosTestClass1();
+        testClass2 = IosTestClass2();
+      }
       callbackClass =
           Platform.isAndroid ? AndroidCallbackClass() : IosCallbackClass();
     });
@@ -33,8 +40,12 @@ void main() {
     });
 
     test('mutableField', () {
-      final TestClass1 mutableTestClass =
-          Platform.isAndroid ? AndroidTestClass1() : IosTestClass1();
+      TestClass1 mutableTestClass;
+      if (Platform.isAndroid) {
+        mutableTestClass = AndroidTestClass1();
+      } else if (Platform.isIOS) {
+        mutableTestClass = IosTestClass1();
+      }
       mutableTestClass.mutableField = 23.4;
       expect(mutableTestClass.mutableField, completion(23.4));
     });
@@ -80,18 +91,21 @@ void main() {
     });
 
     test('namedConstructor', () {
-      final TestClass1 testClass = Platform.isAndroid
-          ? AndroidTestClass1.namedConstructor(
-              'hello',
-              45,
-              (testClass2 as AndroidTestClass2),
-              AndroidNestedClass(),
-            )
-          : IosTestClass1.initNamedConstructor(
-              'goodbye',
-              23,
-              (testClass2 as IosTestClass2),
-            );
+      TestClass1 testClass;
+      if (Platform.isAndroid) {
+        testClass = AndroidTestClass1.namedConstructor(
+          'hello',
+          45,
+          (testClass2 as AndroidTestClass2),
+          AndroidNestedClass(),
+        );
+      } else if (Platform.isIOS) {
+        testClass = IosTestClass1.initNamedConstructor(
+          'goodbye',
+          23,
+          (testClass2 as IosTestClass2),
+        );
+      }
       expect(testClass.returnBool(), completion(isFalse));
     });
 
@@ -158,7 +172,6 @@ void main() {
             'woeif',
             32,
             (testClass2 as IosTestClass2),
-            null,
           ),
           completes,
         );
