@@ -1,4 +1,5 @@
 import 'package:dart_style/dart_style.dart';
+import 'package:path/path.dart' as path;
 import 'package:penguin/penguin.dart';
 import 'package:penguin_generator/src/info.dart';
 import 'package:penguin_generator/src/templates/templates.dart';
@@ -37,11 +38,13 @@ class DartMethodChannelBuilder extends PlatformBuilder {
       buildStep.inputId.changeExtension(androidExtension),
       DartFormatter().format(
         creator.createFile(
+          filename: path.basename(buildStep.inputId.path),
           classes: classes
               .where((ClassInfo classInfo) =>
                   classInfo.aClass.platform is AndroidPlatform)
               .map<String>(
                 (ClassInfo classInfo) => creator.createClass(
+                  wrapperInterface: 'AndroidWrapper',
                   platformViewClass: 'Context',
                   platformViewVariable: 'context',
                   callbackInitializers: classInfo.methods
@@ -200,11 +203,13 @@ class DartMethodChannelBuilder extends PlatformBuilder {
       buildStep.inputId.changeExtension(iosExtension),
       DartFormatter().format(
         creator.createFile(
+          filename: path.basename(buildStep.inputId.path),
           classes: classes
               .where((ClassInfo classInfo) =>
                   classInfo.aClass.platform is IosPlatform)
               .map<String>(
                 (ClassInfo classInfo) => creator.createClass(
+                  wrapperInterface: 'IosWrapper',
                   platformViewClass: 'CGRect',
                   platformViewVariable: 'cgRect',
                   callbackInitializers: classInfo.methods

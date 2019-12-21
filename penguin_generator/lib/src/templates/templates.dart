@@ -559,13 +559,11 @@ static void *wrapperCallbackKey = &wrapperCallbackKey;
 ''');
 
   static const Template dartMethodChannel = Template._(r'''
-import 'dart:async';
-
-import 'package:flutter/services.dart';
+part of '__filename__';
 
 %%CLASSES%%
 %%CLASS%%
-class $__className____typeParameters__ extends Wrapper {
+class $__className____typeParameters__ extends __wrapperInterface__ {
   const $__className__(String uniqueId, 
   { 
   List<MethodCall> Function($__platformViewClass__ __platformViewVariable__) onCreateView,
@@ -575,7 +573,7 @@ class $__className____typeParameters__ extends Wrapper {
   %%CALLBACKINITIALIZER%%
   %%CALLBACKINITIALIZERS%%
   }
-  ) : super(uniqueId, onCreateView: onCreateView);
+  ) : super(uniqueId: uniqueId, platformClassName: '__platformClassName__', onCreateView: onCreateView,);
 
   %%CALLBACKVARIABLES%%
   %%CALLBACKVARIABLE%%
@@ -594,9 +592,6 @@ class $__className____typeParameters__ extends Wrapper {
   ) $__methodName__$Callback;
   %%CALLBACKVARIABLE%%
   %%CALLBACKVARIABLES%%
-
-  @override
-  String get platformClassName => '__platformClassName__';
 
   @override
   List<MethodCall> onMethodCall(MethodCall call) {
@@ -1405,4 +1400,7 @@ class Replacement {
       Replacement('__platformViewVariable__');
   static final Replacement implementationName =
       Replacement('__implementationName__');
+  static final Replacement filename = Replacement('__filename__');
+  static final Replacement wrapperInterface =
+      Replacement('__wrapperInterface__');
 }
