@@ -2,30 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 
-abstract class Wrapper {
-  const Wrapper(this.uniqueId, {this.onCreateView});
-
-  final String uniqueId;
-  final List<MethodCall> Function($Context context) onCreateView;
-
-  String get platformClassName;
-  List<MethodCall> onMethodCall(MethodCall call);
-
-  MethodCall allocate() {
-    return MethodCall(
-      '$platformClassName#allocate',
-      <String, String>{r'$uniqueId': uniqueId},
-    );
-  }
-
-  MethodCall deallocate() {
-    return MethodCall(
-      '$platformClassName#deallocate',
-      <String, String>{r'$uniqueId': uniqueId},
-    );
-  }
-}
-
 Future<T> invoke<T>(
   MethodChannel channel,
   MethodCall call, [
