@@ -17,6 +17,7 @@ void main() {
   group('test_plugin', () {
     TestClass1 testClass;
     TestClass2 testClass2;
+    GenericClass genericClass;
     dynamic callbackClass;
 
     setUpAll(() {

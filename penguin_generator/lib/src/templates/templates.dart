@@ -1285,7 +1285,7 @@ public class ChannelGenerated {
       call.argument("__parameterName__") != null ? (__parameterType__) wrapperManager.getWrapper((String) call.argument("__parameterName__")).$getValue() : null
       %%PARAMETER methodChannel:wrapper%%
       %%PARAMETER methodChannel:typeParameter%%
-      call.argument("__parameterName__") != null && call.argument("__parameterName__") instanceof String && call.wrapperManager.getWrapper((String) call.argument("__parameterName__")) != null ? wrapperManager.getWrapper((String) call.argument("__parameterName__")).$getValue() : call.argument("__parameterName__") 
+      call.argument("__parameterName__$isWrapper") ? (call.argument("__parameterName__") != null ? wrapperManager.getWrapper((String) call.argument("__parameterName__")).$getValue() : null) : call.argument("__parameterName__")
       %%PARAMETER methodChannel:typeParameter%%
       %%PARAMETERS%%
       )
@@ -1306,17 +1306,8 @@ public class ChannelGenerated {
       %%POSTMETHODCALL methodChannel:wrapper%%
       %%POSTMETHODCALL methodChannel:typeParameter%%
       ;
-      if (result == null || result instanceof Number || result instanceof String || result instanceof Boolean) {
-        return result;
-      }
-
-      final Class wrapperClass;
-      try {
-        wrapperClass = Class.forName(String.format("__package__.ChannelGenerated$$%s", result.getClass().getSimpleName()));
-      } catch (ClassNotFoundException e) {
-        return result;
-      }
-
+      if (!(Boolean)call.argument("$returnTypeIsWrapper")) return result;
+      final Class wrapperClass = Class.forName(String.format("__package__.ChannelGenerated$$%s", result.getClass().getSimpleName()));
       final Constructor constructor = wrapperClass.getConstructor(WrapperManager.class, String.class, result.getClass());
       constructor.newInstance(wrapperManager, call.argument("$newUniqueId"), result);
       return null;

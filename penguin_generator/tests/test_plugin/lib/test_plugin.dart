@@ -533,10 +533,16 @@ abstract class TestClass2 {
   'com.example.test_plugin.test_library',
   <String>['GenericClass'],
 )))
-class AndroidGenericClass<T> extends GenericClass<T> {}
+class AndroidGenericClass<T> extends GenericClass<T> {
+  @Constructor()
+  AndroidGenericClass();
+}
 
-@Class(IosPlatform(IosType('GenericClass', import: '"TestPlugin.h"')))
-class IosGenericClass<T> extends GenericClass<T> {}
+//@Class(IosPlatform(IosType('GenericClass', import: '"TestPlugin.h"')))
+//class IosGenericClass<T> extends GenericClass<T> {
+//  @Constructor()
+//  IosGenericClass();
+//}
 
 abstract class GenericClass<T> {
   @Method()
