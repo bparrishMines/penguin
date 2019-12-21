@@ -7,6 +7,9 @@ import '../templates/template_creator.dart';
 import 'platform_builder.dart';
 
 class DartMethodChannelBuilder extends PlatformBuilder {
+  static const androidExtension = '.android.penguin.g.dart';
+  static const iosExtension = '.ios.penguin.g.dart';
+
   @override
   Future<void> build(
     List<ClassInfo> classes,
@@ -14,11 +17,10 @@ class DartMethodChannelBuilder extends PlatformBuilder {
   ) async {
     final MethodChannelTemplateCreator creator = MethodChannelTemplateCreator();
 
-    final bool hasAndroid = classes.any((ClassInfo classInfo) =>
-        classInfo.aClass.platform is AndroidPlatform &&
-        classInfo.name != 'Context');
-    final bool hasIos = classes.any((ClassInfo classInfo) =>
-        classInfo.aClass.platform is IosPlatform && classInfo.name != 'CGRect');
+    final bool hasAndroid = classes.any(
+        (ClassInfo classInfo) => classInfo.aClass.platform is AndroidPlatform);
+    final bool hasIos = classes
+        .any((ClassInfo classInfo) => classInfo.aClass.platform is IosPlatform);
 
     await Future.wait<void>(<Future<void>>[
       if (hasAndroid) _buildAndroid(buildStep, creator, classes),
@@ -31,12 +33,10 @@ class DartMethodChannelBuilder extends PlatformBuilder {
     MethodChannelTemplateCreator creator,
     Iterable<ClassInfo> classes,
   ) {
-    return buildStep.writeAsString(
-      'android.penguin.g.dart',
+    return buildStep.writeToAsset(
+      buildStep.inputId.changeExtension(androidExtension),
       DartFormatter().format(
         creator.createFile(
-          platformViewClass: 'Context',
-          platformViewVariable: 'context',
           classes: classes
               .where((ClassInfo classInfo) =>
                   classInfo.aClass.platform is AndroidPlatform)
@@ -196,12 +196,10 @@ class DartMethodChannelBuilder extends PlatformBuilder {
     MethodChannelTemplateCreator creator,
     Iterable<ClassInfo> classes,
   ) {
-    return buildStep.writeAsString(
-      'ios.penguin.g.dart',
+    return buildStep.writeToAsset(
+      buildStep.inputId.changeExtension(iosExtension),
       DartFormatter().format(
         creator.createFile(
-          platformViewClass: 'CGRect',
-          platformViewVariable: 'cgRect',
           classes: classes
               .where((ClassInfo classInfo) =>
                   classInfo.aClass.platform is IosPlatform)
@@ -345,8 +343,8 @@ class DartMethodChannelBuilder extends PlatformBuilder {
 
   @override
   Iterable<String> get filenames => <String>[
-        'android.penguin.g.dart',
-        'ios.penguin.g.dart',
+        androidExtension,
+        iosExtension,
       ];
 
   Iterable<Type> get platformTypes => <Type>[AndroidPlatform, IosPlatform];

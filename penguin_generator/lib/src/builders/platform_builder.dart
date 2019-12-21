@@ -26,6 +26,12 @@ class PlatformBuilderBuildStep {
 
   final BuildStep _buildStep;
 
+  AssetId get inputId => _buildStep.inputId;
+
+  Future<void> writeToAsset(AssetId assetId, String contents) {
+    return _buildStep.writeAsString(assetId, contents);
+  }
+
   Future<void> writeAsString(String filename, String content) {
     return _buildStep.writeAsString(
       AssetId(_buildStep.inputId.package, p.join('lib', filename)),
@@ -81,10 +87,14 @@ abstract class PlatformBuilder {
 }
 
 class ReadInfoBuilder extends Builder {
-  static const String extension = '.penguin.g.info';
+  ReadInfoBuilder(this.platformBuilders);
+
+  static const String infoExtension = '.penguin.g.info';
 
   final Set<Element> _allElements = <Element>{};
   final Set<ClassInfo> _extraClasses = <ClassInfo>{};
+
+  final List<PlatformBuilder> platformBuilders;
 
   @override
   FutureOr<void> build(BuildStep buildStep) async {
@@ -92,26 +102,40 @@ class ReadInfoBuilder extends Builder {
     if (!await resolver.isLibrary(buildStep.inputId)) return null;
 
     final LibraryReader reader = LibraryReader(await buildStep.inputLibrary);
-    final LibraryReader penguinReader = await _getPenguinReader(resolver);
 
     final List<ClassInfo> allClassInfo = reader
         .annotatedWith(Annotation.$class)
-        .followedBy(penguinReader.annotatedWith(Annotation.$class))
         .map<ClassInfo>((AnnotatedElement element) {
-          _allElements.add(element.element);
-          return _toClassInfo(
-            element.element,
-            AnnotationUtils.classFromConstantReader(element.annotation),
-          );
-        })
-        .followedBy(_extraClasses)
-        .toSet()
-        .toList();
+      _allElements.add(element.element);
+      return _toClassInfo(
+        element.element,
+        AnnotationUtils.classFromConstantReader(element.annotation),
+      );
+    }).toList();
+
+    if (allClassInfo.isEmpty) return Future<void>.value();
+
+    await Future.wait<void>(
+      platformBuilders.map<Future<void>>(
+        (PlatformBuilder builder) => builder.build(
+          allClassInfo
+              .where(
+                (ClassInfo classInfo) => builder.platformTypes.any(
+                  (Type type) =>
+                      classInfo.aClass.platform.runtimeType.toString() ==
+                      type.toString(),
+                ),
+              )
+              .toList(),
+          PlatformBuilderBuildStep._(buildStep),
+        ),
+      ),
+    );
 
     if (allClassInfo.isNotEmpty) {
       buildStep.writeAsString(
-        buildStep.inputId.changeExtension(extension),
-        jsonEncode(allClassInfo),
+        buildStep.inputId.changeExtension(infoExtension),
+        jsonEncode(allClassInfo.followedBy(_extraClasses).toSet().toList()),
       );
     }
   }
@@ -357,14 +381,20 @@ class ReadInfoBuilder extends Builder {
 
   @override
   Map<String, List<String>> get buildExtensions => <String, List<String>>{
-        '.dart': <String>[extension],
+        '.dart': <String>[
+          infoExtension,
+          ...platformBuilders.expand<String>(
+            (PlatformBuilder builder) => builder.filenames,
+          ),
+        ],
       };
 }
 
 class WriteBuilder extends Builder {
   WriteBuilder(this.platformBuilders);
 
-  static final Glob _allInfoFiles = Glob('lib/**${ReadInfoBuilder.extension}');
+  static final Glob _allInfoFiles =
+      Glob('lib/**${ReadInfoBuilder.infoExtension}');
 
   final List<PlatformBuilder> platformBuilders;
 

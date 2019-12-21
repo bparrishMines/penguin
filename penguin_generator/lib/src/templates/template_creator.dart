@@ -210,15 +210,11 @@ class MethodChannelTemplateCreator extends TemplateCreator {
 
   String createFile({
     @required Iterable<String> classes,
-    @required String platformViewClass,
-    @required String platformViewVariable,
   }) {
     return TemplateCreator._replace(
       template.value,
       <Pattern, String>{
         Block.classes.exp: classes.join(),
-        Replacement.platformViewClass.name: platformViewClass,
-        Replacement.platformViewVariable.name: platformViewVariable,
       },
     );
   }

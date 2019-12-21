@@ -12,6 +12,8 @@ dependencies:
     git:
       url: git://github.com/bparrishMines/penguin.git
       path: penguin
+  penguin_plugin:
+    path: ../../../penguin_plugin
   flutter:
     sdk: flutter
 
