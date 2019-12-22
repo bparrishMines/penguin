@@ -30,10 +30,3 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
-
-class TestProtocol extends IosProtocol {
-  @override
-  void callbackMethod() {
-    super.callbackMethod();
-  }
-}

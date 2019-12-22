@@ -22,7 +22,7 @@ class IosCallbackHandler extends CallbackHandler {
   ) get onCreateView =>
       (Wrapper wrapper, Map<String, dynamic> arguments) async {
         return (wrapper as IosWrapper).onCreateView(
-          CGRect._fromUniqueId(arguments['frame']),
+          CGRect._fromUniqueId(arguments['cgRect']),
         );
       };
 }

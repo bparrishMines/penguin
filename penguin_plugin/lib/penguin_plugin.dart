@@ -7,7 +7,10 @@ abstract class CallbackHandler {
     _methodCallHandler = (MethodCall call) async {
       List<MethodCall> result;
       if (call.method == 'CreateView') {
-        onCreateView(_wrappers[call.arguments[r'$uniqueId']], call.arguments);
+        result = await onCreateView(
+          _wrappers[call.arguments[r'$uniqueId']],
+          call.arguments.cast<String, dynamic>(),
+        );
       } else {
         result = _wrappers[call.arguments[r'$uniqueId']].onMethodCall(call);
       }
@@ -25,7 +28,9 @@ abstract class CallbackHandler {
   }
 
   Future<List<MethodCall>> Function(
-      Wrapper wrapper, Map<String, dynamic> arguments) get onCreateView;
+    Wrapper wrapper,
+    Map<String, dynamic> arguments,
+  ) get onCreateView;
 
   final Map<String, Wrapper> _wrappers = <String, Wrapper>{};
   Future<dynamic> Function(MethodCall call) _methodCallHandler;

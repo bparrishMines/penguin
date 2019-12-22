@@ -29,7 +29,7 @@ class IosTextViewState extends State<TextView> {
     super.initState();
     _textView = $IosTextViewState(
       randomId(),
-      onCreateView: ($CGRect cgRect) {
+      onCreateView: (CGRect cgRect) {
         return <MethodCall>[
           _textView.$IosTextViewStateinitWithFrame(cgRect),
           _textView.$text(text: text),
@@ -43,6 +43,7 @@ class IosTextViewState extends State<TextView> {
   @override
   void dispose() {
     super.dispose();
+    invoke<void>(channel, _textView.deallocate());
     callbackHandler.removeWrapper(_textView);
   }
 
