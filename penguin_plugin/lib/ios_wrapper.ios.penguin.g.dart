@@ -3,7 +3,7 @@ part of 'ios_wrapper.dart';
 class $CGRect extends IosWrapper {
   const $CGRect(
     String uniqueId, {
-    List<MethodCall> Function($CGRect cgRect) onCreateView,
+    List<MethodCall> Function(CGRect cgRect) onCreateView,
   }) : super(
           uniqueId: uniqueId,
           platformClassName: 'CGRect',

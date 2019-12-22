@@ -14,7 +14,7 @@ import 'ios.dart';
 
 final CallbackHandler callbackHandler = io.Platform.isAndroid
     ? android.AndroidCallbackHandler()
-    : ios.IosCallbackHandler;
+    : ios.IosCallbackHandler();
 
 final MethodChannel channel = MethodChannel('test_plugin')
   ..setMethodCallHandler(callbackHandler.methodCallHandler);

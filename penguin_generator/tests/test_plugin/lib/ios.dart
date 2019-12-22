@@ -61,18 +61,16 @@ abstract class IosProtocol extends $IosProtocol {
   @Constructor()
   IosProtocol() : super(randomId()) {
     invokeAll(channel, <MethodCall>[
-      _protocol.$IosProtocol$Default(),
-      _protocol.allocate(),
+      $IosProtocol$Default(),
+      allocate(),
     ]);
 
-    callbackHandler.addWrapper(_protocol);
+    callbackHandler.addWrapper(this);
   }
-
-  $IosProtocol _protocol;
 
   @Method(callback: true)
   void callbackMethod() {
-    invoke<void>(channel, _protocol.$callbackMethod());
+    invoke<void>(channel, $callbackMethod());
   }
 }
 
