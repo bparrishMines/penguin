@@ -87,6 +87,8 @@ abstract class TestClass2 {
 }
 
 abstract class GenericClass<T> {
+  MethodCall constructorMethodCall;
+
   @Method()
   Future<void> add(T object) {}
 

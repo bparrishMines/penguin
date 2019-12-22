@@ -28,7 +28,7 @@ class AndroidNestedClass extends $AndroidNestedClass {
 ))
 abstract class AndroidAbstractClass extends $AndroidAbstractClass {
   @Constructor()
-  AndroidAbstractClass() : super('aRef') {
+  AndroidAbstractClass() : super(randomId()) {
     invokeAll(channel, <MethodCall>[
       $AndroidAbstractClass$Default(),
       allocate(),
@@ -115,9 +115,9 @@ class AndroidTestClass1 extends $AndroidTestClass1 with TestClass1 {
 
   @override
   FutureOr<double> get mutableField => invoke<double>(
-    channel,
-    $mutableField(),
-  );
+        channel,
+        $mutableField(),
+      );
 
   @override
   Future<void> returnVoid() {
@@ -312,11 +312,11 @@ class AndroidTestClass2 extends $AndroidTestClass2 with TestClass2 {
   }
 }
 
-//@Class(AndroidPlatform(AndroidType(
-//  'com.example.test_plugin.test_library',
-//  <String>['GenericClass'],
-//)))
-//class AndroidGenericClass<T> extends GenericClass<T> {
-//  @Constructor()
-//  AndroidGenericClass();
-//}
+@Class(AndroidPlatform(AndroidType(
+  'com.example.test_plugin.test_library',
+  <String>['GenericClass'],
+)))
+class AndroidGenericClass<T> extends GenericClass<T> {
+  @Constructor()
+  AndroidGenericClass();
+}

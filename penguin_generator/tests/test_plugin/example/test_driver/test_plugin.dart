@@ -20,7 +20,8 @@ void main() {
     TestClass1 testClass;
     TestClass2 testClass2;
     GenericClass genericClass;
-    dynamic callbackClass;
+    dynamic callbackClass1;
+    dynamic callbackClass2;
 
     setUpAll(() {
       print('Platform: ${Platform.isAndroid ? 'Android' : 'Ios'}');
@@ -31,7 +32,9 @@ void main() {
         testClass = IosTestClass1();
         testClass2 = IosTestClass2();
       }
-      callbackClass =
+      callbackClass1 =
+          Platform.isAndroid ? AndroidCallbackClass() : IosCallbackClass();
+      callbackClass2 =
           Platform.isAndroid ? AndroidCallbackClass() : IosCallbackClass();
     });
 
@@ -179,15 +182,20 @@ void main() {
     });
 
     test('callbackMethod', () async {
-      expect(callbackClass.callbackCalled, isFalse);
-      callbackClass.callCallbackMethod();
+      expect(callbackClass1.callbackCalled, isFalse);
+      callbackClass1.callCallbackMethod();
       await Future<void>.delayed(Duration(seconds: 2));
-      expect(callbackClass.callbackCalled, isTrue);
+      expect(callbackClass1.callbackCalled, isTrue);
+
+      expect(callbackClass2.callbackCalled, isFalse);
+      callbackClass2.callCallbackMethod();
+      await Future<void>.delayed(Duration(seconds: 2));
+      expect(callbackClass2.callbackCalled, isTrue);
     });
 
     test('$TestStruct', () {
       expect(TestStruct().intField, completion(isA<int>()));
-    });
+    }, skip: !Platform.isIOS);
   });
 }
 
