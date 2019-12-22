@@ -8,18 +8,19 @@ import 'platform_builder.dart';
 import '../templates/templates.dart';
 import '../templates/template_creator.dart';
 
-class AndroidBuilder extends PlatformBuilder {
+class AndroidBuilder extends PenguinBuilder {
   static String _androidPackageCache;
 
   @override
   Future<void> build(
     List<ClassInfo> classes,
-    PlatformBuilderBuildStep buildStep,
+    PenguinBuilderBuildStep buildStep,
   ) {
-    if (classes.isEmpty || classes.length == 1 && classes[0].name == 'Context') return Future<void>.value();
+    if (classes.isEmpty)
+      return Future<void>.value();
 
     final AndroidTemplateCreator creator = AndroidTemplateCreator();
-    return buildStep.writeAsString(
+    return buildStep.writeToLib(
       'ChannelGenerated.java',
       creator.createFile(
         imports: classes

@@ -29,8 +29,7 @@
 + (void)staticMethod;
 - (void)parameterMethod:(NSString *_Nonnull)supported
               primitive:(int)primitive
-                wrapper:(TestClass2 *_Nonnull)wrapper
-                aStruct:(CGRect)aStruct;
+                wrapper:(TestClass2 *_Nonnull)wrapper;
 - (void)returnVoid;
 - (NSObject *_Nonnull)returnObject;
 - (NSObject *_Nonnull)returnDynamic;

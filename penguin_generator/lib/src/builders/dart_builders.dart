@@ -7,14 +7,14 @@ import 'package:penguin_generator/src/templates/templates.dart';
 import '../templates/template_creator.dart';
 import 'platform_builder.dart';
 
-class DartMethodChannelBuilder extends PlatformBuilder {
+class DartMethodChannelBuilder extends PenguinBuilder {
   static const androidExtension = '.android.penguin.g.dart';
   static const iosExtension = '.ios.penguin.g.dart';
 
   @override
   Future<void> build(
     List<ClassInfo> classes,
-    PlatformBuilderBuildStep buildStep,
+    PenguinBuilderBuildStep buildStep,
   ) async {
     final MethodChannelTemplateCreator creator = MethodChannelTemplateCreator();
 
@@ -30,7 +30,7 @@ class DartMethodChannelBuilder extends PlatformBuilder {
   }
 
   Future<void> _buildAndroid(
-    PlatformBuilderBuildStep buildStep,
+    PenguinBuilderBuildStep buildStep,
     MethodChannelTemplateCreator creator,
     Iterable<ClassInfo> classes,
   ) {
@@ -38,7 +38,8 @@ class DartMethodChannelBuilder extends PlatformBuilder {
       buildStep.inputId.changeExtension(androidExtension),
       DartFormatter().format(
         creator.createFile(
-          filename: path.basename(buildStep.inputId.path),
+          filename:
+              '${path.basenameWithoutExtension(buildStep.inputId.path)}.dart',
           classes: classes
               .where((ClassInfo classInfo) =>
                   classInfo.aClass.platform is AndroidPlatform)
@@ -195,7 +196,7 @@ class DartMethodChannelBuilder extends PlatformBuilder {
   }
 
   Future<void> _buildIos(
-    PlatformBuilderBuildStep buildStep,
+    PenguinBuilderBuildStep buildStep,
     MethodChannelTemplateCreator creator,
     Iterable<ClassInfo> classes,
   ) {
@@ -203,7 +204,8 @@ class DartMethodChannelBuilder extends PlatformBuilder {
       buildStep.inputId.changeExtension(iosExtension),
       DartFormatter().format(
         creator.createFile(
-          filename: path.basename(buildStep.inputId.path),
+          filename:
+              '${path.basenameWithoutExtension(buildStep.inputId.path)}.dart',
           classes: classes
               .where((ClassInfo classInfo) =>
                   classInfo.aClass.platform is IosPlatform)

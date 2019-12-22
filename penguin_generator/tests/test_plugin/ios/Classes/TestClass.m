@@ -50,8 +50,7 @@
 
 - (void)parameterMethod:(NSString *)supported
               primitive:(int)primitive
-                wrapper:(TestClass2 *)wrapper
-                aStruct:(CGRect)aStruct {
+                wrapper:(TestClass2 *)wrapper {
   if ([supported isEqual:[NSNull null]] ||
       [wrapper isEqual:[NSNull null]] ||
       ![wrapper isKindOfClass:[TestClass2 class]]) {

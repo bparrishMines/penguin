@@ -5,7 +5,7 @@ import '../info.dart';
 import '../templates/templates.dart';
 import '../templates/template_creator.dart';
 
-class IosBuilder extends PlatformBuilder {
+class IosBuilder extends PenguinBuilder {
   static const String _headerFile = r'''
 #import <Flutter/Flutter.h>
 %%IMPORTS%%
@@ -60,13 +60,13 @@ class IosBuilder extends PlatformBuilder {
   @override
   Future<void> build(
     List<ClassInfo> classes,
-    PlatformBuilderBuildStep buildStep,
+    PenguinBuilderBuildStep buildStep,
   ) async {
-    if (classes.isEmpty || classes.length == 1 && classes[0].name == 'CGRect') return;
+    if (classes.isEmpty) return;
 
     final IosTemplateCreator creator = IosTemplateCreator();
     await Future.wait<void>(<Future<void>>[
-      buildStep.writeAsString(
+      buildStep.writeToLib(
         'ChannelHandler+Generated.h',
         IosTemplateCreator.createHeaderFile(
           headerTemplate: _headerFile,
@@ -88,7 +88,7 @@ class IosBuilder extends PlatformBuilder {
           ),
         ),
       ),
-      buildStep.writeAsString(
+      buildStep.writeToLib(
         'ChannelHandler+Generated.m',
         creator.createFile(
           structs: classes

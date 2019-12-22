@@ -5,8 +5,10 @@ import 'src/builders/android_builder.dart';
 import 'src/builders/dart_builders.dart';
 import 'src/builders/platform_builder.dart';
 
-Builder readBuilder(BuilderOptions options) =>
-    ReadInfoBuilder(<PlatformBuilder>[DartMethodChannelBuilder()]);
+Builder readBuilder(BuilderOptions options) => ReadInfoBuilder();
 
-Builder writeBuilder(BuilderOptions options) =>
-    WriteBuilder(<PlatformBuilder>[AndroidBuilder(), IosBuilder()]);
+Builder platformWriteBuilder(BuilderOptions options) =>
+    PlatformWriteBuilder(<PenguinBuilder>[AndroidBuilder(), IosBuilder()]);
+
+Builder dartWriteBuilder(BuilderOptions options) =>
+    DartWriteBuilder(<PenguinBuilder>[DartMethodChannelBuilder()]);
