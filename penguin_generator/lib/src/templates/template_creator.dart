@@ -730,6 +730,7 @@ class IosTemplateCreator extends TemplateCreator {
 
   String createMethod(
     MethodChannelType returnTypeChannelType,
+    Structure structure,
     bool isStatic, {
     @required Iterable<String> parameters,
     @required String returnType,
@@ -740,8 +741,12 @@ class IosTemplateCreator extends TemplateCreator {
       Block.method.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
         if (!isStatic) '+': '-',
-        Replacement.methodCallerName.name:
-            isStatic ? platformClassName : r'_value',
+        if (structure == Structure.struct)
+          Replacement.methodCallerName.name:
+              '[NSValue get__platformClassName__:_value]',
+        if (isStatic) Replacement.methodCallerName.name: platformClassName,
+        if (!isStatic && structure != Structure.struct)
+          Replacement.methodCallerName.name: r'_value',
         Block.preMethodCalls.exp:
             MethodChannelBlock.preMethodCall(returnTypeChannelType)
                 .exp
@@ -758,12 +763,14 @@ class IosTemplateCreator extends TemplateCreator {
             ),
         Replacement.returnType.name: returnType,
         Replacement.methodName.name: methodName,
+        Replacement.platformClassName.name: platformClassName,
       },
     );
   }
 
   String createField(
-    MethodChannelType channelType, {
+    MethodChannelType channelType,
+    Structure structure, {
     @required bool isStatic,
     @required bool isMutable,
     @required String parameter,
@@ -776,8 +783,12 @@ class IosTemplateCreator extends TemplateCreator {
         if (!isStatic) '+': '-',
         if (!isMutable)
           RegExp(r'if\s*(.*?)\s*{.*?}', multiLine: true, dotAll: true): '',
-        Replacement.methodCallerName.name:
-            isStatic ? platformClassName : r'_value',
+        if (structure == Structure.struct)
+          Replacement.methodCallerName.name:
+              '[NSValue get__platformClassName__:_value]',
+        if (isStatic) Replacement.methodCallerName.name: platformClassName,
+        if (!isStatic && structure != Structure.struct)
+          Replacement.methodCallerName.name: r'_value',
         Block.preMethodCalls.exp: MethodChannelBlock.preMethodCall(channelType)
             .exp
             .firstMatch(template.value)

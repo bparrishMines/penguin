@@ -148,8 +148,8 @@ static void *wrapperCallbackKey = &wrapperCallbackKey;
 @implementation  NSValue (Structs)
 %%STRUCTS%%
 %%STRUCT%%
-+ (__platformClassName__)get__platformClassName__:(NSValue *)wrapperValue {
-  __platformClassName__ value;
++ (struct __platformClassName__)get__platformClassName__:(NSValue *)wrapperValue {
+  struct __platformClassName__ value;
   [wrapperValue getValue:&value];
   return value;
 }

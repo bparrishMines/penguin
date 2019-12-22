@@ -57,6 +57,20 @@ class IosTextViewState extends State<TextView> {
   }
 }
 
+@Class(IosPlatform(
+  IosType('TestStruct', isStruct: true, import: '"TestPlugin.h"'),
+))
+class TestStruct extends $TestStruct {
+  @Constructor()
+  TestStruct() : super(randomId());
+
+  @Field()
+  @int32
+  Future<int> get intField {
+    return invoke<int>(channel, $TestStruct$Default(), [$intField()]);
+  }
+}
+
 @Class(IosPlatform(IosType('TestProtocol', import: '"TestPlugin.h"')))
 abstract class IosProtocol extends $IosProtocol {
   @Constructor()

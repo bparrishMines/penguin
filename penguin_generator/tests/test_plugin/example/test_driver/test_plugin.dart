@@ -184,6 +184,10 @@ void main() {
       await Future<void>.delayed(Duration(seconds: 2));
       expect(callbackClass.callbackCalled, isTrue);
     });
+
+    test('$TestStruct', () {
+      expect(TestStruct().intField, completion(isA<int>()));
+    });
   });
 }
 

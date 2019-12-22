@@ -206,6 +206,7 @@ class IosBuilder extends PenguinBuilder {
               methods: classInfo.methods.map<String>(
                 (MethodInfo methodInfo) => creator.createMethod(
                   getChannelType(methodInfo.returnType),
+                  _getStructure(classInfo),
                   methodInfo.isStatic,
                   platformClassName:
                       (classInfo.aClass.platform as IosPlatform).type.name,
@@ -227,6 +228,7 @@ class IosBuilder extends PenguinBuilder {
               fields: classInfo.fields.map<String>(
                 (FieldInfo fieldInfo) => creator.createField(
                   getChannelType(fieldInfo.type),
+                  _getStructure(classInfo),
                   isStatic: fieldInfo.isStatic,
                   isMutable: fieldInfo.isMutable,
                   fieldName: fieldInfo.name,

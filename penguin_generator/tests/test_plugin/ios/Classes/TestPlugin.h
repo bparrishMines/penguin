@@ -41,3 +41,7 @@
 - (NSArray *_Nonnull)returnList;
 - (NSDictionary *_Nonnull)returnMap;
 @end
+
+struct TestStruct {
+  int intField;
+};
