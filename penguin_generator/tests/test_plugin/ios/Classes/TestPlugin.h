@@ -13,7 +13,7 @@
 
 @interface GenericClass<T> : NSObject
 - (void)add:(T _Nonnull)object;
-- (T _Nullable)get;
+- (T _Nullable)get:(NSNumber *)identifier;
 @end
 
 @interface TestClass1 : NSObject

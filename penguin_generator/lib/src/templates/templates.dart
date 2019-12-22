@@ -310,6 +310,7 @@ static void *wrapperCallbackKey = &wrapperCallbackKey;
   %%PREMETHODCALL methodChannel:struct%%
   %%PREMETHODCALL methodChannel:struct%%
   %%PREMETHODCALL methodChannel:typeParameter%%
+  NSObject *result =
   %%PREMETHODCALL methodChannel:typeParameter%%
   %%PREMETHODCALLS%%
   
@@ -328,6 +329,7 @@ static void *wrapperCallbackKey = &wrapperCallbackKey;
   __parameterName__:[NSValue get__parameterType__:[[wrapperManager getWrapper:call.arguments[@"__parameterName__"]] getValue]]
   %%PARAMETER methodChannel:struct%%
   %%PARAMETER methodChannel:typeParameter%%
+  __parameterName__:![call.arguments[@"__parameterName__"] isEqual:[NSNull null]] ? [[wrapperManager getWrapper:call.arguments[@"__parameterName__"]] getValue] : nil
   %%PARAMETER methodChannel:typeParameter%%
   %%PARAMETERS%%
   ]
@@ -348,8 +350,12 @@ static void *wrapperCallbackKey = &wrapperCallbackKey;
   );
   %%POSTMETHODCALL methodChannel:primitive%%
   %%POSTMETHODCALL methodChannel:struct%%
+  ];
+  return [NSNull null];
   %%POSTMETHODCALL methodChannel:struct%%
   %%POSTMETHODCALL methodChannel:typeParameter%%
+  ;
+  return result;
   %%POSTMETHODCALL methodChannel:typeParameter%%
   %%POSTMETHODCALLS%%
 }

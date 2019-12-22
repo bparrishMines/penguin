@@ -730,7 +730,6 @@ class IosTemplateCreator extends TemplateCreator {
 
   String createMethod(
     MethodChannelType returnTypeChannelType,
-    Structure structure,
     bool isStatic, {
     @required Iterable<String> parameters,
     @required String returnType,
@@ -741,12 +740,8 @@ class IosTemplateCreator extends TemplateCreator {
       Block.method.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
         if (!isStatic) '+': '-',
-        if (structure == Structure.struct)
-          Replacement.methodCallerName.name:
-              '[NSValue get__platformClassName__:_value]',
         if (isStatic) Replacement.methodCallerName.name: platformClassName,
-        if (!isStatic && structure != Structure.struct)
-          Replacement.methodCallerName.name: r'_value',
+        if (!isStatic) Replacement.methodCallerName.name: r'_value',
         Block.preMethodCalls.exp:
             MethodChannelBlock.preMethodCall(returnTypeChannelType)
                 .exp

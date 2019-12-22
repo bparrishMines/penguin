@@ -8,7 +8,7 @@ public class GenericClass<T> {
     this.object = object;
   }
 
-  public T get(String id) {
+  public T get(String identifier) {
     return object;
   }
 }

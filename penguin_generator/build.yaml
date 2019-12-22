@@ -12,7 +12,7 @@ builders:
     build_extensions: {".dart": [".info"]}
     build_to: cache
     runs_before: [":platform_write_builder", ":dart_write_builder"]
-    auto_apply: dependents
+    auto_apply: root_package
 
   platform_write_builder:
     target: ":penguin_generator"

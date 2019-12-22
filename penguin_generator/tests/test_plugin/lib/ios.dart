@@ -318,8 +318,8 @@ class IosTestClass2 extends $IosTestClass2 with TestClass2 {
   }
 }
 
-//@Class(IosPlatform(IosType('GenericClass', import: '"TestPlugin.h"')))
-//class IosGenericClass<T> extends GenericClass<T> {
-//  @Constructor()
-//  IosGenericClass();
-//}
+@Class(IosPlatform(IosType('GenericClass', import: '"TestPlugin.h"')))
+class IosGenericClass<T> extends GenericClass<T> {
+  @Constructor()
+  IosGenericClass();
+}

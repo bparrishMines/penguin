@@ -93,5 +93,5 @@ abstract class GenericClass<T> {
   Future<void> add(T object) {}
 
   @Method()
-  Future<T> get(String id) {}
+  Future<T> get(String identifier) {}
 }

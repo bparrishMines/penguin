@@ -206,7 +206,6 @@ class IosBuilder extends PenguinBuilder {
               methods: classInfo.methods.map<String>(
                 (MethodInfo methodInfo) => creator.createMethod(
                   getChannelType(methodInfo.returnType),
-                  _getStructure(classInfo),
                   methodInfo.isStatic,
                   platformClassName:
                       (classInfo.aClass.platform as IosPlatform).type.name,
