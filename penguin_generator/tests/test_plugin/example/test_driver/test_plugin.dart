@@ -19,7 +19,8 @@ void main() {
   group('test_plugin', () {
     TestClass1 testClass;
     TestClass2 testClass2;
-    GenericClass genericClass;
+    GenericClass supportedGenericClass;
+    GenericClass wrapperGenericClass;
     dynamic callbackClass1;
     dynamic callbackClass2;
 
@@ -28,14 +29,18 @@ void main() {
       if (Platform.isAndroid) {
         testClass = AndroidTestClass1();
         testClass2 = AndroidTestClass2();
+        supportedGenericClass = AndroidGenericClass<int>();
+        wrapperGenericClass = AndroidGenericClass<AndroidTestClass2>();
+        callbackClass1 = AndroidCallbackClass();
+        callbackClass2 = AndroidCallbackClass();
       } else if (Platform.isIOS) {
         testClass = IosTestClass1();
         testClass2 = IosTestClass2();
+        supportedGenericClass = IosGenericClass<int>();
+        wrapperGenericClass = IosGenericClass<IosGenericClass>();
+        callbackClass1 = IosCallbackClass();
+        callbackClass2 = IosCallbackClass();
       }
-      callbackClass1 =
-          Platform.isAndroid ? AndroidCallbackClass() : IosCallbackClass();
-      callbackClass2 =
-          Platform.isAndroid ? AndroidCallbackClass() : IosCallbackClass();
     });
 
     test('intField', () {
@@ -196,6 +201,14 @@ void main() {
     test('$TestStruct', () {
       expect(TestStruct().intField, completion(isA<int>()));
     }, skip: !Platform.isIOS);
+
+    test('$GenericClass', () async {
+      supportedGenericClass.add(56);
+      expect(await supportedGenericClass.get('eoij'), 56);
+
+      //wrapperGenericClass.add(testClass2);
+      //TestClass2 testClass2 = await wrapperGenericClass.get('woie');
+    });
   });
 }
 

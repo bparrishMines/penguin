@@ -318,13 +318,17 @@ class AndroidTextViewState extends State<TextView> {
   androidApi: AndroidApi(21),
 )
 class AndroidTestClass2 extends $AndroidTestClass2 with TestClass2 {
+  AndroidTestClass2._(String uniqueId) : super(uniqueId) {
+    invokeAll(channel, <MethodCall>[$AndroidTestClass2$Default(), allocate()]);
+  }
+
   @Constructor()
   AndroidTestClass2() : super(randomId()) {
     constructorMethodCall = $AndroidTestClass2$Default();
   }
 
   static FutureOr<Wrapper> fromUniqueId(String uniqueId) =>
-      throw UnimplementedError();
+      AndroidTestClass2._(uniqueId);
 }
 
 @Class(AndroidPlatform(AndroidType(
@@ -347,10 +351,11 @@ class AndroidGenericClass<T> extends $AndroidGenericClass<T>
   }
 
   @override
-  Future<T> get(String identifier) {
+  Future<T> get(String identifier) async {
     if (isTypeOf<T, Wrapper>()) {
       final String id = randomId();
       invoke<void>(channel, $get(identifier, id));
+      return await _GenericHelper.fromUniqueId<T>(id);
     }
 
     return invoke<T>(channel, $get(identifier));

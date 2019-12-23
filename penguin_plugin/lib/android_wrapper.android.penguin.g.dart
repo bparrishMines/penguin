@@ -19,7 +19,11 @@ class $Context extends AndroidWrapper {
 }
 
 class _GenericHelper {
-  static FutureOr<Wrapper> fromUniqueId<T extends Wrapper>(String uniqueId) {
+  _GenericHelper._();
+
+  static FutureOr<dynamic> fromUniqueId<T>(String uniqueId) {
+    assert(isTypeOf<T, Wrapper>());
+
     if (isTypeOf<T, Context>()) {
       return Context.fromUniqueId(uniqueId);
     }

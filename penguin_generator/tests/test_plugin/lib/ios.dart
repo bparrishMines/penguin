@@ -324,13 +324,17 @@ class IosTestClass1 extends $IosTestClass1 with TestClass1 {
   IosType('TestClass2', import: '"TestPlugin.h"'),
 ))
 class IosTestClass2 extends $IosTestClass2 with TestClass2 {
+  IosTestClass2._(String uniqueId) : super(uniqueId) {
+    invokeAll(channel, <MethodCall>[$IosTestClass2$Default(), allocate()]);
+  }
+
   @Constructor()
   IosTestClass2() : super(randomId()) {
     constructorMethodCall = $IosTestClass2$Default();
   }
 
   static FutureOr<Wrapper> fromUniqueId(String uniqueId) =>
-      throw UnimplementedError();
+      IosTestClass2._(uniqueId);
 }
 
 @Class(IosPlatform(IosType('GenericClass', import: '"TestPlugin.h"')))
@@ -349,11 +353,11 @@ class IosGenericClass<T> extends $IosGenericClass<T> with GenericClass<T> {
   }
 
   @override
-  Future<T> get(String identifier) {
+  Future<T> get(String identifier) async {
     if (isTypeOf<T, Wrapper>()) {
       final String id = randomId();
       invoke<void>(channel, $get(identifier, id));
-      return Future<T>.value((T as dynamic).fromUniqueId(id));
+      return await _GenericHelper.fromUniqueId<T>(id);
     }
 
     return invoke<T>(channel, $get(identifier));

@@ -19,7 +19,11 @@ class $CGRect extends IosWrapper {
 }
 
 class _GenericHelper {
-  static FutureOr<Wrapper> fromUniqueId<T extends Wrapper>(String uniqueId) {
+  _GenericHelper._();
+
+  static FutureOr<dynamic> fromUniqueId<T>(String uniqueId) {
+    assert(isTypeOf<T, Wrapper>());
+
     if (isTypeOf<T, CGRect>()) {
       return CGRect.fromUniqueId(uniqueId);
     }

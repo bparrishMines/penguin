@@ -329,7 +329,7 @@ static void *wrapperCallbackKey = &wrapperCallbackKey;
   __parameterName__:[NSValue get__parameterType__:[[wrapperManager getWrapper:call.arguments[@"__parameterName__"]] getValue]]
   %%PARAMETER methodChannel:struct%%
   %%PARAMETER methodChannel:typeParameter%%
-  __parameterName__:![call.arguments[@"__parameterName__"] isEqual:[NSNull null]] ? [[wrapperManager getWrapper:call.arguments[@"__parameterName__"]] getValue] : nil
+  __parameterName__:[call.arguments[@"__parameterName__$isWrapper"] boolValue] ? (![call.arguments[@"__parameterName__"] isEqual:[NSNull null]] ? [[wrapperManager getWrapper:call.arguments[@"__parameterName__"]] getValue] : nil) : call.arguments[@"__parameterName__"]
   %%PARAMETER methodChannel:typeParameter%%
   %%PARAMETERS%%
   ]
@@ -690,7 +690,7 @@ class $__className____typeParameters__ extends __wrapperInterface__ {
       '__platformClassName__#__methodName__',
        <String, dynamic>{r'$uniqueId': uniqueId,
        r'$newUniqueId': $newUniqueId,
-       r'$returnTypeisWrapper': isTypeOf<__returnType__, Wrapper>(),
+       r'$returnTypeIsWrapper': isTypeOf<__returnType__, Wrapper>(),
        %%METHODCALLPARAMS%%
        %%METHODCALLPARAM methodChannel:supported%%
        '__parameterName__': __parameterName__,
@@ -719,7 +719,11 @@ class $__className____typeParameters__ extends __wrapperInterface__ {
 %%CLASSES%%
 
 class _GenericHelper {
-  static FutureOr<Wrapper> fromUniqueId<T extends Wrapper>(String uniqueId) {
+  _GenericHelper._();
+
+  static FutureOr<dynamic> fromUniqueId<T>(String uniqueId) {
+    assert(isTypeOf<T, Wrapper>());
+  
     %%GENERICHELPERS%%
     %%GENERICHELPER%%
     if (isTypeOf<T, __className__>()) {

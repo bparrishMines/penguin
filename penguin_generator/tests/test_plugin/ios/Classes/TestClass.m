@@ -97,7 +97,7 @@
   self->object = object;
 }
 
-- (id)get {
+- (id)get:(NSString *_Nonnull)identifier; {
   return object;
 }
 @end
