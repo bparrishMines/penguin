@@ -34,7 +34,7 @@ class AndroidNestedClass extends $AndroidNestedClass {
 abstract class AndroidAbstractClass extends $AndroidAbstractClass {
   @Constructor()
   AndroidAbstractClass() : super(randomId()) {
-    invokeAll(channel, <MethodCall>[
+    invoke(channel, <MethodCall>[
       $AndroidAbstractClass$Default(),
       allocate(),
     ]);
@@ -44,7 +44,7 @@ abstract class AndroidAbstractClass extends $AndroidAbstractClass {
 
   @Method(callback: true)
   void callbackMethod() {
-    invoke<void>(channel, $callbackMethod());
+    invoke<void>(channel, [$callbackMethod()]);
   }
 
   static FutureOr<Wrapper> fromUniqueId(String uniqueId) =>
@@ -83,12 +83,12 @@ class AndroidTestClass1 extends $AndroidTestClass1 with TestClass1 {
 
   @Field()
   static Future<List<bool>> get staticField {
-    return invokeList<bool>(channel, $AndroidTestClass1.$staticField());
+    return invokeList<bool>(channel, [$AndroidTestClass1.$staticField()]);
   }
 
   @Method()
   static Future<void> staticMethod() {
-    return invoke<void>(channel, $AndroidTestClass1.$staticMethod());
+    return invoke<void>(channel, [$AndroidTestClass1.$staticMethod()]);
   }
 
   @Method()
@@ -100,9 +100,8 @@ class AndroidTestClass1 extends $AndroidTestClass1 with TestClass1 {
   ) {
     return invoke<void>(
       channel,
-      methodCallStorageHelper.methodCalls[0],
-      methodCallStorageHelper.methodCalls.skip(1).toList()
-      ..addAll(wrapper.methodCallStorageHelper.methodCalls)
+      methodCallStorageHelper.methodCalls
+        ..addAll(wrapper.methodCallStorageHelper.methodCalls)
         ..addAll(nested.methodCallStorageHelper.methodCalls)
         ..add($parameterMethod(
           supported,
@@ -114,9 +113,8 @@ class AndroidTestClass1 extends $AndroidTestClass1 with TestClass1 {
   }
 
   @override
-  set mutableField(FutureOr<double> value) =>
-      invoke<double>(channel, methodCallStorageHelper.methodCalls[0], [
-        ...methodCallStorageHelper.methodCalls.skip(1),
+  set mutableField(FutureOr<double> value) => invoke<double>(channel, [
+        ...methodCallStorageHelper.methodCalls,
         allocate(),
         $mutableField(mutableField: value),
       ]);
@@ -124,25 +122,20 @@ class AndroidTestClass1 extends $AndroidTestClass1 with TestClass1 {
   @override
   FutureOr<double> get mutableField => invoke<double>(
         channel,
-        $mutableField(),
+        [$mutableField()],
       );
 
   @override
   Future<void> returnVoid() {
     return invoke<void>(
-        channel,
-        methodCallStorageHelper.methodCalls[0],
-        methodCallStorageHelper.methodCalls.skip(1).toList()
-          ..add($returnVoid()));
+        channel, methodCallStorageHelper.methodCalls..add($returnVoid()));
   }
 
   @override
   Future<String> returnString() {
     return invoke<String>(
       channel,
-      methodCallStorageHelper.methodCalls[0],
-      methodCallStorageHelper.methodCalls.skip(1).toList()
-        ..add($returnString()),
+      methodCallStorageHelper.methodCalls..add($returnString()),
     );
   }
 
@@ -150,8 +143,7 @@ class AndroidTestClass1 extends $AndroidTestClass1 with TestClass1 {
   Future<int> returnInt() {
     return invoke<int>(
       channel,
-      methodCallStorageHelper.methodCalls[0],
-      methodCallStorageHelper.methodCalls.skip(1).toList()..add($returnInt()),
+      methodCallStorageHelper.methodCalls..add($returnInt()),
     );
   }
 
@@ -159,9 +151,7 @@ class AndroidTestClass1 extends $AndroidTestClass1 with TestClass1 {
   Future<double> returnDouble() {
     return invoke<double>(
       channel,
-      methodCallStorageHelper.methodCalls[0],
-      methodCallStorageHelper.methodCalls.skip(1).toList()
-        ..add($returnDouble()),
+      methodCallStorageHelper.methodCalls..add($returnDouble()),
     );
   }
 
@@ -169,8 +159,7 @@ class AndroidTestClass1 extends $AndroidTestClass1 with TestClass1 {
   Future<bool> returnBool() {
     return invoke<bool>(
       channel,
-      methodCallStorageHelper.methodCalls[0],
-      methodCallStorageHelper.methodCalls.skip(1).toList()..add($returnBool()),
+      methodCallStorageHelper.methodCalls..add($returnBool()),
     );
   }
 
@@ -178,8 +167,7 @@ class AndroidTestClass1 extends $AndroidTestClass1 with TestClass1 {
   Future<List<double>> returnList() {
     return invokeList<double>(
       channel,
-      methodCallStorageHelper.methodCalls[0],
-      methodCallStorageHelper.methodCalls.skip(1).toList()..add($returnList()),
+      methodCallStorageHelper.methodCalls..add($returnList()),
     );
   }
 
@@ -187,8 +175,7 @@ class AndroidTestClass1 extends $AndroidTestClass1 with TestClass1 {
   Future<Map<String, int>> returnMap() {
     return invokeMap<String, int>(
       channel,
-      methodCallStorageHelper.methodCalls[0],
-      methodCallStorageHelper.methodCalls.skip(1).toList()..add($returnMap()),
+      methodCallStorageHelper.methodCalls..add($returnMap()),
     );
   }
 
@@ -196,9 +183,7 @@ class AndroidTestClass1 extends $AndroidTestClass1 with TestClass1 {
   Future<Object> returnObject() {
     return invoke<Object>(
       channel,
-      methodCallStorageHelper.methodCalls[0],
-      methodCallStorageHelper.methodCalls.skip(1).toList()
-        ..add($returnObject()),
+      methodCallStorageHelper.methodCalls..add($returnObject()),
     );
   }
 
@@ -206,37 +191,25 @@ class AndroidTestClass1 extends $AndroidTestClass1 with TestClass1 {
   Future<dynamic> returnDynamic() {
     return invoke<dynamic>(
       channel,
-      methodCallStorageHelper.methodCalls[0],
-      methodCallStorageHelper.methodCalls.skip(1).toList()
-        ..add($returnDynamic()),
+      methodCallStorageHelper.methodCalls..add($returnDynamic()),
     );
   }
 
   @override
   FutureOr<int> get intField => invoke<int>(
-      channel,
-      methodCallStorageHelper.methodCalls[0],
-      methodCallStorageHelper.methodCalls.skip(1).toList()..add($intField()));
+      channel, methodCallStorageHelper.methodCalls..add($intField()));
 
   @override
   Future<String> get stringField => invoke<String>(
-      channel,
-      methodCallStorageHelper.methodCalls[0],
-      methodCallStorageHelper.methodCalls.skip(1).toList()
-        ..add($stringField()));
+      channel, methodCallStorageHelper.methodCalls..add($stringField()));
 
   @override
   Future<double> get doubleField => invoke<double>(
-      channel,
-      methodCallStorageHelper.methodCalls[0],
-      methodCallStorageHelper.methodCalls.skip(1).toList()
-        ..add($doubleField()));
+      channel, methodCallStorageHelper.methodCalls..add($doubleField()));
 
   @override
   Future<bool> get boolField => invoke<bool>(
-      channel,
-      methodCallStorageHelper.methodCalls[0],
-      methodCallStorageHelper.methodCalls.skip(1).toList()..add($boolField()));
+      channel, methodCallStorageHelper.methodCalls..add($boolField()));
 
   static FutureOr<Wrapper> fromUniqueId(String uniqueId) =>
       throw UnimplementedError();
@@ -314,7 +287,7 @@ class AndroidGenericClass<T> extends $AndroidGenericClass<T>
     with GenericClass<T> {
   @Constructor()
   AndroidGenericClass() : super(randomId()) {
-    invokeAll(
+    invoke<void>(
       channel,
       <MethodCall>[$AndroidGenericClass$Default(), allocate()],
     );
@@ -325,24 +298,23 @@ class AndroidGenericClass<T> extends $AndroidGenericClass<T>
     if (isTypeOf<T, Wrapper>()) {
       return invoke<void>(
         channel,
-        (object as Wrapper).methodCallStorageHelper.methodCalls[0],
-        (object as Wrapper).methodCallStorageHelper.methodCalls.skip(1).toList()
+        (object as Wrapper).methodCallStorageHelper.methodCalls.toList()
           ..add($add(object)),
       );
     }
 
-    return invoke<void>(channel, $add(object));
+    return invoke<void>(channel, [$add(object)]);
   }
 
   @override
   Future<T> get(String identifier) async {
     if (isTypeOf<T, Wrapper>()) {
       final String id = randomId();
-      invoke<void>(channel, $get(identifier, id));
+      invoke<void>(channel, [$get(identifier, id)]);
       return await _GenericHelper.fromUniqueId<T>(id);
     }
 
-    return invoke<T>(channel, $get(identifier));
+    return invoke<T>(channel, [$get(identifier)]);
   }
 
   static FutureOr<Wrapper> fromUniqueId(String uniqueId) =>

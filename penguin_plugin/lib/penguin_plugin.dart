@@ -103,16 +103,12 @@ class MethodCallStorageHelper {
   }
 }
 
-Future<T> invoke<T>(
-  MethodChannel channel,
-  MethodCall call, [
-  Iterable<MethodCall> following = const <MethodCall>[],
-]) {
+Future<T> invoke<T>(MethodChannel channel, Iterable<MethodCall> calls) {
   final Completer<T> completer = Completer<T>();
 
-  invokeAll(
+  invokeForAll(
     channel,
-    <MethodCall>[call, ...following].where((MethodCall call) => call != null),
+    calls.where((MethodCall call) => call != null),
   ).then(
     (List<dynamic> results) => completer.complete(results.last),
   );
@@ -122,39 +118,27 @@ Future<T> invoke<T>(
 
 Future<List<T>> invokeList<T>(
   MethodChannel channel,
-  MethodCall call, [
-  Iterable<MethodCall> following = const <MethodCall>[],
-]) {
+  Iterable<MethodCall> calls,
+) {
   final Completer<List<T>> completer = Completer<List<T>>();
-
-  invokeAll(
-    channel,
-    <MethodCall>[call, ...following].where((MethodCall call) => call != null),
-  ).then(
-    (List<dynamic> results) => completer.complete(results.last.cast<T>()),
+  invoke<List>(channel, calls).then(
+    (List result) => completer.complete(result.cast<T>()),
   );
-
   return completer.future;
 }
 
 Future<Map<S, T>> invokeMap<S, T>(
   MethodChannel channel,
-  MethodCall call, [
-  Iterable<MethodCall> following = const <MethodCall>[],
-]) {
+  Iterable<MethodCall> calls,
+) {
   final Completer<Map<S, T>> completer = Completer<Map<S, T>>();
-
-  invokeAll(
-    channel,
-    <MethodCall>[call, ...following].where((MethodCall call) => call != null),
-  ).then(
-    (List<dynamic> results) => completer.complete(results.last.cast<S, T>()),
+  invoke<Map>(channel, calls).then(
+    (Map result) => completer.complete(result.cast<S, T>()),
   );
-
   return completer.future;
 }
 
-Future<List<dynamic>> invokeAll(
+Future<List<dynamic>> invokeForAll(
   MethodChannel channel,
   Iterable<MethodCall> methodCalls,
 ) {
