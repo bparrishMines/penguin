@@ -84,14 +84,18 @@ abstract class TestClass1 {
 
 abstract class TestClass2 {
   MethodCall constructorMethodCall;
+
+  TestClass2 fromUniqueId(String uniqueId) {
+    if (io.Platform.isAndroid) return AndroidTestClass2();
+    else if (io.Platform.isIOS) return IosTestClass2();
+    throw UnsupportedError(io.Platform.operatingSystem);
+  }
 }
 
 abstract class GenericClass<T> {
-  MethodCall constructorMethodCall;
+  @Method()
+  Future<void> add(T object);
 
   @Method()
-  Future<void> add(T object) {}
-
-  @Method()
-  Future<T> get(String identifier) {}
+  Future<T> get(String identifier);
 }

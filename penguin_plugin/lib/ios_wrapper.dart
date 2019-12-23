@@ -22,12 +22,12 @@ class IosCallbackHandler extends CallbackHandler {
   ) get onCreateView =>
       (Wrapper wrapper, Map<String, dynamic> arguments) async {
         return (wrapper as IosWrapper).onCreateView(
-          CGRect._fromUniqueId(arguments['cgRect']),
+          CGRect.fromUniqueId(arguments['cgRect']),
         );
       };
 }
 
 @Class(IosPlatform(IosType('CGRect', isStruct: true)))
 class CGRect extends $CGRect {
-  CGRect._fromUniqueId(String uniqueId) : super(uniqueId);
+  CGRect.fromUniqueId(String uniqueId) : super(uniqueId);
 }

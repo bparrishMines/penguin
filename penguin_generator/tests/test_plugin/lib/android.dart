@@ -316,7 +316,28 @@ class AndroidTestClass2 extends $AndroidTestClass2 with TestClass2 {
   'com.example.test_plugin.test_library',
   <String>['GenericClass'],
 )))
-class AndroidGenericClass<T> extends GenericClass<T> {
+class AndroidGenericClass<T> extends $AndroidGenericClass<T>
+    with GenericClass<T> {
   @Constructor()
-  AndroidGenericClass();
+  AndroidGenericClass() : super(randomId()) {
+    invokeAll(
+      channel,
+      <MethodCall>[$AndroidGenericClass$Default(), allocate()],
+    );
+  }
+
+  @override
+  Future<void> add(T object) {
+    return invoke<void>(channel, $add(object));
+  }
+
+  @override
+  Future<T> get(String identifier) {
+    if (isTypeOf<T, Wrapper>()) {
+      final String id = randomId();
+      invoke<void>(channel, $get(identifier, id));
+    }
+
+    return invoke<T>(channel, $get(identifier));
+  }
 }

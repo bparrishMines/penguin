@@ -319,7 +319,28 @@ class IosTestClass2 extends $IosTestClass2 with TestClass2 {
 }
 
 @Class(IosPlatform(IosType('GenericClass', import: '"TestPlugin.h"')))
-class IosGenericClass<T> extends GenericClass<T> {
+class IosGenericClass<T> extends $IosGenericClass<T> with GenericClass<T> {
   @Constructor()
-  IosGenericClass();
+  IosGenericClass() : super(randomId()) {
+    invokeAll(
+      channel,
+      <MethodCall>[$IosGenericClass$Default(), allocate()],
+    );
+  }
+
+  @override
+  Future<void> add(T object) {
+    return invoke<void>(channel, $add(object));
+  }
+
+  @override
+  Future<T> get(String identifier) {
+    if (isTypeOf<T, Wrapper>()) {
+      final String id = randomId();
+      invoke<void>(channel, $get(identifier, id));
+      return Future<T>.value((T as dynamic).fromUniqueId(id));
+    }
+
+    return invoke<T>(channel, $get(identifier));
+  }
 }
