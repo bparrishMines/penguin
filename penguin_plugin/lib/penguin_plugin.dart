@@ -78,19 +78,24 @@ class MethodCallStorageHelper {
 
   List<MethodCall> get methodCalls => List<MethodCall>.from(_storedMethodCalls);
 
-  void storeMethodCall(MethodCall call) {
+  void store(MethodCall call) {
     _callIndexes[call.method] = _storedMethodCalls.length;
     _storedMethodCalls.add(call);
   }
 
-  void replaceMethodCall(MethodCall call) {
+  void replace(MethodCall call) {
     final int index = _callIndexes[call.method];
     if (index != null) {
       _storedMethodCalls[index] = call;
     } else {
-      storeMethodCall(call);
+      store(call);
     }
   }
+
+  void storeAll(Iterable<MethodCall> calls) => calls.forEach((_) => store(_));
+
+  void replaceAll(Iterable<MethodCall> calls) =>
+      calls.forEach((_) => replace(_));
 
   void clearMethodCalls() {
     _storedMethodCalls.clear();

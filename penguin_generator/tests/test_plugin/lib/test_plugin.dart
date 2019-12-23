@@ -34,8 +34,6 @@ class TextView extends StatefulWidget {
 }
 
 abstract class TestClass1 {
-  List<MethodCall> constructorMethodCalls;
-
   @Field()
   set mutableField(FutureOr<double> value);
 
@@ -82,9 +80,7 @@ abstract class TestClass1 {
   Future<bool> get boolField;
 }
 
-abstract class TestClass2 {
-  MethodCall constructorMethodCall;
-}
+abstract class TestClass2 {}
 
 abstract class GenericClass<T> {
   @Method()

@@ -104,7 +104,7 @@ abstract class IosProtocol extends $IosProtocol {
 class IosTestClass1 extends $IosTestClass1 with TestClass1 {
   @Constructor()
   IosTestClass1() : super(randomId()) {
-    constructorMethodCalls = [$IosTestClass1$Default()];
+    methodCallStorageHelper.store($IosTestClass1$Default());
   }
 
   @Constructor()
@@ -113,14 +113,14 @@ class IosTestClass1 extends $IosTestClass1 with TestClass1 {
     @int32 int primitive,
     IosTestClass2 wrapper,
   ) : super(randomId()) {
-    constructorMethodCalls = [
-      wrapper.$IosTestClass2$Default(),
-      $IosTestClass1initNamedConstructor(
-        supported,
-        primitive,
-        wrapper,
-      )
-    ];
+    methodCallStorageHelper.storeAll(
+      wrapper.methodCallStorageHelper.methodCalls,
+    );
+    methodCallStorageHelper.store($IosTestClass1initNamedConstructor(
+      supported,
+      primitive,
+      wrapper,
+    ));
   }
 
   @Field()
@@ -147,12 +147,10 @@ class IosTestClass1 extends $IosTestClass1 with TestClass1 {
   ) {
     return invoke<void>(
       channel,
-      constructorMethodCalls[0],
-      <MethodCall>[
-        ...constructorMethodCalls.skip(1).toList(),
-        wrapper.constructorMethodCall,
-        $parameterMethod(supported, primitive, wrapper),
-      ],
+      methodCallStorageHelper.methodCalls[0],
+      methodCallStorageHelper.methodCalls.skip(1).toList()
+        ..addAll(wrapper.methodCallStorageHelper.methodCalls)
+        ..add($parameterMethod(supported, primitive, wrapper)),
     );
   }
 
@@ -161,15 +159,15 @@ class IosTestClass1 extends $IosTestClass1 with TestClass1 {
   Future<int> returnInt32() {
     return invoke<int>(
       channel,
-      constructorMethodCalls[0],
-      <MethodCall>[...constructorMethodCalls.skip(1).toList(), $returnInt32()],
+      methodCallStorageHelper.methodCalls[0],
+      methodCallStorageHelper.methodCalls.skip(1).toList()..add($returnInt32()),
     );
   }
 
   @override
   set mutableField(FutureOr<double> value) =>
-      invoke<double>(channel, constructorMethodCalls[0], [
-        ...constructorMethodCalls.skip(1).toList(),
+      invoke<double>(channel, methodCallStorageHelper.methodCalls[0], [
+        ...methodCallStorageHelper.methodCalls.skip(1),
         allocate(),
         $mutableField(mutableField: value),
       ]);
@@ -183,24 +181,19 @@ class IosTestClass1 extends $IosTestClass1 with TestClass1 {
   @override
   Future<void> returnVoid() {
     return invoke<void>(
-      channel,
-      constructorMethodCalls[0],
-      <MethodCall>[
-        ...constructorMethodCalls.skip(1).toList(),
-        $returnVoid(),
-      ],
-    );
+        channel,
+        methodCallStorageHelper.methodCalls[0],
+        methodCallStorageHelper.methodCalls.skip(1).toList()
+          ..add($returnVoid()));
   }
 
   @override
   Future<String> returnString() {
     return invoke<String>(
       channel,
-      constructorMethodCalls[0],
-      <MethodCall>[
-        ...constructorMethodCalls.skip(1).toList(),
-        $returnString(),
-      ],
+      methodCallStorageHelper.methodCalls[0],
+      methodCallStorageHelper.methodCalls.skip(1).toList()
+        ..add($returnString()),
     );
   }
 
@@ -208,11 +201,8 @@ class IosTestClass1 extends $IosTestClass1 with TestClass1 {
   Future<int> returnInt() {
     return invoke<int>(
       channel,
-      constructorMethodCalls[0],
-      <MethodCall>[
-        ...constructorMethodCalls.skip(1).toList(),
-        $returnInt(),
-      ],
+      methodCallStorageHelper.methodCalls[0],
+      methodCallStorageHelper.methodCalls.skip(1).toList()..add($returnInt()),
     );
   }
 
@@ -220,11 +210,9 @@ class IosTestClass1 extends $IosTestClass1 with TestClass1 {
   Future<double> returnDouble() {
     return invoke<double>(
       channel,
-      constructorMethodCalls[0],
-      <MethodCall>[
-        ...constructorMethodCalls.skip(1).toList(),
-        $returnDouble(),
-      ],
+      methodCallStorageHelper.methodCalls[0],
+      methodCallStorageHelper.methodCalls.skip(1).toList()
+        ..add($returnDouble()),
     );
   }
 
@@ -232,11 +220,8 @@ class IosTestClass1 extends $IosTestClass1 with TestClass1 {
   Future<bool> returnBool() {
     return invoke<bool>(
       channel,
-      constructorMethodCalls[0],
-      <MethodCall>[
-        ...constructorMethodCalls.skip(1).toList(),
-        $returnBool(),
-      ],
+      methodCallStorageHelper.methodCalls[0],
+      methodCallStorageHelper.methodCalls.skip(1).toList()..add($returnBool()),
     );
   }
 
@@ -244,11 +229,8 @@ class IosTestClass1 extends $IosTestClass1 with TestClass1 {
   Future<List<double>> returnList() {
     return invokeList<double>(
       channel,
-      constructorMethodCalls[0],
-      <MethodCall>[
-        ...constructorMethodCalls.skip(1).toList(),
-        $returnList(),
-      ],
+      methodCallStorageHelper.methodCalls[0],
+      methodCallStorageHelper.methodCalls.skip(1).toList()..add($returnList()),
     );
   }
 
@@ -256,11 +238,8 @@ class IosTestClass1 extends $IosTestClass1 with TestClass1 {
   Future<Map<String, int>> returnMap() {
     return invokeMap<String, int>(
       channel,
-      constructorMethodCalls[0],
-      <MethodCall>[
-        ...constructorMethodCalls.skip(1).toList(),
-        $returnMap(),
-      ],
+      methodCallStorageHelper.methodCalls[0],
+      methodCallStorageHelper.methodCalls.skip(1).toList()..add($returnMap()),
     );
   }
 
@@ -268,11 +247,9 @@ class IosTestClass1 extends $IosTestClass1 with TestClass1 {
   Future<Object> returnObject() {
     return invoke<Object>(
       channel,
-      constructorMethodCalls[0],
-      <MethodCall>[
-        ...constructorMethodCalls.skip(1).toList(),
-        $returnObject(),
-      ],
+      methodCallStorageHelper.methodCalls[0],
+      methodCallStorageHelper.methodCalls.skip(1).toList()
+        ..add($returnObject()),
     );
   }
 
@@ -280,41 +257,37 @@ class IosTestClass1 extends $IosTestClass1 with TestClass1 {
   Future<dynamic> returnDynamic() {
     return invoke<dynamic>(
       channel,
-      constructorMethodCalls[0],
-      <MethodCall>[
-        ...constructorMethodCalls.skip(1).toList(),
-        $returnDynamic(),
-      ],
+      methodCallStorageHelper.methodCalls[0],
+      methodCallStorageHelper.methodCalls.skip(1).toList()
+        ..add($returnDynamic()),
     );
   }
 
   @override
-  FutureOr<int> get intField =>
-      invoke<int>(channel, constructorMethodCalls[0], [
-        ...constructorMethodCalls.skip(1).toList(),
-        $intField(),
-      ]);
+  FutureOr<int> get intField => invoke<int>(
+      channel,
+      methodCallStorageHelper.methodCalls[0],
+      methodCallStorageHelper.methodCalls.skip(1).toList()..add($intField()));
 
   @override
-  Future<String> get stringField =>
-      invoke<String>(channel, constructorMethodCalls[0], [
-        ...constructorMethodCalls.skip(1).toList(),
-        $stringField(),
-      ]);
+  Future<String> get stringField => invoke<String>(
+      channel,
+      methodCallStorageHelper.methodCalls[0],
+      methodCallStorageHelper.methodCalls.skip(1).toList()
+        ..add($stringField()));
 
   @override
-  Future<double> get doubleField =>
-      invoke<double>(channel, constructorMethodCalls[0], [
-        ...constructorMethodCalls.skip(1).toList(),
-        $doubleField(),
-      ]);
+  Future<double> get doubleField => invoke<double>(
+      channel,
+      methodCallStorageHelper.methodCalls[0],
+      methodCallStorageHelper.methodCalls.skip(1).toList()
+        ..add($doubleField()));
 
   @override
-  Future<bool> get boolField =>
-      invoke<bool>(channel, constructorMethodCalls[0], [
-        ...constructorMethodCalls.skip(1).toList(),
-        $boolField(),
-      ]);
+  Future<bool> get boolField => invoke<bool>(
+      channel,
+      methodCallStorageHelper.methodCalls[0],
+      methodCallStorageHelper.methodCalls.skip(1).toList()..add($boolField()));
 
   static FutureOr<Wrapper> fromUniqueId(String uniqueId) =>
       throw UnimplementedError();
@@ -330,7 +303,7 @@ class IosTestClass2 extends $IosTestClass2 with TestClass2 {
 
   @Constructor()
   IosTestClass2() : super(randomId()) {
-    constructorMethodCall = $IosTestClass2$Default();
+    methodCallStorageHelper.store($IosTestClass2$Default());
   }
 
   static FutureOr<Wrapper> fromUniqueId(String uniqueId) =>
@@ -349,6 +322,15 @@ class IosGenericClass<T> extends $IosGenericClass<T> with GenericClass<T> {
 
   @override
   Future<void> add(T object) {
+    if (isTypeOf<T, Wrapper>()) {
+      return invoke<void>(
+        channel,
+        (object as Wrapper).methodCallStorageHelper.methodCalls[0],
+        (object as Wrapper).methodCallStorageHelper.methodCalls.skip(1).toList()
+          ..add($add(object)),
+      );
+    }
+
     return invoke<void>(channel, $add(object));
   }
 
