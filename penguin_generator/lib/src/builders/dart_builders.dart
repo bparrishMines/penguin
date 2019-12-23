@@ -13,34 +13,56 @@ class DartMethodChannelBuilder extends PenguinBuilder {
 
   @override
   Future<void> build(
-    List<ClassInfo> classes,
+    List<ClassInfo> libraryClasses,
+    List<ClassInfo> importedClasses,
     PenguinBuilderBuildStep buildStep,
   ) async {
     final MethodChannelTemplateCreator creator = MethodChannelTemplateCreator();
 
-    final bool hasAndroid = classes.any(
+    final bool hasAndroid = libraryClasses.any(
         (ClassInfo classInfo) => classInfo.aClass.platform is AndroidPlatform);
-    final bool hasIos = classes
+    final bool hasIos = libraryClasses
         .any((ClassInfo classInfo) => classInfo.aClass.platform is IosPlatform);
 
     await Future.wait<void>(<Future<void>>[
-      if (hasAndroid) _buildAndroid(buildStep, creator, classes),
-      if (hasIos) _buildIos(buildStep, creator, classes),
+      if (hasAndroid)
+        _buildAndroid(
+          buildStep,
+          creator,
+          libraryClasses,
+          importedClasses,
+        ),
+      if (hasIos)
+        _buildIos(
+          buildStep,
+          creator,
+          libraryClasses,
+          importedClasses,
+        ),
     ]);
   }
 
   Future<void> _buildAndroid(
     PenguinBuilderBuildStep buildStep,
     MethodChannelTemplateCreator creator,
-    Iterable<ClassInfo> classes,
+    Iterable<ClassInfo> libraryClasses,
+    Iterable<ClassInfo> importedClasses,
   ) {
     return buildStep.writeToAsset(
       buildStep.inputId.changeExtension(androidExtension),
       DartFormatter().format(
         creator.createFile(
+          genericHelpers: libraryClasses
+              .followedBy(importedClasses)
+              .where((ClassInfo classInfo) =>
+                  classInfo.aClass.platform is AndroidPlatform)
+              .map<String>(
+                (ClassInfo classInfo) =>
+                    creator.createGenericHelper(className: classInfo.name),
+              ),
           filename:
               '${path.basenameWithoutExtension(buildStep.inputId.path)}.dart',
-          classes: classes
+          classes: libraryClasses
               .where((ClassInfo classInfo) =>
                   classInfo.aClass.platform is AndroidPlatform)
               .map<String>(
@@ -198,15 +220,24 @@ class DartMethodChannelBuilder extends PenguinBuilder {
   Future<void> _buildIos(
     PenguinBuilderBuildStep buildStep,
     MethodChannelTemplateCreator creator,
-    Iterable<ClassInfo> classes,
+    Iterable<ClassInfo> libraryClasses,
+    Iterable<ClassInfo> importedClasses,
   ) {
     return buildStep.writeToAsset(
       buildStep.inputId.changeExtension(iosExtension),
       DartFormatter().format(
         creator.createFile(
+          genericHelpers: libraryClasses
+              .followedBy(importedClasses)
+              .where((ClassInfo classInfo) =>
+                  classInfo.aClass.platform is IosPlatform)
+              .map<String>(
+                (ClassInfo classInfo) =>
+                    creator.createGenericHelper(className: classInfo.name),
+              ),
           filename:
               '${path.basenameWithoutExtension(buildStep.inputId.path)}.dart',
-          classes: classes
+          classes: libraryClasses
               .where((ClassInfo classInfo) =>
                   classInfo.aClass.platform is IosPlatform)
               .map<String>(

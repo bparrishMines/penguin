@@ -212,6 +212,7 @@ class MethodChannelTemplateCreator extends TemplateCreator {
 
   String createFile({
     @required Iterable<String> classes,
+    @required Iterable<String> genericHelpers,
     @required String filename,
   }) {
     return TemplateCreator._replace(
@@ -219,6 +220,16 @@ class MethodChannelTemplateCreator extends TemplateCreator {
       <Pattern, String>{
         Block.classes.exp: classes.join(),
         Replacement.filename.name: filename,
+        Block.genericHelpers.exp: genericHelpers.join('else'),
+      },
+    );
+  }
+
+  String createGenericHelper({@required String className}) {
+    return TemplateCreator._replace(
+      Block.genericHelper.exp.firstMatch(template.value).group(1),
+      <Pattern, String>{
+        Replacement.className.name: className,
       },
     );
   }

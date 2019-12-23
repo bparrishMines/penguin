@@ -17,3 +17,13 @@ class $Context extends AndroidWrapper {
     throw UnimplementedError('No implementation for ${call.method}.');
   }
 }
+
+class _GenericHelper {
+  static FutureOr<Wrapper> fromUniqueId<T extends Wrapper>(String uniqueId) {
+    if (isTypeOf<T, Context>()) {
+      return Context.fromUniqueId(uniqueId);
+    }
+
+    throw UnsupportedError('Could not instantiate class ${T.toString()}');
+  }
+}

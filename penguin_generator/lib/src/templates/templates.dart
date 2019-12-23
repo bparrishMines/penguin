@@ -717,6 +717,20 @@ class $__className____typeParameters__ extends __wrapperInterface__ {
 }
 %%CLASS%%
 %%CLASSES%%
+
+class _GenericHelper {
+  static FutureOr<Wrapper> fromUniqueId<T extends Wrapper>(String uniqueId) {
+    %%GENERICHELPERS%%
+    %%GENERICHELPER%%
+    if (isTypeOf<T, __className__>()) {
+      return __className__.fromUniqueId(uniqueId);
+    }
+    %%GENERICHELPER%%
+    %%GENERICHELPERS%%
+
+    throw UnsupportedError('Could not instantiate class ${T.toString()}');
+  }
+}
 ''');
 
   static const Template android = Template._(r'''
@@ -1245,6 +1259,9 @@ class Block {
 
   static Block callbackSwizzles = Block('CALLBACKSWIZZLES');
   static Block callbackSwizzle = Block('CALLBACKSWIZZLE');
+
+  static Block genericHelpers = Block('GENERICHELPERS');
+  static Block genericHelper = Block('GENERICHELPER');
 }
 
 class MethodChannelBlock extends Block {

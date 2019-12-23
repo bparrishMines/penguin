@@ -55,6 +55,9 @@ class IosTextViewState extends State<TextView> {
       creationParamsCodec: const StandardMessageCodec(),
     );
   }
+
+  static FutureOr<Wrapper> fromUniqueId(String uniqueId) =>
+      throw UnimplementedError();
 }
 
 @Class(IosPlatform(
@@ -69,6 +72,9 @@ class TestStruct extends $TestStruct {
   Future<int> get intField {
     return invoke<int>(channel, $TestStruct$Default(), [$intField()]);
   }
+
+  static FutureOr<Wrapper> fromUniqueId(String uniqueId) =>
+      throw UnimplementedError();
 }
 
 @Class(IosPlatform(IosType('TestProtocol', import: '"TestPlugin.h"')))
@@ -87,6 +93,9 @@ abstract class IosProtocol extends $IosProtocol {
   void callbackMethod() {
     invoke<void>(channel, $callbackMethod());
   }
+
+  static FutureOr<Wrapper> fromUniqueId(String uniqueId) =>
+      throw UnimplementedError();
 }
 
 @Class(IosPlatform(
@@ -306,6 +315,9 @@ class IosTestClass1 extends $IosTestClass1 with TestClass1 {
         ...constructorMethodCalls.skip(1).toList(),
         $boolField(),
       ]);
+
+  static FutureOr<Wrapper> fromUniqueId(String uniqueId) =>
+      throw UnimplementedError();
 }
 
 @Class(IosPlatform(
@@ -316,6 +328,9 @@ class IosTestClass2 extends $IosTestClass2 with TestClass2 {
   IosTestClass2() : super(randomId()) {
     constructorMethodCall = $IosTestClass2$Default();
   }
+
+  static FutureOr<Wrapper> fromUniqueId(String uniqueId) =>
+      throw UnimplementedError();
 }
 
 @Class(IosPlatform(IosType('GenericClass', import: '"TestPlugin.h"')))
@@ -343,4 +358,7 @@ class IosGenericClass<T> extends $IosGenericClass<T> with GenericClass<T> {
 
     return invoke<T>(channel, $get(identifier));
   }
+
+  static FutureOr<Wrapper> fromUniqueId(String uniqueId) =>
+      throw UnimplementedError();
 }

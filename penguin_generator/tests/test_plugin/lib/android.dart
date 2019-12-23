@@ -18,6 +18,9 @@ part 'android.android.penguin.g.dart';
 class AndroidNestedClass extends $AndroidNestedClass {
   @Constructor()
   AndroidNestedClass() : super(randomId());
+
+  static FutureOr<Wrapper> fromUniqueId(String uniqueId) =>
+      throw UnimplementedError();
 }
 
 @Class(AndroidPlatform(
@@ -41,6 +44,9 @@ abstract class AndroidAbstractClass extends $AndroidAbstractClass {
   void callbackMethod() {
     invoke<void>(channel, $callbackMethod());
   }
+
+  static FutureOr<Wrapper> fromUniqueId(String uniqueId) =>
+      throw UnimplementedError();
 }
 
 @Class(AndroidPlatform(
@@ -254,6 +260,9 @@ class AndroidTestClass1 extends $AndroidTestClass1 with TestClass1 {
         ...constructorMethodCalls.skip(1).toList(),
         $boolField(),
       ]);
+
+  static FutureOr<Wrapper> fromUniqueId(String uniqueId) =>
+      throw UnimplementedError();
 }
 
 @Class(AndroidPlatform(
@@ -297,6 +306,9 @@ class AndroidTextViewState extends State<TextView> {
       creationParamsCodec: const StandardMessageCodec(),
     );
   }
+
+  static FutureOr<Wrapper> fromUniqueId(String uniqueId) =>
+      throw UnimplementedError();
 }
 
 @Class(
@@ -310,6 +322,9 @@ class AndroidTestClass2 extends $AndroidTestClass2 with TestClass2 {
   AndroidTestClass2() : super(randomId()) {
     constructorMethodCall = $AndroidTestClass2$Default();
   }
+
+  static FutureOr<Wrapper> fromUniqueId(String uniqueId) =>
+      throw UnimplementedError();
 }
 
 @Class(AndroidPlatform(AndroidType(
@@ -340,4 +355,7 @@ class AndroidGenericClass<T> extends $AndroidGenericClass<T>
 
     return invoke<T>(channel, $get(identifier));
   }
+
+  static FutureOr<Wrapper> fromUniqueId(String uniqueId) =>
+      throw UnimplementedError();
 }

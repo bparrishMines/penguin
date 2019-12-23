@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/services.dart';
 import 'package:penguin/penguin.dart';
 import 'package:penguin_plugin/penguin_plugin.dart';
@@ -29,5 +31,7 @@ class IosCallbackHandler extends CallbackHandler {
 
 @Class(IosPlatform(IosType('CGRect', isStruct: true)))
 class CGRect extends $CGRect {
-  CGRect.fromUniqueId(String uniqueId) : super(uniqueId);
+  CGRect._(String uniqueId) : super(uniqueId);
+
+  static CGRect fromUniqueId(String uniqueId) => CGRect._(uniqueId);
 }

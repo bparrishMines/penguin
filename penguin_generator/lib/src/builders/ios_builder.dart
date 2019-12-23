@@ -59,18 +59,20 @@ class IosBuilder extends PenguinBuilder {
 
   @override
   Future<void> build(
-    List<ClassInfo> classes,
+    List<ClassInfo> libraryClasses,
+    List<ClassInfo> importedClasses,
     PenguinBuilderBuildStep buildStep,
   ) async {
-    if (classes.isEmpty) return;
+    if (libraryClasses.isEmpty) return;
 
     final IosTemplateCreator creator = IosTemplateCreator();
+    final List<ClassInfo> allClasses = libraryClasses.followedBy(importedClasses).toList();
     await Future.wait<void>(<Future<void>>[
       buildStep.writeToLib(
         'ChannelHandler+Generated.h',
         IosTemplateCreator.createHeaderFile(
           headerTemplate: _headerFile,
-          classPackages: classes
+          classPackages: allClasses
               .where((ClassInfo classInfo) =>
                   (classInfo.aClass.platform as IosPlatform).type.import !=
                   null)
@@ -78,7 +80,7 @@ class IosBuilder extends PenguinBuilder {
                 (ClassInfo classInfo) =>
                     (classInfo.aClass.platform as IosPlatform).type.import,
               ),
-          classes: classes.map<String>(
+          classes: allClasses.map<String>(
             (ClassInfo classInfo) => IosTemplateCreator.createHeaderClass(
               _getStructure(classInfo),
               headerTemplate: _headerFile,
@@ -91,7 +93,7 @@ class IosBuilder extends PenguinBuilder {
       buildStep.writeToLib(
         'ChannelHandler+Generated.m',
         creator.createFile(
-          structs: classes
+          structs: allClasses
               .where(
                 (ClassInfo classInfo) =>
                     (classInfo.aClass.platform as IosPlatform).type.isStruct,
@@ -103,7 +105,7 @@ class IosBuilder extends PenguinBuilder {
                 ),
               ),
           staticRedirects: <String>[
-            ...classes.expand<String>(
+            ...allClasses.expand<String>(
               (ClassInfo classInfo) => classInfo.constructors.map<String>(
                 (ConstructorInfo constructorInfo) =>
                     creator.createStaticRedirect(
@@ -115,7 +117,7 @@ class IosBuilder extends PenguinBuilder {
                 ),
               ),
             ),
-            ...classes.expand<String>(
+            ...allClasses.expand<String>(
               (ClassInfo classInfo) => classInfo.methods
                   .where((MethodInfo methodInfo) => methodInfo.isStatic)
                   .map<String>(
@@ -127,7 +129,7 @@ class IosBuilder extends PenguinBuilder {
                     ),
                   ),
             ),
-            ...classes.expand<String>(
+            ...allClasses.expand<String>(
               (ClassInfo classInfo) => classInfo.fields
                   .where((FieldInfo fieldInfo) => fieldInfo.isStatic)
                   .map<String>(
@@ -140,7 +142,7 @@ class IosBuilder extends PenguinBuilder {
                   ),
             ),
           ],
-          classes: classes.map<String>(
+          classes: allClasses.map<String>(
             (ClassInfo classInfo) => creator.createClass(
               _getStructure(classInfo),
               callbacks: classInfo.methods
@@ -192,7 +194,7 @@ class IosBuilder extends PenguinBuilder {
                     (ParameterInfo parameterInfo) => creator.createParameter(
                       getChannelType(parameterInfo.type),
                       parameterType:
-                          _getPlatformClassName(parameterInfo.type, classes),
+                          _getPlatformClassName(parameterInfo.type, allClasses),
                       parameterName: parameterInfo.name,
                       primitiveConvertMethod: _getPrimitiveConvertMethod(
                         parameterInfo.type,
@@ -213,7 +215,7 @@ class IosBuilder extends PenguinBuilder {
                     (ParameterInfo parameterInfo) => creator.createParameter(
                       getChannelType(parameterInfo.type),
                       parameterType:
-                          _getPlatformClassName(parameterInfo.type, classes),
+                          _getPlatformClassName(parameterInfo.type, allClasses),
                       parameterName: parameterInfo.name,
                       primitiveConvertMethod: _getPrimitiveConvertMethod(
                         parameterInfo.type,
@@ -234,7 +236,7 @@ class IosBuilder extends PenguinBuilder {
                   parameter: creator.createParameter(
                       getChannelType(fieldInfo.type),
                       parameterType:
-                          _getPlatformClassName(fieldInfo.type, classes),
+                          _getPlatformClassName(fieldInfo.type, allClasses),
                       primitiveConvertMethod:
                           _getPrimitiveConvertMethod(fieldInfo.type),
                       parameterName: fieldInfo.name),

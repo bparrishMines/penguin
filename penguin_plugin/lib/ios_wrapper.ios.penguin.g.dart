@@ -17,3 +17,13 @@ class $CGRect extends IosWrapper {
     throw UnimplementedError('No implementation for ${call.method}.');
   }
 }
+
+class _GenericHelper {
+  static FutureOr<Wrapper> fromUniqueId<T extends Wrapper>(String uniqueId) {
+    if (isTypeOf<T, CGRect>()) {
+      return CGRect.fromUniqueId(uniqueId);
+    }
+
+    throw UnsupportedError('Could not instantiate class ${T.toString()}');
+  }
+}

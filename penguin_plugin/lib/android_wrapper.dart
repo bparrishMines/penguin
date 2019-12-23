@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/services.dart';
 import 'package:penguin/penguin.dart';
 import 'package:penguin_plugin/penguin_plugin.dart';
@@ -22,12 +24,14 @@ class AndroidCallbackHandler extends CallbackHandler {
   ) get onCreateView =>
       (Wrapper wrapper, Map<String, dynamic> arguments) async {
         return (wrapper as AndroidWrapper).onCreateView(
-          Context._fromUniqueId(arguments['context']),
+          Context.fromUniqueId(arguments['context']),
         );
       };
 }
 
 @Class(AndroidPlatform(AndroidType('android.content', <String>['Context'])))
 class Context extends $Context {
-  Context._fromUniqueId(String uniqueId) : super(uniqueId);
+  Context._(String uniqueId) : super(uniqueId);
+
+  static Context fromUniqueId(String uniqueId) => Context._(uniqueId);
 }

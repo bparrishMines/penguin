@@ -46,7 +46,8 @@ abstract class PenguinBuilder {
   Iterable<Type> get platformTypes;
 
   Future<void> build(
-    List<ClassInfo> classes,
+    List<ClassInfo> libraryClasses,
+    List<ClassInfo> importedClasses,
     PenguinBuilderBuildStep buildStep,
   );
 
@@ -362,28 +363,42 @@ class PlatformWriteBuilder extends Builder {
 
   @override
   FutureOr<void> build(BuildStep buildStep) async {
-    final Set<ClassInfo> classes = <ClassInfo>{};
+    final Set<ClassInfo> libraryClasses = <ClassInfo>{};
+    final Set<ClassInfo> importedClasses = <ClassInfo>{};
 
     await for (AssetId input in buildStep.findAssets(_allInfoFiles)) {
       final Map<String, dynamic> info = jsonDecode(
         await buildStep.readAsString(input),
       );
 
-      classes.addAll(
-        info['libraryClasses']
-            .followedBy(info['importedClasses'])
-            .map<ClassInfo>(
-              (dynamic json) => ClassInfo.fromJson(json),
-            ),
+      libraryClasses.addAll(
+        info['libraryClasses'].map<ClassInfo>(
+          (dynamic json) => ClassInfo.fromJson(json),
+        ),
+      );
+
+      importedClasses.addAll(
+        info['importedClasses'].map<ClassInfo>(
+          (dynamic json) => ClassInfo.fromJson(json),
+        ),
       );
     }
 
-    if (classes.isEmpty) return;
+    if (libraryClasses.isEmpty) return;
 
     await Future.wait<void>(
       platformBuilders.map<Future<void>>(
         (PenguinBuilder builder) => builder.build(
-          classes
+          libraryClasses
+              .where(
+                (ClassInfo classInfo) => builder.platformTypes.any(
+                  (Type type) =>
+                      classInfo.aClass.platform.runtimeType.toString() ==
+                      type.toString(),
+                ),
+              )
+              .toList(),
+          importedClasses
               .where(
                 (ClassInfo classInfo) => builder.platformTypes.any(
                   (Type type) =>
@@ -413,23 +428,39 @@ class DartWriteBuilder extends Builder {
 
   @override
   FutureOr<void> build(BuildStep buildStep) async {
-    final List<ClassInfo> classes = <ClassInfo>[];
+    final List<ClassInfo> libraryClasses = <ClassInfo>[];
+    final List<ClassInfo> importedClasses = <ClassInfo>[];
 
     final Map<String, dynamic> info =
         jsonDecode(await buildStep.readAsString(buildStep.inputId));
 
-    classes.addAll(
+    libraryClasses.addAll(
       info['libraryClasses'].map<ClassInfo>(
         (dynamic json) => ClassInfo.fromJson(json),
       ),
     );
 
-    if (classes.isEmpty) return;
+    importedClasses.addAll(
+      info['importedClasses'].map<ClassInfo>(
+        (dynamic json) => ClassInfo.fromJson(json),
+      ),
+    );
+
+    if (libraryClasses.isEmpty) return;
 
     await Future.wait<void>(
       platformBuilders.map<Future<void>>(
         (PenguinBuilder builder) => builder.build(
-          classes
+          libraryClasses
+              .where(
+                (ClassInfo classInfo) => builder.platformTypes.any(
+                  (Type type) =>
+                      classInfo.aClass.platform.runtimeType.toString() ==
+                      type.toString(),
+                ),
+              )
+              .toList(),
+          importedClasses
               .where(
                 (ClassInfo classInfo) => builder.platformTypes.any(
                   (Type type) =>
@@ -447,6 +478,7 @@ class DartWriteBuilder extends Builder {
   @override
   Map<String, List<String>> get buildExtensions => <String, List<String>>{
         ReadInfoBuilder.infoExtension: platformBuilders
-            .expand<String>((PenguinBuilder builder) => builder.filenames).toList(),
+            .expand<String>((PenguinBuilder builder) => builder.filenames)
+            .toList(),
       };
 }
