@@ -7,7 +7,7 @@ import 'package:penguin_plugin/penguin_plugin.dart';
 part 'ios_wrapper.ios.penguin.g.dart';
 
 abstract class IosWrapper extends Wrapper {
-  const IosWrapper({
+  IosWrapper({
     String uniqueId,
     String platformClassName,
     this.onCreateView,

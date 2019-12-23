@@ -7,7 +7,7 @@ import 'package:penguin_plugin/penguin_plugin.dart';
 part 'android_wrapper.android.penguin.g.dart';
 
 abstract class AndroidWrapper extends Wrapper {
-  const AndroidWrapper({
+  AndroidWrapper({
     String uniqueId,
     String platformClassName,
     this.onCreateView,

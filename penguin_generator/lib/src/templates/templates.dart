@@ -570,7 +570,7 @@ part of '__filename__';
 %%CLASSES%%
 %%CLASS%%
 class $__className____typeParameters__ extends __wrapperInterface__ {
-  const $__className__(String uniqueId, 
+  $__className__(String uniqueId, 
   { 
   List<MethodCall> Function(__platformViewClass__ __platformViewVariable__) onCreateView,
   %%CALLBACKINITIALIZERS%%

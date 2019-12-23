@@ -1,7 +1,7 @@
 part of 'android_wrapper.dart';
 
 class $Context extends AndroidWrapper {
-  const $Context(
+  $Context(
     String uniqueId, {
     List<MethodCall> Function(Context context) onCreateView,
   }) : super(

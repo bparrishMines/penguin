@@ -46,11 +46,14 @@ abstract class CallbackHandler {
 }
 
 abstract class Wrapper {
-  const Wrapper({this.uniqueId, this.platformClassName});
+  Wrapper({this.uniqueId, this.platformClassName});
 
   final String uniqueId;
 
   final String platformClassName;
+
+  final MethodCallStorageHelper methodCallStorageHelper =
+      MethodCallStorageHelper();
 
   List<MethodCall> onMethodCall(MethodCall call);
 
@@ -66,6 +69,32 @@ abstract class Wrapper {
       '$platformClassName#deallocate',
       <String, String>{r'$uniqueId': uniqueId},
     );
+  }
+}
+
+class MethodCallStorageHelper {
+  final Map<String, int> _callIndexes = <String, int>{};
+  final List<MethodCall> _storedMethodCalls = <MethodCall>[];
+
+  List<MethodCall> get methodCalls => List<MethodCall>.from(_storedMethodCalls);
+
+  void storeMethodCall(MethodCall call) {
+    _callIndexes[call.method] = _storedMethodCalls.length;
+    _storedMethodCalls.add(call);
+  }
+
+  void replaceMethodCall(MethodCall call) {
+    final int index = _callIndexes[call.method];
+    if (index != null) {
+      _storedMethodCalls[index] = call;
+    } else {
+      storeMethodCall(call);
+    }
+  }
+
+  void clearMethodCalls() {
+    _storedMethodCalls.clear();
+    _callIndexes.clear();
   }
 }
 
