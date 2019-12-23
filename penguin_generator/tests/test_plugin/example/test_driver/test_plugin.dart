@@ -206,8 +206,8 @@ void main() {
       supportedGenericClass.add(56);
       expect(await supportedGenericClass.get('eoij'), 56);
 
-      //wrapperGenericClass.add(testClass2);
-      //TestClass2 testClass2 = await wrapperGenericClass.get('woie');
+      wrapperGenericClass.add(testClass2);
+      expect(await wrapperGenericClass.get('woie'), isA<TestClass2>());
     });
   });
 }
