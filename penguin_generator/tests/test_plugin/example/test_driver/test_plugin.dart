@@ -37,7 +37,7 @@ void main() {
         testClass = IosTestClass1();
         testClass2 = IosTestClass2();
         supportedGenericClass = IosGenericClass<int>();
-        wrapperGenericClass = IosGenericClass<IosGenericClass>();
+        wrapperGenericClass = IosGenericClass<IosTestClass2>();
         callbackClass1 = IosCallbackClass();
         callbackClass2 = IosCallbackClass();
       }
@@ -206,8 +206,38 @@ void main() {
       supportedGenericClass.add(56);
       expect(await supportedGenericClass.get('eoij'), 56);
 
+      TestClass2 testClass2;
+
+      if (Platform.isAndroid) {
+        testClass2 = AndroidTestClass2();
+      } else if (Platform.isIOS) {
+        testClass2 = IosTestClass2();
+      }
+
       wrapperGenericClass.add(testClass2);
-      expect(await wrapperGenericClass.get('woie'), isA<TestClass2>());
+      expect(await wrapperGenericClass.get('woie'),
+          allOf(isNotNull, isA<TestClass2>()));
+
+      if (Platform.isAndroid) {
+        expect(
+          (testClass as AndroidTestClass1).parameterMethod(
+            'woeif',
+            32,
+            (testClass2 as AndroidTestClass2),
+            AndroidNestedClass(),
+          ),
+          completes,
+        );
+      } else if (Platform.isIOS) {
+        expect(
+          (testClass as IosTestClass1).parameterMethod(
+            'woeif',
+            32,
+            (testClass2 as IosTestClass2),
+          ),
+          completes,
+        );
+      }
     });
   });
 }

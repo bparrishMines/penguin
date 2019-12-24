@@ -309,9 +309,12 @@ class AndroidGenericClass<T> extends $AndroidGenericClass<T>
   @override
   Future<T> get(String identifier) async {
     if (isTypeOf<T, Wrapper>()) {
-      final String id = randomId();
-      invoke<void>(channel, [$get(identifier, id)]);
-      return await _GenericHelper.fromUniqueId<T>(id);
+      final T value = _GenericHelper.fromUniqueId<T>(randomId());
+      invoke<void>(channel, [
+        $get(identifier, (value as Wrapper).uniqueId),
+        (value as Wrapper).allocate(),
+      ]);
+      return value;
     }
 
     return invoke<T>(channel, [$get(identifier)]);
