@@ -355,7 +355,11 @@ static void *wrapperCallbackKey = &wrapperCallbackKey;
   %%POSTMETHODCALL methodChannel:struct%%
   %%POSTMETHODCALL methodChannel:typeParameter%%
   ;
-  return result;
+  if (![call.arguments[@"$returnTypeIsWrapper"] boolValue]) return result;
+  NSString *wrapperClassName = [NSString stringWithFormat:@"$%@", NSStringFromClass([result class])];
+  Class wrapperClass = NSClassFromString(wrapperClassName);
+  [[wrapperClass alloc] initWithWrapperManager:wrapperManager uniqueId:call.arguments[@"$newUniqueId"] value:result];
+  return [NSNull null];
   %%POSTMETHODCALL methodChannel:typeParameter%%
   %%POSTMETHODCALLS%%
 }

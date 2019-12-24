@@ -269,9 +269,7 @@ class IosTestClass1 extends $IosTestClass1 with TestClass1 {
   IosType('TestClass2', import: '"TestPlugin.h"'),
 ))
 class IosTestClass2 extends $IosTestClass2 with TestClass2 {
-  IosTestClass2._(String uniqueId) : super(uniqueId) {
-    invoke<void>(channel, <MethodCall>[$IosTestClass2$Default(), allocate()]);
-  }
+  IosTestClass2._(String uniqueId) : super(uniqueId);
 
   @Constructor()
   IosTestClass2() : super(randomId()) {

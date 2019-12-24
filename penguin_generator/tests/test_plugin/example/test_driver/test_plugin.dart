@@ -202,7 +202,7 @@ void main() {
       expect(TestStruct().intField, completion(isA<int>()));
     }, skip: !Platform.isIOS);
 
-    test('$GenericClass', () async {
+    test('GenericClass', () async {
       supportedGenericClass.add(56);
       expect(await supportedGenericClass.get('eoij'), 56);
 
@@ -215,15 +215,16 @@ void main() {
       }
 
       wrapperGenericClass.add(testClass2);
-      expect(await wrapperGenericClass.get('woie'),
-          allOf(isNotNull, isA<TestClass2>()));
+
+      final TestClass2 result = await wrapperGenericClass.get('woie');
+      expect(result, allOf(isNotNull, isA<TestClass2>()));
 
       if (Platform.isAndroid) {
         expect(
           (testClass as AndroidTestClass1).parameterMethod(
             'woeif',
             32,
-            (testClass2 as AndroidTestClass2),
+            (result as AndroidTestClass2),
             AndroidNestedClass(),
           ),
           completes,
@@ -233,7 +234,7 @@ void main() {
           (testClass as IosTestClass1).parameterMethod(
             'woeif',
             32,
-            (testClass2 as IosTestClass2),
+            (result as IosTestClass2),
           ),
           completes,
         );
