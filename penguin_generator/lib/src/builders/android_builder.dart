@@ -299,7 +299,8 @@ class AndroidBuilder extends PenguinBuilder {
       return 'HashMap<${_convertType(infos[0])}, ${_convertType(infos[1])}>';
     } else if (info.isWrapper) {
       return (classes
-              .firstWhere((ClassInfo classInfo) => classInfo.name == info.name)
+              .firstWhere((ClassInfo classInfo) =>
+                  removeBounds(classInfo.name) == removeBounds(info.name))
               .aClass
               .platform as AndroidPlatform)
           .type

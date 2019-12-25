@@ -66,7 +66,8 @@ class IosBuilder extends PenguinBuilder {
     if (libraryClasses.isEmpty) return;
 
     final IosTemplateCreator creator = IosTemplateCreator();
-    final List<ClassInfo> allClasses = libraryClasses.followedBy(importedClasses).toList();
+    final List<ClassInfo> allClasses =
+        libraryClasses.followedBy(importedClasses).toList();
     await Future.wait<void>(<Future<void>>[
       buildStep.writeToLib(
         'ChannelHandler+Generated.h',
@@ -291,8 +292,10 @@ class IosBuilder extends PenguinBuilder {
 
   String _getPlatformClassName(TypeInfo info, List<ClassInfo> classes) {
     if (!info.isWrapper) return 'NSObject'; // Never used.
+    print(removeBounds(info.name));
     return (classes
-            .firstWhere((ClassInfo classInfo) => classInfo.name == info.name)
+            .firstWhere((ClassInfo classInfo) =>
+                removeBounds(classInfo.name) == removeBounds(info.name))
             .aClass
             .platform as IosPlatform)
         .type

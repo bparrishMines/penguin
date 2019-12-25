@@ -87,6 +87,11 @@ abstract class PenguinBuilder {
       'Can\'t find $MethodChannelType for info',
     );
   }
+
+  String removeBounds(String value) {
+    final RegExp genericBrackets = RegExp('<.*>');
+    return value.replaceAll(genericBrackets, '');
+  }
 }
 
 class ReadInfoBuilder extends Builder {
