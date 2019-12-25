@@ -587,10 +587,13 @@ class $__className____typeParameters__ extends __wrapperInterface__ {
         (this as __className__).__methodName__(
           %%CALLBACKCHANNELPARAMS%%
           %%CALLBACKCHANNELPARAM methodChannel:wrapper%%
-          await __className__.onAllocated<__className__>(call.arguments['__parameterName__']),
+          await __className__.onAllocated(call.arguments['__parameterName__']),
           %%CALLBACKCHANNELPARAM methodChannel:wrapper%%
+          %%CALLBACKCHANNELPARAM methodChannel:primitive%%
+          call.arguments['__parameterName__'],
+          %%CALLBACKCHANNELPARAM methodChannel:primitive%%
           %%CALLBACKCHANNELPARAM methodChannel:struct%%
-          await __className__.onAllocated<__className__>(call.arguments['__parameterName__']),
+          await __className__.onAllocated(call.arguments['__parameterName__']),
           %%CALLBACKCHANNELPARAM methodChannel:struct%%
           %%CALLBACKCHANNELPARAM methodChannel:supported%%
           call.arguments['__parameterName__'],
@@ -1011,13 +1014,12 @@ public class ChannelGenerated {
             %%CALLBACKPARAMS%%
             ) {
               final HashMap<String, Object> arguments = new HashMap<>();
-              final ArrayList<Wrapper> wrappers = new ArrayList<>();
               arguments.put("$uniqueId", $uniqueId);
 
               %%CALLBACKCHANNELPARAMS%%
               %%CALLBACKCHANNELPARAM methodChannel:wrapper%%
               final String $$__parameterName__Id = UUID.randomUUID().toString();
-              wrappers.add(new $__wrapperName__(wrapperManager, $$__parameterName__Id, $__parameterName__));
+              wrapperManager.addAllocatedWrapper(new $__wrapperName__(wrapperManager, $$__parameterName__Id, $__parameterName__));
               arguments.put("__parameterName__", $$__parameterName__Id);
               %%CALLBACKCHANNELPARAM methodChannel:wrapper%%
               %%CALLBACKCHANNELPARAM methodChannel:supported%%
@@ -1028,29 +1030,7 @@ public class ChannelGenerated {
               %%CALLBACKCHANNELPARAM methodChannel:primitive%%
               %%CALLBACKCHANNELPARAMS%%
               
-              callbackChannel.invokeMethod("__wrapperName__#__methodName__", arguments, new Result() {
-                @Override
-                public void success(Object result) {
-                  try {
-                    for (final Wrapper wrapper : wrappers) wrapperManager.addTemporaryWrapper(wrapper);
-                    methodCallHandler.onMethodCall(new MethodCall("MultiInvoke", result));
-                  } catch (Exception exception) {
-                    exception.printStackTrace();
-                  } finally {
-                    wrapperManager.clearTemporaryWrappers();
-                  }
-                }
-
-                @Override
-                public void error(String errorCode, String errorMessage, Object errorDetails) {
-                  throw new RuntimeException(errorMessage);
-                }
-
-                @Override
-                public void notImplemented() {
-                  throw new RuntimeException();
-                }
-              });  
+              callbackChannel.invokeMethod("__wrapperName__#__methodName__", arguments);  
             }
             %%CALLBACK%%
             %%CALLBACKS%%

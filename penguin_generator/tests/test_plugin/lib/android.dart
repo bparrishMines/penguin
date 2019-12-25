@@ -16,12 +16,14 @@ part 'android.android.penguin.g.dart';
   ),
 ))
 class AndroidNestedClass extends $AndroidNestedClass {
+  AndroidNestedClass._(String uniqueId) : super(uniqueId);
+
   @Constructor()
   AndroidNestedClass() : super(randomId()) {
     methodCallStorageHelper.store($AndroidNestedClass$Default());
   }
 
-  static FutureOr onAllocated(String uniqueId) => throw UnimplementedError();
+  static FutureOr onAllocated(String uniqueId) => AndroidNestedClass._(uniqueId);
 }
 
 @Class(AndroidPlatform(
@@ -42,11 +44,15 @@ abstract class AndroidAbstractClass extends $AndroidAbstractClass {
   }
 
   @Method(callback: true)
-  void callbackMethod() {
-    invoke<void>(channel, [$callbackMethod()]);
+  void callbackMethod(
+    String supported,
+    @int64 int primitive,
+    AndroidTestClass2 wrapper,
+    AndroidNestedClass nested,
+  ) {
+    invoke<void>(
+        channel, [$callbackMethod(supported, primitive, wrapper, nested)]);
   }
-
-
 
   static FutureOr onAllocated(String uniqueId) => throw UnimplementedError();
 }
@@ -211,9 +217,7 @@ class AndroidTestClass1 extends $AndroidTestClass1 with TestClass1 {
   Future<bool> get boolField => invoke<bool>(
       channel, methodCallStorageHelper.methodCalls..add($boolField()));
 
-
-
-  static FutureOr onAllocated(String uniqueId)=> throw UnimplementedError();
+  static FutureOr onAllocated(String uniqueId) => throw UnimplementedError();
 }
 
 @Class(AndroidPlatform(
@@ -275,8 +279,7 @@ class AndroidTestClass2 extends $AndroidTestClass2 with TestClass2 {
     methodCallStorageHelper.store($AndroidTestClass2$Default());
   }
 
-  static FutureOr onAllocated(String uniqueId) =>
-      AndroidTestClass2._(uniqueId);
+  static FutureOr onAllocated(String uniqueId) => AndroidTestClass2._(uniqueId);
 }
 
 @Class(AndroidPlatform(AndroidType(
@@ -320,6 +323,5 @@ class AndroidGenericClass<T> extends $AndroidGenericClass<T>
     return invoke<T>(channel, [$get(identifier)]);
   }
 
-  static FutureOr onAllocated(String uniqueId) =>
-      throw UnimplementedError();
+  static FutureOr onAllocated(String uniqueId) => throw UnimplementedError();
 }

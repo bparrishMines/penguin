@@ -68,8 +68,8 @@ public class TestClass1 {
     return map;
   }
 
-  public void parameterMethod(String s, Long primitive, TestClass2 wrapper, NestedTestClass nested) {
-    if (s == null || primitive == null || wrapper == null || nested == null) {
+  public void parameterMethod(String supported, Long primitive, TestClass2 wrapper, NestedTestClass nested) {
+    if (supported == null || primitive == null || wrapper == null || nested == null) {
       throw new IllegalArgumentException();
     }
   }
@@ -77,20 +77,4 @@ public class TestClass1 {
   public static class NestedTestClass {
 
   }
-//
-//  public void callCallbackMethod() {
-//    callbackMethod(new TestClass3(), "I love callbacks.");
-//  }
-//
-//  public void callbackMethod(TestClass3 wrapper, String supported) {
-//
-//  }
-//
-//  public enum TestEnum {
-//    ONE, TWO;
-//
-//    public int enumMethod() {
-//      return 2;
-//    }
-//  }
 }

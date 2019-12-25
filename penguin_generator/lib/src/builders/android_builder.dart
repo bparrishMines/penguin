@@ -20,7 +20,8 @@ class AndroidBuilder extends PenguinBuilder {
     if (libraryClasses.isEmpty) return Future<void>.value();
 
     final AndroidTemplateCreator creator = AndroidTemplateCreator();
-    final List<ClassInfo> allClasses = libraryClasses.followedBy(importedClasses).toList();
+    final List<ClassInfo> allClasses =
+        libraryClasses.followedBy(importedClasses).toList();
     return buildStep.writeToLib(
       'ChannelGenerated.java',
       creator.createFile(
@@ -80,7 +81,8 @@ class AndroidBuilder extends PenguinBuilder {
                     primitiveConvertMethod: _getPrimitiveConvertMethod(
                       parameterInfo.type,
                     ),
-                    parameterType: _convertType(parameterInfo.type, allClasses),
+                    parameterType:
+                        _convertType(parameterInfo.type, classes: allClasses),
                     parameterName: parameterInfo.name,
                   ),
                 ),
@@ -111,8 +113,9 @@ class AndroidBuilder extends PenguinBuilder {
                             parameterName: parameterInfo.name,
                             parameterType: _convertType(
                               parameterInfo.type,
-                              allClasses,
-                            ).replaceAll('.', ''),
+                              classes: allClasses,
+                              ignorePrimitives: false,
+                            ),
                           ),
                         ),
                         callbackChannelParams:
@@ -123,7 +126,8 @@ class AndroidBuilder extends PenguinBuilder {
                             wrapperName: getChannelType(parameterInfo.type) !=
                                     MethodChannelType.wrapper
                                 ? null
-                                : _convertType(parameterInfo.type, allClasses)
+                                : _convertType(parameterInfo.type,
+                                        classes: allClasses)
                                     .replaceAll(('.'), ''),
                             parameterName: parameterInfo.name,
                           ),
@@ -148,11 +152,13 @@ class AndroidBuilder extends PenguinBuilder {
                     primitiveConvertMethod: _getPrimitiveConvertMethod(
                       parameterInfo.type,
                     ),
-                    parameterType: _convertType(parameterInfo.type, allClasses),
+                    parameterType:
+                        _convertType(parameterInfo.type, classes: allClasses),
                     parameterName: parameterInfo.name,
                   ),
                 ),
-                returnType: _convertType(methodInfo.returnType, allClasses),
+                returnType:
+                    _convertType(methodInfo.returnType, classes: allClasses),
                 methodName: methodInfo.name,
               ),
             ),
@@ -161,13 +167,14 @@ class AndroidBuilder extends PenguinBuilder {
                 getChannelType(fieldInfo.type),
                 isStatic: fieldInfo.isStatic,
                 isMutable: fieldInfo.isMutable,
-                fieldType: _convertType(fieldInfo.type, allClasses),
+                fieldType: _convertType(fieldInfo.type, classes: allClasses),
                 fieldName: fieldInfo.name,
                 parameter: creator.createParameter(
                     getChannelType(fieldInfo.type),
                     primitiveConvertMethod:
                         _getPrimitiveConvertMethod(fieldInfo.type),
-                    parameterType: _convertType(fieldInfo.type, allClasses),
+                    parameterType:
+                        _convertType(fieldInfo.type, classes: allClasses),
                     parameterName: fieldInfo.name),
                 package: _androidPackage,
                 platformClassName:
@@ -265,13 +272,16 @@ class AndroidBuilder extends PenguinBuilder {
     );
   }
 
-  String _convertType(TypeInfo info, [List<ClassInfo> classes]) {
+  String _convertType(TypeInfo info,
+      {List<ClassInfo> classes, bool ignorePrimitives = true}) {
     if (info.isVoid) {
       return 'void';
     } else if (info.isDynamic || info.isObject) {
       return 'Object';
     } else if (info.isString) {
       return 'String';
+    } else if (!ignorePrimitives && info.isNativeInt64) {
+      return 'Long';
     } else if (info.isInt) {
       return 'Integer';
     } else if (info.isDouble) {

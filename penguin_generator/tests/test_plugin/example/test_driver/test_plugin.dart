@@ -246,13 +246,17 @@ void main() {
 class AndroidCallbackClass extends AndroidAbstractClass {
   bool callbackCalled = false;
 
-  @override
-  void callbackMethod() {
+  void callbackMethod(
+    String supported,
+    int primitive,
+    AndroidTestClass2 wrapper,
+    AndroidNestedClass nested,
+  ) {
     callbackCalled = true;
   }
 
   void callCallbackMethod() {
-    super.callbackMethod();
+    super.callbackMethod('wofeij', 34, null, null);
   }
 }
 
