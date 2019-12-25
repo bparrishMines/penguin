@@ -110,7 +110,7 @@ class ReadInfoBuilder extends Builder {
 
     final LibraryReader reader = LibraryReader(await buildStep.inputLibrary);
 
-    final List<ClassInfo> allClassInfo = reader
+    final List<ClassInfo> libraryClasses = reader
         .annotatedWith(Annotation.$class)
         .map<ClassInfo>((AnnotatedElement element) {
       _allElements.add(element.element);
@@ -120,14 +120,14 @@ class ReadInfoBuilder extends Builder {
       );
     }).toList();
 
-    if (allClassInfo.isEmpty) return Future<void>.value();
+    if (libraryClasses.isEmpty) return Future<void>.value();
 
     buildStep.writeAsString(
       buildStep.inputId.changeExtension(_infoExtension),
       jsonEncode(<String, List<ClassInfo>>{
-        _libraryClassesKey: allClassInfo,
+        _libraryClassesKey: libraryClasses,
         _importedClassesKey:
-            _extraClasses.difference(allClassInfo.toSet()).toList(),
+            _extraClasses.difference(libraryClasses.toSet()).toList(),
       }),
     );
   }
@@ -373,7 +373,7 @@ class PlatformWriteBuilder extends Builder {
   @override
   FutureOr<void> build(BuildStep buildStep) async {
     final Set<ClassInfo> libraryClasses = <ClassInfo>{};
-    final Set<ClassInfo> importedClasses = <ClassInfo>{};
+    Set<ClassInfo> importedClasses = <ClassInfo>{};
 
     await for (AssetId input in buildStep.findAssets(_allInfoFiles)) {
       final String json = await buildStep.readAsString(input);
@@ -382,6 +382,8 @@ class PlatformWriteBuilder extends Builder {
     }
 
     if (libraryClasses.isEmpty) return;
+
+    importedClasses = importedClasses.difference(libraryClasses);
 
     await Future.wait<void>(
       platformBuilders.map<Future<void>>(

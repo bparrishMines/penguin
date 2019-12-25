@@ -293,7 +293,6 @@ class IosBuilder extends PenguinBuilder {
 
   String _getPlatformClassName(TypeInfo info, List<ClassInfo> classes) {
     if (!info.isWrapper) return 'NSObject'; // Never used.
-    print(removeBounds(info.name));
     return (classes
             .firstWhere((ClassInfo classInfo) =>
                 removeBounds(classInfo.name) == removeBounds(info.name))
