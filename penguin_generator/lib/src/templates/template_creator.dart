@@ -740,6 +740,7 @@ class IosTemplateCreator extends TemplateCreator {
     @required bool isStatic,
     @required bool isMutable,
     @required String parameter,
+    @required String fieldType,
     @required String fieldName,
     @required String platformClassName,
   }) {
@@ -770,6 +771,7 @@ class IosTemplateCreator extends TemplateCreator {
         ),
         Replacement.methodName.name: fieldName,
         Replacement.fieldName.name: fieldName,
+        Replacement.returnType.name: fieldType,
       },
     );
   }

@@ -302,7 +302,7 @@ static void *wrapperCallbackKey = &wrapperCallbackKey;
   return
   %%PREMETHODCALL methodChannel:supported%%
   %%PREMETHODCALL methodChannel:wrapper%%
-  [$__returnType__ initWithWrapperManager:wrapperManager uniqueId:call.arguments[@"uniqueId"] value:
+  [[$__returnType__ alloc] initWithWrapperManager:wrapperManager uniqueId:call.arguments[@"uniqueId"] value:
   %%PREMETHODCALL methodChannel:wrapper%%
   %%PREMETHODCALL methodChannel:primitive%%
   return @(

@@ -233,6 +233,7 @@ class IosBuilder extends PenguinBuilder {
                   _getStructure(classInfo),
                   isStatic: fieldInfo.isStatic,
                   isMutable: fieldInfo.isMutable,
+                  fieldType: _getPlatformClassName(fieldInfo.type, allClasses),
                   fieldName: fieldInfo.name,
                   parameter: creator.createParameter(
                       getChannelType(fieldInfo.type),
