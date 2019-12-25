@@ -575,54 +575,28 @@ part of '__filename__';
 %%CLASS%%
 class $__className____typeParameters__ extends __wrapperInterface__ {
   $__className__(String uniqueId, 
-  { 
-  List<MethodCall> Function(__platformViewClass__ __platformViewVariable__) onCreateView,
-  %%CALLBACKINITIALIZERS%%
-  %%CALLBACKINITIALIZER%%
-  this.$__methodName__$Callback,
-  %%CALLBACKINITIALIZER%%
-  %%CALLBACKINITIALIZERS%%
-  }
+  {List<MethodCall> Function(__platformViewClass__ __platformViewVariable__) onCreateView,}
   ) : super(uniqueId: uniqueId, platformClassName: '__platformClassName__', onCreateView: onCreateView,);
 
-  %%CALLBACKVARIABLES%%
-  %%CALLBACKVARIABLE%%
-  final List<MethodCall> Function(
-    %%CALLBACKVARIABLEPARAMS%%
-    %%CALLBACKVARIABLEPARAM methodChannel:wrapper%%
-    $__parameterType__ __parameterName__,
-    %%CALLBACKVARIABLEPARAM methodChannel:wrapper%%
-    %%CALLBACKVARIABLEPARAM methodChannel:supported%%
-    __parameterType__ __parameterName__,
-    %%CALLBACKVARIABLEPARAM methodChannel:supported%%
-    %%CALLBACKVARIABLEPARAM methodChannel:struct%%
-    $__parameterType__ __parameterName__,
-    %%CALLBACKVARIABLEPARAM methodChannel:struct%%
-    %%CALLBACKVARIABLEPARAMS%%
-  ) $__methodName__$Callback;
-  %%CALLBACKVARIABLE%%
-  %%CALLBACKVARIABLES%%
-
   @override
-  List<MethodCall> onMethodCall(MethodCall call) {
+  Future<void> onMethodCall(MethodCall call) async {
     switch (call.method) {
       %%CALLBACKS%%
       %%CALLBACK%%      
       case '__wrapperName__#__methodName__':
-        (this as __className__).__methodName__(%%CALLBACKCHANNELPARAMS%%%%CALLBACKCHANNELPARAMS%%);
-        return $__methodName__$Callback(
+        (this as __className__).__methodName__(
           %%CALLBACKCHANNELPARAMS%%
           %%CALLBACKCHANNELPARAM methodChannel:wrapper%%
-          __className__.fromUniqueId(call.arguments['__parameterName__']),
+          await __className__.onAllocated<__className__>(call.arguments['__parameterName__']),
           %%CALLBACKCHANNELPARAM methodChannel:wrapper%%
           %%CALLBACKCHANNELPARAM methodChannel:struct%%
-          __className__.fromUniqueId(call.arguments['__parameterName__']),
+          await __className__.onAllocated<__className__>(call.arguments['__parameterName__']),
           %%CALLBACKCHANNELPARAM methodChannel:struct%%
           %%CALLBACKCHANNELPARAM methodChannel:supported%%
           call.arguments['__parameterName__'],
           %%CALLBACKCHANNELPARAM methodChannel:supported%%
           %%CALLBACKCHANNELPARAMS%%
-        ) ?? <MethodCall>[];
+        );
         break;
       %%CALLBACK%%
       %%CALLBACKS%%
@@ -724,17 +698,31 @@ class $__className____typeParameters__ extends __wrapperInterface__ {
 
 class _GenericHelper {
   _GenericHelper._();
-
-  static FutureOr<dynamic> fromUniqueId<T>(String uniqueId) {
-    assert(isTypeOf<T, Wrapper>());
   
-    %%GENERICHELPERS%%
-    %%GENERICHELPER%%
+  static Wrapper getWrapperForType<T>(String uniqueId) {
+    assert(isTypeOf<T, Wrapper>());
+    
+    %%GENERICTYPEHELPERS%%
+    %%GENERICTYPEHELPER%%
     if (isTypeOf<T, __className__>()) {
-      return __className__.fromUniqueId(uniqueId);
+      return $__className__(uniqueId);
     }
-    %%GENERICHELPER%%
-    %%GENERICHELPERS%%
+    %%GENERICTYPEHELPER%%
+    %%GENERICTYPEHELPERS%%
+    
+    throw UnsupportedError('Could not instantiate class ${T.toString()}');
+  }
+
+  static FutureOr<dynamic> onAllocated<T>(String uniqueId) {
+    assert(isTypeOf<T, Wrapper>());
+    
+    %%GENERICCREATIONHELPERS%%
+    %%GENERICCREATIONHELPER%%
+    if (isTypeOf<T, __className__>()) {
+      return __className__.onAllocated(uniqueId);
+    }
+    %%GENERICCREATIONHELPER%%
+    %%GENERICCREATIONHELPERS%%
 
     throw UnsupportedError('Could not instantiate class ${T.toString()}');
   }
@@ -1268,8 +1256,11 @@ class Block {
   static Block callbackSwizzles = Block('CALLBACKSWIZZLES');
   static Block callbackSwizzle = Block('CALLBACKSWIZZLE');
 
-  static Block genericHelpers = Block('GENERICHELPERS');
-  static Block genericHelper = Block('GENERICHELPER');
+  static Block genericTypeHelpers = Block('GENERICTYPEHELPERS');
+  static Block genericTypeHelper = Block('GENERICTYPEHELPER');
+
+  static Block genericCreationHelpers = Block('GENERICCREATIONHELPERS');
+  static Block genericCreationHelper = Block('GENERICCREATIONHELPER');
 }
 
 class MethodChannelBlock extends Block {
@@ -1370,25 +1361,6 @@ class MethodChannelBlock extends Block {
 
   static MethodChannelBlock callbackChannelParams() =>
       MethodChannelBlock('CALLBACKCHANNELPARAMS');
-
-  static MethodChannelBlock callbackVariable() =>
-      MethodChannelBlock('CALLBACKVARIABLE');
-
-  static MethodChannelBlock callbackVariables() =>
-      MethodChannelBlock('CALLBACKVARIABLES');
-
-  static MethodChannelBlock callbackInitializers() =>
-      MethodChannelBlock('CALLBACKINITIALIZERS');
-
-  static MethodChannelBlock callbackInitializer() =>
-      MethodChannelBlock('CALLBACKINITIALIZER');
-
-  static MethodChannelBlock callbackVariableParam(
-          MethodChannelType methodChannel) =>
-      MethodChannelBlock('CALLBACKVARIABLEPARAM', methodChannel: methodChannel);
-
-  static MethodChannelBlock callbackVariableParams() =>
-      MethodChannelBlock('CALLBACKVARIABLEPARAMS');
 
   static MethodChannelBlock valueType(Structure structure) =>
       MethodChannelBlock('VALUETYPE', structure: structure);

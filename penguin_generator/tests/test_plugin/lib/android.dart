@@ -21,8 +21,7 @@ class AndroidNestedClass extends $AndroidNestedClass {
     methodCallStorageHelper.store($AndroidNestedClass$Default());
   }
 
-  static FutureOr<Wrapper> fromUniqueId(String uniqueId) =>
-      throw UnimplementedError();
+  static FutureOr onAllocated(String uniqueId) => throw UnimplementedError();
 }
 
 @Class(AndroidPlatform(
@@ -47,8 +46,9 @@ abstract class AndroidAbstractClass extends $AndroidAbstractClass {
     invoke<void>(channel, [$callbackMethod()]);
   }
 
-  static FutureOr<Wrapper> fromUniqueId(String uniqueId) =>
-      throw UnimplementedError();
+
+
+  static FutureOr onAllocated(String uniqueId) => throw UnimplementedError();
 }
 
 @Class(AndroidPlatform(
@@ -211,8 +211,9 @@ class AndroidTestClass1 extends $AndroidTestClass1 with TestClass1 {
   Future<bool> get boolField => invoke<bool>(
       channel, methodCallStorageHelper.methodCalls..add($boolField()));
 
-  static FutureOr<Wrapper> fromUniqueId(String uniqueId) =>
-      throw UnimplementedError();
+
+
+  static FutureOr onAllocated(String uniqueId)=> throw UnimplementedError();
 }
 
 @Class(AndroidPlatform(
@@ -257,8 +258,7 @@ class AndroidTextViewState extends State<TextView> {
     );
   }
 
-  static FutureOr<Wrapper> fromUniqueId(String uniqueId) =>
-      throw UnimplementedError();
+  static FutureOr onAllocated(String uniqueId) => throw UnimplementedError();
 }
 
 @Class(
@@ -275,7 +275,7 @@ class AndroidTestClass2 extends $AndroidTestClass2 with TestClass2 {
     methodCallStorageHelper.store($AndroidTestClass2$Default());
   }
 
-  static FutureOr<Wrapper> fromUniqueId(String uniqueId) =>
+  static FutureOr onAllocated(String uniqueId) =>
       AndroidTestClass2._(uniqueId);
 }
 
@@ -309,17 +309,17 @@ class AndroidGenericClass<T> extends $AndroidGenericClass<T>
   @override
   Future<T> get(String identifier) async {
     if (isTypeOf<T, Wrapper>()) {
-      final T value = _GenericHelper.fromUniqueId<T>(randomId());
-      invoke<void>(channel, [
-        $get(identifier, (value as Wrapper).uniqueId),
-        (value as Wrapper).allocate(),
-      ]);
-      return value;
+      final Wrapper wrapper = _GenericHelper.getWrapperForType<T>(randomId());
+      invoke<void>(
+        channel,
+        [$get(identifier, wrapper.uniqueId), wrapper.allocate()],
+      );
+      return _GenericHelper.onAllocated<T>(wrapper.uniqueId);
     }
 
     return invoke<T>(channel, [$get(identifier)]);
   }
 
-  static FutureOr<Wrapper> fromUniqueId(String uniqueId) =>
+  static FutureOr onAllocated(String uniqueId) =>
       throw UnimplementedError();
 }

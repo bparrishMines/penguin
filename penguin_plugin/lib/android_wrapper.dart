@@ -24,7 +24,7 @@ class AndroidCallbackHandler extends CallbackHandler {
   ) get onCreateView =>
       (Wrapper wrapper, Map<String, dynamic> arguments) async {
         return (wrapper as AndroidWrapper).onCreateView(
-          Context.fromUniqueId(arguments['context']),
+          Context._(arguments['context']),
         );
       };
 }
@@ -33,5 +33,5 @@ class AndroidCallbackHandler extends CallbackHandler {
 class Context extends $Context {
   Context._(String uniqueId) : super(uniqueId);
 
-  static Context fromUniqueId(String uniqueId) => Context._(uniqueId);
+  static Context onAllocated(String uniqueId) => Context._(uniqueId);
 }

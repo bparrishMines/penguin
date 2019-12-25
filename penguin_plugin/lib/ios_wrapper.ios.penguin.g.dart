@@ -11,7 +11,7 @@ class $CGRect extends IosWrapper {
         );
 
   @override
-  List<MethodCall> onMethodCall(MethodCall call) {
+  Future<void> onMethodCall(MethodCall call) async {
     switch (call.method) {
     }
     throw UnimplementedError('No implementation for ${call.method}.');
@@ -21,11 +21,21 @@ class $CGRect extends IosWrapper {
 class _GenericHelper {
   _GenericHelper._();
 
-  static FutureOr<dynamic> fromUniqueId<T>(String uniqueId) {
+  static Wrapper getWrapperForType<T>(String uniqueId) {
     assert(isTypeOf<T, Wrapper>());
 
     if (isTypeOf<T, CGRect>()) {
-      return CGRect.fromUniqueId(uniqueId);
+      return $CGRect(uniqueId);
+    }
+
+    throw UnsupportedError('Could not instantiate class ${T.toString()}');
+  }
+
+  static FutureOr<dynamic> onAllocated<T>(String uniqueId) {
+    assert(isTypeOf<T, Wrapper>());
+
+    if (isTypeOf<T, CGRect>()) {
+      return CGRect.onAllocated(uniqueId);
     }
 
     throw UnsupportedError('Could not instantiate class ${T.toString()}');

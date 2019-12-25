@@ -12,10 +12,11 @@ abstract class CallbackHandler {
           call.arguments.cast<String, dynamic>(),
         );
       } else {
-        result = _wrappers[call.arguments[r'$uniqueId']].onMethodCall(call);
+        return _wrappers[call.arguments[r'$uniqueId']].onMethodCall(call);
       }
 
       if (result == null) return <MethodCall>[];
+
       return result
           .map<Map<String, dynamic>>(
             (MethodCall methodCall) => <String, dynamic>{
@@ -55,7 +56,7 @@ abstract class Wrapper {
   final MethodCallStorageHelper methodCallStorageHelper =
       MethodCallStorageHelper();
 
-  List<MethodCall> onMethodCall(MethodCall call);
+  Future<void> onMethodCall(MethodCall call);
 
   MethodCall allocate() {
     return MethodCall(

@@ -16,52 +16,6 @@ class MethodChannelTemplateCreator extends TemplateCreator {
   @override
   Template get template => Template.dartMethodChannel;
 
-  String createCallbackVariable({
-    @required String methodName,
-    @required Iterable<String> callbackVariableParams,
-  }) {
-    return TemplateCreator._replace(
-      MethodChannelBlock.callbackVariable()
-          .exp
-          .firstMatch(template.value)
-          .group(1),
-      <Pattern, String>{
-        Replacement.methodName.name: methodName,
-        MethodChannelBlock.callbackVariableParams().exp:
-            callbackVariableParams.join(),
-      },
-    );
-  }
-
-  String createCallbackVariableParam(
-    MethodChannelType methodChannel, {
-    @required String parameterType,
-    @required String parameterName,
-  }) {
-    return TemplateCreator._replace(
-      MethodChannelBlock.callbackVariableParam(methodChannel)
-          .exp
-          .firstMatch(template.value)
-          .group(1),
-      <Pattern, String>{
-        Replacement.parameterType.name: parameterType,
-        Replacement.parameterName.name: parameterName,
-      },
-    );
-  }
-
-  String createCallbackInitializer({@required String methodName}) {
-    return TemplateCreator._replace(
-      MethodChannelBlock.callbackInitializer()
-          .exp
-          .firstMatch(template.value)
-          .group(1),
-      <Pattern, String>{
-        Replacement.methodName.name: methodName,
-      },
-    );
-  }
-
   String createCallback({
     @required String methodName,
     @required Iterable<String> callbackChannelParams,
@@ -181,8 +135,6 @@ class MethodChannelTemplateCreator extends TemplateCreator {
     @required Iterable<String> methods,
     @required Iterable<String> fields,
     @required Iterable<String> callbacks,
-    @required Iterable<String> callbackInitializers,
-    @required Iterable<String> callbackVariables,
     @required String className,
     @required String platformClassName,
     @required String platformViewClass,
@@ -199,9 +151,6 @@ class MethodChannelTemplateCreator extends TemplateCreator {
         Block.fields.exp: fields.join(),
         Replacement.platformClassName.name: platformClassName,
         Block.callbacks.exp: callbacks.join(),
-        MethodChannelBlock.callbackVariables().exp: callbackVariables.join(),
-        MethodChannelBlock.callbackInitializers().exp:
-            callbackInitializers.isNotEmpty ? callbackInitializers.join() : '',
         Replacement.platformViewClass.name: platformViewClass,
         Replacement.platformViewVariable.name: platformViewVariable,
         Replacement.wrapperInterface.name: wrapperInterface,
@@ -212,7 +161,8 @@ class MethodChannelTemplateCreator extends TemplateCreator {
 
   String createFile({
     @required Iterable<String> classes,
-    @required Iterable<String> genericHelpers,
+    @required Iterable<String> genericTypeHelpers,
+    @required Iterable<String> genericCreationHelpers,
     @required String filename,
   }) {
     return TemplateCreator._replace(
@@ -220,14 +170,24 @@ class MethodChannelTemplateCreator extends TemplateCreator {
       <Pattern, String>{
         Block.classes.exp: classes.join(),
         Replacement.filename.name: filename,
-        Block.genericHelpers.exp: genericHelpers.join('else'),
+        Block.genericTypeHelpers.exp: genericTypeHelpers.join('else'),
+        Block.genericCreationHelpers.exp: genericCreationHelpers.join('else'),
       },
     );
   }
 
-  String createGenericHelper({@required String className}) {
+  String createGenericTypeHelper({@required String className}) {
     return TemplateCreator._replace(
-      Block.genericHelper.exp.firstMatch(template.value).group(1),
+      Block.genericTypeHelper.exp.firstMatch(template.value).group(1),
+      <Pattern, String>{
+        Replacement.className.name: className,
+      },
+    );
+  }
+
+  String createGenericCreationHelper({@required String className}) {
+    return TemplateCreator._replace(
+      Block.genericCreationHelper.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
         Replacement.className.name: className,
       },

@@ -56,8 +56,7 @@ class IosTextViewState extends State<TextView> {
     );
   }
 
-  static FutureOr<Wrapper> fromUniqueId(String uniqueId) =>
-      throw UnimplementedError();
+  static FutureOr onAllocated(String uniqueId) => throw UnimplementedError();
 }
 
 @Class(IosPlatform(
@@ -73,8 +72,7 @@ class TestStruct extends $TestStruct {
     return invoke<int>(channel, [$TestStruct$Default(), $intField()]);
   }
 
-  static FutureOr<Wrapper> fromUniqueId(String uniqueId) =>
-      throw UnimplementedError();
+  static FutureOr onAllocated(String uniqueId) => throw UnimplementedError();
 }
 
 @Class(IosPlatform(IosType('TestProtocol', import: '"TestPlugin.h"')))
@@ -94,8 +92,7 @@ abstract class IosProtocol extends $IosProtocol {
     invoke<void>(channel, [$callbackMethod()]);
   }
 
-  static FutureOr<Wrapper> fromUniqueId(String uniqueId) =>
-      throw UnimplementedError();
+  static FutureOr onAllocated(String uniqueId) => throw UnimplementedError();
 }
 
 @Class(IosPlatform(
@@ -261,8 +258,7 @@ class IosTestClass1 extends $IosTestClass1 with TestClass1 {
   Future<bool> get boolField => invoke<bool>(
       channel, methodCallStorageHelper.methodCalls..add($boolField()));
 
-  static FutureOr<Wrapper> fromUniqueId(String uniqueId) =>
-      throw UnimplementedError();
+  static FutureOr onAllocated(String uniqueId) => throw UnimplementedError();
 }
 
 @Class(IosPlatform(
@@ -276,7 +272,7 @@ class IosTestClass2 extends $IosTestClass2 with TestClass2 {
     methodCallStorageHelper.store($IosTestClass2$Default());
   }
 
-  static FutureOr<Wrapper> fromUniqueId(String uniqueId) =>
+  static FutureOr<IosTestClass2> onAllocated(String uniqueId) =>
       IosTestClass2._(uniqueId);
 }
 
@@ -303,17 +299,16 @@ class IosGenericClass<T> extends $IosGenericClass<T> with GenericClass<T> {
   @override
   Future<T> get(String identifier) async {
     if (isTypeOf<T, Wrapper>()) {
-      final T value = _GenericHelper.fromUniqueId<T>(randomId());
-      invoke<void>(channel, [
-        $get(identifier, (value as Wrapper).uniqueId),
-        (value as Wrapper).allocate(),
-      ]);
-      return value;
+      final Wrapper wrapper = _GenericHelper.getWrapperForType<T>(randomId());
+      invoke<void>(
+        channel,
+        [$get(identifier, wrapper.uniqueId), wrapper.allocate()],
+      );
+      return _GenericHelper.onAllocated<T>(wrapper.uniqueId);
     }
 
     return invoke<T>(channel, [$get(identifier)]);
   }
 
-  static FutureOr<Wrapper> fromUniqueId(String uniqueId) =>
-      throw UnimplementedError();
+  static FutureOr onAllocated(String uniqueId) => throw UnimplementedError();
 }

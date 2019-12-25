@@ -24,7 +24,7 @@ class IosCallbackHandler extends CallbackHandler {
   ) get onCreateView =>
       (Wrapper wrapper, Map<String, dynamic> arguments) async {
         return (wrapper as IosWrapper).onCreateView(
-          CGRect.fromUniqueId(arguments['cgRect']),
+          CGRect._(arguments['cgRect']),
         );
       };
 }
@@ -33,5 +33,5 @@ class IosCallbackHandler extends CallbackHandler {
 class CGRect extends $CGRect {
   CGRect._(String uniqueId) : super(uniqueId);
 
-  static CGRect fromUniqueId(String uniqueId) => CGRect._(uniqueId);
+  static FutureOr<CGRect> onAllocated(String uniqueId) => CGRect._(uniqueId);
 }
