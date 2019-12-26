@@ -32,7 +32,11 @@ class AnnotationUtils {
   }
 
   static Field fieldFromConstantReader(ConstantReader reader) {
-    return Field();
+    return Field(
+      nameOverride: reader.peek('nameOverride') != null
+          ? reader.read('nameOverride').stringValue
+          : null,
+    );
   }
 
   static AndroidApi _androidApiFromConstantReader(ConstantReader reader) {

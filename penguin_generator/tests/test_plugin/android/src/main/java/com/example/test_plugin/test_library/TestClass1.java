@@ -13,6 +13,7 @@ public class TestClass1 {
   public final double doubleField = 44.0;
   public final boolean boolField = true;
   public double mutableField = 56.5;
+  public double nameOverrideField = 12.10;
 
   public TestClass1() { }
 

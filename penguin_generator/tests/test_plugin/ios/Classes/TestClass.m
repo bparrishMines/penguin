@@ -9,6 +9,7 @@
     _doubleField = @(44.0);
     _boolField = @(YES);
     _mutableField = @55.4;
+    _nameOverrideField = @12.10;
   }
   return self;
 }

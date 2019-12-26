@@ -78,6 +78,9 @@ abstract class TestClass1 {
 
   @Field()
   Future<bool> get boolField;
+
+  @Field(nameOverride: 'nameOverrideField')
+  Future<double> get notAField;
 }
 
 abstract class TestClass2 {}

@@ -258,6 +258,10 @@ class IosTestClass1 extends $IosTestClass1 with TestClass1 {
   Future<bool> get boolField => invoke<bool>(
       channel, methodCallStorageHelper.methodCalls..add($boolField()));
 
+  @override
+  Future<double> get notAField => invoke<double>(
+      channel, methodCallStorageHelper.methodCalls..add($nameOverrideField()));
+
   static FutureOr onAllocated(String uniqueId) => throw UnimplementedError();
 }
 

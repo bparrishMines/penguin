@@ -25,6 +25,7 @@
 @property NSNumber *_Nonnull doubleField;
 @property NSNumber *_Nonnull boolField;
 @property NSNumber *_Nonnull mutableField;
+@property NSNumber *_Nonnull nameOverrideField;
 + (NSArray<NSNumber *> *_Nonnull)staticField;
 + (void)staticMethod;
 - (void)parameterMethod:(NSString *_Nonnull)supported

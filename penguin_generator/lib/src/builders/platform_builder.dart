@@ -219,7 +219,7 @@ class ReadInfoBuilder extends Builder {
                 (FieldElement fieldElement) => FieldInfo(
                   isMutable: fieldElement.isPublic && !fieldElement.isFinal,
                   isStatic: fieldElement.isStatic,
-                  name: fieldElement.name,
+                  name: _getFieldName(fieldElement),
                   type: fieldElement.type.isDartAsyncFuture ||
                           fieldElement.type.isDartAsyncFutureOr
                       ? _toTypeInfo(
@@ -261,7 +261,7 @@ class ReadInfoBuilder extends Builder {
                 (PropertyAccessorElement accessorElement) => FieldInfo(
                   isMutable: accessorElement.isSetter,
                   isStatic: accessorElement.isStatic,
-                  name: accessorElement.name.replaceAll('=', ''),
+                  name: _getFieldName(accessorElement),
                   type: accessorElement.variable.type.isDartAsyncFuture ||
                           accessorElement.variable.type.isDartAsyncFutureOr
                       ? _toTypeInfo(
@@ -354,6 +354,16 @@ class ReadInfoBuilder extends Builder {
     );
 
     return annotation.platform;
+  }
+
+  String _getFieldName(Element element) {
+    final Field field = AnnotationUtils.fieldFromConstantReader(
+      ConstantReader(
+        Annotation.field.firstAnnotationOfExact(element),
+      ),
+    );
+
+    return field.nameOverride ?? element.name.replaceAll('=', '');
   }
 
   @override

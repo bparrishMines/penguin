@@ -240,6 +240,10 @@ void main() {
         );
       }
     });
+    
+    test('nameOverrideField', () {
+      expect(testClass.notAField, completion(12.10));
+    });
   });
 }
 
