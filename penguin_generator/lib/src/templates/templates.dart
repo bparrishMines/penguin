@@ -587,13 +587,13 @@ class $__className____typeParameters__ extends __wrapperInterface__ {
         (this as __className__).__methodName__(
           %%CALLBACKCHANNELPARAMS%%
           %%CALLBACKCHANNELPARAM methodChannel:wrapper%%
-          await __className__.onAllocated(call.arguments['__parameterName__']),
+          await __className__.onAllocated($__className__(call.arguments['__parameterName__'])),
           %%CALLBACKCHANNELPARAM methodChannel:wrapper%%
           %%CALLBACKCHANNELPARAM methodChannel:primitive%%
           call.arguments['__parameterName__'],
           %%CALLBACKCHANNELPARAM methodChannel:primitive%%
           %%CALLBACKCHANNELPARAM methodChannel:struct%%
-          await __className__.onAllocated(call.arguments['__parameterName__']),
+          await __className__.onAllocated($__className__(call.arguments['__parameterName__'])),
           %%CALLBACKCHANNELPARAM methodChannel:struct%%
           %%CALLBACKCHANNELPARAM methodChannel:supported%%
           call.arguments['__parameterName__'],
@@ -716,18 +716,16 @@ class _GenericHelper {
     throw UnsupportedError('Could not instantiate class ${T.toString()}');
   }
 
-  static FutureOr<dynamic> onAllocated<T>(String uniqueId) {
-    assert(isTypeOf<T, Wrapper>());
-    
+  static FutureOr<dynamic> onAllocated(Wrapper wrapper) {
     %%GENERICCREATIONHELPERS%%
     %%GENERICCREATIONHELPER%%
-    if (isTypeOf<T, __className__>()) {
-      return __className__.onAllocated(uniqueId);
+    if (wrapper is $__className__) {
+      return __className__.onAllocated(wrapper as $__className__);
     }
     %%GENERICCREATIONHELPER%%
     %%GENERICCREATIONHELPERS%%
 
-    throw UnsupportedError('Could not instantiate class ${T.toString()}');
+    throw UnsupportedError('Could not instantiate class ${wrapper.runtimeType}');
   }
 }
 ''');

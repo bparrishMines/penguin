@@ -31,13 +31,12 @@ class _GenericHelper {
     throw UnsupportedError('Could not instantiate class ${T.toString()}');
   }
 
-  static FutureOr<dynamic> onAllocated<T>(String uniqueId) {
-    assert(isTypeOf<T, Wrapper>());
-
-    if (isTypeOf<T, Context>()) {
-      return Context.onAllocated(uniqueId);
+  static FutureOr<dynamic> onAllocated(Wrapper wrapper) {
+    if (wrapper is $Context) {
+      return Context.onAllocated(wrapper as $Context);
     }
 
-    throw UnsupportedError('Could not instantiate class ${T.toString()}');
+    throw UnsupportedError(
+        'Could not instantiate class ${wrapper.runtimeType}');
   }
 }

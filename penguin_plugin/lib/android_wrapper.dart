@@ -33,5 +33,5 @@ class AndroidCallbackHandler extends CallbackHandler {
 class Context extends $Context {
   Context._(String uniqueId) : super(uniqueId);
 
-  static Context onAllocated(String uniqueId) => Context._(uniqueId);
+  static Context onAllocated($Context wrapper) => Context._(wrapper.uniqueId);
 }

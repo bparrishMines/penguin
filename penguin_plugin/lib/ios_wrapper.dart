@@ -33,5 +33,6 @@ class IosCallbackHandler extends CallbackHandler {
 class CGRect extends $CGRect {
   CGRect._(String uniqueId) : super(uniqueId);
 
-  static FutureOr<CGRect> onAllocated(String uniqueId) => CGRect._(uniqueId);
+  static FutureOr<CGRect> onAllocated($CGRect wrapper) =>
+      CGRect._(wrapper.uniqueId);
 }
