@@ -60,10 +60,15 @@ Map<String, dynamic> _$ConstructorToJson(Constructor instance) =>
     <String, dynamic>{};
 
 Field _$FieldFromJson(Map<String, dynamic> json) {
-  return Field();
+  $checkKeys(json, requiredKeys: const ['nameOverride']);
+  return Field(
+    nameOverride: json['nameOverride'] as String,
+  );
 }
 
-Map<String, dynamic> _$FieldToJson(Field instance) => <String, dynamic>{};
+Map<String, dynamic> _$FieldToJson(Field instance) => <String, dynamic>{
+      'nameOverride': instance.nameOverride,
+    };
 
 Platform _$PlatformFromJson(Map<String, dynamic> json) {
   return Platform(

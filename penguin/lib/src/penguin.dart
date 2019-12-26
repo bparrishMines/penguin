@@ -67,7 +67,11 @@ class Constructor {
 
 @JsonSerializable()
 class Field {
-  const Field();
+  const Field({this.nameOverride});
+
+  @JsonKey(required: true, nullable: true)
+  final String nameOverride;
+
   factory Field.fromJson(Map json) => _$FieldFromJson(json);
   Map toJson() => _$FieldToJson(this);
   @override
