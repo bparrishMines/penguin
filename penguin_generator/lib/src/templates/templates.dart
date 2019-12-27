@@ -356,7 +356,7 @@ static void *wrapperCallbackKey = &wrapperCallbackKey;
   %%POSTMETHODCALL methodChannel:typeParameter%%
   ;
   if (![call.arguments[@"$returnTypeIsWrapper"] boolValue]) return result;
-  NSString *wrapperClassName = [NSString stringWithFormat:@"$%@", NSStringFromClass([result class])];
+  NSString *wrapperClassName = [NSString stringWithFormat:@"$%@", call.arguments[@"$returnTypePlatformName"]];
   Class wrapperClass = NSClassFromString(wrapperClassName);
   [[wrapperClass alloc] initWithWrapperManager:wrapperManager uniqueId:call.arguments[@"$newUniqueId"] value:result];
   return [NSNull null];
@@ -672,6 +672,7 @@ class $__className____typeParameters__ extends __wrapperInterface__ {
        <String, dynamic>{r'$uniqueId': uniqueId,
        r'$newUniqueId': $newUniqueId,
        r'$returnTypeIsWrapper': isTypeOf<__returnType__, Wrapper>(),
+       r'$returnTypePlatformName': isTypeOf<__returnType__, Wrapper>() ? _GenericHelper.getWrapperForType<__returnType__>('').platformClassName : null,
        %%METHODCALLPARAMS%%
        %%METHODCALLPARAM methodChannel:supported%%
        '__parameterName__': __parameterName__,
@@ -1165,7 +1166,7 @@ public class ChannelGenerated {
       %%POSTMETHODCALL methodChannel:typeParameter%%
       ;
       if (!(Boolean)call.argument("$returnTypeIsWrapper")) return result;
-      final Class wrapperClass = Class.forName(String.format("__package__.ChannelGenerated$$%s", result.getClass().getSimpleName()));
+      final Class wrapperClass = Class.forName(String.format("__package__.ChannelGenerated$$%s", (String) call.argument("$returnTypePlatformName")));
       final Constructor constructor = wrapperClass.getConstructor(WrapperManager.class, String.class, result.getClass());
       constructor.newInstance(wrapperManager, call.argument("$newUniqueId"), result);
       return null;
