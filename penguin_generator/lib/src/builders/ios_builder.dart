@@ -223,7 +223,7 @@ class IosBuilder extends PenguinBuilder {
                       ),
                     ),
                   ),
-                  returnType: methodInfo.returnType.name,
+                  returnType: _getPlatformClassName(methodInfo.returnType, allClasses),
                   methodName: methodInfo.name,
                 ),
               ),

@@ -41,6 +41,7 @@
 - (NSNumber *_Nonnull)returnBool;
 - (NSArray *_Nonnull)returnList;
 - (NSDictionary *_Nonnull)returnMap;
+- (TestClass1 *_Nonnull)returnWrapper;
 @end
 
 struct TestStruct {

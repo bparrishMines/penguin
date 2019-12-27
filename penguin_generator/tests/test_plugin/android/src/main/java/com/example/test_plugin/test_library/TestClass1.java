@@ -69,6 +69,10 @@ public class TestClass1 {
     return map;
   }
 
+  public TestClass1 returnWrapper() {
+    return new TestClass1();
+  }
+
   public void parameterMethod(String supported, Long primitive, TestClass2 wrapper, NestedTestClass nested) {
     if (supported == null || primitive == null || wrapper == null || nested == null) {
       throw new IllegalArgumentException();

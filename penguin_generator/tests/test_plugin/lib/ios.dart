@@ -56,7 +56,8 @@ class IosTextViewState extends State<TextView> {
     );
   }
 
-  static FutureOr onAllocated($IosTextViewState wrapper) => throw UnimplementedError();
+  static FutureOr onAllocated($IosTextViewState wrapper) =>
+      throw UnimplementedError();
 }
 
 @Class(IosPlatform(
@@ -72,7 +73,8 @@ class TestStruct extends $TestStruct {
     return invoke<int>(channel, [$TestStruct$Default(), $intField()]);
   }
 
-  static FutureOr onAllocated($TestStruct wrapper) => throw UnimplementedError();
+  static FutureOr onAllocated($TestStruct wrapper) =>
+      throw UnimplementedError();
 }
 
 @Class(IosPlatform(IosType('TestProtocol', import: '"TestPlugin.h"')))
@@ -92,13 +94,16 @@ abstract class IosProtocol extends $IosProtocol {
     invoke<void>(channel, [$callbackMethod()]);
   }
 
-  static FutureOr onAllocated($IosProtocol wrapper) => throw UnimplementedError();
+  static FutureOr onAllocated($IosProtocol wrapper) =>
+      throw UnimplementedError();
 }
 
 @Class(IosPlatform(
   IosType('TestClass1', import: '"TestPlugin.h"'),
 ))
 class IosTestClass1 extends $IosTestClass1 with TestClass1 {
+  IosTestClass1._(String uniqueId) : super(uniqueId);
+
   @Constructor()
   IosTestClass1() : super(randomId()) {
     methodCallStorageHelper.store($IosTestClass1$Default());
@@ -242,6 +247,17 @@ class IosTestClass1 extends $IosTestClass1 with TestClass1 {
     );
   }
 
+  @Method()
+  IosTestClass1 returnWrapper() {
+    final IosTestClass1 wrapper = IosTestClass1._(randomId());
+    invoke<void>(channel, [
+      ...methodCallStorageHelper.methodCalls,
+      $returnWrapper(wrapper.uniqueId),
+      wrapper.allocate(),
+    ]);
+    return wrapper;
+  }
+
   @override
   FutureOr<int> get intField => invoke<int>(
       channel, methodCallStorageHelper.methodCalls..add($intField()));
@@ -262,7 +278,8 @@ class IosTestClass1 extends $IosTestClass1 with TestClass1 {
   Future<double> get notAField => invoke<double>(
       channel, methodCallStorageHelper.methodCalls..add($nameOverrideField()));
 
-  static FutureOr onAllocated($IosTestClass1 wrapper) => throw UnimplementedError();
+  static FutureOr onAllocated($IosTestClass1 wrapper) =>
+      throw UnimplementedError();
 }
 
 @Class(IosPlatform(
@@ -314,5 +331,6 @@ class IosGenericClass<T> extends $IosGenericClass<T> with GenericClass<T> {
     return invoke<T>(channel, [$get(identifier)]);
   }
 
-  static FutureOr onAllocated($IosGenericClass wrapper) => throw UnimplementedError();
+  static FutureOr onAllocated($IosGenericClass wrapper) =>
+      throw UnimplementedError();
 }

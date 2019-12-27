@@ -84,6 +84,10 @@
 - (NSDictionary *)returnMap {
   return @{@"one": @1, @"two": @2};
 }
+
+- (TestClass1 *_Nonnull)returnWrapper {
+  return [[TestClass1 alloc] init];
+}
 @end
 
 @implementation TestClass2

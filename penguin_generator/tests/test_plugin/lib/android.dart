@@ -23,7 +23,8 @@ class AndroidNestedClass extends $AndroidNestedClass {
     methodCallStorageHelper.store($AndroidNestedClass$Default());
   }
 
-  static FutureOr onAllocated($AndroidNestedClass wrapper) => AndroidNestedClass._(wrapper.uniqueId);
+  static FutureOr onAllocated($AndroidNestedClass wrapper) =>
+      AndroidNestedClass._(wrapper.uniqueId);
 }
 
 @Class(AndroidPlatform(
@@ -54,13 +55,16 @@ abstract class AndroidAbstractClass extends $AndroidAbstractClass {
         channel, [$callbackMethod(supported, primitive, wrapper, nested)]);
   }
 
-  static FutureOr onAllocated($AndroidAbstractClass wrapper) => throw UnimplementedError();
+  static FutureOr onAllocated($AndroidAbstractClass wrapper) =>
+      throw UnimplementedError();
 }
 
 @Class(AndroidPlatform(
   AndroidType('com.example.test_plugin.test_library', <String>['TestClass1']),
 ))
 class AndroidTestClass1 extends $AndroidTestClass1 with TestClass1 {
+  AndroidTestClass1._(String uniqueId) : super(uniqueId);
+
   @Constructor()
   AndroidTestClass1() : super(randomId()) {
     methodCallStorageHelper.store($AndroidTestClass1$Default());
@@ -201,6 +205,17 @@ class AndroidTestClass1 extends $AndroidTestClass1 with TestClass1 {
     );
   }
 
+  @Method()
+  AndroidTestClass1 returnWrapper() {
+    final AndroidTestClass1 wrapper = AndroidTestClass1._(randomId());
+    invoke<void>(channel, [
+      ...methodCallStorageHelper.methodCalls,
+      $returnWrapper(wrapper.uniqueId),
+      wrapper.allocate(),
+    ]);
+    return wrapper;
+  }
+
   @override
   FutureOr<int> get intField => invoke<int>(
       channel, methodCallStorageHelper.methodCalls..add($intField()));
@@ -221,7 +236,8 @@ class AndroidTestClass1 extends $AndroidTestClass1 with TestClass1 {
   Future<double> get notAField => invoke<double>(
       channel, methodCallStorageHelper.methodCalls..add($nameOverrideField()));
 
-  static FutureOr onAllocated($AndroidTestClass1 wrapper) => throw UnimplementedError();
+  static FutureOr onAllocated($AndroidTestClass1 wrapper) =>
+      throw UnimplementedError();
 }
 
 @Class(AndroidPlatform(
@@ -266,7 +282,8 @@ class AndroidTextViewState extends State<TextView> {
     );
   }
 
-  static FutureOr onAllocated($AndroidTextViewState wrapper) => throw UnimplementedError();
+  static FutureOr onAllocated($AndroidTextViewState wrapper) =>
+      throw UnimplementedError();
 }
 
 @Class(
@@ -283,7 +300,8 @@ class AndroidTestClass2 extends $AndroidTestClass2 with TestClass2 {
     methodCallStorageHelper.store($AndroidTestClass2$Default());
   }
 
-  static FutureOr onAllocated($AndroidTestClass2 wrapper) => AndroidTestClass2._(wrapper.uniqueId);
+  static FutureOr onAllocated($AndroidTestClass2 wrapper) =>
+      AndroidTestClass2._(wrapper.uniqueId);
 }
 
 @Class(AndroidPlatform(AndroidType(
@@ -327,5 +345,6 @@ class AndroidGenericClass<T> extends $AndroidGenericClass<T>
     return invoke<T>(channel, [$get(identifier)]);
   }
 
-  static FutureOr onAllocated($AndroidGenericClass wrapper) => throw UnimplementedError();
+  static FutureOr onAllocated($AndroidGenericClass wrapper) =>
+      throw UnimplementedError();
 }
