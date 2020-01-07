@@ -1,9 +1,3 @@
-targets:
-  $default:
-    builders:
-      penguin_generator|penguin:
-        enabled: false
-
 builders:
   read_builder:
     target: ":penguin_generator"
