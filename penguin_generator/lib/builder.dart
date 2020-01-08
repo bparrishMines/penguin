@@ -1,14 +1,16 @@
 import 'package:build/build.dart';
-import 'package:penguin_generator/src/builders/ios_builder.dart';
 
 import 'src/builders/android_builder.dart';
+import 'src/builders/code_builder.dart';
 import 'src/builders/dart_builders.dart';
-import 'src/builders/platform_builder.dart';
+import 'src/builders/info_builder.dart';
+import 'src/builders/ios_builder.dart';
+import 'src/builders/penguin_builder.dart';
 
-Builder readBuilder(BuilderOptions options) => ReadInfoBuilder();
+Builder infoBuilder(BuilderOptions options) => InfoBuilder();
 
-Builder platformWriteBuilder(BuilderOptions options) =>
-    PlatformWriteBuilder(<PenguinBuilder>[AndroidBuilder(), IosBuilder()]);
+Builder platformBuilder(BuilderOptions options) =>
+    PlatformBuilder(<PenguinBuilder>[AndroidBuilder(), IosBuilder()]);
 
-Builder dartWriteBuilder(BuilderOptions options) =>
-    DartWriteBuilder(<PenguinBuilder>[DartMethodChannelBuilder()]);
+Builder dartBuilder(BuilderOptions options) =>
+    DartBuilder(<PenguinBuilder>[DartMethodChannelBuilder()]);

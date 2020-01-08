@@ -1,25 +1,25 @@
 builders:
-  read_builder:
+  info_builder:
     target: ":penguin_generator"
     import: "package:penguin_generator/builder.dart"
-    builder_factories: ["readBuilder"]
+    builder_factories: ["infoBuilder"]
     build_extensions: {".dart": [".info"]}
     build_to: cache
-    runs_before: [":platform_write_builder", ":dart_write_builder"]
+    runs_before: [":platform_builder", ":dart_builder"]
     auto_apply: root_package
 
-  platform_write_builder:
+  platform_builder:
     target: ":penguin_generator"
     import: "package:penguin_generator/builder.dart"
-    builder_factories: ["platformWriteBuilder"]
+    builder_factories: ["platformBuilder"]
     build_extensions: {r"$lib$": ["ChannelGenerated.java", "ChannelHandler+Generated.h", "ChannelHandler+Generated.m"]}
     build_to: source
-    auto_apply: dependents
+    auto_apply: root_package
 
-  dart_write_builder:
+  dart_builder:
     target: ":penguin_generator"
     import: "package:penguin_generator/builder.dart"
-    builder_factories: ["dartWriteBuilder"]
+    builder_factories: ["dartBuilder"]
     build_extensions: {".info": [".android.penguin.g.dart", ".ios.penguin.g.dart"]}
     build_to: source
-    auto_apply: dependents
+    auto_apply: root_package

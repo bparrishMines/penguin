@@ -1,11 +1,11 @@
 import 'package:dart_style/dart_style.dart';
 import 'package:path/path.dart' as path;
 import 'package:penguin/penguin.dart';
-import 'package:penguin_generator/src/info.dart';
-import 'package:penguin_generator/src/templates/templates.dart';
 
+import '../info.dart';
 import '../templates/template_creator.dart';
-import 'platform_builder.dart';
+import '../templates/templates.dart';
+import 'penguin_builder.dart';
 
 class DartMethodChannelBuilder extends PenguinBuilder {
   static const androidExtension = '.android.penguin.g.dart';

@@ -553,7 +553,7 @@ static void *wrapperCallbackKey = &wrapperCallbackKey;
                               FlutterMethodCall *methodCall = [FlutterMethodCall methodCallWithMethodName:@"MultiInvoke" arguments:result];
                               [self->_methodCallHandler onMethodCall:methodCall];
                               [viewFrame.frame addSubview:[[self->_wrapperManager getWrapper:uniqueId] getValue]];
-                              [[viewFrame.frame subviews][0] sizeToFit];
+                              [viewFrame.frame subviews][0].autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
                             } @finally {
                               [self->_wrapperManager clearTemporaryWrappers];
                             }

@@ -4,101 +4,97 @@ import 'dart:convert';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
-import 'package:glob/glob.dart';
-import 'package:meta/meta.dart';
-import 'package:path/path.dart' as p;
 import 'package:penguin/penguin.dart';
 import 'package:source_gen/source_gen.dart';
 
 import '../info.dart';
-import '../templates/templates.dart';
 import 'annotation_utils.dart';
 
-class PenguinBuilderBuildStep {
-  PenguinBuilderBuildStep._(this._buildStep) {}
+//class PenguinBuilderBuildStep {
+//  PenguinBuilderBuildStep._(this._buildStep) {}
+//
+//  static final String _fileHeader = r'''
+//// GENERATED CODE - DO NOT MODIFY BY HAND
+//
+//// **************************************************************************
+//// PenguinGenerator
+//// **************************************************************************
+//''';
+//
+//  final BuildStep _buildStep;
+//
+//  AssetId get inputId => _buildStep.inputId;
+//
+//  Future<void> writeToAsset(AssetId assetId, String contents) {
+//    return _buildStep.writeAsString(assetId, contents);
+//  }
+//
+//  Future<void> writeToLib(String filename, String content) {
+//    return _buildStep.writeAsString(
+//      AssetId(_buildStep.inputId.package, p.join('lib', filename)),
+//      _fileHeader + content,
+//    );
+//  }
+//}
+//
+//abstract class PenguinBuilder {
+//  Iterable<String> get filenames;
+//  // Platform annotation for the builder (e.g. AndroidPlatform)
+//  Iterable<Type> get platformTypes;
+//
+//  Future<void> build(
+//    List<ClassInfo> libraryClasses,
+//    List<ClassInfo> importedClasses,
+//    PenguinBuilderBuildStep buildStep,
+//  );
+//
+//  // For passing methods over MethodChannel
+//  MethodChannelType getChannelType(TypeInfo info) {
+//    if (info.isMap ||
+//        info.isList &&
+//            info.typeArguments.every(
+//              (_) => getChannelType(_) == MethodChannelType.supported,
+//            )) {
+//      return MethodChannelType.supported;
+//    } else if (info.isStruct) {
+//      return MethodChannelType.struct;
+//    } else if (info.isNativeInt32 || info.isNativeInt64) {
+//      // We must check for primitive before supported because a type will be both.
+//      return MethodChannelType.primitive;
+//    } else if (info.isDynamic ||
+//        info.isObject ||
+//        info.isString ||
+//        info.isNum ||
+//        info.isInt ||
+//        info.isDouble ||
+//        info.isBool) {
+//      return MethodChannelType.supported;
+//    } else if (info.isVoid) {
+//      return MethodChannelType.$void;
+//    } else if (info.isWrapper) {
+//      return MethodChannelType.wrapper;
+//    } else if (info.isTypeParameter) {
+//      return MethodChannelType.typeParameter;
+//    }
+//
+//    throw ArgumentError.value(
+//      info.toString(),
+//      'info',
+//      'Can\'t find $MethodChannelType for info',
+//    );
+//  }
+//
+//  String removeBounds(String value) {
+//    final RegExp genericBrackets = RegExp('<.*>');
+//    return value.replaceAll(genericBrackets, '');
+//  }
+//}
 
-  static final String _fileHeader = r'''
-// GENERATED CODE - DO NOT MODIFY BY HAND
+class InfoBuilder extends Builder {
+  static const String infoExtension = '.info';
 
-// **************************************************************************
-// PenguinGenerator
-// **************************************************************************
-''';
-
-  final BuildStep _buildStep;
-
-  AssetId get inputId => _buildStep.inputId;
-
-  Future<void> writeToAsset(AssetId assetId, String contents) {
-    return _buildStep.writeAsString(assetId, contents);
-  }
-
-  Future<void> writeToLib(String filename, String content) {
-    return _buildStep.writeAsString(
-      AssetId(_buildStep.inputId.package, p.join('lib', filename)),
-      _fileHeader + content,
-    );
-  }
-}
-
-abstract class PenguinBuilder {
-  Iterable<String> get filenames;
-  // Platform annotation for the builder (e.g. AndroidPlatform)
-  Iterable<Type> get platformTypes;
-
-  Future<void> build(
-    List<ClassInfo> libraryClasses,
-    List<ClassInfo> importedClasses,
-    PenguinBuilderBuildStep buildStep,
-  );
-
-  // For passing methods over MethodChannel
-  MethodChannelType getChannelType(TypeInfo info) {
-    if (info.isMap ||
-        info.isList &&
-            info.typeArguments.every(
-              (_) => getChannelType(_) == MethodChannelType.supported,
-            )) {
-      return MethodChannelType.supported;
-    } else if (info.isStruct) {
-      return MethodChannelType.struct;
-    } else if (info.isNativeInt32 || info.isNativeInt64) {
-      // We must check for primitive before supported because a type will be both.
-      return MethodChannelType.primitive;
-    } else if (info.isDynamic ||
-        info.isObject ||
-        info.isString ||
-        info.isNum ||
-        info.isInt ||
-        info.isDouble ||
-        info.isBool) {
-      return MethodChannelType.supported;
-    } else if (info.isVoid) {
-      return MethodChannelType.$void;
-    } else if (info.isWrapper) {
-      return MethodChannelType.wrapper;
-    } else if (info.isTypeParameter) {
-      return MethodChannelType.typeParameter;
-    }
-
-    throw ArgumentError.value(
-      info.toString(),
-      'info',
-      'Can\'t find $MethodChannelType for info',
-    );
-  }
-
-  String removeBounds(String value) {
-    final RegExp genericBrackets = RegExp('<.*>');
-    return value.replaceAll(genericBrackets, '');
-  }
-}
-
-class ReadInfoBuilder extends Builder {
-  static const String _infoExtension = '.info';
-
-  static const String _libraryClassesKey = 'libraryClasses';
-  static const String _importedClassesKey = 'importedClasses';
+  static const String libraryClassesKey = 'libraryClasses';
+  static const String importedClassesKey = 'importedClasses';
 
   final Set<Element> _allElements = <Element>{};
   final Set<ClassInfo> _extraClasses = <ClassInfo>{};
@@ -123,10 +119,10 @@ class ReadInfoBuilder extends Builder {
     if (libraryClasses.isEmpty) return Future<void>.value();
 
     buildStep.writeAsString(
-      buildStep.inputId.changeExtension(_infoExtension),
+      buildStep.inputId.changeExtension(infoExtension),
       jsonEncode(<String, List<ClassInfo>>{
-        _libraryClassesKey: libraryClasses,
-        _importedClassesKey:
+        libraryClassesKey: libraryClasses,
+        importedClassesKey:
             _extraClasses.difference(libraryClasses.toSet()).toList(),
       }),
     );
@@ -363,117 +359,86 @@ class ReadInfoBuilder extends Builder {
       ),
     );
 
+    // Accessors include = in their names
     return field.nameOverride ?? element.name.replaceAll('=', '');
   }
 
   @override
   Map<String, List<String>> get buildExtensions => <String, List<String>>{
-        '.dart': <String>[_infoExtension],
+        '.dart': <String>[infoExtension],
       };
 }
 
-class PlatformWriteBuilder extends Builder {
-  PlatformWriteBuilder(this.platformBuilders);
+//class PlatformWriteBuilder extends Builder {
+//  PlatformWriteBuilder(this.platformBuilders);
+//
+//  static final Glob _allInfoFiles =
+//      Glob('lib/**${ReadInfoBuilder._infoExtension}');
+//
+//  final List<PenguinBuilder> platformBuilders;
+//
+//  @override
+//  FutureOr<void> build(BuildStep buildStep) async {
+//    final Set<ClassInfo> libraryClasses = <ClassInfo>{};
+//    Set<ClassInfo> importedClasses = <ClassInfo>{};
+//
+//    await for (AssetId input in buildStep.findAssets(_allInfoFiles)) {
+//      final String json = await buildStep.readAsString(input);
+//      libraryClasses.addAll(_getLibraryClasses(json));
+//      importedClasses.addAll(_getImportedClasses(json));
+//    }
+//
+//    if (libraryClasses.isEmpty) return;
+//
+//    importedClasses = importedClasses.difference(libraryClasses);
+//
+//    await Future.wait<void>(
+//      platformBuilders.map<Future<void>>(
+//        (PenguinBuilder builder) => builder.build(
+//          _classesForPlatforms(libraryClasses, builder.platformTypes),
+//          _classesForPlatforms(importedClasses, builder.platformTypes),
+//          PenguinBuilderBuildStep._(buildStep),
+//        ),
+//      ),
+//    );
+//  }
+//
+//  @override
+//  Map<String, List<String>> get buildExtensions => <String, List<String>>{
+//        r'$lib$': platformBuilders
+//            .expand<String>((PenguinBuilder builder) => builder.filenames)
+//            .toList(),
+//      };
+//}
 
-  static final Glob _allInfoFiles =
-      Glob('lib/**${ReadInfoBuilder._infoExtension}');
-
-  final List<PenguinBuilder> platformBuilders;
-
-  @override
-  FutureOr<void> build(BuildStep buildStep) async {
-    final Set<ClassInfo> libraryClasses = <ClassInfo>{};
-    Set<ClassInfo> importedClasses = <ClassInfo>{};
-
-    await for (AssetId input in buildStep.findAssets(_allInfoFiles)) {
-      final String json = await buildStep.readAsString(input);
-      libraryClasses.addAll(_getLibraryClasses(json));
-      importedClasses.addAll(_getImportedClasses(json));
-    }
-
-    if (libraryClasses.isEmpty) return;
-
-    importedClasses = importedClasses.difference(libraryClasses);
-
-    await Future.wait<void>(
-      platformBuilders.map<Future<void>>(
-        (PenguinBuilder builder) => builder.build(
-          _classesForPlatforms(libraryClasses, builder.platformTypes),
-          _classesForPlatforms(importedClasses, builder.platformTypes),
-          PenguinBuilderBuildStep._(buildStep),
-        ),
-      ),
-    );
-  }
-
-  @override
-  Map<String, List<String>> get buildExtensions => <String, List<String>>{
-        r'$lib$': platformBuilders
-            .expand<String>((PenguinBuilder builder) => builder.filenames)
-            .toList(),
-      };
-}
-
-class DartWriteBuilder extends Builder {
-  DartWriteBuilder(this.platformBuilders);
-
-  final List<PenguinBuilder> platformBuilders;
-
-  @override
-  FutureOr<void> build(BuildStep buildStep) async {
-    final String json = await buildStep.readAsString(buildStep.inputId);
-    final Iterable<ClassInfo> libraryClasses = _getLibraryClasses(json);
-    final Iterable<ClassInfo> importedClasses = _getImportedClasses(json);
-
-    if (libraryClasses.isEmpty) return;
-
-    await Future.wait<void>(
-      platformBuilders.map<Future<void>>(
-        (PenguinBuilder builder) => builder.build(
-          _classesForPlatforms(libraryClasses, builder.platformTypes),
-          _classesForPlatforms(importedClasses, builder.platformTypes),
-          PenguinBuilderBuildStep._(buildStep),
-        ),
-      ),
-    );
-  }
-
-  @override
-  Map<String, List<String>> get buildExtensions => <String, List<String>>{
-        ReadInfoBuilder._infoExtension: platformBuilders
-            .expand<String>((PenguinBuilder builder) => builder.filenames)
-            .toList(),
-      };
-}
-
-Iterable<ClassInfo> _getClasses({
-  @required String key,
-  @required String json,
-}) {
-  return jsonDecode(json)[key].map<ClassInfo>(
-    (dynamic json) => ClassInfo.fromJson(json),
-  );
-}
-
-Iterable<ClassInfo> _getLibraryClasses(String json) {
-  return _getClasses(key: ReadInfoBuilder._libraryClassesKey, json: json);
-}
-
-Iterable<ClassInfo> _getImportedClasses(String json) {
-  return _getClasses(key: ReadInfoBuilder._importedClassesKey, json: json);
-}
-
-List<ClassInfo> _classesForPlatforms(
-  Iterable<ClassInfo> classes,
-  Iterable<Type> platformTypes,
-) {
-  return classes
-      .where(
-        (ClassInfo classInfo) => platformTypes.any(
-          (Type type) =>
-              classInfo.aClass.platform.runtimeType.toString() ==
-              type.toString(),
-        ),
-      )
-      .toList();
-}
+//class DartWriteBuilder extends Builder {
+//  DartWriteBuilder(this.platformBuilders);
+//
+//  final List<PenguinBuilder> platformBuilders;
+//
+//  @override
+//  FutureOr<void> build(BuildStep buildStep) async {
+//    final String json = await buildStep.readAsString(buildStep.inputId);
+//    final Iterable<ClassInfo> libraryClasses = _getLibraryClasses(json);
+//    final Iterable<ClassInfo> importedClasses = _getImportedClasses(json);
+//
+//    if (libraryClasses.isEmpty) return;
+//
+//    await Future.wait<void>(
+//      platformBuilders.map<Future<void>>(
+//        (PenguinBuilder builder) => builder.build(
+//          _classesForPlatforms(libraryClasses, builder.platformTypes),
+//          _classesForPlatforms(importedClasses, builder.platformTypes),
+//          PenguinBuilderBuildStep._(buildStep),
+//        ),
+//      ),
+//    );
+//  }
+//
+//  @override
+//  Map<String, List<String>> get buildExtensions => <String, List<String>>{
+//        ReadInfoBuilder._infoExtension: platformBuilders
+//            .expand<String>((PenguinBuilder builder) => builder.filenames)
+//            .toList(),
+//      };
+//}

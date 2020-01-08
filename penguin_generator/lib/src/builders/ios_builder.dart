@@ -1,6 +1,6 @@
 import 'package:penguin/penguin.dart';
 
-import 'platform_builder.dart';
+import 'penguin_builder.dart';
 import '../info.dart';
 import '../templates/templates.dart';
 import '../templates/template_creator.dart';
@@ -79,8 +79,12 @@ class IosBuilder extends PenguinBuilder {
                   null)
               .map<String>(
                 (ClassInfo classInfo) =>
-                    (classInfo.aClass.platform as IosPlatform).type.import,
-              ),
+                    (classInfo.aClass.platform as IosPlatform)
+                        .type
+                        .import
+                        .trim(),
+              )
+              .toSet(),
           classes: allClasses.map<String>(
             (ClassInfo classInfo) => IosTemplateCreator.createHeaderClass(
               _getStructure(classInfo),
@@ -223,7 +227,8 @@ class IosBuilder extends PenguinBuilder {
                       ),
                     ),
                   ),
-                  returnType: _getPlatformClassName(methodInfo.returnType, allClasses),
+                  returnType:
+                      _getPlatformClassName(methodInfo.returnType, allClasses),
                   methodName: methodInfo.name,
                 ),
               ),

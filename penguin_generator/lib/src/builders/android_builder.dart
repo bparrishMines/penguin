@@ -1,10 +1,10 @@
 import 'dart:io';
 
 import 'package:penguin/penguin.dart';
-import 'package:penguin_generator/src/info.dart';
 import 'package:pubspec_parse/pubspec_parse.dart';
 
-import 'platform_builder.dart';
+import '../info.dart';
+import 'penguin_builder.dart';
 import '../templates/templates.dart';
 import '../templates/template_creator.dart';
 
