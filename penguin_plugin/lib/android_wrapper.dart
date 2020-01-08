@@ -10,19 +10,19 @@ abstract class AndroidWrapper extends Wrapper {
   AndroidWrapper({
     String uniqueId,
     String platformClassName,
-    this.onCreateView,
   }) : super(uniqueId: uniqueId, platformClassName: platformClassName);
 
-  final List<MethodCall> Function(Context context) onCreateView;
+  FutureOr<Iterable<MethodCall>> onCreateView(Context context) =>
+      throw UnimplementedError();
 }
 
 class AndroidCallbackHandler extends CallbackHandler {
   @override
-  Future<List<MethodCall>> Function(
+  FutureOr<Iterable<MethodCall>> Function(
     Wrapper wrapper,
     Map<String, dynamic> arguments,
   ) get onCreateView =>
-      (Wrapper wrapper, Map<String, dynamic> arguments) async {
+      (Wrapper wrapper, Map<String, dynamic> arguments) {
         return (wrapper as AndroidWrapper).onCreateView(
           Context._(arguments['context']),
         );

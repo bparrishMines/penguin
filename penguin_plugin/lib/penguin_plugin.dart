@@ -28,7 +28,7 @@ abstract class CallbackHandler {
     };
   }
 
-  Future<List<MethodCall>> Function(
+  FutureOr<Iterable<MethodCall>> Function(
     Wrapper wrapper,
     Map<String, dynamic> arguments,
   ) get onCreateView;

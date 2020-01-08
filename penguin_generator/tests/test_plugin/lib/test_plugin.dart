@@ -6,29 +6,37 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:penguin/penguin.dart';
 import 'package:penguin_plugin/penguin_plugin.dart';
-import 'package:penguin_plugin/android_wrapper.dart' as android;
-import 'package:penguin_plugin/ios_wrapper.dart' as ios;
+import 'package:penguin_plugin/android_wrapper.dart' as awrapper;
+import 'package:penguin_plugin/ios_wrapper.dart' as iwrapper;
 
-import 'android.dart';
-import 'ios.dart';
+import 'android.dart' as android;
+import 'ios.dart' as ios;
 
 final CallbackHandler callbackHandler = io.Platform.isAndroid
-    ? android.AndroidCallbackHandler()
-    : ios.IosCallbackHandler();
+    ? awrapper.AndroidCallbackHandler()
+    : iwrapper.IosCallbackHandler();
 
 final MethodChannel channel = MethodChannel('test_plugin')
   ..setMethodCallHandler(callbackHandler.methodCallHandler);
 String randomId() => Random().nextDouble().toString();
 
-class TextView extends StatefulWidget {
-  TextView(this.text) : assert(text != null);
+abstract class PlatformTextView {
+  static PlatformTextView fromText(String text) {
+    if (io.Platform.isAndroid) return android.TextView()..setText(text);
+    if (io.Platform.isIOS) return ios.TextView.initWithFrame()..text = text;
+    throw UnsupportedError('Not Android or iOS');
+  }
+}
 
-  final String text;
+class TextViewWidget extends StatefulWidget {
+  TextViewWidget(this.textView);
+
+  final PlatformTextView textView;
 
   @override
   State<StatefulWidget> createState() {
-    if (io.Platform.isAndroid) return AndroidTextViewState(null);
-    if (io.Platform.isIOS) return IosTextViewState(text);
+    if (io.Platform.isAndroid) return android.AndroidTextViewState();
+    if (io.Platform.isIOS) return ios.IosTextViewState();
     throw UnsupportedError('Not Android or iOS');
   }
 }

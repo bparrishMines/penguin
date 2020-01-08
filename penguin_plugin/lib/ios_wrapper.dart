@@ -10,19 +10,19 @@ abstract class IosWrapper extends Wrapper {
   IosWrapper({
     String uniqueId,
     String platformClassName,
-    this.onCreateView,
   }) : super(uniqueId: uniqueId, platformClassName: platformClassName);
 
-  final List<MethodCall> Function(CGRect frame) onCreateView;
+  FutureOr<Iterable<MethodCall>> onCreateView(CGRect frame) =>
+      throw UnimplementedError();
 }
 
 class IosCallbackHandler extends CallbackHandler {
   @override
-  Future<List<MethodCall>> Function(
+  FutureOr<Iterable<MethodCall>> Function(
     Wrapper wrapper,
     Map<String, dynamic> arguments,
   ) get onCreateView =>
-      (Wrapper wrapper, Map<String, dynamic> arguments) async {
+      (Wrapper wrapper, Map<String, dynamic> arguments) {
         return (wrapper as IosWrapper).onCreateView(
           CGRect._(arguments['cgRect']),
         );

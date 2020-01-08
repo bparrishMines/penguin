@@ -1,14 +1,14 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+// **************************************************************************
+// PenguinGenerator
+// **************************************************************************
+
 part of 'android_wrapper.dart';
 
 class $Context extends AndroidWrapper {
-  $Context(
-    String uniqueId, {
-    List<MethodCall> Function(Context context) onCreateView,
-  }) : super(
-          uniqueId: uniqueId,
-          platformClassName: 'Context',
-          onCreateView: onCreateView,
-        );
+  $Context(String uniqueId)
+      : super(uniqueId: uniqueId, platformClassName: 'Context');
 
   @override
   Future<void> onMethodCall(MethodCall call) async {

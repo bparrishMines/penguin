@@ -20,14 +20,14 @@ class PenguinBuilderBuildStep {
 
   AssetId get inputId => _buildStep.inputId;
 
-  Future<void> writeToAsset(AssetId assetId, String contents) {
-    return _buildStep.writeAsString(assetId, contents);
+  Future<void> writeToAsset(AssetId assetId, String content) {
+    return _buildStep.writeAsString(assetId, '$_fileHeader\n$content');
   }
 
   Future<void> writeToLib(String filename, String content) {
     return _buildStep.writeAsString(
       AssetId(_buildStep.inputId.package, path.join('lib', filename)),
-      _fileHeader + content,
+      '$_fileHeader\n$content',
     );
   }
 }

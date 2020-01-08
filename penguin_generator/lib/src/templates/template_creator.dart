@@ -137,8 +137,6 @@ class MethodChannelTemplateCreator extends TemplateCreator {
     @required Iterable<String> callbacks,
     @required String className,
     @required String platformClassName,
-    @required String platformViewClass,
-    @required String platformViewVariable,
     @required String wrapperInterface,
   }) {
     return TemplateCreator._replace(
@@ -151,8 +149,6 @@ class MethodChannelTemplateCreator extends TemplateCreator {
         Block.fields.exp: fields.join(),
         Replacement.platformClassName.name: platformClassName,
         Block.callbacks.exp: callbacks.join(),
-        Replacement.platformViewClass.name: platformViewClass,
-        Replacement.platformViewVariable.name: platformViewVariable,
         Replacement.wrapperInterface.name: wrapperInterface,
         Replacement.className.name: className,
       },

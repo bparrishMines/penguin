@@ -574,9 +574,8 @@ part of '__filename__';
 %%CLASSES%%
 %%CLASS%%
 class $__className____typeParameters__ extends __wrapperInterface__ {
-  $__className__(String uniqueId, 
-  {List<MethodCall> Function(__platformViewClass__ __platformViewVariable__) onCreateView,}
-  ) : super(uniqueId: uniqueId, platformClassName: '__platformClassName__', onCreateView: onCreateView,);
+  $__className__(String uniqueId) :
+      super(uniqueId: uniqueId, platformClassName: '__platformClassName__');
 
   @override
   Future<void> onMethodCall(MethodCall call) async {
@@ -1377,10 +1376,6 @@ class Replacement {
       Replacement('__dartConstructorName__');
   static final Replacement constructorSignature =
       Replacement('__constructorSignature__');
-  static final Replacement platformViewClass =
-      Replacement('__platformViewClass__');
-  static final Replacement platformViewVariable =
-      Replacement('__platformViewVariable__');
   static final Replacement implementationName =
       Replacement('__implementationName__');
   static final Replacement filename = Replacement('__filename__');

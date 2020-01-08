@@ -9,55 +9,60 @@ import 'package:test_plugin/test_plugin.dart';
 
 part 'ios.ios.penguin.g.dart';
 
-@Class(IosPlatform(
-  IosType('UITextView'),
-))
-class IosTextViewState extends State<TextView> {
-  IosTextViewState(this.text);
-
-  /// Internal. Only for code gen. DO NOT USE
-  @Constructor()
-  IosTextViewState.initWithFrame(CGRect frame);
-
-  @Field()
-  String text;
-
-  $IosTextViewState _textView;
+class IosTextViewState extends State<TextViewWidget> {
+  TextView get _asTextView => widget.textView as TextView;
 
   @override
   void initState() {
     super.initState();
-    _textView = $IosTextViewState(
-      randomId(),
-      onCreateView: (CGRect cgRect) {
-        return <MethodCall>[
-          _textView.$IosTextViewStateinitWithFrame(cgRect),
-          _textView.$text(text: text),
-          _textView.allocate(),
-        ];
-      },
-    );
-    callbackHandler.addWrapper(_textView);
+    callbackHandler.addWrapper(_asTextView);
   }
 
   @override
   void dispose() {
     super.dispose();
-    invoke<void>(channel, [_textView.deallocate()]);
-    callbackHandler.removeWrapper(_textView);
+    invoke<void>(channel, [_asTextView.deallocate()]);
+    callbackHandler.removeWrapper(_asTextView);
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_asTextView._isCreated) {
+      invoke<void>(channel, _asTextView.methodCallStorageHelper.methodCalls);
+      _asTextView.methodCallStorageHelper.clearMethodCalls();
+    }
     return UiKitView(
       viewType: '${channel.name}/view',
-      creationParams: _textView.uniqueId,
+      creationParams: _asTextView.uniqueId,
       creationParamsCodec: const StandardMessageCodec(),
     );
   }
+}
 
-  static FutureOr onAllocated($IosTextViewState wrapper) =>
-      throw UnimplementedError();
+@Class(IosPlatform(IosType('UITextView')))
+class TextView extends $TextView with PlatformTextView {
+  @Constructor()
+  TextView.initWithFrame([CGRect frame]) : super(randomId());
+
+  bool _isCreated = false;
+
+  @Field()
+  set text(String text) => methodCallStorageHelper.replace($text(text: text));
+
+  @override
+  FutureOr<Iterable<MethodCall>> onCreateView(CGRect frame) {
+    final List<MethodCall> methodCalls = methodCallStorageHelper.methodCalls;
+    methodCallStorageHelper.clearMethodCalls();
+
+    _isCreated = true;
+    return <MethodCall>[
+      $TextViewinitWithFrame(frame),
+      ...methodCalls,
+      allocate(),
+    ];
+  }
+
+  static FutureOr onAllocated($TextView wrapper) => throw UnimplementedError();
 }
 
 @Class(IosPlatform(

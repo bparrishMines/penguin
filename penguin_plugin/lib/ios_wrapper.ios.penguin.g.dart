@@ -1,14 +1,14 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+// **************************************************************************
+// PenguinGenerator
+// **************************************************************************
+
 part of 'ios_wrapper.dart';
 
 class $CGRect extends IosWrapper {
-  $CGRect(
-    String uniqueId, {
-    List<MethodCall> Function(CGRect cgRect) onCreateView,
-  }) : super(
-          uniqueId: uniqueId,
-          platformClassName: 'CGRect',
-          onCreateView: onCreateView,
-        );
+  $CGRect(String uniqueId)
+      : super(uniqueId: uniqueId, platformClassName: 'CGRect');
 
   @override
   Future<void> onMethodCall(MethodCall call) async {

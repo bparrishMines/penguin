@@ -240,50 +240,65 @@ class AndroidTestClass1 extends $AndroidTestClass1 with TestClass1 {
       throw UnimplementedError();
 }
 
-@Class(AndroidPlatform(
-  AndroidType('android.widget', <String>['TextView']),
-))
-class AndroidTextViewState extends State<TextView> {
-  @Constructor()
-  AndroidTextViewState(Context context);
-
-  $AndroidTextViewState _textView;
-
-  @Method()
-  void setText(String text) {}
+class AndroidTextViewState extends State<TextViewWidget> {
+  TextView get _asTextView => widget.textView as TextView;
 
   @override
   void initState() {
     super.initState();
-    _textView = $AndroidTextViewState(
-      randomId(),
-      onCreateView: (Context context) {
-        return <MethodCall>[
-          _textView.$AndroidTextViewState$Default(context),
-          _textView.$setText(widget.text),
-        ];
-      },
-    );
-    callbackHandler.addWrapper(_textView);
+    callbackHandler.addWrapper(_asTextView);
   }
 
   @override
   void dispose() {
     super.dispose();
-    callbackHandler.removeWrapper(_textView);
+    invoke<void>(channel, [_asTextView.deallocate()]);
+    callbackHandler.removeWrapper(_asTextView);
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_asTextView._isCreated) {
+      invoke<void>(channel, _asTextView.methodCallStorageHelper.methodCalls);
+      _asTextView.methodCallStorageHelper.clearMethodCalls();
+    }
+
     return AndroidView(
       viewType: '${channel.name}/view',
-      creationParams: _textView.uniqueId,
+      creationParams: _asTextView.uniqueId,
       creationParamsCodec: const StandardMessageCodec(),
     );
   }
+}
 
-  static FutureOr onAllocated($AndroidTextViewState wrapper) =>
-      throw UnimplementedError();
+@Class(AndroidPlatform(
+  AndroidType('android.widget', <String>['TextView']),
+))
+class TextView extends $TextView with PlatformTextView {
+  @Constructor()
+  TextView([Context context]) : super(randomId());
+
+  bool _isCreated = false;
+
+  @Method()
+  void setText(String text) {
+    methodCallStorageHelper.replace($setText(text));
+  }
+
+  @override
+  FutureOr<Iterable<MethodCall>> onCreateView(Context context) {
+    final List<MethodCall> methodCalls = methodCallStorageHelper.methodCalls;
+    methodCallStorageHelper.clearMethodCalls();
+
+    _isCreated = true;
+    return <MethodCall>[
+      $TextView$Default(context),
+      ...methodCalls,
+      allocate(),
+    ];
+  }
+
+  static FutureOr onAllocated($TextView wrapper) => throw UnimplementedError();
 }
 
 @Class(

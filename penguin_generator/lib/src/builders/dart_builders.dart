@@ -76,8 +76,6 @@ class DartMethodChannelBuilder extends PenguinBuilder {
               .map<String>(
                 (ClassInfo classInfo) => creator.createClass(
                   wrapperInterface: 'AndroidWrapper',
-                  platformViewClass: 'Context',
-                  platformViewVariable: 'context',
                   typeParameters: classInfo.typeParameters.map<String>(
                     (TypeInfo info) => info.name,
                   ),
@@ -230,8 +228,6 @@ class DartMethodChannelBuilder extends PenguinBuilder {
               .map<String>(
                 (ClassInfo classInfo) => creator.createClass(
                   wrapperInterface: 'IosWrapper',
-                  platformViewClass: 'CGRect',
-                  platformViewVariable: 'cgRect',
                   typeParameters: classInfo.typeParameters.map<String>(
                     (TypeInfo info) => info.name,
                   ),
