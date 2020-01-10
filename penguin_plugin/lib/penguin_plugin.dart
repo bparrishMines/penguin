@@ -1,107 +1,83 @@
 import 'dart:async';
 
 import 'package:flutter/services.dart';
+import 'package:uuid/uuid.dart';
 
-abstract class CallbackHandler {
-  CallbackHandler() {
-    _methodCallHandler = (MethodCall call) async {
-      List<MethodCall> result;
-      if (call.method == 'CreateView') {
-        result = await onCreateView(
-          _wrappers[call.arguments[r'$uniqueId']],
-          call.arguments.cast<String, dynamic>(),
-        );
-      } else {
-        return _wrappers[call.arguments[r'$uniqueId']].onMethodCall(call);
-      }
+abstract class PenguinPlugin {
+  static final _WrapperManager _wrapperManager = _WrapperManager();
 
-      if (result == null) return <MethodCall>[];
-
-      return result
-          .map<Map<String, dynamic>>(
-            (MethodCall methodCall) => <String, dynamic>{
-              'method': methodCall.method,
-              'arguments': methodCall.arguments,
-            },
-          )
-          .toList();
-    };
+  static MethodChannel _globalMethodChannel;
+  static set globalMethodChannel(MethodChannel methodChannel) =>
+      _globalMethodChannel = methodChannel;
+  static MethodChannel get globalMethodChannel {
+    assert(
+      _globalMethodChannel != null,
+      'PenguinPlugin.globalMethodChannel is null.',
+    );
+    return _globalMethodChannel;
   }
 
-  FutureOr<Iterable<MethodCall>> Function(
-    Wrapper wrapper,
-    Map<String, dynamic> arguments,
-  ) get onCreateView;
+  static Future<dynamic> Function(MethodCall call) get methodCallHandler =>
+      (MethodCall call) {
+        return _wrapperManager.wrappers[call.arguments[r'$uniqueId']]
+            .onMethodCall(call);
+      };
+}
 
-  final Map<String, Wrapper> _wrappers = <String, Wrapper>{};
-  Future<dynamic> Function(MethodCall call) _methodCallHandler;
+class _WrapperManager {
+  _WrapperManager();
 
-  Future<dynamic> Function(MethodCall call) get methodCallHandler =>
-      _methodCallHandler;
+  final Map<String, Wrapper> wrappers = <String, Wrapper>{};
 
-  void addWrapper(Wrapper wrapper) => _wrappers[wrapper.uniqueId] = wrapper;
+  void addWrapper(Wrapper wrapper) {
+    assert(!wrappers.containsKey(wrapper.uniqueId));
+    wrappers[wrapper.uniqueId] = wrapper;
+  }
 
-  Wrapper removeWrapper(Wrapper wrapper) => _wrappers.remove(wrapper.uniqueId);
-
-  void clearAll() => _wrappers.clear();
+  FutureOr<void> removeWrapper(String uniqueId) {
+    final Wrapper wrapper = wrappers.remove(uniqueId);
+    if (wrapper != null) {
+      return invoke<void>(
+        PenguinPlugin.globalMethodChannel,
+        <MethodCall>[
+          MethodCall(
+            '${wrapper.platformClassName}#deallocate',
+            <String, String>{r'$uniqueId': uniqueId},
+          )
+        ],
+      );
+    }
+  }
 }
 
 abstract class Wrapper {
-  Wrapper({this.uniqueId, this.platformClassName});
-
-  final String uniqueId;
-
-  final String platformClassName;
-
-  final MethodCallStorageHelper methodCallStorageHelper =
-      MethodCallStorageHelper();
-
-  Future<void> onMethodCall(MethodCall call);
-
-  MethodCall allocate() {
-    return MethodCall(
-      '$platformClassName#allocate',
-      <String, String>{r'$uniqueId': uniqueId},
-    );
+  Wrapper([String uniqueId]) : _uniqueId = uniqueId ?? _uuid.v4() {
+    PenguinPlugin._wrapperManager.addWrapper(this);
   }
 
-  MethodCall deallocate() {
-    return MethodCall(
-      '$platformClassName#deallocate',
-      <String, String>{r'$uniqueId': uniqueId},
-    );
-  }
-}
+  static final Uuid _uuid = Uuid();
 
-class MethodCallStorageHelper {
-  final Map<String, int> _callIndexes = <String, int>{};
-  final List<MethodCall> _storedMethodCalls = <MethodCall>[];
+  final String _uniqueId;
+  String get uniqueId => _uniqueId;
 
-  List<MethodCall> get methodCalls => List<MethodCall>.from(_storedMethodCalls);
+  int _retainCount = 1;
+  int get retainCount => _retainCount;
 
-  void store(MethodCall call) {
-    _callIndexes[call.method] = _storedMethodCalls.length;
-    _storedMethodCalls.add(call);
+  Wrapper retain() {
+    _retainCount++;
+    return this;
   }
 
-  void replace(MethodCall call) {
-    final int index = _callIndexes[call.method];
-    if (index != null) {
-      _storedMethodCalls[index] = call;
-    } else {
-      store(call);
+  FutureOr<void> release() {
+    _retainCount--;
+    if (retainCount == 0) {
+      return PenguinPlugin._wrapperManager.removeWrapper(uniqueId);
     }
   }
 
-  void storeAll(Iterable<MethodCall> calls) => calls.forEach((_) => store(_));
+  String get platformClassName;
 
-  void replaceAll(Iterable<MethodCall> calls) =>
-      calls.forEach((_) => replace(_));
-
-  void clearMethodCalls() {
-    _storedMethodCalls.clear();
-    _callIndexes.clear();
-  }
+  Future<void> onMethodCall(MethodCall call);
 }
 
 Future<T> invoke<T>(MethodChannel channel, Iterable<MethodCall> calls) {
