@@ -573,9 +573,10 @@ part of '__filename__';
 
 %%CLASSES%%
 %%CLASS%%
-class $__className____typeParameters__ extends __wrapperInterface__ {
-  $__className__(String uniqueId) :
-      super(uniqueId: uniqueId, platformClassName: '__platformClassName__');
+class $__className____typeParameters__ extends Wrapper {
+  $__className__.fromUniqueId(String uniqueId) : super(uniqueId);
+  
+  String get platformClassName => '__platformClassName__';
 
   @override
   Future<void> onMethodCall(MethodCall call) async {
@@ -586,13 +587,13 @@ class $__className____typeParameters__ extends __wrapperInterface__ {
         (this as __className__).__methodName__(
           %%CALLBACKCHANNELPARAMS%%
           %%CALLBACKCHANNELPARAM methodChannel:wrapper%%
-          await __className__.onAllocated($__className__(call.arguments['__parameterName__'])),
+          __className__.fromUniqueId(call.arguments['__parameterName__']),
           %%CALLBACKCHANNELPARAM methodChannel:wrapper%%
           %%CALLBACKCHANNELPARAM methodChannel:primitive%%
           call.arguments['__parameterName__'],
           %%CALLBACKCHANNELPARAM methodChannel:primitive%%
           %%CALLBACKCHANNELPARAM methodChannel:struct%%
-          await __className__.onAllocated($__className__(call.arguments['__parameterName__'])),
+          __className__.fromUniqueId(call.arguments['__parameterName__']),
           %%CALLBACKCHANNELPARAM methodChannel:struct%%
           %%CALLBACKCHANNELPARAM methodChannel:supported%%
           call.arguments['__parameterName__'],
@@ -608,15 +609,16 @@ class $__className____typeParameters__ extends __wrapperInterface__ {
 
   %%CONSTRUCTORS%%
   %%CONSTRUCTOR%%
-  MethodCall $__className____dartConstructorName__(
+  $__className__.__dartConstructorName__(
   %%PARAMETERS%%
   %%PARAMETERS%%
   ) {
-    return MethodCall(
+    PenguinPlugin.globalMethodChannel.invokeMethod(
       '__platformClassName__(__constructorName__)',
-      <String, dynamic>{r'$uniqueId': uniqueId,
-       %%METHODCALLPARAMS%%
-       %%METHODCALLPARAMS%%
+      <String, dynamic>{
+        r'$uniqueId': uniqueId,
+        %%METHODCALLPARAMS%%
+        %%METHODCALLPARAMS%%
       },
     );
   }
@@ -625,12 +627,12 @@ class $__className____typeParameters__ extends __wrapperInterface__ {
 
   %%FIELDS%%
   %%FIELD%%
-  static MethodCall $__fieldName__({
+  static Future<__returnType__> $__fieldName__({
     %%PARAMETERS%%
     %%PARAMETERS%%
     String $newUniqueId,
-  }) {
-    return MethodCall(
+  }) =>
+    PenguinPlugin.globalMethodChannel.invokeMethod<__returnType__>(
       '__platformClassName__.__fieldName__',
       <String, dynamic>{
         r'$uniqueId': uniqueId,
@@ -640,13 +642,12 @@ class $__className____typeParameters__ extends __wrapperInterface__ {
         %%METHODCALLPARAMS%%
       },
     );
-  }
   %%FIELD%%
   %%FIELDS%%
 
   %%METHODS%%
   %%METHOD%%
-  static MethodCall $__methodName__(
+  static Future<__returnType__> $__methodName__(
   %%PARAMETERS%%
   %%PARAMETER methodChannel:supported%%
   __parameterType__ __parameterName__,
@@ -665,8 +666,8 @@ class $__className____typeParameters__ extends __wrapperInterface__ {
   %%PARAMETER methodChannel:typeParameter%%
   %%PARAMETERS%%
   [String $newUniqueId,]
-  ) {
-    return MethodCall(
+  ) =>
+    PenguinPlugin.globalMethodChannel.invokeMethod<__returnType__>(
       '__platformClassName__#__methodName__',
        <String, dynamic>{r'$uniqueId': uniqueId,
        r'$newUniqueId': $newUniqueId,
@@ -692,7 +693,6 @@ class $__className____typeParameters__ extends __wrapperInterface__ {
        %%METHODCALLPARAMS%%
        },
     );
-  }
   %%METHOD%%
   %%METHODS%%
 }
@@ -708,24 +708,12 @@ class _GenericHelper {
     %%GENERICTYPEHELPERS%%
     %%GENERICTYPEHELPER%%
     if (isTypeOf<T, __className__>()) {
-      return $__className__(uniqueId);
+      return __className__.fromUniqueId(uniqueId);
     }
     %%GENERICTYPEHELPER%%
     %%GENERICTYPEHELPERS%%
     
     throw UnsupportedError('Could not instantiate class ${T.toString()}');
-  }
-
-  static FutureOr<dynamic> onAllocated(Wrapper wrapper) {
-    %%GENERICCREATIONHELPERS%%
-    %%GENERICCREATIONHELPER%%
-    if (wrapper is $__className__) {
-      return __className__.onAllocated(wrapper as $__className__);
-    }
-    %%GENERICCREATIONHELPER%%
-    %%GENERICCREATIONHELPERS%%
-
-    throw UnsupportedError('Could not instantiate class ${wrapper.runtimeType}');
   }
 }
 ''');

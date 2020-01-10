@@ -245,12 +245,12 @@ void main() {
       expect(testClass.notAField, completion(12.10));
     });
 
-    test('returnWrapper', () {
+    test('returnWrapper', () async {
       TestClass1 result;
       if (Platform.isAndroid) {
-        result = (testClass as AndroidTestClass1).returnWrapper();
+        result = await (testClass as AndroidTestClass1).returnWrapper();
       } else if (Platform.isIOS) {
-        result = (testClass as IosTestClass1).returnWrapper();
+        result = await (testClass as IosTestClass1).returnWrapper();
       }
       
       expect(result.returnInt(), completion(69));

@@ -67,10 +67,7 @@ class MethodChannelTemplateCreator extends TemplateCreator {
         MethodChannelBlock.methodCallParams.exp: methodCallParams.join(),
         Replacement.platformClassName.name: platformClassName,
         Replacement.methodName.name: methodName,
-        Replacement.returnType.name:
-            returnChannelType == MethodChannelType.typeParameter
-                ? returnType
-                : 'void',
+        Replacement.returnType.name: returnType,
       },
     );
   }
@@ -93,6 +90,7 @@ class MethodChannelTemplateCreator extends TemplateCreator {
         Replacement.fieldType.name: fieldType,
         Block.parameters.exp: parameter,
         MethodChannelBlock.methodCallParams.exp: methodCallParam,
+        Replacement.returnType.name: fieldType,
       },
     );
   }
@@ -158,7 +156,6 @@ class MethodChannelTemplateCreator extends TemplateCreator {
   String createFile({
     @required Iterable<String> classes,
     @required Iterable<String> genericTypeHelpers,
-    @required Iterable<String> genericCreationHelpers,
     @required String filename,
   }) {
     return TemplateCreator._replace(
@@ -167,7 +164,6 @@ class MethodChannelTemplateCreator extends TemplateCreator {
         Block.classes.exp: classes.join(),
         Replacement.filename.name: filename,
         Block.genericTypeHelpers.exp: genericTypeHelpers.join('else'),
-        Block.genericCreationHelpers.exp: genericCreationHelpers.join('else'),
       },
     );
   }
@@ -175,15 +171,6 @@ class MethodChannelTemplateCreator extends TemplateCreator {
   String createGenericTypeHelper({@required String className}) {
     return TemplateCreator._replace(
       Block.genericTypeHelper.exp.firstMatch(template.value).group(1),
-      <Pattern, String>{
-        Replacement.className.name: className,
-      },
-    );
-  }
-
-  String createGenericCreationHelper({@required String className}) {
-    return TemplateCreator._replace(
-      Block.genericCreationHelper.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
         Replacement.className.name: className,
       },

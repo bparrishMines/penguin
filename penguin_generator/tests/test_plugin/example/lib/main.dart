@@ -22,7 +22,7 @@ class _MyAppState extends State<MyApp> {
             Container(
               width: 200,
               height: 200,
-              child: TextViewWidget(PlatformTextView.fromText('Apple')),
+              child: Container(),//TextViewWidget(PlatformTextView.fromText('Apple')),
             ),
           ],
         ),

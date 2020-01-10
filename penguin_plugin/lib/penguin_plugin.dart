@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:uuid/uuid.dart';
 
@@ -25,9 +26,12 @@ abstract class PenguinPlugin {
 }
 
 class _WrapperManager {
-  _WrapperManager();
+  _WrapperManager() {
+//    WidgetsBinding.instance.addPostFrameCallback(drainPool);
+  }
 
   final Map<String, Wrapper> wrappers = <String, Wrapper>{};
+  final List<Wrapper> autoReleasePool = <Wrapper>[];
 
   void addWrapper(Wrapper wrapper) {
     assert(!wrappers.containsKey(wrapper.uniqueId));
@@ -48,9 +52,28 @@ class _WrapperManager {
       );
     }
   }
+
+  void drainAutoreleasePool(Duration duration) {
+    invoke<void>(
+      PenguinPlugin.globalMethodChannel,
+      autoReleasePool.map<MethodCall>(
+        (Wrapper wrapper) {
+          return MethodCall(
+            '${wrapper.platformClassName}#deallocate',
+            <String, String>{r'$uniqueId': wrapper.uniqueId},
+          );
+        },
+      ),
+    );
+    autoReleasePool.clear();
+    WidgetsBinding.instance.addPostFrameCallback(drainAutoreleasePool);
+  }
+
+  void addWrapperToAutoReleasePool(Wrapper wrapper) =>
+      autoReleasePool.add(wrapper);
 }
 
-abstract class Wrapper {
+abstract class Wrapper with ReferenceCounter {
   Wrapper([String uniqueId]) : _uniqueId = uniqueId ?? _uuid.v4() {
     PenguinPlugin._wrapperManager.addWrapper(this);
   }
@@ -60,8 +83,16 @@ abstract class Wrapper {
   final String _uniqueId;
   String get uniqueId => _uniqueId;
 
+  String get platformClassName;
+
+  Future<void> onMethodCall(MethodCall call);
+}
+
+mixin ReferenceCounter {
   int _retainCount = 1;
   int get retainCount => _retainCount;
+
+  String get uniqueId;
 
   Wrapper retain() {
     _retainCount++;
@@ -75,9 +106,10 @@ abstract class Wrapper {
     }
   }
 
-  String get platformClassName;
-
-  Future<void> onMethodCall(MethodCall call);
+  Wrapper autoReleasePool() {
+    PenguinPlugin._wrapperManager.addWrapperToAutoReleasePool(this);
+    return this;
+  }
 }
 
 Future<T> invoke<T>(MethodChannel channel, Iterable<MethodCall> calls) {

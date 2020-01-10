@@ -1,10 +1,8 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:penguin/penguin.dart';
 import 'package:penguin_plugin/penguin_plugin.dart';
-import 'package:penguin_plugin/android_wrapper.dart';
 import 'package:test_plugin/test_plugin.dart';
 
 part 'android.android.penguin.g.dart';
@@ -16,15 +14,11 @@ part 'android.android.penguin.g.dart';
   ),
 ))
 class AndroidNestedClass extends $AndroidNestedClass {
-  AndroidNestedClass._(String uniqueId) : super(uniqueId);
-
   @Constructor()
-  AndroidNestedClass() : super(randomId()) {
-    methodCallStorageHelper.store($AndroidNestedClass$Default());
-  }
+  AndroidNestedClass() : super.$Default();
 
-  static FutureOr onAllocated($AndroidNestedClass wrapper) =>
-      AndroidNestedClass._(wrapper.uniqueId);
+  AndroidNestedClass.fromUniqueId(String uniqueId)
+      : super.fromUniqueId(uniqueId);
 }
 
 @Class(AndroidPlatform(
@@ -33,16 +27,12 @@ class AndroidNestedClass extends $AndroidNestedClass {
     <String>['AbstractTestClass'],
   ),
 ))
-abstract class AndroidAbstractClass extends $AndroidAbstractClass {
+class AndroidAbstractClass extends $AndroidAbstractClass {
   @Constructor()
-  AndroidAbstractClass() : super(randomId()) {
-    invoke(channel, <MethodCall>[
-      $AndroidAbstractClass$Default(),
-      allocate(),
-    ]);
+  AndroidAbstractClass() : super.$Default();
 
-    callbackHandler.addWrapper(this);
-  }
+  AndroidAbstractClass.fromUniqueId(String uniqueId)
+      : super.fromUniqueId(uniqueId);
 
   @Method(callback: true)
   void callbackMethod(
@@ -50,25 +40,18 @@ abstract class AndroidAbstractClass extends $AndroidAbstractClass {
     @int64 int primitive,
     AndroidTestClass2 wrapper,
     AndroidNestedClass nested,
-  ) {
-    invoke<void>(
-        channel, [$callbackMethod(supported, primitive, wrapper, nested)]);
-  }
-
-  static FutureOr onAllocated($AndroidAbstractClass wrapper) =>
-      throw UnimplementedError();
+  ) =>
+      $callbackMethod(supported, primitive, wrapper, nested);
 }
 
 @Class(AndroidPlatform(
   AndroidType('com.example.test_plugin.test_library', <String>['TestClass1']),
 ))
 class AndroidTestClass1 extends $AndroidTestClass1 with TestClass1 {
-  AndroidTestClass1._(String uniqueId) : super(uniqueId);
-
   @Constructor()
-  AndroidTestClass1() : super(randomId()) {
-    methodCallStorageHelper.store($AndroidTestClass1$Default());
-  }
+  AndroidTestClass1() : super.$Default();
+
+  AndroidTestClass1.fromUniqueId(String uniqueId) : super.fromUniqueId(uniqueId);
 
   @Constructor()
   AndroidTestClass1.namedConstructor(
@@ -76,30 +59,14 @@ class AndroidTestClass1 extends $AndroidTestClass1 with TestClass1 {
     @int64 int primitive,
     AndroidTestClass2 wrapper,
     AndroidNestedClass nested,
-  ) : super(randomId()) {
-    methodCallStorageHelper.storeAll(
-      wrapper.methodCallStorageHelper.methodCalls,
-    );
-    methodCallStorageHelper.storeAll(
-      nested.methodCallStorageHelper.methodCalls,
-    );
-    methodCallStorageHelper.store($AndroidTestClass1namedConstructor(
-      supported,
-      primitive,
-      wrapper,
-      nested,
-    ));
-  }
+  ) : super.namedConstructor(supported, primitive, wrapper, nested);
 
   @Field()
-  static Future<List<bool>> get staticField {
-    return invokeList<bool>(channel, [$AndroidTestClass1.$staticField()]);
-  }
+  static Future<List<bool>> get staticField =>
+      $AndroidTestClass1.$staticField();
 
   @Method()
-  static Future<void> staticMethod() {
-    return invoke<void>(channel, [$AndroidTestClass1.$staticMethod()]);
-  }
+  static Future<void> staticMethod() => $AndroidTestClass1.$staticMethod();
 
   @Method()
   Future<void> parameterMethod(
@@ -107,199 +74,122 @@ class AndroidTestClass1 extends $AndroidTestClass1 with TestClass1 {
     @int64 int primitive,
     AndroidTestClass2 wrapper,
     AndroidNestedClass nested,
-  ) {
-    return invoke<void>(
-      channel,
-      methodCallStorageHelper.methodCalls
-        ..addAll(wrapper.methodCallStorageHelper.methodCalls)
-        ..addAll(nested.methodCallStorageHelper.methodCalls)
-        ..add($parameterMethod(
-          supported,
-          primitive,
-          wrapper,
-          nested,
-        )),
-    );
-  }
+  ) =>
+      $parameterMethod(supported, primitive, wrapper, nested);
 
   @override
-  set mutableField(FutureOr<double> value) => invoke<double>(channel, [
-        ...methodCallStorageHelper.methodCalls,
-        allocate(),
-        $mutableField(mutableField: value),
-      ]);
+  set mutableField(FutureOr<double> value) =>
+      $mutableField(mutableField: mutableField);
 
   @override
-  FutureOr<double> get mutableField => invoke<double>(
-        channel,
-        [$mutableField()],
-      );
+  FutureOr<double> get mutableField => $mutableField();
 
   @override
-  Future<void> returnVoid() {
-    return invoke<void>(
-        channel, methodCallStorageHelper.methodCalls..add($returnVoid()));
-  }
+  Future<void> returnVoid() => returnVoid();
 
   @override
-  Future<String> returnString() {
-    return invoke<String>(
-      channel,
-      methodCallStorageHelper.methodCalls..add($returnString()),
-    );
-  }
+  Future<String> returnString() => $returnString();
 
   @override
-  Future<int> returnInt() {
-    return invoke<int>(
-      channel,
-      methodCallStorageHelper.methodCalls..add($returnInt()),
-    );
-  }
+  Future<int> returnInt() => $returnInt();
 
   @override
-  Future<double> returnDouble() {
-    return invoke<double>(
-      channel,
-      methodCallStorageHelper.methodCalls..add($returnDouble()),
-    );
-  }
+  Future<double> returnDouble() => $returnDouble();
 
   @override
-  Future<bool> returnBool() {
-    return invoke<bool>(
-      channel,
-      methodCallStorageHelper.methodCalls..add($returnBool()),
-    );
-  }
+  Future<bool> returnBool() => $returnBool();
 
   @override
-  Future<List<double>> returnList() {
-    return invokeList<double>(
-      channel,
-      methodCallStorageHelper.methodCalls..add($returnList()),
-    );
-  }
+  Future<List<double>> returnList() => $returnList();
 
   @override
-  Future<Map<String, int>> returnMap() {
-    return invokeMap<String, int>(
-      channel,
-      methodCallStorageHelper.methodCalls..add($returnMap()),
-    );
-  }
+  Future<Map<String, int>> returnMap() => $returnMap();
 
   @override
-  Future<Object> returnObject() {
-    return invoke<Object>(
-      channel,
-      methodCallStorageHelper.methodCalls..add($returnObject()),
-    );
-  }
+  Future<Object> returnObject() => $returnObject();
 
   @override
-  Future<dynamic> returnDynamic() {
-    return invoke<dynamic>(
-      channel,
-      methodCallStorageHelper.methodCalls..add($returnDynamic()),
-    );
-  }
+  Future<dynamic> returnDynamic() => $returnDynamic();
 
   @Method()
-  AndroidTestClass1 returnWrapper() {
-    final AndroidTestClass1 wrapper = AndroidTestClass1._(randomId());
-    invoke<void>(channel, [
-      ...methodCallStorageHelper.methodCalls,
-      $returnWrapper(wrapper.uniqueId),
-      wrapper.allocate(),
-    ]);
-    return wrapper;
-  }
+  Future<AndroidTestClass1> returnWrapper() => $returnWrapper();
 
   @override
-  FutureOr<int> get intField => invoke<int>(
-      channel, methodCallStorageHelper.methodCalls..add($intField()));
+  FutureOr<int> get intField => $intField();
 
   @override
-  Future<String> get stringField => invoke<String>(
-      channel, methodCallStorageHelper.methodCalls..add($stringField()));
+  Future<String> get stringField => $stringField();
 
   @override
-  Future<double> get doubleField => invoke<double>(
-      channel, methodCallStorageHelper.methodCalls..add($doubleField()));
+  Future<double> get doubleField => $doubleField();
 
   @override
-  Future<bool> get boolField => invoke<bool>(
-      channel, methodCallStorageHelper.methodCalls..add($boolField()));
+  Future<bool> get boolField => $boolField();
 
   @override
-  Future<double> get notAField => invoke<double>(
-      channel, methodCallStorageHelper.methodCalls..add($nameOverrideField()));
-
-  static FutureOr onAllocated($AndroidTestClass1 wrapper) =>
-      throw UnimplementedError();
+  Future<double> get notAField => $nameOverrideField();
 }
 
-class AndroidTextViewState extends State<TextViewWidget> {
-  TextView get _asTextView => widget.textView as TextView;
-
-  @override
-  void initState() {
-    super.initState();
-    callbackHandler.addWrapper(_asTextView);
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    invoke<void>(channel, [_asTextView.deallocate()]);
-    callbackHandler.removeWrapper(_asTextView);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (_asTextView._isCreated) {
-      invoke<void>(channel, _asTextView.methodCallStorageHelper.methodCalls);
-      _asTextView.methodCallStorageHelper.clearMethodCalls();
-    }
-
-    return AndroidView(
-      viewType: '${channel.name}/view',
-      creationParams: _asTextView.uniqueId,
-      creationParamsCodec: const StandardMessageCodec(),
-    );
-  }
-}
-
-@Class(AndroidPlatform(
-  AndroidType('android.widget', <String>['TextView']),
-))
-class TextView extends $TextView with PlatformTextView {
-  @Constructor()
-  TextView([Context context]) : super(randomId());
-
-  bool _isCreated = false;
-
-  @Method()
-  void setText(String text) {
-    methodCallStorageHelper.replace($setText(text));
-  }
-
-  @override
-  FutureOr<Iterable<MethodCall>> onCreateView(Context context) {
-    final List<MethodCall> methodCalls = methodCallStorageHelper.methodCalls;
-    methodCallStorageHelper.clearMethodCalls();
-
-    _isCreated = true;
-    return <MethodCall>[
-      $TextView$Default(context),
-      ...methodCalls,
-      allocate(),
-    ];
-  }
-
-  static FutureOr onAllocated($TextView wrapper) => throw UnimplementedError();
-}
+//class AndroidTextViewState extends State<TextViewWidget> {
+//  TextView get _asTextView => widget.textView as TextView;
+//
+//  @override
+//  void initState() {
+//    super.initState();
+//    callbackHandler.addWrapper(_asTextView);
+//  }
+//
+//  @override
+//  void dispose() {
+//    super.dispose();
+//    invoke<void>(channel, [_asTextView.deallocate()]);
+//    callbackHandler.removeWrapper(_asTextView);
+//  }
+//
+//  @override
+//  Widget build(BuildContext context) {
+//    if (_asTextView._isCreated) {
+//      invoke<void>(channel, _asTextView.methodCallStorageHelper.methodCalls);
+//      _asTextView.methodCallStorageHelper.clearMethodCalls();
+//    }
+//
+//    return AndroidView(
+//      viewType: '${channel.name}/view',
+//      creationParams: _asTextView.uniqueId,
+//      creationParamsCodec: const StandardMessageCodec(),
+//    );
+//  }
+//}
+//
+//@Class(AndroidPlatform(
+//  AndroidType('android.widget', <String>['TextView']),
+//))
+//class TextView extends $TextView with PlatformTextView {
+//  @Constructor()
+//  TextView([Context context]) : super(randomId());
+//
+//  bool _isCreated = false;
+//
+//  @Method()
+//  void setText(String text) {
+//    methodCallStorageHelper.replace($setText(text));
+//  }
+//
+//  @override
+//  FutureOr<Iterable<MethodCall>> onCreateView(Context context) {
+//    final List<MethodCall> methodCalls = methodCallStorageHelper.methodCalls;
+//    methodCallStorageHelper.clearMethodCalls();
+//
+//    _isCreated = true;
+//    return <MethodCall>[
+//      $TextView$Default(context),
+//      ...methodCalls,
+//      allocate(),
+//    ];
+//  }
+//
+//  static FutureOr onAllocated($TextView wrapper) => throw UnimplementedError();
+//}
 
 @Class(
   AndroidPlatform(
@@ -308,15 +198,10 @@ class TextView extends $TextView with PlatformTextView {
   androidApi: AndroidApi(21),
 )
 class AndroidTestClass2 extends $AndroidTestClass2 with TestClass2 {
-  AndroidTestClass2._(String uniqueId) : super(uniqueId);
-
   @Constructor()
-  AndroidTestClass2() : super(randomId()) {
-    methodCallStorageHelper.store($AndroidTestClass2$Default());
-  }
+  AndroidTestClass2() : super.$Default();
 
-  static FutureOr onAllocated($AndroidTestClass2 wrapper) =>
-      AndroidTestClass2._(wrapper.uniqueId);
+  AndroidTestClass2.fromUniqueId(String uniqueId) : super.fromUniqueId(uniqueId);
 }
 
 @Class(AndroidPlatform(AndroidType(
@@ -326,40 +211,34 @@ class AndroidTestClass2 extends $AndroidTestClass2 with TestClass2 {
 class AndroidGenericClass<T> extends $AndroidGenericClass<T>
     with GenericClass<T> {
   @Constructor()
-  AndroidGenericClass() : super(randomId()) {
-    invoke<void>(
-      channel,
-      <MethodCall>[$AndroidGenericClass$Default(), allocate()],
-    );
-  }
+  AndroidGenericClass() : super.$Default();
+
+  AndroidGenericClass.fromUniqueId(String uniqueId) : super.fromUniqueId(uniqueId);
 
   @override
   Future<void> add(T object) {
-    if (isTypeOf<T, Wrapper>()) {
-      return invoke<void>(
-        channel,
-        (object as Wrapper).methodCallStorageHelper.methodCalls.toList()
-          ..add($add(object)),
-      );
-    }
-
-    return invoke<void>(channel, [$add(object)]);
+//    if (isTypeOf<T, Wrapper>()) {
+//      return invoke<void>(
+//        channel,
+//        (object as Wrapper).methodCallStorageHelper.methodCalls.toList()
+//          ..add($add(object)),
+//      );
+//    }
+//
+//    return invoke<void>(channel, [$add(object)]);
   }
 
   @override
   Future<T> get(String identifier) async {
-    if (isTypeOf<T, Wrapper>()) {
-      final Wrapper wrapper = _GenericHelper.getWrapperForType<T>(randomId());
-      invoke<void>(
-        channel,
-        [$get(identifier, wrapper.uniqueId), wrapper.allocate()],
-      );
-      return _GenericHelper.onAllocated(wrapper);
-    }
-
-    return invoke<T>(channel, [$get(identifier)]);
+//    if (isTypeOf<T, Wrapper>()) {
+//      final Wrapper wrapper = _GenericHelper.getWrapperForType<T>(randomId());
+//      invoke<void>(
+//        channel,
+//        [$get(identifier, wrapper.uniqueId), wrapper.allocate()],
+//      );
+//      return _GenericHelper.onAllocated(wrapper);
+//    }
+//
+//    return invoke<T>(channel, [$get(identifier)]);
   }
-
-  static FutureOr onAllocated($AndroidGenericClass wrapper) =>
-      throw UnimplementedError();
 }
