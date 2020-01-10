@@ -21,6 +21,7 @@ dependencies:
     git:
       url: git://github.com/bparrishMines/penguin.git
       path: penguin
+      ref: reference_counting
   
 dev_dependencies:
   path: ^1.6.4

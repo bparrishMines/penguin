@@ -13,6 +13,7 @@ dependencies:
     git:
       url: git://github.com/bparrishMines/penguin.git
       path: penguin
+      ref: reference_counting
   flutter:
     sdk: flutter
 
@@ -22,6 +23,7 @@ dev_dependencies:
     git:
       url: git://github.com/bparrishMines/penguin.git
       path: penguin_generator
+      ref: reference_counting
 
 flutter:
   plugin:
