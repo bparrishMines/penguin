@@ -241,7 +241,7 @@ void main() {
         );
       }
     });
-    
+
     test('nameOverrideField', () {
       expect(testClass.notAField, completion(12.10));
     });
@@ -253,7 +253,9 @@ void main() {
       } else if (Platform.isIOS) {
         result = await (testClass as IosTestClass1).returnWrapper();
       }
-      
+
+      expect(result, isNotNull);
+      expect((result as dynamic).uniqueId, isNotNull);
       expect(result.returnInt(), completion(69));
     });
   });

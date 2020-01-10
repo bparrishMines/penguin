@@ -630,13 +630,11 @@ class $__className____typeParameters__ extends Wrapper {
   static MethodCall $__fieldName__({
     %%PARAMETERS%%
     %%PARAMETERS%%
-    String $newUniqueId,
   }) =>
     MethodCall(
       '__platformClassName__.__fieldName__',
       <String, dynamic>{
         r'$uniqueId': uniqueId,
-        r'$newUniqueId': $newUniqueId,
         if (__fieldName__ != null)
         %%METHODCALLPARAMS%%
         %%METHODCALLPARAMS%%
@@ -665,12 +663,10 @@ class $__className____typeParameters__ extends Wrapper {
   __parameterType__ __parameterName__,
   %%PARAMETER methodChannel:typeParameter%%
   %%PARAMETERS%%
-  [String $newUniqueId,]
   ) =>
     MethodCall(
       '__platformClassName__#__methodName__',
        <String, dynamic>{r'$uniqueId': uniqueId,
-       r'$newUniqueId': $newUniqueId,
        r'$returnTypeIsWrapper': isTypeOf<__returnType__, Wrapper>(),
        r'$returnTypePlatformName': isTypeOf<__returnType__, Wrapper>() 
            ? (_GenericHelper.instance.getWrapperForType<__returnType__>('') as Wrapper).platformClassName
@@ -1116,7 +1112,7 @@ public class ChannelGenerated {
       return
       %%PREMETHODCALL methodChannel:primitive%%
       %%PREMETHODCALL methodChannel:wrapper%%
-      new $__returnType__(wrapperManager, (String) call.argument("$newUniqueId"),
+      final __returnType__ result =
       %%PREMETHODCALL methodChannel:wrapper%%
       %%PREMETHODCALL methodChannel:typeParameter%%
       final Object result = 
@@ -1151,16 +1147,17 @@ public class ChannelGenerated {
       ;
       %%POSTMETHODCALL methodChannel:primitive%%
       %%POSTMETHODCALL methodChannel:wrapper%%
-      );
-      return null;
+      ;
+      if (result == null) return null;
+      return new $__returnType__(wrapperManager, UUID.randomUUID().toString(), result).$uniqueId;
       %%POSTMETHODCALL methodChannel:wrapper%%
       %%POSTMETHODCALL methodChannel:typeParameter%%
       ;
+      if (result == null) return null;
       if (!(Boolean)call.argument("$returnTypeIsWrapper")) return result;
       final Class wrapperClass = Class.forName(String.format("__package__.ChannelGenerated$$%s", (String) call.argument("$returnTypePlatformName")));
       final Constructor constructor = wrapperClass.getConstructor(WrapperManager.class, String.class, result.getClass());
-      constructor.newInstance(wrapperManager, call.argument("$newUniqueId"), result);
-      return null;
+      return ((Wrapper) constructor.newInstance(wrapperManager, UUID.randomUUID().toString(), result)).$uniqueId;
       %%POSTMETHODCALL methodChannel:typeParameter%%
       %%POSTMETHODCALLS%%
     }
