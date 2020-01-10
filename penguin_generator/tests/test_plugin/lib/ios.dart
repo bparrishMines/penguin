@@ -75,7 +75,8 @@ class TestStruct extends $TestStruct {
 
   @Field()
   @int32
-  Future<int> get intField => $intField();
+  Future<int> get intField =>
+      invoke<int>(PenguinPlugin.globalMethodChannel, [$intField()]);
 }
 
 @Class(IosPlatform(IosType('TestProtocol', import: '"TestPlugin.h"')))
@@ -86,7 +87,8 @@ class IosProtocol extends $IosProtocol {
   IosProtocol.fromUniqueId(String uniqueId) : super.fromUniqueId(uniqueId);
 
   @Method(callback: true)
-  void callbackMethod() => $callbackMethod();
+  Future<void> callbackMethod() =>
+      invoke<void>(PenguinPlugin.globalMethodChannel, [$callbackMethod()]);
 }
 
 @Class(IosPlatform(
@@ -106,73 +108,94 @@ class IosTestClass1 extends $IosTestClass1 with TestClass1 {
   IosTestClass1.fromUniqueId(String uniqueId) : super.fromUniqueId(uniqueId);
 
   @Field()
-  static Future<List<bool>> get staticField => $IosTestClass1.$staticField();
+  static Future<List<bool>> get staticField => invokeList<bool>(
+      PenguinPlugin.globalMethodChannel, [$IosTestClass1.$staticField()]);
 
   @Method()
-  static Future<void> staticMethod() => $IosTestClass1.$staticMethod();
+  static Future<void> staticMethod() => invoke<void>(
+      PenguinPlugin.globalMethodChannel, [$IosTestClass1.$staticMethod()]);
 
   @Method()
   Future<void> parameterMethod(
     String supported,
     @int32 int primitive,
     IosTestClass2 wrapper,
-  ) => $parameterMethod(supported, primitive, wrapper);
+  ) =>
+      invoke<void>(PenguinPlugin.globalMethodChannel,
+          [$parameterMethod(supported, primitive, wrapper)]);
 
   @Method()
   @int32
-  Future<int> returnInt32() => $returnInt32();
+  Future<int> returnInt32() =>
+      invoke<int>(PenguinPlugin.globalMethodChannel, [$returnInt32()]);
 
   @override
-  set mutableField(FutureOr<double> value) =>
-      $mutableField(mutableField: value);
+  set mutableField(FutureOr<double> value) => invoke<double>(
+      PenguinPlugin.globalMethodChannel, [$mutableField(mutableField: value)]);
 
   @override
-  FutureOr<double> get mutableField => $mutableField();
+  FutureOr<double> get mutableField =>
+      invoke<double>(PenguinPlugin.globalMethodChannel, [$mutableField()]);
 
   @override
-  Future<void> returnVoid() => $returnVoid();
+  Future<void> returnVoid() =>
+      invoke<void>(PenguinPlugin.globalMethodChannel, [$returnVoid()]);
 
   @override
-  Future<String> returnString() => $returnString();
+  Future<String> returnString() =>
+      invoke<String>(PenguinPlugin.globalMethodChannel, [$returnString()]);
 
   @override
-  Future<int> returnInt() => $returnInt();
+  Future<int> returnInt() =>
+      invoke<int>(PenguinPlugin.globalMethodChannel, [$returnInt()]);
 
   @override
-  Future<double> returnDouble() => $returnDouble();
+  Future<double> returnDouble() =>
+      invoke<double>(PenguinPlugin.globalMethodChannel, [$returnDouble()]);
 
   @override
-  Future<bool> returnBool() => $returnBool();
+  Future<bool> returnBool() =>
+      invoke<bool>(PenguinPlugin.globalMethodChannel, [$returnBool()]);
 
   @override
-  Future<List<double>> returnList() => $returnList();
+  Future<List<double>> returnList() =>
+      invokeList<double>(PenguinPlugin.globalMethodChannel, [$returnList()]);
 
   @override
-  Future<Map<String, int>> returnMap() => $returnMap();
+  Future<Map<String, int>> returnMap() =>
+      invokeMap<String, int>(PenguinPlugin.globalMethodChannel, [$returnMap()]);
 
   @override
-  Future<Object> returnObject() => $returnObject();
+  Future<Object> returnObject() =>
+      invoke<Object>(PenguinPlugin.globalMethodChannel, [$returnObject()]);
 
   @override
-  Future<dynamic> returnDynamic() => $returnDynamic();
+  Future<dynamic> returnDynamic() =>
+      invoke<dynamic>(PenguinPlugin.globalMethodChannel, [$returnDynamic()]);
 
   @Method()
-  Future<IosTestClass1> returnWrapper() => $returnWrapper();
+  Future<IosTestClass1> returnWrapper() => invoke<IosTestClass1>(
+      PenguinPlugin.globalMethodChannel, [$returnWrapper()]);
 
   @override
-  FutureOr<int> get intField => $intField();
+  FutureOr<int> get intField =>
+      invoke<int>(PenguinPlugin.globalMethodChannel, [$intField()]);
 
   @override
-  Future<String> get stringField => $stringField();
+  Future<String> get stringField =>
+      invoke<String>(PenguinPlugin.globalMethodChannel, [$stringField()]);
 
   @override
-  Future<double> get doubleField => $doubleField();
+  Future<double> get doubleField =>
+      invoke<double>(PenguinPlugin.globalMethodChannel, [$doubleField()]);
 
   @override
-  Future<bool> get boolField => $boolField();
+  Future<bool> get boolField =>
+      invoke<bool>(PenguinPlugin.globalMethodChannel, [$boolField()]);
 
   @override
-  Future<double> get notAField => $nameOverrideField();
+  Future<double> get notAField =>
+      invoke<double>(PenguinPlugin.globalMethodChannel, [$nameOverrideField()]);
 }
 
 @Class(IosPlatform(

@@ -112,15 +112,29 @@ mixin ReferenceCounter {
   }
 }
 
-Future<T> invoke<T>(MethodChannel channel, Iterable<MethodCall> calls) {
+abstract class GenericHelper {
+  const GenericHelper();
+
+  T getWrapperForType<T>(String uniqueId);
+}
+
+Future<T> invoke<T>(
+  MethodChannel channel,
+  Iterable<MethodCall> calls, {
+  GenericHelper genericHelper,
+}) {
   final Completer<T> completer = Completer<T>();
 
   invokeForAll(
     channel,
     calls.where((MethodCall call) => call != null),
-  ).then(
-    (List<dynamic> results) => completer.complete(results.last),
-  );
+  ).then((List<dynamic> results) {
+    if (isTypeOf<T, Wrapper>()) {
+      completer.complete(genericHelper.getWrapperForType<T>(results.last));
+    } else {
+      completer.complete(results.last);
+    }
+  });
 
   return completer.future;
 }

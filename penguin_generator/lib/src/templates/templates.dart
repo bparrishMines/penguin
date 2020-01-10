@@ -613,7 +613,7 @@ class $__className____typeParameters__ extends Wrapper {
   %%PARAMETERS%%
   %%PARAMETERS%%
   ) {
-    PenguinPlugin.globalMethodChannel.invokeMethod(
+    PenguinPlugin.globalMethodChannel.invokeMethod<void>(
       '__platformClassName__(__constructorName__)',
       <String, dynamic>{
         r'$uniqueId': uniqueId,
@@ -627,12 +627,12 @@ class $__className____typeParameters__ extends Wrapper {
 
   %%FIELDS%%
   %%FIELD%%
-  static Future<__returnType__> $__fieldName__({
+  static MethodCall $__fieldName__({
     %%PARAMETERS%%
     %%PARAMETERS%%
     String $newUniqueId,
   }) =>
-    PenguinPlugin.globalMethodChannel.invokeMethod<__returnType__>(
+    MethodCall(
       '__platformClassName__.__fieldName__',
       <String, dynamic>{
         r'$uniqueId': uniqueId,
@@ -647,7 +647,7 @@ class $__className____typeParameters__ extends Wrapper {
 
   %%METHODS%%
   %%METHOD%%
-  static Future<__returnType__> $__methodName__(
+  static MethodCall $__methodName__(
   %%PARAMETERS%%
   %%PARAMETER methodChannel:supported%%
   __parameterType__ __parameterName__,
@@ -667,12 +667,14 @@ class $__className____typeParameters__ extends Wrapper {
   %%PARAMETERS%%
   [String $newUniqueId,]
   ) =>
-    PenguinPlugin.globalMethodChannel.invokeMethod<__returnType__>(
+    MethodCall(
       '__platformClassName__#__methodName__',
        <String, dynamic>{r'$uniqueId': uniqueId,
        r'$newUniqueId': $newUniqueId,
        r'$returnTypeIsWrapper': isTypeOf<__returnType__, Wrapper>(),
-       r'$returnTypePlatformName': isTypeOf<__returnType__, Wrapper>() ? _GenericHelper.getWrapperForType<__returnType__>('').platformClassName : null,
+       r'$returnTypePlatformName': isTypeOf<__returnType__, Wrapper>() 
+           ? (_GenericHelper.instance.getWrapperForType<__returnType__>('') as Wrapper).platformClassName
+           : null,
        %%METHODCALLPARAMS%%
        %%METHODCALLPARAM methodChannel:supported%%
        '__parameterName__': __parameterName__,
@@ -699,16 +701,18 @@ class $__className____typeParameters__ extends Wrapper {
 %%CLASS%%
 %%CLASSES%%
 
-class _GenericHelper {
-  _GenericHelper._();
+class _GenericHelper extends GenericHelper {
+  const _GenericHelper._();
   
-  static Wrapper getWrapperForType<T>(String uniqueId) {
+  static final _GenericHelper instance = _GenericHelper._();
+  
+  T getWrapperForType<T>(String uniqueId) {
     assert(isTypeOf<T, Wrapper>());
     
     %%GENERICTYPEHELPERS%%
     %%GENERICTYPEHELPER%%
     if (isTypeOf<T, __className__>()) {
-      return __className__.fromUniqueId(uniqueId);
+      return __className__.fromUniqueId(uniqueId) as T;
     }
     %%GENERICTYPEHELPER%%
     %%GENERICTYPEHELPERS%%

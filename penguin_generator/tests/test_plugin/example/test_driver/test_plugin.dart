@@ -262,13 +262,14 @@ void main() {
 class AndroidCallbackClass extends AndroidAbstractClass {
   bool callbackCalled = false;
 
-  void callbackMethod(
+  Future<void> callbackMethod(
     String supported,
     int primitive,
     AndroidTestClass2 wrapper,
     AndroidNestedClass nested,
   ) {
     callbackCalled = true;
+    return Future<void>.value();
   }
 
   void callCallbackMethod() {
@@ -280,8 +281,9 @@ class IosCallbackClass extends IosProtocol {
   bool callbackCalled = false;
 
   @override
-  void callbackMethod() {
+  Future<void> callbackMethod() {
     callbackCalled = true;
+    return Future<void>.value();
   }
 
   void callCallbackMethod() {
