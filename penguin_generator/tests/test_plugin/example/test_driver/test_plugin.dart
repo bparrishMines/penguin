@@ -16,6 +16,7 @@ void main() {
   enableFlutterDriverExtension(handler: (_) => completer.future);
   tearDownAll(() => completer.complete(null));
 
+  initialize();
   group('test_plugin', () {
     TestClass1 testClass;
     TestClass2 testClass2;

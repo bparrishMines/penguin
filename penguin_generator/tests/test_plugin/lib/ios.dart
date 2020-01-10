@@ -124,13 +124,13 @@ class IosTestClass1 extends $IosTestClass1 with TestClass1 {
 
   @override
   set mutableField(FutureOr<double> value) =>
-      $mutableField(mutableField: mutableField);
+      $mutableField(mutableField: value);
 
   @override
   FutureOr<double> get mutableField => $mutableField();
 
   @override
-  Future<void> returnVoid() => returnVoid();
+  Future<void> returnVoid() => $returnVoid();
 
   @override
   Future<String> returnString() => $returnString();

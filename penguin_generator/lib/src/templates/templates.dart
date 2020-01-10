@@ -106,7 +106,7 @@ static void *wrapperCallbackKey = &wrapperCallbackKey;
   if (self) {
     _$uniqueId = uniqueId;
   }
-  [wrapperManager addTemporaryWrapper:self];
+  [wrapperManager addAllocatedWrapper:self];
   return self;
 }
 
@@ -763,55 +763,56 @@ public class ChannelGenerated {
 
     @Override
     public PlatformView create(final Context context, int viewId, final Object args) {
-      final FrameLayout frameLayout = new FrameLayout(context);
-      
-      final $Context contextWrapper = new $Context(wrapperManager, UUID.randomUUID().toString(), context);
-
-      final HashMap<String, Object> arguments = new HashMap<>();
-      arguments.put("context", contextWrapper.$uniqueId);
-      arguments.put("$uniqueId", args);
-      
-      callbackChannel.invokeMethod("CreateView", arguments, new Result() {
-        @Override
-        public void success(Object result) {
-          try {
-            wrapperManager.addTemporaryWrapper(contextWrapper);
-
-            final MethodCallHandlerImpl handlerImpl = (MethodCallHandlerImpl) methodCallHandler;
-            handlerImpl.onMethodCall(new MethodCall("MultiInvoke", result));
-
-            final View view = wrapperManager.getWrapper((String) args).getView();
-            frameLayout.addView(view,
-                new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-          } catch (Exception exception) {
-            exception.printStackTrace();
-          } finally {
-            wrapperManager.clearTemporaryWrappers();
-          }
-        }
-
-        @Override
-        public void error(String errorCode, String errorMessage, Object errorDetails) {
-          throw new RuntimeException(errorMessage);
-        }
-
-        @Override
-        public void notImplemented() {
-          throw new RuntimeException("notImplemented");
-        }
-      });
-
-      return new PlatformView() {
-        @Override
-        public View getView() {
-          return frameLayout;
-        }
-
-        @Override
-        public void dispose() {
-          // Do nothing
-        }
-      };
+//      final FrameLayout frameLayout = new FrameLayout(context);
+//      
+//      final $Context contextWrapper = new $Context(wrapperManager, UUID.randomUUID().toString(), context);
+//
+//      final HashMap<String, Object> arguments = new HashMap<>();
+//      arguments.put("context", contextWrapper.$uniqueId);
+//      arguments.put("$uniqueId", args);
+//      
+//      callbackChannel.invokeMethod("CreateView", arguments, new Result() {
+//        @Override
+//        public void success(Object result) {
+//          try {
+//            wrapperManager.addTemporaryWrapper(contextWrapper);
+//
+//            final MethodCallHandlerImpl handlerImpl = (MethodCallHandlerImpl) methodCallHandler;
+//            handlerImpl.onMethodCall(new MethodCall("MultiInvoke", result));
+//
+//            final View view = wrapperManager.getWrapper((String) args).getView();
+//            frameLayout.addView(view,
+//                new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+//          } catch (Exception exception) {
+//            exception.printStackTrace();
+//          } finally {
+//            wrapperManager.clearTemporaryWrappers();
+//          }
+//        }
+//
+//        @Override
+//        public void error(String errorCode, String errorMessage, Object errorDetails) {
+//          throw new RuntimeException(errorMessage);
+//        }
+//
+//        @Override
+//        public void notImplemented() {
+//          throw new RuntimeException("notImplemented");
+//        }
+//      });
+//
+//      return new PlatformView() {
+//        @Override
+//        public View getView() {
+//          return frameLayout;
+//        }
+//
+//        @Override
+//        public void dispose() {
+//          // Do nothing
+//        }
+//      };
+      return null;
     }
   }
   
@@ -875,8 +876,9 @@ public class ChannelGenerated {
   private static abstract class Wrapper implements PlatformView {
     final String $uniqueId;
     
-    private Wrapper(String uniqueId) {
+    private Wrapper(WrapperManager wrapperManager, String uniqueId) {
       this.$uniqueId = uniqueId;
+      wrapperManager.addAllocatedWrapper(this);
     }
 
     abstract Object onMethodCall(WrapperManager wrapperManager, MethodCall call) throws Exception;
@@ -974,13 +976,12 @@ public class ChannelGenerated {
     private final __platformClassName__ $value;
 
     public $__wrapperName__(final WrapperManager wrapperManager, final String uniqueId, final __platformClassName__ value) {
-      super(uniqueId);
+      super(wrapperManager, uniqueId);
       this.$value = value;
-      wrapperManager.addTemporaryWrapper(this);
     }
 
     private $__wrapperName__(final MethodCallHandlerImpl methodCallHandler, final WrapperManager wrapperManager, final MethodChannel callbackChannel, final MethodCall call) throws Exception {
-      super((String) call.argument("$uniqueId"));
+      super(wrapperManager, (String) call.argument("$uniqueId"));
       switch(call.method) {
         %%CONSTRUCTORS%%
         %%CONSTRUCTOR%%
@@ -1027,7 +1028,6 @@ public class ChannelGenerated {
         default:
           this.$value = null;
       }
-      wrapperManager.addTemporaryWrapper(this);
     }
     
     static Object onStaticMethodCall(WrapperManager wrapperManager, MethodCall call) throws Exception {
