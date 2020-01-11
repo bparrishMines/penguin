@@ -592,22 +592,10 @@ class $__className____typeParameters__ extends Wrapper {
       <String, dynamic>{
         r'$uniqueId': uniqueId,
         %%METHODCALLPARAMS%%
-        %%METHODCALLPARAM methodChannel:supported%%
-        '__parameterName__': __parameterName__,
-        %%METHODCALLPARAM methodChannel:supported%%
-        %%METHODCALLPARAM methodChannel:primitive%%
-        '__parameterName__': __parameterName__,
-        %%METHODCALLPARAM methodChannel:primitive%%
-        %%METHODCALLPARAM methodChannel:wrapper%%
-        '__parameterName__': __parameterName__?.uniqueId,
-        %%METHODCALLPARAM methodChannel:wrapper%%
-        %%METHODCALLPARAM methodChannel:struct%%
-        '__parameterName__': __parameterName__?.uniqueId,
-        %%METHODCALLPARAM methodChannel:struct%%
-        %%METHODCALLPARAM methodChannel:typeParameter%%
-        r'__parameterName__$isWrapper':  __parameterName__ is Wrapper,
-        '__parameterName__': __parameterName__ is Wrapper ? __parameterName__?.uniqueId : __parameterName__,
-        %%METHODCALLPARAM methodChannel:typeParameter%%
+        %%METHODCALLPARAM%%
+        r'__parameterName__': _setParameter(__parameterName__),
+        r'__parameterName__$isWrapper': __parameterName__ != null && __parameterName__ is Wrapper,
+        %%METHODCALLPARAM%%
         %%METHODCALLPARAMS%%
       },
     );
@@ -717,6 +705,12 @@ class _GenericHelper extends GenericHelper {
     
     throw UnsupportedError('Could not instantiate class ${T.toString()}');
   }
+}
+
+dynamic _setParameter(dynamic parameter) {
+  if (parameter == null) return null;
+  if (parameter is Wrapper) return (parameter as Wrapper).uniqueId;
+  return parameter;
 }
 ''');
 
@@ -1222,16 +1216,19 @@ class Block {
   static final Block structs = Block('STRUCTS');
   static final Block struct = Block('STRUCT');
 
-  static Block callbackSwizzles = Block('CALLBACKSWIZZLES');
-  static Block callbackSwizzle = Block('CALLBACKSWIZZLE');
+  static final Block callbackSwizzles = Block('CALLBACKSWIZZLES');
+  static final Block callbackSwizzle = Block('CALLBACKSWIZZLE');
 
-  static Block genericTypeHelpers = Block('GENERICTYPEHELPERS');
-  static Block genericTypeHelper = Block('GENERICTYPEHELPER');
+  static final Block genericTypeHelpers = Block('GENERICTYPEHELPERS');
+  static final Block genericTypeHelper = Block('GENERICTYPEHELPER');
 
-  static Block genericPlatformTypeNameHelpers =
+  static final Block genericPlatformTypeNameHelpers =
       Block('GENERICPLATFORMTYPENAMEHELPERS');
-  static Block genericPlatformTypeNameHelper =
+  static final Block genericPlatformTypeNameHelper =
       Block('GENERICPLATFORMTYPENAMEHELPER');
+
+  static final Block methodCallParams = Block('METHODCALLPARAMS');
+  static final Block methodCallParam = Block('METHODCALLPARAM');
 }
 
 class MethodChannelBlock extends Block {
@@ -1295,11 +1292,6 @@ class MethodChannelBlock extends Block {
 
     return configs.join(' ');
   }
-
-  static final MethodChannelBlock methodCallParams =
-      MethodChannelBlock('METHODCALLPARAMS');
-  static MethodChannelBlock methodCallParam(MethodChannelType methodChannel) =>
-      MethodChannelBlock('METHODCALLPARAM', methodChannel: methodChannel);
 
   static final MethodChannelBlock staticMethodCalls =
       MethodChannelBlock('STATICMETHODCALLS');

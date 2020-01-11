@@ -96,7 +96,6 @@ class DartMethodChannelBuilder extends PenguinBuilder {
                   methodCallParams: constructorInfo.parameters.map<String>(
                     (ParameterInfo parameterInfo) =>
                         creator.createMethodCallParam(
-                      getChannelType(parameterInfo.type),
                       parameterName: parameterInfo.name,
                     ),
                   ),
@@ -117,7 +116,6 @@ class DartMethodChannelBuilder extends PenguinBuilder {
                   methodCallParams: methodInfo.parameters.map<String>(
                     (ParameterInfo parameterInfo) =>
                         creator.createMethodCallParam(
-                      getChannelType(parameterInfo.type),
                       parameterName: parameterInfo.name,
                     ),
                   ),
@@ -130,7 +128,6 @@ class DartMethodChannelBuilder extends PenguinBuilder {
                   fieldName: fieldInfo.name,
                   fieldType: fieldInfo.type.name,
                   methodCallParam: creator.createMethodCallParam(
-                    getChannelType(fieldInfo.type),
                     parameterName: fieldInfo.name,
                   ),
                   parameter: creator.createParameter(

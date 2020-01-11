@@ -59,10 +59,9 @@ class MethodChannelTemplateCreator extends TemplateCreator {
       Block.method.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
         if (!isStatic) 'static': '',
-        if (isStatic)
-          r"r'$uniqueId': uniqueId,": '',
+        if (isStatic) r"r'$uniqueId': uniqueId,": '',
         Block.parameters.exp: parameters.join(),
-        MethodChannelBlock.methodCallParams.exp: methodCallParams.join(),
+        Block.methodCallParams.exp: methodCallParams.join(),
         Replacement.methodName.name: methodName,
         Replacement.returnType.name: returnType,
       },
@@ -80,11 +79,10 @@ class MethodChannelTemplateCreator extends TemplateCreator {
       Block.field.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
         if (!isStatic) 'static': '',
-        if (isStatic)
-          r"r'$uniqueId': uniqueId,": '',
+        if (isStatic) r"r'$uniqueId': uniqueId,": '',
         Replacement.fieldName.name: fieldName,
         Block.parameters.exp: parameter,
-        MethodChannelBlock.methodCallParams.exp: methodCallParam,
+        Block.methodCallParams.exp: methodCallParam,
         Replacement.returnType.name: fieldType,
       },
     );
@@ -103,15 +101,11 @@ class MethodChannelTemplateCreator extends TemplateCreator {
     );
   }
 
-  String createMethodCallParam(
-    MethodChannelType channelType, {
+  String createMethodCallParam({
     @required String parameterName,
   }) {
     return TemplateCreator._replace(
-      MethodChannelBlock.methodCallParam(channelType)
-          .exp
-          .firstMatch(template.value)
-          .group(1),
+      Block.methodCallParam.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
         Replacement.parameterName.name: parameterName,
       },
@@ -193,7 +187,7 @@ class MethodChannelTemplateCreator extends TemplateCreator {
       Block.constructor.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
         Block.parameters.exp: parameters.join(),
-        MethodChannelBlock.methodCallParams.exp: methodCallParams.join(),
+        Block.methodCallParams.exp: methodCallParams.join(),
         Replacement.constructorName.name: constructorName,
         Replacement.dartConstructorName.name:
             constructorName.isEmpty ? r'$Default' : constructorName,
