@@ -84,7 +84,7 @@ class AndroidTestClass1 extends $AndroidTestClass1 with TestClass1 {
 
   @Field()
   static Future<List<bool>> get staticField => invokeList<bool>(
-      PenguinPlugin.globalMethodChannel, [$AndroidTestClass1.$staticField()]);
+      PenguinPlugin.globalMethodChannel, [$AndroidTestClass1.$get$staticField()]);
 
   @Method()
   static Future<void> staticMethod() => invoke<void>(
@@ -102,11 +102,11 @@ class AndroidTestClass1 extends $AndroidTestClass1 with TestClass1 {
 
   @override
   set mutableField(FutureOr<double> value) => invoke<double>(
-      PenguinPlugin.globalMethodChannel, [$mutableField(mutableField: value)]);
+      PenguinPlugin.globalMethodChannel, [$set$mutableField(value)]);
 
   @override
   FutureOr<double> get mutableField =>
-      invoke<double>(PenguinPlugin.globalMethodChannel, [$mutableField()]);
+      invoke<double>(PenguinPlugin.globalMethodChannel, [$get$mutableField()]);
 
   @override
   Future<void> returnVoid() =>
@@ -151,23 +151,23 @@ class AndroidTestClass1 extends $AndroidTestClass1 with TestClass1 {
 
   @override
   FutureOr<int> get intField =>
-      invoke<int>(PenguinPlugin.globalMethodChannel, [$intField()]);
+      invoke<int>(PenguinPlugin.globalMethodChannel, [$get$intField()]);
 
   @override
   Future<String> get stringField =>
-      invoke<String>(PenguinPlugin.globalMethodChannel, [$stringField()]);
+      invoke<String>(PenguinPlugin.globalMethodChannel, [$get$stringField()]);
 
   @override
   Future<double> get doubleField =>
-      invoke<double>(PenguinPlugin.globalMethodChannel, [$doubleField()]);
+      invoke<double>(PenguinPlugin.globalMethodChannel, [$get$doubleField()]);
 
   @override
   Future<bool> get boolField =>
-      invoke<bool>(PenguinPlugin.globalMethodChannel, [$boolField()]);
+      invoke<bool>(PenguinPlugin.globalMethodChannel, [$get$boolField()]);
 
   @override
   Future<double> get notAField =>
-      invoke<double>(PenguinPlugin.globalMethodChannel, [$nameOverrideField()]);
+      invoke<double>(PenguinPlugin.globalMethodChannel, [$get$nameOverrideField()]);
 }
 
 @Class(

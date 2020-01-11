@@ -636,19 +636,26 @@ class $__className____typeParameters__ extends Wrapper {
 
   %%FIELDS%%
   %%FIELD%%
-  static MethodCall $__fieldName__({
-    %%PARAMETERS%%
-    %%PARAMETERS%%
-  }) =>
+  static MethodCall $get$__fieldName__() =>
     MethodCall(
       '__platformClassName__.__fieldName__',
       <String, dynamic>{
         r'$uniqueId': uniqueId,
-        if (__fieldName__ != null)
+      },
+    );
+  
+  static MethodCall $set$__fieldName__(
+    %%PARAMETERS%%
+    %%PARAMETERS%%
+  ) =>
+    MethodCall(
+      '__platformClassName__.__fieldName__',
+      <String, dynamic>{
+        r'$uniqueId': uniqueId,
         %%METHODCALLPARAMS%%
         %%METHODCALLPARAMS%%
       },
-    );
+    );  
   %%FIELD%%
   %%FIELDS%%
 
