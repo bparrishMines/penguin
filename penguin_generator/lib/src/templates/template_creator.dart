@@ -17,17 +17,15 @@ class MethodChannelTemplateCreator extends TemplateCreator {
   Template get template => Template.dartMethodChannel;
 
   String createCallback({
-    @required String methodName,
     @required Iterable<String> callbackChannelParams,
-    @required String wrapperName,
+    @required String methodName,
   }) {
     return TemplateCreator._replace(
       Block.callback.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
-        Replacement.methodName.name: methodName,
-        Replacement.wrapperName.name: wrapperName,
         MethodChannelBlock.callbackChannelParams().exp:
             callbackChannelParams.join(),
+        Replacement.methodName.name: methodName,
       },
     );
   }
@@ -35,7 +33,7 @@ class MethodChannelTemplateCreator extends TemplateCreator {
   String createCallbackChannelParam(
     MethodChannelType methodChannelType, {
     @required String parameterName,
-    String className,
+    @required String parameterClassName,
   }) {
     return TemplateCreator._replace(
       MethodChannelBlock.callbackChannelParam(methodChannelType)
@@ -44,7 +42,7 @@ class MethodChannelTemplateCreator extends TemplateCreator {
           .group(1),
       <Pattern, String>{
         Replacement.parameterName.name: parameterName,
-        if (className != null) Replacement.className.name: className,
+        Replacement.parameterClassName.name: parameterClassName,
       },
     );
   }
@@ -54,7 +52,6 @@ class MethodChannelTemplateCreator extends TemplateCreator {
     MethodChannelType returnChannelType, {
     @required Iterable<String> parameters,
     @required Iterable<String> methodCallParams,
-    @required String platformClassName,
     @required String methodName,
     @required String returnType,
   }) {
@@ -62,10 +59,10 @@ class MethodChannelTemplateCreator extends TemplateCreator {
       Block.method.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
         if (!isStatic) 'static': '',
-        if (isStatic) r"r'$uniqueId': uniqueId,": '',
+        if (isStatic)
+          r"r'$uniqueId': uniqueId,": '',
         Block.parameters.exp: parameters.join(),
         MethodChannelBlock.methodCallParams.exp: methodCallParams.join(),
-        Replacement.platformClassName.name: platformClassName,
         Replacement.methodName.name: methodName,
         Replacement.returnType.name: returnType,
       },
@@ -74,7 +71,6 @@ class MethodChannelTemplateCreator extends TemplateCreator {
 
   String createField(
     bool isStatic, {
-    @required String platformClassName,
     @required String fieldName,
     @required String fieldType,
     @required String methodCallParam,
@@ -84,10 +80,9 @@ class MethodChannelTemplateCreator extends TemplateCreator {
       Block.field.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
         if (!isStatic) 'static': '',
-        if (isStatic) r"r'$uniqueId': uniqueId,": '',
-        Replacement.platformClassName.name: platformClassName,
+        if (isStatic)
+          r"r'$uniqueId': uniqueId,": '',
         Replacement.fieldName.name: fieldName,
-        Replacement.fieldType.name: fieldType,
         Block.parameters.exp: parameter,
         MethodChannelBlock.methodCallParams.exp: methodCallParam,
         Replacement.returnType.name: fieldType,
@@ -131,7 +126,6 @@ class MethodChannelTemplateCreator extends TemplateCreator {
     @required Iterable<String> callbacks,
     @required String className,
     @required String platformClassName,
-    @required String wrapperInterface,
   }) {
     return TemplateCreator._replace(
       Block.aClass.exp.firstMatch(template.value).group(1),
@@ -141,10 +135,9 @@ class MethodChannelTemplateCreator extends TemplateCreator {
         Block.constructors.exp: constructors.join(),
         Block.methods.exp: methods.join(),
         Block.fields.exp: fields.join(),
-        Replacement.platformClassName.name: platformClassName,
         Block.callbacks.exp: callbacks.join(),
-        Replacement.wrapperInterface.name: wrapperInterface,
         Replacement.className.name: className,
+        Replacement.platformClassName.name: platformClassName,
       },
     );
   }
@@ -192,22 +185,18 @@ class MethodChannelTemplateCreator extends TemplateCreator {
   }
 
   String createConstructor({
-    String platformClassName,
-    String className,
-    @required String constructorName,
     @required Iterable<String> parameters,
     @required Iterable<String> methodCallParams,
+    @required String constructorName,
   }) {
     return TemplateCreator._replace(
       Block.constructor.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
-        Replacement.platformClassName.name: platformClassName,
-        Replacement.className.name: className,
+        Block.parameters.exp: parameters.join(),
+        MethodChannelBlock.methodCallParams.exp: methodCallParams.join(),
         Replacement.constructorName.name: constructorName,
         Replacement.dartConstructorName.name:
             constructorName.isEmpty ? r'$Default' : constructorName,
-        Block.parameters.exp: parameters.join(),
-        MethodChannelBlock.methodCallParams.exp: methodCallParams.join(),
       },
     );
   }

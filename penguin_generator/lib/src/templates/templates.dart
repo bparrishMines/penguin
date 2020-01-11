@@ -622,14 +622,14 @@ class $__className____typeParameters__ extends Wrapper {
     switch (call.method) {
       %%CALLBACKS%%
       %%CALLBACK%%      
-      case '__wrapperName__#__methodName__':
+      case '__platformClassName__#__methodName__':
         (this as __className__).__methodName__(
           %%CALLBACKCHANNELPARAMS%%
           %%CALLBACKCHANNELPARAM methodChannel:wrapper%%
-          __className__.fromUniqueId(call.arguments['__parameterName__']),
+          __parameterClassName__.fromUniqueId(call.arguments['__parameterName__']),
           %%CALLBACKCHANNELPARAM methodChannel:wrapper%%
           %%CALLBACKCHANNELPARAM methodChannel:struct%%
-          __className__.fromUniqueId(call.arguments['__parameterName__']),
+          __parameterClassName__.fromUniqueId(call.arguments['__parameterName__']),
           %%CALLBACKCHANNELPARAM methodChannel:struct%%
           %%CALLBACKCHANNELPARAM methodChannel:primitive%%
           call.arguments['__parameterName__'],
@@ -1372,6 +1372,6 @@ class Replacement {
   static final Replacement implementationName =
       Replacement('__implementationName__');
   static final Replacement filename = Replacement('__filename__');
-  static final Replacement wrapperInterface =
-      Replacement('__wrapperInterface__');
+  static final Replacement parameterClassName =
+      Replacement('__parameterClassName__');
 }

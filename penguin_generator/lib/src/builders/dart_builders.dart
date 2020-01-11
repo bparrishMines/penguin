@@ -4,7 +4,6 @@ import 'package:penguin/penguin.dart';
 
 import '../info.dart';
 import '../templates/template_creator.dart';
-import '../templates/templates.dart';
 import 'penguin_builder.dart';
 
 class DartMethodChannelBuilder extends PenguinBuilder {
@@ -77,7 +76,6 @@ class DartMethodChannelBuilder extends PenguinBuilder {
               classInfo.aClass.platform is AndroidPlatform)
           .map<String>(
             (ClassInfo classInfo) => creator.createClass(
-              wrapperInterface: 'AndroidWrapper',
               typeParameters: classInfo.typeParameters.map<String>(
                 (TypeInfo info) => info.name,
               ),
@@ -88,19 +86,11 @@ class DartMethodChannelBuilder extends PenguinBuilder {
                   .map<String>(
                     (MethodInfo methodInfo) => creator.createCallback(
                       methodName: methodInfo.name,
-                      wrapperName:
-                          (classInfo.aClass.platform as AndroidPlatform)
-                              .type
-                              .names
-                              .join(),
                       callbackChannelParams: methodInfo.parameters.map<String>(
                         (ParameterInfo parameterInfo) =>
                             creator.createCallbackChannelParam(
                           getChannelType(parameterInfo.type),
-                          className: getChannelType(parameterInfo.type) ==
-                                  MethodChannelType.wrapper
-                              ? parameterInfo.type.name
-                              : null,
+                          parameterClassName: parameterInfo.type.name,
                           parameterName: parameterInfo.name,
                         ),
                       ),
@@ -122,12 +112,6 @@ class DartMethodChannelBuilder extends PenguinBuilder {
                     ),
                   ),
                   constructorName: constructorInfo.name,
-                  className: classInfo.name,
-                  platformClassName:
-                      (classInfo.aClass.platform as AndroidPlatform)
-                          .type
-                          .names
-                          .join(),
                 ),
               ),
               methods: classInfo.methods.map<String>(
@@ -148,22 +132,12 @@ class DartMethodChannelBuilder extends PenguinBuilder {
                       parameterName: parameterInfo.name,
                     ),
                   ),
-                  platformClassName:
-                      (classInfo.aClass.platform as AndroidPlatform)
-                          .type
-                          .names
-                          .join(),
                   methodName: methodInfo.name,
                 ),
               ),
               fields: classInfo.fields.map<String>(
                 (FieldInfo fieldInfo) => creator.createField(
                   fieldInfo.isStatic,
-                  platformClassName:
-                      (classInfo.aClass.platform as AndroidPlatform)
-                          .type
-                          .names
-                          .join(),
                   fieldName: fieldInfo.name,
                   fieldType: fieldInfo.type.name,
                   methodCallParam: creator.createMethodCallParam(
@@ -223,7 +197,6 @@ class DartMethodChannelBuilder extends PenguinBuilder {
               (ClassInfo classInfo) => classInfo.aClass.platform is IosPlatform)
           .map<String>(
             (ClassInfo classInfo) => creator.createClass(
-              wrapperInterface: 'IosWrapper',
               typeParameters: classInfo.typeParameters.map<String>(
                 (TypeInfo info) => info.name,
               ),
@@ -234,16 +207,11 @@ class DartMethodChannelBuilder extends PenguinBuilder {
                   .map<String>(
                     (MethodInfo methodInfo) => creator.createCallback(
                       methodName: methodInfo.name,
-                      wrapperName:
-                          (classInfo.aClass.platform as IosPlatform).type.name,
                       callbackChannelParams: methodInfo.parameters.map<String>(
                         (ParameterInfo parameterInfo) =>
                             creator.createCallbackChannelParam(
                           getChannelType(parameterInfo.type),
-                          className: getChannelType(parameterInfo.type) ==
-                                  MethodChannelType.wrapper
-                              ? parameterInfo.type.name
-                              : null,
+                          parameterClassName: parameterInfo.type.name,
                           parameterName: parameterInfo.name,
                         ),
                       ),
@@ -265,9 +233,6 @@ class DartMethodChannelBuilder extends PenguinBuilder {
                     ),
                   ),
                   constructorName: constructorInfo.name,
-                  className: classInfo.name,
-                  platformClassName:
-                      (classInfo.aClass.platform as IosPlatform).type.name,
                 ),
               ),
               methods: classInfo.methods.map<String>(
@@ -288,16 +253,12 @@ class DartMethodChannelBuilder extends PenguinBuilder {
                       parameterName: parameterInfo.name,
                     ),
                   ),
-                  platformClassName:
-                      (classInfo.aClass.platform as IosPlatform).type.name,
                   methodName: methodInfo.name,
                 ),
               ),
               fields: classInfo.fields.map<String>(
                 (FieldInfo fieldInfo) => creator.createField(
                   fieldInfo.isStatic,
-                  platformClassName:
-                      (classInfo.aClass.platform as IosPlatform).type.name,
                   fieldName: fieldInfo.name,
                   fieldType: fieldInfo.type.name,
                   methodCallParam: creator.createMethodCallParam(
