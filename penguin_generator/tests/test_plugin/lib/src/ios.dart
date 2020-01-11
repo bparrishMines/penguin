@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:penguin/penguin.dart';
 import 'package:penguin_plugin/penguin_plugin.dart';
-import 'package:test_plugin/test_plugin.dart';
+
+import 'test_plugin_interface.dart';
 
 part 'ios.ios.penguin.g.dart';
 
@@ -65,33 +65,6 @@ part 'ios.ios.penguin.g.dart';
 //}
 
 @Class(IosPlatform(
-  IosType('TestStruct', isStruct: true, import: '"TestPlugin.h"'),
-))
-class TestStruct extends $TestStruct {
-  @Constructor()
-  TestStruct() : super.$Default();
-
-  TestStruct.fromUniqueId(String uniqueId) : super.fromUniqueId(uniqueId);
-
-  @Field()
-  @int32
-  Future<int> get intField =>
-      invoke<int>(PenguinPlugin.globalMethodChannel, [$intField()]);
-}
-
-@Class(IosPlatform(IosType('TestProtocol', import: '"TestPlugin.h"')))
-class IosProtocol extends $IosProtocol {
-  @Constructor()
-  IosProtocol() : super.$Default();
-
-  IosProtocol.fromUniqueId(String uniqueId) : super.fromUniqueId(uniqueId);
-
-  @Method(callback: true)
-  Future<void> callbackMethod() =>
-      invoke<void>(PenguinPlugin.globalMethodChannel, [$callbackMethod()]);
-}
-
-@Class(IosPlatform(
   IosType('TestClass1', import: '"TestPlugin.h"'),
 ))
 class IosTestClass1 extends $IosTestClass1 with TestClass1 {
@@ -99,11 +72,7 @@ class IosTestClass1 extends $IosTestClass1 with TestClass1 {
   IosTestClass1() : super.$Default();
 
   @Constructor()
-  IosTestClass1.initNamedConstructor(
-    String supported,
-    @int32 int primitive,
-    IosTestClass2 wrapper,
-  ) : super.initNamedConstructor(supported, primitive, wrapper);
+  IosTestClass1.initNamedConstructor() : super.initNamedConstructor();
 
   IosTestClass1.fromUniqueId(String uniqueId) : super.fromUniqueId(uniqueId);
 
@@ -217,28 +186,53 @@ class IosGenericClass<T> extends $IosGenericClass<T> with GenericClass<T> {
 
   @override
   Future<void> add(T object) {
-//    if (isTypeOf<T, Wrapper>()) {
-//      return invoke<void>(
-//        channel,
-//        (object as Wrapper).methodCallStorageHelper.methodCalls
-//          ..add($add(object)),
-//      );
-//    }
-//
-//    return invoke<void>(channel, [$add(object)]);
+    if (isTypeOf<T, Wrapper>()) {
+      return invoke<void>(
+        PenguinPlugin.globalMethodChannel,
+        [$add(object)],
+      );
+    }
+
+    return invoke<void>(PenguinPlugin.globalMethodChannel, [$add(object)]);
   }
 
   @override
   Future<T> get(String identifier) async {
-//    if (isTypeOf<T, Wrapper>()) {
-//      final Wrapper wrapper = _GenericHelper.getWrapperForType<T>(randomId());
-//      invoke<void>(
-//        channel,
-//        [$get(identifier, wrapper.uniqueId), wrapper.allocate()],
-//      );
-//      return _GenericHelper.onAllocated(wrapper);
-//    }
-//
-//    return invoke<T>(channel, [$get(identifier)]);
+    if (isTypeOf<T, Wrapper>()) {
+      return invoke<T>(
+        PenguinPlugin.globalMethodChannel,
+        [$get(identifier)],
+        genericHelper: _GenericHelper.instance,
+      );
+    }
+
+    return invoke<T>(PenguinPlugin.globalMethodChannel, [$get(identifier)]);
   }
+}
+
+@Class(IosPlatform(
+  IosType('TestStruct', isStruct: true, import: '"TestPlugin.h"'),
+))
+class TestStruct extends $TestStruct {
+  @Constructor()
+  TestStruct() : super.$Default();
+
+  TestStruct.fromUniqueId(String uniqueId) : super.fromUniqueId(uniqueId);
+
+  @Field()
+  @int32
+  Future<int> get intField =>
+      invoke<int>(PenguinPlugin.globalMethodChannel, [$intField()]);
+}
+
+@Class(IosPlatform(IosType('TestProtocol', import: '"TestPlugin.h"')))
+class IosProtocol extends $IosProtocol {
+  @Constructor()
+  IosProtocol() : super.$Default();
+
+  IosProtocol.fromUniqueId(String uniqueId) : super.fromUniqueId(uniqueId);
+
+  @Method(callback: true)
+  Future<void> callbackMethod() =>
+      invoke<void>(PenguinPlugin.globalMethodChannel, [$callbackMethod()]);
 }

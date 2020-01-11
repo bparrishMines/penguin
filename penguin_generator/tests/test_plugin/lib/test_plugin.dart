@@ -1,17 +1,102 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/services.dart';
-import 'package:penguin/penguin.dart';
 import 'package:penguin_plugin/penguin_plugin.dart';
 
-import 'android.dart' as android;
-import 'ios.dart' as ios;
+import 'src/android.dart';
+import 'src/test_plugin_interface.dart';
+import 'src/ios.dart';
 
 void initialize() {
   PenguinPlugin.globalMethodChannel = MethodChannel('test_plugin');
   PenguinPlugin.globalMethodChannel.setMethodCallHandler(
     PenguinPlugin.methodCallHandler,
   );
+}
+
+class TestClass1Controller with TestClass1 {
+  TestClass1Controller()
+      : testClass1 = Platform.isAndroid
+            ? AndroidTestClass1()
+            : (IosTestClass1() as TestClass1);
+
+  TestClass1Controller.namedConstructor() : testClass1 = Platform.isAndroid
+      ? AndroidTestClass1.namedConstructor()
+      : (IosTestClass1.initNamedConstructor() as TestClass1);
+
+  final TestClass1 testClass1;
+
+  @override
+  FutureOr<double> get mutableField => testClass1.mutableField;
+
+  @override
+  set mutableField(FutureOr<double> value) => testClass1.mutableField = value;
+
+  @override
+  Future<bool> get boolField => testClass1.boolField;
+
+  @override
+  Future<double> get doubleField => testClass1.doubleField;
+
+  @override
+  FutureOr<int> get intField => testClass1.intField;
+
+  @override
+  Future<double> get notAField => testClass1.notAField;
+
+  @override
+  Future<String> get stringField => testClass1.stringField;
+
+  @override
+  Future<bool> returnBool() => testClass1.returnBool();
+
+  @override
+  Future<double> returnDouble() => testClass1.returnDouble();
+
+  @override
+  Future returnDynamic() => testClass1.returnDynamic();
+
+  @override
+  Future<int> returnInt() => testClass1.returnInt();
+  @override
+  Future<List<double>> returnList() => testClass1.returnList();
+
+  @override
+  Future<Map<String, int>> returnMap() => testClass1.returnMap();
+
+  @override
+  Future<Object> returnObject() => testClass1.returnObject();
+
+  @override
+  Future<String> returnString() => testClass1.returnString();
+
+  @override
+  Future<void> returnVoid() => testClass1.returnVoid();
+}
+
+class TestClass2Controller {
+  TestClass2Controller()
+      : testClass2 = Platform.isAndroid
+            ? AndroidTestClass2()
+            : (IosTestClass2() as TestClass2);
+
+  final TestClass2 testClass2;
+}
+
+class GenericClassController<T> with GenericClass<T> {
+  GenericClassController()
+      : genericClass = Platform.isAndroid
+            ? AndroidGenericClass<T>()
+            : (IosGenericClass<T>() as GenericClass<T>);
+
+  final GenericClass<T> genericClass;
+
+  @override
+  Future<void> add(T object) => genericClass.add(object);
+
+  @override
+  Future<T> get(String identifier) => genericClass.get(identifier);
 }
 
 //abstract class PlatformTextView {
@@ -34,63 +119,3 @@ void initialize() {
 //    throw UnsupportedError('Not Android or iOS');
 //  }
 //}
-
-abstract class TestClass1 {
-  @Field()
-  set mutableField(FutureOr<double> value);
-
-  @Field()
-  FutureOr<double> get mutableField;
-
-  @Method()
-  Future<void> returnVoid();
-
-  @Method()
-  Future<String> returnString();
-
-  @Method()
-  Future<int> returnInt();
-
-  @Method()
-  Future<double> returnDouble();
-
-  @Method()
-  Future<bool> returnBool();
-
-  @Method()
-  Future<List<double>> returnList();
-
-  @Method()
-  Future<Map<String, int>> returnMap();
-
-  @Method()
-  Future<Object> returnObject();
-
-  @Method()
-  Future<dynamic> returnDynamic();
-
-  @Field()
-  FutureOr<int> get intField;
-
-  @Field()
-  Future<String> get stringField;
-
-  @Field()
-  Future<double> get doubleField;
-
-  @Field()
-  Future<bool> get boolField;
-
-  @Field(nameOverride: 'nameOverrideField')
-  Future<double> get notAField;
-}
-
-abstract class TestClass2 {}
-
-abstract class GenericClass<T> {
-  @Method()
-  Future<void> add(T object);
-
-  @Method()
-  Future<T> get(String identifier);
-}

@@ -3,47 +3,71 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:penguin/penguin.dart';
 import 'package:penguin_plugin/penguin_plugin.dart';
-import 'package:test_plugin/test_plugin.dart';
+
+import 'test_plugin_interface.dart';
 
 part 'android.android.penguin.g.dart';
 
-@Class(AndroidPlatform(
-  AndroidType(
-    'com.example.test_plugin.test_library',
-    <String>['TestClass1', 'NestedTestClass'],
-  ),
-))
-class AndroidNestedClass extends $AndroidNestedClass {
-  @Constructor()
-  AndroidNestedClass() : super.$Default();
-
-  AndroidNestedClass.fromUniqueId(String uniqueId)
-      : super.fromUniqueId(uniqueId);
-}
-
-@Class(AndroidPlatform(
-  AndroidType(
-    'com.example.test_plugin.test_library',
-    <String>['AbstractTestClass'],
-  ),
-))
-class AndroidAbstractClass extends $AndroidAbstractClass {
-  @Constructor()
-  AndroidAbstractClass() : super.$Default();
-
-  AndroidAbstractClass.fromUniqueId(String uniqueId)
-      : super.fromUniqueId(uniqueId);
-
-  @Method(callback: true)
-  Future<void> callbackMethod(
-    String supported,
-    @int64 int primitive,
-    AndroidTestClass2 wrapper,
-    AndroidNestedClass nested,
-  ) =>
-      invoke<void>(PenguinPlugin.globalMethodChannel,
-          [$callbackMethod(supported, primitive, wrapper, nested)]);
-}
+//class AndroidTextViewState extends State<TextViewWidget> {
+//  TextView get _asTextView => widget.textView as TextView;
+//
+//  @override
+//  void initState() {
+//    super.initState();
+//    callbackHandler.addWrapper(_asTextView);
+//  }
+//
+//  @override
+//  void dispose() {
+//    super.dispose();
+//    invoke<void>(channel, [_asTextView.deallocate()]);
+//    callbackHandler.removeWrapper(_asTextView);
+//  }
+//
+//  @override
+//  Widget build(BuildContext context) {
+//    if (_asTextView._isCreated) {
+//      invoke<void>(channel, _asTextView.methodCallStorageHelper.methodCalls);
+//      _asTextView.methodCallStorageHelper.clearMethodCalls();
+//    }
+//
+//    return AndroidView(
+//      viewType: '${channel.name}/view',
+//      creationParams: _asTextView.uniqueId,
+//      creationParamsCodec: const StandardMessageCodec(),
+//    );
+//  }
+//}
+//
+//@Class(AndroidPlatform(
+//  AndroidType('android.widget', <String>['TextView']),
+//))
+//class TextView extends $TextView with PlatformTextView {
+//  @Constructor()
+//  TextView([Context context]) : super(randomId());
+//
+//  bool _isCreated = false;
+//
+//  @Method()
+//  void setText(String text) {
+//    methodCallStorageHelper.replace($setText(text));
+//  }
+//
+//  @override
+//  FutureOr<Iterable<MethodCall>> onCreateView(Context context) {
+//    final List<MethodCall> methodCalls = methodCallStorageHelper.methodCalls;
+//    methodCallStorageHelper.clearMethodCalls();
+//
+//    _isCreated = true;
+//    return <MethodCall>[
+//      $TextView$Default(context),
+//      ...methodCalls,
+//      allocate(),
+//    ];
+//  }
+//
+//  static FutureOr onAllocated($TextView wrapper) => throw UnimplementedError();
+//}
 
 @Class(AndroidPlatform(
   AndroidType('com.example.test_plugin.test_library', <String>['TestClass1']),
@@ -56,12 +80,7 @@ class AndroidTestClass1 extends $AndroidTestClass1 with TestClass1 {
       : super.fromUniqueId(uniqueId);
 
   @Constructor()
-  AndroidTestClass1.namedConstructor(
-    String supported,
-    @int64 int primitive,
-    AndroidTestClass2 wrapper,
-    AndroidNestedClass nested,
-  ) : super.namedConstructor(supported, primitive, wrapper, nested);
+  AndroidTestClass1.namedConstructor() : super.namedConstructor();
 
   @Field()
   static Future<List<bool>> get staticField => invokeList<bool>(
@@ -127,7 +146,8 @@ class AndroidTestClass1 extends $AndroidTestClass1 with TestClass1 {
 
   @Method()
   Future<AndroidTestClass1> returnWrapper() => invoke<AndroidTestClass1>(
-      PenguinPlugin.globalMethodChannel, [$returnWrapper()], genericHelper: _GenericHelper.instance);
+      PenguinPlugin.globalMethodChannel, [$returnWrapper()],
+      genericHelper: _GenericHelper.instance);
 
   @override
   FutureOr<int> get intField =>
@@ -149,67 +169,6 @@ class AndroidTestClass1 extends $AndroidTestClass1 with TestClass1 {
   Future<double> get notAField =>
       invoke<double>(PenguinPlugin.globalMethodChannel, [$nameOverrideField()]);
 }
-
-//class AndroidTextViewState extends State<TextViewWidget> {
-//  TextView get _asTextView => widget.textView as TextView;
-//
-//  @override
-//  void initState() {
-//    super.initState();
-//    callbackHandler.addWrapper(_asTextView);
-//  }
-//
-//  @override
-//  void dispose() {
-//    super.dispose();
-//    invoke<void>(channel, [_asTextView.deallocate()]);
-//    callbackHandler.removeWrapper(_asTextView);
-//  }
-//
-//  @override
-//  Widget build(BuildContext context) {
-//    if (_asTextView._isCreated) {
-//      invoke<void>(channel, _asTextView.methodCallStorageHelper.methodCalls);
-//      _asTextView.methodCallStorageHelper.clearMethodCalls();
-//    }
-//
-//    return AndroidView(
-//      viewType: '${channel.name}/view',
-//      creationParams: _asTextView.uniqueId,
-//      creationParamsCodec: const StandardMessageCodec(),
-//    );
-//  }
-//}
-//
-//@Class(AndroidPlatform(
-//  AndroidType('android.widget', <String>['TextView']),
-//))
-//class TextView extends $TextView with PlatformTextView {
-//  @Constructor()
-//  TextView([Context context]) : super(randomId());
-//
-//  bool _isCreated = false;
-//
-//  @Method()
-//  void setText(String text) {
-//    methodCallStorageHelper.replace($setText(text));
-//  }
-//
-//  @override
-//  FutureOr<Iterable<MethodCall>> onCreateView(Context context) {
-//    final List<MethodCall> methodCalls = methodCallStorageHelper.methodCalls;
-//    methodCallStorageHelper.clearMethodCalls();
-//
-//    _isCreated = true;
-//    return <MethodCall>[
-//      $TextView$Default(context),
-//      ...methodCalls,
-//      allocate(),
-//    ];
-//  }
-//
-//  static FutureOr onAllocated($TextView wrapper) => throw UnimplementedError();
-//}
 
 @Class(
   AndroidPlatform(
@@ -261,4 +220,42 @@ class AndroidGenericClass<T> extends $AndroidGenericClass<T>
 
     return invoke<T>(PenguinPlugin.globalMethodChannel, [$get(identifier)]);
   }
+}
+
+@Class(AndroidPlatform(
+  AndroidType(
+    'com.example.test_plugin.test_library',
+    <String>['TestClass1', 'NestedTestClass'],
+  ),
+))
+class AndroidNestedClass extends $AndroidNestedClass {
+  @Constructor()
+  AndroidNestedClass() : super.$Default();
+
+  AndroidNestedClass.fromUniqueId(String uniqueId)
+      : super.fromUniqueId(uniqueId);
+}
+
+@Class(AndroidPlatform(
+  AndroidType(
+    'com.example.test_plugin.test_library',
+    <String>['AbstractTestClass'],
+  ),
+))
+class AndroidAbstractClass extends $AndroidAbstractClass {
+  @Constructor()
+  AndroidAbstractClass() : super.$Default();
+
+  AndroidAbstractClass.fromUniqueId(String uniqueId)
+      : super.fromUniqueId(uniqueId);
+
+  @Method(callback: true)
+  Future<void> callbackMethod(
+    String supported,
+    @int64 int primitive,
+    AndroidTestClass2 wrapper,
+    AndroidNestedClass nested,
+  ) =>
+      invoke<void>(PenguinPlugin.globalMethodChannel,
+          [$callbackMethod(supported, primitive, wrapper, nested)]);
 }

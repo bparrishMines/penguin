@@ -7,8 +7,8 @@ import 'dart:io';
 
 import 'package:flutter_driver/driver_extension.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:test_plugin/android.dart';
-import 'package:test_plugin/ios.dart';
+import 'package:test_plugin/src/android.dart';
+import 'package:test_plugin/src/ios.dart';
 import 'package:test_plugin/test_plugin.dart';
 
 void main() {
@@ -18,246 +18,210 @@ void main() {
 
   initialize();
   group('test_plugin', () {
-    TestClass1 testClass;
-    TestClass2 testClass2;
-    GenericClass supportedGenericClass;
-    GenericClass wrapperGenericClass;
-    dynamic callbackClass1;
-    dynamic callbackClass2;
+    final TestClass1Controller testClass1 = TestClass1Controller();
+    final TestClass2Controller testClass2 = TestClass2Controller();
+    final GenericClassController genericClass = GenericClassController<int>();
 
-    setUpAll(() {
-      print('Platform: ${Platform.isAndroid ? 'Android' : 'Ios'}');
-      if (Platform.isAndroid) {
-        testClass = AndroidTestClass1();
-        testClass2 = AndroidTestClass2();
-        supportedGenericClass = AndroidGenericClass<int>();
-        wrapperGenericClass = AndroidGenericClass<AndroidTestClass2>();
-        callbackClass1 = AndroidCallbackClass();
-        callbackClass2 = AndroidCallbackClass();
-      } else if (Platform.isIOS) {
-        testClass = IosTestClass1();
-        testClass2 = IosTestClass2();
-        supportedGenericClass = IosGenericClass<int>();
-        wrapperGenericClass = IosGenericClass<IosTestClass2>();
-        callbackClass1 = IosCallbackClass();
-        callbackClass2 = IosCallbackClass();
-      }
-    });
+    group('interface', () {
+      test('intField', () {
+        expect(testClass1.intField, completion(43));
+      });
 
-    test('intField', () {
-      expect(testClass.intField, completion(43));
-    });
+      test('mutableField', () {
+        testClass1.mutableField = 23.4;
+        expect(testClass1.mutableField, completion(23.4));
+      });
 
-    test('mutableField', () {
-      TestClass1 mutableTestClass;
-      if (Platform.isAndroid) {
-        mutableTestClass = AndroidTestClass1();
-      } else if (Platform.isIOS) {
-        mutableTestClass = IosTestClass1();
-      }
-      mutableTestClass.mutableField = 23.4;
-      expect(mutableTestClass.mutableField, completion(23.4));
-    });
+      test('stringField', () {
+        expect(testClass1.stringField, completion("Macintosh"));
+      });
 
-    test('stringField', () {
-      expect(testClass.stringField, completion("Macintosh"));
-    });
+      test('doubleField', () {
+        expect(testClass1.doubleField, completion(44.0));
+      });
 
-    test('doubleField', () {
-      expect(testClass.doubleField, completion(44.0));
-    });
+      test('boolField', () {
+        expect(testClass1.boolField, completion(isTrue));
+      });
 
-    test('boolField', () {
-      expect(testClass.boolField, completion(isTrue));
-    });
+      test('staticfield', () {
+        if (Platform.isAndroid) {
+          expect(
+            AndroidTestClass1.staticField,
+            completion(<bool>[true, false, true]),
+          );
+        } else if (Platform.isIOS) {
+          expect(
+            IosTestClass1.staticField,
+            completion(<bool>[true, false, true]),
+          );
+        }
+      });
 
-    test('staticfield', () {
-      if (Platform.isAndroid) {
+      test('staticMethod', () {
+        if (Platform.isAndroid) {
+          expect(
+            AndroidTestClass1.staticMethod(),
+            completes,
+          );
+        } else if (Platform.isIOS) {
+          expect(
+            IosTestClass1.staticMethod(),
+            completes,
+          );
+        }
+      });
+
+      test('namedConstructor', () {
         expect(
-          AndroidTestClass1.staticField,
-          completion(<bool>[true, false, true]),
+          TestClass1Controller.namedConstructor().returnBool(),
+          completion(isFalse),
         );
-      } else if (Platform.isIOS) {
+      });
+
+      test('returnVoid', () {
+        expect(testClass1.returnVoid(), completes);
+      });
+
+      test('returnString', () {
+        expect(testClass1.returnString(), completion('Amigo'));
+      });
+
+      test('returnInt', () {
+        expect(testClass1.returnInt(), completion(69));
+      });
+
+      test('returnDouble', () {
+        expect(testClass1.returnDouble(), completion(70.0));
+      });
+
+      test('returnBool', () {
+        expect(testClass1.returnBool(), completion(false));
+      });
+
+      test('returnList', () {
         expect(
-          IosTestClass1.staticField,
-          completion(<bool>[true, false, true]),
+          testClass1.returnList(),
+          completion(<double>[1.0, 2.0]),
         );
-      }
-    });
+      });
 
-    test('staticMethod', () {
-      if (Platform.isAndroid) {
+      test('returnMap', () {
         expect(
-          AndroidTestClass1.staticMethod(),
-          completes,
+          testClass1.returnMap(),
+          completion(<String, int>{'one': 1, 'two': 2}),
         );
-      } else if (Platform.isIOS) {
+      });
+
+      test('returnObject', () {
+        expect(testClass1.returnObject(), completion('Hello'));
+      });
+
+      test('returnDynamic', () {
+        expect(testClass1.returnDynamic(), completion(3));
+      });
+
+      test('nameOverrideField', () {
+        expect(testClass1.notAField, completion(12.10));
+      });
+    });
+
+    group('android', () {
+      test('parameterMethod', () {
         expect(
-          IosTestClass1.staticMethod(),
-          completes,
-        );
-      }
-    });
-
-    test('namedConstructor', () {
-      TestClass1 testClass;
-      if (Platform.isAndroid) {
-        testClass = AndroidTestClass1.namedConstructor(
-          'hello',
-          45,
-          (testClass2 as AndroidTestClass2),
-          AndroidNestedClass(),
-        );
-      } else if (Platform.isIOS) {
-        testClass = IosTestClass1.initNamedConstructor(
-          'goodbye',
-          23,
-          (testClass2 as IosTestClass2),
-        );
-      }
-      expect(testClass.returnBool(), completion(isFalse));
-    });
-
-    test('returnVoid', () {
-      expect(testClass.returnVoid(), completes);
-    });
-
-    test('returnString', () {
-      expect(testClass.returnString(), completion('Amigo'));
-    });
-
-    test('returnInt', () {
-      expect(testClass.returnInt(), completion(69));
-    });
-
-    test('returnDouble', () {
-      expect(testClass.returnDouble(), completion(70.0));
-    });
-
-    test('returnBool', () {
-      expect(testClass.returnBool(), completion(false));
-    });
-
-    test('returnList', () {
-      expect(
-        testClass.returnList(),
-        completion(<double>[1.0, 2.0]),
-      );
-    });
-
-    test('returnMap', () {
-      expect(
-        testClass.returnMap(),
-        completion(<String, int>{'one': 1, 'two': 2}),
-      );
-    });
-
-    test('returnObject', () {
-      expect(testClass.returnObject(), completion('Hello'));
-    });
-
-    test('returnDynamic', () {
-      expect(testClass.returnDynamic(), completion(3));
-    });
-
-    test('returnInt32', () {
-      expect((testClass as IosTestClass1).returnInt32(), completion(56));
-    }, skip: !Platform.isIOS);
-
-    test('parameterMethod', () {
-      if (Platform.isAndroid) {
-        expect(
-          (testClass as AndroidTestClass1).parameterMethod(
+          (testClass1.testClass1 as AndroidTestClass1).parameterMethod(
             'woeif',
             32,
-            (testClass2 as AndroidTestClass2),
+            (testClass2.testClass2 as AndroidTestClass2),
             AndroidNestedClass(),
           ),
           completes,
         );
-      } else if (Platform.isIOS) {
+      });
+
+      test('$AndroidGenericClass', () async {
+        genericClass.add(56);
+        expect(await genericClass.get('eoij'), 56);
+
+        final AndroidTestClass2 testClass2 = AndroidTestClass2();
+        final AndroidGenericClass<AndroidTestClass2> androidGenericClass =
+            AndroidGenericClass<AndroidTestClass2>();
+        androidGenericClass.add(testClass2);
+
+        final AndroidTestClass2 result = await androidGenericClass.get('woie');
+        expect(result, allOf(isNotNull, isA<AndroidTestClass2>()));
+      });
+
+      test('returnWrapper', () async {
+        final AndroidTestClass1 result =
+            await (testClass1.testClass1 as AndroidTestClass1).returnWrapper();
+
+        expect(result, isNotNull);
+        expect((result as dynamic).uniqueId, isNotNull);
+        expect(result.returnInt(), completion(69));
+      });
+
+      test('callbackMethod', () async {
+        final AndroidCallbackClass callbackClass = AndroidCallbackClass();
+        expect(callbackClass.callbackCalled, isFalse);
+
+        callbackClass.callCallbackMethod();
+        await Future<void>.delayed(Duration(seconds: 2));
+        expect(callbackClass.callbackCalled, isTrue);
+      });
+    }, skip: !Platform.isAndroid);
+
+    group('ios', () {
+      test('returnInt32', () {
+        expect(IosTestClass1(), completion(56));
+      });
+
+      test('parameterMethod', () {
         expect(
-          (testClass as IosTestClass1).parameterMethod(
+          (testClass1.testClass1 as IosTestClass1).parameterMethod(
             'woeif',
             32,
-            (testClass2 as IosTestClass2),
+            (testClass2.testClass2 as IosTestClass2),
           ),
           completes,
         );
-      }
-    });
+      });
 
-    test('callbackMethod', () async {
-      expect(callbackClass1.callbackCalled, isFalse);
-      callbackClass1.callCallbackMethod();
-      await Future<void>.delayed(Duration(seconds: 2));
-      expect(callbackClass1.callbackCalled, isTrue);
+      test('$TestStruct', () {
+        expect(TestStruct().intField, completion(isA<int>()));
+      });
 
-      expect(callbackClass2.callbackCalled, isFalse);
-      callbackClass2.callCallbackMethod();
-      await Future<void>.delayed(Duration(seconds: 2));
-      expect(callbackClass2.callbackCalled, isTrue);
-    });
+      test('$IosGenericClass', () async {
+        genericClass.add(56);
+        expect(await genericClass.get('eoij'), 56);
 
-    test('$TestStruct', () {
-      expect(TestStruct().intField, completion(isA<int>()));
+        final IosTestClass2 testClass2 = IosTestClass2();
+        final IosGenericClass<IosTestClass2> iosGenericClass =
+            IosGenericClass<IosTestClass2>();
+        iosGenericClass.add(testClass2);
+
+        final IosTestClass2 result = await iosGenericClass.get('woie');
+        expect(result, allOf(isNotNull, isA<IosTestClass2>()));
+      });
+
+      test('returnWrapper', () async {
+        final IosTestClass1 result =
+            await (testClass1.testClass1 as IosTestClass1).returnWrapper();
+
+        expect(result, isNotNull);
+        expect((result as dynamic).uniqueId, isNotNull);
+        expect(result.returnInt(), completion(69));
+      });
+
+      test('callbackMethod', () async {
+        final IosCallbackClass callbackClass = IosCallbackClass();
+        expect(callbackClass.callbackCalled, isFalse);
+
+        callbackClass.callCallbackMethod();
+        await Future<void>.delayed(Duration(seconds: 2));
+        expect(callbackClass.callbackCalled, isTrue);
+      });
     }, skip: !Platform.isIOS);
-
-    test('GenericClass', () async {
-      supportedGenericClass.add(56);
-      expect(await supportedGenericClass.get('eoij'), 56);
-
-      TestClass2 testClass2;
-
-      if (Platform.isAndroid) {
-        testClass2 = AndroidTestClass2();
-      } else if (Platform.isIOS) {
-        testClass2 = IosTestClass2();
-      }
-
-      wrapperGenericClass.add(testClass2);
-
-      final TestClass2 result = await wrapperGenericClass.get('woie');
-      expect(result, allOf(isNotNull, isA<TestClass2>()));
-
-      if (Platform.isAndroid) {
-        expect(
-          (testClass as AndroidTestClass1).parameterMethod(
-            'woeif',
-            32,
-            (result as AndroidTestClass2),
-            AndroidNestedClass(),
-          ),
-          completes,
-        );
-      } else if (Platform.isIOS) {
-        expect(
-          (testClass as IosTestClass1).parameterMethod(
-            'woeif',
-            32,
-            (result as IosTestClass2),
-          ),
-          completes,
-        );
-      }
-    });
-
-    test('nameOverrideField', () {
-      expect(testClass.notAField, completion(12.10));
-    });
-
-    test('returnWrapper', () async {
-      TestClass1 result;
-      if (Platform.isAndroid) {
-        result = await (testClass as AndroidTestClass1).returnWrapper();
-      } else if (Platform.isIOS) {
-        result = await (testClass as IosTestClass1).returnWrapper();
-      }
-
-      expect(result, isNotNull);
-      expect((result as dynamic).uniqueId, isNotNull);
-      expect(result.returnInt(), completion(69));
-    });
   });
 }
 

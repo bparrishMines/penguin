@@ -17,12 +17,6 @@ public class TestClass1 {
 
   public TestClass1() { }
 
-  public TestClass1(String s, Long primitive, TestClass2 wrapper, NestedTestClass nested) {
-    if (s == null || primitive == null || wrapper == null || nested == null) {
-      throw new IllegalArgumentException();
-    }
-  }
-
   public static void staticMethod() {
 
   }
