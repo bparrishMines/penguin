@@ -95,16 +95,12 @@ class MethodChannelTemplateCreator extends TemplateCreator {
     );
   }
 
-  String createParameter(
-    MethodChannelType channelType, {
+  String createParameter({
     @required String parameterType,
     @required String parameterName,
   }) {
     return TemplateCreator._replace(
-      MethodChannelBlock.parameter(channelType)
-          .exp
-          .firstMatch(template.value)
-          .group(1),
+      Block.parameter.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
         Replacement.parameterType.name: parameterType,
         Replacement.parameterName.name: parameterName,
@@ -180,7 +176,10 @@ class MethodChannelTemplateCreator extends TemplateCreator {
     );
   }
 
-  String createGenericPlatformTypeNameHelper({@required String className, @required platformClassName,}) {
+  String createGenericPlatformTypeNameHelper({
+    @required String className,
+    @required platformClassName,
+  }) {
     return TemplateCreator._replace(
       Block.genericPlatformTypeNameHelper.exp
           .firstMatch(template.value)

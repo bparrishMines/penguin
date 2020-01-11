@@ -576,7 +576,44 @@ part of '__filename__';
 class $__className____typeParameters__ extends Wrapper {
   $__className__.fromUniqueId(String uniqueId)
       : assert(uniqueId != null),
-        super(uniqueId);  
+        super(uniqueId);
+  
+  %%CONSTRUCTORS%%
+  %%CONSTRUCTOR%%
+  $__className__.__dartConstructorName__(
+  %%PARAMETERS%%
+  %%PARAMETER%%
+  __parameterType__ __parameterName__,
+  %%PARAMETER%%
+  %%PARAMETERS%%
+  ) {
+    PenguinPlugin.globalMethodChannel.invokeMethod<void>(
+      '__platformClassName__(__constructorName__)',
+      <String, dynamic>{
+        r'$uniqueId': uniqueId,
+        %%METHODCALLPARAMS%%
+        %%METHODCALLPARAM methodChannel:supported%%
+        '__parameterName__': __parameterName__,
+        %%METHODCALLPARAM methodChannel:supported%%
+        %%METHODCALLPARAM methodChannel:primitive%%
+        '__parameterName__': __parameterName__,
+        %%METHODCALLPARAM methodChannel:primitive%%
+        %%METHODCALLPARAM methodChannel:wrapper%%
+        '__parameterName__': (__parameterName__ as Wrapper)?.uniqueId,
+        %%METHODCALLPARAM methodChannel:wrapper%%
+        %%METHODCALLPARAM methodChannel:struct%%
+        '__parameterName__': (__parameterName__ as Wrapper)?.uniqueId,
+        %%METHODCALLPARAM methodChannel:struct%%
+        %%METHODCALLPARAM methodChannel:typeParameter%%
+        r'__parameterName__$isWrapper':  __parameterName__ is Wrapper,
+        '__parameterName__': __parameterName__ is Wrapper ? (__parameterName__ as Wrapper)?.uniqueId : __parameterName__,
+        %%METHODCALLPARAM methodChannel:typeParameter%%
+        %%METHODCALLPARAMS%%
+      },
+    );
+  }
+  %%CONSTRUCTOR%%
+  %%CONSTRUCTORS%%
   
   String get platformClassName => '__platformClassName__';
 
@@ -591,12 +628,12 @@ class $__className____typeParameters__ extends Wrapper {
           %%CALLBACKCHANNELPARAM methodChannel:wrapper%%
           __className__.fromUniqueId(call.arguments['__parameterName__']),
           %%CALLBACKCHANNELPARAM methodChannel:wrapper%%
-          %%CALLBACKCHANNELPARAM methodChannel:primitive%%
-          call.arguments['__parameterName__'],
-          %%CALLBACKCHANNELPARAM methodChannel:primitive%%
           %%CALLBACKCHANNELPARAM methodChannel:struct%%
           __className__.fromUniqueId(call.arguments['__parameterName__']),
           %%CALLBACKCHANNELPARAM methodChannel:struct%%
+          %%CALLBACKCHANNELPARAM methodChannel:primitive%%
+          call.arguments['__parameterName__'],
+          %%CALLBACKCHANNELPARAM methodChannel:primitive%%
           %%CALLBACKCHANNELPARAM methodChannel:supported%%
           call.arguments['__parameterName__'],
           %%CALLBACKCHANNELPARAM methodChannel:supported%%
@@ -608,24 +645,6 @@ class $__className____typeParameters__ extends Wrapper {
     }
     throw UnimplementedError('No implementation for ${call.method}.');
   }
-
-  %%CONSTRUCTORS%%
-  %%CONSTRUCTOR%%
-  $__className__.__dartConstructorName__(
-  %%PARAMETERS%%
-  %%PARAMETERS%%
-  ) {
-    PenguinPlugin.globalMethodChannel.invokeMethod<void>(
-      '__platformClassName__(__constructorName__)',
-      <String, dynamic>{
-        r'$uniqueId': uniqueId,
-        %%METHODCALLPARAMS%%
-        %%METHODCALLPARAMS%%
-      },
-    );
-  }
-  %%CONSTRUCTOR%%
-  %%CONSTRUCTORS%%
 
   %%FIELDS%%
   %%FIELD%%
@@ -649,21 +668,6 @@ class $__className____typeParameters__ extends Wrapper {
   %%METHOD%%
   static MethodCall $__methodName__(
   %%PARAMETERS%%
-  %%PARAMETER methodChannel:supported%%
-  __parameterType__ __parameterName__,
-  %%PARAMETER methodChannel:supported%%
-  %%PARAMETER methodChannel:wrapper%%
-  __parameterType__ __parameterName__,
-  %%PARAMETER methodChannel:wrapper%%
-  %%PARAMETER methodChannel:struct%%
-  __parameterType__ __parameterName__,
-  %%PARAMETER methodChannel:struct%%
-  %%PARAMETER methodChannel:primitive%%
-  __parameterType__ __parameterName__,
-  %%PARAMETER methodChannel:primitive%%
-  %%PARAMETER methodChannel:typeParameter%%
-  __parameterType__ __parameterName__,
-  %%PARAMETER methodChannel:typeParameter%%
   %%PARAMETERS%%
   ) =>
     MethodCall(
@@ -674,22 +678,6 @@ class $__className____typeParameters__ extends Wrapper {
            ? _GenericHelper.instance.getPlatformClassForType<__returnType__>()
            : null,
        %%METHODCALLPARAMS%%
-       %%METHODCALLPARAM methodChannel:supported%%
-       '__parameterName__': __parameterName__,
-       %%METHODCALLPARAM methodChannel:supported%%
-       %%METHODCALLPARAM methodChannel:wrapper%%
-       '__parameterName__': (__parameterName__ as Wrapper)?.uniqueId,
-       %%METHODCALLPARAM methodChannel:wrapper%%
-       %%METHODCALLPARAM methodChannel:struct%%
-       '__parameterName__': (__parameterName__ as Wrapper)?.uniqueId,
-       %%METHODCALLPARAM methodChannel:struct%%
-       %%METHODCALLPARAM methodChannel:primitive%%
-       '__parameterName__': __parameterName__,
-       %%METHODCALLPARAM methodChannel:primitive%%
-       %%METHODCALLPARAM methodChannel:typeParameter%%
-       r'__parameterName__$isWrapper':  __parameterName__ is Wrapper,
-       '__parameterName__': __parameterName__ is Wrapper ? (__parameterName__ as Wrapper)?.uniqueId : __parameterName__,
-       %%METHODCALLPARAM methodChannel:typeParameter%%
        %%METHODCALLPARAMS%%
        },
     );
