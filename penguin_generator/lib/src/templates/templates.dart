@@ -599,14 +599,14 @@ class $__className____typeParameters__ extends Wrapper {
         '__parameterName__': __parameterName__,
         %%METHODCALLPARAM methodChannel:primitive%%
         %%METHODCALLPARAM methodChannel:wrapper%%
-        '__parameterName__': (__parameterName__ as Wrapper)?.uniqueId,
+        '__parameterName__': __parameterName__?.uniqueId,
         %%METHODCALLPARAM methodChannel:wrapper%%
         %%METHODCALLPARAM methodChannel:struct%%
-        '__parameterName__': (__parameterName__ as Wrapper)?.uniqueId,
+        '__parameterName__': __parameterName__?.uniqueId,
         %%METHODCALLPARAM methodChannel:struct%%
         %%METHODCALLPARAM methodChannel:typeParameter%%
         r'__parameterName__$isWrapper':  __parameterName__ is Wrapper,
-        '__parameterName__': __parameterName__ is Wrapper ? (__parameterName__ as Wrapper)?.uniqueId : __parameterName__,
+        '__parameterName__': __parameterName__ is Wrapper ? __parameterName__?.uniqueId : __parameterName__,
         %%METHODCALLPARAM methodChannel:typeParameter%%
         %%METHODCALLPARAMS%%
       },
