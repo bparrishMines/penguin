@@ -574,7 +574,9 @@ part of '__filename__';
 %%CLASSES%%
 %%CLASS%%
 class $__className____typeParameters__ extends Wrapper {
-  $__className__.fromUniqueId(String uniqueId) : super(uniqueId);
+  $__className__.fromUniqueId(String uniqueId)
+      : assert(uniqueId != null),
+        super(uniqueId);  
   
   String get platformClassName => '__platformClassName__';
 
@@ -669,7 +671,7 @@ class $__className____typeParameters__ extends Wrapper {
        <String, dynamic>{r'$uniqueId': uniqueId,
        r'$returnTypeIsWrapper': isTypeOf<__returnType__, Wrapper>(),
        r'$returnTypePlatformName': isTypeOf<__returnType__, Wrapper>() 
-           ? (_GenericHelper.instance.getWrapperForType<__returnType__>('') as Wrapper).platformClassName
+           ? _GenericHelper.instance.getPlatformClassForType<__returnType__>()
            : null,
        %%METHODCALLPARAMS%%
        %%METHODCALLPARAM methodChannel:supported%%
@@ -701,6 +703,18 @@ class _GenericHelper extends GenericHelper {
   const _GenericHelper._();
   
   static final _GenericHelper instance = _GenericHelper._();
+  
+  String getPlatformClassForType<T>() {
+    %%GENERICPLATFORMTYPENAMEHELPERS%%
+    %%GENERICPLATFORMTYPENAMEHELPER%%
+    if (isTypeOf<T, __className__>()) {
+      return '__platformClassName__';
+    }
+    %%GENERICPLATFORMTYPENAMEHELPER%%
+    %%GENERICPLATFORMTYPENAMEHELPERS%%
+    
+    throw UnsupportedError('Could not find platform class name for ${T.toString()}');
+  }
   
   T getWrapperForType<T>(String uniqueId) {
     assert(isTypeOf<T, Wrapper>());
@@ -1226,8 +1240,10 @@ class Block {
   static Block genericTypeHelpers = Block('GENERICTYPEHELPERS');
   static Block genericTypeHelper = Block('GENERICTYPEHELPER');
 
-  static Block genericCreationHelpers = Block('GENERICCREATIONHELPERS');
-  static Block genericCreationHelper = Block('GENERICCREATIONHELPER');
+  static Block genericPlatformTypeNameHelpers =
+      Block('GENERICPLATFORMTYPENAMEHELPERS');
+  static Block genericPlatformTypeNameHelper =
+      Block('GENERICPLATFORMTYPENAMEHELPER');
 }
 
 class MethodChannelBlock extends Block {

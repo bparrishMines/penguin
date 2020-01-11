@@ -156,6 +156,7 @@ class MethodChannelTemplateCreator extends TemplateCreator {
   String createFile({
     @required Iterable<String> classes,
     @required Iterable<String> genericTypeHelpers,
+    @required Iterable<String> genericPlatformTypeNameHelpers,
     @required String filename,
   }) {
     return TemplateCreator._replace(
@@ -163,6 +164,8 @@ class MethodChannelTemplateCreator extends TemplateCreator {
       <Pattern, String>{
         Block.classes.exp: classes.join(),
         Replacement.filename.name: filename,
+        Block.genericPlatformTypeNameHelpers.exp:
+            genericPlatformTypeNameHelpers.join('else'),
         Block.genericTypeHelpers.exp: genericTypeHelpers.join('else'),
       },
     );
@@ -173,6 +176,18 @@ class MethodChannelTemplateCreator extends TemplateCreator {
       Block.genericTypeHelper.exp.firstMatch(template.value).group(1),
       <Pattern, String>{
         Replacement.className.name: className,
+      },
+    );
+  }
+
+  String createGenericPlatformTypeNameHelper({@required String className, @required platformClassName,}) {
+    return TemplateCreator._replace(
+      Block.genericPlatformTypeNameHelper.exp
+          .firstMatch(template.value)
+          .group(1),
+      <Pattern, String>{
+        Replacement.className.name: className,
+        Replacement.platformClassName.name: platformClassName,
       },
     );
   }

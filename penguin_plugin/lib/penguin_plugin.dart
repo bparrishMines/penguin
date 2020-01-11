@@ -26,15 +26,11 @@ abstract class PenguinPlugin {
 }
 
 class _WrapperManager {
-  _WrapperManager() {
-//    WidgetsBinding.instance.addPostFrameCallback(drainPool);
-  }
-
   final Map<String, Wrapper> wrappers = <String, Wrapper>{};
   final List<Wrapper> autoReleasePool = <Wrapper>[];
 
   void addWrapper(Wrapper wrapper) {
-    assert(!wrappers.containsKey(wrapper.uniqueId));
+    assert(!wrappers.containsKey(wrapper.uniqueId), wrapper.uniqueId);
     wrappers[wrapper.uniqueId] = wrapper;
   }
 
@@ -54,23 +50,16 @@ class _WrapperManager {
   }
 
   void drainAutoreleasePool(Duration duration) {
-    invoke<void>(
-      PenguinPlugin.globalMethodChannel,
-      autoReleasePool.map<MethodCall>(
-        (Wrapper wrapper) {
-          return MethodCall(
-            '${wrapper.platformClassName}#deallocate',
-            <String, String>{r'$uniqueId': wrapper.uniqueId},
-          );
-        },
-      ),
-    );
+    for (Wrapper wrapper in autoReleasePool) wrapper.release();
     autoReleasePool.clear();
-    WidgetsBinding.instance.addPostFrameCallback(drainAutoreleasePool);
   }
 
-  void addWrapperToAutoReleasePool(Wrapper wrapper) =>
-      autoReleasePool.add(wrapper);
+  void addWrapperToAutoReleasePool(Wrapper wrapper) {
+    autoReleasePool.add(wrapper);
+    if (autoReleasePool.length == 1) {
+      WidgetsBinding.instance.addPostFrameCallback(drainAutoreleasePool);
+    }
+  }
 }
 
 abstract class Wrapper with ReferenceCounter {

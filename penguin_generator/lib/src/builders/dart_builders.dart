@@ -57,6 +57,20 @@ class DartMethodChannelBuilder extends PenguinBuilder {
             (ClassInfo classInfo) =>
                 creator.createGenericTypeHelper(className: classInfo.name),
           ),
+      genericPlatformTypeNameHelpers: libraryClasses
+          .followedBy(importedClasses)
+          .where((ClassInfo classInfo) =>
+              classInfo.aClass.platform is AndroidPlatform)
+          .map<String>(
+            (ClassInfo classInfo) =>
+                creator.createGenericPlatformTypeNameHelper(
+              className: classInfo.name,
+              platformClassName: (classInfo.aClass.platform as AndroidPlatform)
+                  .type
+                  .names
+                  .join(),
+            ),
+          ),
       filename: '${path.basenameWithoutExtension(buildStep.inputId.path)}.dart',
       classes: libraryClasses
           .where((ClassInfo classInfo) =>
@@ -193,6 +207,18 @@ class DartMethodChannelBuilder extends PenguinBuilder {
           .map<String>(
             (ClassInfo classInfo) =>
                 creator.createGenericTypeHelper(className: classInfo.name),
+          ),
+      genericPlatformTypeNameHelpers: libraryClasses
+          .followedBy(importedClasses)
+          .where(
+              (ClassInfo classInfo) => classInfo.aClass.platform is IosPlatform)
+          .map<String>(
+            (ClassInfo classInfo) =>
+                creator.createGenericPlatformTypeNameHelper(
+              className: classInfo.name,
+              platformClassName:
+                  (classInfo.aClass.platform as IosPlatform).type.name,
+            ),
           ),
       filename: '${path.basenameWithoutExtension(buildStep.inputId.path)}.dart',
       classes: libraryClasses

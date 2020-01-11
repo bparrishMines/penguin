@@ -127,7 +127,7 @@ class AndroidTestClass1 extends $AndroidTestClass1 with TestClass1 {
 
   @Method()
   Future<AndroidTestClass1> returnWrapper() => invoke<AndroidTestClass1>(
-      PenguinPlugin.globalMethodChannel, [$returnWrapper()]);
+      PenguinPlugin.globalMethodChannel, [$returnWrapper()], genericHelper: _GenericHelper.instance);
 
   @override
   FutureOr<int> get intField =>
@@ -239,28 +239,26 @@ class AndroidGenericClass<T> extends $AndroidGenericClass<T>
 
   @override
   Future<void> add(T object) {
-//    if (isTypeOf<T, Wrapper>()) {
-//      return invoke<void>(
-//        channel,
-//        (object as Wrapper).methodCallStorageHelper.methodCalls.toList()
-//          ..add($add(object)),
-//      );
-//    }
-//
-//    return invoke<void>(channel, [$add(object)]);
+    if (isTypeOf<T, Wrapper>()) {
+      return invoke<void>(
+        PenguinPlugin.globalMethodChannel,
+        [$add(object)],
+      );
+    }
+
+    return invoke<void>(PenguinPlugin.globalMethodChannel, [$add(object)]);
   }
 
   @override
   Future<T> get(String identifier) async {
-//    if (isTypeOf<T, Wrapper>()) {
-//      final Wrapper wrapper = _GenericHelper.getWrapperForType<T>(randomId());
-//      invoke<void>(
-//        channel,
-//        [$get(identifier, wrapper.uniqueId), wrapper.allocate()],
-//      );
-//      return _GenericHelper.onAllocated(wrapper);
-//    }
-//
-//    return invoke<T>(channel, [$get(identifier)]);
+    if (isTypeOf<T, Wrapper>()) {
+      return invoke<T>(
+        PenguinPlugin.globalMethodChannel,
+        [$get(identifier)],
+        genericHelper: _GenericHelper.instance,
+      );
+    }
+
+    return invoke<T>(PenguinPlugin.globalMethodChannel, [$get(identifier)]);
   }
 }
