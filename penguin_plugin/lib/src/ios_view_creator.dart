@@ -5,11 +5,11 @@ import '../penguin_plugin.dart';
 
 part 'ios_view_creator.ios.penguin.g.dart';
 
-abstract class IosViewCreator with ViewCreator {
-  Future<void> onCreateView(UIView uiView, String viewId);
+abstract class IosViewCreator {
+  Future<String> onCreateView(CGRect frame, String viewId);
 }
 
-@Class(IosPlatform(IosType('UIView')))
-class UIView extends $UIView {
-  UIView.fromUniqueId(String uniqueId) : super.fromUniqueId(uniqueId);
+@Class(IosPlatform(IosType('CGRect', isStruct: true)))
+class CGRect extends $CGRect {
+  CGRect.fromUniqueId(String uniqueId) : super.fromUniqueId(uniqueId);
 }

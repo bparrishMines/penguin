@@ -4,6 +4,11 @@ import 'package:test_plugin/test_plugin.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatefulWidget {
+  MyApp() {
+    WidgetsFlutterBinding.ensureInitialized();
+    initialize();
+  }
+
   @override
   _MyAppState createState() => _MyAppState();
 }
@@ -22,7 +27,7 @@ class _MyAppState extends State<MyApp> {
             Container(
               width: 200,
               height: 200,
-              child: Container(),//TextViewWidget(PlatformTextView.fromText('Apple')),
+              child: TextViewWidget('Apple'),
             ),
           ],
         ),

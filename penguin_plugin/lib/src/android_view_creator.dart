@@ -5,11 +5,13 @@ import '../penguin_plugin.dart';
 
 part 'android_view_creator.android.penguin.g.dart';
 
-abstract class AndroidViewCreator with ViewCreator {
-  Future<void> onCreateView(FrameLayout layout, int viewId);
+abstract class AndroidViewCreator {
+  Future<String> onCreateView(Context context, String viewId);
 }
 
-@Class(AndroidPlatform(AndroidType('android.widget', ['FrameLayout'])))
-class FrameLayout extends $FrameLayout {
-  FrameLayout.fromUniqueId(String uniqueId) : super.fromUniqueId(uniqueId);
+@Class(AndroidPlatform(
+  AndroidType('android.content', ['Context']),
+))
+class Context extends $Context {
+  Context.fromUniqueId(String uniqueId) : super.fromUniqueId(uniqueId);
 }

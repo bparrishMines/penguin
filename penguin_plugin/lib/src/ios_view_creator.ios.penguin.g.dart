@@ -6,12 +6,12 @@
 
 part of 'ios_view_creator.dart';
 
-class $UIView extends Wrapper {
-  $UIView.fromUniqueId(String uniqueId)
+class $CGRect extends Wrapper {
+  $CGRect.fromUniqueId(String uniqueId)
       : assert(uniqueId != null),
         super(uniqueId);
 
-  String get platformClassName => 'UIView';
+  String get platformClassName => 'CGRect';
 
   @override
   Future<void> onMethodCall(MethodCall call) async {
@@ -27,8 +27,8 @@ class _GenericHelper extends GenericHelper {
   static final _GenericHelper instance = _GenericHelper._();
 
   String getPlatformClassForType<T>() {
-    if (isTypeOf<T, UIView>()) {
-      return 'UIView';
+    if (isTypeOf<T, CGRect>()) {
+      return 'CGRect';
     }
 
     throw UnsupportedError(
@@ -38,8 +38,8 @@ class _GenericHelper extends GenericHelper {
   T getWrapperForType<T>(String uniqueId) {
     assert(isTypeOf<T, Wrapper>());
 
-    if (isTypeOf<T, UIView>()) {
-      return UIView.fromUniqueId(uniqueId) as T;
+    if (isTypeOf<T, CGRect>()) {
+      return CGRect.fromUniqueId(uniqueId) as T;
     }
 
     throw UnsupportedError('Could not instantiate class ${T.toString()}');

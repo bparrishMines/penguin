@@ -6,12 +6,12 @@
 
 part of 'android_view_creator.dart';
 
-class $FrameLayout extends Wrapper {
-  $FrameLayout.fromUniqueId(String uniqueId)
+class $Context extends Wrapper {
+  $Context.fromUniqueId(String uniqueId)
       : assert(uniqueId != null),
         super(uniqueId);
 
-  String get platformClassName => 'FrameLayout';
+  String get platformClassName => 'Context';
 
   @override
   Future<void> onMethodCall(MethodCall call) async {
@@ -27,8 +27,8 @@ class _GenericHelper extends GenericHelper {
   static final _GenericHelper instance = _GenericHelper._();
 
   String getPlatformClassForType<T>() {
-    if (isTypeOf<T, FrameLayout>()) {
-      return 'FrameLayout';
+    if (isTypeOf<T, Context>()) {
+      return 'Context';
     }
 
     throw UnsupportedError(
@@ -38,8 +38,8 @@ class _GenericHelper extends GenericHelper {
   T getWrapperForType<T>(String uniqueId) {
     assert(isTypeOf<T, Wrapper>());
 
-    if (isTypeOf<T, FrameLayout>()) {
-      return FrameLayout.fromUniqueId(uniqueId) as T;
+    if (isTypeOf<T, Context>()) {
+      return Context.fromUniqueId(uniqueId) as T;
     }
 
     throw UnsupportedError('Could not instantiate class ${T.toString()}');

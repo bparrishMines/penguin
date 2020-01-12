@@ -8,26 +8,19 @@ import 'package:uuid/uuid.dart';
 import 'android_view_creator.dart';
 import 'ios_view_creator.dart';
 
-abstract class ViewCreator {}
-
 abstract class PenguinPlugin {
   static final _WrapperManager _wrapperManager = _WrapperManager();
-  static ViewCreator viewCreator;
+  static AndroidViewCreator androidCreator;
+  static IosViewCreator iosCreator;
 
   static Future<dynamic> Function(MethodCall call) methodCallHandler =
       (MethodCall call) {
     if (call.method == 'onCreateView' && io.Platform.isAndroid) {
-      final AndroidViewCreator androidCreator =
-      viewCreator as AndroidViewCreator;
-      final FrameLayout layout =
-      FrameLayout.fromUniqueId(call.arguments['frameLayout']);
-
-      return androidCreator.onCreateView(layout, call.arguments['viewId']);
-    } else if (call.method == 'onCreateView' && io.Platform.isAndroid) {
-      final IosViewCreator iosCreator = viewCreator as IosViewCreator;
-      final UIView view = UIView.fromUniqueId(call.arguments['uiView']);
-
-      return iosCreator.onCreateView(view, call.arguments['viewId']);
+      final Context context = Context.fromUniqueId(call.arguments['context']);
+      return androidCreator.onCreateView(context, call.arguments['viewId']);
+    } else if (call.method == 'onCreateView' && io.Platform.isIOS) {
+      final CGRect frame = CGRect.fromUniqueId(call.arguments['frame']);
+      return iosCreator.onCreateView(frame, call.arguments['viewId']);
     }
 
     return _wrapperManager.wrappers[call.arguments[r'$uniqueId']]
@@ -39,8 +32,8 @@ abstract class PenguinPlugin {
       _globalMethodChannel = methodChannel;
   static MethodChannel get globalMethodChannel {
     assert(
-    _globalMethodChannel != null,
-    'PenguinPlugin.globalMethodChannel is null.',
+      _globalMethodChannel != null,
+      'PenguinPlugin.globalMethodChannel is null.',
     );
     return _globalMethodChannel;
   }
@@ -129,10 +122,10 @@ abstract class GenericHelper {
 }
 
 Future<T> invoke<T>(
-    MethodChannel channel,
-    Iterable<MethodCall> calls, {
-      GenericHelper genericHelper,
-    }) {
+  MethodChannel channel,
+  Iterable<MethodCall> calls, {
+  GenericHelper genericHelper,
+}) {
   final Completer<T> completer = Completer<T>();
 
   invokeForAll(
@@ -150,38 +143,38 @@ Future<T> invoke<T>(
 }
 
 Future<List<T>> invokeList<T>(
-    MethodChannel channel,
-    Iterable<MethodCall> calls,
-    ) {
+  MethodChannel channel,
+  Iterable<MethodCall> calls,
+) {
   final Completer<List<T>> completer = Completer<List<T>>();
   invoke<List>(channel, calls).then(
-        (List result) => completer.complete(result.cast<T>()),
+    (List result) => completer.complete(result.cast<T>()),
   );
   return completer.future;
 }
 
 Future<Map<S, T>> invokeMap<S, T>(
-    MethodChannel channel,
-    Iterable<MethodCall> calls,
-    ) {
+  MethodChannel channel,
+  Iterable<MethodCall> calls,
+) {
   final Completer<Map<S, T>> completer = Completer<Map<S, T>>();
   invoke<Map>(channel, calls).then(
-        (Map result) => completer.complete(result.cast<S, T>()),
+    (Map result) => completer.complete(result.cast<S, T>()),
   );
   return completer.future;
 }
 
 Future<List<dynamic>> invokeForAll(
-    MethodChannel channel,
-    Iterable<MethodCall> methodCalls,
-    ) {
+  MethodChannel channel,
+  Iterable<MethodCall> methodCalls,
+) {
   final List<Map<String, dynamic>> serializedCalls = methodCalls
       .map<Map<String, dynamic>>(
         (MethodCall methodCall) => <String, dynamic>{
-      'method': methodCall.method,
-      'arguments': methodCall.arguments,
-    },
-  )
+          'method': methodCall.method,
+          'arguments': methodCall.arguments,
+        },
+      )
       .toList();
 
   return channel.invokeListMethod<dynamic>('MultiInvoke', serializedCalls);

@@ -768,21 +768,44 @@ public class ChannelGenerated {
     public PlatformView create(final Context context, int viewId, final Object args) {
       final FrameLayout frameLayout = new FrameLayout(context);
 
-      final Wrapper layoutWrapper;
+      final Wrapper contextWrapper;
       try {
-        final Class wrapperClass = Class.forName(String.format("com.example.test_plugin.ChannelGenerated$$%s", FrameLayout.class.getSimpleName()));
-        final Constructor constructor = wrapperClass.getConstructor(WrapperManager.class, String.class, FrameLayout.class);
-        layoutWrapper = (Wrapper) constructor.newInstance(wrapperManager, UUID.randomUUID().toString(), frameLayout);
+        final Class wrapperClass = Class.forName(String.format("__package__.ChannelGenerated$$%s", Context.class.getSimpleName()));
+        final Constructor constructor = wrapperClass.getConstructor(WrapperManager.class, String.class, Context.class);
+        contextWrapper = (Wrapper) constructor.newInstance(wrapperManager, UUID.randomUUID().toString(), context);
       } catch (Exception exception) {
         exception.printStackTrace();
         return null;
       }
 
       final HashMap<String, Object> arguments = new HashMap<>();
-      arguments.put("frameLayout", layoutWrapper.$uniqueId);
+      arguments.put("context", contextWrapper.$uniqueId);
       arguments.put("viewId", args);
 
-      callbackChannel.invokeMethod("onCreateView", arguments);
+      callbackChannel.invokeMethod("onCreateView", arguments, new Result() {
+        @Override
+        public void success(Object result) {
+          final View view;
+          try {
+            view = wrapperManager.getWrapper((String) result).getView();
+          } catch (WrapperNotFoundException exception) {
+            exception.printStackTrace();
+            return;
+          }
+          frameLayout.addView(view,
+              new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        }
+
+        @Override
+        public void error(String errorCode, String errorMessage, Object errorDetails) {
+          throw new RuntimeException(errorMessage);
+        }
+
+        @Override
+        public void notImplemented() {
+          throw new RuntimeException("notImplemented");
+        }
+      });
 
       return new PlatformView() {
         @Override
@@ -792,7 +815,7 @@ public class ChannelGenerated {
 
         @Override
         public void dispose() {
-          layoutWrapper.deallocate(wrapperManager);
+          contextWrapper.deallocate(wrapperManager);
         }
       };
     }

@@ -1,73 +1,52 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:penguin/penguin.dart';
 import 'package:penguin_plugin/penguin_plugin.dart';
 
+import '../test_plugin.dart';
 import 'test_plugin_interface.dart';
 
 part 'android.android.penguin.g.dart';
 
-//class AndroidTextViewState extends State<TextViewWidget> {
-//  TextView get _asTextView => widget.textView as TextView;
-//
-//  @override
-//  void initState() {
-//    super.initState();
-//    callbackHandler.addWrapper(_asTextView);
-//  }
-//
-//  @override
-//  void dispose() {
-//    super.dispose();
-//    invoke<void>(channel, [_asTextView.deallocate()]);
-//    callbackHandler.removeWrapper(_asTextView);
-//  }
-//
-//  @override
-//  Widget build(BuildContext context) {
-//    if (_asTextView._isCreated) {
-//      invoke<void>(channel, _asTextView.methodCallStorageHelper.methodCalls);
-//      _asTextView.methodCallStorageHelper.clearMethodCalls();
-//    }
-//
-//    return AndroidView(
-//      viewType: '${channel.name}/view',
-//      creationParams: _asTextView.uniqueId,
-//      creationParamsCodec: const StandardMessageCodec(),
-//    );
-//  }
-//}
-//
-//@Class(AndroidPlatform(
-//  AndroidType('android.widget', <String>['TextView']),
-//))
-//class TextView extends $TextView with PlatformTextView {
-//  @Constructor()
-//  TextView([Context context]) : super(randomId());
-//
-//  bool _isCreated = false;
-//
-//  @Method()
-//  void setText(String text) {
-//    methodCallStorageHelper.replace($setText(text));
-//  }
-//
-//  @override
-//  FutureOr<Iterable<MethodCall>> onCreateView(Context context) {
-//    final List<MethodCall> methodCalls = methodCallStorageHelper.methodCalls;
-//    methodCallStorageHelper.clearMethodCalls();
-//
-//    _isCreated = true;
-//    return <MethodCall>[
-//      $TextView$Default(context),
-//      ...methodCalls,
-//      allocate(),
-//    ];
-//  }
-//
-//  static FutureOr onAllocated($TextView wrapper) => throw UnimplementedError();
-//}
+class AndroidTextViewState extends State<TextViewWidget> with AndroidViewCreator {
+  AndroidTextViewState() {
+    PenguinPlugin.androidCreator = this;
+  }
+
+  final String identifier = 'aaoiej;oaijwfe;';
+
+  @override
+  Widget build(BuildContext context) {
+    return AndroidView(
+      viewType: '${PenguinPlugin.globalMethodChannel.name}/view',
+      creationParams: identifier,
+      creationParamsCodec: const StandardMessageCodec(),
+    );
+  }
+
+  @override
+  Future<String> onCreateView(Context context, String viewId) {
+    final TextView textView = TextView(context);
+    textView.setText(widget.text);
+    return Future<String>.value(textView.autoReleasePool().uniqueId);
+  }
+}
+
+@Class(AndroidPlatform(
+  AndroidType('android.widget', <String>['TextView']),
+))
+class TextView extends $TextView {
+  @Constructor()
+  TextView(Context context) : super.$Default(context);
+
+  TextView.fromUniqueId(String uniqueId)
+      : super.fromUniqueId(uniqueId);
+
+  @Method()
+  Future<void> setText(String text) => invoke<void>(PenguinPlugin.globalMethodChannel, [$setText(text)]);
+}
 
 @Class(AndroidPlatform(
   AndroidType('com.example.test_plugin.test_library', <String>['TestClass1']),

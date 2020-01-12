@@ -1,6 +1,7 @@
 import 'dart:async';
-import 'dart:io';
+import 'dart:io' as io;
 
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:penguin_plugin/penguin_plugin.dart';
 
@@ -17,11 +18,11 @@ void initialize() {
 
 class TestClass1Controller with TestClass1 {
   TestClass1Controller()
-      : testClass1 = Platform.isAndroid
+      : testClass1 = io.Platform.isAndroid
             ? AndroidTestClass1()
             : (IosTestClass1() as TestClass1);
 
-  TestClass1Controller.namedConstructor() : testClass1 = Platform.isAndroid
+  TestClass1Controller.namedConstructor() : testClass1 = io.Platform.isAndroid
       ? AndroidTestClass1.namedConstructor()
       : (IosTestClass1.initNamedConstructor() as TestClass1);
 
@@ -77,7 +78,7 @@ class TestClass1Controller with TestClass1 {
 
 class TestClass2Controller {
   TestClass2Controller()
-      : testClass2 = Platform.isAndroid
+      : testClass2 = io.Platform.isAndroid
             ? AndroidTestClass2()
             : (IosTestClass2() as TestClass2);
 
@@ -86,7 +87,7 @@ class TestClass2Controller {
 
 class GenericClassController<T> with GenericClass<T> {
   GenericClassController()
-      : genericClass = Platform.isAndroid
+      : genericClass = io.Platform.isAndroid
             ? AndroidGenericClass<T>()
             : (IosGenericClass<T>() as GenericClass<T>);
 
@@ -99,23 +100,15 @@ class GenericClassController<T> with GenericClass<T> {
   Future<T> get(String identifier) => genericClass.get(identifier);
 }
 
-//abstract class PlatformTextView {
-//  static PlatformTextView fromText(String text) {
-//    if (io.Platform.isAndroid) return android.TextView()..setText(text);
-//    if (io.Platform.isIOS) return ios.TextView.initWithFrame()..text = text;
-//    throw UnsupportedError('Not Android or iOS');
-//  }
-//}
-//
-//class TextViewWidget extends StatefulWidget {
-//  TextViewWidget(this.textView);
-//
-//  final PlatformTextView textView;
-//
-//  @override
-//  State<StatefulWidget> createState() {
-//    if (io.Platform.isAndroid) return android.AndroidTextViewState();
-//    if (io.Platform.isIOS) return ios.IosTextViewState();
-//    throw UnsupportedError('Not Android or iOS');
-//  }
-//}
+class TextViewWidget extends StatefulWidget {
+  TextViewWidget(this.text);
+
+  final String text;
+
+  @override
+  State<StatefulWidget> createState() {
+    if (io.Platform.isAndroid) return AndroidTextViewState();
+    //if (io.Platform.isIOS) return ios.IosTextViewState();
+    throw UnsupportedError('Not Android or iOS');
+  }
+}
