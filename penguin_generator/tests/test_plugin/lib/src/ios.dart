@@ -1,68 +1,49 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:penguin/penguin.dart';
 import 'package:penguin_plugin/penguin_plugin.dart';
 
+import '../test_plugin.dart';
 import 'test_plugin_interface.dart';
 
 part 'ios.ios.penguin.g.dart';
 
-//class IosTextViewState extends State<TextViewWidget> {
-//  TextView get _asTextView => widget.textView as TextView;
-//
-//  @override
-//  void initState() {
-//    super.initState();
-//    callbackHandler.addWrapper(_asTextView);
-//  }
-//
-//  @override
-//  void dispose() {
-//    super.dispose();
-//    invoke<void>(channel, [_asTextView.deallocate()]);
-//    callbackHandler.removeWrapper(_asTextView);
-//  }
-//
-//  @override
-//  Widget build(BuildContext context) {
-//    if (_asTextView._isCreated) {
-//      invoke<void>(channel, _asTextView.methodCallStorageHelper.methodCalls);
-//      _asTextView.methodCallStorageHelper.clearMethodCalls();
-//    }
-//    return UiKitView(
-//      viewType: '${channel.name}/view',
-//      creationParams: _asTextView.uniqueId,
-//      creationParamsCodec: const StandardMessageCodec(),
-//    );
-//  }
-//}
-//
-//@Class(IosPlatform(IosType('UITextView')))
-//class TextView extends $TextView with PlatformTextView {
-//  @Constructor()
-//  TextView.initWithFrame([CGRect frame]) : super(randomId());
-//
-//  bool _isCreated = false;
-//
-//  @Field()
-//  set text(String text) => methodCallStorageHelper.replace($text(text: text));
-//
-//  @override
-//  FutureOr<Iterable<MethodCall>> onCreateView(CGRect frame) {
-//    final List<MethodCall> methodCalls = methodCallStorageHelper.methodCalls;
-//    methodCallStorageHelper.clearMethodCalls();
-//
-//    _isCreated = true;
-//    return <MethodCall>[
-//      $TextViewinitWithFrame(frame),
-//      ...methodCalls,
-//      allocate(),
-//    ];
-//  }
-//
-//  static FutureOr onAllocated($TextView wrapper) => throw UnimplementedError();
-//}
+class IosTextViewState extends State<TextViewWidget> with IosViewCreator {
+  IosTextViewState() {
+    PenguinPlugin.iosCreator = this;
+  }
+
+  static final String identifier = 'aoeifjaiefoawe';
+
+  @override
+  Widget build(BuildContext context) {
+    return UiKitView(
+      viewType: '${PenguinPlugin.globalMethodChannel.name}/view',
+      creationParams: identifier,
+      creationParamsCodec: const StandardMessageCodec(),
+    );
+  }
+
+  @override
+  Future<String> onCreateView(CGRect frame, String viewId) {
+    final TextView textView = TextView.initWithFrame(frame);
+    textView.text = widget.text;
+    return Future<String>.value(textView.autoReleasePool().uniqueId);
+  }
+}
+
+@Class(IosPlatform(IosType('UITextView')))
+class TextView extends $TextView {
+  @Constructor()
+  TextView.initWithFrame(CGRect frame) : super.initWithFrame(frame);
+
+  TextView.fromUniqueId(String uniqueId) : super.fromUniqueId(uniqueId);
+
+  @Field()
+  set text(String text) => invoke<void>(PenguinPlugin.globalMethodChannel, [$set$text(text)]);
+}
 
 @Class(IosPlatform(
   IosType('TestClass1', import: '"TestPlugin.h"'),
@@ -144,7 +125,7 @@ class IosTestClass1 extends $IosTestClass1 with TestClass1 {
 
   @Method()
   Future<IosTestClass1> returnWrapper() => invoke<IosTestClass1>(
-      PenguinPlugin.globalMethodChannel, [$returnWrapper()]);
+      PenguinPlugin.globalMethodChannel, [$returnWrapper()], genericHelper: _GenericHelper.instance);
 
   @override
   FutureOr<int> get intField =>

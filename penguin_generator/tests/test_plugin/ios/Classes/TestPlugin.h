@@ -17,9 +17,7 @@
 @end
 
 @interface TestClass1 : NSObject
-- (instancetype _Nonnull)initNamedConstructor:(NSString *_Nonnull)supported
-                                    primitive:(int)primitive
-                                      wrapper:(TestClass2 *_Nonnull)wrapper;
+- (instancetype _Nonnull)initNamedConstructor;
 @property NSNumber *_Nonnull intField;
 @property NSString *_Nonnull stringField;
 @property NSNumber *_Nonnull doubleField;

@@ -173,7 +173,7 @@ void main() {
 
     group('ios', () {
       test('returnInt32', () {
-        expect(IosTestClass1(), completion(56));
+        expect((testClass1.testClass1 as IosTestClass1).returnInt32(), completion(56));
       });
 
       test('parameterMethod', () {

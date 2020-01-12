@@ -22,9 +22,10 @@ class TestClass1Controller with TestClass1 {
             ? AndroidTestClass1()
             : (IosTestClass1() as TestClass1);
 
-  TestClass1Controller.namedConstructor() : testClass1 = io.Platform.isAndroid
-      ? AndroidTestClass1.namedConstructor()
-      : (IosTestClass1.initNamedConstructor() as TestClass1);
+  TestClass1Controller.namedConstructor()
+      : testClass1 = io.Platform.isAndroid
+            ? AndroidTestClass1.namedConstructor()
+            : (IosTestClass1.initNamedConstructor() as TestClass1);
 
   final TestClass1 testClass1;
 
@@ -108,7 +109,7 @@ class TextViewWidget extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
     if (io.Platform.isAndroid) return AndroidTextViewState();
-    //if (io.Platform.isIOS) return ios.IosTextViewState();
+    if (io.Platform.isIOS) return IosTextViewState();
     throw UnsupportedError('Not Android or iOS');
   }
 }
