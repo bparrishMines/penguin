@@ -766,56 +766,35 @@ public class ChannelGenerated {
 
     @Override
     public PlatformView create(final Context context, int viewId, final Object args) {
-//      final FrameLayout frameLayout = new FrameLayout(context);
-//      
-//      final $Context contextWrapper = new $Context(wrapperManager, UUID.randomUUID().toString(), context);
-//
-//      final HashMap<String, Object> arguments = new HashMap<>();
-//      arguments.put("context", contextWrapper.$uniqueId);
-//      arguments.put("$uniqueId", args);
-//      
-//      callbackChannel.invokeMethod("CreateView", arguments, new Result() {
-//        @Override
-//        public void success(Object result) {
-//          try {
-//            wrapperManager.addTemporaryWrapper(contextWrapper);
-//
-//            final MethodCallHandlerImpl handlerImpl = (MethodCallHandlerImpl) methodCallHandler;
-//            handlerImpl.onMethodCall(new MethodCall("MultiInvoke", result));
-//
-//            final View view = wrapperManager.getWrapper((String) args).getView();
-//            frameLayout.addView(view,
-//                new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-//          } catch (Exception exception) {
-//            exception.printStackTrace();
-//          } finally {
-//            wrapperManager.clearTemporaryWrappers();
-//          }
-//        }
-//
-//        @Override
-//        public void error(String errorCode, String errorMessage, Object errorDetails) {
-//          throw new RuntimeException(errorMessage);
-//        }
-//
-//        @Override
-//        public void notImplemented() {
-//          throw new RuntimeException("notImplemented");
-//        }
-//      });
-//
-//      return new PlatformView() {
-//        @Override
-//        public View getView() {
-//          return frameLayout;
-//        }
-//
-//        @Override
-//        public void dispose() {
-//          // Do nothing
-//        }
-//      };
-      return null;
+      final FrameLayout frameLayout = new FrameLayout(context);
+
+      final Wrapper layoutWrapper;
+      try {
+        final Class wrapperClass = Class.forName(String.format("com.example.test_plugin.ChannelGenerated$$%s", FrameLayout.class.getSimpleName()));
+        final Constructor constructor = wrapperClass.getConstructor(WrapperManager.class, String.class, FrameLayout.class);
+        layoutWrapper = (Wrapper) constructor.newInstance(wrapperManager, UUID.randomUUID().toString(), frameLayout);
+      } catch (Exception exception) {
+        exception.printStackTrace();
+        return null;
+      }
+
+      final HashMap<String, Object> arguments = new HashMap<>();
+      arguments.put("frameLayout", layoutWrapper.$uniqueId);
+      arguments.put("viewId", args);
+
+      callbackChannel.invokeMethod("onCreateView", arguments);
+
+      return new PlatformView() {
+        @Override
+        public View getView() {
+          return frameLayout;
+        }
+
+        @Override
+        public void dispose() {
+          layoutWrapper.deallocate(wrapperManager);
+        }
+      };
     }
   }
   
