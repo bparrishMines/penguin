@@ -1057,10 +1057,10 @@ public class ChannelGenerated {
     @Override
     public Object onMethodCall(WrapperManager wrapperManager, MethodCall call) throws Exception {
       switch(call.method) {
-        case "__platformClassName__#allocate":
+        case "__wrapperName__#allocate":
           allocate(wrapperManager);
           return null;
-        case "__platformClassName__#deallocate":
+        case "__wrapperName__#deallocate":
           deallocate(wrapperManager);
           return null;
         %%METHODCALLS%%
