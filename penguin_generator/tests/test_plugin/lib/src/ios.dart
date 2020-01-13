@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,24 +11,25 @@ import 'test_plugin_interface.dart';
 
 part 'ios.ios.penguin.g.dart';
 
-class IosTextViewState extends State<TextViewWidget> with IosViewCreator {
-  IosTextViewState() {
-    PenguinPlugin.iosCreator = this;
-  }
+class IosTextViewState extends State<TextViewWidget> {
+  final String callbackId = Random().nextDouble().toString();
 
-  static final String identifier = 'aoeifjaiefoawe';
+  @override
+  void initState() {
+    super.initState();
+    PenguinPlugin.addIosViewCreatorCallback(callbackId, onCreateView);
+  }
 
   @override
   Widget build(BuildContext context) {
     return UiKitView(
       viewType: '${channel.name}/view',
-      creationParams: identifier,
+      creationParams: callbackId,
       creationParamsCodec: const StandardMessageCodec(),
     );
   }
 
-  @override
-  Future<String> onCreateView(CGRect frame, String viewId) {
+  Future<String> onCreateView(CGRect frame) {
     final TextView textView = TextView.initWithFrame(frame);
     textView.text = widget.text;
     return Future<String>.value(textView.autoReleasePool().uniqueId);

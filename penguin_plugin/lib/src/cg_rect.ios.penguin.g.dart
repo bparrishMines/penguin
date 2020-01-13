@@ -4,14 +4,14 @@
 // PenguinGenerator
 // **************************************************************************
 
-part of 'android_view_creator.dart';
+part of 'cg_rect.dart';
 
-class $Context extends Wrapper {
-  $Context.fromUniqueId(String uniqueId, {MethodChannel channel})
+class $CGRect extends Wrapper {
+  $CGRect.fromUniqueId(String uniqueId, {MethodChannel channel})
       : assert(uniqueId != null),
         super(channel, uniqueId);
 
-  String get platformClassName => 'Context';
+  String get platformClassName => 'CGRect';
 
   @override
   Future<void> onMethodCall(MethodCall call) async {
@@ -27,8 +27,8 @@ class _GenericHelper extends GenericHelper {
   static final _GenericHelper instance = _GenericHelper._();
 
   String getPlatformClassForType<T>() {
-    if (isTypeOf<T, Context>()) {
-      return 'Context';
+    if (isTypeOf<T, CGRect>()) {
+      return 'CGRect';
     }
 
     throw UnsupportedError(
@@ -38,8 +38,8 @@ class _GenericHelper extends GenericHelper {
   T getWrapperForType<T>(String uniqueId) {
     assert(isTypeOf<T, Wrapper>());
 
-    if (isTypeOf<T, Context>()) {
-      return Context.fromUniqueId(uniqueId) as T;
+    if (isTypeOf<T, CGRect>()) {
+      return CGRect.fromUniqueId(uniqueId) as T;
     }
 
     throw UnsupportedError('Could not instantiate class ${T.toString()}');

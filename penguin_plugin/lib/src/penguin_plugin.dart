@@ -5,29 +5,57 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:uuid/uuid.dart';
 
-import 'android_view_creator.dart';
-import 'ios_view_creator.dart';
+import 'context.dart';
+import 'cg_rect.dart';
 
-abstract class PenguinPlugin {
+typedef AndroidViewCreatorCallback = Future<String> Function(Context context);
+
+typedef IosViewCreatorCallback = Future<String> Function(CGRect frame);
+
+class PenguinPlugin {
+  PenguinPlugin._();
+
   static final _WrapperManager _wrapperManager = _WrapperManager();
-  static AndroidViewCreator androidCreator;
-  static IosViewCreator iosCreator;
+  static final Map<String, Function> _viewCreatorCallbacks =
+      <String, Function>{};
+
+  static void addAndroidViewCreatorCallback(
+    String callbackId,
+    AndroidViewCreatorCallback callback,
+  ) {
+    assert(!_viewCreatorCallbacks.containsKey(callbackId));
+    _viewCreatorCallbacks[callbackId] = callback;
+  }
+
+  static void addIosViewCreatorCallback(
+    String callbackId,
+    IosViewCreatorCallback callback,
+  ) {
+    assert(!_viewCreatorCallbacks.containsKey(callbackId));
+    _viewCreatorCallbacks[callbackId] = callback;
+  }
 
   static Future<dynamic> Function(MethodCall call) methodCallHandler(
-          MethodChannel channel) =>
+    MethodChannel channel,
+  ) =>
       (MethodCall call) {
+        final Function viewCreatorCallback =
+            _viewCreatorCallbacks.remove(call.arguments['callbackId']);
+
         if (call.method == 'onCreateView' && io.Platform.isAndroid) {
           final Context context = Context.fromUniqueId(
             call.arguments['context'],
             channel: channel,
           );
-          return androidCreator.onCreateView(context, call.arguments['viewId']);
+
+          return viewCreatorCallback(context);
         } else if (call.method == 'onCreateView' && io.Platform.isIOS) {
           final CGRect frame = CGRect.fromUniqueId(
             call.arguments['frame'],
             channel: channel,
           );
-          return iosCreator.onCreateView(frame, call.arguments['viewId']);
+
+          return viewCreatorCallback(frame);
         }
 
         return _wrapperManager.wrappers[call.arguments[r'$uniqueId']]

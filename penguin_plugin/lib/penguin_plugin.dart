@@ -1,3 +1,3 @@
-export 'src/android_view_creator.dart';
-export 'src/ios_view_creator.dart';
+export 'src/context.dart';
+export 'src/cg_rect.dart';
 export 'src/penguin_plugin.dart';

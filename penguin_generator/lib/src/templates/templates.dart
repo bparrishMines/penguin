@@ -549,7 +549,7 @@ static void *wrapperCallbackKey = &wrapperCallbackKey;
                                                                           uniqueId:[[NSUUID UUID] UUIDString]
                                                                              value:rectValue];
   
-  NSDictionary *callbackArguments = @{@"frame": frameWrapper.$uniqueId, @"viewId": args};
+  NSDictionary *callbackArguments = @{@"frame": frameWrapper.$uniqueId, @"callbackId": args};
   
   [_callbackChannel invokeMethod:@"onCreateView"
                        arguments:callbackArguments
@@ -780,7 +780,7 @@ public class ChannelGenerated {
 
       final HashMap<String, Object> arguments = new HashMap<>();
       arguments.put("context", contextWrapper.$uniqueId);
-      arguments.put("viewId", args);
+      arguments.put("callbackId", args);
 
       callbackChannel.invokeMethod("onCreateView", arguments, new Result() {
         @Override

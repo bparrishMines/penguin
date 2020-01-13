@@ -3,11 +3,7 @@ import 'package:penguin/penguin.dart';
 
 import '../penguin_plugin.dart';
 
-part 'ios_view_creator.ios.penguin.g.dart';
-
-abstract class IosViewCreator {
-  Future<String> onCreateView(CGRect frame, String viewId);
-}
+part 'cg_rect.ios.penguin.g.dart';
 
 @Class(IosPlatform(IosType('CGRect', isStruct: true)))
 class CGRect extends $CGRect {

@@ -3,11 +3,7 @@ import 'package:penguin/penguin.dart';
 
 import '../penguin_plugin.dart';
 
-part 'android_view_creator.android.penguin.g.dart';
-
-abstract class AndroidViewCreator {
-  Future<String> onCreateView(Context context, String viewId);
-}
+part 'context.android.penguin.g.dart';
 
 @Class(AndroidPlatform(
   AndroidType('android.content', ['Context']),

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,25 +11,25 @@ import 'test_plugin_interface.dart';
 
 part 'android.android.penguin.g.dart';
 
-class AndroidTextViewState extends State<TextViewWidget>
-    with AndroidViewCreator {
-  AndroidTextViewState() {
-    PenguinPlugin.androidCreator = this;
+class AndroidTextViewState extends State<TextViewWidget> {
+  final String callbackId = Random().nextDouble().toString();
+  
+  @override
+  void initState() {
+    super.initState();
+    PenguinPlugin.addAndroidViewCreatorCallback(callbackId, onCreateView);
   }
-
-  final String identifier = 'aaoiej;oaijwfe;';
 
   @override
   Widget build(BuildContext context) {
     return AndroidView(
       viewType: '${channel.name}/view',
-      creationParams: identifier,
+      creationParams: callbackId,
       creationParamsCodec: const StandardMessageCodec(),
     );
   }
 
-  @override
-  Future<String> onCreateView(Context context, String viewId) {
+  Future<String> onCreateView(Context context) {
     final TextView textView = TextView(context);
     textView.setText(widget.text);
     return Future<String>.value(textView.autoReleasePool().uniqueId);
