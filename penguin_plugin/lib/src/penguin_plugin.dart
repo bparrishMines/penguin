@@ -101,10 +101,11 @@ class _WrapperManager {
 }
 
 abstract class Wrapper with ReferenceCounter {
-  Wrapper(this.channel, [String uniqueId])
+  Wrapper(this.channel, [String uniqueId, bool addToManager = true])
       : _uniqueId = uniqueId ?? _uuid.v4(),
-        assert(channel != null) {
-    PenguinPlugin._wrapperManager.addWrapper(this);
+        assert(channel != null),
+        assert(addToManager != null) {
+    if (addToManager) PenguinPlugin._wrapperManager.addWrapper(this);
   }
 
   static final Uuid _uuid = Uuid();

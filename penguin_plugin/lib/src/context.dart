@@ -9,5 +9,6 @@ part 'context.android.penguin.g.dart';
   AndroidType('android.content', ['Context']),
 ))
 class Context extends $Context {
-  Context.fromUniqueId(String uniqueId, {MethodChannel channel}) : super.fromUniqueId(uniqueId, channel: channel);
+  Context.fromUniqueId(String uniqueId, {MethodChannel channel})
+      : super.fromUniqueId(uniqueId, channel: channel);
 }

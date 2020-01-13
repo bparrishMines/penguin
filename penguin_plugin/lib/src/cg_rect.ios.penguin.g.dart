@@ -7,9 +7,12 @@
 part of 'cg_rect.dart';
 
 class $CGRect extends Wrapper {
-  $CGRect.fromUniqueId(String uniqueId, {MethodChannel channel})
-      : assert(uniqueId != null),
-        super(channel, uniqueId);
+  $CGRect.fromUniqueId(
+    String uniqueId, {
+    MethodChannel channel,
+    bool addToManager = true,
+  })  : assert(uniqueId != null),
+        super(channel, uniqueId, addToManager);
 
   String get platformClassName => 'CGRect';
 

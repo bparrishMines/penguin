@@ -573,9 +573,12 @@ part of '__filename__';
 %%CLASSES%%
 %%CLASS%%
 class $__className____typeParameters__ extends Wrapper {
-  $__className__.fromUniqueId(String uniqueId, {MethodChannel channel})
-      : assert(uniqueId != null),
-        super(channel, uniqueId);
+  $__className__.fromUniqueId(
+    String uniqueId, {
+    MethodChannel channel,
+    bool addToManager = true,
+  })  : assert(uniqueId != null),
+        super(channel, uniqueId, addToManager);
   
   %%CONSTRUCTORS%%
   %%CONSTRUCTOR%%

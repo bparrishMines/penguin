@@ -7,9 +7,12 @@
 part of 'context.dart';
 
 class $Context extends Wrapper {
-  $Context.fromUniqueId(String uniqueId, {MethodChannel channel})
-      : assert(uniqueId != null),
-        super(channel, uniqueId);
+  $Context.fromUniqueId(
+    String uniqueId, {
+    MethodChannel channel,
+    bool addToManager = true,
+  })  : assert(uniqueId != null),
+        super(channel, uniqueId, addToManager);
 
   String get platformClassName => 'Context';
 
