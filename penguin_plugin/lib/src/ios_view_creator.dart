@@ -11,5 +11,6 @@ abstract class IosViewCreator {
 
 @Class(IosPlatform(IosType('CGRect', isStruct: true)))
 class CGRect extends $CGRect {
-  CGRect.fromUniqueId(String uniqueId) : super.fromUniqueId(uniqueId);
+  CGRect.fromUniqueId(String uniqueId, {MethodChannel channel})
+      : super.fromUniqueId(uniqueId, channel: channel);
 }

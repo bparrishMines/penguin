@@ -7,9 +7,9 @@
 part of 'ios_view_creator.dart';
 
 class $CGRect extends Wrapper {
-  $CGRect.fromUniqueId(String uniqueId)
+  $CGRect.fromUniqueId(String uniqueId, {MethodChannel channel})
       : assert(uniqueId != null),
-        super(uniqueId);
+        super(channel, uniqueId);
 
   String get platformClassName => 'CGRect';
 

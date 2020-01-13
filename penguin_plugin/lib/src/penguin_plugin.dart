@@ -13,30 +13,26 @@ abstract class PenguinPlugin {
   static AndroidViewCreator androidCreator;
   static IosViewCreator iosCreator;
 
-  static Future<dynamic> Function(MethodCall call) methodCallHandler =
+  static Future<dynamic> Function(MethodCall call) methodCallHandler(
+          MethodChannel channel) =>
       (MethodCall call) {
-    if (call.method == 'onCreateView' && io.Platform.isAndroid) {
-      final Context context = Context.fromUniqueId(call.arguments['context']);
-      return androidCreator.onCreateView(context, call.arguments['viewId']);
-    } else if (call.method == 'onCreateView' && io.Platform.isIOS) {
-      final CGRect frame = CGRect.fromUniqueId(call.arguments['frame']);
-      return iosCreator.onCreateView(frame, call.arguments['viewId']);
-    }
+        if (call.method == 'onCreateView' && io.Platform.isAndroid) {
+          final Context context = Context.fromUniqueId(
+            call.arguments['context'],
+            channel: channel,
+          );
+          return androidCreator.onCreateView(context, call.arguments['viewId']);
+        } else if (call.method == 'onCreateView' && io.Platform.isIOS) {
+          final CGRect frame = CGRect.fromUniqueId(
+            call.arguments['frame'],
+            channel: channel,
+          );
+          return iosCreator.onCreateView(frame, call.arguments['viewId']);
+        }
 
-    return _wrapperManager.wrappers[call.arguments[r'$uniqueId']]
-        .onMethodCall(call);
-  };
-
-  static MethodChannel _globalMethodChannel;
-  static set globalMethodChannel(MethodChannel methodChannel) =>
-      _globalMethodChannel = methodChannel;
-  static MethodChannel get globalMethodChannel {
-    assert(
-      _globalMethodChannel != null,
-      'PenguinPlugin.globalMethodChannel is null.',
-    );
-    return _globalMethodChannel;
-  }
+        return _wrapperManager.wrappers[call.arguments[r'$uniqueId']]
+            .onMethodCall(call);
+      };
 }
 
 class _WrapperManager {
@@ -52,7 +48,7 @@ class _WrapperManager {
     final Wrapper wrapper = wrappers.remove(uniqueId);
     if (wrapper != null) {
       return invoke<void>(
-        PenguinPlugin.globalMethodChannel,
+        wrapper.channel,
         <MethodCall>[
           MethodCall(
             '${wrapper.platformClassName}#deallocate',
@@ -77,11 +73,15 @@ class _WrapperManager {
 }
 
 abstract class Wrapper with ReferenceCounter {
-  Wrapper([String uniqueId]) : _uniqueId = uniqueId ?? _uuid.v4() {
+  Wrapper(this.channel, [String uniqueId])
+      : _uniqueId = uniqueId ?? _uuid.v4(),
+        assert(channel != null) {
     PenguinPlugin._wrapperManager.addWrapper(this);
   }
 
   static final Uuid _uuid = Uuid();
+
+  final MethodChannel channel;
 
   final String _uniqueId;
   String get uniqueId => _uniqueId;

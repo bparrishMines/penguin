@@ -20,7 +20,7 @@ class IosTextViewState extends State<TextViewWidget> with IosViewCreator {
   @override
   Widget build(BuildContext context) {
     return UiKitView(
-      viewType: '${PenguinPlugin.globalMethodChannel.name}/view',
+      viewType: '${channel.name}/view',
       creationParams: identifier,
       creationParamsCodec: const StandardMessageCodec(),
     );
@@ -37,12 +37,14 @@ class IosTextViewState extends State<TextViewWidget> with IosViewCreator {
 @Class(IosPlatform(IosType('UITextView')))
 class TextView extends $TextView {
   @Constructor()
-  TextView.initWithFrame(CGRect frame) : super.initWithFrame(frame);
+  TextView.initWithFrame(CGRect frame)
+      : super.initWithFrame(frame, channel: channel);
 
-  TextView.fromUniqueId(String uniqueId) : super.fromUniqueId(uniqueId);
+  TextView.fromUniqueId(String uniqueId)
+      : super.fromUniqueId(uniqueId, channel: channel);
 
   @Field()
-  set text(String text) => invoke<void>(PenguinPlugin.globalMethodChannel, [$set$text(text)]);
+  set text(String text) => invoke<void>(channel, [$set$text(text)]);
 }
 
 @Class(IosPlatform(
@@ -50,20 +52,22 @@ class TextView extends $TextView {
 ))
 class IosTestClass1 extends $IosTestClass1 with TestClass1 {
   @Constructor()
-  IosTestClass1() : super.$Default();
+  IosTestClass1() : super.$Default(channel: channel);
 
   @Constructor()
-  IosTestClass1.initNamedConstructor() : super.initNamedConstructor();
+  IosTestClass1.initNamedConstructor()
+      : super.initNamedConstructor(channel: channel);
 
-  IosTestClass1.fromUniqueId(String uniqueId) : super.fromUniqueId(uniqueId);
+  IosTestClass1.fromUniqueId(String uniqueId)
+      : super.fromUniqueId(uniqueId, channel: channel);
 
   @Field()
-  static Future<List<bool>> get staticField => invokeList<bool>(
-      PenguinPlugin.globalMethodChannel, [$IosTestClass1.$get$staticField()]);
+  static Future<List<bool>> get staticField =>
+      invokeList<bool>(channel, [$IosTestClass1.$get$staticField()]);
 
   @Method()
-  static Future<void> staticMethod() => invoke<void>(
-      PenguinPlugin.globalMethodChannel, [$IosTestClass1.$staticMethod()]);
+  static Future<void> staticMethod() =>
+      invoke<void>(channel, [$IosTestClass1.$staticMethod()]);
 
   @Method()
   Future<void> parameterMethod(
@@ -71,81 +75,72 @@ class IosTestClass1 extends $IosTestClass1 with TestClass1 {
     @int32 int primitive,
     IosTestClass2 wrapper,
   ) =>
-      invoke<void>(PenguinPlugin.globalMethodChannel,
-          [$parameterMethod(supported, primitive, wrapper)]);
+      invoke<void>(channel, [$parameterMethod(supported, primitive, wrapper)]);
 
   @Method()
   @int32
-  Future<int> returnInt32() =>
-      invoke<int>(PenguinPlugin.globalMethodChannel, [$returnInt32()]);
+  Future<int> returnInt32() => invoke<int>(channel, [$returnInt32()]);
 
   @override
-  set mutableField(FutureOr<double> value) => invoke<double>(
-      PenguinPlugin.globalMethodChannel, [$set$mutableField(value)]);
+  set mutableField(FutureOr<double> value) =>
+      invoke<double>(channel, [$set$mutableField(value)]);
 
   @override
   FutureOr<double> get mutableField =>
-      invoke<double>(PenguinPlugin.globalMethodChannel, [$get$mutableField()]);
+      invoke<double>(channel, [$get$mutableField()]);
 
   @override
-  Future<void> returnVoid() =>
-      invoke<void>(PenguinPlugin.globalMethodChannel, [$returnVoid()]);
+  Future<void> returnVoid() => invoke<void>(channel, [$returnVoid()]);
 
   @override
-  Future<String> returnString() =>
-      invoke<String>(PenguinPlugin.globalMethodChannel, [$returnString()]);
+  Future<String> returnString() => invoke<String>(channel, [$returnString()]);
 
   @override
-  Future<int> returnInt() =>
-      invoke<int>(PenguinPlugin.globalMethodChannel, [$returnInt()]);
+  Future<int> returnInt() => invoke<int>(channel, [$returnInt()]);
 
   @override
-  Future<double> returnDouble() =>
-      invoke<double>(PenguinPlugin.globalMethodChannel, [$returnDouble()]);
+  Future<double> returnDouble() => invoke<double>(channel, [$returnDouble()]);
 
   @override
-  Future<bool> returnBool() =>
-      invoke<bool>(PenguinPlugin.globalMethodChannel, [$returnBool()]);
+  Future<bool> returnBool() => invoke<bool>(channel, [$returnBool()]);
 
   @override
   Future<List<double>> returnList() =>
-      invokeList<double>(PenguinPlugin.globalMethodChannel, [$returnList()]);
+      invokeList<double>(channel, [$returnList()]);
 
   @override
   Future<Map<String, int>> returnMap() =>
-      invokeMap<String, int>(PenguinPlugin.globalMethodChannel, [$returnMap()]);
+      invokeMap<String, int>(channel, [$returnMap()]);
 
   @override
-  Future<Object> returnObject() =>
-      invoke<Object>(PenguinPlugin.globalMethodChannel, [$returnObject()]);
+  Future<Object> returnObject() => invoke<Object>(channel, [$returnObject()]);
 
   @override
   Future<dynamic> returnDynamic() =>
-      invoke<dynamic>(PenguinPlugin.globalMethodChannel, [$returnDynamic()]);
+      invoke<dynamic>(channel, [$returnDynamic()]);
 
   @Method()
-  Future<IosTestClass1> returnWrapper() => invoke<IosTestClass1>(
-      PenguinPlugin.globalMethodChannel, [$returnWrapper()], genericHelper: _GenericHelper.instance);
+  Future<IosTestClass1> returnWrapper() =>
+      invoke<IosTestClass1>(channel, [$returnWrapper()],
+          genericHelper: _GenericHelper.instance);
 
   @override
-  FutureOr<int> get intField =>
-      invoke<int>(PenguinPlugin.globalMethodChannel, [$get$intField()]);
+  FutureOr<int> get intField => invoke<int>(channel, [$get$intField()]);
 
   @override
   Future<String> get stringField =>
-      invoke<String>(PenguinPlugin.globalMethodChannel, [$get$stringField()]);
+      invoke<String>(channel, [$get$stringField()]);
 
   @override
   Future<double> get doubleField =>
-      invoke<double>(PenguinPlugin.globalMethodChannel, [$get$doubleField()]);
+      invoke<double>(channel, [$get$doubleField()]);
 
   @override
-  Future<bool> get boolField =>
-      invoke<bool>(PenguinPlugin.globalMethodChannel, [$get$boolField()]);
+  Future<bool> get boolField => invoke<bool>(channel, [$get$boolField()]);
 
   @override
   Future<double> get notAField =>
-      invoke<double>(PenguinPlugin.globalMethodChannel, [$get$nameOverrideField()]);
+      invoke<double>(channel, [$get$nameOverrideField()]);
 }
 
 @Class(IosPlatform(
@@ -153,41 +148,43 @@ class IosTestClass1 extends $IosTestClass1 with TestClass1 {
 ))
 class IosTestClass2 extends $IosTestClass2 with TestClass2 {
   @Constructor()
-  IosTestClass2() : super.$Default();
+  IosTestClass2() : super.$Default(channel: channel);
 
-  IosTestClass2.fromUniqueId(String uniqueId) : super.fromUniqueId(uniqueId);
+  IosTestClass2.fromUniqueId(String uniqueId)
+      : super.fromUniqueId(uniqueId, channel: channel);
 }
 
 @Class(IosPlatform(IosType('GenericClass', import: '"TestPlugin.h"')))
 class IosGenericClass<T> extends $IosGenericClass<T> with GenericClass<T> {
   @Constructor()
-  IosGenericClass() : super.$Default();
+  IosGenericClass() : super.$Default(channel: channel);
 
-  IosGenericClass.fromUniqueId(String uniqueId) : super.fromUniqueId(uniqueId);
+  IosGenericClass.fromUniqueId(String uniqueId)
+      : super.fromUniqueId(uniqueId, channel: channel);
 
   @override
   Future<void> add(T object) {
     if (isTypeOf<T, Wrapper>()) {
       return invoke<void>(
-        PenguinPlugin.globalMethodChannel,
+        channel,
         [$add(object)],
       );
     }
 
-    return invoke<void>(PenguinPlugin.globalMethodChannel, [$add(object)]);
+    return invoke<void>(channel, [$add(object)]);
   }
 
   @override
   Future<T> get(String identifier) async {
     if (isTypeOf<T, Wrapper>()) {
       return invoke<T>(
-        PenguinPlugin.globalMethodChannel,
+        channel,
         [$get(identifier)],
         genericHelper: _GenericHelper.instance,
       );
     }
 
-    return invoke<T>(PenguinPlugin.globalMethodChannel, [$get(identifier)]);
+    return invoke<T>(channel, [$get(identifier)]);
   }
 }
 
@@ -196,24 +193,24 @@ class IosGenericClass<T> extends $IosGenericClass<T> with GenericClass<T> {
 ))
 class TestStruct extends $TestStruct {
   @Constructor()
-  TestStruct() : super.$Default();
+  TestStruct() : super.$Default(channel: channel);
 
-  TestStruct.fromUniqueId(String uniqueId) : super.fromUniqueId(uniqueId);
+  TestStruct.fromUniqueId(String uniqueId)
+      : super.fromUniqueId(uniqueId, channel: channel);
 
   @Field()
   @int32
-  Future<int> get intField =>
-      invoke<int>(PenguinPlugin.globalMethodChannel, [$get$intField()]);
+  Future<int> get intField => invoke<int>(channel, [$get$intField()]);
 }
 
 @Class(IosPlatform(IosType('TestProtocol', import: '"TestPlugin.h"')))
 class IosProtocol extends $IosProtocol {
   @Constructor()
-  IosProtocol() : super.$Default();
+  IosProtocol() : super.$Default(channel: channel);
 
-  IosProtocol.fromUniqueId(String uniqueId) : super.fromUniqueId(uniqueId);
+  IosProtocol.fromUniqueId(String uniqueId)
+      : super.fromUniqueId(uniqueId, channel: channel);
 
   @Method(callback: true)
-  Future<void> callbackMethod() =>
-      invoke<void>(PenguinPlugin.globalMethodChannel, [$callbackMethod()]);
+  Future<void> callbackMethod() => invoke<void>(channel, [$callbackMethod()]);
 }

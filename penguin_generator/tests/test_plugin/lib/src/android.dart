@@ -10,7 +10,8 @@ import 'test_plugin_interface.dart';
 
 part 'android.android.penguin.g.dart';
 
-class AndroidTextViewState extends State<TextViewWidget> with AndroidViewCreator {
+class AndroidTextViewState extends State<TextViewWidget>
+    with AndroidViewCreator {
   AndroidTextViewState() {
     PenguinPlugin.androidCreator = this;
   }
@@ -20,7 +21,7 @@ class AndroidTextViewState extends State<TextViewWidget> with AndroidViewCreator
   @override
   Widget build(BuildContext context) {
     return AndroidView(
-      viewType: '${PenguinPlugin.globalMethodChannel.name}/view',
+      viewType: '${channel.name}/view',
       creationParams: identifier,
       creationParamsCodec: const StandardMessageCodec(),
     );
@@ -39,13 +40,13 @@ class AndroidTextViewState extends State<TextViewWidget> with AndroidViewCreator
 ))
 class TextView extends $TextView {
   @Constructor()
-  TextView(Context context) : super.$Default(context);
+  TextView(Context context) : super.$Default(context, channel: channel);
 
   TextView.fromUniqueId(String uniqueId)
-      : super.fromUniqueId(uniqueId);
+      : super.fromUniqueId(uniqueId, channel: channel);
 
   @Method()
-  Future<void> setText(String text) => invoke<void>(PenguinPlugin.globalMethodChannel, [$setText(text)]);
+  Future<void> setText(String text) => invoke<void>(channel, [$setText(text)]);
 }
 
 @Class(AndroidPlatform(
@@ -53,21 +54,22 @@ class TextView extends $TextView {
 ))
 class AndroidTestClass1 extends $AndroidTestClass1 with TestClass1 {
   @Constructor()
-  AndroidTestClass1() : super.$Default();
+  AndroidTestClass1() : super.$Default(channel: channel);
 
   AndroidTestClass1.fromUniqueId(String uniqueId)
-      : super.fromUniqueId(uniqueId);
+      : super.fromUniqueId(uniqueId, channel: channel);
 
   @Constructor()
-  AndroidTestClass1.namedConstructor() : super.namedConstructor();
+  AndroidTestClass1.namedConstructor()
+      : super.namedConstructor(channel: channel);
 
   @Field()
-  static Future<List<bool>> get staticField => invokeList<bool>(
-      PenguinPlugin.globalMethodChannel, [$AndroidTestClass1.$get$staticField()]);
+  static Future<List<bool>> get staticField =>
+      invokeList<bool>(channel, [$AndroidTestClass1.$get$staticField()]);
 
   @Method()
-  static Future<void> staticMethod() => invoke<void>(
-      PenguinPlugin.globalMethodChannel, [$AndroidTestClass1.$staticMethod()]);
+  static Future<void> staticMethod() =>
+      invoke<void>(channel, [$AndroidTestClass1.$staticMethod()]);
 
   @Method()
   Future<void> parameterMethod(
@@ -76,77 +78,69 @@ class AndroidTestClass1 extends $AndroidTestClass1 with TestClass1 {
     AndroidTestClass2 wrapper,
     AndroidNestedClass nested,
   ) =>
-      invoke<void>(PenguinPlugin.globalMethodChannel,
-          [$parameterMethod(supported, primitive, wrapper, nested)]);
+      invoke<void>(
+          channel, [$parameterMethod(supported, primitive, wrapper, nested)]);
 
   @override
-  set mutableField(FutureOr<double> value) => invoke<double>(
-      PenguinPlugin.globalMethodChannel, [$set$mutableField(value)]);
+  set mutableField(FutureOr<double> value) =>
+      invoke<double>(channel, [$set$mutableField(value)]);
 
   @override
   FutureOr<double> get mutableField =>
-      invoke<double>(PenguinPlugin.globalMethodChannel, [$get$mutableField()]);
+      invoke<double>(channel, [$get$mutableField()]);
 
   @override
-  Future<void> returnVoid() =>
-      invoke<void>(PenguinPlugin.globalMethodChannel, [$returnVoid()]);
+  Future<void> returnVoid() => invoke<void>(channel, [$returnVoid()]);
 
   @override
-  Future<String> returnString() =>
-      invoke<String>(PenguinPlugin.globalMethodChannel, [$returnString()]);
+  Future<String> returnString() => invoke<String>(channel, [$returnString()]);
 
   @override
-  Future<int> returnInt() =>
-      invoke<int>(PenguinPlugin.globalMethodChannel, [$returnInt()]);
+  Future<int> returnInt() => invoke<int>(channel, [$returnInt()]);
 
   @override
-  Future<double> returnDouble() =>
-      invoke<double>(PenguinPlugin.globalMethodChannel, [$returnDouble()]);
+  Future<double> returnDouble() => invoke<double>(channel, [$returnDouble()]);
 
   @override
-  Future<bool> returnBool() =>
-      invoke<bool>(PenguinPlugin.globalMethodChannel, [$returnBool()]);
+  Future<bool> returnBool() => invoke<bool>(channel, [$returnBool()]);
 
   @override
   Future<List<double>> returnList() =>
-      invokeList<double>(PenguinPlugin.globalMethodChannel, [$returnList()]);
+      invokeList<double>(channel, [$returnList()]);
 
   @override
   Future<Map<String, int>> returnMap() =>
-      invokeMap<String, int>(PenguinPlugin.globalMethodChannel, [$returnMap()]);
+      invokeMap<String, int>(channel, [$returnMap()]);
 
   @override
-  Future<Object> returnObject() =>
-      invoke<Object>(PenguinPlugin.globalMethodChannel, [$returnObject()]);
+  Future<Object> returnObject() => invoke<Object>(channel, [$returnObject()]);
 
   @override
   Future<dynamic> returnDynamic() =>
-      invoke<dynamic>(PenguinPlugin.globalMethodChannel, [$returnDynamic()]);
+      invoke<dynamic>(channel, [$returnDynamic()]);
 
   @Method()
-  Future<AndroidTestClass1> returnWrapper() => invoke<AndroidTestClass1>(
-      PenguinPlugin.globalMethodChannel, [$returnWrapper()],
-      genericHelper: _GenericHelper.instance);
+  Future<AndroidTestClass1> returnWrapper() =>
+      invoke<AndroidTestClass1>(channel, [$returnWrapper()],
+          genericHelper: _GenericHelper.instance);
 
   @override
-  FutureOr<int> get intField =>
-      invoke<int>(PenguinPlugin.globalMethodChannel, [$get$intField()]);
+  FutureOr<int> get intField => invoke<int>(channel, [$get$intField()]);
 
   @override
   Future<String> get stringField =>
-      invoke<String>(PenguinPlugin.globalMethodChannel, [$get$stringField()]);
+      invoke<String>(channel, [$get$stringField()]);
 
   @override
   Future<double> get doubleField =>
-      invoke<double>(PenguinPlugin.globalMethodChannel, [$get$doubleField()]);
+      invoke<double>(channel, [$get$doubleField()]);
 
   @override
-  Future<bool> get boolField =>
-      invoke<bool>(PenguinPlugin.globalMethodChannel, [$get$boolField()]);
+  Future<bool> get boolField => invoke<bool>(channel, [$get$boolField()]);
 
   @override
   Future<double> get notAField =>
-      invoke<double>(PenguinPlugin.globalMethodChannel, [$get$nameOverrideField()]);
+      invoke<double>(channel, [$get$nameOverrideField()]);
 }
 
 @Class(
@@ -157,10 +151,10 @@ class AndroidTestClass1 extends $AndroidTestClass1 with TestClass1 {
 )
 class AndroidTestClass2 extends $AndroidTestClass2 with TestClass2 {
   @Constructor()
-  AndroidTestClass2() : super.$Default();
+  AndroidTestClass2() : super.$Default(channel: channel);
 
   AndroidTestClass2.fromUniqueId(String uniqueId)
-      : super.fromUniqueId(uniqueId);
+      : super.fromUniqueId(uniqueId, channel: channel);
 }
 
 @Class(AndroidPlatform(AndroidType(
@@ -170,34 +164,34 @@ class AndroidTestClass2 extends $AndroidTestClass2 with TestClass2 {
 class AndroidGenericClass<T> extends $AndroidGenericClass<T>
     with GenericClass<T> {
   @Constructor()
-  AndroidGenericClass() : super.$Default();
+  AndroidGenericClass() : super.$Default(channel: channel);
 
   AndroidGenericClass.fromUniqueId(String uniqueId)
-      : super.fromUniqueId(uniqueId);
+      : super.fromUniqueId(uniqueId, channel: channel);
 
   @override
   Future<void> add(T object) {
     if (isTypeOf<T, Wrapper>()) {
       return invoke<void>(
-        PenguinPlugin.globalMethodChannel,
+        channel,
         [$add(object)],
       );
     }
 
-    return invoke<void>(PenguinPlugin.globalMethodChannel, [$add(object)]);
+    return invoke<void>(channel, [$add(object)]);
   }
 
   @override
   Future<T> get(String identifier) async {
     if (isTypeOf<T, Wrapper>()) {
       return invoke<T>(
-        PenguinPlugin.globalMethodChannel,
+        channel,
         [$get(identifier)],
         genericHelper: _GenericHelper.instance,
       );
     }
 
-    return invoke<T>(PenguinPlugin.globalMethodChannel, [$get(identifier)]);
+    return invoke<T>(channel, [$get(identifier)]);
   }
 }
 
@@ -209,10 +203,10 @@ class AndroidGenericClass<T> extends $AndroidGenericClass<T>
 ))
 class AndroidNestedClass extends $AndroidNestedClass {
   @Constructor()
-  AndroidNestedClass() : super.$Default();
+  AndroidNestedClass() : super.$Default(channel: channel);
 
   AndroidNestedClass.fromUniqueId(String uniqueId)
-      : super.fromUniqueId(uniqueId);
+      : super.fromUniqueId(uniqueId, channel: channel);
 }
 
 @Class(AndroidPlatform(
@@ -223,10 +217,10 @@ class AndroidNestedClass extends $AndroidNestedClass {
 ))
 class AndroidAbstractClass extends $AndroidAbstractClass {
   @Constructor()
-  AndroidAbstractClass() : super.$Default();
+  AndroidAbstractClass() : super.$Default(channel: channel);
 
   AndroidAbstractClass.fromUniqueId(String uniqueId)
-      : super.fromUniqueId(uniqueId);
+      : super.fromUniqueId(uniqueId, channel: channel);
 
   @Method(callback: true)
   Future<void> callbackMethod(
@@ -235,6 +229,6 @@ class AndroidAbstractClass extends $AndroidAbstractClass {
     AndroidTestClass2 wrapper,
     AndroidNestedClass nested,
   ) =>
-      invoke<void>(PenguinPlugin.globalMethodChannel,
-          [$callbackMethod(supported, primitive, wrapper, nested)]);
+      invoke<void>(
+          channel, [$callbackMethod(supported, primitive, wrapper, nested)]);
 }

@@ -573,9 +573,9 @@ part of '__filename__';
 %%CLASSES%%
 %%CLASS%%
 class $__className____typeParameters__ extends Wrapper {
-  $__className__.fromUniqueId(String uniqueId)
+  $__className__.fromUniqueId(String uniqueId, {MethodChannel channel})
       : assert(uniqueId != null),
-        super(uniqueId);
+        super(channel, uniqueId);
   
   %%CONSTRUCTORS%%
   %%CONSTRUCTOR%%
@@ -585,8 +585,9 @@ class $__className____typeParameters__ extends Wrapper {
   __parameterType__ __parameterName__,
   %%PARAMETER%%
   %%PARAMETERS%%
-  ) {
-    PenguinPlugin.globalMethodChannel.invokeMethod<void>(
+  {MethodChannel channel}
+  ) : super(channel) {
+    channel.invokeMethod<void>(
       '__platformClassName__(__constructorName__)',
       <String, dynamic>{
         r'$uniqueId': uniqueId,

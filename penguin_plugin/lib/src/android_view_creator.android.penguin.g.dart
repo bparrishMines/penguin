@@ -7,9 +7,9 @@
 part of 'android_view_creator.dart';
 
 class $Context extends Wrapper {
-  $Context.fromUniqueId(String uniqueId)
+  $Context.fromUniqueId(String uniqueId, {MethodChannel channel})
       : assert(uniqueId != null),
-        super(uniqueId);
+        super(channel, uniqueId);
 
   String get platformClassName => 'Context';
 

@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:test_plugin/test_plugin.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(MyApp());
+}
 
 class MyApp extends StatefulWidget {
-  MyApp() {
-    WidgetsFlutterBinding.ensureInitialized();
-    initialize();
-  }
-
   @override
   _MyAppState createState() => _MyAppState();
 }

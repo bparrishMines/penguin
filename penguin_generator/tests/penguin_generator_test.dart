@@ -69,7 +69,7 @@ void main(List<String> arguments) {
 
         expect(await driverTestProcess.exitCode == 0 && testsPassed, isTrue);
       }
-    }, timeout: Timeout(Duration(minutes: 4)));
+    }, timeout: Timeout(Duration(minutes: 6)));
   });
 }
 

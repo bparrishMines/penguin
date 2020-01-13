@@ -9,12 +9,10 @@ import 'src/android.dart';
 import 'src/test_plugin_interface.dart';
 import 'src/ios.dart';
 
-void initialize() {
-  PenguinPlugin.globalMethodChannel = MethodChannel('test_plugin');
-  PenguinPlugin.globalMethodChannel.setMethodCallHandler(
-    PenguinPlugin.methodCallHandler,
+final MethodChannel channel = MethodChannel('test_plugin')
+  ..setMethodCallHandler(
+    (MethodCall call) => PenguinPlugin.methodCallHandler(channel)(call),
   );
-}
 
 class TestClass1Controller with TestClass1 {
   TestClass1Controller()

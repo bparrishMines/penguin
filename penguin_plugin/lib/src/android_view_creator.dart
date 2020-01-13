@@ -13,5 +13,5 @@ abstract class AndroidViewCreator {
   AndroidType('android.content', ['Context']),
 ))
 class Context extends $Context {
-  Context.fromUniqueId(String uniqueId) : super.fromUniqueId(uniqueId);
+  Context.fromUniqueId(String uniqueId, {MethodChannel channel}) : super.fromUniqueId(uniqueId, channel: channel);
 }
