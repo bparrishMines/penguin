@@ -3,27 +3,14 @@ package plugins.penguin.penguin_plugin;
 import java.util.HashMap;
 
 public class WrapperManager {
-  public final HashMap<String, Wrapper> allocatedWrappers = new HashMap<>();
-  private final HashMap<String, Wrapper> temporaryWrappers = new HashMap<>();
+  private final HashMap<String, Wrapper> wrappers = new HashMap<>();
 
-  public void addAllocatedWrapper(final Wrapper wrapper) {
-    addWrapper(wrapper, allocatedWrappers);
-  }
-
-  public void removeAllocatedWrapper(String uniqueId) {
-    allocatedWrappers.remove(uniqueId);
-  }
-
-  public void addTemporaryWrapper(final Wrapper wrapper) {
-    addWrapper(wrapper, temporaryWrappers);
-  }
-
-  private void addWrapper(final Wrapper wrapper, HashMap<String, Wrapper> wrapperMap) {
+  public void addWrapper(final Wrapper wrapper) {
     final Wrapper existingWrapper;
     try {
       existingWrapper = getWrapper(wrapper.$uniqueId);
     } catch (WrapperNotFoundException exception) {
-      wrapperMap.put(wrapper.$uniqueId, wrapper);
+      wrappers.put(wrapper.$uniqueId, wrapper);
       return;
     }
 
@@ -32,16 +19,15 @@ public class WrapperManager {
       throw new IllegalArgumentException(message);
     }
 
-    if (!wrapperMap.containsKey(wrapper.$uniqueId)) wrapperMap.put(wrapper.$uniqueId, wrapper);
+    if (!wrappers.containsKey(wrapper.$uniqueId)) wrappers.put(wrapper.$uniqueId, wrapper);
+  }
+
+  public void removeWrapper(String uniqueId) {
+    wrappers.remove(uniqueId);
   }
 
   public Wrapper getWrapper(String uniqueId) throws WrapperNotFoundException {
-    if (allocatedWrappers.containsKey(uniqueId)) return allocatedWrappers.get(uniqueId);
-    if (temporaryWrappers.containsKey(uniqueId)) return temporaryWrappers.get(uniqueId);
+    if (wrappers.containsKey(uniqueId)) return wrappers.get(uniqueId);
     throw new WrapperNotFoundException(uniqueId);
-  }
-
-  public void clearTemporaryWrappers() {
-    temporaryWrappers.clear();
   }
 }

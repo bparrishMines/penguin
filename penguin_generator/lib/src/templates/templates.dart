@@ -728,24 +728,22 @@ dynamic _setParameter(dynamic parameter) {
 package __package__;
 
 import android.content.Context;
-import android.os.Build;
-import android.view.View;
 import androidx.annotation.RequiresApi;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.UUID;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
-import io.flutter.plugin.common.MethodChannel.Result;
-import io.flutter.plugin.common.StandardMessageCodec;
-import io.flutter.plugin.platform.PlatformView;
-import io.flutter.plugin.platform.PlatformViewFactory;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
+import plugins.penguin.penguin_plugin.NoUniqueIdException;
+import plugins.penguin.penguin_plugin.NotImplementedException;
+import plugins.penguin.penguin_plugin.PenguinMethodCallHandler;
+import plugins.penguin.penguin_plugin.PenguinViewFactory;
+import plugins.penguin.penguin_plugin.TypeHelper;
+import plugins.penguin.penguin_plugin.Wrapper;
+import plugins.penguin.penguin_plugin.WrapperManager;
+import android.os.Build;
 %%IMPORTS%%
 %%IMPORT%%
 import __classPackage__.__platformClassName__;
@@ -753,93 +751,20 @@ import __classPackage__.__platformClassName__;
 %%IMPORTS%%
 
 public class ChannelGenerated {
-  public final PlatformViewFactory viewFactory = new ViewFactoryImpl();
   public final WrapperManager wrapperManager = new WrapperManager();
   public final MethodCallHandler methodCallHandler = new MethodCallHandlerImpl();
+  public final PenguinViewFactory viewFactory;
   public final MethodChannel callbackChannel;
   
-  public ChannelGenerated(MethodChannel callbackChannel) {
+  public ChannelGenerated(MethodChannel callbackChannel) throws ClassNotFoundException, NoSuchMethodException {
     this.callbackChannel = callbackChannel;
+    final Class wrapperClass = Class.forName(String.format("__package__.ChannelGenerated$$%s", Context.class.getSimpleName()));
+    final Constructor contextWrapperConstructor = wrapperClass.getConstructor(WrapperManager.class, String.class, Context.class);
+    viewFactory = new PenguinViewFactory(wrapperManager, callbackChannel, contextWrapperConstructor);
   }
   
-  private class ViewFactoryImpl extends PlatformViewFactory {
-    ViewFactoryImpl() {
-      super(StandardMessageCodec.INSTANCE);
-    }
-
-    @Override
-    public PlatformView create(final Context context, int viewId, final Object args) {
-      final FrameLayout frameLayout = new FrameLayout(context);
-
-      final Wrapper contextWrapper;
-      try {
-        final Class wrapperClass = Class.forName(String.format("__package__.ChannelGenerated$$%s", Context.class.getSimpleName()));
-        final Constructor constructor = wrapperClass.getConstructor(WrapperManager.class, String.class, Context.class);
-        contextWrapper = (Wrapper) constructor.newInstance(wrapperManager, UUID.randomUUID().toString(), context);
-      } catch (Exception exception) {
-        exception.printStackTrace();
-        return null;
-      }
-
-      final HashMap<String, Object> arguments = new HashMap<>();
-      arguments.put("context", contextWrapper.$uniqueId);
-      arguments.put("callbackId", args);
-
-      callbackChannel.invokeMethod("onCreateView", arguments, new Result() {
-        @Override
-        public void success(Object result) {
-          final View view;
-          try {
-            view = wrapperManager.getWrapper((String) result).getView();
-          } catch (WrapperNotFoundException exception) {
-            exception.printStackTrace();
-            return;
-          }
-          frameLayout.addView(view,
-              new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        }
-
-        @Override
-        public void error(String errorCode, String errorMessage, Object errorDetails) {
-          throw new RuntimeException(errorMessage);
-        }
-
-        @Override
-        public void notImplemented() {
-          throw new RuntimeException("notImplemented");
-        }
-      });
-
-      return new PlatformView() {
-        @Override
-        public View getView() {
-          return frameLayout;
-        }
-
-        @Override
-        public void dispose() {
-          contextWrapper.deallocate(wrapperManager);
-        }
-      };
-    }
-  }
-  
-  private class MethodCallHandlerImpl implements MethodCallHandler {
-    private MethodCallHandlerImpl() {}
-    
-    @Override
-    public void onMethodCall(MethodCall call, Result result) {
-      try {
-        final Object value = onMethodCall(call);
-        result.success(value);
-      } catch (Exception exception) {
-        result.error(exception.getClass().getSimpleName(), exception.getMessage(), android.util.Log.getStackTraceString(exception));
-      } finally {
-        wrapperManager.clearTemporaryWrappers();
-      }
-    }
-  
-    private Object onMethodCall(MethodCall call) throws Exception {
+  private class MethodCallHandlerImpl extends PenguinMethodCallHandler {
+    public Object onMethodCall(MethodCall call) throws Exception {
       switch(call.method) {
         case "MultiInvoke":
           final ArrayList<HashMap<String, Object>> allMethodCallData = (ArrayList<HashMap<String, Object>>) call.arguments;
@@ -855,8 +780,7 @@ public class ChannelGenerated {
         %%STATICREDIRECT classMember:constructor%%
         case "__wrapperName__(__constructorName__)": {
             if (Build.VERSION.SDK_INT >= __api__) {
-              new $__wrapperName__(this, wrapperManager, callbackChannel, call);
-              return null;
+              return new $__wrapperName__(wrapperManager, callbackChannel, call);
             } else {
               throw new UnsupportedOperationException("This operation requires api __api__ and above");
             }
@@ -881,102 +805,6 @@ public class ChannelGenerated {
     }
   }
 
-  private static abstract class Wrapper implements PlatformView {
-    final String $uniqueId;
-    
-    private Wrapper(WrapperManager wrapperManager, String uniqueId) {
-      this.$uniqueId = uniqueId;
-      wrapperManager.addAllocatedWrapper(this);
-    }
-
-    abstract Object onMethodCall(WrapperManager wrapperManager, MethodCall call) throws Exception;
-    abstract Object $getValue();
-
-    void allocate(WrapperManager wrapperManager) {
-      wrapperManager.addAllocatedWrapper(this);
-    }
-
-    void deallocate(WrapperManager wrapperManager) {
-      wrapperManager.removeAllocatedWrapper($uniqueId);
-    }
-    
-    @Override
-    public View getView() {
-      return (View) $getValue();
-    }
-
-    @Override
-    public void dispose() {
-      // Do nothing
-    }
-  }
-  
-  public class WrapperManager {
-    private final HashMap<String, Wrapper> allocatedWrappers = new HashMap<>();
-    private final HashMap<String, Wrapper> temporaryWrappers = new HashMap<>();
-
-    private WrapperManager() {
-      // Do nothing
-    }
-    
-    public void addAllocatedWrapper(final Wrapper wrapper) {
-      addWrapper(wrapper, allocatedWrappers);
-    }
-
-    public void removeAllocatedWrapper(String uniqueId) {
-      allocatedWrappers.remove(uniqueId);
-    }
-
-    private void addTemporaryWrapper(final Wrapper wrapper) {
-      addWrapper(wrapper, temporaryWrappers);
-    }
-
-    private void addWrapper(final Wrapper wrapper, HashMap<String, Wrapper> wrapperMap) {
-      final Wrapper existingWrapper;
-      try {
-        existingWrapper = getWrapper(wrapper.$uniqueId);
-      } catch (WrapperNotFoundException exception) {
-        wrapperMap.put(wrapper.$uniqueId, wrapper);
-        return;
-      }
-
-      if (existingWrapper.$getValue() != wrapper.$getValue()) {
-        final String message = String.format("Object for uniqueId already exists: %s", wrapper.$uniqueId);
-        throw new IllegalArgumentException(message);
-      }
-      
-      if (!wrapperMap.containsKey(wrapper.$uniqueId)) wrapperMap.put(wrapper.$uniqueId, wrapper);
-    }
-
-    private Wrapper getWrapper(String uniqueId) throws WrapperNotFoundException {
-      if (allocatedWrappers.containsKey(uniqueId)) return allocatedWrappers.get(uniqueId);
-      if (temporaryWrappers.containsKey(uniqueId)) return temporaryWrappers.get(uniqueId);
-      throw new WrapperNotFoundException(uniqueId);
-    }
-    
-    private void clearTemporaryWrappers() {
-      temporaryWrappers.clear();
-    }
-  }
-
-  private static class NotImplementedException extends Exception {
-    NotImplementedException(String method) {
-      super(String.format(Locale.getDefault(),"No implementation for %s.", method));
-    }
-  }
-
-  private static class NoUniqueIdException extends Exception {
-    NoUniqueIdException(String method) {
-      super(String.format("MethodCall was made without a unique handle for %s.", method));
-    }
-  }
-
-  private static class WrapperNotFoundException extends Exception {
-    WrapperNotFoundException(String uniqueId) {
-      super(String.format("Could not find Wrapper with uniqueId %s.", uniqueId));
-    }
-  }
-
   %%CLASSES%%
   %%CLASS%%
   @RequiresApi(api = __api__)
@@ -984,12 +812,13 @@ public class ChannelGenerated {
     private final __platformClassName__ $value;
 
     public $__wrapperName__(final WrapperManager wrapperManager, final String uniqueId, final __platformClassName__ value) {
-      super(wrapperManager, uniqueId);
+      super(uniqueId);
       this.$value = value;
+      wrapperManager.addWrapper(this);
     }
 
-    private $__wrapperName__(final MethodCallHandlerImpl methodCallHandler, final WrapperManager wrapperManager, final MethodChannel callbackChannel, final MethodCall call) throws Exception {
-      super(wrapperManager, (String) call.argument("$uniqueId"));
+    private $__wrapperName__(final WrapperManager wrapperManager, final MethodChannel callbackChannel, final MethodCall call) throws Exception {
+      super(TypeHelper.toString(call.argument("$uniqueId")));
       switch(call.method) {
         %%CONSTRUCTORS%%
         %%CONSTRUCTOR%%
@@ -1014,7 +843,7 @@ public class ChannelGenerated {
               %%CALLBACKCHANNELPARAMS%%
               %%CALLBACKCHANNELPARAM methodChannel:wrapper%%
               final String $$__parameterName__Id = UUID.randomUUID().toString();
-              wrapperManager.addAllocatedWrapper(new $__wrapperName__(wrapperManager, $$__parameterName__Id, $__parameterName__));
+              wrapperManager.addWrapper(new $__wrapperName__(wrapperManager, $$__parameterName__Id, $__parameterName__));
               arguments.put("__parameterName__", $$__parameterName__Id);
               %%CALLBACKCHANNELPARAM methodChannel:wrapper%%
               %%CALLBACKCHANNELPARAM methodChannel:supported%%
@@ -1036,6 +865,7 @@ public class ChannelGenerated {
         default:
           this.$value = null;
       }
+      wrapperManager.addWrapper(this);
     }
     
     static Object onStaticMethodCall(WrapperManager wrapperManager, MethodCall call) throws Exception {
@@ -1060,9 +890,6 @@ public class ChannelGenerated {
     @Override
     public Object onMethodCall(WrapperManager wrapperManager, MethodCall call) throws Exception {
       switch(call.method) {
-        case "__wrapperName__#allocate":
-          allocate(wrapperManager);
-          return null;
         case "__wrapperName__#deallocate":
           deallocate(wrapperManager);
           return null;

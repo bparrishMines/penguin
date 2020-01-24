@@ -8,7 +8,13 @@ public class TestPlugin {
   /** Plugin registration. */
   public static void registerWith(Registrar registrar) {
     final MethodChannel channel = new MethodChannel(registrar.messenger(), "test_plugin");
-    final ChannelGenerated channelGenerated = new ChannelGenerated(channel);
+    final ChannelGenerated channelGenerated;
+    try {
+      channelGenerated = new ChannelGenerated(channel);
+    } catch (Exception exception) {
+      exception.printStackTrace();
+      return;
+    }
     channel.setMethodCallHandler(channelGenerated.methodCallHandler);
 
     registrar
