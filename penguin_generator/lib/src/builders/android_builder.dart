@@ -43,18 +43,13 @@ class AndroidBuilder extends PenguinBuilder {
             .toSet(),
         classes: allClasses.map<String>(
           (ClassInfo classInfo) => creator.createClass(
-            api: classInfo.aClass.androidApi?.api?.toString(),
+            api: classInfo.aClass.androidApi?.api?.toString() ?? '16',
             staticMethodCalls: <String>[
               ...classInfo.methods
                   .where((MethodInfo methodInfo) => methodInfo.isStatic)
                   .map<String>(
                     (MethodInfo methodInfo) => creator.createStaticMethodCall(
                       ClassMemberType.method,
-                      wrapperName:
-                          (classInfo.aClass.platform as AndroidPlatform)
-                              .type
-                              .names
-                              .join(),
                       methodName: methodInfo.name,
                     ),
                   ),
@@ -63,11 +58,6 @@ class AndroidBuilder extends PenguinBuilder {
                   .map<String>(
                     (FieldInfo fieldInfo) => creator.createStaticMethodCall(
                       ClassMemberType.field,
-                      wrapperName:
-                          (classInfo.aClass.platform as AndroidPlatform)
-                              .type
-                              .names
-                              .join(),
                       fieldName: fieldInfo.name,
                     ),
                   ),
@@ -86,15 +76,6 @@ class AndroidBuilder extends PenguinBuilder {
                     parameterName: parameterInfo.name,
                   ),
                 ),
-                wrapperName: (classInfo.aClass.platform as AndroidPlatform)
-                    .type
-                    .names
-                    .join(),
-                platformClassName:
-                    (classInfo.aClass.platform as AndroidPlatform)
-                        .type
-                        .names
-                        .join('.'),
                 callbacks: classInfo.methods
                     .where(
                       (MethodInfo methodInfo) => methodInfo.method.callback,
@@ -123,12 +104,13 @@ class AndroidBuilder extends PenguinBuilder {
                           (ParameterInfo parameterInfo) =>
                               creator.createCallbackChannelParam(
                             getChannelType(parameterInfo.type),
-                            wrapperName: getChannelType(parameterInfo.type) !=
-                                    MethodChannelType.wrapper
-                                ? null
-                                : _convertType(parameterInfo.type,
-                                        classes: allClasses)
-                                    .replaceAll(('.'), ''),
+                            parameterWrapperName:
+                                getChannelType(parameterInfo.type) !=
+                                        MethodChannelType.wrapper
+                                    ? null
+                                    : _convertType(parameterInfo.type,
+                                            classes: allClasses)
+                                        .replaceAll(('.'), ''),
                             parameterName: parameterInfo.name,
                           ),
                         ),
@@ -140,12 +122,6 @@ class AndroidBuilder extends PenguinBuilder {
               (MethodInfo methodInfo) => creator.createMethod(
                 getChannelType(methodInfo.returnType),
                 methodInfo.isStatic,
-                platformClassName:
-                    (classInfo.aClass.platform as AndroidPlatform)
-                        .type
-                        .names
-                        .join('.'),
-                package: _androidPackage,
                 parameters: methodInfo.parameters.map<String>(
                   (ParameterInfo parameterInfo) => creator.createParameter(
                     getChannelType(parameterInfo.type),
@@ -176,12 +152,6 @@ class AndroidBuilder extends PenguinBuilder {
                     parameterType:
                         _convertType(fieldInfo.type, classes: allClasses),
                     parameterName: fieldInfo.name),
-                package: _androidPackage,
-                platformClassName:
-                    (classInfo.aClass.platform as AndroidPlatform)
-                        .type
-                        .names
-                        .join('.'),
               ),
             ),
             methodCalls: <String>[
@@ -272,8 +242,11 @@ class AndroidBuilder extends PenguinBuilder {
     );
   }
 
-  String _convertType(TypeInfo info,
-      {List<ClassInfo> classes, bool ignorePrimitives = true}) {
+  String _convertType(
+    TypeInfo info, {
+    List<ClassInfo> classes,
+    bool ignorePrimitives = true,
+  }) {
     if (info.isVoid) {
       return 'void';
     } else if (info.isDynamic || info.isObject) {

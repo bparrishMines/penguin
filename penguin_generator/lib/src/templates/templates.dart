@@ -758,8 +758,15 @@ public class ChannelGenerated {
   
   public ChannelGenerated(MethodChannel callbackChannel) throws ClassNotFoundException, NoSuchMethodException {
     this.callbackChannel = callbackChannel;
-    final Class wrapperClass = Class.forName(String.format("__package__.ChannelGenerated$$%s", Context.class.getSimpleName()));
-    final Constructor contextWrapperConstructor = wrapperClass.getConstructor(WrapperManager.class, String.class, Context.class);
+    final Constructor contextWrapperConstructor;
+    try {
+      final Class wrapperClass = Class.forName(String.format("__package__.ChannelGenerated$$%s", Context.class.getSimpleName()));
+      contextWrapperConstructor = wrapperClass.getConstructor(WrapperManager.class, String.class, Context.class);
+    } catch (Exception exception) {
+      exception.printStackTrace();
+      viewFactory = null;
+      return;
+    }
     viewFactory = new PenguinViewFactory(wrapperManager, callbackChannel, contextWrapperConstructor);
   }
   
@@ -843,7 +850,7 @@ public class ChannelGenerated {
               %%CALLBACKCHANNELPARAMS%%
               %%CALLBACKCHANNELPARAM methodChannel:wrapper%%
               final String $$__parameterName__Id = UUID.randomUUID().toString();
-              wrapperManager.addWrapper(new $__wrapperName__(wrapperManager, $$__parameterName__Id, $__parameterName__));
+              wrapperManager.addWrapper(new $__parameterWrapperName__(wrapperManager, $$__parameterName__Id, $__parameterName__));
               arguments.put("__parameterName__", $$__parameterName__Id);
               %%CALLBACKCHANNELPARAM methodChannel:wrapper%%
               %%CALLBACKCHANNELPARAM methodChannel:supported%%
@@ -1205,4 +1212,6 @@ class Replacement {
   static final Replacement filename = Replacement('__filename__');
   static final Replacement parameterClassName =
       Replacement('__parameterClassName__');
+  static final Replacement parameterWrapperName =
+  Replacement('__parameterWrapperName__');
 }
