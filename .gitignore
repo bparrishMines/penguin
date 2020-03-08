@@ -35,3 +35,4 @@ doc/api/
 penguin_generator/tests/test_plugin/**
 
 test_plugin/**
+test_plugin_platform_interface/**

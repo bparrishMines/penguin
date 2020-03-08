@@ -1,0 +1,22 @@
+name: test_plugin
+description: A new Flutter package project.
+version: 0.0.1
+author:
+homepage:
+
+environment:
+  sdk: ">=2.1.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  plugin_platform_interface: ^1.0.1
+  penguin:
+    path: ../penguin
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+
