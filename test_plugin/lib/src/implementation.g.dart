@@ -1,4 +1,4 @@
-part of 'method_channel_platform.dart';
+part of 'implementation.dart';
 
 abstract class _MethodChannelTestClass with MethodChannelReferenceHolder {
   MethodCall _testMethod(String testParameter) {

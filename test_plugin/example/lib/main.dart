@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:test_plugin/test_plugin.dart';
 
 void main() => runApp(MyApp());
 
