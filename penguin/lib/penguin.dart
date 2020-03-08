@@ -1,3 +1,3 @@
-library penguin;
-
-export 'src/penguin.dart';
+class Interface {
+  const Interface();
+}

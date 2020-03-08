@@ -33,3 +33,5 @@ doc/api/
 
 # Penguin Generator test plugin files
 penguin_generator/tests/test_plugin/**
+
+test_plugin/**

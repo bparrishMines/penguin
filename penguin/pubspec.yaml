@@ -1,16 +1,8 @@
 name: penguin
-description: Keep track of all your TODOs.
+description: Annotations for penguin plugin.
 version: 1.0.0
 author: <bparr2450@gmail.com>
-homepage: https://github.com/jorgecoca/todo_reporter.dart
+homepage: https://github.com/bparrishMines/penguin/penguin
 
 environment:
   sdk: ">=2.0.0 <3.0.0"
-
-dependencies:
-  json_annotation: ^3.0.0
-
-dev_dependencies:
-  json_serializable: ^3.2.3
-  build_runner: ^1.7.1
-
