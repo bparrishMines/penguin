@@ -1,5 +1,5 @@
-name: test_plugin_platform_interface
-description: A new Flutter package project.
+name: test_plugin
+description: A new flutter plugin project.
 version: 0.0.1
 author:
 homepage:
@@ -10,16 +10,21 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  plugin_platform_interface: ^1.0.1
+  test_plugin_platform_interface:
+    path: ../test_plugin_platform_interface
   penguin:
     git:
       url: git://github.com/bparrishMines/penguin.git
       path: penguin
       ref: penguin4
+  penguin_plugin:
+    path: ../penguin_plugin
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
 flutter:
-
+  plugin:
+    androidPackage: com.example.test_plugin
+    pluginClass: TestPlugin
