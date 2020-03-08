@@ -1,5 +1,6 @@
 import 'package:penguin/penguin.dart';
-import 'package:test_plugin/src/platform.dart';
+
+import '../test_plugin_platform_interface.dart';
 
 @Interface()
 class TestClass {

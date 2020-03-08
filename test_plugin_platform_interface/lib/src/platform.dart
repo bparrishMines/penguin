@@ -1,6 +1,6 @@
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
-import '../test_plugin.dart';
+import '../test_plugin_platform_interface.dart';
 
 class TestPluginPlatform extends PlatformInterface {
   TestPluginPlatform() : super(token: _token);
