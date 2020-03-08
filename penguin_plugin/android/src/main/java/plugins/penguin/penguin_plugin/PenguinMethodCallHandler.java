@@ -39,7 +39,7 @@ public abstract class PenguinMethodCallHandler implements MethodCallHandler {
 
     final List<Object> methodArguments;
     if (arguments.size() > 2) {
-      methodArguments = arguments.subList(2, arguments.size() - 1);
+      methodArguments = arguments.subList(2, arguments.size());
     } else {
       methodArguments = new ArrayList<>();
     }

@@ -13,9 +13,12 @@ class TestClassImpl extends _MethodChannelTestClass implements TestClass {
   final String testField;
 
   @override
-  Future<String> testMethod(String testParameter) {
+  Future<String> testMethod(String testParameter) async {
+    retain();
+    autoReleasePool();
+
     final MethodCall methodCall = _testMethod(testParameter);
-    return channel.invokeMethod(methodCall.method, methodCall.arguments);
+    return channel.invokeMethod<String>(methodCall.method, methodCall.arguments);
   }
 
   @override

@@ -6,7 +6,7 @@ public class MyTestClass extends TestPluginPlatform.TestClass {
   }
 
   @Override
-  public String testMethod(String testParameter) {
-    return "Hello, World!";
+  public String testMethod(String testParameter) throws Exception {
+    return String.format("Hello, %s and %s!", testField, testParameter);
   }
 }

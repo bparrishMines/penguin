@@ -21,7 +21,7 @@ public abstract class TestPluginPlatform {
       this.testField = testField;
     }
 
-    public String testMethod(String testParameter) {
+    public String testMethod(String testParameter) throws Exception {
       throw new UnsupportedOperationException();
     }
   }
