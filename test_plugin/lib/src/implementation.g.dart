@@ -1,8 +1,8 @@
 part of 'implementation.dart';
 
-abstract class _MethodChannelTestClass with MethodChannelReferenceHolder {
-  MethodCall _testMethod(String testParameter) {
-    return MethodCall(
+abstract class _MethodChannelTestClass extends TestPluginReference {
+  Future<dynamic> _testMethod(String testParameter) {
+    return _channel.invokeMethod<dynamic>(
       'METHODCALL',
       <dynamic>[this, 'testMethod', testParameter],
     );
@@ -19,7 +19,7 @@ class TestPluginMessageCodec extends StandardMessageCodec {
     if (value is TestClass) {
       buffer.putUint8(_valueTestClass);
       writeValue(buffer, value.testField);
-      writeValue(buffer, (value as MethodChannelReferenceHolder).referenceId);
+      writeValue(buffer, value._reference.referenceId);
     } else {
       super.writeValue(buffer, value);
     }
@@ -31,10 +31,27 @@ class TestPluginMessageCodec extends StandardMessageCodec {
 
     switch (type) {
       case _valueTestClass:
-        return (TestClass(readNextValue()) as MethodChannelReferenceHolder)
-          ..setReferenceId(readNextValue());
+        return TestClass(readNextValue()).._changeReferenceId(readNextValue());
       default:
         return super.readValueOfType(type, buffer);
     }
   }
+}
+
+abstract class TestPluginReference {
+  TestPluginReference() {
+    _reference = MethodChannelReference(object: this, channel: _channel);
+  }
+
+  MethodChannelReference _reference;
+  MethodChannel get _channel;
+
+  void _retain() => _reference.retain();
+
+  void _release() => _reference.release();
+
+  void _autoReleasePool() => _reference.autoReleasePool();
+
+  void _changeReferenceId(String referenceId) =>
+      _reference.changeReferenceId(referenceId);
 }

@@ -2,76 +2,107 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:uuid/uuid.dart';
 
-class _ReferenceHolderManager {
-  static final _ReferenceHolderManager instance = _ReferenceHolderManager();
+class ReferenceManager {
+  ReferenceManager._();
 
-  final Map<String, MethodChannelReferenceHolder> referenceHolders =
-      <String, MethodChannelReferenceHolder>{};
-  final List<MethodChannelReferenceHolder> autoReleasePool =
-      <MethodChannelReferenceHolder>[];
+  static final ReferenceManager instance = ReferenceManager._();
 
-  void addReferenceHolder(MethodChannelReferenceHolder holder) {
+  final Map<Reference, dynamic> _references = <Reference, dynamic>{};
+  final List<Reference> _autoReleasePool = <Reference>[];
+
+  void addReference(Reference reference, dynamic object) {
     assert(
-      !referenceHolders.containsKey(holder.referenceId),
-      holder.referenceId,
+      !_references.containsKey(reference),
+      'A reference for $object already exists',
     );
-    referenceHolders[holder.referenceId] = holder;
+    _references[reference] = object;
   }
 
-  MethodChannelReferenceHolder removeReferenceHolder(
-    MethodChannelReferenceHolder holder,
-  ) {
-    return referenceHolders.remove(holder.referenceId);
+  Reference removeReference(Reference reference) {
+    return _references.remove(reference);
   }
 
   void drainAutoreleasePool(Duration duration) {
-    for (MethodChannelReferenceHolder holder in autoReleasePool) {
-      holder.release();
+    for (Reference reference in _autoReleasePool) {
+      reference.release();
     }
-    autoReleasePool.clear();
+    _autoReleasePool.clear();
   }
 
-  void addReferenceHolderToAutoReleasePool(
-      MethodChannelReferenceHolder holder) {
-    autoReleasePool.add(holder);
-    if (autoReleasePool.length == 1) {
+  void addReferenceHolderToAutoReleasePool(Reference holder) {
+    _autoReleasePool.add(holder);
+    if (_autoReleasePool.length == 1) {
       WidgetsBinding.instance.addPostFrameCallback(drainAutoreleasePool);
     }
   }
 }
 
-mixin MethodChannelReferenceHolder {
+abstract class Reference {
+  Reference(this.object) : assert(object != null);
+
   static final Uuid _uuid = Uuid();
-  int _refCount = 0;
+
+  int _referenceCount = 0;
   String _referenceId = _uuid.v4();
 
-  MethodChannel get channel;
+  final dynamic object;
 
+  int get referenceCount => _referenceCount;
   String get referenceId => _referenceId;
 
+  @mustCallSuper
   void retain() {
-    _refCount++;
+    _referenceCount++;
 
-    if (_refCount == 1) {
-      _ReferenceHolderManager.instance.addReferenceHolder(this);
-      channel.invokeMethod<void>('CREATE', this);
+    if (referenceCount == 1) {
+      ReferenceManager.instance.addReference(this, object);
     }
   }
 
+  @mustCallSuper
   void release() {
-    _refCount--;
+    _referenceCount--;
 
-    if (_refCount == 0) {
-      _ReferenceHolderManager.instance.removeReferenceHolder(this);
-      channel.invokeMethod<void>('DESTROY', this);
-    } else if (_refCount < 0) {
-      _refCount = 0;
+    if (referenceCount == 0) {
+      ReferenceManager.instance.removeReference(this);
+    } else if (referenceCount < 0) {
+      _referenceCount = 0;
     }
   }
 
   void autoReleasePool() {
-    _ReferenceHolderManager.instance.addReferenceHolderToAutoReleasePool(this);
+    ReferenceManager.instance.addReferenceHolderToAutoReleasePool(this);
   }
 
-  void setReferenceId(String referenceId) => _referenceId = referenceId;
+  void changeReferenceId(String referenceId) => _referenceId = referenceId;
+
+  @override
+  int get hashCode => referenceId.hashCode;
+
+  @override
+  bool operator ==(other) {
+    return super.hashCode == hashCode;
+  }
+}
+
+class MethodChannelReference extends Reference {
+  MethodChannelReference({
+    @required dynamic object,
+    @required this.channel,
+  })  : assert(channel != null),
+        super(object);
+
+  final MethodChannel channel;
+
+  @override
+  void retain() {
+    super.retain();
+    if (referenceCount == 1) channel.invokeMethod<void>('CREATE', this);
+  }
+
+  @override
+  void release() {
+    super.release();
+    if (referenceCount == 0) channel.invokeMethod<void>('DESTROY', this);
+  }
 }
