@@ -2,6 +2,7 @@ package com.example.test_plugin;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
+import io.flutter.Log;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
@@ -29,6 +30,7 @@ public abstract class TestPluginPlatform {
   private class TestPluginMethodCallHandler extends PenguinMethodCallHandler {
     @Override
     public void onMethodCall(MethodCall call, Result result) {
+      Log.d(TestPluginPlatform.class.getSimpleName(), "onMethodCall: " + call.method);
       if (call.method.equals("CREATE")) {
         if (call.arguments instanceof TestClass) {
           final TestClass instance = createTestClass((TestClass) call.arguments);

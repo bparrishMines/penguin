@@ -13,7 +13,7 @@ class ReferenceManager {
   void addReference(Reference reference, dynamic object) {
     assert(
       !_references.containsKey(reference),
-      'A reference for $object already exists',
+      'A reference for $object already exists.',
     );
     _references[reference] = object;
   }
@@ -97,12 +97,12 @@ class MethodChannelReference extends Reference {
   @override
   void retain() {
     super.retain();
-    if (referenceCount == 1) channel.invokeMethod<void>('CREATE', this);
+    if (referenceCount == 1) channel.invokeMethod<void>('CREATE', object);
   }
 
   @override
   void release() {
     super.release();
-    if (referenceCount == 0) channel.invokeMethod<void>('DESTROY', this);
+    if (referenceCount == 0) channel.invokeMethod<void>('DESTROY', object);
   }
 }

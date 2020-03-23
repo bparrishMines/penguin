@@ -1,8 +1,8 @@
 part of 'implementation.dart';
 
 abstract class _MethodChannelTestClass extends TestPluginReference {
-  Future<dynamic> _testMethod(String testParameter) {
-    return _channel.invokeMethod<dynamic>(
+  Future<String> _testMethod(String testParameter) {
+    return _channel.invokeMethod<String>(
       'METHODCALL',
       <dynamic>[this, 'testMethod', testParameter],
     );
