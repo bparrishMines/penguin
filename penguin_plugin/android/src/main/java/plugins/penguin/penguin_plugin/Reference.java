@@ -1,9 +1,9 @@
 package plugins.penguin.penguin_plugin;
 
-public abstract class MethodChannelReferenceHolder {
+public abstract class Reference {
   public final String referenceId;
 
-  public MethodChannelReferenceHolder(String referenceId) {
+  public Reference(String referenceId) {
     this.referenceId = referenceId;
   }
 }

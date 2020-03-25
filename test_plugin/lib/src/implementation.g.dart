@@ -1,11 +1,8 @@
 part of 'implementation.dart';
 
 abstract class _MethodChannelTestClass extends TestPluginReference {
-  Future<String> _testMethod(String testParameter) {
-    return _channel.invokeMethod<String>(
-      'METHODCALL',
-      <dynamic>[this, 'testMethod', testParameter],
-    );
+  MethodCall _testMethod(String testParameter) {
+    return _reference.createMethodCall('testMethod', <dynamic>[testParameter]);
   }
 }
 
@@ -31,7 +28,9 @@ class TestPluginMessageCodec extends StandardMessageCodec {
 
     switch (type) {
       case _valueTestClass:
-        return TestClass(readNextValue()).._changeReferenceId(readNextValue());
+        return TestClass(readNextValue())
+          .._reassign(readNextValue(), referenceCount: 1)
+          .._autoReleasePool();
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -52,6 +51,14 @@ abstract class TestPluginReference {
 
   void _autoReleasePool() => _reference.autoReleasePool();
 
-  void _changeReferenceId(String referenceId) =>
-      _reference.changeReferenceId(referenceId);
+  void _reassign(
+    String referenceId, {
+    int referenceCount,
+    bool useGlobalReferenceManager,
+  }) =>
+      _reference.reassign(
+        referenceId,
+        referenceCount: referenceCount,
+        useGlobalReferenceManager: useGlobalReferenceManager,
+      );
 }

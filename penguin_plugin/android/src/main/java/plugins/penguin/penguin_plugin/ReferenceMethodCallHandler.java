@@ -7,11 +7,15 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 
-public abstract class PenguinMethodCallHandler implements MethodCallHandler {
+public abstract class ReferenceMethodCallHandler implements MethodCallHandler {
+  public static final String METHOD_CREATE = "REFERENCE_CREATE";
+  public static final String METHOD_METHODCALL = "REFERENCE_METHODCALL";
+  public static final String METHOD_DESTROY = "REFERENCE_DESTROY";
+
   @Override
   public void onMethodCall(final MethodCall call, final Result result) {
     switch(call.method) {
-      case "METHODCALL":
+      case METHOD_METHODCALL:
         final Object value;
         try {
           value = onMethodCall(call);
@@ -21,7 +25,7 @@ public abstract class PenguinMethodCallHandler implements MethodCallHandler {
         }
         result.success(value);
         break;
-      case "DESTROY":
+      case METHOD_DESTROY:
         handleDestroy(call);
         result.success(null);
         break;
@@ -33,9 +37,8 @@ public abstract class PenguinMethodCallHandler implements MethodCallHandler {
   private Object onMethodCall(final MethodCall call) throws Exception {
     final List<Object> arguments = (List<Object>) call.arguments;
 
-    final String referenceId = ((MethodChannelReferenceHolder) arguments.get(0)).referenceId;
-    final ReferenceHolderManager manager = ReferenceHolderManager.getGlobalInstance();
-    final Object caller = manager.getReferenceHolder(referenceId);
+    final ReferenceManager manager = ReferenceManager.getGlobalInstance();
+    final Object caller = manager.getReference((String) arguments.get(0));
 
     final List<Object> methodArguments;
     if (arguments.size() > 2) {
@@ -50,11 +53,10 @@ public abstract class PenguinMethodCallHandler implements MethodCallHandler {
   }
 
   private void handleDestroy(final MethodCall call) {
-    final List<Object> arguments = (List<Object>) call.arguments;
-    final String referenceId = ((MethodChannelReferenceHolder) arguments.get(0)).referenceId;
-    final ReferenceHolderManager manager = ReferenceHolderManager.getGlobalInstance();
+    final String referenceId = (String) call.arguments;
+    final ReferenceManager manager = ReferenceManager.getGlobalInstance();
 
-    manager.removeReferenceHolder(referenceId);
+    manager.removeReference(referenceId);
   }
 
   private Class[] getClasses(final List<Object> arguments) {

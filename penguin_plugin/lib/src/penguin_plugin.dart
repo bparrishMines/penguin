@@ -1,11 +1,11 @@
+import 'dart:math' as math;
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:uuid/uuid.dart';
 
 class ReferenceManager {
-  ReferenceManager._();
-
-  static final ReferenceManager instance = ReferenceManager._();
+  static final ReferenceManager globalInstance = ReferenceManager();
 
   final Map<Reference, dynamic> _references = <Reference, dynamic>{};
   final List<Reference> _autoReleasePool = <Reference>[];
@@ -29,7 +29,7 @@ class ReferenceManager {
     _autoReleasePool.clear();
   }
 
-  void addReferenceHolderToAutoReleasePool(Reference holder) {
+  void addReferenceToAutoReleasePool(Reference holder) {
     _autoReleasePool.add(holder);
     if (_autoReleasePool.length == 1) {
       WidgetsBinding.instance.addPostFrameCallback(drainAutoreleasePool);
@@ -38,24 +38,31 @@ class ReferenceManager {
 }
 
 abstract class Reference {
-  Reference(this.object) : assert(object != null);
+  Reference(
+    this.object, {
+    bool useGlobalReferenceManager = true,
+  })  : _useGlobalReferenceManager = useGlobalReferenceManager,
+        assert(object != null),
+        assert(useGlobalReferenceManager != null);
 
   static final Uuid _uuid = Uuid();
 
   int _referenceCount = 0;
   String _referenceId = _uuid.v4();
+  bool _useGlobalReferenceManager;
 
   final dynamic object;
 
   int get referenceCount => _referenceCount;
   String get referenceId => _referenceId;
+  bool get useGlobalReferenceManager => _useGlobalReferenceManager;
 
   @mustCallSuper
   void retain() {
     _referenceCount++;
 
-    if (referenceCount == 1) {
-      ReferenceManager.instance.addReference(this, object);
+    if (referenceCount == 1 && useGlobalReferenceManager) {
+      ReferenceManager.globalInstance.addReference(this, object);
     }
   }
 
@@ -63,18 +70,33 @@ abstract class Reference {
   void release() {
     _referenceCount--;
 
-    if (referenceCount == 0) {
-      ReferenceManager.instance.removeReference(this);
+    if (referenceCount == 0 && useGlobalReferenceManager) {
+      ReferenceManager.globalInstance.removeReference(this);
     } else if (referenceCount < 0) {
       _referenceCount = 0;
     }
   }
 
+  @mustCallSuper
   void autoReleasePool() {
-    ReferenceManager.instance.addReferenceHolderToAutoReleasePool(this);
+    if (useGlobalReferenceManager) {
+      ReferenceManager.globalInstance.addReferenceToAutoReleasePool(this);
+    }
   }
 
-  void changeReferenceId(String referenceId) => _referenceId = referenceId;
+  void reassign(
+    String referenceId, {
+    int referenceCount = 0,
+    bool useGlobalReferenceManager = true,
+  }) {
+    assert(referenceId != null);
+    assert(referenceCount != null);
+    assert(useGlobalReferenceManager != null);
+
+    _referenceId = referenceId;
+    _referenceCount = math.max(referenceCount, 0);
+    _useGlobalReferenceManager = useGlobalReferenceManager;
+  }
 
   @override
   int get hashCode => referenceId.hashCode;
@@ -92,17 +114,33 @@ class MethodChannelReference extends Reference {
   })  : assert(channel != null),
         super(object);
 
+  static final String methodCreate = 'REFERENCE_CREATE';
+  static final String methodMethodCall = 'REFERENCE_METHODCALL';
+  static final String methodDestroy = 'REFERENCE_DESTROY';
+
   final MethodChannel channel;
+
+  MethodCall createMethodCall(
+    String methodName, [
+    List<dynamic> arguments,
+  ]) {
+    return MethodCall(
+      MethodChannelReference.methodMethodCall,
+      <dynamic>[referenceId, methodName, ...arguments],
+    );
+  }
 
   @override
   void retain() {
     super.retain();
-    if (referenceCount == 1) channel.invokeMethod<void>('CREATE', object);
+    if (referenceCount == 1) channel.invokeMethod<void>(methodCreate, object);
   }
 
   @override
   void release() {
     super.release();
-    if (referenceCount == 0) channel.invokeMethod<void>('DESTROY', object);
+    if (referenceCount == 0) {
+      channel.invokeMethod<void>(methodDestroy, referenceId);
+    }
   }
 }

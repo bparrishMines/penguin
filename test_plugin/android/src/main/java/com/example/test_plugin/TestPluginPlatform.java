@@ -9,12 +9,12 @@ import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.StandardMessageCodec;
 import io.flutter.plugin.common.StandardMethodCodec;
-import plugins.penguin.penguin_plugin.MethodChannelReferenceHolder;
-import plugins.penguin.penguin_plugin.PenguinMethodCallHandler;
-import plugins.penguin.penguin_plugin.ReferenceHolderManager;
+import plugins.penguin.penguin_plugin.Reference;
+import plugins.penguin.penguin_plugin.ReferenceMethodCallHandler;
+import plugins.penguin.penguin_plugin.ReferenceManager;
 
 public abstract class TestPluginPlatform {
-  public static class TestClass extends MethodChannelReferenceHolder {
+  public static class TestClass extends Reference {
     public final String testField;
 
     public TestClass(final String testField, final String referenceId) {
@@ -27,14 +27,14 @@ public abstract class TestPluginPlatform {
     }
   }
 
-  private class TestPluginMethodCallHandler extends PenguinMethodCallHandler {
+  private class ReferenceMethodCallHandlerImpl extends ReferenceMethodCallHandler {
     @Override
     public void onMethodCall(MethodCall call, Result result) {
-      Log.d(TestPluginPlatform.class.getSimpleName(), "onMethodCall: " + call.method);
-      if (call.method.equals("CREATE")) {
+      Log.d(ReferenceMethodCallHandlerImpl.class.getName(), "onMethodCall: " + call.method);
+      if (call.method.equals(ReferenceMethodCallHandler.METHOD_CREATE)) {
         if (call.arguments instanceof TestClass) {
           final TestClass instance = createTestClass((TestClass) call.arguments);
-          ReferenceHolderManager.getGlobalInstance().addReferenceHolder(instance);
+          ReferenceManager.getGlobalInstance().addReference(instance);
         }
         result.success(null);
       } else {
@@ -71,11 +71,11 @@ public abstract class TestPluginPlatform {
 
   public abstract TestClass createTestClass(TestClass testClass);
 
-  public MethodChannel createMethodChannel(final BinaryMessenger binaryMessenger, final String channelName) {
+  public MethodChannel initializeReferenceMethodChannel(final BinaryMessenger binaryMessenger, final String channelName) {
     final MethodChannel channel = new MethodChannel(binaryMessenger,
         channelName,
         new StandardMethodCodec(new TestPluginMessageCodec()));
-    channel.setMethodCallHandler(new TestPluginMethodCallHandler());
+    channel.setMethodCallHandler(new ReferenceMethodCallHandlerImpl());
 
     return channel;
   }

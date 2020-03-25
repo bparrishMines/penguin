@@ -23,9 +23,11 @@ class TestClass extends _MethodChannelTestClass
   final String testField;
 
   @override
-  Future<String> testMethod(String testParameter) async {
+  Future<String> testMethod(String testParameter) {
     _retain();
     _autoReleasePool();
-    return _testMethod(testParameter);
+
+    final MethodCall call = _testMethod(testParameter);
+    return _channel.invokeMethod<String>(call.method, call.arguments);
   }
 }
