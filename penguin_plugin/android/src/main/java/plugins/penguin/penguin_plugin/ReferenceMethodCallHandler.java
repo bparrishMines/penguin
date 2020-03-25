@@ -53,10 +53,7 @@ public abstract class ReferenceMethodCallHandler implements MethodCallHandler {
   }
 
   private void handleDestroy(final MethodCall call) {
-    final String referenceId = (String) call.arguments;
-    final ReferenceManager manager = ReferenceManager.getGlobalInstance();
-
-    manager.removeReference(referenceId);
+    ReferenceManager.getGlobalInstance().removeReference((String) call.arguments);
   }
 
   private Class[] getClasses(final List<Object> arguments) {
