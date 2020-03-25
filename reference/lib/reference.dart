@@ -7,19 +7,19 @@ import 'package:uuid/uuid.dart';
 class ReferenceManager {
   static final ReferenceManager globalInstance = ReferenceManager();
 
-  final Map<Reference, dynamic> _references = <Reference, dynamic>{};
+  final Map<String, Reference> _references = <String, Reference>{};
   final List<Reference> _autoReleasePool = <Reference>[];
 
-  void addReference(Reference reference, dynamic object) {
+  void addReference(Reference reference) {
     assert(
       !_references.containsKey(reference),
-      'A reference for $object already exists.',
+      'A reference with id ${reference.referenceId} already exists.',
     );
-    _references[reference] = object;
+    _references[reference.referenceId] = reference;
   }
 
   Reference removeReference(Reference reference) {
-    return _references.remove(reference);
+    return _references.remove(reference.referenceId);
   }
 
   void drainAutoreleasePool(Duration duration) {
@@ -29,8 +29,8 @@ class ReferenceManager {
     _autoReleasePool.clear();
   }
 
-  void addReferenceToAutoReleasePool(Reference holder) {
-    _autoReleasePool.add(holder);
+  void addReferenceToAutoReleasePool(Reference reference) {
+    _autoReleasePool.add(reference);
     if (_autoReleasePool.length == 1) {
       WidgetsBinding.instance.addPostFrameCallback(drainAutoreleasePool);
     }
@@ -38,62 +38,54 @@ class ReferenceManager {
 }
 
 abstract class Reference {
-  Reference(
-    this.object, {
-    bool useGlobalReferenceManager = true,
-  })  : _useGlobalReferenceManager = useGlobalReferenceManager,
-        assert(object != null),
-        assert(useGlobalReferenceManager != null);
+  Reference({
+    String referenceId,
+    bool useGlobalReferenceManager,
+    int initialReferenceCount,
+    this.onRetain,
+    this.onRelease,
+  })  : assert(initialReferenceCount == null || initialReferenceCount >= 0),
+        referenceId = referenceId ?? _uuid.v4(),
+        useGlobalReferenceManager = useGlobalReferenceManager ?? true,
+        _referenceCount = math.max(initialReferenceCount ?? 0, 0);
 
   static final Uuid _uuid = Uuid();
 
-  int _referenceCount = 0;
-  String _referenceId = _uuid.v4();
-  bool _useGlobalReferenceManager;
+  int _referenceCount;
 
-  final dynamic object;
+  final String referenceId;
+  final bool useGlobalReferenceManager;
+  final VoidCallback onRetain;
+  final VoidCallback onRelease;
 
   int get referenceCount => _referenceCount;
-  String get referenceId => _referenceId;
-  bool get useGlobalReferenceManager => _useGlobalReferenceManager;
 
-  @mustCallSuper
   void retain() {
     _referenceCount++;
-
-    if (referenceCount == 1 && useGlobalReferenceManager) {
-      ReferenceManager.globalInstance.addReference(this, object);
+    if (referenceCount != 1) return;
+    if (onRetain != null) onRetain();
+    if (useGlobalReferenceManager) {
+      ReferenceManager.globalInstance.addReference(this);
     }
   }
 
-  @mustCallSuper
   void release() {
-    _referenceCount--;
+    assert(_referenceCount > 0,
+        '`release()` was called without calling `retain()` first. In other words, `release()` was called while `referenceCount == 0`. Reference count = $_referenceCount.');
+    if (referenceCount == 0) return;
 
-    if (referenceCount == 0 && useGlobalReferenceManager) {
+    _referenceCount--;
+    if (_referenceCount > 0) return;
+    if (onRelease != null) onRelease();
+    if (useGlobalReferenceManager) {
       ReferenceManager.globalInstance.removeReference(this);
-    } else if (referenceCount < 0) {
-      _referenceCount = 0;
     }
   }
 
-  @mustCallSuper
   void autoReleasePool() {
     if (useGlobalReferenceManager) {
       ReferenceManager.globalInstance.addReferenceToAutoReleasePool(this);
     }
-  }
-
-  void reassign(
-    String referenceId, {
-    int referenceCount = 0,
-    bool useGlobalReferenceManager = true,
-  }) {
-    assert(referenceId != null);
-
-    _referenceId = referenceId;
-    _referenceCount = math.max(referenceCount ?? 0, 0);
-    _useGlobalReferenceManager = useGlobalReferenceManager ?? true;
   }
 
   @override
@@ -106,17 +98,42 @@ abstract class Reference {
 }
 
 class MethodChannelReference extends Reference {
-  MethodChannelReference({
-    @required dynamic object,
-    @required this.channel,
-  })  : assert(channel != null),
-        super(object);
+  MethodChannelReference._({
+    String referenceId,
+    bool useGlobalReferenceManager,
+    dynamic creationParameters,
+  })  : assert(referenceId != null),
+        super(
+          referenceId: referenceId,
+          useGlobalReferenceManager: useGlobalReferenceManager,
+          onRetain: () => channel.invokeMethod<void>(
+            methodRetain,
+            creationParameters,
+          ),
+          onRelease: () => channel.invokeMethod<void>(
+            methodRelease,
+            referenceId,
+          ),
+        );
 
-  static const String methodCreate = 'REFERENCE_CREATE';
+  factory MethodChannelReference({
+    String referenceId,
+    bool useGlobalReferenceManager = true,
+    dynamic creationParameters,
+  }) {
+    referenceId ??= Reference._uuid.v4();
+    return MethodChannelReference._(
+      referenceId: referenceId,
+      useGlobalReferenceManager: useGlobalReferenceManager,
+      creationParameters: creationParameters,
+    );
+  }
+
+  static const String methodRetain = 'REFERENCE_RETAIN';
   static const String methodMethodCall = 'REFERENCE_METHODCALL';
-  static const String methodDestroy = 'REFERENCE_DESTROY';
+  static const String methodRelease = 'REFERENCE_RELEASE';
 
-  final MethodChannel channel;
+  static final MethodChannel channel = MethodChannel('reference');
 
   MethodCall createMethodCall(
     String methodName, [
@@ -126,19 +143,5 @@ class MethodChannelReference extends Reference {
       MethodChannelReference.methodMethodCall,
       <dynamic>[referenceId, methodName, ...arguments],
     );
-  }
-
-  @override
-  void retain() {
-    super.retain();
-    if (referenceCount == 1) channel.invokeMethod<void>(methodCreate, object);
-  }
-
-  @override
-  void release() {
-    super.release();
-    if (referenceCount == 0) {
-      channel.invokeMethod<void>(methodDestroy, referenceId);
-    }
   }
 }

@@ -29,8 +29,8 @@ class TestPluginMessageCodec extends StandardMessageCodec {
     switch (type) {
       case _valueTestClass:
         return TestClass(readNextValue())
-          .._reassign(readNextValue(), referenceCount: 1)
-          .._autoReleasePool();
+          ..reference.reassign(readNextValue(), referenceCount: 1)
+          ..reference.autoReleasePool();
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -43,22 +43,7 @@ abstract class TestPluginReference {
   }
 
   MethodChannelReference _reference;
+  MethodChannelReference get reference => reference;
+
   MethodChannel get _channel;
-
-  void _retain() => _reference.retain();
-
-  void _release() => _reference.release();
-
-  void _autoReleasePool() => _reference.autoReleasePool();
-
-  void _reassign(
-    String referenceId, {
-    int referenceCount,
-    bool useGlobalReferenceManager,
-  }) =>
-      _reference.reassign(
-        referenceId,
-        referenceCount: referenceCount,
-        useGlobalReferenceManager: useGlobalReferenceManager,
-      );
 }

@@ -1,5 +1,8 @@
 package com.example.test_plugin;
 
+import com.example.reference.Reference;
+import com.example.reference.ReferenceManager;
+import com.example.reference.ReferenceMethodCallHandler;
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import io.flutter.Log;
@@ -9,9 +12,6 @@ import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.StandardMessageCodec;
 import io.flutter.plugin.common.StandardMethodCodec;
-import plugins.penguin.penguin_plugin.Reference;
-import plugins.penguin.penguin_plugin.ReferenceMethodCallHandler;
-import plugins.penguin.penguin_plugin.ReferenceManager;
 
 public abstract class TestPluginPlatform {
   public static class TestClass extends Reference {

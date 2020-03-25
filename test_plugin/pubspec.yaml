@@ -17,8 +17,8 @@ dependencies:
       url: git://github.com/bparrishMines/penguin.git
       path: penguin
       ref: penguin4
-  penguin_plugin:
-    path: ../penguin_plugin
+  reference:
+    path: ../reference
 
 dev_dependencies:
   flutter_test:

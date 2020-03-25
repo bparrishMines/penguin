@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:penguin/penguin.dart';
-import 'package:penguin_plugin/penguin_plugin.dart';
+import 'package:reference/reference.dart';
 import 'package:test_plugin_platform_interface/test_plugin_platform_interface.dart'
     as plugin_interface;
 
@@ -24,8 +24,8 @@ class TestClass extends _MethodChannelTestClass
 
   @override
   Future<String> testMethod(String testParameter) {
-    _retain();
-    _autoReleasePool();
+    reference.retain();
+    reference.autoReleasePool();
 
     final MethodCall call = _testMethod(testParameter);
     return _channel.invokeMethod<String>(call.method, call.arguments);

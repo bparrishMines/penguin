@@ -8,9 +8,9 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 
 public abstract class ReferenceMethodCallHandler implements MethodCallHandler {
-  public static final String METHOD_CREATE = "REFERENCE_CREATE";
+  public static final String METHOD_RETAIN = "REFERENCE_RETAIN";
   public static final String METHOD_METHODCALL = "REFERENCE_METHODCALL";
-  public static final String METHOD_DESTROY = "REFERENCE_DESTROY";
+  public static final String METHOD_RELEASE = "REFERENCE_RELEASE";
 
   @Override
   public void onMethodCall(final MethodCall call, final Result result) {
@@ -25,8 +25,8 @@ public abstract class ReferenceMethodCallHandler implements MethodCallHandler {
         }
         result.success(value);
         break;
-      case METHOD_DESTROY:
-        handleDestroy(call);
+      case METHOD_RELEASE:
+        handleRelease(call);
         result.success(null);
         break;
       default:
@@ -52,7 +52,7 @@ public abstract class ReferenceMethodCallHandler implements MethodCallHandler {
     return method.invoke(caller, methodArguments.toArray());
   }
 
-  private void handleDestroy(final MethodCall call) {
+  private void handleRelease(final MethodCall call) {
     ReferenceManager.getGlobalInstance().removeReference((String) call.arguments);
   }
 
