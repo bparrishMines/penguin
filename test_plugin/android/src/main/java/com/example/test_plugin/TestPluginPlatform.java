@@ -3,17 +3,15 @@ package com.example.test_plugin;
 import com.example.reference.Reference;
 import com.example.reference.ReferenceManager;
 import com.example.reference.ReferenceMethodCallHandler;
+import com.example.reference.ReferencePlatform;
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import io.flutter.Log;
-import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
-import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.StandardMessageCodec;
-import io.flutter.plugin.common.StandardMethodCodec;
 
-public abstract class TestPluginPlatform {
+public abstract class TestPluginPlatform extends ReferencePlatform  {
   public static class TestClass extends Reference {
     public final String testField;
 
@@ -27,14 +25,27 @@ public abstract class TestPluginPlatform {
     }
   }
 
-  private class ReferenceMethodCallHandlerImpl extends ReferenceMethodCallHandler {
+  private class GeneratedReferenceMethodCallHandler extends ReferenceMethodCallHandler {
+    private GeneratedReferenceMethodCallHandler(ReferenceManager referenceManager) {
+      super(referenceManager);
+    }
+
     @Override
     public void onMethodCall(MethodCall call, Result result) {
-      Log.d(ReferenceMethodCallHandlerImpl.class.getName(), "onMethodCall: " + call.method);
-      if (call.method.equals(ReferenceMethodCallHandler.METHOD_CREATE)) {
+      Log.d(GeneratedReferenceMethodCallHandler.class.getName(), "onMethodCall: " + call.method);
+      if (call.method.equals(ReferenceMethodCallHandler.METHOD_RETAIN)) {
         if (call.arguments instanceof TestClass) {
           final TestClass instance = createTestClass((TestClass) call.arguments);
-          ReferenceManager.getGlobalInstance().addReference(instance);
+          if (!referenceManager.addReference(instance)) {
+            final String message = String.format("%s with the following referenceId already exists: %s",
+                instance.getClass().getSimpleName(),
+                instance.referenceId);
+            throw new IllegalArgumentException(message);
+          }
+        } else {
+          final String message = String.format("Failed to instantiate an object with parameters `%s`",
+              call.arguments.getClass().getSimpleName());
+          throw new IllegalArgumentException(message);
         }
         result.success(null);
       } else {
@@ -43,7 +54,7 @@ public abstract class TestPluginPlatform {
     }
   }
 
-  private class TestPluginMessageCodec extends StandardMessageCodec {
+  private static class GeneratedMessageCodec extends StandardMessageCodec {
     private static final byte TEST_CLASS = (byte) 128;
 
     @Override
@@ -71,12 +82,11 @@ public abstract class TestPluginPlatform {
 
   public abstract TestClass createTestClass(TestClass testClass);
 
-  public MethodChannel initializeReferenceMethodChannel(final BinaryMessenger binaryMessenger, final String channelName) {
-    final MethodChannel channel = new MethodChannel(binaryMessenger,
-        channelName,
-        new StandardMethodCodec(new TestPluginMessageCodec()));
-    channel.setMethodCallHandler(new ReferenceMethodCallHandlerImpl());
+  public StandardMessageCodec getMessageCodec() {
+    return new GeneratedMessageCodec();
+  }
 
-    return channel;
+  public ReferenceMethodCallHandler getMethodCallHandler(ReferenceManager referenceManager) {
+    return new GeneratedReferenceMethodCallHandler(referenceManager);
   }
 }

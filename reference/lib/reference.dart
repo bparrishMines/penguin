@@ -99,13 +99,17 @@ abstract class Reference {
 
 class MethodChannelReference extends Reference {
   MethodChannelReference._({
+    @required MethodChannel channel,
     String referenceId,
     bool useGlobalReferenceManager,
     dynamic creationParameters,
-  })  : assert(referenceId != null),
+    int initialReferenceCount,
+  })  : channel = channel,
+        assert(referenceId != null),
         super(
           referenceId: referenceId,
           useGlobalReferenceManager: useGlobalReferenceManager,
+          initialReferenceCount: initialReferenceCount,
           onRetain: () => channel.invokeMethod<void>(
             methodRetain,
             creationParameters,
@@ -117,15 +121,19 @@ class MethodChannelReference extends Reference {
         );
 
   factory MethodChannelReference({
+    @required MethodChannel channel,
     String referenceId,
     bool useGlobalReferenceManager = true,
     dynamic creationParameters,
+    int initialReferenceCount,
   }) {
     referenceId ??= Reference._uuid.v4();
     return MethodChannelReference._(
+      channel: channel,
       referenceId: referenceId,
       useGlobalReferenceManager: useGlobalReferenceManager,
       creationParameters: creationParameters,
+      initialReferenceCount: initialReferenceCount,
     );
   }
 
@@ -133,7 +141,7 @@ class MethodChannelReference extends Reference {
   static const String methodMethodCall = 'REFERENCE_METHODCALL';
   static const String methodRelease = 'REFERENCE_RELEASE';
 
-  static final MethodChannel channel = MethodChannel('reference');
+  final MethodChannel channel;
 
   MethodCall createMethodCall(
     String methodName, [

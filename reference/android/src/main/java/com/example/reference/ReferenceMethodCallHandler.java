@@ -12,6 +12,12 @@ public abstract class ReferenceMethodCallHandler implements MethodCallHandler {
   public static final String METHOD_METHODCALL = "REFERENCE_METHODCALL";
   public static final String METHOD_RELEASE = "REFERENCE_RELEASE";
 
+  public final ReferenceManager referenceManager;
+
+  public ReferenceMethodCallHandler(ReferenceManager referenceManager) {
+    this.referenceManager = referenceManager;
+  }
+
   @Override
   public void onMethodCall(final MethodCall call, final Result result) {
     switch(call.method) {
@@ -37,8 +43,9 @@ public abstract class ReferenceMethodCallHandler implements MethodCallHandler {
   private Object onMethodCall(final MethodCall call) throws Exception {
     final List<Object> arguments = (List<Object>) call.arguments;
 
-    final ReferenceManager manager = ReferenceManager.getGlobalInstance();
-    final Object caller = manager.getReference((String) arguments.get(0));
+    final String referenceId = (String) arguments.get(0);
+    final Object caller = referenceManager.getReference(referenceId);
+    if (caller == null) throw new ReferenceNotFoundException(referenceId);
 
     final List<Object> methodArguments;
     if (arguments.size() > 2) {
@@ -53,7 +60,7 @@ public abstract class ReferenceMethodCallHandler implements MethodCallHandler {
   }
 
   private void handleRelease(final MethodCall call) {
-    ReferenceManager.getGlobalInstance().removeReference((String) call.arguments);
+    referenceManager.removeReference((String) call.arguments);
   }
 
   private Class[] getClasses(final List<Object> arguments) {

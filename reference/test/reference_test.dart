@@ -3,12 +3,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:reference/reference.dart';
 
 void main() {
+  final MethodChannel testChannel = MethodChannel('test_channel');
   final List<MethodCall> log = <MethodCall>[];
 
   TestWidgetsFlutterBinding.ensureInitialized();
 
   setUp(() {
-    MethodChannelReference.channel.setMockMethodCallHandler(
+    testChannel.setMockMethodCallHandler(
       (MethodCall methodCall) async {
         log.add(methodCall);
       },
@@ -16,12 +17,13 @@ void main() {
   });
 
   tearDown(() {
-    MethodChannelReference.channel.setMockMethodCallHandler(null);
+    testChannel.setMockMethodCallHandler(null);
     log.clear();
   });
 
   test('retain', () async {
     final MethodChannelReference reference = MethodChannelReference(
+      channel: testChannel,
       creationParameters: 23,
     );
 
@@ -35,6 +37,7 @@ void main() {
 
   test('release', () async {
     final MethodChannelReference reference = MethodChannelReference(
+      channel: testChannel,
       creationParameters: 23,
     );
 
