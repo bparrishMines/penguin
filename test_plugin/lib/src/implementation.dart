@@ -8,9 +8,8 @@ import 'package:test_plugin_platform_interface/test_plugin_platform_interface.da
 part 'implementation.g.dart';
 
 mixin MethodChannelUser {
-  final MethodChannel _channel = MethodChannel(
+  final MethodChannel _channel = _initializeReferenceMethodChannel(
     'test_plugin',
-    StandardMethodCodec(_GeneratedMessageCodec()),
   );
 }
 

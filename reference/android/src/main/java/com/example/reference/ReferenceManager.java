@@ -18,7 +18,8 @@ public class ReferenceManager {
       for (final ReferenceManager manager: attachedManagers) {
         manager.addReference(reference);
       }
-      return super.addReference(reference);
+      references.put(reference.referenceId, reference);
+      return true;
     }
 
     @Override

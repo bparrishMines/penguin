@@ -6,6 +6,30 @@ abstract class _TestClass extends _GeneratedReference {
   }
 }
 
+MethodChannel _initializeReferenceMethodChannel(
+    String name, [
+      MethodCodec codec = const StandardMethodCodec(_GeneratedMessageCodec()),
+      BinaryMessenger binaryMessenger,
+    ]) {
+  assert(name != null);
+  assert(codec != null);
+  return MethodChannel(name, codec, binaryMessenger);
+}
+
+abstract class _GeneratedReference {
+  _GeneratedReference() {
+    _reference = MethodChannelReference(
+      channel: _channel,
+      creationParameters: this,
+    );
+  }
+
+  MethodChannelReference _reference;
+  MethodChannelReference get reference => _reference;
+
+  MethodChannel get _channel;
+}
+
 class _GeneratedMessageCodec extends StandardMessageCodec {
   const _GeneratedMessageCodec();
 
@@ -40,18 +64,4 @@ class _GeneratedMessageCodec extends StandardMessageCodec {
         return super.readValueOfType(type, buffer);
     }
   }
-}
-
-abstract class _GeneratedReference {
-  _GeneratedReference() {
-    _reference = MethodChannelReference(
-      channel: _channel,
-      creationParameters: this,
-    );
-  }
-
-  MethodChannelReference _reference;
-  MethodChannelReference get reference => _reference;
-
-  MethodChannel get _channel;
 }
