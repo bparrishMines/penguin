@@ -2,18 +2,23 @@ part of 'implementation.dart';
 
 abstract class _TestClass extends _GeneratedReference {
   MethodCall _testMethod(String testParameter) {
-    return _reference.createMethodCall('testMethod', <dynamic>[testParameter]);
+    return reference.createMethodCall('testMethod', <dynamic>[testParameter]);
   }
 }
 
 MethodChannel _initializeReferenceMethodChannel(
-    String name, [
-      MethodCodec codec = const StandardMethodCodec(_GeneratedMessageCodec()),
-      BinaryMessenger binaryMessenger,
-    ]) {
+  String name, [
+  MessageCodec messageCodec = const _GeneratedMessageCodec(),
+  BinaryMessenger binaryMessenger,
+]) {
   assert(name != null);
-  assert(codec != null);
-  return MethodChannel(name, codec, binaryMessenger);
+  assert(messageCodec != null);
+  assert(messageCodec is _GeneratedMessageCodec);
+  return MethodChannel(
+    name,
+    StandardMethodCodec(messageCodec),
+    binaryMessenger,
+  );
 }
 
 abstract class _GeneratedReference {

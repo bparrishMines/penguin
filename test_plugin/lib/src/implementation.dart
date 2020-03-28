@@ -7,7 +7,7 @@ import 'package:test_plugin_platform_interface/test_plugin_platform_interface.da
 
 part 'implementation.g.dart';
 
-mixin MethodChannelUser {
+mixin _MethodChannelUser {
   final MethodChannel _channel = _initializeReferenceMethodChannel(
     'test_plugin',
   );
@@ -15,7 +15,7 @@ mixin MethodChannelUser {
 
 @MethodChannelImplementation()
 class TestClass extends _TestClass
-    with MethodChannelUser
+    with _MethodChannelUser
     implements plugin_interface.TestClass {
   TestClass(this.testField);
 

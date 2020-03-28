@@ -12,16 +12,22 @@ public abstract class ReferenceMethodCallHandler implements MethodCallHandler {
   public static final String METHOD_METHODCALL = "REFERENCE_METHODCALL";
   public static final String METHOD_RELEASE = "REFERENCE_RELEASE";
 
-  public final ReferenceManager referenceManager;
+  private final ReferenceManager referenceManager;
 
   public ReferenceMethodCallHandler(ReferenceManager referenceManager) {
     this.referenceManager = referenceManager;
   }
 
+  abstract public Reference createReference(final Object arguments);
+
   @Override
   public void onMethodCall(final MethodCall call, final Result result) {
     try {
       switch (call.method) {
+        case METHOD_RETAIN:
+          handleRetain(call);
+          result.success(null);
+          break;
         case METHOD_METHODCALL:
           result.success(handleMethodCall(call));
           break;
@@ -34,6 +40,16 @@ public abstract class ReferenceMethodCallHandler implements MethodCallHandler {
       }
     } catch (Exception exception) {
       result.error(exception.getClass().getSimpleName(), exception.getMessage(), android.util.Log.getStackTraceString(exception));
+    }
+  }
+  
+  private void handleRetain(final MethodCall call) {
+    final Reference reference = createReference(call.arguments);
+    if (!referenceManager.addReference(reference)) {
+      final String message = String.format("%s with the following referenceId already exists: %s",
+          reference.getClass().getSimpleName(),
+          reference.referenceId);
+      throw new IllegalArgumentException(message);
     }
   }
 
