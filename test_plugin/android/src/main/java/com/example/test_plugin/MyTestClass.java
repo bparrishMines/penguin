@@ -1,7 +1,7 @@
 package com.example.test_plugin;
 
-public class MyTestClass extends TestPluginPlatform.TestClass {
-  public MyTestClass(TestPluginPlatform.TestClass testClass) {
+public class MyTestClass extends GeneratedPlatform.TestClass {
+  public MyTestClass(GeneratedPlatform.TestClass testClass) {
     super(testClass.testField, testClass.referenceId);
   }
 

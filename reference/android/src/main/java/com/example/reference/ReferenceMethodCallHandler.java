@@ -20,27 +20,24 @@ public abstract class ReferenceMethodCallHandler implements MethodCallHandler {
 
   @Override
   public void onMethodCall(final MethodCall call, final Result result) {
-    switch(call.method) {
-      case METHOD_METHODCALL:
-        final Object value;
-        try {
-          value = onMethodCall(call);
-        } catch (Exception exception) {
-          result.error(exception.getClass().getSimpleName(), exception.getMessage(), android.util.Log.getStackTraceString(exception));
+    try {
+      switch (call.method) {
+        case METHOD_METHODCALL:
+          result.success(handleMethodCall(call));
           break;
-        }
-        result.success(value);
-        break;
-      case METHOD_RELEASE:
-        handleRelease(call);
-        result.success(null);
-        break;
-      default:
-        result.notImplemented();
+        case METHOD_RELEASE:
+          handleRelease(call);
+          result.success(null);
+          break;
+        default:
+          result.notImplemented();
+      }
+    } catch (Exception exception) {
+      result.error(exception.getClass().getSimpleName(), exception.getMessage(), android.util.Log.getStackTraceString(exception));
     }
   }
 
-  private Object onMethodCall(final MethodCall call) throws Exception {
+  private Object handleMethodCall(final MethodCall call) throws Exception {
     final List<Object> arguments = (List<Object>) call.arguments;
 
     final String referenceId = (String) arguments.get(0);

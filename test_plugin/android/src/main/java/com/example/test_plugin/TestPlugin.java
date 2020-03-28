@@ -7,7 +7,7 @@ import io.flutter.plugin.common.PluginRegistry.Registrar;
 /** TestPlugin */
 public class TestPlugin implements FlutterPlugin {
   private static final String CHANNEL_NAME = "test_plugin";
-  private static final TestPluginPlatform PLATFORM = new TestPluginPlatform() {
+  private static final GeneratedPlatform PLATFORM = new GeneratedPlatform() {
     @Override
     public TestClass createTestClass(TestClass testClass) {
       return new MyTestClass(testClass);

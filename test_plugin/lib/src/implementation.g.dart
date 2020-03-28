@@ -1,13 +1,13 @@
 part of 'implementation.dart';
 
-abstract class _MethodChannelTestClass extends TestPluginReference {
+abstract class _TestClass extends _GeneratedReference {
   MethodCall _testMethod(String testParameter) {
     return _reference.createMethodCall('testMethod', <dynamic>[testParameter]);
   }
 }
 
-class TestPluginMessageCodec extends StandardMessageCodec {
-  const TestPluginMessageCodec();
+class _GeneratedMessageCodec extends StandardMessageCodec {
+  const _GeneratedMessageCodec();
 
   static const int _valueTestClass = 128;
 
@@ -42,8 +42,8 @@ class TestPluginMessageCodec extends StandardMessageCodec {
   }
 }
 
-abstract class TestPluginReference {
-  TestPluginReference() {
+abstract class _GeneratedReference {
+  _GeneratedReference() {
     _reference = MethodChannelReference(
       channel: _channel,
       creationParameters: this,

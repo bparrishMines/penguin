@@ -8,14 +8,14 @@ import 'package:test_plugin_platform_interface/test_plugin_platform_interface.da
 part 'implementation.g.dart';
 
 mixin MethodChannelUser {
-  MethodChannel get _channel => MethodChannel(
-        'test_plugin',
-        StandardMethodCodec(TestPluginMessageCodec()),
-      );
+  final MethodChannel _channel = MethodChannel(
+    'test_plugin',
+    StandardMethodCodec(_GeneratedMessageCodec()),
+  );
 }
 
 @MethodChannelImplementation()
-class TestClass extends _MethodChannelTestClass
+class TestClass extends _TestClass
     with MethodChannelUser
     implements plugin_interface.TestClass {
   TestClass(this.testField);
