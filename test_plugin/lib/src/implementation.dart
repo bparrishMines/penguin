@@ -14,9 +14,7 @@ mixin _MethodChannelUser {
 }
 
 @MethodChannelImplementation()
-class TestClass extends _TestClass
-    with _MethodChannelUser
-    implements plugin_interface.TestClass {
+class TestClass extends _TestClass with _MethodChannelUser {
   TestClass(this.testField);
 
   final String testField;

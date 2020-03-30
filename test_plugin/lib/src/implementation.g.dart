@@ -1,6 +1,7 @@
 part of 'implementation.dart';
 
-abstract class _TestClass extends _GeneratedReference {
+abstract class _TestClass extends _GeneratedReference
+    implements plugin_interface.TestClass {
   MethodCall _testMethod(String testParameter) {
     return reference.createMethodCall('testMethod', <dynamic>[testParameter]);
   }
@@ -8,7 +9,7 @@ abstract class _TestClass extends _GeneratedReference {
 
 MethodChannel _initializeReferenceMethodChannel(
   String name, [
-  MessageCodec messageCodec = const _GeneratedMessageCodec(),
+  _GeneratedMessageCodec messageCodec = const _GeneratedMessageCodec(),
   BinaryMessenger binaryMessenger,
 ]) {
   assert(name != null);
