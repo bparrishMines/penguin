@@ -14,12 +14,14 @@ mixin _MethodChannelUser {
 }
 
 @MethodChannelImplementation()
-class TestClass extends _TestClass with _MethodChannelUser {
-  TestClass(this.testField);
+class TestClass extends _TestClass
+    with _MethodChannelUser
+    implements plugin_interface.TestClass {
+  TestClass(this.testField, this.onTestCallback);
 
   final String testField;
+  final plugin_interface.TestCallback onTestCallback;
 
-  @override
   Future<String> testMethod(String testParameter) {
     reference.retain();
     reference.autoReleasePool();

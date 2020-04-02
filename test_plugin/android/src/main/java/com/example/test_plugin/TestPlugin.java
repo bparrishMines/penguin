@@ -9,20 +9,33 @@ import io.flutter.plugin.common.PluginRegistry.Registrar;
 /** TestPlugin */
 public class TestPlugin implements FlutterPlugin {
   private static final String CHANNEL_NAME = "test_plugin";
-  private final GeneratedPlatform platform = new GeneratedPlatform() {
-    @Override
-    public TestClass createTestClass(TestClass testClass) {
-      return new MyTestClass(testClass);
-    }
-  };
+  // Only used in Embedding v2.
+  private GeneratedPlatform platform;
 
   public static void registerWith(Registrar registrar) {
-    (new TestPlugin()).platform.initializeReferenceMethodChannel(registrar.messenger(), CHANNEL_NAME);
+    final TestPlugin plugin = new TestPlugin();
+    plugin.platform = new GeneratedPlatform(registrar.messenger(),
+        CHANNEL_NAME,
+        new GeneratedPlatform.GeneratedReferenceFactory() {
+      @Override
+      public GeneratedPlatform.TestClass createTestClass(GeneratedPlatform.TestClass testClass) {
+        return new MyTestClass(testClass);
+      }
+    });
+    plugin.platform.initialize();
   }
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
-    platform.initializeReferenceMethodChannel(flutterPluginBinding.getBinaryMessenger(), CHANNEL_NAME);
+    platform = new GeneratedPlatform(flutterPluginBinding.getBinaryMessenger(),
+        CHANNEL_NAME,
+        new GeneratedPlatform.GeneratedReferenceFactory() {
+          @Override
+          public GeneratedPlatform.TestClass createTestClass(GeneratedPlatform.TestClass testClass) {
+            return new MyTestClass(testClass);
+          }
+        });
+    platform.initialize();
   }
 
   @Override

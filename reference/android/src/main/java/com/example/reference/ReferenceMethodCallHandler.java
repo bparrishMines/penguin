@@ -7,18 +7,19 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 
-public abstract class ReferenceMethodCallHandler implements MethodCallHandler {
+public class ReferenceMethodCallHandler implements MethodCallHandler {
   public static final String METHOD_RETAIN = "REFERENCE_RETAIN";
   public static final String METHOD_METHODCALL = "REFERENCE_METHODCALL";
   public static final String METHOD_RELEASE = "REFERENCE_RELEASE";
 
-  private final ReferenceManager referenceManager;
+  public final ReferenceManager.ReferenceManagerNode referenceManager;
+  public final ReferenceFactory referenceFactory;
 
-  public ReferenceMethodCallHandler(ReferenceManager referenceManager) {
+  public ReferenceMethodCallHandler(final ReferenceManager.ReferenceManagerNode referenceManager,
+                                    final ReferenceFactory referenceFactory) {
     this.referenceManager = referenceManager;
+    this.referenceFactory = referenceFactory;
   }
-
-  abstract public Reference createReference(final Object arguments);
 
   @Override
   public void onMethodCall(final MethodCall call, final Result result) {
@@ -44,7 +45,7 @@ public abstract class ReferenceMethodCallHandler implements MethodCallHandler {
   }
   
   private void handleRetain(final MethodCall call) {
-    final Reference reference = createReference(call.arguments);
+    final Reference reference = referenceFactory.createReference(call.arguments);
     if (!referenceManager.addReference(reference)) {
       final String message = String.format("%s with the following referenceId already exists: %s",
           reference.getClass().getSimpleName(),

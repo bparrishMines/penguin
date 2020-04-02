@@ -1,10 +1,12 @@
 part of 'implementation.dart';
 
-abstract class _TestClass extends _GeneratedReference
-    implements plugin_interface.TestClass {
+abstract class _TestClass extends _GeneratedReference {
   MethodCall _testMethod(String testParameter) {
     return reference.createMethodCall('testMethod', <dynamic>[testParameter]);
   }
+
+  void _onTestCallbackCallback(List<dynamic> parameters) =>
+      (this as dynamic).onTestCallback(parameters[0]);
 }
 
 MethodChannel _initializeReferenceMethodChannel(
@@ -19,7 +21,23 @@ MethodChannel _initializeReferenceMethodChannel(
     name,
     StandardMethodCodec(messageCodec),
     binaryMessenger,
-  );
+  )..setMethodCallHandler(
+      (MethodCall call) {
+        final MethodChannelReference reference =
+            ReferenceManager.globalInstance.getReference(call.arguments[0]);
+
+        Function callbackFunction;
+        switch (call.method) {
+          case 'onTestCallback':
+            callbackFunction =
+                reference.creationParameters._onTestCallbackCallback;
+            break;
+        }
+
+        if (call.arguments.length < 2) return callbackFunction(null);
+        return callbackFunction(call.arguments.sublist(2));
+      },
+    );
 }
 
 abstract class _GeneratedReference {
@@ -58,7 +76,7 @@ class _GeneratedMessageCodec extends StandardMessageCodec {
 
     switch (type) {
       case _valueTestClass:
-        final value = TestClass(readNextValue());
+        final value = TestClass(readNextValue(), null);
         return value
           .._reference = MethodChannelReference(
             channel: value._channel,

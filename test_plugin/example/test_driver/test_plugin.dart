@@ -11,7 +11,7 @@ void main() {
 
   group('$TestClass', () {
     test('testMethod', () {
-      final TestClass testClass = TestClass('Bob');
+      final TestClass testClass = TestClass('Bob', (_) => null);
       expect(testClass.testMethod('Bill'), completion('Hello, Bob and Bill!'));
     });
   });

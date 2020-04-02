@@ -36,6 +36,6 @@ public class ReferencePlugin implements FlutterPlugin {
   }
 
   private static boolean attachToGlobalReferenceManager(ReferenceManager globalReferenceManager, ReferencePlatform platform) {
-    return platform.referenceManager.attachTo(globalReferenceManager);
+    return platform.methodCallHandler.referenceManager.attachTo(globalReferenceManager);
   }
 }

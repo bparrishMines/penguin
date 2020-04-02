@@ -1,10 +1,11 @@
 import 'package:penguin/penguin.dart';
 
+typedef TestCallback = void Function(TestClass testParameter);
+
 @Interface()
-abstract class TestClass {
-  const TestClass(this.testField);
+class TestClass {
+  const TestClass(this.testField, this.onTestCallback);
 
   final String testField;
-
-  Future<String> testMethod(String testParameter);
+  final TestCallback onTestCallback;
 }

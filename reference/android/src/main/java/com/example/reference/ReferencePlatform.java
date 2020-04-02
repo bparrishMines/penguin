@@ -5,18 +5,31 @@ import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.StandardMessageCodec;
 import io.flutter.plugin.common.StandardMethodCodec;
 
-abstract public class ReferencePlatform {
-  final ReferenceManager.ReferenceManagerNode referenceManager = new ReferenceManager.ReferenceManagerNode();
+public abstract class ReferencePlatform {
+  public final BinaryMessenger binaryMessenger;
+  public final String channelName;
+  public final ReferenceFactory referenceFactory;
+  public final StandardMessageCodec messageCodec;
 
-  public abstract StandardMessageCodec getMessageCodec();
-  public abstract ReferenceMethodCallHandler getMethodCallHandler(ReferenceManager referenceManager);
+  ReferenceMethodCallHandler methodCallHandler;
 
-  public MethodChannel initializeReferenceMethodChannel(final BinaryMessenger binaryMessenger, final String channelName) {
+  public ReferencePlatform(final BinaryMessenger binaryMessenger,
+                           final String channelName,
+                           final ReferenceFactory referenceFactory,
+                           final StandardMessageCodec messageCodec) {
+    this.binaryMessenger = binaryMessenger;
+    this.channelName = channelName;
+    this.referenceFactory = referenceFactory;
+    this.messageCodec = messageCodec;
+  }
+
+  public void initialize() {
+    if (methodCallHandler != null) return;
     final MethodChannel channel = new MethodChannel(binaryMessenger,
         channelName,
-        new StandardMethodCodec(getMessageCodec()));
-    channel.setMethodCallHandler(getMethodCallHandler(referenceManager));
-
-    return channel;
+        new StandardMethodCodec(messageCodec));
+    methodCallHandler =
+        new ReferenceMethodCallHandler(new ReferenceManager.ReferenceManagerNode(), referenceFactory);
+    channel.setMethodCallHandler(methodCallHandler);
   }
 }

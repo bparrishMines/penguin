@@ -22,6 +22,10 @@ class ReferenceManager {
     return _references.remove(reference.referenceId);
   }
 
+  Reference getReference(String referenceId) {
+    return _references[referenceId];
+  }
+
   void drainAutoreleasePool(Duration duration) {
     for (Reference reference in _autoReleasePool) {
       reference.release();
@@ -102,7 +106,7 @@ class MethodChannelReference extends Reference {
     @required MethodChannel channel,
     String referenceId,
     bool useGlobalReferenceManager,
-    dynamic creationParameters,
+    this.creationParameters,
     int initialReferenceCount,
   })  : channel = channel,
         assert(referenceId != null),
@@ -142,6 +146,7 @@ class MethodChannelReference extends Reference {
   static const String methodRelease = 'REFERENCE_RELEASE';
 
   final MethodChannel channel;
+  final dynamic creationParameters;
 
   MethodCall createMethodCall(
     String methodName, [
