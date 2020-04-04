@@ -1,6 +1,6 @@
 part of 'implementation.dart';
 
-abstract class _TestClass extends _GeneratedReference {
+abstract class _TestClass extends _ReferenceHolder {
   MethodCall _testMethod(String testParameter) {
     return reference.createMethodCall('testMethod', <dynamic>[testParameter]);
   }
@@ -16,13 +16,12 @@ MethodChannel _initializeReferenceMethodChannel(
 ]) {
   assert(name != null);
   assert(messageCodec != null);
-  assert(messageCodec is _GeneratedMessageCodec);
   return MethodChannel(
     name,
     StandardMethodCodec(messageCodec),
     binaryMessenger,
   )..setMethodCallHandler(
-      (MethodCall call) {
+      (MethodCall call) async {
         final MethodChannelReference reference =
             ReferenceManager.globalInstance.getReference(call.arguments[0]);
 
@@ -34,21 +33,27 @@ MethodChannel _initializeReferenceMethodChannel(
             break;
         }
 
-        if (call.arguments.length < 2) return callbackFunction(null);
-        return callbackFunction(call.arguments.sublist(2));
+        callbackFunction(MethodChannelReference.getCallbackArguments(
+          ReferenceManager.globalInstance,
+          call,
+        ));
+        return null;
       },
     );
 }
 
-abstract class _GeneratedReference {
-  _GeneratedReference() {
+abstract class _ReferenceHolder extends ReferenceHolder {
+  _ReferenceHolder() {
     _reference = MethodChannelReference(
       channel: _channel,
       creationParameters: this,
+      useGlobalReferenceManager: true,
     );
   }
 
   MethodChannelReference _reference;
+
+  @override
   MethodChannelReference get reference => _reference;
 
   MethodChannel get _channel;
@@ -82,6 +87,7 @@ class _GeneratedMessageCodec extends StandardMessageCodec {
             channel: value._channel,
             referenceId: readNextValue(),
             initialReferenceCount: 1,
+            useGlobalReferenceManager: true,
           )
           .._reference.autoReleasePool();
       default:

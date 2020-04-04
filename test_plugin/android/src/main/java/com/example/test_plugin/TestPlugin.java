@@ -1,6 +1,7 @@
 package com.example.test_plugin;
 
 import androidx.annotation.NonNull;
+import com.example.reference.ReferenceManager;
 import com.example.reference.ReferencePlatform;
 import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
@@ -32,10 +33,11 @@ public class TestPlugin implements FlutterPlugin {
   private void initializePlatform(final BinaryMessenger binaryMessenger) {
     platform = new GeneratedPlatform(binaryMessenger,
         CHANNEL_NAME,
+        new ReferenceManager.ReferenceManagerNode(),
         new GeneratedPlatform.GeneratedReferenceFactory() {
           @Override
           public GeneratedPlatform.TestClass createTestClass(GeneratedPlatform.TestClass testClass) {
-            return new MyTestClass(testClass);
+            return new MyTestClass(testClass, platform.channel);
           }
         });
     platform.initialize();

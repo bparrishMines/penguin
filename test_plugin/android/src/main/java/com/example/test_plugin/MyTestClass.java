@@ -1,8 +1,13 @@
 package com.example.test_plugin;
 
+import io.flutter.plugin.common.MethodChannel;
+
 public class MyTestClass extends GeneratedPlatform.TestClass {
-  public MyTestClass(GeneratedPlatform.TestClass testClass) {
+  private final MethodChannel channel;
+
+  public MyTestClass(GeneratedPlatform.TestClass testClass, final MethodChannel channel) {
     super(testClass.testField, testClass.referenceId);
+    this.channel = channel;
   }
 
   @Override

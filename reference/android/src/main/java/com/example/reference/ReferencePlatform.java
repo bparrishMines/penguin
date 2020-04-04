@@ -8,16 +8,19 @@ import io.flutter.plugin.common.StandardMethodCodec;
 public abstract class ReferencePlatform {
   public final ReferenceMethodCallHandler methodCallHandler;
   public final MethodChannel channel;
+  public final ReferenceManager referenceManager;
 
   public ReferencePlatform(final BinaryMessenger binaryMessenger,
                            final String channelName,
                            final ReferenceFactory referenceFactory,
+                           final ReferenceManager referenceManager,
                            final StandardMessageCodec messageCodec) {
+    this.referenceManager = referenceManager;
     channel = new MethodChannel(binaryMessenger,
         channelName,
         new StandardMethodCodec(messageCodec));
     methodCallHandler =
-        new ReferenceMethodCallHandler(new ReferenceManager.ReferenceManagerNode(), referenceFactory);
+        new ReferenceMethodCallHandler(referenceManager, referenceFactory);
   }
 
   public void initialize() {

@@ -12,10 +12,10 @@ public class ReferenceMethodCallHandler implements MethodCallHandler {
   public static final String METHOD_METHODCALL = "REFERENCE_METHODCALL";
   public static final String METHOD_RELEASE = "REFERENCE_RELEASE";
 
-  public final ReferenceManager.ReferenceManagerNode referenceManager;
+  public final ReferenceManager referenceManager;
   public final ReferenceFactory referenceFactory;
 
-  public ReferenceMethodCallHandler(final ReferenceManager.ReferenceManagerNode referenceManager,
+  public ReferenceMethodCallHandler(final ReferenceManager referenceManager,
                                     final ReferenceFactory referenceFactory) {
     this.referenceManager = referenceManager;
     this.referenceFactory = referenceFactory;
@@ -66,6 +66,14 @@ public class ReferenceMethodCallHandler implements MethodCallHandler {
       methodArguments = arguments.subList(2, arguments.size());
     } else {
       methodArguments = new ArrayList<>();
+    }
+
+    for (int i = 0; i < methodArguments.size(); i++) {
+      final Object object = methodArguments.get(i);
+      if (!(object instanceof Reference)) continue;
+
+      final Reference reference = referenceManager.getReference(((Reference) object).referenceId);
+      if (reference != null) methodArguments.set(i, reference);
     }
 
     final String methodName = (String) arguments.get(1);

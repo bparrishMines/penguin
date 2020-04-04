@@ -2,11 +2,10 @@ package com.example.test_plugin;
 
 import com.example.reference.Reference;
 import com.example.reference.ReferenceFactory;
+import com.example.reference.ReferenceManager;
 import com.example.reference.ReferencePlatform;
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.List;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.StandardMessageCodec;
@@ -25,10 +24,7 @@ public final class GeneratedPlatform extends ReferencePlatform {
     }
 
     public final MethodCall onTestCallback(TestClass testParameter) {
-      final List<Object> arguments = new ArrayList<>();
-      arguments.add(referenceId);
-      arguments.add(testParameter);
-      return new MethodCall("onTestCallback", arguments);
+      return createMethodCall("onTestCallback", new Object[]{testParameter});
     }
   }
 
@@ -57,8 +53,16 @@ public final class GeneratedPlatform extends ReferencePlatform {
   public static class GeneratedMessageCodec extends StandardMessageCodec {
     private static final byte TEST_CLASS = (byte) 128;
 
+    private final ReferenceManager referenceManager;
+
+    public GeneratedMessageCodec(ReferenceManager referenceManager) {
+      this.referenceManager = referenceManager;
+    }
+
     @Override
     protected void writeValue(ByteArrayOutputStream stream, Object value) {
+      if (value instanceof Reference) referenceManager.addReference((Reference) value);
+
       if (value instanceof TestClass) {
         stream.write(TEST_CLASS);
         writeValue(stream, ((TestClass) value).testField);
@@ -82,14 +86,16 @@ public final class GeneratedPlatform extends ReferencePlatform {
 
   public GeneratedPlatform(final BinaryMessenger binaryMessenger,
                            final String channelName,
+                           final ReferenceManager referenceManager,
                            final GeneratedReferenceFactory referenceFactory) {
-    super(binaryMessenger, channelName, referenceFactory, new GeneratedMessageCodec());
+    this(binaryMessenger, channelName, referenceManager, referenceFactory, new GeneratedMessageCodec(referenceManager));
   }
 
   public GeneratedPlatform(final BinaryMessenger binaryMessenger,
                            final String channelName,
+                           final ReferenceManager referenceManager,
                            final GeneratedReferenceFactory referenceFactory,
                            final GeneratedMessageCodec messageCodec) {
-    super(binaryMessenger, channelName, referenceFactory, messageCodec);
+    super(binaryMessenger, channelName, referenceFactory, referenceManager, messageCodec);
   }
 }

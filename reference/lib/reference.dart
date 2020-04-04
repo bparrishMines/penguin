@@ -4,6 +4,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:uuid/uuid.dart';
 
+abstract class ReferenceHolder {
+  MethodChannelReference get reference;
+}
+
 class ReferenceManager {
   static final ReferenceManager globalInstance = ReferenceManager();
 
@@ -148,13 +152,31 @@ class MethodChannelReference extends Reference {
   final MethodChannel channel;
   final dynamic creationParameters;
 
-  MethodCall createMethodCall(
-    String methodName, [
-    List<dynamic> arguments,
-  ]) {
+  static List<dynamic> getCallbackArguments(
+    ReferenceManager referenceManager,
+    MethodCall call,
+  ) {
+    final List<dynamic> arguments =
+        call.arguments.length > 1 ? call.arguments.sublist(1) : <dynamic>[];
+
+    for (int i = 0; i < arguments.length; i++) {
+      if (arguments[i] is! ReferenceHolder) continue;
+      final ReferenceHolder generatedReference = arguments[i];
+
+      final MethodChannelReference savedReference = referenceManager
+          .getReference(generatedReference.reference.referenceId);
+      if (savedReference != null) {
+        arguments[i] = savedReference.creationParameters;
+      }
+    }
+
+    return arguments;
+  }
+
+  MethodCall createMethodCall(String methodName, [List<dynamic> arguments]) {
     return MethodCall(
       MethodChannelReference.methodMethodCall,
-      <dynamic>[referenceId, methodName, ...arguments],
+      <dynamic>[referenceId, methodName, if (arguments != null) ...arguments],
     );
   }
 }
