@@ -85,6 +85,7 @@ public class ReferenceManager {
   }
 
   public boolean canAddReference(final Reference reference) {
-    return getReference(reference.referenceId) == null;
+    final Reference query = getReference(reference.referenceId);
+    return query == null || query == reference;
   }
 }

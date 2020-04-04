@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import com.example.reference.ReferencePlatform;
 import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
+import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
 
 /** TestPlugin */
@@ -14,20 +15,22 @@ public class TestPlugin implements FlutterPlugin {
 
   public static void registerWith(Registrar registrar) {
     final TestPlugin plugin = new TestPlugin();
-    plugin.platform = new GeneratedPlatform(registrar.messenger(),
-        CHANNEL_NAME,
-        new GeneratedPlatform.GeneratedReferenceFactory() {
-      @Override
-      public GeneratedPlatform.TestClass createTestClass(GeneratedPlatform.TestClass testClass) {
-        return new MyTestClass(testClass);
-      }
-    });
-    plugin.platform.initialize();
+    plugin.initializePlatform(registrar.messenger());
+    registrar.publish(plugin);
   }
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
-    platform = new GeneratedPlatform(flutterPluginBinding.getBinaryMessenger(),
+    initializePlatform(flutterPluginBinding.getBinaryMessenger());
+  }
+
+  @Override
+  public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
+    // Do nothing.
+  }
+
+  private void initializePlatform(final BinaryMessenger binaryMessenger) {
+    platform = new GeneratedPlatform(binaryMessenger,
         CHANNEL_NAME,
         new GeneratedPlatform.GeneratedReferenceFactory() {
           @Override
@@ -36,11 +39,6 @@ public class TestPlugin implements FlutterPlugin {
           }
         });
     platform.initialize();
-  }
-
-  @Override
-  public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
-    // Do nothing.
   }
 
   public static ReferencePlatform getPlatform(final FlutterEngine engine) {
