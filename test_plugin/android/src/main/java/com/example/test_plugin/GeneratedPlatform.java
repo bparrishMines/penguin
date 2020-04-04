@@ -19,6 +19,10 @@ public final class GeneratedPlatform extends ReferencePlatform {
       this.testField = testField;
     }
 
+    public TestClass(final String testField) {
+      this.testField = testField;
+    }
+
     public Object testMethod(String testParameter) throws Exception {
       throw new UnsupportedOperationException();
     }

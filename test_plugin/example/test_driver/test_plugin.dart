@@ -14,5 +14,21 @@ void main() {
       final TestClass testClass = TestClass('Bob', (_) => null);
       expect(testClass.testMethod('Bill'), completion('Hello, Bob and Bill!'));
     });
+
+    test('onTestCallback', () async {
+      TestClass callbackTestClass;
+      final TestClass testClass = TestClass(
+        '',
+        (TestClass testParameter) {
+          callbackTestClass = testParameter;
+        },
+      );
+
+      testClass.testMethod('');
+      await Future.delayed(Duration(seconds: 2));
+
+      expect(callbackTestClass, isNotNull);
+      expect(callbackTestClass.testField, equals('Hello, World!'));
+    });
   });
 }

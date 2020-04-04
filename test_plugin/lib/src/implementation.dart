@@ -13,14 +13,21 @@ mixin _MethodChannelUser {
   );
 }
 
+typedef TestCallback = void Function(TestClass testParameter);
+
 @MethodChannelImplementation()
 class TestClass extends _TestClass
     with _MethodChannelUser
     implements plugin_interface.TestClass {
-  TestClass(this.testField, this.onTestCallback);
+  TestClass(this.testField, TestCallback onTestCallback)
+      : _onTestCallback = onTestCallback;
 
   final String testField;
-  final plugin_interface.TestCallback onTestCallback;
+
+  TestCallback _onTestCallback;
+  plugin_interface.TestCallback get onTestCallback =>
+      (plugin_interface.TestClass testParameter) =>
+          _onTestCallback(testParameter as TestClass);
 
   Future<String> testMethod(String testParameter) {
     reference.retain();
