@@ -1,6 +1,8 @@
 part of 'implementation.dart';
 
-abstract class _TestClass extends _ReferenceHolder {
+abstract class _TestClass extends MethodChannelReferenceHolder {
+  _TestClass() : super(_channel);
+
   MethodCall _testMethod(String testParameter) {
     return reference.createMethodCall('testMethod', <dynamic>[testParameter]);
   }
@@ -10,12 +12,14 @@ abstract class _TestClass extends _ReferenceHolder {
 }
 
 MethodChannel _initializeReferenceMethodChannel(
-  String name, [
+  String name, {
   _GeneratedMessageCodec messageCodec = const _GeneratedMessageCodec(),
   BinaryMessenger binaryMessenger,
-]) {
+  ReferenceManager referenceManager,
+}) {
   assert(name != null);
   assert(messageCodec != null);
+  referenceManager ??= ReferenceManager.globalInstance;
   return MethodChannel(
     name,
     StandardMethodCodec(messageCodec),
@@ -23,7 +27,7 @@ MethodChannel _initializeReferenceMethodChannel(
   )..setMethodCallHandler(
       (MethodCall call) async {
         final MethodChannelReference reference =
-            ReferenceManager.globalInstance.getReference(call.arguments[0]);
+            referenceManager.getReference(call.arguments[0]);
 
         Function callbackFunction;
         switch (call.method) {
@@ -34,29 +38,12 @@ MethodChannel _initializeReferenceMethodChannel(
         }
 
         callbackFunction(MethodChannelReference.getCallbackArguments(
-          ReferenceManager.globalInstance,
+          referenceManager,
           call,
         ));
         return null;
       },
     );
-}
-
-abstract class _ReferenceHolder extends ReferenceHolder {
-  _ReferenceHolder() {
-    _reference = MethodChannelReference(
-      channel: _channel,
-      creationParameters: this,
-      useGlobalReferenceManager: true,
-    );
-  }
-
-  MethodChannelReference _reference;
-
-  @override
-  MethodChannelReference get reference => _reference;
-
-  MethodChannel get _channel;
 }
 
 class _GeneratedMessageCodec extends StandardMessageCodec {
@@ -69,7 +56,7 @@ class _GeneratedMessageCodec extends StandardMessageCodec {
     if (value is TestClass) {
       buffer.putUint8(_valueTestClass);
       writeValue(buffer, value.testField);
-      writeValue(buffer, value._reference.referenceId);
+      writeValue(buffer, value.reference.referenceId);
     } else {
       super.writeValue(buffer, value);
     }
@@ -81,15 +68,15 @@ class _GeneratedMessageCodec extends StandardMessageCodec {
 
     switch (type) {
       case _valueTestClass:
-        final value = TestClass(readNextValue(), null);
+        final value = TestClass(readNextValue(), (_) => null);
         return value
-          .._reference = MethodChannelReference(
-            channel: value._channel,
+          ..reference = MethodChannelReference(
+            channel: _channel,
             referenceId: readNextValue(),
             initialReferenceCount: 1,
-            useGlobalReferenceManager: true,
+            useGlobalReferenceManager: false,
           )
-          .._reference.autoReleasePool();
+          ..reference.autoReleasePool();
       default:
         return super.readValueOfType(type, buffer);
     }

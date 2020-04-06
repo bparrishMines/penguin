@@ -7,18 +7,14 @@ import 'package:test_plugin_platform_interface/test_plugin_platform_interface.da
 
 part 'implementation.g.dart';
 
-mixin _MethodChannelUser {
-  final MethodChannel _channel = _initializeReferenceMethodChannel(
-    'test_plugin',
-  );
-}
+final MethodChannel _channel = _initializeReferenceMethodChannel(
+  'test_plugin',
+);
 
 typedef TestCallback = void Function(TestClass testParameter);
 
 @MethodChannelImplementation()
-class TestClass extends _TestClass
-    with _MethodChannelUser
-    implements plugin_interface.TestClass {
+class TestClass extends _TestClass implements plugin_interface.TestClass {
   TestClass(this.testField, TestCallback onTestCallback)
       : _onTestCallback = onTestCallback;
 

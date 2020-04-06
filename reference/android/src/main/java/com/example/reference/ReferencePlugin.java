@@ -25,17 +25,17 @@ public class ReferencePlugin implements FlutterPlugin {
     // Do nothing.
   }
 
-  public static boolean attachToGlobalReferenceManager(final PluginRegistry registry, ReferencePlatform platform) {
+  public static boolean attachToGlobalReferenceManager(final PluginRegistry registry, MethodChannelReferencePlatform platform) {
     final ReferenceManager globalManager = registry.valuePublishedByPlugin(ReferencePlugin.class.getName());
     return attachToGlobalReferenceManager(globalManager, platform);
   }
 
-  public static boolean attachToGlobalReferenceManager(final FlutterEngine engine, ReferencePlatform platform) {
+  public static boolean attachToGlobalReferenceManager(final FlutterEngine engine, MethodChannelReferencePlatform platform) {
     final ReferencePlugin plugin = (ReferencePlugin) engine.getPlugins().get(ReferencePlugin.class);
     return attachToGlobalReferenceManager(plugin.globalReferenceManager, platform);
   }
 
-  private static boolean attachToGlobalReferenceManager(ReferenceManager globalReferenceManager, ReferencePlatform platform) {
+  private static boolean attachToGlobalReferenceManager(ReferenceManager globalReferenceManager, MethodChannelReferencePlatform platform) {
     final ReferenceManager referenceManager = platform.referenceManager;
     if (referenceManager instanceof ReferenceManager.ReferenceManagerNode) {
       return ((ReferenceManager.ReferenceManagerNode) referenceManager).attachTo(globalReferenceManager);

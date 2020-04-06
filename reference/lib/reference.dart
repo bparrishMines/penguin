@@ -5,7 +5,19 @@ import 'package:flutter/services.dart';
 import 'package:uuid/uuid.dart';
 
 abstract class ReferenceHolder {
-  MethodChannelReference get reference;
+  Reference get reference;
+}
+
+abstract class MethodChannelReferenceHolder extends ReferenceHolder {
+  MethodChannelReferenceHolder(MethodChannel channel) {
+    reference = MethodChannelReference(
+      channel: channel,
+      creationParameters: this,
+      useGlobalReferenceManager: true,
+    );
+  }
+
+  MethodChannelReference reference;
 }
 
 class ReferenceManager {
