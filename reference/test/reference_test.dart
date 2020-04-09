@@ -5,9 +5,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:reference/reference.dart';
 
+MethodChannelReferenceManager testManager;
+
 void main() {
   final List<MethodCall> log = <MethodCall>[];
-  MethodChannelReferenceManager testManager;
 
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -16,6 +17,10 @@ void main() {
     testManager.channel.setMockMethodCallHandler(
       (MethodCall methodCall) async {
         log.add(methodCall);
+        if (methodCall.method == MethodChannelReferenceManager.methodMethod) {
+          return 'Hello!';
+        }
+        return null;
       },
     );
   });
@@ -25,8 +30,8 @@ void main() {
     log.clear();
   });
 
-  test('create', () async {
-    final TestClass testClass = TestClass();
+  test('retain', () async {
+    final TestClass testClass = TestClass(1);
 
     testManager.retain(testClass);
     testManager.retain(testClass);
@@ -34,13 +39,13 @@ void main() {
     expect(log, <Matcher>[
       isMethodCall('REFERENCE_CREATE', arguments: <dynamic>[
         testManager.getReferenceId(testClass),
-        TestClass(),
+        TestClass(1),
       ]),
     ]);
   });
 
-  test('dispose', () async {
-    final TestClass testClass = TestClass();
+  test('release', () async {
+    final TestClass testClass = TestClass(2);
 
     testManager.retain(testClass);
     final String referenceId = testManager.getReferenceId(testClass);
@@ -49,12 +54,32 @@ void main() {
     expect(log, <Matcher>[
       isMethodCall(
         'REFERENCE_CREATE',
-        arguments: <dynamic>[referenceId, TestClass()],
+        arguments: <dynamic>[referenceId, TestClass(2)],
       ),
       isMethodCall(
         'REFERENCE_DISPOSE',
         arguments: Reference(referenceId),
       ),
+    ]);
+  });
+
+  test('sendMethodCall', () async {
+    final TestClass testClass = TestClass(3);
+    testManager.retain(testClass);
+
+    final String result = await testClass.testMethod('Goodbye!');
+
+    expect(result, equals('Hello!'));
+    expect(log, <Matcher>[
+      isMethodCall('REFERENCE_CREATE', arguments: <dynamic>[
+        testManager.getReferenceId(testClass),
+        TestClass(3),
+      ]),
+      isMethodCall('REFERENCE_METHOD', arguments: <dynamic>[
+        Reference(testManager.getReferenceId(testClass)),
+        'testMethod',
+        <dynamic>['Goodbye!'],
+      ]),
     ]);
   });
 }
@@ -79,17 +104,29 @@ class TestReferenceManager extends MethodChannelReferenceManager {
   }
 
   ReferenceHolder createLocalReference(String referenceId, dynamic arguments) {
-    if (arguments is TestClass) return TestClass();
+    if (arguments is TestClass) return TestClass(arguments.testField);
     throw StateError('createLocalReference');
   }
 }
 
 class TestClass with ReferenceHolder {
-  @override
-  bool operator ==(other) => true;
+  const TestClass(this.testField);
+
+  final int testField;
+
+  Future<String> testMethod(String testParameter) async {
+    return (await testManager.sendMethodCall(
+      this,
+      'testMethod',
+      <dynamic>[testParameter],
+    )) as String;
+  }
 
   @override
-  int get hashCode => 0;
+  bool operator ==(other) => other is TestClass && testField == other.testField;
+
+  @override
+  int get hashCode => testField.hashCode;
 }
 
 class TestMessageCodec extends ReferenceMessageCodec {
@@ -101,6 +138,7 @@ class TestMessageCodec extends ReferenceMessageCodec {
   void writeValue(WriteBuffer buffer, dynamic value) {
     if (value is TestClass) {
       buffer.putUint8(_valueTestClass);
+      writeValue(buffer, value.testField);
     } else {
       super.writeValue(buffer, value);
     }
@@ -110,7 +148,7 @@ class TestMessageCodec extends ReferenceMessageCodec {
   dynamic readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case _valueTestClass:
-        return TestClass();
+        return TestClass(readValueOfType(buffer.getUint8(), buffer));
       default:
         return super.readValueOfType(type, buffer);
     }

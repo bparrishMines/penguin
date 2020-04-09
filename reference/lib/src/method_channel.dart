@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
@@ -59,7 +58,10 @@ abstract class MethodChannelReferenceManager extends ReferenceManager
 
   @override
   FutureOr<dynamic> sendRemoteMethodCall(
-      Reference reference, String methodName, List arguments) {
+    Reference reference,
+    String methodName,
+    List arguments,
+  ) {
     return channel.invokeMethod<dynamic>(
       MethodChannelReferenceManager.methodMethod,
       <dynamic>[reference, methodName, arguments],
