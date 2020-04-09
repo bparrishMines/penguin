@@ -10,6 +10,7 @@ environment:
 
 dependencies:
   uuid: 2.0.4
+  quiver: ^2.1.3
   flutter:
     sdk: flutter
 
