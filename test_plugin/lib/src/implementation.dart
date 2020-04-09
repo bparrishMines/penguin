@@ -7,14 +7,20 @@ import 'package:test_plugin_platform_interface/test_plugin_platform_interface.da
 
 part 'implementation.g.dart';
 
-final MethodChannel _channel = _initializeReferenceMethodChannel(
-  'test_plugin',
-);
+//final MethodChannel _channel = _initializeReferenceMethodChannel(
+//  'test_plugin',
+//);
+
+final MethodChannelReferencePlatform platform = MethodChannelReferencePlatform(
+    channelName: 'test_plutin',
+    referenceManager: ReferenceManager.globalInstance,
+    referenceFactory: GeneratedReferenceFactory(),
+    methodHandler: );
 
 typedef TestCallback = void Function(TestClass testParameter);
 
 @MethodChannelImplementation()
-class TestClass extends _TestClass implements plugin_interface.TestClass {
+class TestClass with ReferenceHolder implements plugin_interface.TestClass {
   TestClass(this.testField, TestCallback onTestCallback)
       : _onTestCallback = onTestCallback;
 
@@ -32,4 +38,7 @@ class TestClass extends _TestClass implements plugin_interface.TestClass {
     final MethodCall call = _testMethod(testParameter);
     return _channel.invokeMethod<String>(call.method, call.arguments);
   }
+
+  @override
+  MethodChannelReference get reference => throw UnimplementedError();
 }

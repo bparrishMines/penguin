@@ -1,50 +1,61 @@
 part of 'implementation.dart';
 
-abstract class _TestClass extends MethodChannelReferenceHolder {
-  _TestClass() : super(_channel);
+class _TestClass extends MethodChannelReference {
+  _TestClass(MethodChannel channel, dynamic creationParameters)
+      : super(channel: channel, creationParameters: creationParameters);
 
   MethodCall _testMethod(String testParameter) {
-    return reference.createMethodCall('testMethod', <dynamic>[testParameter]);
+    return createMethodCall('testMethod', <dynamic>[testParameter]);
   }
 
   void _onTestCallbackCallback(List<dynamic> parameters) =>
       (this as dynamic).onTestCallback(parameters[0]);
 }
 
-MethodChannel _initializeReferenceMethodChannel(
-  String name, {
-  _GeneratedMessageCodec messageCodec = const _GeneratedMessageCodec(),
-  BinaryMessenger binaryMessenger,
-  ReferenceManager referenceManager,
-}) {
-  assert(name != null);
-  assert(messageCodec != null);
-  referenceManager ??= ReferenceManager.globalInstance;
-  return MethodChannel(
-    name,
-    StandardMethodCodec(messageCodec),
-    binaryMessenger,
-  )..setMethodCallHandler(
-      (MethodCall call) async {
-        final MethodChannelReference reference =
-            referenceManager.getReference(call.arguments[0]);
-
-        Function callbackFunction;
-        switch (call.method) {
-          case 'onTestCallback':
-            callbackFunction =
-                reference.creationParameters._onTestCallbackCallback;
-            break;
-        }
-
-        callbackFunction(MethodChannelReference.getCallbackArguments(
-          referenceManager,
-          call,
-        ));
-        return null;
-      },
-    );
+class GeneratedReferenceFactory extends ReferenceFactory {
+  @override
+  Reference createReference(dynamic arguments) {
+    if (arguments is TestClass) return arguments.reference;
+    throw StateError('$StateError');
+  }
 }
+
+typedef GeneratedMethodHandler()
+
+//MethodChannel _initializeReferenceMethodChannel(
+//  String name, {
+//  _GeneratedMessageCodec messageCodec = const _GeneratedMessageCodec(),
+//  BinaryMessenger binaryMessenger,
+//  ReferenceManager referenceManager,
+//}) {
+//  assert(name != null);
+//  assert(messageCodec != null);
+//  referenceManager ??= ReferenceManager.globalInstance;
+//  return MethodChannel(
+//    name,
+//    StandardMethodCodec(messageCodec),
+//    binaryMessenger,
+//  )..setMethodCallHandler(
+//      (MethodCall call) async {
+//        final MethodChannelReference reference =
+//            referenceManager.getReference(call.arguments[0]);
+//
+//        Function callbackFunction;
+//        switch (call.method) {
+//          case 'onTestCallback':
+//            callbackFunction =
+//                reference.creationParameters._onTestCallbackCallback;
+//            break;
+//        }
+//
+//        callbackFunction(MethodChannelReference.getCallbackArguments(
+//          referenceManager,
+//          call,
+//        ));
+//        return null;
+//      },
+//    );
+//}
 
 class _GeneratedMessageCodec extends StandardMessageCodec {
   const _GeneratedMessageCodec();
@@ -68,15 +79,7 @@ class _GeneratedMessageCodec extends StandardMessageCodec {
 
     switch (type) {
       case _valueTestClass:
-        final value = TestClass(readNextValue(), (_) => null);
-        return value
-          ..reference = MethodChannelReference(
-            channel: _channel,
-            referenceId: readNextValue(),
-            initialReferenceCount: 1,
-            useGlobalReferenceManager: false,
-          )
-          ..reference.autoReleasePool();
+        return TestClass(readNextValue(), (_) => null);
       default:
         return super.readValueOfType(type, buffer);
     }

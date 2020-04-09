@@ -18,20 +18,26 @@ class Reference {
 
 mixin ReferenceHolder {}
 
-mixin ReferenceFactory {
+mixin LocalReferenceFactory {
+  ReferenceHolder createLocalReference(String referenceId, dynamic arguments);
+}
+
+mixin RemoteReferenceFactory {
   void createRemoteReference(String referenceId, ReferenceHolder holder);
   void disposeRemoteReference(String referenceId, ReferenceHolder holder);
 }
 
-mixin ReferenceMethodHandler {
-  FutureOr<dynamic> sendRemoteMethodCall(
-    Reference reference,
+mixin ReferenceMethodReceiver {
+  FutureOr<dynamic> receiveLocalMethodCall(
+    ReferenceHolder holder,
     String methodName,
     List<dynamic> arguments,
   );
+}
 
-  FutureOr<dynamic> receiveLocalMethodCall(
-    ReferenceHolder holder,
+mixin ReferenceMethodSender {
+  FutureOr<dynamic> sendRemoteMethodCall(
+    Reference reference,
     String methodName,
     List<dynamic> arguments,
   );
@@ -84,16 +90,22 @@ abstract class ReferenceManager {
 
   final List<ReferenceHolder> _autoReleasePool = <ReferenceHolder>[];
 
-  ReferenceFactory get factory;
-  ReferenceMethodHandler get methodHandler;
+  LocalReferenceFactory get localFactory;
+  RemoteReferenceFactory get remoteFactory;
+  ReferenceMethodReceiver get methodReceiver;
+  ReferenceMethodSender get methodSender;
   void initialize();
 
-  void addLocalReference(String referenceId, ReferenceHolder holder) {
+  void createLocalReference(String referenceId, dynamic arguments) {
+    final ReferenceHolder holder = localFactory.createLocalReference(
+      referenceId,
+      arguments,
+    );
     _valueToReferenceId[holder] = referenceId;
   }
 
-  void removeLocalReference(ReferenceHolder holder) {
-    _valueToReferenceId.remove(holder);
+  void disposeLocalReference(String referenceId) {
+    _valueToReferenceId.inverse.remove(referenceId);
   }
 
   String getReferenceId(ReferenceHolder holder) => _valueToReferenceId[holder];
@@ -115,7 +127,7 @@ abstract class ReferenceManager {
     String methodName,
     List<dynamic> arguments,
   ) {
-    return methodHandler.sendRemoteMethodCall(
+    return methodSender.sendRemoteMethodCall(
       Reference(getReferenceId(holder)),
       methodName,
       arguments.map<dynamic>((dynamic argument) {
@@ -132,7 +144,7 @@ abstract class ReferenceManager {
     String methodName,
     List<dynamic> arguments,
   ) {
-    return methodHandler.receiveLocalMethodCall(
+    return methodReceiver.receiveLocalMethodCall(
       getHolder(reference.referenceId),
       methodName,
       arguments.map<dynamic>((dynamic argument) {
@@ -170,10 +182,10 @@ abstract class ReferenceManager {
     _valueToReferenceId[holder] = referenceId;
     _referenceIdToReferenceCounter[referenceId] = ReferenceCounter(
       onCreate: (String referenceId, ReferenceHolder holder) {
-        factory.createRemoteReference(referenceId, holder);
+        remoteFactory.createRemoteReference(referenceId, holder);
       },
       onDispose: (String referenceId, ReferenceHolder holder) {
-        factory.disposeRemoteReference(referenceId, holder);
+        remoteFactory.disposeRemoteReference(referenceId, holder);
         _remove(holder);
       },
     );

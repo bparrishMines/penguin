@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -10,26 +12,12 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   setUp(() {
-    testManager = MethodChannelReferenceManager(
-      channelName: 'test_channel',
-      onReceiveMethodCall: (
-        ReferenceHolder holder,
-        String methodName,
-        List<dynamic> arguments,
-      ) async {
-        return null;
+    testManager = TestReferenceManager('test_channel')..initialize();
+    testManager.channel.setMockMethodCallHandler(
+      (MethodCall methodCall) async {
+        log.add(methodCall);
       },
-      onCreateLocalReference: (dynamic arguments) {
-        return TestClass();
-      },
-      messageCodec: TestMessageCodec(),
-    )
-      ..initialize()
-      ..initializeMock(
-        (MethodCall methodCall) async {
-          log.add(methodCall);
-        },
-      );
+    );
   });
 
   tearDown(() {
@@ -69,6 +57,31 @@ void main() {
       ),
     ]);
   });
+}
+
+class TestReferenceManager extends MethodChannelReferenceManager {
+  TestReferenceManager(String channelName)
+      : super(channelName, TestMessageCodec());
+
+  @override
+  LocalReferenceFactory get localFactory => this;
+
+  @override
+  ReferenceMethodReceiver get methodReceiver => this;
+
+  @override
+  FutureOr<dynamic> receiveLocalMethodCall(
+    ReferenceHolder holder,
+    String methodName,
+    List<dynamic> arguments,
+  ) {
+    return null;
+  }
+
+  ReferenceHolder createLocalReference(String referenceId, dynamic arguments) {
+    if (arguments is TestClass) return TestClass();
+    throw StateError('createLocalReference');
+  }
 }
 
 class TestClass with ReferenceHolder {
