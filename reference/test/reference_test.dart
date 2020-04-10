@@ -124,6 +124,34 @@ void main() {
     expect(testClass.testField, equals(45));
     expect(testClass.testCallbackMethod, isNotNull);
   });
+
+  test('sendMethodCall for callback', () async {
+    final String referenceId = Uuid().v4();
+    testManager.channel.binaryMessenger.handlePlatformMessage(
+      'test_channel',
+      testManager.channel.codec.encodeMethodCall(
+        MethodCall(
+          'REFERENCE_CREATE',
+          <dynamic>[
+            referenceId,
+            TestClass(45, null),
+          ],
+        ),
+      ),
+      (ByteData data) {},
+    );
+
+    final TestClass testClass = testManager.getHolder(referenceId);
+    testClass.testCallbackMethod(34.4);
+
+    expect(log, <Matcher>[
+      isMethodCall('REFERENCE_METHOD', arguments: <dynamic>[
+        Reference(referenceId),
+        'testCallbackMethod',
+        <dynamic>[34.4],
+      ]),
+    ]);
+  });
 }
 
 class TestReferenceManager extends MethodChannelReferenceManager {
