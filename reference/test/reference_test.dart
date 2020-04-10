@@ -183,7 +183,7 @@ class TestReferenceManager extends MethodChannelReferenceManager {
       return TestClass(
         arguments.testField,
         (double testParameter) {
-          testManager.sendMethodCall(
+          sendMethodCall(
             testManager.getHolder(referenceId),
             'testCallbackMethod',
             <dynamic>[testParameter],
