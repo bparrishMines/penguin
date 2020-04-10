@@ -12,9 +12,9 @@ abstract class MethodChannelReferenceManager extends ReferenceManager
         ReferenceMethodReceiver,
         LocalReferenceFactory {
   MethodChannelReferenceManager(
-    String channelName, [
-    ReferenceMessageCodec messageCodec = const ReferenceMessageCodec(),
-  ]) : channel = MethodChannel(
+    String channelName,
+    ReferenceMessageCodec messageCodec,
+  ) : channel = MethodChannel(
           channelName,
           StandardMethodCodec(messageCodec),
         );
@@ -87,7 +87,7 @@ abstract class MethodChannelReferenceManager extends ReferenceManager
   }
 }
 
-class ReferenceMessageCodec extends StandardMessageCodec {
+abstract class ReferenceMessageCodec extends StandardMessageCodec {
   const ReferenceMessageCodec();
 
   static const int _valueReference = 128;
