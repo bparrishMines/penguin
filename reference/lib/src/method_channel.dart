@@ -60,7 +60,7 @@ abstract class MethodChannelReferenceManager extends ReferenceManager
   FutureOr<dynamic> sendRemoteMethodCall(
     Reference reference,
     String methodName,
-    List arguments,
+    List<dynamic> arguments,
   ) {
     return channel.invokeMethod<dynamic>(
       MethodChannelReferenceManager.methodMethod,
@@ -75,7 +75,7 @@ abstract class MethodChannelReferenceManager extends ReferenceManager
       return receiveMethodCall(
         call.arguments[0],
         call.arguments[1],
-        call.arguments.length > 2 ? call.arguments.sublist(2) : <dynamic>[],
+        call.arguments[2],
       );
     } else if (call.method == MethodChannelReferenceManager.methodDispose) {
       disposeLocalReference(call.arguments.referenceId);
@@ -83,46 +83,6 @@ abstract class MethodChannelReferenceManager extends ReferenceManager
     return null;
   }
 }
-
-//class MethodChannelReferenceMethodSender with ReferenceMethodSender {
-//  const MethodChannelReferenceMethodSender(this.channel);
-//
-//  final MethodChannel channel;
-//
-//  @override
-//  FutureOr<dynamic> sendRemoteMethodCall(
-//    Reference reference,
-//    String methodName,
-//    List<dynamic> arguments,
-//  ) {
-//    return channel.invokeMethod<dynamic>(
-//      MethodChannelReferenceManager.methodMethod,
-//      <dynamic>[reference, methodName, arguments],
-//    );
-//  }
-//}
-//
-//class MethodChannelRemoteReferenceFactory with RemoteReferenceFactory {
-//  const MethodChannelRemoteReferenceFactory(this.channel);
-//
-//  final MethodChannel channel;
-//
-//  @override
-//  void createRemoteReference(String referenceId, ReferenceHolder holder) {
-//    channel.invokeMethod<void>(
-//      MethodChannelReferenceManager.methodCreate,
-//      <dynamic>[referenceId, holder],
-//    );
-//  }
-//
-//  @override
-//  void disposeRemoteReference(String referenceId, ReferenceHolder holder) {
-//    channel.invokeMethod<void>(
-//      MethodChannelReferenceManager.methodDispose,
-//      Reference(referenceId),
-//    );
-//  }
-//}
 
 class ReferenceMessageCodec extends StandardMessageCodec {
   const ReferenceMessageCodec();

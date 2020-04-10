@@ -31,7 +31,7 @@ void main() {
   });
 
   test('retain', () async {
-    final TestClass testClass = TestClass(1);
+    final TestClass testClass = TestClass(1, null);
 
     testManager.retain(testClass);
     testManager.retain(testClass);
@@ -39,13 +39,13 @@ void main() {
     expect(log, <Matcher>[
       isMethodCall('REFERENCE_CREATE', arguments: <dynamic>[
         testManager.getReferenceId(testClass),
-        TestClass(1),
+        TestClass(1, null),
       ]),
     ]);
   });
 
   test('release', () async {
-    final TestClass testClass = TestClass(2);
+    final TestClass testClass = TestClass(2, null);
 
     testManager.retain(testClass);
     final String referenceId = testManager.getReferenceId(testClass);
@@ -54,7 +54,7 @@ void main() {
     expect(log, <Matcher>[
       isMethodCall(
         'REFERENCE_CREATE',
-        arguments: <dynamic>[referenceId, TestClass(2)],
+        arguments: <dynamic>[referenceId, TestClass(2, null)],
       ),
       isMethodCall(
         'REFERENCE_DISPOSE',
@@ -64,7 +64,7 @@ void main() {
   });
 
   test('sendMethodCall', () async {
-    final TestClass testClass = TestClass(3);
+    final TestClass testClass = TestClass(3, null);
     testManager.retain(testClass);
 
     final String result = await testClass.testMethod('Goodbye!');
@@ -73,7 +73,7 @@ void main() {
     expect(log, <Matcher>[
       isMethodCall('REFERENCE_CREATE', arguments: <dynamic>[
         testManager.getReferenceId(testClass),
-        TestClass(3),
+        TestClass(3, null),
       ]),
       isMethodCall('REFERENCE_METHOD', arguments: <dynamic>[
         Reference(testManager.getReferenceId(testClass)),
@@ -81,6 +81,32 @@ void main() {
         <dynamic>['Goodbye!'],
       ]),
     ]);
+  });
+
+  test('receiveLocalMethodCall', () async {
+    final Completer<double> callbackCompleter = Completer<double>();
+    final TestClass testClass = TestClass(3, (double testParameter) {
+      callbackCompleter.complete(testParameter);
+    });
+
+    testManager.retain(testClass);
+
+    testManager.channel.binaryMessenger.handlePlatformMessage(
+      'test_channel',
+      testManager.channel.codec.encodeMethodCall(
+        MethodCall(
+          'REFERENCE_METHOD',
+          <dynamic>[
+            Reference(testManager.getReferenceId(testClass)),
+            'testCallbackMethod',
+            <dynamic>[46.0],
+          ],
+        ),
+      ),
+      (ByteData data) {},
+    );
+
+    expect(callbackCompleter.future, completion(46.0));
   });
 }
 
@@ -100,19 +126,25 @@ class TestReferenceManager extends MethodChannelReferenceManager {
     String methodName,
     List<dynamic> arguments,
   ) {
-    return null;
+    switch (methodName) {
+      case 'testCallbackMethod':
+        (holder as dynamic).testCallbackMethod(arguments[0]);
+        break;
+    }
+    throw StateError('receiveLocalMethodCall');
   }
 
   ReferenceHolder createLocalReference(String referenceId, dynamic arguments) {
-    if (arguments is TestClass) return TestClass(arguments.testField);
+    if (arguments is TestClass) return TestClass(arguments.testField, null);
     throw StateError('createLocalReference');
   }
 }
 
 class TestClass with ReferenceHolder {
-  const TestClass(this.testField);
+  const TestClass(this.testField, this.testCallbackMethod);
 
   final int testField;
+  final void Function(double testParameter) testCallbackMethod;
 
   Future<String> testMethod(String testParameter) async {
     return (await testManager.sendMethodCall(
@@ -148,7 +180,7 @@ class TestMessageCodec extends ReferenceMessageCodec {
   dynamic readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case _valueTestClass:
-        return TestClass(readValueOfType(buffer.getUint8(), buffer));
+        return TestClass(readValueOfType(buffer.getUint8(), buffer), null);
       default:
         return super.readValueOfType(type, buffer);
     }
