@@ -66,15 +66,12 @@ void main() {
   test('sendMethodCall', () async {
     final TestClass testClass = TestClass(3, null);
     testManager.retain(testClass);
+    log.clear();
 
     final String result = await testClass.testMethod('Goodbye!');
 
     expect(result, equals('Hello!'));
     expect(log, <Matcher>[
-      isMethodCall('REFERENCE_CREATE', arguments: <dynamic>[
-        testManager.getReferenceId(testClass),
-        TestClass(3, null),
-      ]),
       isMethodCall('REFERENCE_METHOD', arguments: <dynamic>[
         Reference(testManager.getReferenceId(testClass)),
         'testMethod',

@@ -62,6 +62,9 @@ abstract class MethodChannelReferenceManager extends ReferenceManager
     String methodName,
     List<dynamic> arguments,
   ) {
+    assert(reference != null);
+    assert(methodName != null);
+    assert(arguments != null);
     return channel.invokeMethod<dynamic>(
       MethodChannelReferenceManager.methodMethod,
       <dynamic>[reference, methodName, arguments],
