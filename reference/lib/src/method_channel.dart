@@ -73,7 +73,7 @@ abstract class MethodChannelReferenceManager extends ReferenceManager
 
   Future<dynamic> _handleMethodCall(MethodCall call) async {
     if (call.method == MethodChannelReferenceManager.methodCreate) {
-      createLocalReference(call.arguments[0], call.arguments[1]);
+      createAndAddLocalReference(call.arguments[0], call.arguments[1]);
     } else if (call.method == MethodChannelReferenceManager.methodMethod) {
       return receiveMethodCall(
         call.arguments[0],

@@ -96,7 +96,7 @@ abstract class ReferenceManager {
   ReferenceMethodSender get methodSender;
   void initialize();
 
-  void createLocalReference(String referenceId, dynamic arguments) {
+  void createAndAddLocalReference(String referenceId, dynamic arguments) {
     final ReferenceHolder holder = localFactory.createLocalReference(
       referenceId,
       arguments,

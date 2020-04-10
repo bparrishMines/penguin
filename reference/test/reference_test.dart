@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:reference/reference.dart';
+import 'package:uuid/uuid.dart';
 
 MethodChannelReferenceManager testManager;
 
@@ -49,13 +50,10 @@ void main() {
 
     testManager.retain(testClass);
     final String referenceId = testManager.getReferenceId(testClass);
-    testManager.release(testClass);
+    log.clear();
 
+    testManager.release(testClass);
     expect(log, <Matcher>[
-      isMethodCall(
-        'REFERENCE_CREATE',
-        arguments: <dynamic>[referenceId, TestClass(2, null)],
-      ),
       isMethodCall(
         'REFERENCE_DISPOSE',
         arguments: Reference(referenceId),
@@ -105,6 +103,27 @@ void main() {
 
     expect(callbackCompleter.future, completion(46.0));
   });
+
+  test('createLocalReference', () async {
+    final String referenceId = Uuid().v4();
+    testManager.channel.binaryMessenger.handlePlatformMessage(
+      'test_channel',
+      testManager.channel.codec.encodeMethodCall(
+        MethodCall(
+          'REFERENCE_CREATE',
+          <dynamic>[
+            referenceId,
+            TestClass(45, null),
+          ],
+        ),
+      ),
+      (ByteData data) {},
+    );
+
+    final TestClass testClass = testManager.getHolder(referenceId);
+    expect(testClass.testField, equals(45));
+    expect(testClass.testCallbackMethod, isNotNull);
+  });
 }
 
 class TestReferenceManager extends MethodChannelReferenceManager {
@@ -132,7 +151,18 @@ class TestReferenceManager extends MethodChannelReferenceManager {
   }
 
   ReferenceHolder createLocalReference(String referenceId, dynamic arguments) {
-    if (arguments is TestClass) return TestClass(arguments.testField, null);
+    if (arguments is TestClass) {
+      return TestClass(
+        arguments.testField,
+        (double testParameter) {
+          testManager.sendMethodCall(
+            testManager.getHolder(referenceId),
+            'testCallbackMethod',
+            <dynamic>[testParameter],
+          );
+        },
+      );
+    }
     throw StateError('createLocalReference');
   }
 }
