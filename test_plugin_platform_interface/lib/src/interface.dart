@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:penguin/penguin.dart';
 
 typedef TestCallback = void Function(TestClass testParameter);
@@ -8,4 +10,8 @@ class TestClass {
 
   final String testField;
   final TestCallback onTestCallback;
+
+  FutureOr<int> testMethod(String testParameter) {
+    throw UnimplementedError();
+  }
 }

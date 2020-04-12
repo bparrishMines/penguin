@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:reference/reference.dart';
-import 'package:reference/src/template.dart';
+import 'package:reference/src/templates/implementation.dart';
 import 'package:uuid/uuid.dart';
 
 void main() {
@@ -12,8 +12,8 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   setUp(() {
-    testManager = TestReferenceManager('test_channel')..initialize();
-    testManager.channel.setMockMethodCallHandler(
+    referenceManager = GeneratedReferenceManager('test_channel')..initialize();
+    referenceManager.channel.setMockMethodCallHandler(
       (MethodCall methodCall) async {
         log.add(methodCall);
         if (methodCall.method == MethodChannelReferenceManager.methodMethod) {
@@ -25,32 +25,32 @@ void main() {
   });
 
   tearDown(() {
-    testManager = null;
+    referenceManager = null;
     log.clear();
   });
 
   test('retain', () async {
-    final TestClass testClass = TestClass(1, null);
+    final ClassTemplate testClass = ClassTemplate(1, null);
 
-    testManager.retain(testClass);
-    testManager.retain(testClass);
+    referenceManager.retain(testClass);
+    referenceManager.retain(testClass);
 
     expect(log, <Matcher>[
       isMethodCall('REFERENCE_CREATE', arguments: <dynamic>[
-        testManager.getReferenceId(testClass),
-        TestClass(1, null),
+        referenceManager.getReferenceId(testClass),
+        ClassTemplate(1, null),
       ]),
     ]);
   });
 
   test('release', () async {
-    final TestClass testClass = TestClass(2, null);
+    final ClassTemplate testClass = ClassTemplate(2, null);
 
-    testManager.retain(testClass);
-    final String referenceId = testManager.getReferenceId(testClass);
+    referenceManager.retain(testClass);
+    final String referenceId = referenceManager.getReferenceId(testClass);
     log.clear();
 
-    testManager.release(testClass);
+    referenceManager.release(testClass);
     expect(log, <Matcher>[
       isMethodCall(
         'REFERENCE_DISPOSE',
@@ -60,17 +60,17 @@ void main() {
   });
 
   test('sendMethodCall', () async {
-    final TestClass testClass = TestClass(3, null);
-    testManager.retain(testClass);
+    final ClassTemplate testClass = ClassTemplate(3, null);
+    referenceManager.retain(testClass);
     log.clear();
 
-    final String result = await testClass.testMethod('Goodbye!');
+    final String result = await testClass.methodTemplate('Goodbye!');
 
     expect(result, equals('Hello!'));
     expect(log, <Matcher>[
       isMethodCall('REFERENCE_METHOD', arguments: <dynamic>[
-        Reference(testManager.getReferenceId(testClass)),
-        'testMethod',
+        Reference(referenceManager.getReferenceId(testClass)),
+        'methodTemplate',
         <dynamic>['Goodbye!'],
       ]),
     ]);
@@ -78,20 +78,20 @@ void main() {
 
   test('receiveLocalMethodCall', () async {
     final Completer<double> callbackCompleter = Completer<double>();
-    final TestClass testClass = TestClass(3, (double testParameter) {
+    final ClassTemplate testClass = ClassTemplate(3, (double testParameter) {
       callbackCompleter.complete(testParameter);
     });
 
-    testManager.retain(testClass);
+    referenceManager.retain(testClass);
 
-    testManager.channel.binaryMessenger.handlePlatformMessage(
+    referenceManager.channel.binaryMessenger.handlePlatformMessage(
       'test_channel',
-      testManager.channel.codec.encodeMethodCall(
+      referenceManager.channel.codec.encodeMethodCall(
         MethodCall(
           'REFERENCE_METHOD',
           <dynamic>[
-            Reference(testManager.getReferenceId(testClass)),
-            'testCallbackMethod',
+            Reference(referenceManager.getReferenceId(testClass)),
+            'callbackTemplate',
             <dynamic>[46.0],
           ],
         ),
@@ -104,48 +104,48 @@ void main() {
 
   test('createLocalReference', () async {
     final String referenceId = Uuid().v4();
-    testManager.channel.binaryMessenger.handlePlatformMessage(
+    referenceManager.channel.binaryMessenger.handlePlatformMessage(
       'test_channel',
-      testManager.channel.codec.encodeMethodCall(
+      referenceManager.channel.codec.encodeMethodCall(
         MethodCall(
           'REFERENCE_CREATE',
           <dynamic>[
             referenceId,
-            TestClass(45, null),
+            ClassTemplate(45, null),
           ],
         ),
       ),
       (ByteData data) {},
     );
 
-    final TestClass testClass = testManager.getHolder(referenceId);
-    expect(testClass.testField, equals(45));
-    expect(testClass.testCallbackMethod, isNotNull);
+    final ClassTemplate testClass = referenceManager.getHolder(referenceId);
+    expect(testClass.fieldTemplate, equals(45));
+    expect(testClass.callbackTemplate, isNotNull);
   });
 
   test('sendMethodCall for callback', () async {
     final String referenceId = Uuid().v4();
-    testManager.channel.binaryMessenger.handlePlatformMessage(
+    referenceManager.channel.binaryMessenger.handlePlatformMessage(
       'test_channel',
-      testManager.channel.codec.encodeMethodCall(
+      referenceManager.channel.codec.encodeMethodCall(
         MethodCall(
           'REFERENCE_CREATE',
           <dynamic>[
             referenceId,
-            TestClass(45, null),
+            ClassTemplate(45, null),
           ],
         ),
       ),
       (ByteData data) {},
     );
 
-    final TestClass testClass = testManager.getHolder(referenceId);
-    testClass.testCallbackMethod(34.4);
+    final ClassTemplate testClass = referenceManager.getHolder(referenceId);
+    testClass.callbackTemplate(34.4);
 
     expect(log, <Matcher>[
       isMethodCall('REFERENCE_METHOD', arguments: <dynamic>[
         Reference(referenceId),
-        'testCallbackMethod',
+        'callbackTemplate',
         <dynamic>[34.4],
       ]),
     ]);
