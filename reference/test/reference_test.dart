@@ -17,7 +17,12 @@ void main() {
       (MethodCall methodCall) async {
         log.add(methodCall);
         if (methodCall.method == MethodChannelReferenceManager.methodMethod) {
-          return 'Hello!';
+          switch(methodCall.arguments[1]) {
+            case 'methodTemplate':
+              return 'Hello!';
+            case 'callbackTemplate':
+              return 'Potato';
+          }
         }
         return null;
       },
@@ -80,10 +85,12 @@ void main() {
     final Completer<double> callbackCompleter = Completer<double>();
     final ClassTemplate testClass = ClassTemplate(3, (double testParameter) {
       callbackCompleter.complete(testParameter);
+      return 'Apple';
     });
 
     referenceManager.retain(testClass);
 
+    final Completer<String> responseCompleter = Completer<String>();
     referenceManager.channel.binaryMessenger.handlePlatformMessage(
       'test_channel',
       referenceManager.channel.codec.encodeMethodCall(
@@ -96,10 +103,15 @@ void main() {
           ],
         ),
       ),
-      (ByteData data) {},
+      (ByteData data) {
+        responseCompleter.complete(
+          referenceManager.channel.codec.decodeEnvelope(data),
+        );
+      },
     );
 
     expect(callbackCompleter.future, completion(46.0));
+    expect(responseCompleter.future, completion('Apple'));
   });
 
   test('createLocalReference', () async {
@@ -140,8 +152,9 @@ void main() {
     );
 
     final ClassTemplate testClass = referenceManager.getHolder(referenceId);
-    testClass.callbackTemplate(34.4);
+    final String result = await testClass.callbackTemplate(34.4);
 
+    expect(result, equals('Potato'));
     expect(log, <Matcher>[
       isMethodCall('REFERENCE_METHOD', arguments: <dynamic>[
         Reference(referenceId),
