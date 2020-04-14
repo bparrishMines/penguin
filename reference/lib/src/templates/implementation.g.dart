@@ -7,21 +7,28 @@ class GeneratedReferenceManager extends MethodChannelReferenceManager {
   ]) : super(channelName, messageCodec);
 
   @override
-  LocalReferenceFactory get localFactory => this;
-
-  @override
-  ReferenceMethodReceiver get methodReceiver => this;
-
-  @override
-  FutureOr<dynamic> receiveLocalMethodCall(
+  void receiveLocalMethodCall(
     ReferenceHolder holder,
     String methodName,
-    List<dynamic> arguments,
-  ) async {
+    List<dynamic> arguments, [
+    ResultListener resultListener,
+  ]) {
+    dynamic result;
+
     if (holder is ClassTemplate && methodName == 'callbackTemplate') {
-      holder.callbackTemplate(arguments[0]);
+      result = holder.callbackTemplate(arguments[0]);
     } else {
       throw StateError('Could not call $methodName on ${holder.runtimeType}.');
+    }
+
+    if (result is Future) {
+      result.then((_) => resultListener?.onSuccess(_)).catchError(
+        (dynamic error, [StackTrace stackTrace]) {
+          resultListener?.onError(error, stackTrace);
+        },
+      );
+    } else {
+      resultListener?.onSuccess(result);
     }
   }
 
@@ -30,11 +37,19 @@ class GeneratedReferenceManager extends MethodChannelReferenceManager {
       return ClassTemplate(
         arguments.fieldTemplate,
         (double testParameter) {
+          final Completer<String> completer = Completer<String>();
           sendMethodCall(
             getHolder(referenceId),
             'callbackTemplate',
             <dynamic>[testParameter],
+            ResultListener(
+              onSuccess: ([dynamic result]) => completer.complete(result),
+              onError: (dynamic error, [StackTrace stackTrace]) {
+                return completer.completeError(error, stackTrace);
+              },
+            ),
           );
+          return completer.future;
         },
       );
     }

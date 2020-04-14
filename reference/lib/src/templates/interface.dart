@@ -2,7 +2,7 @@ import 'dart:async';
 
 import '../annotations.dart';
 
-typedef CallbackTemplate = void Function(double testParameter);
+typedef CallbackTemplate = FutureOr<String> Function(double testParameter);
 
 @Interface()
 class ClassTemplateInterface {

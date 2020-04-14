@@ -17,10 +17,20 @@ class ClassTemplate extends ClassTemplateInterface with ReferenceHolder {
 
   @override
   FutureOr<String> methodTemplate(String parameterTemplate) async {
-    return (await referenceManager.sendMethodCall(
+    final Completer<String> completer = Completer<String>();
+
+    referenceManager.sendMethodCall(
       this,
       'methodTemplate',
       <dynamic>[parameterTemplate],
-    )) as String;
+      ResultListener(
+        onSuccess: ([dynamic result]) => completer.complete(result),
+        onError: (dynamic error, [StackTrace stackTrace]) {
+          return completer.completeError(error, stackTrace);
+        },
+      ),
+    );
+
+    return completer.future;
   }
 }

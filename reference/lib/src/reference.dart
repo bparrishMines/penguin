@@ -1,8 +1,8 @@
-import 'dart:async';
-
 import 'package:flutter/widgets.dart';
 import 'package:quiver/collection.dart';
 import 'package:uuid/uuid.dart';
+
+import 'reference_counter.dart';
 
 class Reference {
   const Reference(this.referenceId);
@@ -16,6 +16,13 @@ class Reference {
   int get hashCode => referenceId.hashCode;
 }
 
+class ResultListener {
+  const ResultListener({@required this.onSuccess, this.onError});
+
+  final void Function([dynamic result]) onSuccess;
+  final void Function(dynamic error, [StackTrace stackTrace]) onError;
+}
+
 mixin ReferenceHolder {}
 
 mixin LocalReferenceFactory {
@@ -27,63 +34,28 @@ mixin RemoteReferenceFactory {
   void disposeRemoteReference(String referenceId, ReferenceHolder holder);
 }
 
-mixin ReferenceMethodReceiver {
-  FutureOr<dynamic> receiveLocalMethodCall(
+mixin MethodReceiver {
+  void receiveLocalMethodCall(
     ReferenceHolder holder,
     String methodName,
-    List<dynamic> arguments,
-  );
+    List<dynamic> arguments, [
+    ResultListener resultListener,
+  ]);
 }
 
-mixin ReferenceMethodSender {
-  FutureOr<dynamic> sendRemoteMethodCall(
+mixin MethodSender {
+  void sendRemoteMethodCall(
     Reference reference,
     String methodName,
-    List<dynamic> arguments,
-  );
-}
-
-typedef ReferenceCounterCallback = void Function(
-  String referenceId,
-  ReferenceHolder holder,
-);
-
-class ReferenceCounter {
-  ReferenceCounter({
-    @required this.onCreate,
-    @required this.onDispose,
-    int initialReferenceCount = 0,
-  })  : assert(onCreate != null),
-        assert(onDispose != null),
-        assert(initialReferenceCount == null || initialReferenceCount >= 0),
-        _referenceCount = initialReferenceCount ?? 0;
-
-  final ReferenceCounterCallback onCreate;
-  final ReferenceCounterCallback onDispose;
-
-  int _referenceCount;
-  int get referenceCount => _referenceCount;
-
-  @mustCallSuper
-  void retain(String referenceId, ReferenceHolder holder) {
-    _referenceCount++;
-    if (referenceCount == 1) onCreate(referenceId, holder);
-  }
-
-  @mustCallSuper
-  void release(String referenceId, ReferenceHolder holder) {
-    assert(referenceCount > 0,
-        '`release()` was called without calling `retain()` first. In other words, `release()` was called while `referenceCount == 0`. Reference count = $_referenceCount.');
-
-    _referenceCount--;
-    if (referenceCount == 0) onDispose(referenceId, holder);
-  }
+    List<dynamic> arguments, [
+    ResultListener resultListener,
+  ]);
 }
 
 abstract class ReferenceManager {
   static final Uuid _uuid = Uuid();
 
-  final BiMap<ReferenceHolder, String> _valueToReferenceId =
+  final BiMap<ReferenceHolder, String> _holderToReferenceId =
       BiMap<ReferenceHolder, String>();
   final Map<String, ReferenceCounter> _referenceIdToReferenceCounter =
       <String, ReferenceCounter>{};
@@ -92,8 +64,8 @@ abstract class ReferenceManager {
 
   LocalReferenceFactory get localFactory;
   RemoteReferenceFactory get remoteFactory;
-  ReferenceMethodReceiver get methodReceiver;
-  ReferenceMethodSender get methodSender;
+  MethodReceiver get methodReceiver;
+  MethodSender get methodSender;
   void initialize();
 
   void createAndAddLocalReference(String referenceId, dynamic arguments) {
@@ -101,20 +73,20 @@ abstract class ReferenceManager {
       referenceId,
       arguments,
     );
-    _valueToReferenceId[holder] = referenceId;
+    _holderToReferenceId[holder] = referenceId;
   }
 
   void disposeLocalReference(String referenceId) {
-    _valueToReferenceId.inverse.remove(referenceId);
+    _holderToReferenceId.inverse.remove(referenceId);
   }
 
-  String getReferenceId(ReferenceHolder holder) => _valueToReferenceId[holder];
+  String getReferenceId(ReferenceHolder holder) => _holderToReferenceId[holder];
 
-  dynamic getHolder(String referenceId) =>
-      _valueToReferenceId.inverse[referenceId];
+  ReferenceHolder getHolder(String referenceId) =>
+      _holderToReferenceId.inverse[referenceId];
 
   void retain(ReferenceHolder holder) {
-    String referenceId = _valueToReferenceId[holder];
+    String referenceId = _holderToReferenceId[holder];
     if (referenceId == null) {
       _add(holder);
       referenceId = getReferenceId(holder);
@@ -122,12 +94,13 @@ abstract class ReferenceManager {
     _referenceIdToReferenceCounter[referenceId].retain(referenceId, holder);
   }
 
-  FutureOr<dynamic> sendMethodCall(
+  void sendMethodCall(
     ReferenceHolder holder,
     String methodName,
-    List<dynamic> arguments,
-  ) {
-    return methodSender.sendRemoteMethodCall(
+    List<dynamic> arguments, [
+    ResultListener resultListener,
+  ]) {
+    methodSender.sendRemoteMethodCall(
       Reference(getReferenceId(holder)),
       methodName,
       arguments.map<dynamic>((dynamic argument) {
@@ -136,21 +109,24 @@ abstract class ReferenceManager {
         }
         return argument;
       }).toList(),
+      resultListener,
     );
   }
 
-  FutureOr<dynamic> receiveMethodCall(
+  void receiveMethodCall(
     Reference reference,
     String methodName,
-    List<dynamic> arguments,
-  ) {
-    return methodReceiver.receiveLocalMethodCall(
+    List<dynamic> arguments, [
+    ResultListener resultListener,
+  ]) {
+    methodReceiver.receiveLocalMethodCall(
       getHolder(reference.referenceId),
       methodName,
       arguments.map<dynamic>((dynamic argument) {
         if (argument is Reference) return getHolder(reference.referenceId);
         return argument;
       }).toList(),
+      resultListener,
     );
   }
 
@@ -163,36 +139,38 @@ abstract class ReferenceManager {
     counter.release(referenceId, holder);
   }
 
-  void addToAutoReleasePool(ReferenceHolder value) {
-    _autoReleasePool.add(value);
+  void addToAutoReleasePool(ReferenceHolder holder) {
+    _autoReleasePool.add(holder);
     if (_autoReleasePool.length == 1) {
       WidgetsBinding.instance.addPostFrameCallback(_drainAutoreleasePool);
     }
   }
 
   void _drainAutoreleasePool(Duration duration) {
-    for (dynamic value in _autoReleasePool) {
-      release(value);
+    for (final ReferenceHolder holder in _autoReleasePool) {
+      release(holder);
     }
     _autoReleasePool.clear();
   }
 
   void _add(ReferenceHolder holder) {
     final String referenceId = _uuid.v4();
-    _valueToReferenceId[holder] = referenceId;
+    _holderToReferenceId[holder] = referenceId;
     _referenceIdToReferenceCounter[referenceId] = ReferenceCounter(
-      onCreate: (String referenceId, ReferenceHolder holder) {
-        remoteFactory.createRemoteReference(referenceId, holder);
-      },
-      onDispose: (String referenceId, ReferenceHolder holder) {
-        remoteFactory.disposeRemoteReference(referenceId, holder);
-        _remove(holder);
-      },
+      ReferenceCounterLifecycleListener(
+        onCreate: (String referenceId, ReferenceHolder holder) {
+          remoteFactory.createRemoteReference(referenceId, holder);
+        },
+        onDispose: (String referenceId, ReferenceHolder holder) {
+          remoteFactory.disposeRemoteReference(referenceId, holder);
+          _remove(holder);
+        },
+      ),
     );
   }
 
   void _remove(ReferenceHolder holder) {
-    final String referenceId = _valueToReferenceId.remove(holder);
+    final String referenceId = _holderToReferenceId.remove(holder);
     _referenceIdToReferenceCounter.remove(referenceId);
   }
 }
