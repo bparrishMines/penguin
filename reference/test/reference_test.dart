@@ -12,12 +12,12 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   setUp(() {
-    referenceManager = GeneratedReferenceManager('test_channel')..initialize();
+    referenceManager = ReferenceManagerTemplate()..initialize();
     referenceManager.channel.setMockMethodCallHandler(
       (MethodCall methodCall) async {
         log.add(methodCall);
         if (methodCall.method == MethodChannelReferenceManager.methodMethod) {
-          switch(methodCall.arguments[1]) {
+          switch (methodCall.arguments[1]) {
             case 'methodTemplate':
               return 'Hello!';
             case 'callbackTemplate':
@@ -42,8 +42,11 @@ void main() {
 
     expect(log, <Matcher>[
       isMethodCall('REFERENCE_CREATE', arguments: <dynamic>[
-        referenceManager.getReferenceId(testClass),
-        ClassTemplate(1, null),
+        referenceManager.referenceIdFor(testClass),
+        <dynamic>[
+          129,
+          <dynamic>[1]
+        ],
       ]),
     ]);
   });
@@ -52,7 +55,7 @@ void main() {
     final ClassTemplate testClass = ClassTemplate(2, null);
 
     referenceManager.retain(testClass);
-    final String referenceId = referenceManager.getReferenceId(testClass);
+    final String referenceId = referenceManager.referenceIdFor(testClass);
     log.clear();
 
     referenceManager.release(testClass);
@@ -74,7 +77,7 @@ void main() {
     expect(result, equals('Hello!'));
     expect(log, <Matcher>[
       isMethodCall('REFERENCE_METHOD', arguments: <dynamic>[
-        Reference(referenceManager.getReferenceId(testClass)),
+        Reference(referenceManager.referenceIdFor(testClass)),
         'methodTemplate',
         <dynamic>['Goodbye!'],
       ]),
@@ -92,12 +95,12 @@ void main() {
 
     final Completer<String> responseCompleter = Completer<String>();
     referenceManager.channel.binaryMessenger.handlePlatformMessage(
-      'test_channel',
+      'reference_plugin',
       referenceManager.channel.codec.encodeMethodCall(
         MethodCall(
           'REFERENCE_METHOD',
           <dynamic>[
-            Reference(referenceManager.getReferenceId(testClass)),
+            Reference(referenceManager.referenceIdFor(testClass)),
             'callbackTemplate',
             <dynamic>[46.0],
           ],
@@ -117,20 +120,24 @@ void main() {
   test('createLocalReference', () async {
     final String referenceId = Uuid().v4();
     referenceManager.channel.binaryMessenger.handlePlatformMessage(
-      'test_channel',
+      'reference_plugin',
       referenceManager.channel.codec.encodeMethodCall(
         MethodCall(
           'REFERENCE_CREATE',
           <dynamic>[
             referenceId,
-            ClassTemplate(45, null),
+            <dynamic>[
+              129,
+              <dynamic>[45],
+            ],
           ],
         ),
       ),
       (ByteData data) {},
     );
 
-    final ClassTemplate testClass = referenceManager.getHolder(referenceId);
+    final ClassTemplate testClass =
+        referenceManager.referenceHolderFor(referenceId);
     expect(testClass.fieldTemplate, equals(45));
     expect(testClass.callbackTemplate, isNotNull);
   });
@@ -138,7 +145,7 @@ void main() {
   test('sendMethodCall for callback', () async {
     final String referenceId = Uuid().v4();
     referenceManager.channel.binaryMessenger.handlePlatformMessage(
-      'test_channel',
+      'reference_plugin',
       referenceManager.channel.codec.encodeMethodCall(
         MethodCall(
           'REFERENCE_CREATE',
@@ -151,7 +158,8 @@ void main() {
       (ByteData data) {},
     );
 
-    final ClassTemplate testClass = referenceManager.getHolder(referenceId);
+    final ClassTemplate testClass =
+        referenceManager.referenceHolderFor(referenceId);
     final String result = await testClass.callbackTemplate(34.4);
 
     expect(result, equals('Potato'));
