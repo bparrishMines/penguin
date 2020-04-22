@@ -1,57 +1,35 @@
 part of 'implementation.dart';
 
-class GeneratedReferenceManager extends MethodChannelReferenceManager {
+abstract class GeneratedReferenceManager extends MethodChannelReferenceManager {
   GeneratedReferenceManager(
     String channelName, [
     GeneratedMessageCodec messageCodec = const GeneratedMessageCodec(),
-  ]) : super(channelName, messageCodec);
+  ]) : super(
+          channelName: channelName,
+          messageCodec: messageCodec,
+        );
+
+  ClassTemplate createClassTemplate(String referenceId, int fieldTemplate);
 
   @override
-  void receiveLocalMethodCall(
+  Future<dynamic> receiveLocalMethodCall(
     ReferenceHolder holder,
     String methodName,
-    List<dynamic> arguments, [
-    ResultListener resultListener,
-  ]) {
-    dynamic result;
-
+    List<dynamic> arguments,
+  ) async {
     if (holder is ClassTemplate && methodName == 'callbackTemplate') {
-      result = holder.callbackTemplate(arguments[0]);
+      return holder.callbackTemplate(arguments[0]);
+    } else if (holder is ClassTemplate && methodName == 'methodTemplate') {
+      return holder.methodTemplate(arguments[0]);
     } else {
       throw StateError('Could not call $methodName on ${holder.runtimeType}.');
     }
-
-    if (result is Future) {
-      result.then((_) => resultListener?.onSuccess(_)).catchError(
-        (dynamic error, [StackTrace stackTrace]) {
-          resultListener?.onError(error, stackTrace);
-        },
-      );
-    } else {
-      resultListener?.onSuccess(result);
-    }
   }
 
+  @override
   ReferenceHolder createLocalReference(String referenceId, dynamic arguments) {
-    if (arguments is ClassTemplateInterface) {
-      return ClassTemplate(
-        arguments.fieldTemplate,
-        (double testParameter) {
-          final Completer<String> completer = Completer<String>();
-          sendMethodCall(
-            getHolder(referenceId),
-            'callbackTemplate',
-            <dynamic>[testParameter],
-            ResultListener(
-              onSuccess: ([dynamic result]) => completer.complete(result),
-              onError: (dynamic error, [StackTrace stackTrace]) {
-                return completer.completeError(error, stackTrace);
-              },
-            ),
-          );
-          return completer.future;
-        },
-      );
+    if (arguments[0] == GeneratedMessageCodec._valueClassTemplate) {
+      return createClassTemplate(referenceId, arguments[1][0]);
     }
     throw StateError(
       'Could not instantiate an object with arguments: $arguments.',
@@ -62,13 +40,16 @@ class GeneratedReferenceManager extends MethodChannelReferenceManager {
 class GeneratedMessageCodec extends ReferenceMessageCodec {
   const GeneratedMessageCodec();
 
-  static const int _valueClassTemplateInterface = 129;
+  static const int _valueClassTemplate = 129;
 
   @override
   void writeValue(WriteBuffer buffer, dynamic value) {
-    if (value is ClassTemplateInterface) {
-      buffer.putUint8(_valueClassTemplateInterface);
-      writeValue(buffer, value.fieldTemplate);
+    if (value is ClassTemplate) {
+      buffer.putUint8(_valueClassTemplate);
+      writeValue(buffer, <dynamic>[
+        _valueClassTemplate,
+        <dynamic>[value.fieldTemplate],
+      ]);
     } else {
       super.writeValue(buffer, value);
     }
@@ -77,11 +58,8 @@ class GeneratedMessageCodec extends ReferenceMessageCodec {
   @override
   dynamic readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case _valueClassTemplateInterface:
-        return ClassTemplateInterface(
-          readValueOfType(buffer.getUint8(), buffer),
-          null,
-        );
+      case _valueClassTemplate:
+        return readValueOfType(buffer.getUint8(), buffer);
       default:
         return super.readValueOfType(type, buffer);
     }

@@ -16,40 +16,25 @@ class Reference {
   int get hashCode => referenceId.hashCode;
 }
 
-class ResultListener {
-  const ResultListener({@required this.onSuccess, this.onError});
-
-  final void Function([dynamic result]) onSuccess;
-  final void Function(dynamic error, [StackTrace stackTrace]) onError;
-}
-
 mixin ReferenceHolder {}
 
-mixin LocalReferenceFactory {
-  ReferenceHolder createLocalReference(String referenceId, dynamic arguments);
-}
-
-mixin RemoteReferenceFactory {
+mixin RemoteReferenceHandler {
   void createRemoteReference(String referenceId, ReferenceHolder holder);
+  Future<dynamic> sendRemoteMethodCall(
+    Reference reference,
+    String methodName,
+    List<dynamic> arguments,
+  );
   void disposeRemoteReference(String referenceId, ReferenceHolder holder);
 }
 
-mixin MethodReceiver {
-  void receiveLocalMethodCall(
+mixin LocalReferenceHandler {
+  ReferenceHolder createLocalReference(String referenceId, dynamic arguments);
+  Future<dynamic> receiveLocalMethodCall(
     ReferenceHolder holder,
     String methodName,
-    List<dynamic> arguments, [
-    ResultListener resultListener,
-  ]);
-}
-
-mixin MethodSender {
-  void sendRemoteMethodCall(
-    Reference reference,
-    String methodName,
-    List<dynamic> arguments, [
-    ResultListener resultListener,
-  ]);
+    List<dynamic> arguments,
+  );
 }
 
 abstract class ReferenceManager {
@@ -62,14 +47,12 @@ abstract class ReferenceManager {
 
   final List<ReferenceHolder> _autoReleasePool = <ReferenceHolder>[];
 
-  LocalReferenceFactory get localFactory;
-  RemoteReferenceFactory get remoteFactory;
-  MethodReceiver get methodReceiver;
-  MethodSender get methodSender;
+  RemoteReferenceHandler get remoteHandler;
+  LocalReferenceHandler get localHandler;
   void initialize();
 
   void createAndAddLocalReference(String referenceId, dynamic arguments) {
-    final ReferenceHolder holder = localFactory.createLocalReference(
+    final ReferenceHolder holder = localHandler.createLocalReference(
       referenceId,
       arguments,
     );
@@ -80,58 +63,55 @@ abstract class ReferenceManager {
     _holderToReferenceId.inverse.remove(referenceId);
   }
 
-  String getReferenceId(ReferenceHolder holder) => _holderToReferenceId[holder];
+  String referenceIdFor(ReferenceHolder holder) => _holderToReferenceId[holder];
 
-  ReferenceHolder getHolder(String referenceId) =>
+  ReferenceHolder referenceHolderFor(String referenceId) =>
       _holderToReferenceId.inverse[referenceId];
 
   void retain(ReferenceHolder holder) {
     String referenceId = _holderToReferenceId[holder];
     if (referenceId == null) {
       _add(holder);
-      referenceId = getReferenceId(holder);
+      referenceId = referenceIdFor(holder);
     }
     _referenceIdToReferenceCounter[referenceId].retain(referenceId, holder);
   }
 
-  void sendMethodCall(
+  Future<dynamic> sendMethodCall(
     ReferenceHolder holder,
     String methodName,
-    List<dynamic> arguments, [
-    ResultListener resultListener,
-  ]) {
-    methodSender.sendRemoteMethodCall(
-      Reference(getReferenceId(holder)),
+    List<dynamic> arguments,
+  ) {
+    return remoteHandler.sendRemoteMethodCall(
+      Reference(referenceIdFor(holder)),
       methodName,
       arguments.map<dynamic>((dynamic argument) {
-        if (argument is ReferenceHolder && getReferenceId(argument) != null) {
-          return Reference(getReferenceId(argument));
+        if (argument is ReferenceHolder && referenceIdFor(argument) != null) {
+          return Reference(referenceIdFor(argument));
         }
         return argument;
       }).toList(),
-      resultListener,
     );
   }
 
-  void receiveMethodCall(
+  Future<dynamic> receiveMethodCall(
     Reference reference,
     String methodName,
-    List<dynamic> arguments, [
-    ResultListener resultListener,
-  ]) {
-    methodReceiver.receiveLocalMethodCall(
-      getHolder(reference.referenceId),
+    List<dynamic> arguments,
+  ) {
+    return localHandler.receiveLocalMethodCall(
+      referenceHolderFor(reference.referenceId),
       methodName,
       arguments.map<dynamic>((dynamic argument) {
-        if (argument is Reference) return getHolder(reference.referenceId);
+        if (argument is Reference)
+          return referenceHolderFor(reference.referenceId);
         return argument;
       }).toList(),
-      resultListener,
     );
   }
 
   void release(ReferenceHolder holder) {
-    final String referenceId = getReferenceId(holder);
+    final String referenceId = referenceIdFor(holder);
     if (referenceId == null) return;
 
     final ReferenceCounter counter =
@@ -159,10 +139,10 @@ abstract class ReferenceManager {
     _referenceIdToReferenceCounter[referenceId] = ReferenceCounter(
       ReferenceCounterLifecycleListener(
         onCreate: (String referenceId, ReferenceHolder holder) {
-          remoteFactory.createRemoteReference(referenceId, holder);
+          remoteHandler.createRemoteReference(referenceId, holder);
         },
         onDispose: (String referenceId, ReferenceHolder holder) {
-          remoteFactory.disposeRemoteReference(referenceId, holder);
+          remoteHandler.disposeRemoteReference(referenceId, holder);
           _remove(holder);
         },
       ),

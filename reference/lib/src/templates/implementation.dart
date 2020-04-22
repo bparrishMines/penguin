@@ -8,29 +8,37 @@ import '../annotations.dart';
 
 part 'implementation.g.dart';
 
-GeneratedReferenceManager referenceManager;
+class ReferenceManagerTemplate extends GeneratedReferenceManager {
+  ReferenceManagerTemplate() : super('reference_plugin');
 
-@Implementation()
+  @override
+  ClassTemplate createClassTemplate(String referenceId, int fieldTemplate) {
+    return ClassTemplate(
+      fieldTemplate,
+      (double testParameter) async {
+        return (await sendMethodCall(
+          referenceHolderFor(referenceId),
+          'callbackTemplate',
+          <dynamic>[testParameter],
+        )) as String;
+      },
+    );
+  }
+}
+
+ReferenceManagerTemplate referenceManager;
+
+@MethodChannelImplementation()
 class ClassTemplate extends ClassTemplateInterface with ReferenceHolder {
-  ClassTemplate(int fieldTemplate, CallbackTemplate onTemplateCallback)
+  const ClassTemplate(int fieldTemplate, CallbackTemplate onTemplateCallback)
       : super(fieldTemplate, onTemplateCallback);
 
   @override
   FutureOr<String> methodTemplate(String parameterTemplate) async {
-    final Completer<String> completer = Completer<String>();
-
-    referenceManager.sendMethodCall(
+    return await (referenceManager.sendMethodCall(
       this,
       'methodTemplate',
       <dynamic>[parameterTemplate],
-      ResultListener(
-        onSuccess: ([dynamic result]) => completer.complete(result),
-        onError: (dynamic error, [StackTrace stackTrace]) {
-          return completer.completeError(error, stackTrace);
-        },
-      ),
-    );
-
-    return completer.future;
+    )) as String;
   }
 }
