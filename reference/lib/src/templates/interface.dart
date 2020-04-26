@@ -15,8 +15,6 @@ class ClassTemplateInterface {
     throw UnimplementedError();
   }
 
-  // We equate these when fieldTemplates are equal to make this class usable in
-  // tests.
   @override
   bool operator ==(dynamic other) =>
       other is ClassTemplateInterface && other.fieldTemplate == fieldTemplate;

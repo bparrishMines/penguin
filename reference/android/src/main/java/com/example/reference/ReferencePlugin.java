@@ -8,17 +8,25 @@ import io.flutter.plugin.common.PluginRegistry.Registrar;
 
 /** ReferencePlugin */
 public class ReferencePlugin implements FlutterPlugin {
+  private static class ReferenceManagerTemplate extends GeneratedReferenceManager {
+    ReferenceManagerTemplate(BinaryMessenger binaryMessenger, String channelName, GeneratedMessageCodec messageCodec) {
+      super(binaryMessenger, channelName, messageCodec);
+    }
+
+    @Override
+    public ClassTemplate createClassTemplate(final String referenceId, final int fieldTemplate) {
+      return new com.example.reference.templates.ClassTemplate(this, fieldTemplate);
+    }
+  }
+
   public static void registerWith(Registrar registrar) {
     new ReferencePlugin().initialize(registrar.messenger());
   }
 
   private void initialize(final BinaryMessenger binaryMessenger) {
-    new GeneratedReferenceManager(binaryMessenger, "reference_plugin", new GeneratedReferenceManager.GeneratedMessageCodec()) {
-      @Override
-      public ClassTemplate createClassTemplate(final String referenceId, final int fieldTemplate) {
-        return new com.example.reference.templates.ClassTemplate(this, fieldTemplate);
-      }
-    }.initialize();
+    new ReferenceManagerTemplate(binaryMessenger,
+        "reference_plugin",
+        new GeneratedReferenceManager.GeneratedMessageCodec()).initialize();
   }
 
   @Override

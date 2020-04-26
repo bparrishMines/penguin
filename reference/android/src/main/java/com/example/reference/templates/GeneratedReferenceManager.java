@@ -17,7 +17,7 @@ public abstract class GeneratedReferenceManager extends MethodChannelReferenceMa
     int getFieldTemplate();
   }
 
-  public class GeneratedMessageCodec extends ReferenceMessageCodec {
+  public static class GeneratedMessageCodec extends ReferenceMessageCodec {
     private static final byte CLASS_TEMPLATE = (byte) 129;
 
     @Override
