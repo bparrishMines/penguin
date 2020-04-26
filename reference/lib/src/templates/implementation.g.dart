@@ -21,9 +21,8 @@ abstract class GeneratedReferenceManager extends MethodChannelReferenceManager {
       return holder.callbackTemplate(arguments[0]);
     } else if (holder is ClassTemplate && methodName == 'methodTemplate') {
       return holder.methodTemplate(arguments[0]);
-    } else {
-      throw StateError('Could not call $methodName on ${holder.runtimeType}.');
     }
+    throw StateError('Could not call $methodName on ${holder.runtimeType}.');
   }
 
   @override

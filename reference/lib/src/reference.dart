@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 import 'package:quiver/collection.dart';
 import 'package:uuid/uuid.dart';
@@ -112,11 +114,9 @@ abstract class ReferenceManager {
 
   void release(ReferenceHolder holder) {
     final String referenceId = referenceIdFor(holder);
-    if (referenceId == null) return;
-
-    final ReferenceCounter counter =
-        _referenceIdToReferenceCounter[referenceId];
-    counter.release(referenceId, holder);
+    if (referenceId != null) {
+      _referenceIdToReferenceCounter[referenceId].release(referenceId, holder);
+    }
   }
 
   void addToAutoReleasePool(ReferenceHolder holder) {
