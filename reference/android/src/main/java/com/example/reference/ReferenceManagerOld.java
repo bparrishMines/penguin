@@ -1,7 +1,6 @@
 package com.example.reference;
 
 import com.example.reference.reference.Reference;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,7 +16,7 @@ public class ReferenceManagerOld {
     public boolean addReference(final Reference reference) {
       if (!canAddReference(reference)) return false;
 
-      for (final ReferenceManagerOld manager: attachedManagers) {
+      for (final ReferenceManagerOld manager : attachedManagers) {
         manager.addReference(reference);
       }
       references.put(reference.referenceId, reference);
@@ -26,7 +25,7 @@ public class ReferenceManagerOld {
 
     @Override
     public Reference removeReference(final String referenceId) {
-      for (final ReferenceManagerOld manager: attachedManagers) {
+      for (final ReferenceManagerOld manager : attachedManagers) {
         manager.removeReference(referenceId);
       }
       return super.removeReference(referenceId);
@@ -34,7 +33,7 @@ public class ReferenceManagerOld {
 
     @Override
     public Reference getReference(final String referenceId) {
-      for (final ReferenceManagerOld manager: attachedManagers) {
+      for (final ReferenceManagerOld manager : attachedManagers) {
         final Reference reference = manager.getReference(referenceId);
         if (reference != null) return reference;
       }
@@ -43,7 +42,7 @@ public class ReferenceManagerOld {
 
     @Override
     public boolean canAddReference(Reference reference) {
-      for (final ReferenceManagerOld manager: attachedManagers) {
+      for (final ReferenceManagerOld manager : attachedManagers) {
         if (!manager.canAddReference(reference)) return false;
       }
       return super.canAddReference(reference);

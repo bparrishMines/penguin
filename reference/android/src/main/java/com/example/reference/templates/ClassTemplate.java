@@ -2,7 +2,6 @@ package com.example.reference.templates;
 
 import com.example.reference.reference.CompletableRunnable;
 import com.example.reference.reference.ReferenceManager;
-
 import io.flutter.Log;
 
 public class ClassTemplate implements GeneratedReferenceManager.ClassTemplate {
@@ -28,21 +27,21 @@ public class ClassTemplate implements GeneratedReferenceManager.ClassTemplate {
 
   @Override
   public CompletableRunnable<String> callbackTemplate(final double testParameter) {
-    final CompletableRunnable<String> completer = referenceManager.sendMethodCall(this,
-        "callbackTemplate",
-        new Object[]{testParameter});
+    final CompletableRunnable<String> completer =
+        referenceManager.sendMethodCall(this, "callbackTemplate", new Object[] {testParameter});
 
-    return completer.setOnCompleteListener(new CompletableRunnable.OnCompleteListener() {
-      @Override
-      public void onComplete(Object result) {
-        if (result != "loco") throw new IllegalArgumentException();
-      }
+    return completer.setOnCompleteListener(
+        new CompletableRunnable.OnCompleteListener() {
+          @Override
+          public void onComplete(Object result) {
+            if (result != "loco") throw new IllegalArgumentException();
+          }
 
-      @Override
-      public void onError(Throwable throwable) {
-        Log.d(throwable.getClass().getName(), throwable.getLocalizedMessage());
-      }
-    });
+          @Override
+          public void onError(Throwable throwable) {
+            Log.d(throwable.getClass().getName(), throwable.getLocalizedMessage());
+          }
+        });
   }
 
   @Override

@@ -9,7 +9,8 @@ import io.flutter.plugin.common.PluginRegistry.Registrar;
 /** ReferencePlugin */
 public class ReferencePlugin implements FlutterPlugin {
   private static class ReferenceManagerTemplate extends GeneratedReferenceManager {
-    ReferenceManagerTemplate(BinaryMessenger binaryMessenger, String channelName, GeneratedMessageCodec messageCodec) {
+    ReferenceManagerTemplate(
+        BinaryMessenger binaryMessenger, String channelName, GeneratedMessageCodec messageCodec) {
       super(binaryMessenger, channelName, messageCodec);
     }
 
@@ -24,9 +25,11 @@ public class ReferencePlugin implements FlutterPlugin {
   }
 
   private void initialize(final BinaryMessenger binaryMessenger) {
-    new ReferenceManagerTemplate(binaryMessenger,
-        "reference_plugin",
-        new GeneratedReferenceManager.GeneratedMessageCodec()).initialize();
+    new ReferenceManagerTemplate(
+            binaryMessenger,
+            "reference_plugin",
+            new GeneratedReferenceManager.GeneratedMessageCodec())
+        .initialize();
   }
 
   @Override
@@ -39,21 +42,21 @@ public class ReferencePlugin implements FlutterPlugin {
     // Do nothing.
   }
 
-//  public static boolean attachToGlobalReferenceManager(final PluginRegistry registry, MethodChannelReferencePlatform platform) {
-//    final ReferenceManagerOld globalManager = registry.valuePublishedByPlugin(ReferencePlugin.class.getName());
-//    return attachToGlobalReferenceManager(globalManager, platform);
-//  }
-//
-//  public static boolean attachToGlobalReferenceManager(final FlutterEngine engine, MethodChannelReferencePlatform platform) {
-//    final ReferencePlugin plugin = (ReferencePlugin) engine.getPlugins().get(ReferencePlugin.class);
-//    return attachToGlobalReferenceManager(plugin.globalReferenceManagerOld, platform);
-//  }
-//
-//  private static boolean attachToGlobalReferenceManager(ReferenceManagerOld globalReferenceManagerOld, MethodChannelReferencePlatform platform) {
-//    final ReferenceManagerOld referenceManagerOld = platform.referenceManagerOld;
-//    if (referenceManagerOld instanceof ReferenceManagerOld.ReferenceManagerOldNode) {
-//      return ((ReferenceManagerOld.ReferenceManagerOldNode) referenceManagerOld).attachTo(globalReferenceManagerOld);
-//    }
-//    return false;
-//  }
+  //  public static boolean attachToGlobalReferenceManager(final PluginRegistry registry, MethodChannelReferencePlatform platform) {
+  //    final ReferenceManagerOld globalManager = registry.valuePublishedByPlugin(ReferencePlugin.class.getName());
+  //    return attachToGlobalReferenceManager(globalManager, platform);
+  //  }
+  //
+  //  public static boolean attachToGlobalReferenceManager(final FlutterEngine engine, MethodChannelReferencePlatform platform) {
+  //    final ReferencePlugin plugin = (ReferencePlugin) engine.getPlugins().get(ReferencePlugin.class);
+  //    return attachToGlobalReferenceManager(plugin.globalReferenceManagerOld, platform);
+  //  }
+  //
+  //  private static boolean attachToGlobalReferenceManager(ReferenceManagerOld globalReferenceManagerOld, MethodChannelReferencePlatform platform) {
+  //    final ReferenceManagerOld referenceManagerOld = platform.referenceManagerOld;
+  //    if (referenceManagerOld instanceof ReferenceManagerOld.ReferenceManagerOldNode) {
+  //      return ((ReferenceManagerOld.ReferenceManagerOldNode) referenceManagerOld).attachTo(globalReferenceManagerOld);
+  //    }
+  //    return false;
+  //  }
 }

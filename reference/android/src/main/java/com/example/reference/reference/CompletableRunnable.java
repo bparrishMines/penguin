@@ -1,6 +1,6 @@
 package com.example.reference.reference;
 
-abstract public class CompletableRunnable<T> implements Runnable {
+public abstract class CompletableRunnable<T> implements Runnable {
   private T result;
   private Throwable error;
   private OnCompleteListener listener;
@@ -9,10 +9,11 @@ abstract public class CompletableRunnable<T> implements Runnable {
 
   public interface OnCompleteListener {
     void onComplete(Object result);
+
     void onError(Throwable throwable);
   }
 
-  public void complete(T result) {
+  public void complete(final T result) {
     if (isCompletedWithResult || isCompletedWithError) {
       throw new IllegalStateException("This has already been completed.");
     }
@@ -21,7 +22,7 @@ abstract public class CompletableRunnable<T> implements Runnable {
     tryPassResultToListener();
   }
 
-  public void completeWithError(Throwable error) {
+  public void completeWithError(final Throwable error) {
     if (isCompletedWithResult || isCompletedWithError) {
       throw new IllegalStateException("This has already been completed.");
     }

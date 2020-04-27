@@ -1,9 +1,9 @@
 package com.example.reference.method_channel;
 
 import com.example.reference.reference.Reference;
+import io.flutter.plugin.common.StandardMessageCodec;
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
-import io.flutter.plugin.common.StandardMessageCodec;
 
 public class ReferenceMessageCodec extends StandardMessageCodec {
   private static final byte REFERENCE = (byte) 128;

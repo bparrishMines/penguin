@@ -2,9 +2,9 @@
 
 @implementation ReferencePlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
-  FlutterMethodChannel* channel = [FlutterMethodChannel
-      methodChannelWithName:@"reference"
-            binaryMessenger:[registrar messenger]];
+  FlutterMethodChannel* channel =
+      [FlutterMethodChannel methodChannelWithName:@"reference"
+                                  binaryMessenger:[registrar messenger]];
   ReferencePlugin* instance = [[ReferencePlugin alloc] init];
   [registrar addMethodCallDelegate:instance channel:channel];
 }

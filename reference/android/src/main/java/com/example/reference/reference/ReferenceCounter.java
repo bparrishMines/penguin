@@ -3,6 +3,7 @@ package com.example.reference.reference;
 public class ReferenceCounter {
   public interface LifecycleListener {
     void onCreate(final String referenceId, final ReferenceManager.ReferenceHolder holder);
+
     void onDispose(final String referenceId, final ReferenceManager.ReferenceHolder holder);
   }
 
@@ -28,7 +29,8 @@ public class ReferenceCounter {
   public void release(final String referenceId, final ReferenceManager.ReferenceHolder holder) {
     if (referenceCount < 1) {
       final String message =
-          "`release()` was called without calling `retain()` first. In other words, `release()` was called while `referenceCount == 0`. Reference count =" + referenceCount;
+          "`release()` was called without calling `retain()` first. In other words, `release()` was called while `referenceCount == 0`. Reference count ="
+              + referenceCount;
       throw new IllegalStateException("");
     }
 

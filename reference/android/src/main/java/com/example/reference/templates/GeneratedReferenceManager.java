@@ -1,19 +1,21 @@
 package com.example.reference.templates;
 
-import com.example.reference.reference.CompletableRunnable;
 import com.example.reference.method_channel.MethodChannelReferenceManager;
 import com.example.reference.method_channel.ReferenceMessageCodec;
+import com.example.reference.reference.CompletableRunnable;
+import io.flutter.plugin.common.BinaryMessenger;
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import io.flutter.plugin.common.BinaryMessenger;
 
 public abstract class GeneratedReferenceManager extends MethodChannelReferenceManager {
   public interface ClassTemplate extends ReferenceHolder {
     CompletableRunnable<String> methodTemplate(String parameterTemplate);
+
     CompletableRunnable<String> callbackTemplate(double testParameter);
+
     int getFieldTemplate();
   }
 
@@ -25,7 +27,8 @@ public abstract class GeneratedReferenceManager extends MethodChannelReferenceMa
       if (value instanceof ClassTemplate) {
         stream.write(CLASS_TEMPLATE);
         final ClassTemplate classValue = (ClassTemplate) value;
-        writeValue(stream, toCreationParams(CLASS_TEMPLATE, new Object[]{classValue.getFieldTemplate()}));
+        writeValue(
+            stream, toCreationParams(CLASS_TEMPLATE, new Object[] {classValue.getFieldTemplate()}));
       } else {
         super.writeValue(stream, value);
       }
@@ -49,21 +52,24 @@ public abstract class GeneratedReferenceManager extends MethodChannelReferenceMa
     }
   }
 
-  public GeneratedReferenceManager(final BinaryMessenger binaryMessenger,
-                                   final String channelName,
-                                   final GeneratedMessageCodec messageCodec) {
+  public GeneratedReferenceManager(
+      final BinaryMessenger binaryMessenger,
+      final String channelName,
+      final GeneratedMessageCodec messageCodec) {
     super(binaryMessenger, channelName, messageCodec);
   }
 
   @Override
-  public CompletableRunnable<?> receiveLocalMethodCall(ReferenceHolder holder, String methodName, Object[] arguments) {
+  public CompletableRunnable<?> receiveLocalMethodCall(
+      ReferenceHolder holder, String methodName, Object[] arguments) {
     final CompletableRunnable<?> runnable;
     if (holder instanceof ClassTemplate && methodName.equals("methodTemplate")) {
       runnable = ((ClassTemplate) holder).methodTemplate((String) arguments[0]);
     } else if (holder instanceof ClassTemplate && methodName.equals("callbackTemplate")) {
       runnable = ((ClassTemplate) holder).callbackTemplate((Double) arguments[0]);
     } else {
-      final String message = String.format("Could not call %s on %s.", methodName, holder.getClass().getName());
+      final String message =
+          String.format("Could not call %s on %s.", methodName, holder.getClass().getName());
       throw new IllegalStateException(message);
     }
 
@@ -81,7 +87,8 @@ public abstract class GeneratedReferenceManager extends MethodChannelReferenceMa
       return createClassTemplate(referenceId, (Integer) parameters.get(0));
     }
 
-    throw new IllegalStateException("Could not instantiate an object with arguments." + argumentList.get(0));
+    throw new IllegalStateException(
+        "Could not instantiate an object with arguments." + argumentList.get(0));
   }
 
   private static int byteToUnsignedInt(byte x) {
