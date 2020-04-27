@@ -40,6 +40,9 @@ void main() {
     referenceManager.retain(testClass);
     referenceManager.retain(testClass);
 
+    final String referenceId = referenceManager.referenceIdFor(testClass);
+    expect(referenceId, isNotNull);
+    expect(referenceManager.referenceHolderFor(referenceId), equals(testClass));
     expect(log, <Matcher>[
       isMethodCall('REFERENCE_CREATE', arguments: <dynamic>[
         referenceManager.referenceIdFor(testClass),
@@ -59,6 +62,9 @@ void main() {
     log.clear();
 
     referenceManager.release(testClass);
+
+    expect(referenceManager.referenceHolderFor(referenceId), isNull);
+    expect(referenceManager.referenceIdFor(testClass), isNull);
     expect(log, <Matcher>[
       isMethodCall(
         'REFERENCE_DISPOSE',

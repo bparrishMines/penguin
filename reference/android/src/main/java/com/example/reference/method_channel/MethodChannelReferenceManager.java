@@ -68,7 +68,7 @@ public abstract class MethodChannelReferenceManager extends ReferenceManager imp
 
             @Override
             public void notImplemented() {
-              final String message = String.format("Method `%s` returned as not implemented", methodName);
+              final String message = String.format("Method `%s` returned as not implemented.", methodName);
               completeWithError(new Exception(message));
             }
           });
@@ -107,6 +107,7 @@ public abstract class MethodChannelReferenceManager extends ReferenceManager imp
           case METHOD_CREATE: {
             final List<Object> arguments = (List<Object>) call.arguments;
             createAndAddLocalReference((String) arguments.get(0), arguments.get(1));
+            channelResult.success(null);
             break;
           }
           case METHOD_METHOD:
@@ -128,6 +129,7 @@ public abstract class MethodChannelReferenceManager extends ReferenceManager imp
             break;
           case METHOD_DISPOSE:
             disposeLocalReference(((Reference) call.arguments).referenceId);
+            channelResult.success(null);
             break;
         }
       }

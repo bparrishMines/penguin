@@ -12,7 +12,7 @@ import io.flutter.plugin.common.BinaryMessenger;
 
 public abstract class GeneratedReferenceManager extends MethodChannelReferenceManager {
   public interface ClassTemplate extends ReferenceHolder {
-    CompletableRunnable<String> methodTemplate(String parameterType);
+    CompletableRunnable<String> methodTemplate(String parameterTemplate);
     CompletableRunnable<String> callbackTemplate(double testParameter);
     int getFieldTemplate();
   }
@@ -49,6 +49,12 @@ public abstract class GeneratedReferenceManager extends MethodChannelReferenceMa
     }
   }
 
+  public GeneratedReferenceManager(final BinaryMessenger binaryMessenger,
+                                   final String channelName,
+                                   final GeneratedMessageCodec messageCodec) {
+    super(binaryMessenger, channelName, messageCodec);
+  }
+
   @Override
   public CompletableRunnable<?> receiveLocalMethodCall(ReferenceHolder holder, String methodName, Object[] arguments) {
     final CompletableRunnable<?> runnable;
@@ -70,17 +76,15 @@ public abstract class GeneratedReferenceManager extends MethodChannelReferenceMa
   @Override
   public ReferenceHolder createLocalReference(String referenceId, Object arguments) {
     final List<Object> argumentList = (List<Object>) arguments;
-    if (argumentList.get(0) == (Byte) GeneratedMessageCodec.CLASS_TEMPLATE) {
+    if (argumentList.get(0).equals(byteToUnsignedInt(GeneratedMessageCodec.CLASS_TEMPLATE))) {
       final List<Object> parameters = (List<Object>) argumentList.get(1);
       return createClassTemplate(referenceId, (Integer) parameters.get(0));
     }
 
-    throw new IllegalStateException("Could not instantiate an object with arguments.");
+    throw new IllegalStateException("Could not instantiate an object with arguments." + argumentList.get(0));
   }
 
-  public GeneratedReferenceManager(final BinaryMessenger binaryMessenger,
-                                   final String channelName,
-                                   final GeneratedMessageCodec messageCodec) {
-    super(binaryMessenger, channelName, messageCodec);
+  private static int byteToUnsignedInt(byte x) {
+    return ((int) x) & 0xff;
   }
 }

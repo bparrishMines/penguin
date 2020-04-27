@@ -30,9 +30,10 @@ abstract public class CompletableRunnable<T> implements Runnable {
     tryPassResultToListener();
   }
 
-  public void setOnCompleteListener(final OnCompleteListener listener) {
+  public CompletableRunnable<T> setOnCompleteListener(final OnCompleteListener listener) {
     this.listener = listener;
     tryPassResultToListener();
+    return this;
   }
 
   private void tryPassResultToListener() {
