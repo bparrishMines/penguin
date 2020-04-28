@@ -1,6 +1,6 @@
-package com.example.reference;
+package github.penguin.reference;
 
-import com.example.reference.reference.Reference;
+import github.penguin.reference.reference.Reference;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;

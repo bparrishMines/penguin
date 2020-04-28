@@ -1,8 +1,8 @@
-package com.example.reference.templates;
+package github.penguin.reference.templates;
 
-import com.example.reference.method_channel.MethodChannelReferenceManager;
-import com.example.reference.method_channel.ReferenceMessageCodec;
-import com.example.reference.reference.CompletableRunnable;
+import github.penguin.reference.method_channel.MethodChannelReferenceManager;
+import github.penguin.reference.method_channel.ReferenceMessageCodec;
+import github.penguin.reference.reference.CompletableRunnable;
 import io.flutter.plugin.common.BinaryMessenger;
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;

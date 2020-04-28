@@ -1,4 +1,4 @@
-package com.example.reference.reference;
+package github.penguin.reference.reference;
 
 public class Reference {
   public final String referenceId;

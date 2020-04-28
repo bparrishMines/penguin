@@ -1,7 +1,7 @@
-package com.example.reference.templates;
+package github.penguin.reference.templates;
 
-import com.example.reference.reference.CompletableRunnable;
-import com.example.reference.reference.ReferenceManager;
+import github.penguin.reference.reference.CompletableRunnable;
+import github.penguin.reference.reference.ReferenceManager;
 import io.flutter.Log;
 
 public class ClassTemplate implements GeneratedReferenceManager.ClassTemplate {

@@ -22,7 +22,7 @@ flutter:
   plugin:
     platforms:
       android:
-        package: com.example.reference
+        package: github.penguin.reference
         pluginClass: ReferencePlugin
       ios:
         pluginClass: ReferencePlugin

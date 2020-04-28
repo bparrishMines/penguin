@@ -1,4 +1,4 @@
-group 'com.example.reference'
+group 'github.penguin.reference'
 version '1.0'
 
 buildscript {

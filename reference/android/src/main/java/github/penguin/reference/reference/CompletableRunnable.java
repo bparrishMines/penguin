@@ -1,4 +1,4 @@
-package com.example.reference.reference;
+package github.penguin.reference.reference;
 
 public abstract class CompletableRunnable<T> implements Runnable {
   private T result;

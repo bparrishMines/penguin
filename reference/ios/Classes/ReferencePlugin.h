@@ -1,4 +1,4 @@
 #import <Flutter/Flutter.h>
 
-@interface ReferencePlugin : NSObject <FlutterPlugin>
+@interface ReferencePlugin : NSObject<FlutterPlugin>
 @end

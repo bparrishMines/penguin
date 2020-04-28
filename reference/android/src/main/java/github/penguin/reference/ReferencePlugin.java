@@ -1,7 +1,7 @@
-package com.example.reference;
+package github.penguin.reference;
 
 import androidx.annotation.NonNull;
-import com.example.reference.templates.GeneratedReferenceManager;
+import github.penguin.reference.templates.GeneratedReferenceManager;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
@@ -16,7 +16,7 @@ public class ReferencePlugin implements FlutterPlugin {
 
     @Override
     public ClassTemplate createClassTemplate(final String referenceId, final int fieldTemplate) {
-      return new com.example.reference.templates.ClassTemplate(this, fieldTemplate);
+      return new github.penguin.reference.templates.ClassTemplate(this, fieldTemplate);
     }
   }
 

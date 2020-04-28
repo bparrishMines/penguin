@@ -1,4 +1,4 @@
-package com.example.reference.reference;
+package github.penguin.reference.reference;
 
 public class ReferenceCounter {
   public interface LifecycleListener {

@@ -1,13 +1,13 @@
-package com.example.reference.method_channel;
+package github.penguin.reference.method_channel;
 
 import static java.util.Arrays.asList;
 
 import android.os.Handler;
 import android.os.Looper;
 import androidx.annotation.NonNull;
-import com.example.reference.reference.CompletableRunnable;
-import com.example.reference.reference.Reference;
-import com.example.reference.reference.ReferenceManager;
+import github.penguin.reference.reference.CompletableRunnable;
+import github.penguin.reference.reference.Reference;
+import github.penguin.reference.reference.ReferenceManager;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;

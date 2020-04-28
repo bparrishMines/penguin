@@ -1,6 +1,6 @@
-package com.example.reference.method_channel;
+package github.penguin.reference.method_channel;
 
-import com.example.reference.reference.Reference;
+import github.penguin.reference.reference.Reference;
 import io.flutter.plugin.common.StandardMessageCodec;
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;

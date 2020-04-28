@@ -1,4 +1,4 @@
-package com.example.reference.reference;
+package github.penguin.reference.reference;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
