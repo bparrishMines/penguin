@@ -1,8 +1,8 @@
 name: reference
-description: A new flutter plugin project.
+description: A Flutter plugin for communicating with object-oriented platform APIs.
 version: 0.0.1
-author:
-homepage: 'woefij'
+author: https://github.com/bparrishMines
+homepage: https://github.com/bparrishMines/penguin/tree/master/reference
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
