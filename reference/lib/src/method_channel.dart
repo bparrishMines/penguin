@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import '../reference.dart';
 
 abstract class MethodChannelReferenceManager extends ReferenceManager
-    with LocalReferenceHandler {
+    with LocalReferenceCommunicationHandler {
   MethodChannelReferenceManager({
     @required String channelName,
     @required ReferenceMessageCodec messageCodec,
@@ -37,10 +37,10 @@ abstract class MethodChannelReferenceManager extends ReferenceManager
   }
 
   @override
-  LocalReferenceHandler get localHandler => this;
+  LocalReferenceCommunicationHandler get localHandler => this;
 
   @override
-  RemoteReferenceHandler get remoteHandler =>
+  RemoteReferenceCommunicationHandler get remoteHandler =>
       _MethodChannelRemoteReferenceHandler(channel);
 }
 
@@ -70,7 +70,7 @@ abstract class ReferenceMessageCodec extends StandardMessageCodec {
   }
 }
 
-class _MethodChannelRemoteReferenceHandler with RemoteReferenceHandler {
+class _MethodChannelRemoteReferenceHandler with RemoteReferenceCommunicationHandler {
   const _MethodChannelRemoteReferenceHandler(this.channel);
 
   final MethodChannel channel;

@@ -2,44 +2,55 @@ import 'package:flutter/foundation.dart';
 
 import '../reference.dart';
 
-typedef ReferenceCounterLifecycleCallback = void Function(
-  String referenceId,
-  ReferenceHolder holder,
-);
+// TODO: find some better names?
+//typedef OwnerCounterLifecycleCallback = void Function(
+//  LocalReference localReference,
+//  RemoteReference remoteReference,
+//);
 
-class ReferenceCounterLifecycleListener {
-  const ReferenceCounterLifecycleListener({
+class OwnerCounterLifecycleListener {
+  const OwnerCounterLifecycleListener({
     @required this.onCreate,
     @required this.onDispose,
   })  : assert(onCreate != null),
         assert(onDispose != null);
 
-  final ReferenceCounterLifecycleCallback onCreate;
-  final ReferenceCounterLifecycleCallback onDispose;
+  final void Function(LocalReference localReference) onCreate;
+  final void Function(
+    LocalReference localReference,
+    RemoteReference remoteReference,
+  ) onDispose;
 }
 
-class ReferenceCounter {
-  ReferenceCounter(
+class ReferencePairOwnerCounter {
+  ReferencePairOwnerCounter(
     this.lifecycleListener, [
-    int initialReferenceCount = 0,
-  ])  : assert(initialReferenceCount == null || initialReferenceCount >= 0),
-        _referenceCount = initialReferenceCount ?? 0;
+    int initialOwnerCount = 0,
+  ])  : assert(initialOwnerCount == null || initialOwnerCount >= 0),
+        _ownerCount = initialOwnerCount ?? 0;
 
-  final ReferenceCounterLifecycleListener lifecycleListener;
+  final OwnerCounterLifecycleListener lifecycleListener;
 
-  int _referenceCount;
-  int get referenceCount => _referenceCount;
+  int _ownerCount;
+  int get ownerCount => _ownerCount;
 
-  void retain(String referenceId, ReferenceHolder holder) {
-    _referenceCount++;
-    if (referenceCount == 1) lifecycleListener?.onCreate(referenceId, holder);
+  void increment(LocalReference localReference) {
+    _ownerCount++;
+    if (ownerCount == 1) {
+      lifecycleListener?.onCreate(localReference);
+    }
   }
 
-  void release(String referenceId, ReferenceHolder holder) {
-    assert(referenceCount > 0,
-        '`release()` was called without calling `retain()` first. In other words, `release()` was called while `referenceCount == 0`. Reference count = $_referenceCount.');
+  void decrement(
+    LocalReference localReference,
+    RemoteReference remoteReference,
+  ) {
+    assert(ownerCount > 0,
+        '`release()` was called without calling `retain()` first. In other words, `release()` was called while `referenceCount == 0`. Reference count = $_ownerCount.');
 
-    _referenceCount--;
-    if (referenceCount == 0) lifecycleListener?.onDispose(referenceId, holder);
+    _ownerCount--;
+    if (ownerCount == 0) {
+      lifecycleListener?.onDispose(localReference, remoteReference);
+    }
   }
 }

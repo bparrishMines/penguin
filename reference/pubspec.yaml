@@ -1,5 +1,5 @@
 name: reference
-description: A Flutter plugin for communicating with object-oriented platform APIs.
+description: A Flutter plugin for creating a reference based plugin API.
 version: 0.0.1
 author: https://github.com/bparrishMines
 homepage: https://github.com/bparrishMines/penguin/tree/master/reference
