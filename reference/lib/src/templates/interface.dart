@@ -1,17 +1,15 @@
 import 'dart:async';
 
-import '../annotations.dart';
-
-typedef CallbackTemplate = FutureOr<String> Function(double testParameter);
-
-@Interface()
 class ClassTemplateInterface {
-  const ClassTemplateInterface(this.fieldTemplate, this.callbackTemplate);
+  const ClassTemplateInterface(this.fieldTemplate);
 
   final int fieldTemplate;
-  final CallbackTemplate callbackTemplate;
 
   FutureOr<String> methodTemplate(String parameterTemplate) {
+    throw UnimplementedError();
+  }
+
+  FutureOr<String> callbackTemplate(double parameterTemplate) {
     throw UnimplementedError();
   }
 

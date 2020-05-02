@@ -1,66 +1,89 @@
 part of 'implementation.dart';
 
-abstract class GeneratedReferenceManager extends MethodChannelReferenceManager {
-  GeneratedReferenceManager(
-    String channelName, [
-    GeneratedMessageCodec messageCodec = const GeneratedMessageCodec(),
-  ]) : super(
+class GeneratedReferencePairManager extends MethodChannelReferencePairManager {
+  GeneratedReferencePairManager(
+    String channelName,
+    GeneratedLocalReferenceCommunicationHandler localHandler, {
+    GeneratedRemoteReferenceCommunicationHandler remoteHandler,
+    ReferenceMessageCodec referenceMessageCodec,
+  }) : super(
           channelName: channelName,
-          messageCodec: messageCodec,
+          localHandler: localHandler,
+          remoteHandler:
+              remoteHandler ?? GeneratedRemoteReferenceCommunicationHandler(),
+          referenceMessageCodec:
+              referenceMessageCodec ?? const ReferenceMessageCodec(),
         );
+}
 
-  ClassTemplate createClassTemplate(String referenceId, int fieldTemplate);
+abstract class GeneratedLocalReferenceCommunicationHandler
+    with LocalReferenceCommunicationHandler {
+  const GeneratedLocalReferenceCommunicationHandler();
 
-  @override
-  Future<dynamic> receiveLocalMethodCall(
-    ReferenceHolder holder,
-    String methodName,
-    List<dynamic> arguments,
-  ) async {
-    if (holder is ClassTemplate && methodName == 'callbackTemplate') {
-      return holder.callbackTemplate(arguments[0]);
-    } else if (holder is ClassTemplate && methodName == 'methodTemplate') {
-      return holder.methodTemplate(arguments[0]);
-    }
-    throw StateError('Could not call $methodName on ${holder.runtimeType}.');
-  }
+  ClassTemplate createClassTemplate(
+    RemoteReference remoteReference,
+    int fieldTemplate,
+  );
 
   @override
-  ReferenceHolder createLocalReference(String referenceId, dynamic arguments) {
-    if (arguments[0] == GeneratedMessageCodec._valueClassTemplate) {
-      return createClassTemplate(referenceId, arguments[1][0]);
+  LocalReference createLocalReference(
+    RemoteReference remoteReference,
+    dynamic arguments,
+  ) {
+    if (arguments[0] == '$ClassTemplate') {
+      return createClassTemplate(remoteReference, arguments[1][0]);
     }
+
     throw StateError(
       'Could not instantiate an object with arguments: $arguments.',
     );
   }
+
+  @override
+  Future<dynamic> executeLocalMethod(
+    LocalReference localReference,
+    String methodName,
+    List<dynamic> arguments,
+  ) async {
+    if (localReference is ClassTemplate &&
+        methodName == GeneratedMethodName.callbackTemplate.toString()) {
+      return await localReference.callbackTemplate(arguments[0]);
+    } else if (localReference is ClassTemplate &&
+        methodName == GeneratedMethodName.methodTemplate.toString()) {
+      return await localReference.methodTemplate(arguments[0]);
+    }
+
+    throw StateError(
+      'Could not call $methodName on ${localReference.runtimeType}.',
+    );
+  }
 }
 
-class GeneratedMessageCodec extends ReferenceMessageCodec {
-  const GeneratedMessageCodec();
+class GeneratedRemoteReferenceCommunicationHandler
+    extends MethodChannelRemoteReferenceCommunicationHandler {
+  @override
+  dynamic creationArgumentsFor(LocalReference localReference) {
+    if (localReference is ClassTemplate) {
+      return <dynamic>[
+        '$ClassTemplate',
+        <dynamic>[localReference.fieldTemplate],
+      ];
+    }
 
-  static const int _valueClassTemplate = 129;
+    throw StateError('a;oweijf;');
+  }
+}
+
+class GeneratedMethodName {
+  const GeneratedMethodName._(this.name);
+
+  final String name;
+
+  static final GeneratedMethodName callbackTemplate =
+      GeneratedMethodName._('callbackTemplate');
+  static final GeneratedMethodName methodTemplate =
+      GeneratedMethodName._('methodTemplate');
 
   @override
-  void writeValue(WriteBuffer buffer, dynamic value) {
-    if (value is ClassTemplate) {
-      buffer.putUint8(_valueClassTemplate);
-      writeValue(buffer, <dynamic>[
-        _valueClassTemplate,
-        <dynamic>[value.fieldTemplate],
-      ]);
-    } else {
-      super.writeValue(buffer, value);
-    }
-  }
-
-  @override
-  dynamic readValueOfType(int type, ReadBuffer buffer) {
-    switch (type) {
-      case _valueClassTemplate:
-        return readValueOfType(buffer.getUint8(), buffer);
-      default:
-        return super.readValueOfType(type, buffer);
-    }
-  }
+  String toString() => name;
 }

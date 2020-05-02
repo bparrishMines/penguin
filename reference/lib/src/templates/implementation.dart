@@ -1,43 +1,41 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:reference/reference.dart';
-import 'package:reference/src/templates/interface.dart';
 
-import '../annotations.dart';
+import 'interface.dart';
 
 part 'implementation.g.dart';
 
-class ReferenceManagerTemplate extends GeneratedReferenceManager {
-  ReferenceManagerTemplate() : super('reference_plugin');
+MethodChannelReferencePairManager referencePairManager;
 
+class LocalReferenceCommunicationHandlerTemplate
+    extends GeneratedLocalReferenceCommunicationHandler {
   @override
-  ClassTemplate createClassTemplate(String referenceId, int fieldTemplate) {
-    return ClassTemplate(
-      fieldTemplate,
-      (double testParameter) async {
-        return (await sendMethodCall(
-          referenceHolderFor(referenceId),
-          'callbackTemplate',
-          <dynamic>[testParameter],
-        )) as String;
-      },
-    );
+  ClassTemplate createClassTemplate(
+    RemoteReference remoteReference,
+    int fieldTemplate,
+  ) {
+    return ClassTemplate(fieldTemplate);
   }
 }
 
-ReferenceManagerTemplate referenceManager;
-
-@MethodChannelImplementation()
-class ClassTemplate extends ClassTemplateInterface with ReferenceHolder {
-  const ClassTemplate(int fieldTemplate, CallbackTemplate onTemplateCallback)
-      : super(fieldTemplate, onTemplateCallback);
+class ClassTemplate extends ClassTemplateInterface with LocalReference {
+  const ClassTemplate(int fieldTemplate) : super(fieldTemplate);
 
   @override
   FutureOr<String> methodTemplate(String parameterTemplate) async {
-    return await (referenceManager.sendMethodCall(
+    return await (referencePairManager.executeRemoteMethod(
       this,
-      'methodTemplate',
+      GeneratedMethodName.methodTemplate.toString(),
+      <dynamic>[parameterTemplate],
+    )) as String;
+  }
+
+  @override
+  FutureOr<String> callbackTemplate(double parameterTemplate) async {
+    return (await referencePairManager.executeRemoteMethod(
+      this,
+      GeneratedMethodName.callbackTemplate.toString(),
       <dynamic>[parameterTemplate],
     )) as String;
   }

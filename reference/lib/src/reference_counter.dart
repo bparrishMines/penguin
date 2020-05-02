@@ -2,12 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import '../reference.dart';
 
-// TODO: find some better names?
-//typedef OwnerCounterLifecycleCallback = void Function(
-//  LocalReference localReference,
-//  RemoteReference remoteReference,
-//);
-
+/// Contains lifecycle callbacks for [OwnerCounter].
 class OwnerCounterLifecycleListener {
   const OwnerCounterLifecycleListener({
     @required this.onCreate,
@@ -15,6 +10,7 @@ class OwnerCounterLifecycleListener {
   })  : assert(onCreate != null),
         assert(onDispose != null);
 
+  /// Called when owner count reaches 1 and
   final void Function(LocalReference localReference) onCreate;
   final void Function(
     LocalReference localReference,
@@ -22,8 +18,8 @@ class OwnerCounterLifecycleListener {
   ) onDispose;
 }
 
-class ReferencePairOwnerCounter {
-  ReferencePairOwnerCounter(
+class OwnerCounter {
+  OwnerCounter(
     this.lifecycleListener, [
     int initialOwnerCount = 0,
   ])  : assert(initialOwnerCount == null || initialOwnerCount >= 0),
