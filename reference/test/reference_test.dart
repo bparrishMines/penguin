@@ -22,7 +22,7 @@ void main() {
             MethodChannelReferencePairManager.methodMethod) {
           switch (methodCall.arguments[1]) {
             case 'methodTemplate':
-              return 'Hello!';
+              return 'Good' + methodCall.arguments[2][0];
             case 'callbackTemplate':
               return 'Potato';
           }
@@ -85,109 +85,103 @@ void main() {
       ),
     ]);
   });
-//
-//  test('sendMethodCall', () async {
-//    final ClassTemplate testClass = ClassTemplate(3, null);
-//    referenceManager.retain(testClass);
-//    log.clear();
-//
-//    final String result = await testClass.methodTemplate('Goodbye!');
-//
-//    expect(result, equals('Hello!'));
-//    expect(log, <Matcher>[
-//      isMethodCall('REFERENCE_METHOD', arguments: <dynamic>[
-//        Reference(referenceManager.referenceIdFor(testClass)),
-//        'methodTemplate',
-//        <dynamic>['Goodbye!'],
-//      ]),
-//    ]);
-//  });
-//
-//  test('receiveLocalMethodCall', () async {
-//    final Completer<double> callbackCompleter = Completer<double>();
-//    final ClassTemplate testClass = ClassTemplate(3, (double testParameter) {
-//      callbackCompleter.complete(testParameter);
-//      return 'Apple';
-//    });
-//
-//    referenceManager.retain(testClass);
-//
-//    final Completer<String> responseCompleter = Completer<String>();
-//    referenceManager.channel.binaryMessenger.handlePlatformMessage(
-//      'reference_plugin',
-//      referenceManager.channel.codec.encodeMethodCall(
-//        MethodCall(
-//          'REFERENCE_METHOD',
-//          <dynamic>[
-//            Reference(referenceManager.referenceIdFor(testClass)),
-//            'callbackTemplate',
-//            <dynamic>[46.0],
-//          ],
-//        ),
-//      ),
-//      (ByteData data) {
-//        responseCompleter.complete(
-//          referenceManager.channel.codec.decodeEnvelope(data),
-//        );
-//      },
-//    );
-//
-//    expect(callbackCompleter.future, completion(46.0));
-//    expect(responseCompleter.future, completion('Apple'));
-//  });
-//
-//  test('createLocalReference', () async {
-//    final String referenceId = Uuid().v4();
-//    referenceManager.channel.binaryMessenger.handlePlatformMessage(
-//      'reference_plugin',
-//      referenceManager.channel.codec.encodeMethodCall(
-//        MethodCall(
-//          'REFERENCE_CREATE',
-//          <dynamic>[
-//            referenceId,
-//            <dynamic>[
-//              129,
-//              <dynamic>[45],
-//            ],
-//          ],
-//        ),
-//      ),
-//      (ByteData data) {},
-//    );
-//
-//    final ClassTemplate testClass =
-//        referenceManager.referenceHolderFor(referenceId);
-//    expect(testClass.fieldTemplate, equals(45));
-//    expect(testClass.callbackTemplate, isNotNull);
-//  });
-//
-//  test('sendMethodCall for callback', () async {
-//    final String referenceId = Uuid().v4();
-//    referenceManager.channel.binaryMessenger.handlePlatformMessage(
-//      'reference_plugin',
-//      referenceManager.channel.codec.encodeMethodCall(
-//        MethodCall(
-//          'REFERENCE_CREATE',
-//          <dynamic>[
-//            referenceId,
-//            ClassTemplate(45, null),
-//          ],
-//        ),
-//      ),
-//      (ByteData data) {},
-//    );
-//
-//    final ClassTemplate testClass =
-//        referenceManager.referenceHolderFor(referenceId);
-//    final String result = await testClass.callbackTemplate(34.4);
-//
-//    expect(result, equals('Potato'));
-//    expect(log, <Matcher>[
-//      isMethodCall('REFERENCE_METHOD', arguments: <dynamic>[
-//        Reference(referenceId),
-//        'callbackTemplate',
-//        <dynamic>[34.4],
-//      ]),
-//    ]);
-//  });
+
+  test('executeRemoteMethod', () async {
+    final ReferencePairManager referencePairManager =
+        template.referencePairManager;
+    final template.ClassTemplate testClass = template.ClassTemplate(3);
+    referencePairManager.incrementOwnerCount(testClass);
+    log.clear();
+
+    final String result = await testClass.methodTemplate('bye!');
+
+    expect(result, equals('Goodbye!'));
+    expect(log, <Matcher>[
+      isMethodCall('REFERENCE_METHOD', arguments: <dynamic>[
+        referencePairManager.remoteReferenceFor(testClass),
+        'methodTemplate',
+        <dynamic>['bye!'],
+      ]),
+    ]);
+  });
+
+  test('executeLocalMethod', () async {
+    final MethodChannelReferencePairManager referencePairManager =
+        template.referencePairManager;
+
+    final Completer<double> callbackCompleter = Completer<double>();
+
+    final template.ClassTemplate testClass = TestClassTemplate(
+      3,
+      (double testParameter) async {
+        callbackCompleter.complete(testParameter);
+        return testParameter.toString();
+      },
+    );
+
+    referencePairManager.incrementOwnerCount(testClass);
+
+    final Completer<String> responseCompleter = Completer<String>();
+    await referencePairManager.channel.binaryMessenger.handlePlatformMessage(
+      'test_plugin',
+      referencePairManager.channel.codec.encodeMethodCall(
+        MethodCall(
+          'REFERENCE_METHOD',
+          <dynamic>[
+            referencePairManager.remoteReferenceFor(testClass),
+            'callbackTemplate',
+            <dynamic>[46.0],
+          ],
+        ),
+      ),
+      (ByteData data) {
+        responseCompleter.complete(
+          referencePairManager.channel.codec.decodeEnvelope(data),
+        );
+      },
+    );
+
+    expect(callbackCompleter.future, completion(46.0));
+    expect(responseCompleter.future, completion('46.0'));
+  });
+
+  test('createLocalReference', () async {
+    final MethodChannelReferencePairManager referencePairManager =
+        template.referencePairManager;
+
+    final RemoteReference remoteReference = RemoteReference('aowejea;io');
+    await referencePairManager.channel.binaryMessenger.handlePlatformMessage(
+      'test_plugin',
+      referencePairManager.channel.codec.encodeMethodCall(
+        MethodCall(
+          'REFERENCE_CREATE',
+          <dynamic>[
+            remoteReference,
+            <dynamic>[
+              'ClassTemplate',
+              <dynamic>[45],
+            ],
+          ],
+        ),
+      ),
+      (ByteData data) {},
+    );
+
+    final template.ClassTemplate testClass =
+        referencePairManager.localReferenceFor(remoteReference);
+
+    expect(testClass.fieldTemplate, equals(45));
+  });
+}
+
+class TestClassTemplate extends template.ClassTemplate {
+  TestClassTemplate(int fieldTemplate, this.onCallbackTemplate)
+      : super(fieldTemplate);
+
+  final Future<String> Function(double parameterTemplate) onCallbackTemplate;
+
+  @override
+  FutureOr<String> callbackTemplate(double parameterTemplate) {
+    return onCallbackTemplate(parameterTemplate);
+  }
 }

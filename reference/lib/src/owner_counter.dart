@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-import '../reference.dart';
+import 'reference.dart';
 
 /// Contains lifecycle callbacks for [OwnerCounter].
 class OwnerCounterLifecycleListener {

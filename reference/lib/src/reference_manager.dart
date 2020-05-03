@@ -1,8 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:quiver/collection.dart';
 
-import '../reference.dart';
-import 'reference_counter.dart';
+import 'reference.dart';
+import 'owner_counter.dart';
 
 /// Handles communication with [RemoteReference]s for a [ReferencePairManager].
 mixin RemoteReferenceCommunicationHandler {
@@ -15,7 +15,7 @@ mixin RemoteReferenceCommunicationHandler {
   /// their instances they represent.
   ///
   /// The REMOTE [ReferencePairManager] will represent [localReference] as a
-  /// [RemoteReference], instantiate a new [LocalReference] and also store them
+  /// [RemoteReference], instantiate a new [LocalReference], and also store them
   /// as a pair.
   ///
   /// This method should make the instantiated remote object accessible until
@@ -36,7 +36,7 @@ mixin RemoteReferenceCommunicationHandler {
   ///
   /// This method should also stop the local and remote [ReferencePairManager]
   /// from maintaining the connection between its [LocalReference] and should
-  /// allow for either object instance to connect to new [Reference]s.
+  /// allow for either object instance to connect to new references.
   void disposeRemoteReference(RemoteReference remoteReference);
 }
 
@@ -50,11 +50,11 @@ mixin LocalReferenceCommunicationHandler {
   /// The remote instantiated object will be represented as [remoteReference].
   ///
   /// The LOCAL [ReferencePairManager] stores the [LocalReference] and
-  /// [RemoteReference] as a pair and will facilitate communication between
+  /// [remoteReference] as a pair and will facilitate communication between
   /// their object instances they represent.
   ///
   /// The REMOTE [ReferencePairManager] will represent the returned value as a
-  /// [RemoteReference] and also store both references as a [Pair].
+  /// [RemoteReference] and also store both references as a pair.
   LocalReference createLocalReference(
     RemoteReference remoteReference,
     dynamic arguments,
@@ -89,15 +89,15 @@ mixin LocalReferenceCommunicationHandler {
 /// Java [ReferencePairManager]. If one instantiates an object named `Apple` in
 /// Dart and adds it to the Dart [ReferencePairManager],
 ///
-/// 1. the Dart [ReferencePairManager] will send a message to the Java
+/// 1. The Dart [ReferencePairManager] will send a message to the Java
 /// [ReferencePairManager] to instantiate a Java object named `Apple`.
 ///
 /// 2. The Dart `Apple` would then be stored in a map as a [LocalReference] with
 /// a [RemoteReference] that represents the `Apple` instantiated in Java.
 ///
-/// 3. The [ReferencePairManager]s would then handle sending and receiving methods to
-/// be executed between the Dart `Apple` and the Java `Apple` until the objects
-/// are disposed and removed.
+/// 3. The [ReferencePairManager]s would then handle sending and receiving
+/// methods to be executed between the Dart `Apple` and the Java `Apple` until
+/// the objects are disposed and removed.
 ///
 /// 4. Disposing of the Dart `Apple` would lead to a message sent to the remote
 /// [ReferencePairManager] to dispose of the Java `Apple`.
@@ -118,17 +118,19 @@ abstract class ReferencePairManager {
   @mustCallSuper
   void initialize() => _isInitialized = true;
 
+  /// Retrieve the [RemoteReference] paired with [localReference].
   RemoteReference remoteReferenceFor(LocalReference localReference) =>
       _localRefToRemoteRefMap[localReference];
 
+  /// Retrieve the [LocalReference] paired with [remoteReference].
   LocalReference localReferenceFor(RemoteReference remoteReference) =>
       _localRefToRemoteRefMap.inverse[remoteReference];
 
   /// Call when a remote [ReferencePairManager] wants to create a [RemoteReference].
   ///
-  /// This will create a [LocalReference] and add it and [remoteReference] as
-  /// a pair.
-  void createRemoteReference(
+  /// This will instantiate a [LocalReference] and add it and [remoteReference]
+  /// as a pair.
+  void createLocalReference(
     RemoteReference remoteReference,
     dynamic arguments,
   ) {
@@ -144,7 +146,7 @@ abstract class ReferencePairManager {
   ///
   /// This will remove [remoteReference] and its paired [LocalReference] from
   /// this [ReferencePairManager].
-  void disposeRemoteReference(RemoteReference remoteReference) {
+  void disposeLocalReference(RemoteReference remoteReference) {
     _assertIsInitialized();
     localHandler.disposeLocalReference(localReferenceFor(remoteReference));
     _remove(remoteReference);
@@ -204,7 +206,7 @@ abstract class ReferencePairManager {
 
   /// Decrement the owner count for a reference pair.
   ///
-  /// When the owner count decreases to 0 [localReference] and its paired
+  /// When the owner count decreases to 0, [localReference] and its paired
   /// [RemoteReference] are removed from the [ReferencePairManager].
   ///
   /// See [OwnerCounter].

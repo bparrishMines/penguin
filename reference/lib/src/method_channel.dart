@@ -38,7 +38,7 @@ abstract class MethodChannelReferencePairManager extends ReferencePairManager {
     );
     remoteHandler._channel.setMethodCallHandler((MethodCall call) async {
       if (call.method == MethodChannelReferencePairManager.methodCreate) {
-        createRemoteReference(call.arguments[0], call.arguments[1]);
+        createLocalReference(call.arguments[0], call.arguments[1]);
       } else if (call.method ==
           MethodChannelReferencePairManager.methodMethod) {
         return executeLocalMethod(
@@ -48,7 +48,7 @@ abstract class MethodChannelReferencePairManager extends ReferencePairManager {
         );
       } else if (call.method ==
           MethodChannelReferencePairManager.methodDispose) {
-        disposeRemoteReference(call.arguments);
+        disposeLocalReference(call.arguments);
       }
       return null;
     });
