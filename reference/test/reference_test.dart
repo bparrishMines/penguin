@@ -6,18 +6,19 @@ import 'package:reference/reference.dart';
 import 'package:reference/src/templates/implementation.dart' as template;
 
 void main() {
-  final List<MethodCall> log = <MethodCall>[];
+  final List<MethodCall> methodCallLog = <MethodCall>[];
 
   TestWidgetsFlutterBinding.ensureInitialized();
 
   setUp(() {
     template.referencePairManager = template.GeneratedReferencePairManager(
-        'test_plugin', template.LocalReferenceCommunicationHandlerTemplate())
-      ..initialize();
+      'test_plugin',
+      template.LocalReferenceCommunicationHandlerTemplate(),
+    )..initialize();
 
     template.referencePairManager.channel.setMockMethodCallHandler(
       (MethodCall methodCall) async {
-        log.add(methodCall);
+        methodCallLog.add(methodCall);
         if (methodCall.method ==
             MethodChannelReferencePairManager.methodMethod) {
           switch (methodCall.arguments[1]) {
@@ -34,16 +35,15 @@ void main() {
 
   tearDown(() {
     template.referencePairManager = null;
-    log.clear();
+    methodCallLog.clear();
   });
 
-  test('incrementOwnerCount', () async {
+  test('createRemoteReference', () async {
     final ReferencePairManager referencePairManager =
         template.referencePairManager;
     final template.ClassTemplate testClass = template.ClassTemplate(1);
 
-    referencePairManager.incrementOwnerCount(testClass);
-    referencePairManager.incrementOwnerCount(testClass);
+    referencePairManager.createRemoteReference(testClass);
 
     final RemoteReference remoteReference =
         referencePairManager.remoteReferenceFor(testClass);
@@ -53,7 +53,7 @@ void main() {
       referencePairManager.localReferenceFor(remoteReference),
       equals(testClass),
     );
-    expect(log, <Matcher>[
+    expect(methodCallLog, <Matcher>[
       isMethodCall('REFERENCE_CREATE', arguments: <dynamic>[
         remoteReference.referenceId,
         <dynamic>[
@@ -64,21 +64,21 @@ void main() {
     ]);
   });
 
-  test('decrementOwnerCount', () async {
+  test('disposeRemoteReference', () async {
     final ReferencePairManager referencePairManager =
         template.referencePairManager;
     final template.ClassTemplate testClass = template.ClassTemplate(2);
 
-    referencePairManager.incrementOwnerCount(testClass);
+    referencePairManager.createRemoteReference(testClass);
     final RemoteReference remoteReference =
         referencePairManager.remoteReferenceFor(testClass);
-    log.clear();
+    methodCallLog.clear();
 
-    referencePairManager.decrementOwnerCount(testClass);
+    referencePairManager.disposeRemoteReference(testClass);
 
     expect(referencePairManager.localReferenceFor(remoteReference), isNull);
     expect(referencePairManager.remoteReferenceFor(testClass), isNull);
-    expect(log, <Matcher>[
+    expect(methodCallLog, <Matcher>[
       isMethodCall(
         'REFERENCE_DISPOSE',
         arguments: remoteReference,
@@ -90,13 +90,13 @@ void main() {
     final ReferencePairManager referencePairManager =
         template.referencePairManager;
     final template.ClassTemplate testClass = template.ClassTemplate(3);
-    referencePairManager.incrementOwnerCount(testClass);
-    log.clear();
+    referencePairManager.createRemoteReference(testClass);
+    methodCallLog.clear();
 
     final String result = await testClass.methodTemplate('bye!');
 
     expect(result, equals('Goodbye!'));
-    expect(log, <Matcher>[
+    expect(methodCallLog, <Matcher>[
       isMethodCall('REFERENCE_METHOD', arguments: <dynamic>[
         referencePairManager.remoteReferenceFor(testClass),
         'methodTemplate',
@@ -119,7 +119,7 @@ void main() {
       },
     );
 
-    referencePairManager.incrementOwnerCount(testClass);
+    referencePairManager.createRemoteReference(testClass);
 
     final Completer<String> responseCompleter = Completer<String>();
     await referencePairManager.channel.binaryMessenger.handlePlatformMessage(

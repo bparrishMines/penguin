@@ -152,6 +152,29 @@ abstract class ReferencePairManager {
     _remove(remoteReference);
   }
 
+  void createRemoteReference(
+    LocalReference localReference, [
+    bool useOwnerCounter = false,
+  ]) {
+    _assertIsInitialized();
+    if (remoteReferenceFor(localReference) == null && useOwnerCounter) {
+      _addCounterFor(localReference);
+      _localRefToRefCounterMap[localReference].increment(localReference);
+    } else if (remoteReferenceFor(localReference) == null) {
+      _localRefToRemoteRefMap[localReference] =
+          remoteHandler.createRemoteReference(localReference);
+    }
+  }
+
+  void disposeRemoteReference(LocalReference localReference) {
+    _assertIsInitialized();
+    final RemoteReference remoteReference = remoteReferenceFor(localReference);
+    if (remoteReference != null) {
+      remoteHandler.disposeRemoteReference(remoteReference);
+      _remove(remoteReference);
+    }
+  }
+
   /// Increment the owner count for a reference pair.
   ///
   /// When the owner count increases to 1 a [RemoteReference] is created to be
@@ -160,11 +183,7 @@ abstract class ReferencePairManager {
   /// See [OwnerCounter].
   void incrementOwnerCount(LocalReference localReference) {
     _assertIsInitialized();
-    if (remoteReferenceFor(localReference) == null) {
-      _addCounterFor(localReference);
-    }
-
-    _localRefToRefCounterMap[localReference].increment(localReference);
+    _localRefToRefCounterMap[localReference]?.increment(localReference);
   }
 
   /// Execute a method on the [RemoteReference] paired to [localReference].
@@ -174,6 +193,7 @@ abstract class ReferencePairManager {
     List<dynamic> arguments,
   ) {
     _assertIsInitialized();
+    assert(remoteReferenceFor(localReference) != null);
     return remoteHandler.executeRemoteMethod(
       remoteReferenceFor(localReference),
       methodName,
@@ -194,6 +214,7 @@ abstract class ReferencePairManager {
     List<dynamic> arguments,
   ) {
     _assertIsInitialized();
+    assert(localReferenceFor(remoteReference) != null);
     return localHandler.executeLocalMethod(
       localReferenceFor(remoteReference),
       methodName,
@@ -212,11 +233,8 @@ abstract class ReferencePairManager {
   /// See [OwnerCounter].
   void decrementOwnerCount(LocalReference localReference) {
     _assertIsInitialized();
-    final RemoteReference remoteReference = remoteReferenceFor(localReference);
-    if (remoteReference != null) {
-      final OwnerCounter counter = _ownerCounterFor(localReference);
-      counter.decrement(localReference, remoteReference);
-    }
+    final OwnerCounter counter = _ownerCounterFor(localReference);
+    counter?.decrement(localReference, remoteReferenceFor(localReference));
   }
 
   /// Adds a [localReference] to an auto release pool.
