@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
-import 'reference_manager.dart';
+import 'reference_pair_manager.dart';
 import 'reference.dart';
 
 abstract class MethodChannelReferencePairManager extends ReferencePairManager {

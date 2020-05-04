@@ -1,4 +1,4 @@
-import 'reference_manager.dart';
+import 'reference_pair_manager.dart';
 
 /// Represents an accessible object instance on a remote thread/process.
 ///
