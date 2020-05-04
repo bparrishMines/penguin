@@ -24,7 +24,7 @@ class ClassTemplate extends ClassTemplateInterface with LocalReference {
 
   @override
   FutureOr<String> methodTemplate(String parameterTemplate) async {
-    return await (referencePairManager.executeRemoteMethod(
+    return await (referencePairManager.executeRemoteMethodFor(
       this,
       GeneratedMethodName.methodTemplate.toString(),
       <dynamic>[parameterTemplate],
@@ -33,7 +33,7 @@ class ClassTemplate extends ClassTemplateInterface with LocalReference {
 
   @override
   FutureOr<String> callbackTemplate(double parameterTemplate) async {
-    return (await referencePairManager.executeRemoteMethod(
+    return (await referencePairManager.executeRemoteMethodFor(
       this,
       GeneratedMethodName.callbackTemplate.toString(),
       <dynamic>[parameterTemplate],

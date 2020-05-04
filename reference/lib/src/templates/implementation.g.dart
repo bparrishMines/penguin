@@ -26,7 +26,7 @@ abstract class GeneratedLocalReferenceCommunicationHandler
   );
 
   @override
-  LocalReference createLocalReference(
+  LocalReference createLocalReferenceFor(
     RemoteReference remoteReference,
     dynamic arguments,
   ) {

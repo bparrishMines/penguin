@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:uuid/uuid.dart';
 
 import 'reference_manager.dart';
 import 'reference.dart';
@@ -38,17 +37,17 @@ abstract class MethodChannelReferencePairManager extends ReferencePairManager {
     );
     remoteHandler._channel.setMethodCallHandler((MethodCall call) async {
       if (call.method == MethodChannelReferencePairManager.methodCreate) {
-        createLocalReference(call.arguments[0], call.arguments[1]);
+        createLocalReferenceFor(call.arguments[0], call.arguments[1]);
       } else if (call.method ==
           MethodChannelReferencePairManager.methodMethod) {
-        return executeLocalMethod(
+        return executeLocalMethodFor(
           call.arguments[0],
           call.arguments[1],
           call.arguments[2],
         );
       } else if (call.method ==
           MethodChannelReferencePairManager.methodDispose) {
-        disposeLocalReference(call.arguments);
+        disposeLocalReferenceFor(call.arguments);
       }
       return null;
     });
@@ -59,24 +58,19 @@ abstract class MethodChannelRemoteReferenceCommunicationHandler
     with RemoteReferenceCommunicationHandler {
   MethodChannelRemoteReferenceCommunicationHandler();
 
-  static final Uuid _uuid = Uuid();
-
   MethodChannel _channel;
 
   dynamic creationArgumentsFor(LocalReference localReference);
 
   @override
-  Future<RemoteReference> createRemoteReference(LocalReference localReference, RemoteReference remoteReference) {
-    // TODO update state early
-    final Completer<RemoteReference> completer = Completer<RemoteReference>();
-    final String referenceId = _uuid.v4();
-
-    _channel.invokeMethod<void>(
+  Future<void> createRemoteReferenceFor(
+    LocalReference localReference,
+    RemoteReference remoteReference,
+  ) {
+    return _channel.invokeMethod<void>(
       MethodChannelReferencePairManager.methodCreate,
       <dynamic>[remoteReference, creationArgumentsFor(localReference)],
-    ).then((_) => completer.complete(remoteReference));
-
-    return completer.future;
+    );
   }
 
   @override

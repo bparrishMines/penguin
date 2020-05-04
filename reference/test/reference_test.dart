@@ -43,7 +43,7 @@ void main() {
         template.referencePairManager;
     final template.ClassTemplate testClass = template.ClassTemplate(1);
 
-    referencePairManager.createRemoteReference(testClass);
+    referencePairManager.createRemoteReferenceFor(testClass);
 
     final RemoteReference remoteReference =
         referencePairManager.remoteReferenceFor(testClass);
@@ -69,12 +69,12 @@ void main() {
         template.referencePairManager;
     final template.ClassTemplate testClass = template.ClassTemplate(2);
 
-    referencePairManager.createRemoteReference(testClass);
+    referencePairManager.createRemoteReferenceFor(testClass);
     final RemoteReference remoteReference =
         referencePairManager.remoteReferenceFor(testClass);
     methodCallLog.clear();
 
-    referencePairManager.disposeRemoteReference(testClass);
+    referencePairManager.disposeRemoteReferenceFor(testClass);
 
     expect(referencePairManager.localReferenceFor(remoteReference), isNull);
     expect(referencePairManager.remoteReferenceFor(testClass), isNull);
@@ -90,7 +90,7 @@ void main() {
     final ReferencePairManager referencePairManager =
         template.referencePairManager;
     final template.ClassTemplate testClass = template.ClassTemplate(3);
-    referencePairManager.createRemoteReference(testClass);
+    referencePairManager.createRemoteReferenceFor(testClass);
     methodCallLog.clear();
 
     final String result = await testClass.methodTemplate('bye!');
@@ -119,7 +119,7 @@ void main() {
       },
     );
 
-    referencePairManager.createRemoteReference(testClass);
+    referencePairManager.createRemoteReferenceFor(testClass);
 
     final Completer<String> responseCompleter = Completer<String>();
     await referencePairManager.channel.binaryMessenger.handlePlatformMessage(
