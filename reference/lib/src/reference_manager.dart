@@ -5,7 +5,6 @@ import 'package:quiver/collection.dart';
 import 'package:uuid/uuid.dart';
 
 import 'reference.dart';
-import 'owner_counter.dart';
 
 /// Handles communication with [RemoteReference]s for a [ReferencePairManager].
 mixin RemoteReferenceCommunicationHandler {
@@ -13,8 +12,8 @@ mixin RemoteReferenceCommunicationHandler {
   ///
   /// The remote instantiated object will be represented as [remoteReference].
   ///
-  /// The LOCAL [ReferencePairManager] stores the [LocalReference] and
-  /// [RemoteReference] as a pair and will facilitate communication between
+  /// The LOCAL [ReferencePairManager] stores [localReference] and
+  /// [remoteReference] as a pair and will facilitate communication between
   /// their instances they represent.
   ///
   /// The REMOTE [ReferencePairManager] will represent [localReference] as a
@@ -22,7 +21,7 @@ mixin RemoteReferenceCommunicationHandler {
   /// as a pair.
   ///
   /// This method should make the instantiated remote object accessible until
-  /// [disposeRemoteReference] is called with the the paired [RemoteReference].
+  /// [disposeRemoteReference] is called with [remoteReference].
   Future<void> createRemoteReferenceFor(
     LocalReference localReference,
     RemoteReference remoteReference,
@@ -30,8 +29,8 @@ mixin RemoteReferenceCommunicationHandler {
 
   /// Execute a method on the object instance that [remoteReference] represents.
   ///
-  /// This method should only be called after [createRemoteReferenceFor] and should
-  /// never be called after [disposeRemoteReference].
+  /// This method should only be called after [createRemoteReferenceFor] and
+  /// should never be called after [disposeRemoteReference].
   Future<dynamic> executeRemoteMethod(
     RemoteReference remoteReference,
     String methodName,
@@ -55,18 +54,19 @@ mixin LocalReferenceCommunicationHandler {
   ///
   /// The remote instantiated object will be represented as [remoteReference].
   ///
-  /// The LOCAL [ReferencePairManager] stores the [LocalReference] and
+  /// The LOCAL [ReferencePairManager] stores the returned [LocalReference] and
   /// [remoteReference] as a pair and will facilitate communication between
   /// their object instances they represent.
   ///
   /// The REMOTE [ReferencePairManager] will represent the returned value as a
-  /// [RemoteReference] and also store both references as a pair.
+  /// [RemoteReference] and [remoteReference] as a [LocalReference]. It will
+  /// also store both references as a pair.
   LocalReference createLocalReferenceFor(
-    RemoteReference remoteReference,
+    RemoteReference remoteReference, [
     dynamic arguments,
-  );
+  ]);
 
-  /// Execute a method to be executed on the object instance represented by [reference].
+  /// Execute a method to be executed on the object instance represented by [localReference].
   ///
   /// This method should only be called after [createLocalReferenceFor] and should
   /// never be called after [disposeLocalReference].
@@ -76,27 +76,28 @@ mixin LocalReferenceCommunicationHandler {
     List<dynamic> arguments,
   );
 
-  /// Dispose [reference] and the value it represents.
+  /// Dispose [localReference] and the value it represents.
   ///
   /// This also stops the [ReferencePairManager] from maintaining the connection
   /// with its paired [RemoteReference] and will allow for either value to be
   /// attached to new references.
-  void disposeLocalReference(LocalReference reference) {}
+  void disposeLocalReference(LocalReference localReference) {}
 }
 
 /// Manages connections between [LocalReference]s and [RemoteReference]s.
 ///
 /// This class works by facilitating communication between a [LocalReference]
-/// and a [RemoteReference]. When an object is added to a local
+/// and a [RemoteReference] pair. When a [LocalReference] is added to a LOCAL
 /// [ReferencePairManager], it is expected that an equivalent object is created
-/// and added to a remote [ReferencePairManager].
+/// and added to a REMOTE [ReferencePairManager].
 ///
-/// For example, let's assume that we have a Dart [ReferencePairManager] and a
-/// Java [ReferencePairManager]. If one instantiates an object named `Apple` in
-/// Dart and adds it to the Dart [ReferencePairManager],
+/// For example, assume that there is a Dart [ReferencePairManager] and a
+/// Java [ReferencePairManager]. Next, an object of a Dart class named `Apple`
+/// is instantiated and is added to the Dart [ReferencePairManager],
 ///
 /// 1. The Dart [ReferencePairManager] will send a message to the Java
-/// [ReferencePairManager] to instantiate a Java object named `Apple`.
+/// [ReferencePairManager] to instantiate a Java object of a class named
+/// `Apple`.
 ///
 /// 2. The Dart `Apple` would then be stored in a map as a [LocalReference] with
 /// a [RemoteReference] that represents the `Apple` instantiated in Java.
@@ -106,15 +107,12 @@ mixin LocalReferenceCommunicationHandler {
 /// the objects are disposed and removed.
 ///
 /// 4. Disposing of the Dart `Apple` would lead to a message sent to the remote
-/// [ReferencePairManager] to dispose of the Java `Apple`.
+/// [ReferencePairManager] to dispose the Java `Apple`.
 abstract class ReferencePairManager {
   static final Uuid _uuid = Uuid();
 
   bool _isInitialized = false;
   final _localRefToRemoteRefMap = BiMap<LocalReference, RemoteReference>();
-  final _localRefToOwnerCounterMap = <LocalReference, OwnerCounter>{};
-
-  final List<LocalReference> _autoReleasePool = <LocalReference>[];
 
   /// Handles communication with [RemoteReference]s.
   RemoteReferenceCommunicationHandler get remoteHandler;
@@ -122,17 +120,21 @@ abstract class ReferencePairManager {
   /// Handles communication with [LocalReference]s.
   LocalReferenceCommunicationHandler get localHandler;
 
-  /// Finish setup to facilitate communication between [LocalReference]s and [RemoteReference].
+  /// Finish setup to start facilitating communication between [LocalReference]s and [RemoteReference].
   @mustCallSuper
   void initialize() => _isInitialized = true;
 
   /// Retrieve the [RemoteReference] paired with [localReference].
-  RemoteReference remoteReferenceFor(LocalReference localReference) =>
-      _localRefToRemoteRefMap[localReference];
+  RemoteReference remoteReferenceFor(LocalReference localReference) {
+    _assertIsInitialized();
+    return _localRefToRemoteRefMap[localReference];
+  }
 
   /// Retrieve the [LocalReference] paired with [remoteReference].
-  LocalReference localReferenceFor(RemoteReference remoteReference) =>
-      _localRefToRemoteRefMap.inverse[remoteReference];
+  LocalReference localReferenceFor(RemoteReference remoteReference) {
+    _assertIsInitialized();
+    return _localRefToRemoteRefMap.inverse[remoteReference];
+  }
 
   /// Call when a remote [ReferencePairManager] wants to create a [RemoteReference].
   ///
@@ -150,7 +152,7 @@ abstract class ReferencePairManager {
     _localRefToRemoteRefMap[localReference] = remoteReference;
   }
 
-  /// Call when a remote [ReferencePairManager] wants to dispose a [RemoteReference].
+  /// Call when a remote [ReferencePairManager] wants to dispose their [RemoteReference].
   ///
   /// This will remove [remoteReference] and its paired [LocalReference] from
   /// this [ReferencePairManager].
@@ -160,6 +162,9 @@ abstract class ReferencePairManager {
     _removePairFor(remoteReference);
   }
 
+  /// Creates and maintains access of an equivalent object to [localReference] on a remote thread/process.
+  ///
+  /// This will also store [localReference] and a [RemoteReference] as a pair.
   FutureOr<void> createRemoteReferenceFor(LocalReference localReference) {
     _assertIsInitialized();
     if (remoteReferenceFor(localReference) != null) return null;
@@ -173,14 +178,7 @@ abstract class ReferencePairManager {
     );
   }
 
-  void addLocalReference(
-    LocalReference localReference,
-    OwnerCounter ownerCounter,
-  ) {
-    assert(_localRefToRemoteRefMap[localReference] == null);
-    _localRefToOwnerCounterMap[localReference] = ownerCounter;
-  }
-
+  /// Call when it is no longer needed to access the [RemoteReference] paired with [localReference].
   FutureOr<void> disposeRemoteReferenceFor(LocalReference localReference) {
     _assertIsInitialized();
 
@@ -189,17 +187,6 @@ abstract class ReferencePairManager {
       _removePairFor(remoteReference);
       return remoteHandler.disposeRemoteReference(remoteReference);
     }
-  }
-
-  /// Increment the owner count for a reference pair.
-  ///
-  /// When the owner count increases to 1 a [RemoteReference] is created to be
-  /// paired with [localReference].
-  ///
-  /// See [OwnerCounter].
-  void incrementOwnerCountFor(LocalReference localReference) {
-    _assertIsInitialized();
-    _localRefToOwnerCounterMap[localReference]?.increment(this, localReference);
   }
 
   /// Execute a method on the [RemoteReference] paired to [localReference].
@@ -241,54 +228,10 @@ abstract class ReferencePairManager {
     );
   }
 
-  /// Decrement the owner count for a reference pair.
-  ///
-  /// When the owner count decreases to 0, [localReference] and its paired
-  /// [RemoteReference] are removed from the [ReferencePairManager].
-  ///
-  /// See [OwnerCounter].
-  void decrementOwnerCountFor(LocalReference localReference) {
-    _assertIsInitialized();
-    final OwnerCounter counter = _ownerCounterFor(localReference);
-    counter?.decrement(this, remoteReferenceFor(localReference));
-  }
-
-  /// Adds a [localReference] to an auto release pool.
-  ///
-  /// After each frame, [decrementOwnerCount] is called on all [LocalReference]s
-  /// in the auto release pool and then the pool is cleared.
-  void addToAutoReleasePool(LocalReference localReference) {
-    _assertIsInitialized();
-    _autoReleasePool.add(localReference);
-    if (_autoReleasePool.length == 1) {
-      WidgetsBinding.instance.addPostFrameCallback(_drainAutoreleasePool);
-    }
-  }
-
-  void _drainAutoreleasePool(Duration duration) {
-    for (final LocalReference localReference in _autoReleasePool) {
-      decrementOwnerCountFor(localReference);
-    }
-    _autoReleasePool.clear();
-  }
-
   void _removePairFor(RemoteReference remoteReference) {
     final LocalReference localReference =
         _localRefToRemoteRefMap.inverse.remove(remoteReference);
     _localRefToRemoteRefMap.remove(localReference);
-  }
-
-  OwnerCounter _ownerCounterFor(dynamic reference) {
-    assert(reference is LocalReference || reference is RemoteReference);
-
-    if (reference is LocalReference) {
-      return _localRefToOwnerCounterMap[reference];
-    } else if (reference is RemoteReference) {
-      return _localRefToOwnerCounterMap[
-          _localRefToRemoteRefMap.inverse[reference]];
-    }
-
-    return null;
   }
 
   void _assertIsInitialized() {

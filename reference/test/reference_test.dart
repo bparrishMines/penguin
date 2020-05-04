@@ -38,7 +38,7 @@ void main() {
     methodCallLog.clear();
   });
 
-  test('createRemoteReference', () async {
+  test('createRemoteReferenceFor', () async {
     final ReferencePairManager referencePairManager =
         template.referencePairManager;
     final template.ClassTemplate testClass = template.ClassTemplate(1);
@@ -64,7 +64,7 @@ void main() {
     ]);
   });
 
-  test('disposeRemoteReference', () async {
+  test('disposeRemoteReferenceFor', () async {
     final ReferencePairManager referencePairManager =
         template.referencePairManager;
     final template.ClassTemplate testClass = template.ClassTemplate(2);
@@ -86,7 +86,7 @@ void main() {
     ]);
   });
 
-  test('executeRemoteMethod', () async {
+  test('executeRemoteMethodFor', () async {
     final ReferencePairManager referencePairManager =
         template.referencePairManager;
     final template.ClassTemplate testClass = template.ClassTemplate(3);
@@ -105,7 +105,7 @@ void main() {
     ]);
   });
 
-  test('executeLocalMethod', () async {
+  test('executeLocalMethodFor', () async {
     final MethodChannelReferencePairManager referencePairManager =
         template.referencePairManager;
 
@@ -145,7 +145,7 @@ void main() {
     expect(responseCompleter.future, completion('46.0'));
   });
 
-  test('createLocalReference', () async {
+  test('createLocalReferenceFor', () async {
     final MethodChannelReferencePairManager referencePairManager =
         template.referencePairManager;
 
@@ -171,6 +171,45 @@ void main() {
         referencePairManager.localReferenceFor(remoteReference);
 
     expect(testClass.fieldTemplate, equals(45));
+  });
+
+  test('disposeLocalReference', () async {
+    final MethodChannelReferencePairManager referencePairManager =
+        template.referencePairManager;
+
+    final RemoteReference remoteReference = RemoteReference('aowejea;io');
+    await referencePairManager.channel.binaryMessenger.handlePlatformMessage(
+      'test_plugin',
+      referencePairManager.channel.codec.encodeMethodCall(
+        MethodCall(
+          'REFERENCE_CREATE',
+          <dynamic>[
+            remoteReference,
+            <dynamic>[
+              'ClassTemplate',
+              <dynamic>[45],
+            ],
+          ],
+        ),
+      ),
+      (ByteData data) {},
+    );
+
+    await referencePairManager.channel.binaryMessenger.handlePlatformMessage(
+      'test_plugin',
+      referencePairManager.channel.codec.encodeMethodCall(
+        MethodCall(
+          'REFERENCE_DISPOSE',
+          remoteReference,
+        ),
+      ),
+      (ByteData data) {},
+    );
+
+    final template.ClassTemplate testClass =
+        referencePairManager.localReferenceFor(remoteReference);
+
+    expect(testClass, isNull);
   });
 }
 

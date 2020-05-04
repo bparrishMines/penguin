@@ -27,9 +27,9 @@ abstract class GeneratedLocalReferenceCommunicationHandler
 
   @override
   LocalReference createLocalReferenceFor(
-    RemoteReference remoteReference,
+    RemoteReference remoteReference, [
     dynamic arguments,
-  ) {
+  ]) {
     if (arguments[0] == '$ClassTemplate') {
       return createClassTemplate(remoteReference, arguments[1][0]);
     }

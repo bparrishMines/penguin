@@ -1,9 +1,34 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
-import 'package:reference/reference.dart';
+import 'package:flutter/widgets.dart';
 
-import 'reference.dart';
+class AutoReleasePool {
+  AutoReleasePool._();
+
+  AutoReleasePool get instance => AutoReleasePool._();
+
+  final List<OwnerCounter> _autoReleasePool = <OwnerCounter>[];
+
+  /// Adds a [localReference] to an auto release pool.
+  ///
+  /// After each frame, [decrementOwnerCount] is called on all [LocalReference]s
+  /// in the auto release pool and then the pool is cleared.
+  void addToAutoReleasePool(OwnerCounter counter) {
+    assert(counter != null);
+    _autoReleasePool.add(counter);
+    if (_autoReleasePool.length == 1) {
+      WidgetsBinding.instance.addPostFrameCallback(_drainAutoreleasePool);
+    }
+  }
+
+  void _drainAutoreleasePool(Duration duration) {
+    for (final OwnerCounter counter in _autoReleasePool) {
+      counter.decrement();
+    }
+    _autoReleasePool.clear();
+  }
+}
 
 /// Contains lifecycle callbacks for [OwnerCounter].
 class OwnerCounterLifecycleListener {
@@ -14,15 +39,9 @@ class OwnerCounterLifecycleListener {
         assert(onDispose != null);
 
   /// Called when owner count reaches 1 and
-  final Future<void> Function(
-    ReferencePairManager manager,
-    LocalReference localReference,
-  ) onCreate;
+  final Future<void> Function() onCreate;
 
-  final Future<void> Function(
-    ReferencePairManager manager,
-    RemoteReference remoteReference,
-  ) onDispose;
+  final Future<void> Function() onDispose;
 }
 
 class OwnerCounter {
@@ -37,26 +56,20 @@ class OwnerCounter {
   int _ownerCount;
   int get ownerCount => _ownerCount;
 
-  FutureOr<void> increment(
-    ReferencePairManager manager,
-    LocalReference localReference,
-  ) {
+  FutureOr<void> increment() {
     _ownerCount++;
     if (ownerCount == 1) {
-      return lifecycleListener?.onCreate(manager, localReference);
+      return lifecycleListener.onCreate();
     }
   }
 
-  FutureOr<void> decrement(
-    ReferencePairManager manager,
-    RemoteReference remoteReference,
-  ) {
+  FutureOr<void> decrement() {
     assert(ownerCount > 0,
         '`release()` was called without calling `retain()` first. In other words, `release()` was called while `referenceCount == 0`. Reference count = $_ownerCount.');
 
     _ownerCount--;
     if (ownerCount == 0) {
-      return lifecycleListener?.onDispose(manager, remoteReference);
+      return lifecycleListener.onDispose();
     }
   }
 }
