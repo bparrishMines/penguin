@@ -66,15 +66,17 @@ abstract class MethodChannelRemoteReferenceCommunicationHandler
   dynamic creationArgumentsFor(LocalReference localReference);
 
   @override
-  RemoteReference createRemoteReference(LocalReference localReference) {
+  Future<RemoteReference> createRemoteReference(LocalReference localReference, RemoteReference remoteReference) {
+    // TODO update state early
+    final Completer<RemoteReference> completer = Completer<RemoteReference>();
     final String referenceId = _uuid.v4();
 
     _channel.invokeMethod<void>(
       MethodChannelReferencePairManager.methodCreate,
-      <dynamic>[referenceId, creationArgumentsFor(localReference)],
-    );
+      <dynamic>[remoteReference, creationArgumentsFor(localReference)],
+    ).then((_) => completer.complete(remoteReference));
 
-    return RemoteReference(referenceId);
+    return completer.future;
   }
 
   @override
@@ -90,8 +92,8 @@ abstract class MethodChannelRemoteReferenceCommunicationHandler
   }
 
   @override
-  void disposeRemoteReference(RemoteReference remoteReference) {
-    _channel.invokeMethod<void>(
+  Future<void> disposeRemoteReference(RemoteReference remoteReference) {
+    return _channel.invokeMethod<void>(
       MethodChannelReferencePairManager.methodDispose,
       remoteReference,
     );

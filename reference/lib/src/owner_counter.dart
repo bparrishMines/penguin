@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 
 import 'reference.dart';
@@ -11,11 +13,8 @@ class OwnerCounterLifecycleListener {
         assert(onDispose != null);
 
   /// Called when owner count reaches 1 and
-  final void Function(LocalReference localReference) onCreate;
-  final void Function(
-    LocalReference localReference,
-    RemoteReference remoteReference,
-  ) onDispose;
+  final Future<void> Function(LocalReference localReference) onCreate;
+  final Future<void> Function(RemoteReference remoteReference) onDispose;
 }
 
 class OwnerCounter {
@@ -30,23 +29,20 @@ class OwnerCounter {
   int _ownerCount;
   int get ownerCount => _ownerCount;
 
-  void increment(LocalReference localReference) {
+  FutureOr<void> increment(LocalReference localReference) {
     _ownerCount++;
     if (ownerCount == 1) {
-      lifecycleListener?.onCreate(localReference);
+      return lifecycleListener?.onCreate(localReference);
     }
   }
 
-  void decrement(
-    LocalReference localReference,
-    RemoteReference remoteReference,
-  ) {
+  FutureOr<void> decrement(RemoteReference remoteReference) {
     assert(ownerCount > 0,
         '`release()` was called without calling `retain()` first. In other words, `release()` was called while `referenceCount == 0`. Reference count = $_ownerCount.');
 
     _ownerCount--;
     if (ownerCount == 0) {
-      lifecycleListener?.onDispose(localReference, remoteReference);
+      return lifecycleListener?.onDispose(remoteReference);
     }
   }
 }

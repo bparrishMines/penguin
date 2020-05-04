@@ -55,7 +55,7 @@ void main() {
     );
     expect(methodCallLog, <Matcher>[
       isMethodCall('REFERENCE_CREATE', arguments: <dynamic>[
-        remoteReference.referenceId,
+        remoteReference,
         <dynamic>[
           'ClassTemplate',
           <dynamic>[1]

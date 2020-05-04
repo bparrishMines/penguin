@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 import 'package:quiver/collection.dart';
+import 'package:uuid/uuid.dart';
 
 import 'reference.dart';
 import 'owner_counter.dart';
@@ -20,7 +23,10 @@ mixin RemoteReferenceCommunicationHandler {
   ///
   /// This method should make the instantiated remote object accessible until
   /// [disposeRemoteReference] is called with the the paired [RemoteReference].
-  RemoteReference createRemoteReference(LocalReference localReference);
+  Future<void> createRemoteReference(
+    LocalReference localReference,
+    RemoteReference remoteReference,
+  );
 
   /// Execute a method on the object instance that [remoteReference] represents.
   ///
@@ -37,7 +43,7 @@ mixin RemoteReferenceCommunicationHandler {
   /// This method should also stop the local and remote [ReferencePairManager]
   /// from maintaining the connection between its [LocalReference] and should
   /// allow for either object instance to connect to new references.
-  void disposeRemoteReference(RemoteReference remoteReference);
+  Future<void> disposeRemoteReference(RemoteReference remoteReference);
 }
 
 /// Handles communication with [LocalReference]s for a [ReferencePairManager].
@@ -102,6 +108,8 @@ mixin LocalReferenceCommunicationHandler {
 /// 4. Disposing of the Dart `Apple` would lead to a message sent to the remote
 /// [ReferencePairManager] to dispose of the Java `Apple`.
 abstract class ReferencePairManager {
+  static final Uuid _uuid = Uuid();
+
   bool _isInitialized = false;
   final _localRefToRemoteRefMap = BiMap<LocalReference, RemoteReference>();
   final _localRefToRefCounterMap = <LocalReference, OwnerCounter>{};
@@ -152,26 +160,34 @@ abstract class ReferencePairManager {
     _remove(remoteReference);
   }
 
-  void createRemoteReference(
+  FutureOr<void> createRemoteReference(
     LocalReference localReference, [
     bool useOwnerCounter = false,
   ]) {
     _assertIsInitialized();
-    if (remoteReferenceFor(localReference) == null && useOwnerCounter) {
-      _addCounterFor(localReference);
-      _localRefToRefCounterMap[localReference].increment(localReference);
-    } else if (remoteReferenceFor(localReference) == null) {
-      _localRefToRemoteRefMap[localReference] =
-          remoteHandler.createRemoteReference(localReference);
+    if (remoteReferenceFor(localReference) != null) return null;
+
+    final RemoteReference remoteReference = RemoteReference(_uuid.v4());
+    _localRefToRemoteRefMap[localReference] = remoteReference;
+
+    if (useOwnerCounter) {
+      _addCounterFor(localReference, remoteReference);
+      return _localRefToRefCounterMap[localReference].increment(localReference);
     }
+
+    return remoteHandler.createRemoteReference(
+      localReference,
+      remoteReference,
+    );
   }
 
-  void disposeRemoteReference(LocalReference localReference) {
+  FutureOr<void> disposeRemoteReference(LocalReference localReference) {
     _assertIsInitialized();
+
     final RemoteReference remoteReference = remoteReferenceFor(localReference);
     if (remoteReference != null) {
-      remoteHandler.disposeRemoteReference(remoteReference);
       _remove(remoteReference);
+      return remoteHandler.disposeRemoteReference(remoteReference);
     }
   }
 
@@ -234,7 +250,7 @@ abstract class ReferencePairManager {
   void decrementOwnerCount(LocalReference localReference) {
     _assertIsInitialized();
     final OwnerCounter counter = _ownerCounterFor(localReference);
-    counter?.decrement(localReference, remoteReferenceFor(localReference));
+    counter?.decrement(remoteReferenceFor(localReference));
   }
 
   /// Adds a [localReference] to an auto release pool.
@@ -256,19 +272,21 @@ abstract class ReferencePairManager {
     _autoReleasePool.clear();
   }
 
-  void _addCounterFor(LocalReference localReference) {
+  void _addCounterFor(
+    LocalReference localReference,
+    RemoteReference remoteReference,
+  ) {
     _localRefToRefCounterMap[localReference] = OwnerCounter(
       OwnerCounterLifecycleListener(
         onCreate: (LocalReference localReference) {
-          _localRefToRemoteRefMap[localReference] =
-              remoteHandler.createRemoteReference(localReference);
+          return remoteHandler.createRemoteReference(
+            localReference,
+            remoteReference,
+          );
         },
-        onDispose: (
-          LocalReference localReference,
-          RemoteReference remoteReference,
-        ) {
-          remoteHandler.disposeRemoteReference(remoteReference);
+        onDispose: (RemoteReference remoteReference) {
           _remove(remoteReference);
+          return remoteHandler.disposeRemoteReference(remoteReference);
         },
       ),
     );
