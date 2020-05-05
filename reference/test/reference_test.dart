@@ -62,8 +62,7 @@ void main() {
       template.referencePairManager.channel.setMockMethodCallHandler(
         (MethodCall methodCall) async {
           methodCallLog.add(methodCall);
-          if (methodCall.method ==
-              MethodChannelReferencePairManager.methodMethod) {
+          if (methodCall.method == 'REFERENCE_METHOD') {
             switch (methodCall.arguments[1]) {
               case 'methodTemplate':
                 return 'Good' + methodCall.arguments[2][0];
