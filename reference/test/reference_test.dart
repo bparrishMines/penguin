@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:reference/reference.dart';
-import 'package:reference/src/templates/implementation.dart' as template;
+import 'package:reference/src/templates/template.dart' as template;
 
 void main() {
   final List<MethodCall> methodCallLog = <MethodCall>[];

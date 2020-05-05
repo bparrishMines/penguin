@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:reference/reference.dart';
 
-import 'interface.dart';
+import 'template_interface.dart';
 
-part 'implementation.g.dart';
+part 'template.g.dart';
 
 MethodChannelReferencePairManager referencePairManager;
 

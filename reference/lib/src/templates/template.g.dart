@@ -1,4 +1,4 @@
-part of 'implementation.dart';
+part of 'template.dart';
 
 class GeneratedReferencePairManager extends MethodChannelReferencePairManager {
   GeneratedReferencePairManager(

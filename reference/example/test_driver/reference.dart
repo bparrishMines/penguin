@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_driver/driver_extension.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:reference/src/templates/implementation.dart';
+import 'package:reference/src/templates/template.dart';
 
 void main() {
   final Completer<String> completer = Completer<String>();
