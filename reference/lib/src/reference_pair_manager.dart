@@ -145,8 +145,7 @@ abstract class ReferencePairManager {
   ///
   /// This will instantiate a [LocalReference] and add it and [remoteReference]
   /// as a pair.
-  // TODO return local ref?
-  void createLocalReferenceFor(
+  LocalReference createLocalReferenceFor(
     RemoteReference remoteReference,
     TypeReference typeReference,
     List<dynamic> arguments,
@@ -158,6 +157,7 @@ abstract class ReferencePairManager {
       _replaceRemoteReferences(arguments),
     );
     _localRefToRemoteRefMap[localReference] = remoteReference;
+    return localReference;
   }
 
   /// Call when a remote [ReferencePairManager] wants to dispose their [RemoteReference].
@@ -173,8 +173,7 @@ abstract class ReferencePairManager {
   /// Creates and maintains access of an equivalent object to [localReference] on a remote thread/process.
   ///
   /// This will also store [localReference] and a [RemoteReference] as a pair.
-  // TODO: return RemoteReference?
-  FutureOr<void> createRemoteReferenceFor(
+  FutureOr<RemoteReference> createRemoteReferenceFor(
     LocalReference localReference,
     TypeReference typeReference,
   ) {
@@ -183,13 +182,20 @@ abstract class ReferencePairManager {
 
     final RemoteReference remoteReference = RemoteReference(_uuid.v4());
     _localRefToRemoteRefMap[localReference] = remoteReference;
-    return remoteHandler.createRemoteReference(
-      remoteReference,
-      typeReference,
-      _replaceLocalReferences(
-        remoteHandler.creationArgumentsFor(localReference),
-      ),
-    );
+
+    final Completer<RemoteReference> completer = Completer<RemoteReference>();
+
+    remoteHandler
+        .createRemoteReference(
+          remoteReference,
+          typeReference,
+          _replaceLocalReferences(
+            remoteHandler.creationArgumentsFor(localReference),
+          ),
+        )
+        .then((_) => completer.complete(remoteReference));
+
+    return completer.future;
   }
 
   /// Call when it is no longer needed to access the [RemoteReference] paired with [localReference].
