@@ -8,15 +8,16 @@ import 'reference.dart';
 
 /// Handles communication with [RemoteReference]s for a [ReferencePairManager].
 mixin RemoteReferenceCommunicationHandler {
+  /// Retrieves arguments to instantiate an object that is created with [createRemoteReference].
   List<dynamic> creationArgumentsFor(LocalReference localReference);
 
   /// Instantiate and store an object on a remote thread/process.
   ///
   /// The remote instantiated object will be represented as [remoteReference].
   ///
-  /// The LOCAL [ReferencePairManager] stores [localReference] and
-  /// [remoteReference] as a pair and will facilitate communication between
-  /// their instances they represent.
+  /// The LOCAL [ReferencePairManager] stores the paired [LocalReference] and
+  /// [remoteReference] and facilitates communication between the instances they
+  /// represent.
   ///
   /// The REMOTE [ReferencePairManager] will represent [localReference] as a
   /// [RemoteReference], instantiate a new [LocalReference], and also store them
@@ -32,7 +33,7 @@ mixin RemoteReferenceCommunicationHandler {
 
   /// Execute a method on the object instance that [remoteReference] represents.
   ///
-  /// This method should only be called after [createRemoteReferenceFor] and
+  /// This method should only be called after [createRemoteReference] and
   /// should never be called after [disposeRemoteReference].
   Future<dynamic> executeRemoteMethod(
     RemoteReference remoteReference,
@@ -43,8 +44,8 @@ mixin RemoteReferenceCommunicationHandler {
   /// Dispose [remoteReference] on a remote thread/process.
   ///
   /// This method should also stop the local and remote [ReferencePairManager]
-  /// from maintaining the connection between its [LocalReference] and should
-  /// allow for either object instance to connect to new references.
+  /// from maintaining the connection between its paired [LocalReference] and
+  /// should allow for either object instance to connect to new references.
   Future<void> disposeRemoteReference(RemoteReference remoteReference);
 }
 
@@ -62,8 +63,8 @@ mixin LocalReferenceCommunicationHandler {
   /// their object instances they represent.
   ///
   /// The REMOTE [ReferencePairManager] will represent the returned value as a
-  /// [RemoteReference] and [remoteReference] as a [LocalReference]. It will
-  /// also store both references as a pair.
+  /// [RemoteReference] and represent [remoteReference] as a [LocalReference].
+  /// It will also store both references as a pair.
   LocalReference createLocalReferenceFor(
     RemoteReference remoteReference,
     TypeReference typeReference,

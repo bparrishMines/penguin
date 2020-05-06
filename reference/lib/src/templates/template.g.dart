@@ -5,14 +5,13 @@ class GeneratedReferencePairManager extends MethodChannelReferencePairManager {
     String channelName,
     GeneratedLocalReferenceCommunicationHandler localHandler, {
     GeneratedRemoteReferenceCommunicationHandler remoteHandler,
-    ReferenceMessageCodec referenceMessageCodec,
+    ReferenceMessageCodec referenceMessageCodec = const ReferenceMessageCodec(),
   }) : super(
           channelName: channelName,
           localHandler: localHandler,
           remoteHandler:
               remoteHandler ?? GeneratedRemoteReferenceCommunicationHandler(),
-          referenceMessageCodec:
-              referenceMessageCodec ?? const ReferenceMessageCodec(),
+          referenceMessageCodec: referenceMessageCodec,
         );
 
   static const TypeReference _classTemplateType = TypeReference(0);
@@ -67,7 +66,9 @@ class GeneratedRemoteReferenceCommunicationHandler
       return <dynamic>[localReference.fieldTemplate];
     }
 
-    throw StateError('a;oweijf;');
+    throw StateError(
+      'Could not get creation arguments for a ${localReference.runtimeType}.',
+    );
   }
 }
 

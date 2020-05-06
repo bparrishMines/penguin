@@ -9,10 +9,6 @@ class ClassTemplateInterface {
     throw UnimplementedError();
   }
 
-  FutureOr<String> callbackTemplate(double parameterTemplate) {
-    throw UnimplementedError();
-  }
-
   @override
   bool operator ==(dynamic other) =>
       other is ClassTemplateInterface && other.fieldTemplate == fieldTemplate;

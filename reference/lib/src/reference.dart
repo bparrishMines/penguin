@@ -30,9 +30,19 @@ class RemoteReference {
 /// class is able be paired with a [RemoteReference].
 mixin LocalReference {}
 
+/// Represents a type that exists on a local and remote thread/process.
+///
+/// For example, this could represent a class named `Apple` in `apple.dart`
+/// and `Apple.java` files.
+///
+/// This is used to help instantiate [LocalReference]s for
+/// [ReferencePairManager]s.
+///
+/// Two [TypeReference]s are equal if they share the same [typeId].
 class TypeReference {
   const TypeReference(this.typeId);
 
+  /// Unique identifier to help reference a specific class between [ReferencePairManager]s.
   final int typeId;
 
   @override

@@ -30,7 +30,7 @@ abstract class MethodChannelReferencePairManager extends ReferencePairManager {
   /// Message codec used for [channel].
   ///
   /// [ReferenceMessageCodec] extends [StandardMessageCodec] to provide support
-  /// for passing [RemoteReference].
+  /// for passing [RemoteReference]s and [TypeReference]s.
   ///
   /// See [MethodChannel.codec].
   final ReferenceMessageCodec referenceMessageCodec;
