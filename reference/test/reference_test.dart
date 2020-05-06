@@ -34,15 +34,14 @@ void main() {
       int callCount = 0;
 
       final OwnerCounter counter = OwnerCounter(
-        OwnerCounterLifecycleListener(
-          onCreate: () => null,
-          onDispose: () {
-            callCount++;
-            return Future<void>.value();
-          },
-        ),
-        2
-      );
+          OwnerCounterLifecycleListener(
+            onCreate: () => null,
+            onDispose: () {
+              callCount++;
+              return Future<void>.value();
+            },
+          ),
+          2);
 
       counter.decrement();
       counter.decrement();
@@ -85,7 +84,10 @@ void main() {
           template.referencePairManager;
       final template.ClassTemplate testClass = template.ClassTemplate(1);
 
-      referencePairManager.createRemoteReferenceFor(testClass);
+      referencePairManager.createRemoteReferenceFor(
+        testClass,
+        TypeReference(0),
+      );
 
       final RemoteReference remoteReference =
           referencePairManager.remoteReferenceFor(testClass);
@@ -98,10 +100,8 @@ void main() {
       expect(methodCallLog, <Matcher>[
         isMethodCall('REFERENCE_CREATE', arguments: <dynamic>[
           remoteReference,
-          <dynamic>[
-            'ClassTemplate',
-            <dynamic>[1]
-          ],
+          TypeReference(0),
+          <dynamic>[1],
         ]),
       ]);
     });
@@ -111,7 +111,10 @@ void main() {
           template.referencePairManager;
       final template.ClassTemplate testClass = template.ClassTemplate(2);
 
-      referencePairManager.createRemoteReferenceFor(testClass);
+      referencePairManager.createRemoteReferenceFor(
+        testClass,
+        TypeReference(0),
+      );
       final RemoteReference remoteReference =
           referencePairManager.remoteReferenceFor(testClass);
       methodCallLog.clear();
@@ -132,7 +135,8 @@ void main() {
       final ReferencePairManager referencePairManager =
           template.referencePairManager;
       final template.ClassTemplate testClass = template.ClassTemplate(3);
-      referencePairManager.createRemoteReferenceFor(testClass);
+      referencePairManager.createRemoteReferenceFor(
+          testClass, TypeReference(0),);
       methodCallLog.clear();
 
       final String result = await testClass.methodTemplate('bye!');
@@ -161,7 +165,10 @@ void main() {
         },
       );
 
-      referencePairManager.createRemoteReferenceFor(testClass);
+      referencePairManager.createRemoteReferenceFor(
+        testClass,
+        TypeReference(0),
+      );
 
       final Completer<String> responseCompleter = Completer<String>();
       await referencePairManager.channel.binaryMessenger.handlePlatformMessage(
@@ -199,10 +206,8 @@ void main() {
             'REFERENCE_CREATE',
             <dynamic>[
               remoteReference,
-              <dynamic>[
-                'ClassTemplate',
-                <dynamic>[45],
-              ],
+              TypeReference(0),
+              <dynamic>[45],
             ],
           ),
         ),

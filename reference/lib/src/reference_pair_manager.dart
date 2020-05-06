@@ -8,6 +8,8 @@ import 'reference.dart';
 
 /// Handles communication with [RemoteReference]s for a [ReferencePairManager].
 mixin RemoteReferenceCommunicationHandler {
+  List<dynamic> creationArgumentsFor(LocalReference localReference);
+
   /// Instantiate and store an object on a remote thread/process.
   ///
   /// The remote instantiated object will be represented as [remoteReference].
@@ -22,9 +24,10 @@ mixin RemoteReferenceCommunicationHandler {
   ///
   /// This method should make the instantiated remote object accessible until
   /// [disposeRemoteReference] is called with [remoteReference].
-  Future<void> createRemoteReferenceFor(
-    LocalReference localReference,
+  Future<void> createRemoteReference(
     RemoteReference remoteReference,
+    TypeReference typeReference,
+    List<dynamic> arguments,
   );
 
   /// Execute a method on the object instance that [remoteReference] represents.
@@ -62,9 +65,10 @@ mixin LocalReferenceCommunicationHandler {
   /// [RemoteReference] and [remoteReference] as a [LocalReference]. It will
   /// also store both references as a pair.
   LocalReference createLocalReferenceFor(
-    RemoteReference remoteReference, [
-    dynamic arguments,
-  ]);
+    RemoteReference remoteReference,
+    TypeReference typeReference,
+    List<dynamic> arguments,
+  );
 
   /// Execute a method to be executed on the object instance represented by [localReference].
   ///
@@ -108,6 +112,7 @@ mixin LocalReferenceCommunicationHandler {
 ///
 /// 4. Disposing of the Dart `Apple` would lead to a message sent to the remote
 /// [ReferencePairManager] to dispose the Java `Apple`.
+// TODO: handle null values?
 abstract class ReferencePairManager {
   static final Uuid _uuid = Uuid();
 
@@ -140,14 +145,17 @@ abstract class ReferencePairManager {
   ///
   /// This will instantiate a [LocalReference] and add it and [remoteReference]
   /// as a pair.
+  // TODO return local ref?
   void createLocalReferenceFor(
     RemoteReference remoteReference,
-    dynamic arguments,
+    TypeReference typeReference,
+    List<dynamic> arguments,
   ) {
     _assertIsInitialized();
     final LocalReference localReference = localHandler.createLocalReferenceFor(
       remoteReference,
-      arguments,
+      typeReference,
+      _replaceRemoteReferences(arguments),
     );
     _localRefToRemoteRefMap[localReference] = remoteReference;
   }
@@ -165,16 +173,22 @@ abstract class ReferencePairManager {
   /// Creates and maintains access of an equivalent object to [localReference] on a remote thread/process.
   ///
   /// This will also store [localReference] and a [RemoteReference] as a pair.
-  FutureOr<void> createRemoteReferenceFor(LocalReference localReference) {
+  // TODO: return RemoteReference?
+  FutureOr<void> createRemoteReferenceFor(
+    LocalReference localReference,
+    TypeReference typeReference,
+  ) {
     _assertIsInitialized();
     if (remoteReferenceFor(localReference) != null) return null;
 
     final RemoteReference remoteReference = RemoteReference(_uuid.v4());
     _localRefToRemoteRefMap[localReference] = remoteReference;
-
-    return remoteHandler.createRemoteReferenceFor(
-      localReference,
+    return remoteHandler.createRemoteReference(
       remoteReference,
+      typeReference,
+      _replaceLocalReferences(
+        remoteHandler.creationArgumentsFor(localReference),
+      ),
     );
   }
 
@@ -200,13 +214,7 @@ abstract class ReferencePairManager {
     return remoteHandler.executeRemoteMethod(
       remoteReferenceFor(localReference),
       methodName,
-      arguments.map<dynamic>((dynamic argument) {
-        if (argument is LocalReference &&
-            remoteReferenceFor(localReference) != null) {
-          return remoteReferenceFor(localReference);
-        }
-        return argument;
-      }).toList(),
+      _replaceLocalReferences(arguments),
     );
   }
 
@@ -221,10 +229,7 @@ abstract class ReferencePairManager {
     return localHandler.executeLocalMethod(
       localReferenceFor(remoteReference),
       methodName,
-      arguments.map<dynamic>((dynamic argument) {
-        if (argument is RemoteReference) return localReferenceFor(argument);
-        return argument;
-      }).toList(),
+      _replaceRemoteReferences(arguments),
     );
   }
 
@@ -236,5 +241,36 @@ abstract class ReferencePairManager {
 
   void _assertIsInitialized() {
     assert(_isInitialized, 'Initialize has not been called.');
+  }
+
+  List<dynamic> _replaceRemoteReferences(Iterable<dynamic> iterable) {
+    return iterable
+        .replaceWhere(
+          (value) => value is RemoteReference,
+          (value) => localReferenceFor(value),
+        )
+        .toList();
+  }
+
+  List<dynamic> _replaceLocalReferences(Iterable<dynamic> iterable) {
+    return iterable
+        .replaceWhere(
+          (value) =>
+              value is LocalReference && remoteReferenceFor(value) != null,
+          (value) => remoteReferenceFor(value),
+        )
+        .toList();
+  }
+}
+
+extension ReplaceWhere on Iterable {
+  Iterable<dynamic> replaceWhere(
+    bool Function(dynamic value) test,
+    dynamic Function(dynamic value) replacement,
+  ) {
+    return map<dynamic>((dynamic value) {
+      if (test(value)) return replacement(value);
+      return value;
+    });
   }
 }

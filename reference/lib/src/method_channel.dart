@@ -55,7 +55,11 @@ abstract class MethodChannelReferencePairManager extends ReferencePairManager {
     );
     remoteHandler._channel.setMethodCallHandler((MethodCall call) async {
       if (call.method == MethodChannelReferencePairManager._methodCreate) {
-        createLocalReferenceFor(call.arguments[0], call.arguments[1]);
+        createLocalReferenceFor(
+          call.arguments[0],
+          call.arguments[1],
+          call.arguments[2],
+        );
       } else if (call.method ==
           MethodChannelReferencePairManager._methodMethod) {
         return executeLocalMethodFor(
@@ -67,7 +71,8 @@ abstract class MethodChannelReferencePairManager extends ReferencePairManager {
           MethodChannelReferencePairManager._methodDispose) {
         disposeLocalReferenceFor(call.arguments);
       }
-      return null;
+
+      throw StateError(call.method);
     });
   }
 }
@@ -82,17 +87,15 @@ abstract class MethodChannelRemoteReferenceCommunicationHandler
 
   MethodChannel _channel;
 
-  /// Gets arguments to pass over [MethodChannel] that instantiates a [RemoteReference].
-  dynamic creationArgumentsFor(LocalReference localReference);
-
   @override
-  Future<void> createRemoteReferenceFor(
-    LocalReference localReference,
+  Future<void> createRemoteReference(
     RemoteReference remoteReference,
+    TypeReference typeReference,
+    List<dynamic> arguments,
   ) {
     return _channel.invokeMethod<void>(
       MethodChannelReferencePairManager._methodCreate,
-      <dynamic>[remoteReference, creationArgumentsFor(localReference)],
+      <dynamic>[remoteReference, typeReference, arguments],
     );
   }
 
@@ -119,18 +122,22 @@ abstract class MethodChannelRemoteReferenceCommunicationHandler
 
 /// Implementation of [StandardMessageCodec] that supports serializing [RemoteReference]s.
 ///
-/// When extending, no int below 129 should be used as a key. See
+/// When extending, no int below 130 should be used as a key. See
 /// [StandardMessageCodec] for more info on extending.
 class ReferenceMessageCodec extends StandardMessageCodec {
   const ReferenceMessageCodec();
 
   static const int _valueRemoteReference = 128;
+  static const int _valueTypeReference = 129;
 
   @override
   void writeValue(WriteBuffer buffer, dynamic value) {
     if (value is RemoteReference) {
       buffer.putUint8(_valueRemoteReference);
       writeValue(buffer, value.referenceId);
+    } else if (value is TypeReference) {
+      buffer.putUint8(_valueTypeReference);
+      writeValue(buffer, value.typeId);
     } else {
       super.writeValue(buffer, value);
     }
@@ -141,6 +148,8 @@ class ReferenceMessageCodec extends StandardMessageCodec {
     switch (type) {
       case _valueRemoteReference:
         return RemoteReference(readValueOfType(buffer.getUint8(), buffer));
+      case _valueTypeReference:
+        return TypeReference(readValueOfType(buffer.getUint8(), buffer));
       default:
         return super.readValueOfType(type, buffer);
     }

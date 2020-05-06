@@ -13,10 +13,15 @@ class RemoteReference {
 
   @override
   bool operator ==(other) =>
-      other is RemoteReference && hashCode == other.hashCode;
+      other is RemoteReference && referenceId == other.referenceId;
 
   @override
   int get hashCode => referenceId.hashCode;
+
+  @override
+  String toString() {
+    return '$runtimeType($referenceId)';
+  }
 }
 
 /// Represents an accessible object instance on a local thread/process.
@@ -24,3 +29,20 @@ class RemoteReference {
 /// This is an empty mixin that allows a [ReferencePairManager] to know that a
 /// class is able be paired with a [RemoteReference].
 mixin LocalReference {}
+
+class TypeReference {
+  const TypeReference(this.typeId);
+
+  final int typeId;
+
+  @override
+  bool operator ==(other) => other is TypeReference && typeId == other.typeId;
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  String toString() {
+    return '$runtimeType($typeId)';
+  }
+}
