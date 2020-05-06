@@ -22,21 +22,11 @@ class LocalReferenceCommunicationHandlerTemplate
 class ClassTemplate extends ClassTemplateInterface with LocalReference {
   const ClassTemplate(int fieldTemplate) : super(fieldTemplate);
 
-  // TODO: use one test method?
   @override
   FutureOr<String> methodTemplate(String parameterTemplate) async {
     return await (referencePairManager.executeRemoteMethodFor(
       this,
       GeneratedMethodName.methodTemplate.toString(),
-      <dynamic>[parameterTemplate],
-    )) as String;
-  }
-
-  @override
-  FutureOr<String> callbackTemplate(double parameterTemplate) async {
-    return (await referencePairManager.executeRemoteMethodFor(
-      this,
-      GeneratedMethodName.callbackTemplate.toString(),
       <dynamic>[parameterTemplate],
     )) as String;
   }

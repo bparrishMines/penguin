@@ -155,13 +155,13 @@ void main() {
       final MethodChannelReferencePairManager referencePairManager =
           template.referencePairManager;
 
-      final Completer<double> callbackCompleter = Completer<double>();
+      final Completer<String> callbackCompleter = Completer<String>();
 
       final template.ClassTemplate testClass = TestClassTemplate(
         3,
-        (double testParameter) async {
-          callbackCompleter.complete(testParameter);
-          return testParameter.toString();
+        (String parameterTemplate) async {
+          callbackCompleter.complete(parameterTemplate);
+          return parameterTemplate + ' pie';
         },
       );
 
@@ -178,8 +178,8 @@ void main() {
             'REFERENCE_METHOD',
             <dynamic>[
               referencePairManager.remoteReferenceFor(testClass),
-              'callbackTemplate',
-              <dynamic>[46.0],
+              'methodTemplate',
+              <dynamic>['Apple'],
             ],
           ),
         ),
@@ -190,8 +190,8 @@ void main() {
         },
       );
 
-      expect(callbackCompleter.future, completion(46.0));
-      expect(responseCompleter.future, completion('46.0'));
+      expect(callbackCompleter.future, completion('Apple'));
+      expect(responseCompleter.future, completion('Apple pie'));
     });
 
     test('createLocalReferenceFor', () async {
@@ -262,13 +262,13 @@ void main() {
 }
 
 class TestClassTemplate extends template.ClassTemplate {
-  TestClassTemplate(int fieldTemplate, this.onCallbackTemplate)
+  TestClassTemplate(int fieldTemplate, this.onMethodTemplate)
       : super(fieldTemplate);
 
-  final Future<String> Function(double parameterTemplate) onCallbackTemplate;
+  final Future<String> Function(String parameterTemplate) onMethodTemplate;
 
   @override
-  FutureOr<String> callbackTemplate(double parameterTemplate) {
-    return onCallbackTemplate(parameterTemplate);
+  FutureOr<String> methodTemplate(String parameterTemplate) {
+    return onMethodTemplate(parameterTemplate);
   }
 }

@@ -49,9 +49,6 @@ abstract class GeneratedLocalReferenceCommunicationHandler
     List<dynamic> arguments,
   ) async {
     if (localReference is ClassTemplate &&
-        methodName == GeneratedMethodName.callbackTemplate.toString()) {
-      return await localReference.callbackTemplate(arguments[0]);
-    } else if (localReference is ClassTemplate &&
         methodName == GeneratedMethodName.methodTemplate.toString()) {
       return await localReference.methodTemplate(arguments[0]);
     }
@@ -79,8 +76,6 @@ class GeneratedMethodName {
 
   final String name;
 
-  static final GeneratedMethodName callbackTemplate =
-      GeneratedMethodName._('callbackTemplate');
   static final GeneratedMethodName methodTemplate =
       GeneratedMethodName._('methodTemplate');
 
