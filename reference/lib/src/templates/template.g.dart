@@ -49,7 +49,7 @@ abstract class GeneratedLocalReferenceCommunicationHandler
     List<dynamic> arguments,
   ) async {
     if (localReference is ClassTemplate &&
-        methodName == GeneratedMethodName.methodTemplate.toString()) {
+        methodName == GeneratedMethodNames.methodTemplate) {
       return await localReference.methodTemplate(arguments[0]);
     }
 
@@ -71,14 +71,6 @@ class GeneratedRemoteReferenceCommunicationHandler
   }
 }
 
-class GeneratedMethodName {
-  const GeneratedMethodName._(this.name);
-
-  final String name;
-
-  static final GeneratedMethodName methodTemplate =
-      GeneratedMethodName._('methodTemplate');
-
-  @override
-  String toString() => name;
+mixin GeneratedMethodNames {
+  static const String methodTemplate = 'methodTemplate';
 }

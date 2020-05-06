@@ -3,7 +3,10 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
-/// Automatically decrements [OwnerCounter]s.
+/// Stores [OwnerCounter]s to decrement at a later point.
+///
+/// After each frame, [OwnerCounter.decrement] is called on all [OwnerCounter]s
+/// in the pool and then the pool is cleared.
 ///
 /// See [instance].
 class AutoDecrementPool {
@@ -17,8 +20,8 @@ class AutoDecrementPool {
   /// Adds an [OwnerCounter] to the auto decrement pool.
   ///
   /// After each frame, [OwnerCounter.decrement] is called on all
-  /// [OwnerCounter]s in the auto decrement pool and then the pool is cleared.
-  void addToAutoReleasePool(OwnerCounter counter) {
+  /// [OwnerCounter]s in the pool and then the pool is cleared.
+  void add(OwnerCounter counter) {
     assert(counter != null);
     _autoReleasePool.add(counter);
     if (_autoReleasePool.length == 1) {

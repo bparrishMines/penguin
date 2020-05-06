@@ -26,7 +26,7 @@ class ClassTemplate extends ClassTemplateInterface with LocalReference {
   FutureOr<String> methodTemplate(String parameterTemplate) async {
     return await (referencePairManager.executeRemoteMethodFor(
       this,
-      GeneratedMethodName.methodTemplate.toString(),
+      GeneratedMethodNames.methodTemplate,
       <dynamic>[parameterTemplate],
     )) as String;
   }
