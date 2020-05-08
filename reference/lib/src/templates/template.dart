@@ -12,15 +12,21 @@ class LocalReferenceCommunicationHandlerTemplate
     extends GeneratedLocalReferenceCommunicationHandler {
   @override
   ClassTemplate createClassTemplate(
-    RemoteReference remoteReference,
     int fieldTemplate,
+    ClassTemplate referenceFieldTemplate,
   ) {
-    return ClassTemplate(fieldTemplate);
+    return ClassTemplate(fieldTemplate, referenceFieldTemplate);
   }
 }
 
 class ClassTemplate extends ClassTemplateInterface with LocalReference {
-  const ClassTemplate(int fieldTemplate) : super(fieldTemplate);
+  const ClassTemplate(this.fieldTemplate, this.referenceFieldTemplate);
+
+  @override
+  final int fieldTemplate;
+
+  @override
+  final ClassTemplate referenceFieldTemplate;
 
   @override
   FutureOr<String> methodTemplate(String parameterTemplate) async {

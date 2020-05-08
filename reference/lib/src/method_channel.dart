@@ -129,6 +129,7 @@ class ReferenceMessageCodec extends StandardMessageCodec {
 
   static const int _valueRemoteReference = 128;
   static const int _valueTypeReference = 129;
+  static const int _valueUnpairedRemoteReference = 130;
 
   @override
   void writeValue(WriteBuffer buffer, dynamic value) {
@@ -138,6 +139,10 @@ class ReferenceMessageCodec extends StandardMessageCodec {
     } else if (value is TypeReference) {
       buffer.putUint8(_valueTypeReference);
       writeValue(buffer, value.typeId);
+    } else if (value is UnpairedRemoteReference) {
+      buffer.putUint8(_valueUnpairedRemoteReference);
+      writeValue(buffer, value.typeReference);
+      writeValue(buffer, value.creationArguments);
     } else {
       super.writeValue(buffer, value);
     }
@@ -150,6 +155,11 @@ class ReferenceMessageCodec extends StandardMessageCodec {
         return RemoteReference(readValueOfType(buffer.getUint8(), buffer));
       case _valueTypeReference:
         return TypeReference(readValueOfType(buffer.getUint8(), buffer));
+      case _valueUnpairedRemoteReference:
+        return UnpairedRemoteReference(
+          readValueOfType(buffer.getUint8(), buffer),
+          readValueOfType(buffer.getUint8(), buffer),
+        );
       default:
         return super.readValueOfType(type, buffer);
     }

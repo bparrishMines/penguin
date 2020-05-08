@@ -14,7 +14,12 @@ class GeneratedReferencePairManager extends MethodChannelReferencePairManager {
           referenceMessageCodec: referenceMessageCodec,
         );
 
-  static const TypeReference _classTemplateType = TypeReference(0);
+  @override
+  TypeReference typeReferenceFor(LocalReference localReference) {
+    if (localReference is ClassTemplate) return TypeReference(0);
+
+    throw StateError('aoiej;a');
+  }
 }
 
 abstract class GeneratedLocalReferenceCommunicationHandler
@@ -22,18 +27,17 @@ abstract class GeneratedLocalReferenceCommunicationHandler
   const GeneratedLocalReferenceCommunicationHandler();
 
   ClassTemplate createClassTemplate(
-    RemoteReference remoteReference,
     int fieldTemplate,
+    ClassTemplate referenceFieldTemplate,
   );
 
   @override
   LocalReference createLocalReferenceFor(
-    RemoteReference remoteReference,
     TypeReference typeReference,
     List<dynamic> arguments,
   ) {
-    if (typeReference == GeneratedReferencePairManager._classTemplateType) {
-      return createClassTemplate(remoteReference, arguments[0]);
+    if (typeReference == TypeReference(0)) {
+      return createClassTemplate(arguments[0], arguments[1]);
     }
 
     throw StateError(
@@ -63,7 +67,10 @@ class GeneratedRemoteReferenceCommunicationHandler
   @override
   List<dynamic> creationArgumentsFor(LocalReference localReference) {
     if (localReference is ClassTemplate) {
-      return <dynamic>[localReference.fieldTemplate];
+      return <dynamic>[
+        localReference.fieldTemplate,
+        localReference.referenceFieldTemplate,
+      ];
     }
 
     throw StateError(

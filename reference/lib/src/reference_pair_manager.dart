@@ -66,7 +66,6 @@ mixin LocalReferenceCommunicationHandler {
   /// [RemoteReference] and represent [remoteReference] as a [LocalReference].
   /// It will also store both references as a pair.
   LocalReference createLocalReferenceFor(
-    RemoteReference remoteReference,
     TypeReference typeReference,
     List<dynamic> arguments,
   );
@@ -120,6 +119,8 @@ abstract class ReferencePairManager {
   bool _isInitialized = false;
   final _localRefToRemoteRefMap = BiMap<LocalReference, RemoteReference>();
 
+  TypeReference typeReferenceFor(LocalReference localReference);
+
   /// Handles communication with [RemoteReference]s.
   RemoteReferenceCommunicationHandler get remoteHandler;
 
@@ -153,7 +154,6 @@ abstract class ReferencePairManager {
   ) {
     _assertIsInitialized();
     final LocalReference localReference = localHandler.createLocalReferenceFor(
-      remoteReference,
       typeReference,
       _replaceRemoteReferences(arguments),
     );
@@ -175,9 +175,9 @@ abstract class ReferencePairManager {
   ///
   /// This will also store [localReference] and a [RemoteReference] as a pair.
   FutureOr<RemoteReference> createRemoteReferenceFor(
-    LocalReference localReference,
+    LocalReference localReference, [
     TypeReference typeReference,
-  ) {
+  ]) {
     _assertIsInitialized();
     if (remoteReferenceFor(localReference) != null) return null;
 
@@ -189,7 +189,7 @@ abstract class ReferencePairManager {
     remoteHandler
         .createRemoteReference(
           remoteReference,
-          typeReference,
+          typeReference ?? typeReferenceFor(localReference),
           _replaceLocalReferences(
             remoteHandler.creationArgumentsFor(localReference),
           ),
@@ -256,15 +256,29 @@ abstract class ReferencePairManager {
           (value) => value is RemoteReference,
           (value) => localReferenceFor(value),
         )
+        .replaceWhere(
+          (value) => value is UnpairedRemoteReference,
+          (value) => localHandler.createLocalReferenceFor(
+            value.typeReference,
+            value.creationArguments,
+          ),
+        )
         .toList();
   }
 
   List<dynamic> _replaceLocalReferences(Iterable<dynamic> iterable) {
     return iterable
         .replaceWhere(
+            (value) =>
+                value is LocalReference && remoteReferenceFor(value) != null,
+            (value) => remoteReferenceFor(value))
+        .replaceWhere(
           (value) =>
-              value is LocalReference && remoteReferenceFor(value) != null,
-          (value) => remoteReferenceFor(value),
+              value is LocalReference && remoteReferenceFor(value) == null,
+          (value) => UnpairedRemoteReference(
+            typeReferenceFor(value),
+            remoteHandler.creationArgumentsFor(value),
+          ),
         )
         .toList();
   }

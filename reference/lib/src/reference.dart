@@ -56,3 +56,16 @@ class TypeReference {
     return '$runtimeType($typeId)';
   }
 }
+
+class UnpairedRemoteReference {
+  const UnpairedRemoteReference(this.typeReference, this.creationArguments);
+
+  final TypeReference typeReference;
+
+  final List<dynamic> creationArguments;
+
+  @override
+  String toString() {
+    return '$runtimeType($typeReference, $creationArguments)';
+  }
+}

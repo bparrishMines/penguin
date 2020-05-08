@@ -1,5 +1,5 @@
 name: reference
-description: A Flutter plugin for creating a reference based plugin API.
+description: A Flutter plugin for creating a plugin API with the Reference Pair model.
 version: 0.0.1
 author: https://github.com/bparrishMines
 homepage: https://github.com/bparrishMines/penguin/tree/master/reference

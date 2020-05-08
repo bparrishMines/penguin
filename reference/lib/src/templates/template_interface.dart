@@ -1,17 +1,18 @@
 import 'dart:async';
 
-class ClassTemplateInterface {
-  const ClassTemplateInterface(this.fieldTemplate);
+abstract class ClassTemplateInterface {
+  const ClassTemplateInterface();
 
-  final int fieldTemplate;
+  int get fieldTemplate;
+  ClassTemplateInterface get referenceFieldTemplate;
 
-  FutureOr<String> methodTemplate(String parameterTemplate) {
-    throw UnimplementedError();
-  }
+  FutureOr<String> methodTemplate(String parameterTemplate);
 
   @override
   bool operator ==(dynamic other) =>
-      other is ClassTemplateInterface && other.fieldTemplate == fieldTemplate;
+      other is ClassTemplateInterface &&
+      other.fieldTemplate == fieldTemplate &&
+      referenceFieldTemplate == other.referenceFieldTemplate;
 
   @override
   int get hashCode => fieldTemplate.hashCode;
