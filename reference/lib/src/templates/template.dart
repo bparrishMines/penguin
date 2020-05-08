@@ -29,11 +29,14 @@ class ClassTemplate extends ClassTemplateInterface with LocalReference {
   final ClassTemplate referenceFieldTemplate;
 
   @override
-  FutureOr<String> methodTemplate(String parameterTemplate) async {
+  FutureOr<String> methodTemplate(
+    String parameterTemplate,
+    ClassTemplateInterface referenceParameterTemplate,
+  ) async {
     return await (referencePairManager.executeRemoteMethodFor(
       this,
       GeneratedMethodNames.methodTemplate,
-      <dynamic>[parameterTemplate],
+      <dynamic>[parameterTemplate, referenceParameterTemplate],
     )) as String;
   }
 }

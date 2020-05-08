@@ -53,7 +53,7 @@ abstract class GeneratedLocalReferenceCommunicationHandler
   ) async {
     if (localReference is ClassTemplate &&
         methodName == GeneratedMethodNames.methodTemplate) {
-      return await localReference.methodTemplate(arguments[0]);
+      return await localReference.methodTemplate(arguments[0], arguments[1]);
     }
 
     throw StateError(

@@ -210,6 +210,8 @@ abstract class ReferencePairManager {
     }
   }
 
+  // TODO: test returning LocalReference
+  // TODO: deep list search
   /// Execute a method on the [RemoteReference] paired to [localReference].
   Future<dynamic> executeRemoteMethodFor(
     LocalReference localReference,

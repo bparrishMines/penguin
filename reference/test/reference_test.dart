@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:reference/reference.dart';
 import 'package:reference/src/templates/template.dart' as template;
+import 'package:reference/src/templates/template_interface.dart';
 
 import 'reference_matchers.dart';
 
@@ -105,7 +106,7 @@ void main() {
           TypeReference(0),
           <dynamic>[
             1,
-            unpairedRemoteReferenceHasSame(
+            isUnpairedRemoteReferenceWithSame(
               TypeReference(0),
               <dynamic>[2, null],
             ),
@@ -143,14 +144,23 @@ void main() {
       referencePairManager.createRemoteReferenceFor(testClass);
       methodCallLog.clear();
 
-      final String result = await testClass.methodTemplate('bye!');
+      final String result = await testClass.methodTemplate(
+        'bye!',
+        template.ClassTemplate(16, null),
+      );
 
       expect(result, equals('Goodbye!'));
       expect(methodCallLog, <Matcher>[
-        isMethodCall('REFERENCE_METHOD', arguments: <dynamic>[
+        isMethodCallWithMatchers('REFERENCE_METHOD', arguments: <dynamic>[
           referencePairManager.remoteReferenceFor(testClass),
           'methodTemplate',
-          <dynamic>['bye!'],
+          <dynamic>[
+            'bye!',
+            isUnpairedRemoteReferenceWithSame(
+              TypeReference(0),
+              <dynamic>[16, null],
+            ),
+          ],
         ]),
       ]);
     });
@@ -159,13 +169,20 @@ void main() {
       final MethodChannelReferencePairManager referencePairManager =
           template.referencePairManager;
 
-      final Completer<String> callbackCompleter = Completer<String>();
+      final Completer<List<dynamic>> callbackCompleter =
+          Completer<List<dynamic>>();
 
       final template.ClassTemplate testClass = TestClassTemplate(
         5,
         null,
-        (String parameterTemplate) async {
-          callbackCompleter.complete(parameterTemplate);
+        (
+          String parameterTemplate,
+          ClassTemplateInterface referenceParameterTemplate,
+        ) async {
+          callbackCompleter.complete(<dynamic>[
+            parameterTemplate,
+            referenceParameterTemplate,
+          ]);
           return parameterTemplate + ' pie';
         },
       );
@@ -181,7 +198,10 @@ void main() {
             <dynamic>[
               referencePairManager.remoteReferenceFor(testClass),
               'methodTemplate',
-              <dynamic>['Apple'],
+              <dynamic>[
+                'Apple',
+                UnpairedRemoteReference(TypeReference(0), <dynamic>[19, null]),
+              ],
             ],
           ),
         ),
@@ -192,7 +212,15 @@ void main() {
         },
       );
 
-      expect(callbackCompleter.future, completion('Apple'));
+      expect(
+        callbackCompleter.future,
+        completion(
+          <dynamic>[
+            'Apple',
+            template.ClassTemplate(19, null),
+          ],
+        ),
+      );
       expect(responseCompleter.future, completion('Apple pie'));
     });
 
@@ -277,10 +305,16 @@ class TestClassTemplate extends template.ClassTemplate {
     this.onMethodTemplate,
   ) : super(fieldTemplate, referenceFieldTemplate);
 
-  final Future<String> Function(String parameterTemplate) onMethodTemplate;
+  final Future<String> Function(
+    String parameterTemplate,
+    ClassTemplateInterface referenceParameterTemplate,
+  ) onMethodTemplate;
 
   @override
-  FutureOr<String> methodTemplate(String parameterTemplate) {
-    return onMethodTemplate(parameterTemplate);
+  FutureOr<String> methodTemplate(
+    String parameterTemplate,
+    ClassTemplateInterface referenceParameterTemplate,
+  ) {
+    return onMethodTemplate(parameterTemplate, referenceParameterTemplate);
   }
 }

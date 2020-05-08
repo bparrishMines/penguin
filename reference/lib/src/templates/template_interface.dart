@@ -6,7 +6,10 @@ abstract class ClassTemplateInterface {
   int get fieldTemplate;
   ClassTemplateInterface get referenceFieldTemplate;
 
-  FutureOr<String> methodTemplate(String parameterTemplate);
+  FutureOr<String> methodTemplate(
+    String parameterTemplate,
+    ClassTemplateInterface referenceParameterTemplate,
+  );
 
   @override
   bool operator ==(dynamic other) =>
