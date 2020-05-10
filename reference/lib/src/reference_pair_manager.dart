@@ -112,7 +112,6 @@ mixin LocalReferenceCommunicationHandler {
 ///
 /// 4. Disposing of the Dart `Apple` would lead to a message sent to the remote
 /// [ReferencePairManager] to dispose the Java `Apple`.
-// TODO: handle null values?
 abstract class ReferencePairManager {
   static final Uuid _uuid = Uuid();
 

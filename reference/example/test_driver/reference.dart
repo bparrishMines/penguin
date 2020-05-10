@@ -10,9 +10,9 @@ void main() {
   tearDownAll(() => completer.complete(null));
 
   group('reference', () {
-    test('$ClassTemplate', () async {
+    test('$PlatformClassTemplate', () async {
       final Completer<double> callbackCompleter = Completer<double>();
-      final ClassTemplate template = ClassTemplate(
+      final PlatformClassTemplate template = PlatformClassTemplate(
         54,
         (double value) {
           callbackCompleter.complete(value);

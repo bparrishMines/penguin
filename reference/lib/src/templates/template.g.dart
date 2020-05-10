@@ -16,8 +16,7 @@ class GeneratedReferencePairManager extends MethodChannelReferencePairManager {
 
   @override
   TypeReference typeReferenceFor(LocalReference localReference) {
-    if (localReference is ClassTemplate) return TypeReference(0);
-
+    if (localReference is PlatformClassTemplate) return TypeReference(0);
     throw StateError('aoiej;a');
   }
 }
@@ -26,7 +25,7 @@ abstract class GeneratedLocalReferenceCommunicationHandler
     with LocalReferenceCommunicationHandler {
   const GeneratedLocalReferenceCommunicationHandler();
 
-  ClassTemplate createClassTemplate(
+  PlatformClassTemplate createClassTemplate(
     int fieldTemplate,
     ClassTemplate referenceFieldTemplate,
   );
@@ -41,7 +40,7 @@ abstract class GeneratedLocalReferenceCommunicationHandler
     }
 
     throw StateError(
-      'Could not instantiate an object with arguments: $arguments.',
+      'Could not instantiate a $TypeReference: $typeReference with arguments: $arguments.',
     );
   }
 
@@ -51,7 +50,7 @@ abstract class GeneratedLocalReferenceCommunicationHandler
     String methodName,
     List<dynamic> arguments,
   ) async {
-    if (localReference is ClassTemplate &&
+    if (localReference is PlatformClassTemplate &&
         methodName == GeneratedMethodNames.methodTemplate) {
       return await localReference.methodTemplate(arguments[0], arguments[1]);
     }
@@ -66,7 +65,7 @@ class GeneratedRemoteReferenceCommunicationHandler
     extends MethodChannelRemoteReferenceCommunicationHandler {
   @override
   List<dynamic> creationArgumentsFor(LocalReference localReference) {
-    if (localReference is ClassTemplate) {
+    if (localReference is PlatformClassTemplate) {
       return <dynamic>[
         localReference.fieldTemplate,
         localReference.referenceFieldTemplate,

@@ -8,19 +8,29 @@ part 'template.g.dart';
 
 MethodChannelReferencePairManager referencePairManager;
 
-class LocalReferenceCommunicationHandlerTemplate
-    extends GeneratedLocalReferenceCommunicationHandler {
+class PlatformTemplateImpl extends PlatformInterfaceTemplate {
   @override
   ClassTemplate createClassTemplate(
     int fieldTemplate,
     ClassTemplate referenceFieldTemplate,
   ) {
-    return ClassTemplate(fieldTemplate, referenceFieldTemplate);
+    return PlatformClassTemplate(fieldTemplate, referenceFieldTemplate);
   }
 }
 
-class ClassTemplate extends ClassTemplateInterface with LocalReference {
-  const ClassTemplate(this.fieldTemplate, this.referenceFieldTemplate);
+class LocalReferenceCommunicationHandlerTemplate
+    extends GeneratedLocalReferenceCommunicationHandler {
+  @override
+  PlatformClassTemplate createClassTemplate(
+    int fieldTemplate,
+    ClassTemplate referenceFieldTemplate,
+  ) {
+    return PlatformClassTemplate(fieldTemplate, referenceFieldTemplate);
+  }
+}
+
+class PlatformClassTemplate with ClassTemplate, LocalReference {
+  PlatformClassTemplate(this.fieldTemplate, this.referenceFieldTemplate);
 
   @override
   final int fieldTemplate;
@@ -31,7 +41,7 @@ class ClassTemplate extends ClassTemplateInterface with LocalReference {
   @override
   FutureOr<String> methodTemplate(
     String parameterTemplate,
-    ClassTemplateInterface referenceParameterTemplate,
+    ClassTemplate referenceParameterTemplate,
   ) async {
     return await (referencePairManager.executeRemoteMethodFor(
       this,

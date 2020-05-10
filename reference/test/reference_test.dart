@@ -85,9 +85,10 @@ void main() {
     test('createRemoteReferenceFor', () async {
       final ReferencePairManager referencePairManager =
           template.referencePairManager;
-      final template.ClassTemplate testClass = template.ClassTemplate(
+      final template.PlatformClassTemplate testClass =
+          template.PlatformClassTemplate(
         1,
-        template.ClassTemplate(2, null),
+        template.PlatformClassTemplate(2, null),
       );
 
       referencePairManager.createRemoteReferenceFor(testClass);
@@ -118,7 +119,8 @@ void main() {
     test('disposeRemoteReferenceFor', () async {
       final ReferencePairManager referencePairManager =
           template.referencePairManager;
-      final template.ClassTemplate testClass = template.ClassTemplate(3, null);
+      final template.PlatformClassTemplate testClass =
+          template.PlatformClassTemplate(3, null);
 
       referencePairManager.createRemoteReferenceFor(testClass);
       final RemoteReference remoteReference =
@@ -140,13 +142,14 @@ void main() {
     test('executeRemoteMethodFor', () async {
       final ReferencePairManager referencePairManager =
           template.referencePairManager;
-      final template.ClassTemplate testClass = template.ClassTemplate(4, null);
+      final template.PlatformClassTemplate testClass =
+          template.PlatformClassTemplate(4, null);
       referencePairManager.createRemoteReferenceFor(testClass);
       methodCallLog.clear();
 
       final String result = await testClass.methodTemplate(
         'bye!',
-        template.ClassTemplate(16, null),
+        template.PlatformClassTemplate(16, null),
       );
 
       expect(result, equals('Goodbye!'));
@@ -172,12 +175,12 @@ void main() {
       final Completer<List<dynamic>> callbackCompleter =
           Completer<List<dynamic>>();
 
-      final template.ClassTemplate testClass = TestClassTemplate(
+      final template.PlatformClassTemplate testClass = TestClassTemplate(
         5,
         null,
         (
           String parameterTemplate,
-          ClassTemplateInterface referenceParameterTemplate,
+          ClassTemplate referenceParameterTemplate,
         ) async {
           callbackCompleter.complete(<dynamic>[
             parameterTemplate,
@@ -217,7 +220,7 @@ void main() {
         completion(
           <dynamic>[
             'Apple',
-            template.ClassTemplate(19, null),
+            template.PlatformClassTemplate(19, null),
           ],
         ),
       );
@@ -246,7 +249,7 @@ void main() {
         (ByteData data) {},
       );
 
-      final template.ClassTemplate testClass =
+      final template.PlatformClassTemplate testClass =
           referencePairManager.localReferenceFor(RemoteReference('aowejea;io'));
 
       expect(testClass.fieldTemplate, equals(8));
@@ -273,7 +276,7 @@ void main() {
         (ByteData data) {},
       );
 
-      final template.ClassTemplate testClass =
+      final template.PlatformClassTemplate testClass =
           referencePairManager.localReferenceFor(RemoteReference('aowejea;io'));
       expect(testClass, isNotNull);
       expect(testClass.fieldTemplate, 45);
@@ -298,22 +301,22 @@ void main() {
   });
 }
 
-class TestClassTemplate extends template.ClassTemplate {
+class TestClassTemplate extends template.PlatformClassTemplate {
   TestClassTemplate(
     int fieldTemplate,
-    template.ClassTemplate referenceFieldTemplate,
+    template.PlatformClassTemplate referenceFieldTemplate,
     this.onMethodTemplate,
   ) : super(fieldTemplate, referenceFieldTemplate);
 
   final Future<String> Function(
     String parameterTemplate,
-    ClassTemplateInterface referenceParameterTemplate,
+    ClassTemplate referenceParameterTemplate,
   ) onMethodTemplate;
 
   @override
   FutureOr<String> methodTemplate(
     String parameterTemplate,
-    ClassTemplateInterface referenceParameterTemplate,
+    ClassTemplate referenceParameterTemplate,
   ) {
     return onMethodTemplate(parameterTemplate, referenceParameterTemplate);
   }
