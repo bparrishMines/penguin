@@ -53,13 +53,8 @@ class PlatformClassTemplate with LocalReference implements ClassTemplate {
     )) as String;
   }
 
-  // TODO: Remove and add to reference_matcher.dart.
   @override
-  bool operator ==(dynamic other) =>
-      other is ClassTemplate &&
-      other.fieldTemplate == fieldTemplate &&
-      referenceFieldTemplate == other.referenceFieldTemplate;
-
-  @override
-  int get hashCode => fieldTemplate.hashCode;
+  String toString() {
+    return '$PlatformClassTemplate($fieldTemplate, $referenceFieldTemplate)';
+  }
 }

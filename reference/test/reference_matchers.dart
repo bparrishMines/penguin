@@ -1,6 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:reference/reference.dart';
+import 'package:reference/src/templates/template_interface.dart';
 
 // Extends isMethodCall in packager:test/test.dart to support matchers in arguments.
 Matcher isMethodCallWithMatchers(String name, {dynamic arguments}) {
@@ -98,5 +99,39 @@ mixin DeepEquals {
       }
     }
     return true;
+  }
+}
+
+Matcher isClassTemplateWithSame(int field, dynamic reference) {
+  return _IsClassTemplateWithSame(field, reference);
+}
+
+class _IsClassTemplateWithSame extends Matcher {
+  const _IsClassTemplateWithSame(this.fieldTemplate, this.referenceFieldTemplate);
+
+  final int fieldTemplate;
+  final dynamic referenceFieldTemplate;
+
+  @override
+  Description describe(Description description) {
+    return description
+        .add(' Is a $ClassTemplate with field: ')
+        .addDescriptionOf(fieldTemplate)
+        .add(' and reference: ')
+        .addDescriptionOf(referenceFieldTemplate);
+  }
+
+  @override
+  bool matches(dynamic item, Map<dynamic, dynamic> matchState) {
+    if (item is! ClassTemplate) return false;
+    if (item.fieldTemplate != fieldTemplate) return false;
+    if (item.referenceFieldTemplate == referenceFieldTemplate) return true;
+    if (referenceFieldTemplate is Matcher) {
+      return referenceFieldTemplate.matches(
+        item.referenceFieldTemplate,
+        matchState,
+      );
+    }
+    return false;
   }
 }

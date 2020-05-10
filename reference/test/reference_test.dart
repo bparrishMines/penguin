@@ -99,7 +99,7 @@ void main() {
       expect(remoteReference.referenceId, isNotNull);
       expect(
         referencePairManager.localReferenceFor(remoteReference),
-        equals(testClass),
+        isClassTemplateWithSame(1, isClassTemplateWithSame(2, null)),
       );
       expect(methodCallLog, <Matcher>[
         isMethodCallWithMatchers('REFERENCE_CREATE', arguments: <dynamic>[
@@ -171,20 +171,54 @@ void main() {
       ]);
     });
 
+    test('createLocalReferenceFor', () async {
+      final MethodChannelReferencePairManager referencePairManager =
+          template.referencePairManager;
+
+      await referencePairManager.channel.binaryMessenger.handlePlatformMessage(
+        'test_plugin',
+        referencePairManager.channel.codec.encodeMethodCall(
+          MethodCall(
+            'REFERENCE_CREATE',
+            <dynamic>[
+              RemoteReference('aowejea;io'),
+              TypeReference(0),
+              <dynamic>[
+                8,
+                UnpairedRemoteReference(TypeReference(0), <dynamic>[9, null]),
+              ],
+            ],
+          ),
+        ),
+        (ByteData data) {},
+      );
+
+      final ClassTemplate testClass = referencePairManager
+          .localReferenceFor(RemoteReference('aowejea;io')) as ClassTemplate;
+
+      expect(
+        testClass,
+        isClassTemplateWithSame(
+          8,
+          isClassTemplateWithSame(9, null),
+        ),
+      );
+    });
+
     test('executeLocalMethodFor', () async {
       final MethodChannelReferencePairManager referencePairManager =
           template.referencePairManager;
 
       final Completer<List<dynamic>> callbackCompleter =
-          Completer<List<dynamic>>();
+      Completer<List<dynamic>>();
 
       final ClassTemplate testClass = TestClassTemplate(
         5,
         null,
-        (
-          String parameterTemplate,
-          ClassTemplate referenceParameterTemplate,
-        ) async {
+            (
+            String parameterTemplate,
+            ClassTemplate referenceParameterTemplate,
+            ) async {
           callbackCompleter.complete(<dynamic>[
             parameterTemplate,
             referenceParameterTemplate,
@@ -213,7 +247,7 @@ void main() {
             ],
           ),
         ),
-        (ByteData data) {
+            (ByteData data) {
           responseCompleter.complete(
             referencePairManager.channel.codec.decodeEnvelope(data),
           );
@@ -225,41 +259,11 @@ void main() {
         completion(
           <dynamic>[
             'Apple',
-            ClassTemplate(19, null),
+            isClassTemplateWithSame(19, null),
           ],
         ),
       );
       expect(responseCompleter.future, completion('Apple pie'));
-    });
-
-    test('createLocalReferenceFor', () async {
-      final MethodChannelReferencePairManager referencePairManager =
-          template.referencePairManager;
-
-      await referencePairManager.channel.binaryMessenger.handlePlatformMessage(
-        'test_plugin',
-        referencePairManager.channel.codec.encodeMethodCall(
-          MethodCall(
-            'REFERENCE_CREATE',
-            <dynamic>[
-              RemoteReference('aowejea;io'),
-              TypeReference(0),
-              <dynamic>[
-                8,
-                UnpairedRemoteReference(TypeReference(0), <dynamic>[9, null]),
-              ],
-            ],
-          ),
-        ),
-        (ByteData data) {},
-      );
-
-      final ClassTemplate testClass = referencePairManager
-          .localReferenceFor(RemoteReference('aowejea;io')) as ClassTemplate;
-
-      expect(testClass.fieldTemplate, equals(8));
-      expect(testClass.referenceFieldTemplate.fieldTemplate, equals(9));
-      expect(testClass.referenceFieldTemplate.referenceFieldTemplate, isNull);
     });
 
     test('disposeLocalReference', () async {
