@@ -6,7 +6,7 @@ import 'package:reference/src/templates/template.dart';
 abstract class PlatformInterfaceTemplate extends PlatformInterface {
   PlatformInterfaceTemplate() : super(token: _token);
 
-  static PlatformInterfaceTemplate _instance = PlatformTemplateImpl();
+  static PlatformInterfaceTemplate _instance = PlatformInterfaceTemplateImpl();
 
   static final Object _token = Object();
 
@@ -46,14 +46,4 @@ class ClassTemplate {
   ) {
     throw UnimplementedError();
   }
-
-  // TODO: Remove and add to reference_matcher.dart.
-  @override
-  bool operator ==(dynamic other) =>
-      other is ClassTemplate &&
-      other.fieldTemplate == fieldTemplate &&
-      referenceFieldTemplate == other.referenceFieldTemplate;
-
-  @override
-  int get hashCode => fieldTemplate.hashCode;
 }

@@ -85,16 +85,16 @@ void main() {
     test('createRemoteReferenceFor', () async {
       final ReferencePairManager referencePairManager =
           template.referencePairManager;
-      final template.PlatformClassTemplate testClass =
-          template.PlatformClassTemplate(
+      final ClassTemplate testClass = ClassTemplate(
         1,
-        template.PlatformClassTemplate(2, null),
+        ClassTemplate(2, null),
       );
 
-      referencePairManager.createRemoteReferenceFor(testClass);
+      referencePairManager
+          .createRemoteReferenceFor(testClass as LocalReference);
 
       final RemoteReference remoteReference =
-          referencePairManager.remoteReferenceFor(testClass);
+          referencePairManager.remoteReferenceFor(testClass as LocalReference);
 
       expect(remoteReference.referenceId, isNotNull);
       expect(
@@ -119,18 +119,21 @@ void main() {
     test('disposeRemoteReferenceFor', () async {
       final ReferencePairManager referencePairManager =
           template.referencePairManager;
-      final template.PlatformClassTemplate testClass =
-          template.PlatformClassTemplate(3, null);
+      final ClassTemplate testClass = ClassTemplate(3, null);
 
-      referencePairManager.createRemoteReferenceFor(testClass);
+      referencePairManager
+          .createRemoteReferenceFor(testClass as LocalReference);
       final RemoteReference remoteReference =
-          referencePairManager.remoteReferenceFor(testClass);
+          referencePairManager.remoteReferenceFor(testClass as LocalReference);
       methodCallLog.clear();
 
-      referencePairManager.disposeRemoteReferenceFor(testClass);
+      referencePairManager
+          .disposeRemoteReferenceFor(testClass as LocalReference);
 
       expect(referencePairManager.localReferenceFor(remoteReference), isNull);
-      expect(referencePairManager.remoteReferenceFor(testClass), isNull);
+      expect(
+          referencePairManager.remoteReferenceFor(testClass as LocalReference),
+          isNull);
       expect(methodCallLog, <Matcher>[
         isMethodCall(
           'REFERENCE_DISPOSE',
@@ -142,20 +145,20 @@ void main() {
     test('executeRemoteMethodFor', () async {
       final ReferencePairManager referencePairManager =
           template.referencePairManager;
-      final template.PlatformClassTemplate testClass =
-          template.PlatformClassTemplate(4, null);
-      referencePairManager.createRemoteReferenceFor(testClass);
+      final ClassTemplate testClass = ClassTemplate(4, null);
+      referencePairManager
+          .createRemoteReferenceFor(testClass as LocalReference);
       methodCallLog.clear();
 
       final String result = await testClass.methodTemplate(
         'bye!',
-        template.PlatformClassTemplate(16, null),
+        ClassTemplate(16, null),
       );
 
       expect(result, equals('Goodbye!'));
       expect(methodCallLog, <Matcher>[
         isMethodCallWithMatchers('REFERENCE_METHOD', arguments: <dynamic>[
-          referencePairManager.remoteReferenceFor(testClass),
+          referencePairManager.remoteReferenceFor(testClass as LocalReference),
           'methodTemplate',
           <dynamic>[
             'bye!',
@@ -175,7 +178,7 @@ void main() {
       final Completer<List<dynamic>> callbackCompleter =
           Completer<List<dynamic>>();
 
-      final template.PlatformClassTemplate testClass = TestClassTemplate(
+      final ClassTemplate testClass = TestClassTemplate(
         5,
         null,
         (
@@ -190,7 +193,8 @@ void main() {
         },
       );
 
-      referencePairManager.createRemoteReferenceFor(testClass);
+      referencePairManager
+          .createRemoteReferenceFor(testClass as LocalReference);
 
       final Completer<String> responseCompleter = Completer<String>();
       await referencePairManager.channel.binaryMessenger.handlePlatformMessage(
@@ -199,7 +203,8 @@ void main() {
           MethodCall(
             'REFERENCE_METHOD',
             <dynamic>[
-              referencePairManager.remoteReferenceFor(testClass),
+              referencePairManager
+                  .remoteReferenceFor(testClass as LocalReference),
               'methodTemplate',
               <dynamic>[
                 'Apple',
@@ -220,7 +225,7 @@ void main() {
         completion(
           <dynamic>[
             'Apple',
-            template.PlatformClassTemplate(19, null),
+            ClassTemplate(19, null),
           ],
         ),
       );
@@ -249,8 +254,8 @@ void main() {
         (ByteData data) {},
       );
 
-      final template.PlatformClassTemplate testClass =
-          referencePairManager.localReferenceFor(RemoteReference('aowejea;io'));
+      final ClassTemplate testClass = referencePairManager
+          .localReferenceFor(RemoteReference('aowejea;io')) as ClassTemplate;
 
       expect(testClass.fieldTemplate, equals(8));
       expect(testClass.referenceFieldTemplate.fieldTemplate, equals(9));
@@ -276,8 +281,8 @@ void main() {
         (ByteData data) {},
       );
 
-      final template.PlatformClassTemplate testClass =
-          referencePairManager.localReferenceFor(RemoteReference('aowejea;io'));
+      final ClassTemplate testClass = referencePairManager
+          .localReferenceFor(RemoteReference('aowejea;io')) as ClassTemplate;
       expect(testClass, isNotNull);
       expect(testClass.fieldTemplate, 45);
       expect(testClass.referenceFieldTemplate, isNull);
@@ -304,7 +309,7 @@ void main() {
 class TestClassTemplate extends template.PlatformClassTemplate {
   TestClassTemplate(
     int fieldTemplate,
-    template.PlatformClassTemplate referenceFieldTemplate,
+    ClassTemplate referenceFieldTemplate,
     this.onMethodTemplate,
   ) : super(fieldTemplate, referenceFieldTemplate);
 
