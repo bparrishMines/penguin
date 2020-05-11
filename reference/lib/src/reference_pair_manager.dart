@@ -74,7 +74,7 @@ mixin LocalReferenceCommunicationHandler {
   ///
   /// This method should only be called after [createLocalReferenceFor] and should
   /// never be called after [disposeLocalReference].
-  Future<dynamic> executeLocalMethod(
+  dynamic executeLocalMethod(
     LocalReference localReference,
     String methodName,
     List<dynamic> arguments,
@@ -233,27 +233,21 @@ abstract class ReferencePairManager {
     return resultCompleter.future;
   }
 
-  // TODO: should not return a future
   /// Execute a method on the [LocalReference] paired to [remoteReference].
-  Future<dynamic> executeLocalMethodFor(
+  dynamic executeLocalMethodFor(
     RemoteReference remoteReference,
     String methodName, [
     List<dynamic> arguments,
   ]) {
     _assertIsInitialized();
     assert(localReferenceFor(remoteReference) != null);
-    final Completer<dynamic> resultCompleter = Completer<dynamic>();
-    localHandler
-        .executeLocalMethod(
-          localReferenceFor(remoteReference),
-          methodName,
-          arguments?.map(_replaceRemoteReference)?.toList() ?? <dynamic>[],
-        )
-        .then(
-          (dynamic value) =>
-              resultCompleter.complete(_replaceLocalReference(value)),
-        );
-    return resultCompleter.future;
+
+    final dynamic result = localHandler.executeLocalMethod(
+      localReferenceFor(remoteReference),
+      methodName,
+      arguments?.map(_replaceRemoteReference)?.toList() ?? <dynamic>[],
+    );
+    return _replaceLocalReference(result);
   }
 
   void _removePairFor(RemoteReference remoteReference) {

@@ -52,14 +52,14 @@ abstract class GeneratedLocalReferenceCommunicationHandler
   }
 
   @override
-  Future<dynamic> executeLocalMethod(
+  dynamic executeLocalMethod(
     LocalReference localReference,
     String methodName,
     List<dynamic> arguments,
-  ) async {
+  ) {
     if (localReference is PlatformClassTemplate &&
         methodName == GeneratedMethodNames.methodTemplate) {
-      return await localReference.methodTemplate(
+      return localReference.methodTemplate(
         arguments[0],
         arguments[1],
         arguments[2]?.cast<ClassTemplate>(),
@@ -67,7 +67,7 @@ abstract class GeneratedLocalReferenceCommunicationHandler
       );
     } else if (localReference is PlatformClassTemplate &&
         methodName == GeneratedMethodNames.returnsReference) {
-      return await localReference.returnsReference();
+      return localReference.returnsReference();
     }
 
     throw StateError(

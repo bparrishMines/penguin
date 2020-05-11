@@ -60,6 +60,7 @@ abstract class MethodChannelReferencePairManager extends ReferencePairManager {
           call.arguments[1],
           call.arguments[2],
         );
+        return;
       } else if (call.method ==
           MethodChannelReferencePairManager._methodMethod) {
         return executeLocalMethodFor(
@@ -70,6 +71,7 @@ abstract class MethodChannelReferencePairManager extends ReferencePairManager {
       } else if (call.method ==
           MethodChannelReferencePairManager._methodDispose) {
         disposeLocalReferenceFor(call.arguments);
+        return;
       }
 
       throw StateError(call.method);

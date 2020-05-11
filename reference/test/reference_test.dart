@@ -310,7 +310,7 @@ void main() {
         ClassTemplate referenceParameterTemplate,
         List<ClassTemplate> referenceListTemplate,
         Map<String, ClassTemplate> referenceMapTemplate,
-      ) async {
+      ) {
         callbackCompleter.complete(<dynamic>[
           parameterTemplate,
           referenceParameterTemplate,
@@ -386,7 +386,7 @@ void main() {
         null,
         null,
         null,
-        () async => ClassTemplate(919, null, null, null),
+        () => ClassTemplate(919, null, null, null),
       );
 
       referencePairManager
@@ -478,14 +478,14 @@ class TestClassTemplate extends template.PlatformClassTemplate {
   ) : super(fieldTemplate, referenceFieldTemplate, referenceListTemplate,
             referenceMapTemplate);
 
-  final Future<String> Function(
+  final String Function(
     String parameterTemplate,
     ClassTemplate referenceParameterTemplate,
     List<ClassTemplate> referenceListTemplate,
     Map<String, ClassTemplate> referenceMapTemplate,
   ) onMethodTemplate;
 
-  final Future<ClassTemplate> Function() onReturnsReference;
+  final ClassTemplate Function() onReturnsReference;
 
   @override
   FutureOr<String> methodTemplate(
