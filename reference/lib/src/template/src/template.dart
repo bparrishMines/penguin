@@ -65,11 +65,16 @@ class PlatformClassTemplate with LocalReference implements ClassTemplate {
   FutureOr<String> methodTemplate(
     String parameterTemplate,
     ClassTemplate referenceParameterTemplate,
+    List<ClassTemplate> referenceListTemplate,
   ) async {
     return await (referencePairManager.executeRemoteMethodFor(
       this,
       GeneratedMethodNames.methodTemplate,
-      <dynamic>[parameterTemplate, referenceParameterTemplate],
+      <dynamic>[
+        parameterTemplate,
+        referenceParameterTemplate,
+        referenceListTemplate,
+      ],
     )) as String;
   }
 

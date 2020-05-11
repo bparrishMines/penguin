@@ -212,7 +212,7 @@ abstract class ReferencePairManager {
   }
 
   // TODO: return reference
-  // TODO: pass List/map
+  // TODO: pass map
   /// Execute a method on the [RemoteReference] paired to [localReference].
   Future<dynamic> executeRemoteMethodFor(
     LocalReference localReference,

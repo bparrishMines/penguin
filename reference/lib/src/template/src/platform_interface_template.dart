@@ -48,6 +48,7 @@ class ClassTemplate {
   FutureOr<String> methodTemplate(
     String parameterTemplate,
     ClassTemplate referenceParameterTemplate,
+    List<ClassTemplate> referenceListTemplate,
   ) {
     throw UnimplementedError();
   }

@@ -161,6 +161,7 @@ void main() {
       final String result = await testClass.methodTemplate(
         'bye!',
         ClassTemplate(16, null, null),
+        <ClassTemplate>[ClassTemplate(45, null, null)],
       );
 
       expect(result, equals('Goodbye!'));
@@ -174,6 +175,12 @@ void main() {
               TypeReference(0),
               <dynamic>[16, null, null],
             ),
+            <Matcher>[
+              isUnpairedRemoteReferenceWithSame(
+                TypeReference(0),
+                <dynamic>[45, null, null],
+              ),
+            ],
           ],
         ]),
       ]);
@@ -202,7 +209,7 @@ void main() {
                     TypeReference(0),
                     <dynamic>[10, null, null],
                   ),
-                ]
+                ],
               ],
             ],
           ),
@@ -228,19 +235,21 @@ void main() {
           template.referencePairManager;
 
       final Completer<List<dynamic>> callbackCompleter =
-      Completer<List<dynamic>>();
+          Completer<List<dynamic>>();
 
       final ClassTemplate testClass = TestClassTemplate(
         5,
         null,
-            null,
-            (
-            String parameterTemplate,
-            ClassTemplate referenceParameterTemplate,
-            ) async {
+        null,
+        (
+          String parameterTemplate,
+          ClassTemplate referenceParameterTemplate,
+          List<ClassTemplate> referenceListTemplate,
+        ) async {
           callbackCompleter.complete(<dynamic>[
             parameterTemplate,
             referenceParameterTemplate,
+            referenceListTemplate,
           ]);
           return parameterTemplate + ' pie';
         },
@@ -261,12 +270,19 @@ void main() {
               'methodTemplate',
               <dynamic>[
                 'Apple',
-                UnpairedRemoteReference(TypeReference(0), <dynamic>[19, null, null]),
+                UnpairedRemoteReference(
+                    TypeReference(0), <dynamic>[19, null, null]),
+                <dynamic>[
+                  UnpairedRemoteReference(
+                    TypeReference(0),
+                    <dynamic>[62, null, null],
+                  ),
+                ],
               ],
             ],
           ),
         ),
-            (ByteData data) {
+        (ByteData data) {
           responseCompleter.complete(
             referencePairManager.channel.codec.decodeEnvelope(data),
           );
@@ -279,6 +295,7 @@ void main() {
           <dynamic>[
             'Apple',
             isClassTemplateWithSame(19, null, null),
+            <Matcher>[isClassTemplateWithSame(62, null, null)],
           ],
         ),
       );
@@ -338,13 +355,19 @@ class TestClassTemplate extends template.PlatformClassTemplate {
   final Future<String> Function(
     String parameterTemplate,
     ClassTemplate referenceParameterTemplate,
+    List<ClassTemplate> referenceListTemplate,
   ) onMethodTemplate;
 
   @override
   FutureOr<String> methodTemplate(
     String parameterTemplate,
     ClassTemplate referenceParameterTemplate,
+    List<ClassTemplate> referenceListTemplate,
   ) {
-    return onMethodTemplate(parameterTemplate, referenceParameterTemplate);
+    return onMethodTemplate(
+      parameterTemplate,
+      referenceParameterTemplate,
+      referenceListTemplate,
+    );
   }
 }
