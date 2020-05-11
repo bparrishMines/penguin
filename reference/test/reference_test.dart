@@ -87,7 +87,7 @@ void main() {
           template.referencePairManager;
       final ClassTemplate testClass = ClassTemplate(
         1,
-        ClassTemplate(2, null, null),
+        ClassTemplate(2, ClassTemplate(43, null, null), null),
         <ClassTemplate>[ClassTemplate(3, null, null)],
       );
 
@@ -100,8 +100,7 @@ void main() {
       expect(remoteReference.referenceId, isNotNull);
       expect(
         referencePairManager.localReferenceFor(remoteReference),
-        isClassTemplateWithSame(1, isClassTemplateWithSame(2, null, null),
-            <Matcher>[isClassTemplateWithSame(3, null, null)]),
+        testClass,
       );
       expect(methodCallLog, <Matcher>[
         isMethodCallWithMatchers('REFERENCE_CREATE', arguments: <dynamic>[
@@ -111,7 +110,14 @@ void main() {
             1,
             isUnpairedRemoteReferenceWithSame(
               TypeReference(0),
-              <dynamic>[2, null, null],
+              <dynamic>[
+                2,
+                isUnpairedRemoteReferenceWithSame(
+                  TypeReference(0),
+                  <dynamic>[43, null, null],
+                ),
+                null
+              ],
             ),
             <Matcher>[
               isUnpairedRemoteReferenceWithSame(
@@ -202,7 +208,14 @@ void main() {
                 8,
                 UnpairedRemoteReference(
                   TypeReference(0),
-                  <dynamic>[9, null, null],
+                  <dynamic>[
+                    9,
+                    UnpairedRemoteReference(
+                      TypeReference(0),
+                      <dynamic>[14, null, null],
+                    ),
+                    null
+                  ],
                 ),
                 <dynamic>[
                   UnpairedRemoteReference(
@@ -224,7 +237,11 @@ void main() {
         testClass,
         isClassTemplateWithSame(
           8,
-          isClassTemplateWithSame(9, null, null),
+          isClassTemplateWithSame(
+            9,
+            isClassTemplateWithSame(14, null, null),
+            null,
+          ),
           <Matcher>[isClassTemplateWithSame(10, null, null)],
         ),
       );

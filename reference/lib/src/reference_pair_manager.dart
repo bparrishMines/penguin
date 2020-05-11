@@ -154,7 +154,7 @@ abstract class ReferencePairManager {
     _assertIsInitialized();
     final LocalReference localReference = localHandler.createLocalReferenceFor(
       typeReference,
-      _replaceRemoteReferences(arguments),
+      arguments.map(_replaceRemoteReference).toList(),
     );
     _localRefToRemoteRefMap[localReference] = remoteReference;
     return localReference;
@@ -191,9 +191,10 @@ abstract class ReferencePairManager {
         .createRemoteReference(
           remoteReference,
           typeReference ?? typeReferenceFor(localReference),
-          _replaceLocalReferences(
-            remoteHandler.creationArgumentsFor(localReference),
-          ),
+          remoteHandler
+              .creationArgumentsFor(localReference)
+              .map(_replaceLocalReference)
+              .toList(),
         )
         .then((_) => completer.complete(remoteReference));
 
@@ -224,7 +225,7 @@ abstract class ReferencePairManager {
     return remoteHandler.executeRemoteMethod(
       remoteReferenceFor(localReference),
       methodName,
-      _replaceLocalReferences(arguments),
+      arguments.map(_replaceLocalReference).toList(),
     );
   }
 
@@ -239,7 +240,7 @@ abstract class ReferencePairManager {
     return localHandler.executeLocalMethod(
       localReferenceFor(remoteReference),
       methodName,
-      _replaceRemoteReferences(arguments),
+      arguments.map(_replaceRemoteReference).toList(),
     );
   }
 
@@ -253,56 +254,37 @@ abstract class ReferencePairManager {
     assert(_isInitialized, 'Initialize has not been called.');
   }
 
-  List<dynamic> _replaceRemoteReferences(Iterable<dynamic> iterable) {
-    return iterable
-        .replaceWhere(
-          test: (value) => value is RemoteReference,
-          replacement: (value) => localReferenceFor(value),
-        )
-        .replaceWhere(
-          test: (value) => value is UnpairedRemoteReference,
-          replacement: (value) => localHandler.createLocalReferenceFor(
-            value.typeReference,
-            value.creationArguments,
-          ),
-        )
-        .replaceWhere(
-          test: (value) => value is List,
-          replacement: (value) => _replaceRemoteReferences(value),
-        )
-        .toList();
+  dynamic _replaceRemoteReference(dynamic argument) {
+    if (argument is RemoteReference) {
+      return localReferenceFor(argument);
+    } else if (argument is UnpairedRemoteReference) {
+      return localHandler.createLocalReferenceFor(
+        argument.typeReference,
+        argument.creationArguments.map(_replaceRemoteReference).toList(),
+      );
+    } else if (argument is List) {
+      return argument.map(_replaceRemoteReference).toList();
+    }
+
+    return argument;
   }
 
-  List<dynamic> _replaceLocalReferences(Iterable<dynamic> iterable) {
-    return iterable
-        .replaceWhere(
-            test: (value) =>
-                value is LocalReference && remoteReferenceFor(value) != null,
-            replacement: (value) => remoteReferenceFor(value))
-        .replaceWhere(
-          test: (value) =>
-              value is LocalReference && remoteReferenceFor(value) == null,
-          replacement: (value) => UnpairedRemoteReference(
-            typeReferenceFor(value),
-            remoteHandler.creationArgumentsFor(value),
-          ),
-        )
-        .replaceWhere(
-          test: (value) => value is List,
-          replacement: (value) => _replaceLocalReferences(value),
-        )
-        .toList();
-  }
-}
+  dynamic _replaceLocalReference(dynamic argument) {
+    if (argument is LocalReference && remoteReferenceFor(argument) != null) {
+      return remoteReferenceFor(argument);
+    } else if (argument is LocalReference &&
+        remoteReferenceFor(argument) == null) {
+      return UnpairedRemoteReference(
+        typeReferenceFor(argument),
+        remoteHandler
+            .creationArgumentsFor(argument)
+            .map(_replaceLocalReference)
+            .toList(),
+      );
+    } else if (argument is List) {
+      return argument.map(_replaceLocalReference).toList();
+    }
 
-extension ReplaceWhere on Iterable {
-  Iterable<dynamic> replaceWhere({
-    @required bool Function(dynamic value) test,
-    @required dynamic Function(dynamic value) replacement,
-  }) {
-    return map<dynamic>((dynamic value) {
-      if (test(value)) return replacement(value);
-      return value;
-    });
+    return argument;
   }
 }
