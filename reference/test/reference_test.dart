@@ -170,42 +170,51 @@ void main() {
         ),
       ]);
     });
-//
-//    test('executeRemoteMethodFor', () async {
-//      final ReferencePairManager referencePairManager =
-//          template.referencePairManager;
-//      final ClassTemplate testClass = ClassTemplate(4, null, null);
-//      referencePairManager
-//          .createRemoteReferenceFor(testClass as LocalReference);
-//      methodCallLog.clear();
-//
-//      final String result = await testClass.methodTemplate(
-//        'bye!',
-//        ClassTemplate(16, null, null),
-//        <ClassTemplate>[ClassTemplate(45, null, null)],
-//      );
-//
-//      expect(result, equals('Goodbye!'));
-//      expect(methodCallLog, <Matcher>[
-//        isMethodCallWithMatchers('REFERENCE_METHOD', arguments: <dynamic>[
-//          referencePairManager.remoteReferenceFor(testClass as LocalReference),
-//          'methodTemplate',
-//          <dynamic>[
-//            'bye!',
-//            isUnpairedRemoteReferenceWithSame(
-//              TypeReference(0),
-//              <dynamic>[16, null, null],
-//            ),
-//            <Matcher>[
-//              isUnpairedRemoteReferenceWithSame(
-//                TypeReference(0),
-//                <dynamic>[45, null, null],
-//              ),
-//            ],
-//          ],
-//        ]),
-//      ]);
-//    });
+
+    test('executeRemoteMethodFor', () async {
+      final ReferencePairManager referencePairManager =
+          template.referencePairManager;
+      final ClassTemplate testClass = ClassTemplate(4, null, null, null);
+      referencePairManager
+          .createRemoteReferenceFor(testClass as LocalReference);
+      methodCallLog.clear();
+
+      final String result = await testClass.methodTemplate(
+        'bye!',
+        ClassTemplate(16, null, null, null),
+        <ClassTemplate>[ClassTemplate(45, null, null, null)],
+        <String, ClassTemplate>{
+          'pickle': ClassTemplate(4555, null, null, null),
+        },
+      );
+
+      expect(result, equals('Goodbye!'));
+      expect(methodCallLog, <Matcher>[
+        isMethodCallWithMatchers('REFERENCE_METHOD', arguments: <dynamic>[
+          referencePairManager.remoteReferenceFor(testClass as LocalReference),
+          'methodTemplate',
+          <dynamic>[
+            'bye!',
+            isUnpairedRemoteReferenceWithSame(
+              TypeReference(0),
+              <dynamic>[16, null, null, null],
+            ),
+            <Matcher>[
+              isUnpairedRemoteReferenceWithSame(
+                TypeReference(0),
+                <dynamic>[45, null, null, null],
+              ),
+            ],
+            <String, Matcher>{
+              'pickle': isUnpairedRemoteReferenceWithSame(
+                TypeReference(0),
+                <dynamic>[4555, null, null, null],
+              ),
+            }
+          ],
+        ]),
+      ]);
+    });
 
     test('createLocalReferenceFor', () async {
       final MethodChannelReferencePairManager referencePairManager =
@@ -272,79 +281,85 @@ void main() {
         ),
       );
     });
-//
-//    test('executeLocalMethodFor', () async {
-//      final MethodChannelReferencePairManager referencePairManager =
-//          template.referencePairManager;
-//
-//      final Completer<List<dynamic>> callbackCompleter =
-//          Completer<List<dynamic>>();
-//
-//      final ClassTemplate testClass = TestClassTemplate(
-//        5,
-//        null,
-//        null,
-//        (
-//          String parameterTemplate,
-//          ClassTemplate referenceParameterTemplate,
-//          List<ClassTemplate> referenceListTemplate,
-//        ) async {
-//          callbackCompleter.complete(<dynamic>[
-//            parameterTemplate,
-//            referenceParameterTemplate,
-//            referenceListTemplate,
-//          ]);
-//          return parameterTemplate + ' pie';
-//        },
-//      );
-//
-//      referencePairManager
-//          .createRemoteReferenceFor(testClass as LocalReference);
-//
-//      final Completer<String> responseCompleter = Completer<String>();
-//      await referencePairManager.channel.binaryMessenger.handlePlatformMessage(
-//        'test_plugin',
-//        referencePairManager.channel.codec.encodeMethodCall(
-//          MethodCall(
-//            'REFERENCE_METHOD',
-//            <dynamic>[
-//              referencePairManager
-//                  .remoteReferenceFor(testClass as LocalReference),
-//              'methodTemplate',
-//              <dynamic>[
-//                'Apple',
-//                UnpairedRemoteReference(
-//                    TypeReference(0), <dynamic>[19, null, null]),
-//                <dynamic>[
-//                  UnpairedRemoteReference(
-//                    TypeReference(0),
-//                    <dynamic>[62, null, null],
-//                  ),
-//                ],
-//              ],
-//            ],
-//          ),
-//        ),
-//        (ByteData data) {
-//          responseCompleter.complete(
-//            referencePairManager.channel.codec.decodeEnvelope(data),
-//          );
-//        },
-//      );
-//
-//      expect(
-//        callbackCompleter.future,
-//        completion(
-//          <dynamic>[
-//            'Apple',
-//            isClassTemplateWithSame(19, null, null),
-//            <Matcher>[isClassTemplateWithSame(62, null, null)],
-//          ],
-//        ),
-//      );
-//      expect(responseCompleter.future, completion('Apple pie'));
-//    });
-//
+
+    test('executeLocalMethodFor', () async {
+      final MethodChannelReferencePairManager referencePairManager =
+          template.referencePairManager;
+
+      final Completer<List<dynamic>> callbackCompleter =
+          Completer<List<dynamic>>();
+
+      final ClassTemplate testClass = TestClassTemplate(5, null, null, null, (
+        String parameterTemplate,
+        ClassTemplate referenceParameterTemplate,
+        List<ClassTemplate> referenceListTemplate,
+        Map<String, ClassTemplate> referenceMapTemplate,
+      ) async {
+        callbackCompleter.complete(<dynamic>[
+          parameterTemplate,
+          referenceParameterTemplate,
+          referenceListTemplate,
+          referenceMapTemplate,
+        ]);
+        return parameterTemplate + ' pie';
+      });
+
+      referencePairManager
+          .createRemoteReferenceFor(testClass as LocalReference);
+
+      final Completer<String> responseCompleter = Completer<String>();
+      await referencePairManager.channel.binaryMessenger.handlePlatformMessage(
+        'test_plugin',
+        referencePairManager.channel.codec.encodeMethodCall(
+          MethodCall(
+            'REFERENCE_METHOD',
+            <dynamic>[
+              referencePairManager
+                  .remoteReferenceFor(testClass as LocalReference),
+              'methodTemplate',
+              <dynamic>[
+                'Apple',
+                UnpairedRemoteReference(
+                    TypeReference(0), <dynamic>[19, null, null, null]),
+                <dynamic>[
+                  UnpairedRemoteReference(
+                    TypeReference(0),
+                    <dynamic>[62, null, null, null],
+                  ),
+                ],
+                <dynamic, dynamic>{
+                  'poyo': UnpairedRemoteReference(
+                    TypeReference(0),
+                    <dynamic>[11, null, null, null],
+                  ),
+                },
+              ],
+            ],
+          ),
+        ),
+        (ByteData data) {
+          responseCompleter.complete(
+            referencePairManager.channel.codec.decodeEnvelope(data),
+          );
+        },
+      );
+
+      expect(
+        callbackCompleter.future,
+        completion(
+          <dynamic>[
+            'Apple',
+            isClassTemplateWithSame(19, null, null, null),
+            <Matcher>[isClassTemplateWithSame(62, null, null, null)],
+            <String, Matcher>{
+              'poyo': isClassTemplateWithSame(11, null, null, null),
+            }
+          ],
+        ),
+      );
+      expect(responseCompleter.future, completion('Apple pie'));
+    });
+
     test('disposeLocalReference', () async {
       final MethodChannelReferencePairManager referencePairManager =
           template.referencePairManager;
@@ -387,30 +402,35 @@ void main() {
   });
 }
 
-//class TestClassTemplate extends template.PlatformClassTemplate {
-//  TestClassTemplate(
-//    int fieldTemplate,
-//    ClassTemplate referenceFieldTemplate,
-//    List<ClassTemplate> referenceListTemplate,
-//    this.onMethodTemplate,
-//  ) : super(fieldTemplate, referenceFieldTemplate, referenceListTemplate);
-//
-//  final Future<String> Function(
-//    String parameterTemplate,
-//    ClassTemplate referenceParameterTemplate,
-//    List<ClassTemplate> referenceListTemplate,
-//  ) onMethodTemplate;
-//
-//  @override
-//  FutureOr<String> methodTemplate(
-//    String parameterTemplate,
-//    ClassTemplate referenceParameterTemplate,
-//    List<ClassTemplate> referenceListTemplate,
-//  ) {
-//    return onMethodTemplate(
-//      parameterTemplate,
-//      referenceParameterTemplate,
-//      referenceListTemplate,
-//    );
-//  }
-//}
+class TestClassTemplate extends template.PlatformClassTemplate {
+  TestClassTemplate(
+    int fieldTemplate,
+    ClassTemplate referenceFieldTemplate,
+    List<ClassTemplate> referenceListTemplate,
+    Map<String, ClassTemplate> referenceMapTemplate,
+    this.onMethodTemplate,
+  ) : super(fieldTemplate, referenceFieldTemplate, referenceListTemplate,
+            referenceMapTemplate);
+
+  final Future<String> Function(
+    String parameterTemplate,
+    ClassTemplate referenceParameterTemplate,
+    List<ClassTemplate> referenceListTemplate,
+    Map<String, ClassTemplate> referenceMapTemplate,
+  ) onMethodTemplate;
+
+  @override
+  FutureOr<String> methodTemplate(
+    String parameterTemplate,
+    ClassTemplate referenceParameterTemplate,
+    List<ClassTemplate> referenceListTemplate,
+    Map<String, ClassTemplate> referenceMapTemplate,
+  ) {
+    return onMethodTemplate(
+      parameterTemplate,
+      referenceParameterTemplate,
+      referenceListTemplate,
+      referenceMapTemplate,
+    );
+  }
+}

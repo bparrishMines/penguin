@@ -170,8 +170,7 @@ abstract class ReferencePairManager {
     _removePairFor(remoteReference);
   }
 
-  // TODO: pass map
-  // TODO: note about only supporting List<dynamic> maps
+  // TODO: note about only supporting List<dynamic>/Map<dynamic, dynamic>
   /// Creates and maintains access of an equivalent object to [localReference] on a remote thread/process.
   ///
   /// This will also store [localReference] and a [RemoteReference] as a pair.
@@ -213,7 +212,6 @@ abstract class ReferencePairManager {
   }
 
   // TODO: return reference
-  // TODO: pass map
   /// Execute a method on the [RemoteReference] paired to [localReference].
   Future<dynamic> executeRemoteMethodFor(
     LocalReference localReference,

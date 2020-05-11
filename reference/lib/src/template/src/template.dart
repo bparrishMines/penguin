@@ -74,6 +74,7 @@ class PlatformClassTemplate with LocalReference implements ClassTemplate {
     String parameterTemplate,
     ClassTemplate referenceParameterTemplate,
     List<ClassTemplate> referenceListTemplate,
+    Map<String, ClassTemplate> referenceMapTemplate,
   ) async {
     return await (referencePairManager.executeRemoteMethodFor(
       this,
@@ -82,6 +83,7 @@ class PlatformClassTemplate with LocalReference implements ClassTemplate {
         parameterTemplate,
         referenceParameterTemplate,
         referenceListTemplate,
+        referenceMapTemplate,
       ],
     )) as String;
   }

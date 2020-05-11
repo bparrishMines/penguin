@@ -54,6 +54,7 @@ class ClassTemplate {
     String parameterTemplate,
     ClassTemplate referenceParameterTemplate,
     List<ClassTemplate> referenceListTemplate,
+    Map<String, ClassTemplate> referenceMapTemplate,
   ) {
     throw UnimplementedError();
   }

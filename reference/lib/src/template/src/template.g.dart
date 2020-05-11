@@ -63,6 +63,7 @@ abstract class GeneratedLocalReferenceCommunicationHandler
         arguments[0],
         arguments[1],
         arguments[2]?.cast<ClassTemplate>(),
+        arguments[3]?.cast<String, ClassTemplate>(),
       );
     }
 
