@@ -70,11 +70,13 @@ Matcher isClassTemplateWithSame(
   int fieldTemplate,
   dynamic referenceFieldTemplate,
   dynamic referenceListTemplate,
+  dynamic referenceMapTemplate,
 ) {
   return _IsClassTemplateWithSame(
     fieldTemplate,
     referenceFieldTemplate,
     referenceListTemplate,
+    referenceMapTemplate,
   );
 }
 
@@ -83,11 +85,13 @@ class _IsClassTemplateWithSame extends Matcher with _DeepEquals {
     this.fieldTemplate,
     this.referenceFieldTemplate,
     this.referenceListTemplate,
+    this.referenceMapTemplate,
   );
 
   final int fieldTemplate;
   final dynamic referenceFieldTemplate;
   final dynamic referenceListTemplate;
+  final dynamic referenceMapTemplate;
 
   @override
   Description describe(Description description) {
@@ -97,7 +101,9 @@ class _IsClassTemplateWithSame extends Matcher with _DeepEquals {
         .add(' and referenceFieldTemplate: ')
         .addDescriptionOf(referenceFieldTemplate)
         .add(' and referenceListTemplate: ')
-        .addDescriptionOf(referenceListTemplate);
+        .addDescriptionOf(referenceListTemplate)
+        .add(' and referenceMapTemplate: ')
+        .addDescriptionOf(referenceMapTemplate);
   }
 
   @override
@@ -109,6 +115,9 @@ class _IsClassTemplateWithSame extends Matcher with _DeepEquals {
       return false;
     }
     if (!matchesReferenceListTemplate(item.referenceListTemplate, matchState)) {
+      return false;
+    }
+    if (!matchesReferenceMapTemplate(item.referenceMapTemplate, matchState)) {
       return false;
     }
     return true;
@@ -134,6 +143,17 @@ class _IsClassTemplateWithSame extends Matcher with _DeepEquals {
       return referenceListTemplate.matches(item, matchState);
     if (referenceListTemplate is! List) return false;
     return deepEquals(item, referenceListTemplate, matchState);
+  }
+
+  bool matchesReferenceMapTemplate(
+    dynamic item,
+    Map<dynamic, dynamic> matchState,
+  ) {
+    if (item == referenceMapTemplate) return true;
+    if (referenceMapTemplate is Matcher)
+      return referenceMapTemplate.matches(item, matchState);
+    if (referenceMapTemplate is! Map) return false;
+    return deepEquals(item, referenceMapTemplate, matchState);
   }
 }
 

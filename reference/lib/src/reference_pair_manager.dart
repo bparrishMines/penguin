@@ -264,6 +264,11 @@ abstract class ReferencePairManager {
       );
     } else if (argument is List) {
       return argument.map(_replaceRemoteReference).toList();
+    } else if (argument is Map) {
+      return Map<dynamic, dynamic>.fromIterables(
+        argument.keys.map<dynamic>(_replaceRemoteReference),
+        argument.values.map<dynamic>(_replaceRemoteReference),
+      );
     }
 
     return argument;
@@ -283,6 +288,11 @@ abstract class ReferencePairManager {
       );
     } else if (argument is List) {
       return argument.map(_replaceLocalReference).toList();
+    } else if (argument is Map) {
+      return Map<dynamic, dynamic>.fromIterables(
+        argument.keys.map<dynamic>(_replaceLocalReference),
+        argument.values.map<dynamic>(_replaceLocalReference),
+      );
     }
 
     return argument;

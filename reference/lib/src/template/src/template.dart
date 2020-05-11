@@ -20,12 +20,14 @@ class LocalReferenceCommunicationHandlerTemplate
   PlatformClassTemplate createClassTemplate(
     int fieldTemplate,
     ClassTemplate referenceFieldTemplate,
-    List<dynamic> referenceListTemplate,
+    List<ClassTemplate> referenceListTemplate,
+    Map<String, ClassTemplate> referenceMapTemplate,
   ) {
     return PlatformClassTemplate(
       fieldTemplate,
       referenceFieldTemplate,
       referenceListTemplate,
+      referenceMapTemplate,
     );
   }
 }
@@ -36,11 +38,13 @@ class PlatformInterfaceTemplateImpl extends PlatformInterfaceTemplate {
     int fieldTemplate,
     ClassTemplate referenceFieldTemplate,
     List<ClassTemplate> referenceListTemplate,
+    Map<String, ClassTemplate> referenceMapTemplate,
   ) {
     return LocalReferenceCommunicationHandlerTemplate().createClassTemplate(
       fieldTemplate,
       referenceFieldTemplate,
       referenceListTemplate,
+      referenceMapTemplate,
     );
   }
 }
@@ -50,6 +54,7 @@ class PlatformClassTemplate with LocalReference implements ClassTemplate {
     this.fieldTemplate,
     this.referenceFieldTemplate,
     this.referenceListTemplate,
+    this.referenceMapTemplate,
   );
 
   @override
@@ -60,6 +65,9 @@ class PlatformClassTemplate with LocalReference implements ClassTemplate {
 
   @override
   final List<ClassTemplate> referenceListTemplate;
+
+  @override
+  final Map<String, ClassTemplate> referenceMapTemplate;
 
   @override
   FutureOr<String> methodTemplate(
@@ -80,6 +88,6 @@ class PlatformClassTemplate with LocalReference implements ClassTemplate {
 
   @override
   String toString() {
-    return '$PlatformClassTemplate($fieldTemplate, $referenceFieldTemplate, $referenceListTemplate)';
+    return '$PlatformClassTemplate($fieldTemplate, $referenceFieldTemplate, $referenceListTemplate, $referenceMapTemplate)';
   }
 }

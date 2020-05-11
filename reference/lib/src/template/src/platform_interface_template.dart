@@ -25,6 +25,7 @@ abstract class PlatformInterfaceTemplate extends PlatformInterface {
     int fieldTemplate,
     ClassTemplate referenceFieldTemplate,
     List<ClassTemplate> referenceListTemplate,
+    Map<String, ClassTemplate> referenceMapTemplate,
   );
 }
 
@@ -33,17 +34,21 @@ class ClassTemplate {
     int fieldTemplate,
     ClassTemplate referenceFieldTemplate,
     List<ClassTemplate> referenceListTemplate,
+    Map<String, ClassTemplate> referenceMapTemplate,
   ) {
     return PlatformInterfaceTemplate.instance.createClassTemplate(
       fieldTemplate,
       referenceFieldTemplate,
       referenceListTemplate,
+      referenceMapTemplate,
     );
   }
 
   int get fieldTemplate => throw UnimplementedError();
   ClassTemplate get referenceFieldTemplate => throw UnimplementedError();
   List<ClassTemplate> get referenceListTemplate => throw UnimplementedError();
+  Map<String, ClassTemplate> get referenceMapTemplate =>
+      throw UnimplementedError();
 
   FutureOr<String> methodTemplate(
     String parameterTemplate,

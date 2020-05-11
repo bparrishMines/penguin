@@ -29,6 +29,7 @@ abstract class GeneratedLocalReferenceCommunicationHandler
     int fieldTemplate,
     ClassTemplate referenceFieldTemplate,
     List<ClassTemplate> referenceListTemplate,
+    Map<String, ClassTemplate> referenceMapTemplate,
   );
 
   @override
@@ -41,6 +42,7 @@ abstract class GeneratedLocalReferenceCommunicationHandler
         arguments[0],
         arguments[1],
         arguments[2]?.cast<ClassTemplate>(),
+        arguments[3]?.cast<String, ClassTemplate>(),
       );
     }
 
@@ -79,6 +81,7 @@ class GeneratedRemoteReferenceCommunicationHandler
         localReference.fieldTemplate,
         localReference.referenceFieldTemplate,
         localReference.referenceListTemplate,
+        localReference.referenceMapTemplate,
       ];
     }
 
