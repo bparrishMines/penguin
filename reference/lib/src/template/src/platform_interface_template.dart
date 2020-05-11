@@ -58,4 +58,8 @@ class ClassTemplate {
   ) {
     throw UnimplementedError();
   }
+
+  FutureOr<ClassTemplate> returnsReference() {
+    throw UnimplementedError();
+  }
 }

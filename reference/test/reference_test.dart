@@ -68,8 +68,11 @@ void main() {
             switch (methodCall.arguments[1]) {
               case 'methodTemplate':
                 return 'Good' + methodCall.arguments[2][0];
-              case 'callbackTemplate':
-                return 'Potato';
+              case 'returnsReference':
+                return UnpairedRemoteReference(
+                  TypeReference(0),
+                  <dynamic>[44, null, null, null],
+                );
             }
           }
           return null;
@@ -216,6 +219,19 @@ void main() {
       ]);
     });
 
+    test('executeRemoteMethodFor returnsReference', () async {
+      final ReferencePairManager referencePairManager =
+          template.referencePairManager;
+      final ClassTemplate testClass = ClassTemplate(10101, null, null, null);
+      referencePairManager
+          .createRemoteReferenceFor(testClass as LocalReference);
+      methodCallLog.clear();
+
+      final ClassTemplate result = await testClass.returnsReference();
+
+      expect(result, isClassTemplateWithSame(44, null, null, null));
+    });
+
     test('createLocalReferenceFor', () async {
       final MethodChannelReferencePairManager referencePairManager =
           template.referencePairManager;
@@ -302,7 +318,7 @@ void main() {
           referenceMapTemplate,
         ]);
         return parameterTemplate + ' pie';
-      });
+      }, null);
 
       referencePairManager
           .createRemoteReferenceFor(testClass as LocalReference);
@@ -360,6 +376,55 @@ void main() {
       expect(responseCompleter.future, completion('Apple pie'));
     });
 
+    test('executeLocalMethodFor returnsReference', () async {
+      final MethodChannelReferencePairManager referencePairManager =
+          template.referencePairManager;
+
+      final ClassTemplate testClass = TestClassTemplate(
+        6,
+        null,
+        null,
+        null,
+        null,
+        () async => ClassTemplate(919, null, null, null),
+      );
+
+      referencePairManager
+          .createRemoteReferenceFor(testClass as LocalReference);
+
+      final Completer<UnpairedRemoteReference> responseCompleter =
+          Completer<UnpairedRemoteReference>();
+      await referencePairManager.channel.binaryMessenger.handlePlatformMessage(
+        'test_plugin',
+        referencePairManager.channel.codec.encodeMethodCall(
+          MethodCall(
+            'REFERENCE_METHOD',
+            <dynamic>[
+              referencePairManager
+                  .remoteReferenceFor(testClass as LocalReference),
+              'returnsReference',
+              <dynamic>[],
+            ],
+          ),
+        ),
+        (ByteData data) {
+          responseCompleter.complete(
+            referencePairManager.channel.codec.decodeEnvelope(data),
+          );
+        },
+      );
+
+      expect(
+        responseCompleter.future,
+        completion(
+          isUnpairedRemoteReferenceWithSame(
+            TypeReference(0),
+            <dynamic>[919, null, null, null],
+          ),
+        ),
+      );
+    });
+
     test('disposeLocalReference', () async {
       final MethodChannelReferencePairManager referencePairManager =
           template.referencePairManager;
@@ -409,6 +474,7 @@ class TestClassTemplate extends template.PlatformClassTemplate {
     List<ClassTemplate> referenceListTemplate,
     Map<String, ClassTemplate> referenceMapTemplate,
     this.onMethodTemplate,
+    this.onReturnsReference,
   ) : super(fieldTemplate, referenceFieldTemplate, referenceListTemplate,
             referenceMapTemplate);
 
@@ -418,6 +484,8 @@ class TestClassTemplate extends template.PlatformClassTemplate {
     List<ClassTemplate> referenceListTemplate,
     Map<String, ClassTemplate> referenceMapTemplate,
   ) onMethodTemplate;
+
+  final Future<ClassTemplate> Function() onReturnsReference;
 
   @override
   FutureOr<String> methodTemplate(
@@ -432,5 +500,10 @@ class TestClassTemplate extends template.PlatformClassTemplate {
       referenceListTemplate,
       referenceMapTemplate,
     );
+  }
+
+  @override
+  FutureOr<ClassTemplate> returnsReference() {
+    return onReturnsReference();
   }
 }

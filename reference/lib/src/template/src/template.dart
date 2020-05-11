@@ -89,6 +89,14 @@ class PlatformClassTemplate with LocalReference implements ClassTemplate {
   }
 
   @override
+  FutureOr<ClassTemplate> returnsReference() async {
+    return await (referencePairManager.executeRemoteMethodFor(
+      this,
+      GeneratedMethodNames.returnsReference,
+    )) as PlatformClassTemplate;
+  }
+
+  @override
   String toString() {
     return '$PlatformClassTemplate($fieldTemplate, $referenceFieldTemplate, $referenceListTemplate, $referenceMapTemplate)';
   }

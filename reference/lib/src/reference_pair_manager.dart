@@ -211,35 +211,49 @@ abstract class ReferencePairManager {
     }
   }
 
-  // TODO: return reference
   /// Execute a method on the [RemoteReference] paired to [localReference].
   Future<dynamic> executeRemoteMethodFor(
     LocalReference localReference,
-    String methodName,
+    String methodName, [
     List<dynamic> arguments,
-  ) {
+  ]) {
     _assertIsInitialized();
     assert(remoteReferenceFor(localReference) != null);
-    return remoteHandler.executeRemoteMethod(
-      remoteReferenceFor(localReference),
-      methodName,
-      arguments.map(_replaceLocalReference).toList(),
-    );
+    final Completer<dynamic> resultCompleter = Completer<dynamic>();
+    remoteHandler
+        .executeRemoteMethod(
+          remoteReferenceFor(localReference),
+          methodName,
+          arguments?.map(_replaceLocalReference)?.toList() ?? <dynamic>[],
+        )
+        .then(
+          (dynamic value) =>
+              resultCompleter.complete(_replaceRemoteReference(value)),
+        );
+    return resultCompleter.future;
   }
 
+  // TODO: should not return a future
   /// Execute a method on the [LocalReference] paired to [remoteReference].
   Future<dynamic> executeLocalMethodFor(
     RemoteReference remoteReference,
-    String methodName,
+    String methodName, [
     List<dynamic> arguments,
-  ) {
+  ]) {
     _assertIsInitialized();
     assert(localReferenceFor(remoteReference) != null);
-    return localHandler.executeLocalMethod(
-      localReferenceFor(remoteReference),
-      methodName,
-      arguments.map(_replaceRemoteReference).toList(),
-    );
+    final Completer<dynamic> resultCompleter = Completer<dynamic>();
+    localHandler
+        .executeLocalMethod(
+          localReferenceFor(remoteReference),
+          methodName,
+          arguments?.map(_replaceRemoteReference)?.toList() ?? <dynamic>[],
+        )
+        .then(
+          (dynamic value) =>
+              resultCompleter.complete(_replaceLocalReference(value)),
+        );
+    return resultCompleter.future;
   }
 
   void _removePairFor(RemoteReference remoteReference) {

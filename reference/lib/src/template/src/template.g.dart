@@ -65,6 +65,9 @@ abstract class GeneratedLocalReferenceCommunicationHandler
         arguments[2]?.cast<ClassTemplate>(),
         arguments[3]?.cast<String, ClassTemplate>(),
       );
+    } else if (localReference is PlatformClassTemplate &&
+        methodName == GeneratedMethodNames.returnsReference) {
+      return await localReference.returnsReference();
     }
 
     throw StateError(
@@ -94,4 +97,5 @@ class GeneratedRemoteReferenceCommunicationHandler
 
 mixin GeneratedMethodNames {
   static const String methodTemplate = 'methodTemplate';
+  static const String returnsReference = 'returnsReference';
 }
