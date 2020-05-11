@@ -1,28 +1,18 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:reference/reference.dart';
 
-import 'template_interface.dart';
+import 'platform_interface_template.dart';
 
 part 'template.g.dart';
 
-// TODO: rename template files
-MethodChannelReferencePairManager referencePairManager;
-
-class PlatformInterfaceTemplateImpl extends PlatformInterfaceTemplate {
-  @override
-  ClassTemplate createClassTemplate(
-    int fieldTemplate,
-    ClassTemplate referenceFieldTemplate,
-    List<ClassTemplate> referenceListTemplate,
-  ) {
-    return LocalReferenceCommunicationHandlerTemplate().createClassTemplate(
-      fieldTemplate,
-      referenceFieldTemplate,
-      referenceListTemplate,
-    );
-  }
-}
+@visibleForTesting
+MethodChannelReferencePairManager referencePairManager =
+    GeneratedReferencePairManager(
+  'github.penguin/reference',
+  LocalReferenceCommunicationHandlerTemplate(),
+);
 
 class LocalReferenceCommunicationHandlerTemplate
     extends GeneratedLocalReferenceCommunicationHandler {
@@ -40,8 +30,23 @@ class LocalReferenceCommunicationHandlerTemplate
   }
 }
 
+class PlatformInterfaceTemplateImpl extends PlatformInterfaceTemplate {
+  @override
+  ClassTemplate createClassTemplate(
+    int fieldTemplate,
+    ClassTemplate referenceFieldTemplate,
+    List<ClassTemplate> referenceListTemplate,
+  ) {
+    return LocalReferenceCommunicationHandlerTemplate().createClassTemplate(
+      fieldTemplate,
+      referenceFieldTemplate,
+      referenceListTemplate,
+    );
+  }
+}
+
 class PlatformClassTemplate with LocalReference implements ClassTemplate {
-  PlatformClassTemplate(
+  const PlatformClassTemplate(
     this.fieldTemplate,
     this.referenceFieldTemplate,
     this.referenceListTemplate,

@@ -1,7 +1,8 @@
 import 'dart:async';
 
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
-import 'package:reference/src/templates/template.dart';
+
+import 'template.dart';
 
 abstract class PlatformInterfaceTemplate extends PlatformInterface {
   PlatformInterfaceTemplate() : super(token: _token);
