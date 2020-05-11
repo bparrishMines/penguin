@@ -6,6 +6,7 @@ import 'template_interface.dart';
 
 part 'template.g.dart';
 
+// TODO: rename template files
 MethodChannelReferencePairManager referencePairManager;
 
 class PlatformInterfaceTemplateImpl extends PlatformInterfaceTemplate {
@@ -13,10 +14,12 @@ class PlatformInterfaceTemplateImpl extends PlatformInterfaceTemplate {
   ClassTemplate createClassTemplate(
     int fieldTemplate,
     ClassTemplate referenceFieldTemplate,
+    List<ClassTemplate> referenceListTemplate,
   ) {
     return LocalReferenceCommunicationHandlerTemplate().createClassTemplate(
       fieldTemplate,
       referenceFieldTemplate,
+      referenceListTemplate,
     );
   }
 }
@@ -27,19 +30,31 @@ class LocalReferenceCommunicationHandlerTemplate
   PlatformClassTemplate createClassTemplate(
     int fieldTemplate,
     ClassTemplate referenceFieldTemplate,
+    List<dynamic> referenceListTemplate,
   ) {
-    return PlatformClassTemplate(fieldTemplate, referenceFieldTemplate);
+    return PlatformClassTemplate(
+      fieldTemplate,
+      referenceFieldTemplate,
+      referenceListTemplate,
+    );
   }
 }
 
 class PlatformClassTemplate with LocalReference implements ClassTemplate {
-  PlatformClassTemplate(this.fieldTemplate, this.referenceFieldTemplate);
+  PlatformClassTemplate(
+    this.fieldTemplate,
+    this.referenceFieldTemplate,
+    this.referenceListTemplate,
+  );
 
   @override
   final int fieldTemplate;
 
   @override
   final ClassTemplate referenceFieldTemplate;
+
+  @override
+  final List<ClassTemplate> referenceListTemplate;
 
   @override
   FutureOr<String> methodTemplate(
@@ -55,6 +70,6 @@ class PlatformClassTemplate with LocalReference implements ClassTemplate {
 
   @override
   String toString() {
-    return '$PlatformClassTemplate($fieldTemplate, $referenceFieldTemplate)';
+    return '$PlatformClassTemplate($fieldTemplate, $referenceFieldTemplate, $referenceListTemplate)';
   }
 }

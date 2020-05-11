@@ -87,7 +87,8 @@ void main() {
           template.referencePairManager;
       final ClassTemplate testClass = ClassTemplate(
         1,
-        ClassTemplate(2, null),
+        ClassTemplate(2, null, null),
+        <ClassTemplate>[ClassTemplate(3, null, null)],
       );
 
       referencePairManager
@@ -99,7 +100,8 @@ void main() {
       expect(remoteReference.referenceId, isNotNull);
       expect(
         referencePairManager.localReferenceFor(remoteReference),
-        isClassTemplateWithSame(1, isClassTemplateWithSame(2, null)),
+        isClassTemplateWithSame(1, isClassTemplateWithSame(2, null, null),
+            <Matcher>[isClassTemplateWithSame(3, null, null)]),
       );
       expect(methodCallLog, <Matcher>[
         isMethodCallWithMatchers('REFERENCE_CREATE', arguments: <dynamic>[
@@ -109,8 +111,14 @@ void main() {
             1,
             isUnpairedRemoteReferenceWithSame(
               TypeReference(0),
-              <dynamic>[2, null],
+              <dynamic>[2, null, null],
             ),
+            <Matcher>[
+              isUnpairedRemoteReferenceWithSame(
+                TypeReference(0),
+                <dynamic>[3, null, null],
+              ),
+            ],
           ],
         ]),
       ]);
@@ -119,7 +127,7 @@ void main() {
     test('disposeRemoteReferenceFor', () async {
       final ReferencePairManager referencePairManager =
           template.referencePairManager;
-      final ClassTemplate testClass = ClassTemplate(3, null);
+      final ClassTemplate testClass = ClassTemplate(3, null, null);
 
       referencePairManager
           .createRemoteReferenceFor(testClass as LocalReference);
@@ -145,14 +153,14 @@ void main() {
     test('executeRemoteMethodFor', () async {
       final ReferencePairManager referencePairManager =
           template.referencePairManager;
-      final ClassTemplate testClass = ClassTemplate(4, null);
+      final ClassTemplate testClass = ClassTemplate(4, null, null);
       referencePairManager
           .createRemoteReferenceFor(testClass as LocalReference);
       methodCallLog.clear();
 
       final String result = await testClass.methodTemplate(
         'bye!',
-        ClassTemplate(16, null),
+        ClassTemplate(16, null, null),
       );
 
       expect(result, equals('Goodbye!'));
@@ -164,7 +172,7 @@ void main() {
             'bye!',
             isUnpairedRemoteReferenceWithSame(
               TypeReference(0),
-              <dynamic>[16, null],
+              <dynamic>[16, null, null],
             ),
           ],
         ]),
@@ -185,7 +193,16 @@ void main() {
               TypeReference(0),
               <dynamic>[
                 8,
-                UnpairedRemoteReference(TypeReference(0), <dynamic>[9, null]),
+                UnpairedRemoteReference(
+                  TypeReference(0),
+                  <dynamic>[9, null, null],
+                ),
+                <dynamic>[
+                  UnpairedRemoteReference(
+                    TypeReference(0),
+                    <dynamic>[10, null, null],
+                  ),
+                ]
               ],
             ],
           ),
@@ -200,7 +217,8 @@ void main() {
         testClass,
         isClassTemplateWithSame(
           8,
-          isClassTemplateWithSame(9, null),
+          isClassTemplateWithSame(9, null, null),
+          <Matcher>[isClassTemplateWithSame(10, null, null)],
         ),
       );
     });
@@ -215,6 +233,7 @@ void main() {
       final ClassTemplate testClass = TestClassTemplate(
         5,
         null,
+            null,
             (
             String parameterTemplate,
             ClassTemplate referenceParameterTemplate,
@@ -242,7 +261,7 @@ void main() {
               'methodTemplate',
               <dynamic>[
                 'Apple',
-                UnpairedRemoteReference(TypeReference(0), <dynamic>[19, null]),
+                UnpairedRemoteReference(TypeReference(0), <dynamic>[19, null, null]),
               ],
             ],
           ),
@@ -259,7 +278,7 @@ void main() {
         completion(
           <dynamic>[
             'Apple',
-            isClassTemplateWithSame(19, null),
+            isClassTemplateWithSame(19, null, null),
           ],
         ),
       );
@@ -278,7 +297,7 @@ void main() {
             <dynamic>[
               RemoteReference('aowejea;io'),
               TypeReference(0),
-              <dynamic>[45, null],
+              <dynamic>[45, null, null],
             ],
           ),
         ),
@@ -287,9 +306,7 @@ void main() {
 
       final ClassTemplate testClass = referencePairManager
           .localReferenceFor(RemoteReference('aowejea;io')) as ClassTemplate;
-      expect(testClass, isNotNull);
-      expect(testClass.fieldTemplate, 45);
-      expect(testClass.referenceFieldTemplate, isNull);
+      expect(testClass, isClassTemplateWithSame(45, null, null));
 
       await referencePairManager.channel.binaryMessenger.handlePlatformMessage(
         'test_plugin',
@@ -314,8 +331,9 @@ class TestClassTemplate extends template.PlatformClassTemplate {
   TestClassTemplate(
     int fieldTemplate,
     ClassTemplate referenceFieldTemplate,
+    List<ClassTemplate> referenceListTemplate,
     this.onMethodTemplate,
-  ) : super(fieldTemplate, referenceFieldTemplate);
+  ) : super(fieldTemplate, referenceFieldTemplate, referenceListTemplate);
 
   final Future<String> Function(
     String parameterTemplate,

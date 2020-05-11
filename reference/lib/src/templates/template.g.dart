@@ -28,6 +28,7 @@ abstract class GeneratedLocalReferenceCommunicationHandler
   PlatformClassTemplate createClassTemplate(
     int fieldTemplate,
     ClassTemplate referenceFieldTemplate,
+    List<ClassTemplate> referenceListTemplate,
   );
 
   @override
@@ -36,7 +37,11 @@ abstract class GeneratedLocalReferenceCommunicationHandler
     List<dynamic> arguments,
   ) {
     if (typeReference == TypeReference(0)) {
-      return createClassTemplate(arguments[0], arguments[1]);
+      return createClassTemplate(
+        arguments[0],
+        arguments[1],
+        arguments[2]?.cast<ClassTemplate>(),
+      );
     }
 
     throw StateError(
@@ -69,6 +74,7 @@ class GeneratedRemoteReferenceCommunicationHandler
       return <dynamic>[
         localReference.fieldTemplate,
         localReference.referenceFieldTemplate,
+        localReference.referenceListTemplate,
       ];
     }
 

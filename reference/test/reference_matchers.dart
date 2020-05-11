@@ -8,7 +8,7 @@ Matcher isMethodCallWithMatchers(String name, {dynamic arguments}) {
   return _IsMethodCallWithMatchers(name, arguments);
 }
 
-class _IsMethodCallWithMatchers extends Matcher with DeepEquals {
+class _IsMethodCallWithMatchers extends Matcher with _DeepEquals {
   const _IsMethodCallWithMatchers(this.name, this.arguments);
 
   final String name;
@@ -39,7 +39,7 @@ Matcher isUnpairedRemoteReferenceWithSame(
   return _IsUnpairedRemoteReferenceWithSame(typeReference, creationArguments);
 }
 
-class _IsUnpairedRemoteReferenceWithSame extends Matcher with DeepEquals {
+class _IsUnpairedRemoteReferenceWithSame extends Matcher with _DeepEquals {
   const _IsUnpairedRemoteReferenceWithSame(
     this.typeReference,
     this.creationArguments,
@@ -66,10 +66,82 @@ class _IsUnpairedRemoteReferenceWithSame extends Matcher with DeepEquals {
   }
 }
 
-mixin DeepEquals {
+Matcher isClassTemplateWithSame(
+  int fieldTemplate,
+  dynamic referenceFieldTemplate,
+  dynamic referenceListTemplate,
+) {
+  return _IsClassTemplateWithSame(
+    fieldTemplate,
+    referenceFieldTemplate,
+    referenceListTemplate,
+  );
+}
+
+class _IsClassTemplateWithSame extends Matcher with _DeepEquals {
+  const _IsClassTemplateWithSame(
+    this.fieldTemplate,
+    this.referenceFieldTemplate,
+    this.referenceListTemplate,
+  );
+
+  final int fieldTemplate;
+  final dynamic referenceFieldTemplate;
+  final dynamic referenceListTemplate;
+
+  @override
+  Description describe(Description description) {
+    return description
+        .add(' Is a $ClassTemplate with fieldTemplate: ')
+        .addDescriptionOf(fieldTemplate)
+        .add(' and referenceFieldTemplate: ')
+        .addDescriptionOf(referenceFieldTemplate)
+        .add(' and referenceListTemplate: ')
+        .addDescriptionOf(referenceListTemplate);
+  }
+
+  @override
+  bool matches(dynamic item, Map<dynamic, dynamic> matchState) {
+    if (item is! ClassTemplate) return false;
+    if (item.fieldTemplate != fieldTemplate) return false;
+    if (!matchesReferenceFieldTemplate(
+        item.referenceFieldTemplate, matchState)) {
+      return false;
+    }
+    if (!matchesReferenceListTemplate(item.referenceListTemplate, matchState)) {
+      return false;
+    }
+    return true;
+  }
+
+  bool matchesReferenceFieldTemplate(
+    dynamic item,
+    Map<dynamic, dynamic> matchState,
+  ) {
+    if (item == referenceFieldTemplate) return true;
+    if (referenceFieldTemplate is Matcher) {
+      return referenceFieldTemplate.matches(item, matchState);
+    }
+    return false;
+  }
+
+  bool matchesReferenceListTemplate(
+    dynamic item,
+    Map<dynamic, dynamic> matchState,
+  ) {
+    if (item == referenceListTemplate) return true;
+    if (referenceListTemplate is Matcher)
+      return referenceListTemplate.matches(item, matchState);
+    if (referenceListTemplate is! List) return false;
+    return deepEquals(item, referenceListTemplate, matchState);
+  }
+}
+
+mixin _DeepEquals {
   bool deepEquals(dynamic a, dynamic b, Map<dynamic, dynamic> matchState) {
     if (a == b) return true;
     if (b is Matcher) return b.matches(a, matchState);
+    if (a is Matcher) return a.matches(b, matchState);
     if (a is List) return b is List && _deepEqualsList(a, b, matchState);
     if (a is Map) return b is Map && _deepEqualsMap(a, b, matchState);
     return false;
@@ -99,39 +171,5 @@ mixin DeepEquals {
       }
     }
     return true;
-  }
-}
-
-Matcher isClassTemplateWithSame(int field, dynamic reference) {
-  return _IsClassTemplateWithSame(field, reference);
-}
-
-class _IsClassTemplateWithSame extends Matcher {
-  const _IsClassTemplateWithSame(this.fieldTemplate, this.referenceFieldTemplate);
-
-  final int fieldTemplate;
-  final dynamic referenceFieldTemplate;
-
-  @override
-  Description describe(Description description) {
-    return description
-        .add(' Is a $ClassTemplate with field: ')
-        .addDescriptionOf(fieldTemplate)
-        .add(' and reference: ')
-        .addDescriptionOf(referenceFieldTemplate);
-  }
-
-  @override
-  bool matches(dynamic item, Map<dynamic, dynamic> matchState) {
-    if (item is! ClassTemplate) return false;
-    if (item.fieldTemplate != fieldTemplate) return false;
-    if (item.referenceFieldTemplate == referenceFieldTemplate) return true;
-    if (referenceFieldTemplate is Matcher) {
-      return referenceFieldTemplate.matches(
-        item.referenceFieldTemplate,
-        matchState,
-      );
-    }
-    return false;
   }
 }

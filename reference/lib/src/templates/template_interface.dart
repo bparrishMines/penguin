@@ -23,6 +23,7 @@ abstract class PlatformInterfaceTemplate extends PlatformInterface {
   ClassTemplate createClassTemplate(
     int fieldTemplate,
     ClassTemplate referenceFieldTemplate,
+    List<ClassTemplate> referenceListTemplate,
   );
 }
 
@@ -30,15 +31,18 @@ class ClassTemplate {
   factory ClassTemplate(
     int fieldTemplate,
     ClassTemplate referenceFieldTemplate,
+    List<ClassTemplate> referenceListTemplate,
   ) {
     return PlatformInterfaceTemplate.instance.createClassTemplate(
       fieldTemplate,
       referenceFieldTemplate,
+      referenceListTemplate,
     );
   }
 
   int get fieldTemplate => throw UnimplementedError();
   ClassTemplate get referenceFieldTemplate => throw UnimplementedError();
+  List<ClassTemplate> get referenceListTemplate => throw UnimplementedError();
 
   FutureOr<String> methodTemplate(
     String parameterTemplate,
