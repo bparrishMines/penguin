@@ -17,7 +17,9 @@ class GeneratedReferencePairManager extends MethodChannelReferencePairManager {
   @override
   TypeReference typeReferenceFor(LocalReference localReference) {
     if (localReference is PlatformClassTemplate) return TypeReference(0);
-    throw StateError('aoiej;a');
+    throw StateError(
+      'Could not find a $TypeReference for ${localReference.runtimeType}.',
+    );
   }
 }
 

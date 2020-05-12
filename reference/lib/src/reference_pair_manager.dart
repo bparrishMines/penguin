@@ -33,8 +33,9 @@ mixin RemoteReferenceCommunicationHandler {
 
   /// Execute a method on the object instance that [remoteReference] represents.
   ///
-  /// This method should only be called after [createRemoteReference] and
-  /// should never be called after [disposeRemoteReference].
+  /// For and [RemoteReference], this method should only be called after
+  /// [createRemoteReference] and should never be called after
+  /// [disposeRemoteReference].
   Future<dynamic> executeRemoteMethod(
     RemoteReference remoteReference,
     String methodName,
@@ -59,12 +60,12 @@ mixin LocalReferenceCommunicationHandler {
   /// The remote instantiated object will be represented as [remoteReference].
   ///
   /// The LOCAL [ReferencePairManager] stores the returned [LocalReference] and
-  /// [remoteReference] as a pair and will facilitate communication between
-  /// their object instances they represent.
+  /// and a generated [RemoteReference] as a pair and will facilitate
+  /// communication between their object instances they represent.
   ///
   /// The REMOTE [ReferencePairManager] will represent the returned value as a
-  /// [RemoteReference] and represent [remoteReference] as a [LocalReference].
-  /// It will also store both references as a pair.
+  /// [RemoteReference] and represent the generated [RemoteReference] as a
+  /// [LocalReference]. It will also store both references as a pair.
   LocalReference createLocalReferenceFor(
     TypeReference typeReference,
     List<dynamic> arguments,
@@ -72,8 +73,9 @@ mixin LocalReferenceCommunicationHandler {
 
   /// Execute a method to be executed on the object instance represented by [localReference].
   ///
-  /// This method should only be called after [createLocalReferenceFor] and should
-  /// never be called after [disposeLocalReference].
+  /// For any [LocalReference] this method should only be called after
+  /// [createLocalReferenceFor] and should never be called after
+  /// [disposeLocalReference].
   dynamic executeLocalMethod(
     LocalReference localReference,
     String methodName,
@@ -118,6 +120,12 @@ abstract class ReferencePairManager {
   bool _isInitialized = false;
   final _localRefToRemoteRefMap = BiMap<LocalReference, RemoteReference>();
 
+  /// Retrieve the [TypeReference] that represents the type of [localReference].
+  ///
+  /// The local [TypeReference] should share the same [TypeReference.typeId],
+  /// as the equivalent object for the remote [TypeReference]. For example
+  /// the `Apple` class in `apple.dart` and `Apple.java` could both return
+  /// `TypeReference(0)`.
   TypeReference typeReferenceFor(LocalReference localReference);
 
   /// Handles communication with [RemoteReference]s.
@@ -146,6 +154,12 @@ abstract class ReferencePairManager {
   ///
   /// This will instantiate a [LocalReference] and add it and [remoteReference]
   /// as a pair.
+  ///
+  /// All [RemoteReference]s and [UnpairedRemoteReference]s in `arguments` will
+  /// be replaced by a [LocalReference].
+  ///
+  /// Also, all [List]s will also be converted into `List<dynamic>` and all
+  /// [Map]s will be converted into `Map<dynamic, dynamic>`.
   LocalReference createLocalReferenceFor(
     RemoteReference remoteReference,
     TypeReference typeReference,
@@ -170,7 +184,6 @@ abstract class ReferencePairManager {
     _removePairFor(remoteReference);
   }
 
-  // TODO: note about only supporting List<dynamic>/Map<dynamic, dynamic>
   /// Creates and maintains access of an equivalent object to [localReference] on a remote thread/process.
   ///
   /// This will also store [localReference] and a [RemoteReference] as a pair.
@@ -212,6 +225,12 @@ abstract class ReferencePairManager {
   }
 
   /// Execute a method on the [RemoteReference] paired to [localReference].
+  ///
+  /// The [LocalReference]s in `arguments` will be replaced by a
+  /// [RemoteReference] or a [UnpairedRemoteReference].
+  ///
+  /// All [List]s will also be converted into `List<dynamic>` and all [Map]s
+  /// will be converted into `Map<dynamic, dynamic>`.
   Future<dynamic> executeRemoteMethodFor(
     LocalReference localReference,
     String methodName, [
@@ -234,6 +253,12 @@ abstract class ReferencePairManager {
   }
 
   /// Execute a method on the [LocalReference] paired to [remoteReference].
+  ///
+  /// All [RemoteReference]s and [UnpairedRemoteReference]s in `arguments` will
+  /// be replaced by a [LocalReference].
+  ///
+  /// Also, all [List]s will also be converted into `List<dynamic>` and all
+  /// [Map]s will be converted into `Map<dynamic, dynamic>`.
   dynamic executeLocalMethodFor(
     RemoteReference remoteReference,
     String methodName, [

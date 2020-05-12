@@ -57,11 +57,21 @@ class TypeReference {
   }
 }
 
+/// Represents a [RemoteReference] that is not paired with a [LocalReference] in a [ReferencePairManager].
+///
+/// This act as a replacement for a [RemoteReference] that has no
+/// [LocalReference].
+///
+/// When passed to a [ReferencePairManager], it will try to convert it into a
+/// [LocalReference] with
+/// [LocalReferenceCommunicationHandler.createLocalReferenceFor].
 class UnpairedRemoteReference {
   const UnpairedRemoteReference(this.typeReference, this.creationArguments);
 
+  /// Represents the type that is represented.
   final TypeReference typeReference;
 
+  /// Arguments used to create the instance this represents.
   final List<dynamic> creationArguments;
 
   @override
