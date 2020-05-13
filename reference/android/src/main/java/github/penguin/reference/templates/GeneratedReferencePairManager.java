@@ -1,6 +1,6 @@
 package github.penguin.reference.templates;
 
-import github.penguin.reference.method_channel.MethodChannelReferenceManager;
+import github.penguin.reference.method_channel.MethodChannelReferencePairManager;
 import github.penguin.reference.method_channel.ReferenceMessageCodec;
 import github.penguin.reference.reference.CompletableRunnable;
 import io.flutter.plugin.common.BinaryMessenger;
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class GeneratedReferenceManager extends MethodChannelReferenceManager {
+public abstract class GeneratedReferencePairManager extends MethodChannelReferencePairManager {
   public interface ClassTemplate extends ReferenceHolder {
     CompletableRunnable<String> methodTemplate(String parameterTemplate);
 
@@ -52,7 +52,7 @@ public abstract class GeneratedReferenceManager extends MethodChannelReferenceMa
     }
   }
 
-  public GeneratedReferenceManager(
+  public GeneratedReferencePairManager(
       final BinaryMessenger binaryMessenger,
       final String channelName,
       final GeneratedMessageCodec messageCodec) {

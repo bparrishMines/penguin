@@ -2,9 +2,9 @@ package github.penguin.reference.reference;
 
 public class ReferenceCounter {
   public interface LifecycleListener {
-    void onCreate(final String referenceId, final ReferenceManager.ReferenceHolder holder);
+    void onCreate(final String referenceId, final ReferencePairManager.ReferenceHolder holder);
 
-    void onDispose(final String referenceId, final ReferenceManager.ReferenceHolder holder);
+    void onDispose(final String referenceId, final ReferencePairManager.ReferenceHolder holder);
   }
 
   private int referenceCount = 0;
@@ -21,12 +21,12 @@ public class ReferenceCounter {
     referenceCount = initialReferenceCount;
   }
 
-  public void retain(final String referenceId, final ReferenceManager.ReferenceHolder holder) {
+  public void retain(final String referenceId, final ReferencePairManager.ReferenceHolder holder) {
     referenceCount++;
     if (referenceCount == 1) lifecycleListener.onCreate(referenceId, holder);
   }
 
-  public void release(final String referenceId, final ReferenceManager.ReferenceHolder holder) {
+  public void release(final String referenceId, final ReferencePairManager.ReferenceHolder holder) {
     if (referenceCount < 1) {
       final String message =
           "`release()` was called without calling `retain()` first. In other words, `release()` was called while `referenceCount == 0`. Reference count ="

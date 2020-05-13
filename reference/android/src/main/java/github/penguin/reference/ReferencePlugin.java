@@ -1,15 +1,15 @@
 package github.penguin.reference;
 
 import androidx.annotation.NonNull;
-import github.penguin.reference.templates.GeneratedReferenceManager;
+import github.penguin.reference.templates.GeneratedReferencePairManager;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
 
 /** ReferencePlugin */
 public class ReferencePlugin implements FlutterPlugin {
-  private static class ReferenceManagerTemplate extends GeneratedReferenceManager {
-    ReferenceManagerTemplate(
+  private static class ReferencePairManagerTemplate extends GeneratedReferencePairManager {
+    ReferencePairManagerTemplate(
         BinaryMessenger binaryMessenger, String channelName, GeneratedMessageCodec messageCodec) {
       super(binaryMessenger, channelName, messageCodec);
     }
@@ -25,10 +25,10 @@ public class ReferencePlugin implements FlutterPlugin {
   }
 
   private void initialize(final BinaryMessenger binaryMessenger) {
-    new ReferenceManagerTemplate(
+    new ReferencePairManagerTemplate(
             binaryMessenger,
             "reference_plugin",
-            new GeneratedReferenceManager.GeneratedMessageCodec())
+            new GeneratedReferencePairManager.GeneratedMessageCodec())
         .initialize();
   }
 

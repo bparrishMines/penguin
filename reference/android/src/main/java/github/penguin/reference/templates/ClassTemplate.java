@@ -1,15 +1,15 @@
 package github.penguin.reference.templates;
 
 import github.penguin.reference.reference.CompletableRunnable;
-import github.penguin.reference.reference.ReferenceManager;
+import github.penguin.reference.reference.ReferencePairManager;
 import io.flutter.Log;
 
-public class ClassTemplate implements GeneratedReferenceManager.ClassTemplate {
-  private final ReferenceManager referenceManager;
+public class ClassTemplate implements GeneratedReferencePairManager.ClassTemplate {
+  private final ReferencePairManager referencePairManager;
   private int fieldTemplate;
 
-  public ClassTemplate(final ReferenceManager referenceManager, final int fieldTemplate) {
-    this.referenceManager = referenceManager;
+  public ClassTemplate(final ReferencePairManager referencePairManager, final int fieldTemplate) {
+    this.referencePairManager = referencePairManager;
     this.fieldTemplate = fieldTemplate;
     if (fieldTemplate != 54) throw new IllegalArgumentException();
   }
@@ -28,7 +28,7 @@ public class ClassTemplate implements GeneratedReferenceManager.ClassTemplate {
   @Override
   public CompletableRunnable<String> callbackTemplate(final double testParameter) {
     final CompletableRunnable<String> completer =
-        referenceManager.sendMethodCall(this, "callbackTemplate", new Object[] {testParameter});
+        referencePairManager.sendMethodCall(this, "callbackTemplate", new Object[] {testParameter});
 
     return completer.setOnCompleteListener(
         new CompletableRunnable.OnCompleteListener() {

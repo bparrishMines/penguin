@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @SuppressWarnings("unchecked")
-public abstract class ReferenceManager {
+public abstract class ReferencePairManager {
   private boolean isInitialized = false;
   private final BiMap<LocalReference, RemoteReference> localRefToRemoteRefMap = HashBiMap.create();
 
