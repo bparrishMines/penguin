@@ -1,97 +1,126 @@
 package github.penguin.reference.templates;
 
 import github.penguin.reference.method_channel.MethodChannelReferencePairManager;
+import github.penguin.reference.method_channel.MethodChannelRemoteReferenceCommunicationHandler;
 import github.penguin.reference.method_channel.ReferenceMessageCodec;
 import github.penguin.reference.reference.CompletableRunnable;
+import github.penguin.reference.reference.LocalReference;
+import github.penguin.reference.reference.TypeReference;
 import io.flutter.plugin.common.BinaryMessenger;
-import java.io.ByteArrayOutputStream;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public abstract class GeneratedReferencePairManager extends MethodChannelReferencePairManager {
-  public interface ClassTemplate extends ReferenceHolder {
-    CompletableRunnable<String> methodTemplate(String parameterTemplate);
-
-    CompletableRunnable<String> callbackTemplate(double testParameter);
-
+public class GeneratedReferencePairManager extends MethodChannelReferencePairManager {
+  public interface PlatformClassTemplate extends LocalReference {
     int getFieldTemplate();
+    ClassTemplate getReferenceFieldTemplate();
+    List<ClassTemplate> getReferenceListTemplate();
+    Map<String, ClassTemplate> getReferenceMapTemplate();
+    CompletableRunnable<String> methodTemplate(String parameterTemplate,
+                                               ClassTemplate referenceParameterTemplate,
+                                               List<ClassTemplate> referenceListTemplate,
+                                               Map<String, ClassTemplate> referenceMapTemplate) throws Exception;
+    CompletableRunnable<ClassTemplate> returnsReference() throws Exception;
   }
 
-  public static class GeneratedMessageCodec extends ReferenceMessageCodec {
-    private static final byte CLASS_TEMPLATE = (byte) 129;
+  public static class GeneratedMethodNames {
+    public static final String methodTemplate = "methodTemplate";
+    public static final String returnsReference = "returnsReference";
+  }
+
+  public static abstract class GeneratedLocalReferenceCommunicationHandler implements LocalReferenceCommunicationHandler {
+    public abstract PlatformClassTemplate createClassTemplate(
+        int fieldTemplate,
+        ClassTemplate referenceFieldTemplate,
+        List<ClassTemplate> referenceListTemplate,
+        Map<String, ClassTemplate> referenceMapTemplate) throws Exception;
 
     @Override
-    protected void writeValue(ByteArrayOutputStream stream, Object value) {
-      if (value instanceof ClassTemplate) {
-        stream.write(CLASS_TEMPLATE);
-        final ClassTemplate classValue = (ClassTemplate) value;
-        writeValue(
-            stream, toCreationParams(CLASS_TEMPLATE, new Object[] {classValue.getFieldTemplate()}));
-      } else {
-        super.writeValue(stream, value);
+    public LocalReference createLocalReferenceFor(TypeReference typeReference, List<Object> arguments) throws Exception {
+      if (typeReference.equals(new TypeReference(0))) {
+        return createClassTemplate(
+            (Integer) arguments.get(0),
+            (ClassTemplate) arguments.get(1),
+            arguments.get(2) != null ? new ArrayList<ClassTemplate>((List) arguments.get(2)) : null,
+            arguments.get(3) != null ? new HashMap<String, ClassTemplate>((Map) arguments.get(3)) : null
+        );
       }
+
+      final String message = String.format("Could not instantiate a %s: for %s with arguments: %s.",
+          LocalReference.class.getSimpleName(),
+          typeReference.toString(),
+          arguments.toString());
+      throw new IllegalStateException(message);
     }
 
     @Override
-    protected Object readValueOfType(byte type, ByteBuffer buffer) {
-      switch (type) {
-        case CLASS_TEMPLATE:
-          return readValueOfType(buffer.get(), buffer);
-        default:
-          return super.readValueOfType(type, buffer);
+    public Object executeLocalMethod(LocalReference localReference, String methodName, List<Object> arguments) throws Exception {
+      if (localReference instanceof PlatformClassTemplate && methodName.equals(GeneratedMethodNames.methodTemplate)) {
+        return ((PlatformClassTemplate) localReference).methodTemplate(
+            (String) arguments.get(0),
+            (ClassTemplate) arguments.get(1),
+            arguments.get(2) != null ? new ArrayList<ClassTemplate>((List) arguments.get(2)) : null,
+            arguments.get(3) != null ? new HashMap<String, ClassTemplate>((Map) arguments.get(3)) : null
+        );
+      } else if (localReference instanceof PlatformClassTemplate && methodName.equals(GeneratedMethodNames.returnsReference)) {
+        return ((PlatformClassTemplate) localReference).returnsReference();
       }
+
+      final String message = String.format("Could not call %s on %s.", methodName, localReference.getClass().getName());
+      throw new IllegalStateException(message);
     }
 
-    private List<Object> toCreationParams(final Byte classConst, final Object[] arguments) {
-      final List<Object> codecArgs = new ArrayList<>(1 + arguments.length);
-      codecArgs.add(classConst);
-      codecArgs.add(Arrays.asList(arguments));
-      return codecArgs;
+    @Override
+    public void disposeLocalReference(LocalReference localReference) throws Exception {
+      // Do nothing.
+    }
+  }
+
+  public static class GeneratedRemoteReferenceCommunicationHandler extends MethodChannelRemoteReferenceCommunicationHandler {
+    @Override
+    public List<Object> creationArgumentsFor(LocalReference localReference) {
+      if (localReference instanceof PlatformClassTemplate) {
+        final PlatformClassTemplate value = (PlatformClassTemplate) localReference;
+        return Arrays.asList(value.getFieldTemplate(),
+            value.getReferenceFieldTemplate(),
+            value.getReferenceListTemplate(),
+            value.getReferenceMapTemplate()
+        );
+      }
+
+      final String message = String.format("Could not get creation arguments for a %s.", localReference.getClass().getName());
+      throw new IllegalStateException(message);
     }
   }
 
   public GeneratedReferencePairManager(
       final BinaryMessenger binaryMessenger,
       final String channelName,
-      final GeneratedMessageCodec messageCodec) {
-    super(binaryMessenger, channelName, messageCodec);
+      final GeneratedLocalReferenceCommunicationHandler localHandler) {
+    super(binaryMessenger, channelName, localHandler,
+        new GeneratedRemoteReferenceCommunicationHandler(),
+        new ReferenceMessageCodec());
+  }
+
+  public GeneratedReferencePairManager(
+      final BinaryMessenger binaryMessenger,
+      final String channelName,
+      final GeneratedLocalReferenceCommunicationHandler localHandler,
+      final GeneratedRemoteReferenceCommunicationHandler remoteHandler,
+      final ReferenceMessageCodec messageCodec) {
+    super(binaryMessenger, channelName, localHandler, remoteHandler, messageCodec);
   }
 
   @Override
-  public CompletableRunnable<?> receiveLocalMethodCall(
-      ReferenceHolder holder, String methodName, Object[] arguments) {
-    final CompletableRunnable<?> runnable;
-    if (holder instanceof ClassTemplate && methodName.equals("methodTemplate")) {
-      runnable = ((ClassTemplate) holder).methodTemplate((String) arguments[0]);
-    } else if (holder instanceof ClassTemplate && methodName.equals("callbackTemplate")) {
-      runnable = ((ClassTemplate) holder).callbackTemplate((Double) arguments[0]);
-    } else {
-      final String message =
-          String.format("Could not call %s on %s.", methodName, holder.getClass().getName());
-      throw new IllegalStateException(message);
-    }
+  public TypeReference typeReferenceFor(LocalReference localReference) {
+    if (localReference instanceof PlatformClassTemplate) return new TypeReference(0);
 
-    uiHandler.post(runnable);
-    return runnable;
-  }
-
-  public abstract ClassTemplate createClassTemplate(String referenceId, int fieldTemplate);
-
-  @Override
-  public ReferenceHolder createLocalReference(String referenceId, Object arguments) {
-    final List<Object> argumentList = (List<Object>) arguments;
-    if (argumentList.get(0).equals(byteToUnsignedInt(GeneratedMessageCodec.CLASS_TEMPLATE))) {
-      final List<Object> parameters = (List<Object>) argumentList.get(1);
-      return createClassTemplate(referenceId, (Integer) parameters.get(0));
-    }
-
-    throw new IllegalStateException(
-        "Could not instantiate an object with arguments." + argumentList.get(0));
-  }
-
-  private static int byteToUnsignedInt(byte x) {
-    return ((int) x) & 0xff;
+    final String message = String.format("Could not find a %s for %s.",
+        TypeReference.class.getSimpleName(),
+        localReference.getClass().getName());
+    throw new IllegalStateException(message);
   }
 }

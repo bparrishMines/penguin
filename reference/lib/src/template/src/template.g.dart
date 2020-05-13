@@ -22,7 +22,7 @@ class GeneratedReferencePairManager extends MethodChannelReferencePairManager {
     );
   }
 }
-
+// TODO: how to handle ClassTemple/PlatformClassTemplate on Java
 abstract class GeneratedLocalReferenceCommunicationHandler
     with LocalReferenceCommunicationHandler {
   const GeneratedLocalReferenceCommunicationHandler();
@@ -49,7 +49,7 @@ abstract class GeneratedLocalReferenceCommunicationHandler
     }
 
     throw StateError(
-      'Could not instantiate a $TypeReference: $typeReference with arguments: $arguments.',
+      'Could not instantiate a $LocalReference: for $typeReference with arguments: $arguments.',
     );
   }
 

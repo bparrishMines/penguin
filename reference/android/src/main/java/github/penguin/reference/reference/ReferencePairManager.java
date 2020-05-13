@@ -33,11 +33,11 @@ public abstract class ReferencePairManager {
   }
 
   public interface LocalReferenceCommunicationHandler {
-    LocalReference createLocalReferenceFor(TypeReference typeReference, List<Object> arguments);
+    LocalReference createLocalReferenceFor(TypeReference typeReference, List<Object> arguments) throws Exception;
 
-    Object executeLocalMethod(LocalReference localReference, String methodName, List<Object> arguments);
+    Object executeLocalMethod(LocalReference localReference, String methodName, List<Object> arguments) throws Exception;
 
-    void disposeLocalReference(LocalReference localReference);
+    void disposeLocalReference(LocalReference localReference) throws Exception;
   }
 
   public abstract RemoteReferenceCommunicationHandler getRemoteHandler();
@@ -62,7 +62,7 @@ public abstract class ReferencePairManager {
   }
 
   public LocalReference createLocalReferenceFor(RemoteReference remoteReference,
-                                                TypeReference typeReference) {
+                                                TypeReference typeReference) throws Exception {
     return createLocalReferenceFor(remoteReference, typeReference, new ArrayList<>());
   }
 
@@ -70,7 +70,7 @@ public abstract class ReferencePairManager {
       RemoteReference remoteReference,
       TypeReference typeReference,
       List<Object> arguments
-      ) {
+      ) throws Exception {
     assertIsInitialized();
     final LocalReference localReference = getLocalHandler().createLocalReferenceFor(
         typeReference,
@@ -80,7 +80,7 @@ public abstract class ReferencePairManager {
     return localReference;
   }
 
-  public void disposeLocalReferenceFor(RemoteReference remoteReference) {
+  public void disposeLocalReferenceFor(RemoteReference remoteReference) throws Exception {
     assertIsInitialized();
 
     final LocalReference localReference = localReferenceFor(remoteReference);
@@ -165,7 +165,11 @@ public abstract class ReferencePairManager {
         resultRunnable.setOnCompleteListener(new OnCompleteListener() {
           @Override
           public void onComplete(Object result) {
-            complete(replaceRemoteReferences(result));
+            try {
+              complete(replaceRemoteReferences(result));
+            } catch (Exception exception) {
+              completeWithError(exception);
+            }
           }
 
           @Override
@@ -182,7 +186,7 @@ public abstract class ReferencePairManager {
 
   public Object executeLocalMethodFor(
       RemoteReference remoteReference,
-      String methodName) {
+      String methodName) throws Exception {
     return executeLocalMethodFor(remoteReference, methodName, new ArrayList<>());
   }
 
@@ -190,7 +194,7 @@ public abstract class ReferencePairManager {
       RemoteReference remoteReference,
       String methodName,
       List<Object> arguments
-  ) {
+  ) throws Exception {
     assertIsInitialized();
     if (localReferenceFor(remoteReference) == null) throw new AssertionError();
 
@@ -206,7 +210,7 @@ public abstract class ReferencePairManager {
     if (!isInitialized) throw new AssertionError("Initialize has not been called.");
   }
 
-  private Object replaceRemoteReferences(Object argument) {
+  private Object replaceRemoteReferences(Object argument) throws Exception {
     if (argument instanceof RemoteReference) {
       return localReferenceFor((RemoteReference) argument);
     } else if (argument instanceof UnpairedRemoteReference) {

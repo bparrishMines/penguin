@@ -47,6 +47,7 @@ abstract class MethodChannelReferencePairManager extends ReferencePairManager {
   /// Null until [initialize] is called.
   MethodChannel get channel => remoteHandler._channel;
 
+  // TODO: Capture and print out all exceptions
   @override
   void initialize() {
     super.initialize();

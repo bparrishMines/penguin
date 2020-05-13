@@ -1,5 +1,9 @@
 package github.penguin.reference.reference;
 
+import android.annotation.SuppressLint;
+
+import androidx.annotation.NonNull;
+
 public class TypeReference {
   public final int typeId;
 
@@ -15,5 +19,12 @@ public class TypeReference {
   @Override
   public int hashCode() {
     return typeId;
+  }
+
+  @SuppressLint("DefaultLocale")
+  @NonNull
+  @Override
+  public String toString() {
+    return String.format("%s(%d)", TypeReference.class.getName(), typeId);
   }
 }

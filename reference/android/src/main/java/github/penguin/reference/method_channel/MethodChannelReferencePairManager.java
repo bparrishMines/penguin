@@ -25,16 +25,16 @@ public abstract class MethodChannelReferencePairManager extends ReferencePairMan
   public MethodChannelReferencePairManager(
       final BinaryMessenger binaryMessenger,
       final String channelName,
-      final MethodChannelRemoteReferenceCommunicationHandler remoteHandler,
-      final LocalReferenceCommunicationHandler localHandler) {
-    this(binaryMessenger, channelName, remoteHandler, localHandler, new ReferenceMessageCodec());
+      final LocalReferenceCommunicationHandler localHandler,
+      final MethodChannelRemoteReferenceCommunicationHandler remoteHandler) {
+    this(binaryMessenger, channelName, localHandler, remoteHandler, new ReferenceMessageCodec());
   }
 
   public MethodChannelReferencePairManager(
       final BinaryMessenger binaryMessenger,
       final String channelName,
-      final MethodChannelRemoteReferenceCommunicationHandler remoteHandler,
       final LocalReferenceCommunicationHandler localHandler,
+      final MethodChannelRemoteReferenceCommunicationHandler remoteHandler,
       final ReferenceMessageCodec messageCodec) {
     this.binaryMessenger = binaryMessenger;
     this.channelName = channelName;
@@ -56,29 +56,37 @@ public abstract class MethodChannelReferencePairManager extends ReferencePairMan
   @SuppressWarnings("unchecked")
   @Override
   public void onMethodCall(@NonNull MethodCall call, @NonNull final MethodChannel.Result channelResult) {
-    switch (call.method) {
-      case METHOD_CREATE: {
-        final List<Object> arguments = (List<Object>) call.arguments;
-        createLocalReferenceFor((RemoteReference) arguments.get(0),
-            (TypeReference) arguments.get(1),
-            (List<Object>) arguments.get(2)
-        );
-        channelResult.success(null);
-        break;
+    try {
+      switch (call.method) {
+        case METHOD_CREATE: {
+          final List<Object> arguments = (List<Object>) call.arguments;
+          createLocalReferenceFor((RemoteReference) arguments.get(0),
+              (TypeReference) arguments.get(1),
+              (List<Object>) arguments.get(2)
+          );
+          channelResult.success(null);
+          break;
+        }
+        case METHOD_METHOD: {
+          final List<Object> arguments = (List<Object>) call.arguments;
+          final Object result = executeLocalMethodFor(
+              (RemoteReference) arguments.get(0),
+              (String) arguments.get(1),
+              (List<Object>) arguments.get(2));
+          channelResult.success(result);
+          break;
+        }
+        case METHOD_DISPOSE:
+          disposeLocalReferenceFor((RemoteReference) call.arguments);
+          channelResult.success(null);
+          break;
+        default:
+        channelResult.notImplemented();
       }
-      case METHOD_METHOD: {
-        final List<Object> arguments = (List<Object>) call.arguments;
-        final Object result = executeLocalMethodFor(
-            (RemoteReference) arguments.get(0),
-            (String) arguments.get(1),
-            (List<Object>) arguments.get(2));
-        channelResult.success(result);
-        break;
-      }
-      case METHOD_DISPOSE:
-        disposeLocalReferenceFor((RemoteReference) call.arguments);
-        channelResult.success(null);
-        break;
+    } catch (Exception exception) {
+      channelResult.error(exception.getClass().getName(),
+          exception.getLocalizedMessage(),
+          android.util.Log.getStackTraceString(exception));
     }
   }
 
