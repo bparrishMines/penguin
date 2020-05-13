@@ -6,7 +6,7 @@ import android.os.Handler;
 import android.os.Looper;
 import androidx.annotation.NonNull;
 import github.penguin.reference.reference.CompletableRunnable;
-import github.penguin.reference.reference.Reference;
+import github.penguin.reference.reference.RemoteReference;
 import github.penguin.reference.reference.ReferenceManager;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
@@ -44,14 +44,14 @@ public abstract class MethodChannelReferenceManager extends ReferenceManager
 
     @Override
     public void disposeRemoteReference(String referenceId, ReferenceHolder holder) {
-      channel.invokeMethod(METHOD_DISPOSE, new Reference(referenceId));
+      channel.invokeMethod(METHOD_DISPOSE, new RemoteReference(referenceId));
     }
 
     @Override
     public <T> CompletableRunnable<T> sendRemoteMethodCall(
-        final Reference reference, final String methodName, final Object[] arguments) {
+        final RemoteReference remoteReference, final String methodName, final Object[] arguments) {
       final List<Object> argsForMethodCall = new ArrayList<>(arguments.length + 2);
-      argsForMethodCall.add(reference);
+      argsForMethodCall.add(remoteReference);
       argsForMethodCall.add(methodName);
       argsForMethodCall.add(asList(arguments));
 
@@ -125,7 +125,7 @@ public abstract class MethodChannelReferenceManager extends ReferenceManager
               case METHOD_METHOD:
                 final List<Object> arguments = (List<Object>) call.arguments;
                 receiveMethodCall(
-                        (Reference) arguments.get(0),
+                        (RemoteReference) arguments.get(0),
                         (String) arguments.get(1),
                         ((List<Object>) arguments.get(2)).toArray())
                     .setOnCompleteListener(
@@ -145,7 +145,7 @@ public abstract class MethodChannelReferenceManager extends ReferenceManager
                         });
                 break;
               case METHOD_DISPOSE:
-                disposeLocalReference(((Reference) call.arguments).referenceId);
+                disposeLocalReference(((RemoteReference) call.arguments).referenceId);
                 channelResult.success(null);
                 break;
             }

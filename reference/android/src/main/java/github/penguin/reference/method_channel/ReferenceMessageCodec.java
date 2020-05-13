@@ -1,6 +1,6 @@
 package github.penguin.reference.method_channel;
 
-import github.penguin.reference.reference.Reference;
+import github.penguin.reference.reference.RemoteReference;
 import io.flutter.plugin.common.StandardMessageCodec;
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
@@ -10,9 +10,9 @@ public class ReferenceMessageCodec extends StandardMessageCodec {
 
   @Override
   protected void writeValue(ByteArrayOutputStream stream, Object value) {
-    if (value instanceof Reference) {
+    if (value instanceof RemoteReference) {
       stream.write(REFERENCE);
-      writeValue(stream, ((Reference) value).referenceId);
+      writeValue(stream, ((RemoteReference) value).referenceId);
     } else {
       super.writeValue(stream, value);
     }
@@ -22,7 +22,7 @@ public class ReferenceMessageCodec extends StandardMessageCodec {
   protected Object readValueOfType(byte type, ByteBuffer buffer) {
     switch (type) {
       case REFERENCE:
-        return new Reference((String) readValueOfType(buffer.get(), buffer));
+        return new RemoteReference((String) readValueOfType(buffer.get(), buffer));
       default:
         return super.readValueOfType(type, buffer);
     }

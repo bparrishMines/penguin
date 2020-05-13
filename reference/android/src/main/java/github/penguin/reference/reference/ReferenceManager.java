@@ -1,122 +1,262 @@
 package github.penguin.reference.reference;
 
+import androidx.annotation.CallSuper;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+@SuppressWarnings("unchecked")
 public abstract class ReferenceManager {
-  public interface ReferenceHolder {}
+  private boolean isInitialized = false;
+  private final BiMap<LocalReference, RemoteReference> localRefToRemoteRefMap = HashBiMap.create();
 
-  public interface LocalReferenceHandler {
-    ReferenceHolder createLocalReference(final String referenceId, final Object arguments);
+  public interface RemoteReferenceCommunicationHandler {
+    List<Object> creationArgumentsFor(LocalReference localReference);
 
-    CompletableRunnable<?> receiveLocalMethodCall(
-        final ReferenceHolder holder, final String methodName, final Object[] arguments);
+    CompletableRunnable<Void> createRemoteReference(
+        RemoteReference remoteReference,
+        TypeReference typeReference,
+        List<Object> arguments
+    );
+
+    CompletableRunnable<Object> executeRemoteMethod(
+        RemoteReference remoteReference,
+        String methodName,
+        List<Object> arguments
+    );
+
+    CompletableRunnable<Void> disposeRemoteReference(RemoteReference remoteReference);
   }
 
-  public interface RemoteReferenceHandler {
-    void createRemoteReference(final String referenceId, final ReferenceHolder holder);
+  public interface LocalReferenceCommunicationHandler {
+    LocalReference createLocalReferenceFor(TypeReference typeReference, List<Object> arguments);
 
-    void disposeRemoteReference(final String referenceId, final ReferenceHolder holder);
+    Object executeLocalMethod(LocalReference localReference, String methodName, List<Object> arguments);
 
-    <T> CompletableRunnable<T> sendRemoteMethodCall(
-        final Reference reference, final String methodName, final Object[] arguments);
+    void disposeLocalReference(LocalReference localReference);
   }
 
-  private final BiMap<ReferenceHolder, String> holderToReferenceId = HashBiMap.create();
-  private final Map<String, ReferenceCounter> referenceIdToReferenceCounter = new HashMap<>();
+  public abstract RemoteReferenceCommunicationHandler getRemoteHandler();
 
-  public abstract LocalReferenceHandler getLocalReferenceHandler();
+  public abstract LocalReferenceCommunicationHandler getLocalHandler();
 
-  public abstract RemoteReferenceHandler getRemoteReferenceHandler();
+  public abstract TypeReference typeReferenceFor(LocalReference localReference);
 
-  public abstract void initialize();
-
-  public void createAndAddLocalReference(final String referenceId, final Object arguments) {
-    final ReferenceHolder holder =
-        getLocalReferenceHandler().createLocalReference(referenceId, arguments);
-    holderToReferenceId.put(holder, referenceId);
+  @CallSuper
+  public void initialize() {
+    isInitialized = true;
   }
 
-  public void disposeLocalReference(final String referenceId) {
-    holderToReferenceId.inverse().remove(referenceId);
+  public RemoteReference remoteReferenceFor(LocalReference localReference) {
+    assertIsInitialized();
+    return localRefToRemoteRefMap.get(localReference);
   }
 
-  public String referenceIdFor(final ReferenceHolder holder) {
-    return holderToReferenceId.get(holder);
+  public LocalReference localReferenceFor(RemoteReference remoteReference) {
+    assertIsInitialized();
+    return localRefToRemoteRefMap.inverse().get(remoteReference);
   }
 
-  public ReferenceHolder referenceHolderFor(final String referenceId) {
-    return holderToReferenceId.inverse().get(referenceId);
+  public LocalReference createLocalReferenceFor(RemoteReference remoteReference,
+                                                TypeReference typeReference) {
+    return createLocalReferenceFor(remoteReference, typeReference, new ArrayList<>());
   }
 
-  public void retain(final ReferenceHolder holder) {
-    String referenceId = holderToReferenceId.get(holder);
-    if (referenceId == null) {
-      add(holder);
-      referenceId = referenceIdFor(holder);
-    }
-    referenceIdToReferenceCounter.get(referenceId).retain(referenceId, holder);
+  public LocalReference createLocalReferenceFor(
+      RemoteReference remoteReference,
+      TypeReference typeReference,
+      List<Object> arguments
+      ) {
+    assertIsInitialized();
+    final LocalReference localReference = getLocalHandler().createLocalReferenceFor(
+        typeReference,
+        (List<Object>) replaceRemoteReferences(arguments)
+    );
+    localRefToRemoteRefMap.put(localReference, remoteReference);
+    return localReference;
   }
 
-  public <T> CompletableRunnable<T> sendMethodCall(
-      final ReferenceHolder holder, final String methodName, final Object[] arguments) {
-    for (int i = 0; i < arguments.length; i++) {
-      final Object argument = arguments[i];
-      if (!(argument instanceof ReferenceHolder)) continue;
+  public void disposeLocalReferenceFor(RemoteReference remoteReference) {
+    assertIsInitialized();
 
-      final String referenceId = referenceIdFor((ReferenceHolder) argument);
-      if (referenceId != null) arguments[i] = new Reference(referenceId);
-    }
+    final LocalReference localReference = localReferenceFor(remoteReference);
+    if (localReference == null) return;
 
-    return getRemoteReferenceHandler()
-        .sendRemoteMethodCall(new Reference(referenceIdFor(holder)), methodName, arguments);
+    localRefToRemoteRefMap.remove(localReference);
+    getLocalHandler().disposeLocalReference(localReference);
   }
 
-  public CompletableRunnable<?> receiveMethodCall(
-      final Reference reference, final String methodName, final Object[] arguments) {
-    for (int i = 0; i < arguments.length; i++) {
-      final Object argument = arguments[i];
-      if (argument instanceof Reference) {
-        arguments[i] = referenceHolderFor(((Reference) argument).referenceId);
+  public CompletableRunnable<RemoteReference> createRemoteReferenceFor(final LocalReference localReference) {
+    return createRemoteReferenceFor(localReference, typeReferenceFor(localReference));
+  }
+
+  public CompletableRunnable<RemoteReference> createRemoteReferenceFor(final LocalReference localReference,
+                                                                final TypeReference typeReference) {
+    assertIsInitialized();
+    if (remoteReferenceFor(localReference) != null) return null;
+
+    final RemoteReference remoteReference = new RemoteReference(UUID.randomUUID().toString());
+    localRefToRemoteRefMap.put(localReference, remoteReference);
+
+    final List<Object> creationArguments = getRemoteHandler().creationArgumentsFor(localReference);
+    final CompletableRunnable<Void> resultRunnable = getRemoteHandler().createRemoteReference(
+            remoteReference,
+            typeReference,
+            (List<Object>) replaceLocalReferences(creationArguments));
+
+    final CompletableRunnable<RemoteReference> referenceRunnable  = new CompletableRunnable<RemoteReference>() {
+      @Override
+      public void run() {
+        resultRunnable.setOnCompleteListener(new OnCompleteListener() {
+          @Override
+          public void onComplete(Object result) {
+            complete(remoteReference);
+          }
+
+          @Override
+          public void onError(Throwable throwable) {
+            throw new RuntimeException(throwable.getLocalizedMessage());
+          }
+        });
       }
+    };
+
+    referenceRunnable.run();
+    return referenceRunnable;
+  }
+
+  public CompletableRunnable<Void> disposeRemoteReferenceFor(LocalReference localReference) {
+    assertIsInitialized();
+
+    final RemoteReference remoteReference = remoteReferenceFor(localReference);
+    if (remoteReference == null) return null;
+
+    localRefToRemoteRefMap.remove(localReference);
+    return getRemoteHandler().disposeRemoteReference(remoteReference);
+  }
+
+  public CompletableRunnable<Object> executeRemoteMethodFor(
+      LocalReference localReference,
+      String methodName) {
+    return executeRemoteMethodFor(localReference, methodName, new ArrayList<>());
+  }
+
+  public CompletableRunnable<Object> executeRemoteMethodFor(
+      LocalReference localReference,
+      String methodName,
+      List<Object> arguments
+  ) {
+    assertIsInitialized();
+    if (remoteReferenceFor(localReference) == null) throw new AssertionError();
+
+    final CompletableRunnable<Object> resultRunnable = getRemoteHandler()
+        .executeRemoteMethod(
+            remoteReferenceFor(localReference),
+            methodName,
+            (List<Object>) replaceLocalReferences(arguments));
+
+    final CompletableRunnable<Object> replaceRunnable = new CompletableRunnable<Object>() {
+      @Override
+      public void run() {
+        resultRunnable.setOnCompleteListener(new OnCompleteListener() {
+          @Override
+          public void onComplete(Object result) {
+            complete(replaceRemoteReferences(result));
+          }
+
+          @Override
+          public void onError(Throwable throwable) {
+            throw new RuntimeException(throwable.getLocalizedMessage());
+          }
+        });
+      }
+    };
+
+    replaceRunnable.run();
+    return replaceRunnable;
+  }
+
+  public Object executeLocalMethodFor(
+      RemoteReference remoteReference,
+      String methodName) {
+    return executeLocalMethodFor(remoteReference, methodName, new ArrayList<>());
+  }
+
+  public Object executeLocalMethodFor(
+      RemoteReference remoteReference,
+      String methodName,
+      List<Object> arguments
+  ) {
+    assertIsInitialized();
+    if (localReferenceFor(remoteReference) == null) throw new AssertionError();
+
+    final Object result = getLocalHandler().executeLocalMethod(
+        localReferenceFor(remoteReference),
+        methodName,
+        (List<Object>) replaceRemoteReferences(arguments)
+    );
+    return replaceLocalReferences(result);
+  }
+
+  private void assertIsInitialized() {
+    if (!isInitialized) throw new AssertionError("Initialize has not been called.");
+  }
+
+  private Object replaceRemoteReferences(Object argument) {
+    if (argument instanceof RemoteReference) {
+      return localReferenceFor((RemoteReference) argument);
+    } else if (argument instanceof UnpairedRemoteReference) {
+      return getLocalHandler().createLocalReferenceFor(
+          ((UnpairedRemoteReference) argument).typeReference,
+          (List<Object>) replaceRemoteReferences(((UnpairedRemoteReference) argument).creationArguments)
+      );
+    } else if (argument instanceof List) {
+      final List<Object> result = new ArrayList<>();
+      for (final Object obj : (List) argument) {
+        result.add(replaceRemoteReferences(obj));
+      }
+      return result;
+    } else if (argument instanceof Map) {
+      final Map<Object, Object> oldMap = new HashMap<Object, Object>((Map) argument);
+      final Map<Object, Object> newMap = new HashMap<>();
+      for (Map.Entry<Object, Object> entry : oldMap.entrySet()) {
+        newMap.put(replaceRemoteReferences(entry.getKey()),
+            replaceRemoteReferences(entry.getValue()));
+      }
+      return newMap;
     }
 
-    return getLocalReferenceHandler()
-        .receiveLocalMethodCall(referenceHolderFor(reference.referenceId), methodName, arguments);
+    return argument;
   }
 
-  public void release(ReferenceHolder holder) {
-    final String referenceId = referenceIdFor(holder);
-    if (referenceId != null) {
-      referenceIdToReferenceCounter.get(referenceId).release(referenceId, holder);
+  private Object replaceLocalReferences(Object argument) {
+    if (argument instanceof LocalReference && remoteReferenceFor((LocalReference) argument) != null) {
+      return remoteReferenceFor((LocalReference) argument);
+    } else if (argument instanceof LocalReference && remoteReferenceFor((LocalReference) argument) == null) {
+      return new UnpairedRemoteReference(
+          typeReferenceFor((LocalReference) argument),
+          (List<Object>) replaceLocalReferences(getRemoteHandler().creationArgumentsFor((LocalReference) argument))
+      );
+    } else if (argument instanceof List) {
+      final List<Object> result = new ArrayList<>();
+      for (final Object obj : (List) argument) {
+        result.add(replaceLocalReferences(obj));
+      }
+      return result;
+    } else if (argument instanceof Map) {
+      final Map<Object, Object> oldMap = new HashMap<Object, Object>((Map) argument);
+      final Map<Object, Object> newMap = new HashMap<>();
+      for (Map.Entry<Object, Object> entry : oldMap.entrySet()) {
+        newMap.put(replaceLocalReferences(entry.getKey()),
+            replaceLocalReferences(entry.getValue()));
+      }
+      return newMap;
     }
-  }
 
-  private void add(ReferenceHolder holder) {
-    final String referenceId = UUID.randomUUID().toString();
-    holderToReferenceId.put(holder, referenceId);
-    referenceIdToReferenceCounter.put(
-        referenceId,
-        new ReferenceCounter(
-            new ReferenceCounter.LifecycleListener() {
-              @Override
-              public void onCreate(String referenceId, ReferenceHolder holder) {
-                getRemoteReferenceHandler().createRemoteReference(referenceId, holder);
-              }
-
-              @Override
-              public void onDispose(String referenceId, ReferenceHolder holder) {
-                getRemoteReferenceHandler().disposeRemoteReference(referenceId, holder);
-                remove(holder);
-              }
-            }));
-  }
-
-  private void remove(ReferenceHolder holder) {
-    final String referenceId = holderToReferenceId.remove(holder);
-    referenceIdToReferenceCounter.remove(referenceId);
+    return argument;
   }
 }
