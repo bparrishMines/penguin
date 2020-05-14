@@ -47,7 +47,6 @@ abstract class MethodChannelReferencePairManager extends ReferencePairManager {
   /// Null until [initialize] is called.
   MethodChannel get channel => remoteHandler._channel;
 
-  // TODO: Capture and print out all exceptions
   @override
   void initialize() {
     super.initialize();
@@ -56,27 +55,32 @@ abstract class MethodChannelReferencePairManager extends ReferencePairManager {
       StandardMethodCodec(referenceMessageCodec),
     );
     remoteHandler._channel.setMethodCallHandler((MethodCall call) async {
-      if (call.method == MethodChannelReferencePairManager._methodCreate) {
-        createLocalReferenceFor(
-          call.arguments[0],
-          call.arguments[1],
-          call.arguments[2],
-        );
-        return;
-      } else if (call.method ==
-          MethodChannelReferencePairManager._methodMethod) {
-        return executeLocalMethodFor(
-          call.arguments[0],
-          call.arguments[1],
-          call.arguments[2],
-        );
-      } else if (call.method ==
-          MethodChannelReferencePairManager._methodDispose) {
-        disposeLocalReferenceFor(call.arguments);
-        return;
-      }
+      try {
+        if (call.method == MethodChannelReferencePairManager._methodCreate) {
+          createLocalReferenceFor(
+            call.arguments[0],
+            call.arguments[1],
+            call.arguments[2],
+          );
+          return;
+        } else if (call.method ==
+            MethodChannelReferencePairManager._methodMethod) {
+          return executeLocalMethodFor(
+            call.arguments[0],
+            call.arguments[1],
+            call.arguments[2],
+          );
+        } else if (call.method ==
+            MethodChannelReferencePairManager._methodDispose) {
+          disposeLocalReferenceFor(call.arguments);
+          return;
+        }
 
-      throw StateError(call.method);
+        throw StateError(call.method);
+      } catch (error, stacktrace) {
+        debugPrint('Error: $error\nStackTrace: $stacktrace');
+        rethrow;
+      }
     });
   }
 }
