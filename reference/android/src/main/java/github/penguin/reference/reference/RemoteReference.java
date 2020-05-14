@@ -1,5 +1,7 @@
 package github.penguin.reference.reference;
 
+import androidx.annotation.NonNull;
+
 public class RemoteReference {
   public final String referenceId;
 
@@ -15,5 +17,11 @@ public class RemoteReference {
   @Override
   public int hashCode() {
     return referenceId.hashCode();
+  }
+
+  @NonNull
+  @Override
+  public String toString() {
+    return String.format("%s(%s)", RemoteReference.class.getName(), referenceId);
   }
 }

@@ -2,9 +2,9 @@ package github.penguin.reference.templates;
 
 import java.util.List;
 import java.util.Map;
-
 import github.penguin.reference.reference.CompletableRunnable;
 
+@SuppressWarnings("RedundantThrows")
 public class ClassTemplate implements GeneratedReferencePairManager.PlatformClassTemplate {
   @Override
   public int getFieldTemplate() {

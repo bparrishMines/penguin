@@ -57,7 +57,7 @@ class OwnerCounterLifecycleListener {
 }
 
 /// Keeps count of how many objects claim ownership to another.
-/// 
+///
 /// This is typically used in conjunction with a [LocalReference] so it knows
 /// when it can dispose of its paired [RemoteReference] in a
 /// [ReferencePairManager].
@@ -67,38 +67,34 @@ class OwnerCounter {
     int initialOwnerCount = 0,
   ])  : assert(initialOwnerCount == null || initialOwnerCount >= 0),
         _ownerCount = initialOwnerCount ?? 0;
-  
+
   /// Handles lifecycle callbacks for when [ownerCount] reaches 1 or 0.
   final OwnerCounterLifecycleListener lifecycleListener;
 
   int _ownerCount;
-  
+
   /// Number of objects that claim ownership and wants to keep an object accessible.
   int get ownerCount => _ownerCount;
 
   /// Increments [ownerCount] by one.
-  /// 
+  ///
   /// If [ownerCount] becomes 1, [OwnerCounterLifecycleListener.onCreate] is
   /// called.
   FutureOr<void> increment() {
     _ownerCount++;
-    if (ownerCount == 1) {
-      return lifecycleListener.onCreate();
-    }
+    if (ownerCount == 1) return lifecycleListener.onCreate();
   }
 
   /// Decrements [ownerCount] by one.
-  /// 
+  ///
   /// If [ownerCount] is already 0, an [AssertionError] will be thrown. If
   /// [ownerCount] becomes 0, [OwnerCounterLifecycleListener.onDispose] is
   /// called.
   FutureOr<void> decrement() {
     assert(ownerCount > 0,
-        '`release()` was called without calling `retain()` first. In other words, `release()` was called while `referenceCount == 0`. Reference count = $_ownerCount.');
+        '`decrement()` was called without calling `increment()` first. In other words, `decrement()` was called while `ownerCount == 0`. Owner count = $_ownerCount.');
 
     _ownerCount--;
-    if (ownerCount == 0) {
-      return lifecycleListener.onDispose();
-    }
+    if (ownerCount == 0) return lifecycleListener.onDispose();
   }
 }
