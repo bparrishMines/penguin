@@ -16,18 +16,19 @@ class GeneratedReferencePairManager extends MethodChannelReferencePairManager {
 
   @override
   TypeReference typeReferenceFor(LocalReference localReference) {
-    if (localReference is PlatformClassTemplate) return TypeReference(0);
+    if (localReference is ClassTemplate) return TypeReference(0);
     throw StateError(
       'Could not find a $TypeReference for ${localReference.runtimeType}.',
     );
   }
 }
-// TODO: how to handle ClassTemple/PlatformClassTemplate on Java
+
 abstract class GeneratedLocalReferenceCommunicationHandler
     with LocalReferenceCommunicationHandler {
   const GeneratedLocalReferenceCommunicationHandler();
 
-  PlatformClassTemplate createClassTemplate(
+  ClassTemplate createClassTemplate(
+    ReferencePairManager referencePairManager,
     int fieldTemplate,
     ClassTemplate referenceFieldTemplate,
     List<ClassTemplate> referenceListTemplate,
@@ -37,10 +38,12 @@ abstract class GeneratedLocalReferenceCommunicationHandler
   @override
   LocalReference createLocalReferenceFor(
     TypeReference typeReference,
+    ReferencePairManager referencePairManager,
     List<dynamic> arguments,
   ) {
     if (typeReference == TypeReference(0)) {
       return createClassTemplate(
+        referencePairManager,
         arguments[0],
         arguments[1],
         arguments[2]?.cast<ClassTemplate>(),
@@ -60,7 +63,7 @@ abstract class GeneratedLocalReferenceCommunicationHandler
     String methodName,
     List<dynamic> arguments,
   ) {
-    if (localReference is PlatformClassTemplate &&
+    if (localReference is ClassTemplate &&
         methodName == GeneratedMethodNames.methodTemplate) {
       return localReference.methodTemplate(
         arguments[0],
@@ -68,7 +71,7 @@ abstract class GeneratedLocalReferenceCommunicationHandler
         arguments[2]?.cast<ClassTemplate>(),
         arguments[3]?.cast<String, ClassTemplate>(),
       );
-    } else if (localReference is PlatformClassTemplate &&
+    } else if (localReference is ClassTemplate &&
         methodName == GeneratedMethodNames.returnsReference) {
       return localReference.returnsReference();
     }
@@ -83,7 +86,7 @@ class GeneratedRemoteReferenceCommunicationHandler
     extends MethodChannelRemoteReferenceCommunicationHandler {
   @override
   List<dynamic> creationArgumentsFor(LocalReference localReference) {
-    if (localReference is PlatformClassTemplate) {
+    if (localReference is ClassTemplate) {
       return <dynamic>[
         localReference.fieldTemplate,
         localReference.referenceFieldTemplate,

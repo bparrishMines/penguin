@@ -33,7 +33,7 @@ public abstract class ReferencePairManager {
   }
 
   public interface LocalReferenceCommunicationHandler {
-    LocalReference createLocalReferenceFor(TypeReference typeReference, List<Object> arguments) throws Exception;
+    LocalReference createLocalReferenceFor(TypeReference typeReference, ReferencePairManager referencePairManager, List<Object> arguments) throws Exception;
 
     Object executeLocalMethod(LocalReference localReference, String methodName, List<Object> arguments) throws Exception;
 
@@ -74,6 +74,7 @@ public abstract class ReferencePairManager {
     assertIsInitialized();
     final LocalReference localReference = getLocalHandler().createLocalReferenceFor(
         typeReference,
+        this,
         (List<Object>) replaceRemoteReferences(arguments)
     );
     localRefToRemoteRefMap.put(localReference, remoteReference);
@@ -145,6 +146,7 @@ public abstract class ReferencePairManager {
     return executeRemoteMethodFor(localReference, methodName, new ArrayList<>());
   }
 
+  // TODO: handle setting object type
   public CompletableRunnable<Object> executeRemoteMethodFor(
       LocalReference localReference,
       String methodName,
@@ -216,6 +218,7 @@ public abstract class ReferencePairManager {
     } else if (argument instanceof UnpairedRemoteReference) {
       return getLocalHandler().createLocalReferenceFor(
           ((UnpairedRemoteReference) argument).typeReference,
+          this,
           (List<Object>) replaceRemoteReferences(((UnpairedRemoteReference) argument).creationArguments)
       );
     } else if (argument instanceof List) {

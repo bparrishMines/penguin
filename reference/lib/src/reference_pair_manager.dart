@@ -68,6 +68,7 @@ mixin LocalReferenceCommunicationHandler {
   /// [LocalReference]. It will also store both references as a pair.
   LocalReference createLocalReferenceFor(
     TypeReference typeReference,
+    ReferencePairManager referencePairManager,
     List<dynamic> arguments,
   );
 
@@ -168,6 +169,7 @@ abstract class ReferencePairManager {
     _assertIsInitialized();
     final LocalReference localReference = localHandler.createLocalReferenceFor(
       typeReference,
+      this,
       _replaceRemoteReferences(arguments ?? <dynamic>[]),
     );
     _localRefToRemoteRefMap[localReference] = remoteReference;
@@ -288,6 +290,7 @@ abstract class ReferencePairManager {
     } else if (argument is UnpairedRemoteReference) {
       return localHandler.createLocalReferenceFor(
         argument.typeReference,
+        this,
         argument.creationArguments.map(_replaceRemoteReferences).toList(),
       );
     } else if (argument is List) {

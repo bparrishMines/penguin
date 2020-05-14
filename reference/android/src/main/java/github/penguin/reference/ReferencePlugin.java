@@ -1,34 +1,33 @@
 package github.penguin.reference;
 
 import androidx.annotation.NonNull;
+
+import java.util.List;
+import java.util.Map;
+
+import github.penguin.reference.reference.ReferencePairManager;
 import github.penguin.reference.templates.GeneratedReferencePairManager;
+import github.penguin.reference.templates.GeneratedReferencePairManager.ClassTemplate;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
 
 /** ReferencePlugin */
 public class ReferencePlugin implements FlutterPlugin {
-  private static class ReferencePairManagerTemplate extends GeneratedReferencePairManager {
-    ReferencePairManagerTemplate(
-        BinaryMessenger binaryMessenger, String channelName, GeneratedMessageCodec messageCodec) {
-      super(binaryMessenger, channelName, messageCodec);
-    }
-
-    @Override
-    public ClassTemplate createClassTemplate(final String referenceId, final int fieldTemplate) {
-      return new github.penguin.reference.templates.ClassTemplate(this, fieldTemplate);
-    }
-  }
-
   public static void registerWith(Registrar registrar) {
     new ReferencePlugin().initialize(registrar.messenger());
   }
 
   private void initialize(final BinaryMessenger binaryMessenger) {
-    new ReferencePairManagerTemplate(
-            binaryMessenger,
-            "reference_plugin",
-            new GeneratedReferencePairManager.GeneratedMessageCodec())
+    new GeneratedReferencePairManager(
+        binaryMessenger,
+        "reference_plugin",
+        new GeneratedReferencePairManager.GeneratedLocalReferenceCommunicationHandler() {
+          @Override
+          public ClassTemplate createClassTemplate(ReferencePairManager referencePairManager, int fieldTemplate, ClassTemplate referenceFieldTemplate, List<ClassTemplate> referenceListTemplate, Map<String, ClassTemplate> referenceMapTemplate) throws Exception {
+            return new ClassTemplateImpl(referencePairManager, fieldTemplate, referenceFieldTemplate, referenceListTemplate, referenceMapTemplate);
+          }
+        })
         .initialize();
   }
 
