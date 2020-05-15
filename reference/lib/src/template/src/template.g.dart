@@ -63,8 +63,7 @@ abstract class GeneratedLocalReferenceCommunicationHandler
     String methodName,
     List<dynamic> arguments,
   ) {
-    if (localReference is ClassTemplate &&
-        methodName == GeneratedMethodNames.methodTemplate) {
+    if (localReference is ClassTemplate && methodName == 'methodTemplate') {
       return localReference.methodTemplate(
         arguments[0],
         arguments[1],
@@ -72,7 +71,7 @@ abstract class GeneratedLocalReferenceCommunicationHandler
         arguments[3]?.cast<String, ClassTemplate>(),
       );
     } else if (localReference is ClassTemplate &&
-        methodName == GeneratedMethodNames.returnsReference) {
+        methodName == 'returnsReference') {
       return localReference.returnsReference();
     }
 
@@ -101,7 +100,30 @@ class GeneratedRemoteReferenceCommunicationHandler
   }
 }
 
-mixin GeneratedMethodNames {
-  static const String methodTemplate = 'methodTemplate';
-  static const String returnsReference = 'returnsReference';
+mixin ClassTemplateMethods {
+  Future<dynamic> _methodTemplate(
+    ReferencePairManager referencePairManager,
+    String parameterTemplate,
+    ClassTemplate referenceParameterTemplate,
+    List<ClassTemplate> referenceListTemplate,
+    Map<String, ClassTemplate> referenceMapTemplate,
+  ) {
+    return referencePairManager.executeRemoteMethodFor(
+      this as ClassTemplate,
+      'methodTemplate',
+      <dynamic>[
+        parameterTemplate,
+        referenceParameterTemplate,
+        referenceListTemplate,
+        referenceMapTemplate,
+      ],
+    );
+  }
+
+  Future<dynamic> _returnsReference(ReferencePairManager referencePairManager) {
+    return referencePairManager.executeRemoteMethodFor(
+      this as ClassTemplate,
+      'returnsReference',
+    );
+  }
 }

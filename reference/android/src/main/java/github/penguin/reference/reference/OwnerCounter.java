@@ -31,7 +31,7 @@ public class OwnerCounter {
       final String message =
           "`decrement()` was called without calling `increment()` first. In other words, `decrement()` was called while `ownerCount == 0`. Owner count ="
               + ownerCount;
-      throw new IllegalStateException(message);
+      throw new AssertionError(message);
     }
 
     ownerCount--;

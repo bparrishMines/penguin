@@ -31,7 +31,7 @@ class LocalReferenceCommunicationHandlerTemplate
   }
 }
 
-class ClassTemplate with LocalReference {
+class ClassTemplate with LocalReference, ClassTemplateMethods {
   ClassTemplate(
     this.fieldTemplate,
     this.referenceFieldTemplate,
@@ -50,23 +50,17 @@ class ClassTemplate with LocalReference {
     List<ClassTemplate> referenceListTemplate,
     Map<String, ClassTemplate> referenceMapTemplate,
   ) async {
-    return await (referencePairManager.executeRemoteMethodFor(
-      this,
-      GeneratedMethodNames.methodTemplate,
-      <dynamic>[
-        parameterTemplate,
-        referenceParameterTemplate,
-        referenceListTemplate,
-        referenceMapTemplate,
-      ],
+    return (await _methodTemplate(
+      referencePairManager,
+      parameterTemplate,
+      referenceParameterTemplate,
+      referenceListTemplate,
+      referenceMapTemplate,
     )) as String;
   }
 
   FutureOr<ClassTemplate> returnsReference() async {
-    return await (referencePairManager.executeRemoteMethodFor(
-      this,
-      GeneratedMethodNames.returnsReference,
-    )) as ClassTemplate;
+    return await (_returnsReference(referencePairManager)) as ClassTemplate;
   }
 
   @override
