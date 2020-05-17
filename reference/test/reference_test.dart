@@ -99,7 +99,7 @@ void main() {
       final RemoteReference remoteReference =
           referencePairManager.remoteReferenceFor(testClass);
 
-      expect(remoteReference.referenceId, isNotNull);
+      expect(remoteReference?.referenceId, isNotNull);
       expect(
         referencePairManager.localReferenceFor(remoteReference),
         testClass,

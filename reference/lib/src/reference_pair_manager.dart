@@ -190,6 +190,7 @@ abstract class ReferencePairManager {
     localHandler.disposeLocalReference(localReference);
   }
 
+  // TODO: Don't change state if failure to create
   /// Creates and maintains access of an equivalent object to [localReference] on a remote thread/process.
   ///
   /// This will also store [localReference] and a [RemoteReference] as a pair.
