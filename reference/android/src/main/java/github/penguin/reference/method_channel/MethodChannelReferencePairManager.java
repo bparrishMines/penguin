@@ -7,6 +7,7 @@ import github.penguin.reference.reference.TypeReference;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
+import io.flutter.plugin.common.MethodCodec;
 import io.flutter.plugin.common.StandardMethodCodec;
 import java.util.List;
 
@@ -17,7 +18,7 @@ public abstract class MethodChannelReferencePairManager extends ReferencePairMan
 
   public final BinaryMessenger binaryMessenger;
   public final String channelName;
-  public final ReferenceMessageCodec messageCodec;
+  public final MethodCodec methodCodec;
 
   private final MethodChannelRemoteReferenceCommunicationHandler remoteHandler;
   private final LocalReferenceCommunicationHandler localHandler;
@@ -40,16 +41,13 @@ public abstract class MethodChannelReferencePairManager extends ReferencePairMan
     this.channelName = channelName;
     this.remoteHandler = remoteHandler;
     this.localHandler = localHandler;
-    this.messageCodec = messageCodec;
+    this.methodCodec = new StandardMethodCodec(messageCodec);
   }
 
   @Override
   public void initialize() {
     super.initialize();
-    getRemoteHandler().channel = new MethodChannel(binaryMessenger,
-        channelName,
-        new StandardMethodCodec(messageCodec)
-    );
+    getRemoteHandler().channel = new MethodChannel(binaryMessenger, channelName, methodCodec);
     getRemoteHandler().channel.setMethodCallHandler(this);
   }
 
@@ -81,7 +79,7 @@ public abstract class MethodChannelReferencePairManager extends ReferencePairMan
           channelResult.success(null);
           break;
         default:
-        channelResult.notImplemented();
+          channelResult.notImplemented();
       }
     } catch (Exception exception) {
       channelResult.error(exception.getClass().getName(),

@@ -259,7 +259,7 @@ void main() {
       );
 
       final ClassTemplate testClass = referencePairManager
-          .localReferenceFor(RemoteReference('aowejea;io')) as ClassTemplate;
+          .localReferenceFor(RemoteReference('aowejea;io'));
 
       expect(
         testClass,

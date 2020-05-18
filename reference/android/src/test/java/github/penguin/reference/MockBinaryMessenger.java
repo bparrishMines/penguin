@@ -10,12 +10,12 @@ import io.flutter.plugin.common.BinaryMessenger;
 
 public class MockBinaryMessenger implements BinaryMessenger {
   private final BinaryMessageHandler mockMessageHandler;
-  private final BinaryReply mockReplay;
+  private final BinaryReply mockReply;
   private final Map<String, BinaryMessageHandler> messageHandlers =  new HashMap<>();
 
-  MockBinaryMessenger(final BinaryMessageHandler mockMessageHandler, final BinaryReply mockReplay) {
+  MockBinaryMessenger(final BinaryMessageHandler mockMessageHandler, final BinaryReply mockReply) {
     this.mockMessageHandler = mockMessageHandler;
-    this.mockReplay = mockReplay;
+    this.mockReply = mockReply;
   }
 
   @Override
@@ -35,7 +35,8 @@ public class MockBinaryMessenger implements BinaryMessenger {
   }
 
   public void receive(final String channel, final ByteBuffer byteBuffer) {
-    Objects.requireNonNull(messageHandlers.get(channel)).onMessage(byteBuffer, mockReplay);
+    byteBuffer.position(0);
+    Objects.requireNonNull(messageHandlers.get(channel)).onMessage(byteBuffer, mockReply);
   }
 
   @Override
