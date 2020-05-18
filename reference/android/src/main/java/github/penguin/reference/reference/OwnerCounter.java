@@ -14,10 +14,10 @@ public class OwnerCounter {
     this.lifecycleListener = lifecycleListener;
   }
 
-  public OwnerCounter(final LifecycleListener lifecycleListener, int initialReferenceCount) {
+  public OwnerCounter(final LifecycleListener lifecycleListener, int initialOwnerCount) {
     this(lifecycleListener);
-    if (initialReferenceCount < 0) throw new IllegalArgumentException();
-    ownerCount = initialReferenceCount;
+    if (initialOwnerCount < 0) throw new IllegalArgumentException();
+    ownerCount = initialOwnerCount;
   }
 
   public CompletableRunnable<Void> increment() {
