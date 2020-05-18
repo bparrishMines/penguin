@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import github.penguin.reference.method_channel.ReferenceMessageCodec;
+import github.penguin.reference.reference.CompletableRunnable;
 import github.penguin.reference.reference.ReferencePairManager;
 import github.penguin.reference.reference.RemoteReference;
 import github.penguin.reference.reference.TypeReference;
@@ -29,6 +30,7 @@ import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodCodec;
 import io.flutter.plugin.common.StandardMethodCodec;
 
+import static github.penguin.reference.ReferenceMatchers.isClassTemplate;
 import static github.penguin.reference.ReferenceMatchers.isMethodCall;
 import static github.penguin.reference.ReferenceMatchers.isRemoteReference;
 import static github.penguin.reference.ReferenceMatchers.isTypeReference;
@@ -79,9 +81,22 @@ public class ReferencePairManagerTest {
     });
 
     methodCallHandler = new MethodChannel.MethodCallHandler() {
+      @SuppressWarnings("unchecked")
       @Override
       public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
-        result.success(null);
+        switch(call.method) {
+          case "REFERENCE_METHOD": {
+            final List<Object> arguments = (List<Object>) call.arguments;
+            if (arguments.get(1).equals("methodTemplate")) {
+              result.success("pine" + ((List<Object>) arguments.get(2)).get(0));
+            } else if (arguments.get(1).equals("returnsReference")) {
+              result.success(new UnpairedRemoteReference(new TypeReference(0), Arrays.asList((Object) 123, null, null, null)));
+            }
+          }
+          break;
+          default:
+            result.success(null);
+        }
       }
     };
   }
@@ -145,5 +160,65 @@ public class ReferencePairManagerTest {
     assertNull(referencePairManager.localReferenceFor(remoteReference));
     assertNull(referencePairManager.remoteReferenceFor(classTemplate));
     assertThat(methodCallLog, contains(isMethodCall("REFERENCE_DISPOSE", remoteReference)));
+  }
+
+  @Test
+  public void referencePairManager_executeRemoteMethodFor() throws Exception {
+    final ClassTemplate classTemplate = new ClassTemplateImpl(referencePairManager, 23, null, null, null);
+
+    referencePairManager.createRemoteReferenceFor(classTemplate);
+    final RemoteReference remoteReference = referencePairManager.remoteReferenceFor(classTemplate);
+    assertNotNull(remoteReference);
+    methodCallLog.clear();
+
+    classTemplate.methodTemplate(
+        "apple",
+        new ClassTemplateImpl(null, 11, null, null, null),
+        Collections.singletonList((ClassTemplate) new ClassTemplateImpl(null, 13, null, null, null)),
+        ImmutableMap.of("apple", (ClassTemplate) new ClassTemplateImpl(null, 43, null, null,null))
+    ).setOnCompleteListener(new CompletableRunnable.OnCompleteListener() {
+      @Override
+      public void onComplete(Object result) {
+        assertEquals(result, "pineapple");
+      }
+
+      @Override
+      public void onError(Throwable throwable) {
+
+      }
+    });
+
+    assertThat(methodCallLog, contains(isMethodCall("REFERENCE_METHOD", contains(
+        isRemoteReference(remoteReference.referenceId),
+        equalTo("methodTemplate"),
+        contains(
+            equalTo("apple"),
+            isUnpairedRemoteReference(new TypeReference(0), contains(11, null, null, null)),
+            contains(isUnpairedRemoteReference(new TypeReference(0), contains(13, null, null, null))),
+            new IsMapContaining<String, UnpairedRemoteReference>(equalTo("apple"), isUnpairedRemoteReference(new TypeReference(0), contains(43, null, null, null)))
+        )
+    ))));
+  }
+
+  @Test
+  public void referencePairManager_executeRemoteMethodFor_returnsReference() throws Exception {
+    final ClassTemplate classTemplate = new ClassTemplateImpl(referencePairManager, 23, null, null, null);
+
+    referencePairManager.createRemoteReferenceFor(classTemplate);
+    final RemoteReference remoteReference = referencePairManager.remoteReferenceFor(classTemplate);
+    assertNotNull(remoteReference);
+    methodCallLog.clear();
+
+    classTemplate.returnsReference().setOnCompleteListener(new CompletableRunnable.OnCompleteListener() {
+      @Override
+      public void onComplete(Object result) {
+        assertThat(result, isClassTemplate(123, null, null, null));
+      }
+
+      @Override
+      public void onError(Throwable throwable) {
+
+      }
+    });
   }
 }

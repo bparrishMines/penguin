@@ -120,23 +120,31 @@ class ReferenceMatchers {
       this.referenceMapTemplate = referenceMapTemplate;
     }
 
-    private void describe(final TypeReference typeReference, final Object creationArguments, Description description) {
-//      description
-//          .appendText(" An UnpairedRemoteReference with type reference: ")
-//          .appendText(typeReference.toString())
-//          .appendText(" and creation arguments: ")
-//          .appendText(creationArguments.toString());
+    private void describe(Integer fieldTemplate, Object referenceFieldTemplate, Object referenceListTemplate, Object referenceMapTemplate, Description description) {
+      description
+          .appendText(" A ClassTemplate with fieldTemplate:: ")
+          .appendText("" + fieldTemplate)
+          .appendText(" and referenceFieldTemplate: ")
+          .appendText("" + referenceFieldTemplate)
+          .appendText(" and referenceListTemplate: ")
+          .appendText("" + referenceListTemplate)
+          .appendText(" and referenceMapTemplate: ")
+          .appendText("" + referenceMapTemplate);
     }
 
     @Override
     public void describeTo(Description description) {
-      //describe(typeReference, creationArguments, description);
+      describe(fieldTemplate, referenceFieldTemplate, referenceListTemplate, referenceMapTemplate, description);
     }
 
-//    @Override
-//    protected void describeMismatchSafely(UnpairedRemoteReference reference, Description mismatchDescription) {
-//      describe(reference.typeReference, reference.creationArguments, mismatchDescription);
-//    }
+    @Override
+    protected void describeMismatchSafely(ClassTemplate classTemplate, Description mismatchDescription) {
+      describe(classTemplate.getFieldTemplate(),
+          classTemplate.getReferenceListTemplate(),
+          classTemplate.getReferenceListTemplate(),
+          classTemplate.getReferenceMapTemplate(),
+          mismatchDescription);
+    }
 
     @Override
     protected boolean matchesSafely(ClassTemplate item) {
@@ -147,6 +155,7 @@ class ReferenceMatchers {
     }
 
     private boolean matches(Object left, Object right) {
+      if (left == right) return true;
       if (right.equals(left)) return true;
       if (left instanceof Matcher) {
         return ((Matcher) left).matches(right);
