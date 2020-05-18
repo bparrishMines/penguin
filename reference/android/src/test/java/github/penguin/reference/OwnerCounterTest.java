@@ -2,13 +2,9 @@ package github.penguin.reference;
 
 import org.junit.Before;
 import org.junit.Test;
-
 import github.penguin.reference.reference.CompletableRunnable;
 import github.penguin.reference.reference.OwnerCounter;
-
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 public class OwnerCounterTest {
   private int callCount;
