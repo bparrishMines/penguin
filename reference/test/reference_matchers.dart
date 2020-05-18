@@ -1,8 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:reference/reference.dart';
-
-import 'package:reference/src/template/src/template.dart';
+import 'package:reference/src/template/template.dart';
 
 // Extends isMethodCall in packager:test/test.dart to support matchers in arguments.
 Matcher isMethodCallWithMatchers(String name, {dynamic arguments}) {

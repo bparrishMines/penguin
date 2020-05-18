@@ -1,3 +1,3 @@
 library template;
 
-import 'src/template.dart';
+export 'src/template.dart';
