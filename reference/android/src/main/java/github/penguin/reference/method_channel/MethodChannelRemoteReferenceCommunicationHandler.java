@@ -87,9 +87,7 @@ public abstract class MethodChannelRemoteReferenceCommunicationHandler implement
     final CompletableRunnable<Void> completer =  new CompletableRunnable<Void>() {
       @Override
       public void run() {
-        final List<Object> methodCallArgs = new ArrayList<>();
-        methodCallArgs.add(remoteReference);
-        channel.invokeMethod(MethodChannelReferencePairManager.METHOD_DISPOSE, methodCallArgs, new MethodChannel.Result() {
+        channel.invokeMethod(MethodChannelReferencePairManager.METHOD_DISPOSE, remoteReference, new MethodChannel.Result() {
           @Override
           public void success(@Nullable Object result) {
             complete(null);

@@ -37,6 +37,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertNull;
 
 public class ReferencePairManagerTest {
   private static MockBinaryMessenger mockMessenger;
@@ -116,7 +117,6 @@ public class ReferencePairManagerTest {
     assertNotNull(remoteReference);
     assertNotNull(remoteReference.referenceId);
     assertEquals(referencePairManager.localReferenceFor(remoteReference), classTemplate);
-
     assertThat(methodCallLog, contains(isMethodCall("REFERENCE_CREATE", contains(
         isRemoteReference(remoteReference.referenceId),
         isTypeReference(0),
@@ -127,5 +127,23 @@ public class ReferencePairManagerTest {
             new IsMapContaining<String, UnpairedRemoteReference>(equalTo("apple"), isUnpairedRemoteReference(new TypeReference(0), contains(43, null, null, null)))
         )
     ))));
+  }
+
+  @Test
+  public void referencePairManager_disposeRemoteReferenceFor() {
+    final ClassTemplate classTemplate = new ClassTemplateImpl(referencePairManager, 23, null, null, null);
+
+    referencePairManager.createRemoteReferenceFor(classTemplate);
+    assertNotNull(referencePairManager.remoteReferenceFor(classTemplate));
+    methodCallLog.clear();
+
+    final RemoteReference remoteReference =
+        referencePairManager.remoteReferenceFor(classTemplate);
+
+    referencePairManager.disposeRemoteReferenceFor(classTemplate);
+
+    assertNull(referencePairManager.localReferenceFor(remoteReference));
+    assertNull(referencePairManager.remoteReferenceFor(classTemplate));
+    assertThat(methodCallLog, contains(isMethodCall("REFERENCE_DISPOSE", remoteReference)));
   }
 }

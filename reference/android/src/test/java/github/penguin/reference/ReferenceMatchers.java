@@ -68,7 +68,7 @@ class ReferenceMatchers {
     protected boolean matchesSafely(final MethodCall call) {
       if (!call.method.equals(method)) return false;
       if (arguments instanceof Matcher) return ((Matcher) arguments).matches(call.arguments);
-      return arguments == call.arguments;
+      return arguments.equals(call.arguments);
     }
   }
 
