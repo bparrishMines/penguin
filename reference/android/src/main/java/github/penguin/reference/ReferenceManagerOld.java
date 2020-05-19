@@ -1,7 +1,6 @@
 package github.penguin.reference;
 
 import github.penguin.reference.reference.RemoteReference;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;

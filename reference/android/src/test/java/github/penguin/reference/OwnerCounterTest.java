@@ -1,10 +1,11 @@
 package github.penguin.reference;
 
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+
 import github.penguin.reference.reference.CompletableRunnable;
 import github.penguin.reference.reference.OwnerCounter;
-import static org.junit.Assert.assertEquals;
+import org.junit.Before;
+import org.junit.Test;
 
 public class OwnerCounterTest {
   private int callCount;
@@ -16,18 +17,20 @@ public class OwnerCounterTest {
 
   @Test
   public void ownerCounter_increment() {
-    final OwnerCounter counter = new OwnerCounter(new OwnerCounter.LifecycleListener() {
-      @Override
-      public CompletableRunnable<Void> onCreate() {
-        callCount++;
-        return null;
-      }
+    final OwnerCounter counter =
+        new OwnerCounter(
+            new OwnerCounter.LifecycleListener() {
+              @Override
+              public CompletableRunnable<Void> onCreate() {
+                callCount++;
+                return null;
+              }
 
-      @Override
-      public CompletableRunnable<Void> onDispose() {
-        return null;
-      }
-    });
+              @Override
+              public CompletableRunnable<Void> onDispose() {
+                return null;
+              }
+            });
 
     counter.increment();
     counter.increment();
@@ -37,18 +40,21 @@ public class OwnerCounterTest {
 
   @Test(expected = AssertionError.class)
   public void ownerCounter_decrement() {
-    final OwnerCounter counter = new OwnerCounter(new OwnerCounter.LifecycleListener() {
-      @Override
-      public CompletableRunnable<Void> onCreate() {
-        return null;
-      }
+    final OwnerCounter counter =
+        new OwnerCounter(
+            new OwnerCounter.LifecycleListener() {
+              @Override
+              public CompletableRunnable<Void> onCreate() {
+                return null;
+              }
 
-      @Override
-      public CompletableRunnable<Void> onDispose() {
-        callCount++;
-        return null;
-      }
-    }, 2);
+              @Override
+              public CompletableRunnable<Void> onDispose() {
+                callCount++;
+                return null;
+              }
+            },
+            2);
 
     counter.decrement();
     counter.decrement();

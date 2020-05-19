@@ -39,7 +39,8 @@ public class ReferenceMessageCodec extends StandardMessageCodec {
         return new TypeReference((Integer) readValueOfType(buffer.get(), buffer));
       case UNPAIRED_REMOTE_REFERENCE:
         //noinspection unchecked
-        return new UnpairedRemoteReference((TypeReference) readValueOfType(buffer.get(), buffer),
+        return new UnpairedRemoteReference(
+            (TypeReference) readValueOfType(buffer.get(), buffer),
             (List<Object>) readValueOfType(buffer.get(), buffer));
       default:
         return super.readValueOfType(type, buffer);

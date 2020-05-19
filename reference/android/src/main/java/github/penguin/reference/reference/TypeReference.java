@@ -1,7 +1,6 @@
 package github.penguin.reference.reference;
 
 import android.annotation.SuppressLint;
-
 import androidx.annotation.NonNull;
 
 public class TypeReference {

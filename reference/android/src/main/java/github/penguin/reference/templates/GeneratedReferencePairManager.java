@@ -16,13 +16,20 @@ import java.util.Map;
 public class GeneratedReferencePairManager extends MethodChannelReferencePairManager {
   public interface ClassTemplate extends LocalReference {
     Integer getFieldTemplate();
+
     ClassTemplate getReferenceFieldTemplate();
+
     List<ClassTemplate> getReferenceListTemplate();
+
     Map<String, ClassTemplate> getReferenceMapTemplate();
-    Object methodTemplate(String parameterTemplate,
-                                               ClassTemplate referenceParameterTemplate,
-                                               List<ClassTemplate> referenceListTemplate,
-                                               Map<String, ClassTemplate> referenceMapTemplate) throws Exception;
+
+    Object methodTemplate(
+        String parameterTemplate,
+        ClassTemplate referenceParameterTemplate,
+        List<ClassTemplate> referenceListTemplate,
+        Map<String, ClassTemplate> referenceMapTemplate)
+        throws Exception;
+
     Object returnsReference() throws Exception;
   }
 
@@ -31,49 +38,65 @@ public class GeneratedReferencePairManager extends MethodChannelReferencePairMan
     public static final String returnsReference = "returnsReference";
   }
 
-  public static abstract class GeneratedLocalReferenceCommunicationHandler implements LocalReferenceCommunicationHandler {
+  public abstract static class GeneratedLocalReferenceCommunicationHandler
+      implements LocalReferenceCommunicationHandler {
     public abstract ClassTemplate createClassTemplate(
         ReferencePairManager referencePairManager,
         int fieldTemplate,
         ClassTemplate referenceFieldTemplate,
         List<ClassTemplate> referenceListTemplate,
-        Map<String, ClassTemplate> referenceMapTemplate) throws Exception;
+        Map<String, ClassTemplate> referenceMapTemplate)
+        throws Exception;
 
     @SuppressWarnings("unchecked")
     @Override
-    public LocalReference createLocalReferenceFor(TypeReference typeReference, ReferencePairManager referencePairManager, List<Object> arguments) throws Exception {
+    public LocalReference createLocalReferenceFor(
+        TypeReference typeReference,
+        ReferencePairManager referencePairManager,
+        List<Object> arguments)
+        throws Exception {
       if (typeReference.equals(new TypeReference(0))) {
         return createClassTemplate(
             referencePairManager,
             (Integer) arguments.get(0),
             (ClassTemplate) arguments.get(1),
             arguments.get(2) != null ? new ArrayList<ClassTemplate>((List) arguments.get(2)) : null,
-            arguments.get(3) != null ? new HashMap<String, ClassTemplate>((Map) arguments.get(3)) : null
-        );
+            arguments.get(3) != null
+                ? new HashMap<String, ClassTemplate>((Map) arguments.get(3))
+                : null);
       }
 
-      final String message = String.format("Could not instantiate a %s: for %s with arguments: %s.",
-          LocalReference.class.getSimpleName(),
-          typeReference.toString(),
-          arguments.toString());
+      final String message =
+          String.format(
+              "Could not instantiate a %s: for %s with arguments: %s.",
+              LocalReference.class.getSimpleName(), typeReference.toString(), arguments.toString());
       throw new IllegalStateException(message);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public Object executeLocalMethod(LocalReference localReference, String methodName, List<Object> arguments) throws Exception {
-      if (localReference instanceof ClassTemplate && methodName.equals(GeneratedMethodNames.methodTemplate)) {
-        return ((ClassTemplate) localReference).methodTemplate(
-            (String) arguments.get(0),
-            (ClassTemplate) arguments.get(1),
-            arguments.get(2) != null ? new ArrayList<ClassTemplate>((List) arguments.get(2)) : null,
-            arguments.get(3) != null ? new HashMap<String, ClassTemplate>((Map) arguments.get(3)) : null
-        );
-      } else if (localReference instanceof ClassTemplate && methodName.equals(GeneratedMethodNames.returnsReference)) {
+    public Object executeLocalMethod(
+        LocalReference localReference, String methodName, List<Object> arguments) throws Exception {
+      if (localReference instanceof ClassTemplate
+          && methodName.equals(GeneratedMethodNames.methodTemplate)) {
+        return ((ClassTemplate) localReference)
+            .methodTemplate(
+                (String) arguments.get(0),
+                (ClassTemplate) arguments.get(1),
+                arguments.get(2) != null
+                    ? new ArrayList<ClassTemplate>((List) arguments.get(2))
+                    : null,
+                arguments.get(3) != null
+                    ? new HashMap<String, ClassTemplate>((Map) arguments.get(3))
+                    : null);
+      } else if (localReference instanceof ClassTemplate
+          && methodName.equals(GeneratedMethodNames.returnsReference)) {
         return ((ClassTemplate) localReference).returnsReference();
       }
 
-      final String message = String.format("Could not call %s on %s.", methodName, localReference.getClass().getName());
+      final String message =
+          String.format(
+              "Could not call %s on %s.", methodName, localReference.getClass().getName());
       throw new IllegalStateException(message);
     }
 
@@ -84,19 +107,22 @@ public class GeneratedReferencePairManager extends MethodChannelReferencePairMan
     }
   }
 
-  public static class GeneratedRemoteReferenceCommunicationHandler extends MethodChannelRemoteReferenceCommunicationHandler {
+  public static class GeneratedRemoteReferenceCommunicationHandler
+      extends MethodChannelRemoteReferenceCommunicationHandler {
     @Override
     public List<Object> creationArgumentsFor(LocalReference localReference) {
       if (localReference instanceof ClassTemplate) {
         final ClassTemplate value = (ClassTemplate) localReference;
-        return Arrays.asList(value.getFieldTemplate(),
+        return Arrays.asList(
+            value.getFieldTemplate(),
             value.getReferenceFieldTemplate(),
             value.getReferenceListTemplate(),
-            value.getReferenceMapTemplate()
-        );
+            value.getReferenceMapTemplate());
       }
 
-      final String message = String.format("Could not get creation arguments for a %s.", localReference.getClass().getName());
+      final String message =
+          String.format(
+              "Could not get creation arguments for a %s.", localReference.getClass().getName());
       throw new IllegalStateException(message);
     }
   }
@@ -105,7 +131,10 @@ public class GeneratedReferencePairManager extends MethodChannelReferencePairMan
       final BinaryMessenger binaryMessenger,
       final String channelName,
       final GeneratedLocalReferenceCommunicationHandler localHandler) {
-    super(binaryMessenger, channelName, localHandler,
+    super(
+        binaryMessenger,
+        channelName,
+        localHandler,
         new GeneratedRemoteReferenceCommunicationHandler(),
         new ReferenceMessageCodec());
   }
@@ -124,9 +153,10 @@ public class GeneratedReferencePairManager extends MethodChannelReferencePairMan
   public TypeReference typeReferenceFor(LocalReference localReference) {
     if (localReference instanceof ClassTemplate) return new TypeReference(0);
 
-    final String message = String.format("Could not find a %s for %s.",
-        TypeReference.class.getSimpleName(),
-        localReference.getClass().getName());
+    final String message =
+        String.format(
+            "Could not find a %s for %s.",
+            TypeReference.class.getSimpleName(), localReference.getClass().getName());
     throw new IllegalStateException(message);
   }
 }

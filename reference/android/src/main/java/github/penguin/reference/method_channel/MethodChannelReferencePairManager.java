@@ -1,8 +1,8 @@
 package github.penguin.reference.method_channel;
 
 import androidx.annotation.NonNull;
-import github.penguin.reference.reference.RemoteReference;
 import github.penguin.reference.reference.ReferencePairManager;
+import github.penguin.reference.reference.RemoteReference;
 import github.penguin.reference.reference.TypeReference;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
@@ -11,15 +11,18 @@ import io.flutter.plugin.common.MethodCodec;
 import io.flutter.plugin.common.StandardMethodCodec;
 import java.util.List;
 
-public abstract class MethodChannelReferencePairManager extends ReferencePairManager implements MethodChannel.MethodCallHandler {
+public abstract class MethodChannelReferencePairManager extends ReferencePairManager
+    implements MethodChannel.MethodCallHandler {
   static final String METHOD_CREATE = "REFERENCE_CREATE";
   static final String METHOD_METHOD = "REFERENCE_METHOD";
   static final String METHOD_DISPOSE = "REFERENCE_DISPOSE";
 
   @SuppressWarnings("WeakerAccess")
   public final BinaryMessenger binaryMessenger;
+
   @SuppressWarnings("WeakerAccess")
   public final String channelName;
+
   public final MethodCodec methodCodec;
 
   private final MethodChannelRemoteReferenceCommunicationHandler remoteHandler;
@@ -56,27 +59,31 @@ public abstract class MethodChannelReferencePairManager extends ReferencePairMan
 
   @SuppressWarnings("unchecked")
   @Override
-  public void onMethodCall(@NonNull MethodCall call, @NonNull final MethodChannel.Result channelResult) {
+  public void onMethodCall(
+      @NonNull MethodCall call, @NonNull final MethodChannel.Result channelResult) {
     try {
       switch (call.method) {
-        case METHOD_CREATE: {
-          final List<Object> arguments = (List<Object>) call.arguments;
-          createLocalReferenceFor((RemoteReference) arguments.get(0),
-              (TypeReference) arguments.get(1),
-              (List<Object>) arguments.get(2)
-          );
-          channelResult.success(null);
-          break;
-        }
-        case METHOD_METHOD: {
-          final List<Object> arguments = (List<Object>) call.arguments;
-          final Object result = executeLocalMethodFor(
-              (RemoteReference) arguments.get(0),
-              (String) arguments.get(1),
-              (List<Object>) arguments.get(2));
-          channelResult.success(result);
-          break;
-        }
+        case METHOD_CREATE:
+          {
+            final List<Object> arguments = (List<Object>) call.arguments;
+            createLocalReferenceFor(
+                (RemoteReference) arguments.get(0),
+                (TypeReference) arguments.get(1),
+                (List<Object>) arguments.get(2));
+            channelResult.success(null);
+            break;
+          }
+        case METHOD_METHOD:
+          {
+            final List<Object> arguments = (List<Object>) call.arguments;
+            final Object result =
+                executeLocalMethodFor(
+                    (RemoteReference) arguments.get(0),
+                    (String) arguments.get(1),
+                    (List<Object>) arguments.get(2));
+            channelResult.success(result);
+            break;
+          }
         case METHOD_DISPOSE:
           disposeLocalReferenceFor((RemoteReference) call.arguments);
           channelResult.success(null);
@@ -85,7 +92,8 @@ public abstract class MethodChannelReferencePairManager extends ReferencePairMan
           channelResult.notImplemented();
       }
     } catch (Exception exception) {
-      channelResult.error(exception.getClass().getName(),
+      channelResult.error(
+          exception.getClass().getName(),
           exception.getLocalizedMessage(),
           android.util.Log.getStackTraceString(exception));
     }
@@ -106,4 +114,3 @@ public abstract class MethodChannelReferencePairManager extends ReferencePairMan
     return localHandler;
   }
 }
-

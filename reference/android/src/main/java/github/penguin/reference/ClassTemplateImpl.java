@@ -1,12 +1,12 @@
 package github.penguin.reference;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 import github.penguin.reference.reference.CompletableRunnable;
 import github.penguin.reference.reference.ReferencePairManager;
 import github.penguin.reference.templates.GeneratedReferencePairManager;
 import github.penguin.reference.templates.GeneratedReferencePairManager.ClassTemplate;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings("RedundantThrows")
 public class ClassTemplateImpl implements GeneratedReferencePairManager.ClassTemplate {
@@ -17,11 +17,11 @@ public class ClassTemplateImpl implements GeneratedReferencePairManager.ClassTem
 
   private ReferencePairManager referencePairManager;
 
-  ClassTemplateImpl(Integer fieldTemplate,
-                    ClassTemplate referenceFieldTemplate,
-                       List<ClassTemplate> referenceListTemplate,
-                       Map<String,
-                           ClassTemplate> referenceMapTemplate) {
+  ClassTemplateImpl(
+      Integer fieldTemplate,
+      ClassTemplate referenceFieldTemplate,
+      List<ClassTemplate> referenceListTemplate,
+      Map<String, ClassTemplate> referenceMapTemplate) {
     this.fieldTemplate = fieldTemplate;
     this.referenceFieldTemplate = referenceFieldTemplate;
     this.referenceListTemplate = referenceListTemplate;
@@ -49,27 +49,39 @@ public class ClassTemplateImpl implements GeneratedReferencePairManager.ClassTem
   }
 
   @Override
-  public CompletableRunnable<String> methodTemplate(final String parameterTemplate, final ClassTemplate referenceParameterTemplate, final List<ClassTemplate> referenceListTemplate, final Map<String, ClassTemplate> referenceMapTemplate) throws Exception {
-    final CompletableRunnable<String> completer = new CompletableRunnable<String>() {
-      @Override
-      public void run() {
-        referencePairManager.executeRemoteMethodFor(
-            ClassTemplateImpl.this,
-            GeneratedReferencePairManager.GeneratedMethodNames.methodTemplate,
-            Arrays.asList(parameterTemplate, referenceParameterTemplate, referenceListTemplate,  referenceMapTemplate)
-        ).setOnCompleteListener(new OnCompleteListener() {
+  public CompletableRunnable<String> methodTemplate(
+      final String parameterTemplate,
+      final ClassTemplate referenceParameterTemplate,
+      final List<ClassTemplate> referenceListTemplate,
+      final Map<String, ClassTemplate> referenceMapTemplate)
+      throws Exception {
+    final CompletableRunnable<String> completer =
+        new CompletableRunnable<String>() {
           @Override
-          public void onComplete(Object result) {
-            complete((String) result);
-          }
+          public void run() {
+            referencePairManager
+                .executeRemoteMethodFor(
+                    ClassTemplateImpl.this,
+                    GeneratedReferencePairManager.GeneratedMethodNames.methodTemplate,
+                    Arrays.asList(
+                        parameterTemplate,
+                        referenceParameterTemplate,
+                        referenceListTemplate,
+                        referenceMapTemplate))
+                .setOnCompleteListener(
+                    new OnCompleteListener() {
+                      @Override
+                      public void onComplete(Object result) {
+                        complete((String) result);
+                      }
 
-          @Override
-          public void onError(Throwable throwable) {
-            completeWithError(throwable);
+                      @Override
+                      public void onError(Throwable throwable) {
+                        completeWithError(throwable);
+                      }
+                    });
           }
-        });
-      }
-    };
+        };
 
     completer.run();
     return completer;
@@ -77,25 +89,28 @@ public class ClassTemplateImpl implements GeneratedReferencePairManager.ClassTem
 
   @Override
   public CompletableRunnable<ClassTemplate> returnsReference() throws Exception {
-    final CompletableRunnable<ClassTemplate> completer = new CompletableRunnable<ClassTemplate>() {
-      @Override
-      public void run() {
-        referencePairManager.executeRemoteMethodFor(
-            ClassTemplateImpl.this,
-            GeneratedReferencePairManager.GeneratedMethodNames.returnsReference
-        ).setOnCompleteListener(new OnCompleteListener() {
+    final CompletableRunnable<ClassTemplate> completer =
+        new CompletableRunnable<ClassTemplate>() {
           @Override
-          public void onComplete(Object result) {
-            complete((ClassTemplate) result);
-          }
+          public void run() {
+            referencePairManager
+                .executeRemoteMethodFor(
+                    ClassTemplateImpl.this,
+                    GeneratedReferencePairManager.GeneratedMethodNames.returnsReference)
+                .setOnCompleteListener(
+                    new OnCompleteListener() {
+                      @Override
+                      public void onComplete(Object result) {
+                        complete((ClassTemplate) result);
+                      }
 
-          @Override
-          public void onError(Throwable throwable) {
-            completeWithError(throwable);
+                      @Override
+                      public void onError(Throwable throwable) {
+                        completeWithError(throwable);
+                      }
+                    });
           }
-        });
-      }
-    };
+        };
 
     completer.run();
     return completer;

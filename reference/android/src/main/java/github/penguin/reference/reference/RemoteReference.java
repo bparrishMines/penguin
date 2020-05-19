@@ -11,7 +11,8 @@ public class RemoteReference {
 
   @Override
   public boolean equals(Object obj) {
-    return obj instanceof RemoteReference && referenceId.equals(((RemoteReference) obj).referenceId);
+    return obj instanceof RemoteReference
+        && referenceId.equals(((RemoteReference) obj).referenceId);
   }
 
   @Override

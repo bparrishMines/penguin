@@ -1,31 +1,31 @@
 package github.penguin.reference;
 
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.hamcrest.TypeSafeMatcher;
 import github.penguin.reference.reference.RemoteReference;
 import github.penguin.reference.reference.TypeReference;
 import github.penguin.reference.reference.UnpairedRemoteReference;
 import github.penguin.reference.templates.GeneratedReferencePairManager.ClassTemplate;
 import io.flutter.plugin.common.MethodCall;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
 
 class ReferenceMatchers {
   static Matcher isMethodCall(String method, Object arguments) {
     return new IsMethodCall(method, arguments);
   }
 
-  static Matcher isUnpairedRemoteReference(final TypeReference typeReference, final Object creationArguments) {
+  static Matcher isUnpairedRemoteReference(
+      final TypeReference typeReference, final Object creationArguments) {
     return new IsUnpairedRemoteReference(typeReference, creationArguments);
   }
 
-  static Matcher isClassTemplate(int fieldTemplate,
-                                 Object referenceFieldTemplate,
-                                 Object referenceListTemplate,
-                                 Object referenceMapTemplate) {
-    return new IsClassTemplate(fieldTemplate,
-        referenceFieldTemplate,
-        referenceListTemplate,
-        referenceMapTemplate);
+  static Matcher isClassTemplate(
+      int fieldTemplate,
+      Object referenceFieldTemplate,
+      Object referenceListTemplate,
+      Object referenceMapTemplate) {
+    return new IsClassTemplate(
+        fieldTemplate, referenceFieldTemplate, referenceListTemplate, referenceMapTemplate);
   }
 
   static Matcher isTypeReference(int typeId) {
@@ -71,7 +71,7 @@ class ReferenceMatchers {
     }
   }
 
-  private static class IsUnpairedRemoteReference extends TypeSafeMatcher<UnpairedRemoteReference>  {
+  private static class IsUnpairedRemoteReference extends TypeSafeMatcher<UnpairedRemoteReference> {
     private final TypeReference typeReference;
     private final Object creationArguments;
 
@@ -80,7 +80,10 @@ class ReferenceMatchers {
       this.creationArguments = creationArguments;
     }
 
-    private void describe(final TypeReference typeReference, final Object creationArguments, Description description) {
+    private void describe(
+        final TypeReference typeReference,
+        final Object creationArguments,
+        Description description) {
       description
           .appendText(" An UnpairedRemoteReference with type reference: ")
           .appendText(typeReference.toString())
@@ -94,14 +97,16 @@ class ReferenceMatchers {
     }
 
     @Override
-    protected void describeMismatchSafely(UnpairedRemoteReference reference, Description mismatchDescription) {
+    protected void describeMismatchSafely(
+        UnpairedRemoteReference reference, Description mismatchDescription) {
       describe(reference.typeReference, reference.creationArguments, mismatchDescription);
     }
 
     @Override
     protected boolean matchesSafely(UnpairedRemoteReference reference) {
       if (!typeReference.equals(reference.typeReference)) return false;
-      if (creationArguments instanceof Matcher) return ((Matcher) creationArguments).matches(reference.creationArguments);
+      if (creationArguments instanceof Matcher)
+        return ((Matcher) creationArguments).matches(reference.creationArguments);
       return creationArguments == reference.creationArguments;
     }
   }
@@ -112,14 +117,23 @@ class ReferenceMatchers {
     private final Object referenceListTemplate;
     private final Object referenceMapTemplate;
 
-    private IsClassTemplate(int fieldTemplate, Object referenceFieldTemplate, Object referenceListTemplate, Object referenceMapTemplate) {
+    private IsClassTemplate(
+        int fieldTemplate,
+        Object referenceFieldTemplate,
+        Object referenceListTemplate,
+        Object referenceMapTemplate) {
       this.fieldTemplate = fieldTemplate;
       this.referenceFieldTemplate = referenceFieldTemplate;
       this.referenceListTemplate = referenceListTemplate;
       this.referenceMapTemplate = referenceMapTemplate;
     }
 
-    private void describe(Integer fieldTemplate, Object referenceFieldTemplate, Object referenceListTemplate, Object referenceMapTemplate, Description description) {
+    private void describe(
+        Integer fieldTemplate,
+        Object referenceFieldTemplate,
+        Object referenceListTemplate,
+        Object referenceMapTemplate,
+        Description description) {
       description
           .appendText(" A ClassTemplate with fieldTemplate:: ")
           .appendText("" + fieldTemplate)
@@ -133,12 +147,19 @@ class ReferenceMatchers {
 
     @Override
     public void describeTo(Description description) {
-      describe(fieldTemplate, referenceFieldTemplate, referenceListTemplate, referenceMapTemplate, description);
+      describe(
+          fieldTemplate,
+          referenceFieldTemplate,
+          referenceListTemplate,
+          referenceMapTemplate,
+          description);
     }
 
     @Override
-    protected void describeMismatchSafely(ClassTemplate classTemplate, Description mismatchDescription) {
-      describe(classTemplate.getFieldTemplate(),
+    protected void describeMismatchSafely(
+        ClassTemplate classTemplate, Description mismatchDescription) {
+      describe(
+          classTemplate.getFieldTemplate(),
           classTemplate.getReferenceListTemplate(),
           classTemplate.getReferenceListTemplate(),
           classTemplate.getReferenceMapTemplate(),
@@ -178,9 +199,7 @@ class ReferenceMatchers {
 
     // TODO: All describe matchers
     @Override
-    public void describeTo(Description description) {
-
-    }
+    public void describeTo(Description description) {}
   }
 
   private static class IsRemoteReference extends TypeSafeMatcher<RemoteReference> {
@@ -197,8 +216,6 @@ class ReferenceMatchers {
     }
 
     @Override
-    public void describeTo(Description description) {
-
-    }
+    public void describeTo(Description description) {}
   }
 }

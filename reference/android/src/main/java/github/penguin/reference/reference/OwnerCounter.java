@@ -3,6 +3,7 @@ package github.penguin.reference.reference;
 public class OwnerCounter {
   public interface LifecycleListener {
     CompletableRunnable<Void> onCreate();
+
     CompletableRunnable<Void> onDispose();
   }
 

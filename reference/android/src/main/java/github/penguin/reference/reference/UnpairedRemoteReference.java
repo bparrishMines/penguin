@@ -15,9 +15,10 @@ public class UnpairedRemoteReference {
   @NonNull
   @Override
   public String toString() {
-    return String.format("%s(%s, %s)", UnpairedRemoteReference.class.getName(),
+    return String.format(
+        "%s(%s, %s)",
+        UnpairedRemoteReference.class.getName(),
         typeReference.toString(),
-        creationArguments.toString()
-    );
+        creationArguments.toString());
   }
 }

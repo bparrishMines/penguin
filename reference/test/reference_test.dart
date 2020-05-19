@@ -258,8 +258,8 @@ void main() {
         (ByteData data) {},
       );
 
-      final ClassTemplate testClass = referencePairManager
-          .localReferenceFor(RemoteReference('aowejea;io'));
+      final ClassTemplate testClass =
+          referencePairManager.localReferenceFor(RemoteReference('aowejea;io'));
 
       expect(
         testClass,
