@@ -34,7 +34,8 @@ public class MockBinaryMessenger implements BinaryMessenger {
     });
   }
 
-  public void receive(final String channel, final ByteBuffer byteBuffer) {
+  @SuppressWarnings("SameParameterValue")
+  void receive(final String channel, final ByteBuffer byteBuffer) {
     byteBuffer.position(0);
     Objects.requireNonNull(messageHandlers.get(channel)).onMessage(byteBuffer, mockReply);
   }

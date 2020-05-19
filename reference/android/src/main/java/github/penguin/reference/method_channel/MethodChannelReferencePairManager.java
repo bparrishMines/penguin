@@ -16,13 +16,16 @@ public abstract class MethodChannelReferencePairManager extends ReferencePairMan
   static final String METHOD_METHOD = "REFERENCE_METHOD";
   static final String METHOD_DISPOSE = "REFERENCE_DISPOSE";
 
+  @SuppressWarnings("WeakerAccess")
   public final BinaryMessenger binaryMessenger;
+  @SuppressWarnings("WeakerAccess")
   public final String channelName;
   public final MethodCodec methodCodec;
 
   private final MethodChannelRemoteReferenceCommunicationHandler remoteHandler;
   private final LocalReferenceCommunicationHandler localHandler;
 
+  @SuppressWarnings("unused")
   public MethodChannelReferencePairManager(
       final BinaryMessenger binaryMessenger,
       final String channelName,
@@ -88,6 +91,7 @@ public abstract class MethodChannelReferencePairManager extends ReferencePairMan
     }
   }
 
+  @SuppressWarnings("unused")
   public MethodChannel getChannel() {
     return getRemoteHandler().channel;
   }

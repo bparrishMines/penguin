@@ -7,7 +7,7 @@ public class OwnerCounter {
   }
 
   private int ownerCount = 0;
-  public final LifecycleListener lifecycleListener;
+  private final LifecycleListener lifecycleListener;
 
   public OwnerCounter(final LifecycleListener lifecycleListener) {
     if (lifecycleListener == null) throw new IllegalArgumentException();
@@ -20,12 +20,14 @@ public class OwnerCounter {
     ownerCount = initialOwnerCount;
   }
 
+  @SuppressWarnings("UnusedReturnValue")
   public CompletableRunnable<Void> increment() {
     ownerCount++;
     if (ownerCount == 1) return lifecycleListener.onCreate();
     return null;
   }
 
+  @SuppressWarnings("UnusedReturnValue")
   public CompletableRunnable<Void> decrement() {
     if (ownerCount < 1) {
       final String message =
@@ -39,6 +41,7 @@ public class OwnerCounter {
     return null;
   }
 
+  @SuppressWarnings("unused")
   public int getOwnerCount() {
     return ownerCount;
   }

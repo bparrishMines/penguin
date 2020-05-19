@@ -17,7 +17,7 @@ public class ClassTemplateImpl implements GeneratedReferencePairManager.ClassTem
 
   private ReferencePairManager referencePairManager;
 
-  public ClassTemplateImpl(int fieldTemplate,
+  ClassTemplateImpl(int fieldTemplate,
                            ClassTemplate referenceFieldTemplate,
                        List<ClassTemplate> referenceListTemplate,
                        Map<String,
@@ -101,7 +101,7 @@ public class ClassTemplateImpl implements GeneratedReferencePairManager.ClassTem
     return completer;
   }
 
-  public ClassTemplateImpl setReferencePairManager(final ReferencePairManager referencePairManager) {
+  ClassTemplateImpl setReferencePairManager(final ReferencePairManager referencePairManager) {
     this.referencePairManager = referencePairManager;
     return this;
   }

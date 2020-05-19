@@ -3,7 +3,6 @@ package github.penguin.reference.templates;
 import github.penguin.reference.method_channel.MethodChannelReferencePairManager;
 import github.penguin.reference.method_channel.MethodChannelRemoteReferenceCommunicationHandler;
 import github.penguin.reference.method_channel.ReferenceMessageCodec;
-import github.penguin.reference.reference.CompletableRunnable;
 import github.penguin.reference.reference.LocalReference;
 import github.penguin.reference.reference.ReferencePairManager;
 import github.penguin.reference.reference.TypeReference;
@@ -40,6 +39,7 @@ public class GeneratedReferencePairManager extends MethodChannelReferencePairMan
         List<ClassTemplate> referenceListTemplate,
         Map<String, ClassTemplate> referenceMapTemplate) throws Exception;
 
+    @SuppressWarnings("unchecked")
     @Override
     public LocalReference createLocalReferenceFor(TypeReference typeReference, ReferencePairManager referencePairManager, List<Object> arguments) throws Exception {
       if (typeReference.equals(new TypeReference(0))) {
@@ -59,6 +59,7 @@ public class GeneratedReferencePairManager extends MethodChannelReferencePairMan
       throw new IllegalStateException(message);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Object executeLocalMethod(LocalReference localReference, String methodName, List<Object> arguments) throws Exception {
       if (localReference instanceof ClassTemplate && methodName.equals(GeneratedMethodNames.methodTemplate)) {
@@ -76,6 +77,7 @@ public class GeneratedReferencePairManager extends MethodChannelReferencePairMan
       throw new IllegalStateException(message);
     }
 
+    @SuppressWarnings("RedundantThrows")
     @Override
     public void disposeLocalReference(LocalReference localReference) throws Exception {
       // Do nothing.
@@ -108,6 +110,7 @@ public class GeneratedReferencePairManager extends MethodChannelReferencePairMan
         new ReferenceMessageCodec());
   }
 
+  @SuppressWarnings("unused")
   public GeneratedReferencePairManager(
       final BinaryMessenger binaryMessenger,
       final String channelName,

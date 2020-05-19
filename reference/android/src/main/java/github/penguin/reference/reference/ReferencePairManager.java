@@ -91,6 +91,7 @@ public abstract class ReferencePairManager {
     getLocalHandler().disposeLocalReference(localReference);
   }
 
+  @SuppressWarnings("UnusedReturnValue")
   public CompletableRunnable<RemoteReference> createRemoteReferenceFor(final LocalReference localReference) {
     return createRemoteReferenceFor(localReference, typeReferenceFor(localReference));
   }
@@ -130,6 +131,7 @@ public abstract class ReferencePairManager {
     return referenceRunnable;
   }
 
+  @SuppressWarnings("UnusedReturnValue")
   public CompletableRunnable<Void> disposeRemoteReferenceFor(LocalReference localReference) {
     assertIsInitialized();
 
