@@ -3,6 +3,7 @@ package github.penguin.reference;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.common.collect.ImmutableMap;
+import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -167,12 +168,14 @@ public class ReferencePairManagerTest {
 
     final List<Object> results = new ArrayList<>();
 
-    classTemplate.methodTemplate(
+    @SuppressWarnings("unchecked")
+    final CompletableRunnable<Object> runnable = (CompletableRunnable<Object>) classTemplate.methodTemplate(
         "apple",
         new ClassTemplateImpl(null, 11, null, null, null),
         Collections.singletonList((ClassTemplate) new ClassTemplateImpl(null, 13, null, null, null)),
         ImmutableMap.of("apple", (ClassTemplate) new ClassTemplateImpl(null, 43, null, null,null))
-    ).setOnCompleteListener(new CompletableRunnable.OnCompleteListener() {
+    );
+    runnable.setOnCompleteListener(new CompletableRunnable.OnCompleteListener() {
       @Override
       public void onComplete(Object result) {
         results.add(result);
@@ -208,7 +211,9 @@ public class ReferencePairManagerTest {
 
     final List<Object> results = new ArrayList<>();
 
-    classTemplate.returnsReference().setOnCompleteListener(new CompletableRunnable.OnCompleteListener() {
+    @SuppressWarnings("unchecked")
+    final CompletableRunnable<Object> runnable = (CompletableRunnable<Object>) classTemplate.returnsReference();
+    runnable.setOnCompleteListener(new CompletableRunnable.OnCompleteListener() {
       @Override
       public void onComplete(Object result) {
         results.add(result);
@@ -251,7 +256,7 @@ public class ReferencePairManagerTest {
   @SuppressWarnings("RedundantThrows")
   @Test
   public void referencePairManager_executeLocalMethodFor() throws Exception {
-    final ClassTemplate classTemplate = new ClassTemplateImpl(referencePairManager, 11, null, null, null);
+    final TestClassTemplate classTemplate = new TestClassTemplate();
     referencePairManager.createRemoteReferenceFor(classTemplate);
 
     final ByteBuffer message = referencePairManager.methodCodec.encodeMethodCall(
@@ -267,5 +272,50 @@ public class ReferencePairManagerTest {
         ))
     );
     mockMessenger.receive("reference_plugin", message);
+
+    assertThat(replyMethodCallLog, contains((Matcher) equalTo("tornado")));
+    assertThat(classTemplate.lastMethodTemplateArguments, contains(
+        equalTo("Goku"),
+        isClassTemplate(15, null, null, null),
+        contains(isClassTemplate(16, null, null, null)),
+        hasEntry(equalTo("apple"), isClassTemplate(43, null, null, null))
+    ));
+  }
+
+  @SuppressWarnings("RedundantThrows")
+  @Test
+  public void referencePairManager_executeLocalMethodFor_returnsReference() throws Exception {
+    final TestClassTemplate classTemplate = new TestClassTemplate();
+    referencePairManager.createRemoteReferenceFor(classTemplate);
+
+    final ByteBuffer message = referencePairManager.methodCodec.encodeMethodCall(
+        new MethodCall("REFERENCE_METHOD", Arrays.asList(
+            referencePairManager.remoteReferenceFor(classTemplate),
+            "returnsReference",
+            Collections.emptyList()
+        ))
+    );
+
+    mockMessenger.receive("reference_plugin", message);
+    assertThat(replyMethodCallLog, contains(isUnpairedRemoteReference(new TypeReference(0), contains(11, null, null, null))));
+  }
+
+  @Test
+  public void referencePairManager_disposeLocalReference() {
+    final ByteBuffer createMessage = referencePairManager.methodCodec.encodeMethodCall(
+        new MethodCall("REFERENCE_CREATE", Arrays.asList(
+            new RemoteReference("animal"),
+            new TypeReference(0),
+            Arrays.asList(32, null, null, null)
+        ))
+    );
+    mockMessenger.receive("reference_plugin", createMessage);
+    assertThat(referencePairManager.localReferenceFor(new RemoteReference("animal")), notNullValue());
+
+    final ByteBuffer disposeMessage = referencePairManager.methodCodec.encodeMethodCall(
+        new MethodCall("REFERENCE_DISPOSE", new RemoteReference("animal"))
+    );
+    mockMessenger.receive("reference_plugin", disposeMessage);
+    assertThat(referencePairManager.localReferenceFor(new RemoteReference("animal")), nullValue());
   }
 }

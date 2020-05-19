@@ -3,7 +3,6 @@ package github.penguin.reference;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
-
 import github.penguin.reference.reference.RemoteReference;
 import github.penguin.reference.reference.TypeReference;
 import github.penguin.reference.reference.UnpairedRemoteReference;

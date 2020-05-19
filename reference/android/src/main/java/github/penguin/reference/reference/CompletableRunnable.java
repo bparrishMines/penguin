@@ -1,5 +1,6 @@
 package github.penguin.reference.reference;
 
+// TODO: empty values and auto run and complete values and tryGetResult
 public abstract class CompletableRunnable<T> implements Runnable {
   private T result;
   private Throwable error;

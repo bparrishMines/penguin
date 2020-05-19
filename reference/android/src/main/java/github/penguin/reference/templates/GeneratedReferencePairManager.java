@@ -20,11 +20,11 @@ public class GeneratedReferencePairManager extends MethodChannelReferencePairMan
     ClassTemplate getReferenceFieldTemplate();
     List<ClassTemplate> getReferenceListTemplate();
     Map<String, ClassTemplate> getReferenceMapTemplate();
-    CompletableRunnable<String> methodTemplate(String parameterTemplate,
+    Object methodTemplate(String parameterTemplate,
                                                ClassTemplate referenceParameterTemplate,
                                                List<ClassTemplate> referenceListTemplate,
                                                Map<String, ClassTemplate> referenceMapTemplate) throws Exception;
-    CompletableRunnable<ClassTemplate> returnsReference() throws Exception;
+    Object returnsReference() throws Exception;
   }
 
   public static class GeneratedMethodNames {
