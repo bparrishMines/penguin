@@ -1,10 +1,8 @@
 package github.penguin.reference;
 
 import androidx.annotation.NonNull;
-
 import java.util.List;
 import java.util.Map;
-
 import github.penguin.reference.reference.ReferencePairManager;
 import github.penguin.reference.templates.GeneratedReferencePairManager;
 import github.penguin.reference.templates.GeneratedReferencePairManager.ClassTemplate;
@@ -24,8 +22,8 @@ public class ReferencePlugin implements FlutterPlugin {
         "reference_plugin",
         new GeneratedReferencePairManager.GeneratedLocalReferenceCommunicationHandler() {
           @Override
-          public ClassTemplate createClassTemplate(ReferencePairManager referencePairManager, int fieldTemplate, ClassTemplate referenceFieldTemplate, List<ClassTemplate> referenceListTemplate, Map<String, ClassTemplate> referenceMapTemplate) throws Exception {
-            return new ClassTemplateImpl(referencePairManager, fieldTemplate, referenceFieldTemplate, referenceListTemplate, referenceMapTemplate);
+          public ClassTemplate createClassTemplate(ReferencePairManager referencePairManager, int fieldTemplate, ClassTemplate referenceFieldTemplate, List<ClassTemplate> referenceListTemplate, Map<String, ClassTemplate> referenceMapTemplate) {
+            return new ClassTemplateImpl(fieldTemplate, referenceFieldTemplate, referenceListTemplate, referenceMapTemplate).setReferencePairManager(referencePairManager);
           }
         })
         .initialize();

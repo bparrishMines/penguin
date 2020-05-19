@@ -105,7 +105,7 @@ public class ReferencePairManagerTest {
           @SuppressWarnings("RedundantThrows")
           @Override
           public GeneratedReferencePairManager.ClassTemplate createClassTemplate(ReferencePairManager referencePairManager, int fieldTemplate, GeneratedReferencePairManager.ClassTemplate referenceFieldTemplate, List<GeneratedReferencePairManager.ClassTemplate> referenceListTemplate, Map<String, GeneratedReferencePairManager.ClassTemplate> referenceMapTemplate) throws Exception {
-            return new ClassTemplateImpl(referencePairManager, fieldTemplate, referenceFieldTemplate, referenceListTemplate, referenceMapTemplate);
+            return new ClassTemplateImpl(fieldTemplate, referenceFieldTemplate, referenceListTemplate, referenceMapTemplate).setReferencePairManager(referencePairManager);
           }
         });
     referencePairManager.initialize();
@@ -114,11 +114,10 @@ public class ReferencePairManagerTest {
   @Test
   public void referencePairManager_createRemoteReferenceFor() {
     final ClassTemplateImpl classTemplate = new ClassTemplateImpl(
-        referencePairManager,
         23,
-        new ClassTemplateImpl(null, 11, null, null, null),
-        Collections.singletonList((ClassTemplate) new ClassTemplateImpl(null, 13, null, null, null)),
-        ImmutableMap.of("apple", (ClassTemplate) new ClassTemplateImpl(null, 43, null, null,null))
+        new ClassTemplateImpl(11, null, null, null),
+        Collections.singletonList((ClassTemplate) new ClassTemplateImpl(13, null, null, null)),
+        ImmutableMap.of("apple", (ClassTemplate) new ClassTemplateImpl(43, null, null,null))
     );
 
     referencePairManager.createRemoteReferenceFor(classTemplate);
@@ -141,7 +140,7 @@ public class ReferencePairManagerTest {
 
   @Test
   public void referencePairManager_disposeRemoteReferenceFor() {
-    final ClassTemplate classTemplate = new ClassTemplateImpl(referencePairManager, 23, null, null, null);
+    final ClassTemplate classTemplate = new ClassTemplateImpl(23, null, null, null);
 
     referencePairManager.createRemoteReferenceFor(classTemplate);
     assertNotNull(referencePairManager.remoteReferenceFor(classTemplate));
@@ -159,7 +158,7 @@ public class ReferencePairManagerTest {
 
   @Test
   public void referencePairManager_executeRemoteMethodFor() throws Exception {
-    final ClassTemplate classTemplate = new ClassTemplateImpl(referencePairManager, 23, null, null, null);
+    final ClassTemplate classTemplate = new ClassTemplateImpl(23, null, null, null).setReferencePairManager(referencePairManager);
 
     referencePairManager.createRemoteReferenceFor(classTemplate);
     final RemoteReference remoteReference = referencePairManager.remoteReferenceFor(classTemplate);
@@ -171,9 +170,9 @@ public class ReferencePairManagerTest {
     @SuppressWarnings("unchecked")
     final CompletableRunnable<Object> runnable = (CompletableRunnable<Object>) classTemplate.methodTemplate(
         "apple",
-        new ClassTemplateImpl(null, 11, null, null, null),
-        Collections.singletonList((ClassTemplate) new ClassTemplateImpl(null, 13, null, null, null)),
-        ImmutableMap.of("apple", (ClassTemplate) new ClassTemplateImpl(null, 43, null, null,null))
+        new ClassTemplateImpl( 11, null, null, null),
+        Collections.singletonList((ClassTemplate) new ClassTemplateImpl( 13, null, null, null)),
+        ImmutableMap.of("apple", (ClassTemplate) new ClassTemplateImpl( 43, null, null,null))
     );
     runnable.setOnCompleteListener(new CompletableRunnable.OnCompleteListener() {
       @Override
@@ -202,7 +201,7 @@ public class ReferencePairManagerTest {
 
   @Test
   public void referencePairManager_executeRemoteMethodFor_returnsReference() throws Exception {
-    final ClassTemplate classTemplate = new ClassTemplateImpl(referencePairManager, 23, null, null, null);
+    final ClassTemplate classTemplate = new ClassTemplateImpl(23, null, null, null).setReferencePairManager(referencePairManager);
 
     referencePairManager.createRemoteReferenceFor(classTemplate);
     final RemoteReference remoteReference = referencePairManager.remoteReferenceFor(classTemplate);

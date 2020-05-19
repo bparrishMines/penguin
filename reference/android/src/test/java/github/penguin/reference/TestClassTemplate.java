@@ -11,15 +11,15 @@ public class TestClassTemplate implements ClassTemplate {
   final List<Object> lastMethodTemplateArguments = new ArrayList<>(4);
 
   @Override
-  public String methodTemplate(String parameterTemplate, ClassTemplate referenceParameterTemplate, List<ClassTemplate> referenceListTemplate, Map<String, ClassTemplate> referenceMapTemplate) throws Exception {
+  public String methodTemplate(String parameterTemplate, ClassTemplate referenceParameterTemplate, List<ClassTemplate> referenceListTemplate, Map<String, ClassTemplate> referenceMapTemplate) {
     lastMethodTemplateArguments.clear();
     lastMethodTemplateArguments.addAll(Arrays.asList(parameterTemplate, referenceParameterTemplate, referenceListTemplate, referenceMapTemplate));
     return "tornado";
   }
 
   @Override
-  public ClassTemplate returnsReference() throws Exception {
-    return new ClassTemplateImpl(null, 11, null, null, null);
+  public ClassTemplate returnsReference() {
+    return new ClassTemplateImpl(11, null, null, null);
   }
 
   @Override

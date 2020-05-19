@@ -10,18 +10,18 @@ import github.penguin.reference.templates.GeneratedReferencePairManager.ClassTem
 
 @SuppressWarnings("RedundantThrows")
 public class ClassTemplateImpl implements GeneratedReferencePairManager.ClassTemplate {
-  private final ReferencePairManager referencePairManager;
   private final int fieldTemplate;
   private final ClassTemplate referenceFieldTemplate;
   private final List<ClassTemplate> referenceListTemplate;
   private final Map<String, ClassTemplate> referenceMapTemplate;
 
-  public ClassTemplateImpl(ReferencePairManager referencePairManager,
-                       int fieldTemplate, ClassTemplate referenceFieldTemplate,
+  private ReferencePairManager referencePairManager;
+
+  public ClassTemplateImpl(int fieldTemplate,
+                           ClassTemplate referenceFieldTemplate,
                        List<ClassTemplate> referenceListTemplate,
                        Map<String,
                            ClassTemplate> referenceMapTemplate) {
-    this.referencePairManager = referencePairManager;
     this.fieldTemplate = fieldTemplate;
     this.referenceFieldTemplate = referenceFieldTemplate;
     this.referenceListTemplate = referenceListTemplate;
@@ -99,5 +99,10 @@ public class ClassTemplateImpl implements GeneratedReferencePairManager.ClassTem
 
     completer.run();
     return completer;
+  }
+
+  public ClassTemplateImpl setReferencePairManager(final ReferencePairManager referencePairManager) {
+    this.referencePairManager = referencePairManager;
+    return this;
   }
 }
