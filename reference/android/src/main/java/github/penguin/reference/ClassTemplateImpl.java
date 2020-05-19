@@ -10,15 +10,15 @@ import github.penguin.reference.templates.GeneratedReferencePairManager.ClassTem
 
 @SuppressWarnings("RedundantThrows")
 public class ClassTemplateImpl implements GeneratedReferencePairManager.ClassTemplate {
-  private final int fieldTemplate;
+  private final Integer fieldTemplate;
   private final ClassTemplate referenceFieldTemplate;
   private final List<ClassTemplate> referenceListTemplate;
   private final Map<String, ClassTemplate> referenceMapTemplate;
 
   private ReferencePairManager referencePairManager;
 
-  ClassTemplateImpl(int fieldTemplate,
-                           ClassTemplate referenceFieldTemplate,
+  ClassTemplateImpl(Integer fieldTemplate,
+                    ClassTemplate referenceFieldTemplate,
                        List<ClassTemplate> referenceListTemplate,
                        Map<String,
                            ClassTemplate> referenceMapTemplate) {
@@ -29,7 +29,7 @@ public class ClassTemplateImpl implements GeneratedReferencePairManager.ClassTem
   }
 
   @Override
-  public int getFieldTemplate() {
+  public Integer getFieldTemplate() {
     return fieldTemplate;
   }
 

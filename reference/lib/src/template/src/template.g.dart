@@ -56,7 +56,7 @@ abstract class GeneratedLocalReferenceCommunicationHandler
     );
   }
 
-  // TODO: separate methods by double mapping from type reference to methodName
+  // TODO(bmparr): separate methods by double mapping from type reference to methodName
   @override
   dynamic executeLocalMethod(
     LocalReference localReference,

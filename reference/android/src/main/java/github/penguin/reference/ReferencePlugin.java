@@ -1,6 +1,11 @@
 package github.penguin.reference;
 
 import androidx.annotation.NonNull;
+
+import com.google.common.collect.ImmutableMap;
+
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import github.penguin.reference.reference.ReferencePairManager;
@@ -19,11 +24,44 @@ public class ReferencePlugin implements FlutterPlugin {
   private void initialize(final BinaryMessenger binaryMessenger) {
     new GeneratedReferencePairManager(
         binaryMessenger,
-        "reference_plugin",
+        "github.penguin/reference",
         new GeneratedReferencePairManager.GeneratedLocalReferenceCommunicationHandler() {
           @Override
           public ClassTemplate createClassTemplate(ReferencePairManager referencePairManager, int fieldTemplate, ClassTemplate referenceFieldTemplate, List<ClassTemplate> referenceListTemplate, Map<String, ClassTemplate> referenceMapTemplate) {
-            return new ClassTemplateImpl(fieldTemplate, referenceFieldTemplate, referenceListTemplate, referenceMapTemplate).setReferencePairManager(referencePairManager);
+            return new ClassTemplate() {
+              @Override
+              public Integer getFieldTemplate() {
+                return 0;
+              }
+
+              @Override
+              public ClassTemplate getReferenceFieldTemplate() {
+                return null;
+              }
+
+              @Override
+              public List<ClassTemplate> getReferenceListTemplate() {
+                return null;
+              }
+
+              @Override
+              public Map<String, ClassTemplate> getReferenceMapTemplate() {
+                return null;
+              }
+
+              @Override
+              public Object methodTemplate(String parameterTemplate, ClassTemplate referenceParameterTemplate, List<ClassTemplate> referenceListTemplate, Map<String, ClassTemplate> referenceMapTemplate) {
+                return "Reference";
+              }
+
+              @Override
+              public Object returnsReference() {
+                return new ClassTemplateImpl(15,
+                    new ClassTemplateImpl(16, null, null, null),
+                    Collections.singletonList((ClassTemplate) new ClassTemplateImpl(17, null, null, null)),
+                    ImmutableMap.of("tiny", (ClassTemplate) new ClassTemplateImpl(18, null, null, null)));
+              }
+            };
           }
         })
         .initialize();

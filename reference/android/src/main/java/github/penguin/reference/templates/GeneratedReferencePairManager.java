@@ -15,7 +15,7 @@ import java.util.Map;
 
 public class GeneratedReferencePairManager extends MethodChannelReferencePairManager {
   public interface ClassTemplate extends LocalReference {
-    int getFieldTemplate();
+    Integer getFieldTemplate();
     ClassTemplate getReferenceFieldTemplate();
     List<ClassTemplate> getReferenceListTemplate();
     Map<String, ClassTemplate> getReferenceMapTemplate();

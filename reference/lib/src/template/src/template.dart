@@ -10,7 +10,7 @@ MethodChannelReferencePairManager referencePairManager =
     GeneratedReferencePairManager(
   'github.penguin/reference',
   LocalReferenceCommunicationHandlerTemplate(),
-);
+)..initialize();
 
 class LocalReferenceCommunicationHandlerTemplate
     extends GeneratedLocalReferenceCommunicationHandler {

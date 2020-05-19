@@ -23,7 +23,7 @@ public class TestClassTemplate implements ClassTemplate {
   }
 
   @Override
-  public int getFieldTemplate() {
+  public Integer getFieldTemplate() {
     return 0;
   }
 
