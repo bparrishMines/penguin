@@ -12,7 +12,7 @@ import io.flutter.plugin.common.StandardMethodCodec;
 import java.util.List;
 
 public abstract class MethodChannelReferencePairManager extends ReferencePairManager
-    implements MethodChannel.MethodCallHandler {q
+    implements MethodChannel.MethodCallHandler {
   static final String METHOD_CREATE = "REFERENCE_CREATE";
   static final String METHOD_METHOD = "REFERENCE_METHOD";
   static final String METHOD_DISPOSE = "REFERENCE_DISPOSE";
