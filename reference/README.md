@@ -51,14 +51,14 @@ To give a more detailed explanation, let’s assume we want to create a new pair
 to remember that what is considered a `LocalReference` to one `ReferencePairManager`, is considered
 a `RemoteReference` to another.
 
-1. An instance of LocalReference is created.
-1. LocalReference tells ReferencePairManager1 to create a RemoteReference.
-1. ReferencePairManager1 creates a RemoteReference and stores the RemoteReference and the LocalReference as a pair.
-1. ReferencePairManager1 tells RemoteReferenceCommunicationHandler to communicate with another ReferencePairManager to create a RemoteReference for the instance of LocalReference.
-1. RemoteReferenceCommunicationHandler tells ReferencePairManager2 to make a RemoteReference.
-1. ReferencePairManager2 tells LocalReferenceCommunicationHandler to create a LocalReference.
-1. LocalReferenceCommunicationHandler creates and returns a LocalReference.
-1. ReferencePairManager2 stores the RemoteReference and the LocalReference from LocalReferenceCommunicationHandler as a pair.
+1. An instance of `LocalReference` is created.
+1. `LocalReference` tells ReferencePairManager1 to create a `RemoteReference`.
+1. ReferencePairManager1 creates a `RemoteReference` and stores the `RemoteReference` and the `LocalReference` as a pair.
+1. ReferencePairManager1 tells `RemoteReferenceCommunicationHandler` to communicate with another `ReferencePairManager` to create a `RemoteReference` for the instance of `LocalReference`.
+1. `RemoteReferenceCommunicationHandler` tells ReferencePairManager2 to make a `RemoteReference`.
+1. ReferencePairManager2 tells `LocalReferenceCommunicationHandler` to create a `LocalReference`.
+1. `LocalReferenceCommunicationHandler` creates and returns a `LocalReference`.
+1. ReferencePairManager2 stores the `RemoteReference` and the `LocalReference` from `LocalReferenceCommunicationHandler` as a pair.
 
 ## How ReferencePairManager Handles Arguments
 
@@ -92,6 +92,6 @@ and [Java](https://github.com/bparrishMines/penguin/blob/master/reference/androi
 [RemoteReference]: https://pub.dev/documentation/reference/latest/reference/RemoteReference-class.html
 [TypeReference]: https://pub.dev/documentation/reference/latest/reference/TypeReference-class.html
 [ReferencePairManager]: https://pub.dev/documentation/reference/latest/reference/ReferencePairManager-class.html
-[LocalReferenceCommuniationHandler]: https://pub.dev/documentation/reference/latest/reference/LocalReferenceCommuniationHandler-class.html
-[RemoteReferenceCommuniationHandler]: https://pub.dev/documentation/reference/latest/reference/RemoteReferenceCommuniationHandler-class.html
+[LocalReferenceCommunicationHandler]: https://pub.dev/documentation/reference/latest/reference/LocalReferenceCommunicationHandler-class.html
+[RemoteReferenceCommunicationHandler]: https://pub.dev/documentation/reference/latest/reference/RemoteReferenceCommunicationHandler-class.html
 [MethodChannelReferencePairManager]: https://pub.dev/documentation/reference/latest/reference/MethodChannelReferencePairManager-class.html
