@@ -22,7 +22,7 @@ The labels of local and remote are relative to which thread one is on. A `Remote
 `ReferencePairManager` will represent a `LocalReference` in another `ReferencePairManager` and vice
 versa. This is shown in the diagram below:
 
-<img src="https://raw.githubusercontent.com/bparrishMines/penguin/master/readme_images/reference/reference_architecture.png" alt="Reference Architecture" />
+<img src="https://raw.githubusercontent.com/bparrishMines/penguin/master/readme_images/reference/reference_architecture.jpg" alt="Reference Architecture" />
 
 It’s also important to note that the `RemoteReference` in both `ReferencePairManagers` are
 considered equivalent values, so they can be used to identify paired `LocalReferences`.
@@ -45,7 +45,7 @@ create, dispose, or execute methods for a `LocalReference`.
 Below is the typical flow for either creating a pair, disposing of a pair, or a `LocalReference`
 calling a method on it’s paired `RemoteReference`. A detailed example follows.
 
-<img src="https://raw.githubusercontent.com/bparrishMines/penguin/master/readme_images/reference/reference_flow.png" alt="Reference Architecture" />
+<img src="https://raw.githubusercontent.com/bparrishMines/penguin/master/readme_images/reference/reference_flow.jpg" alt="Reference Architecture" />
 
 To give a more detailed explanation, let’s assume we want to create a new pair. It’s also important
 to remember that what is considered a `LocalReference` to one `ReferencePairManager`, is considered
