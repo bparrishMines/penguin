@@ -91,7 +91,7 @@ mixin LocalReferenceCommunicationHandler {
   void disposeLocalReference(LocalReference localReference) {}
 }
 
-/// Manages connections between [LocalReference]s and [RemoteReference]s.
+/// Manages communication between [LocalReference]s and [RemoteReference]s.
 ///
 /// This class works by facilitating communication between a [LocalReference]
 /// and a [RemoteReference] pair. When a [LocalReference] is added to a LOCAL
@@ -230,6 +230,7 @@ abstract class ReferencePairManager {
     return remoteHandler.disposeRemoteReference(remoteReference);
   }
 
+  // TODO: This should be able to use UnpairedRemoteReference for the RemoteReference
   /// Execute a method on the [RemoteReference] paired to [localReference].
   ///
   /// The [LocalReference]s in `arguments` will be replaced by a
