@@ -88,10 +88,10 @@ Here are the latest example implementations for
 and [Java](https://github.com/bparrishMines/penguin/blob/master/reference/android/src/main/java/github/penguin/reference/templates/GeneratedReferencePairManager.java).
 
 <!-- Links -->
-[LocalReference]: https://pub.dev/documentation/reference/latest/reference/LocalReference-class.html
+[LocalReference]: https://pub.dev/documentatiogn/reference/latest/reference/LocalReference-mixin.html
 [RemoteReference]: https://pub.dev/documentation/reference/latest/reference/RemoteReference-class.html
 [TypeReference]: https://pub.dev/documentation/reference/latest/reference/TypeReference-class.html
 [ReferencePairManager]: https://pub.dev/documentation/reference/latest/reference/ReferencePairManager-class.html
-[LocalReferenceCommunicationHandler]: https://pub.dev/documentation/reference/latest/reference/LocalReferenceCommunicationHandler-class.html
-[RemoteReferenceCommunicationHandler]: https://pub.dev/documentation/reference/latest/reference/RemoteReferenceCommunicationHandler-class.html
+[LocalReferenceCommunicationHandler]: https://pub.dev/documentation/reference/latest/reference/LocalReferenceCommunicationHandler-mixin.html
+[RemoteReferenceCommunicationHandler]: https://pub.dev/documentation/reference/latest/reference/RemoteReferenceCommunicationHandler-mixin.html
 [MethodChannelReferencePairManager]: https://pub.dev/documentation/reference/latest/reference/MethodChannelReferencePairManager-class.html
