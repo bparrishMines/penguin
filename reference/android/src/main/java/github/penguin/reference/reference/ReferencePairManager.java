@@ -12,7 +12,7 @@ import java.util.UUID;
 @SuppressWarnings({"unchecked", "WeakerAccess", "unused"})
 public abstract class ReferencePairManager {
   private boolean isInitialized = false;
-  private final BiMap<LocalReference, RemoteReference> localRefToRemoteRefMap = HashBiMap.create();
+  private static final BiMap<LocalReference, RemoteReference> localRefToRemoteRefMap = HashBiMap.create();
 
   public interface RemoteReferenceCommunicationHandler {
     List<Object> creationArgumentsFor(LocalReference localReference);

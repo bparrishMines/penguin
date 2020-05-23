@@ -399,7 +399,7 @@ void main() {
           MethodCall(
             'REFERENCE_CREATE',
             <dynamic>[
-              RemoteReference('aowejea;io'),
+              RemoteReference('ajackwhack'),
               TypeReference(0),
               <dynamic>[45, null, null, null],
             ],
@@ -409,7 +409,7 @@ void main() {
       );
 
       final ClassTemplate testClass = referencePairManager
-          .localReferenceFor(RemoteReference('aowejea;io')) as ClassTemplate;
+          .localReferenceFor(RemoteReference('ajackwhack')) as ClassTemplate;
       expect(testClass, isClassTemplateWithSame(45, null, null, null));
 
       await referencePairManager.channel.binaryMessenger.handlePlatformMessage(
@@ -417,14 +417,14 @@ void main() {
         referencePairManager.channel.codec.encodeMethodCall(
           MethodCall(
             'REFERENCE_DISPOSE',
-            RemoteReference('aowejea;io'),
+            RemoteReference('ajackwhack'),
           ),
         ),
         (ByteData data) {},
       );
 
       expect(
-        referencePairManager.localReferenceFor(RemoteReference('aowejea;io')),
+        referencePairManager.localReferenceFor(RemoteReference('ajackwhack')),
         isNull,
       );
     });
