@@ -82,10 +82,11 @@ For help getting started with Flutter, view our
 samples, guidance on mobile development, and a full API reference.
 
 To use this with your own plugin, you will have to extend `ReferencePairManager` and implement
-`RemoteReferenceCommunicationHandler` and `LocalReferenceCommunicationHandler`. This plugin allows
-you to use any system for IPC (e.g. `MethodChannel` or dart:ffi), but it also provides a
-[MethodChannelReferencePairManager] that is a partial implementation using `MethodChannel`s.
-Here are the latest example implementations for
+`RemoteReferenceCommunicationHandler` and `LocalReferenceCommunicationHandler`. This needs to be
+done in Dart and then on every platform that is wanted to be supported. (e.g. Java/Kotlin for
+Android or Obj-C/Swift for iOS. This plugin allows you to use any system for IPC (e.g.
+`MethodChannel` or dart:ffi), but it also provides a [MethodChannelReferencePairManager] that is a
+partial implementation using `MethodChannel`s. Here are the latest example implementations for
 [Dart](https://github.com/bparrishMines/penguin/blob/master/reference/lib/src/template/src/template.g.dart)
 and [Java](https://github.com/bparrishMines/penguin/blob/master/reference/android/src/main/java/github/penguin/reference/templates/GeneratedReferencePairManager.java).
 
