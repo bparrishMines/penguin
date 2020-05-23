@@ -2,6 +2,7 @@ package github.penguin.reference;
 
 import github.penguin.reference.templates.$ReferencePairManager;
 import github.penguin.reference.templates.$ReferencePairManager.ClassTemplate;
+import github.penguin.reference.templates.ClassTemplateImpl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

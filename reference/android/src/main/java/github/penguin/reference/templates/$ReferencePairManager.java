@@ -35,14 +35,12 @@ public class $ReferencePairManager extends MethodChannelReferencePairManager {
     Object returnsReference() throws Exception;
   }
 
-  public static class $MethodNames {
-    public static final String methodTemplate = "methodTemplate";
-    public static final String returnsReference = "returnsReference";
+  static class $MethodNames {
+    static final String methodTemplate = "methodTemplate";
+    static final String returnsReference = "returnsReference";
   }
 
-  public abstract static class $LocalReferenceCommunicationHandler
-      implements LocalReferenceCommunicationHandler {
-
+  abstract static class $LocalReferenceCommunicationHandler implements LocalReferenceCommunicationHandler {
     static private Map<TypeReference, ImmutableMap<String, Method>> methods;
     static {
       try {
@@ -107,7 +105,7 @@ public class $ReferencePairManager extends MethodChannelReferencePairManager {
     }
   }
 
-  public static class $RemoteReferenceCommunicationHandler
+  static class $RemoteReferenceCommunicationHandler
       extends MethodChannelRemoteReferenceCommunicationHandler {
     @Override
     public List<Object> creationArgumentsFor(LocalReference localReference) {
@@ -127,7 +125,7 @@ public class $ReferencePairManager extends MethodChannelReferencePairManager {
     }
   }
 
-  public $ReferencePairManager(
+  $ReferencePairManager(
       final BinaryMessenger binaryMessenger,
       final String channelName,
       final $LocalReferenceCommunicationHandler localHandler) {
@@ -140,7 +138,7 @@ public class $ReferencePairManager extends MethodChannelReferencePairManager {
   }
 
   @SuppressWarnings("unused")
-  public $ReferencePairManager(
+  $ReferencePairManager(
       final BinaryMessenger binaryMessenger,
       final String channelName,
       final $LocalReferenceCommunicationHandler localHandler,

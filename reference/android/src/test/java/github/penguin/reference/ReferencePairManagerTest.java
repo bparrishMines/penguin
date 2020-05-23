@@ -17,8 +17,10 @@ import github.penguin.reference.reference.CompletableRunnable;
 import github.penguin.reference.reference.RemoteReference;
 import github.penguin.reference.reference.TypeReference;
 import github.penguin.reference.reference.UnpairedRemoteReference;
-import github.penguin.reference.templates.$ReferencePairManager;
 import github.penguin.reference.templates.$ReferencePairManager.ClassTemplate;
+import github.penguin.reference.templates.PluginTemplate;
+import github.penguin.reference.templates.PluginTemplate.ReferencePairManagerTemplate;
+import github.penguin.reference.templates.ClassTemplateImpl;
 import io.flutter.plugin.common.BinaryMessenger.BinaryMessageHandler;
 import io.flutter.plugin.common.BinaryMessenger.BinaryReply;
 import io.flutter.plugin.common.MethodCall;
@@ -40,7 +42,7 @@ public class ReferencePairManagerTest {
 
   private static MockBinaryMessenger mockMessenger;
   private static MethodChannel.MethodCallHandler methodCallHandler;
-  private static $ReferencePairManager referencePairManager;
+  private static ReferencePairManagerTemplate referencePairManager;
 
   @BeforeClass
   public static void setUpAll() {
@@ -110,7 +112,7 @@ public class ReferencePairManagerTest {
   public void setUp() {
     methodCallLog.clear();
     replyMethodCallLog.clear();
-    referencePairManager = new ReferencePlugin.ReferencePairManagerTemplate(mockMessenger);
+    referencePairManager = new PluginTemplate.ReferencePairManagerTemplate(mockMessenger);
     referencePairManager.initialize();
   }
 

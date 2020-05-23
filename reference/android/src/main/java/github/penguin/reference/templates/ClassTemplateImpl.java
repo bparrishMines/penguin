@@ -1,15 +1,14 @@
-package github.penguin.reference;
+package github.penguin.reference.templates;
 
-import github.penguin.reference.reference.CompletableRunnable;
-import github.penguin.reference.reference.ReferencePairManager;
-import github.penguin.reference.templates.$ReferencePairManager;
-import github.penguin.reference.templates.$ReferencePairManager.ClassTemplate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import github.penguin.reference.reference.CompletableRunnable;
+import github.penguin.reference.reference.ReferencePairManager;
+import github.penguin.reference.templates.$ReferencePairManager.ClassTemplate;
 
 @SuppressWarnings("RedundantThrows")
-public class ClassTemplateImpl implements $ReferencePairManager.ClassTemplate {
+public class ClassTemplateImpl implements ClassTemplate {
   private final Integer fieldTemplate;
   private final ClassTemplate referenceFieldTemplate;
   private final List<ClassTemplate> referenceListTemplate;
@@ -17,7 +16,7 @@ public class ClassTemplateImpl implements $ReferencePairManager.ClassTemplate {
 
   private ReferencePairManager referencePairManager;
 
-  ClassTemplateImpl(
+  public ClassTemplateImpl(
       Integer fieldTemplate,
       ClassTemplate referenceFieldTemplate,
       List<ClassTemplate> referenceListTemplate,
@@ -116,7 +115,7 @@ public class ClassTemplateImpl implements $ReferencePairManager.ClassTemplate {
     return completer;
   }
 
-  ClassTemplateImpl setReferencePairManager(final ReferencePairManager referencePairManager) {
+  public ClassTemplateImpl setReferencePairManager(final ReferencePairManager referencePairManager) {
     this.referencePairManager = referencePairManager;
     return this;
   }
