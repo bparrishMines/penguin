@@ -1,6 +1,6 @@
 import 'reference_pair_manager.dart';
 
-/// Represents an accessible object instance on a remote thread/process.
+/// Represents an object on a different thread/process.
 ///
 /// This is paired with a [LocalReference] in a [ReferencePairManager].
 ///
@@ -24,7 +24,7 @@ class RemoteReference {
   }
 }
 
-/// Represents an accessible object instance on a local thread/process.
+/// Represents an object on the same thread/process.
 ///
 /// This is an empty mixin that allows a [ReferencePairManager] to know that a
 /// class is able be paired with a [RemoteReference].
@@ -32,17 +32,19 @@ mixin LocalReference {}
 
 /// Represents a type that exists on a local and remote thread/process.
 ///
-/// For example, this could represent a class named `Apple` in `apple.dart`
-/// and `Apple.java` files.
+/// For example, a class named `Apple` in an `apple.dart` file and an
+/// `Apple.java` file could both be represented by a [TypeReference] with the
+/// same [typeId].
 ///
-/// This is used to help instantiate [LocalReference]s for
+/// Every type given a unique type reference must implement [LocalReference].
+/// This class is used to help instantiate [LocalReference]s for
 /// [ReferencePairManager]s.
 ///
 /// Two [TypeReference]s are equal if they share the same [typeId].
 class TypeReference {
   const TypeReference(this.typeId);
 
-  /// Unique identifier to help reference a specific class between [ReferencePairManager]s.
+  /// Unique identifier to reference a specific type between [ReferencePairManager]s.
   final int typeId;
 
   @override
@@ -59,8 +61,9 @@ class TypeReference {
 
 /// Represents a [RemoteReference] that is not paired with a [LocalReference] in a [ReferencePairManager].
 ///
-/// This act as a replacement for a [RemoteReference] that has no
-/// [LocalReference].
+/// This acts as a replacement for a [LocalReference] that has no
+/// [RemoteReference] when a [ReferencePairManager] passes arguments to a
+/// [RemoteReferenceCommunicationHandler].
 ///
 /// When passed to a [ReferencePairManager], it will try to convert it into a
 /// [LocalReference] with

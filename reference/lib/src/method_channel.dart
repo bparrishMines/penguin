@@ -42,7 +42,7 @@ abstract class MethodChannelReferencePairManager extends ReferencePairManager {
   @override
   final MethodChannelRemoteReferenceCommunicationHandler remoteHandler;
 
-  /// [MethodChannel] used to communicate with a [ReferencePairManager] on another thread/process.
+  /// [MethodChannel] used to communicate with a [ReferencePairManager] on a different thread/process.
   ///
   /// Null until [initialize] is called.
   MethodChannel get channel => remoteHandler._channel;
@@ -128,10 +128,10 @@ abstract class MethodChannelRemoteReferenceCommunicationHandler
   }
 }
 
-/// Implementation of [StandardMessageCodec] that supports serializing [RemoteReference]s.
+/// Implementation of [StandardMessageCodec] that supports serializing [TypeReference]s, [RemoteReference]s, and [UnpairedRemoteReference]s.
 ///
 /// When extending, no int below 130 should be used as a key. See
-/// [StandardMessageCodec] for more info on extending.
+/// [StandardMessageCodec] for more info on extending a [StandardMessageCodec].
 class ReferenceMessageCodec extends StandardMessageCodec {
   const ReferenceMessageCodec();
 

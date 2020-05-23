@@ -7,11 +7,14 @@ import 'package:uuid/uuid.dart';
 import 'reference.dart';
 
 /// Handles communication with [RemoteReference]s for a [ReferencePairManager].
+///
+/// This class communicates with other [ReferencePairManager]s to create,
+/// dispose, or execute methods on [RemoteReference]s.
 mixin RemoteReferenceCommunicationHandler {
   /// Retrieves arguments to instantiate an object that is created with [createRemoteReference].
   List<dynamic> creationArgumentsFor(LocalReference localReference);
 
-  /// Instantiate and store an object on a remote thread/process.
+  /// Instantiate and store an object on a different thread/process.
   ///
   /// The remote instantiated object will be represented as [remoteReference].
   ///
@@ -33,7 +36,7 @@ mixin RemoteReferenceCommunicationHandler {
 
   /// Execute a method on the object instance that [remoteReference] represents.
   ///
-  /// For and [RemoteReference], this method should only be called after
+  /// For any [RemoteReference], this method should only be called after
   /// [createRemoteReference] and should never be called after
   /// [disposeRemoteReference].
   Future<dynamic> executeRemoteMethod(
@@ -51,11 +54,14 @@ mixin RemoteReferenceCommunicationHandler {
 }
 
 /// Handles communication with [LocalReference]s for a [ReferencePairManager].
+///
+/// This class handles communication from other [ReferencePairManager]s to
+/// create, dispose, or execute methods for a [LocalReference].
 mixin LocalReferenceCommunicationHandler {
-  /// Instantiates and stores an object on the local thread/process.
+  /// Instantiates and stores an object on the same thread/process.
   ///
   /// This will be called when a message to instantiate and store an object on
-  /// the local thread/process is received.
+  /// the same thread/process is received.
   ///
   /// The remote instantiated object will be represented as [remoteReference].
   ///
@@ -94,20 +100,22 @@ mixin LocalReferenceCommunicationHandler {
 /// Manages communication between [LocalReference]s and [RemoteReference]s.
 ///
 /// This class works by facilitating communication between a [LocalReference]
-/// and a [RemoteReference] pair. When a [LocalReference] is added to a LOCAL
-/// [ReferencePairManager], it is expected that an equivalent object is created
-/// and added to a REMOTE [ReferencePairManager].
+/// and a [RemoteReference] pair. When a [LocalReference] is added to a
+/// [ReferencePairManager] on the same thread/process, it is expected that an
+/// equivalent object is created and added to a [ReferencePairManager] on a
+/// different thread/process.
 ///
-/// For example, assume that there is a Dart [ReferencePairManager] and a
-/// Java [ReferencePairManager]. Next, an object of a Dart class named `Apple`
-/// is instantiated and is added to the Dart [ReferencePairManager],
+/// For example, assume that there is a [ReferencePairManager] in a process
+/// running Dart code and a [ReferencePairManager] in a process running Java
+/// code. Next, an object of a Dart class named `Apple` is instantiated and is
+/// added to the Dart [ReferencePairManager], then
 ///
 /// 1. The Dart [ReferencePairManager] will send a message to the Java
 /// [ReferencePairManager] to instantiate a Java object of a class named
 /// `Apple`.
 ///
-/// 2. The Dart `Apple` would then be stored in a map as a [LocalReference] with
-/// a [RemoteReference] that represents the `Apple` instantiated in Java.
+/// 2. The Dart `Apple` would then be stored as a [LocalReference] and paired
+/// with a [RemoteReference] that represents the `Apple` instantiated in Java.
 ///
 /// 3. The [ReferencePairManager]s would then handle sending and receiving
 /// methods to be executed between the Dart `Apple` and the Java `Apple` until
@@ -123,10 +131,13 @@ abstract class ReferencePairManager {
 
   /// Retrieve the [TypeReference] that represents the type of [localReference].
   ///
-  /// The local [TypeReference] should share the same [TypeReference.typeId],
-  /// as the equivalent object for the remote [TypeReference]. For example
-  /// the `Apple` class in `apple.dart` and `Apple.java` could both return
-  /// `TypeReference(0)`.
+  /// This method should be able to return a unique [TypeReference] that this
+  /// [ReferencePairManager] should support.
+  ///
+  /// The local [TypeReference] should also share the same
+  /// [TypeReference.typeId], as the equivalent object for the remote
+  /// [TypeReference]. For example the `Apple` class in `apple.dart` and
+  /// `Apple.java` could both return `TypeReference(0)`.
   TypeReference typeReferenceFor(LocalReference localReference);
 
   /// Handles communication with [RemoteReference]s.
@@ -140,18 +151,22 @@ abstract class ReferencePairManager {
   void initialize() => _isInitialized = true;
 
   /// Retrieve the [RemoteReference] paired with [localReference].
+  ///
+  /// Returns null if this [localReference] is not paired.
   RemoteReference remoteReferenceFor(LocalReference localReference) {
     _assertIsInitialized();
     return _localRefToRemoteRefMap[localReference];
   }
 
   /// Retrieve the [LocalReference] paired with [remoteReference].
+  ///
+  /// Returns null if this [remoteReference] is not paired.
   LocalReference localReferenceFor(RemoteReference remoteReference) {
     _assertIsInitialized();
     return _localRefToRemoteRefMap.inverse[remoteReference];
   }
 
-  /// Call when a remote [ReferencePairManager] wants to create a [RemoteReference].
+  /// Call when a [ReferencePairManager] on a different thread/process wants to create a [RemoteReference].
   ///
   /// This will instantiate a [LocalReference] and add it and [remoteReference]
   /// as a pair.

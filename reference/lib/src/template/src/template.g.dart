@@ -1,5 +1,6 @@
 part of 'template.dart';
 
+// TODO(bmparr): replace generated with _$
 class GeneratedReferencePairManager extends MethodChannelReferencePairManager {
   GeneratedReferencePairManager(
     String channelName,

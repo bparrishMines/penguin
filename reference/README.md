@@ -6,12 +6,13 @@ A library for building Flutter plugins that want to maintain access to object in
 
 ## Overview
 
-This library works by maintaining pairs of a `LocalReference` and a `RemoteReference` in
-`ReferencePairManagers`. Here are the basic definitions of these classes:
+This library works by managing pairs of references. Each pair consists of a `LocalReference` and a
+`RemoteReference`. The pairs are stored and managed in a `ReferencePairManager`. Here are the basic
+definitions of these classes:
 * [LocalReference] - represents an object on the same thread/process.
 * [RemoteReference] - represents an object on a different thread/process.
-* [ReferencePairManager] - manages communication between objects represented by LocalReferences and
-RemoteReferences.
+* [ReferencePairManager] - manages communication between objects represented by `LocalReference`s
+and `RemoteReference`s.
 
 A `LocalReference` and `RemoteReference` pair is also maintained by a pair of
 `ReferencePairManager`s. One `ReferencePairManager` is on the same thread/process as the object that
@@ -34,7 +35,8 @@ objects represented by `LocalReference` and `RemoteReference`.
 
 `ReferencePairManager`s are responsible for creating pairs, disposing pairs, and calling methods on
 paired References. Here are the relevant classes:
-* [TypeReference] - represents a type. This type must be able to be represented by a `LocalReference`.
+* [TypeReference] - represents a type. This type must be able to be represented by a
+`LocalReference`.
 * [RemoteReferenceCommunicationHandler] - handles communication with `RemoteReference`s for a
 `ReferencePairManager`. This class communicates with other `ReferencePairManager`s to create,
 dispose, or execute methods on `RemoteReference`s.
@@ -54,9 +56,9 @@ a `RemoteReference` to another.
 1. An instance of `LocalReference` is created.
 1. `LocalReference` tells ReferencePairManager1 to create a `RemoteReference`.
 1. ReferencePairManager1 creates a `RemoteReference` and stores the `RemoteReference` and the `LocalReference` as a pair.
-1. ReferencePairManager1 tells `RemoteReferenceCommunicationHandler` to communicate with another `ReferencePairManager` to create a `RemoteReference` for the instance of `LocalReference`.
+1. ReferencePairManager1 tells its `RemoteReferenceCommunicationHandler` to communicate with another `ReferencePairManager` to create a `RemoteReference` for the instance of `LocalReference`.
 1. `RemoteReferenceCommunicationHandler` tells ReferencePairManager2 to make a `RemoteReference`.
-1. ReferencePairManager2 tells `LocalReferenceCommunicationHandler` to create a `LocalReference`.
+1. ReferencePairManager2 tells its `LocalReferenceCommunicationHandler` to create a `LocalReference`.
 1. `LocalReferenceCommunicationHandler` creates and returns a `LocalReference`.
 1. ReferencePairManager2 stores the `RemoteReference` and the `LocalReference` from `LocalReferenceCommunicationHandler` as a pair.
 
