@@ -1,6 +1,6 @@
 part of 'template.dart';
 
-// TODO(bmparr): replace generated with _$
+// TODO(bparrishMines): replace generated with _$
 class GeneratedReferencePairManager extends MethodChannelReferencePairManager {
   GeneratedReferencePairManager(
     String channelName,
@@ -28,6 +28,23 @@ abstract class GeneratedLocalReferenceCommunicationHandler
     with LocalReferenceCommunicationHandler {
   const GeneratedLocalReferenceCommunicationHandler();
 
+  static final Map<TypeReference, Map<String, Function>> _methods =
+      <TypeReference, Map<String, Function>>{
+    TypeReference(0): <String, Function>{
+      'methodTemplate': (ClassTemplate value, List<dynamic> arguments) {
+        return value.methodTemplate(
+          arguments[0],
+          arguments[1],
+          arguments[2]?.cast<ClassTemplate>(),
+          arguments[3]?.cast<String, ClassTemplate>(),
+        );
+      },
+      'returnsReference': (ClassTemplate value, List<dynamic> arguments) {
+        return value.returnsReference();
+      },
+    },
+  };
+
   ClassTemplate createClassTemplate(
     ReferencePairManager referencePairManager,
     int fieldTemplate,
@@ -37,9 +54,9 @@ abstract class GeneratedLocalReferenceCommunicationHandler
   );
 
   @override
-  LocalReference createLocalReferenceFor(
-    TypeReference typeReference,
+  LocalReference createLocalReference(
     ReferencePairManager referencePairManager,
+    TypeReference typeReference,
     List<dynamic> arguments,
   ) {
     if (typeReference == TypeReference(0)) {
@@ -57,27 +74,17 @@ abstract class GeneratedLocalReferenceCommunicationHandler
     );
   }
 
-  // TODO(bmparr): separate methods by double mapping from type reference to methodName
   @override
   dynamic executeLocalMethod(
+    ReferencePairManager referencePairManager,
     LocalReference localReference,
     String methodName,
     List<dynamic> arguments,
   ) {
-    if (localReference is ClassTemplate && methodName == 'methodTemplate') {
-      return localReference.methodTemplate(
-        arguments[0],
-        arguments[1],
-        arguments[2]?.cast<ClassTemplate>(),
-        arguments[3]?.cast<String, ClassTemplate>(),
-      );
-    } else if (localReference is ClassTemplate &&
-        methodName == 'returnsReference') {
-      return localReference.returnsReference();
-    }
-
-    throw StateError(
-      'Could not call $methodName on ${localReference.runtimeType}.',
+    return _methods[referencePairManager.typeReferenceFor(localReference)]
+        [methodName](
+      localReference,
+      arguments,
     );
   }
 }

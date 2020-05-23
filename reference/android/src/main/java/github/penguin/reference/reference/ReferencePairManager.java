@@ -27,16 +27,16 @@ public abstract class ReferencePairManager {
   }
 
   public interface LocalReferenceCommunicationHandler {
-    LocalReference createLocalReferenceFor(
-        TypeReference typeReference,
+    LocalReference createLocalReference(
         ReferencePairManager referencePairManager,
+        TypeReference typeReference,
         List<Object> arguments)
         throws Exception;
 
     Object executeLocalMethod(
-        LocalReference localReference, String methodName, List<Object> arguments) throws Exception;
+        ReferencePairManager referencePairManager, LocalReference localReference, String methodName, List<Object> arguments) throws Exception;
 
-    void disposeLocalReference(LocalReference localReference) throws Exception;
+    void disposeLocalReference(ReferencePairManager referencePairManager, LocalReference localReference) throws Exception;
   }
 
   public abstract RemoteReferenceCommunicationHandler getRemoteHandler();
@@ -71,8 +71,8 @@ public abstract class ReferencePairManager {
     assertIsInitialized();
     final LocalReference localReference =
         getLocalHandler()
-            .createLocalReferenceFor(
-                typeReference, this, (List<Object>) replaceRemoteReferences(arguments));
+            .createLocalReference(
+                this, typeReference,  (List<Object>) replaceRemoteReferences(arguments));
     localRefToRemoteRefMap.put(localReference, remoteReference);
     return localReference;
   }
@@ -84,7 +84,7 @@ public abstract class ReferencePairManager {
     if (localReference == null) return;
 
     localRefToRemoteRefMap.remove(localReference);
-    getLocalHandler().disposeLocalReference(localReference);
+    getLocalHandler().disposeLocalReference(this, localReference);
   }
 
   @SuppressWarnings("UnusedReturnValue")
@@ -201,6 +201,7 @@ public abstract class ReferencePairManager {
     final Object result =
         getLocalHandler()
             .executeLocalMethod(
+                this,
                 localReferenceFor(remoteReference),
                 methodName,
                 (List<Object>) replaceRemoteReferences(arguments));
@@ -216,9 +217,9 @@ public abstract class ReferencePairManager {
       return localReferenceFor((RemoteReference) argument);
     } else if (argument instanceof UnpairedRemoteReference) {
       return getLocalHandler()
-          .createLocalReferenceFor(
-              ((UnpairedRemoteReference) argument).typeReference,
+          .createLocalReference(
               this,
+              ((UnpairedRemoteReference) argument).typeReference,
               (List<Object>)
                   replaceRemoteReferences(((UnpairedRemoteReference) argument).creationArguments));
     } else if (argument instanceof List) {

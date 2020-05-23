@@ -7,6 +7,8 @@ import github.penguin.reference.reference.LocalReference;
 import github.penguin.reference.reference.ReferencePairManager;
 import github.penguin.reference.reference.TypeReference;
 import io.flutter.plugin.common.BinaryMessenger;
+import com.google.common.collect.ImmutableMap;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -40,6 +42,20 @@ public class GeneratedReferencePairManager extends MethodChannelReferencePairMan
 
   public abstract static class GeneratedLocalReferenceCommunicationHandler
       implements LocalReferenceCommunicationHandler {
+
+    static private Map<TypeReference, ImmutableMap<String, Method>> methods;
+    static {
+      try {
+        methods = ImmutableMap.of(
+            new TypeReference(0),
+            ImmutableMap.of("methodTemplate", ClassTemplate.class.getMethod("methodTemplate", String.class, ClassTemplate.class, List.class, Map.class),
+                "returnsReference", ClassTemplate.class.getMethod("returnsReference"))
+        );
+      } catch (NoSuchMethodException exception) {
+        throw new RuntimeException(exception.getMessage());
+      }
+    }
+
     public abstract ClassTemplate createClassTemplate(
         ReferencePairManager referencePairManager,
         int fieldTemplate,
@@ -50,9 +66,9 @@ public class GeneratedReferencePairManager extends MethodChannelReferencePairMan
 
     @SuppressWarnings("unchecked")
     @Override
-    public LocalReference createLocalReferenceFor(
-        TypeReference typeReference,
+    public LocalReference createLocalReference(
         ReferencePairManager referencePairManager,
+        TypeReference typeReference,
         List<Object> arguments)
         throws Exception {
       if (typeReference.equals(new TypeReference(0))) {
@@ -73,37 +89,26 @@ public class GeneratedReferencePairManager extends MethodChannelReferencePairMan
       throw new IllegalStateException(message);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"ConstantConditions"})
     @Override
     public Object executeLocalMethod(
-        LocalReference localReference, String methodName, List<Object> arguments) throws Exception {
-      if (localReference instanceof ClassTemplate
-          && methodName.equals(GeneratedMethodNames.methodTemplate)) {
-        return ((ClassTemplate) localReference)
-            .methodTemplate(
-                (String) arguments.get(0),
-                (ClassTemplate) arguments.get(1),
-                arguments.get(2) != null
-                    ? new ArrayList<ClassTemplate>((List) arguments.get(2))
-                    : null,
-                arguments.get(3) != null
-                    ? new HashMap<String, ClassTemplate>((Map) arguments.get(3))
-                    : null);
-      } else if (localReference instanceof ClassTemplate
-          && methodName.equals(GeneratedMethodNames.returnsReference)) {
-        return ((ClassTemplate) localReference).returnsReference();
-      }
-
-      final String message =
-          String.format(
-              "Could not call %s on %s.", methodName, localReference.getClass().getName());
-      throw new IllegalStateException(message);
+        ReferencePairManager referencePairManager,
+        LocalReference localReference,
+        String methodName,
+        List<Object> arguments) throws Exception {
+      return callMethod(localReference,
+          methods.get(referencePairManager.typeReferenceFor(localReference)).get(methodName),
+          arguments);
     }
 
     @SuppressWarnings("RedundantThrows")
     @Override
-    public void disposeLocalReference(LocalReference localReference) throws Exception {
+    public void disposeLocalReference(ReferencePairManager referencePairManager, LocalReference localReference) throws Exception {
       // Do nothing.
+    }
+
+    private Object callMethod(LocalReference object, Method method, List<Object> arguments) throws Exception {
+      return method.invoke(object, arguments.toArray());
     }
   }
 

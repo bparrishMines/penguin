@@ -72,18 +72,19 @@ mixin LocalReferenceCommunicationHandler {
   /// The REMOTE [ReferencePairManager] will represent the returned value as a
   /// [RemoteReference] and represent the generated [RemoteReference] as a
   /// [LocalReference]. It will also store both references as a pair.
-  LocalReference createLocalReferenceFor(
-    TypeReference typeReference,
+  LocalReference createLocalReference(
     ReferencePairManager referencePairManager,
+    TypeReference typeReference,
     List<dynamic> arguments,
   );
 
   /// Execute a method to be executed on the object instance represented by [localReference].
   ///
   /// For any [LocalReference] this method should only be called after
-  /// [createLocalReferenceFor] and should never be called after
+  /// [createLocalReference] and should never be called after
   /// [disposeLocalReference].
   dynamic executeLocalMethod(
+    ReferencePairManager referencePairManager,
     LocalReference localReference,
     String methodName,
     List<dynamic> arguments,
@@ -94,7 +95,10 @@ mixin LocalReferenceCommunicationHandler {
   /// This also stops the [ReferencePairManager] from maintaining the connection
   /// with its paired [RemoteReference] and will allow for either value to be
   /// attached to new references.
-  void disposeLocalReference(LocalReference localReference) {}
+  void disposeLocalReference(
+    ReferencePairManager referencePairManager,
+    LocalReference localReference,
+  ) {}
 }
 
 /// Manages communication between [LocalReference]s and [RemoteReference]s.
@@ -182,9 +186,9 @@ abstract class ReferencePairManager {
     List<dynamic> arguments,
   ]) {
     _assertIsInitialized();
-    final LocalReference localReference = localHandler.createLocalReferenceFor(
-      typeReference,
+    final LocalReference localReference = localHandler.createLocalReference(
       this,
+      typeReference,
       _replaceRemoteReferences(arguments ?? <dynamic>[]),
     );
     _localRefToRemoteRefMap[localReference] = remoteReference;
@@ -202,10 +206,10 @@ abstract class ReferencePairManager {
     if (localReference == null) return;
 
     _localRefToRemoteRefMap.remove(localReference);
-    localHandler.disposeLocalReference(localReference);
+    localHandler.disposeLocalReference(this, localReference);
   }
 
-  // TODO: Don't change state if failure to create
+  // TODO(bparrishMines): Don't change state if failure to create
   /// Creates and maintains access of an equivalent object to [localReference] on a remote thread/process.
   ///
   /// This will also store [localReference] and a [RemoteReference] as a pair.
@@ -245,7 +249,7 @@ abstract class ReferencePairManager {
     return remoteHandler.disposeRemoteReference(remoteReference);
   }
 
-  // TODO: This should be able to use UnpairedRemoteReference for the RemoteReference
+  // TODO(bparrishMines): This should be able to use UnpairedRemoteReference for the RemoteReference
   /// Execute a method on the [RemoteReference] paired to [localReference].
   ///
   /// The [LocalReference]s in `arguments` will be replaced by a
@@ -289,8 +293,10 @@ abstract class ReferencePairManager {
     _assertIsInitialized();
     assert(localReferenceFor(remoteReference) != null);
 
+    final LocalReference localReference = localReferenceFor(remoteReference);
     final dynamic result = localHandler.executeLocalMethod(
-      localReferenceFor(remoteReference),
+      this,
+      localReference,
       methodName,
       _replaceRemoteReferences(arguments) ?? <dynamic>[],
     );
@@ -305,9 +311,9 @@ abstract class ReferencePairManager {
     if (argument is RemoteReference) {
       return localReferenceFor(argument);
     } else if (argument is UnpairedRemoteReference) {
-      return localHandler.createLocalReferenceFor(
-        argument.typeReference,
+      return localHandler.createLocalReference(
         this,
+        argument.typeReference,
         argument.creationArguments.map(_replaceRemoteReferences).toList(),
       );
     } else if (argument is List) {

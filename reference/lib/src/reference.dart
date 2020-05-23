@@ -67,7 +67,7 @@ class TypeReference {
 ///
 /// When passed to a [ReferencePairManager], it will try to convert it into a
 /// [LocalReference] with
-/// [LocalReferenceCommunicationHandler.createLocalReferenceFor].
+/// [LocalReferenceCommunicationHandler.createLocalReference].
 class UnpairedRemoteReference {
   const UnpairedRemoteReference(this.typeReference, this.creationArguments);
 

@@ -36,6 +36,7 @@ public class OwnerCounterTest {
     counter.increment();
 
     assertEquals(callCount, 1);
+    assertEquals(counter.getOwnerCount(), 2);
   }
 
   @Test(expected = AssertionError.class)
@@ -60,6 +61,7 @@ public class OwnerCounterTest {
     counter.decrement();
 
     assertEquals(callCount, 1);
+    assertEquals(counter.getOwnerCount(), 0);
     counter.decrement();
   }
 }
