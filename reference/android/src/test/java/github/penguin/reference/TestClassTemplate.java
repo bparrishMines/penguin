@@ -1,7 +1,7 @@
 package github.penguin.reference;
 
-import github.penguin.reference.templates.GeneratedReferencePairManager;
-import github.penguin.reference.templates.GeneratedReferencePairManager.ClassTemplate;
+import github.penguin.reference.templates.$ReferencePairManager;
+import github.penguin.reference.templates.$ReferencePairManager.ClassTemplate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -37,17 +37,17 @@ public class TestClassTemplate implements ClassTemplate {
   }
 
   @Override
-  public GeneratedReferencePairManager.ClassTemplate getReferenceFieldTemplate() {
+  public $ReferencePairManager.ClassTemplate getReferenceFieldTemplate() {
     return null;
   }
 
   @Override
-  public List<GeneratedReferencePairManager.ClassTemplate> getReferenceListTemplate() {
+  public List<$ReferencePairManager.ClassTemplate> getReferenceListTemplate() {
     return null;
   }
 
   @Override
-  public Map<String, GeneratedReferencePairManager.ClassTemplate> getReferenceMapTemplate() {
+  public Map<String, $ReferencePairManager.ClassTemplate> getReferenceMapTemplate() {
     return null;
   }
 }

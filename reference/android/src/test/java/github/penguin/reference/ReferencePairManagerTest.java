@@ -14,12 +14,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.common.collect.ImmutableMap;
 import github.penguin.reference.reference.CompletableRunnable;
-import github.penguin.reference.reference.ReferencePairManager;
 import github.penguin.reference.reference.RemoteReference;
 import github.penguin.reference.reference.TypeReference;
 import github.penguin.reference.reference.UnpairedRemoteReference;
-import github.penguin.reference.templates.GeneratedReferencePairManager;
-import github.penguin.reference.templates.GeneratedReferencePairManager.ClassTemplate;
+import github.penguin.reference.templates.$ReferencePairManager;
+import github.penguin.reference.templates.$ReferencePairManager.ClassTemplate;
 import io.flutter.plugin.common.BinaryMessenger.BinaryMessageHandler;
 import io.flutter.plugin.common.BinaryMessenger.BinaryReply;
 import io.flutter.plugin.common.MethodCall;
@@ -29,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import org.hamcrest.Matcher;
 import org.junit.Before;
@@ -42,7 +40,7 @@ public class ReferencePairManagerTest {
 
   private static MockBinaryMessenger mockMessenger;
   private static MethodChannel.MethodCallHandler methodCallHandler;
-  private static GeneratedReferencePairManager referencePairManager;
+  private static $ReferencePairManager referencePairManager;
 
   @BeforeClass
   public static void setUpAll() {
@@ -112,28 +110,7 @@ public class ReferencePairManagerTest {
   public void setUp() {
     methodCallLog.clear();
     replyMethodCallLog.clear();
-    referencePairManager =
-        new GeneratedReferencePairManager(
-            mockMessenger,
-            "reference_plugin",
-            new GeneratedReferencePairManager.GeneratedLocalReferenceCommunicationHandler() {
-              @SuppressWarnings("RedundantThrows")
-              @Override
-              public GeneratedReferencePairManager.ClassTemplate createClassTemplate(
-                  ReferencePairManager referencePairManager,
-                  int fieldTemplate,
-                  GeneratedReferencePairManager.ClassTemplate referenceFieldTemplate,
-                  List<GeneratedReferencePairManager.ClassTemplate> referenceListTemplate,
-                  Map<String, GeneratedReferencePairManager.ClassTemplate> referenceMapTemplate)
-                  throws Exception {
-                return new ClassTemplateImpl(
-                        fieldTemplate,
-                        referenceFieldTemplate,
-                        referenceListTemplate,
-                        referenceMapTemplate)
-                    .setReferencePairManager(referencePairManager);
-              }
-            });
+    referencePairManager = new ReferencePlugin.ReferencePairManagerTemplate(mockMessenger);
     referencePairManager.initialize();
   }
 
@@ -297,7 +274,7 @@ public class ReferencePairManagerTest {
                             new UnpairedRemoteReference(
                                 new TypeReference(0),
                                 Arrays.asList((Object) 43, null, null, null)))))));
-    mockMessenger.receive("reference_plugin", message);
+    mockMessenger.receive("github.penguin/reference", message);
 
     final ClassTemplate classTemplate =
         (ClassTemplate) referencePairManager.localReferenceFor(new RemoteReference("table"));
@@ -336,7 +313,7 @@ public class ReferencePairManagerTest {
                             new UnpairedRemoteReference(
                                 new TypeReference(0),
                                 Arrays.asList((Object) 43, null, null, null)))))));
-    mockMessenger.receive("reference_plugin", message);
+    mockMessenger.receive("github.penguin/reference", message);
 
     assertThat(replyMethodCallLog, contains((Matcher) equalTo("tornado")));
     assertThat(
@@ -363,7 +340,7 @@ public class ReferencePairManagerTest {
                     "returnsReference",
                     Collections.emptyList())));
 
-    mockMessenger.receive("reference_plugin", message);
+    mockMessenger.receive("github.penguin/reference", message);
     assertThat(
         replyMethodCallLog,
         contains(isUnpairedRemoteReference(new TypeReference(0), contains(11, null, null, null))));
@@ -379,14 +356,14 @@ public class ReferencePairManagerTest {
                     new RemoteReference("animal"),
                     new TypeReference(0),
                     Arrays.asList(32, null, null, null))));
-    mockMessenger.receive("reference_plugin", createMessage);
+    mockMessenger.receive("github.penguin/reference", createMessage);
     assertThat(
         referencePairManager.localReferenceFor(new RemoteReference("animal")), notNullValue());
 
     final ByteBuffer disposeMessage =
         referencePairManager.methodCodec.encodeMethodCall(
             new MethodCall("REFERENCE_DISPOSE", new RemoteReference("animal")));
-    mockMessenger.receive("reference_plugin", disposeMessage);
+    mockMessenger.receive("github.penguin/reference", disposeMessage);
     assertThat(referencePairManager.localReferenceFor(new RemoteReference("animal")), nullValue());
   }
 }

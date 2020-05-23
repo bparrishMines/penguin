@@ -1,17 +1,16 @@
 part of 'template.dart';
 
-// TODO(bparrishMines): replace generated with _$
-class GeneratedReferencePairManager extends MethodChannelReferencePairManager {
-  GeneratedReferencePairManager(
+class _$ReferencePairManager extends MethodChannelReferencePairManager {
+  _$ReferencePairManager(
     String channelName,
-    GeneratedLocalReferenceCommunicationHandler localHandler, {
-    GeneratedRemoteReferenceCommunicationHandler remoteHandler,
+    _$LocalReferenceCommunicationHandler localHandler, {
+    _$RemoteReferenceCommunicationHandler remoteHandler,
     ReferenceMessageCodec referenceMessageCodec = const ReferenceMessageCodec(),
   }) : super(
           channelName: channelName,
           localHandler: localHandler,
           remoteHandler:
-              remoteHandler ?? GeneratedRemoteReferenceCommunicationHandler(),
+              remoteHandler ?? _$RemoteReferenceCommunicationHandler(),
           referenceMessageCodec: referenceMessageCodec,
         );
 
@@ -24,9 +23,9 @@ class GeneratedReferencePairManager extends MethodChannelReferencePairManager {
   }
 }
 
-abstract class GeneratedLocalReferenceCommunicationHandler
+class _$LocalReferenceCommunicationHandler
     with LocalReferenceCommunicationHandler {
-  const GeneratedLocalReferenceCommunicationHandler();
+  const _$LocalReferenceCommunicationHandler({this.createClassTemplate});
 
   static final Map<TypeReference, Map<String, Function>> _methods =
       <TypeReference, Map<String, Function>>{
@@ -45,13 +44,13 @@ abstract class GeneratedLocalReferenceCommunicationHandler
     },
   };
 
-  ClassTemplate createClassTemplate(
+  final ClassTemplate Function(
     ReferencePairManager referencePairManager,
     int fieldTemplate,
     ClassTemplate referenceFieldTemplate,
     List<ClassTemplate> referenceListTemplate,
     Map<String, ClassTemplate> referenceMapTemplate,
-  );
+  ) createClassTemplate;
 
   @override
   LocalReference createLocalReference(
@@ -89,7 +88,7 @@ abstract class GeneratedLocalReferenceCommunicationHandler
   }
 }
 
-class GeneratedRemoteReferenceCommunicationHandler
+class _$RemoteReferenceCommunicationHandler
     extends MethodChannelRemoteReferenceCommunicationHandler {
   @override
   List<dynamic> creationArgumentsFor(LocalReference localReference) {
@@ -108,8 +107,8 @@ class GeneratedRemoteReferenceCommunicationHandler
   }
 }
 
-mixin ClassTemplateMethods {
-  Future<dynamic> _methodTemplate(
+mixin _$ClassTemplateMethods {
+  Future<dynamic> _$methodTemplate(
     ReferencePairManager referencePairManager,
     String parameterTemplate,
     ClassTemplate referenceParameterTemplate,
@@ -128,7 +127,8 @@ mixin ClassTemplateMethods {
     );
   }
 
-  Future<dynamic> _returnsReference(ReferencePairManager referencePairManager) {
+  Future<dynamic> _$returnsReference(
+      ReferencePairManager referencePairManager) {
     return referencePairManager.executeRemoteMethodFor(
       this as ClassTemplate,
       'returnsReference',

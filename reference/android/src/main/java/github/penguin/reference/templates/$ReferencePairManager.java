@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class GeneratedReferencePairManager extends MethodChannelReferencePairManager {
+public class $ReferencePairManager extends MethodChannelReferencePairManager {
   public interface ClassTemplate extends LocalReference {
     Integer getFieldTemplate();
 
@@ -35,12 +35,12 @@ public class GeneratedReferencePairManager extends MethodChannelReferencePairMan
     Object returnsReference() throws Exception;
   }
 
-  public static class GeneratedMethodNames {
+  public static class $MethodNames {
     public static final String methodTemplate = "methodTemplate";
     public static final String returnsReference = "returnsReference";
   }
 
-  public abstract static class GeneratedLocalReferenceCommunicationHandler
+  public abstract static class $LocalReferenceCommunicationHandler
       implements LocalReferenceCommunicationHandler {
 
     static private Map<TypeReference, ImmutableMap<String, Method>> methods;
@@ -96,9 +96,8 @@ public class GeneratedReferencePairManager extends MethodChannelReferencePairMan
         LocalReference localReference,
         String methodName,
         List<Object> arguments) throws Exception {
-      return callMethod(localReference,
-          methods.get(referencePairManager.typeReferenceFor(localReference)).get(methodName),
-          arguments);
+      final Method method = methods.get(referencePairManager.typeReferenceFor(localReference)).get(methodName);
+      return method.invoke(localReference, arguments.toArray());
     }
 
     @SuppressWarnings("RedundantThrows")
@@ -106,13 +105,9 @@ public class GeneratedReferencePairManager extends MethodChannelReferencePairMan
     public void disposeLocalReference(ReferencePairManager referencePairManager, LocalReference localReference) throws Exception {
       // Do nothing.
     }
-
-    private Object callMethod(LocalReference object, Method method, List<Object> arguments) throws Exception {
-      return method.invoke(object, arguments.toArray());
-    }
   }
 
-  public static class GeneratedRemoteReferenceCommunicationHandler
+  public static class $RemoteReferenceCommunicationHandler
       extends MethodChannelRemoteReferenceCommunicationHandler {
     @Override
     public List<Object> creationArgumentsFor(LocalReference localReference) {
@@ -132,24 +127,24 @@ public class GeneratedReferencePairManager extends MethodChannelReferencePairMan
     }
   }
 
-  public GeneratedReferencePairManager(
+  public $ReferencePairManager(
       final BinaryMessenger binaryMessenger,
       final String channelName,
-      final GeneratedLocalReferenceCommunicationHandler localHandler) {
+      final $LocalReferenceCommunicationHandler localHandler) {
     super(
         binaryMessenger,
         channelName,
         localHandler,
-        new GeneratedRemoteReferenceCommunicationHandler(),
+        new $RemoteReferenceCommunicationHandler(),
         new ReferenceMessageCodec());
   }
 
   @SuppressWarnings("unused")
-  public GeneratedReferencePairManager(
+  public $ReferencePairManager(
       final BinaryMessenger binaryMessenger,
       final String channelName,
-      final GeneratedLocalReferenceCommunicationHandler localHandler,
-      final GeneratedRemoteReferenceCommunicationHandler remoteHandler,
+      final $LocalReferenceCommunicationHandler localHandler,
+      final $RemoteReferenceCommunicationHandler remoteHandler,
       final ReferenceMessageCodec messageCodec) {
     super(binaryMessenger, channelName, localHandler, remoteHandler, messageCodec);
   }

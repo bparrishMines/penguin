@@ -55,11 +55,7 @@ void main() {
 
   group('$ReferencePairManager', () {
     setUp(() {
-      referencePairManager = GeneratedReferencePairManager(
-        'test_plugin',
-        LocalReferenceCommunicationHandlerTemplate(),
-      )..initialize();
-
+      referencePairManager = ReferencePairManagerTemplate()..initialize();
       referencePairManager.channel.setMockMethodCallHandler(
         (MethodCall methodCall) async {
           methodCallLog.add(methodCall);
@@ -218,7 +214,7 @@ void main() {
 
     test('createLocalReferenceFor', () async {
       await referencePairManager.channel.binaryMessenger.handlePlatformMessage(
-        'test_plugin',
+        'github.penguin/reference',
         referencePairManager.channel.codec.encodeMethodCall(
           MethodCall(
             'REFERENCE_CREATE',
@@ -302,7 +298,7 @@ void main() {
 
       final Completer<String> responseCompleter = Completer<String>();
       await referencePairManager.channel.binaryMessenger.handlePlatformMessage(
-        'test_plugin',
+        'github.penguin/reference',
         referencePairManager.channel.codec.encodeMethodCall(
           MethodCall(
             'REFERENCE_METHOD',
@@ -367,7 +363,7 @@ void main() {
       final Completer<UnpairedRemoteReference> responseCompleter =
           Completer<UnpairedRemoteReference>();
       await referencePairManager.channel.binaryMessenger.handlePlatformMessage(
-        'test_plugin',
+        'github.penguin/reference',
         referencePairManager.channel.codec.encodeMethodCall(
           MethodCall(
             'REFERENCE_METHOD',
@@ -398,7 +394,7 @@ void main() {
 
     test('disposeLocalReference', () async {
       await referencePairManager.channel.binaryMessenger.handlePlatformMessage(
-        'test_plugin',
+        'github.penguin/reference',
         referencePairManager.channel.codec.encodeMethodCall(
           MethodCall(
             'REFERENCE_CREATE',
@@ -417,7 +413,7 @@ void main() {
       expect(testClass, isClassTemplateWithSame(45, null, null, null));
 
       await referencePairManager.channel.binaryMessenger.handlePlatformMessage(
-        'test_plugin',
+        'github.penguin/reference',
         referencePairManager.channel.codec.encodeMethodCall(
           MethodCall(
             'REFERENCE_DISPOSE',

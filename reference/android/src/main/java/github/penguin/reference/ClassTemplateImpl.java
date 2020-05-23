@@ -2,14 +2,14 @@ package github.penguin.reference;
 
 import github.penguin.reference.reference.CompletableRunnable;
 import github.penguin.reference.reference.ReferencePairManager;
-import github.penguin.reference.templates.GeneratedReferencePairManager;
-import github.penguin.reference.templates.GeneratedReferencePairManager.ClassTemplate;
+import github.penguin.reference.templates.$ReferencePairManager;
+import github.penguin.reference.templates.$ReferencePairManager.ClassTemplate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("RedundantThrows")
-public class ClassTemplateImpl implements GeneratedReferencePairManager.ClassTemplate {
+public class ClassTemplateImpl implements $ReferencePairManager.ClassTemplate {
   private final Integer fieldTemplate;
   private final ClassTemplate referenceFieldTemplate;
   private final List<ClassTemplate> referenceListTemplate;
@@ -62,7 +62,7 @@ public class ClassTemplateImpl implements GeneratedReferencePairManager.ClassTem
             referencePairManager
                 .executeRemoteMethodFor(
                     ClassTemplateImpl.this,
-                    GeneratedReferencePairManager.GeneratedMethodNames.methodTemplate,
+                    $ReferencePairManager.$MethodNames.methodTemplate,
                     Arrays.asList(
                         parameterTemplate,
                         referenceParameterTemplate,
@@ -96,7 +96,7 @@ public class ClassTemplateImpl implements GeneratedReferencePairManager.ClassTem
             referencePairManager
                 .executeRemoteMethodFor(
                     ClassTemplateImpl.this,
-                    GeneratedReferencePairManager.GeneratedMethodNames.returnsReference)
+                    $ReferencePairManager.$MethodNames.returnsReference)
                 .setOnCompleteListener(
                     new OnCompleteListener() {
                       @Override

@@ -3,7 +3,7 @@ package github.penguin.reference;
 import github.penguin.reference.reference.RemoteReference;
 import github.penguin.reference.reference.TypeReference;
 import github.penguin.reference.reference.UnpairedRemoteReference;
-import github.penguin.reference.templates.GeneratedReferencePairManager.ClassTemplate;
+import github.penguin.reference.templates.$ReferencePairManager.ClassTemplate;
 import io.flutter.plugin.common.MethodCall;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;

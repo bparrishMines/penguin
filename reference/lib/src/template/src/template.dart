@@ -6,32 +6,32 @@ import 'package:reference/reference.dart';
 part 'template.g.dart';
 
 @visibleForTesting
-MethodChannelReferencePairManager referencePairManager =
-    GeneratedReferencePairManager(
-  'github.penguin/reference',
-  LocalReferenceCommunicationHandlerTemplate(),
-)..initialize();
+ReferencePairManagerTemplate referencePairManager = referencePairManager
+  ..initialize();
 
-class LocalReferenceCommunicationHandlerTemplate
-    extends GeneratedLocalReferenceCommunicationHandler {
-  @override
-  ClassTemplate createClassTemplate(
-    ReferencePairManager referencePairManager,
-    int fieldTemplate,
-    ClassTemplate referenceFieldTemplate,
-    List<ClassTemplate> referenceListTemplate,
-    Map<String, ClassTemplate> referenceMapTemplate,
-  ) {
-    return ClassTemplate(
-      fieldTemplate,
-      referenceFieldTemplate,
-      referenceListTemplate,
-      referenceMapTemplate,
-    );
-  }
+class ReferencePairManagerTemplate extends _$ReferencePairManager {
+  ReferencePairManagerTemplate()
+      : super(
+          'github.penguin/reference',
+          _$LocalReferenceCommunicationHandler(
+            createClassTemplate: (
+              ReferencePairManager referencePairManager,
+              int fieldTemplate,
+              ClassTemplate referenceFieldTemplate,
+              List<ClassTemplate> referenceListTemplate,
+              Map<String, ClassTemplate> referenceMapTemplate,
+            ) =>
+                ClassTemplate(
+              fieldTemplate,
+              referenceFieldTemplate,
+              referenceListTemplate,
+              referenceMapTemplate,
+            ),
+          ),
+        );
 }
 
-class ClassTemplate with LocalReference, ClassTemplateMethods {
+class ClassTemplate with LocalReference, _$ClassTemplateMethods {
   ClassTemplate(
     this.fieldTemplate,
     this.referenceFieldTemplate,
@@ -50,7 +50,7 @@ class ClassTemplate with LocalReference, ClassTemplateMethods {
     List<ClassTemplate> referenceListTemplate,
     Map<String, ClassTemplate> referenceMapTemplate,
   ) async {
-    return (await _methodTemplate(
+    return (await _$methodTemplate(
       referencePairManager,
       parameterTemplate,
       referenceParameterTemplate,
@@ -60,7 +60,7 @@ class ClassTemplate with LocalReference, ClassTemplateMethods {
   }
 
   FutureOr<ClassTemplate> returnsReference() async {
-    return await (_returnsReference(referencePairManager)) as ClassTemplate;
+    return await (_$returnsReference(referencePairManager)) as ClassTemplate;
   }
 
   @override
