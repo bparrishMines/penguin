@@ -7,7 +7,7 @@ class _$ReferencePairManager extends MethodChannelReferencePairManager {
     _$RemoteReferenceCommunicationHandler remoteHandler,
     ReferenceMessageCodec referenceMessageCodec = const ReferenceMessageCodec(),
   }) : super(
-          channelName: channelName,
+          channelName,
           localHandler: localHandler,
           remoteHandler:
               remoteHandler ?? _$RemoteReferenceCommunicationHandler(),

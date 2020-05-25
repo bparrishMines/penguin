@@ -8,8 +8,8 @@ import 'reference.dart';
 
 /// Abstract implementation of [ReferencePairManager] for [MethodChannel]s.
 abstract class MethodChannelReferencePairManager extends ReferencePairManager {
-  MethodChannelReferencePairManager({
-    @required this.channelName,
+  MethodChannelReferencePairManager(
+    this.channelName, {
     @required this.localHandler,
     @required this.remoteHandler,
     this.referenceMessageCodec = const ReferenceMessageCodec(),
