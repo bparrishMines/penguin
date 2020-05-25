@@ -262,6 +262,15 @@ class MyReferencePairManager extends MethodChannelReferencePairManager {
   MyReferencePairManager(final BinaryMessenger binaryMessenger, final String channelName) {
     super(binaryMessenger, channelName, new MyLocalHandler(), new MyRemoteHandler());
   }
+
+  // Establishes a unique TypeReference for each supported class.
+  @Override
+  TypeReference typeReferenceFor(LocalReference localReference) {
+    if (localReference instanceOf MyClass) return new TypeReference(0);
+    if (localReference instanceOf MyOtherClass) return new TypeReference(1);
+
+    throw new IllegalStateException("message");
+  }
 }
 ```
 
