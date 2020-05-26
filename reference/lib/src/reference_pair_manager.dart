@@ -131,8 +131,8 @@ abstract class ReferencePairManager {
   static final Uuid _uuid = Uuid();
 
   bool _isInitialized = false;
-  static final _localRefToRemoteRefMap =
-      BiMap<LocalReference, RemoteReference>();
+  // TODO: Add a global container and add option in createRemoteReferenceFor to which to add
+  final _referencePairs = BiMap<LocalReference, RemoteReference>();
 
   /// Retrieve the [TypeReference] that represents the type of [localReference].
   ///
@@ -160,7 +160,7 @@ abstract class ReferencePairManager {
   /// Returns null if this [localReference] is not paired.
   RemoteReference remoteReferenceFor(LocalReference localReference) {
     _assertIsInitialized();
-    return _localRefToRemoteRefMap[localReference];
+    return _referencePairs[localReference];
   }
 
   /// Retrieve the [LocalReference] paired with [remoteReference].
@@ -168,7 +168,7 @@ abstract class ReferencePairManager {
   /// Returns null if this [remoteReference] is not paired.
   LocalReference localReferenceFor(RemoteReference remoteReference) {
     _assertIsInitialized();
-    return _localRefToRemoteRefMap.inverse[remoteReference];
+    return _referencePairs.inverse[remoteReference];
   }
 
   /// Call when a [ReferencePairManager] on a different thread/process wants to create a [RemoteReference].
@@ -192,7 +192,7 @@ abstract class ReferencePairManager {
       typeReference,
       _replaceRemoteReferences(arguments ?? <dynamic>[]),
     );
-    _localRefToRemoteRefMap[localReference] = remoteReference;
+    _referencePairs[localReference] = remoteReference;
     return localReference;
   }
 
@@ -206,7 +206,7 @@ abstract class ReferencePairManager {
     final LocalReference localReference = localReferenceFor(remoteReference);
     if (localReference == null) return;
 
-    _localRefToRemoteRefMap.remove(localReference);
+    _referencePairs.remove(localReference);
     localHandler.disposeLocalReference(this, localReference);
   }
 
@@ -222,7 +222,7 @@ abstract class ReferencePairManager {
     if (remoteReferenceFor(localReference) != null) return null;
 
     final RemoteReference remoteReference = RemoteReference(_uuid.v4());
-    _localRefToRemoteRefMap[localReference] = remoteReference;
+    _referencePairs[localReference] = remoteReference;
 
     final Completer<RemoteReference> completer = Completer<RemoteReference>();
 
@@ -246,7 +246,7 @@ abstract class ReferencePairManager {
     final RemoteReference remoteReference = remoteReferenceFor(localReference);
     if (remoteReference == null) return null;
 
-    _localRefToRemoteRefMap.remove(localReference);
+    _referencePairs.remove(localReference);
     return remoteHandler.disposeRemoteReference(remoteReference);
   }
 

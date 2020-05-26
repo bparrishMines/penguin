@@ -12,7 +12,7 @@ import java.util.UUID;
 @SuppressWarnings({"unchecked", "WeakerAccess", "unused"})
 public abstract class ReferencePairManager {
   private boolean isInitialized = false;
-  private static final BiMap<LocalReference, RemoteReference> localRefToRemoteRefMap = HashBiMap.create();
+  private static final BiMap<LocalReference, RemoteReference> referencePairs = HashBiMap.create();
 
   public interface RemoteReferenceCommunicationHandler {
     List<Object> creationArgumentsFor(LocalReference localReference);
@@ -52,12 +52,12 @@ public abstract class ReferencePairManager {
 
   public RemoteReference remoteReferenceFor(LocalReference localReference) {
     assertIsInitialized();
-    return localRefToRemoteRefMap.get(localReference);
+    return referencePairs.get(localReference);
   }
 
   public LocalReference localReferenceFor(RemoteReference remoteReference) {
     assertIsInitialized();
-    return localRefToRemoteRefMap.inverse().get(remoteReference);
+    return referencePairs.inverse().get(remoteReference);
   }
 
   public LocalReference createLocalReferenceFor(
@@ -73,7 +73,7 @@ public abstract class ReferencePairManager {
         getLocalHandler()
             .createLocalReference(
                 this, typeReference,  (List<Object>) replaceRemoteReferences(arguments));
-    localRefToRemoteRefMap.put(localReference, remoteReference);
+    referencePairs.put(localReference, remoteReference);
     return localReference;
   }
 
@@ -83,7 +83,7 @@ public abstract class ReferencePairManager {
     final LocalReference localReference = localReferenceFor(remoteReference);
     if (localReference == null) return;
 
-    localRefToRemoteRefMap.remove(localReference);
+    referencePairs.remove(localReference);
     getLocalHandler().disposeLocalReference(this, localReference);
   }
 
@@ -99,7 +99,7 @@ public abstract class ReferencePairManager {
     if (remoteReferenceFor(localReference) != null) return null;
 
     final RemoteReference remoteReference = new RemoteReference(UUID.randomUUID().toString());
-    localRefToRemoteRefMap.put(localReference, remoteReference);
+    referencePairs.put(localReference, remoteReference);
 
     final List<Object> creationArguments = getRemoteHandler().creationArgumentsFor(localReference);
     final CompletableRunnable<Void> resultRunnable =
@@ -139,7 +139,7 @@ public abstract class ReferencePairManager {
     final RemoteReference remoteReference = remoteReferenceFor(localReference);
     if (remoteReference == null) return null;
 
-    localRefToRemoteRefMap.remove(localReference);
+    referencePairs.remove(localReference);
     return getRemoteHandler().disposeRemoteReference(remoteReference);
   }
 
