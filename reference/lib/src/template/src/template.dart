@@ -10,10 +10,10 @@ part 'template.g.dart';
 ReferencePairManagerTemplate referencePairManager = referencePairManager
   ..initialize();
 
-class ReferencePairManagerTemplate extends _$ReferencePairManager {
+class ReferencePairManagerTemplate extends _$TemplateReferencePairManager {
   ReferencePairManagerTemplate()
       : super(
-          'github.penguin/reference',
+          'github.penguin/reference/template',
           _$LocalReferenceCommunicationHandler(
             createClassTemplate: (
               ReferencePairManager referencePairManager,

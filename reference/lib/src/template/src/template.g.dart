@@ -1,7 +1,7 @@
 part of 'template.dart';
 
-class _$ReferencePairManager extends MethodChannelReferencePairManager {
-  _$ReferencePairManager(
+class _$TemplateReferencePairManager extends MethodChannelReferencePairManager {
+  _$TemplateReferencePairManager(
     String channelName,
     _$LocalReferenceCommunicationHandler localHandler, {
     _$RemoteReferenceCommunicationHandler remoteHandler,

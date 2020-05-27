@@ -97,4 +97,12 @@ class OwnerCounter {
     _ownerCount--;
     if (ownerCount == 0) return lifecycleListener.onDispose();
   }
+
+  /// Adds itself to the auto decrement pool.
+  ///
+  /// After each frame, [OwnerCounter.decrement] is called on all
+  /// [OwnerCounter]s in the pool and then the pool is cleared.
+  void autoDecrement() {
+    AutoDecrementPool.instance.add(this);
+  }
 }

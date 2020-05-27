@@ -139,7 +139,7 @@ void main() {
 
     test('createLocalReferenceFor', () async {
       await referencePairManager.channel.binaryMessenger.handlePlatformMessage(
-        'github.penguin/reference',
+        'github.penguin/reference/template',
         referencePairManager.channel.codec.encodeMethodCall(
           MethodCall(
             'REFERENCE_CREATE',
@@ -177,7 +177,7 @@ void main() {
 
       final Completer<String> responseCompleter = Completer<String>();
       await referencePairManager.channel.binaryMessenger.handlePlatformMessage(
-        'github.penguin/reference',
+        'github.penguin/reference/template',
         referencePairManager.channel.codec.encodeMethodCall(
           MethodCall(
             'REFERENCE_METHOD',
@@ -201,7 +201,7 @@ void main() {
 
     test('disposeLocalReference', () async {
       await referencePairManager.channel.binaryMessenger.handlePlatformMessage(
-        'github.penguin/reference',
+        'github.penguin/reference/template',
         referencePairManager.channel.codec.encodeMethodCall(
           MethodCall(
             'REFERENCE_CREATE',
@@ -220,7 +220,7 @@ void main() {
       expect(testClass, isClassTemplate(45));
 
       await referencePairManager.channel.binaryMessenger.handlePlatformMessage(
-        'github.penguin/reference',
+        'github.penguin/reference/template',
         referencePairManager.channel.codec.encodeMethodCall(
           MethodCall(
             'REFERENCE_DISPOSE',

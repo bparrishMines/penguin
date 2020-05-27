@@ -131,8 +131,7 @@ abstract class ReferencePairManager {
   static final Uuid _uuid = Uuid();
 
   bool _isInitialized = false;
-  // TODO: Add a global container and add option in createRemoteReferenceFor to which to add
-  final _referencePairs = BiMap<LocalReference, RemoteReference>();
+  static final _referencePairs = BiMap<LocalReference, RemoteReference>();
 
   /// Retrieve the [TypeReference] that represents the type of [localReference].
   ///
