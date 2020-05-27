@@ -1,473 +1,383 @@
 import 'dart:async';
 
-import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:reference/reference.dart';
-import 'package:reference/src/template/template.dart';
 
 import 'reference_matchers.dart';
 
 void main() {
-  final List<MethodCall> methodCallLog = <MethodCall>[];
-
-  TestWidgetsFlutterBinding.ensureInitialized();
-
-  group('$OwnerCounter', () {
-    test('increment', () {
-      int callCount = 0;
-
-      final OwnerCounter counter = OwnerCounter(
-        OwnerCounterLifecycleListener(
-          onCreate: () {
-            callCount++;
-            return Future<void>.value();
-          },
-          onDispose: () => null,
-        ),
-      );
-
-      counter.increment();
-      counter.increment();
-
-      expect(callCount, 1);
-    });
-
-    test('decrement', () {
-      int callCount = 0;
-
-      final OwnerCounter counter = OwnerCounter(
-          OwnerCounterLifecycleListener(
-            onCreate: () => null,
-            onDispose: () {
-              callCount++;
-              return Future<void>.value();
-            },
-          ),
-          2);
-
-      counter.decrement();
-      counter.decrement();
-
-      expect(callCount, 1);
-      expect(() => counter.decrement(), throwsAssertionError);
-    });
-  });
-
   group('$ReferencePairManager', () {
-    setUp(() {
-      referencePairManager = ReferencePairManagerTemplate()..initialize();
-      referencePairManager.channel.setMockMethodCallHandler(
-        (MethodCall methodCall) async {
-          methodCallLog.add(methodCall);
-          if (methodCall.method == 'REFERENCE_METHOD') {
-            switch (methodCall.arguments[1]) {
-              case 'methodTemplate':
-                return 'Good' + methodCall.arguments[2][0];
-              case 'returnsReference':
-                return UnpairedRemoteReference(
-                  TypeReference(0),
-                  <dynamic>[44, null, null, null],
-                );
-            }
-          }
-          return null;
-        },
+    test('createLocalReferenceFor', () {
+      final allArguments = <List<dynamic>>[];
+
+      final manager = TestReferencePairManager(
+        localHandler: TestLocalHandler(
+          onCreateLocalReference: (
+            ReferencePairManager referencePairManager,
+            TypeReference typeReference,
+            List<dynamic> arguments,
+          ) {
+            allArguments.add(arguments);
+            return TestClass();
+          },
+        ),
+      )..initialize();
+
+      final TestClass result = manager.createLocalReferenceFor(
+        RemoteReference('apple'),
+        TypeReference(0),
+        <dynamic>[
+          'Hello',
+          UnpairedRemoteReference(TypeReference(0), <dynamic>[]),
+          <dynamic>[
+            UnpairedRemoteReference(TypeReference(0), <dynamic>[]),
+          ],
+          <dynamic, dynamic>{
+            1.1: UnpairedRemoteReference(TypeReference(0), <dynamic>[]),
+          },
+        ],
+      );
+
+      expect(result, isA<TestClass>());
+      expect(manager.localReferenceFor(RemoteReference('apple')), result);
+      expect(manager.remoteReferenceFor(result), RemoteReference('apple'));
+      expect(
+        allArguments,
+        <Matcher>[
+          isEmpty,
+          isEmpty,
+          isEmpty,
+          containsAllInOrder(<Matcher>[
+            equals('Hello'),
+            isA<TestClass>(),
+            contains(isA<TestClass>()),
+            containsPair(1.1, isA<TestClass>()),
+          ]),
+        ],
       );
     });
 
-    tearDown(() {
-      referencePairManager = null;
-      methodCallLog.clear();
+    // TODO: Test return values
+    test('executeLocalMethodFor', () {
+      final methodArguments = <dynamic>[];
+      final manager = TestReferencePairManager(
+        localHandler: TestLocalHandler(
+          onCreateLocalReference: (
+            ReferencePairManager referencePairManager,
+            TypeReference typeReference,
+            List<dynamic> arguments,
+          ) {
+            return TestClass();
+          },
+          onExecuteLocalMethod: (
+            ReferencePairManager referencePairManager,
+            LocalReference localReference,
+            String methodName,
+            List<dynamic> arguments,
+          ) {
+            if (methodName == 'aMethod') methodArguments.addAll(arguments);
+            return null;
+          },
+        ),
+      )..initialize();
+
+      manager.createLocalReferenceFor(RemoteReference('chi'), TypeReference(0));
+      manager.executeLocalMethodFor(
+        RemoteReference('chi'),
+        'aMethod',
+        <dynamic>[
+          'Hello',
+          UnpairedRemoteReference(TypeReference(0), <dynamic>[]),
+          <dynamic>[
+            UnpairedRemoteReference(TypeReference(0), <dynamic>[]),
+          ],
+          <dynamic, dynamic>{
+            1.1: UnpairedRemoteReference(TypeReference(0), <dynamic>[]),
+          },
+        ],
+      );
+
+      expect(methodArguments, <Matcher>[
+        equals('Hello'),
+        isA<TestClass>(),
+        contains(isA<TestClass>()),
+        containsPair(1.1, isA<TestClass>()),
+      ]);
+    });
+
+    test('disposeLocalReferenceFor', () {
+      final manager = TestReferencePairManager(
+        localHandler: TestLocalHandler(
+          onCreateLocalReference: (
+            ReferencePairManager referencePairManager,
+            TypeReference typeReference,
+            List<dynamic> arguments,
+          ) {
+            return TestClass();
+          },
+        ),
+      )..initialize();
+
+      final TestClass result = manager.createLocalReferenceFor(
+        RemoteReference('tea'),
+        TypeReference(0),
+      );
+      manager.disposeLocalReferenceFor(RemoteReference('tea'));
+
+      expect(manager.localReferenceFor(RemoteReference('tea')), isNull);
+      expect(manager.remoteReferenceFor(result), isNull);
     });
 
     test('createRemoteReferenceFor', () async {
-      final ClassTemplate testClass = ClassTemplate(
-        1,
-        ClassTemplate(2, ClassTemplate(43, null, null, null), null, null),
-        <ClassTemplate>[ClassTemplate(3, null, null, null)],
-        <String, ClassTemplate>{
-          'fire': ClassTemplate(14, null, null, null),
-        },
-      );
+      final creationArguments = <dynamic>[];
+      bool firstCall = false;
 
-      referencePairManager.createRemoteReferenceFor(testClass);
-
-      final RemoteReference remoteReference =
-          referencePairManager.remoteReferenceFor(testClass);
-
-      expect(remoteReference?.referenceId, isNotNull);
-      expect(
-        referencePairManager.localReferenceFor(remoteReference),
-        testClass,
-      );
-      expect(methodCallLog, <Matcher>[
-        isMethodCallWithMatchers('REFERENCE_CREATE', arguments: <dynamic>[
-          remoteReference,
-          TypeReference(0),
-          <dynamic>[
-            1,
-            isUnpairedRemoteReferenceWithSame(
-              TypeReference(0),
-              <dynamic>[
-                2,
-                isUnpairedRemoteReferenceWithSame(
-                  TypeReference(0),
-                  <dynamic>[
-                    43,
-                    null,
-                    null,
-                    null,
-                  ],
-                ),
-                null,
-                null,
-              ],
-            ),
-            <Matcher>[
-              isUnpairedRemoteReferenceWithSame(
-                TypeReference(0),
-                <dynamic>[3, null, null, null],
-              ),
-            ],
-            <String, Matcher>{
-              'fire': isUnpairedRemoteReferenceWithSame(
-                TypeReference(0),
-                <dynamic>[14, null, null, null],
-              )
-            },
-          ],
-        ]),
-      ]);
-    });
-
-    test('disposeRemoteReferenceFor', () async {
-      final ClassTemplate testClass = ClassTemplate(3, null, null, null);
-
-      referencePairManager.createRemoteReferenceFor(testClass);
-      final RemoteReference remoteReference =
-          referencePairManager.remoteReferenceFor(testClass);
-      methodCallLog.clear();
-
-      referencePairManager.disposeRemoteReferenceFor(testClass);
-
-      expect(referencePairManager.localReferenceFor(remoteReference), isNull);
-      expect(referencePairManager.remoteReferenceFor(testClass), isNull);
-      expect(methodCallLog, <Matcher>[
-        isMethodCall(
-          'REFERENCE_DISPOSE',
-          arguments: remoteReference,
-        ),
-      ]);
-    });
-
-    test('executeRemoteMethodFor', () async {
-      final ClassTemplate testClass = ClassTemplate(4, null, null, null);
-      referencePairManager.createRemoteReferenceFor(testClass);
-      methodCallLog.clear();
-
-      final String result = await testClass.methodTemplate(
-        'bye!',
-        ClassTemplate(16, null, null, null),
-        <ClassTemplate>[ClassTemplate(45, null, null, null)],
-        <String, ClassTemplate>{
-          'pickle': ClassTemplate(4555, null, null, null),
-        },
-      );
-
-      expect(result, equals('Goodbye!'));
-      expect(methodCallLog, <Matcher>[
-        isMethodCallWithMatchers('REFERENCE_METHOD', arguments: <dynamic>[
-          referencePairManager.remoteReferenceFor(testClass),
-          'methodTemplate',
-          <dynamic>[
-            'bye!',
-            isUnpairedRemoteReferenceWithSame(
-              TypeReference(0),
-              <dynamic>[16, null, null, null],
-            ),
-            <Matcher>[
-              isUnpairedRemoteReferenceWithSame(
-                TypeReference(0),
-                <dynamic>[45, null, null, null],
-              ),
-            ],
-            <String, Matcher>{
-              'pickle': isUnpairedRemoteReferenceWithSame(
-                TypeReference(0),
-                <dynamic>[4555, null, null, null],
-              ),
+      final manager = TestReferencePairManager(
+        remoteHandler: TestRemoteHandler(
+          onCreationArgumentsFor: (LocalReference localReference) {
+            if (localReference is TestClass && !firstCall) {
+              firstCall = true;
+              return <dynamic>[
+                'Hello',
+                TestClass(),
+                <dynamic>[TestClass()],
+                <dynamic, dynamic>{1.1: TestClass()},
+              ];
             }
-          ],
-        ]),
-      ]);
-    });
 
-    test('executeRemoteMethodFor returnsReference', () async {
-      final ClassTemplate testClass = ClassTemplate(10101, null, null, null);
-      referencePairManager.createRemoteReferenceFor(testClass);
-      methodCallLog.clear();
-
-      final ClassTemplate result = await testClass.returnsReference();
-
-      expect(result, isClassTemplateWithSame(44, null, null, null));
-    });
-
-    test('createLocalReferenceFor', () async {
-      await referencePairManager.channel.binaryMessenger.handlePlatformMessage(
-        'github.penguin/reference',
-        referencePairManager.channel.codec.encodeMethodCall(
-          MethodCall(
-            'REFERENCE_CREATE',
-            <dynamic>[
-              RemoteReference('aowejea;io'),
-              TypeReference(0),
-              <dynamic>[
-                8,
-                UnpairedRemoteReference(
-                  TypeReference(0),
-                  <dynamic>[
-                    9,
-                    UnpairedRemoteReference(
-                      TypeReference(0),
-                      <dynamic>[14, null, null, null],
-                    ),
-                    null,
-                    null,
-                  ],
-                ),
-                <dynamic>[
-                  UnpairedRemoteReference(
-                    TypeReference(0),
-                    <dynamic>[10, null, null, null],
-                  ),
-                ],
-                <dynamic, dynamic>{
-                  'ohno': UnpairedRemoteReference(
-                    TypeReference(0),
-                    <dynamic>[13, null, null, null],
-                  ),
-                }
-              ],
-            ],
-          ),
-        ),
-        (ByteData data) {},
-      );
-
-      final ClassTemplate testClass =
-          referencePairManager.localReferenceFor(RemoteReference('aowejea;io'));
-
-      expect(
-        testClass,
-        isClassTemplateWithSame(
-          8,
-          isClassTemplateWithSame(
-            9,
-            isClassTemplateWithSame(14, null, null, null),
-            null,
-            null,
-          ),
-          <Matcher>[isClassTemplateWithSame(10, null, null, null)],
-          <String, Matcher>{
-            'ohno': isClassTemplateWithSame(13, null, null, null)
+            return <dynamic>[];
+          },
+          onCreateRemoteReference: (
+            RemoteReference remoteReference,
+            TypeReference typeReference,
+            List<dynamic> arguments,
+          ) {
+            creationArguments.addAll(arguments);
+            return Future<void>.value();
           },
         ),
+      )..initialize();
+
+      final testClass = TestClass();
+      final RemoteReference remoteReference =
+          await manager.createRemoteReferenceFor(
+        testClass,
       );
+
+      expect(remoteReference, isNotNull);
+      expect(manager.localReferenceFor(remoteReference), testClass);
+      expect(manager.remoteReferenceFor(testClass), remoteReference);
+      expect(creationArguments, <Matcher>[
+        equals('Hello'),
+        isUnpairedRemoteReference(TypeReference(0), <dynamic>[]),
+        contains(isUnpairedRemoteReference(TypeReference(0), <dynamic>[])),
+        containsPair(
+          1.1,
+          isUnpairedRemoteReference(TypeReference(0), <dynamic>[]),
+        ),
+      ]);
     });
 
-    test('executeLocalMethodFor', () async {
-      final Completer<List<dynamic>> callbackCompleter =
-          Completer<List<dynamic>>();
+    // TODO: test return values
+    test('executeRemoteMethodFor', () async {
+      final methodArguments = <dynamic>[];
 
-      final ClassTemplate testClass = TestClassTemplate(5, null, null, null, (
-        String parameterTemplate,
-        ClassTemplate referenceParameterTemplate,
-        List<ClassTemplate> referenceListTemplate,
-        Map<String, ClassTemplate> referenceMapTemplate,
-      ) {
-        callbackCompleter.complete(<dynamic>[
-          parameterTemplate,
-          referenceParameterTemplate,
-          referenceListTemplate,
-          referenceMapTemplate,
-        ]);
-        return parameterTemplate + ' pie';
-      }, null);
-
-      referencePairManager.createRemoteReferenceFor(testClass);
-
-      final Completer<String> responseCompleter = Completer<String>();
-      await referencePairManager.channel.binaryMessenger.handlePlatformMessage(
-        'github.penguin/reference',
-        referencePairManager.channel.codec.encodeMethodCall(
-          MethodCall(
-            'REFERENCE_METHOD',
-            <dynamic>[
-              referencePairManager.remoteReferenceFor(testClass),
-              'methodTemplate',
-              <dynamic>[
-                'Apple',
-                UnpairedRemoteReference(
-                    TypeReference(0), <dynamic>[19, null, null, null]),
-                <dynamic>[
-                  UnpairedRemoteReference(
-                    TypeReference(0),
-                    <dynamic>[62, null, null, null],
-                  ),
-                ],
-                <dynamic, dynamic>{
-                  'poyo': UnpairedRemoteReference(
-                    TypeReference(0),
-                    <dynamic>[11, null, null, null],
-                  ),
-                },
-              ],
-            ],
-          ),
+      final manager = TestReferencePairManager(
+        remoteHandler: TestRemoteHandler(
+          onCreationArgumentsFor: (LocalReference localReference) {
+            return <dynamic>[];
+          },
+          onCreateRemoteReference: (
+            RemoteReference remoteReference,
+            TypeReference typeReference,
+            List<dynamic> arguments,
+          ) {
+            return Future<void>.value();
+          },
+          onExecuteRemoteMethod: (
+            RemoteReference remoteReference,
+            String methodName,
+            List<dynamic> arguments,
+          ) {
+            methodArguments.addAll(arguments);
+            return Future<void>.value();
+          },
         ),
-        (ByteData data) {
-          responseCompleter.complete(
-            referencePairManager.channel.codec.decodeEnvelope(data),
-          );
+      )..initialize();
+
+      final testClass = TestClass();
+      manager.createRemoteReferenceFor(testClass);
+      await manager.executeRemoteMethodFor(
+        testClass,
+        'aMethod',
+        <dynamic>[
+          'Hello',
+          TestClass(),
+          <dynamic>[TestClass()],
+          <dynamic, dynamic>{1.1: TestClass()},
+        ],
+      );
+
+      expect(methodArguments, <Matcher>[
+        equals('Hello'),
+        isUnpairedRemoteReference(TypeReference(0), <dynamic>[]),
+        contains(isUnpairedRemoteReference(TypeReference(0), <dynamic>[])),
+        containsPair(
+          1.1,
+          isUnpairedRemoteReference(TypeReference(0), <dynamic>[]),
+        ),
+      ]);
+    });
+  });
+
+  test('disposeRemoteReferenceFor', () async {
+    final manager = TestReferencePairManager(
+      remoteHandler: TestRemoteHandler(
+        onCreationArgumentsFor: (LocalReference localReference) {
+          return <dynamic>[];
         },
-      );
-
-      expect(
-        callbackCompleter.future,
-        completion(
-          <dynamic>[
-            'Apple',
-            isClassTemplateWithSame(19, null, null, null),
-            <Matcher>[isClassTemplateWithSame(62, null, null, null)],
-            <String, Matcher>{
-              'poyo': isClassTemplateWithSame(11, null, null, null),
-            }
-          ],
-        ),
-      );
-      expect(responseCompleter.future, completion('Apple pie'));
-    });
-
-    test('executeLocalMethodFor returnsReference', () async {
-      final ClassTemplate testClass = TestClassTemplate(
-        6,
-        null,
-        null,
-        null,
-        null,
-        () => ClassTemplate(919, null, null, null),
-      );
-
-      referencePairManager.createRemoteReferenceFor(testClass);
-
-      final Completer<UnpairedRemoteReference> responseCompleter =
-          Completer<UnpairedRemoteReference>();
-      await referencePairManager.channel.binaryMessenger.handlePlatformMessage(
-        'github.penguin/reference',
-        referencePairManager.channel.codec.encodeMethodCall(
-          MethodCall(
-            'REFERENCE_METHOD',
-            <dynamic>[
-              referencePairManager.remoteReferenceFor(testClass),
-              'returnsReference',
-              <dynamic>[],
-            ],
-          ),
-        ),
-        (ByteData data) {
-          responseCompleter.complete(
-            referencePairManager.channel.codec.decodeEnvelope(data),
-          );
+        onCreateRemoteReference: (
+          RemoteReference remoteReference,
+          TypeReference typeReference,
+          List<dynamic> arguments,
+        ) {
+          return Future<void>.value();
         },
-      );
+      ),
+    )..initialize();
 
-      expect(
-        responseCompleter.future,
-        completion(
-          isUnpairedRemoteReferenceWithSame(
-            TypeReference(0),
-            <dynamic>[919, null, null, null],
-          ),
-        ),
-      );
-    });
+    final testClass = TestClass();
+    final RemoteReference remoteReference =
+        await manager.createRemoteReferenceFor(
+      testClass,
+    );
+    manager.disposeRemoteReferenceFor(testClass);
 
-    test('disposeLocalReference', () async {
-      await referencePairManager.channel.binaryMessenger.handlePlatformMessage(
-        'github.penguin/reference',
-        referencePairManager.channel.codec.encodeMethodCall(
-          MethodCall(
-            'REFERENCE_CREATE',
-            <dynamic>[
-              RemoteReference('ajackwhack'),
-              TypeReference(0),
-              <dynamic>[45, null, null, null],
-            ],
-          ),
-        ),
-        (ByteData data) {},
-      );
-
-      final ClassTemplate testClass = referencePairManager
-          .localReferenceFor(RemoteReference('ajackwhack')) as ClassTemplate;
-      expect(testClass, isClassTemplateWithSame(45, null, null, null));
-
-      await referencePairManager.channel.binaryMessenger.handlePlatformMessage(
-        'github.penguin/reference',
-        referencePairManager.channel.codec.encodeMethodCall(
-          MethodCall(
-            'REFERENCE_DISPOSE',
-            RemoteReference('ajackwhack'),
-          ),
-        ),
-        (ByteData data) {},
-      );
-
-      expect(
-        referencePairManager.localReferenceFor(RemoteReference('ajackwhack')),
-        isNull,
-      );
-    });
+    expect(manager.localReferenceFor(remoteReference), isNull);
+    expect(manager.remoteReferenceFor(testClass), isNull);
   });
 }
 
-class TestClassTemplate extends ClassTemplate {
-  TestClassTemplate(
-    int fieldTemplate,
-    ClassTemplate referenceFieldTemplate,
-    List<ClassTemplate> referenceListTemplate,
-    Map<String, ClassTemplate> referenceMapTemplate,
-    this.onMethodTemplate,
-    this.onReturnsReference,
-  ) : super(fieldTemplate, referenceFieldTemplate, referenceListTemplate,
-            referenceMapTemplate);
+class TestClass with LocalReference {}
 
-  final String Function(
-    String parameterTemplate,
-    ClassTemplate referenceParameterTemplate,
-    List<ClassTemplate> referenceListTemplate,
-    Map<String, ClassTemplate> referenceMapTemplate,
-  ) onMethodTemplate;
-
-  final ClassTemplate Function() onReturnsReference;
+class TestReferencePairManager extends ReferencePairManager {
+  TestReferencePairManager({this.localHandler, this.remoteHandler});
 
   @override
-  FutureOr<String> methodTemplate(
-    String parameterTemplate,
-    ClassTemplate referenceParameterTemplate,
-    List<ClassTemplate> referenceListTemplate,
-    Map<String, ClassTemplate> referenceMapTemplate,
+  final TestLocalHandler localHandler;
+  @override
+  final TestRemoteHandler remoteHandler;
+
+  @override
+  TypeReference typeReferenceFor(LocalReference localReference) {
+    if (localReference is TestClass) return TypeReference(0);
+    throw UnsupportedError('message');
+  }
+}
+
+class TestRemoteHandler implements RemoteReferenceCommunicationHandler {
+  const TestRemoteHandler({
+    this.onCreationArgumentsFor,
+    this.onCreateRemoteReference,
+    this.onExecuteRemoteMethod,
+  });
+
+  final List<dynamic> Function(LocalReference localReference)
+      onCreationArgumentsFor;
+
+  final Future<void> Function(
+    RemoteReference remoteReference,
+    TypeReference typeReference,
+    List<dynamic> arguments,
+  ) onCreateRemoteReference;
+
+  final Future<dynamic> Function(
+    RemoteReference remoteReference,
+    String methodName,
+    List<dynamic> arguments,
+  ) onExecuteRemoteMethod;
+
+  @override
+  List<dynamic> creationArgumentsFor(LocalReference localReference) {
+    return onCreationArgumentsFor(localReference);
+  }
+
+  @override
+  Future<void> createRemoteReference(
+    RemoteReference remoteReference,
+    TypeReference typeReference,
+    List<dynamic> arguments,
   ) {
-    return onMethodTemplate(
-      parameterTemplate,
-      referenceParameterTemplate,
-      referenceListTemplate,
-      referenceMapTemplate,
+    return onCreateRemoteReference(remoteReference, typeReference, arguments);
+  }
+
+  @override
+  Future<void> disposeRemoteReference(RemoteReference remoteReference) {
+    return Future<void>.value();
+  }
+
+  @override
+  Future<dynamic> executeRemoteMethod(
+    RemoteReference remoteReference,
+    String methodName,
+    List<dynamic> arguments,
+  ) {
+    return onExecuteRemoteMethod(remoteReference, methodName, arguments);
+  }
+}
+
+class TestLocalHandler implements LocalReferenceCommunicationHandler {
+  const TestLocalHandler({
+    this.onCreateLocalReference,
+    this.onExecuteLocalMethod,
+  });
+
+  final LocalReference Function(
+    ReferencePairManager referencePairManager,
+    TypeReference typeReference,
+    List<dynamic> arguments,
+  ) onCreateLocalReference;
+
+  final dynamic Function(
+    ReferencePairManager referencePairManager,
+    LocalReference localReference,
+    String methodName,
+    List<dynamic> arguments,
+  ) onExecuteLocalMethod;
+
+  @override
+  LocalReference createLocalReference(
+    ReferencePairManager referencePairManager,
+    TypeReference typeReference,
+    List<dynamic> arguments,
+  ) {
+    return onCreateLocalReference(
+      referencePairManager,
+      typeReference,
+      arguments,
     );
   }
 
   @override
-  FutureOr<ClassTemplate> returnsReference() {
-    return onReturnsReference();
+  void disposeLocalReference(
+    ReferencePairManager referencePairManager,
+    LocalReference localReference,
+  ) {
+    // Do nothing.
+  }
+
+  @override
+  dynamic executeLocalMethod(
+    ReferencePairManager referencePairManager,
+    LocalReference localReference,
+    String methodName,
+    List<dynamic> arguments,
+  ) {
+    return onExecuteLocalMethod(
+      referencePairManager,
+      localReference,
+      methodName,
+      arguments,
+    );
   }
 }

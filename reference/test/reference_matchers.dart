@@ -32,15 +32,15 @@ class _IsMethodCallWithMatchers extends Matcher with _DeepEquals {
 }
 
 // Extends isMethodCall in packager:test/test.dart to support matchers in arguments.
-Matcher isUnpairedRemoteReferenceWithSame(
+Matcher isUnpairedRemoteReference(
   TypeReference typeReference,
   List<dynamic> creationArguments,
 ) {
-  return _IsUnpairedRemoteReferenceWithSame(typeReference, creationArguments);
+  return _IsUnpairedRemoteReference(typeReference, creationArguments);
 }
 
-class _IsUnpairedRemoteReferenceWithSame extends Matcher with _DeepEquals {
-  const _IsUnpairedRemoteReferenceWithSame(
+class _IsUnpairedRemoteReference extends Matcher with _DeepEquals {
+  const _IsUnpairedRemoteReference(
     this.typeReference,
     this.creationArguments,
   );
@@ -66,13 +66,13 @@ class _IsUnpairedRemoteReferenceWithSame extends Matcher with _DeepEquals {
   }
 }
 
-Matcher isClassTemplateWithSame(
+Matcher isClassTemplate(
   int fieldTemplate,
   dynamic referenceFieldTemplate,
   dynamic referenceListTemplate,
   dynamic referenceMapTemplate,
 ) {
-  return _IsClassTemplateWithSame(
+  return _IsClassTemplate(
     fieldTemplate,
     referenceFieldTemplate,
     referenceListTemplate,
@@ -80,8 +80,8 @@ Matcher isClassTemplateWithSame(
   );
 }
 
-class _IsClassTemplateWithSame extends Matcher with _DeepEquals {
-  const _IsClassTemplateWithSame(
+class _IsClassTemplate extends Matcher with _DeepEquals {
+  const _IsClassTemplate(
     this.fieldTemplate,
     this.referenceFieldTemplate,
     this.referenceListTemplate,
