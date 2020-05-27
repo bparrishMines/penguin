@@ -33,39 +33,24 @@ class _$LocalReferenceCommunicationHandler
       'methodTemplate': (ClassTemplate value, List<dynamic> arguments) {
         return value.methodTemplate(
           arguments[0],
-          arguments[1],
-          arguments[2]?.cast<ClassTemplate>(),
-          arguments[3]?.cast<String, ClassTemplate>(),
         );
-      },
-      'returnsReference': (ClassTemplate value, List<dynamic> arguments) {
-        return value.returnsReference();
       },
     },
   };
 
   final ClassTemplate Function(
-    ReferencePairManager referencePairManager,
+    ReferencePairManager manager,
     int fieldTemplate,
-    ClassTemplate referenceFieldTemplate,
-    List<ClassTemplate> referenceListTemplate,
-    Map<String, ClassTemplate> referenceMapTemplate,
   ) createClassTemplate;
 
   @override
   LocalReference createLocalReference(
-    ReferencePairManager referencePairManager,
+    ReferencePairManager manager,
     TypeReference typeReference,
     List<dynamic> arguments,
   ) {
     if (typeReference == TypeReference(0)) {
-      return createClassTemplate(
-        referencePairManager,
-        arguments[0],
-        arguments[1],
-        arguments[2]?.cast<ClassTemplate>(),
-        arguments[3]?.cast<String, ClassTemplate>(),
-      );
+      return createClassTemplate(manager, arguments[0]);
     }
 
     throw StateError(
@@ -93,12 +78,7 @@ class _$RemoteReferenceCommunicationHandler
   @override
   List<dynamic> creationArgumentsFor(LocalReference localReference) {
     if (localReference is ClassTemplate) {
-      return <dynamic>[
-        localReference.fieldTemplate,
-        localReference.referenceFieldTemplate,
-        localReference.referenceListTemplate,
-        localReference.referenceMapTemplate,
-      ];
+      return <dynamic>[localReference.fieldTemplate];
     }
 
     throw StateError(
@@ -111,27 +91,11 @@ mixin _$ClassTemplateMethods {
   Future<dynamic> _$methodTemplate(
     ReferencePairManager referencePairManager,
     String parameterTemplate,
-    ClassTemplate referenceParameterTemplate,
-    List<ClassTemplate> referenceListTemplate,
-    Map<String, ClassTemplate> referenceMapTemplate,
   ) {
     return referencePairManager.executeRemoteMethodFor(
       this as ClassTemplate,
       'methodTemplate',
-      <dynamic>[
-        parameterTemplate,
-        referenceParameterTemplate,
-        referenceListTemplate,
-        referenceMapTemplate,
-      ],
-    );
-  }
-
-  Future<dynamic> _$returnsReference(
-      ReferencePairManager referencePairManager) {
-    return referencePairManager.executeRemoteMethodFor(
-      this as ClassTemplate,
-      'returnsReference',
+      <dynamic>[parameterTemplate],
     );
   }
 }

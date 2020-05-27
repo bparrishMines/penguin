@@ -67,93 +67,33 @@ class _IsUnpairedRemoteReference extends Matcher with _DeepEquals {
 }
 
 Matcher isClassTemplate(
-  int fieldTemplate,
-  dynamic referenceFieldTemplate,
-  dynamic referenceListTemplate,
-  dynamic referenceMapTemplate,
+  int fieldTemplate
 ) {
   return _IsClassTemplate(
-    fieldTemplate,
-    referenceFieldTemplate,
-    referenceListTemplate,
-    referenceMapTemplate,
+    fieldTemplate
   );
 }
 
 class _IsClassTemplate extends Matcher with _DeepEquals {
   const _IsClassTemplate(
-    this.fieldTemplate,
-    this.referenceFieldTemplate,
-    this.referenceListTemplate,
-    this.referenceMapTemplate,
+    this.fieldTemplate
   );
 
   final int fieldTemplate;
-  final dynamic referenceFieldTemplate;
-  final dynamic referenceListTemplate;
-  final dynamic referenceMapTemplate;
 
   @override
   Description describe(Description description) {
     return description
         .add(' Is a $ClassTemplate with fieldTemplate: ')
         .addDescriptionOf(fieldTemplate)
-        .add(' and referenceFieldTemplate: ')
-        .addDescriptionOf(referenceFieldTemplate)
-        .add(' and referenceListTemplate: ')
-        .addDescriptionOf(referenceListTemplate)
-        .add(' and referenceMapTemplate: ')
-        .addDescriptionOf(referenceMapTemplate);
+        .add(' and referenceFieldTemplate: ');
   }
 
   @override
   bool matches(dynamic item, Map<dynamic, dynamic> matchState) {
     if (item is! ClassTemplate) return false;
     if (item.fieldTemplate != fieldTemplate) return false;
-    if (!matchesReferenceFieldTemplate(
-        item.referenceFieldTemplate, matchState)) {
-      return false;
-    }
-    if (!matchesReferenceListTemplate(item.referenceListTemplate, matchState)) {
-      return false;
-    }
-    if (!matchesReferenceMapTemplate(item.referenceMapTemplate, matchState)) {
-      return false;
-    }
     return true;
-  }
-
-  bool matchesReferenceFieldTemplate(
-    dynamic item,
-    Map<dynamic, dynamic> matchState,
-  ) {
-    if (item == referenceFieldTemplate) return true;
-    if (referenceFieldTemplate is Matcher) {
-      return referenceFieldTemplate.matches(item, matchState);
-    }
-    return false;
-  }
-
-  bool matchesReferenceListTemplate(
-    dynamic item,
-    Map<dynamic, dynamic> matchState,
-  ) {
-    if (item == referenceListTemplate) return true;
-    if (referenceListTemplate is Matcher)
-      return referenceListTemplate.matches(item, matchState);
-    if (referenceListTemplate is! List) return false;
-    return deepEquals(item, referenceListTemplate, matchState);
-  }
-
-  bool matchesReferenceMapTemplate(
-    dynamic item,
-    Map<dynamic, dynamic> matchState,
-  ) {
-    if (item == referenceMapTemplate) return true;
-    if (referenceMapTemplate is Matcher)
-      return referenceMapTemplate.matches(item, matchState);
-    if (referenceMapTemplate is! Map) return false;
-    return deepEquals(item, referenceMapTemplate, matchState);
   }
 }
 

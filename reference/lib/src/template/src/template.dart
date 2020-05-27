@@ -18,54 +18,26 @@ class ReferencePairManagerTemplate extends _$ReferencePairManager {
             createClassTemplate: (
               ReferencePairManager referencePairManager,
               int fieldTemplate,
-              ClassTemplate referenceFieldTemplate,
-              List<ClassTemplate> referenceListTemplate,
-              Map<String, ClassTemplate> referenceMapTemplate,
             ) =>
-                ClassTemplate(
-              fieldTemplate,
-              referenceFieldTemplate,
-              referenceListTemplate,
-              referenceMapTemplate,
-            ),
+                ClassTemplate(fieldTemplate),
           ),
         );
 }
 
 class ClassTemplate with LocalReference, _$ClassTemplateMethods {
-  ClassTemplate(
-    this.fieldTemplate,
-    this.referenceFieldTemplate,
-    this.referenceListTemplate,
-    this.referenceMapTemplate,
-  );
+  ClassTemplate(this.fieldTemplate);
 
   final int fieldTemplate;
-  final ClassTemplate referenceFieldTemplate;
-  final List<ClassTemplate> referenceListTemplate;
-  final Map<String, ClassTemplate> referenceMapTemplate;
 
-  FutureOr<String> methodTemplate(
-    String parameterTemplate,
-    ClassTemplate referenceParameterTemplate,
-    List<ClassTemplate> referenceListTemplate,
-    Map<String, ClassTemplate> referenceMapTemplate,
-  ) async {
+  FutureOr<String> methodTemplate(String parameterTemplate) async {
     return (await _$methodTemplate(
       referencePairManager,
       parameterTemplate,
-      referenceParameterTemplate,
-      referenceListTemplate,
-      referenceMapTemplate,
     )) as String;
-  }
-
-  FutureOr<ClassTemplate> returnsReference() async {
-    return await (_$returnsReference(referencePairManager)) as ClassTemplate;
   }
 
   @override
   String toString() {
-    return '$ClassTemplate($fieldTemplate, $referenceFieldTemplate, $referenceListTemplate, $referenceMapTemplate)';
+    return '$ClassTemplate($fieldTemplate)';
   }
 }
