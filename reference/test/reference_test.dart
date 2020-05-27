@@ -57,7 +57,6 @@ void main() {
       );
     });
 
-    // TODO: Test return values
     test('executeLocalMethodFor', () {
       final methodArguments = <dynamic>[];
       final manager = TestReferencePairManager(
@@ -178,7 +177,6 @@ void main() {
       ]);
     });
 
-    // TODO: test return values
     test('executeRemoteMethodFor', () async {
       final methodArguments = <dynamic>[];
 

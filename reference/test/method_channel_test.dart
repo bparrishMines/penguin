@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -12,7 +13,50 @@ void main() {
 
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  group('$ReferencePairManager', () {
+  group('$ReferenceMessageCodec', () {
+    final methodCodec = StandardMethodCodec(ReferenceMessageCodec());
+
+    test('encode/decode $RemoteReference', () {
+      final ByteData byteData = methodCodec.encodeMethodCall(
+        MethodCall('oeifj', RemoteReference('a')),
+      );
+
+      expect(
+        methodCodec.decodeMethodCall(byteData),
+        isMethodCall('oeifj', arguments: RemoteReference('a')),
+      );
+    });
+
+    test('encode/decode $TypeReference', () {
+      final ByteData byteData = methodCodec.encodeMethodCall(
+        MethodCall('oeifj', TypeReference(56)),
+      );
+
+      expect(
+        methodCodec.decodeMethodCall(byteData),
+        isMethodCall('oeifj', arguments: TypeReference(56)),
+      );
+    });
+
+    test('encode/decode $UnpairedRemoteReference', () {
+      final ByteData byteData = methodCodec.encodeMethodCall(
+        MethodCall(
+          'a',
+          UnpairedRemoteReference(TypeReference(56), <dynamic>[]),
+        ),
+      );
+
+      expect(
+        methodCodec.decodeMethodCall(byteData),
+        isMethodCallWithMatchers(
+          'a',
+          arguments: isUnpairedRemoteReference(TypeReference(56), <dynamic>[]),
+        ),
+      );
+    });
+  });
+
+  group('$MethodChannelReferencePairManager', () {
     setUp(() {
       referencePairManager = ReferencePairManagerTemplate()..initialize();
       referencePairManager.channel.setMockMethodCallHandler(

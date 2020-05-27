@@ -66,18 +66,12 @@ class _IsUnpairedRemoteReference extends Matcher with _DeepEquals {
   }
 }
 
-Matcher isClassTemplate(
-  int fieldTemplate
-) {
-  return _IsClassTemplate(
-    fieldTemplate
-  );
+Matcher isClassTemplate(int fieldTemplate) {
+  return _IsClassTemplate(fieldTemplate);
 }
 
 class _IsClassTemplate extends Matcher with _DeepEquals {
-  const _IsClassTemplate(
-    this.fieldTemplate
-  );
+  const _IsClassTemplate(this.fieldTemplate);
 
   final int fieldTemplate;
 

@@ -31,9 +31,7 @@ class _$LocalReferenceCommunicationHandler
       <TypeReference, Map<String, Function>>{
     TypeReference(0): <String, Function>{
       'methodTemplate': (ClassTemplate value, List<dynamic> arguments) {
-        return value.methodTemplate(
-          arguments[0],
-        );
+        return value.methodTemplate(arguments[0]);
       },
     },
   };
