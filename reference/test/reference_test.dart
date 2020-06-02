@@ -38,7 +38,6 @@ void main() {
         ],
       );
 
-      expect(result, isA<TestClass>());
       expect(manager.localReferenceFor(RemoteReference('apple')), result);
       expect(manager.remoteReferenceFor(result), RemoteReference('apple'));
       expect(
@@ -129,13 +128,13 @@ void main() {
 
     test('createRemoteReferenceFor', () async {
       final creationArguments = <dynamic>[];
-      bool firstCall = false;
+      bool firstCall = true;
 
       final manager = TestReferencePairManager(
         remoteHandler: TestRemoteHandler(
           onCreationArgumentsFor: (LocalReference localReference) {
-            if (localReference is TestClass && !firstCall) {
-              firstCall = true;
+            if (localReference is TestClass && firstCall) {
+              firstCall = false;
               return <dynamic>[
                 'Hello',
                 TestClass(),
