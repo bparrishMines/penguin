@@ -5,7 +5,7 @@ import 'package:quiver/collection.dart';
 import 'package:uuid/uuid.dart';
 
 import 'reference.dart';
-// TODO: replace dynamic with Object
+
 /// Handles communication with [RemoteReference]s for a [ReferencePairManager].
 ///
 /// This class communicates with other [ReferencePairManager]s to create,
