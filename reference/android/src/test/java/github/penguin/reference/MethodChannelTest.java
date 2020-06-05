@@ -4,6 +4,7 @@ import static github.penguin.reference.ReferenceMatchers.isClassTemplate;
 import static github.penguin.reference.ReferenceMatchers.isMethodCall;
 import static github.penguin.reference.ReferenceMatchers.isRemoteReference;
 import static github.penguin.reference.ReferenceMatchers.isTypeReference;
+import static github.penguin.reference.ReferenceMatchers.isUnpairedRemoteReference;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
@@ -16,7 +17,7 @@ import github.penguin.reference.reference.RemoteReference;
 import github.penguin.reference.reference.TypeReference;
 import github.penguin.reference.reference.UnpairedRemoteReference;
 import github.penguin.reference.templates.$TemplateReferencePairManager.ClassTemplate;
-import github.penguin.reference.templates.PluginTemplate.TemplateReferencePairManagerTemplate;
+import github.penguin.reference.templates.PluginTemplate.ReferencePairManagerTemplate;
 import github.penguin.reference.templates.ClassTemplateImpl;
 import io.flutter.plugin.common.BinaryMessenger.BinaryMessageHandler;
 import io.flutter.plugin.common.BinaryMessenger.BinaryReply;
@@ -39,7 +40,8 @@ public class MethodChannelTest {
 
   private static MockBinaryMessenger mockMessenger;
   private static MethodChannel.MethodCallHandler methodCallHandler;
-  private static TemplateReferencePairManagerTemplate referencePairManager;
+  private static ReferencePairManagerTemplate referencePairManager;
+
 
   @BeforeClass
   public static void setUpAll() {
@@ -109,8 +111,47 @@ public class MethodChannelTest {
   public void setUp() {
     methodCallLog.clear();
     replyMethodCallLog.clear();
-    referencePairManager = new TemplateReferencePairManagerTemplate(mockMessenger);
+    referencePairManager = new ReferencePairManagerTemplate(mockMessenger);
     referencePairManager.initialize();
+  }
+
+  @Test
+  public void referenceMessageCodec_handlesRemoteReference() {
+    final ByteBuffer message =
+        referencePairManager.methodCodec.encodeMethodCall(
+            new MethodCall("ewoif",
+                new RemoteReference("hi"))
+        );
+
+    assertThat(referencePairManager.methodCodec.decodeMethodCall((ByteBuffer) message.position(0)),
+        isMethodCall("ewoif",
+            new RemoteReference("hi")));
+  }
+
+  @Test
+  public void referenceMessageCodec_handlesTypeReference() {
+    final ByteBuffer message =
+        referencePairManager.methodCodec.encodeMethodCall(
+            new MethodCall("ewoif",
+                new TypeReference(12))
+        );
+
+    assertThat(referencePairManager.methodCodec.decodeMethodCall((ByteBuffer) message.position(0)),
+        isMethodCall("ewoif",
+            new TypeReference(12)));
+  }
+
+  @Test
+  public void referenceMessageCodec_handlesUnpairedRemoteReference() {
+    final ByteBuffer message =
+        referencePairManager.methodCodec.encodeMethodCall(
+            new MethodCall("ewoif",
+                new UnpairedRemoteReference(new TypeReference(1), Collections.emptyList()))
+        );
+
+    assertThat(referencePairManager.methodCodec.decodeMethodCall((ByteBuffer) message.position(0)),
+        isMethodCall("ewoif",
+            isUnpairedRemoteReference(new TypeReference(1), empty())));
   }
 
   @Test

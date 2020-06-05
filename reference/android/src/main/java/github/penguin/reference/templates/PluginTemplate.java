@@ -9,8 +9,8 @@ import io.flutter.plugin.common.PluginRegistry.Registrar;
 
 public class PluginTemplate implements FlutterPlugin {
   @VisibleForTesting
-  public static class TemplateReferencePairManagerTemplate extends $TemplateReferencePairManager {
-    public TemplateReferencePairManagerTemplate(BinaryMessenger binaryMessenger) {
+  public static class ReferencePairManagerTemplate extends $TemplateReferencePairManager {
+    public ReferencePairManagerTemplate(BinaryMessenger binaryMessenger) {
       super(binaryMessenger, "github.penguin/reference", new $LocalReferenceCommunicationHandler() {
         @Override
         public ClassTemplate createClassTemplate(ReferencePairManager referencePairManager, int fieldTemplate) {
@@ -26,7 +26,7 @@ public class PluginTemplate implements FlutterPlugin {
   }
 
   private void initialize(final BinaryMessenger binaryMessenger) {
-    new TemplateReferencePairManagerTemplate(binaryMessenger).initialize();
+    new ReferencePairManagerTemplate(binaryMessenger).initialize();
   }
 
   @Override
