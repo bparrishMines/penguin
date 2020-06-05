@@ -7,8 +7,7 @@ part 'template.g.dart';
 
 // TODO: Somewhere talk about how to use OwnerCounter for using other plugin's code
 @visibleForTesting
-ReferencePairManagerTemplate referencePairManager = referencePairManager
-  ..initialize();
+ReferencePairManagerTemplate referencePairManager;
 
 class ReferencePairManagerTemplate extends _$TemplateReferencePairManager {
   ReferencePairManagerTemplate()

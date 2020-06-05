@@ -9,6 +9,7 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 
+@SuppressWarnings("rawtypes")
 class ReferenceMatchers {
   static Matcher isMethodCall(String method, Object arguments) {
     return new IsMethodCall(method, arguments);
@@ -86,9 +87,9 @@ class ReferenceMatchers {
         Description description) {
       description
           .appendText(" An UnpairedRemoteReference with type reference: ")
-          .appendText(typeReference.toString())
+          .appendText(typeReference != null ? typeReference.toString() : null)
           .appendText(" and creation arguments: ")
-          .appendText(creationArguments.toString());
+          .appendText(creationArguments != null ? creationArguments.toString() : null);
     }
 
     @Override
