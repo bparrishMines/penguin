@@ -1,16 +1,13 @@
 package github.penguin.reference;
 
 import com.google.common.collect.ImmutableMap;
-
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.junit.Test;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
 import github.penguin.reference.reference.CompletableRunnable;
 import github.penguin.reference.reference.LocalReference;
 import github.penguin.reference.reference.ReferencePairManager;
@@ -18,7 +15,6 @@ import github.penguin.reference.reference.ReferencePairManager.*;
 import github.penguin.reference.reference.RemoteReference;
 import github.penguin.reference.reference.TypeReference;
 import github.penguin.reference.reference.UnpairedRemoteReference;
-
 import static github.penguin.reference.ReferenceMatchers.isUnpairedRemoteReference;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;

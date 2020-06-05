@@ -4,7 +4,6 @@ import static github.penguin.reference.ReferenceMatchers.isClassTemplate;
 import static github.penguin.reference.ReferenceMatchers.isMethodCall;
 import static github.penguin.reference.ReferenceMatchers.isRemoteReference;
 import static github.penguin.reference.ReferenceMatchers.isTypeReference;
-import static github.penguin.reference.ReferenceMatchers.isUnpairedRemoteReference;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
@@ -12,14 +11,12 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import com.google.common.collect.ImmutableMap;
 import github.penguin.reference.reference.CompletableRunnable;
 import github.penguin.reference.reference.RemoteReference;
 import github.penguin.reference.reference.TypeReference;
 import github.penguin.reference.reference.UnpairedRemoteReference;
-import github.penguin.reference.templates.$ReferencePairManager.ClassTemplate;
-import github.penguin.reference.templates.PluginTemplate;
-import github.penguin.reference.templates.PluginTemplate.ReferencePairManagerTemplate;
+import github.penguin.reference.templates.$TemplateReferencePairManager.ClassTemplate;
+import github.penguin.reference.templates.PluginTemplate.TemplateReferencePairManagerTemplate;
 import github.penguin.reference.templates.ClassTemplateImpl;
 import io.flutter.plugin.common.BinaryMessenger.BinaryMessageHandler;
 import io.flutter.plugin.common.BinaryMessenger.BinaryReply;
@@ -36,13 +33,13 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class ReferencePairManagerTest {
+public class MethodChannelTest {
   private static final List<MethodCall> methodCallLog = new ArrayList<>();
   private static final List<Object> replyMethodCallLog = new ArrayList<>();
 
   private static MockBinaryMessenger mockMessenger;
   private static MethodChannel.MethodCallHandler methodCallHandler;
-  private static ReferencePairManagerTemplate referencePairManager;
+  private static TemplateReferencePairManagerTemplate referencePairManager;
 
   @BeforeClass
   public static void setUpAll() {
@@ -112,18 +109,13 @@ public class ReferencePairManagerTest {
   public void setUp() {
     methodCallLog.clear();
     replyMethodCallLog.clear();
-    referencePairManager = new PluginTemplate.ReferencePairManagerTemplate(mockMessenger);
+    referencePairManager = new TemplateReferencePairManagerTemplate(mockMessenger);
     referencePairManager.initialize();
   }
 
   @Test
   public void referencePairManager_createRemoteReferenceFor() {
-    final ClassTemplateImpl classTemplate =
-        new ClassTemplateImpl(
-            23,
-            new ClassTemplateImpl(11, null, null, null),
-            Collections.singletonList((ClassTemplate) new ClassTemplateImpl(13, null, null, null)),
-            ImmutableMap.of("apple", (ClassTemplate) new ClassTemplateImpl(43, null, null, null)));
+    final ClassTemplateImpl classTemplate = new ClassTemplateImpl(23);
 
     referencePairManager.createRemoteReferenceFor(classTemplate);
 
@@ -139,22 +131,12 @@ public class ReferencePairManagerTest {
                 contains(
                     isRemoteReference(remoteReference.referenceId),
                     isTypeReference(0),
-                    contains(
-                        equalTo(23),
-                        isUnpairedRemoteReference(
-                            new TypeReference(0), contains(11, null, null, null)),
-                        contains(
-                            isUnpairedRemoteReference(
-                                new TypeReference(0), contains(13, null, null, null))),
-                        hasEntry(
-                            equalTo("apple"),
-                            isUnpairedRemoteReference(
-                                new TypeReference(0), contains(43, null, null, null))))))));
+                    contains(equalTo(23))))));
   }
 
   @Test
   public void referencePairManager_disposeRemoteReferenceFor() {
-    final ClassTemplate classTemplate = new ClassTemplateImpl(23, null, null, null);
+    final ClassTemplate classTemplate = new ClassTemplateImpl(23);
 
     referencePairManager.createRemoteReferenceFor(classTemplate);
     assertNotNull(referencePairManager.remoteReferenceFor(classTemplate));
@@ -172,7 +154,7 @@ public class ReferencePairManagerTest {
   @Test
   public void referencePairManager_executeRemoteMethodFor() throws Exception {
     final ClassTemplate classTemplate =
-        new ClassTemplateImpl(23, null, null, null).setReferencePairManager(referencePairManager);
+        new ClassTemplateImpl(23).setReferencePairManager(referencePairManager);
 
     referencePairManager.createRemoteReferenceFor(classTemplate);
     final RemoteReference remoteReference = referencePairManager.remoteReferenceFor(classTemplate);
@@ -183,14 +165,7 @@ public class ReferencePairManagerTest {
 
     @SuppressWarnings("unchecked")
     final CompletableRunnable<Object> runnable =
-        (CompletableRunnable<Object>)
-            classTemplate.methodTemplate(
-                "apple",
-                new ClassTemplateImpl(11, null, null, null),
-                Collections.singletonList(
-                    (ClassTemplate) new ClassTemplateImpl(13, null, null, null)),
-                ImmutableMap.of(
-                    "apple", (ClassTemplate) new ClassTemplateImpl(43, null, null, null)));
+        (CompletableRunnable<Object>) classTemplate.methodTemplate("apple");
     runnable.setOnCompleteListener(
         new CompletableRunnable.OnCompleteListener() {
           @Override
@@ -211,46 +186,7 @@ public class ReferencePairManagerTest {
                 contains(
                     isRemoteReference(remoteReference.referenceId),
                     equalTo("methodTemplate"),
-                    contains(
-                        equalTo("apple"),
-                        isUnpairedRemoteReference(
-                            new TypeReference(0), contains(11, null, null, null)),
-                        contains(
-                            isUnpairedRemoteReference(
-                                new TypeReference(0), contains(13, null, null, null))),
-                        hasEntry(
-                            equalTo("apple"),
-                            isUnpairedRemoteReference(
-                                new TypeReference(0), contains(43, null, null, null))))))));
-  }
-
-  @Test
-  public void referencePairManager_executeRemoteMethodFor_returnsReference() throws Exception {
-    final ClassTemplate classTemplate =
-        new ClassTemplateImpl(23, null, null, null).setReferencePairManager(referencePairManager);
-
-    referencePairManager.createRemoteReferenceFor(classTemplate);
-    final RemoteReference remoteReference = referencePairManager.remoteReferenceFor(classTemplate);
-    assertNotNull(remoteReference);
-    methodCallLog.clear();
-
-    final List<Object> results = new ArrayList<>();
-
-    @SuppressWarnings("unchecked")
-    final CompletableRunnable<Object> runnable =
-        (CompletableRunnable<Object>) classTemplate.returnsReference();
-    runnable.setOnCompleteListener(
-        new CompletableRunnable.OnCompleteListener() {
-          @Override
-          public void onComplete(Object result) {
-            results.add(result);
-          }
-
-          @Override
-          public void onError(Throwable throwable) {}
-        });
-
-    assertThat(results.get(0), isClassTemplate(123, null, null, null));
+                    contains(equalTo("apple"))))));
   }
 
   @SuppressWarnings("RedundantThrows")
@@ -263,33 +199,17 @@ public class ReferencePairManagerTest {
                 Arrays.asList(
                     new RemoteReference("table"),
                     new TypeReference(0),
-                    Arrays.asList(
-                        32,
-                        new UnpairedRemoteReference(
-                            new TypeReference(0), Arrays.asList((Object) 15, null, null, null)),
-                        Collections.singletonList(
-                            new UnpairedRemoteReference(
-                                new TypeReference(0),
-                                Arrays.asList((Object) 16, null, null, null))),
-                        ImmutableMap.of(
-                            "apple",
-                            new UnpairedRemoteReference(
-                                new TypeReference(0),
-                                Arrays.asList((Object) 43, null, null, null)))))));
+                    Collections.singletonList(32))));
     mockMessenger.receive("github.penguin/reference", message);
 
     final ClassTemplate classTemplate =
         (ClassTemplate) referencePairManager.localReferenceFor(new RemoteReference("table"));
     assertThat(
         classTemplate,
-        isClassTemplate(
-            32,
-            isClassTemplate(15, null, null, null),
-            contains(isClassTemplate(16, null, null, null)),
-            hasEntry(equalTo("apple"), isClassTemplate(43, null, null, null))));
+        isClassTemplate(32));
   }
 
-  @SuppressWarnings("RedundantThrows")
+  @SuppressWarnings({"RedundantThrows", "rawtypes"})
   @Test
   public void referencePairManager_executeLocalMethodFor() throws Exception {
     final TestClassTemplate classTemplate = new TestClassTemplate();
@@ -302,50 +222,13 @@ public class ReferencePairManagerTest {
                 Arrays.asList(
                     referencePairManager.remoteReferenceFor(classTemplate),
                     "methodTemplate",
-                    Arrays.asList(
-                        "Goku",
-                        new UnpairedRemoteReference(
-                            new TypeReference(0), Arrays.asList((Object) 15, null, null, null)),
-                        Collections.singletonList(
-                            new UnpairedRemoteReference(
-                                new TypeReference(0),
-                                Arrays.asList((Object) 16, null, null, null))),
-                        ImmutableMap.of(
-                            "apple",
-                            new UnpairedRemoteReference(
-                                new TypeReference(0),
-                                Arrays.asList((Object) 43, null, null, null)))))));
+                    Collections.singletonList("Goku"))));
     mockMessenger.receive("github.penguin/reference", message);
 
     assertThat(replyMethodCallLog, contains((Matcher) equalTo("tornado")));
     assertThat(
         classTemplate.lastMethodTemplateArguments,
-        contains(
-            equalTo("Goku"),
-            isClassTemplate(15, null, null, null),
-            contains(isClassTemplate(16, null, null, null)),
-            hasEntry(equalTo("apple"), isClassTemplate(43, null, null, null))));
-  }
-
-  @SuppressWarnings("RedundantThrows")
-  @Test
-  public void referencePairManager_executeLocalMethodFor_returnsReference() throws Exception {
-    final TestClassTemplate classTemplate = new TestClassTemplate();
-    referencePairManager.createRemoteReferenceFor(classTemplate);
-
-    final ByteBuffer message =
-        referencePairManager.methodCodec.encodeMethodCall(
-            new MethodCall(
-                "REFERENCE_METHOD",
-                Arrays.asList(
-                    referencePairManager.remoteReferenceFor(classTemplate),
-                    "returnsReference",
-                    Collections.emptyList())));
-
-    mockMessenger.receive("github.penguin/reference", message);
-    assertThat(
-        replyMethodCallLog,
-        contains(isUnpairedRemoteReference(new TypeReference(0), contains(11, null, null, null))));
+        (Matcher) contains(equalTo("Goku")));
   }
 
   @Test
@@ -357,7 +240,7 @@ public class ReferencePairManagerTest {
                 Arrays.asList(
                     new RemoteReference("animal"),
                     new TypeReference(0),
-                    Arrays.asList(32, null, null, null))));
+                    Collections.singletonList(32))));
     mockMessenger.receive("github.penguin/reference", createMessage);
     assertThat(
         referencePairManager.localReferenceFor(new RemoteReference("animal")), notNullValue());

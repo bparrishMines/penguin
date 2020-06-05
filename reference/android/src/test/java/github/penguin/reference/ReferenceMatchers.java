@@ -3,7 +3,7 @@ package github.penguin.reference;
 import github.penguin.reference.reference.RemoteReference;
 import github.penguin.reference.reference.TypeReference;
 import github.penguin.reference.reference.UnpairedRemoteReference;
-import github.penguin.reference.templates.$ReferencePairManager.ClassTemplate;
+import github.penguin.reference.templates.$TemplateReferencePairManager.ClassTemplate;
 import io.flutter.plugin.common.MethodCall;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -20,13 +20,8 @@ class ReferenceMatchers {
     return new IsUnpairedRemoteReference(typeReference, creationArguments);
   }
 
-  static Matcher isClassTemplate(
-      int fieldTemplate,
-      Object referenceFieldTemplate,
-      Object referenceListTemplate,
-      Object referenceMapTemplate) {
-    return new IsClassTemplate(
-        fieldTemplate, referenceFieldTemplate, referenceListTemplate, referenceMapTemplate);
+  static Matcher isClassTemplate(int fieldTemplate) {
+    return new IsClassTemplate(fieldTemplate);
   }
 
   static Matcher isTypeReference(int typeId) {
@@ -114,74 +109,30 @@ class ReferenceMatchers {
 
   private static class IsClassTemplate extends TypeSafeMatcher<ClassTemplate> {
     private final int fieldTemplate;
-    private final Object referenceFieldTemplate;
-    private final Object referenceListTemplate;
-    private final Object referenceMapTemplate;
 
-    private IsClassTemplate(
-        int fieldTemplate,
-        Object referenceFieldTemplate,
-        Object referenceListTemplate,
-        Object referenceMapTemplate) {
+    private IsClassTemplate(int fieldTemplate) {
       this.fieldTemplate = fieldTemplate;
-      this.referenceFieldTemplate = referenceFieldTemplate;
-      this.referenceListTemplate = referenceListTemplate;
-      this.referenceMapTemplate = referenceMapTemplate;
     }
 
-    private void describe(
-        Integer fieldTemplate,
-        Object referenceFieldTemplate,
-        Object referenceListTemplate,
-        Object referenceMapTemplate,
-        Description description) {
+    private void describe(Integer fieldTemplate, Description description) {
       description
           .appendText(" A ClassTemplate with fieldTemplate:: ")
-          .appendText("" + fieldTemplate)
-          .appendText(" and referenceFieldTemplate: ")
-          .appendText("" + referenceFieldTemplate)
-          .appendText(" and referenceListTemplate: ")
-          .appendText("" + referenceListTemplate)
-          .appendText(" and referenceMapTemplate: ")
-          .appendText("" + referenceMapTemplate);
+          .appendText("" + fieldTemplate);
     }
 
     @Override
     public void describeTo(Description description) {
-      describe(
-          fieldTemplate,
-          referenceFieldTemplate,
-          referenceListTemplate,
-          referenceMapTemplate,
-          description);
+      describe(fieldTemplate, description);
     }
 
     @Override
-    protected void describeMismatchSafely(
-        ClassTemplate classTemplate, Description mismatchDescription) {
-      describe(
-          classTemplate.getFieldTemplate(),
-          classTemplate.getReferenceListTemplate(),
-          classTemplate.getReferenceListTemplate(),
-          classTemplate.getReferenceMapTemplate(),
-          mismatchDescription);
+    protected void describeMismatchSafely(ClassTemplate classTemplate, Description mismatchDescription) {
+      describe(classTemplate.getFieldTemplate(), mismatchDescription);
     }
 
     @Override
     protected boolean matchesSafely(ClassTemplate item) {
-      if (fieldTemplate != item.getFieldTemplate()) return false;
-      if (!matches(referenceFieldTemplate, item.getReferenceFieldTemplate())) return false;
-      if (!matches(referenceListTemplate, item.getReferenceListTemplate())) return false;
-      return matches(referenceMapTemplate, item.getReferenceMapTemplate());
-    }
-
-    private boolean matches(Object left, Object right) {
-      if (left == right) return true;
-      if (right.equals(left)) return true;
-      if (left instanceof Matcher) {
-        return ((Matcher) left).matches(right);
-      }
-      return false;
+      return fieldTemplate == item.getFieldTemplate();
     }
   }
 

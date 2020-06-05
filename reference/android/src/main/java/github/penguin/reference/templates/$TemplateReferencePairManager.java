@@ -9,35 +9,18 @@ import github.penguin.reference.reference.TypeReference;
 import io.flutter.plugin.common.BinaryMessenger;
 import com.google.common.collect.ImmutableMap;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class $ReferencePairManager extends MethodChannelReferencePairManager {
+public class $TemplateReferencePairManager extends MethodChannelReferencePairManager {
   public interface ClassTemplate extends LocalReference {
     Integer getFieldTemplate();
-
-    ClassTemplate getReferenceFieldTemplate();
-
-    List<ClassTemplate> getReferenceListTemplate();
-
-    Map<String, ClassTemplate> getReferenceMapTemplate();
-
-    Object methodTemplate(
-        String parameterTemplate,
-        ClassTemplate referenceParameterTemplate,
-        List<ClassTemplate> referenceListTemplate,
-        Map<String, ClassTemplate> referenceMapTemplate)
-        throws Exception;
-
-    Object returnsReference() throws Exception;
+    Object methodTemplate(String parameterTemplate) throws Exception;
   }
 
   static class $MethodNames {
     static final String methodTemplate = "methodTemplate";
-    static final String returnsReference = "returnsReference";
   }
 
   abstract static class $LocalReferenceCommunicationHandler implements LocalReferenceCommunicationHandler {
@@ -46,8 +29,7 @@ public class $ReferencePairManager extends MethodChannelReferencePairManager {
       try {
         methods = ImmutableMap.of(
             new TypeReference(0),
-            ImmutableMap.of("methodTemplate", ClassTemplate.class.getMethod("methodTemplate", String.class, ClassTemplate.class, List.class, Map.class),
-                "returnsReference", ClassTemplate.class.getMethod("returnsReference"))
+            ImmutableMap.of("methodTemplate", ClassTemplate.class.getMethod("methodTemplate", String.class))
         );
       } catch (NoSuchMethodException exception) {
         throw new RuntimeException(exception.getMessage());
@@ -56,13 +38,9 @@ public class $ReferencePairManager extends MethodChannelReferencePairManager {
 
     public abstract ClassTemplate createClassTemplate(
         ReferencePairManager referencePairManager,
-        int fieldTemplate,
-        ClassTemplate referenceFieldTemplate,
-        List<ClassTemplate> referenceListTemplate,
-        Map<String, ClassTemplate> referenceMapTemplate)
+        int fieldTemplate)
         throws Exception;
 
-    @SuppressWarnings("unchecked")
     @Override
     public LocalReference createLocalReference(
         ReferencePairManager referencePairManager,
@@ -70,14 +48,7 @@ public class $ReferencePairManager extends MethodChannelReferencePairManager {
         List<Object> arguments)
         throws Exception {
       if (typeReference.equals(new TypeReference(0))) {
-        return createClassTemplate(
-            referencePairManager,
-            (Integer) arguments.get(0),
-            (ClassTemplate) arguments.get(1),
-            arguments.get(2) != null ? new ArrayList<ClassTemplate>((List) arguments.get(2)) : null,
-            arguments.get(3) != null
-                ? new HashMap<String, ClassTemplate>((Map) arguments.get(3))
-                : null);
+        return createClassTemplate(referencePairManager, (Integer) arguments.get(0));
       }
 
       final String message =
@@ -111,11 +82,7 @@ public class $ReferencePairManager extends MethodChannelReferencePairManager {
     public List<Object> creationArgumentsFor(LocalReference localReference) {
       if (localReference instanceof ClassTemplate) {
         final ClassTemplate value = (ClassTemplate) localReference;
-        return Arrays.asList(
-            value.getFieldTemplate(),
-            value.getReferenceFieldTemplate(),
-            value.getReferenceListTemplate(),
-            value.getReferenceMapTemplate());
+        return Collections.singletonList((Object) value.getFieldTemplate());
       }
 
       final String message =
@@ -125,7 +92,7 @@ public class $ReferencePairManager extends MethodChannelReferencePairManager {
     }
   }
 
-  $ReferencePairManager(
+  $TemplateReferencePairManager(
       final BinaryMessenger binaryMessenger,
       final String channelName,
       final $LocalReferenceCommunicationHandler localHandler) {
@@ -138,7 +105,7 @@ public class $ReferencePairManager extends MethodChannelReferencePairManager {
   }
 
   @SuppressWarnings("unused")
-  $ReferencePairManager(
+  $TemplateReferencePairManager(
       final BinaryMessenger binaryMessenger,
       final String channelName,
       final $LocalReferenceCommunicationHandler localHandler,

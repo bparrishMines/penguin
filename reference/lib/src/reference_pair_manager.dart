@@ -131,7 +131,7 @@ abstract class ReferencePairManager {
   static final Uuid _uuid = Uuid();
 
   bool _isInitialized = false;
-  static final _referencePairs = BiMap<LocalReference, RemoteReference>();
+  final _referencePairs = BiMap<LocalReference, RemoteReference>();
 
   /// Retrieve the [TypeReference] that represents the type of [localReference].
   ///

@@ -212,6 +212,7 @@ public abstract class ReferencePairManager {
     if (!isInitialized) throw new AssertionError("Initialize has not been called.");
   }
 
+  @SuppressWarnings("rawtypes")
   private Object replaceRemoteReferences(Object argument) throws Exception {
     if (argument instanceof RemoteReference) {
       return localReferenceFor((RemoteReference) argument);
@@ -241,6 +242,7 @@ public abstract class ReferencePairManager {
     return argument;
   }
 
+  @SuppressWarnings("rawtypes")
   private Object replaceLocalReferences(Object argument) {
     if (argument instanceof LocalReference
         && remoteReferenceFor((LocalReference) argument) != null) {
