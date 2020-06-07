@@ -14,20 +14,20 @@ import java.util.UUID;
 public abstract class ReferencePairManager {
   private boolean isInitialized = false;
   private final BiMap<LocalReference, RemoteReference> referencePairs = HashBiMap.create();
-  private final BiMap<Integer, Class<? extends LocalReference>> typeIds = HashBiMap.create();
+  private final BiMap<Integer, Class<? extends LocalReference>> classIds = HashBiMap.create();
 
   public final List<Class<? extends LocalReference>> supportedClasses;
 
   protected ReferencePairManager(final List<Class<? extends LocalReference>> supportedClass) {
     this.supportedClasses = Collections.unmodifiableList(supportedClass);
-    for (int i = 0; i < supportedClass.size(); i++) typeIds.put(i, supportedClasses.get(i));
+    for (int i = 0; i < supportedClass.size(); i++) classIds.put(i, supportedClasses.get(i));
   }
 
   public interface RemoteReferenceCommunicationHandler {
     List<Object> creationArgumentsFor(LocalReference localReference);
 
     CompletableRunnable<Void> createRemoteReference(
-        RemoteReference remoteReference, TypeReference typeReference, List<Object> arguments);
+        RemoteReference remoteReference, int classId, List<Object> arguments);
 
     CompletableRunnable<Object> executeRemoteMethod(
         RemoteReference remoteReference, String methodName, List<Object> arguments);
@@ -38,7 +38,7 @@ public abstract class ReferencePairManager {
   public interface LocalReferenceCommunicationHandler {
     LocalReference createLocalReference(
         ReferencePairManager referencePairManager,
-        TypeReference typeReference,
+        Class<? extends LocalReference> referenceClass,
         List<Object> arguments)
         throws Exception;
 
@@ -52,11 +52,11 @@ public abstract class ReferencePairManager {
 
   public abstract LocalReferenceCommunicationHandler getLocalHandler();
 
-  public TypeReference typeReferenceFor(LocalReference localReference) {
-    final Integer typeId = typeIds.inverse().get(localReference.getReferenceClass());
-    if (typeId == null) return null;
-    return new TypeReference(typeId);
-  }
+//  public TypeReference typeReferenceFor(LocalReference localReference) {
+//    final Integer typeId = typeIds.inverse().get(localReference.getReferenceClass());
+//    if (typeId == null) return null;
+//    return new TypeReference(typeId);
+//  }
 
   @CallSuper
   public void initialize() {
@@ -74,18 +74,18 @@ public abstract class ReferencePairManager {
   }
 
   public LocalReference createLocalReferenceFor(
-      RemoteReference remoteReference, TypeReference typeReference) throws Exception {
-    return createLocalReferenceFor(remoteReference, typeReference, new ArrayList<>());
+      RemoteReference remoteReference, int classId) throws Exception {
+    return createLocalReferenceFor(remoteReference, classId, new ArrayList<>());
   }
 
   public LocalReference createLocalReferenceFor(
-      RemoteReference remoteReference, TypeReference typeReference, List<Object> arguments)
+      RemoteReference remoteReference, int classId, List<Object> arguments)
       throws Exception {
     assertIsInitialized();
     final LocalReference localReference =
         getLocalHandler()
             .createLocalReference(
-                this, typeReference,  (List<Object>) replaceRemoteReferences(arguments));
+                this, classIds.get(classId), (List<Object>) replaceRemoteReferences(arguments));
     referencePairs.put(localReference, remoteReference);
     return localReference;
   }
@@ -103,11 +103,11 @@ public abstract class ReferencePairManager {
   @SuppressWarnings("UnusedReturnValue")
   public CompletableRunnable<RemoteReference> createRemoteReferenceFor(
       final LocalReference localReference) {
-    return createRemoteReferenceFor(localReference, typeReferenceFor(localReference));
+    return createRemoteReferenceFor(localReference, classIds.inverse().get(localReference.getReferenceClass()));
   }
 
   public CompletableRunnable<RemoteReference> createRemoteReferenceFor(
-      final LocalReference localReference, final TypeReference typeReference) {
+      final LocalReference localReference, int classId) {
     assertIsInitialized();
     if (remoteReferenceFor(localReference) != null) return null;
 
@@ -119,7 +119,7 @@ public abstract class ReferencePairManager {
         getRemoteHandler()
             .createRemoteReference(
                 remoteReference,
-                typeReference,
+                classId,
                 (List<Object>) replaceLocalReferences(creationArguments));
 
     final CompletableRunnable<RemoteReference> referenceRunnable =
@@ -233,7 +233,7 @@ public abstract class ReferencePairManager {
       return getLocalHandler()
           .createLocalReference(
               this,
-              ((UnpairedRemoteReference) argument).typeReference,
+              classIds.get(((UnpairedRemoteReference) argument).classId),
               (List<Object>)
                   replaceRemoteReferences(((UnpairedRemoteReference) argument).creationArguments));
     } else if (argument instanceof List) {
@@ -263,7 +263,7 @@ public abstract class ReferencePairManager {
     } else if (argument instanceof LocalReference
         && remoteReferenceFor((LocalReference) argument) == null) {
       return new UnpairedRemoteReference(
-          typeReferenceFor((LocalReference) argument),
+          classIds.inverse().get(((LocalReference) argument).getReferenceClass()),
           (List<Object>)
               replaceLocalReferences(
                   getRemoteHandler().creationArgumentsFor((LocalReference) argument)));

@@ -13,7 +13,6 @@ import github.penguin.reference.reference.LocalReference;
 import github.penguin.reference.reference.ReferencePairManager;
 import github.penguin.reference.reference.ReferencePairManager.*;
 import github.penguin.reference.reference.RemoteReference;
-import github.penguin.reference.reference.TypeReference;
 import github.penguin.reference.reference.UnpairedRemoteReference;
 import static github.penguin.reference.ReferenceMatchers.isUnpairedRemoteReference;
 import static org.hamcrest.Matchers.*;
@@ -58,7 +57,7 @@ public class ReferenceTest {
 
     final ReferencePairManager manager = new TestReferencePairManager(new LocalReferenceCommunicationHandler() {
       @Override
-      public LocalReference createLocalReference(ReferencePairManager referencePairManager, TypeReference typeReference, List<Object> arguments) {
+      public LocalReference createLocalReference(ReferencePairManager referencePairManager, Class<? extends LocalReference> referenceClass, List<Object> arguments) {
         allArguments.add(arguments);
         return new TestClass();
       }
@@ -77,11 +76,11 @@ public class ReferenceTest {
 
     final TestClass result = (TestClass) manager.createLocalReferenceFor(
         new RemoteReference("apple"),
-        new TypeReference(0),
+        0,
         Arrays.asList("Hello",
-            new UnpairedRemoteReference(new TypeReference(0), Collections.emptyList()),
-            Collections.singletonList(new UnpairedRemoteReference(new TypeReference(0), Collections.emptyList())),
-            ImmutableMap.of(1.1, new UnpairedRemoteReference(new TypeReference(0), Collections.emptyList()))
+            new UnpairedRemoteReference(0, Collections.emptyList()),
+            Collections.singletonList(new UnpairedRemoteReference(0, Collections.emptyList())),
+            ImmutableMap.of(1.1, new UnpairedRemoteReference(0, Collections.emptyList()))
         )
     );
 
@@ -104,7 +103,7 @@ public class ReferenceTest {
 
     final ReferencePairManager manager = new TestReferencePairManager(new LocalReferenceCommunicationHandler() {
       @Override
-      public LocalReference createLocalReference(ReferencePairManager referencePairManager, TypeReference typeReference, List<Object> arguments) {
+      public LocalReference createLocalReference(ReferencePairManager referencePairManager, Class<? extends LocalReference> referenceClass, List<Object> arguments) {
         return new TestClass();
       }
 
@@ -121,12 +120,12 @@ public class ReferenceTest {
     }, null);
     manager.initialize();
 
-    manager.createLocalReferenceFor(new RemoteReference("chi") , new TypeReference(0));
+    manager.createLocalReferenceFor(new RemoteReference("chi") , 0);
     manager.executeLocalMethodFor(new RemoteReference("chi"), "aMethod",
         Arrays.asList("Hello",
-            new UnpairedRemoteReference(new TypeReference(0), Collections.emptyList()),
-            Collections.singletonList(new UnpairedRemoteReference(new TypeReference(0), Collections.emptyList())),
-            ImmutableMap.of(1.1, new UnpairedRemoteReference(new TypeReference(0), Collections.emptyList()))
+            new UnpairedRemoteReference(0, Collections.emptyList()),
+            Collections.singletonList(new UnpairedRemoteReference(0, Collections.emptyList())),
+            ImmutableMap.of(1.1, new UnpairedRemoteReference(0, Collections.emptyList()))
         ));
 
     assertThat(
@@ -142,7 +141,7 @@ public class ReferenceTest {
   public void referencePairManager_disposeLocalReferenceFor() throws Exception {
     final ReferencePairManager manager = new TestReferencePairManager(new LocalReferenceCommunicationHandler() {
       @Override
-      public LocalReference createLocalReference(ReferencePairManager referencePairManager, TypeReference typeReference, List<Object> arguments) {
+      public LocalReference createLocalReference(ReferencePairManager referencePairManager, Class<? extends LocalReference> referenceClass, List<Object> arguments) {
         return new TestClass();
       }
 
@@ -158,7 +157,7 @@ public class ReferenceTest {
     }, null);
     manager.initialize();
 
-    final TestClass result = (TestClass) manager.createLocalReferenceFor(new RemoteReference("tea") , new TypeReference(0));
+    final TestClass result = (TestClass) manager.createLocalReferenceFor(new RemoteReference("tea") ,0);
     manager.disposeLocalReferenceFor(new RemoteReference("tea"));
 
     assertNull(manager.localReferenceFor(new RemoteReference("tea")));
@@ -187,7 +186,7 @@ public class ReferenceTest {
       }
 
       @Override
-      public CompletableRunnable<Void> createRemoteReference(RemoteReference remoteReference, TypeReference typeReference, List<Object> arguments) {
+      public CompletableRunnable<Void> createRemoteReference(RemoteReference remoteReference, int classId, List<Object> arguments) {
         creationArguments.addAll(arguments);
         final CompletableRunnable<Void> runnable =  new CompletableRunnable<Void>() {
           @Override
@@ -231,9 +230,9 @@ public class ReferenceTest {
     assertEquals(manager.remoteReferenceFor(testClass), remoteReferences.get(0));
     assertThat(creationArguments, contains(
         equalTo("Hello"),
-        isUnpairedRemoteReference(new TypeReference(0), empty()),
-        contains(isUnpairedRemoteReference(new TypeReference(0), empty())),
-        hasEntry(equalTo(1.1), isUnpairedRemoteReference(new TypeReference(0), empty()))
+        isUnpairedRemoteReference(0, empty()),
+        contains(isUnpairedRemoteReference(0, empty())),
+        hasEntry(equalTo(1.1), isUnpairedRemoteReference(0, empty()))
     ));
   }
 
@@ -248,7 +247,7 @@ public class ReferenceTest {
       }
 
       @Override
-      public CompletableRunnable<Void> createRemoteReference(RemoteReference remoteReference, TypeReference typeReference, List<Object> arguments) {
+      public CompletableRunnable<Void> createRemoteReference(RemoteReference remoteReference, int classId, List<Object> arguments) {
         final CompletableRunnable<Void> runnable =  new CompletableRunnable<Void>() {
           @Override
           public void run() {
@@ -289,9 +288,9 @@ public class ReferenceTest {
 
     assertThat(methodArguments, contains(
         equalTo("Hello"),
-        isUnpairedRemoteReference(new TypeReference(0), empty()),
-        contains(isUnpairedRemoteReference(new TypeReference(0), empty())),
-        hasEntry(equalTo(1.1), isUnpairedRemoteReference(new TypeReference(0), empty()))
+        isUnpairedRemoteReference(0, empty()),
+        contains(isUnpairedRemoteReference(0, empty())),
+        hasEntry(equalTo(1.1), isUnpairedRemoteReference(0, empty()))
     ));
   }
 
@@ -304,7 +303,7 @@ public class ReferenceTest {
       }
 
       @Override
-      public CompletableRunnable<Void> createRemoteReference(RemoteReference remoteReference, TypeReference typeReference, List<Object> arguments) {
+      public CompletableRunnable<Void> createRemoteReference(RemoteReference remoteReference, int classId, List<Object> arguments) {
         final CompletableRunnable<Void> runnable =  new CompletableRunnable<Void>() {
           @Override
           public void run() {

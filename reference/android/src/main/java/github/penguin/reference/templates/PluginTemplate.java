@@ -13,7 +13,7 @@ public class PluginTemplate implements FlutterPlugin {
     public ReferencePairManagerTemplate(BinaryMessenger binaryMessenger) {
       super(binaryMessenger, "github.penguin/reference", new $LocalReferenceCommunicationHandler() {
         @Override
-        public ClassTemplate createClassTemplate(ReferencePairManager referencePairManager, int fieldTemplate) {
+        public ClassTemplate createClassTemplate(ReferencePairManager referencePairManager, Integer fieldTemplate) {
           return new ClassTemplateImpl(fieldTemplate).setReferencePairManager(referencePairManager);
         }
       });

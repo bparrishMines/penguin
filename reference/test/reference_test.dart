@@ -14,7 +14,7 @@ void main() {
         localHandler: TestLocalHandler(
           onCreateLocalReference: (
             ReferencePairManager referencePairManager,
-            TypeReference typeReference,
+            Type referenceType,
             List<dynamic> arguments,
           ) {
             allArguments.add(arguments);
@@ -25,15 +25,15 @@ void main() {
 
       final TestClass result = manager.createLocalReferenceFor(
         RemoteReference('apple'),
-        TypeReference(0),
+        0,
         <dynamic>[
           'Hello',
-          UnpairedRemoteReference(TypeReference(0), <dynamic>[]),
+          UnpairedRemoteReference(0, <dynamic>[]),
           <dynamic>[
-            UnpairedRemoteReference(TypeReference(0), <dynamic>[]),
+            UnpairedRemoteReference(0, <dynamic>[]),
           ],
           <dynamic, dynamic>{
-            1.1: UnpairedRemoteReference(TypeReference(0), <dynamic>[]),
+            1.1: UnpairedRemoteReference(0, <dynamic>[]),
           },
         ],
       );
@@ -62,7 +62,7 @@ void main() {
         localHandler: TestLocalHandler(
           onCreateLocalReference: (
             ReferencePairManager referencePairManager,
-            TypeReference typeReference,
+            Type referenceType,
             List<dynamic> arguments,
           ) {
             return TestClass();
@@ -79,18 +79,18 @@ void main() {
         ),
       )..initialize();
 
-      manager.createLocalReferenceFor(RemoteReference('chi'), TypeReference(0));
+      manager.createLocalReferenceFor(RemoteReference('chi'), 0);
       manager.executeLocalMethodFor(
         RemoteReference('chi'),
         'aMethod',
         <dynamic>[
           'Hello',
-          UnpairedRemoteReference(TypeReference(0), <dynamic>[]),
+          UnpairedRemoteReference(0, <dynamic>[]),
           <dynamic>[
-            UnpairedRemoteReference(TypeReference(0), <dynamic>[]),
+            UnpairedRemoteReference(0, <dynamic>[]),
           ],
           <dynamic, dynamic>{
-            1.1: UnpairedRemoteReference(TypeReference(0), <dynamic>[]),
+            1.1: UnpairedRemoteReference(0, <dynamic>[]),
           },
         ],
       );
@@ -108,7 +108,7 @@ void main() {
         localHandler: TestLocalHandler(
           onCreateLocalReference: (
             ReferencePairManager referencePairManager,
-            TypeReference typeReference,
+            Type referenceType,
             List<dynamic> arguments,
           ) {
             return TestClass();
@@ -118,7 +118,7 @@ void main() {
 
       final TestClass result = manager.createLocalReferenceFor(
         RemoteReference('tea'),
-        TypeReference(0),
+        0,
       );
       manager.disposeLocalReferenceFor(RemoteReference('tea'));
 
@@ -147,7 +147,7 @@ void main() {
           },
           onCreateRemoteReference: (
             RemoteReference remoteReference,
-            TypeReference typeReference,
+            int typeId,
             List<dynamic> arguments,
           ) {
             creationArguments.addAll(arguments);
@@ -167,11 +167,11 @@ void main() {
       expect(manager.remoteReferenceFor(testClass), remoteReference);
       expect(creationArguments, <Matcher>[
         equals('Hello'),
-        isUnpairedRemoteReference(TypeReference(0), <dynamic>[]),
-        contains(isUnpairedRemoteReference(TypeReference(0), <dynamic>[])),
+        isUnpairedRemoteReference(0, <dynamic>[]),
+        contains(isUnpairedRemoteReference(0, <dynamic>[])),
         containsPair(
           1.1,
-          isUnpairedRemoteReference(TypeReference(0), <dynamic>[]),
+          isUnpairedRemoteReference(0, <dynamic>[]),
         ),
       ]);
     });
@@ -186,7 +186,7 @@ void main() {
           },
           onCreateRemoteReference: (
             RemoteReference remoteReference,
-            TypeReference typeReference,
+            int typeId,
             List<dynamic> arguments,
           ) {
             return Future<void>.value();
@@ -217,11 +217,11 @@ void main() {
 
       expect(methodArguments, <Matcher>[
         equals('Hello'),
-        isUnpairedRemoteReference(TypeReference(0), <dynamic>[]),
-        contains(isUnpairedRemoteReference(TypeReference(0), <dynamic>[])),
+        isUnpairedRemoteReference(0, <dynamic>[]),
+        contains(isUnpairedRemoteReference(0, <dynamic>[])),
         containsPair(
           1.1,
-          isUnpairedRemoteReference(TypeReference(0), <dynamic>[]),
+          isUnpairedRemoteReference(0, <dynamic>[]),
         ),
       ]);
     });
@@ -235,7 +235,7 @@ void main() {
         },
         onCreateRemoteReference: (
           RemoteReference remoteReference,
-          TypeReference typeReference,
+          int typeId,
           List<dynamic> arguments,
         ) {
           return Future<void>.value();
@@ -268,12 +268,6 @@ class TestReferencePairManager extends ReferencePairManager {
   final TestLocalHandler localHandler;
   @override
   final TestRemoteHandler remoteHandler;
-
-  @override
-  TypeReference typeReferenceFor(LocalReference localReference) {
-    if (localReference is TestClass) return TypeReference(0);
-    throw UnsupportedError('message');
-  }
 }
 
 class TestRemoteHandler implements RemoteReferenceCommunicationHandler {
@@ -288,7 +282,7 @@ class TestRemoteHandler implements RemoteReferenceCommunicationHandler {
 
   final Future<void> Function(
     RemoteReference remoteReference,
-    TypeReference typeReference,
+    int typeId,
     List<dynamic> arguments,
   ) onCreateRemoteReference;
 
@@ -306,10 +300,10 @@ class TestRemoteHandler implements RemoteReferenceCommunicationHandler {
   @override
   Future<void> createRemoteReference(
     RemoteReference remoteReference,
-    TypeReference typeReference,
+    int typeId,
     List<dynamic> arguments,
   ) {
-    return onCreateRemoteReference(remoteReference, typeReference, arguments);
+    return onCreateRemoteReference(remoteReference, typeId, arguments);
   }
 
   @override
@@ -335,7 +329,7 @@ class TestLocalHandler implements LocalReferenceCommunicationHandler {
 
   final LocalReference Function(
     ReferencePairManager referencePairManager,
-    TypeReference typeReference,
+    Type referenceType,
     List<dynamic> arguments,
   ) onCreateLocalReference;
 
@@ -349,12 +343,12 @@ class TestLocalHandler implements LocalReferenceCommunicationHandler {
   @override
   LocalReference createLocalReference(
     ReferencePairManager referencePairManager,
-    TypeReference typeReference,
+    Type referenceType,
     List<dynamic> arguments,
   ) {
     return onCreateLocalReference(
       referencePairManager,
-      typeReference,
+      referenceType,
       arguments,
     );
   }

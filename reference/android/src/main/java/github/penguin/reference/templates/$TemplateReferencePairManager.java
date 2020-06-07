@@ -5,10 +5,10 @@ import github.penguin.reference.method_channel.MethodChannelRemoteReferenceCommu
 import github.penguin.reference.method_channel.ReferenceMessageCodec;
 import github.penguin.reference.reference.LocalReference;
 import github.penguin.reference.reference.ReferencePairManager;
-import github.penguin.reference.reference.TypeReference;
 import io.flutter.plugin.common.BinaryMessenger;
 import com.google.common.collect.ImmutableMap;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -25,13 +25,20 @@ public class $TemplateReferencePairManager extends MethodChannelReferencePairMan
   }
 
   abstract static class $LocalReferenceCommunicationHandler implements LocalReferenceCommunicationHandler {
-    static private Map<TypeReference, ImmutableMap<String, Method>> methods;
+    static private Map<Class<? extends LocalReference>, ImmutableMap<String, Method>> methods;
+    static private Map<Class<? extends LocalReference>, Method> creators;
     static {
       try {
-        methods = ImmutableMap.of(
-            new TypeReference(0),
+        methods = ImmutableMap.<Class<? extends LocalReference>, ImmutableMap<String, Method>>of(
+            ClassTemplate.class,
             ImmutableMap.of("methodTemplate", ClassTemplate.class.getMethod("methodTemplate", String.class))
         );
+        creators = ImmutableMap.<Class<? extends LocalReference>, Method>of(
+            ClassTemplate.class,
+            $LocalReferenceCommunicationHandler.class.getMethod("createClassTemplate",
+                ReferencePairManager.class,
+                Integer.class
+            ));
       } catch (NoSuchMethodException exception) {
         throw new RuntimeException(exception.getMessage());
       }
@@ -39,34 +46,31 @@ public class $TemplateReferencePairManager extends MethodChannelReferencePairMan
 
     public abstract ClassTemplate createClassTemplate(
         ReferencePairManager referencePairManager,
-        int fieldTemplate)
+        Integer fieldTemplate)
         throws Exception;
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public LocalReference createLocalReference(
         ReferencePairManager referencePairManager,
-        TypeReference typeReference,
+        Class<? extends LocalReference> referenceClass,
         List<Object> arguments)
         throws Exception {
-      if (typeReference.equals(new TypeReference(0))) {
-        return createClassTemplate(referencePairManager, (Integer) arguments.get(0));
-      }
-
-      final String message =
-          String.format(
-              "Could not instantiate a %s: for %s with arguments: %s.",
-              LocalReference.class.getSimpleName(), typeReference.toString(), arguments.toString());
-      throw new IllegalStateException(message);
+      final Method method = creators.get(referenceClass);
+      final List<Object> methodParams = new ArrayList<>(1 + arguments.size());
+      methodParams.add(referencePairManager);
+      methodParams.addAll(arguments);
+      return (LocalReference) method.invoke(this, methodParams.toArray());
     }
 
-    @SuppressWarnings({"ConstantConditions"})
+    @SuppressWarnings("ConstantConditions")
     @Override
     public Object executeLocalMethod(
         ReferencePairManager referencePairManager,
         LocalReference localReference,
         String methodName,
         List<Object> arguments) throws Exception {
-      final Method method = methods.get(referencePairManager.typeReferenceFor(localReference)).get(methodName);
+      final Method method = methods.get(localReference.getReferenceClass()).get(methodName);
       return method.invoke(localReference, arguments.toArray());
     }
 

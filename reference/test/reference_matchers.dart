@@ -33,27 +33,27 @@ class _IsMethodCallWithMatchers extends Matcher with _DeepEquals {
 
 // Extends isMethodCall in packager:test/test.dart to support matchers in arguments.
 Matcher isUnpairedRemoteReference(
-  TypeReference typeReference,
+  int typeId,
   List<dynamic> creationArguments,
 ) {
-  return _IsUnpairedRemoteReference(typeReference, creationArguments);
+  return _IsUnpairedRemoteReference(typeId, creationArguments);
 }
 
 class _IsUnpairedRemoteReference extends Matcher with _DeepEquals {
   const _IsUnpairedRemoteReference(
-    this.typeReference,
+    this.typeId,
     this.creationArguments,
   );
 
-  final TypeReference typeReference;
+  final int typeId;
 
   final List<dynamic> creationArguments;
 
   @override
   Description describe(Description description) {
     return description
-        .add(' Is an $UnpairedRemoteReference with type reference: ')
-        .addDescriptionOf(typeReference)
+        .add(' Is an $UnpairedRemoteReference with type id: ')
+        .addDescriptionOf(typeId)
         .add(' and creation arguments: ')
         .addDescriptionOf(creationArguments);
   }
@@ -61,7 +61,7 @@ class _IsUnpairedRemoteReference extends Matcher with _DeepEquals {
   @override
   bool matches(dynamic item, Map<dynamic, dynamic> matchState) {
     if (item is! UnpairedRemoteReference) return false;
-    if (item.typeReference != typeReference) return false;
+    if (item.typeId != typeId) return false;
     return deepEquals(creationArguments, item.creationArguments, matchState);
   }
 }

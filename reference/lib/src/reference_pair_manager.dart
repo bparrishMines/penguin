@@ -31,7 +31,7 @@ mixin RemoteReferenceCommunicationHandler {
   /// [disposeRemoteReference] is called with [remoteReference].
   Future<void> createRemoteReference(
     RemoteReference remoteReference,
-    TypeReference typeReference,
+    int typeId,
     List<dynamic> arguments,
   );
 
@@ -75,7 +75,7 @@ mixin LocalReferenceCommunicationHandler {
   /// [LocalReference]. It will also store both references as a pair.
   LocalReference createLocalReference(
     ReferencePairManager referencePairManager,
-    TypeReference typeReference,
+    Type referenceType,
     List<dynamic> arguments,
   );
 
@@ -142,20 +142,21 @@ abstract class ReferencePairManager {
 
   final List<Type> supportedTypes;
 
-  /// Retrieve the [TypeReference] that represents the type of [localReference].
-  ///
-  /// This method should be able to return a unique [TypeReference] that this
-  /// [ReferencePairManager] should support.
-  ///
-  /// The local [TypeReference] should also share the same
-  /// [TypeReference.typeId], as the equivalent object for the remote
-  /// [TypeReference]. For example the `Apple` class in `apple.dart` and
-  /// `Apple.java` could both return `TypeReference(0)`.
-  TypeReference typeReferenceFor(LocalReference localReference) {
-    final int typeId = _typeIds.inverse[localReference.referenceType];
-    if (typeId == null) return null;
-    return TypeReference(typeId);
-  }
+  // TODO: helper typeIdFor referenceTypeFor
+//  /// Retrieve the [TypeReference] that represents the type of [localReference].
+//  ///
+//  /// This method should be able to return a unique [TypeReference] that this
+//  /// [ReferencePairManager] should support.
+//  ///
+//  /// The local [TypeReference] should also share the same
+//  /// [TypeReference.typeId], as the equivalent object for the remote
+//  /// [TypeReference]. For example the `Apple` class in `apple.dart` and
+//  /// `Apple.java` could both return `TypeReference(0)`.
+//  TypeReference _typeReferenceFor(LocalReference localReference) {
+//    final int typeId = _typeIds.inverse[localReference.referenceType];
+//    if (typeId == null) return null;
+//    return TypeReference(typeId);
+//  }
 
   /// Handles communication with [RemoteReference]s.
   RemoteReferenceCommunicationHandler get remoteHandler;
@@ -195,13 +196,13 @@ abstract class ReferencePairManager {
   /// [Map]s will be converted into `Map<dynamic, dynamic>`.
   LocalReference createLocalReferenceFor(
     RemoteReference remoteReference,
-    TypeReference typeReference, [
+    int typeId, [
     List<dynamic> arguments,
   ]) {
     _assertIsInitialized();
     final LocalReference localReference = localHandler.createLocalReference(
       this,
-      typeReference,
+      _typeIds[typeId],
       _replaceRemoteReferences(arguments ?? <dynamic>[]),
     );
     _referencePairs[localReference] = remoteReference;
@@ -228,7 +229,7 @@ abstract class ReferencePairManager {
   /// This will also store [localReference] and a [RemoteReference] as a pair.
   FutureOr<RemoteReference> createRemoteReferenceFor(
     LocalReference localReference, [
-    TypeReference typeReference,
+    Type referenceType,
   ]) {
     _assertIsInitialized();
     if (remoteReferenceFor(localReference) != null) return null;
@@ -241,7 +242,7 @@ abstract class ReferencePairManager {
     remoteHandler
         .createRemoteReference(
           remoteReference,
-          typeReference ?? typeReferenceFor(localReference),
+          referenceType ?? _typeIds.inverse[localReference.referenceType],
           _replaceLocalReferences(
             remoteHandler.creationArgumentsFor(localReference),
           ),
@@ -326,7 +327,7 @@ abstract class ReferencePairManager {
     } else if (argument is UnpairedRemoteReference) {
       return localHandler.createLocalReference(
         this,
-        argument.typeReference,
+        _typeIds[argument.typeId],
         argument.creationArguments.map(_replaceRemoteReferences).toList(),
       );
     } else if (argument is List) {
@@ -347,7 +348,7 @@ abstract class ReferencePairManager {
     } else if (argument is LocalReference &&
         remoteReferenceFor(argument) == null) {
       return UnpairedRemoteReference(
-        typeReferenceFor(argument),
+        _typeIds.inverse[argument.referenceType],
         remoteHandler
             .creationArgumentsFor(argument)
             .map(_replaceLocalReferences)

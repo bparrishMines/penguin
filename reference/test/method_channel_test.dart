@@ -27,22 +27,11 @@ void main() {
       );
     });
 
-    test('encode/decode $TypeReference', () {
-      final ByteData byteData = methodCodec.encodeMethodCall(
-        MethodCall('oeifj', TypeReference(56)),
-      );
-
-      expect(
-        methodCodec.decodeMethodCall(byteData),
-        isMethodCall('oeifj', arguments: TypeReference(56)),
-      );
-    });
-
     test('encode/decode $UnpairedRemoteReference', () {
       final ByteData byteData = methodCodec.encodeMethodCall(
         MethodCall(
           'a',
-          UnpairedRemoteReference(TypeReference(56), <dynamic>[]),
+          UnpairedRemoteReference(56, <dynamic>[]),
         ),
       );
 
@@ -50,7 +39,7 @@ void main() {
         methodCodec.decodeMethodCall(byteData),
         isMethodCallWithMatchers(
           'a',
-          arguments: isUnpairedRemoteReference(TypeReference(56), <dynamic>[]),
+          arguments: isUnpairedRemoteReference(56, <dynamic>[]),
         ),
       );
     });
@@ -94,7 +83,7 @@ void main() {
       expect(methodCallLog, <Matcher>[
         isMethodCallWithMatchers('REFERENCE_CREATE', arguments: <dynamic>[
           remoteReference,
-          TypeReference(0),
+          0,
           <dynamic>[1],
         ]),
       ]);
@@ -145,7 +134,7 @@ void main() {
             'REFERENCE_CREATE',
             <dynamic>[
               RemoteReference('aowejea;io'),
-              TypeReference(0),
+              0,
               <dynamic>[8],
             ],
           ),
@@ -207,7 +196,7 @@ void main() {
             'REFERENCE_CREATE',
             <dynamic>[
               RemoteReference('ajackwhack'),
-              TypeReference(0),
+              0,
               <dynamic>[45],
             ],
           ),

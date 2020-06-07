@@ -4,7 +4,6 @@ import androidx.annotation.Nullable;
 import github.penguin.reference.reference.CompletableRunnable;
 import github.penguin.reference.reference.ReferencePairManager;
 import github.penguin.reference.reference.RemoteReference;
-import github.penguin.reference.reference.TypeReference;
 import io.flutter.plugin.common.MethodChannel;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +16,7 @@ public abstract class MethodChannelRemoteReferenceCommunicationHandler
   @Override
   public CompletableRunnable<Void> createRemoteReference(
       final RemoteReference remoteReference,
-      final TypeReference typeReference,
+      final int classId,
       final List<Object> arguments) {
     final CompletableRunnable<Void> completer =
         new CompletableRunnable<Void>() {
@@ -25,7 +24,7 @@ public abstract class MethodChannelRemoteReferenceCommunicationHandler
           public void run() {
             final List<Object> methodCallArgs = new ArrayList<>();
             methodCallArgs.add(remoteReference);
-            methodCallArgs.add(typeReference);
+            methodCallArgs.add(classId);
             methodCallArgs.add(arguments);
             channel.invokeMethod(
                 MethodChannelReferencePairManager.METHOD_CREATE,

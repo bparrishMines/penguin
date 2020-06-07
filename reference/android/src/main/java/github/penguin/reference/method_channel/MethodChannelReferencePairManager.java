@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import github.penguin.reference.reference.LocalReference;
 import github.penguin.reference.reference.ReferencePairManager;
 import github.penguin.reference.reference.RemoteReference;
-import github.penguin.reference.reference.TypeReference;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
@@ -72,7 +71,7 @@ public abstract class MethodChannelReferencePairManager extends ReferencePairMan
             final List<Object> arguments = (List<Object>) call.arguments;
             createLocalReferenceFor(
                 (RemoteReference) arguments.get(0),
-                (TypeReference) arguments.get(1),
+                (Integer) arguments.get(1),
                 (List<Object>) arguments.get(2));
             channelResult.success(null);
             break;

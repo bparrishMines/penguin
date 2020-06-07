@@ -1,7 +1,6 @@
 package github.penguin.reference;
 
 import github.penguin.reference.reference.RemoteReference;
-import github.penguin.reference.reference.TypeReference;
 import github.penguin.reference.reference.UnpairedRemoteReference;
 import github.penguin.reference.templates.$TemplateReferencePairManager.ClassTemplate;
 import io.flutter.plugin.common.MethodCall;
@@ -16,16 +15,12 @@ class ReferenceMatchers {
   }
 
   static Matcher isUnpairedRemoteReference(
-      final TypeReference typeReference, final Object creationArguments) {
-    return new IsUnpairedRemoteReference(typeReference, creationArguments);
+      final Integer classId, final Object creationArguments) {
+    return new IsUnpairedRemoteReference(classId, creationArguments);
   }
 
   static Matcher isClassTemplate(int fieldTemplate) {
     return new IsClassTemplate(fieldTemplate);
-  }
-
-  static Matcher isTypeReference(int typeId) {
-    return new IsTypeReference(typeId);
   }
 
   static Matcher isRemoteReference(String referenceId) {
@@ -43,7 +38,7 @@ class ReferenceMatchers {
 
     private void describe(final String method, final Object arguments, Description description) {
       description
-          .appendText("A MethodCall with method name: ")
+          .appendText(String.format("A %s with method name: ", MethodCall.class.getSimpleName()))
           .appendText(method)
           .appendText(" and arguments: ")
           .appendText(arguments.toString());
@@ -68,39 +63,39 @@ class ReferenceMatchers {
   }
 
   private static class IsUnpairedRemoteReference extends TypeSafeMatcher<UnpairedRemoteReference> {
-    private final TypeReference typeReference;
+    private final Integer classId;
     private final Object creationArguments;
 
-    private IsUnpairedRemoteReference(TypeReference typeReference, Object creationArguments) {
-      this.typeReference = typeReference;
+    private IsUnpairedRemoteReference(Integer classId, Object creationArguments) {
+      this.classId = classId;
       this.creationArguments = creationArguments;
     }
 
     private void describe(
-        final TypeReference typeReference,
+        final Integer classId,
         final Object creationArguments,
         Description description) {
       description
-          .appendText(" An UnpairedRemoteReference with type reference: ")
-          .appendText(typeReference != null ? typeReference.toString() : null)
+          .appendText(String.format(" An %s with type reference: ", UnpairedRemoteReference.class.getSimpleName()))
+          .appendText(classId != null ? classId.toString() : null)
           .appendText(" and creation arguments: ")
           .appendText(creationArguments != null ? creationArguments.toString() : null);
     }
 
     @Override
     public void describeTo(Description description) {
-      describe(typeReference, creationArguments, description);
+      describe(classId, creationArguments, description);
     }
 
     @Override
     protected void describeMismatchSafely(
         UnpairedRemoteReference reference, Description mismatchDescription) {
-      describe(reference.typeReference, reference.creationArguments, mismatchDescription);
+      describe(reference.classId, reference.creationArguments, mismatchDescription);
     }
 
     @Override
     protected boolean matchesSafely(UnpairedRemoteReference reference) {
-      if (!typeReference.equals(reference.typeReference)) return false;
+      if (!classId.equals(reference.classId)) return false;
       if (creationArguments instanceof Matcher)
         return ((Matcher) creationArguments).matches(reference.creationArguments);
       return creationArguments == reference.creationArguments;
@@ -116,7 +111,7 @@ class ReferenceMatchers {
 
     private void describe(Integer fieldTemplate, Description description) {
       description
-          .appendText(" A ClassTemplate with fieldTemplate:: ")
+          .appendText(String.format(" A %s with fieldTemplate:: ", ClassTemplate.class.getSimpleName()))
           .appendText("" + fieldTemplate);
     }
 
@@ -136,24 +131,6 @@ class ReferenceMatchers {
     }
   }
 
-  private static class IsTypeReference extends TypeSafeMatcher<TypeReference> {
-    private final Object typeId;
-
-    private IsTypeReference(Object typeId) {
-      this.typeId = typeId;
-    }
-
-    @Override
-    protected boolean matchesSafely(TypeReference item) {
-      if (typeId instanceof Matcher) return ((Matcher) typeId).matches(item.typeId);
-      return (Integer) item.typeId == typeId;
-    }
-
-    // TODO: All describe matchers
-    @Override
-    public void describeTo(Description description) {}
-  }
-
   private static class IsRemoteReference extends TypeSafeMatcher<RemoteReference> {
     private final Object referenceId;
 
@@ -168,6 +145,10 @@ class ReferenceMatchers {
     }
 
     @Override
-    public void describeTo(Description description) {}
+    public void describeTo(Description description) {
+      description
+          .appendText(String.format(" A %s with referenceId: ", RemoteReference.class.getSimpleName()))
+          .appendText("" + referenceId);
+    }
   }
 }

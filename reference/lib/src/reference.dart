@@ -33,34 +33,34 @@ class RemoteReference {
   }
 }
 
-/// Represents a type that exists on a local and remote thread/process.
-///
-/// For example, a class named `Apple` in an `apple.dart` file and an
-/// `Apple.java` file could both be represented by a [TypeReference] with the
-/// same [typeId].
-///
-/// Every type given a unique type reference must implement [LocalReference].
-/// This class is used to help instantiate [LocalReference]s for
-/// [ReferencePairManager]s.
-///
-/// Two [TypeReference]s are equal if they share the same [typeId].
-class TypeReference {
-  const TypeReference(this.typeId);
-
-  /// Unique identifier to reference a specific type between [ReferencePairManager]s.
-  final int typeId;
-
-  @override
-  bool operator ==(other) => other is TypeReference && typeId == other.typeId;
-
-  @override
-  int get hashCode => typeId.hashCode;
-
-  @override
-  String toString() {
-    return '$runtimeType($typeId)';
-  }
-}
+///// Represents a type that exists on a local and remote thread/process.
+/////
+///// For example, a class named `Apple` in an `apple.dart` file and an
+///// `Apple.java` file could both be represented by a [TypeReference] with the
+///// same [typeId].
+/////
+///// Every type given a unique type reference must implement [LocalReference].
+///// This class is used to help instantiate [LocalReference]s for
+///// [ReferencePairManager]s.
+/////
+///// Two [TypeReference]s are equal if they share the same [typeId].
+//class TypeReference {
+//  const TypeReference(this.typeId);
+//
+//  /// Unique identifier to reference a specific type between [ReferencePairManager]s.
+//  final int typeId;
+//
+//  @override
+//  bool operator ==(other) => other is TypeReference && typeId == other.typeId;
+//
+//  @override
+//  int get hashCode => typeId.hashCode;
+//
+//  @override
+//  String toString() {
+//    return '$runtimeType($typeId)';
+//  }
+//}
 
 /// Represents a [RemoteReference] that is not paired with a [LocalReference] in a [ReferencePairManager].
 ///
@@ -72,16 +72,19 @@ class TypeReference {
 /// [LocalReference] with
 /// [LocalReferenceCommunicationHandler.createLocalReference].
 class UnpairedRemoteReference {
-  const UnpairedRemoteReference(this.typeReference, this.creationArguments);
+  const UnpairedRemoteReference(this.typeId, this.creationArguments);
 
   /// Represents the type that is represented.
-  final TypeReference typeReference;
+  ///
+  /// Each [Type] in [ReferencePairManager.supportedTypes] is given a unique
+  /// typeId.
+  final int typeId;
 
   /// Arguments used to create the instance this represents.
   final List<dynamic> creationArguments;
 
   @override
   String toString() {
-    return '$runtimeType($typeReference, $creationArguments)';
+    return '$runtimeType($typeId, $creationArguments)';
   }
 }

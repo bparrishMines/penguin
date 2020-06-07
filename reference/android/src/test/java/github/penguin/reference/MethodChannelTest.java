@@ -3,7 +3,6 @@ package github.penguin.reference;
 import static github.penguin.reference.ReferenceMatchers.isClassTemplate;
 import static github.penguin.reference.ReferenceMatchers.isMethodCall;
 import static github.penguin.reference.ReferenceMatchers.isRemoteReference;
-import static github.penguin.reference.ReferenceMatchers.isTypeReference;
 import static github.penguin.reference.ReferenceMatchers.isUnpairedRemoteReference;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -14,7 +13,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import github.penguin.reference.reference.CompletableRunnable;
 import github.penguin.reference.reference.RemoteReference;
-import github.penguin.reference.reference.TypeReference;
 import github.penguin.reference.reference.UnpairedRemoteReference;
 import github.penguin.reference.templates.$TemplateReferencePairManager.ClassTemplate;
 import github.penguin.reference.templates.PluginTemplate.ReferencePairManagerTemplate;
@@ -98,7 +96,7 @@ public class MethodChannelTest {
               } else if (arguments.get(1).equals("returnsReference")) {
                 result.success(
                     new UnpairedRemoteReference(
-                        new TypeReference(0), Arrays.asList((Object) 123, null, null, null)));
+                        0, Arrays.asList((Object) 123, null, null, null)));
               }
             } else {
               result.success(null);
@@ -129,29 +127,16 @@ public class MethodChannelTest {
   }
 
   @Test
-  public void referenceMessageCodec_handlesTypeReference() {
-    final ByteBuffer message =
-        referencePairManager.methodCodec.encodeMethodCall(
-            new MethodCall("ewoif",
-                new TypeReference(12))
-        );
-
-    assertThat(referencePairManager.methodCodec.decodeMethodCall((ByteBuffer) message.position(0)),
-        isMethodCall("ewoif",
-            new TypeReference(12)));
-  }
-
-  @Test
   public void referenceMessageCodec_handlesUnpairedRemoteReference() {
     final ByteBuffer message =
         referencePairManager.methodCodec.encodeMethodCall(
             new MethodCall("ewoif",
-                new UnpairedRemoteReference(new TypeReference(1), Collections.emptyList()))
+                new UnpairedRemoteReference(1, Collections.emptyList()))
         );
 
     assertThat(referencePairManager.methodCodec.decodeMethodCall((ByteBuffer) message.position(0)),
         isMethodCall("ewoif",
-            isUnpairedRemoteReference(new TypeReference(1), empty())));
+            isUnpairedRemoteReference(1, empty())));
   }
 
   @Test
@@ -171,7 +156,7 @@ public class MethodChannelTest {
                 "REFERENCE_CREATE",
                 contains(
                     isRemoteReference(remoteReference.referenceId),
-                    isTypeReference(0),
+                    equalTo(0),
                     contains(equalTo(23))))));
   }
 
@@ -239,7 +224,7 @@ public class MethodChannelTest {
                 "REFERENCE_CREATE",
                 Arrays.asList(
                     new RemoteReference("table"),
-                    new TypeReference(0),
+                    0,
                     Collections.singletonList(32))));
     mockMessenger.receive("github.penguin/reference", message);
 
@@ -280,7 +265,7 @@ public class MethodChannelTest {
                 "REFERENCE_CREATE",
                 Arrays.asList(
                     new RemoteReference("animal"),
-                    new TypeReference(0),
+                    0,
                     Collections.singletonList(32))));
     mockMessenger.receive("github.penguin/reference", createMessage);
     assertThat(

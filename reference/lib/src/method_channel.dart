@@ -100,12 +100,12 @@ abstract class MethodChannelRemoteReferenceCommunicationHandler
   @override
   Future<void> createRemoteReference(
     RemoteReference remoteReference,
-    TypeReference typeReference,
+    int typeId,
     List<dynamic> arguments,
   ) {
     return _channel.invokeMethod<void>(
       MethodChannelReferencePairManager._methodCreate,
-      <dynamic>[remoteReference, typeReference, arguments],
+      <dynamic>[remoteReference, typeId, arguments],
     );
   }
 
@@ -138,7 +138,6 @@ class ReferenceMessageCodec extends StandardMessageCodec {
   const ReferenceMessageCodec();
 
   static const int _valueRemoteReference = 128;
-  static const int _valueTypeReference = 129;
   static const int _valueUnpairedRemoteReference = 130;
 
   @override
@@ -146,12 +145,9 @@ class ReferenceMessageCodec extends StandardMessageCodec {
     if (value is RemoteReference) {
       buffer.putUint8(_valueRemoteReference);
       writeValue(buffer, value.referenceId);
-    } else if (value is TypeReference) {
-      buffer.putUint8(_valueTypeReference);
-      writeValue(buffer, value.typeId);
     } else if (value is UnpairedRemoteReference) {
       buffer.putUint8(_valueUnpairedRemoteReference);
-      writeValue(buffer, value.typeReference);
+      writeValue(buffer, value.typeId);
       writeValue(buffer, value.creationArguments);
     } else {
       super.writeValue(buffer, value);
@@ -163,8 +159,6 @@ class ReferenceMessageCodec extends StandardMessageCodec {
     switch (type) {
       case _valueRemoteReference:
         return RemoteReference(readValueOfType(buffer.getUint8(), buffer));
-      case _valueTypeReference:
-        return TypeReference(readValueOfType(buffer.getUint8(), buffer));
       case _valueUnpairedRemoteReference:
         return UnpairedRemoteReference(
           readValueOfType(buffer.getUint8(), buffer),

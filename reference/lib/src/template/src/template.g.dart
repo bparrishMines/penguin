@@ -20,12 +20,22 @@ class _$LocalReferenceCommunicationHandler
     with LocalReferenceCommunicationHandler {
   const _$LocalReferenceCommunicationHandler({this.createClassTemplate});
 
-  static final Map<TypeReference, Map<String, Function>> _methods =
-      <TypeReference, Map<String, Function>>{
-    TypeReference(0): <String, Function>{
+  static final Map<Type, Map<String, Function>> _methods =
+      <Type, Map<String, Function>>{
+    ClassTemplate: <String, Function>{
       'methodTemplate': (ClassTemplate value, List<dynamic> arguments) {
         return value.methodTemplate(arguments[0]);
       },
+    },
+  };
+
+  static final Map<Type, Function> _creators = <Type, Function>{
+    ClassTemplate: (
+        _$LocalReferenceCommunicationHandler localHandler,
+      ReferencePairManager manager,
+      int fieldTemplate,
+    ) {
+      return localHandler.createClassTemplate(manager, fieldTemplate);
     },
   };
 
@@ -37,18 +47,10 @@ class _$LocalReferenceCommunicationHandler
   @override
   LocalReference createLocalReference(
     ReferencePairManager manager,
-    TypeReference typeReference,
+    Type referenceType,
     List<dynamic> arguments,
   ) {
-
-
-    if (typeReference == TypeReference(0)) {
-      return createClassTemplate(manager, arguments[0]);
-    }
-
-    throw StateError(
-      'Could not instantiate a $LocalReference: for $typeReference with arguments: $arguments.',
-    );
+    return _creators[referenceType](this, manager, arguments[0]);
   }
 
   @override
@@ -58,8 +60,7 @@ class _$LocalReferenceCommunicationHandler
     String methodName,
     List<dynamic> arguments,
   ) {
-    return _methods[referencePairManager.typeReferenceFor(localReference)]
-        [methodName](
+    return _methods[localReference.referenceType][methodName](
       localReference,
       arguments,
     );
@@ -68,6 +69,7 @@ class _$LocalReferenceCommunicationHandler
 
 class _$RemoteReferenceCommunicationHandler
     extends MethodChannelRemoteReferenceCommunicationHandler {
+  // TODO: to map like methods and creators
   @override
   List<dynamic> creationArgumentsFor(LocalReference localReference) {
     if (localReference is ClassTemplate) {
