@@ -4,6 +4,7 @@ import androidx.annotation.CallSuper;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,14 @@ import java.util.UUID;
 public abstract class ReferencePairManager {
   private boolean isInitialized = false;
   private final BiMap<LocalReference, RemoteReference> referencePairs = HashBiMap.create();
+  private final BiMap<Integer, Class<? extends LocalReference>> typeIds = HashBiMap.create();
+
+  public final List<Class<? extends LocalReference>> supportedClasses;
+
+  protected ReferencePairManager(final List<Class<? extends LocalReference>> supportedClass) {
+    this.supportedClasses = Collections.unmodifiableList(supportedClass);
+    for (int i = 0; i < supportedClass.size(); i++) typeIds.put(i, supportedClasses.get(i));
+  }
 
   public interface RemoteReferenceCommunicationHandler {
     List<Object> creationArgumentsFor(LocalReference localReference);
@@ -43,7 +52,11 @@ public abstract class ReferencePairManager {
 
   public abstract LocalReferenceCommunicationHandler getLocalHandler();
 
-  public abstract TypeReference typeReferenceFor(LocalReference localReference);
+  public TypeReference typeReferenceFor(LocalReference localReference) {
+    final Integer typeId = typeIds.inverse().get(localReference.getReferenceClass());
+    if (typeId == null) return null;
+    return new TypeReference(typeId);
+  }
 
   @CallSuper
   public void initialize() {

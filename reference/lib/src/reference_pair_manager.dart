@@ -6,6 +6,7 @@ import 'package:uuid/uuid.dart';
 
 import 'reference.dart';
 
+//TODO: Change dynamic to Object
 /// Handles communication with [RemoteReference]s for a [ReferencePairManager].
 ///
 /// This class communicates with other [ReferencePairManager]s to create,
@@ -128,10 +129,18 @@ mixin LocalReferenceCommunicationHandler {
 /// 4. Disposing of the Dart `Apple` would lead to a message sent to the remote
 /// [ReferencePairManager] to dispose the Java `Apple`.
 abstract class ReferencePairManager {
+  ReferencePairManager(List<Type> supportedTypes)
+      : assert(supportedTypes != null),
+        supportedTypes = List<Type>.unmodifiable(supportedTypes),
+        _typeIds = BiMap()..addAll(supportedTypes.toList().asMap());
+
   static final Uuid _uuid = Uuid();
 
   bool _isInitialized = false;
   final _referencePairs = BiMap<LocalReference, RemoteReference>();
+  final BiMap<int, Type> _typeIds;
+
+  final List<Type> supportedTypes;
 
   /// Retrieve the [TypeReference] that represents the type of [localReference].
   ///
@@ -142,7 +151,11 @@ abstract class ReferencePairManager {
   /// [TypeReference.typeId], as the equivalent object for the remote
   /// [TypeReference]. For example the `Apple` class in `apple.dart` and
   /// `Apple.java` could both return `TypeReference(0)`.
-  TypeReference typeReferenceFor(LocalReference localReference);
+  TypeReference typeReferenceFor(LocalReference localReference) {
+    final int typeId = _typeIds.inverse[localReference.referenceType];
+    if (typeId == null) return null;
+    return TypeReference(typeId);
+  }
 
   /// Handles communication with [RemoteReference]s.
   RemoteReferenceCommunicationHandler get remoteHandler;

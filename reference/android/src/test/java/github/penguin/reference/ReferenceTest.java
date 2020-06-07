@@ -23,7 +23,12 @@ import static org.junit.Assert.assertNull;
 
 @SuppressWarnings("rawtypes")
 public class ReferenceTest {
-  private static class TestClass implements LocalReference {}
+  private static class TestClass implements LocalReference {
+    @Override
+    public Class<? extends LocalReference> getReferenceClass() {
+      return TestClass.class;
+    }
+  }
 
   private static class TestReferencePairManager extends ReferencePairManager {
     private final LocalReferenceCommunicationHandler localHandler;
@@ -31,6 +36,7 @@ public class ReferenceTest {
 
     private TestReferencePairManager(LocalReferenceCommunicationHandler localHandler,
                                      RemoteReferenceCommunicationHandler remoteHandler) {
+      super(Collections.<Class<? extends LocalReference>>singletonList(TestClass.class));
       this.localHandler = localHandler;
       this.remoteHandler = remoteHandler;
     }
@@ -43,11 +49,6 @@ public class ReferenceTest {
     @Override
     public LocalReferenceCommunicationHandler getLocalHandler() {
       return localHandler;
-    }
-
-    @Override
-    public TypeReference typeReferenceFor(LocalReference localReference) {
-      return new TypeReference(0);
     }
   }
 
@@ -228,7 +229,6 @@ public class ReferenceTest {
     assertThat(remoteReferences, Matchers.<RemoteReference>hasSize(1));
     assertEquals(manager.localReferenceFor(remoteReferences.get(0)), testClass);
     assertEquals(manager.remoteReferenceFor(testClass), remoteReferences.get(0));
-    System.out.println("" + creationArguments.get(0));
     assertThat(creationArguments, contains(
         equalTo("Hello"),
         isUnpairedRemoteReference(new TypeReference(0), empty()),

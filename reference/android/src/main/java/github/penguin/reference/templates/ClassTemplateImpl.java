@@ -2,6 +2,7 @@ package github.penguin.reference.templates;
 
 import java.util.Collections;
 import github.penguin.reference.reference.CompletableRunnable;
+import github.penguin.reference.reference.LocalReference;
 import github.penguin.reference.reference.ReferencePairManager;
 import github.penguin.reference.templates.$TemplateReferencePairManager.ClassTemplate;
 
@@ -53,5 +54,10 @@ public class ClassTemplateImpl implements ClassTemplate {
   public ClassTemplateImpl setReferencePairManager(final ReferencePairManager referencePairManager) {
     this.referencePairManager = referencePairManager;
     return this;
+  }
+
+  @Override
+  public Class<? extends LocalReference> getReferenceClass() {
+    return ClassTemplate.class;
   }
 }

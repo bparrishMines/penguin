@@ -1,5 +1,14 @@
 import 'reference_pair_manager.dart';
 
+/// Represents an object on the same thread/process.
+///
+/// This is a mixin that allows a [ReferencePairManager] to know that a
+/// class is able be paired with a [RemoteReference].
+mixin LocalReference {
+  // TODO: documentation
+  Type get referenceType;
+}
+
 /// Represents an object on a different thread/process.
 ///
 /// This is paired with a [LocalReference] in a [ReferencePairManager].
@@ -23,12 +32,6 @@ class RemoteReference {
     return '$runtimeType($referenceId)';
   }
 }
-
-/// Represents an object on the same thread/process.
-///
-/// This is an empty mixin that allows a [ReferencePairManager] to know that a
-/// class is able be paired with a [RemoteReference].
-mixin LocalReference {}
 
 /// Represents a type that exists on a local and remote thread/process.
 ///

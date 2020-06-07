@@ -255,10 +255,14 @@ void main() {
   });
 }
 
-class TestClass with LocalReference {}
+class TestClass with LocalReference {
+  @override
+  Type get referenceType => TestClass;
+}
 
 class TestReferencePairManager extends ReferencePairManager {
-  TestReferencePairManager({this.localHandler, this.remoteHandler});
+  TestReferencePairManager({this.localHandler, this.remoteHandler})
+      : super(<Type>[TestClass]);
 
   @override
   final TestLocalHandler localHandler;

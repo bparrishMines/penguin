@@ -39,4 +39,7 @@ class ClassTemplate with LocalReference, _$ClassTemplateMethods {
   String toString() {
     return '$ClassTemplate($fieldTemplate)';
   }
+
+  @override
+  Type get referenceType => ClassTemplate;
 }

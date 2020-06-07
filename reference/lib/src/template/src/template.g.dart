@@ -7,20 +7,13 @@ class _$TemplateReferencePairManager extends MethodChannelReferencePairManager {
     _$RemoteReferenceCommunicationHandler remoteHandler,
     ReferenceMessageCodec referenceMessageCodec = const ReferenceMessageCodec(),
   }) : super(
+          <Type>[ClassTemplate],
           channelName,
           localHandler: localHandler,
           remoteHandler:
               remoteHandler ?? _$RemoteReferenceCommunicationHandler(),
           referenceMessageCodec: referenceMessageCodec,
         );
-
-  @override
-  TypeReference typeReferenceFor(LocalReference localReference) {
-    if (localReference is ClassTemplate) return TypeReference(0);
-    throw StateError(
-      'Could not find a $TypeReference for ${localReference.runtimeType}.',
-    );
-  }
 }
 
 class _$LocalReferenceCommunicationHandler
@@ -47,6 +40,8 @@ class _$LocalReferenceCommunicationHandler
     TypeReference typeReference,
     List<dynamic> arguments,
   ) {
+
+
     if (typeReference == TypeReference(0)) {
       return createClassTemplate(manager, arguments[0]);
     }

@@ -1,5 +1,6 @@
 package github.penguin.reference;
 
+import github.penguin.reference.reference.LocalReference;
 import github.penguin.reference.templates.$TemplateReferencePairManager.ClassTemplate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,5 +19,10 @@ public class TestClassTemplate implements ClassTemplate {
   @Override
   public Integer getFieldTemplate() {
     return 0;
+  }
+
+  @Override
+  public Class<? extends LocalReference> getReferenceClass() {
+    return ClassTemplate.class;
   }
 }

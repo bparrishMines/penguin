@@ -1,6 +1,7 @@
 package github.penguin.reference.method_channel;
 
 import androidx.annotation.NonNull;
+import github.penguin.reference.reference.LocalReference;
 import github.penguin.reference.reference.ReferencePairManager;
 import github.penguin.reference.reference.RemoteReference;
 import github.penguin.reference.reference.TypeReference;
@@ -30,19 +31,22 @@ public abstract class MethodChannelReferencePairManager extends ReferencePairMan
 
   @SuppressWarnings("unused")
   public MethodChannelReferencePairManager(
+      final List<Class<? extends LocalReference>> supportedClasses,
       final BinaryMessenger binaryMessenger,
       final String channelName,
       final LocalReferenceCommunicationHandler localHandler,
       final MethodChannelRemoteReferenceCommunicationHandler remoteHandler) {
-    this(binaryMessenger, channelName, localHandler, remoteHandler, new ReferenceMessageCodec());
+    this(supportedClasses, binaryMessenger, channelName, localHandler, remoteHandler, new ReferenceMessageCodec());
   }
 
   public MethodChannelReferencePairManager(
+      final List<Class<? extends LocalReference>> supportedClasses,
       final BinaryMessenger binaryMessenger,
       final String channelName,
       final LocalReferenceCommunicationHandler localHandler,
       final MethodChannelRemoteReferenceCommunicationHandler remoteHandler,
       final ReferenceMessageCodec messageCodec) {
+    super(supportedClasses);
     this.binaryMessenger = binaryMessenger;
     this.channelName = channelName;
     this.remoteHandler = remoteHandler;

@@ -9,6 +9,7 @@ import 'reference.dart';
 /// Abstract implementation of [ReferencePairManager] for [MethodChannel]s.
 abstract class MethodChannelReferencePairManager extends ReferencePairManager {
   MethodChannelReferencePairManager(
+    List<Type> supportedTypes,
     this.channelName, {
     @required this.localHandler,
     @required this.remoteHandler,
@@ -16,7 +17,8 @@ abstract class MethodChannelReferencePairManager extends ReferencePairManager {
   })  : assert(channelName != null),
         assert(localHandler != null),
         assert(remoteHandler != null),
-        assert(referenceMessageCodec != null);
+        assert(referenceMessageCodec != null),
+        super(supportedTypes);
 
   static const String _methodCreate = 'REFERENCE_CREATE';
   static const String _methodMethod = 'REFERENCE_METHOD';

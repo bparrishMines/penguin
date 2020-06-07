@@ -1,3 +1,5 @@
 package github.penguin.reference.reference;
 
-public interface LocalReference {}
+public interface LocalReference {
+  Class<? extends LocalReference> getReferenceClass();
+}

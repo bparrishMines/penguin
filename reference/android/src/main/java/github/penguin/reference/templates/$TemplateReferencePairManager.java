@@ -9,6 +9,7 @@ import github.penguin.reference.reference.TypeReference;
 import io.flutter.plugin.common.BinaryMessenger;
 import com.google.common.collect.ImmutableMap;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -96,7 +97,7 @@ public class $TemplateReferencePairManager extends MethodChannelReferencePairMan
       final BinaryMessenger binaryMessenger,
       final String channelName,
       final $LocalReferenceCommunicationHandler localHandler) {
-    super(
+    this(
         binaryMessenger,
         channelName,
         localHandler,
@@ -104,24 +105,13 @@ public class $TemplateReferencePairManager extends MethodChannelReferencePairMan
         new ReferenceMessageCodec());
   }
 
-  @SuppressWarnings("unused")
+  @SuppressWarnings({"unused", "ArraysAsListWithZeroOrOneArgument"})
   $TemplateReferencePairManager(
       final BinaryMessenger binaryMessenger,
       final String channelName,
       final $LocalReferenceCommunicationHandler localHandler,
       final $RemoteReferenceCommunicationHandler remoteHandler,
       final ReferenceMessageCodec messageCodec) {
-    super(binaryMessenger, channelName, localHandler, remoteHandler, messageCodec);
-  }
-
-  @Override
-  public TypeReference typeReferenceFor(LocalReference localReference) {
-    if (localReference instanceof ClassTemplate) return new TypeReference(0);
-
-    final String message =
-        String.format(
-            "Could not find a %s for %s.",
-            TypeReference.class.getSimpleName(), localReference.getClass().getName());
-    throw new IllegalStateException(message);
+    super(Arrays.<Class<? extends LocalReference>>asList(ClassTemplate.class), binaryMessenger, channelName, localHandler, remoteHandler, messageCodec);
   }
 }
