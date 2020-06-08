@@ -57,9 +57,11 @@ public class $TemplateReferencePairManager extends MethodChannelReferencePairMan
         List<Object> arguments)
         throws Exception {
       final Method method = creators.get(referenceClass);
+
       final List<Object> methodParams = new ArrayList<>(1 + arguments.size());
       methodParams.add(referencePairManager);
       methodParams.addAll(arguments);
+
       return (LocalReference) method.invoke(this, methodParams.toArray());
     }
 

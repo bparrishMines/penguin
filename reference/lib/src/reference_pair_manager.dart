@@ -142,22 +142,6 @@ abstract class ReferencePairManager {
 
   final List<Type> supportedTypes;
 
-  // TODO: helper typeIdFor referenceTypeFor
-//  /// Retrieve the [TypeReference] that represents the type of [localReference].
-//  ///
-//  /// This method should be able to return a unique [TypeReference] that this
-//  /// [ReferencePairManager] should support.
-//  ///
-//  /// The local [TypeReference] should also share the same
-//  /// [TypeReference.typeId], as the equivalent object for the remote
-//  /// [TypeReference]. For example the `Apple` class in `apple.dart` and
-//  /// `Apple.java` could both return `TypeReference(0)`.
-//  TypeReference _typeReferenceFor(LocalReference localReference) {
-//    final int typeId = _typeIds.inverse[localReference.referenceType];
-//    if (typeId == null) return null;
-//    return TypeReference(typeId);
-//  }
-
   /// Handles communication with [RemoteReference]s.
   RemoteReferenceCommunicationHandler get remoteHandler;
 
@@ -353,6 +337,9 @@ abstract class ReferencePairManager {
             .creationArgumentsFor(argument)
             .map(_replaceLocalReferences)
             .toList(),
+        this is PoolableReferencePairManager
+            ? (this as PoolableReferencePairManager).poolId
+            : null,
       );
     } else if (argument is List) {
       return argument.map(_replaceLocalReferences).toList();
@@ -364,5 +351,110 @@ abstract class ReferencePairManager {
     }
 
     return argument;
+  }
+}
+
+abstract class PoolableReferencePairManager extends ReferencePairManager {
+  PoolableReferencePairManager(List<Type> supportedTypes, this.poolId)
+      : assert(poolId != null),
+        super(supportedTypes);
+
+  final String poolId;
+
+  Set<ReferencePairManagerPool> _pools = <ReferencePairManagerPool>{};
+
+  PoolableReferencePairManager _managerFromType(Type type) {
+    for (ReferencePairManagerPool pool in _pools) {
+      final PoolableReferencePairManager manager = pool._typesToManagers[type];
+      if (manager != null) return manager;
+    }
+
+    return null;
+  }
+
+  PoolableReferencePairManager _managerFromPoolId(String poolId) {
+    for (ReferencePairManagerPool pool in _pools) {
+      final PoolableReferencePairManager manager = pool._managers[poolId];
+      if (manager != null) return manager;
+    }
+
+    return null;
+  }
+
+  LocalReference _localRefFromRemoteRef(RemoteReference remoteReference) {
+    for (ReferencePairManagerPool pool in _pools) {
+      for (ReferencePairManager manager in pool._managers.values) {
+        final LocalReference localReference =
+            manager.localReferenceFor(remoteReference);
+        if (localReference != null) return localReference;
+      }
+    }
+
+    return null;
+  }
+
+  @override
+  dynamic _replaceRemoteReferences(dynamic argument) {
+    if (_pools.length == 0) {
+      return super._replaceRemoteReferences(argument);
+    } else if (argument is RemoteReference &&
+        localReferenceFor(argument) == null) {
+      return _localRefFromRemoteRef(argument);
+    } else if (argument is UnpairedRemoteReference) {
+      final PoolableReferencePairManager manager =
+          _managerFromPoolId(argument.managerPoolId);
+      return manager.localHandler.createLocalReference(
+        this,
+        _typeIds[argument.typeId],
+        argument.creationArguments.map(_replaceRemoteReferences).toList(),
+      );
+    }
+
+    return super._replaceRemoteReferences(argument);
+  }
+
+  @override
+  dynamic _replaceLocalReferences(dynamic argument) {
+    if (_pools.length == 0 ||
+        argument is! LocalReference ||
+        _typeIds.inverse[(argument as LocalReference).referenceType] != null) {
+      return super._replaceLocalReferences(argument);
+    }
+
+    return _managerFromType((argument as LocalReference).referenceType)
+        ._replaceLocalReferences(argument);
+  }
+}
+
+class ReferencePairManagerPool {
+  static final ReferencePairManagerPool globalInstance =
+      ReferencePairManagerPool();
+
+  final Map<String, PoolableReferencePairManager> _managers =
+      <String, PoolableReferencePairManager>{};
+  final Map<Type, PoolableReferencePairManager> _typesToManagers =
+      <Type, PoolableReferencePairManager>{};
+
+  bool add(PoolableReferencePairManager manager) {
+    if (_managers.containsKey(manager.poolId)) return false;
+
+    if (manager.supportedTypes
+        .any((Type type) => _typesToManagers[type] != null)) {
+      return false;
+    }
+
+    for (Type type in manager.supportedTypes) _typesToManagers[type] = manager;
+    manager._pools.add(this);
+    _managers[manager.poolId] = manager;
+
+    return true;
+  }
+
+  void remove(PoolableReferencePairManager manager) {
+    if (_managers[manager.poolId] == null) return;
+
+    for (Type type in manager.supportedTypes) _typesToManagers.remove(type);
+    _managers.remove(manager.poolId);
+    manager._pools.remove(this);
   }
 }

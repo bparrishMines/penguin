@@ -11,6 +11,8 @@ void main() {
       final allArguments = <List<dynamic>>[];
 
       final manager = TestReferencePairManager(
+        <Type>[TestClass],
+        "test_id",
         localHandler: TestLocalHandler(
           onCreateLocalReference: (
             ReferencePairManager referencePairManager,
@@ -28,12 +30,12 @@ void main() {
         0,
         <dynamic>[
           'Hello',
-          UnpairedRemoteReference(0, <dynamic>[]),
+          UnpairedRemoteReference(0, <dynamic>[], "test_id"),
           <dynamic>[
-            UnpairedRemoteReference(0, <dynamic>[]),
+            UnpairedRemoteReference(0, <dynamic>[], "test_id"),
           ],
           <dynamic, dynamic>{
-            1.1: UnpairedRemoteReference(0, <dynamic>[]),
+            1.1: UnpairedRemoteReference(0, <dynamic>[], "test_id"),
           },
         ],
       );
@@ -59,6 +61,8 @@ void main() {
     test('executeLocalMethodFor', () {
       final methodArguments = <dynamic>[];
       final manager = TestReferencePairManager(
+        <Type>[TestClass],
+        "test_id",
         localHandler: TestLocalHandler(
           onCreateLocalReference: (
             ReferencePairManager referencePairManager,
@@ -85,12 +89,12 @@ void main() {
         'aMethod',
         <dynamic>[
           'Hello',
-          UnpairedRemoteReference(0, <dynamic>[]),
+          UnpairedRemoteReference(0, <dynamic>[], "test_id"),
           <dynamic>[
-            UnpairedRemoteReference(0, <dynamic>[]),
+            UnpairedRemoteReference(0, <dynamic>[], "test_id"),
           ],
           <dynamic, dynamic>{
-            1.1: UnpairedRemoteReference(0, <dynamic>[]),
+            1.1: UnpairedRemoteReference(0, <dynamic>[], "test_id"),
           },
         ],
       );
@@ -105,6 +109,8 @@ void main() {
 
     test('disposeLocalReferenceFor', () {
       final manager = TestReferencePairManager(
+        <Type>[TestClass],
+        "test_id",
         localHandler: TestLocalHandler(
           onCreateLocalReference: (
             ReferencePairManager referencePairManager,
@@ -131,6 +137,8 @@ void main() {
       bool firstCall = true;
 
       final manager = TestReferencePairManager(
+        <Type>[TestClass],
+        "test_id",
         remoteHandler: TestRemoteHandler(
           onCreationArgumentsFor: (LocalReference localReference) {
             if (localReference is TestClass && firstCall) {
@@ -167,11 +175,11 @@ void main() {
       expect(manager.remoteReferenceFor(testClass), remoteReference);
       expect(creationArguments, <Matcher>[
         equals('Hello'),
-        isUnpairedRemoteReference(0, <dynamic>[]),
-        contains(isUnpairedRemoteReference(0, <dynamic>[])),
+        isUnpairedRemoteReference(0, <dynamic>[], "test_id"),
+        contains(isUnpairedRemoteReference(0, <dynamic>[], "test_id")),
         containsPair(
           1.1,
-          isUnpairedRemoteReference(0, <dynamic>[]),
+          isUnpairedRemoteReference(0, <dynamic>[], "test_id"),
         ),
       ]);
     });
@@ -180,6 +188,8 @@ void main() {
       final methodArguments = <dynamic>[];
 
       final manager = TestReferencePairManager(
+        <Type>[TestClass],
+        "test_id",
         remoteHandler: TestRemoteHandler(
           onCreationArgumentsFor: (LocalReference localReference) {
             return <dynamic>[];
@@ -217,11 +227,11 @@ void main() {
 
       expect(methodArguments, <Matcher>[
         equals('Hello'),
-        isUnpairedRemoteReference(0, <dynamic>[]),
-        contains(isUnpairedRemoteReference(0, <dynamic>[])),
+        isUnpairedRemoteReference(0, <dynamic>[], "test_id"),
+        contains(isUnpairedRemoteReference(0, <dynamic>[], "test_id")),
         containsPair(
           1.1,
-          isUnpairedRemoteReference(0, <dynamic>[]),
+          isUnpairedRemoteReference(0, <dynamic>[], "test_id"),
         ),
       ]);
     });
@@ -229,6 +239,8 @@ void main() {
 
   test('disposeRemoteReferenceFor', () async {
     final manager = TestReferencePairManager(
+      <Type>[TestClass],
+      "test_id",
       remoteHandler: TestRemoteHandler(
         onCreationArgumentsFor: (LocalReference localReference) {
           return <dynamic>[];
@@ -253,6 +265,155 @@ void main() {
     expect(manager.localReferenceFor(remoteReference), isNull);
     expect(manager.remoteReferenceFor(testClass), isNull);
   });
+
+  group('$PoolableReferencePairManager', () {
+    ReferencePairManagerPool pool;
+
+    setUp(() {
+      pool = ReferencePairManagerPool();
+    });
+
+    test('add', () {
+      final manager1 = TestReferencePairManager(<Type>[TestClass], "test_id")
+        ..initialize();
+
+      final manager2 = TestReferencePairManager(<Type>[TestClass2], "test_id2")
+        ..initialize();
+
+      expect(pool.add(manager1), isTrue);
+      expect(pool.add(manager1), isFalse);
+      expect(
+        pool.add(TestReferencePairManager(<Type>[TestClass], "test_id3")),
+        isFalse,
+      );
+      expect(pool.add(manager2), isTrue);
+    });
+
+    test('remove', () {
+      final manager1 = TestReferencePairManager(<Type>[TestClass], "test_id")
+        ..initialize();
+
+      final manager2 = TestReferencePairManager(<Type>[TestClass2], "test_id2")
+        ..initialize();
+
+      pool.add(manager1);
+      pool.add(manager1);
+      pool.add(manager2);
+
+      pool.remove(manager1);
+      pool.remove(manager2);
+
+      expect(pool.add(manager1), isTrue);
+      expect(pool.add(manager2), isTrue);
+    });
+
+    test('createLocalReferenceFor', () {
+      final allArguments = <List<dynamic>>[];
+
+      final manager1 = TestReferencePairManager(
+        <Type>[TestClass],
+        "test_id",
+        localHandler: TestLocalHandler(
+          onCreateLocalReference: (
+            ReferencePairManager referencePairManager,
+            Type referenceType,
+            List<dynamic> arguments,
+          ) {
+            allArguments.add(arguments);
+            return TestClass();
+          },
+        ),
+      )..initialize();
+
+      final manager2 = TestReferencePairManager(<Type>[TestClass2], "test_id2")
+        ..initialize();
+
+      pool.add(manager1);
+      pool.add(manager2);
+
+      manager1.createLocalReferenceFor(
+        RemoteReference('apple'),
+        0,
+        <dynamic>[
+          'Hello',
+          UnpairedRemoteReference(0, <dynamic>[], "test_id"),
+          <dynamic>[
+            UnpairedRemoteReference(0, <dynamic>[], "test_id"),
+          ],
+          <dynamic, dynamic>{
+            1.1: UnpairedRemoteReference(0, <dynamic>[], "test_id"),
+          },
+        ],
+      );
+
+      expect(
+        allArguments,
+        <Matcher>[
+          isEmpty,
+          isEmpty,
+          isEmpty,
+          containsAllInOrder(<Matcher>[
+            equals('Hello'),
+            isA<TestClass>(),
+            contains(isA<TestClass>()),
+            containsPair(1.1, isA<TestClass>()),
+          ]),
+        ],
+      );
+    });
+
+    test('createRemoteReferenceFor', () async {
+      final creationArguments = <dynamic>[];
+      bool firstCall = true;
+
+      final manager1 = TestReferencePairManager(
+        <Type>[TestClass],
+        "test_id",
+        remoteHandler: TestRemoteHandler(
+          onCreationArgumentsFor: (LocalReference localReference) {
+            if (localReference is TestClass && firstCall) {
+              firstCall = false;
+              return <dynamic>[
+                'Hello',
+                TestClass(),
+                <dynamic>[TestClass()],
+                <dynamic, dynamic>{1.1: TestClass()},
+              ];
+            }
+
+            return <dynamic>[];
+          },
+          onCreateRemoteReference: (
+            RemoteReference remoteReference,
+            int typeId,
+            List<dynamic> arguments,
+          ) {
+            creationArguments.addAll(arguments);
+            return Future<void>.value();
+          },
+        ),
+      )..initialize();
+
+      final manager2 = TestReferencePairManager(<Type>[TestClass2], "test_id2")
+        ..initialize();
+
+      pool.add(manager1);
+      pool.add(manager2);
+
+      final testClass = TestClass();
+      await manager1.createRemoteReferenceFor(testClass);
+
+      expect(creationArguments, <Matcher>[
+        equals('Hello'),
+        isUnpairedRemoteReference(0, <dynamic>[], "test_id"),
+        contains(isUnpairedRemoteReference(0, <dynamic>[], "test_id")),
+        containsPair(
+          1.1,
+          isUnpairedRemoteReference(0, <dynamic>[], "test_id"),
+        ),
+      ]);
+    });
+  });
 }
 
 class TestClass with LocalReference {
@@ -260,9 +421,13 @@ class TestClass with LocalReference {
   Type get referenceType => TestClass;
 }
 
-class TestReferencePairManager extends ReferencePairManager {
-  TestReferencePairManager({this.localHandler, this.remoteHandler})
-      : super(<Type>[TestClass]);
+class TestReferencePairManager extends PoolableReferencePairManager {
+  TestReferencePairManager(
+    List<Type> supportedTypes,
+    String poolId, {
+    this.localHandler,
+    this.remoteHandler,
+  }) : super(supportedTypes, poolId);
 
   @override
   final TestLocalHandler localHandler;
@@ -375,4 +540,9 @@ class TestLocalHandler implements LocalReferenceCommunicationHandler {
       arguments,
     );
   }
+}
+
+class TestClass2 with LocalReference {
+  @override
+  Type get referenceType => TestClass2;
 }

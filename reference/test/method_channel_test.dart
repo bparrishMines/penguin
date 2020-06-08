@@ -31,7 +31,7 @@ void main() {
       final ByteData byteData = methodCodec.encodeMethodCall(
         MethodCall(
           'a',
-          UnpairedRemoteReference(56, <dynamic>[]),
+          UnpairedRemoteReference(56, <dynamic>[], "apple"),
         ),
       );
 
@@ -39,7 +39,7 @@ void main() {
         methodCodec.decodeMethodCall(byteData),
         isMethodCallWithMatchers(
           'a',
-          arguments: isUnpairedRemoteReference(56, <dynamic>[]),
+          arguments: isUnpairedRemoteReference(56, <dynamic>[], "apple"),
         ),
       );
     });

@@ -52,12 +52,6 @@ public abstract class ReferencePairManager {
 
   public abstract LocalReferenceCommunicationHandler getLocalHandler();
 
-//  public TypeReference typeReferenceFor(LocalReference localReference) {
-//    final Integer typeId = typeIds.inverse().get(localReference.getReferenceClass());
-//    if (typeId == null) return null;
-//    return new TypeReference(typeId);
-//  }
-
   @CallSuper
   public void initialize() {
     isInitialized = true;

@@ -7,18 +7,20 @@ import 'reference_pair_manager.dart';
 import 'reference.dart';
 
 /// Abstract implementation of [ReferencePairManager] for [MethodChannel]s.
-abstract class MethodChannelReferencePairManager extends ReferencePairManager {
+abstract class MethodChannelReferencePairManager
+    extends PoolableReferencePairManager {
   MethodChannelReferencePairManager(
     List<Type> supportedTypes,
     this.channelName, {
     @required this.localHandler,
     @required this.remoteHandler,
+    String poolId,
     this.referenceMessageCodec = const ReferenceMessageCodec(),
   })  : assert(channelName != null),
         assert(localHandler != null),
         assert(remoteHandler != null),
         assert(referenceMessageCodec != null),
-        super(supportedTypes);
+        super(supportedTypes, poolId ?? channelName);
 
   static const String _methodCreate = 'REFERENCE_CREATE';
   static const String _methodMethod = 'REFERENCE_METHOD';
@@ -149,6 +151,7 @@ class ReferenceMessageCodec extends StandardMessageCodec {
       buffer.putUint8(_valueUnpairedRemoteReference);
       writeValue(buffer, value.typeId);
       writeValue(buffer, value.creationArguments);
+      writeValue(buffer, value.managerPoolId);
     } else {
       super.writeValue(buffer, value);
     }
@@ -161,6 +164,7 @@ class ReferenceMessageCodec extends StandardMessageCodec {
         return RemoteReference(readValueOfType(buffer.getUint8(), buffer));
       case _valueUnpairedRemoteReference:
         return UnpairedRemoteReference(
+          readValueOfType(buffer.getUint8(), buffer),
           readValueOfType(buffer.getUint8(), buffer),
           readValueOfType(buffer.getUint8(), buffer),
         );

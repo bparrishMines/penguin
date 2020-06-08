@@ -35,19 +35,23 @@ class _IsMethodCallWithMatchers extends Matcher with _DeepEquals {
 Matcher isUnpairedRemoteReference(
   int typeId,
   List<dynamic> creationArguments,
+  String managerPoolId,
 ) {
-  return _IsUnpairedRemoteReference(typeId, creationArguments);
+  return _IsUnpairedRemoteReference(typeId, creationArguments, managerPoolId);
 }
 
 class _IsUnpairedRemoteReference extends Matcher with _DeepEquals {
   const _IsUnpairedRemoteReference(
     this.typeId,
     this.creationArguments,
+    this.managerPoolId,
   );
 
   final int typeId;
 
   final List<dynamic> creationArguments;
+
+  final String managerPoolId;
 
   @override
   Description describe(Description description) {
@@ -55,13 +59,16 @@ class _IsUnpairedRemoteReference extends Matcher with _DeepEquals {
         .add(' Is an $UnpairedRemoteReference with type id: ')
         .addDescriptionOf(typeId)
         .add(' and creation arguments: ')
-        .addDescriptionOf(creationArguments);
+        .addDescriptionOf(creationArguments)
+        .add(' and poolId: ')
+        .addDescriptionOf(managerPoolId);
   }
 
   @override
   bool matches(dynamic item, Map<dynamic, dynamic> matchState) {
     if (item is! UnpairedRemoteReference) return false;
     if (item.typeId != typeId) return false;
+    if (item.managerPoolId != managerPoolId) return false;
     return deepEquals(creationArguments, item.creationArguments, matchState);
   }
 }
