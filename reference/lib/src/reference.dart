@@ -67,7 +67,7 @@ class UnpairedRemoteReference {
   final int typeId;
 
   /// Arguments used to create the instance this represents.
-  final List<dynamic> creationArguments;
+  final List<Object> creationArguments;
 
   final String managerPoolId;
 

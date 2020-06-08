@@ -4,7 +4,7 @@ import 'package:reference/reference.dart';
 import 'package:reference/src/template/template.dart';
 
 // Extends isMethodCall in packager:test/test.dart to support matchers in arguments.
-Matcher isMethodCallWithMatchers(String name, {dynamic arguments}) {
+Matcher isMethodCallWithMatchers(String name, {Object arguments}) {
   return _IsMethodCallWithMatchers(name, arguments);
 }
 
@@ -12,7 +12,7 @@ class _IsMethodCallWithMatchers extends Matcher with _DeepEquals {
   const _IsMethodCallWithMatchers(this.name, this.arguments);
 
   final String name;
-  final dynamic arguments;
+  final Object arguments;
 
   @override
   bool matches(dynamic item, Map<dynamic, dynamic> matchState) {
@@ -34,7 +34,7 @@ class _IsMethodCallWithMatchers extends Matcher with _DeepEquals {
 // Extends isMethodCall in packager:test/test.dart to support matchers in arguments.
 Matcher isUnpairedRemoteReference(
   int typeId,
-  List<dynamic> creationArguments,
+  List<Object> creationArguments,
   String managerPoolId,
 ) {
   return _IsUnpairedRemoteReference(typeId, creationArguments, managerPoolId);
@@ -49,7 +49,7 @@ class _IsUnpairedRemoteReference extends Matcher with _DeepEquals {
 
   final int typeId;
 
-  final List<dynamic> creationArguments;
+  final List<Object> creationArguments;
 
   final String managerPoolId;
 
@@ -99,7 +99,7 @@ class _IsClassTemplate extends Matcher with _DeepEquals {
 }
 
 mixin _DeepEquals {
-  bool deepEquals(dynamic a, dynamic b, Map<dynamic, dynamic> matchState) {
+  bool deepEquals(Object a, Object b, Map<Object, Object> matchState) {
     if (a == b) return true;
     if (b is Matcher) return b.matches(a, matchState);
     if (a is Matcher) return a.matches(b, matchState);
@@ -109,9 +109,9 @@ mixin _DeepEquals {
   }
 
   bool _deepEqualsList(
-    List<dynamic> a,
-    List<dynamic> b,
-    Map<dynamic, dynamic> matchState,
+    List<Object> a,
+    List<Object> b,
+    Map<Object, Object> matchState,
   ) {
     if (a.length != b.length) return false;
     for (int i = 0; i < a.length; i++) {
@@ -121,12 +121,12 @@ mixin _DeepEquals {
   }
 
   bool _deepEqualsMap(
-    Map<dynamic, dynamic> a,
-    Map<dynamic, dynamic> b,
-    Map<dynamic, dynamic> matchState,
+    Map<Object, Object> a,
+    Map<Object, Object> b,
+    Map<Object, Object> matchState,
   ) {
     if (a.length != b.length) return false;
-    for (final dynamic key in a.keys) {
+    for (final Object key in a.keys) {
       if (!b.containsKey(key) || !deepEquals(a[key], b[key], matchState)) {
         return false;
       }

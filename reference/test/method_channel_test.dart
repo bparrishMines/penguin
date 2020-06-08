@@ -31,7 +31,7 @@ void main() {
       final ByteData byteData = methodCodec.encodeMethodCall(
         MethodCall(
           'a',
-          UnpairedRemoteReference(56, <dynamic>[], "apple"),
+          UnpairedRemoteReference(56, <Object>[], "apple"),
         ),
       );
 
@@ -39,7 +39,7 @@ void main() {
         methodCodec.decodeMethodCall(byteData),
         isMethodCallWithMatchers(
           'a',
-          arguments: isUnpairedRemoteReference(56, <dynamic>[], "apple"),
+          arguments: isUnpairedRemoteReference(56, <Object>[], "apple"),
         ),
       );
     });
@@ -81,10 +81,10 @@ void main() {
         testClass,
       );
       expect(methodCallLog, <Matcher>[
-        isMethodCallWithMatchers('REFERENCE_CREATE', arguments: <dynamic>[
+        isMethodCallWithMatchers('REFERENCE_CREATE', arguments: <Object>[
           remoteReference,
           0,
-          <dynamic>[1],
+          <Object>[1],
         ]),
       ]);
     });
@@ -118,10 +118,10 @@ void main() {
 
       expect(result, equals('Goodbye!'));
       expect(methodCallLog, <Matcher>[
-        isMethodCallWithMatchers('REFERENCE_METHOD', arguments: <dynamic>[
+        isMethodCallWithMatchers('REFERENCE_METHOD', arguments: <Object>[
           referencePairManager.remoteReferenceFor(testClass),
           'methodTemplate',
-          <dynamic>['bye!'],
+          <Object>['bye!'],
         ]),
       ]);
     });
@@ -132,10 +132,10 @@ void main() {
         referencePairManager.channel.codec.encodeMethodCall(
           MethodCall(
             'REFERENCE_CREATE',
-            <dynamic>[
+            <Object>[
               RemoteReference('aowejea;io'),
               0,
-              <dynamic>[8],
+              <Object>[8],
             ],
           ),
         ),
@@ -149,13 +149,13 @@ void main() {
     });
 
     test('executeLocalMethodFor', () async {
-      final Completer<List<dynamic>> callbackCompleter =
-          Completer<List<dynamic>>();
+      final Completer<List<Object>> callbackCompleter =
+          Completer<List<Object>>();
 
       final ClassTemplate testClass = TestClassTemplate(
         5,
         (String parameterTemplate) {
-          callbackCompleter.complete(<dynamic>[
+          callbackCompleter.complete(<Object>[
             parameterTemplate,
           ]);
           return parameterTemplate + ' pie';
@@ -170,10 +170,10 @@ void main() {
         referencePairManager.channel.codec.encodeMethodCall(
           MethodCall(
             'REFERENCE_METHOD',
-            <dynamic>[
+            <Object>[
               referencePairManager.remoteReferenceFor(testClass),
               'methodTemplate',
-              <dynamic>['Apple'],
+              <Object>['Apple'],
             ],
           ),
         ),
@@ -184,7 +184,7 @@ void main() {
         },
       );
 
-      expect(callbackCompleter.future, completion(<dynamic>['Apple']));
+      expect(callbackCompleter.future, completion(<Object>['Apple']));
       expect(responseCompleter.future, completion('Apple pie'));
     });
 
@@ -194,10 +194,10 @@ void main() {
         referencePairManager.channel.codec.encodeMethodCall(
           MethodCall(
             'REFERENCE_CREATE',
-            <dynamic>[
+            <Object>[
               RemoteReference('ajackwhack'),
               0,
-              <dynamic>[45],
+              <Object>[45],
             ],
           ),
         ),

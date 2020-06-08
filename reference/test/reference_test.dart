@@ -8,7 +8,7 @@ import 'reference_matchers.dart';
 void main() {
   group('$ReferencePairManager', () {
     test('createLocalReferenceFor', () {
-      final allArguments = <List<dynamic>>[];
+      final allArguments = <List<Object>>[];
 
       final manager = TestReferencePairManager(
         <Type>[TestClass],
@@ -17,7 +17,7 @@ void main() {
           onCreateLocalReference: (
             ReferencePairManager referencePairManager,
             Type referenceType,
-            List<dynamic> arguments,
+            List<Object> arguments,
           ) {
             allArguments.add(arguments);
             return TestClass();
@@ -28,14 +28,14 @@ void main() {
       final TestClass result = manager.createLocalReferenceFor(
         RemoteReference('apple'),
         0,
-        <dynamic>[
+        <Object>[
           'Hello',
-          UnpairedRemoteReference(0, <dynamic>[], "test_id"),
-          <dynamic>[
-            UnpairedRemoteReference(0, <dynamic>[], "test_id"),
+          UnpairedRemoteReference(0, <Object>[], "test_id"),
+          <Object>[
+            UnpairedRemoteReference(0, <Object>[], "test_id"),
           ],
-          <dynamic, dynamic>{
-            1.1: UnpairedRemoteReference(0, <dynamic>[], "test_id"),
+          <Object, Object>{
+            1.1: UnpairedRemoteReference(0, <Object>[], "test_id"),
           },
         ],
       );
@@ -59,7 +59,7 @@ void main() {
     });
 
     test('executeLocalMethodFor', () {
-      final methodArguments = <dynamic>[];
+      final methodArguments = <Object>[];
       final manager = TestReferencePairManager(
         <Type>[TestClass],
         "test_id",
@@ -67,7 +67,7 @@ void main() {
           onCreateLocalReference: (
             ReferencePairManager referencePairManager,
             Type referenceType,
-            List<dynamic> arguments,
+            List<Object> arguments,
           ) {
             return TestClass();
           },
@@ -75,7 +75,7 @@ void main() {
             ReferencePairManager referencePairManager,
             LocalReference localReference,
             String methodName,
-            List<dynamic> arguments,
+            List<Object> arguments,
           ) {
             if (methodName == 'aMethod') methodArguments.addAll(arguments);
             return null;
@@ -87,14 +87,14 @@ void main() {
       manager.executeLocalMethodFor(
         RemoteReference('chi'),
         'aMethod',
-        <dynamic>[
+        <Object>[
           'Hello',
-          UnpairedRemoteReference(0, <dynamic>[], "test_id"),
-          <dynamic>[
-            UnpairedRemoteReference(0, <dynamic>[], "test_id"),
+          UnpairedRemoteReference(0, <Object>[], "test_id"),
+          <Object>[
+            UnpairedRemoteReference(0, <Object>[], "test_id"),
           ],
-          <dynamic, dynamic>{
-            1.1: UnpairedRemoteReference(0, <dynamic>[], "test_id"),
+          <Object, Object>{
+            1.1: UnpairedRemoteReference(0, <Object>[], "test_id"),
           },
         ],
       );
@@ -115,7 +115,7 @@ void main() {
           onCreateLocalReference: (
             ReferencePairManager referencePairManager,
             Type referenceType,
-            List<dynamic> arguments,
+            List<Object> arguments,
           ) {
             return TestClass();
           },
@@ -133,7 +133,7 @@ void main() {
     });
 
     test('createRemoteReferenceFor', () async {
-      final creationArguments = <dynamic>[];
+      final creationArguments = <Object>[];
       bool firstCall = true;
 
       final manager = TestReferencePairManager(
@@ -143,20 +143,20 @@ void main() {
           onCreationArgumentsFor: (LocalReference localReference) {
             if (localReference is TestClass && firstCall) {
               firstCall = false;
-              return <dynamic>[
+              return <Object>[
                 'Hello',
                 TestClass(),
-                <dynamic>[TestClass()],
-                <dynamic, dynamic>{1.1: TestClass()},
+                <Object>[TestClass()],
+                <Object, Object>{1.1: TestClass()},
               ];
             }
 
-            return <dynamic>[];
+            return <Object>[];
           },
           onCreateRemoteReference: (
             RemoteReference remoteReference,
             int typeId,
-            List<dynamic> arguments,
+            List<Object> arguments,
           ) {
             creationArguments.addAll(arguments);
             return Future<void>.value();
@@ -175,36 +175,36 @@ void main() {
       expect(manager.remoteReferenceFor(testClass), remoteReference);
       expect(creationArguments, <Matcher>[
         equals('Hello'),
-        isUnpairedRemoteReference(0, <dynamic>[], "test_id"),
-        contains(isUnpairedRemoteReference(0, <dynamic>[], "test_id")),
+        isUnpairedRemoteReference(0, <Object>[], "test_id"),
+        contains(isUnpairedRemoteReference(0, <Object>[], "test_id")),
         containsPair(
           1.1,
-          isUnpairedRemoteReference(0, <dynamic>[], "test_id"),
+          isUnpairedRemoteReference(0, <Object>[], "test_id"),
         ),
       ]);
     });
 
     test('executeRemoteMethodFor', () async {
-      final methodArguments = <dynamic>[];
+      final methodArguments = <Object>[];
 
       final manager = TestReferencePairManager(
         <Type>[TestClass],
         "test_id",
         remoteHandler: TestRemoteHandler(
           onCreationArgumentsFor: (LocalReference localReference) {
-            return <dynamic>[];
+            return <Object>[];
           },
           onCreateRemoteReference: (
             RemoteReference remoteReference,
             int typeId,
-            List<dynamic> arguments,
+            List<Object> arguments,
           ) {
             return Future<void>.value();
           },
           onExecuteRemoteMethod: (
             RemoteReference remoteReference,
             String methodName,
-            List<dynamic> arguments,
+            List<Object> arguments,
           ) {
             methodArguments.addAll(arguments);
             return Future<void>.value();
@@ -217,21 +217,21 @@ void main() {
       await manager.executeRemoteMethodFor(
         testClass,
         'aMethod',
-        <dynamic>[
+        <Object>[
           'Hello',
           TestClass(),
-          <dynamic>[TestClass()],
-          <dynamic, dynamic>{1.1: TestClass()},
+          <Object>[TestClass()],
+          <Object, Object>{1.1: TestClass()},
         ],
       );
 
       expect(methodArguments, <Matcher>[
         equals('Hello'),
-        isUnpairedRemoteReference(0, <dynamic>[], "test_id"),
-        contains(isUnpairedRemoteReference(0, <dynamic>[], "test_id")),
+        isUnpairedRemoteReference(0, <Object>[], "test_id"),
+        contains(isUnpairedRemoteReference(0, <Object>[], "test_id")),
         containsPair(
           1.1,
-          isUnpairedRemoteReference(0, <dynamic>[], "test_id"),
+          isUnpairedRemoteReference(0, <Object>[], "test_id"),
         ),
       ]);
     });
@@ -243,12 +243,12 @@ void main() {
       "test_id",
       remoteHandler: TestRemoteHandler(
         onCreationArgumentsFor: (LocalReference localReference) {
-          return <dynamic>[];
+          return <Object>[];
         },
         onCreateRemoteReference: (
           RemoteReference remoteReference,
           int typeId,
-          List<dynamic> arguments,
+          List<Object> arguments,
         ) {
           return Future<void>.value();
         },
@@ -307,7 +307,7 @@ void main() {
     });
 
     test('createLocalReferenceFor', () {
-      final allArguments = <List<dynamic>>[];
+      final allArguments = <List<Object>>[];
 
       final manager1 = TestReferencePairManager(
         <Type>[TestClass],
@@ -316,7 +316,7 @@ void main() {
           onCreateLocalReference: (
             ReferencePairManager referencePairManager,
             Type referenceType,
-            List<dynamic> arguments,
+            List<Object> arguments,
           ) {
             allArguments.add(arguments);
             return TestClass();
@@ -331,7 +331,7 @@ void main() {
           onCreateLocalReference: (
             ReferencePairManager referencePairManager,
             Type referenceType,
-            List<dynamic> arguments,
+            List<Object> arguments,
           ) {
             return TestClass2();
           },
@@ -344,15 +344,15 @@ void main() {
       manager1.createLocalReferenceFor(
         RemoteReference('apple'),
         0,
-        <dynamic>[
+        <Object>[
           'Hello',
-          UnpairedRemoteReference(0, <dynamic>[], "test_id2"),
-          UnpairedRemoteReference(0, <dynamic>[], "test_id"),
-          <dynamic>[
-            UnpairedRemoteReference(0, <dynamic>[], "test_id"),
+          UnpairedRemoteReference(0, <Object>[], "test_id2"),
+          UnpairedRemoteReference(0, <Object>[], "test_id"),
+          <Object>[
+            UnpairedRemoteReference(0, <Object>[], "test_id"),
           ],
-          <dynamic, dynamic>{
-            1.1: UnpairedRemoteReference(0, <dynamic>[], "test_id"),
+          <Object, Object>{
+            1.1: UnpairedRemoteReference(0, <Object>[], "test_id"),
           },
         ],
       );
@@ -375,7 +375,7 @@ void main() {
     });
 
     test('createRemoteReferenceFor', () async {
-      final creationArguments = <dynamic>[];
+      final creationArguments = <Object>[];
       bool firstCall = true;
 
       final manager1 = TestReferencePairManager(
@@ -385,21 +385,21 @@ void main() {
           onCreationArgumentsFor: (LocalReference localReference) {
             if (localReference is TestClass && firstCall) {
               firstCall = false;
-              return <dynamic>[
+              return <Object>[
                 'Hello',
                 TestClass2(),
                 TestClass(),
-                <dynamic>[TestClass()],
-                <dynamic, dynamic>{1.1: TestClass()},
+                <Object>[TestClass()],
+                <Object, Object>{1.1: TestClass()},
               ];
             }
 
-            return <dynamic>[];
+            return <Object>[];
           },
           onCreateRemoteReference: (
             RemoteReference remoteReference,
             int typeId,
-            List<dynamic> arguments,
+            List<Object> arguments,
           ) {
             creationArguments.addAll(arguments);
             return Future<void>.value();
@@ -412,13 +412,13 @@ void main() {
         "test_id2",
         remoteHandler: TestRemoteHandler(
           onCreationArgumentsFor: (LocalReference localReference) {
-            if (localReference is TestClass2) return <dynamic>[];
+            if (localReference is TestClass2) return <Object>[];
             return null;
           },
           onCreateRemoteReference: (
             RemoteReference remoteReference,
             int typeId,
-            List<dynamic> arguments,
+            List<Object> arguments,
           ) {
             return Future<void>.value();
           },
@@ -433,12 +433,12 @@ void main() {
 
       expect(creationArguments, <Matcher>[
         equals('Hello'),
-        isUnpairedRemoteReference(0, <dynamic>[], "test_id2"),
-        isUnpairedRemoteReference(0, <dynamic>[], "test_id"),
-        contains(isUnpairedRemoteReference(0, <dynamic>[], "test_id")),
+        isUnpairedRemoteReference(0, <Object>[], "test_id2"),
+        isUnpairedRemoteReference(0, <Object>[], "test_id"),
+        contains(isUnpairedRemoteReference(0, <Object>[], "test_id")),
         containsPair(
           1.1,
-          isUnpairedRemoteReference(0, <dynamic>[], "test_id"),
+          isUnpairedRemoteReference(0, <Object>[], "test_id"),
         ),
       ]);
     });
@@ -476,23 +476,23 @@ class TestRemoteHandler implements RemoteReferenceCommunicationHandler {
     this.onExecuteRemoteMethod,
   });
 
-  final List<dynamic> Function(LocalReference localReference)
+  final List<Object> Function(LocalReference localReference)
       onCreationArgumentsFor;
 
   final Future<void> Function(
     RemoteReference remoteReference,
     int typeId,
-    List<dynamic> arguments,
+    List<Object> arguments,
   ) onCreateRemoteReference;
 
-  final Future<dynamic> Function(
+  final Future<Object> Function(
     RemoteReference remoteReference,
     String methodName,
-    List<dynamic> arguments,
+    List<Object> arguments,
   ) onExecuteRemoteMethod;
 
   @override
-  List<dynamic> creationArgumentsFor(LocalReference localReference) {
+  List<Object> creationArgumentsFor(LocalReference localReference) {
     return onCreationArgumentsFor(localReference);
   }
 
@@ -500,7 +500,7 @@ class TestRemoteHandler implements RemoteReferenceCommunicationHandler {
   Future<void> createRemoteReference(
     RemoteReference remoteReference,
     int typeId,
-    List<dynamic> arguments,
+    List<Object> arguments,
   ) {
     return onCreateRemoteReference(remoteReference, typeId, arguments);
   }
@@ -511,10 +511,10 @@ class TestRemoteHandler implements RemoteReferenceCommunicationHandler {
   }
 
   @override
-  Future<dynamic> executeRemoteMethod(
+  Future<Object> executeRemoteMethod(
     RemoteReference remoteReference,
     String methodName,
-    List<dynamic> arguments,
+    List<Object> arguments,
   ) {
     return onExecuteRemoteMethod(remoteReference, methodName, arguments);
   }
@@ -529,21 +529,21 @@ class TestLocalHandler implements LocalReferenceCommunicationHandler {
   final LocalReference Function(
     ReferencePairManager referencePairManager,
     Type referenceType,
-    List<dynamic> arguments,
+    List<Object> arguments,
   ) onCreateLocalReference;
 
-  final dynamic Function(
+  final Object Function(
     ReferencePairManager referencePairManager,
     LocalReference localReference,
     String methodName,
-    List<dynamic> arguments,
+    List<Object> arguments,
   ) onExecuteLocalMethod;
 
   @override
   LocalReference createLocalReference(
     ReferencePairManager referencePairManager,
     Type referenceType,
-    List<dynamic> arguments,
+    List<Object> arguments,
   ) {
     return onCreateLocalReference(
       referencePairManager,
@@ -561,11 +561,11 @@ class TestLocalHandler implements LocalReferenceCommunicationHandler {
   }
 
   @override
-  dynamic executeLocalMethod(
+  Object executeLocalMethod(
     ReferencePairManager referencePairManager,
     LocalReference localReference,
     String methodName,
-    List<dynamic> arguments,
+    List<Object> arguments,
   ) {
     return onExecuteLocalMethod(
       referencePairManager,

@@ -66,7 +66,7 @@ abstract class MethodChannelReferencePairManager
             call.arguments[1],
             call.arguments[2],
           );
-          return;
+          return null;
         } else if (call.method ==
             MethodChannelReferencePairManager._methodMethod) {
           return executeLocalMethodFor(
@@ -77,7 +77,7 @@ abstract class MethodChannelReferencePairManager
         } else if (call.method ==
             MethodChannelReferencePairManager._methodDispose) {
           disposeLocalReferenceFor(call.arguments);
-          return;
+          return null;
         }
 
         throw StateError(call.method);
@@ -103,23 +103,23 @@ abstract class MethodChannelRemoteReferenceCommunicationHandler
   Future<void> createRemoteReference(
     RemoteReference remoteReference,
     int typeId,
-    List<dynamic> arguments,
+    List<Object> arguments,
   ) {
     return _channel.invokeMethod<void>(
       MethodChannelReferencePairManager._methodCreate,
-      <dynamic>[remoteReference, typeId, arguments],
+      <Object>[remoteReference, typeId, arguments],
     );
   }
 
   @override
-  Future<dynamic> executeRemoteMethod(
+  Future<Object> executeRemoteMethod(
     RemoteReference remoteReference,
     String methodName,
-    List<dynamic> arguments,
+    List<Object> arguments,
   ) {
-    return _channel.invokeMethod<dynamic>(
+    return _channel.invokeMethod<Object>(
       MethodChannelReferencePairManager._methodMethod,
-      <dynamic>[remoteReference, methodName, arguments],
+      <Object>[remoteReference, methodName, arguments],
     );
   }
 

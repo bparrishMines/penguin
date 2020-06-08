@@ -6,14 +6,13 @@ import 'package:uuid/uuid.dart';
 
 import 'reference.dart';
 
-//TODO: Change dynamic to Object
 /// Handles communication with [RemoteReference]s for a [ReferencePairManager].
 ///
 /// This class communicates with other [ReferencePairManager]s to create,
 /// dispose, or execute methods on [RemoteReference]s.
 mixin RemoteReferenceCommunicationHandler {
   /// Retrieves arguments to instantiate an object that is created with [createRemoteReference].
-  List<dynamic> creationArgumentsFor(LocalReference localReference);
+  List<Object> creationArgumentsFor(LocalReference localReference);
 
   /// Instantiate and store an object on a different thread/process.
   ///
@@ -32,7 +31,7 @@ mixin RemoteReferenceCommunicationHandler {
   Future<void> createRemoteReference(
     RemoteReference remoteReference,
     int typeId,
-    List<dynamic> arguments,
+    List<Object> arguments,
   );
 
   /// Execute a method on the object instance that [remoteReference] represents.
@@ -40,10 +39,10 @@ mixin RemoteReferenceCommunicationHandler {
   /// For any [RemoteReference], this method should only be called after
   /// [createRemoteReference] and should never be called after
   /// [disposeRemoteReference].
-  Future<dynamic> executeRemoteMethod(
+  Future<Object> executeRemoteMethod(
     RemoteReference remoteReference,
     String methodName,
-    List<dynamic> arguments,
+    List<Object> arguments,
   );
 
   /// Dispose [remoteReference] on a remote thread/process.
@@ -76,7 +75,7 @@ mixin LocalReferenceCommunicationHandler {
   LocalReference createLocalReference(
     ReferencePairManager referencePairManager,
     Type referenceType,
-    List<dynamic> arguments,
+    List<Object> arguments,
   );
 
   /// Execute a method to be executed on the object instance represented by [localReference].
@@ -84,11 +83,11 @@ mixin LocalReferenceCommunicationHandler {
   /// For any [LocalReference] this method should only be called after
   /// [createLocalReference] and should never be called after
   /// [disposeLocalReference].
-  dynamic executeLocalMethod(
+  Object executeLocalMethod(
     ReferencePairManager referencePairManager,
     LocalReference localReference,
     String methodName,
-    List<dynamic> arguments,
+    List<Object> arguments,
   );
 
   /// Dispose [localReference] and the value it represents.
@@ -176,18 +175,18 @@ abstract class ReferencePairManager {
   /// All [RemoteReference]s and [UnpairedRemoteReference]s in `arguments` will
   /// be replaced by a [LocalReference].
   ///
-  /// Also, all [List]s will also be converted into `List<dynamic>` and all
-  /// [Map]s will be converted into `Map<dynamic, dynamic>`.
+  /// Also, all [List]s will also be converted into `List<Object>` and all
+  /// [Map]s will be converted into `Map<Object, Object>`.
   LocalReference createLocalReferenceFor(
     RemoteReference remoteReference,
     int typeId, [
-    List<dynamic> arguments,
+    List<Object> arguments,
   ]) {
     _assertIsInitialized();
     final LocalReference localReference = localHandler.createLocalReference(
       this,
       _typeIds[typeId],
-      _replaceRemoteReferences(arguments ?? <dynamic>[]),
+      _replaceRemoteReferences(arguments ?? <Object>[]),
     );
     _referencePairs[localReference] = remoteReference;
     return localReference;
@@ -253,24 +252,24 @@ abstract class ReferencePairManager {
   /// The [LocalReference]s in `arguments` will be replaced by a
   /// [RemoteReference] or a [UnpairedRemoteReference].
   ///
-  /// All [List]s will also be converted into `List<dynamic>` and all [Map]s
-  /// will be converted into `Map<dynamic, dynamic>`.
-  Future<dynamic> executeRemoteMethodFor(
+  /// All [List]s will also be converted into `List<Object>` and all [Map]s
+  /// will be converted into `Map<Object, Object>`.
+  Future<Object> executeRemoteMethodFor(
     LocalReference localReference,
     String methodName, [
-    List<dynamic> arguments,
+    List<Object> arguments,
   ]) {
     _assertIsInitialized();
     assert(remoteReferenceFor(localReference) != null);
-    final Completer<dynamic> resultCompleter = Completer<dynamic>();
+    final Completer<Object> resultCompleter = Completer<Object>();
     remoteHandler
         .executeRemoteMethod(
           remoteReferenceFor(localReference),
           methodName,
-          _replaceLocalReferences(arguments) ?? <dynamic>[],
+          _replaceLocalReferences(arguments) ?? <Object>[],
         )
         .then(
-          (dynamic value) =>
+          (Object value) =>
               resultCompleter.complete(_replaceRemoteReferences(value)),
         );
     return resultCompleter.future;
@@ -281,22 +280,22 @@ abstract class ReferencePairManager {
   /// All [RemoteReference]s and [UnpairedRemoteReference]s in `arguments` will
   /// be replaced by a [LocalReference].
   ///
-  /// Also, all [List]s will also be converted into `List<dynamic>` and all
-  /// [Map]s will be converted into `Map<dynamic, dynamic>`.
-  dynamic executeLocalMethodFor(
+  /// Also, all [List]s will also be converted into `List<Object>` and all
+  /// [Map]s will be converted into `Map<Object, Object>`.
+  Object executeLocalMethodFor(
     RemoteReference remoteReference,
     String methodName, [
-    List<dynamic> arguments,
+    List<Object> arguments,
   ]) {
     _assertIsInitialized();
     assert(localReferenceFor(remoteReference) != null);
 
     final LocalReference localReference = localReferenceFor(remoteReference);
-    final dynamic result = localHandler.executeLocalMethod(
+    final Object result = localHandler.executeLocalMethod(
       this,
       localReference,
       methodName,
-      _replaceRemoteReferences(arguments) ?? <dynamic>[],
+      _replaceRemoteReferences(arguments) ?? <Object>[],
     );
     return _replaceLocalReferences(result);
   }
@@ -305,7 +304,7 @@ abstract class ReferencePairManager {
     assert(_isInitialized, 'Initialize has not been called.');
   }
 
-  dynamic _replaceRemoteReferences(dynamic argument) {
+  Object _replaceRemoteReferences(Object argument) {
     if (argument is RemoteReference) {
       return localReferenceFor(argument);
     } else if (argument is UnpairedRemoteReference) {
@@ -317,16 +316,16 @@ abstract class ReferencePairManager {
     } else if (argument is List) {
       return argument.map(_replaceRemoteReferences).toList();
     } else if (argument is Map) {
-      return Map<dynamic, dynamic>.fromIterables(
-        argument.keys.map<dynamic>(_replaceRemoteReferences),
-        argument.values.map<dynamic>(_replaceRemoteReferences),
+      return Map<Object, Object>.fromIterables(
+        argument.keys.map<Object>(_replaceRemoteReferences),
+        argument.values.map<Object>(_replaceRemoteReferences),
       );
     }
 
     return argument;
   }
 
-  dynamic _replaceLocalReferences(dynamic argument) {
+  Object _replaceLocalReferences(Object argument) {
     if (argument is LocalReference && remoteReferenceFor(argument) != null) {
       return remoteReferenceFor(argument);
     } else if (argument is LocalReference &&
@@ -341,9 +340,9 @@ abstract class ReferencePairManager {
     } else if (argument is List) {
       return argument.map(_replaceLocalReferences).toList();
     } else if (argument is Map) {
-      return Map<dynamic, dynamic>.fromIterables(
-        argument.keys.map<dynamic>(_replaceLocalReferences),
-        argument.values.map<dynamic>(_replaceLocalReferences),
+      return Map<Object, Object>.fromIterables(
+        argument.keys.map<Object>(_replaceLocalReferences),
+        argument.values.map<Object>(_replaceLocalReferences),
       );
     }
 
@@ -391,7 +390,7 @@ abstract class PoolableReferencePairManager extends ReferencePairManager {
   }
 
   @override
-  dynamic _replaceRemoteReferences(dynamic argument) {
+  Object _replaceRemoteReferences(Object argument) {
     if (argument is! RemoteReference && argument is! UnpairedRemoteReference) {
       return super._replaceRemoteReferences(argument);
     }
@@ -403,19 +402,23 @@ abstract class PoolableReferencePairManager extends ReferencePairManager {
       return _localRefFromRemoteRef(argument);
     }
 
+    final UnpairedRemoteReference unpairedRemoteReference = argument;
     final PoolableReferencePairManager manager =
-        poolId == argument.managerPoolId
+        poolId == unpairedRemoteReference.managerPoolId
             ? this
-            : _managerFromPoolId(argument.managerPoolId);
+            : _managerFromPoolId(unpairedRemoteReference.managerPoolId);
+
     return manager.localHandler.createLocalReference(
       manager,
-      manager._typeIds[argument.typeId],
-      argument.creationArguments.map(_replaceRemoteReferences).toList(),
+      manager._typeIds[unpairedRemoteReference.typeId],
+      unpairedRemoteReference.creationArguments
+          .map(_replaceRemoteReferences)
+          .toList(),
     );
   }
 
   @override
-  dynamic _replaceLocalReferences(dynamic argument) {
+  Object _replaceLocalReferences(Object argument) {
     if (argument is! LocalReference) {
       return super._replaceLocalReferences(argument);
     }

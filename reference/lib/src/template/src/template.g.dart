@@ -23,7 +23,7 @@ class _$LocalReferenceCommunicationHandler
   static final Map<Type, Map<String, Function>> _methods =
       <Type, Map<String, Function>>{
     ClassTemplate: <String, Function>{
-      'methodTemplate': (ClassTemplate value, List<dynamic> arguments) {
+      'methodTemplate': (ClassTemplate value, List<Object> arguments) {
         return value.methodTemplate(arguments[0]);
       },
     },
@@ -31,7 +31,7 @@ class _$LocalReferenceCommunicationHandler
 
   static final Map<Type, Function> _creators = <Type, Function>{
     ClassTemplate: (
-        _$LocalReferenceCommunicationHandler localHandler,
+      _$LocalReferenceCommunicationHandler localHandler,
       ReferencePairManager manager,
       int fieldTemplate,
     ) {
@@ -48,17 +48,17 @@ class _$LocalReferenceCommunicationHandler
   LocalReference createLocalReference(
     ReferencePairManager manager,
     Type referenceType,
-    List<dynamic> arguments,
+    List<Object> arguments,
   ) {
     return _creators[referenceType](this, manager, arguments[0]);
   }
 
   @override
-  dynamic executeLocalMethod(
+  Object executeLocalMethod(
     ReferencePairManager referencePairManager,
     LocalReference localReference,
     String methodName,
-    List<dynamic> arguments,
+    List<Object> arguments,
   ) {
     return _methods[localReference.referenceType][methodName](
       localReference,
@@ -71,9 +71,9 @@ class _$RemoteReferenceCommunicationHandler
     extends MethodChannelRemoteReferenceCommunicationHandler {
   // TODO: to map like methods and creators
   @override
-  List<dynamic> creationArgumentsFor(LocalReference localReference) {
+  List<Object> creationArgumentsFor(LocalReference localReference) {
     if (localReference is ClassTemplate) {
-      return <dynamic>[localReference.fieldTemplate];
+      return <Object>[localReference.fieldTemplate];
     }
 
     throw StateError(
@@ -83,14 +83,14 @@ class _$RemoteReferenceCommunicationHandler
 }
 
 mixin _$ClassTemplateMethods {
-  Future<dynamic> _$methodTemplate(
+  Future<Object> _$methodTemplate(
     ReferencePairManager referencePairManager,
     String parameterTemplate,
   ) {
     return referencePairManager.executeRemoteMethodFor(
       this as ClassTemplate,
       'methodTemplate',
-      <dynamic>[parameterTemplate],
+      <Object>[parameterTemplate],
     );
   }
 }
