@@ -297,7 +297,6 @@ void main() {
         ..initialize();
 
       pool.add(manager1);
-      pool.add(manager1);
       pool.add(manager2);
 
       pool.remove(manager1);
@@ -325,8 +324,19 @@ void main() {
         ),
       )..initialize();
 
-      final manager2 = TestReferencePairManager(<Type>[TestClass2], "test_id2")
-        ..initialize();
+      final manager2 = TestReferencePairManager(
+        <Type>[TestClass2],
+        "test_id2",
+        localHandler: TestLocalHandler(
+          onCreateLocalReference: (
+            ReferencePairManager referencePairManager,
+            Type referenceType,
+            List<dynamic> arguments,
+          ) {
+            return TestClass2();
+          },
+        ),
+      )..initialize();
 
       pool.add(manager1);
       pool.add(manager2);
@@ -336,6 +346,7 @@ void main() {
         0,
         <dynamic>[
           'Hello',
+          UnpairedRemoteReference(0, <dynamic>[], "test_id2"),
           UnpairedRemoteReference(0, <dynamic>[], "test_id"),
           <dynamic>[
             UnpairedRemoteReference(0, <dynamic>[], "test_id"),
@@ -354,6 +365,7 @@ void main() {
           isEmpty,
           containsAllInOrder(<Matcher>[
             equals('Hello'),
+            isA<TestClass2>(),
             isA<TestClass>(),
             contains(isA<TestClass>()),
             containsPair(1.1, isA<TestClass>()),
@@ -375,6 +387,7 @@ void main() {
               firstCall = false;
               return <dynamic>[
                 'Hello',
+                TestClass2(),
                 TestClass(),
                 <dynamic>[TestClass()],
                 <dynamic, dynamic>{1.1: TestClass()},
@@ -394,8 +407,23 @@ void main() {
         ),
       )..initialize();
 
-      final manager2 = TestReferencePairManager(<Type>[TestClass2], "test_id2")
-        ..initialize();
+      final manager2 = TestReferencePairManager(
+        <Type>[TestClass2],
+        "test_id2",
+        remoteHandler: TestRemoteHandler(
+          onCreationArgumentsFor: (LocalReference localReference) {
+            if (localReference is TestClass2) return <dynamic>[];
+            return null;
+          },
+          onCreateRemoteReference: (
+            RemoteReference remoteReference,
+            int typeId,
+            List<dynamic> arguments,
+          ) {
+            return Future<void>.value();
+          },
+        ),
+      )..initialize();
 
       pool.add(manager1);
       pool.add(manager2);
@@ -405,6 +433,7 @@ void main() {
 
       expect(creationArguments, <Matcher>[
         equals('Hello'),
+        isUnpairedRemoteReference(0, <dynamic>[], "test_id2"),
         isUnpairedRemoteReference(0, <dynamic>[], "test_id"),
         contains(isUnpairedRemoteReference(0, <dynamic>[], "test_id")),
         containsPair(
@@ -419,6 +448,11 @@ void main() {
 class TestClass with LocalReference {
   @override
   Type get referenceType => TestClass;
+}
+
+class TestClass2 extends TestClass {
+  @override
+  Type get referenceType => TestClass2;
 }
 
 class TestReferencePairManager extends PoolableReferencePairManager {
@@ -540,9 +574,4 @@ class TestLocalHandler implements LocalReferenceCommunicationHandler {
       arguments,
     );
   }
-}
-
-class TestClass2 with LocalReference {
-  @override
-  Type get referenceType => TestClass2;
 }

@@ -131,16 +131,16 @@ public class MethodChannelTest {
     final ByteBuffer message =
         referencePairManager.methodCodec.encodeMethodCall(
             new MethodCall("ewoif",
-                new UnpairedRemoteReference(1, Collections.emptyList()))
+                new UnpairedRemoteReference(1, Collections.emptyList(), "apple"))
         );
 
     assertThat(referencePairManager.methodCodec.decodeMethodCall((ByteBuffer) message.position(0)),
         isMethodCall("ewoif",
-            isUnpairedRemoteReference(1, empty())));
+            isUnpairedRemoteReference(1, empty(), "apple")));
   }
 
   @Test
-  public void referencePairManager_createRemoteReferenceFor() {
+  public void methodChannelReferencePairManager_createRemoteReferenceFor() {
     final ClassTemplateImpl classTemplate = new ClassTemplateImpl(23);
 
     referencePairManager.createRemoteReferenceFor(classTemplate);
@@ -161,7 +161,7 @@ public class MethodChannelTest {
   }
 
   @Test
-  public void referencePairManager_disposeRemoteReferenceFor() {
+  public void methodChannelReferencePairManager_disposeRemoteReferenceFor() {
     final ClassTemplate classTemplate = new ClassTemplateImpl(23);
 
     referencePairManager.createRemoteReferenceFor(classTemplate);
@@ -178,7 +178,7 @@ public class MethodChannelTest {
   }
 
   @Test
-  public void referencePairManager_executeRemoteMethodFor() throws Exception {
+  public void methodChannelReferencePairManager_executeRemoteMethodFor() throws Exception {
     final ClassTemplate classTemplate =
         new ClassTemplateImpl(23).setReferencePairManager(referencePairManager);
 
@@ -217,7 +217,7 @@ public class MethodChannelTest {
 
   @SuppressWarnings("RedundantThrows")
   @Test
-  public void referencePairManager_createLocalReferenceFor() throws Exception {
+  public void methodChannelReferencePairManager_createLocalReferenceFor() throws Exception {
     final ByteBuffer message =
         referencePairManager.methodCodec.encodeMethodCall(
             new MethodCall(
@@ -237,7 +237,7 @@ public class MethodChannelTest {
 
   @SuppressWarnings({"RedundantThrows", "rawtypes"})
   @Test
-  public void referencePairManager_executeLocalMethodFor() throws Exception {
+  public void methodChannelReferencePairManager_executeLocalMethodFor() throws Exception {
     final TestClassTemplate classTemplate = new TestClassTemplate();
     referencePairManager.createRemoteReferenceFor(classTemplate);
 
@@ -258,7 +258,7 @@ public class MethodChannelTest {
   }
 
   @Test
-  public void referencePairManager_disposeLocalReference() {
+  public void methodChannelReferencePairManager_disposeLocalReference() {
     final ByteBuffer createMessage =
         referencePairManager.methodCodec.encodeMethodCall(
             new MethodCall(

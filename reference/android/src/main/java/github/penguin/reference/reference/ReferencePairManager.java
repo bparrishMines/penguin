@@ -14,13 +14,13 @@ import java.util.UUID;
 public abstract class ReferencePairManager {
   private boolean isInitialized = false;
   private final BiMap<LocalReference, RemoteReference> referencePairs = HashBiMap.create();
-  private final BiMap<Integer, Class<? extends LocalReference>> classIds = HashBiMap.create();
+  final BiMap<Integer, Class<? extends LocalReference>> classIds = HashBiMap.create();
 
   public final List<Class<? extends LocalReference>> supportedClasses;
 
-  protected ReferencePairManager(final List<Class<? extends LocalReference>> supportedClass) {
-    this.supportedClasses = Collections.unmodifiableList(supportedClass);
-    for (int i = 0; i < supportedClass.size(); i++) classIds.put(i, supportedClasses.get(i));
+  protected ReferencePairManager(final List<Class<? extends LocalReference>> supportedClasses) {
+    this.supportedClasses = Collections.unmodifiableList(supportedClasses);
+    for (int i = 0; i < supportedClasses.size(); i++) classIds.put(i, this.supportedClasses.get(i));
   }
 
   public interface RemoteReferenceCommunicationHandler {
@@ -220,7 +220,7 @@ public abstract class ReferencePairManager {
   }
 
   @SuppressWarnings("rawtypes")
-  private Object replaceRemoteReferences(Object argument) throws Exception {
+  Object replaceRemoteReferences(Object argument) throws Exception {
     if (argument instanceof RemoteReference) {
       return localReferenceFor((RemoteReference) argument);
     } else if (argument instanceof UnpairedRemoteReference) {
@@ -250,7 +250,7 @@ public abstract class ReferencePairManager {
   }
 
   @SuppressWarnings("rawtypes")
-  private Object replaceLocalReferences(Object argument) {
+  Object replaceLocalReferences(Object argument) {
     if (argument instanceof LocalReference
         && remoteReferenceFor((LocalReference) argument) != null) {
       return remoteReferenceFor((LocalReference) argument);

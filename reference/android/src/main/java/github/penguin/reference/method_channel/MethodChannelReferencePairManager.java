@@ -2,7 +2,7 @@ package github.penguin.reference.method_channel;
 
 import androidx.annotation.NonNull;
 import github.penguin.reference.reference.LocalReference;
-import github.penguin.reference.reference.ReferencePairManager;
+import github.penguin.reference.reference.PoolableReferencePairManager;
 import github.penguin.reference.reference.RemoteReference;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
@@ -11,7 +11,7 @@ import io.flutter.plugin.common.MethodCodec;
 import io.flutter.plugin.common.StandardMethodCodec;
 import java.util.List;
 
-public abstract class MethodChannelReferencePairManager extends ReferencePairManager
+public abstract class MethodChannelReferencePairManager extends PoolableReferencePairManager
     implements MethodChannel.MethodCallHandler {
   static final String METHOD_CREATE = "REFERENCE_CREATE";
   static final String METHOD_METHOD = "REFERENCE_METHOD";
@@ -34,8 +34,9 @@ public abstract class MethodChannelReferencePairManager extends ReferencePairMan
       final BinaryMessenger binaryMessenger,
       final String channelName,
       final LocalReferenceCommunicationHandler localHandler,
-      final MethodChannelRemoteReferenceCommunicationHandler remoteHandler) {
-    this(supportedClasses, binaryMessenger, channelName, localHandler, remoteHandler, new ReferenceMessageCodec());
+      final MethodChannelRemoteReferenceCommunicationHandler remoteHandler,
+      final String poolId) {
+    this(supportedClasses, binaryMessenger, channelName, localHandler, remoteHandler, poolId, new ReferenceMessageCodec());
   }
 
   public MethodChannelReferencePairManager(
@@ -44,8 +45,9 @@ public abstract class MethodChannelReferencePairManager extends ReferencePairMan
       final String channelName,
       final LocalReferenceCommunicationHandler localHandler,
       final MethodChannelRemoteReferenceCommunicationHandler remoteHandler,
+      final String poolId,
       final ReferenceMessageCodec messageCodec) {
-    super(supportedClasses);
+    super(supportedClasses, poolId != null ? poolId : channelName);
     this.binaryMessenger = binaryMessenger;
     this.channelName = channelName;
     this.remoteHandler = remoteHandler;

@@ -60,7 +60,7 @@ class _IsUnpairedRemoteReference extends Matcher with _DeepEquals {
         .addDescriptionOf(typeId)
         .add(' and creation arguments: ')
         .addDescriptionOf(creationArguments)
-        .add(' and poolId: ')
+        .add(' and managerPoolId: ')
         .addDescriptionOf(managerPoolId);
   }
 

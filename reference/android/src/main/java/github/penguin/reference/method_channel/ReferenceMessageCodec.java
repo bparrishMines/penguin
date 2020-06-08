@@ -20,6 +20,7 @@ public class ReferenceMessageCodec extends StandardMessageCodec {
       stream.write(UNPAIRED_REMOTE_REFERENCE);
       writeValue(stream, ((UnpairedRemoteReference) value).classId);
       writeValue(stream, ((UnpairedRemoteReference) value).creationArguments);
+      writeValue(stream, ((UnpairedRemoteReference) value).managerPoolId);
     } else {
       super.writeValue(stream, value);
     }
@@ -34,7 +35,8 @@ public class ReferenceMessageCodec extends StandardMessageCodec {
         //noinspection unchecked
         return new UnpairedRemoteReference(
             (Integer) readValueOfType(buffer.get(), buffer),
-            (List<Object>) readValueOfType(buffer.get(), buffer));
+            (List<Object>) readValueOfType(buffer.get(), buffer),
+            (String) readValueOfType(buffer.get(), buffer));
       default:
         return super.readValueOfType(type, buffer);
     }

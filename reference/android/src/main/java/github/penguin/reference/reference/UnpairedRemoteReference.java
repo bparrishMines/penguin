@@ -7,10 +7,16 @@ import java.util.List;
 public class UnpairedRemoteReference {
   public final int classId;
   public final List<Object> creationArguments;
+  public final String managerPoolId;
 
   public UnpairedRemoteReference(int classId, List<Object> creationArguments) {
+    this(classId, creationArguments, null);
+  }
+
+  public UnpairedRemoteReference(int classId, List<Object> creationArguments, String managerPoolId) {
     this.classId = classId;
     this.creationArguments = creationArguments;
+    this.managerPoolId = managerPoolId;
   }
 
   @SuppressLint("DefaultLocale")
@@ -18,9 +24,10 @@ public class UnpairedRemoteReference {
   @Override
   public String toString() {
     return String.format(
-        "%s(%d, %s)",
+        "%s(%d, %s, %s)",
         UnpairedRemoteReference.class.getName(),
         classId,
-        creationArguments.toString());
+        creationArguments.toString(),
+        managerPoolId);
   }
 }

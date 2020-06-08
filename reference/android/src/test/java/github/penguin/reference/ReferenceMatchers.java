@@ -15,8 +15,8 @@ class ReferenceMatchers {
   }
 
   static Matcher isUnpairedRemoteReference(
-      final Integer classId, final Object creationArguments) {
-    return new IsUnpairedRemoteReference(classId, creationArguments);
+      final Integer classId, final Object creationArguments, final String managerPoolId) {
+    return new IsUnpairedRemoteReference(classId, creationArguments, managerPoolId);
   }
 
   static Matcher isClassTemplate(int fieldTemplate) {
@@ -65,37 +65,43 @@ class ReferenceMatchers {
   private static class IsUnpairedRemoteReference extends TypeSafeMatcher<UnpairedRemoteReference> {
     private final Integer classId;
     private final Object creationArguments;
+    private final String managerPoolId;
 
-    private IsUnpairedRemoteReference(Integer classId, Object creationArguments) {
+    private IsUnpairedRemoteReference(Integer classId, Object creationArguments, String managerPoolId) {
       this.classId = classId;
       this.creationArguments = creationArguments;
+      this.managerPoolId = managerPoolId;
     }
 
     private void describe(
         final Integer classId,
         final Object creationArguments,
+        final String managerPoolId,
         Description description) {
       description
           .appendText(String.format(" An %s with type reference: ", UnpairedRemoteReference.class.getSimpleName()))
           .appendText(classId != null ? classId.toString() : null)
           .appendText(" and creation arguments: ")
-          .appendText(creationArguments != null ? creationArguments.toString() : null);
+          .appendText(creationArguments != null ? creationArguments.toString() : null)
+          .appendText(" and managerPoolId: ")
+          .appendText(managerPoolId);
     }
 
     @Override
     public void describeTo(Description description) {
-      describe(classId, creationArguments, description);
+      describe(classId, creationArguments, managerPoolId, description);
     }
 
     @Override
     protected void describeMismatchSafely(
         UnpairedRemoteReference reference, Description mismatchDescription) {
-      describe(reference.classId, reference.creationArguments, mismatchDescription);
+      describe(reference.classId, reference.creationArguments, reference.managerPoolId, mismatchDescription);
     }
 
     @Override
     protected boolean matchesSafely(UnpairedRemoteReference reference) {
       if (!classId.equals(reference.classId)) return false;
+      if (!managerPoolId.equals(reference.managerPoolId)) return false;
       if (creationArguments instanceof Matcher)
         return ((Matcher) creationArguments).matches(reference.creationArguments);
       return creationArguments == reference.creationArguments;

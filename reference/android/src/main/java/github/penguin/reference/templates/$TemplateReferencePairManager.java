@@ -118,6 +118,6 @@ public class $TemplateReferencePairManager extends MethodChannelReferencePairMan
       final $LocalReferenceCommunicationHandler localHandler,
       final $RemoteReferenceCommunicationHandler remoteHandler,
       final ReferenceMessageCodec messageCodec) {
-    super(Arrays.<Class<? extends LocalReference>>asList(ClassTemplate.class), binaryMessenger, channelName, localHandler, remoteHandler, messageCodec);
+    super(Arrays.<Class<? extends LocalReference>>asList(ClassTemplate.class), binaryMessenger, channelName, localHandler, remoteHandler, null, messageCodec);
   }
 }

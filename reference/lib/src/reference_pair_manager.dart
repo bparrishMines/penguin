@@ -337,9 +337,6 @@ abstract class ReferencePairManager {
             .creationArgumentsFor(argument)
             .map(_replaceLocalReferences)
             .toList(),
-        this is PoolableReferencePairManager
-            ? (this as PoolableReferencePairManager).poolId
-            : null,
       );
     } else if (argument is List) {
       return argument.map(_replaceLocalReferences).toList();
@@ -395,34 +392,54 @@ abstract class PoolableReferencePairManager extends ReferencePairManager {
 
   @override
   dynamic _replaceRemoteReferences(dynamic argument) {
-    if (_pools.length == 0) {
+    if (argument is! RemoteReference && argument is! UnpairedRemoteReference) {
       return super._replaceRemoteReferences(argument);
+    }
+
+    if (argument is RemoteReference && localReferenceFor(argument) != null) {
+      return localReferenceFor(argument);
     } else if (argument is RemoteReference &&
         localReferenceFor(argument) == null) {
       return _localRefFromRemoteRef(argument);
-    } else if (argument is UnpairedRemoteReference) {
-      final PoolableReferencePairManager manager =
-          _managerFromPoolId(argument.managerPoolId);
-      return manager.localHandler.createLocalReference(
-        this,
-        _typeIds[argument.typeId],
-        argument.creationArguments.map(_replaceRemoteReferences).toList(),
-      );
     }
 
-    return super._replaceRemoteReferences(argument);
+    final PoolableReferencePairManager manager =
+        poolId == argument.managerPoolId
+            ? this
+            : _managerFromPoolId(argument.managerPoolId);
+    return manager.localHandler.createLocalReference(
+      manager,
+      manager._typeIds[argument.typeId],
+      argument.creationArguments.map(_replaceRemoteReferences).toList(),
+    );
   }
 
   @override
   dynamic _replaceLocalReferences(dynamic argument) {
-    if (_pools.length == 0 ||
-        argument is! LocalReference ||
-        _typeIds.inverse[(argument as LocalReference).referenceType] != null) {
+    if (argument is! LocalReference) {
       return super._replaceLocalReferences(argument);
     }
 
-    return _managerFromType((argument as LocalReference).referenceType)
-        ._replaceLocalReferences(argument);
+    final LocalReference localReference = argument;
+
+    final bool isCorrectManager =
+        _typeIds.inverse[localReference.referenceType] != null;
+    final PoolableReferencePairManager manager = isCorrectManager
+        ? this
+        : _managerFromType(localReference.referenceType);
+
+    if (remoteReferenceFor(localReference) != null) {
+      return manager.remoteReferenceFor(localReference);
+    }
+
+    return UnpairedRemoteReference(
+      manager._typeIds.inverse[localReference.referenceType],
+      manager.remoteHandler
+          .creationArgumentsFor(localReference)
+          .map(_replaceLocalReferences)
+          .toList(),
+      manager.poolId,
+    );
   }
 }
 
