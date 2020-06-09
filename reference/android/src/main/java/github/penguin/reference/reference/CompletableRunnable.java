@@ -32,6 +32,7 @@ public abstract class CompletableRunnable<T> implements Runnable {
     tryPassResultToListener();
   }
 
+  @SuppressWarnings("UnusedReturnValue")
   public CompletableRunnable<T> setOnCompleteListener(final OnCompleteListener listener) {
     this.listener = listener;
     tryPassResultToListener();

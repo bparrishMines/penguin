@@ -1,5 +1,20 @@
 part of 'template.dart';
 
+typedef _LocalCreatorHandler = LocalReference Function(
+  _$LocalReferenceCommunicationHandler localHandler,
+  ReferencePairManager manager,
+  List<Object> arguments,
+);
+
+typedef _LocalMethodHandler = Object Function(
+  LocalReference localReference,
+  List<Object> arguments,
+);
+
+typedef _CreationArgumentsHandler = List<Object> Function(
+  LocalReference localReference,
+);
+
 class _$TemplateReferencePairManager extends MethodChannelReferencePairManager {
   _$TemplateReferencePairManager(
     String channelName,
@@ -20,22 +35,26 @@ class _$LocalReferenceCommunicationHandler
     with LocalReferenceCommunicationHandler {
   const _$LocalReferenceCommunicationHandler({this.createClassTemplate});
 
-  static final Map<Type, Map<String, Function>> _methods =
-      <Type, Map<String, Function>>{
-    ClassTemplate: <String, Function>{
-      'methodTemplate': (ClassTemplate value, List<Object> arguments) {
-        return value.methodTemplate(arguments[0]);
+  static final Map<Type, Map<String, _LocalMethodHandler>> _methods =
+      <Type, Map<String, _LocalMethodHandler>>{
+    ClassTemplate: <String, _LocalMethodHandler>{
+      'methodTemplate': (
+        LocalReference localReference,
+        List<Object> arguments,
+      ) {
+        return (localReference as ClassTemplate).methodTemplate(arguments[0]);
       },
     },
   };
 
-  static final Map<Type, Function> _creators = <Type, Function>{
+  static final Map<Type, _LocalCreatorHandler> _creators =
+      <Type, _LocalCreatorHandler>{
     ClassTemplate: (
       _$LocalReferenceCommunicationHandler localHandler,
       ReferencePairManager manager,
-      int fieldTemplate,
+      List<Object> arguments,
     ) {
-      return localHandler.createClassTemplate(manager, fieldTemplate);
+      return localHandler.createClassTemplate(manager, arguments[0]);
     },
   };
 
@@ -50,7 +69,7 @@ class _$LocalReferenceCommunicationHandler
     Type referenceType,
     List<Object> arguments,
   ) {
-    return _creators[referenceType](this, manager, arguments[0]);
+    return _creators[referenceType](this, manager, arguments);
   }
 
   @override
@@ -69,16 +88,16 @@ class _$LocalReferenceCommunicationHandler
 
 class _$RemoteReferenceCommunicationHandler
     extends MethodChannelRemoteReferenceCommunicationHandler {
-  // TODO: to map like methods and creators
+  static final Map<Type, _CreationArgumentsHandler> _creationArguments =
+      <Type, _CreationArgumentsHandler>{
+    ClassTemplate: (LocalReference localReference) {
+      return <Object>[(localReference as ClassTemplate).fieldTemplate];
+    },
+  };
+
   @override
   List<Object> creationArgumentsFor(LocalReference localReference) {
-    if (localReference is ClassTemplate) {
-      return <Object>[localReference.fieldTemplate];
-    }
-
-    throw StateError(
-      'Could not get creation arguments for a ${localReference.runtimeType}.',
-    );
+    return _creationArguments[localReference.referenceType](localReference);
   }
 }
 

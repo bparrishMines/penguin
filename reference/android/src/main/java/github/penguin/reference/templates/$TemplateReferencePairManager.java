@@ -7,10 +7,7 @@ import github.penguin.reference.reference.LocalReference;
 import github.penguin.reference.reference.ReferencePairManager;
 import io.flutter.plugin.common.BinaryMessenger;
 import com.google.common.collect.ImmutableMap;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -24,25 +21,41 @@ public class $TemplateReferencePairManager extends MethodChannelReferencePairMan
     static final String methodTemplate = "methodTemplate";
   }
 
+  private static abstract class LocalCreatorHandler {
+    abstract LocalReference call($LocalReferenceCommunicationHandler localHandler,
+                                      ReferencePairManager referencePairManager,
+                                      List<Object> arguments) throws Exception;
+  }
+
+  private static abstract class LocalMethodHandler {
+    abstract Object call(LocalReference localReference,
+                               List<Object> arguments) throws Exception;
+  }
+
+  private static abstract class CreationArgumentsHandler {
+    abstract List<Object> call(LocalReference localReference);
+  }
+
   abstract static class $LocalReferenceCommunicationHandler implements LocalReferenceCommunicationHandler {
-    static private Map<Class<? extends LocalReference>, ImmutableMap<String, Method>> methods;
-    static private Map<Class<? extends LocalReference>, Method> creators;
-    static {
-      try {
-        methods = ImmutableMap.<Class<? extends LocalReference>, ImmutableMap<String, Method>>of(
+    static private final Map<Class<? extends LocalReference>, ImmutableMap<String, LocalMethodHandler>> methods =
+        ImmutableMap.<Class<? extends LocalReference>, ImmutableMap<String, LocalMethodHandler>>of(
             ClassTemplate.class,
-            ImmutableMap.of("methodTemplate", ClassTemplate.class.getMethod("methodTemplate", String.class))
+             ImmutableMap.<String, LocalMethodHandler>of("methodTemplate", new LocalMethodHandler() {
+               @Override
+               Object call(LocalReference localReference, List<Object> arguments) throws Exception {
+                 return ((ClassTemplate) localReference).methodTemplate((String) arguments.get(0));
+               }
+             }));
+
+    static private final Map<Class<? extends LocalReference>, LocalCreatorHandler> creators =
+        ImmutableMap.<Class<? extends LocalReference>, LocalCreatorHandler>of(
+            ClassTemplate.class, new LocalCreatorHandler() {
+              @Override
+              LocalReference call($LocalReferenceCommunicationHandler localHandler, ReferencePairManager referencePairManager, List<Object> arguments) throws Exception {
+                return localHandler.createClassTemplate(referencePairManager, (Integer) arguments.get(0));
+              }
+            }
         );
-        creators = ImmutableMap.<Class<? extends LocalReference>, Method>of(
-            ClassTemplate.class,
-            $LocalReferenceCommunicationHandler.class.getMethod("createClassTemplate",
-                ReferencePairManager.class,
-                Integer.class
-            ));
-      } catch (NoSuchMethodException exception) {
-        throw new RuntimeException(exception.getMessage());
-      }
-    }
 
     public abstract ClassTemplate createClassTemplate(
         ReferencePairManager referencePairManager,
@@ -56,13 +69,7 @@ public class $TemplateReferencePairManager extends MethodChannelReferencePairMan
         Class<? extends LocalReference> referenceClass,
         List<Object> arguments)
         throws Exception {
-      final Method method = creators.get(referenceClass);
-
-      final List<Object> methodParams = new ArrayList<>(1 + arguments.size());
-      methodParams.add(referencePairManager);
-      methodParams.addAll(arguments);
-
-      return (LocalReference) method.invoke(this, methodParams.toArray());
+      return creators.get(referenceClass).call(this, referencePairManager, arguments);
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -72,8 +79,7 @@ public class $TemplateReferencePairManager extends MethodChannelReferencePairMan
         LocalReference localReference,
         String methodName,
         List<Object> arguments) throws Exception {
-      final Method method = methods.get(localReference.getReferenceClass()).get(methodName);
-      return method.invoke(localReference, arguments.toArray());
+      return methods.get(localReference.getReferenceClass()).get(methodName).call(localReference, arguments);
     }
 
     @SuppressWarnings("RedundantThrows")
@@ -85,17 +91,22 @@ public class $TemplateReferencePairManager extends MethodChannelReferencePairMan
 
   static class $RemoteReferenceCommunicationHandler
       extends MethodChannelRemoteReferenceCommunicationHandler {
+    private static final Map<Class<? extends LocalReference>, CreationArgumentsHandler> creationArguments =
+        ImmutableMap.<Class<? extends LocalReference>, CreationArgumentsHandler>of(
+            ClassTemplate.class, new CreationArgumentsHandler() {
+              @Override
+              List<Object> call(LocalReference localReference) {
+                final ClassTemplate value = (ClassTemplate) localReference;
+                //noinspection ArraysAsListWithZeroOrOneArgument
+                return Arrays.asList((Object) value.getFieldTemplate());
+              }
+            }
+        );
+
+    @SuppressWarnings("ConstantConditions")
     @Override
     public List<Object> creationArgumentsFor(LocalReference localReference) {
-      if (localReference instanceof ClassTemplate) {
-        final ClassTemplate value = (ClassTemplate) localReference;
-        return Collections.singletonList((Object) value.getFieldTemplate());
-      }
-
-      final String message =
-          String.format(
-              "Could not get creation arguments for a %s.", localReference.getClass().getName());
-      throw new IllegalStateException(message);
+      return creationArguments.get(localReference.getReferenceClass()).call(localReference);
     }
   }
 
