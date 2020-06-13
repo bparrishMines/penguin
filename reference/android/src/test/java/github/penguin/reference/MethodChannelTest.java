@@ -143,12 +143,12 @@ public class MethodChannelTest {
   public void methodChannelReferencePairManager_createRemoteReferenceFor() {
     final ClassTemplateImpl classTemplate = new ClassTemplateImpl(23);
 
-    referencePairManager.createRemoteReferenceFor(classTemplate);
+    referencePairManager.pairWithNewRemoteReference(classTemplate);
 
-    final RemoteReference remoteReference = referencePairManager.remoteReferenceFor(classTemplate);
+    final RemoteReference remoteReference = referencePairManager.getPairedRemoteReference(classTemplate);
     assertNotNull(remoteReference);
     assertNotNull(remoteReference.referenceId);
-    assertEquals(referencePairManager.localReferenceFor(remoteReference), classTemplate);
+    assertEquals(referencePairManager.getPairedLocalReference(remoteReference), classTemplate);
     assertThat(
         methodCallLog,
         contains(
@@ -164,16 +164,16 @@ public class MethodChannelTest {
   public void methodChannelReferencePairManager_disposeRemoteReferenceFor() {
     final ClassTemplate classTemplate = new ClassTemplateImpl(23);
 
-    referencePairManager.createRemoteReferenceFor(classTemplate);
-    assertNotNull(referencePairManager.remoteReferenceFor(classTemplate));
+    referencePairManager.pairWithNewRemoteReference(classTemplate);
+    assertNotNull(referencePairManager.getPairedRemoteReference(classTemplate));
     methodCallLog.clear();
 
-    final RemoteReference remoteReference = referencePairManager.remoteReferenceFor(classTemplate);
+    final RemoteReference remoteReference = referencePairManager.getPairedRemoteReference(classTemplate);
 
-    referencePairManager.disposeRemoteReferenceFor(classTemplate);
+    referencePairManager.disposePairWithLocalReference(classTemplate);
 
-    assertNull(referencePairManager.localReferenceFor(remoteReference));
-    assertNull(referencePairManager.remoteReferenceFor(classTemplate));
+    assertNull(referencePairManager.getPairedLocalReference(remoteReference));
+    assertNull(referencePairManager.getPairedRemoteReference(classTemplate));
     assertThat(methodCallLog, contains(isMethodCall("REFERENCE_DISPOSE", remoteReference)));
   }
 
@@ -182,8 +182,8 @@ public class MethodChannelTest {
     final ClassTemplate classTemplate =
         new ClassTemplateImpl(23).setReferencePairManager(referencePairManager);
 
-    referencePairManager.createRemoteReferenceFor(classTemplate);
-    final RemoteReference remoteReference = referencePairManager.remoteReferenceFor(classTemplate);
+    referencePairManager.pairWithNewRemoteReference(classTemplate);
+    final RemoteReference remoteReference = referencePairManager.getPairedRemoteReference(classTemplate);
     assertNotNull(remoteReference);
     methodCallLog.clear();
 
@@ -229,7 +229,7 @@ public class MethodChannelTest {
     mockMessenger.receive("github.penguin/reference", message);
 
     final ClassTemplate classTemplate =
-        (ClassTemplate) referencePairManager.localReferenceFor(new RemoteReference("table"));
+        (ClassTemplate) referencePairManager.getPairedLocalReference(new RemoteReference("table"));
     assertThat(
         classTemplate,
         isClassTemplate(32));
@@ -239,14 +239,14 @@ public class MethodChannelTest {
   @Test
   public void methodChannelReferencePairManager_executeLocalMethodFor() throws Exception {
     final TestClassTemplate classTemplate = new TestClassTemplate();
-    referencePairManager.createRemoteReferenceFor(classTemplate);
+    referencePairManager.pairWithNewRemoteReference(classTemplate);
 
     final ByteBuffer message =
         referencePairManager.methodCodec.encodeMethodCall(
             new MethodCall(
                 "REFERENCE_METHOD",
                 Arrays.asList(
-                    referencePairManager.remoteReferenceFor(classTemplate),
+                    referencePairManager.getPairedRemoteReference(classTemplate),
                     "methodTemplate",
                     Collections.singletonList("Goku"))));
     mockMessenger.receive("github.penguin/reference", message);
@@ -269,12 +269,12 @@ public class MethodChannelTest {
                     Collections.singletonList(32))));
     mockMessenger.receive("github.penguin/reference", createMessage);
     assertThat(
-        referencePairManager.localReferenceFor(new RemoteReference("animal")), notNullValue());
+        referencePairManager.getPairedLocalReference(new RemoteReference("animal")), notNullValue());
 
     final ByteBuffer disposeMessage =
         referencePairManager.methodCodec.encodeMethodCall(
             new MethodCall("REFERENCE_DISPOSE", new RemoteReference("animal")));
     mockMessenger.receive("github.penguin/reference", disposeMessage);
-    assertThat(referencePairManager.localReferenceFor(new RemoteReference("animal")), nullValue());
+    assertThat(referencePairManager.getPairedLocalReference(new RemoteReference("animal")), nullValue());
   }
 }

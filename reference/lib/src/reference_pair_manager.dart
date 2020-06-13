@@ -11,8 +11,8 @@ import 'reference.dart';
 /// This class communicates with other [ReferencePairManager]s to create,
 /// dispose, or execute methods on [RemoteReference]s.
 mixin RemoteReferenceCommunicationHandler {
-  /// Retrieves arguments to instantiate an object that is created with [createRemoteReference].
-  List<Object> creationArgumentsFor(LocalReference localReference);
+  /// Retrieves arguments to instantiate an object that is created with [create].
+  List<Object> getCreationArguments(LocalReference localReference);
 
   /// Instantiate and store an object on a different thread/process.
   ///
@@ -27,8 +27,8 @@ mixin RemoteReferenceCommunicationHandler {
   /// as a pair.
   ///
   /// This method should make the instantiated remote object accessible until
-  /// [disposeRemoteReference] is called with [remoteReference].
-  Future<void> createRemoteReference(
+  /// [dispose] is called with [remoteReference].
+  Future<void> create(
     RemoteReference remoteReference,
     int typeId,
     List<Object> arguments,
@@ -37,9 +37,9 @@ mixin RemoteReferenceCommunicationHandler {
   /// Execute a method on the object instance that [remoteReference] represents.
   ///
   /// For any [RemoteReference], this method should only be called after
-  /// [createRemoteReference] and should never be called after
-  /// [disposeRemoteReference].
-  Future<Object> executeRemoteMethod(
+  /// [create] and should never be called after
+  /// [dispose].
+  Future<Object> invokeMethod(
     RemoteReference remoteReference,
     String methodName,
     List<Object> arguments,
@@ -50,7 +50,7 @@ mixin RemoteReferenceCommunicationHandler {
   /// This method should also stop the local and remote [ReferencePairManager]
   /// from maintaining the connection between its paired [LocalReference] and
   /// should allow for either object instance to connect to new references.
-  Future<void> disposeRemoteReference(RemoteReference remoteReference);
+  Future<void> dispose(RemoteReference remoteReference);
 }
 
 /// Handles communication with [LocalReference]s for a [ReferencePairManager].
@@ -72,7 +72,7 @@ mixin LocalReferenceCommunicationHandler {
   /// The REMOTE [ReferencePairManager] will represent the returned value as a
   /// [RemoteReference] and represent the generated [RemoteReference] as a
   /// [LocalReference]. It will also store both references as a pair.
-  LocalReference createLocalReference(
+  LocalReference create(
     ReferencePairManager referencePairManager,
     Type referenceType,
     List<Object> arguments,
@@ -81,9 +81,9 @@ mixin LocalReferenceCommunicationHandler {
   /// Execute a method to be executed on the object instance represented by [localReference].
   ///
   /// For any [LocalReference] this method should only be called after
-  /// [createLocalReference] and should never be called after
-  /// [disposeLocalReference].
-  Object executeLocalMethod(
+  /// [create] and should never be called after
+  /// [dispose].
+  Object invokeMethod(
     ReferencePairManager referencePairManager,
     LocalReference localReference,
     String methodName,
@@ -95,7 +95,7 @@ mixin LocalReferenceCommunicationHandler {
   /// This also stops the [ReferencePairManager] from maintaining the connection
   /// with its paired [RemoteReference] and will allow for either value to be
   /// attached to new references.
-  void disposeLocalReference(
+  void dispose(
     ReferencePairManager referencePairManager,
     LocalReference localReference,
   ) {}
@@ -154,7 +154,7 @@ abstract class ReferencePairManager {
   /// Retrieve the [RemoteReference] paired with [localReference].
   ///
   /// Returns null if this [localReference] is not paired.
-  RemoteReference remoteReferenceFor(LocalReference localReference) {
+  RemoteReference getPairedRemoteReference(LocalReference localReference) {
     _assertIsInitialized();
     return _referencePairs[localReference];
   }
@@ -162,7 +162,7 @@ abstract class ReferencePairManager {
   /// Retrieve the [LocalReference] paired with [remoteReference].
   ///
   /// Returns null if this [remoteReference] is not paired.
-  LocalReference localReferenceFor(RemoteReference remoteReference) {
+  LocalReference getPairedLocalReference(RemoteReference remoteReference) {
     _assertIsInitialized();
     return _referencePairs.inverse[remoteReference];
   }
@@ -177,13 +177,13 @@ abstract class ReferencePairManager {
   ///
   /// Also, all [List]s will also be converted into `List<Object>` and all
   /// [Map]s will be converted into `Map<Object, Object>`.
-  LocalReference createLocalReferenceFor(
+  LocalReference pairWithNewLocalReference(
     RemoteReference remoteReference,
     int typeId, [
     List<Object> arguments,
   ]) {
     _assertIsInitialized();
-    final LocalReference localReference = localHandler.createLocalReference(
+    final LocalReference localReference = localHandler.create(
       this,
       _typeIds[typeId],
       _replaceRemoteReferences(arguments ?? <Object>[]),
@@ -196,54 +196,50 @@ abstract class ReferencePairManager {
   ///
   /// This will remove [remoteReference] and its paired [LocalReference] from
   /// this [ReferencePairManager].
-  void disposeLocalReferenceFor(RemoteReference remoteReference) {
+  void disposePairWithRemoteReference(RemoteReference remoteReference) {
     _assertIsInitialized();
 
-    final LocalReference localReference = localReferenceFor(remoteReference);
+    final LocalReference localReference =
+        getPairedLocalReference(remoteReference);
     if (localReference == null) return;
 
     _referencePairs.remove(localReference);
-    localHandler.disposeLocalReference(this, localReference);
+    localHandler.dispose(this, localReference);
   }
 
   // TODO(bparrishMines): Don't change state if failure to create
   /// Creates and maintains access of an equivalent object to [localReference] on a remote thread/process.
   ///
   /// This will also store [localReference] and a [RemoteReference] as a pair.
-  FutureOr<RemoteReference> createRemoteReferenceFor(
-    LocalReference localReference, [
-    Type referenceType,
-  ]) {
+  Future<RemoteReference> pairWithNewRemoteReference(
+      LocalReference localReference) async {
     _assertIsInitialized();
-    if (remoteReferenceFor(localReference) != null) return null;
+    if (getPairedRemoteReference(localReference) != null) return null;
 
     final RemoteReference remoteReference = RemoteReference(_uuid.v4());
     _referencePairs[localReference] = remoteReference;
 
-    final Completer<RemoteReference> completer = Completer<RemoteReference>();
+    await remoteHandler.create(
+      remoteReference,
+      _typeIds.inverse[localReference.referenceType],
+      _replaceLocalReferences(
+        remoteHandler.getCreationArguments(localReference),
+      ),
+    );
 
-    remoteHandler
-        .createRemoteReference(
-          remoteReference,
-          referenceType ?? _typeIds.inverse[localReference.referenceType],
-          _replaceLocalReferences(
-            remoteHandler.creationArgumentsFor(localReference),
-          ),
-        )
-        .then((_) => completer.complete(remoteReference));
-
-    return completer.future;
+    return remoteReference;
   }
 
   /// Call when it is no longer needed to access the [RemoteReference] paired with [localReference].
-  FutureOr<void> disposeRemoteReferenceFor(LocalReference localReference) {
+  FutureOr<void> disposePairWithLocalReference(LocalReference localReference) {
     _assertIsInitialized();
 
-    final RemoteReference remoteReference = remoteReferenceFor(localReference);
+    final RemoteReference remoteReference =
+        getPairedRemoteReference(localReference);
     if (remoteReference == null) return null;
 
     _referencePairs.remove(localReference);
-    return remoteHandler.disposeRemoteReference(remoteReference);
+    return remoteHandler.dispose(remoteReference);
   }
 
   // TODO(bparrishMines): This should be able to use UnpairedRemoteReference for the RemoteReference
@@ -254,25 +250,20 @@ abstract class ReferencePairManager {
   ///
   /// All [List]s will also be converted into `List<Object>` and all [Map]s
   /// will be converted into `Map<Object, Object>`.
-  Future<Object> executeRemoteMethodFor(
-    LocalReference localReference,
+  Future<Object> invokeRemoteMethod(
+    RemoteReference remoteReference,
     String methodName, [
     List<Object> arguments,
-  ]) {
+  ]) async {
     _assertIsInitialized();
-    assert(remoteReferenceFor(localReference) != null);
-    final Completer<Object> resultCompleter = Completer<Object>();
-    remoteHandler
-        .executeRemoteMethod(
-          remoteReferenceFor(localReference),
-          methodName,
-          _replaceLocalReferences(arguments) ?? <Object>[],
-        )
-        .then(
-          (Object value) =>
-              resultCompleter.complete(_replaceRemoteReferences(value)),
-        );
-    return resultCompleter.future;
+
+    final Object result = await remoteHandler.invokeMethod(
+      remoteReference,
+      methodName,
+      _replaceLocalReferences(arguments) ?? <Object>[],
+    );
+
+    return _replaceRemoteReferences(result);
   }
 
   /// Execute a method on the [LocalReference] paired to [remoteReference].
@@ -282,21 +273,20 @@ abstract class ReferencePairManager {
   ///
   /// Also, all [List]s will also be converted into `List<Object>` and all
   /// [Map]s will be converted into `Map<Object, Object>`.
-  Object executeLocalMethodFor(
-    RemoteReference remoteReference,
+  Object invokeLocalMethod(
+    LocalReference localReference,
     String methodName, [
     List<Object> arguments,
   ]) {
     _assertIsInitialized();
-    assert(localReferenceFor(remoteReference) != null);
 
-    final LocalReference localReference = localReferenceFor(remoteReference);
-    final Object result = localHandler.executeLocalMethod(
+    final Object result = localHandler.invokeMethod(
       this,
       localReference,
       methodName,
       _replaceRemoteReferences(arguments) ?? <Object>[],
     );
+
     return _replaceLocalReferences(result);
   }
 
@@ -306,9 +296,9 @@ abstract class ReferencePairManager {
 
   Object _replaceRemoteReferences(Object argument) {
     if (argument is RemoteReference) {
-      return localReferenceFor(argument);
+      return getPairedLocalReference(argument);
     } else if (argument is UnpairedRemoteReference) {
-      return localHandler.createLocalReference(
+      return localHandler.create(
         this,
         _typeIds[argument.typeId],
         argument.creationArguments.map(_replaceRemoteReferences).toList(),
@@ -326,14 +316,15 @@ abstract class ReferencePairManager {
   }
 
   Object _replaceLocalReferences(Object argument) {
-    if (argument is LocalReference && remoteReferenceFor(argument) != null) {
-      return remoteReferenceFor(argument);
+    if (argument is LocalReference &&
+        getPairedRemoteReference(argument) != null) {
+      return getPairedRemoteReference(argument);
     } else if (argument is LocalReference &&
-        remoteReferenceFor(argument) == null) {
+        getPairedRemoteReference(argument) == null) {
       return UnpairedRemoteReference(
         _typeIds.inverse[argument.referenceType],
         remoteHandler
-            .creationArgumentsFor(argument)
+            .getCreationArguments(argument)
             .map(_replaceLocalReferences)
             .toList(),
       );
@@ -381,7 +372,7 @@ abstract class PoolableReferencePairManager extends ReferencePairManager {
     for (ReferencePairManagerPool pool in _pools) {
       for (ReferencePairManager manager in pool._managers.values) {
         final LocalReference localReference =
-            manager.localReferenceFor(remoteReference);
+            manager.getPairedLocalReference(remoteReference);
         if (localReference != null) return localReference;
       }
     }
@@ -395,10 +386,11 @@ abstract class PoolableReferencePairManager extends ReferencePairManager {
       return super._replaceRemoteReferences(argument);
     }
 
-    if (argument is RemoteReference && localReferenceFor(argument) != null) {
-      return localReferenceFor(argument);
+    if (argument is RemoteReference &&
+        getPairedLocalReference(argument) != null) {
+      return getPairedLocalReference(argument);
     } else if (argument is RemoteReference &&
-        localReferenceFor(argument) == null) {
+        getPairedLocalReference(argument) == null) {
       return _localRefFromRemoteRef(argument);
     }
 
@@ -408,7 +400,7 @@ abstract class PoolableReferencePairManager extends ReferencePairManager {
             ? this
             : _managerFromPoolId(unpairedRemoteReference.managerPoolId);
 
-    return manager.localHandler.createLocalReference(
+    return manager.localHandler.create(
       manager,
       manager._typeIds[unpairedRemoteReference.typeId],
       unpairedRemoteReference.creationArguments
@@ -431,14 +423,14 @@ abstract class PoolableReferencePairManager extends ReferencePairManager {
         ? this
         : _managerFromType(localReference.referenceType);
 
-    if (remoteReferenceFor(localReference) != null) {
-      return manager.remoteReferenceFor(localReference);
+    if (getPairedRemoteReference(localReference) != null) {
+      return manager.getPairedRemoteReference(localReference);
     }
 
     return UnpairedRemoteReference(
       manager._typeIds.inverse[localReference.referenceType],
       manager.remoteHandler
-          .creationArgumentsFor(localReference)
+          .getCreationArguments(localReference)
           .map(_replaceLocalReferences)
           .toList(),
       manager.poolId,

@@ -28,8 +28,8 @@ public class ClassTemplateImpl implements ClassTemplate {
           @Override
           public void run() {
             referencePairManager
-                .executeRemoteMethodFor(
-                    ClassTemplateImpl.this,
+                .invokeRemoteMethod(
+                    referencePairManager.getPairedRemoteReference(ClassTemplateImpl.this),
                     $TemplateReferencePairManager.$MethodNames.methodTemplate,
                     Collections.singletonList((Object) parameterTemplate))
                 .setOnCompleteListener(

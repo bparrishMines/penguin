@@ -9,7 +9,7 @@ import java.util.List;
 
 public class ReferenceMessageCodec extends StandardMessageCodec {
   private static final byte REMOTE_REFERENCE = (byte) 128;
-  private static final byte UNPAIRED_REMOTE_REFERENCE = (byte) 130;
+  private static final byte UNPAIRED_REMOTE_REFERENCE = (byte) 129;
 
   @Override
   protected void writeValue(ByteArrayOutputStream stream, Object value) {

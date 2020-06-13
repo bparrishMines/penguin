@@ -64,7 +64,7 @@ public class $TemplateReferencePairManager extends MethodChannelReferencePairMan
 
     @SuppressWarnings("ConstantConditions")
     @Override
-    public LocalReference createLocalReference(
+    public LocalReference create(
         ReferencePairManager referencePairManager,
         Class<? extends LocalReference> referenceClass,
         List<Object> arguments)
@@ -74,7 +74,7 @@ public class $TemplateReferencePairManager extends MethodChannelReferencePairMan
 
     @SuppressWarnings("ConstantConditions")
     @Override
-    public Object executeLocalMethod(
+    public Object invokeMethod(
         ReferencePairManager referencePairManager,
         LocalReference localReference,
         String methodName,
@@ -84,7 +84,7 @@ public class $TemplateReferencePairManager extends MethodChannelReferencePairMan
 
     @SuppressWarnings("RedundantThrows")
     @Override
-    public void disposeLocalReference(ReferencePairManager referencePairManager, LocalReference localReference) throws Exception {
+    public void dispose(ReferencePairManager referencePairManager, LocalReference localReference) throws Exception {
       // Do nothing.
     }
   }
@@ -105,7 +105,7 @@ public class $TemplateReferencePairManager extends MethodChannelReferencePairMan
 
     @SuppressWarnings("ConstantConditions")
     @Override
-    public List<Object> creationArgumentsFor(LocalReference localReference) {
+    public List<Object> getCreationArguments(LocalReference localReference) {
       return creationArguments.get(localReference.getReferenceClass()).call(localReference);
     }
   }

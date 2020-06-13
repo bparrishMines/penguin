@@ -64,7 +64,7 @@ class _$LocalReferenceCommunicationHandler
   ) createClassTemplate;
 
   @override
-  LocalReference createLocalReference(
+  LocalReference create(
     ReferencePairManager manager,
     Type referenceType,
     List<Object> arguments,
@@ -73,7 +73,7 @@ class _$LocalReferenceCommunicationHandler
   }
 
   @override
-  Object executeLocalMethod(
+  Object invokeMethod(
     ReferencePairManager referencePairManager,
     LocalReference localReference,
     String methodName,
@@ -96,7 +96,7 @@ class _$RemoteReferenceCommunicationHandler
   };
 
   @override
-  List<Object> creationArgumentsFor(LocalReference localReference) {
+  List<Object> getCreationArguments(LocalReference localReference) {
     return _creationArguments[localReference.referenceType](localReference);
   }
 }
@@ -106,8 +106,8 @@ mixin _$ClassTemplateMethods {
     ReferencePairManager referencePairManager,
     String parameterTemplate,
   ) {
-    return referencePairManager.executeRemoteMethodFor(
-      this as ClassTemplate,
+    return referencePairManager.invokeRemoteMethod(
+      referencePairManager.getPairedRemoteReference(this as LocalReference),
       'methodTemplate',
       <Object>[parameterTemplate],
     );

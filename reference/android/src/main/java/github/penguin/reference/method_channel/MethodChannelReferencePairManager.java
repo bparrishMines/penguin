@@ -71,7 +71,7 @@ public abstract class MethodChannelReferencePairManager extends PoolableReferenc
         case METHOD_CREATE:
           {
             final List<Object> arguments = (List<Object>) call.arguments;
-            createLocalReferenceFor(
+            pairWithNewLocalReference(
                 (RemoteReference) arguments.get(0),
                 (Integer) arguments.get(1),
                 (List<Object>) arguments.get(2));
@@ -82,15 +82,15 @@ public abstract class MethodChannelReferencePairManager extends PoolableReferenc
           {
             final List<Object> arguments = (List<Object>) call.arguments;
             final Object result =
-                executeLocalMethodFor(
-                    (RemoteReference) arguments.get(0),
+                invokeLocalMethod(
+                    getPairedLocalReference((RemoteReference) arguments.get(0)),
                     (String) arguments.get(1),
                     (List<Object>) arguments.get(2));
             channelResult.success(result);
             break;
           }
         case METHOD_DISPOSE:
-          disposeLocalReferenceFor((RemoteReference) call.arguments);
+          disposePairWithRemoteReference((RemoteReference) call.arguments);
           channelResult.success(null);
           break;
         default:

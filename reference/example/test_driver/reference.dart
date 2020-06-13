@@ -21,8 +21,8 @@ Future<void> main() async {
         <String, ClassTemplate>{'hello': classTemplate1},
       );
 
-      referencePairManager.createRemoteReferenceFor(classTemplate1);
-      referencePairManager.createRemoteReferenceFor(classTemplate2);
+      referencePairManager.pairWithNewRemoteReference(classTemplate1);
+      referencePairManager.pairWithNewRemoteReference(classTemplate2);
 
       expect(
         classTemplate2.methodTemplate('hello', null, null, null),

@@ -14,7 +14,7 @@ public abstract class MethodChannelRemoteReferenceCommunicationHandler
   MethodChannel channel;
 
   @Override
-  public CompletableRunnable<Void> createRemoteReference(
+  public CompletableRunnable<Void> create(
       final RemoteReference remoteReference,
       final int classId,
       final List<Object> arguments) {
@@ -61,7 +61,7 @@ public abstract class MethodChannelRemoteReferenceCommunicationHandler
   }
 
   @Override
-  public CompletableRunnable<Object> executeRemoteMethod(
+  public CompletableRunnable<Object> invokeMethod(
       final RemoteReference remoteReference,
       final String methodName,
       final List<Object> arguments) {
@@ -106,7 +106,7 @@ public abstract class MethodChannelRemoteReferenceCommunicationHandler
   }
 
   @Override
-  public CompletableRunnable<Void> disposeRemoteReference(final RemoteReference remoteReference) {
+  public CompletableRunnable<Void> dispose(final RemoteReference remoteReference) {
     final CompletableRunnable<Void> completer =
         new CompletableRunnable<Void>() {
           @Override

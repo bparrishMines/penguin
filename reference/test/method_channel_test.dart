@@ -67,19 +67,13 @@ void main() {
       methodCallLog.clear();
     });
 
-    test('createRemoteReferenceFor', () async {
+    test('pairWithNewRemoteReference', () async {
       final ClassTemplate testClass = ClassTemplate(1);
 
-      referencePairManager.createRemoteReferenceFor(testClass);
-
+      referencePairManager.pairWithNewRemoteReference(testClass);
       final RemoteReference remoteReference =
-          referencePairManager.remoteReferenceFor(testClass);
+          referencePairManager.getPairedRemoteReference(testClass);
 
-      expect(remoteReference?.referenceId, isNotNull);
-      expect(
-        referencePairManager.localReferenceFor(remoteReference),
-        testClass,
-      );
       expect(methodCallLog, <Matcher>[
         isMethodCallWithMatchers('REFERENCE_CREATE', arguments: <Object>[
           remoteReference,
@@ -89,18 +83,16 @@ void main() {
       ]);
     });
 
-    test('disposeRemoteReferenceFor', () async {
+    test('disposePairWithLocalReference', () async {
       final ClassTemplate testClass = ClassTemplate(3);
 
-      referencePairManager.createRemoteReferenceFor(testClass);
+      referencePairManager.pairWithNewRemoteReference(testClass);
       final RemoteReference remoteReference =
-          referencePairManager.remoteReferenceFor(testClass);
+          referencePairManager.getPairedRemoteReference(testClass);
       methodCallLog.clear();
 
-      referencePairManager.disposeRemoteReferenceFor(testClass);
+      referencePairManager.disposePairWithLocalReference(testClass);
 
-      expect(referencePairManager.localReferenceFor(remoteReference), isNull);
-      expect(referencePairManager.remoteReferenceFor(testClass), isNull);
       expect(methodCallLog, <Matcher>[
         isMethodCall(
           'REFERENCE_DISPOSE',
@@ -109,9 +101,9 @@ void main() {
       ]);
     });
 
-    test('executeRemoteMethodFor', () async {
+    test('invokeRemoteMethod', () async {
       final ClassTemplate testClass = ClassTemplate(4);
-      referencePairManager.createRemoteReferenceFor(testClass);
+      referencePairManager.pairWithNewRemoteReference(testClass);
       methodCallLog.clear();
 
       final String result = await testClass.methodTemplate('bye!');
@@ -119,14 +111,14 @@ void main() {
       expect(result, equals('Goodbye!'));
       expect(methodCallLog, <Matcher>[
         isMethodCallWithMatchers('REFERENCE_METHOD', arguments: <Object>[
-          referencePairManager.remoteReferenceFor(testClass),
+          referencePairManager.getPairedRemoteReference(testClass),
           'methodTemplate',
           <Object>['bye!'],
         ]),
       ]);
     });
 
-    test('createLocalReferenceFor', () async {
+    test('pairWithNewLocalReference', () async {
       await referencePairManager.channel.binaryMessenger.handlePlatformMessage(
         'github.penguin/reference/template',
         referencePairManager.channel.codec.encodeMethodCall(
@@ -142,13 +134,13 @@ void main() {
         (ByteData data) {},
       );
 
-      final ClassTemplate testClass =
-          referencePairManager.localReferenceFor(RemoteReference('aowejea;io'));
+      final ClassTemplate testClass = referencePairManager
+          .getPairedLocalReference(RemoteReference('aowejea;io'));
 
       expect(testClass, isClassTemplate(8));
     });
 
-    test('executeLocalMethodFor', () async {
+    test('invokeLocalMethod', () async {
       final Completer<List<Object>> callbackCompleter =
           Completer<List<Object>>();
 
@@ -162,7 +154,7 @@ void main() {
         },
       );
 
-      referencePairManager.createRemoteReferenceFor(testClass);
+      referencePairManager.pairWithNewRemoteReference(testClass);
 
       final Completer<String> responseCompleter = Completer<String>();
       await referencePairManager.channel.binaryMessenger.handlePlatformMessage(
@@ -171,7 +163,7 @@ void main() {
           MethodCall(
             'REFERENCE_METHOD',
             <Object>[
-              referencePairManager.remoteReferenceFor(testClass),
+              referencePairManager.getPairedRemoteReference(testClass),
               'methodTemplate',
               <Object>['Apple'],
             ],
@@ -188,7 +180,7 @@ void main() {
       expect(responseCompleter.future, completion('Apple pie'));
     });
 
-    test('disposeLocalReference', () async {
+    test('disposePairWithRemoteReference', () async {
       await referencePairManager.channel.binaryMessenger.handlePlatformMessage(
         'github.penguin/reference/template',
         referencePairManager.channel.codec.encodeMethodCall(
@@ -205,7 +197,8 @@ void main() {
       );
 
       final ClassTemplate testClass = referencePairManager
-          .localReferenceFor(RemoteReference('ajackwhack')) as ClassTemplate;
+              .getPairedLocalReference(RemoteReference('ajackwhack'))
+          as ClassTemplate;
       expect(testClass, isClassTemplate(45));
 
       await referencePairManager.channel.binaryMessenger.handlePlatformMessage(
@@ -220,7 +213,8 @@ void main() {
       );
 
       expect(
-        referencePairManager.localReferenceFor(RemoteReference('ajackwhack')),
+        referencePairManager
+            .getPairedLocalReference(RemoteReference('ajackwhack')),
         isNull,
       );
     });

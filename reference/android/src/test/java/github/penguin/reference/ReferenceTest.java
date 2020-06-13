@@ -65,31 +65,31 @@ public class ReferenceTest {
   }
 
   @Test
-  public void referencePairManager_createLocalReferenceFor() throws Exception {
+  public void referencePairManager_pairWithNewLocalReference() throws Exception {
     final List<List<Object>> allArguments = new ArrayList<>();
 
     final ReferencePairManager manager = new TestReferencePairManager(
         Collections.<Class<? extends LocalReference>>singletonList(TestClass.class), "test_id",
         new LocalReferenceCommunicationHandler() {
       @Override
-      public LocalReference createLocalReference(ReferencePairManager referencePairManager, Class<? extends LocalReference> referenceClass, List<Object> arguments) {
+      public LocalReference create(ReferencePairManager referencePairManager, Class<? extends LocalReference> referenceClass, List<Object> arguments) {
         allArguments.add(arguments);
         return new TestClass();
       }
 
       @Override
-      public Object executeLocalMethod(ReferencePairManager referencePairManager, LocalReference localReference, String methodName, List<Object> arguments) {
+      public Object invokeMethod(ReferencePairManager referencePairManager, LocalReference localReference, String methodName, List<Object> arguments) {
         return null;
       }
 
       @Override
-      public void disposeLocalReference(ReferencePairManager referencePairManager, LocalReference localReference) {
+      public void dispose(ReferencePairManager referencePairManager, LocalReference localReference) {
         // Do nothing.
       }
     }, null);
     manager.initialize();
 
-    final TestClass result = (TestClass) manager.createLocalReferenceFor(
+    final TestClass result = (TestClass) manager.pairWithNewLocalReference(
         new RemoteReference("apple"),
         0,
         Arrays.asList("Hello",
@@ -99,8 +99,8 @@ public class ReferenceTest {
         )
     );
 
-    assertEquals(manager.localReferenceFor(new RemoteReference("apple")), result);
-    assertEquals(manager.remoteReferenceFor(result), new RemoteReference("apple"));
+    assertEquals(manager.getPairedLocalReference(new RemoteReference("apple")), result);
+    assertEquals(manager.getPairedRemoteReference(result), new RemoteReference("apple"));
     assertThat(
         allArguments,
         contains(empty(), empty(), empty(),
@@ -113,31 +113,31 @@ public class ReferenceTest {
 
 
   @Test
-  public void referencePairManager_executeLocalMethodFor() throws Exception {
+  public void referencePairManager_invokeLocalMethod() throws Exception {
     final List<Object> methodArguments = new ArrayList<>();
 
     final ReferencePairManager manager = new TestReferencePairManager(Collections.<Class<? extends LocalReference>>singletonList(TestClass.class), "test_id",
         new LocalReferenceCommunicationHandler() {
       @Override
-      public LocalReference createLocalReference(ReferencePairManager referencePairManager, Class<? extends LocalReference> referenceClass, List<Object> arguments) {
+      public LocalReference create(ReferencePairManager referencePairManager, Class<? extends LocalReference> referenceClass, List<Object> arguments) {
         return new TestClass();
       }
 
       @Override
-      public Object executeLocalMethod(ReferencePairManager referencePairManager, LocalReference localReference, String methodName, List<Object> arguments) {
+      public Object invokeMethod(ReferencePairManager referencePairManager, LocalReference localReference, String methodName, List<Object> arguments) {
         methodArguments.addAll(arguments);
         return null;
       }
 
       @Override
-      public void disposeLocalReference(ReferencePairManager referencePairManager, LocalReference localReference) {
+      public void dispose(ReferencePairManager referencePairManager, LocalReference localReference) {
         // Do nothing.
       }
     }, null);
     manager.initialize();
 
-    manager.createLocalReferenceFor(new RemoteReference("chi") , 0);
-    manager.executeLocalMethodFor(new RemoteReference("chi"), "aMethod",
+    manager.pairWithNewLocalReference(new RemoteReference("chi") , 0);
+    manager.invokeLocalMethod(manager.getPairedLocalReference(new RemoteReference("chi")), "aMethod",
         Arrays.asList("Hello",
             new UnpairedRemoteReference(0, Collections.emptyList(), "test_id"),
             Collections.singletonList(new UnpairedRemoteReference(0, Collections.emptyList(), "test_id")),
@@ -154,35 +154,35 @@ public class ReferenceTest {
   }
 
   @Test
-  public void referencePairManager_disposeLocalReferenceFor() throws Exception {
+  public void referencePairManager_disposePairWithRemoteReference() throws Exception {
     final ReferencePairManager manager = new TestReferencePairManager(Collections.<Class<? extends LocalReference>>singletonList(TestClass.class), "test_id",
         new LocalReferenceCommunicationHandler() {
       @Override
-      public LocalReference createLocalReference(ReferencePairManager referencePairManager, Class<? extends LocalReference> referenceClass, List<Object> arguments) {
+      public LocalReference create(ReferencePairManager referencePairManager, Class<? extends LocalReference> referenceClass, List<Object> arguments) {
         return new TestClass();
       }
 
       @Override
-      public Object executeLocalMethod(ReferencePairManager referencePairManager, LocalReference localReference, String methodName, List<Object> arguments) {
+      public Object invokeMethod(ReferencePairManager referencePairManager, LocalReference localReference, String methodName, List<Object> arguments) {
         return null;
       }
 
       @Override
-      public void disposeLocalReference(ReferencePairManager referencePairManager, LocalReference localReference) {
+      public void dispose(ReferencePairManager referencePairManager, LocalReference localReference) {
         // Do nothing.
       }
     }, null);
     manager.initialize();
 
-    final TestClass result = (TestClass) manager.createLocalReferenceFor(new RemoteReference("tea") ,0);
-    manager.disposeLocalReferenceFor(new RemoteReference("tea"));
+    final TestClass result = (TestClass) manager.pairWithNewLocalReference(new RemoteReference("tea") ,0);
+    manager.disposePairWithRemoteReference(new RemoteReference("tea"));
 
-    assertNull(manager.localReferenceFor(new RemoteReference("tea")));
-    assertNull(manager.remoteReferenceFor(result));
+    assertNull(manager.getPairedLocalReference(new RemoteReference("tea")));
+    assertNull(manager.getPairedRemoteReference(result));
   }
 
   @Test
-  public void referencePairManager_createRemoteReferenceFor() {
+  public void referencePairManager_pairWithNewRemoteReference() {
     final List<Object> creationArguments = new ArrayList<>();
 
     final ReferencePairManager manager = new TestReferencePairManager(
@@ -192,7 +192,7 @@ public class ReferenceTest {
       boolean firstCall = true;
 
       @Override
-      public List<Object> creationArgumentsFor(LocalReference localReference) {
+      public List<Object> getCreationArguments(LocalReference localReference) {
         if (localReference instanceof TestClass && firstCall) {
           firstCall = false;
           return Arrays.asList("Hello",
@@ -206,7 +206,7 @@ public class ReferenceTest {
       }
 
       @Override
-      public CompletableRunnable<Void> createRemoteReference(RemoteReference remoteReference, int classId, List<Object> arguments) {
+      public CompletableRunnable<Void> create(RemoteReference remoteReference, int classId, List<Object> arguments) {
         creationArguments.addAll(arguments);
         final CompletableRunnable<Void> runnable =  new CompletableRunnable<Void>() {
           @Override
@@ -219,12 +219,12 @@ public class ReferenceTest {
       }
 
       @Override
-      public CompletableRunnable<Object> executeRemoteMethod(RemoteReference remoteReference, String methodName, List<Object> arguments) {
+      public CompletableRunnable<Object> invokeMethod(RemoteReference remoteReference, String methodName, List<Object> arguments) {
         return null;
       }
 
       @Override
-      public CompletableRunnable<Void> disposeRemoteReference(RemoteReference remoteReference) {
+      public CompletableRunnable<Void> dispose(RemoteReference remoteReference) {
         return null;
       }
     });
@@ -233,7 +233,7 @@ public class ReferenceTest {
     final TestClass testClass = new TestClass();
 
     final List<RemoteReference> remoteReferences =  new ArrayList<>();
-    manager.createRemoteReferenceFor(testClass).setOnCompleteListener(new CompletableRunnable.OnCompleteListener() {
+    manager.pairWithNewRemoteReference(testClass).setOnCompleteListener(new CompletableRunnable.OnCompleteListener() {
       @Override
       public void onComplete(Object result) {
         remoteReferences.add((RemoteReference) result);
@@ -246,8 +246,8 @@ public class ReferenceTest {
     });
 
     assertThat(remoteReferences, Matchers.<RemoteReference>hasSize(1));
-    assertEquals(manager.localReferenceFor(remoteReferences.get(0)), testClass);
-    assertEquals(manager.remoteReferenceFor(testClass), remoteReferences.get(0));
+    assertEquals(manager.getPairedLocalReference(remoteReferences.get(0)), testClass);
+    assertEquals(manager.getPairedRemoteReference(testClass), remoteReferences.get(0));
     assertThat(creationArguments, contains(
         equalTo("Hello"),
         isUnpairedRemoteReference(0, empty(), "test_id"),
@@ -257,18 +257,18 @@ public class ReferenceTest {
   }
 
   @Test
-  public void referencePairManager_executeRemoteMethodFor() {
+  public void referencePairManager_invokeRemoteMethod() {
     final List<Object> methodArguments = new ArrayList<>();
 
     final ReferencePairManager manager = new TestReferencePairManager(Collections.<Class<? extends LocalReference>>singletonList(TestClass.class), "test_id",
         null, new RemoteReferenceCommunicationHandler() {
       @Override
-      public List<Object> creationArgumentsFor(LocalReference localReference) {
+      public List<Object> getCreationArguments(LocalReference localReference) {
         return Collections.emptyList();
       }
 
       @Override
-      public CompletableRunnable<Void> createRemoteReference(RemoteReference remoteReference, int classId, List<Object> arguments) {
+      public CompletableRunnable<Void> create(RemoteReference remoteReference, int classId, List<Object> arguments) {
         final CompletableRunnable<Void> runnable =  new CompletableRunnable<Void>() {
           @Override
           public void run() {
@@ -280,7 +280,7 @@ public class ReferenceTest {
       }
 
       @Override
-      public CompletableRunnable<Object> executeRemoteMethod(RemoteReference remoteReference, String methodName, List<Object> arguments) {
+      public CompletableRunnable<Object> invokeMethod(RemoteReference remoteReference, String methodName, List<Object> arguments) {
         methodArguments.addAll(arguments);
         final CompletableRunnable<Object> runnable =  new CompletableRunnable<Object>() {
           @Override
@@ -293,15 +293,15 @@ public class ReferenceTest {
       }
 
       @Override
-      public CompletableRunnable<Void> disposeRemoteReference(RemoteReference remoteReference) {
+      public CompletableRunnable<Void> dispose(RemoteReference remoteReference) {
         return null;
       }
     });
     manager.initialize();
 
     final TestClass testClass = new TestClass();
-    manager.createRemoteReferenceFor(testClass);
-    manager.executeRemoteMethodFor(testClass, "aMethod", Arrays.asList( "Hello",
+    manager.pairWithNewRemoteReference(testClass);
+    manager.invokeRemoteMethod(manager.getPairedRemoteReference(testClass), "aMethod", Arrays.asList( "Hello",
         new TestClass(),
         Collections.singletonList(new TestClass()),
         ImmutableMap.of(1.1, new TestClass())
@@ -316,18 +316,18 @@ public class ReferenceTest {
   }
 
   @Test
-  public void referencePairManager_disposeRemoteReferenceFor() {
+  public void referencePairManager_disposePairWithLocalReference() {
     final ReferencePairManager manager = new TestReferencePairManager(
         Collections.<Class<? extends LocalReference>>singletonList(TestClass.class),
         "test_id",
         null, new RemoteReferenceCommunicationHandler() {
       @Override
-      public List<Object> creationArgumentsFor(LocalReference localReference) {
+      public List<Object> getCreationArguments(LocalReference localReference) {
         return Collections.emptyList();
       }
 
       @Override
-      public CompletableRunnable<Void> createRemoteReference(RemoteReference remoteReference, int classId, List<Object> arguments) {
+      public CompletableRunnable<Void> create(RemoteReference remoteReference, int classId, List<Object> arguments) {
         final CompletableRunnable<Void> runnable =  new CompletableRunnable<Void>() {
           @Override
           public void run() {
@@ -339,7 +339,7 @@ public class ReferenceTest {
       }
 
       @Override
-      public CompletableRunnable<Object> executeRemoteMethod(RemoteReference remoteReference, String methodName, List<Object> arguments) {
+      public CompletableRunnable<Object> invokeMethod(RemoteReference remoteReference, String methodName, List<Object> arguments) {
         final CompletableRunnable<Object> runnable =  new CompletableRunnable<Object>() {
           @Override
           public void run() {
@@ -351,7 +351,7 @@ public class ReferenceTest {
       }
 
       @Override
-      public CompletableRunnable<Void> disposeRemoteReference(RemoteReference remoteReference) {
+      public CompletableRunnable<Void> dispose(RemoteReference remoteReference) {
         return null;
       }
     });
@@ -359,7 +359,7 @@ public class ReferenceTest {
 
     final TestClass testClass = new TestClass();
     final List<RemoteReference> remoteReferences =  new ArrayList<>();
-    manager.createRemoteReferenceFor(testClass).setOnCompleteListener(new CompletableRunnable.OnCompleteListener() {
+    manager.pairWithNewRemoteReference(testClass).setOnCompleteListener(new CompletableRunnable.OnCompleteListener() {
       @Override
       public void onComplete(Object result) {
         remoteReferences.add((RemoteReference) result);
@@ -370,11 +370,11 @@ public class ReferenceTest {
 
       }
     });
-    manager.disposeRemoteReferenceFor(testClass);
+    manager.disposePairWithLocalReference(testClass);
 
     assertThat(remoteReferences, Matchers.<RemoteReference>hasSize(1));
-    assertNull(manager.localReferenceFor(remoteReferences.get(0)));
-    assertNull(manager.remoteReferenceFor(testClass));
+    assertNull(manager.getPairedLocalReference(remoteReferences.get(0)));
+    assertNull(manager.getPairedRemoteReference(testClass));
   }
 
   @Test
@@ -426,18 +426,18 @@ public class ReferenceTest {
         Collections.<Class<? extends LocalReference>>singletonList(TestClass.class), "test_id",
         new LocalReferenceCommunicationHandler() {
           @Override
-          public LocalReference createLocalReference(ReferencePairManager referencePairManager, Class<? extends LocalReference> referenceClass, List<Object> arguments) {
+          public LocalReference create(ReferencePairManager referencePairManager, Class<? extends LocalReference> referenceClass, List<Object> arguments) {
             allArguments.add(arguments);
             return new TestClass();
           }
 
           @Override
-          public Object executeLocalMethod(ReferencePairManager referencePairManager, LocalReference localReference, String methodName, List<Object> arguments) {
+          public Object invokeMethod(ReferencePairManager referencePairManager, LocalReference localReference, String methodName, List<Object> arguments) {
             return null;
           }
 
           @Override
-          public void disposeLocalReference(ReferencePairManager referencePairManager, LocalReference localReference) {
+          public void dispose(ReferencePairManager referencePairManager, LocalReference localReference) {
             // Do nothing.
           }
         }, null);
@@ -447,17 +447,17 @@ public class ReferenceTest {
         Collections.<Class<? extends LocalReference>>singletonList(TestClass2.class), "test_id2",
         new LocalReferenceCommunicationHandler() {
           @Override
-          public LocalReference createLocalReference(ReferencePairManager referencePairManager, Class<? extends LocalReference> referenceClass, List<Object> arguments) {
+          public LocalReference create(ReferencePairManager referencePairManager, Class<? extends LocalReference> referenceClass, List<Object> arguments) {
             return new TestClass2();
           }
 
           @Override
-          public Object executeLocalMethod(ReferencePairManager referencePairManager, LocalReference localReference, String methodName, List<Object> arguments) {
+          public Object invokeMethod(ReferencePairManager referencePairManager, LocalReference localReference, String methodName, List<Object> arguments) {
             return null;
           }
 
           @Override
-          public void disposeLocalReference(ReferencePairManager referencePairManager, LocalReference localReference) {
+          public void dispose(ReferencePairManager referencePairManager, LocalReference localReference) {
             // Do nothing.
           }
         }, null);
@@ -467,7 +467,7 @@ public class ReferenceTest {
     pool.add(manager1);
     pool.add(manager2);
 
-    manager1.createLocalReferenceFor(
+    manager1.pairWithNewLocalReference(
         new RemoteReference("apple"),
         0,
         Arrays.asList("Hello",
@@ -500,7 +500,7 @@ public class ReferenceTest {
       boolean firstCall = true;
 
       @Override
-      public List<Object> creationArgumentsFor(LocalReference localReference) {
+      public List<Object> getCreationArguments(LocalReference localReference) {
         if (localReference instanceof TestClass && firstCall) {
           firstCall = false;
           return Arrays.asList("Hello",
@@ -515,7 +515,7 @@ public class ReferenceTest {
       }
 
       @Override
-      public CompletableRunnable<Void> createRemoteReference(RemoteReference remoteReference, int classId, List<Object> arguments) {
+      public CompletableRunnable<Void> create(RemoteReference remoteReference, int classId, List<Object> arguments) {
         creationArguments.addAll(arguments);
         final CompletableRunnable<Void> runnable =  new CompletableRunnable<Void>() {
           @Override
@@ -528,12 +528,12 @@ public class ReferenceTest {
       }
 
       @Override
-      public CompletableRunnable<Object> executeRemoteMethod(RemoteReference remoteReference, String methodName, List<Object> arguments) {
+      public CompletableRunnable<Object> invokeMethod(RemoteReference remoteReference, String methodName, List<Object> arguments) {
         return null;
       }
 
       @Override
-      public CompletableRunnable<Void> disposeRemoteReference(RemoteReference remoteReference) {
+      public CompletableRunnable<Void> dispose(RemoteReference remoteReference) {
         return null;
       }
     });
@@ -544,12 +544,12 @@ public class ReferenceTest {
         "test_id2",
         null, new RemoteReferenceCommunicationHandler() {
       @Override
-      public List<Object> creationArgumentsFor(LocalReference localReference) {
+      public List<Object> getCreationArguments(LocalReference localReference) {
         return Collections.emptyList();
       }
 
       @Override
-      public CompletableRunnable<Void> createRemoteReference(RemoteReference remoteReference, int classId, List<Object> arguments) {
+      public CompletableRunnable<Void> create(RemoteReference remoteReference, int classId, List<Object> arguments) {
         final CompletableRunnable<Void> runnable =  new CompletableRunnable<Void>() {
           @Override
           public void run() {
@@ -561,12 +561,12 @@ public class ReferenceTest {
       }
 
       @Override
-      public CompletableRunnable<Object> executeRemoteMethod(RemoteReference remoteReference, String methodName, List<Object> arguments) {
+      public CompletableRunnable<Object> invokeMethod(RemoteReference remoteReference, String methodName, List<Object> arguments) {
         return null;
       }
 
       @Override
-      public CompletableRunnable<Void> disposeRemoteReference(RemoteReference remoteReference) {
+      public CompletableRunnable<Void> dispose(RemoteReference remoteReference) {
         return null;
       }
     });
@@ -577,7 +577,7 @@ public class ReferenceTest {
     pool.add(manager2);
 
     final TestClass testClass = new TestClass();
-    manager1.createRemoteReferenceFor(testClass);
+    manager1.pairWithNewRemoteReference(testClass);
 
     assertThat(creationArguments, contains(
         equalTo("Hello"),

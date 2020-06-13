@@ -61,7 +61,7 @@ abstract class MethodChannelReferencePairManager
     remoteHandler._channel.setMethodCallHandler((MethodCall call) async {
       try {
         if (call.method == MethodChannelReferencePairManager._methodCreate) {
-          createLocalReferenceFor(
+          pairWithNewLocalReference(
             call.arguments[0],
             call.arguments[1],
             call.arguments[2],
@@ -69,14 +69,14 @@ abstract class MethodChannelReferencePairManager
           return null;
         } else if (call.method ==
             MethodChannelReferencePairManager._methodMethod) {
-          return executeLocalMethodFor(
-            call.arguments[0],
+          return invokeLocalMethod(
+            getPairedLocalReference(call.arguments[0]),
             call.arguments[1],
             call.arguments[2],
           );
         } else if (call.method ==
             MethodChannelReferencePairManager._methodDispose) {
-          disposeLocalReferenceFor(call.arguments);
+          disposePairWithRemoteReference(call.arguments);
           return null;
         }
 
@@ -100,7 +100,7 @@ abstract class MethodChannelRemoteReferenceCommunicationHandler
   MethodChannel _channel;
 
   @override
-  Future<void> createRemoteReference(
+  Future<void> create(
     RemoteReference remoteReference,
     int typeId,
     List<Object> arguments,
@@ -112,7 +112,7 @@ abstract class MethodChannelRemoteReferenceCommunicationHandler
   }
 
   @override
-  Future<Object> executeRemoteMethod(
+  Future<Object> invokeMethod(
     RemoteReference remoteReference,
     String methodName,
     List<Object> arguments,
@@ -124,7 +124,7 @@ abstract class MethodChannelRemoteReferenceCommunicationHandler
   }
 
   @override
-  Future<void> disposeRemoteReference(RemoteReference remoteReference) {
+  Future<void> dispose(RemoteReference remoteReference) {
     return _channel.invokeMethod<void>(
       MethodChannelReferencePairManager._methodDispose,
       remoteReference,
@@ -140,7 +140,7 @@ class ReferenceMessageCodec extends StandardMessageCodec {
   const ReferenceMessageCodec();
 
   static const int _valueRemoteReference = 128;
-  static const int _valueUnpairedRemoteReference = 130;
+  static const int _valueUnpairedRemoteReference = 129;
 
   @override
   void writeValue(WriteBuffer buffer, dynamic value) {

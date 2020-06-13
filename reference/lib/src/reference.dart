@@ -52,7 +52,7 @@ class RemoteReference {
 ///
 /// When passed to a [ReferencePairManager], it will try to convert it into a
 /// [LocalReference] with
-/// [LocalReferenceCommunicationHandler.createLocalReference].
+/// [LocalReferenceCommunicationHandler.create].
 class UnpairedRemoteReference {
   const UnpairedRemoteReference(
     this.typeId,
