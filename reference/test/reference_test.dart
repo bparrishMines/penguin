@@ -87,20 +87,21 @@ void main() {
       );
 
       expect(
-          verify(
-            testManager.localHandler.invokeMethod(
-              testManager,
-              testClass,
-              'aMethod',
-              captureAny,
-            ),
-          ).captured.single,
-          <Matcher>[
-            equals('Hello'),
-            isA<TestClass>(),
-            contains(isA<TestClass>()),
-            containsPair(1.1, isA<TestClass>()),
-          ]);
+        verify(
+          testManager.localHandler.invokeMethod(
+            testManager,
+            testClass,
+            'aMethod',
+            captureAny,
+          ),
+        ).captured.single,
+        <Matcher>[
+          equals('Hello'),
+          isA<TestClass>(),
+          contains(isA<TestClass>()),
+          containsPair(1.1, isA<TestClass>()),
+        ],
+      );
     });
 
     test('invokeLocalMethodOnUnpairedReference', () {
@@ -128,20 +129,21 @@ void main() {
       );
 
       expect(
-          verify(
-            testManager.localHandler.invokeMethod(
-              testManager,
-              testClass,
-              'aMethod',
-              captureAny,
-            ),
-          ).captured.single,
-          <Matcher>[
-            equals('Hello'),
-            isA<TestClass>(),
-            contains(isA<TestClass>()),
-            containsPair(1.1, isA<TestClass>()),
-          ]);
+        verify(
+          testManager.localHandler.invokeMethod(
+            testManager,
+            testClass,
+            'aMethod',
+            captureAny,
+          ),
+        ).captured.single,
+        <Matcher>[
+          equals('Hello'),
+          isA<TestClass>(),
+          contains(isA<TestClass>()),
+          containsPair(1.1, isA<TestClass>()),
+        ],
+      );
     });
 
     test('disposePairWithRemoteReference', () {
@@ -189,19 +191,19 @@ void main() {
       expect(testManager.getPairedLocalReference(remoteReference), testClass);
       expect(testManager.getPairedRemoteReference(testClass), remoteReference);
       expect(
-          verify(testManager.remoteHandler
-                  .create(remoteReference, 0, captureAny))
-              .captured
-              .single,
-          <Matcher>[
-            equals('Hello'),
+        verify(testManager.remoteHandler.create(remoteReference, 0, captureAny))
+            .captured
+            .single,
+        <Matcher>[
+          equals('Hello'),
+          isUnpairedReference(0, <Object>[], null),
+          contains(isUnpairedReference(0, <Object>[], null)),
+          containsPair(
+            1.1,
             isUnpairedReference(0, <Object>[], null),
-            contains(isUnpairedReference(0, <Object>[], null)),
-            containsPair(
-              1.1,
-              isUnpairedReference(0, <Object>[], null),
-            ),
-          ]);
+          ),
+        ],
+      );
     });
 
     test('invokeRemoteMethod', () async {

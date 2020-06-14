@@ -18,17 +18,20 @@ typedef _CreationArgumentsHandler = List<Object> Function(
 class _$TemplateReferencePairManager extends MethodChannelReferencePairManager {
   _$TemplateReferencePairManager(
     String channelName,
-    _$LocalReferenceCommunicationHandler localHandler, {
-    _$RemoteReferenceCommunicationHandler remoteHandler,
-    ReferenceMessageCodec referenceMessageCodec = const ReferenceMessageCodec(),
+    this.localHandler, {
+    ReferenceMessageCodec messageCodec,
   }) : super(
           <Type>[ClassTemplate],
           channelName,
-          localHandler: localHandler,
-          remoteHandler:
-              remoteHandler ?? _$RemoteReferenceCommunicationHandler(),
-          referenceMessageCodec: referenceMessageCodec,
+          messageCodec: messageCodec,
         );
+
+  @override
+  final LocalReferenceCommunicationHandler localHandler;
+
+  @override
+  RemoteReferenceCommunicationHandler get remoteHandler =>
+      _$RemoteReferenceCommunicationHandler(channel.name);
 }
 
 class _$LocalReferenceCommunicationHandler
@@ -94,6 +97,9 @@ class _$RemoteReferenceCommunicationHandler
       return <Object>[(localReference as ClassTemplate).fieldTemplate];
     },
   };
+
+  _$RemoteReferenceCommunicationHandler(String channelName)
+      : super(channelName);
 
   @override
   List<Object> getCreationArguments(LocalReference localReference) {

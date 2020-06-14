@@ -3,14 +3,12 @@ import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/mockito.dart';
 import 'package:reference/reference.dart';
-import 'package:reference/src/template/template.dart';
 
 import 'reference_matchers.dart';
 
 void main() {
-  final List<MethodCall> methodCallLog = <MethodCall>[];
-
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('$ReferenceMessageCodec', () {
@@ -46,15 +44,19 @@ void main() {
   });
 
   group('$MethodChannelReferencePairManager', () {
+    final List<MethodCall> methodCallLog = <MethodCall>[];
+    TestReferencePairManager testManager;
+
     setUp(() {
-      referencePairManager = ReferencePairManagerTemplate()..initialize();
-      referencePairManager.channel.setMockMethodCallHandler(
+      methodCallLog.clear();
+      testManager = TestReferencePairManager()..initialize();
+      testManager.channel.setMockMethodCallHandler(
         (MethodCall methodCall) async {
           methodCallLog.add(methodCall);
           if (methodCall.method == 'REFERENCE_METHOD') {
             switch (methodCall.arguments[1]) {
-              case 'methodTemplate':
-                return 'Good' + methodCall.arguments[2][0];
+              case 'aMethod':
+                return 'polo';
             }
           }
           return null;
@@ -62,36 +64,65 @@ void main() {
       );
     });
 
-    tearDown(() {
-      referencePairManager = null;
-      methodCallLog.clear();
-    });
-
     test('pairWithNewRemoteReference', () async {
-      final ClassTemplate testClass = ClassTemplate(1);
+      final TestClass testClass = TestClass();
 
-      referencePairManager.pairWithNewRemoteReference(testClass);
+      testManager.pairWithNewRemoteReference(testClass);
       final RemoteReference remoteReference =
-          referencePairManager.getPairedRemoteReference(testClass);
+          testManager.getPairedRemoteReference(testClass);
 
       expect(methodCallLog, <Matcher>[
         isMethodCallWithMatchers('REFERENCE_CREATE', arguments: <Object>[
           remoteReference,
           0,
-          <Object>[1],
+          <Object>[],
+        ]),
+      ]);
+    });
+
+    test('invokeRemoteMethod', () async {
+      final TestClass testClass = TestClass();
+      testManager.pairWithNewRemoteReference(testClass);
+      methodCallLog.clear();
+
+      final String result = await testManager.invokeRemoteMethod(
+        testManager.getPairedRemoteReference(testClass),
+        'aMethod',
+      );
+
+      expect(result, equals('polo'));
+      expect(methodCallLog, <Matcher>[
+        isMethodCallWithMatchers('REFERENCE_METHOD', arguments: <Object>[
+          testManager.getPairedRemoteReference(testClass),
+          'aMethod',
+          <Object>[],
+        ]),
+      ]);
+    });
+
+    test('invokeRemoteMethodOnUnpairedReference', () async {
+      final String result = await testManager
+          .invokeRemoteMethodOnUnpairedReference(TestClass(), 'aMethod');
+
+      expect(result, equals('polo'));
+      expect(methodCallLog, <Matcher>[
+        isMethodCallWithMatchers('REFERENCE_METHOD', arguments: <Object>[
+          isUnpairedReference(0, <Object>[], null),
+          'aMethod',
+          <Object>[],
         ]),
       ]);
     });
 
     test('disposePairWithLocalReference', () async {
-      final ClassTemplate testClass = ClassTemplate(3);
+      final TestClass testClass = TestClass();
 
-      referencePairManager.pairWithNewRemoteReference(testClass);
+      testManager.pairWithNewRemoteReference(testClass);
       final RemoteReference remoteReference =
-          referencePairManager.getPairedRemoteReference(testClass);
+          testManager.getPairedRemoteReference(testClass);
       methodCallLog.clear();
 
-      referencePairManager.disposePairWithLocalReference(testClass);
+      testManager.disposePairWithLocalReference(testClass);
 
       expect(methodCallLog, <Matcher>[
         isMethodCall(
@@ -101,179 +132,165 @@ void main() {
       ]);
     });
 
-    test('invokeRemoteMethod', () async {
-      final ClassTemplate testClass = ClassTemplate(4);
-      referencePairManager.pairWithNewRemoteReference(testClass);
-      methodCallLog.clear();
-
-      final String result = await testClass.methodTemplate('bye!');
-
-      expect(result, equals('Goodbye!'));
-      expect(methodCallLog, <Matcher>[
-        isMethodCallWithMatchers('REFERENCE_METHOD', arguments: <Object>[
-          referencePairManager.getPairedRemoteReference(testClass),
-          'methodTemplate',
-          <Object>['bye!'],
-        ]),
-      ]);
-    });
-
-    test('invokeRemoteMethodOnUnpairedReference', () async {
-      final ClassTemplate testClass = ClassTemplate(4);
-
-      final String result = await testClass.methodTemplate('bye!');
-
-      expect(result, equals('Goodbye!'));
-      expect(methodCallLog, <Matcher>[
-        isMethodCallWithMatchers('REFERENCE_METHOD', arguments: <Object>[
-          isUnpairedReference(0, <dynamic>[4], null),
-          'methodTemplate',
-          <Object>['bye!'],
-        ]),
-      ]);
-    });
-
     test('pairWithNewLocalReference', () async {
-      await referencePairManager.channel.binaryMessenger.handlePlatformMessage(
-        'github.penguin/reference/template',
-        referencePairManager.channel.codec.encodeMethodCall(
+      when(testManager.localHandler.create(testManager, TestClass, any))
+          .thenReturn(TestClass());
+
+      await testManager.channel.binaryMessenger.handlePlatformMessage(
+        'test_channel',
+        testManager.channel.codec.encodeMethodCall(
           MethodCall(
             'REFERENCE_CREATE',
             <Object>[
               RemoteReference('aowejea;io'),
               0,
-              <Object>[8],
+              <Object>[],
             ],
           ),
         ),
         (ByteData data) {},
       );
 
-      final ClassTemplate testClass = referencePairManager
-          .getPairedLocalReference(RemoteReference('aowejea;io'));
+      final TestClass testClass =
+          testManager.getPairedLocalReference(RemoteReference('aowejea;io'));
 
-      expect(testClass, isClassTemplate(8));
+      expect(testClass, isNotNull);
     });
 
     test('invokeLocalMethod', () async {
-      final Completer<List<Object>> callbackCompleter =
-          Completer<List<Object>>();
+      final TestClass testClass = TestClass();
 
-      final ClassTemplate testClass = TestClassTemplate(
-        5,
-        (String parameterTemplate) {
-          callbackCompleter.complete(<Object>[
-            parameterTemplate,
-          ]);
-          return parameterTemplate + ' pie';
-        },
-      );
+      testManager.pairWithNewRemoteReference(testClass);
 
-      referencePairManager.pairWithNewRemoteReference(testClass);
+      when(
+        testManager.localHandler.invokeMethod(
+          testManager,
+          testClass,
+          'aMethod',
+          <Object>[],
+        ),
+      ).thenReturn('Apple pie');
 
       final Completer<String> responseCompleter = Completer<String>();
-      await referencePairManager.channel.binaryMessenger.handlePlatformMessage(
-        'github.penguin/reference/template',
-        referencePairManager.channel.codec.encodeMethodCall(
+      await testManager.channel.binaryMessenger.handlePlatformMessage(
+        'test_channel',
+        testManager.channel.codec.encodeMethodCall(
           MethodCall(
             'REFERENCE_METHOD',
             <Object>[
-              referencePairManager.getPairedRemoteReference(testClass),
-              'methodTemplate',
-              <Object>['Apple'],
+              testManager.getPairedRemoteReference(testClass),
+              'aMethod',
+              <Object>[],
             ],
           ),
         ),
         (ByteData data) {
           responseCompleter.complete(
-            referencePairManager.channel.codec.decodeEnvelope(data),
+            testManager.channel.codec.decodeEnvelope(data),
           );
         },
       );
 
-      expect(callbackCompleter.future, completion(<Object>['Apple']));
+      verify(testManager.localHandler.invokeMethod(
+        testManager,
+        testClass,
+        'aMethod',
+        any,
+      ));
       expect(responseCompleter.future, completion('Apple pie'));
     });
 
     test('invokeLocalMethodOnUnpairedReference', () async {
+      when(testManager.localHandler.create(testManager, TestClass, any))
+          .thenReturn(TestClass());
+
+      when(
+        testManager.localHandler.invokeMethod(
+          testManager,
+          any,
+          'aMethod',
+          <Object>[],
+        ),
+      ).thenReturn('Apple pie');
+
       final Completer<String> responseCompleter = Completer<String>();
-      await referencePairManager.channel.binaryMessenger.handlePlatformMessage(
-        'github.penguin/reference/template',
-        referencePairManager.channel.codec.encodeMethodCall(
+      await testManager.channel.binaryMessenger.handlePlatformMessage(
+        'test_channel',
+        testManager.channel.codec.encodeMethodCall(
           MethodCall(
             'REFERENCE_METHOD',
             <Object>[
-              UnpairedReference(0, <dynamic>[18]),
-              'methodTemplate',
-              <Object>['Apple'],
+              UnpairedReference(0, <dynamic>[]),
+              'aMethod',
+              <Object>[],
             ],
           ),
         ),
         (ByteData data) {
           responseCompleter.complete(
-            referencePairManager.channel.codec.decodeEnvelope(data),
+            testManager.channel.codec.decodeEnvelope(data),
           );
         },
       );
 
-      expect(methodCallLog, <Matcher>[
-        isMethodCallWithMatchers('REFERENCE_METHOD', arguments: <Object>[
-          isUnpairedReference(0, <dynamic>[18], null),
-          'methodTemplate',
-          <Object>['Apple'],
-        ]),
-      ]);
+      verify(testManager.localHandler.invokeMethod(
+        testManager,
+        any,
+        'aMethod',
+        any,
+      ));
+      expect(responseCompleter.future, completion('Apple pie'));
     });
 
     test('disposePairWithRemoteReference', () async {
-      await referencePairManager.channel.binaryMessenger.handlePlatformMessage(
-        'github.penguin/reference/template',
-        referencePairManager.channel.codec.encodeMethodCall(
-          MethodCall(
-            'REFERENCE_CREATE',
-            <Object>[
-              RemoteReference('ajackwhack'),
-              0,
-              <Object>[45],
-            ],
-          ),
-        ),
-        (ByteData data) {},
-      );
+      final TestClass testClass = TestClass();
 
-      final ClassTemplate testClass = referencePairManager
-              .getPairedLocalReference(RemoteReference('ajackwhack'))
-          as ClassTemplate;
-      expect(testClass, isClassTemplate(45));
+      final RemoteReference remoteReference =
+          await testManager.pairWithNewRemoteReference(testClass);
 
-      await referencePairManager.channel.binaryMessenger.handlePlatformMessage(
-        'github.penguin/reference/template',
-        referencePairManager.channel.codec.encodeMethodCall(
+      await testManager.channel.binaryMessenger.handlePlatformMessage(
+        'test_channel',
+        testManager.channel.codec.encodeMethodCall(
           MethodCall(
             'REFERENCE_DISPOSE',
-            RemoteReference('ajackwhack'),
+            remoteReference,
           ),
         ),
         (ByteData data) {},
       );
 
-      expect(
-        referencePairManager
-            .getPairedLocalReference(RemoteReference('ajackwhack')),
-        isNull,
-      );
+      verify(testManager.localHandler.dispose(testManager, testClass));
+      expect(testManager.getPairedLocalReference(remoteReference), isNull);
     });
   });
 }
 
-class TestClassTemplate extends ClassTemplate {
-  TestClassTemplate(int fieldTemplate, this.onMethodTemplate)
-      : super(fieldTemplate);
+class TestClass with LocalReference {
+  @override
+  Type get referenceType => TestClass;
+}
 
-  final String Function(String parameterTemplate) onMethodTemplate;
+class TestReferencePairManager extends MethodChannelReferencePairManager {
+  TestReferencePairManager() : super(<Type>[TestClass], 'test_channel');
+
+  final MockLocalHandler _localHandler = MockLocalHandler();
 
   @override
-  FutureOr<String> methodTemplate(String parameterTemplate) {
-    return onMethodTemplate(parameterTemplate);
+  LocalReferenceCommunicationHandler get localHandler => _localHandler;
+
+  @override
+  RemoteReferenceCommunicationHandler get remoteHandler => TestRemoteHandler();
+}
+
+class TestRemoteHandler
+    extends MethodChannelRemoteReferenceCommunicationHandler {
+  TestRemoteHandler() : super('test_channel');
+
+  @override
+  List<Object> getCreationArguments(LocalReference localReference) {
+    return <Object>[];
   }
 }
+
+class MockLocalHandler extends Mock
+    implements LocalReferenceCommunicationHandler {}

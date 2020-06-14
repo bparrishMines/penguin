@@ -194,6 +194,7 @@ abstract class ReferencePairManager {
       _typeIds[typeId],
       _replaceRemoteReferences(arguments ?? <Object>[]),
     );
+
     _referencePairs[localReference] = remoteReference;
     return localReference;
   }
@@ -294,7 +295,7 @@ abstract class ReferencePairManager {
     return _replaceRemoteReferences(result);
   }
 
-  Future<Object> invokeLocalMethodOnUnpairedReference(
+  Object invokeLocalMethodOnUnpairedReference(
     UnpairedReference unpairedReference,
     String methodName, [
     List<Object> arguments,

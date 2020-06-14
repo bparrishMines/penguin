@@ -11,54 +11,29 @@ abstract class MethodChannelReferencePairManager
     extends PoolableReferencePairManager {
   MethodChannelReferencePairManager(
     List<Type> supportedTypes,
-    this.channelName, {
-    @required this.localHandler,
-    @required this.remoteHandler,
+    String channelName, {
     String poolId,
-    this.referenceMessageCodec = const ReferenceMessageCodec(),
-  })  : assert(channelName != null),
-        assert(localHandler != null),
-        assert(remoteHandler != null),
-        assert(referenceMessageCodec != null),
+    ReferenceMessageCodec messageCodec,
+  })  : channel = MethodChannel(
+            channelName,
+            StandardMethodCodec(
+              messageCodec ?? ReferenceMessageCodec(),
+            )),
         super(supportedTypes, poolId ?? channelName);
 
   static const String _methodCreate = 'REFERENCE_CREATE';
   static const String _methodMethod = 'REFERENCE_METHOD';
   static const String _methodDispose = 'REFERENCE_DISPOSE';
 
-  /// Name used for [channel].
-  ///
-  /// See [MethodChannel.name].
-  final String channelName;
-
-  /// Message codec used for [channel].
-  ///
-  /// [ReferenceMessageCodec] extends [StandardMessageCodec] to provide support
-  /// for passing [RemoteReference]s, [UnpairedReference]s, and
-  /// [TypeReference]s.
-  ///
-  /// See [MethodChannel.codec].
-  final ReferenceMessageCodec referenceMessageCodec;
-
-  @override
-  final LocalReferenceCommunicationHandler localHandler;
-
-  @override
-  final MethodChannelRemoteReferenceCommunicationHandler remoteHandler;
-
   /// [MethodChannel] used to communicate with a [ReferencePairManager] on a different thread/process.
   ///
   /// Null until [initialize] is called.
-  MethodChannel get channel => remoteHandler._channel;
+  final MethodChannel channel;
 
   @override
   void initialize() {
     super.initialize();
-    remoteHandler._channel = MethodChannel(
-      channelName,
-      StandardMethodCodec(referenceMessageCodec),
-    );
-    remoteHandler._channel.setMethodCallHandler((MethodCall call) async {
+    channel.setMethodCallHandler((MethodCall call) async {
       try {
         if (call.method == MethodChannelReferencePairManager._methodCreate) {
           pairWithNewLocalReference(
@@ -104,9 +79,16 @@ abstract class MethodChannelReferencePairManager
 /// [RemoteReference]s.
 abstract class MethodChannelRemoteReferenceCommunicationHandler
     with RemoteReferenceCommunicationHandler {
-  MethodChannelRemoteReferenceCommunicationHandler();
+  MethodChannelRemoteReferenceCommunicationHandler(
+    String channelName, [
+    ReferenceMessageCodec messageCodec,
+  ]) : channel = MethodChannel(
+            channelName,
+            StandardMethodCodec(
+              messageCodec ?? ReferenceMessageCodec(),
+            ));
 
-  MethodChannel _channel;
+  final MethodChannel channel;
 
   @override
   Future<void> create(
@@ -114,7 +96,7 @@ abstract class MethodChannelRemoteReferenceCommunicationHandler
     int typeId,
     List<Object> arguments,
   ) {
-    return _channel.invokeMethod<void>(
+    return channel.invokeMethod<void>(
       MethodChannelReferencePairManager._methodCreate,
       <Object>[remoteReference, typeId, arguments],
     );
@@ -126,7 +108,7 @@ abstract class MethodChannelRemoteReferenceCommunicationHandler
     String methodName,
     List<Object> arguments,
   ) {
-    return _channel.invokeMethod<Object>(
+    return channel.invokeMethod<Object>(
       MethodChannelReferencePairManager._methodMethod,
       <Object>[remoteReference, methodName, arguments],
     );
@@ -134,7 +116,7 @@ abstract class MethodChannelRemoteReferenceCommunicationHandler
 
   @override
   Future<void> dispose(RemoteReference remoteReference) {
-    return _channel.invokeMethod<void>(
+    return channel.invokeMethod<void>(
       MethodChannelReferencePairManager._methodDispose,
       remoteReference,
     );
@@ -146,7 +128,7 @@ abstract class MethodChannelRemoteReferenceCommunicationHandler
     String methodName,
     List<Object> arguments,
   ) {
-    return _channel.invokeMethod<Object>(
+    return channel.invokeMethod<Object>(
       MethodChannelReferencePairManager._methodMethod,
       <Object>[unpairedReference, methodName, arguments],
     );
