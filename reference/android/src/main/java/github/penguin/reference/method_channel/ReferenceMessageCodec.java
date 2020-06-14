@@ -1,7 +1,7 @@
 package github.penguin.reference.method_channel;
 
 import github.penguin.reference.reference.RemoteReference;
-import github.penguin.reference.reference.UnpairedRemoteReference;
+import github.penguin.reference.reference.UnpairedReference;
 import io.flutter.plugin.common.StandardMessageCodec;
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
@@ -16,11 +16,11 @@ public class ReferenceMessageCodec extends StandardMessageCodec {
     if (value instanceof RemoteReference) {
       stream.write(REMOTE_REFERENCE);
       writeValue(stream, ((RemoteReference) value).referenceId);
-    } else if (value instanceof UnpairedRemoteReference) {
+    } else if (value instanceof UnpairedReference) {
       stream.write(UNPAIRED_REMOTE_REFERENCE);
-      writeValue(stream, ((UnpairedRemoteReference) value).classId);
-      writeValue(stream, ((UnpairedRemoteReference) value).creationArguments);
-      writeValue(stream, ((UnpairedRemoteReference) value).managerPoolId);
+      writeValue(stream, ((UnpairedReference) value).classId);
+      writeValue(stream, ((UnpairedReference) value).creationArguments);
+      writeValue(stream, ((UnpairedReference) value).managerPoolId);
     } else {
       super.writeValue(stream, value);
     }
@@ -33,7 +33,7 @@ public class ReferenceMessageCodec extends StandardMessageCodec {
         return new RemoteReference((String) readValueOfType(buffer.get(), buffer));
       case UNPAIRED_REMOTE_REFERENCE:
         //noinspection unchecked
-        return new UnpairedRemoteReference(
+        return new UnpairedReference(
             (Integer) readValueOfType(buffer.get(), buffer),
             (List<Object>) readValueOfType(buffer.get(), buffer),
             (String) readValueOfType(buffer.get(), buffer));

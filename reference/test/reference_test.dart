@@ -7,6 +7,7 @@ import 'reference_matchers.dart';
 
 void main() {
   // TODO: test only non-poolable reference
+  // TODO: Replace tests with mocks
   group('$ReferencePairManager', () {
     test('pairWithNewLocalReference', () {
       final allArguments = <List<Object>>[];
@@ -15,7 +16,7 @@ void main() {
         <Type>[TestClass],
         "test_id",
         localHandler: TestLocalHandler(
-          onPairWithNewLocalReference: (
+          onCreate: (
             ReferencePairManager referencePairManager,
             Type referenceType,
             List<Object> arguments,
@@ -31,12 +32,12 @@ void main() {
         0,
         <Object>[
           'Hello',
-          UnpairedRemoteReference(0, <Object>[], "test_id"),
+          UnpairedReference(0, <Object>[], "test_id"),
           <Object>[
-            UnpairedRemoteReference(0, <Object>[], "test_id"),
+            UnpairedReference(0, <Object>[], "test_id"),
           ],
           <Object, Object>{
-            1.1: UnpairedRemoteReference(0, <Object>[], "test_id"),
+            1.1: UnpairedReference(0, <Object>[], "test_id"),
           },
         ],
       );
@@ -66,14 +67,14 @@ void main() {
         <Type>[TestClass],
         "test_id",
         localHandler: TestLocalHandler(
-          onPairWithNewLocalReference: (
+          onCreate: (
             ReferencePairManager referencePairManager,
             Type referenceType,
             List<Object> arguments,
           ) {
             return TestClass();
           },
-          onInvokeLocalMethod: (
+          onInvokeMethod: (
             ReferencePairManager referencePairManager,
             LocalReference localReference,
             String methodName,
@@ -91,12 +92,60 @@ void main() {
         'aMethod',
         <Object>[
           'Hello',
-          UnpairedRemoteReference(0, <Object>[], "test_id"),
+          UnpairedReference(0, <Object>[], "test_id"),
           <Object>[
-            UnpairedRemoteReference(0, <Object>[], "test_id"),
+            UnpairedReference(0, <Object>[], "test_id"),
           ],
           <Object, Object>{
-            1.1: UnpairedRemoteReference(0, <Object>[], "test_id"),
+            1.1: UnpairedReference(0, <Object>[], "test_id"),
+          },
+        ],
+      );
+
+      expect(methodArguments, <Matcher>[
+        equals('Hello'),
+        isA<TestClass>(),
+        contains(isA<TestClass>()),
+        containsPair(1.1, isA<TestClass>()),
+      ]);
+    });
+
+    test('invokeLocalMethodOnUnpairedReference', () {
+      final methodArguments = <Object>[];
+      final manager = TestReferencePairManager(
+        <Type>[TestClass],
+        "test_id",
+        localHandler: TestLocalHandler(
+          onCreate: (
+            ReferencePairManager referencePairManager,
+            Type referenceType,
+            List<Object> arguments,
+          ) {
+            return TestClass();
+          },
+          onInvokeMethod: (
+            ReferencePairManager referencePairManager,
+            LocalReference localReference,
+            String methodName,
+            List<Object> arguments,
+          ) {
+            if (methodName == 'aMethod') methodArguments.addAll(arguments);
+            return null;
+          },
+        ),
+      )..initialize();
+
+      manager.invokeLocalMethodOnUnpairedReference(
+        UnpairedReference(0, <Object>[]),
+        'aMethod',
+        <Object>[
+          'Hello',
+          UnpairedReference(0, <Object>[], "test_id"),
+          <Object>[
+            UnpairedReference(0, <Object>[], "test_id"),
+          ],
+          <Object, Object>{
+            1.1: UnpairedReference(0, <Object>[], "test_id"),
           },
         ],
       );
@@ -114,7 +163,7 @@ void main() {
         <Type>[TestClass],
         "test_id",
         localHandler: TestLocalHandler(
-          onPairWithNewLocalReference: (
+          onCreate: (
             ReferencePairManager referencePairManager,
             Type referenceType,
             List<Object> arguments,
@@ -155,7 +204,7 @@ void main() {
 
             return <Object>[];
           },
-          onPairWithNewRemoteReference: (
+          onCreate: (
             RemoteReference remoteReference,
             int typeId,
             List<Object> arguments,
@@ -177,11 +226,11 @@ void main() {
       expect(manager.getPairedRemoteReference(testClass), remoteReference);
       expect(creationArguments, <Matcher>[
         equals('Hello'),
-        isUnpairedRemoteReference(0, <Object>[], "test_id"),
-        contains(isUnpairedRemoteReference(0, <Object>[], "test_id")),
+        isUnpairedReference(0, <Object>[], "test_id"),
+        contains(isUnpairedReference(0, <Object>[], "test_id")),
         containsPair(
           1.1,
-          isUnpairedRemoteReference(0, <Object>[], "test_id"),
+          isUnpairedReference(0, <Object>[], "test_id"),
         ),
       ]);
     });
@@ -196,14 +245,14 @@ void main() {
           onGetCreationArguments: (LocalReference localReference) {
             return <Object>[];
           },
-          onPairWithNewRemoteReference: (
+          onCreate: (
             RemoteReference remoteReference,
             int typeId,
             List<Object> arguments,
           ) {
             return Future<void>.value();
           },
-          onInvokeRemoteMethod: (
+          onInvokeMethod: (
             RemoteReference remoteReference,
             String methodName,
             List<Object> arguments,
@@ -229,43 +278,86 @@ void main() {
 
       expect(methodArguments, <Matcher>[
         equals('Hello'),
-        isUnpairedRemoteReference(0, <Object>[], "test_id"),
-        contains(isUnpairedRemoteReference(0, <Object>[], "test_id")),
+        isUnpairedReference(0, <Object>[], "test_id"),
+        contains(isUnpairedReference(0, <Object>[], "test_id")),
         containsPair(
           1.1,
-          isUnpairedRemoteReference(0, <Object>[], "test_id"),
+          isUnpairedReference(0, <Object>[], "test_id"),
         ),
       ]);
     });
-  });
 
-  test('disposePairWithLocalReference', () async {
-    final manager = TestReferencePairManager(
-      <Type>[TestClass],
-      "test_id",
-      remoteHandler: TestRemoteHandler(
-        onGetCreationArguments: (LocalReference localReference) {
-          return <Object>[];
-        },
-        onPairWithNewRemoteReference: (
-          RemoteReference remoteReference,
-          int typeId,
-          List<Object> arguments,
-        ) {
-          return Future<void>.value();
-        },
-      ),
-    )..initialize();
+    test('invokeRemoteMethodOnUnpairedReference', () async {
+      final methodArguments = <Object>[];
 
-    final testClass = TestClass();
-    final RemoteReference remoteReference =
-        await manager.pairWithNewRemoteReference(
-      testClass,
-    );
-    manager.disposePairWithLocalReference(testClass);
+      final manager = TestReferencePairManager(
+        <Type>[TestClass],
+        "test_id",
+        remoteHandler: TestRemoteHandler(
+          onGetCreationArguments: (LocalReference localReference) {
+            return <Object>[];
+          },
+          onInvokeMethodOnUnpairedReference: (
+            UnpairedReference unpairedReference,
+            String methodName,
+            List<Object> arguments,
+          ) {
+            methodArguments.addAll(arguments);
+            return Future<void>.value();
+          },
+        ),
+      )..initialize();
 
-    expect(manager.getPairedLocalReference(remoteReference), isNull);
-    expect(manager.getPairedRemoteReference(testClass), isNull);
+      await manager.invokeRemoteMethodOnUnpairedReference(
+        TestClass(),
+        'aMethod',
+        <Object>[
+          'Hello',
+          TestClass(),
+          <Object>[TestClass()],
+          <Object, Object>{1.1: TestClass()},
+        ],
+      );
+
+      expect(methodArguments, <Matcher>[
+        equals('Hello'),
+        isUnpairedReference(0, <Object>[], "test_id"),
+        contains(isUnpairedReference(0, <Object>[], "test_id")),
+        containsPair(
+          1.1,
+          isUnpairedReference(0, <Object>[], "test_id"),
+        ),
+      ]);
+    });
+
+    test('disposePairWithLocalReference', () async {
+      final manager = TestReferencePairManager(
+        <Type>[TestClass],
+        "test_id",
+        remoteHandler: TestRemoteHandler(
+          onGetCreationArguments: (LocalReference localReference) {
+            return <Object>[];
+          },
+          onCreate: (
+            RemoteReference remoteReference,
+            int typeId,
+            List<Object> arguments,
+          ) {
+            return Future<void>.value();
+          },
+        ),
+      )..initialize();
+
+      final testClass = TestClass();
+      final RemoteReference remoteReference =
+          await manager.pairWithNewRemoteReference(
+        testClass,
+      );
+      manager.disposePairWithLocalReference(testClass);
+
+      expect(manager.getPairedLocalReference(remoteReference), isNull);
+      expect(manager.getPairedRemoteReference(testClass), isNull);
+    });
   });
 
   group('$PoolableReferencePairManager', () {
@@ -315,7 +407,7 @@ void main() {
         <Type>[TestClass],
         "test_id",
         localHandler: TestLocalHandler(
-          onPairWithNewLocalReference: (
+          onCreate: (
             ReferencePairManager referencePairManager,
             Type referenceType,
             List<Object> arguments,
@@ -330,7 +422,7 @@ void main() {
         <Type>[TestClass2],
         "test_id2",
         localHandler: TestLocalHandler(
-          onPairWithNewLocalReference: (
+          onCreate: (
             ReferencePairManager referencePairManager,
             Type referenceType,
             List<Object> arguments,
@@ -348,13 +440,13 @@ void main() {
         0,
         <Object>[
           'Hello',
-          UnpairedRemoteReference(0, <Object>[], "test_id2"),
-          UnpairedRemoteReference(0, <Object>[], "test_id"),
+          UnpairedReference(0, <Object>[], "test_id2"),
+          UnpairedReference(0, <Object>[], "test_id"),
           <Object>[
-            UnpairedRemoteReference(0, <Object>[], "test_id"),
+            UnpairedReference(0, <Object>[], "test_id"),
           ],
           <Object, Object>{
-            1.1: UnpairedRemoteReference(0, <Object>[], "test_id"),
+            1.1: UnpairedReference(0, <Object>[], "test_id"),
           },
         ],
       );
@@ -398,7 +490,7 @@ void main() {
 
             return <Object>[];
           },
-          onPairWithNewRemoteReference: (
+          onCreate: (
             RemoteReference remoteReference,
             int typeId,
             List<Object> arguments,
@@ -417,7 +509,7 @@ void main() {
             if (localReference is TestClass2) return <Object>[];
             return null;
           },
-          onPairWithNewRemoteReference: (
+          onCreate: (
             RemoteReference remoteReference,
             int typeId,
             List<Object> arguments,
@@ -435,12 +527,12 @@ void main() {
 
       expect(creationArguments, <Matcher>[
         equals('Hello'),
-        isUnpairedRemoteReference(0, <Object>[], "test_id2"),
-        isUnpairedRemoteReference(0, <Object>[], "test_id"),
-        contains(isUnpairedRemoteReference(0, <Object>[], "test_id")),
+        isUnpairedReference(0, <Object>[], "test_id2"),
+        isUnpairedReference(0, <Object>[], "test_id"),
+        contains(isUnpairedReference(0, <Object>[], "test_id")),
         containsPair(
           1.1,
-          isUnpairedRemoteReference(0, <Object>[], "test_id"),
+          isUnpairedReference(0, <Object>[], "test_id"),
         ),
       ]);
     });
@@ -474,8 +566,9 @@ class TestReferencePairManager extends PoolableReferencePairManager {
 class TestRemoteHandler implements RemoteReferenceCommunicationHandler {
   const TestRemoteHandler({
     this.onGetCreationArguments,
-    this.onPairWithNewRemoteReference,
-    this.onInvokeRemoteMethod,
+    this.onCreate,
+    this.onInvokeMethod,
+    this.onInvokeMethodOnUnpairedReference,
   });
 
   final List<Object> Function(LocalReference localReference)
@@ -485,13 +578,18 @@ class TestRemoteHandler implements RemoteReferenceCommunicationHandler {
     RemoteReference remoteReference,
     int typeId,
     List<Object> arguments,
-  ) onPairWithNewRemoteReference;
+  ) onCreate;
 
   final Future<Object> Function(
     RemoteReference remoteReference,
     String methodName,
     List<Object> arguments,
-  ) onInvokeRemoteMethod;
+  ) onInvokeMethod;
+
+  final Future<Object> Function(
+      UnpairedReference unpairedReference,
+      String methodName,
+      List<Object> arguments) onInvokeMethodOnUnpairedReference;
 
   @override
   List<Object> getCreationArguments(LocalReference localReference) {
@@ -504,7 +602,7 @@ class TestRemoteHandler implements RemoteReferenceCommunicationHandler {
     int typeId,
     List<Object> arguments,
   ) {
-    return onPairWithNewRemoteReference(remoteReference, typeId, arguments);
+    return onCreate(remoteReference, typeId, arguments);
   }
 
   @override
@@ -518,28 +616,37 @@ class TestRemoteHandler implements RemoteReferenceCommunicationHandler {
     String methodName,
     List<Object> arguments,
   ) {
-    return onInvokeRemoteMethod(remoteReference, methodName, arguments);
+    return onInvokeMethod(remoteReference, methodName, arguments);
+  }
+
+  @override
+  Future<Object> invokeMethodOnUnpairedReference(
+      UnpairedReference unpairedReference,
+      String methodName,
+      List<Object> arguments) {
+    return onInvokeMethodOnUnpairedReference(
+        unpairedReference, methodName, arguments);
   }
 }
 
 class TestLocalHandler implements LocalReferenceCommunicationHandler {
   const TestLocalHandler({
-    this.onPairWithNewLocalReference,
-    this.onInvokeLocalMethod,
+    this.onCreate,
+    this.onInvokeMethod,
   });
 
   final LocalReference Function(
     ReferencePairManager referencePairManager,
     Type referenceType,
     List<Object> arguments,
-  ) onPairWithNewLocalReference;
+  ) onCreate;
 
   final Object Function(
     ReferencePairManager referencePairManager,
     LocalReference localReference,
     String methodName,
     List<Object> arguments,
-  ) onInvokeLocalMethod;
+  ) onInvokeMethod;
 
   @override
   LocalReference create(
@@ -547,7 +654,7 @@ class TestLocalHandler implements LocalReferenceCommunicationHandler {
     Type referenceType,
     List<Object> arguments,
   ) {
-    return onPairWithNewLocalReference(
+    return onCreate(
       referencePairManager,
       referenceType,
       arguments,
@@ -569,7 +676,7 @@ class TestLocalHandler implements LocalReferenceCommunicationHandler {
     String methodName,
     List<Object> arguments,
   ) {
-    return onInvokeLocalMethod(
+    return onInvokeMethod(
       referencePairManager,
       localReference,
       methodName,

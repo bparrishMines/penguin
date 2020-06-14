@@ -53,12 +53,13 @@ class RemoteReference {
 /// When passed to a [ReferencePairManager], it will try to convert it into a
 /// [LocalReference] with
 /// [LocalReferenceCommunicationHandler.create].
-class UnpairedRemoteReference {
-  const UnpairedRemoteReference(
+class UnpairedReference {
+  const UnpairedReference(
     this.typeId,
     this.creationArguments, [
     this.managerPoolId,
-  ]);
+  ])  : assert(typeId != null),
+        assert(creationArguments != null);
 
   /// Represents the type that is represented.
   ///

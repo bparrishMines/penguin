@@ -34,7 +34,7 @@ abstract class MethodChannelReferencePairManager
   /// Message codec used for [channel].
   ///
   /// [ReferenceMessageCodec] extends [StandardMessageCodec] to provide support
-  /// for passing [RemoteReference]s, [UnpairedRemoteReference]s, and
+  /// for passing [RemoteReference]s, [UnpairedReference]s, and
   /// [TypeReference]s.
   ///
   /// See [MethodChannel.codec].
@@ -68,7 +68,16 @@ abstract class MethodChannelReferencePairManager
           );
           return null;
         } else if (call.method ==
-            MethodChannelReferencePairManager._methodMethod) {
+                MethodChannelReferencePairManager._methodMethod &&
+            call.arguments[0] is UnpairedReference) {
+          return invokeLocalMethodOnUnpairedReference(
+            call.arguments[0],
+            call.arguments[1],
+            call.arguments[2],
+          );
+        } else if (call.method ==
+                MethodChannelReferencePairManager._methodMethod &&
+            call.arguments[0] is RemoteReference) {
           return invokeLocalMethod(
             getPairedLocalReference(call.arguments[0]),
             call.arguments[1],
@@ -130,9 +139,21 @@ abstract class MethodChannelRemoteReferenceCommunicationHandler
       remoteReference,
     );
   }
+
+  @override
+  Future<Object> invokeMethodOnUnpairedReference(
+    UnpairedReference unpairedReference,
+    String methodName,
+    List<Object> arguments,
+  ) {
+    return _channel.invokeMethod<Object>(
+      MethodChannelReferencePairManager._methodMethod,
+      <Object>[unpairedReference, methodName, arguments],
+    );
+  }
 }
 
-/// Implementation of [StandardMessageCodec] that supports serializing [TypeReference]s, [RemoteReference]s, and [UnpairedRemoteReference]s.
+/// Implementation of [StandardMessageCodec] that supports serializing [TypeReference]s, [RemoteReference]s, and [UnpairedReference]s.
 ///
 /// When extending, no int below 130 should be used as a key. See
 /// [StandardMessageCodec] for more info on extending a [StandardMessageCodec].
@@ -140,15 +161,15 @@ class ReferenceMessageCodec extends StandardMessageCodec {
   const ReferenceMessageCodec();
 
   static const int _valueRemoteReference = 128;
-  static const int _valueUnpairedRemoteReference = 129;
+  static const int _valueUnpairedReference = 129;
 
   @override
   void writeValue(WriteBuffer buffer, dynamic value) {
     if (value is RemoteReference) {
       buffer.putUint8(_valueRemoteReference);
       writeValue(buffer, value.referenceId);
-    } else if (value is UnpairedRemoteReference) {
-      buffer.putUint8(_valueUnpairedRemoteReference);
+    } else if (value is UnpairedReference) {
+      buffer.putUint8(_valueUnpairedReference);
       writeValue(buffer, value.typeId);
       writeValue(buffer, value.creationArguments);
       writeValue(buffer, value.managerPoolId);
@@ -162,8 +183,8 @@ class ReferenceMessageCodec extends StandardMessageCodec {
     switch (type) {
       case _valueRemoteReference:
         return RemoteReference(readValueOfType(buffer.getUint8(), buffer));
-      case _valueUnpairedRemoteReference:
-        return UnpairedRemoteReference(
+      case _valueUnpairedReference:
+        return UnpairedReference(
           readValueOfType(buffer.getUint8(), buffer),
           readValueOfType(buffer.getUint8(), buffer),
           readValueOfType(buffer.getUint8(), buffer),

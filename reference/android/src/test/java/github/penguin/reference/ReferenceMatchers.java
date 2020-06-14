@@ -1,7 +1,7 @@
 package github.penguin.reference;
 
 import github.penguin.reference.reference.RemoteReference;
-import github.penguin.reference.reference.UnpairedRemoteReference;
+import github.penguin.reference.reference.UnpairedReference;
 import github.penguin.reference.templates.$TemplateReferencePairManager.ClassTemplate;
 import io.flutter.plugin.common.MethodCall;
 import org.hamcrest.Description;
@@ -14,9 +14,9 @@ class ReferenceMatchers {
     return new IsMethodCall(method, arguments);
   }
 
-  static Matcher isUnpairedRemoteReference(
+  static Matcher isUnpairedReference(
       final Integer classId, final Object creationArguments, final String managerPoolId) {
-    return new IsUnpairedRemoteReference(classId, creationArguments, managerPoolId);
+    return new IsUnpairedReference(classId, creationArguments, managerPoolId);
   }
 
   static Matcher isClassTemplate(int fieldTemplate) {
@@ -62,12 +62,12 @@ class ReferenceMatchers {
     }
   }
 
-  private static class IsUnpairedRemoteReference extends TypeSafeMatcher<UnpairedRemoteReference> {
+  private static class IsUnpairedReference extends TypeSafeMatcher<UnpairedReference> {
     private final Integer classId;
     private final Object creationArguments;
     private final String managerPoolId;
 
-    private IsUnpairedRemoteReference(Integer classId, Object creationArguments, String managerPoolId) {
+    private IsUnpairedReference(Integer classId, Object creationArguments, String managerPoolId) {
       this.classId = classId;
       this.creationArguments = creationArguments;
       this.managerPoolId = managerPoolId;
@@ -79,7 +79,7 @@ class ReferenceMatchers {
         final String managerPoolId,
         Description description) {
       description
-          .appendText(String.format(" An %s with type reference: ", UnpairedRemoteReference.class.getSimpleName()))
+          .appendText(String.format(" An %s with type reference: ", UnpairedReference.class.getSimpleName()))
           .appendText(classId != null ? classId.toString() : null)
           .appendText(" and creation arguments: ")
           .appendText(creationArguments != null ? creationArguments.toString() : null)
@@ -94,16 +94,20 @@ class ReferenceMatchers {
 
     @Override
     protected void describeMismatchSafely(
-        UnpairedRemoteReference reference, Description mismatchDescription) {
+        UnpairedReference reference, Description mismatchDescription) {
       describe(reference.classId, reference.creationArguments, reference.managerPoolId, mismatchDescription);
     }
 
     @Override
-    protected boolean matchesSafely(UnpairedRemoteReference reference) {
+    protected boolean matchesSafely(UnpairedReference reference) {
       if (!classId.equals(reference.classId)) return false;
-      if (!managerPoolId.equals(reference.managerPoolId)) return false;
-      if (creationArguments instanceof Matcher)
+      if (managerPoolId != null && !managerPoolId.equals(reference.managerPoolId)) return false;
+      if (reference.managerPoolId != null && !reference.managerPoolId.equals(managerPoolId)) {
+        return false;
+      }
+      if (creationArguments instanceof Matcher) {
         return ((Matcher) creationArguments).matches(reference.creationArguments);
+      }
       return creationArguments == reference.creationArguments;
     }
   }

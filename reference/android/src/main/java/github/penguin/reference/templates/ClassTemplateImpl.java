@@ -22,28 +22,48 @@ public class ClassTemplateImpl implements ClassTemplate {
   }
 
   @Override
-  public CompletableRunnable<String> methodTemplate(final String parameterTemplate) throws Exception {
+  public Object methodTemplate(final String parameterTemplate) throws Exception {
     final CompletableRunnable<String> completer =
         new CompletableRunnable<String>() {
           @Override
           public void run() {
-            referencePairManager
-                .invokeRemoteMethod(
-                    referencePairManager.getPairedRemoteReference(ClassTemplateImpl.this),
-                    $TemplateReferencePairManager.$MethodNames.methodTemplate,
-                    Collections.singletonList((Object) parameterTemplate))
-                .setOnCompleteListener(
-                    new OnCompleteListener() {
-                      @Override
-                      public void onComplete(Object result) {
-                        complete((String) result);
-                      }
+            if (referencePairManager.getPairedRemoteReference(ClassTemplateImpl.this) == null) {
+              referencePairManager
+                  .invokeRemoteMethodOnUnpairedReference(
+                      ClassTemplateImpl.this,
+                      $TemplateReferencePairManager.$MethodNames.methodTemplate,
+                      Collections.singletonList((Object) parameterTemplate))
+                  .setOnCompleteListener(
+                      new OnCompleteListener() {
+                        @Override
+                        public void onComplete(Object result) {
+                          complete((String) result);
+                        }
 
-                      @Override
-                      public void onError(Throwable throwable) {
-                        completeWithError(throwable);
-                      }
-                    });
+                        @Override
+                        public void onError(Throwable throwable) {
+                          completeWithError(throwable);
+                        }
+                      });
+            } else {
+              referencePairManager
+                  .invokeRemoteMethod(
+                      referencePairManager.getPairedRemoteReference(ClassTemplateImpl.this),
+                      $TemplateReferencePairManager.$MethodNames.methodTemplate,
+                      Collections.singletonList((Object) parameterTemplate))
+                  .setOnCompleteListener(
+                      new OnCompleteListener() {
+                        @Override
+                        public void onComplete(Object result) {
+                          complete((String) result);
+                        }
+
+                        @Override
+                        public void onError(Throwable throwable) {
+                          completeWithError(throwable);
+                        }
+                      });
+            }
           }
         };
 

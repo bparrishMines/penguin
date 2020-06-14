@@ -46,7 +46,7 @@ public abstract class PoolableReferencePairManager extends ReferencePairManager 
   @SuppressWarnings({"unchecked", "ConstantConditions"})
   @Override
   Object replaceRemoteReferences(Object argument) throws Exception {
-    if (!(argument instanceof RemoteReference) && !(argument instanceof UnpairedRemoteReference)) {
+    if (!(argument instanceof RemoteReference) && !(argument instanceof UnpairedReference)) {
       return super.replaceRemoteReferences(argument);
     }
 
@@ -57,16 +57,16 @@ public abstract class PoolableReferencePairManager extends ReferencePairManager 
       return localRefFromRemoteRef((RemoteReference) argument);
     }
 
-    final UnpairedRemoteReference unpairedRemoteReference = (UnpairedRemoteReference) argument;
+    final UnpairedReference unpairedReference = (UnpairedReference) argument;
     final PoolableReferencePairManager manager =
-        poolId.equals(unpairedRemoteReference.managerPoolId)
+        poolId.equals(unpairedReference.managerPoolId)
             ? this
-            : managerFromPoolId(unpairedRemoteReference.managerPoolId);
+            : managerFromPoolId(unpairedReference.managerPoolId);
     return manager.getLocalHandler()
         .create(
             manager,
-            manager.classIds.get(((UnpairedRemoteReference) argument).classId),
-            (List<Object>) replaceRemoteReferences(((UnpairedRemoteReference) argument).creationArguments));
+            manager.classIds.get(((UnpairedReference) argument).classId),
+            (List<Object>) replaceRemoteReferences(((UnpairedReference) argument).creationArguments));
   }
 
   @SuppressWarnings({"ConstantConditions", "unchecked"})
@@ -88,7 +88,7 @@ public abstract class PoolableReferencePairManager extends ReferencePairManager 
       return manager.getPairedRemoteReference(localReference);
     }
 
-    return new UnpairedRemoteReference(
+    return new UnpairedReference(
         manager.classIds.inverse().get(((LocalReference) argument).getReferenceClass()),
         (List<Object>)
             manager.replaceLocalReferences(manager.getRemoteHandler().getCreationArguments(localReference)), manager.poolId);

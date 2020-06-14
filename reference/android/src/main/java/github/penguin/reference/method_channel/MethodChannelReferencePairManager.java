@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import github.penguin.reference.reference.LocalReference;
 import github.penguin.reference.reference.PoolableReferencePairManager;
 import github.penguin.reference.reference.RemoteReference;
+import github.penguin.reference.reference.UnpairedReference;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
@@ -81,11 +82,20 @@ public abstract class MethodChannelReferencePairManager extends PoolableReferenc
         case METHOD_METHOD:
           {
             final List<Object> arguments = (List<Object>) call.arguments;
-            final Object result =
-                invokeLocalMethod(
-                    getPairedLocalReference((RemoteReference) arguments.get(0)),
-                    (String) arguments.get(1),
-                    (List<Object>) arguments.get(2));
+            final Object result;
+            if (arguments.get(0) instanceof UnpairedReference) {
+              result = invokeLocalMethodOnUnpairedReference((UnpairedReference) arguments.get(0),
+                  (String) arguments.get(1),
+                  (List<Object>) arguments.get(2));
+            } else if (arguments.get(0) instanceof RemoteReference) {
+              result =
+                  invokeLocalMethod(
+                      getPairedLocalReference((RemoteReference) arguments.get(0)),
+                      (String) arguments.get(1),
+                      (List<Object>) arguments.get(2));
+            } else {
+              throw new IllegalArgumentException(arguments.toString());
+            }
             channelResult.success(result);
             break;
           }

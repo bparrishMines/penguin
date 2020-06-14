@@ -2,8 +2,10 @@ package github.penguin.reference.method_channel;
 
 import androidx.annotation.Nullable;
 import github.penguin.reference.reference.CompletableRunnable;
+import github.penguin.reference.reference.LocalReference;
 import github.penguin.reference.reference.ReferencePairManager;
 import github.penguin.reference.reference.RemoteReference;
+import github.penguin.reference.reference.UnpairedReference;
 import io.flutter.plugin.common.MethodChannel;
 import java.util.ArrayList;
 import java.util.List;
@@ -71,6 +73,48 @@ public abstract class MethodChannelRemoteReferenceCommunicationHandler
           public void run() {
             final List<Object> methodCallArgs = new ArrayList<>();
             methodCallArgs.add(remoteReference);
+            methodCallArgs.add(methodName);
+            methodCallArgs.add(arguments);
+            channel.invokeMethod(
+                MethodChannelReferencePairManager.METHOD_METHOD,
+                methodCallArgs,
+                new MethodChannel.Result() {
+                  @Override
+                  public void success(@Nullable Object result) {
+                    complete(result);
+                  }
+
+                  @Override
+                  public void error(
+                      String errorCode,
+                      @Nullable String errorMessage,
+                      @Nullable Object errorDetails) {
+                    completeWithError(
+                        new Throwable(String.format("%s: %s", errorCode, errorMessage)));
+                  }
+
+                  @Override
+                  public void notImplemented() {
+                    final String message =
+                        String.format("Method `%s` returned as not implemented.", methodName);
+                    completeWithError(new Throwable(message));
+                  }
+                });
+          }
+        };
+
+    completer.run();
+    return completer;
+  }
+
+  @Override
+  public CompletableRunnable<Object> invokeMethodOnUnpairedReference(final UnpairedReference unpairedReference, final String methodName, final List<Object> arguments) {
+    final CompletableRunnable<Object> completer =
+        new CompletableRunnable<Object>() {
+          @Override
+          public void run() {
+            final List<Object> methodCallArgs = new ArrayList<>();
+            methodCallArgs.add(unpairedReference);
             methodCallArgs.add(methodName);
             methodCallArgs.add(arguments);
             channel.invokeMethod(

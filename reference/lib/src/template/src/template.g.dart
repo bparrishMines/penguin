@@ -101,13 +101,21 @@ class _$RemoteReferenceCommunicationHandler
   }
 }
 
-mixin _$ClassTemplateMethods {
+mixin _$ClassTemplateMethods implements LocalReference {
   Future<Object> _$methodTemplate(
     ReferencePairManager referencePairManager,
     String parameterTemplate,
   ) {
+    if (referencePairManager.getPairedRemoteReference(this) == null) {
+      return referencePairManager.invokeRemoteMethodOnUnpairedReference(
+        this,
+        'methodTemplate',
+        <Object>[parameterTemplate],
+      );
+    }
+
     return referencePairManager.invokeRemoteMethod(
-      referencePairManager.getPairedRemoteReference(this as LocalReference),
+      referencePairManager.getPairedRemoteReference(this),
       'methodTemplate',
       <Object>[parameterTemplate],
     );

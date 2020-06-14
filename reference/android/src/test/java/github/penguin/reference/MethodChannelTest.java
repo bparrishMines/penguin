@@ -3,7 +3,7 @@ package github.penguin.reference;
 import static github.penguin.reference.ReferenceMatchers.isClassTemplate;
 import static github.penguin.reference.ReferenceMatchers.isMethodCall;
 import static github.penguin.reference.ReferenceMatchers.isRemoteReference;
-import static github.penguin.reference.ReferenceMatchers.isUnpairedRemoteReference;
+import static github.penguin.reference.ReferenceMatchers.isUnpairedReference;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
@@ -13,7 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import github.penguin.reference.reference.CompletableRunnable;
 import github.penguin.reference.reference.RemoteReference;
-import github.penguin.reference.reference.UnpairedRemoteReference;
+import github.penguin.reference.reference.UnpairedReference;
 import github.penguin.reference.templates.$TemplateReferencePairManager.ClassTemplate;
 import github.penguin.reference.templates.PluginTemplate.ReferencePairManagerTemplate;
 import github.penguin.reference.templates.ClassTemplateImpl;
@@ -39,7 +39,6 @@ public class MethodChannelTest {
   private static MockBinaryMessenger mockMessenger;
   private static MethodChannel.MethodCallHandler methodCallHandler;
   private static ReferencePairManagerTemplate referencePairManager;
-
 
   @BeforeClass
   public static void setUpAll() {
@@ -93,10 +92,6 @@ public class MethodChannelTest {
               final List<Object> arguments = (List<Object>) call.arguments;
               if (arguments.get(1).equals("methodTemplate")) {
                 result.success("pine" + ((List<Object>) arguments.get(2)).get(0));
-              } else if (arguments.get(1).equals("returnsReference")) {
-                result.success(
-                    new UnpairedRemoteReference(
-                        0, Arrays.asList((Object) 123, null, null, null)));
               }
             } else {
               result.success(null);
@@ -131,16 +126,16 @@ public class MethodChannelTest {
     final ByteBuffer message =
         referencePairManager.methodCodec.encodeMethodCall(
             new MethodCall("ewoif",
-                new UnpairedRemoteReference(1, Collections.emptyList(), "apple"))
+                new UnpairedReference(1, Collections.emptyList(), "apple"))
         );
 
     assertThat(referencePairManager.methodCodec.decodeMethodCall((ByteBuffer) message.position(0)),
         isMethodCall("ewoif",
-            isUnpairedRemoteReference(1, empty(), "apple")));
+            isUnpairedReference(1, empty(), "apple")));
   }
 
   @Test
-  public void methodChannelReferencePairManager_createRemoteReferenceFor() {
+  public void methodChannelReferencePairManager_pairWithNewRemoteReference() {
     final ClassTemplateImpl classTemplate = new ClassTemplateImpl(23);
 
     referencePairManager.pairWithNewRemoteReference(classTemplate);
@@ -161,7 +156,7 @@ public class MethodChannelTest {
   }
 
   @Test
-  public void methodChannelReferencePairManager_disposeRemoteReferenceFor() {
+  public void methodChannelReferencePairManager_disposePairWithLocalReference() {
     final ClassTemplate classTemplate = new ClassTemplateImpl(23);
 
     referencePairManager.pairWithNewRemoteReference(classTemplate);
@@ -178,7 +173,7 @@ public class MethodChannelTest {
   }
 
   @Test
-  public void methodChannelReferencePairManager_executeRemoteMethodFor() throws Exception {
+  public void methodChannelReferencePairManager_invokeRemoteMethod() throws Exception {
     final ClassTemplate classTemplate =
         new ClassTemplateImpl(23).setReferencePairManager(referencePairManager);
 
@@ -215,9 +210,42 @@ public class MethodChannelTest {
                     contains(equalTo("apple"))))));
   }
 
+  @Test
+  public void methodChannelReferencePairManager_invokeRemoteMethodOnUnpairedReference() throws Exception {
+    final ClassTemplate classTemplate =
+        new ClassTemplateImpl(24).setReferencePairManager(referencePairManager);
+
+    final List<Object> results = new ArrayList<>();
+
+    @SuppressWarnings("unchecked")
+    final CompletableRunnable<Object> runnable =
+        (CompletableRunnable<Object>) classTemplate.methodTemplate("apple");
+    runnable.setOnCompleteListener(
+        new CompletableRunnable.OnCompleteListener() {
+          @Override
+          public void onComplete(Object result) {
+            results.add(result);
+          }
+
+          @Override
+          public void onError(Throwable throwable) {}
+        });
+
+    assertEquals(results.get(0), "pineapple");
+    assertThat(
+        methodCallLog,
+        contains(
+            isMethodCall(
+                "REFERENCE_METHOD",
+                contains(
+                    isUnpairedReference(0, contains(equalTo(24)), null),
+                    equalTo("methodTemplate"),
+                    contains(equalTo("apple"))))));
+  }
+
   @SuppressWarnings("RedundantThrows")
   @Test
-  public void methodChannelReferencePairManager_createLocalReferenceFor() throws Exception {
+  public void methodChannelReferencePairManager_pairWithNewLocalReference() throws Exception {
     final ByteBuffer message =
         referencePairManager.methodCodec.encodeMethodCall(
             new MethodCall(
@@ -237,7 +265,7 @@ public class MethodChannelTest {
 
   @SuppressWarnings({"RedundantThrows", "rawtypes"})
   @Test
-  public void methodChannelReferencePairManager_executeLocalMethodFor() throws Exception {
+  public void methodChannelReferencePairManager_invokeLocalMethod() throws Exception {
     final TestClassTemplate classTemplate = new TestClassTemplate();
     referencePairManager.pairWithNewRemoteReference(classTemplate);
 
@@ -257,8 +285,32 @@ public class MethodChannelTest {
         (Matcher) contains(equalTo("Goku")));
   }
 
+  @SuppressWarnings({"RedundantThrows", "rawtypes"})
   @Test
-  public void methodChannelReferencePairManager_disposeLocalReference() {
+  public void methodChannelReferencePairManager_invokeLocalMethodOnUnpairedReference() throws Exception {
+    final ByteBuffer message =
+        referencePairManager.methodCodec.encodeMethodCall(
+            new MethodCall(
+                "REFERENCE_METHOD",
+                Arrays.asList(
+                    new UnpairedReference(0, Collections.singletonList((Object) 18)),
+                    "methodTemplate",
+                    Collections.singletonList("Goku"))));
+    mockMessenger.receive("github.penguin/reference", message);
+
+    assertThat(
+        methodCallLog,
+        contains(
+            isMethodCall(
+                "REFERENCE_METHOD",
+                contains(
+                    isUnpairedReference(0, contains(equalTo(24)), null),
+                    equalTo("methodTemplate"),
+                    contains(equalTo("apple"))))));
+  }
+
+  @Test
+  public void methodChannelReferencePairManager_disposePairWithRemoteReference() {
     final ByteBuffer createMessage =
         referencePairManager.methodCodec.encodeMethodCall(
             new MethodCall(

@@ -45,6 +45,12 @@ mixin RemoteReferenceCommunicationHandler {
     List<Object> arguments,
   );
 
+  Future<Object> invokeMethodOnUnpairedReference(
+    UnpairedReference unpairedReference,
+    String methodName,
+    List<Object> arguments,
+  );
+
   /// Dispose [remoteReference] on a remote thread/process.
   ///
   /// This method should also stop the local and remote [ReferencePairManager]
@@ -172,7 +178,7 @@ abstract class ReferencePairManager {
   /// This will instantiate a [LocalReference] and add it and [remoteReference]
   /// as a pair.
   ///
-  /// All [RemoteReference]s and [UnpairedRemoteReference]s in `arguments` will
+  /// All [RemoteReference]s and [UnpairedReference]s in `arguments` will
   /// be replaced by a [LocalReference].
   ///
   /// Also, all [List]s will also be converted into `List<Object>` and all
@@ -212,7 +218,8 @@ abstract class ReferencePairManager {
   ///
   /// This will also store [localReference] and a [RemoteReference] as a pair.
   Future<RemoteReference> pairWithNewRemoteReference(
-      LocalReference localReference) async {
+    LocalReference localReference,
+  ) async {
     _assertIsInitialized();
     if (getPairedRemoteReference(localReference) != null) return null;
 
@@ -246,7 +253,7 @@ abstract class ReferencePairManager {
   /// Execute a method on the [RemoteReference] paired to [localReference].
   ///
   /// The [LocalReference]s in `arguments` will be replaced by a
-  /// [RemoteReference] or a [UnpairedRemoteReference].
+  /// [RemoteReference] or a [UnpairedReference].
   ///
   /// All [List]s will also be converted into `List<Object>` and all [Map]s
   /// will be converted into `Map<Object, Object>`.
@@ -266,9 +273,47 @@ abstract class ReferencePairManager {
     return _replaceRemoteReferences(result);
   }
 
+  Future<Object> invokeRemoteMethodOnUnpairedReference(
+    LocalReference localReference,
+    String methodName, [
+    List<Object> arguments,
+  ]) async {
+    _assertIsInitialized();
+
+    final Object result = await remoteHandler.invokeMethodOnUnpairedReference(
+      UnpairedReference(
+        _typeIds.inverse[localReference.referenceType],
+        _replaceLocalReferences(
+          remoteHandler.getCreationArguments(localReference),
+        ),
+      ),
+      methodName,
+      _replaceLocalReferences(arguments) ?? <Object>[],
+    );
+
+    return _replaceRemoteReferences(result);
+  }
+
+  Future<Object> invokeLocalMethodOnUnpairedReference(
+    UnpairedReference unpairedReference,
+    String methodName, [
+    List<Object> arguments,
+  ]) {
+    _assertIsInitialized();
+    return invokeLocalMethod(
+      localHandler.create(
+        this,
+        _typeIds[unpairedReference.typeId],
+        _replaceRemoteReferences(unpairedReference.creationArguments),
+      ),
+      methodName,
+      arguments,
+    );
+  }
+
   /// Execute a method on the [LocalReference] paired to [remoteReference].
   ///
-  /// All [RemoteReference]s and [UnpairedRemoteReference]s in `arguments` will
+  /// All [RemoteReference]s and [UnpairedReference]s in `arguments` will
   /// be replaced by a [LocalReference].
   ///
   /// Also, all [List]s will also be converted into `List<Object>` and all
@@ -297,7 +342,7 @@ abstract class ReferencePairManager {
   Object _replaceRemoteReferences(Object argument) {
     if (argument is RemoteReference) {
       return getPairedLocalReference(argument);
-    } else if (argument is UnpairedRemoteReference) {
+    } else if (argument is UnpairedReference) {
       return localHandler.create(
         this,
         _typeIds[argument.typeId],
@@ -321,7 +366,7 @@ abstract class ReferencePairManager {
       return getPairedRemoteReference(argument);
     } else if (argument is LocalReference &&
         getPairedRemoteReference(argument) == null) {
-      return UnpairedRemoteReference(
+      return UnpairedReference(
         _typeIds.inverse[argument.referenceType],
         remoteHandler
             .getCreationArguments(argument)
@@ -382,7 +427,7 @@ abstract class PoolableReferencePairManager extends ReferencePairManager {
 
   @override
   Object _replaceRemoteReferences(Object argument) {
-    if (argument is! RemoteReference && argument is! UnpairedRemoteReference) {
+    if (argument is! RemoteReference && argument is! UnpairedReference) {
       return super._replaceRemoteReferences(argument);
     }
 
@@ -394,7 +439,7 @@ abstract class PoolableReferencePairManager extends ReferencePairManager {
       return _localRefFromRemoteRef(argument);
     }
 
-    final UnpairedRemoteReference unpairedRemoteReference = argument;
+    final UnpairedReference unpairedRemoteReference = argument;
     final PoolableReferencePairManager manager =
         poolId == unpairedRemoteReference.managerPoolId
             ? this
@@ -427,7 +472,7 @@ abstract class PoolableReferencePairManager extends ReferencePairManager {
       return manager.getPairedRemoteReference(localReference);
     }
 
-    return UnpairedRemoteReference(
+    return UnpairedReference(
       manager._typeIds.inverse[localReference.referenceType],
       manager.remoteHandler
           .getCreationArguments(localReference)

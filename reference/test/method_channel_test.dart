@@ -27,11 +27,11 @@ void main() {
       );
     });
 
-    test('encode/decode $UnpairedRemoteReference', () {
+    test('encode/decode $UnpairedReference', () {
       final ByteData byteData = methodCodec.encodeMethodCall(
         MethodCall(
           'a',
-          UnpairedRemoteReference(56, <Object>[], "apple"),
+          UnpairedReference(56, <Object>[], "apple"),
         ),
       );
 
@@ -39,7 +39,7 @@ void main() {
         methodCodec.decodeMethodCall(byteData),
         isMethodCallWithMatchers(
           'a',
-          arguments: isUnpairedRemoteReference(56, <Object>[], "apple"),
+          arguments: isUnpairedReference(56, <Object>[], "apple"),
         ),
       );
     });
@@ -118,6 +118,21 @@ void main() {
       ]);
     });
 
+    test('invokeRemoteMethodOnUnpairedReference', () async {
+      final ClassTemplate testClass = ClassTemplate(4);
+
+      final String result = await testClass.methodTemplate('bye!');
+
+      expect(result, equals('Goodbye!'));
+      expect(methodCallLog, <Matcher>[
+        isMethodCallWithMatchers('REFERENCE_METHOD', arguments: <Object>[
+          isUnpairedReference(0, <dynamic>[4], null),
+          'methodTemplate',
+          <Object>['bye!'],
+        ]),
+      ]);
+    });
+
     test('pairWithNewLocalReference', () async {
       await referencePairManager.channel.binaryMessenger.handlePlatformMessage(
         'github.penguin/reference/template',
@@ -178,6 +193,36 @@ void main() {
 
       expect(callbackCompleter.future, completion(<Object>['Apple']));
       expect(responseCompleter.future, completion('Apple pie'));
+    });
+
+    test('invokeLocalMethodOnUnpairedReference', () async {
+      final Completer<String> responseCompleter = Completer<String>();
+      await referencePairManager.channel.binaryMessenger.handlePlatformMessage(
+        'github.penguin/reference/template',
+        referencePairManager.channel.codec.encodeMethodCall(
+          MethodCall(
+            'REFERENCE_METHOD',
+            <Object>[
+              UnpairedReference(0, <dynamic>[18]),
+              'methodTemplate',
+              <Object>['Apple'],
+            ],
+          ),
+        ),
+        (ByteData data) {
+          responseCompleter.complete(
+            referencePairManager.channel.codec.decodeEnvelope(data),
+          );
+        },
+      );
+
+      expect(methodCallLog, <Matcher>[
+        isMethodCallWithMatchers('REFERENCE_METHOD', arguments: <Object>[
+          isUnpairedReference(0, <dynamic>[18], null),
+          'methodTemplate',
+          <Object>['Apple'],
+        ]),
+      ]);
     });
 
     test('disposePairWithRemoteReference', () async {
