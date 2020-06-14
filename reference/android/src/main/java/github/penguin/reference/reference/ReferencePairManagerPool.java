@@ -14,6 +14,7 @@ public class ReferencePairManagerPool {
 
   @SuppressWarnings("unused")
   public boolean add(PoolableReferencePairManager manager) {
+    if (managers.containsValue(manager)) return true;
     if (managers.containsKey(manager.poolId)) return false;
 
     for (Class<? extends LocalReference> clazz : manager.supportedClasses) {

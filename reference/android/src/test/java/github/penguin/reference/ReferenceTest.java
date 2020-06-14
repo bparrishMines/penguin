@@ -509,7 +509,7 @@ public class ReferenceTest {
         "test_id3", null, null);
 
     assertTrue(pool.add(manager1));
-    assertFalse(pool.add(manager1));
+    assertTrue(pool.add(manager1));
     assertFalse(pool.add(manager3));
     assertTrue(pool.add(manager2));
   }

@@ -230,7 +230,7 @@ abstract class ReferencePairManager {
       remoteReference,
       _typeIds.inverse[localReference.referenceType],
       _replaceLocalReferences(
-        remoteHandler.getCreationArguments(localReference),
+        remoteHandler.getCreationArguments(localReference) ?? <Object>[],
       ),
     );
 
@@ -493,6 +493,7 @@ class ReferencePairManagerPool {
       <Type, PoolableReferencePairManager>{};
 
   bool add(PoolableReferencePairManager manager) {
+    if (_managers.containsValue(manager)) return true;
     if (_managers.containsKey(manager.poolId)) return false;
 
     if (manager.supportedTypes
