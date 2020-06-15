@@ -59,8 +59,8 @@ public abstract class MethodChannelReferencePairManager extends PoolableReferenc
   @Override
   public void initialize() {
     super.initialize();
-    getRemoteHandler().channel = new MethodChannel(binaryMessenger, channelName, methodCodec);
-    getRemoteHandler().channel.setMethodCallHandler(this);
+//    getRemoteHandler().channel = new MethodChannel(binaryMessenger, channelName, methodCodec);
+//    getRemoteHandler().channel.setMethodCallHandler(this);
   }
 
   @SuppressWarnings("unchecked")
@@ -116,12 +116,14 @@ public abstract class MethodChannelReferencePairManager extends PoolableReferenc
 
   @SuppressWarnings("unused")
   public MethodChannel getChannel() {
-    return getRemoteHandler().channel;
+//    return getRemoteHandler().channel;
+    return null;
   }
 
   @Override
-  public MethodChannelRemoteReferenceCommunicationHandler getRemoteHandler() {
-    return remoteHandler;
+  public RemoteReferenceCommunicationHandler getRemoteHandler() {
+    //return remoteHandler;
+    return null;
   }
 
   @Override

@@ -2,17 +2,17 @@ package github.penguin.reference;
 
 import com.google.common.collect.ImmutableMap;
 import org.hamcrest.Matcher;
-import org.hamcrest.Matchers;
+import org.junit.Before;
 import org.junit.Test;
-import java.util.ArrayList;
+import org.mockito.ArgumentCaptor;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import github.penguin.reference.reference.CompletableRunnable;
+import github.penguin.reference.reference.Completable;
+import github.penguin.reference.reference.Completer;
 import github.penguin.reference.reference.LocalReference;
 import github.penguin.reference.reference.PoolableReferencePairManager;
 import github.penguin.reference.reference.ReferencePairManager;
-import github.penguin.reference.reference.ReferencePairManager.*;
 import github.penguin.reference.reference.ReferencePairManagerPool;
 import github.penguin.reference.reference.RemoteReference;
 import github.penguin.reference.reference.UnpairedReference;
@@ -23,9 +23,22 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.notNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.any;
 
 @SuppressWarnings("rawtypes")
 public class ReferenceTest {
+  private static TestReferencePairManager testManager;
+  private static TestPoolableReferencePairManager testPoolableManager1;
+  private static TestPoolableReferencePairManager testPoolableManager2;
+  private static ReferencePairManagerPool pool;
+
   private static class TestClass implements LocalReference {
     @Override
     public Class<? extends LocalReference> getReferenceClass() {
@@ -40,17 +53,14 @@ public class ReferenceTest {
     }
   }
 
-  private static class TestReferencePairManager extends PoolableReferencePairManager {
+  private static class TestReferencePairManager extends ReferencePairManager {
     private final LocalReferenceCommunicationHandler localHandler;
     private final RemoteReferenceCommunicationHandler remoteHandler;
 
-    private TestReferencePairManager(List<Class<? extends LocalReference>> supportedClasses,
-                                     String poolId,
-                                     LocalReferenceCommunicationHandler localHandler,
-                                     RemoteReferenceCommunicationHandler remoteHandler) {
-      super(supportedClasses, poolId);
-      this.localHandler = localHandler;
-      this.remoteHandler = remoteHandler;
+    private TestReferencePairManager() {
+      super(Collections.<Class<? extends LocalReference>>singletonList(TestClass.class));
+      this.localHandler = mock(LocalReferenceCommunicationHandler.class);
+      this.remoteHandler = mock(RemoteReferenceCommunicationHandler.class);
     }
 
     @Override
@@ -64,654 +74,368 @@ public class ReferenceTest {
     }
   }
 
+  public static class TestPoolableReferencePairManager extends PoolableReferencePairManager {
+    private final LocalReferenceCommunicationHandler localHandler;
+    private final RemoteReferenceCommunicationHandler remoteHandler;
+
+    private TestPoolableReferencePairManager(List<Class<? extends LocalReference>> supportedClasses, String poolId) {
+      super(supportedClasses, poolId);
+      this.localHandler = mock(LocalReferenceCommunicationHandler.class);
+      this.remoteHandler = mock(RemoteReferenceCommunicationHandler.class);
+    }
+
+    @Override
+    public RemoteReferenceCommunicationHandler getRemoteHandler() {
+      return remoteHandler;
+    }
+
+    @Override
+    public LocalReferenceCommunicationHandler getLocalHandler() {
+      return localHandler;
+    }
+  }
+
+  @Before
+  public void setUp() {
+    testManager = new TestReferencePairManager();
+    testManager.initialize();
+
+    pool = new ReferencePairManagerPool();
+
+    testPoolableManager1 = new TestPoolableReferencePairManager(
+        Collections.<Class<? extends LocalReference>>singletonList(TestClass.class),
+        "id1");
+    testPoolableManager1.initialize();
+
+    testPoolableManager2 = new TestPoolableReferencePairManager(
+        Collections.<Class<? extends LocalReference>>singletonList(TestClass2.class),
+        "id2");
+    testPoolableManager2.initialize();
+  }
+
   @Test
   public void referencePairManager_pairWithNewLocalReference() throws Exception {
-    final List<List<Object>> allArguments = new ArrayList<>();
+    when(testManager.localHandler.create(eq(testManager), eq(TestClass.class), anyList()))
+        .thenReturn(new TestClass());
 
-    final ReferencePairManager manager = new TestReferencePairManager(
-        Collections.<Class<? extends LocalReference>>singletonList(TestClass.class), "test_id",
-        new LocalReferenceCommunicationHandler() {
-      @Override
-      public LocalReference create(ReferencePairManager referencePairManager, Class<? extends LocalReference> referenceClass, List<Object> arguments) {
-        allArguments.add(arguments);
-        return new TestClass();
-      }
-
-      @Override
-      public Object invokeMethod(ReferencePairManager referencePairManager, LocalReference localReference, String methodName, List<Object> arguments) {
-        return null;
-      }
-
-      @Override
-      public void dispose(ReferencePairManager referencePairManager, LocalReference localReference) {
-        // Do nothing.
-      }
-    }, null);
-    manager.initialize();
-
-    final TestClass result = (TestClass) manager.pairWithNewLocalReference(
+    final TestClass result = (TestClass) testManager.pairWithNewLocalReference(
         new RemoteReference("apple"),
         0,
         Arrays.asList("Hello",
-            new UnpairedReference(0, Collections.emptyList(), "test_id"),
-            Collections.singletonList(new UnpairedReference(0, Collections.emptyList(), "test_id")),
-            ImmutableMap.of(1.1, new UnpairedReference(0, Collections.emptyList(), "test_id"))
+            new UnpairedReference(0, Collections.emptyList(), null),
+            Collections.singletonList(new UnpairedReference(0, Collections.emptyList(), null)),
+            ImmutableMap.of(1.1, new UnpairedReference(0, Collections.emptyList(), null))
         )
     );
 
-    assertEquals(manager.getPairedLocalReference(new RemoteReference("apple")), result);
-    assertEquals(manager.getPairedRemoteReference(result), new RemoteReference("apple"));
+    assertEquals(testManager.getPairedLocalReference(new RemoteReference("apple")), result);
+    assertEquals(testManager.getPairedRemoteReference(result), new RemoteReference("apple"));
+
+    final ArgumentCaptor<List> creationArguments = ArgumentCaptor.forClass(List.class);
+    verify(testManager.localHandler, times(4)).create(eq(testManager), eq(TestClass.class), creationArguments.capture());
+
     assertThat(
-        allArguments,
+        creationArguments.getAllValues(),
         contains(empty(), empty(), empty(),
         contains(
             (Matcher) equalTo("Hello"),
-            Matchers.<String>instanceOf(TestClass.class),
-            contains(Matchers.<String>instanceOf(TestClass.class)),
-            hasEntry(equalTo(1.1), Matchers.<String>instanceOf(TestClass.class)))));
+            instanceOf(TestClass.class),
+            contains(instanceOf(TestClass.class)),
+            hasEntry(equalTo(1.1), instanceOf(TestClass.class)))));
   }
 
   @Test
   public void referencePairManager_invokeLocalMethod() throws Exception {
-    final List<Object> methodArguments = new ArrayList<>();
+    when(testManager.localHandler.create(eq(testManager), eq(TestClass.class), anyList()))
+        .thenReturn(new TestClass());
 
-    final ReferencePairManager manager = new TestReferencePairManager(Collections.<Class<? extends LocalReference>>singletonList(TestClass.class), "test_id",
-        new LocalReferenceCommunicationHandler() {
-      @Override
-      public LocalReference create(ReferencePairManager referencePairManager, Class<? extends LocalReference> referenceClass, List<Object> arguments) {
-        return new TestClass();
-      }
+    final LocalReference localReference =
+        testManager.pairWithNewLocalReference(new RemoteReference("chi") , 0);
 
-      @Override
-      public Object invokeMethod(ReferencePairManager referencePairManager, LocalReference localReference, String methodName, List<Object> arguments) {
-        methodArguments.addAll(arguments);
-        return null;
-      }
-
-      @Override
-      public void dispose(ReferencePairManager referencePairManager, LocalReference localReference) {
-        // Do nothing.
-      }
-    }, null);
-    manager.initialize();
-
-    manager.pairWithNewLocalReference(new RemoteReference("chi") , 0);
-    manager.invokeLocalMethod(manager.getPairedLocalReference(new RemoteReference("chi")), "aMethod",
+    testManager.invokeLocalMethod(localReference, "aMethod",
         Arrays.asList("Hello",
-            new UnpairedReference(0, Collections.emptyList(), "test_id"),
-            Collections.singletonList(new UnpairedReference(0, Collections.emptyList(), "test_id")),
-            ImmutableMap.of(1.1, new UnpairedReference(0, Collections.emptyList(), "test_id"))
+            new UnpairedReference(0, Collections.emptyList(), null),
+            Collections.singletonList(new UnpairedReference(0, Collections.emptyList(), null)),
+            ImmutableMap.of(1.1, new UnpairedReference(0, Collections.emptyList(), null))
         ));
 
+    final ArgumentCaptor<List> methodArguments = ArgumentCaptor.forClass(List.class);
+    verify(testManager.localHandler).invokeMethod(eq(testManager),
+        eq(localReference),
+        eq("aMethod"),
+        methodArguments.capture()
+    );
+
     assertThat(
-        methodArguments,
+        methodArguments.getValue(),
             contains(
                 (Matcher) equalTo("Hello"),
-                Matchers.<String>instanceOf(TestClass.class),
-                contains(Matchers.<String>instanceOf(TestClass.class)),
-                hasEntry(equalTo(1.1), Matchers.<String>instanceOf(TestClass.class))));
+                instanceOf(TestClass.class),
+                contains(instanceOf(TestClass.class)),
+                hasEntry(equalTo(1.1), instanceOf(TestClass.class))));
   }
 
   @Test
   public void referencePairManager_invokeLocalMethodOnUnpairedReference() throws Exception {
-    final List<Object> methodArguments = new ArrayList<>();
+    when(testManager.localHandler.create(eq(testManager), eq(TestClass.class), anyList()))
+        .thenReturn(new TestClass());
 
-    final ReferencePairManager manager = new TestReferencePairManager(Collections.<Class<? extends LocalReference>>singletonList(TestClass.class), "test_id",
-        new LocalReferenceCommunicationHandler() {
-          @Override
-          public LocalReference create(ReferencePairManager referencePairManager, Class<? extends LocalReference> referenceClass, List<Object> arguments) {
-            return new TestClass();
-          }
-
-          @Override
-          public Object invokeMethod(ReferencePairManager referencePairManager, LocalReference localReference, String methodName, List<Object> arguments) {
-            methodArguments.addAll(arguments);
-            return null;
-          }
-
-          @Override
-          public void dispose(ReferencePairManager referencePairManager, LocalReference localReference) {
-            // Do nothing.
-          }
-        }, null);
-    manager.initialize();
-
-    manager.invokeLocalMethodOnUnpairedReference(new UnpairedReference(0, Collections.emptyList()), "aMethod",
+    testManager.invokeLocalMethodOnUnpairedReference(new UnpairedReference(0, Collections.emptyList()), "aMethod",
         Arrays.asList("Hello",
-            new UnpairedReference(0, Collections.emptyList(), "test_id"),
-            Collections.singletonList(new UnpairedReference(0, Collections.emptyList(), "test_id")),
-            ImmutableMap.of(1.1, new UnpairedReference(0, Collections.emptyList(), "test_id"))
+            new UnpairedReference(0, Collections.emptyList(), null),
+            Collections.singletonList(new UnpairedReference(0, Collections.emptyList(), null)),
+            ImmutableMap.of(1.1, new UnpairedReference(0, Collections.emptyList(), null))
         ));
 
+    final ArgumentCaptor<List> methodArguments = ArgumentCaptor.forClass(List.class);
+    verify(testManager.localHandler).invokeMethod(eq(testManager),
+        (LocalReference) notNull(),
+        eq("aMethod"),
+        methodArguments.capture()
+    );
+
     assertThat(
-        methodArguments,
+        methodArguments.getValue(),
         contains(
             (Matcher) equalTo("Hello"),
-            Matchers.<String>instanceOf(TestClass.class),
-            contains(Matchers.<String>instanceOf(TestClass.class)),
-            hasEntry(equalTo(1.1), Matchers.<String>instanceOf(TestClass.class))));
+            instanceOf(TestClass.class),
+            contains(instanceOf(TestClass.class)),
+            hasEntry(equalTo(1.1), instanceOf(TestClass.class))));
   }
 
   @Test
   public void referencePairManager_disposePairWithRemoteReference() throws Exception {
-    final ReferencePairManager manager = new TestReferencePairManager(Collections.<Class<? extends LocalReference>>singletonList(TestClass.class), "test_id",
-        new LocalReferenceCommunicationHandler() {
-      @Override
-      public LocalReference create(ReferencePairManager referencePairManager, Class<? extends LocalReference> referenceClass, List<Object> arguments) {
-        return new TestClass();
-      }
+    when(testManager.localHandler.create(eq(testManager), eq(TestClass.class), anyList()))
+        .thenReturn(new TestClass());
 
-      @Override
-      public Object invokeMethod(ReferencePairManager referencePairManager, LocalReference localReference, String methodName, List<Object> arguments) {
-        return null;
-      }
+    final TestClass testClass = (TestClass) testManager.pairWithNewLocalReference(new RemoteReference("tea") ,0);
+    testManager.disposePairWithRemoteReference(new RemoteReference("tea"));
 
-      @Override
-      public void dispose(ReferencePairManager referencePairManager, LocalReference localReference) {
-        // Do nothing.
-      }
-    }, null);
-    manager.initialize();
-
-    final TestClass result = (TestClass) manager.pairWithNewLocalReference(new RemoteReference("tea") ,0);
-    manager.disposePairWithRemoteReference(new RemoteReference("tea"));
-
-    assertNull(manager.getPairedLocalReference(new RemoteReference("tea")));
-    assertNull(manager.getPairedRemoteReference(result));
+    verify(testManager.localHandler).dispose(testManager, testClass);
+    assertNull(testManager.getPairedLocalReference(new RemoteReference("tea")));
+    assertNull(testManager.getPairedRemoteReference(testClass));
   }
 
   @Test
   public void referencePairManager_pairWithNewRemoteReference() {
-    final List<Object> creationArguments = new ArrayList<>();
-
-    final ReferencePairManager manager = new TestReferencePairManager(
-        Collections.<Class<? extends LocalReference>>singletonList(TestClass.class),
-        "test_id",
-        null, new RemoteReferenceCommunicationHandler() {
-      boolean firstCall = true;
-
-      @Override
-      public List<Object> getCreationArguments(LocalReference localReference) {
-        if (localReference instanceof TestClass && firstCall) {
-          firstCall = false;
-          return Arrays.asList("Hello",
-              new TestClass(),
-              Collections.singletonList(new TestClass()),
-              ImmutableMap.of(1.1, new TestClass())
-          );
-        }
-
-        return Collections.emptyList();
-      }
-
-      @Override
-      public CompletableRunnable<Void> create(RemoteReference remoteReference, int classId, List<Object> arguments) {
-        creationArguments.addAll(arguments);
-        final CompletableRunnable<Void> runnable =  new CompletableRunnable<Void>() {
-          @Override
-          public void run() {
-            complete(null);
-          }
-        };
-        runnable.run();
-        return runnable;
-      }
-
-      @Override
-      public CompletableRunnable<Object> invokeMethod(RemoteReference remoteReference, String methodName, List<Object> arguments) {
-        return null;
-      }
-
-      @Override
-      public CompletableRunnable<Object> invokeMethodOnUnpairedReference(UnpairedReference unpairedReference, String methodName, List<Object> arguments) {
-        return null;
-      }
-
-      @Override
-      public CompletableRunnable<Void> dispose(RemoteReference remoteReference) {
-        return null;
-      }
-    });
-    manager.initialize();
-
     final TestClass testClass = new TestClass();
 
-    final List<RemoteReference> remoteReferences =  new ArrayList<>();
-    manager.pairWithNewRemoteReference(testClass).setOnCompleteListener(new CompletableRunnable.OnCompleteListener() {
-      @Override
-      public void onComplete(Object result) {
-        remoteReferences.add((RemoteReference) result);
-      }
+    when(testManager.remoteHandler.getCreationArguments(testClass))
+        .thenReturn(Arrays.asList("Hello",
+            new TestClass(),
+            Collections.singletonList(new TestClass()),
+            ImmutableMap.of(1.1, new TestClass())
+        ));
 
-      @Override
-      public void onError(Throwable throwable) {
+    when(testManager.remoteHandler.create(any(RemoteReference.class), eq(0), anyList()))
+        .thenReturn(new Completer<Void>().complete(null).completable);
 
-      }
-    });
+    final Completable.OnCompleteListener mockListener = mock(Completable.OnCompleteListener.class);
+    testManager.pairWithNewRemoteReference(testClass).setOnCompleteListener(mockListener);
+    final RemoteReference remoteReference = testManager.getPairedRemoteReference(testClass);
 
-    assertThat(remoteReferences, Matchers.<RemoteReference>hasSize(1));
-    assertEquals(manager.getPairedLocalReference(remoteReferences.get(0)), testClass);
-    assertEquals(manager.getPairedRemoteReference(testClass), remoteReferences.get(0));
-    assertThat(creationArguments, contains(
+    verify(mockListener).onComplete(remoteReference);
+    assertEquals(testManager.getPairedLocalReference(remoteReference), testClass);
+    assertEquals(testManager.getPairedRemoteReference(testClass), remoteReference);
+
+    final ArgumentCaptor<List> creationArguments = ArgumentCaptor.forClass(List.class);
+    verify(testManager.remoteHandler).create(eq(remoteReference),
+        eq(0),
+        creationArguments.capture()
+    );
+
+    assertThat(creationArguments.getValue(), contains(
         equalTo("Hello"),
-        isUnpairedReference(0, empty(), "test_id"),
-        contains(isUnpairedReference(0, empty(), "test_id")),
-        hasEntry(equalTo(1.1), isUnpairedReference(0, empty(), "test_id"))
+        isUnpairedReference(0, empty(), null),
+        contains(isUnpairedReference(0, empty(), null)),
+        hasEntry(equalTo(1.1), isUnpairedReference(0, empty(), null))
     ));
   }
 
   @Test
   public void referencePairManager_invokeRemoteMethod() {
-    final List<Object> methodArguments = new ArrayList<>();
-
-    final ReferencePairManager manager = new TestReferencePairManager(Collections.<Class<? extends LocalReference>>singletonList(TestClass.class), "test_id",
-        null, new RemoteReferenceCommunicationHandler() {
-      @Override
-      public List<Object> getCreationArguments(LocalReference localReference) {
-        return Collections.emptyList();
-      }
-
-      @Override
-      public CompletableRunnable<Void> create(RemoteReference remoteReference, int classId, List<Object> arguments) {
-        final CompletableRunnable<Void> runnable =  new CompletableRunnable<Void>() {
-          @Override
-          public void run() {
-            complete(null);
-          }
-        };
-        runnable.run();
-        return runnable;
-      }
-
-      @Override
-      public CompletableRunnable<Object> invokeMethod(RemoteReference remoteReference, String methodName, List<Object> arguments) {
-        methodArguments.addAll(arguments);
-        final CompletableRunnable<Object> runnable =  new CompletableRunnable<Object>() {
-          @Override
-          public void run() {
-            complete(null);
-          }
-        };
-        runnable.run();
-        return runnable;
-      }
-
-      @Override
-      public CompletableRunnable<Object> invokeMethodOnUnpairedReference(UnpairedReference unpairedReference, String methodName, List<Object> arguments) {
-        return null;
-      }
-
-      @Override
-      public CompletableRunnable<Void> dispose(RemoteReference remoteReference) {
-        return null;
-      }
-    });
-    manager.initialize();
-
     final TestClass testClass = new TestClass();
-    manager.pairWithNewRemoteReference(testClass);
-    manager.invokeRemoteMethod(manager.getPairedRemoteReference(testClass), "aMethod", Arrays.asList( "Hello",
+
+    when(testManager.remoteHandler.create(any(RemoteReference.class), eq(0), anyList()))
+        .thenReturn(new Completer<Void>().complete(null).completable);
+
+    when(testManager.remoteHandler.invokeMethod(any(RemoteReference.class), eq("aMethod"), anyList()))
+        .thenReturn(new Completer<>().complete(null).completable);
+
+    testManager.pairWithNewRemoteReference(testClass);
+    final RemoteReference remoteReference = testManager.getPairedRemoteReference(testClass);
+    testManager.invokeRemoteMethod(remoteReference, "aMethod", Arrays.asList( "Hello",
         new TestClass(),
         Collections.singletonList(new TestClass()),
         ImmutableMap.of(1.1, new TestClass())
     ));
 
-    assertThat(methodArguments, contains(
+    final ArgumentCaptor<List> methodArguments = ArgumentCaptor.forClass(List.class);
+    verify(testManager.remoteHandler).invokeMethod(eq(remoteReference),
+        eq("aMethod"),
+        methodArguments.capture()
+    );
+
+    assertThat(methodArguments.getValue(), contains(
         equalTo("Hello"),
-        isUnpairedReference(0, empty(), "test_id"),
-        contains(isUnpairedReference(0, empty(), "test_id")),
-        hasEntry(equalTo(1.1), isUnpairedReference(0, empty(), "test_id"))
+        isUnpairedReference(0, empty(), null),
+        contains(isUnpairedReference(0, empty(), null)),
+        hasEntry(equalTo(1.1), isUnpairedReference(0, empty(), null))
     ));
   }
 
   @Test
   public void referencePairManager_invokeRemoteMethodOnUnpairedReference() {
-    final List<Object> methodArguments = new ArrayList<>();
+    when(testManager.remoteHandler.create(any(RemoteReference.class), eq(0), anyList()))
+        .thenReturn(new Completer<Void>().complete(null).completable);
 
-    final ReferencePairManager manager = new TestReferencePairManager(Collections.<Class<? extends LocalReference>>singletonList(TestClass.class), "test_id",
-        null, new RemoteReferenceCommunicationHandler() {
-      @Override
-      public List<Object> getCreationArguments(LocalReference localReference) {
-        return Collections.emptyList();
-      }
+    when(testManager.remoteHandler.invokeMethodOnUnpairedReference(any(UnpairedReference.class), eq("aMethod"), anyList()))
+        .thenReturn(new Completer<>().complete(null).completable);
 
-      @Override
-      public CompletableRunnable<Void> create(RemoteReference remoteReference, int classId, List<Object> arguments) {
-        return null;
-      }
-
-      @Override
-      public CompletableRunnable<Object> invokeMethod(RemoteReference remoteReference, String methodName, List<Object> arguments) {
-        methodArguments.addAll(arguments);
-        final CompletableRunnable<Object> runnable =  new CompletableRunnable<Object>() {
-          @Override
-          public void run() {
-            complete(null);
-          }
-        };
-        runnable.run();
-        return runnable;
-      }
-
-      @Override
-      public CompletableRunnable<Object> invokeMethodOnUnpairedReference(UnpairedReference unpairedReference, String methodName, List<Object> arguments) {
-        methodArguments.addAll(arguments);
-        final CompletableRunnable<Object> runnable =  new CompletableRunnable<Object>() {
-          @Override
-          public void run() {
-            complete(null);
-          }
-        };
-        runnable.run();
-        return runnable;
-      }
-
-      @Override
-      public CompletableRunnable<Void> dispose(RemoteReference remoteReference) {
-        return null;
-      }
-    });
-    manager.initialize();
-
-    manager.invokeRemoteMethodOnUnpairedReference(new TestClass(), "aMethod", Arrays.asList( "Hello",
+    testManager.invokeRemoteMethodOnUnpairedReference(new TestClass(), "aMethod", Arrays.asList( "Hello",
         new TestClass(),
         Collections.singletonList(new TestClass()),
         ImmutableMap.of(1.1, new TestClass())
     ));
 
-    assertThat(methodArguments, contains(
+    final ArgumentCaptor<List> methodArguments = ArgumentCaptor.forClass(List.class);
+    verify(testManager.remoteHandler).invokeMethodOnUnpairedReference(any(UnpairedReference.class),
+        eq("aMethod"),
+        methodArguments.capture()
+    );
+
+    assertThat(methodArguments.getValue(), contains(
         equalTo("Hello"),
-        isUnpairedReference(0, empty(), "test_id"),
-        contains(isUnpairedReference(0, empty(), "test_id")),
-        hasEntry(equalTo(1.1), isUnpairedReference(0, empty(), "test_id"))
+        isUnpairedReference(0, empty(), null),
+        contains(isUnpairedReference(0, empty(), null)),
+        hasEntry(equalTo(1.1), isUnpairedReference(0, empty(), null))
     ));
   }
 
   @Test
   public void referencePairManager_disposePairWithLocalReference() {
-    final ReferencePairManager manager = new TestReferencePairManager(
-        Collections.<Class<? extends LocalReference>>singletonList(TestClass.class),
-        "test_id",
-        null, new RemoteReferenceCommunicationHandler() {
-      @Override
-      public List<Object> getCreationArguments(LocalReference localReference) {
-        return Collections.emptyList();
-      }
-
-      @Override
-      public CompletableRunnable<Void> create(RemoteReference remoteReference, int classId, List<Object> arguments) {
-        final CompletableRunnable<Void> runnable =  new CompletableRunnable<Void>() {
-          @Override
-          public void run() {
-            complete(null);
-          }
-        };
-        runnable.run();
-        return runnable;
-      }
-
-      @Override
-      public CompletableRunnable<Object> invokeMethod(RemoteReference remoteReference, String methodName, List<Object> arguments) {
-        final CompletableRunnable<Object> runnable =  new CompletableRunnable<Object>() {
-          @Override
-          public void run() {
-            complete(null);
-          }
-        };
-        runnable.run();
-        return runnable;
-      }
-
-      @Override
-      public CompletableRunnable<Object> invokeMethodOnUnpairedReference(UnpairedReference unpairedReference, String methodName, List<Object> arguments) {
-        return null;
-      }
-
-      @Override
-      public CompletableRunnable<Void> dispose(RemoteReference remoteReference) {
-        return null;
-      }
-    });
-    manager.initialize();
-
     final TestClass testClass = new TestClass();
-    final List<RemoteReference> remoteReferences =  new ArrayList<>();
-    manager.pairWithNewRemoteReference(testClass).setOnCompleteListener(new CompletableRunnable.OnCompleteListener() {
-      @Override
-      public void onComplete(Object result) {
-        remoteReferences.add((RemoteReference) result);
-      }
 
-      @Override
-      public void onError(Throwable throwable) {
+    when(testManager.remoteHandler.create(any(RemoteReference.class), eq(0), anyList()))
+        .thenReturn(new Completer<Void>().complete(null).completable);
 
-      }
-    });
-    manager.disposePairWithLocalReference(testClass);
+    testManager.pairWithNewRemoteReference(testClass);
+    final RemoteReference remoteReference = testManager.getPairedRemoteReference(testClass);
 
-    assertThat(remoteReferences, Matchers.<RemoteReference>hasSize(1));
-    assertNull(manager.getPairedLocalReference(remoteReferences.get(0)));
-    assertNull(manager.getPairedRemoteReference(testClass));
+    testManager.disposePairWithLocalReference(testClass);
+
+    verify(testManager.remoteHandler).dispose(remoteReference);
+
+    assertNull(testManager.getPairedLocalReference(remoteReference));
+    assertNull(testManager.getPairedRemoteReference(testClass));
   }
 
   @Test
   public void poolableReferencePairManager_add() {
-    final ReferencePairManagerPool pool = new ReferencePairManagerPool();
-
-    final PoolableReferencePairManager manager1 = new TestReferencePairManager(
+    final PoolableReferencePairManager sameClassManager = new TestPoolableReferencePairManager(
         Collections.<Class<? extends LocalReference>>singletonList(TestClass.class),
-        "test_id", null, null);
-    final PoolableReferencePairManager manager2 = new TestReferencePairManager(
+        "id3");
+
+    final PoolableReferencePairManager sameIdManager = new TestPoolableReferencePairManager(
         Collections.<Class<? extends LocalReference>>singletonList(TestClass2.class),
-        "test_id2", null, null);
-    final PoolableReferencePairManager manager3 = new TestReferencePairManager(
-        Collections.<Class<? extends LocalReference>>singletonList(TestClass.class),
-        "test_id3", null, null);
+        "id1");
 
-    assertTrue(pool.add(manager1));
-    assertTrue(pool.add(manager1));
-    assertFalse(pool.add(manager3));
-    assertTrue(pool.add(manager2));
+    assertTrue(pool.add(testPoolableManager1));
+    assertTrue(pool.add(testPoolableManager1));
+    assertFalse(pool.add(sameClassManager));
+    assertFalse(pool.add(sameIdManager));
+    assertTrue(pool.add(testPoolableManager2));
   }
 
   @Test
   public void poolableReferencePairManager_remove() {
-    final ReferencePairManagerPool pool = new ReferencePairManagerPool();
+    pool.add(testPoolableManager1);
+    pool.remove(testPoolableManager1);
 
-    final PoolableReferencePairManager manager1 = new TestReferencePairManager(
+    final PoolableReferencePairManager sameClassManager = new TestPoolableReferencePairManager(
         Collections.<Class<? extends LocalReference>>singletonList(TestClass.class),
-        "test_id", null, null);
-    final PoolableReferencePairManager manager2 = new TestReferencePairManager(
-        Collections.<Class<? extends LocalReference>>singletonList(TestClass2.class),
-        "test_id2", null, null);
+        "id1");
 
-    pool.add(manager1);
-    pool.add(manager2);
-
-    pool.remove(manager1);
-    pool.remove(manager2);
-
-    assertTrue(pool.add(manager1));
-    assertTrue(pool.add(manager2));
+    assertTrue(pool.add(sameClassManager));
   }
 
   @Test
-  public void poolableReferencePairManager_createLocalReferenceFor() throws Exception {
-    final List<List<Object>> allArguments = new ArrayList<>();
+  public void poolableReferencePairManager_pairWithNewLocalReference() throws Exception {
+    pool.add(testPoolableManager1);
+    pool.add(testPoolableManager2);
 
-    final PoolableReferencePairManager manager1 = new TestReferencePairManager(
-        Collections.<Class<? extends LocalReference>>singletonList(TestClass.class), "test_id",
-        new LocalReferenceCommunicationHandler() {
-          @Override
-          public LocalReference create(ReferencePairManager referencePairManager, Class<? extends LocalReference> referenceClass, List<Object> arguments) {
-            allArguments.add(arguments);
-            return new TestClass();
-          }
+    when(testPoolableManager1.localHandler.create(eq(testPoolableManager1), eq(TestClass.class), anyList()))
+        .thenReturn(new TestClass());
 
-          @Override
-          public Object invokeMethod(ReferencePairManager referencePairManager, LocalReference localReference, String methodName, List<Object> arguments) {
-            return null;
-          }
+    when(testPoolableManager2.localHandler.create(eq(testPoolableManager2), eq(TestClass2.class), anyList()))
+        .thenReturn(new TestClass2());
 
-          @Override
-          public void dispose(ReferencePairManager referencePairManager, LocalReference localReference) {
-            // Do nothing.
-          }
-        }, null);
-    manager1.initialize();
-
-    final PoolableReferencePairManager manager2 = new TestReferencePairManager(
-        Collections.<Class<? extends LocalReference>>singletonList(TestClass2.class), "test_id2",
-        new LocalReferenceCommunicationHandler() {
-          @Override
-          public LocalReference create(ReferencePairManager referencePairManager, Class<? extends LocalReference> referenceClass, List<Object> arguments) {
-            return new TestClass2();
-          }
-
-          @Override
-          public Object invokeMethod(ReferencePairManager referencePairManager, LocalReference localReference, String methodName, List<Object> arguments) {
-            return null;
-          }
-
-          @Override
-          public void dispose(ReferencePairManager referencePairManager, LocalReference localReference) {
-            // Do nothing.
-          }
-        }, null);
-    manager2.initialize();
-
-    final ReferencePairManagerPool pool = new ReferencePairManagerPool();
-    pool.add(manager1);
-    pool.add(manager2);
-
-    manager1.pairWithNewLocalReference(
+    testPoolableManager1.pairWithNewLocalReference(
         new RemoteReference("apple"),
         0,
         Arrays.asList("Hello",
-            new UnpairedReference(0, Collections.emptyList(), "test_id"),
-            new UnpairedReference(0, Collections.emptyList(), "test_id2"),
-            Collections.singletonList(new UnpairedReference(0, Collections.emptyList(), "test_id")),
-            ImmutableMap.of(1.1, new UnpairedReference(0, Collections.emptyList(), "test_id"))
+            new UnpairedReference(0, Collections.emptyList(), "id1"),
+            new UnpairedReference(0, Collections.emptyList(), "id2"),
+            Collections.singletonList(new UnpairedReference(0, Collections.emptyList(), "id1")),
+            ImmutableMap.of(1.1, new UnpairedReference(0, Collections.emptyList(), "id1"))
         )
     );
 
+    final ArgumentCaptor<List> creationArguments = ArgumentCaptor.forClass(List.class);
+    verify(testPoolableManager1.localHandler,
+        times(4)).create(eq(testPoolableManager1),
+        eq(TestClass.class),
+        creationArguments.capture());
+
+    verify(testPoolableManager2.localHandler).create(eq(testPoolableManager2), eq(TestClass2.class), anyList());
+
     assertThat(
-        allArguments,
+        creationArguments.getAllValues(),
         contains(empty(), empty(), empty(),
             contains(
                 (Matcher) equalTo("Hello"),
-                Matchers.<String>instanceOf(TestClass.class),
-                Matchers.<String>instanceOf(TestClass2.class),
-                contains(Matchers.<String>instanceOf(TestClass.class)),
-                hasEntry(equalTo(1.1), Matchers.<String>instanceOf(TestClass.class)))));
+                instanceOf(TestClass.class),
+                instanceOf(TestClass2.class),
+                contains(instanceOf(TestClass.class)),
+                hasEntry(equalTo(1.1), instanceOf(TestClass.class)))));
   }
 
   @Test
-  public void poolableReferencePairManager_createRemoteReferenceFor() {
-    final List<Object> creationArguments = new ArrayList<>();
-
-    final PoolableReferencePairManager manager1 = new TestReferencePairManager(
-        Collections.<Class<? extends LocalReference>>singletonList(TestClass.class),
-        "test_id",
-        null, new RemoteReferenceCommunicationHandler() {
-      boolean firstCall = true;
-
-      @Override
-      public List<Object> getCreationArguments(LocalReference localReference) {
-        if (localReference instanceof TestClass && firstCall) {
-          firstCall = false;
-          return Arrays.asList("Hello",
-              new TestClass(),
-              new TestClass2(),
-              Collections.singletonList(new TestClass()),
-              ImmutableMap.of(1.1, new TestClass())
-          );
-        }
-
-        return Collections.emptyList();
-      }
-
-      @Override
-      public CompletableRunnable<Void> create(RemoteReference remoteReference, int classId, List<Object> arguments) {
-        creationArguments.addAll(arguments);
-        final CompletableRunnable<Void> runnable =  new CompletableRunnable<Void>() {
-          @Override
-          public void run() {
-            complete(null);
-          }
-        };
-        runnable.run();
-        return runnable;
-      }
-
-      @Override
-      public CompletableRunnable<Object> invokeMethod(RemoteReference remoteReference, String methodName, List<Object> arguments) {
-        return null;
-      }
-
-      @Override
-      public CompletableRunnable<Object> invokeMethodOnUnpairedReference(UnpairedReference unpairedReference, String methodName, List<Object> arguments) {
-        return null;
-      }
-
-      @Override
-      public CompletableRunnable<Void> dispose(RemoteReference remoteReference) {
-        return null;
-      }
-    });
-    manager1.initialize();
-
-    final PoolableReferencePairManager manager2 = new TestReferencePairManager(
-        Collections.<Class<? extends LocalReference>>singletonList(TestClass2.class),
-        "test_id2",
-        null, new RemoteReferenceCommunicationHandler() {
-      @Override
-      public List<Object> getCreationArguments(LocalReference localReference) {
-        return Collections.emptyList();
-      }
-
-      @Override
-      public CompletableRunnable<Void> create(RemoteReference remoteReference, int classId, List<Object> arguments) {
-        final CompletableRunnable<Void> runnable =  new CompletableRunnable<Void>() {
-          @Override
-          public void run() {
-            complete(null);
-          }
-        };
-        runnable.run();
-        return runnable;
-      }
-
-      @Override
-      public CompletableRunnable<Object> invokeMethod(RemoteReference remoteReference, String methodName, List<Object> arguments) {
-        return null;
-      }
-
-      @Override
-      public CompletableRunnable<Object> invokeMethodOnUnpairedReference(UnpairedReference unpairedReference, String methodName, List<Object> arguments) {
-        return null;
-      }
-
-      @Override
-      public CompletableRunnable<Void> dispose(RemoteReference remoteReference) {
-        return null;
-      }
-    });
-    manager2.initialize();
-
-    final ReferencePairManagerPool pool = new ReferencePairManagerPool();
-    pool.add(manager1);
-    pool.add(manager2);
+  public void poolableReferencePairManager_pairWithNewRemoteReference() {
+    pool.add(testPoolableManager1);
+    pool.add(testPoolableManager2);
 
     final TestClass testClass = new TestClass();
-    manager1.pairWithNewRemoteReference(testClass);
 
-    assertThat(creationArguments, contains(
+    when(testPoolableManager1.remoteHandler.getCreationArguments(testClass))
+        .thenReturn(Arrays.asList("Hello",
+            new TestClass(),
+            new TestClass2(),
+            Collections.singletonList(new TestClass()),
+            ImmutableMap.of(1.1, new TestClass())
+        ));
+
+    when(testPoolableManager2.remoteHandler.getCreationArguments(any(TestClass2.class)))
+        .thenReturn(Collections.emptyList());
+
+    when(testPoolableManager1.remoteHandler.create(any(RemoteReference.class), eq(0), anyList()))
+        .thenReturn(new Completer<Void>().complete(null).completable);
+
+    testPoolableManager1.pairWithNewRemoteReference(testClass);
+    final RemoteReference remoteReference = testPoolableManager1.getPairedRemoteReference(testClass);
+
+    final ArgumentCaptor<List> creationArguments = ArgumentCaptor.forClass(List.class);
+    verify(testPoolableManager1.remoteHandler).create(eq(remoteReference),
+        eq(0),
+        creationArguments.capture()
+    );
+
+    assertThat(creationArguments.getValue(), contains(
         equalTo("Hello"),
-        isUnpairedReference(0, empty(), "test_id"),
-        isUnpairedReference(0, empty(), "test_id2"),
-        contains(isUnpairedReference(0, empty(), "test_id")),
-        hasEntry(equalTo(1.1), isUnpairedReference(0, empty(), "test_id"))
+        isUnpairedReference(0, empty(), "id1"),
+        isUnpairedReference(0, empty(), "id2"),
+        contains(isUnpairedReference(0, empty(), "id1")),
+        hasEntry(equalTo(1.1), isUnpairedReference(0, empty(), "id1"))
     ));
   }
 }

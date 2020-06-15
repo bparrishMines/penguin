@@ -8,17 +8,17 @@ import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
 
 public class PluginTemplate implements FlutterPlugin {
-  @VisibleForTesting
-  public static class ReferencePairManagerTemplate extends $TemplateReferencePairManager {
-    public ReferencePairManagerTemplate(BinaryMessenger binaryMessenger) {
-      super(binaryMessenger, "github.penguin/reference", new $LocalReferenceCommunicationHandler() {
-        @Override
-        public ClassTemplate createClassTemplate(ReferencePairManager referencePairManager, Integer fieldTemplate) {
-          return new ClassTemplateImpl(fieldTemplate).setReferencePairManager(referencePairManager);
-        }
-      });
-    }
-  }
+//  @VisibleForTesting
+//  public static class ReferencePairManagerTemplate extends $TemplateReferencePairManager {
+//    public ReferencePairManagerTemplate(BinaryMessenger binaryMessenger) {
+//      super(binaryMessenger, "github.penguin/reference", new $LocalReferenceCommunicationHandler() {
+//        @Override
+//        public ClassTemplate createClassTemplate(ReferencePairManager referencePairManager, Integer fieldTemplate) {
+//          return new ClassTemplateImpl(fieldTemplate).setReferencePairManager(referencePairManager);
+//        }
+//      });
+//    }
+//  }
 
   @SuppressWarnings("unused")
   public static void registerWith(Registrar registrar) {
@@ -26,7 +26,7 @@ public class PluginTemplate implements FlutterPlugin {
   }
 
   private void initialize(final BinaryMessenger binaryMessenger) {
-    new ReferencePairManagerTemplate(binaryMessenger).initialize();
+//    new ReferencePairManagerTemplate(binaryMessenger).initialize();
   }
 
   @Override

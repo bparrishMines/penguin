@@ -2,9 +2,9 @@ package github.penguin.reference.reference;
 
 public class OwnerCounter {
   public interface LifecycleListener {
-    CompletableRunnable<Void> onCreate();
+    Completer<Void> onCreate();
 
-    CompletableRunnable<Void> onDispose();
+    Completer<Void> onDispose();
   }
 
   private int ownerCount = 0;
@@ -22,14 +22,14 @@ public class OwnerCounter {
   }
 
   @SuppressWarnings("UnusedReturnValue")
-  public CompletableRunnable<Void> increment() {
+  public Completer<Void> increment() {
     ownerCount++;
     if (ownerCount == 1) return lifecycleListener.onCreate();
     return null;
   }
 
   @SuppressWarnings("UnusedReturnValue")
-  public CompletableRunnable<Void> decrement() {
+  public Completer<Void> decrement() {
     if (ownerCount < 1) {
       final String message =
           "`decrement()` was called without calling `increment()` first. In other words, `decrement()` was called while `ownerCount == 0`. Owner count ="

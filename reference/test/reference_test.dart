@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:reference/reference.dart';
@@ -76,12 +74,12 @@ void main() {
         'aMethod',
         <Object>[
           'Hello',
-          UnpairedReference(0, <Object>[], "test_id"),
+          UnpairedReference(0, <Object>[]),
           <Object>[
-            UnpairedReference(0, <Object>[], "test_id"),
+            UnpairedReference(0, <Object>[]),
           ],
           <Object, Object>{
-            1.1: UnpairedReference(0, <Object>[], "test_id"),
+            1.1: UnpairedReference(0, <Object>[]),
           },
         ],
       );
@@ -108,22 +106,17 @@ void main() {
       when(testManager.localHandler.create(testManager, TestClass, any))
           .thenReturn(TestClass());
 
-      final TestClass testClass = testManager.pairWithNewLocalReference(
-        RemoteReference('chi'),
-        0,
-      );
-
       testManager.invokeLocalMethodOnUnpairedReference(
         UnpairedReference(0, <Object>[]),
         'aMethod',
         <Object>[
           'Hello',
-          UnpairedReference(0, <Object>[], "test_id"),
+          UnpairedReference(0, <Object>[]),
           <Object>[
-            UnpairedReference(0, <Object>[], "test_id"),
+            UnpairedReference(0, <Object>[]),
           ],
           <Object, Object>{
-            1.1: UnpairedReference(0, <Object>[], "test_id"),
+            1.1: UnpairedReference(0, <Object>[]),
           },
         ],
       );
@@ -131,8 +124,8 @@ void main() {
       expect(
         verify(
           testManager.localHandler.invokeMethod(
-            testManager,
-            testClass,
+            testManager, 
+            argThat(isA<TestClass>()),
             'aMethod',
             captureAny,
           ),
@@ -317,6 +310,10 @@ void main() {
       expect(pool.add(testManager1), isTrue);
       expect(
         pool.add(TestPoolableReferencePairManager(<Type>[TestClass], 'id3')),
+        isFalse,
+      );
+      expect(
+        pool.add(TestPoolableReferencePairManager(<Type>[TestClass2], 'id1')),
         isFalse,
       );
       expect(pool.add(testManager2), isTrue);
