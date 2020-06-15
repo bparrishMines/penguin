@@ -113,6 +113,7 @@ public class ReferenceTest {
     testPoolableManager2.initialize();
   }
 
+  @SuppressWarnings("unchecked")
   @Test
   public void referencePairManager_pairWithNewLocalReference() throws Exception {
     when(testManager.localHandler.create(eq(testManager), eq(TestClass.class), anyList()))
@@ -132,7 +133,10 @@ public class ReferenceTest {
     assertEquals(testManager.getPairedRemoteReference(result), new RemoteReference("apple"));
 
     final ArgumentCaptor<List> creationArguments = ArgumentCaptor.forClass(List.class);
-    verify(testManager.localHandler, times(4)).create(eq(testManager), eq(TestClass.class), creationArguments.capture());
+    verify(testManager.localHandler,
+        times(4)).create(eq(testManager),
+        eq(TestClass.class),
+        creationArguments.capture());
 
     assertThat(
         creationArguments.getAllValues(),
@@ -144,6 +148,7 @@ public class ReferenceTest {
             hasEntry(equalTo(1.1), instanceOf(TestClass.class)))));
   }
 
+  @SuppressWarnings("unchecked")
   @Test
   public void referencePairManager_invokeLocalMethod() throws Exception {
     when(testManager.localHandler.create(eq(testManager), eq(TestClass.class), anyList()))
@@ -175,6 +180,7 @@ public class ReferenceTest {
                 hasEntry(equalTo(1.1), instanceOf(TestClass.class))));
   }
 
+  @SuppressWarnings("unchecked")
   @Test
   public void referencePairManager_invokeLocalMethodOnUnpairedReference() throws Exception {
     when(testManager.localHandler.create(eq(testManager), eq(TestClass.class), anyList()))
@@ -216,6 +222,7 @@ public class ReferenceTest {
     assertNull(testManager.getPairedRemoteReference(testClass));
   }
 
+  @SuppressWarnings("unchecked")
   @Test
   public void referencePairManager_pairWithNewRemoteReference() {
     final TestClass testClass = new TestClass();
@@ -252,6 +259,7 @@ public class ReferenceTest {
     ));
   }
 
+  @SuppressWarnings("unchecked")
   @Test
   public void referencePairManager_invokeRemoteMethod() {
     final TestClass testClass = new TestClass();
@@ -284,6 +292,7 @@ public class ReferenceTest {
     ));
   }
 
+  @SuppressWarnings("unchecked")
   @Test
   public void referencePairManager_invokeRemoteMethodOnUnpairedReference() {
     when(testManager.remoteHandler.create(any(RemoteReference.class), eq(0), anyList()))
@@ -359,6 +368,7 @@ public class ReferenceTest {
     assertTrue(pool.add(sameClassManager));
   }
 
+  @SuppressWarnings("unchecked")
   @Test
   public void poolableReferencePairManager_pairWithNewLocalReference() throws Exception {
     pool.add(testPoolableManager1);
@@ -400,6 +410,7 @@ public class ReferenceTest {
                 hasEntry(equalTo(1.1), instanceOf(TestClass.class)))));
   }
 
+  @SuppressWarnings("unchecked")
   @Test
   public void poolableReferencePairManager_pairWithNewRemoteReference() {
     pool.add(testPoolableManager1);
