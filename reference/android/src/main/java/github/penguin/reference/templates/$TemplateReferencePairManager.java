@@ -1,16 +1,5 @@
 package github.penguin.reference.templates;
 
-import github.penguin.reference.method_channel.MethodChannelReferencePairManager;
-import github.penguin.reference.method_channel.MethodChannelRemoteReferenceCommunicationHandler;
-import github.penguin.reference.method_channel.ReferenceMessageCodec;
-import github.penguin.reference.reference.LocalReference;
-import github.penguin.reference.reference.ReferencePairManager;
-import io.flutter.plugin.common.BinaryMessenger;
-import com.google.common.collect.ImmutableMap;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
 public class $TemplateReferencePairManager {// extends MethodChannelReferencePairManager {
 //  public interface ClassTemplate extends LocalReference {
 //    Integer getFieldTemplate();

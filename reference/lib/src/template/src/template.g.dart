@@ -30,7 +30,7 @@ class _$TemplateReferencePairManager extends MethodChannelReferencePairManager {
   final LocalReferenceCommunicationHandler localHandler;
 
   @override
-  RemoteReferenceCommunicationHandler get remoteHandler =>
+  MethodChannelRemoteHandler get remoteHandler =>
       _$RemoteReferenceCommunicationHandler(channel.name);
 }
 
@@ -90,7 +90,7 @@ class _$LocalReferenceCommunicationHandler
 }
 
 class _$RemoteReferenceCommunicationHandler
-    extends MethodChannelRemoteReferenceCommunicationHandler {
+    extends MethodChannelRemoteHandler {
   static final Map<Type, _CreationArgumentsHandler> _creationArguments =
       <Type, _CreationArgumentsHandler>{
     ClassTemplate: (LocalReference localReference) {

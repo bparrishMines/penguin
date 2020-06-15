@@ -31,6 +31,9 @@ abstract class MethodChannelReferencePairManager
   final MethodChannel channel;
 
   @override
+  MethodChannelRemoteHandler get remoteHandler;
+
+  @override
   void initialize() {
     super.initialize();
     channel.setMethodCallHandler((MethodCall call) async {
@@ -77,9 +80,9 @@ abstract class MethodChannelReferencePairManager
 ///
 /// Used in [MethodChannelReferencePairManager] to handle communication with
 /// [RemoteReference]s.
-abstract class MethodChannelRemoteReferenceCommunicationHandler
+abstract class MethodChannelRemoteHandler
     with RemoteReferenceCommunicationHandler {
-  MethodChannelRemoteReferenceCommunicationHandler(
+  MethodChannelRemoteHandler(
     String channelName, [
     ReferenceMessageCodec messageCodec,
   ]) : channel = MethodChannel(

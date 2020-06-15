@@ -74,7 +74,7 @@ public class ReferenceTest {
     }
   }
 
-  public static class TestPoolableReferencePairManager extends PoolableReferencePairManager {
+  private static class TestPoolableReferencePairManager extends PoolableReferencePairManager {
     private final LocalReferenceCommunicationHandler localHandler;
     private final RemoteReferenceCommunicationHandler remoteHandler;
 

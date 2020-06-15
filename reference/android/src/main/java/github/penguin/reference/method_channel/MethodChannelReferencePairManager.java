@@ -18,49 +18,40 @@ public abstract class MethodChannelReferencePairManager extends PoolableReferenc
   static final String METHOD_METHOD = "REFERENCE_METHOD";
   static final String METHOD_DISPOSE = "REFERENCE_DISPOSE";
 
-  @SuppressWarnings("WeakerAccess")
-  public final BinaryMessenger binaryMessenger;
-
-  @SuppressWarnings("WeakerAccess")
-  public final String channelName;
+  public final MethodChannel channel;
 
   public final MethodCodec methodCodec;
 
-  private final MethodChannelRemoteReferenceCommunicationHandler remoteHandler;
-  private final LocalReferenceCommunicationHandler localHandler;
+  public final BinaryMessenger binaryMessenger;
 
   @SuppressWarnings("unused")
   public MethodChannelReferencePairManager(
       final List<Class<? extends LocalReference>> supportedClasses,
       final BinaryMessenger binaryMessenger,
-      final String channelName,
-      final LocalReferenceCommunicationHandler localHandler,
-      final MethodChannelRemoteReferenceCommunicationHandler remoteHandler,
-      final String poolId) {
-    this(supportedClasses, binaryMessenger, channelName, localHandler, remoteHandler, poolId, new ReferenceMessageCodec());
+      final String channelName) {
+    this(supportedClasses, binaryMessenger, channelName, channelName, new ReferenceMessageCodec());
   }
 
+  // TODO: problem with if null add my choice
   public MethodChannelReferencePairManager(
       final List<Class<? extends LocalReference>> supportedClasses,
       final BinaryMessenger binaryMessenger,
       final String channelName,
-      final LocalReferenceCommunicationHandler localHandler,
-      final MethodChannelRemoteReferenceCommunicationHandler remoteHandler,
       final String poolId,
       final ReferenceMessageCodec messageCodec) {
     super(supportedClasses, poolId != null ? poolId : channelName);
     this.binaryMessenger = binaryMessenger;
-    this.channelName = channelName;
-    this.remoteHandler = remoteHandler;
-    this.localHandler = localHandler;
-    this.methodCodec = new StandardMethodCodec(messageCodec);
+    methodCodec = new StandardMethodCodec(messageCodec);
+    this.channel = new MethodChannel(binaryMessenger, channelName, methodCodec);
   }
+
+  @Override
+  public abstract MethodChannelRemoteHandler getRemoteHandler();
 
   @Override
   public void initialize() {
     super.initialize();
-//    getRemoteHandler().channel = new MethodChannel(binaryMessenger, channelName, methodCodec);
-//    getRemoteHandler().channel.setMethodCallHandler(this);
+    channel.setMethodCallHandler(this);
   }
 
   @SuppressWarnings("unchecked")
@@ -112,22 +103,5 @@ public abstract class MethodChannelReferencePairManager extends PoolableReferenc
           exception.getLocalizedMessage(),
           android.util.Log.getStackTraceString(exception));
     }
-  }
-
-  @SuppressWarnings("unused")
-  public MethodChannel getChannel() {
-//    return getRemoteHandler().channel;
-    return null;
-  }
-
-  @Override
-  public RemoteReferenceCommunicationHandler getRemoteHandler() {
-    //return remoteHandler;
-    return null;
-  }
-
-  @Override
-  public LocalReferenceCommunicationHandler getLocalHandler() {
-    return localHandler;
   }
 }

@@ -1,6 +1,6 @@
 package github.penguin.reference.reference;
 
-// TODO: empty values and auto run and complete values and tryGetResult
+// TODO: move to separate folder
 public class Completer<T> {
   public final Completable<T> completable = new Completable<T>();
 

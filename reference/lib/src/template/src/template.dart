@@ -5,7 +5,6 @@ import 'package:reference/reference.dart';
 
 part 'template.g.dart';
 
-// TODO: Somewhere talk about how to use OwnerCounter for using other plugin's code
 @visibleForTesting
 ReferencePairManagerTemplate referencePairManager;
 

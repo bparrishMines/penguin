@@ -279,11 +279,11 @@ class TestReferencePairManager extends MethodChannelReferencePairManager {
   LocalReferenceCommunicationHandler get localHandler => _localHandler;
 
   @override
-  RemoteReferenceCommunicationHandler get remoteHandler => TestRemoteHandler();
+  MethodChannelRemoteHandler get remoteHandler => TestRemoteHandler();
 }
 
 class TestRemoteHandler
-    extends MethodChannelRemoteReferenceCommunicationHandler {
+    extends MethodChannelRemoteHandler {
   TestRemoteHandler() : super('test_channel');
 
   @override

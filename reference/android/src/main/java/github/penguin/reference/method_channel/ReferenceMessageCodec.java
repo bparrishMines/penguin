@@ -9,7 +9,7 @@ import java.util.List;
 
 public class ReferenceMessageCodec extends StandardMessageCodec {
   private static final byte REMOTE_REFERENCE = (byte) 128;
-  private static final byte UNPAIRED_REMOTE_REFERENCE = (byte) 129;
+  private static final byte UNPAIRED_REFERENCE = (byte) 129;
 
   @Override
   protected void writeValue(ByteArrayOutputStream stream, Object value) {
@@ -17,7 +17,7 @@ public class ReferenceMessageCodec extends StandardMessageCodec {
       stream.write(REMOTE_REFERENCE);
       writeValue(stream, ((RemoteReference) value).referenceId);
     } else if (value instanceof UnpairedReference) {
-      stream.write(UNPAIRED_REMOTE_REFERENCE);
+      stream.write(UNPAIRED_REFERENCE);
       writeValue(stream, ((UnpairedReference) value).classId);
       writeValue(stream, ((UnpairedReference) value).creationArguments);
       writeValue(stream, ((UnpairedReference) value).managerPoolId);
@@ -31,7 +31,7 @@ public class ReferenceMessageCodec extends StandardMessageCodec {
     switch (type) {
       case REMOTE_REFERENCE:
         return new RemoteReference((String) readValueOfType(buffer.get(), buffer));
-      case UNPAIRED_REMOTE_REFERENCE:
+      case UNPAIRED_REFERENCE:
         //noinspection unchecked
         return new UnpairedReference(
             (Integer) readValueOfType(buffer.get(), buffer),
