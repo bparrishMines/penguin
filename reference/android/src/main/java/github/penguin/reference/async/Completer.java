@@ -1,6 +1,5 @@
-package github.penguin.reference.reference;
+package github.penguin.reference.async;
 
-// TODO: move to separate folder
 public class Completer<T> {
   public final Completable<T> completable = new Completable<T>();
 

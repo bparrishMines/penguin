@@ -2,7 +2,8 @@ package github.penguin.reference;
 
 import static org.junit.Assert.assertEquals;
 
-import github.penguin.reference.reference.Completer;
+import github.penguin.reference.async.Completable;
+import github.penguin.reference.async.Completer;
 import github.penguin.reference.reference.OwnerCounter;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,13 +22,13 @@ public class OwnerCounterTest {
         new OwnerCounter(
             new OwnerCounter.LifecycleListener() {
               @Override
-              public Completer<Void> onCreate() {
+              public Completable<Void> onCreate() {
                 callCount++;
                 return null;
               }
 
               @Override
-              public Completer<Void> onDispose() {
+              public Completable<Void> onDispose() {
                 return null;
               }
             });
@@ -45,12 +46,12 @@ public class OwnerCounterTest {
         new OwnerCounter(
             new OwnerCounter.LifecycleListener() {
               @Override
-              public Completer<Void> onCreate() {
+              public Completable<Void> onCreate() {
                 return null;
               }
 
               @Override
-              public Completer<Void> onDispose() {
+              public Completable<Void> onDispose() {
                 callCount++;
                 return null;
               }

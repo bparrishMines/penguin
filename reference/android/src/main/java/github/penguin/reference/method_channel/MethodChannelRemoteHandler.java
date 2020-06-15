@@ -1,8 +1,8 @@
 package github.penguin.reference.method_channel;
 
 import androidx.annotation.Nullable;
-import github.penguin.reference.reference.Completable;
-import github.penguin.reference.reference.Completer;
+import github.penguin.reference.async.Completable;
+import github.penguin.reference.async.Completer;
 import github.penguin.reference.reference.ReferencePairManager.RemoteReferenceCommunicationHandler;
 import github.penguin.reference.reference.RemoteReference;
 import github.penguin.reference.reference.UnpairedReference;
@@ -14,8 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class MethodChannelRemoteHandler implements RemoteReferenceCommunicationHandler {
-  public final MethodChannel channel;
   public final BinaryMessenger binaryMessenger;
+  public final MethodChannel channel;
 
   private static class RemoteHandlerResult<T> implements Result {
     private final Completer<T> completer;

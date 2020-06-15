@@ -11,6 +11,7 @@ public abstract class PoolableReferencePairManager extends ReferencePairManager 
 
   public PoolableReferencePairManager(List<Class<? extends LocalReference>> supportedClasses, String poolId) {
     super(supportedClasses);
+    if (poolId == null) throw new AssertionError("`poolId` cannot be null.");
     this.poolId = poolId;
   }
 

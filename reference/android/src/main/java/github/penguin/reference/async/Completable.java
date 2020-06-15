@@ -1,4 +1,4 @@
-package github.penguin.reference.reference;
+package github.penguin.reference.async;
 
 public class Completable<T> {
   T result;
@@ -12,7 +12,6 @@ public class Completable<T> {
     void onError(Throwable throwable);
   }
 
-  @SuppressWarnings("UnusedReturnValue")
   public void setOnCompleteListener(final OnCompleteListener<T> listener) {
     this.listener = listener;
     tryPassResultToListener();
