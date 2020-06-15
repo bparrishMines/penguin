@@ -250,7 +250,6 @@ abstract class ReferencePairManager {
     return remoteHandler.dispose(remoteReference);
   }
 
-  // TODO(bparrishMines): This should be able to use UnpairedRemoteReference for the RemoteReference
   /// Execute a method on the [RemoteReference] paired to [localReference].
   ///
   /// The [LocalReference]s in `arguments` will be replaced by a

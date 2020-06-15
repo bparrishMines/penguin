@@ -1,9 +1,8 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:reference/reference.dart';
-import 'package:reference/src/template/template.dart';
 
-// Extends isMethodCall in packager:test/test.dart to support matchers in arguments.
+// Extends isMethodCall in package:test/test.dart to support matchers in arguments.
 Matcher isMethodCallWithMatchers(String name, {Object arguments}) {
   return _IsMethodCallWithMatchers(name, arguments);
 }
@@ -70,31 +69,6 @@ class _IsUnpairedReference extends Matcher with _DeepEquals {
     if (item.typeId != typeId) return false;
     if (item.managerPoolId != managerPoolId) return false;
     return deepEquals(creationArguments, item.creationArguments, matchState);
-  }
-}
-
-Matcher isClassTemplate(int fieldTemplate) {
-  return _IsClassTemplate(fieldTemplate);
-}
-
-class _IsClassTemplate extends Matcher with _DeepEquals {
-  const _IsClassTemplate(this.fieldTemplate);
-
-  final int fieldTemplate;
-
-  @override
-  Description describe(Description description) {
-    return description
-        .add(' Is a $ClassTemplate with fieldTemplate: ')
-        .addDescriptionOf(fieldTemplate)
-        .add(' and referenceFieldTemplate: ');
-  }
-
-  @override
-  bool matches(dynamic item, Map<dynamic, dynamic> matchState) {
-    if (item is! ClassTemplate) return false;
-    if (item.fieldTemplate != fieldTemplate) return false;
-    return true;
   }
 }
 

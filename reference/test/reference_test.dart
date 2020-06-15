@@ -5,7 +5,6 @@ import 'package:reference/reference.dart';
 import 'reference_matchers.dart';
 
 void main() {
-  // TODO: Replace tests with mocks
   group('$ReferencePairManager', () {
     TestReferencePairManager testManager;
 

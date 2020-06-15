@@ -2,7 +2,6 @@ package github.penguin.reference;
 
 import github.penguin.reference.reference.RemoteReference;
 import github.penguin.reference.reference.UnpairedReference;
-//import github.penguin.reference.templates.$TemplateReferencePairManager.ClassTemplate;
 import io.flutter.plugin.common.MethodCall;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -18,10 +17,6 @@ class ReferenceMatchers {
       final Integer classId, final Object creationArguments, final String managerPoolId) {
     return new IsUnpairedReference(classId, creationArguments, managerPoolId);
   }
-
-//  static Matcher isClassTemplate(int fieldTemplate) {
-//    return new IsClassTemplate(fieldTemplate);
-//  }
 
   static Matcher isRemoteReference(String referenceId) {
     return new IsRemoteReference(referenceId);
@@ -111,35 +106,6 @@ class ReferenceMatchers {
       return creationArguments == reference.creationArguments;
     }
   }
-
-//  private static class IsClassTemplate extends TypeSafeMatcher<ClassTemplate> {
-//    private final int fieldTemplate;
-//
-//    private IsClassTemplate(int fieldTemplate) {
-//      this.fieldTemplate = fieldTemplate;
-//    }
-//
-//    private void describe(Integer fieldTemplate, Description description) {
-//      description
-//          .appendText(String.format(" A %s with fieldTemplate:: ", ClassTemplate.class.getSimpleName()))
-//          .appendText("" + fieldTemplate);
-//    }
-//
-//    @Override
-//    public void describeTo(Description description) {
-//      describe(fieldTemplate, description);
-//    }
-//
-//    @Override
-//    protected void describeMismatchSafely(ClassTemplate classTemplate, Description mismatchDescription) {
-//      describe(classTemplate.getFieldTemplate(), mismatchDescription);
-//    }
-//
-//    @Override
-//    protected boolean matchesSafely(ClassTemplate item) {
-//      return fieldTemplate == item.getFieldTemplate();
-//    }
-//  }
 
   private static class IsRemoteReference extends TypeSafeMatcher<RemoteReference> {
     private final Object referenceId;
