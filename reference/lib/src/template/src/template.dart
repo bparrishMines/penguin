@@ -1,25 +1,24 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:reference/reference.dart';
 
 part 'template.g.dart';
 
-@visibleForTesting
-ReferencePairManagerTemplate referencePairManager;
+_ReferencePairManagerTemplate _referencePairManager =
+    _ReferencePairManagerTemplate()..initialize();
 
-class ReferencePairManagerTemplate extends _$TemplateReferencePairManager {
-  ReferencePairManagerTemplate()
-      : super(
-          'github.penguin/reference/template',
-          _$LocalReferenceCommunicationHandler(
-            createClassTemplate: (
-              ReferencePairManager referencePairManager,
-              int fieldTemplate,
-            ) =>
-                ClassTemplate(fieldTemplate),
-          ),
-        );
+class _ReferencePairManagerTemplate extends _$TemplateReferencePairManager {
+  _ReferencePairManagerTemplate() : super('github.penguin/reference/template');
+
+  @override
+  _$LocalReferenceCommunicationHandler get localHandler =>
+      _$LocalReferenceCommunicationHandler(
+        createClassTemplate: (
+          ReferencePairManager referencePairManager,
+          int fieldTemplate,
+        ) =>
+            ClassTemplate(fieldTemplate),
+      );
 }
 
 class ClassTemplate with LocalReference, _$ClassTemplateMethods {
@@ -27,9 +26,9 @@ class ClassTemplate with LocalReference, _$ClassTemplateMethods {
 
   final int fieldTemplate;
 
-  FutureOr<String> methodTemplate(String parameterTemplate) async {
+  Future<String> methodTemplate(String parameterTemplate) async {
     return (await _$methodTemplate(
-      referencePairManager,
+      _referencePairManager,
       parameterTemplate,
     )) as String;
   }

@@ -12,23 +12,12 @@ Future<void> main() async {
 
   group('reference', () {
     test('$ClassTemplate', () async {
-      final ClassTemplate classTemplate1 = ClassTemplate(44, null, null, null);
-
-      final ClassTemplate classTemplate2 = ClassTemplate(
-        11,
-        ClassTemplate(22, null, null, null),
-        <ClassTemplate>[ClassTemplate(33, null, null, null)],
-        <String, ClassTemplate>{'hello': classTemplate1},
-      );
-
-      referencePairManager.pairWithNewRemoteReference(classTemplate1);
-      referencePairManager.pairWithNewRemoteReference(classTemplate2);
+      final ClassTemplate classTemplate = ClassTemplate(44);
 
       expect(
-        classTemplate2.methodTemplate('hello', null, null, null),
-        completion('Reference'),
+        classTemplate.methodTemplate('Hello,'),
+        completion('Hello, World!'),
       );
-      expect(classTemplate2.returnsReference(), completes);
     });
   });
 }

@@ -1,83 +1,28 @@
 package github.penguin.reference.templates;
 
-import java.util.Collections;
-import github.penguin.reference.reference.Completer;
 import github.penguin.reference.reference.LocalReference;
-import github.penguin.reference.reference.ReferencePairManager;
-//import github.penguin.reference.templates.$TemplateReferencePairManager.ClassTemplate;
+import github.penguin.reference.templates.$TemplateReferencePairManager.ClassTemplate;
 
 @SuppressWarnings("RedundantThrows")
-public class ClassTemplateImpl {// implements ClassTemplate {
-//  private final Integer fieldTemplate;
-//
-//  private ReferencePairManager referencePairManager;
-//
-//  public ClassTemplateImpl(Integer fieldTemplate) {
-//    this.fieldTemplate = fieldTemplate;
-//  }
-//
-//  @Override
-//  public Integer getFieldTemplate() {
-//    return fieldTemplate;
-//  }
-//
-//  @Override
-//  public Object methodTemplate(final String parameterTemplate) throws Exception {
-//    final Completer<String> completer =
-//        new Completer<String>() {
-//          @Override
-//          public void run() {
-//            if (referencePairManager.getPairedRemoteReference(ClassTemplateImpl.this) == null) {
-//              referencePairManager
-//                  .invokeRemoteMethodOnUnpairedReference(
-//                      ClassTemplateImpl.this,
-//                      $TemplateReferencePairManager.$MethodNames.methodTemplate,
-//                      Collections.singletonList((Object) parameterTemplate))
-//                  .setOnCompleteListener(
-//                      new OnCompleteListener() {
-//                        @Override
-//                        public void onComplete(Object result) {
-//                          complete((String) result);
-//                        }
-//
-//                        @Override
-//                        public void onError(Throwable throwable) {
-//                          completeWithError(throwable);
-//                        }
-//                      });
-//            } else {
-//              referencePairManager
-//                  .invokeRemoteMethod(
-//                      referencePairManager.getPairedRemoteReference(ClassTemplateImpl.this),
-//                      $TemplateReferencePairManager.$MethodNames.methodTemplate,
-//                      Collections.singletonList((Object) parameterTemplate))
-//                  .setOnCompleteListener(
-//                      new OnCompleteListener() {
-//                        @Override
-//                        public void onComplete(Object result) {
-//                          complete((String) result);
-//                        }
-//
-//                        @Override
-//                        public void onError(Throwable throwable) {
-//                          completeWithError(throwable);
-//                        }
-//                      });
-//            }
-//          }
-//        };
-//
-//    completer.run();
-//    return completer;
-//  }
-//
-//  public ClassTemplateImpl setReferencePairManager(final ReferencePairManager referencePairManager) {
-//    this.referencePairManager = referencePairManager;
-//    return this;
-//  }
-//
-//  @Override
-//  public Class<? extends LocalReference> getReferenceClass() {
-//    return ClassTemplate.class;
-//  }
+public class ClassTemplateImpl implements ClassTemplate {
+  private final Integer fieldTemplate;
+
+  public ClassTemplateImpl(Integer fieldTemplate) {
+    this.fieldTemplate = fieldTemplate;
+  }
+
+  @Override
+  public Integer getFieldTemplate() {
+    return fieldTemplate;
+  }
+
+  @Override
+  public Object methodTemplate(final String parameterTemplate) throws Exception {
+    return parameterTemplate + " World!";
+  }
+
+  @Override
+  public Class<? extends LocalReference> getReferenceClass() {
+    return ClassTemplate.class;
+  }
 }

@@ -18,11 +18,13 @@ public abstract class MethodChannelReferencePairManager extends PoolableReferenc
   static final String METHOD_METHOD = "REFERENCE_METHOD";
   static final String METHOD_DISPOSE = "REFERENCE_DISPOSE";
 
-  public final MethodChannel channel;
+  public final BinaryMessenger binaryMessenger;
+
+  public final String channelName;
 
   public final MethodCodec methodCodec;
 
-  public final BinaryMessenger binaryMessenger;
+  public final MethodChannel channel;
 
   @SuppressWarnings("unused")
   public MethodChannelReferencePairManager(
@@ -41,6 +43,7 @@ public abstract class MethodChannelReferencePairManager extends PoolableReferenc
       final ReferenceMessageCodec messageCodec) {
     super(supportedClasses, poolId != null ? poolId : channelName);
     this.binaryMessenger = binaryMessenger;
+    this.channelName = channelName;
     methodCodec = new StandardMethodCodec(messageCodec);
     this.channel = new MethodChannel(binaryMessenger, channelName, methodCodec);
   }

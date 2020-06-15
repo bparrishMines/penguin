@@ -15,10 +15,10 @@ typedef _CreationArgumentsHandler = List<Object> Function(
   LocalReference localReference,
 );
 
-class _$TemplateReferencePairManager extends MethodChannelReferencePairManager {
+abstract class _$TemplateReferencePairManager
+    extends MethodChannelReferencePairManager {
   _$TemplateReferencePairManager(
-    String channelName,
-    this.localHandler, {
+    String channelName, {
     ReferenceMessageCodec messageCodec,
   }) : super(
           <Type>[ClassTemplate],
@@ -27,7 +27,7 @@ class _$TemplateReferencePairManager extends MethodChannelReferencePairManager {
         );
 
   @override
-  final LocalReferenceCommunicationHandler localHandler;
+  _$LocalReferenceCommunicationHandler get localHandler;
 
   @override
   MethodChannelRemoteHandler get remoteHandler =>
@@ -89,8 +89,7 @@ class _$LocalReferenceCommunicationHandler
   }
 }
 
-class _$RemoteReferenceCommunicationHandler
-    extends MethodChannelRemoteHandler {
+class _$RemoteReferenceCommunicationHandler extends MethodChannelRemoteHandler {
   static final Map<Type, _CreationArgumentsHandler> _creationArguments =
       <Type, _CreationArgumentsHandler>{
     ClassTemplate: (LocalReference localReference) {

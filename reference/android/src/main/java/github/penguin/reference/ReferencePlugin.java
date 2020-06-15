@@ -1,6 +1,7 @@
 package github.penguin.reference;
 
 import androidx.annotation.NonNull;
+import github.penguin.reference.templates.PluginTemplate;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
 
@@ -8,16 +9,16 @@ import io.flutter.plugin.common.PluginRegistry.Registrar;
 public class ReferencePlugin implements FlutterPlugin {
   @SuppressWarnings("unused")
   public static void registerWith(Registrar registrar) {
-    // This plugin is only provides a library and has no implementation.
+    PluginTemplate.registerWith(registrar);
   }
 
   @Override
-  public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
-    // This plugin is only provides a library and has no implementation.
+  public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
+    new PluginTemplate().onAttachedToEngine(binding);
   }
 
   @Override
   public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
-    // Do nothing.
+    new PluginTemplate().onDetachedFromEngine(binding);
   }
 }
