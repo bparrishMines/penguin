@@ -265,7 +265,8 @@ class TestClass with LocalReference {
 }
 
 class TestReferencePairManager extends MethodChannelReferencePairManager {
-  TestReferencePairManager() : super(<Type>[TestClass], 'test_channel');
+  TestReferencePairManager()
+      : super(<Type>[TestClass], 'test_channel');
 
   final MockLocalHandler _localHandler = MockLocalHandler();
 

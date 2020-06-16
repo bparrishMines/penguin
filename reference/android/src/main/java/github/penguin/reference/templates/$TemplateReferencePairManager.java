@@ -122,7 +122,7 @@ abstract class $TemplateReferencePairManager extends MethodChannelReferencePairM
     super(Arrays.<Class<? extends LocalReference>>asList(ClassTemplate.class),
         binaryMessenger,
         channelName,
-        null,
+        channelName,
         messageCodec
     );
   }

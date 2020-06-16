@@ -24,6 +24,7 @@ abstract class _$TemplateReferencePairManager
           <Type>[ClassTemplate],
           channelName,
           messageCodec: messageCodec,
+          poolId: channelName,
         );
 
   @override

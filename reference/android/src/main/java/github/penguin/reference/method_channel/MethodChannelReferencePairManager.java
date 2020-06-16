@@ -34,14 +34,13 @@ public abstract class MethodChannelReferencePairManager extends PoolableReferenc
     this(supportedClasses, binaryMessenger, channelName, channelName, new ReferenceMessageCodec());
   }
 
-  // TODO: problem with if null add my choice
   public MethodChannelReferencePairManager(
       final List<Class<? extends LocalReference>> supportedClasses,
       final BinaryMessenger binaryMessenger,
       final String channelName,
       final String poolId,
       final ReferenceMessageCodec messageCodec) {
-    super(supportedClasses, poolId != null ? poolId : channelName);
+    super(supportedClasses, poolId);
     this.binaryMessenger = binaryMessenger;
     this.channelName = channelName;
     methodCodec = new StandardMethodCodec(messageCodec);
