@@ -214,7 +214,7 @@ abstract class ReferencePairManager {
     localHandler.dispose(this, localReference);
   }
 
-  // TODO(bparrishMines): Don't change state if failure to create
+  // TODO(bparrishMines): Don't change state if failure to create?
   /// Creates and maintains access of an equivalent object to [localReference] on a remote thread/process.
   ///
   /// This will also store [localReference] and a [RemoteReference] as a pair.
@@ -231,7 +231,7 @@ abstract class ReferencePairManager {
       remoteReference,
       _typeIds.inverse[localReference.referenceType],
       _replaceLocalReferences(
-        remoteHandler.getCreationArguments(localReference) ?? <Object>[],
+        remoteHandler.getCreationArguments(localReference),
       ),
     );
 

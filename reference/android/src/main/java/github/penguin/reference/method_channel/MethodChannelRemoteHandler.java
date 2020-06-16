@@ -24,6 +24,7 @@ public abstract class MethodChannelRemoteHandler implements RemoteReferenceCommu
       this.completer = completer;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void success(@Nullable Object result) {
       completer.complete((T) result);

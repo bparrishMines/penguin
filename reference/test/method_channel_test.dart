@@ -11,6 +11,7 @@ import 'reference_matchers.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
+  // TODO: just use message codec?
   group('$ReferenceMessageCodec', () {
     final methodCodec = StandardMethodCodec(ReferenceMessageCodec());
 

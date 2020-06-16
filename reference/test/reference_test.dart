@@ -58,7 +58,6 @@ void main() {
       );
     });
 
-    // TODO: test return values
     test('invokeLocalMethod', () {
       when(testManager.localHandler.create(testManager, TestClass, any))
           .thenReturn(TestClass());
@@ -101,6 +100,39 @@ void main() {
       );
     });
 
+    test('invokeLocalMethod converts returned ${LocalReference}s', () {
+      when(testManager.localHandler.create(testManager, TestClass, any))
+          .thenReturn(TestClass());
+
+      when(testManager.remoteHandler.getCreationArguments(any))
+          .thenReturn(<Object>[]);
+
+      final TestClass caller = testManager.pairWithNewLocalReference(
+        RemoteReference('chi'),
+        0,
+      );
+
+      final TestClass hasRemoteRef = testManager.pairWithNewLocalReference(
+        RemoteReference('ro'),
+        0,
+      );
+
+      when(testManager.localHandler
+              .invokeMethod(testManager, caller, 'aMethod', any))
+          .thenReturn(<Object>[TestClass(), hasRemoteRef, null]);
+
+      final Object result = testManager.invokeLocalMethod(caller, 'aMethod');
+
+      expect(
+        result,
+        <Matcher>[
+          isUnpairedReference(0, <Object>[], null),
+          equals(RemoteReference('ro')),
+          isNull,
+        ],
+      );
+    });
+
     test('invokeLocalMethodOnUnpairedReference', () {
       when(testManager.localHandler.create(testManager, TestClass, any))
           .thenReturn(TestClass());
@@ -123,7 +155,7 @@ void main() {
       expect(
         verify(
           testManager.localHandler.invokeMethod(
-            testManager, 
+            testManager,
             argThat(isA<TestClass>()),
             'aMethod',
             captureAny,
@@ -234,6 +266,37 @@ void main() {
           ),
         ],
       );
+    });
+
+    test('invokeRemoteMethod converts returned ${RemoteReference}s', () async {
+      final RemoteReference remoteReference =
+          await testManager.pairWithNewRemoteReference(TestClass());
+
+      final TestClass hasRemoteRef = TestClass();
+      final RemoteReference hasLocalRef =
+          await testManager.pairWithNewRemoteReference(hasRemoteRef);
+
+      when(testManager.localHandler.create(testManager, TestClass, any))
+          .thenReturn(TestClass());
+
+      when(testManager.remoteHandler
+              .invokeMethod(remoteReference, 'aMethod', any))
+          .thenAnswer(
+        (_) => Future<Object>.value(
+          <Object>[
+            UnpairedReference(0, <Object>[]),
+            hasLocalRef,
+            null,
+          ],
+        ),
+      );
+
+      final Object result = await testManager.invokeRemoteMethod(
+        remoteReference,
+        'aMethod',
+      );
+
+      expect(result, <Matcher>[isA<TestClass>(), equals(hasRemoteRef), isNull]);
     });
 
     test(
