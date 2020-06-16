@@ -8,6 +8,8 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.isA;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -38,7 +40,8 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
 public class MethodChannelTest {
-  private static final MethodCodec methodCodec = new StandardMethodCodec(new ReferenceMessageCodec());
+  private static final ReferenceMessageCodec messageCodec = new ReferenceMessageCodec();
+  private static final MethodCodec methodCodec = new StandardMethodCodec(messageCodec);
   private static TestReferencePairManager testManager;
 
   private static class TestClass implements LocalReference {
@@ -109,25 +112,21 @@ public class MethodChannelTest {
 
   @Test
   public void referenceMessageCodec_encodeAndDecodeRemoteReference() {
-    final ByteBuffer message = methodCodec.encodeMethodCall(
-            new MethodCall("ewoif",
-                new RemoteReference("hi"))
-        );
+    final ByteBuffer message = messageCodec.encodeMessage(new RemoteReference("hi"));
 
-    assertThat(methodCodec.decodeMethodCall((ByteBuffer) message.position(0)),
-        isMethodCall("ewoif",
-            new RemoteReference("hi")));
+    assertNotNull(message);
+    assertEquals(messageCodec.decodeMessage((ByteBuffer) message.position(0)),
+        new RemoteReference("hi"));
   }
 
   @Test
   public void referenceMessageCodec_encodeAndDecodeUnpairedRemoteReference() {
-    final ByteBuffer message = methodCodec.encodeMethodCall(
-            new MethodCall("ewoif",
-                new UnpairedReference(1, Collections.emptyList(), "apple"))
-        );
+    final ByteBuffer message = messageCodec.encodeMessage(
+        new UnpairedReference(1, Collections.emptyList(), "apple"));
 
-    assertThat(methodCodec.decodeMethodCall((ByteBuffer) message.position(0)),
-        isMethodCall("ewoif", isUnpairedReference(1, empty(), "apple")));
+    assertNotNull(message);
+    assertThat(messageCodec.decodeMessage((ByteBuffer) message.position(0)),
+       isUnpairedReference(1, empty(), "apple"));
   }
 
   @Test

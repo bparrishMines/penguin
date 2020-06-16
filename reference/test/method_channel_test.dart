@@ -11,35 +11,28 @@ import 'reference_matchers.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  // TODO: just use message codec?
   group('$ReferenceMessageCodec', () {
-    final methodCodec = StandardMethodCodec(ReferenceMessageCodec());
+    final ReferenceMessageCodec messageCodec = ReferenceMessageCodec();
 
     test('encode/decode $RemoteReference', () {
-      final ByteData byteData = methodCodec.encodeMethodCall(
-        MethodCall('oeifj', RemoteReference('a')),
+      final ByteData byteData = messageCodec.encodeMessage(
+        RemoteReference('a'),
       );
 
       expect(
-        methodCodec.decodeMethodCall(byteData),
-        isMethodCall('oeifj', arguments: RemoteReference('a')),
+        messageCodec.decodeMessage(byteData),
+        RemoteReference('a'),
       );
     });
 
     test('encode/decode $UnpairedReference', () {
-      final ByteData byteData = methodCodec.encodeMethodCall(
-        MethodCall(
-          'a',
-          UnpairedReference(56, <Object>[], "apple"),
-        ),
+      final ByteData byteData = messageCodec.encodeMessage(
+        UnpairedReference(56, <Object>[], "apple"),
       );
 
       expect(
-        methodCodec.decodeMethodCall(byteData),
-        isMethodCallWithMatchers(
-          'a',
-          arguments: isUnpairedReference(56, <Object>[], "apple"),
-        ),
+        messageCodec.decodeMessage(byteData),
+        isUnpairedReference(56, <Object>[], "apple"),
       );
     });
   });
@@ -283,8 +276,7 @@ class TestReferencePairManager extends MethodChannelReferencePairManager {
   MethodChannelRemoteHandler get remoteHandler => TestRemoteHandler();
 }
 
-class TestRemoteHandler
-    extends MethodChannelRemoteHandler {
+class TestRemoteHandler extends MethodChannelRemoteHandler {
   TestRemoteHandler() : super('test_channel');
 
   @override
