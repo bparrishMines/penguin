@@ -3,7 +3,6 @@ package github.penguin.reference.templates;
 import github.penguin.reference.reference.LocalReference;
 import github.penguin.reference.templates.$TemplateReferencePairManager.ClassTemplate;
 
-@SuppressWarnings("RedundantThrows")
 public class ClassTemplateImpl implements ClassTemplate {
   private final Integer fieldTemplate;
 
@@ -17,7 +16,7 @@ public class ClassTemplateImpl implements ClassTemplate {
   }
 
   @Override
-  public Object methodTemplate(final String parameterTemplate) throws Exception {
+  public Object methodTemplate(final String parameterTemplate) {
     return parameterTemplate + " World!";
   }
 

@@ -1,0 +1,28 @@
+#import <Foundation/Foundation.h>
+
+NS_ASSUME_NONNULL_BEGIN
+
+@class REFClass;
+
+@protocol REFReference <NSObject>
+@end
+
+@protocol REFLocalReference <REFReference>
+- (REFClass *)referenceClass;
+@end
+
+@interface REFRemoteReference : NSObject<REFReference>
+@property (readonly) NSString *referenceID;
+- (instancetype)initWithReferenceID:(NSString *)referenceID;
+@end
+
+@interface REFUnpairedReference : NSObject<REFReference>
+@property (readonly) NSUInteger classID;
+@property (readonly) NSArray<id> *creationArguments;
+@property (readonly) NSString *_Nullable managerPoolID;
+- (instancetype)initWithClassID:(NSUInteger)classID
+              creationArguments:(NSArray<id> *)creationArguments
+                  managerPoolID:(NSString *_Nullable)managerPoolID;
+@end
+
+NS_ASSUME_NONNULL_END

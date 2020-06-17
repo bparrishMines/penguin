@@ -25,8 +25,7 @@ public abstract class ReferencePairManager {
 
     Completable<Void> create(RemoteReference remoteReference, int classId, List<Object> arguments);
 
-    Completable<Object> invokeMethod(
-        RemoteReference remoteReference, String methodName, List<Object> arguments);
+    Completable<Object> invokeMethod(RemoteReference remoteReference, String methodName, List<Object> arguments);
 
     Completable<Object> invokeMethodOnUnpairedReference(
         UnpairedReference unpairedReference,
@@ -76,7 +75,7 @@ public abstract class ReferencePairManager {
 
   public LocalReference pairWithNewLocalReference(
       RemoteReference remoteReference, int classId) throws Exception {
-    return pairWithNewLocalReference(remoteReference, classId, new ArrayList<>());
+    return pairWithNewLocalReference(remoteReference, classId, Collections.emptyList());
   }
 
   public LocalReference pairWithNewLocalReference(

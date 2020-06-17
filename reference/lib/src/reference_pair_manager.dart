@@ -199,6 +199,47 @@ abstract class ReferencePairManager {
     return localReference;
   }
 
+  /// Execute a method on the [LocalReference] paired to [remoteReference].
+  ///
+  /// All [RemoteReference]s and [UnpairedReference]s in `arguments` will
+  /// be replaced by a [LocalReference].
+  ///
+  /// Also, all [List]s will also be converted into `List<Object>` and all
+  /// [Map]s will be converted into `Map<Object, Object>`.
+  Object invokeLocalMethod(
+    LocalReference localReference,
+    String methodName, [
+    List<Object> arguments,
+  ]) {
+    _assertIsInitialized();
+
+    final Object result = localHandler.invokeMethod(
+      this,
+      localReference,
+      methodName,
+      _replaceRemoteReferences(arguments) ?? <Object>[],
+    );
+
+    return _replaceLocalReferences(result);
+  }
+
+  Object invokeLocalMethodOnUnpairedReference(
+    UnpairedReference unpairedReference,
+    String methodName, [
+    List<Object> arguments,
+  ]) {
+    _assertIsInitialized();
+    return invokeLocalMethod(
+      localHandler.create(
+        this,
+        _typeIds[unpairedReference.typeId],
+        _replaceRemoteReferences(unpairedReference.creationArguments),
+      ),
+      methodName,
+      arguments,
+    );
+  }
+
   /// Call when a remote [ReferencePairManager] wants to dispose their [RemoteReference].
   ///
   /// This will remove [remoteReference] and its paired [LocalReference] from
@@ -236,18 +277,6 @@ abstract class ReferencePairManager {
     );
 
     return remoteReference;
-  }
-
-  /// Call when it is no longer needed to access the [RemoteReference] paired with [localReference].
-  FutureOr<void> disposePairWithLocalReference(LocalReference localReference) {
-    _assertIsInitialized();
-
-    final RemoteReference remoteReference =
-        getPairedRemoteReference(localReference);
-    if (remoteReference == null) return null;
-
-    _referencePairs.remove(localReference);
-    return remoteHandler.dispose(remoteReference);
   }
 
   /// Execute a method on the [RemoteReference] paired to [localReference].
@@ -294,45 +323,16 @@ abstract class ReferencePairManager {
     return _replaceRemoteReferences(result);
   }
 
-  Object invokeLocalMethodOnUnpairedReference(
-    UnpairedReference unpairedReference,
-    String methodName, [
-    List<Object> arguments,
-  ]) {
-    _assertIsInitialized();
-    return invokeLocalMethod(
-      localHandler.create(
-        this,
-        _typeIds[unpairedReference.typeId],
-        _replaceRemoteReferences(unpairedReference.creationArguments),
-      ),
-      methodName,
-      arguments,
-    );
-  }
-
-  /// Execute a method on the [LocalReference] paired to [remoteReference].
-  ///
-  /// All [RemoteReference]s and [UnpairedReference]s in `arguments` will
-  /// be replaced by a [LocalReference].
-  ///
-  /// Also, all [List]s will also be converted into `List<Object>` and all
-  /// [Map]s will be converted into `Map<Object, Object>`.
-  Object invokeLocalMethod(
-    LocalReference localReference,
-    String methodName, [
-    List<Object> arguments,
-  ]) {
+  /// Call when it is no longer needed to access the [RemoteReference] paired with [localReference].
+  FutureOr<void> disposePairWithLocalReference(LocalReference localReference) {
     _assertIsInitialized();
 
-    final Object result = localHandler.invokeMethod(
-      this,
-      localReference,
-      methodName,
-      _replaceRemoteReferences(arguments) ?? <Object>[],
-    );
+    final RemoteReference remoteReference =
+        getPairedRemoteReference(localReference);
+    if (remoteReference == null) return null;
 
-    return _replaceLocalReferences(result);
+    _referencePairs.remove(localReference);
+    return remoteHandler.dispose(remoteReference);
   }
 
   void _assertIsInitialized() {
