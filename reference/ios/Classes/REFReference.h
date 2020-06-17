@@ -2,7 +2,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class REFClass;
+@interface REFClass : NSObject
+@property (readonly) Class clazz;
++ (REFClass *)fromClass:(Class)clazz;
+@end
 
 @protocol REFReference <NSObject>
 @end

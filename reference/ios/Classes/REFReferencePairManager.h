@@ -1,5 +1,6 @@
 #import <Foundation/Foundation.h>
 #import "REFReference.h"
+#import "REFCollections_Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -42,11 +43,6 @@ NS_ASSUME_NONNULL_BEGIN
 @optional
 -(void)dispose:(REFReferencePairManager *)referencePairManager
 localReference:(id<REFLocalReference>)localReference;
-@end
-
-@interface REFClass
-@property (readonly) Class clazz;
-+ (instancetype)fromClass:(Class)clazz;
 @end
 
 @interface REFReferencePairManager : NSObject
