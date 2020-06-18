@@ -12,6 +12,21 @@
 + (REFClass *_Nonnull)fromClass:(Class)clazz {
   return [[REFClass alloc] initWithClass:clazz];
 }
+
+- (BOOL)isEqual:(id)other {
+  if (other == self) {
+    return YES;
+  } else if (![super isKindOfClass:[REFClass class]]) {
+    return NO;
+  } else {
+    REFClass *clazz = other;
+    return _clazz == clazz.clazz;
+  }
+}
+
+- (NSUInteger)hash {
+  return NSStringFromClass(_clazz).hash;
+}
 @end
 
 @implementation REFRemoteReference
