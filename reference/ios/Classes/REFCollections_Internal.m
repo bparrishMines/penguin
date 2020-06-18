@@ -33,7 +33,7 @@
 - (id _Nullable)objectForKey:(id _Nonnull)key {
   id __block object = nil;
   dispatch_sync(_lockQueue, ^{
-    [self->_table objectForKey:key];
+    object = [self->_table objectForKey:key];
   });
   return object;
 }
@@ -63,14 +63,16 @@
 }
 
 - (void)setObject:(id _Nonnull)object forKey:(id _Nonnull)key {
-  if (key && object && [self objectForKey:key]) {
+  if (key && object &&
+      ![self objectForKey:key] &&
+      ![self.inverse objectForKey:object]) {
     [_table setObject:object forKey:key];
     [_inverse->_table setObject:key forKey:object];
   }
 }
 
 - (void)removeObjectForKey:(id _Nonnull)key {
-  if (key != nil) {
+  if (key) {
     id object = [_table objectForKey:key];
     [_table removeObjectForKey:key];
     [_inverse->_table removeObjectForKey:object];

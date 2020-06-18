@@ -62,7 +62,9 @@
                                                       classID:0
                                                     arguments:@[@"table"]];
 
-  XCTAssertNotNil(_testManager);
+  [verify(_testManager.localHandler) create:_testManager
+                             referenceClass:[TestClass class]
+                                  arguments:anything()];
 
   XCTAssertEqual([_testManager getPairedLocalReference:[[REFRemoteReference alloc] initWithReferenceID:@"apple"]], result);
   XCTAssertEqualObjects([_testManager getPairedRemoteReference:result], [[REFRemoteReference alloc] initWithReferenceID:@"apple"]);
