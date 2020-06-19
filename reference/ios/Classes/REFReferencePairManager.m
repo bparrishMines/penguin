@@ -70,6 +70,20 @@
   return localReference;
 }
 
+-(id _Nullable)invokeLocalMethod:(id<REFLocalReference>)localReference
+                      methodName:(NSString *)methodName {
+  return [self invokeLocalMethod:localReference methodName:methodName arguments:@[]];
+}
+
+-(id _Nullable)invokeLocalMethod:(id<REFLocalReference>)localReference
+                      methodName:(NSString *)methodName
+                       arguments:(NSArray<id> *)arguments {
+  [self assertInitialized];
+  id result = [self.localHandler invokeMethod:self localReference:localReference methodName:methodName arguments:[self replaceRemoteReferences:arguments]];
+  
+  return [self replaceLocalReferences:result];
+}
+
 - (void)assertInitialized {
   NSAssert(_isInitialized, @"Initialize has not been called.");
 }
@@ -101,6 +115,10 @@
     return newDictionary.copy;
   }
   
+  return argument;
+}
+
+- (id _Nullable)replaceLocalReferences:(id _Nullable)argument {
   return argument;
 }
 @end

@@ -90,6 +90,38 @@ public abstract class ReferencePairManager {
     return localReference;
   }
 
+  public <T> T invokeLocalMethod(LocalReference localReference, String methodName)
+      throws Exception {
+    return (T) invokeLocalMethod(localReference, methodName, new ArrayList<>());
+  }
+
+  public <T> T invokeLocalMethod(
+      LocalReference localReference, String methodName, List<Object> arguments) throws Exception {
+    assertIsInitialized();
+    final Object result =
+        getLocalHandler()
+            .invokeMethod(
+                this,
+                localReference,
+                methodName,
+                (List<Object>) replaceRemoteReferences(arguments));
+
+    return (T) replaceLocalReferences(result);
+  }
+
+  public <T> T invokeLocalMethodOnUnpairedReference(UnpairedReference unpairedReference, String methodName) throws Exception {
+    return (T) invokeLocalMethodOnUnpairedReference(unpairedReference, methodName, Collections.EMPTY_LIST);
+  }
+
+  public <T> T invokeLocalMethodOnUnpairedReference(UnpairedReference unpairedReference, String methodName,
+                                                    List<Object> arguments) throws Exception {
+    assertIsInitialized();
+    return invokeLocalMethod(getLocalHandler().create(this,
+        classIds.get(unpairedReference.classId),
+        (List<Object>) replaceRemoteReferences(unpairedReference.creationArguments)
+    ), methodName, arguments);
+  }
+
   public void disposePairWithRemoteReference(RemoteReference remoteReference) throws Exception {
     assertIsInitialized();
 
@@ -131,17 +163,6 @@ public abstract class ReferencePairManager {
     });
 
     return completer.completable;
-  }
-
-  @SuppressWarnings("UnusedReturnValue")
-  public Completable<Void> disposePairWithLocalReference(LocalReference localReference) {
-    assertIsInitialized();
-
-    final RemoteReference remoteReference = getPairedRemoteReference(localReference);
-    if (remoteReference == null) return null;
-
-    referencePairs.remove(localReference);
-    return getRemoteHandler().dispose(remoteReference);
   }
 
   public <T> Completable<T> invokeRemoteMethod(
@@ -219,36 +240,15 @@ public abstract class ReferencePairManager {
     return replaceCompleter.completable;
   }
 
-  public <T> T invokeLocalMethodOnUnpairedReference(UnpairedReference unpairedReference, String methodName) throws Exception {
-    return (T) invokeLocalMethodOnUnpairedReference(unpairedReference, methodName, Collections.EMPTY_LIST);
-  }
-
-  public <T> T invokeLocalMethodOnUnpairedReference(UnpairedReference unpairedReference, String methodName,
-                                                     List<Object> arguments) throws Exception {
+  @SuppressWarnings("UnusedReturnValue")
+  public Completable<Void> disposePairWithLocalReference(LocalReference localReference) {
     assertIsInitialized();
-    return invokeLocalMethod(getLocalHandler().create(this,
-        classIds.get(unpairedReference.classId),
-        (List<Object>) replaceRemoteReferences(unpairedReference.creationArguments)
-    ), methodName, arguments);
-  }
 
-  public <T> T invokeLocalMethod(LocalReference localReference, String methodName)
-      throws Exception {
-    return (T) invokeLocalMethod(localReference, methodName, new ArrayList<>());
-  }
+    final RemoteReference remoteReference = getPairedRemoteReference(localReference);
+    if (remoteReference == null) return null;
 
-  public <T> T invokeLocalMethod(
-      LocalReference localReference, String methodName, List<Object> arguments) throws Exception {
-    assertIsInitialized();
-    final Object result =
-        getLocalHandler()
-            .invokeMethod(
-                this,
-                localReference,
-                methodName,
-                (List<Object>) replaceRemoteReferences(arguments));
-
-    return (T) replaceLocalReferences(result);
+    referencePairs.remove(localReference);
+    return getRemoteHandler().dispose(remoteReference);
   }
 
   private void assertIsInitialized() {
