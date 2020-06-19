@@ -56,8 +56,15 @@
 
 @implementation REFUnpairedReference
 - (instancetype)initWithClassID:(NSUInteger)classID
+              creationArguments:(NSArray<id> *)creationArguments {
+    return [self initWithClassID:classID
+               creationArguments:creationArguments
+                   managerPoolID:[NSNull null]];
+}
+
+- (instancetype)initWithClassID:(NSUInteger)classID
               creationArguments:(NSArray<id> *)creationArguments
-                  managerPoolID:(NSString *_Nullable)managerPoolID {
+                  managerPoolID:(NSString *)managerPoolID {
   self = [super init];
   if (self) {
     _classID = classID;

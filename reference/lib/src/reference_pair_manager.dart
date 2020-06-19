@@ -339,6 +339,9 @@ abstract class ReferencePairManager {
     assert(_isInitialized, 'Initialize has not been called.');
   }
 
+  // TODO: These should be expandable. Also include docs about what they support
+  // TODO: Also split implementations of replace remote reference and unpairedReference
+  // TODO:  ReferenceChanager get changer
   Object _replaceRemoteReferences(Object argument) {
     if (argument is RemoteReference) {
       return getPairedLocalReference(argument);

@@ -24,8 +24,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly) NSArray<id> *creationArguments;
 @property (readonly) NSString *_Nullable managerPoolID;
 - (instancetype)initWithClassID:(NSUInteger)classID
+              creationArguments:(NSArray<id> *)creationArguments;
+- (instancetype)initWithClassID:(NSUInteger)classID
               creationArguments:(NSArray<id> *)creationArguments
-                  managerPoolID:(NSString *_Nullable)managerPoolID;
+                  managerPoolID:(NSString *)managerPoolID;
 @end
 
 NS_ASSUME_NONNULL_END

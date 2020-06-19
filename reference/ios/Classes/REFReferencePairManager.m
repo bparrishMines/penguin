@@ -74,7 +74,33 @@
   NSAssert(_isInitialized, @"Initialize has not been called.");
 }
 
-- (id _Nullable)replaceRemoteReferences:(id _Nullable)object {
-  return object;
+- (id _Nullable)replaceRemoteReferences:(id _Nullable)argument {
+  if ([argument isKindOfClass:[REFRemoteReference class]]) {
+    return [self getPairedLocalReference:argument];
+  } else if ([argument isKindOfClass:[REFUnpairedReference class]]) {
+    REFUnpairedReference *reference = argument;
+    return [self.localHandler create:self
+                      referenceClass:[_classIDs objectForKey:@(reference.classID)].clazz
+                           arguments:[self replaceRemoteReferences:reference.creationArguments]];
+  } else if ([argument isKindOfClass:[NSArray class]]) {
+    NSArray *array = argument;
+    NSMutableArray *newArray = [NSMutableArray arrayWithCapacity:array.count];
+    for (id object in array) {
+      [newArray addObject:[self replaceRemoteReferences:object]];
+    }
+    return newArray.copy;
+  } else if ([argument isKindOfClass:[NSDictionary class]]) {
+    NSDictionary *dictionary = argument;
+    NSMutableDictionary *newDictionary = [NSMutableDictionary
+                                          dictionaryWithCapacity:dictionary.count];
+    [dictionary enumerateKeysAndObjectsUsingBlock:^(id _Nonnull key, id _Nonnull obj, BOOL * _Nonnull stop) {
+      [newDictionary setObject:[self replaceRemoteReferences:obj]
+                        forKey:[self replaceRemoteReferences:key]];
+    }];
+    
+    return newDictionary.copy;
+  }
+  
+  return argument;
 }
 @end

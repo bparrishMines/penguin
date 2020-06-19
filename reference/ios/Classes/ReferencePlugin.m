@@ -16,5 +16,4 @@
     result(FlutterMethodNotImplemented);
   }
 }
-
 @end
