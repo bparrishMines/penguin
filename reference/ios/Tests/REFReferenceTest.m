@@ -149,4 +149,30 @@
                       )
              );
 }
+
+- (void)testReferencePairManager_invokeLocalMethodOnUnpairedReference {
+  [given([_testManager.localHandler create:_testManager
+                            referenceClass:[TestClass class]
+                                 arguments:anything()])
+   willReturn:[[TestClass alloc] init]];
+
+   [_testManager invokeLocalMethodOnUnpairedReference:[[REFUnpairedReference alloc] initWithClassID:0 creationArguments:@[]] methodName:@"aMethod" arguments:@[@"Hello",
+                                                                                      [[REFUnpairedReference alloc] initWithClassID:0 creationArguments:@[]],
+                                                                                      @[[[REFUnpairedReference alloc] initWithClassID:0 creationArguments:@[]]],
+                                                                                      @{@(1.1): [[REFUnpairedReference alloc] initWithClassID:0 creationArguments:@[]]}
+     ]];
+
+  HCArgumentCaptor *methodArguments = [[HCArgumentCaptor alloc] init];
+    [verify(_testManager.localHandler) invokeMethod:_testManager
+                                     localReference:isA([TestClass class])
+                                         methodName:@"aMethod"
+                                          arguments:(id)methodArguments];
+
+    assertThat(methodArguments.value,
+               contains(
+                        equalTo(@"Hello"),
+                        isA([TestClass class]),
+                        contains(isA([TestClass class]), nil),
+                        hasEntry(equalTo(@(1.1)), isA([TestClass class])), nil));
+}
 @end

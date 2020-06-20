@@ -58,7 +58,7 @@
 }
 
 -(id<REFLocalReference>)pairWithNewLocalReference:(REFRemoteReference *)remoteReference
-  classID:(NSUInteger)classID
+                                          classID:(NSUInteger)classID
                                         arguments:(NSArray<id> *)arguments {
   [self assertInitialized];
   id<REFLocalReference> localReference = [self.localHandler
@@ -84,6 +84,23 @@
   return [self replaceLocalReferences:result];
 }
 
+-(id _Nullable)invokeLocalMethodOnUnpairedReference:(REFUnpairedReference *)unpairedReference
+                                         methodName:(NSString *)methodName {
+  return [self invokeLocalMethodOnUnpairedReference:unpairedReference methodName:methodName arguments:@[]];
+}
+
+-(id _Nullable)invokeLocalMethodOnUnpairedReference:(REFUnpairedReference *)unpairedReference
+                                         methodName:(NSString *)methodName
+                                          arguments:(NSArray<id> *)arguments {
+  [self assertInitialized];
+  return [self invokeLocalMethod:[self.localHandler
+                                  create:self
+                                  referenceClass:[_classIDs objectForKey:@(unpairedReference.classID)].clazz
+                                  arguments:[self replaceRemoteReferences:unpairedReference.creationArguments]]
+                      methodName:methodName
+                       arguments:arguments];
+}
+
 - (void)assertInitialized {
   NSAssert(_isInitialized, @"Initialize has not been called.");
 }
@@ -100,7 +117,7 @@
     NSArray *array = argument;
     NSMutableArray *newArray = [NSMutableArray arrayWithCapacity:array.count];
     for (id object in array) {
-       [newArray addObject:[self replaceRemoteReferences:object]];
+      [newArray addObject:[self replaceRemoteReferences:object]];
     }
     return newArray.copy;
   } else if ([argument isKindOfClass:[NSDictionary class]]) {
@@ -123,7 +140,7 @@
       [self getPairedRemoteReference:argument]) {
     return [self getPairedRemoteReference:argument];
   } else if ([argument conformsToProtocol:@protocol(REFLocalReference)] &&
-  ![self getPairedRemoteReference:argument]) {
+             ![self getPairedRemoteReference:argument]) {
     return [[REFUnpairedReference alloc] initWithClassID:[_classIDs.inverse
                                                           objectForKey:[argument referenceClass]].unsignedLongValue
                                        creationArguments:[self replaceLocalReferences:[self.remoteHandler getCreationArguments:argument]]];
