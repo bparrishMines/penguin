@@ -74,7 +74,7 @@ class ReferenceMatchers {
         final String managerPoolId,
         Description description) {
       description
-          .appendText(String.format(" An %s with type reference: ", UnpairedReference.class.getSimpleName()))
+          .appendText(String.format(" An %s with classId: ", UnpairedReference.class.getSimpleName()))
           .appendText(classId != null ? classId.toString() : null)
           .appendText(" and creation arguments: ")
           .appendText(creationArguments != null ? creationArguments.toString() : null)

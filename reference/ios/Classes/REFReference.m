@@ -52,23 +52,28 @@
 - (NSUInteger)hash {
   return _referenceID.hash;
 }
+
+- (NSString *)description {
+  return [NSString stringWithFormat:@"%@(%@)", NSStringFromClass([REFRemoteReference class]), _referenceID];
+}
 @end
 
 @implementation REFUnpairedReference
 - (instancetype)initWithClassID:(NSUInteger)classID
               creationArguments:(NSArray<id> *)creationArguments {
-    return [self initWithClassID:classID
-               creationArguments:creationArguments
-                   managerPoolID:[NSNull null]];
+    self = [super init];
+    if (self) {
+      _classID = classID;
+      _creationArguments = creationArguments.copy;
+    }
+    return self;
 }
 
 - (instancetype)initWithClassID:(NSUInteger)classID
               creationArguments:(NSArray<id> *)creationArguments
                   managerPoolID:(NSString *)managerPoolID {
-  self = [super init];
+  self = [self initWithClassID:classID creationArguments:creationArguments];
   if (self) {
-    _classID = classID;
-    _creationArguments = creationArguments.copy;
     _managerPoolID = managerPoolID;
   }
   return self;

@@ -189,6 +189,7 @@ abstract class ReferencePairManager {
     List<Object> arguments,
   ]) {
     _assertIsInitialized();
+    // TODO(bparrishMines): Verify this localReference doesn't already exists
     final LocalReference localReference = localHandler.create(
       this,
       _typeIds[typeId],

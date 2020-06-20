@@ -5,6 +5,8 @@ import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -118,7 +120,12 @@ public class ReferenceTest {
   @Test
   public void referencePairManager_pairWithNewLocalReference() throws Exception {
     when(testManager.localHandler.create(eq(testManager), eq(TestClass.class), anyList()))
-        .thenReturn(new TestClass());
+        .thenAnswer(new Answer<Object>() {
+          @Override
+          public Object answer(InvocationOnMock invocation) {
+            return new TestClass();
+          }
+        });
 
     final TestClass result = (TestClass) testManager.pairWithNewLocalReference(
         new RemoteReference("apple"),
@@ -153,7 +160,12 @@ public class ReferenceTest {
   @Test
   public void referencePairManager_invokeLocalMethod() throws Exception {
     when(testManager.localHandler.create(eq(testManager), eq(TestClass.class), anyList()))
-        .thenReturn(new TestClass());
+        .thenAnswer(new Answer<Object>() {
+          @Override
+          public Object answer(InvocationOnMock invocation) {
+            return new TestClass();
+          }
+        });
 
     final LocalReference localReference =
         testManager.pairWithNewLocalReference(new RemoteReference("chi") , 0);
@@ -184,7 +196,12 @@ public class ReferenceTest {
   @Test
   public void referencePairManager_invokeLocalMethod_convertsReturnedLocalReferences() throws Exception {
     when(testManager.localHandler.create(eq(testManager), eq(TestClass.class), anyList()))
-        .thenReturn(new TestClass());
+        .thenAnswer(new Answer<Object>() {
+          @Override
+          public Object answer(InvocationOnMock invocation) {
+            return new TestClass();
+          }
+        });
 
     when(testManager.remoteHandler.getCreationArguments(any(TestClass.class)))
         .thenReturn(Collections.emptyList());
@@ -212,7 +229,12 @@ public class ReferenceTest {
   @Test
   public void referencePairManager_invokeLocalMethodOnUnpairedReference() throws Exception {
     when(testManager.localHandler.create(eq(testManager), eq(TestClass.class), anyList()))
-        .thenReturn(new TestClass());
+        .thenAnswer(new Answer<Object>() {
+          @Override
+          public Object answer(InvocationOnMock invocation) {
+            return new TestClass();
+          }
+        });
 
     testManager.invokeLocalMethodOnUnpairedReference(new UnpairedReference(0, Collections.emptyList()), "aMethod",
         Arrays.asList("Hello",
@@ -240,7 +262,12 @@ public class ReferenceTest {
   @Test
   public void referencePairManager_disposePairWithRemoteReference() throws Exception {
     when(testManager.localHandler.create(eq(testManager), eq(TestClass.class), anyList()))
-        .thenReturn(new TestClass());
+        .thenAnswer(new Answer<Object>() {
+          @Override
+          public Object answer(InvocationOnMock invocation) {
+            return new TestClass();
+          }
+        });
 
     final TestClass testClass = (TestClass) testManager.pairWithNewLocalReference(new RemoteReference("tea") ,0);
     testManager.disposePairWithRemoteReference(new RemoteReference("tea"));

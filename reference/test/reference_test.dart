@@ -14,7 +14,7 @@ void main() {
 
     test('pairWithNewLocalReference', () {
       when(testManager.localHandler.create(testManager, TestClass, any))
-          .thenReturn(TestClass());
+          .thenAnswer((_) => TestClass());
 
       final TestClass result = testManager.pairWithNewLocalReference(
         RemoteReference('apple'),
@@ -60,7 +60,7 @@ void main() {
 
     test('invokeLocalMethod', () {
       when(testManager.localHandler.create(testManager, TestClass, any))
-          .thenReturn(TestClass());
+          .thenAnswer((_) => TestClass());
 
       final TestClass testClass = testManager.pairWithNewLocalReference(
         RemoteReference('chi'),
@@ -102,7 +102,7 @@ void main() {
 
     test('invokeLocalMethod converts returned ${LocalReference}s', () {
       when(testManager.localHandler.create(testManager, TestClass, any))
-          .thenReturn(TestClass());
+          .thenAnswer((_) => TestClass());
 
       when(testManager.remoteHandler.getCreationArguments(any))
           .thenReturn(<Object>[]);
@@ -135,7 +135,7 @@ void main() {
 
     test('invokeLocalMethodOnUnpairedReference', () {
       when(testManager.localHandler.create(testManager, TestClass, any))
-          .thenReturn(TestClass());
+          .thenAnswer((_) => TestClass());
 
       testManager.invokeLocalMethodOnUnpairedReference(
         UnpairedReference(0, <Object>[]),
@@ -172,7 +172,7 @@ void main() {
 
     test('disposePairWithRemoteReference', () {
       when(testManager.localHandler.create(testManager, TestClass, any))
-          .thenReturn(TestClass());
+          .thenAnswer((_) => TestClass());
 
       final TestClass testClass = testManager.pairWithNewLocalReference(
         RemoteReference('tea'),

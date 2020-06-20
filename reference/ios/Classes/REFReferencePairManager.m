@@ -100,7 +100,7 @@
     NSArray *array = argument;
     NSMutableArray *newArray = [NSMutableArray arrayWithCapacity:array.count];
     for (id object in array) {
-      [newArray addObject:[self replaceRemoteReferences:object]];
+       [newArray addObject:[self replaceRemoteReferences:object]];
     }
     return newArray.copy;
   } else if ([argument isKindOfClass:[NSDictionary class]]) {
@@ -119,6 +119,33 @@
 }
 
 - (id _Nullable)replaceLocalReferences:(id _Nullable)argument {
+  if ([argument conformsToProtocol:@protocol(REFLocalReference)] &&
+      [self getPairedRemoteReference:argument]) {
+    return [self getPairedRemoteReference:argument];
+  } else if ([argument conformsToProtocol:@protocol(REFLocalReference)] &&
+  ![self getPairedRemoteReference:argument]) {
+    return [[REFUnpairedReference alloc] initWithClassID:[_classIDs.inverse
+                                                          objectForKey:[argument referenceClass]].unsignedLongValue
+                                       creationArguments:[self replaceLocalReferences:[self.remoteHandler getCreationArguments:argument]]];
+  } else if ([argument isKindOfClass:[NSArray class]]) {
+    NSArray *array = argument;
+    NSMutableArray *newArray = [NSMutableArray arrayWithCapacity:array.count];
+    for (id object in array) {
+      [newArray addObject:[self replaceLocalReferences:object]];
+    }
+    return newArray.copy;
+  } else if ([argument isKindOfClass:[NSDictionary class]]) {
+    NSDictionary *dictionary = argument;
+    NSMutableDictionary *newDictionary = [NSMutableDictionary
+                                          dictionaryWithCapacity:dictionary.count];
+    [dictionary enumerateKeysAndObjectsUsingBlock:^(id _Nonnull key, id _Nonnull obj, BOOL * _Nonnull stop) {
+      [newDictionary setObject:[self replaceLocalReferences:obj]
+                        forKey:[self replaceLocalReferences:key]];
+    }];
+    
+    return newDictionary.copy;
+  }
+  
   return argument;
 }
 @end
