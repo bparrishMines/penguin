@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
+import 'poolable.dart';
 import 'reference_pair_manager.dart';
 import 'reference.dart';
 

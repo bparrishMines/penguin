@@ -107,6 +107,75 @@ mixin LocalReferenceCommunicationHandler {
   ) {}
 }
 
+mixin ReferenceConverter {
+  Object convertAllLocalReferences(ReferencePairManager manager, Object object);
+  Object convertAllRemoteReferences(
+    ReferencePairManager manager,
+    Object object,
+  );
+}
+
+class StandardReferenceConverter implements ReferenceConverter {
+  const StandardReferenceConverter();
+
+  @override
+  Object convertAllLocalReferences(
+    ReferencePairManager manager,
+    Object object,
+  ) {
+    if (object is LocalReference &&
+        manager.getPairedRemoteReference(object) != null) {
+      return manager.getPairedRemoteReference(object);
+    } else if (object is LocalReference &&
+        manager.getPairedRemoteReference(object) == null) {
+      return UnpairedReference(
+        manager.getTypeId(object.referenceType),
+        manager.remoteHandler
+            .getCreationArguments(object)
+            .map((_) => convertAllLocalReferences(manager, _))
+            .toList(),
+      );
+    } else if (object is List) {
+      return object.map((_) => convertAllLocalReferences(manager, _)).toList();
+    } else if (object is Map) {
+      return Map<Object, Object>.fromIterables(
+        object.keys.map<Object>((_) => convertAllLocalReferences(manager, _)),
+        object.values.map<Object>((_) => convertAllLocalReferences(manager, _)),
+      );
+    }
+
+    return object;
+  }
+
+  @override
+  Object convertAllRemoteReferences(
+    ReferencePairManager manager,
+    Object object,
+  ) {
+    if (object is RemoteReference) {
+      return manager.getPairedLocalReference(object);
+    } else if (object is UnpairedReference) {
+      return manager.localHandler.create(
+        manager,
+        manager.getReferenceType(object.typeId),
+        object.creationArguments
+            .map((_) => convertAllRemoteReferences(manager, _))
+            .toList(),
+      );
+    } else if (object is List) {
+      return object.map((_) => convertAllRemoteReferences(manager, _)).toList();
+    } else if (object is Map) {
+      return Map<Object, Object>.fromIterables(
+        object.keys.map<Object>((_) => convertAllRemoteReferences(manager, _)),
+        object.values
+            .map<Object>((_) => convertAllRemoteReferences(manager, _)),
+      );
+    }
+
+    return object;
+  }
+}
+
 /// Manages communication between [LocalReference]s and [RemoteReference]s.
 ///
 /// This class works by facilitating communication between a [LocalReference]
@@ -157,11 +226,14 @@ abstract class ReferencePairManager {
   @mustCallSuper
   void initialize() => _isInitialized = true;
 
+  int getTypeId(Type referenceType) => _typeIds.inverse[referenceType];
+
+  Type getReferenceType(int typeId) => _typeIds[typeId];
+
   /// Retrieve the [RemoteReference] paired with [localReference].
   ///
   /// Returns null if this [localReference] is not paired.
   RemoteReference getPairedRemoteReference(LocalReference localReference) {
-    _assertIsInitialized();
     return _referencePairs[localReference];
   }
 
@@ -169,9 +241,10 @@ abstract class ReferencePairManager {
   ///
   /// Returns null if this [remoteReference] is not paired.
   LocalReference getPairedLocalReference(RemoteReference remoteReference) {
-    _assertIsInitialized();
     return _referencePairs.inverse[remoteReference];
   }
+
+  ReferenceConverter get converter => StandardReferenceConverter();
 
   /// Call when a [ReferencePairManager] on a different thread/process wants to create a [RemoteReference].
   ///
@@ -192,8 +265,8 @@ abstract class ReferencePairManager {
     // TODO(bparrishMines): Verify this localReference doesn't already exists
     final LocalReference localReference = localHandler.create(
       this,
-      _typeIds[typeId],
-      _replaceRemoteReferences(arguments ?? <Object>[]),
+      getReferenceType(typeId),
+      converter.convertAllRemoteReferences(this, arguments ?? <Object>[]),
     );
 
     _referencePairs[localReference] = remoteReference;
@@ -218,10 +291,10 @@ abstract class ReferencePairManager {
       this,
       localReference,
       methodName,
-      _replaceRemoteReferences(arguments) ?? <Object>[],
+      converter.convertAllRemoteReferences(this, arguments) ?? <Object>[],
     );
 
-    return _replaceLocalReferences(result);
+    return converter.convertAllLocalReferences(this, result);
   }
 
   Object invokeLocalMethodOnUnpairedReference(
@@ -233,8 +306,9 @@ abstract class ReferencePairManager {
     return invokeLocalMethod(
       localHandler.create(
         this,
-        _typeIds[unpairedReference.typeId],
-        _replaceRemoteReferences(unpairedReference.creationArguments),
+        getReferenceType(unpairedReference.typeId),
+        converter.convertAllRemoteReferences(
+            this, unpairedReference.creationArguments),
       ),
       methodName,
       arguments,
@@ -271,8 +345,9 @@ abstract class ReferencePairManager {
 
     await remoteHandler.create(
       remoteReference,
-      _typeIds.inverse[localReference.referenceType],
-      _replaceLocalReferences(
+      getTypeId(localReference.referenceType),
+      converter.convertAllLocalReferences(
+        this,
         remoteHandler.getCreationArguments(localReference),
       ),
     );
@@ -297,10 +372,10 @@ abstract class ReferencePairManager {
     final Object result = await remoteHandler.invokeMethod(
       remoteReference,
       methodName,
-      _replaceLocalReferences(arguments) ?? <Object>[],
+      converter.convertAllLocalReferences(this, arguments) ?? <Object>[],
     );
 
-    return _replaceRemoteReferences(result);
+    return converter.convertAllRemoteReferences(this, result);
   }
 
   Future<Object> invokeRemoteMethodOnUnpairedReference(
@@ -312,16 +387,17 @@ abstract class ReferencePairManager {
 
     final Object result = await remoteHandler.invokeMethodOnUnpairedReference(
       UnpairedReference(
-        _typeIds.inverse[localReference.referenceType],
-        _replaceLocalReferences(
+        getTypeId(localReference.referenceType),
+        converter.convertAllLocalReferences(
+          this,
           remoteHandler.getCreationArguments(localReference),
         ),
       ),
       methodName,
-      _replaceLocalReferences(arguments) ?? <Object>[],
+      converter.convertAllLocalReferences(this, arguments) ?? <Object>[],
     );
 
-    return _replaceRemoteReferences(result);
+    return converter.convertAllRemoteReferences(this, result);
   }
 
   /// Call when it is no longer needed to access the [RemoteReference] paired with [localReference].
@@ -338,185 +414,5 @@ abstract class ReferencePairManager {
 
   void _assertIsInitialized() {
     assert(_isInitialized, 'Initialize has not been called.');
-  }
-
-  // TODO: These should be expandable. Also include docs about what they support
-  // TODO: Also split implementations of replace remote reference and unpairedReference
-  // TODO:  ReferenceChanager get changer
-  Object _replaceRemoteReferences(Object argument) {
-    if (argument is RemoteReference) {
-      return getPairedLocalReference(argument);
-    } else if (argument is UnpairedReference) {
-      return localHandler.create(
-        this,
-        _typeIds[argument.typeId],
-        argument.creationArguments.map(_replaceRemoteReferences).toList(),
-      );
-    } else if (argument is List) {
-      return argument.map(_replaceRemoteReferences).toList();
-    } else if (argument is Map) {
-      return Map<Object, Object>.fromIterables(
-        argument.keys.map<Object>(_replaceRemoteReferences),
-        argument.values.map<Object>(_replaceRemoteReferences),
-      );
-    }
-
-    return argument;
-  }
-
-  Object _replaceLocalReferences(Object argument) {
-    if (argument is LocalReference &&
-        getPairedRemoteReference(argument) != null) {
-      return getPairedRemoteReference(argument);
-    } else if (argument is LocalReference &&
-        getPairedRemoteReference(argument) == null) {
-      return UnpairedReference(
-        _typeIds.inverse[argument.referenceType],
-        remoteHandler
-            .getCreationArguments(argument)
-            .map(_replaceLocalReferences)
-            .toList(),
-      );
-    } else if (argument is List) {
-      return argument.map(_replaceLocalReferences).toList();
-    } else if (argument is Map) {
-      return Map<Object, Object>.fromIterables(
-        argument.keys.map<Object>(_replaceLocalReferences),
-        argument.values.map<Object>(_replaceLocalReferences),
-      );
-    }
-
-    return argument;
-  }
-}
-
-abstract class PoolableReferencePairManager extends ReferencePairManager {
-  PoolableReferencePairManager(List<Type> supportedTypes, this.poolId)
-      : assert(poolId != null),
-        super(supportedTypes);
-
-  final String poolId;
-
-  Set<ReferencePairManagerPool> _pools = <ReferencePairManagerPool>{};
-
-  PoolableReferencePairManager _managerFromType(Type type) {
-    for (ReferencePairManagerPool pool in _pools) {
-      final PoolableReferencePairManager manager = pool._typesToManagers[type];
-      if (manager != null) return manager;
-    }
-
-    return null;
-  }
-
-  PoolableReferencePairManager _managerFromPoolId(String poolId) {
-    for (ReferencePairManagerPool pool in _pools) {
-      final PoolableReferencePairManager manager = pool._managers[poolId];
-      if (manager != null) return manager;
-    }
-
-    return null;
-  }
-
-  LocalReference _localRefFromRemoteRef(RemoteReference remoteReference) {
-    for (ReferencePairManagerPool pool in _pools) {
-      for (ReferencePairManager manager in pool._managers.values) {
-        final LocalReference localReference =
-            manager.getPairedLocalReference(remoteReference);
-        if (localReference != null) return localReference;
-      }
-    }
-
-    return null;
-  }
-
-  @override
-  Object _replaceRemoteReferences(Object argument) {
-    if (argument is! RemoteReference && argument is! UnpairedReference) {
-      return super._replaceRemoteReferences(argument);
-    }
-
-    if (argument is RemoteReference &&
-        getPairedLocalReference(argument) != null) {
-      return getPairedLocalReference(argument);
-    } else if (argument is RemoteReference &&
-        getPairedLocalReference(argument) == null) {
-      return _localRefFromRemoteRef(argument);
-    }
-
-    final UnpairedReference unpairedRemoteReference = argument;
-    final PoolableReferencePairManager manager =
-        poolId == unpairedRemoteReference.managerPoolId
-            ? this
-            : _managerFromPoolId(unpairedRemoteReference.managerPoolId);
-
-    return manager.localHandler.create(
-      manager,
-      manager._typeIds[unpairedRemoteReference.typeId],
-      unpairedRemoteReference.creationArguments
-          .map(_replaceRemoteReferences)
-          .toList(),
-    );
-  }
-
-  @override
-  Object _replaceLocalReferences(Object argument) {
-    if (argument is! LocalReference) {
-      return super._replaceLocalReferences(argument);
-    }
-
-    final LocalReference localReference = argument;
-
-    final bool isCorrectManager =
-        _typeIds.inverse[localReference.referenceType] != null;
-    final PoolableReferencePairManager manager = isCorrectManager
-        ? this
-        : _managerFromType(localReference.referenceType);
-
-    if (getPairedRemoteReference(localReference) != null) {
-      return manager.getPairedRemoteReference(localReference);
-    }
-
-    return UnpairedReference(
-      manager._typeIds.inverse[localReference.referenceType],
-      manager.remoteHandler
-          .getCreationArguments(localReference)
-          .map(_replaceLocalReferences)
-          .toList(),
-      manager.poolId,
-    );
-  }
-}
-
-class ReferencePairManagerPool {
-  static final ReferencePairManagerPool globalInstance =
-      ReferencePairManagerPool();
-
-  final Map<String, PoolableReferencePairManager> _managers =
-      <String, PoolableReferencePairManager>{};
-  final Map<Type, PoolableReferencePairManager> _typesToManagers =
-      <Type, PoolableReferencePairManager>{};
-
-  bool add(PoolableReferencePairManager manager) {
-    if (_managers.containsValue(manager)) return true;
-    if (_managers.containsKey(manager.poolId)) return false;
-
-    if (manager.supportedTypes
-        .any((Type type) => _typesToManagers[type] != null)) {
-      return false;
-    }
-
-    for (Type type in manager.supportedTypes) _typesToManagers[type] = manager;
-    manager._pools.add(this);
-    _managers[manager.poolId] = manager;
-
-    return true;
-  }
-
-  void remove(PoolableReferencePairManager manager) {
-    if (_managers[manager.poolId] == null) return;
-
-    for (Type type in manager.supportedTypes) _typesToManagers.remove(type);
-    _managers.remove(manager.poolId);
-    manager._pools.remove(this);
   }
 }

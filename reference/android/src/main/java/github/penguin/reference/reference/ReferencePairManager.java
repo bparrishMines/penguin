@@ -58,9 +58,21 @@ public abstract class ReferencePairManager {
 
   public abstract LocalReferenceCommunicationHandler getLocalHandler();
 
+  public ReferenceConverter getConverter() {
+    return new ReferenceConverter.StandardReferenceConverter();
+  }
+
   @CallSuper
   public void initialize() {
     isInitialized = true;
+  }
+
+  public Integer getClassId(Class<? extends LocalReference> referenceClass) {
+    return classIds.inverse().get(referenceClass);
+  }
+
+  public Class<? extends LocalReference> getReferenceClass(int typeId) {
+    return classIds.get(typeId);
   }
 
   public RemoteReference getPairedRemoteReference(LocalReference localReference) {
@@ -85,7 +97,8 @@ public abstract class ReferencePairManager {
     final LocalReference localReference =
         getLocalHandler()
             .create(
-                this, classIds.get(classId), (List<Object>) replaceRemoteReferences(arguments));
+                this, classIds.get(classId),
+                (List<Object>) getConverter().convertAllRemoteReferences(this, arguments));
     referencePairs.put(localReference, remoteReference);
     return localReference;
   }
@@ -104,9 +117,9 @@ public abstract class ReferencePairManager {
                 this,
                 localReference,
                 methodName,
-                (List<Object>) replaceRemoteReferences(arguments));
+                (List<Object>) getConverter().convertAllRemoteReferences(this, arguments));
 
-    return (T) replaceLocalReferences(result);
+    return (T) getConverter().convertAllLocalReferences(this, result);
   }
 
   public <T> T invokeLocalMethodOnUnpairedReference(UnpairedReference unpairedReference, String methodName) throws Exception {
@@ -118,7 +131,7 @@ public abstract class ReferencePairManager {
     assertIsInitialized();
     return invokeLocalMethod(getLocalHandler().create(this,
         classIds.get(unpairedReference.classId),
-        (List<Object>) replaceRemoteReferences(unpairedReference.creationArguments)
+        (List<Object>) getConverter().convertAllRemoteReferences(this, unpairedReference.creationArguments)
     ), methodName, arguments);
   }
 
@@ -146,7 +159,7 @@ public abstract class ReferencePairManager {
             .create(
                 remoteReference,
                 classIds.inverse().get(localReference.getReferenceClass()),
-                (List<Object>) replaceLocalReferences(creationArguments));
+                (List<Object>) getConverter().convertAllLocalReferences(this, creationArguments));
 
     final Completer<RemoteReference> completer = new Completer<>();
 
@@ -178,7 +191,7 @@ public abstract class ReferencePairManager {
             .invokeMethod(
                 remoteReference,
                 methodName,
-                (List<Object>) replaceLocalReferences(arguments));
+                (List<Object>) getConverter().convertAllLocalReferences(this, arguments));
 
     final Completer<T> replaceCompleter = new Completer<>();
 
@@ -186,7 +199,7 @@ public abstract class ReferencePairManager {
       @Override
       public void onComplete(Object result) {
         try {
-          replaceCompleter.complete((T) replaceRemoteReferences(result));
+          replaceCompleter.complete((T) getConverter().convertAllRemoteReferences(ReferencePairManager.this, result));
         } catch(Exception exception) {
           throw new RuntimeException(exception.getMessage());
         }
@@ -218,17 +231,17 @@ public abstract class ReferencePairManager {
             .invokeMethodOnUnpairedReference(
                 new UnpairedReference(
                     classIds.inverse().get(localReference.getReferenceClass()),
-                    (List<Object>) replaceLocalReferences(getRemoteHandler().getCreationArguments(localReference))
+                    (List<Object>) getConverter().convertAllLocalReferences(this, getRemoteHandler().getCreationArguments(localReference))
                 ),
                 methodName,
-                (List<Object>) replaceLocalReferences(arguments));
+                (List<Object>) getConverter().convertAllLocalReferences(this, arguments));
 
     final Completer<T> replaceCompleter = new Completer<>();
 
     resultCompletable.setOnCompleteListener(new Completable.OnCompleteListener<Object>() {
       @Override
       public void onComplete(Object result) {
-        replaceCompleter.complete((T) replaceLocalReferences(result));
+        replaceCompleter.complete((T) getConverter().convertAllLocalReferences(ReferencePairManager.this, result));
       }
 
       @Override
@@ -253,66 +266,5 @@ public abstract class ReferencePairManager {
 
   private void assertIsInitialized() {
     if (!isInitialized) throw new AssertionError("Initialize has not been called.");
-  }
-
-  @SuppressWarnings("rawtypes")
-  Object replaceRemoteReferences(Object argument) throws Exception {
-    if (argument instanceof RemoteReference) {
-      return getPairedLocalReference((RemoteReference) argument);
-    } else if (argument instanceof UnpairedReference) {
-      return getLocalHandler()
-          .create(
-              this,
-              classIds.get(((UnpairedReference) argument).classId),
-              (List<Object>)
-                  replaceRemoteReferences(((UnpairedReference) argument).creationArguments));
-    } else if (argument instanceof List) {
-      final List<Object> result = new ArrayList<>();
-      for (final Object obj : (List) argument) {
-        result.add(replaceRemoteReferences(obj));
-      }
-      return result;
-    } else if (argument instanceof Map) {
-      final Map<Object, Object> oldMap = new HashMap<Object, Object>((Map) argument);
-      final Map<Object, Object> newMap = new HashMap<>();
-      for (Map.Entry<Object, Object> entry : oldMap.entrySet()) {
-        newMap.put(
-            replaceRemoteReferences(entry.getKey()), replaceRemoteReferences(entry.getValue()));
-      }
-      return newMap;
-    }
-
-    return argument;
-  }
-
-  @SuppressWarnings({"rawtypes", "ConstantConditions"})
-  Object replaceLocalReferences(Object argument) {
-    if (argument instanceof LocalReference
-        && getPairedRemoteReference((LocalReference) argument) != null) {
-      return getPairedRemoteReference((LocalReference) argument);
-    } else if (argument instanceof LocalReference
-        && getPairedRemoteReference((LocalReference) argument) == null) {
-      return new UnpairedReference(
-          classIds.inverse().get(((LocalReference) argument).getReferenceClass()),
-          (List<Object>)
-              replaceLocalReferences(
-                  getRemoteHandler().getCreationArguments((LocalReference) argument)));
-    } else if (argument instanceof List) {
-      final List<Object> result = new ArrayList<>();
-      for (final Object obj : (List) argument) {
-        result.add(replaceLocalReferences(obj));
-      }
-      return result;
-    } else if (argument instanceof Map) {
-      final Map<Object, Object> oldMap = new HashMap<Object, Object>((Map) argument);
-      final Map<Object, Object> newMap = new HashMap<>();
-      for (Map.Entry<Object, Object> entry : oldMap.entrySet()) {
-        newMap.put(
-            replaceLocalReferences(entry.getKey()), replaceLocalReferences(entry.getValue()));
-      }
-      return newMap;
-    }
-
-    return argument;
   }
 }
