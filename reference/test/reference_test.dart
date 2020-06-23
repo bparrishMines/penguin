@@ -14,21 +14,11 @@ void main() {
 
     test('pairWithNewLocalReference', () {
       when(testManager.localHandler.create(testManager, TestClass, any))
-          .thenAnswer((_) => TestClass());
+          .thenReturn(TestClass());
 
       final TestClass result = testManager.pairWithNewLocalReference(
         RemoteReference('apple'),
         0,
-        <Object>[
-          'Hello',
-          UnpairedReference(0, <Object>[]),
-          <Object>[
-            UnpairedReference(0, <Object>[]),
-          ],
-          <Object, Object>{
-            1.1: UnpairedReference(0, <Object>[]),
-          },
-        ],
       );
 
       expect(
@@ -40,22 +30,17 @@ void main() {
         RemoteReference('apple'),
       );
 
-      expect(
-        verify(testManager.localHandler
-                .create(testManager, TestClass, captureAny))
-            .captured,
-        <Matcher>[
-          isEmpty,
-          isEmpty,
-          isEmpty,
-          containsAllInOrder(<Matcher>[
-            equals('Hello'),
-            isA<TestClass>(),
-            contains(isA<TestClass>()),
-            containsPair(1.1, isA<TestClass>()),
-          ]),
-        ],
-      );
+      verifyInOrder([
+        testManager.converter.mock.convertAllRemoteReferences(
+          testManager,
+          argThat(isEmpty),
+        ),
+        testManager.localHandler.create(
+          testManager,
+          TestClass,
+          argThat(isEmpty),
+        ),
+      ]);
     });
 
     test('invokeLocalMethod', () {
@@ -67,112 +52,48 @@ void main() {
         0,
       );
 
-      testManager.invokeLocalMethod(
-        testClass,
-        'aMethod',
-        <Object>[
-          'Hello',
-          UnpairedReference(0, <Object>[]),
-          <Object>[
-            UnpairedReference(0, <Object>[]),
-          ],
-          <Object, Object>{
-            1.1: UnpairedReference(0, <Object>[]),
-          },
-        ],
-      );
+      testManager.invokeLocalMethod(testClass, 'aMethod');
 
-      expect(
-        verify(
-          testManager.localHandler.invokeMethod(
-            testManager,
-            testClass,
-            'aMethod',
-            captureAny,
-          ),
-        ).captured.single,
-        <Matcher>[
-          equals('Hello'),
-          isA<TestClass>(),
-          contains(isA<TestClass>()),
-          containsPair(1.1, isA<TestClass>()),
-        ],
-      );
-    });
-
-    test('invokeLocalMethod converts returned ${LocalReference}s', () {
-      when(testManager.localHandler.create(testManager, TestClass, any))
-          .thenAnswer((_) => TestClass());
-
-      when(testManager.remoteHandler.getCreationArguments(any))
-          .thenReturn(<Object>[]);
-
-      final TestClass caller = testManager.pairWithNewLocalReference(
-        RemoteReference('chi'),
-        0,
-      );
-
-      final TestClass hasRemoteRef = testManager.pairWithNewLocalReference(
-        RemoteReference('ro'),
-        0,
-      );
-
-      when(testManager.localHandler
-              .invokeMethod(testManager, caller, 'aMethod', any))
-          .thenReturn(<Object>[TestClass(), hasRemoteRef, null]);
-
-      final Object result = testManager.invokeLocalMethod(caller, 'aMethod');
-
-      expect(
-        result,
-        <Matcher>[
-          isUnpairedReference(0, <Object>[], null),
-          equals(RemoteReference('ro')),
-          isNull,
-        ],
-      );
+      verifyInOrder([
+        testManager.converter.mock.convertAllRemoteReferences(
+          testManager,
+          argThat(isNull),
+        ),
+        testManager.localHandler.invokeMethod(
+          testManager,
+          testClass,
+          'aMethod',
+          argThat(isEmpty),
+        ),
+        testManager.converter.mock.convertAllLocalReferences(
+          testManager,
+          argThat(isNull),
+        ),
+      ]);
     });
 
     test('invokeLocalMethodOnUnpairedReference', () {
       when(testManager.localHandler.create(testManager, TestClass, any))
-          .thenAnswer((_) => TestClass());
+          .thenReturn(TestClass());
 
       testManager.invokeLocalMethodOnUnpairedReference(
         UnpairedReference(0, <Object>[]),
         'aMethod',
-        <Object>[
-          'Hello',
-          UnpairedReference(0, <Object>[]),
-          <Object>[
-            UnpairedReference(0, <Object>[]),
-          ],
-          <Object, Object>{
-            1.1: UnpairedReference(0, <Object>[]),
-          },
-        ],
       );
 
-      expect(
-        verify(
-          testManager.localHandler.invokeMethod(
-            testManager,
-            argThat(isA<TestClass>()),
-            'aMethod',
-            captureAny,
-          ),
-        ).captured.single,
-        <Matcher>[
-          equals('Hello'),
-          isA<TestClass>(),
-          contains(isA<TestClass>()),
-          containsPair(1.1, isA<TestClass>()),
-        ],
+      verify(
+        testManager.localHandler.invokeMethod(
+          testManager,
+          argThat(isA<TestClass>()),
+          'aMethod',
+          argThat(isEmpty),
+        ),
       );
     });
 
     test('disposePairWithRemoteReference', () {
       when(testManager.localHandler.create(testManager, TestClass, any))
-          .thenAnswer((_) => TestClass());
+          .thenReturn(TestClass());
 
       final TestClass testClass = testManager.pairWithNewLocalReference(
         RemoteReference('tea'),
@@ -192,19 +113,8 @@ void main() {
     test('pairWithNewRemoteReference', () async {
       final TestClass testClass = TestClass();
 
-      final List<List<Object>> responses = [
-        <Object>[
-          'Hello',
-          TestClass(),
-          <Object>[TestClass()],
-          <Object, Object>{1.1: TestClass()},
-        ],
-        <Object>[],
-        <Object>[],
-        <Object>[],
-      ];
       when(testManager.remoteHandler.getCreationArguments(any))
-          .thenAnswer((_) => responses.removeAt(0));
+          .thenReturn(<Object>[]);
 
       final RemoteReference remoteReference =
           await testManager.pairWithNewRemoteReference(
@@ -214,20 +124,13 @@ void main() {
       expect(remoteReference, isNotNull);
       expect(testManager.getPairedLocalReference(remoteReference), testClass);
       expect(testManager.getPairedRemoteReference(testClass), remoteReference);
-      expect(
-        verify(testManager.remoteHandler.create(remoteReference, 0, captureAny))
-            .captured
-            .single,
-        <Matcher>[
-          equals('Hello'),
-          isUnpairedReference(0, <Object>[], null),
-          contains(isUnpairedReference(0, <Object>[], null)),
-          containsPair(
-            1.1,
-            isUnpairedReference(0, <Object>[], null),
-          ),
-        ],
-      );
+      verifyInOrder([
+        testManager.converter.mock.convertAllLocalReferences(
+          testManager,
+          argThat(isEmpty),
+        ),
+        testManager.remoteHandler.create(remoteReference, 0, argThat(isEmpty)),
+      ]);
     });
 
     test('invokeRemoteMethod', () async {
@@ -240,63 +143,19 @@ void main() {
       await testManager.invokeRemoteMethod(
         testManager.getPairedRemoteReference(testClass),
         'aMethod',
-        <Object>[
-          'Hello',
-          TestClass(),
-          <Object>[TestClass()],
-          <Object, Object>{1.1: TestClass()},
-        ],
       );
 
-      expect(
-        verify(
-          testManager.remoteHandler.invokeMethod(
-            testManager.getPairedRemoteReference(testClass),
-            'aMethod',
-            captureAny,
-          ),
-        ).captured.single,
-        <Matcher>[
-          equals('Hello'),
-          isUnpairedReference(0, <Object>[], null),
-          contains(isUnpairedReference(0, <Object>[], null)),
-          containsPair(
-            1.1,
-            isUnpairedReference(0, <Object>[], null),
-          ),
-        ],
-      );
-    });
-
-    test('invokeRemoteMethod converts returned ${RemoteReference}s', () async {
-      final RemoteReference remoteReference =
-          await testManager.pairWithNewRemoteReference(TestClass());
-
-      final TestClass hasRemoteRef = TestClass();
-      final RemoteReference hasLocalRef =
-          await testManager.pairWithNewRemoteReference(hasRemoteRef);
-
-      when(testManager.localHandler.create(testManager, TestClass, any))
-          .thenReturn(TestClass());
-
-      when(testManager.remoteHandler
-              .invokeMethod(remoteReference, 'aMethod', any))
-          .thenAnswer(
-        (_) => Future<Object>.value(
-          <Object>[
-            UnpairedReference(0, <Object>[]),
-            hasLocalRef,
-            null,
-          ],
+      verifyInOrder([
+        testManager.converter.mock.convertAllLocalReferences(
+          testManager,
+          argThat(isNull),
         ),
-      );
-
-      final Object result = await testManager.invokeRemoteMethod(
-        remoteReference,
-        'aMethod',
-      );
-
-      expect(result, <Matcher>[isA<TestClass>(), equals(hasRemoteRef), isNull]);
+        testManager.remoteHandler.invokeMethod(
+          testManager.getPairedRemoteReference(testClass),
+          'aMethod',
+          argThat(isEmpty),
+        ),
+      ]);
     });
 
     test(
@@ -306,37 +165,19 @@ void main() {
             .thenReturn(<Object>[]);
 
         await testManager.invokeRemoteMethodOnUnpairedReference(
-          TestClass(),
-          'aMethod',
-          <Object>[
-            'Hello',
-            TestClass(),
-            <Object>[TestClass()],
-            <Object, Object>{1.1: TestClass()},
-          ],
-        );
+            TestClass(), 'aMethod');
 
-        final List<Object> captured = verify(
-          testManager.remoteHandler.invokeMethodOnUnpairedReference(
-            captureAny,
-            'aMethod',
-            captureAny,
+        verifyInOrder([
+          testManager.converter.convertAllLocalReferences(
+            testManager,
+            argThat(isNull),
           ),
-        ).captured;
-
-        expect(captured[0], isUnpairedReference(0, <Object>[], null));
-        expect(
-          captured[1],
-          <Matcher>[
-            equals('Hello'),
-            isUnpairedReference(0, <Object>[], null),
-            contains(isUnpairedReference(0, <Object>[], null)),
-            containsPair(
-              1.1,
-              isUnpairedReference(0, <Object>[], null),
-            ),
-          ],
-        );
+          testManager.remoteHandler.invokeMethodOnUnpairedReference(
+            argThat(isUnpairedReference(0, <Object>[], null)),
+            'aMethod',
+            argThat(isEmpty),
+          ),
+        ]);
       },
     );
 
@@ -499,6 +340,12 @@ class TestReferencePairManager extends ReferencePairManager {
 
   @override
   final MockRemoteHandler remoteHandler = MockRemoteHandler();
+
+  @override
+  final SpyReferenceConverter converter = SpyReferenceConverter(
+    StandardReferenceConverter(),
+    MockReferenceConverter(),
+  );
 }
 
 class TestPoolableReferencePairManager extends PoolableReferencePairManager {
@@ -519,3 +366,30 @@ class MockRemoteHandler extends Mock
 
 class MockLocalHandler extends Mock
     implements LocalReferenceCommunicationHandler {}
+
+class MockReferenceConverter extends Mock implements ReferenceConverter {}
+
+class SpyReferenceConverter implements ReferenceConverter {
+  final ReferenceConverter delegate;
+  final ReferenceConverter mock;
+
+  SpyReferenceConverter(this.delegate, this.mock);
+
+  @override
+  Object convertAllLocalReferences(
+    ReferencePairManager manager,
+    Object object,
+  ) {
+    mock.convertAllLocalReferences(manager, object);
+    return delegate.convertAllLocalReferences(manager, object);
+  }
+
+  @override
+  Object convertAllRemoteReferences(
+    ReferencePairManager manager,
+    Object object,
+  ) {
+    mock.convertAllRemoteReferences(manager, object);
+    return delegate.convertAllRemoteReferences(manager, object);
+  }
+}

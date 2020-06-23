@@ -1,4 +1,5 @@
 import 'reference.dart';
+import 'reference_converter.dart';
 import 'reference_pair_manager.dart';
 
 class PoolableReferenceConverter extends StandardReferenceConverter {
