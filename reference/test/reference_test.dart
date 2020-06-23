@@ -31,7 +31,7 @@ void main() {
       );
 
       verifyInOrder([
-        testManager.converter.mock.convertAllRemoteReferences(
+        testManager.converter.mock.convertForLocalManager(
           testManager,
           argThat(isEmpty),
         ),
@@ -55,7 +55,7 @@ void main() {
       testManager.invokeLocalMethod(testClass, 'aMethod');
 
       verifyInOrder([
-        testManager.converter.mock.convertAllRemoteReferences(
+        testManager.converter.mock.convertForLocalManager(
           testManager,
           argThat(isNull),
         ),
@@ -65,7 +65,7 @@ void main() {
           'aMethod',
           argThat(isEmpty),
         ),
-        testManager.converter.mock.convertAllLocalReferences(
+        testManager.converter.mock.convertForRemoteManager(
           testManager,
           argThat(isNull),
         ),
@@ -125,7 +125,7 @@ void main() {
       expect(testManager.getPairedLocalReference(remoteReference), testClass);
       expect(testManager.getPairedRemoteReference(testClass), remoteReference);
       verifyInOrder([
-        testManager.converter.mock.convertAllLocalReferences(
+        testManager.converter.mock.convertForRemoteManager(
           testManager,
           argThat(isEmpty),
         ),
@@ -146,7 +146,7 @@ void main() {
       );
 
       verifyInOrder([
-        testManager.converter.mock.convertAllLocalReferences(
+        testManager.converter.mock.convertForRemoteManager(
           testManager,
           argThat(isNull),
         ),
@@ -168,7 +168,7 @@ void main() {
             TestClass(), 'aMethod');
 
         verifyInOrder([
-          testManager.converter.convertAllLocalReferences(
+          testManager.converter.convertForRemoteManager(
             testManager,
             argThat(isNull),
           ),
@@ -376,20 +376,20 @@ class SpyReferenceConverter implements ReferenceConverter {
   SpyReferenceConverter(this.delegate, this.mock);
 
   @override
-  Object convertAllLocalReferences(
+  Object convertForRemoteManager(
     ReferencePairManager manager,
     Object object,
   ) {
-    mock.convertAllLocalReferences(manager, object);
-    return delegate.convertAllLocalReferences(manager, object);
+    mock.convertForRemoteManager(manager, object);
+    return delegate.convertForRemoteManager(manager, object);
   }
 
   @override
-  Object convertAllRemoteReferences(
+  Object convertForLocalManager(
     ReferencePairManager manager,
     Object object,
   ) {
-    mock.convertAllRemoteReferences(manager, object);
-    return delegate.convertAllRemoteReferences(manager, object);
+    mock.convertForLocalManager(manager, object);
+    return delegate.convertForLocalManager(manager, object);
   }
 }

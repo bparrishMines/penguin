@@ -198,7 +198,7 @@ abstract class ReferencePairManager {
     final LocalReference localReference = localHandler.create(
       this,
       getReferenceType(typeId),
-      converter.convertAllRemoteReferences(this, arguments ?? <Object>[]),
+      converter.convertForLocalManager(this, arguments ?? <Object>[]),
     );
 
     _referencePairs[localReference] = remoteReference;
@@ -223,10 +223,10 @@ abstract class ReferencePairManager {
       this,
       localReference,
       methodName,
-      converter.convertAllRemoteReferences(this, arguments) ?? <Object>[],
+      converter.convertForLocalManager(this, arguments) ?? <Object>[],
     );
 
-    return converter.convertAllLocalReferences(this, result);
+    return converter.convertForRemoteManager(this, result);
   }
 
   Object invokeLocalMethodOnUnpairedReference(
@@ -239,7 +239,7 @@ abstract class ReferencePairManager {
       localHandler.create(
         this,
         getReferenceType(unpairedReference.typeId),
-        converter.convertAllRemoteReferences(
+        converter.convertForLocalManager(
             this, unpairedReference.creationArguments),
       ),
       methodName,
@@ -278,7 +278,7 @@ abstract class ReferencePairManager {
     await remoteHandler.create(
       remoteReference,
       getTypeId(localReference.referenceType),
-      converter.convertAllLocalReferences(
+      converter.convertForRemoteManager(
         this,
         remoteHandler.getCreationArguments(localReference),
       ),
@@ -304,10 +304,10 @@ abstract class ReferencePairManager {
     final Object result = await remoteHandler.invokeMethod(
       remoteReference,
       methodName,
-      converter.convertAllLocalReferences(this, arguments) ?? <Object>[],
+      converter.convertForRemoteManager(this, arguments) ?? <Object>[],
     );
 
-    return converter.convertAllRemoteReferences(this, result);
+    return converter.convertForLocalManager(this, result);
   }
 
   Future<Object> invokeRemoteMethodOnUnpairedReference(
@@ -320,16 +320,16 @@ abstract class ReferencePairManager {
     final Object result = await remoteHandler.invokeMethodOnUnpairedReference(
       UnpairedReference(
         getTypeId(localReference.referenceType),
-        converter.convertAllLocalReferences(
+        converter.convertForRemoteManager(
           this,
           remoteHandler.getCreationArguments(localReference),
         ),
       ),
       methodName,
-      converter.convertAllLocalReferences(this, arguments) ?? <Object>[],
+      converter.convertForRemoteManager(this, arguments) ?? <Object>[],
     );
 
-    return converter.convertAllRemoteReferences(this, result);
+    return converter.convertForLocalManager(this, result);
   }
 
   /// Call when it is no longer needed to access the [RemoteReference] paired with [localReference].

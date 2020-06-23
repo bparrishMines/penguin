@@ -39,12 +39,12 @@ class PoolableReferenceConverter extends StandardReferenceConverter {
   }
 
   @override
-  Object convertAllLocalReferences(
+  Object convertForRemoteManager(
     ReferencePairManager manager,
     Object object,
   ) {
     if (object is! LocalReference) {
-      return super.convertAllLocalReferences(manager, object);
+      return super.convertForRemoteManager(manager, object);
     }
 
     final LocalReference localReference = object;
@@ -63,19 +63,19 @@ class PoolableReferenceConverter extends StandardReferenceConverter {
       correctManager.getTypeId(localReference.referenceType),
       correctManager.remoteHandler
           .getCreationArguments(localReference)
-          .map((_) => convertAllLocalReferences(manager, _))
+          .map((_) => convertForRemoteManager(manager, _))
           .toList(),
       correctManager.poolId,
     );
   }
 
   @override
-  Object convertAllRemoteReferences(
+  Object convertForLocalManager(
     ReferencePairManager manager,
     Object object,
   ) {
     if (object is! RemoteReference && object is! UnpairedReference) {
-      return super.convertAllRemoteReferences(manager, object);
+      return super.convertForLocalManager(manager, object);
     }
 
     if (object is RemoteReference &&
@@ -96,7 +96,7 @@ class PoolableReferenceConverter extends StandardReferenceConverter {
       correctManager,
       correctManager.getReferenceType(unpairedRemoteReference.typeId),
       unpairedRemoteReference.creationArguments
-          .map((_) => convertAllRemoteReferences(manager, _))
+          .map((_) => convertForLocalManager(manager, _))
           .toList(),
     );
   }

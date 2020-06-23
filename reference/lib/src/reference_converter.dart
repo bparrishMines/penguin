@@ -2,8 +2,8 @@ import 'reference.dart';
 import 'reference_pair_manager.dart';
 
 mixin ReferenceConverter {
-  Object convertAllLocalReferences(ReferencePairManager manager, Object object);
-  Object convertAllRemoteReferences(
+  Object convertForRemoteManager(ReferencePairManager manager, Object object);
+  Object convertForLocalManager(
     ReferencePairManager manager,
     Object object,
   );
@@ -13,7 +13,7 @@ class StandardReferenceConverter implements ReferenceConverter {
   const StandardReferenceConverter();
 
   @override
-  Object convertAllLocalReferences(
+  Object convertForRemoteManager(
     ReferencePairManager manager,
     Object object,
   ) {
@@ -26,15 +26,15 @@ class StandardReferenceConverter implements ReferenceConverter {
         manager.getTypeId(object.referenceType),
         manager.remoteHandler
             .getCreationArguments(object)
-            .map((_) => convertAllLocalReferences(manager, _))
+            .map((_) => convertForRemoteManager(manager, _))
             .toList(),
       );
     } else if (object is List) {
-      return object.map((_) => convertAllLocalReferences(manager, _)).toList();
+      return object.map((_) => convertForRemoteManager(manager, _)).toList();
     } else if (object is Map) {
       return Map<Object, Object>.fromIterables(
-        object.keys.map<Object>((_) => convertAllLocalReferences(manager, _)),
-        object.values.map<Object>((_) => convertAllLocalReferences(manager, _)),
+        object.keys.map<Object>((_) => convertForRemoteManager(manager, _)),
+        object.values.map<Object>((_) => convertForRemoteManager(manager, _)),
       );
     }
 
@@ -42,7 +42,7 @@ class StandardReferenceConverter implements ReferenceConverter {
   }
 
   @override
-  Object convertAllRemoteReferences(
+  Object convertForLocalManager(
     ReferencePairManager manager,
     Object object,
   ) {
@@ -53,16 +53,15 @@ class StandardReferenceConverter implements ReferenceConverter {
         manager,
         manager.getReferenceType(object.typeId),
         object.creationArguments
-            .map((_) => convertAllRemoteReferences(manager, _))
+            .map((_) => convertForLocalManager(manager, _))
             .toList(),
       );
     } else if (object is List) {
-      return object.map((_) => convertAllRemoteReferences(manager, _)).toList();
+      return object.map((_) => convertForLocalManager(manager, _)).toList();
     } else if (object is Map) {
       return Map<Object, Object>.fromIterables(
-        object.keys.map<Object>((_) => convertAllRemoteReferences(manager, _)),
-        object.values
-            .map<Object>((_) => convertAllRemoteReferences(manager, _)),
+        object.keys.map<Object>((_) => convertForLocalManager(manager, _)),
+        object.values.map<Object>((_) => convertForLocalManager(manager, _)),
       );
     }
 
