@@ -7,9 +7,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @SuppressWarnings({"unchecked", "WeakerAccess", "unused"})
@@ -98,7 +96,7 @@ public abstract class ReferencePairManager {
         getLocalHandler()
             .create(
                 this, classIds.get(classId),
-                (List<Object>) getConverter().convertAllRemoteReferences(this, arguments));
+                (List<Object>) getConverter().convertReferencesForLocalManager(this, arguments));
     referencePairs.put(localReference, remoteReference);
     return localReference;
   }
@@ -117,9 +115,9 @@ public abstract class ReferencePairManager {
                 this,
                 localReference,
                 methodName,
-                (List<Object>) getConverter().convertAllRemoteReferences(this, arguments));
+                (List<Object>) getConverter().convertReferencesForLocalManager(this, arguments));
 
-    return (T) getConverter().convertAllLocalReferences(this, result);
+    return (T) getConverter().convertReferencesForRemoteManager(this, result);
   }
 
   public <T> T invokeLocalMethodOnUnpairedReference(UnpairedReference unpairedReference, String methodName) throws Exception {
@@ -131,7 +129,7 @@ public abstract class ReferencePairManager {
     assertIsInitialized();
     return invokeLocalMethod(getLocalHandler().create(this,
         classIds.get(unpairedReference.classId),
-        (List<Object>) getConverter().convertAllRemoteReferences(this, unpairedReference.creationArguments)
+        (List<Object>) getConverter().convertReferencesForLocalManager(this, unpairedReference.creationArguments)
     ), methodName, arguments);
   }
 
@@ -159,7 +157,7 @@ public abstract class ReferencePairManager {
             .create(
                 remoteReference,
                 classIds.inverse().get(localReference.getReferenceClass()),
-                (List<Object>) getConverter().convertAllLocalReferences(this, creationArguments));
+                (List<Object>) getConverter().convertReferencesForRemoteManager(this, creationArguments));
 
     final Completer<RemoteReference> completer = new Completer<>();
 
@@ -191,7 +189,7 @@ public abstract class ReferencePairManager {
             .invokeMethod(
                 remoteReference,
                 methodName,
-                (List<Object>) getConverter().convertAllLocalReferences(this, arguments));
+                (List<Object>) getConverter().convertReferencesForRemoteManager(this, arguments));
 
     final Completer<T> replaceCompleter = new Completer<>();
 
@@ -199,7 +197,7 @@ public abstract class ReferencePairManager {
       @Override
       public void onComplete(Object result) {
         try {
-          replaceCompleter.complete((T) getConverter().convertAllRemoteReferences(ReferencePairManager.this, result));
+          replaceCompleter.complete((T) getConverter().convertReferencesForLocalManager(ReferencePairManager.this, result));
         } catch(Exception exception) {
           throw new RuntimeException(exception.getMessage());
         }
@@ -231,17 +229,17 @@ public abstract class ReferencePairManager {
             .invokeMethodOnUnpairedReference(
                 new UnpairedReference(
                     classIds.inverse().get(localReference.getReferenceClass()),
-                    (List<Object>) getConverter().convertAllLocalReferences(this, getRemoteHandler().getCreationArguments(localReference))
+                    (List<Object>) getConverter().convertReferencesForRemoteManager(this, getRemoteHandler().getCreationArguments(localReference))
                 ),
                 methodName,
-                (List<Object>) getConverter().convertAllLocalReferences(this, arguments));
+                (List<Object>) getConverter().convertReferencesForRemoteManager(this, arguments));
 
     final Completer<T> replaceCompleter = new Completer<>();
 
     resultCompletable.setOnCompleteListener(new Completable.OnCompleteListener<Object>() {
       @Override
       public void onComplete(Object result) {
-        replaceCompleter.complete((T) getConverter().convertAllLocalReferences(ReferencePairManager.this, result));
+        replaceCompleter.complete((T) getConverter().convertReferencesForRemoteManager(ReferencePairManager.this, result));
       }
 
       @Override

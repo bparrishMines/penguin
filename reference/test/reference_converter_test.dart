@@ -162,7 +162,6 @@ void main() {
 
   group('$PoolableReferenceConverter', () {
     PoolableReferenceConverter converter;
-    ReferencePairManagerPool pool;
 
     TestPoolableReferencePairManager testManager1;
     TestPoolableReferencePairManager testManager2;
@@ -174,7 +173,7 @@ void main() {
       testManager2 = TestPoolableReferencePairManager(<Type>[TestClass2], 'id2')
         ..initialize();
 
-      pool = ReferencePairManagerPool()..add(testManager1)..add(testManager2);
+      final ReferencePairManagerPool pool = ReferencePairManagerPool()..add(testManager1)..add(testManager2);
 
       converter = PoolableReferenceConverter(
         'id1',
