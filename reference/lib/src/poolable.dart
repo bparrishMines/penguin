@@ -3,12 +3,10 @@ import 'reference_converter.dart';
 import 'reference_pair_manager.dart';
 
 class PoolableReferenceConverter extends StandardReferenceConverter {
-  const PoolableReferenceConverter(this.poolId, this.pools);
-
-  final String poolId;
-  final Set<ReferencePairManagerPool> pools;
-
-  PoolableReferencePairManager _managerFromType(Type type) {
+  PoolableReferencePairManager _managerFromType(
+    Set<ReferencePairManagerPool> pools,
+    Type type,
+  ) {
     for (ReferencePairManagerPool pool in pools) {
       final PoolableReferencePairManager manager = pool._typesToManagers[type];
       if (manager != null) return manager;
@@ -17,7 +15,10 @@ class PoolableReferenceConverter extends StandardReferenceConverter {
     return null;
   }
 
-  PoolableReferencePairManager _managerFromPoolId(String poolId) {
+  PoolableReferencePairManager _managerFromPoolId(
+    Set<ReferencePairManagerPool> pools,
+    String poolId,
+  ) {
     for (ReferencePairManagerPool pool in pools) {
       final PoolableReferencePairManager manager = pool._managers[poolId];
       if (manager != null) return manager;
@@ -26,7 +27,10 @@ class PoolableReferenceConverter extends StandardReferenceConverter {
     return null;
   }
 
-  LocalReference _localRefFromRemoteRef(RemoteReference remoteReference) {
+  LocalReference _localRefFromRemoteRef(
+    Set<ReferencePairManagerPool> pools,
+    RemoteReference remoteReference,
+  ) {
     for (ReferencePairManagerPool pool in pools) {
       for (ReferencePairManager manager in pool._managers.values) {
         final LocalReference localReference =
@@ -53,7 +57,8 @@ class PoolableReferenceConverter extends StandardReferenceConverter {
         manager.getTypeId(localReference.referenceType) != null;
     final PoolableReferencePairManager correctManager = isCorrectManager
         ? manager
-        : _managerFromType(localReference.referenceType);
+        : _managerFromType((manager as PoolableReferencePairManager)._pools,
+            localReference.referenceType);
 
     if (correctManager.getPairedRemoteReference(localReference) != null) {
       return correctManager.getPairedRemoteReference(localReference);
@@ -83,14 +88,18 @@ class PoolableReferenceConverter extends StandardReferenceConverter {
       return manager.getPairedLocalReference(object);
     } else if (object is RemoteReference &&
         manager.getPairedLocalReference(object) == null) {
-      return _localRefFromRemoteRef(object);
+      return _localRefFromRemoteRef(
+          (manager as PoolableReferencePairManager)._pools, object);
     }
 
     final UnpairedReference unpairedRemoteReference = object;
     final PoolableReferencePairManager correctManager =
-        poolId == unpairedRemoteReference.managerPoolId
+        (manager as PoolableReferencePairManager).poolId ==
+                unpairedRemoteReference.managerPoolId
             ? manager
-            : _managerFromPoolId(unpairedRemoteReference.managerPoolId);
+            : _managerFromPoolId(
+                (manager as PoolableReferencePairManager)._pools,
+                unpairedRemoteReference.managerPoolId);
 
     return correctManager.localHandler.create(
       correctManager,
@@ -111,12 +120,8 @@ abstract class PoolableReferencePairManager extends ReferencePairManager {
 
   Set<ReferencePairManagerPool> _pools = <ReferencePairManagerPool>{};
 
-  Set<ReferencePairManagerPool> get pools =>
-      Set<ReferencePairManagerPool>.from(_pools);
-
   @override
-  PoolableReferenceConverter get converter =>
-      PoolableReferenceConverter(poolId, pools);
+  PoolableReferenceConverter get converter => PoolableReferenceConverter();
 }
 
 class ReferencePairManagerPool {

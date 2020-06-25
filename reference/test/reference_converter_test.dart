@@ -173,12 +173,9 @@ void main() {
       testManager2 = TestPoolableReferencePairManager(<Type>[TestClass2], 'id2')
         ..initialize();
 
-      final ReferencePairManagerPool pool = ReferencePairManagerPool()..add(testManager1)..add(testManager2);
+      ReferencePairManagerPool()..add(testManager1)..add(testManager2);
 
-      converter = PoolableReferenceConverter(
-        'id1',
-        <ReferencePairManagerPool>{pool},
-      );
+      converter = PoolableReferenceConverter();
     });
 
     test('convertForRemoteManager handles paired $LocalReference', () async {

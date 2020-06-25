@@ -1,7 +1,6 @@
 package github.penguin.reference;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
@@ -100,8 +99,6 @@ public class ReferenceConverterTest {
     testManager = new TestReferencePairManager();
     testManager.initialize();
 
-    final ReferencePairManagerPool pool = new ReferencePairManagerPool();
-
     testPoolableManager1 = new TestPoolableReferencePairManager(
         Collections.<Class<? extends LocalReference>>singletonList(TestClass.class),
         "id1");
@@ -112,10 +109,11 @@ public class ReferenceConverterTest {
         "id2");
     testPoolableManager2.initialize();
 
+    final ReferencePairManagerPool pool = new ReferencePairManagerPool();
     pool.add(testPoolableManager1);
     pool.add(testPoolableManager2);
 
-    poolableConverter = new PoolableReferenceConverter("id1", ImmutableSet.of(pool));
+    poolableConverter = new PoolableReferenceConverter();
   }
 
   @Test
