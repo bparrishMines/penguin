@@ -141,7 +141,7 @@ public class ReferenceConverterTest {
     creationArguments.add(Collections.singletonList(new TestClass()));
     creationArguments.add(Collections.<TestClass>emptyList());
 
-    when(testManager.remoteHandler.getCreationArguments((LocalReference) any()))
+    when(testManager.remoteHandler.getCreationArguments(any(LocalReference.class)))
         .thenAnswer(new Answer<Object>() {
           @Override
           public Object answer(InvocationOnMock invocation) {
@@ -167,7 +167,7 @@ public class ReferenceConverterTest {
     creationArguments.add(Collections.singletonList(new TestClass()));
     creationArguments.add(Collections.<TestClass>emptyList());
 
-    when(testManager.remoteHandler.getCreationArguments((LocalReference) any()))
+    when(testManager.remoteHandler.getCreationArguments(any(LocalReference.class)))
         .thenAnswer(new Answer<Object>() {
           @Override
           public Object answer(InvocationOnMock invocation) {

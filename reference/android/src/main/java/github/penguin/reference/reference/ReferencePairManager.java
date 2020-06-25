@@ -239,7 +239,11 @@ public abstract class ReferencePairManager {
     resultCompletable.setOnCompleteListener(new Completable.OnCompleteListener<Object>() {
       @Override
       public void onComplete(Object result) {
-        replaceCompleter.complete((T) getConverter().convertReferencesForRemoteManager(ReferencePairManager.this, result));
+        try {
+          replaceCompleter.complete((T) getConverter().convertReferencesForLocalManager(ReferencePairManager.this, result));
+        } catch(Exception exception) {
+          throw new RuntimeException(exception.getMessage());
+        }
       }
 
       @Override

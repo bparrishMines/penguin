@@ -165,19 +165,19 @@ void main() {
             .thenReturn(<Object>[]);
 
         await testManager.invokeRemoteMethodOnUnpairedReference(
-            TestClass(), 'aMethod');
+          TestClass(),
+          'aMethod',
+        );
 
-        verifyInOrder([
-          testManager.converter.convertForRemoteManager(
-            testManager,
-            argThat(isNull),
-          ),
-          testManager.remoteHandler.invokeMethodOnUnpairedReference(
-            argThat(isUnpairedReference(0, <Object>[], null)),
-            'aMethod',
-            argThat(isEmpty),
-          ),
-        ]);
+        verify(testManager.converter.convertForRemoteManager(
+          testManager,
+          any,
+        )).called(2);
+        verify(testManager.remoteHandler.invokeMethodOnUnpairedReference(
+          argThat(isUnpairedReference(0, <Object>[], null)),
+          'aMethod',
+          argThat(isEmpty),
+        ));
       },
     );
 
