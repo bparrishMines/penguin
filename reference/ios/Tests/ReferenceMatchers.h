@@ -1,6 +1,14 @@
+@import OCMockito;
 @import OCHamcrest;
 
 @import reference;
+
+@interface TestClass : NSObject<REFLocalReference>
++(TestClass *_Nonnull)testClass;
+@end
+
+@interface TestReferencePairManager : REFReferencePairManager
+@end
 
 @interface IsUnpairedReference : HCBaseMatcher
 @property (readonly) NSUInteger classID;

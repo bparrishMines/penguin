@@ -38,6 +38,10 @@
   return self;
 }
 
++ (REFRemoteReference *)fromID:(NSString *)referenceID {
+  return [[REFRemoteReference alloc] initWithReferenceID:referenceID];
+}
+
 - (BOOL)isEqual:(id)other {
   if (other == self) {
     return YES;
@@ -61,12 +65,12 @@
 @implementation REFUnpairedReference
 - (instancetype)initWithClassID:(NSUInteger)classID
               creationArguments:(NSArray<id> *)creationArguments {
-    self = [super init];
-    if (self) {
-      _classID = classID;
-      _creationArguments = creationArguments.copy;
-    }
-    return self;
+  self = [super init];
+  if (self) {
+    _classID = classID;
+    _creationArguments = creationArguments.copy;
+  }
+  return self;
 }
 
 - (instancetype)initWithClassID:(NSUInteger)classID
@@ -77,5 +81,11 @@
     _managerPoolID = managerPoolID;
   }
   return self;
+}
+
+- (NSString *)description {
+  return [NSString stringWithFormat:@"%@(%lu, %@, %@)", NSStringFromClass([REFUnpairedReference class]),
+          (unsigned long)_classID,
+          _managerPoolID];
 }
 @end

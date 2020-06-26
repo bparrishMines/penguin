@@ -6,41 +6,6 @@
 
 @import reference;
 
-@interface TestClass : NSObject<REFLocalReference>
-@end
-
-@interface TestReferencePairManager : REFReferencePairManager
-@end
-
-@implementation TestClass
-- (REFClass *)referenceClass {
-  return [REFClass fromClass:[TestClass class]];
-}
-@end
-
-@implementation TestReferencePairManager {
-  id<REFRemoteReferenceCommunicationHandler> _remoteHandler;
-  id<REFLocalReferenceCommunicationHandler> _localHandler;
-}
-
--(instancetype)init {
-  self = [super initWithSupportedClasses:@[[REFClass fromClass:[TestClass class]]]];
-  if (self) {
-    _remoteHandler = mockProtocol(@protocol(REFRemoteReferenceCommunicationHandler));
-    _localHandler = mockProtocol(@protocol(REFLocalReferenceCommunicationHandler));
-  }
-  return self;
-}
-
--(id<REFRemoteReferenceCommunicationHandler>)remoteHandler {
-  return _remoteHandler;
-}
-
--(id<REFLocalReferenceCommunicationHandler>)localHandler {
-  return _localHandler;
-}
-@end
-
 @interface REFReferenceTest : XCTestCase
 @end
 
