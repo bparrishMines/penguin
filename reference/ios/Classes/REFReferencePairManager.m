@@ -1,5 +1,69 @@
 #import "REFReferencePairManager.h"
 
+@implementation REFStandardReferenceConverter
+- (id _Nullable)convertReferencesForLocalManager:(REFReferencePairManager *)manager obj:(id _Nullable)obj {
+  if ([obj isKindOfClass:[REFRemoteReference class]]) {
+    return [manager getPairedLocalReference:obj];
+  } else if ([obj isKindOfClass:[REFUnpairedReference class]]) {
+    REFUnpairedReference *reference = obj;
+    return [[manager localHandler] create:manager
+                           referenceClass:[manager getReferenceClass:reference.classID].clazz
+                                arguments:[self convertReferencesForLocalManager:manager obj:reference.creationArguments]];
+  } else if ([obj isKindOfClass:[NSArray class]]) {
+    NSArray *array = obj;
+    NSMutableArray *newArray = [NSMutableArray arrayWithCapacity:array.count];
+    for (id object in array) {
+      [newArray addObject:[self convertReferencesForLocalManager:manager obj:object]];
+    }
+    return newArray;
+  } else if ([obj isKindOfClass:[NSDictionary class]]) {
+    NSDictionary *dictionary = obj;
+    NSMutableDictionary *newDictionary = [NSMutableDictionary
+                                          dictionaryWithCapacity:dictionary.count];
+    [dictionary enumerateKeysAndObjectsUsingBlock:^(id _Nonnull key, id _Nonnull object, BOOL * _Nonnull stop) {
+      [newDictionary setObject:[self convertReferencesForLocalManager:manager obj:object]
+                        forKey:[self convertReferencesForLocalManager:manager obj:key]];
+    }];
+    
+    return newDictionary;
+  }
+  
+  return obj;
+}
+
+- (id _Nullable)convertReferencesForRemoteManager:(REFReferencePairManager *)manager obj:(id _Nullable)obj {
+  if ([obj conformsToProtocol:@protocol(REFLocalReference)] && [manager getPairedRemoteReference:obj]) {
+    return [manager getPairedRemoteReference:obj];
+  } else if ([obj conformsToProtocol:@protocol(REFLocalReference)] &&
+             ![manager getPairedRemoteReference:obj]) {
+    NSUInteger classID = [manager getClassID:[obj referenceClass]];
+    NSArray<id> *creationArguments = [manager.remoteHandler getCreationArguments:obj];
+    return [[REFUnpairedReference alloc] initWithClassID:classID
+                                       creationArguments:[self convertReferencesForRemoteManager:manager
+                                                                                             obj:creationArguments]];
+  } else if ([obj isKindOfClass:[NSArray class]]) {
+    NSArray *array = obj;
+    NSMutableArray *newArray = [NSMutableArray arrayWithCapacity:array.count];
+    for (id object in array) {
+      [newArray addObject:[self convertReferencesForRemoteManager:manager obj:object]];
+    }
+    return newArray;
+  } else if ([obj isKindOfClass:[NSDictionary class]]) {
+    NSDictionary *dictionary = obj;
+    NSMutableDictionary *newDictionary = [NSMutableDictionary
+                                          dictionaryWithCapacity:dictionary.count];
+    [dictionary enumerateKeysAndObjectsUsingBlock:^(id _Nonnull key, id _Nonnull object, BOOL * _Nonnull stop) {
+      [newDictionary setObject:[self convertReferencesForRemoteManager:manager obj:object]
+                        forKey:[self convertReferencesForRemoteManager:manager obj:key]];
+    }];
+    
+    return newDictionary;
+  }
+  
+  return obj;
+}
+@end
+
 @implementation REFReferencePairManager {
   REFBiMapTable<id<REFLocalReference>, REFRemoteReference *> *_referencePairs;
   REFBiMapTable<NSNumber *, REFClass *> *_classIDs;
@@ -39,6 +103,18 @@
   _isInitialized = YES;
 }
 
+-(id<REFReferenceConverter>)converter {
+  return [[REFStandardReferenceConverter alloc] init];
+}
+
+-(NSUInteger)getClassID:(REFClass *)clazz {
+  return [_classIDs.inverse objectForKey:clazz].unsignedLongValue;
+}
+
+-(REFClass *_Nullable)getReferenceClass:(NSUInteger)classID {
+  return [_classIDs objectForKey:@(classID)];
+}
+
 -(REFRemoteReference *_Nullable)getPairedRemoteReference:(id<REFLocalReference>)localReference {
   [self assertInitialized];
   return [_referencePairs objectForKey:localReference];
@@ -63,8 +139,8 @@
   [self assertInitialized];
   id<REFLocalReference> localReference = [self.localHandler
                                           create:self
-                                          referenceClass:[_classIDs objectForKey:@(classID)].clazz
-                                          arguments:[self replaceRemoteReferences:arguments]];
+                                          referenceClass:[self getReferenceClass:classID].clazz
+                                          arguments:[self.converter convertReferencesForLocalManager:self obj:arguments]];
   
   [_referencePairs setObject:remoteReference forKey:localReference];
   return localReference;
@@ -79,9 +155,9 @@
                       methodName:(NSString *)methodName
                        arguments:(NSArray<id> *)arguments {
   [self assertInitialized];
-  id result = [self.localHandler invokeMethod:self localReference:localReference methodName:methodName arguments:[self replaceRemoteReferences:arguments]];
+  id result = [self.localHandler invokeMethod:self localReference:localReference methodName:methodName arguments:[self.converter convertReferencesForLocalManager:self obj:arguments]];
   
-  return [self replaceLocalReferences:result];
+  return [self.converter convertReferencesForRemoteManager:self obj:result];
 }
 
 -(id _Nullable)invokeLocalMethodOnUnpairedReference:(REFUnpairedReference *)unpairedReference
@@ -96,73 +172,12 @@
   return [self invokeLocalMethod:[self.localHandler
                                   create:self
                                   referenceClass:[_classIDs objectForKey:@(unpairedReference.classID)].clazz
-                                  arguments:[self replaceRemoteReferences:unpairedReference.creationArguments]]
+                                  arguments:[self.converter convertReferencesForLocalManager:self obj:unpairedReference.creationArguments]]
                       methodName:methodName
                        arguments:arguments];
 }
 
 - (void)assertInitialized {
   NSAssert(_isInitialized, @"Initialize has not been called.");
-}
-
-- (id _Nullable)replaceRemoteReferences:(id _Nullable)argument {
-  if ([argument isKindOfClass:[REFRemoteReference class]]) {
-    return [self getPairedLocalReference:argument];
-  } else if ([argument isKindOfClass:[REFUnpairedReference class]]) {
-    REFUnpairedReference *reference = argument;
-    return [self.localHandler create:self
-                      referenceClass:[_classIDs objectForKey:@(reference.classID)].clazz
-                           arguments:[self replaceRemoteReferences:reference.creationArguments]];
-  } else if ([argument isKindOfClass:[NSArray class]]) {
-    NSArray *array = argument;
-    NSMutableArray *newArray = [NSMutableArray arrayWithCapacity:array.count];
-    for (id object in array) {
-      [newArray addObject:[self replaceRemoteReferences:object]];
-    }
-    return newArray.copy;
-  } else if ([argument isKindOfClass:[NSDictionary class]]) {
-    NSDictionary *dictionary = argument;
-    NSMutableDictionary *newDictionary = [NSMutableDictionary
-                                          dictionaryWithCapacity:dictionary.count];
-    [dictionary enumerateKeysAndObjectsUsingBlock:^(id _Nonnull key, id _Nonnull obj, BOOL * _Nonnull stop) {
-      [newDictionary setObject:[self replaceRemoteReferences:obj]
-                        forKey:[self replaceRemoteReferences:key]];
-    }];
-    
-    return newDictionary.copy;
-  }
-  
-  return argument;
-}
-
-- (id _Nullable)replaceLocalReferences:(id _Nullable)argument {
-  if ([argument conformsToProtocol:@protocol(REFLocalReference)] &&
-      [self getPairedRemoteReference:argument]) {
-    return [self getPairedRemoteReference:argument];
-  } else if ([argument conformsToProtocol:@protocol(REFLocalReference)] &&
-             ![self getPairedRemoteReference:argument]) {
-    return [[REFUnpairedReference alloc] initWithClassID:[_classIDs.inverse
-                                                          objectForKey:[argument referenceClass]].unsignedLongValue
-                                       creationArguments:[self replaceLocalReferences:[self.remoteHandler getCreationArguments:argument]]];
-  } else if ([argument isKindOfClass:[NSArray class]]) {
-    NSArray *array = argument;
-    NSMutableArray *newArray = [NSMutableArray arrayWithCapacity:array.count];
-    for (id object in array) {
-      [newArray addObject:[self replaceLocalReferences:object]];
-    }
-    return newArray.copy;
-  } else if ([argument isKindOfClass:[NSDictionary class]]) {
-    NSDictionary *dictionary = argument;
-    NSMutableDictionary *newDictionary = [NSMutableDictionary
-                                          dictionaryWithCapacity:dictionary.count];
-    [dictionary enumerateKeysAndObjectsUsingBlock:^(id _Nonnull key, id _Nonnull obj, BOOL * _Nonnull stop) {
-      [newDictionary setObject:[self replaceLocalReferences:obj]
-                        forKey:[self replaceLocalReferences:key]];
-    }];
-    
-    return newDictionary.copy;
-  }
-  
-  return argument;
 }
 @end

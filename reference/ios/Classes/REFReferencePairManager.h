@@ -45,12 +45,23 @@ NS_ASSUME_NONNULL_BEGIN
 localReference:(id<REFLocalReference>)localReference;
 @end
 
+@protocol REFReferenceConverter <NSObject>
+-(id _Nullable)convertReferencesForRemoteManager:(REFReferencePairManager *)manager obj:(id _Nullable)obj;
+-(id _Nullable)convertReferencesForLocalManager:(REFReferencePairManager *)manager obj:(id _Nullable)obj;
+@end
+
+@interface REFStandardReferenceConverter : NSObject<REFReferenceConverter>
+@end
+
 @interface REFReferencePairManager : NSObject
 @property (readonly) NSArray<REFClass *> *supportedClasses;
 -(instancetype)initWithSupportedClasses:(NSArray<REFClass *> *)supportedClasses;
 -(id<REFRemoteReferenceCommunicationHandler>)remoteHandler;
 -(id<REFLocalReferenceCommunicationHandler>)localHandler;
+-(id<REFReferenceConverter>)converter;
 -(void)initialize;
+-(NSUInteger)getClassID:(REFClass *)clazz;
+-(REFClass *_Nullable)getReferenceClass:(NSUInteger)classID;
 -(REFRemoteReference *_Nullable)getPairedRemoteReference:(id<REFLocalReference>)localReference;
 -(id<REFLocalReference> _Nullable)getPairedLocalReference:(REFRemoteReference *)remoteReference;
 -(id<REFLocalReference>)pairWithNewLocalReference:(REFRemoteReference *)remoteReference
