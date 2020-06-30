@@ -41,6 +41,27 @@
    willReturn:@[]];
   
   assertThat([_converter convertReferencesForRemoteManager:_testManager obj: [TestClass testClass]],
-                        isUnpairedReference(0, isEmpty(), nil));
+             isUnpairedReference(0, isEmpty(), nil));
+}
+
+- (void)testStandardReferenceConverter_convertReferencesForRemoteManager_handlesEmptyList {
+  assertThat([_converter convertReferencesForRemoteManager:_testManager obj:@[]], isEmpty());
+}
+
+- (void)testStandardReferenceConverter_convertReferencesForRemoteManager_handlesList {
+  __block NSMutableArray<NSArray<NSObject *> *> *creationArguments = [NSMutableArray
+                                                                      arrayWithObjects:@[[TestClass testClass]], @[], nil];
+
+  [given([_testManager.remoteHandler getCreationArguments:anything()])
+   willDo:^id (NSInvocation *invocation) {
+    NSArray<NSObject *> *arguments = creationArguments[0];
+    [creationArguments removeObjectAtIndex:0];
+    return arguments;
+  }];
+
+  id result = [_converter convertReferencesForRemoteManager:_testManager obj:@[[TestClass testClass]]];
+
+  assertThat(result,
+             contains(isUnpairedReference(0, contains(isUnpairedReference(0, isEmpty(), nil),nil),nil),nil));
 }
 @end

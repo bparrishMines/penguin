@@ -86,6 +86,7 @@
 - (NSString *)description {
   return [NSString stringWithFormat:@"%@(%lu, %@, %@)", NSStringFromClass([REFUnpairedReference class]),
           (unsigned long)_classID,
+          _creationArguments.description,
           _managerPoolID];
 }
 @end
