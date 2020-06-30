@@ -51,16 +51,16 @@
 - (void)testStandardReferenceConverter_convertReferencesForRemoteManager_handlesList {
   __block NSMutableArray<NSArray<NSObject *> *> *creationArguments = [NSMutableArray
                                                                       arrayWithObjects:@[[TestClass testClass]], @[], nil];
-
+  
   [given([_testManager.remoteHandler getCreationArguments:anything()])
    willDo:^id (NSInvocation *invocation) {
     NSArray<NSObject *> *arguments = creationArguments[0];
     [creationArguments removeObjectAtIndex:0];
     return arguments;
   }];
-
+  
   id result = [_converter convertReferencesForRemoteManager:_testManager obj:@[[TestClass testClass]]];
-
+  
   assertThat(result,
              contains(isUnpairedReference(0, contains(isUnpairedReference(0, isEmpty(), nil),nil),nil),nil));
 }
@@ -86,5 +86,67 @@
   XCTAssertEqual(result.count, 1);
   assertThat(result.allKeys[0], isUnpairedReference(0, contains(isUnpairedReference(0, isEmpty(), nil), nil), nil));
   assertThat(result.allValues[0], isUnpairedReference(0, contains(isUnpairedReference(0, isEmpty(), nil), nil), nil));
+}
+
+- (void)testStandardReferenceConverter_convertReferencesForRemoteManager_handlesNonLocalReference {
+  XCTAssertEqualObjects([_converter convertReferencesForRemoteManager:_testManager obj:@"apple"], @"apple");
+}
+
+- (void)testStandardReferenceConverter_convertReferencesForLocalManager_handlesRemoteReference {
+  TestClass *testClass = [TestClass testClass];
+  
+  [given([_testManager.localHandler create:_testManager
+                            referenceClass:[TestClass class]
+                                 arguments:anything()])
+   willReturn:testClass];
+  
+  TestClass *result = [_testManager pairWithNewLocalReference:[REFRemoteReference fromID:@"apple"]
+                                                      classID:0];
+  
+  XCTAssertEqualObjects([_converter convertReferencesForLocalManager:_testManager obj:[REFRemoteReference fromID:@"apple"]],
+                        testClass);
+}
+
+- (void)testStandardReferenceConverter_convertReferencesForLocalManager_handlesUnpairedReference {
+  [given([_testManager.localHandler
+          create:_testManager
+          referenceClass:[TestClass class] arguments:anything()])
+   willReturn:[TestClass testClass]];
+  
+  assertThat([_converter convertReferencesForLocalManager:_testManager obj:[[REFUnpairedReference alloc]
+                                                                             initWithClassID:0
+                                                                             creationArguments:@[]]],
+             isA([TestClass class]));
+}
+
+- (void)testStandardReferenceConverter_convertReferencesForLocalManager_handlesList {
+  [given([_testManager.localHandler create:_testManager
+                            referenceClass:[TestClass class]
+                                 arguments:anything()])
+   willReturn:[TestClass testClass]];
+  
+  assertThat([_converter convertReferencesForLocalManager:_testManager obj:@[[[REFUnpairedReference alloc]
+                                                                              initWithClassID:0
+                                                                              creationArguments:@[]]]],
+             contains(isA([TestClass class]), nil));
+}
+
+- (void)testStandardReferenceConverter_convertReferencesForLocalManager_handlesMap {
+  [given([_testManager.localHandler create:_testManager
+                            referenceClass:[TestClass class]
+                                 arguments:anything()])
+   willReturn:[TestClass testClass]];
+  
+  REFUnpairedReference *unpairedReference = [[REFUnpairedReference alloc] initWithClassID:0 creationArguments:@[]];
+  
+  NSDictionary<id, id> *result = [_converter convertReferencesForLocalManager:_testManager obj:@{unpairedReference: unpairedReference}];
+  
+  XCTAssertEqual(result.count, 1);
+  assertThat(result.allKeys[0], isA([TestClass class]));
+  assertThat(result.allValues[0], isA([TestClass class]));
+}
+
+- (void)testStandardReferenceConverter_convertReferencesForLocalManager_handlesNonLocalReference {
+  XCTAssertEqualObjects([_converter convertReferencesForLocalManager:_testManager obj:@"apple"], @"apple");
 }
 @end
