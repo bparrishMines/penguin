@@ -8,6 +8,10 @@
 - (REFClass *)referenceClass {
   return [REFClass fromClass:[TestClass class]];
 }
+
+- (id)copyWithZone:(NSZone *)zone {
+  return [TestClass testClass];
+}
 @end
 
 @implementation TestReferencePairManager {

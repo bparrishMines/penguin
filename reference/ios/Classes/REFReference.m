@@ -42,6 +42,10 @@
   return [[REFRemoteReference alloc] initWithReferenceID:referenceID];
 }
 
+- (id)copyWithZone:(NSZone *)zone {
+  return [REFRemoteReference fromID:_referenceID];
+}
+
 - (BOOL)isEqual:(id)other {
   if (other == self) {
     return YES;
@@ -81,6 +85,12 @@
     _managerPoolID = managerPoolID;
   }
   return self;
+}
+
+- (id)copyWithZone:(NSZone *)zone {
+  return [[REFUnpairedReference alloc] initWithClassID:_classID
+                                     creationArguments:_creationArguments.copy
+                                         managerPoolID:_managerPoolID];
 }
 
 - (NSString *)description {

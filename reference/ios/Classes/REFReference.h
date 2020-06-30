@@ -14,13 +14,13 @@ NS_ASSUME_NONNULL_BEGIN
 - (REFClass *)referenceClass;
 @end
 
-@interface REFRemoteReference : NSObject<REFReference>
+@interface REFRemoteReference : NSObject<REFReference, NSCopying>
 @property (readonly) NSString *referenceID;
 + (REFRemoteReference *)fromID:(NSString *)referenceID;
 - (instancetype)initWithReferenceID:(NSString *)referenceID;
 @end
 
-@interface REFUnpairedReference : NSObject<REFReference>
+@interface REFUnpairedReference : NSObject<REFReference, NSCopying>
 @property (readonly) NSUInteger classID;
 @property (readonly) NSArray<id> *creationArguments;
 @property (readonly) NSString *_Nullable managerPoolID;

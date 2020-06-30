@@ -64,4 +64,27 @@
   assertThat(result,
              contains(isUnpairedReference(0, contains(isUnpairedReference(0, isEmpty(), nil),nil),nil),nil));
 }
+
+- (void)testStandardReferenceConverter_convertReferencesForRemoteManager_handlesMap {
+  __block NSMutableArray<NSArray<NSObject *> *> *creationArguments = [NSMutableArray
+                                                                      arrayWithObjects:
+                                                                      @[[TestClass testClass]],
+                                                                      @[],
+                                                                      @[[TestClass testClass]],
+                                                                      @[],
+                                                                      nil];
+  
+  [given([_testManager.remoteHandler getCreationArguments:anything()])
+   willDo:^id (NSInvocation *invocation) {
+    NSArray<NSObject *> *arguments = creationArguments[0];
+    [creationArguments removeObjectAtIndex:0];
+    return arguments;
+  }];
+  
+  NSDictionary<id, id> *result = [_converter convertReferencesForRemoteManager:_testManager obj:@{[TestClass testClass]: [TestClass testClass]}];
+  
+  XCTAssertEqual(result.count, 1);
+  assertThat(result.allKeys[0], isUnpairedReference(0, contains(isUnpairedReference(0, isEmpty(), nil), nil), nil));
+  assertThat(result.allValues[0], isUnpairedReference(0, contains(isUnpairedReference(0, isEmpty(), nil), nil), nil));
+}
 @end

@@ -3,7 +3,7 @@
 
 @import reference;
 
-@interface TestClass : NSObject<REFLocalReference>
+@interface TestClass : NSObject<REFLocalReference, NSCopying>
 +(TestClass *_Nonnull)testClass;
 @end
 
