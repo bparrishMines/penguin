@@ -7,7 +7,13 @@
 +(TestClass *_Nonnull)testClass;
 @end
 
+@interface SpyReferenceConverter : NSObject<REFReferenceConverter>
+@property (readonly) REFStandardReferenceConverter *_Nonnull delegate;
+@property (readonly) id<REFReferenceConverter> _Nonnull mock;
+@end
+
 @interface TestReferencePairManager : REFReferencePairManager
+@property (readonly) SpyReferenceConverter *_Nonnull spyConverter;
 @end
 
 @interface IsUnpairedReference : HCBaseMatcher
