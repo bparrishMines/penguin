@@ -25,7 +25,7 @@
    willReturn:[TestClass testClass]];
   
   TestClass *result = (TestClass *) [_testManager pairWithNewLocalReference:[[REFRemoteReference alloc] initWithReferenceID:@"apple"]
-                                                      classID:0];
+                                                                    classID:0];
   
   XCTAssertEqual([_testManager getPairedLocalReference:[[REFRemoteReference alloc] initWithReferenceID:@"apple"]], result);
   XCTAssertEqualObjects([_testManager getPairedRemoteReference:result], [[REFRemoteReference alloc] initWithReferenceID:@"apple"]);
@@ -40,89 +40,36 @@
   [given([_testManager.localHandler create:_testManager
                             referenceClass:[TestClass class]
                                  arguments:anything()])
-                                willReturn:[[TestClass alloc] init]];
+   willReturn:[[TestClass alloc] init]];
   
-  TestClass *localReference = [_testManager pairWithNewLocalReference:[[REFRemoteReference alloc] initWithReferenceID:@"apple"]
-                                                              classID:0];
+  TestClass *testClass = (TestClass *) [_testManager pairWithNewLocalReference:[[REFRemoteReference alloc] initWithReferenceID:@"apple"]
+                                                                       classID:0];
   
-  [_testManager invokeLocalMethod:localReference methodName:@"aMethod" arguments:@[@"Hello",
-                                                                                   [[REFUnpairedReference alloc] initWithClassID:0 creationArguments:@[]],
-                                                                                   @[[[REFUnpairedReference alloc] initWithClassID:0 creationArguments:@[]]],
-                                                                                   @{@(1.1): [[REFUnpairedReference alloc] initWithClassID:0 creationArguments:@[]]}
-  ]];
+  [verify(_testManager.spyConverter.mock) convertReferencesForLocalManager:_testManager obj:isEmpty()];
   
-  HCArgumentCaptor *methodArguments = [[HCArgumentCaptor alloc] init];
+  [_testManager invokeLocalMethod:testClass methodName:@"aMethod"];
+  
+  [verify(_testManager.spyConverter.mock) convertReferencesForLocalManager:_testManager obj:isEmpty()];
   [verify(_testManager.localHandler) invokeMethod:_testManager
-                                   localReference:localReference
+                                   localReference:testClass
                                        methodName:@"aMethod"
-                                        arguments:(id)methodArguments];
-  
-  assertThat(methodArguments.value,
-             contains(
-                      equalTo(@"Hello"),
-                      isA([TestClass class]),
-                      contains(isA([TestClass class]), nil),
-                      hasEntry(equalTo(@(1.1)), isA([TestClass class])), nil));
-}
-
-- (void)testReferencePairManager_invokeLocalMethod_convertsReturnedLocalReferences {
-  [given([_testManager.localHandler create:_testManager
-                            referenceClass:[TestClass class]
-                                 arguments:anything()])
-   willDo:^id (NSInvocation *invocation) {
-    return [[TestClass alloc] init];
-  }];
-  
-  [given([_testManager.remoteHandler getCreationArguments:isA([TestClass class])])
-   willReturn:@[]];
-  
-  TestClass *caller = [_testManager pairWithNewLocalReference:[[REFRemoteReference alloc] initWithReferenceID:@"apple"] classID:0];
-  
-  TestClass *hasRemoteRef = [_testManager
-                             pairWithNewLocalReference:[[REFRemoteReference alloc] initWithReferenceID:@"banana"]
-                             classID:0];
-  
-  [given([_testManager.localHandler invokeMethod:_testManager
-                                  localReference:caller
-                                      methodName:@"aMethod"
-                                       arguments:anything()])
-   willReturn:@[[[TestClass alloc] init], hasRemoteRef, [NSNull null]]];
-  
-  id result = [_testManager invokeLocalMethod:caller methodName:@"aMethod"];
-  
-  assertThat(result,
-             contains(
-                      isUnpairedReference(0, isEmpty(), nil),
-                      equalTo([[REFRemoteReference alloc] initWithReferenceID:@"banana"]),
-                      equalTo([NSNull null]),
-                      nil
-                      )
-             );
+                                        arguments:isEmpty()];
+  [verify(_testManager.spyConverter.mock) convertReferencesForRemoteManager:_testManager obj:nil];
 }
 
 - (void)testReferencePairManager_invokeLocalMethodOnUnpairedReference {
   [given([_testManager.localHandler create:_testManager
-                            referenceClass:[TestClass class]
-                                 arguments:anything()])
-   willReturn:[[TestClass alloc] init]];
-
-   [_testManager invokeLocalMethodOnUnpairedReference:[[REFUnpairedReference alloc] initWithClassID:0 creationArguments:@[]] methodName:@"aMethod" arguments:@[@"Hello",
-                                                                                      [[REFUnpairedReference alloc] initWithClassID:0 creationArguments:@[]],
-                                                                                      @[[[REFUnpairedReference alloc] initWithClassID:0 creationArguments:@[]]],
-                                                                                      @{@(1.1): [[REFUnpairedReference alloc] initWithClassID:0 creationArguments:@[]]}
-     ]];
-
-  HCArgumentCaptor *methodArguments = [[HCArgumentCaptor alloc] init];
-    [verify(_testManager.localHandler) invokeMethod:_testManager
-                                     localReference:isA([TestClass class])
-                                         methodName:@"aMethod"
-                                          arguments:(id)methodArguments];
-
-    assertThat(methodArguments.value,
-               contains(
-                        equalTo(@"Hello"),
-                        isA([TestClass class]),
-                        contains(isA([TestClass class]), nil),
-                        hasEntry(equalTo(@(1.1)), isA([TestClass class])), nil));
+                           referenceClass:[TestClass class]
+                                arguments:anything()])
+  willReturn:[[TestClass alloc] init]];
+  
+  [_testManager invokeLocalMethodOnUnpairedReference:[[REFUnpairedReference alloc] initWithClassID:0
+                                                                                 creationArguments:@[]]
+                                          methodName:@"aMethod"];
+  
+  [verify(_testManager.localHandler) invokeMethod:_testManager
+                                   localReference:isA([TestClass class])
+                                       methodName:@"aMethod"
+                                        arguments:isEmpty()];
 }
 @end

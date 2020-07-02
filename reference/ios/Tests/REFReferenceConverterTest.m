@@ -29,7 +29,7 @@
                                  arguments:anything()])
    willReturn:testClass];
   
-  TestClass *result = [_testManager pairWithNewLocalReference:[REFRemoteReference fromID:@"apple"]
+  [_testManager pairWithNewLocalReference:[REFRemoteReference fromID:@"apple"]
                                                       classID:0];
   
   XCTAssertEqualObjects([_converter convertReferencesForRemoteManager:_testManager obj: testClass],
@@ -100,7 +100,7 @@
                                  arguments:anything()])
    willReturn:testClass];
   
-  TestClass *result = [_testManager pairWithNewLocalReference:[REFRemoteReference fromID:@"apple"]
+  [_testManager pairWithNewLocalReference:[REFRemoteReference fromID:@"apple"]
                                                       classID:0];
   
   XCTAssertEqualObjects([_converter convertReferencesForLocalManager:_testManager obj:[REFRemoteReference fromID:@"apple"]],
