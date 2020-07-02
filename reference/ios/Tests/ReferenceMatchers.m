@@ -18,7 +18,6 @@
 - (instancetype)init {
   self = [super init];
   if (self) {
-    _delegate = [[REFStandardReferenceConverter alloc] init];
     _mock = mockProtocol(@protocol(REFReferenceConverter));
   }
   return self;
@@ -26,12 +25,12 @@
 
 -(id _Nullable)convertReferencesForRemoteManager:(REFReferencePairManager *)manager obj:(id _Nullable)obj {
   [_mock convertReferencesForRemoteManager:manager obj:obj];
-  return [_delegate convertReferencesForRemoteManager:manager obj:obj];
+  return [super convertReferencesForRemoteManager:manager obj:obj];
 }
 
 -(id _Nullable)convertReferencesForLocalManager:(REFReferencePairManager *)manager obj:(id _Nullable)obj {
   [_mock convertReferencesForLocalManager:manager obj:obj];
-  return [_delegate convertReferencesForLocalManager:manager obj:obj];
+  return [super convertReferencesForLocalManager:manager obj:obj];
 }
 @end
 

@@ -254,10 +254,7 @@ class TestReferencePairManager extends ReferencePairManager {
   final MockRemoteHandler remoteHandler = MockRemoteHandler();
 
   @override
-  final SpyReferenceConverter converter = SpyReferenceConverter(
-    StandardReferenceConverter(),
-    MockReferenceConverter(),
-  );
+  final SpyReferenceConverter converter = SpyReferenceConverter();
 }
 
 class TestPoolableReferencePairManager extends PoolableReferencePairManager {
@@ -281,11 +278,10 @@ class MockLocalHandler extends Mock
 
 class MockReferenceConverter extends Mock implements ReferenceConverter {}
 
-class SpyReferenceConverter implements ReferenceConverter {
-  final ReferenceConverter delegate;
-  final ReferenceConverter mock;
+class SpyReferenceConverter extends StandardReferenceConverter {
+  SpyReferenceConverter();
 
-  SpyReferenceConverter(this.delegate, this.mock);
+  final ReferenceConverter mock = MockReferenceConverter();
 
   @override
   Object convertForRemoteManager(
@@ -293,7 +289,7 @@ class SpyReferenceConverter implements ReferenceConverter {
     Object object,
   ) {
     mock.convertForRemoteManager(manager, object);
-    return delegate.convertForRemoteManager(manager, object);
+    return super.convertForRemoteManager(manager, object);
   }
 
   @override
@@ -302,6 +298,6 @@ class SpyReferenceConverter implements ReferenceConverter {
     Object object,
   ) {
     mock.convertForLocalManager(manager, object);
-    return delegate.convertForLocalManager(manager, object);
+    return super.convertForLocalManager(manager, object);
   }
 }
