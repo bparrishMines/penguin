@@ -85,7 +85,7 @@ localReference:(id<REFLocalReference>)localReference;
 -(void)disposePairWithRemoteReference:(REFRemoteReference *)remoteReference;
 
 -(void)pairWithNewRemoteReference:(id<REFLocalReference>)localReference
-                       completion:(void (^)(NSError *_Nullable))completion;
+                       completion:(void (^)(REFRemoteReference *_Nullable, NSError *_Nullable))completion;
 
 -(void)invokeRemoteMethod:(REFRemoteReference *)remoteReference
                methodName:(NSString *)methodName

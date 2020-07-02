@@ -7,6 +7,7 @@
 +(TestClass *_Nonnull)testClass;
 @end
 
+// TODO: Have this class extend StandardReferenceConverter instead
 @interface SpyReferenceConverter : NSObject<REFReferenceConverter>
 @property (readonly) REFStandardReferenceConverter *_Nonnull delegate;
 @property (readonly) id<REFReferenceConverter> _Nonnull mock;

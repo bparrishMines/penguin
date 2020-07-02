@@ -177,6 +177,40 @@
                        arguments:arguments];
 }
 
+-(void)disposePairWithRemoteReference:(REFRemoteReference *)remoteReference {
+  [self assertInitialized];
+  
+  id<REFLocalReference> localReference = [self getPairedLocalReference:remoteReference];
+  if (!localReference) return;
+  
+  [_referencePairs removeObjectForKey:localReference];
+  [self.localHandler dispose:self localReference:localReference];
+}
+
+-(void)pairWithNewRemoteReference:(id<REFLocalReference>)localReference
+                       completion:(void (^)(REFRemoteReference *_Nullable, NSError *_Nullable))completion {
+  [self assertInitialized];
+  NSAssert(localReference, @"LocalReference must not be null.");
+  
+  __block REFRemoteReference *remoteReference = [REFRemoteReference fromID:[[NSUUID UUID] UUIDString]];
+  [_referencePairs setObject:remoteReference forKey:localReference];
+  
+  NSArray<id> *creationArguments = [self.converter convertReferencesForRemoteManager:self
+                                                                                 obj:[self.remoteHandler
+                                                                                      getCreationArguments:localReference]];
+  
+  [self.remoteHandler create:remoteReference
+                     classID:[self getClassID:localReference.referenceClass]
+                   arguments:creationArguments
+                  completion:^(NSError *error) {
+    if (error) {
+      completion(nil, error);
+    } else {
+      completion(remoteReference, nil);
+    }
+  }];
+}
+
 - (void)assertInitialized {
   NSAssert(_isInitialized, @"Initialize has not been called.");
 }

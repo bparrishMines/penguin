@@ -59,9 +59,9 @@
 
 - (void)testReferencePairManager_invokeLocalMethodOnUnpairedReference {
   [given([_testManager.localHandler create:_testManager
-                           referenceClass:[TestClass class]
-                                arguments:anything()])
-  willReturn:[[TestClass alloc] init]];
+                            referenceClass:[TestClass class]
+                                 arguments:anything()])
+   willReturn:[[TestClass alloc] init]];
   
   [_testManager invokeLocalMethodOnUnpairedReference:[[REFUnpairedReference alloc] initWithClassID:0
                                                                                  creationArguments:@[]]
@@ -71,5 +71,40 @@
                                    localReference:isA([TestClass class])
                                        methodName:@"aMethod"
                                         arguments:isEmpty()];
+}
+
+- (void)testReferencePairManager_disposePairWithRemoteReference {
+  [given([_testManager.localHandler create:_testManager
+                            referenceClass:[TestClass class]
+                                 arguments:anything()])
+   willReturn:[TestClass testClass]];
+  
+  TestClass *testClass = (TestClass *) [_testManager pairWithNewLocalReference:[REFRemoteReference fromID:@"apple"]
+                                                                       classID:0];
+  [_testManager disposePairWithRemoteReference:[REFRemoteReference fromID:@"apple"]];
+  
+  [verify(_testManager.localHandler) dispose:_testManager localReference:testClass];
+  XCTAssertNil([_testManager getPairedLocalReference:[REFRemoteReference fromID:@"apple"]]);
+  XCTAssertNil([_testManager getPairedRemoteReference:testClass]);
+}
+
+// TODO: Test RemoteReference is returned in completion block
+- (void)testReferencePairManager_pairWithNewRemoteReference {
+  [given([_testManager.remoteHandler getCreationArguments:isA([TestClass class])])
+   willReturn:@[]];
+  
+  TestClass *testClass = [TestClass testClass];
+  
+  [_testManager pairWithNewRemoteReference:testClass completion:^(REFRemoteReference *remoteReference, NSError *error) {}];
+  
+  [verify(_testManager.remoteHandler) create:isA([REFRemoteReference class])
+                                     classID:0
+                                   arguments:isEmpty()
+                                  completion:anything()];
+  [verify(_testManager.spyConverter.mock) convertReferencesForRemoteManager:_testManager obj:isEmpty()];
+  
+  REFRemoteReference *remoteReference = [_testManager getPairedRemoteReference:testClass];
+  XCTAssertEqual([_testManager getPairedLocalReference:remoteReference], testClass);
+  XCTAssertEqualObjects([_testManager getPairedRemoteReference:testClass], remoteReference);
 }
 @end
