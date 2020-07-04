@@ -13,6 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setObject:(ObjectType)object forKey:(KeyType)key;
 - (void)removeObjectForKey:(KeyType)key;
 - (ObjectType _Nullable)objectForKey:(KeyType)key;
+- (NSEnumerator<ObjectType> *)objectEnumerator;
 @end
 
 @interface REFBiMapTable<KeyType, ObjectType> : NSObject
@@ -20,6 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setObject:(ObjectType)object forKey:(KeyType)key;
 - (void)removeObjectForKey:(KeyType)key;
 - (ObjectType _Nullable)objectForKey:(KeyType)key;
+- (NSEnumerator<ObjectType> *)objectEnumerator;
 @end
 
 NS_ASSUME_NONNULL_END

@@ -14,7 +14,7 @@ import java.util.UUID;
 public abstract class ReferencePairManager {
   private boolean isInitialized = false;
   private final BiMap<LocalReference, RemoteReference> referencePairs = HashBiMap.create();
-  final BiMap<Integer, Class<? extends LocalReference>> classIds = HashBiMap.create();
+  private final BiMap<Integer, Class<? extends LocalReference>> classIds = HashBiMap.create();
 
   public final List<Class<? extends LocalReference>> supportedClasses;
 

@@ -3,7 +3,7 @@ import 'reference_converter.dart';
 import 'reference_pair_manager.dart';
 
 class PoolableReferenceConverter extends StandardReferenceConverter {
-  PoolableReferencePairManager _managerFromType(
+  static PoolableReferencePairManager _managerFromType(
     Set<ReferencePairManagerPool> pools,
     Type type,
   ) {
@@ -15,7 +15,7 @@ class PoolableReferenceConverter extends StandardReferenceConverter {
     return null;
   }
 
-  PoolableReferencePairManager _managerFromPoolId(
+  static PoolableReferencePairManager _managerFromPoolId(
     Set<ReferencePairManagerPool> pools,
     String poolId,
   ) {
@@ -27,7 +27,7 @@ class PoolableReferenceConverter extends StandardReferenceConverter {
     return null;
   }
 
-  LocalReference _localRefFromRemoteRef(
+  static LocalReference _localRefFromRemoteRef(
     Set<ReferencePairManagerPool> pools,
     RemoteReference remoteReference,
   ) {

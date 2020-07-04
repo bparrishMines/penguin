@@ -108,7 +108,9 @@
 }
 
 -(NSUInteger)getClassID:(REFClass *)clazz {
-  return [_classIDs.inverse objectForKey:clazz].unsignedLongValue;
+  NSNumber *classID = [_classIDs.inverse objectForKey:clazz];
+  if (classID) return classID.unsignedLongValue;
+  return -1;
 }
 
 -(REFClass *_Nullable)getReferenceClass:(NSUInteger)classID {

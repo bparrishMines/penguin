@@ -37,6 +37,14 @@
   });
   return object;
 }
+
+- (NSEnumerator<id> *)objectEnumerator {
+  __block NSEnumerator<id> *enumerator = nil;
+  dispatch_sync(_lockQueue, ^{
+    enumerator = self->_table.objectEnumerator;
+  });
+  return enumerator;
+}
 @end
 
 // TODO: Inverse of inverse not reachable
@@ -81,5 +89,9 @@
 
 - (id _Nullable)objectForKey:(id _Nonnull)key {
   return [_table objectForKey:key];
+}
+
+- (NSEnumerator<id> *)objectEnumerator {
+  return _table.objectEnumerator;
 }
 @end
