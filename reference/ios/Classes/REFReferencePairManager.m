@@ -267,6 +267,17 @@
   }];
 }
 
+-(void)disposePairWithLocalReference:(id<REFLocalReference>)localReference
+                          completion:(void (^)(NSError *_Nullable))completion {
+  [self assertInitialized];
+
+  REFRemoteReference *remoteReference = [self getPairedRemoteReference:localReference];
+  if (!remoteReference) return;
+
+  [_referencePairs removeObjectForKey:localReference];
+  [self.remoteHandler dispose:remoteReference completion:completion];
+}
+
 - (void)assertInitialized {
   NSAssert(_isInitialized, @"Initialize has not been called.");
 }

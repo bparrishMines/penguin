@@ -260,7 +260,7 @@ public abstract class ReferencePairManager {
     assertIsInitialized();
 
     final RemoteReference remoteReference = getPairedRemoteReference(localReference);
-    if (remoteReference == null) return null;
+    if (remoteReference == null) return new Completer<Void>().complete(null).completable;
 
     referencePairs.remove(localReference);
     return getRemoteHandler().dispose(remoteReference);

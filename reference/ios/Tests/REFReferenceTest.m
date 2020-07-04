@@ -114,8 +114,8 @@
                                  arguments:anything()])
    willReturn:[[TestClass alloc] init]];
   
-  TestClass *testClass = (TestClass *) [_testManager pairWithNewLocalReference:[REFRemoteReference fromID:@"apple"]
-                                                                       classID:0];
+  [_testManager pairWithNewLocalReference:[REFRemoteReference fromID:@"apple"]
+                                  classID:0];
   
   [verify(_testManager.spyConverter.mock) convertReferencesForLocalManager:_testManager obj:isEmpty()];
   
@@ -139,7 +139,7 @@
 
 - (void)testReferencePairManager_invokeRemoteMethodOnUnpairedReference {
   [given([_testManager.remoteHandler getCreationArguments:isA([TestClass class])])
-  willReturn:@[]];
+   willReturn:@[]];
   
   [_testManager invokeRemoteMethodOnUnpairedReference:[TestClass testClass]
                                            methodName:@"aMethod"
@@ -159,5 +159,24 @@
   block(nil, nil);
   
   [verify(_testManager.spyConverter.mock) convertReferencesForLocalManager:_testManager obj:nil];
+}
+
+- (void)testReferencePairManager_disposePairWithLocalReference {
+  [given([_testManager.remoteHandler getCreationArguments:isA([TestClass class])])
+   willReturn:@[]];
+  
+  TestClass *testClass = [TestClass testClass];
+  
+  [_testManager pairWithNewRemoteReference:testClass
+                                completion:^(REFRemoteReference *remoteReference, NSError *error) {}];
+  
+  REFRemoteReference *remoteReference = [_testManager getPairedRemoteReference:testClass];
+  
+  XCTAssertNotNil(remoteReference);
+  
+  [_testManager disposePairWithLocalReference:testClass completion:^(NSError *error) {}];
+  
+  XCTAssertNil([_testManager getPairedLocalReference:remoteReference]);
+  XCTAssertNil([_testManager getPairedRemoteReference:testClass]);
 }
 @end
