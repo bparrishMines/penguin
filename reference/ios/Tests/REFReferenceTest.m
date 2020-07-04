@@ -42,7 +42,7 @@
                                  arguments:anything()])
    willReturn:[[TestClass alloc] init]];
   
-  TestClass *testClass = (TestClass *) [_testManager pairWithNewLocalReference:[[REFRemoteReference alloc] initWithReferenceID:@"apple"]
+  TestClass *testClass = (TestClass *) [_testManager pairWithNewLocalReference:[REFRemoteReference fromID:@"apple"]
                                                                        classID:0];
   
   [verify(_testManager.spyConverter.mock) convertReferencesForLocalManager:_testManager obj:isEmpty()];
@@ -106,5 +106,34 @@
   REFRemoteReference *remoteReference = [_testManager getPairedRemoteReference:testClass];
   XCTAssertEqual([_testManager getPairedLocalReference:remoteReference], testClass);
   XCTAssertEqualObjects([_testManager getPairedRemoteReference:testClass], remoteReference);
+}
+
+- (void)testReferencePairManager_invokeRemoteMethod {
+  [given([_testManager.localHandler create:_testManager
+                            referenceClass:[TestClass class]
+                                 arguments:anything()])
+   willReturn:[[TestClass alloc] init]];
+  
+  TestClass *testClass = (TestClass *) [_testManager pairWithNewLocalReference:[REFRemoteReference fromID:@"apple"]
+                                                                       classID:0];
+  
+  [verify(_testManager.spyConverter.mock) convertReferencesForLocalManager:_testManager obj:isEmpty()];
+  
+  [_testManager invokeRemoteMethod:[REFRemoteReference fromID:@"apple"]
+                        methodName:@"aMethod"
+                        completion:(^(id result, NSError *error) {})];
+  
+  [verify(_testManager.spyConverter.mock) convertReferencesForRemoteManager:_testManager obj:isEmpty()];
+  
+  HCArgumentCaptor *argument = [[HCArgumentCaptor alloc] init];
+  [verify(_testManager.remoteHandler) invokeMethod:[REFRemoteReference fromID:@"apple"]
+                                        methodName:@"aMethod"
+                                         arguments:isEmpty()
+                                        completion:(id)argument];
+
+  void (^block)(id, NSError *) = argument.value;
+  block(nil, nil);
+  
+  [verify(_testManager.spyConverter.mock) convertReferencesForLocalManager:_testManager obj:nil];
 }
 @end

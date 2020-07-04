@@ -211,6 +211,30 @@
   }];
 }
 
+-(void)invokeRemoteMethod:(REFRemoteReference *)remoteReference
+               methodName:(NSString *)methodName
+               completion:(void (^)(id _Nullable, NSError *_Nullable))completion {
+  return [self invokeRemoteMethod:remoteReference methodName:methodName arguments:@[] completion:completion];
+}
+
+-(void)invokeRemoteMethod:(REFRemoteReference *)remoteReference
+               methodName:(NSString *)methodName
+                arguments:(NSArray<id> *)arguments
+               completion:(void (^)(id _Nullable, NSError *_Nullable))completion {
+  [self assertInitialized];
+  
+  [self.remoteHandler invokeMethod:remoteReference
+                        methodName:methodName
+                         arguments:[self.converter convertReferencesForRemoteManager:self obj:arguments]
+                        completion:^(id result, NSError *error) {
+    if (error) {
+      completion(nil, error);
+    } else {
+      completion([self.converter convertReferencesForLocalManager:self obj:result], nil);
+    }
+  }];
+}
+
 - (void)assertInitialized {
   NSAssert(_isInitialized, @"Initialize has not been called.");
 }
