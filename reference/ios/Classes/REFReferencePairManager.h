@@ -21,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
          completion:(void (^)(id _Nullable, NSError *_Nullable))completion;
 
 -(void)invokeMethodOnUnpairedReference:(REFUnpairedReference *)unpairedReference
-                               classID:(NSString *)methodName
+                            methodName:(NSString *)methodName
                              arguments:(NSArray<id> *)arguments
                             completion:(void (^)(id _Nullable, NSError *_Nullable))completion;
 

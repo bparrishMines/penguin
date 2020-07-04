@@ -130,7 +130,31 @@
                                         methodName:@"aMethod"
                                          arguments:isEmpty()
                                         completion:(id)argument];
+  
+  void (^block)(id, NSError *) = argument.value;
+  block(nil, nil);
+  
+  [verify(_testManager.spyConverter.mock) convertReferencesForLocalManager:_testManager obj:nil];
+}
 
+- (void)testReferencePairManager_invokeRemoteMethodOnUnpairedReference {
+  [given([_testManager.remoteHandler getCreationArguments:isA([TestClass class])])
+  willReturn:@[]];
+  
+  [_testManager invokeRemoteMethodOnUnpairedReference:[TestClass testClass]
+                                           methodName:@"aMethod"
+                                            arguments:@[]
+                                           completion:^(id result, NSError *error) {}];
+  
+  [verifyCount(_testManager.spyConverter.mock, times(2)) convertReferencesForRemoteManager:_testManager
+                                                                                       obj:isEmpty()];
+  
+  HCArgumentCaptor *argument = [[HCArgumentCaptor alloc] init];
+  [verify(_testManager.remoteHandler) invokeMethodOnUnpairedReference:isUnpairedReference(0, isEmpty(), nil)
+                                                           methodName:@"aMethod"
+                                                            arguments:isEmpty()
+                                                           completion:(id)argument];
+  
   void (^block)(id, NSError *) = argument.value;
   block(nil, nil);
   

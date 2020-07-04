@@ -235,6 +235,38 @@
   }];
 }
 
+-(void)invokeRemoteMethodOnUnpairedReference:(id<REFLocalReference>)localReference
+                                  methodName:(NSString *)methodName
+                                  completion:(void (^)(id _Nullable, NSError *_Nullable))completion {
+  return [self invokeRemoteMethodOnUnpairedReference:localReference
+                                          methodName:methodName
+                                           arguments:@[]
+                                          completion:completion];
+}
+
+-(void)invokeRemoteMethodOnUnpairedReference:(id<REFLocalReference>)localReference
+                                  methodName:(NSString *)methodName
+                                   arguments:(NSArray<id> *)arguments
+                                  completion:(void (^)(id _Nullable, NSError *_Nullable))completion {
+  [self assertInitialized];
+  
+  [self.remoteHandler invokeMethodOnUnpairedReference:[[REFUnpairedReference alloc]
+                                                       initWithClassID:[self getClassID:localReference.referenceClass]
+                                                       creationArguments:[self.converter
+                                                                          convertReferencesForRemoteManager:self
+                                                                          obj:[self.remoteHandler
+                                                                               getCreationArguments:localReference]]]
+                                           methodName:methodName
+                                            arguments:[self.converter convertReferencesForRemoteManager:self obj:arguments]
+                                           completion:^(id result, NSError *error) {
+    if (error) {
+      completion(nil, error);
+    } else {
+      completion([self.converter convertReferencesForLocalManager:self obj:result], nil);
+    }
+  }];
+}
+
 - (void)assertInitialized {
   NSAssert(_isInitialized, @"Initialize has not been called.");
 }
