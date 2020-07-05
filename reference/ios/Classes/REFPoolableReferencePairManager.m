@@ -61,11 +61,9 @@
   [REFPoolableReferenceConverter managerFromClass:poolableManager.pools
                                             clazz:localReference.referenceClass];
   
-  if (![correctManager getPairedRemoteReference:localReference]) {
+  if ([correctManager getPairedRemoteReference:localReference]) {
     return [correctManager getPairedRemoteReference:localReference];
   }
-  
-  
   
   return [[REFUnpairedReference alloc] initWithClassID:[correctManager getClassID:localReference.referenceClass]
                                      creationArguments:[correctManager.converter

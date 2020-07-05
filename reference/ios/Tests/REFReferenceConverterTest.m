@@ -12,6 +12,12 @@
 @implementation REFReferenceConverterTest {
   TestReferencePairManager *_testManager;
   REFStandardReferenceConverter *_converter;
+  
+  TestPoolableReferencePairManager *_testPoolableManager1;
+  TestPoolableReferencePairManager *_testPoolableManager2;
+  REFPoolableReferenceConverter *_poolableConverter;
+  
+  REFReferencePairManagerPool *_pool;
 }
 
 - (void)setUp {
@@ -19,6 +25,22 @@
   [_testManager initialize];
   
   _converter = [[REFStandardReferenceConverter alloc] init];
+  
+  _testPoolableManager1 = [[TestPoolableReferencePairManager alloc] initWithSupportedClasses:@[[REFClass
+                                                                                                fromClass:[TestClass class]]]
+                                                                                      poolID:@"id1"];
+  [_testPoolableManager1 initialize];
+  
+  _testPoolableManager2 = [[TestPoolableReferencePairManager alloc] initWithSupportedClasses:@[[REFClass
+                                                                                                fromClass:[TestClass2 class]]]
+                                                                                      poolID:@"id2"];
+  [_testPoolableManager2 initialize];
+  
+  _pool = [[REFReferencePairManagerPool alloc] init];
+  [_pool add:_testPoolableManager1];
+  [_pool add:_testPoolableManager2];
+  
+  _poolableConverter = [[REFPoolableReferenceConverter alloc] init];
 }
 
 - (void)testStandardReferenceConverter_convertReferencesForRemoteManager_handlesPairedLocalReference {
@@ -30,7 +52,7 @@
    willReturn:testClass];
   
   [_testManager pairWithNewLocalReference:[REFRemoteReference fromID:@"apple"]
-                                                      classID:0];
+                                  classID:0];
   
   XCTAssertEqualObjects([_converter convertReferencesForRemoteManager:_testManager obj: testClass],
                         [REFRemoteReference fromID:@"apple"]);
@@ -101,7 +123,7 @@
    willReturn:testClass];
   
   [_testManager pairWithNewLocalReference:[REFRemoteReference fromID:@"apple"]
-                                                      classID:0];
+                                  classID:0];
   
   XCTAssertEqualObjects([_converter convertReferencesForLocalManager:_testManager obj:[REFRemoteReference fromID:@"apple"]],
                         testClass);
@@ -114,8 +136,8 @@
    willReturn:[TestClass testClass]];
   
   assertThat([_converter convertReferencesForLocalManager:_testManager obj:[[REFUnpairedReference alloc]
-                                                                             initWithClassID:0
-                                                                             creationArguments:@[]]],
+                                                                            initWithClassID:0
+                                                                            creationArguments:@[]]],
              isA([TestClass class]));
 }
 
@@ -148,5 +170,32 @@
 
 - (void)testStandardReferenceConverter_convertReferencesForLocalManager_handlesNonLocalReference {
   XCTAssertEqualObjects([_converter convertReferencesForLocalManager:_testManager obj:@"apple"], @"apple");
+}
+
+- (void)testPoolableReferenceConverter_convertReferencesForRemoteManager_handlesPairedLocalReference {
+  TestClass *testClass = [TestClass testClass];
+  TestClass2 *testClass2 = [TestClass2 testClass2];
+  
+  [given([_testPoolableManager1.localHandler create:_testPoolableManager1
+                                     referenceClass:[TestClass class]
+                                          arguments:anything()])
+   willReturn:testClass];
+  [given([_testPoolableManager2.localHandler create:_testPoolableManager2
+                                     referenceClass:[TestClass2 class]
+                                          arguments:anything()])
+   willReturn:testClass2];
+  
+  [_testPoolableManager1 pairWithNewLocalReference:[REFRemoteReference fromID:@"apple"]
+                                           classID:0];
+  [_testPoolableManager2 pairWithNewLocalReference:[REFRemoteReference fromID:@"apple2"]
+                                           classID:0];
+  
+  XCTAssertEqualObjects([_poolableConverter convertReferencesForRemoteManager:_testPoolableManager1 obj:testClass], [REFRemoteReference fromID:@"apple"]);
+  
+  XCTAssertEqualObjects([_poolableConverter convertReferencesForRemoteManager:_testPoolableManager1 obj:testClass2], [REFRemoteReference fromID:@"apple2"]);
+}
+
+- (void)testPoolableReferenceConverter_convertReferencesForRemoteManager_handlesPairedLocalReference {
+  
 }
 @end

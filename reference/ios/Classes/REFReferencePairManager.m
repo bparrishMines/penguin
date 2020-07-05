@@ -86,14 +86,14 @@
 }
 
 -(id<REFRemoteReferenceCommunicationHandler>)remoteHandler {
-  NSString *message = [NSString stringWithFormat:@"You must override %@ in a subclass", NSStringFromSelector(_cmd)];
+  NSString *message = [NSString stringWithFormat:@"You must override %@ in a subclass.", NSStringFromSelector(_cmd)];
   @throw [NSException exceptionWithName:NSInternalInconsistencyException
                                  reason:message
                                userInfo:nil];
 }
 
 -(id<REFLocalReferenceCommunicationHandler>)localHandler {
-  NSString *message = [NSString stringWithFormat:@"You must override %@ in a subclass", NSStringFromSelector(_cmd)];
+  NSString *message = [NSString stringWithFormat:@"You must override %@ in a subclass.", NSStringFromSelector(_cmd)];
   @throw [NSException exceptionWithName:NSInternalInconsistencyException
                                  reason:message
                                userInfo:nil];

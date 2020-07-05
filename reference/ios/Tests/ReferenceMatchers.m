@@ -14,6 +14,20 @@
 }
 @end
 
+@implementation TestClass2
++(TestClass2 *_Nonnull)testClass2 {
+  return [[TestClass2 alloc] init];
+}
+
+- (REFClass *)referenceClass {
+  return [REFClass fromClass:[TestClass2 class]];
+}
+
+- (id)copyWithZone:(NSZone *)zone {
+  return [TestClass2 testClass2];
+}
+@end
+
 @implementation SpyReferenceConverter
 - (instancetype)init {
   self = [super init];
@@ -31,6 +45,30 @@
 -(id _Nullable)convertReferencesForLocalManager:(REFReferencePairManager *)manager obj:(id _Nullable)obj {
   [_mock convertReferencesForLocalManager:manager obj:obj];
   return [super convertReferencesForLocalManager:manager obj:obj];
+}
+@end
+
+@implementation TestPoolableReferencePairManager {
+  id<REFRemoteReferenceCommunicationHandler> _remoteHandler;
+  id<REFLocalReferenceCommunicationHandler> _localHandler;
+}
+
+-(instancetype)initWithSupportedClasses:(NSArray<REFClass *> *)supportedClasses
+                                 poolID:(NSString *)poolID {
+  self = [super initWithSupportedClasses:supportedClasses poolID:poolID];
+  if (self) {
+    _remoteHandler = mockProtocol(@protocol(REFRemoteReferenceCommunicationHandler));
+    _localHandler = mockProtocol(@protocol(REFLocalReferenceCommunicationHandler));
+  }
+  return self;
+}
+
+-(id<REFRemoteReferenceCommunicationHandler>)remoteHandler {
+  return _remoteHandler;
+}
+
+-(id<REFLocalReferenceCommunicationHandler>)localHandler {
+  return _localHandler;
 }
 @end
 

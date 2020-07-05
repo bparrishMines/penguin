@@ -7,12 +7,21 @@
 +(TestClass *_Nonnull)testClass;
 @end
 
+@interface TestClass2 : TestClass<REFLocalReference, NSCopying>
++(TestClass2 *_Nonnull)testClass2;
+@end
+
 @interface SpyReferenceConverter : REFStandardReferenceConverter
 @property (readonly) id<REFReferenceConverter> _Nonnull mock;
 @end
 
 @interface TestReferencePairManager : REFReferencePairManager
 @property (readonly) SpyReferenceConverter *_Nonnull spyConverter;
+@end
+
+@interface TestPoolableReferencePairManager : REFPoolableReferencePairManager
+-(instancetype _Nonnull)initWithSupportedClasses:(NSArray<REFClass *> *_Nonnull)supportedClasses
+                                 poolID:(NSString *_Nonnull)poolID;
 @end
 
 @interface IsUnpairedReference : HCBaseMatcher

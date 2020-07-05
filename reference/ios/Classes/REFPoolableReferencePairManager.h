@@ -1,10 +1,3 @@
-//
-//  REFPoolableReferencePairManager.h
-//  Pods-Runner
-//
-//  Created by Maurice P on 7/4/20.
-//
-
 #import "REFReferencePairManager.h"
 
 NS_ASSUME_NONNULL_BEGIN
