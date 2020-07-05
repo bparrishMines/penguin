@@ -120,10 +120,10 @@
 
 
   if (_classID != reference.classID) return NO;
-  if (_managerPoolID && [_managerPoolID isEqualToString:reference.managerPoolID]) {
+  if (_managerPoolID && ![_managerPoolID isEqualToString:reference.managerPoolID]) {
     return NO;
   }
-  if (reference.managerPoolID && [reference.managerPoolID isEqualToString:_managerPoolID]) {
+  if (reference.managerPoolID && ![reference.managerPoolID isEqualToString:_managerPoolID]) {
     return NO;
   }
   if ([_creationArguments isKindOfClass:[HCBaseMatcher class]]) {
@@ -134,11 +134,18 @@
 }
 
 - (void)describeTo:(id <HCDescription>)description {
-  [[[[[[description
+  [[[description
      appendText:[NSString stringWithFormat:@" An %@ with classID: ", NSStringFromClass([REFUnpairedReference class])]]
      appendText:[NSString stringWithFormat:@"%lu", (unsigned long)_classID]]
-     appendText:@" and creation arguments "]
-     appendText:[_creationArguments description]]
+     appendText:@" and creation arguments: "];
+
+  if ([_creationArguments isKindOfClass:[HCBaseMatcher class]]) {
+    [_creationArguments describeTo:description];
+  } else {
+    [description appendText:[_creationArguments description]];
+  }
+
+  [[description
      appendText:@" and managerPoolID: "]
      appendText:_managerPoolID ? _managerPoolID : @"nil"
   ];

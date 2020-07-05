@@ -195,7 +195,71 @@
   XCTAssertEqualObjects([_poolableConverter convertReferencesForRemoteManager:_testPoolableManager1 obj:testClass2], [REFRemoteReference fromID:@"apple2"]);
 }
 
-- (void)testPoolableReferenceConverter_convertReferencesForRemoteManager_handlesPairedLocalReference {
+- (void)testPoolableReferenceConverter_convertReferencesForRemoteManager_handlesUnpairedLocalReference {
+  [given([_testPoolableManager1.remoteHandler getCreationArguments:isA([TestClass class])])
+   willReturn:@[]];
   
+  [given([_testPoolableManager2.remoteHandler getCreationArguments:isA([TestClass2 class])])
+   willReturn:@[]];
+
+  assertThat([_poolableConverter convertReferencesForRemoteManager:_testPoolableManager1
+                                                               obj:[TestClass testClass]],
+             isUnpairedReference(0, isEmpty(), @"id1"));
+  assertThat([_poolableConverter convertReferencesForRemoteManager:_testPoolableManager1
+                                                               obj:[TestClass2 testClass2]],
+             isUnpairedReference(0, isEmpty(), @"id2"));
+}
+
+- (void)testPoolableReferenceConverter_convertReferencesForLocalManager_handlesRemoteReference {
+  TestClass *testClass = [TestClass testClass];
+  TestClass2 *testClass2 = [TestClass2 testClass2];
+  
+  [given([_testPoolableManager1.localHandler create:_testPoolableManager1
+                                     referenceClass:[TestClass class]
+                                          arguments:anything()])
+   willReturn:testClass];
+  [given([_testPoolableManager2.localHandler create:_testPoolableManager2
+                                     referenceClass:[TestClass2 class]
+                                          arguments:anything()])
+   willReturn:testClass2];
+  
+  [_testPoolableManager1 pairWithNewLocalReference:[REFRemoteReference fromID:@"apple"]
+                                           classID:0];
+  [_testPoolableManager2 pairWithNewLocalReference:[REFRemoteReference fromID:@"apple2"]
+                                           classID:0];
+  
+  XCTAssertEqualObjects([_poolableConverter convertReferencesForLocalManager:_testPoolableManager1
+                                                                         obj:[REFRemoteReference fromID:@"apple"]],
+                        testClass);
+  
+  XCTAssertEqualObjects([_poolableConverter convertReferencesForLocalManager:_testPoolableManager1
+                                                                         obj:[REFRemoteReference fromID:@"apple2"]],
+                        testClass2);
+}
+
+- (void)testPoolableReferenceConverter_convertReferencesForLocalManager_handlesUnpairedReference {
+  [given([_testPoolableManager1.localHandler create:_testPoolableManager1
+                                     referenceClass:[TestClass class]
+                                          arguments:anything()])
+   willReturn:[TestClass testClass]];
+  
+  [given([_testPoolableManager2.localHandler create:_testPoolableManager2
+                                     referenceClass:[TestClass2 class]
+                                          arguments:anything()])
+   willReturn:[TestClass2 testClass2]];
+  
+  assertThat([_poolableConverter convertReferencesForLocalManager:_testPoolableManager1
+                                                              obj:[[REFUnpairedReference alloc]
+                                                                   initWithClassID:0
+                                                                   creationArguments:@[]
+                                                                   managerPoolID:@"id1"]],
+             isA([TestClass class]));
+  
+  assertThat([_poolableConverter convertReferencesForLocalManager:_testPoolableManager1
+                                                              obj:[[REFUnpairedReference alloc]
+                                                                   initWithClassID:0
+                                                                   creationArguments:@[]
+                                                                   managerPoolID:@"id2"]],
+             isA([TestClass2 class]));
 }
 @end

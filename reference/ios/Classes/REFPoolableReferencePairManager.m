@@ -41,7 +41,7 @@
     while ((manager = [enumerator nextObject])) {
       id<REFLocalReference> localReference = [manager
                                               getPairedLocalReference:remoteReference];
-      if (!localReference) return localReference;
+      if (localReference) return localReference;
     }
   }
   
@@ -83,8 +83,7 @@
   BOOL objIsRemoteReference = [obj isKindOfClass:[REFRemoteReference class]];
   if (objIsRemoteReference && [manager getPairedLocalReference:obj]) {
     return [manager getPairedLocalReference:obj];
-  } else if (objIsRemoteReference && !objIsRemoteReference && [manager getPairedLocalReference:obj]) {
-    
+  } else if (objIsRemoteReference && ![manager getPairedLocalReference:obj]) {
     return [REFPoolableReferenceConverter localRefFromRemoteRef:poolableManager.pools remoteReference:obj];
   }
   
