@@ -11,11 +11,29 @@
 
 @implementation REFReferenceTest {
   TestReferencePairManager *_testManager;
+  
+  TestPoolableReferencePairManager *_testPoolableManager1;
+  TestPoolableReferencePairManager *_testPoolableManager2;
+  REFPoolableReferenceConverter *_poolableConverter;
+  
+  REFReferencePairManagerPool *_pool;
 }
 
 - (void)setUp {
   _testManager = [[TestReferencePairManager alloc] init];
   [_testManager initialize];
+  
+  _testPoolableManager1 = [[TestPoolableReferencePairManager alloc] initWithSupportedClasses:@[[REFClass
+                                                                                                fromClass:[TestClass class]]]
+                                                                                      poolID:@"id1"];
+  [_testPoolableManager1 initialize];
+  
+  _testPoolableManager2 = [[TestPoolableReferencePairManager alloc] initWithSupportedClasses:@[[REFClass
+                                                                                                fromClass:[TestClass2 class]]]
+                                                                                      poolID:@"id2"];
+  [_testPoolableManager2 initialize];
+  
+  _pool = [[REFReferencePairManagerPool alloc] init];
 }
 
 - (void)testReferencePairManager_pairWithNewLocalReference {
@@ -178,5 +196,35 @@
   
   XCTAssertNil([_testManager getPairedLocalReference:remoteReference]);
   XCTAssertNil([_testManager getPairedRemoteReference:testClass]);
+}
+
+- (void)testPoolableReferencePairManager_add {
+  TestPoolableReferencePairManager *sameClassManager = [[TestPoolableReferencePairManager alloc]
+                                                       initWithSupportedClasses:@[[REFClass
+                                                                                   fromClass:[TestClass class]]]
+                                                       poolID:@"id3"];
+  
+  TestPoolableReferencePairManager *sameIdManager = [[TestPoolableReferencePairManager alloc]
+                                                    initWithSupportedClasses:@[[REFClass
+                                                                                fromClass:[TestClass2 class]]]
+                                                    poolID:@"id1"];
+  
+  XCTAssertTrue([_pool add:_testPoolableManager1]);
+  XCTAssertTrue([_pool add:_testPoolableManager1]);
+  XCTAssertFalse([_pool add:sameClassManager]);
+  XCTAssertFalse([_pool add:sameIdManager]);
+  XCTAssertTrue([_pool add:_testPoolableManager2]);
+}
+
+- (void)testPoolableReferencePairManager_remove {
+  [_pool add:_testPoolableManager1];
+  [_pool remove:_testPoolableManager1];
+  
+  TestPoolableReferencePairManager *manager = [[TestPoolableReferencePairManager alloc]
+                                              initWithSupportedClasses:@[[REFClass
+                                                                          fromClass:[TestClass class]]]
+                                              poolID:@"id1"];
+  
+  XCTAssertTrue([_pool add:manager]);
 }
 @end

@@ -291,10 +291,10 @@ public class ReferenceTest {
     pool.add(testPoolableManager1);
     pool.remove(testPoolableManager1);
 
-    final PoolableReferencePairManager sameClassManager = new TestPoolableReferencePairManager(
+    final PoolableReferencePairManager manager = new TestPoolableReferencePairManager(
         Collections.<Class<? extends LocalReference>>singletonList(TestClass.class),
         "id1");
 
-    assertTrue(pool.add(sameClassManager));
+    assertTrue(pool.add(manager));
   }
 }

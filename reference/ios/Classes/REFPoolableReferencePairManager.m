@@ -143,7 +143,7 @@
 }
 
 - (void)remove:(REFPoolableReferencePairManager *)manager {
-  if ([_managers objectForKey:manager.poolID]) return;
+  if (![_managers objectForKey:manager.poolID]) return;
   
   for (REFClass *clazz in manager.supportedClasses) {
     [_classesToManagers removeObjectForKey:clazz];
