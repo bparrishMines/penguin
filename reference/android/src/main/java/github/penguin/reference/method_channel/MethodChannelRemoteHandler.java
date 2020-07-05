@@ -10,7 +10,7 @@ import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.StandardMethodCodec;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public abstract class MethodChannelRemoteHandler implements RemoteReferenceCommunicationHandler {
@@ -68,13 +68,9 @@ public abstract class MethodChannelRemoteHandler implements RemoteReferenceCommu
       final List<Object> arguments) {
     final Completer<Void> completer = new Completer<>();
 
-    final List<Object> methodCallArgs = new ArrayList<>();
-    methodCallArgs.add(remoteReference);
-    methodCallArgs.add(classId);
-    methodCallArgs.add(arguments);
     channel.invokeMethod(
         MethodChannelReferencePairManager.METHOD_CREATE,
-        methodCallArgs,
+        Arrays.asList(remoteReference, classId, arguments),
         new RemoteHandlerResult<>(completer));
 
     return completer.completable;
@@ -87,13 +83,9 @@ public abstract class MethodChannelRemoteHandler implements RemoteReferenceCommu
       final List<Object> arguments) {
     final Completer<Object> completer = new Completer<>();
 
-    final List<Object> methodCallArgs = new ArrayList<>();
-    methodCallArgs.add(remoteReference);
-    methodCallArgs.add(methodName);
-    methodCallArgs.add(arguments);
     channel.invokeMethod(
         MethodChannelReferencePairManager.METHOD_METHOD,
-        methodCallArgs,
+        Arrays.asList(remoteReference, methodName, arguments),
         new RemoteHandlerResult<>(completer));
 
     return completer.completable;
@@ -105,13 +97,9 @@ public abstract class MethodChannelRemoteHandler implements RemoteReferenceCommu
                                                              final List<Object> arguments) {
     final Completer<Object> completer = new Completer<>();
 
-    final List<Object> methodCallArgs = new ArrayList<>();
-    methodCallArgs.add(unpairedReference);
-    methodCallArgs.add(methodName);
-    methodCallArgs.add(arguments);
     channel.invokeMethod(
         MethodChannelReferencePairManager.METHOD_METHOD,
-        methodCallArgs,
+        Arrays.asList(unpairedReference, methodName, arguments),
         new RemoteHandlerResult<>(completer));
 
     return completer.completable;

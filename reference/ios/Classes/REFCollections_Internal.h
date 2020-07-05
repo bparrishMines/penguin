@@ -1,10 +1,3 @@
-//
-//  REFCollections_Internal.h
-//  Pods-Runner
-//
-//  Created by Maurice P on 6/17/20.
-//
-
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
