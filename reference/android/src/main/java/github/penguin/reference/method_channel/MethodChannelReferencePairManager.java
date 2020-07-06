@@ -87,6 +87,7 @@ public abstract class MethodChannelReferencePairManager extends PoolableReferenc
                       (String) arguments.get(1),
                       (List<Object>) arguments.get(2));
             } else {
+              // TODO: Explanation
               throw new IllegalArgumentException(arguments.toString());
             }
             channelResult.success(result);

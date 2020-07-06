@@ -2,8 +2,10 @@
 
 #import "REFPoolableReferencePairManager.h"
 
-
 NS_ASSUME_NONNULL_BEGIN
+
+@interface REFMethodChannelError : NSError
+@end
 
 @interface REFReferenceReaderWriter : FlutterStandardReaderWriter
 @end
@@ -11,10 +13,17 @@ NS_ASSUME_NONNULL_BEGIN
 @interface REFMethodChannelRemoteHandler : NSObject<REFRemoteReferenceCommunicationHandler>
 @property (readonly) id<FlutterBinaryMessenger> binaryMessenger;
 @property (readonly) FlutterMethodChannel *channel;
-- (instancetype)initWithName:(NSString *)name binaaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;
+- (instancetype)initWithChannelName:(NSString *)channelName
+                    binaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;
 @end
 
 @interface REFMethodChannelReferencePairManager : REFPoolableReferencePairManager
+@property (readonly) id<FlutterBinaryMessenger> binaryMessenger;
+@property (readonly) FlutterMethodChannel *channel;
+- (instancetype) initWithSupportedClasses:(NSArray<REFClass *> *)supportedClasses
+                          binaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger
+                              channelName:(NSString *)channelName;
+// TODO: Constructor with ReaderWriter and poolID
 @end
 
 NS_ASSUME_NONNULL_END

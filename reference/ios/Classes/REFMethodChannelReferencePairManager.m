@@ -15,7 +15,33 @@ NSString *const REFMethodDispose = @"REFERENCE_DISPOSE";
 @interface REFReferenceWriter : FlutterStandardWriter
 @end
 
-@interface REFReferenceError : NSError
+@implementation REFMethodChannelError {
+  NSString *_description;
+}
+
+- (instancetype)init {
+  return self = [super initWithDomain:@"REFReferencePluginDomain" code:0 userInfo:nil];
+}
+
+- (instancetype _Nonnull)initWithFlutterError:(FlutterError *_Nonnull)error {
+  self = [self init];
+  if (self) {
+    _description = [[NSString alloc] initWithFormat:@"%@: %@", error.code, error.message];
+  }
+  return self;
+}
+
+- (instancetype _Nonnull)initWithUnimplementedMethod:(NSString *_Nonnull)methodName {
+  self = [self init];
+  if (self) {
+    _description = [[NSString alloc] initWithFormat:@"Method `%@` returned as not implemented.", methodName];
+  }
+  return self;
+}
+
+- (NSString *)localizedDescription {
+  return _description;
+}
 @end
 
 @implementation REFReferenceReaderWriter
@@ -63,23 +89,16 @@ NSString *const REFMethodDispose = @"REFERENCE_DISPOSE";
 }
 @end
 
-@implementation REFReferenceError
-
-- (NSString *)localizedDescription {
-  return @"
-}
-
-@end
-
 @implementation REFMethodChannelRemoteHandler
-- (instancetype)initWithName:(NSString *)name binaaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger {
+- (instancetype)initWithChannelName:(NSString *)channelName
+                    binaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger {
   self = [super init];
   if (self) {
     _binaryMessenger = binaryMessenger;
     
     NSObject<FlutterMethodCodec> *methodCodec = [FlutterStandardMethodCodec
                                                  codecWithReaderWriter:[[REFReferenceReaderWriter alloc] init]];
-    _channel = [[FlutterMethodChannel alloc] initWithName:name binaryMessenger:binaryMessenger codec:methodCodec];
+    _channel = [[FlutterMethodChannel alloc] initWithName:channelName binaryMessenger:binaryMessenger codec:methodCodec];
   }
   return self;
 }
@@ -92,32 +111,118 @@ NSString *const REFMethodDispose = @"REFERENCE_DISPOSE";
                arguments:@[remoteReference, @(classID), arguments]
                   result:^(id result) {
     if ([result isKindOfClass:[FlutterError class]]) {
-      completion([[NSError alloc] initWithDomain:@"REFMethodChannelRemoteHandler" code:0 userInfo:nil]);
+      completion([[REFMethodChannelError alloc] initWithFlutterError:result]);
     } else if ([result isEqual:FlutterMethodNotImplemented]) {
-      
+      completion([[REFMethodChannelError alloc] initWithUnimplementedMethod:REFMethodCreate]);
     } else {
-      
+      completion(nil);
     }
   }];
 }
 
-- (void)dispose:(nonnull REFRemoteReference *)remoteReference completion:(nonnull void (^)(NSError * _Nullable))completion {
-  
+- (void)invokeMethod:(nonnull REFRemoteReference *)remoteReference
+          methodName:(nonnull NSString *)methodName
+           arguments:(nonnull NSArray<id> *)arguments
+          completion:(nonnull void (^)(id _Nullable, NSError * _Nullable))completion {
+  [_channel invokeMethod:REFMethodMethod
+               arguments:@[remoteReference, methodName, arguments]
+                  result:^(id result) {
+    if ([result isKindOfClass:[FlutterError class]]) {
+      completion(nil, [[REFMethodChannelError alloc] initWithFlutterError:result]);
+    } else if ([result isEqual:FlutterMethodNotImplemented]) {
+      completion(nil, [[REFMethodChannelError alloc] initWithUnimplementedMethod:REFMethodMethod]);
+    } else {
+      completion(result, nil);
+    }
+  }];
+}
+
+- (void)invokeMethodOnUnpairedReference:(nonnull REFUnpairedReference *)unpairedReference
+                             methodName:(nonnull NSString *)methodName
+                              arguments:(nonnull NSArray<id> *)arguments
+                             completion:(nonnull void (^)(id _Nullable, NSError * _Nullable))completion {
+  [_channel invokeMethod:REFMethodMethod
+               arguments:@[unpairedReference, methodName, arguments]
+                  result:^(id result) {
+    if ([result isKindOfClass:[FlutterError class]]) {
+      completion(nil, [[REFMethodChannelError alloc] initWithFlutterError:result]);
+    } else if ([result isEqual:FlutterMethodNotImplemented]) {
+      completion(nil, [[REFMethodChannelError alloc] initWithUnimplementedMethod:REFMethodMethod]);
+    } else {
+      completion(result, nil);
+    }
+  }];
+}
+
+- (void)dispose:(nonnull REFRemoteReference *)remoteReference
+     completion:(nonnull void (^)(NSError * _Nullable))completion {
+  [_channel invokeMethod:REFMethodDispose
+               arguments:remoteReference
+                  result:^(id result) {
+    if ([result isKindOfClass:[FlutterError class]]) {
+      completion([[REFMethodChannelError alloc] initWithFlutterError:result]);
+    } else if ([result isEqual:FlutterMethodNotImplemented]) {
+      completion([[REFMethodChannelError alloc] initWithUnimplementedMethod:REFMethodDispose]);
+    } else {
+      completion(nil);
+    }
+  }];
 }
 
 - (nonnull NSArray<id> *)getCreationArguments:(nonnull id<REFLocalReference>)localReference {
-  return nil;
+  NSString *message = [NSString stringWithFormat:@"You must override %@ in a subclass.", NSStringFromSelector(_cmd)];
+  @throw [NSException exceptionWithName:NSInternalInconsistencyException
+                                 reason:message
+                               userInfo:nil];
 }
-
-- (void)invokeMethod:(nonnull REFRemoteReference *)remoteReference methodName:(nonnull NSString *)methodName arguments:(nonnull NSArray<id> *)arguments completion:(nonnull void (^)(id _Nullable, NSError * _Nullable))completion {
-  
-}
-
-- (void)invokeMethodOnUnpairedReference:(nonnull REFUnpairedReference *)unpairedReference methodName:(nonnull NSString *)methodName arguments:(nonnull NSArray<id> *)arguments completion:(nonnull void (^)(id _Nullable, NSError * _Nullable))completion {
-  
-}
-
 @end
 
 @implementation REFMethodChannelReferencePairManager
+- (instancetype) initWithSupportedClasses:(NSArray<REFClass *> *)supportedClasses
+                          binaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger
+                              channelName:(NSString *)channelName {
+  self = [super initWithSupportedClasses:supportedClasses poolID:channelName];
+  if (self) {
+    _binaryMessenger = binaryMessenger;
+    NSObject<FlutterMethodCodec> *methodCodec = [FlutterStandardMethodCodec
+                                                 codecWithReaderWriter:[[REFReferenceReaderWriter alloc] init]];
+    _channel = [[FlutterMethodChannel alloc] initWithName:channelName binaryMessenger:binaryMessenger codec:methodCodec];
+  }
+  return self;
+}
+
+- (void)initialize {
+  [super initialize];
+  __unsafe_unretained typeof(self) weakSelf = self;
+  [_channel setMethodCallHandler:^(FlutterMethodCall *_Nonnull call, FlutterResult _Nonnull channelResult) {
+    // TODO: wrap in try/catch and print error
+    if ([REFMethodCreate isEqualToString:call.method]) {
+      NSArray<id> *arguments = [call arguments];
+      NSNumber *classID = arguments[1];
+      [weakSelf pairWithNewLocalReference:arguments[0] classID:classID.unsignedLongValue arguments:arguments[2]];
+      channelResult(nil);
+    } else if ([REFMethodMethod isEqualToString:call.method]) {
+      NSArray<id> *arguments = [call arguments];
+      NSObject *result;
+      if ([arguments[0] isKindOfClass:[REFUnpairedReference class]]) {
+        result = [weakSelf invokeLocalMethodOnUnpairedReference:arguments[0]
+                                                     methodName:arguments[1]
+                                                      arguments:arguments[2]];
+      } else if ([arguments[0] isKindOfClass:[REFRemoteReference class]]) {
+        result = [weakSelf invokeLocalMethod:[weakSelf getPairedLocalReference:arguments[0]]
+                                  methodName:arguments[1]
+                                   arguments:arguments[2]];
+      } else {
+        // TODO: Explanation
+        @throw [NSException exceptionWithName:@"FailedMethodCall" reason:@"methodCallHandler" userInfo:nil];
+      }
+      channelResult(result);
+    } else if ([REFMethodDispose isEqualToString:call.method]) {
+      [weakSelf disposePairWithRemoteReference:call.arguments];
+      channelResult(nil);
+    } else {
+      channelResult(FlutterMethodNotImplemented);
+    }
+  }];
+}
 @end
