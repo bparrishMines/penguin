@@ -21,7 +21,13 @@
 
 @interface TestPoolableReferencePairManager : REFPoolableReferencePairManager
 -(instancetype _Nonnull)initWithSupportedClasses:(NSArray<REFClass *> *_Nonnull)supportedClasses
-                                 poolID:(NSString *_Nonnull)poolID;
+                                          poolID:(NSString *_Nonnull)poolID;
+@end
+
+@interface TestRemoteHandler : REFMethodChannelRemoteHandler
+@end
+
+@interface TestMethodChannelReferencePairManager : REFMethodChannelReferencePairManager
 @end
 
 @interface IsUnpairedReference : HCBaseMatcher

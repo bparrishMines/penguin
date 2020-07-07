@@ -100,6 +100,43 @@
 }
 @end
 
+@implementation TestRemoteHandler
+- (instancetype)init {
+  NSObject<FlutterBinaryMessenger> *mockMessenger = mockProtocol(@protocol(FlutterBinaryMessenger));
+  return self = [super initWithChannelName:@"test_channel"
+                           binaryMessenger:mockMessenger];
+}
+
+-(NSArray<id> *)getCreationArguments:(id<REFLocalReference>)localReference {
+  return @[];
+}
+@end
+
+@implementation TestMethodChannelReferencePairManager {
+  id<REFRemoteReferenceCommunicationHandler> _remoteHandler;
+  id<REFLocalReferenceCommunicationHandler> _localHandler;
+}
+
+-(instancetype)init {
+  self = [super initWithSupportedClasses:@[[REFClass fromClass:[TestClass class]]]
+                         binaryMessenger:mockProtocol(@protocol(FlutterBinaryMessenger))
+                             channelName:@"test_channel"];
+  if (self) {
+    _remoteHandler = [[TestRemoteHandler alloc] init];
+    _localHandler = mockProtocol(@protocol(REFLocalReferenceCommunicationHandler));
+  }
+  return self;
+}
+
+-(id<REFRemoteReferenceCommunicationHandler>)remoteHandler {
+  return _remoteHandler;
+}
+
+-(id<REFLocalReferenceCommunicationHandler>)localHandler {
+  return _localHandler;
+}
+@end
+
 @implementation IsUnpairedReference
 
 - (instancetype)initWithClassID:(NSUInteger)classID

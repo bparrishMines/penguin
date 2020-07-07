@@ -8,8 +8,7 @@ import 'reference_pair_manager.dart';
 import 'reference.dart';
 
 /// Abstract implementation of [ReferencePairManager] for [MethodChannel]s.
-abstract class MethodChannelReferencePairManager
-    extends PoolableReferencePairManager {
+abstract class MethodChannelReferencePairManager extends PoolableReferencePairManager {
   MethodChannelReferencePairManager(
     List<Type> supportedTypes,
     String channelName, {
@@ -139,7 +138,7 @@ abstract class MethodChannelRemoteHandler
   }
 }
 
-/// Implementation of [StandardMessageCodec] that supports serializing [TypeReference]s, [RemoteReference]s, and [UnpairedReference]s.
+/// Implementation of [StandardMessageCodec] that supports serializing [RemoteReference]s and [UnpairedReference]s.
 ///
 /// When extending, no int below 130 should be used as a key. See
 /// [StandardMessageCodec] for more info on extending a [StandardMessageCodec].

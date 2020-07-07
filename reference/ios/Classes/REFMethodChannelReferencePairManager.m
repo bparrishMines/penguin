@@ -95,7 +95,7 @@ NSString *const REFMethodDispose = @"REFERENCE_DISPOSE";
   self = [super init];
   if (self) {
     _binaryMessenger = binaryMessenger;
-    
+
     NSObject<FlutterMethodCodec> *methodCodec = [FlutterStandardMethodCodec
                                                  codecWithReaderWriter:[[REFReferenceReaderWriter alloc] init]];
     _channel = [[FlutterMethodChannel alloc] initWithName:channelName binaryMessenger:binaryMessenger codec:methodCodec];
