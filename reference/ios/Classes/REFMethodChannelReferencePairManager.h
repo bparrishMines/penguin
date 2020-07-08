@@ -13,6 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface REFMethodChannelRemoteHandler : NSObject<REFRemoteReferenceCommunicationHandler>
 @property (readonly) id<FlutterBinaryMessenger> binaryMessenger;
 @property (readonly) FlutterMethodChannel *channel;
+// TODO: Switch order of channelName and binaryMessenger
 - (instancetype)initWithChannelName:(NSString *)channelName
                     binaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;
 @end
