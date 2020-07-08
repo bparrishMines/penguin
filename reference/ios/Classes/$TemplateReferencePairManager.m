@@ -8,7 +8,7 @@
                                userInfo:nil];
 }
 
--(id _Nullable)methodTemplate:(NSString *)parameterTemplate {
+-(NSString *_Nullable)methodTemplate:(NSString *)parameterTemplate {
   NSString *message = [NSString stringWithFormat:@"You must override %@ in a subclass.", NSStringFromSelector(_cmd)];
   @throw [NSException exceptionWithName:NSInternalInconsistencyException
                                  reason:message
