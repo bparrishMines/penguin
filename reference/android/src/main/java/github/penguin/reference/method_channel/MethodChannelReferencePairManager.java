@@ -19,11 +19,8 @@ public abstract class MethodChannelReferencePairManager extends PoolableReferenc
   static final String METHOD_DISPOSE = "REFERENCE_DISPOSE";
 
   public final BinaryMessenger binaryMessenger;
-
   public final String channelName;
-
   public final MethodCodec methodCodec;
-
   public final MethodChannel channel;
 
   @SuppressWarnings("unused")

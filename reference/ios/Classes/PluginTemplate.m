@@ -1,5 +1,8 @@
 #import "PluginTemplate.h"
 
+@interface LocalHandlerImpl : _LocalHandler
+@end
+
 @interface ReferencePairManagerTemplate : _TemplateReferencePairManager
 @end
 
@@ -24,11 +27,20 @@
 }
 @end
 
+@implementation LocalHandlerImpl
+-(ClassTemplate *)createClassTemplate:(REFReferencePairManager *)manager fieldTemplate:(NSNumber *)fieldTemplate {
+  return [[ClassTemplateImpl alloc] initWithFieldTemplate:fieldTemplate];
+}
+@end
+
 @implementation ReferencePairManagerTemplate
 -(instancetype _Nonnull)initBinaryMessenger:(id<FlutterBinaryMessenger> _Nonnull)binaryMessenger {
   return self = [super initWithChannelName:@"github.penguin/reference/template" binaryMessenger:binaryMessenger];
 }
 
+-(id<REFLocalReferenceCommunicationHandler>)localHandler {
+  return [[LocalHandlerImpl alloc] init];
+}
 @end
 
 @implementation PluginTemplate

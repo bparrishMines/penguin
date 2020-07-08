@@ -183,6 +183,7 @@ NSString *const REFMethodDispose = @"REFERENCE_DISPOSE";
                               channelName:(NSString *)channelName {
   self = [super initWithSupportedClasses:supportedClasses poolID:channelName];
   if (self) {
+    _channelName = channelName;
     _binaryMessenger = binaryMessenger;
     NSObject<FlutterMethodCodec> *methodCodec = [FlutterStandardMethodCodec
                                                  codecWithReaderWriter:[[REFReferenceReaderWriter alloc] init]];
@@ -193,7 +194,7 @@ NSString *const REFMethodDispose = @"REFERENCE_DISPOSE";
 
 - (void)initialize {
   [super initialize];
-  __unsafe_unretained typeof(self) weakSelf = self;
+  __block REFReferencePairManager *weakSelf = self;
   [_channel setMethodCallHandler:^(FlutterMethodCall *_Nonnull call, FlutterResult _Nonnull channelResult) {
     // TODO: wrap in try/catch and print error
     if ([REFMethodCreate isEqualToString:call.method]) {

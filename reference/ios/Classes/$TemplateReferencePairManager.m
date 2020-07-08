@@ -45,7 +45,7 @@
   if (localReference.referenceClass.clazz == [ClassTemplate class]) {
     if ([methodName  isEqual: @"methodTemplate"]) {
       ClassTemplate *classTemplate = localReference;
-      [classTemplate methodTemplate:arguments[0]];
+      return [classTemplate methodTemplate:arguments[0]];
     }
   }
   
@@ -73,5 +73,9 @@
   return self = [super initWithSupportedClasses:@[[REFClass fromClass:[ClassTemplate class]]]
                                 binaryMessenger:binaryMessenger
                                     channelName:channelName];
+}
+
+- (id<REFRemoteReferenceCommunicationHandler>)remoteHandler {
+  return [[_RemoteHandler alloc] initWithChannelName:self.channelName binaryMessenger:self.binaryMessenger];
 }
 @end

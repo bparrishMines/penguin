@@ -19,6 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface REFMethodChannelReferencePairManager : REFPoolableReferencePairManager
+@property (readonly) NSString* channelName;
 @property (readonly) id<FlutterBinaryMessenger> binaryMessenger;
 @property (readonly) FlutterMethodChannel *channel;
 - (instancetype) initWithSupportedClasses:(NSArray<REFClass *> *)supportedClasses
