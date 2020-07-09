@@ -2,6 +2,12 @@ import 'reference.dart';
 import 'reference_converter.dart';
 import 'reference_pair_manager.dart';
 
+/// The [ReferenceConverter] for [PoolableReferencePairManager]s.
+///
+/// This converter searches through each [PoolableReferencePairManagerPool] that
+/// a [PoolableReferencePairManager] is attached to to convert arguments.
+///
+/// This extends the use cases of [StandardReferenceConverter].
 class PoolableReferenceConverter extends StandardReferenceConverter {
   static PoolableReferencePairManager _managerFromType(
     Set<ReferencePairManagerPool> pools,
@@ -111,11 +117,17 @@ class PoolableReferenceConverter extends StandardReferenceConverter {
   }
 }
 
+/// A [ReferencePairManager] that can access the [LocalReferenceCommunicationHandler]s and [RemoteReferenceCommunicationHandler] of other [ReferencePairManager]s.
+///
+/// Add this to a [ReferencePairManagerPool] and it will be able to handle
+/// the [ReferencePairManager.supportedTypes] of other the other
+/// [ReferencePairManagers] within the pool.
 abstract class PoolableReferencePairManager extends ReferencePairManager {
   PoolableReferencePairManager(List<Type> supportedTypes, this.poolId)
       : assert(poolId != null),
         super(supportedTypes);
 
+  /// Unique identifier used to identify this manager in a [ReferencePairManagerPool].
   final String poolId;
 
   Set<ReferencePairManagerPool> _pools = <ReferencePairManagerPool>{};
@@ -124,7 +136,13 @@ abstract class PoolableReferencePairManager extends ReferencePairManager {
   PoolableReferenceConverter get converter => PoolableReferenceConverter();
 }
 
+/// Pools [PoolableReferencePairManager]s to allow cross support of [ReferencePairManager.supportedTypes].
+///
+/// Typically a [ReferencePairManager] can only support types added to its
+/// [ReferencePairManager.supportedTypes]. But by creating a shared pool, they
+/// can support [Type]s from other [ReferencePairManager]s.
 class ReferencePairManagerPool {
+  /// A global [ReferencePairManagerPool] that provides a easily accessible pool.
   static final ReferencePairManagerPool globalInstance =
       ReferencePairManagerPool();
 
@@ -133,6 +151,15 @@ class ReferencePairManagerPool {
   final Map<Type, PoolableReferencePairManager> _typesToManagers =
       <Type, PoolableReferencePairManager>{};
 
+  /// Add a manager to this pool.
+  ///
+  /// Successfully adding a manager requires:
+  ///   1. Having a unique [PoolableReferencePairManager.poolId].
+  ///   2. Having an empty interception of [ReferencePairManager.supportedTypes]
+  ///      of all other managers within this pool.
+  ///
+  /// If both conditions are met, the manager is added and `true` is returned.
+  /// Otherwise `false` is returned.
   bool add(PoolableReferencePairManager manager) {
     if (_managers.containsValue(manager)) return true;
     if (_managers.containsKey(manager.poolId)) return false;
@@ -149,6 +176,7 @@ class ReferencePairManagerPool {
     return true;
   }
 
+  /// Removes a manager from this pool.
   void remove(PoolableReferencePairManager manager) {
     if (_managers[manager.poolId] == null) return;
 

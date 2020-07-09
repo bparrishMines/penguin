@@ -10,12 +10,12 @@ import 'reference_converter.dart';
 /// Handles communication with [RemoteReference]s for a [ReferencePairManager].
 ///
 /// This class communicates with other [ReferencePairManager]s to create,
-/// dispose, or execute methods on [RemoteReference]s.
+/// dispose, or invoke methods on [RemoteReference]s.
 mixin RemoteReferenceCommunicationHandler {
   /// Retrieves arguments to instantiate an object that is created with [create].
   List<Object> getCreationArguments(LocalReference localReference);
 
-  /// Instantiate and store an object on a different thread/process.
+  /// Instantiate and store an instance of an object that is remotely accessible.
   ///
   /// The remote instantiated object will be represented as [remoteReference].
   ///
@@ -23,9 +23,9 @@ mixin RemoteReferenceCommunicationHandler {
   /// [remoteReference] and facilitates communication between the instances they
   /// represent.
   ///
-  /// The REMOTE [ReferencePairManager] will represent [localReference] as a
-  /// [RemoteReference], instantiate a new [LocalReference], and also store them
-  /// as a pair.
+  /// The REMOTE [ReferencePairManager] will represent the paired
+  /// [localReference] as a [RemoteReference], instantiate a new
+  /// [LocalReference], and also store them as a pair.
   ///
   /// This method should make the instantiated remote object accessible until
   /// [dispose] is called with [remoteReference].
@@ -35,7 +35,7 @@ mixin RemoteReferenceCommunicationHandler {
     List<Object> arguments,
   );
 
-  /// Execute a method on the object instance that [remoteReference] represents.
+  /// Invoke a method on the object instance that [remoteReference] represents.
   ///
   /// For any [RemoteReference], this method should only be called after
   /// [create] and should never be called after
@@ -46,13 +46,14 @@ mixin RemoteReferenceCommunicationHandler {
     List<Object> arguments,
   );
 
+  /// Invoke a method on an object instance that [unpairedReference] represents.
   Future<Object> invokeMethodOnUnpairedReference(
     UnpairedReference unpairedReference,
     String methodName,
     List<Object> arguments,
   );
 
-  /// Dispose [remoteReference] on a remote thread/process.
+  /// Dispose the object instance that [remoteReference] represents.
   ///
   /// This method should also stop the local and remote [ReferencePairManager]
   /// from maintaining the connection between its paired [LocalReference] and
@@ -63,18 +64,22 @@ mixin RemoteReferenceCommunicationHandler {
 /// Handles communication with [LocalReference]s for a [ReferencePairManager].
 ///
 /// This class handles communication from other [ReferencePairManager]s to
-/// create, dispose, or execute methods for a [LocalReference].
+/// create, dispose, or invoke methods for a [LocalReference].
 mixin LocalReferenceCommunicationHandler {
-  /// Instantiates and stores an object on the same thread/process.
+  /// Instantiates a new [LocalReference].
   ///
-  /// This will be called when a message to instantiate and store an object on
-  /// the same thread/process is received.
+  /// When a remote [ReferencePairManager] would like to create a new pair, this
+  /// method is called to instantiate a [LocalReference] to be stored in a local
+  /// [ReferencePairManager] and paired with a [RemoteReference]. This method is
+  /// also called to convert an [UnpairedReference] into a [LocalReference].
   ///
-  /// The remote instantiated object will be represented as [remoteReference].
+  /// Assuming [LocalReference] is being created to be paired with a
+  /// [RemoteReference]:
   ///
   /// The LOCAL [ReferencePairManager] stores the returned [LocalReference] and
-  /// and a generated [RemoteReference] as a pair and will facilitate
-  /// communication between their object instances they represent.
+  /// a [RemoteReference] with a generated `referenceId` are stored as a pair
+  /// and the LOCAL [ReferencePairManager] will facilitate communication between
+  /// their object instances they represent.
   ///
   /// The REMOTE [ReferencePairManager] will represent the returned value as a
   /// [RemoteReference] and represent the generated [RemoteReference] as a
@@ -85,11 +90,7 @@ mixin LocalReferenceCommunicationHandler {
     List<Object> arguments,
   );
 
-  /// Execute a method to be executed on the object instance represented by [localReference].
-  ///
-  /// For any [LocalReference] this method should only be called after
-  /// [create] and should never be called after
-  /// [dispose].
+  /// Invoke a method to be executed on the object instance represented by [localReference].
   Object invokeMethod(
     ReferencePairManager referencePairManager,
     LocalReference localReference,
@@ -112,13 +113,13 @@ mixin LocalReferenceCommunicationHandler {
 ///
 /// This class works by facilitating communication between a [LocalReference]
 /// and a [RemoteReference] pair. When a [LocalReference] is added to a
-/// [ReferencePairManager] on the same thread/process, it is expected that an
-/// equivalent object is created and added to a [ReferencePairManager] on a
-/// different thread/process.
+/// locally accessible [ReferencePairManager], it is expected that an
+/// equivalent object is created and added to a remotely accessible
+/// [ReferencePairManager].
 ///
-/// For example, assume that there is a [ReferencePairManager] in a process
-/// running Dart code and a [ReferencePairManager] in a process running Java
-/// code. Next, an object of a Dart class named `Apple` is instantiated and is
+/// For example, assume that there is a [ReferencePairManager] on a thread
+/// running Dart code and a [ReferencePairManager] on a thread running Java
+/// code. When an object of a Dart class named `Apple` is instantiated and is
 /// added to the Dart [ReferencePairManager], then
 ///
 /// 1. The Dart [ReferencePairManager] will send a message to the Java
@@ -129,12 +130,22 @@ mixin LocalReferenceCommunicationHandler {
 /// with a [RemoteReference] that represents the `Apple` instantiated in Java.
 ///
 /// 3. The [ReferencePairManager]s would then handle sending and receiving
-/// methods to be executed between the Dart `Apple` and the Java `Apple` until
+/// methods to be invoked between the Dart `Apple` and the Java `Apple` until
 /// the objects are disposed and removed.
 ///
 /// 4. Disposing of the Dart `Apple` would lead to a message sent to the remote
 /// [ReferencePairManager] to dispose the Java `Apple`.
+///
+///
+/// --------------------------------------------------------
+///
+/// [ReferencePairManager.remoteHandler] and [ReferencePairManager.localHandler]
+/// must be overriden to return a value. See [MethodChannelReferencePairManager]
+/// for an implementation using [MethodChannel]s.
 abstract class ReferencePairManager {
+  /// Default constructor for [ReferencePairManager].
+  ///
+  /// [ReferencePairManager.supportedTypes] must not be `null`.
   ReferencePairManager(List<Type> supportedTypes)
       : assert(supportedTypes != null),
         supportedTypes = List<Type>.unmodifiable(supportedTypes),
@@ -154,12 +165,20 @@ abstract class ReferencePairManager {
   /// Handles communication with [LocalReference]s.
   LocalReferenceCommunicationHandler get localHandler;
 
-  /// Finish setup to start facilitating communication between [LocalReference]s and [RemoteReference].
+  /// Finish setup to start facilitating communication between [LocalReference] and [RemoteReference] pairs.
   @mustCallSuper
   void initialize() => _isInitialized = true;
 
+  /// Get the unique type identifier for a type in [ReferencePairManager.supportedTypes].
+  ///
+  /// If this [referenceType] is not in [ReferencePairManager.supportedTypes],
+  /// this will return `null`.
   int getTypeId(Type referenceType) => _typeIds.inverse[referenceType];
 
+  /// Get the type represented by [typeId].
+  ///
+  /// [typeId] should be greater than or equal to zero and less than
+  /// [ReferencePairManager.supportedTypes].length;
   Type getReferenceType(int typeId) => _typeIds[typeId];
 
   /// Retrieve the [RemoteReference] paired with [localReference].
@@ -176,18 +195,19 @@ abstract class ReferencePairManager {
     return _referencePairs.inverse[remoteReference];
   }
 
+  /// Converts [Reference]s when passing values to a [LocalReferenceCommunicationHandler] or a [RemoteReferenceCommunicationHandler].
   ReferenceConverter get converter => StandardReferenceConverter();
 
-  /// Call when a [ReferencePairManager] on a different thread/process wants to create a [RemoteReference].
+  /// Create a new [LocalReference] to be paired with [RemoteReference].
   ///
-  /// This will instantiate a [LocalReference] and add it and [remoteReference]
-  /// as a pair.
+  /// This is typically called when a remote [ReferencePairManager] wants to
+  /// create a [RemoteReference].
   ///
-  /// All [RemoteReference]s and [UnpairedReference]s in `arguments` will
-  /// be replaced by a [LocalReference].
+  /// This will instantiate a new [LocalReference] and add it and
+  /// [remoteReference] as a pair.
   ///
-  /// Also, all [List]s will also be converted into `List<Object>` and all
-  /// [Map]s will be converted into `Map<Object, Object>`.
+  /// This method uses [ReferenceConverter.convertForLocalManager] to convert
+  /// [arguments].
   LocalReference pairWithNewLocalReference(
     RemoteReference remoteReference,
     int typeId, [
@@ -205,13 +225,10 @@ abstract class ReferencePairManager {
     return localReference;
   }
 
-  /// Execute a method on the [LocalReference] paired to [remoteReference].
+  /// Invoke a method on [localReference].
   ///
-  /// All [RemoteReference]s and [UnpairedReference]s in `arguments` will
-  /// be replaced by a [LocalReference].
-  ///
-  /// Also, all [List]s will also be converted into `List<Object>` and all
-  /// [Map]s will be converted into `Map<Object, Object>`.
+  /// This method uses [ReferenceConverter.convertForLocalManager] to convert
+  /// [arguments].
   Object invokeLocalMethod(
     LocalReference localReference,
     String methodName, [
@@ -229,6 +246,10 @@ abstract class ReferencePairManager {
     return converter.convertForRemoteManager(this, result);
   }
 
+  /// Creates a [LocalReference] from [unpairedReference] and invoke a method.
+  ///
+  /// This method uses [ReferenceConverter.convertForLocalManager] to convert
+  /// [arguments].
   Object invokeLocalMethodOnUnpairedReference(
     UnpairedReference unpairedReference,
     String methodName, [
@@ -247,7 +268,10 @@ abstract class ReferencePairManager {
     );
   }
 
-  /// Call when a remote [ReferencePairManager] wants to dispose their [RemoteReference].
+  /// Removes the [Reference] pair containing [remoteReference] from this [ReferencePairManager].
+  ///
+  /// Typically called when a remote [ReferencePairManager] wants to dispose
+  /// their [RemoteReference].
   ///
   /// This will remove [remoteReference] and its paired [LocalReference] from
   /// this [ReferencePairManager].
@@ -262,13 +286,20 @@ abstract class ReferencePairManager {
     localHandler.dispose(this, localReference);
   }
 
-  // TODO(bparrishMines): Don't change state if failure to create?
-  /// Creates and maintains access of an equivalent object to [localReference] on a remote thread/process.
+  // TODO(bparrishMines): Undo state change if failure to create?
+  /// Creates a new [RemoteReference] to be paired with [localReference].
   ///
-  /// This will also store [localReference] and a [RemoteReference] as a pair.
+  /// This is typically called when a class wants a remote
+  /// [ReferencePairManager] wants to pair itself with a [RemoteReference].
+  ///
+  /// This will instantiate a new [RemoteReference] and add it and
+  /// [localReference] as a pair.
+  ///
+  /// This method uses [ReferenceConverter.convertForRemoteManager] to convert
+  /// arguments retrieved from
+  /// [RemoteReferenceCommunicationHandler.getCreationArguments].
   Future<RemoteReference> pairWithNewRemoteReference(
-    LocalReference localReference,
-  ) async {
+      LocalReference localReference,) async {
     _assertIsInitialized();
     if (getPairedRemoteReference(localReference) != null) return null;
 
@@ -287,13 +318,10 @@ abstract class ReferencePairManager {
     return remoteReference;
   }
 
-  /// Execute a method on the [RemoteReference] paired to [localReference].
+  /// Invoke a method on [remoteReference].
   ///
-  /// The [LocalReference]s in `arguments` will be replaced by a
-  /// [RemoteReference] or a [UnpairedReference].
-  ///
-  /// All [List]s will also be converted into `List<Object>` and all [Map]s
-  /// will be converted into `Map<Object, Object>`.
+  /// This method uses [ReferenceConverter.convertForRemoteManager] to convert
+  /// [arguments].
   Future<Object> invokeRemoteMethod(
     RemoteReference remoteReference,
     String methodName, [
@@ -310,6 +338,10 @@ abstract class ReferencePairManager {
     return converter.convertForLocalManager(this, result);
   }
 
+  /// Creates an [UnpairedReference] from [localReference] and invokes a method on a remote version of the [UnpairedReference].
+  ///
+  /// This method uses [ReferenceConverter.convertForRemoteManager] to convert
+  /// [arguments].
   Future<Object> invokeRemoteMethodOnUnpairedReference(
     LocalReference localReference,
     String methodName, [
@@ -332,7 +364,13 @@ abstract class ReferencePairManager {
     return converter.convertForLocalManager(this, result);
   }
 
-  /// Call when it is no longer needed to access the [RemoteReference] paired with [localReference].
+  /// Removes the [Reference] pair containing [localReference] from this [ReferencePairManager].
+  ///
+  /// This also removes the [Reference] pair from the remote
+  /// [ReferencePairManager].
+  ///
+  /// This is typically called when a class no longer needs access to the
+  /// [RemoteReference] it is paired with.
   FutureOr<void> disposePairWithLocalReference(LocalReference localReference) {
     _assertIsInitialized();
 

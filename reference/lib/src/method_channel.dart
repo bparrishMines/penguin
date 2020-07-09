@@ -7,7 +7,7 @@ import 'poolable.dart';
 import 'reference_pair_manager.dart';
 import 'reference.dart';
 
-/// Abstract implementation of [ReferencePairManager] for [MethodChannel]s.
+/// Abstract implementation of [ReferencePairManager] using [MethodChannel]s.
 abstract class MethodChannelReferencePairManager extends PoolableReferencePairManager {
   MethodChannelReferencePairManager(
     List<Type> supportedTypes,
@@ -25,9 +25,7 @@ abstract class MethodChannelReferencePairManager extends PoolableReferencePairMa
   static const String _methodMethod = 'REFERENCE_METHOD';
   static const String _methodDispose = 'REFERENCE_DISPOSE';
 
-  /// [MethodChannel] used to communicate with a [ReferencePairManager] on a different thread/process.
-  ///
-  /// Null until [initialize] is called.
+  /// [MethodChannel] used to communicate with a remote [ReferencePairManager].
   final MethodChannel channel;
 
   @override
@@ -91,6 +89,7 @@ abstract class MethodChannelRemoteHandler
               messageCodec ?? ReferenceMessageCodec(),
             ));
 
+  /// [MethodChannel] used to communicate with a remote [ReferencePairManager].
   final MethodChannel channel;
 
   @override
