@@ -7,63 +7,56 @@ A library for building Flutter plugins that want to maintain access to object in
 ## Overview
 
 This library works by managing pairs of references. Each pair consists of a `LocalReference` and a
-`RemoteReference`. The pairs are stored and managed in a `ReferencePairManager`. Here are the basic
+`RemoteReference` and is stored and managed in a `ReferencePairManager`. Here are the basic
 definitions of these classes:
-* [LocalReference] - represents an object on the same thread/process.
-* [RemoteReference] - represents an object on a different thread/process.
+* [LocalReference] - represents an object that is locally accessible. Typically on the same thread
+and same coding language
+* [RemoteReference] - Represents an object that is remotely accessible. Typically on another thread
+and/or another coding language.
+* [UnpairedReference] - Represents an object that is not paired like a `LocalReference` or
+`RemoteReference`.
 * [ReferencePairManager] - manages communication between objects represented by `LocalReference`s
 and `RemoteReference`s.
 
-A `LocalReference` and `RemoteReference` that are paired are also maintained by two
-`ReferencePairManager`s. One `ReferencePairManager` is on the same thread/process as the object that
-`LocalReference` represents and another `ReferencePairManager` is on the same thread/process as the
-object that `RemoteReference` represents.
+A paired `LocalReference` and `RemoteReference` are also maintained by two `ReferencePairManager`s.
+One `ReferencePairManager` is locally accessible by the object represented by `LocalReference`
+and another `ReferencePairManager` is locally accessible by the object represented by
+`RemoteReference`.
 
-The labels of **local** and **remote** are relative to which thread one is on. A `RemoteReference`
-in one `ReferencePairManager` will represent a `LocalReference` in another `ReferencePairManager`
-and vice versa. This is shown in the diagram below:
+The labels of **local** and **remote** are relative to a thread or coding language. A
+`RemoteReference` in one `ReferencePairManager` will represent a `LocalReference` in another
+`ReferencePairManager` and vice versa. This is shown in the diagram below:
 
 <img src="https://raw.githubusercontent.com/bparrishMines/penguin/master/readme_images/reference/reference_architecture.jpg" alt="Reference Architecture" />
 
 It’s also important to note that the `RemoteReference` in both `ReferencePairManagers` are
 considered equivalent values, so they can be used to identify their paired `LocalReference`s. One
 could also view this as if the two `LocalReference`s are paired and the `RemoteReference`s are a
-stand in for an object on another thread.
+stand in for an object on another thread and/or coding language.
 
 For every reference pair, the `ReferencePairManager`’s role is to handle communication between
 paired objects represented by `LocalReference` and `RemoteReference`.
 
 ## Getting Started
 
-`ReferencePairManager`s are responsible for creating pairs, disposing pairs, and executing
-methods on paired references. Here are the relevant classes:
-* [TypeReference] - represents a type. This type must be able to be represented by a
-`LocalReference`.
-* [RemoteReferenceCommunicationHandler] - handles communication with `RemoteReference`s for a
-`ReferencePairManager`. This class communicates with other `ReferencePairManager`s to create,
-dispose, or execute methods on `RemoteReference`s.
-* [LocalReferenceCommunicationHandler] - handles communication with `LocalReference`s for a
-`ReferencePairManager`. This class handles communication from other `ReferencePairManager`s to
-create, dispose, or execute methods for a `LocalReference`.
-
 To use this with your own plugin, you will have to extend `ReferencePairManager` and implement
 `RemoteReferenceCommunicationHandler` and `LocalReferenceCommunicationHandler`. This needs to be
 done in Dart and then on every platform that is wanted to be supported. (e.g. Java/Kotlin for
 Android or Obj-C/Swift for iOS). This plugin allows you to use any system for IPC (e.g.
-[MethodChannel] or [dart:ffi](https://dart.dev/guides/libraries/c-interop)), but it also provides a [MethodChannelReferencePairManager] that is a
-partial implementation using `MethodChannel`s. Here are the latest template implementations for
+[MethodChannel] or [dart:ffi](https://dart.dev/guides/libraries/c-interop)), but it also provides a
+[MethodChannelReferencePairManager] that is a partial implementation using `MethodChannel`s. Here
+are the latest template implementations for
 [Dart](https://github.com/bparrishMines/penguin/blob/master/reference/lib/src/template/src/template.g.dart)
-and [Java](https://github.com/bparrishMines/penguin/blob/master/reference/android/src/main/java/github/penguin/reference/templates/$ReferencePairManager.java).
+and
+[Java](https://github.com/bparrishMines/penguin/blob/master/reference/android/src/main/java/github/penguin/reference/templates/$ReferencePairManager.java).
 
 Below is a walk-through for using `MethodChannelReferencePairManager`. It is not required, but a
 basic understanding of [MethodChannel]s helps understand how everything works.
 
 ### Implementing `LocalReference`
 
-Start by deciding which classes will need to support being paired to a `RemoteReference` or is
-a user defined type that can be passed as a parameter when creating a `RemoteReference` or executing
-a method on one. Each of these classes should implement `LocalReference`. This should be done in
-Dart and platform code:
+Start by deciding which classes that will be supported. Each of these classes should implement
+`LocalReference`. This should be done in Dart and platform code:
 
 **Dart:**
 ```dart
@@ -73,10 +66,16 @@ class MyClass with LocalReference {
   Future<void> myMethod(double value, MyOtherClass myOtherClass) {
 
   }
+
+  @override
+  Type get referenceType => runtimeType;
 }
 
 class MyOtherClass with LocalReference {
   int intField;
+
+  @override
+  Type get referenceType => runtimeType;
 }
 ```
 
@@ -88,32 +87,65 @@ class MyClass implements LocalReference {
   void myMethod(double value, MyOtherClass myOtherClass) {
 
   }
+
+  @Override
+  public Class<? extends LocalReference> getReferenceClass() {
+    return MyClass.class;
+  }
 }
 
 class MyOtherClass implements LocalReference {
   int intField;
+
+  @Override
+  public Class<? extends LocalReference> getReferenceClass() {
+    return MyOtherClass.class;
+  }
 }
 ```
 
-### Extending `MethodChannelRemoteReferenceCommunicationHandler`
+**Objective-C**
+```objectivec
+@interface MyClass : NSObject<REFLocalReference>
+@end
+
+@interface MyOtherClass : NSObject<REFLocalReference>
+@end
+
+@implementation MyClass
+- (REFClass *)referenceClass {
+  return [REFClass fromClass:[MyClass class]];
+}
+@end
+
+@implementation MyOtherClass
+- (REFClass *)referenceClass {
+  return [REFClass fromClass:[MyOtherClass class]];
+}
+@end
+```
+
+### Extending `MethodChannelRemoteHandler`
 
 This class is responsible for sending messages to other `ReferencePairManager`s when a new pair is
-created, a pair is disposed or a `RemoteReference` needs to execute a method. The only method
-that needs to be implemented is [creationArgumentsFor(LocalReference)](https://pub.dev/documentation/reference/latest/reference/RemoteReferenceCommunicationHandler/creationArgumentsFor.html):
+created, a pair is disposed or a `RemoteReference` needs to invoke a method. The only method
+that needs to be implemented is `getCreationArguments`:
 
 **Dart:**
 ```dart
-class MyRemoteHandler extends MethodChannelRemoteReferenceCommunicationHandler {
+class MyRemoteHandler extends MethodChannelRemoteHandler {
+  MyRemoteHandler() : super('my_method_channel');
+
   // This method should return a list of arguments to instantiate a new instance of the object.
   @override
-  List<dynamic> creationArgumentsFor(LocalReference localReference) {
+  List<Object> getCreationArguments(LocalReference localReference) {
     if (localReference is MyClass) {
-      return <dynamic>[localReference.stringField];
+      return <Object>[localReference.stringField];
     } else if (localReference is MyOtherClass) {
-      return <dynamic>[localReference.intField];
+      return <Object>[localReference.intField];
     }
 
-    throw UnsupportedError('${localReference.runtimeType} is not supported');
+    throw UnsupportedError('${localReference.referenceType} is not supported.');
   }
 }
 ```
@@ -123,14 +155,14 @@ class MyRemoteHandler extends MethodChannelRemoteReferenceCommunicationHandler {
 class MyRemoteHandler extends MethodChannelRemoteReferenceCommunicationHandler {
   // This method should return a list of arguments to instantiate a new instance of the object.
   @Override
-  public List<Object> creationArgumentsFor(LocalReference localReference) {
+  public List<Object> getCreationArguments(LocalReference localReference) {
     if (localReference instanceof MyClass) {
       return Arrays.asList((Object) ((MyClass) localReference).stringField);
     } else if (localReference instanceof MyOtherClass) {
       return Arrays.asList((Object) ((MyOtherClass) localReference).intField);
     }
 
-    throw new IllegalStateException("message");
+    throw new UnsupportedError("message");
   }
 }
 ```
@@ -143,40 +175,40 @@ establish a new pair, dispose a pair or execute a method on a `LocalReference`:
 **Dart:**
 ```dart
 class MyLocalHandler implements LocalReferenceCommunicationHandler {
-  // Every TypeReference represents a type that the LocalReference and RemoteReference share. This
-  // method should instantiate a new instance for the type reference and arguments.
+  // Every `referenceType` should represents a type that the LocalReference and RemoteReference
+  // share. This method should instantiate a new instance for the type reference and arguments.
   @override
-  LocalReference createLocalReference(
-    ReferencePairManager referencePairManager,
-    TypeReference typeReference,
-    List<dynamic> arguments,
+  LocalReference create(
+    ReferencePairManager manager,
+    Type referenceType,
+    List<Object> arguments,
   ) {
-    if (typeReference == TypeReference(0)) {
+    if (referenceType == MyClass) {
       return MyClass()..stringField = arguments[0];
-    } else if (typeReference == TypeReference(1)) {
+    } else if (referenceType == MyOtherClass) {
       return MyOtherClass()..intField = arguments[0];
     }
 
-    throw UnsupportedError("message");
+    throw UnsupportedError('$referenceType is not supported.);
   }
 
-  // This method handles executing methods on LocalReferences stored in the ReferencePairManager.
+  // This method handles invoking methods on LocalReferences stored in the ReferencePairManager.
   @override
-  dynamic executeLocalMethod(
+  Object invokeMethod(
     ReferencePairManager referencePairManager,
     LocalReference localReference,
     String methodName,
-    List<dynamic> arguments,
+    List<Object> arguments,
   ) {
     if (localReference is MyClass && methodName == 'myMethod') {
       return localReference.myMethod(arguments[0], arguments[1]);
     }
 
-    throw UnimplementedError();
+    throw UnimplementedError('${localReference.referenceType}.$methodName');
   }
 
   // Handle any additional work when the pair with localReference is removed from a
-  // ReferencePairManager.
+  // ReferencePairManager. This method is optional.
   @override
   void disposeLocalReference(
     ReferencePairManager referencePairManager,
@@ -234,27 +266,21 @@ class MyLocalHandler implements ReferencePairManager.LocalReferenceCommunication
 
 ### Extending `MethodChannelReferencePairManager`
 
-This class is the entry point when creating a new pair, disposing a pair, or executing a method. You
+This class is the entry point when creating a new pair, disposing a pair, or invoking a method. You
 should extend it and pass it instances of your `MethodChannelRemoteReferenceCommunicationHandler`
 and `LocalReferenceCommunicationHandler`.
 
 **Dart:**
 ```dart
 class MyReferencePairManager extends MethodChannelReferencePairManager {
-  MyReferencePairManager(String channelName)
-      : super(
-          channelName,
-          localHandler: MyLocalHandler(),
-          remoteHandler: MyRemoteHandler(),
-        );
+  MyReferencePairManager()
+      : super(<Type>[MyClass, MyOtherClass], 'my_method_channel');
 
-  // Establishes a unique TypeReference for each supported class.
   @override
-  TypeReference typeReferenceFor(LocalReference localReference) {
-    if (localReference is MyClass) return TypeReference(0);
-    if (localReference is MyOtherClass) return TypeReference(1);
-    throw UnimplementedError();
-  }
+  LocalReferenceCommunicationHandler get localHandler => MyLocalHandler();
+
+  @override
+  MethodChannelRemoteHandler get remoteHandler => MyRemoteHandler();
 }
 ```
 
@@ -282,19 +308,18 @@ Your `ReferencePairManager`s can now be used by instantiating them and calling `
 is an example of a class utilizing a `ReferencePairManager`:
 
 ```dart
-final MyReferencePairManager referencePairManager =
-    MyReferencePairManager("my_plugin_channel")..initialize();
+final MyReferencePairManager referencePairManager = MyReferencePairManager()..initialize();
 
 class MyClass with LocalReference {
   MyClass() {
-    referencePairManager.createRemoteReferenceFor(this);
+    referencePairManager.pairWithNewRemoteReference(this);
   }
 
   String stringField;
 
   Future<void> myMethod(double value, MyOtherClass myOtherClass) {
-    return referencePairManager.executeRemoteMethodFor(
-      this,
+    return referencePairManager.invokeRemoteMethod(
+      referencePairManager.getPairedRemoteReference(this),
       'myMethod',
       <dynamic>[value, myOtherClass],
     );
@@ -306,8 +331,26 @@ class MyClass with LocalReference {
 
 ### How ReferencePairManager Handles Communication
 
+`ReferencePairManager`s are responsible for creating pairs, disposing pairs, and executing methods
+on paired references. This class doesn’t have any IPC of its own and depends on delegates that
+should be implemented by the user that handles sending messages and receiving messages with another
+thread or coding language. The definition of these delegates follow:
+
+* [RemoteReferenceCommunicationHandler] - Handles communication with `RemoteReference`s for a
+`ReferencePairManager`. This class communicates with other `ReferencePairManager`s to create,
+dispose, or invoke methods on `RemoteReference`s.
+* [LocalReferenceCommunicationHandler] - Handles communication with `LocalReference`s for a
+`ReferencePairManager`. This class handles communication from other `ReferencePairManager`s to
+create, dispose, or invoke methods for a `LocalReference`.
+* [ReferenceConverter] - Handles converting `Reference`s for a `ReferencePairManager`. When a
+`ReferencePairManager` receives arguments from another `ReferencePairManager` or sends arguments to
+another `ReferencePairManager`, it converts `Reference`s to their paired
+`LocalReference`/`RemoteReference` or creates a new `UnpairedReference`.
+
 Below is the typical flow for either creating a pair, disposing of a pair, or a `LocalReference`
-executing a method on it’s paired `RemoteReference`. A detailed example follows.
+executing a method on it’s paired `RemoteReference`. The `ReferencePairManager` API should be
+identical on each platform/language, so the flow should remain the same when starting from any
+thread or programming language. A detailed example of this flow follows.
 
 <img src="https://raw.githubusercontent.com/bparrishMines/penguin/master/readme_images/reference/reference_flow.jpg" alt="Reference Architecture" />
 

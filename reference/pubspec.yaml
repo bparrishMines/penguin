@@ -1,5 +1,5 @@
 name: reference
-description: A library for building Flutter plugins that want to maintain access to object instances on separate threads/processes.
+description: Reduce plugin maintenance burden for plugins that have to maintain platform object instances in memory.
 version: 0.0.2
 homepage: https://github.com/bparrishMines/penguin/tree/master/reference
 

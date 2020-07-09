@@ -9,6 +9,7 @@ import 'reference.dart';
 
 /// Abstract implementation of [ReferencePairManager] using [MethodChannel]s.
 abstract class MethodChannelReferencePairManager extends PoolableReferencePairManager {
+  // TODO: Documentation
   MethodChannelReferencePairManager(
     List<Type> supportedTypes,
     String channelName, {
