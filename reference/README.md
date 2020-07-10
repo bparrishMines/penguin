@@ -85,7 +85,7 @@ class MyClass implements LocalReference {
   String stringField;
 
   void myMethod(double value, MyOtherClass myOtherClass) {
-
+    Log.d("MyClass", "MyClass.myMethod called.");
   }
 
   @Override
@@ -107,12 +107,19 @@ class MyOtherClass implements LocalReference {
 **Objective-C**
 ```objectivec
 @interface MyClass : NSObject<REFLocalReference>
+@property NSString* stringField;
+-(void)myMethod:(NSNumber *)value myOtherClass:(MyOtherClass *)myOtherClass;
 @end
 
 @interface MyOtherClass : NSObject<REFLocalReference>
+@property NSNumber *intField;
 @end
 
 @implementation MyClass
+-(void)myMethod:(NSNumber *)value myOtherClass:(MyOtherClass *)myOtherClass {
+
+}
+
 - (REFClass *)referenceClass {
   return [REFClass fromClass:[MyClass class]];
 }
@@ -152,7 +159,11 @@ class MyRemoteHandler extends MethodChannelRemoteHandler {
 
 **Java:**
 ```java
-class MyRemoteHandler extends MethodChannelRemoteReferenceCommunicationHandler {
+class MyRemoteHandler extends MethodChannelRemoteHandler {
+  MyRemoteHandler(BinaryMessenger binaryMessenger) {
+    super(binaryMessenger, "my_method_channel");
+  }
+
   // This method should return a list of arguments to instantiate a new instance of the object.
   @Override
   public List<Object> getCreationArguments(LocalReference localReference) {
@@ -165,6 +176,27 @@ class MyRemoteHandler extends MethodChannelRemoteReferenceCommunicationHandler {
     throw new UnsupportedError("message");
   }
 }
+```
+
+**Objective-C**
+```objectivec
+@interface MyRemoteHandler : REFMethodChannelRemoteHandler
+@end
+
+@implementation MyRemoteHandler
+-(instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger {
+  return self = [super initWithChannelName:@"my_method_channel" binaryMessenger:binaryMessenger];
+}
+
+- (NSArray<id> *)getCreationArguments:(id<REFLocalReference>)localReference {
+  if (localReference.referenceClass.clazz == [MyClass class]) {
+    MyClass *myClass = localReference;
+    return @[myClass.fieldTemplate];
+  }
+
+  return nil;
+}
+@end
 ```
 
 ### Implementing `LocalReferenceCommunicationHandler`
@@ -210,7 +242,7 @@ class MyLocalHandler implements LocalReferenceCommunicationHandler {
   // Handle any additional work when the pair with localReference is removed from a
   // ReferencePairManager. This method is optional.
   @override
-  void disposeLocalReference(
+  void dispose(
     ReferencePairManager referencePairManager,
     LocalReference localReference,
   ) {
@@ -225,28 +257,28 @@ class MyLocalHandler implements ReferencePairManager.LocalReferenceCommunication
   // Every TypeReference represents a the type that the LocalReference and RemoteReference
   // share. This method should instantiate a new instance for the type reference and arguments.
   @Override
-  public LocalReference createLocalReference(ReferencePairManager referencePairManager,
-                                      TypeReference typeReference,
-                                      List<Object> arguments) {
-    if (typeReference.equals(new TypeReference(0))) {
+  public LocalReference create(ReferencePairManager referencePairManager,
+                                             Class<? extends LocalReference> referenceClass,
+                                             List<Object> arguments) {
+    if (referenceClass == MyClass.class) {
       final MyClass value = new MyClass();
       value.stringField = (String) arguments.get(0);
       return value;
-    } else if (typeReference.equals(new TypeReference(1))) {
+    } else if (referenceClass = MyOtherClass.class) {
       final MyClass value = new MyClass();
-      value.stringField = (String) arguments.get(0);
+      value.intField = (Integer) arguments.get(0);
       return value;
     }
 
     throw new IllegalStateException("message");
   }
 
-  // This method handles executing methods on LocalReferences stored in the ReferencePairManager.
+  // This method handles invoking methods on LocalReferences stored in the ReferencePairManager.
   @Override
-  public Object executeLocalMethod(ReferencePairManager referencePairManager,
-                                   LocalReference localReference,
-                                   String methodName,
-                                   List<Object> arguments) {
+  public Object invokeMethod(ReferencePairManager referencePairManager,
+                             LocalReference localReference,
+                             String methodName,
+                             List<Object> arguments) {
     if (localReference instanceof MyClass && methodName.equals("myMethod")) {
       ((MyClass) localReference).myMethod((Double) arguments.get(0), (MyOtherClass) arguments.get(1));
       return;
@@ -258,10 +290,55 @@ class MyLocalHandler implements ReferencePairManager.LocalReferenceCommunication
   // Handle any additional work when the pair with localReference is removed from a
   // ReferencePairManager.
   @Override
-  public void disposeLocalReference(ReferencePairManager referencePairManager, LocalReference localReference) {
+  public void dispose(ReferencePairManager referencePairManager, LocalReference localReference) {
     // Do additional closing.
   }
 }
+```
+
+**Objective-C**
+```objectivec
+@interface MyLocalHandler : NSObject<REFLocalReferenceCommunicationHandler>
+@end
+
+@implementation MyLocalHandler
+- (nonnull id<REFLocalReference>)create:(nonnull REFReferencePairManager *)referencePairManager
+                         referenceClass:(nonnull Class)referenceClass
+                              arguments:(nonnull NSArray<id> *)arguments {
+  if (referenceClass == [MyClass class]) {
+    MyClass *value = [[MyClass alloc] init];
+    value.stringField = arguments[0];
+    return value;
+  } else if (referenceClass == [MyOtherClass class]) {
+    MyOtherClass *value = [[MyOtherClass alloc] init];
+    value.intField = arguments[0];
+    return value;
+  }
+
+  NSLog(@"message");
+  return nil;
+}
+
+- (id _Nullable)invokeMethod:(nonnull REFReferencePairManager *)referencePairManager
+              localReference:(nonnull id<REFLocalReference>)localReference
+                  methodName:(nonnull NSString *)methodName
+                   arguments:(nonnull NSArray<id> *)arguments {
+  if (localReference.referenceClass.clazz == [MyClass class]) {
+    if ([methodName isEqualToString:@"myMethod"]) {
+      MyClass *value = localReference;
+      return [value myMethod:arguments[0] myOtherClass:argument[1]];
+    }
+  }
+
+  NSLog(@"message");
+  return nil;
+}
+
+-(void)dispose:(REFReferencePairManager *)referencePairManager
+localReference:(id<REFLocalReference>)localReference {
+  // Do additional closing.
+}
+@end
 ```
 
 ### Extending `MethodChannelReferencePairManager`
@@ -287,19 +364,45 @@ class MyReferencePairManager extends MethodChannelReferencePairManager {
 **Java:**
 ```java
 class MyReferencePairManager extends MethodChannelReferencePairManager {
-  MyReferencePairManager(final BinaryMessenger binaryMessenger, final String channelName) {
-    super(binaryMessenger, channelName, new MyLocalHandler(), new MyRemoteHandler());
+  MyReferencePairManager(final BinaryMessenger binaryMessenger) {
+    super(Arrays.<Class<? extends LocalReference>>.asList(MyClass.class, MyOtherClass.class),
+     binaryMessenger,
+      "my_method_channel");
   }
 
-  // Establishes a unique TypeReference for each supported class.
   @Override
-  TypeReference typeReferenceFor(LocalReference localReference) {
-    if (localReference instanceOf MyClass) return new TypeReference(0);
-    if (localReference instanceOf MyOtherClass) return new TypeReference(1);
+  public LocalReferenceCommunicationHandler getLocalHandler() {
+    return new MyLocalHandler();
+  }
 
-    throw new IllegalStateException("message");
+  @Override
+  public MethodChannelRemoteHandler getRemoteHandler() {
+    return new MyRemoteHandler(binaryMessenger);
   }
 }
+```
+
+**Objective-C**
+```objectivec
+@interface MyReferencePairManager : REFMethodChannelReferencePairManager
+-(instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;
+@end
+
+@implementation MyReferencePairManager
+-(instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger {
+  return self = [super initWithSupportedClasses:@[[REFClass fromClass:[MyClass class]], [REFClass fromClass:[MyOtherClass class]]]
+                                binaryMessenger:binaryMessenger
+                                    channelName:@"my_method_channel"];
+}
+
+- (id<REFLocalReferenceCommunicationHandler>)localHandler {
+  return [[MyLocalHandler alloc] init];
+}
+
+- (id<REFRemoteReferenceCommunicationHandler>)remoteHandler {
+  return [[MyRemoteHandler alloc] initWithBinaryMessenger:_binaryMessenger];
+}
+@end
 ```
 
 ### Usage
@@ -307,6 +410,7 @@ class MyReferencePairManager extends MethodChannelReferencePairManager {
 Your `ReferencePairManager`s can now be used by instantiating them and calling `initialize`. Below
 is an example of a class utilizing a `ReferencePairManager`:
 
+**Dart**
 ```dart
 final MyReferencePairManager referencePairManager = MyReferencePairManager()..initialize();
 
@@ -325,6 +429,42 @@ class MyClass with LocalReference {
     );
   }
 }
+```
+
+**Java**
+```java
+public class MyPlugin implements FlutterPlugin {
+  public static void registerWith(Registrar registrar) {
+    new MyPlugin().initialize(registrar.messenger());
+  }
+
+  @Override
+  public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
+    initialize(flutterPluginBinding.getBinaryMessenger());
+  }
+
+  @Override
+  public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
+    // Do nothing.
+  }
+
+  private void initialize(final BinaryMessenger binaryMessenger) {
+    new MyReferencePairManager(binaryMessenger).initialize();
+  }
+}
+```
+
+**Objective-C**
+```objectivec
+@interface MyPlugin : NSObject<FlutterPlugin>
+@end
+
+@implementation MyPlugin
++ (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
+  MyReferencePairManager *manager = [[MyReferencePairManager alloc] initBinaryMessenger:registrar.messenger];
+  [manager initialize];
+}
+@end
 ```
 
 ## Additional Overview
@@ -365,14 +505,6 @@ Let’s assume we want to create a new pair. It’s also important to remember t
 1. ReferencePairManager2 tells its `LocalReferenceCommunicationHandler` to create a `LocalReference`.
 1. `LocalReferenceCommunicationHandler` creates and returns a `LocalReference`.
 1. ReferencePairManager2 stores the `RemoteReference` and the `LocalReference` from `LocalReferenceCommunicationHandler` as a pair.
-
-### How ReferencePairManager Handles Arguments
-
-When creating a `RemoteReference` or executing a method, you have the option to pass arguments as
-well. Before a `ReferencePairManager` hands off arguments to a
-`RemoteReferenceCommunicationHandler`, it converts all `LocalReference`s to `RemoteReference`s and
-before a `ReferencePairManager` hands off arguments to a `LocalReferenceCommunicationHandler` it
-converts all `RemoteReference`s to `LocalReference`s.
 
 <!-- Links -->
 [LocalReference]: https://pub.dev/documentation/reference/latest/reference/LocalReference-mixin.html
