@@ -1,7 +1,7 @@
 import 'reference.dart';
 import 'reference_pair_manager.dart';
 
-/// Handles converting [References] for a [ReferencePairManager].
+/// Handles converting [Reference]s for a [ReferencePairManager].
 ///
 /// When a [ReferencePairManager] receives arguments from another
 /// [ReferencePairManager] or sends arguments to another [ReferencePairManager],
@@ -37,7 +37,7 @@ class StandardReferenceConverter implements ReferenceConverter {
   ///   * Unpaired [LocalReference]s are converted into [UnpairedReference].
   ///   * [List]s are converted to `List<dynamic>` and this method is applied to
   ///     each value within the list.
-  ///   * [Map]s are converted to `Map<dynamic, dynamic> and this method is
+  ///   * [Map]s are converted to `Map<dynamic, dynamic>` and this method is
   ///     applied to each key and each value.
   @override
   Object convertForRemoteManager(
@@ -78,7 +78,7 @@ class StandardReferenceConverter implements ReferenceConverter {
   ///   * [UnpairedReference]s are converted into unpaired [LocalReference]s.
   ///   * [List]s are converted to `List<dynamic>` and this method is applied to
   ///     each value within the list.
-  ///   * [Map]s are converted to `Map<dynamic, dynamic> and this method is
+  ///   * [Map]s are converted to `Map<dynamic, dynamic>` and this method is
   ///     applied to each key and each value.
   @override
   Object convertForLocalManager(
