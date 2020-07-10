@@ -106,7 +106,7 @@ class MyOtherClass implements LocalReference {
 }
 ```
 
-**Objective-C**
+**Objective-C:**
 ```objectivec
 @interface MyClass : NSObject<REFLocalReference>
 @property NSString* stringField;
@@ -182,7 +182,7 @@ class MyRemoteHandler extends MethodChannelRemoteHandler {
 }
 ```
 
-**Objective-C**
+**Objective-C:**
 ```objectivec
 @interface MyRemoteHandler : REFMethodChannelRemoteHandler
 @end
@@ -229,7 +229,7 @@ class MyLocalHandler implements LocalReferenceCommunicationHandler {
       return MyOtherClass()..intField = arguments[0];
     }
 
-    throw UnsupportedError('$referenceType is not supported.);
+    throw UnsupportedError('$referenceType is not supported.');
   }
 
   // This method handles invoking methods on LocalReferences stored in the ReferencePairManager.
@@ -304,7 +304,7 @@ class MyLocalHandler implements ReferencePairManager.LocalReferenceCommunication
 }
 ```
 
-**Objective-C**
+**Objective-C:**
 ```objectivec
 @interface MyLocalHandler : NSObject<REFLocalReferenceCommunicationHandler>
 @end
@@ -397,7 +397,7 @@ class MyReferencePairManager extends MethodChannelReferencePairManager {
 }
 ```
 
-**Objective-C**
+**Objective-C:**
 ```objectivec
 @interface MyReferencePairManager : REFMethodChannelReferencePairManager
 // Constructs a ReferencePairManager that supports types: MyClass and MyOtherClass
@@ -424,9 +424,10 @@ class MyReferencePairManager extends MethodChannelReferencePairManager {
 ### Usage
 
 Your `ReferencePairManager`s can now be used by instantiating them and calling `initialize`. Below
-is an example of updating `MyClass` to use `ReferencePairManager`:
+is an example of updating `MyClass` to use `ReferencePairManager` and preparing the
+ =`ReferencePairManager` in your plugin:
 
-**Dart**
+**Dart:**
 ```dart
 final MyReferencePairManager referencePairManager = MyReferencePairManager()..initialize();
 
@@ -447,7 +448,7 @@ class MyClass with LocalReference {
 }
 ```
 
-**Java**
+**Java:**
 ```java
 public class MyPlugin implements FlutterPlugin {
   public static void registerWith(Registrar registrar) {
@@ -470,7 +471,7 @@ public class MyPlugin implements FlutterPlugin {
 }
 ```
 
-**Objective-C**
+**Objective-C:**
 ```objectivec
 @interface MyPlugin : NSObject<FlutterPlugin>
 @end
@@ -487,7 +488,7 @@ public class MyPlugin implements FlutterPlugin {
 
 ### How ReferencePairManager Handles Communication
 
-`ReferencePairManager`s are responsible for creating pairs, disposing pairs, and executing methods
+`ReferencePairManager`s are responsible for creating pairs, disposing pairs, and invoking methods
 on paired references. This class doesn’t have any IPC of its own and depends on delegates that
 should be implemented by the user that handles sending messages and receiving messages with another
 thread or coding language. The definition of these delegates follow:
