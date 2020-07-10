@@ -1,8 +1,0 @@
-name: penguin
-description: Annotations for penguin plugin.
-version: 1.0.0
-author: <bparr2450@gmail.com>
-homepage: https://github.com/bparrishMines/penguin/penguin
-
-environment:
-  sdk: ">=2.0.0 <3.0.0"
