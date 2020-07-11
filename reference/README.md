@@ -51,21 +51,53 @@ Android or Obj-C/Swift for iOS). This plugin allows you to use any system for IP
 Below is a guide for using `MethodChannelReferencePairManager`. It is not required, but a
 basic understanding of [MethodChannel]s helps understand how this plugin works.
 
+To get access to the `reference` plugin API, start by adding the plugin to your `pubspec.yaml` and
+following the instructions to
+[add the dependency for each supported platform](https://flutter.dev/docs/development/packages-and-plugins/developing-packages#dependencies).
+
 ### Implementing `LocalReference`
 
 Start by deciding which classes that will be supported. Each of these classes should implement
 `LocalReference`. This should be done in Dart and platform code:
 
 **Dart:**
-<script src=http://gist-it.appspot.com/https://github.com/bparrishMines/penguin/blob/9a54efb34d29022dd0ea0e22ce7a44ef105fc24a/reference_example/lib/src/my_class_without_manager.dart#L1-L21></script>
+```dart
+import 'package:reference/reference.dart';
+
+class MyClass with LocalReference {
+  String stringField;
+
+  Future<void> myMethod(double value, MyOtherClass myOtherClass) {
+
+  }
+
+  // The unique `Type` used to represent this class in a `ReferencePairManager`.
+  @override
+  Type get referenceType => runtimeType;
+}
+
+class MyOtherClass with LocalReference {
+  MyOtherClass(this.intField);
+
+  final int intField;
+
+  // The unique `Type` used to represent this class in a `ReferencePairManager`.
+  @override
+  Type get referenceType => runtimeType;
+}
+```
 
 **Java:**
 ```java
-class MyClass implements LocalReference {
-  String stringField;
+public class MyClass implements LocalReference {
+  public MyClass(String stringField) {
+    this.stringField = stringField;
+  }
 
-  void myMethod(double value, MyOtherClass myOtherClass) {
-    Log.d("MyClass", "MyClass.myMethod called.");
+  public final String stringField;
+
+  public String myMethod(double value, MyOtherClass myOtherClass) {
+    return String.format("myMethod(%f, %s)", value, myOtherClass.toString());
   }
 
   // The unique `Class` used to represent this class in a `ReferencePairManager`.
@@ -76,7 +108,11 @@ class MyClass implements LocalReference {
 }
 
 class MyOtherClass implements LocalReference {
-  int intField;
+  public final int intField;
+
+  public MyOtherClass(int intField) {
+    this.intField = intField;
+  }
 
   // The unique `Class` used to represent this class in a `ReferencePairManager`.
   @Override
@@ -88,18 +124,28 @@ class MyOtherClass implements LocalReference {
 
 **Objective-C:**
 ```objectivec
-@interface MyClass : NSObject<REFLocalReference>
-@property NSString* stringField;
--(void)myMethod:(NSNumber *)value myOtherClass:(MyOtherClass *)myOtherClass;
+@interface MyOtherClass : NSObject<REFLocalReference>
+@property (readonly) NSNumber *intField;
+-(instancetype)initWithIntField:(NSNumber *)intField;
 @end
 
-@interface MyOtherClass : NSObject<REFLocalReference>
-@property NSNumber *intField;
+@interface MyClass : NSObject<REFLocalReference>
+@property (readonly) NSString* stringField;
+-(instancetype)initWithStringField:(NSString *)stringField;
+-(NSString *)myMethod:(NSNumber *)value myOtherClass:(MyOtherClass *)myOtherClass;
 @end
 
 @implementation MyClass
--(void)myMethod:(NSNumber *)value myOtherClass:(MyOtherClass *)myOtherClass {
-  NSLog(@"[MyClass myMethod] called.");
+-(instancetype)initWithStringField:(NSString *)stringField {
+  self = [super init];
+  if (self) {
+    _stringField = stringField;
+  }
+  return self;
+}
+
+-(NSString *)myMethod:(NSNumber *)value myOtherClass:(MyOtherClass *)myOtherClass {
+  return [NSString stringWithFormat:@"myMethod:%f, %@", value.doubleValue, [myOtherClass description]];
 }
 
 // The unique `Class` used to represent this class in a `ReferencePairManager`.
@@ -109,6 +155,14 @@ class MyOtherClass implements LocalReference {
 @end
 
 @implementation MyOtherClass
+-(instancetype)initWithIntField:(NSNumber *)intField {
+  self = [super init];
+  if (self) {
+    _intField = intField;
+  }
+  return self;
+}
+
 - (REFClass *)referenceClass {
   return [REFClass fromClass:[MyOtherClass class]];
 }
@@ -152,12 +206,14 @@ class MyRemoteHandler extends MethodChannelRemoteHandler {
   @Override
   public List<Object> getCreationArguments(LocalReference localReference) {
     if (localReference instanceof MyClass) {
-      return Arrays.asList((Object) ((MyClass) localReference).stringField);
+      final MyClass value = (MyClass) localReference;
+      return Collections.singletonList((Object) value.stringField);
     } else if (localReference instanceof MyOtherClass) {
-      return Arrays.asList((Object) ((MyOtherClass) localReference).intField);
+      final MyOtherClass value = (MyOtherClass) localReference;
+      return Collections.singletonList((Object) value.intField);
     }
 
-    throw new UnsupportedError("message");
+    throw new UnsupportedOperationException(String.format("%s is not supported.", localReference));
   }
 }
 ```
@@ -182,7 +238,9 @@ class MyRemoteHandler extends MethodChannelRemoteHandler {
     return @[value.intField];
   }
 
-  return nil;
+  @throw [NSException exceptionWithName:NSInvalidArgumentException
+                                 reason:[NSString stringWithFormat:@"%@ not supported.", localReference]
+                               userInfo:nil];
 }
 @end
 ```
@@ -204,9 +262,9 @@ class MyLocalHandler implements LocalReferenceCommunicationHandler {
     List<Object> arguments,
   ) {
     if (referenceType == MyClass) {
-      return MyClass()..stringField = arguments[0];
+      return MyClass(arguments[0]);
     } else if (referenceType == MyOtherClass) {
-      return MyOtherClass()..intField = arguments[0];
+      return MyOtherClass(arguments[0]);
     }
 
     throw UnsupportedError('$referenceType is not supported.');
@@ -241,24 +299,20 @@ class MyLocalHandler implements LocalReferenceCommunicationHandler {
 
 **Java:**
 ```java
-class MyLocalHandler implements ReferencePairManager.LocalReferenceCommunicationHandler {
+class MyLocalHandler implements LocalReferenceCommunicationHandler {
   // Every `referenceClass` should represents a type that the LocalReference and RemoteReference
   // share. This method should instantiate a new instance for the type reference and arguments.
   @Override
   public LocalReference create(ReferencePairManager referencePairManager,
-                                             Class<? extends LocalReference> referenceClass,
-                                             List<Object> arguments) {
+                               Class<? extends LocalReference> referenceClass,
+                               List<Object> arguments) {
     if (referenceClass == MyClass.class) {
-      final MyClass value = new MyClass();
-      value.stringField = (String) arguments.get(0);
-      return value;
-    } else if (referenceClass = MyOtherClass.class) {
-      final MyClass value = new MyClass();
-      value.intField = (Integer) arguments.get(0);
-      return value;
+      return new MyClass((String) arguments.get(0));
+    } else if (referenceClass == MyOtherClass.class) {
+      return new MyOtherClass((Integer) arguments.get(0));
     }
 
-    throw new IllegalStateException("message");
+    throw new UnsupportedOperationException(String.format("%s not supported.", referenceClass));
   }
 
   // This method handles invoking methods on LocalReferences stored in the ReferencePairManager.
@@ -268,11 +322,13 @@ class MyLocalHandler implements ReferencePairManager.LocalReferenceCommunication
                              String methodName,
                              List<Object> arguments) {
     if (localReference instanceof MyClass && methodName.equals("myMethod")) {
-      ((MyClass) localReference).myMethod((Double) arguments.get(0), (MyOtherClass) arguments.get(1));
-      return;
+      final MyClass value = (MyClass) localReference;
+      return value.myMethod((Double) arguments.get(0), (MyOtherClass) arguments.get(1));
     }
 
-    throw new IllegalStateException("message");
+    throw new UnsupportedOperationException(
+        String.format("%s.%s not supported.", localReference, methodName)
+    );
   }
 
   // Handle any additional work when the pair with localReference is removed from a
@@ -296,17 +352,14 @@ class MyLocalHandler implements ReferencePairManager.LocalReferenceCommunication
                          referenceClass:(nonnull Class)referenceClass
                               arguments:(nonnull NSArray<id> *)arguments {
   if (referenceClass == [MyClass class]) {
-    MyClass *value = [[MyClass alloc] init];
-    value.stringField = arguments[0];
-    return value;
+    return [[MyClass alloc] initWithStringField:arguments[0]];
   } else if (referenceClass == [MyOtherClass class]) {
-    MyOtherClass *value = [[MyOtherClass alloc] init];
-    value.intField = arguments[0];
-    return value;
+    return [[MyOtherClass alloc] initWithIntField:arguments[0]];
   }
 
-  NSLog(@"message");
-  return nil;
+  @throw [NSException exceptionWithName:NSInvalidArgumentException
+                                 reason:[NSString stringWithFormat:@"%@ not supported.", NSStringFromClass(referenceClass)]
+                               userInfo:nil];
 }
 
 // This method handles invoking methods on LocalReferences stored in the ReferencePairManager.
@@ -317,12 +370,13 @@ class MyLocalHandler implements ReferencePairManager.LocalReferenceCommunication
   if (localReference.referenceClass.clazz == [MyClass class]) {
     if ([methodName isEqualToString:@"myMethod"]) {
       MyClass *value = localReference;
-      return [value myMethod:arguments[0] myOtherClass:argument[1]];
+      return [value myMethod:arguments[0] myOtherClass:arguments[1]];
     }
   }
 
-  NSLog(@"message");
-  return nil;
+  @throw [NSException exceptionWithName:NSInvalidArgumentException
+                                 reason:[NSString stringWithFormat:@"%@:%@ not supported.", localReference, methodName]
+                               userInfo:nil];
 }
 
 // Handle any additional work when the pair with localReference is removed from a
@@ -360,13 +414,13 @@ class MyReferencePairManager extends MethodChannelReferencePairManager {
 class MyReferencePairManager extends MethodChannelReferencePairManager {
   // Constructs a ReferencePairManager that supports types: MyClass and MyOtherClass
   MyReferencePairManager(final BinaryMessenger binaryMessenger) {
-    super(Arrays.<Class<? extends LocalReference>>.asList(MyClass.class, MyOtherClass.class),
-     binaryMessenger,
-      "my_method_channel");
+    super(asList(MyClass.class, MyOtherClass.class),
+        binaryMessenger,
+        "my_method_channel");
   }
 
   @Override
-  public LocalReferenceCommunicationHandler getLocalHandler() {
+  public ReferencePairManager.LocalReferenceCommunicationHandler getLocalHandler() {
     return new MyLocalHandler();
   }
 
@@ -396,7 +450,7 @@ class MyReferencePairManager extends MethodChannelReferencePairManager {
 }
 
 - (id<REFRemoteReferenceCommunicationHandler>)remoteHandler {
-  return [[MyRemoteHandler alloc] initWithBinaryMessenger:_binaryMessenger];
+  return [[MyRemoteHandler alloc] initWithBinaryMessenger:[self binaryMessenger]];
 }
 @end
 ```
@@ -409,30 +463,35 @@ is an example of updating `MyClass` to use `ReferencePairManager` and preparing 
 
 **Dart:**
 ```dart
-final MyReferencePairManager referencePairManager = MyReferencePairManager()..initialize();
+final MyReferencePairManager referencePairManager = MyReferencePairManager()
+  ..initialize();
 
 class MyClass with LocalReference {
-  MyClass() {
+  MyClass(this.stringField) {
     referencePairManager.pairWithNewRemoteReference(this);
   }
 
-  String stringField;
+  final String stringField;
 
-  Future<void> myMethod(double value, MyOtherClass myOtherClass) {
-    return referencePairManager.invokeRemoteMethod(
+  Future<String> myMethod(double value, MyOtherClass myOtherClass) async {
+    return (await referencePairManager.invokeRemoteMethod(
       referencePairManager.getPairedRemoteReference(this),
       'myMethod',
       <dynamic>[value, myOtherClass],
-    );
+    )) as String;
   }
+
+  // The unique `Type` used to represent this class in a `ReferencePairManager`.
+  @override
+  Type get referenceType => runtimeType;
 }
 ```
 
 **Java:**
 ```java
-public class MyPlugin implements FlutterPlugin {
+public class ReferenceExamplePlugin implements FlutterPlugin {
   public static void registerWith(Registrar registrar) {
-    new MyPlugin().initialize(registrar.messenger());
+    new ReferenceExamplePlugin().initialize(registrar.messenger());
   }
 
   @Override
@@ -453,12 +512,12 @@ public class MyPlugin implements FlutterPlugin {
 
 **Objective-C:**
 ```objectivec
-@interface MyPlugin : NSObject<FlutterPlugin>
+@interface ReferenceExamplePlugin : NSObject<FlutterPlugin>
 @end
 
-@implementation MyPlugin
+@implementation ReferenceExamplePlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
-  MyReferencePairManager *manager = [[MyReferencePairManager alloc] initBinaryMessenger:registrar.messenger];
+  MyReferencePairManager *manager = [[MyReferencePairManager alloc] initWithBinaryMessenger:registrar.messenger];
   [manager initialize];
 }
 @end

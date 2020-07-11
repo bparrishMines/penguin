@@ -13,7 +13,9 @@ class MyClass with LocalReference {
 }
 
 class MyOtherClass with LocalReference {
-  int intField;
+  MyOtherClass(this.intField);
+
+  final int intField;
 
   // The unique `Type` used to represent this class in a `ReferencePairManager`.
   @override
