@@ -57,27 +57,7 @@ Start by deciding which classes that will be supported. Each of these classes sh
 `LocalReference`. This should be done in Dart and platform code:
 
 **Dart:**
-```dart
-class MyClass with LocalReference {
-  String stringField;
-
-  Future<void> myMethod(double value, MyOtherClass myOtherClass) {
-
-  }
-
-  // The unique `Type` used to represent this class in a `ReferencePairManager`.
-  @override
-  Type get referenceType => runtimeType;
-}
-
-class MyOtherClass with LocalReference {
-  int intField;
-
-  // The unique `Type` used to represent this class in a `ReferencePairManager`.
-  @override
-  Type get referenceType => runtimeType;
-}
-```
+<script src=http://gist-it.appspot.com/https://github.com/bparrishMines/penguin/blob/9a54efb34d29022dd0ea0e22ce7a44ef105fc24a/reference_example/lib/src/my_class_without_manager.dart#L1-L21></script>
 
 **Java:**
 ```java

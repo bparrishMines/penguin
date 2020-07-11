@@ -1,8 +1,9 @@
 name: reference_example
 description: A new flutter plugin project.
 version: 0.0.1
-author:
-homepage:
+author: "none"
+homepage: "none"
+publish_to: none
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
