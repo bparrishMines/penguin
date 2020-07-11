@@ -1,3 +1,7 @@
+## 0.1.1
+
+* Fix bugs in README code.
+
 ## 0.1.0
 
 * Added full support for iOS.
