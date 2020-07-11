@@ -30,4 +30,7 @@ android {
     lintOptions {
         disable 'InvalidPackage'
     }
+    dependencies {
+        compileOnly rootProject.findProject(":reference")
+    }
 }

@@ -9,6 +9,8 @@ environment:
   flutter: ">=1.10.0"
 
 dependencies:
+  reference:
+    path: ../reference
   flutter:
     sdk: flutter
 
