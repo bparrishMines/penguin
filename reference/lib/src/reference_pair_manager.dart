@@ -147,7 +147,7 @@ abstract class ReferencePairManager {
   ///
   /// [ReferencePairManager.supportedTypes] must not be `null`.
   ReferencePairManager(List<Type> supportedTypes)
-      : assert(supportedTypes != null),
+      : assert(supportedTypes != null && supportedTypes.isNotEmpty),
         supportedTypes = List<Type>.unmodifiable(supportedTypes),
         _typeIds = BiMap()..addAll(supportedTypes.toList().asMap());
 
@@ -299,7 +299,8 @@ abstract class ReferencePairManager {
   /// arguments retrieved from
   /// [RemoteReferenceCommunicationHandler.getCreationArguments].
   Future<RemoteReference> pairWithNewRemoteReference(
-      LocalReference localReference,) async {
+    LocalReference localReference,
+  ) async {
     _assertIsInitialized();
     if (getPairedRemoteReference(localReference) != null) return null;
 

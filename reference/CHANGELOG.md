@@ -1,3 +1,8 @@
+## 0.1.2
+
+* Improve documentation.
+* Add `assert` that `ReferencePairManager.supportedTypes` must contain at least one value in Dart.
+
 ## 0.1.1
 
 * Fix bugs in README code.

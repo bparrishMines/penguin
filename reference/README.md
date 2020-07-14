@@ -49,7 +49,8 @@ Android or Obj-C/Swift for iOS). This plugin allows you to use any system for IP
 [MethodChannelReferencePairManager] that is a partial implementation using `MethodChannel`s.
 
 Below is a guide for using `MethodChannelReferencePairManager`. It is not required, but a
-basic understanding of [MethodChannel]s helps understand how this plugin works.
+basic understanding of [MethodChannel]s helps understand how this plugin works. The full example
+project lives at https://github.com/bparrishMines/penguin/tree/master/reference_example.
 
 To get access to the `reference` plugin API, start by adding the plugin to your `pubspec.yaml` and
 following the instructions to
@@ -459,7 +460,7 @@ class MyReferencePairManager extends MethodChannelReferencePairManager {
 
 Your `ReferencePairManager`s can now be used by instantiating them and calling `initialize`. Below
 is an example of updating `MyClass` to use `ReferencePairManager` and preparing the
- =`ReferencePairManager` in your plugin:
+`ReferencePairManager` in your plugin:
 
 **Dart:**
 ```dart

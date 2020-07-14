@@ -9,7 +9,11 @@ import 'reference.dart';
 
 /// Abstract implementation of [ReferencePairManager] using [MethodChannel]s.
 abstract class MethodChannelReferencePairManager extends PoolableReferencePairManager {
-  // TODO: Documentation
+  /// Default constructor for [MethodChannelReferencePairManager].
+  ///
+  /// If [poolId] is passed as `null`, it will be set to [channelName].
+  /// If [messageCodec] is passed as `null`, it will be set to
+  /// [ReferenceMessageCodec].
   MethodChannelReferencePairManager(
     List<Type> supportedTypes,
     String channelName, {
