@@ -35,6 +35,5 @@ android {
         testImplementation 'junit:junit:4.12'
         testImplementation 'org.hamcrest:hamcrest:2.2'
         testImplementation 'org.mockito:mockito-core:2.28.2'
-        implementation 'com.google.guava:guava:28.2-android'
     }
 }

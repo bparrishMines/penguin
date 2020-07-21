@@ -1,3 +1,7 @@
+## 0.1.2+1
+
+* Removed Guava dependency on Android.
+
 ## 0.1.2
 
 * Improve documentation.

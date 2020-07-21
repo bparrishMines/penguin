@@ -1,7 +1,7 @@
 package github.penguin.reference.templates;
 
-import com.google.common.collect.ImmutableMap;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import github.penguin.reference.method_channel.MethodChannelReferencePairManager;
@@ -9,6 +9,7 @@ import github.penguin.reference.method_channel.MethodChannelRemoteHandler;
 import github.penguin.reference.method_channel.ReferenceMessageCodec;
 import github.penguin.reference.reference.LocalReference;
 import github.penguin.reference.reference.ReferencePairManager;
+import github.penguin.reference.reference.ReferencePairManager.LocalReferenceCommunicationHandler;
 import io.flutter.plugin.common.BinaryMessenger;
 
 abstract class $TemplateReferencePairManager extends MethodChannelReferencePairManager {
@@ -33,25 +34,27 @@ abstract class $TemplateReferencePairManager extends MethodChannelReferencePairM
   }
 
   abstract static class $LocalReferenceCommunicationHandler implements LocalReferenceCommunicationHandler {
-    static private final Map<Class<? extends LocalReference>, ImmutableMap<String, LocalMethodHandler>> methods =
-        ImmutableMap.<Class<? extends LocalReference>, ImmutableMap<String, LocalMethodHandler>>of(
-            ClassTemplate.class,
-             ImmutableMap.<String, LocalMethodHandler>of("methodTemplate", new LocalMethodHandler() {
-               @Override
-               Object call(LocalReference localReference, List<Object> arguments) throws Exception {
-                 return ((ClassTemplate) localReference).methodTemplate((String) arguments.get(0));
-               }
-             }));
+    static private final Map<Class<? extends LocalReference>, Map<String, LocalMethodHandler>> methods =
+        new HashMap<Class<? extends LocalReference>, Map<String, LocalMethodHandler>>(){{
+          put(ClassTemplate.class, new HashMap<String, LocalMethodHandler>(){{
+            put("methodTemplate", new LocalMethodHandler() {
+              @Override
+              Object call(LocalReference localReference, List<Object> arguments) throws Exception {
+                return ((ClassTemplate) localReference).methodTemplate((String) arguments.get(0));
+              }
+            });
+          }});
+        }};
 
     static private final Map<Class<? extends LocalReference>, LocalCreatorHandler> creators =
-        ImmutableMap.<Class<? extends LocalReference>, LocalCreatorHandler>of(
-            ClassTemplate.class, new LocalCreatorHandler() {
-              @Override
-              LocalReference call($LocalReferenceCommunicationHandler localHandler, ReferencePairManager referencePairManager, List<Object> arguments) throws Exception {
-                return localHandler.createClassTemplate(referencePairManager, (Integer) arguments.get(0));
-              }
+        new HashMap<Class<? extends LocalReference>, LocalCreatorHandler>() {{
+          put(ClassTemplate.class, new LocalCreatorHandler() {
+            @Override
+            LocalReference call($LocalReferenceCommunicationHandler localHandler, ReferencePairManager referencePairManager, List<Object> arguments) throws Exception {
+              return localHandler.createClassTemplate(referencePairManager, (Integer) arguments.get(0));
             }
-        );
+          });
+        }};
 
     public abstract ClassTemplate createClassTemplate(
         ReferencePairManager referencePairManager,
@@ -87,16 +90,16 @@ abstract class $TemplateReferencePairManager extends MethodChannelReferencePairM
 
   static class $RemoteReferenceCommunicationHandler extends MethodChannelRemoteHandler {
     private static final Map<Class<? extends LocalReference>, CreationArgumentsHandler> creationArguments =
-        ImmutableMap.<Class<? extends LocalReference>, CreationArgumentsHandler>of(
-            ClassTemplate.class, new CreationArgumentsHandler() {
-              @Override
-              List<Object> call(LocalReference localReference) {
-                final ClassTemplate value = (ClassTemplate) localReference;
-                //noinspection ArraysAsListWithZeroOrOneArgument
-                return Arrays.asList((Object) value.getFieldTemplate());
-              }
+        new HashMap<Class<? extends LocalReference>, CreationArgumentsHandler>() {{
+          put(ClassTemplate.class, new CreationArgumentsHandler() {
+            @Override
+            List<Object> call(LocalReference localReference) {
+              final ClassTemplate value = (ClassTemplate) localReference;
+              //noinspection ArraysAsListWithZeroOrOneArgument
+              return Arrays.asList((Object) value.getFieldTemplate());
             }
-        );
+          });
+        }};
 
     $RemoteReferenceCommunicationHandler(BinaryMessenger binaryMessenger, String channelName) {
       super(binaryMessenger, channelName);

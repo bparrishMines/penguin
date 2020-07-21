@@ -3,8 +3,6 @@ package github.penguin.reference.reference;
 import androidx.annotation.CallSuper;
 import github.penguin.reference.async.Completable;
 import github.penguin.reference.async.Completer;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -13,8 +11,8 @@ import java.util.UUID;
 @SuppressWarnings({"unchecked", "WeakerAccess", "unused"})
 public abstract class ReferencePairManager {
   private boolean isInitialized = false;
-  private final BiMap<LocalReference, RemoteReference> referencePairs = HashBiMap.create();
-  private final BiMap<Integer, Class<? extends LocalReference>> classIds = HashBiMap.create();
+  private final BiMap<LocalReference, RemoteReference> referencePairs = new BiMap<>();
+  private final BiMap<Integer, Class<? extends LocalReference>> classIds = new BiMap<>();
 
   public final List<Class<? extends LocalReference>> supportedClasses;
 
@@ -66,7 +64,7 @@ public abstract class ReferencePairManager {
   }
 
   public Integer getClassId(Class<? extends LocalReference> referenceClass) {
-    return classIds.inverse().get(referenceClass);
+    return classIds.inverse.get(referenceClass);
   }
 
   public Class<? extends LocalReference> getReferenceClass(int typeId) {
@@ -80,7 +78,7 @@ public abstract class ReferencePairManager {
 
   public LocalReference getPairedLocalReference(RemoteReference remoteReference) {
     assertIsInitialized();
-    return referencePairs.inverse().get(remoteReference);
+    return referencePairs.inverse.get(remoteReference);
   }
 
   public LocalReference pairWithNewLocalReference(
@@ -156,7 +154,7 @@ public abstract class ReferencePairManager {
         getRemoteHandler()
             .create(
                 remoteReference,
-                classIds.inverse().get(localReference.getReferenceClass()),
+                classIds.inverse.get(localReference.getReferenceClass()),
                 (List<Object>) getConverter().convertReferencesForRemoteManager(this, creationArguments));
 
     final Completer<RemoteReference> completer = new Completer<>();
@@ -228,7 +226,7 @@ public abstract class ReferencePairManager {
     final Completable<Object> resultCompletable = getRemoteHandler()
             .invokeMethodOnUnpairedReference(
                 new UnpairedReference(
-                    classIds.inverse().get(localReference.getReferenceClass()),
+                    classIds.inverse.get(localReference.getReferenceClass()),
                     (List<Object>) getConverter().convertReferencesForRemoteManager(this, getRemoteHandler().getCreationArguments(localReference))
                 ),
                 methodName,

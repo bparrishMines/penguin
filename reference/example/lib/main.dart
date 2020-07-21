@@ -13,6 +13,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  String _text = 'nada';
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -20,12 +22,14 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: const Text('Plugin example app'),
         ),
-        body: Center(child: Text('Hello, World!')),
+        body: Center(child: Text(_text)),
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
             final ClassTemplate classTemplate = ClassTemplate(44);
             final String result = await classTemplate.methodTemplate('Hello,');
-            print(result);
+            setState(() {
+              _text = result;
+            });
           },
           child: Icon(Icons.ac_unit),
         ),

@@ -1,6 +1,5 @@
 package github.penguin.reference;
 
-import com.google.common.collect.ImmutableMap;
 import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
@@ -8,6 +7,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import github.penguin.reference.async.Completer;
@@ -176,7 +176,9 @@ public class ReferenceConverterTest {
         });
 
     @SuppressWarnings("unchecked") final Map<Object, Object> result = (Map<Object, Object>)
-        converter.convertReferencesForRemoteManager(testManager, ImmutableMap.of(new TestClass(), new TestClass()));
+        converter.convertReferencesForRemoteManager(testManager, new HashMap<Object, Object>(){{
+          put(new TestClass(), new TestClass());
+        }});
 
     assertThat(result,
         hasEntry(
@@ -258,7 +260,7 @@ public class ReferenceConverterTest {
     testManager.pairWithNewLocalReference(new RemoteReference("banana"), 0);
 
     final Map<Object, Object> result = (Map<Object, Object>) converter.convertReferencesForLocalManager(testManager,
-        ImmutableMap.of(new RemoteReference("apple"), new RemoteReference("banana"))
+        new HashMap<Object, Object>(){{put(new RemoteReference("apple"), new RemoteReference("banana"));}}
     );
 
     assertThat(
