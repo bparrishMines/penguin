@@ -54,6 +54,19 @@
                                   arguments:isEmpty()];
 }
 
+- (void)testReferencePairManager_pairWithNewLocalReference_returnsNull {
+  [given([_testManager.localHandler create:_testManager
+                            referenceClass:[TestClass class]
+                                 arguments:anything()])
+   willReturn:[TestClass testClass]];
+
+  [_testManager pairWithNewLocalReference:[[REFRemoteReference alloc] initWithReferenceID:@"apple"]
+                                                                                  classID:0];
+
+  XCTAssertNil([_testManager pairWithNewLocalReference:[[REFRemoteReference alloc] initWithReferenceID:@"apple"]
+                                                                                                 classID:0]);
+}
+
 - (void)testReferencePairManager_invokeLocalMethod {
   [given([_testManager.localHandler create:_testManager
                             referenceClass:[TestClass class]
@@ -124,6 +137,20 @@
   REFRemoteReference *remoteReference = [_testManager getPairedRemoteReference:testClass];
   XCTAssertEqual([_testManager getPairedLocalReference:remoteReference], testClass);
   XCTAssertEqualObjects([_testManager getPairedRemoteReference:testClass], remoteReference);
+}
+
+- (void)testReferencePairManager_pairWithNewRemoteReference_returnsNull {
+  [given([_testManager.remoteHandler getCreationArguments:isA([TestClass class])])
+   willReturn:@[]];
+
+  TestClass *testClass = [TestClass testClass];
+
+  [_testManager pairWithNewRemoteReference:testClass completion:^(REFRemoteReference *remoteReference, NSError *error) {}];
+  [_testManager pairWithNewRemoteReference:testClass completion:^(REFRemoteReference *remoteReference, NSError *error) {}];
+  [verify(_testManager.remoteHandler) create:isA([REFRemoteReference class])
+                                     classID:0
+                                   arguments:isEmpty()
+                                  completion:anything()];
 }
 
 - (void)testReferencePairManager_invokeRemoteMethod {

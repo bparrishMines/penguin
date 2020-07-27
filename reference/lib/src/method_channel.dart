@@ -8,7 +8,8 @@ import 'reference_pair_manager.dart';
 import 'reference.dart';
 
 /// Abstract implementation of [ReferencePairManager] using [MethodChannel]s.
-abstract class MethodChannelReferencePairManager extends PoolableReferencePairManager {
+abstract class MethodChannelReferencePairManager
+    extends PoolableReferencePairManager {
   /// Default constructor for [MethodChannelReferencePairManager].
   ///
   /// If [poolId] is passed as `null`, it will be set to [channelName].

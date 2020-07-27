@@ -90,11 +90,18 @@ public abstract class ReferencePairManager {
       RemoteReference remoteReference, int classId, List<Object> arguments)
       throws Exception {
     assertIsInitialized();
+    if (getPairedLocalReference(remoteReference) != null) return null;
+
     final LocalReference localReference =
         getLocalHandler()
             .create(
                 this, classIds.get(classId),
                 (List<Object>) getConverter().convertReferencesForLocalManager(this, arguments));
+
+    if (getPairedRemoteReference(localReference) != null) {
+      throw new AssertionError();
+    }
+
     referencePairs.put(localReference, remoteReference);
     return localReference;
   }
@@ -144,7 +151,9 @@ public abstract class ReferencePairManager {
   @SuppressWarnings("ConstantConditions")
   public Completable<RemoteReference> pairWithNewRemoteReference(final LocalReference localReference) {
     assertIsInitialized();
-    if (getPairedRemoteReference(localReference) != null) return null;
+    if (getPairedRemoteReference(localReference) != null) {
+      return new Completer<RemoteReference>().complete(null).completable;
+    }
 
     final RemoteReference remoteReference = new RemoteReference(UUID.randomUUID().toString());
     referencePairs.put(localReference, remoteReference);

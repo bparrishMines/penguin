@@ -64,7 +64,7 @@ localReference:(id<REFLocalReference>)localReference;
 -(REFClass *_Nullable)getReferenceClass:(NSUInteger)classID;
 -(REFRemoteReference *_Nullable)getPairedRemoteReference:(id<REFLocalReference>)localReference;
 -(id<REFLocalReference> _Nullable)getPairedLocalReference:(REFRemoteReference *)remoteReference;
--(id<REFLocalReference>)pairWithNewLocalReference:(REFRemoteReference *)remoteReference
+-(id<REFLocalReference> _Nullable)pairWithNewLocalReference:(REFRemoteReference *)remoteReference
                                           classID:(NSUInteger)classID;
 -(id<REFLocalReference>)pairWithNewLocalReference:(REFRemoteReference *)remoteReference
                                           classID:(NSUInteger)classID

@@ -208,18 +208,24 @@ abstract class ReferencePairManager {
   ///
   /// This method uses [ReferenceConverter.convertForLocalManager] to convert
   /// [arguments].
+  ///
+  /// Returns `null` if a pair with [remoteReference] has already been added.
+  /// Otherwise, it returns the paired [LocalReference].
   LocalReference pairWithNewLocalReference(
     RemoteReference remoteReference,
     int typeId, [
     List<Object> arguments,
   ]) {
     _assertIsInitialized();
-    // TODO(bparrishMines): Verify this localReference doesn't already exists
+    if (getPairedLocalReference(remoteReference) != null) return null;
+
     final LocalReference localReference = localHandler.create(
       this,
       getReferenceType(typeId),
       converter.convertForLocalManager(this, arguments ?? <Object>[]),
     );
+
+    assert(getPairedRemoteReference(localReference) == null);
 
     _referencePairs[localReference] = remoteReference;
     return localReference;
@@ -287,7 +293,6 @@ abstract class ReferencePairManager {
   }
 
   // TODO(bparrishMines): Undo state change if failure to create?
-  // TODO: return reference if it already exists
   /// Creates a new [RemoteReference] to be paired with [localReference].
   ///
   /// This is typically called when a class wants a remote
@@ -299,15 +304,20 @@ abstract class ReferencePairManager {
   /// This method uses [ReferenceConverter.convertForRemoteManager] to convert
   /// arguments retrieved from
   /// [RemoteReferenceCommunicationHandler.getCreationArguments].
+  ///
+  /// Returns `null` if a pair with [localReference] has already been added.
+  /// Otherwise, it returns the paired [RemoteReference].
   Future<RemoteReference> pairWithNewRemoteReference(
     LocalReference localReference,
   ) async {
     _assertIsInitialized();
-    if (getPairedRemoteReference(localReference) != null) return null;
+    if (getPairedRemoteReference(localReference) != null) {
+      return null;
+    }
 
-    final RemoteReference remoteReference = RemoteReference(
-      getRandomReferenceId(),
-    );
+    final RemoteReference remoteReference =
+        RemoteReference(getNewReferenceId());
+
     _referencePairs[localReference] = remoteReference;
 
     await remoteHandler.create(
@@ -390,7 +400,7 @@ abstract class ReferencePairManager {
     assert(_isInitialized, 'Initialize has not been called.');
   }
 
-  String getRandomReferenceId() {
+  String getNewReferenceId() {
     return String.fromCharCodes(Iterable.generate(
       10,
       (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length)),

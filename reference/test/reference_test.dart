@@ -43,6 +43,17 @@ void main() {
       ]);
     });
 
+    test('pairWithNewLocalReference returns null', () {
+      when(testManager.localHandler.create(testManager, TestClass, any))
+          .thenReturn(TestClass());
+
+      testManager.pairWithNewLocalReference(RemoteReference('apple'), 0);
+      expect(
+        testManager.pairWithNewLocalReference(RemoteReference('apple'), 0),
+        isNull,
+      );
+    });
+
     test('invokeLocalMethod', () {
       when(testManager.localHandler.create(testManager, TestClass, any))
           .thenAnswer((_) => TestClass());
@@ -131,6 +142,19 @@ void main() {
         ),
         testManager.remoteHandler.create(remoteReference, 0, argThat(isEmpty)),
       ]);
+    });
+
+    test('pairWithNewRemoteReference returns null', () async {
+      final TestClass testClass = TestClass();
+
+      when(testManager.remoteHandler.getCreationArguments(any))
+          .thenReturn(<Object>[]);
+
+      testManager.pairWithNewRemoteReference(testClass);
+      expect(
+        testManager.pairWithNewRemoteReference(testClass),
+        completion(isNull),
+      );
     });
 
     test('invokeRemoteMethod', () async {

@@ -120,7 +120,6 @@ public class ReferenceTest {
     testPoolableManager2.initialize();
   }
 
-  @SuppressWarnings("unchecked")
   @Test
   public void referencePairManager_pairWithNewLocalReference() throws Exception {
     when(testManager.localHandler.create(eq(testManager), eq(TestClass.class), anyList()))
@@ -138,7 +137,15 @@ public class ReferenceTest {
     verify(testManager.localHandler).create(eq(testManager), eq(TestClass.class), anyList());
   }
 
-  @SuppressWarnings("unchecked")
+  @Test
+  public void referencePairManager_pairWithNewLocalReference_returnsNull() throws Exception {
+    when(testManager.localHandler.create(eq(testManager), eq(TestClass.class), anyList()))
+        .thenReturn(new TestClass());
+
+    testManager.pairWithNewLocalReference(new RemoteReference("apple"), 0);
+    assertNull(testManager.pairWithNewLocalReference(new RemoteReference("apple"), 0));
+  }
+
   @Test
   public void referencePairManager_invokeLocalMethod() throws Exception {
     when(testManager.localHandler.create(eq(testManager), eq(TestClass.class), anyList()))
@@ -159,7 +166,6 @@ public class ReferenceTest {
     verify(testManager.converter).convertReferencesForRemoteManager(eq(testManager), isNull());
   }
 
-  @SuppressWarnings("unchecked")
   @Test
   public void referencePairManager_invokeLocalMethodOnUnpairedReference() throws Exception {
     when(testManager.localHandler.create(eq(testManager), eq(TestClass.class), anyList()))
@@ -211,6 +217,24 @@ public class ReferenceTest {
     verify(testManager.remoteHandler).create(eq(remoteReference), eq(0), anyList());
   }
 
+  @SuppressWarnings("unchecked")
+  @Test
+  public void referencePairManager_pairWithNewRemoteReference_returnsNull() {
+    final TestClass testClass = new TestClass();
+
+    when(testManager.remoteHandler.getCreationArguments(testClass))
+        .thenReturn(Collections.emptyList());
+
+    when(testManager.remoteHandler.create(any(RemoteReference.class), eq(0), anyList()))
+        .thenReturn(new Completer<Void>().complete(null).completable);
+
+    testManager.pairWithNewRemoteReference(testClass);
+
+    final Completable.OnCompleteListener mockListener = mock(Completable.OnCompleteListener.class);
+    testManager.pairWithNewRemoteReference(testClass).setOnCompleteListener(mockListener);
+    verify(mockListener).onComplete(null);
+  }
+
   @Test
   public void referencePairManager_invokeRemoteMethod() throws Exception {
     final TestClass testClass = new TestClass();
@@ -232,7 +256,6 @@ public class ReferenceTest {
     verify(testManager.converter).convertReferencesForLocalManager(eq(testManager), isNull());
   }
 
-  @SuppressWarnings("unchecked")
   @Test
   public void referencePairManager_invokeRemoteMethodOnUnpairedReference() throws Exception {
     when(testManager.remoteHandler.create(any(RemoteReference.class), eq(0), anyList()))

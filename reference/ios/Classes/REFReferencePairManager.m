@@ -139,10 +139,16 @@
                                           classID:(NSUInteger)classID
                                         arguments:(NSArray<id> *)arguments {
   [self assertInitialized];
+  if ([self getPairedLocalReference:remoteReference]) {
+    return nil;
+  }
+  
   id<REFLocalReference> localReference = [self.localHandler
                                           create:self
                                           referenceClass:[self getReferenceClass:classID].clazz
                                           arguments:[self.converter convertReferencesForLocalManager:self obj:arguments]];
+  
+  NSAssert(![self getPairedRemoteReference:localReference], @"");
   
   [_referencePairs setObject:remoteReference forKey:localReference];
   return localReference;
@@ -193,6 +199,10 @@
                        completion:(void (^)(REFRemoteReference *_Nullable, NSError *_Nullable))completion {
   [self assertInitialized];
   NSAssert(localReference, @"LocalReference must not be null.");
+  if ([self getPairedRemoteReference:localReference]) {
+    completion(nil, nil);
+    return;
+  }
   
   __block REFRemoteReference *remoteReference = [REFRemoteReference fromID:[[NSUUID UUID] UUIDString]];
   [_referencePairs setObject:remoteReference forKey:localReference];
