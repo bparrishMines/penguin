@@ -1,3 +1,7 @@
+## 0.1.2+2
+
+* Removed quiver and uuid Dart dependencies.
+
 ## 0.1.2+1
 
 * Removed Guava dependency on Android.
