@@ -31,7 +31,7 @@ target 'Runner' do
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end
 
-target 'reference_example_exampleUITests' do
+target 'reference_example_exampleTests' do
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end
 
