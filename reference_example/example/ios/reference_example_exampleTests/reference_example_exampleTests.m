@@ -2,26 +2,39 @@
 @import e2e;
 
 @interface MyTestRunner : NSObject
-
+- (instancetype)initWithClass:(Class)clazz;
 - (BOOL)runTest:(NSString **)testResult;
-
 @end
 
 @interface reference_example_exampleTests : XCTestCase
+@end
+
+@interface MyPluginTests : XCTestCaseRun
+- (void)testMyClass;
 @end
                                                     
 @implementation reference_example_exampleTests
                                                       
 -(void)testMyPlugin {
   NSString *testResult;
-  MyTestRunner *testRunner = [[MyTestRunner alloc] init];
+  MyTestRunner *testRunner = [[MyTestRunner alloc] initWithClass:[MyPluginTests class]];
   BOOL testPass = [testRunner runTest:&testResult];
   XCTAssertTrue(testPass, @"%@", testResult);
 }
                                                       
 @end
 
-@implementation MyTestRunner
+@implementation MyTestRunner {
+  NSObject *_testClassInstance;
+}
+
+- (instancetype)initWithClass:(Class)clazz {
+  self = [super init];
+  if (self) {
+    _testClassInstance = [[clazz alloc] init];
+  }
+  return self;
+}
 
 - (BOOL)runTest:(NSString **)testResult {
   E2EPlugin *e2ePlugin = [E2EPlugin instance];
@@ -33,6 +46,26 @@
   }
   FlutterViewController *flutterViewController = (FlutterViewController *)rootViewController;
   [e2ePlugin setupChannels:flutterViewController.engine.binaryMessenger];
+  
+  FlutterMethodChannel *testChannel = [FlutterMethodChannel methodChannelWithName:@"test_channel" binaryMessenger:flutterViewController.engine.binaryMessenger];
+  [testChannel setMethodCallHandler:^(FlutterMethodCall * _Nonnull call, FlutterResult _Nonnull result) {
+    if (![call.method isEqualToString:@"verify"]) {
+      result(FlutterMethodNotImplemented);
+    }
+    
+    SEL methodSelector = NSSelectorFromString(call.arguments);
+    if (![self->_testClassInstance respondsToSelector:methodSelector]) {
+      result(FlutterMethodNotImplemented);
+      return;
+    }
+    
+    IMP imp = [self->_testClassInstance methodForSelector:methodSelector];
+    void (*func)(id, SEL) = (void *)imp;
+    func(self->_testClassInstance, methodSelector);
+    
+    result(nil);
+  }];
+  
   while (!e2ePlugin.testResults) {
     CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1.f, NO);
   }
@@ -60,4 +93,11 @@
   return testPass;
 }
 
+@end
+
+@implementation MyPluginTests
+
+- (void)myClassTest {
+  
+}
 @end
