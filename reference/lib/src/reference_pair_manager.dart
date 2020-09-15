@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math';
+import 'dart:collection';
 
 import 'package:flutter/widgets.dart';
 
@@ -408,7 +409,7 @@ abstract class ReferencePairManager {
   }
 }
 
-class _BiMap<K, V> implements Map<K, V> {
+class _BiMap<K, V> extends MapBase<K, V> {
   _BiMap() {
     _inverse = _BiMap<V, K>._inverse(this);
   }
@@ -436,67 +437,13 @@ class _BiMap<K, V> implements Map<K, V> {
   }
 
   @override
-  void addAll(Map other) {
-    addEntries(other.entries);
-  }
-
-  @override
-  void addEntries(Iterable<MapEntry> newEntries) {
-    for (MapEntry entry in newEntries) {
-      this[entry.key] = entry.value;
-    }
-  }
-
-  @override
-  Map<RK, RV> cast<RK, RV>() {
-    return _BiMap<RK, RV>()..addAll(this);
-  }
-
-  @override
   void clear() {
     _map.clear();
     inverse._map.clear();
   }
 
   @override
-  bool containsKey(Object key) {
-    return _map.containsKey(key);
-  }
-
-  @override
-  bool containsValue(Object value) {
-    return _map.containsValue(value);
-  }
-
-  @override
-  Iterable<MapEntry<K, V>> get entries => _map.entries;
-
-  @override
-  void forEach(void Function(K key, V value) f) {
-    throw UnsupportedError('');
-  }
-
-  @override
-  bool get isEmpty => _map.isEmpty;
-
-  @override
-  bool get isNotEmpty => _map.isNotEmpty;
-
-  @override
   Iterable<K> get keys => _map.keys;
-
-  @override
-  int get length => _map.length;
-
-  @override
-  Map<K2, V2> map<K2, V2>(MapEntry<K2, V2> Function(K key, V value) f) {
-    throw UnsupportedError('');
-  }
-
-  @override
-  V putIfAbsent(key, Function() ifAbsent) {
-    throw UnsupportedError('');
-  }
 
   @override
   V remove(Object key) {
@@ -505,22 +452,4 @@ class _BiMap<K, V> implements Map<K, V> {
     inverse._map.remove(value);
     return _map.remove(key);
   }
-
-  @override
-  void removeWhere(bool Function(K key, V value) predicate) {
-    throw UnsupportedError('');
-  }
-
-  @override
-  V update(key, Function(V value) update, {Function() ifAbsent}) {
-    throw UnsupportedError('');
-  }
-
-  @override
-  void updateAll(Function(K key, V value) update) {
-    throw UnsupportedError('');
-  }
-
-  @override
-  Iterable<V> get values => _map.values;
 }
