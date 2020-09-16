@@ -29,6 +29,7 @@ abstract class MethodChannelReferencePairManager
 
   static const String _methodCreate = 'REFERENCE_CREATE';
   static const String _methodMethod = 'REFERENCE_METHOD';
+  static const String _methodStaticMethod = 'REFERENCE_STATIC_METHOD';
   static const String _methodDispose = 'REFERENCE_DISPOSE';
 
   /// [MethodChannel] used to communicate with a remote [ReferencePairManager].
@@ -49,6 +50,13 @@ abstract class MethodChannelReferencePairManager
             call.arguments[2],
           );
           return null;
+        } else if (call.method ==
+            MethodChannelReferencePairManager._methodStaticMethod) {
+          return invokeLocalStaticMethod(
+            getReferenceType(call.arguments[0]),
+            call.arguments[1],
+            call.arguments[2],
+          );
         } else if (call.method ==
                 MethodChannelReferencePairManager._methodMethod &&
             call.arguments[0] is UnpairedReference) {
@@ -107,6 +115,18 @@ abstract class MethodChannelRemoteHandler
     return channel.invokeMethod<void>(
       MethodChannelReferencePairManager._methodCreate,
       <Object>[remoteReference, typeId, arguments],
+    );
+  }
+
+  @override
+  Future<Object> invokeStaticMethod(
+    int typeId,
+    String methodName,
+    List<Object> arguments,
+  ) {
+    return channel.invokeMethod<Object>(
+      MethodChannelReferencePairManager._methodStaticMethod,
+      <Object>[typeId, methodName, arguments],
     );
   }
 

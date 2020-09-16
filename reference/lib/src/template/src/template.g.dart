@@ -6,13 +6,15 @@ typedef _LocalCreatorHandler = LocalReference Function(
   List<Object> arguments,
 );
 
+typedef _CreationArgumentsHandler = List<Object> Function(
+  LocalReference localReference,
+);
+
+typedef _LocalStaticMethodHandler = Object Function(List<Object> arguments);
+
 typedef _LocalMethodHandler = Object Function(
   LocalReference localReference,
   List<Object> arguments,
-);
-
-typedef _CreationArgumentsHandler = List<Object> Function(
-  LocalReference localReference,
 );
 
 abstract class _$TemplateReferencePairManager
@@ -39,6 +41,26 @@ class _$LocalReferenceCommunicationHandler
     with LocalReferenceCommunicationHandler {
   const _$LocalReferenceCommunicationHandler({this.createClassTemplate});
 
+  static final Map<Type, _LocalCreatorHandler> _creators =
+      <Type, _LocalCreatorHandler>{
+    ClassTemplate: (
+      _$LocalReferenceCommunicationHandler localHandler,
+      ReferencePairManager manager,
+      List<Object> arguments,
+    ) {
+      return localHandler.createClassTemplate(manager, arguments[0]);
+    },
+  };
+
+  static final Map<Type, Map<String, _LocalStaticMethodHandler>>
+      _staticMethods = <Type, Map<String, _LocalStaticMethodHandler>>{
+    ClassTemplate: <String, _LocalStaticMethodHandler>{
+      'staticMethodTemplate': (List<Object> arguments) {
+        return ClassTemplate.staticMethodTemplate(arguments[0]);
+      },
+    },
+  };
+
   static final Map<Type, Map<String, _LocalMethodHandler>> _methods =
       <Type, Map<String, _LocalMethodHandler>>{
     ClassTemplate: <String, _LocalMethodHandler>{
@@ -48,17 +70,6 @@ class _$LocalReferenceCommunicationHandler
       ) {
         return (localReference as ClassTemplate).methodTemplate(arguments[0]);
       },
-    },
-  };
-
-  static final Map<Type, _LocalCreatorHandler> _creators =
-      <Type, _LocalCreatorHandler>{
-    ClassTemplate: (
-      _$LocalReferenceCommunicationHandler localHandler,
-      ReferencePairManager manager,
-      List<Object> arguments,
-    ) {
-      return localHandler.createClassTemplate(manager, arguments[0]);
     },
   };
 
@@ -87,6 +98,16 @@ class _$LocalReferenceCommunicationHandler
       localReference,
       arguments,
     );
+  }
+
+  @override
+  Object invokeStaticMethod(
+    ReferencePairManager referencePairManager,
+    Type referenceType,
+    String methodName,
+    List<Object> arguments,
+  ) {
+    return _staticMethods[referenceType][methodName](arguments);
   }
 }
 

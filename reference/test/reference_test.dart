@@ -54,6 +54,26 @@ void main() {
       );
     });
 
+    test('invokeLocalStaticMethod', () {
+      testManager.invokeLocalStaticMethod(TestClass, 'aStaticMethod');
+      verifyInOrder([
+        testManager.converter.mock.convertForLocalManager(
+          testManager,
+          argThat(isNull),
+        ),
+        testManager.localHandler.invokeStaticMethod(
+          testManager,
+          TestClass,
+          'aStaticMethod',
+          argThat(isEmpty),
+        ),
+        testManager.converter.mock.convertForRemoteManager(
+          testManager,
+          argThat(isNull),
+        ),
+      ]);
+    });
+
     test('invokeLocalMethod', () {
       when(testManager.localHandler.create(testManager, TestClass, any))
           .thenAnswer((_) => TestClass());
@@ -155,6 +175,25 @@ void main() {
         testManager.pairWithNewRemoteReference(testClass),
         completion(isNull),
       );
+    });
+
+    test('invokeRemoteStaticMethod', () async {
+      await testManager.invokeRemoteStaticMethod(TestClass, 'aStaticMethod');
+      verifyInOrder([
+        testManager.converter.mock.convertForRemoteManager(
+          testManager,
+          argThat(isNull),
+        ),
+        testManager.remoteHandler.invokeStaticMethod(
+          0,
+          'aStaticMethod',
+          argThat(isEmpty),
+        ),
+        testManager.converter.mock.convertForLocalManager(
+          testManager,
+          argThat(isNull),
+        ),
+      ]);
     });
 
     test('invokeRemoteMethod', () async {

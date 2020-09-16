@@ -35,6 +35,12 @@ mixin RemoteReferenceCommunicationHandler {
     List<Object> arguments,
   );
 
+  Future<Object> invokeStaticMethod(
+    int typeId,
+    String methodName,
+    List<Object> arguments,
+  );
+
   /// Invoke a method on the object instance that [remoteReference] represents.
   ///
   /// For any [RemoteReference], this method should only be called after
@@ -87,6 +93,13 @@ mixin LocalReferenceCommunicationHandler {
   LocalReference create(
     ReferencePairManager referencePairManager,
     Type referenceType,
+    List<Object> arguments,
+  );
+
+  Object invokeStaticMethod(
+    ReferencePairManager referencePairManager,
+    Type referenceType,
+    String methodName,
     List<Object> arguments,
   );
 
@@ -232,6 +245,22 @@ abstract class ReferencePairManager {
     return localReference;
   }
 
+  Object invokeLocalStaticMethod(
+    Type referenceType,
+    String methodName, [
+    List<Object> arguments,
+  ]) {
+    _assertIsInitialized();
+    final Object result = localHandler.invokeStaticMethod(
+      this,
+      referenceType,
+      methodName,
+      converter.convertForLocalManager(this, arguments) ?? <Object>[],
+    );
+
+    return converter.convertForRemoteManager(this, result);
+  }
+
   /// Invoke a method on [localReference].
   ///
   /// This method uses [ReferenceConverter.convertForLocalManager] to convert
@@ -331,6 +360,21 @@ abstract class ReferencePairManager {
     );
 
     return remoteReference;
+  }
+
+  Future<Object> invokeRemoteStaticMethod(
+    Type referenceType,
+    String methodName, [
+    List<Object> arguments,
+  ]) async {
+    _assertIsInitialized();
+    final Object result = await remoteHandler.invokeStaticMethod(
+      getTypeId(referenceType),
+      methodName,
+      converter.convertForRemoteManager(this, arguments) ?? <Object>[],
+    );
+
+    return converter.convertForLocalManager(this, result);
   }
 
   /// Invoke a method on [remoteReference].

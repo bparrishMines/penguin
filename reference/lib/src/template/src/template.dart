@@ -26,6 +26,14 @@ class ClassTemplate with LocalReference, _$ClassTemplateMethods {
 
   final int fieldTemplate;
 
+  static Future<double> staticMethodTemplate(String parameterTemplate) async {
+    return (await _referencePairManager.invokeRemoteStaticMethod(
+      ClassTemplate,
+      'staticMethodTemplate',
+      <Object>[parameterTemplate],
+    )) as double;
+  }
+
   Future<String> methodTemplate(String parameterTemplate) async {
     return (await _$methodTemplate(
       _referencePairManager,

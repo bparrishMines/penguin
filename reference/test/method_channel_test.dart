@@ -52,6 +52,11 @@ void main() {
               case 'aMethod':
                 return 'polo';
             }
+          } else if (methodCall.method == 'REFERENCE_STATIC_METHOD') {
+            switch (methodCall.arguments[1]) {
+              case 'aStaticMethod':
+                return 14;
+            }
           }
           return null;
         },
@@ -69,6 +74,22 @@ void main() {
         isMethodCallWithMatchers('REFERENCE_CREATE', arguments: <Object>[
           remoteReference,
           0,
+          <Object>[],
+        ]),
+      ]);
+    });
+
+    test('invokeRemoteStaticMethod', () async {
+      final int result = await testManager.invokeRemoteStaticMethod(
+        TestClass,
+        'aStaticMethod',
+      );
+
+      expect(result, equals(14));
+      expect(methodCallLog, <Matcher>[
+        isMethodCallWithMatchers('REFERENCE_STATIC_METHOD', arguments: <Object>[
+          0,
+          'aStaticMethod',
           <Object>[],
         ]),
       ]);
@@ -149,6 +170,41 @@ void main() {
           testManager.getPairedLocalReference(RemoteReference('aowejea;io'));
 
       expect(testClass, isNotNull);
+    });
+
+    test('invokeLocalStaticMethod', () async {
+      when(
+        testManager.localHandler.invokeStaticMethod(
+          testManager,
+          TestClass,
+          'aStaticMethod',
+          <Object>[],
+        ),
+      ).thenReturn('OJ');
+
+      final Completer<String> responseCompleter = Completer<String>();
+      await testManager.channel.binaryMessenger.handlePlatformMessage(
+        'test_channel',
+        testManager.channel.codec.encodeMethodCall(
+          MethodCall(
+            'REFERENCE_STATIC_METHOD',
+            <Object>[0, 'aStaticMethod', <Object>[]],
+          ),
+        ),
+        (ByteData data) {
+          responseCompleter.complete(
+            testManager.channel.codec.decodeEnvelope(data),
+          );
+        },
+      );
+
+      verify(testManager.localHandler.invokeStaticMethod(
+        testManager,
+        TestClass,
+        'aStaticMethod',
+        any,
+      ));
+      expect(responseCompleter.future, completion('OJ'));
     });
 
     test('invokeLocalMethod', () async {
@@ -265,8 +321,7 @@ class TestClass with LocalReference {
 }
 
 class TestReferencePairManager extends MethodChannelReferencePairManager {
-  TestReferencePairManager()
-      : super(<Type>[TestClass], 'test_channel');
+  TestReferencePairManager() : super(<Type>[TestClass], 'test_channel');
 
   final MockLocalHandler _localHandler = MockLocalHandler();
 
