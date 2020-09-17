@@ -15,6 +15,7 @@ import java.util.List;
 public abstract class MethodChannelReferencePairManager extends PoolableReferencePairManager
     implements MethodChannel.MethodCallHandler {
   static final String METHOD_CREATE = "REFERENCE_CREATE";
+  static final String METHOD_STATIC_METHOD = "REFERENCE_STATIC_METHOD";
   static final String METHOD_METHOD = "REFERENCE_METHOD";
   static final String METHOD_DISPOSE = "REFERENCE_DISPOSE";
 

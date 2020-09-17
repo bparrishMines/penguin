@@ -6,15 +6,19 @@ typedef _LocalCreatorHandler = LocalReference Function(
   List<Object> arguments,
 );
 
-typedef _CreationArgumentsHandler = List<Object> Function(
-  LocalReference localReference,
+typedef _LocalStaticMethodHandler = Object Function(
+  _$LocalReferenceCommunicationHandler localHandler,
+  ReferencePairManager manager,
+  List<Object> arguments,
 );
-
-typedef _LocalStaticMethodHandler = Object Function(List<Object> arguments);
 
 typedef _LocalMethodHandler = Object Function(
   LocalReference localReference,
   List<Object> arguments,
+);
+
+typedef _CreationArgumentsHandler = List<Object> Function(
+  LocalReference localReference,
 );
 
 abstract class _$TemplateReferencePairManager
@@ -39,7 +43,10 @@ abstract class _$TemplateReferencePairManager
 
 class _$LocalReferenceCommunicationHandler
     with LocalReferenceCommunicationHandler {
-  const _$LocalReferenceCommunicationHandler({this.createClassTemplate});
+  const _$LocalReferenceCommunicationHandler({
+    this.createClassTemplate,
+    this.classTemplate$staticMethodTemplate,
+  });
 
   static final Map<Type, _LocalCreatorHandler> _creators =
       <Type, _LocalCreatorHandler>{
@@ -55,8 +62,15 @@ class _$LocalReferenceCommunicationHandler
   static final Map<Type, Map<String, _LocalStaticMethodHandler>>
       _staticMethods = <Type, Map<String, _LocalStaticMethodHandler>>{
     ClassTemplate: <String, _LocalStaticMethodHandler>{
-      'staticMethodTemplate': (List<Object> arguments) {
-        return ClassTemplate.staticMethodTemplate(arguments[0]);
+      'staticMethodTemplate': (
+        _$LocalReferenceCommunicationHandler localHandler,
+        ReferencePairManager manager,
+        List<Object> arguments,
+      ) {
+        return localHandler.classTemplate$staticMethodTemplate(
+          manager,
+          arguments[0],
+        );
       },
     },
   };
@@ -73,6 +87,11 @@ class _$LocalReferenceCommunicationHandler
     },
   };
 
+  final double Function(
+    ReferencePairManager manager,
+    String parameterTemplate,
+  ) classTemplate$staticMethodTemplate;
+
   final ClassTemplate Function(
     ReferencePairManager manager,
     int fieldTemplate,
@@ -88,6 +107,20 @@ class _$LocalReferenceCommunicationHandler
   }
 
   @override
+  Object invokeStaticMethod(
+    ReferencePairManager referencePairManager,
+    Type referenceType,
+    String methodName,
+    List<Object> arguments,
+  ) {
+    return _staticMethods[referenceType][methodName](
+      this,
+      referencePairManager,
+      arguments,
+    );
+  }
+
+  @override
   Object invokeMethod(
     ReferencePairManager referencePairManager,
     LocalReference localReference,
@@ -98,16 +131,6 @@ class _$LocalReferenceCommunicationHandler
       localReference,
       arguments,
     );
-  }
-
-  @override
-  Object invokeStaticMethod(
-    ReferencePairManager referencePairManager,
-    Type referenceType,
-    String methodName,
-    List<Object> arguments,
-  ) {
-    return _staticMethods[referenceType][methodName](arguments);
   }
 }
 

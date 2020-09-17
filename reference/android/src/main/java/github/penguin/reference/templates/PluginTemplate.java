@@ -16,8 +16,13 @@ public class PluginTemplate implements FlutterPlugin {
     public $LocalReferenceCommunicationHandler getLocalHandler() {
       return new $LocalReferenceCommunicationHandler() {
         @Override
-        public ClassTemplate createClassTemplate(ReferencePairManager referencePairManager, Integer fieldTemplate) {
-          return new ClassTemplateImpl(fieldTemplate);
+        public $ClassTemplate createClassTemplate(ReferencePairManager referencePairManager, Integer fieldTemplate) {
+          return new ClassTemplate(fieldTemplate);
+        }
+
+        @Override
+        public Double classTemplate$staticMethodTemplate(ReferencePairManager referencePairManager, String parameterTemplate) {
+          return ClassTemplate.staticMethodTemplate(parameterTemplate);
         }
       };
     }

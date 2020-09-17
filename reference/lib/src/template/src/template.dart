@@ -13,12 +13,16 @@ class _ReferencePairManagerTemplate extends _$TemplateReferencePairManager {
   @override
   _$LocalReferenceCommunicationHandler get localHandler =>
       _$LocalReferenceCommunicationHandler(
-        createClassTemplate: (
-          ReferencePairManager referencePairManager,
-          int fieldTemplate,
-        ) =>
-            ClassTemplate(fieldTemplate),
-      );
+          createClassTemplate: (
+            ReferencePairManager referencePairManager,
+            int fieldTemplate,
+          ) =>
+              ClassTemplate(fieldTemplate),
+          classTemplate$staticMethodTemplate:
+              (ReferencePairManager referencePairManager,
+                  String parameterTemplate) {
+            return 62.0;
+          });
 }
 
 class ClassTemplate with LocalReference, _$ClassTemplateMethods {

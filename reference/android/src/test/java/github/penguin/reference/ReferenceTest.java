@@ -147,6 +147,20 @@ public class ReferenceTest {
   }
 
   @Test
+  public void referencePairManager_invokeLocalStaticMethod() throws Exception {
+    testManager.invokeLocalStaticMethod(TestClass.class, "aStaticMethod");
+
+    verify(testManager.converter).convertReferencesForLocalManager(eq(testManager), anyList());
+    verify(testManager.localHandler).invokeStaticMethod(
+        eq(testManager),
+        eq(TestClass.class),
+        eq("aStaticMethod"),
+        anyList()
+    );
+    verify(testManager.converter).convertReferencesForRemoteManager(eq(testManager), isNull());
+  }
+
+  @Test
   public void referencePairManager_invokeLocalMethod() throws Exception {
     when(testManager.localHandler.create(eq(testManager), eq(TestClass.class), anyList()))
         .thenReturn(new TestClass());

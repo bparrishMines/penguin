@@ -77,6 +77,18 @@ public abstract class MethodChannelRemoteHandler implements RemoteReferenceCommu
   }
 
   @Override
+  public Completable<Object> invokeStaticMethod(int classId, String methodName, List<Object> arguments) {
+    final Completer<Object> completer = new Completer<>();
+
+    channel.invokeMethod(
+        MethodChannelReferencePairManager.METHOD_STATIC_METHOD,
+        Arrays.asList(classId, methodName, arguments),
+        new RemoteHandlerResult<>(completer));
+
+    return completer.completable;
+  }
+
+  @Override
   public Completable<Object> invokeMethod(
       final RemoteReference remoteReference,
       final String methodName,

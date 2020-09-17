@@ -1,12 +1,16 @@
 package github.penguin.reference.templates;
 
 import github.penguin.reference.reference.LocalReference;
-import github.penguin.reference.templates.$TemplateReferencePairManager.ClassTemplate;
+import github.penguin.reference.templates.$TemplateReferencePairManager.$ClassTemplate;
 
-public class ClassTemplateImpl implements ClassTemplate {
+public class ClassTemplate implements $ClassTemplate {
   private final Integer fieldTemplate;
 
-  public ClassTemplateImpl(Integer fieldTemplate) {
+  public static Double staticMethodTemplate(String parameterTemplate) {
+    return parameterTemplate.length() / 1.0;
+  }
+
+  public ClassTemplate(Integer fieldTemplate) {
     this.fieldTemplate = fieldTemplate;
   }
 
@@ -22,6 +26,6 @@ public class ClassTemplateImpl implements ClassTemplate {
 
   @Override
   public Class<? extends LocalReference> getReferenceClass() {
-    return ClassTemplate.class;
+    return $ClassTemplate.class;
   }
 }
