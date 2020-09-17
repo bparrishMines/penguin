@@ -28,8 +28,8 @@ abstract class MethodChannelReferencePairManager
         super(supportedTypes, poolId ?? channelName);
 
   static const String _methodCreate = 'REFERENCE_CREATE';
-  static const String _methodMethod = 'REFERENCE_METHOD';
   static const String _methodStaticMethod = 'REFERENCE_STATIC_METHOD';
+  static const String _methodMethod = 'REFERENCE_METHOD';
   static const String _methodDispose = 'REFERENCE_DISPOSE';
 
   /// [MethodChannel] used to communicate with a remote [ReferencePairManager].

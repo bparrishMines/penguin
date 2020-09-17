@@ -70,6 +70,15 @@ public abstract class MethodChannelReferencePairManager extends PoolableReferenc
             channelResult.success(null);
             break;
           }
+        case METHOD_STATIC_METHOD: {
+          final List<Object> arguments = (List<Object>) call.arguments;
+          final Object result = invokeLocalStaticMethod(
+              getReferenceClass((Integer) arguments.get(0)),
+              (String) arguments.get(1),
+              (List<Object>) arguments.get(2));
+          channelResult.success(result);
+          break;
+        }
         case METHOD_METHOD:
           {
             final List<Object> arguments = (List<Object>) call.arguments;

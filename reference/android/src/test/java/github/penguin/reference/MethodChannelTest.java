@@ -149,6 +149,16 @@ public class MethodChannelTest {
   }
 
   @Test
+  public void methodChannelReferencePairManager_invokeRemoteStaticMethod() {
+    testManager.invokeRemoteStaticMethod(TestClass.class, "aStaticMethod", Collections.emptyList());
+    assertThat(
+        getRemoteHandlerMethodCall(),
+        isMethodCall(
+            "REFERENCE_STATIC_METHOD",
+            contains(0, "aStaticMethod", Collections.emptyList())));
+  }
+
+  @Test
   public void methodChannelReferencePairManager_invokeRemoteMethod() {
     final TestClass testClass = new TestClass();
 
@@ -222,6 +232,29 @@ public class MethodChannelTest {
     final TestClass testClass =
         (TestClass) testManager.getPairedLocalReference(new RemoteReference("table"));
     assertThat(testClass, isA(TestClass.class));
+  }
+
+  @Test
+  public void methodChannelReferencePairManager_invokeLocalStaticMethod() throws Exception {
+    final ByteBuffer message = methodCodec.encodeMethodCall(
+        new MethodCall(
+            "REFERENCE_STATIC_METHOD",
+            Arrays.asList(
+                0,
+                "aStaticMethod",
+                Collections.emptyList())));
+
+    getBinaryMessageHandler().onMessage((ByteBuffer) message.position(0), new BinaryReply() {
+      @Override
+      public void reply(@Nullable ByteBuffer reply) {
+
+      }
+    });
+
+    verify(testManager.localHandler).invokeStaticMethod(eq(testManager),
+        eq(TestClass.class),
+        eq("aStaticMethod"),
+        anyList());
   }
 
   @Test
