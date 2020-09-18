@@ -8,7 +8,8 @@
     REFUnpairedReference *reference = obj;
     return [[manager localHandler] create:manager
                            referenceClass:[manager getReferenceClass:reference.classID].clazz
-                                arguments:[self convertReferencesForLocalManager:manager obj:reference.creationArguments]];
+                                arguments:[self convertReferencesForLocalManager:manager
+                                                                             obj:reference.creationArguments]];
   } else if ([obj isKindOfClass:[NSArray class]]) {
     NSArray *array = obj;
     NSMutableArray *newArray = [NSMutableArray arrayWithCapacity:array.count];
@@ -154,6 +155,24 @@
   return localReference;
 }
 
+-(id _Nullable)invokeLocalStaticMethod:(Class)referenceClass
+                            methodName:(NSString *)methodName {
+  return [self invokeLocalStaticMethod:referenceClass methodName:methodName arguments:@[]];
+}
+
+-(id _Nullable)invokeLocalStaticMethod:(Class)referenceClass
+                            methodName:(NSString *)methodName
+                             arguments:(NSArray<id> *)arguments {
+  [self assertInitialized];
+  id result = [self.localHandler invokeStaticMethod:self
+                                     referenceClass:referenceClass
+                                         methodName:methodName
+                                          arguments:[self.converter convertReferencesForLocalManager:self
+                                                                                                 obj:arguments]];
+  
+  return [self.converter convertReferencesForRemoteManager:self obj:result];
+}
+
 -(id _Nullable)invokeLocalMethod:(id<REFLocalReference>)localReference
                       methodName:(NSString *)methodName {
   return [self invokeLocalMethod:localReference methodName:methodName arguments:@[]];
@@ -219,6 +238,30 @@
       completion(nil, error);
     } else {
       completion(remoteReference, nil);
+    }
+  }];
+}
+
+-(void)invokeRemoteStaticMethod:(Class)referenceClass
+                     methodName:(NSString *)methodName
+                     completion:(void (^)(id _Nullable, NSError *_Nullable))completion {
+  return [self invokeRemoteStaticMethod:referenceClass methodName:methodName arguments:@[] completion:completion];
+}
+
+-(void)invokeRemoteStaticMethod:(Class)referenceClass
+                     methodName:(NSString *)methodName
+                      arguments:(NSArray<id> *)arguments
+                     completion:(void (^)(id _Nullable, NSError *_Nullable))completion {
+  [self assertInitialized];
+  
+  [self.remoteHandler invokeStaticMethod:[self getClassID:[REFClass fromClass:referenceClass]]
+                              methodName:methodName
+                               arguments:[self.converter convertReferencesForRemoteManager:self obj:arguments]
+                              completion:^(id result, NSError *error) {
+    if (error) {
+      completion(nil, error);
+    } else {
+      completion([self.converter convertReferencesForLocalManager:self obj:result], nil);
     }
   }];
 }

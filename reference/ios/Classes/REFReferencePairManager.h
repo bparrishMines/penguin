@@ -15,6 +15,11 @@ NS_ASSUME_NONNULL_BEGIN
     arguments:(NSArray<id> *)arguments
    completion:(void (^)(NSError *_Nullable))completion;
 
+-(void)invokeStaticMethod:(NSUInteger)classID
+               methodName:(NSString *)methodName
+                arguments:(NSArray<id> *)arguments
+               completion:(void (^)(id _Nullable, NSError *_Nullable))completion;
+
 -(void)invokeMethod:(REFRemoteReference *)remoteReference
          methodName:(NSString *)methodName
           arguments:(NSArray<id> *)arguments
@@ -34,6 +39,11 @@ NS_ASSUME_NONNULL_BEGIN
 -(id<REFLocalReference>)create:(REFReferencePairManager *)referencePairManager
                 referenceClass:(Class)referenceClass
                      arguments:(NSArray<id> *)arguments;
+
+-(id _Nullable)invokeStaticMethod:(REFReferencePairManager *)referencePairManager
+                   referenceClass:(Class)referenceClass
+                       methodName:(NSString *)methodName
+                        arguments:(NSArray<id> *)arguments;
 
 -(id _Nullable)invokeMethod:(REFReferencePairManager *)referencePairManager
              localReference:(id<REFLocalReference>)localReference
@@ -70,6 +80,12 @@ localReference:(id<REFLocalReference>)localReference;
                                           classID:(NSUInteger)classID
                                         arguments:(NSArray<id> *)arguments;
 
+-(id _Nullable)invokeLocalStaticMethod:(Class)referenceClass
+                            methodName:(NSString *)methodName;
+-(id _Nullable)invokeLocalStaticMethod:(Class)referenceClass
+                            methodName:(NSString *)methodName
+                             arguments:(NSArray<id> *)arguments;
+
 -(id _Nullable)invokeLocalMethod:(id<REFLocalReference>)localReference
                       methodName:(NSString *)methodName;
 -(id _Nullable)invokeLocalMethod:(id<REFLocalReference>)localReference
@@ -86,6 +102,14 @@ localReference:(id<REFLocalReference>)localReference;
 
 -(void)pairWithNewRemoteReference:(id<REFLocalReference>)localReference
                        completion:(void (^)(REFRemoteReference *_Nullable, NSError *_Nullable))completion;
+
+-(void)invokeRemoteStaticMethod:(Class)referenceClass
+                     methodName:(NSString *)methodName
+                     completion:(void (^)(id _Nullable, NSError *_Nullable))completion;
+-(void)invokeRemoteStaticMethod:(Class)referenceClass
+                     methodName:(NSString *)methodName
+                      arguments:(NSArray<id> *)arguments
+                     completion:(void (^)(id _Nullable, NSError *_Nullable))completion;
 
 -(void)invokeRemoteMethod:(REFRemoteReference *)remoteReference
                methodName:(NSString *)methodName

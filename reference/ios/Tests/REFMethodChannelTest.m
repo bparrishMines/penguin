@@ -66,6 +66,17 @@
   assertThat(call.arguments, contains(equalTo(remoteReference), equalTo(@(0)), isEmpty(), nil));
 }
 
+- (void)testMethodChannelReferencePairManager_invokeRemoteStaticMethod {
+  [_testManager invokeRemoteStaticMethod:[TestClass class]
+                              methodName:@"aStaticMethod"
+                              completion:(^(id result, NSError *error) {})];
+  
+  FlutterMethodCall *call = [self getRemoteHandlerMethodCall];
+  
+  XCTAssertEqualObjects(call.method, @"REFERENCE_STATIC_METHOD");
+  assertThat(call.arguments, contains(equalTo(@(0)), equalTo(@"aStaticMethod"), isEmpty(), nil));
+}
+
 - (void)testMethodChannelReferencePairManager_invokeRemoteMethod {
   TestClass *testClass = [TestClass testClass];
   
@@ -132,6 +143,19 @@
   assertThat([_testManager getPairedLocalReference:[REFRemoteReference fromID:@"table"]], isA([TestClass class]));
 }
 
+- (void)testMethodChannelReferencePairManager_invokeLocalStaticMethod {
+  NSData *message = [_methodCodec encodeMethodCall:[FlutterMethodCall
+                                                    methodCallWithMethodName:@"REFERENCE_STATIC_METHOD"
+                                                    arguments:@[@(0), @"aStaticMethod", @[]]]];
+  FlutterBinaryMessageHandler messageHandler = [self getBinaryMessageHandler];
+  messageHandler(message, ^(NSData* reply) {});
+  
+  [verify(_testManager.localHandler) invokeStaticMethod:_testManager
+                                         referenceClass:[TestClass class]
+                                             methodName:@"aStaticMethod"
+                                              arguments:isEmpty()];
+}
+
 - (void)testMethodChannelReferencePairManager_invokeLocalMethod {
   TestClass *testClass = [TestClass testClass];
   
@@ -154,9 +178,9 @@
 
 - (void)testMethodChannelReferencePairManager_invokeLocalMethodOnUnpairedReference {
   [given([_testManager.localHandler create:_testManager
-                           referenceClass:[TestClass class]
-                                arguments:anything()])
-  willReturn:[TestClass testClass]];
+                            referenceClass:[TestClass class]
+                                 arguments:anything()])
+   willReturn:[TestClass testClass]];
   
   REFUnpairedReference *unpairedReference = [[REFUnpairedReference alloc] initWithClassID:0 creationArguments:@[]];
   NSData *message = [_methodCodec encodeMethodCall:[FlutterMethodCall methodCallWithMethodName:@"REFERENCE_METHOD"
@@ -164,7 +188,7 @@
                                                                                                  @"aMethod",
                                                                                                  @[]]
                                                     ]];
-
+  
   FlutterBinaryMessageHandler messageHandler = [self getBinaryMessageHandler];
   messageHandler(message, ^(NSData* reply) {});
   

@@ -1,6 +1,13 @@
 #import "$TemplateReferencePairManager.h"
 
 @implementation ClassTemplate
++(NSNumber *_Nullable)staticMethodTemplate:(NSString *)parameterTemplate {
+  NSString *message = [NSString stringWithFormat:@"You must override %@ in a subclass.", NSStringFromSelector(_cmd)];
+  @throw [NSException exceptionWithName:NSInternalInconsistencyException
+                                 reason:message
+                               userInfo:nil];
+}
+
 -(NSNumber *)fieldTemplate {
   NSString *message = [NSString stringWithFormat:@"You must override %@ in a subclass.", NSStringFromSelector(_cmd)];
   @throw [NSException exceptionWithName:NSInternalInconsistencyException
@@ -28,6 +35,14 @@
                                userInfo:nil];
 }
 
+-(id _Nullable)classTemplate_staticMethodTemplate:(REFReferencePairManager *)manager
+                                   parameterTemplate:(NSString *)parameterTemplate {
+  NSString *message = [NSString stringWithFormat:@"You must override %@ in a subclass.", NSStringFromSelector(_cmd)];
+  @throw [NSException exceptionWithName:NSInternalInconsistencyException
+                                 reason:message
+                               userInfo:nil];
+}
+
 - (nonnull id<REFLocalReference>)create:(nonnull REFReferencePairManager *)referencePairManager
                          referenceClass:(nonnull Class)referenceClass
                               arguments:(nonnull NSArray<id> *)arguments {
@@ -38,12 +53,24 @@
   return nil;
 }
 
+- (id _Nullable)invokeStaticMethod:(nonnull REFReferencePairManager *)referencePairManager
+                    referenceClass:(nonnull Class)referenceClass
+                        methodName:(nonnull NSString *)methodName
+                         arguments:(nonnull NSArray<id> *)arguments {
+  if (referenceClass == ClassTemplate.class) {
+    if ([methodName isEqualToString:@"staticMethodTemplate"]) {
+      return [self classTemplate_staticMethodTemplate:referencePairManager parameterTemplate:arguments[0]];
+    }
+  }
+  @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:nil userInfo:nil];
+}
+
 - (id _Nullable)invokeMethod:(nonnull REFReferencePairManager *)referencePairManager
               localReference:(nonnull id<REFLocalReference>)localReference
                   methodName:(nonnull NSString *)methodName
                    arguments:(nonnull NSArray<id> *)arguments {
   if (localReference.referenceClass.clazz == [ClassTemplate class]) {
-    if ([methodName  isEqual: @"methodTemplate"]) {
+    if ([methodName  isEqualToString: @"methodTemplate"]) {
       ClassTemplate *classTemplate = localReference;
       return [classTemplate methodTemplate:arguments[0]];
     }

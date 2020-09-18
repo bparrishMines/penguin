@@ -59,12 +59,23 @@
                             referenceClass:[TestClass class]
                                  arguments:anything()])
    willReturn:[TestClass testClass]];
-
+  
   [_testManager pairWithNewLocalReference:[[REFRemoteReference alloc] initWithReferenceID:@"apple"]
-                                                                                  classID:0];
-
+                                  classID:0];
+  
   XCTAssertNil([_testManager pairWithNewLocalReference:[[REFRemoteReference alloc] initWithReferenceID:@"apple"]
-                                                                                                 classID:0]);
+                                               classID:0]);
+}
+
+- (void)testReferencePairManager_invokeLocalStaticMethod {
+  [_testManager invokeLocalStaticMethod:[TestClass class] methodName:@"aStaticMethod"];
+  
+  [verify(_testManager.spyConverter.mock) convertReferencesForLocalManager:_testManager obj:isEmpty()];
+  [verify(_testManager.localHandler) invokeStaticMethod:_testManager
+                                         referenceClass:[TestClass class]
+                                             methodName:@"aStaticMethod"
+                                              arguments:isEmpty()];
+  [verify(_testManager.spyConverter.mock) convertReferencesForRemoteManager:_testManager obj:nil];
 }
 
 - (void)testReferencePairManager_invokeLocalMethod {
@@ -142,15 +153,34 @@
 - (void)testReferencePairManager_pairWithNewRemoteReference_returnsNull {
   [given([_testManager.remoteHandler getCreationArguments:isA([TestClass class])])
    willReturn:@[]];
-
+  
   TestClass *testClass = [TestClass testClass];
-
+  
   [_testManager pairWithNewRemoteReference:testClass completion:^(REFRemoteReference *remoteReference, NSError *error) {}];
   [_testManager pairWithNewRemoteReference:testClass completion:^(REFRemoteReference *remoteReference, NSError *error) {}];
   [verify(_testManager.remoteHandler) create:isA([REFRemoteReference class])
                                      classID:0
                                    arguments:isEmpty()
                                   completion:anything()];
+}
+
+- (void)testReferencePairManager_invokeRemoteStaticMethod {
+  [_testManager invokeRemoteStaticMethod:[TestClass class]
+                              methodName:@"aStaticMethod"
+                              completion:(^(id result, NSError *error) {})];
+  
+  [verify(_testManager.spyConverter.mock) convertReferencesForRemoteManager:_testManager obj:isEmpty()];
+  
+  HCArgumentCaptor *argument = [[HCArgumentCaptor alloc] init];
+  [verify(_testManager.remoteHandler) invokeStaticMethod:0
+                                              methodName:@"aStaticMethod"
+                                               arguments:isEmpty()
+                                              completion:(id)argument];
+  
+  void (^block)(id, NSError *) = argument.value;
+  block(nil, nil);
+  
+  [verify(_testManager.spyConverter.mock) convertReferencesForLocalManager:_testManager obj:nil];
 }
 
 - (void)testReferencePairManager_invokeRemoteMethod {
@@ -227,14 +257,14 @@
 
 - (void)testPoolableReferencePairManager_add {
   TestPoolableReferencePairManager *sameClassManager = [[TestPoolableReferencePairManager alloc]
-                                                       initWithSupportedClasses:@[[REFClass
-                                                                                   fromClass:[TestClass class]]]
-                                                       poolID:@"id3"];
+                                                        initWithSupportedClasses:@[[REFClass
+                                                                                    fromClass:[TestClass class]]]
+                                                        poolID:@"id3"];
   
   TestPoolableReferencePairManager *sameIdManager = [[TestPoolableReferencePairManager alloc]
-                                                    initWithSupportedClasses:@[[REFClass
-                                                                                fromClass:[TestClass2 class]]]
-                                                    poolID:@"id1"];
+                                                     initWithSupportedClasses:@[[REFClass
+                                                                                 fromClass:[TestClass2 class]]]
+                                                     poolID:@"id1"];
   
   XCTAssertTrue([_pool add:_testPoolableManager1]);
   XCTAssertTrue([_pool add:_testPoolableManager1]);
@@ -248,9 +278,9 @@
   [_pool remove:_testPoolableManager1];
   
   TestPoolableReferencePairManager *manager = [[TestPoolableReferencePairManager alloc]
-                                              initWithSupportedClasses:@[[REFClass
-                                                                          fromClass:[TestClass class]]]
-                                              poolID:@"id1"];
+                                               initWithSupportedClasses:@[[REFClass
+                                                                           fromClass:[TestClass class]]]
+                                               poolID:@"id1"];
   
   XCTAssertTrue([_pool add:manager]);
 }

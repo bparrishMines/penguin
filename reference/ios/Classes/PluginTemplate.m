@@ -18,6 +18,10 @@
   return self;
 }
 
++(NSNumber *)staticMethodTemplate:(NSString *)parameterTemplate {
+  return @(16.0);
+}
+
 -(NSNumber *)fieldTemplate {
   return _fieldTemplate;
 }
@@ -30,6 +34,11 @@
 @implementation LocalHandlerImpl
 -(ClassTemplate *)createClassTemplate:(REFReferencePairManager *)manager fieldTemplate:(NSNumber *)fieldTemplate {
   return [[ClassTemplateImpl alloc] initWithFieldTemplate:fieldTemplate];
+}
+
+-(id)classTemplate_staticMethodTemplate:(REFReferencePairManager *)manager
+                      parameterTemplate:(NSString *)parameterTemplate {
+  return [ClassTemplateImpl staticMethodTemplate:parameterTemplate];
 }
 @end
 

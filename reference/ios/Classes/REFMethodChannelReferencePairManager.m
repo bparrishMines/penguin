@@ -6,6 +6,7 @@ typedef NS_ENUM(NSInteger, REFReferenceField) {
 };
 
 NSString *const REFMethodCreate = @"REFERENCE_CREATE";
+NSString *const REFMethodStaticMethod = @"REFERENCE_STATIC_METHOD";
 NSString *const REFMethodMethod = @"REFERENCE_METHOD";
 NSString *const REFMethodDispose = @"REFERENCE_DISPOSE";
 
@@ -120,6 +121,23 @@ NSString *const REFMethodDispose = @"REFERENCE_DISPOSE";
   }];
 }
 
+- (void)invokeStaticMethod:(NSUInteger)classID
+                methodName:(NSString *)methodName
+                 arguments:(NSArray<id> *)arguments
+                completion:(void (^)(id _Nullable, NSError * _Nullable))completion {
+  [_channel invokeMethod:REFMethodStaticMethod
+               arguments:@[@(classID), methodName, arguments]
+                  result:^(id result) {
+    if ([result isKindOfClass:[FlutterError class]]) {
+      completion(nil, [[REFMethodChannelError alloc] initWithFlutterError:result]);
+    } else if ([result isEqual:FlutterMethodNotImplemented]) {
+      completion(nil, [[REFMethodChannelError alloc] initWithUnimplementedMethod:REFMethodMethod]);
+    } else {
+      completion(result, nil);
+    }
+  }];
+}
+
 - (void)invokeMethod:(nonnull REFRemoteReference *)remoteReference
           methodName:(nonnull NSString *)methodName
            arguments:(nonnull NSArray<id> *)arguments
@@ -202,6 +220,13 @@ NSString *const REFMethodDispose = @"REFERENCE_DISPOSE";
       NSNumber *classID = arguments[1];
       [weakSelf pairWithNewLocalReference:arguments[0] classID:classID.unsignedLongValue arguments:arguments[2]];
       channelResult(nil);
+    } else if ([REFMethodStaticMethod isEqualToString:call.method]) {
+      NSArray<id> *arguments = [call arguments];
+      NSNumber *classID = arguments[0];
+      NSObject *result = [weakSelf invokeLocalStaticMethod:[weakSelf getReferenceClass:classID.unsignedLongValue].clazz
+                                                methodName:arguments[1]
+                                                 arguments:arguments[2]];
+      channelResult(result);
     } else if ([REFMethodMethod isEqualToString:call.method]) {
       NSArray<id> *arguments = [call arguments];
       NSObject *result;
