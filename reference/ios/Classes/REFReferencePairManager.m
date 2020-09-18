@@ -164,6 +164,7 @@
                             methodName:(NSString *)methodName
                              arguments:(NSArray<id> *)arguments {
   [self assertInitialized];
+  NSAssert([self getClassID:[REFClass fromClass:referenceClass]] != -1, @"");
   id result = [self.localHandler invokeStaticMethod:self
                                      referenceClass:referenceClass
                                          methodName:methodName
@@ -253,6 +254,7 @@
                       arguments:(NSArray<id> *)arguments
                      completion:(void (^)(id _Nullable, NSError *_Nullable))completion {
   [self assertInitialized];
+  NSAssert([self getClassID:[REFClass fromClass:referenceClass]] != -1, @"");
   
   [self.remoteHandler invokeStaticMethod:[self getClassID:[REFClass fromClass:referenceClass]]
                               methodName:methodName

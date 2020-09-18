@@ -251,6 +251,7 @@ abstract class ReferencePairManager {
     List<Object> arguments,
   ]) {
     _assertIsInitialized();
+    assert(getTypeId(referenceType) != null);
     final Object result = localHandler.invokeStaticMethod(
       this,
       referenceType,
@@ -368,6 +369,7 @@ abstract class ReferencePairManager {
     List<Object> arguments,
   ]) async {
     _assertIsInitialized();
+    assert(getTypeId(referenceType) != null);
     final Object result = await remoteHandler.invokeStaticMethod(
       getTypeId(referenceType),
       methodName,

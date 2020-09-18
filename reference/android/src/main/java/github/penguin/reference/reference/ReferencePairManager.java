@@ -122,6 +122,8 @@ public abstract class ReferencePairManager {
                                        String methodName,
                                        List<Object> arguments) throws Exception {
     assertIsInitialized();
+    if (getClassId(referenceClass) == null) throw new AssertionError();
+
     final Object result =
         getLocalHandler()
             .invokeStaticMethod(
@@ -219,6 +221,7 @@ public abstract class ReferencePairManager {
                                                      String methodName,
                                                      List<Object> arguments) {
     assertIsInitialized();
+    if (getClassId(referenceClass) == null) throw new AssertionError();
 
     final Completable<Object> resultCompletable = getRemoteHandler()
         .invokeStaticMethod(
