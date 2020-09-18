@@ -35,6 +35,7 @@ mixin RemoteReferenceCommunicationHandler {
     List<Object> arguments,
   );
 
+  /// Invoke a static method on the type that is represented by [typeId].
   Future<Object> invokeStaticMethod(
     int typeId,
     String methodName,
@@ -96,6 +97,7 @@ mixin LocalReferenceCommunicationHandler {
     List<Object> arguments,
   );
 
+  /// Invoke a static method on [referenceType].
   Object invokeStaticMethod(
     ReferencePairManager referencePairManager,
     Type referenceType,
@@ -103,7 +105,7 @@ mixin LocalReferenceCommunicationHandler {
     List<Object> arguments,
   );
 
-  /// Invoke a method to be executed on the object instance represented by [localReference].
+  /// Invoke a method on the object instance represented by [localReference].
   Object invokeMethod(
     ReferencePairManager referencePairManager,
     LocalReference localReference,
@@ -245,6 +247,11 @@ abstract class ReferencePairManager {
     return localReference;
   }
 
+  /// Invoke a static method on [referenceType].
+  ///
+  /// This method uses [ReferenceConverter.convertForLocalManager] to convert
+  /// [arguments] and [ReferenceConverter.convertForRemoteManager] to convert
+  /// the result.
   Object invokeLocalStaticMethod(
     Type referenceType,
     String methodName, [
@@ -265,7 +272,8 @@ abstract class ReferencePairManager {
   /// Invoke a method on [localReference].
   ///
   /// This method uses [ReferenceConverter.convertForLocalManager] to convert
-  /// [arguments].
+  /// [arguments] and [ReferenceConverter.convertForRemoteManager] to convert
+  /// the result.
   Object invokeLocalMethod(
     LocalReference localReference,
     String methodName, [
@@ -286,7 +294,8 @@ abstract class ReferencePairManager {
   /// Creates a [LocalReference] from [unpairedReference] and invoke a method.
   ///
   /// This method uses [ReferenceConverter.convertForLocalManager] to convert
-  /// [arguments].
+  /// [arguments] and [ReferenceConverter.convertForRemoteManager] to convert
+  /// the result.
   Object invokeLocalMethodOnUnpairedReference(
     UnpairedReference unpairedReference,
     String methodName, [
@@ -363,6 +372,11 @@ abstract class ReferencePairManager {
     return remoteReference;
   }
 
+  /// Invoke a static method on [referenceType].
+  ///
+  /// This method uses [ReferenceConverter.convertForRemoteManager] to convert
+  /// [arguments] and [ReferenceConverter.convertForLocalManager] to convert
+  /// the result.
   Future<Object> invokeRemoteStaticMethod(
     Type referenceType,
     String methodName, [
@@ -382,7 +396,8 @@ abstract class ReferencePairManager {
   /// Invoke a method on [remoteReference].
   ///
   /// This method uses [ReferenceConverter.convertForRemoteManager] to convert
-  /// [arguments].
+  /// [arguments] and [ReferenceConverter.convertForLocalManager] to convert
+  /// the result.
   Future<Object> invokeRemoteMethod(
     RemoteReference remoteReference,
     String methodName, [
@@ -402,7 +417,8 @@ abstract class ReferencePairManager {
   /// Creates an [UnpairedReference] from [localReference] and invokes a method on a remote version of the [UnpairedReference].
   ///
   /// This method uses [ReferenceConverter.convertForRemoteManager] to convert
-  /// [arguments].
+  /// [arguments] and [ReferenceConverter.convertForLocalManager] to convert
+  /// the result.
   Future<Object> invokeRemoteMethodOnUnpairedReference(
     LocalReference localReference,
     String methodName, [
