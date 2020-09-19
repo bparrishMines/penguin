@@ -1,3 +1,7 @@
+## 0.1.4
+
+* Add support for static methods.
+
 ## 0.1.3
 
 * Removed quiver and uuid Dart dependencies.
