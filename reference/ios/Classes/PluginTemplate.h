@@ -2,7 +2,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface ClassTemplateImpl : ClassTemplate
+@interface ClassTemplate : _ClassTemplate
 -(instancetype)initWithFieldTemplate:(NSNumber *)fieldTemplate;
 @end
 

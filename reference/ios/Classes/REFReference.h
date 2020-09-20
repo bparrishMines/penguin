@@ -2,7 +2,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface REFClass : NSObject
+@interface REFClass : NSObject<NSCopying>
 @property (readonly) Class clazz;
 + (REFClass *)fromClass:(Class)clazz;
 @end

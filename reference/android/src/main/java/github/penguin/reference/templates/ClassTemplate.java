@@ -3,7 +3,7 @@ package github.penguin.reference.templates;
 import github.penguin.reference.reference.LocalReference;
 import github.penguin.reference.templates.$TemplateReferencePairManager.$ClassTemplate;
 
-public class ClassTemplate implements $ClassTemplate {
+public class ClassTemplate extends $ClassTemplate {
   private final Integer fieldTemplate;
 
   public static Double staticMethodTemplate(String parameterTemplate) {
@@ -22,10 +22,5 @@ public class ClassTemplate implements $ClassTemplate {
   @Override
   public Object methodTemplate(final String parameterTemplate) {
     return parameterTemplate + " World!";
-  }
-
-  @Override
-  public Class<? extends LocalReference> getReferenceClass() {
-    return $ClassTemplate.class;
   }
 }

@@ -14,6 +14,7 @@ public class ReferencePlugin implements FlutterPlugin {
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
+    // TODO(bparrishMines): Check if in debug mode or not.
     new PluginTemplate().onAttachedToEngine(binding);
   }
 

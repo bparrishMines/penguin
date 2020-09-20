@@ -6,7 +6,7 @@
 @interface ReferencePairManagerTemplate : _TemplateReferencePairManager
 @end
 
-@implementation ClassTemplateImpl {
+@implementation ClassTemplate {
   NSNumber *_fieldTemplate;
 }
 
@@ -19,7 +19,7 @@
 }
 
 +(NSNumber *)staticMethodTemplate:(NSString *)parameterTemplate {
-  return @(16.0);
+  return @(parameterTemplate.length / 1.0);
 }
 
 -(NSNumber *)fieldTemplate {
@@ -32,13 +32,13 @@
 @end
 
 @implementation LocalHandlerImpl
--(ClassTemplate *)createClassTemplate:(REFReferencePairManager *)manager fieldTemplate:(NSNumber *)fieldTemplate {
-  return [[ClassTemplateImpl alloc] initWithFieldTemplate:fieldTemplate];
+-(_ClassTemplate *)createClassTemplate:(REFReferencePairManager *)manager fieldTemplate:(NSNumber *)fieldTemplate {
+  return [[ClassTemplate alloc] initWithFieldTemplate:fieldTemplate];
 }
 
 -(id)classTemplate_staticMethodTemplate:(REFReferencePairManager *)manager
                       parameterTemplate:(NSString *)parameterTemplate {
-  return [ClassTemplateImpl staticMethodTemplate:parameterTemplate];
+  return [ClassTemplate staticMethodTemplate:parameterTemplate];
 }
 @end
 

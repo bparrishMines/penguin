@@ -27,6 +27,10 @@
 - (NSUInteger)hash {
   return NSStringFromClass(_clazz).hash;
 }
+
+- (nonnull id)copyWithZone:(nullable NSZone *)zone {
+  return [REFClass fromClass:_clazz];
+}
 @end
 
 @implementation REFRemoteReference

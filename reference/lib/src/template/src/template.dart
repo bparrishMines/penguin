@@ -11,18 +11,18 @@ class _ReferencePairManagerTemplate extends _$TemplateReferencePairManager {
   _ReferencePairManagerTemplate() : super('github.penguin/reference/template');
 
   @override
-  _$LocalReferenceCommunicationHandler get localHandler =>
-      _$LocalReferenceCommunicationHandler(
-          createClassTemplate: (
-            ReferencePairManager referencePairManager,
-            int fieldTemplate,
-          ) =>
-              ClassTemplate(fieldTemplate),
-          classTemplate$staticMethodTemplate:
-              (ReferencePairManager referencePairManager,
-                  String parameterTemplate) {
-            return 62.0;
-          });
+  _$LocalHandler get localHandler => _$LocalHandler(
+      createClassTemplate: (
+        ReferencePairManager referencePairManager,
+        int fieldTemplate,
+      ) =>
+          ClassTemplate(fieldTemplate),
+      classTemplate$staticMethodTemplate: (
+        ReferencePairManager referencePairManager,
+        String parameterTemplate,
+      ) {
+        return 62.0;
+      });
 }
 
 class ClassTemplate with LocalReference, _$ClassTemplateMethods {
@@ -31,10 +31,9 @@ class ClassTemplate with LocalReference, _$ClassTemplateMethods {
   final int fieldTemplate;
 
   static Future<double> staticMethodTemplate(String parameterTemplate) async {
-    return (await _referencePairManager.invokeRemoteStaticMethod(
-      ClassTemplate,
-      'staticMethodTemplate',
-      <Object>[parameterTemplate],
+    return (await _$ClassTemplateMethods._$staticMethodTemplate(
+      _referencePairManager,
+      parameterTemplate,
     )) as double;
   }
 
