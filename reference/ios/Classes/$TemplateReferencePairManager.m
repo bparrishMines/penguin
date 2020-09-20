@@ -128,19 +128,19 @@ static NSDictionary<REFClass *, _CreationArgumentsHandler> *creationArguments = 
               localReference:(nonnull id<REFLocalReference>)localReference
                   methodName:(nonnull NSString *)methodName
                    arguments:(nonnull NSArray<id> *)arguments {
-  _LocalMethodHandler handler = methods[[REFClass fromClass:localReference.class]][methodName];
-  if (!handler) return handler(localReference, arguments);
+  _LocalMethodHandler handler = methods[localReference.referenceClass][methodName];
+  if (handler) return handler(localReference, arguments);
   
   // Based on inheritance.
   if ([localReference isKindOfClass:_ClassTemplate.class]) {
-    if ([@"methodTempate" isEqualToString:methodName]) {
+    if ([@"methodTemplate" isEqualToString:methodName]) {
       _ClassTemplate *value = localReference;
       return [value methodTemplate:arguments[0]];
     }
   }
   
-  NSString *reason = [NSString stringWithFormat:@"Unable to invoke method `$methodName` on (localReference): %@",
-                      localReference.description];
+  NSString *reason = [NSString stringWithFormat:@"Unable to invoke method `%@` on (localReference): %@",
+                      methodName, localReference.description];
   @throw [NSException exceptionWithName:NSInvalidArgumentException reason:reason userInfo:nil];
 }
 @end
@@ -160,7 +160,7 @@ static NSDictionary<REFClass *, _CreationArgumentsHandler> *creationArguments = 
 }
 
 - (NSArray<id> *)getCreationArguments:(id<REFLocalReference>)localReference {
-  return creationArguments[[REFClass fromClass:_ClassTemplate.class]](localReference);
+  return creationArguments[localReference.referenceClass](localReference);
 }
 @end
 
