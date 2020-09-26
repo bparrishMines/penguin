@@ -1,0 +1,15 @@
+targets:
+  reference_generator:reference_generator:
+    builders:
+      reference_generator|reference_generator:
+        enabled: false
+
+builders:
+  reference_generator:
+    import: 'package:reference_generator/reference_generator.dart'
+    builder_factories: ['referenceGenerator']
+    build_extensions:
+      .dart:
+        - .g.txt
+    build_to: source
+    auto_apply: none
