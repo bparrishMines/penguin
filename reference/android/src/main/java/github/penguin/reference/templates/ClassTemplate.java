@@ -1,6 +1,5 @@
 package github.penguin.reference.templates;
 
-import github.penguin.reference.reference.LocalReference;
 import github.penguin.reference.templates.$TemplateReferencePairManager.$ClassTemplate;
 
 public class ClassTemplate extends $ClassTemplate {

@@ -6,7 +6,9 @@ import 'reference_pair_manager.dart';
 ///   [LocalReference]
 ///   [RemoteReference]
 ///   [UnpairedReference]
-mixin Reference {}
+class Reference {
+  const Reference();
+}
 
 /// Represents an object that is locally accessible.
 ///
