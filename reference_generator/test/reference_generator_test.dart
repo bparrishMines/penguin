@@ -1,5 +1,6 @@
-import 'package:build/build.dart';
-import 'package:reference_generator/builder.dart';
+import 'dart:convert';
+
+import 'package:reference_generator/src/ast.dart';
 import 'package:reference_generator/src/reference_generator.dart';
 import 'package:test/test.dart';
 import 'package:build_test/build_test.dart';
@@ -10,10 +11,18 @@ void main() {
         rootPackage: 'reference_generator');
 
     await testBuilder(
-        DartBuilder(), {'reference_generator|src/some_file.dart': ''},
+        ReferenceAstBuilder(),
+        {
+          'reference_generator|src/some_file.dart': '''
+import 'package:reference/reference.dart';
+
+@Reference()
+class Apple { }
+'''
+        },
         outputs: {
-          'reference_generator|src/some_file.g.dart':
-              'void main() {print(\'hi\');}'
+          'reference_generator|src/some_file.reference_ast':
+              jsonEncode(LibraryNode(<ClassNode>[ClassNode('Apple')])),
         },
         reader: reader);
   });

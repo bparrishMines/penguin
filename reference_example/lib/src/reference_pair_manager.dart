@@ -72,4 +72,10 @@ class MyLocalHandler implements LocalReferenceCommunicationHandler {
   ) {
     // Do additional closing.
   }
+
+  @override
+  Object invokeStaticMethod(ReferencePairManager referencePairManager, Type referenceType, String methodName, List<Object> arguments) {
+    // TODO: implement invokeStaticMethod
+    throw UnimplementedError();
+  }
 }
