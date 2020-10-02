@@ -5,6 +5,215 @@ import 'package:args/args.dart';
 import 'package:path/path.dart' as path;
 import 'package:reference_generator/src/ast.dart';
 
+final String darty = r'''import 'package:reference/reference.dart';
+
+// Helper Typedefs
+typedef _$LocalCreatorHandler = LocalReference Function(
+  $LocalHandler localHandler,
+  ReferencePairManager manager,
+  List<Object> arguments,
+);
+
+typedef _$LocalStaticMethodHandler = Object Function(
+  $LocalHandler localHandler,
+  ReferencePairManager manager,
+  List<Object> arguments,
+);
+
+typedef _$LocalMethodHandler = Object Function(
+  LocalReference localReference,
+  List<Object> arguments,
+);
+
+typedef _$CreationArgumentsHandler = List<Object> Function(
+  LocalReference localReference,
+);
+
+// Classes
+abstract class $ClassTemplate implements LocalReference {
+  int get fieldTemplate;
+
+  Future<String> methodTemplate(String parameterTemplate);
+
+  @override
+  Type get referenceType => $ClassTemplate;
+}
+
+// Class Extensions
+extension $ClassTemplateMethods on $ClassTemplate {
+  static Future<Object> $staticMethodTemplate(
+    $ReferencePairManager referencePairManager,
+    String parameterTemplate,
+  ) {
+    return referencePairManager.invokeRemoteStaticMethod(
+      $ClassTemplate,
+      'staticMethodTemplate',
+      <Object>[parameterTemplate],
+    );
+  }
+
+  Future<Object> $methodTemplate(
+    $ReferencePairManager referencePairManager,
+    String parameterTemplate,
+  ) {
+    if (referencePairManager.getPairedRemoteReference(this) == null) {
+      return referencePairManager.invokeRemoteMethodOnUnpairedReference(
+        this,
+        'methodTemplate',
+        <Object>[parameterTemplate],
+      );
+    }
+
+    return referencePairManager.invokeRemoteMethod(
+      referencePairManager.getPairedRemoteReference(this),
+      'methodTemplate',
+      <Object>[parameterTemplate],
+    );
+  }
+}
+
+// Reference Pair Manager
+abstract class $ReferencePairManager extends MethodChannelReferencePairManager {
+  $ReferencePairManager(
+    String channelName, {
+    ReferenceMessageCodec messageCodec,
+  }) : super(
+          <Type>[$ClassTemplate],
+          channelName,
+          messageCodec: messageCodec,
+          poolId: channelName,
+        );
+
+  @override
+  $LocalHandler get localHandler;
+
+  @override
+  MethodChannelRemoteHandler get remoteHandler => $RemoteHandler(channel.name);
+}
+
+// LocalReferenceCommunicationHandler
+class $LocalHandler with LocalReferenceCommunicationHandler {
+  const $LocalHandler({
+    this.createClassTemplate,
+    this.classTemplate$staticMethodTemplate,
+  });
+
+  static final Map<Type, _$LocalCreatorHandler> _creators =
+      <Type, _$LocalCreatorHandler>{
+    $ClassTemplate: (
+      $LocalHandler localHandler,
+      ReferencePairManager manager,
+      List<Object> arguments,
+    ) {
+      return localHandler.createClassTemplate(manager, arguments[0]);
+    },
+  };
+
+  static final Map<Type, Map<String, _$LocalStaticMethodHandler>>
+      _staticMethods = <Type, Map<String, _$LocalStaticMethodHandler>>{
+    $ClassTemplate: <String, _$LocalStaticMethodHandler>{
+      'staticMethodTemplate': (
+        $LocalHandler localHandler,
+        ReferencePairManager manager,
+        List<Object> arguments,
+      ) {
+        return localHandler.classTemplate$staticMethodTemplate(
+          manager,
+          arguments[0],
+        );
+      },
+    },
+  };
+
+  static final Map<Type, Map<String, _$LocalMethodHandler>> _methods =
+      <Type, Map<String, _$LocalMethodHandler>>{
+    $ClassTemplate: <String, _$LocalMethodHandler>{
+      'methodTemplate': (
+        LocalReference localReference,
+        List<Object> arguments,
+      ) {
+        return (localReference as $ClassTemplate).methodTemplate(arguments[0]);
+      },
+    },
+  };
+
+  final double Function(
+    ReferencePairManager manager,
+    String parameterTemplate,
+  ) classTemplate$staticMethodTemplate;
+
+  final $ClassTemplate Function(
+    ReferencePairManager manager,
+    int fieldTemplate,
+  ) createClassTemplate;
+
+  @override
+  LocalReference create(
+    ReferencePairManager manager,
+    Type referenceType,
+    List<Object> arguments,
+  ) {
+    return _creators[referenceType](this, manager, arguments);
+  }
+
+  @override
+  Object invokeStaticMethod(
+    ReferencePairManager referencePairManager,
+    Type referenceType,
+    String methodName,
+    List<Object> arguments,
+  ) {
+    return _staticMethods[referenceType][methodName](
+      this,
+      referencePairManager,
+      arguments,
+    );
+  }
+
+  @override
+  Object invokeMethod(
+    ReferencePairManager referencePairManager,
+    LocalReference localReference,
+    String methodName,
+    List<Object> arguments,
+  ) {
+    final _$LocalMethodHandler handler =
+        _methods[localReference.referenceType][methodName];
+    if (handler != null) return handler(localReference, arguments);
+
+    // Based on inheritance.
+    if (localReference is $ClassTemplate) {
+      switch (methodName) {
+        case 'methodTemplate':
+          return localReference.methodTemplate(arguments[0]);
+      }
+    }
+
+    throw ArgumentError.value(
+      localReference,
+      'localReference',
+      'Unable to invoke method `$methodName` on',
+    );
+  }
+}
+
+// MethodChannelRemoteHandler
+class $RemoteHandler extends MethodChannelRemoteHandler {
+  static final Map<Type, _$CreationArgumentsHandler> _creationArguments =
+      <Type, _$CreationArgumentsHandler>{
+    $ClassTemplate: (LocalReference localReference) {
+      return <Object>[(localReference as $ClassTemplate).fieldTemplate];
+    },
+  };
+
+  $RemoteHandler(String channelName) : super(channelName);
+
+  @override
+  List<Object> getCreationArguments(LocalReference localReference) {
+    return _creationArguments[localReference.referenceType](localReference);
+  }
+}''';
+
 final ArgParser parser = ArgParser()
   ..addOption('package-root', defaultsTo: '.')
   ..addOption('dart-out')
@@ -41,16 +250,79 @@ void main(List<String> arguments) async {
     ),
   );
 
-  final HttpClientRequest request = await HttpClient().getUrl(Uri.parse(
-      'https://raw.githubusercontent.com/bparrishMines/penguin/reference_generator/reference/lib/src/template/src/template.g.dart'));
-  final HttpClientResponse response = await request.close();
+  // final HttpClientRequest request = await HttpClient().getUrl(Uri.parse(
+  //     'https://raw.githubusercontent.com/bparrishMines/penguin/reference_generator/reference/lib/src/template/src/template.g.dart'));
+  // await request.done;
+  // final HttpClientResponse response = await request.close();
+  //
+  // final StringBuffer buffer = StringBuffer()
+  //   ..writeAll(await response.transform(utf8.decoder).toList());
+  //
+  //final String dartTemplate = buffer.toString();
 
-  final StringBuffer buffer = StringBuffer()
-    ..writeAll(await response.transform(utf8.decoder).toList());
-
-  final String dartTemplate = buffer.toString();
-
-  options?.dartOut?.writeAsStringSync(dartTemplate);
+  //final String aClass = DartTemplateLibrary.aClass.stringMatch(darty);
+  final String Function(ReferenceType type) getTrueTypeName =
+      (ReferenceType type) {
+    if (type.codeGeneratedClass) return '\$${type.name}';
+    return type.name;
+  };
+  options?.dartOut?.writeAsStringSync(
+    darty.replaceAll(
+      DartTemplateLibrary.aClass,
+      libraryNode.classes
+          .map<String>(
+            (ClassNode classNode) => DartTemplateLibrary.aClass
+                .stringMatch(darty)
+                .replaceAll(DartTemplateClass.name, classNode.name)
+                .replaceAll(
+                  DartTemplateClass.aField,
+                  classNode.fields
+                      .map<String>(
+                        (FieldNode fieldNode) => DartTemplateClass.aField
+                            .replaceAll(DartTemplateField.name, fieldNode.name)
+                            .replaceAll(DartTemplateField.type,
+                                getTrueTypeName(fieldNode.type)),
+                      )
+                      .join('\n'),
+                )
+                .replaceAll(
+                  DartTemplateClass.aMethod,
+                  classNode.methods
+                      .map<String>(
+                        (MethodNode methodNode) => DartTemplateClass.aMethod
+                            .replaceAll(
+                              DartTemplateMethod.returnType,
+                              getTrueTypeName(methodNode.returnType),
+                            )
+                            .replaceAll(
+                              DartTemplateMethod.name,
+                              methodNode.name,
+                            )
+                            .replaceAll(
+                                DartTemplateMethod.aParameter,
+                                methodNode.parameters
+                                    .map<String>(
+                                      (ParameterNode parameterNode) =>
+                                          DartTemplateMethod.aParameter
+                                              .replaceAll(
+                                                DartTemplateParameter.type,
+                                                getTrueTypeName(
+                                                  parameterNode.type,
+                                                ),
+                                              )
+                                              .replaceAll(
+                                                DartTemplateParameter.name,
+                                                parameterNode.name,
+                                              ),
+                                    )
+                                    .join(', ')),
+                      )
+                      .join('\n\n'),
+                ),
+          )
+          .join('\n\n'),
+    ),
+  );
 }
 
 class ReferenceGeneratorOptions {
@@ -78,4 +350,69 @@ class ReferenceGeneratorOptions {
   final File packageRoot;
   final File dartOut;
   final File inputFile;
+}
+
+class DartTemplateLibrary {
+  static final RegExp aClass = RegExp(
+    r'abstract\sclass\s\$ClassTemplate.+?Type\sget\sreferenceType\s=>\s\$ClassTemplate;.+?}',
+    multiLine: true,
+    dotAll: true,
+  );
+}
+
+class DartTemplateClass {
+  static final RegExp name = RegExp(
+    r'ClassTemplate(?=.+?implements|;.*?\})',
+    multiLine: true,
+    dotAll: true,
+  );
+
+  static final String aField = 'int get fieldTemplate;';
+
+  static final String aMethod =
+      r'Future<String> methodTemplate(String parameterTemplate);';
+}
+
+class DartTemplateField {
+  static final RegExp type = RegExp(
+    r'^int',
+    multiLine: true,
+    dotAll: true,
+  );
+
+  static final RegExp name = RegExp(
+    r'fieldTemplate(?=;)',
+    multiLine: true,
+    dotAll: true,
+  );
+}
+
+class DartTemplateMethod {
+  static final RegExp returnType = RegExp(
+    r'^Future<String>',
+    multiLine: true,
+    dotAll: true,
+  );
+
+  static final RegExp name = RegExp(
+    'methodTemplate(?=\\($aParameter\\);)',
+    multiLine: true,
+    dotAll: true,
+  );
+
+  static final String aParameter = 'String parameterTemplate';
+}
+
+class DartTemplateParameter {
+  static final RegExp type = RegExp(
+    r'^String',
+    multiLine: true,
+    dotAll: true,
+  );
+
+  static final RegExp name = RegExp(
+    r'parameterTemplate$',
+    multiLine: true,
+    dotAll: true,
+  );
 }

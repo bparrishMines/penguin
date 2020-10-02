@@ -1,5 +1,3 @@
-import 'reference_pair_manager.dart';
-
 /// Represents a specific object instance.
 ///
 /// See:

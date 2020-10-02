@@ -30,11 +30,6 @@ abstract class $ClassTemplate implements LocalReference {
 
   @override
   Type get referenceType => $ClassTemplate;
-
-  @override
-  String toString() {
-    return '${$ClassTemplate}($fieldTemplate)';
-  }
 }
 
 // Class Extensions

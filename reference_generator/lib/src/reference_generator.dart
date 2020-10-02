@@ -3,6 +3,9 @@ import 'dart:convert';
 
 import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
+// The builder can't access Flutter, so this access just the independent reference file.
+// TODO: Expose this in reference plugin
+import 'package:reference/src/reference.dart';
 import 'package:source_gen/source_gen.dart';
 
 import 'ast.dart';
@@ -16,7 +19,15 @@ class ReferenceAstBuilder extends Builder {
     if (!await resolver.isLibrary(buildStep.inputId)) return null;
 
     final LibraryReader reader = LibraryReader(await buildStep.inputLibrary);
-    final LibraryNode ast = _toLibraryNode(reader.element, reader.classes);
+
+    final Iterable<ClassElement> classes = reader
+        .annotatedWith(const TypeChecker.fromRuntime(Reference))
+        .map<ClassElement>(
+            (AnnotatedElement annotatedElement) => annotatedElement.element);
+
+    if (classes.isEmpty) return;
+
+    final LibraryNode ast = _toLibraryNode(reader.element, classes);
 
     await buildStep.writeAsString(newFile, jsonEncode(ast));
   }
@@ -26,14 +37,92 @@ class ReferenceAstBuilder extends Builder {
     Iterable<ClassElement> classes,
   ) {
     return LibraryNode(
-      classes.map<ClassNode>(
-        (ClassElement classElement) => _toClassNode(classElement),
-      ).toList(),
+      classes
+          .map<ClassNode>(
+            (ClassElement classElement) =>
+                _toClassNode(classElement, classes.toSet()),
+          )
+          .toList(),
     );
   }
 
-  ClassNode _toClassNode(ClassElement classElement) {
-    return ClassNode(classElement.name);
+  ClassNode _toClassNode(
+      ClassElement classElement, Set<ClassElement> allGeneratedClasses) {
+    List<ParameterElement> parameters;
+    final ConstructorElement defaultConstructor = classElement.constructors
+        .firstWhere(
+            (ConstructorElement constructorElement) =>
+                constructorElement.name.isEmpty,
+            orElse: () => null);
+    if (defaultConstructor == null) {
+      parameters = <ParameterElement>[];
+    } else {
+      parameters = defaultConstructor.parameters;
+    }
+    return ClassNode(
+      name: classElement.name,
+      fields: parameters
+          .map<FieldNode>((ParameterElement parameterElement) =>
+              _toFieldNode(parameterElement, allGeneratedClasses))
+          .toList(),
+      methods: classElement.methods
+          .where((MethodElement element) => !element.isPrivate)
+          .where((MethodElement methodElement) => !methodElement.isStatic)
+          .map<MethodNode>(
+            (MethodElement methodElement) =>
+                _toMethodNode(methodElement, allGeneratedClasses),
+          )
+          .toList(),
+      staticMethods: classElement.methods
+          .where((MethodElement element) => !element.isPrivate)
+          .where((MethodElement methodElement) => methodElement.isStatic)
+          .map<MethodNode>(
+            (MethodElement methodElement) =>
+                _toMethodNode(methodElement, allGeneratedClasses),
+          )
+          .toList(),
+    );
+  }
+
+  FieldNode _toFieldNode(ParameterElement parameterElement,
+      Set<ClassElement> allGeneratedClasses) {
+    return FieldNode(
+      name: parameterElement.name,
+      type: ReferenceType(
+          name: parameterElement.type.getDisplayString(withNullability: false),
+          codeGeneratedClass:
+              allGeneratedClasses.contains(parameterElement.type.element)),
+    );
+  }
+
+  MethodNode _toMethodNode(
+      MethodElement methodElement, Set<ClassElement> allGeneratedClasses) {
+    return MethodNode(
+      name: methodElement.name,
+      returnType: ReferenceType(
+          name:
+              methodElement.returnType.getDisplayString(withNullability: false),
+          codeGeneratedClass:
+              allGeneratedClasses.contains(methodElement.returnType.element)),
+      parameters: methodElement.parameters
+          .map<ParameterNode>(
+            (ParameterElement parameterElement) =>
+                _toParameterNode(parameterElement, allGeneratedClasses),
+          )
+          .toList(),
+    );
+  }
+
+  ParameterNode _toParameterNode(ParameterElement parameterElement,
+      Set<ClassElement> allGeneratedClasses) {
+    return ParameterNode(
+      name: parameterElement.name,
+      type: ReferenceType(
+        name: parameterElement.type.getDisplayString(withNullability: false),
+        codeGeneratedClass:
+            allGeneratedClasses.contains(parameterElement.type.element),
+      ),
+    );
   }
 
   @override
