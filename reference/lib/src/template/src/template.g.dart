@@ -35,9 +35,7 @@ abstract class $ClassTemplate implements LocalReference {
 // Class Extensions
 extension $ClassTemplateMethods on $ClassTemplate {
   static Future<Object> $staticMethodTemplate(
-    $ReferencePairManager referencePairManager,
-    String parameterTemplate,
-  ) {
+      $ReferencePairManager referencePairManager, String parameterTemplate) {
     return referencePairManager.invokeRemoteStaticMethod(
       $ClassTemplate,
       'staticMethodTemplate',
@@ -46,9 +44,7 @@ extension $ClassTemplateMethods on $ClassTemplate {
   }
 
   Future<Object> $methodTemplate(
-    $ReferencePairManager referencePairManager,
-    String parameterTemplate,
-  ) {
+      $ReferencePairManager referencePairManager, String parameterTemplate) {
     if (referencePairManager.getPairedRemoteReference(this) == null) {
       return referencePairManager.invokeRemoteMethodOnUnpairedReference(
         this,
