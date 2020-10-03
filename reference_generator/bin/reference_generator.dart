@@ -5,6 +5,8 @@ import 'package:args/args.dart';
 import 'package:path/path.dart' as path;
 import 'package:reference_generator/src/ast.dart';
 
+import 'dart_generator.dart' show generateDart;
+
 final String darty = r'''import 'package:reference/reference.dart';
 
 // Helper Typedefs
@@ -43,7 +45,7 @@ abstract class $ClassTemplate implements LocalReference {
 extension $ClassTemplateMethods on $ClassTemplate {
   static Future<Object> $staticMethodTemplate(
     $ReferencePairManager referencePairManager,
-    String parameterTemplate,
+    String parameterTemplate
   ) {
     return referencePairManager.invokeRemoteStaticMethod(
       $ClassTemplate,
@@ -54,7 +56,7 @@ extension $ClassTemplateMethods on $ClassTemplate {
 
   Future<Object> $methodTemplate(
     $ReferencePairManager referencePairManager,
-    String parameterTemplate,
+    String parameterTemplate
   ) {
     if (referencePairManager.getPairedRemoteReference(this) == null) {
       return referencePairManager.invokeRemoteMethodOnUnpairedReference(
@@ -217,7 +219,8 @@ class $RemoteHandler extends MethodChannelRemoteHandler {
 final ArgParser parser = ArgParser()
   ..addOption('package-root', defaultsTo: '.')
   ..addOption('dart-out')
-  ..addFlag('help');
+  ..addFlag('help')
+  ..addFlag('build', abbr: 'b', defaultsTo: true);
 
 void main(List<String> arguments) async {
   final ArgResults results = parser.parse(arguments);
@@ -227,15 +230,17 @@ void main(List<String> arguments) async {
   }
   final options = ReferenceGeneratorOptions.parse(results);
 
-  final Process process = await Process.start(
-    'flutter',
-    ['pub', 'run', 'build_runner', 'build'],
-    workingDirectory: options.packageRoot.path,
-  );
+  if (options.build) {
+    final Process process = await Process.start(
+      'flutter',
+      ['pub', 'run', 'build_runner', 'build'],
+      workingDirectory: options.packageRoot.path,
+    );
 
-  process.stdout.transform(utf8.decoder).listen((String data) => print(data));
-  process.stderr.transform(utf8.decoder).listen((String data) => print(data));
-  await process.exitCode;
+    process.stdout.transform(utf8.decoder).listen((String data) => print(data));
+    process.stderr.transform(utf8.decoder).listen((String data) => print(data));
+    await process.exitCode;
+  }
 
   final File astInputFile = File(path.setExtension(
     path.withoutExtension(options.inputFile.path),
@@ -260,73 +265,16 @@ void main(List<String> arguments) async {
   //
   //final String dartTemplate = buffer.toString();
 
-  //final String aClass = DartTemplateLibrary.aClass.stringMatch(darty);
-  final String Function(ReferenceType type) getTrueTypeName =
-      (ReferenceType type) {
-    if (type.codeGeneratedClass) return '\$${type.name}';
-    return type.name;
-  };
-  options?.dartOut?.writeAsStringSync(
-    darty.replaceAll(
-      DartTemplateLibrary.aClass,
-      libraryNode.classes
-          .map<String>(
-            (ClassNode classNode) => DartTemplateLibrary.aClass
-                .stringMatch(darty)
-                .replaceAll(DartTemplateClass.name, classNode.name)
-                .replaceAll(
-                  DartTemplateClass.aField,
-                  classNode.fields
-                      .map<String>(
-                        (FieldNode fieldNode) => DartTemplateClass.aField
-                            .replaceAll(DartTemplateField.name, fieldNode.name)
-                            .replaceAll(DartTemplateField.type,
-                                getTrueTypeName(fieldNode.type)),
-                      )
-                      .join('\n'),
-                )
-                .replaceAll(
-                  DartTemplateClass.aMethod,
-                  classNode.methods
-                      .map<String>(
-                        (MethodNode methodNode) => DartTemplateClass.aMethod
-                            .replaceAll(
-                              DartTemplateMethod.returnType,
-                              getTrueTypeName(methodNode.returnType),
-                            )
-                            .replaceAll(
-                              DartTemplateMethod.name,
-                              methodNode.name,
-                            )
-                            .replaceAll(
-                                DartTemplateMethod.aParameter,
-                                methodNode.parameters
-                                    .map<String>(
-                                      (ParameterNode parameterNode) =>
-                                          DartTemplateMethod.aParameter
-                                              .replaceAll(
-                                                DartTemplateParameter.type,
-                                                getTrueTypeName(
-                                                  parameterNode.type,
-                                                ),
-                                              )
-                                              .replaceAll(
-                                                DartTemplateParameter.name,
-                                                parameterNode.name,
-                                              ),
-                                    )
-                                    .join(', ')),
-                      )
-                      .join('\n\n'),
-                ),
-          )
-          .join('\n\n'),
-    ),
-  );
+  options?.dartOut?.writeAsStringSync(generateDart(darty, libraryNode));
 }
 
 class ReferenceGeneratorOptions {
-  ReferenceGeneratorOptions._({this.packageRoot, this.dartOut, this.inputFile});
+  ReferenceGeneratorOptions._({
+    this.packageRoot,
+    this.dartOut,
+    this.inputFile,
+    this.build,
+  });
 
   factory ReferenceGeneratorOptions.parse(ArgResults results) {
     if (results.rest.isEmpty || results.rest.length > 1) {
@@ -344,75 +292,12 @@ class ReferenceGeneratorOptions {
       packageRoot: File(results['package-root']),
       dartOut: results.wasParsed('dart-out') ? File(results['dart-out']) : null,
       inputFile: File(results.rest.first),
+      build: results['build'],
     );
   }
 
   final File packageRoot;
   final File dartOut;
   final File inputFile;
-}
-
-class DartTemplateLibrary {
-  static final RegExp aClass = RegExp(
-    r'abstract\sclass\s\$ClassTemplate.+?Type\sget\sreferenceType\s=>\s\$ClassTemplate;.+?}',
-    multiLine: true,
-    dotAll: true,
-  );
-}
-
-class DartTemplateClass {
-  static final RegExp name = RegExp(
-    r'ClassTemplate(?=.+?implements|;.*?\})',
-    multiLine: true,
-    dotAll: true,
-  );
-
-  static final String aField = 'int get fieldTemplate;';
-
-  static final String aMethod =
-      r'Future<String> methodTemplate(String parameterTemplate);';
-}
-
-class DartTemplateField {
-  static final RegExp type = RegExp(
-    r'^int',
-    multiLine: true,
-    dotAll: true,
-  );
-
-  static final RegExp name = RegExp(
-    r'fieldTemplate(?=;)',
-    multiLine: true,
-    dotAll: true,
-  );
-}
-
-class DartTemplateMethod {
-  static final RegExp returnType = RegExp(
-    r'^Future<String>',
-    multiLine: true,
-    dotAll: true,
-  );
-
-  static final RegExp name = RegExp(
-    'methodTemplate(?=\\($aParameter\\);)',
-    multiLine: true,
-    dotAll: true,
-  );
-
-  static final String aParameter = 'String parameterTemplate';
-}
-
-class DartTemplateParameter {
-  static final RegExp type = RegExp(
-    r'^String',
-    multiLine: true,
-    dotAll: true,
-  );
-
-  static final RegExp name = RegExp(
-    r'parameterTemplate$',
-    multiLine: true,
-    dotAll: true,
-  );
+  final bool build;
 }
