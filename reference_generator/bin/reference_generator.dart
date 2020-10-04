@@ -97,7 +97,7 @@ abstract class $ReferencePairManager extends MethodChannelReferencePairManager {
 class $LocalHandler with LocalReferenceCommunicationHandler {
   const $LocalHandler({
     this.createClassTemplate,
-    this.classTemplate$staticMethodTemplate,
+    this.classTemplate$staticMethodTemplate
   });
 
   static final Map<Type, _$LocalCreatorHandler> _creators =

@@ -1,7 +1,8 @@
+import 'package:recase/recase.dart';
 import 'package:reference_generator/src/ast.dart';
 
 String generateDart(String template, LibraryNode libraryNode) {
-  print(Library.aManager.stringMatch(template));
+  print(Library.aLocalHandler.stringMatch(template));
   return template
       .replaceAll(
         Library.aClass,
@@ -262,6 +263,52 @@ String generateDart(String template, LibraryNode libraryNode) {
                   )
                   .join(', '),
             ),
+      )
+      .replaceAll(
+        Library.aLocalHandler,
+        Library.aLocalHandler
+            .stringMatch(template)
+            .replaceAll(
+              LocalHandler.aCreatorName,
+              libraryNode.classes
+                  .map<String>(
+                    (ClassNode classNode) => LocalHandler.aCreatorName
+                        .stringMatch(
+                          Library.aLocalHandler.stringMatch(template),
+                        )
+                        .replaceAll(
+                          LocalHandlerCreatorName.name,
+                          classNode.name,
+                        ),
+                  )
+                  .join(', '),
+            )
+            .replaceAll(
+              LocalHandler.aStaticMethodName,
+              libraryNode.classes
+                  .fold<Map<MethodNode, ClassNode>>(
+                    <MethodNode, ClassNode>{},
+                    (Map<MethodNode, ClassNode> map, ClassNode classNode) {
+                      classNode.staticMethods.forEach(
+                        (MethodNode methodNode) => map[methodNode] = classNode,
+                      );
+                      return map;
+                    },
+                  )
+                  .entries
+                  .map<String>(
+                    (MapEntry<MethodNode, ClassNode> entry) => LocalHandler
+                        .aStaticMethodName
+                        .stringMatch(
+                          Library.aLocalHandler.stringMatch(template),
+                        )
+                        .replaceAll(LocalHandlerStaticMethodName.className,
+                            ReCase(entry.value.name).camelCase)
+                        .replaceAll(
+                            LocalHandlerStaticMethodName.name, entry.key.name),
+                  )
+                  .join(','),
+            ),
       );
 }
 
@@ -290,9 +337,8 @@ class Library {
     dotAll: true,
   );
 
-  // TODO:
   static final RegExp aLocalHandler = RegExp(
-    r'(?<=abstract\sclass\s\$)ReferencePairManager[^\}]+\}[^\}]+\}',
+    r'class\s\$LocalHandler[^{]+{([^}]+}){15}',
     multiLine: true,
     dotAll: true,
   );
@@ -464,6 +510,42 @@ class Manager {
 class ManagerClass {
   static final RegExp name = RegExp(
     r'ClassTemplate',
+    multiLine: true,
+    dotAll: true,
+  );
+}
+
+class LocalHandler {
+  static final RegExp aCreatorName = RegExp(
+    r'this.createClassTemplate',
+    multiLine: true,
+    dotAll: true,
+  );
+
+  static final RegExp aStaticMethodName = RegExp(
+    r'this.classTemplate\$staticMethodTemplate',
+    multiLine: true,
+    dotAll: true,
+  );
+}
+
+class LocalHandlerCreatorName {
+  static final RegExp name = RegExp(
+    r'ClassTemplate',
+    multiLine: true,
+    dotAll: true,
+  );
+}
+
+class LocalHandlerStaticMethodName {
+  static final RegExp className = RegExp(
+    r'classTemplate',
+    multiLine: true,
+    dotAll: true,
+  );
+
+  static final RegExp name = RegExp(
+    r'staticMethodTemplate',
     multiLine: true,
     dotAll: true,
   );
