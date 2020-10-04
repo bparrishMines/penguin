@@ -1,6 +1,7 @@
 import 'package:reference_generator/src/ast.dart';
 
 String generateDart(String template, LibraryNode libraryNode) {
+  print(Library.aManager.stringMatch(template));
   return template
       .replaceAll(
         Library.aClass,
@@ -246,9 +247,25 @@ String generateDart(String template, LibraryNode libraryNode) {
                   ),
             )
             .join('\n\n'),
+      )
+      .replaceAll(
+        Library.aManager,
+        Library.aManager.stringMatch(template).replaceAll(
+              Manager.aClass,
+              libraryNode.classes
+                  .map<String>(
+                    (ClassNode classNode) => Manager.aClass
+                        .stringMatch(
+                          Library.aManager.stringMatch(template),
+                        )
+                        .replaceAll(ManagerClass.name, classNode.name),
+                  )
+                  .join(', '),
+            ),
       );
 }
 
+// TODO: handle type parameters
 String getTrueTypeName(ReferenceType type) {
   if (type.codeGeneratedClass) return '\$${type.name}';
   return type.name;
@@ -263,6 +280,19 @@ class Library {
 
   static final RegExp aClassExtension = RegExp(
     r'extension\s\$ClassTemplateMethods[^\}]+\}[^\}]+\}[^\}]+\}[^\}]*\}',
+    multiLine: true,
+    dotAll: true,
+  );
+
+  static final RegExp aManager = RegExp(
+    r'(?<=abstract\sclass\s\$)ReferencePairManager[^\}]+\}[^\}]+\}',
+    multiLine: true,
+    dotAll: true,
+  );
+
+  // TODO:
+  static final RegExp aLocalHandler = RegExp(
+    r'(?<=abstract\sclass\s\$)ReferencePairManager[^\}]+\}[^\}]+\}',
     multiLine: true,
     dotAll: true,
   );
@@ -418,6 +448,22 @@ class ClassExtensionMethodPairedReference {
 
   static final RegExp aParameterName = RegExp(
     r'parameterTemplate(?<=<Object>\[parameterTemplate)',
+    multiLine: true,
+    dotAll: true,
+  );
+}
+
+class Manager {
+  static final RegExp aClass = RegExp(
+    r'\$ClassTemplate',
+    multiLine: true,
+    dotAll: true,
+  );
+}
+
+class ManagerClass {
+  static final RegExp name = RegExp(
+    r'ClassTemplate',
     multiLine: true,
     dotAll: true,
   );
