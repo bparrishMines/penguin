@@ -135,18 +135,18 @@ class $LocalHandler with LocalReferenceCommunicationHandler {
         List<Object> arguments,
       ) {
         return (localReference as $ClassTemplate).methodTemplate(arguments[0]);
-      },
-    },
+      }
+    }
   };
 
   final double Function(
     ReferencePairManager manager,
-    String parameterTemplate,
+    String parameterTemplate
   ) classTemplate$staticMethodTemplate;
 
   final $ClassTemplate Function(
     ReferencePairManager manager,
-    int fieldTemplate,
+    int fieldTemplate
   ) createClassTemplate;
 
   @override
@@ -205,7 +205,7 @@ class $RemoteHandler extends MethodChannelRemoteHandler {
       <Type, _$CreationArgumentsHandler>{
     $ClassTemplate: (LocalReference localReference) {
       return <Object>[(localReference as $ClassTemplate).fieldTemplate];
-    },
+    }
   };
 
   $RemoteHandler(String channelName) : super(channelName);
