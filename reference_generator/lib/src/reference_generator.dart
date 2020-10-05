@@ -3,7 +3,7 @@ import 'dart:convert';
 
 import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
-// The builder can't access Flutter, so this access just the independent reference file.
+// The builder can't access Flutter, so this accesses just the independent reference file.
 // TODO: Expose this in reference plugin
 import 'package:reference/src/reference.dart';
 import 'package:source_gen/source_gen.dart';
@@ -23,7 +23,8 @@ class ReferenceAstBuilder extends Builder {
     final Iterable<ClassElement> classes = reader
         .annotatedWith(const TypeChecker.fromRuntime(Reference))
         .map<ClassElement>(
-            (AnnotatedElement annotatedElement) => annotatedElement.element);
+          (AnnotatedElement annotatedElement) => annotatedElement.element,
+        );
 
     if (classes.isEmpty) return;
 
@@ -39,15 +40,19 @@ class ReferenceAstBuilder extends Builder {
     return LibraryNode(
       classes
           .map<ClassNode>(
-            (ClassElement classElement) =>
-                _toClassNode(classElement, classes.toSet()),
+            (ClassElement classElement) => _toClassNode(
+              classElement,
+              classes.toSet(),
+            ),
           )
           .toList(),
     );
   }
 
   ClassNode _toClassNode(
-      ClassElement classElement, Set<ClassElement> allGeneratedClasses) {
+    ClassElement classElement,
+    Set<ClassElement> allGeneratedClasses,
+  ) {
     List<ParameterElement> parameters;
     final ConstructorElement defaultConstructor = classElement.constructors
         .firstWhere(
@@ -59,6 +64,7 @@ class ReferenceAstBuilder extends Builder {
     } else {
       parameters = defaultConstructor.parameters;
     }
+
     return ClassNode(
       name: classElement.name,
       fields: parameters
@@ -128,17 +134,5 @@ class ReferenceAstBuilder extends Builder {
   @override
   Map<String, List<String>> get buildExtensions => <String, List<String>>{
         '.dart': <String>['.reference_ast'],
-      };
-}
-
-class JavaBuilder implements Builder {
-  @override
-  FutureOr<void> build(BuildStep buildStep) {
-    throw UnimplementedError();
-  }
-
-  @override
-  Map<String, List<String>> get buildExtensions => <String, List<String>>{
-        '.dart': <String>['.java'],
       };
 }

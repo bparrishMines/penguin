@@ -2,8 +2,9 @@ import 'package:recase/recase.dart';
 import 'package:reference_generator/src/ast.dart';
 
 String generateDart(String template, LibraryNode libraryNode) {
-  print(LocalHandler.aStaticMethodField
-      .stringMatch(Library.aLocalHandler.stringMatch(template)));
+  print(LocalHandlerInvokeMethodCondition.aMethod.stringMatch(LocalHandler
+      .anInvokeMethodCondition
+      .stringMatch(Library.aLocalHandler.stringMatch(template))));
   return template
       .replaceAll(
         Library.aClass,
@@ -492,6 +493,96 @@ String generateDart(String template, LibraryNode libraryNode) {
                         ),
                   )
                   .join('\n\n'),
+            )
+            .replaceAll(
+              LocalHandler.aCreatorField,
+              libraryNode.classes
+                  .map<String>(
+                    (ClassNode classNode) => LocalHandler.aCreatorField
+                        .stringMatch(
+                          Library.aLocalHandler.stringMatch(template),
+                        )
+                        .replaceAll(
+                          LocalHandlerCreatorField.className,
+                          classNode.name,
+                        )
+                        .replaceAll(
+                          LocalHandlerCreatorField.aField,
+                          classNode.fields
+                              .map<String>(
+                                (FieldNode fieldNode) =>
+                                    LocalHandlerCreatorField.aField
+                                        .stringMatch(
+                                          LocalHandler.aCreatorField
+                                              .stringMatch(
+                                            Library.aLocalHandler.stringMatch(
+                                              template,
+                                            ),
+                                          ),
+                                        )
+                                        .replaceAll(
+                                          LocalHandlerCreatorFieldField.name,
+                                          fieldNode.name,
+                                        )
+                                        .replaceAll(
+                                          LocalHandlerCreatorFieldField.type,
+                                          getTrueTypeName(fieldNode.type),
+                                        ),
+                              )
+                              .join(','),
+                        ),
+                  )
+                  .join('\n\n'),
+            )
+            .replaceAll(
+              LocalHandler.anInvokeMethodCondition,
+              libraryNode.classes
+                  .map<String>(
+                    (ClassNode classNode) => LocalHandler
+                        .anInvokeMethodCondition
+                        .stringMatch(
+                          Library.aLocalHandler.stringMatch(template),
+                        )
+                        .replaceAll(
+                          LocalHandlerInvokeMethodCondition.className,
+                          classNode.name,
+                        )
+                        .replaceAll(
+                          LocalHandlerInvokeMethodCondition.aMethod,
+                          classNode.methods
+                              .map<String>(
+                                (MethodNode methodNode) =>
+                                    LocalHandlerInvokeMethodCondition.aMethod
+                                        .stringMatch(
+                                          LocalHandler.anInvokeMethodCondition
+                                              .stringMatch(
+                                            Library.aLocalHandler
+                                                .stringMatch(template),
+                                          ),
+                                        )
+                                        .replaceAll(
+                                          LocalHandlerInvokeMethodConditionMethod
+                                              .name,
+                                          methodNode.name,
+                                        )
+                                        .replaceAll(
+                                          LocalHandlerInvokeMethodConditionMethod
+                                              .argument,
+                                          List<int>.generate(
+                                            methodNode.parameters.length,
+                                            (int index) => index,
+                                          )
+                                              .map<String>(
+                                                (int index) =>
+                                                    'arguments[$index]',
+                                              )
+                                              .join(','),
+                                        ),
+                              )
+                              .join('\n'),
+                        ),
+                  )
+                  .join('else '),
             ),
       );
 }
@@ -735,6 +826,18 @@ class LocalHandler {
     multiLine: true,
     dotAll: true,
   );
+
+  static final RegExp aCreatorField = RegExp(
+    r'final[^;]+createClassTemplate;',
+    multiLine: true,
+    dotAll: true,
+  );
+
+  static final RegExp anInvokeMethodCondition = RegExp(
+    r'if\s\(localReference\sis\s\$ClassTemplate\)[^\}]+}[^\}]+}',
+    multiLine: true,
+    dotAll: true,
+  );
 }
 
 class LocalHandlerCreatorName {
@@ -855,7 +958,63 @@ class LocalHandlerStaticMethodField {
   );
 
   static final RegExp aParameter = RegExp(
-    'String parameterTemplate',
+    r'String parameterTemplate',
+    multiLine: true,
+    dotAll: true,
+  );
+}
+
+class LocalHandlerCreatorField {
+  static final RegExp className = RegExp(
+    r'ClassTemplate',
+    multiLine: true,
+    dotAll: true,
+  );
+
+  static final RegExp aField = RegExp(
+    r'int fieldTemplate',
+    multiLine: true,
+    dotAll: true,
+  );
+}
+
+class LocalHandlerCreatorFieldField {
+  static final RegExp name = RegExp(
+    r'fieldTemplate$',
+    multiLine: true,
+    dotAll: true,
+  );
+
+  static final RegExp type = RegExp(
+    r'^int',
+    multiLine: true,
+    dotAll: true,
+  );
+}
+
+class LocalHandlerInvokeMethodCondition {
+  static final RegExp className = RegExp(
+    r'ClassTemplate',
+    multiLine: true,
+    dotAll: true,
+  );
+
+  static final RegExp aMethod = RegExp(
+    r"case\s'methodTemplate'[^\)]+\);",
+    multiLine: true,
+    dotAll: true,
+  );
+}
+
+class LocalHandlerInvokeMethodConditionMethod {
+  static final RegExp name = RegExp(
+    r'methodTemplate',
+    multiLine: true,
+    dotAll: true,
+  );
+
+  static final RegExp argument = RegExp(
+    r'arguments\[0\]',
     multiLine: true,
     dotAll: true,
   );
