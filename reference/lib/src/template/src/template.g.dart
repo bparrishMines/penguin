@@ -93,7 +93,7 @@ class $LocalHandler with LocalReferenceCommunicationHandler {
       List<Object> arguments,
     ) {
       return localHandler.createClassTemplate(manager, arguments[0]);
-    },
+    }
   };
 
   static final Map<Type, Map<String, _$LocalStaticMethodHandler>>
@@ -108,8 +108,8 @@ class $LocalHandler with LocalReferenceCommunicationHandler {
           manager,
           arguments[0],
         );
-      },
-    },
+      }
+    }
   };
 
   static final Map<Type, Map<String, _$LocalMethodHandler>> _methods =
