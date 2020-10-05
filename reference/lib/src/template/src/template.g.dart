@@ -1,4 +1,10 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
 import 'package:reference/reference.dart';
+
+// **************************************************************************
+// ReferenceGenerator
+// **************************************************************************
 
 // Helper Typedefs
 typedef _$LocalCreatorHandler = LocalReference Function(

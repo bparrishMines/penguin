@@ -2,9 +2,7 @@ import 'package:recase/recase.dart';
 import 'package:reference_generator/src/ast.dart';
 
 String generateDart(String template, LibraryNode libraryNode) {
-  print(LocalHandlerInvokeMethodCondition.aMethod.stringMatch(LocalHandler
-      .anInvokeMethodCondition
-      .stringMatch(Library.aLocalHandler.stringMatch(template))));
+  print(Library.aCreationArgument.stringMatch(template));
   return template
       .replaceAll(
         Library.aClass,
@@ -584,6 +582,42 @@ String generateDart(String template, LibraryNode libraryNode) {
                   )
                   .join('else '),
             ),
+      )
+      .replaceAll(
+        Library.aCreationArgument,
+        libraryNode.classes
+            .map<String>(
+              (ClassNode classNode) => Library.aCreationArgument
+                  .stringMatch(template)
+                  .replaceAll(
+                    CreationArgument.className,
+                    classNode.name,
+                  )
+                  .replaceAll(
+                    CreationArgument.aField,
+                    classNode.fields
+                        .map<String>(
+                          (FieldNode fieldNode) => CreationArgument.aField
+                              .stringMatch(
+                                Library.aCreationArgument.stringMatch(template),
+                              )
+                              .replaceAll(
+                                CreationArgumentField.className,
+                                classNode.name,
+                              )
+                              .replaceAll(
+                                CreationArgumentField.name,
+                                fieldNode.name,
+                              )
+                              .replaceAll(
+                                CreationArgumentField.className,
+                                classNode.name,
+                              ),
+                        )
+                        .join(','),
+                  ),
+            )
+            .join(','),
       );
 }
 
@@ -614,6 +648,12 @@ class Library {
 
   static final RegExp aLocalHandler = RegExp(
     r'class\s\$LocalHandler[^{]+{([^}]+}){15}',
+    multiLine: true,
+    dotAll: true,
+  );
+
+  static final RegExp aCreationArgument = RegExp(
+    r'\$ClassTemplate: \(LocalReference localReference\)[^\}]+\}',
     multiLine: true,
     dotAll: true,
   );
@@ -1015,6 +1055,34 @@ class LocalHandlerInvokeMethodConditionMethod {
 
   static final RegExp argument = RegExp(
     r'arguments\[0\]',
+    multiLine: true,
+    dotAll: true,
+  );
+}
+
+class CreationArgument {
+  static final RegExp className = RegExp(
+    r'(?<=\$)ClassTemplate(?=:)',
+    multiLine: true,
+    dotAll: true,
+  );
+
+  static final RegExp aField = RegExp(
+    r'\(localReference as \$ClassTemplate\).fieldTemplate',
+    multiLine: true,
+    dotAll: true,
+  );
+}
+
+class CreationArgumentField {
+  static final RegExp className = RegExp(
+    r'ClassTemplate',
+    multiLine: true,
+    dotAll: true,
+  );
+
+  static final RegExp name = RegExp(
+    r'(?<=\.)fieldTemplate',
     multiLine: true,
     dotAll: true,
   );
