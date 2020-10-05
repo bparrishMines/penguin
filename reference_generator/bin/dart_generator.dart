@@ -2,7 +2,7 @@ import 'package:recase/recase.dart';
 import 'package:reference_generator/src/ast.dart';
 
 String generateDart(String template, LibraryNode libraryNode) {
-  print(Library.aCreationArgument.stringMatch(template));
+  final Library library = Library(template);
   return template
       .replaceAll(
         Library.aClass,
@@ -584,35 +584,34 @@ String generateDart(String template, LibraryNode libraryNode) {
             ),
       )
       .replaceAll(
-        Library.aCreationArgument,
+        library.aCreationArgument.exp,
         libraryNode.classes
             .map<String>(
-              (ClassNode classNode) => Library.aCreationArgument
-                  .stringMatch(template)
+              (ClassNode classNode) => library.aCreationArgument
+                  .stringMatch()
                   .replaceAll(
-                    CreationArgument.className,
+                    library.aCreationArgument.className,
                     classNode.name,
                   )
                   .replaceAll(
-                    CreationArgument.aField,
+                    library.aCreationArgument.aField.exp,
                     classNode.fields
                         .map<String>(
-                          (FieldNode fieldNode) => CreationArgument.aField
-                              .stringMatch(
-                                Library.aCreationArgument.stringMatch(template),
-                              )
-                              .replaceAll(
-                                CreationArgumentField.className,
-                                classNode.name,
-                              )
-                              .replaceAll(
-                                CreationArgumentField.name,
-                                fieldNode.name,
-                              )
-                              .replaceAll(
-                                CreationArgumentField.className,
-                                classNode.name,
-                              ),
+                          (FieldNode fieldNode) =>
+                              library.aCreationArgument.aField
+                                  .stringMatch()
+                                  .replaceAll(
+                                    library.aCreationArgument.aField.className,
+                                    classNode.name,
+                                  )
+                                  .replaceAll(
+                                    library.aCreationArgument.aField.name,
+                                    fieldNode.name,
+                                  )
+                                  .replaceAll(
+                                    library.aCreationArgument.aField.className,
+                                    classNode.name,
+                                  ),
                         )
                         .join(','),
                   ),
@@ -627,7 +626,49 @@ String getTrueTypeName(ReferenceType type) {
   return type.name;
 }
 
-class Library {
+mixin TemplateRegExp {
+  static RegExp regExp(String pattern) {
+    return RegExp(pattern, multiLine: true, dotAll: true);
+  }
+
+  RegExp get exp;
+
+  TemplateRegExp get parent;
+
+  String get template => parent.template;
+
+  String stringMatch() {
+    final List<TemplateRegExp> expressions = <TemplateRegExp>[];
+
+    TemplateRegExp currentExp = this;
+    while (currentExp.parent != null) {
+      expressions.add(currentExp);
+      currentExp = currentExp.parent;
+    }
+
+    if (expressions.isEmpty) return template;
+
+    String result = template;
+    for (TemplateRegExp expression in expressions.reversed) {
+      result = expression.exp.stringMatch(result);
+    }
+
+    return result;
+  }
+}
+
+class Library with TemplateRegExp {
+  Library(this.template);
+
+  @override
+  final String template;
+
+  @override
+  RegExp get exp => null;
+
+  @override
+  TemplateRegExp get parent => null;
+
   static final RegExp aClass = RegExp(
     r'abstract\sclass\s\$ClassTemplate.+?Type\sget\sreferenceType\s=>\s\$ClassTemplate;.+?}',
     multiLine: true,
@@ -652,11 +693,13 @@ class Library {
     dotAll: true,
   );
 
-  static final RegExp aCreationArgument = RegExp(
-    r'\$ClassTemplate: \(LocalReference localReference\)[^\}]+\}',
-    multiLine: true,
-    dotAll: true,
-  );
+  CreationArgument get aCreationArgument => CreationArgument(this);
+
+  // static final RegExp aCreationArgument = RegExp(
+  //   r'\$ClassTemplate: \(LocalReference localReference\)[^\}]+\}',
+  //   multiLine: true,
+  //   dotAll: true,
+  // );
 }
 
 class Class {
@@ -1060,28 +1103,59 @@ class LocalHandlerInvokeMethodConditionMethod {
   );
 }
 
-class CreationArgument {
-  static final RegExp className = RegExp(
-    r'(?<=\$)ClassTemplate(?=:)',
-    multiLine: true,
-    dotAll: true,
+class CreationArgument with TemplateRegExp {
+  CreationArgument(this.parent);
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'\$ClassTemplate: \(LocalReference localReference\)[^\}]+\}',
   );
 
-  static final RegExp aField = RegExp(
-    r'\(localReference as \$ClassTemplate\).fieldTemplate',
-    multiLine: true,
-    dotAll: true,
+  @override
+  final Library parent;
+  // final RegExp exp = RegExp(
+  //   r'\$ClassTemplate: \(LocalReference localReference\)[^\}]+\}',
+  //   multiLine: true,
+  //   dotAll: true,
+  // );
+
+  CreationArgumentField get aField => CreationArgumentField(this);
+
+  final RegExp className = TemplateRegExp.regExp(
+    r'(?<=\$)ClassTemplate(?=:)',
   );
+
+  // static final RegExp aField = RegExp(
+  //   r'\(localReference as \$ClassTemplate\).fieldTemplate',
+  //   multiLine: true,
+  //   dotAll: true,
+  // );
 }
 
-class CreationArgumentField {
-  static final RegExp className = RegExp(
+class CreationArgumentField with TemplateRegExp {
+  CreationArgumentField(this.parent);
+
+  @override
+  final CreationArgument parent;
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'\(localReference as \$ClassTemplate\).fieldTemplate',
+  );
+
+  // final RegExp exp = RegExp(
+  //   r'\(localReference as \$ClassTemplate\).fieldTemplate',
+  //   multiLine: true,
+  //   dotAll: true,
+  // );
+
+  final RegExp className = RegExp(
     r'ClassTemplate',
     multiLine: true,
     dotAll: true,
   );
 
-  static final RegExp name = RegExp(
+  final RegExp name = RegExp(
     r'(?<=\.)fieldTemplate',
     multiLine: true,
     dotAll: true,
