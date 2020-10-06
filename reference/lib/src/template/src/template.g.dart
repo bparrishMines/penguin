@@ -38,6 +38,10 @@ abstract class $ClassTemplate implements LocalReference {
   Type get referenceType => $ClassTemplate;
 }
 
+class $ClassTemplateCreationArgs {
+  int fieldTemplate;
+}
+
 // Class Extensions
 extension $ClassTemplateMethods on $ClassTemplate {
   static Future<Object> $staticMethodTemplate(
@@ -98,7 +102,8 @@ class $LocalHandler with LocalReferenceCommunicationHandler {
       ReferencePairManager manager,
       List<Object> arguments,
     ) {
-      return localHandler.createClassTemplate(manager, arguments[0]);
+      return localHandler.createClassTemplate(
+          manager, $ClassTemplateCreationArgs()..fieldTemplate = arguments[0]);
     }
   };
 
@@ -133,7 +138,8 @@ class $LocalHandler with LocalReferenceCommunicationHandler {
   final double Function(ReferencePairManager manager, String parameterTemplate)
       classTemplate$staticMethodTemplate;
 
-  final $ClassTemplate Function(ReferencePairManager manager, int fieldTemplate)
+  final $ClassTemplate Function(
+          ReferencePairManager manager, $ClassTemplateCreationArgs args)
       createClassTemplate;
 
   @override

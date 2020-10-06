@@ -635,8 +635,6 @@ mixin TemplateRegExp {
       currentExp = currentExp.parent;
     }
 
-    if (expressions.isEmpty) return template;
-
     String result = template;
     for (TemplateRegExp expression in expressions.reversed) {
       result = expression.exp.stringMatch(result);

@@ -5,19 +5,22 @@ import github.penguin.reference.reference.ReferencePairManager;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
+import github.penguin.reference.templates.LibraryTemplate.$ReferencePairManager;
+import github.penguin.reference.templates.LibraryTemplate.$LocalHandler;
+import github.penguin.reference.templates.LibraryTemplate.$ClassTemplateCreationArgs;
 
 public class PluginTemplate implements FlutterPlugin {
-  private static class ReferencePairManagerTemplate extends $TemplateReferencePairManager {
+  private static class ReferencePairManagerTemplate extends $ReferencePairManager {
     public ReferencePairManagerTemplate(BinaryMessenger binaryMessenger) {
       super(binaryMessenger, "github.penguin/reference/template");
     }
 
     @Override
-    public $LocalReferenceCommunicationHandler getLocalHandler() {
-      return new $LocalReferenceCommunicationHandler() {
+    public $LocalHandler getLocalHandler() {
+      return new $LocalHandler() {
         @Override
-        public $ClassTemplate createClassTemplate(ReferencePairManager referencePairManager, Integer fieldTemplate) {
-          return new ClassTemplate(fieldTemplate);
+        public LibraryTemplate.$ClassTemplate createClassTemplate(ReferencePairManager referencePairManager, $ClassTemplateCreationArgs args) {
+          return new ClassTemplate(args.fieldTemplate);
         }
 
         @Override

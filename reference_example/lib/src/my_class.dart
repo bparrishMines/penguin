@@ -1,38 +1,40 @@
 import 'dart:async';
 
 import 'package:reference/reference.dart';
+import 'package:reference_example/src/my_class.g.dart';
 
 import 'reference_pair_manager.dart';
 
 final MyReferencePairManager referencePairManager = MyReferencePairManager()
   ..initialize();
 
-class MyClass with LocalReference {
+@Reference()
+class MyClass extends $MyClass {
   MyClass(this.stringField) {
     referencePairManager.pairWithNewRemoteReference(this);
   }
 
-  final String stringField;
-
-  Future<String> myMethod(double value, MyOtherClass myOtherClass) async {
-    return (await referencePairManager.invokeRemoteMethod(
-      referencePairManager.getPairedRemoteReference(this),
-      'myMethod',
-      <dynamic>[value, myOtherClass],
-    )) as String;
+  static Future<Object> myStaticMethod(String table, MyOtherClass chair) {
+    return $MyClassMethods.$myStaticMethod(null, null, null);
   }
 
-  // The unique `Type` used to represent this class in a `ReferencePairManager`.
+  static Future<Object> anotherStaticMethod(String table, List<MyClass> chair) {
+    return $MyClassMethods.$anotherStaticMethod(null, table, chair);
+  }
+
+  final String stringField;
+
   @override
-  Type get referenceType => runtimeType;
+  Future<String> myMethod(
+      double value, covariant MyOtherClass myOtherClass) async {
+    return (await $myMethod(null, value, myOtherClass)) as String;
+  }
 }
 
-class MyOtherClass with LocalReference {
-  MyOtherClass(this.intField);
+@Reference()
+class MyOtherClass extends $MyOtherClass {
+  MyOtherClass(this.intField, this.doubleField);
 
   final int intField;
-
-  // The unique `Type` used to represent this class in a `ReferencePairManager`.
-  @override
-  Type get referenceType => runtimeType;
+  final double doubleField;
 }

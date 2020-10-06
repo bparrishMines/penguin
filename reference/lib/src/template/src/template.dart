@@ -13,9 +13,9 @@ class _ManagerTemplate extends $ReferencePairManager {
   $LocalHandler get localHandler => $LocalHandler(
         createClassTemplate: (
           ReferencePairManager referencePairManager,
-          int fieldTemplate,
+          $ClassTemplateCreationArgs args,
         ) =>
-            ClassTemplate(fieldTemplate),
+            ClassTemplate(args.fieldTemplate),
       );
 }
 

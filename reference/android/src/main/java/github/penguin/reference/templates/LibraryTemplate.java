@@ -10,15 +10,38 @@ import github.penguin.reference.method_channel.MethodChannelRemoteHandler;
 import github.penguin.reference.method_channel.ReferenceMessageCodec;
 import github.penguin.reference.reference.LocalReference;
 import github.penguin.reference.reference.ReferencePairManager;
+import github.penguin.reference.reference.ReferencePairManager.LocalReferenceCommunicationHandler;
 import io.flutter.plugin.common.BinaryMessenger;
 
 @SuppressWarnings({"ArraysAsListWithZeroOrOneArgument", "unused"})
-abstract class $TemplateReferencePairManager extends MethodChannelReferencePairManager {
+class LibraryTemplate {
+  private static abstract class $LocalCreatorHandler {
+    abstract LocalReference call($LocalHandler localHandler,
+                                 ReferencePairManager referencePairManager,
+                                 List<Object> arguments) throws Exception;
+  }
+
+  private static abstract class $LocalStaticMethodHandler {
+    abstract Object call($LocalHandler localHandler,
+                         ReferencePairManager referencePairManager,
+                         List<Object> arguments) throws Exception;
+  }
+
+  private static abstract class $LocalMethodHandler {
+    abstract Object call(LocalReference localReference,
+                         List<Object> arguments) throws Exception;
+  }
+
+  private static abstract class $CreationArgumentsHandler {
+    abstract List<Object> call(LocalReference localReference);
+  }
+
   static abstract class $ClassTemplate implements LocalReference {
     abstract Integer getFieldTemplate();
+
     abstract Object methodTemplate(String parameterTemplate) throws Exception;
 
-    static Completable<Object> $staticMethodTemplate($TemplateReferencePairManager manager,
+    protected static Completable<Object> $staticMethodTemplate($ReferencePairManager manager,
                                                         String parameterTemplate) {
       return manager.invokeRemoteStaticMethod($ClassTemplate.class,
           "staticMethodTemplate",
@@ -26,11 +49,11 @@ abstract class $TemplateReferencePairManager extends MethodChannelReferencePairM
       );
     }
 
-    protected Completable<Object> $methodTemplate($TemplateReferencePairManager manager,
+    protected Completable<Object> $methodTemplate($ReferencePairManager manager,
                                                   String parameterTemplate) {
       if (manager.getPairedRemoteReference(this) == null) {
         return manager.invokeRemoteMethodOnUnpairedReference(this,
-            "methodName",
+            "methodTemplate",
             Arrays.asList((Object) parameterTemplate));
       }
 
@@ -45,34 +68,46 @@ abstract class $TemplateReferencePairManager extends MethodChannelReferencePairM
     }
   }
 
-  private static abstract class $LocalCreatorHandler {
-    abstract LocalReference call($LocalReferenceCommunicationHandler localHandler,
-                                      ReferencePairManager referencePairManager,
-                                      List<Object> arguments) throws Exception;
+  static class $ClassTemplateCreationArgs {
+    Integer fieldTemplate;
   }
 
-  private static abstract class $LocalStaticMethodHandler {
-    abstract Object call($LocalReferenceCommunicationHandler localHandler,
-                                 ReferencePairManager referencePairManager,
-                                 List<Object> arguments) throws Exception;
+  static abstract class $ReferencePairManager extends MethodChannelReferencePairManager {
+    $ReferencePairManager(final BinaryMessenger binaryMessenger, final String channelName) {
+      this(binaryMessenger, channelName, new ReferenceMessageCodec());
+    }
+
+    @SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
+    $ReferencePairManager(
+        final BinaryMessenger binaryMessenger,
+        final String channelName,
+        final ReferenceMessageCodec messageCodec) {
+      super(Arrays.<Class<? extends LocalReference>>asList($ClassTemplate.class),
+          binaryMessenger,
+          channelName,
+          channelName,
+          messageCodec
+      );
+    }
+
+    @Override
+    public abstract $LocalHandler getLocalHandler();
+
+    @Override
+    public MethodChannelRemoteHandler getRemoteHandler() {
+      return new $RemoteHandler(binaryMessenger, channelName);
+    }
   }
 
-  private static abstract class $LocalMethodHandler {
-    abstract Object call(LocalReference localReference,
-                               List<Object> arguments) throws Exception;
-  }
-
-  private static abstract class $CreationArgumentsHandler {
-    abstract List<Object> call(LocalReference localReference);
-  }
-
-  abstract static class $LocalReferenceCommunicationHandler implements LocalReferenceCommunicationHandler {
+  static abstract class $LocalHandler implements LocalReferenceCommunicationHandler {
     static private final Map<Class<? extends LocalReference>, $LocalCreatorHandler> creators =
         new HashMap<Class<? extends LocalReference>, $LocalCreatorHandler>() {{
           put($ClassTemplate.class, new $LocalCreatorHandler() {
             @Override
-            LocalReference call($LocalReferenceCommunicationHandler localHandler, ReferencePairManager referencePairManager, List<Object> arguments) throws Exception {
-              return localHandler.createClassTemplate(referencePairManager, (Integer) arguments.get(0));
+            LocalReference call($LocalHandler localHandler, ReferencePairManager referencePairManager, List<Object> arguments) throws Exception {
+              final $ClassTemplateCreationArgs args = new $ClassTemplateCreationArgs();
+              args.fieldTemplate = (Integer) arguments.get(0);
+              return localHandler.createClassTemplate(referencePairManager, args);
             }
           });
         }};
@@ -81,7 +116,7 @@ abstract class $TemplateReferencePairManager extends MethodChannelReferencePairM
         new HashMap<Class<? extends LocalReference>, $LocalStaticMethodHandler>() {{
           put($ClassTemplate.class, new $LocalStaticMethodHandler() {
             @Override
-            Object call($LocalReferenceCommunicationHandler localHandler, ReferencePairManager referencePairManager, List<Object> arguments) throws Exception {
+            Object call($LocalHandler localHandler, ReferencePairManager referencePairManager, List<Object> arguments) throws Exception {
               return localHandler.classTemplate$staticMethodTemplate(referencePairManager, (String) arguments.get(0));
             }
           });
@@ -101,7 +136,7 @@ abstract class $TemplateReferencePairManager extends MethodChannelReferencePairM
 
     public abstract $ClassTemplate createClassTemplate(
         ReferencePairManager referencePairManager,
-        Integer fieldTemplate)
+        $ClassTemplateCreationArgs args)
         throws Exception;
 
     public abstract Double classTemplate$staticMethodTemplate(
@@ -153,7 +188,7 @@ abstract class $TemplateReferencePairManager extends MethodChannelReferencePairM
     }
   }
 
-  static class $RemoteReferenceCommunicationHandler extends MethodChannelRemoteHandler {
+  static class $RemoteHandler extends MethodChannelRemoteHandler {
     private static final Map<Class<? extends LocalReference>, $CreationArgumentsHandler> creationArguments =
         new HashMap<Class<? extends LocalReference>, $CreationArgumentsHandler>() {{
           put($ClassTemplate.class, new $CreationArgumentsHandler() {
@@ -165,7 +200,7 @@ abstract class $TemplateReferencePairManager extends MethodChannelReferencePairM
           });
         }};
 
-    $RemoteReferenceCommunicationHandler(BinaryMessenger binaryMessenger, String channelName) {
+    $RemoteHandler(BinaryMessenger binaryMessenger, String channelName) {
       super(binaryMessenger, channelName);
     }
 
@@ -174,30 +209,5 @@ abstract class $TemplateReferencePairManager extends MethodChannelReferencePairM
     public List<Object> getCreationArguments(LocalReference localReference) {
       return creationArguments.get(localReference.getReferenceClass()).call(localReference);
     }
-  }
-
-  $TemplateReferencePairManager(final BinaryMessenger binaryMessenger, final String channelName) {
-    this(binaryMessenger, channelName, new ReferenceMessageCodec());
-  }
-
-  @SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
-  $TemplateReferencePairManager(
-      final BinaryMessenger binaryMessenger,
-      final String channelName,
-      final ReferenceMessageCodec messageCodec) {
-    super(Arrays.<Class<? extends LocalReference>>asList($ClassTemplate.class),
-        binaryMessenger,
-        channelName,
-        channelName,
-        messageCodec
-    );
-  }
-
-  @Override
-  public abstract $LocalReferenceCommunicationHandler getLocalHandler();
-
-  @Override
-  public MethodChannelRemoteHandler getRemoteHandler() {
-    return new $RemoteReferenceCommunicationHandler(binaryMessenger, channelName);
   }
 }

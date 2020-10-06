@@ -1,8 +1,6 @@
 package github.penguin.reference.templates;
 
-import github.penguin.reference.templates.$TemplateReferencePairManager.$ClassTemplate;
-
-public class ClassTemplate extends $ClassTemplate {
+public class ClassTemplate extends LibraryTemplate.$ClassTemplate {
   private final Integer fieldTemplate;
 
   public static Double staticMethodTemplate(String parameterTemplate) {
