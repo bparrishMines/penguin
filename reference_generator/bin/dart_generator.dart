@@ -5,52 +5,58 @@ String generateDart(String template, LibraryNode libraryNode) {
   final Library library = Library(template);
   return template
       .replaceAll(
-        Library.aClass,
+        library.aClass.exp,
         libraryNode.classes
             .map<String>(
-              (ClassNode classNode) => Library.aClass
-                  .stringMatch(template)
-                  .replaceAll(Class.name, classNode.name)
+              (ClassNode classNode) => library.aClass
+                  .stringMatch()
+                  .replaceAll(library.aClass.name, classNode.name)
                   .replaceAll(
-                    Class.aField,
+                    library.aClass.aField.exp,
                     classNode.fields
                         .map<String>(
-                          (FieldNode fieldNode) => Class.aField
-                              .replaceAll(Field.name, fieldNode.name)
+                          (FieldNode fieldNode) => library.aClass.aField
+                              .stringMatch()
                               .replaceAll(
-                                Field.type,
+                                  library.aClass.aField.name, fieldNode.name)
+                              .replaceAll(
+                                library.aClass.aField.type,
                                 getTrueTypeName(fieldNode.type),
                               ),
                         )
                         .join('\n'),
                   )
                   .replaceAll(
-                    Class.aMethod,
+                    library.aClass.aMethod.exp,
                     classNode.methods
                         .map<String>(
-                          (MethodNode methodNode) => Class.aMethod
+                          (MethodNode methodNode) => library.aClass.aMethod
+                              .stringMatch()
                               .replaceAll(
-                                Method.returnType,
+                                library.aClass.aMethod.returnType,
                                 getTrueTypeName(methodNode.returnType),
                               )
                               .replaceAll(
-                                Method.name,
+                                library.aClass.aMethod.name,
                                 methodNode.name,
                               )
                               .replaceAll(
-                                Method.aParameter,
+                                library.aClass.aMethod.aParameter.exp,
                                 methodNode.parameters
                                     .map<String>(
                                       (ParameterNode parameterNode) =>
-                                          Method.aParameter
+                                          library.aClass.aMethod.aParameter
+                                              .stringMatch()
                                               .replaceAll(
-                                                Parameter.type,
+                                                library.aClass.aMethod
+                                                    .aParameter.type,
                                                 getTrueTypeName(
                                                   parameterNode.type,
                                                 ),
                                               )
                                               .replaceAll(
-                                                Parameter.name,
+                                                library.aClass.aMethod
+                                                    .aParameter.name,
                                                 parameterNode.name,
                                               ),
                                     )
@@ -100,11 +106,11 @@ String generateDart(String template, LibraryNode libraryNode) {
                                       (ParameterNode parameterNode) =>
                                           ClassExtensionStaticMethod.aParameter
                                               .replaceAll(
-                                                Parameter.name,
+                                                Parameter(null).name,
                                                 parameterNode.name,
                                               )
                                               .replaceAll(
-                                                Parameter.type,
+                                                Parameter(null).type,
                                                 getTrueTypeName(
                                                     parameterNode.type),
                                               ),
@@ -126,7 +132,7 @@ String generateDart(String template, LibraryNode libraryNode) {
                                                 ),
                                               )
                                               .replaceAll(
-                                                Parameter.name,
+                                                Parameter(null).name,
                                                 parameterNode.name,
                                               ),
                                     )
@@ -154,11 +160,11 @@ String generateDart(String template, LibraryNode libraryNode) {
                                       (ParameterNode parameterNode) =>
                                           ClassExtensionStaticMethod.aParameter
                                               .replaceAll(
-                                                Parameter.name,
+                                                Parameter(null).name,
                                                 parameterNode.name,
                                               )
                                               .replaceAll(
-                                                Parameter.type,
+                                                Parameter(null).type,
                                                 getTrueTypeName(
                                                     parameterNode.type),
                                               ),
@@ -197,7 +203,7 @@ String generateDart(String template, LibraryNode libraryNode) {
                                                       ),
                                                     )
                                                     .replaceAll(
-                                                      Parameter.name,
+                                                      Parameter(null).name,
                                                       parameterNode.name,
                                                     ),
                                           )
@@ -236,7 +242,7 @@ String generateDart(String template, LibraryNode libraryNode) {
                                                       ),
                                                     )
                                                     .replaceAll(
-                                                      Parameter.name,
+                                                      Parameter(null).name,
                                                       parameterNode.name,
                                                     ),
                                           )
@@ -479,11 +485,11 @@ String generateDart(String template, LibraryNode libraryNode) {
                                           ),
                                         )
                                         .replaceAll(
-                                          Parameter.name,
+                                          Parameter(null).name,
                                           parameterNode.name,
                                         )
                                         .replaceAll(
-                                          Parameter.type,
+                                          Parameter(null).type,
                                           getTrueTypeName(parameterNode.type),
                                         ),
                               )
@@ -669,11 +675,7 @@ class Library with TemplateRegExp {
   @override
   TemplateRegExp get parent => null;
 
-  static final RegExp aClass = RegExp(
-    r'abstract\sclass\s\$ClassTemplate.+?Type\sget\sreferenceType\s=>\s\$ClassTemplate;.+?}',
-    multiLine: true,
-    dotAll: true,
-  );
+  Class get aClass => Class(this);
 
   static final RegExp aClassExtension = RegExp(
     r'extension\s\$ClassTemplateMethods[^\}]+\}[^\}]+\}[^\}]+\}[^\}]*\}',
@@ -694,69 +696,72 @@ class Library with TemplateRegExp {
   );
 
   CreationArgument get aCreationArgument => CreationArgument(this);
-
-  // static final RegExp aCreationArgument = RegExp(
-  //   r'\$ClassTemplate: \(LocalReference localReference\)[^\}]+\}',
-  //   multiLine: true,
-  //   dotAll: true,
-  // );
 }
 
-class Class {
-  static final RegExp name = RegExp(
+class Class with TemplateRegExp {
+  Class(this.parent);
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'abstract\sclass\s\$ClassTemplate.+?Type\sget\sreferenceType\s=>\s\$ClassTemplate;.+?}',
+  );
+
+  @override
+  final Library parent;
+
+  final RegExp name = TemplateRegExp.regExp(
     r'ClassTemplate(?=.+?implements|;.*?\})',
-    multiLine: true,
-    dotAll: true,
   );
 
-  static final String aField = 'int get fieldTemplate;';
-
-  static final String aMethod =
-      r'Future<String> methodTemplate(String parameterTemplate);';
+  ClassMethod get aMethod => ClassMethod(this);
+  ClassField get aField => ClassField(this);
 }
 
-class Field {
-  static final RegExp type = RegExp(
-    r'^int',
-    multiLine: true,
-    dotAll: true,
-  );
+class ClassField with TemplateRegExp {
+  ClassField(this.parent);
 
-  static final RegExp name = RegExp(
-    r'fieldTemplate(?=;)',
-    multiLine: true,
-    dotAll: true,
-  );
+  final RegExp type = TemplateRegExp.regExp(r'^int');
+  final RegExp name = TemplateRegExp.regExp(r'fieldTemplate(?=;)');
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp('int get fieldTemplate;');
+
+  @override
+  final Class parent;
 }
 
-class Method {
-  static final RegExp returnType = RegExp(
-    r'^Future<String>',
-    multiLine: true,
-    dotAll: true,
+class ClassMethod with TemplateRegExp {
+  ClassMethod(this.parent);
+
+  final RegExp returnType = TemplateRegExp.regExp(r'^Future<String>');
+
+  final RegExp name = TemplateRegExp.regExp(
+    r'methodTemplate(?=\(String parameterTemplate\);)',
   );
 
-  static final RegExp name = RegExp(
-    'methodTemplate(?=\\($aParameter\\);)',
-    multiLine: true,
-    dotAll: true,
+  Parameter get aParameter => Parameter(this);
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'Future<String> methodTemplate\(String parameterTemplate\);',
   );
 
-  static final String aParameter = 'String parameterTemplate';
+  @override
+  final Class parent;
 }
 
-class Parameter {
-  static final RegExp type = RegExp(
-    r'^String',
-    multiLine: true,
-    dotAll: true,
-  );
+class Parameter with TemplateRegExp {
+  Parameter(this.parent);
 
-  static final RegExp name = RegExp(
-    r'parameterTemplate$',
-    multiLine: true,
-    dotAll: true,
-  );
+  final RegExp type = TemplateRegExp.regExp(r'^String');
+
+  final RegExp name = TemplateRegExp.regExp(r'parameterTemplate$');
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(r'String parameterTemplate');
+
+  @override
+  final TemplateRegExp parent;
 }
 
 class ClassExtension {
@@ -1113,27 +1118,19 @@ class CreationArgument with TemplateRegExp {
 
   @override
   final Library parent;
-  // final RegExp exp = RegExp(
-  //   r'\$ClassTemplate: \(LocalReference localReference\)[^\}]+\}',
-  //   multiLine: true,
-  //   dotAll: true,
-  // );
 
   CreationArgumentField get aField => CreationArgumentField(this);
 
   final RegExp className = TemplateRegExp.regExp(
     r'(?<=\$)ClassTemplate(?=:)',
   );
-
-  // static final RegExp aField = RegExp(
-  //   r'\(localReference as \$ClassTemplate\).fieldTemplate',
-  //   multiLine: true,
-  //   dotAll: true,
-  // );
 }
 
 class CreationArgumentField with TemplateRegExp {
   CreationArgumentField(this.parent);
+
+  final RegExp className = TemplateRegExp.regExp(r'ClassTemplate');
+  final RegExp name = TemplateRegExp.regExp(r'(?<=\.)fieldTemplate');
 
   @override
   final CreationArgument parent;
@@ -1141,23 +1138,5 @@ class CreationArgumentField with TemplateRegExp {
   @override
   final RegExp exp = TemplateRegExp.regExp(
     r'\(localReference as \$ClassTemplate\).fieldTemplate',
-  );
-
-  // final RegExp exp = RegExp(
-  //   r'\(localReference as \$ClassTemplate\).fieldTemplate',
-  //   multiLine: true,
-  //   dotAll: true,
-  // );
-
-  final RegExp className = RegExp(
-    r'ClassTemplate',
-    multiLine: true,
-    dotAll: true,
-  );
-
-  final RegExp name = RegExp(
-    r'(?<=\.)fieldTemplate',
-    multiLine: true,
-    dotAll: true,
   );
 }
