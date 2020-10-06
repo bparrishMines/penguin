@@ -275,22 +275,20 @@ String generateDart(String template, LibraryNode libraryNode) {
         library.aLocalHandler.exp
             .stringMatch(template)
             .replaceAll(
-              LocalHandler.aCreatorName,
+              library.aLocalHandler.aCreatorName.exp,
               libraryNode.classes
                   .map<String>(
-                    (ClassNode classNode) => LocalHandler.aCreatorName
-                        .stringMatch(
-                          library.aLocalHandler.exp.stringMatch(template),
-                        )
+                    (ClassNode classNode) => library.aLocalHandler.aCreatorName
+                        .stringMatch()
                         .replaceAll(
-                          LocalHandlerCreatorName.name,
+                          library.aLocalHandler.aCreatorName.name,
                           classNode.name,
                         ),
                   )
                   .join(', '),
             )
             .replaceAll(
-              LocalHandler.aStaticMethodName,
+              library.aLocalHandler.aStaticMethodName.exp,
               libraryNode.classes
                   .fold<Map<MethodNode, ClassNode>>(
                     <MethodNode, ClassNode>{},
@@ -303,32 +301,32 @@ String generateDart(String template, LibraryNode libraryNode) {
                   )
                   .entries
                   .map<String>(
-                    (MapEntry<MethodNode, ClassNode> entry) => LocalHandler
-                        .aStaticMethodName
-                        .stringMatch(
-                          library.aLocalHandler.exp.stringMatch(template),
-                        )
-                        .replaceAll(LocalHandlerStaticMethodName.className,
-                            ReCase(entry.value.name).camelCase)
-                        .replaceAll(
-                            LocalHandlerStaticMethodName.name, entry.key.name),
+                    (MapEntry<MethodNode, ClassNode> entry) =>
+                        library.aLocalHandler.aStaticMethodName
+                            .stringMatch()
+                            .replaceAll(
+                              library.aLocalHandler.aStaticMethodName.className,
+                              ReCase(entry.value.name).camelCase,
+                            )
+                            .replaceAll(
+                              library.aLocalHandler.aStaticMethodName.name,
+                              entry.key.name,
+                            ),
                   )
                   .join(','),
             )
             .replaceAll(
-              LocalHandler.aCreator,
+              library.aLocalHandler.aCreator.exp,
               libraryNode.classes
                   .map<String>(
-                    (ClassNode classNode) => LocalHandler.aCreator
-                        .stringMatch(
-                          library.aLocalHandler.exp.stringMatch(template),
-                        )
+                    (ClassNode classNode) => library.aLocalHandler.aCreator
+                        .stringMatch()
                         .replaceAll(
-                          LocalHandlerCreator.className,
+                          library.aLocalHandler.aCreator.className,
                           classNode.name,
                         )
                         .replaceAll(
-                          LocalHandlerCreator.argument,
+                          library.aLocalHandler.aCreator.argument,
                           List<int>.generate(
                                   classNode.fields.length, (int index) => index)
                               .map<String>((int index) => 'arguments[$index]')
@@ -338,45 +336,35 @@ String generateDart(String template, LibraryNode libraryNode) {
                   .join(', '),
             )
             .replaceAll(
-              LocalHandler.aStaticMethod,
+              library.aLocalHandler.aStaticMethod.exp,
               libraryNode.classes
                   .map<String>(
-                    (ClassNode classNode) => LocalHandler.aStaticMethod
-                        .stringMatch(
-                          library.aLocalHandler.exp.stringMatch(template),
-                        )
+                    (ClassNode classNode) => library.aLocalHandler.aStaticMethod
+                        .stringMatch()
                         .replaceAll(
-                          LocalHandlerStaticMethod.className,
+                          library.aLocalHandler.aStaticMethod.className,
                           classNode.name,
                         )
                         .replaceAll(
-                          LocalHandlerStaticMethod.aMethod,
+                          library.aLocalHandler.aStaticMethod.aMethod.exp,
                           classNode.staticMethods
                               .map<String>(
                                 (MethodNode methodNode) =>
-                                    LocalHandlerStaticMethod.aMethod
-                                        .stringMatch(
-                                          LocalHandler.aStaticMethod
-                                              .stringMatch(
-                                            library.aLocalHandler.exp
-                                                .stringMatch(
-                                              template,
-                                            ),
-                                          ),
-                                        )
+                                    library.aLocalHandler.aStaticMethod.aMethod
+                                        .stringMatch()
                                         .replaceAll(
-                                          LocalHandlerStaticMethodMethod
-                                              .classNamePart,
+                                          library.aLocalHandler.aStaticMethod
+                                              .aMethod.classNamePart,
                                           ReCase(classNode.name).camelCase,
                                         )
                                         .replaceAll(
-                                          LocalHandlerStaticMethodMethod
-                                              .methodName,
+                                          library.aLocalHandler.aStaticMethod
+                                              .aMethod.methodName,
                                           methodNode.name,
                                         )
                                         .replaceAll(
-                                          LocalHandlerStaticMethodMethod
-                                              .argument,
+                                          library.aLocalHandler.aStaticMethod
+                                              .aMethod.argument,
                                           List<int>.generate(
                                             methodNode.parameters.length,
                                             (int index) => index,
@@ -900,29 +888,14 @@ class ManagerClass with TemplateRegExp {
 class LocalHandler with TemplateRegExp {
   LocalHandler(this.parent);
 
-  static final RegExp aCreatorName = RegExp(
-    r'this.createClassTemplate',
-    multiLine: true,
-    dotAll: true,
-  );
+  LocalHandlerCreatorName get aCreatorName => LocalHandlerCreatorName(this);
 
-  static final RegExp aStaticMethodName = RegExp(
-    r'this.classTemplate\$staticMethodTemplate',
-    multiLine: true,
-    dotAll: true,
-  );
+  LocalHandlerStaticMethodName get aStaticMethodName =>
+      LocalHandlerStaticMethodName(this);
 
-  static final RegExp aCreator = RegExp(
-    r'\$ClassTemplate[^\}]+createClassTemplate\([^\}]+}',
-    multiLine: true,
-    dotAll: true,
-  );
+  LocalHandlerCreator get aCreator => LocalHandlerCreator(this);
 
-  static final RegExp aStaticMethod = RegExp(
-    r'\$ClassTemplate[^\}]+classTemplate\$staticMethodTemplate\([^\}]+}[^\}]+}',
-    multiLine: true,
-    dotAll: true,
-  );
+  LocalHandlerStaticMethod get aStaticMethod => LocalHandlerStaticMethod(this);
 
   static final RegExp aMethod = RegExp(
     r'\$ClassTemplate[^<]+<String, _\$LocalMethodHandler>[^\}]+}[^\}]+}',
@@ -957,74 +930,78 @@ class LocalHandler with TemplateRegExp {
   final Library parent;
 }
 
-class LocalHandlerCreatorName {
-  static final RegExp name = RegExp(
-    r'ClassTemplate',
-    multiLine: true,
-    dotAll: true,
-  );
+class LocalHandlerCreatorName with TemplateRegExp {
+  LocalHandlerCreatorName(this.parent);
+
+  final RegExp name = TemplateRegExp.regExp(r'ClassTemplate');
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(r'this.createClassTemplate');
+
+  @override
+  final LocalHandler parent;
 }
 
-class LocalHandlerStaticMethodName {
-  static final RegExp className = RegExp(
-    r'classTemplate',
-    multiLine: true,
-    dotAll: true,
+class LocalHandlerStaticMethodName with TemplateRegExp {
+  LocalHandlerStaticMethodName(this.parent);
+
+  final RegExp className = TemplateRegExp.regExp(r'classTemplate');
+
+  final RegExp name = TemplateRegExp.regExp(r'staticMethodTemplate');
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'this.classTemplate\$staticMethodTemplate',
   );
 
-  static final RegExp name = RegExp(
-    r'staticMethodTemplate',
-    multiLine: true,
-    dotAll: true,
-  );
+  @override
+  final LocalHandler parent;
 }
 
-class LocalHandlerCreator {
-  static final RegExp className = RegExp(
-    r'ClassTemplate',
-    multiLine: true,
-    dotAll: true,
+class LocalHandlerCreator with TemplateRegExp {
+  LocalHandlerCreator(this.parent);
+
+  final RegExp className = RegExp(r'ClassTemplate');
+  final RegExp argument = RegExp(r'arguments\[0\]');
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'\$ClassTemplate[^\}]+createClassTemplate\([^\}]+}',
   );
 
-  static final RegExp argument = RegExp(
-    r'arguments\[0\]',
-    multiLine: true,
-    dotAll: true,
-  );
+  @override
+  final LocalHandler parent;
 }
 
-class LocalHandlerStaticMethod {
-  static final RegExp className = RegExp(
-    r'ClassTemplate',
-    multiLine: true,
-    dotAll: true,
+class LocalHandlerStaticMethod with TemplateRegExp {
+  LocalHandlerStaticMethod(this.parent);
+
+  final RegExp className = TemplateRegExp.regExp(r'ClassTemplate');
+
+  LocalHandlerStaticMethodMethod get aMethod =>
+      LocalHandlerStaticMethodMethod(this);
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'\$ClassTemplate[^\}]+classTemplate\$staticMethodTemplate\([^\}]+}[^\}]+}',
   );
 
-  static final RegExp aMethod = RegExp(
-    r"'staticMethodTemplate'[^\}]+}",
-    multiLine: true,
-    dotAll: true,
-  );
+  @override
+  final LocalHandler parent;
 }
 
-class LocalHandlerStaticMethodMethod {
-  static final RegExp methodName = RegExp(
-    r'staticMethodTemplate',
-    multiLine: true,
-    dotAll: true,
-  );
+class LocalHandlerStaticMethodMethod with TemplateRegExp {
+  LocalHandlerStaticMethodMethod(this.parent);
 
-  static final RegExp classNamePart = RegExp(
-    r'classTemplate',
-    multiLine: true,
-    dotAll: true,
-  );
+  final RegExp methodName = TemplateRegExp.regExp(r'staticMethodTemplate');
+  final RegExp classNamePart = TemplateRegExp.regExp(r'classTemplate');
+  final RegExp argument = TemplateRegExp.regExp(r'arguments\[0\]');
 
-  static final RegExp argument = RegExp(
-    r'arguments\[0\]',
-    multiLine: true,
-    dotAll: true,
-  );
+  @override
+  final RegExp exp = TemplateRegExp.regExp(r"'staticMethodTemplate'[^\}]+}");
+
+  @override
+  final LocalHandlerStaticMethod parent;
 }
 
 class LocalHandlerMethod {
