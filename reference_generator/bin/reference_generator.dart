@@ -255,17 +255,16 @@ void main(List<String> arguments) async {
     ),
   );
 
-  // final HttpClientRequest request = await HttpClient().getUrl(Uri.parse(
-  //     'https://raw.githubusercontent.com/bparrishMines/penguin/reference_generator/reference/lib/src/template/src/template.g.dart'));
-  // await request.done;
-  // final HttpClientResponse response = await request.close();
-  //
-  // final StringBuffer buffer = StringBuffer()
-  //   ..writeAll(await response.transform(utf8.decoder).toList());
-  //
-  //final String dartTemplate = buffer.toString();
+  final HttpClientRequest request = await HttpClient().getUrl(Uri.parse(
+      'https://raw.githubusercontent.com/bparrishMines/penguin/reference_generator/reference/lib/src/template/src/template.g.dart'));
+  final HttpClientResponse response = await request.close();
 
-  options?.dartOut?.writeAsStringSync(generateDart(darty, libraryNode));
+  final StringBuffer buffer = StringBuffer()
+    ..writeAll(await response.transform(utf8.decoder).toList());
+
+  final String dartTemplate = buffer.toString();
+
+  options?.dartOut?.writeAsStringSync(generateDart(dartTemplate, libraryNode));
 }
 
 class ReferenceGeneratorOptions {

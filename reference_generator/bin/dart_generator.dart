@@ -69,6 +69,37 @@ String generateDart(String template, LibraryNode libraryNode) {
             .join('\n\n'),
       )
       .replaceAll(
+        library.aCreationArgsClass.exp,
+        libraryNode.classes
+            .map<String>(
+              (ClassNode classNode) => library.aCreationArgsClass
+                  .stringMatch()
+                  .replaceAll(
+                    library.aCreationArgsClass.className,
+                    classNode.name,
+                  )
+                  .replaceAll(
+                    library.aCreationArgsClass.aField.exp,
+                    classNode.fields
+                        .map<String>(
+                          (FieldNode fieldNode) =>
+                              library.aCreationArgsClass.aField
+                                  .stringMatch()
+                                  .replaceAll(
+                                    library.aCreationArgsClass.aField.name,
+                                    fieldNode.name,
+                                  )
+                                  .replaceAll(
+                                    library.aCreationArgsClass.aField.type,
+                                    getTrueTypeName(fieldNode.type),
+                                  ),
+                        )
+                        .join('\n'),
+                  ),
+            )
+            .join('\n\n'),
+      )
+      .replaceAll(
         library.aClassExtension.exp,
         libraryNode.classes
             .map<String>(
@@ -326,10 +357,24 @@ String generateDart(String template, LibraryNode libraryNode) {
                           classNode.name,
                         )
                         .replaceAll(
-                          library.aLocalHandler.aCreator.argument,
+                          library.aLocalHandler.aCreator.argument.exp,
                           List<int>.generate(
                                   classNode.fields.length, (int index) => index)
-                              .map<String>((int index) => 'arguments[$index]')
+                              .map<String>(
+                                (int index) =>
+                                    library.aLocalHandler.aCreator.argument
+                                        .stringMatch()
+                                        .replaceAll(
+                                          library.aLocalHandler.aCreator
+                                              .argument.fieldName,
+                                          classNode.fields[0].name,
+                                        )
+                                        .replaceAll(
+                                          library.aLocalHandler.aCreator
+                                              .argument.argumentIndex,
+                                          '$index',
+                                        ),
+                              )
                               .join(','),
                         ),
                   )
@@ -485,26 +530,6 @@ String generateDart(String template, LibraryNode libraryNode) {
                         .replaceAll(
                           library.aLocalHandler.aCreatorField.className,
                           classNode.name,
-                        )
-                        .replaceAll(
-                          library.aLocalHandler.aCreatorField.aField.exp,
-                          classNode.fields
-                              .map<String>(
-                                (FieldNode fieldNode) =>
-                                    library.aLocalHandler.aCreatorField.aField
-                                        .stringMatch()
-                                        .replaceAll(
-                                          library.aLocalHandler.aCreatorField
-                                              .aField.name,
-                                          fieldNode.name,
-                                        )
-                                        .replaceAll(
-                                          library.aLocalHandler.aCreatorField
-                                              .aField.type,
-                                          getTrueTypeName(fieldNode.type),
-                                        ),
-                              )
-                              .join(','),
                         ),
                   )
                   .join('\n\n'),
@@ -658,6 +683,8 @@ class Library with TemplateRegExp {
 
   Class get aClass => Class(this);
 
+  CreationArgsClass get aCreationArgsClass => CreationArgsClass(this);
+
   ClassExtension get aClassExtension => ClassExtension(this);
 
   Manager get aManager => Manager(this);
@@ -731,6 +758,35 @@ class Parameter with TemplateRegExp {
 
   @override
   final TemplateRegExp parent;
+}
+
+class CreationArgsClass with TemplateRegExp {
+  CreationArgsClass(this.parent);
+
+  final RegExp className = TemplateRegExp.regExp(r'(?<=class \$)ClassTemplate');
+
+  CreationArgsClassField get aField => CreationArgsClassField(this);
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'class \$ClassTemplateCreationArgs[^\}]+\}',
+  );
+
+  @override
+  final Library parent;
+}
+
+class CreationArgsClassField with TemplateRegExp {
+  CreationArgsClassField(this.parent);
+
+  final RegExp type = TemplateRegExp.regExp(r'^int');
+  final RegExp name = TemplateRegExp.regExp(r'fieldTemplate(?=;)');
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(r'int fieldTemplate;');
+
+  @override
+  final CreationArgsClass parent;
 }
 
 class ClassExtension with TemplateRegExp {
@@ -938,8 +994,10 @@ class LocalHandlerStaticMethodName with TemplateRegExp {
 class LocalHandlerCreator with TemplateRegExp {
   LocalHandlerCreator(this.parent);
 
-  final RegExp className = RegExp(r'ClassTemplate');
-  final RegExp argument = RegExp(r'arguments\[0\]');
+  final RegExp className = TemplateRegExp.regExp(r'ClassTemplate');
+
+  LocalHandlerCreatorCreationArgs get argument =>
+      LocalHandlerCreatorCreationArgs(this);
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
@@ -948,6 +1006,21 @@ class LocalHandlerCreator with TemplateRegExp {
 
   @override
   final LocalHandler parent;
+}
+
+class LocalHandlerCreatorCreationArgs with TemplateRegExp {
+  LocalHandlerCreatorCreationArgs(this.parent);
+
+  final RegExp fieldName = TemplateRegExp.regExp(r'fieldTemplate');
+  final RegExp argumentIndex = TemplateRegExp.regExp(r'\d+(?=\])');
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'\.\.fieldTemplate = arguments\[0\]',
+  );
+
+  @override
+  final LocalHandlerCreator parent;
 }
 
 class LocalHandlerStaticMethod with TemplateRegExp {
@@ -1033,27 +1106,11 @@ class LocalHandlerCreatorField with TemplateRegExp {
 
   final RegExp className = TemplateRegExp.regExp(r'ClassTemplate');
 
-  LocalHandlerCreatorFieldField get aField =>
-      LocalHandlerCreatorFieldField(this);
-
   @override
   final RegExp exp = TemplateRegExp.regExp(r'final[^;]+createClassTemplate;');
 
   @override
   final LocalHandler parent;
-}
-
-class LocalHandlerCreatorFieldField with TemplateRegExp {
-  LocalHandlerCreatorFieldField(this.parent);
-
-  final RegExp name = TemplateRegExp.regExp(r'fieldTemplate$');
-  final RegExp type = TemplateRegExp.regExp(r'^int');
-
-  @override
-  final RegExp exp = TemplateRegExp.regExp(r'int fieldTemplate');
-
-  @override
-  final LocalHandlerCreatorField parent;
 }
 
 class LocalHandlerInvokeMethodCondition with TemplateRegExp {
