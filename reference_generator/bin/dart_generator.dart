@@ -382,49 +382,45 @@ String generateDart(String template, LibraryNode libraryNode) {
                   .join(','),
             )
             .replaceAll(
-              LocalHandler.aMethod,
+              library.aLocalHandler.aMethod.exp,
               libraryNode.classes
                   .map<String>(
-                    (ClassNode classNode) => LocalHandler.aMethod
-                        .stringMatch(
-                          library.aLocalHandler.exp.stringMatch(template),
-                        )
+                    (ClassNode classNode) => library.aLocalHandler.aMethod
+                        .stringMatch()
                         .replaceAll(
-                          LocalHandlerMethod.className,
+                          library.aLocalHandler.aMethod.className,
                           classNode.name,
                         )
                         .replaceAll(
-                          LocalHandlerMethod.aMethod,
+                          library.aLocalHandler.aMethod.aMethod.exp,
                           classNode.methods
                               .map<String>(
-                                (MethodNode methodNode) => LocalHandlerMethod
-                                    .aMethod
-                                    .stringMatch(
-                                      LocalHandler.aMethod.stringMatch(
-                                        library.aLocalHandler.exp.stringMatch(
-                                          template,
-                                        ),
-                                      ),
-                                    )
-                                    .replaceAll(
-                                      LocalHandlerMethodMethod.className,
-                                      classNode.name,
-                                    )
-                                    .replaceAll(
-                                      LocalHandlerMethodMethod.methodName,
-                                      methodNode.name,
-                                    )
-                                    .replaceAll(
-                                      LocalHandlerMethodMethod.argument,
-                                      List<int>.generate(
-                                        methodNode.parameters.length,
-                                        (int index) => index,
-                                      )
-                                          .map<String>(
-                                            (int index) => 'arguments[$index]',
+                                (MethodNode methodNode) =>
+                                    library.aLocalHandler.aMethod.aMethod
+                                        .stringMatch()
+                                        .replaceAll(
+                                          library.aLocalHandler.aMethod.aMethod
+                                              .className,
+                                          classNode.name,
+                                        )
+                                        .replaceAll(
+                                          library.aLocalHandler.aMethod.aMethod
+                                              .methodName,
+                                          methodNode.name,
+                                        )
+                                        .replaceAll(
+                                          library.aLocalHandler.aMethod.aMethod
+                                              .argument,
+                                          List<int>.generate(
+                                            methodNode.parameters.length,
+                                            (int index) => index,
                                           )
-                                          .join(','),
-                                    ),
+                                              .map<String>(
+                                                (int index) =>
+                                                    'arguments[$index]',
+                                              )
+                                              .join(','),
+                                        ),
                               )
                               .join(','),
                         ),
@@ -432,7 +428,7 @@ String generateDart(String template, LibraryNode libraryNode) {
                   .join(','),
             )
             .replaceAll(
-              LocalHandler.aStaticMethodField,
+              library.aLocalHandler.aStaticMethodField.exp,
               libraryNode.classes
                   .fold<Map<MethodNode, ClassNode>>(
                     <MethodNode, ClassNode>{},
@@ -445,42 +441,35 @@ String generateDart(String template, LibraryNode libraryNode) {
                   )
                   .entries
                   .map<String>(
-                    (MapEntry<MethodNode, ClassNode> entry) => LocalHandler
-                        .aStaticMethodField
-                        .stringMatch(
-                          library.aLocalHandler.exp.stringMatch(template),
-                        )
+                    (MapEntry<MethodNode, ClassNode> entry) => library
+                        .aLocalHandler.aStaticMethodField
+                        .stringMatch()
                         .replaceAll(
-                          LocalHandlerStaticMethodField.className,
+                          library.aLocalHandler.aStaticMethodField.className,
                           ReCase(entry.value.name).camelCase,
                         )
                         .replaceAll(
-                          LocalHandlerStaticMethodField.name,
+                          library.aLocalHandler.aStaticMethodField.name,
                           entry.key.name,
                         )
                         .replaceAll(
-                          LocalHandlerStaticMethodField.aParameter,
+                          library
+                              .aLocalHandler.aStaticMethodField.aParameter.exp,
                           entry.key.parameters
                               .map<String>(
-                                (ParameterNode parameterNode) =>
-                                    LocalHandlerStaticMethodField.aParameter
-                                        .stringMatch(
-                                          LocalHandler.aStaticMethodField
-                                              .stringMatch(
-                                            library.aLocalHandler.exp
-                                                .stringMatch(
-                                              template,
-                                            ),
-                                          ),
-                                        )
-                                        .replaceAll(
-                                          Parameter(null).name,
-                                          parameterNode.name,
-                                        )
-                                        .replaceAll(
-                                          Parameter(null).type,
-                                          getTrueTypeName(parameterNode.type),
-                                        ),
+                                (ParameterNode parameterNode) => library
+                                    .aLocalHandler.aStaticMethodField.aParameter
+                                    .stringMatch()
+                                    .replaceAll(
+                                      library.aLocalHandler.aStaticMethodField
+                                          .aParameter.name,
+                                      parameterNode.name,
+                                    )
+                                    .replaceAll(
+                                      library.aLocalHandler.aStaticMethodField
+                                          .aParameter.type,
+                                      getTrueTypeName(parameterNode.type),
+                                    ),
                               )
                               .join(', '),
                         ),
@@ -488,38 +477,30 @@ String generateDart(String template, LibraryNode libraryNode) {
                   .join('\n\n'),
             )
             .replaceAll(
-              LocalHandler.aCreatorField,
+              library.aLocalHandler.aCreatorField.exp,
               libraryNode.classes
                   .map<String>(
-                    (ClassNode classNode) => LocalHandler.aCreatorField
-                        .stringMatch(
-                          library.aLocalHandler.exp.stringMatch(template),
-                        )
+                    (ClassNode classNode) => library.aLocalHandler.aCreatorField
+                        .stringMatch()
                         .replaceAll(
-                          LocalHandlerCreatorField.className,
+                          library.aLocalHandler.aCreatorField.className,
                           classNode.name,
                         )
                         .replaceAll(
-                          LocalHandlerCreatorField.aField,
+                          library.aLocalHandler.aCreatorField.aField.exp,
                           classNode.fields
                               .map<String>(
                                 (FieldNode fieldNode) =>
-                                    LocalHandlerCreatorField.aField
-                                        .stringMatch(
-                                          LocalHandler.aCreatorField
-                                              .stringMatch(
-                                            library.aLocalHandler.exp
-                                                .stringMatch(
-                                              template,
-                                            ),
-                                          ),
-                                        )
+                                    library.aLocalHandler.aCreatorField.aField
+                                        .stringMatch()
                                         .replaceAll(
-                                          LocalHandlerCreatorFieldField.name,
+                                          library.aLocalHandler.aCreatorField
+                                              .aField.name,
                                           fieldNode.name,
                                         )
                                         .replaceAll(
-                                          LocalHandlerCreatorFieldField.type,
+                                          library.aLocalHandler.aCreatorField
+                                              .aField.type,
                                           getTrueTypeName(fieldNode.type),
                                         ),
                               )
@@ -897,23 +878,12 @@ class LocalHandler with TemplateRegExp {
 
   LocalHandlerStaticMethod get aStaticMethod => LocalHandlerStaticMethod(this);
 
-  static final RegExp aMethod = RegExp(
-    r'\$ClassTemplate[^<]+<String, _\$LocalMethodHandler>[^\}]+}[^\}]+}',
-    multiLine: true,
-    dotAll: true,
-  );
+  LocalHandlerMethod get aMethod => LocalHandlerMethod(this);
 
-  static final RegExp aStaticMethodField = RegExp(
-    r'final[^;]+classTemplate\$staticMethodTemplate;',
-    multiLine: true,
-    dotAll: true,
-  );
+  LocalHandlerStaticMethodField get aStaticMethodField =>
+      LocalHandlerStaticMethodField(this);
 
-  static final RegExp aCreatorField = RegExp(
-    r'final[^;]+createClassTemplate;',
-    multiLine: true,
-    dotAll: true,
-  );
+  LocalHandlerCreatorField get aCreatorField => LocalHandlerCreatorField(this);
 
   static final RegExp anInvokeMethodCondition = RegExp(
     r'if\s\(localReference\sis\s\$ClassTemplate\)[^\}]+}[^\}]+}',
@@ -1004,86 +974,79 @@ class LocalHandlerStaticMethodMethod with TemplateRegExp {
   final LocalHandlerStaticMethod parent;
 }
 
-class LocalHandlerMethod {
-  static final RegExp className = RegExp(
-    r'ClassTemplate(?=:)',
-    multiLine: true,
-    dotAll: true,
+class LocalHandlerMethod with TemplateRegExp {
+  LocalHandlerMethod(this.parent);
+
+  final RegExp className = TemplateRegExp.regExp(r'ClassTemplate(?=:)');
+
+  LocalHandlerMethodMethod get aMethod => LocalHandlerMethodMethod(this);
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'\$ClassTemplate[^<]+<String, _\$LocalMethodHandler>[^\}]+}[^\}]+}',
   );
 
-  static final RegExp aMethod = RegExp(
-    r"'methodTemplate'[^\}]+}",
-    multiLine: true,
-    dotAll: true,
-  );
+  @override
+  final LocalHandler parent;
 }
 
-class LocalHandlerMethodMethod {
-  static final RegExp methodName = RegExp(
-    r'methodTemplate',
-    multiLine: true,
-    dotAll: true,
-  );
+class LocalHandlerMethodMethod with TemplateRegExp {
+  LocalHandlerMethodMethod(this.parent);
 
-  static final RegExp className = RegExp(
-    r'ClassTemplate(?=\))',
-    multiLine: true,
-    dotAll: true,
-  );
+  final RegExp methodName = TemplateRegExp.regExp(r'methodTemplate');
+  final RegExp className = TemplateRegExp.regExp(r'ClassTemplate(?=\))');
+  final RegExp argument = TemplateRegExp.regExp(r'arguments\[0\]');
 
-  static final RegExp argument = RegExp(
-    r'arguments\[0\]',
-    multiLine: true,
-    dotAll: true,
-  );
+  @override
+  final RegExp exp = TemplateRegExp.regExp(r"'methodTemplate'[^\}]+}");
+
+  @override
+  final LocalHandlerMethod parent;
 }
 
-class LocalHandlerStaticMethodField {
-  static final RegExp className = RegExp(
-    r'classTemplate',
-    multiLine: true,
-    dotAll: true,
+class LocalHandlerStaticMethodField with TemplateRegExp {
+  LocalHandlerStaticMethodField(this.parent);
+
+  final RegExp className = TemplateRegExp.regExp(r'classTemplate');
+  final RegExp name = TemplateRegExp.regExp(r'staticMethodTemplate');
+
+  Parameter get aParameter => Parameter(this);
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'final[^;]+classTemplate\$staticMethodTemplate;',
   );
 
-  static final RegExp name = RegExp(
-    r'staticMethodTemplate',
-    multiLine: true,
-    dotAll: true,
-  );
-
-  static final RegExp aParameter = RegExp(
-    r'String parameterTemplate',
-    multiLine: true,
-    dotAll: true,
-  );
+  @override
+  final LocalHandler parent;
 }
 
-class LocalHandlerCreatorField {
-  static final RegExp className = RegExp(
-    r'ClassTemplate',
-    multiLine: true,
-    dotAll: true,
-  );
+class LocalHandlerCreatorField with TemplateRegExp {
+  LocalHandlerCreatorField(this.parent);
 
-  static final RegExp aField = RegExp(
-    r'int fieldTemplate',
-    multiLine: true,
-    dotAll: true,
-  );
+  final RegExp className = TemplateRegExp.regExp(r'ClassTemplate');
+
+  LocalHandlerCreatorFieldField get aField =>
+      LocalHandlerCreatorFieldField(this);
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(r'final[^;]+createClassTemplate;');
+
+  @override
+  final LocalHandler parent;
 }
 
-class LocalHandlerCreatorFieldField {
-  static final RegExp name = RegExp(
-    r'fieldTemplate$',
-    multiLine: true,
-    dotAll: true,
-  );
+class LocalHandlerCreatorFieldField with TemplateRegExp {
+  LocalHandlerCreatorFieldField(this.parent);
 
-  static final RegExp type = RegExp(
-    r'^int',
-    multiLine: true,
-    dotAll: true,
-  );
+  final RegExp name = TemplateRegExp.regExp(r'fieldTemplate$');
+  final RegExp type = TemplateRegExp.regExp(r'^int');
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(r'int fieldTemplate');
+
+  @override
+  final LocalHandlerCreatorField parent;
 }
 
 class LocalHandlerInvokeMethodCondition {
