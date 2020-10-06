@@ -256,23 +256,23 @@ String generateDart(String template, LibraryNode libraryNode) {
             .join('\n\n'),
       )
       .replaceAll(
-        Library.aManager,
-        Library.aManager.stringMatch(template).replaceAll(
-              Manager.aClass,
+        library.aManager.exp,
+        library.aManager.stringMatch().replaceAll(
+              library.aManager.aClass.exp,
               libraryNode.classes
                   .map<String>(
-                    (ClassNode classNode) => Manager.aClass
-                        .stringMatch(
-                          Library.aManager.stringMatch(template),
-                        )
-                        .replaceAll(ManagerClass.name, classNode.name),
+                    (ClassNode classNode) =>
+                        library.aManager.aClass.stringMatch().replaceAll(
+                              library.aManager.aClass.name,
+                              classNode.name,
+                            ),
                   )
                   .join(', '),
             ),
       )
       .replaceAll(
-        Library.aLocalHandler,
-        Library.aLocalHandler
+        library.aLocalHandler.exp,
+        library.aLocalHandler.exp
             .stringMatch(template)
             .replaceAll(
               LocalHandler.aCreatorName,
@@ -280,7 +280,7 @@ String generateDart(String template, LibraryNode libraryNode) {
                   .map<String>(
                     (ClassNode classNode) => LocalHandler.aCreatorName
                         .stringMatch(
-                          Library.aLocalHandler.stringMatch(template),
+                          library.aLocalHandler.exp.stringMatch(template),
                         )
                         .replaceAll(
                           LocalHandlerCreatorName.name,
@@ -306,7 +306,7 @@ String generateDart(String template, LibraryNode libraryNode) {
                     (MapEntry<MethodNode, ClassNode> entry) => LocalHandler
                         .aStaticMethodName
                         .stringMatch(
-                          Library.aLocalHandler.stringMatch(template),
+                          library.aLocalHandler.exp.stringMatch(template),
                         )
                         .replaceAll(LocalHandlerStaticMethodName.className,
                             ReCase(entry.value.name).camelCase)
@@ -321,7 +321,7 @@ String generateDart(String template, LibraryNode libraryNode) {
                   .map<String>(
                     (ClassNode classNode) => LocalHandler.aCreator
                         .stringMatch(
-                          Library.aLocalHandler.stringMatch(template),
+                          library.aLocalHandler.exp.stringMatch(template),
                         )
                         .replaceAll(
                           LocalHandlerCreator.className,
@@ -343,7 +343,7 @@ String generateDart(String template, LibraryNode libraryNode) {
                   .map<String>(
                     (ClassNode classNode) => LocalHandler.aStaticMethod
                         .stringMatch(
-                          Library.aLocalHandler.stringMatch(template),
+                          library.aLocalHandler.exp.stringMatch(template),
                         )
                         .replaceAll(
                           LocalHandlerStaticMethod.className,
@@ -358,7 +358,8 @@ String generateDart(String template, LibraryNode libraryNode) {
                                         .stringMatch(
                                           LocalHandler.aStaticMethod
                                               .stringMatch(
-                                            Library.aLocalHandler.stringMatch(
+                                            library.aLocalHandler.exp
+                                                .stringMatch(
                                               template,
                                             ),
                                           ),
@@ -398,7 +399,7 @@ String generateDart(String template, LibraryNode libraryNode) {
                   .map<String>(
                     (ClassNode classNode) => LocalHandler.aMethod
                         .stringMatch(
-                          Library.aLocalHandler.stringMatch(template),
+                          library.aLocalHandler.exp.stringMatch(template),
                         )
                         .replaceAll(
                           LocalHandlerMethod.className,
@@ -408,35 +409,34 @@ String generateDart(String template, LibraryNode libraryNode) {
                           LocalHandlerMethod.aMethod,
                           classNode.methods
                               .map<String>(
-                                (MethodNode methodNode) =>
-                                    LocalHandlerMethod.aMethod
-                                        .stringMatch(
-                                          LocalHandler.aMethod.stringMatch(
-                                            Library.aLocalHandler.stringMatch(
-                                              template,
-                                            ),
-                                          ),
-                                        )
-                                        .replaceAll(
-                                          LocalHandlerMethodMethod.className,
-                                          classNode.name,
-                                        )
-                                        .replaceAll(
-                                          LocalHandlerMethodMethod.methodName,
-                                          methodNode.name,
-                                        )
-                                        .replaceAll(
-                                          LocalHandlerMethodMethod.argument,
-                                          List<int>.generate(
-                                            methodNode.parameters.length,
-                                            (int index) => index,
-                                          )
-                                              .map<String>(
-                                                (int index) =>
-                                                    'arguments[$index]',
-                                              )
-                                              .join(','),
+                                (MethodNode methodNode) => LocalHandlerMethod
+                                    .aMethod
+                                    .stringMatch(
+                                      LocalHandler.aMethod.stringMatch(
+                                        library.aLocalHandler.exp.stringMatch(
+                                          template,
                                         ),
+                                      ),
+                                    )
+                                    .replaceAll(
+                                      LocalHandlerMethodMethod.className,
+                                      classNode.name,
+                                    )
+                                    .replaceAll(
+                                      LocalHandlerMethodMethod.methodName,
+                                      methodNode.name,
+                                    )
+                                    .replaceAll(
+                                      LocalHandlerMethodMethod.argument,
+                                      List<int>.generate(
+                                        methodNode.parameters.length,
+                                        (int index) => index,
+                                      )
+                                          .map<String>(
+                                            (int index) => 'arguments[$index]',
+                                          )
+                                          .join(','),
+                                    ),
                               )
                               .join(','),
                         ),
@@ -460,7 +460,7 @@ String generateDart(String template, LibraryNode libraryNode) {
                     (MapEntry<MethodNode, ClassNode> entry) => LocalHandler
                         .aStaticMethodField
                         .stringMatch(
-                          Library.aLocalHandler.stringMatch(template),
+                          library.aLocalHandler.exp.stringMatch(template),
                         )
                         .replaceAll(
                           LocalHandlerStaticMethodField.className,
@@ -479,7 +479,8 @@ String generateDart(String template, LibraryNode libraryNode) {
                                         .stringMatch(
                                           LocalHandler.aStaticMethodField
                                               .stringMatch(
-                                            Library.aLocalHandler.stringMatch(
+                                            library.aLocalHandler.exp
+                                                .stringMatch(
                                               template,
                                             ),
                                           ),
@@ -504,7 +505,7 @@ String generateDart(String template, LibraryNode libraryNode) {
                   .map<String>(
                     (ClassNode classNode) => LocalHandler.aCreatorField
                         .stringMatch(
-                          Library.aLocalHandler.stringMatch(template),
+                          library.aLocalHandler.exp.stringMatch(template),
                         )
                         .replaceAll(
                           LocalHandlerCreatorField.className,
@@ -519,7 +520,8 @@ String generateDart(String template, LibraryNode libraryNode) {
                                         .stringMatch(
                                           LocalHandler.aCreatorField
                                               .stringMatch(
-                                            Library.aLocalHandler.stringMatch(
+                                            library.aLocalHandler.exp
+                                                .stringMatch(
                                               template,
                                             ),
                                           ),
@@ -545,7 +547,7 @@ String generateDart(String template, LibraryNode libraryNode) {
                     (ClassNode classNode) => LocalHandler
                         .anInvokeMethodCondition
                         .stringMatch(
-                          Library.aLocalHandler.stringMatch(template),
+                          library.aLocalHandler.exp.stringMatch(template),
                         )
                         .replaceAll(
                           LocalHandlerInvokeMethodCondition.className,
@@ -560,7 +562,7 @@ String generateDart(String template, LibraryNode libraryNode) {
                                         .stringMatch(
                                           LocalHandler.anInvokeMethodCondition
                                               .stringMatch(
-                                            Library.aLocalHandler
+                                            library.aLocalHandler.exp
                                                 .stringMatch(template),
                                           ),
                                         )
@@ -679,17 +681,9 @@ class Library with TemplateRegExp {
 
   ClassExtension get aClassExtension => ClassExtension(this);
 
-  static final RegExp aManager = RegExp(
-    r'(?<=abstract\sclass\s\$)ReferencePairManager[^\}]+\}[^\}]+\}',
-    multiLine: true,
-    dotAll: true,
-  );
+  Manager get aManager => Manager(this);
 
-  static final RegExp aLocalHandler = RegExp(
-    r'class\s\$LocalHandler[^{]+{([^}]+}){15}',
-    multiLine: true,
-    dotAll: true,
-  );
+  LocalHandler get aLocalHandler => LocalHandler(this);
 
   CreationArgument get aCreationArgument => CreationArgument(this);
 }
@@ -877,23 +871,35 @@ class ClassExtensionMethodPairedReference with TemplateRegExp {
   final ClassExtensionMethod parent;
 }
 
-class Manager {
-  static final RegExp aClass = RegExp(
-    r'\$ClassTemplate',
-    multiLine: true,
-    dotAll: true,
+class Manager with TemplateRegExp {
+  Manager(this.parent);
+
+  ManagerClass get aClass => ManagerClass(this);
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'(?<=abstract\sclass\s\$)ReferencePairManager[^\}]+\}[^\}]+\}',
   );
+
+  @override
+  final Library parent;
 }
 
-class ManagerClass {
-  static final RegExp name = RegExp(
-    r'ClassTemplate',
-    multiLine: true,
-    dotAll: true,
-  );
+class ManagerClass with TemplateRegExp {
+  ManagerClass(this.parent);
+
+  final RegExp name = TemplateRegExp.regExp(r'ClassTemplate');
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(r'\$ClassTemplate');
+
+  @override
+  final Manager parent;
 }
 
-class LocalHandler {
+class LocalHandler with TemplateRegExp {
+  LocalHandler(this.parent);
+
   static final RegExp aCreatorName = RegExp(
     r'this.createClassTemplate',
     multiLine: true,
@@ -941,6 +947,14 @@ class LocalHandler {
     multiLine: true,
     dotAll: true,
   );
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'class\s\$LocalHandler[^{]+{([^}]+}){15}',
+  );
+
+  @override
+  final Library parent;
 }
 
 class LocalHandlerCreatorName {
