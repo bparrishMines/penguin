@@ -69,72 +69,75 @@ String generateDart(String template, LibraryNode libraryNode) {
             .join('\n\n'),
       )
       .replaceAll(
-        Library.aClassExtension,
+        library.aClassExtension.exp,
         libraryNode.classes
             .map<String>(
-              (ClassNode classNode) => Library.aClassExtension
-                  .stringMatch(template)
+              (ClassNode classNode) => library.aClassExtension
+                  .stringMatch()
                   .replaceAll(
-                    ClassExtension.extensionName,
+                    library.aClassExtension.extensionName,
                     classNode.name,
                   )
                   .replaceAll(
-                    ClassExtension.className,
+                    library.aClassExtension.className,
                     classNode.name,
                   )
                   .replaceAll(
-                    ClassExtension.aStaticMethod,
+                    library.aClassExtension.aStaticMethod.exp,
                     classNode.staticMethods
                         .map<String>(
-                          (MethodNode methodNode) => ClassExtension
-                              .aStaticMethod
-                              .stringMatch(
-                                Library.aClassExtension.stringMatch(template),
-                              )
+                          (MethodNode methodNode) => library
+                              .aClassExtension.aStaticMethod
+                              .stringMatch()
                               .replaceAll(
-                                ClassExtensionStaticMethod.className,
+                                library.aClassExtension.aStaticMethod.className,
                                 classNode.name,
                               )
                               .replaceAll(
-                                ClassExtensionStaticMethod.name,
+                                library.aClassExtension.aStaticMethod.name,
                                 methodNode.name,
                               )
                               .replaceAll(
-                                ClassExtensionStaticMethod.aParameter,
+                                library.aClassExtension.aStaticMethod.aParameter
+                                    .exp,
                                 methodNode.parameters
                                     .map<String>(
-                                      (ParameterNode parameterNode) =>
-                                          ClassExtensionStaticMethod.aParameter
-                                              .replaceAll(
-                                                Parameter(null).name,
-                                                parameterNode.name,
-                                              )
-                                              .replaceAll(
-                                                Parameter(null).type,
-                                                getTrueTypeName(
-                                                    parameterNode.type),
-                                              ),
+                                      (ParameterNode parameterNode) => library
+                                          .aClassExtension
+                                          .aStaticMethod
+                                          .aParameter
+                                          .stringMatch()
+                                          .replaceAll(
+                                            library.aClassExtension
+                                                .aStaticMethod.aParameter.name,
+                                            parameterNode.name,
+                                          )
+                                          .replaceAll(
+                                            library.aClassExtension
+                                                .aStaticMethod.aParameter.type,
+                                            getTrueTypeName(parameterNode.type),
+                                          ),
                                     )
                                     .join(', '),
                               )
                               .replaceAll(
-                                ClassExtensionStaticMethod.aParameterName,
+                                library.aClassExtension.aStaticMethod
+                                    .aParameterName.exp,
                                 methodNode.parameters
                                     .map<String>(
-                                      (ParameterNode parameterNode) =>
-                                          ClassExtensionStaticMethod
-                                              .aParameterName
-                                              .stringMatch(
-                                                ClassExtension.aStaticMethod
-                                                    .stringMatch(
-                                                  Library.aClassExtension
-                                                      .stringMatch(template),
-                                                ),
-                                              )
-                                              .replaceAll(
-                                                Parameter(null).name,
-                                                parameterNode.name,
-                                              ),
+                                      (ParameterNode parameterNode) => library
+                                          .aClassExtension
+                                          .aStaticMethod
+                                          .aParameterName
+                                          .stringMatch()
+                                          .replaceAll(
+                                            library
+                                                .aClassExtension
+                                                .aStaticMethod
+                                                .aParameterName
+                                                .name,
+                                            parameterNode.name,
+                                          ),
                                     )
                                     .join(', '),
                               ),
@@ -142,68 +145,69 @@ String generateDart(String template, LibraryNode libraryNode) {
                         .join('\n\n'),
                   )
                   .replaceAll(
-                    ClassExtension.aMethod,
+                    library.aClassExtension.aMethod.exp,
                     classNode.methods
                         .map<String>(
-                          (MethodNode methodNode) => ClassExtension.aMethod
-                              .stringMatch(
-                                Library.aClassExtension.stringMatch(template),
-                              )
+                          (MethodNode methodNode) => library
+                              .aClassExtension.aMethod
+                              .stringMatch()
                               .replaceAll(
-                                ClassExtensionMethod.name,
+                                library.aClassExtension.aMethod.name,
                                 methodNode.name,
                               )
                               .replaceAll(
-                                ClassExtensionMethod.aParameter,
+                                library.aClassExtension.aMethod.aParameter.exp,
                                 methodNode.parameters
                                     .map<String>(
-                                      (ParameterNode parameterNode) =>
-                                          ClassExtensionStaticMethod.aParameter
-                                              .replaceAll(
-                                                Parameter(null).name,
-                                                parameterNode.name,
-                                              )
-                                              .replaceAll(
-                                                Parameter(null).type,
-                                                getTrueTypeName(
-                                                    parameterNode.type),
-                                              ),
+                                      (ParameterNode parameterNode) => library
+                                          .aClassExtension.aMethod.aParameter
+                                          .stringMatch()
+                                          .replaceAll(
+                                            library.aClassExtension.aMethod
+                                                .aParameter.name,
+                                            parameterNode.name,
+                                          )
+                                          .replaceAll(
+                                            library.aClassExtension.aMethod
+                                                .aParameter.type,
+                                            getTrueTypeName(parameterNode.type),
+                                          ),
                                     )
                                     .join(', '),
                               )
                               .replaceAll(
-                                ClassExtensionMethod.anUnpairedReference,
-                                ClassExtensionMethod.anUnpairedReference
-                                    .stringMatch(
-                                      ClassExtension.aMethod.stringMatch(
-                                        Library.aClassExtension
-                                            .stringMatch(template),
-                                      ),
-                                    )
+                                library.aClassExtension.aMethod
+                                    .anUnpairedReference.exp,
+                                library
+                                    .aClassExtension.aMethod.anUnpairedReference
+                                    .stringMatch()
                                     .replaceAll(
-                                        ClassExtensionMethodUnpairedReference
-                                            .name,
+                                        library.aClassExtension.aMethod
+                                            .anUnpairedReference.name,
                                         methodNode.name)
                                     .replaceAll(
-                                      ClassExtensionMethodUnpairedReference
-                                          .aParameterName,
+                                      library
+                                          .aClassExtension
+                                          .aMethod
+                                          .anUnpairedReference
+                                          .aParameterName
+                                          .exp,
                                       methodNode.parameters
                                           .map<String>(
                                             (ParameterNode parameterNode) =>
-                                                ClassExtensionStaticMethod
+                                                library
+                                                    .aClassExtension
+                                                    .aMethod
+                                                    .anUnpairedReference
                                                     .aParameterName
-                                                    .stringMatch(
-                                                      ClassExtension
-                                                          .aStaticMethod
-                                                          .stringMatch(
-                                                        Library.aClassExtension
-                                                            .stringMatch(
-                                                          template,
-                                                        ),
-                                                      ),
-                                                    )
+                                                    .stringMatch()
                                                     .replaceAll(
-                                                      Parameter(null).name,
+                                                      library
+                                                          .aClassExtension
+                                                          .aMethod
+                                                          .anUnpairedReference
+                                                          .aParameterName
+                                                          .name,
                                                       parameterNode.name,
                                                     ),
                                           )
@@ -211,38 +215,34 @@ String generateDart(String template, LibraryNode libraryNode) {
                                     ),
                               )
                               .replaceAll(
-                                ClassExtensionMethod.aPairedReference,
-                                ClassExtensionMethod.aPairedReference
-                                    .stringMatch(
-                                      ClassExtension.aMethod.stringMatch(
-                                        Library.aClassExtension
-                                            .stringMatch(template),
-                                      ),
+                                library.aClassExtension.aMethod.aPairedReference
+                                    .exp,
+                                library.aClassExtension.aMethod.aPairedReference
+                                    .stringMatch()
+                                    .replaceAll(
+                                      library.aClassExtension.aMethod
+                                          .aPairedReference.name,
+                                      methodNode.name,
                                     )
                                     .replaceAll(
-                                        ClassExtensionMethodPairedReference
-                                            .name,
-                                        methodNode.name)
-                                    .replaceAll(
-                                      ClassExtensionMethodPairedReference
-                                          .aParameterName,
+                                      library.aClassExtension.aMethod
+                                          .aPairedReference.aParameterName.exp,
                                       methodNode.parameters
                                           .map<String>(
                                             (ParameterNode parameterNode) =>
-                                                ClassExtensionStaticMethod
+                                                library
+                                                    .aClassExtension
+                                                    .aMethod
+                                                    .aPairedReference
                                                     .aParameterName
-                                                    .stringMatch(
-                                                      ClassExtension
-                                                          .aStaticMethod
-                                                          .stringMatch(
-                                                        Library.aClassExtension
-                                                            .stringMatch(
-                                                          template,
-                                                        ),
-                                                      ),
-                                                    )
+                                                    .stringMatch()
                                                     .replaceAll(
-                                                      Parameter(null).name,
+                                                      library
+                                                          .aClassExtension
+                                                          .aMethod
+                                                          .aPairedReference
+                                                          .aParameterName
+                                                          .name,
                                                       parameterNode.name,
                                                     ),
                                           )
@@ -677,11 +677,7 @@ class Library with TemplateRegExp {
 
   Class get aClass => Class(this);
 
-  static final RegExp aClassExtension = RegExp(
-    r'extension\s\$ClassTemplateMethods[^\}]+\}[^\}]+\}[^\}]+\}[^\}]*\}',
-    multiLine: true,
-    dotAll: true,
-  );
+  ClassExtension get aClassExtension => ClassExtension(this);
 
   static final RegExp aManager = RegExp(
     r'(?<=abstract\sclass\s\$)ReferencePairManager[^\}]+\}[^\}]+\}',
@@ -764,102 +760,121 @@ class Parameter with TemplateRegExp {
   final TemplateRegExp parent;
 }
 
-class ClassExtension {
-  static final RegExp extensionName = RegExp(
+class ClassExtension with TemplateRegExp {
+  ClassExtension(this.parent);
+
+  final RegExp extensionName = TemplateRegExp.regExp(
     r'ClassTemplate(?=Methods\son)',
-    multiLine: true,
-    dotAll: true,
   );
 
-  static final RegExp className = RegExp(
+  final RegExp className = TemplateRegExp.regExp(
     r'ClassTemplate(?<=on\s\$ClassTemplate)',
-    multiLine: true,
-    dotAll: true,
   );
 
-  static final RegExp aStaticMethod = RegExp(
-    r'static\sFuture<Object>\s\$staticMethodTemplate[^\}]+\}',
-    multiLine: true,
-    dotAll: true,
+  ClassExtensionStaticMethod get aStaticMethod =>
+      ClassExtensionStaticMethod(this);
+
+  ClassExtensionMethod get aMethod => ClassExtensionMethod(this);
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'extension\s\$ClassTemplateMethods[^\}]+\}[^\}]+\}[^\}]+\}[^\}]*\}',
   );
 
-  static final RegExp aMethod = RegExp(
-    r'Future<Object>\s\$methodTemplate[^\}]+\}[^\}]+\}',
-    multiLine: true,
-    dotAll: true,
-  );
+  @override
+  final Library parent;
 }
 
-class ClassExtensionStaticMethod {
-  static final RegExp className = RegExp(
+class ClassExtensionStaticMethod with TemplateRegExp {
+  ClassExtensionStaticMethod(this.parent);
+
+  final RegExp className = TemplateRegExp.regExp(
     r'ClassTemplate(?<=invokeRemoteStaticMethod.*?\$ClassTemplate)',
-    multiLine: true,
-    dotAll: true,
   );
 
-  static final RegExp name = RegExp(
+  final RegExp name = TemplateRegExp.regExp(
     r'staticMethodTemplate(?=.*?<Object>)',
-    multiLine: true,
-    dotAll: true,
   );
 
-  static final String aParameter = 'String parameterTemplate';
+  Parameter get aParameter => Parameter(this);
 
-  static final RegExp aParameterName = RegExp(
-    r'parameterTemplate(?<=<Object>\[parameterTemplate)',
-    multiLine: true,
-    dotAll: true,
+  ParameterName get aParameterName => ParameterName(this);
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'static\sFuture<Object>\s\$staticMethodTemplate[^\}]+\}',
   );
+
+  @override
+  final ClassExtension parent;
 }
 
-class ClassExtensionMethod {
-  static final RegExp name = RegExp(
+class ClassExtensionMethod with TemplateRegExp {
+  ClassExtensionMethod(this.parent);
+
+  final RegExp name = TemplateRegExp.regExp(
     r'methodTemplate(?<=Future<Object>\s\$methodTemplate)',
-    multiLine: true,
-    dotAll: true,
   );
 
-  static final String aParameter = 'String parameterTemplate';
+  Parameter get aParameter => Parameter(this);
 
-  static final RegExp anUnpairedReference = RegExp(
-    r'return.+?invokeRemoteMethod[^\}]+\}',
-    multiLine: true,
-    dotAll: true,
+  ClassExtensionMethodUnpairedReference get anUnpairedReference =>
+      ClassExtensionMethodUnpairedReference(this);
+
+  ClassExtensionMethodPairedReference get aPairedReference =>
+      ClassExtensionMethodPairedReference(this);
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'Future<Object>\s\$methodTemplate[^\}]+\}[^\}]+\}',
   );
 
-  static final RegExp aPairedReference = RegExp(
+  @override
+  final ClassExtension parent;
+}
+
+class ParameterName with TemplateRegExp {
+  ParameterName(this.parent);
+
+  final RegExp name = TemplateRegExp.regExp(r'parameterTemplate');
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(r'(?<=<Object>\[)parameterTemplate');
+
+  @override
+  final TemplateRegExp parent;
+}
+
+class ClassExtensionMethodUnpairedReference with TemplateRegExp {
+  ClassExtensionMethodUnpairedReference(this.parent);
+
+  final RegExp name = TemplateRegExp.regExp(r"methodTemplate(?=')");
+
+  ParameterName get aParameterName => ParameterName(this);
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
     r'return.+?invokeRemoteMethodOnUnpairedReference.+;',
-    multiLine: true,
-    dotAll: true,
   );
+
+  @override
+  final ClassExtensionMethod parent;
 }
 
-class ClassExtensionMethodUnpairedReference {
-  static final RegExp name = RegExp(
-    r'methodTemplate(?=.*?<Object>)',
-    multiLine: true,
-    dotAll: true,
+class ClassExtensionMethodPairedReference with TemplateRegExp {
+  ClassExtensionMethodPairedReference(this.parent);
+
+  final RegExp name = TemplateRegExp.regExp(r"methodTemplate(?=')");
+
+  ParameterName get aParameterName => ParameterName(this);
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'return.+?invokeRemoteMethod[^\}]+\}',
   );
 
-  static final RegExp aParameterName = RegExp(
-    r'parameterTemplate(?<=<Object>\[parameterTemplate)',
-    multiLine: true,
-    dotAll: true,
-  );
-}
-
-class ClassExtensionMethodPairedReference {
-  static final RegExp name = RegExp(
-    r'methodTemplate(?=.*?<Object>)',
-    multiLine: true,
-    dotAll: true,
-  );
-
-  static final RegExp aParameterName = RegExp(
-    r'parameterTemplate(?<=<Object>\[parameterTemplate)',
-    multiLine: true,
-    dotAll: true,
-  );
+  @override
+  final ClassExtensionMethod parent;
 }
 
 class Manager {
