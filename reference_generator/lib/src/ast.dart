@@ -89,10 +89,11 @@ class ParameterNode {
 
 @JsonSerializable()
 class ReferenceType {
-  ReferenceType({this.name, this.codeGeneratedClass});
+  ReferenceType({this.name, this.codeGeneratedClass, this.typeArguments});
 
   final String name;
   final bool codeGeneratedClass;
+  final List<ReferenceType> typeArguments;
 
   factory ReferenceType.fromJson(Map<String, dynamic> json) =>
       _$ReferenceTypeFromJson(json);

@@ -599,9 +599,19 @@ String generateDart(String template, LibraryNode libraryNode) {
       );
 }
 
-// TODO: handle type parameters
 String getTrueTypeName(ReferenceType type) {
-  if (type.codeGeneratedClass) return '\$${type.name}';
+  final Iterable<String> typeArguments = type.typeArguments.map<String>(
+    (ReferenceType type) => getTrueTypeName(type),
+  );
+
+  if (type.codeGeneratedClass && typeArguments.isEmpty) {
+    return '\$${type.name}';
+  } else if (type.codeGeneratedClass && typeArguments.isNotEmpty) {
+    return '\$${type.name}<${typeArguments.join(',')}>';
+  } else if (!type.codeGeneratedClass && typeArguments.isNotEmpty) {
+    return '${type.name}<${typeArguments.join(',')}>';
+  }
+
   return type.name;
 }
 

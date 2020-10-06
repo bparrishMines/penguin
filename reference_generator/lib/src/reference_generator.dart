@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:analyzer/dart/element/element.dart';
+import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
 // The builder can't access Flutter, so this accesses just the independent reference file.
 // TODO: Expose this in reference plugin
@@ -90,26 +91,26 @@ class ReferenceAstBuilder extends Builder {
     );
   }
 
-  FieldNode _toFieldNode(ParameterElement parameterElement,
-      Set<ClassElement> allGeneratedClasses) {
+  FieldNode _toFieldNode(
+    ParameterElement parameterElement,
+    Set<ClassElement> allGeneratedClasses,
+  ) {
     return FieldNode(
       name: parameterElement.name,
-      type: ReferenceType(
-          name: parameterElement.type.getDisplayString(withNullability: false),
-          codeGeneratedClass:
-              allGeneratedClasses.contains(parameterElement.type.element)),
+      type: _toReferenceType(parameterElement.type, allGeneratedClasses),
     );
   }
 
   MethodNode _toMethodNode(
-      MethodElement methodElement, Set<ClassElement> allGeneratedClasses) {
+    MethodElement methodElement,
+    Set<ClassElement> allGeneratedClasses,
+  ) {
     return MethodNode(
       name: methodElement.name,
-      returnType: ReferenceType(
-          name:
-              methodElement.returnType.getDisplayString(withNullability: false),
-          codeGeneratedClass:
-              allGeneratedClasses.contains(methodElement.returnType.element)),
+      returnType: _toReferenceType(
+        methodElement.returnType,
+        allGeneratedClasses,
+      ),
       parameters: methodElement.parameters
           .map<ParameterNode>(
             (ParameterElement parameterElement) =>
@@ -119,15 +120,31 @@ class ReferenceAstBuilder extends Builder {
     );
   }
 
-  ParameterNode _toParameterNode(ParameterElement parameterElement,
-      Set<ClassElement> allGeneratedClasses) {
+  ParameterNode _toParameterNode(
+    ParameterElement parameterElement,
+    Set<ClassElement> allGeneratedClasses,
+  ) {
     return ParameterNode(
       name: parameterElement.name,
-      type: ReferenceType(
-        name: parameterElement.type.getDisplayString(withNullability: false),
-        codeGeneratedClass:
-            allGeneratedClasses.contains(parameterElement.type.element),
-      ),
+      type: _toReferenceType(parameterElement.type, allGeneratedClasses),
+    );
+  }
+
+  ReferenceType _toReferenceType(
+    DartType type,
+    Set<ClassElement> allGeneratedClasses,
+  ) {
+    return ReferenceType(
+      name: type.getDisplayString(withNullability: false).split('<').first,
+      codeGeneratedClass: allGeneratedClasses.contains(type.element),
+      typeArguments: type is! ParameterizedType
+          ? <ReferenceType>[]
+          : (type as ParameterizedType)
+              .typeArguments
+              .map<ReferenceType>(
+                (DartType type) => _toReferenceType(type, allGeneratedClasses),
+              )
+              .toList(),
     );
   }
 
