@@ -510,38 +510,40 @@ String generateDart(String template, LibraryNode libraryNode) {
                   .join('\n\n'),
             )
             .replaceAll(
-              LocalHandler.anInvokeMethodCondition,
+              library.aLocalHandler.anInvokeMethodCondition.exp,
               libraryNode.classes
                   .map<String>(
-                    (ClassNode classNode) => LocalHandler
-                        .anInvokeMethodCondition
-                        .stringMatch(
-                          library.aLocalHandler.exp.stringMatch(template),
-                        )
-                        .replaceAll(
-                          LocalHandlerInvokeMethodCondition.className,
-                          classNode.name,
-                        )
-                        .replaceAll(
-                          LocalHandlerInvokeMethodCondition.aMethod,
-                          classNode.methods
-                              .map<String>(
-                                (MethodNode methodNode) =>
-                                    LocalHandlerInvokeMethodCondition.aMethod
-                                        .stringMatch(
-                                          LocalHandler.anInvokeMethodCondition
-                                              .stringMatch(
-                                            library.aLocalHandler.exp
-                                                .stringMatch(template),
-                                          ),
-                                        )
+                    (ClassNode classNode) =>
+                        library.aLocalHandler.anInvokeMethodCondition
+                            .stringMatch()
+                            .replaceAll(
+                              library.aLocalHandler.anInvokeMethodCondition
+                                  .className,
+                              classNode.name,
+                            )
+                            .replaceAll(
+                              library.aLocalHandler.anInvokeMethodCondition
+                                  .aMethod.exp,
+                              classNode.methods
+                                  .map<String>(
+                                    (MethodNode methodNode) => library
+                                        .aLocalHandler
+                                        .anInvokeMethodCondition
+                                        .aMethod
+                                        .stringMatch()
                                         .replaceAll(
-                                          LocalHandlerInvokeMethodConditionMethod
+                                          library
+                                              .aLocalHandler
+                                              .anInvokeMethodCondition
+                                              .aMethod
                                               .name,
                                           methodNode.name,
                                         )
                                         .replaceAll(
-                                          LocalHandlerInvokeMethodConditionMethod
+                                          library
+                                              .aLocalHandler
+                                              .anInvokeMethodCondition
+                                              .aMethod
                                               .argument,
                                           List<int>.generate(
                                             methodNode.parameters.length,
@@ -553,9 +555,9 @@ String generateDart(String template, LibraryNode libraryNode) {
                                               )
                                               .join(','),
                                         ),
-                              )
-                              .join('\n'),
-                        ),
+                                  )
+                                  .join('\n'),
+                            ),
                   )
                   .join('else '),
             ),
@@ -885,11 +887,8 @@ class LocalHandler with TemplateRegExp {
 
   LocalHandlerCreatorField get aCreatorField => LocalHandlerCreatorField(this);
 
-  static final RegExp anInvokeMethodCondition = RegExp(
-    r'if\s\(localReference\sis\s\$ClassTemplate\)[^\}]+}[^\}]+}',
-    multiLine: true,
-    dotAll: true,
-  );
+  LocalHandlerInvokeMethodCondition get anInvokeMethodCondition =>
+      LocalHandlerInvokeMethodCondition(this);
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
@@ -1049,32 +1048,34 @@ class LocalHandlerCreatorFieldField with TemplateRegExp {
   final LocalHandlerCreatorField parent;
 }
 
-class LocalHandlerInvokeMethodCondition {
-  static final RegExp className = RegExp(
-    r'ClassTemplate',
-    multiLine: true,
-    dotAll: true,
+class LocalHandlerInvokeMethodCondition with TemplateRegExp {
+  LocalHandlerInvokeMethodCondition(this.parent);
+
+  final RegExp className = TemplateRegExp.regExp(r'ClassTemplate');
+
+  LocalHandlerInvokeMethodConditionMethod get aMethod =>
+      LocalHandlerInvokeMethodConditionMethod(this);
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'if\s\(localReference\sis\s\$ClassTemplate\)[^\}]+}[^\}]+}',
   );
 
-  static final RegExp aMethod = RegExp(
-    r"case\s'methodTemplate'[^\)]+\);",
-    multiLine: true,
-    dotAll: true,
-  );
+  @override
+  final LocalHandler parent;
 }
 
-class LocalHandlerInvokeMethodConditionMethod {
-  static final RegExp name = RegExp(
-    r'methodTemplate',
-    multiLine: true,
-    dotAll: true,
-  );
+class LocalHandlerInvokeMethodConditionMethod with TemplateRegExp {
+  LocalHandlerInvokeMethodConditionMethod(this.parent);
 
-  static final RegExp argument = RegExp(
-    r'arguments\[0\]',
-    multiLine: true,
-    dotAll: true,
-  );
+  final RegExp name = TemplateRegExp.regExp(r'methodTemplate');
+  final RegExp argument = TemplateRegExp.regExp(r'arguments\[0\]');
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(r"case\s'methodTemplate'[^\)]+\);");
+
+  @override
+  final LocalHandlerInvokeMethodCondition parent;
 }
 
 class CreationArgument with TemplateRegExp {
