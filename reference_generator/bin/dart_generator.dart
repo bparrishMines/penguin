@@ -367,7 +367,7 @@ String generateDart(String template, LibraryNode libraryNode) {
                                         .replaceAll(
                                           library.aLocalHandler.aCreator
                                               .argument.fieldName,
-                                          classNode.fields[0].name,
+                                          classNode.fields[index].name,
                                         )
                                         .replaceAll(
                                           library.aLocalHandler.aCreator
