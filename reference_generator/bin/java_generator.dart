@@ -1,9 +1,16 @@
 import 'package:recase/recase.dart';
 import 'package:reference_generator/src/ast.dart';
 
-String generateJava(String template, LibraryNode libraryNode) {
+String generateJava({
+  String template,
+  LibraryNode libraryNode,
+  String libraryName,
+  String package,
+}) {
   final Library library = Library(template);
   return template
+      .replaceAll(library.name, libraryName)
+      .replaceAll(library.package, package)
       .replaceAll(
         library.aClass.exp,
         libraryNode.classes
@@ -728,10 +735,18 @@ class Library with TemplateRegExp {
   final String template;
 
   @override
-  RegExp get exp => null;
+  final TemplateRegExp parent = null;
 
   @override
-  TemplateRegExp get parent => null;
+  final RegExp exp = null;
+
+  final RegExp name = TemplateRegExp.regExp(
+    r'(?<=^class )LibraryTemplate(?= \{)',
+  );
+
+  final RegExp package = TemplateRegExp.regExp(
+    r'(?<=package )github.penguin.reference.templates(?=;)',
+  );
 
   Class get aClass => Class(this);
 

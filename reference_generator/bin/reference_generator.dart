@@ -439,6 +439,7 @@ final ArgParser parser = ArgParser()
   ..addOption('package-root', defaultsTo: '.')
   ..addOption('dart-out')
   ..addOption('java-out')
+  ..addOption('java-package')
   ..addFlag('help')
   ..addFlag('build', abbr: 'b', defaultsTo: true);
 
@@ -504,7 +505,14 @@ void main(List<String> arguments) async {
     //
     // final String dartTemplate = buffer.toString();
 
-    options.javaOut.writeAsStringSync(generateJava(javay, libraryNode));
+    options.javaOut.writeAsStringSync(
+      generateJava(
+        template: javay,
+        libraryNode: libraryNode,
+        libraryName: path.basenameWithoutExtension(options.javaOut.path),
+        package: options.javaPackage,
+      ),
+    );
   }
 }
 
@@ -515,7 +523,11 @@ class ReferenceGeneratorOptions {
     this.inputFile,
     this.javaOut,
     this.build,
-  });
+    this.javaPackage,
+  }) : assert(
+          javaOut == null || javaPackage != null,
+          'Please provide a `--java-package` when setting `--java-out`.',
+        );
 
   factory ReferenceGeneratorOptions.parse(ArgResults results) {
     if (results.rest.isEmpty || results.rest.length > 1) {
@@ -529,13 +541,20 @@ class ReferenceGeneratorOptions {
       throw ArgumentError('Please provide an input file ending in `.dart`.');
     }
 
-    return ReferenceGeneratorOptions._(
+    final ReferenceGeneratorOptions options = ReferenceGeneratorOptions._(
       packageRoot: File(results['package-root']),
       dartOut: results.wasParsed('dart-out') ? File(results['dart-out']) : null,
       inputFile: File(results.rest.first),
       build: results['build'],
       javaOut: results.wasParsed('java-out') ? File(results['java-out']) : null,
+      javaPackage: results['java-package'],
     );
+
+    if(options.javaOut != null && options.javaPackage == null) {
+      throw ArgumentError('Please provide a `--java-package` when setting `--java-out`.',);
+    }
+
+    return options;
   }
 
   final File packageRoot;
@@ -543,4 +562,5 @@ class ReferenceGeneratorOptions {
   final File inputFile;
   final bool build;
   final File javaOut;
+  final String javaPackage;
 }
