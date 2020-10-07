@@ -286,347 +286,381 @@ String generateJava(String template, LibraryNode libraryNode) {
             ),
       )
       .replaceAll(
-          library.aLocalHandler.exp,
-          library.aLocalHandler.exp
-              .stringMatch(template)
-              .replaceAll(
-                library.aLocalHandler.aCreator.exp,
-                libraryNode.classes
-                    .map<String>(
-                      (ClassNode classNode) => library.aLocalHandler.aCreator
-                          .stringMatch()
-                          .replaceAll(
-                            library.aLocalHandler.aCreator.className,
-                            classNode.name,
-                          )
-                          .replaceAll(
-                            library.aLocalHandler.aCreator.argument.exp,
-                            List<int>.generate(classNode.fields.length,
-                                    (int index) => index)
-                                .map<String>(
-                                  (int index) =>
-                                      library.aLocalHandler.aCreator.argument
-                                          .stringMatch()
-                                          .replaceAll(
-                                            library.aLocalHandler.aCreator
-                                                .argument.fieldName,
-                                            classNode.fields[index].name,
-                                          )
-                                          .replaceAll(
-                                            library.aLocalHandler.aCreator
-                                                .argument.fieldType,
-                                            getTrueTypeName(
-                                                classNode.fields[index].type),
-                                          )
-                                          .replaceAll(
-                                            library.aLocalHandler.aCreator
-                                                .argument.argumentIndex,
-                                            '$index',
-                                          ),
-                                )
-                                .join('\n'),
-                          ),
-                    )
-                    .join('\n'),
-              )
-              .replaceAll(
-                library.aLocalHandler.aStaticMethod.exp,
-                libraryNode.classes
-                    .map<String>(
-                      (ClassNode classNode) => library
-                          .aLocalHandler.aStaticMethod
-                          .stringMatch()
-                          .replaceAll(
-                            library.aLocalHandler.aStaticMethod.className,
-                            classNode.name,
-                          )
-                          .replaceAll(
-                            library.aLocalHandler.aStaticMethod.aMethod.exp,
-                            classNode.staticMethods
-                                .map<String>(
-                                  (MethodNode methodNode) => library
-                                      .aLocalHandler.aStaticMethod.aMethod
-                                      .stringMatch()
-                                      .replaceAll(
-                                        library.aLocalHandler.aStaticMethod
-                                            .aMethod.classNamePart,
-                                        ReCase(classNode.name).camelCase,
-                                      )
-                                      .replaceAll(
-                                        library.aLocalHandler.aStaticMethod
-                                            .aMethod.methodName,
-                                        methodNode.name,
-                                      )
-                                      .replaceAll(
-                                        library.aLocalHandler.aStaticMethod
-                                            .aMethod.anArgument.exp,
-                                        List<int>.generate(
-                                                methodNode.parameters.length,
-                                                (int index) => index)
-                                            .map<String>(
-                                              (int index) => library
-                                                  .aLocalHandler
-                                                  .aStaticMethod
-                                                  .aMethod
-                                                  .anArgument
-                                                  .stringMatch()
-                                                  .replaceAll(
-                                                    library
-                                                        .aLocalHandler
-                                                        .aStaticMethod
-                                                        .aMethod
-                                                        .anArgument
-                                                        .type,
-                                                    getTrueTypeName(
-                                                      methodNode
-                                                          .parameters[index]
+        library.aLocalHandler.exp,
+        library.aLocalHandler.exp
+            .stringMatch(template)
+            .replaceAll(
+              library.aLocalHandler.aCreator.exp,
+              libraryNode.classes
+                  .map<String>(
+                    (ClassNode classNode) => library.aLocalHandler.aCreator
+                        .stringMatch()
+                        .replaceAll(
+                          library.aLocalHandler.aCreator.className,
+                          classNode.name,
+                        )
+                        .replaceAll(
+                          library.aLocalHandler.aCreator.argument.exp,
+                          List<int>.generate(
+                                  classNode.fields.length, (int index) => index)
+                              .map<String>(
+                                (int index) =>
+                                    library.aLocalHandler.aCreator.argument
+                                        .stringMatch()
+                                        .replaceAll(
+                                          library.aLocalHandler.aCreator
+                                              .argument.fieldName,
+                                          classNode.fields[index].name,
+                                        )
+                                        .replaceAll(
+                                          library.aLocalHandler.aCreator
+                                              .argument.fieldType,
+                                          getTrueTypeName(
+                                              classNode.fields[index].type),
+                                        )
+                                        .replaceAll(
+                                          library.aLocalHandler.aCreator
+                                              .argument.argumentIndex,
+                                          '$index',
+                                        ),
+                              )
+                              .join('\n'),
+                        ),
+                  )
+                  .join('\n'),
+            )
+            .replaceAll(
+              library.aLocalHandler.aStaticMethod.exp,
+              libraryNode.classes
+                  .map<String>(
+                    (ClassNode classNode) => library.aLocalHandler.aStaticMethod
+                        .stringMatch()
+                        .replaceAll(
+                          library.aLocalHandler.aStaticMethod.className,
+                          classNode.name,
+                        )
+                        .replaceAll(
+                          library.aLocalHandler.aStaticMethod.aMethod.exp,
+                          classNode.staticMethods
+                              .map<String>(
+                                (MethodNode methodNode) =>
+                                    library.aLocalHandler.aStaticMethod.aMethod
+                                        .stringMatch()
+                                        .replaceAll(
+                                          library.aLocalHandler.aStaticMethod
+                                              .aMethod.classNamePart,
+                                          ReCase(classNode.name).camelCase,
+                                        )
+                                        .replaceAll(
+                                          library.aLocalHandler.aStaticMethod
+                                              .aMethod.methodName,
+                                          methodNode.name,
+                                        )
+                                        .replaceAll(
+                                          library.aLocalHandler.aStaticMethod
+                                              .aMethod.anArgument.exp,
+                                          List<int>.generate(
+                                                  methodNode.parameters.length,
+                                                  (int index) => index)
+                                              .map<String>(
+                                                (int index) => library
+                                                    .aLocalHandler
+                                                    .aStaticMethod
+                                                    .aMethod
+                                                    .anArgument
+                                                    .stringMatch()
+                                                    .replaceAll(
+                                                      library
+                                                          .aLocalHandler
+                                                          .aStaticMethod
+                                                          .aMethod
+                                                          .anArgument
                                                           .type,
-                                                    ),
-                                                  )
-                                                  .replaceAll(
-                                                    library
-                                                        .aLocalHandler
-                                                        .aStaticMethod
-                                                        .aMethod
-                                                        .anArgument
-                                                        .index,
-                                                    '$index',
-                                                  ),
-                                            )
-                                            .join(','),
-                                      ),
-                                )
-                                .join('\n'),
-                          ),
-                    )
-                    .join('\n'),
-              )
-              .replaceAll(
-                library.aLocalHandler.aMethod.exp,
-                libraryNode.classes
-                    .map<String>(
-                      (ClassNode classNode) => library.aLocalHandler.aMethod
-                          .stringMatch()
-                          .replaceAll(
-                            library.aLocalHandler.aMethod.className,
-                            classNode.name,
-                          )
-                          .replaceAll(
-                            library.aLocalHandler.aMethod.aMethod.exp,
-                            classNode.methods
-                                .map<String>(
-                                  (MethodNode methodNode) =>
-                                      library.aLocalHandler.aMethod.aMethod
-                                          .stringMatch()
-                                          .replaceAll(
-                                            library.aLocalHandler.aMethod
-                                                .aMethod.className,
-                                            classNode.name,
-                                          )
-                                          .replaceAll(
-                                            library.aLocalHandler.aMethod
-                                                .aMethod.methodName,
-                                            methodNode.name,
-                                          )
-                                          .replaceAll(
-                                            library.aLocalHandler.aMethod
-                                                .aMethod.anArgument.exp,
-                                            List<int>.generate(
-                                              methodNode.parameters.length,
-                                              (int index) => index,
-                                            )
-                                                .map<String>(
-                                                  (int index) => library
-                                                      .aLocalHandler
-                                                      .aMethod
-                                                      .aMethod
-                                                      .anArgument
-                                                      .stringMatch()
-                                                      .replaceAll(
-                                                        library
-                                                            .aLocalHandler
-                                                            .aMethod
-                                                            .aMethod
-                                                            .anArgument
+                                                      getTrueTypeName(
+                                                        methodNode
+                                                            .parameters[index]
                                                             .type,
-                                                        getTrueTypeName(
-                                                          methodNode
-                                                              .parameters[index]
-                                                              .type,
-                                                        ),
-                                                      )
-                                                      .replaceAll(
-                                                        library
-                                                            .aLocalHandler
-                                                            .aMethod
-                                                            .aMethod
-                                                            .anArgument
-                                                            .index,
-                                                        '$index',
                                                       ),
-                                                )
-                                                .join(','),
-                                          ),
-                                )
-                                .join('\n'),
-                          ),
-                    )
-                    .join('\n'),
-              )
-              .replaceAll(
-                library.aLocalHandler.aStaticMethodAbstractMethod.exp,
-                libraryNode.classes
-                    .fold<Map<MethodNode, ClassNode>>(
-                      <MethodNode, ClassNode>{},
-                      (Map<MethodNode, ClassNode> map, ClassNode classNode) {
-                        classNode.staticMethods.forEach(
-                          (MethodNode methodNode) =>
-                              map[methodNode] = classNode,
-                        );
-                        return map;
-                      },
-                    )
-                    .entries
-                    .map<String>(
-                      (MapEntry<MethodNode, ClassNode> entry) => library
-                          .aLocalHandler.aStaticMethodAbstractMethod
-                          .stringMatch()
-                          .replaceAll(
-                            library.aLocalHandler.aStaticMethodAbstractMethod.className,
-                            ReCase(entry.value.name).camelCase,
-                          )
-                          .replaceAll(
-                            library.aLocalHandler.aStaticMethodAbstractMethod.name,
-                            entry.key.name,
-                          )
-                          .replaceAll(
-                            library.aLocalHandler.aStaticMethodAbstractMethod.aParameter
-                                .exp,
-                            entry.key.parameters
-                                .map<String>(
-                                  (ParameterNode parameterNode) => library
-                                      .aLocalHandler
-                                      .aStaticMethodAbstractMethod
-                                      .aParameter
-                                      .stringMatch()
-                                      .replaceAll(
-                                        library.aLocalHandler.aStaticMethodAbstractMethod
-                                            .aParameter.name,
-                                        parameterNode.name,
-                                      )
-                                      .replaceAll(
-                                        library.aLocalHandler.aStaticMethodAbstractMethod
-                                            .aParameter.type,
-                                        getTrueTypeName(parameterNode.type),
-                                      ),
-                                )
-                                .join(', '),
-                          ),
-                    )
-                    .join('\n\n'),
-              )
-              .replaceAll(
-                library.aLocalHandler.aCreatorAbstractMethod.exp,
-                libraryNode.classes
-                    .map<String>(
-                      (ClassNode classNode) => library
-                          .aLocalHandler.aCreatorAbstractMethod
-                          .stringMatch()
-                          .replaceAll(
-                            library.aLocalHandler.aCreatorAbstractMethod.className,
-                            classNode.name,
-                          ),
-                    )
-                    .join('\n\n'),
-              )
-          //       .replaceAll(
-          //         library.aLocalHandler.anInvokeMethodCondition.exp,
-          //         libraryNode.classes
-          //             .map<String>(
-          //               (ClassNode classNode) =>
-          //                   library.aLocalHandler.anInvokeMethodCondition
-          //                       .stringMatch()
-          //                       .replaceAll(
-          //                         library.aLocalHandler.anInvokeMethodCondition
-          //                             .className,
-          //                         classNode.name,
-          //                       )
-          //                       .replaceAll(
-          //                         library.aLocalHandler.anInvokeMethodCondition
-          //                             .aMethod.exp,
-          //                         classNode.methods
-          //                             .map<String>(
-          //                               (MethodNode methodNode) => library
-          //                                   .aLocalHandler
-          //                                   .anInvokeMethodCondition
-          //                                   .aMethod
-          //                                   .stringMatch()
-          //                                   .replaceAll(
-          //                                     library
-          //                                         .aLocalHandler
-          //                                         .anInvokeMethodCondition
-          //                                         .aMethod
-          //                                         .name,
-          //                                     methodNode.name,
-          //                                   )
-          //                                   .replaceAll(
-          //                                     library
-          //                                         .aLocalHandler
-          //                                         .anInvokeMethodCondition
-          //                                         .aMethod
-          //                                         .argument,
-          //                                     List<int>.generate(
-          //                                       methodNode.parameters.length,
-          //                                       (int index) => index,
-          //                                     )
-          //                                         .map<String>(
-          //                                           (int index) =>
-          //                                               'arguments[$index]',
-          //                                         )
-          //                                         .join(','),
-          //                                   ),
-          //                             )
-          //                             .join('\n'),
-          //                       ),
-          //             )
-          //             .join('else '),
-          //       ),
-          );
-  // .replaceAll(
-  //   library.aCreationArgument.exp,
-  //   libraryNode.classes
-  //       .map<String>(
-  //         (ClassNode classNode) => library.aCreationArgument
-  //             .stringMatch()
-  //             .replaceAll(
-  //               library.aCreationArgument.className,
-  //               classNode.name,
-  //             )
-  //             .replaceAll(
-  //               library.aCreationArgument.aField.exp,
-  //               classNode.fields
-  //                   .map<String>(
-  //                     (FieldNode fieldNode) =>
-  //                         library.aCreationArgument.aField
-  //                             .stringMatch()
-  //                             .replaceAll(
-  //                               library.aCreationArgument.aField.className,
-  //                               classNode.name,
-  //                             )
-  //                             .replaceAll(
-  //                               library.aCreationArgument.aField.name,
-  //                               fieldNode.name,
-  //                             )
-  //                             .replaceAll(
-  //                               library.aCreationArgument.aField.className,
-  //                               classNode.name,
-  //                             ),
-  //                   )
-  //                   .join(','),
-  //             ),
-  //       )
-  //       .join(','),
-  // );
+                                                    )
+                                                    .replaceAll(
+                                                      library
+                                                          .aLocalHandler
+                                                          .aStaticMethod
+                                                          .aMethod
+                                                          .anArgument
+                                                          .index,
+                                                      '$index',
+                                                    ),
+                                              )
+                                              .join(','),
+                                        ),
+                              )
+                              .join('\n'),
+                        ),
+                  )
+                  .join('\n'),
+            )
+            .replaceAll(
+              library.aLocalHandler.aMethod.exp,
+              libraryNode.classes
+                  .map<String>(
+                    (ClassNode classNode) => library.aLocalHandler.aMethod
+                        .stringMatch()
+                        .replaceAll(
+                          library.aLocalHandler.aMethod.className,
+                          classNode.name,
+                        )
+                        .replaceAll(
+                          library.aLocalHandler.aMethod.aMethod.exp,
+                          classNode.methods
+                              .map<String>(
+                                (MethodNode methodNode) =>
+                                    library.aLocalHandler.aMethod.aMethod
+                                        .stringMatch()
+                                        .replaceAll(
+                                          library.aLocalHandler.aMethod.aMethod
+                                              .className,
+                                          classNode.name,
+                                        )
+                                        .replaceAll(
+                                          library.aLocalHandler.aMethod.aMethod
+                                              .methodName,
+                                          methodNode.name,
+                                        )
+                                        .replaceAll(
+                                          library.aLocalHandler.aMethod.aMethod
+                                              .anArgument.exp,
+                                          List<int>.generate(
+                                            methodNode.parameters.length,
+                                            (int index) => index,
+                                          )
+                                              .map<String>(
+                                                (int index) => library
+                                                    .aLocalHandler
+                                                    .aMethod
+                                                    .aMethod
+                                                    .anArgument
+                                                    .stringMatch()
+                                                    .replaceAll(
+                                                      library
+                                                          .aLocalHandler
+                                                          .aMethod
+                                                          .aMethod
+                                                          .anArgument
+                                                          .type,
+                                                      getTrueTypeName(
+                                                        methodNode
+                                                            .parameters[index]
+                                                            .type,
+                                                      ),
+                                                    )
+                                                    .replaceAll(
+                                                      library
+                                                          .aLocalHandler
+                                                          .aMethod
+                                                          .aMethod
+                                                          .anArgument
+                                                          .index,
+                                                      '$index',
+                                                    ),
+                                              )
+                                              .join(','),
+                                        ),
+                              )
+                              .join('\n'),
+                        ),
+                  )
+                  .join('\n'),
+            )
+            .replaceAll(
+              library.aLocalHandler.aStaticMethodAbstractMethod.exp,
+              libraryNode.classes
+                  .fold<Map<MethodNode, ClassNode>>(
+                    <MethodNode, ClassNode>{},
+                    (Map<MethodNode, ClassNode> map, ClassNode classNode) {
+                      classNode.staticMethods.forEach(
+                        (MethodNode methodNode) => map[methodNode] = classNode,
+                      );
+                      return map;
+                    },
+                  )
+                  .entries
+                  .map<String>(
+                    (MapEntry<MethodNode, ClassNode> entry) =>
+                        library.aLocalHandler.aStaticMethodAbstractMethod
+                            .stringMatch()
+                            .replaceAll(
+                              library.aLocalHandler.aStaticMethodAbstractMethod
+                                  .className,
+                              ReCase(entry.value.name).camelCase,
+                            )
+                            .replaceAll(
+                              library.aLocalHandler.aStaticMethodAbstractMethod
+                                  .name,
+                              entry.key.name,
+                            )
+                            .replaceAll(
+                              library.aLocalHandler.aStaticMethodAbstractMethod
+                                  .aParameter.exp,
+                              entry.key.parameters
+                                  .map<String>(
+                                    (ParameterNode parameterNode) => library
+                                        .aLocalHandler
+                                        .aStaticMethodAbstractMethod
+                                        .aParameter
+                                        .stringMatch()
+                                        .replaceAll(
+                                          library
+                                              .aLocalHandler
+                                              .aStaticMethodAbstractMethod
+                                              .aParameter
+                                              .name,
+                                          parameterNode.name,
+                                        )
+                                        .replaceAll(
+                                          library
+                                              .aLocalHandler
+                                              .aStaticMethodAbstractMethod
+                                              .aParameter
+                                              .type,
+                                          getTrueTypeName(parameterNode.type),
+                                        ),
+                                  )
+                                  .join(', '),
+                            ),
+                  )
+                  .join('\n\n'),
+            )
+            .replaceAll(
+              library.aLocalHandler.aCreatorAbstractMethod.exp,
+              libraryNode.classes
+                  .map<String>(
+                    (ClassNode classNode) => library
+                        .aLocalHandler.aCreatorAbstractMethod
+                        .stringMatch()
+                        .replaceAll(
+                          library
+                              .aLocalHandler.aCreatorAbstractMethod.className,
+                          classNode.name,
+                        ),
+                  )
+                  .join('\n\n'),
+            )
+            .replaceAll(
+              library.aLocalHandler.anInvokeMethodCondition.exp,
+              libraryNode.classes
+                  .map<String>(
+                    (ClassNode classNode) =>
+                        library.aLocalHandler.anInvokeMethodCondition
+                            .stringMatch()
+                            .replaceAll(
+                              library.aLocalHandler.anInvokeMethodCondition
+                                  .className,
+                              classNode.name,
+                            )
+                            .replaceAll(
+                              library.aLocalHandler.anInvokeMethodCondition
+                                  .aMethod.exp,
+                              classNode.methods
+                                  .map<String>(
+                                    (MethodNode methodNode) => library
+                                        .aLocalHandler
+                                        .anInvokeMethodCondition
+                                        .aMethod
+                                        .stringMatch()
+                                        .replaceAll(
+                                          library
+                                              .aLocalHandler
+                                              .anInvokeMethodCondition
+                                              .aMethod
+                                              .name,
+                                          methodNode.name,
+                                        )
+                                        .replaceAll(
+                                          library
+                                              .aLocalHandler
+                                              .anInvokeMethodCondition
+                                              .aMethod
+                                              .className,
+                                          classNode.name,
+                                        )
+                                        .replaceAll(
+                                          library
+                                              .aLocalHandler
+                                              .anInvokeMethodCondition
+                                              .aMethod
+                                              .anArgument
+                                              .exp,
+                                          List<int>.generate(
+                                            methodNode.parameters.length,
+                                            (int index) => index,
+                                          )
+                                              .map<String>(
+                                                (int index) => library
+                                                    .aLocalHandler
+                                                    .anInvokeMethodCondition
+                                                    .aMethod
+                                                    .anArgument
+                                                    .stringMatch()
+                                                    .replaceAll(
+                                                      library
+                                                          .aLocalHandler
+                                                          .anInvokeMethodCondition
+                                                          .aMethod
+                                                          .anArgument
+                                                          .type,
+                                                      getTrueTypeName(
+                                                        methodNode
+                                                            .parameters[index]
+                                                            .type,
+                                                      ),
+                                                    )
+                                                    .replaceAll(
+                                                      library
+                                                          .aLocalHandler
+                                                          .aMethod
+                                                          .aMethod
+                                                          .anArgument
+                                                          .index,
+                                                      '$index',
+                                                    ),
+                                              )
+                                              .join(','),
+                                        ),
+                                  )
+                                  .join('\n'),
+                            ),
+                  )
+                  .join('else '),
+            ),
+      )
+      .replaceAll(
+        library.aCreationArgument.exp,
+        libraryNode.classes
+            .map<String>(
+              (ClassNode classNode) => library.aCreationArgument
+                  .stringMatch()
+                  .replaceAll(
+                    library.aCreationArgument.className,
+                    classNode.name,
+                  )
+                  .replaceAll(
+                    library.aCreationArgument.aField.exp,
+                    classNode.fields
+                        .map<String>(
+                          (FieldNode fieldNode) => library
+                              .aCreationArgument.aField
+                              .stringMatch()
+                              .replaceAll(
+                                library.aCreationArgument.aField.name,
+                                ReCase(fieldNode.name).pascalCase,
+                              ),
+                        )
+                        .join(','),
+                  ),
+            )
+            .join('\n'),
+      );
 }
 
 String getTrueTypeName(ReferenceType type) {
@@ -651,6 +685,8 @@ String javaTypeNameConversion(String type) {
   switch (type) {
     case 'int':
       return 'Integer';
+    case 'double':
+      return 'Double';
   }
 
   return type;
@@ -1094,7 +1130,8 @@ class LocalHandlerStaticMethodAbstractMethod with TemplateRegExp {
 class LocalHandlerCreatorAbstractMethod with TemplateRegExp {
   LocalHandlerCreatorAbstractMethod(this.parent);
 
-  final RegExp className = TemplateRegExp.regExp(r'(?<=\$|create)ClassTemplate');
+  final RegExp className =
+      TemplateRegExp.regExp(r'(?<=\$|create)ClassTemplate');
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
@@ -1108,14 +1145,16 @@ class LocalHandlerCreatorAbstractMethod with TemplateRegExp {
 class LocalHandlerInvokeMethodCondition with TemplateRegExp {
   LocalHandlerInvokeMethodCondition(this.parent);
 
-  final RegExp className = TemplateRegExp.regExp(r'ClassTemplate');
+  final RegExp className = TemplateRegExp.regExp(
+    r'(?<=instanceof \$)ClassTemplate',
+  );
 
   LocalHandlerInvokeMethodConditionMethod get aMethod =>
       LocalHandlerInvokeMethodConditionMethod(this);
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'if\s\(localReference\sis\s\$ClassTemplate\)[^\}]+}[^\}]+}',
+    r'if \(localReference instanceof \$ClassTemplate\)[^\}]*}[^\}]*}',
   );
 
   @override
@@ -1125,11 +1164,14 @@ class LocalHandlerInvokeMethodCondition with TemplateRegExp {
 class LocalHandlerInvokeMethodConditionMethod with TemplateRegExp {
   LocalHandlerInvokeMethodConditionMethod(this.parent);
 
-  final RegExp name = TemplateRegExp.regExp(r'methodTemplate');
-  final RegExp argument = TemplateRegExp.regExp(r'arguments\[0\]');
+  final RegExp className = TemplateRegExp.regExp(r'(?<=\$)ClassTemplate');
+
+  final RegExp name = TemplateRegExp.regExp(r'(?<=\.|")methodTemplate');
+
+  Argument get anArgument => Argument(this);
 
   @override
-  final RegExp exp = TemplateRegExp.regExp(r"case\s'methodTemplate'[^\)]+\);");
+  final RegExp exp = TemplateRegExp.regExp(r'case "methodTemplate"[^;]+;');
 
   @override
   final LocalHandlerInvokeMethodCondition parent;
@@ -1138,32 +1180,31 @@ class LocalHandlerInvokeMethodConditionMethod with TemplateRegExp {
 class CreationArgument with TemplateRegExp {
   CreationArgument(this.parent);
 
+  CreationArgumentField get aField => CreationArgumentField(this);
+
+  final RegExp className = TemplateRegExp.regExp(
+    r'ClassTemplate(?=\.class| value|\) localReference)',
+  );
+
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'\$ClassTemplate: \(LocalReference localReference\)[^\}]+\}',
+    r'put\(\$ClassTemplate\.class, new \$CreationArgumentsHandler([^\}]*\}){2}\);',
   );
 
   @override
   final Library parent;
-
-  CreationArgumentField get aField => CreationArgumentField(this);
-
-  final RegExp className = TemplateRegExp.regExp(
-    r'(?<=\$)ClassTemplate(?=:)',
-  );
 }
 
 class CreationArgumentField with TemplateRegExp {
   CreationArgumentField(this.parent);
 
-  final RegExp className = TemplateRegExp.regExp(r'ClassTemplate');
-  final RegExp name = TemplateRegExp.regExp(r'(?<=\.)fieldTemplate');
+  final RegExp name = TemplateRegExp.regExp(r'(?<=\.get)FieldTemplate');
 
   @override
   final CreationArgument parent;
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'\(localReference as \$ClassTemplate\).fieldTemplate',
+    r'\(Object\) value.getFieldTemplate\(\)',
   );
 }

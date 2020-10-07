@@ -391,10 +391,10 @@ class LibraryTemplate {
       if (handler != null) return handler.call(localReference, arguments);
 
       // Based on inheritance.
-      if (localReference instanceof ClassTemplate) {
+      if (localReference instanceof $ClassTemplate) {
         switch(methodName) {
           case "methodTemplate":
-            return ((ClassTemplate) localReference).methodTemplate((String) arguments.get(0));
+            return (($ClassTemplate) localReference).methodTemplate((String) arguments.get(0));
         }
       }
 

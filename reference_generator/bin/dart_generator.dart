@@ -600,23 +600,17 @@ String generateDart(String template, LibraryNode libraryNode) {
                   .replaceAll(
                     library.aCreationArgument.aField.exp,
                     classNode.fields
-                        .map<String>(
-                          (FieldNode fieldNode) =>
-                              library.aCreationArgument.aField
-                                  .stringMatch()
-                                  .replaceAll(
-                                    library.aCreationArgument.aField.className,
-                                    classNode.name,
-                                  )
-                                  .replaceAll(
-                                    library.aCreationArgument.aField.name,
-                                    fieldNode.name,
-                                  )
-                                  .replaceAll(
-                                    library.aCreationArgument.aField.className,
-                                    classNode.name,
-                                  ),
-                        )
+                        .map<String>((FieldNode fieldNode) =>
+                            library.aCreationArgument.aField
+                                .stringMatch()
+                                .replaceAll(
+                                  library.aCreationArgument.aField.className,
+                                  classNode.name,
+                                )
+                                .replaceAll(
+                                  library.aCreationArgument.aField.name,
+                                  fieldNode.name,
+                                ))
                         .join(','),
                   ),
             )
