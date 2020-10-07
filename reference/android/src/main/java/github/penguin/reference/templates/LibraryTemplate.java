@@ -112,14 +112,16 @@ class LibraryTemplate {
           });
         }};
 
-    static private final Map<Class<? extends LocalReference>, $LocalStaticMethodHandler> staticMethods =
-        new HashMap<Class<? extends LocalReference>, $LocalStaticMethodHandler>() {{
-          put($ClassTemplate.class, new $LocalStaticMethodHandler() {
-            @Override
-            Object call($LocalHandler localHandler, ReferencePairManager referencePairManager, List<Object> arguments) throws Exception {
-              return localHandler.classTemplate$staticMethodTemplate(referencePairManager, (String) arguments.get(0));
-            }
-          });
+    static private final Map<Class<? extends LocalReference>, Map<String, $LocalStaticMethodHandler>> staticMethods =
+        new HashMap<Class<? extends LocalReference>, Map<String, $LocalStaticMethodHandler>>() {{
+          put($ClassTemplate.class, new HashMap<String, $LocalStaticMethodHandler>(){{
+            put("staticMethodTemplate", new $LocalStaticMethodHandler() {
+              @Override
+              Object call($LocalHandler localHandler, ReferencePairManager referencePairManager, List<Object> arguments) throws Exception {
+                return localHandler.classTemplate$staticMethodTemplate(referencePairManager, (String) arguments.get(0));
+              }
+            });
+          }});
         }};
 
     static private final Map<Class<? extends LocalReference>, Map<String, $LocalMethodHandler>> methods =
@@ -156,7 +158,7 @@ class LibraryTemplate {
     @SuppressWarnings("ConstantConditions")
     @Override
     public Object invokeStaticMethod(ReferencePairManager referencePairManager, Class<? extends LocalReference> referenceClass, String methodName, List<Object> arguments) throws Exception {
-      return staticMethods.get(referenceClass).call(this, referencePairManager, arguments);
+      return staticMethods.get(referenceClass).get(methodName).call(this, referencePairManager, arguments);
     }
 
     @SuppressWarnings({"ConstantConditions", "SwitchStatementWithTooFewBranches"})
