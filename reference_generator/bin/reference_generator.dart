@@ -6,6 +6,7 @@ import 'package:path/path.dart' as path;
 import 'package:reference_generator/src/ast.dart';
 
 import 'dart_generator.dart' show generateDart;
+import 'java_generator.dart' show generateJava;
 
 final String darty = r'''import 'package:reference/reference.dart';
 
@@ -219,6 +220,7 @@ class $RemoteHandler extends MethodChannelRemoteHandler {
 final ArgParser parser = ArgParser()
   ..addOption('package-root', defaultsTo: '.')
   ..addOption('dart-out')
+  ..addOption('java-out')
   ..addFlag('help')
   ..addFlag('build', abbr: 'b', defaultsTo: true);
 
@@ -255,16 +257,37 @@ void main(List<String> arguments) async {
     ),
   );
 
-  final HttpClientRequest request = await HttpClient().getUrl(Uri.parse(
-      'https://raw.githubusercontent.com/bparrishMines/penguin/reference_generator/reference/lib/src/template/src/template.g.dart'));
-  final HttpClientResponse response = await request.close();
+  if (options.dartOut != null) {
+    final HttpClientRequest request = await HttpClient().getUrl(
+      Uri.parse(
+        'https://raw.githubusercontent.com/bparrishMines/penguin/reference_generator/reference/lib/src/template/src/template.g.dart',
+      ),
+    );
+    final HttpClientResponse response = await request.close();
 
-  final StringBuffer buffer = StringBuffer()
-    ..writeAll(await response.transform(utf8.decoder).toList());
+    final StringBuffer buffer = StringBuffer()
+      ..writeAll(await response.transform(utf8.decoder).toList());
 
-  final String dartTemplate = buffer.toString();
+    final String dartTemplate = buffer.toString();
 
-  options?.dartOut?.writeAsStringSync(generateDart(dartTemplate, libraryNode));
+    options.dartOut.writeAsStringSync(generateDart(dartTemplate, libraryNode));
+  }
+
+  if (options.javaOut != null) {
+    final HttpClientRequest request = await HttpClient().getUrl(
+      Uri.parse(
+        'https://raw.githubusercontent.com/bparrishMines/penguin/reference_generator/reference/android/src/main/java/github/penguin/reference/templates/LibraryTemplate.java',
+      ),
+    );
+    final HttpClientResponse response = await request.close();
+
+    final StringBuffer buffer = StringBuffer()
+      ..writeAll(await response.transform(utf8.decoder).toList());
+
+    final String dartTemplate = buffer.toString();
+
+    options.javaOut.writeAsStringSync(generateJava(dartTemplate, libraryNode));
+  }
 }
 
 class ReferenceGeneratorOptions {
@@ -272,6 +295,7 @@ class ReferenceGeneratorOptions {
     this.packageRoot,
     this.dartOut,
     this.inputFile,
+    this.javaOut,
     this.build,
   });
 
@@ -292,6 +316,7 @@ class ReferenceGeneratorOptions {
       dartOut: results.wasParsed('dart-out') ? File(results['dart-out']) : null,
       inputFile: File(results.rest.first),
       build: results['build'],
+      javaOut: results.wasParsed('java-out') ? File(results['java-out']) : null,
     );
   }
 
@@ -299,4 +324,5 @@ class ReferenceGeneratorOptions {
   final File dartOut;
   final File inputFile;
   final bool build;
+  final File javaOut;
 }

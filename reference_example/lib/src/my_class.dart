@@ -13,6 +13,10 @@ class MyClass with LocalReference {
     referencePairManager.pairWithNewRemoteReference(this);
   }
 
+  static void aStaticMethodBro(Map<String, MyOtherClass> something) {
+
+  }
+
   final String stringField;
 
   Future<String> myMethod(double value, MyOtherClass myOtherClass) async {
