@@ -71,9 +71,7 @@
 }
 
 - (void)setObject:(id _Nonnull)object forKey:(id _Nonnull)key {
-  if (key && object &&
-      ![self objectForKey:key] &&
-      ![self.inverse objectForKey:object]) {
+  if (key && object && ![self objectForKey:key] && ![self.inverse objectForKey:object]) {
     [_table setObject:object forKey:key];
     [_inverse->_table setObject:key forKey:object];
   }

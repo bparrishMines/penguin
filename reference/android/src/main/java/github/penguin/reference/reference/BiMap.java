@@ -1,11 +1,11 @@
 package github.penguin.reference.reference;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 class BiMap<K, V> implements Map<K, V> {
   private final Map<K, V> map = new HashMap<>();

@@ -32,11 +32,8 @@ public abstract class MethodChannelRemoteHandler implements RemoteReferenceCommu
 
     @Override
     public void error(
-        String errorCode,
-        @Nullable String errorMessage,
-        @Nullable Object errorDetails) {
-      completer.completeWithError(
-          new Throwable(String.format("%s: %s", errorCode, errorMessage)));
+        String errorCode, @Nullable String errorMessage, @Nullable Object errorDetails) {
+      completer.completeWithError(new Throwable(String.format("%s: %s", errorCode, errorMessage)));
     }
 
     @Override
@@ -54,18 +51,16 @@ public abstract class MethodChannelRemoteHandler implements RemoteReferenceCommu
     this(binaryMessenger, channelName, new ReferenceMessageCodec());
   }
 
-  public MethodChannelRemoteHandler(BinaryMessenger binaryMessenger,
-                                    String channelName,
-                                    ReferenceMessageCodec messageCodec) {
+  public MethodChannelRemoteHandler(
+      BinaryMessenger binaryMessenger, String channelName, ReferenceMessageCodec messageCodec) {
     this.binaryMessenger = binaryMessenger;
-    this.channel = new MethodChannel(binaryMessenger, channelName, new StandardMethodCodec(messageCodec));
+    this.channel =
+        new MethodChannel(binaryMessenger, channelName, new StandardMethodCodec(messageCodec));
   }
 
   @Override
   public Completable<Void> create(
-      final RemoteReference remoteReference,
-      final int classId,
-      final List<Object> arguments) {
+      final RemoteReference remoteReference, final int classId, final List<Object> arguments) {
     final Completer<Void> completer = new Completer<>();
 
     channel.invokeMethod(
@@ -77,7 +72,8 @@ public abstract class MethodChannelRemoteHandler implements RemoteReferenceCommu
   }
 
   @Override
-  public Completable<Object> invokeStaticMethod(int classId, String methodName, List<Object> arguments) {
+  public Completable<Object> invokeStaticMethod(
+      int classId, String methodName, List<Object> arguments) {
     final Completer<Object> completer = new Completer<>();
 
     channel.invokeMethod(
@@ -104,9 +100,10 @@ public abstract class MethodChannelRemoteHandler implements RemoteReferenceCommu
   }
 
   @Override
-  public Completable<Object> invokeMethodOnUnpairedReference(final UnpairedReference unpairedReference,
-                                                             final String methodName,
-                                                             final List<Object> arguments) {
+  public Completable<Object> invokeMethodOnUnpairedReference(
+      final UnpairedReference unpairedReference,
+      final String methodName,
+      final List<Object> arguments) {
     final Completer<Object> completer = new Completer<>();
 
     channel.invokeMethod(

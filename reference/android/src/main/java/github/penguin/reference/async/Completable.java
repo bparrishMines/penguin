@@ -9,6 +9,7 @@ public class Completable<T> {
 
   public interface OnCompleteListener<S> {
     void onComplete(S result);
+
     void onError(Throwable throwable);
   }
 

@@ -66,7 +66,8 @@
 }
 
 - (NSString *)description {
-  return [NSString stringWithFormat:@"%@(%@)", NSStringFromClass([REFRemoteReference class]), _referenceID];
+  return [NSString
+      stringWithFormat:@"%@(%@)", NSStringFromClass([REFRemoteReference class]), _referenceID];
 }
 @end
 
@@ -98,9 +99,8 @@
 }
 
 - (NSString *)description {
-  return [NSString stringWithFormat:@"%@(%lu, %@, %@)", NSStringFromClass([REFUnpairedReference class]),
-          (unsigned long)_classID,
-          _creationArguments.description,
-          _managerPoolID];
+  return [NSString
+      stringWithFormat:@"%@(%lu, %@, %@)", NSStringFromClass([REFUnpairedReference class]),
+                       (unsigned long)_classID, _creationArguments.description, _managerPoolID];
 }
 @end

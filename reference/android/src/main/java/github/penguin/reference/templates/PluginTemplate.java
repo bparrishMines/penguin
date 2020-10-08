@@ -2,12 +2,12 @@ package github.penguin.reference.templates;
 
 import androidx.annotation.NonNull;
 import github.penguin.reference.reference.ReferencePairManager;
+import github.penguin.reference.templates.LibraryTemplate.$ClassTemplateCreationArgs;
+import github.penguin.reference.templates.LibraryTemplate.$LocalHandler;
+import github.penguin.reference.templates.LibraryTemplate.$ReferencePairManager;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
-import github.penguin.reference.templates.LibraryTemplate.$ReferencePairManager;
-import github.penguin.reference.templates.LibraryTemplate.$LocalHandler;
-import github.penguin.reference.templates.LibraryTemplate.$ClassTemplateCreationArgs;
 
 public class PluginTemplate implements FlutterPlugin {
   private static class ReferencePairManagerTemplate extends $ReferencePairManager {
@@ -19,12 +19,14 @@ public class PluginTemplate implements FlutterPlugin {
     public $LocalHandler getLocalHandler() {
       return new $LocalHandler() {
         @Override
-        public LibraryTemplate.$ClassTemplate createClassTemplate(ReferencePairManager referencePairManager, $ClassTemplateCreationArgs args) {
+        public LibraryTemplate.$ClassTemplate createClassTemplate(
+            ReferencePairManager referencePairManager, $ClassTemplateCreationArgs args) {
           return new ClassTemplate(args.fieldTemplate);
         }
 
         @Override
-        public Double classTemplate$staticMethodTemplate(ReferencePairManager referencePairManager, String parameterTemplate) {
+        public Double classTemplate$staticMethodTemplate(
+            ReferencePairManager referencePairManager, String parameterTemplate) {
           return ClassTemplate.staticMethodTemplate(parameterTemplate);
         }
       };

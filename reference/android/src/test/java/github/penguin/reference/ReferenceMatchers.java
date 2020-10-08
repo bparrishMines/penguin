@@ -74,7 +74,8 @@ class ReferenceMatchers {
         final String managerPoolId,
         Description description) {
       description
-          .appendText(String.format(" An %s with classId: ", UnpairedReference.class.getSimpleName()))
+          .appendText(
+              String.format(" An %s with classId: ", UnpairedReference.class.getSimpleName()))
           .appendText(classId != null ? classId.toString() : null)
           .appendText(" and creation arguments: ")
           .appendText(creationArguments != null ? creationArguments.toString() : null)
@@ -90,7 +91,11 @@ class ReferenceMatchers {
     @Override
     protected void describeMismatchSafely(
         UnpairedReference reference, Description mismatchDescription) {
-      describe(reference.classId, reference.creationArguments, reference.managerPoolId, mismatchDescription);
+      describe(
+          reference.classId,
+          reference.creationArguments,
+          reference.managerPoolId,
+          mismatchDescription);
     }
 
     @Override
@@ -123,7 +128,8 @@ class ReferenceMatchers {
     @Override
     public void describeTo(Description description) {
       description
-          .appendText(String.format(" A %s with referenceId: ", RemoteReference.class.getSimpleName()))
+          .appendText(
+              String.format(" A %s with referenceId: ", RemoteReference.class.getSimpleName()))
           .appendText("" + referenceId);
     }
   }

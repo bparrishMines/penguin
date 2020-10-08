@@ -4,58 +4,58 @@ typedef id<REFLocalReference> (^_LocalCreatorHandler)(_LocalHandler *_Nonnull,
                                                       REFReferencePairManager *_Nonnull,
                                                       NSArray<id> *_Nonnull);
 
-typedef id (^_LocalStaticMethodHandler)(_LocalHandler *_Nonnull,
-                                        REFReferencePairManager *_Nonnull,
+typedef id (^_LocalStaticMethodHandler)(_LocalHandler *_Nonnull, REFReferencePairManager *_Nonnull,
                                         NSArray<id> *_Nonnull);
 
-typedef id (^_LocalMethodHandler)(id<REFLocalReference> _Nonnull localReference, NSArray<id> *_Nonnull);
+typedef id (^_LocalMethodHandler)(id<REFLocalReference> _Nonnull localReference,
+                                  NSArray<id> *_Nonnull);
 
-typedef NSArray<id>* (^_CreationArgumentsHandler)(id<REFLocalReference> _Nonnull localReference);
+typedef NSArray<id> * (^_CreationArgumentsHandler)(id<REFLocalReference> _Nonnull localReference);
 
 @implementation _ClassTemplate
-+(NSNumber *_Nullable)staticMethodTemplate:(NSString *)parameterTemplate {
-  NSString *message = [NSString stringWithFormat:@"You must override %@ in a subclass.", NSStringFromSelector(_cmd)];
-  @throw [NSException exceptionWithName:NSInternalInconsistencyException
-                                 reason:message
-                               userInfo:nil];
++ (NSNumber *_Nullable)staticMethodTemplate:(NSString *)parameterTemplate {
+  NSString *message = [NSString
+      stringWithFormat:@"You must override %@ in a subclass.", NSStringFromSelector(_cmd)];
+  @throw
+      [NSException exceptionWithName:NSInternalInconsistencyException reason:message userInfo:nil];
 }
 
--(NSNumber *)fieldTemplate {
-  NSString *message = [NSString stringWithFormat:@"You must override %@ in a subclass.", NSStringFromSelector(_cmd)];
-  @throw [NSException exceptionWithName:NSInternalInconsistencyException
-                                 reason:message
-                               userInfo:nil];
+- (NSNumber *)fieldTemplate {
+  NSString *message = [NSString
+      stringWithFormat:@"You must override %@ in a subclass.", NSStringFromSelector(_cmd)];
+  @throw
+      [NSException exceptionWithName:NSInternalInconsistencyException reason:message userInfo:nil];
 }
 
--(NSString *_Nullable)methodTemplate:(NSString *)parameterTemplate {
-  NSString *message = [NSString stringWithFormat:@"You must override %@ in a subclass.", NSStringFromSelector(_cmd)];
-  @throw [NSException exceptionWithName:NSInternalInconsistencyException
-                                 reason:message
-                               userInfo:nil];
+- (NSString *_Nullable)methodTemplate:(NSString *)parameterTemplate {
+  NSString *message = [NSString
+      stringWithFormat:@"You must override %@ in a subclass.", NSStringFromSelector(_cmd)];
+  @throw
+      [NSException exceptionWithName:NSInternalInconsistencyException reason:message userInfo:nil];
 }
 
-+(void)_staticMethodTemplate:(_ReferencePairManager *)manager
-           parameterTemplate:(NSString *_Nullable)parameterTemplate
-                  completion:(void (^)(id _Nullable, NSError *_Nullable))completion {
++ (void)_staticMethodTemplate:(_ReferencePairManager *)manager
+            parameterTemplate:(NSString *_Nullable)parameterTemplate
+                   completion:(void (^)(id _Nullable, NSError *_Nullable))completion {
   [manager invokeRemoteStaticMethod:[_ClassTemplate class]
                          methodName:@"staticMethodTemplate"
-                          arguments:@[parameterTemplate]
+                          arguments:@[ parameterTemplate ]
                          completion:completion];
 }
 
--(void)_methodTemplate:(_ReferencePairManager *)manager
-     parameterTemplate:(NSString *_Nullable)parameterTemplate
-            completion:(void (^)(id _Nullable, NSError *_Nullable))completion {
+- (void)_methodTemplate:(_ReferencePairManager *)manager
+      parameterTemplate:(NSString *_Nullable)parameterTemplate
+             completion:(void (^)(id _Nullable, NSError *_Nullable))completion {
   if (![manager getPairedRemoteReference:self]) {
     [manager invokeRemoteMethodOnUnpairedReference:self
                                         methodName:@"methodTemplate"
-                                         arguments:@[parameterTemplate]
+                                         arguments:@[ parameterTemplate ]
                                         completion:completion];
   }
-  
+
   [manager invokeRemoteMethod:[manager getPairedRemoteReference:self]
                    methodName:@"methodTemplate"
-                    arguments:@[parameterTemplate]
+                    arguments:@[ parameterTemplate ]
                    completion:completion];
 }
 
@@ -68,63 +68,75 @@ typedef NSArray<id>* (^_CreationArgumentsHandler)(id<REFLocalReference> _Nonnull
 @end
 
 @implementation _ReferencePairManager
--(instancetype)initWithChannelName:(NSString *)channelName binaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger {
-  return self = [super initWithSupportedClasses:@[[REFClass fromClass:[_ClassTemplate class]]]
+- (instancetype)initWithChannelName:(NSString *)channelName
+                    binaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger {
+  return self = [super initWithSupportedClasses:@[ [REFClass fromClass:[_ClassTemplate class]] ]
                                 binaryMessenger:binaryMessenger
                                     channelName:channelName];
 }
 
 - (id<REFRemoteReferenceCommunicationHandler>)remoteHandler {
-  return [[_RemoteHandler alloc] initWithChannelName:self.channelName binaryMessenger:self.binaryMessenger];
+  return [[_RemoteHandler alloc] initWithChannelName:self.channelName
+                                     binaryMessenger:self.binaryMessenger];
 }
 @end
 
 static NSDictionary<REFClass *, _LocalCreatorHandler> *creators = nil;
-static NSDictionary<REFClass *, NSDictionary<NSString *, _LocalStaticMethodHandler>*> *staticMethods = nil;
-static NSDictionary<REFClass *, NSDictionary<NSString *, _LocalMethodHandler>*> *methods = nil;
+static NSDictionary<REFClass *, NSDictionary<NSString *, _LocalStaticMethodHandler> *>
+    *staticMethods = nil;
+static NSDictionary<REFClass *, NSDictionary<NSString *, _LocalMethodHandler> *> *methods = nil;
 
 @implementation _LocalHandler
--(instancetype)init {
+- (instancetype)init {
   static dispatch_once_t onceToken;
   dispatch_once(&onceToken, ^{
-    creators = @{
-      [REFClass fromClass:_ClassTemplate.class]: ^(_LocalHandler *localHandler,
-                                                   REFReferencePairManager *manager, NSArray<id> *arguments) {
+    creators = @{[REFClass fromClass:_ClassTemplate.class] : ^(
+        _LocalHandler *localHandler, REFReferencePairManager *manager, NSArray<id> *arguments){
         _ClassTemplateCreationArgs *args = [[_ClassTemplateCreationArgs alloc] init];
-        args.fieldTemplate = arguments[0];
-        return [localHandler createClassTemplate:manager args:args];
+    args.fieldTemplate = arguments[0];
+    return [localHandler createClassTemplate:manager args:args];
       },
-    };
-    staticMethods = @{
-      [REFClass fromClass:_ClassTemplate.class]: @{@"staticMethodTemplate": ^(_LocalHandler *localHandler,
-                                                                              REFReferencePairManager *manager, NSArray<id> *arguments) {
-        return [localHandler classTemplate_staticMethodTemplate:manager parameterTemplate:arguments[0]];
-      },},
-    };
-    methods = @{
-      [REFClass fromClass:_ClassTemplate.class]: @{@"methodTemplate": ^(id<REFLocalReference> localReference,
-                                                                        NSArray<id> *arguments) {
-        _ClassTemplate *value = localReference;
-        return [value methodTemplate:arguments[0]];
-      },},
-    };
-  });
-  return [super init];
+};
+staticMethods =
+    @{[REFClass fromClass:_ClassTemplate.class] : @{@"staticMethodTemplate" : ^(
+        _LocalHandler *localHandler, REFReferencePairManager *manager, NSArray<id> *arguments){
+        return
+        [localHandler classTemplate_staticMethodTemplate:manager parameterTemplate:arguments[0]];
+}
+,
+}
+,
+}
+;
+methods =
+    @{[REFClass fromClass:_ClassTemplate.class] :
+          @{@"methodTemplate" : ^(id<REFLocalReference> localReference, NSArray<id> *arguments){
+              _ClassTemplate *value = localReference;
+return [value methodTemplate:arguments[0]];
+}
+,
+}
+,
+}
+;
+});
+return [super init];
 }
 
--(_ClassTemplate *)createClassTemplate:(REFReferencePairManager *)manager args:(_ClassTemplateCreationArgs *)args {
-  NSString *message = [NSString stringWithFormat:@"You must override %@ in a subclass.", NSStringFromSelector(_cmd)];
-  @throw [NSException exceptionWithName:NSInternalInconsistencyException
-                                 reason:message
-                               userInfo:nil];
+- (_ClassTemplate *)createClassTemplate:(REFReferencePairManager *)manager
+                                   args:(_ClassTemplateCreationArgs *)args {
+  NSString *message = [NSString
+      stringWithFormat:@"You must override %@ in a subclass.", NSStringFromSelector(_cmd)];
+  @throw
+      [NSException exceptionWithName:NSInternalInconsistencyException reason:message userInfo:nil];
 }
 
--(id _Nullable)classTemplate_staticMethodTemplate:(REFReferencePairManager *)manager
-                                parameterTemplate:(NSString *)parameterTemplate {
-  NSString *message = [NSString stringWithFormat:@"You must override %@ in a subclass.", NSStringFromSelector(_cmd)];
-  @throw [NSException exceptionWithName:NSInternalInconsistencyException
-                                 reason:message
-                               userInfo:nil];
+- (id _Nullable)classTemplate_staticMethodTemplate:(REFReferencePairManager *)manager
+                                 parameterTemplate:(NSString *)parameterTemplate {
+  NSString *message = [NSString
+      stringWithFormat:@"You must override %@ in a subclass.", NSStringFromSelector(_cmd)];
+  @throw
+      [NSException exceptionWithName:NSInternalInconsistencyException reason:message userInfo:nil];
 }
 
 - (nonnull id<REFLocalReference>)create:(nonnull REFReferencePairManager *)referencePairManager
@@ -137,7 +149,8 @@ static NSDictionary<REFClass *, NSDictionary<NSString *, _LocalMethodHandler>*> 
                     referenceClass:(nonnull Class)referenceClass
                         methodName:(nonnull NSString *)methodName
                          arguments:(nonnull NSArray<id> *)arguments {
-  return staticMethods[[REFClass fromClass:referenceClass]][methodName](self, referencePairManager, arguments);
+  return staticMethods[[REFClass fromClass:referenceClass]][methodName](self, referencePairManager,
+                                                                        arguments);
 }
 
 - (id _Nullable)invokeMethod:(nonnull REFReferencePairManager *)referencePairManager
@@ -146,7 +159,7 @@ static NSDictionary<REFClass *, NSDictionary<NSString *, _LocalMethodHandler>*> 
                    arguments:(nonnull NSArray<id> *)arguments {
   _LocalMethodHandler handler = methods[localReference.referenceClass][methodName];
   if (handler) return handler(localReference, arguments);
-  
+
   // Based on inheritance.
   if ([localReference isKindOfClass:_ClassTemplate.class]) {
     if ([@"methodTemplate" isEqualToString:methodName]) {
@@ -154,9 +167,10 @@ static NSDictionary<REFClass *, NSDictionary<NSString *, _LocalMethodHandler>*> 
       return [value methodTemplate:arguments[0]];
     }
   }
-  
-  NSString *reason = [NSString stringWithFormat:@"Unable to invoke method `%@` on (localReference): %@",
-                      methodName, localReference.description];
+
+  NSString *reason =
+      [NSString stringWithFormat:@"Unable to invoke method `%@` on (localReference): %@",
+                                 methodName, localReference.description];
   @throw [NSException exceptionWithName:NSInvalidArgumentException reason:reason userInfo:nil];
 }
 @end
@@ -164,17 +178,18 @@ static NSDictionary<REFClass *, NSDictionary<NSString *, _LocalMethodHandler>*> 
 static NSDictionary<REFClass *, _CreationArgumentsHandler> *creationArguments = nil;
 
 @implementation _RemoteHandler
--(instancetype)initWithChannelName:(NSString *)channelName binaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger {
+- (instancetype)initWithChannelName:(NSString *)channelName
+                    binaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger {
   static dispatch_once_t onceToken;
   dispatch_once(&onceToken, ^{
-    creationArguments = @{
-      [REFClass fromClass:_ClassTemplate.class]: ^(id<REFLocalReference> localReference) {
-        _ClassTemplate *value = localReference;
-        return @[value.fieldTemplate];
+    creationArguments =
+        @{[REFClass fromClass:_ClassTemplate.class] : ^(id<REFLocalReference> localReference){
+            _ClassTemplate *value = localReference;
+    return @[ value.fieldTemplate ];
       },
-    };
-  });
-  return self = [super initWithChannelName:channelName binaryMessenger:binaryMessenger];
+};
+});
+return self = [super initWithChannelName:channelName binaryMessenger:binaryMessenger];
 }
 
 - (NSArray<id> *)getCreationArguments:(id<REFLocalReference>)localReference {
