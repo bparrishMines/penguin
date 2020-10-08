@@ -1,4 +1,4 @@
-#import "$TemplateReferencePairManager.h"
+#import "REFLibraryTemplate_Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

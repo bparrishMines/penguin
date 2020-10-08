@@ -194,14 +194,17 @@ class $LocalHandler with LocalReferenceCommunicationHandler {
 
 // MethodChannelRemoteHandler
 class $RemoteHandler extends MethodChannelRemoteHandler {
+  $RemoteHandler(
+    String channelName, [
+    ReferenceMessageCodec messageCodec,
+  ]) : super(channelName, messageCodec);
+
   static final Map<Type, _$CreationArgumentsHandler> _creationArguments =
       <Type, _$CreationArgumentsHandler>{
     $ClassTemplate: (LocalReference localReference) {
       return <Object>[(localReference as $ClassTemplate).fieldTemplate];
     }
   };
-
-  $RemoteHandler(String channelName) : super(channelName);
 
   @override
   List<Object> getCreationArguments(LocalReference localReference) {

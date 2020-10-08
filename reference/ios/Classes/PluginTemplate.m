@@ -3,7 +3,7 @@
 @interface LocalHandlerImpl : _LocalHandler
 @end
 
-@interface ReferencePairManagerTemplate : _TemplateReferencePairManager
+@interface ReferencePairManagerTemplate : _ReferencePairManager
 @end
 
 @implementation ClassTemplate {
@@ -32,8 +32,8 @@
 @end
 
 @implementation LocalHandlerImpl
--(_ClassTemplate *)createClassTemplate:(REFReferencePairManager *)manager fieldTemplate:(NSNumber *)fieldTemplate {
-  return [[ClassTemplate alloc] initWithFieldTemplate:fieldTemplate];
+-(_ClassTemplate *)createClassTemplate:(REFReferencePairManager *)manager args:(_ClassTemplateCreationArgs *)args {
+    return [[ClassTemplate alloc] initWithFieldTemplate:args.fieldTemplate];
 }
 
 -(id)classTemplate_staticMethodTemplate:(REFReferencePairManager *)manager
@@ -54,7 +54,8 @@
 
 @implementation PluginTemplate
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
-  ReferencePairManagerTemplate *manager = [[ReferencePairManagerTemplate alloc] initBinaryMessenger:registrar.messenger];
+  ReferencePairManagerTemplate *manager = [[ReferencePairManagerTemplate alloc]
+                                           initBinaryMessenger:registrar.messenger];
   [manager initialize];
 }
 @end

@@ -1,4 +1,4 @@
-#import "$TemplateReferencePairManager.h"
+#import "REFLibraryTemplate_Internal.h"
 
 typedef id<REFLocalReference> (^_LocalCreatorHandler)(_LocalHandler *_Nonnull,
                                                       REFReferencePairManager *_Nonnull,
@@ -11,11 +11,6 @@ typedef id (^_LocalStaticMethodHandler)(_LocalHandler *_Nonnull,
 typedef id (^_LocalMethodHandler)(id<REFLocalReference> _Nonnull localReference, NSArray<id> *_Nonnull);
 
 typedef NSArray<id>* (^_CreationArgumentsHandler)(id<REFLocalReference> _Nonnull localReference);
-
-static NSDictionary<REFClass *, _LocalCreatorHandler> *creators = nil;
-static NSDictionary<REFClass *, NSDictionary<NSString *, _LocalStaticMethodHandler>*> *staticMethods = nil;
-static NSDictionary<REFClass *, NSDictionary<NSString *, _LocalMethodHandler>*> *methods = nil;
-static NSDictionary<REFClass *, _CreationArgumentsHandler> *creationArguments = nil;
 
 @implementation _ClassTemplate
 +(NSNumber *_Nullable)staticMethodTemplate:(NSString *)parameterTemplate {
@@ -39,7 +34,7 @@ static NSDictionary<REFClass *, _CreationArgumentsHandler> *creationArguments = 
                                userInfo:nil];
 }
 
-+(void)_staticMethodTemplate:(_TemplateReferencePairManager *)manager
++(void)_staticMethodTemplate:(_ReferencePairManager *)manager
            parameterTemplate:(NSString *_Nullable)parameterTemplate
                   completion:(void (^)(id _Nullable, NSError *_Nullable))completion {
   [manager invokeRemoteStaticMethod:[_ClassTemplate class]
@@ -48,7 +43,7 @@ static NSDictionary<REFClass *, _CreationArgumentsHandler> *creationArguments = 
                          completion:completion];
 }
 
--(void)_methodTemplate:(_TemplateReferencePairManager *)manager
+-(void)_methodTemplate:(_ReferencePairManager *)manager
      parameterTemplate:(NSString *_Nullable)parameterTemplate
             completion:(void (^)(id _Nullable, NSError *_Nullable))completion {
   if (![manager getPairedRemoteReference:self]) {
@@ -69,6 +64,25 @@ static NSDictionary<REFClass *, _CreationArgumentsHandler> *creationArguments = 
 }
 @end
 
+@implementation _ClassTemplateCreationArgs
+@end
+
+@implementation _ReferencePairManager
+-(instancetype)initWithChannelName:(NSString *)channelName binaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger {
+  return self = [super initWithSupportedClasses:@[[REFClass fromClass:[_ClassTemplate class]]]
+                                binaryMessenger:binaryMessenger
+                                    channelName:channelName];
+}
+
+- (id<REFRemoteReferenceCommunicationHandler>)remoteHandler {
+  return [[_RemoteHandler alloc] initWithChannelName:self.channelName binaryMessenger:self.binaryMessenger];
+}
+@end
+
+static NSDictionary<REFClass *, _LocalCreatorHandler> *creators = nil;
+static NSDictionary<REFClass *, NSDictionary<NSString *, _LocalStaticMethodHandler>*> *staticMethods = nil;
+static NSDictionary<REFClass *, NSDictionary<NSString *, _LocalMethodHandler>*> *methods = nil;
+
 @implementation _LocalHandler
 -(instancetype)init {
   static dispatch_once_t onceToken;
@@ -76,7 +90,9 @@ static NSDictionary<REFClass *, _CreationArgumentsHandler> *creationArguments = 
     creators = @{
       [REFClass fromClass:_ClassTemplate.class]: ^(_LocalHandler *localHandler,
                                                    REFReferencePairManager *manager, NSArray<id> *arguments) {
-        return [localHandler createClassTemplate:manager fieldTemplate:arguments[0]];
+        _ClassTemplateCreationArgs *args = [[_ClassTemplateCreationArgs alloc] init];
+        args.fieldTemplate = arguments[0];
+        return [localHandler createClassTemplate:manager args:args];
       },
     };
     staticMethods = @{
@@ -96,7 +112,7 @@ static NSDictionary<REFClass *, _CreationArgumentsHandler> *creationArguments = 
   return [super init];
 }
 
--(_ClassTemplate *)createClassTemplate:(REFReferencePairManager *)manager fieldTemplate:(NSNumber *)fieldTemplate {
+-(_ClassTemplate *)createClassTemplate:(REFReferencePairManager *)manager args:(_ClassTemplateCreationArgs *)args {
   NSString *message = [NSString stringWithFormat:@"You must override %@ in a subclass.", NSStringFromSelector(_cmd)];
   @throw [NSException exceptionWithName:NSInternalInconsistencyException
                                  reason:message
@@ -145,6 +161,8 @@ static NSDictionary<REFClass *, _CreationArgumentsHandler> *creationArguments = 
 }
 @end
 
+static NSDictionary<REFClass *, _CreationArgumentsHandler> *creationArguments = nil;
+
 @implementation _RemoteHandler
 -(instancetype)initWithChannelName:(NSString *)channelName binaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger {
   static dispatch_once_t onceToken;
@@ -161,17 +179,5 @@ static NSDictionary<REFClass *, _CreationArgumentsHandler> *creationArguments = 
 
 - (NSArray<id> *)getCreationArguments:(id<REFLocalReference>)localReference {
   return creationArguments[localReference.referenceClass](localReference);
-}
-@end
-
-@implementation _TemplateReferencePairManager
--(instancetype)initWithChannelName:(NSString *)channelName binaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger {
-  return self = [super initWithSupportedClasses:@[[REFClass fromClass:[_ClassTemplate class]]]
-                                binaryMessenger:binaryMessenger
-                                    channelName:channelName];
-}
-
-- (id<REFRemoteReferenceCommunicationHandler>)remoteHandler {
-  return [[_RemoteHandler alloc] initWithChannelName:self.channelName binaryMessenger:self.binaryMessenger];
 }
 @end
