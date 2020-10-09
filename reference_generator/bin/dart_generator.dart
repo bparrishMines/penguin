@@ -1,6 +1,8 @@
 import 'package:recase/recase.dart';
 import 'package:reference_generator/src/ast.dart';
 
+import 'common.dart';
+
 String generateDart(String template, LibraryNode libraryNode) {
   final Library library = Library(template);
   return template
@@ -632,35 +634,6 @@ String getTrueTypeName(ReferenceType type) {
   }
 
   return type.name;
-}
-
-mixin TemplateRegExp {
-  static RegExp regExp(String pattern) {
-    return RegExp(pattern, multiLine: true, dotAll: true);
-  }
-
-  RegExp get exp;
-
-  TemplateRegExp get parent;
-
-  String get template => parent.template;
-
-  String stringMatch() {
-    final List<TemplateRegExp> expressions = <TemplateRegExp>[];
-
-    TemplateRegExp currentExp = this;
-    while (currentExp.parent != null) {
-      expressions.add(currentExp);
-      currentExp = currentExp.parent;
-    }
-
-    String result = template;
-    for (TemplateRegExp expression in expressions.reversed) {
-      result = expression.exp.stringMatch(result);
-    }
-
-    return result;
-  }
 }
 
 class Library with TemplateRegExp {

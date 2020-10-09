@@ -7,7 +7,8 @@ import 'package:reference_generator/src/ast.dart';
 
 import 'dart_generator.dart' show generateDart;
 import 'java_generator.dart' show generateJava;
-import 'objc_generator.dart' show generateObjcHeader, generateObjcImpl;
+import 'objc_impl_generator.dart' show generateObjcImpl;
+import 'objc_header_generator.dart' show generateObjcHeader;
 
 const String packageRootOption = 'package-root';
 const String dartOutOption = 'dart-out';
@@ -24,14 +25,14 @@ final ArgParser parser = ArgParser()
   ..addOption(javaPackageOption)
   ..addOption(objcHeaderOutOption)
   ..addOption(objcImplOutOption)
-  ..addFlag('help')
+  ..addFlag('help', abbr: 'h')
   ..addFlag(buildFlag, abbr: 'b', defaultsTo: true);
 
 void main(List<String> arguments) async {
   final ArgResults results = parser.parse(arguments);
   if (results['help']) {
     print(parser.usage);
-    exit(64);
+    exit(0);
   }
   final options = ReferenceGeneratorOptions.parse(results);
 
