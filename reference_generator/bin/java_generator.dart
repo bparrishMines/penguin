@@ -889,7 +889,7 @@ class ClassProtectedMethod with TemplateRegExp {
   ClassProtectedMethod(this.parent);
 
   final RegExp name = TemplateRegExp.regExp(
-    r'methodTemplate(?=\(\$ReferencePairManager)',
+    r'(?<=Completable<Object> \$)methodTemplate',
   );
 
   Parameter get aParameter => Parameter(this);
@@ -1010,7 +1010,7 @@ class LocalHandlerCreator with TemplateRegExp {
   LocalHandlerCreator(this.parent);
 
   final RegExp className = TemplateRegExp.regExp(
-    r'(?<=put\(\$|final \$|new \$|localHandler\.create)ClassTemplate',
+    r'(?<=put\(\s+\$|final \$|new \$|localHandler\.create)ClassTemplate',
   );
 
   LocalHandlerCreatorCreationArgs get argument =>
@@ -1044,7 +1044,7 @@ class LocalHandlerCreatorCreationArgs with TemplateRegExp {
 class LocalHandlerStaticMethod with TemplateRegExp {
   LocalHandlerStaticMethod(this.parent);
 
-  final RegExp className = TemplateRegExp.regExp(r'(?<=put\(\$)ClassTemplate');
+  final RegExp className = TemplateRegExp.regExp(r'(?<=put\(\s+\$)ClassTemplate');
 
   LocalHandlerStaticMethodMethod get aMethod =>
       LocalHandlerStaticMethodMethod(this);
@@ -1096,7 +1096,7 @@ class Argument with TemplateRegExp {
 class LocalHandlerMethod with TemplateRegExp {
   LocalHandlerMethod(this.parent);
 
-  final RegExp className = TemplateRegExp.regExp(r'(?<=put\(\$)ClassTemplate');
+  final RegExp className = TemplateRegExp.regExp(r'(?<=put\(\s+\$)ClassTemplate',);
 
   LocalHandlerMethodMethod get aMethod => LocalHandlerMethodMethod(this);
 
