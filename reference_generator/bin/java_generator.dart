@@ -8,7 +8,8 @@ String generateJava({
   String package,
 }) {
   final Library library = Library(template);
-  return template
+  return library
+      .stringMatch()
       .replaceAll(library.name, libraryName)
       .replaceAll(library.package, package)
       .replaceAll(
@@ -294,8 +295,8 @@ String generateJava({
       )
       .replaceAll(
         library.aLocalHandler.exp,
-        library.aLocalHandler.exp
-            .stringMatch(template)
+        library.aLocalHandler
+            .stringMatch()
             .replaceAll(
               library.aLocalHandler.aCreator.exp,
               libraryNode.classes
@@ -764,7 +765,7 @@ class Class with TemplateRegExp {
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'static abstract class \$ClassTemplate.+?getReferenceClass[^\}]+\}[^\}]+\}',
+    r'abstract static class \$ClassTemplate.+?getReferenceClass[^\}]+\}[^\}]+\}',
   );
 
   @override
@@ -959,7 +960,7 @@ class Manager with TemplateRegExp {
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'(?<=static abstract class \$)ReferencePairManager([^\}]+\}){4}',
+    r'(?<=abstract static class \$)ReferencePairManager([^\}]+\}){4}',
   );
 
   @override
@@ -998,7 +999,7 @@ class LocalHandler with TemplateRegExp {
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'static abstract class \$LocalHandler.+?public void dispose\(([^\}]+\}){2}',
+    r'abstract static class \$LocalHandler.+?public void dispose\(([^\}]+\}){2}',
   );
 
   @override
@@ -1017,7 +1018,7 @@ class LocalHandlerCreator with TemplateRegExp {
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'put\(\$ClassTemplate\.class, new \$LocalCreatorHandler([^\}]*\}){2}\);',
+    r'put\(\s+\$ClassTemplate\.class,\s+new \$LocalCreatorHandler([^\}]*\}){2}\);',
   );
 
   @override
@@ -1050,7 +1051,7 @@ class LocalHandlerStaticMethod with TemplateRegExp {
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'put\(\$ClassTemplate\.class, new HashMap<String, \$LocalStaticMethodHandler([^\}]*\}){4}\);',
+    r'put\(\s+\$ClassTemplate\.class,\s+new HashMap<String, \$LocalStaticMethodHandler([^\}]*\}){4}\);',
   );
 
   @override
@@ -1070,7 +1071,7 @@ class LocalHandlerStaticMethodMethod with TemplateRegExp {
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'put\("staticMethodTemplate", new \$LocalStaticMethodHandler([^\}]*\}){2}\);',
+    r'put\(\s+"staticMethodTemplate",\s+new \$LocalStaticMethodHandler([^\}]*\}){2}\);',
   );
 
   @override
@@ -1101,7 +1102,7 @@ class LocalHandlerMethod with TemplateRegExp {
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'put\(\$ClassTemplate\.class, new HashMap<String, \$LocalMethodHandler([^\}]*\}){4}\);',
+    r'put\(\s+\$ClassTemplate\.class,\s+new HashMap<String, \$LocalMethodHandler([^\}]*\}){4}\);',
   );
 
   @override
@@ -1119,7 +1120,8 @@ class LocalHandlerMethodMethod with TemplateRegExp {
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-      r'put\("methodTemplate", new \$LocalMethodHandler([^\}]*\}){2}\);');
+    r'put\(\s+"methodTemplate",\s+new \$LocalMethodHandler([^\}]*\}){2}\);',
+  );
 
   @override
   final LocalHandlerMethod parent;
@@ -1203,7 +1205,7 @@ class CreationArgument with TemplateRegExp {
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'put\(\$ClassTemplate\.class, new \$CreationArgumentsHandler([^\}]*\}){2}\);',
+    r'put\(\s+\$ClassTemplate\.class,\s+new \$CreationArgumentsHandler([^\}]*\}){2}\);',
   );
 
   @override

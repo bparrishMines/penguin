@@ -7,14 +7,25 @@ import 'package:reference_generator/src/ast.dart';
 
 import 'dart_generator.dart' show generateDart;
 import 'java_generator.dart' show generateJava;
+import 'objc_generator.dart' show generateObjcHeader, generateObjcImpl;
+
+const String packageRootOption = 'package-root';
+const String dartOutOption = 'dart-out';
+const String javaOutOption = 'java-out';
+const String buildFlag = 'build';
+const String javaPackageOption = 'java-package';
+const String objcHeaderOutOption = 'objc-header-out';
+const String objcImplOutOption = 'objc-impl-out';
 
 final ArgParser parser = ArgParser()
-  ..addOption('package-root', defaultsTo: '.')
-  ..addOption('dart-out')
-  ..addOption('java-out')
-  ..addOption('java-package')
+  ..addOption(packageRootOption, defaultsTo: '.')
+  ..addOption(dartOutOption)
+  ..addOption(javaOutOption)
+  ..addOption(javaPackageOption)
+  ..addOption(objcHeaderOutOption)
+  ..addOption(objcImplOutOption)
   ..addFlag('help')
-  ..addFlag('build', abbr: 'b', defaultsTo: true);
+  ..addFlag(buildFlag, abbr: 'b', defaultsTo: true);
 
 void main(List<String> arguments) async {
   final ArgResults results = parser.parse(arguments);
@@ -87,6 +98,48 @@ void main(List<String> arguments) async {
       ),
     );
   }
+
+  if (options.objcHeaderOut != null) {
+    final HttpClientRequest request = await HttpClient().getUrl(
+      Uri.parse(
+        'https://raw.githubusercontent.com/bparrishMines/penguin/reference_generator/reference/ios/Classes/REFLibraryTemplate_Internal.h',
+      ),
+    );
+    final HttpClientResponse response = await request.close();
+
+    final StringBuffer buffer = StringBuffer()
+      ..writeAll(await response.transform(utf8.decoder).toList());
+
+    final String objcHeaderTemplate = buffer.toString();
+
+    options.objcHeaderOut.writeAsStringSync(
+      generateObjcHeader(
+        template: objcHeaderTemplate,
+        libraryNode: libraryNode,
+      ),
+    );
+  }
+
+  if (options.objcImplOut != null) {
+    final HttpClientRequest request = await HttpClient().getUrl(
+      Uri.parse(
+        'https://raw.githubusercontent.com/bparrishMines/penguin/reference_generator/reference/ios/Classes/REFLibraryTemplate_Internal.m',
+      ),
+    );
+    final HttpClientResponse response = await request.close();
+
+    final StringBuffer buffer = StringBuffer()
+      ..writeAll(await response.transform(utf8.decoder).toList());
+
+    final String objcImplTemplate = buffer.toString();
+
+    options.objcImplOut.writeAsStringSync(
+      generateObjcImpl(
+        template: objcImplTemplate,
+        libraryNode: libraryNode,
+      ),
+    );
+  }
 }
 
 class ReferenceGeneratorOptions {
@@ -97,10 +150,9 @@ class ReferenceGeneratorOptions {
     this.javaOut,
     this.build,
     this.javaPackage,
-  }) : assert(
-          javaOut == null || javaPackage != null,
-          'Please provide a `--java-package` when setting `--java-out`.',
-        );
+    this.objcHeaderOut,
+    this.objcImplOut,
+  });
 
   factory ReferenceGeneratorOptions.parse(ArgResults results) {
     if (results.rest.isEmpty || results.rest.length > 1) {
@@ -115,16 +167,28 @@ class ReferenceGeneratorOptions {
     }
 
     final ReferenceGeneratorOptions options = ReferenceGeneratorOptions._(
-      packageRoot: File(results['package-root']),
-      dartOut: results.wasParsed('dart-out') ? File(results['dart-out']) : null,
+      packageRoot: File(results[packageRootOption]),
+      dartOut: results.wasParsed(dartOutOption)
+          ? File(results[dartOutOption])
+          : null,
       inputFile: File(results.rest.first),
-      build: results['build'],
-      javaOut: results.wasParsed('java-out') ? File(results['java-out']) : null,
-      javaPackage: results['java-package'],
+      build: results[buildFlag],
+      javaOut: results.wasParsed(javaOutOption)
+          ? File(results[javaOutOption])
+          : null,
+      javaPackage: results[javaPackageOption],
+      objcHeaderOut: results.wasParsed(objcHeaderOutOption)
+          ? File(results[objcHeaderOutOption])
+          : null,
+      objcImplOut: results.wasParsed(objcImplOutOption)
+          ? File(results[objcImplOutOption])
+          : null,
     );
 
-    if(options.javaOut != null && options.javaPackage == null) {
-      throw ArgumentError('Please provide a `--java-package` when setting `--java-out`.',);
+    if (options.javaOut != null && options.javaPackage == null) {
+      throw ArgumentError(
+        'Please provide a `--$javaPackageOption` when setting `--$javaOutOption`.',
+      );
     }
 
     return options;
@@ -136,4 +200,6 @@ class ReferenceGeneratorOptions {
   final bool build;
   final File javaOut;
   final String javaPackage;
+  final File objcHeaderOut;
+  final File objcImplOut;
 }
