@@ -91,36 +91,30 @@ static NSDictionary<REFClass *, NSDictionary<NSString *, _LocalMethodHandler> *>
   static dispatch_once_t onceToken;
   dispatch_once(&onceToken, ^{
     creators = @{[REFClass fromClass:_ClassTemplate.class] : ^(
-        _LocalHandler *localHandler, REFReferencePairManager *manager, NSArray<id> *arguments){
+        _LocalHandler *localHandler, REFReferencePairManager *manager, NSArray<id> *arguments) {
         _ClassTemplateCreationArgs *args = [[_ClassTemplateCreationArgs alloc] init];
-    args.fieldTemplate = arguments[0];
-    return [localHandler createClassTemplate:manager args:args];
+        args.fieldTemplate = arguments[0];
+        return [localHandler createClassTemplate:manager args:args];
       },
-};
-staticMethods =
-    @{[REFClass fromClass:_ClassTemplate.class] : @{@"staticMethodTemplate" : ^(
-        _LocalHandler *localHandler, REFReferencePairManager *manager, NSArray<id> *arguments){
-        return
-        [localHandler classTemplate_staticMethodTemplate:manager parameterTemplate:arguments[0]];
-}
-,
-}
-,
-}
-;
-methods =
-    @{[REFClass fromClass:_ClassTemplate.class] :
-          @{@"methodTemplate" : ^(id<REFLocalReference> localReference, NSArray<id> *arguments){
+    };
+    staticMethods =
+      @{[REFClass fromClass:_ClassTemplate.class] : @{@"staticMethodTemplate" : ^(
+          _LocalHandler *localHandler, REFReferencePairManager *manager, NSArray<id> *arguments) {
+          return [localHandler classTemplate_staticMethodTemplate:manager
+                                              parameterTemplate:arguments[0]];
+          },
+        },
+      };
+    methods =
+      @{[REFClass fromClass:_ClassTemplate.class] :
+          @{@"methodTemplate" : ^(id<REFLocalReference> localReference, NSArray<id> *arguments) {
               _ClassTemplate *value = localReference;
-return [value methodTemplate:arguments[0]];
-}
-,
-}
-,
-}
-;
-});
-return [super init];
+              return [value methodTemplate:arguments[0]];
+            },
+          },
+      };
+  });
+  return [super init];
 }
 
 - (_ClassTemplate *)createClassTemplate:(REFReferencePairManager *)manager
@@ -183,13 +177,13 @@ static NSDictionary<REFClass *, _CreationArgumentsHandler> *creationArguments = 
   static dispatch_once_t onceToken;
   dispatch_once(&onceToken, ^{
     creationArguments =
-        @{[REFClass fromClass:_ClassTemplate.class] : ^(id<REFLocalReference> localReference){
+        @{[REFClass fromClass:_ClassTemplate.class] : ^(id<REFLocalReference> localReference) {
             _ClassTemplate *value = localReference;
-    return @[ value.fieldTemplate ];
-      },
-};
-});
-return self = [super initWithChannelName:channelName binaryMessenger:binaryMessenger];
+            return @[ value.fieldTemplate ];
+          },
+        };
+  });
+  return self = [super initWithChannelName:channelName binaryMessenger:binaryMessenger];
 }
 
 - (NSArray<id> *)getCreationArguments:(id<REFLocalReference>)localReference {
