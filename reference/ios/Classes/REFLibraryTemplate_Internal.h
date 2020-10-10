@@ -10,8 +10,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface _ClassTemplate : NSObject <REFLocalReference>
 - (NSNumber *_Nullable)fieldTemplate;
-+ (NSNumber *_Nullable)staticMethodTemplate:(NSString *_Nullable)parameterTemplate;
-- (NSString *_Nullable)methodTemplate:(NSString *_Nullable)parameterTemplate;
+- (NSObject *_Nullable)methodTemplate:(NSString *_Nullable)parameterTemplate;
 
 + (void)_staticMethodTemplate:(_ReferencePairManager *)manager
             parameterTemplate:(NSString *_Nullable)parameterTemplate
