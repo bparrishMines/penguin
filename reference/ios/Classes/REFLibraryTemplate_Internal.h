@@ -28,7 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (_ClassTemplate *)createClassTemplate:(REFReferencePairManager *)manager
                                    args:(_ClassTemplateCreationArgs *)args;
 - (id _Nullable)classTemplate_staticMethodTemplate:(REFReferencePairManager *)manager
-                                 parameterTemplate:(NSString *)parameterTemplate;
+                                 parameterTemplate:(NSString *_Nullable)parameterTemplate;
 @end
 
 @interface _RemoteHandler : REFMethodChannelRemoteHandler
