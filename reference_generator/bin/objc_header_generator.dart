@@ -343,6 +343,7 @@ class ClassMethod with TemplateRegExp, PrefixTemplate {
   final Class parent;
 }
 
+// TODO: handle no parameter methods
 class Parameter with TemplateRegExp, PrefixTemplate {
   Parameter(this.parent);
 
@@ -361,7 +362,7 @@ class Parameter with TemplateRegExp, PrefixTemplate {
   );
 
   @override
-  final TemplateRegExp parent;
+  final PrefixTemplate parent;
 
   String replaceWithFirst(Iterable<ParameterNode> parameterNodes) {
     if (parameterNodes.isEmpty) return '';

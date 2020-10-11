@@ -141,6 +141,7 @@ void main(List<String> arguments) async {
       generateObjcImpl(
         template: objcImplTemplate,
         libraryNode: libraryNode,
+        prefix: options.objcPrefix,
       ),
     );
   }
