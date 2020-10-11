@@ -11,236 +11,240 @@ String generateObjcImpl({
   String prefix,
 }) {
   final Library library = Library(template: template, templatePrefix: prefix);
-  return template.replaceAll(
-    library.aClass.exp,
-    libraryNode.classes
-        .map<String>(
-          (ClassNode classNode) => library.aClass
-              .stringMatch()
-              .replaceAll(library.aClass.name, classNode.name)
-              .replaceAll(library.aClass.referenceClass, classNode.name)
-              .replaceAll(library.aClass.prefix, prefix)
-              .replaceAll(library.aClass.referenceClassPrefix, prefix)
-              .replaceAll(
-                library.aClass.aField.exp,
-                classNode.fields
-                    .map<String>(
-                      (FieldNode fieldNode) => library.aClass.aField
-                          .stringMatch()
-                          .replaceAll(
-                              library.aClass.aField.name, fieldNode.name)
-                          .replaceAll(
-                            library.aClass.aField.type,
-                            getTrueTypeName(fieldNode.type, prefix),
-                          ),
-                    )
-                    .join('\n'),
-              )
-              .replaceAll(
-                library.aClass.aMethod.exp,
-                classNode.methods
-                    .map<String>(
-                      (MethodNode methodNode) => library.aClass.aMethod
-                          .stringMatch()
-                          .replaceAll(
-                            library.aClass.aMethod.name,
-                            methodNode.name,
-                          )
-                          .replaceAll(
-                            library.aClass.aMethod.aParameter.exp,
-                            library.aClass.aMethod.aParameter
-                                .replaceWithFirst(methodNode.parameters),
-                          ),
-                    )
-                    .join('\n\n'),
-              )
-              .replaceAll(
-                library.aClass.aProtectedStaticMethod.exp,
-                classNode.staticMethods
-                    .map<String>(
-                      (MethodNode methodNode) => library
-                          .aClass.aProtectedStaticMethod
-                          .stringMatch()
-                          .replaceAll(
-                            library.aClass.aProtectedStaticMethod.className,
-                            classNode.name,
-                          )
-                          .replaceAll(
-                            library.aClass.aProtectedStaticMethod.name,
-                            methodNode.name,
-                          )
-                          .replaceAll(
-                            library.aClass.aProtectedStaticMethod.managerPrefix,
-                            prefix,
-                          )
-                          .replaceAll(
-                            library.aClass.aProtectedStaticMethod.classPrefix,
-                            prefix,
-                          )
-                          .replaceAll(
-                            library.aClass.aMethod.aParameter.exp,
-                            library.aClass.aMethod.aParameter
-                                .replace(methodNode.parameters),
-                          )
-                          .replaceAll(
-                            library.aClass.aProtectedStaticMethod.aParameterName
-                                .exp,
-                            methodNode.parameters
-                                .map<String>(
-                                  (ParameterNode parameterNode) => library
-                                      .aClass
-                                      .aProtectedStaticMethod
-                                      .aParameterName
-                                      .stringMatch()
-                                      .replaceAll(
-                                        library.aClass.aProtectedStaticMethod
-                                            .aParameterName.name,
-                                        parameterNode.name,
-                                      ),
-                                )
-                                .join(', '),
-                          ),
-                    )
-                    .join('\n\n'),
-              )
-              .replaceAll(
-                library.aClass.aProtectedMethod.exp,
-                classNode.methods
-                    .map<String>(
-                      (MethodNode methodNode) => library.aClass.aProtectedMethod
-                          .stringMatch()
-                          .replaceAll(
-                            library.aClass.aProtectedMethod.name,
-                            methodNode.name,
-                          )
-                          .replaceAll(
-                            library.aClass.aProtectedMethod.managerPrefix,
-                            prefix,
-                          )
-                          .replaceAll(
-                            library.aClass.aMethod.aParameter.exp,
-                            library.aClass.aMethod.aParameter
-                                .replace(methodNode.parameters),
-                          )
-                          .replaceAll(
-                            library.aClass.aProtectedMethod.anUnpairedReference
-                                .exp,
-                            library.aClass.aProtectedMethod.anUnpairedReference
-                                .stringMatch()
-                                .replaceAll(
-                                    library.aClass.aProtectedMethod
-                                        .anUnpairedReference.name,
-                                    methodNode.name)
-                                .replaceAll(
-                                  library.aClass.aProtectedMethod
-                                      .anUnpairedReference.aParameterName.exp,
-                                  methodNode.parameters
-                                      .map<String>(
-                                        (ParameterNode parameterNode) => library
-                                            .aClass
-                                            .aProtectedMethod
-                                            .anUnpairedReference
-                                            .aParameterName
-                                            .stringMatch()
-                                            .replaceAll(
-                                              library
-                                                  .aClass
-                                                  .aProtectedMethod
-                                                  .anUnpairedReference
-                                                  .aParameterName
-                                                  .name,
-                                              parameterNode.name,
-                                            ),
-                                      )
-                                      .join(', '),
-                                ),
-                          )
-                          .replaceAll(
-                            library
-                                .aClass.aProtectedMethod.aPairedReference.exp,
-                            library.aClass.aProtectedMethod.aPairedReference
-                                .stringMatch()
-                                .replaceAll(
-                                  library.aClass.aProtectedMethod
-                                      .aPairedReference.name,
-                                  methodNode.name,
-                                )
-                                .replaceAll(
-                                  library.aClass.aProtectedMethod
-                                      .aPairedReference.aParameterName.exp,
-                                  methodNode.parameters
-                                      .map<String>(
-                                        (ParameterNode parameterNode) => library
-                                            .aClass
-                                            .aProtectedMethod
-                                            .aPairedReference
-                                            .aParameterName
-                                            .stringMatch()
-                                            .replaceAll(
-                                              library
-                                                  .aClass
-                                                  .aProtectedMethod
-                                                  .aPairedReference
-                                                  .aParameterName
-                                                  .name,
-                                              parameterNode.name,
-                                            ),
-                                      )
-                                      .join(', '),
-                                ),
-                          ),
-                    )
-                    .join('\n\n'),
-              ),
-        )
-        .join('\n\n'),
-  );
-  // .replaceAll(
-  //   library.aCreationArgsClass.exp,
-  //   libraryNode.classes
-  //       .map<String>(
-  //         (ClassNode classNode) => library.aCreationArgsClass
-  //             .stringMatch()
-  //             .replaceAll(
-  //               library.aCreationArgsClass.className,
-  //               classNode.name,
-  //             )
-  //             .replaceAll(
-  //               library.aCreationArgsClass.aField.exp,
-  //               classNode.fields
-  //                   .map<String>(
-  //                     (FieldNode fieldNode) =>
-  //                         library.aCreationArgsClass.aField
-  //                             .stringMatch()
-  //                             .replaceAll(
-  //                               library.aCreationArgsClass.aField.name,
-  //                               fieldNode.name,
-  //                             )
-  //                             .replaceAll(
-  //                               library.aCreationArgsClass.aField.type,
-  //                               getTrueTypeName(fieldNode.type),
-  //                             ),
-  //                   )
-  //                   .join('\n'),
-  //             ),
-  //       )
-  //       .join('\n\n'),
-  // )
-  // .replaceAll(
-  //   library.aManager.exp,
-  //   library.aManager.stringMatch().replaceAll(
-  //         library.aManager.aClass.exp,
-  //         libraryNode.classes
-  //             .map<String>(
-  //               (ClassNode classNode) =>
-  //                   library.aManager.aClass.stringMatch().replaceAll(
-  //                         library.aManager.aClass.name,
-  //                         classNode.name,
-  //                       ),
-  //             )
-  //             .join(', '),
-  //       ),
-  // )
+  return template
+      .replaceAll(
+        library.aClass.exp,
+        libraryNode.classes
+            .map<String>(
+              (ClassNode classNode) => library.aClass
+                  .stringMatch()
+                  .replaceAll(library.aClass.name, classNode.name)
+                  .replaceAll(library.aClass.referenceClass, classNode.name)
+                  .replaceAll(library.aClass.prefix, prefix)
+                  .replaceAll(library.aClass.referenceClassPrefix, prefix)
+                  .replaceAll(
+                    library.aClass.aField.exp,
+                    classNode.fields
+                        .map<String>(
+                          (FieldNode fieldNode) => library.aClass.aField
+                              .stringMatch()
+                              .replaceAll(
+                                  library.aClass.aField.name, fieldNode.name)
+                              .replaceAll(
+                                library.aClass.aField.type,
+                                getTrueTypeName(fieldNode.type, prefix),
+                              ),
+                        )
+                        .join('\n'),
+                  )
+                  .replaceAll(
+                    library.aClass.aMethod.exp,
+                    classNode.methods
+                        .map<String>(
+                          (MethodNode methodNode) => library.aClass.aMethod
+                              .stringMatch()
+                              .replaceAll(
+                                library.aClass.aMethod.name,
+                                methodNode.name,
+                              )
+                              .replaceAll(
+                                library.aClass.aMethod.aParameter.exp,
+                                library.aClass.aMethod.aParameter
+                                    .replaceWithFirst(methodNode.parameters),
+                              ),
+                        )
+                        .join('\n\n'),
+                  )
+                  .replaceAll(
+                    library.aClass.aProtectedStaticMethod.exp,
+                    classNode.staticMethods
+                        .map<String>(
+                          (MethodNode methodNode) => library
+                              .aClass.aProtectedStaticMethod
+                              .stringMatch()
+                              .replaceAll(
+                                library.aClass.aProtectedStaticMethod.className,
+                                classNode.name,
+                              )
+                              .replaceAll(
+                                library.aClass.aProtectedStaticMethod.name,
+                                methodNode.name,
+                              )
+                              .replaceAll(
+                                library.aClass.aProtectedStaticMethod
+                                    .managerPrefix,
+                                prefix,
+                              )
+                              .replaceAll(
+                                library
+                                    .aClass.aProtectedStaticMethod.classPrefix,
+                                prefix,
+                              )
+                              .replaceAll(
+                                library.aClass.aMethod.aParameter.exp,
+                                library.aClass.aMethod.aParameter
+                                    .replace(methodNode.parameters),
+                              )
+                              .replaceAll(
+                                library.aClass.aProtectedStaticMethod
+                                    .aParameterName.exp,
+                                methodNode.parameters
+                                    .map<String>(
+                                      (ParameterNode parameterNode) => library
+                                          .aClass
+                                          .aProtectedStaticMethod
+                                          .aParameterName
+                                          .stringMatch()
+                                          .replaceAll(
+                                            library
+                                                .aClass
+                                                .aProtectedStaticMethod
+                                                .aParameterName
+                                                .name,
+                                            parameterNode.name,
+                                          ),
+                                    )
+                                    .join(', '),
+                              ),
+                        )
+                        .join('\n\n'),
+                  )
+                  .replaceAll(
+                    library.aClass.aProtectedMethod.exp,
+                    classNode.methods
+                        .map<String>(
+                          (MethodNode methodNode) => library
+                              .aClass.aProtectedMethod
+                              .stringMatch()
+                              .replaceAll(
+                                library.aClass.aProtectedMethod.name,
+                                methodNode.name,
+                              )
+                              .replaceAll(
+                                library.aClass.aProtectedMethod.managerPrefix,
+                                prefix,
+                              )
+                              .replaceAll(
+                                library.aClass.aMethod.aParameter.exp,
+                                library.aClass.aMethod.aParameter
+                                    .replace(methodNode.parameters),
+                              )
+                              .replaceAll(
+                                library.aClass.aProtectedMethod
+                                    .anUnpairedReference.exp,
+                                library
+                                    .aClass.aProtectedMethod.anUnpairedReference
+                                    .stringMatch()
+                                    .replaceAll(
+                                        library.aClass.aProtectedMethod
+                                            .anUnpairedReference.name,
+                                        methodNode.name)
+                                    .replaceAll(
+                                      library
+                                          .aClass
+                                          .aProtectedMethod
+                                          .anUnpairedReference
+                                          .aParameterName
+                                          .exp,
+                                      methodNode.parameters
+                                          .map<String>(
+                                            (ParameterNode parameterNode) =>
+                                                library
+                                                    .aClass
+                                                    .aProtectedMethod
+                                                    .anUnpairedReference
+                                                    .aParameterName
+                                                    .stringMatch()
+                                                    .replaceAll(
+                                                      library
+                                                          .aClass
+                                                          .aProtectedMethod
+                                                          .anUnpairedReference
+                                                          .aParameterName
+                                                          .name,
+                                                      parameterNode.name,
+                                                    ),
+                                          )
+                                          .join(', '),
+                                    ),
+                              )
+                              .replaceAll(
+                                library.aClass.aProtectedMethod.aPairedReference
+                                    .exp,
+                                library.aClass.aProtectedMethod.aPairedReference
+                                    .stringMatch()
+                                    .replaceAll(
+                                      library.aClass.aProtectedMethod
+                                          .aPairedReference.name,
+                                      methodNode.name,
+                                    )
+                                    .replaceAll(
+                                      library.aClass.aProtectedMethod
+                                          .aPairedReference.aParameterName.exp,
+                                      methodNode.parameters
+                                          .map<String>(
+                                            (ParameterNode parameterNode) =>
+                                                library
+                                                    .aClass
+                                                    .aProtectedMethod
+                                                    .aPairedReference
+                                                    .aParameterName
+                                                    .stringMatch()
+                                                    .replaceAll(
+                                                      library
+                                                          .aClass
+                                                          .aProtectedMethod
+                                                          .aPairedReference
+                                                          .aParameterName
+                                                          .name,
+                                                      parameterNode.name,
+                                                    ),
+                                          )
+                                          .join(', '),
+                                    ),
+                              ),
+                        )
+                        .join('\n\n'),
+                  ),
+            )
+            .join('\n\n'),
+      )
+      .replaceAll(
+        library.aCreationArgsClass.exp,
+        libraryNode.classes
+            .map<String>((ClassNode classNode) => library.aCreationArgsClass
+                .stringMatch()
+                .replaceAll(library.aCreationArgsClass.classPrefix, prefix)
+                .replaceAll(
+                  library.aCreationArgsClass.className,
+                  classNode.name,
+                ))
+            .join('\n\n'),
+      )
+      .replaceAll(
+        library.aManager.exp,
+        library.aManager
+            .stringMatch()
+            .replaceAll(library.aManager.prefix, prefix)
+            .replaceAll(library.aManager.remoteHandlerPrefix, prefix)
+            .replaceAll(
+              library.aManager.aClass.exp,
+              libraryNode.classes
+                  .map<String>(
+                    (ClassNode classNode) => library.aManager.aClass
+                        .stringMatch()
+                        .replaceAll(
+                          library.aManager.aClass.prefix,
+                          prefix,
+                        )
+                        .replaceAll(
+                          library.aManager.aClass.name,
+                          classNode.name,
+                        ),
+                  )
+                  .join(', '),
+            ),
+      );
   // .replaceAll(
   //   library.aLocalHandler.exp,
   //   library.aLocalHandler.exp
@@ -723,30 +727,21 @@ class ClassMethod with TemplateRegExp, PrefixTemplate {
 class CreationArgsClass with TemplateRegExp {
   CreationArgsClass(this.parent);
 
-  final RegExp className = TemplateRegExp.regExp(r'(?<=class \$)ClassTemplate');
+  final RegExp className = TemplateRegExp.regExp(
+    r'ClassTemplate(?=CreationArgs)',
+  );
 
-  CreationArgsClassField get aField => CreationArgsClassField(this);
+  final RegExp classPrefix = TemplateRegExp.regExp(
+    r'_p_(?=ClassTemplate)',
+  );
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'static class \$ClassTemplateCreationArgs[^\}]+\}',
+    r'@implementation _p_ClassTemplateCreationArgs[^@]@end',
   );
 
   @override
   final Library parent;
-}
-
-class CreationArgsClassField with TemplateRegExp {
-  CreationArgsClassField(this.parent);
-
-  final RegExp type = TemplateRegExp.regExp(r'^Integer');
-  final RegExp name = TemplateRegExp.regExp(r'fieldTemplate(?=;)');
-
-  @override
-  final RegExp exp = TemplateRegExp.regExp(r'Integer fieldTemplate;');
-
-  @override
-  final CreationArgsClass parent;
 }
 
 class ClassProtectedStaticMethod with TemplateRegExp, PrefixTemplate {
@@ -856,11 +851,16 @@ class ClassProtectedMethodPairedReference with TemplateRegExp {
 class Manager with TemplateRegExp {
   Manager(this.parent);
 
+  final RegExp prefix = TemplateRegExp.regExp(r'(?<=@implementation )_p_');
+
+  final RegExp remoteHandlerPrefix =
+      TemplateRegExp.regExp(r'_p_(?=RemoteHandler alloc)');
+
   ManagerClass get aClass => ManagerClass(this);
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'(?<=static abstract class \$)ReferencePairManager([^\}]+\}){4}',
+    r'@implementation _p_ReferencePairManager[^\}]+\}[^\}]+\}',
   );
 
   @override
@@ -871,9 +871,12 @@ class ManagerClass with TemplateRegExp {
   ManagerClass(this.parent);
 
   final RegExp name = TemplateRegExp.regExp(r'ClassTemplate');
+  final RegExp prefix = TemplateRegExp.regExp(r'_p_');
 
   @override
-  final RegExp exp = TemplateRegExp.regExp(r'\$ClassTemplate.class');
+  final RegExp exp = TemplateRegExp.regExp(
+    r'\[REFClass fromClass:\[_p_ClassTemplate class\]\]',
+  );
 
   @override
   final Manager parent;
