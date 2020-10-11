@@ -1,9 +1,9 @@
 #import "PluginTemplate.h"
 
-@interface LocalHandlerImpl : _LocalHandler
+@interface LocalHandlerImpl : _p_LocalHandler
 @end
 
-@interface ReferencePairManagerTemplate : _ReferencePairManager
+@interface ReferencePairManagerTemplate : _p_ReferencePairManager
 @end
 
 @implementation ClassTemplate {
@@ -32,8 +32,8 @@
 @end
 
 @implementation LocalHandlerImpl
-- (_ClassTemplate *)createClassTemplate:(REFReferencePairManager *)manager
-                                   args:(_ClassTemplateCreationArgs *)args {
+- (_p_ClassTemplate *)createClassTemplate:(REFReferencePairManager *)manager
+                                   args:(_p_ClassTemplateCreationArgs *)args {
   return [[ClassTemplate alloc] initWithFieldTemplate:args.fieldTemplate];
 }
 
