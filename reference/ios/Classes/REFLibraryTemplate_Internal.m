@@ -95,23 +95,23 @@ static NSDictionary<REFClass *, NSDictionary<NSString *, _LocalMethodHandler> *>
           _p_LocalHandler *localHandler, REFReferencePairManager *manager, NSArray<id> *arguments) {
           return [localHandler classTemplate_staticMethodTemplate:manager
                                               parameterTemplate:arguments[0]];
-          },
-        },
+          }
+        }
       };
     methods =
       @{[REFClass fromClass:_p_ClassTemplate.class] :
           @{@"methodTemplate" : ^(id<REFLocalReference> localReference, NSArray<id> *arguments) {
               _p_ClassTemplate *value = localReference;
               return [value methodTemplate:arguments[0]];
-            },
-          },
+            }
+          }
       };
   });
   return [super init];
 }
 
 - (_p_ClassTemplate *)createClassTemplate:(REFReferencePairManager *)manager
-                                   args:(_p_ClassTemplateCreationArgs *)args {
+                                     args:(_p_ClassTemplateCreationArgs *)args {
   NSString *message = [NSString
       stringWithFormat:@"You must override %@ in a subclass.", NSStringFromSelector(_cmd)];
   @throw
@@ -173,7 +173,7 @@ static NSDictionary<REFClass *, _CreationArgumentsHandler> *creationArguments = 
         @{[REFClass fromClass:_p_ClassTemplate.class] : ^(id<REFLocalReference> localReference) {
             _p_ClassTemplate *value = localReference;
             return @[ value.fieldTemplate ];
-          },
+          }
         };
   });
   return self = [super initWithChannelName:channelName binaryMessenger:binaryMessenger];
