@@ -88,7 +88,7 @@ static NSDictionary<REFClass *, NSDictionary<NSString *, _LocalMethodHandler> *>
         _p_ClassTemplateCreationArgs *args = [[_p_ClassTemplateCreationArgs alloc] init];
         args.fieldTemplate = arguments[0];
         return [localHandler createClassTemplate:manager args:args];
-      },
+      }
     };
     staticMethods =
       @{[REFClass fromClass:_p_ClassTemplate.class] : @{@"staticMethodTemplate" : ^(
