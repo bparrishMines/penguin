@@ -13,13 +13,6 @@ typedef id (^_LocalMethodHandler)(id<REFLocalReference> _Nonnull localReference,
 typedef NSArray<id> * (^_CreationArgumentsHandler)(id<REFLocalReference> _Nonnull localReference);
 
 @implementation _p_ClassTemplate
-+ (NSNumber *_Nullable)staticMethodTemplate:(NSString *)parameterTemplate {
-  NSString *message = [NSString
-      stringWithFormat:@"You must override %@ in a subclass.", NSStringFromSelector(_cmd)];
-  @throw
-      [NSException exceptionWithName:NSInternalInconsistencyException reason:message userInfo:nil];
-}
-
 - (NSNumber *)fieldTemplate {
   NSString *message = [NSString
       stringWithFormat:@"You must override %@ in a subclass.", NSStringFromSelector(_cmd)];
