@@ -26,7 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface _p_LocalHandler : NSObject <REFLocalReferenceCommunicationHandler>
 - (_p_ClassTemplate *)createClassTemplate:(REFReferencePairManager *)manager
-                                   args:(_p_ClassTemplateCreationArgs *)args;
+                                     args:(_p_ClassTemplateCreationArgs *)args;
 - (id _Nullable)classTemplate_staticMethodTemplate:(REFReferencePairManager *)manager
                                  parameterTemplate:(NSString *_Nullable)parameterTemplate;
 @end

@@ -17,6 +17,7 @@ const String buildFlag = 'build';
 const String javaPackageOption = 'java-package';
 const String objcHeaderOutOption = 'objc-header-out';
 const String objcImplOutOption = 'objc-impl-out';
+const String objcPrefixOption = 'objc-prefix';
 
 final ArgParser parser = ArgParser()
   ..addOption(packageRootOption, defaultsTo: '.')
@@ -25,6 +26,7 @@ final ArgParser parser = ArgParser()
   ..addOption(javaPackageOption)
   ..addOption(objcHeaderOutOption)
   ..addOption(objcImplOutOption)
+  ..addOption(objcPrefixOption)
   ..addFlag('help', abbr: 'h')
   ..addFlag(buildFlag, abbr: 'b', defaultsTo: true);
 
@@ -117,6 +119,7 @@ void main(List<String> arguments) async {
       generateObjcHeader(
         template: objcHeaderTemplate,
         libraryNode: libraryNode,
+        prefix: options.objcPrefix,
       ),
     );
   }
@@ -153,6 +156,7 @@ class ReferenceGeneratorOptions {
     this.javaPackage,
     this.objcHeaderOut,
     this.objcImplOut,
+    this.objcPrefix,
   });
 
   factory ReferenceGeneratorOptions.parse(ArgResults results) {
@@ -184,11 +188,17 @@ class ReferenceGeneratorOptions {
       objcImplOut: results.wasParsed(objcImplOutOption)
           ? File(results[objcImplOutOption])
           : null,
+      objcPrefix: results[objcPrefixOption],
     );
 
     if (options.javaOut != null && options.javaPackage == null) {
       throw ArgumentError(
         'Please provide a `--$javaPackageOption` when setting `--$javaOutOption`.',
+      );
+    } else if ((options.objcImplOut != null || options.objcHeaderOut != null) &&
+        options.objcPrefix == null) {
+      throw ArgumentError(
+        'Please provide a `--$objcPrefixOption` when setting `--$objcHeaderOutOption` or `--$objcImplOutOption`.',
       );
     }
 
@@ -203,4 +213,5 @@ class ReferenceGeneratorOptions {
   final String javaPackage;
   final File objcHeaderOut;
   final File objcImplOut;
+  final String objcPrefix;
 }

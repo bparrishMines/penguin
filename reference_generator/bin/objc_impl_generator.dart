@@ -2,6 +2,7 @@ import 'package:recase/recase.dart';
 import 'package:reference_generator/src/ast.dart';
 
 import 'common.dart';
+import 'objc_header_generator.dart' show getTrueTypeName, Parameter;
 
 String generateObjcImpl({
   String template,
@@ -668,38 +669,6 @@ String generateObjcImpl({
   // );
 }
 
-String getTrueTypeName(ReferenceType type) {
-  final String javaName = javaTypeNameConversion(type.name);
-
-  final Iterable<String> typeArguments = type.typeArguments.map<String>(
-    (ReferenceType type) => getTrueTypeName(type),
-  );
-
-  if (type.codeGeneratedClass && typeArguments.isEmpty) {
-    return '\$$javaName *';
-  } else if (type.codeGeneratedClass && typeArguments.isNotEmpty) {
-    return '\$$javaName<${typeArguments.join(',')}> *';
-  } else if (!type.codeGeneratedClass && typeArguments.isNotEmpty) {
-    return '$javaName<${typeArguments.join(',')}> *';
-  }
-
-  return '$javaName *';
-}
-
-String javaTypeNameConversion(String type) {
-  switch (type) {
-    case 'int':
-    case 'double':
-      return 'NSNumber';
-    case 'String':
-      return 'NSString';
-    case 'Object':
-      return 'NSObject';
-  }
-
-  return type;
-}
-
 class Library with TemplateRegExp {
   Library(this.template);
 
@@ -734,20 +703,12 @@ class Library with TemplateRegExp {
 class Class with TemplateRegExp {
   Class(this.parent);
 
-  @override
-  final RegExp exp = TemplateRegExp.regExp(
-    r'static abstract class \$ClassTemplate.+?getReferenceClass[^\}]+\}[^\}]+\}',
-  );
-
-  @override
-  final Library parent;
-
   final RegExp name = TemplateRegExp.regExp(
-    r'(?<=class \$)ClassTemplate(?= implements)',
+    r'(?<=@implementation _)ClassTemplate',
   );
 
   final RegExp referenceClass = TemplateRegExp.regExp(
-    r'(?<=return \$)ClassTemplate(?=\.class;)',
+    r'(?<=\[REFClass fromClass:\[_)ClassTemplate',
   );
 
   ClassMethod get aMethod => ClassMethod(this);
@@ -757,6 +718,14 @@ class Class with TemplateRegExp {
       ClassProtectedStaticMethod(this);
 
   ClassProtectedMethod get aProtectedMethod => ClassProtectedMethod(this);
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'@implementation _ClassTemplate(?<=@end)\s',
+  );
+
+  @override
+  final Library parent;
 }
 
 class ClassField with TemplateRegExp {
@@ -787,20 +756,6 @@ class ClassMethod with TemplateRegExp {
 
   @override
   final Class parent;
-}
-
-class Parameter with TemplateRegExp {
-  Parameter(this.parent);
-
-  final RegExp type = TemplateRegExp.regExp(r'^String');
-
-  final RegExp name = TemplateRegExp.regExp(r'parameterTemplate$');
-
-  @override
-  final RegExp exp = TemplateRegExp.regExp(r'String parameterTemplate');
-
-  @override
-  final TemplateRegExp parent;
 }
 
 class CreationArgsClass with TemplateRegExp {
