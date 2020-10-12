@@ -12,7 +12,10 @@ dependencies:
   source_gen: 0.9.7+1
   json_annotation: 3.1.0
   reference:
-    path: ../reference
+    git:
+      url: git@github.com:bparrishMines/penguin.git
+      ref: reference_generator
+      path: reference
   build: ^1.5.0
   path: ^1.7.0
 
