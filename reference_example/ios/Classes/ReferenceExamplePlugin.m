@@ -2,6 +2,7 @@
 
 @interface MyOtherClass : NSObject<REFLocalReference>
 @property (readonly) NSNumber *intField;
++ (NSNumber *)myStaticMethod;
 -(instancetype)initWithIntField:(NSNumber *)intField;
 @end
 
@@ -37,6 +38,10 @@
     _intField = intField;
   }
   return self;
+}
+
++ (NSNumber *)myStaticMethod {
+  return @(324);
 }
 
 - (REFClass *)referenceClass {
@@ -88,6 +93,25 @@
                                userInfo:nil];
 }
 
+// This method handles invoking static methods on LocalReferences stored in
+// the ReferencePairManager.
+- (id _Nullable)invokeStaticMethod:(nonnull REFReferencePairManager *)referencePairManager
+                    referenceClass:(nonnull Class)referenceClass
+                        methodName:(nonnull NSString *)methodName
+                         arguments:(nonnull NSArray<id> *)arguments {
+  if (referenceClass == [MyOtherClass class]) {
+    if ([methodName isEqualToString:@"myStaticMethod"]) {
+      return [MyOtherClass myStaticMethod];
+    }
+  }
+
+  @throw [NSException exceptionWithName:NSInvalidArgumentException
+                                 reason:[NSString stringWithFormat:@"%@:%@ not supported.",
+                                         NSStringFromClass(referenceClass),
+                                         methodName]
+                               userInfo:nil];
+}
+
 // This method handles invoking methods on LocalReferences stored in the ReferencePairManager.
 - (id _Nullable)invokeMethod:(nonnull REFReferencePairManager *)referencePairManager
               localReference:(nonnull id<REFLocalReference>)localReference
@@ -101,7 +125,9 @@
   }
 
   @throw [NSException exceptionWithName:NSInvalidArgumentException
-                                 reason:[NSString stringWithFormat:@"%@:%@ not supported.", localReference, methodName]
+                                 reason:[NSString stringWithFormat:@"%@:%@ not supported.",
+                                         localReference,
+                                         methodName]
                                userInfo:nil];
 }
 

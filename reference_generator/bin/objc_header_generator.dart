@@ -2,7 +2,8 @@ import 'package:recase/recase.dart';
 import 'package:reference_generator/src/ast.dart';
 
 import 'common.dart';
-
+// TODO: list all @class for headers
+// TODO: add template header to top of impl file
 String generateObjcHeader({
   String template,
   LibraryNode libraryNode,

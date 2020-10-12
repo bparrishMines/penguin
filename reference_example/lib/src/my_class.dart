@@ -7,14 +7,9 @@ import 'reference_pair_manager.dart';
 final MyReferencePairManager referencePairManager = MyReferencePairManager()
   ..initialize();
 
-@Reference()
 class MyClass with LocalReference {
   MyClass(this.stringField) {
     referencePairManager.pairWithNewRemoteReference(this);
-  }
-
-  static void aStaticMethodBro(Map<String, MyOtherClass> something) {
-
   }
 
   final String stringField;
@@ -32,14 +27,17 @@ class MyClass with LocalReference {
   Type get referenceType => runtimeType;
 }
 
-@Reference()
 class MyOtherClass with LocalReference {
-  MyOtherClass(this.intField, this.stringField);
+  MyOtherClass(this.intField);
 
   final int intField;
-  final String stringField;
 
-  void noParamMethod() {}
+  static Future<int> myStaticMethod() async {
+    return (await referencePairManager.invokeRemoteStaticMethod(
+      MyOtherClass,
+      'myMethod',
+    )) as int;
+  }
 
   // The unique `Type` used to represent this class in a `ReferencePairManager`.
   @override

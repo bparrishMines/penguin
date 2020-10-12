@@ -48,6 +48,22 @@ class MyLocalHandler implements LocalReferenceCommunicationHandler {
     throw UnsupportedError('$referenceType is not supported.');
   }
 
+  // This method handles invoking static methods on LocalReferences stored in
+  // the ReferencePairManager.
+  @override
+  Object invokeStaticMethod(
+    ReferencePairManager referencePairManager,
+    Type referenceType,
+    String methodName,
+    List<Object> arguments,
+  ) {
+    if (referenceType == MyOtherClass && methodName == 'myStaticMethod') {
+      return MyOtherClass.myStaticMethod();
+    }
+
+    throw UnimplementedError('$referenceType.$methodName');
+  }
+
   // This method handles invoking methods on LocalReferences stored in the ReferencePairManager.
   @override
   Object invokeMethod(
@@ -71,11 +87,5 @@ class MyLocalHandler implements LocalReferenceCommunicationHandler {
     LocalReference localReference,
   ) {
     // Do additional closing.
-  }
-
-  @override
-  Object invokeStaticMethod(ReferencePairManager referencePairManager, Type referenceType, String methodName, List<Object> arguments) {
-    // TODO: implement invokeStaticMethod
-    throw UnimplementedError();
   }
 }
