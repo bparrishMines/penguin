@@ -567,6 +567,24 @@ String generateDart(String template, LibraryNode libraryNode) {
                                           methodNode.name,
                                         )
                                         .replaceAll(
+                                            library
+                                                .aLocalHandler
+                                                .anInvokeMethodCondition
+                                                .aMethod
+                                                .returnValue,
+                                            methodNode.returnType.name == 'void'
+                                                ? ''
+                                                : 'return ')
+                                        .replaceAll(
+                                            library
+                                                .aLocalHandler
+                                                .anInvokeMethodCondition
+                                                .aMethod
+                                                .colonAfterMethod,
+                                            methodNode.returnType.name == 'void'
+                                                ? ';return null;'
+                                                : ';')
+                                        .replaceAll(
                                           library
                                               .aLocalHandler
                                               .anInvokeMethodCondition
@@ -1102,6 +1120,8 @@ class LocalHandlerInvokeMethodConditionMethod with TemplateRegExp {
 
   final RegExp name = TemplateRegExp.regExp(r'methodTemplate');
   final RegExp argument = TemplateRegExp.regExp(r'arguments\[0\]');
+  final RegExp returnValue = TemplateRegExp.regExp(r'return ');
+  final RegExp colonAfterMethod = TemplateRegExp.regExp(r';');
 
   @override
   final RegExp exp = TemplateRegExp.regExp(r"case\s'methodTemplate'[^\)]+\);");

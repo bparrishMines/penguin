@@ -34,13 +34,12 @@ class MyClass with LocalReference {
 
 @Reference()
 class MyOtherClass with LocalReference {
-  MyOtherClass(this.intField);
+  MyOtherClass(this.intField, this.stringField);
 
   final int intField;
+  final String stringField;
 
-  void noParamMethod() {
-
-  }
+  void noParamMethod() {}
 
   // The unique `Type` used to represent this class in a `ReferencePairManager`.
   @override
