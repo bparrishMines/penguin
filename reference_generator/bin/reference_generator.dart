@@ -86,6 +86,7 @@ void main(List<String> arguments) async {
     options.dartOut.writeAsStringSync(generateDart(dartTemplate, libraryNode));
   }
 
+  // TODO: Template files should be come from a specific version of reference
   if (options.javaOut != null) {
     final HttpClientRequest request = await HttpClient().getUrl(
       Uri.parse(
