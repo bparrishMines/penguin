@@ -216,7 +216,7 @@ String generateObjcHeader({
 }
 
 String getTrueTypeName(ReferenceType type, String prefix) {
-  final String javaName = javaTypeNameConversion(type.name);
+  final String javaName = objcTypeNameConversion(type.name);
 
   final Iterable<String> typeArguments = type.typeArguments.map<String>(
     (ReferenceType type) => getTrueTypeName(type, prefix),
@@ -234,7 +234,7 @@ String getTrueTypeName(ReferenceType type, String prefix) {
 }
 
 // TODO: A user could extend a list/map so we want a boolean flag to check.
-String javaTypeNameConversion(String type) {
+String objcTypeNameConversion(String type) {
   switch (type) {
     case 'int':
     case 'double':
@@ -343,12 +343,11 @@ class ClassMethod with TemplateRegExp, PrefixTemplate {
   final Class parent;
 }
 
-// TODO: handle no parameter methods
 class Parameter with TemplateRegExp, PrefixTemplate {
   Parameter(this.parent);
 
   static const String firstParameter =
-      r'(NSString *_Nullable)parameterTemplate';
+      r':(NSString *_Nullable)parameterTemplate';
   static const String followingParameter =
       r'parameterTemplate:(NSString *_Nullable)parameterTemplate';
 
@@ -358,7 +357,7 @@ class Parameter with TemplateRegExp, PrefixTemplate {
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'(parameterTemplate:)*\(NSString \*_Nullable\)parameterTemplate',
+    r'(parameterTemplate)*:*\(NSString \*_Nullable\)parameterTemplate',
   );
 
   @override

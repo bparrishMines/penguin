@@ -38,6 +38,10 @@ class MyOtherClass with LocalReference {
 
   final int intField;
 
+  void noParamMethod() {
+
+  }
+
   // The unique `Type` used to represent this class in a `ReferencePairManager`.
   @override
   Type get referenceType => runtimeType;

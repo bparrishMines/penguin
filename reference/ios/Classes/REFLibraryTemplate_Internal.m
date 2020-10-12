@@ -26,7 +26,7 @@ typedef NSArray<id> * (^_CreationArgumentsHandler)(id<REFLocalReference> _Nonnul
       [NSException exceptionWithName:NSInternalInconsistencyException reason:message userInfo:nil];
 }
 
-- (NSString *_Nullable)methodTemplate:(NSString *_Nullable)parameterTemplate {
+- (NSObject *_Nullable)methodTemplate:(NSString *_Nullable)parameterTemplate {
   NSString *message = [NSString
       stringWithFormat:@"You must override %@ in a subclass.", NSStringFromSelector(_cmd)];
   @throw

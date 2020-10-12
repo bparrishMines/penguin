@@ -934,8 +934,8 @@ class LocalHandlerMethod with TemplateRegExp {
 class LocalHandlerMethodMethod with TemplateRegExp {
   LocalHandlerMethodMethod(this.parent);
 
-  final RegExp methodName = TemplateRegExp.regExp(r'methodTemplate(?=:)');
-  final RegExp className = TemplateRegExp.regExp(r'ClassTemplate(?= *value)');
+  final RegExp methodName = TemplateRegExp.regExp(r'methodTemplate(?=:|")');
+  final RegExp className = TemplateRegExp.regExp(r'ClassTemplate(?= \*value)');
   final RegExp classPrefix = TemplateRegExp.regExp(r'(?<=\s)_p_');
 
   Argument get anArgument => Argument(this);
@@ -949,19 +949,18 @@ class LocalHandlerMethodMethod with TemplateRegExp {
   final LocalHandlerMethod parent;
 }
 
-// TODO: handle zero param method
 class Argument with TemplateRegExp {
   Argument(this.parent);
 
-  static const String firstParameter = r'arguments[0]';
-  static const String followingParameter = r'parameterTemplate:arguments[0]';
+  static const String firstArgument = r':arguments[0]';
+  static const String followingArgument = r'parameterTemplate:arguments[0]';
 
   final RegExp name = TemplateRegExp.regExp(r'parameterTemplate(?=:)');
   final RegExp index = TemplateRegExp.regExp(r'(?<=\[)\d');
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'(parameterTemplate:)*arguments[0]',
+    r'(parameterTemplate)*:*arguments\[0\]',
   );
 
   @override
@@ -970,21 +969,19 @@ class Argument with TemplateRegExp {
   String replaceWithFirst(Iterable<ParameterNode> parameterNodes) {
     if (parameterNodes.isEmpty) return '';
 
-    final String first = Parameter.firstParameter
-        .replaceAll(name, parameterNodes.first.name)
-        .replaceAll(index, '0');
+    final String first = Argument.firstArgument.replaceAll(index, '0');
 
-    return '$first ${replace(parameterNodes.skip(1).toList())}';
+    return '$first ${replace(parameterNodes.skip(1).toList(), 1)}';
   }
 
-  String replace(List<ParameterNode> parameterNodes) {
+  String replace(List<ParameterNode> parameterNodes, [int startIndex = 0]) {
     if (parameterNodes.isEmpty) return '';
 
     final String parameters =
         List<int>.generate(parameterNodes.length, (int index) => index)
-            .map<String>((int parameterIndex) => Parameter.followingParameter
+            .map<String>((int parameterIndex) => Argument.followingArgument
                 .replaceAll(name, parameterNodes[parameterIndex].name)
-                .replaceAll(index, '$parameterIndex'))
+                .replaceAll(index, '${parameterIndex + startIndex}'))
             .join(' ');
 
     return parameters;
@@ -1030,7 +1027,7 @@ class LocalHandlerCreatorAbstractMethod with TemplateRegExp {
 class LocalHandlerInvokeMethodCondition with TemplateRegExp {
   LocalHandlerInvokeMethodCondition(this.parent);
 
-  final RegExp className = TemplateRegExp.regExp(r'=ClassTemplate(?=\.class)');
+  final RegExp className = TemplateRegExp.regExp(r'ClassTemplate(?=\.class)');
   final RegExp classPrefix = TemplateRegExp.regExp(
     r'(?<=isKindOfClass:)_p_',
   );
@@ -1050,7 +1047,7 @@ class LocalHandlerInvokeMethodCondition with TemplateRegExp {
 class LocalHandlerInvokeMethodConditionMethod with TemplateRegExp {
   LocalHandlerInvokeMethodConditionMethod(this.parent);
 
-  final RegExp className = TemplateRegExp.regExp(r'ClassTemplate(?= *value)');
+  final RegExp className = TemplateRegExp.regExp(r'ClassTemplate(?= \*value)');
 
   final RegExp name = TemplateRegExp.regExp(r'methodTemplate(?="|:)');
 
