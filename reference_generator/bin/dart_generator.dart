@@ -377,7 +377,7 @@ String generateDart(String template, LibraryNode libraryNode) {
                                           '$index',
                                         ),
                               )
-                              .join(','),
+                              .join(),
                         ),
                   )
                   .join(', '),
