@@ -112,7 +112,7 @@ String generateJava({
                                             getTrueTypeName(parameterNode.type),
                                           ),
                                     )
-                                    .join(', '),
+                                    .join(' '),
                               )
                               .replaceAll(
                                 library.aClass.aProtectedStaticMethod
@@ -167,7 +167,7 @@ String generateJava({
                                             getTrueTypeName(parameterNode.type),
                                           ),
                                     )
-                                    .join(', '),
+                                    .join(' '),
                               )
                               .replaceAll(
                                 library.aClass.aProtectedMethod
@@ -536,7 +536,7 @@ String generateJava({
                                           getTrueTypeName(parameterNode.type),
                                         ),
                                   )
-                                  .join(', '),
+                                  .join(' '),
                             ),
                   )
                   .join('\n\n'),
@@ -794,12 +794,12 @@ class ClassMethod with TemplateRegExp {
 class Parameter with TemplateRegExp {
   Parameter(this.parent);
 
-  final RegExp type = TemplateRegExp.regExp(r'^String');
+  final RegExp type = TemplateRegExp.regExp(r'(?<=^|\s)String');
 
   final RegExp name = TemplateRegExp.regExp(r'parameterTemplate$');
 
   @override
-  final RegExp exp = TemplateRegExp.regExp(r'String parameterTemplate');
+  final RegExp exp = TemplateRegExp.regExp(r',*\s*String parameterTemplate');
 
   @override
   final TemplateRegExp parent;

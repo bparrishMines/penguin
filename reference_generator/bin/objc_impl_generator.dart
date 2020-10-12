@@ -641,7 +641,7 @@ class ClassMethod with TemplateRegExp, PrefixTemplate {
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'- \(NSString \*_Nullable\)methodTemplate:[^\}]+\}',
+    r'- \(NSObject \*_Nullable\)methodTemplate:[^\}]+\}',
   );
 
   @override
