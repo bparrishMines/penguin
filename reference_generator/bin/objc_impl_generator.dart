@@ -12,6 +12,7 @@ String generateObjcImpl({
 }) {
   final Library library = Library(template: template, templatePrefix: prefix);
   return template
+      .replaceAll(library.handlerPrefix, prefix)
       .replaceAll(
         library.aClass.exp,
         libraryNode.classes
@@ -519,34 +520,35 @@ String generateObjcImpl({
                   )
                   .join(' else '),
             ),
+      )
+      .replaceAll(
+        library.aCreationArgument.exp,
+        libraryNode.classes
+            .map<String>(
+              (ClassNode classNode) => library.aCreationArgument
+                  .stringMatch()
+                  .replaceAll(
+                    library.aCreationArgument.className,
+                    classNode.name,
+                  )
+                  .replaceAll(library.aCreationArgument.classPrefix, prefix)
+                  .replaceAll(
+                    library.aCreationArgument.aField.exp,
+                    classNode.fields
+                        .map<String>(
+                          (FieldNode fieldNode) => library
+                              .aCreationArgument.aField
+                              .stringMatch()
+                              .replaceAll(
+                                library.aCreationArgument.aField.name,
+                                fieldNode.name,
+                              ),
+                        )
+                        .join(','),
+                  ),
+            )
+            .join(',\n'),
       );
-  // .replaceAll(
-  //   library.aCreationArgument.exp,
-  //   libraryNode.classes
-  //       .map<String>(
-  //         (ClassNode classNode) => library.aCreationArgument
-  //             .stringMatch()
-  //             .replaceAll(
-  //               library.aCreationArgument.className,
-  //               classNode.name,
-  //             )
-  //             .replaceAll(
-  //               library.aCreationArgument.aField.exp,
-  //               classNode.fields
-  //                   .map<String>(
-  //                     (FieldNode fieldNode) => library
-  //                         .aCreationArgument.aField
-  //                         .stringMatch()
-  //                         .replaceAll(
-  //                           library.aCreationArgument.aField.name,
-  //                           ReCase(fieldNode.name).pascalCase,
-  //                         ),
-  //                   )
-  //                   .join(','),
-  //             ),
-  //       )
-  //       .join('\n'),
-  // );
 }
 
 class Library with TemplateRegExp, PrefixTemplate {
@@ -558,18 +560,8 @@ class Library with TemplateRegExp, PrefixTemplate {
   @override
   final String templatePrefix;
 
-  @override
-  final TemplateRegExp parent = null;
-
-  @override
-  final RegExp exp = null;
-
-  final RegExp name = TemplateRegExp.regExp(
-    r'(?<=^class )LibraryTemplate(?= \{)',
-  );
-
-  final RegExp package = TemplateRegExp.regExp(
-    r'(?<=package )github.penguin.reference.templates(?=;)',
+  final RegExp handlerPrefix = TemplateRegExp.regExp(
+    r'(?<=_LocalStaticMethodHandler\)\(|_LocalCreatorHandler\)\()_p_',
   );
 
   Class get aClass => Class(this);
@@ -581,6 +573,12 @@ class Library with TemplateRegExp, PrefixTemplate {
   LocalHandler get aLocalHandler => LocalHandler(this);
 
   CreationArgument get aCreationArgument => CreationArgument(this);
+
+  @override
+  final TemplateRegExp parent = null;
+
+  @override
+  final RegExp exp = null;
 }
 
 class Class with TemplateRegExp, PrefixTemplate {
@@ -674,11 +672,11 @@ class ClassProtectedStaticMethod with TemplateRegExp, PrefixTemplate {
   ClassProtectedStaticMethod(this.parent);
 
   final RegExp className = TemplateRegExp.regExp(
-    r'(?<=invokeRemoteStaticMethod:\[_p_)ClassTemplate(?= class)',
+    r'ClassTemplate(?= class)',
   );
 
   final RegExp classPrefix = TemplateRegExp.regExp(
-    r'(?<=invokeRemoteStaticMethod:\[_p_)(?=ClassTemplate)',
+    r'(?<=invokeRemoteStaticMethod:\[)_p_',
   );
 
   final RegExp name = TemplateRegExp.regExp(
@@ -1075,12 +1073,16 @@ class CreationArgument with TemplateRegExp {
   CreationArgumentField get aField => CreationArgumentField(this);
 
   final RegExp className = TemplateRegExp.regExp(
-    r'ClassTemplate(?=\.class| value|\) localReference)',
+    r'ClassTemplate(?=\.class| \*value)',
+  );
+
+  final RegExp classPrefix = TemplateRegExp.regExp(
+    r'(?<=:|\s)_p_',
   );
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'put\(\$ClassTemplate\.class, new \$CreationArgumentsHandler([^\}]*\}){2}\);',
+    r'(?<=creationArguments =\s*@\{)\[[^\}]+\}',
   );
 
   @override
@@ -1090,13 +1092,13 @@ class CreationArgument with TemplateRegExp {
 class CreationArgumentField with TemplateRegExp {
   CreationArgumentField(this.parent);
 
-  final RegExp name = TemplateRegExp.regExp(r'(?<=\.get)FieldTemplate');
+  final RegExp name = TemplateRegExp.regExp(r'(?<=\.)fieldTemplate');
 
   @override
   final CreationArgument parent;
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'\(Object\) value.getFieldTemplate\(\)',
+    r'value\.fieldTemplate',
   );
 }
