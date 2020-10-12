@@ -5,5 +5,5 @@ builders:
     build_extensions:
       .dart:
       - .reference_ast
-    build_to: source
+    build_to: cache
     auto_apply: dependents

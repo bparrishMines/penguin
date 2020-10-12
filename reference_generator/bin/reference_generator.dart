@@ -41,7 +41,7 @@ void main(List<String> arguments) async {
   if (options.build) {
     final Process process = await Process.start(
       'flutter',
-      ['pub', 'run', 'build_runner', 'build', '--delete-conflicting-outputs'],
+      ['pub', 'run', 'build_runner', 'build'],
       workingDirectory: options.packageRoot.path,
     );
 
@@ -50,12 +50,19 @@ void main(List<String> arguments) async {
     await process.exitCode;
   }
 
-  final File astInputFile = File(path.setExtension(
-    path.withoutExtension(options.inputFile.path),
+  final String astFileName = path.setExtension(
+    path.basenameWithoutExtension(options.inputFile.path),
     '.reference_ast',
-  ));
+  );
 
-  // TODO: make sure astInputFile exists
+  final File astInputFile =
+      options.packageRoot.listSync(recursive: true).firstWhere(
+            (FileSystemEntity entity) =>
+                entity is File && path.basename(entity.path) == astFileName,
+            orElse: () => null,
+          );
+
+  if (astInputFile == null) throw StateError('No ast file was found.');
 
   final libraryNode = LibraryNode.fromJson(
     jsonDecode(
@@ -173,7 +180,7 @@ class ReferenceGeneratorOptions {
     }
 
     final ReferenceGeneratorOptions options = ReferenceGeneratorOptions._(
-      packageRoot: File(results[packageRootOption]),
+      packageRoot: Directory(results[packageRootOption]),
       dartOut: results.wasParsed(dartOutOption)
           ? File(results[dartOutOption])
           : null,
@@ -206,7 +213,7 @@ class ReferenceGeneratorOptions {
     return options;
   }
 
-  final File packageRoot;
+  final Directory packageRoot;
   final File dartOut;
   final File inputFile;
   final bool build;
