@@ -697,6 +697,10 @@ String javaTypeNameConversion(String type) {
       return 'Integer';
     case 'double':
       return 'Double';
+    case 'bool':
+      return 'Boolean';
+    case 'num':
+      return 'Number';
   }
 
   return type;

@@ -238,6 +238,8 @@ String objcTypeNameConversion(String type) {
   switch (type) {
     case 'int':
     case 'double':
+    case 'num':
+    case 'bool':
       return 'NSNumber';
     case 'String':
       return 'NSString';
