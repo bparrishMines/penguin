@@ -1,4 +1,10 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
 #import "REFLibraryTemplate_Internal.h"
+
+// **************************************************************************
+// ReferenceGenerator
+// **************************************************************************
 
 typedef id<REFLocalReference> (^_LocalCreatorHandler)(_p_LocalHandler *_Nonnull,
                                                       REFReferencePairManager *_Nonnull,

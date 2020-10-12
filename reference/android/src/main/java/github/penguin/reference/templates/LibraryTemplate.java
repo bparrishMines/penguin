@@ -1,3 +1,5 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
 package github.penguin.reference.templates;
 
 import github.penguin.reference.async.Completable;
@@ -12,6 +14,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+// **************************************************************************
+// ReferenceGenerator
+// **************************************************************************
 
 @SuppressWarnings({"ArraysAsListWithZeroOrOneArgument", "unused"})
 class LibraryTemplate {
