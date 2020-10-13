@@ -36,6 +36,7 @@ void main(List<String> arguments) async {
     print(parser.usage);
     exit(0);
   }
+
   final options = ReferenceGeneratorOptions.parse(results);
 
   if (options.build) {
@@ -47,7 +48,8 @@ void main(List<String> arguments) async {
 
     process.stdout.transform(utf8.decoder).listen((String data) => print(data));
     process.stderr.transform(utf8.decoder).listen((String data) => print(data));
-    await process.exitCode;
+    final int exitCode = await process.exitCode;
+    if (exitCode != 0) exit(exitCode);
   }
 
   final String astFileName = path.setExtension(
@@ -65,15 +67,13 @@ void main(List<String> arguments) async {
   if (astInputFile == null) throw StateError('No ast file was found.');
 
   final libraryNode = LibraryNode.fromJson(
-    jsonDecode(
-      astInputFile.readAsStringSync(),
-    ),
+    jsonDecode(astInputFile.readAsStringSync()),
   );
 
   if (options.dartOut != null) {
     final HttpClientRequest request = await HttpClient().getUrl(
       Uri.parse(
-        'https://raw.githubusercontent.com/bparrishMines/penguin/reference_generator/reference/lib/src/template/src/template.g.dart',
+        'https://raw.githubusercontent.com/bparrishMines/penguin/master/reference/lib/src/template/src/template.g.dart',
       ),
     );
     final HttpClientResponse response = await request.close();
@@ -90,7 +90,7 @@ void main(List<String> arguments) async {
   if (options.javaOut != null) {
     final HttpClientRequest request = await HttpClient().getUrl(
       Uri.parse(
-        'https://raw.githubusercontent.com/bparrishMines/penguin/reference_generator/reference/android/src/main/java/github/penguin/reference/templates/LibraryTemplate.java',
+        'https://raw.githubusercontent.com/bparrishMines/penguin/master/reference/android/src/main/java/github/penguin/reference/templates/LibraryTemplate.java',
       ),
     );
     final HttpClientResponse response = await request.close();
@@ -113,7 +113,7 @@ void main(List<String> arguments) async {
   if (options.objcHeaderOut != null) {
     final HttpClientRequest request = await HttpClient().getUrl(
       Uri.parse(
-        'https://raw.githubusercontent.com/bparrishMines/penguin/reference_generator/reference/ios/Classes/REFLibraryTemplate_Internal.h',
+        'https://raw.githubusercontent.com/bparrishMines/penguin/master/reference/ios/Classes/REFLibraryTemplate_Internal.h',
       ),
     );
     final HttpClientResponse response = await request.close();
@@ -135,7 +135,7 @@ void main(List<String> arguments) async {
   if (options.objcImplOut != null) {
     final HttpClientRequest request = await HttpClient().getUrl(
       Uri.parse(
-        'https://raw.githubusercontent.com/bparrishMines/penguin/reference_generator/reference/ios/Classes/REFLibraryTemplate_Internal.m',
+        'https://raw.githubusercontent.com/bparrishMines/penguin/master/reference/ios/Classes/REFLibraryTemplate_Internal.m',
       ),
     );
     final HttpClientResponse response = await request.close();
