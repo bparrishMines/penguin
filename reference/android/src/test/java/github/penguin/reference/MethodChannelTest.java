@@ -18,6 +18,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
 import androidx.annotation.Nullable;
 import github.penguin.reference.method_channel.MethodChannelReferencePairManager;
 import github.penguin.reference.method_channel.MethodChannelRemoteHandler;
@@ -67,7 +68,8 @@ public class MethodChannelTest {
     private final TestRemoteHandler remoteHandler;
 
     private TestReferencePairManager() {
-      super(Collections.<Class<? extends LocalReference>>singletonList(TestClass.class),
+      super(
+          Collections.<Class<? extends LocalReference>>singletonList(TestClass.class),
           mock(BinaryMessenger.class),
           "test_channel");
       this.localHandler = mock(LocalReferenceCommunicationHandler.class);
@@ -87,19 +89,17 @@ public class MethodChannelTest {
 
   private static MethodCall getRemoteHandlerMethodCall() {
     final ArgumentCaptor<ByteBuffer> byteBufferCaptor = ArgumentCaptor.forClass(ByteBuffer.class);
-    verify(testManager.remoteHandler.binaryMessenger).send(eq("test_channel"),
-        byteBufferCaptor.capture(),
-        any(BinaryReply.class)
-    );
+    verify(testManager.remoteHandler.binaryMessenger)
+        .send(eq("test_channel"), byteBufferCaptor.capture(), any(BinaryReply.class));
 
     return methodCodec.decodeMethodCall((ByteBuffer) byteBufferCaptor.getValue().position(0));
   }
 
   private static BinaryMessageHandler getBinaryMessageHandler() {
-    final ArgumentCaptor<BinaryMessageHandler> handlerCaptor = ArgumentCaptor.forClass(BinaryMessageHandler.class);
-    verify(testManager.binaryMessenger).setMessageHandler(eq("test_channel"),
-        handlerCaptor.capture()
-    );
+    final ArgumentCaptor<BinaryMessageHandler> handlerCaptor =
+        ArgumentCaptor.forClass(BinaryMessageHandler.class);
+    verify(testManager.binaryMessenger)
+        .setMessageHandler(eq("test_channel"), handlerCaptor.capture());
 
     return handlerCaptor.getValue();
   }
@@ -115,18 +115,19 @@ public class MethodChannelTest {
     final ByteBuffer message = messageCodec.encodeMessage(new RemoteReference("hi"));
 
     assertNotNull(message);
-    assertEquals(messageCodec.decodeMessage((ByteBuffer) message.position(0)),
-        new RemoteReference("hi"));
+    assertEquals(
+        messageCodec.decodeMessage((ByteBuffer) message.position(0)), new RemoteReference("hi"));
   }
 
   @Test
   public void referenceMessageCodec_encodeAndDecodeUnpairedRemoteReference() {
-    final ByteBuffer message = messageCodec.encodeMessage(
-        new UnpairedReference(1, Collections.emptyList(), "apple"));
+    final ByteBuffer message =
+        messageCodec.encodeMessage(new UnpairedReference(1, Collections.emptyList(), "apple"));
 
     assertNotNull(message);
-    assertThat(messageCodec.decodeMessage((ByteBuffer) message.position(0)),
-       isUnpairedReference(1, empty(), "apple"));
+    assertThat(
+        messageCodec.decodeMessage((ByteBuffer) message.position(0)),
+        isUnpairedReference(1, empty(), "apple"));
   }
 
   @Test
@@ -138,14 +139,9 @@ public class MethodChannelTest {
 
     assertThat(
         getRemoteHandlerMethodCall(),
-            isMethodCall(
-                "REFERENCE_CREATE",
-                contains(
-                    isRemoteReference(remoteReference.referenceId),
-                    equalTo(0), empty()
-                )
-            )
-    );
+        isMethodCall(
+            "REFERENCE_CREATE",
+            contains(isRemoteReference(remoteReference.referenceId), equalTo(0), empty())));
   }
 
   @Test
@@ -154,8 +150,7 @@ public class MethodChannelTest {
     assertThat(
         getRemoteHandlerMethodCall(),
         isMethodCall(
-            "REFERENCE_STATIC_METHOD",
-            contains(0, "aStaticMethod", Collections.emptyList())));
+            "REFERENCE_STATIC_METHOD", contains(0, "aStaticMethod", Collections.emptyList())));
   }
 
   @Test
@@ -170,27 +165,22 @@ public class MethodChannelTest {
 
     assertThat(
         getRemoteHandlerMethodCall(),
-            isMethodCall(
-                "REFERENCE_METHOD",
-                contains(
-                    isRemoteReference(remoteReference.referenceId),
-                    equalTo("aMethod"),
-                    empty())));
+        isMethodCall(
+            "REFERENCE_METHOD",
+            contains(isRemoteReference(remoteReference.referenceId), equalTo("aMethod"), empty())));
   }
 
   @Test
   public void methodChannelReferencePairManager_invokeRemoteMethodOnUnpairedReference() {
     final TestClass testClass = new TestClass();
-    testManager.invokeRemoteMethodOnUnpairedReference(testClass, "aMethod", Collections.emptyList());
+    testManager.invokeRemoteMethodOnUnpairedReference(
+        testClass, "aMethod", Collections.emptyList());
 
     assertThat(
         getRemoteHandlerMethodCall(),
-            isMethodCall(
-                "REFERENCE_METHOD",
-                contains(
-                    isUnpairedReference(0, empty(), null),
-                    equalTo("aMethod"),
-                    empty())));
+        isMethodCall(
+            "REFERENCE_METHOD",
+            contains(isUnpairedReference(0, empty(), null), equalTo("aMethod"), empty())));
   }
 
   @Test
@@ -213,21 +203,19 @@ public class MethodChannelTest {
     when(testManager.localHandler.create(eq(testManager), eq(TestClass.class), anyList()))
         .thenReturn(new TestClass());
 
-    final ByteBuffer message = methodCodec.encodeMethodCall(
-        new MethodCall(
-            "REFERENCE_CREATE",
-            Arrays.asList(
-                new RemoteReference("table"),
-                0,
-                Collections.emptyList()))
-    );
+    final ByteBuffer message =
+        methodCodec.encodeMethodCall(
+            new MethodCall(
+                "REFERENCE_CREATE",
+                Arrays.asList(new RemoteReference("table"), 0, Collections.emptyList())));
 
-    getBinaryMessageHandler().onMessage((ByteBuffer) message.position(0), new BinaryReply() {
-      @Override
-      public void reply(@Nullable ByteBuffer reply) {
-
-      }
-    });
+    getBinaryMessageHandler()
+        .onMessage(
+            (ByteBuffer) message.position(0),
+            new BinaryReply() {
+              @Override
+              public void reply(@Nullable ByteBuffer reply) {}
+            });
 
     final TestClass testClass =
         (TestClass) testManager.getPairedLocalReference(new RemoteReference("table"));
@@ -236,25 +224,22 @@ public class MethodChannelTest {
 
   @Test
   public void methodChannelReferencePairManager_invokeLocalStaticMethod() throws Exception {
-    final ByteBuffer message = methodCodec.encodeMethodCall(
-        new MethodCall(
-            "REFERENCE_STATIC_METHOD",
-            Arrays.asList(
-                0,
-                "aStaticMethod",
-                Collections.emptyList())));
+    final ByteBuffer message =
+        methodCodec.encodeMethodCall(
+            new MethodCall(
+                "REFERENCE_STATIC_METHOD",
+                Arrays.asList(0, "aStaticMethod", Collections.emptyList())));
 
-    getBinaryMessageHandler().onMessage((ByteBuffer) message.position(0), new BinaryReply() {
-      @Override
-      public void reply(@Nullable ByteBuffer reply) {
+    getBinaryMessageHandler()
+        .onMessage(
+            (ByteBuffer) message.position(0),
+            new BinaryReply() {
+              @Override
+              public void reply(@Nullable ByteBuffer reply) {}
+            });
 
-      }
-    });
-
-    verify(testManager.localHandler).invokeStaticMethod(eq(testManager),
-        eq(TestClass.class),
-        eq("aStaticMethod"),
-        anyList());
+    verify(testManager.localHandler)
+        .invokeStaticMethod(eq(testManager), eq(TestClass.class), eq("aStaticMethod"), anyList());
   }
 
   @Test
@@ -262,7 +247,8 @@ public class MethodChannelTest {
     final TestClass testClass = new TestClass();
     testManager.pairWithNewRemoteReference(testClass);
 
-    final ByteBuffer message = methodCodec.encodeMethodCall(
+    final ByteBuffer message =
+        methodCodec.encodeMethodCall(
             new MethodCall(
                 "REFERENCE_METHOD",
                 Arrays.asList(
@@ -270,36 +256,42 @@ public class MethodChannelTest {
                     "aMethod",
                     Collections.emptyList())));
 
-    getBinaryMessageHandler().onMessage((ByteBuffer) message.position(0), new BinaryReply() {
-      @Override
-      public void reply(@Nullable ByteBuffer reply) {
+    getBinaryMessageHandler()
+        .onMessage(
+            (ByteBuffer) message.position(0),
+            new BinaryReply() {
+              @Override
+              public void reply(@Nullable ByteBuffer reply) {}
+            });
 
-      }
-    });
-
-    verify(testManager.localHandler).invokeMethod(eq(testManager), eq(testClass), eq("aMethod"), anyList());
+    verify(testManager.localHandler)
+        .invokeMethod(eq(testManager), eq(testClass), eq("aMethod"), anyList());
   }
 
   @Test
-  public void methodChannelReferencePairManager_invokeLocalMethodOnUnpairedReference() throws Exception {
+  public void methodChannelReferencePairManager_invokeLocalMethodOnUnpairedReference()
+      throws Exception {
     when(testManager.localHandler.create(eq(testManager), eq(TestClass.class), anyList()))
         .thenReturn(new TestClass());
 
-    final ByteBuffer message = methodCodec.encodeMethodCall(
+    final ByteBuffer message =
+        methodCodec.encodeMethodCall(
             new MethodCall(
                 "REFERENCE_METHOD",
                 Arrays.asList(
                     new UnpairedReference(0, Collections.emptyList()),
                     "aMethod",
                     Collections.emptyList())));
-    getBinaryMessageHandler().onMessage((ByteBuffer) message.position(0), new BinaryReply() {
-      @Override
-      public void reply(@Nullable ByteBuffer reply) {
+    getBinaryMessageHandler()
+        .onMessage(
+            (ByteBuffer) message.position(0),
+            new BinaryReply() {
+              @Override
+              public void reply(@Nullable ByteBuffer reply) {}
+            });
 
-      }
-    });
-
-    verify(testManager.localHandler).invokeMethod(eq(testManager), any(TestClass.class), eq("aMethod"), anyList());
+    verify(testManager.localHandler)
+        .invokeMethod(eq(testManager), any(TestClass.class), eq("aMethod"), anyList());
   }
 
   @Test
@@ -309,13 +301,15 @@ public class MethodChannelTest {
     testManager.pairWithNewRemoteReference(testClass);
     final RemoteReference remoteReference = testManager.getPairedRemoteReference(testClass);
 
-    final ByteBuffer message = methodCodec.encodeMethodCall(new MethodCall("REFERENCE_DISPOSE", remoteReference));
-    getBinaryMessageHandler().onMessage((ByteBuffer) message.position(0), new BinaryReply() {
-      @Override
-      public void reply(@Nullable ByteBuffer reply) {
-
-      }
-    });
+    final ByteBuffer message =
+        methodCodec.encodeMethodCall(new MethodCall("REFERENCE_DISPOSE", remoteReference));
+    getBinaryMessageHandler()
+        .onMessage(
+            (ByteBuffer) message.position(0),
+            new BinaryReply() {
+              @Override
+              public void reply(@Nullable ByteBuffer reply) {}
+            });
 
     verify(testManager.localHandler).dispose(testManager, testClass);
     assertNull(testManager.getPairedLocalReference(remoteReference));

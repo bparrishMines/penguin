@@ -5,6 +5,10 @@ import github.penguin.reference.reference.LocalReference;
 class MyOtherClass implements LocalReference {
   public final int intField;
 
+  static Integer myStaticMethod() {
+    return 324;
+  }
+
   public MyOtherClass(int intField) {
     this.intField = intField;
   }

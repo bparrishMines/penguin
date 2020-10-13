@@ -7,8 +7,7 @@ public class ReferencePairManagerPool {
   @SuppressWarnings("unused")
   public static final ReferencePairManagerPool globalInstance = new ReferencePairManagerPool();
 
-  final Map<String, PoolableReferencePairManager> managers =
-      new HashMap<>();
+  final Map<String, PoolableReferencePairManager> managers = new HashMap<>();
   final Map<Class<? extends LocalReference>, PoolableReferencePairManager> classesToManagers =
       new HashMap<>();
 

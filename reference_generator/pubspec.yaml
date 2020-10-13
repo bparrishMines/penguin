@@ -1,0 +1,28 @@
+name: reference_generator
+description: A sample command-line application.
+# version: 1.0.0
+# homepage: https://www.example.com
+
+environment:
+  sdk: '>=2.10.0-93.0.dev <3.0.0'
+
+dependencies:
+  recase: ^3.0.0
+  args: 1.6.0
+  source_gen: 0.9.7+1
+  json_annotation: 3.1.0
+  reference:
+    git:
+      url: git@github.com:bparrishMines/penguin.git
+      ref: reference_generator
+      path: reference
+  build: ^1.5.0
+  path: ^1.7.0
+
+dev_dependencies:
+  json_serializable: 3.5.0
+  build_test: ^1.2.2
+  build_config: ^0.4.2
+  build_runner: ^1.10.3
+  pedantic: ^1.9.0
+  test: ^1.14.4

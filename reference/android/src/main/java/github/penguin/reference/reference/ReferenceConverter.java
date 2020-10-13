@@ -7,7 +7,9 @@ import java.util.Map;
 
 public interface ReferenceConverter {
   Object convertReferencesForRemoteManager(ReferencePairManager manager, Object object);
-  Object convertReferencesForLocalManager(ReferencePairManager manager, Object object) throws Exception;
+
+  Object convertReferencesForLocalManager(ReferencePairManager manager, Object object)
+      throws Exception;
 
   class StandardReferenceConverter implements ReferenceConverter {
     @Override
@@ -20,7 +22,8 @@ public interface ReferenceConverter {
         return new UnpairedReference(
             manager.getClassId(((LocalReference) object).getReferenceClass()),
             (List<Object>)
-                convertReferencesForRemoteManager(manager,
+                convertReferencesForRemoteManager(
+                    manager,
                     manager.getRemoteHandler().getCreationArguments((LocalReference) object)));
       } else if (object instanceof List) {
         final List<Object> result = new ArrayList<>();
@@ -33,7 +36,8 @@ public interface ReferenceConverter {
         final Map<Object, Object> newMap = new HashMap<>();
         for (Map.Entry<Object, Object> entry : oldMap.entrySet()) {
           newMap.put(
-              convertReferencesForRemoteManager(manager, entry.getKey()), convertReferencesForRemoteManager(manager, entry.getValue()));
+              convertReferencesForRemoteManager(manager, entry.getKey()),
+              convertReferencesForRemoteManager(manager, entry.getValue()));
         }
         return newMap;
       }
@@ -42,16 +46,19 @@ public interface ReferenceConverter {
     }
 
     @Override
-    public Object convertReferencesForLocalManager(ReferencePairManager manager, Object object) throws Exception {
+    public Object convertReferencesForLocalManager(ReferencePairManager manager, Object object)
+        throws Exception {
       if (object instanceof RemoteReference) {
         return manager.getPairedLocalReference((RemoteReference) object);
       } else if (object instanceof UnpairedReference) {
-        return manager.getLocalHandler()
+        return manager
+            .getLocalHandler()
             .create(
                 manager,
                 manager.getReferenceClass(((UnpairedReference) object).classId),
                 (List<Object>)
-                    convertReferencesForLocalManager(manager, ((UnpairedReference) object).creationArguments));
+                    convertReferencesForLocalManager(
+                        manager, ((UnpairedReference) object).creationArguments));
       } else if (object instanceof List) {
         final List<Object> result = new ArrayList<>();
         for (final Object obj : (List) object) {
@@ -63,7 +70,8 @@ public interface ReferenceConverter {
         final Map<Object, Object> newMap = new HashMap<>();
         for (Map.Entry<Object, Object> entry : oldMap.entrySet()) {
           newMap.put(
-              convertReferencesForLocalManager(manager, entry.getKey()), convertReferencesForLocalManager(manager, entry.getValue()));
+              convertReferencesForLocalManager(manager, entry.getKey()),
+              convertReferencesForLocalManager(manager, entry.getValue()));
         }
         return newMap;
       }

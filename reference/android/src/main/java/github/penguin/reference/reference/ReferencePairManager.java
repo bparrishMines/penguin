@@ -23,13 +23,11 @@ public abstract class ReferencePairManager {
 
     Completable<Object> invokeStaticMethod(int classId, String methodName, List<Object> arguments);
 
-    Completable<Object> invokeMethod(RemoteReference remoteReference, String methodName, List<Object> arguments);
+    Completable<Object> invokeMethod(
+        RemoteReference remoteReference, String methodName, List<Object> arguments);
 
     Completable<Object> invokeMethodOnUnpairedReference(
-        UnpairedReference unpairedReference,
-        String methodName,
-        List<Object> arguments
-    );
+        UnpairedReference unpairedReference, String methodName, List<Object> arguments);
 
     Completable<Void> dispose(RemoteReference remoteReference);
   }
@@ -41,15 +39,22 @@ public abstract class ReferencePairManager {
         List<Object> arguments)
         throws Exception;
 
-    Object invokeStaticMethod(ReferencePairManager referencePairManager,
+    Object invokeStaticMethod(
+        ReferencePairManager referencePairManager,
         Class<? extends LocalReference> referenceClass,
         String methodName,
-        List<Object> arguments) throws Exception;
+        List<Object> arguments)
+        throws Exception;
 
     Object invokeMethod(
-        ReferencePairManager referencePairManager, LocalReference localReference, String methodName, List<Object> arguments) throws Exception;
+        ReferencePairManager referencePairManager,
+        LocalReference localReference,
+        String methodName,
+        List<Object> arguments)
+        throws Exception;
 
-    void dispose(ReferencePairManager referencePairManager, LocalReference localReference) throws Exception;
+    void dispose(ReferencePairManager referencePairManager, LocalReference localReference)
+        throws Exception;
   }
 
   protected ReferencePairManager(final List<Class<? extends LocalReference>> supportedClasses) {
@@ -88,21 +93,21 @@ public abstract class ReferencePairManager {
     return referencePairs.inverse.get(remoteReference);
   }
 
-  public LocalReference pairWithNewLocalReference(
-      RemoteReference remoteReference, int classId) throws Exception {
+  public LocalReference pairWithNewLocalReference(RemoteReference remoteReference, int classId)
+      throws Exception {
     return pairWithNewLocalReference(remoteReference, classId, Collections.emptyList());
   }
 
   public LocalReference pairWithNewLocalReference(
-      RemoteReference remoteReference, int classId, List<Object> arguments)
-      throws Exception {
+      RemoteReference remoteReference, int classId, List<Object> arguments) throws Exception {
     assertIsInitialized();
     if (getPairedLocalReference(remoteReference) != null) return null;
 
     final LocalReference localReference =
         getLocalHandler()
             .create(
-                this, classIds.get(classId),
+                this,
+                classIds.get(classId),
                 (List<Object>) getConverter().convertReferencesForLocalManager(this, arguments));
 
     if (getPairedRemoteReference(localReference) != null) {
@@ -113,14 +118,14 @@ public abstract class ReferencePairManager {
     return localReference;
   }
 
-  public <T> T invokeLocalStaticMethod(Class<? extends LocalReference> referenceClass,
-                                       String methodName) throws Exception {
+  public <T> T invokeLocalStaticMethod(
+      Class<? extends LocalReference> referenceClass, String methodName) throws Exception {
     return (T) invokeLocalStaticMethod(referenceClass, methodName, Collections.emptyList());
   }
 
-  public <T> T invokeLocalStaticMethod(Class<? extends LocalReference> referenceClass,
-                                       String methodName,
-                                       List<Object> arguments) throws Exception {
+  public <T> T invokeLocalStaticMethod(
+      Class<? extends LocalReference> referenceClass, String methodName, List<Object> arguments)
+      throws Exception {
     assertIsInitialized();
     if (getClassId(referenceClass) == null) throw new AssertionError();
 
@@ -154,17 +159,27 @@ public abstract class ReferencePairManager {
     return (T) getConverter().convertReferencesForRemoteManager(this, result);
   }
 
-  public <T> T invokeLocalMethodOnUnpairedReference(UnpairedReference unpairedReference, String methodName) throws Exception {
-    return (T) invokeLocalMethodOnUnpairedReference(unpairedReference, methodName, Collections.EMPTY_LIST);
+  public <T> T invokeLocalMethodOnUnpairedReference(
+      UnpairedReference unpairedReference, String methodName) throws Exception {
+    return (T)
+        invokeLocalMethodOnUnpairedReference(unpairedReference, methodName, Collections.EMPTY_LIST);
   }
 
-  public <T> T invokeLocalMethodOnUnpairedReference(UnpairedReference unpairedReference, String methodName,
-                                                    List<Object> arguments) throws Exception {
+  public <T> T invokeLocalMethodOnUnpairedReference(
+      UnpairedReference unpairedReference, String methodName, List<Object> arguments)
+      throws Exception {
     assertIsInitialized();
-    return invokeLocalMethod(getLocalHandler().create(this,
-        classIds.get(unpairedReference.classId),
-        (List<Object>) getConverter().convertReferencesForLocalManager(this, unpairedReference.creationArguments)
-    ), methodName, arguments);
+    return invokeLocalMethod(
+        getLocalHandler()
+            .create(
+                this,
+                classIds.get(unpairedReference.classId),
+                (List<Object>)
+                    getConverter()
+                        .convertReferencesForLocalManager(
+                            this, unpairedReference.creationArguments)),
+        methodName,
+        arguments);
   }
 
   public void disposePairWithRemoteReference(RemoteReference remoteReference) throws Exception {
@@ -178,7 +193,8 @@ public abstract class ReferencePairManager {
   }
 
   @SuppressWarnings("ConstantConditions")
-  public Completable<RemoteReference> pairWithNewRemoteReference(final LocalReference localReference) {
+  public Completable<RemoteReference> pairWithNewRemoteReference(
+      final LocalReference localReference) {
     assertIsInitialized();
     if (getPairedRemoteReference(localReference) != null) {
       return new Completer<RemoteReference>().complete(null).completable;
@@ -193,65 +209,70 @@ public abstract class ReferencePairManager {
             .create(
                 remoteReference,
                 classIds.inverse.get(localReference.getReferenceClass()),
-                (List<Object>) getConverter().convertReferencesForRemoteManager(this, creationArguments));
+                (List<Object>)
+                    getConverter().convertReferencesForRemoteManager(this, creationArguments));
 
     final Completer<RemoteReference> completer = new Completer<>();
 
-    resultRunnable.setOnCompleteListener(new Completable.OnCompleteListener<Void>() {
-      @Override
-      public void onComplete(Void result) {
-        completer.complete(remoteReference);
-      }
+    resultRunnable.setOnCompleteListener(
+        new Completable.OnCompleteListener<Void>() {
+          @Override
+          public void onComplete(Void result) {
+            completer.complete(remoteReference);
+          }
 
-      @Override
-      public void onError(Throwable throwable) {
-        completer.completeWithError(throwable);
-      }
-    });
+          @Override
+          public void onError(Throwable throwable) {
+            completer.completeWithError(throwable);
+          }
+        });
 
     return completer.completable;
   }
 
-  public <T> Completable<T> invokeRemoteStaticMethod(Class<? extends LocalReference> referenceClass,
-                                                     String methodName) {
+  public <T> Completable<T> invokeRemoteStaticMethod(
+      Class<? extends LocalReference> referenceClass, String methodName) {
     return invokeRemoteStaticMethod(referenceClass, methodName, Collections.emptyList());
   }
 
-  public <T> Completable<T> invokeRemoteStaticMethod(Class<? extends LocalReference> referenceClass,
-                                                     String methodName,
-                                                     List<Object> arguments) {
+  public <T> Completable<T> invokeRemoteStaticMethod(
+      Class<? extends LocalReference> referenceClass, String methodName, List<Object> arguments) {
     assertIsInitialized();
     if (getClassId(referenceClass) == null) throw new AssertionError();
 
-    final Completable<Object> resultCompletable = getRemoteHandler()
-        .invokeStaticMethod(
-            getClassId(referenceClass),
-            methodName,
-            (List<Object>) getConverter().convertReferencesForRemoteManager(this, arguments));
+    final Completable<Object> resultCompletable =
+        getRemoteHandler()
+            .invokeStaticMethod(
+                getClassId(referenceClass),
+                methodName,
+                (List<Object>) getConverter().convertReferencesForRemoteManager(this, arguments));
 
     final Completer<T> replaceCompleter = new Completer<>();
 
-    resultCompletable.setOnCompleteListener(new Completable.OnCompleteListener<Object>() {
-      @Override
-      public void onComplete(Object result) {
-        try {
-          replaceCompleter.complete((T) getConverter().convertReferencesForLocalManager(ReferencePairManager.this, result));
-        } catch(Exception exception) {
-          throw new RuntimeException(exception.getMessage());
-        }
-      }
+    resultCompletable.setOnCompleteListener(
+        new Completable.OnCompleteListener<Object>() {
+          @Override
+          public void onComplete(Object result) {
+            try {
+              replaceCompleter.complete(
+                  (T)
+                      getConverter()
+                          .convertReferencesForLocalManager(ReferencePairManager.this, result));
+            } catch (Exception exception) {
+              throw new RuntimeException(exception.getMessage());
+            }
+          }
 
-      @Override
-      public void onError(Throwable throwable) {
-        replaceCompleter.completeWithError(throwable);
-      }
-    });
+          @Override
+          public void onError(Throwable throwable) {
+            replaceCompleter.completeWithError(throwable);
+          }
+        });
 
     return replaceCompleter.completable;
   }
 
-  public <T> Completable<T> invokeRemoteMethod(
-      RemoteReference remoteReference, String methodName) {
+  public <T> Completable<T> invokeRemoteMethod(RemoteReference remoteReference, String methodName) {
     return invokeRemoteMethod(remoteReference, methodName, Collections.EMPTY_LIST);
   }
 
@@ -259,7 +280,8 @@ public abstract class ReferencePairManager {
       RemoteReference remoteReference, String methodName, List<Object> arguments) {
     assertIsInitialized();
 
-    final Completable<Object> resultCompletable = getRemoteHandler()
+    final Completable<Object> resultCompletable =
+        getRemoteHandler()
             .invokeMethod(
                 remoteReference,
                 methodName,
@@ -267,64 +289,73 @@ public abstract class ReferencePairManager {
 
     final Completer<T> replaceCompleter = new Completer<>();
 
-    resultCompletable.setOnCompleteListener(new Completable.OnCompleteListener<Object>() {
-      @Override
-      public void onComplete(Object result) {
-        try {
-          replaceCompleter.complete((T) getConverter().convertReferencesForLocalManager(ReferencePairManager.this, result));
-        } catch(Exception exception) {
-          throw new RuntimeException(exception.getMessage());
-        }
-      }
+    resultCompletable.setOnCompleteListener(
+        new Completable.OnCompleteListener<Object>() {
+          @Override
+          public void onComplete(Object result) {
+            try {
+              replaceCompleter.complete(
+                  (T)
+                      getConverter()
+                          .convertReferencesForLocalManager(ReferencePairManager.this, result));
+            } catch (Exception exception) {
+              throw new RuntimeException(exception.getMessage());
+            }
+          }
 
-      @Override
-      public void onError(Throwable throwable) {
-          replaceCompleter.completeWithError(throwable);
-      }
-    });
+          @Override
+          public void onError(Throwable throwable) {
+            replaceCompleter.completeWithError(throwable);
+          }
+        });
 
     return replaceCompleter.completable;
   }
 
-  public <T> Completable<T> invokeRemoteMethodOnUnpairedReference(LocalReference localReference,
-                                                                 String methodName) {
-    return invokeRemoteMethodOnUnpairedReference(localReference, methodName, Collections.EMPTY_LIST);
+  public <T> Completable<T> invokeRemoteMethodOnUnpairedReference(
+      LocalReference localReference, String methodName) {
+    return invokeRemoteMethodOnUnpairedReference(
+        localReference, methodName, Collections.EMPTY_LIST);
   }
 
   @SuppressWarnings("ConstantConditions")
   public <T> Completable<T> invokeRemoteMethodOnUnpairedReference(
-      LocalReference localReference,
-      String methodName,
-      List<Object> arguments
-  ) {
+      LocalReference localReference, String methodName, List<Object> arguments) {
     assertIsInitialized();
 
-    final Completable<Object> resultCompletable = getRemoteHandler()
+    final Completable<Object> resultCompletable =
+        getRemoteHandler()
             .invokeMethodOnUnpairedReference(
                 new UnpairedReference(
                     classIds.inverse.get(localReference.getReferenceClass()),
-                    (List<Object>) getConverter().convertReferencesForRemoteManager(this, getRemoteHandler().getCreationArguments(localReference))
-                ),
+                    (List<Object>)
+                        getConverter()
+                            .convertReferencesForRemoteManager(
+                                this, getRemoteHandler().getCreationArguments(localReference))),
                 methodName,
                 (List<Object>) getConverter().convertReferencesForRemoteManager(this, arguments));
 
     final Completer<T> replaceCompleter = new Completer<>();
 
-    resultCompletable.setOnCompleteListener(new Completable.OnCompleteListener<Object>() {
-      @Override
-      public void onComplete(Object result) {
-        try {
-          replaceCompleter.complete((T) getConverter().convertReferencesForLocalManager(ReferencePairManager.this, result));
-        } catch(Exception exception) {
-          throw new RuntimeException(exception.getMessage());
-        }
-      }
+    resultCompletable.setOnCompleteListener(
+        new Completable.OnCompleteListener<Object>() {
+          @Override
+          public void onComplete(Object result) {
+            try {
+              replaceCompleter.complete(
+                  (T)
+                      getConverter()
+                          .convertReferencesForLocalManager(ReferencePairManager.this, result));
+            } catch (Exception exception) {
+              throw new RuntimeException(exception.getMessage());
+            }
+          }
 
-      @Override
-      public void onError(Throwable throwable) {
-        replaceCompleter.completeWithError(throwable);
-      }
-    });
+          @Override
+          public void onError(Throwable throwable) {
+            replaceCompleter.completeWithError(throwable);
+          }
+        });
 
     return replaceCompleter.completable;
   }

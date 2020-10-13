@@ -1,12 +1,12 @@
-import 'reference_pair_manager.dart';
-
 /// Represents a specific object instance.
 ///
 /// See:
 ///   [LocalReference]
 ///   [RemoteReference]
 ///   [UnpairedReference]
-mixin Reference {}
+class Reference {
+  const Reference();
+}
 
 /// Represents an object that is locally accessible.
 ///

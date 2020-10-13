@@ -8,8 +8,10 @@ public abstract class PoolableReferencePairManager extends ReferencePairManager 
   public final String poolId;
   Set<ReferencePairManagerPool> pools = new HashSet<>();
 
-  public static class PoolableReferenceConverter extends ReferenceConverter.StandardReferenceConverter {
-    private static PoolableReferencePairManager managerFromClass(Set<ReferencePairManagerPool> pools, Class<? extends LocalReference> clazz) {
+  public static class PoolableReferenceConverter
+      extends ReferenceConverter.StandardReferenceConverter {
+    private static PoolableReferencePairManager managerFromClass(
+        Set<ReferencePairManagerPool> pools, Class<? extends LocalReference> clazz) {
       for (ReferencePairManagerPool pool : pools) {
         final PoolableReferencePairManager manager = pool.classesToManagers.get(clazz);
         if (manager != null) return manager;
@@ -18,7 +20,8 @@ public abstract class PoolableReferencePairManager extends ReferencePairManager 
       return null;
     }
 
-    private static PoolableReferencePairManager managerFromPoolId(Set<ReferencePairManagerPool> pools, String poolId) {
+    private static PoolableReferencePairManager managerFromPoolId(
+        Set<ReferencePairManagerPool> pools, String poolId) {
       for (ReferencePairManagerPool pool : pools) {
         final PoolableReferencePairManager manager = pool.managers.get(poolId);
         if (manager != null) return manager;
@@ -27,7 +30,8 @@ public abstract class PoolableReferencePairManager extends ReferencePairManager 
       return null;
     }
 
-    private static LocalReference localRefFromRemoteRef(Set<ReferencePairManagerPool> pools, RemoteReference remoteReference) {
+    private static LocalReference localRefFromRemoteRef(
+        Set<ReferencePairManagerPool> pools, RemoteReference remoteReference) {
       for (ReferencePairManagerPool pool : pools) {
         for (ReferencePairManager manager : pool.managers.values()) {
           final LocalReference localReference = manager.getPairedLocalReference(remoteReference);
@@ -46,10 +50,14 @@ public abstract class PoolableReferencePairManager extends ReferencePairManager 
 
       final LocalReference localReference = (LocalReference) object;
 
-      final boolean isCorrectManager = manager.getClassId(localReference.getReferenceClass()) != null;
-      final PoolableReferencePairManager correctManager = isCorrectManager
-          ? (PoolableReferencePairManager) manager
-          : managerFromClass(((PoolableReferencePairManager) manager).pools, localReference.getReferenceClass());
+      final boolean isCorrectManager =
+          manager.getClassId(localReference.getReferenceClass()) != null;
+      final PoolableReferencePairManager correctManager =
+          isCorrectManager
+              ? (PoolableReferencePairManager) manager
+              : managerFromClass(
+                  ((PoolableReferencePairManager) manager).pools,
+                  localReference.getReferenceClass());
 
       if (correctManager.getPairedRemoteReference(localReference) != null) {
         return correctManager.getPairedRemoteReference(localReference);
@@ -58,35 +66,50 @@ public abstract class PoolableReferencePairManager extends ReferencePairManager 
       return new UnpairedReference(
           correctManager.getClassId(((LocalReference) object).getReferenceClass()),
           (List<Object>)
-              correctManager.getConverter().convertReferencesForRemoteManager(correctManager, correctManager.getRemoteHandler().getCreationArguments(localReference)), correctManager.poolId);
+              correctManager
+                  .getConverter()
+                  .convertReferencesForRemoteManager(
+                      correctManager,
+                      correctManager.getRemoteHandler().getCreationArguments(localReference)),
+          correctManager.poolId);
     }
 
     @Override
-    public Object convertReferencesForLocalManager(ReferencePairManager manager, Object object) throws Exception {
+    public Object convertReferencesForLocalManager(ReferencePairManager manager, Object object)
+        throws Exception {
       if (!(object instanceof RemoteReference) && !(object instanceof UnpairedReference)) {
         return super.convertReferencesForLocalManager(manager, object);
       }
 
       final boolean argumentIsRemoteReference = object instanceof RemoteReference;
-      if (argumentIsRemoteReference && manager.getPairedLocalReference((RemoteReference) object) != null) {
+      if (argumentIsRemoteReference
+          && manager.getPairedLocalReference((RemoteReference) object) != null) {
         return manager.getPairedLocalReference((RemoteReference) object);
-      } else if (argumentIsRemoteReference && manager.getPairedLocalReference((RemoteReference) object) == null) {
-        return localRefFromRemoteRef(((PoolableReferencePairManager) manager).pools, (RemoteReference) object);
+      } else if (argumentIsRemoteReference
+          && manager.getPairedLocalReference((RemoteReference) object) == null) {
+        return localRefFromRemoteRef(
+            ((PoolableReferencePairManager) manager).pools, (RemoteReference) object);
       }
 
       final UnpairedReference unpairedReference = (UnpairedReference) object;
-      final PoolableReferencePairManager correctManager = ((PoolableReferencePairManager) manager).poolId.equals(unpairedReference.managerPoolId)
+      final PoolableReferencePairManager correctManager =
+          ((PoolableReferencePairManager) manager).poolId.equals(unpairedReference.managerPoolId)
               ? (PoolableReferencePairManager) manager
-              : managerFromPoolId(((PoolableReferencePairManager) manager).pools, unpairedReference.managerPoolId);
-      return correctManager.getLocalHandler()
+              : managerFromPoolId(
+                  ((PoolableReferencePairManager) manager).pools, unpairedReference.managerPoolId);
+      return correctManager
+          .getLocalHandler()
           .create(
               correctManager,
               correctManager.getReferenceClass(((UnpairedReference) object).classId),
-              (List<Object>) convertReferencesForLocalManager(manager, ((UnpairedReference) object).creationArguments));
+              (List<Object>)
+                  convertReferencesForLocalManager(
+                      manager, ((UnpairedReference) object).creationArguments));
     }
   }
 
-  public PoolableReferencePairManager(List<Class<? extends LocalReference>> supportedClasses, String poolId) {
+  public PoolableReferencePairManager(
+      List<Class<? extends LocalReference>> supportedClasses, String poolId) {
     super(supportedClasses);
     if (poolId == null) throw new AssertionError("`poolId` cannot be null.");
     this.poolId = poolId;

@@ -25,9 +25,6 @@ public class UnpairedReference {
   public String toString() {
     return String.format(
         "%s(%d, %s, %s)",
-        UnpairedReference.class.getName(),
-        classId,
-        creationArguments.toString(),
-        managerPoolId);
+        UnpairedReference.class.getName(), classId, creationArguments.toString(), managerPoolId);
   }
 }

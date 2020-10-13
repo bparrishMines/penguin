@@ -1,7 +1,7 @@
 #import "ReferenceMatchers.h"
 
 @implementation TestClass
-+(TestClass *_Nonnull)testClass {
++ (TestClass *_Nonnull)testClass {
   return [[TestClass alloc] init];
 }
 
@@ -15,7 +15,7 @@
 @end
 
 @implementation TestClass2
-+(TestClass2 *_Nonnull)testClass2 {
++ (TestClass2 *_Nonnull)testClass2 {
   return [[TestClass2 alloc] init];
 }
 
@@ -37,12 +37,14 @@
   return self;
 }
 
--(id _Nullable)convertReferencesForRemoteManager:(REFReferencePairManager *)manager obj:(id _Nullable)obj {
+- (id _Nullable)convertReferencesForRemoteManager:(REFReferencePairManager *)manager
+                                              obj:(id _Nullable)obj {
   [_mock convertReferencesForRemoteManager:manager obj:obj];
   return [super convertReferencesForRemoteManager:manager obj:obj];
 }
 
--(id _Nullable)convertReferencesForLocalManager:(REFReferencePairManager *)manager obj:(id _Nullable)obj {
+- (id _Nullable)convertReferencesForLocalManager:(REFReferencePairManager *)manager
+                                             obj:(id _Nullable)obj {
   [_mock convertReferencesForLocalManager:manager obj:obj];
   return [super convertReferencesForLocalManager:manager obj:obj];
 }
@@ -53,8 +55,8 @@
   id<REFLocalReferenceCommunicationHandler> _localHandler;
 }
 
--(instancetype)initWithSupportedClasses:(NSArray<REFClass *> *)supportedClasses
-                                 poolID:(NSString *)poolID {
+- (instancetype)initWithSupportedClasses:(NSArray<REFClass *> *)supportedClasses
+                                  poolID:(NSString *)poolID {
   self = [super initWithSupportedClasses:supportedClasses poolID:poolID];
   if (self) {
     _remoteHandler = mockProtocol(@protocol(REFRemoteReferenceCommunicationHandler));
@@ -63,11 +65,11 @@
   return self;
 }
 
--(id<REFRemoteReferenceCommunicationHandler>)remoteHandler {
+- (id<REFRemoteReferenceCommunicationHandler>)remoteHandler {
   return _remoteHandler;
 }
 
--(id<REFLocalReferenceCommunicationHandler>)localHandler {
+- (id<REFLocalReferenceCommunicationHandler>)localHandler {
   return _localHandler;
 }
 @end
@@ -77,8 +79,8 @@
   id<REFLocalReferenceCommunicationHandler> _localHandler;
 }
 
--(instancetype)init {
-  self = [super initWithSupportedClasses:@[[REFClass fromClass:[TestClass class]]]];
+- (instancetype)init {
+  self = [super initWithSupportedClasses:@[ [REFClass fromClass:[TestClass class]] ]];
   if (self) {
     _remoteHandler = mockProtocol(@protocol(REFRemoteReferenceCommunicationHandler));
     _localHandler = mockProtocol(@protocol(REFLocalReferenceCommunicationHandler));
@@ -87,15 +89,15 @@
   return self;
 }
 
--(id<REFReferenceConverter>)converter {
+- (id<REFReferenceConverter>)converter {
   return _spyConverter;
 }
 
--(id<REFRemoteReferenceCommunicationHandler>)remoteHandler {
+- (id<REFRemoteReferenceCommunicationHandler>)remoteHandler {
   return _remoteHandler;
 }
 
--(id<REFLocalReferenceCommunicationHandler>)localHandler {
+- (id<REFLocalReferenceCommunicationHandler>)localHandler {
   return _localHandler;
 }
 @end
@@ -103,11 +105,10 @@
 @implementation TestRemoteHandler
 - (instancetype)init {
   NSObject<FlutterBinaryMessenger> *mockMessenger = mockProtocol(@protocol(FlutterBinaryMessenger));
-  return self = [super initWithChannelName:@"test_channel"
-                           binaryMessenger:mockMessenger];
+  return self = [super initWithChannelName:@"test_channel" binaryMessenger:mockMessenger];
 }
 
--(NSArray<id> *)getCreationArguments:(id<REFLocalReference>)localReference {
+- (NSArray<id> *)getCreationArguments:(id<REFLocalReference>)localReference {
   return @[];
 }
 @end
@@ -117,8 +118,8 @@
   id<REFLocalReferenceCommunicationHandler> _localHandler;
 }
 
--(instancetype)init {
-  self = [super initWithSupportedClasses:@[[REFClass fromClass:[TestClass class]]]
+- (instancetype)init {
+  self = [super initWithSupportedClasses:@[ [REFClass fromClass:[TestClass class]] ]
                          binaryMessenger:mockProtocol(@protocol(FlutterBinaryMessenger))
                              channelName:@"test_channel"];
   if (self) {
@@ -128,11 +129,11 @@
   return self;
 }
 
--(id<REFRemoteReferenceCommunicationHandler>)remoteHandler {
+- (id<REFRemoteReferenceCommunicationHandler>)remoteHandler {
   return _remoteHandler;
 }
 
--(id<REFLocalReferenceCommunicationHandler>)localHandler {
+- (id<REFLocalReferenceCommunicationHandler>)localHandler {
   return _localHandler;
 }
 @end
@@ -155,7 +156,6 @@
   if (![item isKindOfClass:[REFUnpairedReference class]]) return NO;
   REFUnpairedReference *reference = item;
 
-
   if (_classID != reference.classID) return NO;
   if (_managerPoolID && ![_managerPoolID isEqualToString:reference.managerPoolID]) {
     return NO;
@@ -170,11 +170,12 @@
   return [_creationArguments isEqualToArray:reference.creationArguments];
 }
 
-- (void)describeTo:(id <HCDescription>)description {
+- (void)describeTo:(id<HCDescription>)description {
   [[[description
-     appendText:[NSString stringWithFormat:@" An %@ with classID: ", NSStringFromClass([REFUnpairedReference class])]]
-     appendText:[NSString stringWithFormat:@"%lu", (unsigned long)_classID]]
-     appendText:@" and creation arguments: "];
+      appendText:[NSString stringWithFormat:@" An %@ with classID: ",
+                                            NSStringFromClass([REFUnpairedReference class])]]
+      appendText:[NSString stringWithFormat:@"%lu", (unsigned long)_classID]]
+      appendText:@" and creation arguments: "];
 
   if ([_creationArguments isKindOfClass:[HCBaseMatcher class]]) {
     [_creationArguments describeTo:description];
@@ -182,10 +183,8 @@
     [description appendText:[_creationArguments description]];
   }
 
-  [[description
-     appendText:@" and managerPoolID: "]
-     appendText:_managerPoolID ? _managerPoolID : @"nil"
-  ];
+  [[description appendText:@" and managerPoolID: "]
+      appendText:_managerPoolID ? _managerPoolID : @"nil"];
 }
 @end
 

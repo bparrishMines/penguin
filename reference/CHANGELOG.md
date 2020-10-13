@@ -1,3 +1,7 @@
+## 0.1.4+1
+
+* Update templates and README examples.
+
 ## 0.1.4
 
 * Add support for static methods.

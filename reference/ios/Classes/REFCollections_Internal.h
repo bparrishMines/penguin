@@ -10,7 +10,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface REFBiMapTable<KeyType, ObjectType> : NSObject
-@property (readonly) REFBiMapTable<ObjectType, KeyType> *_Nullable inverse;
+@property(readonly) REFBiMapTable<ObjectType, KeyType> *_Nullable inverse;
 - (void)setObject:(ObjectType)object forKey:(KeyType)key;
 - (void)removeObjectForKey:(KeyType)key;
 - (ObjectType _Nullable)objectForKey:(KeyType)key;

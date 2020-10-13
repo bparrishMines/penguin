@@ -82,6 +82,10 @@ class MyOtherClass with LocalReference {
 
   final int intField;
 
+  static Future<int> myStaticMethod() {
+
+  }
+
   // The unique `Type` used to represent this class in a `ReferencePairManager`.
   @override
   Type get referenceType => runtimeType;
@@ -111,6 +115,10 @@ public class MyClass implements LocalReference {
 class MyOtherClass implements LocalReference {
   public final int intField;
 
+  static Integer myStaticMethod() {
+    return 324;
+  }
+
   public MyOtherClass(int intField) {
     this.intField = intField;
   }
@@ -127,6 +135,7 @@ class MyOtherClass implements LocalReference {
 ```objectivec
 @interface MyOtherClass : NSObject<REFLocalReference>
 @property (readonly) NSNumber *intField;
++ (NSNumber *)myStaticMethod;
 -(instancetype)initWithIntField:(NSNumber *)intField;
 @end
 
@@ -162,6 +171,10 @@ class MyOtherClass implements LocalReference {
     _intField = intField;
   }
   return self;
+}
+
++ (NSNumber *)myStaticMethod {
+  return @(324);
 }
 
 - (REFClass *)referenceClass {
@@ -271,6 +284,22 @@ class MyLocalHandler implements LocalReferenceCommunicationHandler {
     throw UnsupportedError('$referenceType is not supported.');
   }
 
+  // This method handles invoking static methods on LocalReferences stored in
+  // the ReferencePairManager.
+  @override
+  Object invokeStaticMethod(
+    ReferencePairManager referencePairManager,
+    Type referenceType,
+    String methodName,
+    List<Object> arguments,
+  ) {
+    if (referenceType == MyOtherClass && methodName == 'myStaticMethod') {
+      return MyOtherClass.myStaticMethod();
+    }
+
+    throw UnimplementedError('$referenceType.$methodName');
+  }
+
   // This method handles invoking methods on LocalReferences stored in the ReferencePairManager.
   @override
   Object invokeMethod(
@@ -314,6 +343,21 @@ class MyLocalHandler implements LocalReferenceCommunicationHandler {
     }
 
     throw new UnsupportedOperationException(String.format("%s not supported.", referenceClass));
+  }
+
+  // This method handles invoking static methods on LocalReferences stored in
+  // the ReferencePairManager.
+  @Override
+  public Object invokeStaticMethod(ReferencePairManager referencePairManager,
+                                   Class<? extends LocalReference> referenceClass,
+                                   String methodName, List<Object> arguments) {
+    if (referenceClass == MyOtherClass.class && methodName.equals("myStaticMethod")) {
+      return MyOtherClass.myStaticMethod();
+    }
+
+    throw new UnsupportedOperationException(
+        String.format("%s.%s not supported.", referenceClass, methodName)
+    );
   }
 
   // This method handles invoking methods on LocalReferences stored in the ReferencePairManager.
@@ -360,6 +404,25 @@ class MyLocalHandler implements LocalReferenceCommunicationHandler {
 
   @throw [NSException exceptionWithName:NSInvalidArgumentException
                                  reason:[NSString stringWithFormat:@"%@ not supported.", NSStringFromClass(referenceClass)]
+                               userInfo:nil];
+}
+
+// This method handles invoking static methods on LocalReferences stored in
+// the ReferencePairManager.
+- (id _Nullable)invokeStaticMethod:(nonnull REFReferencePairManager *)referencePairManager
+                    referenceClass:(nonnull Class)referenceClass
+                        methodName:(nonnull NSString *)methodName
+                         arguments:(nonnull NSArray<id> *)arguments {
+  if (referenceClass == [MyOtherClass class]) {
+    if ([methodName isEqualToString:@"myStaticMethod"]) {
+      return [MyOtherClass myStaticMethod];
+    }
+  }
+
+  @throw [NSException exceptionWithName:NSInvalidArgumentException
+                                 reason:[NSString stringWithFormat:@"%@:%@ not supported.",
+                                         NSStringFromClass(referenceClass),
+                                         methodName]
                                userInfo:nil];
 }
 
@@ -480,6 +543,23 @@ class MyClass with LocalReference {
       'myMethod',
       <dynamic>[value, myOtherClass],
     )) as String;
+  }
+
+  // The unique `Type` used to represent this class in a `ReferencePairManager`.
+  @override
+  Type get referenceType => runtimeType;
+}
+
+class MyOtherClass with LocalReference {
+  MyOtherClass(this.intField);
+
+  final int intField;
+
+  static Future<int> myStaticMethod() async {
+    return (await referencePairManager.invokeRemoteStaticMethod(
+      MyOtherClass,
+      'myMethod',
+    )) as int;
   }
 
   // The unique `Type` used to represent this class in a `ReferencePairManager`.

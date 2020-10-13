@@ -11,11 +11,17 @@ environment:
 
 dependencies:
   reference:
-    path: ../reference
+    git:
+      url: git@github.com:bparrishMines/penguin.git
+      ref: reference_generator
+      path: reference
   flutter:
     sdk: flutter
 
 dev_dependencies:
+  reference_generator:
+    path: ../reference_generator
+  build_runner: ^1.10.3
   flutter_test:
     sdk: flutter
 

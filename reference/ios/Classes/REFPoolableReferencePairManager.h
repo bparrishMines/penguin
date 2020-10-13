@@ -6,9 +6,9 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface REFPoolableReferencePairManager : REFReferencePairManager
-@property (readonly) NSString *poolID;
--(instancetype)initWithSupportedClasses:(NSArray<REFClass *> *)supportedClasses
-                                 poolID:(NSString *)poolID;
+@property(readonly) NSString *poolID;
+- (instancetype)initWithSupportedClasses:(NSArray<REFClass *> *)supportedClasses
+                                  poolID:(NSString *)poolID;
 @end
 
 @interface REFReferencePairManagerPool : NSObject

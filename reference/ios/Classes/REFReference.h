@@ -2,8 +2,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface REFClass : NSObject<NSCopying>
-@property (readonly) Class clazz;
+@interface REFClass : NSObject <NSCopying>
+@property(readonly) Class clazz;
 + (REFClass *)fromClass:(Class)clazz;
 @end
 
@@ -14,16 +14,16 @@ NS_ASSUME_NONNULL_BEGIN
 - (REFClass *)referenceClass;
 @end
 
-@interface REFRemoteReference : NSObject<REFReference, NSCopying>
-@property (readonly) NSString *referenceID;
+@interface REFRemoteReference : NSObject <REFReference, NSCopying>
+@property(readonly) NSString *referenceID;
 + (REFRemoteReference *)fromID:(NSString *)referenceID;
 - (instancetype)initWithReferenceID:(NSString *)referenceID;
 @end
 
-@interface REFUnpairedReference : NSObject<REFReference, NSCopying>
-@property (readonly) NSUInteger classID;
-@property (readonly) NSArray<id> *creationArguments;
-@property (readonly) NSString *_Nullable managerPoolID;
+@interface REFUnpairedReference : NSObject <REFReference, NSCopying>
+@property(readonly) NSUInteger classID;
+@property(readonly) NSArray<id> *creationArguments;
+@property(readonly) NSString *_Nullable managerPoolID;
 - (instancetype)initWithClassID:(NSUInteger)classID
               creationArguments:(NSArray<id> *)creationArguments;
 - (instancetype)initWithClassID:(NSUInteger)classID

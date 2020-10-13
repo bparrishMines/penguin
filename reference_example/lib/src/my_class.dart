@@ -32,6 +32,13 @@ class MyOtherClass with LocalReference {
 
   final int intField;
 
+  static Future<int> myStaticMethod() async {
+    return (await referencePairManager.invokeRemoteStaticMethod(
+      MyOtherClass,
+      'myMethod',
+    )) as int;
+  }
+
   // The unique `Type` used to represent this class in a `ReferencePairManager`.
   @override
   Type get referenceType => runtimeType;

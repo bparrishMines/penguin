@@ -21,6 +21,21 @@ class MyLocalHandler implements LocalReferenceCommunicationHandler {
     throw new UnsupportedOperationException(String.format("%s not supported.", referenceClass));
   }
 
+  // This method handles invoking static methods on LocalReferences stored in
+  // the ReferencePairManager.
+  @Override
+  public Object invokeStaticMethod(ReferencePairManager referencePairManager,
+                                   Class<? extends LocalReference> referenceClass,
+                                   String methodName, List<Object> arguments) {
+    if (referenceClass == MyOtherClass.class && methodName.equals("myStaticMethod")) {
+      return MyOtherClass.myStaticMethod();
+    }
+
+    throw new UnsupportedOperationException(
+        String.format("%s.%s not supported.", referenceClass, methodName)
+    );
+  }
+
   // This method handles invoking methods on LocalReferences stored in the ReferencePairManager.
   @Override
   public Object invokeMethod(ReferencePairManager referencePairManager,
