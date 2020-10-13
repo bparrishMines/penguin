@@ -2,6 +2,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class _p_ClassTemplate;
+
 @interface _p_ReferencePairManager : REFMethodChannelReferencePairManager
 - (instancetype)initWithChannelName:(NSString *)channelName
                     binaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;
