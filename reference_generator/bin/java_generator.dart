@@ -402,7 +402,7 @@ String generateJava({
                                                       '$index',
                                                     ),
                                               )
-                                              .join(','),
+                                              .join(' '),
                                         ),
                               )
                               .join('\n'),
@@ -1063,7 +1063,7 @@ class Argument with TemplateRegExp {
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'\(String\) arguments\.get\(0\)',
+    r',*\s*\(String\) arguments\.get\(0\)',
   );
 
   @override
@@ -1114,7 +1114,7 @@ class LocalHandlerStaticMethodAbstractMethod with TemplateRegExp {
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'public abstract Double classTemplate\$staticMethodTemplate[^;]+;',
+    r'public abstract Object classTemplate\$staticMethodTemplate[^;]+;',
   );
 
   @override

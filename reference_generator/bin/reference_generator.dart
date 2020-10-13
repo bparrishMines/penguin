@@ -64,7 +64,13 @@ void main(List<String> arguments) async {
             orElse: () => null,
           );
 
-  if (astInputFile == null) throw StateError('No ast file was found.');
+  if (astInputFile == null) {
+    final String message =
+        'No file named $astFileName was found. This could be caused by missing'
+        ' `Reference()` annotations or not including `reference_generator` in'
+        ' `dev_dependencies`';
+    throw StateError(message);
+  }
 
   final libraryNode = LibraryNode.fromJson(
     jsonDecode(astInputFile.readAsStringSync()),

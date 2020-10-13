@@ -116,9 +116,7 @@ class $LocalHandler with LocalReferenceCommunicationHandler {
         List<Object> arguments,
       ) {
         return localHandler.classTemplate$staticMethodTemplate(
-          manager,
-          arguments[0],
-        );
+            manager, arguments[0]);
       }
     }
   };
