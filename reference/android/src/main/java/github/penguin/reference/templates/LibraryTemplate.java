@@ -181,7 +181,7 @@ class LibraryTemplate {
         ReferencePairManager referencePairManager, $ClassTemplateCreationArgs args)
         throws Exception;
 
-    public abstract Double classTemplate$staticMethodTemplate(
+    public abstract Object classTemplate$staticMethodTemplate(
         ReferencePairManager referencePairManager, String parameterTemplate) throws Exception;
 
     @SuppressWarnings("ConstantConditions")

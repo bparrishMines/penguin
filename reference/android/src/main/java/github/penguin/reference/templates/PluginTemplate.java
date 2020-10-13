@@ -25,7 +25,7 @@ public class PluginTemplate implements FlutterPlugin {
         }
 
         @Override
-        public Double classTemplate$staticMethodTemplate(
+        public Object classTemplate$staticMethodTemplate(
             ReferencePairManager referencePairManager, String parameterTemplate) {
           return ClassTemplate.staticMethodTemplate(parameterTemplate);
         }
