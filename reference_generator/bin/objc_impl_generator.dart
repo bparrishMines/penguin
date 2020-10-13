@@ -9,10 +9,12 @@ String generateObjcImpl({
   String template,
   LibraryNode libraryNode,
   String prefix,
+  String headerFilename,
 }) {
   final Library library = Library(template: template, templatePrefix: prefix);
   return template
       .replaceAll(library.handlerPrefix, prefix)
+  .replaceAll(library.headerFilename, headerFilename)
       .replaceAll(
         library.aClass.exp,
         libraryNode.classes
@@ -23,6 +25,7 @@ String generateObjcImpl({
                   .replaceAll(library.aClass.referenceClass, classNode.name)
                   .replaceAll(library.aClass.prefix, prefix)
                   .replaceAll(library.aClass.referenceClassPrefix, prefix)
+
                   .replaceAll(
                     library.aClass.aField.exp,
                     classNode.fields
@@ -385,10 +388,10 @@ String generateObjcImpl({
                                           ),
                                         ),
                               )
-                              .join('\n'),
+                              .join(',\n'),
                         ),
                   )
-                  .join('\n'),
+                  .join(',\n'),
             )
             .replaceAll(
               library.aLocalHandler.aStaticMethodAbstractMethod.exp,
@@ -562,6 +565,10 @@ class Library with TemplateRegExp, PrefixTemplate {
 
   final RegExp handlerPrefix = TemplateRegExp.regExp(
     r'(?<=_LocalStaticMethodHandler\)\(|_LocalCreatorHandler\)\()_p_',
+  );
+
+  final RegExp headerFilename = TemplateRegExp.regExp(
+    r'(?<=#import ")REFLibraryTemplate_Internal\.h',
   );
 
   Class get aClass => Class(this);

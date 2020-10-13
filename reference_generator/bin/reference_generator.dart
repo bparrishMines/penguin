@@ -150,6 +150,7 @@ void main(List<String> arguments) async {
         template: objcImplTemplate,
         libraryNode: libraryNode,
         prefix: options.objcPrefix,
+        headerFilename: path.basename(options.objcHeaderOut.path),
       ),
     );
   }
@@ -208,6 +209,10 @@ class ReferenceGeneratorOptions {
         options.objcPrefix == null) {
       throw ArgumentError(
         'Please provide a `--$objcPrefixOption` when setting `--$objcHeaderOutOption` or `--$objcImplOutOption`.',
+      );
+    } else if (options.objcImplOut != null && options.objcHeaderOut == null) {
+      throw ArgumentError(
+        'Please provide a `--$objcHeaderOutOption` when setting `--$objcImplOutOption`.',
       );
     }
 

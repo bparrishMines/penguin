@@ -2,8 +2,7 @@ import 'package:recase/recase.dart';
 import 'package:reference_generator/src/ast.dart';
 
 import 'common.dart';
-// TODO: list all @class for headers
-// TODO: add template header to top of impl file
+
 String generateObjcHeader({
   String template,
   LibraryNode libraryNode,
@@ -13,6 +12,20 @@ String generateObjcHeader({
   return template
       .replaceAll(library.managerPrefix, prefix)
       .replaceAll(library.remoteHandlerPrefix, prefix)
+      .replaceAll(
+        library.aClassDirective.exp,
+        libraryNode.classes
+            .map<String>(
+              (ClassNode classNode) => library.aClassDirective
+                  .stringMatch()
+                  .replaceAll(library.aClassDirective.classPrefix, prefix)
+                  .replaceAll(
+                    library.aClassDirective.className,
+                    classNode.name,
+                  ),
+            )
+            .join('\n'),
+      )
       .replaceAll(
         library.aClass.exp,
         libraryNode.classes
@@ -276,6 +289,8 @@ class Library with TemplateRegExp, PrefixTemplate {
     r'(?<=@interface )_p_(?=RemoteHandler)',
   );
 
+  ClassDirective get aClassDirective => ClassDirective(this);
+
   Class get aClass => Class(this);
 
   CreationArgsClass get aCreationArgsClass => CreationArgsClass(this);
@@ -287,6 +302,19 @@ class Library with TemplateRegExp, PrefixTemplate {
 
   @override
   final RegExp exp = null;
+}
+
+class ClassDirective with TemplateRegExp {
+  ClassDirective(this.parent);
+
+  final RegExp classPrefix = TemplateRegExp.regExp(r'(?<=@class )_p_');
+  final RegExp className = TemplateRegExp.regExp(r'ClassTemplate(?=;)');
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(r'@class _p_ClassTemplate;');
+
+  @override
+  final Library parent;
 }
 
 class Class with TemplateRegExp, PrefixTemplate {
@@ -517,7 +545,8 @@ class LocalHandlerCreatorAbstractMethod with TemplateRegExp, PrefixTemplate {
 
   final RegExp classPrefix = TemplateRegExp.regExp(r'(?<=- \(|args:\()_p_');
 
-  final RegExp className = TemplateRegExp.regExp(r'(?<=\)create)ClassTemplate');
+  final RegExp className =
+      TemplateRegExp.regExp(r'(?<=- \(\w*|\)create)ClassTemplate');
 
   final RegExp creationArgsClassName = TemplateRegExp.regExp(
     r'ClassTemplate(?=CreationArgs )',
