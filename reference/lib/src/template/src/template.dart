@@ -1,40 +1,42 @@
 import 'dart:async';
 
 import 'package:reference/reference.dart';
+import 'package:reference/annotations.dart';
 
 import 'template.g.dart';
 
-_ManagerTemplate _referencePairManager = _ManagerTemplate()..initialize();
-
-class _ManagerTemplate extends $ReferencePairManager {
-  _ManagerTemplate() : super('github.penguin/reference/template');
-
-  @override
-  $LocalHandler get localHandler => $LocalHandler(
-        createClassTemplate: (
-          ReferencePairManager referencePairManager,
-          $ClassTemplateCreationArgs args,
-        ) =>
-            ClassTemplate(args.fieldTemplate),
+MethodChannelReferenceChannelManager _manager =
+    MethodChannelReferenceChannelManager.instance
+      ..registerHandler(
+        $ClassTemplateHandler.$handlerChannel,
+        $ClassTemplateHandler(
+          onCreateClassTemplate: (
+            ReferenceChannelManager manager,
+            $ClassTemplateCreationArgs args,
+          ) {
+            return ClassTemplate(args.fieldTemplate);
+          },
+        ),
       );
-}
 
-@Reference()
-class ClassTemplate extends $ClassTemplate {
+@ReferenceChannel('github.penguin/template/template/ClassTemplate')
+class ClassTemplate with $ClassTemplate {
   ClassTemplate(this.fieldTemplate);
 
   final int fieldTemplate;
 
   static Future<double> staticMethodTemplate(String parameterTemplate) async {
-    return (await $ClassTemplateMethods.$staticMethodTemplate(
-      _referencePairManager,
+    return (await $ClassTemplateHandler.$invokeStaticMethodTemplate(
+      _manager,
       parameterTemplate,
     )) as double;
   }
 
+  @override
   Future<String> methodTemplate(String parameterTemplate) async {
-    return (await $methodTemplate(
-      _referencePairManager,
+    return (await $ClassTemplateHandler.$invokeMethodTemplate(
+      _manager,
+      this,
       parameterTemplate,
     )) as String;
   }

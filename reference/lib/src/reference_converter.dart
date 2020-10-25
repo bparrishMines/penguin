@@ -1,10 +1,11 @@
 import 'reference.dart';
-import 'reference_pair_manager.dart';
+import 'reference_channel_manager.dart';
+import 'remote_reference_map.dart';
 
-/// Handles converting [Reference]s for a [ReferencePairManager].
+/// Handles converting [Reference]s for a [RemoteReferenceMap].
 ///
-/// When a [ReferencePairManager] receives arguments from another
-/// [ReferencePairManager] or sends arguments to another [ReferencePairManager],
+/// When a [RemoteReferenceMap] receives arguments from another
+/// [RemoteReferenceMap] or sends arguments to another [RemoteReferenceMap],
 /// it converts [Reference]s to their paired [LocalReference]/[RemoteReference]
 /// or creates a new [UnpairedReference].
 ///
@@ -12,16 +13,19 @@ import 'reference_pair_manager.dart';
 mixin ReferenceConverter {
   /// Converts arguments to be used by a [RemoteReference].
   ///
-  /// A [ReferencePairManager] should use this when creating or invoking a
+  /// A [RemoteReferenceMap] should use this when creating or invoking a
   /// method on a [RemoteReference].
-  Object convertForRemoteManager(ReferencePairManager manager, Object object);
+  Object convertForRemoteManager(
+    ReferenceChannelManager manager,
+    Object object,
+  );
 
   /// Converts arguments to be used with a [LocalReference].
   ///
-  /// A [ReferencePairManager] uses this when creating or invoking a method on
+  /// A [RemoteReferenceMap] uses this when creating or invoking a method on
   /// a [LocalReference].
   Object convertForLocalManager(
-    ReferencePairManager manager,
+    ReferenceChannelManager manager,
     Object object,
   );
 }
@@ -41,21 +45,11 @@ class StandardReferenceConverter implements ReferenceConverter {
   ///     applied to each key and each value.
   @override
   Object convertForRemoteManager(
-    ReferencePairManager manager,
+    ReferenceChannelManager manager,
     Object object,
   ) {
-    if (object is LocalReference &&
-        manager.getPairedRemoteReference(object) != null) {
-      return manager.getPairedRemoteReference(object);
-    } else if (object is LocalReference &&
-        manager.getPairedRemoteReference(object) == null) {
-      return UnpairedReference(
-        manager.getTypeId(object.referenceType),
-        manager.remoteHandler
-            .getCreationArguments(object)
-            .map((_) => convertForRemoteManager(manager, _))
-            .toList(),
-      );
+    if (manager.referencePairs.getPairedRemoteReference(object) != null) {
+      return manager.referencePairs.getPairedRemoteReference(object);
     } else if (object is List) {
       return object.map((_) => convertForRemoteManager(manager, _)).toList();
     } else if (object is Map) {
@@ -70,7 +64,7 @@ class StandardReferenceConverter implements ReferenceConverter {
 
   /// Converts arguments to be used with a [LocalReference].
   ///
-  /// A [ReferencePairManager] uses this when creating or invoking a method on
+  /// A [RemoteReferenceMap] uses this when creating or invoking a method on
   /// a [LocalReference].
   ///
   /// Conversions:
@@ -82,19 +76,17 @@ class StandardReferenceConverter implements ReferenceConverter {
   ///     applied to each key and each value.
   @override
   Object convertForLocalManager(
-    ReferencePairManager manager,
+    ReferenceChannelManager manager,
     Object object,
   ) {
     if (object is RemoteReference) {
-      return manager.getPairedLocalReference(object);
+      return manager.referencePairs.getPairedObject(object);
     } else if (object is UnpairedReference) {
-      return manager.localHandler.create(
-        manager,
-        manager.getReferenceType(object.typeId),
-        object.creationArguments
-            .map((_) => convertForLocalManager(manager, _))
-            .toList(),
-      );
+      return manager.getChannelHandler(object.handlerChannel).createInstance(
+            manager,
+            // manager.getReferenceType(object.typeId),
+            convertForLocalManager(manager, object.creationArguments),
+          );
     } else if (object is List) {
       return object.map((_) => convertForLocalManager(manager, _)).toList();
     } else if (object is Map) {

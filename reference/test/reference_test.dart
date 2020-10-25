@@ -5,7 +5,7 @@ import 'package:reference/reference.dart';
 import 'reference_matchers.dart';
 
 void main() {
-  group('$ReferencePairManager', () {
+  group('$RemoteReferenceMap', () {
     TestReferencePairManager testManager;
 
     setUp(() {
@@ -13,10 +13,10 @@ void main() {
     });
 
     test('pairWithNewLocalReference', () {
-      when(testManager.localHandler.create(testManager, TestClass, any))
+      when(testManager.localHandler.createInstance(testManager, TestClass, any))
           .thenReturn(TestClass());
 
-      final TestClass result = testManager.pairWithNewLocalReference(
+      final TestClass result = testManager.onReceiveCreateNewPair(
         RemoteReference('apple'),
         0,
       );
@@ -35,7 +35,7 @@ void main() {
           testManager,
           argThat(isEmpty),
         ),
-        testManager.localHandler.create(
+        testManager.localHandler.createInstance(
           testManager,
           TestClass,
           argThat(isEmpty),
@@ -44,24 +44,24 @@ void main() {
     });
 
     test('pairWithNewLocalReference returns null', () {
-      when(testManager.localHandler.create(testManager, TestClass, any))
+      when(testManager.localHandler.createInstance(testManager, TestClass, any))
           .thenReturn(TestClass());
 
-      testManager.pairWithNewLocalReference(RemoteReference('apple'), 0);
+      testManager.onReceiveCreateNewPair(RemoteReference('apple'), 0);
       expect(
-        testManager.pairWithNewLocalReference(RemoteReference('apple'), 0),
+        testManager.onReceiveCreateNewPair(RemoteReference('apple'), 0),
         isNull,
       );
     });
 
     test('invokeLocalStaticMethod', () {
-      testManager.invokeLocalStaticMethod(TestClass, 'aStaticMethod');
+      testManager.onReceiveInvokeStaticMethod(TestClass, 'aStaticMethod');
       verifyInOrder([
         testManager.converter.mock.convertForLocalManager(
           testManager,
           argThat(isNull),
         ),
-        testManager.localHandler.invokeStaticMethod(
+        testManager.localHandler.sendInvokeStaticMethod(
           testManager,
           TestClass,
           'aStaticMethod',
@@ -75,22 +75,22 @@ void main() {
     });
 
     test('invokeLocalMethod', () {
-      when(testManager.localHandler.create(testManager, TestClass, any))
+      when(testManager.localHandler.createInstance(testManager, TestClass, any))
           .thenAnswer((_) => TestClass());
 
-      final TestClass testClass = testManager.pairWithNewLocalReference(
+      final TestClass testClass = testManager.onReceiveCreateNewPair(
         RemoteReference('chi'),
         0,
       );
 
-      testManager.invokeLocalMethod(testClass, 'aMethod');
+      testManager.onReceiveInvokeMethod(testClass, 'aMethod');
 
       verifyInOrder([
         testManager.converter.mock.convertForLocalManager(
           testManager,
           argThat(isNull),
         ),
-        testManager.localHandler.invokeMethod(
+        testManager.localHandler.sendInvokeMethod(
           testManager,
           testClass,
           'aMethod',
@@ -104,16 +104,16 @@ void main() {
     });
 
     test('invokeLocalMethodOnUnpairedReference', () {
-      when(testManager.localHandler.create(testManager, TestClass, any))
+      when(testManager.localHandler.createInstance(testManager, TestClass, any))
           .thenReturn(TestClass());
 
-      testManager.invokeLocalMethodOnUnpairedReference(
+      testManager.onReceiveInvokeMethodOnUnpairedReference(
         UnpairedReference(0, <Object>[]),
         'aMethod',
       );
 
       verify(
-        testManager.localHandler.invokeMethod(
+        testManager.localHandler.sendInvokeMethod(
           testManager,
           argThat(isA<TestClass>()),
           'aMethod',
@@ -123,17 +123,17 @@ void main() {
     });
 
     test('disposePairWithRemoteReference', () {
-      when(testManager.localHandler.create(testManager, TestClass, any))
+      when(testManager.localHandler.createInstance(testManager, TestClass, any))
           .thenReturn(TestClass());
 
-      final TestClass testClass = testManager.pairWithNewLocalReference(
+      final TestClass testClass = testManager.onReceiveCreateNewPair(
         RemoteReference('tea'),
         0,
       );
 
-      testManager.disposePairWithRemoteReference(RemoteReference('tea'));
+      testManager.onReceiveDisposePair(RemoteReference('tea'));
 
-      verify(testManager.localHandler.dispose(testManager, testClass));
+      verify(testManager.localHandler.onInstanceDisposed(testManager, testClass));
       expect(
         testManager.getPairedLocalReference(RemoteReference('tea')),
         isNull,
@@ -160,7 +160,7 @@ void main() {
           testManager,
           argThat(isEmpty),
         ),
-        testManager.remoteHandler.create(remoteReference, 0, argThat(isEmpty)),
+        testManager.remoteHandler.createInstance(remoteReference, 0, argThat(isEmpty)),
       ]);
     });
 
@@ -178,13 +178,13 @@ void main() {
     });
 
     test('invokeRemoteStaticMethod', () async {
-      await testManager.invokeRemoteStaticMethod(TestClass, 'aStaticMethod');
+      await testManager.invokeStaticMethod(TestClass, 'aStaticMethod');
       verifyInOrder([
         testManager.converter.mock.convertForRemoteManager(
           testManager,
           argThat(isNull),
         ),
-        testManager.remoteHandler.invokeStaticMethod(
+        testManager.remoteHandler.sendInvokeStaticMethod(
           0,
           'aStaticMethod',
           argThat(isEmpty),
@@ -203,7 +203,7 @@ void main() {
       when(testManager.remoteHandler.getCreationArguments(any))
           .thenReturn(<Object>[]);
 
-      await testManager.invokeRemoteMethod(
+      await testManager.invokeMethod(
         testManager.getPairedRemoteReference(testClass),
         'aMethod',
       );
@@ -213,7 +213,7 @@ void main() {
           testManager,
           argThat(isNull),
         ),
-        testManager.remoteHandler.invokeMethod(
+        testManager.remoteHandler.sendInvokeMethod(
           testManager.getPairedRemoteReference(testClass),
           'aMethod',
           argThat(isEmpty),
@@ -227,7 +227,7 @@ void main() {
         when(testManager.remoteHandler.getCreationArguments(any))
             .thenReturn(<Object>[]);
 
-        await testManager.invokeRemoteMethodOnUnpairedReference(
+        await testManager.invokeMethodOnUnpairedReference(
           TestClass(),
           'aMethod',
         );
@@ -236,7 +236,7 @@ void main() {
           testManager,
           any,
         )).called(2);
-        verify(testManager.remoteHandler.invokeMethodOnUnpairedReference(
+        verify(testManager.remoteHandler.sendInvokeMethodOnUnpairedReference(
           argThat(isUnpairedReference(0, <Object>[], null)),
           'aMethod',
           argThat(isEmpty),
@@ -251,7 +251,7 @@ void main() {
           await testManager.pairWithNewRemoteReference(
         testClass,
       );
-      testManager.disposePairWithLocalReference(testClass);
+      testManager.disposePair(testClass);
 
       expect(testManager.getPairedLocalReference(remoteReference), isNull);
       expect(testManager.getPairedRemoteReference(testClass), isNull);
@@ -307,7 +307,7 @@ class TestClass2 extends TestClass {
   Type get referenceType => TestClass2;
 }
 
-class TestReferencePairManager extends ReferencePairManager {
+class TestReferencePairManager extends RemoteReferenceMap {
   TestReferencePairManager() : super(<Type>[TestClass]);
 
   @override
@@ -334,10 +334,10 @@ class TestPoolableReferencePairManager extends PoolableReferencePairManager {
 }
 
 class MockRemoteHandler extends Mock
-    implements RemoteReferenceCommunicationHandler {}
+    implements MessageSender {}
 
 class MockLocalHandler extends Mock
-    implements LocalReferenceCommunicationHandler {}
+    implements ReferenceChannelHandler {}
 
 class MockReferenceConverter extends Mock implements ReferenceConverter {}
 
@@ -348,7 +348,7 @@ class SpyReferenceConverter extends StandardReferenceConverter {
 
   @override
   Object convertForRemoteManager(
-    ReferencePairManager manager,
+    RemoteReferenceMap manager,
     Object object,
   ) {
     mock.convertForRemoteManager(manager, object);
@@ -357,7 +357,7 @@ class SpyReferenceConverter extends StandardReferenceConverter {
 
   @override
   Object convertForLocalManager(
-    ReferencePairManager manager,
+    RemoteReferenceMap manager,
     Object object,
   ) {
     mock.convertForLocalManager(manager, object);

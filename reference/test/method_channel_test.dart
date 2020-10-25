@@ -37,7 +37,7 @@ void main() {
     });
   });
 
-  group('$MethodChannelReferencePairManager', () {
+  group('$MethodChannelReferenceChannelManager', () {
     final List<MethodCall> methodCallLog = <MethodCall>[];
     TestReferencePairManager testManager;
 
@@ -80,7 +80,7 @@ void main() {
     });
 
     test('invokeRemoteStaticMethod', () async {
-      final int result = await testManager.invokeRemoteStaticMethod(
+      final int result = await testManager.invokeStaticMethod(
         TestClass,
         'aStaticMethod',
       );
@@ -100,7 +100,7 @@ void main() {
       testManager.pairWithNewRemoteReference(testClass);
       methodCallLog.clear();
 
-      final String result = await testManager.invokeRemoteMethod(
+      final String result = await testManager.invokeMethod(
         testManager.getPairedRemoteReference(testClass),
         'aMethod',
       );
@@ -117,7 +117,7 @@ void main() {
 
     test('invokeRemoteMethodOnUnpairedReference', () async {
       final String result = await testManager
-          .invokeRemoteMethodOnUnpairedReference(TestClass(), 'aMethod');
+          .invokeMethodOnUnpairedReference(TestClass(), 'aMethod');
 
       expect(result, equals('polo'));
       expect(methodCallLog, <Matcher>[
@@ -137,7 +137,7 @@ void main() {
           testManager.getPairedRemoteReference(testClass);
       methodCallLog.clear();
 
-      testManager.disposePairWithLocalReference(testClass);
+      testManager.disposePair(testClass);
 
       expect(methodCallLog, <Matcher>[
         isMethodCall(
@@ -148,7 +148,7 @@ void main() {
     });
 
     test('pairWithNewLocalReference', () async {
-      when(testManager.localHandler.create(testManager, TestClass, any))
+      when(testManager.localHandler.createInstance(testManager, TestClass, any))
           .thenReturn(TestClass());
 
       await testManager.channel.binaryMessenger.handlePlatformMessage(
@@ -174,7 +174,7 @@ void main() {
 
     test('invokeLocalStaticMethod', () async {
       when(
-        testManager.localHandler.invokeStaticMethod(
+        testManager.localHandler.sendInvokeStaticMethod(
           testManager,
           TestClass,
           'aStaticMethod',
@@ -198,7 +198,7 @@ void main() {
         },
       );
 
-      verify(testManager.localHandler.invokeStaticMethod(
+      verify(testManager.localHandler.sendInvokeStaticMethod(
         testManager,
         TestClass,
         'aStaticMethod',
@@ -213,7 +213,7 @@ void main() {
       testManager.pairWithNewRemoteReference(testClass);
 
       when(
-        testManager.localHandler.invokeMethod(
+        testManager.localHandler.sendInvokeMethod(
           testManager,
           testClass,
           'aMethod',
@@ -241,7 +241,7 @@ void main() {
         },
       );
 
-      verify(testManager.localHandler.invokeMethod(
+      verify(testManager.localHandler.sendInvokeMethod(
         testManager,
         testClass,
         'aMethod',
@@ -251,11 +251,11 @@ void main() {
     });
 
     test('invokeLocalMethodOnUnpairedReference', () async {
-      when(testManager.localHandler.create(testManager, TestClass, any))
+      when(testManager.localHandler.createInstance(testManager, TestClass, any))
           .thenReturn(TestClass());
 
       when(
-        testManager.localHandler.invokeMethod(
+        testManager.localHandler.sendInvokeMethod(
           testManager,
           any,
           'aMethod',
@@ -283,7 +283,7 @@ void main() {
         },
       );
 
-      verify(testManager.localHandler.invokeMethod(
+      verify(testManager.localHandler.sendInvokeMethod(
         testManager,
         any,
         'aMethod',
@@ -309,7 +309,7 @@ void main() {
         (ByteData data) {},
       );
 
-      verify(testManager.localHandler.dispose(testManager, testClass));
+      verify(testManager.localHandler.onInstanceDisposed(testManager, testClass));
       expect(testManager.getPairedLocalReference(remoteReference), isNull);
     });
   });
@@ -320,19 +320,19 @@ class TestClass with LocalReference {
   Type get referenceType => TestClass;
 }
 
-class TestReferencePairManager extends MethodChannelReferencePairManager {
+class TestReferencePairManager extends MethodChannelReferenceChannelManager {
   TestReferencePairManager() : super(<Type>[TestClass], 'test_channel');
 
   final MockLocalHandler _localHandler = MockLocalHandler();
 
   @override
-  LocalReferenceCommunicationHandler get localHandler => _localHandler;
+  ReferenceChannelHandler get localHandler => _localHandler;
 
   @override
-  MethodChannelRemoteHandler get remoteHandler => TestRemoteHandler();
+  MethodChannelReferenceChannelMessenger get remoteHandler => TestRemoteHandler();
 }
 
-class TestRemoteHandler extends MethodChannelRemoteHandler {
+class TestRemoteHandler extends MethodChannelReferenceChannelMessenger {
   TestRemoteHandler() : super('test_channel');
 
   @override
@@ -342,4 +342,4 @@ class TestRemoteHandler extends MethodChannelRemoteHandler {
 }
 
 class MockLocalHandler extends Mock
-    implements LocalReferenceCommunicationHandler {}
+    implements ReferenceChannelHandler {}

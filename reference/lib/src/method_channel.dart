@@ -3,79 +3,76 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
-import 'poolable.dart';
-import 'reference_pair_manager.dart';
+import 'reference_channel_manager.dart';
 import 'reference.dart';
 
-/// Abstract implementation of [ReferencePairManager] using [MethodChannel]s.
-abstract class MethodChannelReferencePairManager
-    extends PoolableReferencePairManager {
-  /// Default constructor for [MethodChannelReferencePairManager].
+/// Abstract implementation of [RemoteReferenceMap] using [MethodChannel]s.
+class MethodChannelReferenceChannelManager extends ReferenceChannelManager {
+  /// Default constructor for [MethodChannelReferenceChannelManager].
   ///
   /// If [poolId] is passed as `null`, it will be set to [channelName].
   /// If [messageCodec] is passed as `null`, it will be set to
   /// [ReferenceMessageCodec].
-  MethodChannelReferencePairManager(
-    List<Type> supportedTypes,
-    String channelName, {
-    String poolId,
-    ReferenceMessageCodec messageCodec,
-  })  : channel = MethodChannel(
-            channelName,
-            StandardMethodCodec(
-              messageCodec ?? ReferenceMessageCodec(),
-            )),
-        super(supportedTypes, poolId ?? channelName);
+  // @visibleForTesting
+  MethodChannelReferenceChannelManager(String channelName)
+      : channel = MethodChannel(
+          channelName,
+          StandardMethodCodec(ReferenceMessageCodec()),
+        );
 
   static const String _methodCreate = 'REFERENCE_CREATE';
   static const String _methodStaticMethod = 'REFERENCE_STATIC_METHOD';
   static const String _methodMethod = 'REFERENCE_METHOD';
+  static const String _methodUnpairedMethod = 'REFERENCE_UNPAIRED_METHOD';
   static const String _methodDispose = 'REFERENCE_DISPOSE';
 
-  /// [MethodChannel] used to communicate with a remote [ReferencePairManager].
+  static final MethodChannelReferenceChannelManager instance =
+      MethodChannelReferenceChannelManager('github.penguin/reference')..initialize();
+
+  /// [MethodChannel] used to communicate with a remote [RemoteReferenceMap].
   final MethodChannel channel;
 
   @override
-  MethodChannelRemoteHandler get remoteHandler;
+  MethodChannelReferenceChannelMessenger get messenger =>
+      MethodChannelReferenceChannelMessenger(channel.name);
 
   @override
   void initialize() {
     super.initialize();
     channel.setMethodCallHandler((MethodCall call) async {
       try {
-        if (call.method == MethodChannelReferencePairManager._methodCreate) {
-          pairWithNewLocalReference(
+        if (call.method == MethodChannelReferenceChannelManager._methodCreate) {
+          onReceiveCreateNewPair(
             call.arguments[0],
             call.arguments[1],
             call.arguments[2],
           );
           return null;
         } else if (call.method ==
-            MethodChannelReferencePairManager._methodStaticMethod) {
-          return invokeLocalStaticMethod(
-            getReferenceType(call.arguments[0]),
-            call.arguments[1],
-            call.arguments[2],
-          );
-        } else if (call.method ==
-                MethodChannelReferencePairManager._methodMethod &&
-            call.arguments[0] is UnpairedReference) {
-          return invokeLocalMethodOnUnpairedReference(
+            MethodChannelReferenceChannelManager._methodStaticMethod) {
+          return onReceiveInvokeStaticMethod(
             call.arguments[0],
             call.arguments[1],
             call.arguments[2],
           );
         } else if (call.method ==
-                MethodChannelReferencePairManager._methodMethod &&
-            call.arguments[0] is RemoteReference) {
-          return invokeLocalMethod(
-            getPairedLocalReference(call.arguments[0]),
+            MethodChannelReferenceChannelManager._methodMethod) {
+          return onReceiveInvokeMethodOnUnpairedReference(
+            call.arguments[0],
             call.arguments[1],
             call.arguments[2],
           );
         } else if (call.method ==
-            MethodChannelReferencePairManager._methodDispose) {
-          disposePairWithRemoteReference(call.arguments);
+            MethodChannelReferenceChannelManager._methodUnpairedMethod) {
+          return onReceiveInvokeMethod(
+            call.arguments[0],
+            call.arguments[0],
+            call.arguments[1],
+            call.arguments[2],
+          );
+        } else if (call.method ==
+            MethodChannelReferenceChannelManager._methodDispose) {
+          onReceiveDisposePair(call.arguments[0], call.arguments[1]);
           return null;
         }
 
@@ -88,77 +85,133 @@ abstract class MethodChannelReferencePairManager
   }
 }
 
-/// Implementation of [RemoteReferenceCommunicationHandler] for [MethodChannel]s.
+/// Implementation of [MessageSender] for [MethodChannel]s.
 ///
-/// Used in [MethodChannelReferencePairManager] to handle communication with
+/// Used in [MethodChannelReferenceChannelManager] to handle communication with
 /// [RemoteReference]s.
-abstract class MethodChannelRemoteHandler
-    with RemoteReferenceCommunicationHandler {
-  MethodChannelRemoteHandler(
-    String channelName, [
-    ReferenceMessageCodec messageCodec,
-  ]) : channel = MethodChannel(
-            channelName,
-            StandardMethodCodec(
-              messageCodec ?? ReferenceMessageCodec(),
-            ));
+class MethodChannelReferenceChannelMessenger with ReferenceChannelMessenger {
+  MethodChannelReferenceChannelMessenger(String channelName)
+      : channel = MethodChannel(
+          channelName,
+          StandardMethodCodec(ReferenceMessageCodec()),
+        );
 
-  /// [MethodChannel] used to communicate with a remote [ReferencePairManager].
+  /// [MethodChannel] used to communicate with a remote [RemoteReferenceMap].
   final MethodChannel channel;
 
+  // @override
+  // Future<void> create(
+  //   RemoteReference remoteReference,
+  //   int typeId,
+  //   List<Object> arguments,
+  // ) {
+  //   return channel.invokeMethod<void>(
+  //     MethodChannelReferenceChannelManager._methodCreate,
+  //     <Object>[remoteReference, typeId, arguments],
+  //   );
+  // }
+  //
+  // @override
+  // Future<Object> invokeStaticMethod(
+  //   int typeId,
+  //   String methodName,
+  //   List<Object> arguments,
+  // ) {
+  //   return channel.invokeMethod<Object>(
+  //     MethodChannelReferenceChannelManager._methodStaticMethod,
+  //     <Object>[typeId, methodName, arguments],
+  //   );
+  // }
+  //
+  // @override
+  // Future<Object> invokeMethod(
+  //   RemoteReference remoteReference,
+  //   String methodName,
+  //   List<Object> arguments,
+  // ) {
+  //   return channel.invokeMethod<Object>(
+  //     MethodChannelReferenceChannelManager._methodMethod,
+  //     <Object>[remoteReference, methodName, arguments],
+  //   );
+  // }
+  //
+  // @override
+  // Future<void> dispose(RemoteReference remoteReference) {
+  //   return channel.invokeMethod<void>(
+  //     MethodChannelReferenceChannelManager._methodDispose,
+  //     remoteReference,
+  //   );
+  // }
+  //
+  // @override
+  // Future<Object> invokeMethodOnUnpairedReference(
+  //   UnpairedReference unpairedReference,
+  //   String methodName,
+  //   List<Object> arguments,
+  // ) {
+  //   return channel.invokeMethod<Object>(
+  //     MethodChannelReferenceChannelManager._methodMethod,
+  //     <Object>[unpairedReference, methodName, arguments],
+  //   );
+  // }
+
   @override
-  Future<void> create(
+  Future<void> sendCreateNewPair(
+    String handlerChannel,
     RemoteReference remoteReference,
-    int typeId,
     List<Object> arguments,
   ) {
     return channel.invokeMethod<void>(
-      MethodChannelReferencePairManager._methodCreate,
-      <Object>[remoteReference, typeId, arguments],
+      MethodChannelReferenceChannelManager._methodCreate,
+      <Object>[handlerChannel, remoteReference, arguments],
     );
   }
 
   @override
-  Future<Object> invokeStaticMethod(
-    int typeId,
+  Future<Object> sendInvokeStaticMethod(
+    String handlerChannel,
     String methodName,
     List<Object> arguments,
   ) {
     return channel.invokeMethod<Object>(
-      MethodChannelReferencePairManager._methodStaticMethod,
-      <Object>[typeId, methodName, arguments],
+      MethodChannelReferenceChannelManager._methodStaticMethod,
+      <Object>[handlerChannel, methodName, arguments],
     );
   }
 
   @override
-  Future<Object> invokeMethod(
+  Future<Object> sendInvokeMethod(
+    String handlerChannel,
     RemoteReference remoteReference,
     String methodName,
     List<Object> arguments,
   ) {
     return channel.invokeMethod<Object>(
-      MethodChannelReferencePairManager._methodMethod,
-      <Object>[remoteReference, methodName, arguments],
+      MethodChannelReferenceChannelManager._methodMethod,
+      <Object>[handlerChannel, remoteReference, methodName, arguments],
     );
   }
 
   @override
-  Future<void> dispose(RemoteReference remoteReference) {
-    return channel.invokeMethod<void>(
-      MethodChannelReferencePairManager._methodDispose,
-      remoteReference,
-    );
-  }
-
-  @override
-  Future<Object> invokeMethodOnUnpairedReference(
+  Future<Object> sendInvokeMethodOnUnpairedReference(
     UnpairedReference unpairedReference,
     String methodName,
     List<Object> arguments,
   ) {
     return channel.invokeMethod<Object>(
-      MethodChannelReferencePairManager._methodMethod,
+      MethodChannelReferenceChannelManager._methodUnpairedMethod,
       <Object>[unpairedReference, methodName, arguments],
+    );
+  }
+
+  @override
+  Future<void> sendDisposePair(
+    String handlerChannel,
+    RemoteReference remoteReference,
+  ) {
+    return channel.invokeMethod<void>(
+      MethodChannelReferenceChannelManager._methodDispose,
+      <Object>[handlerChannel, remoteReference],
     );
   }
 }
@@ -180,9 +233,8 @@ class ReferenceMessageCodec extends StandardMessageCodec {
       writeValue(buffer, value.referenceId);
     } else if (value is UnpairedReference) {
       buffer.putUint8(_valueUnpairedReference);
-      writeValue(buffer, value.typeId);
+      writeValue(buffer, value.handlerChannel);
       writeValue(buffer, value.creationArguments);
-      writeValue(buffer, value.managerPoolId);
     } else {
       super.writeValue(buffer, value);
     }
@@ -195,7 +247,6 @@ class ReferenceMessageCodec extends StandardMessageCodec {
         return RemoteReference(readValueOfType(buffer.getUint8(), buffer));
       case _valueUnpairedReference:
         return UnpairedReference(
-          readValueOfType(buffer.getUint8(), buffer),
           readValueOfType(buffer.getUint8(), buffer),
           readValueOfType(buffer.getUint8(), buffer),
         );

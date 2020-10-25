@@ -108,7 +108,7 @@ void main() {
     });
 
     test('convertForLocalManager handles $UnpairedReference', () async {
-      when(testManager.localHandler.create(any, any, any))
+      when(testManager.localHandler.createInstance(any, any, any))
           .thenReturn(TestClass());
 
       expect(
@@ -239,10 +239,10 @@ void main() {
     });
 
     test('convertForLocalManager handles $UnpairedReference', () async {
-      when(testManager1.localHandler.create(any, any, any))
+      when(testManager1.localHandler.createInstance(any, any, any))
           .thenReturn(TestClass());
 
-      when(testManager2.localHandler.create(any, any, any))
+      when(testManager2.localHandler.createInstance(any, any, any))
           .thenReturn(TestClass2());
 
       expect(
@@ -273,7 +273,7 @@ class TestClass2 extends TestClass {
   Type get referenceType => TestClass2;
 }
 
-class TestReferencePairManager extends ReferencePairManager {
+class TestReferencePairManager extends RemoteReferenceMap {
   TestReferencePairManager() : super(<Type>[TestClass]);
 
   @override
@@ -297,7 +297,7 @@ class TestPoolableReferencePairManager extends PoolableReferencePairManager {
 }
 
 class MockRemoteHandler extends Mock
-    implements RemoteReferenceCommunicationHandler {}
+    implements MessageSender {}
 
 class MockLocalHandler extends Mock
-    implements LocalReferenceCommunicationHandler {}
+    implements ReferenceChannelHandler {}

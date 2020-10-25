@@ -6,206 +6,138 @@ import 'package:reference/reference.dart';
 // ReferenceGenerator
 // **************************************************************************
 
-// Helper Typedefs
-typedef _$LocalCreatorHandler = LocalReference Function(
-  $LocalHandler localHandler,
-  ReferencePairManager manager,
-  List<Object> arguments,
-);
-
-typedef _$LocalStaticMethodHandler = Object Function(
-  $LocalHandler localHandler,
-  ReferencePairManager manager,
-  List<Object> arguments,
-);
-
-typedef _$LocalMethodHandler = Object Function(
-  LocalReference localReference,
-  List<Object> arguments,
-);
-
-typedef _$CreationArgumentsHandler = List<Object> Function(
-  LocalReference localReference,
-);
-
-// Classes
-abstract class $ClassTemplate implements LocalReference {
+mixin $ClassTemplate {
   int get fieldTemplate;
-
   Future<String> methodTemplate(String parameterTemplate);
-
-  @override
-  Type get referenceType => $ClassTemplate;
 }
 
 class $ClassTemplateCreationArgs {
   int fieldTemplate;
 }
 
-// Class Extensions
-extension $ClassTemplateMethods on $ClassTemplate {
-  static Future<Object> $staticMethodTemplate(
-      $ReferencePairManager referencePairManager, String parameterTemplate) {
-    return referencePairManager.invokeRemoteStaticMethod(
-      $ClassTemplate,
-      'staticMethodTemplate',
-      <Object>[parameterTemplate],
-    );
+class $ClassTemplateHandler implements ReferenceChannelHandler {
+  $ClassTemplateHandler(
+      {this.onCreateClassTemplate,
+      this.onDisposeClassTemplate,
+      this.$onStaticMethodTemplate});
+
+  static const $handlerChannel = 'github.penguin/reference/template';
+
+  final $ClassTemplate Function(
+          ReferenceChannelManager manager, $ClassTemplateCreationArgs args)
+      onCreateClassTemplate;
+
+  final void Function(ReferenceChannelManager manager, $ClassTemplate instance)
+      onDisposeClassTemplate;
+
+  final double Function(
+          ReferenceChannelManager manager, String parameterTemplate)
+      $onStaticMethodTemplate;
+
+  static Future<void> $createPair(
+      MethodChannelReferenceChannelManager manager, $ClassTemplate instance) {
+    return manager.createNewPair($handlerChannel, instance);
   }
 
-  Future<Object> $methodTemplate(
-      $ReferencePairManager referencePairManager, String parameterTemplate) {
-    if (referencePairManager.getPairedRemoteReference(this) == null) {
-      return referencePairManager.invokeRemoteMethodOnUnpairedReference(
-        this,
-        'methodTemplate',
-        <Object>[parameterTemplate],
+  static Future<Object> $invokeStaticMethodTemplate(
+      MethodChannelReferenceChannelManager manager, String parameterTemplate) {
+    final String $methodName = 'staticMethodTemplate';
+    final List<Object> $arguments = <Object>[parameterTemplate];
+
+    return manager.invokeStaticMethod($handlerChannel, $methodName, $arguments);
+  }
+
+  // TODO: handle difference between an instance vs regular
+  static Future<Object> $invokeMethodTemplate(
+      MethodChannelReferenceChannelManager manager,
+      $ClassTemplate instance,
+      String parameterTemplate) {
+    final RemoteReference $remoteReference =
+        manager.referencePairs.getPairedRemoteReference(instance);
+    final String $methodName = 'methodName';
+    final List<Object> $arguments = <Object>[
+      manager.referencePairs.getPairedRemoteReference(parameterTemplate) == null
+          ? parameterTemplate
+          : manager.createUnpairedReference('channel', parameterTemplate)
+    ];
+
+    if ($remoteReference == null) {
+      return manager.invokeMethodOnUnpairedReference(
+        $handlerChannel,
+        instance,
+        $methodName,
+        $arguments,
       );
     }
 
-    return referencePairManager.invokeRemoteMethod(
-      referencePairManager.getPairedRemoteReference(this),
-      'methodTemplate',
-      <Object>[parameterTemplate],
+    return manager.invokeMethod(
+      $handlerChannel,
+      $remoteReference,
+      $methodName,
+      $arguments,
     );
   }
-}
 
-// Reference Pair Manager
-abstract class $ReferencePairManager extends MethodChannelReferencePairManager {
-  $ReferencePairManager(
-    String channelName, {
-    ReferenceMessageCodec messageCodec,
-  }) : super(
-          <Type>[$ClassTemplate],
-          channelName,
-          messageCodec: messageCodec,
-          poolId: channelName,
-        );
-
-  @override
-  $LocalHandler get localHandler;
-
-  @override
-  MethodChannelRemoteHandler get remoteHandler => $RemoteHandler(channel.name);
-}
-
-// LocalReferenceCommunicationHandler
-class $LocalHandler with LocalReferenceCommunicationHandler {
-  const $LocalHandler(
-      {this.createClassTemplate, this.classTemplate$staticMethodTemplate});
-
-  static final Map<Type, _$LocalCreatorHandler> _creators =
-      <Type, _$LocalCreatorHandler>{
-    $ClassTemplate: (
-      $LocalHandler localHandler,
-      ReferencePairManager manager,
-      List<Object> arguments,
-    ) {
-      return localHandler.createClassTemplate(
-          manager, $ClassTemplateCreationArgs()..fieldTemplate = arguments[0]);
-    }
-  };
-
-  static final Map<Type, Map<String, _$LocalStaticMethodHandler>>
-      _staticMethods = <Type, Map<String, _$LocalStaticMethodHandler>>{
-    $ClassTemplate: <String, _$LocalStaticMethodHandler>{
-      'staticMethodTemplate': (
-        $LocalHandler localHandler,
-        ReferencePairManager manager,
-        List<Object> arguments,
-      ) {
-        return localHandler.classTemplate$staticMethodTemplate(
-            manager, arguments[0]);
-      }
-    }
-  };
-
-  static final Map<Type, Map<String, _$LocalMethodHandler>> _methods =
-      <Type, Map<String, _$LocalMethodHandler>>{
-    $ClassTemplate: <String, _$LocalMethodHandler>{
-      'methodTemplate': (
-        LocalReference localReference,
-        List<Object> arguments,
-      ) {
-        return (localReference as $ClassTemplate).methodTemplate(arguments[0]);
-      }
-    }
-  };
-
-  final double Function(ReferencePairManager manager, String parameterTemplate)
-      classTemplate$staticMethodTemplate;
-
-  final $ClassTemplate Function(
-          ReferencePairManager manager, $ClassTemplateCreationArgs args)
-      createClassTemplate;
-
-  @override
-  LocalReference create(
-    ReferencePairManager manager,
-    Type referenceType,
-    List<Object> arguments,
+  static Future<void> $disposePair(
+    MethodChannelReferenceChannelManager manager,
+    $ClassTemplate instance,
   ) {
-    return _creators[referenceType](this, manager, arguments);
+    return manager.disposePair($handlerChannel, instance);
   }
 
   @override
-  Object invokeStaticMethod(
-    ReferencePairManager referencePairManager,
-    Type referenceType,
-    String methodName,
+  Object createInstance(
+    ReferenceChannelManager manager,
     List<Object> arguments,
   ) {
-    return _staticMethods[referenceType][methodName](
-      this,
-      referencePairManager,
-      arguments,
-    );
+    return onCreateClassTemplate(
+        manager, $ClassTemplateCreationArgs()..fieldTemplate = arguments[0]);
+  }
+
+  @override
+  List<Object> getCreationArguments(Object instance) {
+    return <Object>[(instance as $ClassTemplate).fieldTemplate];
   }
 
   @override
   Object invokeMethod(
-    ReferencePairManager referencePairManager,
-    LocalReference localReference,
+    ReferenceChannelManager manager,
+    Object instance,
     String methodName,
     List<Object> arguments,
   ) {
-    final _$LocalMethodHandler handler =
-        _methods[localReference.referenceType][methodName];
-    if (handler != null) return handler(localReference, arguments);
-
-    // Based on inheritance.
-    if (localReference is $ClassTemplate) {
-      switch (methodName) {
-        case 'methodTemplate':
-          return localReference.methodTemplate(arguments[0]);
-      }
+    switch (methodName) {
+      case 'methodTemplate':
+        return (instance as $ClassTemplate).methodTemplate(arguments[0]);
     }
 
     throw ArgumentError.value(
-      localReference,
-      'localReference',
+      instance,
+      'instance',
       'Unable to invoke method `$methodName` on',
     );
   }
-}
-
-// MethodChannelRemoteHandler
-class $RemoteHandler extends MethodChannelRemoteHandler {
-  $RemoteHandler(
-    String channelName, [
-    ReferenceMessageCodec messageCodec,
-  ]) : super(channelName, messageCodec);
-
-  static final Map<Type, _$CreationArgumentsHandler> _creationArguments =
-      <Type, _$CreationArgumentsHandler>{
-    $ClassTemplate: (LocalReference localReference) {
-      return <Object>[(localReference as $ClassTemplate).fieldTemplate];
-    }
-  };
 
   @override
-  List<Object> getCreationArguments(LocalReference localReference) {
-    return _creationArguments[localReference.referenceType](localReference);
+  Object invokeStaticMethod(
+    ReferenceChannelManager manager,
+    String methodName,
+    List<Object> arguments,
+  ) {
+    switch (methodName) {
+      case 'staticMethodTemplate':
+        return $onStaticMethodTemplate(manager, arguments[0]);
+    }
+
+    throw ArgumentError.value(
+      methodName,
+      'methodName',
+      'Unable to invoke static method `$methodName`',
+    );
+  }
+
+  @override
+  void onInstanceDisposed(ReferenceChannelManager manager, Object instance) {
+    onDisposeClassTemplate(manager, instance);
   }
 }

@@ -8,18 +8,18 @@ class Reference {
   const Reference();
 }
 
-/// Represents an object that is locally accessible.
-///
-/// This is a mixin that allows a [ReferencePairManager] to know that a
-/// class is able be paired with a [RemoteReference].
-mixin LocalReference implements Reference {
-  /// The unique [Type] used to represent this class in a [ReferencePairManager].
-  ///
-  /// The [Type] returned by this value should be added to
-  /// [ReferencePairManager.supportedTypes] of the [ReferencePairManager] that
-  /// supports this class.
-  Type get referenceType;
-}
+// /// Represents an object that is locally accessible.
+// ///
+// /// This is a mixin that allows a [ReferencePairManager] to know that a
+// /// class is able be paired with a [RemoteReference].
+// mixin LocalReference implements Reference {
+//   /// The unique [Type] used to represent this class in a [ReferencePairManager].
+//   ///
+//   /// The [Type] returned by this value should be added to
+//   /// [ReferencePairManager.supportedTypes] of the [ReferencePairManager] that
+//   /// supports this class.
+//   Type get referenceType;
+// }
 
 /// Represents an object that is remotely accessible.
 ///
@@ -54,31 +54,33 @@ class RemoteReference implements Reference {
 /// [RemoteReference] when a [ReferencePairManager] passes arguments to a
 /// [RemoteReferenceCommunicationHandler].
 ///
-/// When passed to [ReferencePairManager.invokeLocalMethod] or
-/// [ReferencePairManager.invokeLocalMethodOnUnpairedReference], the
+/// When passed to [ReferencePairManager.onReceiveInvokeMethod] or
+/// [ReferencePairManager.onReceiveInvokeMethodOnUnpairedReference], the
 /// [ReferencePairManager] will try to convert it into a [LocalReference] with
-/// [LocalReferenceCommunicationHandler.create].
+/// [LocalReferenceCommunicationHandler.createInstance].
 class UnpairedReference implements Reference {
   const UnpairedReference(
-    this.typeId,
-    this.creationArguments, [
-    this.managerPoolId,
-  ])  : assert(typeId != null),
-        assert(creationArguments != null);
+    // this.typeId,
+    this.handlerChannel,
+    this.creationArguments,
+    // this.managerPoolId,
+  );
 
-  /// Serialized version of type that is represented.
-  ///
-  /// This is derived from the indexes of [ReferencePairManager.supportedTypes].
-  final int typeId;
+  // /// Serialized version of type that is represented.
+  // ///
+  // /// This is derived from the indexes of [ReferencePairManager.supportedTypes].
+  // final int typeId;
+
+  final String handlerChannel;
 
   /// Arguments used to create the instance this represents.
   final List<Object> creationArguments;
 
-  /// Unique identifier used to identify the [PoolableReferencePairManager] that can handle the creation and serialization of this type.
-  final String managerPoolId;
+  // /// Unique identifier used to identify the [PoolableReferencePairManager] that can handle the creation and serialization of this type.
+  // final String managerPoolId;
 
   @override
   String toString() {
-    return '$runtimeType($typeId, $creationArguments, $managerPoolId)';
+    return '$runtimeType($handlerChannel, $creationArguments, )';
   }
 }
