@@ -74,7 +74,10 @@ mixin ReferenceChannelMessenger {
 /// create, dispose, or invoke methods for a [LocalReference].
 mixin ReferenceChannelHandler {
   /// Retrieves arguments to instantiate an object that is created with [createInstance].
-  List<Object> getCreationArguments(Object instance);
+  List<Object> getCreationArguments(
+    ReferenceChannelManager manager,
+    Object instance,
+  );
 
   /// Instantiates a new [LocalReference].
   ///
@@ -221,7 +224,7 @@ abstract class ReferenceChannelManager {
   ) {
     return UnpairedReference(
       handlerChannel,
-      getChannelHandler(handlerChannel).getCreationArguments(object),
+      getChannelHandler(handlerChannel).getCreationArguments(this, object),
     );
   }
 
@@ -329,7 +332,7 @@ abstract class ReferenceChannelManager {
       // getTypeId(localReference.referenceType),
       converter.convertForRemoteManager(
         this,
-        getChannelHandler(handlerChannel).getCreationArguments(instance),
+        getChannelHandler(handlerChannel).getCreationArguments(this, instance),
       ),
     );
 
@@ -396,10 +399,7 @@ abstract class ReferenceChannelManager {
     _assertIsInitialized();
 
     final Object result = await messenger.sendInvokeMethodOnUnpairedReference(
-      UnpairedReference(
-        handlerChannel,
-        getChannelHandler(handlerChannel).getCreationArguments(object),
-      ),
+      createUnpairedReference(handlerChannel, object),
       methodName,
       converter.convertForRemoteManager(this, arguments) ?? <Object>[],
     );
