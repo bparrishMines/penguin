@@ -27,7 +27,8 @@ class MethodChannelReferenceChannelManager extends ReferenceChannelManager {
   static const String _methodDispose = 'REFERENCE_DISPOSE';
 
   static final MethodChannelReferenceChannelManager instance =
-      MethodChannelReferenceChannelManager('github.penguin/reference')..initialize();
+      MethodChannelReferenceChannelManager('github.penguin/reference')
+        ..initialize();
 
   /// [MethodChannel] used to communicate with a remote [RemoteReferenceMap].
   final MethodChannel channel;
@@ -57,15 +58,15 @@ class MethodChannelReferenceChannelManager extends ReferenceChannelManager {
           );
         } else if (call.method ==
             MethodChannelReferenceChannelManager._methodMethod) {
-          return onReceiveInvokeMethodOnUnpairedReference(
+          return onReceiveInvokeMethod(
             call.arguments[0],
-            call.arguments[1],
+            referencePairs.getPairedObject(call.arguments[1]),
             call.arguments[2],
+            call.arguments[3],
           );
         } else if (call.method ==
             MethodChannelReferenceChannelManager._methodUnpairedMethod) {
-          return onReceiveInvokeMethod(
-            call.arguments[0],
+          return onReceiveInvokeMethodOnUnpairedReference(
             call.arguments[0],
             call.arguments[1],
             call.arguments[2],
@@ -98,62 +99,6 @@ class MethodChannelReferenceChannelMessenger with ReferenceChannelMessenger {
 
   /// [MethodChannel] used to communicate with a remote [RemoteReferenceMap].
   final MethodChannel channel;
-
-  // @override
-  // Future<void> create(
-  //   RemoteReference remoteReference,
-  //   int typeId,
-  //   List<Object> arguments,
-  // ) {
-  //   return channel.invokeMethod<void>(
-  //     MethodChannelReferenceChannelManager._methodCreate,
-  //     <Object>[remoteReference, typeId, arguments],
-  //   );
-  // }
-  //
-  // @override
-  // Future<Object> invokeStaticMethod(
-  //   int typeId,
-  //   String methodName,
-  //   List<Object> arguments,
-  // ) {
-  //   return channel.invokeMethod<Object>(
-  //     MethodChannelReferenceChannelManager._methodStaticMethod,
-  //     <Object>[typeId, methodName, arguments],
-  //   );
-  // }
-  //
-  // @override
-  // Future<Object> invokeMethod(
-  //   RemoteReference remoteReference,
-  //   String methodName,
-  //   List<Object> arguments,
-  // ) {
-  //   return channel.invokeMethod<Object>(
-  //     MethodChannelReferenceChannelManager._methodMethod,
-  //     <Object>[remoteReference, methodName, arguments],
-  //   );
-  // }
-  //
-  // @override
-  // Future<void> dispose(RemoteReference remoteReference) {
-  //   return channel.invokeMethod<void>(
-  //     MethodChannelReferenceChannelManager._methodDispose,
-  //     remoteReference,
-  //   );
-  // }
-  //
-  // @override
-  // Future<Object> invokeMethodOnUnpairedReference(
-  //   UnpairedReference unpairedReference,
-  //   String methodName,
-  //   List<Object> arguments,
-  // ) {
-  //   return channel.invokeMethod<Object>(
-  //     MethodChannelReferenceChannelManager._methodMethod,
-  //     <Object>[unpairedReference, methodName, arguments],
-  //   );
-  // }
 
   @override
   Future<void> sendCreateNewPair(

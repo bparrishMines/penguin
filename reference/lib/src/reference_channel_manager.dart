@@ -26,14 +26,12 @@ mixin ReferenceChannelMessenger {
   Future<void> sendCreateNewPair(
     String handlerChannel,
     RemoteReference remoteReference,
-    // int typeId,
     List<Object> arguments,
   );
 
   /// Invoke a static method on the type that is represented by [typeId].
   Future<Object> sendInvokeStaticMethod(
     String handlerChannel,
-    // int typeId,
     String methodName,
     List<Object> arguments,
   );
@@ -72,11 +70,11 @@ mixin ReferenceChannelMessenger {
 ///
 /// This class handles communication from other [ReferencePairManager]s to
 /// create, dispose, or invoke methods for a [LocalReference].
-mixin ReferenceChannelHandler {
+mixin ReferenceChannelHandler<T> {
   /// Retrieves arguments to instantiate an object that is created with [createInstance].
   List<Object> getCreationArguments(
     ReferenceChannelManager manager,
-    Object instance,
+    T instance,
   );
 
   /// Instantiates a new [LocalReference].
@@ -97,16 +95,14 @@ mixin ReferenceChannelHandler {
   /// The REMOTE [ReferencePairManager] will represent the returned value as a
   /// [RemoteReference] and represent the generated [RemoteReference] as a
   /// [LocalReference]. It will also store both references as a pair.
-  Object createInstance(
+  T createInstance(
     ReferenceChannelManager manager,
-    // Type referenceType,
     List<Object> arguments,
   );
 
   /// Invoke a static method on [referenceType].
   Object invokeStaticMethod(
     ReferenceChannelManager manager,
-    // Type referenceType,
     String methodName,
     List<Object> arguments,
   );
@@ -114,7 +110,7 @@ mixin ReferenceChannelHandler {
   /// Invoke a method on the object instance represented by [localReference].
   Object invokeMethod(
     ReferenceChannelManager manager,
-    Object instance,
+    T instance,
     String methodName,
     List<Object> arguments,
   );
@@ -126,7 +122,7 @@ mixin ReferenceChannelHandler {
   /// attached to new references.
   void onInstanceDisposed(
     ReferenceChannelManager manager,
-    Object instance,
+    T instance,
   ) {}
 }
 
@@ -201,7 +197,6 @@ abstract class ReferenceChannelManager {
   /// [arguments] and [ReferenceConverter.convertForRemoteManager] to convert
   /// the result.
   Object onReceiveInvokeStaticMethod(
-    // Type referenceType,
     String handlerChannel,
     String methodName, [
     List<Object> arguments,

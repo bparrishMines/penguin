@@ -5,18 +5,12 @@ import androidx.annotation.NonNull;
 import java.util.List;
 
 public class UnpairedReference {
-  public final int classId;
+  public final String handlerChannel;
   public final List<Object> creationArguments;
-  public final String managerPoolId;
 
-  public UnpairedReference(int classId, List<Object> creationArguments) {
-    this(classId, creationArguments, null);
-  }
-
-  public UnpairedReference(int classId, List<Object> creationArguments, String managerPoolId) {
-    this.classId = classId;
+  public UnpairedReference(String handlerChannel, List<Object> creationArguments) {
+    this.handlerChannel = handlerChannel;
     this.creationArguments = creationArguments;
-    this.managerPoolId = managerPoolId;
   }
 
   @SuppressLint("DefaultLocale")
@@ -24,7 +18,7 @@ public class UnpairedReference {
   @Override
   public String toString() {
     return String.format(
-        "%s(%d, %s, %s)",
-        UnpairedReference.class.getName(), classId, creationArguments.toString(), managerPoolId);
+        "%s(%s, %s)",
+        "UnpairedReference", handlerChannel, creationArguments.toString());
   }
 }

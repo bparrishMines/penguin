@@ -3,6 +3,7 @@ package github.penguin.reference.method_channel;
 import androidx.annotation.Nullable;
 import github.penguin.reference.async.Completable;
 import github.penguin.reference.async.Completer;
+import github.penguin.reference.reference.ReferenceChannelMessenger;
 import github.penguin.reference.reference.ReferencePairManager.RemoteReferenceCommunicationHandler;
 import github.penguin.reference.reference.RemoteReference;
 import github.penguin.reference.reference.UnpairedReference;
@@ -13,7 +14,7 @@ import io.flutter.plugin.common.StandardMethodCodec;
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class MethodChannelRemoteHandler implements RemoteReferenceCommunicationHandler {
+public abstract class MethodChannelRemoteHandler implements ReferenceChannelMessenger {
   public final BinaryMessenger binaryMessenger;
   public final MethodChannel channel;
 

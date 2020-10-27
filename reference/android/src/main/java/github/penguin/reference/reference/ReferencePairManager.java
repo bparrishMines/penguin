@@ -108,7 +108,7 @@ public abstract class ReferencePairManager {
             .create(
                 this,
                 classIds.get(classId),
-                (List<Object>) getConverter().convertReferencesForLocalManager(this, arguments));
+                (List<Object>) getConverter().convertForLocalManager(this, arguments));
 
     if (getPairedRemoteReference(localReference) != null) {
       throw new AssertionError();
@@ -135,9 +135,9 @@ public abstract class ReferencePairManager {
                 this,
                 referenceClass,
                 methodName,
-                (List<Object>) getConverter().convertReferencesForLocalManager(this, arguments));
+                (List<Object>) getConverter().convertForLocalManager(this, arguments));
 
-    return (T) getConverter().convertReferencesForRemoteManager(this, result);
+    return (T) getConverter().convertForRemoteManager(this, result);
   }
 
   public <T> T invokeLocalMethod(LocalReference localReference, String methodName)
@@ -154,9 +154,9 @@ public abstract class ReferencePairManager {
                 this,
                 localReference,
                 methodName,
-                (List<Object>) getConverter().convertReferencesForLocalManager(this, arguments));
+                (List<Object>) getConverter().convertForLocalManager(this, arguments));
 
-    return (T) getConverter().convertReferencesForRemoteManager(this, result);
+    return (T) getConverter().convertForRemoteManager(this, result);
   }
 
   public <T> T invokeLocalMethodOnUnpairedReference(
@@ -176,7 +176,7 @@ public abstract class ReferencePairManager {
                 classIds.get(unpairedReference.classId),
                 (List<Object>)
                     getConverter()
-                        .convertReferencesForLocalManager(
+                        .convertForLocalManager(
                             this, unpairedReference.creationArguments)),
         methodName,
         arguments);
@@ -210,7 +210,7 @@ public abstract class ReferencePairManager {
                 remoteReference,
                 classIds.inverse.get(localReference.getReferenceClass()),
                 (List<Object>)
-                    getConverter().convertReferencesForRemoteManager(this, creationArguments));
+                    getConverter().convertForRemoteManager(this, creationArguments));
 
     final Completer<RemoteReference> completer = new Completer<>();
 
@@ -245,7 +245,7 @@ public abstract class ReferencePairManager {
             .invokeStaticMethod(
                 getClassId(referenceClass),
                 methodName,
-                (List<Object>) getConverter().convertReferencesForRemoteManager(this, arguments));
+                (List<Object>) getConverter().convertForRemoteManager(this, arguments));
 
     final Completer<T> replaceCompleter = new Completer<>();
 
@@ -257,7 +257,7 @@ public abstract class ReferencePairManager {
               replaceCompleter.complete(
                   (T)
                       getConverter()
-                          .convertReferencesForLocalManager(ReferencePairManager.this, result));
+                          .convertForLocalManager(ReferencePairManager.this, result));
             } catch (Exception exception) {
               throw new RuntimeException(exception.getMessage());
             }
@@ -285,7 +285,7 @@ public abstract class ReferencePairManager {
             .invokeMethod(
                 remoteReference,
                 methodName,
-                (List<Object>) getConverter().convertReferencesForRemoteManager(this, arguments));
+                (List<Object>) getConverter().convertForRemoteManager(this, arguments));
 
     final Completer<T> replaceCompleter = new Completer<>();
 
@@ -297,7 +297,7 @@ public abstract class ReferencePairManager {
               replaceCompleter.complete(
                   (T)
                       getConverter()
-                          .convertReferencesForLocalManager(ReferencePairManager.this, result));
+                          .convertForLocalManager(ReferencePairManager.this, result));
             } catch (Exception exception) {
               throw new RuntimeException(exception.getMessage());
             }
@@ -330,10 +330,10 @@ public abstract class ReferencePairManager {
                     classIds.inverse.get(localReference.getReferenceClass()),
                     (List<Object>)
                         getConverter()
-                            .convertReferencesForRemoteManager(
+                            .convertForRemoteManager(
                                 this, getRemoteHandler().getCreationArguments(localReference))),
                 methodName,
-                (List<Object>) getConverter().convertReferencesForRemoteManager(this, arguments));
+                (List<Object>) getConverter().convertForRemoteManager(this, arguments));
 
     final Completer<T> replaceCompleter = new Completer<>();
 
@@ -345,7 +345,7 @@ public abstract class ReferencePairManager {
               replaceCompleter.complete(
                   (T)
                       getConverter()
-                          .convertReferencesForLocalManager(ReferencePairManager.this, result));
+                          .convertForLocalManager(ReferencePairManager.this, result));
             } catch (Exception exception) {
               throw new RuntimeException(exception.getMessage());
             }

@@ -133,7 +133,7 @@ public class ReferenceTest {
     assertEquals(testManager.getPairedLocalReference(new RemoteReference("apple")), result);
     assertEquals(testManager.getPairedRemoteReference(result), new RemoteReference("apple"));
 
-    verify(testManager.converter).convertReferencesForLocalManager(eq(testManager), anyList());
+    verify(testManager.converter).convertForLocalManager(eq(testManager), anyList());
     verify(testManager.localHandler).create(eq(testManager), eq(TestClass.class), anyList());
   }
 
@@ -150,10 +150,10 @@ public class ReferenceTest {
   public void referencePairManager_invokeLocalStaticMethod() throws Exception {
     testManager.invokeLocalStaticMethod(TestClass.class, "aStaticMethod");
 
-    verify(testManager.converter).convertReferencesForLocalManager(eq(testManager), anyList());
+    verify(testManager.converter).convertForLocalManager(eq(testManager), anyList());
     verify(testManager.localHandler)
         .invokeStaticMethod(eq(testManager), eq(TestClass.class), eq("aStaticMethod"), anyList());
-    verify(testManager.converter).convertReferencesForRemoteManager(eq(testManager), isNull());
+    verify(testManager.converter).convertForRemoteManager(eq(testManager), isNull());
   }
 
   @Test
@@ -167,10 +167,10 @@ public class ReferenceTest {
 
     testManager.invokeLocalMethod(localReference, "aMethod");
 
-    verify(testManager.converter).convertReferencesForLocalManager(eq(testManager), anyList());
+    verify(testManager.converter).convertForLocalManager(eq(testManager), anyList());
     verify(testManager.localHandler)
         .invokeMethod(eq(testManager), eq(localReference), eq("aMethod"), anyList());
-    verify(testManager.converter).convertReferencesForRemoteManager(eq(testManager), isNull());
+    verify(testManager.converter).convertForRemoteManager(eq(testManager), isNull());
   }
 
   @Test
@@ -224,7 +224,7 @@ public class ReferenceTest {
     assertEquals(testManager.getPairedLocalReference(remoteReference), testClass);
     assertEquals(testManager.getPairedRemoteReference(testClass), remoteReference);
 
-    verify(testManager.converter).convertReferencesForRemoteManager(eq(testManager), anyList());
+    verify(testManager.converter).convertForRemoteManager(eq(testManager), anyList());
     verify(testManager.remoteHandler).create(eq(remoteReference), eq(0), anyList());
   }
 
@@ -253,9 +253,9 @@ public class ReferenceTest {
 
     testManager.invokeRemoteStaticMethod(TestClass.class, "aStaticMethod");
 
-    verify(testManager.converter).convertReferencesForRemoteManager(eq(testManager), anyList());
+    verify(testManager.converter).convertForRemoteManager(eq(testManager), anyList());
     verify(testManager.remoteHandler).invokeStaticMethod(eq(0), eq("aStaticMethod"), anyList());
-    verify(testManager.converter).convertReferencesForLocalManager(eq(testManager), isNull());
+    verify(testManager.converter).convertForLocalManager(eq(testManager), isNull());
   }
 
   @Test
@@ -275,9 +275,9 @@ public class ReferenceTest {
     final RemoteReference remoteReference = testManager.getPairedRemoteReference(testClass);
     testManager.invokeRemoteMethod(remoteReference, "aMethod");
 
-    verify(testManager.converter).convertReferencesForRemoteManager(eq(testManager), anyList());
+    verify(testManager.converter).convertForRemoteManager(eq(testManager), anyList());
     verify(testManager.remoteHandler).invokeMethod(eq(remoteReference), eq("aMethod"), anyList());
-    verify(testManager.converter).convertReferencesForLocalManager(eq(testManager), isNull());
+    verify(testManager.converter).convertForLocalManager(eq(testManager), isNull());
   }
 
   @Test
@@ -292,10 +292,10 @@ public class ReferenceTest {
     testManager.invokeRemoteMethodOnUnpairedReference(new TestClass(), "aMethod");
 
     verify(testManager.converter, times(2))
-        .convertReferencesForRemoteManager(eq(testManager), anyList());
+        .convertForRemoteManager(eq(testManager), anyList());
     verify(testManager.remoteHandler)
         .invokeMethodOnUnpairedReference(any(UnpairedReference.class), eq("aMethod"), anyList());
-    verify(testManager.converter).convertReferencesForLocalManager(eq(testManager), isNull());
+    verify(testManager.converter).convertForLocalManager(eq(testManager), isNull());
   }
 
   @Test

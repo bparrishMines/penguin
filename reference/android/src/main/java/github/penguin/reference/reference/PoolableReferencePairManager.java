@@ -43,9 +43,9 @@ public abstract class PoolableReferencePairManager extends ReferencePairManager 
     }
 
     @Override
-    public Object convertReferencesForRemoteManager(ReferencePairManager manager, Object object) {
+    public Object convertForRemoteManager(ReferencePairManager manager, Object object) {
       if (!(object instanceof LocalReference)) {
-        return super.convertReferencesForRemoteManager(manager, object);
+        return super.convertForRemoteManager(manager, object);
       }
 
       final LocalReference localReference = (LocalReference) object;
@@ -68,17 +68,17 @@ public abstract class PoolableReferencePairManager extends ReferencePairManager 
           (List<Object>)
               correctManager
                   .getConverter()
-                  .convertReferencesForRemoteManager(
+                  .convertForRemoteManager(
                       correctManager,
                       correctManager.getRemoteHandler().getCreationArguments(localReference)),
           correctManager.poolId);
     }
 
     @Override
-    public Object convertReferencesForLocalManager(ReferencePairManager manager, Object object)
+    public Object convertForLocalManager(ReferencePairManager manager, Object object)
         throws Exception {
       if (!(object instanceof RemoteReference) && !(object instanceof UnpairedReference)) {
-        return super.convertReferencesForLocalManager(manager, object);
+        return super.convertForLocalManager(manager, object);
       }
 
       final boolean argumentIsRemoteReference = object instanceof RemoteReference;
@@ -103,7 +103,7 @@ public abstract class PoolableReferencePairManager extends ReferencePairManager 
               correctManager,
               correctManager.getReferenceClass(((UnpairedReference) object).classId),
               (List<Object>)
-                  convertReferencesForLocalManager(
+                  convertForLocalManager(
                       manager, ((UnpairedReference) object).creationArguments));
     }
   }

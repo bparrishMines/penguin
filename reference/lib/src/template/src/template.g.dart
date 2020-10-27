@@ -24,7 +24,7 @@ class $ClassTemplateCreationArgs {
 
 class $ClassTemplate2CreationArgs {}
 
-class $ClassTemplateHandler implements ReferenceChannelHandler {
+class $ClassTemplateHandler implements ReferenceChannelHandler<$ClassTemplate> {
   $ClassTemplateHandler(
       {this.onCreateClassTemplate,
       this.onDisposeClassTemplate,
@@ -57,14 +57,11 @@ class $ClassTemplateHandler implements ReferenceChannelHandler {
     final String $methodName = 'staticMethodTemplate';
     final List<Object> $arguments = <Object>[
       parameterTemplate,
-      manager.referencePairs
-                  .getPairedRemoteReference(referenceParameterTemplate) !=
-              null
-          ? referenceParameterTemplate
-          : manager.createUnpairedReference(
-              'github.penguin/template/template/ClassTemplate2',
-              referenceParameterTemplate,
-            )
+      _tryReplaceReference(
+        manager,
+        'github.penguin/template/template/ClassTemplate2',
+        referenceParameterTemplate,
+      )
     ];
 
     return manager.invokeStaticMethod($handlerChannel, $methodName, $arguments);
@@ -80,14 +77,11 @@ class $ClassTemplateHandler implements ReferenceChannelHandler {
     final String $methodName = 'methodName';
     final List<Object> $arguments = <Object>[
       parameterTemplate,
-      manager.referencePairs
-                  .getPairedRemoteReference(referenceParameterTemplate) !=
-              null
-          ? referenceParameterTemplate
-          : manager.createUnpairedReference(
-              'github.penguin/template/template/ClassTemplate2',
-              referenceParameterTemplate,
-            )
+      _tryReplaceReference(
+        manager,
+        'github.penguin/template/template/ClassTemplate2',
+        referenceParameterTemplate,
+      )
     ];
 
     if ($remoteReference == null) {
@@ -115,7 +109,7 @@ class $ClassTemplateHandler implements ReferenceChannelHandler {
   }
 
   @override
-  Object createInstance(
+  $ClassTemplate createInstance(
     ReferenceChannelManager manager,
     List<Object> arguments,
   ) {
@@ -129,32 +123,28 @@ class $ClassTemplateHandler implements ReferenceChannelHandler {
   @override
   List<Object> getCreationArguments(
     ReferenceChannelManager manager,
-    Object instance,
+    $ClassTemplate instance,
   ) {
     return <Object>[
-      (instance as $ClassTemplate).fieldTemplate,
-      manager.referencePairs.getPairedRemoteReference(
-                  (instance as $ClassTemplate).referenceParameterTemplate) !=
-              null
-          ? (instance as $ClassTemplate).referenceParameterTemplate
-          : manager.createUnpairedReference(
-              'github.penguin/template/template/ClassTemplate2',
-              (instance as $ClassTemplate).referenceParameterTemplate,
-            )
+      instance.fieldTemplate,
+      _tryReplaceReference(
+        manager,
+        'github.penguin/template/template/ClassTemplate2',
+        instance.referenceParameterTemplate,
+      )
     ];
   }
 
   @override
   Object invokeMethod(
     ReferenceChannelManager manager,
-    Object instance,
+    $ClassTemplate instance,
     String methodName,
     List<Object> arguments,
   ) {
     switch (methodName) {
       case 'methodTemplate':
-        return (instance as $ClassTemplate)
-            .methodTemplate(arguments[0], arguments[1]);
+        return instance.methodTemplate(arguments[0], arguments[1]);
     }
 
     throw ArgumentError.value(
@@ -183,12 +173,16 @@ class $ClassTemplateHandler implements ReferenceChannelHandler {
   }
 
   @override
-  void onInstanceDisposed(ReferenceChannelManager manager, Object instance) {
+  void onInstanceDisposed(
+    ReferenceChannelManager manager,
+    $ClassTemplate instance,
+  ) {
     onDisposeClassTemplate(manager, instance);
   }
 }
 
-class $ClassTemplate2Handler implements ReferenceChannelHandler {
+class $ClassTemplate2Handler
+    implements ReferenceChannelHandler<$ClassTemplate2> {
   $ClassTemplate2Handler({
     this.onCreateClassTemplate2,
     this.onDisposeClassTemplate2,
@@ -217,7 +211,7 @@ class $ClassTemplate2Handler implements ReferenceChannelHandler {
   }
 
   @override
-  Object createInstance(
+  $ClassTemplate2 createInstance(
     ReferenceChannelManager manager,
     List<Object> arguments,
   ) {
@@ -230,7 +224,7 @@ class $ClassTemplate2Handler implements ReferenceChannelHandler {
   @override
   List<Object> getCreationArguments(
     ReferenceChannelManager manager,
-    Object instance,
+    $ClassTemplate2 instance,
   ) {
     return <Object>[];
   }
@@ -238,7 +232,7 @@ class $ClassTemplate2Handler implements ReferenceChannelHandler {
   @override
   Object invokeMethod(
     ReferenceChannelManager manager,
-    Object instance,
+    $ClassTemplate2 instance,
     String methodName,
     List<Object> arguments,
   ) {
@@ -263,7 +257,20 @@ class $ClassTemplate2Handler implements ReferenceChannelHandler {
   }
 
   @override
-  void onInstanceDisposed(ReferenceChannelManager manager, Object instance) {
+  void onInstanceDisposed(
+    ReferenceChannelManager manager,
+    $ClassTemplate2 instance,
+  ) {
     onDisposeClassTemplate2(manager, instance);
   }
+}
+
+bool _tryReplaceReference(
+  ReferenceChannelManager manager,
+  String handlerChannel,
+  Object instance,
+) {
+  return manager.referencePairs.getPairedRemoteReference(instance) != null
+      ? instance
+      : manager.createUnpairedReference(handlerChannel, instance);
 }
