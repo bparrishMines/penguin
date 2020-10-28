@@ -4,7 +4,7 @@ package github.penguin.reference.templates;
 
 import github.penguin.reference.async.Completable;
 import github.penguin.reference.method_channel.MethodChannelReferencePairManager;
-import github.penguin.reference.method_channel.MethodChannelRemoteHandler;
+import github.penguin.reference.method_channel.MethodChannelReferenceChannelMessenger;
 import github.penguin.reference.method_channel.ReferenceMessageCodec;
 import github.penguin.reference.reference.LocalReference;
 import github.penguin.reference.reference.ReferencePairManager;
@@ -101,7 +101,7 @@ class LibraryTemplate {
     public abstract $LocalHandler getLocalHandler();
 
     @Override
-    public MethodChannelRemoteHandler getRemoteHandler() {
+    public MethodChannelReferenceChannelMessenger getRemoteHandler() {
       return new $RemoteHandler(binaryMessenger, channelName);
     }
   }
@@ -243,7 +243,7 @@ class LibraryTemplate {
     }
   }
 
-  static class $RemoteHandler extends MethodChannelRemoteHandler {
+  static class $RemoteHandler extends MethodChannelReferenceChannelMessenger {
     private static final Map<Class<? extends LocalReference>, $CreationArgumentsHandler>
         creationArguments =
             new HashMap<Class<? extends LocalReference>, $CreationArgumentsHandler>() {

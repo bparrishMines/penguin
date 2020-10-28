@@ -21,7 +21,7 @@ import static org.mockito.Mockito.when;
 
 import androidx.annotation.Nullable;
 import github.penguin.reference.method_channel.MethodChannelReferencePairManager;
-import github.penguin.reference.method_channel.MethodChannelRemoteHandler;
+import github.penguin.reference.method_channel.MethodChannelReferenceChannelMessenger;
 import github.penguin.reference.method_channel.ReferenceMessageCodec;
 import github.penguin.reference.reference.LocalReference;
 import github.penguin.reference.reference.RemoteReference;
@@ -52,7 +52,7 @@ public class MethodChannelTest {
     }
   }
 
-  private static class TestRemoteHandler extends MethodChannelRemoteHandler {
+  private static class TestRemoteHandler extends MethodChannelReferenceChannelMessenger {
     private TestRemoteHandler() {
       super(mock(BinaryMessenger.class), "test_channel");
     }

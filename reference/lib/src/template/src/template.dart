@@ -5,37 +5,24 @@ import 'package:reference/annotations.dart';
 
 import 'template.g.dart';
 
-MethodChannelReferenceChannelManager _manager =
-    MethodChannelReferenceChannelManager.instance
-      ..registerHandler(
-        $ClassTemplateHandler.$handlerChannel,
-        $ClassTemplateHandler(
-          onCreateClassTemplate: (
-            ReferenceChannelManager manager,
-            $ClassTemplateCreationArgs args,
-          ) {
-            return ClassTemplate(
-              args.fieldTemplate,
-              args.referenceParameterTemplate,
-            );
-          },
-        ),
-      )
-      ..registerHandler(
-        $ClassTemplate2Handler.$handlerChannel,
-        $ClassTemplate2Handler(
-          onCreateClassTemplate2: (
-            ReferenceChannelManager manager,
-            $ClassTemplate2CreationArgs args,
-          ) {
-            return ClassTemplate2();
-          },
-        ),
-      );
-
-@ReferenceChannel('github.penguin/template/template/ClassTemplate')
+@Channel('github.penguin/template/template/ClassTemplate')
 class ClassTemplate with $ClassTemplate {
   ClassTemplate(this.fieldTemplate, this.referenceParameterTemplate);
+
+  static final $ClassTemplateChannel _channel = $ClassTemplateChannel(
+    MethodChannelReferenceChannelManager.instance,
+    handler: $ClassTemplateHandler(
+      onCreateClassTemplate: (
+        ReferenceChannelManager manager,
+        $ClassTemplateCreationArgs args,
+      ) {
+        return ClassTemplate(
+          args.fieldTemplate,
+          args.referenceParameterTemplate,
+        );
+      },
+    ),
+  );
 
   final int fieldTemplate;
   final ClassTemplate2 referenceParameterTemplate;
@@ -44,8 +31,7 @@ class ClassTemplate with $ClassTemplate {
     String parameterTemplate,
     ClassTemplate2 referenceParameterTemplate,
   ) async {
-    return (await $ClassTemplateHandler.$invokeStaticMethodTemplate(
-      _manager,
+    return (await _channel.$invokeStaticMethodTemplate(
       parameterTemplate,
       referenceParameterTemplate,
     )) as double;
@@ -56,8 +42,7 @@ class ClassTemplate with $ClassTemplate {
     String parameterTemplate,
     covariant ClassTemplate2 referenceParameterTemplate,
   ) async {
-    return (await $ClassTemplateHandler.$invokeMethodTemplate(
-      _manager,
+    return (await _channel.$invokeMethodTemplate(
       this,
       parameterTemplate,
       referenceParameterTemplate,
@@ -65,5 +50,18 @@ class ClassTemplate with $ClassTemplate {
   }
 }
 
-@ReferenceChannel('github.penguin/template/template/ClassTemplate2')
-class ClassTemplate2 with $ClassTemplate2 {}
+@Channel('github.penguin/template/template/ClassTemplate2')
+class ClassTemplate2 with $ClassTemplate2 {
+  // ignore: unused_field
+  static final $ClassTemplate2Channel _channel = $ClassTemplate2Channel(
+    MethodChannelReferenceChannelManager.instance,
+    handler: $ClassTemplate2Handler(
+      onCreateClassTemplate2: (
+        ReferenceChannelManager manager,
+        $ClassTemplate2CreationArgs args,
+      ) {
+        return ClassTemplate2();
+      },
+    ),
+  );
+}

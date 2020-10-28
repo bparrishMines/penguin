@@ -3,6 +3,7 @@ package github.penguin.reference.method_channel;
 import androidx.annotation.NonNull;
 import github.penguin.reference.reference.LocalReference;
 import github.penguin.reference.reference.PoolableReferencePairManager;
+import github.penguin.reference.reference.ReferenceChannelManager;
 import github.penguin.reference.reference.RemoteReference;
 import github.penguin.reference.reference.UnpairedReference;
 import io.flutter.plugin.common.BinaryMessenger;
@@ -12,11 +13,12 @@ import io.flutter.plugin.common.MethodCodec;
 import io.flutter.plugin.common.StandardMethodCodec;
 import java.util.List;
 
-public abstract class MethodChannelReferencePairManager extends PoolableReferencePairManager
+public abstract class MethodChannelReferencePairManager extends ReferenceChannelManager
     implements MethodChannel.MethodCallHandler {
   static final String METHOD_CREATE = "REFERENCE_CREATE";
   static final String METHOD_STATIC_METHOD = "REFERENCE_STATIC_METHOD";
   static final String METHOD_METHOD = "REFERENCE_METHOD";
+  static final String METHOD_UNPAIRED_METHOD = "REFERENCE_UNPAIRED_METHOD";
   static final String METHOD_DISPOSE = "REFERENCE_DISPOSE";
 
   public final BinaryMessenger binaryMessenger;
@@ -46,7 +48,7 @@ public abstract class MethodChannelReferencePairManager extends PoolableReferenc
   }
 
   @Override
-  public abstract MethodChannelRemoteHandler getRemoteHandler();
+  public abstract MethodChannelReferenceChannelMessenger getRemoteHandler();
 
   @Override
   public void initialize() {

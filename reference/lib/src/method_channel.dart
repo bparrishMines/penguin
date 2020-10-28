@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
-import 'reference_channel_manager.dart';
+import 'reference_channel.dart';
 import 'reference.dart';
 
 /// Abstract implementation of [RemoteReferenceMap] using [MethodChannel]s.
@@ -18,7 +18,9 @@ class MethodChannelReferenceChannelManager extends ReferenceChannelManager {
       : channel = MethodChannel(
           channelName,
           StandardMethodCodec(ReferenceMessageCodec()),
-        );
+        ) {
+    channel.setMethodCallHandler(_handleMethodCall);
+  }
 
   static const String _methodCreate = 'REFERENCE_CREATE';
   static const String _methodStaticMethod = 'REFERENCE_STATIC_METHOD';
@@ -27,62 +29,57 @@ class MethodChannelReferenceChannelManager extends ReferenceChannelManager {
   static const String _methodDispose = 'REFERENCE_DISPOSE';
 
   static final MethodChannelReferenceChannelManager instance =
-      MethodChannelReferenceChannelManager('github.penguin/reference')
-        ..initialize();
+      MethodChannelReferenceChannelManager('github.penguin/reference');
 
   /// [MethodChannel] used to communicate with a remote [RemoteReferenceMap].
   final MethodChannel channel;
 
   @override
   MethodChannelReferenceChannelMessenger get messenger =>
-      MethodChannelReferenceChannelMessenger(channel.name);
+      MethodChannelReferenceChannelMessenger(channel);
 
-  @override
-  void initialize() {
-    super.initialize();
-    channel.setMethodCallHandler((MethodCall call) async {
-      try {
-        if (call.method == MethodChannelReferenceChannelManager._methodCreate) {
-          onReceiveCreateNewPair(
-            call.arguments[0],
-            call.arguments[1],
-            call.arguments[2],
-          );
-          return null;
-        } else if (call.method ==
-            MethodChannelReferenceChannelManager._methodStaticMethod) {
-          return onReceiveInvokeStaticMethod(
-            call.arguments[0],
-            call.arguments[1],
-            call.arguments[2],
-          );
-        } else if (call.method ==
-            MethodChannelReferenceChannelManager._methodMethod) {
-          return onReceiveInvokeMethod(
-            call.arguments[0],
-            referencePairs.getPairedObject(call.arguments[1]),
-            call.arguments[2],
-            call.arguments[3],
-          );
-        } else if (call.method ==
-            MethodChannelReferenceChannelManager._methodUnpairedMethod) {
-          return onReceiveInvokeMethodOnUnpairedReference(
-            call.arguments[0],
-            call.arguments[1],
-            call.arguments[2],
-          );
-        } else if (call.method ==
-            MethodChannelReferenceChannelManager._methodDispose) {
-          onReceiveDisposePair(call.arguments[0], call.arguments[1]);
-          return null;
-        }
-
-        throw StateError(call.method);
-      } catch (error, stacktrace) {
-        debugPrint('Error: $error\nStackTrace: $stacktrace');
-        rethrow;
+  Future<dynamic> _handleMethodCall(MethodCall call) async {
+    try {
+      if (call.method == MethodChannelReferenceChannelManager._methodCreate) {
+        onReceiveCreateNewPair(
+          call.arguments[0],
+          call.arguments[1],
+          call.arguments[2],
+        );
+        return null;
+      } else if (call.method ==
+          MethodChannelReferenceChannelManager._methodStaticMethod) {
+        return onReceiveInvokeStaticMethod(
+          call.arguments[0],
+          call.arguments[1],
+          call.arguments[2],
+        );
+      } else if (call.method ==
+          MethodChannelReferenceChannelManager._methodMethod) {
+        return onReceiveInvokeMethod(
+          call.arguments[0],
+          call.arguments[1],
+          call.arguments[2],
+          call.arguments[3],
+        );
+      } else if (call.method ==
+          MethodChannelReferenceChannelManager._methodUnpairedMethod) {
+        return onReceiveInvokeMethodOnUnpairedReference(
+          call.arguments[0],
+          call.arguments[1],
+          call.arguments[2],
+        );
+      } else if (call.method ==
+          MethodChannelReferenceChannelManager._methodDispose) {
+        onReceiveDisposePair(call.arguments[0], call.arguments[1]);
+        return null;
       }
-    });
+
+      throw StateError(call.method);
+    } catch (error, stacktrace) {
+      debugPrint('Error: $error\nStackTrace: $stacktrace');
+      rethrow;
+    }
   }
 }
 
@@ -91,11 +88,7 @@ class MethodChannelReferenceChannelManager extends ReferenceChannelManager {
 /// Used in [MethodChannelReferenceChannelManager] to handle communication with
 /// [RemoteReference]s.
 class MethodChannelReferenceChannelMessenger with ReferenceChannelMessenger {
-  MethodChannelReferenceChannelMessenger(String channelName)
-      : channel = MethodChannel(
-          channelName,
-          StandardMethodCodec(ReferenceMessageCodec()),
-        );
+  MethodChannelReferenceChannelMessenger(this.channel);
 
   /// [MethodChannel] used to communicate with a remote [RemoteReferenceMap].
   final MethodChannel channel;

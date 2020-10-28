@@ -4,7 +4,6 @@ import androidx.annotation.Nullable;
 import github.penguin.reference.async.Completable;
 import github.penguin.reference.async.Completer;
 import github.penguin.reference.reference.ReferenceChannelMessenger;
-import github.penguin.reference.reference.ReferencePairManager.RemoteReferenceCommunicationHandler;
 import github.penguin.reference.reference.RemoteReference;
 import github.penguin.reference.reference.UnpairedReference;
 import io.flutter.plugin.common.BinaryMessenger;
@@ -14,15 +13,17 @@ import io.flutter.plugin.common.StandardMethodCodec;
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class MethodChannelRemoteHandler implements ReferenceChannelMessenger {
+public class MethodChannelReferenceChannelMessenger implements ReferenceChannelMessenger {
   public final BinaryMessenger binaryMessenger;
   public final MethodChannel channel;
 
   private static class RemoteHandlerResult<T> implements Result {
     private final Completer<T> completer;
+    private final String method;
 
-    private RemoteHandlerResult(Completer<T> completer) {
+    private RemoteHandlerResult(Completer<T> completer, String method) {
       this.completer = completer;
+      this.method = method;
     }
 
     @SuppressWarnings("unchecked")
@@ -39,90 +40,79 @@ public abstract class MethodChannelRemoteHandler implements ReferenceChannelMess
 
     @Override
     public void notImplemented() {
-      final String message =
-          String.format(
-              "Method `%s` returned as not implemented.",
-              MethodChannelReferencePairManager.METHOD_CREATE);
+      final String message = String.format("Method `%s` returned as not implemented.", method);
       completer.completeWithError(new Throwable(message));
     }
   }
 
   @SuppressWarnings("unused")
-  public MethodChannelRemoteHandler(BinaryMessenger binaryMessenger, String channelName) {
-    this(binaryMessenger, channelName, new ReferenceMessageCodec());
-  }
-
-  public MethodChannelRemoteHandler(
-      BinaryMessenger binaryMessenger, String channelName, ReferenceMessageCodec messageCodec) {
+  public MethodChannelReferenceChannelMessenger(BinaryMessenger binaryMessenger, String channelName) {
     this.binaryMessenger = binaryMessenger;
     this.channel =
-        new MethodChannel(binaryMessenger, channelName, new StandardMethodCodec(messageCodec));
+        new MethodChannel(binaryMessenger, channelName, new StandardMethodCodec(new ReferenceMessageCodec()));
   }
 
   @Override
-  public Completable<Void> create(
-      final RemoteReference remoteReference, final int classId, final List<Object> arguments) {
+  public Completable<Void> sendCreateNewPair(String handlerChannel, RemoteReference remoteReference, List<Object> arguments) {
     final Completer<Void> completer = new Completer<>();
+    final String method = MethodChannelReferencePairManager.METHOD_CREATE;
 
     channel.invokeMethod(
-        MethodChannelReferencePairManager.METHOD_CREATE,
-        Arrays.asList(remoteReference, classId, arguments),
-        new RemoteHandlerResult<>(completer));
+        method,
+        Arrays.asList(handlerChannel, remoteReference, arguments),
+        new RemoteHandlerResult<>(completer, method));
 
     return completer.completable;
   }
 
   @Override
-  public Completable<Object> invokeStaticMethod(
-      int classId, String methodName, List<Object> arguments) {
+  public Completable<Object> sendInvokeStaticMethod(String handlerChannel, String methodName, List<Object> arguments) {
     final Completer<Object> completer = new Completer<>();
+    final String method = MethodChannelReferencePairManager.METHOD_STATIC_METHOD;
 
     channel.invokeMethod(
-        MethodChannelReferencePairManager.METHOD_STATIC_METHOD,
-        Arrays.asList(classId, methodName, arguments),
-        new RemoteHandlerResult<>(completer));
+        method,
+        Arrays.asList(handlerChannel, methodName, arguments),
+        new RemoteHandlerResult<>(completer, method));
 
     return completer.completable;
   }
 
   @Override
-  public Completable<Object> invokeMethod(
-      final RemoteReference remoteReference,
-      final String methodName,
-      final List<Object> arguments) {
+  public Completable<Object> sendInvokeMethod(String handlerChannel, RemoteReference remoteReference, String methodName, List<Object> arguments) {
     final Completer<Object> completer = new Completer<>();
+    final String method = MethodChannelReferencePairManager.METHOD_METHOD;
 
     channel.invokeMethod(
-        MethodChannelReferencePairManager.METHOD_METHOD,
-        Arrays.asList(remoteReference, methodName, arguments),
-        new RemoteHandlerResult<>(completer));
+        method,
+        Arrays.asList(handlerChannel, remoteReference, methodName, arguments),
+        new RemoteHandlerResult<>(completer, method));
 
     return completer.completable;
   }
 
   @Override
-  public Completable<Object> invokeMethodOnUnpairedReference(
-      final UnpairedReference unpairedReference,
-      final String methodName,
-      final List<Object> arguments) {
+  public Completable<Object> sendInvokeMethodOnUnpairedReference(UnpairedReference unpairedReference, String methodName, List<Object> arguments) {
     final Completer<Object> completer = new Completer<>();
+    final String method = MethodChannelReferencePairManager.METHOD_UNPAIRED_METHOD;
 
     channel.invokeMethod(
-        MethodChannelReferencePairManager.METHOD_METHOD,
+        method,
         Arrays.asList(unpairedReference, methodName, arguments),
-        new RemoteHandlerResult<>(completer));
+        new RemoteHandlerResult<>(completer, method));
 
     return completer.completable;
   }
 
   @Override
-  public Completable<Void> dispose(final RemoteReference remoteReference) {
+  public Completable<Void> sendDisposePair(String handlerChannel, RemoteReference remoteReference) {
     final Completer<Void> completer = new Completer<>();
+    final String method = MethodChannelReferencePairManager.METHOD_DISPOSE;
 
     channel.invokeMethod(
-        MethodChannelReferencePairManager.METHOD_DISPOSE,
-        remoteReference,
-        new RemoteHandlerResult<>(completer));
+        method,
+        Arrays.asList(handlerChannel, remoteReference),
+        new RemoteHandlerResult<>(completer, method));
 
     return completer.completable;
   }

@@ -1,5 +1,5 @@
-class ReferenceChannel {
-  const ReferenceChannel(this.channel);
+class Channel {
+  const Channel(this.channel);
 
   final String channel;
 }
