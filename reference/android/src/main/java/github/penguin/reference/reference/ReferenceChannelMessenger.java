@@ -8,7 +8,6 @@ public interface ReferenceChannelMessenger {
   Completable<Void> sendCreateNewPair(
       String handlerChannel,
       RemoteReference remoteReference,
-      // int typeId,
       List<Object> arguments
       );
 

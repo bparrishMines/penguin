@@ -8,18 +8,6 @@ class Reference {
   const Reference();
 }
 
-// /// Represents an object that is locally accessible.
-// ///
-// /// This is a mixin that allows a [ReferencePairManager] to know that a
-// /// class is able be paired with a [RemoteReference].
-// mixin LocalReference implements Reference {
-//   /// The unique [Type] used to represent this class in a [ReferencePairManager].
-//   ///
-//   /// The [Type] returned by this value should be added to
-//   /// [ReferencePairManager.supportedTypes] of the [ReferencePairManager] that
-//   /// supports this class.
-//   Type get referenceType;
-// }
 
 /// Represents an object that is remotely accessible.
 ///

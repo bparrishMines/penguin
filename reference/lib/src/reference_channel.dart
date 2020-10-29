@@ -292,14 +292,14 @@ abstract class ReferenceChannelManager {
   /// Otherwise, it returns the paired [LocalReference].
   Object onReceiveCreateNewPair(
     String handlerChannel,
-    RemoteReference remoteReference, [
+    RemoteReference remoteReference,
     List<Object> arguments,
-  ]) {
+  ) {
     if (_referencePairs.getPairedObject(remoteReference) != null) return null;
 
     final Object object = getChannelHandler(handlerChannel).createInstance(
       this,
-      converter.convertForLocalManager(this, arguments ?? <Object>[]),
+      converter.convertForLocalManager(this, arguments),
     );
 
     assert(_referencePairs.getPairedRemoteReference(object) == null);
@@ -315,13 +315,13 @@ abstract class ReferenceChannelManager {
   /// the result.
   Object onReceiveInvokeStaticMethod(
     String handlerChannel,
-    String methodName, [
+    String methodName,
     List<Object> arguments,
-  ]) {
+  ) {
     final Object result = getChannelHandler(handlerChannel).invokeStaticMethod(
       this,
       methodName,
-      converter.convertForLocalManager(this, arguments) ?? <Object>[],
+      converter.convertForLocalManager(this, arguments),
     );
 
     return converter.convertForRemoteManager(this, result);

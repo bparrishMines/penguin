@@ -2,11 +2,11 @@ package github.penguin.reference.reference;
 
 import java.util.List;
 
-public interface ReferenceChannelHandler {
+public interface ReferenceChannelHandler<T> {
   List<Object> getCreationArguments(
       ReferenceChannelManager manager,
-      Object instance
-      );
+      T instance
+  );
 
   /// Instantiates a new [LocalReference].
   ///
@@ -26,30 +26,30 @@ public interface ReferenceChannelHandler {
   /// The REMOTE [ReferencePairManager] will represent the returned value as a
   /// [RemoteReference] and represent the generated [RemoteReference] as a
   /// [LocalReference]. It will also store both references as a pair.
-  Object createInstance(
+  T createInstance(
       ReferenceChannelManager manager,
       List<Object> arguments
-      )throws Exception;
+  ) throws Exception;
 
   /// Invoke a static method on [referenceType].
   Object invokeStaticMethod(
       ReferenceChannelManager manager,
       String methodName,
       List<Object> arguments
-      )throws Exception;
+  ) throws Exception;
 
   /// Invoke a method on the object instance represented by [localReference].
   Object invokeMethod(
       ReferenceChannelManager manager,
-      Object instance,
+      T instance,
       String methodName,
       List<Object> arguments
-  )throws Exception;
+  ) throws Exception;
 
   /// Dispose [localReference] and the value it represents.
   ///
   /// This also stops the [ReferencePairManager] from maintaining the connection
   /// with its paired [RemoteReference] and will allow for either value to be
   /// attached to new references.
-  void onInstanceDisposed(ReferenceChannelManager manager, Object instance)throws Exception;
+  void onInstanceDisposed(ReferenceChannelManager manager, T instance)throws Exception;
 }

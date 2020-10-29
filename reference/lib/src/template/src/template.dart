@@ -5,6 +5,15 @@ import 'package:reference/annotations.dart';
 
 import 'template.g.dart';
 
+abstract class PluginTemplate {
+  static void initialize() {
+    // ignore: unnecessary_statements
+    ClassTemplate._channel;
+    // ignore: unnecessary_statements
+    ClassTemplate2._channel;
+  }
+}
+
 @Channel('github.penguin/template/template/ClassTemplate')
 class ClassTemplate with $ClassTemplate {
   ClassTemplate(this.fieldTemplate, this.referenceParameterTemplate);

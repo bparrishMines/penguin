@@ -6,7 +6,7 @@ import 'package:reference/reference.dart';
 // ReferenceGenerator
 // **************************************************************************
 
-bool _tryReplaceReference(
+Object _replaceIfUnpaired(
   ReferenceChannelManager manager,
   String handlerChannel,
   Object instance,
@@ -44,17 +44,17 @@ class $ClassTemplateChannel extends ReferenceChannel<$ClassTemplate> {
 
   Future<Object> $invokeStaticMethodTemplate(
       String parameterTemplate, $ClassTemplate2 referenceParameterTemplate) {
-    final String $methodName = 'staticMethodTemplate';
-    final List<Object> $arguments = <Object>[
-      parameterTemplate,
-      _tryReplaceReference(
-        manager,
-        'github.penguin/template/template/ClassTemplate2',
-        referenceParameterTemplate,
-      )
-    ];
-
-    return invokeStaticMethod($methodName, $arguments);
+    return invokeStaticMethod(
+      'staticMethodTemplate',
+      <Object>[
+        parameterTemplate,
+        _replaceIfUnpaired(
+          manager,
+          'github.penguin/template/template/ClassTemplate2',
+          referenceParameterTemplate,
+        )
+      ],
+    );
   }
 
   Future<Object> $invokeMethodTemplate($ClassTemplate instance,
@@ -62,7 +62,7 @@ class $ClassTemplateChannel extends ReferenceChannel<$ClassTemplate> {
     final String $methodName = 'methodTemplate';
     final List<Object> $arguments = <Object>[
       parameterTemplate,
-      _tryReplaceReference(
+      _replaceIfUnpaired(
         manager,
         'github.penguin/template/template/ClassTemplate2',
         referenceParameterTemplate,
@@ -70,18 +70,10 @@ class $ClassTemplateChannel extends ReferenceChannel<$ClassTemplate> {
     ];
 
     if (manager.isPaired(instance)) {
-      return invokeMethod(
-        instance,
-        $methodName,
-        $arguments,
-      );
+      return invokeMethod(instance, $methodName, $arguments);
     }
 
-    return invokeMethodOnUnpairedReference(
-      instance,
-      $methodName,
-      $arguments,
-    );
+    return invokeMethodOnUnpairedReference(instance, $methodName, $arguments);
   }
 }
 
@@ -113,15 +105,21 @@ class $ClassTemplateHandler implements ReferenceChannelHandler<$ClassTemplate> {
       $ClassTemplate2 referenceParameterTemplate) $onStaticMethodTemplate;
 
   @override
-  $ClassTemplate createInstance(
+  Object invokeStaticMethod(
     ReferenceChannelManager manager,
+    String methodName,
     List<Object> arguments,
   ) {
-    return onCreateClassTemplate(
-        manager,
-        $ClassTemplateCreationArgs()
-          ..fieldTemplate = arguments[0]
-          ..referenceParameterTemplate = arguments[1]);
+    switch (methodName) {
+      case 'staticMethodTemplate':
+        return $onStaticMethodTemplate(manager, arguments[0], arguments[1]);
+    }
+
+    throw ArgumentError.value(
+      methodName,
+      'methodName',
+      'Unable to invoke static method `$methodName`',
+    );
   }
 
   @override
@@ -131,12 +129,24 @@ class $ClassTemplateHandler implements ReferenceChannelHandler<$ClassTemplate> {
   ) {
     return <Object>[
       instance.fieldTemplate,
-      _tryReplaceReference(
+      _replaceIfUnpaired(
         manager,
         'github.penguin/template/template/ClassTemplate2',
         instance.referenceParameterTemplate,
       )
     ];
+  }
+
+  @override
+  $ClassTemplate createInstance(
+    ReferenceChannelManager manager,
+    List<Object> arguments,
+  ) {
+    return onCreateClassTemplate(
+        manager,
+        $ClassTemplateCreationArgs()
+          ..fieldTemplate = arguments[0]
+          ..referenceParameterTemplate = arguments[1]);
   }
 
   @override
@@ -155,24 +165,6 @@ class $ClassTemplateHandler implements ReferenceChannelHandler<$ClassTemplate> {
       instance,
       'instance',
       'Unable to invoke method `$methodName` on',
-    );
-  }
-
-  @override
-  Object invokeStaticMethod(
-    ReferenceChannelManager manager,
-    String methodName,
-    List<Object> arguments,
-  ) {
-    switch (methodName) {
-      case 'staticMethodTemplate':
-        return $onStaticMethodTemplate(manager, arguments[0], arguments[1]);
-    }
-
-    throw ArgumentError.value(
-      methodName,
-      'methodName',
-      'Unable to invoke static method `$methodName`',
     );
   }
 
@@ -200,13 +192,15 @@ class $ClassTemplate2Handler
       onDisposeClassTemplate2;
 
   @override
-  $ClassTemplate2 createInstance(
+  Object invokeStaticMethod(
     ReferenceChannelManager manager,
+    String methodName,
     List<Object> arguments,
   ) {
-    return onCreateClassTemplate2(
-      manager,
-      $ClassTemplate2CreationArgs(),
+    throw ArgumentError.value(
+      methodName,
+      'methodName',
+      'Unable to invoke static method `$methodName`',
     );
   }
 
@@ -216,6 +210,17 @@ class $ClassTemplate2Handler
     $ClassTemplate2 instance,
   ) {
     return <Object>[];
+  }
+
+  @override
+  $ClassTemplate2 createInstance(
+    ReferenceChannelManager manager,
+    List<Object> arguments,
+  ) {
+    return onCreateClassTemplate2(
+      manager,
+      $ClassTemplate2CreationArgs(),
+    );
   }
 
   @override
@@ -229,19 +234,6 @@ class $ClassTemplate2Handler
       instance,
       'instance',
       'Unable to invoke method `$methodName` on',
-    );
-  }
-
-  @override
-  Object invokeStaticMethod(
-    ReferenceChannelManager manager,
-    String methodName,
-    List<Object> arguments,
-  ) {
-    throw ArgumentError.value(
-      methodName,
-      'methodName',
-      'Unable to invoke static method `$methodName`',
     );
   }
 

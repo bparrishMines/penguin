@@ -20,7 +20,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import androidx.annotation.Nullable;
-import github.penguin.reference.method_channel.MethodChannelReferencePairManager;
+import github.penguin.reference.method_channel.MethodChannelReferenceChannelManager;
 import github.penguin.reference.method_channel.MethodChannelReferenceChannelMessenger;
 import github.penguin.reference.method_channel.ReferenceMessageCodec;
 import github.penguin.reference.reference.LocalReference;
@@ -63,7 +63,7 @@ public class MethodChannelTest {
     }
   }
 
-  private static class TestReferencePairManager extends MethodChannelReferencePairManager {
+  private static class TestReferencePairManager extends MethodChannelReferenceChannelManager {
     private final LocalReferenceCommunicationHandler localHandler;
     private final TestRemoteHandler remoteHandler;
 

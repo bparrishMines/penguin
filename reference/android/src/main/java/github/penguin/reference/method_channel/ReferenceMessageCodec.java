@@ -7,7 +7,7 @@ import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.util.List;
 
-public class ReferenceMessageCodec extends StandardMessageCodec {
+class ReferenceMessageCodec extends StandardMessageCodec {
   private static final byte REMOTE_REFERENCE = (byte) 128;
   private static final byte UNPAIRED_REFERENCE = (byte) 129;
 
