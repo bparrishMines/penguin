@@ -35,12 +35,8 @@ class $ClassTemplateCreationArgs {
 class $ClassTemplate2CreationArgs {}
 
 class $ClassTemplateChannel extends ReferenceChannel<$ClassTemplate> {
-  $ClassTemplateChannel(
-    ReferenceChannelManager manager, {
-    $ClassTemplateHandler handler,
-  }) : super(manager, 'github.penguin/template/template/ClassTemplate') {
-    registerHandler(handler);
-  }
+  $ClassTemplateChannel(ReferenceChannelManager manager)
+      : super(manager, 'github.penguin/template/template/ClassTemplate');
 
   Future<Object> $invokeStaticMethodTemplate(
       String parameterTemplate, $ClassTemplate2 referenceParameterTemplate) {
@@ -78,12 +74,8 @@ class $ClassTemplateChannel extends ReferenceChannel<$ClassTemplate> {
 }
 
 class $ClassTemplate2Channel extends ReferenceChannel<$ClassTemplate2> {
-  $ClassTemplate2Channel(
-    ReferenceChannelManager manager, {
-    $ClassTemplate2Handler handler,
-  }) : super(manager, 'github.penguin/template/template/ClassTemplate2') {
-    registerHandler(handler);
-  }
+  $ClassTemplate2Channel(ReferenceChannelManager manager)
+      : super(manager, 'github.penguin/template/template/ClassTemplate2');
 }
 
 class $ClassTemplateHandler implements ReferenceChannelHandler<$ClassTemplate> {
@@ -217,10 +209,7 @@ class $ClassTemplate2Handler
     ReferenceChannelManager manager,
     List<Object> arguments,
   ) {
-    return onCreateClassTemplate2(
-      manager,
-      $ClassTemplate2CreationArgs(),
-    );
+    return onCreateClassTemplate2(manager, $ClassTemplate2CreationArgs());
   }
 
   @override

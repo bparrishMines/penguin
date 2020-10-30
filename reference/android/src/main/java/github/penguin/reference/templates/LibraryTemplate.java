@@ -42,9 +42,8 @@ class LibraryTemplate {
   static class $ClassTemplate2CreationArgs {}
 
   static class $ClassTemplateChannel extends ReferenceChannel<$ClassTemplate> {
-    $ClassTemplateChannel(@NonNull ReferenceChannelManager manager, $ClassTemplateHandler handler) {
+    $ClassTemplateChannel(@NonNull ReferenceChannelManager manager) {
       super(manager, "github.penguin/template/template/ClassTemplate");
-      registerHandler(handler);
     }
 
     Completable<Object> $invokeStaticMethodTemplate(
@@ -81,10 +80,8 @@ class LibraryTemplate {
   }
 
   static class $ClassTemplate2Channel extends ReferenceChannel<$ClassTemplate2> {
-    $ClassTemplate2Channel(
-        @NonNull ReferenceChannelManager manager, $ClassTemplate2Handler handler) {
+    $ClassTemplate2Channel(@NonNull ReferenceChannelManager manager) {
       super(manager, "github.penguin/template/template/ClassTemplate2");
-      registerHandler(handler);
     }
   }
 

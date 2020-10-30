@@ -20,7 +20,7 @@ class ClassTemplate with $ClassTemplate {
 
   static final $ClassTemplateChannel _channel = $ClassTemplateChannel(
     MethodChannelReferenceChannelManager.instance,
-    handler: $ClassTemplateHandler(
+  )..registerHandler($ClassTemplateHandler(
       onCreateClassTemplate: (
         ReferenceChannelManager manager,
         $ClassTemplateCreationArgs args,
@@ -30,8 +30,7 @@ class ClassTemplate with $ClassTemplate {
           args.referenceParameterTemplate,
         );
       },
-    ),
-  );
+    ));
 
   final int fieldTemplate;
   final ClassTemplate2 referenceParameterTemplate;
@@ -64,13 +63,12 @@ class ClassTemplate2 with $ClassTemplate2 {
   // ignore: unused_field
   static final $ClassTemplate2Channel _channel = $ClassTemplate2Channel(
     MethodChannelReferenceChannelManager.instance,
-    handler: $ClassTemplate2Handler(
+  )..registerHandler($ClassTemplate2Handler(
       onCreateClassTemplate2: (
         ReferenceChannelManager manager,
         $ClassTemplate2CreationArgs args,
       ) {
         return ClassTemplate2();
       },
-    ),
-  );
+    ));
 }

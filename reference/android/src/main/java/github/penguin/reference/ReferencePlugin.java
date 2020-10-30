@@ -14,7 +14,7 @@ import java.util.Map;
 public class ReferencePlugin implements FlutterPlugin {
   private static final Map<BinaryMessenger, ReferenceChannelManager> managers = new HashMap<>();
 
-  public static ReferenceChannelManager getInstance(BinaryMessenger messenger) {
+  public static ReferenceChannelManager getManagerInstance(BinaryMessenger messenger) {
     ReferenceChannelManager manager = managers.get(messenger);
     if (manager == null) {
       manager = new MethodChannelReferenceChannelManager(messenger, "github.penguin/reference");

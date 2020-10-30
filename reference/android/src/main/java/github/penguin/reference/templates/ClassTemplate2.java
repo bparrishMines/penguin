@@ -7,16 +7,13 @@ public class ClassTemplate2 implements LibraryTemplate.$ClassTemplate2 {
 
   static void setupChannel(ReferenceChannelManager manager) {
     if (channel != null) return;
-    channel =
-        new LibraryTemplate.$ClassTemplate2Channel(
-            manager,
-            new LibraryTemplate.$ClassTemplate2Handler() {
-              @Override
-              LibraryTemplate.$ClassTemplate2 onCreateClassTemplate2(
-                  ReferenceChannelManager manager, LibraryTemplate.$ClassTemplate2CreationArgs args)
-                  throws Exception {
-                return new ClassTemplate2();
-              }
-            });
+    channel = new LibraryTemplate.$ClassTemplate2Channel(manager);
+    channel.registerHandler(new LibraryTemplate.$ClassTemplate2Handler() {
+      @Override
+      LibraryTemplate.$ClassTemplate2 onCreateClassTemplate2(
+          ReferenceChannelManager manager, LibraryTemplate.$ClassTemplate2CreationArgs args) {
+        return new ClassTemplate2();
+      }
+    });
   }
 }
