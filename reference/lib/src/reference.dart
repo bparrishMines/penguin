@@ -48,24 +48,14 @@ class RemoteReference implements Reference {
 /// [LocalReferenceCommunicationHandler.createInstance].
 class UnpairedReference implements Reference {
   const UnpairedReference(
-    // this.typeId,
     this.handlerChannel,
     this.creationArguments,
-    // this.managerPoolId,
   );
-
-  // /// Serialized version of type that is represented.
-  // ///
-  // /// This is derived from the indexes of [ReferencePairManager.supportedTypes].
-  // final int typeId;
 
   final String handlerChannel;
 
   /// Arguments used to create the instance this represents.
   final List<Object> creationArguments;
-
-  // /// Unique identifier used to identify the [PoolableReferencePairManager] that can handle the creation and serialization of this type.
-  // final String managerPoolId;
 
   @override
   String toString() {

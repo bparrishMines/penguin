@@ -14,8 +14,7 @@ public interface ReferenceConverter {
   class StandardReferenceConverter implements ReferenceConverter {
     @Override
     public Object convertForRemoteManager(ReferenceChannelManager manager, Object object) {
-      if (object instanceof LocalReference
-          && manager.referencePairs.getPairedRemoteReference(object) != null) {
+      if (manager.isPaired(object)) {
         return manager.referencePairs.getPairedRemoteReference(object);
       } else if (object instanceof List) {
         final List<Object> result = new ArrayList<>();

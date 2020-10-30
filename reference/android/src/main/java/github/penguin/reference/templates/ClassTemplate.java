@@ -9,6 +9,7 @@ public class ClassTemplate implements LibraryTemplate.$ClassTemplate {
   private final ClassTemplate2 referenceParameterTemplate;
 
   static void setupChannel(ReferenceChannelManager manager) {
+    if (channel != null) return;
     channel = new LibraryTemplate.$ClassTemplateChannel(manager, new LibraryTemplate.$ClassTemplateHandler() {
       @Override
       LibraryTemplate.$ClassTemplate onCreateClassTemplate(ReferenceChannelManager manager, LibraryTemplate.$ClassTemplateCreationArgs args) throws Exception {

@@ -5,10 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import androidx.annotation.CallSuper;
-import github.penguin.reference.async.Completable;
-import github.penguin.reference.async.Completer;
-
 public abstract class ReferenceChannelManager {
   private final Map<String, ReferenceChannelHandler<?>> channelHandlers = new HashMap<>();
 
@@ -88,11 +84,6 @@ public abstract class ReferenceChannelManager {
     return getConverter().convertForRemoteManager(this, result);
   }
 
-  /// Creates a [LocalReference] from [unpairedReference] and invoke a method.
-  ///
-  /// This method uses [ReferenceConverter.convertForLocalManager] to convert
-  /// [arguments] and [ReferenceConverter.convertForRemoteManager] to convert
-  /// the result.
   public Object onReceiveInvokeMethodOnUnpairedReference(
       UnpairedReference unpairedReference,
       String methodName,

@@ -23,7 +23,6 @@ import androidx.annotation.Nullable;
 import github.penguin.reference.method_channel.MethodChannelReferenceChannelManager;
 import github.penguin.reference.method_channel.MethodChannelReferenceChannelMessenger;
 import github.penguin.reference.method_channel.ReferenceMessageCodec;
-import github.penguin.reference.reference.LocalReference;
 import github.penguin.reference.reference.RemoteReference;
 import github.penguin.reference.reference.UnpairedReference;
 import io.flutter.plugin.common.BinaryMessenger;
@@ -45,7 +44,7 @@ public class MethodChannelTest {
   private static final MethodCodec methodCodec = new StandardMethodCodec(messageCodec);
   private static TestReferencePairManager testManager;
 
-  private static class TestClass implements LocalReference {
+  private static class TestClass {
     @Override
     public Class<? extends LocalReference> getReferenceClass() {
       return TestClass.class;

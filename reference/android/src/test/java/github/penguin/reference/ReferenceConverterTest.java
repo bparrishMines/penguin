@@ -12,12 +12,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import github.penguin.reference.async.Completer;
-import github.penguin.reference.reference.LocalReference;
-import github.penguin.reference.reference.PoolableReferencePairManager;
-import github.penguin.reference.reference.PoolableReferencePairManager.PoolableReferenceConverter;
 import github.penguin.reference.reference.ReferenceConverter.StandardReferenceConverter;
-import github.penguin.reference.reference.ReferencePairManager;
-import github.penguin.reference.reference.ReferencePairManagerPool;
 import github.penguin.reference.reference.RemoteReference;
 import github.penguin.reference.reference.UnpairedReference;
 import java.util.ArrayList;
@@ -39,7 +34,7 @@ public class ReferenceConverterTest {
   private static TestPoolableReferencePairManager testPoolableManager2;
   private static PoolableReferenceConverter poolableConverter;
 
-  private static class TestClass implements LocalReference {
+  private static class TestClass {
     @Override
     public Class<? extends LocalReference> getReferenceClass() {
       return TestClass.class;
@@ -53,7 +48,7 @@ public class ReferenceConverterTest {
     }
   }
 
-  private static class TestReferencePairManager extends ReferencePairManager {
+  private static class TestReferencePairManager {
     private final LocalReferenceCommunicationHandler localHandler;
     private final RemoteReferenceCommunicationHandler remoteHandler;
 
@@ -74,7 +69,7 @@ public class ReferenceConverterTest {
     }
   }
 
-  private static class TestPoolableReferencePairManager extends PoolableReferencePairManager {
+  private static class TestPoolableReferencePairManager {
     private final LocalReferenceCommunicationHandler localHandler;
     private final RemoteReferenceCommunicationHandler remoteHandler;
 

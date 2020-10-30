@@ -13,7 +13,6 @@ public interface ReferenceChannelMessenger {
 
   Completable<Object> sendInvokeStaticMethod(
       String handlerChannel,
-      // int typeId,
       String methodName,
       List<Object> arguments
       );

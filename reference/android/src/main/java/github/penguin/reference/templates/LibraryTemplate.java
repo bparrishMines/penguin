@@ -37,10 +37,7 @@ class LibraryTemplate {
     $ClassTemplate2 referenceParameterTemplate;
   }
 
-  static class $ClassTemplate2CreationArgs {
-    Integer fieldTemplate;
-    $ClassTemplate2 referenceParameterTemplate;
-  }
+  static class $ClassTemplate2CreationArgs { }
 
   static class $ClassTemplateChannel extends ReferenceChannel<$ClassTemplate> {
     $ClassTemplateChannel(@NonNull ReferenceChannelManager manager, $ClassTemplateHandler handler) {

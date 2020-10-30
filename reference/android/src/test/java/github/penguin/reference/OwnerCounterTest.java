@@ -3,7 +3,7 @@ package github.penguin.reference;
 import static org.junit.Assert.assertEquals;
 
 import github.penguin.reference.async.Completable;
-import github.penguin.reference.reference.OwnerCounter;
+
 import org.junit.Before;
 import org.junit.Test;
 
