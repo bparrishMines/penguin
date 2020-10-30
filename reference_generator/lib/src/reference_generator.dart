@@ -135,6 +135,7 @@ class ReferenceAstBuilder extends Builder {
     return ReferenceType(
       name: type.getDisplayString(withNullability: false).split('<').first,
       codeGeneratedClass: allGeneratedClasses.contains(type.element),
+      referenceChannel: _getChannel(type),
       typeArguments: type is! ParameterizedType
           ? <ReferenceType>[]
           : (type as ParameterizedType)
@@ -144,6 +145,15 @@ class ReferenceAstBuilder extends Builder {
               )
               .toList(),
     );
+  }
+
+  String _getChannel(DartType type) {
+    final TypeChecker typeChecker = TypeChecker.fromRuntime(Channel);
+    if (!typeChecker.hasAnnotationOf(type.element)) return null;
+
+    final ConstantReader constantReader =
+        ConstantReader(typeChecker.firstAnnotationOf(type.element));
+    return constantReader.read('channel').stringValue;
   }
 
   @override
