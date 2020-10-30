@@ -29,85 +29,77 @@ public abstract class ReferenceChannelManager {
   }
 
   public Object onReceiveCreateNewPair(
-      String handlerChannel,
-      RemoteReference remoteReference,
-      List<Object> arguments
-  ) throws Exception {
+      String handlerChannel, RemoteReference remoteReference, List<Object> arguments)
+      throws Exception {
     if (referencePairs.getPairedObject(remoteReference) != null) return null;
 
-    final Object object = getChannelHandler(handlerChannel).createInstance(
-        this,
-        (List<Object>) getConverter().convertForLocalManager(this, arguments)
-    );
+    final Object object =
+        getChannelHandler(handlerChannel)
+            .createInstance(
+                this, (List<Object>) getConverter().convertForLocalManager(this, arguments));
 
-    assert(referencePairs.getPairedRemoteReference(object) == null);
+    assert (referencePairs.getPairedRemoteReference(object) == null);
 
     referencePairs.add(object, remoteReference);
     return object;
   }
 
   public Object onReceiveInvokeStaticMethod(
-      String handlerChannel,
-      String methodName,
-      List<Object> arguments) throws Exception {
-    final Object result = getChannelHandler(handlerChannel).invokeStaticMethod(
-        this,
-        methodName,
-        (List<Object>) getConverter().convertForLocalManager(this, arguments)
-    );
+      String handlerChannel, String methodName, List<Object> arguments) throws Exception {
+    final Object result =
+        getChannelHandler(handlerChannel)
+            .invokeStaticMethod(
+                this,
+                methodName,
+                (List<Object>) getConverter().convertForLocalManager(this, arguments));
 
     return getConverter().convertForRemoteManager(this, result);
   }
 
-  public UnpairedReference createUnpairedReference(
-      String handlerChannel,
-      Object object
-  ) {
+  public UnpairedReference createUnpairedReference(String handlerChannel, Object object) {
     return new UnpairedReference(
-        handlerChannel,
-        getChannelHandler(handlerChannel).getCreationArguments(this, object));
+        handlerChannel, getChannelHandler(handlerChannel).getCreationArguments(this, object));
   }
 
   public Object onReceiveInvokeMethod(
       String handlerChannel,
       RemoteReference remoteReference,
       String methodName,
-      List<Object> arguments
-      ) throws Exception {
-    final Object result = getChannelHandler(handlerChannel).invokeMethod(
-        this,
-        referencePairs.getPairedObject(remoteReference),
-        methodName,
-        (List<Object>) getConverter().convertForLocalManager(this, arguments)
-    );
+      List<Object> arguments)
+      throws Exception {
+    final Object result =
+        getChannelHandler(handlerChannel)
+            .invokeMethod(
+                this,
+                referencePairs.getPairedObject(remoteReference),
+                methodName,
+                (List<Object>) getConverter().convertForLocalManager(this, arguments));
 
     return getConverter().convertForRemoteManager(this, result);
   }
 
   public Object onReceiveInvokeMethodOnUnpairedReference(
-      UnpairedReference unpairedReference,
-      String methodName,
-      List<Object> arguments
-      ) throws  Exception {
+      UnpairedReference unpairedReference, String methodName, List<Object> arguments)
+      throws Exception {
 
-    final Object result = getChannelHandler(unpairedReference.handlerChannel).invokeMethod(this,
-    getChannelHandler(unpairedReference.handlerChannel).createInstance(
-        this,
-        (List<Object>) getConverter().convertForLocalManager(
-            this,
-            unpairedReference.creationArguments
-        )
-    ),
-        methodName,
-        (List<Object>) getConverter().convertForLocalManager(this, arguments));
+    final Object result =
+        getChannelHandler(unpairedReference.handlerChannel)
+            .invokeMethod(
+                this,
+                getChannelHandler(unpairedReference.handlerChannel)
+                    .createInstance(
+                        this,
+                        (List<Object>)
+                            getConverter()
+                                .convertForLocalManager(this, unpairedReference.creationArguments)),
+                methodName,
+                (List<Object>) getConverter().convertForLocalManager(this, arguments));
 
     return getConverter().convertForRemoteManager(this, result);
   }
 
-  public void onReceiveDisposePair(
-      String handlerChannel,
-      RemoteReference remoteReference
-      ) throws Exception {
+  public void onReceiveDisposePair(String handlerChannel, RemoteReference remoteReference)
+      throws Exception {
     final Object instance = referencePairs.getPairedObject(remoteReference);
     if (instance == null) return;
 

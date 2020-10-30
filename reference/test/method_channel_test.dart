@@ -116,8 +116,8 @@ void main() {
     });
 
     test('invokeRemoteMethodOnUnpairedReference', () async {
-      final String result = await testManager
-          .invokeMethodOnUnpairedReference(TestClass(), 'aMethod');
+      final String result = await testManager.invokeMethodOnUnpairedReference(
+          TestClass(), 'aMethod');
 
       expect(result, equals('polo'));
       expect(methodCallLog, <Matcher>[
@@ -309,7 +309,8 @@ void main() {
         (ByteData data) {},
       );
 
-      verify(testManager.localHandler.onInstanceDisposed(testManager, testClass));
+      verify(
+          testManager.localHandler.onInstanceDisposed(testManager, testClass));
       expect(testManager.getPairedLocalReference(remoteReference), isNull);
     });
   });
@@ -329,7 +330,8 @@ class TestReferencePairManager extends MethodChannelReferenceChannelManager {
   ReferenceChannelHandler get localHandler => _localHandler;
 
   @override
-  MethodChannelReferenceChannelMessenger get remoteHandler => TestRemoteHandler();
+  MethodChannelReferenceChannelMessenger get remoteHandler =>
+      TestRemoteHandler();
 }
 
 class TestRemoteHandler extends MethodChannelReferenceChannelMessenger {
@@ -341,5 +343,4 @@ class TestRemoteHandler extends MethodChannelReferenceChannelMessenger {
   }
 }
 
-class MockLocalHandler extends Mock
-    implements ReferenceChannelHandler {}
+class MockLocalHandler extends Mock implements ReferenceChannelHandler {}

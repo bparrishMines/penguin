@@ -8,8 +8,7 @@ import java.util.Map;
 public interface ReferenceConverter {
   Object convertForRemoteManager(ReferenceChannelManager manager, Object object);
 
-  Object convertForLocalManager(ReferenceChannelManager manager, Object object)
-      throws Exception;
+  Object convertForLocalManager(ReferenceChannelManager manager, Object object) throws Exception;
 
   class StandardReferenceConverter implements ReferenceConverter {
     @Override
@@ -48,7 +47,8 @@ public interface ReferenceConverter {
             .createInstance(
                 manager,
                 (List<Object>)
-                    convertForLocalManager(manager, ((UnpairedReference) object).creationArguments));
+                    convertForLocalManager(
+                        manager, ((UnpairedReference) object).creationArguments));
       } else if (object instanceof List) {
         final List<Object> result = new ArrayList<>();
         for (final Object obj : (List) object) {

@@ -287,8 +287,7 @@ public class ReferenceTest {
 
     testManager.invokeRemoteMethodOnUnpairedReference(new TestClass(), "aMethod");
 
-    verify(testManager.converter, times(2))
-        .convertForRemoteManager(eq(testManager), anyList());
+    verify(testManager.converter, times(2)).convertForRemoteManager(eq(testManager), anyList());
     verify(testManager.remoteHandler)
         .invokeMethodOnUnpairedReference(any(UnpairedReference.class), eq("aMethod"), anyList());
     verify(testManager.converter).convertForLocalManager(eq(testManager), isNull());

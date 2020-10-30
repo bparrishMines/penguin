@@ -10,8 +10,8 @@ typedef id<REFLocalReference> (^_LocalCreatorHandler)(_p_LocalHandler *_Nonnull,
                                                       REFReferencePairManager *_Nonnull,
                                                       NSArray<id> *_Nonnull);
 
-typedef id (^_LocalStaticMethodHandler)(_p_LocalHandler *_Nonnull, REFReferencePairManager *_Nonnull,
-                                        NSArray<id> *_Nonnull);
+typedef id (^_LocalStaticMethodHandler)(_p_LocalHandler *_Nonnull,
+                                        REFReferencePairManager *_Nonnull, NSArray<id> *_Nonnull);
 
 typedef id (^_LocalMethodHandler)(id<REFLocalReference> _Nonnull localReference,
                                   NSArray<id> *_Nonnull);
@@ -76,7 +76,7 @@ typedef NSArray<id> * (^_CreationArgumentsHandler)(id<REFLocalReference> _Nonnul
 
 - (id<REFRemoteReferenceCommunicationHandler>)remoteHandler {
   return [[_p_RemoteHandler alloc] initWithChannelName:self.channelName
-                                     binaryMessenger:self.binaryMessenger];
+                                       binaryMessenger:self.binaryMessenger];
 }
 @end
 
@@ -90,30 +90,32 @@ static NSDictionary<REFClass *, NSDictionary<NSString *, _LocalMethodHandler> *>
   static dispatch_once_t onceToken;
   dispatch_once(&onceToken, ^{
     creators = @{[REFClass fromClass:_p_ClassTemplate.class] : ^(
-        _p_LocalHandler *localHandler, REFReferencePairManager *manager, NSArray<id> *arguments) {
+        _p_LocalHandler *localHandler, REFReferencePairManager *manager, NSArray<id> *arguments){
         _p_ClassTemplateCreationArgs *args = [[_p_ClassTemplateCreationArgs alloc] init];
-        args.fieldTemplate = arguments[0];
-        return [localHandler createClassTemplate:manager args:args];
+    args.fieldTemplate = arguments[0];
+    return [localHandler createClassTemplate:manager args:args];
       }
-    };
-    staticMethods =
-      @{[REFClass fromClass:_p_ClassTemplate.class] : @{@"staticMethodTemplate" : ^(
-          _p_LocalHandler *localHandler, REFReferencePairManager *manager, NSArray<id> *arguments) {
-          return [localHandler classTemplate_staticMethodTemplate:manager
-                                              parameterTemplate:arguments[0]];
-          }
-        }
-      };
-    methods =
-      @{[REFClass fromClass:_p_ClassTemplate.class] :
-          @{@"methodTemplate" : ^(id<REFLocalReference> localReference, NSArray<id> *arguments) {
+};
+staticMethods =
+    @{[REFClass fromClass:_p_ClassTemplate.class] : @{@"staticMethodTemplate" : ^(
+        _p_LocalHandler *localHandler, REFReferencePairManager *manager, NSArray<id> *arguments){
+        return
+        [localHandler classTemplate_staticMethodTemplate:manager parameterTemplate:arguments[0]];
+}
+}
+}
+;
+methods =
+    @{[REFClass fromClass:_p_ClassTemplate.class] :
+          @{@"methodTemplate" : ^(id<REFLocalReference> localReference, NSArray<id> *arguments){
               _p_ClassTemplate *value = localReference;
-              return [value methodTemplate:arguments[0]];
-            }
-          }
-      };
-  });
-  return [super init];
+return [value methodTemplate:arguments[0]];
+}
+}
+}
+;
+});
+return [super init];
 }
 
 - (_p_ClassTemplate *)createClassTemplate:(REFReferencePairManager *)manager
@@ -176,13 +178,13 @@ static NSDictionary<REFClass *, _CreationArgumentsHandler> *creationArguments = 
   static dispatch_once_t onceToken;
   dispatch_once(&onceToken, ^{
     creationArguments =
-        @{[REFClass fromClass:_p_ClassTemplate.class] : ^(id<REFLocalReference> localReference) {
+        @{[REFClass fromClass:_p_ClassTemplate.class] : ^(id<REFLocalReference> localReference){
             _p_ClassTemplate *value = localReference;
-            return @[ value.fieldTemplate ];
+    return @[ value.fieldTemplate ];
           }
-        };
-  });
-  return self = [super initWithChannelName:channelName binaryMessenger:binaryMessenger];
+};
+});
+return self = [super initWithChannelName:channelName binaryMessenger:binaryMessenger];
 }
 
 - (NSArray<id> *)getCreationArguments:(id<REFLocalReference>)localReference {

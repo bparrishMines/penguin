@@ -1,10 +1,9 @@
 package github.penguin.reference.reference;
 
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import github.penguin.reference.async.Completable;
 import github.penguin.reference.async.Completer;
+import java.util.List;
 
 public class ReferenceChannel<T> {
   @NonNull public final ReferenceChannelManager manager;
@@ -19,7 +18,7 @@ public class ReferenceChannel<T> {
     manager.registerHandler(channelName, handler);
   }
 
-  public Completable<RemoteReference> createNewPair(T instance)  {
+  public Completable<RemoteReference> createNewPair(T instance) {
     if (manager.referencePairs.getPairedRemoteReference(instance) != null) {
       return null;
     }
@@ -29,119 +28,130 @@ public class ReferenceChannel<T> {
 
     manager.referencePairs.add(instance, remoteReference);
 
-    manager.getMessenger().sendCreateNewPair(
-        channelName,
-        remoteReference,
-        (List<Object>) manager.getConverter().convertForRemoteManager(
-            manager,
-            manager.getChannelHandler(channelName).getCreationArguments(manager, instance)
-        )).setOnCompleteListener(new Completable.OnCompleteListener<Void>() {
-      @Override
-      public void onComplete(Void result) {
-        referenceCompleter.complete(remoteReference);
-      }
+    manager
+        .getMessenger()
+        .sendCreateNewPair(
+            channelName,
+            remoteReference,
+            (List<Object>)
+                manager
+                    .getConverter()
+                    .convertForRemoteManager(
+                        manager,
+                        manager
+                            .getChannelHandler(channelName)
+                            .getCreationArguments(manager, instance)))
+        .setOnCompleteListener(
+            new Completable.OnCompleteListener<Void>() {
+              @Override
+              public void onComplete(Void result) {
+                referenceCompleter.complete(remoteReference);
+              }
 
-      @Override
-      public void onError(Throwable throwable) {
-        referenceCompleter.completeWithError(throwable);
-      }
-    });
+              @Override
+              public void onError(Throwable throwable) {
+                referenceCompleter.completeWithError(throwable);
+              }
+            });
 
     return referenceCompleter.completable;
   }
 
-  public Completable<Object> invokeStaticMethod(
-      String methodName,
-      List<Object> arguments
-  ) {
+  public Completable<Object> invokeStaticMethod(String methodName, List<Object> arguments) {
     final Completer<Object> returnCompleter = new Completer<>();
 
-    manager.getMessenger().sendInvokeStaticMethod(
-        channelName,
-        methodName,
-        (List<Object>) manager.getConverter().convertForRemoteManager(manager, arguments)
-    ).setOnCompleteListener(new Completable.OnCompleteListener<Object>() {
-      @Override
-      public void onComplete(Object result) {
-        try {
-          returnCompleter.complete(manager.getConverter().convertForLocalManager(manager, result));
-        } catch (Exception exception) {
-          onError(exception);
-        }
-      }
+    manager
+        .getMessenger()
+        .sendInvokeStaticMethod(
+            channelName,
+            methodName,
+            (List<Object>) manager.getConverter().convertForRemoteManager(manager, arguments))
+        .setOnCompleteListener(
+            new Completable.OnCompleteListener<Object>() {
+              @Override
+              public void onComplete(Object result) {
+                try {
+                  returnCompleter.complete(
+                      manager.getConverter().convertForLocalManager(manager, result));
+                } catch (Exception exception) {
+                  onError(exception);
+                }
+              }
 
-      @Override
-      public void onError(Throwable throwable) {
-        returnCompleter.completeWithError(throwable);
-      }
-    });
+              @Override
+              public void onError(Throwable throwable) {
+                returnCompleter.completeWithError(throwable);
+              }
+            });
 
     return returnCompleter.completable;
   }
 
-  public Completable<Object> invokeMethod(
-      T instance,
-      String methodName,
-      List<Object> arguments
-  ) {
+  public Completable<Object> invokeMethod(T instance, String methodName, List<Object> arguments) {
     final Completer<Object> returnCompleter = new Completer<>();
 
-    manager.getMessenger().sendInvokeMethod(
-        channelName,
-        manager.referencePairs.getPairedRemoteReference(instance),
-        methodName,
-        (List<Object>) manager.getConverter().convertForRemoteManager(manager, arguments)
-    ).setOnCompleteListener(new Completable.OnCompleteListener<Object>() {
-      @Override
-      public void onComplete(Object result) {
-        try {
-          returnCompleter.complete(manager.getConverter().convertForLocalManager(manager, result));
-        } catch (Exception exception) {
-          onError(exception);
-        }
-      }
+    manager
+        .getMessenger()
+        .sendInvokeMethod(
+            channelName,
+            manager.referencePairs.getPairedRemoteReference(instance),
+            methodName,
+            (List<Object>) manager.getConverter().convertForRemoteManager(manager, arguments))
+        .setOnCompleteListener(
+            new Completable.OnCompleteListener<Object>() {
+              @Override
+              public void onComplete(Object result) {
+                try {
+                  returnCompleter.complete(
+                      manager.getConverter().convertForLocalManager(manager, result));
+                } catch (Exception exception) {
+                  onError(exception);
+                }
+              }
 
-      @Override
-      public void onError(Throwable throwable) {
-        returnCompleter.completeWithError(throwable);
-      }
-    });
+              @Override
+              public void onError(Throwable throwable) {
+                returnCompleter.completeWithError(throwable);
+              }
+            });
 
     return returnCompleter.completable;
   }
 
   public Completable<Object> invokeMethodOnUnpairedReference(
-      Object object,
-      String methodName,
-      List<Object> arguments
-  ) {
+      Object object, String methodName, List<Object> arguments) {
     final Completer<Object> returnCompleter = new Completer<>();
 
-    manager.getMessenger().sendInvokeMethodOnUnpairedReference(
-        manager.createUnpairedReference(channelName, object),
-        methodName,
-        (List<Object>) manager.getConverter().convertForRemoteManager(manager, arguments)
-    ).setOnCompleteListener(new Completable.OnCompleteListener<Object>() {
-      @Override
-      public void onComplete(Object result) {
-        try {
-          returnCompleter.complete(manager.getConverter().convertForLocalManager(manager, result));
-        } catch (Exception exception) {
-          onError(exception);
-        }
-      }
+    manager
+        .getMessenger()
+        .sendInvokeMethodOnUnpairedReference(
+            manager.createUnpairedReference(channelName, object),
+            methodName,
+            (List<Object>) manager.getConverter().convertForRemoteManager(manager, arguments))
+        .setOnCompleteListener(
+            new Completable.OnCompleteListener<Object>() {
+              @Override
+              public void onComplete(Object result) {
+                try {
+                  returnCompleter.complete(
+                      manager.getConverter().convertForLocalManager(manager, result));
+                } catch (Exception exception) {
+                  onError(exception);
+                }
+              }
 
-      @Override
-      public void onError(Throwable throwable) {
-        returnCompleter.completeWithError(throwable);
-      }
-    });
+              @Override
+              public void onError(Throwable throwable) {
+                returnCompleter.completeWithError(throwable);
+              }
+            });
 
     return returnCompleter.completable;
   }
 
   public Completable<Void> disposePair(Object instance) {
-    final RemoteReference remoteReference = manager.referencePairs.getPairedRemoteReference(instance);
+    final RemoteReference remoteReference =
+        manager.referencePairs.getPairedRemoteReference(instance);
     if (remoteReference == null) return null;
 
     manager.referencePairs.removePairWithObject(instance);

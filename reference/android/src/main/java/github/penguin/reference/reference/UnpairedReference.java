@@ -18,7 +18,6 @@ public class UnpairedReference {
   @Override
   public String toString() {
     return String.format(
-        "%s(%s, %s)",
-        "UnpairedReference", handlerChannel, creationArguments.toString());
+        "%s(%s, %s)", "UnpairedReference", handlerChannel, creationArguments.toString());
   }
 }

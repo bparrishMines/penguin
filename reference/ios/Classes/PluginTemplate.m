@@ -33,7 +33,7 @@
 
 @implementation LocalHandlerImpl
 - (_p_ClassTemplate *)createClassTemplate:(REFReferencePairManager *)manager
-                                   args:(_p_ClassTemplateCreationArgs *)args {
+                                     args:(_p_ClassTemplateCreationArgs *)args {
   return [[ClassTemplate alloc] initWithFieldTemplate:args.fieldTemplate];
 }
 

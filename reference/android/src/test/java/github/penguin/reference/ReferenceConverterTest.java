@@ -125,8 +125,7 @@ public class ReferenceConverterTest {
     testManager.pairWithNewLocalReference(new RemoteReference("apple"), 0);
 
     assertEquals(
-        converter.convertForRemoteManager(testManager, testClass),
-        new RemoteReference("apple"));
+        converter.convertForRemoteManager(testManager, testClass), new RemoteReference("apple"));
   }
 
   @Test
@@ -153,8 +152,7 @@ public class ReferenceConverterTest {
             });
 
     assertThat(
-        converter.convertForRemoteManager(
-            testManager, Collections.singletonList(new TestClass())),
+        converter.convertForRemoteManager(testManager, Collections.singletonList(new TestClass())),
         contains(isUnpairedReference(0, contains(isUnpairedReference(0, empty(), null)), null)));
   }
 
@@ -210,8 +208,7 @@ public class ReferenceConverterTest {
     testManager.pairWithNewLocalReference(new RemoteReference("apple"), 0);
 
     assertEquals(
-        converter.convertForLocalManager(testManager, new RemoteReference("apple")),
-        testClass);
+        converter.convertForLocalManager(testManager, new RemoteReference("apple")), testClass);
   }
 
   @Test

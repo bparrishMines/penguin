@@ -8,7 +8,6 @@ class Reference {
   const Reference();
 }
 
-
 /// Represents an object that is remotely accessible.
 ///
 /// This is paired with a [LocalReference] in a [ReferencePairManager].

@@ -133,7 +133,8 @@ void main() {
 
       testManager.onReceiveDisposePair(RemoteReference('tea'));
 
-      verify(testManager.localHandler.onInstanceDisposed(testManager, testClass));
+      verify(
+          testManager.localHandler.onInstanceDisposed(testManager, testClass));
       expect(
         testManager.getPairedLocalReference(RemoteReference('tea')),
         isNull,
@@ -160,7 +161,8 @@ void main() {
           testManager,
           argThat(isEmpty),
         ),
-        testManager.remoteHandler.createInstance(remoteReference, 0, argThat(isEmpty)),
+        testManager.remoteHandler
+            .createInstance(remoteReference, 0, argThat(isEmpty)),
       ]);
     });
 
@@ -333,11 +335,9 @@ class TestPoolableReferencePairManager extends PoolableReferencePairManager {
   final MockRemoteHandler remoteHandler = MockRemoteHandler();
 }
 
-class MockRemoteHandler extends Mock
-    implements MessageSender {}
+class MockRemoteHandler extends Mock implements MessageSender {}
 
-class MockLocalHandler extends Mock
-    implements ReferenceChannelHandler {}
+class MockLocalHandler extends Mock implements ReferenceChannelHandler {}
 
 class MockReferenceConverter extends Mock implements ReferenceConverter {}
 

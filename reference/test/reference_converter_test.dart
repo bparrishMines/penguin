@@ -296,8 +296,6 @@ class TestPoolableReferencePairManager extends PoolableReferencePairManager {
   final MockRemoteHandler remoteHandler = MockRemoteHandler();
 }
 
-class MockRemoteHandler extends Mock
-    implements MessageSender {}
+class MockRemoteHandler extends Mock implements MessageSender {}
 
-class MockLocalHandler extends Mock
-    implements ReferenceChannelHandler {}
+class MockLocalHandler extends Mock implements ReferenceChannelHandler {}

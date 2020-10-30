@@ -45,13 +45,15 @@ public class MethodChannelReferenceChannelMessenger implements ReferenceChannelM
   }
 
   @SuppressWarnings("unused")
-  public MethodChannelReferenceChannelMessenger(BinaryMessenger binaryMessenger, MethodChannel channel) {
+  public MethodChannelReferenceChannelMessenger(
+      BinaryMessenger binaryMessenger, MethodChannel channel) {
     this.binaryMessenger = binaryMessenger;
     this.channel = channel;
   }
 
   @Override
-  public Completable<Void> sendCreateNewPair(String handlerChannel, RemoteReference remoteReference, List<Object> arguments) {
+  public Completable<Void> sendCreateNewPair(
+      String handlerChannel, RemoteReference remoteReference, List<Object> arguments) {
     final Completer<Void> completer = new Completer<>();
     final String method = MethodChannelReferenceChannelManager.METHOD_CREATE;
 
@@ -64,7 +66,8 @@ public class MethodChannelReferenceChannelMessenger implements ReferenceChannelM
   }
 
   @Override
-  public Completable<Object> sendInvokeStaticMethod(String handlerChannel, String methodName, List<Object> arguments) {
+  public Completable<Object> sendInvokeStaticMethod(
+      String handlerChannel, String methodName, List<Object> arguments) {
     final Completer<Object> completer = new Completer<>();
     final String method = MethodChannelReferenceChannelManager.METHOD_STATIC_METHOD;
 
@@ -77,7 +80,11 @@ public class MethodChannelReferenceChannelMessenger implements ReferenceChannelM
   }
 
   @Override
-  public Completable<Object> sendInvokeMethod(String handlerChannel, RemoteReference remoteReference, String methodName, List<Object> arguments) {
+  public Completable<Object> sendInvokeMethod(
+      String handlerChannel,
+      RemoteReference remoteReference,
+      String methodName,
+      List<Object> arguments) {
     final Completer<Object> completer = new Completer<>();
     final String method = MethodChannelReferenceChannelManager.METHOD_METHOD;
 
@@ -90,7 +97,8 @@ public class MethodChannelReferenceChannelMessenger implements ReferenceChannelM
   }
 
   @Override
-  public Completable<Object> sendInvokeMethodOnUnpairedReference(UnpairedReference unpairedReference, String methodName, List<Object> arguments) {
+  public Completable<Object> sendInvokeMethodOnUnpairedReference(
+      UnpairedReference unpairedReference, String methodName, List<Object> arguments) {
     final Completer<Object> completer = new Completer<>();
     final String method = MethodChannelReferenceChannelManager.METHOD_UNPAIRED_METHOD;
 

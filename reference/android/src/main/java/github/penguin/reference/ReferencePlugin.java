@@ -1,8 +1,5 @@
 package github.penguin.reference;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import androidx.annotation.NonNull;
 import github.penguin.reference.method_channel.MethodChannelReferenceChannelManager;
 import github.penguin.reference.reference.ReferenceChannelManager;
@@ -10,6 +7,8 @@ import github.penguin.reference.templates.PluginTemplate;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
+import java.util.HashMap;
+import java.util.Map;
 
 /** ReferencePlugin */
 public class ReferencePlugin implements FlutterPlugin {
