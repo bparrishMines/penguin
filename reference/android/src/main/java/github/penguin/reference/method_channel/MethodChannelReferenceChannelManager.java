@@ -62,8 +62,8 @@ public class MethodChannelReferenceChannelManager extends ReferenceChannelManage
                   onReceiveInvokeMethod(
                       (String) arguments.get(0),
                       (RemoteReference) arguments.get(1),
-                      (String) arguments.get(0),
-                      (List<Object>) arguments.get(2));
+                      (String) arguments.get(2),
+                      (List<Object>) arguments.get(3));
               callResult.success(result);
               break;
             }
@@ -73,7 +73,7 @@ public class MethodChannelReferenceChannelManager extends ReferenceChannelManage
               final Object result =
                   onReceiveInvokeMethodOnUnpairedReference(
                       (UnpairedReference) arguments.get(0),
-                      (String) arguments.get(0),
+                      (String) arguments.get(1),
                       (List<Object>) arguments.get(2));
               callResult.success(result);
               break;

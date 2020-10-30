@@ -72,11 +72,6 @@ public abstract class ReferenceChannelManager {
         getChannelHandler(handlerChannel).getCreationArguments(this, object));
   }
 
-  /// Invoke a method on [localReference].
-  ///
-  /// This method uses [ReferenceConverter.convertForLocalManager] to convert
-  /// [arguments] and [ReferenceConverter.convertForRemoteManager] to convert
-  /// the result.
   public Object onReceiveInvokeMethod(
       String handlerChannel,
       RemoteReference remoteReference,
