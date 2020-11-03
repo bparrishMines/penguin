@@ -20,9 +20,7 @@ mixin $ClassTemplate {
   int get fieldTemplate;
   $ClassTemplate2 get referenceParameterTemplate;
   Future<String> methodTemplate(
-    String parameterTemplate,
-    $ClassTemplate2 referenceParameterTemplate,
-  );
+      String parameterTemplate, $ClassTemplate2 referenceParameterTemplate);
 }
 
 mixin $ClassTemplate2 {}
