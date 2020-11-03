@@ -72,7 +72,7 @@ String generateDart(String template, LibraryNode libraryNode) {
             .join('\n\n'),
       )
       .replaceAll(
-        library.aCreationArgsClass.exp,
+        library.creationArgs,
         libraryNode.classes
             .map<String>(
               (ClassNode classNode) => library.aCreationArgsClass
@@ -668,6 +668,10 @@ class Library with TemplateRegExp {
 
   final RegExp channels = TemplateRegExp.regExp(
     r'class \$ClassTemplateChannel.*}(?=\s*class \$ClassTemplateHandler)',
+  );
+
+  final RegExp creationArgs = TemplateRegExp.regExp(
+    r'class \$ClassTemplateCreationArgs.*}(?=\s*class \$ClassTemplateChannel)',
   );
 
   Mixin get aMixin => Mixin(this);
