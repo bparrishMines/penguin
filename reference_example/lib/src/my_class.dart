@@ -1,45 +1,33 @@
 import 'dart:async';
 
 import 'package:reference/reference.dart';
+import 'package:reference/annotations.dart';
 
 import 'reference_pair_manager.dart';
 
-final MyReferencePairManager referencePairManager = MyReferencePairManager()
-  ..initialize();
+// final MyReferencePairManager referencePairManager = MyReferencePairManager()
+//   ..initialize();
 
-class MyClass with LocalReference {
+@Channel('a_channel_my_dude')
+class MyClass {
   MyClass(this.stringField) {
-    referencePairManager.pairWithNewRemoteReference(this);
+    //referencePairManager.pairWithNewRemoteReference(this);
   }
 
   final String stringField;
 
   Future<String> myMethod(double value, MyOtherClass myOtherClass) async {
-    return (await referencePairManager.invokeRemoteMethod(
-      referencePairManager.getPairedRemoteReference(this),
-      'myMethod',
-      <dynamic>[value, myOtherClass],
-    )) as String;
+    return null;
   }
-
-  // The unique `Type` used to represent this class in a `ReferencePairManager`.
-  @override
-  Type get referenceType => runtimeType;
 }
 
-class MyOtherClass with LocalReference {
+@Channel('my_channel')
+class MyOtherClass {
   MyOtherClass(this.intField);
 
   final int intField;
 
   static Future<int> myStaticMethod() async {
-    return (await referencePairManager.invokeRemoteStaticMethod(
-      MyOtherClass,
-      'myMethod',
-    )) as int;
+    return null;
   }
-
-  // The unique `Type` used to represent this class in a `ReferencePairManager`.
-  @override
-  Type get referenceType => runtimeType;
 }
