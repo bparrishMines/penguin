@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:reference/reference.dart';
 import 'package:reference/annotations.dart';
+import 'package:reference_example/src/my_class.g.dart';
 
 import 'reference_pair_manager.dart';
 
@@ -9,20 +10,23 @@ import 'reference_pair_manager.dart';
 //   ..initialize();
 
 @Channel('a_channel_my_dude')
-class MyClass {
+class MyClass with $MyClass {
   MyClass(this.stringField) {
     //referencePairManager.pairWithNewRemoteReference(this);
   }
 
   final String stringField;
 
-  Future<String> myMethod(double value, MyOtherClass myOtherClass) async {
+  Future<String> myMethod(
+    double value,
+    covariant MyOtherClass myOtherClass,
+  ) async {
     return null;
   }
 }
 
 @Channel('my_channel')
-class MyOtherClass {
+class MyOtherClass with $MyOtherClass {
   MyOtherClass(this.intField);
 
   final int intField;

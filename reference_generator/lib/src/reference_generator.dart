@@ -66,6 +66,7 @@ class ReferenceAstBuilder extends Builder {
 
     return ClassNode(
       name: classElement.name,
+      channelName: _getChannel(classElement.thisType),
       fields: parameters
           .map<FieldNode>((ParameterElement parameterElement) =>
               _toFieldNode(parameterElement, allGeneratedClasses))

@@ -19,9 +19,17 @@ class LibraryNode {
 
 @JsonSerializable()
 class ClassNode {
-  ClassNode({this.name, this.fields, this.methods, this.staticMethods});
+  ClassNode({
+    this.name,
+    this.channelName,
+    this.fields,
+    this.methods,
+    this.staticMethods,
+  });
 
   final String name;
+
+  final String channelName;
 
   final List<FieldNode> fields;
 
