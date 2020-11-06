@@ -308,7 +308,7 @@ String generateDart(String template, LibraryNode libraryNode) {
                               .stringMatch()
                               .replaceAll(
                                 library.aHandler.aStaticMethodName.name,
-                                methodNode.name,
+                                ReCase(methodNode.name).pascalCase,
                               ),
                         )
                         .join(','),
@@ -374,6 +374,17 @@ String generateDart(String template, LibraryNode libraryNode) {
                         return invoker
                             .stringMatch()
                             .replaceAll(invoker.methodName, methodNode.name)
+                            .replaceAll(
+                              invoker.arguments,
+                              List<int>.generate(
+                                methodNode.parameters.length,
+                                (int index) => index,
+                              )
+                                  .map<String>(
+                                    (int index) => 'arguments[$index]',
+                                  )
+                                  .join(','),
+                            )
                             .replaceAll(
                               invoker.methodHandler,
                               ReCase(methodNode.name).pascalCase,
@@ -1067,7 +1078,7 @@ class Handler with TemplateRegExp {
   );
 
   final RegExp onDisposeClassName = TemplateRegExp.regExp(
-    r'ClassTemplate(?= instance)\s+onDispose;',
+    r'ClassTemplate(?= instance\)\s+onDispose;)',
   );
 
   HandlerStaticMethodName get aStaticMethodName =>
@@ -1156,6 +1167,12 @@ class HandlerStaticMethodInvoker with TemplateRegExp {
   final RegExp methodHandler = TemplateRegExp.regExp(
     r'(?<=\$on)StaticMethodTemplate',
   );
+
+  final RegExp arguments = TemplateRegExp.regExp(
+    r'arguments\[0\], arguments\[1\]',
+  );
+
+  final RegExp anArgument = TemplateRegExp.regExp(r'arguments\[0\]');
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
