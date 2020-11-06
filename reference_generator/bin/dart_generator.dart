@@ -439,6 +439,38 @@ String generateDart(String template, LibraryNode libraryNode) {
                               )
                               .join(', '),
                         ),
+                  )
+                  .replaceAll(
+                    library.aHandler.theCreateInstance.exp,
+                    library.aHandler.theCreateInstance
+                        .stringMatch()
+                        .replaceAll(
+                          library.aHandler.theCreateInstance.className,
+                          classNode.name,
+                        )
+                        .replaceAll(
+                          library.aHandler.theCreateInstance.argsClassName,
+                          classNode.name,
+                        )
+                        .replaceAll(
+                          library.aHandler.theCreateInstance.fields,
+                          List<int>.generate(
+                            classNode.fields.length,
+                            (int index) => index,
+                          ).map<String>(
+                            (int index) {
+                              final HandlerCreateInstanceField field =
+                                  library.aHandler.theCreateInstance.aField;
+                              return field
+                                  .stringMatch()
+                                  .replaceAll(
+                                    field.name,
+                                    classNode.fields[index].name,
+                                  )
+                                  .replaceAll(field.index, index.toString());
+                            },
+                          ).join('\n'),
+                        ),
                   ),
             )
             .join(''),
@@ -1094,6 +1126,8 @@ class Handler with TemplateRegExp {
   HandlerCreationArguments get theCreationArguments =>
       HandlerCreationArguments(this);
 
+  HandlerCreateInstance get theCreateInstance => HandlerCreateInstance(this);
+
   @override
   final RegExp exp = TemplateRegExp.regExp(
     r'class \$ClassTemplateHandler.*}(?=\s+class \$ClassTemplate2Handler)',
@@ -1236,6 +1270,44 @@ class HandlerCreationArgumentsFieldReference with TemplateRegExp {
 
   @override
   final HandlerCreationArguments parent;
+}
+
+class HandlerCreateInstance with TemplateRegExp {
+  HandlerCreateInstance(this.parent);
+
+  final RegExp className = TemplateRegExp.regExp(r'ClassTemplate(?= createInstance\()',);
+
+  final RegExp argsClassName =
+      TemplateRegExp.regExp(r'ClassTemplate(?=CreationArgs\()');
+
+  final RegExp fields = TemplateRegExp.regExp(
+    r'\.\.fieldTemplate = arguments\[0\]\s+\.\.referenceParameterTemplate = arguments\[1\]',
+  );
+
+  HandlerCreateInstanceField get aField => HandlerCreateInstanceField(this);
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'\$ClassTemplate createInstance[^\}]+\}',
+  );
+
+  @override
+  final Handler parent;
+}
+
+class HandlerCreateInstanceField with TemplateRegExp {
+  HandlerCreateInstanceField(this.parent);
+
+  final RegExp name = TemplateRegExp.regExp(r'fieldTemplate');
+
+  final RegExp index = TemplateRegExp.regExp(r'0(?=\])');
+
+  @override
+  final RegExp exp =
+      TemplateRegExp.regExp(r'\.\.fieldTemplate = arguments\[0\]');
+
+  @override
+  final HandlerCreateInstance parent;
 }
 
 //
