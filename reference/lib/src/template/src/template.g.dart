@@ -98,10 +98,14 @@ class $ClassTemplateHandler implements ReferenceChannelHandler<$ClassTemplate> {
     String methodName,
     List<Object> arguments,
   ) {
+    Function method;
     switch (methodName) {
       case 'staticMethodTemplate':
-        return $onStaticMethodTemplate(manager, arguments[0], arguments[1]);
+        method =
+            () => $onStaticMethodTemplate(manager, arguments[0], arguments[1]);
     }
+
+    if (method != null) return method();
 
     throw ArgumentError.value(
       methodName,
@@ -144,11 +148,13 @@ class $ClassTemplateHandler implements ReferenceChannelHandler<$ClassTemplate> {
     String methodName,
     List<Object> arguments,
   ) {
+    Function method;
     switch (methodName) {
       case 'methodTemplate':
-        return instance.methodTemplate(arguments[0], arguments[1]);
+        method = () => instance.methodTemplate(arguments[0], arguments[1]);
     }
 
+    if (method != null) return method();
     throw ArgumentError.value(
       instance,
       'instance',
