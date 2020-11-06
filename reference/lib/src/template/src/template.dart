@@ -21,7 +21,7 @@ class ClassTemplate with $ClassTemplate {
   static final $ClassTemplateChannel _channel = $ClassTemplateChannel(
     MethodChannelReferenceChannelManager.instance,
   )..registerHandler($ClassTemplateHandler(
-      onCreateClassTemplate: (
+      onCreate: (
         ReferenceChannelManager manager,
         $ClassTemplateCreationArgs args,
       ) {
@@ -64,7 +64,7 @@ class ClassTemplate2 with $ClassTemplate2 {
   static final $ClassTemplate2Channel _channel = $ClassTemplate2Channel(
     MethodChannelReferenceChannelManager.instance,
   )..registerHandler($ClassTemplate2Handler(
-      onCreateClassTemplate2: (
+      onCreate: (
         ReferenceChannelManager manager,
         $ClassTemplate2CreationArgs args,
       ) {

@@ -78,16 +78,14 @@ class $ClassTemplate2Channel extends ReferenceChannel<$ClassTemplate2> {
 
 class $ClassTemplateHandler implements ReferenceChannelHandler<$ClassTemplate> {
   $ClassTemplateHandler(
-      {this.onCreateClassTemplate,
-      this.onDisposeClassTemplate,
-      this.$onStaticMethodTemplate});
+      {this.onCreate, this.onDispose, this.$onStaticMethodTemplate});
 
   final $ClassTemplate Function(
           ReferenceChannelManager manager, $ClassTemplateCreationArgs args)
-      onCreateClassTemplate;
+      onCreate;
 
   final void Function(ReferenceChannelManager manager, $ClassTemplate instance)
-      onDisposeClassTemplate;
+      onDispose;
 
   final double Function(
       ReferenceChannelManager manager,
@@ -132,7 +130,7 @@ class $ClassTemplateHandler implements ReferenceChannelHandler<$ClassTemplate> {
     ReferenceChannelManager manager,
     List<Object> arguments,
   ) {
-    return onCreateClassTemplate(
+    return onCreate(
         manager,
         $ClassTemplateCreationArgs()
           ..fieldTemplate = arguments[0]
@@ -163,23 +161,20 @@ class $ClassTemplateHandler implements ReferenceChannelHandler<$ClassTemplate> {
     ReferenceChannelManager manager,
     $ClassTemplate instance,
   ) {
-    onDisposeClassTemplate(manager, instance);
+    onDispose(manager, instance);
   }
 }
 
 class $ClassTemplate2Handler
     implements ReferenceChannelHandler<$ClassTemplate2> {
-  $ClassTemplate2Handler({
-    this.onCreateClassTemplate2,
-    this.onDisposeClassTemplate2,
-  });
+  $ClassTemplate2Handler({this.onCreate, this.onDispose});
 
   final $ClassTemplate2 Function(
           ReferenceChannelManager manager, $ClassTemplate2CreationArgs args)
-      onCreateClassTemplate2;
+      onCreate;
 
   final void Function(ReferenceChannelManager manager, $ClassTemplate2 instance)
-      onDisposeClassTemplate2;
+      onDispose;
 
   @override
   Object invokeStaticMethod(
@@ -207,7 +202,7 @@ class $ClassTemplate2Handler
     ReferenceChannelManager manager,
     List<Object> arguments,
   ) {
-    return onCreateClassTemplate2(manager, $ClassTemplate2CreationArgs());
+    return onCreate(manager, $ClassTemplate2CreationArgs());
   }
 
   @override
@@ -229,6 +224,6 @@ class $ClassTemplate2Handler
     ReferenceChannelManager manager,
     $ClassTemplate2 instance,
   ) {
-    onDisposeClassTemplate2(manager, instance);
+    onDispose(manager, instance);
   }
 }
