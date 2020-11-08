@@ -15,13 +15,23 @@ class MyClass with $MyClass {
     //referencePairManager.pairWithNewRemoteReference(this);
   }
 
+  final $MyClassChannel _channel = $MyClassChannel(
+    MethodChannelReferenceChannelManager.instance,
+  )..registerHandler(
+      $MyClassHandler(
+        onCreate: (_, args) {
+          return MyClass(args.stringField);
+        },
+      ),
+    );
+
   final String stringField;
 
   Future<String> myMethod(
     double value,
     covariant MyOtherClass myOtherClass,
   ) async {
-    return null;
+    return await _channel.$invokeMyMethod(this, value, myOtherClass);
   }
 }
 

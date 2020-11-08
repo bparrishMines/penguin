@@ -299,6 +299,7 @@ String generateDart(String template, LibraryNode libraryNode) {
                     library.aHandler.onDisposeClassName,
                     classNode.name,
                   )
+              .replaceAll(library.aHandler.onInstanceDisposedClassName, classNode.name,)
                   .replaceAll(
                     library.aHandler.aStaticMethodName.exp,
                     classNode.staticMethods
@@ -468,6 +469,46 @@ String generateDart(String template, LibraryNode libraryNode) {
                                     classNode.fields[index].name,
                                   )
                                   .replaceAll(field.index, index.toString());
+                            },
+                          ).join('\n'),
+                        ),
+                  )
+                  .replaceAll(
+                    library.aHandler.theHandlerInvokeMethod.exp,
+                    library.aHandler.theHandlerInvokeMethod
+                        .stringMatch()
+                        .replaceAll(
+                          library.aHandler.theHandlerInvokeMethod
+                              .instanceClassName,
+                          classNode.name,
+                        )
+                        .replaceAll(
+                          library.aHandler.theHandlerInvokeMethod.anInvoker.exp,
+                          classNode.methods.map<String>(
+                            (MethodNode methodNode) {
+                              final HandlerInvokeMethodInvoker invoker = library
+                                  .aHandler.theHandlerInvokeMethod.anInvoker;
+                              return invoker
+                                  .stringMatch()
+                                  .replaceAll(
+                                    invoker.methodName,
+                                    methodNode.name,
+                                  )
+                                  .replaceAll(
+                                    invoker.instanceMethodName,
+                                    methodNode.name,
+                                  )
+                                  .replaceAll(
+                                    invoker.arguments,
+                                    List<int>.generate(
+                                      methodNode.parameters.length,
+                                      (int index) => index,
+                                    )
+                                        .map<String>(
+                                          (int index) => 'arguments[$index]',
+                                        )
+                                        .join(','),
+                                  );
                             },
                           ).join('\n'),
                         ),
@@ -1128,6 +1169,12 @@ class Handler with TemplateRegExp {
 
   HandlerCreateInstance get theCreateInstance => HandlerCreateInstance(this);
 
+  HandlerInvokeMethod get theHandlerInvokeMethod => HandlerInvokeMethod(this);
+
+  final RegExp onInstanceDisposedClassName = TemplateRegExp.regExp(
+    r'(?<=void onInstanceDisposed\([^\$]+\$)ClassTemplate',
+  );
+
   @override
   final RegExp exp = TemplateRegExp.regExp(
     r'class \$ClassTemplateHandler.*}(?=\s+class \$ClassTemplate2Handler)',
@@ -1275,7 +1322,9 @@ class HandlerCreationArgumentsFieldReference with TemplateRegExp {
 class HandlerCreateInstance with TemplateRegExp {
   HandlerCreateInstance(this.parent);
 
-  final RegExp className = TemplateRegExp.regExp(r'ClassTemplate(?= createInstance\()',);
+  final RegExp className = TemplateRegExp.regExp(
+    r'ClassTemplate(?= createInstance\()',
+  );
 
   final RegExp argsClassName =
       TemplateRegExp.regExp(r'ClassTemplate(?=CreationArgs\()');
@@ -1308,6 +1357,48 @@ class HandlerCreateInstanceField with TemplateRegExp {
 
   @override
   final HandlerCreateInstance parent;
+}
+
+class HandlerInvokeMethod with TemplateRegExp {
+  HandlerInvokeMethod(this.parent);
+
+  final RegExp instanceClassName = TemplateRegExp.regExp(
+    r'ClassTemplate(?= instance,)',
+  );
+
+  HandlerInvokeMethodInvoker get anInvoker => HandlerInvokeMethodInvoker(this);
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'Object invokeMethod\([^\}]+\}',
+  );
+
+  @override
+  final Handler parent;
+}
+
+class HandlerInvokeMethodInvoker with TemplateRegExp {
+  HandlerInvokeMethodInvoker(this.parent);
+
+  final RegExp methodName = TemplateRegExp.regExp(
+    r"(?<=')methodTemplate(?=')",
+  );
+
+  final RegExp instanceMethodName = TemplateRegExp.regExp(
+    r'(?<=instance\.)methodTemplate',
+  );
+
+  final RegExp arguments = TemplateRegExp.regExp(
+    r'arguments\[0\], arguments\[1\]',
+  );
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r"case 'methodTemplate'[^;]+;",
+  );
+
+  @override
+  final HandlerInvokeMethod parent;
 }
 
 //
