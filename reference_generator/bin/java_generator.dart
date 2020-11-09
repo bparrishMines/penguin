@@ -85,6 +85,188 @@ String generateJava({
                 }).join('\n'),
               );
         }).join('\n\n'),
+      )
+      .replaceAll(
+        library.channels,
+        libraryNode.classes
+            .map<String>(
+              (ClassNode classNode) => library.aChannel
+                  .stringMatch()
+                  .replaceAll(
+                    library.aChannel.className,
+                    classNode.name,
+                  )
+                  .replaceAll(
+                    library.aChannel.typeArgumentClassName,
+                    classNode.name,
+                  )
+                  .replaceAll(
+                    library.aChannel.constructorClassName,
+                    classNode.name,
+                  )
+                  .replaceAll(
+                    library.aChannel.channel,
+                    classNode.channelName,
+                  )
+                  .replaceAll(
+                    library.aChannel.aStaticMethod.exp,
+                    classNode.staticMethods
+                        .map<String>(
+                          (MethodNode methodNode) => library
+                              .aChannel.aStaticMethod
+                              .stringMatch()
+                              .replaceAll(
+                                library.aChannel.aStaticMethod.name,
+                                ReCase(methodNode.name).pascalCase,
+                              )
+                              .replaceAll(
+                                library.aChannel.aStaticMethod.nameAsParameter,
+                                methodNode.name,
+                              )
+                              .replaceAll(
+                                library.aChannel.aStaticMethod.parameters,
+                                methodNode.parameters
+                                    .map<String>(
+                                      (ParameterNode parameterNode) => library
+                                          .aChannel.aStaticMethod.aParameter
+                                          .stringMatch()
+                                          .replaceAll(
+                                            library.aChannel.aStaticMethod
+                                                .aParameter.name,
+                                            parameterNode.name,
+                                          )
+                                          .replaceAll(
+                                            library.aChannel.aStaticMethod
+                                                .aParameter.type,
+                                            getTrueTypeName(parameterNode.type),
+                                          ),
+                                    )
+                                    .join(', '),
+                              )
+                              .replaceAll(
+                                library
+                                    .aChannel.aStaticMethod.channelParameters,
+                                methodNode.parameters
+                                    .map<String>(
+                                      (ParameterNode parameterNode) =>
+                                          parameterNode.type.hasReferenceChannel
+                                              ? library.aChannel.aStaticMethod
+                                                  .aParameterReference
+                                                  .stringMatch()
+                                                  .replaceAll(
+                                                    library
+                                                        .aChannel
+                                                        .aStaticMethod
+                                                        .aParameterReference
+                                                        .name,
+                                                    parameterNode.name,
+                                                  )
+                                                  .replaceAll(
+                                                    library
+                                                        .aChannel
+                                                        .aStaticMethod
+                                                        .aParameterReference
+                                                        .channel,
+                                                    parameterNode
+                                                        .type.referenceChannel,
+                                                  )
+                                              : library.aChannel.aStaticMethod
+                                                  .aParameterName
+                                                  .stringMatch()
+                                                  .replaceAll(
+                                                    library
+                                                        .aChannel
+                                                        .aStaticMethod
+                                                        .aParameterName
+                                                        .name,
+                                                    parameterNode.name,
+                                                  ),
+                                    )
+                                    .join(', '),
+                              ),
+                        )
+                        .join('\n\n'),
+                  )
+                  .replaceAll(
+                    library.aChannel.aMethod.exp,
+                    classNode.methods
+                        .map<String>(
+                          (MethodNode methodNode) => library.aChannel.aMethod
+                              .stringMatch()
+                              .replaceAll(
+                                library.aChannel.aMethod.name,
+                                ReCase(methodNode.name).pascalCase,
+                              )
+                              .replaceAll(
+                                library.aChannel.aMethod.channelMethodName,
+                                methodNode.name,
+                              )
+                              .replaceAll(
+                                library.aChannel.aMethod.instanceClassName,
+                                classNode.name,
+                              )
+                              .replaceAll(
+                                library.aChannel.aMethod.parameters,
+                                methodNode.parameters
+                                    .map<String>(
+                                      (ParameterNode parameterNode) => library
+                                          .aChannel.aMethod.aParameter
+                                          .stringMatch()
+                                          .replaceAll(
+                                            library.aChannel.aMethod.aParameter
+                                                .name,
+                                            parameterNode.name,
+                                          )
+                                          .replaceAll(
+                                            library.aChannel.aMethod.aParameter
+                                                .type,
+                                            getTrueTypeName(parameterNode.type),
+                                          ),
+                                    )
+                                    .join(', '),
+                              )
+                              .replaceAll(
+                                library.aChannel.aMethod.channelParameters,
+                                methodNode.parameters
+                                    .map<String>(
+                                      (ParameterNode parameterNode) =>
+                                          parameterNode.type.hasReferenceChannel
+                                              ? library.aChannel.aMethod
+                                                  .aParameterReference
+                                                  .stringMatch()
+                                                  .replaceAll(
+                                                    library
+                                                        .aChannel
+                                                        .aMethod
+                                                        .aParameterReference
+                                                        .name,
+                                                    parameterNode.name,
+                                                  )
+                                                  .replaceAll(
+                                                    library
+                                                        .aChannel
+                                                        .aMethod
+                                                        .aParameterReference
+                                                        .channel,
+                                                    parameterNode
+                                                        .type.referenceChannel,
+                                                  )
+                                              : library.aChannel.aMethod
+                                                  .aParameterName
+                                                  .stringMatch()
+                                                  .replaceAll(
+                                                    library.aChannel.aMethod
+                                                        .aParameterName.name,
+                                                    parameterNode.name,
+                                                  ),
+                                    )
+                                    .join(', '),
+                              ),
+                        )
+                        .join('\n\n'),
+                  ),
+            )
+            .join('\n\n'),
       );
   // .replaceAll(
   //   library.aClass.exp,
@@ -806,9 +988,15 @@ class Library with TemplateRegExp {
     r'static class \$ClassTemplateCreationArgs.*}(?=\s*static class \$ClassTemplateChannel)',
   );
 
+  final RegExp channels = TemplateRegExp.regExp(
+    r'static class \$ClassTemplateChannel.*}(?=\s*static class \$ClassTemplateHandler)',
+  );
+
   Interface get anInterface => Interface(this);
 
   CreationArgsClass get aCreationArgsClass => CreationArgsClass(this);
+
+  Channel get aChannel => Channel(this);
 
   // Class get aClass => Class(this);
   //
@@ -916,6 +1104,135 @@ class CreationArgsClassField with TemplateRegExp {
 
   @override
   final CreationArgsClass parent;
+}
+
+class Channel with TemplateRegExp {
+  Channel(this.parent);
+
+  final RegExp className = TemplateRegExp.regExp(
+    r'(?<=class \$)ClassTemplate',
+  );
+
+  final RegExp typeArgumentClassName = TemplateRegExp.regExp(
+    r'(?<=extends ReferenceChannel<\$)ClassTemplate',
+  );
+
+  final RegExp constructorClassName = TemplateRegExp.regExp(
+    r'(?<=\$)ClassTemplate(?=Channel\()',
+  );
+
+  final RegExp channel = TemplateRegExp.regExp(
+    r'(?<=super\(manager, ")github\.penguin/template/template/ClassTemplate',
+  );
+
+  ChannelStaticMethod get aStaticMethod => ChannelStaticMethod(this);
+
+  ChannelMethod get aMethod => ChannelMethod(this);
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'static class \$ClassTemplateChannel.*}(?=\s*static class \$ClassTemplate2Channel)',
+  );
+
+  @override
+  final Library parent;
+}
+
+class ChannelStaticMethod with TemplateRegExp {
+  ChannelStaticMethod(this.parent);
+
+  final RegExp name = TemplateRegExp.regExp(r'StaticMethodTemplate');
+
+  final RegExp nameAsParameter = TemplateRegExp.regExp(r'staticMethodTemplate');
+
+  final RegExp parameters = TemplateRegExp.regExp(
+    r'String parameterTemplate, \$ClassTemplate2 referenceParameterTemplate',
+  );
+
+  final RegExp channelParameters = TemplateRegExp.regExp(
+    r'(?<=asList\(\s*)parameterTemplate[^\)]+\)',
+  );
+
+  Parameter get aParameter => Parameter(this);
+
+  ParameterName get aParameterName => ParameterName(this);
+
+  ParameterReference get aParameterReference => ParameterReference(this);
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'Completable<Object> \$invokeStaticMethodTemplate[^\}]+\}',
+  );
+
+  @override
+  final Channel parent;
+}
+
+class ChannelMethod with TemplateRegExp {
+  ChannelMethod(this.parent);
+
+  final RegExp name = TemplateRegExp.regExp(
+    r'(?<=Completable<Object>\s\$invoke)MethodTemplate',
+  );
+
+  final RegExp instanceClassName = TemplateRegExp.regExp(
+    r'(?<=\$)ClassTemplate(?= instance)',
+  );
+
+  final RegExp channelMethodName = TemplateRegExp.regExp(
+    r'(?<=")methodTemplate(?=")',
+  );
+
+  final RegExp parameters = TemplateRegExp.regExp(
+    r'String parameterTemplate,\s*\$ClassTemplate2 referenceParameterTemplate',
+  );
+
+  final RegExp channelParameters = TemplateRegExp.regExp(
+    r'(?<=asList\(\s*)parameterTemplate[^\)]+\)',
+  );
+
+  Parameter get aParameter => Parameter(this);
+
+  ParameterName get aParameterName => ParameterName(this);
+
+  ParameterReference get aParameterReference => ParameterReference(this);
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'Completable<Object>\s\$invokeMethodTemplate[^\}]+\}',
+  );
+
+  @override
+  final Channel parent;
+}
+
+class ParameterName with TemplateRegExp {
+  ParameterName(this.parent);
+
+  final RegExp name = TemplateRegExp.regExp(r'parameterTemplate');
+
+  @override
+  final RegExp exp =
+      TemplateRegExp.regExp(r'(?<=asList\(\s*)parameterTemplate');
+
+  @override
+  final TemplateRegExp parent;
+}
+
+class ParameterReference with TemplateRegExp {
+  ParameterReference(this.parent);
+
+  final RegExp name = TemplateRegExp.regExp(r'referenceParameterTemplate');
+
+  final RegExp channel = TemplateRegExp.regExp(
+    r'github\.penguin/template/template/ClassTemplate2',
+  );
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(r'replaceIfUnpaired\([^\)]+\)');
+
+  @override
+  final TemplateRegExp parent;
 }
 
 // class Class with TemplateRegExp {
