@@ -58,6 +58,33 @@ String generateJava({
                 }).join('\n'),
               );
         }).join('\n'),
+      )
+      .replaceAll(
+        library.creationArgs,
+        libraryNode.classes.map<String>((ClassNode classNode) {
+          final CreationArgsClass aCreationArgsClass =
+              library.aCreationArgsClass;
+          return aCreationArgsClass
+              .stringMatch()
+              .replaceAll(
+                aCreationArgsClass.className,
+                classNode.name,
+              )
+              .replaceAll(
+                aCreationArgsClass.fields,
+                classNode.fields.map<String>((FieldNode fieldNode) {
+                  final CreationArgsClassField aField =
+                      aCreationArgsClass.aField;
+                  return aField
+                      .stringMatch()
+                      .replaceAll(aField.name, fieldNode.name)
+                      .replaceAll(
+                        aField.type,
+                        getTrueTypeName(fieldNode.type),
+                      );
+                }).join('\n'),
+              );
+        }).join('\n\n'),
       );
   // .replaceAll(
   //   library.aClass.exp,
@@ -775,7 +802,13 @@ class Library with TemplateRegExp {
     r'interface \$ClassTemplate \{.+}(?=\s+static class \$ClassTemplateCreationArgs \{)',
   );
 
+  final RegExp creationArgs = TemplateRegExp.regExp(
+    r'static class \$ClassTemplateCreationArgs.*}(?=\s*static class \$ClassTemplateChannel)',
+  );
+
   Interface get anInterface => Interface(this);
+
+  CreationArgsClass get aCreationArgsClass => CreationArgsClass(this);
 
   // Class get aClass => Class(this);
   //
@@ -852,6 +885,37 @@ class Parameter with TemplateRegExp {
 
   @override
   final TemplateRegExp parent;
+}
+
+class CreationArgsClass with TemplateRegExp {
+  CreationArgsClass(this.parent);
+
+  final RegExp className = TemplateRegExp.regExp(r'(?<=class \$)ClassTemplate');
+
+  final RegExp fields = TemplateRegExp.regExp(r'Integer fieldTemplate;[^;]+;');
+
+  CreationArgsClassField get aField => CreationArgsClassField(this);
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'static class \$ClassTemplateCreationArgs[^\}]+\}',
+  );
+
+  @override
+  final Library parent;
+}
+
+class CreationArgsClassField with TemplateRegExp {
+  CreationArgsClassField(this.parent);
+
+  final RegExp type = TemplateRegExp.regExp(r'^Integer');
+  final RegExp name = TemplateRegExp.regExp(r'fieldTemplate(?=;)');
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(r'Integer fieldTemplate;');
+
+  @override
+  final CreationArgsClass parent;
 }
 
 // class Class with TemplateRegExp {
