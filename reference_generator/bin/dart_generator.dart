@@ -571,11 +571,7 @@ class Library with TemplateRegExp {
 
   Channel get aChannel => Channel(this);
 
-  // Manager get aManager => Manager(this);
-
   Handler get aHandler => Handler(this);
-
-  // CreationArgument get aCreationArgument => CreationArgument(this);
 }
 
 class Mixin with TemplateRegExp {
