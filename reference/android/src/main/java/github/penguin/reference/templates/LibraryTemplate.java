@@ -7,6 +7,7 @@ import github.penguin.reference.async.Completable;
 import github.penguin.reference.reference.ReferenceChannel;
 import github.penguin.reference.reference.ReferenceChannelHandler;
 import github.penguin.reference.reference.ReferenceChannelManager;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -71,10 +72,7 @@ class LibraryTemplate {
                   "github.penguin/template/template/ClassTemplate2",
                   referenceParameterTemplate));
 
-      if (manager.isPaired(instance)) {
-        return invokeMethod(instance, $methodName, $arguments);
-      }
-
+      if (manager.isPaired(instance)) return invokeMethod(instance, $methodName, $arguments);
       return invokeMethodOnUnpairedReference(instance, $methodName, $arguments);
     }
   }
@@ -140,10 +138,10 @@ class LibraryTemplate {
         String methodName,
         List<Object> arguments)
         throws Exception {
-      switch (methodName) {
-        case "methodTemplate":
-          return instance.methodTemplate(
-              (String) arguments.get(0), ($ClassTemplate2) arguments.get(1));
+      for (Method method : $ClassTemplate.class.getMethods()) {
+        if (method.getName().equals(methodName)) {
+          return method.invoke(instance, arguments.toArray());
+        }
       }
 
       throw new UnsupportedOperationException(
@@ -157,14 +155,13 @@ class LibraryTemplate {
 
   abstract static class $ClassTemplate2Handler implements ReferenceChannelHandler<$ClassTemplate2> {
     $ClassTemplate2 onCreateClassTemplate2(
-        ReferenceChannelManager manager, $ClassTemplate2CreationArgs args) throws Exception {
+        ReferenceChannelManager manager, $ClassTemplate2CreationArgs args) {
       return null;
     }
 
     @Override
     public Object invokeStaticMethod(
-        ReferenceChannelManager manager, String methodName, List<Object> arguments)
-        throws Exception {
+        ReferenceChannelManager manager, String methodName, List<Object> arguments) {
       throw new UnsupportedOperationException(
           String.format("%s.%s not supported.", $ClassTemplate.class, methodName));
     }
@@ -176,10 +173,8 @@ class LibraryTemplate {
     }
 
     @Override
-    public $ClassTemplate2 createInstance(ReferenceChannelManager manager, List<Object> arguments)
-        throws Exception {
-      final $ClassTemplate2CreationArgs args = new $ClassTemplate2CreationArgs();
-      return onCreateClassTemplate2(manager, args);
+    public $ClassTemplate2 createInstance(ReferenceChannelManager manager, List<Object> arguments) {
+      return onCreateClassTemplate2(manager, new $ClassTemplate2CreationArgs());
     }
 
     @Override
@@ -187,14 +182,12 @@ class LibraryTemplate {
         ReferenceChannelManager manager,
         $ClassTemplate2 instance,
         String methodName,
-        List<Object> arguments)
-        throws Exception {
+        List<Object> arguments) {
       throw new UnsupportedOperationException(
           String.format("%s.%s not supported.", instance, methodName));
     }
 
     @Override
-    public void onInstanceDisposed(ReferenceChannelManager manager, $ClassTemplate2 instance)
-        throws Exception {}
+    public void onInstanceDisposed(ReferenceChannelManager manager, $ClassTemplate2 instance) {}
   }
 }
