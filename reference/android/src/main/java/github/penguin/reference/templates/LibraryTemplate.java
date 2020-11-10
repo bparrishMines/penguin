@@ -114,7 +114,7 @@ class LibraryTemplate {
     @Override
     public List<Object> getCreationArguments(
         ReferenceChannelManager manager, $ClassTemplate instance) {
-      return Arrays.asList(
+      return Arrays.<Object>asList(
           instance.getFieldTemplate(),
           replaceIfUnpaired(
               manager,
