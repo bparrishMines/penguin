@@ -41,7 +41,7 @@ class MyOtherClass with $MyOtherClass {
 
   final int intField;
 
-  static Future<int> myStaticMethod() async {
+  static Future<int> myStaticMethod(String value) async {
     return null;
   }
 }

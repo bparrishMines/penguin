@@ -132,7 +132,7 @@ String generateDart(String template, LibraryNode libraryNode) {
                               .stringMatch()
                               .replaceAll(
                                 library.aChannel.aStaticMethod.name,
-                                ReCase(methodNode.name).pascalCase,
+                                methodNode.name.pascalCase,
                               )
                               .replaceAll(
                                 library.aChannel.aStaticMethod.nameAsParameter,
@@ -391,7 +391,7 @@ String generateDart(String template, LibraryNode libraryNode) {
                             )
                             .replaceAll(
                               invoker.methodHandler,
-                              ReCase(methodNode.name).pascalCase,
+                              methodNode.name.pascalCase,
                             );
                       },
                     ).join('\n'),

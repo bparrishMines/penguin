@@ -117,7 +117,7 @@ String generateJava({
                               .stringMatch()
                               .replaceAll(
                                 library.aChannel.aStaticMethod.name,
-                                ReCase(methodNode.name).pascalCase,
+                                methodNode.name.pascalCase,
                               )
                               .replaceAll(
                                 library.aChannel.aStaticMethod.nameAsParameter,
@@ -195,7 +195,7 @@ String generateJava({
                               .stringMatch()
                               .replaceAll(
                                 library.aChannel.aMethod.name,
-                                ReCase(methodNode.name).pascalCase,
+                                methodNode.name.pascalCase,
                               )
                               .replaceAll(
                                 library.aChannel.aMethod.channelMethodName,
@@ -223,7 +223,7 @@ String generateJava({
                                             getTrueTypeName(parameterNode.type),
                                           ),
                                     )
-                                    .join(', '),
+                                    .join(' '),
                               )
                               .replaceAll(
                                 library.aChannel.aMethod.channelParameters,
@@ -267,7 +267,182 @@ String generateJava({
                   ),
             )
             .join('\n\n'),
-      );
+      )
+      .replaceAll(
+          library.handlers,
+          libraryNode.classes.map<String>((ClassNode classNode) {
+            final Handler handler = library.aHandler;
+            return handler
+                .stringMatch()
+                .replaceAll(handler.className, classNode.name)
+                .replaceAll(handler.typeArgClassName, classNode.name)
+                .replaceAll(
+                  handler.onInstanceDisposedClassName,
+                  classNode.name,
+                )
+                .replaceAll(handler.onInstanceDisposedClassName, classNode.name)
+                .replaceAll(
+                  handler.theOnCreateMethod.exp,
+                  handler.theOnCreateMethod
+                      .stringMatch()
+                      .replaceAll(
+                        handler.theOnCreateMethod.returnType,
+                        classNode.name,
+                      )
+                      .replaceAll(
+                        handler.theOnCreateMethod.creationArgsClassName,
+                        classNode.name,
+                      ),
+                )
+                .replaceAll(
+                  handler.aStaticMethod.exp,
+                  classNode.staticMethods.map<String>((MethodNode methodNode) {
+                    final HandlerStaticMethod staticMethod =
+                        handler.aStaticMethod;
+                    return staticMethod
+                        .stringMatch()
+                        .replaceAll(
+                          staticMethod.name,
+                          methodNode.name.pascalCase,
+                        )
+                        .replaceAll(
+                          staticMethod.parameters,
+                          methodNode.parameters
+                              .map<String>((ParameterNode parameterNode) {
+                            final Parameter parameter = staticMethod.aParameter;
+                            return parameter
+                                .stringMatch()
+                                .replaceAll(parameter.name, parameterNode.name)
+                                .replaceAll(
+                                  parameter.type,
+                                  getTrueTypeName(parameterNode.type),
+                                );
+                          }).join(' '),
+                        );
+                  }).join('\n'),
+                )
+                .replaceAll(
+                    handler.aStaticMethodInvoker.exp,
+                    classNode.staticMethods
+                        .map<String>((MethodNode methodNode) {
+                      final HandlerStaticMethodInvoker staticMethodInvoker =
+                          handler.aStaticMethodInvoker;
+                      return staticMethodInvoker
+                          .stringMatch()
+                          .replaceAll(
+                            staticMethodInvoker.methodName,
+                            methodNode.name,
+                          )
+                          .replaceAll(
+                            staticMethodInvoker.methodHandler,
+                            methodNode.name.pascalCase,
+                          )
+                          .replaceAll(
+                            staticMethodInvoker.arguments,
+                            incrementingList(
+                              methodNode.parameters.length,
+                            ).map<String>(
+                              (int index) {
+                                final HandlerStaticMethodInvokerArgument
+                                    argument = staticMethodInvoker.anArgument;
+                                return argument
+                                    .stringMatch()
+                                    .replaceAll(
+                                      argument.type,
+                                      getTrueTypeName(
+                                        methodNode.parameters[index].type,
+                                      ),
+                                    )
+                                    .replaceAll(
+                                      argument.index,
+                                      index.toString(),
+                                    );
+                              },
+                            ).join(','),
+                          );
+                    }).join('\n'))
+                .replaceAll(
+                  handler.theCreationArguments.exp,
+                  handler.theCreationArguments
+                      .stringMatch()
+                      .replaceAll(handler.theCreationArguments.className,
+                          classNode.name)
+                      .replaceAll(
+                        handler.theCreationArguments.fields,
+                        classNode.fields.map<String>((FieldNode fieldNode) {
+                          final HandlerCreationArguments arguments =
+                              handler.theCreationArguments;
+                          return fieldNode.type.hasReferenceChannel
+                              ? arguments.aFieldReference
+                                  .stringMatch()
+                                  .replaceAll(
+                                    arguments.aFieldReference.name,
+                                    fieldNode.name.pascalCase,
+                                  )
+                                  .replaceAll(
+                                    arguments.aFieldReference.channel,
+                                    fieldNode.type.referenceChannel,
+                                  )
+                              : arguments.aFieldName.stringMatch().replaceAll(
+                                    arguments.aFieldName.name,
+                                    fieldNode.name.pascalCase,
+                                  );
+                        }).join(','),
+                      ),
+                )
+                .replaceAll(
+                  handler.theCreateInstance.exp,
+                  handler.theCreateInstance
+                      .stringMatch()
+                      .replaceAll(
+                        handler.theCreateInstance.className,
+                        classNode.name,
+                      )
+                      .replaceAll(handler.theCreateInstance.returnTypeClassName,
+                          classNode.name)
+                      .replaceAll(
+                        handler.theCreateInstance.argsClassName,
+                        classNode.name,
+                      )
+                      .replaceAll(
+                        handler.theCreateInstance.fields,
+                        incrementingList(classNode.fields.length)
+                            .map<String>((int index) {
+                          final HandlerCreateInstanceField field =
+                              handler.theCreateInstance.aField;
+                          return field
+                              .stringMatch()
+                              .replaceAll(
+                                field.name,
+                                classNode.fields[index].name,
+                              )
+                              .replaceAll(
+                                field.type,
+                                getTrueTypeName(
+                                  classNode.fields[index].type,
+                                ),
+                              )
+                              .replaceAll(
+                                field.index,
+                                index.toString(),
+                              );
+                        }).join('\n'),
+                      ),
+                )
+                .replaceAll(
+                  handler.theInvokeMethod.exp,
+                  handler.theInvokeMethod
+                      .stringMatch()
+                      .replaceAll(
+                        handler.theInvokeMethod.instanceClassName,
+                        classNode.name,
+                      )
+                      .replaceAll(
+                        handler.theInvokeMethod.forLoopClassName,
+                        classNode.name,
+                      ),
+                );
+          }).join('\n'));
   // .replaceAll(
   //   library.aClass.exp,
   //   libraryNode.classes
@@ -992,11 +1167,17 @@ class Library with TemplateRegExp {
     r'static class \$ClassTemplateChannel.*}(?=\s*static class \$ClassTemplateHandler)',
   );
 
+  final RegExp handlers = TemplateRegExp.regExp(
+    r'static class \$ClassTemplateHandler.*}(?=\s+\}\s+$)',
+  );
+
   Interface get anInterface => Interface(this);
 
   CreationArgsClass get aCreationArgsClass => CreationArgsClass(this);
 
   Channel get aChannel => Channel(this);
+
+  Handler get aHandler => Handler(this);
 
   // Class get aClass => Class(this);
   //
@@ -1064,7 +1245,7 @@ class InterfaceMethod with TemplateRegExp {
 class Parameter with TemplateRegExp {
   Parameter(this.parent);
 
-  final RegExp type = TemplateRegExp.regExp(r'^String');
+  final RegExp type = TemplateRegExp.regExp(r'String(?= )');
 
   final RegExp name = TemplateRegExp.regExp(r'parameterTemplate$');
 
@@ -1233,6 +1414,260 @@ class ParameterReference with TemplateRegExp {
 
   @override
   final TemplateRegExp parent;
+}
+
+class Handler with TemplateRegExp {
+  Handler(this.parent);
+
+  final RegExp className = TemplateRegExp.regExp(
+    r'(?<=static class \$)ClassTemplate(?=Handler)',
+  );
+
+  final RegExp typeArgClassName = TemplateRegExp.regExp(
+    r'(?<=ReferenceChannelHandler<\$)ClassTemplate',
+  );
+
+  // final RegExp constructorClassName = TemplateRegExp.regExp(
+  //   r'(?<=\$)ClassTemplate(?=Handler\()',
+  // );
+
+  // final RegExp onDisposeClassName = TemplateRegExp.regExp(
+  //   r'ClassTemplate(?= instance\)\s+onDispose;)',
+  // );
+
+  // HandlerStaticMethodName get aStaticMethodName =>
+  //     HandlerStaticMethodName(this);
+
+  HandlerOnCreateMethod get theOnCreateMethod => HandlerOnCreateMethod(this);
+
+  HandlerStaticMethod get aStaticMethod => HandlerStaticMethod(this);
+
+  HandlerStaticMethodInvoker get aStaticMethodInvoker =>
+      HandlerStaticMethodInvoker(this);
+
+  HandlerCreationArguments get theCreationArguments =>
+      HandlerCreationArguments(this);
+
+  HandlerCreateInstance get theCreateInstance => HandlerCreateInstance(this);
+
+  HandlerInvokeMethod get theInvokeMethod => HandlerInvokeMethod(this);
+
+  final RegExp onInstanceDisposedClassName = TemplateRegExp.regExp(
+    r'(?<=void onInstanceDisposed\([^\$]+\$)ClassTemplate',
+  );
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'static class \$ClassTemplateHandler.*}(?=\s+static class \$ClassTemplate2Handler)',
+  );
+
+  @override
+  final Library parent;
+}
+
+class HandlerOnCreateMethod with TemplateRegExp {
+  HandlerOnCreateMethod(this.parent);
+
+  final RegExp returnType = TemplateRegExp.regExp(
+    r'ClassTemplate(?= onCreate\()',
+  );
+
+  final RegExp creationArgsClassName = TemplateRegExp.regExp(
+    r'(?<=\$)ClassTemplate(?=CreationArgs args)',
+  );
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'\$ClassTemplate onCreate\([^\}]+\}',
+  );
+
+  @override
+  final Handler parent;
+}
+
+class HandlerStaticMethod with TemplateRegExp {
+  HandlerStaticMethod(this.parent);
+
+  final RegExp name = TemplateRegExp.regExp(r'StaticMethodTemplate(?=\()');
+
+  final RegExp parameters = TemplateRegExp.regExp(
+    r',\s*String parameterTemplate,\s+\$ClassTemplate2 referenceParameterTemplate',
+  );
+
+  Parameter get aParameter => Parameter(this);
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'public Object \$onStaticMethodTemplate[^\}]+\}',
+  );
+
+  @override
+  final Handler parent;
+}
+
+class HandlerStaticMethodInvoker with TemplateRegExp {
+  HandlerStaticMethodInvoker(this.parent);
+
+  final RegExp methodName = TemplateRegExp.regExp(
+    r'(?<=")staticMethodTemplate(?=")',
+  );
+
+  final RegExp methodHandler = TemplateRegExp.regExp(
+    r'(?<=\$on)StaticMethodTemplate',
+  );
+
+  final RegExp arguments = TemplateRegExp.regExp(
+    r', \(String\) arguments.get\(0\), \(\$ClassTemplate2\) arguments.get\(1\)',
+  );
+
+  HandlerStaticMethodInvokerArgument get anArgument =>
+      HandlerStaticMethodInvokerArgument(this);
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'case "staticMethodTemplate"[^;]+;',
+  );
+
+  @override
+  final Handler parent;
+}
+
+class HandlerStaticMethodInvokerArgument with TemplateRegExp {
+  HandlerStaticMethodInvokerArgument(this.parent);
+
+  final RegExp type = TemplateRegExp.regExp(r'(?<=\()String(?=\))');
+
+  final RegExp index = TemplateRegExp.regExp(r'(?<=arguments\.get\()0');
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r', \(String\) arguments.get\(0\)',
+  );
+
+  @override
+  final HandlerStaticMethodInvoker parent;
+}
+
+class HandlerCreationArguments with TemplateRegExp {
+  HandlerCreationArguments(this.parent);
+
+  final RegExp className = TemplateRegExp.regExp(
+    r'(?<=\$)ClassTemplate(?= instance\))',
+  );
+
+  final RegExp fields = TemplateRegExp.regExp(
+    r'(?<=\(\s*)instance\.getFieldTemplate([^\)]*\)){3}',
+  );
+
+  HandlerCreationArgumentsFieldName get aFieldName =>
+      HandlerCreationArgumentsFieldName(this);
+
+  HandlerCreationArgumentsFieldReference get aFieldReference =>
+      HandlerCreationArgumentsFieldReference(this);
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'getCreationArguments[^\}]+\}',
+  );
+
+  @override
+  final Handler parent;
+}
+
+class HandlerCreationArgumentsFieldName with TemplateRegExp {
+  HandlerCreationArgumentsFieldName(this.parent);
+
+  final RegExp name = TemplateRegExp.regExp(r'FieldTemplate');
+
+  @override
+  final RegExp exp =
+      TemplateRegExp.regExp(r'(?<=\(\s*)instance\.getFieldTemplate\(\)');
+
+  @override
+  final HandlerCreationArguments parent;
+}
+
+class HandlerCreationArgumentsFieldReference with TemplateRegExp {
+  HandlerCreationArgumentsFieldReference(this.parent);
+
+  final RegExp name = TemplateRegExp.regExp(r'ReferenceParameterTemplate');
+
+  final RegExp channel = TemplateRegExp.regExp(
+    r'github\.penguin/template/template/ClassTemplate2',
+  );
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(r'replaceIfUnpaired[^\)]+\)\)');
+
+  @override
+  final HandlerCreationArguments parent;
+}
+
+class HandlerCreateInstance with TemplateRegExp {
+  HandlerCreateInstance(this.parent);
+
+  final RegExp className = TemplateRegExp.regExp(
+    r'ClassTemplate(?= createInstance\()',
+  );
+
+  final RegExp returnTypeClassName = TemplateRegExp.regExp(
+    r'(?<=^\$)ClassTemplate',
+  );
+
+  final RegExp argsClassName = TemplateRegExp.regExp(
+      r'ClassTemplate(?=CreationArgs\(|CreationArgs args)');
+
+  final RegExp fields = TemplateRegExp.regExp(
+    r'args\.fieldTemplate([^;]+;){2}',
+  );
+
+  HandlerCreateInstanceField get aField => HandlerCreateInstanceField(this);
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'\$ClassTemplate createInstance\([^\}]+\}',
+  );
+
+  @override
+  final Handler parent;
+}
+
+class HandlerCreateInstanceField with TemplateRegExp {
+  HandlerCreateInstanceField(this.parent);
+
+  final RegExp name = TemplateRegExp.regExp(r'fieldTemplate');
+
+  final RegExp type = TemplateRegExp.regExp(r'(?<=\()Integer(?=\))');
+
+  final RegExp index = TemplateRegExp.regExp(r'(?<=\.get\()0');
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'args\.fieldTemplate = \(Integer\) arguments.get\(0\);',
+  );
+
+  @override
+  final HandlerCreateInstance parent;
+}
+
+class HandlerInvokeMethod with TemplateRegExp {
+  HandlerInvokeMethod(this.parent);
+
+  final RegExp instanceClassName = TemplateRegExp.regExp(
+    r'ClassTemplate(?= instance,)',
+  );
+
+  final RegExp forLoopClassName = TemplateRegExp.regExp(
+    r'ClassTemplate(?=\.class)',
+  );
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'Object invokeMethod\([^\}]+\}',
+  );
+
+  @override
+  final Handler parent;
 }
 
 // class Class with TemplateRegExp {
