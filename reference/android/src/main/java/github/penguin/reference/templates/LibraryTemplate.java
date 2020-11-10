@@ -84,7 +84,7 @@ class LibraryTemplate {
   }
 
   static class $ClassTemplateHandler implements ReferenceChannelHandler<$ClassTemplate> {
-    $ClassTemplate onCreateClassTemplate(
+    $ClassTemplate onCreate(
         ReferenceChannelManager manager, $ClassTemplateCreationArgs args) throws Exception {
       return null;
     }
@@ -108,7 +108,7 @@ class LibraryTemplate {
       }
 
       throw new UnsupportedOperationException(
-          String.format("%s.%s not supported.", $ClassTemplate.class, methodName));
+          String.format("Unable to invoke static method %s", methodName));
     }
 
     @Override
@@ -128,7 +128,7 @@ class LibraryTemplate {
       final $ClassTemplateCreationArgs args = new $ClassTemplateCreationArgs();
       args.fieldTemplate = (Integer) arguments.get(0);
       args.referenceParameterTemplate = ($ClassTemplate2) arguments.get(1);
-      return onCreateClassTemplate(manager, args);
+      return onCreate(manager, args);
     }
 
     @Override
@@ -153,7 +153,7 @@ class LibraryTemplate {
         throws Exception {}
   }
 
-  abstract static class $ClassTemplate2Handler implements ReferenceChannelHandler<$ClassTemplate2> {
+  static class $ClassTemplate2Handler implements ReferenceChannelHandler<$ClassTemplate2> {
     $ClassTemplate2 onCreateClassTemplate2(
         ReferenceChannelManager manager, $ClassTemplate2CreationArgs args) {
       return null;
@@ -163,7 +163,7 @@ class LibraryTemplate {
     public Object invokeStaticMethod(
         ReferenceChannelManager manager, String methodName, List<Object> arguments) {
       throw new UnsupportedOperationException(
-          String.format("%s.%s not supported.", $ClassTemplate.class, methodName));
+          String.format("Unable to invoke static method %s", methodName));
     }
 
     @Override
