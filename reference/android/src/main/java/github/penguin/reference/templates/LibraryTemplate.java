@@ -51,7 +51,7 @@ class LibraryTemplate {
         String parameterTemplate, $ClassTemplate2 referenceParameterTemplate) {
       return invokeStaticMethod(
           "staticMethodTemplate",
-          Arrays.asList(
+          Arrays.<Object>asList(
               parameterTemplate,
               replaceIfUnpaired(
                   manager,
@@ -65,7 +65,7 @@ class LibraryTemplate {
         $ClassTemplate2 referenceParameterTemplate) {
       final String $methodName = "methodTemplate";
       final List<Object> $arguments =
-          Arrays.asList(
+          Arrays.<Object>asList(
               parameterTemplate,
               replaceIfUnpaired(
                   manager,
