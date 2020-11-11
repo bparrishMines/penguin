@@ -312,7 +312,7 @@ String generateDart(String template, LibraryNode libraryNode) {
                               .stringMatch()
                               .replaceAll(
                                 library.aHandler.aStaticMethodName.name,
-                                ReCase(methodNode.name).pascalCase,
+                                methodNode.name.pascalCase,
                               ),
                         )
                         .join(','),
@@ -340,7 +340,7 @@ String generateDart(String template, LibraryNode libraryNode) {
                               .stringMatch()
                               .replaceAll(
                                 library.aHandler.aStaticMethod.name,
-                                ReCase(methodNode.name).pascalCase,
+                                methodNode.name.pascalCase,
                               )
                               .replaceAll(
                                 library.aHandler.aStaticMethod.returnType,
@@ -367,7 +367,7 @@ String generateDart(String template, LibraryNode libraryNode) {
                                     .join(', '),
                               ),
                         )
-                        .join(','),
+                        .join('\n'),
                   )
                   .replaceAll(
                     library.aHandler.aStaticMethodInvoker.exp,
@@ -380,10 +380,7 @@ String generateDart(String template, LibraryNode libraryNode) {
                             .replaceAll(invoker.methodName, methodNode.name)
                             .replaceAll(
                               invoker.arguments,
-                              List<int>.generate(
-                                methodNode.parameters.length,
-                                (int index) => index,
-                              )
+                              incrementingList(methodNode.parameters.length)
                                   .map<String>(
                                     (int index) => 'arguments[$index]',
                                   )
@@ -394,7 +391,7 @@ String generateDart(String template, LibraryNode libraryNode) {
                               methodNode.name.pascalCase,
                             );
                       },
-                    ).join('\n'),
+                    ).join('\nbreak;\n'),
                   )
                   .replaceAll(
                     library.aHandler.theCreationArguments.exp,
@@ -458,10 +455,7 @@ String generateDart(String template, LibraryNode libraryNode) {
                         )
                         .replaceAll(
                           library.aHandler.theCreateInstance.fields,
-                          List<int>.generate(
-                            classNode.fields.length,
-                            (int index) => index,
-                          ).map<String>(
+                          incrementingList(classNode.fields.length).map<String>(
                             (int index) {
                               final HandlerCreateInstanceField field =
                                   library.aHandler.theCreateInstance.aField;
@@ -503,9 +497,8 @@ String generateDart(String template, LibraryNode libraryNode) {
                                   )
                                   .replaceAll(
                                     invoker.arguments,
-                                    List<int>.generate(
+                                    incrementingList(
                                       methodNode.parameters.length,
-                                      (int index) => index,
                                     )
                                         .map<String>(
                                           (int index) => 'arguments[$index]',
@@ -513,7 +506,7 @@ String generateDart(String template, LibraryNode libraryNode) {
                                         .join(','),
                                   );
                             },
-                          ).join('\n'),
+                          ).join('\nbreak;\n'),
                         ),
                   ),
             )
