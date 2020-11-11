@@ -41,7 +41,7 @@ class MyOtherClass with $MyOtherClass {
 
   final int intField;
 
-  Future<String> myMethod() {
+  void myMethod() {
 
   }
 
