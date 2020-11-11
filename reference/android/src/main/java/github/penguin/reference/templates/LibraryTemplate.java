@@ -9,7 +9,6 @@ import github.penguin.reference.reference.ReferenceChannelHandler;
 import github.penguin.reference.reference.ReferenceChannelManager;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 // **************************************************************************
@@ -169,7 +168,7 @@ class LibraryTemplate {
     @Override
     public List<Object> getCreationArguments(
         ReferenceChannelManager manager, $ClassTemplate2 instance) {
-      return Collections.emptyList();
+      return Arrays.asList();
     }
 
     @Override

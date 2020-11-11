@@ -309,7 +309,8 @@ String generateJava({
                           staticMethod.parameters,
                           methodNode.parameters
                               .map<String>((ParameterNode parameterNode) {
-                            final Parameter parameter = staticMethod.aParameter;
+                            final FollowingParameter parameter =
+                                staticMethod.aParameter;
                             return parameter
                                 .stringMatch()
                                 .replaceAll(parameter.name, parameterNode.name)
@@ -1256,6 +1257,20 @@ class Parameter with TemplateRegExp {
   final TemplateRegExp parent;
 }
 
+class FollowingParameter with TemplateRegExp {
+  FollowingParameter(this.parent);
+
+  final RegExp type = TemplateRegExp.regExp(r'String(?= )');
+
+  final RegExp name = TemplateRegExp.regExp(r'parameterTemplate$');
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(r',\s+String parameterTemplate');
+
+  @override
+  final TemplateRegExp parent;
+}
+
 class CreationArgsClass with TemplateRegExp {
   CreationArgsClass(this.parent);
 
@@ -1365,14 +1380,14 @@ class ChannelMethod with TemplateRegExp {
   );
 
   final RegExp parameters = TemplateRegExp.regExp(
-    r'String parameterTemplate,\s*\$ClassTemplate2 referenceParameterTemplate',
+    r',\s*String parameterTemplate,\s*\$ClassTemplate2 referenceParameterTemplate',
   );
 
   final RegExp channelParameters = TemplateRegExp.regExp(
     r'(?<=asList\(\s*)parameterTemplate[^\)]+\)',
   );
 
-  Parameter get aParameter => Parameter(this);
+  FollowingParameter get aParameter => FollowingParameter(this);
 
   ParameterName get aParameterName => ParameterName(this);
 
@@ -1494,7 +1509,7 @@ class HandlerStaticMethod with TemplateRegExp {
     r',\s*String parameterTemplate,\s+\$ClassTemplate2 referenceParameterTemplate',
   );
 
-  Parameter get aParameter => Parameter(this);
+  FollowingParameter get aParameter => FollowingParameter(this);
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
