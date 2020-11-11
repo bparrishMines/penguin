@@ -150,7 +150,8 @@ class ReferenceAstBuilder extends Builder {
 
   String _getChannel(DartType type) {
     final TypeChecker typeChecker = TypeChecker.fromRuntime(Channel);
-    if (!typeChecker.hasAnnotationOf(type.element)) return null;
+    print(type.getDisplayString(withNullability: false));
+    if (!typeChecker.hasAnnotationOf(type.element, throwOnUnresolved: false)) return null;
 
     final ConstantReader constantReader =
         ConstantReader(typeChecker.firstAnnotationOf(type.element));
