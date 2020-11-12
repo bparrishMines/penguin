@@ -18,6 +18,7 @@ public class ReferencePlugin implements FlutterPlugin {
     ReferenceChannelManager manager = managers.get(messenger);
     if (manager == null) {
       manager = new MethodChannelReferenceChannelManager(messenger, "github.penguin/reference");
+      managers.put(messenger, manager);
     }
     return manager;
   }

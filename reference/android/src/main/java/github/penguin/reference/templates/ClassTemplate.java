@@ -13,7 +13,7 @@ public class ClassTemplate implements LibraryTemplate.$ClassTemplate {
     channel = new LibraryTemplate.$ClassTemplateChannel(manager);
     channel.registerHandler(new LibraryTemplate.$ClassTemplateHandler() {
       @Override
-      LibraryTemplate.$ClassTemplate onCreateClassTemplate(
+      LibraryTemplate.$ClassTemplate onCreate(
           ReferenceChannelManager manager, LibraryTemplate.$ClassTemplateCreationArgs args) {
         return new ClassTemplate(
             args.fieldTemplate, (ClassTemplate2) args.referenceParameterTemplate);

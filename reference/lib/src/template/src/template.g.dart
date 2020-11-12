@@ -167,7 +167,7 @@ class $ClassTemplateHandler implements ReferenceChannelHandler<$ClassTemplate> {
     ReferenceChannelManager manager,
     $ClassTemplate instance,
   ) {
-    onDispose(manager, instance);
+    if (onDispose != null) onDispose(manager, instance);
   }
 }
 
@@ -230,6 +230,6 @@ class $ClassTemplate2Handler
     ReferenceChannelManager manager,
     $ClassTemplate2 instance,
   ) {
-    onDispose(manager, instance);
+    if (onDispose != null) onDispose(manager, instance);
   }
 }
