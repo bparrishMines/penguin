@@ -29,9 +29,7 @@ class ReferenceChannel<T> {
   /// Returns `null` if a pair with [localReference] has already been added.
   /// Otherwise, it returns the paired [RemoteReference].
   Future<RemoteReference> createNewPair(T instance) async {
-    if (manager._referencePairs.getPairedRemoteReference(instance) != null) {
-      return null;
-    }
+    if (manager.isPaired(instance)) return null;
 
     final RemoteReference remoteReference = RemoteReference(
       manager.getNewReferenceId(),
@@ -457,8 +455,13 @@ class StandardReferenceConverter implements ReferenceConverter {
     ReferenceChannelManager manager,
     Object object,
   ) {
-    if (manager._referencePairs.getPairedRemoteReference(object) != null) {
+    if (manager.isPaired(object)) {
       return manager._referencePairs.getPairedRemoteReference(object);
+    } else if (!manager.isPaired(object) && object is UnpairedReferenceParameter) {
+      return manager.createUnpairedReference(
+        object.referenceChannelName,
+        object,
+      );
     } else if (object is List) {
       return object.map((_) => convertForRemoteManager(manager, _)).toList();
     } else if (object is Map) {

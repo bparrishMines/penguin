@@ -11,25 +11,18 @@ Future<void> main() async {
   tearDownAll(() => completer.complete(null));
 
   group('reference', () {
-    setUpAll(() {
-      PluginTemplate.initialize();
-    });
-
     test('$ClassTemplate.methodTemplate', () async {
-      final ClassTemplate classTemplate = ClassTemplate(44, ClassTemplate2());
+      final ClassTemplate classTemplate = ClassTemplate(44);
 
       expect(
-        classTemplate.methodTemplate('Hello,', ClassTemplate2()),
+        classTemplate.methodTemplate('Hello,'),
         completion('Hello, World!'),
       );
     });
 
     test('$ClassTemplate.staticMethodTemplate', () async {
       expect(
-        ClassTemplate.staticMethodTemplate(
-          'howmanycharacters',
-          ClassTemplate2(),
-        ),
+        ClassTemplate.staticMethodTemplate('howmanycharacters'),
         completion(17),
       );
     });

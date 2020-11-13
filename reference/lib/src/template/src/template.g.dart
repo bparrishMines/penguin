@@ -6,62 +6,30 @@ import 'package:reference/reference.dart';
 // ReferenceGenerator
 // **************************************************************************
 
-Object _replaceIfUnpaired(
-  ReferenceChannelManager manager,
-  String handlerChannel,
-  Object instance,
-) {
-  return manager.isPaired(instance)
-      ? instance
-      : manager.createUnpairedReference(handlerChannel, instance);
-}
-
 mixin $ClassTemplate {
   int get fieldTemplate;
-  $ClassTemplate2 get referenceParameterTemplate;
-  Future<String> methodTemplate(
-      String parameterTemplate, $ClassTemplate2 referenceParameterTemplate);
+  Future<String> methodTemplate(String parameterTemplate);
 }
-
-mixin $ClassTemplate2 {}
 
 class $ClassTemplateCreationArgs {
   int fieldTemplate;
-  $ClassTemplate2 referenceParameterTemplate;
 }
-
-class $ClassTemplate2CreationArgs {}
 
 class $ClassTemplateChannel extends ReferenceChannel<$ClassTemplate> {
   $ClassTemplateChannel(ReferenceChannelManager manager)
       : super(manager, 'github.penguin/template/template/ClassTemplate');
 
-  Future<Object> $invokeStaticMethodTemplate(
-      String parameterTemplate, $ClassTemplate2 referenceParameterTemplate) {
+  Future<Object> $invokeStaticMethodTemplate(String parameterTemplate) {
     return invokeStaticMethod(
       'staticMethodTemplate',
-      <Object>[
-        parameterTemplate,
-        _replaceIfUnpaired(
-          manager,
-          'github.penguin/template/template/ClassTemplate2',
-          referenceParameterTemplate,
-        )
-      ],
+      <Object>[parameterTemplate],
     );
   }
 
-  Future<Object> $invokeMethodTemplate($ClassTemplate instance,
-      String parameterTemplate, $ClassTemplate2 referenceParameterTemplate) {
+  Future<Object> $invokeMethodTemplate(
+      $ClassTemplate instance, String parameterTemplate) {
     final String $methodName = 'methodTemplate';
-    final List<Object> $arguments = <Object>[
-      parameterTemplate,
-      _replaceIfUnpaired(
-        manager,
-        'github.penguin/template/template/ClassTemplate2',
-        referenceParameterTemplate,
-      )
-    ];
+    final List<Object> $arguments = <Object>[parameterTemplate];
 
     if (manager.isPaired(instance)) {
       return invokeMethod(instance, $methodName, $arguments);
@@ -69,11 +37,6 @@ class $ClassTemplateChannel extends ReferenceChannel<$ClassTemplate> {
 
     return invokeMethodOnUnpairedReference(instance, $methodName, $arguments);
   }
-}
-
-class $ClassTemplate2Channel extends ReferenceChannel<$ClassTemplate2> {
-  $ClassTemplate2Channel(ReferenceChannelManager manager)
-      : super(manager, 'github.penguin/template/template/ClassTemplate2');
 }
 
 class $ClassTemplateHandler implements ReferenceChannelHandler<$ClassTemplate> {
@@ -88,9 +51,8 @@ class $ClassTemplateHandler implements ReferenceChannelHandler<$ClassTemplate> {
       onDispose;
 
   final double Function(
-      ReferenceChannelManager manager,
-      String parameterTemplate,
-      $ClassTemplate2 referenceParameterTemplate) $onStaticMethodTemplate;
+          ReferenceChannelManager manager, String parameterTemplate)
+      $onStaticMethodTemplate;
 
   @override
   Object invokeStaticMethod(
@@ -101,8 +63,7 @@ class $ClassTemplateHandler implements ReferenceChannelHandler<$ClassTemplate> {
     Function method;
     switch (methodName) {
       case 'staticMethodTemplate':
-        method =
-            () => $onStaticMethodTemplate(manager, arguments[0], arguments[1]);
+        method = () => $onStaticMethodTemplate(manager, arguments[0]);
     }
 
     if (method != null) return method();
@@ -119,14 +80,7 @@ class $ClassTemplateHandler implements ReferenceChannelHandler<$ClassTemplate> {
     ReferenceChannelManager manager,
     $ClassTemplate instance,
   ) {
-    return <Object>[
-      instance.fieldTemplate,
-      _replaceIfUnpaired(
-        manager,
-        'github.penguin/template/template/ClassTemplate2',
-        instance.referenceParameterTemplate,
-      )
-    ];
+    return <Object>[instance.fieldTemplate];
   }
 
   @override
@@ -135,10 +89,9 @@ class $ClassTemplateHandler implements ReferenceChannelHandler<$ClassTemplate> {
     List<Object> arguments,
   ) {
     return onCreate(
-        manager,
-        $ClassTemplateCreationArgs()
-          ..fieldTemplate = arguments[0]
-          ..referenceParameterTemplate = arguments[1]);
+      manager,
+      $ClassTemplateCreationArgs()..fieldTemplate = arguments[0],
+    );
   }
 
   @override
@@ -151,7 +104,7 @@ class $ClassTemplateHandler implements ReferenceChannelHandler<$ClassTemplate> {
     Function method;
     switch (methodName) {
       case 'methodTemplate':
-        method = () => instance.methodTemplate(arguments[0], arguments[1]);
+        method = () => instance.methodTemplate(arguments[0]);
     }
 
     if (method != null) return method();
@@ -166,69 +119,6 @@ class $ClassTemplateHandler implements ReferenceChannelHandler<$ClassTemplate> {
   void onInstanceDisposed(
     ReferenceChannelManager manager,
     $ClassTemplate instance,
-  ) {
-    if (onDispose != null) onDispose(manager, instance);
-  }
-}
-
-class $ClassTemplate2Handler
-    implements ReferenceChannelHandler<$ClassTemplate2> {
-  $ClassTemplate2Handler({this.onCreate, this.onDispose});
-
-  final $ClassTemplate2 Function(
-          ReferenceChannelManager manager, $ClassTemplate2CreationArgs args)
-      onCreate;
-
-  final void Function(ReferenceChannelManager manager, $ClassTemplate2 instance)
-      onDispose;
-
-  @override
-  Object invokeStaticMethod(
-    ReferenceChannelManager manager,
-    String methodName,
-    List<Object> arguments,
-  ) {
-    throw ArgumentError.value(
-      methodName,
-      'methodName',
-      'Unable to invoke static method `$methodName`',
-    );
-  }
-
-  @override
-  List<Object> getCreationArguments(
-    ReferenceChannelManager manager,
-    $ClassTemplate2 instance,
-  ) {
-    return <Object>[];
-  }
-
-  @override
-  $ClassTemplate2 createInstance(
-    ReferenceChannelManager manager,
-    List<Object> arguments,
-  ) {
-    return onCreate(manager, $ClassTemplate2CreationArgs());
-  }
-
-  @override
-  Object invokeMethod(
-    ReferenceChannelManager manager,
-    $ClassTemplate2 instance,
-    String methodName,
-    List<Object> arguments,
-  ) {
-    throw ArgumentError.value(
-      instance,
-      'instance',
-      'Unable to invoke method `$methodName` on',
-    );
-  }
-
-  @override
-  void onInstanceDisposed(
-    ReferenceChannelManager manager,
-    $ClassTemplate2 instance,
   ) {
     if (onDispose != null) onDispose(manager, instance);
   }

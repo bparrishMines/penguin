@@ -16,69 +16,35 @@ import java.util.List;
 // **************************************************************************
 
 class LibraryTemplate {
-  private static Object replaceIfUnpaired(
-      ReferenceChannelManager manager, String handlerChannel, Object instance) {
-    return manager.isPaired(instance)
-        ? instance
-        : manager.createUnpairedReference(handlerChannel, instance);
-  }
-
   interface $ClassTemplate {
     Integer getFieldTemplate();
-
-    $ClassTemplate2 getReferenceParameterTemplate();
-
-    Object methodTemplate(String parameterTemplate, $ClassTemplate2 referenceParameterTemplate)
-        throws Exception;
+    Object methodTemplate(String parameterTemplate) throws Exception;
   }
-
-  interface $ClassTemplate2 {}
 
   static class $ClassTemplateCreationArgs {
     Integer fieldTemplate;
-    $ClassTemplate2 referenceParameterTemplate;
   }
-
-  static class $ClassTemplate2CreationArgs {}
 
   static class $ClassTemplateChannel extends ReferenceChannel<$ClassTemplate> {
     $ClassTemplateChannel(@NonNull ReferenceChannelManager manager) {
       super(manager, "github.penguin/template/template/ClassTemplate");
     }
 
-    Completable<Object> $invokeStaticMethodTemplate(
-        String parameterTemplate, $ClassTemplate2 referenceParameterTemplate) {
+    Completable<Object> $invokeStaticMethodTemplate(String parameterTemplate) {
       return invokeStaticMethod(
           "staticMethodTemplate",
-          Arrays.<Object>asList(
-              parameterTemplate,
-              replaceIfUnpaired(
-                  manager,
-                  "github.penguin/template/template/ClassTemplate2",
-                  referenceParameterTemplate)));
+          Arrays.<Object>asList(parameterTemplate));
     }
 
     Completable<Object> $invokeMethodTemplate(
         $ClassTemplate instance,
-        String parameterTemplate,
-        $ClassTemplate2 referenceParameterTemplate) {
+        String parameterTemplate) {
       final String $methodName = "methodTemplate";
       final List<Object> $arguments =
-          Arrays.<Object>asList(
-              parameterTemplate,
-              replaceIfUnpaired(
-                  manager,
-                  "github.penguin/template/template/ClassTemplate2",
-                  referenceParameterTemplate));
+          Arrays.<Object>asList(parameterTemplate);
 
       if (manager.isPaired(instance)) return invokeMethod(instance, $methodName, $arguments);
       return invokeMethodOnUnpairedReference(instance, $methodName, $arguments);
-    }
-  }
-
-  static class $ClassTemplate2Channel extends ReferenceChannel<$ClassTemplate2> {
-    $ClassTemplate2Channel(@NonNull ReferenceChannelManager manager) {
-      super(manager, "github.penguin/template/template/ClassTemplate2");
     }
   }
 
@@ -90,8 +56,7 @@ class LibraryTemplate {
 
     public Object $onStaticMethodTemplate(
         ReferenceChannelManager manager,
-        String parameterTemplate,
-        $ClassTemplate2 referenceParameterTemplate)
+        String parameterTemplate)
         throws Exception {
       return null;
     }
@@ -102,8 +67,7 @@ class LibraryTemplate {
         throws Exception {
       switch (methodName) {
         case "staticMethodTemplate":
-          return $onStaticMethodTemplate(
-              manager, (String) arguments.get(0), ($ClassTemplate2) arguments.get(1));
+          return $onStaticMethodTemplate(manager, (String) arguments.get(0));
       }
 
       throw new UnsupportedOperationException(
@@ -113,12 +77,7 @@ class LibraryTemplate {
     @Override
     public List<Object> getCreationArguments(
         ReferenceChannelManager manager, $ClassTemplate instance) {
-      return Arrays.<Object>asList(
-          instance.getFieldTemplate(),
-          replaceIfUnpaired(
-              manager,
-              "github.penguin/template/template/ClassTemplate2",
-              instance.getReferenceParameterTemplate()));
+      return Arrays.<Object>asList(instance.getFieldTemplate());
     }
 
     @Override
@@ -126,7 +85,6 @@ class LibraryTemplate {
         throws Exception {
       final $ClassTemplateCreationArgs args = new $ClassTemplateCreationArgs();
       args.fieldTemplate = (Integer) arguments.get(0);
-      args.referenceParameterTemplate = ($ClassTemplate2) arguments.get(1);
       return onCreate(manager, args);
     }
 
@@ -150,43 +108,5 @@ class LibraryTemplate {
     @Override
     public void onInstanceDisposed(ReferenceChannelManager manager, $ClassTemplate instance)
         throws Exception {}
-  }
-
-  static class $ClassTemplate2Handler implements ReferenceChannelHandler<$ClassTemplate2> {
-    $ClassTemplate2 onCreateClassTemplate2(
-        ReferenceChannelManager manager, $ClassTemplate2CreationArgs args) {
-      return null;
-    }
-
-    @Override
-    public Object invokeStaticMethod(
-        ReferenceChannelManager manager, String methodName, List<Object> arguments) {
-      throw new UnsupportedOperationException(
-          String.format("Unable to invoke static method %s", methodName));
-    }
-
-    @Override
-    public List<Object> getCreationArguments(
-        ReferenceChannelManager manager, $ClassTemplate2 instance) {
-      return Arrays.asList();
-    }
-
-    @Override
-    public $ClassTemplate2 createInstance(ReferenceChannelManager manager, List<Object> arguments) {
-      return onCreateClassTemplate2(manager, new $ClassTemplate2CreationArgs());
-    }
-
-    @Override
-    public Object invokeMethod(
-        ReferenceChannelManager manager,
-        $ClassTemplate2 instance,
-        String methodName,
-        List<Object> arguments) {
-      throw new UnsupportedOperationException(
-          String.format("%s.%s not supported.", instance, methodName));
-    }
-
-    @Override
-    public void onInstanceDisposed(ReferenceChannelManager manager, $ClassTemplate2 instance) {}
   }
 }

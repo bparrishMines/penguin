@@ -8,6 +8,10 @@ class Reference {
   const Reference();
 }
 
+mixin UnpairedReferenceParameter {
+  String get referenceChannelName;
+}
+
 /// Represents an object that is remotely accessible.
 ///
 /// This is paired with a [LocalReference] in a [ReferencePairManager].

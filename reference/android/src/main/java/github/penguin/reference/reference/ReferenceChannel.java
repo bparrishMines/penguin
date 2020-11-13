@@ -19,9 +19,7 @@ public class ReferenceChannel<T> {
   }
 
   public Completable<RemoteReference> createNewPair(T instance) {
-    if (manager.referencePairs.getPairedRemoteReference(instance) != null) {
-      return null;
-    }
+    if (manager.isPaired(instance)) return null;
 
     final Completer<RemoteReference> referenceCompleter = new Completer<>();
     final RemoteReference remoteReference = new RemoteReference(manager.getNewReferenceId());
