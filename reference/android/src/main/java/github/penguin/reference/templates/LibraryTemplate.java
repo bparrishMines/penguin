@@ -18,6 +18,7 @@ import java.util.List;
 class LibraryTemplate {
   interface $ClassTemplate {
     Integer getFieldTemplate();
+
     Object methodTemplate(String parameterTemplate) throws Exception;
   }
 
@@ -31,17 +32,12 @@ class LibraryTemplate {
     }
 
     Completable<Object> $invokeStaticMethodTemplate(String parameterTemplate) {
-      return invokeStaticMethod(
-          "staticMethodTemplate",
-          Arrays.<Object>asList(parameterTemplate));
+      return invokeStaticMethod("staticMethodTemplate", Arrays.<Object>asList(parameterTemplate));
     }
 
-    Completable<Object> $invokeMethodTemplate(
-        $ClassTemplate instance,
-        String parameterTemplate) {
+    Completable<Object> $invokeMethodTemplate($ClassTemplate instance, String parameterTemplate) {
       final String $methodName = "methodTemplate";
-      final List<Object> $arguments =
-          Arrays.<Object>asList(parameterTemplate);
+      final List<Object> $arguments = Arrays.<Object>asList(parameterTemplate);
 
       if (manager.isPaired(instance)) return invokeMethod(instance, $methodName, $arguments);
       return invokeMethodOnUnpairedReference(instance, $methodName, $arguments);
@@ -49,14 +45,12 @@ class LibraryTemplate {
   }
 
   static class $ClassTemplateHandler implements ReferenceChannelHandler<$ClassTemplate> {
-    $ClassTemplate onCreate(
-        ReferenceChannelManager manager, $ClassTemplateCreationArgs args) throws Exception {
+    $ClassTemplate onCreate(ReferenceChannelManager manager, $ClassTemplateCreationArgs args)
+        throws Exception {
       return null;
     }
 
-    public Object $onStaticMethodTemplate(
-        ReferenceChannelManager manager,
-        String parameterTemplate)
+    public Object $onStaticMethodTemplate(ReferenceChannelManager manager, String parameterTemplate)
         throws Exception {
       return null;
     }

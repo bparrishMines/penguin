@@ -457,7 +457,8 @@ class StandardReferenceConverter implements ReferenceConverter {
   ) {
     if (manager.isPaired(object)) {
       return manager._referencePairs.getPairedRemoteReference(object);
-    } else if (!manager.isPaired(object) && object is UnpairedReferenceParameter) {
+    } else if (!manager.isPaired(object) &&
+        object is UnpairedReferenceParameter) {
       return manager.createUnpairedReference(
         object.referenceChannelName,
         object,
