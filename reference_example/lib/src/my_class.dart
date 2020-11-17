@@ -36,20 +36,31 @@ class MyClass with $MyClass {
 }
 
 @Channel('my_channel')
-class MyOtherClass with $MyOtherClass {
+class MyOtherClass with $MyOtherClass, UnpairedReferenceParameter {
   MyOtherClass(this.intField);
 
   final int intField;
 
-  void myMethod() {
+  final $MyOtherClassChannel _channel = $MyOtherClassChannel(
+    MethodChannelReferenceChannelManager.instance,
+  )..registerHandler(
+      $MyOtherClassHandler(
+        onCreate: (_, args) {
+          return MyOtherClass(args.intField);
+        },
+        $onMyStaticMethod: null,
+        $onNoParams: (_) async => 'woefj',
+      ),
+    );
 
-  }
+  void myMethod() {}
 
   static Future<int> myStaticMethod(String value) async {
     return null;
   }
 
-  static Future<String> noParams() {
+  static Future<String> noParams() {}
 
-  }
+  @override
+  String get referenceChannelName => 'my_channel';
 }

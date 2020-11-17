@@ -106,6 +106,7 @@ class ReferenceType {
 
   final String name;
   final bool codeGeneratedClass;
+  // TODO: remove
   final String referenceChannel;
   final List<ReferenceType> typeArguments;
 

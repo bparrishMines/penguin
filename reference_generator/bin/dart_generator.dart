@@ -5,9 +5,10 @@ import 'common.dart';
 
 String generateDart(String template, LibraryNode libraryNode) {
   final Library library = Library(template);
+  print(library.aMixin.aMethod.stringMatch());
   return template
       .replaceAll(
-        library.mixins,
+        library.aMixin.exp,
         libraryNode.classes
             .map<String>(
               (ClassNode classNode) => library.aMixin
@@ -43,7 +44,7 @@ String generateDart(String template, LibraryNode libraryNode) {
                                 methodNode.name,
                               )
                               .replaceAll(
-                                library.aMixin.aMethod.parameters,
+                                library.aMixin.aMethod.aParameter.exp,
                                 methodNode.parameters
                                     .map<String>(
                                       (ParameterNode parameterNode) =>
@@ -71,7 +72,7 @@ String generateDart(String template, LibraryNode libraryNode) {
             .join('\n\n'),
       )
       .replaceAll(
-        library.creationArgs,
+        library.aCreationArgsClass.exp,
         libraryNode.classes
             .map<String>(
               (ClassNode classNode) => library.aCreationArgsClass
@@ -81,7 +82,7 @@ String generateDart(String template, LibraryNode libraryNode) {
                     classNode.name,
                   )
                   .replaceAll(
-                    library.aCreationArgsClass.fields,
+                    library.aCreationArgsClass.aField.exp,
                     classNode.fields
                         .map<String>(
                           (FieldNode fieldNode) =>
@@ -102,7 +103,7 @@ String generateDart(String template, LibraryNode libraryNode) {
             .join('\n\n'),
       )
       .replaceAll(
-        library.channels,
+        library.aChannel.exp,
         libraryNode.classes
             .map<String>(
               (ClassNode classNode) => library.aChannel
@@ -139,7 +140,7 @@ String generateDart(String template, LibraryNode libraryNode) {
                                 methodNode.name,
                               )
                               .replaceAll(
-                                library.aChannel.aStaticMethod.parameters,
+                                library.aChannel.aStaticMethod.aParameter.exp,
                                 methodNode.parameters
                                     .map<String>(
                                       (ParameterNode parameterNode) => library
@@ -160,42 +161,17 @@ String generateDart(String template, LibraryNode libraryNode) {
                               )
                               .replaceAll(
                                 library
-                                    .aChannel.aStaticMethod.channelParameters,
+                                    .aChannel.aStaticMethod.aParameterName.exp,
                                 methodNode.parameters
                                     .map<String>(
-                                      (ParameterNode parameterNode) =>
-                                          parameterNode.type.hasReferenceChannel
-                                              ? library.aChannel.aStaticMethod
-                                                  .aParameterReference
-                                                  .stringMatch()
-                                                  .replaceAll(
-                                                    library
-                                                        .aChannel
-                                                        .aStaticMethod
-                                                        .aParameterReference
-                                                        .name,
-                                                    parameterNode.name,
-                                                  )
-                                                  .replaceAll(
-                                                    library
-                                                        .aChannel
-                                                        .aStaticMethod
-                                                        .aParameterReference
-                                                        .channel,
-                                                    parameterNode
-                                                        .type.referenceChannel,
-                                                  )
-                                              : library.aChannel.aStaticMethod
-                                                  .aParameterName
-                                                  .stringMatch()
-                                                  .replaceAll(
-                                                    library
-                                                        .aChannel
-                                                        .aStaticMethod
-                                                        .aParameterName
-                                                        .name,
-                                                    parameterNode.name,
-                                                  ),
+                                      (ParameterNode parameterNode) => library
+                                          .aChannel.aStaticMethod.aParameterName
+                                          .stringMatch()
+                                          .replaceAll(
+                                            library.aChannel.aStaticMethod
+                                                .aParameterName.name,
+                                            parameterNode.name,
+                                          ),
                                     )
                                     .join(', '),
                               ),
@@ -221,7 +197,7 @@ String generateDart(String template, LibraryNode libraryNode) {
                                 classNode.name,
                               )
                               .replaceAll(
-                                library.aChannel.aMethod.parameters,
+                                library.aChannel.aMethod.aParameter.exp,
                                 methodNode.parameters
                                     .map<String>(
                                       (ParameterNode parameterNode) => library
@@ -241,39 +217,17 @@ String generateDart(String template, LibraryNode libraryNode) {
                                     .join(', '),
                               )
                               .replaceAll(
-                                library.aChannel.aMethod.channelParameters,
+                                library.aChannel.aMethod.aParameterName.exp,
                                 methodNode.parameters
                                     .map<String>(
-                                      (ParameterNode parameterNode) =>
-                                          parameterNode.type.hasReferenceChannel
-                                              ? library.aChannel.aMethod
-                                                  .aParameterReference
-                                                  .stringMatch()
-                                                  .replaceAll(
-                                                    library
-                                                        .aChannel
-                                                        .aMethod
-                                                        .aParameterReference
-                                                        .name,
-                                                    parameterNode.name,
-                                                  )
-                                                  .replaceAll(
-                                                    library
-                                                        .aChannel
-                                                        .aMethod
-                                                        .aParameterReference
-                                                        .channel,
-                                                    parameterNode
-                                                        .type.referenceChannel,
-                                                  )
-                                              : library.aChannel.aMethod
-                                                  .aParameterName
-                                                  .stringMatch()
-                                                  .replaceAll(
-                                                    library.aChannel.aMethod
-                                                        .aParameterName.name,
-                                                    parameterNode.name,
-                                                  ),
+                                      (ParameterNode parameterNode) => library
+                                          .aChannel.aMethod.aParameterName
+                                          .stringMatch()
+                                          .replaceAll(
+                                            library.aChannel.aMethod
+                                                .aParameterName.name,
+                                            parameterNode.name,
+                                          ),
                                     )
                                     .join(', '),
                               ),
@@ -284,7 +238,7 @@ String generateDart(String template, LibraryNode libraryNode) {
             .join('\n\n'),
       )
       .replaceAll(
-        library.handlers,
+        library.aHandler.exp,
         libraryNode.classes
             .map<String>(
               (ClassNode classNode) => library.aHandler
@@ -347,7 +301,7 @@ String generateDart(String template, LibraryNode libraryNode) {
                                 getTrueTypeName(methodNode.returnType),
                               )
                               .replaceAll(
-                                library.aHandler.aStaticMethod.parameters,
+                                library.aHandler.aStaticMethod.aParameter.exp,
                                 methodNode.parameters
                                     .map<String>(
                                       (ParameterNode parameterNode) => library
@@ -379,7 +333,7 @@ String generateDart(String template, LibraryNode libraryNode) {
                             .stringMatch()
                             .replaceAll(invoker.methodName, methodNode.name)
                             .replaceAll(
-                              invoker.arguments,
+                              invoker.anArgument,
                               incrementingList(methodNode.parameters.length)
                                   .map<String>(
                                     (int index) => 'arguments[$index]',
@@ -402,41 +356,17 @@ String generateDart(String template, LibraryNode libraryNode) {
                           classNode.name,
                         )
                         .replaceAll(
-                          library.aHandler.theCreationArguments.fields,
+                          library.aHandler.theCreationArguments.aFieldName.exp,
                           classNode.fields
                               .map<String>(
-                                (FieldNode fieldNode) =>
-                                    fieldNode.type.hasReferenceChannel
-                                        ? library.aHandler.theCreationArguments
-                                            .aFieldReference
-                                            .stringMatch()
-                                            .replaceAll(
-                                              library
-                                                  .aHandler
-                                                  .theCreationArguments
-                                                  .aFieldReference
-                                                  .name,
-                                              fieldNode.name,
-                                            )
-                                            .replaceAll(
-                                              library
-                                                  .aHandler
-                                                  .theCreationArguments
-                                                  .aFieldReference
-                                                  .channel,
-                                              fieldNode.type.referenceChannel,
-                                            )
-                                        : library.aHandler.theCreationArguments
-                                            .aFieldName
-                                            .stringMatch()
-                                            .replaceAll(
-                                              library
-                                                  .aHandler
-                                                  .theCreationArguments
-                                                  .aFieldName
-                                                  .name,
-                                              fieldNode.name,
-                                            ),
+                                (FieldNode fieldNode) => library
+                                    .aHandler.theCreationArguments.aFieldName
+                                    .stringMatch()
+                                    .replaceAll(
+                                      library.aHandler.theCreationArguments
+                                          .aFieldName.name,
+                                      fieldNode.name,
+                                    ),
                               )
                               .join(', '),
                         ),
@@ -454,7 +384,7 @@ String generateDart(String template, LibraryNode libraryNode) {
                           classNode.name,
                         )
                         .replaceAll(
-                          library.aHandler.theCreateInstance.fields,
+                          library.aHandler.theCreateInstance.aField.exp,
                           incrementingList(classNode.fields.length).map<String>(
                             (int index) {
                               final HandlerCreateInstanceField field =
@@ -496,7 +426,7 @@ String generateDart(String template, LibraryNode libraryNode) {
                                     methodNode.name,
                                   )
                                   .replaceAll(
-                                    invoker.arguments,
+                                    invoker.anArgument,
                                     incrementingList(
                                       methodNode.parameters.length,
                                     )
@@ -542,21 +472,21 @@ class Library with TemplateRegExp {
   @override
   TemplateRegExp get parent => null;
 
-  final RegExp mixins = TemplateRegExp.regExp(
-    r'mixin \$ClassTemplate \{[^\}]+\}[^\}]+\}',
-  );
-
-  final RegExp channels = TemplateRegExp.regExp(
-    r'class \$ClassTemplateChannel.*}(?=\s*class \$ClassTemplateHandler)',
-  );
-
-  final RegExp creationArgs = TemplateRegExp.regExp(
-    r'class \$ClassTemplateCreationArgs.*}(?=\s*class \$ClassTemplateChannel)',
-  );
-
-  final RegExp handlers = TemplateRegExp.regExp(
-    r'class \$ClassTemplateHandler.*$',
-  );
+  // final RegExp mixins = TemplateRegExp.regExp(
+  //   r'mixin \$ClassTemplate \{[^\}]+\}[^\}]+\}',
+  // );
+  //
+  // final RegExp channels = TemplateRegExp.regExp(
+  //   r'class \$ClassTemplateChannel.*}(?=\s*class \$ClassTemplateHandler)',
+  // );
+  //
+  // final RegExp creationArgs = TemplateRegExp.regExp(
+  //   r'class \$ClassTemplateCreationArgs.*}(?=\s*class \$ClassTemplateChannel)',
+  // );
+  //
+  // final RegExp handlers = TemplateRegExp.regExp(
+  //   r'class \$ClassTemplateHandler.*$',
+  // );
 
   Mixin get aMixin => Mixin(this);
 
@@ -579,7 +509,7 @@ class Mixin with TemplateRegExp {
   final Library parent;
 
   final RegExp name = TemplateRegExp.regExp(r'(?<=mixin \$)ClassTemplate');
-  final RegExp fields = TemplateRegExp.regExp(r'int get fieldTemplate;[^;]+;');
+  final RegExp fields = TemplateRegExp.regExp(r'int get fieldTemplate;');
 
   ClassMethod get aMethod => ClassMethod(this);
   ClassField get aField => ClassField(this);
@@ -605,9 +535,9 @@ class ClassMethod with TemplateRegExp {
 
   final RegExp name = TemplateRegExp.regExp(r'methodTemplate');
 
-  final RegExp parameters = TemplateRegExp.regExp(
-    r'String parameterTemplate, \$ClassTemplate2 referenceParameterTemplate',
-  );
+  // final RegExp parameters = TemplateRegExp.regExp(
+  //   r'String parameterTemplate, \$ClassTemplate2 referenceParameterTemplate',
+  // );
 
   Parameter get aParameter => Parameter(this);
 
@@ -639,7 +569,7 @@ class CreationArgsClass with TemplateRegExp {
 
   final RegExp className = TemplateRegExp.regExp(r'(?<=class \$)ClassTemplate');
 
-  final RegExp fields = TemplateRegExp.regExp(r'int fieldTemplate;[^;]+;');
+  // final RegExp fields = TemplateRegExp.regExp(r'int fieldTemplate;[^;]+;');
 
   CreationArgsClassField get aField => CreationArgsClassField(this);
 
@@ -690,7 +620,7 @@ class Channel with TemplateRegExp {
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'class \$ClassTemplateChannel.*}(?=\s*class \$ClassTemplate2Channel)',
+    r'class \$ClassTemplateChannel.*}(?=\s*class \$ClassTemplateHandler)',
   );
 
   @override
@@ -704,19 +634,19 @@ class ChannelStaticMethod with TemplateRegExp {
 
   final RegExp nameAsParameter = TemplateRegExp.regExp(r'staticMethodTemplate');
 
-  final RegExp parameters = TemplateRegExp.regExp(
-    r'String parameterTemplate, \$ClassTemplate2 referenceParameterTemplate',
-  );
+  // final RegExp parameters = TemplateRegExp.regExp(
+  //   r'String parameterTemplate, \$ClassTemplate2 referenceParameterTemplate',
+  // );
 
-  final RegExp channelParameters = TemplateRegExp.regExp(
-    r'(?<=\[\s*)parameterTemplate[^\)]+\)',
-  );
+  // final RegExp channelParameters = TemplateRegExp.regExp(
+  //   r'(?<=\[\s*)parameterTemplate[^\)]+\)',
+  // );
 
   Parameter get aParameter => Parameter(this);
 
   ParameterName get aParameterName => ParameterName(this);
 
-  ParameterReference get aParameterReference => ParameterReference(this);
+  // ParameterReference get aParameterReference => ParameterReference(this);
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
@@ -742,19 +672,19 @@ class ChannelMethod with TemplateRegExp {
     r"(?<=')methodTemplate(?=')",
   );
 
-  final RegExp parameters = TemplateRegExp.regExp(
-    r'String parameterTemplate, \$ClassTemplate2 referenceParameterTemplate',
-  );
+  // final RegExp parameters = TemplateRegExp.regExp(
+  //   r'String parameterTemplate, \$ClassTemplate2 referenceParameterTemplate',
+  // );
 
-  final RegExp channelParameters = TemplateRegExp.regExp(
-    r'(?<=\[\s*)parameterTemplate[^\)]+\)',
-  );
+  // final RegExp channelParameters = TemplateRegExp.regExp(
+  //   r'(?<=\[\s*)parameterTemplate[^\)]+\)',
+  // );
 
   Parameter get aParameter => Parameter(this);
 
   ParameterName get aParameterName => ParameterName(this);
 
-  ParameterReference get aParameterReference => ParameterReference(this);
+  // ParameterReference get aParameterReference => ParameterReference(this);
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
@@ -778,21 +708,21 @@ class ParameterName with TemplateRegExp {
   final TemplateRegExp parent;
 }
 
-class ParameterReference with TemplateRegExp {
-  ParameterReference(this.parent);
-
-  final RegExp name = TemplateRegExp.regExp(r'referenceParameterTemplate');
-
-  final RegExp channel = TemplateRegExp.regExp(
-    r'github\.penguin/template/template/ClassTemplate2',
-  );
-
-  @override
-  final RegExp exp = TemplateRegExp.regExp(r'_replaceIfUnpaired\([^\)]+\)');
-
-  @override
-  final TemplateRegExp parent;
-}
+// class ParameterReference with TemplateRegExp {
+//   ParameterReference(this.parent);
+//
+//   final RegExp name = TemplateRegExp.regExp(r'referenceParameterTemplate');
+//
+//   final RegExp channel = TemplateRegExp.regExp(
+//     r'github\.penguin/template/template/ClassTemplate2',
+//   );
+//
+//   @override
+//   final RegExp exp = TemplateRegExp.regExp(r'_replaceIfUnpaired\([^\)]+\)');
+//
+//   @override
+//   final TemplateRegExp parent;
+// }
 
 class Handler with TemplateRegExp {
   Handler(this.parent);
@@ -836,7 +766,7 @@ class Handler with TemplateRegExp {
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'class \$ClassTemplateHandler.*}(?=\s+class \$ClassTemplate2Handler)',
+    r'class \$ClassTemplateHandler.*}$',
   );
 
   @override
@@ -882,9 +812,9 @@ class HandlerStaticMethod with TemplateRegExp {
 
   final RegExp returnType = TemplateRegExp.regExp(r'(?<=final )double');
 
-  final RegExp parameters = TemplateRegExp.regExp(
-    r'String parameterTemplate,\s+\$ClassTemplate2 referenceParameterTemplate',
-  );
+  // final RegExp parameters = TemplateRegExp.regExp(
+  //   r'String parameterTemplate,\s+\$ClassTemplate2 referenceParameterTemplate',
+  // );
 
   Parameter get aParameter => Parameter(this);
 
@@ -908,9 +838,9 @@ class HandlerStaticMethodInvoker with TemplateRegExp {
     r'(?<=\$on)StaticMethodTemplate',
   );
 
-  final RegExp arguments = TemplateRegExp.regExp(
-    r'arguments\[0\], arguments\[1\]',
-  );
+  // final RegExp arguments = TemplateRegExp.regExp(
+  //   r'arguments\[0\], arguments\[1\]',
+  // );
 
   final RegExp anArgument = TemplateRegExp.regExp(r'arguments\[0\]');
 
@@ -930,15 +860,15 @@ class HandlerCreationArguments with TemplateRegExp {
     r'(?<=\$)ClassTemplate(?= instance,)',
   );
 
-  final RegExp fields = TemplateRegExp.regExp(
-    r'(?<=\[\s*)instance\.fieldTemplate[^\)]+\)',
-  );
+  // final RegExp fields = TemplateRegExp.regExp(
+  //   r'(?<=\[\s*)instance\.fieldTemplate[^\)]+\)',
+  // );
 
   HandlerCreationArgumentsFieldName get aFieldName =>
       HandlerCreationArgumentsFieldName(this);
 
-  HandlerCreationArgumentsFieldReference get aFieldReference =>
-      HandlerCreationArgumentsFieldReference(this);
+  // HandlerCreationArgumentsFieldReference get aFieldReference =>
+  //     HandlerCreationArgumentsFieldReference(this);
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
@@ -962,21 +892,21 @@ class HandlerCreationArgumentsFieldName with TemplateRegExp {
   final HandlerCreationArguments parent;
 }
 
-class HandlerCreationArgumentsFieldReference with TemplateRegExp {
-  HandlerCreationArgumentsFieldReference(this.parent);
-
-  final RegExp name = TemplateRegExp.regExp(r'referenceParameterTemplate');
-
-  final RegExp channel = TemplateRegExp.regExp(
-    r'github\.penguin/template/template/ClassTemplate2',
-  );
-
-  @override
-  final RegExp exp = TemplateRegExp.regExp(r'_replaceIfUnpaired\([^\)]+\)');
-
-  @override
-  final HandlerCreationArguments parent;
-}
+// class HandlerCreationArgumentsFieldReference with TemplateRegExp {
+//   HandlerCreationArgumentsFieldReference(this.parent);
+//
+//   final RegExp name = TemplateRegExp.regExp(r'referenceParameterTemplate');
+//
+//   final RegExp channel = TemplateRegExp.regExp(
+//     r'github\.penguin/template/template/ClassTemplate2',
+//   );
+//
+//   @override
+//   final RegExp exp = TemplateRegExp.regExp(r'_replaceIfUnpaired\([^\)]+\)');
+//
+//   @override
+//   final HandlerCreationArguments parent;
+// }
 
 class HandlerCreateInstance with TemplateRegExp {
   HandlerCreateInstance(this.parent);
@@ -988,9 +918,9 @@ class HandlerCreateInstance with TemplateRegExp {
   final RegExp argsClassName =
       TemplateRegExp.regExp(r'ClassTemplate(?=CreationArgs\()');
 
-  final RegExp fields = TemplateRegExp.regExp(
-    r'\.\.fieldTemplate = arguments\[0\]\s+\.\.referenceParameterTemplate = arguments\[1\]',
-  );
+  // final RegExp fields = TemplateRegExp.regExp(
+  //   r'\.\.fieldTemplate = arguments\[0\]\s+\.\.referenceParameterTemplate = arguments\[1\]',
+  // );
 
   HandlerCreateInstanceField get aField => HandlerCreateInstanceField(this);
 
@@ -1047,9 +977,7 @@ class HandlerInvokeMethodInvoker with TemplateRegExp {
     r'(?<=instance\.)methodTemplate',
   );
 
-  final RegExp arguments = TemplateRegExp.regExp(
-    r'arguments\[0\], arguments\[1\]',
-  );
+  final RegExp anArgument = TemplateRegExp.regExp(r'arguments\[0\]');
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
