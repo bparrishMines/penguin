@@ -5,7 +5,6 @@ import 'common.dart';
 
 String generateDart(String template, LibraryNode libraryNode) {
   final Library library = Library(template);
-  print(library.aMixin.aMethod.stringMatch());
   return template
       .replaceAll(
         library.aMixin.exp,
@@ -15,7 +14,7 @@ String generateDart(String template, LibraryNode libraryNode) {
                   .stringMatch()
                   .replaceAll(library.aMixin.name, classNode.name)
                   .replaceAll(
-                    library.aMixin.fields,
+                    library.aMixin.aField.exp,
                     classNode.fields
                         .map<String>(
                           (FieldNode fieldNode) => library.aMixin.aField
@@ -509,7 +508,7 @@ class Mixin with TemplateRegExp {
   final Library parent;
 
   final RegExp name = TemplateRegExp.regExp(r'(?<=mixin \$)ClassTemplate');
-  final RegExp fields = TemplateRegExp.regExp(r'int get fieldTemplate;');
+  // final RegExp fields = TemplateRegExp.regExp(r'int get fieldTemplate;');
 
   ClassMethod get aMethod => ClassMethod(this);
   ClassField get aField => ClassField(this);

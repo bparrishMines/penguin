@@ -15,14 +15,14 @@ String generateJava({
       .replaceAll(library.name, libraryName)
       .replaceAll(library.package, package)
       .replaceAll(
-        library.interfaces,
+        library.anInterface.exp,
         libraryNode.classes.map<String>((ClassNode classNode) {
           final Interface anInterface = library.anInterface;
           return anInterface
               .stringMatch()
               .replaceAll(anInterface.name, classNode.name)
               .replaceAll(
-                anInterface.fields,
+                anInterface.aField.exp,
                 classNode.fields.map<String>((FieldNode fieldNode) {
                   final InterfaceField aField = anInterface.aField;
                   return aField
@@ -42,7 +42,7 @@ String generateJava({
                       .stringMatch()
                       .replaceAll(aMethod.name, methodNode.name)
                       .replaceAll(
-                        aMethod.parameters,
+                        aMethod.aParameter.exp,
                         methodNode.parameters
                             .map<String>((ParameterNode parameterNode) {
                           final Parameter aParameter = aMethod.aParameter;
@@ -60,7 +60,7 @@ String generateJava({
         }).join('\n'),
       )
       .replaceAll(
-        library.creationArgs,
+        library.aCreationArgsClass.exp,
         libraryNode.classes.map<String>((ClassNode classNode) {
           final CreationArgsClass aCreationArgsClass =
               library.aCreationArgsClass;
@@ -71,7 +71,7 @@ String generateJava({
                 classNode.name,
               )
               .replaceAll(
-                aCreationArgsClass.fields,
+                aCreationArgsClass.aField.exp,
                 classNode.fields.map<String>((FieldNode fieldNode) {
                   final CreationArgsClassField aField =
                       aCreationArgsClass.aField;
@@ -87,7 +87,7 @@ String generateJava({
         }).join('\n\n'),
       )
       .replaceAll(
-        library.channels,
+        library.aChannel.exp,
         libraryNode.classes
             .map<String>(
               (ClassNode classNode) => library.aChannel
@@ -124,7 +124,7 @@ String generateJava({
                                 methodNode.name,
                               )
                               .replaceAll(
-                                library.aChannel.aStaticMethod.parameters,
+                                library.aChannel.aStaticMethod.aParameter.exp,
                                 methodNode.parameters
                                     .map<String>(
                                       (ParameterNode parameterNode) => library
@@ -145,42 +145,17 @@ String generateJava({
                               )
                               .replaceAll(
                                 library
-                                    .aChannel.aStaticMethod.channelParameters,
+                                    .aChannel.aStaticMethod.aParameterName.exp,
                                 methodNode.parameters
                                     .map<String>(
-                                      (ParameterNode parameterNode) =>
-                                          parameterNode.type.hasReferenceChannel
-                                              ? library.aChannel.aStaticMethod
-                                                  .aParameterReference
-                                                  .stringMatch()
-                                                  .replaceAll(
-                                                    library
-                                                        .aChannel
-                                                        .aStaticMethod
-                                                        .aParameterReference
-                                                        .name,
-                                                    parameterNode.name,
-                                                  )
-                                                  .replaceAll(
-                                                    library
-                                                        .aChannel
-                                                        .aStaticMethod
-                                                        .aParameterReference
-                                                        .channel,
-                                                    parameterNode
-                                                        .type.referenceChannel,
-                                                  )
-                                              : library.aChannel.aStaticMethod
-                                                  .aParameterName
-                                                  .stringMatch()
-                                                  .replaceAll(
-                                                    library
-                                                        .aChannel
-                                                        .aStaticMethod
-                                                        .aParameterName
-                                                        .name,
-                                                    parameterNode.name,
-                                                  ),
+                                      (ParameterNode parameterNode) => library
+                                          .aChannel.aStaticMethod.aParameterName
+                                          .stringMatch()
+                                          .replaceAll(
+                                            library.aChannel.aStaticMethod
+                                                .aParameterName.name,
+                                            parameterNode.name,
+                                          ),
                                     )
                                     .join(', '),
                               ),
@@ -206,7 +181,7 @@ String generateJava({
                                 classNode.name,
                               )
                               .replaceAll(
-                                library.aChannel.aMethod.parameters,
+                                library.aChannel.aMethod.aParameter.exp,
                                 methodNode.parameters
                                     .map<String>(
                                       (ParameterNode parameterNode) => library
@@ -226,39 +201,17 @@ String generateJava({
                                     .join(' '),
                               )
                               .replaceAll(
-                                library.aChannel.aMethod.channelParameters,
+                                library.aChannel.aMethod.aParameterName.exp,
                                 methodNode.parameters
                                     .map<String>(
-                                      (ParameterNode parameterNode) =>
-                                          parameterNode.type.hasReferenceChannel
-                                              ? library.aChannel.aMethod
-                                                  .aParameterReference
-                                                  .stringMatch()
-                                                  .replaceAll(
-                                                    library
-                                                        .aChannel
-                                                        .aMethod
-                                                        .aParameterReference
-                                                        .name,
-                                                    parameterNode.name,
-                                                  )
-                                                  .replaceAll(
-                                                    library
-                                                        .aChannel
-                                                        .aMethod
-                                                        .aParameterReference
-                                                        .channel,
-                                                    parameterNode
-                                                        .type.referenceChannel,
-                                                  )
-                                              : library.aChannel.aMethod
-                                                  .aParameterName
-                                                  .stringMatch()
-                                                  .replaceAll(
-                                                    library.aChannel.aMethod
-                                                        .aParameterName.name,
-                                                    parameterNode.name,
-                                                  ),
+                                      (ParameterNode parameterNode) => library
+                                          .aChannel.aMethod.aParameterName
+                                          .stringMatch()
+                                          .replaceAll(
+                                            library.aChannel.aMethod
+                                                .aParameterName.name,
+                                            parameterNode.name,
+                                          ),
                                     )
                                     .join(', '),
                               ),
@@ -269,7 +222,7 @@ String generateJava({
             .join('\n\n'),
       )
       .replaceAll(
-          library.handlers,
+          library.aHandler.exp,
           libraryNode.classes.map<String>((ClassNode classNode) {
             final Handler handler = library.aHandler;
             return handler
@@ -306,7 +259,7 @@ String generateJava({
                           methodNode.name.pascalCase,
                         )
                         .replaceAll(
-                          staticMethod.parameters,
+                          staticMethod.aParameter.exp,
                           methodNode.parameters
                               .map<String>((ParameterNode parameterNode) {
                             final FollowingParameter parameter =
@@ -339,7 +292,7 @@ String generateJava({
                             methodNode.name.pascalCase,
                           )
                           .replaceAll(
-                            staticMethodInvoker.arguments,
+                            staticMethodInvoker.anArgument.exp,
                             incrementingList(
                               methodNode.parameters.length,
                             ).map<String>(
@@ -369,25 +322,14 @@ String generateJava({
                       .replaceAll(handler.theCreationArguments.className,
                           classNode.name)
                       .replaceAll(
-                        handler.theCreationArguments.fields,
+                        handler.theCreationArguments.aFieldName.exp,
                         classNode.fields.map<String>((FieldNode fieldNode) {
                           final HandlerCreationArguments arguments =
                               handler.theCreationArguments;
-                          return fieldNode.type.hasReferenceChannel
-                              ? arguments.aFieldReference
-                                  .stringMatch()
-                                  .replaceAll(
-                                    arguments.aFieldReference.name,
-                                    fieldNode.name.pascalCase,
-                                  )
-                                  .replaceAll(
-                                    arguments.aFieldReference.channel,
-                                    fieldNode.type.referenceChannel,
-                                  )
-                              : arguments.aFieldName.stringMatch().replaceAll(
-                                    arguments.aFieldName.name,
-                                    fieldNode.name.pascalCase,
-                                  );
+                          return arguments.aFieldName.stringMatch().replaceAll(
+                                arguments.aFieldName.name,
+                                fieldNode.name.pascalCase,
+                              );
                         }).join(','),
                       ),
                 )
@@ -406,7 +348,7 @@ String generateJava({
                         classNode.name,
                       )
                       .replaceAll(
-                        handler.theCreateInstance.fields,
+                        handler.theCreateInstance.aField.exp,
                         incrementingList(classNode.fields.length)
                             .map<String>((int index) {
                           final HandlerCreateInstanceField field =
@@ -499,21 +441,21 @@ class Library with TemplateRegExp {
     r'(?<=package )github.penguin.reference.templates(?=;)',
   );
 
-  final RegExp interfaces = TemplateRegExp.regExp(
-    r'interface \$ClassTemplate \{.+}(?=\s+static class \$ClassTemplateCreationArgs \{)',
-  );
-
-  final RegExp creationArgs = TemplateRegExp.regExp(
-    r'static class \$ClassTemplateCreationArgs.*}(?=\s*static class \$ClassTemplateChannel)',
-  );
-
-  final RegExp channels = TemplateRegExp.regExp(
-    r'static class \$ClassTemplateChannel.*}(?=\s*static class \$ClassTemplateHandler)',
-  );
-
-  final RegExp handlers = TemplateRegExp.regExp(
-    r'static class \$ClassTemplateHandler.*}(?=\s+\}\s+$)',
-  );
+  // final RegExp interfaces = TemplateRegExp.regExp(
+  //   r'interface \$ClassTemplate \{.+}(?=\s+static class \$ClassTemplateCreationArgs \{)',
+  // );
+  //
+  // final RegExp creationArgs = TemplateRegExp.regExp(
+  //   r'static class \$ClassTemplateCreationArgs.*}(?=\s*static class \$ClassTemplateChannel)',
+  // );
+  //
+  // final RegExp channels = TemplateRegExp.regExp(
+  //   r'static class \$ClassTemplateChannel.*}(?=\s*static class \$ClassTemplateHandler)',
+  // );
+  //
+  // final RegExp handlers = TemplateRegExp.regExp(
+  //   r'static class \$ClassTemplateHandler.*}(?=\s+\}\s+$)',
+  // );
 
   Interface get anInterface => Interface(this);
 
@@ -529,8 +471,8 @@ class Interface with TemplateRegExp {
 
   final RegExp name = TemplateRegExp.regExp(r'(?<=interface \$)ClassTemplate');
 
-  final RegExp fields =
-      TemplateRegExp.regExp(r'Integer getFieldTemplate[^;]+;[^;]+;');
+  // final RegExp fields =
+  //     TemplateRegExp.regExp(r'Integer getFieldTemplate[^;]+;[^;]+;');
 
   InterfaceField get aField => InterfaceField(this);
 
@@ -563,9 +505,9 @@ class InterfaceMethod with TemplateRegExp {
 
   final RegExp name = TemplateRegExp.regExp(r'methodTemplate(?=\()');
 
-  final RegExp parameters = TemplateRegExp.regExp(
-    r'String parameterTemplate, \$ClassTemplate2 referenceParameterTemplate',
-  );
+  // final RegExp parameters = TemplateRegExp.regExp(
+  //   r'String parameterTemplate, \$ClassTemplate2 referenceParameterTemplate',
+  // );
 
   Parameter get aParameter => Parameter(this);
 
@@ -598,7 +540,7 @@ class FollowingParameter with TemplateRegExp {
   final RegExp name = TemplateRegExp.regExp(r'parameterTemplate$');
 
   @override
-  final RegExp exp = TemplateRegExp.regExp(r',\s+String parameterTemplate');
+  final RegExp exp = TemplateRegExp.regExp(r',\s*String parameterTemplate');
 
   @override
   final TemplateRegExp parent;
@@ -609,7 +551,7 @@ class CreationArgsClass with TemplateRegExp {
 
   final RegExp className = TemplateRegExp.regExp(r'(?<=class \$)ClassTemplate');
 
-  final RegExp fields = TemplateRegExp.regExp(r'Integer fieldTemplate;[^;]+;');
+  // final RegExp fields = TemplateRegExp.regExp(r'Integer fieldTemplate;[^;]+;');
 
   CreationArgsClassField get aField => CreationArgsClassField(this);
 
@@ -660,7 +602,7 @@ class Channel with TemplateRegExp {
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'static class \$ClassTemplateChannel.*}(?=\s*static class \$ClassTemplate2Channel)',
+    r'static class \$ClassTemplateChannel.*}(?=\s*static class \$ClassTemplateHandler)',
   );
 
   @override
@@ -674,19 +616,19 @@ class ChannelStaticMethod with TemplateRegExp {
 
   final RegExp nameAsParameter = TemplateRegExp.regExp(r'staticMethodTemplate');
 
-  final RegExp parameters = TemplateRegExp.regExp(
-    r'String parameterTemplate, \$ClassTemplate2 referenceParameterTemplate',
-  );
+  // final RegExp parameters = TemplateRegExp.regExp(
+  //   r'String parameterTemplate, \$ClassTemplate2 referenceParameterTemplate',
+  // );
 
-  final RegExp channelParameters = TemplateRegExp.regExp(
-    r'(?<=asList\(\s*)parameterTemplate[^\)]+\)',
-  );
+  // final RegExp channelParameters = TemplateRegExp.regExp(
+  //   r'(?<=asList\(\s*)parameterTemplate[^\)]+\)',
+  // );
 
   Parameter get aParameter => Parameter(this);
 
   ParameterName get aParameterName => ParameterName(this);
 
-  ParameterReference get aParameterReference => ParameterReference(this);
+  // ParameterReference get aParameterReference => ParameterReference(this);
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
@@ -712,19 +654,19 @@ class ChannelMethod with TemplateRegExp {
     r'(?<=")methodTemplate(?=")',
   );
 
-  final RegExp parameters = TemplateRegExp.regExp(
-    r',\s*String parameterTemplate,\s*\$ClassTemplate2 referenceParameterTemplate',
-  );
-
-  final RegExp channelParameters = TemplateRegExp.regExp(
-    r'(?<=asList\(\s*)parameterTemplate[^\)]+\)',
-  );
+  // final RegExp parameters = TemplateRegExp.regExp(
+  //   r',\s*String parameterTemplate,\s*\$ClassTemplate2 referenceParameterTemplate',
+  // );
+  //
+  // final RegExp channelParameters = TemplateRegExp.regExp(
+  //   r'(?<=asList\(\s*)parameterTemplate[^\)]+\)',
+  // );
 
   FollowingParameter get aParameter => FollowingParameter(this);
 
   ParameterName get aParameterName => ParameterName(this);
 
-  ParameterReference get aParameterReference => ParameterReference(this);
+  // ParameterReference get aParameterReference => ParameterReference(this);
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
@@ -748,21 +690,21 @@ class ParameterName with TemplateRegExp {
   final TemplateRegExp parent;
 }
 
-class ParameterReference with TemplateRegExp {
-  ParameterReference(this.parent);
-
-  final RegExp name = TemplateRegExp.regExp(r'referenceParameterTemplate');
-
-  final RegExp channel = TemplateRegExp.regExp(
-    r'github\.penguin/template/template/ClassTemplate2',
-  );
-
-  @override
-  final RegExp exp = TemplateRegExp.regExp(r'replaceIfUnpaired\([^\)]+\)');
-
-  @override
-  final TemplateRegExp parent;
-}
+// class ParameterReference with TemplateRegExp {
+//   ParameterReference(this.parent);
+//
+//   final RegExp name = TemplateRegExp.regExp(r'referenceParameterTemplate');
+//
+//   final RegExp channel = TemplateRegExp.regExp(
+//     r'github\.penguin/template/template/ClassTemplate2',
+//   );
+//
+//   @override
+//   final RegExp exp = TemplateRegExp.regExp(r'replaceIfUnpaired\([^\)]+\)');
+//
+//   @override
+//   final TemplateRegExp parent;
+// }
 
 class Handler with TemplateRegExp {
   Handler(this.parent);
@@ -795,7 +737,7 @@ class Handler with TemplateRegExp {
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'static class \$ClassTemplateHandler.*}(?=\s+static class \$ClassTemplate2Handler)',
+    r'static class \$ClassTemplateHandler.*}(?=\s+\}\s+$)',
   );
 
   @override
@@ -827,9 +769,9 @@ class HandlerStaticMethod with TemplateRegExp {
 
   final RegExp name = TemplateRegExp.regExp(r'StaticMethodTemplate(?=\()');
 
-  final RegExp parameters = TemplateRegExp.regExp(
-    r',\s*String parameterTemplate,\s+\$ClassTemplate2 referenceParameterTemplate',
-  );
+  // final RegExp parameters = TemplateRegExp.regExp(
+  //   r',\s*String parameterTemplate,\s+\$ClassTemplate2 referenceParameterTemplate',
+  // );
 
   FollowingParameter get aParameter => FollowingParameter(this);
 
@@ -853,9 +795,9 @@ class HandlerStaticMethodInvoker with TemplateRegExp {
     r'(?<=\$on)StaticMethodTemplate',
   );
 
-  final RegExp arguments = TemplateRegExp.regExp(
-    r', \(String\) arguments.get\(0\), \(\$ClassTemplate2\) arguments.get\(1\)',
-  );
+  // final RegExp arguments = TemplateRegExp.regExp(
+  //   r', \(String\) arguments.get\(0\), \(\$ClassTemplate2\) arguments.get\(1\)',
+  // );
 
   HandlerStaticMethodInvokerArgument get anArgument =>
       HandlerStaticMethodInvokerArgument(this);
@@ -892,15 +834,15 @@ class HandlerCreationArguments with TemplateRegExp {
     r'(?<=\$)ClassTemplate(?= instance\))',
   );
 
-  final RegExp fields = TemplateRegExp.regExp(
-    r'(?<=\(\s*)instance\.getFieldTemplate([^\)]*\)){3}',
-  );
+  // final RegExp fields = TemplateRegExp.regExp(
+  //   r'(?<=\(\s*)instance\.getFieldTemplate([^\)]*\)){3}',
+  // );
 
   HandlerCreationArgumentsFieldName get aFieldName =>
       HandlerCreationArgumentsFieldName(this);
 
-  HandlerCreationArgumentsFieldReference get aFieldReference =>
-      HandlerCreationArgumentsFieldReference(this);
+  // HandlerCreationArgumentsFieldReference get aFieldReference =>
+  //     HandlerCreationArgumentsFieldReference(this);
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
@@ -954,9 +896,9 @@ class HandlerCreateInstance with TemplateRegExp {
   final RegExp argsClassName = TemplateRegExp.regExp(
       r'ClassTemplate(?=CreationArgs\(|CreationArgs args)');
 
-  final RegExp fields = TemplateRegExp.regExp(
-    r'args\.fieldTemplate([^;]+;){2}',
-  );
+  // final RegExp fields = TemplateRegExp.regExp(
+  //   r'args\.fieldTemplate([^;]+;){2}',
+  // );
 
   HandlerCreateInstanceField get aField => HandlerCreateInstanceField(this);
 
