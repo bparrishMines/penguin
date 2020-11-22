@@ -5,7 +5,7 @@ import 'package:reference/annotations.dart';
 
 import 'template.g.dart';
 
-@Channel('github.penguin/template/template/ClassTemplate')
+@Reference('github.penguin/template/template/ClassTemplate')
 class ClassTemplate with $ClassTemplate {
   ClassTemplate(this.fieldTemplate);
 

@@ -1,15 +1,17 @@
+import 'package:reference/reference.dart';
+
 /// Represents a specific object instance.
 ///
 /// See:
 ///   [LocalReference]
 ///   [RemoteReference]
 ///   [UnpairedReference]
-class Reference {
-  const Reference();
-}
+// class Reference {
+//   const Reference();
+// }
 
-mixin UnpairedReferenceParameter {
-  String get referenceChannelName;
+mixin Referencable<T> {
+  ReferenceChannel<T> get referenceChannel;
 }
 
 /// Represents an object that is remotely accessible.
@@ -17,7 +19,7 @@ mixin UnpairedReferenceParameter {
 /// This is paired with a [LocalReference] in a [ReferencePairManager].
 ///
 /// Two [RemoteReference]s are equal if they share the same [referenceId].
-class RemoteReference implements Reference {
+class RemoteReference {
   const RemoteReference(this.referenceId) : assert(referenceId != null);
 
   /// Unique identifier used to retrieve the instance this represents from a remote [ReferencePairManager].
@@ -49,7 +51,7 @@ class RemoteReference implements Reference {
 /// [ReferencePairManager.onReceiveInvokeMethodOnUnpairedReference], the
 /// [ReferencePairManager] will try to convert it into a [LocalReference] with
 /// [LocalReferenceCommunicationHandler.createInstance].
-class UnpairedReference implements Reference {
+class UnpairedReference {
   const UnpairedReference(
     this.handlerChannel,
     this.creationArguments,

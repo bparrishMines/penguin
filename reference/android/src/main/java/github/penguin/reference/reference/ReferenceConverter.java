@@ -15,9 +15,9 @@ public interface ReferenceConverter {
     public Object convertForRemoteManager(ReferenceChannelManager manager, Object object) {
       if (manager.isPaired(object)) {
         return manager.referencePairs.getPairedRemoteReference(object);
-      } else if (!manager.isPaired(object) && object instanceof UnpairedReferenceParameter) {
+      } else if (!manager.isPaired(object) && object instanceof Referencable) {
         final String referenceChannelName =
-            ((UnpairedReferenceParameter) object).getReferenceChannelName();
+            ((Referencable) object).getReferenceChannel().channelName;
         return manager.createUnpairedReference(referenceChannelName, object);
       } else if (object instanceof List) {
         final List<Object> result = new ArrayList<>();
