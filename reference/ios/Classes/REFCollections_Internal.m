@@ -93,3 +93,40 @@
   return _table.objectEnumerator;
 }
 @end
+
+@implementation REFRemoteReferenceMap {
+  REFBiMapTable<id, REFRemoteReference *> *_remoteReferences;
+}
+
+- (instancetype)init {
+  self = [super init];
+  if (self) {
+    _remoteReferences = [[REFBiMapTable alloc] init];
+  }
+  return self;
+}
+
+- (void)add:(id)instance remoteReference:(REFRemoteReference *)remoteReference {
+  [_remoteReferences setObject:remoteReference forKey:instance];
+}
+
+- (REFRemoteReference *_Nullable)removePairWithObject:(id)object {
+  REFRemoteReference *remoteReference = [_remoteReferences objectForKey:object];
+  [_remoteReferences removeObjectForKey:object];
+  return remoteReference;
+}
+
+- (id _Nullable)removePairWithRemoteReference:(REFRemoteReference *)remoteReference {
+  id object = [_remoteReferences.inverse objectForKey:remoteReference];
+  [_remoteReferences removeObjectForKey:object];
+  return object;
+}
+
+- (REFRemoteReference *_Nullable)getPairedRemoteReference:(id)object {
+  return [_remoteReferences objectForKey:object];
+}
+
+- (id _Nullable)getPairedObject:(REFRemoteReference *)remoteReference {
+  return [_remoteReferences.inverse objectForKey:remoteReference];
+}
+@end
