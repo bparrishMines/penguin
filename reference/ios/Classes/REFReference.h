@@ -14,9 +14,6 @@ NS_ASSUME_NONNULL_BEGIN
 //- (REFClass *)referenceClass;
 //@end
 
-@protocol REFReferencable
-@end
-
 @interface REFRemoteReference : NSObject <NSCopying>
 @property(readonly) NSString *referenceID;
 + (REFRemoteReference *)fromID:(NSString *)referenceID;

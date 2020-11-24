@@ -95,7 +95,7 @@
 @end
 
 @implementation REFRemoteReferenceMap {
-  REFBiMapTable<id, REFRemoteReference *> *_remoteReferences;
+  REFBiMapTable<NSObject *, REFRemoteReference *> *_remoteReferences;
 }
 
 - (instancetype)init {

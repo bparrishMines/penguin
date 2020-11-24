@@ -6,26 +6,26 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class REFReferenceChannelManager;
 
-@interface REFReferenceChannelHandler<ObjectType> : NSObject
-- (NSArray *)getCreationArguments:(REFReferenceChannelManager *)manager instance:(ObjectType)instance;
-- (ObjectType)createInstance:(REFReferenceChannelManager *)manager arguments:(NSArray *)arguments;
+@protocol REFReferenceChannelHandler <NSObject>
+- (NSArray *)getCreationArguments:(REFReferenceChannelManager *)manager instance:(NSObject *)instance;
+- (id)createInstance:(REFReferenceChannelManager *)manager arguments:(NSArray *)arguments;
 - (id _Nullable)invokeStaticMethod:(REFReferenceChannelManager *)manager
                         methodName:(NSString *)methodName
                          arguments:(NSArray *)arguments;
 - (id _Nullable)invokeMethod:(REFReferenceChannelManager *)manager
-                    instance:(ObjectType)instance
+                    instance:(NSObject *)instance
                   methodName:(NSString *)methodName
                    arguments:(NSArray *)arguments;
 - (void)onInstanceDisposed:(REFReferenceChannelManager *)manager
-                  instance:(ObjectType)instance;
+                  instance:(NSObject *)instance;
 @end
 
 @interface REFReferenceChannel<ObjectType> : NSObject
 @property(readonly) REFReferenceChannelManager *manager;
 @property(readonly) NSString *channelName;
-- (void)registerHandler:(REFReferenceChannelHandler<ObjectType> *)handler;
 - (instancetype)initWithManager:(REFReferenceChannelManager *)manager
                     channelName:(NSString *)channelName;
+- (void)registerHandler:(NSObject<REFReferenceChannelHandler> *)handler;
 - (void)createNewPair:(ObjectType)instance
            completion:(void (^)(REFRemoteReference *_Nullable, NSError *_Nullable))completion;
 - (void)invokeStaticMethod:(NSString *)methodName
@@ -35,7 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
           methodName:(NSString *)methodName
            arguments:(NSArray<id> *)arguments
           completion:(void (^)(id _Nullable, NSError *_Nullable))completion;
-- (void)invokeMethodOnUnpairedReference:(ObjectType)object
+- (void)invokeMethodOnUnpairedReference:(ObjectType)obj
                              methodName:(NSString *)methodName
                               arguments:(NSArray<id> *)arguments
                              completion:(void (^)(id _Nullable, NSError *_Nullable))completion;
@@ -60,10 +60,10 @@ NS_ASSUME_NONNULL_BEGIN
                arguments:(NSArray<id> *)arguments
               completion:(void (^)(id _Nullable, NSError *_Nullable))completion;
 
-- (void)invokeMethodOnUnpairedReference:(REFUnpairedReference *)unpairedReference
-                             methodName:(NSString *)methodName
-                              arguments:(NSArray<id> *)arguments
-                             completion:(void (^)(id _Nullable, NSError *_Nullable))completion;
+- (void)sendInvokeMethodOnUnpairedReference:(REFUnpairedReference *)unpairedReference
+                                 methodName:(NSString *)methodName
+                                  arguments:(NSArray<id> *)arguments
+                                 completion:(void (^)(id _Nullable, NSError *_Nullable))completion;
 
 - (void)sendDisposePair:(NSString *)handlerChannel
         remoteReference:(REFRemoteReference *)remoteReference
@@ -80,13 +80,18 @@ NS_ASSUME_NONNULL_BEGIN
 @interface REFStandardReferenceConverter : NSObject <REFReferenceConverter>
 @end
 
+@protocol REFReferencable
+- (REFReferenceChannel *)referenceChannel;
+@end
+
 @interface REFReferenceChannelManager : NSObject
 @property(readonly) id<REFReferenceChannelMessenger> messenger;
 - (instancetype)initWithMessenger:(id<REFReferenceChannelMessenger>)messenger;
-- (BOOL)isPaired:(id)instance;
-- (void)registerHandler:(NSString *)channelName handler:(REFReferenceChannelHandler *)handler;
-- (REFReferenceChannelHandler *_Nullable)getChannelHandler:(NSString *)channelName;
+- (BOOL)isPaired:(NSObject *)instance;
+- (void)registerHandler:(NSString *)channelName handler:(NSObject<REFReferenceChannelHandler> *)handler;
+- (NSObject<REFReferenceChannelHandler> *_Nullable)getChannelHandler:(NSString *)channelName;
 - (id<REFReferenceConverter>)converter;
+- (REFUnpairedReference *_Nullable)createUnpairedReference:(NSString *)handlerChannel obj:(id)obj;
 - (id)onReceiveCreateNewPair:(NSString *)handlerChannel
              remoteReference:(REFRemoteReference *)remoteReference
                    arguments:(NSArray<id> *)arguments;
@@ -97,11 +102,12 @@ NS_ASSUME_NONNULL_BEGIN
                       remoteReference:(REFRemoteReference *)remoteReference
                            methodName:(NSString *)methodName
                             arguments:(NSArray<id> *)arguments;
-- (void)onReceiveInvokeMethodOnUnpairedReference:(REFUnpairedReference *)unpairedReference
-                                      methodName:(NSString *)methodName
-                                       arguments:(NSArray<id> *)arguments;
+- (id _Nullable)onReceiveInvokeMethodOnUnpairedReference:(REFUnpairedReference *)unpairedReference
+                                              methodName:(NSString *)methodName
+                                               arguments:(NSArray<id> *)arguments;
 - (void)onReceiveDisposePair:(NSString *)handlerChannel
              remoteReference:(REFRemoteReference *)remoteReference;
+- (NSString *)getNewReferenceId;
 @end
 
 //@class REFReferencePairManager;

@@ -1,5 +1,7 @@
 import 'dart:math';
 
+import 'package:reference/reference.dart';
+
 import 'reference.dart';
 import 'remote_reference_map.dart';
 
@@ -119,10 +121,11 @@ class ReferenceChannel<T> {
   Future<void> disposePair(T instance) async {
     final RemoteReference remoteReference =
         manager._referencePairs.getPairedRemoteReference(instance);
-    if (remoteReference == null) return null;
 
-    manager._referencePairs.removePairWithObject(instance);
-    return manager.messenger.sendDisposePair(channelName, remoteReference);
+    if (remoteReference != null) {
+      manager._referencePairs.removePairWithObject(instance);
+      return manager.messenger.sendDisposePair(channelName, remoteReference);
+    }
   }
 }
 
@@ -209,7 +212,7 @@ mixin ReferenceChannelHandler<T> {
   /// Assuming [LocalReference] is being created to be paired with a
   /// [RemoteReference]:
   ///
-  /// The LOCAL [ReferencePairManager] stores the returned [LocalReference] and
+  /// The LOCAL [ReferencePairManagerr] stores the returned [LocalReference] and
   /// a [RemoteReference] with a generated `referenceId` are stored as a pair
   /// and the LOCAL [ReferencePairManager] will facilitate communication between
   /// their object instances they represent.
@@ -260,6 +263,9 @@ abstract class ReferenceChannelManager {
 
   ReferenceChannelMessenger get messenger;
 
+  /// Converts [Reference]s when passing values to a [ReferenceChannelHandler] or a [MessageSender].
+  ReferenceConverter get converter => StandardReferenceConverter();
+
   bool isPaired(Object instance) {
     return _referencePairs.getPairedRemoteReference(instance) != null;
   }
@@ -271,9 +277,6 @@ abstract class ReferenceChannelManager {
   ReferenceChannelHandler getChannelHandler(String channelName) {
     return _channelHandlers[channelName];
   }
-
-  /// Converts [Reference]s when passing values to a [ReferenceChannelHandler] or a [MessageSender].
-  ReferenceConverter get converter => StandardReferenceConverter();
 
   /// Create a new [LocalReference] to be paired with [RemoteReference].
   ///
@@ -300,7 +303,7 @@ abstract class ReferenceChannelManager {
       converter.convertForLocalManager(this, arguments),
     );
 
-    assert(_referencePairs.getPairedRemoteReference(object) == null);
+    assert(!isPaired(object));
 
     _referencePairs.add(object, remoteReference);
     return object;
@@ -329,9 +332,12 @@ abstract class ReferenceChannelManager {
     String handlerChannel,
     Object object,
   ) {
+    final ReferenceChannelHandler handler = _channelHandlers[handlerChannel];
+    if (handler == null) return null;
+
     return UnpairedReference(
       handlerChannel,
-      getChannelHandler(handlerChannel).getCreationArguments(this, object),
+      handler.getCreationArguments(this, object),
     );
   }
 
