@@ -1,38 +1,5 @@
 #import "REFReference.h"
 
-//@implementation REFClass
-//- (instancetype)initWithClass:(Class)clazz {
-//  self = [super init];
-//  if (self) {
-//    _clazz = clazz;
-//  }
-//  return self;
-//}
-//
-//+ (REFClass *_Nonnull)fromClass:(Class)clazz {
-//  return [[REFClass alloc] initWithClass:clazz];
-//}
-//
-//- (BOOL)isEqual:(id)other {
-//  if (other == self) {
-//    return YES;
-//  } else if (![super isKindOfClass:[REFClass class]]) {
-//    return NO;
-//  } else {
-//    REFClass *clazz = other;
-//    return _clazz == clazz.clazz;
-//  }
-//}
-//
-//- (NSUInteger)hash {
-//  return NSStringFromClass(_clazz).hash;
-//}
-//
-//- (nonnull id)copyWithZone:(nullable NSZone *)zone {
-//  return [REFClass fromClass:_clazz];
-//}
-//@end
-
 @implementation REFRemoteReference
 - (instancetype)initWithReferenceID:(NSString *_Nonnull)referenceID {
   self = [super init];
