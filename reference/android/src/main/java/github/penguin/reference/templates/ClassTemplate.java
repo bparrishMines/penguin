@@ -3,6 +3,7 @@ package github.penguin.reference.templates;
 import github.penguin.reference.reference.ReferenceChannelManager;
 
 public class ClassTemplate implements LibraryTemplate.$ClassTemplate {
+  // TODO: not right
   private static LibraryTemplate.$ClassTemplateChannel channel;
 
   private final Integer fieldTemplate;

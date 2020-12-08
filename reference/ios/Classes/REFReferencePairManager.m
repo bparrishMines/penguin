@@ -10,6 +10,7 @@
   self = [super init];
   if (self) {
     _messenger = messenger;
+    _channelHandlers = [[REFThreadSafeMapTable alloc] init];
   }
   return self;
 }

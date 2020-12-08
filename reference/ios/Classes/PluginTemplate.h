@@ -1,8 +1,9 @@
 #import "REFLibraryTemplate_Internal.h"
+#import "ReferencePlugin.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface ClassTemplate : _p_ClassTemplate
+@interface ClassTemplate : NSObject<_p_ClassTemplate>
 - (instancetype)initWithFieldTemplate:(NSNumber *)fieldTemplate;
 @end
 
