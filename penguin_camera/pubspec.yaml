@@ -1,0 +1,40 @@
+name: penguin_camera
+description: A new flutter plugin project.
+version: 0.0.1
+author:
+homepage:
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+  flutter: ">=1.20.0 <2.0.0"
+
+dependencies:
+  reference:
+    git:
+      url: git@github.com:bparrishMines/penguin.git
+      ref: channels
+      path: reference
+  device_info: 0.4.2+9
+  plugin_platform_interface: ^1.0.3
+  flutter_plugin_android_lifecycle: ^1.0.11
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  reference_generator:
+    git:
+      url: git@github.com:bparrishMines/penguin.git
+      ref: channels
+      path: reference_generator
+  build_runner: ^1.10.3
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  plugin:
+    platforms:
+      android:
+        package: bparrishMines.penguin.penguin_camera
+        pluginClass: PenguinCameraPlugin
+      ios:
+        pluginClass: PenguinCameraPlugin

@@ -1,0 +1,5 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+  package="bparrishMines.penguin.penguin_camera">
+    <uses-sdk tools:overrideLibrary="androidx.camera.core,androidx.camera.lifecycle,androidx.camera.camera2,androidx.camera.view,androidx.camera.extensions"/>
+</manifest>
