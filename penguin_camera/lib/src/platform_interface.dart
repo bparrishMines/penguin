@@ -22,23 +22,22 @@ abstract class PenguinCameraPlatform extends PlatformInterface {
     _instance = instance;
   }
 
-  PenguinCamera createPenguinCamera();
+  void initialize();
+  Future<List<CameraDevice>> getAllCameraDevices();
   CameraController createCameraController(CameraDevice device);
 }
 
 abstract class PenguinCamera {
   PenguinCamera._();
 
-  static PenguinCamera get instance =>
-      PenguinCameraPlatform.instance.createPenguinCamera();
-
   static void initialize() {
     if (defaultTargetPlatform == TargetPlatform.android) {
-      PenguinCameraPlatform.instance = CameraXCameraPlatform();
+      PenguinCameraPlatform.instance = CameraXCameraPlatform()..initialize();
     }
   }
 
-  Future<List<CameraDevice>> getAllCameraDevices();
+  static Future<List<CameraDevice>> getAllCameraDevices() =>
+      PenguinCameraPlatform.instance.getAllCameraDevices();
 }
 
 abstract class CameraDevice {

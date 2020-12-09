@@ -28,7 +28,7 @@ class _MyAppState extends State<MyApp> {
 
   void _setupCamera() async {
     final List<CameraDevice> devices =
-        await PenguinCamera.instance.getAllCameraDevices();
+        await PenguinCamera.getAllCameraDevices();
     final CameraController controller = CameraController(devices.first);
     await controller.initialize();
 

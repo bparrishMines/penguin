@@ -1,37 +1,15 @@
 import 'dart:async';
 
 import 'package:flutter/services.dart';
-// import 'package:penguin_camera/src/android/camera/camera.g.dart';
 import 'package:reference/annotations.dart';
 import 'package:reference/reference.dart';
 
 import 'camera.g.dart';
 
-// class _CameraReferenceManager extends $ReferencePairManager {
-//   _CameraReferenceManager() : super('bparrishMines.penguin/penguin_camera/camera');
-//
-//   @override
-//   $LocalHandler get localHandler => $LocalHandler(
-//         createCamera: (
-//           ReferencePairManager manager,
-//           $CameraCreationArgs args,
-//         ) {
-//           return Camera();
-//         },
-//         createCameraInfo: (
-//           ReferencePairManager manager,
-//           $CameraInfoCreationArgs args,
-//         ) {
-//           return CameraInfo(
-//             cameraId: args.cameraId,
-//             orientation: args.orientation,
-//             facing: args.facing,
-//           );
-//         },
-//       );
-// }
-//
-// _CameraReferenceManager _manager = _CameraReferenceManager()..initialize();
+void initializeChannels() {
+  Camera._channel; // ignore: unnecessary_statements
+  CameraInfo._channel; // ignore: unnecessary_statements
+}
 
 /// The [Camera] class is used to set image capture settings, start/stop preview, snap pictures, and retrieve frames for encoding for video.
 ///
@@ -40,7 +18,7 @@ import 'camera.g.dart';
 ///
 /// This uses the [Camera](https://developer.android.com/reference/android/hardware/Camera)
 /// API and is deprecated for Android versions 21+.
-@Channel('penguin_camera/android/camera/Camera')
+@Reference('penguin_camera/android/camera/Camera')
 class Camera with $Camera {
   Camera();
 
@@ -52,8 +30,6 @@ class Camera with $Camera {
 
   /// Returns the information about each camera.
   static Future<List<CameraInfo>> getAllCameraInfo() async {
-    // ignore: unnecessary_statements
-    CameraInfo._channel;
     final List<dynamic> allInfo = await _channel.$invokeGetAllCameraInfo();
     return allInfo.cast<CameraInfo>();
   }
@@ -114,7 +90,7 @@ class Camera with $Camera {
 /// Information about a camera.
 ///
 /// Retrieve by calling [Camera.getAllCameraInfo].
-@Channel('penguin_camera/android/camera/CameraInfo')
+@Reference('penguin_camera/android/camera/CameraInfo')
 class CameraInfo with $CameraInfo {
   CameraInfo({this.cameraId, this.facing, this.orientation})
       : assert(cameraId != null),

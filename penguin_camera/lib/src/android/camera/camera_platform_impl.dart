@@ -5,21 +5,6 @@ import 'package:flutter/widgets.dart';
 import 'camera.dart';
 import '../../platform_interface.dart';
 
-class AndroidCameraImpl implements PenguinCamera {
-  AndroidCameraImpl._();
-
-  static AndroidCameraImpl instance = AndroidCameraImpl._();
-
-  @override
-  Future<List<CameraDevice>> getAllCameraDevices() async {
-    final List<CameraInfo> allInfo = await Camera.getAllCameraInfo();
-    return allInfo
-        .map<AndroidCameraDevice>(
-            (CameraInfo info) => AndroidCameraDevice(info))
-        .toList();
-  }
-}
-
 class AndroidCameraDevice implements CameraDevice {
   AndroidCameraDevice(this.info);
 
@@ -82,7 +67,16 @@ class AndroidCameraPlatform extends PenguinCameraPlatform {
   }
 
   @override
-  PenguinCamera createPenguinCamera() {
-    return AndroidCameraImpl.instance;
+  Future<List<CameraDevice>> getAllCameraDevices() async {
+    final List<CameraInfo> allInfo = await Camera.getAllCameraInfo();
+    return allInfo
+        .map<AndroidCameraDevice>(
+            (CameraInfo info) => AndroidCameraDevice(info))
+        .toList();
+  }
+
+  @override
+  void initialize() {
+    initializeChannels();
   }
 }

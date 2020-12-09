@@ -1,32 +1,22 @@
 import 'dart:async';
 
-// import 'package:penguin_camera/src/android/camerax/camerax.g.dart';
-import 'package:penguin_camera/src/android/camerax/camerax.g.dart';
 import 'package:reference/annotations.dart';
 import 'package:reference/reference.dart';
 
-// class _CameraXReferenceManager extends $ReferencePairManager {
-//   _CameraXReferenceManager()
-//       : super('bparrishMines.penguin/penguin_camera/camerax');
-//
-//   @override
-//   $LocalHandler get localHandler => $LocalHandler(
-//         createCamera: (ReferencePairManager manager, $CameraCreationArgs args) {
-//           return Camera();
-//         },
-//         createProcessCameraProvider: (ReferencePairManager manager,
-//             $ProcessCameraProviderCreationArgs args) {
-//           return ProcessCameraProvider._();
-//         },
-//       );
-// }
-//
-// final _CameraXReferenceManager _manager = _CameraXReferenceManager();
+import 'camerax.g.dart';
 
-@Channel('penguin_camera/usecase')
-abstract class UseCase with $UseCase, UnpairedReferenceParameter {}
+void initializeChannels() {
+  Preview._channel; // ignore: unnecessary_statements
+  SuccessListener._channel; // ignore: unnecessary_statements
+  ProcessCameraProvider._channel; // ignore: unnecessary_statements
+  Camera._channel; // ignore: unnecessary_statements
+  CameraSelector._channel; // ignore: unnecessary_statements
+}
 
-@Channel('penguin_camera/preview')
+@Reference('penguin_camera/android/camerax/UseCase')
+abstract class UseCase with $UseCase, Referencable {}
+
+@Reference('penguin_camera/android/camerax/Preview')
 class Preview extends UseCase with $Preview {
   Preview();
 
@@ -55,10 +45,10 @@ class Preview extends UseCase with $Preview {
   }
 
   @override
-  String get referenceChannelName => 'penguin_camera/preview';
+  ReferenceChannel get referenceChannel => _channel;
 }
 
-@Channel('penguin_camera/successlistener')
+@Reference('penguin_camera/android/camerax/SuccessListener')
 abstract class SuccessListener with $SuccessListener {
   static final $SuccessListenerChannel _channel = $SuccessListenerChannel(
     MethodChannelReferenceChannelManager.instance,
@@ -71,7 +61,7 @@ abstract class SuccessListener with $SuccessListener {
   void onError(String code, String message);
 }
 
-@Channel('penguin_camera/processcameraprovider')
+@Reference('penguin_camera/android/camerax/ProcessCameraProvider')
 class ProcessCameraProvider with $ProcessCameraProvider {
   ProcessCameraProvider._();
 
@@ -107,7 +97,7 @@ class ProcessCameraProvider with $ProcessCameraProvider {
     covariant CameraSelector selector,
     covariant UseCase useCase,
   ) async {
-    if (useCase is Preview) Preview._channel.createNewPair(useCase);
+    useCase.referenceChannel.createNewPair(useCase);
     _dependentReferences.add(useCase);
 
     final Camera camera = await _channel.$invokeBindToLifecycle(
@@ -130,7 +120,7 @@ class ProcessCameraProvider with $ProcessCameraProvider {
   }
 }
 
-@Channel('penguin_camera/camera')
+@Reference('penguin_camera/android/camerax/Camera')
 class Camera with $Camera {
   static final $CameraChannel _channel = $CameraChannel(
     MethodChannelReferenceChannelManager.instance,
@@ -141,8 +131,8 @@ class Camera with $Camera {
     );
 }
 
-@Channel('penguin_camera/cameraselector')
-class CameraSelector with $CameraSelector, UnpairedReferenceParameter {
+@Reference('penguin_camera/android/camerax/CameraSelector')
+class CameraSelector with $CameraSelector, Referencable {
   CameraSelector(this.lensFacing);
 
   static final $CameraSelectorChannel _channel = $CameraSelectorChannel(
@@ -159,11 +149,5 @@ class CameraSelector with $CameraSelector, UnpairedReferenceParameter {
   final int lensFacing;
 
   @override
-  String get referenceChannelName {
-    Preview._channel;
-    SuccessListener._channel;
-    ProcessCameraProvider._channel;
-    Camera._channel;
-    return _channel.channelName;
-  }
+  ReferenceChannel get referenceChannel => _channel;
 }
