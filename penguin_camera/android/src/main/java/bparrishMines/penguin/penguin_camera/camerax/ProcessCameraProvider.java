@@ -62,10 +62,10 @@ public class ProcessCameraProvider implements CameraXChannelLibrary.$ProcessCame
     final CameraSelector cameraSelector = (CameraSelector) selector;
     final Preview preview = (Preview) useCase;
     final androidx.camera.core.Camera camera =
-        provider.bindToLifecycle(lifecycleOwner, cameraSelector.getCameraSelector(), preview.preview);
+        provider.bindToLifecycle(lifecycleOwner, cameraSelector.getCameraSelector(), preview.getPreview());
 
     if (cameraReference == null) {
-      cameraReference = new Camera(camera);
+      cameraReference = new Camera(manager, camera);
       final CameraXChannelLibrary.$CameraChannel channel = new CameraXChannelLibrary.$CameraChannel(manager);
       channel.createNewPair(cameraReference);
     }

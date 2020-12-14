@@ -1,14 +1,11 @@
 package bparrishMines.penguin.penguin_camera;
 
 import android.app.Activity;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
-//import bparrishMines.penguin.penguin_camera.camera.CameraReferenceManager;
-//import bparrishMines.penguin.penguin_camera.camerax.CameraXManager;
 import bparrishMines.penguin.penguin_camera.camera.Camera;
 import bparrishMines.penguin.penguin_camera.camera.CameraInfo;
 import bparrishMines.penguin.penguin_camera.camerax.CameraSelector;
@@ -28,7 +25,6 @@ import io.flutter.view.TextureRegistry;
 public class PenguinCameraPlugin implements FlutterPlugin, ActivityAware, LifecycleOwner {
   private FlutterPluginBinding pluginBinding;
   private Lifecycle lifecycle;
-  //private CameraXManager cameraXManager;
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
@@ -39,12 +35,10 @@ public class PenguinCameraPlugin implements FlutterPlugin, ActivityAware, Lifecy
   public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) { }
 
   private void initialize(BinaryMessenger binaryMessenger, TextureRegistry textureRegistry, Activity activity) {
-    //new CameraReferenceManager(binaryMessenger, textureRegistry).initialize();
-    //cameraXManager = new CameraXManager(binaryMessenger, textureRegistry, activity, this);
-    //cameraXManager.initialize();
     final ReferenceChannelManager manager = ReferencePlugin.getManagerInstance(binaryMessenger);
     Camera.setupChannel(ReferencePlugin.getManagerInstance(binaryMessenger), textureRegistry);
     CameraInfo.setupChannel(ReferencePlugin.getManagerInstance(binaryMessenger));
+
     bparrishMines.penguin.penguin_camera.camerax.Camera.setupChannel(manager);
     CameraSelector.setupChannel(manager);
     Preview.setupChannel(manager, activity, pluginBinding.getTextureRegistry());

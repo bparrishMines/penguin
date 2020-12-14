@@ -24,7 +24,7 @@ public class CameraSelector implements CameraXChannelLibrary.$CameraSelector {
         .build();
   }
 
-  androidx.camera.core.CameraSelector getCameraSelector() {
+  public androidx.camera.core.CameraSelector getCameraSelector() {
     return cameraSelector;
   }
 

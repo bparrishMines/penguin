@@ -1,9 +1,11 @@
 package bparrishMines.penguin.penguin_camera.camerax;
 
+import github.penguin.reference.reference.Referencable;
+import github.penguin.reference.reference.ReferenceChannel;
 import github.penguin.reference.reference.ReferenceChannelManager;
-import github.penguin.reference.reference.UnpairedReferenceParameter;
 
-public class Camera implements CameraXChannelLibrary.$Camera, UnpairedReferenceParameter {
+public class Camera implements CameraXChannelLibrary.$Camera, Referencable<CameraXChannelLibrary.$Camera> {
+  private final ReferenceChannelManager manager;
   final androidx.camera.core.Camera camera;
 
   public static void setupChannel(ReferenceChannelManager manager) {
@@ -12,12 +14,13 @@ public class Camera implements CameraXChannelLibrary.$Camera, UnpairedReferenceP
     channel.registerHandler(new CameraXChannelLibrary.$CameraHandler());
   }
 
-  public Camera(androidx.camera.core.Camera camera) {
+  public Camera(ReferenceChannelManager manager, androidx.camera.core.Camera camera) {
+    this.manager = manager;
     this.camera = camera;
   }
 
   @Override
-  public String getReferenceChannelName() {
-    return "penguin_camera/camera";
+  public ReferenceChannel<CameraXChannelLibrary.$Camera> getReferenceChannel() {
+    return new CameraXChannelLibrary.$CameraChannel(manager);
   }
 }

@@ -2,11 +2,14 @@ package bparrishMines.penguin.penguin_camera.camera;
 
 import android.hardware.Camera;
 
+import github.penguin.reference.reference.Referencable;
+import github.penguin.reference.reference.ReferenceChannel;
 import github.penguin.reference.reference.ReferenceChannelManager;
-import github.penguin.reference.reference.UnpairedReferenceParameter;
 
-public class CameraInfo implements CameraChannelLibrary.$CameraInfo, UnpairedReferenceParameter {
-  private int cameraId;
+public class CameraInfo implements CameraChannelLibrary.$CameraInfo,
+    Referencable<CameraChannelLibrary.$CameraInfo> {
+  private final CameraChannelLibrary.$CameraInfoChannel channel;
+  private final int cameraId;
   private final Camera.CameraInfo cameraInfo;
 
   public static void setupChannel(ReferenceChannelManager manager) {
@@ -15,9 +18,14 @@ public class CameraInfo implements CameraChannelLibrary.$CameraInfo, UnpairedRef
     channel.registerHandler(new CameraChannelLibrary.$CameraInfoHandler());
   }
 
-  CameraInfo(int cameraId, Camera.CameraInfo cameraInfo) {
+  CameraInfo(ReferenceChannelManager manager, int cameraId, Camera.CameraInfo cameraInfo) {
+    this.channel = new CameraChannelLibrary.$CameraInfoChannel(manager);
     this.cameraId = cameraId;
     this.cameraInfo = cameraInfo;
+  }
+
+  public Camera.CameraInfo getCameraInfo() {
+    return cameraInfo;
   }
 
   @Override
@@ -27,16 +35,16 @@ public class CameraInfo implements CameraChannelLibrary.$CameraInfo, UnpairedRef
 
   @Override
   public Integer getFacing() {
-    return cameraInfo.facing;
+    return getCameraInfo().facing;
   }
 
   @Override
   public Integer getOrientation() {
-    return cameraInfo.orientation;
+    return getCameraInfo().orientation;
   }
 
   @Override
-  public String getReferenceChannelName() {
-    return "penguin_camera/android/camera/CameraInfo";
+  public ReferenceChannel<CameraChannelLibrary.$CameraInfo> getReferenceChannel() {
+    return channel;
   }
 }

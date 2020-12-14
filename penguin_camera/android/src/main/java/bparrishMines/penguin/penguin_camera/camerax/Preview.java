@@ -12,6 +12,9 @@ import io.flutter.view.TextureRegistry;
 
 public class Preview implements CameraXChannelLibrary.$Preview, CameraXChannelLibrary.$UseCase {
   private static final String TAG = "Preview";
+  private final Context context;
+  private final TextureRegistry textureRegistry;
+  private final androidx.camera.core.Preview preview;
 
   public static void setupChannel(ReferenceChannelManager manager, Context context, TextureRegistry textureRegistry) {
     final CameraXChannelLibrary.$PreviewChannel channel =
@@ -24,16 +27,20 @@ public class Preview implements CameraXChannelLibrary.$Preview, CameraXChannelLi
     });
   }
 
-  private final Context context;
-  private final TextureRegistry textureRegistry;
-  final androidx.camera.core.Preview preview;
-
   private TextureRegistry.SurfaceTextureEntry currentTextureEntry;
 
   Preview(Context context, TextureRegistry textureRegistry) {
     this.textureRegistry = textureRegistry;
     this.context = context;
     this.preview = new androidx.camera.core.Preview.Builder().build();
+  }
+
+  public androidx.camera.core.Preview getPreview() {
+    return preview;
+  }
+
+  public TextureRegistry getTextureRegistry() {
+    return textureRegistry;
   }
 
   @Override
