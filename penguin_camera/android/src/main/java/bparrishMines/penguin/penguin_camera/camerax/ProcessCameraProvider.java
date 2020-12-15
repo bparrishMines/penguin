@@ -13,7 +13,7 @@ public class ProcessCameraProvider implements CameraXChannelLibrary.$ProcessCame
     final CameraXChannelLibrary.$ProcessCameraProviderChannel channel =
         new CameraXChannelLibrary.$ProcessCameraProviderChannel(manager);
     channel.registerHandler(new CameraXChannelLibrary.$ProcessCameraProviderHandler() {
-      private ProcessCameraProvider instance = new ProcessCameraProvider(manager, lifecycleOwner);
+      private final ProcessCameraProvider instance = new ProcessCameraProvider(manager, lifecycleOwner);
 
       @Override
       CameraXChannelLibrary.$ProcessCameraProvider onCreate(ReferenceChannelManager manager, CameraXChannelLibrary.$ProcessCameraProviderCreationArgs args) throws Exception {
@@ -32,7 +32,7 @@ public class ProcessCameraProvider implements CameraXChannelLibrary.$ProcessCame
   private androidx.camera.lifecycle.ProcessCameraProvider provider;
   private Camera cameraReference;
 
-  static Object initialize(Context context, ProcessCameraProvider instance, SuccessListener listener) {
+  static ProcessCameraProvider initialize(Context context, ProcessCameraProvider instance, SuccessListener listener) {
     if (instance.provider != null) return instance;
 
     final ListenableFuture<androidx.camera.lifecycle.ProcessCameraProvider> future =

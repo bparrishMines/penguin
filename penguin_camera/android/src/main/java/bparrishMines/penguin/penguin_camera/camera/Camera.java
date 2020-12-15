@@ -10,12 +10,12 @@ public class Camera implements CameraChannelLibrary.$Camera {
   private final android.hardware.Camera camera;
   private TextureRegistry.SurfaceTextureEntry currentTextureEntry;
 
-  public static void setupChannel( ReferenceChannelManager manager,  TextureRegistry textureRegistry) {
+  public static void setupChannel(ReferenceChannelManager manager,  TextureRegistry textureRegistry) {
     final CameraChannelLibrary.$CameraChannel channel =
         new CameraChannelLibrary.$CameraChannel(manager);
     channel.registerHandler(new CameraChannelLibrary.$CameraHandler() {
       @Override
-      public Object $onGetAllCameraInfo(ReferenceChannelManager manager) throws Exception {
+      public Object $onGetAllCameraInfo(ReferenceChannelManager manager) {
         return Camera.getAllCameraInfo(manager);
       }
 
@@ -45,11 +45,10 @@ public class Camera implements CameraChannelLibrary.$Camera {
     return allCameraInfo;
   }
 
-  private Camera(android.hardware.Camera camera, TextureRegistry textureRegistry) {
+  public Camera(android.hardware.Camera camera, TextureRegistry textureRegistry) {
     this.camera = camera;
     this.textureRegistry = textureRegistry;
   }
-
 
   public android.hardware.Camera getCamera() {
     return camera;
@@ -61,19 +60,19 @@ public class Camera implements CameraChannelLibrary.$Camera {
   }
 
   @Override
-  public Object release() {
+  public Void release() {
     getCamera().release();
     return null;
   }
 
   @Override
-  public Object startPreview() {
+  public Void startPreview() {
     getCamera().startPreview();
     return null;
   }
 
   @Override
-  public Object stopPreview() {
+  public Void stopPreview() {
     getCamera().stopPreview();
     return null;
   }
@@ -88,7 +87,7 @@ public class Camera implements CameraChannelLibrary.$Camera {
   }
 
   @Override
-  public Object releaseTexture() throws Exception {
+  public Void releaseTexture() throws Exception {
     if (currentTextureEntry == null) return null;
     getCamera().setPreviewTexture(null);
     currentTextureEntry.release();
