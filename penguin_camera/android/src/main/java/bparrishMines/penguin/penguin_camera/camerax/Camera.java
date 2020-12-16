@@ -6,7 +6,7 @@ import github.penguin.reference.reference.ReferenceChannelManager;
 
 public class Camera implements CameraXChannelLibrary.$Camera, Referencable<CameraXChannelLibrary.$Camera> {
   private final ReferenceChannelManager manager;
-  final androidx.camera.core.Camera camera;
+  private final androidx.camera.core.Camera camera;
 
   public static void setupChannel(ReferenceChannelManager manager) {
     final CameraXChannelLibrary.$CameraChannel channel =
@@ -17,6 +17,10 @@ public class Camera implements CameraXChannelLibrary.$Camera, Referencable<Camer
   public Camera(ReferenceChannelManager manager, androidx.camera.core.Camera camera) {
     this.manager = manager;
     this.camera = camera;
+  }
+
+  public androidx.camera.core.Camera getCamera() {
+    return camera;
   }
 
   @Override

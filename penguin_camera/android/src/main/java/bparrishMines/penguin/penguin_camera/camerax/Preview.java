@@ -10,6 +10,12 @@ import androidx.core.util.Consumer;
 import github.penguin.reference.reference.ReferenceChannelManager;
 import io.flutter.view.TextureRegistry;
 
+import static androidx.camera.core.SurfaceRequest.Result.RESULT_INVALID_SURFACE;
+import static androidx.camera.core.SurfaceRequest.Result.RESULT_REQUEST_CANCELLED;
+import static androidx.camera.core.SurfaceRequest.Result.RESULT_SURFACE_ALREADY_PROVIDED;
+import static androidx.camera.core.SurfaceRequest.Result.RESULT_SURFACE_USED_SUCCESSFULLY;
+import static androidx.camera.core.SurfaceRequest.Result.RESULT_WILL_NOT_PROVIDE_SURFACE;
+
 public class Preview implements CameraXChannelLibrary.$Preview, CameraXChannelLibrary.$UseCase {
   private static final String TAG = "Preview";
   private final Context context;
@@ -29,9 +35,9 @@ public class Preview implements CameraXChannelLibrary.$Preview, CameraXChannelLi
 
   private TextureRegistry.SurfaceTextureEntry currentTextureEntry;
 
-  Preview(Context context, TextureRegistry textureRegistry) {
-    this.textureRegistry = textureRegistry;
+  public Preview(Context context, TextureRegistry textureRegistry) {
     this.context = context;
+    this.textureRegistry = textureRegistry;
     this.preview = new androidx.camera.core.Preview.Builder().build();
   }
 
@@ -44,11 +50,11 @@ public class Preview implements CameraXChannelLibrary.$Preview, CameraXChannelLi
   }
 
   @Override
-  public Object attachToTexture() {
+  public Long attachToTexture() {
     if (currentTextureEntry != null) return currentTextureEntry.id();
 
-    currentTextureEntry = textureRegistry.createSurfaceTexture();
-    preview.setSurfaceProvider(new androidx.camera.core.Preview.SurfaceProvider() {
+    currentTextureEntry = getTextureRegistry().createSurfaceTexture();
+    getPreview().setSurfaceProvider(new androidx.camera.core.Preview.SurfaceProvider() {
       @Override
       public void onSurfaceRequested(@NonNull SurfaceRequest request) {
         request.provideSurface(new Surface(currentTextureEntry.surfaceTexture()),
@@ -56,7 +62,27 @@ public class Preview implements CameraXChannelLibrary.$Preview, CameraXChannelLi
             new Consumer<SurfaceRequest.Result>() {
               @Override
               public void accept(SurfaceRequest.Result result) {
-                Log.d(TAG, "" + result.getResultCode());
+                final String message;
+                switch(result.getResultCode()) {
+                  case RESULT_SURFACE_USED_SUCCESSFULLY:
+                    message = "Result surface used successfully.";
+                    break;
+                  case RESULT_REQUEST_CANCELLED:
+                    message = "Result request cancelled.";
+                    break;
+                  case RESULT_INVALID_SURFACE:
+                    message = "Result invalid surface.";
+                    break;
+                  case RESULT_SURFACE_ALREADY_PROVIDED:
+                    message = "Result surface already provided.";
+                    break;
+                  case RESULT_WILL_NOT_PROVIDE_SURFACE:
+                    message = "Result will not provide surface";
+                    break;
+                  default:
+                    message = "Unknown error code.";
+                }
+                Log.d(TAG, String.format("%d: %s", result.getResultCode(), message));
               }
             }
         );
@@ -66,10 +92,10 @@ public class Preview implements CameraXChannelLibrary.$Preview, CameraXChannelLi
   }
 
   @Override
-  public Object releaseTexture() {
+  public Void releaseTexture() {
     if (currentTextureEntry == null) return null;
 
-    preview.setSurfaceProvider(null);
+    getPreview().setSurfaceProvider(null);
     currentTextureEntry.release();
     currentTextureEntry = null;
     return null;

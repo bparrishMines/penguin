@@ -1,5 +1,7 @@
 package bparrishMines.penguin.penguin_camera.camerax;
 
+import android.annotation.SuppressLint;
+
 import github.penguin.reference.reference.ReferenceChannelManager;
 
 public class CameraSelector implements CameraXChannelLibrary.$CameraSelector {
