@@ -16,7 +16,7 @@ import static androidx.camera.core.SurfaceRequest.Result.RESULT_SURFACE_ALREADY_
 import static androidx.camera.core.SurfaceRequest.Result.RESULT_SURFACE_USED_SUCCESSFULLY;
 import static androidx.camera.core.SurfaceRequest.Result.RESULT_WILL_NOT_PROVIDE_SURFACE;
 
-public class Preview implements CameraXChannelLibrary.$Preview, CameraXChannelLibrary.$UseCase {
+public class Preview extends UseCase implements CameraXChannelLibrary.$Preview, CameraXChannelLibrary.$UseCase {
   private static final String TAG = "Preview";
   private final Context context;
   private final TextureRegistry textureRegistry;
@@ -41,10 +41,6 @@ public class Preview implements CameraXChannelLibrary.$Preview, CameraXChannelLi
     this.preview = new androidx.camera.core.Preview.Builder().build();
   }
 
-  public androidx.camera.core.Preview getPreview() {
-    return preview;
-  }
-
   public TextureRegistry getTextureRegistry() {
     return textureRegistry;
   }
@@ -54,7 +50,7 @@ public class Preview implements CameraXChannelLibrary.$Preview, CameraXChannelLi
     if (currentTextureEntry != null) return currentTextureEntry.id();
 
     currentTextureEntry = getTextureRegistry().createSurfaceTexture();
-    getPreview().setSurfaceProvider(new androidx.camera.core.Preview.SurfaceProvider() {
+    getUseCase().setSurfaceProvider(new androidx.camera.core.Preview.SurfaceProvider() {
       @Override
       public void onSurfaceRequested(@NonNull SurfaceRequest request) {
         request.provideSurface(new Surface(currentTextureEntry.surfaceTexture()),
@@ -95,9 +91,14 @@ public class Preview implements CameraXChannelLibrary.$Preview, CameraXChannelLi
   public Void releaseTexture() {
     if (currentTextureEntry == null) return null;
 
-    getPreview().setSurfaceProvider(null);
+    getUseCase().setSurfaceProvider(null);
     currentTextureEntry.release();
     currentTextureEntry = null;
     return null;
+  }
+
+  @Override
+  public androidx.camera.core.Preview getUseCase() {
+    return preview;
   }
 }

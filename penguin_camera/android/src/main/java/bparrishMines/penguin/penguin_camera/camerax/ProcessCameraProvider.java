@@ -9,6 +9,11 @@ import androidx.lifecycle.LifecycleOwner;
 import github.penguin.reference.reference.ReferenceChannelManager;
 
 public class ProcessCameraProvider implements CameraXChannelLibrary.$ProcessCameraProvider {
+  private final ReferenceChannelManager manager;
+  private final LifecycleOwner lifecycleOwner;
+  private androidx.camera.lifecycle.ProcessCameraProvider provider;
+  private Camera cameraReference;
+
   public static void setupChannel(ReferenceChannelManager manager, Context context, LifecycleOwner lifecycleOwner) {
     final CameraXChannelLibrary.$ProcessCameraProviderChannel channel =
         new CameraXChannelLibrary.$ProcessCameraProviderChannel(manager);
@@ -27,13 +32,8 @@ public class ProcessCameraProvider implements CameraXChannelLibrary.$ProcessCame
     });
   }
 
-  private final ReferenceChannelManager manager;
-  private final LifecycleOwner lifecycleOwner;
-  private androidx.camera.lifecycle.ProcessCameraProvider provider;
-  private Camera cameraReference;
-
-  static ProcessCameraProvider initialize(Context context, ProcessCameraProvider instance, SuccessListener listener) {
-    if (instance.provider != null) return instance;
+  public static ProcessCameraProvider initialize(Context context, ProcessCameraProvider instance, SuccessListener listener) {
+    if (instance.getProvider() != null) return instance;
 
     final ListenableFuture<androidx.camera.lifecycle.ProcessCameraProvider> future =
         androidx.camera.lifecycle.ProcessCameraProvider.getInstance(context);
@@ -52,17 +52,21 @@ public class ProcessCameraProvider implements CameraXChannelLibrary.$ProcessCame
     return instance;
   }
 
-  ProcessCameraProvider(ReferenceChannelManager manager, LifecycleOwner lifecycleOwner) {
+  public ProcessCameraProvider(ReferenceChannelManager manager, LifecycleOwner lifecycleOwner) {
     this.manager = manager;
     this.lifecycleOwner = lifecycleOwner;
   }
 
+  public androidx.camera.lifecycle.ProcessCameraProvider getProvider() {
+    return provider;
+  }
+
   @Override
-  public Object bindToLifecycle(CameraXChannelLibrary.$CameraSelector selector, CameraXChannelLibrary.$UseCase useCase) {
+  public Camera bindToLifecycle(CameraXChannelLibrary.$CameraSelector selector, CameraXChannelLibrary.$UseCase useCase) {
     final CameraSelector cameraSelector = (CameraSelector) selector;
-    final Preview preview = (Preview) useCase;
+    final UseCase useCaseImpl = (UseCase) useCase;
     final androidx.camera.core.Camera camera =
-        provider.bindToLifecycle(lifecycleOwner, cameraSelector.getCameraSelector(), preview.getPreview());
+        getProvider().bindToLifecycle(lifecycleOwner, cameraSelector.getCameraSelector(), useCaseImpl.getUseCase());
 
     if (cameraReference == null) {
       cameraReference = new Camera(manager, camera);
@@ -73,11 +77,11 @@ public class ProcessCameraProvider implements CameraXChannelLibrary.$ProcessCame
   }
 
   @Override
-  public Object unbindAll() {
+  public Void unbindAll() {
     final CameraXChannelLibrary.$CameraChannel channel = new CameraXChannelLibrary.$CameraChannel(manager);
     channel.disposePair(cameraReference);
     cameraReference = null;
-    provider.unbindAll();
+    getProvider().unbindAll();
     return null;
   }
 }

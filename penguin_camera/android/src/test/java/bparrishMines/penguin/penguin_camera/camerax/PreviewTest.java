@@ -36,7 +36,7 @@ public class PreviewTest {
   @Test
   public void attachToTexture() {
     final bparrishMines.penguin.penguin_camera.camerax.Preview preview = mock(bparrishMines.penguin.penguin_camera.camerax.Preview.class);
-    when(preview.getPreview()).thenReturn(mockPreview);
+    when(preview.getUseCase()).thenReturn(mockPreview);
     when(preview.getTextureRegistry()).thenReturn(mockTextureRegistry);
     when(preview.attachToTexture()).thenCallRealMethod();
 
@@ -56,7 +56,7 @@ public class PreviewTest {
     final Preview mockPreview = mock(Preview.class);
 
     final bparrishMines.penguin.penguin_camera.camerax.Preview preview = mock(bparrishMines.penguin.penguin_camera.camerax.Preview.class);
-    when(preview.getPreview()).thenReturn(mockPreview);
+    when(preview.getUseCase()).thenReturn(mockPreview);
     when(preview.getTextureRegistry()).thenReturn(mockTextureRegistry);
     when(preview.attachToTexture()).thenCallRealMethod();
     when(preview.releaseTexture()).thenCallRealMethod();
