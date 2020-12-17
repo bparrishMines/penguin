@@ -17,7 +17,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.lifecycle.LifecycleOwner;
-import github.penguin.reference.async.Completable;
 import github.penguin.reference.async.Completer;
 import github.penguin.reference.reference.ReferenceChannelManager;
 import github.penguin.reference.reference.ReferenceChannelMessenger;

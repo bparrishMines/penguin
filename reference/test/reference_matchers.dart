@@ -32,42 +32,35 @@ class _IsMethodCallWithMatchers extends Matcher with _DeepEquals {
 
 // Extends isMethodCall in packager:test/test.dart to support matchers in arguments.
 Matcher isUnpairedReference(
-  int typeId,
+  String channelName,
   List<Object> creationArguments,
-  String managerPoolId,
 ) {
-  return _IsUnpairedReference(typeId, creationArguments, managerPoolId);
+  return _IsUnpairedReference(channelName, creationArguments);
 }
 
 class _IsUnpairedReference extends Matcher with _DeepEquals {
-  const _IsUnpairedReference(
-    this.typeId,
-    this.creationArguments,
-    this.managerPoolId,
-  );
+  const _IsUnpairedReference(this.channelName, this.creationArguments);
 
-  final int typeId;
+  final String channelName;
 
   final List<Object> creationArguments;
-
-  final String managerPoolId;
 
   @override
   Description describe(Description description) {
     return description
-        .add(' Is an $UnpairedReference with type id: ')
-        .addDescriptionOf(typeId)
+        .add(' Is an $UnpairedReference with channel name: ')
+        .addDescriptionOf(channelName)
         .add(' and creation arguments: ')
-        .addDescriptionOf(creationArguments)
-        .add(' and managerPoolId: ')
-        .addDescriptionOf(managerPoolId);
+        .addDescriptionOf(creationArguments);
   }
 
   @override
-  bool matches(dynamic item, Map<dynamic, dynamic> matchState) {
+  bool matches(
+    covariant UnpairedReference item,
+    Map<dynamic, dynamic> matchState,
+  ) {
     if (item is! UnpairedReference) return false;
-    if (item.typeId != typeId) return false;
-    if (item.managerPoolId != managerPoolId) return false;
+    if (item.handlerChannel != channelName) return false;
     return deepEquals(creationArguments, item.creationArguments, matchState);
   }
 }
