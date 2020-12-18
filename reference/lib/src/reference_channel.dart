@@ -11,6 +11,7 @@ class ReferenceChannel<T> {
   final ReferenceChannelManager manager;
   final String channelName;
 
+  // TODO: to setHandler
   void registerHandler(ReferenceChannelHandler<T> handler) {
     manager.registerHandler(channelName, handler);
   }

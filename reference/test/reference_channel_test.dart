@@ -2,8 +2,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:reference/reference.dart';
 
-import 'reference_matchers.dart';
-
 void main() {
   group('$ReferenceChannelManager', () {
     TestManager testManager;
@@ -18,12 +16,10 @@ void main() {
       when(testManager.mockHandler.createInstance(testManager, <Object>[]))
           .thenReturn(testClass);
 
-      final RemoteReference remoteReference = RemoteReference('test_id');
-
       expect(
         testManager.onReceiveCreateNewPair(
           'test_channel',
-          remoteReference,
+          RemoteReference('test_id'),
           <Object>[],
         ),
         testClass,
@@ -32,7 +28,7 @@ void main() {
       expect(
         testManager.onReceiveCreateNewPair(
           '',
-          remoteReference,
+          RemoteReference('test_id'),
           <Object>[],
         ),
         isNull,
@@ -72,17 +68,15 @@ void main() {
       when(testManager.mockHandler.createInstance(testManager, <Object>[]))
           .thenReturn(testClass);
 
-      final RemoteReference remoteReference = RemoteReference('test_id');
-
       testManager.onReceiveCreateNewPair(
         'test_channel',
-        remoteReference,
+        RemoteReference('test_id'),
         <Object>[],
       );
 
       testManager.onReceiveInvokeMethod(
         'test_channel',
-        remoteReference,
+        RemoteReference('test_id'),
         'aMethod',
         <Object>[],
       );
@@ -123,136 +117,119 @@ void main() {
       when(testManager.mockHandler.createInstance(testManager, <Object>[]))
           .thenReturn(testClass);
 
-      final RemoteReference remoteReference = RemoteReference('test_id');
-
       testManager.onReceiveCreateNewPair(
         'test_channel',
-        remoteReference,
+        RemoteReference('test_id'),
         <Object>[],
       );
-      testManager.onReceiveDisposePair('test_channel', remoteReference);
+      testManager.onReceiveDisposePair(
+        'test_channel',
+        RemoteReference('test_id'),
+      );
       expect(testManager.isPaired(testClass), isFalse);
     });
   });
 
-  group('$ReferenceChannelMessenger', () {
-    //
-    // test('pairWithNewRemoteReference', () async {
-    //   final TestClass testClass = TestClass();
-    //
-    //   when(testManager.remoteHandler.getCreationArguments(any))
-    //       .thenReturn(<Object>[]);
-    //
-    //   final RemoteReference remoteReference =
-    //       await testManager.pairWithNewRemoteReference(
-    //     testClass,
-    //   );
-    //
-    //   expect(remoteReference, isNotNull);
-    //   expect(testManager.getPairedLocalReference(remoteReference), testClass);
-    //   expect(testManager.getPairedRemoteReference(testClass), remoteReference);
-    //   verifyInOrder([
-    //     testManager.converter.mock.convertForRemoteManager(
-    //       testManager,
-    //       argThat(isEmpty),
-    //     ),
-    //     testManager.remoteHandler
-    //         .createInstance(remoteReference, 0, argThat(isEmpty)),
-    //   ]);
-    // });
-    //
-    // test('pairWithNewRemoteReference returns null', () async {
-    //   final TestClass testClass = TestClass();
-    //
-    //   when(testManager.remoteHandler.getCreationArguments(any))
-    //       .thenReturn(<Object>[]);
-    //
-    //   testManager.pairWithNewRemoteReference(testClass);
-    //   expect(
-    //     testManager.pairWithNewRemoteReference(testClass),
-    //     completion(isNull),
-    //   );
-    // });
-    //
-    // test('invokeRemoteStaticMethod', () async {
-    //   await testManager.invokeStaticMethod(TestClass, 'aStaticMethod');
-    //   verifyInOrder([
-    //     testManager.converter.mock.convertForRemoteManager(
-    //       testManager,
-    //       argThat(isNull),
-    //     ),
-    //     testManager.remoteHandler.sendInvokeStaticMethod(
-    //       0,
-    //       'aStaticMethod',
-    //       argThat(isEmpty),
-    //     ),
-    //     testManager.converter.mock.convertForLocalManager(
-    //       testManager,
-    //       argThat(isNull),
-    //     ),
-    //   ]);
-    // });
-    //
-    // test('invokeRemoteMethod', () async {
-    //   final testClass = TestClass();
-    //   testManager.pairWithNewRemoteReference(testClass);
-    //
-    //   when(testManager.remoteHandler.getCreationArguments(any))
-    //       .thenReturn(<Object>[]);
-    //
-    //   await testManager.invokeMethod(
-    //     testManager.getPairedRemoteReference(testClass),
-    //     'aMethod',
-    //   );
-    //
-    //   verifyInOrder([
-    //     testManager.converter.mock.convertForRemoteManager(
-    //       testManager,
-    //       argThat(isNull),
-    //     ),
-    //     testManager.remoteHandler.sendInvokeMethod(
-    //       testManager.getPairedRemoteReference(testClass),
-    //       'aMethod',
-    //       argThat(isEmpty),
-    //     ),
-    //   ]);
-    // });
-    //
-    // test(
-    //   'invokeRemoteMethodOnUnpairedReference',
-    //   () async {
-    //     when(testManager.remoteHandler.getCreationArguments(any))
-    //         .thenReturn(<Object>[]);
-    //
-    //     await testManager.invokeMethodOnUnpairedReference(
-    //       TestClass(),
-    //       'aMethod',
-    //     );
-    //
-    //     verify(testManager.converter.convertForRemoteManager(
-    //       testManager,
-    //       any,
-    //     )).called(2);
-    //     verify(testManager.remoteHandler.sendInvokeMethodOnUnpairedReference(
-    //       argThat(isUnpairedReference(0, <Object>[], null)),
-    //       'aMethod',
-    //       argThat(isEmpty),
-    //     ));
-    //   },
-    // );
-    //
-    // test('disposePairWithLocalReference', () async {
-    //   final testClass = TestClass();
-    //
-    //   final RemoteReference remoteReference =
-    //       await testManager.pairWithNewRemoteReference(
-    //     testClass,
-    //   );
-    //   testManager.disposePair(testClass);
-    //
-    //   expect(testManager.getPairedLocalReference(remoteReference), isNull);
-    //   expect(testManager.getPairedRemoteReference(testClass), isNull);
-    // });
+  group('$ReferenceChannel', () {
+    TestManager testManager;
+    ReferenceChannel<TestClass> testChannel;
+
+    setUp(() {
+      testManager = TestManager();
+      testChannel = ReferenceChannel<TestClass>(testManager, 'test_channel');
+    });
+
+    test('createNewPair', () {
+      final TestClass testClass = TestClass(testManager);
+
+      when(testManager.mockHandler.getCreationArguments(testManager, testClass))
+          .thenReturn(<Object>[]);
+
+      when(testManager.mockMessenger.sendCreateNewPair(
+        'test_channel',
+        RemoteReference('test_reference_id'),
+        <Object>[],
+      )).thenAnswer((_) => Future<void>.value());
+
+      expect(
+        testChannel.createNewPair(testClass),
+        completion(RemoteReference('test_reference_id')),
+      );
+      expect(testChannel.createNewPair(testClass), completion(isNull));
+    });
+
+    test('invokeStaticMethod', () {
+      when(testManager.mockMessenger.sendInvokeStaticMethod(
+        'test_channel',
+        'aStaticMethod',
+        <Object>[],
+      )).thenAnswer((_) => Future<Object>.value('return_value'));
+
+      expect(
+        testChannel.invokeStaticMethod('aStaticMethod', <Object>[]),
+        completion('return_value'),
+      );
+    });
+
+    test('invokeMethod', () async {
+      final TestClass testClass = TestClass(testManager);
+
+      when(testManager.mockHandler.getCreationArguments(testManager, testClass))
+          .thenReturn(<Object>[]);
+
+      when(testManager.mockMessenger.sendInvokeMethod(
+        'test_channel',
+        RemoteReference('test_reference_id'),
+        'aMethod',
+        <Object>[],
+      )).thenAnswer((_) => Future<Object>.value('return_value'));
+
+      testChannel.createNewPair(testClass);
+      expect(
+        testChannel.invokeMethod(testClass, 'aMethod', <Object>[]),
+        completion('return_value'),
+      );
+    });
+
+    test(
+      'invokeMethodOnUnpairedReference',
+      () async {
+        final TestClass testClass = TestClass(testManager);
+
+        when(
+          testManager.mockHandler.getCreationArguments(testManager, testClass),
+        ).thenReturn(<Object>[]);
+
+        when(testManager.mockMessenger.sendInvokeMethodOnUnpairedReference(
+          any,
+          'aMethod',
+          <Object>[],
+        )).thenAnswer((_) => Future<Object>.value('return_value'));
+
+        expect(
+          testChannel.invokeMethodOnUnpairedReference(
+            TestClass(testManager),
+            'aMethod',
+            <Object>[],
+          ),
+          completion('return_value'),
+        );
+      },
+    );
+
+    test('disposePair', () async {
+      final testClass = TestClass(testManager);
+
+      when(testManager.mockHandler.getCreationArguments(testManager, testClass))
+          .thenReturn(<Object>[]);
+
+      testChannel.createNewPair(testClass);
+      expect(testChannel.disposePair(testClass), completion(isNull));
+      verify(testManager.mockMessenger.sendDisposePair(
+        'test_channel',
+        RemoteReference('test_reference_id'),
+      ));
+    });
   });
 }
 
@@ -263,8 +240,15 @@ class TestManager extends ReferenceChannelManager {
 
   final MockHandler mockHandler = MockHandler();
 
+  MockMessenger get mockMessenger => messenger;
+
   @override
   final MockMessenger messenger = MockMessenger();
+
+  @override
+  String getNewReferenceId() {
+    return 'test_reference_id';
+  }
 }
 
 class MockHandler = Mock with ReferenceChannelHandler<TestClass>;
@@ -281,69 +265,3 @@ class TestClass with Referencable<TestClass> {
         'test_channel',
       );
 }
-
-// class TestClass with LocalReference {
-//   @override
-//   Type get referenceType => TestClass;
-// }
-//
-// class TestClass2 extends TestClass {
-//   @override
-//   Type get referenceType => TestClass2;
-// }
-//
-// class TestReferencePairManager extends RemoteReferenceMap {
-//   TestReferencePairManager() : super(<Type>[TestClass]);
-//
-//   @override
-//   final MockLocalHandler localHandler = MockLocalHandler();
-//
-//   @override
-//   final MockRemoteHandler remoteHandler = MockRemoteHandler();
-//
-//   @override
-//   final SpyReferenceConverter converter = SpyReferenceConverter();
-// }
-//
-// class TestPoolableReferencePairManager extends PoolableReferencePairManager {
-//   TestPoolableReferencePairManager(
-//     List<Type> supportedTypes,
-//     String poolId,
-//   ) : super(supportedTypes, poolId);
-//
-//   @override
-//   final MockLocalHandler localHandler = MockLocalHandler();
-//
-//   @override
-//   final MockRemoteHandler remoteHandler = MockRemoteHandler();
-// }
-//
-// class MockRemoteHandler extends Mock implements MessageSender {}
-//
-// class MockLocalHandler extends Mock implements ReferenceChannelHandler {}
-//
-// class MockReferenceConverter extends Mock implements ReferenceConverter {}
-//
-// class SpyReferenceConverter extends StandardReferenceConverter {
-//   SpyReferenceConverter();
-//
-//   final ReferenceConverter mock = MockReferenceConverter();
-//
-//   @override
-//   Object convertForRemoteManager(
-//     RemoteReferenceMap manager,
-//     Object object,
-//   ) {
-//     mock.convertForRemoteManager(manager, object);
-//     return super.convertForRemoteManager(manager, object);
-//   }
-//
-//   @override
-//   Object convertForLocalManager(
-//     RemoteReferenceMap manager,
-//     Object object,
-//   ) {
-//     mock.convertForLocalManager(manager, object);
-//     return super.convertForLocalManager(manager, object);
-//   }
-// }
