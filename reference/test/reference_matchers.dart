@@ -60,7 +60,7 @@ class _IsUnpairedReference extends Matcher with _DeepEquals {
     Map<dynamic, dynamic> matchState,
   ) {
     if (item is! UnpairedReference) return false;
-    if (item.handlerChannel != channelName) return false;
+    if (item.channelName != channelName) return false;
     return deepEquals(creationArguments, item.creationArguments, matchState);
   }
 }

@@ -58,7 +58,7 @@ void main() {
         'test_channel',
         TestClass(testManager),
       );
-      expect(unpairedReference.handlerChannel, 'test_channel');
+      expect(unpairedReference.channelName, 'test_channel');
       expect(unpairedReference.creationArguments, isEmpty);
     });
 

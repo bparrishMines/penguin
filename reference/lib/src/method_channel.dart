@@ -13,7 +13,6 @@ class MethodChannelManager extends ReferenceChannelManager {
   /// If [poolId] is passed as `null`, it will be set to [channelName].
   /// If [messageCodec] is passed as `null`, it will be set to
   /// [ReferenceMessageCodec].
-  // @visibleForTesting
   MethodChannelManager(String channelName)
       : channel = MethodChannel(
           channelName,
@@ -35,8 +34,7 @@ class MethodChannelManager extends ReferenceChannelManager {
   final MethodChannel channel;
 
   @override
-  MethodChannelMessenger get messenger =>
-      MethodChannelMessenger(channel);
+  MethodChannelMessenger get messenger => MethodChannelMessenger(channel);
 
   Future<dynamic> _handleMethodCall(MethodCall call) async {
     try {
@@ -47,30 +45,26 @@ class MethodChannelManager extends ReferenceChannelManager {
           call.arguments[2],
         );
         return null;
-      } else if (call.method ==
-          MethodChannelManager._methodStaticMethod) {
+      } else if (call.method == MethodChannelManager._methodStaticMethod) {
         return onReceiveInvokeStaticMethod(
           call.arguments[0],
           call.arguments[1],
           call.arguments[2],
         );
-      } else if (call.method ==
-          MethodChannelManager._methodMethod) {
+      } else if (call.method == MethodChannelManager._methodMethod) {
         return onReceiveInvokeMethod(
           call.arguments[0],
           call.arguments[1],
           call.arguments[2],
           call.arguments[3],
         );
-      } else if (call.method ==
-          MethodChannelManager._methodUnpairedMethod) {
+      } else if (call.method == MethodChannelManager._methodUnpairedMethod) {
         return onReceiveInvokeMethodOnUnpairedReference(
           call.arguments[0],
           call.arguments[1],
           call.arguments[2],
         );
-      } else if (call.method ==
-          MethodChannelManager._methodDispose) {
+      } else if (call.method == MethodChannelManager._methodDispose) {
         onReceiveDisposePair(call.arguments[0], call.arguments[1]);
         return null;
       }
@@ -171,7 +165,7 @@ class ReferenceMessageCodec extends StandardMessageCodec {
       writeValue(buffer, value.referenceId);
     } else if (value is UnpairedReference) {
       buffer.putUint8(_valueUnpairedReference);
-      writeValue(buffer, value.handlerChannel);
+      writeValue(buffer, value.channelName);
       writeValue(buffer, value.creationArguments);
     } else {
       super.writeValue(buffer, value);

@@ -11,12 +11,10 @@ class ReferenceChannel<T> {
   final ReferenceChannelManager manager;
   final String channelName;
 
-  // TODO: to setHandler
-  void registerHandler(ReferenceChannelHandler<T> handler) {
+  void setHandler(ReferenceChannelHandler<T> handler) {
     manager.registerHandler(channelName, handler);
   }
 
-  // TODO(bparrishMines): Undo state change if failure to create?
   /// Creates a new [RemoteReference] to be paired with [localReference].
   ///
   /// This is typically called when a class wants a remote
@@ -293,13 +291,13 @@ abstract class ReferenceChannelManager {
   /// Returns `null` if a pair with [remoteReference] has already been added.
   /// Otherwise, it returns the paired [LocalReference].
   Object onReceiveCreateNewPair(
-    String handlerChannel,
+    String channelName,
     RemoteReference remoteReference,
     List<Object> arguments,
   ) {
     if (_referencePairs.getPairedObject(remoteReference) != null) return null;
 
-    final Object object = getChannelHandler(handlerChannel).createInstance(
+    final Object object = getChannelHandler(channelName).createInstance(
       this,
       converter.convertForLocalManager(this, arguments),
     );
@@ -316,11 +314,11 @@ abstract class ReferenceChannelManager {
   /// [arguments] and [ReferenceConverter.convertForRemoteManager] to convert
   /// the result.
   Object onReceiveInvokeStaticMethod(
-    String handlerChannel,
+    String channelName,
     String methodName,
     List<Object> arguments,
   ) {
-    final Object result = getChannelHandler(handlerChannel).invokeStaticMethod(
+    final Object result = getChannelHandler(channelName).invokeStaticMethod(
       this,
       methodName,
       converter.convertForLocalManager(this, arguments),
@@ -330,14 +328,14 @@ abstract class ReferenceChannelManager {
   }
 
   UnpairedReference createUnpairedReference(
-    String handlerChannel,
+    String channelName,
     Object object,
   ) {
-    final ReferenceChannelHandler handler = _channelHandlers[handlerChannel];
+    final ReferenceChannelHandler handler = _channelHandlers[channelName];
     if (handler == null) return null;
 
     return UnpairedReference(
-      handlerChannel,
+      channelName,
       handler.getCreationArguments(this, object),
     );
   }
@@ -348,12 +346,12 @@ abstract class ReferenceChannelManager {
   /// [arguments] and [ReferenceConverter.convertForRemoteManager] to convert
   /// the result.
   Object onReceiveInvokeMethod(
-    String handlerChannel,
+    String channelName,
     RemoteReference remoteReference,
     String methodName,
     List<Object> arguments,
   ) {
-    final Object result = getChannelHandler(handlerChannel).invokeMethod(
+    final Object result = getChannelHandler(channelName).invokeMethod(
       this,
       _referencePairs.getPairedObject(remoteReference),
       methodName,
@@ -374,9 +372,9 @@ abstract class ReferenceChannelManager {
     List<Object> arguments,
   ) {
     final Object result =
-        getChannelHandler(unpairedReference.handlerChannel).invokeMethod(
+        getChannelHandler(unpairedReference.channelName).invokeMethod(
       this,
-      getChannelHandler(unpairedReference.handlerChannel).createInstance(
+      getChannelHandler(unpairedReference.channelName).createInstance(
         this,
         converter.convertForLocalManager(
           this,
@@ -398,14 +396,14 @@ abstract class ReferenceChannelManager {
   /// This will remove [remoteReference] and its paired [LocalReference] from
   /// this [RemoteReferenceMap].
   void onReceiveDisposePair(
-    String handlerChannel,
+    String channelName,
     RemoteReference remoteReference,
   ) {
     final Object instance = _referencePairs.getPairedObject(remoteReference);
     if (instance == null) return;
 
     _referencePairs.removePairWithObject(instance);
-    getChannelHandler(handlerChannel).onInstanceDisposed(this, instance);
+    getChannelHandler(channelName).onInstanceDisposed(this, instance);
   }
 
   String getNewReferenceId() {
@@ -501,7 +499,7 @@ class StandardReferenceConverter implements ReferenceConverter {
     if (object is RemoteReference) {
       return manager._referencePairs.getPairedObject(object);
     } else if (object is UnpairedReference) {
-      return manager.getChannelHandler(object.handlerChannel).createInstance(
+      return manager.getChannelHandler(object.channelName).createInstance(
             manager,
             convertForLocalManager(manager, object.creationArguments),
           );

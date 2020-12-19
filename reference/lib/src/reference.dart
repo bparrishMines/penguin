@@ -1,15 +1,5 @@
 import 'package:reference/reference.dart';
 
-/// Represents a specific object instance.
-///
-/// See:
-///   [LocalReference]
-///   [RemoteReference]
-///   [UnpairedReference]
-// class Reference {
-//   const Reference();
-// }
-
 mixin Referencable<T> {
   ReferenceChannel<T> get referenceChannel;
 }
@@ -52,18 +42,15 @@ class RemoteReference {
 /// [ReferencePairManager] will try to convert it into a [LocalReference] with
 /// [LocalReferenceCommunicationHandler.createInstance].
 class UnpairedReference {
-  const UnpairedReference(
-    this.handlerChannel,
-    this.creationArguments,
-  );
+  const UnpairedReference(this.channelName, this.creationArguments);
 
-  final String handlerChannel;
+  final String channelName;
 
   /// Arguments used to create the instance this represents.
   final List<Object> creationArguments;
 
   @override
   String toString() {
-    return '$runtimeType($handlerChannel, $creationArguments)';
+    return '$runtimeType($channelName, $creationArguments)';
   }
 }

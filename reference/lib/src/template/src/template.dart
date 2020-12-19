@@ -11,7 +11,7 @@ class ClassTemplate with $ClassTemplate {
 
   static final $ClassTemplateChannel _channel = $ClassTemplateChannel(
     MethodChannelManager.instance,
-  )..registerHandler($ClassTemplateHandler(
+  )..setHandler($ClassTemplateHandler(
       onCreate: (
         ReferenceChannelManager manager,
         $ClassTemplateCreationArgs args,
