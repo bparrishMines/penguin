@@ -64,6 +64,6 @@ class UnpairedReference {
 
   @override
   String toString() {
-    return '$runtimeType($handlerChannel, $creationArguments, )';
+    return '$runtimeType($handlerChannel, $creationArguments)';
   }
 }

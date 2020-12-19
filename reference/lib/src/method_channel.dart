@@ -7,14 +7,14 @@ import 'reference_channel.dart';
 import 'reference.dart';
 
 /// Abstract implementation of [RemoteReferenceMap] using [MethodChannel]s.
-class MethodChannelReferenceChannelManager extends ReferenceChannelManager {
-  /// Default constructor for [MethodChannelReferenceChannelManager].
+class MethodChannelManager extends ReferenceChannelManager {
+  /// Default constructor for [MethodChannelManager].
   ///
   /// If [poolId] is passed as `null`, it will be set to [channelName].
   /// If [messageCodec] is passed as `null`, it will be set to
   /// [ReferenceMessageCodec].
   // @visibleForTesting
-  MethodChannelReferenceChannelManager(String channelName)
+  MethodChannelManager(String channelName)
       : channel = MethodChannel(
           channelName,
           StandardMethodCodec(ReferenceMessageCodec()),
@@ -28,19 +28,19 @@ class MethodChannelReferenceChannelManager extends ReferenceChannelManager {
   static const String _methodUnpairedMethod = 'REFERENCE_UNPAIRED_METHOD';
   static const String _methodDispose = 'REFERENCE_DISPOSE';
 
-  static final MethodChannelReferenceChannelManager instance =
-      MethodChannelReferenceChannelManager('github.penguin/reference');
+  static final MethodChannelManager instance =
+      MethodChannelManager('github.penguin/reference');
 
   /// [MethodChannel] used to communicate with a remote [RemoteReferenceMap].
   final MethodChannel channel;
 
   @override
-  MethodChannelReferenceChannelMessenger get messenger =>
-      MethodChannelReferenceChannelMessenger(channel);
+  MethodChannelMessenger get messenger =>
+      MethodChannelMessenger(channel);
 
   Future<dynamic> _handleMethodCall(MethodCall call) async {
     try {
-      if (call.method == MethodChannelReferenceChannelManager._methodCreate) {
+      if (call.method == MethodChannelManager._methodCreate) {
         onReceiveCreateNewPair(
           call.arguments[0],
           call.arguments[1],
@@ -48,14 +48,14 @@ class MethodChannelReferenceChannelManager extends ReferenceChannelManager {
         );
         return null;
       } else if (call.method ==
-          MethodChannelReferenceChannelManager._methodStaticMethod) {
+          MethodChannelManager._methodStaticMethod) {
         return onReceiveInvokeStaticMethod(
           call.arguments[0],
           call.arguments[1],
           call.arguments[2],
         );
       } else if (call.method ==
-          MethodChannelReferenceChannelManager._methodMethod) {
+          MethodChannelManager._methodMethod) {
         return onReceiveInvokeMethod(
           call.arguments[0],
           call.arguments[1],
@@ -63,14 +63,14 @@ class MethodChannelReferenceChannelManager extends ReferenceChannelManager {
           call.arguments[3],
         );
       } else if (call.method ==
-          MethodChannelReferenceChannelManager._methodUnpairedMethod) {
+          MethodChannelManager._methodUnpairedMethod) {
         return onReceiveInvokeMethodOnUnpairedReference(
           call.arguments[0],
           call.arguments[1],
           call.arguments[2],
         );
       } else if (call.method ==
-          MethodChannelReferenceChannelManager._methodDispose) {
+          MethodChannelManager._methodDispose) {
         onReceiveDisposePair(call.arguments[0], call.arguments[1]);
         return null;
       }
@@ -85,10 +85,10 @@ class MethodChannelReferenceChannelManager extends ReferenceChannelManager {
 
 /// Implementation of [MessageSender] for [MethodChannel]s.
 ///
-/// Used in [MethodChannelReferenceChannelManager] to handle communication with
+/// Used in [MethodChannelManager] to handle communication with
 /// [RemoteReference]s.
-class MethodChannelReferenceChannelMessenger with ReferenceChannelMessenger {
-  MethodChannelReferenceChannelMessenger(this.channel);
+class MethodChannelMessenger with ReferenceChannelMessenger {
+  MethodChannelMessenger(this.channel);
 
   /// [MethodChannel] used to communicate with a remote [RemoteReferenceMap].
   final MethodChannel channel;
@@ -100,7 +100,7 @@ class MethodChannelReferenceChannelMessenger with ReferenceChannelMessenger {
     List<Object> arguments,
   ) {
     return channel.invokeMethod<void>(
-      MethodChannelReferenceChannelManager._methodCreate,
+      MethodChannelManager._methodCreate,
       <Object>[handlerChannel, remoteReference, arguments],
     );
   }
@@ -112,7 +112,7 @@ class MethodChannelReferenceChannelMessenger with ReferenceChannelMessenger {
     List<Object> arguments,
   ) {
     return channel.invokeMethod<Object>(
-      MethodChannelReferenceChannelManager._methodStaticMethod,
+      MethodChannelManager._methodStaticMethod,
       <Object>[handlerChannel, methodName, arguments],
     );
   }
@@ -125,7 +125,7 @@ class MethodChannelReferenceChannelMessenger with ReferenceChannelMessenger {
     List<Object> arguments,
   ) {
     return channel.invokeMethod<Object>(
-      MethodChannelReferenceChannelManager._methodMethod,
+      MethodChannelManager._methodMethod,
       <Object>[handlerChannel, remoteReference, methodName, arguments],
     );
   }
@@ -137,7 +137,7 @@ class MethodChannelReferenceChannelMessenger with ReferenceChannelMessenger {
     List<Object> arguments,
   ) {
     return channel.invokeMethod<Object>(
-      MethodChannelReferenceChannelManager._methodUnpairedMethod,
+      MethodChannelManager._methodUnpairedMethod,
       <Object>[unpairedReference, methodName, arguments],
     );
   }
@@ -148,7 +148,7 @@ class MethodChannelReferenceChannelMessenger with ReferenceChannelMessenger {
     RemoteReference remoteReference,
   ) {
     return channel.invokeMethod<void>(
-      MethodChannelReferenceChannelManager._methodDispose,
+      MethodChannelManager._methodDispose,
       <Object>[handlerChannel, remoteReference],
     );
   }

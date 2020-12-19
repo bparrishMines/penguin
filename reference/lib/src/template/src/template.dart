@@ -10,7 +10,7 @@ class ClassTemplate with $ClassTemplate {
   ClassTemplate(this.fieldTemplate);
 
   static final $ClassTemplateChannel _channel = $ClassTemplateChannel(
-    MethodChannelReferenceChannelManager.instance,
+    MethodChannelManager.instance,
   )..registerHandler($ClassTemplateHandler(
       onCreate: (
         ReferenceChannelManager manager,

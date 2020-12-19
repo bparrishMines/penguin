@@ -37,310 +37,324 @@ void main() {
     });
   });
 
-  group('$MethodChannelReferenceChannelManager', () {
-    // final List<MethodCall> methodCallLog = <MethodCall>[];
-    // TestReferencePairManager testManager;
-    //
-    // setUp(() {
-    //   methodCallLog.clear();
-    //   testManager = TestReferencePairManager()..initialize();
-    //   testManager.channel.setMockMethodCallHandler(
-    //     (MethodCall methodCall) async {
-    //       methodCallLog.add(methodCall);
-    //       if (methodCall.method == 'REFERENCE_METHOD') {
-    //         switch (methodCall.arguments[1]) {
-    //           case 'aMethod':
-    //             return 'polo';
-    //         }
-    //       } else if (methodCall.method == 'REFERENCE_STATIC_METHOD') {
-    //         switch (methodCall.arguments[1]) {
-    //           case 'aStaticMethod':
-    //             return 14;
-    //         }
-    //       }
-    //       return null;
-    //     },
-    //   );
-    // });
-    //
-    // test('pairWithNewRemoteReference', () async {
-    //   final TestClass testClass = TestClass();
-    //
-    //   testManager.pairWithNewRemoteReference(testClass);
-    //   final RemoteReference remoteReference =
-    //       testManager.getPairedRemoteReference(testClass);
-    //
-    //   expect(methodCallLog, <Matcher>[
-    //     isMethodCallWithMatchers('REFERENCE_CREATE', arguments: <Object>[
-    //       remoteReference,
-    //       0,
-    //       <Object>[],
-    //     ]),
-    //   ]);
-    // });
-    //
-    // test('invokeRemoteStaticMethod', () async {
-    //   final int result = await testManager.invokeStaticMethod(
-    //     TestClass,
-    //     'aStaticMethod',
-    //   );
-    //
-    //   expect(result, equals(14));
-    //   expect(methodCallLog, <Matcher>[
-    //     isMethodCallWithMatchers('REFERENCE_STATIC_METHOD', arguments: <Object>[
-    //       0,
-    //       'aStaticMethod',
-    //       <Object>[],
-    //     ]),
-    //   ]);
-    // });
-    //
-    // test('invokeRemoteMethod', () async {
-    //   final TestClass testClass = TestClass();
-    //   testManager.pairWithNewRemoteReference(testClass);
-    //   methodCallLog.clear();
-    //
-    //   final String result = await testManager.invokeMethod(
-    //     testManager.getPairedRemoteReference(testClass),
-    //     'aMethod',
-    //   );
-    //
-    //   expect(result, equals('polo'));
-    //   expect(methodCallLog, <Matcher>[
-    //     isMethodCallWithMatchers('REFERENCE_METHOD', arguments: <Object>[
-    //       testManager.getPairedRemoteReference(testClass),
-    //       'aMethod',
-    //       <Object>[],
-    //     ]),
-    //   ]);
-    // });
-    //
-    // test('invokeRemoteMethodOnUnpairedReference', () async {
-    //   final String result = await testManager.invokeMethodOnUnpairedReference(
-    //       TestClass(), 'aMethod');
-    //
-    //   expect(result, equals('polo'));
-    //   expect(methodCallLog, <Matcher>[
-    //     isMethodCallWithMatchers('REFERENCE_METHOD', arguments: <Object>[
-    //       isUnpairedReference(0, <Object>[], null),
-    //       'aMethod',
-    //       <Object>[],
-    //     ]),
-    //   ]);
-    // });
-    //
-    // test('disposePairWithLocalReference', () async {
-    //   final TestClass testClass = TestClass();
-    //
-    //   testManager.pairWithNewRemoteReference(testClass);
-    //   final RemoteReference remoteReference =
-    //       testManager.getPairedRemoteReference(testClass);
-    //   methodCallLog.clear();
-    //
-    //   testManager.disposePair(testClass);
-    //
-    //   expect(methodCallLog, <Matcher>[
-    //     isMethodCall(
-    //       'REFERENCE_DISPOSE',
-    //       arguments: remoteReference,
-    //     ),
-    //   ]);
-    // });
-    //
-    // test('pairWithNewLocalReference', () async {
-    //   when(testManager.localHandler.createInstance(testManager, TestClass, any))
-    //       .thenReturn(TestClass());
-    //
-    //   await testManager.channel.binaryMessenger.handlePlatformMessage(
-    //     'test_channel',
-    //     testManager.channel.codec.encodeMethodCall(
-    //       MethodCall(
-    //         'REFERENCE_CREATE',
-    //         <Object>[
-    //           RemoteReference('aowejea;io'),
-    //           0,
-    //           <Object>[],
-    //         ],
-    //       ),
-    //     ),
-    //     (ByteData data) {},
-    //   );
-    //
-    //   final TestClass testClass =
-    //       testManager.getPairedLocalReference(RemoteReference('aowejea;io'));
-    //
-    //   expect(testClass, isNotNull);
-    // });
-    //
-    // test('invokeLocalStaticMethod', () async {
-    //   when(
-    //     testManager.localHandler.sendInvokeStaticMethod(
-    //       testManager,
-    //       TestClass,
-    //       'aStaticMethod',
-    //       <Object>[],
-    //     ),
-    //   ).thenReturn('OJ');
-    //
-    //   final Completer<String> responseCompleter = Completer<String>();
-    //   await testManager.channel.binaryMessenger.handlePlatformMessage(
-    //     'test_channel',
-    //     testManager.channel.codec.encodeMethodCall(
-    //       MethodCall(
-    //         'REFERENCE_STATIC_METHOD',
-    //         <Object>[0, 'aStaticMethod', <Object>[]],
-    //       ),
-    //     ),
-    //     (ByteData data) {
-    //       responseCompleter.complete(
-    //         testManager.channel.codec.decodeEnvelope(data),
-    //       );
-    //     },
-    //   );
-    //
-    //   verify(testManager.localHandler.sendInvokeStaticMethod(
-    //     testManager,
-    //     TestClass,
-    //     'aStaticMethod',
-    //     any,
-    //   ));
-    //   expect(responseCompleter.future, completion('OJ'));
-    // });
-    //
-    // test('invokeLocalMethod', () async {
-    //   final TestClass testClass = TestClass();
-    //
-    //   testManager.pairWithNewRemoteReference(testClass);
-    //
-    //   when(
-    //     testManager.localHandler.sendInvokeMethod(
-    //       testManager,
-    //       testClass,
-    //       'aMethod',
-    //       <Object>[],
-    //     ),
-    //   ).thenReturn('Apple pie');
-    //
-    //   final Completer<String> responseCompleter = Completer<String>();
-    //   await testManager.channel.binaryMessenger.handlePlatformMessage(
-    //     'test_channel',
-    //     testManager.channel.codec.encodeMethodCall(
-    //       MethodCall(
-    //         'REFERENCE_METHOD',
-    //         <Object>[
-    //           testManager.getPairedRemoteReference(testClass),
-    //           'aMethod',
-    //           <Object>[],
-    //         ],
-    //       ),
-    //     ),
-    //     (ByteData data) {
-    //       responseCompleter.complete(
-    //         testManager.channel.codec.decodeEnvelope(data),
-    //       );
-    //     },
-    //   );
-    //
-    //   verify(testManager.localHandler.sendInvokeMethod(
-    //     testManager,
-    //     testClass,
-    //     'aMethod',
-    //     any,
-    //   ));
-    //   expect(responseCompleter.future, completion('Apple pie'));
-    // });
-    //
-    // test('invokeLocalMethodOnUnpairedReference', () async {
-    //   when(testManager.localHandler.createInstance(testManager, TestClass, any))
-    //       .thenReturn(TestClass());
-    //
-    //   when(
-    //     testManager.localHandler.sendInvokeMethod(
-    //       testManager,
-    //       any,
-    //       'aMethod',
-    //       <Object>[],
-    //     ),
-    //   ).thenReturn('Apple pie');
-    //
-    //   final Completer<String> responseCompleter = Completer<String>();
-    //   await testManager.channel.binaryMessenger.handlePlatformMessage(
-    //     'test_channel',
-    //     testManager.channel.codec.encodeMethodCall(
-    //       MethodCall(
-    //         'REFERENCE_METHOD',
-    //         <Object>[
-    //           UnpairedReference(0, <dynamic>[]),
-    //           'aMethod',
-    //           <Object>[],
-    //         ],
-    //       ),
-    //     ),
-    //     (ByteData data) {
-    //       responseCompleter.complete(
-    //         testManager.channel.codec.decodeEnvelope(data),
-    //       );
-    //     },
-    //   );
-    //
-    //   verify(testManager.localHandler.sendInvokeMethod(
-    //     testManager,
-    //     any,
-    //     'aMethod',
-    //     any,
-    //   ));
-    //   expect(responseCompleter.future, completion('Apple pie'));
-    // });
-    //
-    // test('disposePairWithRemoteReference', () async {
-    //   final TestClass testClass = TestClass();
-    //
-    //   final RemoteReference remoteReference =
-    //       await testManager.pairWithNewRemoteReference(testClass);
-    //
-    //   await testManager.channel.binaryMessenger.handlePlatformMessage(
-    //     'test_channel',
-    //     testManager.channel.codec.encodeMethodCall(
-    //       MethodCall(
-    //         'REFERENCE_DISPOSE',
-    //         remoteReference,
-    //       ),
-    //     ),
-    //     (ByteData data) {},
-    //   );
-    //
-    //   verify(
-    //       testManager.localHandler.onInstanceDisposed(testManager, testClass));
-    //   expect(testManager.getPairedLocalReference(remoteReference), isNull);
-    // });
+  group('$MethodChannelManager', () {
+    TestManager testManager;
+
+    setUp(() {
+      testManager = TestManager();
+    });
+
+    test('onReceiveCreateNewPair', () async {
+      final TestClass testClass = TestClass(testManager);
+
+      when(testManager.mockHandler.createInstance(testManager, <Object>[]))
+          .thenReturn(testClass);
+
+      await testManager.channel.binaryMessenger.handlePlatformMessage(
+        'test_method_channel',
+        testManager.channel.codec.encodeMethodCall(
+          MethodCall(
+            'REFERENCE_CREATE',
+            <Object>[
+              'test_channel',
+              RemoteReference('test_reference_id'),
+              <Object>[],
+            ],
+          ),
+        ),
+        (ByteData data) {},
+      );
+
+      expect(testManager.isPaired(testClass), isTrue);
+    });
+
+    test('onReceiveInvokeStaticMethod', () async {
+      when(
+        testManager.mockHandler.invokeStaticMethod(
+          testManager,
+          'aStaticMethod',
+          <Object>[],
+        ),
+      ).thenReturn('return_value');
+
+      final Completer<String> responseCompleter = Completer<String>();
+      await testManager.channel.binaryMessenger.handlePlatformMessage(
+        'test_method_channel',
+        testManager.channel.codec.encodeMethodCall(
+          MethodCall(
+            'REFERENCE_STATIC_METHOD',
+            <Object>['test_channel', 'aStaticMethod', <Object>[]],
+          ),
+        ),
+        (ByteData data) {
+          responseCompleter.complete(
+            testManager.channel.codec.decodeEnvelope(data),
+          );
+        },
+      );
+
+      expect(responseCompleter.future, completion('return_value'));
+    });
+
+    test('onReceiveInvokeMethod', () async {
+      final TestClass testClass = TestClass(testManager);
+
+      when(testManager.mockHandler.createInstance(testManager, <Object>[]))
+          .thenReturn(testClass);
+
+      testManager.onReceiveCreateNewPair(
+        'test_channel',
+        RemoteReference('test_id'),
+        <Object>[],
+      );
+
+      when(
+        testManager.mockHandler.invokeMethod(
+          testManager,
+          testClass,
+          'aMethod',
+          <Object>[],
+        ),
+      ).thenReturn('return_value');
+
+      final Completer<String> responseCompleter = Completer<String>();
+      await testManager.channel.binaryMessenger.handlePlatformMessage(
+        'test_method_channel',
+        testManager.channel.codec.encodeMethodCall(
+          MethodCall(
+            'REFERENCE_METHOD',
+            <Object>[
+              'test_channel',
+              RemoteReference('test_id'),
+              'aMethod',
+              <Object>[],
+            ],
+          ),
+        ),
+        (ByteData data) {
+          responseCompleter.complete(
+            testManager.channel.codec.decodeEnvelope(data),
+          );
+        },
+      );
+
+      expect(responseCompleter.future, completion('return_value'));
+    });
+
+    test('onReceiveInvokeMethodOnUnpairedReference', () async {
+      final TestClass testClass = TestClass(testManager);
+
+      when(testManager.mockHandler.createInstance(testManager, <Object>[]))
+          .thenReturn(testClass);
+
+      when(
+        testManager.mockHandler.invokeMethod(
+          testManager,
+          testClass,
+          'aMethod',
+          <Object>[],
+        ),
+      ).thenReturn('return_value');
+
+      final Completer<String> responseCompleter = Completer<String>();
+      await testManager.channel.binaryMessenger.handlePlatformMessage(
+        'test_method_channel',
+        testManager.channel.codec.encodeMethodCall(
+          MethodCall(
+            'REFERENCE_UNPAIRED_METHOD',
+            <Object>[
+              UnpairedReference('test_channel', <dynamic>[]),
+              'aMethod',
+              <Object>[],
+            ],
+          ),
+        ),
+        (ByteData data) {
+          responseCompleter.complete(
+            testManager.channel.codec.decodeEnvelope(data),
+          );
+        },
+      );
+
+      expect(responseCompleter.future, completion('return_value'));
+    });
+
+    test('onReceiveDisposePair', () async {
+      final TestClass testClass = TestClass(testManager);
+
+      when(testManager.mockHandler.createInstance(testManager, <Object>[]))
+          .thenReturn(testClass);
+
+      testManager.onReceiveCreateNewPair(
+        'test_channel',
+        RemoteReference('test_id'),
+        <Object>[],
+      );
+
+      await testManager.channel.binaryMessenger.handlePlatformMessage(
+        'test_method_channel',
+        testManager.channel.codec.encodeMethodCall(
+          MethodCall(
+            'REFERENCE_DISPOSE',
+            <Object>['test_channel', RemoteReference('test_id')],
+          ),
+        ),
+        (ByteData data) {},
+      );
+
+      expect(testManager.isPaired(testClass), isFalse);
+    });
+  });
+
+  group('$MethodChannelMessenger', () {
+    final List<MethodCall> methodCallLog = <MethodCall>[];
+    TestManager testManager;
+    ReferenceChannel<TestClass> testChannel;
+
+    setUp(() {
+      methodCallLog.clear();
+      testManager = TestManager();
+      testChannel = ReferenceChannel<TestClass>(testManager, 'test_channel');
+
+      testManager.channel.setMockMethodCallHandler(
+        (MethodCall methodCall) async {
+          methodCallLog.add(methodCall);
+          if (methodCall.method == 'REFERENCE_METHOD' &&
+              methodCall.arguments[2] == 'aMethod') {
+            return 'return_value';
+          } else if (methodCall.method == 'REFERENCE_STATIC_METHOD' &&
+              methodCall.arguments[1] == 'aStaticMethod') {
+            return 'return_value';
+          } else if (methodCall.method == 'REFERENCE_UNPAIRED_METHOD' &&
+              methodCall.arguments[1] == 'aMethod') {
+            return 'return_value';
+          }
+          return null;
+        },
+      );
+    });
+
+    test('createNewPair', () {
+      final TestClass testClass = TestClass(testManager);
+
+      when(testManager.mockHandler.getCreationArguments(testManager, testClass))
+          .thenReturn(<Object>[]);
+
+      testChannel.createNewPair(testClass);
+
+      expect(methodCallLog, <Matcher>[
+        isMethodCallWithMatchers('REFERENCE_CREATE', arguments: <Object>[
+          'test_channel',
+          RemoteReference('test_reference_id'),
+          <Object>[],
+        ]),
+      ]);
+    });
+
+    test('sendInvokeStaticMethod', () {
+      expect(
+        testChannel.invokeStaticMethod('aStaticMethod', <Object>[]),
+        completion('return_value'),
+      );
+      expect(methodCallLog, <Matcher>[
+        isMethodCallWithMatchers('REFERENCE_STATIC_METHOD', arguments: <Object>[
+          'test_channel',
+          'aStaticMethod',
+          <Object>[],
+        ]),
+      ]);
+    });
+
+    test('sendInvokeMethod', () {
+      final TestClass testClass = TestClass(testManager);
+      testChannel.createNewPair(testClass);
+
+      methodCallLog.clear();
+
+      expect(
+        testChannel.invokeMethod(testClass, 'aMethod', <Object>[]),
+        completion('return_value'),
+      );
+      expect(methodCallLog, <Matcher>[
+        isMethodCallWithMatchers('REFERENCE_METHOD', arguments: <Object>[
+          'test_channel',
+          RemoteReference('test_reference_id'),
+          'aMethod',
+          <Object>[],
+        ]),
+      ]);
+    });
+
+    test('sendInvokeMethodOnUnpairedReference', () {
+      final TestClass testClass = TestClass(testManager);
+
+      when(testManager.mockHandler.getCreationArguments(testManager, testClass))
+          .thenReturn(<Object>[]);
+
+      expect(
+        testChannel.invokeMethodOnUnpairedReference(
+          testClass,
+          'aMethod',
+          <Object>[],
+        ),
+        completion('return_value'),
+      );
+      expect(methodCallLog, <Matcher>[
+        isMethodCallWithMatchers(
+          'REFERENCE_UNPAIRED_METHOD',
+          arguments: <Object>[
+            isUnpairedReference('test_channel', <Object>[]),
+            'aMethod',
+            <Object>[],
+          ],
+        ),
+      ]);
+    });
+
+    test('REFERENCE_DISPOSE', () {
+      final TestClass testClass = TestClass(testManager);
+      testChannel.createNewPair(testClass);
+
+      methodCallLog.clear();
+
+      testChannel.disposePair(testClass);
+      expect(testManager.isPaired(testClass), isFalse);
+      expect(methodCallLog, <Matcher>[
+        isMethodCall(
+          'REFERENCE_DISPOSE',
+          arguments: <Object>[
+            'test_channel',
+            RemoteReference('test_reference_id'),
+          ],
+        ),
+      ]);
+    });
   });
 }
 
-// class TestClass with LocalReference {
-//   @override
-//   Type get referenceType => TestClass;
-// }
-//
-// class TestReferencePairManager extends MethodChannelReferenceChannelManager {
-//   TestReferencePairManager() : super(<Type>[TestClass], 'test_channel');
-//
-//   final MockLocalHandler _localHandler = MockLocalHandler();
-//
-//   @override
-//   ReferenceChannelHandler get localHandler => _localHandler;
-//
-//   @override
-//   MethodChannelReferenceChannelMessenger get remoteHandler =>
-//       TestRemoteHandler();
-// }
-//
-// class TestRemoteHandler extends MethodChannelReferenceChannelMessenger {
-//   TestRemoteHandler() : super('test_channel');
-//
-//   @override
-//   List<Object> getCreationArguments(LocalReference localReference) {
-//     return <Object>[];
-//   }
-// }
-//
-// class MockLocalHandler extends Mock implements ReferenceChannelHandler {}
+class TestManager extends MethodChannelManager {
+  TestManager() : super('test_method_channel') {
+    registerHandler('test_channel', mockHandler);
+  }
+
+  final MockHandler mockHandler = MockHandler();
+
+  @override
+  String getNewReferenceId() {
+    return 'test_reference_id';
+  }
+}
+
+class MockHandler = Mock with ReferenceChannelHandler<TestClass>;
+
+class TestClass with Referencable<TestClass> {
+  TestClass(this.manager);
+
+  final ReferenceChannelManager manager;
+
+  @override
+  ReferenceChannel<TestClass> get referenceChannel => ReferenceChannel(
+        manager,
+        'test_channel',
+      );
+}
