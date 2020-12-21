@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
 import 'package:reference/reference.dart';
 
 void main() {
@@ -11,20 +10,18 @@ void main() {
     });
 
     test('onReceiveCreateNewPair', () {
-      final TestClass testClass = TestClass(testManager);
-
-      when(testManager.mockHandler.createInstance(testManager, <Object>[]))
-          .thenReturn(testClass);
-
       expect(
         testManager.onReceiveCreateNewPair(
           'test_channel',
           RemoteReference('test_id'),
           <Object>[],
         ),
-        testClass,
+        testManager.testHandler.testClassInstance,
       );
-      expect(testManager.isPaired(testClass), isTrue);
+      expect(
+        testManager.isPaired(testManager.testHandler.testClassInstance),
+        isTrue,
+      );
       expect(
         testManager.onReceiveCreateNewPair(
           '',
@@ -36,87 +33,56 @@ void main() {
     });
 
     test('onReceiveInvokeStaticMethod', () {
-      testManager.onReceiveInvokeStaticMethod(
-        'test_channel',
-        'aStaticMethod',
-        <Object>[],
+      expect(
+        testManager.onReceiveInvokeStaticMethod(
+          'test_channel',
+          'aStaticMethod',
+          <Object>[],
+        ),
+        'return_value',
       );
-
-      verify(testManager.mockHandler.invokeStaticMethod(
-        testManager,
-        'aStaticMethod',
-        <Object>[],
-      ));
     });
 
     test('createUnpairedReference', () {
-      when(testManager.mockHandler.getCreationArguments(testManager, any))
-          .thenReturn(<Object>[]);
-
       final UnpairedReference unpairedReference =
           testManager.createUnpairedReference(
         'test_channel',
         TestClass(testManager),
-      );
+      )!;
       expect(unpairedReference.channelName, 'test_channel');
       expect(unpairedReference.creationArguments, isEmpty);
     });
 
     test('onReceiveInvokeMethod', () {
-      final TestClass testClass = TestClass(testManager);
-
-      when(testManager.mockHandler.createInstance(testManager, <Object>[]))
-          .thenReturn(testClass);
-
       testManager.onReceiveCreateNewPair(
         'test_channel',
         RemoteReference('test_id'),
         <Object>[],
       );
 
-      testManager.onReceiveInvokeMethod(
-        'test_channel',
-        RemoteReference('test_id'),
-        'aMethod',
-        <Object>[],
+      expect(
+        testManager.onReceiveInvokeMethod(
+          'test_channel',
+          RemoteReference('test_id'),
+          'aMethod',
+          <Object>[],
+        ),
+        'return_value',
       );
-      verify(testManager.mockHandler.invokeMethod(
-        testManager,
-        testClass,
-        'aMethod',
-        <Object>[],
-      ));
     });
 
     test('onReceiveInvokeMethodOnUnpairedReference', () {
-      final TestClass testClass = TestClass(testManager);
-
-      when(testManager.mockHandler.createInstance(testManager, <Object>[]))
-          .thenReturn(testClass);
-
       expect(
         testManager.onReceiveInvokeMethodOnUnpairedReference(
           UnpairedReference('test_channel', <Object>[]),
           'aMethod',
           <Object>[],
         ),
-        isNull,
+        'return_value',
       );
-
-      verify(testManager.mockHandler.invokeMethod(
-        testManager,
-        testClass,
-        'aMethod',
-        <Object>[],
-      ));
     });
 
     test('onReceiveDisposePair', () {
-      final TestClass testClass = TestClass(testManager);
-
-      when(testManager.mockHandler.createInstance(testManager, <Object>[]))
-          .thenReturn(testClass);
-
       testManager.onReceiveCreateNewPair(
         'test_channel',
         RemoteReference('test_id'),
@@ -126,13 +92,16 @@ void main() {
         'test_channel',
         RemoteReference('test_id'),
       );
-      expect(testManager.isPaired(testClass), isFalse);
+      expect(
+        testManager.isPaired(testManager.testHandler.testClassInstance),
+        isFalse,
+      );
     });
   });
 
   group('$ReferenceChannel', () {
-    TestManager testManager;
-    ReferenceChannel<TestClass> testChannel;
+    late TestManager testManager;
+    late ReferenceChannel<TestClass> testChannel;
 
     setUp(() {
       testManager = TestManager();
@@ -142,15 +111,6 @@ void main() {
     test('createNewPair', () {
       final TestClass testClass = TestClass(testManager);
 
-      when(testManager.mockHandler.getCreationArguments(testManager, testClass))
-          .thenReturn(<Object>[]);
-
-      when(testManager.mockMessenger.sendCreateNewPair(
-        'test_channel',
-        RemoteReference('test_reference_id'),
-        <Object>[],
-      )).thenAnswer((_) => Future<void>.value());
-
       expect(
         testChannel.createNewPair(testClass),
         completion(RemoteReference('test_reference_id')),
@@ -159,30 +119,14 @@ void main() {
     });
 
     test('invokeStaticMethod', () {
-      when(testManager.mockMessenger.sendInvokeStaticMethod(
-        'test_channel',
-        'aStaticMethod',
-        <Object>[],
-      )).thenAnswer((_) => Future<Object>.value('return_value'));
-
       expect(
         testChannel.invokeStaticMethod('aStaticMethod', <Object>[]),
         completion('return_value'),
       );
     });
 
-    test('invokeMethod', () async {
+    test('invokeMethod', () {
       final TestClass testClass = TestClass(testManager);
-
-      when(testManager.mockHandler.getCreationArguments(testManager, testClass))
-          .thenReturn(<Object>[]);
-
-      when(testManager.mockMessenger.sendInvokeMethod(
-        'test_channel',
-        RemoteReference('test_reference_id'),
-        'aMethod',
-        <Object>[],
-      )).thenAnswer((_) => Future<Object>.value('return_value'));
 
       testChannel.createNewPair(testClass);
       expect(
@@ -191,59 +135,37 @@ void main() {
       );
     });
 
-    test(
-      'invokeMethodOnUnpairedReference',
-      () async {
-        final TestClass testClass = TestClass(testManager);
-
-        when(
-          testManager.mockHandler.getCreationArguments(testManager, testClass),
-        ).thenReturn(<Object>[]);
-
-        when(testManager.mockMessenger.sendInvokeMethodOnUnpairedReference(
-          any,
+    test('invokeMethod on unpaired reference', () {
+      expect(
+        testChannel.invokeMethod(
+          TestClass(testManager),
           'aMethod',
           <Object>[],
-        )).thenAnswer((_) => Future<Object>.value('return_value'));
+        ),
+        completion('return_value'),
+      );
+    });
 
-        expect(
-          testChannel.invokeMethodOnUnpairedReference(
-            TestClass(testManager),
-            'aMethod',
-            <Object>[],
-          ),
-          completion('return_value'),
-        );
-      },
-    );
-
-    test('disposePair', () async {
+    test('disposePair', () {
       final testClass = TestClass(testManager);
 
-      when(testManager.mockHandler.getCreationArguments(testManager, testClass))
-          .thenReturn(<Object>[]);
-
       testChannel.createNewPair(testClass);
-      expect(testChannel.disposePair(testClass), completion(isNull));
-      verify(testManager.mockMessenger.sendDisposePair(
-        'test_channel',
-        RemoteReference('test_reference_id'),
-      ));
+      expect(testChannel.disposePair(testClass), completes);
+      expect(testManager.isPaired(testClass), isFalse);
     });
   });
 }
 
 class TestManager extends ReferenceChannelManager {
   TestManager() {
-    registerHandler('test_channel', mockHandler);
+    testHandler = TestHandler(this);
+    registerHandler('test_channel', testHandler);
   }
 
-  final MockHandler mockHandler = MockHandler();
-
-  MockMessenger get mockMessenger => messenger;
+  late final TestHandler testHandler;
 
   @override
-  final MockMessenger messenger = MockMessenger();
+  final TestMessenger messenger = TestMessenger();
 
   @override
   String getNewReferenceId() {
@@ -251,8 +173,88 @@ class TestManager extends ReferenceChannelManager {
   }
 }
 
-class MockHandler = Mock with ReferenceChannelHandler<TestClass>;
-class MockMessenger = Mock with ReferenceChannelMessenger;
+class TestHandler with ReferenceChannelHandler<TestClass> {
+  TestHandler(TestManager manager) : testClassInstance = TestClass(manager);
+
+  final TestClass testClassInstance;
+
+  @override
+  TestClass createInstance(
+    ReferenceChannelManager manager,
+    List<Object?> arguments,
+  ) {
+    return testClassInstance;
+  }
+
+  @override
+  List<Object?> getCreationArguments(
+    ReferenceChannelManager manager,
+    TestClass instance,
+  ) {
+    return <Object?>[];
+  }
+
+  @override
+  Object? invokeMethod(
+    ReferenceChannelManager manager,
+    TestClass instance,
+    String methodName,
+    List<Object?> arguments,
+  ) {
+    return 'return_value';
+  }
+
+  @override
+  Object? invokeStaticMethod(
+    ReferenceChannelManager manager,
+    String methodName,
+    List<Object?> arguments,
+  ) {
+    return 'return_value';
+  }
+}
+
+class TestMessenger with ReferenceChannelMessenger {
+  @override
+  Future<void> sendCreateNewPair(String handlerChannel,
+      RemoteReference remoteReference, List<Object?> arguments) {
+    return Future<void>.value();
+  }
+
+  @override
+  Future<void> sendDisposePair(
+      String channelName, RemoteReference remoteReference) {
+    return Future<void>.value();
+  }
+
+  @override
+  Future<Object?> sendInvokeMethod(
+    String handlerChannel,
+    RemoteReference remoteReference,
+    String methodName,
+    List<Object?> arguments,
+  ) {
+    return Future<String>.value('return_value');
+  }
+
+  @override
+  Future<Object?> sendInvokeMethodOnUnpairedReference(
+    UnpairedReference unpairedReference,
+    String methodName,
+    List<Object?> arguments,
+  ) {
+    return Future<String>.value('return_value');
+  }
+
+  @override
+  Future<Object?> sendInvokeStaticMethod(
+    String handlerChannel,
+    String methodName,
+    List<Object?> arguments,
+  ) {
+    return Future<String>.value('return_value');
+  }
+}
 
 class TestClass with Referencable<TestClass> {
   TestClass(this.manager);

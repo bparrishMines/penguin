@@ -3,7 +3,6 @@ import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
 import 'package:reference/reference.dart';
 
 import 'reference_matchers.dart';
@@ -15,7 +14,7 @@ void main() {
     final ReferenceMessageCodec messageCodec = ReferenceMessageCodec();
 
     test('encode/decode $RemoteReference', () {
-      final ByteData byteData = messageCodec.encodeMessage(
+      final ByteData? byteData = messageCodec.encodeMessage(
         RemoteReference('a'),
       );
 
@@ -26,7 +25,7 @@ void main() {
     });
 
     test('encode/decode $UnpairedReference', () {
-      final ByteData byteData = messageCodec.encodeMessage(
+      final ByteData? byteData = messageCodec.encodeMessage(
         UnpairedReference('apple', <Object>[]),
       );
 
@@ -38,18 +37,13 @@ void main() {
   });
 
   group('$MethodChannelManager', () {
-    TestManager testManager;
+    late TestManager testManager;
 
     setUp(() {
       testManager = TestManager();
     });
 
     test('onReceiveCreateNewPair', () async {
-      final TestClass testClass = TestClass(testManager);
-
-      when(testManager.mockHandler.createInstance(testManager, <Object>[]))
-          .thenReturn(testClass);
-
       await testManager.channel.binaryMessenger.handlePlatformMessage(
         'test_method_channel',
         testManager.channel.codec.encodeMethodCall(
@@ -62,21 +56,16 @@ void main() {
             ],
           ),
         ),
-        (ByteData data) {},
+        (ByteData? data) {},
       );
 
-      expect(testManager.isPaired(testClass), isTrue);
+      expect(
+        testManager.isPaired(testManager.testHandler.testClassInstance),
+        isTrue,
+      );
     });
 
     test('onReceiveInvokeStaticMethod', () async {
-      when(
-        testManager.mockHandler.invokeStaticMethod(
-          testManager,
-          'aStaticMethod',
-          <Object>[],
-        ),
-      ).thenReturn('return_value');
-
       final Completer<String> responseCompleter = Completer<String>();
       await testManager.channel.binaryMessenger.handlePlatformMessage(
         'test_method_channel',
@@ -86,9 +75,9 @@ void main() {
             <Object>['test_channel', 'aStaticMethod', <Object>[]],
           ),
         ),
-        (ByteData data) {
+        (ByteData? data) {
           responseCompleter.complete(
-            testManager.channel.codec.decodeEnvelope(data),
+            testManager.channel.codec.decodeEnvelope(data!),
           );
         },
       );
@@ -97,25 +86,11 @@ void main() {
     });
 
     test('onReceiveInvokeMethod', () async {
-      final TestClass testClass = TestClass(testManager);
-
-      when(testManager.mockHandler.createInstance(testManager, <Object>[]))
-          .thenReturn(testClass);
-
       testManager.onReceiveCreateNewPair(
         'test_channel',
         RemoteReference('test_id'),
         <Object>[],
       );
-
-      when(
-        testManager.mockHandler.invokeMethod(
-          testManager,
-          testClass,
-          'aMethod',
-          <Object>[],
-        ),
-      ).thenReturn('return_value');
 
       final Completer<String> responseCompleter = Completer<String>();
       await testManager.channel.binaryMessenger.handlePlatformMessage(
@@ -131,9 +106,9 @@ void main() {
             ],
           ),
         ),
-        (ByteData data) {
+        (ByteData? data) {
           responseCompleter.complete(
-            testManager.channel.codec.decodeEnvelope(data),
+            testManager.channel.codec.decodeEnvelope(data!),
           );
         },
       );
@@ -142,20 +117,6 @@ void main() {
     });
 
     test('onReceiveInvokeMethodOnUnpairedReference', () async {
-      final TestClass testClass = TestClass(testManager);
-
-      when(testManager.mockHandler.createInstance(testManager, <Object>[]))
-          .thenReturn(testClass);
-
-      when(
-        testManager.mockHandler.invokeMethod(
-          testManager,
-          testClass,
-          'aMethod',
-          <Object>[],
-        ),
-      ).thenReturn('return_value');
-
       final Completer<String> responseCompleter = Completer<String>();
       await testManager.channel.binaryMessenger.handlePlatformMessage(
         'test_method_channel',
@@ -169,9 +130,9 @@ void main() {
             ],
           ),
         ),
-        (ByteData data) {
+        (ByteData? data) {
           responseCompleter.complete(
-            testManager.channel.codec.decodeEnvelope(data),
+            testManager.channel.codec.decodeEnvelope(data!),
           );
         },
       );
@@ -180,11 +141,6 @@ void main() {
     });
 
     test('onReceiveDisposePair', () async {
-      final TestClass testClass = TestClass(testManager);
-
-      when(testManager.mockHandler.createInstance(testManager, <Object>[]))
-          .thenReturn(testClass);
-
       testManager.onReceiveCreateNewPair(
         'test_channel',
         RemoteReference('test_id'),
@@ -199,17 +155,20 @@ void main() {
             <Object>['test_channel', RemoteReference('test_id')],
           ),
         ),
-        (ByteData data) {},
+        (ByteData? data) {},
       );
 
-      expect(testManager.isPaired(testClass), isFalse);
+      expect(
+        testManager.isPaired(testManager.testHandler.testClassInstance),
+        isFalse,
+      );
     });
   });
 
   group('$MethodChannelMessenger', () {
     final List<MethodCall> methodCallLog = <MethodCall>[];
-    TestManager testManager;
-    ReferenceChannel<TestClass> testChannel;
+    late TestManager testManager;
+    late ReferenceChannel<TestClass> testChannel;
 
     setUp(() {
       methodCallLog.clear();
@@ -235,12 +194,7 @@ void main() {
     });
 
     test('createNewPair', () {
-      final TestClass testClass = TestClass(testManager);
-
-      when(testManager.mockHandler.getCreationArguments(testManager, testClass))
-          .thenReturn(<Object>[]);
-
-      testChannel.createNewPair(testClass);
+      testChannel.createNewPair(TestClass(testManager));
 
       expect(methodCallLog, <Matcher>[
         isMethodCallWithMatchers('REFERENCE_CREATE', arguments: <Object>[
@@ -286,17 +240,8 @@ void main() {
     });
 
     test('sendInvokeMethodOnUnpairedReference', () {
-      final TestClass testClass = TestClass(testManager);
-
-      when(testManager.mockHandler.getCreationArguments(testManager, testClass))
-          .thenReturn(<Object>[]);
-
       expect(
-        testChannel.invokeMethodOnUnpairedReference(
-          testClass,
-          'aMethod',
-          <Object>[],
-        ),
+        testChannel.invokeMethod(TestClass(testManager), 'aMethod', <Object>[]),
         completion('return_value'),
       );
       expect(methodCallLog, <Matcher>[
@@ -334,10 +279,11 @@ void main() {
 
 class TestManager extends MethodChannelManager {
   TestManager() : super('test_method_channel') {
-    registerHandler('test_channel', mockHandler);
+    testHandler = TestHandler(this);
+    registerHandler('test_channel', testHandler);
   }
 
-  final MockHandler mockHandler = MockHandler();
+  late final TestHandler testHandler;
 
   @override
   String getNewReferenceId() {
@@ -345,7 +291,46 @@ class TestManager extends MethodChannelManager {
   }
 }
 
-class MockHandler = Mock with ReferenceChannelHandler<TestClass>;
+class TestHandler with ReferenceChannelHandler<TestClass> {
+  TestHandler(TestManager manager) : testClassInstance = TestClass(manager);
+
+  final TestClass testClassInstance;
+
+  @override
+  TestClass createInstance(
+    ReferenceChannelManager manager,
+    List<Object?> arguments,
+  ) {
+    return testClassInstance;
+  }
+
+  @override
+  List<Object?> getCreationArguments(
+    ReferenceChannelManager manager,
+    TestClass instance,
+  ) {
+    return <Object?>[];
+  }
+
+  @override
+  Object? invokeMethod(
+    ReferenceChannelManager manager,
+    TestClass instance,
+    String methodName,
+    List<Object?> arguments,
+  ) {
+    return 'return_value';
+  }
+
+  @override
+  Object? invokeStaticMethod(
+    ReferenceChannelManager manager,
+    String methodName,
+    List<Object?> arguments,
+  ) {
+    return 'return_value';
+  }
+}
 
 class TestClass with Referencable<TestClass> {
   TestClass(this.manager);

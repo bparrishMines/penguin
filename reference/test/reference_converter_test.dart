@@ -22,7 +22,8 @@ void main() {
       );
 
       expect(
-        converter.convertForRemoteManager(testManager, testManager.testHandler.testClassInstance),
+        converter.convertForRemoteManager(
+            testManager, testManager.testHandler.testClassInstance),
         remoteReference,
       );
     });
@@ -34,8 +35,7 @@ void main() {
       );
     });
 
-    test('convertForRemoteManager handles unpaired non-$Referencable',
-        () {
+    test('convertForRemoteManager handles unpaired non-$Referencable', () {
       expect(
         converter.convertForRemoteManager(testManager, 'potato'),
         equals('potato'),
@@ -83,22 +83,28 @@ class TestHandler with ReferenceChannelHandler<TestClass> {
   final TestClass testClassInstance;
 
   @override
-  TestClass createInstance(ReferenceChannelManager manager, List<Object?> arguments,) {
+  TestClass createInstance(
+    ReferenceChannelManager manager,
+    List<Object?> arguments,
+  ) {
     return testClassInstance;
   }
 
   @override
-  List<Object?> getCreationArguments(ReferenceChannelManager manager, TestClass instance) {
+  List<Object?> getCreationArguments(
+      ReferenceChannelManager manager, TestClass instance) {
     return <Object?>[];
   }
 
   @override
-  Object? invokeMethod(ReferenceChannelManager manager, TestClass instance, String methodName, List<Object?> arguments) {
+  Object? invokeMethod(ReferenceChannelManager manager, TestClass instance,
+      String methodName, List<Object?> arguments) {
     return 'return_value';
   }
 
   @override
-  Object? invokeStaticMethod(ReferenceChannelManager manager, String methodName, List<Object?> arguments) {
+  Object? invokeStaticMethod(ReferenceChannelManager manager, String methodName,
+      List<Object?> arguments) {
     return 'return_value';
   }
 }
