@@ -5,7 +5,7 @@ import 'package:reference/reference.dart';
 import 'reference.dart';
 import 'remote_reference_map.dart';
 
-class ReferenceChannel<T> {
+class ReferenceChannel<T extends Object> {
   ReferenceChannel(this.manager, this.channelName);
 
   final ReferenceChannelManager manager;
@@ -29,7 +29,7 @@ class ReferenceChannel<T> {
   ///
   /// Returns `null` if a pair with [localReference] has already been added.
   /// Otherwise, it returns the paired [RemoteReference].
-  Future<RemoteReference> createNewPair(T instance) async {
+  Future<RemoteReference?> createNewPair(T instance) async {
     if (manager.isPaired(instance)) return null;
 
     final RemoteReference remoteReference = RemoteReference(
@@ -44,9 +44,9 @@ class ReferenceChannel<T> {
       manager.converter.convertForRemoteManager(
         manager,
         manager
-            .getChannelHandler(channelName)
+            .getChannelHandler(channelName)!
             .getCreationArguments(manager, instance),
-      ),
+      )! as List<Object?>,
     );
 
     return remoteReference;
@@ -57,14 +57,15 @@ class ReferenceChannel<T> {
   /// This method uses [ReferenceConverter.convertForRemoteManager] to convert
   /// [arguments] and [ReferenceConverter.convertForLocalManager] to convert
   /// the result.
-  Future<Object> invokeStaticMethod(
+  Future<Object?> invokeStaticMethod(
     String methodName,
-    List<Object> arguments,
+    List<Object?> arguments,
   ) async {
-    final Object result = await manager.messenger.sendInvokeStaticMethod(
+    final Object? result = await manager.messenger.sendInvokeStaticMethod(
       channelName,
       methodName,
-      manager.converter.convertForRemoteManager(manager, arguments),
+      manager.converter.convertForRemoteManager(manager, arguments)!
+          as List<Object?>,
     );
 
     return manager.converter.convertForLocalManager(manager, result);
@@ -75,16 +76,21 @@ class ReferenceChannel<T> {
   /// This method uses [ReferenceConverter.convertForRemoteManager] to convert
   /// [arguments] and [ReferenceConverter.convertForLocalManager] to convert
   /// the result.
-  Future<Object> invokeMethod(
+  Future<Object?> invokeMethod(
     T instance,
     String methodName,
-    List<Object> arguments,
+    List<Object?> arguments,
   ) async {
-    final Object result = await manager.messenger.sendInvokeMethod(
+    if (!manager.isPaired(instance)) {
+      return _invokeMethodOnUnpairedReference(instance, methodName, arguments);
+    }
+
+    final Object? result = await manager.messenger.sendInvokeMethod(
       channelName,
-      manager._referencePairs.getPairedRemoteReference(instance),
+      manager._referencePairs.getPairedRemoteReference(instance)!,
       methodName,
-      manager.converter.convertForRemoteManager(manager, arguments),
+      manager.converter.convertForRemoteManager(manager, arguments)!
+          as List<Object?>,
     );
 
     return manager.converter.convertForLocalManager(manager, result);
@@ -95,16 +101,17 @@ class ReferenceChannel<T> {
   /// This method uses [ReferenceConverter.convertForRemoteManager] to convert
   /// [arguments] and [ReferenceConverter.convertForLocalManager] to convert
   /// the result.
-  Future<Object> invokeMethodOnUnpairedReference(
+  Future<Object?> _invokeMethodOnUnpairedReference(
     T object,
     String methodName,
-    List<Object> arguments,
+    List<Object?> arguments,
   ) async {
-    final Object result =
+    final Object? result =
         await manager.messenger.sendInvokeMethodOnUnpairedReference(
-      manager.createUnpairedReference(channelName, object),
+      manager.createUnpairedReference(channelName, object)!,
       methodName,
-      manager.converter.convertForRemoteManager(manager, arguments),
+      manager.converter.convertForRemoteManager(manager, arguments)!
+          as List<Object?>,
     );
 
     return manager.converter.convertForLocalManager(manager, result);
@@ -118,7 +125,7 @@ class ReferenceChannel<T> {
   /// This is typically called when a class no longer needs access to the
   /// [RemoteReference] it is paired with.
   Future<void> disposePair(T instance) async {
-    final RemoteReference remoteReference =
+    final RemoteReference? remoteReference =
         manager._referencePairs.getPairedRemoteReference(instance);
 
     if (remoteReference != null) {
@@ -150,14 +157,14 @@ mixin ReferenceChannelMessenger {
   Future<void> sendCreateNewPair(
     String handlerChannel,
     RemoteReference remoteReference,
-    List<Object> arguments,
+    List<Object?> arguments,
   );
 
   /// Invoke a static method on the type that is represented by [typeId].
-  Future<Object> sendInvokeStaticMethod(
+  Future<Object?> sendInvokeStaticMethod(
     String handlerChannel,
     String methodName,
-    List<Object> arguments,
+    List<Object?> arguments,
   );
 
   /// Invoke a method on the object instance that [remoteReference] represents.
@@ -165,18 +172,18 @@ mixin ReferenceChannelMessenger {
   /// For any [RemoteReference], this method should only be called after
   /// [sendCreateNewPair] and should never be called after
   /// [sendDisposePair].
-  Future<Object> sendInvokeMethod(
+  Future<Object?> sendInvokeMethod(
     String handlerChannel,
     RemoteReference remoteReference,
     String methodName,
-    List<Object> arguments,
+    List<Object?> arguments,
   );
 
   /// Invoke a method on an object instance that [unpairedReference] represents.
-  Future<Object> sendInvokeMethodOnUnpairedReference(
+  Future<Object?> sendInvokeMethodOnUnpairedReference(
     UnpairedReference unpairedReference,
     String methodName,
-    List<Object> arguments,
+    List<Object?> arguments,
   );
 
   /// Dispose the object instance that [remoteReference] represents.
@@ -185,7 +192,7 @@ mixin ReferenceChannelMessenger {
   /// from maintaining the connection between its paired [LocalReference] and
   /// should allow for either object instance to connect to new references.
   Future<void> sendDisposePair(
-    String handlerChannel,
+    String channelName,
     RemoteReference remoteReference,
   );
 }
@@ -194,9 +201,9 @@ mixin ReferenceChannelMessenger {
 ///
 /// This class handles communication from other [ReferencePairManager]s to
 /// create, dispose, or invoke methods for a [LocalReference].
-mixin ReferenceChannelHandler<T> {
+mixin ReferenceChannelHandler<T extends Object> {
   /// Retrieves arguments to instantiate an object that is created with [createInstance].
-  List<Object> getCreationArguments(
+  List<Object?> getCreationArguments(
     ReferenceChannelManager manager,
     T instance,
   );
@@ -221,22 +228,22 @@ mixin ReferenceChannelHandler<T> {
   /// [LocalReference]. It will also store both references as a pair.
   T createInstance(
     ReferenceChannelManager manager,
-    List<Object> arguments,
+    List<Object?> arguments,
   );
 
   /// Invoke a static method on [referenceType].
-  Object invokeStaticMethod(
+  Object? invokeStaticMethod(
     ReferenceChannelManager manager,
     String methodName,
-    List<Object> arguments,
+    List<Object?> arguments,
   );
 
   /// Invoke a method on the object instance represented by [localReference].
-  Object invokeMethod(
+  Object? invokeMethod(
     ReferenceChannelManager manager,
     T instance,
     String methodName,
-    List<Object> arguments,
+    List<Object?> arguments,
   );
 
   /// Dispose [localReference] and the value it represents.
@@ -265,7 +272,8 @@ abstract class ReferenceChannelManager {
   /// Converts [Reference]s when passing values to a [ReferenceChannelHandler] or a [MessageSender].
   ReferenceConverter get converter => StandardReferenceConverter();
 
-  bool isPaired(Object instance) {
+  bool isPaired(Object? instance) {
+    if (instance == null) return false;
     return _referencePairs.getPairedRemoteReference(instance) != null;
   }
 
@@ -273,7 +281,7 @@ abstract class ReferenceChannelManager {
     _channelHandlers[channelName] = handler;
   }
 
-  ReferenceChannelHandler getChannelHandler(String channelName) {
+  ReferenceChannelHandler? getChannelHandler(String channelName) {
     return _channelHandlers[channelName];
   }
 
@@ -290,16 +298,16 @@ abstract class ReferenceChannelManager {
   ///
   /// Returns `null` if a pair with [remoteReference] has already been added.
   /// Otherwise, it returns the paired [LocalReference].
-  Object onReceiveCreateNewPair(
+  Object? onReceiveCreateNewPair(
     String channelName,
     RemoteReference remoteReference,
-    List<Object> arguments,
+    List<Object?> arguments,
   ) {
     if (_referencePairs.getPairedObject(remoteReference) != null) return null;
 
-    final Object object = getChannelHandler(channelName).createInstance(
+    final Object object = getChannelHandler(channelName)!.createInstance(
       this,
-      converter.convertForLocalManager(this, arguments),
+      converter.convertForLocalManager(this, arguments)! as List<Object?>,
     );
 
     assert(!isPaired(object));
@@ -313,25 +321,25 @@ abstract class ReferenceChannelManager {
   /// This method uses [ReferenceConverter.convertForLocalManager] to convert
   /// [arguments] and [ReferenceConverter.convertForRemoteManager] to convert
   /// the result.
-  Object onReceiveInvokeStaticMethod(
+  Object? onReceiveInvokeStaticMethod(
     String channelName,
     String methodName,
-    List<Object> arguments,
+    List<Object?> arguments,
   ) {
-    final Object result = getChannelHandler(channelName).invokeStaticMethod(
+    final Object? result = getChannelHandler(channelName)!.invokeStaticMethod(
       this,
       methodName,
-      converter.convertForLocalManager(this, arguments),
+      converter.convertForLocalManager(this, arguments)! as List<Object?>,
     );
 
     return converter.convertForRemoteManager(this, result);
   }
 
-  UnpairedReference createUnpairedReference(
+  UnpairedReference? createUnpairedReference(
     String channelName,
     Object object,
   ) {
-    final ReferenceChannelHandler handler = _channelHandlers[channelName];
+    final ReferenceChannelHandler? handler = getChannelHandler(channelName);
     if (handler == null) return null;
 
     return UnpairedReference(
@@ -345,17 +353,17 @@ abstract class ReferenceChannelManager {
   /// This method uses [ReferenceConverter.convertForLocalManager] to convert
   /// [arguments] and [ReferenceConverter.convertForRemoteManager] to convert
   /// the result.
-  Object onReceiveInvokeMethod(
+  Object? onReceiveInvokeMethod(
     String channelName,
     RemoteReference remoteReference,
     String methodName,
-    List<Object> arguments,
+    List<Object?> arguments,
   ) {
-    final Object result = getChannelHandler(channelName).invokeMethod(
+    final Object? result = getChannelHandler(channelName)!.invokeMethod(
       this,
-      _referencePairs.getPairedObject(remoteReference),
+      _referencePairs.getPairedObject(remoteReference)!,
       methodName,
-      converter.convertForLocalManager(this, arguments) ?? <Object>[],
+      converter.convertForLocalManager(this, arguments)! as List<Object?>,
     );
 
     return converter.convertForRemoteManager(this, result);
@@ -366,23 +374,23 @@ abstract class ReferenceChannelManager {
   /// This method uses [ReferenceConverter.convertForLocalManager] to convert
   /// [arguments] and [ReferenceConverter.convertForRemoteManager] to convert
   /// the result.
-  Object onReceiveInvokeMethodOnUnpairedReference(
+  Object? onReceiveInvokeMethodOnUnpairedReference(
     UnpairedReference unpairedReference,
     String methodName,
-    List<Object> arguments,
+    List<Object?> arguments,
   ) {
-    final Object result =
-        getChannelHandler(unpairedReference.channelName).invokeMethod(
+    final Object? result =
+        getChannelHandler(unpairedReference.channelName)!.invokeMethod(
       this,
-      getChannelHandler(unpairedReference.channelName).createInstance(
+      getChannelHandler(unpairedReference.channelName)!.createInstance(
         this,
         converter.convertForLocalManager(
           this,
           unpairedReference.creationArguments,
-        ),
+        )! as List<Object?>,
       ),
       methodName,
-      converter.convertForLocalManager(this, arguments),
+      converter.convertForLocalManager(this, arguments)! as List<Object?>,
     );
 
     return converter.convertForRemoteManager(this, result);
@@ -399,11 +407,11 @@ abstract class ReferenceChannelManager {
     String channelName,
     RemoteReference remoteReference,
   ) {
-    final Object instance = _referencePairs.getPairedObject(remoteReference);
+    final Object? instance = _referencePairs.getPairedObject(remoteReference);
     if (instance == null) return;
 
     _referencePairs.removePairWithObject(instance);
-    getChannelHandler(channelName).onInstanceDisposed(this, instance);
+    getChannelHandler(channelName)!.onInstanceDisposed(this, instance);
   }
 
   String getNewReferenceId() {
@@ -427,18 +435,18 @@ mixin ReferenceConverter {
   ///
   /// A [RemoteReferenceMap] should use this when creating or invoking a
   /// method on a [RemoteReference].
-  Object convertForRemoteManager(
+  Object? convertForRemoteManager(
     ReferenceChannelManager manager,
-    Object object,
+    Object? object,
   );
 
   /// Converts arguments to be used with a [LocalReference].
   ///
   /// A [RemoteReferenceMap] uses this when creating or invoking a method on
   /// a [LocalReference].
-  Object convertForLocalManager(
+  Object? convertForLocalManager(
     ReferenceChannelManager manager,
-    Object object,
+    Object? object,
   );
 }
 
@@ -456,23 +464,25 @@ class StandardReferenceConverter implements ReferenceConverter {
   ///   * [Map]s are converted to `Map<dynamic, dynamic>` and this method is
   ///     applied to each key and each value.
   @override
-  Object convertForRemoteManager(
+  Object? convertForRemoteManager(
     ReferenceChannelManager manager,
-    Object object,
+    Object? object,
   ) {
     if (manager.isPaired(object)) {
-      return manager._referencePairs.getPairedRemoteReference(object);
+      return manager._referencePairs.getPairedRemoteReference(object!);
     } else if (!manager.isPaired(object) && object is Referencable) {
       return manager.createUnpairedReference(
         object.referenceChannel.channelName,
         object,
       );
     } else if (object is List) {
-      return object.map((_) => convertForRemoteManager(manager, _)).toList();
+      return object
+          .map<Object?>((_) => convertForRemoteManager(manager, _))
+          .toList();
     } else if (object is Map) {
-      return Map<Object, Object>.fromIterables(
-        object.keys.map<Object>((_) => convertForRemoteManager(manager, _)),
-        object.values.map<Object>((_) => convertForRemoteManager(manager, _)),
+      return Map<Object?, Object?>.fromIterables(
+        object.keys.map<Object?>((_) => convertForRemoteManager(manager, _)),
+        object.values.map<Object?>((_) => convertForRemoteManager(manager, _)),
       );
     }
 
@@ -492,23 +502,26 @@ class StandardReferenceConverter implements ReferenceConverter {
   ///   * [Map]s are converted to `Map<dynamic, dynamic>` and this method is
   ///     applied to each key and each value.
   @override
-  Object convertForLocalManager(
+  Object? convertForLocalManager(
     ReferenceChannelManager manager,
-    Object object,
+    Object? object,
   ) {
     if (object is RemoteReference) {
       return manager._referencePairs.getPairedObject(object);
     } else if (object is UnpairedReference) {
-      return manager.getChannelHandler(object.channelName).createInstance(
+      return manager.getChannelHandler(object.channelName)!.createInstance(
             manager,
-            convertForLocalManager(manager, object.creationArguments),
+            convertForLocalManager(manager, object.creationArguments)!
+                as List<Object?>,
           );
     } else if (object is List) {
-      return object.map((_) => convertForLocalManager(manager, _)).toList();
+      return object
+          .map<Object?>((_) => convertForLocalManager(manager, _))
+          .toList();
     } else if (object is Map) {
-      return Map<Object, Object>.fromIterables(
-        object.keys.map<Object>((_) => convertForLocalManager(manager, _)),
-        object.values.map<Object>((_) => convertForLocalManager(manager, _)),
+      return Map<Object?, Object?>.fromIterables(
+        object.keys.map<Object?>((_) => convertForLocalManager(manager, _)),
+        object.values.map<Object?>((_) => convertForLocalManager(manager, _)),
       );
     }
 

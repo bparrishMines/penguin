@@ -1,6 +1,6 @@
 import 'package:reference/reference.dart';
 
-mixin Referencable<T> {
+mixin Referencable<T extends Object> {
   ReferenceChannel<T> get referenceChannel;
 }
 
@@ -10,7 +10,7 @@ mixin Referencable<T> {
 ///
 /// Two [RemoteReference]s are equal if they share the same [referenceId].
 class RemoteReference {
-  const RemoteReference(this.referenceId) : assert(referenceId != null);
+  const RemoteReference(this.referenceId);
 
   /// Unique identifier used to retrieve the instance this represents from a remote [ReferencePairManager].
   ///
@@ -47,7 +47,7 @@ class UnpairedReference {
   final String channelName;
 
   /// Arguments used to create the instance this represents.
-  final List<Object> creationArguments;
+  final List<Object?> creationArguments;
 
   @override
   String toString() {

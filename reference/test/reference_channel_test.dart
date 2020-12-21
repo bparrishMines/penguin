@@ -4,7 +4,7 @@ import 'package:reference/reference.dart';
 
 void main() {
   group('$ReferenceChannelManager', () {
-    TestManager testManager;
+    late TestManager testManager;
 
     setUp(() {
       testManager = TestManager();

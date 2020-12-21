@@ -11,14 +11,16 @@ class ClassTemplate with $ClassTemplate {
 
   static final $ClassTemplateChannel _channel = $ClassTemplateChannel(
     MethodChannelManager.instance,
-  )..setHandler($ClassTemplateHandler(
-      onCreate: (
-        ReferenceChannelManager manager,
-        $ClassTemplateCreationArgs args,
-      ) {
-        return ClassTemplate(args.fieldTemplate);
-      },
-    ));
+  )..setHandler(
+      $ClassTemplateHandler(
+        onCreate: (
+          ReferenceChannelManager manager,
+          $ClassTemplateCreationArgs args,
+        ) {
+          return ClassTemplate(args.fieldTemplate);
+        },
+      ),
+    );
 
   final int fieldTemplate;
 

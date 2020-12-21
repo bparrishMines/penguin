@@ -12,30 +12,27 @@ mixin $ClassTemplate {
 }
 
 class $ClassTemplateCreationArgs {
-  int fieldTemplate;
+  late int fieldTemplate;
 }
 
 class $ClassTemplateChannel extends ReferenceChannel<$ClassTemplate> {
   $ClassTemplateChannel(ReferenceChannelManager manager)
       : super(manager, 'github.penguin/template/template/ClassTemplate');
 
-  Future<Object> $invokeStaticMethodTemplate(String parameterTemplate) {
+  Future<Object?> $invokeStaticMethodTemplate(String parameterTemplate) {
     return invokeStaticMethod(
       'staticMethodTemplate',
       <Object>[parameterTemplate],
     );
   }
 
-  Future<Object> $invokeMethodTemplate(
+  Future<Object?> $invokeMethodTemplate(
       $ClassTemplate instance, String parameterTemplate) {
-    final String $methodName = 'methodTemplate';
-    final List<Object> $arguments = <Object>[parameterTemplate];
-
-    if (manager.isPaired(instance)) {
-      return invokeMethod(instance, $methodName, $arguments);
-    }
-
-    return invokeMethodOnUnpairedReference(instance, $methodName, $arguments);
+    return invokeMethod(
+      instance,
+      'methodTemplate',
+      <Object>[parameterTemplate],
+    );
   }
 }
 
@@ -44,39 +41,41 @@ class $ClassTemplateHandler implements ReferenceChannelHandler<$ClassTemplate> {
       {this.onCreate, this.onDispose, this.$onStaticMethodTemplate});
 
   final $ClassTemplate Function(
-          ReferenceChannelManager manager, $ClassTemplateCreationArgs args)
+          ReferenceChannelManager manager, $ClassTemplateCreationArgs args)?
       onCreate;
 
-  final void Function(ReferenceChannelManager manager, $ClassTemplate instance)
+  final void Function(ReferenceChannelManager manager, $ClassTemplate instance)?
       onDispose;
 
   final double Function(
-          ReferenceChannelManager manager, String parameterTemplate)
+          ReferenceChannelManager manager, String parameterTemplate)?
       $onStaticMethodTemplate;
 
   @override
-  Object invokeStaticMethod(
+  Object? invokeStaticMethod(
     ReferenceChannelManager manager,
     String methodName,
-    List<Object> arguments,
+    List<Object?> arguments,
   ) {
-    Function method;
+    late Function method;
     switch (methodName) {
       case 'staticMethodTemplate':
-        method = () => $onStaticMethodTemplate(manager, arguments[0]);
+        method =
+            () => $onStaticMethodTemplate!(manager, arguments[0] as String);
+        break;
+      default:
+        throw ArgumentError.value(
+          methodName,
+          'methodName',
+          'Unable to invoke static method `$methodName`',
+        );
     }
 
-    if (method != null) return method();
-
-    throw ArgumentError.value(
-      methodName,
-      'methodName',
-      'Unable to invoke static method `$methodName`',
-    );
+    return method();
   }
 
   @override
-  List<Object> getCreationArguments(
+  List<Object?> getCreationArguments(
     ReferenceChannelManager manager,
     $ClassTemplate instance,
   ) {
@@ -86,33 +85,35 @@ class $ClassTemplateHandler implements ReferenceChannelHandler<$ClassTemplate> {
   @override
   $ClassTemplate createInstance(
     ReferenceChannelManager manager,
-    List<Object> arguments,
+    List<Object?> arguments,
   ) {
-    return onCreate(
+    return onCreate!(
       manager,
-      $ClassTemplateCreationArgs()..fieldTemplate = arguments[0],
+      $ClassTemplateCreationArgs()..fieldTemplate = arguments[0] as int,
     );
   }
 
   @override
-  Object invokeMethod(
+  Object? invokeMethod(
     ReferenceChannelManager manager,
     $ClassTemplate instance,
     String methodName,
-    List<Object> arguments,
+    List<Object?> arguments,
   ) {
-    Function method;
+    late Function method;
     switch (methodName) {
       case 'methodTemplate':
-        method = () => instance.methodTemplate(arguments[0]);
+        method = () => instance.methodTemplate(arguments[0] as String);
+        break;
+      default:
+        throw ArgumentError.value(
+          instance,
+          'instance',
+          'Unable to invoke method `$methodName` on',
+        );
     }
 
-    if (method != null) return method();
-    throw ArgumentError.value(
-      instance,
-      'instance',
-      'Unable to invoke method `$methodName` on',
-    );
+    return method();
   }
 
   @override
@@ -120,6 +121,6 @@ class $ClassTemplateHandler implements ReferenceChannelHandler<$ClassTemplate> {
     ReferenceChannelManager manager,
     $ClassTemplate instance,
   ) {
-    if (onDispose != null) onDispose(manager, instance);
+    if (onDispose != null) onDispose!(manager, instance);
   }
 }

@@ -91,7 +91,7 @@ class MethodChannelMessenger with ReferenceChannelMessenger {
   Future<void> sendCreateNewPair(
     String handlerChannel,
     RemoteReference remoteReference,
-    List<Object> arguments,
+    List<Object?> arguments,
   ) {
     return channel.invokeMethod<void>(
       MethodChannelManager._methodCreate,
@@ -100,10 +100,10 @@ class MethodChannelMessenger with ReferenceChannelMessenger {
   }
 
   @override
-  Future<Object> sendInvokeStaticMethod(
+  Future<Object?> sendInvokeStaticMethod(
     String handlerChannel,
     String methodName,
-    List<Object> arguments,
+    List<Object?> arguments,
   ) {
     return channel.invokeMethod<Object>(
       MethodChannelManager._methodStaticMethod,
@@ -112,11 +112,11 @@ class MethodChannelMessenger with ReferenceChannelMessenger {
   }
 
   @override
-  Future<Object> sendInvokeMethod(
+  Future<Object?> sendInvokeMethod(
     String handlerChannel,
     RemoteReference remoteReference,
     String methodName,
-    List<Object> arguments,
+    List<Object?> arguments,
   ) {
     return channel.invokeMethod<Object>(
       MethodChannelManager._methodMethod,
@@ -125,10 +125,10 @@ class MethodChannelMessenger with ReferenceChannelMessenger {
   }
 
   @override
-  Future<Object> sendInvokeMethodOnUnpairedReference(
+  Future<Object?> sendInvokeMethodOnUnpairedReference(
     UnpairedReference unpairedReference,
     String methodName,
-    List<Object> arguments,
+    List<Object?> arguments,
   ) {
     return channel.invokeMethod<Object>(
       MethodChannelManager._methodUnpairedMethod,

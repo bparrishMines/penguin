@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
+//import 'package:mockito/mockito.dart';
 import 'package:reference/reference.dart';
 
 import 'reference_matchers.dart';
@@ -7,18 +7,13 @@ import 'reference_matchers.dart';
 void main() {
   group('$StandardReferenceConverter', () {
     final StandardReferenceConverter converter = StandardReferenceConverter();
-    TestManager testManager;
+    late TestManager testManager;
 
     setUp(() {
       testManager = TestManager();
     });
 
-    test('convertForRemoteManager handles paired Object', () async {
-      final TestClass testClass = TestClass(testManager);
-
-      when(testManager.mockHandler.createInstance(testManager, any))
-          .thenReturn(testClass);
-
+    test('convertForRemoteManager handles paired Object', () {
       final RemoteReference remoteReference = RemoteReference('test_id');
       testManager.onReceiveCreateNewPair(
         'test_channel',
@@ -27,15 +22,12 @@ void main() {
       );
 
       expect(
-        converter.convertForRemoteManager(testManager, testClass),
+        converter.convertForRemoteManager(testManager, testManager.testHandler.testClassInstance),
         remoteReference,
       );
     });
 
-    test('convertForRemoteManager handles unpaired $Referencable', () async {
-      when(testManager.mockHandler.getCreationArguments(testManager, any))
-          .thenReturn(<Object>[]);
-
+    test('convertForRemoteManager handles unpaired $Referencable', () {
       expect(
         converter.convertForRemoteManager(testManager, TestClass(testManager)),
         isUnpairedReference('test_channel', <Object>[]),
@@ -43,19 +35,14 @@ void main() {
     });
 
     test('convertForRemoteManager handles unpaired non-$Referencable',
-        () async {
+        () {
       expect(
         converter.convertForRemoteManager(testManager, 'potato'),
         equals('potato'),
       );
     });
 
-    test('convertForLocalManager handles $RemoteReference', () async {
-      final TestClass testClass = TestClass(testManager);
-
-      when(testManager.mockHandler.createInstance(testManager, any))
-          .thenReturn(testClass);
-
+    test('convertForLocalManager handles $RemoteReference', () {
       final RemoteReference remoteReference = RemoteReference('test_id');
       testManager.onReceiveCreateNewPair(
         'test_channel',
@@ -65,16 +52,11 @@ void main() {
 
       expect(
         converter.convertForLocalManager(testManager, remoteReference),
-        testClass,
+        testManager.testHandler.testClassInstance,
       );
     });
 
     test('convertForLocalManager handles $UnpairedReference', () async {
-      final TestClass testClass = TestClass(testManager);
-
-      when(testManager.mockHandler.createInstance(testManager, any))
-          .thenReturn(testClass);
-
       converter.convertForLocalManager(
         testManager,
         UnpairedReference('test_channel', <Object>[]),
@@ -85,16 +67,41 @@ void main() {
 
 class TestManager extends ReferenceChannelManager {
   TestManager() {
-    registerHandler('test_channel', mockHandler);
+    testHandler = TestHandler(this);
+    registerHandler('test_channel', testHandler);
   }
 
-  final MockHandler mockHandler = MockHandler();
+  late final TestHandler testHandler;
 
   @override
   ReferenceChannelMessenger get messenger => throw UnimplementedError();
 }
 
-class MockHandler = Mock with ReferenceChannelHandler<TestClass>;
+class TestHandler with ReferenceChannelHandler<TestClass> {
+  TestHandler(TestManager manager) : testClassInstance = TestClass(manager);
+
+  final TestClass testClassInstance;
+
+  @override
+  TestClass createInstance(ReferenceChannelManager manager, List<Object?> arguments,) {
+    return testClassInstance;
+  }
+
+  @override
+  List<Object?> getCreationArguments(ReferenceChannelManager manager, TestClass instance) {
+    return <Object?>[];
+  }
+
+  @override
+  Object? invokeMethod(ReferenceChannelManager manager, TestClass instance, String methodName, List<Object?> arguments) {
+    return 'return_value';
+  }
+
+  @override
+  Object? invokeStaticMethod(ReferenceChannelManager manager, String methodName, List<Object?> arguments) {
+    return 'return_value';
+  }
+}
 
 class TestClass with Referencable<TestClass> {
   TestClass(this.manager);
