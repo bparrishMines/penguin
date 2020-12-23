@@ -13,14 +13,14 @@ void main() {
   group('$ReferenceMessageCodec', () {
     final ReferenceMessageCodec messageCodec = ReferenceMessageCodec();
 
-    test('encode/decode $RemoteReference', () {
+    test('encode/decode $PairedReference', () {
       final ByteData? byteData = messageCodec.encodeMessage(
-        RemoteReference('a'),
+        PairedReference('a'),
       );
 
       expect(
         messageCodec.decodeMessage(byteData),
-        RemoteReference('a'),
+        PairedReference('a'),
       );
     });
 
@@ -51,7 +51,7 @@ void main() {
             'REFERENCE_CREATE',
             <Object>[
               'test_channel',
-              RemoteReference('test_reference_id'),
+              PairedReference('test_reference_id'),
               <Object>[],
             ],
           ),
@@ -88,7 +88,7 @@ void main() {
     test('onReceiveInvokeMethod', () async {
       testManager.onReceiveCreateNewPair(
         'test_channel',
-        RemoteReference('test_id'),
+        PairedReference('test_id'),
         <Object>[],
       );
 
@@ -100,7 +100,7 @@ void main() {
             'REFERENCE_METHOD',
             <Object>[
               'test_channel',
-              RemoteReference('test_id'),
+              PairedReference('test_id'),
               'aMethod',
               <Object>[],
             ],
@@ -143,7 +143,7 @@ void main() {
     test('onReceiveDisposePair', () async {
       testManager.onReceiveCreateNewPair(
         'test_channel',
-        RemoteReference('test_id'),
+        PairedReference('test_id'),
         <Object>[],
       );
 
@@ -152,7 +152,7 @@ void main() {
         testManager.channel.codec.encodeMethodCall(
           MethodCall(
             'REFERENCE_DISPOSE',
-            <Object>['test_channel', RemoteReference('test_id')],
+            <Object>['test_channel', PairedReference('test_id')],
           ),
         ),
         (ByteData? data) {},
@@ -199,7 +199,7 @@ void main() {
       expect(methodCallLog, <Matcher>[
         isMethodCallWithMatchers('REFERENCE_CREATE', arguments: <Object>[
           'test_channel',
-          RemoteReference('test_reference_id'),
+          PairedReference('test_reference_id'),
           <Object>[],
         ]),
       ]);
@@ -232,7 +232,7 @@ void main() {
       expect(methodCallLog, <Matcher>[
         isMethodCallWithMatchers('REFERENCE_METHOD', arguments: <Object>[
           'test_channel',
-          RemoteReference('test_reference_id'),
+          PairedReference('test_reference_id'),
           'aMethod',
           <Object>[],
         ]),
@@ -269,7 +269,7 @@ void main() {
           'REFERENCE_DISPOSE',
           arguments: <Object>[
             'test_channel',
-            RemoteReference('test_reference_id'),
+            PairedReference('test_reference_id'),
           ],
         ),
       ]);

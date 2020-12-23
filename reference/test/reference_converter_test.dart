@@ -14,7 +14,7 @@ void main() {
     });
 
     test('convertForRemoteManager handles paired Object', () {
-      final RemoteReference remoteReference = RemoteReference('test_id');
+      final PairedReference remoteReference = PairedReference('test_id');
       testManager.onReceiveCreateNewPair(
         'test_channel',
         remoteReference,
@@ -42,8 +42,8 @@ void main() {
       );
     });
 
-    test('convertForLocalManager handles $RemoteReference', () {
-      final RemoteReference remoteReference = RemoteReference('test_id');
+    test('convertForLocalManager handles $PairedReference', () {
+      final PairedReference remoteReference = PairedReference('test_id');
       testManager.onReceiveCreateNewPair(
         'test_channel',
         remoteReference,

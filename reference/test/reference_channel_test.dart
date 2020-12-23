@@ -13,7 +13,7 @@ void main() {
       expect(
         testManager.onReceiveCreateNewPair(
           'test_channel',
-          RemoteReference('test_id'),
+          PairedReference('test_id'),
           <Object>[],
         ),
         testManager.testHandler.testClassInstance,
@@ -25,7 +25,7 @@ void main() {
       expect(
         testManager.onReceiveCreateNewPair(
           '',
-          RemoteReference('test_id'),
+          PairedReference('test_id'),
           <Object>[],
         ),
         isNull,
@@ -56,14 +56,14 @@ void main() {
     test('onReceiveInvokeMethod', () {
       testManager.onReceiveCreateNewPair(
         'test_channel',
-        RemoteReference('test_id'),
+        PairedReference('test_id'),
         <Object>[],
       );
 
       expect(
         testManager.onReceiveInvokeMethod(
           'test_channel',
-          RemoteReference('test_id'),
+          PairedReference('test_id'),
           'aMethod',
           <Object>[],
         ),
@@ -85,12 +85,12 @@ void main() {
     test('onReceiveDisposePair', () {
       testManager.onReceiveCreateNewPair(
         'test_channel',
-        RemoteReference('test_id'),
+        PairedReference('test_id'),
         <Object>[],
       );
       testManager.onReceiveDisposePair(
         'test_channel',
-        RemoteReference('test_id'),
+        PairedReference('test_id'),
       );
       expect(
         testManager.isPaired(testManager.testHandler.testClassInstance),
@@ -113,7 +113,7 @@ void main() {
 
       expect(
         testChannel.createNewPair(testClass),
-        completion(RemoteReference('test_reference_id')),
+        completion(PairedReference('test_reference_id')),
       );
       expect(testChannel.createNewPair(testClass), completion(isNull));
     });
@@ -217,20 +217,20 @@ class TestHandler with ReferenceChannelHandler<TestClass> {
 class TestMessenger with ReferenceChannelMessenger {
   @override
   Future<void> sendCreateNewPair(String handlerChannel,
-      RemoteReference remoteReference, List<Object?> arguments) {
+      PairedReference remoteReference, List<Object?> arguments) {
     return Future<void>.value();
   }
 
   @override
   Future<void> sendDisposePair(
-      String channelName, RemoteReference remoteReference) {
+      String channelName, PairedReference remoteReference) {
     return Future<void>.value();
   }
 
   @override
   Future<Object?> sendInvokeMethod(
     String handlerChannel,
-    RemoteReference remoteReference,
+    PairedReference remoteReference,
     String methodName,
     List<Object?> arguments,
   ) {

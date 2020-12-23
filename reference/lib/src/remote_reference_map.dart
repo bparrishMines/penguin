@@ -3,31 +3,31 @@ import 'dart:collection';
 import 'reference.dart';
 
 class RemoteReferenceMap {
-  final _remoteReferences = _BiMap<Object, RemoteReference>();
+  final _remoteReferences = _BiMap<Object, PairedReference>();
 
-  void add(Object instance, RemoteReference remoteReference) {
+  void add(Object instance, PairedReference remoteReference) {
     _remoteReferences[instance] = remoteReference;
   }
 
-  RemoteReference? removePairWithObject(Object object) {
+  PairedReference? removePairWithObject(Object object) {
     return _remoteReferences.remove(object);
   }
 
-  Object? removePairWithRemoteReference(RemoteReference remoteReference) {
+  Object? removePairWithRemoteReference(PairedReference remoteReference) {
     return _remoteReferences.inverse.remove(remoteReference);
   }
 
-  /// Retrieve the [RemoteReference] paired with [instance].
+  /// Retrieve the [PairedReference] paired with [instance].
   ///
   /// Returns null if this [instance] is not paired.
-  RemoteReference? getPairedRemoteReference(Object instance) {
+  PairedReference? getPairedRemoteReference(Object instance) {
     return _remoteReferences[instance];
   }
 
   /// Retrieve the [Object] paired with [remoteReference].
   ///
   /// Returns null if this [remoteReference] is not paired.
-  Object? getPairedObject(RemoteReference remoteReference) {
+  Object? getPairedObject(PairedReference remoteReference) {
     return _remoteReferences.inverse[remoteReference];
   }
 }

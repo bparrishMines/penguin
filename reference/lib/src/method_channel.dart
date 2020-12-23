@@ -80,7 +80,7 @@ class MethodChannelManager extends ReferenceChannelManager {
 /// Implementation of [MessageSender] for [MethodChannel]s.
 ///
 /// Used in [MethodChannelManager] to handle communication with
-/// [RemoteReference]s.
+/// [PairedReference]s.
 class MethodChannelMessenger with ReferenceChannelMessenger {
   MethodChannelMessenger(this.channel);
 
@@ -90,7 +90,7 @@ class MethodChannelMessenger with ReferenceChannelMessenger {
   @override
   Future<void> sendCreateNewPair(
     String handlerChannel,
-    RemoteReference remoteReference,
+    PairedReference remoteReference,
     List<Object?> arguments,
   ) {
     return channel.invokeMethod<void>(
@@ -114,7 +114,7 @@ class MethodChannelMessenger with ReferenceChannelMessenger {
   @override
   Future<Object?> sendInvokeMethod(
     String handlerChannel,
-    RemoteReference remoteReference,
+    PairedReference remoteReference,
     String methodName,
     List<Object?> arguments,
   ) {
@@ -139,7 +139,7 @@ class MethodChannelMessenger with ReferenceChannelMessenger {
   @override
   Future<void> sendDisposePair(
     String handlerChannel,
-    RemoteReference remoteReference,
+    PairedReference remoteReference,
   ) {
     return channel.invokeMethod<void>(
       MethodChannelManager._methodDispose,
@@ -148,7 +148,7 @@ class MethodChannelMessenger with ReferenceChannelMessenger {
   }
 }
 
-/// Implementation of [StandardMessageCodec] that supports serializing [RemoteReference]s and [UnpairedReference]s.
+/// Implementation of [StandardMessageCodec] that supports serializing [PairedReference]s and [UnpairedReference]s.
 ///
 /// When extending, no int below 130 should be used as a key. See
 /// [StandardMessageCodec] for more info on extending a [StandardMessageCodec].
@@ -160,7 +160,7 @@ class ReferenceMessageCodec extends StandardMessageCodec {
 
   @override
   void writeValue(WriteBuffer buffer, dynamic value) {
-    if (value is RemoteReference) {
+    if (value is PairedReference) {
       buffer.putUint8(_valueRemoteReference);
       writeValue(buffer, value.referenceId);
     } else if (value is UnpairedReference) {
@@ -176,7 +176,7 @@ class ReferenceMessageCodec extends StandardMessageCodec {
   dynamic readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case _valueRemoteReference:
-        return RemoteReference(readValueOfType(buffer.getUint8(), buffer));
+        return PairedReference(readValueOfType(buffer.getUint8(), buffer));
       case _valueUnpairedReference:
         return UnpairedReference(
           readValueOfType(buffer.getUint8(), buffer),

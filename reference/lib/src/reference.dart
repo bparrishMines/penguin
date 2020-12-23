@@ -1,26 +1,30 @@
 import 'package:reference/reference.dart';
 
+/// A class that is can be represented by a [PairedReference].
 mixin Referencable<T extends Object> {
   ReferenceChannel<T> get referenceChannel;
 }
 
-/// Represents an object that is remotely accessible.
+/// Represents a paired object instance in a [ReferenceChannelManager].
 ///
-/// This is paired with a [LocalReference] in a [ReferencePairManager].
+/// When two [ReferenceChannelManager]s each maintain access to one of two
+/// paired objects, this class is used to represent both objects.
 ///
-/// Two [RemoteReference]s are equal if they share the same [referenceId].
-class RemoteReference {
-  const RemoteReference(this.referenceId);
+/// Two [PairedReference]s are equal if they share the same [referenceId].
+class PairedReference {
+  /// Default constructor for [PairedReference].
+  const PairedReference(this.referenceId);
 
-  /// Unique identifier used to retrieve the instance this represents from a remote [ReferencePairManager].
+  /// Unique identifier used to retrieve the instance this represents from a
+  /// [ReferenceChannelManager].
   ///
-  /// No two [RemoteReference]s in a [ReferencePairManager] can have the same
+  /// No two [PairedReference]s in a [ReferencePairManager] can have the same
   /// [referenceId].
   final String referenceId;
 
   @override
   bool operator ==(other) =>
-      other is RemoteReference && referenceId == other.referenceId;
+      other is PairedReference && referenceId == other.referenceId;
 
   @override
   int get hashCode => referenceId.hashCode;
@@ -31,19 +35,12 @@ class RemoteReference {
   }
 }
 
-/// Represents an object that is not paired like a [LocalReference] or [RemoteReference].
-///
-/// This acts as a replacement for a [LocalReference] that has no paired
-/// [RemoteReference] when a [ReferencePairManager] passes arguments to a
-/// [RemoteReferenceCommunicationHandler].
-///
-/// When passed to [ReferencePairManager.onReceiveInvokeMethod] or
-/// [ReferencePairManager.onReceiveInvokeMethodOnUnpairedReference], the
-/// [ReferencePairManager] will try to convert it into a [LocalReference] with
-/// [LocalReferenceCommunicationHandler.createInstance].
+/// Represents an object that is not paired to a specific object instance, but can be instantiated in a [ReferenceChannelManager].
 class UnpairedReference {
+  /// Default constructor for [UnpairedReference].
   const UnpairedReference(this.channelName, this.creationArguments);
 
+  /// Name of the [ReferenceChannel] used create this and handle instantiation.
   final String channelName;
 
   /// Arguments used to create the instance this represents.
