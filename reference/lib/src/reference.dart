@@ -1,6 +1,6 @@
 import 'package:reference/reference.dart';
 
-/// A class that is can be represented by a [PairedReference].
+/// A class that can be represented by a [PairedReference].
 mixin Referencable<T extends Object> {
   ReferenceChannel<T> get referenceChannel;
 }

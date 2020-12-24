@@ -6,13 +6,9 @@ import 'package:flutter/services.dart';
 import 'reference_channel.dart';
 import 'reference.dart';
 
-/// Abstract implementation of [RemoteReferenceMap] using [MethodChannel]s.
+/// Implementation of a [ReferenceChannelManager] using a [MethodChannel].
 class MethodChannelManager extends ReferenceChannelManager {
   /// Default constructor for [MethodChannelManager].
-  ///
-  /// If [poolId] is passed as `null`, it will be set to [channelName].
-  /// If [messageCodec] is passed as `null`, it will be set to
-  /// [ReferenceMessageCodec].
   MethodChannelManager(String channelName)
       : channel = MethodChannel(
           channelName,
@@ -27,10 +23,11 @@ class MethodChannelManager extends ReferenceChannelManager {
   static const String _methodUnpairedMethod = 'REFERENCE_UNPAIRED_METHOD';
   static const String _methodDispose = 'REFERENCE_DISPOSE';
 
+  /// Global manager maintained by reference plugin.
   static final MethodChannelManager instance =
       MethodChannelManager('github.penguin/reference');
 
-  /// [MethodChannel] used to communicate with a remote [RemoteReferenceMap].
+  /// [MethodChannel] used to communicate with the platform [ReferenceChannelManager].
   final MethodChannel channel;
 
   @override
@@ -77,14 +74,11 @@ class MethodChannelManager extends ReferenceChannelManager {
   }
 }
 
-/// Implementation of [MessageSender] for [MethodChannel]s.
-///
-/// Used in [MethodChannelManager] to handle communication with
-/// [PairedReference]s.
+/// Implementation of [ReferenceChannelMessenger] using a [MethodChannel].
 class MethodChannelMessenger with ReferenceChannelMessenger {
   MethodChannelMessenger(this.channel);
 
-  /// [MethodChannel] used to communicate with a remote [RemoteReferenceMap].
+  /// [MethodChannel] used to communicate with the platform [ReferenceChannelManager].
   final MethodChannel channel;
 
   @override
@@ -148,11 +142,12 @@ class MethodChannelMessenger with ReferenceChannelMessenger {
   }
 }
 
-/// Implementation of [StandardMessageCodec] that supports serializing [PairedReference]s and [UnpairedReference]s.
+/// Implementation of [StandardMessageCodec] supporting serialization of [PairedReference]s and [UnpairedReference]s.
 ///
 /// When extending, no int below 130 should be used as a key. See
 /// [StandardMessageCodec] for more info on extending a [StandardMessageCodec].
 class ReferenceMessageCodec extends StandardMessageCodec {
+  /// Default constructor for [ReferenceMessageCodec].
   const ReferenceMessageCodec();
 
   static const int _valueRemoteReference = 128;

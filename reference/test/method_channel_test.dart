@@ -286,7 +286,7 @@ class TestManager extends MethodChannelManager {
   late final TestHandler testHandler;
 
   @override
-  String getNewReferenceId() {
+  String generateUniqueReferenceId() {
     return 'test_reference_id';
   }
 }

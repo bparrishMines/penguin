@@ -2,19 +2,23 @@ import 'dart:collection';
 
 import 'reference.dart';
 
+/// Maintains reference pairs.
 class RemoteReferenceMap {
   final _remoteReferences = _BiMap<Object, PairedReference>();
 
+  /// Adds a reference pair.
   void add(Object instance, PairedReference remoteReference) {
     _remoteReferences[instance] = remoteReference;
   }
 
+  /// Remove a reference pair containing [object].
   PairedReference? removePairWithObject(Object object) {
     return _remoteReferences.remove(object);
   }
 
-  Object? removePairWithRemoteReference(PairedReference remoteReference) {
-    return _remoteReferences.inverse.remove(remoteReference);
+  /// Remove a reference pair containing [pairedReference].
+  Object? removePairWithRemoteReference(PairedReference pairedReference) {
+    return _remoteReferences.inverse.remove(pairedReference);
   }
 
   /// Retrieve the [PairedReference] paired with [instance].
@@ -24,15 +28,15 @@ class RemoteReferenceMap {
     return _remoteReferences[instance];
   }
 
-  /// Retrieve the [Object] paired with [remoteReference].
+  /// Retrieve the [Object] paired with [pairedReference].
   ///
-  /// Returns null if this [remoteReference] is not paired.
-  Object? getPairedObject(PairedReference remoteReference) {
-    return _remoteReferences.inverse[remoteReference];
+  /// Returns null if this [pairedReference] is not paired.
+  Object? getPairedObject(PairedReference pairedReference) {
+    return _remoteReferences.inverse[pairedReference];
   }
 }
 
-class _BiMap<K, V> extends MapBase<K, V> {
+class _BiMap<K extends Object, V extends Object> extends MapBase<K, V> {
   _BiMap() {
     _inverse = _BiMap<V, K>._inverse(this);
   }
@@ -49,8 +53,6 @@ class _BiMap<K, V> extends MapBase<K, V> {
 
   @override
   void operator []=(K key, V value) {
-    assert(key != null);
-    assert(value != null);
     assert(!_map.containsKey(key));
     assert(!inverse.containsKey(value));
     _map[key] = value;

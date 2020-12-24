@@ -168,7 +168,7 @@ class TestManager extends ReferenceChannelManager {
   final TestMessenger messenger = TestMessenger();
 
   @override
-  String getNewReferenceId() {
+  String generateUniqueReferenceId() {
     return 'test_reference_id';
   }
 }
