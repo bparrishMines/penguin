@@ -26,8 +26,9 @@ class PairedInstance {
   bool operator ==(other) =>
       other is PairedInstance && referenceId == other.referenceId;
 
+  // TODO: Avoid hash code collision with String value
   @override
-  int get hashCode => referenceId.hashCode & super.hashCode;
+  int get hashCode => referenceId.hashCode;
 
   @override
   String toString() {
