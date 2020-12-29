@@ -15,8 +15,8 @@ class $ClassTemplateCreationArgs {
   late int fieldTemplate;
 }
 
-class $ClassTemplateChannel extends ReferenceChannel<$ClassTemplate> {
-  $ClassTemplateChannel(ReferenceChannelManager manager)
+class $ClassTemplateChannel extends TypeChannel<$ClassTemplate> {
+  $ClassTemplateChannel(TypeChannelManager manager)
       : super(manager, 'github.penguin/template/template/ClassTemplate');
 
   Future<Object?> $invokeStaticMethodTemplate(String parameterTemplate) {
@@ -36,24 +36,24 @@ class $ClassTemplateChannel extends ReferenceChannel<$ClassTemplate> {
   }
 }
 
-class $ClassTemplateHandler implements ReferenceChannelHandler<$ClassTemplate> {
+class $ClassTemplateHandler implements TypeChannelHandler<$ClassTemplate> {
   $ClassTemplateHandler(
       {this.onCreate, this.onDispose, this.$onStaticMethodTemplate});
 
   final $ClassTemplate Function(
-          ReferenceChannelManager manager, $ClassTemplateCreationArgs args)?
+          TypeChannelManager manager, $ClassTemplateCreationArgs args)?
       onCreate;
 
-  final void Function(ReferenceChannelManager manager, $ClassTemplate instance)?
+  final void Function(TypeChannelManager manager, $ClassTemplate instance)?
       onDispose;
 
   final double Function(
-          ReferenceChannelManager manager, String parameterTemplate)?
+          TypeChannelManager manager, String parameterTemplate)?
       $onStaticMethodTemplate;
 
   @override
   Object? invokeStaticMethod(
-    ReferenceChannelManager manager,
+    TypeChannelManager manager,
     String methodName,
     List<Object?> arguments,
   ) {
@@ -76,7 +76,7 @@ class $ClassTemplateHandler implements ReferenceChannelHandler<$ClassTemplate> {
 
   @override
   List<Object?> getCreationArguments(
-    ReferenceChannelManager manager,
+    TypeChannelManager manager,
     $ClassTemplate instance,
   ) {
     return <Object>[instance.fieldTemplate];
@@ -84,7 +84,7 @@ class $ClassTemplateHandler implements ReferenceChannelHandler<$ClassTemplate> {
 
   @override
   $ClassTemplate createInstance(
-    ReferenceChannelManager manager,
+    TypeChannelManager manager,
     List<Object?> arguments,
   ) {
     return onCreate!(
@@ -95,7 +95,7 @@ class $ClassTemplateHandler implements ReferenceChannelHandler<$ClassTemplate> {
 
   @override
   Object? invokeMethod(
-    ReferenceChannelManager manager,
+    TypeChannelManager manager,
     $ClassTemplate instance,
     String methodName,
     List<Object?> arguments,
@@ -118,7 +118,7 @@ class $ClassTemplateHandler implements ReferenceChannelHandler<$ClassTemplate> {
 
   @override
   void onInstanceDisposed(
-    ReferenceChannelManager manager,
+    TypeChannelManager manager,
     $ClassTemplate instance,
   ) {
     if (onDispose != null) onDispose!(manager, instance);

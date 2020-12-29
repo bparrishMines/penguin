@@ -31,15 +31,15 @@ class _IsMethodCallWithMatchers extends Matcher with _DeepEquals {
 }
 
 // Extends isMethodCall in packager:test/test.dart to support matchers in arguments.
-Matcher isUnpairedReference(
+Matcher isUnpairedInstance(
   String channelName,
   List<Object> creationArguments,
 ) {
-  return _IsUnpairedReference(channelName, creationArguments);
+  return _IsUnpairedInstance(channelName, creationArguments);
 }
 
-class _IsUnpairedReference extends Matcher with _DeepEquals {
-  const _IsUnpairedReference(this.channelName, this.creationArguments);
+class _IsUnpairedInstance extends Matcher with _DeepEquals {
+  const _IsUnpairedInstance(this.channelName, this.creationArguments);
 
   final String channelName;
 
@@ -48,7 +48,7 @@ class _IsUnpairedReference extends Matcher with _DeepEquals {
   @override
   Description describe(Description description) {
     return description
-        .add(' Is an $UnpairedReference with channel name: ')
+        .add(' Is an $NewUnpairedInstance with channel name: ')
         .addDescriptionOf(channelName)
         .add(' and creation arguments: ')
         .addDescriptionOf(creationArguments);
@@ -56,10 +56,10 @@ class _IsUnpairedReference extends Matcher with _DeepEquals {
 
   @override
   bool matches(
-    covariant UnpairedReference item,
+    covariant NewUnpairedInstance item,
     Map<dynamic, dynamic> matchState,
   ) {
-    if (item is! UnpairedReference) return false;
+    if (item is! NewUnpairedInstance) return false;
     if (item.channelName != channelName) return false;
     return deepEquals(creationArguments, item.creationArguments, matchState);
   }

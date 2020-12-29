@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:reference/reference.dart';
 
 void main() {
-  group('$ReferenceChannelManager', () {
+  group('$TypeChannelManager', () {
     late TestManager testManager;
 
     setUp(() {
@@ -11,9 +11,9 @@ void main() {
 
     test('onReceiveCreateNewPair', () {
       expect(
-        testManager.onReceiveCreateNewPair(
+        testManager.onReceiveCreateNewInstancePair(
           'test_channel',
-          PairedReference('test_id'),
+          PairedInstance('test_id'),
           <Object>[],
         ),
         testManager.testHandler.testClassInstance,
@@ -23,9 +23,9 @@ void main() {
         isTrue,
       );
       expect(
-        testManager.onReceiveCreateNewPair(
+        testManager.onReceiveCreateNewInstancePair(
           '',
-          PairedReference('test_id'),
+          PairedInstance('test_id'),
           <Object>[],
         ),
         isNull,
@@ -44,7 +44,7 @@ void main() {
     });
 
     test('createUnpairedReference', () {
-      final UnpairedReference unpairedReference =
+      final NewUnpairedInstance unpairedReference =
           testManager.createUnpairedReference(
         'test_channel',
         TestClass(testManager),
@@ -54,16 +54,16 @@ void main() {
     });
 
     test('onReceiveInvokeMethod', () {
-      testManager.onReceiveCreateNewPair(
+      testManager.onReceiveCreateNewInstancePair(
         'test_channel',
-        PairedReference('test_id'),
+        PairedInstance('test_id'),
         <Object>[],
       );
 
       expect(
         testManager.onReceiveInvokeMethod(
           'test_channel',
-          PairedReference('test_id'),
+          PairedInstance('test_id'),
           'aMethod',
           <Object>[],
         ),
@@ -74,7 +74,7 @@ void main() {
     test('onReceiveInvokeMethodOnUnpairedReference', () {
       expect(
         testManager.onReceiveInvokeMethodOnUnpairedReference(
-          UnpairedReference('test_channel', <Object>[]),
+          NewUnpairedInstance('test_channel', <Object>[]),
           'aMethod',
           <Object>[],
         ),
@@ -83,14 +83,14 @@ void main() {
     });
 
     test('onReceiveDisposePair', () {
-      testManager.onReceiveCreateNewPair(
+      testManager.onReceiveCreateNewInstancePair(
         'test_channel',
-        PairedReference('test_id'),
+        PairedInstance('test_id'),
         <Object>[],
       );
       testManager.onReceiveDisposePair(
         'test_channel',
-        PairedReference('test_id'),
+        PairedInstance('test_id'),
       );
       expect(
         testManager.isPaired(testManager.testHandler.testClassInstance),
@@ -99,23 +99,23 @@ void main() {
     });
   });
 
-  group('$ReferenceChannel', () {
+  group('$TypeChannel', () {
     late TestManager testManager;
-    late ReferenceChannel<TestClass> testChannel;
+    late TypeChannel<TestClass> testChannel;
 
     setUp(() {
       testManager = TestManager();
-      testChannel = ReferenceChannel<TestClass>(testManager, 'test_channel');
+      testChannel = TypeChannel<TestClass>(testManager, 'test_channel');
     });
 
     test('createNewPair', () {
       final TestClass testClass = TestClass(testManager);
 
       expect(
-        testChannel.createNewPair(testClass),
-        completion(PairedReference('test_reference_id')),
+        testChannel.createNewInstancePair(testClass),
+        completion(PairedInstance('test_reference_id')),
       );
-      expect(testChannel.createNewPair(testClass), completion(isNull));
+      expect(testChannel.createNewInstancePair(testClass), completion(isNull));
     });
 
     test('invokeStaticMethod', () {
@@ -128,7 +128,7 @@ void main() {
     test('invokeMethod', () {
       final TestClass testClass = TestClass(testManager);
 
-      testChannel.createNewPair(testClass);
+      testChannel.createNewInstancePair(testClass);
       expect(
         testChannel.invokeMethod(testClass, 'aMethod', <Object>[]),
         completion('return_value'),
@@ -149,14 +149,14 @@ void main() {
     test('disposePair', () {
       final testClass = TestClass(testManager);
 
-      testChannel.createNewPair(testClass);
+      testChannel.createNewInstancePair(testClass);
       expect(testChannel.disposePair(testClass), completes);
       expect(testManager.isPaired(testClass), isFalse);
     });
   });
 }
 
-class TestManager extends ReferenceChannelManager {
+class TestManager extends TypeChannelManager {
   TestManager() {
     testHandler = TestHandler(this);
     registerHandler('test_channel', testHandler);
@@ -173,14 +173,14 @@ class TestManager extends ReferenceChannelManager {
   }
 }
 
-class TestHandler with ReferenceChannelHandler<TestClass> {
+class TestHandler with TypeChannelHandler<TestClass> {
   TestHandler(TestManager manager) : testClassInstance = TestClass(manager);
 
   final TestClass testClassInstance;
 
   @override
   TestClass createInstance(
-    ReferenceChannelManager manager,
+    TypeChannelManager manager,
     List<Object?> arguments,
   ) {
     return testClassInstance;
@@ -188,7 +188,7 @@ class TestHandler with ReferenceChannelHandler<TestClass> {
 
   @override
   List<Object?> getCreationArguments(
-    ReferenceChannelManager manager,
+    TypeChannelManager manager,
     TestClass instance,
   ) {
     return <Object?>[];
@@ -196,7 +196,7 @@ class TestHandler with ReferenceChannelHandler<TestClass> {
 
   @override
   Object? invokeMethod(
-    ReferenceChannelManager manager,
+    TypeChannelManager manager,
     TestClass instance,
     String methodName,
     List<Object?> arguments,
@@ -206,7 +206,7 @@ class TestHandler with ReferenceChannelHandler<TestClass> {
 
   @override
   Object? invokeStaticMethod(
-    ReferenceChannelManager manager,
+    TypeChannelManager manager,
     String methodName,
     List<Object?> arguments,
   ) {
@@ -214,23 +214,23 @@ class TestHandler with ReferenceChannelHandler<TestClass> {
   }
 }
 
-class TestMessenger with ReferenceChannelMessenger {
+class TestMessenger with TypeChannelMessenger {
   @override
-  Future<void> sendCreateNewPair(String handlerChannel,
-      PairedReference remoteReference, List<Object?> arguments) {
+  Future<void> sendCreateNewInstancePair(String handlerChannel,
+      PairedInstance remoteReference, List<Object?> arguments) {
     return Future<void>.value();
   }
 
   @override
   Future<void> sendDisposePair(
-      String channelName, PairedReference remoteReference) {
+      String channelName, PairedInstance remoteReference) {
     return Future<void>.value();
   }
 
   @override
   Future<Object?> sendInvokeMethod(
     String handlerChannel,
-    PairedReference remoteReference,
+    PairedInstance remoteReference,
     String methodName,
     List<Object?> arguments,
   ) {
@@ -239,7 +239,7 @@ class TestMessenger with ReferenceChannelMessenger {
 
   @override
   Future<Object?> sendInvokeMethodOnUnpairedReference(
-    UnpairedReference unpairedReference,
+    NewUnpairedInstance unpairedReference,
     String methodName,
     List<Object?> arguments,
   ) {
@@ -256,13 +256,13 @@ class TestMessenger with ReferenceChannelMessenger {
   }
 }
 
-class TestClass with Referencable<TestClass> {
+class TestClass with PairableInstance<TestClass> {
   TestClass(this.manager);
 
-  final ReferenceChannelManager manager;
+  final TypeChannelManager manager;
 
   @override
-  ReferenceChannel<TestClass> get referenceChannel => ReferenceChannel(
+  TypeChannel<TestClass> get typeChannel => TypeChannel<TestClass>(
         manager,
         'test_channel',
       );

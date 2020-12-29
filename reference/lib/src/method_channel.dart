@@ -3,11 +3,11 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
-import 'reference_channel.dart';
-import 'reference.dart';
+import 'type_channel.dart';
+import 'instance.dart';
 
-/// Implementation of a [ReferenceChannelManager] using a [MethodChannel].
-class MethodChannelManager extends ReferenceChannelManager {
+/// Implementation of a [TypeChannelManager] using a [MethodChannel].
+class MethodChannelManager extends TypeChannelManager {
   /// Default constructor for [MethodChannelManager].
   MethodChannelManager(String channelName)
       : channel = MethodChannel(
@@ -27,7 +27,7 @@ class MethodChannelManager extends ReferenceChannelManager {
   static final MethodChannelManager instance =
       MethodChannelManager('github.penguin/reference');
 
-  /// [MethodChannel] used to communicate with the platform [ReferenceChannelManager].
+  /// [MethodChannel] used to communicate with the platform [TypeChannelManager].
   final MethodChannel channel;
 
   @override
@@ -36,7 +36,7 @@ class MethodChannelManager extends ReferenceChannelManager {
   Future<dynamic> _handleMethodCall(MethodCall call) async {
     try {
       if (call.method == MethodChannelManager._methodCreate) {
-        onReceiveCreateNewPair(
+        onReceiveCreateNewInstancePair(
           call.arguments[0],
           call.arguments[1],
           call.arguments[2],
@@ -74,17 +74,17 @@ class MethodChannelManager extends ReferenceChannelManager {
   }
 }
 
-/// Implementation of [ReferenceChannelMessenger] using a [MethodChannel].
-class MethodChannelMessenger with ReferenceChannelMessenger {
+/// Implementation of [TypeChannelMessenger] using a [MethodChannel].
+class MethodChannelMessenger with TypeChannelMessenger {
   MethodChannelMessenger(this.channel);
 
-  /// [MethodChannel] used to communicate with the platform [ReferenceChannelManager].
+  /// [MethodChannel] used to communicate with a platform [TypeChannelManager].
   final MethodChannel channel;
 
   @override
-  Future<void> sendCreateNewPair(
+  Future<void> sendCreateNewInstancePair(
     String handlerChannel,
-    PairedReference remoteReference,
+    PairedInstance remoteReference,
     List<Object?> arguments,
   ) {
     return channel.invokeMethod<void>(
@@ -108,7 +108,7 @@ class MethodChannelMessenger with ReferenceChannelMessenger {
   @override
   Future<Object?> sendInvokeMethod(
     String handlerChannel,
-    PairedReference remoteReference,
+    PairedInstance remoteReference,
     String methodName,
     List<Object?> arguments,
   ) {
@@ -120,7 +120,7 @@ class MethodChannelMessenger with ReferenceChannelMessenger {
 
   @override
   Future<Object?> sendInvokeMethodOnUnpairedReference(
-    UnpairedReference unpairedReference,
+    NewUnpairedInstance unpairedReference,
     String methodName,
     List<Object?> arguments,
   ) {
@@ -133,7 +133,7 @@ class MethodChannelMessenger with ReferenceChannelMessenger {
   @override
   Future<void> sendDisposePair(
     String handlerChannel,
-    PairedReference remoteReference,
+    PairedInstance remoteReference,
   ) {
     return channel.invokeMethod<void>(
       MethodChannelManager._methodDispose,
@@ -142,7 +142,10 @@ class MethodChannelMessenger with ReferenceChannelMessenger {
   }
 }
 
-/// Implementation of [StandardMessageCodec] supporting serialization of [PairedReference]s and [UnpairedReference]s.
+/// Implementation of [StandardMessageCodec] for reference plugin.
+/// 
+/// Adds support for serialization of [PairedInstance]s and
+/// [NewUnpairedInstance]s.
 ///
 /// When extending, no int below 130 should be used as a key. See
 /// [StandardMessageCodec] for more info on extending a [StandardMessageCodec].
@@ -150,16 +153,16 @@ class ReferenceMessageCodec extends StandardMessageCodec {
   /// Default constructor for [ReferenceMessageCodec].
   const ReferenceMessageCodec();
 
-  static const int _valueRemoteReference = 128;
-  static const int _valueUnpairedReference = 129;
+  static const int _valuePairedInstance = 128;
+  static const int _valueNewUnpairedInstance = 129;
 
   @override
   void writeValue(WriteBuffer buffer, dynamic value) {
-    if (value is PairedReference) {
-      buffer.putUint8(_valueRemoteReference);
+    if (value is PairedInstance) {
+      buffer.putUint8(_valuePairedInstance);
       writeValue(buffer, value.referenceId);
-    } else if (value is UnpairedReference) {
-      buffer.putUint8(_valueUnpairedReference);
+    } else if (value is NewUnpairedInstance) {
+      buffer.putUint8(_valueNewUnpairedInstance);
       writeValue(buffer, value.channelName);
       writeValue(buffer, value.creationArguments);
     } else {
@@ -170,10 +173,10 @@ class ReferenceMessageCodec extends StandardMessageCodec {
   @override
   dynamic readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case _valueRemoteReference:
-        return PairedReference(readValueOfType(buffer.getUint8(), buffer));
-      case _valueUnpairedReference:
-        return UnpairedReference(
+      case _valuePairedInstance:
+        return PairedInstance(readValueOfType(buffer.getUint8(), buffer));
+      case _valueNewUnpairedInstance:
+        return NewUnpairedInstance(
           readValueOfType(buffer.getUint8(), buffer),
           readValueOfType(buffer.getUint8(), buffer),
         );

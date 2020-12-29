@@ -14,7 +14,7 @@ class ClassTemplate with $ClassTemplate {
   )..setHandler(
       $ClassTemplateHandler(
         onCreate: (
-          ReferenceChannelManager manager,
+          TypeChannelManager manager,
           $ClassTemplateCreationArgs args,
         ) {
           return ClassTemplate(args.fieldTemplate);

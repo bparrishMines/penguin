@@ -1,12 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
-//import 'package:mockito/mockito.dart';
 import 'package:reference/reference.dart';
 
 import 'reference_matchers.dart';
 
 void main() {
-  group('$StandardReferenceConverter', () {
-    final StandardReferenceConverter converter = StandardReferenceConverter();
+  group('$StandardInstanceConverter', () {
+    final StandardInstanceConverter converter = StandardInstanceConverter();
     late TestManager testManager;
 
     setUp(() {
@@ -14,8 +13,8 @@ void main() {
     });
 
     test('convertForRemoteManager handles paired Object', () {
-      final PairedReference remoteReference = PairedReference('test_id');
-      testManager.onReceiveCreateNewPair(
+      final PairedInstance remoteReference = PairedInstance('test_id');
+      testManager.onReceiveCreateNewInstancePair(
         'test_channel',
         remoteReference,
         <Object>[],
@@ -28,23 +27,23 @@ void main() {
       );
     });
 
-    test('convertForRemoteManager handles unpaired $Referencable', () {
+    test('convertForRemoteManager handles unpaired $PairableInstance', () {
       expect(
         converter.convertForRemoteManager(testManager, TestClass(testManager)),
-        isUnpairedReference('test_channel', <Object>[]),
+        isUnpairedInstance('test_channel', <Object>[]),
       );
     });
 
-    test('convertForRemoteManager handles unpaired non-$Referencable', () {
+    test('convertForRemoteManager handles unpaired non-$PairableInstance', () {
       expect(
         converter.convertForRemoteManager(testManager, 'potato'),
         equals('potato'),
       );
     });
 
-    test('convertForLocalManager handles $PairedReference', () {
-      final PairedReference remoteReference = PairedReference('test_id');
-      testManager.onReceiveCreateNewPair(
+    test('convertForLocalManager handles $PairedInstance', () {
+      final PairedInstance remoteReference = PairedInstance('test_id');
+      testManager.onReceiveCreateNewInstancePair(
         'test_channel',
         remoteReference,
         <Object>[],
@@ -56,16 +55,16 @@ void main() {
       );
     });
 
-    test('convertForLocalManager handles $UnpairedReference', () async {
+    test('convertForLocalManager handles $NewUnpairedInstance', () async {
       converter.convertForLocalManager(
         testManager,
-        UnpairedReference('test_channel', <Object>[]),
+        NewUnpairedInstance('test_channel', <Object>[]),
       );
     });
   });
 }
 
-class TestManager extends ReferenceChannelManager {
+class TestManager extends TypeChannelManager {
   TestManager() {
     testHandler = TestHandler(this);
     registerHandler('test_channel', testHandler);
@@ -74,17 +73,17 @@ class TestManager extends ReferenceChannelManager {
   late final TestHandler testHandler;
 
   @override
-  ReferenceChannelMessenger get messenger => throw UnimplementedError();
+  TypeChannelMessenger get messenger => throw UnimplementedError();
 }
 
-class TestHandler with ReferenceChannelHandler<TestClass> {
+class TestHandler with TypeChannelHandler<TestClass> {
   TestHandler(TestManager manager) : testClassInstance = TestClass(manager);
 
   final TestClass testClassInstance;
 
   @override
   TestClass createInstance(
-    ReferenceChannelManager manager,
+    TypeChannelManager manager,
     List<Object?> arguments,
   ) {
     return testClassInstance;
@@ -92,30 +91,30 @@ class TestHandler with ReferenceChannelHandler<TestClass> {
 
   @override
   List<Object?> getCreationArguments(
-      ReferenceChannelManager manager, TestClass instance) {
+      TypeChannelManager manager, TestClass instance) {
     return <Object?>[];
   }
 
   @override
-  Object? invokeMethod(ReferenceChannelManager manager, TestClass instance,
+  Object? invokeMethod(TypeChannelManager manager, TestClass instance,
       String methodName, List<Object?> arguments) {
     return 'return_value';
   }
 
   @override
-  Object? invokeStaticMethod(ReferenceChannelManager manager, String methodName,
+  Object? invokeStaticMethod(TypeChannelManager manager, String methodName,
       List<Object?> arguments) {
     return 'return_value';
   }
 }
 
-class TestClass with Referencable<TestClass> {
+class TestClass with PairableInstance<TestClass> {
   TestClass(this.manager);
 
-  final ReferenceChannelManager manager;
+  final TypeChannelManager manager;
 
   @override
-  ReferenceChannel<TestClass> get referenceChannel => ReferenceChannel(
+  TypeChannel<TestClass> get typeChannel => TypeChannel<TestClass>(
         manager,
         'test_channel',
       );
