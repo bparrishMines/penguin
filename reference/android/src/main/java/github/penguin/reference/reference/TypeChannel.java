@@ -5,54 +5,58 @@ import github.penguin.reference.async.Completable;
 import github.penguin.reference.async.Completer;
 import java.util.List;
 
-public class ReferenceChannel<T> {
-  @NonNull public final ReferenceChannelManager manager;
-  @NonNull public final String channelName;
+public class TypeChannel<T> {
+  @NonNull public final TypeChannelManager manager;
+  @NonNull public final String name;
 
-  public ReferenceChannel(@NonNull ReferenceChannelManager manager, @NonNull String channelName) {
+  public TypeChannel(@NonNull TypeChannelManager manager, @NonNull String name) {
     this.manager = manager;
-    this.channelName = channelName;
+    this.name = name;
   }
 
-  public void registerHandler(ReferenceChannelHandler<T> handler) {
-    manager.registerHandler(channelName, handler);
+  public void setHandler(TypeChannelHandler<T> handler) {
+    manager.registerHandler(name, handler);
+  }
+  
+  NewUnpairedInstance createUnpairedInstance(T instance) {
+    return manager.createUnpairedReference(name, instance);
   }
 
-  public Completable<RemoteReference> createNewPair(T instance) {
+  public Completable<PairedInstance> createNewInstancePair(T instance) {
     if (manager.isPaired(instance)) return null;
 
-    final Completer<RemoteReference> referenceCompleter = new Completer<>();
-    final RemoteReference remoteReference = new RemoteReference(manager.getNewReferenceId());
+    final Completer<PairedInstance> instanceCompleter = new Completer<>();
+    final PairedInstance pairedInstance = new PairedInstance(manager.generateUniqueReferenceId());
 
-    manager.referencePairs.add(instance, remoteReference);
+    manager.instancePairs.add(instance, pairedInstance);
 
     manager
         .getMessenger()
-        .sendCreateNewPair(
-            channelName,
-            remoteReference,
+        .sendCreateNewInstancePair(
+            name,
+            pairedInstance,
             (List<Object>)
                 manager
                     .getConverter()
                     .convertForRemoteManager(
                         manager,
                         manager
-                            .getChannelHandler(channelName)
+                            .getChannelHandler(name)
                             .getCreationArguments(manager, instance)))
         .setOnCompleteListener(
             new Completable.OnCompleteListener<Void>() {
               @Override
               public void onComplete(Void result) {
-                referenceCompleter.complete(remoteReference);
+                instanceCompleter.complete(pairedInstance);
               }
 
               @Override
               public void onError(Throwable throwable) {
-                referenceCompleter.completeWithError(throwable);
+                instanceCompleter.completeWithError(throwable);
               }
             });
 
-    return referenceCompleter.completable;
+    return instanceCompleter.completable;
   }
 
   public Completable<Object> invokeStaticMethod(String methodName, List<Object> arguments) {
@@ -61,7 +65,7 @@ public class ReferenceChannel<T> {
     manager
         .getMessenger()
         .sendInvokeStaticMethod(
-            channelName,
+            name,
             methodName,
             (List<Object>) manager.getConverter().convertForRemoteManager(manager, arguments))
         .setOnCompleteListener(
@@ -86,13 +90,17 @@ public class ReferenceChannel<T> {
   }
 
   public Completable<Object> invokeMethod(T instance, String methodName, List<Object> arguments) {
+    if (!manager.isPaired(instance)) {
+      return invokeMethodOnUnpairedReference(instance, methodName, arguments);
+    }
+      
     final Completer<Object> returnCompleter = new Completer<>();
 
     manager
         .getMessenger()
         .sendInvokeMethod(
-            channelName,
-            manager.referencePairs.getPairedRemoteReference(instance),
+            name,
+            manager.instancePairs.getPairedPairedInstance(instance),
             methodName,
             (List<Object>) manager.getConverter().convertForRemoteManager(manager, arguments))
         .setOnCompleteListener(
@@ -116,14 +124,14 @@ public class ReferenceChannel<T> {
     return returnCompleter.completable;
   }
 
-  public Completable<Object> invokeMethodOnUnpairedReference(
+  private Completable<Object> invokeMethodOnUnpairedReference(
       Object object, String methodName, List<Object> arguments) {
     final Completer<Object> returnCompleter = new Completer<>();
 
     manager
         .getMessenger()
         .sendInvokeMethodOnUnpairedReference(
-            manager.createUnpairedReference(channelName, object),
+            manager.createUnpairedReference(name, object),
             methodName,
             (List<Object>) manager.getConverter().convertForRemoteManager(manager, arguments))
         .setOnCompleteListener(
@@ -148,11 +156,11 @@ public class ReferenceChannel<T> {
   }
 
   public Completable<Void> disposePair(Object instance) {
-    final RemoteReference remoteReference =
-        manager.referencePairs.getPairedRemoteReference(instance);
-    if (remoteReference == null) return null;
+    final PairedInstance pairedInstance =
+        manager.instancePairs.getPairedPairedInstance(instance);
+    if (pairedInstance == null) return null;
 
-    manager.referencePairs.removePairWithObject(instance);
-    return manager.getMessenger().sendDisposePair(channelName, remoteReference);
+    manager.instancePairs.removePairWithObject(instance);
+    return manager.getMessenger().sendDisposePair(name, pairedInstance);
   }
 }

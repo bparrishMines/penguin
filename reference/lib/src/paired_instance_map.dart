@@ -24,7 +24,7 @@ class PairedInstanceMap {
   /// Retrieve the [PairedInstance] paired with [instance].
   ///
   /// Returns null if this [instance] is not paired.
-  PairedInstance? getPairedInstance(Object instance) {
+  PairedInstance? getPairedPairedInstance(Object instance) {
     return _pairedInstances[instance];
   }
 

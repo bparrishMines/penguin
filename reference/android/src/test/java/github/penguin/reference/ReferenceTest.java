@@ -18,10 +18,10 @@ import static org.mockito.Mockito.when;
 
 import github.penguin.reference.async.Completable;
 import github.penguin.reference.async.Completer;
-import github.penguin.reference.reference.ReferenceConverter;
-import github.penguin.reference.reference.ReferenceConverter.StandardReferenceConverter;
-import github.penguin.reference.reference.RemoteReference;
-import github.penguin.reference.reference.UnpairedReference;
+import github.penguin.reference.reference.PairedInstance;
+import github.penguin.reference.reference.InstanceConverter;
+import github.penguin.reference.reference.InstanceConverter.StandardInstanceConverter;
+import github.penguin.reference.reference.NewUnpairedInstance;
 import java.util.Collections;
 import java.util.List;
 import org.junit.Before;
@@ -53,13 +53,13 @@ public class ReferenceTest {
   private static class TestReferencePairManager {
     private final LocalReferenceCommunicationHandler localHandler;
     private final RemoteReferenceCommunicationHandler remoteHandler;
-    private final StandardReferenceConverter converter;
+    private final StandardInstanceConverter converter;
 
     private TestReferencePairManager() {
       super(Collections.<Class<? extends LocalReference>>singletonList(TestClass.class));
       this.localHandler = mock(LocalReferenceCommunicationHandler.class);
       this.remoteHandler = mock(RemoteReferenceCommunicationHandler.class);
-      this.converter = spy(new StandardReferenceConverter());
+      this.converter = spy(new StandardInstanceConverter());
     }
 
     @Override
@@ -73,7 +73,7 @@ public class ReferenceTest {
     }
 
     @Override
-    public ReferenceConverter getConverter() {
+    public InstanceConverter getConverter() {
       return converter;
     }
   }
@@ -124,10 +124,10 @@ public class ReferenceTest {
         .thenReturn(new TestClass());
 
     final TestClass result =
-        (TestClass) testManager.pairWithNewLocalReference(new RemoteReference("apple"), 0);
+        (TestClass) testManager.pairWithNewLocalReference(new PairedInstance("apple"), 0);
 
-    assertEquals(testManager.getPairedLocalReference(new RemoteReference("apple")), result);
-    assertEquals(testManager.getPairedRemoteReference(result), new RemoteReference("apple"));
+    assertEquals(testManager.getPairedLocalReference(new PairedInstance("apple")), result);
+    assertEquals(testManager.getPairedRemoteReference(result), new PairedInstance("apple"));
 
     verify(testManager.converter).convertForLocalManager(eq(testManager), anyList());
     verify(testManager.localHandler).create(eq(testManager), eq(TestClass.class), anyList());
@@ -138,8 +138,8 @@ public class ReferenceTest {
     when(testManager.localHandler.create(eq(testManager), eq(TestClass.class), anyList()))
         .thenReturn(new TestClass());
 
-    testManager.pairWithNewLocalReference(new RemoteReference("apple"), 0);
-    assertNull(testManager.pairWithNewLocalReference(new RemoteReference("apple"), 0));
+    testManager.pairWithNewLocalReference(new PairedInstance("apple"), 0);
+    assertNull(testManager.pairWithNewLocalReference(new PairedInstance("apple"), 0));
   }
 
   @Test
@@ -158,7 +158,7 @@ public class ReferenceTest {
         .thenReturn(new TestClass());
 
     final LocalReference localReference =
-        testManager.pairWithNewLocalReference(new RemoteReference("chi"), 0);
+        testManager.pairWithNewLocalReference(new PairedInstance("chi"), 0);
     reset(testManager.converter);
 
     testManager.invokeLocalMethod(localReference, "aMethod");
@@ -175,7 +175,7 @@ public class ReferenceTest {
         .thenReturn(new TestClass());
 
     testManager.invokeLocalMethodOnUnpairedReference(
-        new UnpairedReference(0, Collections.emptyList()), "aMethod");
+        new NewUnpairedInstance(0, Collections.emptyList()), "aMethod");
 
     verify(testManager.localHandler)
         .invokeMethod(eq(testManager), (LocalReference) notNull(), eq("aMethod"), anyList());
@@ -193,11 +193,11 @@ public class ReferenceTest {
             });
 
     final TestClass testClass =
-        (TestClass) testManager.pairWithNewLocalReference(new RemoteReference("tea"), 0);
-    testManager.disposePairWithRemoteReference(new RemoteReference("tea"));
+        (TestClass) testManager.pairWithNewLocalReference(new PairedInstance("tea"), 0);
+    testManager.disposePairWithRemoteReference(new PairedInstance("tea"));
 
     verify(testManager.localHandler).dispose(testManager, testClass);
-    assertNull(testManager.getPairedLocalReference(new RemoteReference("tea")));
+    assertNull(testManager.getPairedLocalReference(new PairedInstance("tea")));
     assertNull(testManager.getPairedRemoteReference(testClass));
   }
 
@@ -209,19 +209,19 @@ public class ReferenceTest {
     when(testManager.remoteHandler.getCreationArguments(testClass))
         .thenReturn(Collections.emptyList());
 
-    when(testManager.remoteHandler.create(any(RemoteReference.class), eq(0), anyList()))
+    when(testManager.remoteHandler.create(any(PairedInstance.class), eq(0), anyList()))
         .thenReturn(new Completer<Void>().complete(null).completable);
 
     final Completable.OnCompleteListener mockListener = mock(Completable.OnCompleteListener.class);
     testManager.pairWithNewRemoteReference(testClass).setOnCompleteListener(mockListener);
-    final RemoteReference remoteReference = testManager.getPairedRemoteReference(testClass);
+    final PairedInstance pairedInstance = testManager.getPairedRemoteReference(testClass);
 
-    verify(mockListener).onComplete(remoteReference);
-    assertEquals(testManager.getPairedLocalReference(remoteReference), testClass);
-    assertEquals(testManager.getPairedRemoteReference(testClass), remoteReference);
+    verify(mockListener).onComplete(pairedInstance);
+    assertEquals(testManager.getPairedLocalReference(pairedInstance), testClass);
+    assertEquals(testManager.getPairedRemoteReference(testClass), pairedInstance);
 
     verify(testManager.converter).convertForRemoteManager(eq(testManager), anyList());
-    verify(testManager.remoteHandler).create(eq(remoteReference), eq(0), anyList());
+    verify(testManager.remoteHandler).create(eq(pairedInstance), eq(0), anyList());
   }
 
   @SuppressWarnings("unchecked")
@@ -232,7 +232,7 @@ public class ReferenceTest {
     when(testManager.remoteHandler.getCreationArguments(testClass))
         .thenReturn(Collections.emptyList());
 
-    when(testManager.remoteHandler.create(any(RemoteReference.class), eq(0), anyList()))
+    when(testManager.remoteHandler.create(any(PairedInstance.class), eq(0), anyList()))
         .thenReturn(new Completer<Void>().complete(null).completable);
 
     testManager.pairWithNewRemoteReference(testClass);
@@ -258,38 +258,38 @@ public class ReferenceTest {
   public void referencePairManager_invokeRemoteMethod() throws Exception {
     final TestClass testClass = new TestClass();
 
-    when(testManager.remoteHandler.create(any(RemoteReference.class), eq(0), anyList()))
+    when(testManager.remoteHandler.create(any(PairedInstance.class), eq(0), anyList()))
         .thenReturn(new Completer<Void>().complete(null).completable);
 
     when(testManager.remoteHandler.invokeMethod(
-            any(RemoteReference.class), eq("aMethod"), anyList()))
+            any(PairedInstance.class), eq("aMethod"), anyList()))
         .thenReturn(new Completer<>().complete(null).completable);
 
     testManager.pairWithNewRemoteReference(testClass);
     reset(testManager.converter);
 
-    final RemoteReference remoteReference = testManager.getPairedRemoteReference(testClass);
-    testManager.invokeRemoteMethod(remoteReference, "aMethod");
+    final PairedInstance pairedInstance = testManager.getPairedRemoteReference(testClass);
+    testManager.invokeRemoteMethod(pairedInstance, "aMethod");
 
     verify(testManager.converter).convertForRemoteManager(eq(testManager), anyList());
-    verify(testManager.remoteHandler).invokeMethod(eq(remoteReference), eq("aMethod"), anyList());
+    verify(testManager.remoteHandler).invokeMethod(eq(pairedInstance), eq("aMethod"), anyList());
     verify(testManager.converter).convertForLocalManager(eq(testManager), isNull());
   }
 
   @Test
   public void referencePairManager_invokeRemoteMethodOnUnpairedReference() throws Exception {
-    when(testManager.remoteHandler.create(any(RemoteReference.class), eq(0), anyList()))
+    when(testManager.remoteHandler.create(any(PairedInstance.class), eq(0), anyList()))
         .thenReturn(new Completer<Void>().complete(null).completable);
 
     when(testManager.remoteHandler.invokeMethodOnUnpairedReference(
-            any(UnpairedReference.class), eq("aMethod"), anyList()))
+            any(NewUnpairedInstance.class), eq("aMethod"), anyList()))
         .thenReturn(new Completer<>().complete(null).completable);
 
     testManager.invokeRemoteMethodOnUnpairedReference(new TestClass(), "aMethod");
 
     verify(testManager.converter, times(2)).convertForRemoteManager(eq(testManager), anyList());
     verify(testManager.remoteHandler)
-        .invokeMethodOnUnpairedReference(any(UnpairedReference.class), eq("aMethod"), anyList());
+        .invokeMethodOnUnpairedReference(any(NewUnpairedInstance.class), eq("aMethod"), anyList());
     verify(testManager.converter).convertForLocalManager(eq(testManager), isNull());
   }
 
@@ -297,17 +297,17 @@ public class ReferenceTest {
   public void referencePairManager_disposePairWithLocalReference() {
     final TestClass testClass = new TestClass();
 
-    when(testManager.remoteHandler.create(any(RemoteReference.class), eq(0), anyList()))
+    when(testManager.remoteHandler.create(any(PairedInstance.class), eq(0), anyList()))
         .thenReturn(new Completer<Void>().complete(null).completable);
 
     testManager.pairWithNewRemoteReference(testClass);
-    final RemoteReference remoteReference = testManager.getPairedRemoteReference(testClass);
+    final PairedInstance pairedInstance = testManager.getPairedRemoteReference(testClass);
 
     testManager.disposePairWithLocalReference(testClass);
 
-    verify(testManager.remoteHandler).dispose(remoteReference);
+    verify(testManager.remoteHandler).dispose(pairedInstance);
 
-    assertNull(testManager.getPairedLocalReference(remoteReference));
+    assertNull(testManager.getPairedLocalReference(pairedInstance));
     assertNull(testManager.getPairedRemoteReference(testClass));
   }
 

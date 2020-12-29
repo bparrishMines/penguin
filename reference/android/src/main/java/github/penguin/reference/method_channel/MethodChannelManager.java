@@ -1,10 +1,10 @@
 package github.penguin.reference.method_channel;
 
 import androidx.annotation.NonNull;
-import github.penguin.reference.reference.ReferenceChannelManager;
-import github.penguin.reference.reference.ReferenceChannelMessenger;
-import github.penguin.reference.reference.RemoteReference;
-import github.penguin.reference.reference.UnpairedReference;
+import github.penguin.reference.reference.PairedInstance;
+import github.penguin.reference.reference.TypeChannelManager;
+import github.penguin.reference.reference.TypeChannelMessenger;
+import github.penguin.reference.reference.NewUnpairedInstance;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
@@ -12,7 +12,7 @@ import io.flutter.plugin.common.MethodCodec;
 import io.flutter.plugin.common.StandardMethodCodec;
 import java.util.List;
 
-public class MethodChannelReferenceChannelManager extends ReferenceChannelManager {
+public class MethodChannelManager extends TypeChannelManager {
   static final String METHOD_CREATE = "REFERENCE_CREATE";
   static final String METHOD_STATIC_METHOD = "REFERENCE_STATIC_METHOD";
   static final String METHOD_METHOD = "REFERENCE_METHOD";
@@ -24,7 +24,7 @@ public class MethodChannelReferenceChannelManager extends ReferenceChannelManage
   public final MethodCodec methodCodec;
   public final MethodChannel channel;
 
-  public MethodChannelReferenceChannelManager(
+  public MethodChannelManager(
       final BinaryMessenger binaryMessenger, final String channelName) {
     this.binaryMessenger = binaryMessenger;
     this.channelName = channelName;
@@ -40,9 +40,9 @@ public class MethodChannelReferenceChannelManager extends ReferenceChannelManage
                 case METHOD_CREATE:
                   {
                     final List<Object> arguments = (List<Object>) call.arguments;
-                    onReceiveCreateNewPair(
+                    onReceiveCreateNewInstancePair(
                         (String) arguments.get(0),
-                        (RemoteReference) arguments.get(1),
+                        (PairedInstance) arguments.get(1),
                         (List<Object>) arguments.get(2));
                     callResult.success(null);
                     break;
@@ -64,7 +64,7 @@ public class MethodChannelReferenceChannelManager extends ReferenceChannelManage
                     final Object result =
                         onReceiveInvokeMethod(
                             (String) arguments.get(0),
-                            (RemoteReference) arguments.get(1),
+                            (PairedInstance) arguments.get(1),
                             (String) arguments.get(2),
                             (List<Object>) arguments.get(3));
                     callResult.success(result);
@@ -75,7 +75,7 @@ public class MethodChannelReferenceChannelManager extends ReferenceChannelManage
                     final List<Object> arguments = (List<Object>) call.arguments;
                     final Object result =
                         onReceiveInvokeMethodOnUnpairedReference(
-                            (UnpairedReference) arguments.get(0),
+                            (NewUnpairedInstance) arguments.get(0),
                             (String) arguments.get(1),
                             (List<Object>) arguments.get(2));
                     callResult.success(result);
@@ -84,7 +84,7 @@ public class MethodChannelReferenceChannelManager extends ReferenceChannelManage
                 case METHOD_DISPOSE:
                   final List<Object> arguments = (List<Object>) call.arguments;
                   onReceiveDisposePair(
-                      (String) arguments.get(0), (RemoteReference) arguments.get(1));
+                      (String) arguments.get(0), (PairedInstance) arguments.get(1));
                   callResult.success(null);
                   break;
                 default:
@@ -101,7 +101,7 @@ public class MethodChannelReferenceChannelManager extends ReferenceChannelManage
   }
 
   @Override
-  public ReferenceChannelMessenger getMessenger() {
-    return new MethodChannelReferenceChannelMessenger(binaryMessenger, channel);
+  public TypeChannelMessenger getMessenger() {
+    return new MethodChannelMessenger(binaryMessenger, channel);
   }
 }

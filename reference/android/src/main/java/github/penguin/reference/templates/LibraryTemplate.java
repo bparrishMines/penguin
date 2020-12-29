@@ -4,9 +4,9 @@ package github.penguin.reference.templates;
 
 import androidx.annotation.NonNull;
 import github.penguin.reference.async.Completable;
-import github.penguin.reference.reference.ReferenceChannel;
-import github.penguin.reference.reference.ReferenceChannelHandler;
-import github.penguin.reference.reference.ReferenceChannelManager;
+import github.penguin.reference.reference.TypeChannel;
+import github.penguin.reference.reference.TypeChannelHandler;
+import github.penguin.reference.reference.TypeChannelManager;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
@@ -26,8 +26,8 @@ class LibraryTemplate {
     Integer fieldTemplate;
   }
 
-  static class $ClassTemplateChannel extends ReferenceChannel<$ClassTemplate> {
-    $ClassTemplateChannel(@NonNull ReferenceChannelManager manager) {
+  static class $ClassTemplateChannel extends TypeChannel<$ClassTemplate> {
+    $ClassTemplateChannel(@NonNull TypeChannelManager manager) {
       super(manager, "github.penguin/template/template/ClassTemplate");
     }
 
@@ -36,28 +36,24 @@ class LibraryTemplate {
     }
 
     Completable<Object> $invokeMethodTemplate($ClassTemplate instance, String parameterTemplate) {
-      final String $methodName = "methodTemplate";
-      final List<Object> $arguments = Arrays.<Object>asList(parameterTemplate);
-
-      if (manager.isPaired(instance)) return invokeMethod(instance, $methodName, $arguments);
-      return invokeMethodOnUnpairedReference(instance, $methodName, $arguments);
+      return invokeMethod(instance, "methodTemplate", Arrays.<Object>asList(parameterTemplate));
     }
   }
 
-  static class $ClassTemplateHandler implements ReferenceChannelHandler<$ClassTemplate> {
-    $ClassTemplate onCreate(ReferenceChannelManager manager, $ClassTemplateCreationArgs args)
+  static class $ClassTemplateHandler implements TypeChannelHandler<$ClassTemplate> {
+    $ClassTemplate onCreate(TypeChannelManager manager, $ClassTemplateCreationArgs args)
         throws Exception {
       return null;
     }
 
-    public Object $onStaticMethodTemplate(ReferenceChannelManager manager, String parameterTemplate)
+    public Object $onStaticMethodTemplate(TypeChannelManager manager, String parameterTemplate)
         throws Exception {
       return null;
     }
 
     @Override
     public Object invokeStaticMethod(
-        ReferenceChannelManager manager, String methodName, List<Object> arguments)
+        TypeChannelManager manager, String methodName, List<Object> arguments)
         throws Exception {
       switch (methodName) {
         case "staticMethodTemplate":
@@ -70,12 +66,12 @@ class LibraryTemplate {
 
     @Override
     public List<Object> getCreationArguments(
-        ReferenceChannelManager manager, $ClassTemplate instance) {
+        TypeChannelManager manager, $ClassTemplate instance) {
       return Arrays.<Object>asList(instance.getFieldTemplate());
     }
 
     @Override
-    public $ClassTemplate createInstance(ReferenceChannelManager manager, List<Object> arguments)
+    public $ClassTemplate createInstance(TypeChannelManager manager, List<Object> arguments)
         throws Exception {
       final $ClassTemplateCreationArgs args = new $ClassTemplateCreationArgs();
       args.fieldTemplate = (Integer) arguments.get(0);
@@ -84,7 +80,7 @@ class LibraryTemplate {
 
     @Override
     public Object invokeMethod(
-        ReferenceChannelManager manager,
+        TypeChannelManager manager,
         $ClassTemplate instance,
         String methodName,
         List<Object> arguments)
@@ -100,7 +96,7 @@ class LibraryTemplate {
     }
 
     @Override
-    public void onInstanceDisposed(ReferenceChannelManager manager, $ClassTemplate instance)
+    public void onInstanceDisposed(TypeChannelManager manager, $ClassTemplate instance)
         throws Exception {}
   }
 }

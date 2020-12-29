@@ -1,6 +1,6 @@
 package github.penguin.reference.templates;
 
-import github.penguin.reference.reference.ReferenceChannelManager;
+import github.penguin.reference.reference.TypeChannelManager;
 
 public class ClassTemplate implements LibraryTemplate.$ClassTemplate {
   // TODO: not right
@@ -8,20 +8,20 @@ public class ClassTemplate implements LibraryTemplate.$ClassTemplate {
 
   private final Integer fieldTemplate;
 
-  static void setupChannel(ReferenceChannelManager manager) {
+  static void setupChannel(TypeChannelManager manager) {
     if (channel != null) return;
     channel = new LibraryTemplate.$ClassTemplateChannel(manager);
-    channel.registerHandler(
+    channel.setHandler(
         new LibraryTemplate.$ClassTemplateHandler() {
           @Override
           LibraryTemplate.$ClassTemplate onCreate(
-              ReferenceChannelManager manager, LibraryTemplate.$ClassTemplateCreationArgs args) {
+              TypeChannelManager manager, LibraryTemplate.$ClassTemplateCreationArgs args) {
             return new ClassTemplate(args.fieldTemplate);
           }
 
           @Override
           public Object $onStaticMethodTemplate(
-              ReferenceChannelManager manager, String parameterTemplate) {
+              TypeChannelManager manager, String parameterTemplate) {
             return staticMethodTemplate(parameterTemplate);
           }
         });

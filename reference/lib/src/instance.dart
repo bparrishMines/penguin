@@ -27,7 +27,7 @@ class PairedInstance {
       other is PairedInstance && referenceId == other.referenceId;
 
   @override
-  int get hashCode => referenceId.hashCode;
+  int get hashCode => referenceId.hashCode & super.hashCode;
 
   @override
   String toString() {

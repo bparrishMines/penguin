@@ -1,7 +1,7 @@
 package github.penguin.reference;
 
-import github.penguin.reference.reference.RemoteReference;
-import github.penguin.reference.reference.UnpairedReference;
+import github.penguin.reference.reference.PairedInstance;
+import github.penguin.reference.reference.NewUnpairedInstance;
 import io.flutter.plugin.common.MethodCall;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -57,7 +57,7 @@ class ReferenceMatchers {
     }
   }
 
-  private static class IsUnpairedReference extends TypeSafeMatcher<UnpairedReference> {
+  private static class IsUnpairedReference extends TypeSafeMatcher<NewUnpairedInstance> {
     private final Integer classId;
     private final Object creationArguments;
     private final String managerPoolId;
@@ -75,7 +75,7 @@ class ReferenceMatchers {
         Description description) {
       description
           .appendText(
-              String.format(" An %s with classId: ", UnpairedReference.class.getSimpleName()))
+              String.format(" An %s with classId: ", NewUnpairedInstance.class.getSimpleName()))
           .appendText(classId != null ? classId.toString() : null)
           .appendText(" and creation arguments: ")
           .appendText(creationArguments != null ? creationArguments.toString() : null)
@@ -90,7 +90,7 @@ class ReferenceMatchers {
 
     @Override
     protected void describeMismatchSafely(
-        UnpairedReference reference, Description mismatchDescription) {
+        NewUnpairedInstance reference, Description mismatchDescription) {
       describe(
           reference.classId,
           reference.creationArguments,
@@ -99,7 +99,7 @@ class ReferenceMatchers {
     }
 
     @Override
-    protected boolean matchesSafely(UnpairedReference reference) {
+    protected boolean matchesSafely(NewUnpairedInstance reference) {
       if (!classId.equals(reference.classId)) return false;
       if (managerPoolId != null && !managerPoolId.equals(reference.managerPoolId)) return false;
       if (reference.managerPoolId != null && !reference.managerPoolId.equals(managerPoolId)) {
@@ -112,7 +112,7 @@ class ReferenceMatchers {
     }
   }
 
-  private static class IsRemoteReference extends TypeSafeMatcher<RemoteReference> {
+  private static class IsRemoteReference extends TypeSafeMatcher<PairedInstance> {
     private final Object referenceId;
 
     private IsRemoteReference(Object referenceId) {
@@ -120,7 +120,7 @@ class ReferenceMatchers {
     }
 
     @Override
-    protected boolean matchesSafely(RemoteReference item) {
+    protected boolean matchesSafely(PairedInstance item) {
       if (referenceId instanceof Matcher) return ((Matcher) referenceId).matches(item.referenceId);
       return item.referenceId.equals(referenceId);
     }
@@ -129,7 +129,7 @@ class ReferenceMatchers {
     public void describeTo(Description description) {
       description
           .appendText(
-              String.format(" A %s with referenceId: ", RemoteReference.class.getSimpleName()))
+              String.format(" A %s with referenceId: ", PairedInstance.class.getSimpleName()))
           .appendText("" + referenceId);
     }
   }

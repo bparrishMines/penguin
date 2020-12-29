@@ -12,9 +12,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import github.penguin.reference.async.Completer;
-import github.penguin.reference.reference.ReferenceConverter.StandardReferenceConverter;
-import github.penguin.reference.reference.RemoteReference;
-import github.penguin.reference.reference.UnpairedReference;
+import github.penguin.reference.reference.PairedInstance;
+import github.penguin.reference.reference.InstanceConverter.StandardInstanceConverter;
+import github.penguin.reference.reference.NewUnpairedInstance;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -26,8 +26,8 @@ import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
-public class ReferenceConverterTest {
-  private static final StandardReferenceConverter converter = new StandardReferenceConverter();
+public class InstanceConverterTest {
+  private static final StandardInstanceConverter converter = new StandardInstanceConverter();
   private static TestReferencePairManager testManager;
 
   private static TestPoolableReferencePairManager testPoolableManager1;
@@ -122,10 +122,10 @@ public class ReferenceConverterTest {
     when(testManager.localHandler.create(eq(testManager), eq(TestClass.class), anyList()))
         .thenReturn(testClass);
 
-    testManager.pairWithNewLocalReference(new RemoteReference("apple"), 0);
+    testManager.pairWithNewLocalReference(new PairedInstance("apple"), 0);
 
     assertEquals(
-        converter.convertForRemoteManager(testManager, testClass), new RemoteReference("apple"));
+        converter.convertForRemoteManager(testManager, testClass), new PairedInstance("apple"));
   }
 
   @Test
@@ -205,10 +205,10 @@ public class ReferenceConverterTest {
     when(testManager.localHandler.create(eq(testManager), eq(TestClass.class), anyList()))
         .thenReturn(testClass);
 
-    testManager.pairWithNewLocalReference(new RemoteReference("apple"), 0);
+    testManager.pairWithNewLocalReference(new PairedInstance("apple"), 0);
 
     assertEquals(
-        converter.convertForLocalManager(testManager, new RemoteReference("apple")), testClass);
+        converter.convertForLocalManager(testManager, new PairedInstance("apple")), testClass);
   }
 
   @Test
@@ -219,7 +219,7 @@ public class ReferenceConverterTest {
 
     assertThat(
         converter.convertForLocalManager(
-            testManager, new UnpairedReference(0, Collections.emptyList())),
+            testManager, new NewUnpairedInstance(0, Collections.emptyList())),
         isA(TestClass.class));
   }
 
@@ -231,11 +231,11 @@ public class ReferenceConverterTest {
     when(testManager.localHandler.create(eq(testManager), eq(TestClass.class), anyList()))
         .thenReturn(testClass);
 
-    testManager.pairWithNewLocalReference(new RemoteReference("apple"), 0);
+    testManager.pairWithNewLocalReference(new PairedInstance("apple"), 0);
 
     assertThat(
         converter.convertForLocalManager(
-            testManager, Collections.singletonList(new RemoteReference("apple"))),
+            testManager, Collections.singletonList(new PairedInstance("apple"))),
         (Matcher) contains(testClass));
   }
 
@@ -258,8 +258,8 @@ public class ReferenceConverterTest {
               }
             });
 
-    testManager.pairWithNewLocalReference(new RemoteReference("apple"), 0);
-    testManager.pairWithNewLocalReference(new RemoteReference("banana"), 0);
+    testManager.pairWithNewLocalReference(new PairedInstance("apple"), 0);
+    testManager.pairWithNewLocalReference(new PairedInstance("banana"), 0);
 
     final Map<Object, Object> result =
         (Map<Object, Object>)
@@ -267,7 +267,7 @@ public class ReferenceConverterTest {
                 testManager,
                 new HashMap<Object, Object>() {
                   {
-                    put(new RemoteReference("apple"), new RemoteReference("banana"));
+                    put(new PairedInstance("apple"), new PairedInstance("banana"));
                   }
                 });
 
@@ -281,10 +281,10 @@ public class ReferenceConverterTest {
     final TestClass testClass1 = new TestClass();
     final TestClass2 testClass2 = new TestClass2();
 
-    when(testPoolableManager1.remoteHandler.create(any(RemoteReference.class), eq(0), anyList()))
+    when(testPoolableManager1.remoteHandler.create(any(PairedInstance.class), eq(0), anyList()))
         .thenReturn(new Completer<Void>().complete(null).completable);
 
-    when(testPoolableManager2.remoteHandler.create(any(RemoteReference.class), eq(0), anyList()))
+    when(testPoolableManager2.remoteHandler.create(any(PairedInstance.class), eq(0), anyList()))
         .thenReturn(new Completer<Void>().complete(null).completable);
 
     testPoolableManager1.pairWithNewRemoteReference(testClass1);
@@ -317,10 +317,10 @@ public class ReferenceConverterTest {
     final TestClass testClass1 = new TestClass();
     final TestClass2 testClass2 = new TestClass2();
 
-    when(testPoolableManager1.remoteHandler.create(any(RemoteReference.class), eq(0), anyList()))
+    when(testPoolableManager1.remoteHandler.create(any(PairedInstance.class), eq(0), anyList()))
         .thenReturn(new Completer<Void>().complete(null).completable);
 
-    when(testPoolableManager2.remoteHandler.create(any(RemoteReference.class), eq(0), anyList()))
+    when(testPoolableManager2.remoteHandler.create(any(PairedInstance.class), eq(0), anyList()))
         .thenReturn(new Completer<Void>().complete(null).completable);
 
     testPoolableManager1.pairWithNewRemoteReference(testClass1);
@@ -349,12 +349,12 @@ public class ReferenceConverterTest {
 
     assertThat(
         poolableConverter.convertForLocalManager(
-            testPoolableManager1, new UnpairedReference(0, Collections.emptyList(), "id1")),
+            testPoolableManager1, new NewUnpairedInstance(0, Collections.emptyList(), "id1")),
         isA(TestClass.class));
 
     assertThat(
         poolableConverter.convertForLocalManager(
-            testPoolableManager1, new UnpairedReference(0, Collections.emptyList(), "id2")),
+            testPoolableManager1, new NewUnpairedInstance(0, Collections.emptyList(), "id2")),
         isA(TestClass2.class));
   }
 }

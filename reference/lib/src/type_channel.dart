@@ -100,7 +100,7 @@ class TypeChannel<T extends Object> {
 
     final Object? result = await manager.messenger.sendInvokeMethod(
       name,
-      manager._instancePairs.getPairedInstance(instance)!,
+      manager._instancePairs.getPairedPairedInstance(instance)!,
       methodName,
       manager.converter.convertForRemoteManager(manager, arguments)!
           as List<Object?>,
@@ -131,7 +131,7 @@ class TypeChannel<T extends Object> {
   /// [TypeChannelManager.messenger].
   Future<void> disposePair(T instance) async {
     final PairedInstance? pairedInstance =
-        manager._instancePairs.getPairedInstance(instance);
+        manager._instancePairs.getPairedPairedInstance(instance);
 
     if (pairedInstance != null) {
       manager._instancePairs.removePairWithObject(instance);
@@ -256,7 +256,7 @@ abstract class TypeChannelManager {
   /// Whether [instance] is paired with a [PairedInstance].
   bool isPaired(Object? instance) {
     if (instance == null) return false;
-    return _instancePairs.getPairedInstance(instance) != null;
+    return _instancePairs.getPairedPairedInstance(instance) != null;
   }
 
   /// Set a [TypeChannelHandler] for a type channel.
@@ -421,7 +421,7 @@ class StandardInstanceConverter implements InstanceConverter {
     Object? object,
   ) {
     if (manager.isPaired(object)) {
-      return manager._instancePairs.getPairedInstance(object!);
+      return manager._instancePairs.getPairedPairedInstance(object!);
     } else if (!manager.isPaired(object) && object is PairableInstance) {
       return manager.createUnpairedReference(
         object.typeChannel.name,

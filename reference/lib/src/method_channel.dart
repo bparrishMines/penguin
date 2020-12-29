@@ -83,38 +83,38 @@ class MethodChannelMessenger with TypeChannelMessenger {
 
   @override
   Future<void> sendCreateNewInstancePair(
-    String handlerChannel,
+    String channelName,
     PairedInstance remoteReference,
     List<Object?> arguments,
   ) {
     return channel.invokeMethod<void>(
       MethodChannelManager._methodCreate,
-      <Object>[handlerChannel, remoteReference, arguments],
+      <Object>[channelName, remoteReference, arguments],
     );
   }
 
   @override
   Future<Object?> sendInvokeStaticMethod(
-    String handlerChannel,
+    String channelName,
     String methodName,
     List<Object?> arguments,
   ) {
     return channel.invokeMethod<Object>(
       MethodChannelManager._methodStaticMethod,
-      <Object>[handlerChannel, methodName, arguments],
+      <Object>[channelName, methodName, arguments],
     );
   }
 
   @override
   Future<Object?> sendInvokeMethod(
-    String handlerChannel,
+    String channelName,
     PairedInstance remoteReference,
     String methodName,
     List<Object?> arguments,
   ) {
     return channel.invokeMethod<Object>(
       MethodChannelManager._methodMethod,
-      <Object>[handlerChannel, remoteReference, methodName, arguments],
+      <Object>[channelName, remoteReference, methodName, arguments],
     );
   }
 
@@ -132,12 +132,12 @@ class MethodChannelMessenger with TypeChannelMessenger {
 
   @override
   Future<void> sendDisposePair(
-    String handlerChannel,
+    String channelName,
     PairedInstance remoteReference,
   ) {
     return channel.invokeMethod<void>(
       MethodChannelManager._methodDispose,
-      <Object>[handlerChannel, remoteReference],
+      <Object>[channelName, remoteReference],
     );
   }
 }

@@ -5,19 +5,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public interface ReferenceConverter {
-  Object convertForRemoteManager(ReferenceChannelManager manager, Object object);
+import androidx.annotation.Nullable;
 
-  Object convertForLocalManager(ReferenceChannelManager manager, Object object) throws Exception;
+public interface InstanceConverter {
+  @Nullable
+  Object convertForRemoteManager(TypeChannelManager manager, @Nullable Object object);
 
-  class StandardReferenceConverter implements ReferenceConverter {
+  @Nullable
+  Object convertForLocalManager(TypeChannelManager manager, @Nullable Object object) throws Exception;
+
+  class StandardInstanceConverter implements InstanceConverter {
+    @Nullable
     @Override
-    public Object convertForRemoteManager(ReferenceChannelManager manager, Object object) {
+    public Object convertForRemoteManager(TypeChannelManager manager, @Nullable Object object) {
       if (manager.isPaired(object)) {
-        return manager.referencePairs.getPairedRemoteReference(object);
-      } else if (!manager.isPaired(object) && object instanceof Referencable) {
+        return manager.instancePairs.getPairedPairedInstance(object);
+      } else if (!manager.isPaired(object) && object instanceof PairableInstance) {
         final String referenceChannelName =
-            ((Referencable) object).getReferenceChannel().channelName;
+            ((PairableInstance) object).getTypeChannel().name;
         return manager.createUnpairedReference(referenceChannelName, object);
       } else if (object instanceof List) {
         final List<Object> result = new ArrayList<>();
@@ -39,20 +44,21 @@ public interface ReferenceConverter {
       return object;
     }
 
+    @Nullable
     @Override
-    public Object convertForLocalManager(ReferenceChannelManager manager, Object object)
+    public Object convertForLocalManager(TypeChannelManager manager, @Nullable Object object)
         throws Exception {
-      if (object instanceof RemoteReference) {
-        return manager.referencePairs.getPairedObject((RemoteReference) object);
-      } else if (object instanceof UnpairedReference) {
-        final UnpairedReference unpairedReference = (UnpairedReference) object;
+      if (object instanceof PairedInstance) {
+        return manager.instancePairs.getPairedObject((PairedInstance) object);
+      } else if (object instanceof NewUnpairedInstance) {
+        final NewUnpairedInstance unpairedInstance = (NewUnpairedInstance) object;
         return manager
-            .getChannelHandler(unpairedReference.handlerChannel)
+            .getChannelHandler(unpairedInstance.channelName)
             .createInstance(
                 manager,
                 (List<Object>)
                     convertForLocalManager(
-                        manager, ((UnpairedReference) object).creationArguments));
+                        manager, ((NewUnpairedInstance) object).creationArguments));
       } else if (object instanceof List) {
         final List<Object> result = new ArrayList<>();
         for (final Object obj : (List) object) {

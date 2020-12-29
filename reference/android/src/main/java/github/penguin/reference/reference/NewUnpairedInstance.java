@@ -4,12 +4,12 @@ import android.annotation.SuppressLint;
 import androidx.annotation.NonNull;
 import java.util.List;
 
-public class UnpairedReference {
-  public final String handlerChannel;
+public class NewUnpairedInstance {
+  public final String channelName;
   public final List<Object> creationArguments;
 
-  public UnpairedReference(String handlerChannel, List<Object> creationArguments) {
-    this.handlerChannel = handlerChannel;
+  public NewUnpairedInstance(String channelName, List<Object> creationArguments) {
+    this.channelName = channelName;
     this.creationArguments = creationArguments;
   }
 
@@ -18,6 +18,6 @@ public class UnpairedReference {
   @Override
   public String toString() {
     return String.format(
-        "%s(%s, %s)", "UnpairedReference", handlerChannel, creationArguments.toString());
+        "%s(%s, %s)", "UnpairedReference", channelName, creationArguments.toString());
   }
 }
