@@ -1,11 +1,12 @@
 package github.penguin.reference;
 
-import github.penguin.reference.reference.PairedInstance;
 import github.penguin.reference.reference.NewUnpairedInstance;
 import io.flutter.plugin.common.MethodCall;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
+
+import java.util.List;
 
 @SuppressWarnings("rawtypes")
 class ReferenceMatchers {
@@ -13,14 +14,13 @@ class ReferenceMatchers {
     return new IsMethodCall(method, arguments);
   }
 
-  static Matcher isUnpairedReference(
-      final Integer classId, final Object creationArguments, final String managerPoolId) {
-    return new IsUnpairedReference(classId, creationArguments, managerPoolId);
+  static Matcher isUnpairedInstance(String channelName, final Object creationArguments) {
+    return new IsUnpairedInstance(channelName, creationArguments);
   }
 
-  static Matcher isRemoteReference(String referenceId) {
-    return new IsRemoteReference(referenceId);
-  }
+//  static Matcher isRemoteReference(String referenceId) {
+//    return new IsRemoteReference(referenceId);
+//  }
 
   private static class IsMethodCall extends TypeSafeMatcher<MethodCall> {
     private final String method;
@@ -57,80 +57,75 @@ class ReferenceMatchers {
     }
   }
 
-  private static class IsUnpairedReference extends TypeSafeMatcher<NewUnpairedInstance> {
-    private final Integer classId;
+  private static class IsUnpairedInstance extends TypeSafeMatcher<NewUnpairedInstance> {
+    private final String channelName;
     private final Object creationArguments;
-    private final String managerPoolId;
+    //private final String managerPoolId;
 
-    private IsUnpairedReference(Integer classId, Object creationArguments, String managerPoolId) {
-      this.classId = classId;
+    private IsUnpairedInstance(String channelName, Object creationArguments) {
+      this.channelName = channelName;
       this.creationArguments = creationArguments;
-      this.managerPoolId = managerPoolId;
+      //this.managerPoolId = managerPoolId;
     }
 
     private void describe(
-        final Integer classId,
+        final String channelName,
         final Object creationArguments,
-        final String managerPoolId,
         Description description) {
       description
           .appendText(
-              String.format(" An %s with classId: ", NewUnpairedInstance.class.getSimpleName()))
-          .appendText(classId != null ? classId.toString() : null)
+              String.format(" An %s with channelName: ", NewUnpairedInstance.class.getSimpleName()))
+          .appendText(channelName)
           .appendText(" and creation arguments: ")
-          .appendText(creationArguments != null ? creationArguments.toString() : null)
-          .appendText(" and managerPoolId: ")
-          .appendText(managerPoolId);
+          .appendText(creationArguments != null ? creationArguments.toString() : null);
     }
 
     @Override
     public void describeTo(Description description) {
-      describe(classId, creationArguments, managerPoolId, description);
+      describe(channelName, creationArguments, description);
     }
 
     @Override
     protected void describeMismatchSafely(
-        NewUnpairedInstance reference, Description mismatchDescription) {
+        NewUnpairedInstance unpairedInstance, Description mismatchDescription) {
       describe(
-          reference.classId,
-          reference.creationArguments,
-          reference.managerPoolId,
+          unpairedInstance.channelName,
+          unpairedInstance.creationArguments,
           mismatchDescription);
     }
 
     @Override
-    protected boolean matchesSafely(NewUnpairedInstance reference) {
-      if (!classId.equals(reference.classId)) return false;
-      if (managerPoolId != null && !managerPoolId.equals(reference.managerPoolId)) return false;
-      if (reference.managerPoolId != null && !reference.managerPoolId.equals(managerPoolId)) {
-        return false;
+    protected boolean matchesSafely(NewUnpairedInstance unpairedInstance) {
+      if (!channelName.equals(unpairedInstance.channelName)) return false;
+      if (creationArguments instanceof List) {
+        return creationArguments.equals(unpairedInstance.creationArguments);
       }
       if (creationArguments instanceof Matcher) {
-        return ((Matcher) creationArguments).matches(reference.creationArguments);
+        return ((Matcher) creationArguments).matches(unpairedInstance.creationArguments);
       }
-      return creationArguments == reference.creationArguments;
+      return creationArguments == unpairedInstance.creationArguments;
     }
   }
 
-  private static class IsRemoteReference extends TypeSafeMatcher<PairedInstance> {
-    private final Object referenceId;
-
-    private IsRemoteReference(Object referenceId) {
-      this.referenceId = referenceId;
-    }
-
-    @Override
-    protected boolean matchesSafely(PairedInstance item) {
-      if (referenceId instanceof Matcher) return ((Matcher) referenceId).matches(item.referenceId);
-      return item.referenceId.equals(referenceId);
-    }
-
-    @Override
-    public void describeTo(Description description) {
-      description
-          .appendText(
-              String.format(" A %s with referenceId: ", PairedInstance.class.getSimpleName()))
-          .appendText("" + referenceId);
-    }
-  }
+//  private static class IsRemoteReference extends TypeSafeMatcher<PairedInstance> {
+//    private final Object referenceId;
+//
+//    private IsRemoteReference(Object referenceId) {
+//      this.referenceId = referenceId;
+//    }
+//
+//    @Override
+//    protected boolean matchesSafely(PairedInstance item) {
+//      if (referenceId instanceof Matcher) return ((Matcher) referenceId).matches(item.referenceId);
+//      return item.referenceId.equals(referenceId);
+//    }
+//
+//    @Override
+//    public void describeTo(Description description) {
+//      description
+//          .appendText(
+//              String.format(" A %s with referenceId: ", PairedInstance.class.getSimpleName()))
+//          .appendText("" + referenceId);
+//    }
+//  }
 }

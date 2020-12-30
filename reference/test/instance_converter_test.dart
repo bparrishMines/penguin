@@ -13,21 +13,22 @@ void main() {
     });
 
     test('convertForRemoteManager handles paired Object', () {
-      final PairedInstance remoteReference = PairedInstance('test_id');
       testManager.onReceiveCreateNewInstancePair(
         'test_channel',
-        remoteReference,
+        PairedInstance('test_id'),
         <Object>[],
       );
 
       expect(
         converter.convertForRemoteManager(
-            testManager, testManager.testHandler.testClassInstance),
-        remoteReference,
+          testManager,
+          testManager.testHandler.testClassInstance,
+        ),
+        PairedInstance('test_id'),
       );
     });
 
-    test('convertForRemoteManager handles unpaired $PairableInstance', () {
+    test('convertForRemoteManager handles unpaired object', () {
       expect(
         converter.convertForRemoteManager(testManager, TestClass(testManager)),
         isUnpairedInstance('test_channel', <Object>[]),
@@ -42,23 +43,26 @@ void main() {
     });
 
     test('convertForLocalManager handles $PairedInstance', () {
-      final PairedInstance remoteReference = PairedInstance('test_id');
+      final PairedInstance pairedInstance = PairedInstance('test_id');
       testManager.onReceiveCreateNewInstancePair(
         'test_channel',
-        remoteReference,
+        pairedInstance,
         <Object>[],
       );
 
       expect(
-        converter.convertForLocalManager(testManager, remoteReference),
+        converter.convertForLocalManager(testManager, pairedInstance),
         testManager.testHandler.testClassInstance,
       );
     });
 
     test('convertForLocalManager handles $NewUnpairedInstance', () async {
-      converter.convertForLocalManager(
-        testManager,
-        NewUnpairedInstance('test_channel', <Object>[]),
+      expect(
+        converter.convertForLocalManager(
+          testManager,
+          NewUnpairedInstance('test_channel', <Object>[]),
+        ),
+        testManager.testHandler.testClassInstance,
       );
     });
   });
@@ -102,8 +106,8 @@ class TestHandler with TypeChannelHandler<TestClass> {
   }
 
   @override
-  Object? invokeStaticMethod(TypeChannelManager manager, String methodName,
-      List<Object?> arguments) {
+  Object? invokeStaticMethod(
+      TypeChannelManager manager, String methodName, List<Object?> arguments) {
     return 'return_value';
   }
 }

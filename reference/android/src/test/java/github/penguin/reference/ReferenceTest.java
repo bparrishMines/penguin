@@ -31,312 +31,312 @@ import org.mockito.stubbing.Answer;
 
 @SuppressWarnings("rawtypes")
 public class ReferenceTest {
-  private static TestReferencePairManager testManager;
-  private static TestPoolableReferencePairManager testPoolableManager1;
-  private static TestPoolableReferencePairManager testPoolableManager2;
-  private static ReferencePairManagerPool pool;
-
-  private static class TestClass {
-    @Override
-    public Class<? extends LocalReference> getReferenceClass() {
-      return TestClass.class;
-    }
-  }
-
-  private static class TestClass2 extends TestClass {
-    @Override
-    public Class<? extends LocalReference> getReferenceClass() {
-      return TestClass2.class;
-    }
-  }
-
-  private static class TestReferencePairManager {
-    private final LocalReferenceCommunicationHandler localHandler;
-    private final RemoteReferenceCommunicationHandler remoteHandler;
-    private final StandardInstanceConverter converter;
-
-    private TestReferencePairManager() {
-      super(Collections.<Class<? extends LocalReference>>singletonList(TestClass.class));
-      this.localHandler = mock(LocalReferenceCommunicationHandler.class);
-      this.remoteHandler = mock(RemoteReferenceCommunicationHandler.class);
-      this.converter = spy(new StandardInstanceConverter());
-    }
-
-    @Override
-    public RemoteReferenceCommunicationHandler getRemoteHandler() {
-      return remoteHandler;
-    }
-
-    @Override
-    public LocalReferenceCommunicationHandler getLocalHandler() {
-      return localHandler;
-    }
-
-    @Override
-    public InstanceConverter getConverter() {
-      return converter;
-    }
-  }
-
-  private static class TestPoolableReferencePairManager {
-    private final LocalReferenceCommunicationHandler localHandler;
-    private final RemoteReferenceCommunicationHandler remoteHandler;
-
-    private TestPoolableReferencePairManager(
-        List<Class<? extends LocalReference>> supportedClasses, String poolId) {
-      super(supportedClasses, poolId);
-      this.localHandler = mock(LocalReferenceCommunicationHandler.class);
-      this.remoteHandler = mock(RemoteReferenceCommunicationHandler.class);
-    }
-
-    @Override
-    public RemoteReferenceCommunicationHandler getRemoteHandler() {
-      return remoteHandler;
-    }
-
-    @Override
-    public LocalReferenceCommunicationHandler getLocalHandler() {
-      return localHandler;
-    }
-  }
-
-  @Before
-  public void setUp() {
-    testManager = new TestReferencePairManager();
-    testManager.initialize();
-
-    pool = new ReferencePairManagerPool();
-
-    testPoolableManager1 =
-        new TestPoolableReferencePairManager(
-            Collections.<Class<? extends LocalReference>>singletonList(TestClass.class), "id1");
-    testPoolableManager1.initialize();
-
-    testPoolableManager2 =
-        new TestPoolableReferencePairManager(
-            Collections.<Class<? extends LocalReference>>singletonList(TestClass2.class), "id2");
-    testPoolableManager2.initialize();
-  }
-
-  @Test
-  public void referencePairManager_pairWithNewLocalReference() throws Exception {
-    when(testManager.localHandler.create(eq(testManager), eq(TestClass.class), anyList()))
-        .thenReturn(new TestClass());
-
-    final TestClass result =
-        (TestClass) testManager.pairWithNewLocalReference(new PairedInstance("apple"), 0);
-
-    assertEquals(testManager.getPairedLocalReference(new PairedInstance("apple")), result);
-    assertEquals(testManager.getPairedRemoteReference(result), new PairedInstance("apple"));
-
-    verify(testManager.converter).convertForLocalManager(eq(testManager), anyList());
-    verify(testManager.localHandler).create(eq(testManager), eq(TestClass.class), anyList());
-  }
-
-  @Test
-  public void referencePairManager_pairWithNewLocalReference_returnsNull() throws Exception {
-    when(testManager.localHandler.create(eq(testManager), eq(TestClass.class), anyList()))
-        .thenReturn(new TestClass());
-
-    testManager.pairWithNewLocalReference(new PairedInstance("apple"), 0);
-    assertNull(testManager.pairWithNewLocalReference(new PairedInstance("apple"), 0));
-  }
-
-  @Test
-  public void referencePairManager_invokeLocalStaticMethod() throws Exception {
-    testManager.invokeLocalStaticMethod(TestClass.class, "aStaticMethod");
-
-    verify(testManager.converter).convertForLocalManager(eq(testManager), anyList());
-    verify(testManager.localHandler)
-        .invokeStaticMethod(eq(testManager), eq(TestClass.class), eq("aStaticMethod"), anyList());
-    verify(testManager.converter).convertForRemoteManager(eq(testManager), isNull());
-  }
-
-  @Test
-  public void referencePairManager_invokeLocalMethod() throws Exception {
-    when(testManager.localHandler.create(eq(testManager), eq(TestClass.class), anyList()))
-        .thenReturn(new TestClass());
-
-    final LocalReference localReference =
-        testManager.pairWithNewLocalReference(new PairedInstance("chi"), 0);
-    reset(testManager.converter);
-
-    testManager.invokeLocalMethod(localReference, "aMethod");
-
-    verify(testManager.converter).convertForLocalManager(eq(testManager), anyList());
-    verify(testManager.localHandler)
-        .invokeMethod(eq(testManager), eq(localReference), eq("aMethod"), anyList());
-    verify(testManager.converter).convertForRemoteManager(eq(testManager), isNull());
-  }
-
-  @Test
-  public void referencePairManager_invokeLocalMethodOnUnpairedReference() throws Exception {
-    when(testManager.localHandler.create(eq(testManager), eq(TestClass.class), anyList()))
-        .thenReturn(new TestClass());
-
-    testManager.invokeLocalMethodOnUnpairedReference(
-        new NewUnpairedInstance(0, Collections.emptyList()), "aMethod");
-
-    verify(testManager.localHandler)
-        .invokeMethod(eq(testManager), (LocalReference) notNull(), eq("aMethod"), anyList());
-  }
-
-  @Test
-  public void referencePairManager_disposePairWithRemoteReference() throws Exception {
-    when(testManager.localHandler.create(eq(testManager), eq(TestClass.class), anyList()))
-        .thenAnswer(
-            new Answer<Object>() {
-              @Override
-              public Object answer(InvocationOnMock invocation) {
-                return new TestClass();
-              }
-            });
-
-    final TestClass testClass =
-        (TestClass) testManager.pairWithNewLocalReference(new PairedInstance("tea"), 0);
-    testManager.disposePairWithRemoteReference(new PairedInstance("tea"));
-
-    verify(testManager.localHandler).dispose(testManager, testClass);
-    assertNull(testManager.getPairedLocalReference(new PairedInstance("tea")));
-    assertNull(testManager.getPairedRemoteReference(testClass));
-  }
-
-  @SuppressWarnings("unchecked")
-  @Test
-  public void referencePairManager_pairWithNewRemoteReference() {
-    final TestClass testClass = new TestClass();
-
-    when(testManager.remoteHandler.getCreationArguments(testClass))
-        .thenReturn(Collections.emptyList());
-
-    when(testManager.remoteHandler.create(any(PairedInstance.class), eq(0), anyList()))
-        .thenReturn(new Completer<Void>().complete(null).completable);
-
-    final Completable.OnCompleteListener mockListener = mock(Completable.OnCompleteListener.class);
-    testManager.pairWithNewRemoteReference(testClass).setOnCompleteListener(mockListener);
-    final PairedInstance pairedInstance = testManager.getPairedRemoteReference(testClass);
-
-    verify(mockListener).onComplete(pairedInstance);
-    assertEquals(testManager.getPairedLocalReference(pairedInstance), testClass);
-    assertEquals(testManager.getPairedRemoteReference(testClass), pairedInstance);
-
-    verify(testManager.converter).convertForRemoteManager(eq(testManager), anyList());
-    verify(testManager.remoteHandler).create(eq(pairedInstance), eq(0), anyList());
-  }
-
-  @SuppressWarnings("unchecked")
-  @Test
-  public void referencePairManager_pairWithNewRemoteReference_returnsNull() {
-    final TestClass testClass = new TestClass();
-
-    when(testManager.remoteHandler.getCreationArguments(testClass))
-        .thenReturn(Collections.emptyList());
-
-    when(testManager.remoteHandler.create(any(PairedInstance.class), eq(0), anyList()))
-        .thenReturn(new Completer<Void>().complete(null).completable);
-
-    testManager.pairWithNewRemoteReference(testClass);
-
-    final Completable.OnCompleteListener mockListener = mock(Completable.OnCompleteListener.class);
-    testManager.pairWithNewRemoteReference(testClass).setOnCompleteListener(mockListener);
-    verify(mockListener).onComplete(null);
-  }
-
-  @Test
-  public void referencePairManager_invokeRemoteStaticMethod() throws Exception {
-    when(testManager.remoteHandler.invokeStaticMethod(eq(0), eq("aStaticMethod"), anyList()))
-        .thenReturn(new Completer<>().complete(null).completable);
-
-    testManager.invokeRemoteStaticMethod(TestClass.class, "aStaticMethod");
-
-    verify(testManager.converter).convertForRemoteManager(eq(testManager), anyList());
-    verify(testManager.remoteHandler).invokeStaticMethod(eq(0), eq("aStaticMethod"), anyList());
-    verify(testManager.converter).convertForLocalManager(eq(testManager), isNull());
-  }
-
-  @Test
-  public void referencePairManager_invokeRemoteMethod() throws Exception {
-    final TestClass testClass = new TestClass();
-
-    when(testManager.remoteHandler.create(any(PairedInstance.class), eq(0), anyList()))
-        .thenReturn(new Completer<Void>().complete(null).completable);
-
-    when(testManager.remoteHandler.invokeMethod(
-            any(PairedInstance.class), eq("aMethod"), anyList()))
-        .thenReturn(new Completer<>().complete(null).completable);
-
-    testManager.pairWithNewRemoteReference(testClass);
-    reset(testManager.converter);
-
-    final PairedInstance pairedInstance = testManager.getPairedRemoteReference(testClass);
-    testManager.invokeRemoteMethod(pairedInstance, "aMethod");
-
-    verify(testManager.converter).convertForRemoteManager(eq(testManager), anyList());
-    verify(testManager.remoteHandler).invokeMethod(eq(pairedInstance), eq("aMethod"), anyList());
-    verify(testManager.converter).convertForLocalManager(eq(testManager), isNull());
-  }
-
-  @Test
-  public void referencePairManager_invokeRemoteMethodOnUnpairedReference() throws Exception {
-    when(testManager.remoteHandler.create(any(PairedInstance.class), eq(0), anyList()))
-        .thenReturn(new Completer<Void>().complete(null).completable);
-
-    when(testManager.remoteHandler.invokeMethodOnUnpairedReference(
-            any(NewUnpairedInstance.class), eq("aMethod"), anyList()))
-        .thenReturn(new Completer<>().complete(null).completable);
-
-    testManager.invokeRemoteMethodOnUnpairedReference(new TestClass(), "aMethod");
-
-    verify(testManager.converter, times(2)).convertForRemoteManager(eq(testManager), anyList());
-    verify(testManager.remoteHandler)
-        .invokeMethodOnUnpairedReference(any(NewUnpairedInstance.class), eq("aMethod"), anyList());
-    verify(testManager.converter).convertForLocalManager(eq(testManager), isNull());
-  }
-
-  @Test
-  public void referencePairManager_disposePairWithLocalReference() {
-    final TestClass testClass = new TestClass();
-
-    when(testManager.remoteHandler.create(any(PairedInstance.class), eq(0), anyList()))
-        .thenReturn(new Completer<Void>().complete(null).completable);
-
-    testManager.pairWithNewRemoteReference(testClass);
-    final PairedInstance pairedInstance = testManager.getPairedRemoteReference(testClass);
-
-    testManager.disposePairWithLocalReference(testClass);
-
-    verify(testManager.remoteHandler).dispose(pairedInstance);
-
-    assertNull(testManager.getPairedLocalReference(pairedInstance));
-    assertNull(testManager.getPairedRemoteReference(testClass));
-  }
-
-  @Test
-  public void poolableReferencePairManager_add() {
-    final PoolableReferencePairManager sameClassManager =
-        new TestPoolableReferencePairManager(
-            Collections.<Class<? extends LocalReference>>singletonList(TestClass.class), "id3");
-
-    final PoolableReferencePairManager sameIdManager =
-        new TestPoolableReferencePairManager(
-            Collections.<Class<? extends LocalReference>>singletonList(TestClass2.class), "id1");
-
-    assertTrue(pool.add(testPoolableManager1));
-    assertTrue(pool.add(testPoolableManager1));
-    assertFalse(pool.add(sameClassManager));
-    assertFalse(pool.add(sameIdManager));
-    assertTrue(pool.add(testPoolableManager2));
-  }
-
-  @Test
-  public void poolableReferencePairManager_remove() {
-    pool.add(testPoolableManager1);
-    pool.remove(testPoolableManager1);
-
-    final PoolableReferencePairManager manager =
-        new TestPoolableReferencePairManager(
-            Collections.<Class<? extends LocalReference>>singletonList(TestClass.class), "id1");
-
-    assertTrue(pool.add(manager));
-  }
+//  private static TestReferencePairManager testManager;
+//  private static TestPoolableReferencePairManager testPoolableManager1;
+//  private static TestPoolableReferencePairManager testPoolableManager2;
+//  private static ReferencePairManagerPool pool;
+//
+//  private static class TestClass {
+//    @Override
+//    public Class<? extends LocalReference> getReferenceClass() {
+//      return TestClass.class;
+//    }
+//  }
+//
+//  private static class TestClass2 extends TestClass {
+//    @Override
+//    public Class<? extends LocalReference> getReferenceClass() {
+//      return TestClass2.class;
+//    }
+//  }
+//
+//  private static class TestReferencePairManager {
+//    private final LocalReferenceCommunicationHandler localHandler;
+//    private final RemoteReferenceCommunicationHandler remoteHandler;
+//    private final StandardInstanceConverter converter;
+//
+//    private TestReferencePairManager() {
+//      super(Collections.<Class<? extends LocalReference>>singletonList(TestClass.class));
+//      this.localHandler = mock(LocalReferenceCommunicationHandler.class);
+//      this.remoteHandler = mock(RemoteReferenceCommunicationHandler.class);
+//      this.converter = spy(new StandardInstanceConverter());
+//    }
+//
+//    @Override
+//    public RemoteReferenceCommunicationHandler getRemoteHandler() {
+//      return remoteHandler;
+//    }
+//
+//    @Override
+//    public LocalReferenceCommunicationHandler getLocalHandler() {
+//      return localHandler;
+//    }
+//
+//    @Override
+//    public InstanceConverter getConverter() {
+//      return converter;
+//    }
+//  }
+//
+//  private static class TestPoolableReferencePairManager {
+//    private final LocalReferenceCommunicationHandler localHandler;
+//    private final RemoteReferenceCommunicationHandler remoteHandler;
+//
+//    private TestPoolableReferencePairManager(
+//        List<Class<? extends LocalReference>> supportedClasses, String poolId) {
+//      super(supportedClasses, poolId);
+//      this.localHandler = mock(LocalReferenceCommunicationHandler.class);
+//      this.remoteHandler = mock(RemoteReferenceCommunicationHandler.class);
+//    }
+//
+//    @Override
+//    public RemoteReferenceCommunicationHandler getRemoteHandler() {
+//      return remoteHandler;
+//    }
+//
+//    @Override
+//    public LocalReferenceCommunicationHandler getLocalHandler() {
+//      return localHandler;
+//    }
+//  }
+//
+//  @Before
+//  public void setUp() {
+//    testManager = new TestReferencePairManager();
+//    testManager.initialize();
+//
+//    pool = new ReferencePairManagerPool();
+//
+//    testPoolableManager1 =
+//        new TestPoolableReferencePairManager(
+//            Collections.<Class<? extends LocalReference>>singletonList(TestClass.class), "id1");
+//    testPoolableManager1.initialize();
+//
+//    testPoolableManager2 =
+//        new TestPoolableReferencePairManager(
+//            Collections.<Class<? extends LocalReference>>singletonList(TestClass2.class), "id2");
+//    testPoolableManager2.initialize();
+//  }
+//
+//  @Test
+//  public void referencePairManager_pairWithNewLocalReference() throws Exception {
+//    when(testManager.localHandler.create(eq(testManager), eq(TestClass.class), anyList()))
+//        .thenReturn(new TestClass());
+//
+//    final TestClass result =
+//        (TestClass) testManager.pairWithNewLocalReference(new PairedInstance("apple"), 0);
+//
+//    assertEquals(testManager.getPairedLocalReference(new PairedInstance("apple")), result);
+//    assertEquals(testManager.getPairedRemoteReference(result), new PairedInstance("apple"));
+//
+//    verify(testManager.converter).convertForLocalManager(eq(testManager), anyList());
+//    verify(testManager.localHandler).create(eq(testManager), eq(TestClass.class), anyList());
+//  }
+//
+//  @Test
+//  public void referencePairManager_pairWithNewLocalReference_returnsNull() throws Exception {
+//    when(testManager.localHandler.create(eq(testManager), eq(TestClass.class), anyList()))
+//        .thenReturn(new TestClass());
+//
+//    testManager.pairWithNewLocalReference(new PairedInstance("apple"), 0);
+//    assertNull(testManager.pairWithNewLocalReference(new PairedInstance("apple"), 0));
+//  }
+//
+//  @Test
+//  public void referencePairManager_invokeLocalStaticMethod() throws Exception {
+//    testManager.invokeLocalStaticMethod(TestClass.class, "aStaticMethod");
+//
+//    verify(testManager.converter).convertForLocalManager(eq(testManager), anyList());
+//    verify(testManager.localHandler)
+//        .invokeStaticMethod(eq(testManager), eq(TestClass.class), eq("aStaticMethod"), anyList());
+//    verify(testManager.converter).convertForRemoteManager(eq(testManager), isNull());
+//  }
+//
+//  @Test
+//  public void referencePairManager_invokeLocalMethod() throws Exception {
+//    when(testManager.localHandler.create(eq(testManager), eq(TestClass.class), anyList()))
+//        .thenReturn(new TestClass());
+//
+//    final LocalReference localReference =
+//        testManager.pairWithNewLocalReference(new PairedInstance("chi"), 0);
+//    reset(testManager.converter);
+//
+//    testManager.invokeLocalMethod(localReference, "aMethod");
+//
+//    verify(testManager.converter).convertForLocalManager(eq(testManager), anyList());
+//    verify(testManager.localHandler)
+//        .invokeMethod(eq(testManager), eq(localReference), eq("aMethod"), anyList());
+//    verify(testManager.converter).convertForRemoteManager(eq(testManager), isNull());
+//  }
+//
+//  @Test
+//  public void referencePairManager_invokeLocalMethodOnUnpairedReference() throws Exception {
+//    when(testManager.localHandler.create(eq(testManager), eq(TestClass.class), anyList()))
+//        .thenReturn(new TestClass());
+//
+//    testManager.invokeLocalMethodOnUnpairedReference(
+//        new NewUnpairedInstance(0, Collections.emptyList()), "aMethod");
+//
+//    verify(testManager.localHandler)
+//        .invokeMethod(eq(testManager), (LocalReference) notNull(), eq("aMethod"), anyList());
+//  }
+//
+//  @Test
+//  public void referencePairManager_disposePairWithRemoteReference() throws Exception {
+//    when(testManager.localHandler.create(eq(testManager), eq(TestClass.class), anyList()))
+//        .thenAnswer(
+//            new Answer<Object>() {
+//              @Override
+//              public Object answer(InvocationOnMock invocation) {
+//                return new TestClass();
+//              }
+//            });
+//
+//    final TestClass testClass =
+//        (TestClass) testManager.pairWithNewLocalReference(new PairedInstance("tea"), 0);
+//    testManager.disposePairWithRemoteReference(new PairedInstance("tea"));
+//
+//    verify(testManager.localHandler).dispose(testManager, testClass);
+//    assertNull(testManager.getPairedLocalReference(new PairedInstance("tea")));
+//    assertNull(testManager.getPairedRemoteReference(testClass));
+//  }
+//
+//  @SuppressWarnings("unchecked")
+//  @Test
+//  public void referencePairManager_pairWithNewRemoteReference() {
+//    final TestClass testClass = new TestClass();
+//
+//    when(testManager.remoteHandler.getCreationArguments(testClass))
+//        .thenReturn(Collections.emptyList());
+//
+//    when(testManager.remoteHandler.create(any(PairedInstance.class), eq(0), anyList()))
+//        .thenReturn(new Completer<Void>().complete(null).completable);
+//
+//    final Completable.OnCompleteListener mockListener = mock(Completable.OnCompleteListener.class);
+//    testManager.pairWithNewRemoteReference(testClass).setOnCompleteListener(mockListener);
+//    final PairedInstance pairedInstance = testManager.getPairedRemoteReference(testClass);
+//
+//    verify(mockListener).onComplete(pairedInstance);
+//    assertEquals(testManager.getPairedLocalReference(pairedInstance), testClass);
+//    assertEquals(testManager.getPairedRemoteReference(testClass), pairedInstance);
+//
+//    verify(testManager.converter).convertForRemoteManager(eq(testManager), anyList());
+//    verify(testManager.remoteHandler).create(eq(pairedInstance), eq(0), anyList());
+//  }
+//
+//  @SuppressWarnings("unchecked")
+//  @Test
+//  public void referencePairManager_pairWithNewRemoteReference_returnsNull() {
+//    final TestClass testClass = new TestClass();
+//
+//    when(testManager.remoteHandler.getCreationArguments(testClass))
+//        .thenReturn(Collections.emptyList());
+//
+//    when(testManager.remoteHandler.create(any(PairedInstance.class), eq(0), anyList()))
+//        .thenReturn(new Completer<Void>().complete(null).completable);
+//
+//    testManager.pairWithNewRemoteReference(testClass);
+//
+//    final Completable.OnCompleteListener mockListener = mock(Completable.OnCompleteListener.class);
+//    testManager.pairWithNewRemoteReference(testClass).setOnCompleteListener(mockListener);
+//    verify(mockListener).onComplete(null);
+//  }
+//
+//  @Test
+//  public void referencePairManager_invokeRemoteStaticMethod() throws Exception {
+//    when(testManager.remoteHandler.invokeStaticMethod(eq(0), eq("aStaticMethod"), anyList()))
+//        .thenReturn(new Completer<>().complete(null).completable);
+//
+//    testManager.invokeRemoteStaticMethod(TestClass.class, "aStaticMethod");
+//
+//    verify(testManager.converter).convertForRemoteManager(eq(testManager), anyList());
+//    verify(testManager.remoteHandler).invokeStaticMethod(eq(0), eq("aStaticMethod"), anyList());
+//    verify(testManager.converter).convertForLocalManager(eq(testManager), isNull());
+//  }
+//
+//  @Test
+//  public void referencePairManager_invokeRemoteMethod() throws Exception {
+//    final TestClass testClass = new TestClass();
+//
+//    when(testManager.remoteHandler.create(any(PairedInstance.class), eq(0), anyList()))
+//        .thenReturn(new Completer<Void>().complete(null).completable);
+//
+//    when(testManager.remoteHandler.invokeMethod(
+//            any(PairedInstance.class), eq("aMethod"), anyList()))
+//        .thenReturn(new Completer<>().complete(null).completable);
+//
+//    testManager.pairWithNewRemoteReference(testClass);
+//    reset(testManager.converter);
+//
+//    final PairedInstance pairedInstance = testManager.getPairedRemoteReference(testClass);
+//    testManager.invokeRemoteMethod(pairedInstance, "aMethod");
+//
+//    verify(testManager.converter).convertForRemoteManager(eq(testManager), anyList());
+//    verify(testManager.remoteHandler).invokeMethod(eq(pairedInstance), eq("aMethod"), anyList());
+//    verify(testManager.converter).convertForLocalManager(eq(testManager), isNull());
+//  }
+//
+//  @Test
+//  public void referencePairManager_invokeRemoteMethodOnUnpairedReference() throws Exception {
+//    when(testManager.remoteHandler.create(any(PairedInstance.class), eq(0), anyList()))
+//        .thenReturn(new Completer<Void>().complete(null).completable);
+//
+//    when(testManager.remoteHandler.invokeMethodOnUnpairedReference(
+//            any(NewUnpairedInstance.class), eq("aMethod"), anyList()))
+//        .thenReturn(new Completer<>().complete(null).completable);
+//
+//    testManager.invokeRemoteMethodOnUnpairedReference(new TestClass(), "aMethod");
+//
+//    verify(testManager.converter, times(2)).convertForRemoteManager(eq(testManager), anyList());
+//    verify(testManager.remoteHandler)
+//        .invokeMethodOnUnpairedReference(any(NewUnpairedInstance.class), eq("aMethod"), anyList());
+//    verify(testManager.converter).convertForLocalManager(eq(testManager), isNull());
+//  }
+//
+//  @Test
+//  public void referencePairManager_disposePairWithLocalReference() {
+//    final TestClass testClass = new TestClass();
+//
+//    when(testManager.remoteHandler.create(any(PairedInstance.class), eq(0), anyList()))
+//        .thenReturn(new Completer<Void>().complete(null).completable);
+//
+//    testManager.pairWithNewRemoteReference(testClass);
+//    final PairedInstance pairedInstance = testManager.getPairedRemoteReference(testClass);
+//
+//    testManager.disposePairWithLocalReference(testClass);
+//
+//    verify(testManager.remoteHandler).dispose(pairedInstance);
+//
+//    assertNull(testManager.getPairedLocalReference(pairedInstance));
+//    assertNull(testManager.getPairedRemoteReference(testClass));
+//  }
+//
+//  @Test
+//  public void poolableReferencePairManager_add() {
+//    final PoolableReferencePairManager sameClassManager =
+//        new TestPoolableReferencePairManager(
+//            Collections.<Class<? extends LocalReference>>singletonList(TestClass.class), "id3");
+//
+//    final PoolableReferencePairManager sameIdManager =
+//        new TestPoolableReferencePairManager(
+//            Collections.<Class<? extends LocalReference>>singletonList(TestClass2.class), "id1");
+//
+//    assertTrue(pool.add(testPoolableManager1));
+//    assertTrue(pool.add(testPoolableManager1));
+//    assertFalse(pool.add(sameClassManager));
+//    assertFalse(pool.add(sameIdManager));
+//    assertTrue(pool.add(testPoolableManager2));
+//  }
+//
+//  @Test
+//  public void poolableReferencePairManager_remove() {
+//    pool.add(testPoolableManager1);
+//    pool.remove(testPoolableManager1);
+//
+//    final PoolableReferencePairManager manager =
+//        new TestPoolableReferencePairManager(
+//            Collections.<Class<? extends LocalReference>>singletonList(TestClass.class), "id1");
+//
+//    assertTrue(pool.add(manager));
+//  }
 }
