@@ -17,7 +17,7 @@ public class PairedInstance {
 
   @Override
   public int hashCode() {
-    return referenceId.hashCode() & super.hashCode();
+    return referenceId.hashCode();
   }
 
   @NonNull
