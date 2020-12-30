@@ -1,45 +1,25 @@
-package github.penguin.reference;
+package github.penguin.reference.method_channel;
 
-import static github.penguin.reference.ReferenceMatchers.isMethodCall;
 //import static github.penguin.reference.ReferenceMatchers.isRemoteReference;
 //import static github.penguin.reference.ReferenceMatchers.isUnpairedReference;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.isA;
-import static org.junit.Assert.assertEquals;
+    import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.eq;
+    import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+    import static org.mockito.Mockito.verify;
 
-import androidx.annotation.Nullable;
-import github.penguin.reference.method_channel.MethodChannelManager;
-import github.penguin.reference.method_channel.MethodChannelMessenger;
 //import github.penguin.reference.method_channel.ReferenceMessageCodec;
-import github.penguin.reference.reference.PairedInstance;
-import github.penguin.reference.reference.NewUnpairedInstance;
-import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugin.common.BinaryMessenger.BinaryMessageHandler;
-import io.flutter.plugin.common.BinaryMessenger.BinaryReply;
-import io.flutter.plugin.common.MethodCall;
-import io.flutter.plugin.common.MethodCodec;
+    import io.flutter.plugin.common.MethodCodec;
 import io.flutter.plugin.common.StandardMethodCodec;
-import java.nio.ByteBuffer;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 
 public class MethodChannelTest {
+  private static final ReferenceMessageCodec messageCodec = new ReferenceMessageCodec();
+  private static final MethodCodec methodCodec = new StandardMethodCodec(messageCodec);
+  
 //  private static final ReferenceMessageCodec messageCodec = new ReferenceMessageCodec();
 //  private static final MethodCodec methodCodec = new StandardMethodCodec(messageCodec);
 //  private static TestTypePairManager testManager;
