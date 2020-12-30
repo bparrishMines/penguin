@@ -43,9 +43,9 @@ void main() {
       );
     });
 
-    test('createUnpairedReference', () {
+    test('createUnpairedInstance', () {
       final NewUnpairedInstance unpairedReference =
-          testManager.createUnpairedReference(
+          testManager.createUnpairedInstance(
         'test_channel',
         TestClass(testManager),
       )!;
@@ -135,7 +135,7 @@ void main() {
       );
     });
 
-    test('invokeMethod on unpaired reference', () {
+    test('invokeMethod on unpaired instance', () {
       expect(
         testChannel.invokeMethod(
           TestClass(testManager),
@@ -150,8 +150,10 @@ void main() {
       final testClass = TestClass(testManager);
 
       testChannel.createNewInstancePair(testClass);
-      expect(testChannel.disposePair(testClass), completes);
+      expect(testChannel.disposePair(testClass), completion(null));
       expect(testManager.isPaired(testClass), isFalse);
+      // Test that this completes with second call.
+      expect(testChannel.disposePair(testClass), completion(null));
     });
   });
 }

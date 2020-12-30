@@ -24,7 +24,7 @@ class TypeChannel<T extends Object> {
   }
 
   NewUnpairedInstance? createUnpairedInstance(T instance) {
-    return manager.createUnpairedReference(name, instance);
+    return manager.createUnpairedInstance(name, instance);
   }
 
   /// Creates a new [PairedInstance] to be paired with [instance].
@@ -116,7 +116,7 @@ class TypeChannel<T extends Object> {
   ) async {
     final Object? result =
         await manager.messenger.sendInvokeMethodOnUnpairedReference(
-      manager.createUnpairedReference(name, object)!,
+      createUnpairedInstance(object)!,
       methodName,
       manager.converter.convertForRemoteManager(manager, arguments)!
           as List<Object?>,
@@ -310,7 +310,7 @@ abstract class TypeChannelManager {
   ///
   /// Returns `null` if no such handler exists for a type channel of name:
   /// [channelName].
-  NewUnpairedInstance? createUnpairedReference(
+  NewUnpairedInstance? createUnpairedInstance(
     String channelName,
     Object instance,
   ) {
@@ -423,7 +423,7 @@ class StandardInstanceConverter implements InstanceConverter {
     if (manager.isPaired(object)) {
       return manager._instancePairs.getPairedPairedInstance(object!);
     } else if (!manager.isPaired(object) && object is PairableInstance) {
-      return manager.createUnpairedReference(
+      return manager.createUnpairedInstance(
         object.typeChannel.name,
         object,
       );

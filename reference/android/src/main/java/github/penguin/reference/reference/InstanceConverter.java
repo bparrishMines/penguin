@@ -23,7 +23,7 @@ public interface InstanceConverter {
       } else if (!manager.isPaired(object) && object instanceof PairableInstance) {
         final String referenceChannelName =
             ((PairableInstance) object).getTypeChannel().name;
-        return manager.createUnpairedReference(referenceChannelName, object);
+        return manager.createUnpairedInstance(referenceChannelName, object);
       } else if (object instanceof List) {
         final List<Object> result = new ArrayList<>();
         for (final Object obj : (List) object) {

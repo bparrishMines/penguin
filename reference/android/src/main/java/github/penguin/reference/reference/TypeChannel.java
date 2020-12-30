@@ -19,11 +19,11 @@ public class TypeChannel<T> {
   }
   
   NewUnpairedInstance createUnpairedInstance(T instance) {
-    return manager.createUnpairedReference(name, instance);
+    return manager.createUnpairedInstance(name, instance);
   }
 
   public Completable<PairedInstance> createNewInstancePair(T instance) {
-    if (manager.isPaired(instance)) return null;
+    if (manager.isPaired(instance)) return new Completer<PairedInstance>().complete(null).completable;
 
     final Completer<PairedInstance> instanceCompleter = new Completer<>();
     final PairedInstance pairedInstance = new PairedInstance(manager.generateUniqueReferenceId());
@@ -131,7 +131,7 @@ public class TypeChannel<T> {
     manager
         .getMessenger()
         .sendInvokeMethodOnUnpairedReference(
-            manager.createUnpairedReference(name, object),
+            manager.createUnpairedInstance(name, object),
             methodName,
             (List<Object>) manager.getConverter().convertForRemoteManager(manager, arguments))
         .setOnCompleteListener(
@@ -158,7 +158,7 @@ public class TypeChannel<T> {
   public Completable<Void> disposePair(Object instance) {
     final PairedInstance pairedInstance =
         manager.instancePairs.getPairedPairedInstance(instance);
-    if (pairedInstance == null) return null;
+    if (pairedInstance == null) return new Completer<Void>().complete(null).completable;
 
     manager.instancePairs.removePairWithObject(instance);
     return manager.getMessenger().sendDisposePair(name, pairedInstance);

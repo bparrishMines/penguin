@@ -117,9 +117,9 @@ public class TypeChannelManagerTest {
   }
 
   @Test
-  public void createUnpairedReference() {
+  public void createUnpairedInstance() {
     final NewUnpairedInstance unpairedReference =
-        testManager.createUnpairedReference(
+        testManager.createUnpairedInstance(
             "test_channel",
             new TestClass(testManager)
             );

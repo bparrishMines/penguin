@@ -56,7 +56,7 @@ public abstract class TypeChannelManager {
     return getConverter().convertForRemoteManager(this, result);
   }
 
-  public NewUnpairedInstance createUnpairedReference(String channelName, Object object) {
+  public NewUnpairedInstance createUnpairedInstance(String channelName, Object object) {
     return new NewUnpairedInstance(
         channelName, getChannelHandler(channelName).getCreationArguments(this, object));
   }
