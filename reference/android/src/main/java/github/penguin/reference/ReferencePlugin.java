@@ -23,7 +23,7 @@ public class ReferencePlugin implements FlutterPlugin {
     return manager;
   }
 
-  @SuppressWarnings("unused")
+  @SuppressWarnings({"unused", "deprecation"})
   public static void registerWith(Registrar registrar) {
     PluginTemplate.registerWith(registrar);
   }

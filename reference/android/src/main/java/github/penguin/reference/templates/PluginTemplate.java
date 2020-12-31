@@ -8,7 +8,7 @@ import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
 
 public class PluginTemplate implements FlutterPlugin {
-  @SuppressWarnings("unused")
+  @SuppressWarnings({"unused", "deprecation"})
   public static void registerWith(Registrar registrar) {
     new PluginTemplate().initialize(registrar.messenger());
   }
