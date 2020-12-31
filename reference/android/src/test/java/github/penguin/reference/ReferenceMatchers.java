@@ -9,18 +9,14 @@ import org.hamcrest.TypeSafeMatcher;
 import java.util.List;
 
 @SuppressWarnings("rawtypes")
-class ReferenceMatchers {
-  static Matcher isMethodCall(String method, Object arguments) {
+public class ReferenceMatchers {
+  public static Matcher isMethodCall(String method, Object arguments) {
     return new IsMethodCall(method, arguments);
   }
 
-  static Matcher isUnpairedInstance(String channelName, final Object creationArguments) {
+  public static Matcher isUnpairedInstance(String channelName, final Object creationArguments) {
     return new IsUnpairedInstance(channelName, creationArguments);
   }
-
-//  static Matcher isRemoteReference(String referenceId) {
-//    return new IsRemoteReference(referenceId);
-//  }
 
   private static class IsMethodCall extends TypeSafeMatcher<MethodCall> {
     private final String method;
@@ -60,12 +56,10 @@ class ReferenceMatchers {
   private static class IsUnpairedInstance extends TypeSafeMatcher<NewUnpairedInstance> {
     private final String channelName;
     private final Object creationArguments;
-    //private final String managerPoolId;
 
     private IsUnpairedInstance(String channelName, Object creationArguments) {
       this.channelName = channelName;
       this.creationArguments = creationArguments;
-      //this.managerPoolId = managerPoolId;
     }
 
     private void describe(
@@ -106,26 +100,4 @@ class ReferenceMatchers {
       return creationArguments == unpairedInstance.creationArguments;
     }
   }
-
-//  private static class IsRemoteReference extends TypeSafeMatcher<PairedInstance> {
-//    private final Object referenceId;
-//
-//    private IsRemoteReference(Object referenceId) {
-//      this.referenceId = referenceId;
-//    }
-//
-//    @Override
-//    protected boolean matchesSafely(PairedInstance item) {
-//      if (referenceId instanceof Matcher) return ((Matcher) referenceId).matches(item.referenceId);
-//      return item.referenceId.equals(referenceId);
-//    }
-//
-//    @Override
-//    public void describeTo(Description description) {
-//      description
-//          .appendText(
-//              String.format(" A %s with referenceId: ", PairedInstance.class.getSimpleName()))
-//          .appendText("" + referenceId);
-//    }
-//  }
 }

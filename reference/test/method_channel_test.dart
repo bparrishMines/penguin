@@ -43,7 +43,7 @@ void main() {
       testManager = TestManager();
     });
 
-    test('onReceiveCreateNewPair', () async {
+    test('onReceiveCreateNewInstancePair', () async {
       await testManager.channel.binaryMessenger.handlePlatformMessage(
         'test_method_channel',
         testManager.channel.codec.encodeMethodCall(
@@ -116,7 +116,7 @@ void main() {
       expect(responseCompleter.future, completion('return_value'));
     });
 
-    test('onReceiveInvokeMethodOnUnpairedReference', () async {
+    test('onReceiveInvokeMethodOnUnpairedInstance', () async {
       final Completer<String> responseCompleter = Completer<String>();
       await testManager.channel.binaryMessenger.handlePlatformMessage(
         'test_method_channel',
@@ -256,7 +256,7 @@ void main() {
       ]);
     });
 
-    test('REFERENCE_DISPOSE', () {
+    test('disposePair', () {
       final TestClass testClass = TestClass(testManager);
       testChannel.createNewInstancePair(testClass);
 
