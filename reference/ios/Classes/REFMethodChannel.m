@@ -1,8 +1,8 @@
-#import "REFMethodChannelReferencePairManager.h"
+#import "REFMethodChannel.h"
 
 typedef NS_ENUM(NSInteger, REFReferenceField) {
-  REFRemoteReferenceValue = 128,
-  REFUnpairedReferenceValue = 129,
+  REFPairedInstanceValue = 128,
+  REFNewUnpairedInstanceValue = 129,
 };
 
 NSString *const REFMethodCreate = @"REFERENCE_CREATE";
@@ -21,10 +21,10 @@ NSString *const REFMethodDispose = @"REFERENCE_DISPOSE";
 - (id _Nullable)readValueOfType:(UInt8)type {
   REFReferenceField field = (REFReferenceField)type;
   switch (field) {
-    case REFRemoteReferenceValue:
-      return [REFRemoteReference fromID:[self readValueOfType:[self readByte]]];
-    case REFUnpairedReferenceValue: {
-      return [[REFUnpairedReference alloc] initWithChannel:[self readValueOfType:[self readByte]]
+    case REFPairedInstanceValue:
+      return [REFPairedInstance fromID:[self readValueOfType:[self readByte]]];
+    case REFNewUnpairedInstanceValue: {
+      return [[REFNewUnpairedInstance alloc] initWithChannelName:[self readValueOfType:[self readByte]]
                                          creationArguments:[self readValueOfType:[self readByte]]];
     }
   }
@@ -34,14 +34,14 @@ NSString *const REFMethodDispose = @"REFERENCE_DISPOSE";
 
 @implementation REFReferenceWriter
 - (void)writeValue:(id _Nonnull)value {
-  if ([value isKindOfClass:[REFRemoteReference class]]) {
-    [self writeByte:REFRemoteReferenceValue];
-    REFRemoteReference *remoteReference = value;
-    [self writeValue:remoteReference.referenceID];
-  } else if ([value isKindOfClass:[REFUnpairedReference class]]) {
-    [self writeByte:REFUnpairedReferenceValue];
-    REFUnpairedReference *unpairedReference = value;
-    [self writeValue:unpairedReference.handlerChannel];
+  if ([value isKindOfClass:[REFPairedInstance class]]) {
+    [self writeByte:REFPairedInstanceValue];
+    REFPairedInstance *remoteReference = value;
+    [self writeValue:remoteReference.instanceID];
+  } else if ([value isKindOfClass:[REFNewUnpairedInstance class]]) {
+    [self writeByte:REFNewUnpairedInstanceValue];
+    REFNewUnpairedInstance *unpairedReference = value;
+    [self writeValue:unpairedReference.channelName];
     [self writeValue:unpairedReference.creationArguments];
   } else {
     [super writeValue:value];
@@ -89,7 +89,7 @@ NSString *const REFMethodDispose = @"REFERENCE_DISPOSE";
 }
 @end
 
-@implementation REFMethodChannelReferenceChannelMessenger
+@implementation REFMethodChannelMessenger
 - (instancetype)initWithChannel:(FlutterMethodChannel *)channel {
   self = [super init];
   if (self) {
@@ -98,12 +98,12 @@ NSString *const REFMethodDispose = @"REFERENCE_DISPOSE";
   return self;
 }
 
-- (void)sendCreateNewPair:(nonnull NSString *)handlerChannel
-          remoteReference:(nonnull REFRemoteReference *)remoteReference
+- (void)sendCreateNewInstancePair:(nonnull NSString *)handlerChannel
+          pairedInstance:(nonnull REFPairedInstance *)pairedInstance
                 arguments:(nonnull NSArray<id> *)arguments
                completion:(nonnull void (^)(NSError * _Nullable))completion {
   [_channel invokeMethod:REFMethodCreate
-               arguments:@[handlerChannel, remoteReference, arguments]
+               arguments:@[handlerChannel, pairedInstance, arguments]
                   result:^(id result) {
     if ([result isKindOfClass:[FlutterError class]]) {
       completion([[REFMethodChannelError alloc] initWithFlutterError:result]);
@@ -116,12 +116,12 @@ NSString *const REFMethodDispose = @"REFERENCE_DISPOSE";
   }];
 }
 
-- (void)sendInvokeStaticMethod:(nonnull NSString *)handlerChannel
+- (void)sendInvokeStaticMethod:(nonnull NSString *)channelName
                     methodName:(nonnull NSString *)methodName
                      arguments:(nonnull NSArray<id> *)arguments
                     completion:(nonnull void (^)(id _Nullable, NSError * _Nullable))completion {
   [_channel invokeMethod:REFMethodStaticMethod
-               arguments:@[handlerChannel, methodName, arguments ]
+               arguments:@[channelName, methodName, arguments ]
                   result:^(id result) {
     if ([result isKindOfClass:[FlutterError class]]) {
       completion(nil, [[REFMethodChannelError alloc] initWithFlutterError:result]);
@@ -134,13 +134,13 @@ NSString *const REFMethodDispose = @"REFERENCE_DISPOSE";
   }];
 }
 
-- (void)sendInvokeMethod:(nonnull NSString *)handlerChannel
-         remoteReference:(nonnull REFRemoteReference *)remoteReference
+- (void)sendInvokeMethod:(nonnull NSString *)channelName
+         pairedInstance:(nonnull REFPairedInstance *)pairedInstance
               methodName:(nonnull NSString *)methodName
                arguments:(nonnull NSArray<id> *)arguments
               completion:(nonnull void (^)(id _Nullable, NSError * _Nullable))completion {
   [_channel invokeMethod:REFMethodMethod
-               arguments:@[handlerChannel, remoteReference, methodName, arguments ]
+               arguments:@[channelName, pairedInstance, methodName, arguments ]
                   result:^(id result) {
     if ([result isKindOfClass:[FlutterError class]]) {
       completion(nil, [[REFMethodChannelError alloc] initWithFlutterError:result]);
@@ -153,7 +153,7 @@ NSString *const REFMethodDispose = @"REFERENCE_DISPOSE";
   }];
 }
 
-- (void)sendInvokeMethodOnUnpairedReference:(nonnull REFUnpairedReference *)unpairedReference
+- (void)sendInvokeMethodOnUnpairedReference:(nonnull REFNewUnpairedInstance *)unpairedReference
                                  methodName:(nonnull NSString *)methodName
                                   arguments:(nonnull NSArray<id> *)arguments
                                  completion:(nonnull void (^)(id _Nullable, NSError * _Nullable))completion {
@@ -171,9 +171,11 @@ NSString *const REFMethodDispose = @"REFERENCE_DISPOSE";
   }];
 }
 
-- (void)sendDisposePair:(nonnull NSString *)handlerChannel remoteReference:(nonnull REFRemoteReference *)remoteReference completion:(nonnull void (^)(NSError * _Nullable))completion {
+- (void)sendDisposePair:(nonnull NSString *)handlerChannel
+         pairedInstance:(nonnull REFPairedInstance *)pairedInstance
+             completion:(nonnull void (^)(NSError * _Nullable))completion {
   [_channel invokeMethod:REFMethodDispose
-               arguments:@[handlerChannel, remoteReference]
+               arguments:@[handlerChannel, pairedInstance]
                   result:^(id result) {
     if ([result isKindOfClass:[FlutterError class]]) {
       completion([[REFMethodChannelError alloc] initWithFlutterError:result]);
@@ -187,7 +189,7 @@ NSString *const REFMethodDispose = @"REFERENCE_DISPOSE";
 }
 @end
 
-@implementation REFMethodChannelReferenceChannelManager
+@implementation REFMethodChannelManager
 - (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger
                             channelName:(NSString *)channelName {
   NSObject<FlutterMethodCodec> *methodCodec =
@@ -196,16 +198,16 @@ NSString *const REFMethodDispose = @"REFERENCE_DISPOSE";
                                         binaryMessenger:binaryMessenger
                                                   codec:methodCodec];
   
-  self = [super initWithMessenger:[[REFMethodChannelReferenceChannelMessenger alloc] initWithChannel:_channel]];
+  self = [super initWithMessenger:[[REFMethodChannelMessenger alloc] initWithChannel:_channel]];
   
   if (self) {
-    __block REFMethodChannelReferenceChannelManager *weakSelf = self;
+    __block REFMethodChannelManager *weakSelf = self;
     [_channel setMethodCallHandler:^(FlutterMethodCall *_Nonnull call,
                                      FlutterResult _Nonnull channelResult) {
       if ([REFMethodCreate isEqualToString:call.method]) {
         NSArray<id> *arguments = [call arguments];
-        [weakSelf onReceiveCreateNewPair:arguments[0]
-                         remoteReference:arguments[1]
+        [weakSelf onReceiveCreateNewInstancePair:arguments[0]
+                         pairedInstance:arguments[1]
                                arguments:arguments[2]];
         channelResult(nil);
       } else if ([REFMethodStaticMethod isEqualToString:call.method]) {
@@ -217,19 +219,19 @@ NSString *const REFMethodDispose = @"REFERENCE_DISPOSE";
       } else if ([REFMethodMethod isEqualToString:call.method]) {
         NSArray<id> *arguments = [call arguments];
         NSObject *result = [weakSelf onReceiveInvokeMethod:arguments[0]
-                                           remoteReference:arguments[1]
+                                           pairedInstance:arguments[1]
                                                 methodName:arguments[2]
                                                  arguments:arguments[3]];
         channelResult(result);
       } else if ([REFMethodUnpairedMethod isEqualToString:call.method]) {
         NSArray<id> *arguments = [call arguments];
-        NSObject *result = [weakSelf onReceiveInvokeMethodOnUnpairedReference:arguments[0]
+        NSObject *result = [weakSelf onReceiveInvokeMethodOnUnpairedInstance:arguments[0]
                                                                    methodName:arguments[1]
                                                                     arguments:arguments[2]];
         channelResult(result);
       } else if ([REFMethodDispose isEqualToString:call.method]) {
         NSArray<id> *arguments = [call arguments];
-        [weakSelf onReceiveDisposePair:arguments[0] remoteReference:arguments[1]];
+        [weakSelf onReceiveDisposePair:arguments[0] pairedInstance:arguments[1]];
         channelResult(nil);
       } else {
         channelResult(FlutterMethodNotImplemented);

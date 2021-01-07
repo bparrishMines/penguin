@@ -18,6 +18,6 @@ public class NewUnpairedInstance {
   @Override
   public String toString() {
     return String.format(
-        "%s(%s, %s)", "UnpairedReference", channelName, creationArguments.toString());
+        "%s(%s, %s)", "NewUnpairedReference", channelName, creationArguments.toString());
   }
 }

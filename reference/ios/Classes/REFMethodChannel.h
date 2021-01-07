@@ -1,18 +1,18 @@
 #import <Flutter/Flutter.h>
 
-#import "REFReferenceChannelManager.h"
+#import "REFTypeChannel.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface REFReferenceReaderWriter : FlutterStandardReaderWriter
 @end
 
-@interface REFMethodChannelReferenceChannelMessenger : NSObject<REFReferenceChannelMessenger>
+@interface REFMethodChannelMessenger : NSObject<REFTypeChannelMessenger>
 @property(readonly) FlutterMethodChannel *channel;
 - (instancetype)initWithChannel:(FlutterMethodChannel *)channel;
 @end
 
-@interface REFMethodChannelReferenceChannelManager : REFReferenceChannelManager
+@interface REFMethodChannelManager : REFTypeChannelManager
 @property(readonly) FlutterMethodChannel *channel;
 - (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger
                             channelName:(NSString *)channelName;

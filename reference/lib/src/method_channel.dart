@@ -160,7 +160,7 @@ class ReferenceMessageCodec extends StandardMessageCodec {
   void writeValue(WriteBuffer buffer, dynamic value) {
     if (value is PairedInstance) {
       buffer.putUint8(_valuePairedInstance);
-      writeValue(buffer, value.referenceId);
+      writeValue(buffer, value.instanceId);
     } else if (value is NewUnpairedInstance) {
       buffer.putUint8(_valueNewUnpairedInstance);
       writeValue(buffer, value.channelName);

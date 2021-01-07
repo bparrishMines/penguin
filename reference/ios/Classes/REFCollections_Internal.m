@@ -94,39 +94,39 @@
 }
 @end
 
-@implementation REFRemoteReferenceMap {
-  REFBiMapTable<NSObject *, REFRemoteReference *> *_remoteReferences;
+@implementation REFPairedInstanceMap {
+  REFBiMapTable<NSObject *, REFPairedInstance *> *_pairedInstances;
 }
 
 - (instancetype)init {
   self = [super init];
   if (self) {
-    _remoteReferences = [[REFBiMapTable alloc] init];
+    _pairedInstances = [[REFBiMapTable alloc] init];
   }
   return self;
 }
 
-- (void)add:(id)instance remoteReference:(REFRemoteReference *)remoteReference {
-  [_remoteReferences setObject:remoteReference forKey:instance];
+- (void)add:(id)instance pairedInstance:(REFPairedInstance *)pairedInstance {
+  [_pairedInstances setObject:pairedInstance forKey:instance];
 }
 
-- (REFRemoteReference *_Nullable)removePairWithObject:(id)object {
-  REFRemoteReference *remoteReference = [_remoteReferences objectForKey:object];
-  [_remoteReferences removeObjectForKey:object];
-  return remoteReference;
+- (REFPairedInstance *_Nullable)removePairWithObject:(id)object {
+  REFPairedInstance *pairedInstance = [_pairedInstances objectForKey:object];
+  [_pairedInstances removeObjectForKey:object];
+  return pairedInstance;
 }
 
-- (id _Nullable)removePairWithRemoteReference:(REFRemoteReference *)remoteReference {
-  id object = [_remoteReferences.inverse objectForKey:remoteReference];
-  [_remoteReferences removeObjectForKey:object];
+- (id _Nullable)removePairWithPairedInstance:(REFPairedInstance *)pairedInstance {
+  id object = [_pairedInstances.inverse objectForKey:pairedInstance];
+  [_pairedInstances removeObjectForKey:object];
   return object;
 }
 
-- (REFRemoteReference *_Nullable)getPairedRemoteReference:(id)object {
-  return [_remoteReferences objectForKey:object];
+- (REFPairedInstance *_Nullable)getPairedInstance:(id)object {
+  return [_pairedInstances objectForKey:object];
 }
 
-- (id _Nullable)getPairedObject:(REFRemoteReference *)remoteReference {
-  return [_remoteReferences.inverse objectForKey:remoteReference];
+- (id _Nullable)getPairedObject:(REFPairedInstance *)pairedInstance {
+  return [_pairedInstances.inverse objectForKey:pairedInstance];
 }
 @end

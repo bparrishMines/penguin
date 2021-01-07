@@ -1,4 +1,4 @@
-#import "REFMethodChannelReferencePairManager.h"
+#import "REFMethodChannel.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -13,8 +13,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property NSNumber *_Nullable fieldTemplate;
 @end
 
-@interface REFClassTemplateChannel : REFReferenceChannel
-- (instancetype)initWithManager:(REFReferenceChannelManager *)manager;
+@interface REFClassTemplateChannel : REFTypeChannel
+- (instancetype)initWithManager:(REFTypeChannelManager *)manager;
 - (void)invoke_staticMethodTemplate:(NSString *_Nullable)parameterTemplate
                          completion:(void (^)(id _Nullable, NSError *_Nullable))completion;
 - (void)invoke_methodTemplate:(NSObject<REFClassTemplate> *)instance
@@ -22,10 +22,10 @@ NS_ASSUME_NONNULL_BEGIN
                    completion:(void (^)(id _Nullable, NSError *_Nullable))completion;
 @end
 
-@interface REFClassTemplateHandler : NSObject<REFReferenceChannelHandler>
-- (NSObject<REFClassTemplate> *)onCreate:(REFReferenceChannelManager *)manager
+@interface REFClassTemplateHandler : NSObject<REFTypeChannelHandler>
+- (NSObject<REFClassTemplate> *)onCreate:(REFTypeChannelManager *)manager
                                              args:(REFClassTemplateCreationArgs *)args;
-- (NSObject *_Nullable)on_staticMethodTemplate:(REFReferenceChannelManager *)manager
+- (NSObject *_Nullable)on_staticMethodTemplate:(REFTypeChannelManager *)manager
                              parameterTemplate:(NSString *_Nullable)parameterTemplate;
 @end
 

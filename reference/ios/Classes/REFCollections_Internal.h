@@ -1,6 +1,6 @@
 #import <Foundation/Foundation.h>
 
-#import "REFReference.h"
+#import "REFInstance.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -19,12 +19,12 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSEnumerator<ObjectType> *)objectEnumerator;
 @end
 
-@interface REFRemoteReferenceMap : NSObject
-- (void)add:(id)instance remoteReference:(REFRemoteReference *)remoteReference;
-- (REFRemoteReference *_Nullable)removePairWithObject:(id)object;
-- (id _Nullable)removePairWithRemoteReference:(REFRemoteReference *)remoteReference;
-- (REFRemoteReference *_Nullable)getPairedRemoteReference:(id)object;
-- (id _Nullable)getPairedObject:(REFRemoteReference *)remoteReference;
+@interface REFPairedInstanceMap : NSObject
+- (void)add:(id)instance pairedInstance:(REFPairedInstance *)pairedInstance;
+- (REFPairedInstance *_Nullable)removePairWithObject:(id)object;
+- (id _Nullable)removePairWithPairedInstance:(REFPairedInstance *)pairedInstance;
+- (REFPairedInstance *_Nullable)getPairedInstance:(id)object;
+- (id _Nullable)getPairedObject:(REFPairedInstance *)pairedInstance;
 @end
 
 NS_ASSUME_NONNULL_END
