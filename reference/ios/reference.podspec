@@ -5,14 +5,15 @@
 Pod::Spec.new do |s|
   s.name             = 'reference'
   s.version          = '0.0.1'
-  s.summary          = 'A new flutter plugin project.'
+  s.summary          = 'A Flutter plugin library for communicating language types.'
   s.description      = <<-DESC
-A new flutter plugin project.
+Manages communication between types/classes of different languages.
                        DESC
-  s.homepage         = 'http://example.com'
-  s.license          = { :file => '../LICENSE' }
-  s.author           = { 'Your Company' => 'email@example.com' }
-  s.source           = { :path => '.' }
+  s.homepage         = 'https://github.com/bparrishMines/penguin/tree/master/reference'
+  s.license          = { :type => 'MIT', :file => '../LICENSE' }
+  s.author           = { 'Brandon Parrish' => 'email@example.com' }
+  s.source           = { :http => 'https://github.com/bparrishMines/penguin/tree/master/reference' }
+  s.documentation_url = 'https://pub.dev/documentation/reference/latest'
   s.source_files = 'Classes/**/*'
   s.public_header_files = 'Classes/**/*.h'
   s.dependency 'Flutter'
