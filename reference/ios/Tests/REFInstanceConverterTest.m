@@ -1,5 +1,9 @@
 #import <XCTest/XCTest.h>
 
+@import OCHamcrest;
+
+#import "REFReferenceMatchers.h"
+
 @import reference;
 
 @class REFTestManager;
@@ -102,6 +106,16 @@
   XCTAssertEqualObjects([REFPairedInstance fromID:@"test_id"],
                         [_converter convertForRemoteManager:_testManager
                                                         obj:_testManager.testHandler.testClassInstance]);
+}
+
+- (void)testConvertForRemoteManager_handlesUnpairedObject {
+  assertThat([_converter convertForRemoteManager:_testManager
+                                                        obj:[[REFTestClass alloc] initWithManager:_testManager]],
+                                                        isUnpairedInstance(@"test_channel", @[]));
+}
+
+- (void)testConvertForRemoteManager_handlesNonPairableInstance {
+  XCTAssertEqualObjects(@"potato", [_converter convertForRemoteManager:_testManager obj:@"potato"]);
 }
 @end
 

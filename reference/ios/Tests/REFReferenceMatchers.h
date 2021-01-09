@@ -1,3 +1,15 @@
+@import reference;
+@import OCHamcrest;
+
+@interface IsUnpairedInstance : HCBaseMatcher
+@property(readonly) NSString *_Nonnull channelName;
+@property(readonly) id _Nonnull creationArguments;
+- (instancetype _Nonnull)initWithChannelName:(NSString *_Nonnull)channelName
+                       creationArguments:(id _Nonnull)creationArguments;
+@end
+
+FOUNDATION_EXPORT id _Nonnull isUnpairedInstance(NSString *_Nonnull channelName, id _Nonnull creationArguments);
+
 //@import OCMockito;
 //@import OCHamcrest;
 //

@@ -56,7 +56,7 @@
 
 - (REFNewUnpairedInstance *)createUnpairedInstance:(NSString *)channelName obj:(id)obj {
   NSObject<REFTypeChannelHandler> *handler = [_channelHandlers objectForKey:channelName];
-  if (handler) return nil;
+  if (!handler) return nil;
   
   return [[REFNewUnpairedInstance alloc] initWithChannelName:channelName
                                      creationArguments:[handler getCreationArguments:self instance:obj]];
