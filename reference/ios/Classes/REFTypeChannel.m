@@ -3,7 +3,7 @@
 @implementation REFTypeChannelManager {
 @public
   REFThreadSafeMapTable<NSString *, NSObject<REFTypeChannelHandler> *> *_channelHandlers;
-  REFPairedInstanceMap *_referencePairs;
+  REFPairedInstanceMap *_instancePairs;
 }
 
 - (instancetype)initWithMessenger:(id<REFTypeChannelMessenger>)messenger {
@@ -11,6 +11,7 @@
   if (self) {
     _messenger = messenger;
     _channelHandlers = [[REFThreadSafeMapTable alloc] init];
+    _instancePairs = [[REFPairedInstanceMap alloc] init];
   }
   return self;
 }
@@ -20,7 +21,7 @@
 }
 
 - (BOOL)isPaired:(NSObject *)instance {
-  return [_referencePairs getPairedInstance:instance] != nil;
+  return [_instancePairs getPairedInstance:instance] != nil;
 }
 
 - (void)registerHandler:(NSString *)channelName handler:(NSObject<REFTypeChannelHandler> *)handler {
@@ -34,12 +35,12 @@
 - (id)onReceiveCreateNewInstancePair:(NSString *)channelName
              pairedInstance:(REFPairedInstance *)pairedInstance
                    arguments:(NSArray<id> *)arguments {
-  if ([_referencePairs getPairedObject:pairedInstance]) return nil;
+  if ([_instancePairs getPairedObject:pairedInstance]) return nil;
   
   NSObject *object = [[self getChannelHandler:channelName] createInstance:self
                                                                    arguments:[[self converter] convertForLocalManager:self obj:arguments]];
   NSAssert(![self isPaired:object], @"");
-  [_referencePairs add:object pairedInstance:pairedInstance];
+  [_instancePairs add:object pairedInstance:pairedInstance];
   return object;
 }
 
@@ -66,7 +67,7 @@
                  methodName:(NSString *)methodName
                   arguments:(NSArray<id> *)arguments {
   NSObject *object = [[self getChannelHandler:channelName] invokeMethod:self
-                                                                  instance:[_referencePairs getPairedObject:pairedInstance]
+                                                                  instance:[_instancePairs getPairedObject:pairedInstance]
                                                                 methodName:methodName
                                                                  arguments:[[self converter] convertForLocalManager:self
                                                                                                                           obj:arguments]];
@@ -91,10 +92,10 @@
 }
 
 - (void)onReceiveDisposePair:(NSString *)channelName pairedInstance:(REFPairedInstance *)remoteReference {
-  NSObject *instance = [_referencePairs getPairedObject:remoteReference];
+  NSObject *instance = [_instancePairs getPairedObject:remoteReference];
   if (!instance) return;
   
-  [_referencePairs removePairWithObject:instance];
+  [_instancePairs removePairWithObject:instance];
   [[self getChannelHandler:channelName] onInstanceDisposed:self instance:instance];
 }
 
@@ -131,7 +132,7 @@
   
   __block REFPairedInstance *remoteReference =
   [REFPairedInstance fromID:[_manager generateUniqueInstanceId]];
-  [_manager->_referencePairs add:instance pairedInstance:remoteReference];
+  [_manager->_instancePairs add:instance pairedInstance:remoteReference];
   
   NSArray<id> *creationArguments = [_manager.converter
                                     convertForRemoteManager:_manager
@@ -171,7 +172,7 @@
            arguments:(NSArray<id> *)arguments
           completion:(void (^)(id _Nullable, NSError *_Nullable))completion {
   [_manager.messenger sendInvokeMethod:_name
-                       pairedInstance:[_manager->_referencePairs getPairedInstance:instance]
+                       pairedInstance:[_manager->_instancePairs getPairedInstance:instance]
                             methodName:methodName
                              arguments:[_manager.converter convertForRemoteManager:_manager obj:arguments]
                             completion:^(id result, NSError *error) {
@@ -201,9 +202,9 @@
 
 - (void)disposePair:(id)instance
          completion:(void (^)(NSError *_Nullable))completion {
-  REFPairedInstance *remoteReference = [_manager->_referencePairs getPairedInstance:instance];
+  REFPairedInstance *remoteReference = [_manager->_instancePairs getPairedInstance:instance];
   if (remoteReference) {
-    [_manager->_referencePairs removePairWithObject:instance];
+    [_manager->_instancePairs removePairWithObject:instance];
     [_manager.messenger sendDisposePair:_name pairedInstance:remoteReference completion:completion];
   }
 }
@@ -213,7 +214,7 @@
 - (id _Nullable)convertForRemoteManager:(REFTypeChannelManager *)manager
                                               obj:(id _Nullable)obj {
   if ([manager isPaired:obj]) {
-    return [manager->_referencePairs getPairedInstance:obj];
+    return [manager->_instancePairs getPairedInstance:obj];
   } else if (![manager isPaired:obj] && [obj conformsToProtocol:@protocol(REFPairableInstance)]) {
     id<REFPairableInstance> referencable = (id<REFPairableInstance>) obj;
     return [referencable.typeChannel createUnpairedInstance:obj];
@@ -243,7 +244,7 @@
 - (id _Nullable)convertForLocalManager:(REFTypeChannelManager *)manager
                                              obj:(id _Nullable)obj {
   if ([obj isKindOfClass:[REFPairedInstance class]]) {
-    return [manager->_referencePairs getPairedObject:obj];
+    return [manager->_instancePairs getPairedObject:obj];
   } else if ([obj isKindOfClass:[REFNewUnpairedInstance class]]) {
     REFNewUnpairedInstance *unpairedReference = (REFNewUnpairedInstance *)obj;
     return [[manager

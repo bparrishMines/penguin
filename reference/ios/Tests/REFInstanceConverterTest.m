@@ -1,3 +1,110 @@
+#import <XCTest/XCTest.h>
+
+@import reference;
+
+@class REFTestManager;
+@class REFTestClass;
+@class REFTestHandler;
+
+@interface REFTestManager : REFTypeChannelManager
+@property (readonly) REFTestHandler *testHandler;
+@end
+
+@interface REFTestHandler : NSObject<REFTypeChannelHandler>
+@property (readonly) REFTestClass *testClassInstance;
+-(instancetype)initWithManager:(REFTestManager *)manager;
+@end
+
+@interface REFTestClass : NSObject<REFPairableInstance>
+@property (readonly) REFTestManager *testManager;
+-(instancetype)initWithManager:(REFTestManager *)manager;
+@end
+
+@interface REFInstanceConverterTest : XCTestCase
+@end
+
+@implementation REFTestManager
+- (instancetype)init {
+  self = [super initWithMessenger:nil];
+  if (self) {
+    _testHandler = [[REFTestHandler alloc] initWithManager:self];
+    [self registerHandler:@"test_channel" handler:_testHandler];
+  }
+  return self;
+}
+@end
+
+@implementation REFTestHandler
+-(instancetype)initWithManager:(REFTestManager *)manager {
+  self = [super init];
+  if (self) {
+    _testClassInstance = [[REFTestClass alloc] initWithManager:manager];
+  }
+  return self;
+}
+
+- (NSArray *)getCreationArguments:(REFTypeChannelManager *)manager instance:(NSObject *)instance {
+  return @[];
+}
+
+- (id)createInstance:(REFTypeChannelManager *)manager arguments:(NSArray *)arguments {
+  return _testClassInstance;
+}
+
+- (id _Nullable)invokeStaticMethod:(REFTypeChannelManager *)manager
+                        methodName:(NSString *)methodName
+                         arguments:(NSArray *)arguments {
+  return @"return_value";
+}
+
+- (id _Nullable)invokeMethod:(REFTypeChannelManager *)manager
+                    instance:(NSObject *)instance
+                  methodName:(NSString *)methodName
+                   arguments:(NSArray *)arguments {
+  return @"return_value";
+}
+
+- (void)onInstanceDisposed:(REFTypeChannelManager *)manager
+                  instance:(NSObject *)instance {
+  // Do nothing.
+}
+@end
+
+@implementation REFTestClass
+-(instancetype)initWithManager:(REFTestManager *)manager {
+  self = [super init];
+  if (self) {
+    _testManager = manager;
+  }
+  return self;
+}
+
+- (REFTypeChannel *)typeChannel {
+  return [[REFTypeChannel alloc] initWithManager:_testManager name:@"test_channel"];
+}
+@end
+
+@implementation REFInstanceConverterTest {
+  REFStandardInstanceConverter *_converter;
+  REFTestManager *_testManager;
+}
+
+- (void)setUp {
+  _converter = [[REFStandardInstanceConverter alloc] init];
+  _testManager = [[REFTestManager alloc] init];
+}
+
+- (void)testConvertForRemoteManager_handlesPairedObject {
+  [_testManager onReceiveCreateNewInstancePair:@"test_channel"
+                                pairedInstance:[REFPairedInstance fromID:@"test_id"]
+                                     arguments:@[]];
+  
+  XCTAssertEqualObjects([REFPairedInstance fromID:@"test_id"],
+                        [_converter convertForRemoteManager:_testManager
+                                                        obj:_testManager.testHandler.testClassInstance]);
+}
+@end
+
 //#import <XCTest/XCTest.h>
 //#import "ReferenceMatchers.h"
 //

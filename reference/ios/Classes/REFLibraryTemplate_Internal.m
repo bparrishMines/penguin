@@ -21,7 +21,7 @@
 
 - (void)invoke_methodTemplate:(NSObject<REFClassTemplate> *)instance
             parameterTemplate:(NSString *_Nullable)parameterTemplate
-                   completion:(void (^)(id _Nullable, NSError *_Nullable))completion {  
+                   completion:(void (^)(id _Nullable, NSError *_Nullable))completion {
   [self invokeMethod:instance methodName:@"methodTemplate" arguments:@[parameterTemplate] completion:completion];
 }
 @end
