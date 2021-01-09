@@ -117,6 +117,23 @@
 - (void)testConvertForRemoteManager_handlesNonPairableInstance {
   XCTAssertEqualObjects(@"potato", [_converter convertForRemoteManager:_testManager obj:@"potato"]);
 }
+
+- (void)testConvertForLocalManager_handlesPairedInstance {
+  [_testManager onReceiveCreateNewInstancePair:@"test_channel"
+                                pairedInstance:[REFPairedInstance fromID:@"test_id"]
+                                     arguments:@[]];
+  
+  XCTAssertEqualObjects(_testManager.testHandler.testClassInstance,
+  [_converter convertForLocalManager:_testManager
+                                 obj:[REFPairedInstance fromID:@"test_id"]]);
+}
+
+- (void)testConvertForLocalManager_handlesNewUnpairedInstance {
+  XCTAssertEqualObjects([_converter convertForLocalManager:_testManager
+                                                       obj:[[REFNewUnpairedInstance alloc] initWithChannelName:@"test_channel"
+                                                                                             creationArguments:@[]]],
+                        _testManager.testHandler.testClassInstance);
+}
 @end
 
 //#import <XCTest/XCTest.h>

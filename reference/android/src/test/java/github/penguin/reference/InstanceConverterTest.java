@@ -111,15 +111,14 @@ public class InstanceConverterTest {
 
   @Test
   public void convertForLocalManager_handlesPairedInstance() throws Exception {
-    final PairedInstance pairedInstance = new PairedInstance("test_id");
     testManager.onReceiveCreateNewInstancePair(
         "test_channel",
-        pairedInstance,
+        new PairedInstance("test_id"),
         Collections.emptyList()
       );
 
     assertEquals(
-        converter.convertForLocalManager(testManager, pairedInstance),
+        converter.convertForLocalManager(testManager, new PairedInstance("test_id")),
         testManager.testHandler.testClassInstance
     );
   }
