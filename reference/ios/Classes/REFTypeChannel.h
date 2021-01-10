@@ -57,7 +57,7 @@ NS_ASSUME_NONNULL_BEGIN
                arguments:(NSArray<id> *)arguments
               completion:(void (^)(id _Nullable, NSError *_Nullable))completion;
 
-- (void)sendInvokeMethodOnUnpairedReference:(REFNewUnpairedInstance *)unpairedReference
+- (void)sendInvokeMethodOnUnpairedInstance:(REFNewUnpairedInstance *)unpairedReference
                                  methodName:(NSString *)methodName
                                   arguments:(NSArray<id> *)arguments
                                  completion:(void (^)(id _Nullable, NSError *_Nullable))completion;

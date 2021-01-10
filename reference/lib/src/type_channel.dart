@@ -115,7 +115,7 @@ class TypeChannel<T extends Object> {
     List<Object?> arguments,
   ) async {
     final Object? result =
-        await manager.messenger.sendInvokeMethodOnUnpairedReference(
+        await manager.messenger.sendInvokeMethodOnUnpairedInstance(
       createUnpairedInstance(object)!,
       methodName,
       manager.converter.convertForRemoteManager(manager, arguments)!
@@ -168,7 +168,7 @@ mixin TypeChannelMessenger {
   );
 
   /// Instantiate [unpairedInstance] and invoke a method on the instance.
-  Future<Object?> sendInvokeMethodOnUnpairedReference(
+  Future<Object?> sendInvokeMethodOnUnpairedInstance(
     NewUnpairedInstance unpairedInstance,
     String methodName,
     List<Object?> arguments,
@@ -341,7 +341,7 @@ abstract class TypeChannelManager {
   }
 
   /// Instantiate an object from [unpairedInstance] and invoke a method.
-  Object? onReceiveInvokeMethodOnUnpairedReference(
+  Object? onReceiveInvokeMethodOnUnpairedInstance(
     NewUnpairedInstance unpairedInstance,
     String methodName,
     List<Object?> arguments,

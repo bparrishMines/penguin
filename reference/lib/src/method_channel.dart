@@ -56,7 +56,7 @@ class MethodChannelManager extends TypeChannelManager {
           call.arguments[3],
         );
       } else if (call.method == MethodChannelManager._methodUnpairedMethod) {
-        return onReceiveInvokeMethodOnUnpairedReference(
+        return onReceiveInvokeMethodOnUnpairedInstance(
           call.arguments[0],
           call.arguments[1],
           call.arguments[2],
@@ -119,7 +119,7 @@ class MethodChannelMessenger with TypeChannelMessenger {
   }
 
   @override
-  Future<Object?> sendInvokeMethodOnUnpairedReference(
+  Future<Object?> sendInvokeMethodOnUnpairedInstance(
     NewUnpairedInstance unpairedReference,
     String methodName,
     List<Object?> arguments,

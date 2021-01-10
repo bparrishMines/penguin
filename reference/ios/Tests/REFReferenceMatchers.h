@@ -1,6 +1,24 @@
 @import reference;
 @import OCHamcrest;
 
+@class REFTestManager;
+@class REFTestClass;
+@class REFTestHandler;
+
+@interface REFTestManager : REFTypeChannelManager
+@property (readonly) REFTestHandler *_Nonnull testHandler;
+@end
+
+@interface REFTestHandler : NSObject<REFTypeChannelHandler>
+@property (readonly) REFTestClass *_Nonnull testClassInstance;
+-(instancetype _Nonnull)initWithManager:(REFTestManager *_Nonnull)manager;
+@end
+
+@interface REFTestClass : NSObject<REFPairableInstance>
+@property (readonly) REFTestManager *_Nonnull testManager;
+-(instancetype _Nonnull)initWithManager:(REFTestManager *_Nonnull)manager;
+@end
+
 @interface IsUnpairedInstance : HCBaseMatcher
 @property(readonly) NSString *_Nonnull channelName;
 @property(readonly) id _Nonnull creationArguments;

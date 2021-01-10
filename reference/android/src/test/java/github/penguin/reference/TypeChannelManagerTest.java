@@ -118,13 +118,13 @@ public class TypeChannelManagerTest {
 
   @Test
   public void createUnpairedInstance() {
-    final NewUnpairedInstance unpairedReference =
+    final NewUnpairedInstance unpairedInstance =
         testManager.createUnpairedInstance(
             "test_channel",
             new TestClass(testManager)
             );
-    assertEquals("test_channel", unpairedReference.channelName);
-    assertTrue(unpairedReference.creationArguments.isEmpty());
+    assertEquals("test_channel", unpairedInstance.channelName);
+    assertTrue(unpairedInstance.creationArguments.isEmpty());
   }
 
   @Test
@@ -147,10 +147,10 @@ public class TypeChannelManagerTest {
   }
 
   @Test
-  public void onReceiveInvokeMethodOnUnpairedReference() throws Exception {
+  public void onReceiveInvokeMethodOnUnpairedInstance() throws Exception {
     assertEquals(
         "return_value",
-        testManager.onReceiveInvokeMethodOnUnpairedReference(
+        testManager.onReceiveInvokeMethodOnUnpairedInstance(
             new NewUnpairedInstance("test_channel", Collections.emptyList()),
     "aMethod",
           Collections.emptyList()

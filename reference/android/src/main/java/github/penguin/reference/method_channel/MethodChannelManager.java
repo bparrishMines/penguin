@@ -74,7 +74,7 @@ public class MethodChannelManager extends TypeChannelManager {
                   {
                     final List<Object> arguments = (List<Object>) call.arguments;
                     final Object result =
-                        onReceiveInvokeMethodOnUnpairedReference(
+                        onReceiveInvokeMethodOnUnpairedInstance(
                             (NewUnpairedInstance) arguments.get(0),
                             (String) arguments.get(1),
                             (List<Object>) arguments.get(2));

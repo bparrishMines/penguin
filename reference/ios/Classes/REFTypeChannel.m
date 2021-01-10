@@ -75,13 +75,13 @@
   return [[self converter] convertForRemoteManager:self obj:object];
 }
 
-- (id)onReceiveInvokeMethodOnUnpairedInstance:(REFNewUnpairedInstance *)unpairedReference
+- (id)onReceiveInvokeMethodOnUnpairedInstance:(REFNewUnpairedInstance *)unpairedInstance
                                     methodName:(NSString *)methodName
                                      arguments:(NSArray<id> *)arguments {
-  NSObject<REFTypeChannelHandler> *handler = [self getChannelHandler:unpairedReference.channelName];
+  NSObject<REFTypeChannelHandler> *handler = [self getChannelHandler:unpairedInstance.channelName];
   NSObject *object = [handler createInstance:self
                                    arguments:[[self converter] convertForLocalManager:self
-                                                                                            obj:unpairedReference.creationArguments]];
+                                                                                            obj:unpairedInstance.creationArguments]];
   NSObject *result = [handler invokeMethod:self
                                   instance:object
                                 methodName:methodName
@@ -91,8 +91,8 @@
   return [[self converter] convertForRemoteManager:self obj:result];
 }
 
-- (void)onReceiveDisposePair:(NSString *)channelName pairedInstance:(REFPairedInstance *)remoteReference {
-  NSObject *instance = [_instancePairs getPairedObject:remoteReference];
+- (void)onReceiveDisposePair:(NSString *)channelName pairedInstance:(REFPairedInstance *)pairedInstance {
+  NSObject *instance = [_instancePairs getPairedObject:pairedInstance];
   if (!instance) return;
   
   [_instancePairs removePairWithObject:instance];
@@ -188,7 +188,7 @@
                              methodName:(NSString *)methodName
                               arguments:(NSArray<id> *)arguments
                              completion:(void (^)(id _Nullable, NSError *_Nullable))completion {
-  [_manager.messenger sendInvokeMethodOnUnpairedReference:[_manager createUnpairedInstance:_name obj:obj]
+  [_manager.messenger sendInvokeMethodOnUnpairedInstance:[_manager createUnpairedInstance:_name obj:obj]
                                                methodName:methodName
                                                 arguments:[_manager.converter convertForRemoteManager:_manager obj:arguments]
                                                completion:^(id result, NSError *error) {

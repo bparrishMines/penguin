@@ -78,7 +78,7 @@ public abstract class TypeChannelManager {
     return getConverter().convertForRemoteManager(this, result);
   }
 
-  public Object onReceiveInvokeMethodOnUnpairedReference(
+  public Object onReceiveInvokeMethodOnUnpairedInstance(
       NewUnpairedInstance unpairedInstance, String methodName, List<Object> arguments)
       throws Exception {
 

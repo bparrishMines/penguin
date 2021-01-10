@@ -1,5 +1,66 @@
 #import "REFReferenceMatchers.h"
 
+@implementation REFTestManager
+- (instancetype)init {
+  self = [super initWithMessenger:nil];
+  if (self) {
+    _testHandler = [[REFTestHandler alloc] initWithManager:self];
+    [self registerHandler:@"test_channel" handler:_testHandler];
+  }
+  return self;
+}
+@end
+
+@implementation REFTestHandler
+-(instancetype)initWithManager:(REFTestManager *)manager {
+  self = [super init];
+  if (self) {
+    _testClassInstance = [[REFTestClass alloc] initWithManager:manager];
+  }
+  return self;
+}
+
+- (NSArray *)getCreationArguments:(REFTypeChannelManager *)manager instance:(NSObject *)instance {
+  return @[];
+}
+
+- (id)createInstance:(REFTypeChannelManager *)manager arguments:(NSArray *)arguments {
+  return _testClassInstance;
+}
+
+- (id _Nullable)invokeStaticMethod:(REFTypeChannelManager *)manager
+                        methodName:(NSString *)methodName
+                         arguments:(NSArray *)arguments {
+  return @"return_value";
+}
+
+- (id _Nullable)invokeMethod:(REFTypeChannelManager *)manager
+                    instance:(NSObject *)instance
+                  methodName:(NSString *)methodName
+                   arguments:(NSArray *)arguments {
+  return @"return_value";
+}
+
+- (void)onInstanceDisposed:(REFTypeChannelManager *)manager
+                  instance:(NSObject *)instance {
+  // Do nothing.
+}
+@end
+
+@implementation REFTestClass
+-(instancetype)initWithManager:(REFTestManager *)manager {
+  self = [super init];
+  if (self) {
+    _testManager = manager;
+  }
+  return self;
+}
+
+- (REFTypeChannel *)typeChannel {
+  return [[REFTypeChannel alloc] initWithManager:_testManager name:@"test_channel"];
+}
+@end
+
 @implementation IsUnpairedInstance
 - (instancetype _Nonnull)initWithChannelName:(NSString *_Nonnull)channelName
                            creationArguments:(id _Nonnull)creationArguments {

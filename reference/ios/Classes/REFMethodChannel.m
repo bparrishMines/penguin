@@ -153,7 +153,7 @@ NSString *const REFMethodDispose = @"REFERENCE_DISPOSE";
   }];
 }
 
-- (void)sendInvokeMethodOnUnpairedReference:(nonnull REFNewUnpairedInstance *)unpairedReference
+- (void)sendInvokeMethodOnUnpairedInstance:(nonnull REFNewUnpairedInstance *)unpairedReference
                                  methodName:(nonnull NSString *)methodName
                                   arguments:(nonnull NSArray<id> *)arguments
                                  completion:(nonnull void (^)(id _Nullable, NSError * _Nullable))completion {

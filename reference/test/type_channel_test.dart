@@ -71,9 +71,9 @@ void main() {
       );
     });
 
-    test('onReceiveInvokeMethodOnUnpairedReference', () {
+    test('onReceiveInvokeMethodOnUnpairedInstance', () {
       expect(
-        testManager.onReceiveInvokeMethodOnUnpairedReference(
+        testManager.onReceiveInvokeMethodOnUnpairedInstance(
           NewUnpairedInstance('test_channel', <Object>[]),
           'aMethod',
           <Object>[],
@@ -240,7 +240,7 @@ class TestMessenger with TypeChannelMessenger {
   }
 
   @override
-  Future<Object?> sendInvokeMethodOnUnpairedReference(
+  Future<Object?> sendInvokeMethodOnUnpairedInstance(
     NewUnpairedInstance unpairedReference,
     String methodName,
     List<Object?> arguments,
