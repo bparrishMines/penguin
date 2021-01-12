@@ -107,7 +107,7 @@ public abstract class TypeChannelManager {
     getChannelHandler(channelName).onInstanceDisposed(this, instance);
   }
 
-  protected String generateUniqueReferenceId() {
+  protected String generateUniqueInstanceId() {
     return UUID.randomUUID().toString();
   }
 }

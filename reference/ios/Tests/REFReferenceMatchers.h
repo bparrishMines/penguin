@@ -4,9 +4,11 @@
 @class REFTestManager;
 @class REFTestClass;
 @class REFTestHandler;
+@class REFTestMessenger;
 
 @interface REFTestManager : REFTypeChannelManager
 @property (readonly) REFTestHandler *_Nonnull testHandler;
+@property (readonly) REFTestMessenger *_Nonnull testMessenger;
 @end
 
 @interface REFTestHandler : NSObject<REFTypeChannelHandler>
@@ -17,6 +19,9 @@
 @interface REFTestClass : NSObject<REFPairableInstance>
 @property (readonly) REFTestManager *_Nonnull testManager;
 -(instancetype _Nonnull)initWithManager:(REFTestManager *_Nonnull)manager;
+@end
+
+@interface REFTestMessenger : NSObject<REFTypeChannelMessenger>
 @end
 
 @interface IsUnpairedInstance : HCBaseMatcher

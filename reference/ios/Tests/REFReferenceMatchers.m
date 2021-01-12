@@ -2,12 +2,16 @@
 
 @implementation REFTestManager
 - (instancetype)init {
-  self = [super initWithMessenger:nil];
+  self = [super initWithMessenger:[[REFTestMessenger alloc] init]];
   if (self) {
     _testHandler = [[REFTestHandler alloc] initWithManager:self];
     [self registerHandler:@"test_channel" handler:_testHandler];
   }
   return self;
+}
+
+- (NSString *)generateUniqueInstanceId {
+  return @"test_instance_id";
 }
 @end
 
@@ -58,6 +62,43 @@
 
 - (REFTypeChannel *)typeChannel {
   return [[REFTypeChannel alloc] initWithManager:_testManager name:@"test_channel"];
+}
+@end
+
+@implementation REFTestMessenger
+- (void)sendCreateNewInstancePair:(NSString *)channelName
+          pairedInstance:(REFPairedInstance *)pairedInstance
+                arguments:(NSArray<id> *)arguments
+                       completion:(void (^)(NSError *_Nullable))completion {
+  completion(nil);
+}
+
+- (void)sendInvokeStaticMethod:(NSString *)channelName
+                    methodName:(NSString *)methodName
+                     arguments:(NSArray<id> *)arguments
+                    completion:(void (^)(id _Nullable, NSError *_Nullable))completion {
+  completion(@"return_value", nil);
+}
+
+- (void)sendInvokeMethod:(NSString *)channelName
+         pairedInstance:(REFPairedInstance *)pairedInstance
+              methodName:(NSString *)methodName
+               arguments:(NSArray<id> *)arguments
+              completion:(void (^)(id _Nullable, NSError *_Nullable))completion {
+  completion(@"return_value", nil);
+}
+
+- (void)sendInvokeMethodOnUnpairedInstance:(REFNewUnpairedInstance *)unpairedReference
+                                 methodName:(NSString *)methodName
+                                  arguments:(NSArray<id> *)arguments
+                                completion:(void (^)(id _Nullable, NSError *_Nullable))completion {
+  completion(@"return_value", nil);
+}
+
+- (void)sendDisposePair:(NSString *)channelName
+        pairedInstance:(REFPairedInstance *)pairedInstance
+             completion:(void (^)(NSError *_Nullable))completion {
+  completion(nil);
 }
 @end
 

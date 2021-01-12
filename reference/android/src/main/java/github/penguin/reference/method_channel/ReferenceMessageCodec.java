@@ -15,7 +15,7 @@ class ReferenceMessageCodec extends StandardMessageCodec {
   protected void writeValue(ByteArrayOutputStream stream, Object value) {
     if (value instanceof PairedInstance) {
       stream.write(PAIRED_INSTANCE);
-      writeValue(stream, ((PairedInstance) value).referenceId);
+      writeValue(stream, ((PairedInstance) value).instanceId);
     } else if (value instanceof NewUnpairedInstance) {
       stream.write(NEW_UNPAIRED_INSTANCE);
       writeValue(stream, ((NewUnpairedInstance) value).channelName);

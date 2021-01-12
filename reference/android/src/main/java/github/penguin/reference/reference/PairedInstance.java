@@ -3,26 +3,26 @@ package github.penguin.reference.reference;
 import androidx.annotation.NonNull;
 
 public class PairedInstance {
-  public final String referenceId;
+  public final String instanceId;
 
-  public PairedInstance(final String referenceId) {
-    this.referenceId = referenceId;
+  public PairedInstance(final String instanceId) {
+    this.instanceId = instanceId;
   }
 
   @Override
   public boolean equals(Object obj) {
     return obj instanceof PairedInstance
-        && referenceId.equals(((PairedInstance) obj).referenceId);
+        && instanceId.equals(((PairedInstance) obj).instanceId);
   }
 
   @Override
   public int hashCode() {
-    return referenceId.hashCode();
+    return instanceId.hashCode();
   }
 
   @NonNull
   @Override
   public String toString() {
-    return String.format("%s(%s)", "PairedInstance", referenceId);
+    return String.format("%s(%s)", "PairedInstance", instanceId);
   }
 }

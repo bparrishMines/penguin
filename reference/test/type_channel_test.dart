@@ -113,7 +113,7 @@ void main() {
 
       expect(
         testChannel.createNewInstancePair(testClass),
-        completion(PairedInstance('test_reference_id')),
+        completion(PairedInstance('test_instance_id')),
       );
       expect(testChannel.createNewInstancePair(testClass), completion(isNull));
     });
@@ -170,8 +170,8 @@ class TestManager extends TypeChannelManager {
   final TestMessenger messenger = TestMessenger();
 
   @override
-  String generateUniqueReferenceId() {
-    return 'test_reference_id';
+  String generateUniqueInstanceId() {
+    return 'test_instance_id';
   }
 }
 

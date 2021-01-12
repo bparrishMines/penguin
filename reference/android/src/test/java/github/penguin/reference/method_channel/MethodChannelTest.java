@@ -121,7 +121,7 @@ public class MethodChannelTest {
     }
 
     @Override
-    public String generateUniqueReferenceId() {
+    public String generateUniqueInstanceId() {
       return "test_reference_id";
     }
   }

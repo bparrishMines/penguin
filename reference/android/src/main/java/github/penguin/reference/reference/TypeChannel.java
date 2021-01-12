@@ -26,7 +26,7 @@ public class TypeChannel<T> {
     if (manager.isPaired(instance)) return new Completer<PairedInstance>().complete(null).completable;
 
     final Completer<PairedInstance> instanceCompleter = new Completer<>();
-    final PairedInstance pairedInstance = new PairedInstance(manager.generateUniqueReferenceId());
+    final PairedInstance pairedInstance = new PairedInstance(manager.generateUniqueInstanceId());
 
     manager.instancePairs.add(instance, pairedInstance);
 

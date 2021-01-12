@@ -37,8 +37,8 @@ public class TypeChannelTest {
     }
 
     @Override
-    public String generateUniqueReferenceId() {
-      return "test_reference_id";
+    public String generateUniqueInstanceId() {
+      return "test_instance_id";
     }
   }
   
@@ -134,12 +134,12 @@ public class TypeChannelTest {
   }
   
   @Test
-  public void createNewPair() {
+  public void createNewInstancePair() {
     final TestClass testClass = new TestClass(testManager);
     final TestListener<PairedInstance> testListener = new TestListener<>();
 
     testChannel.createNewInstancePair(testClass).setOnCompleteListener(testListener);
-    assertEquals(new PairedInstance("test_reference_id"), testListener.result);
+    assertEquals(new PairedInstance("test_instance_id"), testListener.result);
 
     testChannel.createNewInstancePair(testClass).setOnCompleteListener(testListener);
     assertNull(testListener.result);

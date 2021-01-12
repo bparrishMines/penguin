@@ -41,7 +41,7 @@ class TypeChannel<T extends Object> {
     if (manager.isPaired(instance)) return null;
 
     final PairedInstance pairedInstance = PairedInstance(
-      manager.generateUniqueReferenceId(),
+      manager.generateUniqueInstanceId(),
     );
 
     manager._instancePairs.add(instance, pairedInstance);
@@ -376,7 +376,7 @@ abstract class TypeChannelManager {
   }
 
   /// Generate a new unique reference id for a [PairedInstance].
-  String generateUniqueReferenceId() {
+  String generateUniqueInstanceId() {
     return String.fromCharCodes(Iterable.generate(
       10,
       (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length)),
