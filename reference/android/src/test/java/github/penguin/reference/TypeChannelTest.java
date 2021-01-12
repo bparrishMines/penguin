@@ -19,6 +19,7 @@ import github.penguin.reference.reference.TypeChannelMessenger;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class TypeChannelTest {
   private static TestManager testManager;
@@ -143,6 +144,8 @@ public class TypeChannelTest {
 
     testChannel.createNewInstancePair(testClass).setOnCompleteListener(testListener);
     assertNull(testListener.result);
+
+    assertTrue(testManager.isPaired(testClass));
   }
 
   @Test

@@ -1,3 +1,9 @@
+#import <XCTest/XCTest.h>
+#import "REFReferenceMatchers.h"
+
+@import OCHamcrest;
+@import reference;
+
 //#import <XCTest/XCTest.h>
 //#import "ReferenceMatchers.h"
 //
