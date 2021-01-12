@@ -4,8 +4,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface REFPairedInstance : NSObject <NSCopying>
 @property(readonly) NSString *instanceID;
-+ (REFPairedInstance *)fromID:(NSString *)referenceID;
-- (instancetype)initWithReferenceID:(NSString *)referenceID;
++ (REFPairedInstance *)fromID:(NSString *)instanceID;
+- (instancetype)initWithInstanceID:(NSString *)instanceID;
 @end
 
 @interface REFNewUnpairedInstance : NSObject <NSCopying>

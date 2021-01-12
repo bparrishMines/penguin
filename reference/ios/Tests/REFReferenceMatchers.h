@@ -8,17 +8,16 @@
 
 @interface REFTestManager : REFTypeChannelManager
 @property (readonly) REFTestHandler *_Nonnull testHandler;
-@property (readonly) REFTestMessenger *_Nonnull testMessenger;
 @end
 
 @interface REFTestHandler : NSObject<REFTypeChannelHandler>
 @property (readonly) REFTestClass *_Nonnull testClassInstance;
--(instancetype _Nonnull)initWithManager:(REFTestManager *_Nonnull)manager;
+-(instancetype _Nonnull)initWithManager:(REFTypeChannelManager *_Nonnull)manager;
 @end
 
 @interface REFTestClass : NSObject<REFPairableInstance>
-@property (readonly) REFTestManager *_Nonnull testManager;
--(instancetype _Nonnull)initWithManager:(REFTestManager *_Nonnull)manager;
+@property (readonly) REFTypeChannelManager *_Nonnull testManager;
+-(instancetype _Nonnull)initWithManager:(REFTypeChannelManager *_Nonnull)manager;
 @end
 
 @interface REFTestMessenger : NSObject<REFTypeChannelMessenger>

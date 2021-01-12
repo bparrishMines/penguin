@@ -36,13 +36,13 @@ NSString *const REFMethodDispose = @"REFERENCE_DISPOSE";
 - (void)writeValue:(id _Nonnull)value {
   if ([value isKindOfClass:[REFPairedInstance class]]) {
     [self writeByte:REFPairedInstanceValue];
-    REFPairedInstance *remoteReference = value;
-    [self writeValue:remoteReference.instanceID];
+    REFPairedInstance *pairedInstance = value;
+    [self writeValue:pairedInstance.instanceID];
   } else if ([value isKindOfClass:[REFNewUnpairedInstance class]]) {
     [self writeByte:REFNewUnpairedInstanceValue];
-    REFNewUnpairedInstance *unpairedReference = value;
-    [self writeValue:unpairedReference.channelName];
-    [self writeValue:unpairedReference.creationArguments];
+    REFNewUnpairedInstance *unpairedInstance = value;
+    [self writeValue:unpairedInstance.channelName];
+    [self writeValue:unpairedInstance.creationArguments];
   } else {
     [super writeValue:value];
   }

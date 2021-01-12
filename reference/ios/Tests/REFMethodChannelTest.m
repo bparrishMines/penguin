@@ -1,8 +1,150 @@
+#import <Flutter/Flutter.h>
 #import <XCTest/XCTest.h>
+
 #import "REFReferenceMatchers.h"
 
 @import OCHamcrest;
 @import reference;
+
+@interface REFTestBinaryMessenger : NSObject<FlutterBinaryMessenger>
+@property (readonly) NSMutableArray<FlutterMethodCall *> *methodCalls;
+@property (readonly) NSMutableDictionary<NSString *, FlutterBinaryMessageHandler> *handlers;
+@property (readonly) FlutterMethodCallHandler testMethodCallHandler;
+@end
+
+@interface REFTestMethodChannelManager : REFMethodChannelManager
+@property (readonly) REFTestBinaryMessenger *testMessenger;
+@property (readonly) REFTestHandler *_Nonnull testHandler;
+@end
+
+@implementation REFTestBinaryMessenger {
+  FlutterStandardMethodCodec *_methodCodec;
+}
+
+- (instancetype)init {
+  self = [super init];
+  if (self) {
+    _methodCalls = [NSMutableArray array];
+    _handlers = [NSMutableDictionary dictionary];
+    _testMethodCallHandler = ^(FlutterMethodCall *call, FlutterResult result) {
+      result(nil);
+    };
+    
+    _methodCodec = [FlutterStandardMethodCodec codecWithReaderWriter:[[REFReferenceReaderWriter alloc] init]];
+  }
+  return self;
+}
+
+- (void)sendOnChannel:(NSString*)channel message:(NSData* _Nullable)message {
+  [self sendOnChannel:channel message:message binaryReply:nil];
+}
+
+- (void)sendOnChannel:(NSString*)channel
+              message:(NSData* _Nullable)message
+          binaryReply:(FlutterBinaryReply _Nullable)callback {
+  if ([@"test_method_channel" isEqualToString:channel]) {
+    FlutterMethodCall *methodCall = [_methodCodec decodeMethodCall:message];
+    [_methodCalls addObject:methodCall];
+    _testMethodCallHandler(methodCall, ^(id result) {
+      callback([self->_methodCodec encodeSuccessEnvelope:result]);
+    });
+  }
+}
+
+- (void)setMessageHandlerOnChannel:(NSString*)channel
+            binaryMessageHandler:(FlutterBinaryMessageHandler _Nullable)handler {
+  if (!handler) {
+    [_handlers removeObjectForKey:channel];
+  } else {
+    _handlers[channel] = handler;
+  }
+}
+
+- (void)handlePlatformMessage:(NSString *)channel
+                   methodCall:(FlutterMethodCall *)methodCall
+                       result:(FlutterResult)result {
+  FlutterBinaryMessageHandler handler = _handlers[channel];
+  if (!handler) return;
+  handler([_methodCodec encodeMethodCall:methodCall], ^(NSData *reply) {
+    if (result && reply) {
+      result([self->_methodCodec decodeEnvelope:reply]);
+    }
+  });
+}
+
+- (void)cleanupConnection:(id)connection {
+  // Do nothing.
+}
+@end
+
+@implementation REFTestMethodChannelManager
+- (instancetype)init {
+  self = [super initWithBinaryMessenger:[[REFTestBinaryMessenger alloc] init]
+                            channelName:@"test_method_channel"];
+  if (self) {
+    _testHandler = [[REFTestHandler alloc] initWithManager:self];
+    [self registerHandler:@"test_channel" handler:_testHandler];
+  }
+  return self;
+}
+
+- (NSString *)generateUniqueInstanceId {
+  return @"test_instance_id";
+}
+@end
+
+@interface REFMethodChannelTest : XCTestCase
+@end
+
+@implementation REFMethodChannelTest {
+  FlutterStandardMethodCodec *_methodCodec;
+  id<FlutterMessageCodec> _messageCodec;
+  REFTestMethodChannelManager *_testManager;
+}
+
+- (void)setUp {
+  _messageCodec =
+      [FlutterStandardMessageCodec codecWithReaderWriter:[[REFReferenceReaderWriter alloc] init]];
+  _methodCodec =
+      [FlutterStandardMethodCodec codecWithReaderWriter:[[REFReferenceReaderWriter alloc] init]];
+
+  _testManager = [[REFTestMethodChannelManager alloc] init];
+}
+
+- (void)testReferenceReaderWriter_encodeAndDecodePairedInstance {
+  XCTAssertEqualObjects(
+      [_messageCodec decode:[_messageCodec encode:[REFPairedInstance fromID:@"taco"]]],
+      [REFPairedInstance fromID:@"taco"]);
+}
+
+- (void)testReferenceReaderWriter_encodeAndDecodeUnpairedInstance {
+  REFNewUnpairedInstance *unpairedInstance =
+      [[REFNewUnpairedInstance alloc] initWithChannelName:@"a_channel" creationArguments:@[]];
+
+  NSData *data = [_messageCodec encode:unpairedInstance];
+  REFNewUnpairedInstance *result = [_messageCodec decode:data];
+  XCTAssertEqualObjects(result.channelName, @"a_channel");
+  XCTAssertEqualObjects(result.creationArguments, @[]);
+  
+  // TODO: WHY DOESN'T THIS WORK!
+  //  assertThat(result, isUnpairedInstance(@"a_channel", @[]));
+}
+
+- (void)testMethodChannelManager_onReceiveCreateNewInstancePair {
+  NSArray *arguments = @[@"test_channel", [REFPairedInstance fromID:@"test_instance_id"], @[]];
+  FlutterMethodCall *methodCall = [FlutterMethodCall methodCallWithMethodName:@"REFERENCE_CREATE" arguments:arguments];
+  [_testManager.testMessenger handlePlatformMessage:@"test_method_channel" methodCall:methodCall result:nil];
+  XCTAssertFalse([_testManager isPaired:_testManager.testHandler.testClassInstance]);
+}
+
+- (void)testMethodChannelManager_onReceiveInvokeStaticMethod {
+  
+}
+
+- (void)testMethodChannelManager_onReceiveInvokeMethod {
+  
+}
+@end
 
 //#import <XCTest/XCTest.h>
 //#import "ReferenceMatchers.h"

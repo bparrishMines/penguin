@@ -122,7 +122,7 @@ public class MethodChannelTest {
 
     @Override
     public String generateUniqueInstanceId() {
-      return "test_reference_id";
+      return "test_instance_id";
     }
   }
 
@@ -231,7 +231,7 @@ public class MethodChannelTest {
 
   @Test
   public void methodChannelManager_onReceiveCreateNewInstancePair() {
-    final List<Object> arguments = Arrays.asList("test_channel", new PairedInstance("test_reference_id"), Collections.emptyList());
+    final List<Object> arguments = Arrays.asList("test_channel", new PairedInstance("test_instance_id"), Collections.emptyList());
     final MethodCall methodCall = new MethodCall("REFERENCE_CREATE", arguments);
     testManager.testMessenger.handlePlatformMessage(
         "test_method_channel",
@@ -310,7 +310,7 @@ public class MethodChannelTest {
     assertThat(methodCalls.get(0),
         isMethodCall("REFERENCE_CREATE",
             Arrays.asList("test_channel",
-                new PairedInstance("test_reference_id")
+                new PairedInstance("test_instance_id")
                 , Collections.emptyList())));
   }
 
@@ -346,7 +346,7 @@ public class MethodChannelTest {
     assertThat(methodCalls.get(0),
         isMethodCall("REFERENCE_METHOD",
             Arrays.asList("test_channel",
-                new PairedInstance("test_reference_id"),
+                new PairedInstance("test_instance_id"),
                 "aMethod"
                 , Collections.emptyList())));
   }
@@ -383,6 +383,6 @@ public class MethodChannelTest {
     assertThat(methodCalls.get(0),
         isMethodCall("REFERENCE_DISPOSE",
             Arrays.asList("test_channel",
-                new PairedInstance("test_reference_id"))));
+                new PairedInstance("test_instance_id"))));
   }
 }

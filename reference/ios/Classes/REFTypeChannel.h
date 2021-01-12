@@ -82,7 +82,6 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface REFTypeChannelManager : NSObject
-// TODO: Can this be a method like in Dart and Java?
 @property(readonly) id<REFTypeChannelMessenger> messenger;
 - (instancetype)initWithMessenger:(id<REFTypeChannelMessenger>)messenger;
 - (BOOL)isPaired:(NSObject *)instance;

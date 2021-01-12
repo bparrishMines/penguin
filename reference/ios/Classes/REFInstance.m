@@ -1,16 +1,16 @@
 #import "REFInstance.h"
 
 @implementation REFPairedInstance
-- (instancetype)initWithReferenceID:(NSString *_Nonnull)referenceID {
+- (instancetype)initWithInstanceID:(NSString *_Nonnull)instanceID {
   self = [super init];
   if (self) {
-    _instanceID = referenceID;
+    _instanceID = instanceID;
   }
   return self;
 }
 
-+ (REFPairedInstance *)fromID:(NSString *)referenceID {
-  return [[REFPairedInstance alloc] initWithReferenceID:referenceID];
++ (REFPairedInstance *)fromID:(NSString *)instanceID {
+  return [[REFPairedInstance alloc] initWithInstanceID:instanceID];
 }
 
 - (id)copyWithZone:(NSZone *)zone {
@@ -23,14 +23,13 @@
   } else if (![other isKindOfClass:[REFPairedInstance class]]) {
     return NO;
   } else {
-    REFPairedInstance *remoteReference = other;
-    return [_instanceID isEqualToString:remoteReference.instanceID];
+    REFPairedInstance *instanceId = other;
+    return [_instanceID isEqualToString:instanceId.instanceID];
   }
 }
 
 - (NSUInteger)hash {
-  // TODO: change hash
-  return 31 * _instanceID.hash;
+  return _instanceID.hash;
 }
 
 - (NSString *)description {
@@ -57,6 +56,6 @@
 - (NSString *)description {
   return [NSString
       stringWithFormat:@"REFNewUnpairedReference(%@, %@)",
-          _channelName, _creationArguments.description];
+          _channelName, [_creationArguments.description stringByReplacingOccurrencesOfString:@"\n" withString:@""]];
 }
 @end
