@@ -10,4 +10,5 @@ jobs:
     - uses: actions/labler@main
       with:
         repo-token: "${{ secrets.GITHUB_TOKEN }}"
+        sync-labels: true
 
