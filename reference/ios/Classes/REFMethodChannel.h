@@ -13,6 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface REFMethodChannelManager : REFTypeChannelManager
+@property(readonly) id<FlutterBinaryMessenger> binaryMessenger;
 @property(readonly) FlutterMethodChannel *channel;
 - (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger
                             channelName:(NSString *)channelName;

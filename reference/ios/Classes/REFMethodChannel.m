@@ -201,6 +201,7 @@ NSString *const REFMethodDispose = @"REFERENCE_DISPOSE";
   self = [super initWithMessenger:[[REFMethodChannelMessenger alloc] initWithChannel:_channel]];
   
   if (self) {
+    _binaryMessenger = binaryMessenger;
     __block REFMethodChannelManager *weakSelf = self;
     [_channel setMethodCallHandler:^(FlutterMethodCall *_Nonnull call,
                                      FlutterResult _Nonnull channelResult) {
