@@ -1,15 +1,13 @@
 name: Labeler
 
 on:
-  pull_request:
-    branches:
-      - main
+  - pull_request_target
 
 jobs:
   label:
     runs_on: ubuntu-latest
     steps:
-    - uses: actions/labler@v2
+    - uses: actions/labler@main
       with:
         repo-token: "${{ secrets.GITHUB_TOKEN }}"
 
