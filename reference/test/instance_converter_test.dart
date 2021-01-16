@@ -5,7 +5,7 @@ import 'reference_matchers.dart';
 
 void main() {
   group('$StandardInstanceConverter', () {
-    final StandardInstanceConverter converter = StandardInstanceConverter();
+    const StandardInstanceConverter converter = StandardInstanceConverter();
     late TestManager testManager;
 
     setUp(() {
@@ -15,7 +15,7 @@ void main() {
     test('convertForRemoteManager handles paired Object', () {
       testManager.onReceiveCreateNewInstancePair(
         'test_channel',
-        PairedInstance('test_id'),
+        const PairedInstance('test_id'),
         <Object>[],
       );
 
@@ -24,7 +24,7 @@ void main() {
           testManager,
           testManager.testHandler.testClassInstance,
         ),
-        PairedInstance('test_id'),
+        const PairedInstance('test_id'),
       );
     });
 
@@ -43,7 +43,7 @@ void main() {
     });
 
     test('convertForLocalManager handles $PairedInstance', () {
-      final PairedInstance pairedInstance = PairedInstance('test_id');
+      const PairedInstance pairedInstance = PairedInstance('test_id');
       testManager.onReceiveCreateNewInstancePair(
         'test_channel',
         pairedInstance,
@@ -60,7 +60,7 @@ void main() {
       expect(
         converter.convertForLocalManager(
           testManager,
-          NewUnpairedInstance('test_channel', <Object>[]),
+          const NewUnpairedInstance('test_channel', <Object>[]),
         ),
         testManager.testHandler.testClassInstance,
       );

@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
-import 'type_channel.dart';
 import 'instance.dart';
+import 'type_channel.dart';
 
 /// Implementation of a [TypeChannelManager] using a [MethodChannel].
 class MethodChannelManager extends TypeChannelManager {
@@ -12,7 +12,7 @@ class MethodChannelManager extends TypeChannelManager {
   MethodChannelManager(String channelName)
       : channel = MethodChannel(
           channelName,
-          StandardMethodCodec(ReferenceMessageCodec()),
+          const StandardMethodCodec(ReferenceMessageCodec()),
         ) {
     channel.setMethodCallHandler(_handleMethodCall);
   }
@@ -37,32 +37,35 @@ class MethodChannelManager extends TypeChannelManager {
     try {
       if (call.method == MethodChannelManager._methodCreate) {
         onReceiveCreateNewInstancePair(
-          call.arguments[0],
-          call.arguments[1],
-          call.arguments[2],
+          call.arguments[0] as String,
+          call.arguments[1] as PairedInstance,
+          call.arguments[2] as List<Object?>,
         );
         return null;
       } else if (call.method == MethodChannelManager._methodStaticMethod) {
         return onReceiveInvokeStaticMethod(
-          call.arguments[0],
-          call.arguments[1],
-          call.arguments[2],
+          call.arguments[0] as String,
+          call.arguments[1] as String,
+          call.arguments[2] as List<Object?>,
         );
       } else if (call.method == MethodChannelManager._methodMethod) {
         return onReceiveInvokeMethod(
-          call.arguments[0],
-          call.arguments[1],
-          call.arguments[2],
-          call.arguments[3],
+          call.arguments[0] as String,
+          call.arguments[1] as PairedInstance,
+          call.arguments[2] as String,
+          call.arguments[3] as List<Object?>,
         );
       } else if (call.method == MethodChannelManager._methodUnpairedMethod) {
         return onReceiveInvokeMethodOnUnpairedInstance(
-          call.arguments[0],
-          call.arguments[1],
-          call.arguments[2],
+          call.arguments[0] as NewUnpairedInstance,
+          call.arguments[1] as String,
+          call.arguments[2] as List<Object?>,
         );
       } else if (call.method == MethodChannelManager._methodDispose) {
-        onReceiveDisposePair(call.arguments[0], call.arguments[1]);
+        onReceiveDisposePair(
+          call.arguments[0] as String,
+          call.arguments[1] as PairedInstance,
+        );
         return null;
       }
 
@@ -143,7 +146,7 @@ class MethodChannelMessenger with TypeChannelMessenger {
 }
 
 /// Implementation of [StandardMessageCodec] for reference plugin.
-/// 
+///
 /// Adds support for serialization of [PairedInstance]s and
 /// [NewUnpairedInstance]s.
 ///
@@ -174,11 +177,13 @@ class ReferenceMessageCodec extends StandardMessageCodec {
   dynamic readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case _valuePairedInstance:
-        return PairedInstance(readValueOfType(buffer.getUint8(), buffer));
+        return PairedInstance(
+          readValueOfType(buffer.getUint8(), buffer) as String,
+        );
       case _valueNewUnpairedInstance:
         return NewUnpairedInstance(
-          readValueOfType(buffer.getUint8(), buffer),
-          readValueOfType(buffer.getUint8(), buffer),
+          readValueOfType(buffer.getUint8(), buffer) as String,
+          readValueOfType(buffer.getUint8(), buffer) as List<Object?>,
         );
       default:
         return super.readValueOfType(type, buffer);

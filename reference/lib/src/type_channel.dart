@@ -251,7 +251,7 @@ abstract class TypeChannelManager {
   TypeChannelMessenger get messenger;
 
   /// Attempts to convert objects to [PairedInstance]s or [NewUnpairedInstance]s and vice-versa.
-  InstanceConverter get converter => StandardInstanceConverter();
+  InstanceConverter get converter => const StandardInstanceConverter();
 
   /// Whether [instance] is paired with a [PairedInstance].
   bool isPaired(Object? instance) {

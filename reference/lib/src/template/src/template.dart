@@ -22,18 +22,19 @@ class ClassTemplate with $ClassTemplate {
       ),
     );
 
+  @override
   final int fieldTemplate;
 
   static Future<double> staticMethodTemplate(String parameterTemplate) async {
-    return (await _channel.$invokeStaticMethodTemplate(parameterTemplate))
+    return await _channel.$invokeStaticMethodTemplate(parameterTemplate)
         as double;
   }
 
   @override
   Future<String> methodTemplate(String parameterTemplate) async {
-    return (await _channel.$invokeMethodTemplate(
+    return await _channel.$invokeMethodTemplate(
       this,
       parameterTemplate,
-    )) as String;
+    ) as String;
   }
 }

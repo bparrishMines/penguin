@@ -23,7 +23,7 @@ class PairedInstance {
   final String instanceId;
 
   @override
-  bool operator ==(other) =>
+  bool operator ==(Object? other) =>
       other is PairedInstance && instanceId == other.instanceId;
 
   // TODO: Avoid hash code collision with String value
@@ -32,7 +32,7 @@ class PairedInstance {
 
   @override
   String toString() {
-    return '$runtimeType($instanceId)';
+    return 'PairedInstance($instanceId)';
   }
 }
 
@@ -49,6 +49,6 @@ class NewUnpairedInstance {
 
   @override
   String toString() {
-    return '$runtimeType($channelName, $creationArguments)';
+    return 'NewUnpairedInstance($channelName, $creationArguments)';
   }
 }

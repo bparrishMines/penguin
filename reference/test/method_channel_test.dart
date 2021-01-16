@@ -11,22 +11,22 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('$ReferenceMessageCodec', () {
-    final ReferenceMessageCodec messageCodec = ReferenceMessageCodec();
+    const ReferenceMessageCodec messageCodec = ReferenceMessageCodec();
 
     test('encode/decode $PairedInstance', () {
       final ByteData? byteData = messageCodec.encodeMessage(
-        PairedInstance('a'),
+        const PairedInstance('a'),
       );
 
       expect(
         messageCodec.decodeMessage(byteData),
-        PairedInstance('a'),
+        const PairedInstance('a'),
       );
     });
 
     test('encode/decode $NewUnpairedInstance', () {
       final ByteData? byteData = messageCodec.encodeMessage(
-        NewUnpairedInstance('apple', <Object>[]),
+        const NewUnpairedInstance('apple', <Object>[]),
       );
 
       expect(
@@ -47,7 +47,7 @@ void main() {
       await testManager.channel.binaryMessenger.handlePlatformMessage(
         'test_method_channel',
         testManager.channel.codec.encodeMethodCall(
-          MethodCall(
+          const MethodCall(
             'REFERENCE_CREATE',
             <Object>[
               'test_channel',
@@ -70,14 +70,15 @@ void main() {
       await testManager.channel.binaryMessenger.handlePlatformMessage(
         'test_method_channel',
         testManager.channel.codec.encodeMethodCall(
-          MethodCall(
+          const MethodCall(
             'REFERENCE_STATIC_METHOD',
             <Object>['test_channel', 'aStaticMethod', <Object>[]],
           ),
         ),
         (ByteData? data) {
           responseCompleter.complete(
-            testManager.channel.codec.decodeEnvelope(data!),
+            testManager.channel.codec.decodeEnvelope(data!)
+                as FutureOr<String>?,
           );
         },
       );
@@ -88,7 +89,7 @@ void main() {
     test('onReceiveInvokeMethod', () async {
       testManager.onReceiveCreateNewInstancePair(
         'test_channel',
-        PairedInstance('test_id'),
+        const PairedInstance('test_id'),
         <Object>[],
       );
 
@@ -96,7 +97,7 @@ void main() {
       await testManager.channel.binaryMessenger.handlePlatformMessage(
         'test_method_channel',
         testManager.channel.codec.encodeMethodCall(
-          MethodCall(
+          const MethodCall(
             'REFERENCE_METHOD',
             <Object>[
               'test_channel',
@@ -108,7 +109,8 @@ void main() {
         ),
         (ByteData? data) {
           responseCompleter.complete(
-            testManager.channel.codec.decodeEnvelope(data!),
+            testManager.channel.codec.decodeEnvelope(data!)
+                as FutureOr<String>?,
           );
         },
       );
@@ -121,7 +123,7 @@ void main() {
       await testManager.channel.binaryMessenger.handlePlatformMessage(
         'test_method_channel',
         testManager.channel.codec.encodeMethodCall(
-          MethodCall(
+          const MethodCall(
             'REFERENCE_UNPAIRED_METHOD',
             <Object>[
               NewUnpairedInstance('test_channel', <dynamic>[]),
@@ -132,7 +134,8 @@ void main() {
         ),
         (ByteData? data) {
           responseCompleter.complete(
-            testManager.channel.codec.decodeEnvelope(data!),
+            testManager.channel.codec.decodeEnvelope(data!)
+                as FutureOr<String>?,
           );
         },
       );
@@ -143,14 +146,14 @@ void main() {
     test('onReceiveDisposePair', () async {
       testManager.onReceiveCreateNewInstancePair(
         'test_channel',
-        PairedInstance('test_id'),
+        const PairedInstance('test_id'),
         <Object>[],
       );
 
       await testManager.channel.binaryMessenger.handlePlatformMessage(
         'test_method_channel',
         testManager.channel.codec.encodeMethodCall(
-          MethodCall(
+          const MethodCall(
             'REFERENCE_DISPOSE',
             <Object>['test_channel', PairedInstance('test_id')],
           ),
@@ -199,7 +202,7 @@ void main() {
       expect(methodCallLog, <Matcher>[
         isMethodCallWithMatchers('REFERENCE_CREATE', arguments: <Object>[
           'test_channel',
-          PairedInstance('test_reference_id'),
+          const PairedInstance('test_reference_id'),
           <Object>[],
         ]),
       ]);
@@ -232,7 +235,7 @@ void main() {
       expect(methodCallLog, <Matcher>[
         isMethodCallWithMatchers('REFERENCE_METHOD', arguments: <Object>[
           'test_channel',
-          PairedInstance('test_reference_id'),
+          const PairedInstance('test_reference_id'),
           'aMethod',
           <Object>[],
         ]),
@@ -269,7 +272,7 @@ void main() {
           'REFERENCE_DISPOSE',
           arguments: <Object>[
             'test_channel',
-            PairedInstance('test_reference_id'),
+            const PairedInstance('test_reference_id'),
           ],
         ),
       ]);

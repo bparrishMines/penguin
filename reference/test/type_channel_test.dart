@@ -13,7 +13,7 @@ void main() {
       expect(
         testManager.onReceiveCreateNewInstancePair(
           'test_channel',
-          PairedInstance('test_id'),
+          const PairedInstance('test_id'),
           <Object>[],
         ),
         testManager.testHandler.testClassInstance,
@@ -25,7 +25,7 @@ void main() {
       expect(
         testManager.onReceiveCreateNewInstancePair(
           '',
-          PairedInstance('test_id'),
+          const PairedInstance('test_id'),
           <Object>[],
         ),
         isNull,
@@ -56,14 +56,14 @@ void main() {
     test('onReceiveInvokeMethod', () {
       testManager.onReceiveCreateNewInstancePair(
         'test_channel',
-        PairedInstance('test_id'),
+        const PairedInstance('test_id'),
         <Object>[],
       );
 
       expect(
         testManager.onReceiveInvokeMethod(
           'test_channel',
-          PairedInstance('test_id'),
+          const PairedInstance('test_id'),
           'aMethod',
           <Object>[],
         ),
@@ -74,7 +74,7 @@ void main() {
     test('onReceiveInvokeMethodOnUnpairedInstance', () {
       expect(
         testManager.onReceiveInvokeMethodOnUnpairedInstance(
-          NewUnpairedInstance('test_channel', <Object>[]),
+          const NewUnpairedInstance('test_channel', <Object>[]),
           'aMethod',
           <Object>[],
         ),
@@ -85,12 +85,12 @@ void main() {
     test('onReceiveDisposePair', () {
       testManager.onReceiveCreateNewInstancePair(
         'test_channel',
-        PairedInstance('test_id'),
+        const PairedInstance('test_id'),
         <Object>[],
       );
       testManager.onReceiveDisposePair(
         'test_channel',
-        PairedInstance('test_id'),
+        const PairedInstance('test_id'),
       );
       expect(
         testManager.isPaired(testManager.testHandler.testClassInstance),
@@ -113,7 +113,7 @@ void main() {
 
       expect(
         testChannel.createNewInstancePair(testClass),
-        completion(PairedInstance('test_instance_id')),
+        completion(const PairedInstance('test_instance_id')),
       );
       expect(testChannel.createNewInstancePair(testClass), completion(isNull));
     });
