@@ -153,12 +153,12 @@ NSString *const REFMethodDispose = @"REFERENCE_DISPOSE";
   }];
 }
 
-- (void)sendInvokeMethodOnUnpairedInstance:(nonnull REFNewUnpairedInstance *)unpairedReference
+- (void)sendInvokeMethodOnUnpairedInstance:(nonnull REFNewUnpairedInstance *)unpairedInstance
                                  methodName:(nonnull NSString *)methodName
                                   arguments:(nonnull NSArray<id> *)arguments
                                  completion:(nonnull void (^)(id _Nullable, NSError * _Nullable))completion {
   [_channel invokeMethod:REFMethodUnpairedMethod
-               arguments:@[unpairedReference, methodName, arguments ]
+               arguments:@[unpairedInstance, methodName, arguments]
                   result:^(id result) {
     if ([result isKindOfClass:[FlutterError class]]) {
       completion(nil, [[REFMethodChannelError alloc] initWithFlutterError:result]);

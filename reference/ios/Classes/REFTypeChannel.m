@@ -171,6 +171,11 @@
           methodName:(NSString *)methodName
            arguments:(NSArray<id> *)arguments
           completion:(void (^)(id _Nullable, NSError *_Nullable))completion {
+  if (![_manager isPaired:instance]) {
+    [self invokeMethodOnUnpairedReference:instance methodName:methodName arguments:arguments completion:completion];
+    return;
+  }
+  
   [_manager.messenger sendInvokeMethod:_name
                        pairedInstance:[_manager->_instancePairs getPairedInstance:instance]
                             methodName:methodName

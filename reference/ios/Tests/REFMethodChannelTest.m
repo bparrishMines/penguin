@@ -26,7 +26,15 @@
     _methodCalls = [NSMutableArray array];
     _handlers = [NSMutableDictionary dictionary];
     _testMethodCallHandler = ^(FlutterMethodCall *call, FlutterResult result) {
-      result(nil);
+      if ([@"REFERENCE_METHOD" isEqualToString:call.method] && [call.arguments[2] isEqualToString:@"aMethod"]) {
+        result(@"return_value");
+      } else if ([@"REFERENCE_STATIC_METHOD" isEqualToString:call.method] && [call.arguments[1] isEqualToString:@"aStaticMethod"]) {
+        result(@"return_value");
+      } else if ([@"REFERENCE_UNPAIRED_METHOD" isEqualToString:call.method] && [call.arguments[1] isEqualToString:@"aMethod"]) {
+        result(@"return_value");
+      } else {
+        result(nil);
+      }
     };
     
     _methodCodec = [FlutterStandardMethodCodec codecWithReaderWriter:[[REFReferenceReaderWriter alloc] init]];
@@ -102,6 +110,7 @@
   id<FlutterMessageCodec> _messageCodec;
   REFTestMethodChannelManager *_testManager;
   REFTestBinaryMessenger *_testBinaryMessenger;
+  REFTypeChannel *_testChannel;
 }
 
 - (void)setUp {
@@ -112,6 +121,7 @@
 
   _testManager = [[REFTestMethodChannelManager alloc] init];
   _testBinaryMessenger = (REFTestBinaryMessenger *) _testManager.binaryMessenger;
+  _testChannel = [[REFTypeChannel alloc] initWithManager:_testManager name:@"test_channel"];
 }
 
 - (void)testReferenceReaderWriter_encodeAndDecodePairedInstance {
@@ -141,20 +151,144 @@
   XCTAssertTrue([_testManager isPaired:_testManager.testHandler.testClassInstance]);
 }
 
-//- (void)testMethodChannelManager_onReceiveInvokeStaticMethod {
-//  NSArray *arguments = @[@"test_channel", @"aStaticMethod", @[]];
-//  FlutterMethodCall *methodCall = [FlutterMethodCall methodCallWithMethodName:@"REFERENCE_STATIC_METHOD"
-//                                                                    arguments:arguments];
-//
-//  __block id blockResult;
-//  [_testManager.testMessenger handlePlatformMessage:@"test_method_channel" methodCall:methodCall result:^(id result) {
-//    blockResult = result;
-//  }];
-//  XCTAssertEqualObjects(@"return_value", blockResult);
-//}
+- (void)testMethodChannelManager_onReceiveInvokeStaticMethod {
+  NSArray *arguments = @[@"test_channel", @"aStaticMethod", @[]];
+  FlutterMethodCall *methodCall = [FlutterMethodCall methodCallWithMethodName:@"REFERENCE_STATIC_METHOD"
+                                                                    arguments:arguments];
+
+  __block id blockResult;
+  [_testBinaryMessenger handlePlatformMessage:@"test_method_channel" methodCall:methodCall result:^(id result) {
+    blockResult = result;
+  }];
+  XCTAssertEqualObjects(@"return_value", blockResult);
+}
 
 - (void)testMethodChannelManager_onReceiveInvokeMethod {
+  [_testManager onReceiveCreateNewInstancePair:@"test_channel"
+  pairedInstance:[REFPairedInstance fromID:@"test_instance_id"]
+                                     arguments:@[]];
   
+  NSArray *arguments = @[@"test_channel", [REFPairedInstance fromID:@"test_instance_id"], @"aMethod", @[]];
+  FlutterMethodCall *methodCall = [FlutterMethodCall methodCallWithMethodName:@"REFERENCE_METHOD"
+                                                                    arguments:arguments];
+  
+  __block id blockResult;
+  [_testBinaryMessenger handlePlatformMessage:@"test_method_channel" methodCall:methodCall result:^(id result) {
+    blockResult = result;
+  }];
+  XCTAssertEqualObjects(@"return_value", blockResult);
+}
+
+- (void)testMethodChannelManager_onReceiveInvokeMethodOnUnpairedInstance {
+  NSArray *arguments = @[[[REFNewUnpairedInstance alloc] initWithChannelName:@"test_channel" creationArguments:@[]],
+                         @"aMethod",
+                         @[]];
+  FlutterMethodCall *methodCall = [FlutterMethodCall methodCallWithMethodName:@"REFERENCE_UNPAIRED_METHOD"
+                                                                    arguments:arguments];
+  
+  __block id blockResult;
+  [_testBinaryMessenger handlePlatformMessage:@"test_method_channel" methodCall:methodCall result:^(id result) {
+    blockResult = result;
+  }];
+  XCTAssertEqualObjects(@"return_value", blockResult);
+}
+
+- (void)testMethodChannelManager_onReceiveDisposePair {
+  [_testManager onReceiveCreateNewInstancePair:@"test_channel"
+  pairedInstance:[REFPairedInstance fromID:@"test_instance_id"]
+                                     arguments:@[]];
+  
+  NSArray *arguments = @[@"test_channel", [REFPairedInstance fromID:@"test_instance_id"]];
+  FlutterMethodCall *methodCall = [FlutterMethodCall methodCallWithMethodName:@"REFERENCE_DISPOSE"
+                                                                    arguments:arguments];
+  [_testBinaryMessenger handlePlatformMessage:@"test_method_channel" methodCall:methodCall result:nil];
+  XCTAssertFalse([_testManager isPaired:_testManager.testHandler.testClassInstance]);
+}
+
+- (void)testMethodChannelMessenger_createNewPair {
+  [_testChannel createNewInstancePair:[[REFTestClass alloc] initWithManager:_testManager]
+                           completion:^(REFPairedInstance *pairedInstance, NSError *error) {}];
+  
+  XCTAssertEqual(1, _testBinaryMessenger.methodCalls.count);
+  FlutterMethodCall *methodCall = _testBinaryMessenger.methodCalls[0];
+  XCTAssertEqualObjects(methodCall.method, @"REFERENCE_CREATE");
+  
+  NSArray *arugments = @[@"test_channel", [REFPairedInstance fromID:@"test_instance_id"], @[]];
+  XCTAssertEqualObjects(methodCall.arguments, arugments);
+}
+
+- (void)testMethodChannelMessenger_sendInvokeStaticMethod {
+  __block id blockResult;
+  [_testChannel invokeStaticMethod:@"aStaticMethod" arguments:@[] completion:^(id result, NSError *error) {
+    blockResult = result;
+  }];
+  
+  XCTAssertEqualObjects(blockResult, @"return_value");
+  
+  XCTAssertEqual(1, _testBinaryMessenger.methodCalls.count);
+  FlutterMethodCall *methodCall = _testBinaryMessenger.methodCalls[0];
+  XCTAssertEqualObjects(methodCall.method, @"REFERENCE_STATIC_METHOD");
+  
+  NSArray *arugments = @[@"test_channel", @"aStaticMethod", @[]];
+  XCTAssertEqualObjects(methodCall.arguments, arugments);
+}
+
+- (void)testMethodChannelMessenger_sendInvokeMethod {
+  REFTestClass *testClass = [[REFTestClass alloc] initWithManager:_testManager];
+  
+  [_testChannel createNewInstancePair:testClass
+  completion:^(REFPairedInstance *pairedInstance, NSError *error) {}];
+  [_testBinaryMessenger.methodCalls removeAllObjects];
+  
+  __block id blockResult;
+  [_testChannel invokeMethod:testClass methodName:@"aMethod" arguments:@[] completion:^(id result, NSError *error) {
+    blockResult = result;
+  }];
+  XCTAssertEqualObjects(blockResult, @"return_value");
+  
+  XCTAssertEqual(1, _testBinaryMessenger.methodCalls.count);
+  FlutterMethodCall *methodCall = _testBinaryMessenger.methodCalls[0];
+  XCTAssertEqualObjects(methodCall.method, @"REFERENCE_METHOD");
+  
+  NSArray *arugments = @[@"test_channel", [REFPairedInstance fromID:@"test_instance_id"], @"aMethod", @[]];
+  XCTAssertEqualObjects(methodCall.arguments, arugments);
+}
+
+- (void)testMethodChannelMessenger_sendInvokeMethodOnUnpairedReference {
+  __block id blockResult;
+  [_testChannel invokeMethod:[[REFTestClass alloc] initWithManager:_testManager]
+                  methodName:@"aMethod"
+                   arguments:@[]
+                  completion:^(id result, NSError *error) {
+    blockResult = result;
+  }];
+  XCTAssertEqualObjects(blockResult, @"return_value");
+  
+  XCTAssertEqual(1, _testBinaryMessenger.methodCalls.count);
+  FlutterMethodCall *methodCall = _testBinaryMessenger.methodCalls[0];
+  XCTAssertEqualObjects(methodCall.method, @"REFERENCE_UNPAIRED_METHOD");
+  
+  REFNewUnpairedInstance *unpairedReference = methodCall.arguments[0];
+  XCTAssertEqualObjects(unpairedReference.channelName, @"test_channel");
+  XCTAssertEqualObjects(unpairedReference.creationArguments, @[]);
+  NSArray *arugments = @[@"aMethod", @[]];
+  XCTAssertEqualObjects([methodCall.arguments subarrayWithRange:NSMakeRange(1, 2)], arugments);
+}
+
+- (void)testMethodChannelMessenger_disposePair {
+  REFTestClass *testClass = [[REFTestClass alloc] initWithManager:_testManager];
+  
+  [_testChannel createNewInstancePair:testClass
+  completion:^(REFPairedInstance *pairedInstance, NSError *error) {}];
+  [_testBinaryMessenger.methodCalls removeAllObjects];
+  
+  [_testChannel disposePair:testClass completion:^(NSError *error) {}];
+  XCTAssertEqual(1, _testBinaryMessenger.methodCalls.count);
+  FlutterMethodCall *methodCall = _testBinaryMessenger.methodCalls[0];
+  XCTAssertEqualObjects(methodCall.method, @"REFERENCE_DISPOSE");
+  
+  NSArray *arugments = @[@"test_channel", [REFPairedInstance fromID:@"test_instance_id"]];
+  XCTAssertEqualObjects(methodCall.arguments, arugments);
 }
 @end
 
