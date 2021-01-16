@@ -1,7 +1,25 @@
 package github.penguin.reference.templates;
 
-public class ClassTemplate extends LibraryTemplate.$ClassTemplate {
+import github.penguin.reference.reference.TypeChannelManager;
+
+public class ClassTemplate implements LibraryTemplate.$ClassTemplate {
   private final Integer fieldTemplate;
+
+  static void setupChannel(TypeChannelManager manager) {
+    final LibraryTemplate.$ClassTemplateChannel channel = new LibraryTemplate.$ClassTemplateChannel(manager);
+    channel.setHandler(
+        new LibraryTemplate.$ClassTemplateHandler() {
+          @Override
+          LibraryTemplate.$ClassTemplate onCreate(TypeChannelManager manager, LibraryTemplate.$ClassTemplateCreationArgs args) {
+            return new ClassTemplate(args.fieldTemplate);
+          }
+
+          @Override
+          public Object $onStaticMethodTemplate(TypeChannelManager manager, String parameterTemplate) {
+            return staticMethodTemplate(parameterTemplate);
+          }
+        });
+  }
 
   public static Double staticMethodTemplate(String parameterTemplate) {
     return parameterTemplate.length() / 1.0;
@@ -17,7 +35,7 @@ public class ClassTemplate extends LibraryTemplate.$ClassTemplate {
   }
 
   @Override
-  public Object methodTemplate(final String parameterTemplate) {
+  public Object methodTemplate(String parameterTemplate) {
     return parameterTemplate + " World!";
   }
 }

@@ -93,3 +93,40 @@
   return _table.objectEnumerator;
 }
 @end
+
+@implementation REFPairedInstanceMap {
+  REFBiMapTable<NSObject *, REFPairedInstance *> *_pairedInstances;
+}
+
+- (instancetype)init {
+  self = [super init];
+  if (self) {
+    _pairedInstances = [[REFBiMapTable alloc] init];
+  }
+  return self;
+}
+
+- (void)add:(id)instance pairedInstance:(REFPairedInstance *)pairedInstance {
+  [_pairedInstances setObject:pairedInstance forKey:instance];
+}
+
+- (REFPairedInstance *_Nullable)removePairWithObject:(id)object {
+  REFPairedInstance *pairedInstance = [_pairedInstances objectForKey:object];
+  [_pairedInstances removeObjectForKey:object];
+  return pairedInstance;
+}
+
+- (id _Nullable)removePairWithPairedInstance:(REFPairedInstance *)pairedInstance {
+  id object = [_pairedInstances.inverse objectForKey:pairedInstance];
+  [_pairedInstances removeObjectForKey:object];
+  return object;
+}
+
+- (REFPairedInstance *_Nullable)getPairedInstance:(id)object {
+  return [_pairedInstances objectForKey:object];
+}
+
+- (id _Nullable)getPairedObject:(REFPairedInstance *)pairedInstance {
+  return [_pairedInstances.inverse objectForKey:pairedInstance];
+}
+@end

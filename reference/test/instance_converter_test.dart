@@ -1,0 +1,125 @@
+import 'package:flutter_test/flutter_test.dart';
+import 'package:reference/reference.dart';
+
+import 'reference_matchers.dart';
+
+void main() {
+  group('$StandardInstanceConverter', () {
+    final StandardInstanceConverter converter = StandardInstanceConverter();
+    late TestManager testManager;
+
+    setUp(() {
+      testManager = TestManager();
+    });
+
+    test('convertForRemoteManager handles paired Object', () {
+      testManager.onReceiveCreateNewInstancePair(
+        'test_channel',
+        PairedInstance('test_id'),
+        <Object>[],
+      );
+
+      expect(
+        converter.convertForRemoteManager(
+          testManager,
+          testManager.testHandler.testClassInstance,
+        ),
+        PairedInstance('test_id'),
+      );
+    });
+
+    test('convertForRemoteManager handles unpaired object', () {
+      expect(
+        converter.convertForRemoteManager(testManager, TestClass(testManager)),
+        isUnpairedInstance('test_channel', <Object>[]),
+      );
+    });
+
+    test('convertForRemoteManager handles unpaired non-$PairableInstance', () {
+      expect(
+        converter.convertForRemoteManager(testManager, 'potato'),
+        equals('potato'),
+      );
+    });
+
+    test('convertForLocalManager handles $PairedInstance', () {
+      final PairedInstance pairedInstance = PairedInstance('test_id');
+      testManager.onReceiveCreateNewInstancePair(
+        'test_channel',
+        pairedInstance,
+        <Object>[],
+      );
+
+      expect(
+        converter.convertForLocalManager(testManager, pairedInstance),
+        testManager.testHandler.testClassInstance,
+      );
+    });
+
+    test('convertForLocalManager handles $NewUnpairedInstance', () async {
+      expect(
+        converter.convertForLocalManager(
+          testManager,
+          NewUnpairedInstance('test_channel', <Object>[]),
+        ),
+        testManager.testHandler.testClassInstance,
+      );
+    });
+  });
+}
+
+class TestManager extends TypeChannelManager {
+  TestManager() {
+    testHandler = TestHandler(this);
+    registerHandler('test_channel', testHandler);
+  }
+
+  late final TestHandler testHandler;
+
+  @override
+  TypeChannelMessenger get messenger => throw UnimplementedError();
+}
+
+class TestHandler with TypeChannelHandler<TestClass> {
+  TestHandler(TestManager manager) : testClassInstance = TestClass(manager);
+
+  final TestClass testClassInstance;
+
+  @override
+  TestClass createInstance(
+    TypeChannelManager manager,
+    List<Object?> arguments,
+  ) {
+    return testClassInstance;
+  }
+
+  @override
+  List<Object?> getCreationArguments(
+      TypeChannelManager manager, TestClass instance) {
+    return <Object?>[];
+  }
+
+  @override
+  Object? invokeMethod(TypeChannelManager manager, TestClass instance,
+      String methodName, List<Object?> arguments) {
+    return 'return_value';
+  }
+
+  @override
+  Object? invokeStaticMethod(
+      TypeChannelManager manager, String methodName, List<Object?> arguments) {
+    return 'return_value';
+  }
+}
+
+class TestClass with PairableInstance<TestClass> {
+  TestClass(this.manager);
+
+  final TypeChannelManager manager;
+
+  @override
+  TypeChannel<TestClass> get typeChannel => TypeChannel<TestClass>(
+        manager,
+        'test_channel',
+      );
+}

@@ -26,3 +26,7 @@ mixin TemplateRegExp {
     return result;
   }
 }
+
+List<int> incrementingList(int length) {
+  return List<int>.generate(length, (int index) => index);
+}

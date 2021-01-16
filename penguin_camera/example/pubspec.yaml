@@ -1,0 +1,23 @@
+name: penguin_camera_example
+description: Demonstrates how to use the penguin_camera plugin.
+
+publish_to: 'none'
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+
+dependencies:
+  permission_handler: ^5.0.1+1
+  flutter:
+    sdk: flutter
+
+  penguin_camera:
+    path: ../
+  cupertino_icons: ^1.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true

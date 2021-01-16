@@ -19,9 +19,17 @@ class LibraryNode {
 
 @JsonSerializable()
 class ClassNode {
-  ClassNode({this.name, this.fields, this.methods, this.staticMethods});
+  ClassNode({
+    this.name,
+    this.channelName,
+    this.fields,
+    this.methods,
+    this.staticMethods,
+  });
 
   final String name;
+
+  final String channelName;
 
   final List<FieldNode> fields;
 
@@ -89,11 +97,20 @@ class ParameterNode {
 
 @JsonSerializable()
 class ReferenceType {
-  ReferenceType({this.name, this.codeGeneratedClass, this.typeArguments});
+  ReferenceType({
+    this.name,
+    this.codeGeneratedClass,
+    this.referenceChannel,
+    this.typeArguments,
+  });
 
   final String name;
   final bool codeGeneratedClass;
+  // TODO: remove
+  final String referenceChannel;
   final List<ReferenceType> typeArguments;
+
+  bool get hasReferenceChannel => referenceChannel != null;
 
   factory ReferenceType.fromJson(Map<String, dynamic> json) =>
       _$ReferenceTypeFromJson(json);

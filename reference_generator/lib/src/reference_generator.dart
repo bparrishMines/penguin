@@ -4,9 +4,7 @@ import 'dart:convert';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
-// The builder can't access Flutter, so this accesses just the independent reference file.
-// TODO: Expose this in reference plugin
-import 'package:reference/src/reference.dart';
+import 'package:reference/annotations.dart';
 import 'package:source_gen/source_gen.dart';
 
 import 'ast.dart';
@@ -22,7 +20,7 @@ class ReferenceAstBuilder extends Builder {
     final LibraryReader reader = LibraryReader(await buildStep.inputLibrary);
 
     final Iterable<ClassElement> classes = reader
-        .annotatedWith(const TypeChecker.fromRuntime(Reference))
+        .annotatedWith(const TypeChecker.fromRuntime(Channel))
         .map<ClassElement>(
           (AnnotatedElement annotatedElement) => annotatedElement.element,
         );
@@ -68,6 +66,7 @@ class ReferenceAstBuilder extends Builder {
 
     return ClassNode(
       name: classElement.name,
+      channelName: _getChannel(classElement.thisType),
       fields: parameters
           .map<FieldNode>((ParameterElement parameterElement) =>
               _toFieldNode(parameterElement, allGeneratedClasses))
@@ -137,6 +136,7 @@ class ReferenceAstBuilder extends Builder {
     return ReferenceType(
       name: type.getDisplayString(withNullability: false).split('<').first,
       codeGeneratedClass: allGeneratedClasses.contains(type.element),
+      referenceChannel: _getChannel(type),
       typeArguments: type is! ParameterizedType
           ? <ReferenceType>[]
           : (type as ParameterizedType)
@@ -146,6 +146,16 @@ class ReferenceAstBuilder extends Builder {
               )
               .toList(),
     );
+  }
+
+  String _getChannel(DartType type) {
+    final TypeChecker typeChecker = TypeChecker.fromRuntime(Channel);
+
+    if (type.isVoid || !typeChecker.hasAnnotationOf(type.element)) return null;
+
+    final ConstantReader constantReader =
+        ConstantReader(typeChecker.firstAnnotationOf(type.element));
+    return constantReader.read('channel').stringValue;
   }
 
   @override

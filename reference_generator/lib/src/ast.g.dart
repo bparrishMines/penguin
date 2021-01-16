@@ -23,6 +23,7 @@ Map<String, dynamic> _$LibraryNodeToJson(LibraryNode instance) =>
 ClassNode _$ClassNodeFromJson(Map<String, dynamic> json) {
   return ClassNode(
     name: json['name'] as String,
+    channelName: json['channelName'] as String,
     fields: (json['fields'] as List)
         ?.map((e) =>
             e == null ? null : FieldNode.fromJson(e as Map<String, dynamic>))
@@ -40,6 +41,7 @@ ClassNode _$ClassNodeFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$ClassNodeToJson(ClassNode instance) => <String, dynamic>{
       'name': instance.name,
+      'channelName': instance.channelName,
       'fields': instance.fields,
       'methods': instance.methods,
       'staticMethods': instance.staticMethods,
@@ -99,6 +101,7 @@ ReferenceType _$ReferenceTypeFromJson(Map<String, dynamic> json) {
   return ReferenceType(
     name: json['name'] as String,
     codeGeneratedClass: json['codeGeneratedClass'] as bool,
+    referenceChannel: json['referenceChannel'] as String,
     typeArguments: (json['typeArguments'] as List)
         ?.map((e) => e == null
             ? null
@@ -111,5 +114,6 @@ Map<String, dynamic> _$ReferenceTypeToJson(ReferenceType instance) =>
     <String, dynamic>{
       'name': instance.name,
       'codeGeneratedClass': instance.codeGeneratedClass,
+      'referenceChannel': instance.referenceChannel,
       'typeArguments': instance.typeArguments,
     };

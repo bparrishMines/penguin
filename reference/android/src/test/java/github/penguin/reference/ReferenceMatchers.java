@@ -1,25 +1,21 @@
 package github.penguin.reference;
 
-import github.penguin.reference.reference.RemoteReference;
-import github.penguin.reference.reference.UnpairedReference;
+import github.penguin.reference.reference.NewUnpairedInstance;
 import io.flutter.plugin.common.MethodCall;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 
+import java.util.List;
+
 @SuppressWarnings("rawtypes")
-class ReferenceMatchers {
-  static Matcher isMethodCall(String method, Object arguments) {
+public class ReferenceMatchers {
+  public static Matcher isMethodCall(String method, Object arguments) {
     return new IsMethodCall(method, arguments);
   }
 
-  static Matcher isUnpairedReference(
-      final Integer classId, final Object creationArguments, final String managerPoolId) {
-    return new IsUnpairedReference(classId, creationArguments, managerPoolId);
-  }
-
-  static Matcher isRemoteReference(String referenceId) {
-    return new IsRemoteReference(referenceId);
+  public static Matcher isUnpairedInstance(String channelName, final Object creationArguments) {
+    return new IsUnpairedInstance(channelName, creationArguments);
   }
 
   private static class IsMethodCall extends TypeSafeMatcher<MethodCall> {
@@ -57,80 +53,51 @@ class ReferenceMatchers {
     }
   }
 
-  private static class IsUnpairedReference extends TypeSafeMatcher<UnpairedReference> {
-    private final Integer classId;
+  private static class IsUnpairedInstance extends TypeSafeMatcher<NewUnpairedInstance> {
+    private final String channelName;
     private final Object creationArguments;
-    private final String managerPoolId;
 
-    private IsUnpairedReference(Integer classId, Object creationArguments, String managerPoolId) {
-      this.classId = classId;
+    private IsUnpairedInstance(String channelName, Object creationArguments) {
+      this.channelName = channelName;
       this.creationArguments = creationArguments;
-      this.managerPoolId = managerPoolId;
     }
 
     private void describe(
-        final Integer classId,
+        final String channelName,
         final Object creationArguments,
-        final String managerPoolId,
         Description description) {
       description
           .appendText(
-              String.format(" An %s with classId: ", UnpairedReference.class.getSimpleName()))
-          .appendText(classId != null ? classId.toString() : null)
+              String.format(" An %s with channelName: ", NewUnpairedInstance.class.getSimpleName()))
+          .appendText(channelName)
           .appendText(" and creation arguments: ")
-          .appendText(creationArguments != null ? creationArguments.toString() : null)
-          .appendText(" and managerPoolId: ")
-          .appendText(managerPoolId);
+          .appendText(creationArguments != null ? creationArguments.toString() : null);
     }
 
     @Override
     public void describeTo(Description description) {
-      describe(classId, creationArguments, managerPoolId, description);
+      describe(channelName, creationArguments, description);
     }
 
     @Override
     protected void describeMismatchSafely(
-        UnpairedReference reference, Description mismatchDescription) {
+        NewUnpairedInstance unpairedInstance, Description mismatchDescription) {
       describe(
-          reference.classId,
-          reference.creationArguments,
-          reference.managerPoolId,
+          unpairedInstance.channelName,
+          unpairedInstance.creationArguments,
           mismatchDescription);
     }
 
     @Override
-    protected boolean matchesSafely(UnpairedReference reference) {
-      if (!classId.equals(reference.classId)) return false;
-      if (managerPoolId != null && !managerPoolId.equals(reference.managerPoolId)) return false;
-      if (reference.managerPoolId != null && !reference.managerPoolId.equals(managerPoolId)) {
-        return false;
+    protected boolean matchesSafely(NewUnpairedInstance unpairedInstance) {
+      if (!channelName.equals(unpairedInstance.channelName)) return false;
+      if (creationArguments instanceof List) {
+        return creationArguments.equals(unpairedInstance.creationArguments);
       }
       if (creationArguments instanceof Matcher) {
-        return ((Matcher) creationArguments).matches(reference.creationArguments);
+        return ((Matcher) creationArguments).matches(unpairedInstance.creationArguments);
       }
-      return creationArguments == reference.creationArguments;
-    }
-  }
-
-  private static class IsRemoteReference extends TypeSafeMatcher<RemoteReference> {
-    private final Object referenceId;
-
-    private IsRemoteReference(Object referenceId) {
-      this.referenceId = referenceId;
-    }
-
-    @Override
-    protected boolean matchesSafely(RemoteReference item) {
-      if (referenceId instanceof Matcher) return ((Matcher) referenceId).matches(item.referenceId);
-      return item.referenceId.equals(referenceId);
-    }
-
-    @Override
-    public void describeTo(Description description) {
-      description
-          .appendText(
-              String.format(" A %s with referenceId: ", RemoteReference.class.getSimpleName()))
-          .appendText("" + referenceId);
+      return creationArguments == unpairedInstance.creationArguments;
     }
   }
 }
