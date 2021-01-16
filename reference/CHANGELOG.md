@@ -1,3 +1,7 @@
+## 0.2.0-beta
+
+* Migrate to null safety and transition to using type channels. See documentation for more info.
+
 ## 0.1.4+1
 
 * Update templates and README examples.
