@@ -22,7 +22,7 @@ class $ClassTemplateChannel extends TypeChannel<$ClassTemplate> {
   Future<Object?> $invokeStaticMethodTemplate(String parameterTemplate) {
     return invokeStaticMethod(
       'staticMethodTemplate',
-      <Object>[parameterTemplate],
+      <Object?>[parameterTemplate],
     );
   }
 
@@ -31,7 +31,7 @@ class $ClassTemplateChannel extends TypeChannel<$ClassTemplate> {
     return invokeMethod(
       instance,
       'methodTemplate',
-      <Object>[parameterTemplate],
+      <Object?>[parameterTemplate],
     );
   }
 }
@@ -41,14 +41,12 @@ class $ClassTemplateHandler implements TypeChannelHandler<$ClassTemplate> {
       {this.onCreate, this.onDispose, this.$onStaticMethodTemplate});
 
   final $ClassTemplate Function(
-          TypeChannelManager manager, $ClassTemplateCreationArgs args)?
-      onCreate;
+      TypeChannelManager manager, $ClassTemplateCreationArgs args)? onCreate;
 
   final void Function(TypeChannelManager manager, $ClassTemplate instance)?
       onDispose;
 
-  final double Function(
-          TypeChannelManager manager, String parameterTemplate)?
+  final double Function(TypeChannelManager manager, String parameterTemplate)?
       $onStaticMethodTemplate;
 
   @override
@@ -79,7 +77,7 @@ class $ClassTemplateHandler implements TypeChannelHandler<$ClassTemplate> {
     TypeChannelManager manager,
     $ClassTemplate instance,
   ) {
-    return <Object>[instance.fieldTemplate];
+    return <Object?>[instance.fieldTemplate];
   }
 
   @override
@@ -117,10 +115,7 @@ class $ClassTemplateHandler implements TypeChannelHandler<$ClassTemplate> {
   }
 
   @override
-  void onInstanceDisposed(
-    TypeChannelManager manager,
-    $ClassTemplate instance,
-  ) {
+  void onInstanceDisposed(TypeChannelManager manager, $ClassTemplate instance) {
     if (onDispose != null) onDispose!(manager, instance);
   }
 }
