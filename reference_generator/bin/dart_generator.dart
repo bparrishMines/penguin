@@ -332,13 +332,24 @@ String generateDart(String template, LibraryNode libraryNode) {
                             .stringMatch()
                             .replaceAll(invoker.methodName, methodNode.name)
                             .replaceAll(
-                              invoker.anArgument,
-                              incrementingList(methodNode.parameters.length)
-                                  .map<String>(
-                                    (int index) => 'arguments[$index]',
-                                  )
-                                  .join(','),
-                            )
+                                invoker.anArgument.exp,
+                                incrementingList(methodNode.parameters.length)
+                                    .map<String>(
+                                  (int index) {
+                                    final MethodArgument argument = library
+                                        .aHandler
+                                        .aStaticMethodInvoker
+                                        .anArgument;
+                                    return argument
+                                        .stringMatch()
+                                        .replaceAll(argument.index, '$index')
+                                        .replaceAll(
+                                          argument.type,
+                                          getTrueTypeName(methodNode
+                                              .parameters[index].type),
+                                        );
+                                  },
+                                ).join(','))
                             .replaceAll(
                               invoker.methodHandler,
                               methodNode.name.pascalCase,
@@ -391,6 +402,12 @@ String generateDart(String template, LibraryNode libraryNode) {
                               return field
                                   .stringMatch()
                                   .replaceAll(
+                                    field.type,
+                                    getTrueTypeName(
+                                      classNode.fields[index].type,
+                                    ),
+                                  )
+                                  .replaceAll(
                                     field.name,
                                     classNode.fields[index].name,
                                   )
@@ -425,14 +442,31 @@ String generateDart(String template, LibraryNode libraryNode) {
                                     methodNode.name,
                                   )
                                   .replaceAll(
-                                    invoker.anArgument,
+                                    invoker.anArgument.exp,
                                     incrementingList(
-                                      methodNode.parameters.length,
-                                    )
+                                            methodNode.parameters.length)
                                         .map<String>(
-                                          (int index) => 'arguments[$index]',
-                                        )
-                                        .join(','),
+                                      (int index) {
+                                        final MethodArgument argument = library
+                                            .aHandler
+                                            .theHandlerInvokeMethod
+                                            .anInvoker
+                                            .anArgument;
+                                        return argument
+                                            .stringMatch()
+                                            .replaceAll(
+                                              argument.index,
+                                              '$index',
+                                            )
+                                            .replaceAll(
+                                              argument.type,
+                                              getTrueTypeName(
+                                                methodNode
+                                                    .parameters[index].type,
+                                              ),
+                                            );
+                                      },
+                                    ).join(','),
                                   );
                             },
                           ).join('\nbreak;\n'),
@@ -471,22 +505,6 @@ class Library with TemplateRegExp {
   @override
   TemplateRegExp get parent => null;
 
-  // final RegExp mixins = TemplateRegExp.regExp(
-  //   r'mixin \$ClassTemplate \{[^\}]+\}[^\}]+\}',
-  // );
-  //
-  // final RegExp channels = TemplateRegExp.regExp(
-  //   r'class \$ClassTemplateChannel.*}(?=\s*class \$ClassTemplateHandler)',
-  // );
-  //
-  // final RegExp creationArgs = TemplateRegExp.regExp(
-  //   r'class \$ClassTemplateCreationArgs.*}(?=\s*class \$ClassTemplateChannel)',
-  // );
-  //
-  // final RegExp handlers = TemplateRegExp.regExp(
-  //   r'class \$ClassTemplateHandler.*$',
-  // );
-
   Mixin get aMixin => Mixin(this);
 
   CreationArgsClass get aCreationArgsClass => CreationArgsClass(this);
@@ -508,7 +526,6 @@ class Mixin with TemplateRegExp {
   final Library parent;
 
   final RegExp name = TemplateRegExp.regExp(r'(?<=mixin \$)ClassTemplate');
-  // final RegExp fields = TemplateRegExp.regExp(r'int get fieldTemplate;');
 
   ClassMethod get aMethod => ClassMethod(this);
   ClassField get aField => ClassField(this);
@@ -533,10 +550,6 @@ class ClassMethod with TemplateRegExp {
   final RegExp returnType = TemplateRegExp.regExp(r'^Future<String>');
 
   final RegExp name = TemplateRegExp.regExp(r'methodTemplate');
-
-  // final RegExp parameters = TemplateRegExp.regExp(
-  //   r'String parameterTemplate, \$ClassTemplate2 referenceParameterTemplate',
-  // );
 
   Parameter get aParameter => Parameter(this);
 
@@ -568,8 +581,6 @@ class CreationArgsClass with TemplateRegExp {
 
   final RegExp className = TemplateRegExp.regExp(r'(?<=class \$)ClassTemplate');
 
-  // final RegExp fields = TemplateRegExp.regExp(r'int fieldTemplate;[^;]+;');
-
   CreationArgsClassField get aField => CreationArgsClassField(this);
 
   @override
@@ -584,11 +595,11 @@ class CreationArgsClass with TemplateRegExp {
 class CreationArgsClassField with TemplateRegExp {
   CreationArgsClassField(this.parent);
 
-  final RegExp type = TemplateRegExp.regExp(r'^int');
+  final RegExp type = TemplateRegExp.regExp(r'(?<=late )int');
   final RegExp name = TemplateRegExp.regExp(r'fieldTemplate(?=;)');
 
   @override
-  final RegExp exp = TemplateRegExp.regExp(r'int fieldTemplate;');
+  final RegExp exp = TemplateRegExp.regExp(r'late int fieldTemplate;');
 
   @override
   final CreationArgsClass parent;
@@ -602,7 +613,7 @@ class Channel with TemplateRegExp {
   );
 
   final RegExp typeArgumentClassName = TemplateRegExp.regExp(
-    r'(?<=extends ReferenceChannel<\$)ClassTemplate',
+    r'(?<=extends TypeChannel<\$)ClassTemplate',
   );
 
   final RegExp constructorClassName = TemplateRegExp.regExp(
@@ -633,23 +644,13 @@ class ChannelStaticMethod with TemplateRegExp {
 
   final RegExp nameAsParameter = TemplateRegExp.regExp(r'staticMethodTemplate');
 
-  // final RegExp parameters = TemplateRegExp.regExp(
-  //   r'String parameterTemplate, \$ClassTemplate2 referenceParameterTemplate',
-  // );
-
-  // final RegExp channelParameters = TemplateRegExp.regExp(
-  //   r'(?<=\[\s*)parameterTemplate[^\)]+\)',
-  // );
-
   Parameter get aParameter => Parameter(this);
 
   ParameterName get aParameterName => ParameterName(this);
 
-  // ParameterReference get aParameterReference => ParameterReference(this);
-
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'Future<Object> \$invokeStaticMethodTemplate[^\}]+\}',
+    r'Future<Object\?> \$invokeStaticMethodTemplate[^\}]+\}',
   );
 
   @override
@@ -660,7 +661,7 @@ class ChannelMethod with TemplateRegExp {
   ChannelMethod(this.parent);
 
   final RegExp name = TemplateRegExp.regExp(
-    r'(?<=Future<Object>\s\$invoke)MethodTemplate',
+    r'(?<=Future<Object\?>\s\$invoke)MethodTemplate',
   );
 
   final RegExp instanceClassName = TemplateRegExp.regExp(
@@ -671,23 +672,13 @@ class ChannelMethod with TemplateRegExp {
     r"(?<=')methodTemplate(?=')",
   );
 
-  // final RegExp parameters = TemplateRegExp.regExp(
-  //   r'String parameterTemplate, \$ClassTemplate2 referenceParameterTemplate',
-  // );
-
-  // final RegExp channelParameters = TemplateRegExp.regExp(
-  //   r'(?<=\[\s*)parameterTemplate[^\)]+\)',
-  // );
-
   Parameter get aParameter => Parameter(this);
 
   ParameterName get aParameterName => ParameterName(this);
 
-  // ParameterReference get aParameterReference => ParameterReference(this);
-
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'Future<Object>\s\$invokeMethodTemplate[^\}]+\}[^\}]+\}',
+    r'Future<Object\?>\s\$invokeMethodTemplate[^\}]+\}',
   );
 
   @override
@@ -701,27 +692,11 @@ class ParameterName with TemplateRegExp {
 
   @override
   final RegExp exp =
-      TemplateRegExp.regExp(r'(?<=<Object>\[\s*)parameterTemplate');
+      TemplateRegExp.regExp(r'(?<=<Object\?>\[\s*)parameterTemplate');
 
   @override
   final TemplateRegExp parent;
 }
-
-// class ParameterReference with TemplateRegExp {
-//   ParameterReference(this.parent);
-//
-//   final RegExp name = TemplateRegExp.regExp(r'referenceParameterTemplate');
-//
-//   final RegExp channel = TemplateRegExp.regExp(
-//     r'github\.penguin/template/template/ClassTemplate2',
-//   );
-//
-//   @override
-//   final RegExp exp = TemplateRegExp.regExp(r'_replaceIfUnpaired\([^\)]+\)');
-//
-//   @override
-//   final TemplateRegExp parent;
-// }
 
 class Handler with TemplateRegExp {
   Handler(this.parent);
@@ -731,7 +706,7 @@ class Handler with TemplateRegExp {
   );
 
   final RegExp typeArgClassName = TemplateRegExp.regExp(
-    r'(?<=ReferenceChannelHandler<\$)ClassTemplate',
+    r'(?<=TypeChannelHandler<\$)ClassTemplate',
   );
 
   final RegExp constructorClassName = TemplateRegExp.regExp(
@@ -739,7 +714,7 @@ class Handler with TemplateRegExp {
   );
 
   final RegExp onDisposeClassName = TemplateRegExp.regExp(
-    r'ClassTemplate(?= instance\)\s+onDispose;)',
+    r'(?<=void onInstanceDisposed\(TypeChannelManager manager, \$)ClassTemplate',
   );
 
   HandlerStaticMethodName get aStaticMethodName =>
@@ -811,10 +786,6 @@ class HandlerStaticMethod with TemplateRegExp {
 
   final RegExp returnType = TemplateRegExp.regExp(r'(?<=final )double');
 
-  // final RegExp parameters = TemplateRegExp.regExp(
-  //   r'String parameterTemplate,\s+\$ClassTemplate2 referenceParameterTemplate',
-  // );
-
   Parameter get aParameter => Parameter(this);
 
   @override
@@ -837,11 +808,7 @@ class HandlerStaticMethodInvoker with TemplateRegExp {
     r'(?<=\$on)StaticMethodTemplate',
   );
 
-  // final RegExp arguments = TemplateRegExp.regExp(
-  //   r'arguments\[0\], arguments\[1\]',
-  // );
-
-  final RegExp anArgument = TemplateRegExp.regExp(r'arguments\[0\]');
+  MethodArgument get anArgument => MethodArgument(this);
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
@@ -852,6 +819,20 @@ class HandlerStaticMethodInvoker with TemplateRegExp {
   final Handler parent;
 }
 
+class MethodArgument with TemplateRegExp {
+  MethodArgument(this.parent);
+
+  final RegExp type = TemplateRegExp.regExp(r'(?<=as )String');
+
+  final RegExp index = TemplateRegExp.regExp(r'(?<=\[)0');
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(r'arguments\[0\] as String');
+
+  @override
+  final TemplateRegExp parent;
+}
+
 class HandlerCreationArguments with TemplateRegExp {
   HandlerCreationArguments(this.parent);
 
@@ -859,15 +840,8 @@ class HandlerCreationArguments with TemplateRegExp {
     r'(?<=\$)ClassTemplate(?= instance,)',
   );
 
-  // final RegExp fields = TemplateRegExp.regExp(
-  //   r'(?<=\[\s*)instance\.fieldTemplate[^\)]+\)',
-  // );
-
   HandlerCreationArgumentsFieldName get aFieldName =>
       HandlerCreationArgumentsFieldName(this);
-
-  // HandlerCreationArgumentsFieldReference get aFieldReference =>
-  //     HandlerCreationArgumentsFieldReference(this);
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
@@ -885,27 +859,11 @@ class HandlerCreationArgumentsFieldName with TemplateRegExp {
 
   @override
   final RegExp exp =
-      TemplateRegExp.regExp(r'(?<=<Object>\[\s*)instance\.fieldTemplate');
+      TemplateRegExp.regExp(r'(?<=<Object\?>\[\s*)instance\.fieldTemplate');
 
   @override
   final HandlerCreationArguments parent;
 }
-
-// class HandlerCreationArgumentsFieldReference with TemplateRegExp {
-//   HandlerCreationArgumentsFieldReference(this.parent);
-//
-//   final RegExp name = TemplateRegExp.regExp(r'referenceParameterTemplate');
-//
-//   final RegExp channel = TemplateRegExp.regExp(
-//     r'github\.penguin/template/template/ClassTemplate2',
-//   );
-//
-//   @override
-//   final RegExp exp = TemplateRegExp.regExp(r'_replaceIfUnpaired\([^\)]+\)');
-//
-//   @override
-//   final HandlerCreationArguments parent;
-// }
 
 class HandlerCreateInstance with TemplateRegExp {
   HandlerCreateInstance(this.parent);
@@ -916,10 +874,6 @@ class HandlerCreateInstance with TemplateRegExp {
 
   final RegExp argsClassName =
       TemplateRegExp.regExp(r'ClassTemplate(?=CreationArgs\()');
-
-  // final RegExp fields = TemplateRegExp.regExp(
-  //   r'\.\.fieldTemplate = arguments\[0\]\s+\.\.referenceParameterTemplate = arguments\[1\]',
-  // );
 
   HandlerCreateInstanceField get aField => HandlerCreateInstanceField(this);
 
@@ -939,9 +893,11 @@ class HandlerCreateInstanceField with TemplateRegExp {
 
   final RegExp index = TemplateRegExp.regExp(r'0(?=\])');
 
+  final RegExp type = TemplateRegExp.regExp(r'int$');
+
   @override
   final RegExp exp =
-      TemplateRegExp.regExp(r'\.\.fieldTemplate = arguments\[0\]');
+      TemplateRegExp.regExp(r'\.\.fieldTemplate = arguments\[0\] as int');
 
   @override
   final HandlerCreateInstance parent;
@@ -958,7 +914,7 @@ class HandlerInvokeMethod with TemplateRegExp {
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'Object invokeMethod\([^\}]+\}',
+    r'Object\? invokeMethod\([^\}]+\}',
   );
 
   @override
@@ -976,7 +932,7 @@ class HandlerInvokeMethodInvoker with TemplateRegExp {
     r'(?<=instance\.)methodTemplate',
   );
 
-  final RegExp anArgument = TemplateRegExp.regExp(r'arguments\[0\]');
+  MethodArgument get anArgument => MethodArgument(this);
 
   @override
   final RegExp exp = TemplateRegExp.regExp(

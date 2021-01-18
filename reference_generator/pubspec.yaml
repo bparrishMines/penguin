@@ -2,6 +2,7 @@ name: reference_generator
 description: A sample command-line application.
 # version: 1.0.0
 # homepage: https://www.example.com
+publish_to: none
 
 environment:
   sdk: '>=2.10.0-93.0.dev <3.0.0'
@@ -11,11 +12,7 @@ dependencies:
   args: 1.6.0
   source_gen: 0.9.7+1
   json_annotation: 3.1.0
-  reference:
-    git:
-      url: git@github.com:bparrishMines/penguin.git
-      ref: channels
-      path: reference
+  reference: 0.2.0-beta
   build: ^1.5.0
   path: ^1.7.0
 

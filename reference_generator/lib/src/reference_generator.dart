@@ -20,7 +20,7 @@ class ReferenceAstBuilder extends Builder {
     final LibraryReader reader = LibraryReader(await buildStep.inputLibrary);
 
     final Iterable<ClassElement> classes = reader
-        .annotatedWith(const TypeChecker.fromRuntime(Channel))
+        .annotatedWith(const TypeChecker.fromRuntime(Reference))
         .map<ClassElement>(
           (AnnotatedElement annotatedElement) => annotatedElement.element,
         );
@@ -134,7 +134,7 @@ class ReferenceAstBuilder extends Builder {
     Set<ClassElement> allGeneratedClasses,
   ) {
     return ReferenceType(
-      name: type.getDisplayString(withNullability: false).split('<').first,
+      name: type.getDisplayString(withNullability: true).split('<').first,
       codeGeneratedClass: allGeneratedClasses.contains(type.element),
       referenceChannel: _getChannel(type),
       typeArguments: type is! ParameterizedType
@@ -149,7 +149,7 @@ class ReferenceAstBuilder extends Builder {
   }
 
   String _getChannel(DartType type) {
-    final TypeChecker typeChecker = TypeChecker.fromRuntime(Channel);
+    final TypeChecker typeChecker = TypeChecker.fromRuntime(Reference);
 
     if (type.isVoid || !typeChecker.hasAnnotationOf(type.element)) return null;
 

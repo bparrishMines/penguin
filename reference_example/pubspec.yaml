@@ -10,11 +10,7 @@ environment:
   flutter: ">=1.10.0"
 
 dependencies:
-  reference:
-    git:
-      url: git@github.com:bparrishMines/penguin.git
-      ref: channels
-      path: reference
+  reference: 0.2.0-beta
   flutter:
     sdk: flutter
 

@@ -79,7 +79,7 @@ void main(List<String> arguments) async {
   if (options.dartOut != null) {
     final HttpClientRequest request = await HttpClient().getUrl(
       Uri.parse(
-        'https://raw.githubusercontent.com/bparrishMines/penguin/channels/reference/lib/src/template/src/template.g.dart',
+        'https://raw.githubusercontent.com/bparrishMines/penguin/master/reference/lib/src/template/src/template.g.dart',
       ),
     );
     final HttpClientResponse response = await request.close();
@@ -96,7 +96,7 @@ void main(List<String> arguments) async {
   if (options.javaOut != null) {
     final HttpClientRequest request = await HttpClient().getUrl(
       Uri.parse(
-        'https://raw.githubusercontent.com/bparrishMines/penguin/channels/reference/android/src/main/java/github/penguin/reference/templates/LibraryTemplate.java',
+        'https://raw.githubusercontent.com/bparrishMines/penguin/master/reference/android/src/main/java/github/penguin/reference/templates/LibraryTemplate.java',
       ),
     );
     final HttpClientResponse response = await request.close();
