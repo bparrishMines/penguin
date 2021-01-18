@@ -409,13 +409,20 @@ String getTrueTypeName(ReferenceType type) {
 String javaTypeNameConversion(String type) {
   switch (type) {
     case 'int':
+    case 'int?':
       return 'Integer';
     case 'double':
+    case 'double?':
       return 'Double';
     case 'bool':
+    case 'bool?':
       return 'Boolean';
     case 'num':
+    case 'num?':
       return 'Number';
+    case 'String':
+    case 'String?':
+      return 'String';
   }
 
   return type;
@@ -441,22 +448,6 @@ class Library with TemplateRegExp {
     r'(?<=package )github.penguin.reference.templates(?=;)',
   );
 
-  // final RegExp interfaces = TemplateRegExp.regExp(
-  //   r'interface \$ClassTemplate \{.+}(?=\s+static class \$ClassTemplateCreationArgs \{)',
-  // );
-  //
-  // final RegExp creationArgs = TemplateRegExp.regExp(
-  //   r'static class \$ClassTemplateCreationArgs.*}(?=\s*static class \$ClassTemplateChannel)',
-  // );
-  //
-  // final RegExp channels = TemplateRegExp.regExp(
-  //   r'static class \$ClassTemplateChannel.*}(?=\s*static class \$ClassTemplateHandler)',
-  // );
-  //
-  // final RegExp handlers = TemplateRegExp.regExp(
-  //   r'static class \$ClassTemplateHandler.*}(?=\s+\}\s+$)',
-  // );
-
   Interface get anInterface => Interface(this);
 
   CreationArgsClass get aCreationArgsClass => CreationArgsClass(this);
@@ -470,9 +461,6 @@ class Interface with TemplateRegExp {
   Interface(this.parent);
 
   final RegExp name = TemplateRegExp.regExp(r'(?<=interface \$)ClassTemplate');
-
-  // final RegExp fields =
-  //     TemplateRegExp.regExp(r'Integer getFieldTemplate[^;]+;[^;]+;');
 
   InterfaceField get aField => InterfaceField(this);
 
@@ -504,10 +492,6 @@ class InterfaceMethod with TemplateRegExp {
   InterfaceMethod(this.parent);
 
   final RegExp name = TemplateRegExp.regExp(r'methodTemplate(?=\()');
-
-  // final RegExp parameters = TemplateRegExp.regExp(
-  //   r'String parameterTemplate, \$ClassTemplate2 referenceParameterTemplate',
-  // );
 
   Parameter get aParameter => Parameter(this);
 
@@ -551,8 +535,6 @@ class CreationArgsClass with TemplateRegExp {
 
   final RegExp className = TemplateRegExp.regExp(r'(?<=class \$)ClassTemplate');
 
-  // final RegExp fields = TemplateRegExp.regExp(r'Integer fieldTemplate;[^;]+;');
-
   CreationArgsClassField get aField => CreationArgsClassField(this);
 
   @override
@@ -585,7 +567,7 @@ class Channel with TemplateRegExp {
   );
 
   final RegExp typeArgumentClassName = TemplateRegExp.regExp(
-    r'(?<=extends ReferenceChannel<\$)ClassTemplate',
+    r'(?<=extends TypeChannel<\$)ClassTemplate',
   );
 
   final RegExp constructorClassName = TemplateRegExp.regExp(
@@ -616,19 +598,9 @@ class ChannelStaticMethod with TemplateRegExp {
 
   final RegExp nameAsParameter = TemplateRegExp.regExp(r'staticMethodTemplate');
 
-  // final RegExp parameters = TemplateRegExp.regExp(
-  //   r'String parameterTemplate, \$ClassTemplate2 referenceParameterTemplate',
-  // );
-
-  // final RegExp channelParameters = TemplateRegExp.regExp(
-  //   r'(?<=asList\(\s*)parameterTemplate[^\)]+\)',
-  // );
-
   Parameter get aParameter => Parameter(this);
 
   ParameterName get aParameterName => ParameterName(this);
-
-  // ParameterReference get aParameterReference => ParameterReference(this);
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
@@ -654,19 +626,9 @@ class ChannelMethod with TemplateRegExp {
     r'(?<=")methodTemplate(?=")',
   );
 
-  // final RegExp parameters = TemplateRegExp.regExp(
-  //   r',\s*String parameterTemplate,\s*\$ClassTemplate2 referenceParameterTemplate',
-  // );
-  //
-  // final RegExp channelParameters = TemplateRegExp.regExp(
-  //   r'(?<=asList\(\s*)parameterTemplate[^\)]+\)',
-  // );
-
   FollowingParameter get aParameter => FollowingParameter(this);
 
   ParameterName get aParameterName => ParameterName(this);
-
-  // ParameterReference get aParameterReference => ParameterReference(this);
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
@@ -690,22 +652,6 @@ class ParameterName with TemplateRegExp {
   final TemplateRegExp parent;
 }
 
-// class ParameterReference with TemplateRegExp {
-//   ParameterReference(this.parent);
-//
-//   final RegExp name = TemplateRegExp.regExp(r'referenceParameterTemplate');
-//
-//   final RegExp channel = TemplateRegExp.regExp(
-//     r'github\.penguin/template/template/ClassTemplate2',
-//   );
-//
-//   @override
-//   final RegExp exp = TemplateRegExp.regExp(r'replaceIfUnpaired\([^\)]+\)');
-//
-//   @override
-//   final TemplateRegExp parent;
-// }
-
 class Handler with TemplateRegExp {
   Handler(this.parent);
 
@@ -714,7 +660,7 @@ class Handler with TemplateRegExp {
   );
 
   final RegExp typeArgClassName = TemplateRegExp.regExp(
-    r'(?<=ReferenceChannelHandler<\$)ClassTemplate',
+    r'(?<=TypeChannelHandler<\$)ClassTemplate',
   );
 
   HandlerOnCreateMethod get theOnCreateMethod => HandlerOnCreateMethod(this);
@@ -769,10 +715,6 @@ class HandlerStaticMethod with TemplateRegExp {
 
   final RegExp name = TemplateRegExp.regExp(r'StaticMethodTemplate(?=\()');
 
-  // final RegExp parameters = TemplateRegExp.regExp(
-  //   r',\s*String parameterTemplate,\s+\$ClassTemplate2 referenceParameterTemplate',
-  // );
-
   FollowingParameter get aParameter => FollowingParameter(this);
 
   @override
@@ -794,10 +736,6 @@ class HandlerStaticMethodInvoker with TemplateRegExp {
   final RegExp methodHandler = TemplateRegExp.regExp(
     r'(?<=\$on)StaticMethodTemplate',
   );
-
-  // final RegExp arguments = TemplateRegExp.regExp(
-  //   r', \(String\) arguments.get\(0\), \(\$ClassTemplate2\) arguments.get\(1\)',
-  // );
 
   HandlerStaticMethodInvokerArgument get anArgument =>
       HandlerStaticMethodInvokerArgument(this);
@@ -834,15 +772,8 @@ class HandlerCreationArguments with TemplateRegExp {
     r'(?<=\$)ClassTemplate(?= instance\))',
   );
 
-  // final RegExp fields = TemplateRegExp.regExp(
-  //   r'(?<=\(\s*)instance\.getFieldTemplate([^\)]*\)){3}',
-  // );
-
   HandlerCreationArgumentsFieldName get aFieldName =>
       HandlerCreationArgumentsFieldName(this);
-
-  // HandlerCreationArgumentsFieldReference get aFieldReference =>
-  //     HandlerCreationArgumentsFieldReference(this);
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
@@ -866,22 +797,6 @@ class HandlerCreationArgumentsFieldName with TemplateRegExp {
   final HandlerCreationArguments parent;
 }
 
-class HandlerCreationArgumentsFieldReference with TemplateRegExp {
-  HandlerCreationArgumentsFieldReference(this.parent);
-
-  final RegExp name = TemplateRegExp.regExp(r'ReferenceParameterTemplate');
-
-  final RegExp channel = TemplateRegExp.regExp(
-    r'github\.penguin/template/template/ClassTemplate2',
-  );
-
-  @override
-  final RegExp exp = TemplateRegExp.regExp(r'replaceIfUnpaired[^\)]+\)\)');
-
-  @override
-  final HandlerCreationArguments parent;
-}
-
 class HandlerCreateInstance with TemplateRegExp {
   HandlerCreateInstance(this.parent);
 
@@ -895,10 +810,6 @@ class HandlerCreateInstance with TemplateRegExp {
 
   final RegExp argsClassName = TemplateRegExp.regExp(
       r'ClassTemplate(?=CreationArgs\(|CreationArgs args)');
-
-  // final RegExp fields = TemplateRegExp.regExp(
-  //   r'args\.fieldTemplate([^;]+;){2}',
-  // );
 
   HandlerCreateInstanceField get aField => HandlerCreateInstanceField(this);
 
