@@ -6,7 +6,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol REFClassTemplate <NSObject>
 - (NSNumber *_Nullable)fieldTemplate;
-- (NSObject *_Nullable)methodTemplate:(NSString *_Nullable)parameterTemplate;
+- (NSObject *_Nullable)methodTemplate:(NSString *_Nullable)parameterTemplate /*following_parameters*/;
 @end
 
 @interface REFClassTemplateCreationArgs : NSObject
@@ -16,6 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface REFClassTemplateChannel : REFTypeChannel
 - (instancetype)initWithManager:(REFTypeChannelManager *)manager;
 - (void)invoke_staticMethodTemplate:(NSString *_Nullable)parameterTemplate
+                         /*following_parameters*/
                          completion:(void (^)(id _Nullable, NSError *_Nullable))completion;
 - (void)invoke_methodTemplate:(NSObject<REFClassTemplate> *)instance
             parameterTemplate:(NSString *_Nullable)parameterTemplate
@@ -24,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface REFClassTemplateHandler : NSObject<REFTypeChannelHandler>
 - (NSObject<REFClassTemplate> *)onCreate:(REFTypeChannelManager *)manager
-                                             args:(REFClassTemplateCreationArgs *)args;
+                                    args:(REFClassTemplateCreationArgs *)args;
 - (NSObject *_Nullable)on_staticMethodTemplate:(REFTypeChannelManager *)manager
                              parameterTemplate:(NSString *_Nullable)parameterTemplate;
 @end
