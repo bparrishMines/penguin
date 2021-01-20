@@ -1,4 +1,3 @@
-import 'package:recase/recase.dart';
 import 'package:reference_generator/src/ast.dart';
 
 import 'common.dart';
@@ -240,6 +239,76 @@ String generateObjcHeader({
                     }).join('\n'));
           },
         ).join('\n'),
+      )
+      .replaceAll(
+        library.aHandler.exp,
+        libraryNode.classes.map<String>(
+          (ClassNode classNode) {
+            final Handler handler = library.aHandler;
+            return handler
+                .stringMatch()
+                .replaceAll(handler.prefix, prefix)
+                .replaceAll(handler.className, classNode.name)
+                .replaceAll(
+                  handler.theOnCreateMethod.exp,
+                  handler.theOnCreateMethod
+                      .stringMatch()
+                      .replaceAll(
+                        handler.theOnCreateMethod.className,
+                        classNode.name,
+                      )
+                      .replaceAll(
+                        handler.theOnCreateMethod.classPrefix,
+                        prefix,
+                      )
+                      .replaceAll(
+                        handler.theOnCreateMethod.creationArgsClassName,
+                        classNode.name,
+                      )
+                      .replaceAll(
+                        handler.theOnCreateMethod.creationArgsPrefix,
+                        prefix,
+                      ),
+                )
+                .replaceAll(
+                  handler.aStaticMethod.exp,
+                  classNode.staticMethods.map<String>(
+                    (MethodNode methodNode) {
+                      final HandlerStaticMethod method = handler.aStaticMethod;
+                      return method
+                          .stringMatch()
+                          .replaceAll(method.name, methodNode.name)
+                          .replaceAll(
+                            method.aFollowingParameter.exp,
+                            methodNode.parameters.map<String>(
+                              (ParameterNode parameterNode) {
+                                final FollowingParameter parameter =
+                                    method.aFollowingParameter;
+                                return parameter
+                                    .stringMatch()
+                                    .replaceAll(
+                                      parameter.name,
+                                      parameterNode.name,
+                                    )
+                                    .replaceAll(
+                                      parameter.name2,
+                                      parameterNode.name,
+                                    )
+                                    .replaceAll(
+                                      parameter.type,
+                                      getTrueTypeName(
+                                        parameterNode.type,
+                                        prefix,
+                                      ),
+                                    );
+                              },
+                            ).join('\n'),
+                          );
+                    },
+                  ).join('\n'),
+                );
+          },
+        ).join('\n'),
       );
 }
 
@@ -341,7 +410,7 @@ class Protocol with TemplateRegExp {
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'@interface REFClassTemplate[^@]*@end',
+    r'@protocol REFClassTemplate[^@]*@end',
   );
 
   @override
@@ -377,7 +446,7 @@ class ProtocolMethod with TemplateRegExp {
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'- \(NSObject \*_Nullable\)methodTemplate:\(NSString \*_Nullable\)parameterTemplate;',
+    r'- \(NSObject \*_Nullable\)methodTemplate:[^;]+;',
   );
 
   @override
@@ -597,6 +666,8 @@ class HandlerStaticMethod with TemplateRegExp {
   final RegExp exp = TemplateRegExp.regExp(
     r'- \(NSObject \*_Nullable\)on_staticMethodTemplate:[^;]+;',
   );
+
+  final RegExp name = TemplateRegExp.regExp(r'(?<=on_)staticMethodTemplate');
 
   FollowingParameter get aFollowingParameter => FollowingParameter(this);
 }

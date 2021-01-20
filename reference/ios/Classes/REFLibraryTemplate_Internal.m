@@ -28,7 +28,7 @@
 
 @implementation REFClassTemplateHandler
 - (NSObject<REFClassTemplate> *)onCreate:(REFTypeChannelManager *)manager
-                                             args:(REFClassTemplateCreationArgs *)args {
+                                    args:(REFClassTemplateCreationArgs *)args {
   return nil;
 }
 
