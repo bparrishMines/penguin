@@ -8,7 +8,7 @@ String generateObjcHeader({
   LibraryNode libraryNode,
   String prefix,
 }) {
-  final Library library = Library(template: template, templatePrefix: prefix);
+  final Library library = Library(template);
   return template
       .replaceAll(
         library.aClassDirective.exp,
@@ -20,7 +20,7 @@ String generateObjcHeader({
                 .replaceAll(classDirective.className, classNode.name)
                 .replaceAll(
                   classDirective.classPrefix,
-                  classDirective.templatePrefix,
+                  prefix,
                 );
           },
         ).join('\n'),
@@ -33,7 +33,7 @@ String generateObjcHeader({
             return protocol
                 .stringMatch()
                 .replaceAll(protocol.name, classNode.name)
-                .replaceAll(protocol.prefix, protocol.templatePrefix)
+                .replaceAll(protocol.prefix, prefix)
                 .replaceAll(
                   protocol.aField.exp,
                   classNode.fields.map<String>(
@@ -44,10 +44,7 @@ String generateObjcHeader({
                           .replaceAll(field.name, fieldNode.name)
                           .replaceAll(
                             field.type,
-                            getTrueTypeName(
-                              fieldNode.type,
-                              field.templatePrefix,
-                            ),
+                            getTrueTypeName(fieldNode.type, prefix),
                           );
                     },
                   ).join('\n'),
@@ -57,10 +54,190 @@ String generateObjcHeader({
                   classNode.methods.map<String>(
                     (MethodNode methodNode) {
                       final ProtocolMethod method = protocol.aMethod;
-                      //return method.stringMatch().replaceAll(method.name, methodNode.name).replaceAll(method.aParameter.exp, methodNode.parameters.map<String>().join(' '))
+                      return method
+                          .stringMatch()
+                          .replaceAll(method.name, methodNode.name)
+                          .replaceAll(
+                            method.theLeadingParameter.exp,
+                            methodNode.parameters.isEmpty
+                                ? ''
+                                : method.theLeadingParameter
+                                    .stringMatch()
+                                    .replaceAll(method.theLeadingParameter.name,
+                                        methodNode.parameters[0].name)
+                                    .replaceAll(
+                                      method.theLeadingParameter.type,
+                                      getTrueTypeName(
+                                        methodNode.parameters[0].type,
+                                        prefix,
+                                      ),
+                                    ),
+                          )
+                          .replaceAll(
+                            method.aFollowingParameterComment.exp,
+                            methodNode.parameters.skip(1).map<String>(
+                              (ParameterNode parameterNode) {
+                                final FollowingParameterComment comment =
+                                    method.aFollowingParameterComment;
+                                return comment
+                                    .stringMatch()
+                                    .replaceAll(
+                                      comment.name,
+                                      parameterNode.name,
+                                    )
+                                    .replaceAll(
+                                      comment.name2,
+                                      parameterNode.name,
+                                    )
+                                    .replaceAll(
+                                      comment.type,
+                                      getTrueTypeName(
+                                        parameterNode.type,
+                                        prefix,
+                                      ),
+                                    );
+                              },
+                            ).join(' '),
+                          );
                     },
                   ).join('\n'),
                 );
+          },
+        ).join('\n'),
+      )
+      .replaceAll(
+        library.aCreationArgsClass.exp,
+        libraryNode.classes.map<String>(
+          (ClassNode classNode) {
+            final CreationArgsClass argsClass = library.aCreationArgsClass;
+            return argsClass
+                .stringMatch()
+                .replaceAll(argsClass.className, classNode.name)
+                .replaceAll(argsClass.classPrefix, prefix)
+                .replaceAll(
+                    argsClass.aField.exp,
+                    classNode.fields.map<String>(
+                      (FieldNode fieldNode) {
+                        final CreationArgsClassField field = argsClass.aField;
+                        return field
+                            .stringMatch()
+                            .replaceAll(field.name, fieldNode.name)
+                            .replaceAll(
+                              field.type,
+                              getTrueTypeName(
+                                fieldNode.type,
+                                prefix,
+                              ),
+                            );
+                      },
+                    ).join('\n'));
+          },
+        ).join('\n'),
+      )
+      .replaceAll(
+        library.aChannel.exp,
+        libraryNode.classes.map<String>(
+          (ClassNode classNode) {
+            final Channel channel = library.aChannel;
+            return channel
+                .stringMatch()
+                .replaceAll(channel.className, classNode.name)
+                .replaceAll(channel.prefix, prefix)
+                .replaceAll(
+                  channel.aStaticMethod.exp,
+                  classNode.staticMethods.map<String>(
+                    (MethodNode methodNode) {
+                      final ChannelStaticMethod staticMethod =
+                          channel.aStaticMethod;
+                      return staticMethod
+                          .stringMatch()
+                          .replaceAll(staticMethod.name, methodNode.name)
+                          .replaceAll(
+                            staticMethod.completion,
+                            methodNode.parameters.isEmpty ? '' : 'completion',
+                          )
+                          .replaceAll(
+                            staticMethod.theLeadingParameter.exp,
+                            methodNode.parameters.isEmpty
+                                ? ''
+                                : staticMethod.theLeadingParameter
+                                    .stringMatch()
+                                    .replaceAll(
+                                      staticMethod.theLeadingParameter.name,
+                                      methodNode.parameters[0].name,
+                                    )
+                                    .replaceAll(
+                                      staticMethod.theLeadingParameter.type,
+                                      getTrueTypeName(
+                                        methodNode.parameters[0].type,
+                                        prefix,
+                                      ),
+                                    ),
+                          )
+                          .replaceAll(
+                            staticMethod.aFollowingParameterComment.exp,
+                            methodNode.parameters.skip(1).map<String>(
+                              (ParameterNode parameterNode) {
+                                final FollowingParameterComment comment =
+                                    staticMethod.aFollowingParameterComment;
+                                return comment
+                                    .stringMatch()
+                                    .replaceAll(
+                                      comment.name,
+                                      parameterNode.name,
+                                    )
+                                    .replaceAll(
+                                      comment.name2,
+                                      parameterNode.name,
+                                    )
+                                    .replaceAll(
+                                      comment.type,
+                                      getTrueTypeName(
+                                        parameterNode.type,
+                                        prefix,
+                                      ),
+                                    );
+                              },
+                            ).join('/n'),
+                          );
+                    },
+                  ).join('\n'),
+                )
+                .replaceAll(
+                    channel.aMethod.exp,
+                    classNode.methods.map<String>((MethodNode methodNode) {
+                      final ChannelMethod method = channel.aMethod;
+                      return method
+                          .stringMatch()
+                          .replaceAll(method.name, methodNode.name)
+                          .replaceAll(method.instanceType, classNode.name)
+                          .replaceAll(method.instanceTypePrefix, prefix)
+                          .replaceAll(
+                            method.aFollowingParameter.exp,
+                            methodNode.parameters
+                                .map<String>((ParameterNode parameterNode) {
+                              final FollowingParameter parameter =
+                                  method.aFollowingParameter;
+                              return parameter
+                                  .stringMatch()
+                                  .replaceAll(
+                                    parameter.name,
+                                    parameterNode.name,
+                                  )
+                                  .replaceAll(
+                                    parameter.name2,
+                                    parameterNode.name,
+                                  )
+                                  .replaceAll(
+                                    parameter.type,
+                                    getTrueTypeName(
+                                      parameterNode.type,
+                                      prefix,
+                                    ),
+                                  );
+                            }).join('\n'),
+                          );
+                    }).join('\n'));
           },
         ).join('\n'),
       );
@@ -113,12 +290,8 @@ String objcTypeNameConversion(String type) {
   return type;
 }
 
-mixin PrefixTemplate implements TemplateRegExp {
-  String get templatePrefix => (parent as PrefixTemplate).templatePrefix;
-}
-
-class Library with TemplateRegExp, PrefixTemplate {
-  Library({this.template, this.templatePrefix});
+class Library with TemplateRegExp {
+  Library(this.template);
 
   @override
   final RegExp exp = null;
@@ -128,9 +301,6 @@ class Library with TemplateRegExp, PrefixTemplate {
 
   @override
   final String template;
-
-  @override
-  final String templatePrefix;
 
   ClassDirective get aClassDirective => ClassDirective(this);
 
@@ -143,7 +313,7 @@ class Library with TemplateRegExp, PrefixTemplate {
   Handler get aHandler => Handler(this);
 }
 
-class ClassDirective with TemplateRegExp, PrefixTemplate {
+class ClassDirective with TemplateRegExp {
   ClassDirective(this.parent);
 
   final RegExp classPrefix = TemplateRegExp.regExp(r'(?<=@class )REF');
@@ -156,7 +326,7 @@ class ClassDirective with TemplateRegExp, PrefixTemplate {
   final Library parent;
 }
 
-class Protocol with TemplateRegExp, PrefixTemplate {
+class Protocol with TemplateRegExp {
   Protocol(this.parent);
 
   final RegExp name = TemplateRegExp.regExp(
@@ -178,7 +348,7 @@ class Protocol with TemplateRegExp, PrefixTemplate {
   final Library parent;
 }
 
-class ProtocolField with TemplateRegExp, PrefixTemplate {
+class ProtocolField with TemplateRegExp {
   ProtocolField(this.parent);
 
   final RegExp type = TemplateRegExp.regExp(r'NSNumber(?= \*)');
@@ -193,16 +363,17 @@ class ProtocolField with TemplateRegExp, PrefixTemplate {
   final Protocol parent;
 }
 
-class ProtocolMethod with TemplateRegExp, PrefixTemplate {
+class ProtocolMethod with TemplateRegExp {
   ProtocolMethod(this.parent);
 
   final RegExp name = TemplateRegExp.regExp(
     r'(?<=- \(NSObject \*_Nullable\))methodTemplate',
   );
 
-  LeadingParameter get aLeadingParameter => LeadingParameter(this);
+  LeadingParameter get theLeadingParameter => LeadingParameter(this);
 
-  //FollowingParameter get aFollowingParameter => FollowingParameter(this);
+  FollowingParameterComment get aFollowingParameterComment =>
+      FollowingParameterComment(this);
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
@@ -211,19 +382,6 @@ class ProtocolMethod with TemplateRegExp, PrefixTemplate {
 
   @override
   final Protocol parent;
-}
-
-class ProtocolMethodFollowingParameter extends FollowingParameter
-    with PrefixTemplate {
-  ProtocolMethodFollowingParameter(TemplateRegExp parent) : super(parent);
-
-  @override
-  RegExp exp = TemplateRegExp.regExp(r';');
-
-  @override
-  String stringMatch() {
-    return 'parameterTemplate:(NSString *_Nullable)parameterTemplate';
-  }
 }
 
 class LeadingParameter with TemplateRegExp {
@@ -260,7 +418,30 @@ class FollowingParameter with TemplateRegExp {
   final TemplateRegExp parent;
 }
 
-class CreationArgsClass with TemplateRegExp, PrefixTemplate {
+class FollowingParameterComment with TemplateRegExp {
+  FollowingParameterComment(this.parent);
+
+  @override
+  final TemplateRegExp parent;
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'\/\*following_parameters\*\/',
+  );
+
+  final RegExp type = TemplateRegExp.regExp(r'NSString(?= \*)');
+
+  final RegExp name = TemplateRegExp.regExp(r'^parameterTemplate');
+
+  final RegExp name2 = TemplateRegExp.regExp(r'parameterTemplate$');
+
+  @override
+  String stringMatch() {
+    return 'parameterTemplate:(NSString *_Nullable)parameterTemplate';
+  }
+}
+
+class CreationArgsClass with TemplateRegExp {
   CreationArgsClass(this.parent);
 
   final RegExp className = TemplateRegExp.regExp(
@@ -280,7 +461,7 @@ class CreationArgsClass with TemplateRegExp, PrefixTemplate {
   final Library parent;
 }
 
-class CreationArgsClassField with TemplateRegExp, PrefixTemplate {
+class CreationArgsClassField with TemplateRegExp {
   CreationArgsClassField(this.parent);
 
   final RegExp type = TemplateRegExp.regExp(r'(?<=@property )NSNumber');
@@ -295,7 +476,7 @@ class CreationArgsClassField with TemplateRegExp, PrefixTemplate {
   final CreationArgsClass parent;
 }
 
-class Channel with TemplateRegExp, PrefixTemplate {
+class Channel with TemplateRegExp {
   Channel(this.parent);
 
   @override
@@ -316,7 +497,7 @@ class Channel with TemplateRegExp, PrefixTemplate {
   ChannelMethod get aMethod => ChannelMethod(this);
 }
 
-class ChannelStaticMethod with TemplateRegExp, PrefixTemplate {
+class ChannelStaticMethod with TemplateRegExp {
   ChannelStaticMethod(this.parent);
 
   @override
@@ -331,27 +512,15 @@ class ChannelStaticMethod with TemplateRegExp, PrefixTemplate {
     r'(?<=invoke_)staticMethodTemplate',
   );
 
-  LeadingParameter get aParameter => LeadingParameter(this);
+  final RegExp completion = TemplateRegExp.regExp(r'completion(?=:)');
 
-  ChannelStaticMethodFollowingParameter get aFollowingParameter =>
-      ChannelStaticMethodFollowingParameter(this);
+  LeadingParameter get theLeadingParameter => LeadingParameter(this);
+
+  FollowingParameterComment get aFollowingParameterComment =>
+      FollowingParameterComment(this);
 }
 
-class ChannelStaticMethodFollowingParameter extends FollowingParameter {
-  ChannelStaticMethodFollowingParameter(TemplateRegExp parent) : super(parent);
-
-  @override
-  RegExp exp = TemplateRegExp.regExp(
-    r'(?<=parameterTemplate\s)\s+(?=\scompletion:)',
-  );
-
-  @override
-  String stringMatch() {
-    return 'parameterTemplate:(NSString *_Nullable)parameterTemplate';
-  }
-}
-
-class ChannelMethod with TemplateRegExp, PrefixTemplate {
+class ChannelMethod with TemplateRegExp {
   ChannelMethod(this.parent);
 
   @override
@@ -374,7 +543,7 @@ class ChannelMethod with TemplateRegExp, PrefixTemplate {
   FollowingParameter get aFollowingParameter => FollowingParameter(this);
 }
 
-class Handler with TemplateRegExp, PrefixTemplate {
+class Handler with TemplateRegExp {
   Handler(this.parent);
 
   @override
@@ -396,7 +565,7 @@ class Handler with TemplateRegExp, PrefixTemplate {
   HandlerStaticMethod get aStaticMethod => HandlerStaticMethod(this);
 }
 
-class HandlerOnCreateMethod with TemplateRegExp, PrefixTemplate {
+class HandlerOnCreateMethod with TemplateRegExp {
   HandlerOnCreateMethod(this.parent);
 
   @override
@@ -418,7 +587,7 @@ class HandlerOnCreateMethod with TemplateRegExp, PrefixTemplate {
       TemplateRegExp.regExp(r'ClassTemplate(?=CreationArgs \*)');
 }
 
-class HandlerStaticMethod with TemplateRegExp, PrefixTemplate {
+class HandlerStaticMethod with TemplateRegExp {
   HandlerStaticMethod(this.parent);
 
   @override
@@ -432,7 +601,7 @@ class HandlerStaticMethod with TemplateRegExp, PrefixTemplate {
   FollowingParameter get aFollowingParameter => FollowingParameter(this);
 }
 
-// class Library with TemplateRegExp, PrefixTemplate {
+// class Library with TemplateRegExp {
 //   Library({this.template, this.templatePrefix});
 //
 //   @override
@@ -477,7 +646,7 @@ class HandlerStaticMethod with TemplateRegExp, PrefixTemplate {
 //   final Library parent;
 // }
 //
-// class Class with TemplateRegExp, PrefixTemplate {
+// class Class with TemplateRegExp {
 //   Class(this.parent);
 //
 //   final RegExp name = TemplateRegExp.regExp(
@@ -503,7 +672,7 @@ class HandlerStaticMethod with TemplateRegExp, PrefixTemplate {
 //   final Library parent;
 // }
 //
-// class ClassField with TemplateRegExp, PrefixTemplate {
+// class ClassField with TemplateRegExp {
 //   ClassField(this.parent);
 //
 //   final RegExp type = TemplateRegExp.regExp(r'NSNumber');
@@ -518,7 +687,7 @@ class HandlerStaticMethod with TemplateRegExp, PrefixTemplate {
 //   final Class parent;
 // }
 //
-// class ClassMethod with TemplateRegExp, PrefixTemplate {
+// class ClassMethod with TemplateRegExp {
 //   ClassMethod(this.parent);
 //
 //   final RegExp name = TemplateRegExp.regExp(r'methodTemplate');
@@ -534,7 +703,7 @@ class HandlerStaticMethod with TemplateRegExp, PrefixTemplate {
 //   final Class parent;
 // }
 //
-// class Parameter with TemplateRegExp, PrefixTemplate {
+// class Parameter with TemplateRegExp {
 //   Parameter(this.parent);
 //
 //   static const String firstParameter =
@@ -586,7 +755,7 @@ class HandlerStaticMethod with TemplateRegExp, PrefixTemplate {
 //   }
 // }
 //
-// class CreationArgsClass with TemplateRegExp, PrefixTemplate {
+// class CreationArgsClass with TemplateRegExp {
 //   CreationArgsClass(this.parent);
 //
 //   final RegExp className =
@@ -605,7 +774,7 @@ class HandlerStaticMethod with TemplateRegExp, PrefixTemplate {
 //   final Library parent;
 // }
 //
-// class CreationArgsClassField with TemplateRegExp, PrefixTemplate {
+// class CreationArgsClassField with TemplateRegExp {
 //   CreationArgsClassField(this.parent);
 //
 //   final RegExp type = TemplateRegExp.regExp(r'(?<=@property )NSNumber');
@@ -620,7 +789,7 @@ class HandlerStaticMethod with TemplateRegExp, PrefixTemplate {
 //   final CreationArgsClass parent;
 // }
 //
-// class ClassProtectedStaticMethod with TemplateRegExp, PrefixTemplate {
+// class ClassProtectedStaticMethod with TemplateRegExp {
 //   ClassProtectedStaticMethod(this.parent);
 //
 //   final RegExp name = TemplateRegExp.regExp(r'staticMethodTemplate(?=:)');
@@ -640,7 +809,7 @@ class HandlerStaticMethod with TemplateRegExp, PrefixTemplate {
 //   final Class parent;
 // }
 //
-// class ClassProtectedMethod with TemplateRegExp, PrefixTemplate {
+// class ClassProtectedMethod with TemplateRegExp {
 //   ClassProtectedMethod(this.parent);
 //
 //   final RegExp name = TemplateRegExp.regExp(
@@ -662,7 +831,7 @@ class HandlerStaticMethod with TemplateRegExp, PrefixTemplate {
 //   final Class parent;
 // }
 //
-// class LocalHandler with TemplateRegExp, PrefixTemplate {
+// class LocalHandler with TemplateRegExp {
 //   LocalHandler(this.parent);
 //
 //   final RegExp prefix = TemplateRegExp.regExp(r'(?<=@interface )_p_');
@@ -683,7 +852,7 @@ class HandlerStaticMethod with TemplateRegExp, PrefixTemplate {
 // }
 //
 // class LocalHandlerStaticMethodAbstractMethod
-//     with TemplateRegExp, PrefixTemplate {
+//     with TemplateRegExp {
 //   LocalHandlerStaticMethodAbstractMethod(this.parent);
 //
 //   final RegExp className = TemplateRegExp.regExp(r'classTemplate(?=_)');
@@ -700,7 +869,7 @@ class HandlerStaticMethod with TemplateRegExp, PrefixTemplate {
 //   final LocalHandler parent;
 // }
 //
-// class LocalHandlerCreatorAbstractMethod with TemplateRegExp, PrefixTemplate {
+// class LocalHandlerCreatorAbstractMethod with TemplateRegExp {
 //   LocalHandlerCreatorAbstractMethod(this.parent);
 //
 //   final RegExp classPrefix = TemplateRegExp.regExp(r'(?<=- \(|args:\()_p_');
