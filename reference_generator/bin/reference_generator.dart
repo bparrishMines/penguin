@@ -7,7 +7,7 @@ import 'package:reference_generator/src/ast.dart';
 
 import 'dart_generator.dart' show generateDart;
 import 'java_generator.dart' show generateJava;
-//import 'objc_impl_generator.dart' show generateObjcImpl;
+import 'objc_impl_generator.dart' show generateObjcImpl;
 import 'objc_header_generator.dart' show generateObjcHeader;
 
 const String packageRootOption = 'package-root';
@@ -151,14 +151,14 @@ void main(List<String> arguments) async {
 
     final String objcImplTemplate = buffer.toString();
 
-    // options.objcImplOut.writeAsStringSync(
-    //   generateObjcImpl(
-    //     template: objcImplTemplate,
-    //     libraryNode: libraryNode,
-    //     prefix: options.objcPrefix,
-    //     headerFilename: path.basename(options.objcHeaderOut.path),
-    //   ),
-    // );
+    options.objcImplOut.writeAsStringSync(
+      generateObjcImpl(
+        template: objcImplTemplate,
+        libraryNode: libraryNode,
+        prefix: options.objcPrefix,
+        headerFilename: path.basename(options.objcHeaderOut.path),
+      ),
+    );
   }
 }
 

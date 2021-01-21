@@ -13,7 +13,367 @@ String generateObjcImpl({
   LibraryNode libraryNode,
   String prefix,
   String headerFilename,
-}) {}
+}) {
+  final Library library = Library(template);
+  return template
+      .replaceAll(library.headerFilename, headerFilename)
+      .replaceAll(
+        library.aCreationArgsClass.exp,
+        libraryNode.classes.map<String>(
+          (ClassNode classNode) {
+            final CreationArgsClass argsClass = library.aCreationArgsClass;
+            return argsClass
+                .stringMatch()
+                .replaceAll(argsClass.className, classNode.name)
+                .replaceAll(argsClass.prefix, prefix);
+          },
+        ).join('\n'),
+      )
+      .replaceAll(
+        library.aChannel.exp,
+        libraryNode.classes.map<String>(
+          (ClassNode classNode) {
+            final Channel channel = library.aChannel;
+            return channel
+                .stringMatch()
+                .replaceAll(channel.className, classNode.name)
+                .replaceAll(channel.prefix, prefix)
+                .replaceAll(channel.channelName, classNode.channelName)
+                .replaceAll(
+                  channel.aStaticMethod.exp,
+                  classNode.staticMethods.map<String>(
+                    (MethodNode methodNode) {
+                      final ChannelStaticMethod staticMethod =
+                          channel.aStaticMethod;
+                      return staticMethod
+                          .stringMatch()
+                          .replaceAll(staticMethod.name, methodNode.name)
+                          .replaceAll(
+                              staticMethod.methodNameParameter, methodNode.name)
+                          .replaceAll(
+                            staticMethod.completion,
+                            methodNode.parameters.isEmpty ? '' : 'completion',
+                          )
+                          .replaceAll(
+                            staticMethod.theLeadingParameter.exp,
+                            methodNode.parameters.isEmpty
+                                ? ''
+                                : staticMethod.theLeadingParameter
+                                    .stringMatch()
+                                    .replaceAll(
+                                      staticMethod.theLeadingParameter.name,
+                                      methodNode.parameters[0].name,
+                                    )
+                                    .replaceAll(
+                                      staticMethod.theLeadingParameter.type,
+                                      getTrueTypeName(
+                                        methodNode.parameters[0].type,
+                                        prefix,
+                                      ),
+                                    ),
+                          )
+                          .replaceAll(
+                            staticMethod.aFollowingParameterComment.exp,
+                            methodNode.parameters.skip(1).map<String>(
+                              (ParameterNode parameterNode) {
+                                final FollowingParameterComment comment =
+                                    staticMethod.aFollowingParameterComment;
+                                return comment
+                                    .stringMatch()
+                                    .replaceAll(
+                                      comment.name,
+                                      parameterNode.name,
+                                    )
+                                    .replaceAll(
+                                      comment.name2,
+                                      parameterNode.name,
+                                    )
+                                    .replaceAll(
+                                      comment.type,
+                                      getTrueTypeName(
+                                        parameterNode.type,
+                                        prefix,
+                                      ),
+                                    );
+                              },
+                            ).join('/n'),
+                          )
+                          .replaceAll(
+                            staticMethod.aParameterName.exp,
+                            methodNode.parameters.map<String>(
+                              (ParameterNode parameterNode) {
+                                final ParameterName parameterName =
+                                    staticMethod.aParameterName;
+                                return parameterName.stringMatch().replaceAll(
+                                      parameterName.name,
+                                      parameterNode.name,
+                                    );
+                              },
+                            ).join(','),
+                          );
+                    },
+                  ).join('\n'),
+                )
+                .replaceAll(
+                  channel.aMethod.exp,
+                  classNode.methods.map<String>(
+                    (MethodNode methodNode) {
+                      final ChannelMethod method = channel.aMethod;
+                      return method
+                          .stringMatch()
+                          .replaceAll(method.name, methodNode.name)
+                          .replaceAll(method.instanceType, classNode.name)
+                          .replaceAll(method.instanceTypePrefix, prefix)
+                          .replaceAll(
+                            method.methodNameParameter,
+                            methodNode.name,
+                          )
+                          .replaceAll(
+                            method.aParameter.exp,
+                            methodNode.parameters.map<String>(
+                              (ParameterNode parameterNode) {
+                                final FollowingParameter parameter =
+                                    method.aParameter;
+                                return parameter
+                                    .stringMatch()
+                                    .replaceAll(
+                                      parameter.name,
+                                      parameterNode.name,
+                                    )
+                                    .replaceAll(
+                                      parameter.name2,
+                                      parameterNode.name,
+                                    )
+                                    .replaceAll(
+                                      parameter.type,
+                                      getTrueTypeName(
+                                        parameterNode.type,
+                                        prefix,
+                                      ),
+                                    );
+                              },
+                            ).join('\n'),
+                          )
+                          .replaceAll(
+                            method.aParameterName.exp,
+                            methodNode.parameters.map<String>(
+                              (ParameterNode parameterNode) {
+                                final ParameterName parameterName =
+                                    method.aParameterName;
+                                return parameterName.stringMatch().replaceAll(
+                                      parameterName.name,
+                                      parameterNode.name,
+                                    );
+                              },
+                            ).join(','),
+                          );
+                    },
+                  ).join('\n'),
+                );
+          },
+        ).join('\n'),
+      )
+      .replaceAll(
+        library.aHandler.exp,
+        libraryNode.classes.map<String>(
+          (ClassNode classNode) {
+            final Handler handler = library.aHandler;
+            return handler
+                .stringMatch()
+                .replaceAll(handler.prefix, prefix)
+                .replaceAll(handler.className, classNode.name)
+                .replaceAll(
+                  handler.theOnCreateMethod.exp,
+                  handler.theOnCreateMethod
+                      .stringMatch()
+                      .replaceAll(
+                        handler.theOnCreateMethod.className,
+                        classNode.name,
+                      )
+                      .replaceAll(
+                        handler.theOnCreateMethod.classPrefix,
+                        prefix,
+                      )
+                      .replaceAll(
+                        handler.theOnCreateMethod.creationArgsClassName,
+                        classNode.name,
+                      )
+                      .replaceAll(
+                        handler.theOnCreateMethod.creationArgsPrefix,
+                        prefix,
+                      ),
+                )
+                .replaceAll(
+                  handler.aStaticMethod.exp,
+                  classNode.staticMethods.map<String>(
+                    (MethodNode methodNode) {
+                      final HandlerStaticMethod method = handler.aStaticMethod;
+                      return method
+                          .stringMatch()
+                          .replaceAll(method.name, methodNode.name)
+                          .replaceAll(
+                            method.aFollowingParameter.exp,
+                            methodNode.parameters.map<String>(
+                              (ParameterNode parameterNode) {
+                                final FollowingParameter parameter =
+                                    method.aFollowingParameter;
+                                return parameter
+                                    .stringMatch()
+                                    .replaceAll(
+                                      parameter.name,
+                                      parameterNode.name,
+                                    )
+                                    .replaceAll(
+                                      parameter.name2,
+                                      parameterNode.name,
+                                    )
+                                    .replaceAll(
+                                      parameter.type,
+                                      getTrueTypeName(
+                                        parameterNode.type,
+                                        prefix,
+                                      ),
+                                    );
+                              },
+                            ).join('\n'),
+                          );
+                    },
+                  ).join('\n'),
+                )
+                .replaceAll(
+                  handler.aStaticMethodInvoker.exp,
+                  classNode.staticMethods.map<String>(
+                    (MethodNode methodNode) {
+                      final HandlerStaticMethodInvoker invoker =
+                          handler.aStaticMethodInvoker;
+                      return invoker
+                          .stringMatch()
+                          .replaceAll(invoker.implMethodName, methodNode.name)
+                          .replaceAll(invoker.methodNameString, methodNode.name)
+                          .replaceAll(
+                            invoker.anArgument.exp,
+                            incrementingList(methodNode.parameters.length)
+                                .map<String>(
+                              (int index) {
+                                final FollowingArgument argument =
+                                    invoker.anArgument;
+                                return argument
+                                    .stringMatch()
+                                    .replaceAll(
+                                      argument.name,
+                                      methodNode.parameters[index].name,
+                                    )
+                                    .replaceAll(argument.index, '$index');
+                              },
+                            ).join(' else '),
+                          );
+                    },
+                  ).join(' else '),
+                )
+                .replaceAll(
+                  handler.theCreationArguments.exp,
+                  handler.theCreationArguments
+                      .stringMatch()
+                      .replaceAll(handler.theCreationArguments.prefix, prefix)
+                      .replaceAll(handler.className, classNode.name)
+                      .replaceAll(
+                        handler.theCreationArguments.fieldName.exp,
+                        classNode.fields.map<String>(
+                          (FieldNode fieldNode) {
+                            final HandlerCreationArgsFieldName field =
+                                handler.theCreationArguments.fieldName;
+                            return field.stringMatch().replaceAll(
+                                  field.name,
+                                  fieldNode.name,
+                                );
+                          },
+                        ).join(','),
+                      ),
+                )
+                .replaceAll(
+                  handler.theCreateInstance.exp,
+                  handler.theCreateInstance
+                      .stringMatch()
+                      .replaceAll(
+                          handler.theCreateInstance.className, classNode.name)
+                      .replaceAll(handler.theCreateInstance.prefix, prefix)
+                      .replaceAll(
+                        handler.theCreateInstance.field.exp,
+                        incrementingList(classNode.fields.length).map<String>(
+                          (int index) {
+                            final HandlerCreateInstanceField field =
+                                handler.theCreateInstance.field;
+                            return field
+                                .stringMatch()
+                                .replaceAll(
+                                  field.name,
+                                  classNode.fields[index].name,
+                                )
+                                .replaceAll(field.index, '$index');
+                          },
+                        ).join('\n'),
+                      ),
+                )
+                .replaceAll(
+                  handler.theMethodInvoker.exp,
+                  handler.theMethodInvoker
+                      .stringMatch()
+                      .replaceAll(
+                        handler.theMethodInvoker.className,
+                        classNode.name,
+                      )
+                      .replaceAll(handler.theMethodInvoker.prefix, prefix)
+                      .replaceAll(
+                        handler.theMethodInvoker.aMethod.exp,
+                        classNode.methods.map<String>(
+                          (MethodNode methodNode) {
+                            final HandlerMethodInvokerMethod method =
+                                handler.theMethodInvoker.aMethod;
+                            return method
+                                .stringMatch()
+                                .replaceAll(
+                                  method.methodNameString,
+                                  methodNode.name,
+                                )
+                                .replaceAll(
+                                  method.implMethodName,
+                                  methodNode.name,
+                                )
+                                .replaceAll(
+                                  method.theLeadingArgument,
+                                  methodNode.parameters.isEmpty
+                                      ? ''
+                                      : ':arguments[0]',
+                                )
+                                .replaceAll(
+                                  method.aFollowingArgument.exp,
+                                  incrementingList(methodNode.parameters.length)
+                                      .skip(1)
+                                      .map<String>(
+                                    (int index) {
+                                      final FollowingArgumentComment argument =
+                                          method.aFollowingArgument;
+                                      return argument
+                                          .stringMatch()
+                                          .replaceAll(
+                                            argument.name,
+                                            methodNode.parameters[index].name,
+                                          )
+                                          .replaceAll(
+                                            argument.index,
+                                            '${index}',
+                                          );
+                                    },
+                                  ).join(' '),
+                                );
+                          },
+                        ).join(' else '),
+                      ),
+                );
+          },
+        ).join('\n'),
+      );
+}
 
 class Library with TemplateRegExp {
   Library(this.template);
@@ -97,7 +457,7 @@ class ChannelStaticMethod with TemplateRegExp {
     r'(?<=invoke_)staticMethodTemplate',
   );
 
-  final RegExp completion = TemplateRegExp.regExp(r'completion(?=:)');
+  final RegExp completion = TemplateRegExp.regExp(r'completion(?=:\(void)');
 
   final RegExp methodNameParameter = TemplateRegExp.regExp(
     r'(?<=@")staticMethodTemplate(?=")',
@@ -140,7 +500,7 @@ class ChannelMethod with TemplateRegExp {
   );
 
   final RegExp instanceType = TemplateRegExp.regExp(
-    r'(?<=NSObject<REF)ClassTemplate',
+    r'(?<=NSObject<\w*)ClassTemplate',
   );
 
   final RegExp instanceTypePrefix = TemplateRegExp.regExp(r'(?<=NSObject<)REF');
@@ -151,7 +511,7 @@ class ChannelMethod with TemplateRegExp {
 
   ParameterName get aParameterName => ParameterName(this);
 
-  FollowingParameter get aFollowingParameter => FollowingParameter(this);
+  FollowingParameter get aParameter => FollowingParameter(this);
 }
 
 class Handler with TemplateRegExp {
@@ -182,7 +542,7 @@ class Handler with TemplateRegExp {
 
   HandlerCreateInstance get theCreateInstance => HandlerCreateInstance(this);
 
-  HandlerMethodInvoker get aMethodInvoker => HandlerMethodInvoker(this);
+  HandlerMethodInvoker get theMethodInvoker => HandlerMethodInvoker(this);
 }
 
 class HandlerOnCreateMethod with TemplateRegExp {
@@ -231,7 +591,7 @@ class HandlerStaticMethodInvoker with TemplateRegExp {
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'(?<=- \(id _Nullable\)invokeStaticMethod:[^\}]+)if \(\[@"staticMethodTemplate"[^\}]\}',
+    r'(?<=- \(id _Nullable\)invokeStaticMethod:[^\}]+)if \(\[@"staticMethodTemplate"[^\}]+\}',
   );
 
   final RegExp methodNameString = TemplateRegExp.regExp(
@@ -267,7 +627,7 @@ class HandlerCreationArgs with TemplateRegExp {
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'- \(nonnull NSArray \*\)getCreationArguments:[^\}]\}',
+    r'- \(nonnull NSArray \*\)getCreationArguments:[^\}]+\}',
   );
 
   final RegExp className = TemplateRegExp.regExp(
@@ -275,6 +635,9 @@ class HandlerCreationArgs with TemplateRegExp {
   );
 
   final RegExp prefix = TemplateRegExp.regExp(r'(?<=NSObject<)REF');
+
+  HandlerCreationArgsFieldName get fieldName =>
+      HandlerCreationArgsFieldName(this);
 }
 
 class HandlerCreationArgsFieldName with TemplateRegExp {
@@ -297,12 +660,16 @@ class HandlerCreateInstance with TemplateRegExp {
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'- \(nonnull id\)createInstance:[^\}]\}',
+    r'- \(nonnull id\)createInstance:[^\}]+\}',
   );
 
   final RegExp className = TemplateRegExp.regExp(
     r'(?<=\w*)ClassTemplate(?=CreationArgs)',
   );
+
+  final RegExp prefix = TemplateRegExp.regExp(r'REF(?=\w+CreationArgs)');
+
+  HandlerCreateInstanceField get field => HandlerCreateInstanceField(this);
 }
 
 class HandlerCreateInstanceField with TemplateRegExp {
@@ -337,6 +704,8 @@ class HandlerMethodInvoker with TemplateRegExp {
   );
 
   final RegExp prefix = TemplateRegExp.regExp(r'(?<=NSObject<)REF');
+
+  HandlerMethodInvokerMethod get aMethod => HandlerMethodInvokerMethod(this);
 }
 
 class HandlerMethodInvokerMethod with TemplateRegExp {
@@ -346,16 +715,17 @@ class HandlerMethodInvokerMethod with TemplateRegExp {
   final HandlerMethodInvoker parent;
 
   @override
-  final RegExp exp = TemplateRegExp.regExp(r'if \(\[@"methodTemplate"[^\}]\}');
+  final RegExp exp = TemplateRegExp.regExp(r'if \(\[@"methodTemplate"[^\}]+\}');
 
   final RegExp methodNameString = TemplateRegExp.regExp(
     r'(?<=@")methodTemplate(?=")',
   );
 
-  final RegExp implMethodName =
-      TemplateRegExp.regExp(r'(?<=value )methodTemplate',);
+  final RegExp implMethodName = TemplateRegExp.regExp(
+    r'(?<=value )methodTemplate',
+  );
 
-  LeadingArgument get aLeadingArgument => LeadingArgument(this);
+  final RegExp theLeadingArgument = TemplateRegExp.regExp(r':arguments\[0\]');
 
   FollowingArgumentComment get aFollowingArgument =>
       FollowingArgumentComment(this);
@@ -378,18 +748,6 @@ class FollowingArgumentComment with TemplateRegExp {
   String stringMatch() {
     return 'parameterTemplate:arguments[0]';
   }
-}
-
-class LeadingArgument with TemplateRegExp {
-  LeadingArgument(this.parent);
-
-  @override
-  final TemplateRegExp parent;
-
-  @override
-  final RegExp exp = TemplateRegExp.regExp(r':arguments[0]');
-
-  final RegExp index = TemplateRegExp.regExp(r'0(?=\])');
 }
 
 // import 'package:recase/recase.dart';
