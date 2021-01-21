@@ -15,6 +15,7 @@
 }
 
 - (void)invoke_staticMethodTemplate:(NSString *_Nullable)parameterTemplate
+                         /*following_parameters*/
                          completion:(void (^)(id _Nullable, NSError *_Nullable))completion {
   [self invokeStaticMethod:@"staticMethodTemplate" arguments:@[parameterTemplate] completion:completion];
 }
@@ -67,7 +68,7 @@
                    arguments:(nonnull NSArray *)arguments {
   NSObject<REFClassTemplate> *value = (NSObject<REFClassTemplate> *) instance;
   if ([@"methodTemplate" isEqualToString:methodName]) {
-    return [value methodTemplate:arguments[0]];
+    return [value methodTemplate:arguments[0] /*following_arguments*/];
   }
   
   NSLog(@"Unable to invoke method %@", methodName);

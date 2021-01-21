@@ -1,3 +1,397 @@
+import 'package:reference_generator/src/ast.dart';
+
+import 'common.dart';
+import 'objc_header_generator.dart'
+    show
+        getTrueTypeName,
+        LeadingParameter,
+        FollowingParameter,
+        FollowingParameterComment;
+
+String generateObjcImpl({
+  String template,
+  LibraryNode libraryNode,
+  String prefix,
+  String headerFilename,
+}) {}
+
+class Library with TemplateRegExp {
+  Library(this.template);
+
+  @override
+  final String template;
+
+  @override
+  final TemplateRegExp parent = null;
+
+  @override
+  final RegExp exp = null;
+
+  final RegExp headerFilename = TemplateRegExp.regExp(
+    r'(?<=#import ")REFLibraryTemplate_Internal\.h',
+  );
+
+  CreationArgsClass get aCreationArgsClass => CreationArgsClass(this);
+
+  Channel get aChannel => Channel(this);
+
+  Handler get aHandler => Handler(this);
+}
+
+class CreationArgsClass with TemplateRegExp {
+  CreationArgsClass(this.parent);
+
+  @override
+  final Library parent;
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'@implementation REFClassTemplateCreationArgs[^@]+@end',
+  );
+
+  final RegExp prefix = TemplateRegExp.regExp(r'(?<=@implementation )REF');
+
+  final RegExp className = TemplateRegExp.regExp(
+    r'(?<=@implementation \w*)ClassTemplate(?=CreationArgs)',
+  );
+}
+
+class Channel with TemplateRegExp {
+  Channel(this.parent);
+
+  @override
+  final Library parent;
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'@implementation REFClassTemplateChannel.+(?=@implementation REFClassTemplateHandler)',
+  );
+
+  final RegExp prefix = TemplateRegExp.regExp(r'(?<=@implementation )REF');
+
+  final RegExp className = TemplateRegExp.regExp(
+    r'(?<=@implementation \w*)ClassTemplate(?=Channel)',
+  );
+
+  final RegExp channelName = TemplateRegExp.regExp(
+    r'(?<=@")github.penguin/template/template/ClassTemplate(?=")',
+  );
+
+  ChannelStaticMethod get aStaticMethod => ChannelStaticMethod(this);
+
+  ChannelMethod get aMethod => ChannelMethod(this);
+}
+
+class ChannelStaticMethod with TemplateRegExp {
+  ChannelStaticMethod(this.parent);
+
+  @override
+  final Channel parent;
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'- \(void\)invoke_staticMethodTemplate[^\}]+\}',
+  );
+
+  final RegExp name = TemplateRegExp.regExp(
+    r'(?<=invoke_)staticMethodTemplate',
+  );
+
+  final RegExp completion = TemplateRegExp.regExp(r'completion(?=:)');
+
+  final RegExp methodNameParameter = TemplateRegExp.regExp(
+    r'(?<=@")staticMethodTemplate(?=")',
+  );
+
+  ParameterName get aParameterName => ParameterName(this);
+
+  LeadingParameter get theLeadingParameter => LeadingParameter(this);
+
+  FollowingParameterComment get aFollowingParameterComment =>
+      FollowingParameterComment(this);
+}
+
+class ParameterName with TemplateRegExp {
+  ParameterName(this.parent);
+
+  final RegExp name = TemplateRegExp.regExp(r'parameterTemplate');
+
+  @override
+  final RegExp exp =
+      TemplateRegExp.regExp(r'(?<=arguments:@\[)parameterTemplate(?=\])');
+
+  @override
+  final TemplateRegExp parent;
+}
+
+class ChannelMethod with TemplateRegExp {
+  ChannelMethod(this.parent);
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'- \(void\)invoke_methodTemplate[^\}]+\}',
+  );
+
+  @override
+  final Channel parent;
+
+  final RegExp name = TemplateRegExp.regExp(
+    r'(?<=invoke_)methodTemplate',
+  );
+
+  final RegExp instanceType = TemplateRegExp.regExp(
+    r'(?<=NSObject<REF)ClassTemplate',
+  );
+
+  final RegExp instanceTypePrefix = TemplateRegExp.regExp(r'(?<=NSObject<)REF');
+
+  final RegExp methodNameParameter = TemplateRegExp.regExp(
+    r'(?<=@")methodTemplate(?=")',
+  );
+
+  ParameterName get aParameterName => ParameterName(this);
+
+  FollowingParameter get aFollowingParameter => FollowingParameter(this);
+}
+
+class Handler with TemplateRegExp {
+  Handler(this.parent);
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'@implementation REFClassTemplateHandler.+$',
+  );
+
+  @override
+  final Library parent;
+
+  final RegExp className = TemplateRegExp.regExp(
+    r'(?<=@implementation \w*)ClassTemplate(?=Handler)',
+  );
+
+  final RegExp prefix = TemplateRegExp.regExp(r'(?<=@implementation )REF');
+
+  HandlerOnCreateMethod get theOnCreateMethod => HandlerOnCreateMethod(this);
+
+  HandlerStaticMethod get aStaticMethod => HandlerStaticMethod(this);
+
+  HandlerStaticMethodInvoker get aStaticMethodInvoker =>
+      HandlerStaticMethodInvoker(this);
+
+  HandlerCreationArgs get theCreationArguments => HandlerCreationArgs(this);
+
+  HandlerCreateInstance get theCreateInstance => HandlerCreateInstance(this);
+
+  HandlerMethodInvoker get aMethodInvoker => HandlerMethodInvoker(this);
+}
+
+class HandlerOnCreateMethod with TemplateRegExp {
+  HandlerOnCreateMethod(this.parent);
+
+  @override
+  final Handler parent;
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'- \(NSObject<REFClassTemplate> \*\)onCreate:[^\}]+\}',
+  );
+
+  final RegExp classPrefix = TemplateRegExp.regExp(r'(?<=NSObject<)REF');
+
+  final RegExp creationArgsPrefix = TemplateRegExp.regExp(r'(?<=args:\()REF');
+
+  final RegExp className =
+      TemplateRegExp.regExp(r'ClassTemplate(?=> \*\)onCreate)');
+
+  final RegExp creationArgsClassName =
+      TemplateRegExp.regExp(r'ClassTemplate(?=CreationArgs \*)');
+}
+
+class HandlerStaticMethod with TemplateRegExp {
+  HandlerStaticMethod(this.parent);
+
+  @override
+  final Handler parent;
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'- \(NSObject \*_Nullable\)on_staticMethodTemplate:[^\}]+\}',
+  );
+
+  final RegExp name = TemplateRegExp.regExp(r'(?<=on_)staticMethodTemplate');
+
+  FollowingParameter get aFollowingParameter => FollowingParameter(this);
+}
+
+class HandlerStaticMethodInvoker with TemplateRegExp {
+  HandlerStaticMethodInvoker(this.parent);
+
+  @override
+  final Handler parent;
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'(?<=- \(id _Nullable\)invokeStaticMethod:[^\}]+)if \(\[@"staticMethodTemplate"[^\}]\}',
+  );
+
+  final RegExp methodNameString = TemplateRegExp.regExp(
+    r'(?<=@")staticMethodTemplate(?=")',
+  );
+
+  final RegExp implMethodName = TemplateRegExp.regExp(
+    r'(?<=self on_)staticMethodTemplate',
+  );
+
+  FollowingArgument get anArgument => FollowingArgument(this);
+}
+
+class FollowingArgument with TemplateRegExp {
+  FollowingArgument(this.parent);
+
+  @override
+  final TemplateRegExp parent;
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(r'parameterTemplate:arguments\[0\]');
+
+  final RegExp name = TemplateRegExp.regExp(r'^parameterTemplate');
+
+  final RegExp index = TemplateRegExp.regExp(r'0(?=\])');
+}
+
+class HandlerCreationArgs with TemplateRegExp {
+  HandlerCreationArgs(this.parent);
+
+  @override
+  final Handler parent;
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'- \(nonnull NSArray \*\)getCreationArguments:[^\}]\}',
+  );
+
+  final RegExp className = TemplateRegExp.regExp(
+    r'(?<=NSObject<\w*)ClassTemplate',
+  );
+
+  final RegExp prefix = TemplateRegExp.regExp(r'(?<=NSObject<)REF');
+}
+
+class HandlerCreationArgsFieldName with TemplateRegExp {
+  HandlerCreationArgsFieldName(this.parent);
+
+  @override
+  final HandlerCreationArgs parent;
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(r'value\.fieldTemplate');
+
+  final RegExp name = TemplateRegExp.regExp(r'fieldTemplate');
+}
+
+class HandlerCreateInstance with TemplateRegExp {
+  HandlerCreateInstance(this.parent);
+
+  @override
+  final Handler parent;
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'- \(nonnull id\)createInstance:[^\}]\}',
+  );
+
+  final RegExp className = TemplateRegExp.regExp(
+    r'(?<=\w*)ClassTemplate(?=CreationArgs)',
+  );
+}
+
+class HandlerCreateInstanceField with TemplateRegExp {
+  HandlerCreateInstanceField(this.parent);
+
+  @override
+  final HandlerCreateInstance parent;
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'args\.fieldTemplate = arguments\[0\];',
+  );
+
+  final RegExp name = TemplateRegExp.regExp(r'fieldTemplate');
+
+  final RegExp index = TemplateRegExp.regExp(r'0(?=\])');
+}
+
+class HandlerMethodInvoker with TemplateRegExp {
+  HandlerMethodInvoker(this.parent);
+
+  @override
+  final Handler parent;
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'- \(id _Nullable\)invokeMethod:.*(?=- \(void\)onInstanceDisposed:)',
+  );
+
+  final RegExp className = TemplateRegExp.regExp(
+    r'(?<=NSObject<\w*)ClassTemplate',
+  );
+
+  final RegExp prefix = TemplateRegExp.regExp(r'(?<=NSObject<)REF');
+}
+
+class HandlerMethodInvokerMethod with TemplateRegExp {
+  HandlerMethodInvokerMethod(this.parent);
+
+  @override
+  final HandlerMethodInvoker parent;
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(r'if \(\[@"methodTemplate"[^\}]\}');
+
+  final RegExp methodNameString = TemplateRegExp.regExp(
+    r'(?<=@")methodTemplate(?=")',
+  );
+
+  final RegExp implMethodName =
+      TemplateRegExp.regExp(r'(?<=value )methodTemplate',);
+
+  LeadingArgument get aLeadingArgument => LeadingArgument(this);
+
+  FollowingArgumentComment get aFollowingArgument =>
+      FollowingArgumentComment(this);
+}
+
+class FollowingArgumentComment with TemplateRegExp {
+  FollowingArgumentComment(this.parent);
+
+  @override
+  final TemplateRegExp parent;
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(r'\/\*following_arguments\*\/');
+
+  final RegExp name = TemplateRegExp.regExp(r'^parameterTemplate');
+
+  final RegExp index = TemplateRegExp.regExp(r'0(?=\])');
+
+  @override
+  String stringMatch() {
+    return 'parameterTemplate:arguments[0]';
+  }
+}
+
+class LeadingArgument with TemplateRegExp {
+  LeadingArgument(this.parent);
+
+  @override
+  final TemplateRegExp parent;
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(r':arguments[0]');
+
+  final RegExp index = TemplateRegExp.regExp(r'0(?=\])');
+}
+
 // import 'package:recase/recase.dart';
 // import 'package:reference_generator/src/ast.dart';
 //

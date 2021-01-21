@@ -402,7 +402,7 @@ class Protocol with TemplateRegExp {
     r'(?<=@interface REF)ClassTemplate(?= <NSObject>)',
   );
 
-  final RegExp prefix = TemplateRegExp.regExp(r'(?<=@interface )REF');
+  final RegExp prefix = TemplateRegExp.regExp(r'(?<=@protocol )REF');
 
   ProtocolMethod get aMethod => ProtocolMethod(this);
 
