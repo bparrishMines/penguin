@@ -55,7 +55,8 @@ class $ClassTemplateHandler implements TypeChannelHandler<$ClassTemplate> {
     String methodName,
     List<Object?> arguments,
   ) {
-    late Function method;
+    // ignore: prefer_final_locals, prefer_function_declarations_over_variables
+    Function method = () {};
     switch (methodName) {
       case 'staticMethodTemplate':
         method =
@@ -69,6 +70,7 @@ class $ClassTemplateHandler implements TypeChannelHandler<$ClassTemplate> {
         );
     }
 
+    // ignore: dead_code
     return method();
   }
 
@@ -98,7 +100,8 @@ class $ClassTemplateHandler implements TypeChannelHandler<$ClassTemplate> {
     String methodName,
     List<Object?> arguments,
   ) {
-    late Function method;
+    // ignore: prefer_final_locals, prefer_function_declarations_over_variables
+    Function method = () {};
     switch (methodName) {
       case 'methodTemplate':
         method = () => instance.methodTemplate(arguments[0] as String);
@@ -111,6 +114,7 @@ class $ClassTemplateHandler implements TypeChannelHandler<$ClassTemplate> {
         );
     }
 
+    // ignore: dead_code
     return method();
   }
 
