@@ -14,26 +14,27 @@ void initializeChannels() {
 }
 
 @Reference('penguin_camera/android/camerax/UseCase')
-abstract class UseCase with $UseCase, Referencable {}
+abstract class UseCase with $UseCase, PairableInstance {}
 
 @Reference('penguin_camera/android/camerax/Preview')
 class Preview extends UseCase with $Preview {
   Preview();
 
   static final $PreviewChannel _channel = $PreviewChannel(
-    MethodChannelReferenceChannelManager.instance,
-  )..registerHandler(
+    MethodChannelManager.instance,
+  )..setHandler(
       $PreviewHandler(
         onCreate: (_, __) => Preview(),
       ),
     );
 
-  int _currentTexture;
+  int? _currentTexture;
 
   @override
   Future<int> attachToTexture() async {
-    _channel.createNewPair(this);
-    return _currentTexture ??= await _channel.$invokeAttachToTexture(this);
+    _channel.createNewInstancePair(this);
+    return _currentTexture ??=
+        await _channel.$invokeAttachToTexture(this) as int;
   }
 
   @override
@@ -41,18 +42,18 @@ class Preview extends UseCase with $Preview {
     if (_currentTexture == null || !_channel.manager.isPaired(this)) return;
 
     _currentTexture = null;
-    return _channel.$invokeReleaseTexture(this);
+    await _channel.$invokeReleaseTexture(this);
   }
 
   @override
-  ReferenceChannel get referenceChannel => _channel;
+  TypeChannel<$Preview> get typeChannel => _channel;
 }
 
 @Reference('penguin_camera/android/camerax/SuccessListener')
 abstract class SuccessListener with $SuccessListener {
   static final $SuccessListenerChannel _channel = $SuccessListenerChannel(
-    MethodChannelReferenceChannelManager.instance,
-  )..registerHandler($SuccessListenerHandler());
+    MethodChannelManager.instance,
+  )..setHandler($SuccessListenerHandler());
 
   @override
   void onSuccess();
@@ -67,28 +68,28 @@ class ProcessCameraProvider with $ProcessCameraProvider {
 
   static final $ProcessCameraProviderChannel _channel =
       $ProcessCameraProviderChannel(
-    MethodChannelReferenceChannelManager.instance,
-  )..registerHandler(
+    MethodChannelManager.instance,
+  )..setHandler(
           $ProcessCameraProviderHandler(
             onCreate: (_, args) => ProcessCameraProvider._(),
           ),
         );
 
-  static ProcessCameraProvider _instance;
+  static ProcessCameraProvider _instance = _EmptyProcessCameraProvider();
 
-  Set<Object> _dependentReferences = <Object>{};
+  Set<PairableInstance> _dependentInstances = <PairableInstance>{};
 
   static ProcessCameraProvider get instance => _instance;
 
   static void initialize(SuccessListener successListener) {
-    if (_instance != null) {
+    if (_instance is _EmptyProcessCameraProvider) {
       successListener.onSuccess();
       return;
     }
     _instance = ProcessCameraProvider._();
-    _channel.createNewPair(instance);
+    _channel.createNewInstancePair(instance);
 
-    SuccessListener._channel.createNewPair(successListener);
+    SuccessListener._channel.createNewInstancePair(successListener);
     _channel.$invokeInitialize(successListener);
   }
 
@@ -97,47 +98,49 @@ class ProcessCameraProvider with $ProcessCameraProvider {
     covariant CameraSelector selector,
     covariant UseCase useCase,
   ) async {
-    useCase.referenceChannel.createNewPair(useCase);
-    _dependentReferences.add(useCase);
+    useCase.typeChannel.createNewInstancePair(useCase);
+    _dependentInstances.add(useCase);
 
     final Camera camera = await _channel.$invokeBindToLifecycle(
       this,
       selector,
       useCase,
-    );
-    _dependentReferences.add(camera);
+    ) as Camera;
+    _dependentInstances.add(camera);
     return camera;
   }
 
   Future<void> unbindAll() async {
-    for (Object object in _dependentReferences) {
-      final String channel = (object as UnpairedReference).handlerChannel;
-      _channel.manager.messenger.sendDisposePair(channel, object);
+    for (PairableInstance instance in _dependentInstances) {
+      instance.typeChannel.disposePair(instance);
     }
-    _dependentReferences.clear();
+    _dependentInstances.clear();
 
-    return _channel.$invokeUnbindAll(this);
+    await _channel.$invokeUnbindAll(this);
   }
 }
 
 @Reference('penguin_camera/android/camerax/Camera')
-class Camera with $Camera {
+class Camera with $Camera, PairableInstance {
   static final $CameraChannel _channel = $CameraChannel(
-    MethodChannelReferenceChannelManager.instance,
-  )..registerHandler(
+    MethodChannelManager.instance,
+  )..setHandler(
       $CameraHandler(
         onCreate: (_, args) => Camera(),
       ),
     );
+
+  @override
+  TypeChannel<$Camera> get typeChannel => _channel;
 }
 
 @Reference('penguin_camera/android/camerax/CameraSelector')
-class CameraSelector with $CameraSelector, Referencable {
+class CameraSelector with $CameraSelector, PairableInstance {
   CameraSelector(this.lensFacing);
 
   static final $CameraSelectorChannel _channel = $CameraSelectorChannel(
-    MethodChannelReferenceChannelManager.instance,
-  )..registerHandler(
+    MethodChannelManager.instance,
+  )..setHandler(
       $CameraSelectorHandler(
         onCreate: (_, args) => CameraSelector(args.lensFacing),
       ),
@@ -149,5 +152,21 @@ class CameraSelector with $CameraSelector, Referencable {
   final int lensFacing;
 
   @override
-  ReferenceChannel get referenceChannel => _channel;
+  TypeChannel<$CameraSelector> get typeChannel => _channel;
+}
+
+class _EmptyProcessCameraProvider implements ProcessCameraProvider {
+  @override
+  Set<PairableInstance> _dependentInstances = <PairableInstance>{};
+
+  @override
+  Future<Camera> bindToLifecycle(
+      covariant CameraSelector selector, covariant UseCase useCase) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> unbindAll() {
+    throw UnimplementedError();
+  }
 }

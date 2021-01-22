@@ -23,14 +23,15 @@ class Camera with $Camera {
   Camera();
 
   static final $CameraChannel _channel = $CameraChannel(
-    MethodChannelReferenceChannelManager.instance,
-  )..registerHandler($CameraHandler(onCreate: (_, __) => Camera()));
+    MethodChannelManager.instance,
+  )..setHandler($CameraHandler(onCreate: (_, __) => Camera()));
 
-  int _currentTexture;
+  int? _currentTexture;
 
   /// Returns the information about each camera.
   static Future<List<CameraInfo>> getAllCameraInfo() async {
-    final List<dynamic> allInfo = await _channel.$invokeGetAllCameraInfo();
+    final List<Object> allInfo =
+        await _channel.$invokeGetAllCameraInfo() as List<Object>;
     return allInfo.cast<CameraInfo>();
   }
 
@@ -44,7 +45,7 @@ class Camera with $Camera {
   /// application should only have one [Camera] object active at a time for a
   /// particular hardware camera.
   static Future<Camera> open(int cameraId) async {
-    return (await _channel.$invokeOpen(cameraId)) as Camera;
+    return await _channel.$invokeOpen(cameraId) as Camera;
   }
 
   /// Disconnects and releases the [Camera] object resources.
@@ -77,7 +78,7 @@ class Camera with $Camera {
   Future<int> attachPreviewToTexture() async {
     assert(_channel.manager.isPaired(this));
     return _currentTexture ??=
-        await _channel.$invokeAttachPreviewToTexture(this);
+        await _channel.$invokeAttachPreviewToTexture(this) as int;
   }
 
   Future<void> releaseTexture() async {
@@ -92,15 +93,13 @@ class Camera with $Camera {
 /// Retrieve by calling [Camera.getAllCameraInfo].
 @Reference('penguin_camera/android/camera/CameraInfo')
 class CameraInfo with $CameraInfo {
-  CameraInfo({this.cameraId, this.facing, this.orientation})
-      : assert(cameraId != null),
-        assert(facing != null),
-        assert(facing == CAMERA_FACING_BACK || facing == CAMERA_FACING_FRONT),
-        assert(orientation != null);
+  CameraInfo(
+      {required this.cameraId, required this.facing, required this.orientation})
+      : assert(facing == CAMERA_FACING_BACK || facing == CAMERA_FACING_FRONT);
 
   static final $CameraInfoChannel _channel = $CameraInfoChannel(
-    MethodChannelReferenceChannelManager.instance,
-  )..registerHandler($CameraInfoHandler(
+    MethodChannelManager.instance,
+  )..setHandler($CameraInfoHandler(
       onCreate: (_, $CameraInfoCreationArgs args) {
         return CameraInfo(
           cameraId: args.cameraId,

@@ -4,12 +4,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
+import 'android/camera/camera_platform_impl.dart';
 import 'android/camerax/camerax_platform_impl.dart';
 
 abstract class PenguinCameraPlatform extends PlatformInterface {
   PenguinCameraPlatform() : super(token: _token);
 
-  static PenguinCameraPlatform _instance;
+  static PenguinCameraPlatform _instance = _EmptyPenguinCameraPlatform();
 
   static final Object _token = Object();
 
@@ -31,8 +32,10 @@ abstract class PenguinCamera {
   PenguinCamera._();
 
   static void initialize() {
+    if (PenguinCameraPlatform.instance is! _EmptyPenguinCameraPlatform) return;
+
     if (defaultTargetPlatform == TargetPlatform.android) {
-      PenguinCameraPlatform.instance = CameraXCameraPlatform()..initialize();
+      PenguinCameraPlatform.instance = AndroidCameraPlatform()..initialize();
     }
   }
 
@@ -56,4 +59,21 @@ abstract class CameraController {
   Future<void> stop();
   Future<void> dispose();
   Future<Widget> getPreview();
+}
+
+class _EmptyPenguinCameraPlatform implements PenguinCameraPlatform {
+  @override
+  CameraController createCameraController(CameraDevice device) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<CameraDevice>> getAllCameraDevices() {
+    throw UnimplementedError();
+  }
+
+  @override
+  void initialize() {
+    throw UnimplementedError();
+  }
 }

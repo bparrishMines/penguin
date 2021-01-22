@@ -40,7 +40,7 @@ class CameraXCameraController implements CameraController {
   final CameraDevice device;
 
   final Preview preview = Preview();
-  Camera camera;
+  Camera? camera;
 
   @override
   Future<void> initialize() async {

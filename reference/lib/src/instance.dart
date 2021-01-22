@@ -1,5 +1,6 @@
 import 'package:reference/reference.dart';
 
+// TODO: ReferenceType?
 /// A class that can be paired with another instance in a [TypeChannelManager].
 mixin PairableInstance<T extends Object> {
   TypeChannel<T> get typeChannel;

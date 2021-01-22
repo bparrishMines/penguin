@@ -1,3 +1,5 @@
+// @dart=2.9
+
 import 'package:flutter/material.dart';
 import 'package:penguin_camera/penguin_camera.dart';
 import 'package:permission_handler/permission_handler.dart';

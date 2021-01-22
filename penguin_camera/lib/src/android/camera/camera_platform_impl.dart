@@ -20,7 +20,7 @@ class AndroidCameraController implements CameraController {
   @override
   final AndroidCameraDevice device;
 
-  Camera camera;
+  Camera? camera;
 
   @override
   Future<void> initialize() async {
@@ -31,28 +31,28 @@ class AndroidCameraController implements CameraController {
   @override
   Future<Widget> getPreview() async {
     assert(camera != null);
-    return Texture(textureId: await camera.attachPreviewToTexture());
+    return Texture(textureId: await camera!.attachPreviewToTexture());
   }
 
   @override
   Future<void> start() {
     assert(camera != null);
-    return camera.startPreview();
+    return camera!.startPreview();
   }
 
   @override
   Future<void> stop() {
     assert(camera != null);
-    return camera.stopPreview();
+    return camera!.stopPreview();
   }
 
   @override
-  Future<void> dispose() {
-    if (camera == null) return Future<void>.value();
+  Future<void> dispose() async {
+    if (camera == null) return;
     stop();
-    camera.releaseTexture();
+    camera!.releaseTexture();
 
-    final Camera oldCamera = camera;
+    final Camera oldCamera = camera!;
     camera = null;
     return oldCamera.release();
   }
