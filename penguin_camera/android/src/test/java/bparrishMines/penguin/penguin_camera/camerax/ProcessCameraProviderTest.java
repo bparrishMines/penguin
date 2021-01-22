@@ -18,9 +18,9 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.lifecycle.LifecycleOwner;
 import github.penguin.reference.async.Completer;
-import github.penguin.reference.reference.ReferenceChannelManager;
-import github.penguin.reference.reference.ReferenceChannelMessenger;
-import github.penguin.reference.reference.RemoteReference;
+import github.penguin.reference.reference.PairedInstance;
+import github.penguin.reference.reference.TypeChannelManager;
+import github.penguin.reference.reference.TypeChannelMessenger;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyList;
@@ -48,20 +48,20 @@ public class ProcessCameraProviderTest {
   @Mock
   LifecycleOwner mockLifecycleOwner;
 
-  ReferenceChannelManager testManager;
+  TypeChannelManager testManager;
 
   @Before
   public void setUp() {
-    final ReferenceChannelMessenger mockMessenger = mock(ReferenceChannelMessenger.class);
-    when(mockMessenger.sendCreateNewPair(anyString(), any(RemoteReference.class), anyList())).thenReturn(new Completer<Void>().complete(null).completable);
-    testManager = new ReferenceChannelManager() {
+    final TypeChannelMessenger mockMessenger = mock(TypeChannelMessenger.class);
+    when(mockMessenger.sendCreateNewInstancePair(anyString(), any(PairedInstance.class), anyList())).thenReturn(new Completer<Void>().complete(null).completable);
+    testManager = new TypeChannelManager() {
       @Override
-      public ReferenceChannelMessenger getMessenger() {
+      public TypeChannelMessenger getMessenger() {
         return mockMessenger;
       }
     };
     final CameraXChannelLibrary.$CameraChannel testChannel = new CameraXChannelLibrary.$CameraChannel(testManager);
-    testChannel.registerHandler(new CameraXChannelLibrary.$CameraHandler());
+    testChannel.setHandler(new CameraXChannelLibrary.$CameraHandler());
   }
 
   @Test

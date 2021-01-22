@@ -1,24 +1,24 @@
 package bparrishMines.penguin.penguin_camera.camerax;
 
 import github.penguin.reference.async.Completable;
-import github.penguin.reference.reference.ReferenceChannelManager;
+import github.penguin.reference.reference.TypeChannelManager;
 
 public class SuccessListener implements CameraXChannelLibrary.$SuccessListener {
   private final CameraXChannelLibrary.$SuccessListenerChannel channel;
 
-  public static void setupChannel(ReferenceChannelManager manager) {
+  public static void setupChannel(TypeChannelManager manager) {
     final CameraXChannelLibrary.$SuccessListenerChannel channel =
         new CameraXChannelLibrary.$SuccessListenerChannel (manager);
-    channel.registerHandler(new CameraXChannelLibrary.$SuccessListenerHandler() {
+    channel.setHandler(new CameraXChannelLibrary.$SuccessListenerHandler() {
       @Override
-      CameraXChannelLibrary.$SuccessListener onCreate(ReferenceChannelManager manager, CameraXChannelLibrary.$SuccessListenerCreationArgs args) throws Exception {
-        return new SuccessListener(channel);
+      CameraXChannelLibrary.$SuccessListener onCreate(TypeChannelManager manager, CameraXChannelLibrary.$SuccessListenerCreationArgs args) {
+        return new SuccessListener(manager);
       }
     });
   }
 
-  public SuccessListener(CameraXChannelLibrary.$SuccessListenerChannel channel) {
-    this.channel = channel;
+  public SuccessListener(TypeChannelManager manager) {
+    this.channel = new CameraXChannelLibrary.$SuccessListenerChannel(manager);
   }
 
   @Override

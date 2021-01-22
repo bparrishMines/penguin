@@ -1,17 +1,17 @@
 package bparrishMines.penguin.penguin_camera.camerax;
 
-import github.penguin.reference.reference.ReferenceChannelManager;
+import github.penguin.reference.reference.TypeChannelManager;
 
 public class CameraSelector implements CameraXChannelLibrary.$CameraSelector {
   private final Integer lensFacing;
   private final androidx.camera.core.CameraSelector cameraSelector;
 
-  public static void setupChannel(ReferenceChannelManager manager) {
+  public static void setupChannel(TypeChannelManager manager) {
     final CameraXChannelLibrary.$CameraSelectorChannel channel =
         new CameraXChannelLibrary.$CameraSelectorChannel (manager);
-    channel.registerHandler(new CameraXChannelLibrary.$CameraSelectorHandler() {
+    channel.setHandler(new CameraXChannelLibrary.$CameraSelectorHandler() {
       @Override
-      CameraXChannelLibrary.$CameraSelector onCreate(ReferenceChannelManager manager, CameraXChannelLibrary.$CameraSelectorCreationArgs args) {
+      CameraXChannelLibrary.$CameraSelector onCreate(TypeChannelManager manager, CameraXChannelLibrary.$CameraSelectorCreationArgs args) {
         return new CameraSelector(args.lensFacing);
       }
     });

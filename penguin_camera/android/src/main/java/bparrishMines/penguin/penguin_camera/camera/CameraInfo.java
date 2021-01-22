@@ -2,23 +2,23 @@ package bparrishMines.penguin.penguin_camera.camera;
 
 import android.hardware.Camera;
 
-import github.penguin.reference.reference.Referencable;
-import github.penguin.reference.reference.ReferenceChannel;
-import github.penguin.reference.reference.ReferenceChannelManager;
+import github.penguin.reference.reference.PairableInstance;
+import github.penguin.reference.reference.TypeChannel;
+import github.penguin.reference.reference.TypeChannelManager;
 
 public class CameraInfo implements CameraChannelLibrary.$CameraInfo,
-    Referencable<CameraChannelLibrary.$CameraInfo> {
+    PairableInstance<CameraChannelLibrary.$CameraInfo> {
   private final CameraChannelLibrary.$CameraInfoChannel channel;
   private final int cameraId;
   private final Camera.CameraInfo cameraInfo;
 
-  public static void setupChannel(ReferenceChannelManager manager) {
+  public static void setupChannel(TypeChannelManager manager) {
     final CameraChannelLibrary.$CameraInfoChannel channel =
         new CameraChannelLibrary.$CameraInfoChannel(manager);
-    channel.registerHandler(new CameraChannelLibrary.$CameraInfoHandler());
+    channel.setHandler(new CameraChannelLibrary.$CameraInfoHandler());
   }
 
-  CameraInfo(ReferenceChannelManager manager, int cameraId, Camera.CameraInfo cameraInfo) {
+  CameraInfo(TypeChannelManager manager, int cameraId, Camera.CameraInfo cameraInfo) {
     this.channel = new CameraChannelLibrary.$CameraInfoChannel(manager);
     this.cameraId = cameraId;
     this.cameraInfo = cameraInfo;
@@ -44,7 +44,7 @@ public class CameraInfo implements CameraChannelLibrary.$CameraInfo,
   }
 
   @Override
-  public ReferenceChannel<CameraChannelLibrary.$CameraInfo> getReferenceChannel() {
+  public TypeChannel<CameraChannelLibrary.$CameraInfo> getTypeChannel() {
     return channel;
   }
 }

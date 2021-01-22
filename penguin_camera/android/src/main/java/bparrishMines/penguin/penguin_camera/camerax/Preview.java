@@ -7,7 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.camera.core.SurfaceRequest;
 import androidx.core.content.ContextCompat;
 import androidx.core.util.Consumer;
-import github.penguin.reference.reference.ReferenceChannelManager;
+import github.penguin.reference.reference.TypeChannelManager;
 import io.flutter.view.TextureRegistry;
 
 import static androidx.camera.core.SurfaceRequest.Result.RESULT_INVALID_SURFACE;
@@ -22,12 +22,12 @@ public class Preview extends UseCase implements CameraXChannelLibrary.$Preview, 
   private final TextureRegistry textureRegistry;
   private final androidx.camera.core.Preview preview;
 
-  public static void setupChannel(ReferenceChannelManager manager, Context context, TextureRegistry textureRegistry) {
+  public static void setupChannel(TypeChannelManager manager, Context context, TextureRegistry textureRegistry) {
     final CameraXChannelLibrary.$PreviewChannel channel =
         new CameraXChannelLibrary.$PreviewChannel(manager);
-    channel.registerHandler(new CameraXChannelLibrary.$PreviewHandler() {
+    channel.setHandler(new CameraXChannelLibrary.$PreviewHandler() {
       @Override
-      CameraXChannelLibrary.$Preview onCreate(ReferenceChannelManager manager, CameraXChannelLibrary.$PreviewCreationArgs args) throws Exception {
+      CameraXChannelLibrary.$Preview onCreate(TypeChannelManager manager, CameraXChannelLibrary.$PreviewCreationArgs args) throws Exception {
         return new Preview(context, textureRegistry);
       }
     });

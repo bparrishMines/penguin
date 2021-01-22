@@ -2,7 +2,7 @@ package bparrishMines.penguin.penguin_camera.camera;
 
 import java.util.ArrayList;
 import java.util.List;
-import github.penguin.reference.reference.ReferenceChannelManager;
+import github.penguin.reference.reference.TypeChannelManager;
 import io.flutter.view.TextureRegistry;
 
 public class Camera implements CameraChannelLibrary.$Camera {
@@ -10,17 +10,17 @@ public class Camera implements CameraChannelLibrary.$Camera {
   private final android.hardware.Camera camera;
   private TextureRegistry.SurfaceTextureEntry currentTextureEntry;
 
-  public static void setupChannel(ReferenceChannelManager manager,  TextureRegistry textureRegistry) {
+  public static void setupChannel(TypeChannelManager manager, TextureRegistry textureRegistry) {
     final CameraChannelLibrary.$CameraChannel channel =
         new CameraChannelLibrary.$CameraChannel(manager);
-    channel.registerHandler(new CameraChannelLibrary.$CameraHandler() {
+    channel.setHandler(new CameraChannelLibrary.$CameraHandler() {
       @Override
-      public Object $onGetAllCameraInfo(ReferenceChannelManager manager) {
+      public Object $onGetAllCameraInfo(TypeChannelManager manager) {
         return Camera.getAllCameraInfo(manager);
       }
 
       @Override
-      public Object $onOpen(ReferenceChannelManager manager, Integer cameraId) {
+      public Object $onOpen(TypeChannelManager manager, Integer cameraId) {
         return Camera.open(textureRegistry, channel, cameraId);
       }
     });
@@ -28,11 +28,11 @@ public class Camera implements CameraChannelLibrary.$Camera {
 
   public static Camera open(TextureRegistry textureRegistry, CameraChannelLibrary.$CameraChannel channel, int cameraId) {
     final Camera camera = new Camera(android.hardware.Camera.open(cameraId), textureRegistry);
-    channel.createNewPair(camera);
+    channel.createNewInstancePair(camera);
     return camera;
   }
 
-  public static List<CameraInfo> getAllCameraInfo(ReferenceChannelManager manager) {
+  public static List<CameraInfo> getAllCameraInfo(TypeChannelManager manager) {
     final List<CameraInfo> allCameraInfo = new ArrayList<>();
 
     int numOfCameras = android.hardware.Camera.getNumberOfCameras();
