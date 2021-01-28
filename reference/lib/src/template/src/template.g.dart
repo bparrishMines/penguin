@@ -16,8 +16,8 @@ class $ClassTemplateCreationArgs {
 }
 
 class $ClassTemplateChannel extends TypeChannel<$ClassTemplate> {
-  $ClassTemplateChannel(TypeChannelManager manager)
-      : super(manager, 'github.penguin/template/template/ClassTemplate');
+  $ClassTemplateChannel(TypeChannelMessenger messenger)
+      : super(messenger, 'github.penguin/template/template/ClassTemplate');
 
   Future<Object?> $invokeStaticMethodTemplate(String parameterTemplate) {
     return invokeStaticMethod(
@@ -37,21 +37,31 @@ class $ClassTemplateChannel extends TypeChannel<$ClassTemplate> {
 }
 
 class $ClassTemplateHandler implements TypeChannelHandler<$ClassTemplate> {
-  $ClassTemplateHandler(
-      {this.onCreate, this.onDispose, this.$onStaticMethodTemplate});
+  $ClassTemplateHandler({
+    this.onCreate,
+    this.onAdded,
+    this.onRemoved,
+    this.$onStaticMethodTemplate,
+  });
 
   final $ClassTemplate Function(
-      TypeChannelManager manager, $ClassTemplateCreationArgs args)? onCreate;
+    TypeChannelMessenger messenger,
+    $ClassTemplateCreationArgs args,
+  )? onCreate;
 
-  final void Function(TypeChannelManager manager, $ClassTemplate instance)?
-      onDispose;
+  final void Function(TypeChannelMessenger messenger, $ClassTemplate instance)?
+      onAdded;
 
-  final double Function(TypeChannelManager manager, String parameterTemplate)?
+  final void Function(TypeChannelMessenger messenger, $ClassTemplate instance)?
+      onRemoved;
+
+  final double Function(
+          TypeChannelMessenger messenger, String parameterTemplate)?
       $onStaticMethodTemplate;
 
   @override
   Object? invokeStaticMethod(
-    TypeChannelManager manager,
+    TypeChannelMessenger messenger,
     String methodName,
     List<Object?> arguments,
   ) {
@@ -60,7 +70,7 @@ class $ClassTemplateHandler implements TypeChannelHandler<$ClassTemplate> {
     switch (methodName) {
       case 'staticMethodTemplate':
         method =
-            () => $onStaticMethodTemplate!(manager, arguments[0] as String);
+            () => $onStaticMethodTemplate!(messenger, arguments[0] as String);
         break;
       default:
         throw ArgumentError.value(
@@ -76,7 +86,7 @@ class $ClassTemplateHandler implements TypeChannelHandler<$ClassTemplate> {
 
   @override
   List<Object?> getCreationArguments(
-    TypeChannelManager manager,
+    TypeChannelMessenger messenger,
     $ClassTemplate instance,
   ) {
     return <Object?>[instance.fieldTemplate];
@@ -84,18 +94,18 @@ class $ClassTemplateHandler implements TypeChannelHandler<$ClassTemplate> {
 
   @override
   $ClassTemplate createInstance(
-    TypeChannelManager manager,
+    TypeChannelMessenger messenger,
     List<Object?> arguments,
   ) {
     return onCreate!(
-      manager,
+      messenger,
       $ClassTemplateCreationArgs()..fieldTemplate = arguments[0] as int,
     );
   }
 
   @override
   Object? invokeMethod(
-    TypeChannelManager manager,
+    TypeChannelMessenger messenger,
     $ClassTemplate instance,
     String methodName,
     List<Object?> arguments,
@@ -119,7 +129,18 @@ class $ClassTemplateHandler implements TypeChannelHandler<$ClassTemplate> {
   }
 
   @override
-  void onInstanceDisposed(TypeChannelManager manager, $ClassTemplate instance) {
-    if (onDispose != null) onDispose!(manager, instance);
+  void onInstanceAdded(
+    TypeChannelMessenger messenger,
+    $ClassTemplate instance,
+  ) {
+    if (onAdded != null) onAdded!(messenger, instance);
+  }
+
+  @override
+  void onInstanceRemoved(
+    TypeChannelMessenger messenger,
+    $ClassTemplate instance,
+  ) {
+    if (onRemoved != null) onRemoved!(messenger, instance);
   }
 }

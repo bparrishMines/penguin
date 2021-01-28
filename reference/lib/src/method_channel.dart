@@ -6,10 +6,10 @@ import 'package:flutter/services.dart';
 import 'instance.dart';
 import 'type_channel.dart';
 
-/// Implementation of a [TypeChannelManager] using a [MethodChannel].
-class MethodChannelManager extends TypeChannelManager {
-  /// Default constructor for [MethodChannelManager].
-  MethodChannelManager(String channelName)
+/// Implementation of a [TypeChannelMessenger] using a [MethodChannel].
+class MethodChannelMessenger extends TypeChannelMessenger {
+  /// Default constructor for [MethodChannelMessenger].
+  MethodChannelMessenger(String channelName)
       : channel = MethodChannel(
           channelName,
           const StandardMethodCodec(ReferenceMessageCodec()),
@@ -24,44 +24,45 @@ class MethodChannelManager extends TypeChannelManager {
   static const String _methodDispose = 'REFERENCE_DISPOSE';
 
   /// Global manager maintained by reference plugin.
-  static final MethodChannelManager instance =
-      MethodChannelManager('github.penguin/reference');
+  static final MethodChannelMessenger instance =
+      MethodChannelMessenger('github.penguin/reference');
 
-  /// [MethodChannel] used to communicate with the platform [TypeChannelManager].
+  /// [MethodChannel] used to communicate with the platform [TypeChannelMessenger].
   final MethodChannel channel;
 
   @override
-  MethodChannelMessenger get messenger => MethodChannelMessenger(channel);
+  MethodChannelDispatcher get messageDispatcher =>
+      MethodChannelDispatcher(channel);
 
   Future<dynamic> _handleMethodCall(MethodCall call) async {
     try {
-      if (call.method == MethodChannelManager._methodCreate) {
+      if (call.method == MethodChannelMessenger._methodCreate) {
         onReceiveCreateNewInstancePair(
           call.arguments[0] as String,
           call.arguments[1] as PairedInstance,
           call.arguments[2] as List<Object?>,
         );
         return null;
-      } else if (call.method == MethodChannelManager._methodStaticMethod) {
+      } else if (call.method == MethodChannelMessenger._methodStaticMethod) {
         return onReceiveInvokeStaticMethod(
           call.arguments[0] as String,
           call.arguments[1] as String,
           call.arguments[2] as List<Object?>,
         );
-      } else if (call.method == MethodChannelManager._methodMethod) {
+      } else if (call.method == MethodChannelMessenger._methodMethod) {
         return onReceiveInvokeMethod(
           call.arguments[0] as String,
           call.arguments[1] as PairedInstance,
           call.arguments[2] as String,
           call.arguments[3] as List<Object?>,
         );
-      } else if (call.method == MethodChannelManager._methodUnpairedMethod) {
+      } else if (call.method == MethodChannelMessenger._methodUnpairedMethod) {
         return onReceiveInvokeMethodOnUnpairedInstance(
           call.arguments[0] as NewUnpairedInstance,
           call.arguments[1] as String,
           call.arguments[2] as List<Object?>,
         );
-      } else if (call.method == MethodChannelManager._methodDispose) {
+      } else if (call.method == MethodChannelMessenger._methodDispose) {
         onReceiveDisposePair(
           call.arguments[0] as String,
           call.arguments[1] as PairedInstance,
@@ -77,11 +78,11 @@ class MethodChannelManager extends TypeChannelManager {
   }
 }
 
-/// Implementation of [TypeChannelMessenger] using a [MethodChannel].
-class MethodChannelMessenger with TypeChannelMessenger {
-  MethodChannelMessenger(this.channel);
+/// Implementation of [TypeChannelMessageDispatcher] using a [MethodChannel].
+class MethodChannelDispatcher with TypeChannelMessageDispatcher {
+  MethodChannelDispatcher(this.channel);
 
-  /// [MethodChannel] used to communicate with a platform [TypeChannelManager].
+  /// [MethodChannel] used to communicate with a platform [TypeChannelMessenger].
   final MethodChannel channel;
 
   @override
@@ -91,7 +92,7 @@ class MethodChannelMessenger with TypeChannelMessenger {
     List<Object?> arguments,
   ) {
     return channel.invokeMethod<void>(
-      MethodChannelManager._methodCreate,
+      MethodChannelMessenger._methodCreate,
       <Object>[channelName, remoteReference, arguments],
     );
   }
@@ -103,7 +104,7 @@ class MethodChannelMessenger with TypeChannelMessenger {
     List<Object?> arguments,
   ) {
     return channel.invokeMethod<Object>(
-      MethodChannelManager._methodStaticMethod,
+      MethodChannelMessenger._methodStaticMethod,
       <Object>[channelName, methodName, arguments],
     );
   }
@@ -116,7 +117,7 @@ class MethodChannelMessenger with TypeChannelMessenger {
     List<Object?> arguments,
   ) {
     return channel.invokeMethod<Object>(
-      MethodChannelManager._methodMethod,
+      MethodChannelMessenger._methodMethod,
       <Object>[channelName, remoteReference, methodName, arguments],
     );
   }
@@ -128,7 +129,7 @@ class MethodChannelMessenger with TypeChannelMessenger {
     List<Object?> arguments,
   ) {
     return channel.invokeMethod<Object>(
-      MethodChannelManager._methodUnpairedMethod,
+      MethodChannelMessenger._methodUnpairedMethod,
       <Object>[unpairedReference, methodName, arguments],
     );
   }
@@ -139,7 +140,7 @@ class MethodChannelMessenger with TypeChannelMessenger {
     PairedInstance remoteReference,
   ) {
     return channel.invokeMethod<void>(
-      MethodChannelManager._methodDispose,
+      MethodChannelMessenger._methodDispose,
       <Object>[channelName, remoteReference],
     );
   }

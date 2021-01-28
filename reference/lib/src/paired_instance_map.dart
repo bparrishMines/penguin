@@ -2,30 +2,106 @@ import 'dart:collection';
 
 import 'instance.dart';
 
-/// Maintains instance pairs.
-class PairedInstanceMap {
+// /// Maintains instance pairs.
+// class PairedInstanceMap {
+//   final _pairedInstances = _BiMap<Object, PairedInstance>();
+//
+//   /// Adds an instance pair.
+//   void add(Object instance, PairedInstance pairedInstance) {
+//     assert(getPairedPairedInstance(instance) == null);
+//     assert(getPairedObject(pairedInstance) == null);
+//     _pairedInstances[instance] = pairedInstance;
+//   }
+//
+//   /// Remove an instance pair containing [object].
+//   PairedInstance? removePairWithInstance(Object instance) {
+//     return _pairedInstances.remove(instance);
+//   }
+//
+//   /// Remove an instance pair containing [pairedInstance].
+//   Object? removePairWithPairedInstance(PairedInstance pairedInstance) {
+//     return _pairedInstances.inverse.remove(pairedInstance);
+//   }
+//
+//   /// Retrieve the [PairedInstance] paired with [instance].
+//   ///
+//   /// Returns null if this [instance] is not paired.
+//   PairedInstance? getPairedPairedInstance(Object instance) {
+//     return _pairedInstances[instance];
+//   }
+//
+//   /// Retrieve the [Object] paired with [pairedInstance].
+//   ///
+//   /// Returns null if this [pairedInstance] is not paired.
+//   Object? getPairedObject(PairedInstance pairedInstance) {
+//     return _pairedInstances.inverse[pairedInstance];
+//   }
+// }
+
+class InstancePairManager {
   final _pairedInstances = _BiMap<Object, PairedInstance>();
+  final Map<Object, Set<Object>> _owners = <Object, Set<Object>>{};
 
   /// Adds an instance pair.
-  void add(Object instance, PairedInstance pairedInstance) {
-    _pairedInstances[instance] = pairedInstance;
+  ///
+  /// Duplicate keys or values will throw an [AssertionError].
+  bool addPair(Object object, PairedInstance pairedInstance, {Object? owner}) {
+    owner ??= object;
+
+    final bool containsObject = _pairedInstances.containsKey(object);
+
+    if (!containsObject) {
+      assert(!_pairedInstances.containsValue(pairedInstance));
+      _owners[object] = <Object>{};
+    }
+    _owners[object]!.add(owner);
+    if (!_pairedInstances.containsKey(object)) {
+      _pairedInstances[object] = pairedInstance;
+    }
+
+    return !containsObject;
   }
 
   /// Remove an instance pair containing [object].
-  PairedInstance? removePairWithObject(Object object) {
-    return _pairedInstances.remove(object);
+  bool removePairWithObject(
+    Object object, {
+    Object? owner,
+    bool force = false,
+  }) {
+    if (!_pairedInstances.containsKey(object)) return false;
+
+    owner ??= object;
+
+    final Set<Object> owners = _owners[object]!;
+    owners.remove(owner);
+
+    if (!force && owners.isNotEmpty) return false;
+
+    _pairedInstances.remove(object);
+    _owners.remove(object);
+    return true;
   }
 
   /// Remove an instance pair containing [pairedInstance].
-  Object? removePairWithPairedInstance(PairedInstance pairedInstance) {
-    return _pairedInstances.inverse.remove(pairedInstance);
+  bool removePairWithPairedInstance(
+    PairedInstance pairedInstance, {
+    bool force = false,
+  }) {
+    final Object? object = _pairedInstances.inverse[pairedInstance];
+    if (object == null) return false;
+
+    return removePairWithObject(object, force: force);
   }
 
-  /// Retrieve the [PairedInstance] paired with [instance].
+  bool isPaired(Object instance) {
+    return getPairedPairedInstance(instance) != null;
+  }
+
+  /// Retrieve the [PairedInstance] paired with [object].
   ///
-  /// Returns null if this [instance] is not paired.
-  PairedInstance? getPairedPairedInstance(Object instance) {
-    return _pairedInstances[instance];
+  /// Returns null if this [object] is not paired.
+  PairedInstance? getPairedPairedInstance(Object object) {
+    return _pairedInstances[object];
   }
 
   /// Retrieve the [Object] paired with [pairedInstance].

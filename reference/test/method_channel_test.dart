@@ -6,6 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:reference/reference.dart';
 
 import 'reference_matchers.dart';
+import 'test_classes.dart' hide TestMessenger;
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -36,17 +37,17 @@ void main() {
     });
   });
 
-  group('$MethodChannelManager', () {
-    late TestManager testManager;
+  group('$MethodChannelMessenger', () {
+    late TestMessenger testMessenger;
 
     setUp(() {
-      testManager = TestManager();
+      testMessenger = TestMessenger();
     });
 
     test('onReceiveCreateNewInstancePair', () async {
-      await testManager.channel.binaryMessenger.handlePlatformMessage(
+      await testMessenger.channel.binaryMessenger.handlePlatformMessage(
         'test_method_channel',
-        testManager.channel.codec.encodeMethodCall(
+        testMessenger.channel.codec.encodeMethodCall(
           const MethodCall(
             'REFERENCE_CREATE',
             <Object>[
@@ -60,16 +61,16 @@ void main() {
       );
 
       expect(
-        testManager.isPaired(testManager.testHandler.testClassInstance),
+        testMessenger.isPaired(testMessenger.testHandler.testClassInstance),
         isTrue,
       );
     });
 
     test('onReceiveInvokeStaticMethod', () async {
       final Completer<String> responseCompleter = Completer<String>();
-      await testManager.channel.binaryMessenger.handlePlatformMessage(
+      await testMessenger.channel.binaryMessenger.handlePlatformMessage(
         'test_method_channel',
-        testManager.channel.codec.encodeMethodCall(
+        testMessenger.channel.codec.encodeMethodCall(
           const MethodCall(
             'REFERENCE_STATIC_METHOD',
             <Object>['test_channel', 'aStaticMethod', <Object>[]],
@@ -77,7 +78,7 @@ void main() {
         ),
         (ByteData? data) {
           responseCompleter.complete(
-            testManager.channel.codec.decodeEnvelope(data!)
+            testMessenger.channel.codec.decodeEnvelope(data!)
                 as FutureOr<String>?,
           );
         },
@@ -87,16 +88,16 @@ void main() {
     });
 
     test('onReceiveInvokeMethod', () async {
-      testManager.onReceiveCreateNewInstancePair(
+      testMessenger.onReceiveCreateNewInstancePair(
         'test_channel',
         const PairedInstance('test_id'),
         <Object>[],
       );
 
       final Completer<String> responseCompleter = Completer<String>();
-      await testManager.channel.binaryMessenger.handlePlatformMessage(
+      await testMessenger.channel.binaryMessenger.handlePlatformMessage(
         'test_method_channel',
-        testManager.channel.codec.encodeMethodCall(
+        testMessenger.channel.codec.encodeMethodCall(
           const MethodCall(
             'REFERENCE_METHOD',
             <Object>[
@@ -109,7 +110,7 @@ void main() {
         ),
         (ByteData? data) {
           responseCompleter.complete(
-            testManager.channel.codec.decodeEnvelope(data!)
+            testMessenger.channel.codec.decodeEnvelope(data!)
                 as FutureOr<String>?,
           );
         },
@@ -120,9 +121,9 @@ void main() {
 
     test('onReceiveInvokeMethodOnUnpairedInstance', () async {
       final Completer<String> responseCompleter = Completer<String>();
-      await testManager.channel.binaryMessenger.handlePlatformMessage(
+      await testMessenger.channel.binaryMessenger.handlePlatformMessage(
         'test_method_channel',
-        testManager.channel.codec.encodeMethodCall(
+        testMessenger.channel.codec.encodeMethodCall(
           const MethodCall(
             'REFERENCE_UNPAIRED_METHOD',
             <Object>[
@@ -134,7 +135,7 @@ void main() {
         ),
         (ByteData? data) {
           responseCompleter.complete(
-            testManager.channel.codec.decodeEnvelope(data!)
+            testMessenger.channel.codec.decodeEnvelope(data!)
                 as FutureOr<String>?,
           );
         },
@@ -144,15 +145,15 @@ void main() {
     });
 
     test('onReceiveDisposePair', () async {
-      testManager.onReceiveCreateNewInstancePair(
+      testMessenger.onReceiveCreateNewInstancePair(
         'test_channel',
         const PairedInstance('test_id'),
         <Object>[],
       );
 
-      await testManager.channel.binaryMessenger.handlePlatformMessage(
+      await testMessenger.channel.binaryMessenger.handlePlatformMessage(
         'test_method_channel',
-        testManager.channel.codec.encodeMethodCall(
+        testMessenger.channel.codec.encodeMethodCall(
           const MethodCall(
             'REFERENCE_DISPOSE',
             <Object>['test_channel', PairedInstance('test_id')],
@@ -162,23 +163,23 @@ void main() {
       );
 
       expect(
-        testManager.isPaired(testManager.testHandler.testClassInstance),
+        testMessenger.isPaired(testMessenger.testHandler.testClassInstance),
         isFalse,
       );
     });
   });
 
-  group('$MethodChannelMessenger', () {
+  group('$MethodChannelDispatcher', () {
     final List<MethodCall> methodCallLog = <MethodCall>[];
-    late TestManager testManager;
+    late TestMessenger testMessenger;
     late TypeChannel<TestClass> testChannel;
 
     setUp(() {
       methodCallLog.clear();
-      testManager = TestManager();
-      testChannel = TypeChannel<TestClass>(testManager, 'test_channel');
+      testMessenger = TestMessenger();
+      testChannel = TypeChannel<TestClass>(testMessenger, 'test_channel');
 
-      testManager.channel.setMockMethodCallHandler(
+      testMessenger.channel.setMockMethodCallHandler(
         (MethodCall methodCall) async {
           methodCallLog.add(methodCall);
           if (methodCall.method == 'REFERENCE_METHOD' &&
@@ -197,7 +198,7 @@ void main() {
     });
 
     test('createNewPair', () {
-      testChannel.createNewInstancePair(TestClass(testManager));
+      testChannel.createNewInstancePair(TestClass(testMessenger));
 
       expect(methodCallLog, <Matcher>[
         isMethodCallWithMatchers('REFERENCE_CREATE', arguments: <Object>[
@@ -223,7 +224,7 @@ void main() {
     });
 
     test('sendInvokeMethod', () {
-      final TestClass testClass = TestClass(testManager);
+      final TestClass testClass = TestClass(testMessenger);
       testChannel.createNewInstancePair(testClass);
 
       methodCallLog.clear();
@@ -244,7 +245,8 @@ void main() {
 
     test('sendInvokeMethodOnUnpairedReference', () {
       expect(
-        testChannel.invokeMethod(TestClass(testManager), 'aMethod', <Object>[]),
+        testChannel
+            .invokeMethod(TestClass(testMessenger), 'aMethod', <Object>[]),
         completion('return_value'),
       );
       expect(methodCallLog, <Matcher>[
@@ -260,13 +262,13 @@ void main() {
     });
 
     test('disposePair', () {
-      final TestClass testClass = TestClass(testManager);
+      final TestClass testClass = TestClass(testMessenger);
       testChannel.createNewInstancePair(testClass);
 
       methodCallLog.clear();
 
       testChannel.disposePair(testClass);
-      expect(testManager.isPaired(testClass), isFalse);
+      expect(testMessenger.isPaired(testClass), isFalse);
       expect(methodCallLog, <Matcher>[
         isMethodCall(
           'REFERENCE_DISPOSE',
@@ -280,8 +282,8 @@ void main() {
   });
 }
 
-class TestManager extends MethodChannelManager {
-  TestManager() : super('test_method_channel') {
+class TestMessenger extends MethodChannelMessenger {
+  TestMessenger() : super('test_method_channel') {
     testHandler = TestHandler(this);
     registerHandler('test_channel', testHandler);
   }
@@ -289,60 +291,7 @@ class TestManager extends MethodChannelManager {
   late final TestHandler testHandler;
 
   @override
-  String generateUniqueInstanceId() {
+  String generateUniqueInstanceId(Object instance) {
     return 'test_reference_id';
   }
-}
-
-class TestHandler with TypeChannelHandler<TestClass> {
-  TestHandler(TestManager manager) : testClassInstance = TestClass(manager);
-
-  final TestClass testClassInstance;
-
-  @override
-  TestClass createInstance(
-    TypeChannelManager manager,
-    List<Object?> arguments,
-  ) {
-    return testClassInstance;
-  }
-
-  @override
-  List<Object?> getCreationArguments(
-    TypeChannelManager manager,
-    TestClass instance,
-  ) {
-    return <Object?>[];
-  }
-
-  @override
-  Object? invokeMethod(
-    TypeChannelManager manager,
-    TestClass instance,
-    String methodName,
-    List<Object?> arguments,
-  ) {
-    return 'return_value';
-  }
-
-  @override
-  Object? invokeStaticMethod(
-    TypeChannelManager manager,
-    String methodName,
-    List<Object?> arguments,
-  ) {
-    return 'return_value';
-  }
-}
-
-class TestClass with PairableInstance<TestClass> {
-  TestClass(this.manager);
-
-  final TypeChannelManager manager;
-
-  @override
-  TypeChannel<TestClass> get typeChannel => TypeChannel<TestClass>(
-        manager,
-        'test_channel',
-      );
 }

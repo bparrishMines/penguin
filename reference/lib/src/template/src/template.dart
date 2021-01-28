@@ -10,11 +10,11 @@ class ClassTemplate with $ClassTemplate {
   ClassTemplate(this.fieldTemplate);
 
   static final $ClassTemplateChannel _channel = $ClassTemplateChannel(
-    MethodChannelManager.instance,
+    MethodChannelMessenger.instance,
   )..setHandler(
       $ClassTemplateHandler(
         onCreate: (
-          TypeChannelManager manager,
+          TypeChannelMessenger messenger,
           $ClassTemplateCreationArgs args,
         ) {
           return ClassTemplate(args.fieldTemplate);

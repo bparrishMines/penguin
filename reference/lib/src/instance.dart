@@ -1,14 +1,13 @@
 import 'package:reference/reference.dart';
 
-// TODO: ReferenceType?
-/// A class that can be paired with another instance in a [TypeChannelManager].
-mixin PairableInstance<T extends Object> {
+/// A class that can be paired with another instance in a [TypeChannelMessenger].
+mixin ReferenceType<T extends Object> {
   TypeChannel<T> get typeChannel;
 }
 
-/// Represents a object instance in a [TypeChannelManager].
+/// Represents a object instance in a [TypeChannelMessenger].
 ///
-/// When two [TypeChannelManager]s each maintain access to one of two
+/// When two [TypeChannelMessenger]s each maintain access to one of two
 /// paired objects, this class is used to represent both objects.
 ///
 /// Two [PairedInstance]s are equal if they share the same [instanceId].
@@ -17,9 +16,9 @@ class PairedInstance {
   const PairedInstance(this.instanceId);
 
   /// Unique identifier used to retrieve the instance this represents from a
-  /// [TypeChannelManager].
+  /// [TypeChannelMessenger].
   ///
-  /// No two [PairedInstance]s in a [TypeChannelManager] can have the same
+  /// No two [PairedInstance]s in a [TypeChannelMessenger] can have the same
   /// [instanceId].
   final String instanceId;
 
@@ -27,7 +26,7 @@ class PairedInstance {
   bool operator ==(Object? other) =>
       other is PairedInstance && instanceId == other.instanceId;
 
-  // TODO: Avoid hash code collision with String value
+  // TODO: Avoid hash code collision with String value?
   @override
   int get hashCode => instanceId.hashCode;
 
@@ -37,7 +36,7 @@ class PairedInstance {
   }
 }
 
-/// Represents a new object that can be instantiated in a [TypeChannelManager].
+/// Represents a new object that can be instantiated in a [TypeChannelMessenger].
 class NewUnpairedInstance {
   /// Default constructor for [NewUnpairedInstance].
   const NewUnpairedInstance(this.channelName, this.creationArguments);

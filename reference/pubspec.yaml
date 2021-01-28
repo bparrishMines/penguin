@@ -1,6 +1,6 @@
 name: reference
 description: Reduce plugin maintenance burden for plugins that have to maintain platform object instances in memory.
-version: 0.2.0-beta
+version: 0.2.0-beta.1
 homepage: https://github.com/bparrishMines/penguin/tree/master/reference
 
 environment:
@@ -13,9 +13,9 @@ dependencies:
 
 dev_dependencies:
   lint: ^1.5.1
-  flutter_test:
-    sdk: flutter
   flutter_driver:
+    sdk: flutter
+  flutter_test:
     sdk: flutter
 
 flutter:
