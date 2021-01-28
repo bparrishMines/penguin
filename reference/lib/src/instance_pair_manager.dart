@@ -2,42 +2,6 @@ import 'dart:collection';
 
 import 'instance.dart';
 
-// /// Maintains instance pairs.
-// class PairedInstanceMap {
-//   final _pairedInstances = _BiMap<Object, PairedInstance>();
-//
-//   /// Adds an instance pair.
-//   void add(Object instance, PairedInstance pairedInstance) {
-//     assert(getPairedPairedInstance(instance) == null);
-//     assert(getPairedObject(pairedInstance) == null);
-//     _pairedInstances[instance] = pairedInstance;
-//   }
-//
-//   /// Remove an instance pair containing [object].
-//   PairedInstance? removePairWithInstance(Object instance) {
-//     return _pairedInstances.remove(instance);
-//   }
-//
-//   /// Remove an instance pair containing [pairedInstance].
-//   Object? removePairWithPairedInstance(PairedInstance pairedInstance) {
-//     return _pairedInstances.inverse.remove(pairedInstance);
-//   }
-//
-//   /// Retrieve the [PairedInstance] paired with [instance].
-//   ///
-//   /// Returns null if this [instance] is not paired.
-//   PairedInstance? getPairedPairedInstance(Object instance) {
-//     return _pairedInstances[instance];
-//   }
-//
-//   /// Retrieve the [Object] paired with [pairedInstance].
-//   ///
-//   /// Returns null if this [pairedInstance] is not paired.
-//   Object? getPairedObject(PairedInstance pairedInstance) {
-//     return _pairedInstances.inverse[pairedInstance];
-//   }
-// }
-
 class InstancePairManager {
   final _pairedInstances = _BiMap<Object, PairedInstance>();
   final Map<Object, Set<Object>> _owners = <Object, Set<Object>>{};

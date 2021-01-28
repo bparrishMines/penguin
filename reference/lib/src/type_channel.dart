@@ -1,7 +1,5 @@
-import 'package:reference/reference.dart';
-
 import 'instance.dart';
-import 'paired_instance_map.dart';
+import 'instance_pair_manager.dart';
 
 /// A named channel used to handle communication between platform types.
 class TypeChannel<T extends Object> {
