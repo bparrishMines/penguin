@@ -1,6 +1,7 @@
 package github.penguin.reference.templates;
 
 import androidx.annotation.NonNull;
+
 import github.penguin.reference.ReferencePlugin;
 import github.penguin.reference.reference.TypeChannelMessenger;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;

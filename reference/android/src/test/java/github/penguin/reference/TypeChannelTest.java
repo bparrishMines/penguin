@@ -4,18 +4,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Collections;
-import java.util.List;
 
-import github.penguin.reference.async.Completable;
-import github.penguin.reference.async.Completer;
-import github.penguin.reference.reference.NewUnpairedInstance;
-import github.penguin.reference.reference.ReferenceType;
+import github.penguin.reference.TestClasses.TestClass;
+import github.penguin.reference.TestClasses.TestListener;
 import github.penguin.reference.reference.PairedInstance;
 import github.penguin.reference.reference.TypeChannel;
-import github.penguin.reference.reference.TypeChannelHandler;
-import github.penguin.reference.reference.TypeChannelMessenger;
-import github.penguin.reference.reference.TypeChannelMessageDispatcher;
-import github.penguin.reference.TestClasses.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -31,7 +24,7 @@ public class TypeChannelTest {
     testManager = new TestClasses.TestMessenger();
     testChannel = new TypeChannel<>(testManager, "test_channel");
   }
-  
+
   @Test
   public void createNewInstancePair() {
     final TestClasses.TestClass testClass = new TestClasses.TestClass(testManager);
@@ -60,9 +53,9 @@ public class TypeChannelTest {
   public void invokeMethod() {
     final TestClass testClass = new TestClass(testManager);
     testChannel.createNewInstancePair(testClass);
-    
+
     final TestListener<Object> testListener = new TestListener<>();
-    
+
     testChannel.invokeMethod(testClass, "aMethod", Collections.emptyList()).setOnCompleteListener(testListener);
     assertEquals("return_value", testListener.result);
   }
@@ -83,7 +76,7 @@ public class TypeChannelTest {
     testChannel.createNewInstancePair(testClass);
     testChannel.disposeInstancePair(testClass).setOnCompleteListener(testListener);
     assertFalse(testManager.isPaired(testClass));
-    
+
     // Test that this completes with second call.
     testChannel.disposeInstancePair(testClass).setOnCompleteListener(testListener);
 

@@ -1,12 +1,13 @@
 package github.penguin.reference;
 
-import github.penguin.reference.reference.NewUnpairedInstance;
-import io.flutter.plugin.common.MethodCall;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 
 import java.util.List;
+
+import github.penguin.reference.reference.NewUnpairedInstance;
+import io.flutter.plugin.common.MethodCall;
 
 @SuppressWarnings("rawtypes")
 public class ReferenceMatchers {

@@ -1,17 +1,19 @@
 package github.penguin.reference;
 
-import static github.penguin.reference.ReferenceMatchers.isUnpairedInstance;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import github.penguin.reference.TestClasses.*;
-import github.penguin.reference.reference.PairedInstance;
-import github.penguin.reference.reference.InstanceConverter.StandardInstanceConverter;
-import github.penguin.reference.reference.NewUnpairedInstance;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.util.Collections;
 
-import org.junit.Before;
-import org.junit.Test;
+import github.penguin.reference.TestClasses.TestClass;
+import github.penguin.reference.TestClasses.TestMessenger;
+import github.penguin.reference.reference.InstanceConverter.StandardInstanceConverter;
+import github.penguin.reference.reference.NewUnpairedInstance;
+import github.penguin.reference.reference.PairedInstance;
+
+import static github.penguin.reference.ReferenceMatchers.isUnpairedInstance;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 public class InstanceConverterTest {
   private static final StandardInstanceConverter converter = new StandardInstanceConverter();
@@ -24,7 +26,7 @@ public class InstanceConverterTest {
 
   @Test
   public void convertForRemoteManager_handlesPairedObject()
-          throws Exception {
+      throws Exception {
     testMessenger.onReceiveCreateNewInstancePair("test_channel",
         new PairedInstance("test_id"),
         Collections.emptyList());
@@ -51,7 +53,7 @@ public class InstanceConverterTest {
         "test_channel",
         new PairedInstance("test_id"),
         Collections.emptyList()
-      );
+    );
 
     assertEquals(
         converter.convertForLocalMessenger(testMessenger, new PairedInstance("test_id")),
@@ -62,9 +64,9 @@ public class InstanceConverterTest {
   @Test
   public void convertForLocalManager_handlesNewUnpairedInstance() throws Exception {
     assertEquals(converter.convertForLocalMessenger(
-            testMessenger,
+        testMessenger,
         new NewUnpairedInstance("test_channel", Collections.emptyList())
-      ),
+        ),
         testMessenger.testHandler.testClassInstance);
   }
 }

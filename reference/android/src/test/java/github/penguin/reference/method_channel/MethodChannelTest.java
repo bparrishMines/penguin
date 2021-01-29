@@ -1,7 +1,11 @@
 package github.penguin.reference.method_channel;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import org.junit.Before;
 import org.junit.Test;
+
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,6 +13,19 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import github.penguin.reference.TestClasses.TestClass;
+import github.penguin.reference.TestClasses.TestHandler;
+import github.penguin.reference.TestClasses.TestListener;
+import github.penguin.reference.reference.NewUnpairedInstance;
+import github.penguin.reference.reference.PairedInstance;
+import github.penguin.reference.reference.TypeChannel;
+import io.flutter.plugin.common.BinaryMessenger;
+import io.flutter.plugin.common.MethodCall;
+import io.flutter.plugin.common.MethodChannel;
+import io.flutter.plugin.common.MethodCodec;
+import io.flutter.plugin.common.StandardMethodCodec;
+
 import static github.penguin.reference.ReferenceMatchers.isMethodCall;
 import static github.penguin.reference.ReferenceMatchers.isUnpairedInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -18,20 +35,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-import github.penguin.reference.reference.NewUnpairedInstance;
-import github.penguin.reference.reference.PairedInstance;
-import github.penguin.reference.reference.TypeChannel;
-import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugin.common.MethodCall;
-import io.flutter.plugin.common.MethodChannel;
-import io.flutter.plugin.common.MethodCodec;
-import io.flutter.plugin.common.StandardMethodCodec;
-import github.penguin.reference.TestClasses.TestClass;
-import github.penguin.reference.TestClasses.TestHandler;
-import github.penguin.reference.TestClasses.TestListener;
 
 public class MethodChannelTest {
   private static final ReferenceMessageCodec messageCodec = new ReferenceMessageCodec();
@@ -39,111 +42,6 @@ public class MethodChannelTest {
 
   private static TestMessenger testMessenger;
   private static TypeChannel<TestClass> testChannel;
-
-  private static class TestMethodCallHandler implements MethodChannel.MethodCallHandler {
-    @Override
-    public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
-      final List<Object> arguments = call.arguments();
-      if (call.method.equals("REFERENCE_METHOD") && arguments.get(2).equals("aMethod")) {
-        result.success("return_value");
-      } else if (call.method.equals("REFERENCE_STATIC_METHOD") && arguments.get(1).equals("aStaticMethod")) {
-        result.success("return_value");
-      } else if (call.method.equals("REFERENCE_UNPAIRED_METHOD") && arguments.get(1).equals("aMethod")) {
-        result.success("return_value");
-      } else {
-        result.success(null);
-      }
-    }
-  }
-
-  private static class TestBinaryMessenger implements BinaryMessenger {
-    private final List<MethodCall> methodCalls = new ArrayList<>();
-    private final Map<String, BinaryMessageHandler> handlers = new HashMap<>();
-    private final TestMethodCallHandler testMethodCallHandler = new TestMethodCallHandler();
-
-    @Override
-    public void send(@NonNull String channel, @Nullable ByteBuffer message) {
-      send(channel, message, null);
-    }
-
-    @Override
-    public void send(@NonNull String channel, @Nullable ByteBuffer message, @Nullable final BinaryReply callback) {
-      if (channel.equals("test_method_channel")) {
-        final MethodCall methodCall = methodCodec.decodeMethodCall((ByteBuffer) message.position(0));
-        methodCalls.add(methodCall);
-        testMethodCallHandler.onMethodCall(methodCall, new MethodChannel.Result() {
-          @Override
-          public void success(@Nullable Object result) {
-            if (callback != null) {
-              callback.reply((ByteBuffer) methodCodec.encodeSuccessEnvelope(result).position(0));
-            }
-          }
-
-          @Override
-          public void error(String errorCode, @Nullable String errorMessage, @Nullable Object errorDetails) { }
-
-          @Override
-          public void notImplemented() { }
-        });
-      }
-    }
-
-    @Override
-    public void setMessageHandler(@NonNull String channel, @Nullable BinaryMessageHandler handler) {
-      if (handler == null) throw new AssertionError();
-      handlers.put(channel, handler);
-    }
-
-    public void handlePlatformMessage(String channel, final ByteBuffer message, @Nullable final MethodChannel.Result result) {
-      final BinaryMessageHandler handler = handlers.get(channel);
-        if (handler != null) {
-          handler.onMessage((ByteBuffer) message.position(0), new BinaryReply() {
-            @Override
-            public void reply(@Nullable ByteBuffer reply) {
-              if (result != null && reply != null) {
-                result.success(methodCodec.decodeEnvelope((ByteBuffer) reply.position(0)));
-              }
-            }
-          });
-        }
-    }
-  }
-
-  private static class TestMessenger extends MethodChannelMessenger {
-    public final TestBinaryMessenger testMessenger;
-    public final TestHandler testHandler;
-
-    private TestMessenger() {
-      super(new TestBinaryMessenger(), "test_method_channel");
-      this.testMessenger = (TestBinaryMessenger) binaryMessenger;
-      this.testHandler = new TestHandler(this);
-      registerHandler("test_channel", testHandler);
-    }
-
-    @Override
-    public String generateUniqueInstanceId(Object instance) {
-      return "test_instance_id";
-    }
-  }
-
-  private static class TestResult implements MethodChannel.Result {
-    private Object result;
-
-    @Override
-    public void success(@Nullable Object result) {
-      this.result = result;
-    }
-
-    @Override
-    public void error(String errorCode, @Nullable String errorMessage, @Nullable Object errorDetails) {
-
-    }
-
-    @Override
-    public void notImplemented() {
-
-    }
-  }
 
   @Before
   public void setUp() {
@@ -279,7 +177,7 @@ public class MethodChannelTest {
     testMessenger.testMessenger.methodCalls.clear();
 
     final TestListener<Object> testListener = new TestListener<>();
-    testChannel.invokeMethod(testClass,"aMethod", Collections.emptyList()).setOnCompleteListener(testListener);
+    testChannel.invokeMethod(testClass, "aMethod", Collections.emptyList()).setOnCompleteListener(testListener);
 
     assertEquals("return_value", testListener.result);
 
@@ -326,5 +224,112 @@ public class MethodChannelTest {
         isMethodCall("REFERENCE_DISPOSE",
             Arrays.asList("test_channel",
                 new PairedInstance("test_instance_id"))));
+  }
+
+  private static class TestMethodCallHandler implements MethodChannel.MethodCallHandler {
+    @Override
+    public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
+      final List<Object> arguments = call.arguments();
+      if (call.method.equals("REFERENCE_METHOD") && arguments.get(2).equals("aMethod")) {
+        result.success("return_value");
+      } else if (call.method.equals("REFERENCE_STATIC_METHOD") && arguments.get(1).equals("aStaticMethod")) {
+        result.success("return_value");
+      } else if (call.method.equals("REFERENCE_UNPAIRED_METHOD") && arguments.get(1).equals("aMethod")) {
+        result.success("return_value");
+      } else {
+        result.success(null);
+      }
+    }
+  }
+
+  private static class TestBinaryMessenger implements BinaryMessenger {
+    private final List<MethodCall> methodCalls = new ArrayList<>();
+    private final Map<String, BinaryMessageHandler> handlers = new HashMap<>();
+    private final TestMethodCallHandler testMethodCallHandler = new TestMethodCallHandler();
+
+    @Override
+    public void send(@NonNull String channel, @Nullable ByteBuffer message) {
+      send(channel, message, null);
+    }
+
+    @Override
+    public void send(@NonNull String channel, @Nullable ByteBuffer message, @Nullable final BinaryReply callback) {
+      if (channel.equals("test_method_channel")) {
+        final MethodCall methodCall = methodCodec.decodeMethodCall((ByteBuffer) message.position(0));
+        methodCalls.add(methodCall);
+        testMethodCallHandler.onMethodCall(methodCall, new MethodChannel.Result() {
+          @Override
+          public void success(@Nullable Object result) {
+            if (callback != null) {
+              callback.reply((ByteBuffer) methodCodec.encodeSuccessEnvelope(result).position(0));
+            }
+          }
+
+          @Override
+          public void error(String errorCode, @Nullable String errorMessage, @Nullable Object errorDetails) {
+          }
+
+          @Override
+          public void notImplemented() {
+          }
+        });
+      }
+    }
+
+    @Override
+    public void setMessageHandler(@NonNull String channel, @Nullable BinaryMessageHandler handler) {
+      if (handler == null) throw new AssertionError();
+      handlers.put(channel, handler);
+    }
+
+    public void handlePlatformMessage(String channel, final ByteBuffer message, @Nullable final MethodChannel.Result result) {
+      final BinaryMessageHandler handler = handlers.get(channel);
+      if (handler != null) {
+        handler.onMessage((ByteBuffer) message.position(0), new BinaryReply() {
+          @Override
+          public void reply(@Nullable ByteBuffer reply) {
+            if (result != null && reply != null) {
+              result.success(methodCodec.decodeEnvelope((ByteBuffer) reply.position(0)));
+            }
+          }
+        });
+      }
+    }
+  }
+
+  private static class TestMessenger extends MethodChannelMessenger {
+    public final TestBinaryMessenger testMessenger;
+    public final TestHandler testHandler;
+
+    private TestMessenger() {
+      super(new TestBinaryMessenger(), "test_method_channel");
+      this.testMessenger = (TestBinaryMessenger) binaryMessenger;
+      this.testHandler = new TestHandler(this);
+      registerHandler("test_channel", testHandler);
+    }
+
+    @Override
+    public String generateUniqueInstanceId(Object instance) {
+      return "test_instance_id";
+    }
+  }
+
+  private static class TestResult implements MethodChannel.Result {
+    private Object result;
+
+    @Override
+    public void success(@Nullable Object result) {
+      this.result = result;
+    }
+
+    @Override
+    public void error(String errorCode, @Nullable String errorMessage, @Nullable Object errorDetails) {
+
+    }
+
+    @Override
+    public void notImplemented() {
+
+    }
   }
 }

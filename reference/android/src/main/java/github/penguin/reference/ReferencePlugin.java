@@ -1,16 +1,20 @@
 package github.penguin.reference;
 
 import androidx.annotation.NonNull;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import github.penguin.reference.method_channel.MethodChannelMessenger;
 import github.penguin.reference.reference.TypeChannelMessenger;
 import github.penguin.reference.templates.PluginTemplate;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
-import java.util.HashMap;
-import java.util.Map;
 
-/** ReferencePlugin */
+/**
+ * ReferencePlugin
+ */
 public class ReferencePlugin implements FlutterPlugin {
   private static final Map<BinaryMessenger, TypeChannelMessenger> managers = new HashMap<>();
 

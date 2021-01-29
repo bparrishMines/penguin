@@ -7,12 +7,6 @@ public class Completable<T> {
   boolean isCompletedWithResult = false;
   boolean isCompletedWithError = false;
 
-  public interface OnCompleteListener<S> {
-    void onComplete(S result);
-
-    void onError(Throwable throwable);
-  }
-
   public void setOnCompleteListener(final OnCompleteListener<T> listener) {
     this.listener = listener;
     tryPassResultToListener();
@@ -24,5 +18,11 @@ public class Completable<T> {
     } else if (listener != null && isCompletedWithError) {
       this.listener.onError(error);
     }
+  }
+
+  public interface OnCompleteListener<S> {
+    void onComplete(S result);
+
+    void onError(Throwable throwable);
   }
 }

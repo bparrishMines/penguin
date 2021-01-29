@@ -1,16 +1,18 @@
 package github.penguin.reference.method_channel;
 
 import androidx.annotation.NonNull;
-import github.penguin.reference.reference.PairedInstance;
-import github.penguin.reference.reference.TypeChannelMessenger;
-import github.penguin.reference.reference.TypeChannelMessageDispatcher;
+
+import java.util.List;
+
 import github.penguin.reference.reference.NewUnpairedInstance;
+import github.penguin.reference.reference.PairedInstance;
+import github.penguin.reference.reference.TypeChannelMessageDispatcher;
+import github.penguin.reference.reference.TypeChannelMessenger;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodCodec;
 import io.flutter.plugin.common.StandardMethodCodec;
-import java.util.List;
 
 public class MethodChannelMessenger extends TypeChannelMessenger {
   static final String METHOD_CREATE = "REFERENCE_CREATE";
@@ -37,50 +39,46 @@ public class MethodChannelMessenger extends TypeChannelMessenger {
               @NonNull MethodCall call, @NonNull MethodChannel.Result callResult) {
             try {
               switch (call.method) {
-                case METHOD_CREATE:
-                  {
-                    final List<Object> arguments = (List<Object>) call.arguments;
-                    onReceiveCreateNewInstancePair(
-                        (String) arguments.get(0),
-                        (PairedInstance) arguments.get(1),
-                        (List<Object>) arguments.get(2));
-                    callResult.success(null);
-                    break;
-                  }
-                case METHOD_STATIC_METHOD:
-                  {
-                    final List<Object> arguments = (List<Object>) call.arguments;
-                    final Object result =
-                        onReceiveInvokeStaticMethod(
-                            (String) arguments.get(0),
-                            (String) arguments.get(1),
-                            (List<Object>) arguments.get(2));
-                    callResult.success(result);
-                    break;
-                  }
-                case METHOD_METHOD:
-                  {
-                    final List<Object> arguments = (List<Object>) call.arguments;
-                    final Object result =
-                        onReceiveInvokeMethod(
-                            (String) arguments.get(0),
-                            (PairedInstance) arguments.get(1),
-                            (String) arguments.get(2),
-                            (List<Object>) arguments.get(3));
-                    callResult.success(result);
-                    break;
-                  }
-                case METHOD_UNPAIRED_METHOD:
-                  {
-                    final List<Object> arguments = (List<Object>) call.arguments;
-                    final Object result =
-                        onReceiveInvokeMethodOnUnpairedInstance(
-                            (NewUnpairedInstance) arguments.get(0),
-                            (String) arguments.get(1),
-                            (List<Object>) arguments.get(2));
-                    callResult.success(result);
-                    break;
-                  }
+                case METHOD_CREATE: {
+                  final List<Object> arguments = (List<Object>) call.arguments;
+                  onReceiveCreateNewInstancePair(
+                      (String) arguments.get(0),
+                      (PairedInstance) arguments.get(1),
+                      (List<Object>) arguments.get(2));
+                  callResult.success(null);
+                  break;
+                }
+                case METHOD_STATIC_METHOD: {
+                  final List<Object> arguments = (List<Object>) call.arguments;
+                  final Object result =
+                      onReceiveInvokeStaticMethod(
+                          (String) arguments.get(0),
+                          (String) arguments.get(1),
+                          (List<Object>) arguments.get(2));
+                  callResult.success(result);
+                  break;
+                }
+                case METHOD_METHOD: {
+                  final List<Object> arguments = (List<Object>) call.arguments;
+                  final Object result =
+                      onReceiveInvokeMethod(
+                          (String) arguments.get(0),
+                          (PairedInstance) arguments.get(1),
+                          (String) arguments.get(2),
+                          (List<Object>) arguments.get(3));
+                  callResult.success(result);
+                  break;
+                }
+                case METHOD_UNPAIRED_METHOD: {
+                  final List<Object> arguments = (List<Object>) call.arguments;
+                  final Object result =
+                      onReceiveInvokeMethodOnUnpairedInstance(
+                          (NewUnpairedInstance) arguments.get(0),
+                          (String) arguments.get(1),
+                          (List<Object>) arguments.get(2));
+                  callResult.success(result);
+                  break;
+                }
                 case METHOD_DISPOSE:
                   final List<Object> arguments = (List<Object>) call.arguments;
                   onReceiveDisposeInstancePair(

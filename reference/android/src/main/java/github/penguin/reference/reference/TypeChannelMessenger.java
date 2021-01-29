@@ -17,7 +17,7 @@ public abstract class TypeChannelMessenger {
   public abstract TypeChannelMessageDispatcher getMessageDispatcher();
 
   private boolean addInstancePair(String channelName, Object instance, PairedInstance pairedInstance, Object owner)
-          throws Exception {
+      throws Exception {
     if (instancePairManager.addPair(instance, pairedInstance, owner)) {
       final TypeChannelHandler handler = getChannelHandler(channelName);
       if (handler != null) handler.onInstanceAdded(this, instance);
@@ -89,23 +89,23 @@ public abstract class TypeChannelMessenger {
 
     final Completer<PairedInstance> instanceCompleter = new Completer<>();
     getMessageDispatcher().sendCreateNewInstancePair(
-            channelName,
-            pairedInstance,
-            (List<Object>) getConverter().convertForRemoteMessenger(
-                    this,
-                    handler.getCreationArguments(this, instance))
+        channelName,
+        pairedInstance,
+        (List<Object>) getConverter().convertForRemoteMessenger(
+            this,
+            handler.getCreationArguments(this, instance))
     ).setOnCompleteListener(
-      new Completable.OnCompleteListener<Void>() {
-        @Override
-        public void onComplete(Void result) {
-          instanceCompleter.complete(pairedInstance);
-        }
+        new Completable.OnCompleteListener<Void>() {
+          @Override
+          public void onComplete(Void result) {
+            instanceCompleter.complete(pairedInstance);
+          }
 
-        @Override
-        public void onError(Throwable throwable) {
-          instanceCompleter.completeWithError(throwable);
-        }
-      });
+          @Override
+          public void onError(Throwable throwable) {
+            instanceCompleter.completeWithError(throwable);
+          }
+        });
 
     return instanceCompleter.completable;
   }
@@ -114,26 +114,26 @@ public abstract class TypeChannelMessenger {
     final Completer<Object> returnCompleter = new Completer<>();
 
     getMessageDispatcher()
-            .sendInvokeStaticMethod(
-                    channelName,
-                    methodName,
-                    (List<Object>) getConverter().convertForRemoteMessenger(this, arguments))
-            .setOnCompleteListener(
-                    new Completable.OnCompleteListener<Object>() {
-                      @Override
-                      public void onComplete(Object result) {
-                        try {
-                          returnCompleter.complete(getConverter().convertForLocalMessenger(TypeChannelMessenger.this, result));
-                        } catch (Exception exception) {
-                          onError(exception);
-                        }
-                      }
+        .sendInvokeStaticMethod(
+            channelName,
+            methodName,
+            (List<Object>) getConverter().convertForRemoteMessenger(this, arguments))
+        .setOnCompleteListener(
+            new Completable.OnCompleteListener<Object>() {
+              @Override
+              public void onComplete(Object result) {
+                try {
+                  returnCompleter.complete(getConverter().convertForLocalMessenger(TypeChannelMessenger.this, result));
+                } catch (Exception exception) {
+                  onError(exception);
+                }
+              }
 
-                      @Override
-                      public void onError(Throwable throwable) {
-                        returnCompleter.completeWithError(throwable);
-                      }
-                    });
+              @Override
+              public void onError(Throwable throwable) {
+                returnCompleter.completeWithError(throwable);
+              }
+            });
 
     return returnCompleter.completable;
   }
@@ -146,56 +146,56 @@ public abstract class TypeChannelMessenger {
     final Completer<Object> returnCompleter = new Completer<>();
 
     getMessageDispatcher()
-            .sendInvokeMethod(
-                    channelName,
-                    instancePairManager.getPairedPairedInstance(instance),
-                    methodName,
-                    (List<Object>) getConverter().convertForRemoteMessenger(this, arguments))
-            .setOnCompleteListener(
-                    new Completable.OnCompleteListener<Object>() {
-                      @Override
-                      public void onComplete(Object result) {
-                        try {
-                          returnCompleter.complete(getConverter().convertForLocalMessenger(TypeChannelMessenger.this, result));
-                        } catch (Exception exception) {
-                          onError(exception);
-                        }
-                      }
+        .sendInvokeMethod(
+            channelName,
+            instancePairManager.getPairedPairedInstance(instance),
+            methodName,
+            (List<Object>) getConverter().convertForRemoteMessenger(this, arguments))
+        .setOnCompleteListener(
+            new Completable.OnCompleteListener<Object>() {
+              @Override
+              public void onComplete(Object result) {
+                try {
+                  returnCompleter.complete(getConverter().convertForLocalMessenger(TypeChannelMessenger.this, result));
+                } catch (Exception exception) {
+                  onError(exception);
+                }
+              }
 
-                      @Override
-                      public void onError(Throwable throwable) {
-                        returnCompleter.completeWithError(throwable);
-                      }
-                    });
+              @Override
+              public void onError(Throwable throwable) {
+                returnCompleter.completeWithError(throwable);
+              }
+            });
 
     return returnCompleter.completable;
   }
 
   private Completable<Object> sendInvokeMethodOnUnpairedInstance(
-          String channelName, Object object, String methodName, List<Object> arguments) {
+      String channelName, Object object, String methodName, List<Object> arguments) {
     final Completer<Object> returnCompleter = new Completer<>();
 
     getMessageDispatcher()
-            .sendInvokeMethodOnUnpairedReference(
-                    createUnpairedInstance(channelName, object),
-                    methodName,
-                    (List<Object>) getConverter().convertForRemoteMessenger(this, arguments))
-            .setOnCompleteListener(
-                    new Completable.OnCompleteListener<Object>() {
-                      @Override
-                      public void onComplete(Object result) {
-                        try {
-                          returnCompleter.complete(getConverter().convertForLocalMessenger(TypeChannelMessenger.this, result));
-                        } catch (Exception exception) {
-                          onError(exception);
-                        }
-                      }
+        .sendInvokeMethodOnUnpairedReference(
+            createUnpairedInstance(channelName, object),
+            methodName,
+            (List<Object>) getConverter().convertForRemoteMessenger(this, arguments))
+        .setOnCompleteListener(
+            new Completable.OnCompleteListener<Object>() {
+              @Override
+              public void onComplete(Object result) {
+                try {
+                  returnCompleter.complete(getConverter().convertForLocalMessenger(TypeChannelMessenger.this, result));
+                } catch (Exception exception) {
+                  onError(exception);
+                }
+              }
 
-                      @Override
-                      public void onError(Throwable throwable) {
-                        returnCompleter.completeWithError(throwable);
-                      }
-                    });
+              @Override
+              public void onError(Throwable throwable) {
+                returnCompleter.completeWithError(throwable);
+              }
+            });
 
     return returnCompleter.completable;
   }

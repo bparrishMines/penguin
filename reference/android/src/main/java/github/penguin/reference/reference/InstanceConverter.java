@@ -1,11 +1,11 @@
 package github.penguin.reference.reference;
 
+import androidx.annotation.Nullable;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import androidx.annotation.Nullable;
 
 public interface InstanceConverter {
   @Nullable

@@ -2,14 +2,15 @@ package github.penguin.reference.reference;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 class BiMap<K, V> implements Map<K, V> {
-  private final Map<K, V> map = new HashMap<>();
   final BiMap<V, K> inverse;
+  private final Map<K, V> map = new HashMap<>();
 
   BiMap() {
     this.inverse = new BiMap<>(this);

@@ -1,18 +1,19 @@
 package github.penguin.reference;
 
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.Collections;
+
+import github.penguin.reference.TestClasses.TestClass;
+import github.penguin.reference.TestClasses.TestMessenger;
+import github.penguin.reference.reference.NewUnpairedInstance;
+import github.penguin.reference.reference.PairedInstance;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-
-import github.penguin.reference.reference.PairedInstance;
-import github.penguin.reference.reference.NewUnpairedInstance;
-import github.penguin.reference.TestClasses.*;
-
-import java.util.Collections;
-
-import org.junit.Before;
-import org.junit.Test;
 
 public class TypeChannelMessengerTest {
   private static TestMessenger testMessenger;
@@ -30,8 +31,8 @@ public class TypeChannelMessengerTest {
             new PairedInstance("test_id"),
             Collections.emptyList()
         ),
-    testMessenger.testHandler.testClassInstance
-      );
+        testMessenger.testHandler.testClassInstance
+    );
     assertTrue(testMessenger.isPaired(testMessenger.testHandler.testClassInstance));
     assertNull(
         testMessenger.onReceiveCreateNewInstancePair(
@@ -49,8 +50,8 @@ public class TypeChannelMessengerTest {
             "aStaticMethod",
             Collections.emptyList()
         ),
-    "return_value"
-      );
+        "return_value"
+    );
   }
 
   @Test
@@ -59,7 +60,7 @@ public class TypeChannelMessengerTest {
         testMessenger.createUnpairedInstance(
             "test_channel",
             new TestClass(testMessenger)
-            );
+        );
     assertEquals("test_channel", unpairedInstance.channelName);
     assertTrue(unpairedInstance.creationArguments.isEmpty());
   }
@@ -70,7 +71,7 @@ public class TypeChannelMessengerTest {
         "test_channel",
         new PairedInstance("test_id"),
         Collections.emptyList()
-      );
+    );
 
     assertEquals(
         "return_value",
@@ -80,7 +81,7 @@ public class TypeChannelMessengerTest {
             "aMethod",
             Collections.emptyList()
         )
-      );
+    );
   }
 
   @Test
@@ -89,10 +90,10 @@ public class TypeChannelMessengerTest {
         "return_value",
         testMessenger.onReceiveInvokeMethodOnUnpairedInstance(
             new NewUnpairedInstance("test_channel", Collections.emptyList()),
-    "aMethod",
-          Collections.emptyList()
+            "aMethod",
+            Collections.emptyList()
         )
-      );
+    );
   }
 
   @Test
@@ -101,13 +102,13 @@ public class TypeChannelMessengerTest {
         "test_channel",
         new PairedInstance("test_id"),
         Collections.emptyList()
-      );
+    );
     testMessenger.onReceiveDisposeInstancePair(
         "test_channel",
         new PairedInstance("test_id")
-        );
+    );
     assertFalse(
         testMessenger.isPaired(testMessenger.testHandler.testClassInstance)
-        );
+    );
   }
 }

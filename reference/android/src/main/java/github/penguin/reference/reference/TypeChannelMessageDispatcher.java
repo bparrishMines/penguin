@@ -1,7 +1,8 @@
 package github.penguin.reference.reference;
 
-import github.penguin.reference.async.Completable;
 import java.util.List;
+
+import github.penguin.reference.async.Completable;
 
 public interface TypeChannelMessageDispatcher {
   Completable<Void> sendCreateNewInstancePair(

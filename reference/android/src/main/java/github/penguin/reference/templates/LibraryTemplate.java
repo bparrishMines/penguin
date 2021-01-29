@@ -3,13 +3,15 @@
 package github.penguin.reference.templates;
 
 import androidx.annotation.NonNull;
+
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
+
 import github.penguin.reference.async.Completable;
 import github.penguin.reference.reference.TypeChannel;
 import github.penguin.reference.reference.TypeChannelHandler;
 import github.penguin.reference.reference.TypeChannelMessenger;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.List;
 
 // **************************************************************************
 // ReferenceGenerator
@@ -53,7 +55,7 @@ class LibraryTemplate {
 
     @Override
     public Object invokeStaticMethod(
-            TypeChannelMessenger manager, String methodName, List<Object> arguments)
+        TypeChannelMessenger manager, String methodName, List<Object> arguments)
         throws Exception {
       switch (methodName) {
         case "staticMethodTemplate":
@@ -66,7 +68,7 @@ class LibraryTemplate {
 
     @Override
     public List<Object> getCreationArguments(
-            TypeChannelMessenger manager, $ClassTemplate instance) {
+        TypeChannelMessenger manager, $ClassTemplate instance) {
       return Arrays.<Object>asList(instance.getFieldTemplate());
     }
 
@@ -97,10 +99,12 @@ class LibraryTemplate {
 
     @Override
     public void onInstanceAdded(TypeChannelMessenger manager, $ClassTemplate instance)
-            throws Exception {}
+        throws Exception {
+    }
 
     @Override
     public void onInstanceRemoved(TypeChannelMessenger manager, $ClassTemplate instance)
-        throws Exception {}
+        throws Exception {
+    }
   }
 }
