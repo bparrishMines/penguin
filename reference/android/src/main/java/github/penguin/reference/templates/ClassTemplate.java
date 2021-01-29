@@ -1,21 +1,21 @@
 package github.penguin.reference.templates;
 
-import github.penguin.reference.reference.TypeChannelManager;
+import github.penguin.reference.reference.TypeChannelMessenger;
 
 public class ClassTemplate implements LibraryTemplate.$ClassTemplate {
   private final Integer fieldTemplate;
 
-  static void setupChannel(TypeChannelManager manager) {
+  static void setupChannel(TypeChannelMessenger manager) {
     final LibraryTemplate.$ClassTemplateChannel channel = new LibraryTemplate.$ClassTemplateChannel(manager);
     channel.setHandler(
         new LibraryTemplate.$ClassTemplateHandler() {
           @Override
-          LibraryTemplate.$ClassTemplate onCreate(TypeChannelManager manager, LibraryTemplate.$ClassTemplateCreationArgs args) {
+          LibraryTemplate.$ClassTemplate onCreate(TypeChannelMessenger manager, LibraryTemplate.$ClassTemplateCreationArgs args) {
             return new ClassTemplate(args.fieldTemplate);
           }
 
           @Override
-          public Object $onStaticMethodTemplate(TypeChannelManager manager, String parameterTemplate) {
+          public Object $onStaticMethodTemplate(TypeChannelMessenger manager, String parameterTemplate) {
             return staticMethodTemplate(parameterTemplate);
           }
         });

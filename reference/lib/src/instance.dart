@@ -1,4 +1,4 @@
-import 'package:reference/reference.dart';
+import 'type_channel.dart';
 
 /// A class that can be paired with another instance in a [TypeChannelMessenger].
 mixin ReferenceType<T extends Object> {

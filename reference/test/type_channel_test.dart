@@ -161,18 +161,18 @@ void main() {
       final testClass = TestClass(testMessenger);
 
       testChannel.createNewInstancePair(testClass);
-      expect(testChannel.disposePair(testClass), completes);
+      expect(testChannel.disposeInstancePair(testClass), completes);
       expect(testMessenger.isPaired(testClass), isFalse);
 
-      expect(testChannel.disposePair(testClass), completes);
+      expect(testChannel.disposeInstancePair(testClass), completes);
 
       final Object owner = Object();
       testChannel.createNewInstancePair(testClass, owner: owner);
-      expect(testChannel.disposePair(testClass), completes);
+      expect(testChannel.disposeInstancePair(testClass), completes);
       expect(testMessenger.isPaired(testClass), isTrue);
 
       expect(
-        testChannel.disposePair(testClass, owner: owner),
+        testChannel.disposeInstancePair(testClass, owner: owner),
         completes,
       );
       expect(testMessenger.isPaired(testClass), isFalse);

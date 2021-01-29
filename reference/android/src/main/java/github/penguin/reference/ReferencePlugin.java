@@ -1,8 +1,8 @@
 package github.penguin.reference;
 
 import androidx.annotation.NonNull;
-import github.penguin.reference.method_channel.MethodChannelManager;
-import github.penguin.reference.reference.TypeChannelManager;
+import github.penguin.reference.method_channel.MethodChannelMessenger;
+import github.penguin.reference.reference.TypeChannelMessenger;
 import github.penguin.reference.templates.PluginTemplate;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.BinaryMessenger;
@@ -12,12 +12,12 @@ import java.util.Map;
 
 /** ReferencePlugin */
 public class ReferencePlugin implements FlutterPlugin {
-  private static final Map<BinaryMessenger, TypeChannelManager> managers = new HashMap<>();
+  private static final Map<BinaryMessenger, TypeChannelMessenger> managers = new HashMap<>();
 
-  public static TypeChannelManager getManagerInstance(BinaryMessenger messenger) {
-    TypeChannelManager manager = managers.get(messenger);
+  public static TypeChannelMessenger getManagerInstance(BinaryMessenger messenger) {
+    TypeChannelMessenger manager = managers.get(messenger);
     if (manager == null) {
-      manager = new MethodChannelManager(messenger, "github.penguin/reference");
+      manager = new MethodChannelMessenger(messenger, "github.penguin/reference");
       managers.put(messenger, manager);
     }
     return manager;

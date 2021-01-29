@@ -16,13 +16,11 @@ class InstancePairManager {
 
     if (!containsObject) {
       assert(!_pairedInstances.containsValue(pairedInstance));
+      _pairedInstances[object] = pairedInstance;
       _owners[object] = <Object>{};
     }
-    _owners[object]!.add(owner);
-    if (!_pairedInstances.containsKey(object)) {
-      _pairedInstances[object] = pairedInstance;
-    }
 
+    _owners[object]!.add(owner);
     return !containsObject;
   }
 

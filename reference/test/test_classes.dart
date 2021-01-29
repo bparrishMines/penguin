@@ -102,13 +102,13 @@ class TestMessageDispatcher with TypeChannelMessageDispatcher {
 }
 
 class TestClass with ReferenceType<TestClass> {
-  TestClass(this.manager);
+  TestClass(this.messenger);
 
-  final TypeChannelMessenger manager;
+  final TypeChannelMessenger messenger;
 
   @override
   TypeChannel<TestClass> get typeChannel => TypeChannel<TestClass>(
-        manager,
+        messenger,
         'test_channel',
       );
 }

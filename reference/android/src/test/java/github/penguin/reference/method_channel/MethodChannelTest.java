@@ -20,24 +20,24 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import github.penguin.reference.async.Completable;
+
 import github.penguin.reference.reference.NewUnpairedInstance;
-import github.penguin.reference.reference.PairableInstance;
 import github.penguin.reference.reference.PairedInstance;
 import github.penguin.reference.reference.TypeChannel;
-import github.penguin.reference.reference.TypeChannelHandler;
-import github.penguin.reference.reference.TypeChannelManager;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodCodec;
 import io.flutter.plugin.common.StandardMethodCodec;
+import github.penguin.reference.TestClasses.TestClass;
+import github.penguin.reference.TestClasses.TestHandler;
+import github.penguin.reference.TestClasses.TestListener;
 
 public class MethodChannelTest {
   private static final ReferenceMessageCodec messageCodec = new ReferenceMessageCodec();
   private static final MethodCodec methodCodec = new StandardMethodCodec(messageCodec);
 
-  private static TestManager testManager;
+  private static TestMessenger testMessenger;
   private static TypeChannel<TestClass> testChannel;
 
   private static class TestMethodCallHandler implements MethodChannel.MethodCallHandler {
@@ -109,11 +109,11 @@ public class MethodChannelTest {
     }
   }
 
-  private static class TestManager extends MethodChannelManager {
-    private final TestBinaryMessenger testMessenger;
-    private final TestHandler testHandler;
+  private static class TestMessenger extends MethodChannelMessenger {
+    public final TestBinaryMessenger testMessenger;
+    public final TestHandler testHandler;
 
-    private TestManager() {
+    private TestMessenger() {
       super(new TestBinaryMessenger(), "test_method_channel");
       this.testMessenger = (TestBinaryMessenger) binaryMessenger;
       this.testHandler = new TestHandler(this);
@@ -121,67 +121,9 @@ public class MethodChannelTest {
     }
 
     @Override
-    public String generateUniqueInstanceId() {
+    public String generateUniqueInstanceId(Object instance) {
       return "test_instance_id";
     }
-  }
-
-  private static class TestHandler implements TypeChannelHandler<TestClass> {
-    final TestClass testClassInstance;
-
-    private TestHandler(TestManager manager) {
-      testClassInstance = new TestClass(manager);
-    }
-
-    @Override
-    public List<Object> getCreationArguments(TypeChannelManager manager, TestClass instance) {
-      return Collections.emptyList();
-    }
-
-    @Override
-    public TestClass createInstance(TypeChannelManager manager, List<Object> arguments) {
-      return testClassInstance;
-    }
-
-    @Override
-    public Object invokeStaticMethod(TypeChannelManager manager, String methodName, List<Object> arguments) {
-      return "return_value";
-    }
-
-    @Override
-    public Object invokeMethod(TypeChannelManager manager, TestClass instance, String methodName, List<Object> arguments) {
-      return "return_value";
-    }
-
-    @Override
-    public void onInstanceDisposed(TypeChannelManager manager, TestClass instance) {
-
-    }
-  }
-
-  private static class TestClass implements PairableInstance<TestClass> {
-    private final TestManager manager;
-
-    TestClass(TestManager manager) {
-      this.manager = manager;
-    }
-
-    @Override
-    public TypeChannel<TestClass> getTypeChannel() {
-      return new TypeChannel<>(manager, "test_channel");
-    }
-  }
-
-  private static class TestListener<T> implements Completable.OnCompleteListener<T> {
-    T result;
-
-    @Override
-    public void onComplete(T result) {
-      this.result = result;
-    }
-
-    @Override
-    public void onError(Throwable throwable) { }
   }
 
   private static class TestResult implements MethodChannel.Result {
@@ -205,8 +147,8 @@ public class MethodChannelTest {
 
   @Before
   public void setUp() {
-    testManager = new TestManager();
-    testChannel = new TypeChannel<>(testManager, "test_channel");
+    testMessenger = new TestMessenger();
+    testChannel = new TypeChannel<>(testMessenger, "test_channel");
   }
 
   @Test
@@ -233,11 +175,11 @@ public class MethodChannelTest {
   public void methodChannelManager_onReceiveCreateNewInstancePair() {
     final List<Object> arguments = Arrays.asList("test_channel", new PairedInstance("test_instance_id"), Collections.emptyList());
     final MethodCall methodCall = new MethodCall("REFERENCE_CREATE", arguments);
-    testManager.testMessenger.handlePlatformMessage(
+    testMessenger.testMessenger.handlePlatformMessage(
         "test_method_channel",
         methodCodec.encodeMethodCall(methodCall), null);
 
-    assertTrue(testManager.isPaired(testManager.testHandler.testClassInstance));
+    assertTrue(testMessenger.isPaired(testMessenger.testHandler.testClassInstance));
   }
 
   @Test
@@ -246,14 +188,14 @@ public class MethodChannelTest {
     final MethodCall methodCall = new MethodCall("REFERENCE_STATIC_METHOD", arguments);
 
     final TestResult testResult = new TestResult();
-    testManager.testMessenger.handlePlatformMessage("test_method_channel",
+    testMessenger.testMessenger.handlePlatformMessage("test_method_channel",
         methodCodec.encodeMethodCall(methodCall), testResult);
     assertEquals("return_value", testResult.result);
   }
 
   @Test
   public void methodChannelManager_onReceiveInvokeMethod() throws Exception {
-    testManager.onReceiveCreateNewInstancePair("test_channel",
+    testMessenger.onReceiveCreateNewInstancePair("test_channel",
         new PairedInstance("test_id"),
         Collections.emptyList());
 
@@ -264,7 +206,7 @@ public class MethodChannelTest {
     final MethodCall methodCall = new MethodCall("REFERENCE_METHOD", arguments);
 
     final TestResult testResult = new TestResult();
-    testManager.testMessenger.handlePlatformMessage("test_method_channel",
+    testMessenger.testMessenger.handlePlatformMessage("test_method_channel",
         methodCodec.encodeMethodCall(methodCall), testResult);
 
     assertEquals("return_value", testResult.result);
@@ -279,7 +221,7 @@ public class MethodChannelTest {
     final MethodCall methodCall = new MethodCall("REFERENCE_UNPAIRED_METHOD", arguments);
 
     final TestResult testResult = new TestResult();
-    testManager.testMessenger.handlePlatformMessage("test_method_channel",
+    testMessenger.testMessenger.handlePlatformMessage("test_method_channel",
         methodCodec.encodeMethodCall(methodCall), testResult);
 
     assertEquals("return_value", testResult.result);
@@ -287,25 +229,25 @@ public class MethodChannelTest {
 
   @Test
   public void methodChannelManager_onReceiveDisposePair() throws Exception {
-    testManager.onReceiveCreateNewInstancePair("test_channel",
+    testMessenger.onReceiveCreateNewInstancePair("test_channel",
         new PairedInstance("test_id"),
         Collections.emptyList());
 
     final List<Object> arguments = Arrays.asList("test_channel", new PairedInstance("test_id"));
     final MethodCall methodCall = new MethodCall("REFERENCE_DISPOSE", arguments);
 
-    testManager.testMessenger.handlePlatformMessage("test_method_channel",
+    testMessenger.testMessenger.handlePlatformMessage("test_method_channel",
         methodCodec.encodeMethodCall(methodCall),
         null);
 
-    assertFalse(testManager.isPaired(testManager.testHandler.testClassInstance));
+    assertFalse(testMessenger.isPaired(testMessenger.testHandler.testClassInstance));
   }
 
   @Test
   public void methodChannelMessenger_createNewPair() {
-    testChannel.createNewInstancePair(new TestClass(testManager));
+    testChannel.createNewInstancePair(new TestClass(testMessenger));
 
-    final List<MethodCall> methodCalls = testManager.testMessenger.methodCalls;
+    final List<MethodCall> methodCalls = testMessenger.testMessenger.methodCalls;
     assertEquals(1, methodCalls.size());
     assertThat(methodCalls.get(0),
         isMethodCall("REFERENCE_CREATE",
@@ -321,7 +263,7 @@ public class MethodChannelTest {
 
     assertEquals("return_value", testListener.result);
 
-    final List<MethodCall> methodCalls = testManager.testMessenger.methodCalls;
+    final List<MethodCall> methodCalls = testMessenger.testMessenger.methodCalls;
     assertEquals(1, methodCalls.size());
     assertThat(methodCalls.get(0),
         isMethodCall("REFERENCE_STATIC_METHOD",
@@ -332,16 +274,16 @@ public class MethodChannelTest {
 
   @Test
   public void methodChannelMessenger_sendInvokeMethod() {
-    final TestClass testClass = new TestClass(testManager);
+    final TestClass testClass = new TestClass(testMessenger);
     testChannel.createNewInstancePair(testClass);
-    testManager.testMessenger.methodCalls.clear();
+    testMessenger.testMessenger.methodCalls.clear();
 
     final TestListener<Object> testListener = new TestListener<>();
     testChannel.invokeMethod(testClass,"aMethod", Collections.emptyList()).setOnCompleteListener(testListener);
 
     assertEquals("return_value", testListener.result);
 
-    final List<MethodCall> methodCalls = testManager.testMessenger.methodCalls;
+    final List<MethodCall> methodCalls = testMessenger.testMessenger.methodCalls;
     assertEquals(1, methodCalls.size());
     assertThat(methodCalls.get(0),
         isMethodCall("REFERENCE_METHOD",
@@ -354,13 +296,13 @@ public class MethodChannelTest {
   @Test
   public void methodChannelMessenger_sendInvokeMethodOnUnpairedReference() {
     final TestListener<Object> testListener = new TestListener<>();
-    testChannel.invokeMethod(new TestClass(testManager),
+    testChannel.invokeMethod(new TestClass(testMessenger),
         "aMethod",
         Collections.emptyList()).setOnCompleteListener(testListener);
 
     assertEquals("return_value", testListener.result);
 
-    final List<MethodCall> methodCalls = testManager.testMessenger.methodCalls;
+    final List<MethodCall> methodCalls = testMessenger.testMessenger.methodCalls;
     assertEquals(1, methodCalls.size());
     assertThat(methodCalls.get(0),
         isMethodCall("REFERENCE_UNPAIRED_METHOD",
@@ -372,13 +314,13 @@ public class MethodChannelTest {
 
   @Test
   public void methodChannelMessenger_disposePair() {
-    final TestClass testClass = new TestClass(testManager);
+    final TestClass testClass = new TestClass(testMessenger);
     testChannel.createNewInstancePair(testClass);
-    testManager.testMessenger.methodCalls.clear();
+    testMessenger.testMessenger.methodCalls.clear();
 
 
-    testChannel.disposePair(testClass);
-    final List<MethodCall> methodCalls = testManager.testMessenger.methodCalls;
+    testChannel.disposeInstancePair(testClass);
+    final List<MethodCall> methodCalls = testMessenger.testMessenger.methodCalls;
     assertEquals(1, methodCalls.size());
     assertThat(methodCalls.get(0),
         isMethodCall("REFERENCE_DISPOSE",

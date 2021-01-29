@@ -2,7 +2,7 @@ package github.penguin.reference.templates;
 
 import androidx.annotation.NonNull;
 import github.penguin.reference.ReferencePlugin;
-import github.penguin.reference.reference.TypeChannelManager;
+import github.penguin.reference.reference.TypeChannelMessenger;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
@@ -14,7 +14,7 @@ public class PluginTemplate implements FlutterPlugin {
   }
 
   private void initialize(final BinaryMessenger binaryMessenger) {
-    final TypeChannelManager manager = ReferencePlugin.getManagerInstance(binaryMessenger);
+    final TypeChannelMessenger manager = ReferencePlugin.getManagerInstance(binaryMessenger);
     ClassTemplate.setupChannel(manager);
   }
 

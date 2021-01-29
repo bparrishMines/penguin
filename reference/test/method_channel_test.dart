@@ -267,7 +267,7 @@ void main() {
 
       methodCallLog.clear();
 
-      testChannel.disposePair(testClass);
+      testChannel.disposeInstancePair(testClass);
       expect(testMessenger.isPaired(testClass), isFalse);
       expect(methodCallLog, <Matcher>[
         isMethodCall(

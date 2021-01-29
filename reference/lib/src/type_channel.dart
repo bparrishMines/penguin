@@ -74,7 +74,7 @@ class TypeChannel<T extends Object> {
   ///
   /// Sends a message to another [TypeChannelMessenger] with
   /// [TypeChannelMessenger.messenger].
-  Future<void> disposePair(T instance, {Object? owner}) async {
+  Future<void> disposeInstancePair(T instance, {Object? owner}) async {
     return messenger.sendDisposePair(name, instance, owner: owner);
   }
 }
@@ -368,7 +368,6 @@ abstract class TypeChannelMessenger {
       instance: instance,
       owner: owner,
     )) {
-      getChannelHandler(channelName)?.onInstanceRemoved(this, instance);
       return messageDispatcher.sendDisposePair(channelName, pairedInstance);
     }
   }

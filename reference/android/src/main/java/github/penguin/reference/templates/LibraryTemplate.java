@@ -6,7 +6,7 @@ import androidx.annotation.NonNull;
 import github.penguin.reference.async.Completable;
 import github.penguin.reference.reference.TypeChannel;
 import github.penguin.reference.reference.TypeChannelHandler;
-import github.penguin.reference.reference.TypeChannelManager;
+import github.penguin.reference.reference.TypeChannelMessenger;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
@@ -27,7 +27,7 @@ class LibraryTemplate {
   }
 
   static class $ClassTemplateChannel extends TypeChannel<$ClassTemplate> {
-    $ClassTemplateChannel(@NonNull TypeChannelManager manager) {
+    $ClassTemplateChannel(@NonNull TypeChannelMessenger manager) {
       super(manager, "github.penguin/template/template/ClassTemplate");
     }
 
@@ -41,19 +41,19 @@ class LibraryTemplate {
   }
 
   static class $ClassTemplateHandler implements TypeChannelHandler<$ClassTemplate> {
-    $ClassTemplate onCreate(TypeChannelManager manager, $ClassTemplateCreationArgs args)
+    $ClassTemplate onCreate(TypeChannelMessenger manager, $ClassTemplateCreationArgs args)
         throws Exception {
       return null;
     }
 
-    public Object $onStaticMethodTemplate(TypeChannelManager manager, String parameterTemplate)
+    public Object $onStaticMethodTemplate(TypeChannelMessenger manager, String parameterTemplate)
         throws Exception {
       return null;
     }
 
     @Override
     public Object invokeStaticMethod(
-        TypeChannelManager manager, String methodName, List<Object> arguments)
+            TypeChannelMessenger manager, String methodName, List<Object> arguments)
         throws Exception {
       switch (methodName) {
         case "staticMethodTemplate":
@@ -66,12 +66,12 @@ class LibraryTemplate {
 
     @Override
     public List<Object> getCreationArguments(
-        TypeChannelManager manager, $ClassTemplate instance) {
+            TypeChannelMessenger manager, $ClassTemplate instance) {
       return Arrays.<Object>asList(instance.getFieldTemplate());
     }
 
     @Override
-    public $ClassTemplate createInstance(TypeChannelManager manager, List<Object> arguments)
+    public $ClassTemplate createInstance(TypeChannelMessenger manager, List<Object> arguments)
         throws Exception {
       final $ClassTemplateCreationArgs args = new $ClassTemplateCreationArgs();
       args.fieldTemplate = (Integer) arguments.get(0);
@@ -80,7 +80,7 @@ class LibraryTemplate {
 
     @Override
     public Object invokeMethod(
-        TypeChannelManager manager,
+        TypeChannelMessenger manager,
         $ClassTemplate instance,
         String methodName,
         List<Object> arguments)
@@ -96,7 +96,11 @@ class LibraryTemplate {
     }
 
     @Override
-    public void onInstanceDisposed(TypeChannelManager manager, $ClassTemplate instance)
+    public void onInstanceAdded(TypeChannelMessenger manager, $ClassTemplate instance)
+            throws Exception {}
+
+    @Override
+    public void onInstanceRemoved(TypeChannelMessenger manager, $ClassTemplate instance)
         throws Exception {}
   }
 }
