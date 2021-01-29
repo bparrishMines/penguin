@@ -2,6 +2,7 @@ import 'dart:collection';
 
 import 'instance.dart';
 
+// TODO: Test
 class InstancePairManager {
   final _pairedInstances = _BiMap<Object, PairedInstance>();
   final Map<Object, Set<Object>> _owners = <Object, Set<Object>>{};
@@ -9,9 +10,11 @@ class InstancePairManager {
   /// Adds an instance pair.
   ///
   /// Duplicate keys or values will throw an [AssertionError].
-  bool addPair(Object object, PairedInstance pairedInstance, {Object? owner}) {
-    owner ??= object;
-
+  bool addPair(
+    Object object,
+    PairedInstance pairedInstance, {
+    required Object owner,
+  }) {
     final bool containsObject = _pairedInstances.containsKey(object);
 
     if (!containsObject) {
@@ -27,12 +30,10 @@ class InstancePairManager {
   /// Remove an instance pair containing [object].
   bool removePairWithObject(
     Object object, {
-    Object? owner,
+    required Object owner,
     bool force = false,
   }) {
     if (!_pairedInstances.containsKey(object)) return false;
-
-    owner ??= object;
 
     final Set<Object> owners = _owners[object]!;
     owners.remove(owner);
@@ -52,7 +53,7 @@ class InstancePairManager {
     final Object? object = _pairedInstances.inverse[pairedInstance];
     if (object == null) return false;
 
-    return removePairWithObject(object, force: force);
+    return removePairWithObject(object, owner: object, force: force);
   }
 
   bool isPaired(Object instance) {

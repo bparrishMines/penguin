@@ -188,7 +188,7 @@ abstract class TypeChannelMessenger {
     required String channelName,
     required Object instance,
     required PairedInstance pairedInstance,
-    Object? owner,
+    required Object owner,
   }) {
     if (_instancePairManager.addPair(instance, pairedInstance, owner: owner)) {
       getChannelHandler(channelName)?.onInstanceAdded(this, instance);
@@ -200,7 +200,7 @@ abstract class TypeChannelMessenger {
   bool _removeInstancePair({
     required String channelName,
     required Object instance,
-    Object? owner,
+    required Object owner,
     bool force = false,
   }) {
     if (_instancePairManager.removePairWithObject(
@@ -264,7 +264,7 @@ abstract class TypeChannelMessenger {
       channelName: channelName,
       instance: instance,
       pairedInstance: pairedInstance,
-      owner: owner,
+      owner: owner ?? instance,
     );
 
     if (!createdNewInstance) return null;
@@ -366,7 +366,7 @@ abstract class TypeChannelMessenger {
     if (_removeInstancePair(
       channelName: channelName,
       instance: instance,
-      owner: owner,
+      owner: owner ?? instance,
     )) {
       return messageDispatcher.sendDisposePair(channelName, pairedInstance);
     }
@@ -401,6 +401,7 @@ abstract class TypeChannelMessenger {
       channelName: channelName,
       instance: instance,
       pairedInstance: pairedInstance,
+      owner: instance,
     );
     return instance;
   }
@@ -488,6 +489,7 @@ abstract class TypeChannelMessenger {
     _removeInstancePair(
       channelName: channelName,
       instance: instance,
+      owner: instance,
       force: true,
     );
   }

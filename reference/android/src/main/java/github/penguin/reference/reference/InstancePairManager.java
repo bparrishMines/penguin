@@ -9,27 +9,17 @@ public class InstancePairManager {
   private final BiMap<Object, PairedInstance> pairedInstances = new BiMap<>();
   private final Map<Object, Set<Object>> owners = new HashMap<>();
 
-  boolean addPair(Object object, PairedInstance pairedInstance) {
-    return addPair(object, pairedInstance, null);
-  }
-
   boolean addPair(Object object, PairedInstance pairedInstance, Object owner) {
-    if (owner == null) owner = object;
+    final boolean wasPaired = isPaired(object);
 
-    final boolean containsObject = pairedInstances.containsKey(object);
-
-    if (!containsObject) {
+    if (!wasPaired) {
       if (pairedInstances.containsValue(pairedInstance)) throw new IllegalStateException();
       pairedInstances.put(object, pairedInstance);
       owners.put(object, new HashSet<>());
     }
 
     owners.get(object).add(owner);
-    return !containsObject;
-  }
-
-  boolean removePairWithObject(Object object) {
-    return removePairWithObject(object, null);
+    return !wasPaired;
   }
 
   boolean removePairWithObject(Object object, Object owner) {
@@ -37,7 +27,7 @@ public class InstancePairManager {
   }
 
   boolean removePairWithObject(Object object, Object owner, boolean force) {
-    if (!pairedInstances.containsKey(object)) return false;
+    if (!isPaired(object)) return false;
 
     if (owner == null) owner = object;
 
