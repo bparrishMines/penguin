@@ -22,10 +22,6 @@ public class InstancePairManager {
     return !wasPaired;
   }
 
-  boolean removePairWithObject(Object object, Object owner) {
-    return removePairWithObject(object, owner, false);
-  }
-
   boolean removePairWithObject(Object object, Object owner, boolean force) {
     if (!isPaired(object)) return false;
 
@@ -39,17 +35,6 @@ public class InstancePairManager {
     pairedInstances.remove(object);
     objectOwners.remove(object);
     return true;
-  }
-
-  boolean removePairWithPairedInstance(PairedInstance pairedInstance) {
-    return removePairWithPairedInstance(pairedInstance, false);
-  }
-
-  boolean removePairWithPairedInstance(PairedInstance pairedInstance, boolean force) {
-    final Object object = pairedInstances.inverse.get(pairedInstance);
-    if (object == null) return false;
-
-    return removePairWithObject(object, force);
   }
 
   boolean isPaired(Object instance) {

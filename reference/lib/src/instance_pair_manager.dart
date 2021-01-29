@@ -45,17 +45,6 @@ class InstancePairManager {
     return true;
   }
 
-  /// Remove an instance pair containing [pairedInstance].
-  bool removePairWithPairedInstance(
-    PairedInstance pairedInstance, {
-    bool force = false,
-  }) {
-    final Object? object = _pairedInstances.inverse[pairedInstance];
-    if (object == null) return false;
-
-    return removePairWithObject(object, owner: object, force: force);
-  }
-
   bool isPaired(Object instance) {
     return getPairedPairedInstance(instance) != null;
   }
