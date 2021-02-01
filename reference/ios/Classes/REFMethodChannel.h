@@ -7,12 +7,12 @@ NS_ASSUME_NONNULL_BEGIN
 @interface REFReferenceReaderWriter : FlutterStandardReaderWriter
 @end
 
-@interface REFMethodChannelMessenger : NSObject<REFTypeChannelMessenger>
+@interface REFMethodChannelMessageDispatcher : NSObject<REFTypeChannelMessageDispatcher>
 @property(readonly) FlutterMethodChannel *channel;
 - (instancetype)initWithChannel:(FlutterMethodChannel *)channel;
 @end
 
-@interface REFMethodChannelManager : REFTypeChannelManager
+@interface REFMethodChannelMessenger : REFTypeChannelMessenger
 @property(readonly) id<FlutterBinaryMessenger> binaryMessenger;
 @property(readonly) FlutterMethodChannel *channel;
 - (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger

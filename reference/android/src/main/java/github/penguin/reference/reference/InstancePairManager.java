@@ -25,8 +25,6 @@ public class InstancePairManager {
   boolean removePairWithObject(Object object, Object owner, boolean force) {
     if (!isPaired(object)) return false;
 
-    if (owner == null) owner = object;
-
     final Set<Object> objectOwners = owners.get(object);
     objectOwners.remove(owner);
 

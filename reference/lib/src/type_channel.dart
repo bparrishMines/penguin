@@ -235,8 +235,12 @@ abstract class TypeChannelMessenger {
   }
 
   /// Set a [TypeChannelHandler] for a type channel.
-  void registerHandler(String channelName, TypeChannelHandler handler) {
-    _channelHandlers[channelName] = handler;
+  void registerHandler(String channelName, TypeChannelHandler? handler) {
+    if (handler != null) {
+      _channelHandlers[channelName] = handler;
+    } else {
+      _channelHandlers.remove(channelName);
+    }
   }
 
   /// Retrieve the registered [TypeChannelHandler] for a type channel.

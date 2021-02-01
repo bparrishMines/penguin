@@ -50,8 +50,12 @@ public abstract class TypeChannelMessenger {
     return instancePairManager.getPairedObject(pairedInstance);
   }
 
-  public void registerHandler(String channelName, TypeChannelHandler<?> handler) {
-    channelHandlers.put(channelName, handler);
+  public void registerHandler(String channelName, @Nullable TypeChannelHandler<?> handler) {
+    if (handler != null) {
+      channelHandlers.put(channelName, handler);
+    } else {
+      channelHandlers.remove(channelName);
+    }
   }
 
   @Nullable
@@ -62,11 +66,6 @@ public abstract class TypeChannelMessenger {
   @NonNull
   public InstanceConverter getConverter() {
     return new InstanceConverter.StandardInstanceConverter();
-  }
-
-  @NonNull
-  public Completable<PairedInstance> sendCreateNewInstancePair(String channelName, Object instance) {
-    return sendCreateNewInstancePair(channelName, instance);
   }
 
   @NonNull
@@ -198,11 +197,6 @@ public abstract class TypeChannelMessenger {
             });
 
     return returnCompleter.completable;
-  }
-
-  @NonNull
-  public Completable<Void> sendDisposeInstancePair(String channelName, Object instance) {
-    return sendDisposeInstancePair(channelName, instance, instance);
   }
 
   @NonNull

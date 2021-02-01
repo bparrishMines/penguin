@@ -1,5 +1,14 @@
 #import "REFCollections_Internal.h"
 
+@interface REFBiMapTable<KeyType, ObjectType> : NSObject
+// Inverse of inverse is null
+@property(readonly) REFBiMapTable<ObjectType, KeyType> *_Nullable inverse;
+- (void)setObject:(ObjectType)object forKey:(KeyType)key;
+- (void)removeObjectForKey:(KeyType)key;
+- (ObjectType _Nullable)objectForKey:(KeyType)key;
+- (NSEnumerator<ObjectType> *)objectEnumerator;
+@end
+
 @implementation REFThreadSafeMapTable {
   NSMapTable<id, id> *_table;
   dispatch_queue_t _lockQueue;
@@ -47,7 +56,6 @@
 }
 @end
 
-// TODO: Inverse of inverse not reachable
 @implementation REFBiMapTable {
   REFThreadSafeMapTable<id, id> *_table;
   dispatch_queue_t _lockQueue;
@@ -94,35 +102,55 @@
 }
 @end
 
-@implementation REFPairedInstanceMap {
+@implementation InstancePairManager {
   REFBiMapTable<NSObject *, REFPairedInstance *> *_pairedInstances;
+  // TODO: Need to make thread-safe owner sets
+  REFThreadSafeMapTable<NSObject *, NSMutableSet<NSObject *> *> *_owners;
 }
 
 - (instancetype)init {
   self = [super init];
   if (self) {
     _pairedInstances = [[REFBiMapTable alloc] init];
+    _owners = [[REFThreadSafeMapTable alloc] init];
   }
   return self;
 }
 
-- (void)add:(id)instance pairedInstance:(REFPairedInstance *)pairedInstance {
-  [_pairedInstances setObject:pairedInstance forKey:instance];
+- (BOOL)isPaired:(NSObject *)object {
+  return [self getPairedPairedInstance:object] != nil;
 }
 
-- (REFPairedInstance *_Nullable)removePairWithObject:(id)object {
-  REFPairedInstance *pairedInstance = [_pairedInstances objectForKey:object];
+- (BOOL)addPair:(NSObject *)object
+ pairedInstance:(REFPairedInstance *)pairedInstance
+          owner:(NSObject *)owner {
+  BOOL wasPaired = [self isPaired:object];
+  
+  if (!wasPaired) {
+    [_pairedInstances setObject:pairedInstance forKey:object];
+    [_owners setObject:[NSMutableSet set] forKey:object];
+  }
+  
+  [[_owners objectForKey:object] addObject:owner];
+  return !wasPaired;
+}
+
+- (BOOL)removePairWithObject:(id)object
+                       owner:(NSObject *)owner
+                       force:(BOOL)force {
+  if (![self isPaired:object]) return NO;
+  
+  NSMutableSet *objectOwners = [_owners objectForKey:object];
+  [objectOwners removeObject:owner];
+  
+  if (!force && [objectOwners count] > 0) return NO;
+  
   [_pairedInstances removeObjectForKey:object];
-  return pairedInstance;
+  [_owners removeObjectForKey:object];
+  return YES;
 }
 
-- (id _Nullable)removePairWithPairedInstance:(REFPairedInstance *)pairedInstance {
-  id object = [_pairedInstances.inverse objectForKey:pairedInstance];
-  [_pairedInstances removeObjectForKey:object];
-  return object;
-}
-
-- (REFPairedInstance *_Nullable)getPairedInstance:(id)object {
+- (REFPairedInstance *_Nullable)getPairedPairedInstance:(id)object {
   return [_pairedInstances objectForKey:object];
 }
 
