@@ -9,17 +9,17 @@
 @end
 
 @implementation REFTypeChannelTest {
-  REFTestManager *_testManager;
+  REFTestMessenger *_testMessenger;
   REFTypeChannel *_testChannel;
 }
 
 - (void)setUp {
-  _testManager = [[REFTestManager alloc] init];
-  _testChannel = [[REFTypeChannel alloc] initWithManager:_testManager name:@"test_channel"];
+  _testMessenger = [[REFTestMessenger alloc] init];
+  _testChannel = [[REFTypeChannel alloc] initWithMessenger:_testMessenger name:@"test_channel"];
 }
 
 - (void)testCreateNewInstancePair {
-  REFTestClass *testClass = [[REFTestClass alloc] initWithManager:_testManager];
+  REFTestClass *testClass = [[REFTestClass alloc] initWithMessenger:_testMessenger];
   
   __block REFPairedInstance *blockPairedInstance;
   [_testChannel createNewInstancePair:testClass completion:^(REFPairedInstance *pairedInstance, NSError *error) {
@@ -43,7 +43,7 @@
 }
 
 - (void)testInvokeMethod {
-  REFTestClass *testClass = [[REFTestClass alloc] initWithManager:_testManager];
+  REFTestClass *testClass = [[REFTestClass alloc] initWithMessenger:_testMessenger];
   [_testChannel createNewInstancePair:testClass completion:^(REFPairedInstance *pairedInstance, NSError *error) {}];
   
   __block id blockResult;
@@ -55,7 +55,7 @@
 
 - (void)testInvokeMethodOnUnpairedInstance {
   __block id blockResult;
-  [_testChannel invokeMethod:[[REFTestClass alloc] initWithManager:_testManager]
+  [_testChannel invokeMethod:[[REFTestClass alloc] initWithMessenger:_testMessenger]
                   methodName:@"aMethod"
                    arguments:@[]
                   completion:^(id result, NSError *error) {
@@ -65,11 +65,11 @@
 }
 
 - (void)testDisposePair {
-  REFTestClass *testClass = [[REFTestClass alloc] initWithManager:_testManager];
+  REFTestClass *testClass = [[REFTestClass alloc] initWithMessenger:_testMessenger];
   
   [_testChannel createNewInstancePair:testClass completion:^(REFPairedInstance *pairedInstance, NSError *error) {}];
-  [_testChannel disposePair:testClass completion:^(NSError *error) {}];
+  [_testChannel disposeInstancePair:testClass completion:^(NSError *error) {}];
   
-  XCTAssertFalse([_testManager isPaired:testClass]);
+  XCTAssertFalse([_testMessenger isPaired:testClass]);
 }
 @end

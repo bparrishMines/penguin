@@ -186,7 +186,9 @@
   
   BOOL removedInstance = [self removeInstancePair:channelName instance:instance owner:owner force:NO];
   if (removedInstance) {
-    [_messageDispatcher sendDisposePair:channelName pairedInstance:pairedInstance completion:completion];
+    [_messageDispatcher sendDisposeInstancePair:channelName
+                                 pairedInstance:pairedInstance
+                                     completion:completion];
   }
 }
 

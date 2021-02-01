@@ -171,9 +171,9 @@ NSString *const REFMethodDispose = @"REFERENCE_DISPOSE";
   }];
 }
 
-- (void)sendDisposePair:(nonnull NSString *)handlerChannel
-         pairedInstance:(nonnull REFPairedInstance *)pairedInstance
-             completion:(nonnull void (^)(NSError * _Nullable))completion {
+- (void)sendDisposeInstancePair:(nonnull NSString *)handlerChannel
+                 pairedInstance:(nonnull REFPairedInstance *)pairedInstance
+                     completion:(nonnull void (^)(NSError * _Nullable))completion {
   [_channel invokeMethod:REFMethodDispose
                arguments:@[handlerChannel, pairedInstance]
                   result:^(id result) {

@@ -70,9 +70,9 @@ NS_ASSUME_NONNULL_BEGIN
                                  arguments:(NSArray<id> *)arguments
                                 completion:(void (^)(id _Nullable, NSError *_Nullable))completion;
 
-- (void)sendDisposePair:(NSString *)channelName
-         pairedInstance:(REFPairedInstance *)pairedInstance
-             completion:(void (^)(NSError *_Nullable))completion;
+- (void)sendDisposeInstancePair:(NSString *)channelName
+                 pairedInstance:(REFPairedInstance *)pairedInstance
+                     completion:(void (^)(NSError *_Nullable))completion;
 @end
 
 @protocol REFInstanceConverter <NSObject>

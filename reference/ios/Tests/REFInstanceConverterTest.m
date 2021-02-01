@@ -9,49 +9,49 @@
 @end
 
 @implementation REFInstanceConverterTest {
-  REFStandardInstanceConverter *_converter;
-  REFTestManager *_testManager;
+    REFStandardInstanceConverter *_converter;
+    REFTestMessenger *_testMessenger;
 }
 
 - (void)setUp {
-  _converter = [[REFStandardInstanceConverter alloc] init];
-  _testManager = [[REFTestManager alloc] init];
+    _converter = [[REFStandardInstanceConverter alloc] init];
+    _testMessenger = [[REFTestMessenger alloc] init];
 }
 
-- (void)testConvertForRemoteManager_handlesPairedObject {
-  [_testManager onReceiveCreateNewInstancePair:@"test_channel"
-                                pairedInstance:[REFPairedInstance fromID:@"test_id"]
-                                     arguments:@[]];
-  
-  XCTAssertEqualObjects([REFPairedInstance fromID:@"test_id"],
-                        [_converter convertForRemoteManager:_testManager
-                                                        obj:_testManager.testHandler.testClassInstance]);
+- (void)testConvertForRemoteMessenger_handlesPairedObject {
+    [_testMessenger onReceiveCreateNewInstancePair:@"test_channel"
+                                    pairedInstance:[REFPairedInstance fromID:@"test_id"]
+                                         arguments:@[]];
+    
+    XCTAssertEqualObjects([REFPairedInstance fromID:@"test_id"],
+                          [_converter convertForRemoteMessenger:_testMessenger
+                                                            obj:_testMessenger.testHandler.testClassInstance]);
 }
 
-- (void)testConvertForRemoteManager_handlesUnpairedObject {
-  assertThat([_converter convertForRemoteManager:_testManager
-                                                        obj:[[REFTestClass alloc] initWithManager:_testManager]],
-                                                        isUnpairedInstance(@"test_channel", @[]));
+- (void)testConvertForRemoteMessenger_handlesUnpairedObject {
+    assertThat([_converter convertForRemoteMessenger:_testMessenger
+                                                 obj:[[REFTestClass alloc] initWithMessenger:_testMessenger]],
+               isUnpairedInstance(@"test_channel", @[]));
 }
 
-- (void)testConvertForRemoteManager_handlesNonPairableInstance {
-  XCTAssertEqualObjects(@"potato", [_converter convertForRemoteManager:_testManager obj:@"potato"]);
+- (void)testConvertForRemoteMessenger_handlesNonPairableInstance {
+    XCTAssertEqualObjects(@"potato", [_converter convertForRemoteMessenger:_testMessenger obj:@"potato"]);
 }
 
-- (void)testConvertForLocalManager_handlesPairedInstance {
-  [_testManager onReceiveCreateNewInstancePair:@"test_channel"
-                                pairedInstance:[REFPairedInstance fromID:@"test_id"]
-                                     arguments:@[]];
-  
-  XCTAssertEqualObjects(_testManager.testHandler.testClassInstance,
-  [_converter convertForLocalManager:_testManager
-                                 obj:[REFPairedInstance fromID:@"test_id"]]);
+- (void)testConvertForLocalMessenger_handlesPairedInstance {
+    [_testMessenger onReceiveCreateNewInstancePair:@"test_channel"
+                                    pairedInstance:[REFPairedInstance fromID:@"test_id"]
+                                         arguments:@[]];
+    
+    XCTAssertEqualObjects(_testMessenger.testHandler.testClassInstance,
+                          [_converter convertForLocalMessenger:_testMessenger
+                                                           obj:[REFPairedInstance fromID:@"test_id"]]);
 }
 
-- (void)testConvertForLocalManager_handlesNewUnpairedInstance {
-  XCTAssertEqualObjects([_converter convertForLocalManager:_testManager
-                                                       obj:[[REFNewUnpairedInstance alloc] initWithChannelName:@"test_channel"
-                                                                                             creationArguments:@[]]],
-                        _testManager.testHandler.testClassInstance);
+- (void)testConvertForLocalMessenger_handlesNewUnpairedInstance {
+    XCTAssertEqualObjects([_converter convertForLocalMessenger:_testMessenger
+                                                           obj:[[REFNewUnpairedInstance alloc] initWithChannelName:@"test_channel"
+                                                                                                 creationArguments:@[]]],
+                          _testMessenger.testHandler.testClassInstance);
 }
 @end
