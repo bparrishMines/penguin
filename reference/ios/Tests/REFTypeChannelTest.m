@@ -25,13 +25,21 @@
   [_testChannel createNewInstancePair:testClass completion:^(REFPairedInstance *pairedInstance, NSError *error) {
     blockPairedInstance = pairedInstance;
   }];
-  
   XCTAssertEqualObjects([REFPairedInstance fromID:@"test_instance_id"], blockPairedInstance);
+  XCTAssertTrue([_testMessenger isPaired:testClass]);
   
   [_testChannel createNewInstancePair:testClass completion:^(REFPairedInstance *pairedInstance, NSError *error) {
     blockPairedInstance = pairedInstance;
   }];
   XCTAssertNil(blockPairedInstance);
+
+  [_testChannel createNewInstancePair:testClass
+                                owner:[[NSObject alloc] init]
+                           completion:^(REFPairedInstance *pairedInstance, NSError *error) {
+    blockPairedInstance = pairedInstance;
+  }];
+  XCTAssertNil(blockPairedInstance);
+  XCTAssertTrue([_testMessenger isPaired:testClass]);
 }
 
 - (void)testInvokeStaticMethod {
@@ -64,12 +72,20 @@
   XCTAssertEqualObjects(@"return_value", blockResult);
 }
 
-- (void)testDisposePair {
+- (void)testDisposeInstancePair {
   REFTestClass *testClass = [[REFTestClass alloc] initWithMessenger:_testMessenger];
   
   [_testChannel createNewInstancePair:testClass completion:^(REFPairedInstance *pairedInstance, NSError *error) {}];
   [_testChannel disposeInstancePair:testClass completion:^(NSError *error) {}];
+  XCTAssertFalse([_testMessenger isPaired:testClass]);
+
+  [_testChannel disposeInstancePair:testClass completion:^(NSError *error) {}];
+  NSObject *owner = [[NSObject alloc] init];
+  [_testChannel createNewInstancePair:testClass owner:owner completion:^(REFPairedInstance *pairedInstance, NSError *error) {}];
+  [_testChannel disposeInstancePair:testClass completion:^(NSError *error) {}];
+  XCTAssertTrue([_testMessenger isPaired:testClass]);
   
+  [_testChannel disposeInstancePair:testClass owner:owner completion:^(NSError *error) {}];
   XCTAssertFalse([_testMessenger isPaired:testClass]);
 }
 @end

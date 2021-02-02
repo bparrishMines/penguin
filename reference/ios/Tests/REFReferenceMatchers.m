@@ -10,7 +10,7 @@
   return self;
 }
 
-- (NSString *)generateUniqueInstanceId {
+- (NSString *)generateUniqueInstanceId:(NSObject *)instance {
   return @"test_instance_id";
 }
 @end
