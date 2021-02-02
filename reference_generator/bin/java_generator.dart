@@ -229,11 +229,8 @@ String generateJava({
                 .stringMatch()
                 .replaceAll(handler.className, classNode.name)
                 .replaceAll(handler.typeArgClassName, classNode.name)
-                .replaceAll(
-                  handler.onInstanceDisposedClassName,
-                  classNode.name,
-                )
-                .replaceAll(handler.onInstanceDisposedClassName, classNode.name)
+                .replaceAll(handler.onInstanceAddedClassName, classNode.name)
+                .replaceAll(handler.onInstanceRemovedClassName, classNode.name)
                 .replaceAll(
                   handler.theOnCreateMethod.exp,
                   handler.theOnCreateMethod
@@ -575,7 +572,7 @@ class Channel with TemplateRegExp {
   );
 
   final RegExp channel = TemplateRegExp.regExp(
-    r'(?<=super\(manager, ")github\.penguin/template/template/ClassTemplate',
+    r'(?<=super\(messenger, ")github\.penguin/template/template/ClassTemplate',
   );
 
   ChannelStaticMethod get aStaticMethod => ChannelStaticMethod(this);
@@ -677,8 +674,12 @@ class Handler with TemplateRegExp {
 
   HandlerInvokeMethod get theInvokeMethod => HandlerInvokeMethod(this);
 
-  final RegExp onInstanceDisposedClassName = TemplateRegExp.regExp(
+  final RegExp onInstanceAddedClassName = TemplateRegExp.regExp(
     r'(?<=void onInstanceDisposed\([^\$]+\$)ClassTemplate',
+  );
+
+  final RegExp onInstanceRemovedClassName = TemplateRegExp.regExp(
+    r'(?<=void onInstanceRemoved\([^\$]+\$)ClassTemplate',
   );
 
   @override

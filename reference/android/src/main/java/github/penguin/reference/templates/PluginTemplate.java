@@ -16,8 +16,8 @@ public class PluginTemplate implements FlutterPlugin {
   }
 
   private void initialize(final BinaryMessenger binaryMessenger) {
-    final TypeChannelMessenger manager = ReferencePlugin.getManagerInstance(binaryMessenger);
-    ClassTemplate.setupChannel(manager);
+    final TypeChannelMessenger messenger = ReferencePlugin.getMessengerInstance(binaryMessenger);
+    ClassTemplate.setupChannel(messenger);
   }
 
   @Override

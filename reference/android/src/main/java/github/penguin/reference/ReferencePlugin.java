@@ -16,15 +16,15 @@ import io.flutter.plugin.common.PluginRegistry.Registrar;
  * ReferencePlugin
  */
 public class ReferencePlugin implements FlutterPlugin {
-  private static final Map<BinaryMessenger, TypeChannelMessenger> managers = new HashMap<>();
+  private static final Map<BinaryMessenger, TypeChannelMessenger> messengers = new HashMap<>();
 
-  public static TypeChannelMessenger getManagerInstance(BinaryMessenger messenger) {
-    TypeChannelMessenger manager = managers.get(messenger);
-    if (manager == null) {
-      manager = new MethodChannelMessenger(messenger, "github.penguin/reference");
-      managers.put(messenger, manager);
+  public static TypeChannelMessenger getMessengerInstance(BinaryMessenger messenger) {
+    TypeChannelMessenger typeChannelMessenger = messengers.get(messenger);
+    if (typeChannelMessenger == null) {
+      typeChannelMessenger = new MethodChannelMessenger(messenger, "github.penguin/reference");
+      messengers.put(messenger, typeChannelMessenger);
     }
-    return manager;
+    return typeChannelMessenger;
   }
 
   @SuppressWarnings({"unused", "deprecation"})
@@ -40,6 +40,6 @@ public class ReferencePlugin implements FlutterPlugin {
   @Override
   public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
     new PluginTemplate().onDetachedFromEngine(binding);
-    managers.remove(binding.getBinaryMessenger());
+    messengers.remove(binding.getBinaryMessenger());
   }
 }
