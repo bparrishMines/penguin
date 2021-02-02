@@ -29,8 +29,8 @@ class LibraryTemplate {
   }
 
   static class $ClassTemplateChannel extends TypeChannel<$ClassTemplate> {
-    $ClassTemplateChannel(@NonNull TypeChannelMessenger manager) {
-      super(manager, "github.penguin/template/template/ClassTemplate");
+    $ClassTemplateChannel(@NonNull TypeChannelMessenger messenger) {
+      super(messenger, "github.penguin/template/template/ClassTemplate");
     }
 
     Completable<Object> $invokeStaticMethodTemplate(String parameterTemplate) {
@@ -43,23 +43,23 @@ class LibraryTemplate {
   }
 
   static class $ClassTemplateHandler implements TypeChannelHandler<$ClassTemplate> {
-    $ClassTemplate onCreate(TypeChannelMessenger manager, $ClassTemplateCreationArgs args)
+    $ClassTemplate onCreate(TypeChannelMessenger messenger, $ClassTemplateCreationArgs args)
         throws Exception {
       return null;
     }
 
-    public Object $onStaticMethodTemplate(TypeChannelMessenger manager, String parameterTemplate)
+    public Object $onStaticMethodTemplate(TypeChannelMessenger messenger, String parameterTemplate)
         throws Exception {
       return null;
     }
 
     @Override
     public Object invokeStaticMethod(
-        TypeChannelMessenger manager, String methodName, List<Object> arguments)
+        TypeChannelMessenger messenger, String methodName, List<Object> arguments)
         throws Exception {
       switch (methodName) {
         case "staticMethodTemplate":
-          return $onStaticMethodTemplate(manager, (String) arguments.get(0));
+          return $onStaticMethodTemplate(messenger, (String) arguments.get(0));
       }
 
       throw new UnsupportedOperationException(
@@ -68,21 +68,21 @@ class LibraryTemplate {
 
     @Override
     public List<Object> getCreationArguments(
-        TypeChannelMessenger manager, $ClassTemplate instance) {
+        TypeChannelMessenger messenger, $ClassTemplate instance) {
       return Arrays.<Object>asList(instance.getFieldTemplate());
     }
 
     @Override
-    public $ClassTemplate createInstance(TypeChannelMessenger manager, List<Object> arguments)
+    public $ClassTemplate createInstance(TypeChannelMessenger messenger, List<Object> arguments)
         throws Exception {
       final $ClassTemplateCreationArgs args = new $ClassTemplateCreationArgs();
       args.fieldTemplate = (Integer) arguments.get(0);
-      return onCreate(manager, args);
+      return onCreate(messenger, args);
     }
 
     @Override
     public Object invokeMethod(
-        TypeChannelMessenger manager,
+        TypeChannelMessenger messenger,
         $ClassTemplate instance,
         String methodName,
         List<Object> arguments)
@@ -98,12 +98,12 @@ class LibraryTemplate {
     }
 
     @Override
-    public void onInstanceAdded(TypeChannelMessenger manager, $ClassTemplate instance)
+    public void onInstanceAdded(TypeChannelMessenger messenger, $ClassTemplate instance)
         throws Exception {
     }
 
     @Override
-    public void onInstanceRemoved(TypeChannelMessenger manager, $ClassTemplate instance)
+    public void onInstanceRemoved(TypeChannelMessenger messenger, $ClassTemplate instance)
         throws Exception {
     }
   }

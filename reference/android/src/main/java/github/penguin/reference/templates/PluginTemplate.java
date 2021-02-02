@@ -8,6 +8,7 @@ import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
 
+// TODO(bparrishMines) Shouldn't be public.
 public class PluginTemplate implements FlutterPlugin {
   @SuppressWarnings({"unused", "deprecation"})
   public static void registerWith(Registrar registrar) {

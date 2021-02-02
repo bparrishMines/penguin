@@ -157,7 +157,7 @@ void main() {
       );
     });
 
-    test('disposePair', () {
+    test('disposeInstancePair', () {
       final testClass = TestClass(testMessenger);
 
       testChannel.createNewInstancePair(testClass);
