@@ -1,12 +1,14 @@
 package github.penguin.reference.templates;
 
 import androidx.annotation.NonNull;
+
 import github.penguin.reference.ReferencePlugin;
-import github.penguin.reference.reference.TypeChannelManager;
+import github.penguin.reference.reference.TypeChannelMessenger;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
 
+// TODO(bparrishMines) Shouldn't be public.
 public class PluginTemplate implements FlutterPlugin {
   @SuppressWarnings({"unused", "deprecation"})
   public static void registerWith(Registrar registrar) {
@@ -14,8 +16,8 @@ public class PluginTemplate implements FlutterPlugin {
   }
 
   private void initialize(final BinaryMessenger binaryMessenger) {
-    final TypeChannelManager manager = ReferencePlugin.getManagerInstance(binaryMessenger);
-    ClassTemplate.setupChannel(manager);
+    final TypeChannelMessenger messenger = ReferencePlugin.getMessengerInstance(binaryMessenger);
+    ClassTemplate.setupChannel(messenger);
   }
 
   @Override

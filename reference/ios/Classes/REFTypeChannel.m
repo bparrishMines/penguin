@@ -1,19 +1,44 @@
 #import "REFTypeChannel.h"
 
-@implementation REFTypeChannelManager {
+@implementation REFTypeChannelMessenger {
 @public
   REFThreadSafeMapTable<NSString *, NSObject<REFTypeChannelHandler> *> *_channelHandlers;
-  REFPairedInstanceMap *_instancePairs;
+  InstancePairManager *_instancePairManager;
 }
 
-- (instancetype)initWithMessenger:(id<REFTypeChannelMessenger>)messenger {
+- (instancetype)initWithMessageDispatcher:(id<REFTypeChannelMessageDispatcher>)messenger {
   self = [super init];
   if (self) {
-    _messenger = messenger;
+    _messageDispatcher = messenger;
     _channelHandlers = [[REFThreadSafeMapTable alloc] init];
-    _instancePairs = [[REFPairedInstanceMap alloc] init];
+    _instancePairManager = [[InstancePairManager alloc] init];
   }
   return self;
+}
+
+- (BOOL)addInstancePair:(NSString *)channelName
+               instance:(NSObject *)instance
+         pairedInstance:(REFPairedInstance *)pairedInstance
+                  owner:(NSObject *)owner {
+  if ([_instancePairManager addPair:instance pairedInstance:pairedInstance owner:owner]) {
+    NSObject<REFTypeChannelHandler> *handler = [self getChannelHandler:channelName];
+    if (!handler) [handler onInstanceAdded:self instance:instance];
+    return YES;
+  }
+  return NO;
+}
+
+- (BOOL)removeInstancePair:(NSString *)channelName
+                  instance:(NSObject *)instance
+                     owner:(NSObject *)owner
+                     force:(BOOL)force {
+  if ([_instancePairManager removePairWithObject:instance owner:owner force:force]) {
+    NSObject<REFTypeChannelHandler> *handler = [self getChannelHandler:channelName];
+    if (!handler) [handler onInstanceRemoved:self instance:instance];
+    return YES;
+  }
+  
+  return NO;
 }
 
 - (id<REFInstanceConverter>)converter {
@@ -21,26 +46,162 @@
 }
 
 - (BOOL)isPaired:(NSObject *)instance {
-  return [_instancePairs getPairedInstance:instance] != nil;
+  return [_instancePairManager isPaired:instance];
+}
+
+- (REFPairedInstance *)getPairedPairedInstance:(NSObject *)object {
+  return [_instancePairManager getPairedPairedInstance:object];
+}
+
+- (NSObject *)getPairedObject:(REFPairedInstance *)pairedInstance {
+  return [_instancePairManager getPairedObject:pairedInstance];
 }
 
 - (void)registerHandler:(NSString *)channelName handler:(NSObject<REFTypeChannelHandler> *)handler {
-  [_channelHandlers setObject:handler forKey:channelName];
+  if (handler) {
+    [_channelHandlers setObject:handler forKey:channelName];
+  } else {
+    [_channelHandlers removeObjectForKey:channelName];
+  }
 }
 
 - (NSObject<REFTypeChannelHandler> *)getChannelHandler:(NSString *)channelName {
   return [_channelHandlers objectForKey:channelName];
 }
 
-- (id)onReceiveCreateNewInstancePair:(NSString *)channelName
-             pairedInstance:(REFPairedInstance *)pairedInstance
-                   arguments:(NSArray<id> *)arguments {
-  if ([_instancePairs getPairedObject:pairedInstance]) return nil;
+- (void)sendCreateNewInstancePair:(NSString *)channelName
+                         instance:(NSObject *)instance
+                            owner:(NSObject *)owner
+                       completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
+  REFPairedInstance *pairedInstance = [REFPairedInstance fromID:[self generateUniqueInstanceId:instance]];
+  
+  NSObject<REFTypeChannelHandler> *handler = [self getChannelHandler:channelName];
+  if (!handler) {
+    NSLog(@"A `REFTypeChannelHandler` must be set for channel of: %@.", channelName);
+    return;
+  }
+  
+  BOOL createdNewInstance = [self addInstancePair:channelName
+                                         instance:instance
+                                   pairedInstance:pairedInstance
+                                            owner:owner];
+  
+  if (!createdNewInstance) {
+    completion(nil, nil);
+    return;
+  }
+  
+  NSArray<id> *creationArguments = [self.converter convertForRemoteMessenger:self
+                                                                         obj:[[self
+                                                                               getChannelHandler:channelName]
+                                                                              getCreationArguments:self
+                                                                              instance:instance]];
+  
+  [_messageDispatcher sendCreateNewInstancePair:channelName
+                                 pairedInstance:pairedInstance
+                                      arguments:creationArguments
+                                     completion:^(NSError *error) {
+    if (error) {
+      completion(nil, error);
+    } else {
+      completion(pairedInstance, nil);
+    }
+  }];
+}
+
+- (void)sendInvokeStaticMethod:(NSString *)channelName
+                    methodName:(NSString *)methodName
+                     arguments:(NSArray<id> *)arguments
+                    completion:(void (^)(id _Nullable, NSError *_Nullable))completion {
+  [_messageDispatcher sendInvokeStaticMethod:channelName
+                                  methodName:methodName
+                                   arguments:[self.converter convertForRemoteMessenger:self obj:arguments]
+                                  completion:^(id result, NSError *error) {
+    if (error) {
+      completion(nil, error);
+    } else {
+      completion([self.converter convertForLocalMessenger:self obj:result], nil);
+    }
+  }];
+}
+
+- (void)sendInvokeMethod:(NSString *)channelName
+                instance:(NSObject *)instance
+              methodName:(NSString *)methodName
+               arguments:(NSArray<id> *)arguments
+              completion:(void (^)(id _Nullable, NSError *_Nullable))completion {
+  if (![self isPaired:instance]) {
+    [self sendInvokeMethodOnUnpairedInstance:channelName
+                                      object:instance
+                                  methodName:methodName
+                                   arguments:arguments
+                                  completion:completion];
+    return;
+  }
+  
+  [_messageDispatcher sendInvokeMethod:channelName
+                        pairedInstance:[_instancePairManager getPairedPairedInstance:instance]
+                            methodName:methodName
+                             arguments:[self.converter convertForRemoteMessenger:self obj:arguments]
+                            completion:^(id result, NSError *error) {
+    if (error) {
+      completion(nil, error);
+    } else {
+      completion([self.converter convertForLocalMessenger:self obj:result], nil);
+    }
+  }];
+}
+
+- (void)sendInvokeMethodOnUnpairedInstance:(NSString *)channelName
+                                    object:(NSObject *)object
+                                methodName:(NSString *)methodName
+                                 arguments:(NSArray<id> *)arguments
+                                completion:(void (^)(id _Nullable, NSError *_Nullable))completion {
+  [_messageDispatcher sendInvokeMethodOnUnpairedInstance:[self createUnpairedInstance:channelName
+                                                                                  obj:object]
+   
+                                              methodName:methodName
+                                               arguments:[self.converter
+                                                          convertForRemoteMessenger:self
+                                                          obj:arguments]
+                                              completion:^(id result, NSError *error) {
+    if (error) {
+      completion(nil, error);
+    } else {
+      completion([self.converter convertForLocalMessenger:self obj:result], nil);
+    }
+  }];
+}
+
+- (void)sendDisposeInstancePair:(NSString *)channelName
+                       instance:(NSObject *)instance
+                          owner:(NSObject *)owner
+                     completion:(void (^)(NSError *_Nullable))completion {
+  if (![self isPaired:instance]) {
+    completion(nil);
+    return;
+  }
+  
+  REFPairedInstance *pairedInstance = [_instancePairManager getPairedPairedInstance:instance];
+  
+  BOOL removedInstance = [self removeInstancePair:channelName instance:instance owner:owner force:NO];
+  if (removedInstance) {
+    [_messageDispatcher sendDisposeInstancePair:channelName
+                                 pairedInstance:pairedInstance
+                                     completion:completion];
+  }
+}
+
+- (NSObject *)onReceiveCreateNewInstancePair:(NSString *)channelName
+                              pairedInstance:(REFPairedInstance *)pairedInstance
+                                   arguments:(NSArray<id> *)arguments {
+  if ([_instancePairManager getPairedObject:pairedInstance]) return nil;
   
   NSObject *object = [[self getChannelHandler:channelName] createInstance:self
-                                                                   arguments:[[self converter] convertForLocalManager:self obj:arguments]];
+                                                                arguments:[[self converter]
+                                                                           convertForLocalMessenger:self obj:arguments]];
   NSAssert(![self isPaired:object], @"");
-  [_instancePairs add:object pairedInstance:pairedInstance];
+  [self addInstancePair:channelName instance:object pairedInstance:pairedInstance owner:object];
   return object;
 }
 
@@ -48,10 +209,10 @@
                        methodName:(NSString *)methodName
                         arguments:(NSArray<id> *)arguments {
   NSObject *object = [[self getChannelHandler:channelName] invokeStaticMethod:self
-                                                                      methodName:methodName
-                                                                       arguments:[[self converter] convertForLocalManager:self obj:arguments]];
+                                                                   methodName:methodName
+                                                                    arguments:[[self converter] convertForLocalMessenger:self obj:arguments]];
   
-  return [[self converter] convertForRemoteManager:self obj:object];
+  return [[self converter] convertForRemoteMessenger:self obj:object];
 }
 
 - (REFNewUnpairedInstance *)createUnpairedInstance:(NSString *)channelName obj:(id)obj {
@@ -59,175 +220,200 @@
   if (!handler) return nil;
   
   return [[REFNewUnpairedInstance alloc] initWithChannelName:channelName
-                                     creationArguments:[handler getCreationArguments:self instance:obj]];
+                                           creationArguments:[handler getCreationArguments:self instance:obj]];
 }
 
 - (id)onReceiveInvokeMethod:(NSString *)channelName
-            pairedInstance:(REFPairedInstance *)pairedInstance
+             pairedInstance:(REFPairedInstance *)pairedInstance
                  methodName:(NSString *)methodName
                   arguments:(NSArray<id> *)arguments {
   NSObject *object = [[self getChannelHandler:channelName] invokeMethod:self
-                                                                  instance:[_instancePairs getPairedObject:pairedInstance]
-                                                                methodName:methodName
-                                                                 arguments:[[self converter] convertForLocalManager:self
-                                                                                                                          obj:arguments]];
+                                                               instance:[_instancePairManager getPairedObject:pairedInstance]
+                                                             methodName:methodName
+                                                              arguments:[[self converter]
+                                                                         convertForLocalMessenger:self
+                                                                         obj:arguments]];
   
-  return [[self converter] convertForRemoteManager:self obj:object];
+  return [[self converter] convertForRemoteMessenger:self obj:object];
 }
 
 - (id)onReceiveInvokeMethodOnUnpairedInstance:(REFNewUnpairedInstance *)unpairedInstance
-                                    methodName:(NSString *)methodName
-                                     arguments:(NSArray<id> *)arguments {
+                                   methodName:(NSString *)methodName
+                                    arguments:(NSArray<id> *)arguments {
   NSObject<REFTypeChannelHandler> *handler = [self getChannelHandler:unpairedInstance.channelName];
   NSObject *object = [handler createInstance:self
-                                   arguments:[[self converter] convertForLocalManager:self
-                                                                                            obj:unpairedInstance.creationArguments]];
+                                   arguments:[[self converter] convertForLocalMessenger:self
+                                                                                    obj:unpairedInstance.creationArguments]];
   NSObject *result = [handler invokeMethod:self
                                   instance:object
                                 methodName:methodName
-                                 arguments:[[self converter] convertForLocalManager:self
-                                                                                          obj:arguments]];
+                                 arguments:[[self converter] convertForLocalMessenger:self
+                                                                                  obj:arguments]];
   
-  return [[self converter] convertForRemoteManager:self obj:result];
+  return [[self converter] convertForRemoteMessenger:self obj:result];
 }
 
-- (void)onReceiveDisposePair:(NSString *)channelName pairedInstance:(REFPairedInstance *)pairedInstance {
-  NSObject *instance = [_instancePairs getPairedObject:pairedInstance];
+- (void)onReceiveDisposeInstancePair:(NSString *)channelName
+                      pairedInstance:(REFPairedInstance *)pairedInstance {
+  NSObject *instance = [_instancePairManager getPairedObject:pairedInstance];
   if (!instance) return;
   
-  [_instancePairs removePairWithObject:instance];
-  [[self getChannelHandler:channelName] onInstanceDisposed:self instance:instance];
+  [self removeInstancePair:channelName instance:instance owner:instance force:YES];
 }
 
-- (NSString *)generateUniqueInstanceId {
-  return [[NSUUID UUID] UUIDString];
+- (NSString *)generateUniqueInstanceId:(NSObject *)instance {
+  return [@(instance.hash) stringValue];
 }
 @end
 
 @implementation REFTypeChannel
-- (instancetype)initWithManager:(REFTypeChannelManager *)manager
-                    name:(NSString *)channelName {
+- (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger
+                             name:(NSString *)channelName {
   self = [super init];
   if (self) {
-    _manager = manager;
+    _messenger = messenger;
     _name = channelName;
   }
   return self;
 }
 
 - (void)setHandler:(NSObject<REFTypeChannelHandler> *)handler {
-  [_manager registerHandler:_name handler:handler];
+  [_messenger registerHandler:_name handler:handler];
 }
 
 - (REFNewUnpairedInstance *_Nullable)createUnpairedInstance:(id)instance {
-  return [_manager createUnpairedInstance:_name obj:instance];
+  return [_messenger createUnpairedInstance:_name obj:instance];
 }
 
-- (void)createNewInstancePair:(id)instance
-           completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
-  if ([_manager isPaired:instance]) {
-    completion(nil, nil);
-    return;
-  }
-  
-  __block REFPairedInstance *remoteReference =
-  [REFPairedInstance fromID:[_manager generateUniqueInstanceId]];
-  [_manager->_instancePairs add:instance pairedInstance:remoteReference];
-  
-  NSArray<id> *creationArguments = [_manager.converter
-                                    convertForRemoteManager:_manager
-                                    obj:[[_manager getChannelHandler:_name] getCreationArguments:_manager instance:instance]];
-  
-  [_manager.messenger sendCreateNewInstancePair:_name
-                        pairedInstance:remoteReference
-                              arguments:creationArguments
-                             completion:^(NSError *error) {
-    if (error) {
-      completion(nil, error);
-    } else {
-      completion(remoteReference, nil);
-    }
-  }];
+- (void)createNewInstancePair:(NSObject *)instance
+                   completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
+  return [self createNewInstancePair:instance owner:instance completion:completion];
+}
+
+- (void)createNewInstancePair:(NSObject *)instance
+                        owner:(NSObject *)owner
+                   completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
+  [_messenger sendCreateNewInstancePair:_name instance:instance owner:owner completion:completion];
+  //return [
+  //  if ([_manager isPaired:instance]) {
+  //    completion(nil, nil);
+  //    return;
+  //  }
+  //
+  //  __block REFPairedInstance *remoteReference =
+  //  [REFPairedInstance fromID:[_manager generateUniqueInstanceId]];
+  //  [_manager->_instancePairs addPair:instance pairedInstance:remoteReference];
+  //
+  //  NSArray<id> *creationArguments = [_manager.converter
+  //                                    convertForRemoteMessenger:_manager
+  //                                    obj:[[_manager getChannelHandler:_name] getCreationArguments:_manager instance:instance]];
+  //
+  //  [_manager.messageDispatcher sendCreateNewInstancePair:_name
+  //                        pairedInstance:remoteReference
+  //                              arguments:creationArguments
+  //                             completion:^(NSError *error) {
+  //    if (error) {
+  //      completion(nil, error);
+  //    } else {
+  //      completion(remoteReference, nil);
+  //    }
+  //  }];
 }
 
 - (void)invokeStaticMethod:(NSString *)methodName
                  arguments:(NSArray<id> *)arguments
                 completion:(void (^)(id _Nullable, NSError *_Nullable))completion {
-  [_manager.messenger
-   sendInvokeStaticMethod:_name
-   methodName:methodName
-   arguments:[_manager.converter convertForRemoteManager:_manager obj:arguments]
-   completion:^(id result, NSError *error) {
-    if (error) {
-      completion(nil, error);
-    } else {
-      completion([self->_manager.converter convertForLocalManager:self->_manager obj:result],
-                 nil);
-    }
-  }];
+  return [_messenger sendInvokeStaticMethod:_name
+                                 methodName:methodName
+                                  arguments:arguments
+                                 completion:completion];
+  //  [_messenger.messageDispatcher
+  //   sendInvokeStaticMethod:_name
+  //   methodName:methodName
+  //   arguments:[_messenger.converter convertForRemoteMessenger:_messenger obj:arguments]
+  //   completion:^(id result, NSError *error) {
+  //    if (error) {
+  //      completion(nil, error);
+  //    } else {
+  //      completion([self->_messenger.converter convertForLocalMessenger:self->_messenger obj:result],
+  //                 nil);
+  //    }
+  //  }];
 }
 
-- (void)invokeMethod:(id)instance
+- (void)invokeMethod:(NSObject *)instance
           methodName:(NSString *)methodName
            arguments:(NSArray<id> *)arguments
           completion:(void (^)(id _Nullable, NSError *_Nullable))completion {
-  if (![_manager isPaired:instance]) {
-    [self invokeMethodOnUnpairedReference:instance methodName:methodName arguments:arguments completion:completion];
-    return;
-  }
-  
-  [_manager.messenger sendInvokeMethod:_name
-                       pairedInstance:[_manager->_instancePairs getPairedInstance:instance]
-                            methodName:methodName
-                             arguments:[_manager.converter convertForRemoteManager:_manager obj:arguments]
-                            completion:^(id result, NSError *error) {
-    if (error) {
-      completion(nil, error);
-    } else {
-      completion([self->_manager.converter convertForLocalManager:self->_manager obj:result], nil);
-    }
-  }];
+  [_messenger sendInvokeMethod:_name
+                      instance:instance
+                    methodName:methodName
+                     arguments:arguments
+                    completion:completion];
+  //  if (![_messenger isPaired:instance]) {
+  //    [self invokeMethodOnUnpairedReference:instance methodName:methodName arguments:arguments completion:completion];
+  //    return;
+  //  }
+  //
+  //  [_manager.messenger sendInvokeMethod:_name
+  //                        pairedInstance:[_manager->_instancePairs getPairedPairedInstance:instance]
+  //                            methodName:methodName
+  //                             arguments:[_manager.converter convertForRemoteManager:_manager obj:arguments]
+  //                            completion:^(id result, NSError *error) {
+  //    if (error) {
+  //      completion(nil, error);
+  //    } else {
+  //      completion([self->_manager.converter convertForLocalManager:self->_manager obj:result], nil);
+  //    }
+  //  }];
 }
 
-- (void)invokeMethodOnUnpairedReference:(id)obj
-                             methodName:(NSString *)methodName
-                              arguments:(NSArray<id> *)arguments
-                             completion:(void (^)(id _Nullable, NSError *_Nullable))completion {
-  [_manager.messenger sendInvokeMethodOnUnpairedInstance:[_manager createUnpairedInstance:_name obj:obj]
-                                               methodName:methodName
-                                                arguments:[_manager.converter convertForRemoteManager:_manager obj:arguments]
-                                               completion:^(id result, NSError *error) {
-    if (error) {
-      completion(nil, error);
-    } else {
-      completion([self->_manager.converter convertForLocalManager:self->_manager obj:result], nil);
-    }
-  }];
+//- (void)invokeMethodOnUnpairedReference:(id)obj
+//                             methodName:(NSString *)methodName
+//                              arguments:(NSArray<id> *)arguments
+//                             completion:(void (^)(id _Nullable, NSError *_Nullable))completion {
+//  [_messenger.messageDispatcher sendInvokeMethodOnUnpairedInstance:[_messenger createUnpairedInstance:_name obj:obj]
+//                                                      methodName:methodName
+//                                                       arguments:[_messenger.converter convertForRemoteMessenger:_messenger obj:arguments]
+//                                                      completion:^(id result, NSError *error) {
+//    if (error) {
+//      completion(nil, error);
+//    } else {
+//      completion([self->_messenger.converter convertForLocalMessenger:self->_messenger obj:result], nil);
+//    }
+//  }];
+//}
+
+- (void)disposeInstancePair:(id)instance
+                 completion:(void (^)(NSError *_Nullable))completion {
+  [self disposeInstancePair:instance owner:instance completion:completion];
 }
 
-- (void)disposePair:(id)instance
-         completion:(void (^)(NSError *_Nullable))completion {
-  REFPairedInstance *remoteReference = [_manager->_instancePairs getPairedInstance:instance];
-  if (remoteReference) {
-    [_manager->_instancePairs removePairWithObject:instance];
-    [_manager.messenger sendDisposePair:_name pairedInstance:remoteReference completion:completion];
-  }
+- (void)disposeInstancePair:(id)instance
+                      owner:(NSObject *)owner
+                 completion:(void (^)(NSError *_Nullable))completion {
+  [_messenger sendDisposeInstancePair:_name instance:instance owner:owner completion:completion];
+  //  REFPairedInstance *remoteReference = [_manager->_instancePairs getPairedPairedInstance:instance];
+  //  if (remoteReference) {
+  //    [_manager->_instancePairs removePairWithObject:instance];
+  //    [_messenger.messageDispatcher sendDisposePair:_name pairedInstance:remoteReference completion:completion];
+  //  }
 }
 @end
 
 @implementation REFStandardInstanceConverter
-- (id _Nullable)convertForRemoteManager:(REFTypeChannelManager *)manager
-                                              obj:(id _Nullable)obj {
-  if ([manager isPaired:obj]) {
-    return [manager->_instancePairs getPairedInstance:obj];
-  } else if (![manager isPaired:obj] && [obj conformsToProtocol:@protocol(REFPairableInstance)]) {
-    id<REFPairableInstance> referencable = (id<REFPairableInstance>) obj;
+- (id _Nullable)convertForRemoteMessenger:(REFTypeChannelMessenger *)messenger
+                                      obj:(id _Nullable)obj {
+  if ([messenger isPaired:obj]) {
+    return [messenger getPairedPairedInstance:obj];
+  } else if (![messenger isPaired:obj] && [obj conformsToProtocol:@protocol(REFReferenceType)]) {
+    id<REFReferenceType> referencable = (id<REFReferenceType>) obj;
     return [referencable.typeChannel createUnpairedInstance:obj];
   } else if ([obj isKindOfClass:[NSArray class]]) {
     NSArray *array = obj;
     NSMutableArray *newArray = [NSMutableArray arrayWithCapacity:array.count];
     for (id object in array) {
-      [newArray addObject:[self convertForRemoteManager:manager obj:object]];
+      [newArray addObject:[self convertForRemoteMessenger:messenger obj:object]];
     }
     return newArray;
   } else if ([obj isKindOfClass:[NSDictionary class]]) {
@@ -236,8 +422,8 @@
     [NSMutableDictionary dictionaryWithCapacity:dictionary.count];
     [dictionary enumerateKeysAndObjectsUsingBlock:^(id _Nonnull key, id _Nonnull object,
                                                     BOOL *_Nonnull stop) {
-      [newDictionary setObject:[self convertForRemoteManager:manager obj:object]
-                        forKey:[self convertForRemoteManager:manager obj:key]];
+      [newDictionary setObject:[self convertForRemoteMessenger:messenger obj:object]
+                        forKey:[self convertForRemoteMessenger:messenger obj:key]];
     }];
     
     return newDictionary;
@@ -246,21 +432,21 @@
   return obj;
 }
 
-- (id _Nullable)convertForLocalManager:(REFTypeChannelManager *)manager
-                                             obj:(id _Nullable)obj {
+- (id _Nullable)convertForLocalMessenger:(REFTypeChannelMessenger *)messenger
+                                     obj:(id _Nullable)obj {
   if ([obj isKindOfClass:[REFPairedInstance class]]) {
-    return [manager->_instancePairs getPairedObject:obj];
+    return [messenger getPairedObject:obj];
   } else if ([obj isKindOfClass:[REFNewUnpairedInstance class]]) {
     REFNewUnpairedInstance *unpairedReference = (REFNewUnpairedInstance *)obj;
-    return [[manager
-             getChannelHandler:unpairedReference.channelName] createInstance:manager
-            arguments:[self convertForLocalManager:manager
-                                                         obj:unpairedReference.creationArguments]];
+    return [[messenger
+             getChannelHandler:unpairedReference.channelName] createInstance:messenger
+            arguments:[self convertForLocalMessenger:messenger
+                                                 obj:unpairedReference.creationArguments]];
   } else if ([obj isKindOfClass:[NSArray class]]) {
     NSArray *array = obj;
     NSMutableArray *newArray = [NSMutableArray arrayWithCapacity:array.count];
     for (id object in array) {
-      [newArray addObject:[self convertForLocalManager:manager obj:object]];
+      [newArray addObject:[self convertForLocalMessenger:messenger obj:object]];
     }
     return newArray;
   } else if ([obj isKindOfClass:[NSDictionary class]]) {
@@ -269,8 +455,8 @@
     [NSMutableDictionary dictionaryWithCapacity:dictionary.count];
     [dictionary enumerateKeysAndObjectsUsingBlock:^(id _Nonnull key, id _Nonnull object,
                                                     BOOL *_Nonnull stop) {
-      [newDictionary setObject:[self convertForLocalManager:manager obj:object]
-                        forKey:[self convertForLocalManager:manager obj:key]];
+      [newDictionary setObject:[self convertForLocalMessenger:messenger obj:object]
+                        forKey:[self convertForLocalMessenger:messenger obj:key]];
     }];
     
     return newDictionary;

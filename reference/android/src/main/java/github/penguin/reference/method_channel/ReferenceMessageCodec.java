@@ -1,11 +1,12 @@
 package github.penguin.reference.method_channel;
 
-import github.penguin.reference.reference.PairedInstance;
-import github.penguin.reference.reference.NewUnpairedInstance;
-import io.flutter.plugin.common.StandardMessageCodec;
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.util.List;
+
+import github.penguin.reference.reference.NewUnpairedInstance;
+import github.penguin.reference.reference.PairedInstance;
+import io.flutter.plugin.common.StandardMessageCodec;
 
 class ReferenceMessageCodec extends StandardMessageCodec {
   private static final byte PAIRED_INSTANCE = (byte) 128;

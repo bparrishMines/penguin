@@ -2,27 +2,28 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:reference/reference.dart';
 
 import 'reference_matchers.dart';
+import 'test_classes.dart';
 
 void main() {
   group('$StandardInstanceConverter', () {
     const StandardInstanceConverter converter = StandardInstanceConverter();
-    late TestManager testManager;
+    late TestMessenger testMessenger;
 
     setUp(() {
-      testManager = TestManager();
+      testMessenger = TestMessenger();
     });
 
     test('convertForRemoteManager handles paired Object', () {
-      testManager.onReceiveCreateNewInstancePair(
+      testMessenger.onReceiveCreateNewInstancePair(
         'test_channel',
         const PairedInstance('test_id'),
         <Object>[],
       );
 
       expect(
-        converter.convertForRemoteManager(
-          testManager,
-          testManager.testHandler.testClassInstance,
+        converter.convertForRemoteMessenger(
+          testMessenger,
+          testMessenger.testHandler.testClassInstance,
         ),
         const PairedInstance('test_id'),
       );
@@ -30,96 +31,41 @@ void main() {
 
     test('convertForRemoteManager handles unpaired object', () {
       expect(
-        converter.convertForRemoteManager(testManager, TestClass(testManager)),
+        converter.convertForRemoteMessenger(
+            testMessenger, TestClass(testMessenger)),
         isUnpairedInstance('test_channel', <Object>[]),
       );
     });
 
-    test('convertForRemoteManager handles unpaired non-$PairableInstance', () {
+    test('convertForRemoteManager handles unpaired non-$ReferenceType', () {
       expect(
-        converter.convertForRemoteManager(testManager, 'potato'),
+        converter.convertForRemoteMessenger(testMessenger, 'potato'),
         equals('potato'),
       );
     });
 
     test('convertForLocalManager handles $PairedInstance', () {
       const PairedInstance pairedInstance = PairedInstance('test_id');
-      testManager.onReceiveCreateNewInstancePair(
+      testMessenger.onReceiveCreateNewInstancePair(
         'test_channel',
         pairedInstance,
         <Object>[],
       );
 
       expect(
-        converter.convertForLocalManager(testManager, pairedInstance),
-        testManager.testHandler.testClassInstance,
+        converter.convertForLocalMessenger(testMessenger, pairedInstance),
+        testMessenger.testHandler.testClassInstance,
       );
     });
 
     test('convertForLocalManager handles $NewUnpairedInstance', () async {
       expect(
-        converter.convertForLocalManager(
-          testManager,
+        converter.convertForLocalMessenger(
+          testMessenger,
           const NewUnpairedInstance('test_channel', <Object>[]),
         ),
-        testManager.testHandler.testClassInstance,
+        testMessenger.testHandler.testClassInstance,
       );
     });
   });
-}
-
-class TestManager extends TypeChannelManager {
-  TestManager() {
-    testHandler = TestHandler(this);
-    registerHandler('test_channel', testHandler);
-  }
-
-  late final TestHandler testHandler;
-
-  @override
-  TypeChannelMessenger get messenger => throw UnimplementedError();
-}
-
-class TestHandler with TypeChannelHandler<TestClass> {
-  TestHandler(TestManager manager) : testClassInstance = TestClass(manager);
-
-  final TestClass testClassInstance;
-
-  @override
-  TestClass createInstance(
-    TypeChannelManager manager,
-    List<Object?> arguments,
-  ) {
-    return testClassInstance;
-  }
-
-  @override
-  List<Object?> getCreationArguments(
-      TypeChannelManager manager, TestClass instance) {
-    return <Object?>[];
-  }
-
-  @override
-  Object? invokeMethod(TypeChannelManager manager, TestClass instance,
-      String methodName, List<Object?> arguments) {
-    return 'return_value';
-  }
-
-  @override
-  Object? invokeStaticMethod(
-      TypeChannelManager manager, String methodName, List<Object?> arguments) {
-    return 'return_value';
-  }
-}
-
-class TestClass with PairableInstance<TestClass> {
-  TestClass(this.manager);
-
-  final TypeChannelManager manager;
-
-  @override
-  TypeChannel<TestClass> get typeChannel => TypeChannel<TestClass>(
-        manager,
-        'test_channel',
-      );
 }

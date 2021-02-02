@@ -11,19 +11,15 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSEnumerator<ObjectType> *)objectEnumerator;
 @end
 
-@interface REFBiMapTable<KeyType, ObjectType> : NSObject
-@property(readonly) REFBiMapTable<ObjectType, KeyType> *_Nullable inverse;
-- (void)setObject:(ObjectType)object forKey:(KeyType)key;
-- (void)removeObjectForKey:(KeyType)key;
-- (ObjectType _Nullable)objectForKey:(KeyType)key;
-- (NSEnumerator<ObjectType> *)objectEnumerator;
-@end
-
-@interface REFPairedInstanceMap : NSObject
-- (void)add:(id)instance pairedInstance:(REFPairedInstance *)pairedInstance;
-- (REFPairedInstance *_Nullable)removePairWithObject:(id)object;
-- (id _Nullable)removePairWithPairedInstance:(REFPairedInstance *)pairedInstance;
-- (REFPairedInstance *_Nullable)getPairedInstance:(id)object;
+@interface InstancePairManager : NSObject
+- (BOOL)addPair:(NSObject *)object
+ pairedInstance:(REFPairedInstance *)pairedInstance
+          owner:(NSObject *)owner;
+- (BOOL)isPaired:(NSObject *)object;
+- (BOOL)removePairWithObject:(id)object
+                       owner:(NSObject *)owner
+                       force:(BOOL)force;
+- (REFPairedInstance *_Nullable)getPairedPairedInstance:(id)object;
 - (id _Nullable)getPairedObject:(REFPairedInstance *)pairedInstance;
 @end
 

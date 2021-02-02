@@ -4,8 +4,8 @@
 @end
 
 @implementation ClassTemplate
-+ (void)setupChannel:(REFTypeChannelManager *)manager {
-  REFClassTemplateChannel *channel = [[REFClassTemplateChannel alloc] initWithManager:manager];
++ (void)setupChannel:(REFTypeChannelMessenger *)manager {
+  REFClassTemplateChannel *channel = [[REFClassTemplateChannel alloc] initWithMessenger:manager];
   [channel setHandler:[[ClassTemplateHandler alloc] init]];
 }
 
@@ -27,11 +27,12 @@
 @end
 
 @implementation ClassTemplateHandler
-- (NSObject<REFClassTemplate> *)onCreate:(REFTypeChannelManager *)manager args:(REFClassTemplateCreationArgs *)args {
+- (NSObject<REFClassTemplate> *)onCreate:(REFTypeChannelMessenger *)manager
+                                    args:(REFClassTemplateCreationArgs *)args {
   return [[ClassTemplate alloc] initWithFieldTemplate:args.fieldTemplate];
 }
 
-- (NSObject *)on_staticMethodTemplate:(REFTypeChannelManager *)manager
+- (NSObject *)on_staticMethodTemplate:(REFTypeChannelMessenger *)manager
                     parameterTemplate:(NSString *)parameterTemplate {
   return [ClassTemplate staticMethodTemplate:parameterTemplate];
 }
@@ -39,7 +40,7 @@
 
 @implementation PluginTemplate
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  REFTypeChannelManager *manager = [ReferencePlugin getManagerInstance:registrar.messenger];
+  REFTypeChannelMessenger *manager = [ReferencePlugin getManagerInstance:registrar.messenger];
   [ClassTemplate setupChannel:manager];
 }
 @end

@@ -8,7 +8,7 @@ import 'package:reference/src/template/template.dart';
 Future<void> main() async {
   final Completer<String> completer = Completer<String>();
   enableFlutterDriverExtension(handler: (_) => completer.future);
-  tearDownAll(() => completer.complete(null));
+  tearDownAll(() => completer.complete('lul'));
 
   group('reference', () {
     test('$ClassTemplate.methodTemplate', () async {

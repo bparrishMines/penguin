@@ -1,3 +1,12 @@
+0.2.0-beta.1
+
+* Added `TypeChannelManager.getPairedPairedInstance` and `TypeChannelManager.getPairedObject`.
+* Name change of `PairableInstance` to `ReferenceType`.
+* Added `TypeChannelHandler.onInstanceAdded`.
+* Replaced `TypeChannelHandler.onInstanceDisposed` with `TypeChannelHandler.onInstanceRemoved`.
+* `TypeChannelManager.generateUniqueInstanceId` now takes an object and uses the hashcode to create
+  unique id.
+
 ## 0.2.0-beta
 
 * Migrate to null safety and transition to using type channels. See documentation for more info.

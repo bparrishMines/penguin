@@ -1,33 +1,35 @@
 package github.penguin.reference.reference;
 
+import androidx.annotation.Nullable;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import androidx.annotation.Nullable;
-
 public interface InstanceConverter {
   @Nullable
-  Object convertForRemoteManager(TypeChannelManager manager, @Nullable Object object);
+  Object convertForRemoteMessenger(TypeChannelMessenger manager, @Nullable Object object);
 
   @Nullable
-  Object convertForLocalManager(TypeChannelManager manager, @Nullable Object object) throws Exception;
+  Object convertForLocalMessenger(TypeChannelMessenger manager, @Nullable Object object) throws Exception;
 
   class StandardInstanceConverter implements InstanceConverter {
     @Nullable
     @Override
-    public Object convertForRemoteManager(TypeChannelManager manager, @Nullable Object object) {
-      if (manager.isPaired(object)) {
-        return manager.instancePairs.getPairedPairedInstance(object);
-      } else if (!manager.isPaired(object) && object instanceof PairableInstance) {
+    public Object convertForRemoteMessenger(TypeChannelMessenger manager, @Nullable Object object) {
+      if (object == null) {
+        return null;
+      } else if (manager.isPaired(object)) {
+        return manager.getPairedPairedInstance(object);
+      } else if (!manager.isPaired(object) && object instanceof ReferenceType) {
         final String referenceChannelName =
-            ((PairableInstance) object).getTypeChannel().name;
+            ((ReferenceType<?>) object).getTypeChannel().name;
         return manager.createUnpairedInstance(referenceChannelName, object);
       } else if (object instanceof List) {
         final List<Object> result = new ArrayList<>();
-        for (final Object obj : (List) object) {
-          result.add(convertForRemoteManager(manager, obj));
+        for (final Object obj : (List<?>) object) {
+          result.add(convertForRemoteMessenger(manager, obj));
         }
         return result;
       } else if (object instanceof Map) {
@@ -35,8 +37,8 @@ public interface InstanceConverter {
         final Map<Object, Object> newMap = new HashMap<>();
         for (Map.Entry<Object, Object> entry : oldMap.entrySet()) {
           newMap.put(
-              convertForRemoteManager(manager, entry.getKey()),
-              convertForRemoteManager(manager, entry.getValue()));
+              convertForRemoteMessenger(manager, entry.getKey()),
+              convertForRemoteMessenger(manager, entry.getValue()));
         }
         return newMap;
       }
@@ -46,10 +48,10 @@ public interface InstanceConverter {
 
     @Nullable
     @Override
-    public Object convertForLocalManager(TypeChannelManager manager, @Nullable Object object)
+    public Object convertForLocalMessenger(TypeChannelMessenger manager, @Nullable Object object)
         throws Exception {
       if (object instanceof PairedInstance) {
-        return manager.instancePairs.getPairedObject((PairedInstance) object);
+        return manager.getPairedObject((PairedInstance) object);
       } else if (object instanceof NewUnpairedInstance) {
         final NewUnpairedInstance unpairedInstance = (NewUnpairedInstance) object;
         return manager
@@ -57,12 +59,12 @@ public interface InstanceConverter {
             .createInstance(
                 manager,
                 (List<Object>)
-                    convertForLocalManager(
+                    convertForLocalMessenger(
                         manager, ((NewUnpairedInstance) object).creationArguments));
       } else if (object instanceof List) {
         final List<Object> result = new ArrayList<>();
         for (final Object obj : (List) object) {
-          result.add(convertForLocalManager(manager, obj));
+          result.add(convertForLocalMessenger(manager, obj));
         }
         return result;
       } else if (object instanceof Map) {
@@ -70,8 +72,8 @@ public interface InstanceConverter {
         final Map<Object, Object> newMap = new HashMap<>();
         for (Map.Entry<Object, Object> entry : oldMap.entrySet()) {
           newMap.put(
-              convertForLocalManager(manager, entry.getKey()),
-              convertForLocalManager(manager, entry.getValue()));
+              convertForLocalMessenger(manager, entry.getKey()),
+              convertForLocalMessenger(manager, entry.getValue()));
         }
         return newMap;
       }

@@ -9,44 +9,44 @@
 @end
 
 @implementation REFTypeChannelManagerTest {
-  REFTestManager *_testManager;
+  REFTestMessenger *_testMessenger;
 }
 
 - (void)setUp {
-  _testManager = [[REFTestManager alloc] init];
+  _testMessenger = [[REFTestMessenger alloc] init];
 }
 
 - (void)testOnReceiveCreateNewPair {
-  XCTAssertEqualObjects([_testManager onReceiveCreateNewInstancePair:@"test_channel"
+  XCTAssertEqualObjects([_testMessenger onReceiveCreateNewInstancePair:@"test_channel"
   pairedInstance:[REFPairedInstance fromID:@"test_id"]
-       arguments:@[]], _testManager.testHandler.testClassInstance);
+       arguments:@[]], _testMessenger.testHandler.testClassInstance);
   
-  XCTAssertTrue([_testManager isPaired:_testManager.testHandler.testClassInstance]);
+  XCTAssertTrue([_testMessenger isPaired:_testMessenger.testHandler.testClassInstance]);
   
-  XCTAssertNil([_testManager onReceiveCreateNewInstancePair:@""
+  XCTAssertNil([_testMessenger onReceiveCreateNewInstancePair:@""
   pairedInstance:[REFPairedInstance fromID:@"test_id"]
        arguments:@[]]);
 }
 
 - (void)testOnReceiveInvokeStaticMethod {
-  XCTAssertEqualObjects([_testManager onReceiveInvokeStaticMethod:@"test_channel"
+  XCTAssertEqualObjects([_testMessenger onReceiveInvokeStaticMethod:@"test_channel"
                                                        methodName:@"aStaticMethod"
                                                         arguments:@[]], @"return_value");
 }
 
 - (void)testCreateUnpairedInstance {
-  REFNewUnpairedInstance *unpairedInstance = [_testManager createUnpairedInstance:@"test_channel"
-                                                                              obj:[[REFTestClass alloc] initWithManager:_testManager]];
+  REFNewUnpairedInstance *unpairedInstance = [_testMessenger createUnpairedInstance:@"test_channel"
+                                                                              obj:[[REFTestClass alloc] initWithMessenger:_testMessenger]];
   XCTAssertEqualObjects(@"test_channel", unpairedInstance.channelName);
   XCTAssertEqual(0, unpairedInstance.creationArguments.count);
 }
 
 - (void)testOnReceiveInvokeMethod {
-  [_testManager onReceiveCreateNewInstancePair:@"test_channel"
+  [_testMessenger onReceiveCreateNewInstancePair:@"test_channel"
   pairedInstance:[REFPairedInstance fromID:@"test_id"]
                                      arguments:@[]];
   
-  XCTAssertEqualObjects(@"return_value", [_testManager onReceiveInvokeMethod:@"test_channel"
+  XCTAssertEqualObjects(@"return_value", [_testMessenger onReceiveInvokeMethod:@"test_channel"
                                                               pairedInstance:[REFPairedInstance fromID:@"test_id"]
                                                                   methodName:@"aMethod"
                                                                    arguments:@[]]);
@@ -54,16 +54,16 @@
 
 - (void)testOnReceiveInvokeMethodOnUnpairedInstance {
   REFNewUnpairedInstance *unpairedInstance = [[REFNewUnpairedInstance alloc] initWithChannelName:@"test_channel" creationArguments:@[]];
-  XCTAssertEqualObjects(@"return_value", [_testManager onReceiveInvokeMethodOnUnpairedInstance:unpairedInstance
+  XCTAssertEqualObjects(@"return_value", [_testMessenger onReceiveInvokeMethodOnUnpairedInstance:unpairedInstance
                                                                                      methodName:@"aMethod"
                                                                                       arguments:@[]]);
 }
 
-- (void)testOnReceiveDisposePair {
-  [_testManager onReceiveCreateNewInstancePair:@"test_channel"
+- (void)testOnReceiveDisposeInstancePair {
+  [_testMessenger onReceiveCreateNewInstancePair:@"test_channel"
   pairedInstance:[REFPairedInstance fromID:@"test_id"]
                                      arguments:@[]];
-  [_testManager onReceiveDisposePair:@"test_channel" pairedInstance:[REFPairedInstance fromID:@"test_id"]];
-  XCTAssertFalse([_testManager isPaired:_testManager.testHandler.testClassInstance]);
+  [_testMessenger onReceiveDisposeInstancePair:@"test_channel" pairedInstance:[REFPairedInstance fromID:@"test_id"]];
+  XCTAssertFalse([_testMessenger isPaired:_testMessenger.testHandler.testClassInstance]);
 }
 @end

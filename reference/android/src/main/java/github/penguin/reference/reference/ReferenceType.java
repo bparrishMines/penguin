@@ -1,5 +1,5 @@
 package github.penguin.reference.reference;
 
-public interface PairableInstance<T> {
+public interface ReferenceType<T> {
   TypeChannel<T> getTypeChannel();
 }

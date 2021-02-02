@@ -249,11 +249,19 @@ String generateDart(String template, LibraryNode libraryNode) {
                     classNode.name,
                   )
                   .replaceAll(
-                    library.aHandler.onDisposeClassName,
+                    library.aHandler.onAddedClassName,
                     classNode.name,
                   )
                   .replaceAll(
-                    library.aHandler.onInstanceDisposedClassName,
+                    library.aHandler.onRemovedClassName,
+                    classNode.name,
+                  )
+                  .replaceAll(
+                    library.aHandler.onInstanceAddedClassName,
+                    classNode.name,
+                  )
+                  .replaceAll(
+                    library.aHandler.onInstanceRemovedClassName,
                     classNode.name,
                   )
                   .replaceAll(
@@ -621,7 +629,7 @@ class Channel with TemplateRegExp {
   );
 
   final RegExp channel = TemplateRegExp.regExp(
-    r"(?<=super\(manager, ')github\.penguin/template/template/ClassTemplate",
+    r"(?<=super\(messenger, ')github\.penguin/template/template/ClassTemplate",
   );
 
   ChannelStaticMethod get aStaticMethod => ChannelStaticMethod(this);
@@ -713,8 +721,12 @@ class Handler with TemplateRegExp {
     r'(?<=\$)ClassTemplate(?=Handler\()',
   );
 
-  final RegExp onDisposeClassName = TemplateRegExp.regExp(
-    r'(?<=void Function\(TypeChannelManager manager, \$)ClassTemplate(?= instance\)\?\s+onDispose;)',
+  final RegExp onAddedClassName = TemplateRegExp.regExp(
+    r'(?<=void Function\(TypeChannelMessenger messenger, \$)ClassTemplate(?= instance\)\?\s+onAdded;)',
+  );
+
+  final RegExp onRemovedClassName = TemplateRegExp.regExp(
+    r'(?<=void Function\(TypeChannelMessenger messenger, \$)ClassTemplate(?= instance\)\?\s+onRemoved;)',
   );
 
   HandlerStaticMethodName get aStaticMethodName =>
@@ -734,8 +746,12 @@ class Handler with TemplateRegExp {
 
   HandlerInvokeMethod get theHandlerInvokeMethod => HandlerInvokeMethod(this);
 
-  final RegExp onInstanceDisposedClassName = TemplateRegExp.regExp(
-    r'(?<=void onInstanceDisposed\([^\$]+\$)ClassTemplate',
+  final RegExp onInstanceAddedClassName = TemplateRegExp.regExp(
+    r'(?<=void onInstanceAdded\([^\$]+\$)ClassTemplate',
+  );
+
+  final RegExp onInstanceRemovedClassName = TemplateRegExp.regExp(
+    r'(?<=void onInstanceRemoved\([^\$]+\$)ClassTemplate',
   );
 
   @override
