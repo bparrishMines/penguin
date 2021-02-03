@@ -23,7 +23,7 @@ class Camera with $Camera {
   Camera();
 
   static final $CameraChannel _channel = $CameraChannel(
-    MethodChannelManager.instance,
+    MethodChannelMessenger.instance,
   )..setHandler($CameraHandler(onCreate: (_, __) => Camera()));
 
   int? _currentTexture;
@@ -52,10 +52,10 @@ class Camera with $Camera {
   ///
   /// You must call this as soon as you're done with the [Camera] object.
   Future<void> release() {
-    if (!_channel.manager.isPaired(this)) return Future<void>.value();
+    if (!_channel.messenger.isPaired(this)) return Future<void>.value();
 
     _channel.$invokeRelease(this);
-    return _channel.disposePair(this);
+    return _channel.disposeInstancePair(this);
   }
 
   /// Starts capturing and drawing preview frames to the screen.
@@ -63,7 +63,7 @@ class Camera with $Camera {
   /// Preview will not actually start until a texture is supplied with
   /// [addToTexture].
   Future<void> startPreview() async {
-    assert(_channel.manager.isPaired(this));
+    assert(_channel.messenger.isPaired(this));
     _channel.$invokeStartPreview(this);
   }
 
@@ -71,18 +71,18 @@ class Camera with $Camera {
   ///
   /// Resets the camera for a future call to [startPreview].
   Future<void> stopPreview() async {
-    assert(_channel.manager.isPaired(this));
+    assert(_channel.messenger.isPaired(this));
     await _channel.$invokeStartPreview(this);
   }
 
   Future<int> attachPreviewToTexture() async {
-    assert(_channel.manager.isPaired(this));
+    assert(_channel.messenger.isPaired(this));
     return _currentTexture ??=
         await _channel.$invokeAttachPreviewToTexture(this) as int;
   }
 
   Future<void> releaseTexture() async {
-    assert(_channel.manager.isPaired(this));
+    assert(_channel.messenger.isPaired(this));
     _currentTexture = null;
     await _channel.$invokeReleaseTexture(this);
   }
@@ -93,12 +93,14 @@ class Camera with $Camera {
 /// Retrieve by calling [Camera.getAllCameraInfo].
 @Reference('penguin_camera/android/camera/CameraInfo')
 class CameraInfo with $CameraInfo {
-  CameraInfo(
-      {required this.cameraId, required this.facing, required this.orientation})
-      : assert(facing == CAMERA_FACING_BACK || facing == CAMERA_FACING_FRONT);
+  CameraInfo({
+    required this.cameraId,
+    required this.facing,
+    required this.orientation,
+  }) : assert(facing == CAMERA_FACING_BACK || facing == CAMERA_FACING_FRONT);
 
   static final $CameraInfoChannel _channel = $CameraInfoChannel(
-    MethodChannelManager.instance,
+    MethodChannelMessenger.instance,
   )..setHandler($CameraInfoHandler(
       onCreate: (_, $CameraInfoCreationArgs args) {
         return CameraInfo(

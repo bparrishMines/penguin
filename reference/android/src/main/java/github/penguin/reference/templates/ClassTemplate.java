@@ -9,17 +9,17 @@ public class ClassTemplate implements LibraryTemplate.$ClassTemplate {
     this.fieldTemplate = fieldTemplate;
   }
 
-  static void setupChannel(TypeChannelMessenger manager) {
-    final LibraryTemplate.$ClassTemplateChannel channel = new LibraryTemplate.$ClassTemplateChannel(manager);
+  static void setupChannel(TypeChannelMessenger messenger) {
+    final LibraryTemplate.$ClassTemplateChannel channel = new LibraryTemplate.$ClassTemplateChannel(messenger);
     channel.setHandler(
         new LibraryTemplate.$ClassTemplateHandler() {
           @Override
-          LibraryTemplate.$ClassTemplate onCreate(TypeChannelMessenger manager, LibraryTemplate.$ClassTemplateCreationArgs args) {
+          LibraryTemplate.$ClassTemplate onCreate(TypeChannelMessenger messenger, LibraryTemplate.$ClassTemplateCreationArgs args) {
             return new ClassTemplate(args.fieldTemplate);
           }
 
           @Override
-          public Object $onStaticMethodTemplate(TypeChannelMessenger manager, String parameterTemplate) {
+          public Object $onStaticMethodTemplate(TypeChannelMessenger messenger, String parameterTemplate) {
             return staticMethodTemplate(parameterTemplate);
           }
         });

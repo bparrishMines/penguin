@@ -276,7 +276,7 @@ String generateDart(String template, LibraryNode libraryNode) {
                                 methodNode.name.pascalCase,
                               ),
                         )
-                        .join(','),
+                        .join(' '),
                   )
                   .replaceAll(
                     library.aHandler.aOnCreateMethod.exp,
@@ -770,7 +770,7 @@ class HandlerStaticMethodName with TemplateRegExp {
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'this\.\$onStaticMethodTemplate',
+    r'this\.\$onStaticMethodTemplate,',
   );
 
   @override
@@ -930,7 +930,7 @@ class HandlerInvokeMethod with TemplateRegExp {
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'Object\? invokeMethod\(.+(?<=@override\s*void onInstanceDisposed\()',
+    r'Object\? invokeMethod\(.+(?<=@override\s*void onInstanceAdded\()',
   );
 
   @override

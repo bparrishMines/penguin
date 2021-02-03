@@ -33,8 +33,8 @@ class $CameraInfoCreationArgs {
 }
 
 class $CameraChannel extends TypeChannel<$Camera> {
-  $CameraChannel(TypeChannelManager manager)
-      : super(manager, 'penguin_camera/android/camera/Camera');
+  $CameraChannel(TypeChannelMessenger messenger)
+      : super(messenger, 'penguin_camera/android/camera/Camera');
 
   Future<Object?> $invokeGetAllCameraInfo() {
     return invokeStaticMethod(
@@ -102,28 +102,39 @@ class $CameraChannel extends TypeChannel<$Camera> {
 }
 
 class $CameraInfoChannel extends TypeChannel<$CameraInfo> {
-  $CameraInfoChannel(TypeChannelManager manager)
-      : super(manager, 'penguin_camera/android/camera/CameraInfo');
+  $CameraInfoChannel(TypeChannelMessenger messenger)
+      : super(messenger, 'penguin_camera/android/camera/CameraInfo');
 }
 
 class $CameraHandler implements TypeChannelHandler<$Camera> {
-  $CameraHandler(
-      {this.onCreate, this.onDispose, this.$onGetAllCameraInfo, this.$onOpen});
+  $CameraHandler({
+    this.onCreate,
+    this.onAdded,
+    this.onRemoved,
+    this.$onGetAllCameraInfo,
+    this.$onOpen,
+  });
 
-  final $Camera Function(TypeChannelManager manager, $CameraCreationArgs args)?
-      onCreate;
+  final $Camera Function(
+    TypeChannelMessenger messenger,
+    $CameraCreationArgs args,
+  )? onCreate;
 
-  final void Function(TypeChannelManager manager, $Camera instance)? onDispose;
+  final void Function(TypeChannelMessenger messenger, $Camera instance)?
+      onAdded;
+
+  final void Function(TypeChannelMessenger messenger, $Camera instance)?
+      onRemoved;
 
   final Future<List<$CameraInfo>> Function(
-    TypeChannelManager manager,
+    TypeChannelMessenger messenger,
   )? $onGetAllCameraInfo;
-  final Future<$Camera> Function(TypeChannelManager manager, int cameraId)?
+  final Future<$Camera> Function(TypeChannelMessenger messenger, int cameraId)?
       $onOpen;
 
   @override
   Object? invokeStaticMethod(
-    TypeChannelManager manager,
+    TypeChannelMessenger messenger,
     String methodName,
     List<Object?> arguments,
   ) {
@@ -132,11 +143,11 @@ class $CameraHandler implements TypeChannelHandler<$Camera> {
     switch (methodName) {
       case 'getAllCameraInfo':
         method = () => $onGetAllCameraInfo!(
-              manager,
+              messenger,
             );
         break;
       case 'open':
-        method = () => $onOpen!(manager, arguments[0] as int);
+        method = () => $onOpen!(messenger, arguments[0] as int);
         break;
       default:
         throw ArgumentError.value(
@@ -152,7 +163,7 @@ class $CameraHandler implements TypeChannelHandler<$Camera> {
 
   @override
   List<Object?> getCreationArguments(
-    TypeChannelManager manager,
+    TypeChannelMessenger messenger,
     $Camera instance,
   ) {
     return <Object?>[];
@@ -160,18 +171,18 @@ class $CameraHandler implements TypeChannelHandler<$Camera> {
 
   @override
   $Camera createInstance(
-    TypeChannelManager manager,
+    TypeChannelMessenger messenger,
     List<Object?> arguments,
   ) {
     return onCreate!(
-      manager,
+      messenger,
       $CameraCreationArgs(),
     );
   }
 
   @override
   Object? invokeMethod(
-    TypeChannelManager manager,
+    TypeChannelMessenger messenger,
     $Camera instance,
     String methodName,
     List<Object?> arguments,
@@ -207,26 +218,43 @@ class $CameraHandler implements TypeChannelHandler<$Camera> {
   }
 
   @override
-  void onInstanceDisposed(TypeChannelManager manager, $Camera instance) {
-    if (onDispose != null) onDispose!(manager, instance);
+  void onInstanceAdded(
+    TypeChannelMessenger messenger,
+    $Camera instance,
+  ) {
+    if (onAdded != null) onAdded!(messenger, instance);
+  }
+
+  @override
+  void onInstanceRemoved(
+    TypeChannelMessenger messenger,
+    $Camera instance,
+  ) {
+    if (onRemoved != null) onRemoved!(messenger, instance);
   }
 }
 
 class $CameraInfoHandler implements TypeChannelHandler<$CameraInfo> {
   $CameraInfoHandler({
     this.onCreate,
-    this.onDispose,
+    this.onAdded,
+    this.onRemoved,
   });
 
   final $CameraInfo Function(
-      TypeChannelManager manager, $CameraInfoCreationArgs args)? onCreate;
+    TypeChannelMessenger messenger,
+    $CameraInfoCreationArgs args,
+  )? onCreate;
 
-  final void Function(TypeChannelManager manager, $CameraInfo instance)?
-      onDispose;
+  final void Function(TypeChannelMessenger messenger, $CameraInfo instance)?
+      onAdded;
+
+  final void Function(TypeChannelMessenger messenger, $CameraInfo instance)?
+      onRemoved;
 
   @override
   Object? invokeStaticMethod(
-    TypeChannelManager manager,
+    TypeChannelMessenger messenger,
     String methodName,
     List<Object?> arguments,
   ) {
@@ -247,7 +275,7 @@ class $CameraInfoHandler implements TypeChannelHandler<$CameraInfo> {
 
   @override
   List<Object?> getCreationArguments(
-    TypeChannelManager manager,
+    TypeChannelMessenger messenger,
     $CameraInfo instance,
   ) {
     return <Object?>[instance.cameraId, instance.facing, instance.orientation];
@@ -255,11 +283,11 @@ class $CameraInfoHandler implements TypeChannelHandler<$CameraInfo> {
 
   @override
   $CameraInfo createInstance(
-    TypeChannelManager manager,
+    TypeChannelMessenger messenger,
     List<Object?> arguments,
   ) {
     return onCreate!(
-      manager,
+      messenger,
       $CameraInfoCreationArgs()
         ..cameraId = arguments[0] as int
         ..facing = arguments[1] as int
@@ -269,7 +297,7 @@ class $CameraInfoHandler implements TypeChannelHandler<$CameraInfo> {
 
   @override
   Object? invokeMethod(
-    TypeChannelManager manager,
+    TypeChannelMessenger messenger,
     $CameraInfo instance,
     String methodName,
     List<Object?> arguments,
@@ -290,7 +318,18 @@ class $CameraInfoHandler implements TypeChannelHandler<$CameraInfo> {
   }
 
   @override
-  void onInstanceDisposed(TypeChannelManager manager, $CameraInfo instance) {
-    if (onDispose != null) onDispose!(manager, instance);
+  void onInstanceAdded(
+    TypeChannelMessenger messenger,
+    $CameraInfo instance,
+  ) {
+    if (onAdded != null) onAdded!(messenger, instance);
+  }
+
+  @override
+  void onInstanceRemoved(
+    TypeChannelMessenger messenger,
+    $CameraInfo instance,
+  ) {
+    if (onRemoved != null) onRemoved!(messenger, instance);
   }
 }

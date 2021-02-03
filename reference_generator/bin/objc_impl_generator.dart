@@ -696,7 +696,7 @@ class HandlerMethodInvoker with TemplateRegExp {
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'- \(id _Nullable\)invokeMethod:.*(?=- \(void\)onInstanceDisposed:)',
+    r'- \(id _Nullable\)invokeMethod:.*(?=- \(void\)onInstanceAdded:)',
   );
 
   final RegExp className = TemplateRegExp.regExp(

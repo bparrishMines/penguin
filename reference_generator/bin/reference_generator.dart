@@ -37,7 +37,13 @@ void main(List<String> arguments) async {
     exit(0);
   }
 
-  final options = ReferenceGeneratorOptions.parse(results);
+  ReferenceGeneratorOptions options;
+  try {
+    options = ReferenceGeneratorOptions.parse(results);
+  } on ArgumentError catch (error) {
+    print(error.message);
+    exit(64);
+  }
 
   if (options.build) {
     final Process process = await Process.start(

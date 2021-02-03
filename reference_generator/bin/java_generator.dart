@@ -675,7 +675,7 @@ class Handler with TemplateRegExp {
   HandlerInvokeMethod get theInvokeMethod => HandlerInvokeMethod(this);
 
   final RegExp onInstanceAddedClassName = TemplateRegExp.regExp(
-    r'(?<=void onInstanceDisposed\([^\$]+\$)ClassTemplate',
+    r'(?<=void onInstanceAdded\([^\$]+\$)ClassTemplate',
   );
 
   final RegExp onInstanceRemovedClassName = TemplateRegExp.regExp(

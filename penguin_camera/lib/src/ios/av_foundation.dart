@@ -5,6 +5,13 @@ import 'package:penguin_camera/src/ios/av_foundation.g.dart';
 import 'package:reference/annotations.dart';
 import 'package:reference/reference.dart';
 
+void initializeChannels() {
+  CaptureDeviceInput._channel; // ignore: unnecessary_statements
+  CaptureSession._channel; // ignore: unnecessary_statements
+  CaptureDevice._channel; // ignore: unnecessary_statements
+  PreviewController._channel; // ignore: unnecessary_statements
+}
+
 abstract class MediaType {
   const MediaType._();
 
@@ -24,7 +31,7 @@ class CaptureDeviceInput with $CaptureDeviceInput {
   const CaptureDeviceInput(this.device);
 
   static final $CaptureDeviceInputChannel _channel =
-      $CaptureDeviceInputChannel(MethodChannelManager.instance)
+      $CaptureDeviceInputChannel(MethodChannelMessenger.instance)
         ..setHandler($CaptureDeviceInputHandler());
 
   final CaptureDevice device;
@@ -35,7 +42,7 @@ class CaptureSession with $CaptureSession, ReferenceType<$CaptureSession> {
   CaptureSession(this.inputs);
 
   static final $CaptureSessionChannel _channel =
-      $CaptureSessionChannel(MethodChannelManager.instance)
+      $CaptureSessionChannel(MethodChannelMessenger.instance)
         ..setHandler(
           $CaptureSessionHandler(
             onAdded: (manager, instance) {
@@ -47,7 +54,7 @@ class CaptureSession with $CaptureSession, ReferenceType<$CaptureSession> {
             onRemoved: (manager, instance) {
               final CaptureSession session = instance as CaptureSession;
               for (CaptureDeviceInput input in session.inputs) {
-                input.device.typeChannel.disposePair(input.device);
+                input.device.typeChannel.disposeInstancePair(input.device);
               }
             },
           ),
@@ -62,9 +69,9 @@ class CaptureSession with $CaptureSession, ReferenceType<$CaptureSession> {
   }
 
   Future<void> stopRunning() async {
-    if (!_channel.manager.isPaired(this)) return;
-    await _channel.$invokeStopRunning(this);
-    _channel.disposePair(this);
+    if (!_channel.messenger.isPaired(this)) return;
+    _channel.$invokeStopRunning(this);
+    return _channel.disposeInstancePair(this);
   }
 
   @override
@@ -76,7 +83,7 @@ class CaptureDevice with $CaptureDevice, ReferenceType<$CaptureDevice> {
   CaptureDevice({required this.uniqueId, required this.position});
 
   static final $CaptureDeviceChannel _channel =
-      $CaptureDeviceChannel(MethodChannelManager.instance)
+      $CaptureDeviceChannel(MethodChannelMessenger.instance)
         ..setHandler($CaptureDeviceHandler());
 
   final String uniqueId;
@@ -113,19 +120,20 @@ class PreviewState extends State<Preview> {
   @override
   void dispose() {
     super.dispose();
-    widget.controller.typeChannel.disposePair(widget.controller);
+    widget.controller.typeChannel.disposeInstancePair(widget.controller);
   }
 
   @override
   Widget build(BuildContext context) {
-    final PairedInstance? pairedInstance = widget.controller.typeChannel.manager
+    final PairedInstance? pairedInstance = widget
+        .controller.typeChannel.messenger
         .getPairedPairedInstance(widget.controller);
     if (pairedInstance == null) {
       throw StateError("PreviewController isn't paired");
     }
     return UiKitView(
       viewType: 'penguin_camera/ios/Preview',
-      creationParams: PairedInstance(widget.controller.hashCode.toString()),
+      creationParams: pairedInstance,
       creationParamsCodec: ReferenceMessageCodec(),
     );
   }
@@ -137,16 +145,24 @@ class PreviewController
   PreviewController(this.captureSession);
 
   static final $PreviewControllerChannel _channel =
-      $PreviewControllerChannel(MethodChannelManager.instance)
-        ..setHandler($PreviewControllerHandler(onAdded: (manager, instance) {
-          final CaptureSession session =
-              instance.captureSession as CaptureSession;
-          session.typeChannel.createNewInstancePair(session, owner: instance);
-        }, onDispose: (manager, instance) {
-          final CaptureSession session =
-              instance.captureSession as CaptureSession;
-          session.typeChannel.disposePair(session);
-        }));
+      $PreviewControllerChannel(MethodChannelMessenger.instance)
+        ..setHandler(
+          $PreviewControllerHandler(
+            onAdded: (manager, instance) {
+              final CaptureSession session =
+                  instance.captureSession as CaptureSession;
+              session.typeChannel.createNewInstancePair(
+                session,
+                owner: instance,
+              );
+            },
+            onRemoved: (manager, instance) {
+              final CaptureSession session =
+                  instance.captureSession as CaptureSession;
+              session.typeChannel.disposeInstancePair(session);
+            },
+          ),
+        );
 
   final CaptureSession captureSession;
 

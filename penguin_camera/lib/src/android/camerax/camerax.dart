@@ -14,14 +14,14 @@ void initializeChannels() {
 }
 
 @Reference('penguin_camera/android/camerax/UseCase')
-abstract class UseCase with $UseCase, PairableInstance {}
+abstract class UseCase with $UseCase, ReferenceType {}
 
 @Reference('penguin_camera/android/camerax/Preview')
 class Preview extends UseCase with $Preview {
   Preview();
 
   static final $PreviewChannel _channel = $PreviewChannel(
-    MethodChannelManager.instance,
+    MethodChannelMessenger.instance,
   )..setHandler(
       $PreviewHandler(
         onCreate: (_, __) => Preview(),
@@ -39,7 +39,7 @@ class Preview extends UseCase with $Preview {
 
   @override
   Future<void> releaseTexture() async {
-    if (_currentTexture == null || !_channel.manager.isPaired(this)) return;
+    if (_currentTexture == null || !_channel.messenger.isPaired(this)) return;
 
     _currentTexture = null;
     await _channel.$invokeReleaseTexture(this);
@@ -52,7 +52,7 @@ class Preview extends UseCase with $Preview {
 @Reference('penguin_camera/android/camerax/SuccessListener')
 abstract class SuccessListener with $SuccessListener {
   static final $SuccessListenerChannel _channel = $SuccessListenerChannel(
-    MethodChannelManager.instance,
+    MethodChannelMessenger.instance,
   )..setHandler($SuccessListenerHandler());
 
   @override
@@ -68,7 +68,7 @@ class ProcessCameraProvider with $ProcessCameraProvider {
 
   static final $ProcessCameraProviderChannel _channel =
       $ProcessCameraProviderChannel(
-    MethodChannelManager.instance,
+    MethodChannelMessenger.instance,
   )..setHandler(
           $ProcessCameraProviderHandler(
             onCreate: (_, args) => ProcessCameraProvider._(),
@@ -77,7 +77,7 @@ class ProcessCameraProvider with $ProcessCameraProvider {
 
   static ProcessCameraProvider _instance = _EmptyProcessCameraProvider();
 
-  Set<PairableInstance> _dependentInstances = <PairableInstance>{};
+  Set<ReferenceType> _dependentInstances = <ReferenceType>{};
 
   static ProcessCameraProvider get instance => _instance;
 
@@ -111,19 +111,18 @@ class ProcessCameraProvider with $ProcessCameraProvider {
   }
 
   Future<void> unbindAll() async {
-    for (PairableInstance instance in _dependentInstances) {
-      instance.typeChannel.disposePair(instance);
+    for (ReferenceType type in _dependentInstances) {
+      type.typeChannel.disposeInstancePair(instance);
     }
     _dependentInstances.clear();
-
     await _channel.$invokeUnbindAll(this);
   }
 }
 
 @Reference('penguin_camera/android/camerax/Camera')
-class Camera with $Camera, PairableInstance {
+class Camera with $Camera, ReferenceType {
   static final $CameraChannel _channel = $CameraChannel(
-    MethodChannelManager.instance,
+    MethodChannelMessenger.instance,
   )..setHandler(
       $CameraHandler(
         onCreate: (_, args) => Camera(),
@@ -135,11 +134,11 @@ class Camera with $Camera, PairableInstance {
 }
 
 @Reference('penguin_camera/android/camerax/CameraSelector')
-class CameraSelector with $CameraSelector, PairableInstance {
+class CameraSelector with $CameraSelector, ReferenceType {
   CameraSelector(this.lensFacing);
 
   static final $CameraSelectorChannel _channel = $CameraSelectorChannel(
-    MethodChannelManager.instance,
+    MethodChannelMessenger.instance,
   )..setHandler(
       $CameraSelectorHandler(
         onCreate: (_, args) => CameraSelector(args.lensFacing),
@@ -157,7 +156,7 @@ class CameraSelector with $CameraSelector, PairableInstance {
 
 class _EmptyProcessCameraProvider implements ProcessCameraProvider {
   @override
-  Set<PairableInstance> _dependentInstances = <PairableInstance>{};
+  Set<ReferenceType> _dependentInstances = <ReferenceType>{};
 
   @override
   Future<Camera> bindToLifecycle(
