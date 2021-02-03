@@ -8,21 +8,21 @@ import github.penguin.reference.async.Completable;
 
 public class TypeChannel<T> {
   @NonNull
-  public final TypeChannelMessenger manager;
+  public final TypeChannelMessenger messenger;
   @NonNull
   public final String name;
 
-  public TypeChannel(@NonNull TypeChannelMessenger manager, @NonNull String name) {
-    this.manager = manager;
+  public TypeChannel(@NonNull TypeChannelMessenger messenger, @NonNull String name) {
+    this.messenger = messenger;
     this.name = name;
   }
 
   public void setHandler(TypeChannelHandler<T> handler) {
-    manager.registerHandler(name, handler);
+    messenger.registerHandler(name, handler);
   }
 
   public NewUnpairedInstance createUnpairedInstance(T instance) {
-    return manager.createUnpairedInstance(name, instance);
+    return messenger.createUnpairedInstance(name, instance);
   }
 
   public Completable<PairedInstance> createNewInstancePair(T instance) {
@@ -30,22 +30,22 @@ public class TypeChannel<T> {
   }
 
   public Completable<PairedInstance> createNewInstancePair(T instance, Object owner) {
-    return manager.sendCreateNewInstancePair(name, instance, owner);
+    return messenger.sendCreateNewInstancePair(name, instance, owner);
   }
 
   public Completable<Object> invokeStaticMethod(String methodName, List<Object> arguments) {
-    return manager.sendInvokeStaticMethod(name, methodName, arguments);
+    return messenger.sendInvokeStaticMethod(name, methodName, arguments);
   }
 
   public Completable<Object> invokeMethod(T instance, String methodName, List<Object> arguments) {
-    return manager.sendInvokeMethod(name, instance, methodName, arguments);
+    return messenger.sendInvokeMethod(name, instance, methodName, arguments);
   }
 
   public Completable<Void> disposeInstancePair(Object instance) {
-    return manager.sendDisposeInstancePair(name, instance, instance);
+    return messenger.sendDisposeInstancePair(name, instance, instance);
   }
 
   public Completable<Void> disposeInstancePair(Object instance, Object owner) {
-    return manager.sendDisposeInstancePair(name, instance, owner);
+    return messenger.sendDisposeInstancePair(name, instance, owner);
   }
 }

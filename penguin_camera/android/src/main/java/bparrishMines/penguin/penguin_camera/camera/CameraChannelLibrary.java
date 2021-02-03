@@ -3,13 +3,15 @@
 package bparrishMines.penguin.penguin_camera.camera;
 
 import androidx.annotation.NonNull;
-import github.penguin.reference.async.Completable;
-import github.penguin.reference.reference.TypeChannel;
-import github.penguin.reference.reference.TypeChannelHandler;
-import github.penguin.reference.reference.TypeChannelManager;
+
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
+
+import github.penguin.reference.async.Completable;
+import github.penguin.reference.reference.TypeChannel;
+import github.penguin.reference.reference.TypeChannelHandler;
+import github.penguin.reference.reference.TypeChannelMessenger;
 
 // **************************************************************************
 // ReferenceGenerator
@@ -18,37 +20,44 @@ import java.util.List;
 class CameraChannelLibrary {
   interface $Camera {
     Object release() throws Exception;
+
     Object startPreview() throws Exception;
+
     Object stopPreview() throws Exception;
+
     Object attachPreviewToTexture() throws Exception;
+
     Object releaseTexture() throws Exception;
   }
-interface $CameraInfo {
+
+  interface $CameraInfo {
     Integer getCameraId();
+
     Integer getFacing();
+
     Integer getOrientation();
   }
 
   static class $CameraCreationArgs {
-    
+
   }
 
-static class $CameraInfoCreationArgs {
+  static class $CameraInfoCreationArgs {
     Integer cameraId;
     Integer facing;
     Integer orientation;
   }
 
   static class $CameraChannel extends TypeChannel<$Camera> {
-    $CameraChannel(@NonNull TypeChannelManager manager) {
-      super(manager, "penguin_camera/android/camera/Camera");
+    $CameraChannel(@NonNull TypeChannelMessenger messenger) {
+      super(messenger, "penguin_camera/android/camera/Camera");
     }
 
     Completable<Object> $invokeGetAllCameraInfo() {
       return invokeStaticMethod("getAllCameraInfo", Arrays.<Object>asList());
     }
 
-Completable<Object> $invokeOpen(Integer cameraId) {
+    Completable<Object> $invokeOpen(Integer cameraId) {
       return invokeStaticMethod("open", Arrays.<Object>asList(cameraId));
     }
 
@@ -56,53 +65,56 @@ Completable<Object> $invokeOpen(Integer cameraId) {
       return invokeMethod(instance, "release", Arrays.<Object>asList());
     }
 
-Completable<Object> $invokeStartPreview($Camera instance) {
+    Completable<Object> $invokeStartPreview($Camera instance) {
       return invokeMethod(instance, "startPreview", Arrays.<Object>asList());
     }
 
-Completable<Object> $invokeStopPreview($Camera instance) {
+    Completable<Object> $invokeStopPreview($Camera instance) {
       return invokeMethod(instance, "stopPreview", Arrays.<Object>asList());
     }
 
-Completable<Object> $invokeAttachPreviewToTexture($Camera instance) {
+    Completable<Object> $invokeAttachPreviewToTexture($Camera instance) {
       return invokeMethod(instance, "attachPreviewToTexture", Arrays.<Object>asList());
     }
 
-Completable<Object> $invokeReleaseTexture($Camera instance) {
+    Completable<Object> $invokeReleaseTexture($Camera instance) {
       return invokeMethod(instance, "releaseTexture", Arrays.<Object>asList());
     }
   }
 
-static class $CameraInfoChannel extends TypeChannel<$CameraInfo> {
-    $CameraInfoChannel(@NonNull TypeChannelManager manager) {
-      super(manager, "penguin_camera/android/camera/CameraInfo");
+  static class $CameraInfoChannel extends TypeChannel<$CameraInfo> {
+    $CameraInfoChannel(@NonNull TypeChannelMessenger messenger) {
+      super(messenger, "penguin_camera/android/camera/CameraInfo");
     }
-}
+
+
+  }
 
   static class $CameraHandler implements TypeChannelHandler<$Camera> {
-    $Camera onCreate(TypeChannelManager manager, $CameraCreationArgs args)
+    $Camera onCreate(TypeChannelMessenger messenger, $CameraCreationArgs args)
         throws Exception {
       return null;
     }
 
-    public Object $onGetAllCameraInfo(TypeChannelManager manager)
+    public Object $onGetAllCameraInfo(TypeChannelMessenger messenger)
         throws Exception {
       return null;
     }
-public Object $onOpen(TypeChannelManager manager, Integer cameraId)
+
+    public Object $onOpen(TypeChannelMessenger messenger, Integer cameraId)
         throws Exception {
       return null;
     }
 
     @Override
     public Object invokeStaticMethod(
-        TypeChannelManager manager, String methodName, List<Object> arguments)
+        TypeChannelMessenger messenger, String methodName, List<Object> arguments)
         throws Exception {
       switch (methodName) {
         case "getAllCameraInfo":
-          return $onGetAllCameraInfo(manager);
-case "open":
-          return $onOpen(manager, (Integer) arguments.get(0));
+          return $onGetAllCameraInfo(messenger);
+        case "open":
+          return $onOpen(messenger, (Integer) arguments.get(0));
       }
 
       throw new UnsupportedOperationException(
@@ -111,21 +123,21 @@ case "open":
 
     @Override
     public List<Object> getCreationArguments(
-        TypeChannelManager manager, $Camera instance) {
+        TypeChannelMessenger messenger, $Camera instance) {
       return Arrays.<Object>asList();
     }
 
     @Override
-    public $Camera createInstance(TypeChannelManager manager, List<Object> arguments)
+    public $Camera createInstance(TypeChannelMessenger messenger, List<Object> arguments)
         throws Exception {
       final $CameraCreationArgs args = new $CameraCreationArgs();
-      
-      return onCreate(manager, args);
+
+      return onCreate(messenger, args);
     }
 
     @Override
     public Object invokeMethod(
-        TypeChannelManager manager,
+        TypeChannelMessenger messenger,
         $Camera instance,
         String methodName,
         List<Object> arguments)
@@ -141,23 +153,29 @@ case "open":
     }
 
     @Override
-    public void onInstanceDisposed(TypeChannelManager manager, $Camera instance)
-        throws Exception {}
+    public void onInstanceAdded(TypeChannelMessenger messenger, $Camera instance)
+        throws Exception {
+    }
+
+    @Override
+    public void onInstanceRemoved(TypeChannelMessenger messenger, $Camera instance)
+        throws Exception {
+    }
   }
-static class $CameraInfoHandler implements TypeChannelHandler<$CameraInfo> {
-    $CameraInfo onCreate(TypeChannelManager manager, $CameraInfoCreationArgs args)
+
+  static class $CameraInfoHandler implements TypeChannelHandler<$CameraInfo> {
+    $CameraInfo onCreate(TypeChannelMessenger messenger, $CameraInfoCreationArgs args)
         throws Exception {
       return null;
     }
 
-    
 
     @Override
     public Object invokeStaticMethod(
-        TypeChannelManager manager, String methodName, List<Object> arguments)
+        TypeChannelMessenger messenger, String methodName, List<Object> arguments)
         throws Exception {
       switch (methodName) {
-        
+
       }
 
       throw new UnsupportedOperationException(
@@ -166,23 +184,23 @@ static class $CameraInfoHandler implements TypeChannelHandler<$CameraInfo> {
 
     @Override
     public List<Object> getCreationArguments(
-        TypeChannelManager manager, $CameraInfo instance) {
-      return Arrays.<Object>asList(instance.getCameraId(),instance.getFacing(),instance.getOrientation());
+        TypeChannelMessenger messenger, $CameraInfo instance) {
+      return Arrays.<Object>asList(instance.getCameraId(), instance.getFacing(), instance.getOrientation());
     }
 
     @Override
-    public $CameraInfo createInstance(TypeChannelManager manager, List<Object> arguments)
+    public $CameraInfo createInstance(TypeChannelMessenger messenger, List<Object> arguments)
         throws Exception {
       final $CameraInfoCreationArgs args = new $CameraInfoCreationArgs();
       args.cameraId = (Integer) arguments.get(0);
-args.facing = (Integer) arguments.get(1);
-args.orientation = (Integer) arguments.get(2);
-      return onCreate(manager, args);
+      args.facing = (Integer) arguments.get(1);
+      args.orientation = (Integer) arguments.get(2);
+      return onCreate(messenger, args);
     }
 
     @Override
     public Object invokeMethod(
-        TypeChannelManager manager,
+        TypeChannelMessenger messenger,
         $CameraInfo instance,
         String methodName,
         List<Object> arguments)
@@ -198,7 +216,13 @@ args.orientation = (Integer) arguments.get(2);
     }
 
     @Override
-    public void onInstanceDisposed(TypeChannelManager manager, $CameraInfo instance)
-        throws Exception {}
+    public void onInstanceAdded(TypeChannelMessenger messenger, $CameraInfo instance)
+        throws Exception {
+    }
+
+    @Override
+    public void onInstanceRemoved(TypeChannelMessenger messenger, $CameraInfo instance)
+        throws Exception {
+    }
   }
 }

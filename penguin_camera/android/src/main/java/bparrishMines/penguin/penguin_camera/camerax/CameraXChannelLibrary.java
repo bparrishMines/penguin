@@ -3,171 +3,160 @@
 package bparrishMines.penguin.penguin_camera.camerax;
 
 import androidx.annotation.NonNull;
-import github.penguin.reference.async.Completable;
-import github.penguin.reference.reference.TypeChannel;
-import github.penguin.reference.reference.TypeChannelHandler;
-import github.penguin.reference.reference.TypeChannelManager;
+
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
+
+import github.penguin.reference.async.Completable;
+import github.penguin.reference.reference.TypeChannel;
+import github.penguin.reference.reference.TypeChannelHandler;
+import github.penguin.reference.reference.TypeChannelMessenger;
 
 // **************************************************************************
 // ReferenceGenerator
 // **************************************************************************
 
 class CameraXChannelLibrary {
-  interface $UseCase {
-    
+  interface $UseCase {}
 
-    
-  }
-interface $Preview {
-    
-
+  interface $Preview {
     Object attachToTexture() throws Exception;
-Object releaseTexture() throws Exception;
-  }
-interface $SuccessListener {
-    
 
+    Object releaseTexture() throws Exception;
+  }
+
+  interface $SuccessListener {
     Object onSuccess() throws Exception;
-Object onError(String code,String message) throws Exception;
-  }
-interface $ProcessCameraProvider {
-    
 
-    Object bindToLifecycle($CameraSelector selector,$UseCase useCase) throws Exception;
-Object unbindAll() throws Exception;
+    Object onError(String code, String message) throws Exception;
   }
-interface $Camera {
-    
 
-    
+  interface $ProcessCameraProvider {
+    Object bindToLifecycle($CameraSelector selector, $UseCase useCase) throws Exception;
+
+    Object unbindAll() throws Exception;
   }
-interface $CameraSelector {
+
+  interface $Camera {
+
+  }
+
+  interface $CameraSelector {
     Integer getLensFacing();
 
-    
+
   }
 
   static class $UseCaseCreationArgs {
-    
+
   }
 
-static class $PreviewCreationArgs {
-    
+  static class $PreviewCreationArgs {
+
   }
 
-static class $SuccessListenerCreationArgs {
-    
+  static class $SuccessListenerCreationArgs {
+
   }
 
-static class $ProcessCameraProviderCreationArgs {
-    
+  static class $ProcessCameraProviderCreationArgs {
+
   }
 
-static class $CameraCreationArgs {
-    
+  static class $CameraCreationArgs {
+
   }
 
-static class $CameraSelectorCreationArgs {
+  static class $CameraSelectorCreationArgs {
     Integer lensFacing;
   }
 
   static class $UseCaseChannel extends TypeChannel<$UseCase> {
-    $UseCaseChannel(@NonNull TypeChannelManager manager) {
-      super(manager, "penguin_camera/android/camerax/UseCase");
+    $UseCaseChannel(@NonNull TypeChannelMessenger messenger) {
+      super(messenger, "penguin_camera/android/camerax/UseCase");
     }
 
-    
 
-    
   }
 
-static class $PreviewChannel extends TypeChannel<$Preview> {
-    $PreviewChannel(@NonNull TypeChannelManager manager) {
-      super(manager, "penguin_camera/android/camerax/Preview");
+  static class $PreviewChannel extends TypeChannel<$Preview> {
+    $PreviewChannel(@NonNull TypeChannelMessenger messenger) {
+      super(messenger, "penguin_camera/android/camerax/Preview");
     }
 
-    
 
     Completable<Object> $invokeAttachToTexture($Preview instance) {
-      return invokeMethod(instance, "attachToTexture", Arrays.<Object>asList());
+      return invokeMethod(instance, "attachToTexture", Arrays.asList());
     }
 
-Completable<Object> $invokeReleaseTexture($Preview instance) {
-      return invokeMethod(instance, "releaseTexture", Arrays.<Object>asList());
+    Completable<Object> $invokeReleaseTexture($Preview instance) {
+      return invokeMethod(instance, "releaseTexture", Arrays.asList());
     }
   }
 
-static class $SuccessListenerChannel extends TypeChannel<$SuccessListener> {
-    $SuccessListenerChannel(@NonNull TypeChannelManager manager) {
-      super(manager, "penguin_camera/android/camerax/SuccessListener");
+  static class $SuccessListenerChannel extends TypeChannel<$SuccessListener> {
+    $SuccessListenerChannel(@NonNull TypeChannelMessenger messenger) {
+      super(messenger, "penguin_camera/android/camerax/SuccessListener");
     }
 
-    
 
     Completable<Object> $invokeOnSuccess($SuccessListener instance) {
-      return invokeMethod(instance, "onSuccess", Arrays.<Object>asList());
+      return invokeMethod(instance, "onSuccess", Arrays.asList());
     }
 
-Completable<Object> $invokeOnError($SuccessListener instance, String code , String message) {
-      return invokeMethod(instance, "onError", Arrays.<Object>asList(code, message));
+    Completable<Object> $invokeOnError($SuccessListener instance, String code, String message) {
+      return invokeMethod(instance, "onError", Arrays.asList(code, message));
     }
   }
 
-static class $ProcessCameraProviderChannel extends TypeChannel<$ProcessCameraProvider> {
-    $ProcessCameraProviderChannel(@NonNull TypeChannelManager manager) {
-      super(manager, "penguin_camera/android/camerax/ProcessCameraProvider");
+  static class $ProcessCameraProviderChannel extends TypeChannel<$ProcessCameraProvider> {
+    $ProcessCameraProviderChannel(@NonNull TypeChannelMessenger messenger) {
+      super(messenger, "penguin_camera/android/camerax/ProcessCameraProvider");
     }
 
     Completable<Object> $invokeInitialize($SuccessListener successListener) {
-      return invokeStaticMethod("initialize", Arrays.<Object>asList(successListener));
+      return invokeStaticMethod("initialize", Arrays.asList(successListener));
     }
 
-    Completable<Object> $invokeBindToLifecycle($ProcessCameraProvider instance, $CameraSelector selector , $UseCase useCase) {
-      return invokeMethod(instance, "bindToLifecycle", Arrays.<Object>asList(selector, useCase));
+    Completable<Object> $invokeBindToLifecycle($ProcessCameraProvider instance, $CameraSelector selector, $UseCase useCase) {
+      return invokeMethod(instance, "bindToLifecycle", Arrays.asList(selector, useCase));
     }
 
-Completable<Object> $invokeUnbindAll($ProcessCameraProvider instance) {
-      return invokeMethod(instance, "unbindAll", Arrays.<Object>asList());
+    Completable<Object> $invokeUnbindAll($ProcessCameraProvider instance) {
+      return invokeMethod(instance, "unbindAll", Arrays.asList());
     }
   }
 
-static class $CameraChannel extends TypeChannel<$Camera> {
-    $CameraChannel(@NonNull TypeChannelManager manager) {
-      super(manager, "penguin_camera/android/camerax/Camera");
+  static class $CameraChannel extends TypeChannel<$Camera> {
+    $CameraChannel(@NonNull TypeChannelMessenger messenger) {
+      super(messenger, "penguin_camera/android/camerax/Camera");
     }
 
-    
 
-    
   }
 
-static class $CameraSelectorChannel extends TypeChannel<$CameraSelector> {
-    $CameraSelectorChannel(@NonNull TypeChannelManager manager) {
-      super(manager, "penguin_camera/android/camerax/CameraSelector");
+  static class $CameraSelectorChannel extends TypeChannel<$CameraSelector> {
+    $CameraSelectorChannel(@NonNull TypeChannelMessenger messenger) {
+      super(messenger, "penguin_camera/android/camerax/CameraSelector");
     }
 
-    
 
-    
   }
 
   static class $UseCaseHandler implements TypeChannelHandler<$UseCase> {
-    $UseCase onCreate(TypeChannelManager manager, $UseCaseCreationArgs args)
+    $UseCase onCreate(TypeChannelMessenger messenger, $UseCaseCreationArgs args)
         throws Exception {
       return null;
     }
 
-    
 
     @Override
     public Object invokeStaticMethod(
-        TypeChannelManager manager, String methodName, List<Object> arguments)
+        TypeChannelMessenger messenger, String methodName, List<Object> arguments)
         throws Exception {
       switch (methodName) {
-        
+
       }
 
       throw new UnsupportedOperationException(
@@ -176,21 +165,21 @@ static class $CameraSelectorChannel extends TypeChannel<$CameraSelector> {
 
     @Override
     public List<Object> getCreationArguments(
-        TypeChannelManager manager, $UseCase instance) {
-      return Arrays.<Object>asList();
+        TypeChannelMessenger messenger, $UseCase instance) {
+      return Arrays.asList();
     }
 
     @Override
-    public $UseCase createInstance(TypeChannelManager manager, List<Object> arguments)
+    public $UseCase createInstance(TypeChannelMessenger messenger, List<Object> arguments)
         throws Exception {
       final $UseCaseCreationArgs args = new $UseCaseCreationArgs();
-      
-      return onCreate(manager, args);
+
+      return onCreate(messenger, args);
     }
 
     @Override
     public Object invokeMethod(
-        TypeChannelManager manager,
+        TypeChannelMessenger messenger,
         $UseCase instance,
         String methodName,
         List<Object> arguments)
@@ -206,23 +195,29 @@ static class $CameraSelectorChannel extends TypeChannel<$CameraSelector> {
     }
 
     @Override
-    public void onInstanceDisposed(TypeChannelManager manager, $UseCase instance)
-        throws Exception {}
+    public void onInstanceAdded(TypeChannelMessenger messenger, $UseCase instance)
+        throws Exception {
+    }
+
+    @Override
+    public void onInstanceRemoved(TypeChannelMessenger messenger, $UseCase instance)
+        throws Exception {
+    }
   }
-static class $PreviewHandler implements TypeChannelHandler<$Preview> {
-    $Preview onCreate(TypeChannelManager manager, $PreviewCreationArgs args)
+
+  static class $PreviewHandler implements TypeChannelHandler<$Preview> {
+    $Preview onCreate(TypeChannelMessenger messenger, $PreviewCreationArgs args)
         throws Exception {
       return null;
     }
 
-    
 
     @Override
     public Object invokeStaticMethod(
-        TypeChannelManager manager, String methodName, List<Object> arguments)
+        TypeChannelMessenger messenger, String methodName, List<Object> arguments)
         throws Exception {
       switch (methodName) {
-        
+
       }
 
       throw new UnsupportedOperationException(
@@ -231,21 +226,21 @@ static class $PreviewHandler implements TypeChannelHandler<$Preview> {
 
     @Override
     public List<Object> getCreationArguments(
-        TypeChannelManager manager, $Preview instance) {
-      return Arrays.<Object>asList();
+        TypeChannelMessenger messenger, $Preview instance) {
+      return Arrays.asList();
     }
 
     @Override
-    public $Preview createInstance(TypeChannelManager manager, List<Object> arguments)
+    public $Preview createInstance(TypeChannelMessenger messenger, List<Object> arguments)
         throws Exception {
       final $PreviewCreationArgs args = new $PreviewCreationArgs();
-      
-      return onCreate(manager, args);
+
+      return onCreate(messenger, args);
     }
 
     @Override
     public Object invokeMethod(
-        TypeChannelManager manager,
+        TypeChannelMessenger messenger,
         $Preview instance,
         String methodName,
         List<Object> arguments)
@@ -261,23 +256,29 @@ static class $PreviewHandler implements TypeChannelHandler<$Preview> {
     }
 
     @Override
-    public void onInstanceDisposed(TypeChannelManager manager, $Preview instance)
-        throws Exception {}
+    public void onInstanceAdded(TypeChannelMessenger messenger, $Preview instance)
+        throws Exception {
+    }
+
+    @Override
+    public void onInstanceRemoved(TypeChannelMessenger messenger, $Preview instance)
+        throws Exception {
+    }
   }
-static class $SuccessListenerHandler implements TypeChannelHandler<$SuccessListener> {
-    $SuccessListener onCreate(TypeChannelManager manager, $SuccessListenerCreationArgs args)
+
+  static class $SuccessListenerHandler implements TypeChannelHandler<$SuccessListener> {
+    $SuccessListener onCreate(TypeChannelMessenger messenger, $SuccessListenerCreationArgs args)
         throws Exception {
       return null;
     }
 
-    
 
     @Override
     public Object invokeStaticMethod(
-        TypeChannelManager manager, String methodName, List<Object> arguments)
+        TypeChannelMessenger messenger, String methodName, List<Object> arguments)
         throws Exception {
       switch (methodName) {
-        
+
       }
 
       throw new UnsupportedOperationException(
@@ -286,21 +287,21 @@ static class $SuccessListenerHandler implements TypeChannelHandler<$SuccessListe
 
     @Override
     public List<Object> getCreationArguments(
-        TypeChannelManager manager, $SuccessListener instance) {
-      return Arrays.<Object>asList();
+        TypeChannelMessenger messenger, $SuccessListener instance) {
+      return Arrays.asList();
     }
 
     @Override
-    public $SuccessListener createInstance(TypeChannelManager manager, List<Object> arguments)
+    public $SuccessListener createInstance(TypeChannelMessenger messenger, List<Object> arguments)
         throws Exception {
       final $SuccessListenerCreationArgs args = new $SuccessListenerCreationArgs();
-      
-      return onCreate(manager, args);
+
+      return onCreate(messenger, args);
     }
 
     @Override
     public Object invokeMethod(
-        TypeChannelManager manager,
+        TypeChannelMessenger messenger,
         $SuccessListener instance,
         String methodName,
         List<Object> arguments)
@@ -316,27 +317,34 @@ static class $SuccessListenerHandler implements TypeChannelHandler<$SuccessListe
     }
 
     @Override
-    public void onInstanceDisposed(TypeChannelManager manager, $SuccessListener instance)
-        throws Exception {}
+    public void onInstanceAdded(TypeChannelMessenger messenger, $SuccessListener instance)
+        throws Exception {
+    }
+
+    @Override
+    public void onInstanceRemoved(TypeChannelMessenger messenger, $SuccessListener instance)
+        throws Exception {
+    }
   }
-static class $ProcessCameraProviderHandler implements TypeChannelHandler<$ProcessCameraProvider> {
-    $ProcessCameraProvider onCreate(TypeChannelManager manager, $ProcessCameraProviderCreationArgs args)
+
+  static class $ProcessCameraProviderHandler implements TypeChannelHandler<$ProcessCameraProvider> {
+    $ProcessCameraProvider onCreate(TypeChannelMessenger messenger, $ProcessCameraProviderCreationArgs args)
         throws Exception {
       return null;
     }
 
-    public Object $onInitialize(TypeChannelManager manager, $SuccessListener successListener)
+    public Object $onInitialize(TypeChannelMessenger messenger, $SuccessListener successListener)
         throws Exception {
       return null;
     }
 
     @Override
     public Object invokeStaticMethod(
-        TypeChannelManager manager, String methodName, List<Object> arguments)
+        TypeChannelMessenger messenger, String methodName, List<Object> arguments)
         throws Exception {
       switch (methodName) {
         case "initialize":
-          return $onInitialize(manager, ($SuccessListener) arguments.get(0));
+          return $onInitialize(messenger, ($SuccessListener) arguments.get(0));
       }
 
       throw new UnsupportedOperationException(
@@ -345,21 +353,21 @@ static class $ProcessCameraProviderHandler implements TypeChannelHandler<$Proces
 
     @Override
     public List<Object> getCreationArguments(
-        TypeChannelManager manager, $ProcessCameraProvider instance) {
-      return Arrays.<Object>asList();
+        TypeChannelMessenger messenger, $ProcessCameraProvider instance) {
+      return Arrays.asList();
     }
 
     @Override
-    public $ProcessCameraProvider createInstance(TypeChannelManager manager, List<Object> arguments)
+    public $ProcessCameraProvider createInstance(TypeChannelMessenger messenger, List<Object> arguments)
         throws Exception {
       final $ProcessCameraProviderCreationArgs args = new $ProcessCameraProviderCreationArgs();
-      
-      return onCreate(manager, args);
+
+      return onCreate(messenger, args);
     }
 
     @Override
     public Object invokeMethod(
-        TypeChannelManager manager,
+        TypeChannelMessenger messenger,
         $ProcessCameraProvider instance,
         String methodName,
         List<Object> arguments)
@@ -375,23 +383,29 @@ static class $ProcessCameraProviderHandler implements TypeChannelHandler<$Proces
     }
 
     @Override
-    public void onInstanceDisposed(TypeChannelManager manager, $ProcessCameraProvider instance)
-        throws Exception {}
+    public void onInstanceAdded(TypeChannelMessenger messenger, $ProcessCameraProvider instance)
+        throws Exception {
+    }
+
+    @Override
+    public void onInstanceRemoved(TypeChannelMessenger messenger, $ProcessCameraProvider instance)
+        throws Exception {
+    }
   }
-static class $CameraHandler implements TypeChannelHandler<$Camera> {
-    $Camera onCreate(TypeChannelManager manager, $CameraCreationArgs args)
+
+  static class $CameraHandler implements TypeChannelHandler<$Camera> {
+    $Camera onCreate(TypeChannelMessenger messenger, $CameraCreationArgs args)
         throws Exception {
       return null;
     }
 
-    
 
     @Override
     public Object invokeStaticMethod(
-        TypeChannelManager manager, String methodName, List<Object> arguments)
+        TypeChannelMessenger messenger, String methodName, List<Object> arguments)
         throws Exception {
       switch (methodName) {
-        
+
       }
 
       throw new UnsupportedOperationException(
@@ -400,21 +414,21 @@ static class $CameraHandler implements TypeChannelHandler<$Camera> {
 
     @Override
     public List<Object> getCreationArguments(
-        TypeChannelManager manager, $Camera instance) {
-      return Arrays.<Object>asList();
+        TypeChannelMessenger messenger, $Camera instance) {
+      return Arrays.asList();
     }
 
     @Override
-    public $Camera createInstance(TypeChannelManager manager, List<Object> arguments)
+    public $Camera createInstance(TypeChannelMessenger messenger, List<Object> arguments)
         throws Exception {
       final $CameraCreationArgs args = new $CameraCreationArgs();
-      
-      return onCreate(manager, args);
+
+      return onCreate(messenger, args);
     }
 
     @Override
     public Object invokeMethod(
-        TypeChannelManager manager,
+        TypeChannelMessenger messenger,
         $Camera instance,
         String methodName,
         List<Object> arguments)
@@ -430,23 +444,29 @@ static class $CameraHandler implements TypeChannelHandler<$Camera> {
     }
 
     @Override
-    public void onInstanceDisposed(TypeChannelManager manager, $Camera instance)
-        throws Exception {}
+    public void onInstanceAdded(TypeChannelMessenger messenger, $Camera instance)
+        throws Exception {
+    }
+
+    @Override
+    public void onInstanceRemoved(TypeChannelMessenger messenger, $Camera instance)
+        throws Exception {
+    }
   }
-static class $CameraSelectorHandler implements TypeChannelHandler<$CameraSelector> {
-    $CameraSelector onCreate(TypeChannelManager manager, $CameraSelectorCreationArgs args)
+
+  static class $CameraSelectorHandler implements TypeChannelHandler<$CameraSelector> {
+    $CameraSelector onCreate(TypeChannelMessenger messenger, $CameraSelectorCreationArgs args)
         throws Exception {
       return null;
     }
 
-    
 
     @Override
     public Object invokeStaticMethod(
-        TypeChannelManager manager, String methodName, List<Object> arguments)
+        TypeChannelMessenger messenger, String methodName, List<Object> arguments)
         throws Exception {
       switch (methodName) {
-        
+
       }
 
       throw new UnsupportedOperationException(
@@ -455,21 +475,21 @@ static class $CameraSelectorHandler implements TypeChannelHandler<$CameraSelecto
 
     @Override
     public List<Object> getCreationArguments(
-        TypeChannelManager manager, $CameraSelector instance) {
-      return Arrays.<Object>asList(instance.getLensFacing());
+        TypeChannelMessenger messenger, $CameraSelector instance) {
+      return Arrays.asList(instance.getLensFacing());
     }
 
     @Override
-    public $CameraSelector createInstance(TypeChannelManager manager, List<Object> arguments)
+    public $CameraSelector createInstance(TypeChannelMessenger messenger, List<Object> arguments)
         throws Exception {
       final $CameraSelectorCreationArgs args = new $CameraSelectorCreationArgs();
       args.lensFacing = (Integer) arguments.get(0);
-      return onCreate(manager, args);
+      return onCreate(messenger, args);
     }
 
     @Override
     public Object invokeMethod(
-        TypeChannelManager manager,
+        TypeChannelMessenger messenger,
         $CameraSelector instance,
         String methodName,
         List<Object> arguments)
@@ -485,7 +505,13 @@ static class $CameraSelectorHandler implements TypeChannelHandler<$CameraSelecto
     }
 
     @Override
-    public void onInstanceDisposed(TypeChannelManager manager, $CameraSelector instance)
-        throws Exception {}
+    public void onInstanceAdded(TypeChannelMessenger messenger, $CameraSelector instance)
+        throws Exception {
+    }
+
+    @Override
+    public void onInstanceRemoved(TypeChannelMessenger messenger, $CameraSelector instance)
+        throws Exception {
+    }
   }
 }

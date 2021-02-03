@@ -19,7 +19,7 @@ import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.lifecycle.LifecycleOwner;
 import github.penguin.reference.async.Completer;
 import github.penguin.reference.reference.PairedInstance;
-import github.penguin.reference.reference.TypeChannelManager;
+import github.penguin.reference.reference.TypeChannelMessageDispatcher;
 import github.penguin.reference.reference.TypeChannelMessenger;
 
 import static org.mockito.Matchers.any;
@@ -48,15 +48,15 @@ public class ProcessCameraProviderTest {
   @Mock
   LifecycleOwner mockLifecycleOwner;
 
-  TypeChannelManager testManager;
+  TypeChannelMessenger testManager;
 
   @Before
   public void setUp() {
-    final TypeChannelMessenger mockMessenger = mock(TypeChannelMessenger.class);
+    final TypeChannelMessageDispatcher mockMessenger = mock(TypeChannelMessageDispatcher.class);
     when(mockMessenger.sendCreateNewInstancePair(anyString(), any(PairedInstance.class), anyList())).thenReturn(new Completer<Void>().complete(null).completable);
-    testManager = new TypeChannelManager() {
+    testManager = new TypeChannelMessenger() {
       @Override
-      public TypeChannelMessenger getMessenger() {
+      public TypeChannelMessageDispatcher getMessageDispatcher() {
         return mockMessenger;
       }
     };

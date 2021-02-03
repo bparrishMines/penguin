@@ -2,7 +2,7 @@ package bparrishMines.penguin.penguin_camera.camera;
 
 import java.util.ArrayList;
 import java.util.List;
-import github.penguin.reference.reference.TypeChannelManager;
+import github.penguin.reference.reference.TypeChannelMessenger;
 import io.flutter.view.TextureRegistry;
 
 public class Camera implements CameraChannelLibrary.$Camera {
@@ -10,17 +10,17 @@ public class Camera implements CameraChannelLibrary.$Camera {
   private final android.hardware.Camera camera;
   private TextureRegistry.SurfaceTextureEntry currentTextureEntry;
 
-  public static void setupChannel(TypeChannelManager manager, TextureRegistry textureRegistry) {
+  public static void setupChannel(TypeChannelMessenger messenger, TextureRegistry textureRegistry) {
     final CameraChannelLibrary.$CameraChannel channel =
-        new CameraChannelLibrary.$CameraChannel(manager);
+        new CameraChannelLibrary.$CameraChannel(messenger);
     channel.setHandler(new CameraChannelLibrary.$CameraHandler() {
       @Override
-      public Object $onGetAllCameraInfo(TypeChannelManager manager) {
-        return Camera.getAllCameraInfo(manager);
+      public Object $onGetAllCameraInfo(TypeChannelMessenger messenger) {
+        return Camera.getAllCameraInfo(messenger);
       }
 
       @Override
-      public Object $onOpen(TypeChannelManager manager, Integer cameraId) {
+      public Object $onOpen(TypeChannelMessenger messenger, Integer cameraId) {
         return Camera.open(textureRegistry, channel, cameraId);
       }
     });
@@ -32,14 +32,14 @@ public class Camera implements CameraChannelLibrary.$Camera {
     return camera;
   }
 
-  public static List<CameraInfo> getAllCameraInfo(TypeChannelManager manager) {
+  public static List<CameraInfo> getAllCameraInfo(TypeChannelMessenger messenger) {
     final List<CameraInfo> allCameraInfo = new ArrayList<>();
 
     int numOfCameras = android.hardware.Camera.getNumberOfCameras();
     for (int i = 0; i < numOfCameras; i++) {
       final android.hardware.Camera.CameraInfo info = new android.hardware.Camera.CameraInfo();
       android.hardware.Camera.getCameraInfo(i, info);
-      allCameraInfo.add(new CameraInfo(manager, i, info));
+      allCameraInfo.add(new CameraInfo(messenger, i, info));
     }
 
     return allCameraInfo;

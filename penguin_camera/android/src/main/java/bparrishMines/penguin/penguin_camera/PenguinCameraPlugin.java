@@ -13,7 +13,7 @@ import bparrishMines.penguin.penguin_camera.camerax.Preview;
 import bparrishMines.penguin.penguin_camera.camerax.ProcessCameraProvider;
 import bparrishMines.penguin.penguin_camera.camerax.SuccessListener;
 import github.penguin.reference.ReferencePlugin;
-import github.penguin.reference.reference.TypeChannelManager;
+import github.penguin.reference.reference.TypeChannelMessenger;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
@@ -35,9 +35,9 @@ public class PenguinCameraPlugin implements FlutterPlugin, ActivityAware, Lifecy
   public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) { }
 
   private void initialize(BinaryMessenger binaryMessenger, TextureRegistry textureRegistry, Activity activity) {
-    final TypeChannelManager manager = ReferencePlugin.getManagerInstance(binaryMessenger);
-    Camera.setupChannel(ReferencePlugin.getManagerInstance(binaryMessenger), textureRegistry);
-    CameraInfo.setupChannel(ReferencePlugin.getManagerInstance(binaryMessenger));
+    final TypeChannelMessenger manager = ReferencePlugin.getMessengerInstance(binaryMessenger);
+    Camera.setupChannel(ReferencePlugin.getMessengerInstance(binaryMessenger), textureRegistry);
+    CameraInfo.setupChannel(ReferencePlugin.getMessengerInstance(binaryMessenger));
 
     bparrishMines.penguin.penguin_camera.camerax.Camera.setupChannel(manager);
     CameraSelector.setupChannel(manager);

@@ -7,7 +7,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LifecycleOwner;
-import github.penguin.reference.reference.TypeChannelManager;
+import github.penguin.reference.reference.TypeChannelMessenger;
 
 public class ProcessCameraProvider implements CameraXChannelLibrary.$ProcessCameraProvider {
   private final CameraXChannelLibrary.$ProcessCameraProviderChannel channel;
@@ -17,19 +17,19 @@ public class ProcessCameraProvider implements CameraXChannelLibrary.$ProcessCame
   @Nullable
   private Camera cameraInstance;
 
-  public static void setupChannel(TypeChannelManager manager, Context context, LifecycleOwner lifecycleOwner) {
+  public static void setupChannel(TypeChannelMessenger messenger, Context context, LifecycleOwner lifecycleOwner) {
     final CameraXChannelLibrary.$ProcessCameraProviderChannel channel =
-        new CameraXChannelLibrary.$ProcessCameraProviderChannel(manager);
+        new CameraXChannelLibrary.$ProcessCameraProviderChannel(messenger);
     channel.setHandler(new CameraXChannelLibrary.$ProcessCameraProviderHandler() {
-      private final ProcessCameraProvider instance = new ProcessCameraProvider(manager, lifecycleOwner);
+      private final ProcessCameraProvider instance = new ProcessCameraProvider(messenger, lifecycleOwner);
 
       @Override
-      CameraXChannelLibrary.$ProcessCameraProvider onCreate(TypeChannelManager manager, CameraXChannelLibrary.$ProcessCameraProviderCreationArgs args) {
+      CameraXChannelLibrary.$ProcessCameraProvider onCreate(TypeChannelMessenger messenger, CameraXChannelLibrary.$ProcessCameraProviderCreationArgs args) {
         return instance;
       }
 
       @Override
-      public Object $onInitialize(TypeChannelManager manager, CameraXChannelLibrary.$SuccessListener successListener) {
+      public Object $onInitialize(TypeChannelMessenger messenger, CameraXChannelLibrary.$SuccessListener successListener) {
         return initialize(context, instance, (SuccessListener) successListener);
       }
     });
@@ -55,8 +55,8 @@ public class ProcessCameraProvider implements CameraXChannelLibrary.$ProcessCame
     return instance;
   }
 
-  public ProcessCameraProvider(TypeChannelManager manager, LifecycleOwner lifecycleOwner) {
-    this.channel = new CameraXChannelLibrary.$ProcessCameraProviderChannel(manager);
+  public ProcessCameraProvider(TypeChannelMessenger messenger, LifecycleOwner lifecycleOwner) {
+    this.channel = new CameraXChannelLibrary.$ProcessCameraProviderChannel(messenger);
     this.lifecycleOwner = lifecycleOwner;
   }
 
@@ -73,7 +73,7 @@ public class ProcessCameraProvider implements CameraXChannelLibrary.$ProcessCame
         getProvider().bindToLifecycle(lifecycleOwner, cameraSelector.getCameraSelector(), useCaseImpl.getUseCase());
 
     if (cameraInstance == null) {
-      cameraInstance = new Camera(channel.manager, camera);
+      cameraInstance = new Camera(channel.messenger, camera);
       cameraInstance.getTypeChannel().createNewInstancePair(cameraInstance);
     }
     return cameraInstance;
@@ -82,7 +82,7 @@ public class ProcessCameraProvider implements CameraXChannelLibrary.$ProcessCame
   @Override
   public Void unbindAll() {
     if (cameraInstance != null) {
-      cameraInstance.getTypeChannel().disposePair(cameraInstance);
+      cameraInstance.getTypeChannel().disposeInstancePair(cameraInstance);
       cameraInstance = null;
     }
     getProvider().unbindAll();

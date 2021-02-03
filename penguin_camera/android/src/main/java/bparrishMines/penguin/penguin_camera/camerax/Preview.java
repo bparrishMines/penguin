@@ -3,11 +3,13 @@ package bparrishMines.penguin.penguin_camera.camerax;
 import android.content.Context;
 import android.util.Log;
 import android.view.Surface;
+
 import androidx.annotation.NonNull;
 import androidx.camera.core.SurfaceRequest;
 import androidx.core.content.ContextCompat;
 import androidx.core.util.Consumer;
-import github.penguin.reference.reference.TypeChannelManager;
+
+import github.penguin.reference.reference.TypeChannelMessenger;
 import io.flutter.view.TextureRegistry;
 
 import static androidx.camera.core.SurfaceRequest.Result.RESULT_INVALID_SURFACE;
@@ -21,24 +23,23 @@ public class Preview extends UseCase implements CameraXChannelLibrary.$Preview, 
   private final Context context;
   private final TextureRegistry textureRegistry;
   private final androidx.camera.core.Preview preview;
-
-  public static void setupChannel(TypeChannelManager manager, Context context, TextureRegistry textureRegistry) {
-    final CameraXChannelLibrary.$PreviewChannel channel =
-        new CameraXChannelLibrary.$PreviewChannel(manager);
-    channel.setHandler(new CameraXChannelLibrary.$PreviewHandler() {
-      @Override
-      CameraXChannelLibrary.$Preview onCreate(TypeChannelManager manager, CameraXChannelLibrary.$PreviewCreationArgs args) throws Exception {
-        return new Preview(context, textureRegistry);
-      }
-    });
-  }
-
   private TextureRegistry.SurfaceTextureEntry currentTextureEntry;
 
   public Preview(Context context, TextureRegistry textureRegistry) {
     this.context = context;
     this.textureRegistry = textureRegistry;
     this.preview = new androidx.camera.core.Preview.Builder().build();
+  }
+
+  public static void setupChannel(TypeChannelMessenger messenger, Context context, TextureRegistry textureRegistry) {
+    final CameraXChannelLibrary.$PreviewChannel channel =
+        new CameraXChannelLibrary.$PreviewChannel(messenger);
+    channel.setHandler(new CameraXChannelLibrary.$PreviewHandler() {
+      @Override
+      CameraXChannelLibrary.$Preview onCreate(TypeChannelMessenger messenger, CameraXChannelLibrary.$PreviewCreationArgs args) {
+        return new Preview(context, textureRegistry);
+      }
+    });
   }
 
   public TextureRegistry getTextureRegistry() {
@@ -59,7 +60,7 @@ public class Preview extends UseCase implements CameraXChannelLibrary.$Preview, 
               @Override
               public void accept(SurfaceRequest.Result result) {
                 final String message;
-                switch(result.getResultCode()) {
+                switch (result.getResultCode()) {
                   case RESULT_SURFACE_USED_SUCCESSFULLY:
                     message = "Result surface used successfully.";
                     break;
