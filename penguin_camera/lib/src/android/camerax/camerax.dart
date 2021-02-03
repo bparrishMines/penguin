@@ -82,7 +82,7 @@ class ProcessCameraProvider with $ProcessCameraProvider {
   static ProcessCameraProvider get instance => _instance;
 
   static void initialize(SuccessListener successListener) {
-    if (_instance is _EmptyProcessCameraProvider) {
+    if (_instance is! _EmptyProcessCameraProvider) {
       successListener.onSuccess();
       return;
     }
