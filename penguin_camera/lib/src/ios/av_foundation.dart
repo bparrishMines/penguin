@@ -159,7 +159,7 @@ class PreviewController
             onRemoved: (manager, instance) {
               final CaptureSession session =
                   instance.captureSession as CaptureSession;
-              session.typeChannel.disposeInstancePair(session);
+              session.typeChannel.disposeInstancePair(session, owner: instance);
             },
           ),
         );

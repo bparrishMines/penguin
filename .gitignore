@@ -53,6 +53,7 @@ Pods/
 **/Flutter/Flutter.framework/
 **/Flutter/Generated.xcconfig
 **/Flutter/flutter_assets/
+**/ios/Flutter/Flutter.podspec
 
 ServiceDefinitions.json
 xcuserdata/

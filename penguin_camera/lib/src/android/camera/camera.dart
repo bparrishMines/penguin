@@ -72,7 +72,7 @@ class Camera with $Camera {
   /// Resets the camera for a future call to [startPreview].
   Future<void> stopPreview() async {
     assert(_channel.messenger.isPaired(this));
-    await _channel.$invokeStartPreview(this);
+    await _channel.$invokeStopPreview(this);
   }
 
   Future<int> attachPreviewToTexture() async {

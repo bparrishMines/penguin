@@ -1,29 +1,29 @@
 #import "ReferencePlugin.h"
 
-static REFThreadSafeMapTable<NSObject<FlutterBinaryMessenger> *, REFTypeChannelMessenger *> *managers;
+static REFThreadSafeMapTable<NSObject<FlutterBinaryMessenger> *, REFTypeChannelMessenger *> *messengers;
 
 @implementation ReferencePlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
   [PluginTemplate registerWithRegistrar:registrar];
 }
 
-+ (REFTypeChannelMessenger *)getManagerInstance:(NSObject<FlutterBinaryMessenger> *)messenger {
++ (REFTypeChannelMessenger *)getMessengerInstance:(NSObject<FlutterBinaryMessenger> *)binaryMessenger {
   static dispatch_once_t once;
   dispatch_once(&once, ^ {
-    managers = [[REFThreadSafeMapTable alloc] init];
+    messengers = [[REFThreadSafeMapTable alloc] init];
   });
   
-  REFTypeChannelMessenger *manager = [managers objectForKey:messenger];
-  if (!manager) {
-    manager = [[REFMethodChannelMessenger alloc] initWithBinaryMessenger:messenger
-                                                           channelName:@"github.penguin/reference"];
-    [managers setObject:manager forKey:messenger];
+  REFTypeChannelMessenger *typeChannelMessenger = [messengers objectForKey:binaryMessenger];
+  if (!typeChannelMessenger) {
+    typeChannelMessenger = [[REFMethodChannelMessenger alloc] initWithBinaryMessenger:binaryMessenger
+                                                                          channelName:@"github.penguin/reference"];
+    [messengers setObject:typeChannelMessenger forKey:binaryMessenger];
   }
-  return manager;
+  return typeChannelMessenger;
 }
 
 // TODO: actually called?
 - (void)detachFromEngineForRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  [managers removeObjectForKey:registrar.messenger];
+  [messengers removeObjectForKey:registrar.messenger];
 }
 @end

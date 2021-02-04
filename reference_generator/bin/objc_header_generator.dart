@@ -399,7 +399,7 @@ class Protocol with TemplateRegExp {
   Protocol(this.parent);
 
   final RegExp name = TemplateRegExp.regExp(
-    r'(?<=@interface REF)ClassTemplate(?= <NSObject>)',
+    r'(?<=@protocol REF)ClassTemplate(?= <NSObject>)',
   );
 
   final RegExp prefix = TemplateRegExp.regExp(r'(?<=@protocol )REF');

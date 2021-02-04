@@ -40,7 +40,7 @@
 
 @implementation PluginTemplate
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  REFTypeChannelMessenger *manager = [ReferencePlugin getManagerInstance:registrar.messenger];
+  REFTypeChannelMessenger *manager = [ReferencePlugin getMessengerInstance:registrar.messenger];
   [ClassTemplate setupChannel:manager];
 }
 @end

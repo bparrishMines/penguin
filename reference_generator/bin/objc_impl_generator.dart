@@ -275,7 +275,7 @@ String generateObjcImpl({
                   handler.theCreationArguments
                       .stringMatch()
                       .replaceAll(handler.theCreationArguments.prefix, prefix)
-                      .replaceAll(handler.className, classNode.name)
+                      .replaceAll(handler.theCreationArguments.className, classNode.name)
                       .replaceAll(
                         handler.theCreationArguments.fieldName.exp,
                         classNode.fields.map<String>(

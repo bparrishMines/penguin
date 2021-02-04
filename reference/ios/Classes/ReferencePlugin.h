@@ -5,7 +5,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface ReferencePlugin : NSObject <FlutterPlugin>
-+ (REFTypeChannelMessenger *)getManagerInstance:(NSObject<FlutterBinaryMessenger> *)messenger;
++ (REFTypeChannelMessenger *)getMessengerInstance:(NSObject<FlutterBinaryMessenger> *)messenger;
 @end
 
 NS_ASSUME_NONNULL_END
