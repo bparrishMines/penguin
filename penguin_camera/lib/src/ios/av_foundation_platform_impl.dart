@@ -19,7 +19,7 @@ class CameraController implements intf.CameraController {
     session = CaptureSession(
       <CaptureDeviceInput>[CaptureDeviceInput(device.device)],
     );
-    Preview(controller: PreviewController(session));
+    preview = Preview(controller: PreviewController(session));
   }
 
   @override
@@ -63,8 +63,10 @@ class CameraPlatform extends intf.PenguinCameraPlatform {
 
   @override
   Future<List<CameraDevice>> getAllCameraDevices() async {
-    return await CaptureDevice.devicesWithMediaType(MediaType.video)
-        as List<CameraDevice>;
+    return (await CaptureDevice.devicesWithMediaType(MediaType.video))
+        .map<CameraDevice>((CaptureDevice device) {
+      return CameraDevice(device);
+    }).toList();
   }
 
   @override

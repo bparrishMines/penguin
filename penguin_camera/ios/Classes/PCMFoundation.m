@@ -44,6 +44,7 @@
     _captureDevice = captureDevice;
     _uniqueId = captureDevice.uniqueID;
     _position = @(captureDevice.position);
+      _messenger = messenger;
   }
   return self;
 }
@@ -70,6 +71,11 @@
   self = [super init];
   if (self) {
     _inputs = inputs;
+    _session = [[AVCaptureSession alloc] init];
+    for (PCM_CaptureDeviceInput *input in inputs) {
+      PCMCaptureDeviceInput *inputImpl = (PCMCaptureDeviceInput *)input;
+      [_session addInput:inputImpl.captureDeviceInput];
+    }
   }
   return self;
 }
@@ -117,13 +123,16 @@
 }
 @end
 
-@implementation PCMPreviewView
+@implementation PCMPreviewView {
+  AVCaptureVideoPreviewLayer *_layer;
+}
+
 -(instancetype)initWithCaptureSession:(AVCaptureSession *)captureSession {
   self = [super initWithFrame:CGRectMake(0, 0, 100, 100)];
   if (self) {
     _captureSession = captureSession;
-    AVCaptureVideoPreviewLayer *layer = [[AVCaptureVideoPreviewLayer alloc] initWithSession:captureSession];
-    [self.layer addSublayer:layer];
+    _layer = [[AVCaptureVideoPreviewLayer alloc] initWithSession:captureSession];
+    [self.layer addSublayer:_layer];
   }
   return self;
 }

@@ -27,7 +27,8 @@ abstract class CaptureDevicePosition {
 }
 
 @Reference('captureDeviceInput')
-class CaptureDeviceInput with $CaptureDeviceInput {
+class CaptureDeviceInput
+    with $CaptureDeviceInput, ReferenceType<$CaptureDeviceInput> {
   const CaptureDeviceInput(this.device);
 
   static final $CaptureDeviceInputChannel _channel =
@@ -35,6 +36,9 @@ class CaptureDeviceInput with $CaptureDeviceInput {
         ..setHandler($CaptureDeviceInputHandler());
 
   final CaptureDevice device;
+
+  @override
+  TypeChannel<$CaptureDeviceInput> get typeChannel => _channel;
 }
 
 @Reference('captureSession')
@@ -48,13 +52,13 @@ class CaptureSession with $CaptureSession, ReferenceType<$CaptureSession> {
             onAdded: (manager, instance) {
               final CaptureSession session = instance as CaptureSession;
               for (CaptureDeviceInput input in session.inputs) {
-                input.device.typeChannel.createNewInstancePair(input.device);
+                input.typeChannel.createNewInstancePair(input);
               }
             },
             onRemoved: (manager, instance) {
               final CaptureSession session = instance as CaptureSession;
               for (CaptureDeviceInput input in session.inputs) {
-                input.device.typeChannel.disposeInstancePair(input.device);
+                input.typeChannel.disposeInstancePair(input);
               }
             },
           ),
@@ -84,7 +88,10 @@ class CaptureDevice with $CaptureDevice, ReferenceType<$CaptureDevice> {
 
   static final $CaptureDeviceChannel _channel =
       $CaptureDeviceChannel(MethodChannelMessenger.instance)
-        ..setHandler($CaptureDeviceHandler());
+        ..setHandler($CaptureDeviceHandler(onCreate: (_, args) {
+          return CaptureDevice(
+              uniqueId: args.uniqueId, position: args.position);
+        }));
 
   final String uniqueId;
   final int position;
@@ -93,8 +100,9 @@ class CaptureDevice with $CaptureDevice, ReferenceType<$CaptureDevice> {
     String mediaType,
   ) async {
     assert(mediaType == MediaType.video);
-    return await _channel.$invokeDevicesWithMediaType(mediaType)
-        as List<CaptureDevice>;
+    final List<Object?> result =
+        await _channel.$invokeDevicesWithMediaType(mediaType) as List<Object?>;
+    return result.cast<CaptureDevice>().toList();
   }
 
   @override
@@ -131,6 +139,7 @@ class PreviewState extends State<Preview> {
     if (pairedInstance == null) {
       throw StateError("PreviewController isn't paired");
     }
+
     return UiKitView(
       viewType: 'penguin_camera/ios/Preview',
       creationParams: pairedInstance,

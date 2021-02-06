@@ -211,7 +211,6 @@
   NSObject *object = [[self getChannelHandler:channelName] invokeStaticMethod:self
                                                                    methodName:methodName
                                                                     arguments:[[self converter] convertForLocalMessenger:self obj:arguments]];
-  
   return [[self converter] convertForRemoteMessenger:self obj:object];
 }
 

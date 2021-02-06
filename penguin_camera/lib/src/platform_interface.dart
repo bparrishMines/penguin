@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 import 'android/camerax/camerax_platform_impl.dart';
+import 'ios/av_foundation_platform_impl.dart';
 
 abstract class PenguinCameraPlatform extends PlatformInterface {
   PenguinCameraPlatform() : super(token: _token);
@@ -35,6 +36,8 @@ abstract class PenguinCamera {
 
     if (defaultTargetPlatform == TargetPlatform.android) {
       PenguinCameraPlatform.instance = CameraXCameraPlatform()..initialize();
+    } else if (defaultTargetPlatform == TargetPlatform.iOS) {
+      PenguinCameraPlatform.instance = CameraPlatform()..initialize();
     }
   }
 
