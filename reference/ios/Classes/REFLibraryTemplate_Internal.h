@@ -2,7 +2,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class REFClassTemplate;
+@protocol REFClassTemplate;
 
 @protocol REFClassTemplate <NSObject>
 - (NSNumber *_Nullable)fieldTemplate;

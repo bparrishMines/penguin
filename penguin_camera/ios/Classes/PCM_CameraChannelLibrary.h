@@ -2,10 +2,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class PCM_CaptureDeviceInput;
-@class PCM_CaptureSession;
-@class PCM_CaptureDevice;
-@class PCM_PreviewController;
+@protocol PCM_CaptureDeviceInput;
+@protocol PCM_CaptureSession;
+@protocol PCM_CaptureDevice;
+@protocol PCM_PreviewController;
 
 @protocol PCM_CaptureDeviceInput <NSObject>
 - (PCM_CaptureDevice *_Nullable)device;

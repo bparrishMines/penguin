@@ -1,12 +1,10 @@
 #import <XCTest/XCTest.h>
-#import <OCMock/OCMock.h>
-@import penguin_camera;
 
-@interface penguin_cameraTests : XCTestCase
+@interface PCMPreviewControllerTests : XCTestCase
 
 @end
 
-@implementation penguin_cameraTests
+@implementation PCMPreviewControllerTests
 
 - (void)setUp {
     // Put setup code here. This method is called before the invocation of each test method in the class.

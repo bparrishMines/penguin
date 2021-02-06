@@ -44,7 +44,7 @@
     _captureDevice = captureDevice;
     _uniqueId = captureDevice.uniqueID;
     _position = @(captureDevice.position);
-      _messenger = messenger;
+    _messenger = messenger;
   }
   return self;
 }
@@ -67,7 +67,7 @@
   [channel setHandler:[[PCMCaptureSessionHandler alloc] init]];
 }
 
-- (instancetype)initWithInputs:(NSArray<PCM_CaptureDeviceInput *> *)inputs {
+- (instancetype)initWithInputs:(NSArray<PCM_CaptureDeviceInput> *)inputs {
   self = [super init];
   if (self) {
     _inputs = inputs;
@@ -105,7 +105,7 @@
   [channel setHandler:[[PCMCaptureDeviceInputHandler alloc] init]];
 }
 
-- (instancetype)initWithDevice:(PCM_CaptureDevice *)device {
+- (instancetype)initWithDevice:(NSObject<PCM_CaptureDevice> *)device {
   self = [super init];
   if (self) {
     _device = device;

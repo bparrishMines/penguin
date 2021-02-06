@@ -10,10 +10,10 @@ String generateObjcHeader({
   final Library library = Library(template);
   return template
       .replaceAll(
-        library.aClassDirective.exp,
+        library.aProtocolDirective.exp,
         libraryNode.classes.map<String>(
           (ClassNode classNode) {
-            final ClassDirective classDirective = library.aClassDirective;
+            final ProtocolDirective classDirective = library.aProtocolDirective;
             return classDirective
                 .stringMatch()
                 .replaceAll(classDirective.className, classNode.name)
@@ -313,21 +313,21 @@ String generateObjcHeader({
 }
 
 String getTrueTypeName(ReferenceType type, String prefix) {
-  final String javaName = objcTypeNameConversion(type.name);
+  final String objcName = objcTypeNameConversion(type.name);
 
   final Iterable<String> typeArguments = type.typeArguments.map<String>(
     (ReferenceType type) => getTrueTypeName(type, prefix),
   );
 
   if (type.codeGeneratedClass && typeArguments.isEmpty) {
-    return '$prefix$javaName';
+    return 'NSObject<$prefix$objcName>';
   } else if (type.codeGeneratedClass && typeArguments.isNotEmpty) {
-    return '$prefix$javaName<${typeArguments.join(' *,')} *>';
+    return 'NSObject<$prefix$objcName<${typeArguments.join(' *,')} *>>';
   } else if (!type.codeGeneratedClass && typeArguments.isNotEmpty) {
-    return '$javaName<${typeArguments.join(' *,')} *>';
+    return '$objcName<${typeArguments.join(' *,')} *>';
   }
 
-  return '$javaName';
+  return '$objcName';
 }
 
 // TODO: A user could extend a list/map so we want a boolean flag to check.
@@ -371,7 +371,7 @@ class Library with TemplateRegExp {
   @override
   final String template;
 
-  ClassDirective get aClassDirective => ClassDirective(this);
+  ProtocolDirective get aProtocolDirective => ProtocolDirective(this);
 
   Protocol get aProtocol => Protocol(this);
 
@@ -382,14 +382,14 @@ class Library with TemplateRegExp {
   Handler get aHandler => Handler(this);
 }
 
-class ClassDirective with TemplateRegExp {
-  ClassDirective(this.parent);
+class ProtocolDirective with TemplateRegExp {
+  ProtocolDirective(this.parent);
 
-  final RegExp classPrefix = TemplateRegExp.regExp(r'(?<=@class )REF');
+  final RegExp classPrefix = TemplateRegExp.regExp(r'(?<=@protocol )REF');
   final RegExp className = TemplateRegExp.regExp(r'ClassTemplate(?=;)');
 
   @override
-  final RegExp exp = TemplateRegExp.regExp(r'@class REFClassTemplate;');
+  final RegExp exp = TemplateRegExp.regExp(r'@protocol REFClassTemplate;');
 
   @override
   final Library parent;

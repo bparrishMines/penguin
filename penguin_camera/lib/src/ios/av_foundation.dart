@@ -21,6 +21,8 @@ abstract class MediaType {
 abstract class CaptureDevicePosition {
   const CaptureDevicePosition._();
 
+  static const int unspecified = 0;
+
   static const int back = 1;
 
   static const int front = 2;
@@ -40,6 +42,7 @@ class CaptureDeviceInput
   @override
   TypeChannel<$CaptureDeviceInput> get typeChannel => _channel;
 }
+
 
 @Reference('captureSession')
 class CaptureSession with $CaptureSession, ReferenceType<$CaptureSession> {
@@ -67,6 +70,7 @@ class CaptureSession with $CaptureSession, ReferenceType<$CaptureSession> {
   @override
   final List<CaptureDeviceInput> inputs;
 
+  // TODO: Pattern of returning CaptureSessionController here and preview controller pass function to return controller after init
   Future<void> startRunning() async {
     _channel.createNewInstancePair(this);
     await _channel.$invokeStartRunning(this);
