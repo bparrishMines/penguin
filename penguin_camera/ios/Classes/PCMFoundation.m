@@ -17,7 +17,6 @@
 @end
 
 @implementation PCMCaptureDevice {
-  AVCaptureDevice *_captureDevice;
   REFTypeChannelMessenger *_messenger;
 }
 
@@ -37,6 +36,10 @@
   return pcmDevices;
 }
 
+- (instancetype)initWithUniqueID:(NSString *)uniqueID messenger:(REFTypeChannelMessenger *)messenger {
+  return [self initWithCaptureDevice:[AVCaptureDevice deviceWithUniqueID:uniqueID] messenger:messenger];
+}
+
 - (instancetype)initWithCaptureDevice:(AVCaptureDevice *)captureDevice
                             messenger:(REFTypeChannelMessenger *)messenger {
   self = [super init];
@@ -49,17 +52,13 @@
   return self;
 }
 
-- (AVCaptureDevice *)captureDevice {
-  return _captureDevice;
-}
-
 - (nonnull REFTypeChannel *)typeChannel {
   return [[PCM_CaptureDeviceChannel alloc] initWithMessenger:_messenger];
 }
 @end
 
 @implementation PCMCaptureSession {
-  AVCaptureSession *_session;
+  NSArray<PCMCaptureDeviceInput *> *_inputs;
 }
 
 + (void)setupChannel:(REFTypeChannelMessenger *)messenger {
@@ -67,59 +66,62 @@
   [channel setHandler:[[PCMCaptureSessionHandler alloc] init]];
 }
 
-- (instancetype)initWithInputs:(NSArray<PCM_CaptureDeviceInput> *)inputs {
+- (instancetype)init {
+  return [self initWithCaptureSession:[[AVCaptureSession alloc] init]];
+}
+
+- (instancetype)initWithCaptureSession:(AVCaptureSession *)captureSession {
   self = [super init];
   if (self) {
-    _inputs = inputs;
-    _session = [[AVCaptureSession alloc] init];
-    for (PCM_CaptureDeviceInput *input in inputs) {
-      PCMCaptureDeviceInput *inputImpl = (PCMCaptureDeviceInput *)input;
-      [_session addInput:inputImpl.captureDeviceInput];
-    }
+    _captureSession = captureSession;
   }
   return self;
 }
 
+- (void)setInputs:(NSArray<PCMCaptureDeviceInput *> *)inputs {
+  NSAssert(!_inputs, @"Inputs should only be set once.");
+  _inputs = inputs;
+  for (PCMCaptureDeviceInput *input in inputs) {
+    [_captureSession addInput:input.captureDeviceInput];
+  }
+}
+
 - (NSObject * _Nullable)startRunning {
-  [_session startRunning];
+  [_captureSession startRunning];
   return nil;
 }
 
 - (NSObject * _Nullable)stopRunning {
-  [_session stopRunning];
+  [_captureSession stopRunning];
   return nil;
-}
-
-- (AVCaptureSession *)session {
-  return _session;
 }
 @end
 
-@implementation PCMCaptureDeviceInput {
-  AVCaptureDeviceInput *_captureDeviceInput;
-}
-
+@implementation PCMCaptureDeviceInput
 + (void)setupChannel:(REFTypeChannelMessenger *)messenger {
   PCM_CaptureDeviceInputChannel *channel = [[PCM_CaptureDeviceInputChannel alloc]
                                             initWithMessenger:messenger];
   [channel setHandler:[[PCMCaptureDeviceInputHandler alloc] init]];
 }
 
-- (instancetype)initWithDevice:(NSObject<PCM_CaptureDevice> *)device {
-  self = [super init];
+- (instancetype)initWithDevice:(PCMCaptureDevice *)device {
+  NSError *error;
+  AVCaptureDeviceInput *captureDeviceInput = [[AVCaptureDeviceInput alloc] initWithDevice:device.captureDevice
+                                                                                    error:&error];
+  if (error) NSLog(@"Error creating AVCaptureDeviceInput: %@: %@", error.domain, error.description);
+  self = [[PCMCaptureDeviceInput alloc] initWithCaptureDeviceInput:captureDeviceInput];
   if (self) {
     _device = device;
-    
-    PCMCaptureDevice *deviceImpl = (PCMCaptureDevice *) _device;
-    NSError *error;
-    _captureDeviceInput = [[AVCaptureDeviceInput alloc] initWithDevice:deviceImpl.captureDevice error:&error];
-    if (error) NSLog(@"Error creating AVCaptureDeviceInput: %@: %@", error.domain, error.description);
   }
   return self;
 }
 
-- (AVCaptureDeviceInput *)captureDeviceInput {
-  return _captureDeviceInput;
+- (instancetype)initWithCaptureDeviceInput:(AVCaptureDeviceInput *)captureDeviceInput {
+  self = [super init];
+  if (self) {
+    _captureDeviceInput = captureDeviceInput;
+  }
+  return self;
 }
 @end
 
@@ -147,7 +149,7 @@
 @end
 
 @implementation PCMPreviewController {
-  PCMPreviewView *_view;
+  UIView *_view;
 }
 
 + (void)setupChannel:(REFTypeChannelMessenger *)messenger {
@@ -156,13 +158,19 @@
   [channel setHandler:[[PCMPreviewControllerHandler alloc] init]];
 }
 
-- (instancetype)initWithCaptureSession:(PCM_CaptureSession *)captureSession {
-  self = [super init];
+- (instancetype)initWithCaptureSession:(PCMCaptureSession *)captureSession {
+  UIView *view = [[PCMPreviewView alloc] initWithCaptureSession:captureSession.captureSession];
+  self = [self initWithView:view];
   if (self) {
     _captureSession = captureSession;
-    
-    PCMCaptureSession *captureSessionImpl = (PCMCaptureSession *)captureSession;
-    _view = [[PCMPreviewView alloc] initWithCaptureSession:captureSessionImpl.session];
+  }
+  return self;
+}
+
+- (instancetype)initWithView:(UIView *)view {
+  self = [super init];
+  if (self) {
+    _view = view;
   }
   return self;
 }
@@ -173,10 +181,9 @@
 @end
 
 @implementation PCMCaptureDeviceHandler
-- (NSObject<PCM_CaptureDevice> *)onCreate:(REFTypeChannelMessenger *)messenger
-                                     args:(PCM_CaptureDeviceCreationArgs *)args {
-  AVCaptureDevice *device = [AVCaptureDevice deviceWithUniqueID:args.uniqueId];
-  return [[PCMCaptureDevice alloc] initWithCaptureDevice:device messenger:messenger];
+- (PCMCaptureDevice *)onCreate:(REFTypeChannelMessenger *)messenger
+                          args:(PCM_CaptureDeviceCreationArgs *)args {
+  return [[PCMCaptureDevice alloc] initWithUniqueID:args.uniqueId messenger:messenger];
 }
 
 - (NSArray<PCMCaptureDevice *> *)on_devicesWithMediaType:(REFTypeChannelMessenger *)messenger
@@ -186,22 +193,24 @@
 @end
 
 @implementation PCMCaptureDeviceInputHandler
-- (NSObject<PCM_CaptureDeviceInput> *)onCreate:(REFTypeChannelMessenger *)messenger
-                                          args:(PCM_CaptureDeviceInputCreationArgs *)args {
+- (PCMCaptureDeviceInput *)onCreate:(REFTypeChannelMessenger *)messenger
+                               args:(PCM_CaptureDeviceInputCreationArgs *)args {
   return [[PCMCaptureDeviceInput alloc] initWithDevice:args.device];
 }
 @end
 
 @implementation PCMCaptureSessionHandler
-- (NSObject<PCM_CaptureSession> *)onCreate:(REFTypeChannelMessenger *)messenger
-                                      args:(PCM_CaptureSessionCreationArgs *)args {
-  return [[PCMCaptureSession alloc] initWithInputs:args.inputs];
+- (PCMCaptureSession *)onCreate:(REFTypeChannelMessenger *)messenger
+                           args:(PCM_CaptureSessionCreationArgs *)args {
+  PCMCaptureSession *captureSession = [[PCMCaptureSession alloc] init];
+  captureSession.inputs = args.inputs;
+  return captureSession;
 }
 @end
 
 @implementation PCMPreviewControllerHandler
-- (NSObject<PCM_PreviewController> *)onCreate:(REFTypeChannelMessenger *)messenger
-                                         args:(PCM_PreviewControllerCreationArgs *)args {
+- (PCMPreviewController *)onCreate:(REFTypeChannelMessenger *)messenger
+                              args:(PCM_PreviewControllerCreationArgs *)args {
   return [[PCMPreviewController alloc] initWithCaptureSession:args.captureSession];
 }
 @end

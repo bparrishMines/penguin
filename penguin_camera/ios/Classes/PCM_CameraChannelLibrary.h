@@ -8,11 +8,11 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol PCM_PreviewController;
 
 @protocol PCM_CaptureDeviceInput <NSObject>
-- (PCM_CaptureDevice *_Nullable)device;
+- (NSObject<PCM_CaptureDevice> *_Nullable)device;
 
 @end
 @protocol PCM_CaptureSession <NSObject>
-- (NSArray<PCM_CaptureDeviceInput *> *_Nullable)inputs;
+- (NSArray<NSObject<PCM_CaptureDeviceInput> *> *_Nullable)inputs;
 - (NSObject *_Nullable)startRunning ;
 - (NSObject *_Nullable)stopRunning ;
 @end
@@ -22,22 +22,22 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 @protocol PCM_PreviewController <NSObject>
-- (PCM_CaptureSession *_Nullable)captureSession;
+- (NSObject<PCM_CaptureSession> *_Nullable)captureSession;
 
 @end
 
 @interface PCM_CaptureDeviceInputCreationArgs : NSObject
-@property PCM_CaptureDevice *_Nullable device;
+@property NSObject<PCM_CaptureDevice> *_Nullable device;
 @end
 @interface PCM_CaptureSessionCreationArgs : NSObject
-@property NSArray<PCM_CaptureDeviceInput *> *_Nullable inputs;
+@property NSArray<NSObject<PCM_CaptureDeviceInput> *> *_Nullable inputs;
 @end
 @interface PCM_CaptureDeviceCreationArgs : NSObject
 @property NSString *_Nullable uniqueId;
 @property NSNumber *_Nullable position;
 @end
 @interface PCM_PreviewControllerCreationArgs : NSObject
-@property PCM_CaptureSession *_Nullable captureSession;
+@property NSObject<PCM_CaptureSession> *_Nullable captureSession;
 @end
 
 @interface PCM_CaptureDeviceInputChannel : REFTypeChannel
