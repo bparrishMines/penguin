@@ -3,10 +3,10 @@
 
 @import penguin_camera;
 
-@interface TestAVCaptureDevice : NSObject
+@interface TestCaptureDevice : NSObject
 @end
 
-@implementation TestAVCaptureDevice
+@implementation TestCaptureDevice
 - (instancetype)init {
   return self = [super init];
 }
@@ -23,21 +23,18 @@
 @interface PCMCaptureDeviceTests : XCTestCase
 @end
 
-@implementation PCMCaptureDeviceTests
-
-- (void)setUp {
-    // Put setup code here. This method is called before the invocation of each test method in the class.
+@implementation PCMCaptureDeviceTests {
+  TestCaptureDevice *_testCaptureDevice;
 }
 
-- (void)tearDown {
-  
+- (void)setUp {
+  _testCaptureDevice = [[TestCaptureDevice alloc] init];
 }
 
 - (void)testDevicesWithMediaType {
   id mockCaptureDevice = OCMClassMock([AVCaptureDevice class]);
 
-  TestAVCaptureDevice *testAVCaptureDevice = [[TestAVCaptureDevice alloc] init];
-  OCMStub(ClassMethod([mockCaptureDevice devicesWithMediaType:@"apple"])).andReturn(@[testAVCaptureDevice]);
+  OCMStub(ClassMethod([mockCaptureDevice devicesWithMediaType:@"apple"])).andReturn(@[_testCaptureDevice]);
   
   NSArray<PCMCaptureDevice *> *devices = [PCMCaptureDevice devicesWithMediaType:@"apple" messenger:nil];
   XCTAssertEqual(devices.count, 1);
@@ -47,9 +44,13 @@
   XCTAssertEqualObjects(device.position, @(2));
 }
 
-- (void)testCameraDevicePosition {
-  XCTAssertEqual(AVCaptureDevicePositionUnspecified, 0);
-  XCTAssertEqual(AVCaptureDevicePositionBack, 1);
-  XCTAssertEqual(AVCaptureDevicePositionFront, 2);
+-(void)testInitWithUniqueID {
+  id mockCaptureDevice = OCMClassMock([AVCaptureDevice class]);
+
+  OCMStub(ClassMethod([mockCaptureDevice deviceWithUniqueID:@"test_id"])).andReturn(_testCaptureDevice);
+  
+  PCMCaptureDevice *captureDevice = [[PCMCaptureDevice alloc] initWithCaptureDevice:_testCaptureDevice
+                                                                          messenger:nil];
+  XCTAssertEqualObjects(_testCaptureDevice, captureDevice.captureDevice);
 }
 @end

@@ -6,7 +6,6 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface PCMCaptureDevice : NSObject<PCM_CaptureDevice, REFReferenceType>
-@property (readonly) AVCaptureDevice *captureDevice;
 @property (readonly) NSNumber *position;
 @property (readonly) NSString *uniqueId;
 + (void)setupChannel:(REFTypeChannelMessenger *)messenger;
@@ -15,25 +14,25 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithUniqueID:(NSString *)uniqueID messenger:(REFTypeChannelMessenger *)messenger;
 - (instancetype)initWithCaptureDevice:(AVCaptureDevice *)captureDevice
                             messenger:(REFTypeChannelMessenger *)messenger;
+- (AVCaptureDevice *)captureDevice;
 @end
 
 @interface PCMCaptureDeviceInput : NSObject<PCM_CaptureDeviceInput>
-@property (readonly) AVCaptureDeviceInput *captureDeviceInput;
 @property (readonly) PCMCaptureDevice *device;
 + (void)setupChannel:(REFTypeChannelMessenger *)messenger;
 - (instancetype)initWithDevice:(PCMCaptureDevice *)device;
 - (instancetype)initWithCaptureDeviceInput:(AVCaptureDeviceInput *)captureDeviceInput;
+- (AVCaptureDeviceInput *)captureDeviceInput;
 @end
 
 @interface PCMCaptureSession : NSObject
-@property (readonly) AVCaptureSession *captureSession;
 @property (nonatomic) NSArray<PCMCaptureDeviceInput *> *inputs;
 + (void)setupChannel:(REFTypeChannelMessenger *)messenger;
 - (instancetype)initWithCaptureSession:(AVCaptureSession *)captureSession;
+- (AVCaptureSession *)captureSession;
 @end
 
 @interface PCMPreviewController : NSObject<PCM_PreviewController, FlutterPlatformView>
-@property (readonly) UIView *view;
 @property (readonly) PCMCaptureSession *captureSession;
 + (void)setupChannel:(REFTypeChannelMessenger *)messenger;
 - (instancetype)initWithCaptureSession:(PCMCaptureSession *)captureSession;

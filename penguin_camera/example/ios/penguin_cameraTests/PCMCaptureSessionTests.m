@@ -8,32 +8,15 @@
 @end
 
 @implementation PCMCaptureSessionTests
-
-- (void)setUp {
-    // Put setup code here. This method is called before the invocation of each test method in the class.
-}
-
-- (void)tearDown {
-    // Put teardown code here. This method is called after the invocation of each test method in the class.
-}
-
-- (void)testExample {
-    // This is an example of a functional test case.
-    // Use XCTAssert and related functions to verify your tests produce the correct results.
-}
-
-- (void)testPerformanceExample {
+- (void)testSetInputs {
+  id mockCaptureDeviceInput = OCMClassMock([AVCaptureDeviceInput class]);
+  id mockPcmCaptureDeviceInput = OCMClassMock([PCMCaptureDeviceInput class]);
+  OCMStub([mockPcmCaptureDeviceInput captureDeviceInput]).andReturn(mockCaptureDeviceInput);
+  
   id mockCaptureSession = OCMClassMock([AVCaptureSession class]);
-  OCMStub([mockCaptureSession alloc]).andReturn(mockCaptureSession);
-  OCMStub([mockCaptureSession addInput:OCMOCK_ANY]);
+  PCMCaptureSession *captureSession = [[PCMCaptureSession alloc] initWithCaptureSession:mockCaptureSession];
+  [captureSession setInputs:@[mockPcmCaptureDeviceInput]];
   
-  id mockDeviceInput = OCMClassMock([AVCaptureDeviceInput class]);
-  id mockPcmDeviceInput = OCMClassMock([PCMCaptureDeviceInput class]);
-  [(PCMCaptureDeviceInput*)[[mockPcmDeviceInput stub] andReturnValue:[NSNull null]] captureDeviceInput];
-  
-  //[[PCMCaptureSession alloc] initWithInputs:@[mockPcmDeviceInput]];
-  
-  //OCMVerify([mockCaptureSession addInput:mockDeviceInput]);
+  OCMVerify([mockCaptureSession addInput:mockCaptureDeviceInput]);
 }
-
 @end

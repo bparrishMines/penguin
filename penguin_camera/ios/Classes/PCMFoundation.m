@@ -18,6 +18,7 @@
 
 @implementation PCMCaptureDevice {
   REFTypeChannelMessenger *_messenger;
+  AVCaptureDevice *_captureDevice;
 }
 
 + (void)setupChannel:(REFTypeChannelMessenger *)messenger {
@@ -52,6 +53,10 @@
   return self;
 }
 
+- (AVCaptureDevice *)captureDevice {
+  return _captureDevice;
+}
+
 - (nonnull REFTypeChannel *)typeChannel {
   return [[PCM_CaptureDeviceChannel alloc] initWithMessenger:_messenger];
 }
@@ -59,6 +64,7 @@
 
 @implementation PCMCaptureSession {
   NSArray<PCMCaptureDeviceInput *> *_inputs;
+  AVCaptureSession *_captureSession;
 }
 
 + (void)setupChannel:(REFTypeChannelMessenger *)messenger {
@@ -82,6 +88,7 @@
   NSAssert(!_inputs, @"Inputs should only be set once.");
   _inputs = inputs;
   for (PCMCaptureDeviceInput *input in inputs) {
+    NSLog(@"HERE: %@", _captureSession);
     [_captureSession addInput:input.captureDeviceInput];
   }
 }
@@ -95,9 +102,16 @@
   [_captureSession stopRunning];
   return nil;
 }
+
+- (AVCaptureSession *)captureSession {
+  return _captureSession;
+}
 @end
 
-@implementation PCMCaptureDeviceInput
+@implementation PCMCaptureDeviceInput {
+  AVCaptureDeviceInput *_captureDeviceInput;
+}
+
 + (void)setupChannel:(REFTypeChannelMessenger *)messenger {
   PCM_CaptureDeviceInputChannel *channel = [[PCM_CaptureDeviceInputChannel alloc]
                                             initWithMessenger:messenger];
@@ -122,6 +136,10 @@
     _captureDeviceInput = captureDeviceInput;
   }
   return self;
+}
+
+- (AVCaptureDeviceInput *)captureDeviceInput {
+  return _captureDeviceInput;
 }
 @end
 

@@ -13,7 +13,7 @@
 		643A02AA25CE2C9F00481A8E /* PCMCaptureDeviceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 643A02A925CE2C9F00481A8E /* PCMCaptureDeviceTests.m */; };
 		643A02E925CF185200481A8E /* PCMCaptureSessionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 643A02E825CF185200481A8E /* PCMCaptureSessionTests.m */; };
 		643A02EC25CF186E00481A8E /* PCMCaptureDeviceInputTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 643A02EB25CF186E00481A8E /* PCMCaptureDeviceInputTests.m */; };
-		643A02EF25CF188700481A8E /* PCMPreviewControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 643A02EE25CF188700481A8E /* PCMPreviewControllerTests.m */; };
+		643A02F225D1AF7000481A8E /* PCMFoundationEnumTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 643A02F125D1AF7000481A8E /* PCMFoundationEnumTests.m */; };
 		978B8F6F1D3862AE00F588F7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7AFFD8EE1D35381100E5BB4D /* AppDelegate.m */; };
 		97C146F31CF9000F007C117D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 97C146F21CF9000F007C117D /* main.m */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
@@ -58,7 +58,7 @@
 		643A02AB25CE2C9F00481A8E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		643A02E825CF185200481A8E /* PCMCaptureSessionTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PCMCaptureSessionTests.m; sourceTree = "<group>"; };
 		643A02EB25CF186E00481A8E /* PCMCaptureDeviceInputTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PCMCaptureDeviceInputTests.m; sourceTree = "<group>"; };
-		643A02EE25CF188700481A8E /* PCMPreviewControllerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PCMPreviewControllerTests.m; sourceTree = "<group>"; };
+		643A02F125D1AF7000481A8E /* PCMFoundationEnumTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PCMFoundationEnumTests.m; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Flutter/Release.xcconfig; sourceTree = "<group>"; };
 		7AFFD8ED1D35381100E5BB4D /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		7AFFD8EE1D35381100E5BB4D /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -125,7 +125,7 @@
 				643A02AB25CE2C9F00481A8E /* Info.plist */,
 				643A02E825CF185200481A8E /* PCMCaptureSessionTests.m */,
 				643A02EB25CF186E00481A8E /* PCMCaptureDeviceInputTests.m */,
-				643A02EE25CF188700481A8E /* PCMPreviewControllerTests.m */,
+				643A02F125D1AF7000481A8E /* PCMFoundationEnumTests.m */,
 			);
 			path = penguin_cameraTests;
 			sourceTree = "<group>";
@@ -387,8 +387,8 @@
 			files = (
 				643A02EC25CF186E00481A8E /* PCMCaptureDeviceInputTests.m in Sources */,
 				643A02E925CF185200481A8E /* PCMCaptureSessionTests.m in Sources */,
+				643A02F225D1AF7000481A8E /* PCMFoundationEnumTests.m in Sources */,
 				643A02AA25CE2C9F00481A8E /* PCMCaptureDeviceTests.m in Sources */,
-				643A02EF25CF188700481A8E /* PCMPreviewControllerTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
