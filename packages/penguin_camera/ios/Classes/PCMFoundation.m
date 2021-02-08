@@ -88,7 +88,6 @@
   NSAssert(!_inputs, @"Inputs should only be set once.");
   _inputs = inputs;
   for (PCMCaptureDeviceInput *input in inputs) {
-    NSLog(@"HERE: %@", _captureSession);
     [_captureSession addInput:input.captureDeviceInput];
   }
 }
