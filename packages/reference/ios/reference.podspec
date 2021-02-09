@@ -19,8 +19,7 @@ Manages communication between types/classes of different languages.
   s.dependency 'Flutter'
   s.platform = :ios, '8.0'
 
-  # Flutter.framework does not contain a i386 slice. Only x86_64 simulators are supported.
-  s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'VALID_ARCHS[sdk=iphonesimulator*]' => 'x86_64 arm64 armv7' }
+  s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'VALID_ARCHS' => 'armv7 arm64 x86_64' }
 
   s.test_spec 'Tests' do |test_spec|
     test_spec.source_files = 'Tests/**/*'
