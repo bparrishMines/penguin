@@ -13,5 +13,5 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           channel: dev
-      - run: cd packages/references
+      - run: cd packages/reference
       - run: flutter pub get
