@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:reference/src/template/template.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   _MyAppState createState() => _MyAppState();
 }
@@ -31,7 +33,7 @@ class _MyAppState extends State<MyApp> {
               _text = result;
             });
           },
-          child: Icon(Icons.ac_unit),
+          child: const Icon(Icons.ac_unit),
         ),
       ),
     );

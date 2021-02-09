@@ -8,15 +8,15 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
   reference:
     path: ../
 
 dev_dependencies:
-  flutter_test:
-    sdk: flutter
   flutter_driver:
     sdk: flutter
+  flutter_test:
+    sdk: flutter
+  lint: ^1.5.1
 
 flutter:
   uses-material-design: true
