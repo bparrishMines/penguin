@@ -13,7 +13,11 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           channel: dev
-      - name: Run Dart Test
+      - name: Dart Unit Test
         run: |
           cd packages/reference
-          flutter pub get
+          flutter test
+      - name: Android Build Test
+        run: |
+          cd packages/reference/example
+          flutter build apk
