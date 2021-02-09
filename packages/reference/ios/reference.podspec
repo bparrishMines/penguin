@@ -9,10 +9,10 @@ Pod::Spec.new do |s|
   s.description      = <<-DESC
 Manages communication between types/classes of different languages.
                        DESC
-  s.homepage         = 'https://github.com/bparrishMines/penguin/tree/master/reference'
+  s.homepage         = 'https://github.com/bparrishMines/penguin/tree/master/packages/reference'
   s.license          = { :type => 'MIT', :file => '../LICENSE' }
   s.author           = { 'Brandon Parrish' => 'email@example.com' }
-  s.source           = { :http => 'https://github.com/bparrishMines/penguin/tree/master/reference' }
+  s.source           = { :http => 'https://github.com/bparrishMines/penguin/tree/master/packages/reference' }
   s.documentation_url = 'https://pub.dev/documentation/reference/latest'
   s.source_files = 'Classes/**/*'
   s.public_header_files = 'Classes/**/*.h'

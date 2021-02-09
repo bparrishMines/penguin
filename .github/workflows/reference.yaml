@@ -1,6 +1,9 @@
 name: A workflow for my Hello World file
 on: push 
 
+env:
+  PLUGIN_DIR: packages/reference
+
 jobs:
   build:
     name: Something something
@@ -13,11 +16,21 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           channel: dev
-      - name: Dart Unit Test
+      - name: Dart Unit Tests
         run: |
-          cd packages/reference
+          cd $PLUGIN_DIR
           flutter test
+      - name: Ios Unit Tests
+        run: |
+          cd $PLUGIN_DIR/ios
+          pod lib lint
+        env:
+          DEVELOPER_DIR: /Applications/Xcode_11.4.app/Contents/Developer
       - name: Android Build Test
         run: |
-          cd packages/reference/example
+          cd $PLUGIN_DIR/example
           flutter build apk
+      - name: Ios Build Test
+        run: |
+         cd $PLUGIN_DIR/example
+         flutter build ios --no-codesign
