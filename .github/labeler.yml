@@ -1,2 +1,5 @@
 'reference':
   - packages/reference/**/*
+  
+'teference':
+  - packages/*/**
