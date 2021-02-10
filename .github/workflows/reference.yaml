@@ -36,12 +36,14 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           channel: dev
-      - name: Android Unit Tests
-        run: ./gradlew test $PLUGIN_DIR/android
       - name: Android Build Test
         run: |
           cd $PLUGIN_DIR/example
           flutter build apk
+      - name: Android Unit Tests
+        run: |
+          cd $PLUGIN_DIR/example/android
+          ./gradlew test
 
   verify_ios:
     name: Ios Tests
