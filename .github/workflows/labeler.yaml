@@ -13,7 +13,7 @@ jobs:
         repo-token: "${{ secrets.GITHUB_TOKEN }}"
         sync-labels: true
   post_merge_label:
-    if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
+    if: github.event.action == 'closed' && github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
     - uses: actions/labeler@v3
