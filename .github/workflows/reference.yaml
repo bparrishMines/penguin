@@ -1,5 +1,13 @@
-name: A workflow for my Hello World file
-on: push 
+name: Reference Tests
+
+on:
+  pull_request:
+    paths:
+      - packages/reference/**
+      - .github/workflows/reference.yaml
+  push:
+    branches:
+      - master
 
 env:
   PLUGIN_DIR: packages/reference
