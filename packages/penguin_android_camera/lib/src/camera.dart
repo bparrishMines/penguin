@@ -126,13 +126,21 @@ class CameraInfo with $CameraInfo {
 }
 
 class Channels {
-  static final $CameraChannel cameraChannel = $CameraChannel(
+  static final CameraChannel cameraChannel = CameraChannel(
     MethodChannelMessenger.instance,
   )..setHandler(CameraHandler());
 
-  static final $CameraInfoChannel cameraInfoChannel = $CameraInfoChannel(
+  static final CameraInfoChannel cameraInfoChannel = CameraInfoChannel(
     MethodChannelMessenger.instance,
   )..setHandler(CameraInfoHandler());
+}
+
+class CameraChannel extends $CameraChannel {
+  CameraChannel(TypeChannelMessenger messenger) : super(messenger);
+}
+
+class CameraInfoChannel extends $CameraInfoChannel {
+  CameraInfoChannel(TypeChannelMessenger messenger) : super(messenger);
 }
 
 class CameraHandler extends $CameraHandler {

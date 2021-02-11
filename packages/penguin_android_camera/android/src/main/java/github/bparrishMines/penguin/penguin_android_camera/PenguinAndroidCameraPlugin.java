@@ -16,8 +16,8 @@ public class PenguinAndroidCameraPlugin implements FlutterPlugin {
 
     final TextureRegistry textureRegistry = flutterPluginBinding.getTextureRegistry();
 
-    Camera.setupChannel(manager, textureRegistry);
-    CameraInfo.setupChannel(manager);
+    Channels.setupCameraChannel(manager, textureRegistry);
+    Channels.setupCameraInfoChannel(manager);
   }
 
   @Override

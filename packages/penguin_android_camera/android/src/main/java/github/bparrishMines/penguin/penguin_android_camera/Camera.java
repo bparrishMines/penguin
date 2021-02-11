@@ -11,25 +11,9 @@ public class Camera implements CameraChannelLibrary.$Camera {
   private final android.hardware.Camera camera;
   private TextureRegistry.SurfaceTextureEntry currentTextureEntry;
 
-  public static void setupChannel(TypeChannelMessenger messenger, TextureRegistry textureRegistry) {
-    final CameraChannelLibrary.$CameraChannel channel =
-        new CameraChannelLibrary.$CameraChannel(messenger);
-    channel.setHandler(new CameraChannelLibrary.$CameraHandler() {
-      @Override
-      public Object $onGetAllCameraInfo(TypeChannelMessenger messenger) {
-        return Camera.getAllCameraInfo(messenger);
-      }
-
-      @Override
-      public Object $onOpen(TypeChannelMessenger messenger, Integer cameraId) {
-        return Camera.open(textureRegistry, channel, cameraId);
-      }
-    });
-  }
-
-  public static Camera open(TextureRegistry textureRegistry, CameraChannelLibrary.$CameraChannel channel, int cameraId) {
+  public static Camera open(TypeChannelMessenger messenger, TextureRegistry textureRegistry, int cameraId) {
     final Camera camera = new Camera(android.hardware.Camera.open(cameraId), textureRegistry);
-    channel.createNewInstancePair(camera);
+    new Channels.CameraChannel(messenger).createNewInstancePair(camera);
     return camera;
   }
 
@@ -40,7 +24,7 @@ public class Camera implements CameraChannelLibrary.$Camera {
     for (int i = 0; i < numOfCameras; i++) {
       final android.hardware.Camera.CameraInfo info = new android.hardware.Camera.CameraInfo();
       android.hardware.Camera.getCameraInfo(i, info);
-      allCameraInfo.add(new CameraInfo(messenger, i, info));
+      allCameraInfo.add(new CameraInfo(info, messenger, i));
     }
 
     return allCameraInfo;
