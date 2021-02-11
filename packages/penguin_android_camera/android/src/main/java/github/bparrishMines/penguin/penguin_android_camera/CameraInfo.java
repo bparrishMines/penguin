@@ -12,12 +12,6 @@ public class CameraInfo implements CameraChannelLibrary.$CameraInfo,
   private final int cameraId;
   private final Camera.CameraInfo cameraInfo;
 
-  public static void setupChannel(TypeChannelMessenger messenger) {
-    final CameraChannelLibrary.$CameraInfoChannel channel =
-        new CameraChannelLibrary.$CameraInfoChannel(messenger);
-    channel.setHandler(new CameraChannelLibrary.$CameraInfoHandler());
-  }
-
   CameraInfo(Camera.CameraInfo cameraInfo, TypeChannelMessenger messenger, int cameraId) {
     this.channel = new CameraChannelLibrary.$CameraInfoChannel(messenger);
     this.cameraId = cameraId;
