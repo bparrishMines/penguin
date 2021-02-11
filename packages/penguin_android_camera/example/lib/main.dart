@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
-import 'dart:async';
+// @dart=2.9
 
-import 'package:flutter/services.dart';
+import 'package:flutter/material.dart';
 import 'package:penguin_android_camera/penguin_android_camera.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 void main() {
   runApp(MyApp());
@@ -14,32 +14,43 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _platformVersion = 'Unknown';
+  Camera camera;
+  Widget _previewWidget = Container();
 
   @override
   void initState() {
     super.initState();
-    initPlatformState();
+    _getCameraPermission();
   }
 
-  // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> initPlatformState() async {
-    String platformVersion;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      platformVersion = await PenguinAndroidCamera.platformVersion;
-    } on PlatformException {
-      platformVersion = 'Failed to get platform version.';
-    }
+  void _getCameraPermission() async {
+    while (!await Permission.camera.request().isGranted) {}
+    _setupCamera();
+  }
 
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
+  void _setupCamera() async {
+    initializeChannels();
+    final List<CameraInfo> allCameraInfo = await Camera.getAllCameraInfo();
+
+    camera = await Camera.open(
+      allCameraInfo
+          .firstWhere(
+              (CameraInfo info) => info.facing == CameraInfo.CAMERA_FACING_FRONT)
+          .cameraId,
+    );
+    camera.startPreview();
+    final int textureId = await camera.attachPreviewToTexture();
 
     setState(() {
-      _platformVersion = platformVersion;
+      _previewWidget = Texture(textureId: textureId);
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    camera?.releaseTexture();
+    camera?.release();
   }
 
   @override
@@ -50,7 +61,7 @@ class _MyAppState extends State<MyApp> {
           title: const Text('Plugin example app'),
         ),
         body: Center(
-          child: Text('Running on: $_platformVersion\n'),
+          child: Container(width: 200, height: 200, child: _previewWidget),
         ),
       ),
     );
