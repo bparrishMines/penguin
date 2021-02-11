@@ -1,1 +1,1 @@
-export 'src/camera.dart';
+export 'src/camera.dart' hide Channels, CameraHandler, CameraInfoHandler;

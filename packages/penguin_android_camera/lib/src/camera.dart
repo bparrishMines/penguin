@@ -6,11 +6,6 @@ import 'package:reference/reference.dart';
 
 import 'camera.g.dart';
 
-void initializeChannels() {
-  Camera._channel; // ignore: unnecessary_statements
-  CameraInfo._channel; // ignore: unnecessary_statements
-}
-
 /// The [Camera] class is used to set image capture settings, start/stop preview, snap pictures, and retrieve frames for encoding for video.
 ///
 /// This class is a client for the Camera service, which manages the actual
@@ -22,16 +17,12 @@ void initializeChannels() {
 class Camera with $Camera {
   Camera();
 
-  static final $CameraChannel _channel = $CameraChannel(
-    MethodChannelMessenger.instance,
-  )..setHandler($CameraHandler(onCreate: (_, __) => Camera()));
-
   int? _currentTexture;
 
   /// Returns the information about each camera.
   static Future<List<CameraInfo>> getAllCameraInfo() async {
     final List<Object> allInfo =
-        await _channel.$invokeGetAllCameraInfo() as List<Object>;
+        await Channels.cameraChannel.$invokeGetAllCameraInfo() as List<Object>;
     return allInfo.cast<CameraInfo>();
   }
 
@@ -45,17 +36,19 @@ class Camera with $Camera {
   /// application should only have one [Camera] object active at a time for a
   /// particular hardware camera.
   static Future<Camera> open(int cameraId) async {
-    return await _channel.$invokeOpen(cameraId) as Camera;
+    return await Channels.cameraChannel.$invokeOpen(cameraId) as Camera;
   }
 
   /// Disconnects and releases the [Camera] object resources.
   ///
   /// You must call this as soon as you're done with the [Camera] object.
   Future<void> release() {
-    if (!_channel.messenger.isPaired(this)) return Future<void>.value();
+    if (!Channels.cameraChannel.messenger.isPaired(this)) {
+      return Future<void>.value();
+    }
 
-    _channel.$invokeRelease(this);
-    return _channel.disposeInstancePair(this);
+    Channels.cameraChannel.$invokeRelease(this);
+    return Channels.cameraChannel.disposeInstancePair(this);
   }
 
   /// Starts capturing and drawing preview frames to the screen.
@@ -63,28 +56,28 @@ class Camera with $Camera {
   /// Preview will not actually start until a texture is supplied with
   /// [addToTexture].
   Future<void> startPreview() async {
-    assert(_channel.messenger.isPaired(this));
-    _channel.$invokeStartPreview(this);
+    assert(Channels.cameraChannel.messenger.isPaired(this));
+    await Channels.cameraChannel.$invokeStartPreview(this);
   }
 
   /// Stops capturing and drawing preview frames to the surface.
   ///
   /// Resets the camera for a future call to [startPreview].
   Future<void> stopPreview() async {
-    assert(_channel.messenger.isPaired(this));
-    await _channel.$invokeStopPreview(this);
+    assert(Channels.cameraChannel.messenger.isPaired(this));
+    await Channels.cameraChannel.$invokeStopPreview(this);
   }
 
   Future<int> attachPreviewToTexture() async {
-    assert(_channel.messenger.isPaired(this));
+    assert(Channels.cameraChannel.messenger.isPaired(this));
     return _currentTexture ??=
-        await _channel.$invokeAttachPreviewToTexture(this) as int;
+        await Channels.cameraChannel.$invokeAttachPreviewToTexture(this) as int;
   }
 
   Future<void> releaseTexture() async {
-    assert(_channel.messenger.isPaired(this));
+    assert(Channels.cameraChannel.messenger.isPaired(this));
     _currentTexture = null;
-    await _channel.$invokeReleaseTexture(this);
+    await Channels.cameraChannel.$invokeReleaseTexture(this);
   }
 }
 
@@ -98,18 +91,6 @@ class CameraInfo with $CameraInfo {
     required this.facing,
     required this.orientation,
   }) : assert(facing == CAMERA_FACING_BACK || facing == CAMERA_FACING_FRONT);
-
-  static final $CameraInfoChannel _channel = $CameraInfoChannel(
-    MethodChannelMessenger.instance,
-  )..setHandler($CameraInfoHandler(
-      onCreate: (_, $CameraInfoCreationArgs args) {
-        return CameraInfo(
-          cameraId: args.cameraId,
-          facing: args.facing,
-          orientation: args.orientation,
-        );
-      },
-    ));
 
   // TODO: test!
   /// The facing of the camera is opposite to that of the screen.
@@ -142,4 +123,31 @@ class CameraInfo with $CameraInfo {
   /// a front-facing camera sensor is aligned with the right of the screen,
   /// the value should be 270.
   final int orientation;
+}
+
+class Channels {
+  static final $CameraChannel cameraChannel = $CameraChannel(
+    MethodChannelMessenger.instance,
+  )..setHandler(CameraHandler());
+
+  static final $CameraInfoChannel cameraInfoChannel = $CameraInfoChannel(
+    MethodChannelMessenger.instance,
+  )..setHandler(CameraInfoHandler());
+}
+
+class CameraHandler extends $CameraHandler {
+  CameraHandler() : super(onCreate: (_, $CameraCreationArgs args) => Camera());
+}
+
+class CameraInfoHandler extends $CameraInfoHandler {
+  CameraInfoHandler()
+      : super(
+          onCreate: (_, $CameraInfoCreationArgs args) {
+            return CameraInfo(
+              cameraId: args.cameraId,
+              facing: args.facing,
+              orientation: args.orientation,
+            );
+          },
+        );
 }

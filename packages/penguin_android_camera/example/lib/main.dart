@@ -29,13 +29,12 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _setupCamera() async {
-    initializeChannels();
     final List<CameraInfo> allCameraInfo = await Camera.getAllCameraInfo();
 
     camera = await Camera.open(
       allCameraInfo
-          .firstWhere(
-              (CameraInfo info) => info.facing == CameraInfo.CAMERA_FACING_FRONT)
+          .firstWhere((CameraInfo info) =>
+              info.facing == CameraInfo.CAMERA_FACING_FRONT)
           .cameraId,
     );
     camera.startPreview();
