@@ -1,0 +1,70 @@
+name: Reference Tests
+
+on:
+  pull_request:
+    paths:
+      - packages/penguin_android_camera/**
+      - .github/workflows/penguin_android_camera.yaml
+  push:
+    branches:
+      - master
+
+env:
+  PLUGIN_DIR: packages/penguin_android_camera
+
+jobs:
+  verify_dart:
+    name: Dart Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: subosito/flutter-action@v1
+        with:
+          channel: dev
+      - name: Dart Unit Tests
+        run: |
+          cd $PLUGIN_DIR
+          flutter test
+      - name: Dart Analyze
+        run: |
+          cd $PLUGIN_DIR
+          flutter analyze
+
+  verify_android:
+    name: Android Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v1
+        with:
+          java-version: '12.x'
+      - uses: subosito/flutter-action@v1
+        with:
+          channel: dev
+      - name: Android Build Test
+        run: |
+          cd $PLUGIN_DIR/example
+          flutter build apk
+      - name: Android Unit Tests
+        run: |
+          cd $PLUGIN_DIR/example/android
+          ./gradlew test
+
+  verify_ios:
+    name: Ios Tests
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: subosito/flutter-action@v1
+        with:
+          channel: dev
+      - name: Ios Unit Tests
+        run: |
+          cd $PLUGIN_DIR/ios
+          pod lib lint --verbose
+        env:
+          DEVELOPER_DIR: /Applications/Xcode_11.4.app/Contents/Developer
+      - name: Ios Build Test
+        run: |
+         cd $PLUGIN_DIR/example
+         flutter build ios --no-codesign

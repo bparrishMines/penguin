@@ -9,19 +9,18 @@ environment:
   flutter: ">=1.20.0"
 
 dependencies:
-  reference:
-    path: ../reference
   flutter:
     sdk: flutter
+  reference:
+    path: ../reference
 
 dev_dependencies:
-  # TODO: global repo analysis file
-  lint: ^1.5.1
-  reference_generator:
-    path: ../reference_generator
   build_runner: ^1.10.13
   flutter_test:
     sdk: flutter
+  lint: ^1.5.1
+  reference_generator:
+    path: ../reference_generator
 
 flutter:
   plugin:

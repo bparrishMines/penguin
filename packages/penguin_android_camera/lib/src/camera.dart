@@ -42,6 +42,7 @@ class Camera with $Camera {
   /// Disconnects and releases the [Camera] object resources.
   ///
   /// You must call this as soon as you're done with the [Camera] object.
+  @override
   Future<void> release() {
     if (!Channels.cameraChannel.messenger.isPaired(this)) {
       return Future<void>.value();
@@ -55,6 +56,7 @@ class Camera with $Camera {
   ///
   /// Preview will not actually start until a texture is supplied with
   /// [addToTexture].
+  @override
   Future<void> startPreview() async {
     assert(Channels.cameraChannel.messenger.isPaired(this));
     await Channels.cameraChannel.$invokeStartPreview(this);
@@ -63,17 +65,20 @@ class Camera with $Camera {
   /// Stops capturing and drawing preview frames to the surface.
   ///
   /// Resets the camera for a future call to [startPreview].
+  @override
   Future<void> stopPreview() async {
     assert(Channels.cameraChannel.messenger.isPaired(this));
     await Channels.cameraChannel.$invokeStopPreview(this);
   }
 
+  @override
   Future<int> attachPreviewToTexture() async {
     assert(Channels.cameraChannel.messenger.isPaired(this));
     return _currentTexture ??=
         await Channels.cameraChannel.$invokeAttachPreviewToTexture(this) as int;
   }
 
+  @override
   Future<void> releaseTexture() async {
     assert(Channels.cameraChannel.messenger.isPaired(this));
     _currentTexture = null;
@@ -90,24 +95,26 @@ class CameraInfo with $CameraInfo {
     required this.cameraId,
     required this.facing,
     required this.orientation,
-  }) : assert(facing == CAMERA_FACING_BACK || facing == CAMERA_FACING_FRONT);
+  }) : assert(facing == cameraFacingBack || facing == cameraFacingFront);
 
   // TODO: test!
   /// The facing of the camera is opposite to that of the screen.
-  static const int CAMERA_FACING_BACK = 0;
+  static const int cameraFacingBack = 0;
 
   /// The facing of the camera is the same as that of the screen.
-  static const int CAMERA_FACING_FRONT = 1;
+  static const int cameraFacingFront = 1;
 
   /// The identifier for this camera device.
   ///
   /// This can be used in [Camera.open].
+  @override
   final int cameraId;
 
   /// The direction that the camera faces.
   ///
-  /// It should be [CameraInfo.CAMERA_FACING_BACK] or
-  /// [CameraInfo.CAMERA_FACING_FRONT].
+  /// It should be [CameraInfo.cameraFacingBack] or
+  /// [CameraInfo.cameraFacingFront].
+  @override
   final int facing;
 
   /// The orientation of the camera image.
@@ -122,9 +129,11 @@ class CameraInfo with $CameraInfo {
   /// screen in natural orientation, the value should be 90. If the top side of
   /// a front-facing camera sensor is aligned with the right of the screen,
   /// the value should be 270.
+  @override
   final int orientation;
 }
 
+// ignore: avoid_classes_with_only_static_members
 class Channels {
   static final CameraChannel cameraChannel = CameraChannel(
     MethodChannelMessenger.instance,

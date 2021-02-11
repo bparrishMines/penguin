@@ -5,10 +5,12 @@ import 'package:penguin_android_camera/penguin_android_camera.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
+  const MyApp({Key key}) : super(key: key);
+
   @override
   _MyAppState createState() => _MyAppState();
 }
@@ -24,18 +26,18 @@ class _MyAppState extends State<MyApp> {
     _getCameraPermission();
   }
 
-  void _getCameraPermission() async {
+  Future<void> _getCameraPermission() async {
     while (!await Permission.camera.request().isGranted) {}
     _setupCamera();
   }
 
-  void _setupCamera() async {
+  Future<void> _setupCamera() async {
     final List<CameraInfo> allCameraInfo = await Camera.getAllCameraInfo();
 
     camera = await Camera.open(
       allCameraInfo
-          .firstWhere((CameraInfo info) =>
-              info.facing == CameraInfo.CAMERA_FACING_FRONT)
+          .firstWhere(
+              (CameraInfo info) => info.facing == CameraInfo.cameraFacingFront)
           .cameraId,
     );
     camera.startPreview();
@@ -61,7 +63,12 @@ class _MyAppState extends State<MyApp> {
           title: const Text('Plugin example app'),
         ),
         body: Center(
-          child: Container(width: 200, height: 200, child: _previewWidget),
+          child: Row(
+            children: <Widget>[
+              const SizedBox(width: 200, height: 200),
+              if (_previewWidget != null) _previewWidget,
+            ],
+          ),
         ),
       ),
     );
