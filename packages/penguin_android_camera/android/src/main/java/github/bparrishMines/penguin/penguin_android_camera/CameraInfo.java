@@ -12,7 +12,7 @@ public class CameraInfo implements CameraChannelLibrary.$CameraInfo,
   private final int cameraId;
   private final Camera.CameraInfo cameraInfo;
 
-  CameraInfo(Camera.CameraInfo cameraInfo, TypeChannelMessenger messenger, int cameraId) {
+  public CameraInfo(Camera.CameraInfo cameraInfo, TypeChannelMessenger messenger, int cameraId) {
     this.channel = new CameraChannelLibrary.$CameraInfoChannel(messenger);
     this.cameraId = cameraId;
     this.cameraInfo = cameraInfo;
