@@ -44,6 +44,9 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           channel: dev
+      - uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 29
       - name: Android Build Test
         run: |
           cd $PLUGIN_DIR/example
@@ -53,10 +56,9 @@ jobs:
           cd $PLUGIN_DIR/example/android
           ./gradlew test
       - name: Android Drive Tests
-        uses: reactivecircus/android-emulator-runner@v2
-          with:
-            api-level: 29
-            script: cd $PLUGIN_DIR/example && flutter drive test_driver/reference.dart
+        run: |
+          cd $PLUGIN_DIR/example
+          flutter drive test_driver/reference.dart
 
   verify_ios:
     name: Ios Tests
