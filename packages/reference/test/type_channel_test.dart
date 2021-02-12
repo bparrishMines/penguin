@@ -131,7 +131,7 @@ void main() {
 
     test('invokeStaticMethod', () {
       expect(
-        testChannel.invokeStaticMethod('aStaticMethod', <Object>[]),
+        testChannel.sendInvokeStaticMethod('aStaticMethod', <Object>[]),
         completion('return_value'),
       );
     });
@@ -141,14 +141,14 @@ void main() {
 
       testChannel.createNewInstancePair(testClass);
       expect(
-        testChannel.invokeMethod(testClass, 'aMethod', <Object>[]),
+        testChannel.sendInvokeMethod(testClass, 'aMethod', <Object>[]),
         completion('return_value'),
       );
     });
 
     test('invokeMethod on unpaired instance', () {
       expect(
-        testChannel.invokeMethod(
+        testChannel.sendInvokeMethod(
           TestClass(testMessenger),
           'aMethod',
           <Object>[],

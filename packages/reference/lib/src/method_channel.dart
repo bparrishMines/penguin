@@ -9,6 +9,8 @@ import 'type_channel.dart';
 /// Implementation of a [TypeChannelMessenger] using a [MethodChannel].
 class MethodChannelMessenger extends TypeChannelMessenger {
   /// Default constructor for [MethodChannelMessenger].
+  ///
+  /// `channelName` is the name used for [channel].
   MethodChannelMessenger(String channelName)
       : channel = MethodChannel(
           channelName,
@@ -24,6 +26,9 @@ class MethodChannelMessenger extends TypeChannelMessenger {
   static const String _methodDispose = 'REFERENCE_DISPOSE';
 
   /// Global manager maintained by reference plugin.
+  ///
+  /// A plugin should use this instance when it allows other plugins to access
+  /// their instance pairs.
   static final MethodChannelMessenger instance =
       MethodChannelMessenger('github.penguin/reference');
 
@@ -151,7 +156,7 @@ class MethodChannelDispatcher with TypeChannelMessageDispatcher {
 /// Adds support for serialization of [PairedInstance]s and
 /// [NewUnpairedInstance]s.
 ///
-/// When extending, no int below 130 should be used as a key. See
+/// When extending, no `int` below 130 should be used as a key. See
 /// [StandardMessageCodec] for more info on extending a [StandardMessageCodec].
 class ReferenceMessageCodec extends StandardMessageCodec {
   /// Default constructor for [ReferenceMessageCodec].
