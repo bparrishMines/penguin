@@ -90,7 +90,7 @@ void main() {
         const PairedInstance('test_id'),
         <Object>[],
       );
-      testMessenger.onReceiveDisposePair(
+      testMessenger.onReceiveDisposeInstancePair(
         'test_channel',
         const PairedInstance('test_id'),
       );

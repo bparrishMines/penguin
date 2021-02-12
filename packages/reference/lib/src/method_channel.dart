@@ -63,7 +63,7 @@ class MethodChannelMessenger extends TypeChannelMessenger {
           call.arguments[2] as List<Object?>,
         );
       } else if (call.method == MethodChannelMessenger._methodDispose) {
-        onReceiveDisposePair(
+        onReceiveDisposeInstancePair(
           call.arguments[0] as String,
           call.arguments[1] as PairedInstance,
         );

@@ -144,7 +144,7 @@ void main() {
       expect(responseCompleter.future, completion('return_value'));
     });
 
-    test('onReceiveDisposePair', () async {
+    test('onReceiveDisposeInstancePair', () async {
       testMessenger.onReceiveCreateNewInstancePair(
         'test_channel',
         const PairedInstance('test_id'),

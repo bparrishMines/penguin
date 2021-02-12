@@ -29,7 +29,9 @@
 }
 
 - (NSUInteger)hash {
-  return _instanceID.hash;
+  int hash = 0x1fffffff & (17 + _instanceId.hash);
+  hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
+  return hash ^ (hash >> 6);
 }
 
 - (NSString *)description {

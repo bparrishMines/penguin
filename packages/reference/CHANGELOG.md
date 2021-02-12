@@ -6,6 +6,7 @@
 * Replaced `TypeChannelHandler.onInstanceDisposed` with `TypeChannelHandler.onInstanceRemoved`.
 * `TypeChannelManager.generateUniqueInstanceId` now takes an object and uses the hashcode to create
   unique id.
+* `PairedInstance` now has a separate hashcode from its `instanceId`.
 
 ## 0.2.0-beta
 

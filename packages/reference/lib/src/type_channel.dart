@@ -483,7 +483,7 @@ abstract class TypeChannelMessenger {
   }
 
   /// Dispose of the pair containing [pairedInstance].
-  void onReceiveDisposePair(
+  void onReceiveDisposeInstancePair(
     String channelName,
     PairedInstance pairedInstance,
   ) {
