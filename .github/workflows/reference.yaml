@@ -52,6 +52,11 @@ jobs:
         run: |
           cd $PLUGIN_DIR/example/android
           ./gradlew test
+      - name: Android Drive Tests
+        uses: reactivecircus/android-emulator-runner@v2
+          with:
+            api-level: 29
+            script: cd $PLUGIN_DIR/example && flutter drive test_driver/reference.dart
 
   verify_ios:
     name: Ios Tests
@@ -70,4 +75,13 @@ jobs:
       - name: Ios Build Test
         run: |
          cd $PLUGIN_DIR/example
-         flutter build ios --no-codesign
+         flutter build ios --simulator --no-codesign
+      - name: Start iOS Simulator
+        run: |
+          xcrun simctl list
+          DEVICE_ID=$(xcrun simctl create My-iphoneX com.apple.CoreSimulator.SimDeviceType.iPhone-X com.apple.CoreSimulator.SimRuntime.iOS-14-4)
+          xcrun simctl boot $DEVICE_ID
+      - name: Ios Drive Tests
+        run: |
+          cd $PLUGIN_DIR/example
+          flutter drive test_driver/reference.dart
