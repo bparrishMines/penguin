@@ -71,6 +71,7 @@ class Camera with $Camera {
     await Channels.cameraChannel.$invokeStopPreview(this);
   }
 
+  // TODO: change to attachPreviewTexture
   @override
   Future<int> attachPreviewToTexture() async {
     assert(Channels.cameraChannel.messenger.isPaired(this));
@@ -78,6 +79,7 @@ class Camera with $Camera {
         await Channels.cameraChannel.$invokeAttachPreviewToTexture(this) as int;
   }
 
+  // TODO: change to releasePreviewTexture
   @override
   Future<void> releaseTexture() async {
     assert(Channels.cameraChannel.messenger.isPaired(this));
@@ -97,7 +99,6 @@ class CameraInfo with $CameraInfo {
     required this.orientation,
   }) : assert(facing == cameraFacingBack || facing == cameraFacingFront);
 
-  // TODO: test!
   /// The facing of the camera is opposite to that of the screen.
   static const int cameraFacingBack = 0;
 
@@ -133,13 +134,12 @@ class CameraInfo with $CameraInfo {
   final int orientation;
 }
 
-// ignore: avoid_classes_with_only_static_members
 class Channels {
-  static final CameraChannel cameraChannel = CameraChannel(
+  static CameraChannel cameraChannel = CameraChannel(
     MethodChannelMessenger.instance,
   )..setHandler(CameraHandler());
 
-  static final CameraInfoChannel cameraInfoChannel = CameraInfoChannel(
+  static CameraInfoChannel cameraInfoChannel = CameraInfoChannel(
     MethodChannelMessenger.instance,
   )..setHandler(CameraInfoHandler());
 }
