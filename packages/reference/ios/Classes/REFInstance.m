@@ -23,13 +23,15 @@
   } else if (![other isKindOfClass:[REFPairedInstance class]]) {
     return NO;
   } else {
-    REFPairedInstance *instanceId = other;
-    return [_instanceID isEqualToString:instanceId.instanceID];
+    REFPairedInstance *instance = other;
+    return [_instanceID isEqualToString:instance.instanceID];
   }
 }
 
 - (NSUInteger)hash {
-  return _instanceID.hash;
+  int hash = 0x1fffffff & (17 + _instanceID.hash);
+  hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
+  return hash ^ (hash >> 6);
 }
 
 - (NSString *)description {

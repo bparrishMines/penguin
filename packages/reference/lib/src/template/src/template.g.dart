@@ -20,7 +20,7 @@ class $ClassTemplateChannel extends TypeChannel<$ClassTemplate> {
       : super(messenger, 'github.penguin/template/template/ClassTemplate');
 
   Future<Object?> $invokeStaticMethodTemplate(String parameterTemplate) {
-    return invokeStaticMethod(
+    return sendInvokeStaticMethod(
       'staticMethodTemplate',
       <Object?>[parameterTemplate],
     );
@@ -28,7 +28,7 @@ class $ClassTemplateChannel extends TypeChannel<$ClassTemplate> {
 
   Future<Object?> $invokeMethodTemplate(
       $ClassTemplate instance, String parameterTemplate) {
-    return invokeMethod(
+    return sendInvokeMethod(
       instance,
       'methodTemplate',
       <Object?>[parameterTemplate],

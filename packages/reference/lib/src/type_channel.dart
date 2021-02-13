@@ -7,6 +7,8 @@ class TypeChannel<T extends Object> {
   TypeChannel(this.messenger, this.name);
 
   /// Manages instances created and disposed by this [TypeChannel].
+  ///
+  /// Also handles communication with other platform [TypeChannelMessenger]s.
   final TypeChannelMessenger messenger;
 
   /// The channel used to handle communication.
@@ -19,6 +21,7 @@ class TypeChannel<T extends Object> {
     messenger.registerHandler(name, handler);
   }
 
+  /// Create a [NewUnpairedInstance] with a registered [TypeChannelHandler].
   NewUnpairedInstance? createUnpairedInstance(T instance) {
     return messenger.createUnpairedInstance(name, instance);
   }
@@ -37,7 +40,7 @@ class TypeChannel<T extends Object> {
     T instance, {
     Object? owner,
   }) async {
-    return messenger.sendCreateNewInstancePair(name, instance, owner: owner);
+    return messenger.createNewInstancePair(name, instance, owner: owner);
   }
 
   /// Invoke static method [methodName] on type channel of [name].
@@ -48,7 +51,7 @@ class TypeChannel<T extends Object> {
   ///
   /// Sends a message to another [TypeChannelMessenger] with
   /// [TypeChannelMessenger.messenger].
-  Future<Object?> invokeStaticMethod(
+  Future<Object?> sendInvokeStaticMethod(
     String methodName,
     List<Object?> arguments,
   ) async {
@@ -62,7 +65,7 @@ class TypeChannel<T extends Object> {
   ///
   /// Sends a message to another [TypeChannelMessenger] with
   /// [TypeChannelMessenger.messenger].
-  Future<Object?> invokeMethod(
+  Future<Object?> sendInvokeMethod(
     T instance,
     String methodName,
     List<Object?> arguments,
@@ -75,7 +78,7 @@ class TypeChannel<T extends Object> {
   /// Sends a message to another [TypeChannelMessenger] with
   /// [TypeChannelMessenger.messenger].
   Future<void> disposeInstancePair(T instance, {Object? owner}) async {
-    return messenger.sendDisposePair(name, instance, owner: owner);
+    return messenger.disposeInstancePair(name, instance, owner: owner);
   }
 }
 
@@ -226,21 +229,28 @@ abstract class TypeChannelMessenger {
     return _instancePairManager.isPaired(instance);
   }
 
+  /// Retrieve the [PairedInstanced] paired to [instance].
+  ///
+  /// Returns `null` if [instance] is not paired.
   PairedInstance? getPairedPairedInstance(Object instance) {
     return _instancePairManager.getPairedPairedInstance(instance);
   }
 
+  /// Retrieve the `Object` paired to [pairedInstance].
+  ///
+  /// Returns `null` is [pairedInstance] is not paired.
   Object? getPairedObject(PairedInstance pairedInstance) {
     return _instancePairManager.getPairedObject(pairedInstance);
   }
 
-  /// Set a [TypeChannelHandler] for a type channel.
-  void registerHandler(String channelName, TypeChannelHandler? handler) {
-    if (handler != null) {
-      _channelHandlers[channelName] = handler;
-    } else {
-      _channelHandlers.remove(channelName);
-    }
+  /// Set a [TypeChannelHandler] for a type channel with [channelName].
+  void registerHandler(String channelName, TypeChannelHandler handler) {
+    _channelHandlers[channelName] = handler;
+  }
+
+  /// Removes a [TypeChannelHandler] for the type channel of [channelName].
+  void unregisterHandler(String channelName, TypeChannelHandler handler) {
+    _channelHandlers.remove(channelName);
   }
 
   /// Retrieve the registered [TypeChannelHandler] for a type channel.
@@ -248,7 +258,17 @@ abstract class TypeChannelMessenger {
     return _channelHandlers[channelName];
   }
 
-  Future<PairedInstance?> sendCreateNewInstancePair(
+  /// Create a new [PairedInstance] to be paired with [instance].
+  ///
+  /// Also sends a message to another [TypeChannelMessenger] to instantiate an
+  /// object for [TypeChannel] with name: [channelName].
+  ///
+  /// Returns `null` if a pair with [instance] has already been added to
+  /// messenger. Otherwise, it returns the paired [PairedInstance].
+  ///
+  /// Sends a message to another [TypeChannelMessenger] with
+  /// [messageDispatcher].
+  Future<PairedInstance?> createNewInstancePair(
     String channelName,
     Object instance, {
     Object? owner,
@@ -285,14 +305,14 @@ abstract class TypeChannelMessenger {
     return pairedInstance;
   }
 
-  /// Invoke static method [methodName] on type channel of [name].
+  /// Invoke static method [methodName] on type channel of [channelName].
   ///
-  /// Sends a message to another [TypeChannelMessenger] to invoke a static
+  /// Also sends a message to another [TypeChannelMessenger] to invoke a static
   /// method on the [TypeChannelHandler] registered to [TypeChannel]
   /// with name: [name]. See [TypeChannelMessenger.registerHandler].
   ///
   /// Sends a message to another [TypeChannelMessenger] with
-  /// [TypeChannelMessenger.messenger].
+  /// [messageDispatcher].
   Future<Object?> sendInvokeStaticMethod(
     String channelName,
     String methodName,
@@ -307,13 +327,13 @@ abstract class TypeChannelMessenger {
     return converter.convertForLocalMessenger(this, result);
   }
 
-  /// Attempt to invoke a method on [PairedInstance] paired with [instance].
+  /// Send a message to invoke a method on [PairedInstance] paired with [instance].
   ///
   /// If [instance] isn't paired, the method will be invoked on a
   /// [NewUnpairedInstance].
   ///
   /// Sends a message to another [TypeChannelMessenger] with
-  /// [TypeChannelMessenger.messenger].
+  /// [messageDispatcher].
   Future<Object?> sendInvokeMethod(
     String channelName,
     Object instance,
@@ -321,7 +341,7 @@ abstract class TypeChannelMessenger {
     List<Object?> arguments,
   ) async {
     if (!isPaired(instance)) {
-      return _invokeMethodOnUnpairedInstance(
+      return _sendInvokeMethodOnUnpairedInstance(
         channelName,
         instance,
         methodName,
@@ -339,7 +359,7 @@ abstract class TypeChannelMessenger {
     return converter.convertForLocalMessenger(this, result);
   }
 
-  Future<Object?> _invokeMethodOnUnpairedInstance(
+  Future<Object?> _sendInvokeMethodOnUnpairedInstance(
     String channelName,
     Object object,
     String methodName,
@@ -358,8 +378,8 @@ abstract class TypeChannelMessenger {
   /// Dispose the instance pair containing [instance].
   ///
   /// Sends a message to another [TypeChannelMessenger] with
-  /// [TypeChannelMessenger.messenger].
-  Future<void> sendDisposePair(
+  /// [messageDispatcher].
+  Future<void> disposeInstancePair(
     String channelName,
     Object instance, {
     Object? owner,
@@ -483,7 +503,7 @@ abstract class TypeChannelMessenger {
   }
 
   /// Dispose of the pair containing [pairedInstance].
-  void onReceiveDisposePair(
+  void onReceiveDisposeInstancePair(
     String channelName,
     PairedInstance pairedInstance,
   ) {

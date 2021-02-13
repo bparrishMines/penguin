@@ -17,7 +17,9 @@ public class PairedInstance {
 
   @Override
   public int hashCode() {
-    return instanceId.hashCode();
+    int hash = 0x1fffffff & (17 + instanceId.hashCode());
+    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
+    return hash ^ (hash >> 6);
   }
 
   @NonNull
