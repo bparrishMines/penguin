@@ -1,4 +1,4 @@
-name: Reference Tests
+name: Penguin Android Camera Tests
 
 on:
   pull_request:
