@@ -1,0 +1,42 @@
+group 'github.bparrishMines.penguin.penguin_android_camera'
+version '1.0'
+
+buildscript {
+    repositories {
+        google()
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:4.1.0'
+    }
+}
+
+rootProject.allprojects {
+    repositories {
+        google()
+        jcenter()
+    }
+}
+
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 30
+
+    defaultConfig {
+        minSdkVersion 16
+    }
+    dependencies {
+        // Test apis
+        testImplementation 'junit:junit:4.12'
+        testImplementation 'org.powermock:powermock-api-mockito:1.6.2'
+        testImplementation 'org.powermock:powermock-module-junit4-rule-agent:1.6.2'
+        testImplementation 'org.powermock:powermock-module-junit4-rule:1.6.2'
+        testImplementation 'org.powermock:powermock-module-junit4:1.6.2'
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
