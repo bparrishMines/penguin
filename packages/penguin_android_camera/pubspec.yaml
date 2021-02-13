@@ -11,8 +11,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  reference:
-    path: ../reference
+  reference: 0.2.0-beta.1
 
 dev_dependencies:
   build_runner: ^1.10.13
