@@ -26,9 +26,13 @@ class PairedInstance {
   bool operator ==(Object? other) =>
       other is PairedInstance && instanceId == other.instanceId;
 
-  // TODO: Avoid hash code collision with String value?
+  // Hash algorithm from package:quiver hash2();
   @override
-  int get hashCode => instanceId.hashCode;
+  int get hashCode {
+    int hash = 0x1fffffff & (17 + instanceId.hashCode);
+    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
+    return hash ^ (hash >> 6);
+  }
 
   @override
   String toString() {

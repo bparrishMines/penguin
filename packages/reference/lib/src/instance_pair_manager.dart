@@ -2,7 +2,7 @@ import 'dart:collection';
 
 import 'instance.dart';
 
-// TODO: Test
+/// Stores instance pair.
 class InstancePairManager {
   final _pairedInstances = _BiMap<Object, PairedInstance>();
   final Map<Object, Set<Object>> _owners = <Object, Set<Object>>{};

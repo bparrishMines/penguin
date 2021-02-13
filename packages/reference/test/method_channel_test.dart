@@ -144,7 +144,7 @@ void main() {
       expect(responseCompleter.future, completion('return_value'));
     });
 
-    test('onReceiveDisposePair', () async {
+    test('onReceiveDisposeInstancePair', () async {
       testMessenger.onReceiveCreateNewInstancePair(
         'test_channel',
         const PairedInstance('test_id'),
@@ -211,7 +211,7 @@ void main() {
 
     test('sendInvokeStaticMethod', () {
       expect(
-        testChannel.invokeStaticMethod('aStaticMethod', <Object>[]),
+        testChannel.sendInvokeStaticMethod('aStaticMethod', <Object>[]),
         completion('return_value'),
       );
       expect(methodCallLog, <Matcher>[
@@ -230,7 +230,7 @@ void main() {
       methodCallLog.clear();
 
       expect(
-        testChannel.invokeMethod(testClass, 'aMethod', <Object>[]),
+        testChannel.sendInvokeMethod(testClass, 'aMethod', <Object>[]),
         completion('return_value'),
       );
       expect(methodCallLog, <Matcher>[
@@ -246,7 +246,7 @@ void main() {
     test('sendInvokeMethodOnUnpairedReference', () {
       expect(
         testChannel
-            .invokeMethod(TestClass(testMessenger), 'aMethod', <Object>[]),
+            .sendInvokeMethod(TestClass(testMessenger), 'aMethod', <Object>[]),
         completion('return_value'),
       );
       expect(methodCallLog, <Matcher>[
