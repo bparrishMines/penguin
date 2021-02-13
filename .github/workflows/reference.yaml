@@ -44,9 +44,6 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           channel: dev
-      - uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 29
       - name: Android Build Test
         run: |
           cd $PLUGIN_DIR/example
