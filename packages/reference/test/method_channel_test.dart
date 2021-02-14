@@ -37,6 +37,50 @@ void main() {
     });
   });
 
+  group('$MethodChannelConverter', () {
+    final MethodChannelMessenger messenger = MethodChannelMessenger('a_name');
+
+    test('convertForRemoteMessenger', () {
+      final InstanceConverter converter = messenger.converter;
+      expect(
+        converter.convertForRemoteMessenger(messenger, Uint8List(2)),
+        isA<Uint8List>(),
+      );
+      expect(
+        converter.convertForRemoteMessenger(messenger, Int32List(2)),
+        isA<Int32List>(),
+      );
+      expect(
+        converter.convertForRemoteMessenger(messenger, Int64List(2)),
+        isA<Int64List>(),
+      );
+      expect(
+        converter.convertForRemoteMessenger(messenger, Float64List(2)),
+        isA<Float64List>(),
+      );
+    });
+
+    test('convertForLocalMessenger', () {
+      final InstanceConverter converter = messenger.converter;
+      expect(
+        converter.convertForLocalMessenger(messenger, Uint8List(2)),
+        isA<Uint8List>(),
+      );
+      expect(
+        converter.convertForLocalMessenger(messenger, Int32List(2)),
+        isA<Int32List>(),
+      );
+      expect(
+        converter.convertForLocalMessenger(messenger, Int64List(2)),
+        isA<Int64List>(),
+      );
+      expect(
+        converter.convertForLocalMessenger(messenger, Float64List(2)),
+        isA<Float64List>(),
+      );
+    });
+  });
+
   group('$MethodChannelMessenger', () {
     late TestMessenger testMessenger;
 

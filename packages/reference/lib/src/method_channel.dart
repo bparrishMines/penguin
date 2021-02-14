@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -38,6 +39,9 @@ class MethodChannelMessenger extends TypeChannelMessenger {
   @override
   MethodChannelDispatcher get messageDispatcher =>
       MethodChannelDispatcher(channel);
+
+  @override
+  InstanceConverter get converter => MethodChannelConverter();
 
   Future<dynamic> _handleMethodCall(MethodCall call) async {
     try {
@@ -80,6 +84,42 @@ class MethodChannelMessenger extends TypeChannelMessenger {
       debugPrint('Error: $error\nStackTrace: $stacktrace');
       rethrow;
     }
+  }
+}
+
+/// Implementation of [StandardInstanceConverter] for [MethodChannel]s.
+///
+/// This allows [Uint8List]s, [Int32List]s, [Int64List]s, and [Float64List]s
+/// to be passed without being converted to `List<Object?>`.
+class MethodChannelConverter extends StandardInstanceConverter {
+  @override
+  Object? convertForLocalMessenger(
+    TypeChannelMessenger messenger,
+    Object? object,
+  ) {
+    if (object is Uint8List ||
+        object is Int32List ||
+        object is Int64List ||
+        object is Float64List) {
+      return object;
+    }
+
+    return super.convertForLocalMessenger(messenger, object);
+  }
+
+  @override
+  Object? convertForRemoteMessenger(
+    TypeChannelMessenger messenger,
+    Object? object,
+  ) {
+    if (object is Uint8List ||
+        object is Int32List ||
+        object is Int64List ||
+        object is Float64List) {
+      return object;
+    }
+
+    return super.convertForRemoteMessenger(messenger, object);
   }
 }
 
