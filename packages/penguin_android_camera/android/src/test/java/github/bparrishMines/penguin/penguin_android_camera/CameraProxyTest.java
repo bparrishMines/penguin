@@ -1,6 +1,7 @@
 package github.bparrishMines.penguin.penguin_android_camera;
 
 import android.graphics.SurfaceTexture;
+import android.hardware.Camera;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -128,10 +129,18 @@ public class CameraProxyTest {
   }
 
   @Test
-  public void stopPreview() {
+  public void takePicture() {
     final CameraProxy cameraProxy = new CameraProxy(mockCamera, mockTextureRegistry);
 
-    cameraProxy.stopPreview();
-    verify(mockCamera).stopPreview();
+    final Camera.ShutterCallback shutterCallback = () -> {
+    };
+    final ShutterCallbackProxy shutterCallbackProxy = new ShutterCallbackProxy(shutterCallback, mockTypeMessenger);
+
+    final Camera.PictureCallback pictureCallback = (data, camera) -> {
+    };
+    final PictureCallbackProxy pictureCallbackProxy = new PictureCallbackProxy(pictureCallback, mockTypeMessenger);
+
+    cameraProxy.takePicture(shutterCallbackProxy, pictureCallbackProxy, pictureCallbackProxy, pictureCallbackProxy);
+    verify(mockCamera).takePicture(shutterCallback, pictureCallback, pictureCallback, pictureCallback);
   }
 }
