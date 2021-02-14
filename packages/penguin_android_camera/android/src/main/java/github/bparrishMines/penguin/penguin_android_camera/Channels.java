@@ -16,6 +16,16 @@ public class Channels {
     channel.setHandler(new CameraInfoHandler());
   }
 
+  static void setupShutterCallbackChannel(TypeChannelMessenger messenger) {
+    final ShutterCallbackChannel channel = new ShutterCallbackChannel(messenger);
+    channel.setHandler(new ShutterCallbackHandler());
+  }
+
+  static void setupPictureCallbackChannel(TypeChannelMessenger messenger) {
+    final PictureCallbackChannel channel = new PictureCallbackChannel(messenger);
+    channel.setHandler(new PictureCallbackHandler());
+  }
+
   public static class CameraChannel extends CameraChannelLibrary.$CameraChannel {
     public CameraChannel(@NonNull TypeChannelMessenger messenger) {
       super(messenger);
@@ -24,6 +34,18 @@ public class Channels {
 
   public static class CameraInfoChannel extends CameraChannelLibrary.$CameraInfoChannel {
     public CameraInfoChannel(@NonNull TypeChannelMessenger messenger) {
+      super(messenger);
+    }
+  }
+
+  public static class ShutterCallbackChannel extends CameraChannelLibrary.$ShutterCallbackChannel {
+    public ShutterCallbackChannel(@NonNull TypeChannelMessenger messenger) {
+      super(messenger);
+    }
+  }
+
+  public static class PictureCallbackChannel extends CameraChannelLibrary.$PictureCallbackChannel {
+    public PictureCallbackChannel(@NonNull TypeChannelMessenger messenger) {
       super(messenger);
     }
   }
@@ -37,14 +59,28 @@ public class Channels {
 
     @Override
     public Object $onGetAllCameraInfo(TypeChannelMessenger messenger) {
-      return Camera.getAllCameraInfo(messenger);
+      return CameraProxy.getAllCameraInfo(messenger);
     }
 
     @Override
     public Object $onOpen(TypeChannelMessenger messenger, Integer cameraId) {
-      return Camera.open(messenger, textureRegistry, cameraId);
+      return CameraProxy.open(messenger, textureRegistry, cameraId);
     }
   }
 
   public static class CameraInfoHandler extends CameraChannelLibrary.$CameraInfoHandler { }
+
+  public static class ShutterCallbackHandler extends CameraChannelLibrary.$ShutterCallbackHandler {
+    @Override
+    ShutterCallbackProxy onCreate(TypeChannelMessenger messenger, CameraChannelLibrary.$ShutterCallbackCreationArgs args) {
+      return new ShutterCallbackProxy(messenger);
+    }
+  }
+
+  public static class PictureCallbackHandler extends CameraChannelLibrary.$PictureCallbackHandler {
+    @Override
+    PictureCallbackProxy onCreate(TypeChannelMessenger messenger, CameraChannelLibrary.$PictureCallbackCreationArgs args) {
+      return new PictureCallbackProxy(messenger);
+    }
+  }
 }

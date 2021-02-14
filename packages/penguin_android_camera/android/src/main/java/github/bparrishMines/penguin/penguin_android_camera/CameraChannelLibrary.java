@@ -19,47 +19,61 @@ import github.penguin.reference.reference.TypeChannelMessenger;
 
 class CameraChannelLibrary {
   interface $Camera {
+    
+
     Object release() throws Exception;
-
-    Object startPreview() throws Exception;
-
-    Object stopPreview() throws Exception;
-
-    Object attachPreviewToTexture() throws Exception;
-
-    Object releaseTexture() throws Exception;
+Object startPreview() throws Exception;
+Object stopPreview() throws Exception;
+Object attachPreviewTexture() throws Exception;
+Object releasePreviewTexture() throws Exception;
+Object takePicture($ShutterCallback shutter,$PictureCallback raw,$PictureCallback postView,$PictureCallback jpeg) throws Exception;
   }
+interface $ShutterCallback {
+    
 
-  interface $CameraInfo {
+    Object onShutter() throws Exception;
+  }
+interface $PictureCallback {
+    
+
+    Object onPictureTaken(byte[] data) throws Exception;
+  }
+interface $CameraInfo {
     Integer getCameraId();
+Integer getFacing();
+Integer getOrientation();
 
-    Integer getFacing();
-
-    Integer getOrientation();
-
-
+    
   }
 
   static class $CameraCreationArgs {
-
+    
   }
 
-  static class $CameraInfoCreationArgs {
+static class $ShutterCallbackCreationArgs {
+    
+  }
+
+static class $PictureCallbackCreationArgs {
+    
+  }
+
+static class $CameraInfoCreationArgs {
     Integer cameraId;
-    Integer facing;
-    Integer orientation;
+Integer facing;
+Integer orientation;
   }
 
   static class $CameraChannel extends TypeChannel<$Camera> {
     $CameraChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "penguin_camera/android/camera/Camera");
+      super(messenger, "penguin_android_camera/camera/Camera");
     }
 
     Completable<Object> $invokeGetAllCameraInfo() {
       return invokeStaticMethod("getAllCameraInfo", Arrays.<Object>asList());
     }
 
-    Completable<Object> $invokeOpen(Integer cameraId) {
+Completable<Object> $invokeOpen(Integer cameraId) {
       return invokeStaticMethod("open", Arrays.<Object>asList(cameraId));
     }
 
@@ -67,29 +81,59 @@ class CameraChannelLibrary {
       return invokeMethod(instance, "release", Arrays.<Object>asList());
     }
 
-    Completable<Object> $invokeStartPreview($Camera instance) {
+Completable<Object> $invokeStartPreview($Camera instance) {
       return invokeMethod(instance, "startPreview", Arrays.<Object>asList());
     }
 
-    Completable<Object> $invokeStopPreview($Camera instance) {
+Completable<Object> $invokeStopPreview($Camera instance) {
       return invokeMethod(instance, "stopPreview", Arrays.<Object>asList());
     }
 
-    Completable<Object> $invokeAttachPreviewToTexture($Camera instance) {
-      return invokeMethod(instance, "attachPreviewToTexture", Arrays.<Object>asList());
+Completable<Object> $invokeAttachPreviewTexture($Camera instance) {
+      return invokeMethod(instance, "attachPreviewTexture", Arrays.<Object>asList());
     }
 
-    Completable<Object> $invokeReleaseTexture($Camera instance) {
-      return invokeMethod(instance, "releaseTexture", Arrays.<Object>asList());
+Completable<Object> $invokeReleasePreviewTexture($Camera instance) {
+      return invokeMethod(instance, "releasePreviewTexture", Arrays.<Object>asList());
+    }
+
+Completable<Object> $invokeTakePicture($Camera instance, $ShutterCallback shutter , $PictureCallback raw , $PictureCallback postView , $PictureCallback jpeg) {
+      return invokeMethod(instance, "takePicture", Arrays.<Object>asList(shutter, raw, postView, jpeg));
     }
   }
 
-  static class $CameraInfoChannel extends TypeChannel<$CameraInfo> {
-    $CameraInfoChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "penguin_camera/android/camera/CameraInfo");
+static class $ShutterCallbackChannel extends TypeChannel<$ShutterCallback> {
+    $ShutterCallbackChannel(@NonNull TypeChannelMessenger messenger) {
+      super(messenger, "penguin_android_camera/camera/ShutterCallback");
     }
 
+    
 
+    Completable<Object> $invokeOnShutter($ShutterCallback instance) {
+      return invokeMethod(instance, "onShutter", Arrays.<Object>asList());
+    }
+  }
+
+static class $PictureCallbackChannel extends TypeChannel<$PictureCallback> {
+    $PictureCallbackChannel(@NonNull TypeChannelMessenger messenger) {
+      super(messenger, "penguin_android_camera/camera/PictureCallback");
+    }
+
+    
+
+    Completable<Object> $invokeOnPictureTaken($PictureCallback instance, byte[] data) {
+      return invokeMethod(instance, "onPictureTaken", Arrays.<Object>asList(data));
+    }
+  }
+
+static class $CameraInfoChannel extends TypeChannel<$CameraInfo> {
+    $CameraInfoChannel(@NonNull TypeChannelMessenger messenger) {
+      super(messenger, "penguin_android_camera/camera/CameraInfo");
+    }
+
+    
+
+    
   }
 
   static class $CameraHandler implements TypeChannelHandler<$Camera> {
@@ -102,8 +146,7 @@ class CameraChannelLibrary {
         throws Exception {
       return null;
     }
-
-    public Object $onOpen(TypeChannelMessenger messenger, Integer cameraId)
+public Object $onOpen(TypeChannelMessenger messenger, Integer cameraId)
         throws Exception {
       return null;
     }
@@ -115,7 +158,7 @@ class CameraChannelLibrary {
       switch (methodName) {
         case "getAllCameraInfo":
           return $onGetAllCameraInfo(messenger);
-        case "open":
+case "open":
           return $onOpen(messenger, (Integer) arguments.get(0));
       }
 
@@ -126,14 +169,14 @@ class CameraChannelLibrary {
     @Override
     public List<Object> getCreationArguments(
         TypeChannelMessenger messenger, $Camera instance) {
-      return Arrays.asList();
+      return Arrays.<Object>asList();
     }
 
     @Override
     public $Camera createInstance(TypeChannelMessenger messenger, List<Object> arguments)
         throws Exception {
       final $CameraCreationArgs args = new $CameraCreationArgs();
-
+      
       return onCreate(messenger, args);
     }
 
@@ -164,20 +207,142 @@ class CameraChannelLibrary {
         throws Exception {
     }
   }
-
-  static class $CameraInfoHandler implements TypeChannelHandler<$CameraInfo> {
-    $CameraInfo onCreate(TypeChannelMessenger messenger, $CameraInfoCreationArgs args)
+static class $ShutterCallbackHandler implements TypeChannelHandler<$ShutterCallback> {
+    $ShutterCallback onCreate(TypeChannelMessenger messenger, $ShutterCallbackCreationArgs args)
         throws Exception {
       return null;
     }
 
+    
 
     @Override
     public Object invokeStaticMethod(
         TypeChannelMessenger messenger, String methodName, List<Object> arguments)
         throws Exception {
       switch (methodName) {
+        
+      }
 
+      throw new UnsupportedOperationException(
+          String.format("Unable to invoke static method %s", methodName));
+    }
+
+    @Override
+    public List<Object> getCreationArguments(
+        TypeChannelMessenger messenger, $ShutterCallback instance) {
+      return Arrays.<Object>asList();
+    }
+
+    @Override
+    public $ShutterCallback createInstance(TypeChannelMessenger messenger, List<Object> arguments)
+        throws Exception {
+      final $ShutterCallbackCreationArgs args = new $ShutterCallbackCreationArgs();
+      
+      return onCreate(messenger, args);
+    }
+
+    @Override
+    public Object invokeMethod(
+        TypeChannelMessenger messenger,
+        $ShutterCallback instance,
+        String methodName,
+        List<Object> arguments)
+        throws Exception {
+      for (Method method : $ShutterCallback.class.getMethods()) {
+        if (method.getName().equals(methodName)) {
+          return method.invoke(instance, arguments.toArray());
+        }
+      }
+
+      throw new UnsupportedOperationException(
+          String.format("%s.%s not supported.", instance, methodName));
+    }
+
+    @Override
+    public void onInstanceAdded(TypeChannelMessenger messenger, $ShutterCallback instance)
+        throws Exception {
+    }
+
+    @Override
+    public void onInstanceRemoved(TypeChannelMessenger messenger, $ShutterCallback instance)
+        throws Exception {
+    }
+  }
+static class $PictureCallbackHandler implements TypeChannelHandler<$PictureCallback> {
+    $PictureCallback onCreate(TypeChannelMessenger messenger, $PictureCallbackCreationArgs args)
+        throws Exception {
+      return null;
+    }
+
+    
+
+    @Override
+    public Object invokeStaticMethod(
+        TypeChannelMessenger messenger, String methodName, List<Object> arguments)
+        throws Exception {
+      switch (methodName) {
+        
+      }
+
+      throw new UnsupportedOperationException(
+          String.format("Unable to invoke static method %s", methodName));
+    }
+
+    @Override
+    public List<Object> getCreationArguments(
+        TypeChannelMessenger messenger, $PictureCallback instance) {
+      return Arrays.<Object>asList();
+    }
+
+    @Override
+    public $PictureCallback createInstance(TypeChannelMessenger messenger, List<Object> arguments)
+        throws Exception {
+      final $PictureCallbackCreationArgs args = new $PictureCallbackCreationArgs();
+      
+      return onCreate(messenger, args);
+    }
+
+    @Override
+    public Object invokeMethod(
+        TypeChannelMessenger messenger,
+        $PictureCallback instance,
+        String methodName,
+        List<Object> arguments)
+        throws Exception {
+      for (Method method : $PictureCallback.class.getMethods()) {
+        if (method.getName().equals(methodName)) {
+          return method.invoke(instance, arguments.toArray());
+        }
+      }
+
+      throw new UnsupportedOperationException(
+          String.format("%s.%s not supported.", instance, methodName));
+    }
+
+    @Override
+    public void onInstanceAdded(TypeChannelMessenger messenger, $PictureCallback instance)
+        throws Exception {
+    }
+
+    @Override
+    public void onInstanceRemoved(TypeChannelMessenger messenger, $PictureCallback instance)
+        throws Exception {
+    }
+  }
+static class $CameraInfoHandler implements TypeChannelHandler<$CameraInfo> {
+    $CameraInfo onCreate(TypeChannelMessenger messenger, $CameraInfoCreationArgs args)
+        throws Exception {
+      return null;
+    }
+
+    
+
+    @Override
+    public Object invokeStaticMethod(
+        TypeChannelMessenger messenger, String methodName, List<Object> arguments)
+        throws Exception {
+      switch (methodName) {
+        
       }
 
       throw new UnsupportedOperationException(
@@ -187,7 +352,7 @@ class CameraChannelLibrary {
     @Override
     public List<Object> getCreationArguments(
         TypeChannelMessenger messenger, $CameraInfo instance) {
-      return Arrays.asList(instance.getCameraId(), instance.getFacing(), instance.getOrientation());
+      return Arrays.<Object>asList(instance.getCameraId(),instance.getFacing(),instance.getOrientation());
     }
 
     @Override
@@ -195,8 +360,8 @@ class CameraChannelLibrary {
         throws Exception {
       final $CameraInfoCreationArgs args = new $CameraInfoCreationArgs();
       args.cameraId = (Integer) arguments.get(0);
-      args.facing = (Integer) arguments.get(1);
-      args.orientation = (Integer) arguments.get(2);
+args.facing = (Integer) arguments.get(1);
+args.orientation = (Integer) arguments.get(2);
       return onCreate(messenger, args);
     }
 
