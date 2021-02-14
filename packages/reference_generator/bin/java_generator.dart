@@ -405,6 +405,9 @@ String getTrueTypeName(ReferenceType type) {
 
 String javaTypeNameConversion(String type) {
   switch (type) {
+    case 'Uint8List':
+    case 'Uint8List?':
+      return 'byte[]';
     case 'int':
     case 'int?':
       return 'Integer';
@@ -422,7 +425,7 @@ String javaTypeNameConversion(String type) {
       return 'String';
   }
 
-  return type;
+  return type.replaceAll('?', '');
 }
 
 class Library with TemplateRegExp {

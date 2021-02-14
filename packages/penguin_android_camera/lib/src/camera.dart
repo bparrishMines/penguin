@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
 import 'package:reference/annotations.dart';
@@ -13,7 +14,7 @@ import 'camera.g.dart';
 ///
 /// This uses the [Camera](https://developer.android.com/reference/android/hardware/Camera)
 /// API and is deprecated for Android versions 21+.
-@Reference('penguin_camera/android/camera/Camera')
+@Reference('penguin_android_camera/camera/Camera')
 class Camera with $Camera {
   Camera();
 
@@ -71,27 +72,70 @@ class Camera with $Camera {
     await Channels.cameraChannel.$invokeStopPreview(this);
   }
 
-  // TODO: change to attachPreviewTexture
   @override
-  Future<int> attachPreviewToTexture() async {
+  Future<int> attachPreviewTexture() async {
     assert(Channels.cameraChannel.messenger.isPaired(this));
     return _currentTexture ??=
-        await Channels.cameraChannel.$invokeAttachPreviewToTexture(this) as int;
+        await Channels.cameraChannel.$invokeAttachPreviewTexture(this) as int;
   }
 
-  // TODO: change to releasePreviewTexture
   @override
-  Future<void> releaseTexture() async {
+  Future<void> releasePreviewTexture() async {
     assert(Channels.cameraChannel.messenger.isPaired(this));
     _currentTexture = null;
-    await Channels.cameraChannel.$invokeReleaseTexture(this);
+    await Channels.cameraChannel.$invokeReleasePreviewTexture(this);
   }
+
+  @override
+  Future<void> takePicture(
+    covariant ShutterCallback? shutter,
+    covariant PictureCallback? raw,
+    covariant PictureCallback? postView,
+    covariant PictureCallback? jpeg,
+  ) async {
+    assert(raw == null || (raw != postView && raw != jpeg));
+    assert(postView == null || (postView != raw && postView != jpeg));
+    assert(jpeg == null || (jpeg != raw && jpeg != postView));
+
+    if (shutter != null) {
+      Channels.shutterCallbackChannel.createNewInstancePair(shutter);
+    }
+    if (raw != null) {
+      Channels.pictureCallbackChannel.createNewInstancePair(raw);
+    }
+    if (postView != null) {
+      Channels.pictureCallbackChannel.createNewInstancePair(postView);
+    }
+    if (jpeg != null) {
+      Channels.pictureCallbackChannel.createNewInstancePair(jpeg);
+    }
+
+    await Channels.cameraChannel.$invokeTakePicture(
+      this,
+      shutter,
+      raw,
+      postView,
+      jpeg,
+    );
+  }
+}
+
+@Reference('penguin_android_camera/camera/ShutterCallback')
+abstract class ShutterCallback with $ShutterCallback {
+  @override
+  void onShutter();
+}
+
+@Reference('penguin_android_camera/camera/PictureCallback')
+abstract class PictureCallback with $PictureCallback {
+  @override
+  void onPictureTaken(Uint8List data);
 }
 
 /// Information about a camera.
 ///
 /// Retrieve by calling [Camera.getAllCameraInfo].
-@Reference('penguin_camera/android/camera/CameraInfo')
+@Reference('penguin_android_camera/camera/CameraInfo')
 class CameraInfo with $CameraInfo {
   CameraInfo({
     required this.cameraId,
@@ -142,6 +186,14 @@ class Channels {
   static CameraInfoChannel cameraInfoChannel = CameraInfoChannel(
     MethodChannelMessenger.instance,
   )..setHandler(CameraInfoHandler());
+
+  static ShutterCallbackChannel shutterCallbackChannel = ShutterCallbackChannel(
+    MethodChannelMessenger.instance,
+  )..setHandler(ShutterCallbackHandler());
+
+  static PictureCallbackChannel pictureCallbackChannel = PictureCallbackChannel(
+    MethodChannelMessenger.instance,
+  )..setHandler(PictureCallbackHandler());
 }
 
 class CameraChannel extends $CameraChannel {
@@ -150,6 +202,14 @@ class CameraChannel extends $CameraChannel {
 
 class CameraInfoChannel extends $CameraInfoChannel {
   CameraInfoChannel(TypeChannelMessenger messenger) : super(messenger);
+}
+
+class ShutterCallbackChannel extends $ShutterCallbackChannel {
+  ShutterCallbackChannel(TypeChannelMessenger messenger) : super(messenger);
+}
+
+class PictureCallbackChannel extends $PictureCallbackChannel {
+  PictureCallbackChannel(TypeChannelMessenger messenger) : super(messenger);
 }
 
 class CameraHandler extends $CameraHandler {
@@ -168,3 +228,7 @@ class CameraInfoHandler extends $CameraInfoHandler {
           },
         );
 }
+
+class ShutterCallbackHandler extends $ShutterCallbackHandler {}
+
+class PictureCallbackHandler extends $PictureCallbackHandler {}

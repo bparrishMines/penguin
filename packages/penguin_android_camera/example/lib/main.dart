@@ -1,6 +1,7 @@
 // @dart=2.9
 
 import 'dart:math';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -50,7 +51,7 @@ class _MyAppState extends State<MyApp> {
 
     _camera = await Camera.open(cameraInfo.cameraId);
     _camera.startPreview();
-    final int textureId = await _camera.attachPreviewToTexture();
+    final int textureId = await _camera.attachPreviewTexture();
 
     setState(() {
       _previewWidget = _createCameraPreview(
@@ -83,14 +84,14 @@ class _MyAppState extends State<MyApp> {
   @override
   void dispose() {
     super.dispose();
-    _camera?.releaseTexture();
+    _camera?.releasePreviewTexture();
     _camera?.release();
   }
 
   Future<void> _toggleLensDirection() {
     if (_camera == null) return Future<void>.value();
 
-    _camera?.releaseTexture();
+    _camera?.releasePreviewTexture();
     _camera?.release();
     _camera = null;
 
@@ -105,7 +106,9 @@ class _MyAppState extends State<MyApp> {
 
   Widget _buildPictureButton() {
     return InkResponse(
-      onTap: () {},
+      onTap: () {
+        _camera?.takePicture(null, null, null, JpegPictureCallback(_camera));
+      },
       child: Container(
         width: 65,
         height: 65,
@@ -169,5 +172,18 @@ class _MyAppState extends State<MyApp> {
         ],
       ),
     );
+  }
+}
+
+class JpegPictureCallback extends PictureCallback {
+  JpegPictureCallback(this.camera);
+  
+  final Camera camera;
+  
+  @override
+  void onPictureTaken(Uint8List data) {
+    print(data.length);
+    print(data);
+    camera.startPreview();
   }
 }

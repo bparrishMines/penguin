@@ -32,10 +32,10 @@ void main() {
         camera,
       );
 
-      int textureId = await camera.attachPreviewToTexture();
+      int textureId = await camera.attachPreviewTexture();
       expect(textureId, 5);
 
-      textureId = await camera.attachPreviewToTexture();
+      textureId = await camera.attachPreviewTexture();
       expect(textureId, 5);
     });
   });

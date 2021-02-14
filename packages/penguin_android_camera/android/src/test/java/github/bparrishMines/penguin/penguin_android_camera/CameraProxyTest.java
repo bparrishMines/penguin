@@ -29,7 +29,7 @@ import static org.powermock.api.mockito.PowerMockito.when;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({android.hardware.Camera.class})
-public class CameraTest {
+public class CameraProxyTest {
   @Rule
   public MockitoRule mockitoRule = MockitoJUnit.rule();
 
@@ -46,7 +46,7 @@ public class CameraTest {
   public void open() {
     PowerMockito.mockStatic(android.hardware.Camera.class);
 
-    Camera.open(mockTypeMessenger, mockTextureRegistry, 12);
+    CameraProxy.open(mockTypeMessenger, mockTextureRegistry, 12);
 
     verifyStatic();
     android.hardware.Camera.open(12);
@@ -65,7 +65,7 @@ public class CameraTest {
     }).when(android.hardware.Camera.class);
     android.hardware.Camera.getCameraInfo(eq(0), any(android.hardware.Camera.CameraInfo.class));
 
-    final List<CameraInfo> allInfo = Camera.getAllCameraInfo(null);
+    final List<CameraInfoProxy> allInfo = CameraProxy.getAllCameraInfo(null);
 
     assertEquals(allInfo.size(), 1);
     assertEquals(allInfo.get(0).getFacing(), (Integer) 11);
@@ -74,31 +74,31 @@ public class CameraTest {
 
   @Test
   public void release() {
-    final Camera camera = new Camera(mockCamera, mockTextureRegistry);
+    final CameraProxy cameraProxy = new CameraProxy(mockCamera, mockTextureRegistry);
 
-    camera.release();
+    cameraProxy.release();
     verify(mockCamera).release();
   }
 
   @Test
   public void startPreview() {
-    final Camera camera = new Camera(mockCamera, mockTextureRegistry);
+    final CameraProxy cameraProxy = new CameraProxy(mockCamera, mockTextureRegistry);
 
-    camera.startPreview();
+    cameraProxy.startPreview();
     verify(mockCamera).startPreview();
   }
 
   @Test
   public void stopPreview() {
-    final Camera camera = new Camera(mockCamera, mockTextureRegistry);
+    final CameraProxy cameraProxy = new CameraProxy(mockCamera, mockTextureRegistry);
 
-    camera.stopPreview();
+    cameraProxy.stopPreview();
     verify(mockCamera).stopPreview();
   }
 
   @Test
-  public void attachPreviewToTexture() throws Exception {
-    final Camera camera = new Camera(mockCamera, mockTextureRegistry);
+  public void attachPreviewTexture() throws Exception {
+    final CameraProxy cameraProxy = new CameraProxy(mockCamera, mockTextureRegistry);
 
     final TextureRegistry.SurfaceTextureEntry mockEntry = mock(TextureRegistry.SurfaceTextureEntry.class);
     final SurfaceTexture mockTexture = mock(SurfaceTexture.class);
@@ -106,13 +106,13 @@ public class CameraTest {
     when(mockEntry.id()).thenReturn(3L);
     when(mockEntry.surfaceTexture()).thenReturn(mockTexture);
 
-    assertEquals(camera.attachPreviewToTexture(), (Long) 3L);
+    assertEquals(cameraProxy.attachPreviewTexture(), (Long) 3L);
     verify(mockCamera).setPreviewTexture(mockTexture);
   }
 
   @Test
-  public void releaseTexture() throws Exception {
-    final Camera camera = new Camera(mockCamera, mockTextureRegistry);
+  public void releasePreviewTexture() throws Exception {
+    final CameraProxy cameraProxy = new CameraProxy(mockCamera, mockTextureRegistry);
 
     final TextureRegistry.SurfaceTextureEntry mockEntry = mock(TextureRegistry.SurfaceTextureEntry.class);
     final SurfaceTexture mockTexture = mock(SurfaceTexture.class);
@@ -120,10 +120,18 @@ public class CameraTest {
     when(mockEntry.id()).thenReturn(0L);
     when(mockEntry.surfaceTexture()).thenReturn(mockTexture);
 
-    camera.attachPreviewToTexture();
-    camera.releaseTexture();
+    cameraProxy.attachPreviewTexture();
+    cameraProxy.releasePreviewTexture();
 
     verify(mockCamera).setPreviewTexture(null);
     verify(mockEntry).release();
+  }
+
+  @Test
+  public void stopPreview() {
+    final CameraProxy cameraProxy = new CameraProxy(mockCamera, mockTextureRegistry);
+
+    cameraProxy.stopPreview();
+    verify(mockCamera).stopPreview();
   }
 }

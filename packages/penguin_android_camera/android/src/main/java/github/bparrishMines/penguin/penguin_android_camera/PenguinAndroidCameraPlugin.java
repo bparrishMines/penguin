@@ -18,6 +18,8 @@ public class PenguinAndroidCameraPlugin implements FlutterPlugin {
 
     Channels.setupCameraChannel(manager, textureRegistry);
     Channels.setupCameraInfoChannel(manager);
+    Channels.setupShutterCallbackChannel(manager);
+    Channels.setupPictureCallbackChannel(manager);
   }
 
   @Override
