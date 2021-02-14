@@ -1,3 +1,7 @@
+## 0.2.0-beta.2
+
+* `MethodChannelMessenger` supports `List`s supported by `MethodChannel`.
+
 ## 0.2.0-beta.1
 
 * Added `TypeChannelManager.getPairedPairedInstance` and `TypeChannelManager.getPairedObject`.
