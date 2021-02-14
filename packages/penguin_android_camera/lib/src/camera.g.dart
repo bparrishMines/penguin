@@ -8,53 +8,44 @@ import 'package:reference/reference.dart';
 // **************************************************************************
 
 mixin $Camera {
-  
   Future<void> release();
 
-Future<void> startPreview();
+  Future<void> startPreview();
 
-Future<void> stopPreview();
+  Future<void> stopPreview();
 
-Future<int> attachPreviewTexture();
+  Future<int> attachPreviewTexture();
 
-Future<void> releasePreviewTexture();
+  Future<void> releasePreviewTexture();
 
-Future<void> takePicture($ShutterCallback? shutter, $PictureCallback? raw, $PictureCallback? postView, $PictureCallback? jpeg);
+  Future<void> takePicture($ShutterCallback? shutter, $PictureCallback? raw,
+      $PictureCallback? postView, $PictureCallback? jpeg);
 }
 
 mixin $ShutterCallback {
-  
   void onShutter();
 }
 
 mixin $PictureCallback {
-  
   void onPictureTaken(Uint8List data);
 }
 
 mixin $CameraInfo {
   int get cameraId;
-int get facing;
-int get orientation;
-  
+  int get facing;
+  int get orientation;
 }
 
-class $CameraCreationArgs {
-  
-}
+class $CameraCreationArgs {}
 
-class $ShutterCallbackCreationArgs {
-  
-}
+class $ShutterCallbackCreationArgs {}
 
-class $PictureCallbackCreationArgs {
-  
-}
+class $PictureCallbackCreationArgs {}
 
 class $CameraInfoCreationArgs {
   late int cameraId;
-late int facing;
-late int orientation;
+  late int facing;
+  late int orientation;
 }
 
 class $CameraChannel extends TypeChannel<$Camera> {
@@ -68,7 +59,7 @@ class $CameraChannel extends TypeChannel<$Camera> {
     );
   }
 
-Future<Object?> $invokeOpen(int cameraId) {
+  Future<Object?> $invokeOpen(int cameraId) {
     return sendInvokeStaticMethod(
       'open',
       <Object?>[cameraId],
@@ -76,7 +67,8 @@ Future<Object?> $invokeOpen(int cameraId) {
   }
 
   Future<Object?> $invokeRelease(
-      $Camera instance, ) {
+    $Camera instance,
+  ) {
     return sendInvokeMethod(
       instance,
       'release',
@@ -84,8 +76,9 @@ Future<Object?> $invokeOpen(int cameraId) {
     );
   }
 
-Future<Object?> $invokeStartPreview(
-      $Camera instance, ) {
+  Future<Object?> $invokeStartPreview(
+    $Camera instance,
+  ) {
     return sendInvokeMethod(
       instance,
       'startPreview',
@@ -93,8 +86,9 @@ Future<Object?> $invokeStartPreview(
     );
   }
 
-Future<Object?> $invokeStopPreview(
-      $Camera instance, ) {
+  Future<Object?> $invokeStopPreview(
+    $Camera instance,
+  ) {
     return sendInvokeMethod(
       instance,
       'stopPreview',
@@ -102,8 +96,9 @@ Future<Object?> $invokeStopPreview(
     );
   }
 
-Future<Object?> $invokeAttachPreviewTexture(
-      $Camera instance, ) {
+  Future<Object?> $invokeAttachPreviewTexture(
+    $Camera instance,
+  ) {
     return sendInvokeMethod(
       instance,
       'attachPreviewTexture',
@@ -111,8 +106,9 @@ Future<Object?> $invokeAttachPreviewTexture(
     );
   }
 
-Future<Object?> $invokeReleasePreviewTexture(
-      $Camera instance, ) {
+  Future<Object?> $invokeReleasePreviewTexture(
+    $Camera instance,
+  ) {
     return sendInvokeMethod(
       instance,
       'releasePreviewTexture',
@@ -120,8 +116,12 @@ Future<Object?> $invokeReleasePreviewTexture(
     );
   }
 
-Future<Object?> $invokeTakePicture(
-      $Camera instance, $ShutterCallback? shutter, $PictureCallback? raw, $PictureCallback? postView, $PictureCallback? jpeg) {
+  Future<Object?> $invokeTakePicture(
+      $Camera instance,
+      $ShutterCallback? shutter,
+      $PictureCallback? raw,
+      $PictureCallback? postView,
+      $PictureCallback? jpeg) {
     return sendInvokeMethod(
       instance,
       'takePicture',
@@ -134,10 +134,9 @@ class $ShutterCallbackChannel extends TypeChannel<$ShutterCallback> {
   $ShutterCallbackChannel(TypeChannelMessenger messenger)
       : super(messenger, 'penguin_android_camera/camera/ShutterCallback');
 
-  
-
   Future<Object?> $invokeOnShutter(
-      $ShutterCallback instance, ) {
+    $ShutterCallback instance,
+  ) {
     return sendInvokeMethod(
       instance,
       'onShutter',
@@ -149,8 +148,6 @@ class $ShutterCallbackChannel extends TypeChannel<$ShutterCallback> {
 class $PictureCallbackChannel extends TypeChannel<$PictureCallback> {
   $PictureCallbackChannel(TypeChannelMessenger messenger)
       : super(messenger, 'penguin_android_camera/camera/PictureCallback');
-
-  
 
   Future<Object?> $invokeOnPictureTaken(
       $PictureCallback instance, Uint8List data) {
@@ -165,10 +162,6 @@ class $PictureCallbackChannel extends TypeChannel<$PictureCallback> {
 class $CameraInfoChannel extends TypeChannel<$CameraInfo> {
   $CameraInfoChannel(TypeChannelMessenger messenger)
       : super(messenger, 'penguin_android_camera/camera/CameraInfo');
-
-  
-
-  
 }
 
 class $CameraHandler implements TypeChannelHandler<$Camera> {
@@ -176,7 +169,8 @@ class $CameraHandler implements TypeChannelHandler<$Camera> {
     this.onCreate,
     this.onAdded,
     this.onRemoved,
-    this.$onGetAllCameraInfo, this.$onOpen,
+    this.$onGetAllCameraInfo,
+    this.$onOpen,
   });
 
   final $Camera Function(
@@ -191,10 +185,9 @@ class $CameraHandler implements TypeChannelHandler<$Camera> {
       onRemoved;
 
   final Future<List<$CameraInfo>> Function(
-          TypeChannelMessenger messenger, )?
-      $onGetAllCameraInfo;
-final Future<$Camera> Function(
-          TypeChannelMessenger messenger, int cameraId)?
+    TypeChannelMessenger messenger,
+  )? $onGetAllCameraInfo;
+  final Future<$Camera> Function(TypeChannelMessenger messenger, int cameraId)?
       $onOpen;
 
   @override
@@ -207,12 +200,12 @@ final Future<$Camera> Function(
     Function method = () {};
     switch (methodName) {
       case 'getAllCameraInfo':
-        method =
-            () => $onGetAllCameraInfo!(messenger, );
+        method = () => $onGetAllCameraInfo!(
+              messenger,
+            );
         break;
-case 'open':
-        method =
-            () => $onOpen!(messenger, arguments[0] as int);
+      case 'open':
+        method = () => $onOpen!(messenger, arguments[0] as int);
         break;
       default:
         throw ArgumentError.value(
@@ -258,20 +251,24 @@ case 'open':
       case 'release':
         method = () => instance.release();
         break;
-case 'startPreview':
+      case 'startPreview':
         method = () => instance.startPreview();
         break;
-case 'stopPreview':
+      case 'stopPreview':
         method = () => instance.stopPreview();
         break;
-case 'attachPreviewTexture':
+      case 'attachPreviewTexture':
         method = () => instance.attachPreviewTexture();
         break;
-case 'releasePreviewTexture':
+      case 'releasePreviewTexture':
         method = () => instance.releasePreviewTexture();
         break;
-case 'takePicture':
-        method = () => instance.takePicture(arguments[0] as $ShutterCallback?,arguments[1] as $PictureCallback?,arguments[2] as $PictureCallback?,arguments[3] as $PictureCallback?);
+      case 'takePicture':
+        method = () => instance.takePicture(
+            arguments[0] as $ShutterCallback?,
+            arguments[1] as $PictureCallback?,
+            arguments[2] as $PictureCallback?,
+            arguments[3] as $PictureCallback?);
         break;
       default:
         throw ArgumentError.value(
@@ -300,12 +297,13 @@ case 'takePicture':
   ) {
     if (onRemoved != null) onRemoved!(messenger, instance);
   }
-}class $ShutterCallbackHandler implements TypeChannelHandler<$ShutterCallback> {
+}
+
+class $ShutterCallbackHandler implements TypeChannelHandler<$ShutterCallback> {
   $ShutterCallbackHandler({
     this.onCreate,
     this.onAdded,
     this.onRemoved,
-    
   });
 
   final $ShutterCallback Function(
@@ -313,13 +311,11 @@ case 'takePicture':
     $ShutterCallbackCreationArgs args,
   )? onCreate;
 
-  final void Function(TypeChannelMessenger messenger, $ShutterCallback instance)?
-      onAdded;
+  final void Function(
+      TypeChannelMessenger messenger, $ShutterCallback instance)? onAdded;
 
-  final void Function(TypeChannelMessenger messenger, $ShutterCallback instance)?
-      onRemoved;
-
-  
+  final void Function(
+      TypeChannelMessenger messenger, $ShutterCallback instance)? onRemoved;
 
   @override
   Object? invokeStaticMethod(
@@ -330,7 +326,6 @@ case 'takePicture':
     // ignore: prefer_final_locals, prefer_function_declarations_over_variables
     Function method = () {};
     switch (methodName) {
-      
       default:
         throw ArgumentError.value(
           methodName,
@@ -402,12 +397,13 @@ case 'takePicture':
   ) {
     if (onRemoved != null) onRemoved!(messenger, instance);
   }
-}class $PictureCallbackHandler implements TypeChannelHandler<$PictureCallback> {
+}
+
+class $PictureCallbackHandler implements TypeChannelHandler<$PictureCallback> {
   $PictureCallbackHandler({
     this.onCreate,
     this.onAdded,
     this.onRemoved,
-    
   });
 
   final $PictureCallback Function(
@@ -415,13 +411,11 @@ case 'takePicture':
     $PictureCallbackCreationArgs args,
   )? onCreate;
 
-  final void Function(TypeChannelMessenger messenger, $PictureCallback instance)?
-      onAdded;
+  final void Function(
+      TypeChannelMessenger messenger, $PictureCallback instance)? onAdded;
 
-  final void Function(TypeChannelMessenger messenger, $PictureCallback instance)?
-      onRemoved;
-
-  
+  final void Function(
+      TypeChannelMessenger messenger, $PictureCallback instance)? onRemoved;
 
   @override
   Object? invokeStaticMethod(
@@ -432,7 +426,6 @@ case 'takePicture':
     // ignore: prefer_final_locals, prefer_function_declarations_over_variables
     Function method = () {};
     switch (methodName) {
-      
       default:
         throw ArgumentError.value(
           methodName,
@@ -504,12 +497,13 @@ case 'takePicture':
   ) {
     if (onRemoved != null) onRemoved!(messenger, instance);
   }
-}class $CameraInfoHandler implements TypeChannelHandler<$CameraInfo> {
+}
+
+class $CameraInfoHandler implements TypeChannelHandler<$CameraInfo> {
   $CameraInfoHandler({
     this.onCreate,
     this.onAdded,
     this.onRemoved,
-    
   });
 
   final $CameraInfo Function(
@@ -523,8 +517,6 @@ case 'takePicture':
   final void Function(TypeChannelMessenger messenger, $CameraInfo instance)?
       onRemoved;
 
-  
-
   @override
   Object? invokeStaticMethod(
     TypeChannelMessenger messenger,
@@ -534,7 +526,6 @@ case 'takePicture':
     // ignore: prefer_final_locals, prefer_function_declarations_over_variables
     Function method = () {};
     switch (methodName) {
-      
       default:
         throw ArgumentError.value(
           methodName,
@@ -562,9 +553,10 @@ case 'takePicture':
   ) {
     return onCreate!(
       messenger,
-      $CameraInfoCreationArgs()..cameraId = arguments[0] as int
-..facing = arguments[1] as int
-..orientation = arguments[2] as int,
+      $CameraInfoCreationArgs()
+        ..cameraId = arguments[0] as int
+        ..facing = arguments[1] as int
+        ..orientation = arguments[2] as int,
     );
   }
 
@@ -578,7 +570,6 @@ case 'takePicture':
     // ignore: prefer_final_locals, prefer_function_declarations_over_variables
     Function method = () {};
     switch (methodName) {
-      
       default:
         throw ArgumentError.value(
           instance,
