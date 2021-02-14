@@ -13,7 +13,7 @@ void main() {
       testMessenger = TestMessenger();
     });
 
-    test('convertForRemoteManager handles paired Object', () {
+    test('convertForRemoteMessenger handles paired Object', () {
       testMessenger.onReceiveCreateNewInstancePair(
         'test_channel',
         const PairedInstance('test_id'),
@@ -29,7 +29,7 @@ void main() {
       );
     });
 
-    test('convertForRemoteManager handles unpaired object', () {
+    test('convertForRemoteMessenger handles unpaired object', () {
       expect(
         converter.convertForRemoteMessenger(
             testMessenger, TestClass(testMessenger)),
@@ -37,14 +37,14 @@ void main() {
       );
     });
 
-    test('convertForRemoteManager handles unpaired non-$ReferenceType', () {
+    test('convertForRemoteMessenger handles unpaired non-$ReferenceType', () {
       expect(
         converter.convertForRemoteMessenger(testMessenger, 'potato'),
         equals('potato'),
       );
     });
 
-    test('convertForLocalManager handles $PairedInstance', () {
+    test('convertForLocalMessenger handles $PairedInstance', () {
       const PairedInstance pairedInstance = PairedInstance('test_id');
       testMessenger.onReceiveCreateNewInstancePair(
         'test_channel',
@@ -58,7 +58,7 @@ void main() {
       );
     });
 
-    test('convertForLocalManager handles $NewUnpairedInstance', () async {
+    test('convertForLocalMessenger handles $NewUnpairedInstance', () async {
       expect(
         converter.convertForLocalMessenger(
           testMessenger,
