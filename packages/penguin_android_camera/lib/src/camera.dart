@@ -208,8 +208,10 @@ class MediaRecorder implements $MediaRecorder {
 
   @override
   Future<void> release() async {
-    if(!Channels.mediaRecorderChannel.messenger.isPaired(this)) return;
-    await Channels.mediaRecorderChannel.$invokeRelease(this);
+    if (!Channels.mediaRecorderChannel.messenger.isPaired(this)) return;
+
+    Channels.mediaRecorderChannel.$invokeRelease(this);
+    await Channels.mediaRecorderChannel.disposeInstancePair(this);
   }
 }
 

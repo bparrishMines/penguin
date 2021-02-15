@@ -7,8 +7,14 @@ export 'src/camera.dart'
         Channels,
         CameraChannel,
         CameraInfoChannel,
+        ShutterCallbackChannel,
+        PictureCallbackChannel,
+        MediaRecorderChannel,
         CameraHandler,
-        CameraInfoHandler;
+        CameraInfoHandler,
+        ShutterCallbackHandler,
+        PictureCallbackHandler,
+        MediaRecorderHandler;
 
 class PenguinAndroidCamera {
   /// Initialize communication with the platform API.

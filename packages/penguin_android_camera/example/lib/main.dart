@@ -5,6 +5,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:penguin_android_camera/penguin_android_camera.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -21,6 +22,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   Camera _camera;
+  MediaRecorder _mediaRecorder;
   Widget _previewWidget = Container();
   int _cameraFacing = CameraInfo.cameraFacingFront;
   final double _deviceRotation = 0;
@@ -39,6 +41,7 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> _getCameraPermission() async {
     while (!await Permission.camera.request().isGranted) {}
+    while (!await Permission.storage.request().isGranted) {}
     _setupCamera();
   }
 
@@ -104,10 +107,40 @@ class _MyAppState extends State<MyApp> {
     return _setupCamera();
   }
 
+  Future<void> _startRecording() async {
+    if (_camera == null) {
+      print('The camera has still not been setup.');
+      return;
+    }
+
+    _mediaRecorder = MediaRecorder(camera: _camera, outputFilePath: "aFile");
+    await _mediaRecorder.prepare();
+    _mediaRecorder.start();
+  }
+
+  void _stopRecording() {
+    if (_mediaRecorder == null) return;
+    _mediaRecorder.stop();
+    _mediaRecorder.release();
+    _mediaRecorder = null;
+  }
+
   Widget _buildPictureButton() {
     return InkResponse(
-      onTap: () {
-        _camera?.takePicture(null, null, null, JpegPictureCallback(_camera));
+      onTap: () async {
+        _camera?.takePicture(
+          null,
+          null,
+          null,
+          JpegPictureCallback(_camera, (data) async {
+            final result = await ImageGallerySaver.saveImage(
+              data,
+              quality: 60,
+              name: 'my_image${data.hashCode}',
+            );
+            print(result);
+          }),
+        );
       },
       child: Container(
         width: 65,
@@ -176,14 +209,16 @@ class _MyAppState extends State<MyApp> {
 }
 
 class JpegPictureCallback extends PictureCallback {
-  JpegPictureCallback(this.camera);
-  
+  JpegPictureCallback(this.camera, this.onData);
+
   final Camera camera;
-  
+
+  void Function(Uint8List data) onData;
+
   @override
   void onPictureTaken(Uint8List data) {
-    print(data.length);
-    print(data);
+    print('Image taken with jpeg data length: ${data.length}');
+    onData(data);
     camera.startPreview();
   }
 }
