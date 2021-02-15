@@ -26,6 +26,11 @@ public class Channels {
     channel.setHandler(new PictureCallbackHandler());
   }
 
+  static void setupMediaRecorderChannel(TypeChannelMessenger messenger) {
+    final MediaRecorderChannel channel = new MediaRecorderChannel(messenger);
+    channel.setHandler(new MediaRecorderHandler());
+  }
+
   public static class CameraChannel extends CameraChannelLibrary.$CameraChannel {
     public CameraChannel(@NonNull TypeChannelMessenger messenger) {
       super(messenger);
@@ -46,6 +51,12 @@ public class Channels {
 
   public static class PictureCallbackChannel extends CameraChannelLibrary.$PictureCallbackChannel {
     public PictureCallbackChannel(@NonNull TypeChannelMessenger messenger) {
+      super(messenger);
+    }
+  }
+
+  public static class MediaRecorderChannel extends CameraChannelLibrary.$MediaRecorderChannel {
+    public MediaRecorderChannel(@NonNull TypeChannelMessenger messenger) {
       super(messenger);
     }
   }
@@ -81,6 +92,13 @@ public class Channels {
     @Override
     PictureCallbackProxy onCreate(TypeChannelMessenger messenger, CameraChannelLibrary.$PictureCallbackCreationArgs args) {
       return new PictureCallbackProxy(messenger);
+    }
+  }
+
+  public static class MediaRecorderHandler extends CameraChannelLibrary.$MediaRecorderHandler {
+    @Override
+    MediaRecorderProxy onCreate(TypeChannelMessenger messenger, CameraChannelLibrary.$MediaRecorderCreationArgs args) {
+      return new MediaRecorderProxy((CameraProxy) args.camera, args.outputFilePath);
     }
   }
 }

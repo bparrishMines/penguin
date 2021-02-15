@@ -15,5 +15,8 @@ class PenguinAndroidCamera {
   static void initialize() {
     Channels.cameraChannel;
     Channels.cameraInfoChannel;
+    Channels.shutterCallbackChannel;
+    Channels.pictureCallbackChannel;
+    Channels.mediaRecorderChannel;
   }
 }

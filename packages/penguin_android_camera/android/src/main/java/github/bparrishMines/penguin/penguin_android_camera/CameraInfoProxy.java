@@ -8,18 +8,14 @@ import github.penguin.reference.reference.TypeChannelMessenger;
 
 public class CameraInfoProxy implements CameraChannelLibrary.$CameraInfo,
     ReferenceType<CameraChannelLibrary.$CameraInfo> {
+  public final Camera.CameraInfo cameraInfo;
   private final CameraChannelLibrary.$CameraInfoChannel channel;
   private final int cameraId;
-  private final Camera.CameraInfo cameraInfo;
 
   public CameraInfoProxy(Camera.CameraInfo cameraInfo, TypeChannelMessenger messenger, int cameraId) {
     this.channel = new CameraChannelLibrary.$CameraInfoChannel(messenger);
     this.cameraId = cameraId;
     this.cameraInfo = cameraInfo;
-  }
-
-  public Camera.CameraInfo getCameraInfo() {
-    return cameraInfo;
   }
 
   @Override
@@ -29,12 +25,12 @@ public class CameraInfoProxy implements CameraChannelLibrary.$CameraInfo,
 
   @Override
   public Integer getFacing() {
-    return getCameraInfo().facing;
+    return cameraInfo.facing;
   }
 
   @Override
   public Integer getOrientation() {
-    return getCameraInfo().orientation;
+    return cameraInfo.orientation;
   }
 
   @Override

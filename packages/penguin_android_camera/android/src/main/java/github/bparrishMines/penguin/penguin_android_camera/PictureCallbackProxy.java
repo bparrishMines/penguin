@@ -5,7 +5,7 @@ import android.hardware.Camera;
 import github.penguin.reference.reference.TypeChannelMessenger;
 
 public class PictureCallbackProxy implements CameraChannelLibrary.$PictureCallback {
-  private final Camera.PictureCallback pictureCallback;
+  public final Camera.PictureCallback pictureCallback;
   private final TypeChannelMessenger messenger;
 
   public PictureCallbackProxy(TypeChannelMessenger messenger) {
@@ -16,10 +16,6 @@ public class PictureCallbackProxy implements CameraChannelLibrary.$PictureCallba
   public PictureCallbackProxy(Camera.PictureCallback PictureCallback, TypeChannelMessenger messenger) {
     this.pictureCallback = PictureCallback;
     this.messenger = messenger;
-  }
-
-  public Camera.PictureCallback getPictureCallback() {
-    return pictureCallback;
   }
 
   @Override
