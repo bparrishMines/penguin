@@ -45,6 +45,15 @@ Integer getOrientation();
 
     
   }
+interface $MediaRecorder {
+    $Camera getCamera();
+String getOutputFilePath();
+
+    Object prepare() throws Exception;
+Object start() throws Exception;
+Object stop() throws Exception;
+Object release() throws Exception;
+  }
 
   static class $CameraCreationArgs {
     
@@ -62,6 +71,11 @@ static class $CameraInfoCreationArgs {
     Integer cameraId;
 Integer facing;
 Integer orientation;
+  }
+
+static class $MediaRecorderCreationArgs {
+    $Camera camera;
+String outputFilePath;
   }
 
   static class $CameraChannel extends TypeChannel<$Camera> {
@@ -134,6 +148,30 @@ static class $CameraInfoChannel extends TypeChannel<$CameraInfo> {
     
 
     
+  }
+
+static class $MediaRecorderChannel extends TypeChannel<$MediaRecorder> {
+    $MediaRecorderChannel(@NonNull TypeChannelMessenger messenger) {
+      super(messenger, "penguin_android_camera/camera/MediaRecorder");
+    }
+
+    
+
+    Completable<Object> $invokePrepare($MediaRecorder instance) {
+      return invokeMethod(instance, "prepare", Arrays.<Object>asList());
+    }
+
+Completable<Object> $invokeStart($MediaRecorder instance) {
+      return invokeMethod(instance, "start", Arrays.<Object>asList());
+    }
+
+Completable<Object> $invokeStop($MediaRecorder instance) {
+      return invokeMethod(instance, "stop", Arrays.<Object>asList());
+    }
+
+Completable<Object> $invokeRelease($MediaRecorder instance) {
+      return invokeMethod(instance, "release", Arrays.<Object>asList());
+    }
   }
 
   static class $CameraHandler implements TypeChannelHandler<$Camera> {
@@ -389,6 +427,68 @@ args.orientation = (Integer) arguments.get(2);
 
     @Override
     public void onInstanceRemoved(TypeChannelMessenger messenger, $CameraInfo instance)
+        throws Exception {
+    }
+  }
+static class $MediaRecorderHandler implements TypeChannelHandler<$MediaRecorder> {
+    $MediaRecorder onCreate(TypeChannelMessenger messenger, $MediaRecorderCreationArgs args)
+        throws Exception {
+      return null;
+    }
+
+    
+
+    @Override
+    public Object invokeStaticMethod(
+        TypeChannelMessenger messenger, String methodName, List<Object> arguments)
+        throws Exception {
+      switch (methodName) {
+        
+      }
+
+      throw new UnsupportedOperationException(
+          String.format("Unable to invoke static method %s", methodName));
+    }
+
+    @Override
+    public List<Object> getCreationArguments(
+        TypeChannelMessenger messenger, $MediaRecorder instance) {
+      return Arrays.<Object>asList(instance.getCamera(),instance.getOutputFilePath());
+    }
+
+    @Override
+    public $MediaRecorder createInstance(TypeChannelMessenger messenger, List<Object> arguments)
+        throws Exception {
+      final $MediaRecorderCreationArgs args = new $MediaRecorderCreationArgs();
+      args.camera = ($Camera) arguments.get(0);
+args.outputFilePath = (String) arguments.get(1);
+      return onCreate(messenger, args);
+    }
+
+    @Override
+    public Object invokeMethod(
+        TypeChannelMessenger messenger,
+        $MediaRecorder instance,
+        String methodName,
+        List<Object> arguments)
+        throws Exception {
+      for (Method method : $MediaRecorder.class.getMethods()) {
+        if (method.getName().equals(methodName)) {
+          return method.invoke(instance, arguments.toArray());
+        }
+      }
+
+      throw new UnsupportedOperationException(
+          String.format("%s.%s not supported.", instance, methodName));
+    }
+
+    @Override
+    public void onInstanceAdded(TypeChannelMessenger messenger, $MediaRecorder instance)
+        throws Exception {
+    }
+
+    @Override
+    public void onInstanceRemoved(TypeChannelMessenger messenger, $MediaRecorder instance)
         throws Exception {
     }
   }

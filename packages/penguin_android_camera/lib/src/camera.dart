@@ -178,7 +178,44 @@ class CameraInfo with $CameraInfo {
   final int orientation;
 }
 
-class Channels {
+@Reference('penguin_android_camera/camera/MediaRecorder')
+class MediaRecorder implements $MediaRecorder {
+  MediaRecorder({required this.camera, required this.outputFilePath});
+
+  @override
+  final Camera camera;
+
+  @override
+  final String outputFilePath;
+
+  @override
+  Future<void> prepare() {
+    Channels.mediaRecorderChannel.createNewInstancePair(this);
+    return Channels.mediaRecorderChannel.$invokePrepare(this);
+  }
+
+  @override
+  Future<void> start() {
+    assert(Channels.mediaRecorderChannel.messenger.isPaired(this));
+    return Channels.mediaRecorderChannel.$invokeStart(this);
+  }
+
+  @override
+  Future<void> stop() {
+    assert(Channels.mediaRecorderChannel.messenger.isPaired(this));
+    return Channels.mediaRecorderChannel.$invokeStop(this);
+  }
+
+  @override
+  Future<void> release() async {
+    if(!Channels.mediaRecorderChannel.messenger.isPaired(this)) return;
+    await Channels.mediaRecorderChannel.$invokeRelease(this);
+  }
+}
+
+abstract class Channels {
+  Channels._();
+
   static CameraChannel cameraChannel = CameraChannel(
     MethodChannelMessenger.instance,
   )..setHandler(CameraHandler());
@@ -194,6 +231,10 @@ class Channels {
   static PictureCallbackChannel pictureCallbackChannel = PictureCallbackChannel(
     MethodChannelMessenger.instance,
   )..setHandler(PictureCallbackHandler());
+
+  static MediaRecorderChannel mediaRecorderChannel = MediaRecorderChannel(
+    MethodChannelMessenger.instance,
+  )..setHandler(MediaRecorderHandler());
 }
 
 class CameraChannel extends $CameraChannel {
@@ -210,6 +251,10 @@ class ShutterCallbackChannel extends $ShutterCallbackChannel {
 
 class PictureCallbackChannel extends $PictureCallbackChannel {
   PictureCallbackChannel(TypeChannelMessenger messenger) : super(messenger);
+}
+
+class MediaRecorderChannel extends $MediaRecorderChannel {
+  MediaRecorderChannel(TypeChannelMessenger messenger) : super(messenger);
 }
 
 class CameraHandler extends $CameraHandler {
@@ -232,3 +277,5 @@ class CameraInfoHandler extends $CameraInfoHandler {
 class ShutterCallbackHandler extends $ShutterCallbackHandler {}
 
 class PictureCallbackHandler extends $PictureCallbackHandler {}
+
+class MediaRecorderHandler extends $MediaRecorderHandler {}

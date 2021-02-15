@@ -36,6 +36,18 @@ mixin $CameraInfo {
   int get orientation;
 }
 
+mixin $MediaRecorder {
+  $Camera get camera;
+  String get outputFilePath;
+  Future<void> prepare();
+
+  Future<void> start();
+
+  Future<void> stop();
+
+  Future<void> release();
+}
+
 class $CameraCreationArgs {}
 
 class $ShutterCallbackCreationArgs {}
@@ -46,6 +58,11 @@ class $CameraInfoCreationArgs {
   late int cameraId;
   late int facing;
   late int orientation;
+}
+
+class $MediaRecorderCreationArgs {
+  late $Camera camera;
+  late String outputFilePath;
 }
 
 class $CameraChannel extends TypeChannel<$Camera> {
@@ -162,6 +179,51 @@ class $PictureCallbackChannel extends TypeChannel<$PictureCallback> {
 class $CameraInfoChannel extends TypeChannel<$CameraInfo> {
   $CameraInfoChannel(TypeChannelMessenger messenger)
       : super(messenger, 'penguin_android_camera/camera/CameraInfo');
+}
+
+class $MediaRecorderChannel extends TypeChannel<$MediaRecorder> {
+  $MediaRecorderChannel(TypeChannelMessenger messenger)
+      : super(messenger, 'penguin_android_camera/camera/MediaRecorder');
+
+  Future<Object?> $invokePrepare(
+    $MediaRecorder instance,
+  ) {
+    return sendInvokeMethod(
+      instance,
+      'prepare',
+      <Object?>[],
+    );
+  }
+
+  Future<Object?> $invokeStart(
+    $MediaRecorder instance,
+  ) {
+    return sendInvokeMethod(
+      instance,
+      'start',
+      <Object?>[],
+    );
+  }
+
+  Future<Object?> $invokeStop(
+    $MediaRecorder instance,
+  ) {
+    return sendInvokeMethod(
+      instance,
+      'stop',
+      <Object?>[],
+    );
+  }
+
+  Future<Object?> $invokeRelease(
+    $MediaRecorder instance,
+  ) {
+    return sendInvokeMethod(
+      instance,
+      'release',
+      <Object?>[],
+    );
+  }
 }
 
 class $CameraHandler implements TypeChannelHandler<$Camera> {
@@ -594,6 +656,117 @@ class $CameraInfoHandler implements TypeChannelHandler<$CameraInfo> {
   void onInstanceRemoved(
     TypeChannelMessenger messenger,
     $CameraInfo instance,
+  ) {
+    if (onRemoved != null) onRemoved!(messenger, instance);
+  }
+}
+
+class $MediaRecorderHandler implements TypeChannelHandler<$MediaRecorder> {
+  $MediaRecorderHandler({
+    this.onCreate,
+    this.onAdded,
+    this.onRemoved,
+  });
+
+  final $MediaRecorder Function(
+    TypeChannelMessenger messenger,
+    $MediaRecorderCreationArgs args,
+  )? onCreate;
+
+  final void Function(TypeChannelMessenger messenger, $MediaRecorder instance)?
+      onAdded;
+
+  final void Function(TypeChannelMessenger messenger, $MediaRecorder instance)?
+      onRemoved;
+
+  @override
+  Object? invokeStaticMethod(
+    TypeChannelMessenger messenger,
+    String methodName,
+    List<Object?> arguments,
+  ) {
+    // ignore: prefer_final_locals, prefer_function_declarations_over_variables
+    Function method = () {};
+    switch (methodName) {
+      default:
+        throw ArgumentError.value(
+          methodName,
+          'methodName',
+          'Unable to invoke static method `$methodName`',
+        );
+    }
+
+    // ignore: dead_code
+    return method();
+  }
+
+  @override
+  List<Object?> getCreationArguments(
+    TypeChannelMessenger messenger,
+    $MediaRecorder instance,
+  ) {
+    return <Object?>[instance.camera, instance.outputFilePath];
+  }
+
+  @override
+  $MediaRecorder createInstance(
+    TypeChannelMessenger messenger,
+    List<Object?> arguments,
+  ) {
+    return onCreate!(
+      messenger,
+      $MediaRecorderCreationArgs()
+        ..camera = arguments[0] as $Camera
+        ..outputFilePath = arguments[1] as String,
+    );
+  }
+
+  @override
+  Object? invokeMethod(
+    TypeChannelMessenger messenger,
+    $MediaRecorder instance,
+    String methodName,
+    List<Object?> arguments,
+  ) {
+    // ignore: prefer_final_locals, prefer_function_declarations_over_variables
+    Function method = () {};
+    switch (methodName) {
+      case 'prepare':
+        method = () => instance.prepare();
+        break;
+      case 'start':
+        method = () => instance.start();
+        break;
+      case 'stop':
+        method = () => instance.stop();
+        break;
+      case 'release':
+        method = () => instance.release();
+        break;
+      default:
+        throw ArgumentError.value(
+          instance,
+          'instance',
+          'Unable to invoke method `$methodName` on',
+        );
+    }
+
+    // ignore: dead_code
+    return method();
+  }
+
+  @override
+  void onInstanceAdded(
+    TypeChannelMessenger messenger,
+    $MediaRecorder instance,
+  ) {
+    if (onAdded != null) onAdded!(messenger, instance);
+  }
+
+  @override
+  void onInstanceRemoved(
+    TypeChannelMessenger messenger,
+    $MediaRecorder instance,
   ) {
     if (onRemoved != null) onRemoved!(messenger, instance);
   }
