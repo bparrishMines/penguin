@@ -51,6 +51,8 @@ interface $MediaRecorder {
 Integer getOutputFormat();
 String getOutputFilePath();
 Integer getVideoEncoder();
+Integer getAudioSource();
+Integer getAudioEncoder();
 
     Object prepare() throws Exception;
 Object start() throws Exception;
@@ -81,6 +83,8 @@ static class $MediaRecorderCreationArgs {
 Integer outputFormat;
 String outputFilePath;
 Integer videoEncoder;
+Integer audioSource;
+Integer audioEncoder;
   }
 
   static class $CameraChannel extends TypeChannel<$Camera> {
@@ -462,7 +466,7 @@ static class $MediaRecorderHandler implements TypeChannelHandler<$MediaRecorder>
     @Override
     public List<Object> getCreationArguments(
         TypeChannelMessenger messenger, $MediaRecorder instance) {
-      return Arrays.<Object>asList(instance.getCamera(),instance.getOutputFormat(),instance.getOutputFilePath(),instance.getVideoEncoder());
+      return Arrays.<Object>asList(instance.getCamera(),instance.getOutputFormat(),instance.getOutputFilePath(),instance.getVideoEncoder(),instance.getAudioSource(),instance.getAudioEncoder());
     }
 
     @Override
@@ -473,6 +477,8 @@ static class $MediaRecorderHandler implements TypeChannelHandler<$MediaRecorder>
 args.outputFormat = (Integer) arguments.get(1);
 args.outputFilePath = (String) arguments.get(2);
 args.videoEncoder = (Integer) arguments.get(3);
+args.audioSource = (Integer) arguments.get(4);
+args.audioEncoder = (Integer) arguments.get(5);
       return onCreate(messenger, args);
     }
 

@@ -197,6 +197,14 @@ abstract class VideoEncoder {
   static const int mpeg4Sp = 0x00000003;
 }
 
+abstract class AudioSource {
+  static const int defaultSource = 0x00000000;
+}
+
+abstract class AudioEncoder {
+  static const int amrNb = 0x00000001;
+}
+
 @Reference('penguin_android_camera/camera/MediaRecorder')
 class MediaRecorder implements $MediaRecorder {
   MediaRecorder({
@@ -204,7 +212,9 @@ class MediaRecorder implements $MediaRecorder {
     required this.outputFormat,
     required this.outputFilePath,
     required this.videoEncoder,
-  });
+    required this.audioSource,
+    required this.audioEncoder,
+  }) : assert(Channels.cameraChannel.messenger.isPaired(camera));
 
   @override
   final Camera camera;
@@ -217,6 +227,12 @@ class MediaRecorder implements $MediaRecorder {
 
   @override
   final int videoEncoder;
+
+  @override
+  final int audioSource;
+
+  @override
+  final int audioEncoder;
 
   @override
   Future<void> prepare() {

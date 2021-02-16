@@ -43,6 +43,7 @@ class _MyAppState extends State<MyApp> {
   Future<void> _getCameraPermission() async {
     while (!await Permission.camera.request().isGranted) {}
     while (!await Permission.storage.request().isGranted) {}
+    while (!await Permission.microphone.request().isGranted) {}
     _setupCamera();
   }
 
@@ -136,11 +137,13 @@ class _MyAppState extends State<MyApp> {
       outputFormat: OutputFormat.mpeg4,
       outputFilePath: '${dir.path}/my_video${Random().nextInt(10000)}.mp4',
       videoEncoder: VideoEncoder.mpeg4Sp,
+      audioSource: AudioSource.defaultSource,
+      audioEncoder: AudioEncoder.amrNb,
     );
     _camera.unlock();
     _mediaRecorder.prepare();
     _mediaRecorder.start();
-    await Future<void>.delayed(Duration(seconds: 5));
+    await Future<void>.delayed(Duration(seconds: 8));
     _mediaRecorder.stop();
     _mediaRecorder.release();
   }

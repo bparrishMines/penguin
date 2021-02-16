@@ -44,6 +44,8 @@ mixin $MediaRecorder {
   int get outputFormat;
   String get outputFilePath;
   int get videoEncoder;
+  int get audioSource;
+  int get audioEncoder;
   Future<void> prepare();
 
   Future<void> start();
@@ -70,6 +72,8 @@ class $MediaRecorderCreationArgs {
   late int outputFormat;
   late String outputFilePath;
   late int videoEncoder;
+  late int audioSource;
+  late int audioEncoder;
 }
 
 class $CameraChannel extends TypeChannel<$Camera> {
@@ -729,7 +733,9 @@ class $MediaRecorderHandler implements TypeChannelHandler<$MediaRecorder> {
       instance.camera,
       instance.outputFormat,
       instance.outputFilePath,
-      instance.videoEncoder
+      instance.videoEncoder,
+      instance.audioSource,
+      instance.audioEncoder
     ];
   }
 
@@ -744,7 +750,9 @@ class $MediaRecorderHandler implements TypeChannelHandler<$MediaRecorder> {
         ..camera = arguments[0] as $Camera
         ..outputFormat = arguments[1] as int
         ..outputFilePath = arguments[2] as String
-        ..videoEncoder = arguments[3] as int,
+        ..videoEncoder = arguments[3] as int
+        ..audioSource = arguments[4] as int
+        ..audioEncoder = arguments[5] as int,
     );
   }
 

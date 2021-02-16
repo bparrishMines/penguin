@@ -30,6 +30,8 @@ public class MediaRecorderProxyTest {
     testBuilder.videoEncoder = 12;
     testBuilder.outputFormat = 13;
     testBuilder.camera = mock(CameraProxy.class);
+    testBuilder.audioSource = 45;
+    testBuilder.audioEncoder = 12;
   }
 
   @Test
@@ -42,6 +44,8 @@ public class MediaRecorderProxyTest {
     verify(mockMediaRecorder).setCamera(mockCamera);
     verify(mockMediaRecorder).setVideoEncoder(12);
     verify(mockMediaRecorder).setOutputFormat(13);
+    verify(mockMediaRecorder).setAudioSource(45);
+    verify(mockMediaRecorder).setAudioEncoder(12);
   }
 
   @Test

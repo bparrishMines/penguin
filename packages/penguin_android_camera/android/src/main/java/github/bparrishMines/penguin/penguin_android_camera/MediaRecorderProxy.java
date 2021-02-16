@@ -16,8 +16,10 @@ public class MediaRecorderProxy implements CameraChannelLibrary.$MediaRecorder {
 
     mediaRecorder.setCamera(builder.camera.camera);
     mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
+    mediaRecorder.setAudioSource(builder.audioSource);
     mediaRecorder.setOutputFormat(builder.outputFormat);
     mediaRecorder.setVideoEncoder(builder.videoEncoder);
+    mediaRecorder.setAudioEncoder(builder.audioEncoder);
     mediaRecorder.setOutputFile(builder.outputFilePath);
   }
 
@@ -39,6 +41,16 @@ public class MediaRecorderProxy implements CameraChannelLibrary.$MediaRecorder {
   @Override
   public Integer getVideoEncoder() {
     return builder.videoEncoder;
+  }
+
+  @Override
+  public Integer getAudioSource() {
+    return builder.audioSource;
+  }
+
+  @Override
+  public Integer getAudioEncoder() {
+    return builder.audioEncoder;
   }
 
   @Override
@@ -70,5 +82,7 @@ public class MediaRecorderProxy implements CameraChannelLibrary.$MediaRecorder {
     public Integer outputFormat;
     public String outputFilePath;
     public Integer videoEncoder;
+    public Integer audioSource;
+    public Integer audioEncoder;
   }
 }

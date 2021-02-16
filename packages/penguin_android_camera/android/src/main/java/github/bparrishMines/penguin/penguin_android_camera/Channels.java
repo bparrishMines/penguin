@@ -103,6 +103,8 @@ public class Channels {
       builder.outputFormat = args.outputFormat;
       builder.outputFilePath = args.outputFilePath;
       builder.videoEncoder = args.videoEncoder;
+      builder.audioSource = args.audioSource;
+      builder.audioEncoder = args.audioEncoder;
       return new MediaRecorderProxy(builder);
     }
   }
