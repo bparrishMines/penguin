@@ -143,4 +143,12 @@ public class CameraProxyTest {
     cameraProxy.takePicture(shutterCallbackProxy, pictureCallbackProxy, pictureCallbackProxy, pictureCallbackProxy);
     verify(mockCamera).takePicture(shutterCallback, pictureCallback, pictureCallback, pictureCallback);
   }
+
+  @Test
+  public void unlock() {
+    final CameraProxy cameraProxy = new CameraProxy(mockCamera, mockTextureRegistry);
+
+    cameraProxy.unlock();
+    verify(mockCamera).unlock();
+  }
 }

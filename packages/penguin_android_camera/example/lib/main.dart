@@ -2,10 +2,11 @@
 
 import 'dart:math';
 import 'dart:typed_data';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:penguin_android_camera/penguin_android_camera.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -22,10 +23,10 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   Camera _camera;
-  MediaRecorder _mediaRecorder;
   Widget _previewWidget = Container();
   int _cameraFacing = CameraInfo.cameraFacingFront;
   final double _deviceRotation = 0;
+  MediaRecorder _mediaRecorder;
 
   @override
   void initState() {
@@ -107,40 +108,49 @@ class _MyAppState extends State<MyApp> {
     return _setupCamera();
   }
 
-  Future<void> _startRecording() async {
-    if (_camera == null) {
-      print('The camera has still not been setup.');
-      return;
-    }
-
-    _mediaRecorder = MediaRecorder(camera: _camera, outputFilePath: "aFile");
-    await _mediaRecorder.prepare();
-    _mediaRecorder.start();
+  Future<Directory> _storageDir() async {
+    final List<Directory> dirs =
+        await getExternalStorageDirectories(type: StorageDirectory.dcim);
+    print(dirs[0]);
+    print(dirs[0].path);
+    return dirs[0];
   }
 
-  void _stopRecording() {
-    if (_mediaRecorder == null) return;
+  void _takePicture() {
+    _camera?.takePicture(
+      null,
+      null,
+      null,
+      JpegPictureCallback(_camera, (data) async {
+        final Directory dir = await _storageDir();
+        final File imageFile = File('${dir.path}/my_image${data.hashCode}.jpg');
+        imageFile.writeAsBytes(data);
+      }),
+    );
+  }
+
+  Future<void> _recordAVideo() async {
+    final Directory dir = await _storageDir();
+    _mediaRecorder = MediaRecorder(
+      camera: _camera,
+      outputFormat: OutputFormat.mpeg4,
+      outputFilePath: '${dir.path}/my_video${Random().nextInt(10000)}.mp4',
+      videoEncoder: VideoEncoder.mpeg4Sp,
+    );
+    _camera.unlock();
+    _mediaRecorder.prepare();
+    _mediaRecorder.start();
+    await Future<void>.delayed(Duration(seconds: 5));
     _mediaRecorder.stop();
     _mediaRecorder.release();
-    _mediaRecorder = null;
   }
+
+  void _stopRecording() {}
 
   Widget _buildPictureButton() {
     return InkResponse(
-      onTap: () async {
-        _camera?.takePicture(
-          null,
-          null,
-          null,
-          JpegPictureCallback(_camera, (data) async {
-            final result = await ImageGallerySaver.saveImage(
-              data,
-              quality: 60,
-              name: 'my_image${data.hashCode}',
-            );
-            print(result);
-          }),
-        );
+      onTap: () {
+        _recordAVideo();
       },
       child: Container(
         width: 65,

@@ -3,6 +3,7 @@ package github.bparrishMines.penguin.penguin_android_camera;
 import android.hardware.Camera;
 import android.media.MediaRecorder;
 
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -19,23 +20,34 @@ public class MediaRecorderProxyTest {
   public MockitoRule mockitoRule = MockitoJUnit.rule();
 
   @Mock
-  MediaRecorder mockMediaRecorder;
+  public MediaRecorder mockMediaRecorder;
+
+  public MediaRecorderProxy.Builder testBuilder = new MediaRecorderProxy.Builder();
+
+  @Before
+  public void setUp() {
+    testBuilder.outputFilePath = "output_file";
+    testBuilder.videoEncoder = 12;
+    testBuilder.outputFormat = 13;
+    testBuilder.camera = mock(CameraProxy.class);
+  }
 
   @Test
   public void constructorParameters() {
     final Camera mockCamera = mock(Camera.class);
-    final CameraProxy cameraProxy = new CameraProxy(mockCamera, mock(TextureRegistry.class));
+    testBuilder.camera = new CameraProxy(mockCamera, mock(TextureRegistry.class));
 
-    new MediaRecorderProxy(mockMediaRecorder, cameraProxy, "output_file");
+    new MediaRecorderProxy(mockMediaRecorder, testBuilder);
     verify(mockMediaRecorder).setOutputFile("output_file");
     verify(mockMediaRecorder).setCamera(mockCamera);
+    verify(mockMediaRecorder).setVideoEncoder(12);
+    verify(mockMediaRecorder).setOutputFormat(13);
   }
 
   @Test
   public void prepare() throws Exception {
     final MediaRecorderProxy mediaRecorderProxy = new MediaRecorderProxy(mockMediaRecorder,
-        mock(CameraProxy.class),
-        "output_file");
+        testBuilder);
 
     mediaRecorderProxy.prepare();
     verify(mockMediaRecorder).prepare();
@@ -44,8 +56,7 @@ public class MediaRecorderProxyTest {
   @Test
   public void start() {
     final MediaRecorderProxy mediaRecorderProxy = new MediaRecorderProxy(mockMediaRecorder,
-        mock(CameraProxy.class),
-        "output_file");
+        testBuilder);
 
     mediaRecorderProxy.start();
     verify(mockMediaRecorder).start();
@@ -54,8 +65,7 @@ public class MediaRecorderProxyTest {
   @Test
   public void stop() {
     final MediaRecorderProxy mediaRecorderProxy = new MediaRecorderProxy(mockMediaRecorder,
-        mock(CameraProxy.class),
-        "output_file");
+        testBuilder);
 
     mediaRecorderProxy.stop();
     verify(mockMediaRecorder).stop();
@@ -64,8 +74,7 @@ public class MediaRecorderProxyTest {
   @Test
   public void release() {
     final MediaRecorderProxy mediaRecorderProxy = new MediaRecorderProxy(mockMediaRecorder,
-        mock(CameraProxy.class),
-        "output_file");
+        testBuilder);
 
     mediaRecorderProxy.release();
     verify(mockMediaRecorder).release();

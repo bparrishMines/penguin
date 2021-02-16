@@ -1,4 +1,5 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
+
 import 'dart:typed_data';
 
 import 'package:reference/reference.dart';
@@ -17,6 +18,8 @@ mixin $Camera {
   Future<int> attachPreviewTexture();
 
   Future<void> releasePreviewTexture();
+
+  Future<void> unlock();
 
   Future<void> takePicture($ShutterCallback? shutter, $PictureCallback? raw,
       $PictureCallback? postView, $PictureCallback? jpeg);
@@ -38,7 +41,9 @@ mixin $CameraInfo {
 
 mixin $MediaRecorder {
   $Camera get camera;
+  int get outputFormat;
   String get outputFilePath;
+  int get videoEncoder;
   Future<void> prepare();
 
   Future<void> start();
@@ -62,7 +67,9 @@ class $CameraInfoCreationArgs {
 
 class $MediaRecorderCreationArgs {
   late $Camera camera;
+  late int outputFormat;
   late String outputFilePath;
+  late int videoEncoder;
 }
 
 class $CameraChannel extends TypeChannel<$Camera> {
@@ -129,6 +136,16 @@ class $CameraChannel extends TypeChannel<$Camera> {
     return sendInvokeMethod(
       instance,
       'releasePreviewTexture',
+      <Object?>[],
+    );
+  }
+
+  Future<Object?> $invokeUnlock(
+    $Camera instance,
+  ) {
+    return sendInvokeMethod(
+      instance,
+      'unlock',
       <Object?>[],
     );
   }
@@ -324,6 +341,9 @@ class $CameraHandler implements TypeChannelHandler<$Camera> {
         break;
       case 'releasePreviewTexture':
         method = () => instance.releasePreviewTexture();
+        break;
+      case 'unlock':
+        method = () => instance.unlock();
         break;
       case 'takePicture':
         method = () => instance.takePicture(
@@ -705,7 +725,12 @@ class $MediaRecorderHandler implements TypeChannelHandler<$MediaRecorder> {
     TypeChannelMessenger messenger,
     $MediaRecorder instance,
   ) {
-    return <Object?>[instance.camera, instance.outputFilePath];
+    return <Object?>[
+      instance.camera,
+      instance.outputFormat,
+      instance.outputFilePath,
+      instance.videoEncoder
+    ];
   }
 
   @override
@@ -717,7 +742,9 @@ class $MediaRecorderHandler implements TypeChannelHandler<$MediaRecorder> {
       messenger,
       $MediaRecorderCreationArgs()
         ..camera = arguments[0] as $Camera
-        ..outputFilePath = arguments[1] as String,
+        ..outputFormat = arguments[1] as int
+        ..outputFilePath = arguments[2] as String
+        ..videoEncoder = arguments[3] as int,
     );
   }
 

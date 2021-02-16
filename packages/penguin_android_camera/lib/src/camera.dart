@@ -16,6 +16,10 @@ import 'camera.g.dart';
 /// API and is deprecated for Android versions 21+.
 @Reference('penguin_android_camera/camera/Camera')
 class Camera with $Camera {
+  /// Default constructor for [Camera].
+  ///
+  /// This should only be used when subclassing. Otherwise, an instance will be
+  /// provided from [open].
   Camera();
 
   int? _currentTexture;
@@ -84,6 +88,11 @@ class Camera with $Camera {
     assert(Channels.cameraChannel.messenger.isPaired(this));
     _currentTexture = null;
     await Channels.cameraChannel.$invokeReleasePreviewTexture(this);
+  }
+
+  @override
+  Future<void> unlock() {
+    return Channels.cameraChannel.$invokeUnlock(this);
   }
 
   @override
@@ -178,15 +187,36 @@ class CameraInfo with $CameraInfo {
   final int orientation;
 }
 
+abstract class OutputFormat {
+  OutputFormat._();
+
+  static const int mpeg4 = 0x00000002;
+}
+
+abstract class VideoEncoder {
+  static const int mpeg4Sp = 0x00000003;
+}
+
 @Reference('penguin_android_camera/camera/MediaRecorder')
 class MediaRecorder implements $MediaRecorder {
-  MediaRecorder({required this.camera, required this.outputFilePath});
+  MediaRecorder({
+    required this.camera,
+    required this.outputFormat,
+    required this.outputFilePath,
+    required this.videoEncoder,
+  });
 
   @override
   final Camera camera;
 
   @override
   final String outputFilePath;
+
+  @override
+  final int outputFormat;
+
+  @override
+  final int videoEncoder;
 
   @override
   Future<void> prepare() {

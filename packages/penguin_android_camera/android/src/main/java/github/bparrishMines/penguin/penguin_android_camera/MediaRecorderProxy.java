@@ -4,30 +4,41 @@ import android.media.MediaRecorder;
 
 public class MediaRecorderProxy implements CameraChannelLibrary.$MediaRecorder {
   public final MediaRecorder mediaRecorder;
-  private final CameraProxy camera;
-  private final String outputFilePath;
+  private final Builder builder;
 
-  public MediaRecorderProxy(CameraProxy camera, String outputFilePath) {
-    this(new MediaRecorder(), camera, outputFilePath);
+  public MediaRecorderProxy(Builder builder) {
+    this(new MediaRecorder(), builder);
   }
 
-  public MediaRecorderProxy(MediaRecorder mediaRecorder, CameraProxy camera, String outputFilePath) {
+  public MediaRecorderProxy(MediaRecorder mediaRecorder, Builder builder) {
     this.mediaRecorder = mediaRecorder;
-    this.camera = camera;
-    this.outputFilePath = outputFilePath;
+    this.builder = builder;
 
-    mediaRecorder.setOutputFile(outputFilePath);
-    mediaRecorder.setCamera(camera.camera);
+    mediaRecorder.setCamera(builder.camera.camera);
+    mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
+    mediaRecorder.setOutputFormat(builder.outputFormat);
+    mediaRecorder.setVideoEncoder(builder.videoEncoder);
+    mediaRecorder.setOutputFile(builder.outputFilePath);
   }
 
   @Override
   public CameraProxy getCamera() {
-    return camera;
+    return builder.camera;
+  }
+
+  @Override
+  public Integer getOutputFormat() {
+    return builder.outputFormat;
   }
 
   @Override
   public String getOutputFilePath() {
-    return outputFilePath;
+    return builder.outputFilePath;
+  }
+
+  @Override
+  public Integer getVideoEncoder() {
+    return builder.videoEncoder;
   }
 
   @Override
@@ -52,5 +63,12 @@ public class MediaRecorderProxy implements CameraChannelLibrary.$MediaRecorder {
   public Void release() {
     mediaRecorder.release();
     return null;
+  }
+
+  public static class Builder {
+    public CameraProxy camera;
+    public Integer outputFormat;
+    public String outputFilePath;
+    public Integer videoEncoder;
   }
 }

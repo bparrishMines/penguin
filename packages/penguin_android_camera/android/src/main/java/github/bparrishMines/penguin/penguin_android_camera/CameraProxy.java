@@ -92,4 +92,10 @@ public class CameraProxy implements CameraChannelLibrary.$Camera {
     currentTextureEntry = null;
     return null;
   }
+
+  @Override
+  public Void unlock() {
+    camera.unlock();
+    return null;
+  }
 }
