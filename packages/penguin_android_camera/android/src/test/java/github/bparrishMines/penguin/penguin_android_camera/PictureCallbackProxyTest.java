@@ -20,7 +20,7 @@ public class PictureCallbackProxyTest {
       }
     };
 
-    proxy.getPictureCallback().onPictureTaken(bytes[0], null);
+    proxy.pictureCallback.onPictureTaken(bytes[0], null);
     assertArrayEquals(bytes[0], new byte[]{1, 2, 3});
   }
 }

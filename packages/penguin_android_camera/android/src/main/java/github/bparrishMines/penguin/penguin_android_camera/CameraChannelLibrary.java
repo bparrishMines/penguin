@@ -26,6 +26,7 @@ Object startPreview() throws Exception;
 Object stopPreview() throws Exception;
 Object attachPreviewTexture() throws Exception;
 Object releasePreviewTexture() throws Exception;
+Object unlock() throws Exception;
 Object takePicture($ShutterCallback shutter,$PictureCallback raw,$PictureCallback postView,$PictureCallback jpeg) throws Exception;
   }
 interface $ShutterCallback {
@@ -45,6 +46,19 @@ Integer getOrientation();
 
     
   }
+interface $MediaRecorder {
+    $Camera getCamera();
+Integer getOutputFormat();
+String getOutputFilePath();
+Integer getVideoEncoder();
+Integer getAudioSource();
+Integer getAudioEncoder();
+
+    Object prepare() throws Exception;
+Object start() throws Exception;
+Object stop() throws Exception;
+Object release() throws Exception;
+  }
 
   static class $CameraCreationArgs {
     
@@ -62,6 +76,15 @@ static class $CameraInfoCreationArgs {
     Integer cameraId;
 Integer facing;
 Integer orientation;
+  }
+
+static class $MediaRecorderCreationArgs {
+    $Camera camera;
+Integer outputFormat;
+String outputFilePath;
+Integer videoEncoder;
+Integer audioSource;
+Integer audioEncoder;
   }
 
   static class $CameraChannel extends TypeChannel<$Camera> {
@@ -95,6 +118,10 @@ Completable<Object> $invokeAttachPreviewTexture($Camera instance) {
 
 Completable<Object> $invokeReleasePreviewTexture($Camera instance) {
       return invokeMethod(instance, "releasePreviewTexture", Arrays.<Object>asList());
+    }
+
+Completable<Object> $invokeUnlock($Camera instance) {
+      return invokeMethod(instance, "unlock", Arrays.<Object>asList());
     }
 
 Completable<Object> $invokeTakePicture($Camera instance, $ShutterCallback shutter , $PictureCallback raw , $PictureCallback postView , $PictureCallback jpeg) {
@@ -134,6 +161,30 @@ static class $CameraInfoChannel extends TypeChannel<$CameraInfo> {
     
 
     
+  }
+
+static class $MediaRecorderChannel extends TypeChannel<$MediaRecorder> {
+    $MediaRecorderChannel(@NonNull TypeChannelMessenger messenger) {
+      super(messenger, "penguin_android_camera/camera/MediaRecorder");
+    }
+
+    
+
+    Completable<Object> $invokePrepare($MediaRecorder instance) {
+      return invokeMethod(instance, "prepare", Arrays.<Object>asList());
+    }
+
+Completable<Object> $invokeStart($MediaRecorder instance) {
+      return invokeMethod(instance, "start", Arrays.<Object>asList());
+    }
+
+Completable<Object> $invokeStop($MediaRecorder instance) {
+      return invokeMethod(instance, "stop", Arrays.<Object>asList());
+    }
+
+Completable<Object> $invokeRelease($MediaRecorder instance) {
+      return invokeMethod(instance, "release", Arrays.<Object>asList());
+    }
   }
 
   static class $CameraHandler implements TypeChannelHandler<$Camera> {
@@ -389,6 +440,72 @@ args.orientation = (Integer) arguments.get(2);
 
     @Override
     public void onInstanceRemoved(TypeChannelMessenger messenger, $CameraInfo instance)
+        throws Exception {
+    }
+  }
+static class $MediaRecorderHandler implements TypeChannelHandler<$MediaRecorder> {
+    $MediaRecorder onCreate(TypeChannelMessenger messenger, $MediaRecorderCreationArgs args)
+        throws Exception {
+      return null;
+    }
+
+    
+
+    @Override
+    public Object invokeStaticMethod(
+        TypeChannelMessenger messenger, String methodName, List<Object> arguments)
+        throws Exception {
+      switch (methodName) {
+        
+      }
+
+      throw new UnsupportedOperationException(
+          String.format("Unable to invoke static method %s", methodName));
+    }
+
+    @Override
+    public List<Object> getCreationArguments(
+        TypeChannelMessenger messenger, $MediaRecorder instance) {
+      return Arrays.<Object>asList(instance.getCamera(),instance.getOutputFormat(),instance.getOutputFilePath(),instance.getVideoEncoder(),instance.getAudioSource(),instance.getAudioEncoder());
+    }
+
+    @Override
+    public $MediaRecorder createInstance(TypeChannelMessenger messenger, List<Object> arguments)
+        throws Exception {
+      final $MediaRecorderCreationArgs args = new $MediaRecorderCreationArgs();
+      args.camera = ($Camera) arguments.get(0);
+args.outputFormat = (Integer) arguments.get(1);
+args.outputFilePath = (String) arguments.get(2);
+args.videoEncoder = (Integer) arguments.get(3);
+args.audioSource = (Integer) arguments.get(4);
+args.audioEncoder = (Integer) arguments.get(5);
+      return onCreate(messenger, args);
+    }
+
+    @Override
+    public Object invokeMethod(
+        TypeChannelMessenger messenger,
+        $MediaRecorder instance,
+        String methodName,
+        List<Object> arguments)
+        throws Exception {
+      for (Method method : $MediaRecorder.class.getMethods()) {
+        if (method.getName().equals(methodName)) {
+          return method.invoke(instance, arguments.toArray());
+        }
+      }
+
+      throw new UnsupportedOperationException(
+          String.format("%s.%s not supported.", instance, methodName));
+    }
+
+    @Override
+    public void onInstanceAdded(TypeChannelMessenger messenger, $MediaRecorder instance)
+        throws Exception {
+    }
+
+    @Override
+    public void onInstanceRemoved(TypeChannelMessenger messenger, $MediaRecorder instance)
         throws Exception {
     }
   }

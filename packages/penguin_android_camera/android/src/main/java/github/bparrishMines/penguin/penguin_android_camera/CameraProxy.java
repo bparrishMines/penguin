@@ -9,8 +9,8 @@ import github.penguin.reference.reference.TypeChannelMessenger;
 import io.flutter.view.TextureRegistry;
 
 public class CameraProxy implements CameraChannelLibrary.$Camera {
-  private final TextureRegistry textureRegistry;
-  private final Camera camera;
+  public final Camera camera;
+  public final TextureRegistry textureRegistry;
   private TextureRegistry.SurfaceTextureEntry currentTextureEntry;
 
   public CameraProxy(Camera camera, TextureRegistry textureRegistry) {
@@ -37,30 +37,21 @@ public class CameraProxy implements CameraChannelLibrary.$Camera {
     return allCameraInfoProxy;
   }
 
-  public Camera getCamera() {
-    return camera;
-  }
-
-
-  public TextureRegistry getTextureRegistry() {
-    return textureRegistry;
-  }
-
   @Override
   public Void release() {
-    getCamera().release();
+    camera.release();
     return null;
   }
 
   @Override
   public Void startPreview() {
-    getCamera().startPreview();
+    camera.startPreview();
     return null;
   }
 
   @Override
   public Void stopPreview() {
-    getCamera().stopPreview();
+    camera.stopPreview();
     return null;
   }
 
@@ -77,10 +68,10 @@ public class CameraProxy implements CameraChannelLibrary.$Camera {
                            PictureCallbackProxy raw,
                            PictureCallbackProxy postView,
                            PictureCallbackProxy jpeg) {
-    getCamera().takePicture(shutter != null ? shutter.getShutterCallback() : null,
-        raw != null ? raw.getPictureCallback() : null,
-        postView != null ? postView.getPictureCallback() : null,
-        jpeg != null ? jpeg.getPictureCallback() : null);
+    camera.takePicture(shutter != null ? shutter.shutterCallback : null,
+        raw != null ? raw.pictureCallback : null,
+        postView != null ? postView.pictureCallback : null,
+        jpeg != null ? jpeg.pictureCallback : null);
     return null;
   }
 
@@ -88,17 +79,23 @@ public class CameraProxy implements CameraChannelLibrary.$Camera {
   public Long attachPreviewTexture() throws Exception {
     if (currentTextureEntry != null) return currentTextureEntry.id();
 
-    currentTextureEntry = getTextureRegistry().createSurfaceTexture();
-    getCamera().setPreviewTexture(currentTextureEntry.surfaceTexture());
+    currentTextureEntry = textureRegistry.createSurfaceTexture();
+    camera.setPreviewTexture(currentTextureEntry.surfaceTexture());
     return currentTextureEntry.id();
   }
 
   @Override
   public Void releasePreviewTexture() throws Exception {
     if (currentTextureEntry == null) return null;
-    getCamera().setPreviewTexture(null);
+    camera.setPreviewTexture(null);
     currentTextureEntry.release();
     currentTextureEntry = null;
+    return null;
+  }
+
+  @Override
+  public Void unlock() {
+    camera.unlock();
     return null;
   }
 }

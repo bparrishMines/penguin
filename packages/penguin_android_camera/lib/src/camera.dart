@@ -16,6 +16,10 @@ import 'camera.g.dart';
 /// API and is deprecated for Android versions 21+.
 @Reference('penguin_android_camera/camera/Camera')
 class Camera with $Camera {
+  /// Default constructor for [Camera].
+  ///
+  /// This should only be used when subclassing. Otherwise, an instance will be
+  /// provided from [open].
   Camera();
 
   int? _currentTexture;
@@ -84,6 +88,11 @@ class Camera with $Camera {
     assert(Channels.cameraChannel.messenger.isPaired(this));
     _currentTexture = null;
     await Channels.cameraChannel.$invokeReleasePreviewTexture(this);
+  }
+
+  @override
+  Future<void> unlock() {
+    return Channels.cameraChannel.$invokeUnlock(this);
   }
 
   @override
@@ -178,7 +187,83 @@ class CameraInfo with $CameraInfo {
   final int orientation;
 }
 
-class Channels {
+abstract class OutputFormat {
+  OutputFormat._();
+
+  static const int mpeg4 = 0x00000002;
+}
+
+abstract class VideoEncoder {
+  static const int mpeg4Sp = 0x00000003;
+}
+
+abstract class AudioSource {
+  static const int defaultSource = 0x00000000;
+}
+
+abstract class AudioEncoder {
+  static const int amrNb = 0x00000001;
+}
+
+@Reference('penguin_android_camera/camera/MediaRecorder')
+class MediaRecorder implements $MediaRecorder {
+  MediaRecorder({
+    required this.camera,
+    required this.outputFormat,
+    required this.outputFilePath,
+    required this.videoEncoder,
+    required this.audioSource,
+    required this.audioEncoder,
+  }) : assert(Channels.cameraChannel.messenger.isPaired(camera));
+
+  @override
+  final Camera camera;
+
+  @override
+  final String outputFilePath;
+
+  @override
+  final int outputFormat;
+
+  @override
+  final int videoEncoder;
+
+  @override
+  final int audioSource;
+
+  @override
+  final int audioEncoder;
+
+  @override
+  Future<void> prepare() {
+    Channels.mediaRecorderChannel.createNewInstancePair(this);
+    return Channels.mediaRecorderChannel.$invokePrepare(this);
+  }
+
+  @override
+  Future<void> start() {
+    assert(Channels.mediaRecorderChannel.messenger.isPaired(this));
+    return Channels.mediaRecorderChannel.$invokeStart(this);
+  }
+
+  @override
+  Future<void> stop() {
+    assert(Channels.mediaRecorderChannel.messenger.isPaired(this));
+    return Channels.mediaRecorderChannel.$invokeStop(this);
+  }
+
+  @override
+  Future<void> release() async {
+    if (!Channels.mediaRecorderChannel.messenger.isPaired(this)) return;
+
+    Channels.mediaRecorderChannel.$invokeRelease(this);
+    await Channels.mediaRecorderChannel.disposeInstancePair(this);
+  }
+}
+
+abstract class Channels {
+  Channels._();
+
   static CameraChannel cameraChannel = CameraChannel(
     MethodChannelMessenger.instance,
   )..setHandler(CameraHandler());
@@ -194,6 +279,10 @@ class Channels {
   static PictureCallbackChannel pictureCallbackChannel = PictureCallbackChannel(
     MethodChannelMessenger.instance,
   )..setHandler(PictureCallbackHandler());
+
+  static MediaRecorderChannel mediaRecorderChannel = MediaRecorderChannel(
+    MethodChannelMessenger.instance,
+  )..setHandler(MediaRecorderHandler());
 }
 
 class CameraChannel extends $CameraChannel {
@@ -210,6 +299,10 @@ class ShutterCallbackChannel extends $ShutterCallbackChannel {
 
 class PictureCallbackChannel extends $PictureCallbackChannel {
   PictureCallbackChannel(TypeChannelMessenger messenger) : super(messenger);
+}
+
+class MediaRecorderChannel extends $MediaRecorderChannel {
+  MediaRecorderChannel(TypeChannelMessenger messenger) : super(messenger);
 }
 
 class CameraHandler extends $CameraHandler {
@@ -232,3 +325,5 @@ class CameraInfoHandler extends $CameraInfoHandler {
 class ShutterCallbackHandler extends $ShutterCallbackHandler {}
 
 class PictureCallbackHandler extends $PictureCallbackHandler {}
+
+class MediaRecorderHandler extends $MediaRecorderHandler {}

@@ -5,7 +5,7 @@ import android.hardware.Camera;
 import github.penguin.reference.reference.TypeChannelMessenger;
 
 public class ShutterCallbackProxy implements CameraChannelLibrary.$ShutterCallback {
-  private final Camera.ShutterCallback shutterCallback;
+  public final Camera.ShutterCallback shutterCallback;
   private final TypeChannelMessenger messenger;
 
   public ShutterCallbackProxy(TypeChannelMessenger messenger) {
@@ -16,10 +16,6 @@ public class ShutterCallbackProxy implements CameraChannelLibrary.$ShutterCallba
   public ShutterCallbackProxy(Camera.ShutterCallback shutterCallback, TypeChannelMessenger messenger) {
     this.shutterCallback = shutterCallback;
     this.messenger = messenger;
-  }
-
-  public Camera.ShutterCallback getShutterCallback() {
-    return shutterCallback;
   }
 
   @Override

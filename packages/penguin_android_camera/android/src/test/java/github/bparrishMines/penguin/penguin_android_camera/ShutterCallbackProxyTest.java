@@ -22,7 +22,7 @@ public class ShutterCallbackProxyTest {
       }
     };
 
-    proxy.getShutterCallback().onShutter();
+    proxy.shutterCallback.onShutter();
     assertTrue(onShutterCalled[0]);
   }
 }

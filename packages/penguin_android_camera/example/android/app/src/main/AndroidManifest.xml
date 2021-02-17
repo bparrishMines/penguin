@@ -2,8 +2,11 @@
     package="github.bparrishMines.penguin.penguin_android_camera_example">
     <uses-feature android:name="android.hardware.cameraProxy.any" />
     <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
    <application
         android:label="penguin_android_camera_example"
+        android:requestLegacyExternalStorage="true"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

@@ -26,6 +26,11 @@ public class Channels {
     channel.setHandler(new PictureCallbackHandler());
   }
 
+  static void setupMediaRecorderChannel(TypeChannelMessenger messenger) {
+    final MediaRecorderChannel channel = new MediaRecorderChannel(messenger);
+    channel.setHandler(new MediaRecorderHandler());
+  }
+
   public static class CameraChannel extends CameraChannelLibrary.$CameraChannel {
     public CameraChannel(@NonNull TypeChannelMessenger messenger) {
       super(messenger);
@@ -46,6 +51,12 @@ public class Channels {
 
   public static class PictureCallbackChannel extends CameraChannelLibrary.$PictureCallbackChannel {
     public PictureCallbackChannel(@NonNull TypeChannelMessenger messenger) {
+      super(messenger);
+    }
+  }
+
+  public static class MediaRecorderChannel extends CameraChannelLibrary.$MediaRecorderChannel {
+    public MediaRecorderChannel(@NonNull TypeChannelMessenger messenger) {
       super(messenger);
     }
   }
@@ -72,15 +83,29 @@ public class Channels {
 
   public static class ShutterCallbackHandler extends CameraChannelLibrary.$ShutterCallbackHandler {
     @Override
-    ShutterCallbackProxy onCreate(TypeChannelMessenger messenger, CameraChannelLibrary.$ShutterCallbackCreationArgs args) {
+    public ShutterCallbackProxy onCreate(TypeChannelMessenger messenger, CameraChannelLibrary.$ShutterCallbackCreationArgs args) {
       return new ShutterCallbackProxy(messenger);
     }
   }
 
   public static class PictureCallbackHandler extends CameraChannelLibrary.$PictureCallbackHandler {
     @Override
-    PictureCallbackProxy onCreate(TypeChannelMessenger messenger, CameraChannelLibrary.$PictureCallbackCreationArgs args) {
+    public PictureCallbackProxy onCreate(TypeChannelMessenger messenger, CameraChannelLibrary.$PictureCallbackCreationArgs args) {
       return new PictureCallbackProxy(messenger);
+    }
+  }
+
+  public static class MediaRecorderHandler extends CameraChannelLibrary.$MediaRecorderHandler {
+    @Override
+    public MediaRecorderProxy onCreate(TypeChannelMessenger messenger, CameraChannelLibrary.$MediaRecorderCreationArgs args) {
+      final MediaRecorderProxy.Builder builder = new MediaRecorderProxy.Builder();
+      builder.camera = (CameraProxy) args.camera;
+      builder.outputFormat = args.outputFormat;
+      builder.outputFilePath = args.outputFilePath;
+      builder.videoEncoder = args.videoEncoder;
+      builder.audioSource = args.audioSource;
+      builder.audioEncoder = args.audioEncoder;
+      return new MediaRecorderProxy(builder);
     }
   }
 }
