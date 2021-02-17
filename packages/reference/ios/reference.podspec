@@ -1,17 +1,16 @@
-#
-# To learn more about a Podspec see http://guides.cocoapods.org/syntax/podspec.html.
-# Run `pod lib lint reference.podspec' to validate before publishing.
-#
+require 'yaml'
+
+pubspec = YAML.load_file(File.join('..', 'pubspec.yaml'))
+library_version = pubspec['version'].gsub('+', '-')
+
 Pod::Spec.new do |s|
-  s.name             = 'reference'
-  s.version          = '0.0.1'
+  s.name             = pubspec['name']
+  s.version          = library_version
   s.summary          = 'A Flutter plugin library for communicating language types.'
-  s.description      = <<-DESC
-Manages communication between types/classes of different languages.
-                       DESC
+  s.description      = pubspec['description']
   s.homepage         = 'https://github.com/bparrishMines/penguin/tree/master/packages/reference'
   s.license          = { :type => 'MIT', :file => '../LICENSE' }
-  s.author           = { 'Brandon Parrish' => 'email@example.com' }
+  s.author           = { 'Brandon Parrish' => 'bparr2450@gmail.com' }
   s.source           = { :http => 'https://github.com/bparrishMines/penguin/tree/master/packages/reference' }
   s.documentation_url = 'https://pub.dev/documentation/reference/latest'
   s.source_files = 'Classes/**/*'

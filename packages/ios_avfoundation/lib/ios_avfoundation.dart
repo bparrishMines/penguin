@@ -1,14 +1,12 @@
+//import 'channels.dart';
 
-import 'dart:async';
+// ignore_for_file: unnecessary_statements
 
-import 'package:flutter/services.dart';
+//export 'src/avfoundation.dart';
 
-class IosAvfoundation {
-  static const MethodChannel _channel =
-      const MethodChannel('ios_avfoundation');
+class AvFoundation {
+  /// Initialize communication with the platform API.
+  static void initialize() {
 
-  static Future<String> get platformVersion async {
-    final String version = await _channel.invokeMethod('getPlatformVersion');
-    return version;
   }
 }

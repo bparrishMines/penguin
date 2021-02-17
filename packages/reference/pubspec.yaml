@@ -1,8 +1,8 @@
 name: reference
 description: Reduce plugin maintenance burden for plugins that have to maintain platform object instances in memory.
 version: 0.2.0-beta.2
+author: Brandon Parrish
 homepage: https://github.com/bparrishMines/penguin/tree/master/packages/reference
-
 
 environment:
   sdk: ">=2.12.0-0 <3.0.0"
