@@ -1,6 +1,7 @@
 // @dart=2.9
 
 import 'package:flutter/material.dart';
+import 'package:ios_avfoundation/ios_avfoundation.dart';
 
 void main() {
   runApp(const MyApp());
