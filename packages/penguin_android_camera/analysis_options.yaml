@@ -1,9 +1,9 @@
 include: package:lint/analysis_options_package.yaml
 analyzer:
-  exclude: [example/lib/main.dart, 'lib/src/**.g.dart']
+  exclude: [example/lib/main.dart, lib/src/camera.g.dart']
 
 linter:
   rules:
-    #avoid_classes_with_only_static_members: false
-    public_member_api_docs: true
+    avoid_classes_with_only_static_members: false
+    # public_member_api_docs: true
 
