@@ -1,3 +1,7 @@
+## 0.2.0-beta.3
+
+* `MethodChannelMessenger` on iOS now handles exceptions when receiving messsages.
+
 ## 0.2.0-beta.2
 
 * `MethodChannelMessenger` supports `List`s supported by `MethodChannel`.
