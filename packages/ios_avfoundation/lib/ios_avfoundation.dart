@@ -1,18 +1,8 @@
-import 'channels.dart';
+import 'src/avfoundation_channels.dart';
 
 // ignore_for_file: unnecessary_statements
 
-export 'src/avfoundation.dart'
-    hide
-        Channels,
-        CaptureDeviceInputChannel,
-        CaptureSessionChannel,
-        CaptureDeviceChannel,
-        PreviewControllerChannel,
-        CaptureDeviceInputHandler,
-        CaptureSessionHandler,
-        CaptureDeviceHandler,
-        PreviewControllerHandler;
+export 'src/avfoundation.dart';
 
 class Avfoundation {
   /// Initialize communication with the platform API.
