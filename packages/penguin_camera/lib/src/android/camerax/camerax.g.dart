@@ -58,7 +58,7 @@ class $PreviewChannel extends TypeChannel<$Preview> {
   Future<Object?> $invokeAttachToTexture(
     $Preview instance,
   ) {
-    return invokeMethod(
+    return sendInvokeMethod(
       instance,
       'attachToTexture',
       <Object?>[],
@@ -68,7 +68,7 @@ class $PreviewChannel extends TypeChannel<$Preview> {
   Future<Object?> $invokeReleaseTexture(
     $Preview instance,
   ) {
-    return invokeMethod(
+    return sendInvokeMethod(
       instance,
       'releaseTexture',
       <Object?>[],
@@ -83,7 +83,7 @@ class $SuccessListenerChannel extends TypeChannel<$SuccessListener> {
   Future<Object?> $invokeOnSuccess(
     $SuccessListener instance,
   ) {
-    return invokeMethod(
+    return sendInvokeMethod(
       instance,
       'onSuccess',
       <Object?>[],
@@ -92,7 +92,7 @@ class $SuccessListenerChannel extends TypeChannel<$SuccessListener> {
 
   Future<Object?> $invokeOnError(
       $SuccessListener instance, String code, String message) {
-    return invokeMethod(
+    return sendInvokeMethod(
       instance,
       'onError',
       <Object?>[code, message],
@@ -107,7 +107,7 @@ class $ProcessCameraProviderChannel
             messenger, 'penguin_camera/android/camerax/ProcessCameraProvider');
 
   Future<Object?> $invokeInitialize($SuccessListener successListener) {
-    return invokeStaticMethod(
+    return sendInvokeStaticMethod(
       'initialize',
       <Object?>[successListener],
     );
@@ -115,7 +115,7 @@ class $ProcessCameraProviderChannel
 
   Future<Object?> $invokeBindToLifecycle($ProcessCameraProvider instance,
       $CameraSelector selector, $UseCase useCase) {
-    return invokeMethod(
+    return sendInvokeMethod(
       instance,
       'bindToLifecycle',
       <Object?>[selector, useCase],
@@ -125,7 +125,7 @@ class $ProcessCameraProviderChannel
   Future<Object?> $invokeUnbindAll(
     $ProcessCameraProvider instance,
   ) {
-    return invokeMethod(
+    return sendInvokeMethod(
       instance,
       'unbindAll',
       <Object?>[],

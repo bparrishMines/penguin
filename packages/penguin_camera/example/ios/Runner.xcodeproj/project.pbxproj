@@ -19,7 +19,6 @@
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
-		E8D5A0469131D9249BDD22DE /* Pods_penguin_cameraTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28330036DD7D655370389D55 /* Pods_penguin_cameraTests.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,8 +48,6 @@
 		053FA2FEBEA34C5C68BEABC3 /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
-		28330036DD7D655370389D55 /* Pods_penguin_cameraTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_penguin_cameraTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		3524242049358297485A1A96 /* Pods-penguin_cameraTests.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-penguin_cameraTests.profile.xcconfig"; path = "Target Support Files/Pods-penguin_cameraTests/Pods-penguin_cameraTests.profile.xcconfig"; sourceTree = "<group>"; };
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
 		48D3A973EC886AD0509891CD /* libPods-Runner.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Runner.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		643A02A725CE2C9F00481A8E /* penguin_cameraTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = penguin_cameraTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -72,8 +69,6 @@
 		97C147021CF9000F007C117D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B5B5CDD48D1E674EFA2D6719 /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
 		D4EE1D4B125CD6E4EE775BC1 /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
-		EE0E29EF3513F3798E927C4C /* Pods-penguin_cameraTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-penguin_cameraTests.release.xcconfig"; path = "Target Support Files/Pods-penguin_cameraTests/Pods-penguin_cameraTests.release.xcconfig"; sourceTree = "<group>"; };
-		EE3842D09634E18B6B760709 /* Pods-penguin_cameraTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-penguin_cameraTests.debug.xcconfig"; path = "Target Support Files/Pods-penguin_cameraTests/Pods-penguin_cameraTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,7 +76,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E8D5A0469131D9249BDD22DE /* Pods_penguin_cameraTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -99,7 +93,6 @@
 		11A2C18994D0B2AD1CC454AF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				28330036DD7D655370389D55 /* Pods_penguin_cameraTests.framework */,
 				48D3A973EC886AD0509891CD /* libPods-Runner.a */,
 			);
 			name = Frameworks;
@@ -111,9 +104,6 @@
 				D4EE1D4B125CD6E4EE775BC1 /* Pods-Runner.debug.xcconfig */,
 				B5B5CDD48D1E674EFA2D6719 /* Pods-Runner.release.xcconfig */,
 				053FA2FEBEA34C5C68BEABC3 /* Pods-Runner.profile.xcconfig */,
-				EE3842D09634E18B6B760709 /* Pods-penguin_cameraTests.debug.xcconfig */,
-				EE0E29EF3513F3798E927C4C /* Pods-penguin_cameraTests.release.xcconfig */,
-				3524242049358297485A1A96 /* Pods-penguin_cameraTests.profile.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -193,11 +183,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 643A02B125CE2C9F00481A8E /* Build configuration list for PBXNativeTarget "penguin_cameraTests" */;
 			buildPhases = (
-				AF6ED0B3FCAA094A4E928AE2 /* [CP] Check Pods Manifest.lock */,
 				643A02A325CE2C9F00481A8E /* Sources */,
 				643A02A425CE2C9F00481A8E /* Frameworks */,
 				643A02A525CE2C9F00481A8E /* Resources */,
-				B4497D8525275EB4A602F0D5 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -339,45 +327,6 @@
 			shellPath = /bin/sh;
 			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" build";
 		};
-		AF6ED0B3FCAA094A4E928AE2 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-penguin_cameraTests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		B4497D8525275EB4A602F0D5 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-penguin_cameraTests/Pods-penguin_cameraTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-penguin_cameraTests/Pods-penguin_cameraTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-penguin_cameraTests/Pods-penguin_cameraTests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -512,7 +461,6 @@
 		};
 		643A02AE25CE2C9F00481A8E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = EE3842D09634E18B6B760709 /* Pods-penguin_cameraTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -542,7 +490,6 @@
 		};
 		643A02AF25CE2C9F00481A8E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = EE0E29EF3513F3798E927C4C /* Pods-penguin_cameraTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -571,7 +518,6 @@
 		};
 		643A02B025CE2C9F00481A8E /* Profile */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3524242049358297485A1A96 /* Pods-penguin_cameraTests.profile.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
