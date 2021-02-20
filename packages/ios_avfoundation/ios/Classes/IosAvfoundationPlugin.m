@@ -19,9 +19,7 @@
                                             viewIdentifier:(int64_t)viewId
                                                  arguments:(id _Nullable)args {
   REFPairedInstance *pairedInstance = (REFPairedInstance *) args;
-  NSLog(@"pairedInstance: %@", pairedInstance);
   NSObject<FlutterPlatformView> *view = [_messenger getPairedObject:pairedInstance];
-  NSLog(@"view: %@", view);
   return view;
 }
 
