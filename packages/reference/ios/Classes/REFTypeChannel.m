@@ -293,30 +293,6 @@
                         owner:(NSObject *)owner
                    completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
   [_messenger sendCreateNewInstancePair:_name instance:instance owner:owner completion:completion];
-  //return [
-  //  if ([_manager isPaired:instance]) {
-  //    completion(nil, nil);
-  //    return;
-  //  }
-  //
-  //  __block REFPairedInstance *remoteReference =
-  //  [REFPairedInstance fromID:[_manager generateUniqueInstanceId]];
-  //  [_manager->_instancePairs addPair:instance pairedInstance:remoteReference];
-  //
-  //  NSArray<id> *creationArguments = [_manager.converter
-  //                                    convertForRemoteMessenger:_manager
-  //                                    obj:[[_manager getChannelHandler:_name] getCreationArguments:_manager instance:instance]];
-  //
-  //  [_manager.messageDispatcher sendCreateNewInstancePair:_name
-  //                        pairedInstance:remoteReference
-  //                              arguments:creationArguments
-  //                             completion:^(NSError *error) {
-  //    if (error) {
-  //      completion(nil, error);
-  //    } else {
-  //      completion(remoteReference, nil);
-  //    }
-  //  }];
 }
 
 - (void)invokeStaticMethod:(NSString *)methodName
@@ -326,18 +302,6 @@
                                  methodName:methodName
                                   arguments:arguments
                                  completion:completion];
-  //  [_messenger.messageDispatcher
-  //   sendInvokeStaticMethod:_name
-  //   methodName:methodName
-  //   arguments:[_messenger.converter convertForRemoteMessenger:_messenger obj:arguments]
-  //   completion:^(id result, NSError *error) {
-  //    if (error) {
-  //      completion(nil, error);
-  //    } else {
-  //      completion([self->_messenger.converter convertForLocalMessenger:self->_messenger obj:result],
-  //                 nil);
-  //    }
-  //  }];
 }
 
 - (void)invokeMethod:(NSObject *)instance
@@ -349,39 +313,7 @@
                     methodName:methodName
                      arguments:arguments
                     completion:completion];
-  //  if (![_messenger isPaired:instance]) {
-  //    [self invokeMethodOnUnpairedReference:instance methodName:methodName arguments:arguments completion:completion];
-  //    return;
-  //  }
-  //
-  //  [_manager.messenger sendInvokeMethod:_name
-  //                        pairedInstance:[_manager->_instancePairs getPairedPairedInstance:instance]
-  //                            methodName:methodName
-  //                             arguments:[_manager.converter convertForRemoteManager:_manager obj:arguments]
-  //                            completion:^(id result, NSError *error) {
-  //    if (error) {
-  //      completion(nil, error);
-  //    } else {
-  //      completion([self->_manager.converter convertForLocalManager:self->_manager obj:result], nil);
-  //    }
-  //  }];
 }
-
-//- (void)invokeMethodOnUnpairedReference:(id)obj
-//                             methodName:(NSString *)methodName
-//                              arguments:(NSArray<id> *)arguments
-//                             completion:(void (^)(id _Nullable, NSError *_Nullable))completion {
-//  [_messenger.messageDispatcher sendInvokeMethodOnUnpairedInstance:[_messenger createUnpairedInstance:_name obj:obj]
-//                                                      methodName:methodName
-//                                                       arguments:[_messenger.converter convertForRemoteMessenger:_messenger obj:arguments]
-//                                                      completion:^(id result, NSError *error) {
-//    if (error) {
-//      completion(nil, error);
-//    } else {
-//      completion([self->_messenger.converter convertForLocalMessenger:self->_messenger obj:result], nil);
-//    }
-//  }];
-//}
 
 - (void)disposeInstancePair:(id)instance
                  completion:(void (^)(NSError *_Nullable))completion {
@@ -392,11 +324,6 @@
                       owner:(NSObject *)owner
                  completion:(void (^)(NSError *_Nullable))completion {
   [_messenger sendDisposeInstancePair:_name instance:instance owner:owner completion:completion];
-  //  REFPairedInstance *remoteReference = [_manager->_instancePairs getPairedPairedInstance:instance];
-  //  if (remoteReference) {
-  //    [_manager->_instancePairs removePairWithObject:instance];
-  //    [_messenger.messageDispatcher sendDisposePair:_name pairedInstance:remoteReference completion:completion];
-  //  }
 }
 @end
 

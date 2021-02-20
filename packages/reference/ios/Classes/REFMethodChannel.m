@@ -205,37 +205,43 @@ NSString *const REFMethodDispose = @"REFERENCE_DISPOSE";
     __block REFMethodChannelMessenger *weakSelf = self;
     [_channel setMethodCallHandler:^(FlutterMethodCall *_Nonnull call,
                                      FlutterResult _Nonnull channelResult) {
-      if ([REFMethodCreate isEqualToString:call.method]) {
-        NSArray *arguments = [call arguments];
-        [weakSelf onReceiveCreateNewInstancePair:arguments[0]
-                                  pairedInstance:arguments[1]
-                                       arguments:arguments[2]];
-        channelResult(nil);
-      } else if ([REFMethodStaticMethod isEqualToString:call.method]) {
-        NSArray *arguments = [call arguments];
-        NSObject *result = [weakSelf onReceiveInvokeStaticMethod:arguments[0]
-                                                      methodName:arguments[1]
-                                                       arguments:arguments[2]];
-        channelResult(result);
-      } else if ([REFMethodMethod isEqualToString:call.method]) {
-        NSArray *arguments = [call arguments];
-        NSObject *result = [weakSelf onReceiveInvokeMethod:arguments[0]
-                                            pairedInstance:arguments[1]
-                                                methodName:arguments[2]
-                                                 arguments:arguments[3]];
-        channelResult(result);
-      } else if ([REFMethodUnpairedMethod isEqualToString:call.method]) {
-        NSArray *arguments = [call arguments];
-        NSObject *result = [weakSelf onReceiveInvokeMethodOnUnpairedInstance:arguments[0]
-                                                                  methodName:arguments[1]
-                                                                   arguments:arguments[2]];
-        channelResult(result);
-      } else if ([REFMethodDispose isEqualToString:call.method]) {
-        NSArray *arguments = [call arguments];
-        [weakSelf onReceiveDisposeInstancePair:arguments[0] pairedInstance:arguments[1]];
-        channelResult(nil);
-      } else {
-        channelResult(FlutterMethodNotImplemented);
+      @try {
+        if ([REFMethodCreate isEqualToString:call.method]) {
+          NSArray *arguments = [call arguments];
+          [weakSelf onReceiveCreateNewInstancePair:arguments[0]
+                                    pairedInstance:arguments[1]
+                                         arguments:arguments[2]];
+          channelResult(nil);
+        } else if ([REFMethodStaticMethod isEqualToString:call.method]) {
+          NSArray *arguments = [call arguments];
+          NSObject *result = [weakSelf onReceiveInvokeStaticMethod:arguments[0]
+                                                        methodName:arguments[1]
+                                                         arguments:arguments[2]];
+          channelResult(result);
+        } else if ([REFMethodMethod isEqualToString:call.method]) {
+          NSArray *arguments = [call arguments];
+          NSObject *result = [weakSelf onReceiveInvokeMethod:arguments[0]
+                                              pairedInstance:arguments[1]
+                                                  methodName:arguments[2]
+                                                   arguments:arguments[3]];
+          channelResult(result);
+        } else if ([REFMethodUnpairedMethod isEqualToString:call.method]) {
+          NSArray *arguments = [call arguments];
+          NSObject *result = [weakSelf onReceiveInvokeMethodOnUnpairedInstance:arguments[0]
+                                                                    methodName:arguments[1]
+                                                                     arguments:arguments[2]];
+          channelResult(result);
+        } else if ([REFMethodDispose isEqualToString:call.method]) {
+          NSArray *arguments = [call arguments];
+          [weakSelf onReceiveDisposeInstancePair:arguments[0] pairedInstance:arguments[1]];
+          channelResult(nil);
+        } else {
+          channelResult(FlutterMethodNotImplemented);
+        }
+      } @catch(NSException *exception) {
+        channelResult([FlutterError errorWithCode:@"REFMethodChannelMessenger"
+                                          message:[NSString stringWithFormat:@"%@: %@", exception.name, exception.reason]
+                                          details:[exception callStackSymbols]]);
       }
     }];
   }

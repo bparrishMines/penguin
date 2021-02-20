@@ -32,6 +32,10 @@ jobs:
         run: |
           cd $PLUGIN_DIR
           flutter analyze
+      - name: Publish Check
+        run: |
+          cd $PLUGIN_DIR
+          flutter pub publish --dry-run
 
   verify_android:
     name: Android Tests
