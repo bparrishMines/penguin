@@ -37,14 +37,14 @@ class $CameraChannel extends TypeChannel<$Camera> {
       : super(messenger, 'penguin_camera/android/camera/Camera');
 
   Future<Object?> $invokeGetAllCameraInfo() {
-    return invokeStaticMethod(
+    return sendInvokeStaticMethod(
       'getAllCameraInfo',
       <Object?>[],
     );
   }
 
   Future<Object?> $invokeOpen(int cameraId) {
-    return invokeStaticMethod(
+    return sendInvokeStaticMethod(
       'open',
       <Object?>[cameraId],
     );
@@ -53,7 +53,7 @@ class $CameraChannel extends TypeChannel<$Camera> {
   Future<Object?> $invokeRelease(
     $Camera instance,
   ) {
-    return invokeMethod(
+    return sendInvokeMethod(
       instance,
       'release',
       <Object?>[],
@@ -63,7 +63,7 @@ class $CameraChannel extends TypeChannel<$Camera> {
   Future<Object?> $invokeStartPreview(
     $Camera instance,
   ) {
-    return invokeMethod(
+    return sendInvokeMethod(
       instance,
       'startPreview',
       <Object?>[],
@@ -73,7 +73,7 @@ class $CameraChannel extends TypeChannel<$Camera> {
   Future<Object?> $invokeStopPreview(
     $Camera instance,
   ) {
-    return invokeMethod(
+    return sendInvokeMethod(
       instance,
       'stopPreview',
       <Object?>[],
@@ -83,7 +83,7 @@ class $CameraChannel extends TypeChannel<$Camera> {
   Future<Object?> $invokeAttachPreviewToTexture(
     $Camera instance,
   ) {
-    return invokeMethod(
+    return sendInvokeMethod(
       instance,
       'attachPreviewToTexture',
       <Object?>[],
@@ -93,7 +93,7 @@ class $CameraChannel extends TypeChannel<$Camera> {
   Future<Object?> $invokeReleaseTexture(
     $Camera instance,
   ) {
-    return invokeMethod(
+    return sendInvokeMethod(
       instance,
       'releaseTexture',
       <Object?>[],

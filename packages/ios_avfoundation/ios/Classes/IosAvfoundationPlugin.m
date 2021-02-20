@@ -1,6 +1,5 @@
 #import "IosAvfoundationPlugin.h"
 
-/*
 @interface MyViewFactory : NSObject<FlutterPlatformViewFactory>
 @end
 
@@ -30,18 +29,16 @@
   return [FlutterStandardMessageCodec codecWithReaderWriter:[[REFReferenceReaderWriter alloc] init]];
 }
 @end
-*/
 
 @implementation IosAvfoundationPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
-/*
   REFTypeChannelMessenger *messenger = [ReferencePlugin getMessengerInstance:registrar.messenger];
-    [PCMCaptureSession setupChannel:messenger];
-    [PCMCaptureDevice setupChannel:messenger];
-    [PCMCaptureDeviceInput setupChannel:messenger];
-    [PCMPreviewController setupChannel:messenger];
-    [registrar registerViewFactory:[[MyViewFactory alloc] initWithMessenger:messenger]
-                            withId:@"penguin_camera/ios/Preview"];
-                            */
+  
+  IAVChannels *channels = [[IAVChannels alloc] initWithMessenger:messenger];
+  [channels initialize];
+  
+  [registrar registerViewFactory:[[MyViewFactory alloc] initWithMessenger:messenger]
+                          withId:@"ios_avfoundation/Preview"];
+  
 }
 @end

@@ -14,7 +14,7 @@ export 'src/avfoundation.dart'
         CaptureDeviceHandler,
         PreviewControllerHandler;
 
-class AvFoundation {
+class Avfoundation {
   /// Initialize communication with the platform API.
   static void initialize() {
     Channels.captureDeviceInputChannel;

@@ -20,3 +20,9 @@ dev_dependencies:
   lint: ^1.5.1
   reference_generator:
     path: ../reference_generator
+
+flutter:
+  plugin:
+    platforms:
+      ios:
+        pluginClass: IosAvfoundationPlugin

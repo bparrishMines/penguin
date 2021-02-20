@@ -55,7 +55,7 @@ class $CaptureSessionChannel extends TypeChannel<$CaptureSession> {
   Future<Object?> $invokeStartRunning(
     $CaptureSession instance,
   ) {
-    return invokeMethod(
+    return sendInvokeMethod(
       instance,
       'startRunning',
       <Object?>[],
@@ -65,7 +65,7 @@ class $CaptureSessionChannel extends TypeChannel<$CaptureSession> {
   Future<Object?> $invokeStopRunning(
     $CaptureSession instance,
   ) {
-    return invokeMethod(
+    return sendInvokeMethod(
       instance,
       'stopRunning',
       <Object?>[],
@@ -78,7 +78,7 @@ class $CaptureDeviceChannel extends TypeChannel<$CaptureDevice> {
       : super(messenger, 'captureDevice');
 
   Future<Object?> $invokeDevicesWithMediaType(String mediaType) {
-    return invokeStaticMethod(
+    return sendInvokeStaticMethod(
       'devicesWithMediaType',
       <Object?>[mediaType],
     );

@@ -52,15 +52,9 @@ class CaptureSession with $CaptureSession {
 }
 
 @Reference('captureDevice')
-class CaptureDevice with $CaptureDevice {
+class CaptureDevice with $CaptureDevice, ReferenceType {
   CaptureDevice({required this.uniqueId, required this.position});
 
-  static final $CaptureDeviceChannel _channel =
-      $CaptureDeviceChannel(MethodChannelMessenger.instance)
-        ..setHandler($CaptureDeviceHandler(onCreate: (_, args) {
-          return CaptureDevice(
-              uniqueId: args.uniqueId, position: args.position);
-        }));
   @override
   final String uniqueId;
 
@@ -71,10 +65,13 @@ class CaptureDevice with $CaptureDevice {
     String mediaType,
   ) async {
     assert(mediaType == MediaType.video);
-    final List<Object?> result =
-        await _channel.$invokeDevicesWithMediaType(mediaType) as List<Object?>;
+    final List<Object?> result = await Channels.captureDeviceChannel
+        .$invokeDevicesWithMediaType(mediaType) as List<Object?>;
     return result.cast<CaptureDevice>().toList();
   }
+
+  @override
+  TypeChannel<Object> get typeChannel => Channels.captureDeviceChannel;
 }
 
 class Preview extends StatefulWidget {
@@ -121,7 +118,7 @@ class PreviewState extends State<Preview> {
     }
 
     return UiKitView(
-      viewType: 'avfoundation/Preview',
+      viewType: 'ios_avfoundation/Preview',
       creationParams: pairedInstance,
       creationParamsCodec: const ReferenceMessageCodec(),
     );
@@ -180,13 +177,15 @@ class CaptureSessionHandler extends $CaptureSessionHandler {
           onAdded: (manager, instance) {
             final CaptureSession session = instance as CaptureSession;
             for (final CaptureDeviceInput input in session.inputs) {
-              Channels.captureDeviceInputChannel.createNewInstancePair(input);
+              Channels.captureDeviceInputChannel
+                  .createNewInstancePair(input, owner: session);
             }
           },
           onRemoved: (manager, instance) {
             final CaptureSession session = instance as CaptureSession;
             for (final CaptureDeviceInput input in session.inputs) {
-              Channels.captureDeviceInputChannel.disposeInstancePair(input);
+              Channels.captureDeviceInputChannel
+                  .disposeInstancePair(input, owner: session);
             }
           },
         );
