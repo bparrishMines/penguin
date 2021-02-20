@@ -206,7 +206,6 @@ NSString *const REFMethodDispose = @"REFERENCE_DISPOSE";
     [_channel setMethodCallHandler:^(FlutterMethodCall *_Nonnull call,
                                      FlutterResult _Nonnull channelResult) {
       @try {
-        @throw [NSException exceptionWithName:@"owefij" reason:@"woefj" userInfo:nil];
         if ([REFMethodCreate isEqualToString:call.method]) {
           NSArray *arguments = [call arguments];
           [weakSelf onReceiveCreateNewInstancePair:arguments[0]
