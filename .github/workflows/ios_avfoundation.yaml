@@ -48,5 +48,5 @@ jobs:
       - name: Ios Unit Tests
         run: |
          cd $PLUGIN_DIR/example/ios
-         xcodebuild -project Runner.xcodeproj -scheme Runner -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 12,OS=14.4' test
+         xcodebuild -project Runner.xcodeproj -scheme Runner -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 12,OS=14.3' test
 
