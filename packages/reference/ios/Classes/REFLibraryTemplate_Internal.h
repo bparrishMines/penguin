@@ -30,4 +30,10 @@ NS_ASSUME_NONNULL_BEGIN
                              parameterTemplate:(NSString *_Nullable)parameterTemplate;
 @end
 
+@protocol REFChannels
+-(void)registerHandlers;
+-(void)unregisterHandlers;
+-(REFClassTemplateChannel *)classTemplateChannel;
+@end
+
 NS_ASSUME_NONNULL_END

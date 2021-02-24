@@ -58,11 +58,11 @@
 }
 
 - (void)registerHandler:(NSString *)channelName handler:(NSObject<REFTypeChannelHandler> *)handler {
-  if (handler) {
-    [_channelHandlers setObject:handler forKey:channelName];
-  } else {
-    [_channelHandlers removeObjectForKey:channelName];
-  }
+  [_channelHandlers setObject:handler forKey:channelName];
+}
+
+- (void)unregisterHandler:(NSString *)channelName {
+  [_channelHandlers removeObjectForKey:channelName];
 }
 
 - (NSObject<REFTypeChannelHandler> *)getChannelHandler:(NSString *)channelName {
@@ -278,6 +278,10 @@
 
 - (void)setHandler:(NSObject<REFTypeChannelHandler> *)handler {
   [_messenger registerHandler:_name handler:handler];
+}
+
+- (void)removeHandler {
+  [_messenger unregisterHandler:_name];
 }
 
 - (REFNewUnpairedInstance *_Nullable)createUnpairedInstance:(id)instance {

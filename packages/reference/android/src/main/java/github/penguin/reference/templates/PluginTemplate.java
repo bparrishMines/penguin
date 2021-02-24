@@ -6,18 +6,13 @@ import github.penguin.reference.ReferencePlugin;
 import github.penguin.reference.reference.TypeChannelMessenger;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugin.common.PluginRegistry.Registrar;
 
 // TODO(bparrishMines) Shouldn't be public.
 public class PluginTemplate implements FlutterPlugin {
-  @SuppressWarnings({"unused", "deprecation"})
-  public static void registerWith(Registrar registrar) {
-    new PluginTemplate().initialize(registrar.messenger());
-  }
-
   private void initialize(final BinaryMessenger binaryMessenger) {
     final TypeChannelMessenger messenger = ReferencePlugin.getMessengerInstance(binaryMessenger);
-    ClassTemplate.setupChannel(messenger);
+    final Channels channels = new Channels(messenger);
+    channels.registerHandlers();
   }
 
   @Override

@@ -37,11 +37,11 @@ class MethodChannelMessenger extends TypeChannelMessenger {
   final MethodChannel channel;
 
   @override
-  MethodChannelDispatcher get messageDispatcher =>
+  late final MethodChannelDispatcher messageDispatcher =
       MethodChannelDispatcher(channel);
 
   @override
-  InstanceConverter get converter => MethodChannelConverter();
+  final MethodChannelConverter converter = MethodChannelConverter();
 
   Future<dynamic> _handleMethodCall(MethodCall call) async {
     try {

@@ -11,4 +11,14 @@ NS_ASSUME_NONNULL_BEGIN
 @interface PluginTemplate : NSObject <FlutterPlugin>
 @end
 
+@interface ClassTemplateChannel : REFClassTemplateChannel
+@end
+
+@interface ClassTemplateHandler : REFClassTemplateHandler
+@end
+
+@interface Channels : NSObject<REFChannels>
+-(instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger;
+@end
+
 NS_ASSUME_NONNULL_END
