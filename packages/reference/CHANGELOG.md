@@ -1,3 +1,7 @@
+## 0.2.0-beta.4
+
+* Add Dart `TypeChannel.removeHandler`.
+
 ## 0.2.0-beta.3
 
 * `MethodChannelMessenger` on iOS now handles exceptions when receiving messsages.

@@ -1,14 +1,6 @@
 #import "REFPluginTemplate_Internal.h"
 
-@interface ClassTemplateHandler : REFClassTemplateHandler
-@end
-
 @implementation ClassTemplate
-+ (void)setupChannel:(REFTypeChannelMessenger *)manager {
-  REFClassTemplateChannel *channel = [[REFClassTemplateChannel alloc] initWithMessenger:manager];
-  [channel setHandler:[[ClassTemplateHandler alloc] init]];
-}
-
 - (instancetype)initWithFieldTemplate:(NSNumber *)fieldTemplate {
   self = [super init];
   if (self) {
@@ -26,6 +18,9 @@
 }
 @end
 
+@implementation ClassTemplateChannel
+@end
+
 @implementation ClassTemplateHandler
 - (NSObject<REFClassTemplate> *)onCreate:(REFTypeChannelMessenger *)manager
                                     args:(REFClassTemplateCreationArgs *)args {
@@ -38,9 +33,38 @@
 }
 @end
 
+@implementation Channels {
+  ClassTemplateChannel *_classTemplateChannel;
+}
+
+-(instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
+  self = [self init];
+  if (self) {
+    _classTemplateChannel = [[ClassTemplateChannel alloc] initWithMessenger:messenger];
+  }
+  
+  return self;
+}
+
+- (ClassTemplateChannel *)classTemplateChannel {
+  return _classTemplateChannel;
+}
+
+- (void)registerHandlers {
+  [_classTemplateChannel setHandler:[[ClassTemplateHandler alloc] init]];
+}
+
+
+- (void)unregisterHandlers {
+  [_classTemplateChannel removeHandler];
+}
+
+@end
+
 @implementation PluginTemplate
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  REFTypeChannelMessenger *manager = [ReferencePlugin getMessengerInstance:registrar.messenger];
-  [ClassTemplate setupChannel:manager];
+  REFTypeChannelMessenger *messenger = [ReferencePlugin getMessengerInstance:registrar.messenger];
+  Channels *channels = [[Channels alloc] initWithMessenger:messenger];
+  [channels registerHandlers];
 }
 @end

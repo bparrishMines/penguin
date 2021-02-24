@@ -50,12 +50,12 @@ public abstract class TypeChannelMessenger {
     return instancePairManager.getPairedObject(pairedInstance);
   }
 
-  public void registerHandler(String channelName, @Nullable TypeChannelHandler<?> handler) {
-    if (handler != null) {
-      channelHandlers.put(channelName, handler);
-    } else {
-      channelHandlers.remove(channelName);
-    }
+  public void registerHandler(String channelName, @NonNull TypeChannelHandler<?> handler) {
+    channelHandlers.put(channelName, handler);
+  }
+
+  public void unregisterHandler(String channelName) {
+    channelHandlers.remove(channelName);
   }
 
   @Nullable

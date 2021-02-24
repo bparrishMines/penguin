@@ -10,7 +10,6 @@ import github.penguin.reference.reference.TypeChannelMessenger;
 import github.penguin.reference.templates.PluginTemplate;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugin.common.PluginRegistry.Registrar;
 
 /**
  * ReferencePlugin
@@ -25,11 +24,6 @@ public class ReferencePlugin implements FlutterPlugin {
       messengers.put(messenger, typeChannelMessenger);
     }
     return typeChannelMessenger;
-  }
-
-  @SuppressWarnings({"unused", "deprecation"})
-  public static void registerWith(Registrar registrar) {
-    PluginTemplate.registerWith(registrar);
   }
 
   @Override

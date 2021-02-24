@@ -18,32 +18,32 @@ import github.penguin.reference.reference.TypeChannelMessenger;
 // **************************************************************************
 
 class LibraryTemplate {
-  interface $ClassTemplate {
+  public interface $ClassTemplate {
     Integer getFieldTemplate();
 
     Object methodTemplate(String parameterTemplate) throws Exception;
   }
 
-  static class $ClassTemplateCreationArgs {
+  public static class $ClassTemplateCreationArgs {
     Integer fieldTemplate;
   }
 
-  static class $ClassTemplateChannel extends TypeChannel<$ClassTemplate> {
-    $ClassTemplateChannel(@NonNull TypeChannelMessenger messenger) {
+  public static class $ClassTemplateChannel extends TypeChannel<$ClassTemplate> {
+    public $ClassTemplateChannel(@NonNull TypeChannelMessenger messenger) {
       super(messenger, "github.penguin/template/template/ClassTemplate");
     }
 
-    Completable<Object> $invokeStaticMethodTemplate(String parameterTemplate) {
+    public Completable<Object> $invokeStaticMethodTemplate(String parameterTemplate) {
       return invokeStaticMethod("staticMethodTemplate", Arrays.<Object>asList(parameterTemplate));
     }
 
-    Completable<Object> $invokeMethodTemplate($ClassTemplate instance, String parameterTemplate) {
+    public Completable<Object> $invokeMethodTemplate($ClassTemplate instance, String parameterTemplate) {
       return invokeMethod(instance, "methodTemplate", Arrays.<Object>asList(parameterTemplate));
     }
   }
 
   static class $ClassTemplateHandler implements TypeChannelHandler<$ClassTemplate> {
-    $ClassTemplate onCreate(TypeChannelMessenger messenger, $ClassTemplateCreationArgs args)
+    public $ClassTemplate onCreate(TypeChannelMessenger messenger, $ClassTemplateCreationArgs args)
         throws Exception {
       return null;
     }
@@ -106,5 +106,11 @@ class LibraryTemplate {
     public void onInstanceRemoved(TypeChannelMessenger messenger, $ClassTemplate instance)
         throws Exception {
     }
+  }
+
+  public interface $Channels {
+    void registerHandlers();
+    void unregisterHandlers();
+    $ClassTemplateChannel getClassTemplateChannel();
   }
 }

@@ -144,3 +144,9 @@ class $ClassTemplateHandler implements TypeChannelHandler<$ClassTemplate> {
     if (onRemoved != null) onRemoved!(messenger, instance);
   }
 }
+
+mixin $Channels {
+  void registerHandlers();
+  void unregisterHandlers();
+  $ClassTemplateChannel get classTemplateChannel;
+}

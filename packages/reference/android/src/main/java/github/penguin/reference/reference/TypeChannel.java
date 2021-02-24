@@ -21,6 +21,10 @@ public class TypeChannel<T> {
     messenger.registerHandler(name, handler);
   }
 
+  public void removeHandler() {
+    messenger.unregisterHandler(name);
+  }
+
   public NewUnpairedInstance createUnpairedInstance(T instance) {
     return messenger.createUnpairedInstance(name, instance);
   }

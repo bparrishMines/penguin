@@ -21,6 +21,13 @@ class TypeChannel<T extends Object> {
     messenger.registerHandler(name, handler);
   }
 
+  /// Unregister a [TypeChannelHandler] for channel [name] in a [messenger].
+  ///
+  /// See [TypeChannelMessenger.registerHandler].
+  void removeHandler() {
+    messenger.unregisterHandler(name);
+  }
+
   /// Create a [NewUnpairedInstance] with a registered [TypeChannelHandler].
   NewUnpairedInstance? createUnpairedInstance(T instance) {
     return messenger.createUnpairedInstance(name, instance);
@@ -249,7 +256,7 @@ abstract class TypeChannelMessenger {
   }
 
   /// Removes a [TypeChannelHandler] for the type channel of [channelName].
-  void unregisterHandler(String channelName, TypeChannelHandler handler) {
+  void unregisterHandler(String channelName) {
     _channelHandlers.remove(channelName);
   }
 
