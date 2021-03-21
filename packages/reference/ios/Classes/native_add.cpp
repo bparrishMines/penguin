@@ -1,6 +1,6 @@
 #include <stdint.h>
 #include <stdio.h>
-//#include <android/log.h>
+#include <android/log.h>
 
 #include "include/dart_api.h"
 #include "include/dart_native_api.h"
@@ -12,7 +12,7 @@
 
 extern "C" __attribute__((visibility("default"))) __attribute__((used))
 int32_t native_add(int32_t x, int32_t y) {
-//__android_log_write(ANDROID_LOG_INFO, "Tag", "Error here");
+__android_log_write(ANDROID_LOG_INFO, "Tag", "Error here");
 printf("HIIIIIIIII.\n");
     return x + y;
 }

@@ -141,7 +141,7 @@ CMAKE_OBJCOPY:FILEPATH=/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.702606
 CMAKE_OBJDUMP:FILEPATH=/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/bin/x86_64-linux-android-objdump
 
 //Value Computed by CMake
-CMAKE_PROJECT_NAME:STATIC=Project
+CMAKE_PROJECT_NAME:STATIC=native_add
 
 //Ranlib
 CMAKE_RANLIB:FILEPATH=/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/bin/llvm-ranlib
@@ -186,8 +186,8 @@ CMAKE_STATIC_LINKER_FLAGS_RELWITHDEBINFO:STRING=
 //Strip
 CMAKE_STRIP:FILEPATH=/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/bin/llvm-strip
 
-//The CMake toolchain file
-CMAKE_TOOLCHAIN_FILE:FILEPATH=/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/build/cmake/android.toolchain.cmake
+//No help, variable specified on the command line.
+CMAKE_TOOLCHAIN_FILE:UNINITIALIZED=/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/build/cmake/android.toolchain.cmake
 
 //If this value is on, makefiles will be generated without the
 // .SILENT directive, and all commands will be echoed to the console
@@ -201,8 +201,17 @@ Project_BINARY_DIR:STATIC=/Users/mauriceparrish/Development/penguin/packages/ref
 //Value Computed by CMake
 Project_SOURCE_DIR:STATIC=/Users/mauriceparrish/Development/penguin/packages/reference/android
 
-//Dependencies for target
-native_add_LIB_DEPENDS:STATIC=
+//Path to a library.
+log-lib:FILEPATH=/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib/x86_64-linux-android/21/liblog.so
+
+//Value Computed by CMake
+native_add_BINARY_DIR:STATIC=/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/debug/x86_64
+
+//Dependencies for the target
+native_add_LIB_DEPENDS:STATIC=general;/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib/x86_64-linux-android/21/liblog.so;
+
+//Value Computed by CMake
+native_add_SOURCE_DIR:STATIC=/Users/mauriceparrish/Development/penguin/packages/reference/android
 
 
 ########################

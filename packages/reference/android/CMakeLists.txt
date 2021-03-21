@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.6.0)  # for example
-#project(native_add)
+project(native_add)
 
 enable_language(ASM)
 
@@ -30,4 +30,18 @@ target_include_directories(
 
   ../third_party/dart-sdk/src/runtime/
 )
+
+find_library( # Defines the name of the path variable that stores the
+              # location of the NDK library.
+              log-lib
+
+              # Specifies the name of the NDK library that
+              # CMake needs to locate.
+              log )
+
+target_link_libraries( # Specifies the target library.
+                       native_add
+
+                       # Links the log library to the target library.
+                       ${log-lib} )
 

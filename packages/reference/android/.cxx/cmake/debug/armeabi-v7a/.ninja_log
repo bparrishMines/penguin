@@ -2,3 +2,6 @@
 2	56	0	CMakeFiles/native_add.dir/Users/mauriceparrish/Development/penguin/packages/reference/ios/Classes/native_add.cpp.o	83eabcb2f43ed271
 1	74	0	CMakeFiles/native_add.dir/Users/mauriceparrish/Development/penguin/packages/reference/third_party/dart-sdk/src/runtime/include/dart_api_dl.c.o	202594d70865132a
 74	128	0	/Users/mauriceparrish/Development/penguin/packages/reference/example/build/reference/intermediates/cmake/debug/obj/armeabi-v7a/libnative_add.so	6c9b8c107a08e344
+0	55	0	/Users/mauriceparrish/Development/penguin/packages/reference/example/build/reference/intermediates/cmake/debug/obj/armeabi-v7a/libnative_add.so	971973d4d2a0d03f
+0	53	0	CMakeFiles/native_add.dir/Users/mauriceparrish/Development/penguin/packages/reference/ios/Classes/native_add.cpp.o	83eabcb2f43ed271
+53	112	0	/Users/mauriceparrish/Development/penguin/packages/reference/example/build/reference/intermediates/cmake/debug/obj/armeabi-v7a/libnative_add.so	971973d4d2a0d03f
