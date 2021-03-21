@@ -1,0 +1,3 @@
+[1/3] Building C object CMakeFiles/native_add.dir/Users/mauriceparrish/Development/penguin/packages/reference/third_party/dart-sdk/src/runtime/include/dart_api_dl.c.o
+[2/3] Building CXX object CMakeFiles/native_add.dir/Users/mauriceparrish/Development/penguin/packages/reference/ios/Classes/native_add.cpp.o
+[3/3] Linking CXX shared library /Users/mauriceparrish/Development/penguin/packages/reference/example/build/reference/intermediates/cmake/debug/obj/armeabi-v7a/libnative_add.so

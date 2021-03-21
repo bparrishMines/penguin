@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 // ignore: implementation_imports
 import 'package:reference/src/template/template.dart';
+import 'package:reference/native_add.dart';
 
 void main() {
   runApp(const MyApp());
@@ -27,11 +28,15 @@ class _MyAppState extends State<MyApp> {
         body: Center(child: Text(_text)),
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
-            final ClassTemplate classTemplate = ClassTemplate(44);
-            final String result = await classTemplate.methodTemplate('Hello,');
-            setState(() {
-              _text = result;
-            });
+            print(nativeAdd(3, 5));
+            final Object object = Object();
+            attachFinalizer(object);
+            //print(object);
+            // final ClassTemplate classTemplate = ClassTemplate(44);
+            // final String result = await classTemplate.methodTemplate('Hello,');
+            // setState(() {
+            //   _text = result;
+            // });
           },
           child: const Icon(Icons.ac_unit),
         ),

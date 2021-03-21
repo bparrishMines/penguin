@@ -1,0 +1,16 @@
+{
+  "buildFiles": [
+    "/Users/mauriceparrish/Development/penguin/packages/reference/android/CMakeLists.txt"
+  ],
+  "cleanCommands": [
+    "/Users/mauriceparrish/Library/Android/sdk/cmake/3.6.4111459/bin/cmake --build /Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/debug/arm64-v8a --target clean"
+  ],
+  "libraries": {
+    "native_add-Debug-arm64-v8a": {
+      "artifactName": "native_add",
+      "buildCommand": "/Users/mauriceparrish/Library/Android/sdk/cmake/3.6.4111459/bin/cmake --build /Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/debug/arm64-v8a --target native_add",
+      "abi": "arm64-v8a",
+      "output": "/Users/mauriceparrish/Development/penguin/packages/reference/example/build/reference/intermediates/cmake/debug/obj/arm64-v8a/libnative_add.so"
+    }
+  }
+}

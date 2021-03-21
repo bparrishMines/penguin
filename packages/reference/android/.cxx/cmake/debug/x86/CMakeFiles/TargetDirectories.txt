@@ -1,0 +1,3 @@
+/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/debug/x86/CMakeFiles/edit_cache.dir
+/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/debug/x86/CMakeFiles/rebuild_cache.dir
+/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/debug/x86/CMakeFiles/native_add.dir
