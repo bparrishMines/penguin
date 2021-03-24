@@ -34,7 +34,13 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: const Text('Plugin example app'),
         ),
-        body: Center(child: Text(_text)),
+        body: Column(children: <Widget>[
+          Text(_text),
+          ElevatedButton(
+            onPressed: () => print(object),
+            child: const Text('HI'),
+          ),
+        ]),
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
             print(nativeAdd(3, 5));

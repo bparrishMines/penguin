@@ -41,17 +41,13 @@ extern "C" void PassObjectToC(Dart_Handle object/*,
   if (Dart_NewFinalizableHandle_DL == NULL) {
     __android_log_write(ANDROID_LOG_INFO, "Tag", "NADA");
   }
-  __android_log_write(ANDROID_LOG_INFO, "Tag", "PassObjectToC");
 
   void *peer = 0x0;
-  __android_log_write(ANDROID_LOG_INFO, "Tag", "peer");
-  intptr_t size = 4096;
-  __android_log_write(ANDROID_LOG_INFO, "Tag", "Size");
+  intptr_t size = 10000;
 
   __android_log_print(ANDROID_LOG_INFO, "Tag", "object %d\n", object == NULL);
   __android_log_print(ANDROID_LOG_INFO, "Tag", "RunFinalizer %d\n", RunFinalizer == NULL);
   auto finalizable_handle = Dart_NewFinalizableHandle_DL(object, peer, size, RunFinalizer);
-  __android_log_write(ANDROID_LOG_INFO, "Tag", "finalizable_handle");
 
   // Create a _finalizable_pointer to be attached as peer.
 /*
