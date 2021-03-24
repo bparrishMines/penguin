@@ -1,2 +1,10 @@
 [1/2] Building CXX object CMakeFiles/native_add.dir/Users/mauriceparrish/Development/penguin/packages/reference/ios/Classes/native_add.cpp.o
+/Users/mauriceparrish/Development/penguin/packages/reference/ios/Classes/native_add.cpp:52:69: warning: comparison of function 'RunFinalizer' equal to a null pointer is always false [-Wtautological-pointer-compare]
+  __android_log_print(ANDROID_LOG_INFO, "Tag", "RunFinalizer %d\n", RunFinalizer == NULL);
+                                                                    ^~~~~~~~~~~~    ~~~~
+/Users/mauriceparrish/Development/penguin/packages/reference/ios/Classes/native_add.cpp:52:69: note: prefix with the address-of operator to silence this warning
+  __android_log_print(ANDROID_LOG_INFO, "Tag", "RunFinalizer %d\n", RunFinalizer == NULL);
+                                                                    ^
+                                                                    &
+1 warning generated.
 [2/2] Linking CXX shared library /Users/mauriceparrish/Development/penguin/packages/reference/example/build/reference/intermediates/cmake/debug/obj/armeabi-v7a/libnative_add.so

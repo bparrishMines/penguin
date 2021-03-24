@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 
 // ignore: implementation_imports
@@ -17,6 +19,13 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String _text = 'nada';
+  Object? object;
+
+  @override
+  void initState() {
+    super.initState();
+    reference_dart_dl_initialize(NativeApi.initializeApiDLData);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,8 +38,13 @@ class _MyAppState extends State<MyApp> {
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
             print(nativeAdd(3, 5));
-            final Object object = Object();
-            attachFinalizer(object);
+            if (object == null) {
+              final Object object1 = Object();
+              attachFinalizer(object1);
+              object = object1;
+            } else {
+              object = null;
+            }
             //print(object);
             // final ClassTemplate classTemplate = ClassTemplate(44);
             // final String result = await classTemplate.methodTemplate('Hello,');
@@ -44,3 +58,11 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
+
+// class MyObject {
+//   Pointer<Void> finalizer;
+//
+//   MyObject() {
+//     attachFinalizer()
+//   }
+// }
