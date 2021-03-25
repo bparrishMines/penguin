@@ -48,4 +48,9 @@ public class ReferencePlugin implements FlutterPlugin {
   }
 
   public native String getMsgFromJni();
+
+  @Override
+  protected void finalize() throws Throwable {
+    super.finalize();
+  }
 }

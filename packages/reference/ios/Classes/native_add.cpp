@@ -12,6 +12,7 @@
 #define FINALIZER_H
 
 static Dart_Handle aDartHandle;
+static int count = 0;
 
 typedef void (*reference_finalizer)(void*);
 
@@ -52,6 +53,7 @@ extern "C" void PassObjectToC(Dart_Handle object/*,
   intptr_t size = 10000;
 
   __android_log_print(ANDROID_LOG_INFO, "Tag", "object %d\n", object == NULL);
+  __android_log_print(ANDROID_LOG_INFO, "Tag", "count %d\n", count);
   auto finalizable_handle = Dart_NewFinalizableHandle_DL(object, peer, size, &RunFinalizer);
 
   // Create a _finalizable_pointer to be attached as peer.
@@ -77,6 +79,7 @@ extern "C"
 JNIEXPORT jstring JNICALL
 Java_github_penguin_reference_ReferencePlugin_getMsgFromJni(JNIEnv *env, jobject instance) {
 // Put your code here
+ count++;
  return env->NewStringUTF("Hello From JNI");
 }
 
