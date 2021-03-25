@@ -1,5 +1,7 @@
 package github.penguin.reference;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import java.util.HashMap;
@@ -15,6 +17,8 @@ import io.flutter.plugin.common.BinaryMessenger;
  * ReferencePlugin
  */
 public class ReferencePlugin implements FlutterPlugin {
+
+
   private static final Map<BinaryMessenger, TypeChannelMessenger> messengers = new HashMap<>();
 
   public static TypeChannelMessenger getMessengerInstance(BinaryMessenger messenger) {
@@ -28,6 +32,8 @@ public class ReferencePlugin implements FlutterPlugin {
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
+    Log.i("APPLE", "HEREE");
+    Log.i("APPLE", getMsgFromJni());
     new PluginTemplate().onAttachedToEngine(binding);
   }
 
@@ -36,4 +42,10 @@ public class ReferencePlugin implements FlutterPlugin {
     new PluginTemplate().onDetachedFromEngine(binding);
     messengers.remove(binding.getBinaryMessenger());
   }
+
+  static {
+    System.loadLibrary("native_add");
+  }
+
+  public native String getMsgFromJni();
 }
