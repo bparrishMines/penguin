@@ -12,6 +12,7 @@ dependencies:
     sdk: flutter
 
 dev_dependencies:
+  ffigen: 2.4.1
   flutter_driver:
     sdk: flutter
   flutter_test:
@@ -26,3 +27,14 @@ flutter:
         pluginClass: ReferencePlugin
       ios:
         pluginClass: ReferencePlugin
+
+ffigen:
+  name: NativeAdd
+  description: Bindings to `ios/Classes/native_add.h`.
+  output: 'lib/src/generated_bindings.dart'
+  compiler-opts: '-Ithird_party/dart-sdk/src/runtime/'
+  headers:
+    entry-points:
+      - 'ios/Classes/native_add.h'
+  llvm-path:
+    - '/opt/homebrew/opt/llvm'
