@@ -1,6 +1,8 @@
 import 'dart:ffi'; // For FFI
 import 'dart:io'; // For Platform.isX
 
+import 'package:ffi/ffi.dart';
+
 final DynamicLibrary nativeAddLib = Platform.isAndroid
     ? DynamicLibrary.open("libnative_add.so")
     : DynamicLibrary.process();
@@ -21,4 +23,12 @@ final void Function(Pointer<Void> data) reference_dart_dl_initialize =
 
 void attachFinalizer(Object o) {
   passObjectToC(o);
+}
+
+final void Function(Pointer<Int8>, Object object) sendCreateNewInstancePair =
+    nativeAddLib.lookupFunction<Void Function(Pointer<Int8>, Handle),
+        void Function(Pointer<Int8>, Object)>("dart_send_create_new_instance_pair");
+
+void trySend(String channel, Object object) {
+  sendCreateNewInstancePair(channel.toNativeUtf8().cast<Int8>(), object);
 }

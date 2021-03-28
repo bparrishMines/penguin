@@ -17,7 +17,7 @@ import io.flutter.plugin.common.BinaryMessenger;
  * ReferencePlugin
  */
 public class ReferencePlugin implements FlutterPlugin {
-
+  private final Apple apple = new Apple();
 
   private static final Map<BinaryMessenger, TypeChannelMessenger> messengers = new HashMap<>();
 
@@ -33,7 +33,7 @@ public class ReferencePlugin implements FlutterPlugin {
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
     Log.i("APPLE", "HEREE");
-    Log.i("APPLE", getMsgFromJni());
+    Log.i("APPLE", getMsgFromJni(apple));
     new PluginTemplate().onAttachedToEngine(binding);
   }
 
@@ -47,7 +47,7 @@ public class ReferencePlugin implements FlutterPlugin {
     System.loadLibrary("native_add");
   }
 
-  public native String getMsgFromJni();
+  public native String getMsgFromJni(Apple appleClass);
 
   @Override
   protected void finalize() throws Throwable {

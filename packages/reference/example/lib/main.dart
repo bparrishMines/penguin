@@ -44,13 +44,14 @@ class _MyAppState extends State<MyApp> {
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
             print(nativeAdd(3, 5));
-            if (object == null) {
-              final Object object1 = Object();
-              attachFinalizer(object1);
-              object = object1;
-            } else {
-              object = null;
-            }
+            // if (object == null) {
+            //   final Object object1 = Object();
+            //   attachFinalizer(object1);
+            //   object = object1;
+            // } else {
+            //   object = null;
+            // }
+            trySend('my_channel', Object());
             //print(object);
             // final ClassTemplate classTemplate = ClassTemplate(44);
             // final String result = await classTemplate.methodTemplate('Hello,');
