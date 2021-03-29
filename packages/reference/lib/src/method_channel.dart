@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 import 'instance.dart';
+import 'instance_converter.dart';
 import 'type_channel.dart';
 
 /// Implementation of a [TypeChannelMessenger] using a [MethodChannel].
@@ -24,7 +25,7 @@ class MethodChannelMessenger extends TypeChannelMessenger {
   static const String _methodStaticMethod = 'REFERENCE_STATIC_METHOD';
   static const String _methodMethod = 'REFERENCE_METHOD';
   static const String _methodUnpairedMethod = 'REFERENCE_UNPAIRED_METHOD';
-  static const String _methodDispose = 'REFERENCE_DISPOSE';
+  //static const String _methodDispose = 'REFERENCE_DISPOSE';
 
   /// Global manager maintained by reference plugin.
   ///
@@ -71,13 +72,14 @@ class MethodChannelMessenger extends TypeChannelMessenger {
           call.arguments[1] as String,
           call.arguments[2] as List<Object?>,
         );
-      } else if (call.method == MethodChannelMessenger._methodDispose) {
-        onReceiveDisposeInstancePair(
-          call.arguments[0] as String,
-          call.arguments[1] as PairedInstance,
-        );
-        return null;
       }
+      // else if (call.method == MethodChannelMessenger._methodDispose) {
+      //   onReceiveDisposeInstancePair(
+      //     call.arguments[0] as String,
+      //     call.arguments[1] as PairedInstance,
+      //   );
+      //   return null;
+      // }
 
       throw StateError(call.method);
     } catch (error, stacktrace) {
@@ -167,28 +169,28 @@ class MethodChannelDispatcher with TypeChannelMessageDispatcher {
     );
   }
 
-  @override
-  Future<Object?> sendInvokeMethodOnUnpairedInstance(
-    NewUnpairedInstance unpairedReference,
-    String methodName,
-    List<Object?> arguments,
-  ) {
-    return channel.invokeMethod<Object>(
-      MethodChannelMessenger._methodUnpairedMethod,
-      <Object>[unpairedReference, methodName, arguments],
-    );
-  }
-
-  @override
-  Future<void> sendDisposePair(
-    String channelName,
-    PairedInstance remoteReference,
-  ) {
-    return channel.invokeMethod<void>(
-      MethodChannelMessenger._methodDispose,
-      <Object>[channelName, remoteReference],
-    );
-  }
+  // @override
+  // Future<Object?> sendInvokeMethodOnUnpairedInstance(
+  //   NewUnpairedInstance unpairedReference,
+  //   String methodName,
+  //   List<Object?> arguments,
+  // ) {
+  //   return channel.invokeMethod<Object>(
+  //     MethodChannelMessenger._methodUnpairedMethod,
+  //     <Object>[unpairedReference, methodName, arguments],
+  //   );
+  // }
+  //
+  // @override
+  // Future<void> sendDisposePair(
+  //   String channelName,
+  //   PairedInstance remoteReference,
+  // ) {
+  //   return channel.invokeMethod<void>(
+  //     MethodChannelMessenger._methodDispose,
+  //     <Object>[channelName, remoteReference],
+  //   );
+  // }
 }
 
 /// Implementation of [StandardMessageCodec] for reference plugin.

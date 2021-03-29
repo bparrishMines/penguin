@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <android/log.h>
 #include <jni.h>
+#include <map>
+#include <string>
 
 #include "include/dart_api.h"
 #include "include/dart_native_api.h"
@@ -115,5 +117,27 @@ extern "C" void dart_send_create_new_instance_pair(char *channelName, Dart_Handl
   }
 }
 
+static std::map<Dart_Handle, std::string> dart_handle_to_instanceId;
+static std::map<std::string, Dart_Handle> instanceId_to_dart_handle;
 
+extern "C" void dart_add_pair(char *instanceId, Dart_Handle instance) {
+  instanceId_to_dart_handle[std::string(instanceId)] = instance;
+  dart_handle_to_instanceId[instance] = std::string(instanceId);
+}
+
+extern "C" int dart_is_paired(Dart_Handle instance) {
+  return dart_handle_to_instanceId.count(instance);
+}
+
+extern "C" char* dart_get_instanceId(Dart_Handle instance) {
+  if(!dart_is_paired(instance)) return NULL;
+  std::string instanceId = dart_handle_to_instanceId[instance];
+  return &instanceId[0];
+}
+
+extern "C" Dart_Handle dart_get_object(char *instanceId) {
+  std::string strId = std::string(instanceId);
+  if (!instanceId_to_dart_handle.count(strId)) return NULL;
+  return instanceId_to_dart_handle[strId];
+}
 #endif  // FINALIZER_H

@@ -1,6 +1,7 @@
 import 'dart:ffi';
 
 import 'package:flutter/material.dart';
+import 'package:reference/reference.dart';
 
 // ignore: implementation_imports
 import 'package:reference/src/template/template.dart';
@@ -24,7 +25,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    reference_dart_dl_initialize(NativeApi.initializeApiDLData);
+    //reference_dart_dl_initialize(NativeApi.initializeApiDLData);
   }
 
   @override
@@ -43,7 +44,16 @@ class _MyAppState extends State<MyApp> {
         ]),
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
-            print(nativeAdd(3, 5));
+            print('onPressed');
+            object = Object();
+            print(MethodChannelMessenger.instance.isPaired(object!));
+            MethodChannelMessenger.instance.registerHandler('channelName', MyHandler());
+            MethodChannelMessenger.instance.sendCreateNewInstancePair(
+              'channelName',
+              object!,
+            );
+            print(MethodChannelMessenger.instance.isPaired(object!));
+            // print(nativeAdd(3, 5));
             // if (object == null) {
             //   final Object object1 = Object();
             //   attachFinalizer(object1);
@@ -51,7 +61,7 @@ class _MyAppState extends State<MyApp> {
             // } else {
             //   object = null;
             // }
-            trySend('my_channel', Object());
+            // trySend('my_channel', Object());
             //print(object);
             // final ClassTemplate classTemplate = ClassTemplate(44);
             // final String result = await classTemplate.methodTemplate('Hello,');
@@ -64,6 +74,33 @@ class _MyAppState extends State<MyApp> {
       ),
     );
   }
+}
+
+class MyHandler with TypeChannelHandler {
+  @override
+  Object createInstance(TypeChannelMessenger messenger, List<Object?> arguments) {
+    // TODO: implement createInstance
+    throw UnimplementedError();
+  }
+
+  @override
+  List<Object?> getCreationArguments(TypeChannelMessenger messenger, Object instance) {
+    // TODO: implement getCreationArguments
+    throw UnimplementedError();
+  }
+
+  @override
+  Object? invokeMethod(TypeChannelMessenger messenger, Object instance, String methodName, List<Object?> arguments) {
+    // TODO: implement invokeMethod
+    throw UnimplementedError();
+  }
+
+  @override
+  Object? invokeStaticMethod(TypeChannelMessenger messenger, String methodName, List<Object?> arguments) {
+    // TODO: implement invokeStaticMethod
+    throw UnimplementedError();
+  }
+
 }
 
 // class MyObject {
