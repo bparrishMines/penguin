@@ -44,15 +44,19 @@ class _MyAppState extends State<MyApp> {
         ]),
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
-            print('onPressed');
-            object = Object();
-            print(MethodChannelMessenger.instance.isPaired(object!));
-            MethodChannelMessenger.instance.registerHandler('channelName', MyHandler());
-            MethodChannelMessenger.instance.sendCreateNewInstancePair(
-              'channelName',
-              object!,
-            );
-            print(MethodChannelMessenger.instance.isPaired(object!));
+            if (object == null) {
+              object = Object();
+              print(MethodChannelMessenger.instance.isPaired(object!));
+              MethodChannelMessenger.instance.registerHandler(
+                  'channelName', MyHandler());
+              MethodChannelMessenger.instance.sendCreateNewInstancePair(
+                'channelName',
+                object!,
+              );
+              print(MethodChannelMessenger.instance.isPaired(object!));
+            } else {
+              object = null;
+            }
             // print(nativeAdd(3, 5));
             // if (object == null) {
             //   final Object object1 = Object();

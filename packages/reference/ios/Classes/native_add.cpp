@@ -120,9 +120,29 @@ extern "C" void dart_send_create_new_instance_pair(char *channelName, Dart_Handl
 static std::map<Dart_Handle, std::string> dart_handle_to_instanceId;
 static std::map<std::string, Dart_Handle> instanceId_to_dart_handle;
 
+void dart_finalizer(void* isolate_callback_data,
+                    void* peer) {
+  std::string instanceId = std::string((char*)peer);
+  __android_log_print(ANDROID_LOG_INFO, "Tag", "Removing instance with id: %s", (char*)peer);
+
+  Dart_Handle instance = instanceId_to_dart_handle[instanceId];
+  instanceId_to_dart_handle.erase(instanceId);
+  dart_handle_to_instanceId.erase(instance);
+}
+
+void dart_attach_finalizer(Dart_Handle instance, char *instanceId) {
+  if (Dart_NewFinalizableHandle_DL == NULL) {
+    __android_log_write(ANDROID_LOG_INFO, "Tag", "Finalizer could not be attached.");
+  }
+
+  intptr_t size = 4096;
+  Dart_NewFinalizableHandle_DL(instance, (void*)instanceId, size, &dart_finalizer);
+}
+
 extern "C" void dart_add_pair(char *instanceId, Dart_Handle instance) {
   instanceId_to_dart_handle[std::string(instanceId)] = instance;
   dart_handle_to_instanceId[instance] = std::string(instanceId);
+  dart_attach_finalizer(instance, instanceId);
 }
 
 extern "C" int dart_is_paired(Dart_Handle instance) {
