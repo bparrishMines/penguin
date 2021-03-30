@@ -120,6 +120,9 @@ extern "C" void dart_send_create_new_instance_pair(char *channelName, Dart_Handl
 static std::map<Dart_Handle, std::string> dart_handle_to_instanceId;
 static std::map<std::string, Dart_Handle> instanceId_to_dart_handle;
 
+static std::map<jobject, std::string> jobject_to_instanceId;
+static std::map<std::string, jobject> instanceId_to_jobject;
+
 void dart_finalizer(void* isolate_callback_data,
                     void* peer) {
   std::string instanceId = std::string((char*)peer);
@@ -139,14 +142,26 @@ void dart_attach_finalizer(Dart_Handle instance, char *instanceId) {
   Dart_NewFinalizableHandle_DL(instance, (void*)instanceId, size, &dart_finalizer);
 }
 
-extern "C" void dart_add_pair(char *instanceId, Dart_Handle instance) {
-  instanceId_to_dart_handle[std::string(instanceId)] = instance;
-  dart_handle_to_instanceId[instance] = std::string(instanceId);
-  dart_attach_finalizer(instance, instanceId);
-}
-
 extern "C" int dart_is_paired(Dart_Handle instance) {
   return dart_handle_to_instanceId.count(instance);
+}
+
+extern "C" int dart_add_pair(char *instanceId, Dart_Handle instance, int owner) {
+  if (dart_is_paired(instance)) return 0;
+  std::string strInstanceId = std::string(instanceId);
+
+  Dart_Handle handle;
+  if (owner) {
+    handle = instance;
+    dart_attach_finalizer(instance, instanceId);
+  } else {
+    handle = Dart_NewPersistentHandle_DL(instance);
+  }
+
+  instanceId_to_dart_handle[strInstanceId] = handle;
+  dart_handle_to_instanceId[handle] = strInstanceId;
+
+  return 1;
 }
 
 extern "C" char* dart_get_instanceId(Dart_Handle instance) {
@@ -159,5 +174,69 @@ extern "C" Dart_Handle dart_get_object(char *instanceId) {
   std::string strId = std::string(instanceId);
   if (!instanceId_to_dart_handle.count(strId)) return NULL;
   return instanceId_to_dart_handle[strId];
+}
+
+std::string jstring2string(JNIEnv *env, jstring jStr) {
+  if (!jStr) return "";
+
+  const jclass stringClass = env->GetObjectClass(jStr);
+  const jmethodID getBytes = env->GetMethodID(stringClass, "getBytes", "(Ljava/lang/String;)[B");
+  const jbyteArray stringJbytes = (jbyteArray) env->CallObjectMethod(jStr, getBytes, env->NewStringUTF("UTF-8"));
+
+  size_t length = (size_t) env->GetArrayLength(stringJbytes);
+  jbyte* pBytes = env->GetByteArrayElements(stringJbytes, NULL);
+
+  std::string ret = std::string((char *)pBytes, length);
+  env->ReleaseByteArrayElements(stringJbytes, pBytes, JNI_ABORT);
+
+  env->DeleteLocalRef(stringJbytes);
+  env->DeleteLocalRef(stringClass);
+  return ret;
+}
+
+extern "C"
+JNIEXPORT jboolean JNICALL
+Java_github_penguin_reference_reference_InstancePairManager_isPaired(JNIEnv *env, jobject object, jobject instance) {
+  return jobject_to_instanceId.count(instance);
+}
+
+extern "C"
+JNIEXPORT jboolean JNICALL
+Java_github_penguin_reference_reference_InstancePairManager_addPair(JNIEnv *env,
+ jobject object, jobject instance, jstring instanceId, jboolean owner) {
+  if (Java_github_penguin_reference_reference_InstancePairManager_isPaired(env, object, instance)) {
+    return JNI_FALSE;
+  }
+  std::string strInstanceId = jstring2string(env, instanceId);
+
+  jobject ref;
+  if (owner) {
+    ref = env->NewWeakGlobalRef(instance);
+  } else {
+    ref = env->NewGlobalRef(instance);
+  }
+
+  instanceId_to_jobject[strInstanceId] = ref;
+  jobject_to_instanceId[ref] = strInstanceId;
+
+  return JNI_TRUE;
+}
+
+extern "C"
+JNIEXPORT jstring JNICALL
+Java_github_penguin_reference_reference_InstancePairManager_getInstanceId(JNIEnv *env, jobject object, jobject instance) {
+  if (!Java_github_penguin_reference_reference_InstancePairManager_isPaired(env, object, instance)) {
+    return NULL;
+  }
+  std::string instanceId = jobject_to_instanceId[instance];
+  return env->NewStringUTF(&instanceId[0]);
+}
+
+extern "C"
+JNIEXPORT jobject JNICALL
+Java_github_penguin_reference_reference_InstancePairManager_getObject(JNIEnv *env, jobject object, jstring instanceId) {
+  std::string strInstanceId = jstring2string(env, instanceId);
+  if (!instanceId_to_jobject.count(strInstanceId)) return NULL;
+  return instanceId_to_jobject[strInstanceId];
 }
 #endif  // FINALIZER_H

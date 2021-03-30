@@ -22,11 +22,11 @@ public interface InstanceConverter {
         return null;
       } else if (manager.isPaired(object)) {
         return manager.getPairedPairedInstance(object);
-      } else if (!manager.isPaired(object) && object instanceof ReferenceType) {
+      } else/* if (!manager.isPaired(object) && object instanceof ReferenceType) {
         final String referenceChannelName =
             ((ReferenceType<?>) object).getTypeChannel().name;
         return manager.createUnpairedInstance(referenceChannelName, object);
-      } else if (object instanceof List) {
+      } else*/ if (object instanceof List) {
         final List<Object> result = new ArrayList<>();
         for (final Object obj : (List<?>) object) {
           result.add(convertForRemoteMessenger(manager, obj));

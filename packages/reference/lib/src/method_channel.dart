@@ -51,6 +51,7 @@ class MethodChannelMessenger extends TypeChannelMessenger {
           call.arguments[0] as String,
           call.arguments[1] as PairedInstance,
           call.arguments[2] as List<Object?>,
+          owner: call.arguments[3] as bool,
         );
         return null;
       } else if (call.method == MethodChannelMessenger._methodStaticMethod) {

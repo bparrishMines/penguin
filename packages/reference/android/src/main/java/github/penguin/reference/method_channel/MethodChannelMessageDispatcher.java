@@ -70,19 +70,19 @@ public class MethodChannelMessageDispatcher implements TypeChannelMessageDispatc
     return completer.completable;
   }
 
-  @Override
-  public Completable<Object> sendInvokeMethodOnUnpairedReference(
-      NewUnpairedInstance unpairedInstance, String methodName, List<Object> arguments) {
-    final Completer<Object> completer = new Completer<>();
-    final String method = MethodChannelMessenger.METHOD_UNPAIRED_METHOD;
-
-    channel.invokeMethod(
-        method,
-        Arrays.asList(unpairedInstance, methodName, arguments),
-        new MethodChannelMessengerResult<>(completer, method));
-
-    return completer.completable;
-  }
+//  @Override
+//  public Completable<Object> sendInvokeMethodOnUnpairedReference(
+//      NewUnpairedInstance unpairedInstance, String methodName, List<Object> arguments) {
+//    final Completer<Object> completer = new Completer<>();
+//    final String method = MethodChannelMessenger.METHOD_UNPAIRED_METHOD;
+//
+//    channel.invokeMethod(
+//        method,
+//        Arrays.asList(unpairedInstance, methodName, arguments),
+//        new MethodChannelMessengerResult<>(completer, method));
+//
+//    return completer.completable;
+//  }
 
   @Override
   public Completable<Void> sendDisposePair(String channelName, PairedInstance pairedInstance) {

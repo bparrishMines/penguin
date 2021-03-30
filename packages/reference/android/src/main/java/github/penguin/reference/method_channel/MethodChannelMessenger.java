@@ -44,7 +44,8 @@ public class MethodChannelMessenger extends TypeChannelMessenger {
                   onReceiveCreateNewInstancePair(
                       (String) arguments.get(0),
                       (PairedInstance) arguments.get(1),
-                      (List<Object>) arguments.get(2));
+                      (List<Object>) arguments.get(2),
+                      (Boolean) arguments.get(3));
                   callResult.success(null);
                   break;
                 }
@@ -79,12 +80,12 @@ public class MethodChannelMessenger extends TypeChannelMessenger {
                   callResult.success(result);
                   break;
                 }
-                case METHOD_DISPOSE:
-                  final List<Object> arguments = (List<Object>) call.arguments;
-                  onReceiveDisposeInstancePair(
-                      (String) arguments.get(0), (PairedInstance) arguments.get(1));
-                  callResult.success(null);
-                  break;
+//                case METHOD_DISPOSE:
+//                  final List<Object> arguments = (List<Object>) call.arguments;
+//                  onReceiveDisposeInstancePair(
+//                      (String) arguments.get(0), (PairedInstance) arguments.get(1));
+//                  callResult.success(null);
+//                  break;
                 default:
                   callResult.notImplemented();
               }

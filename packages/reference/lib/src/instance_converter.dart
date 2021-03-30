@@ -41,9 +41,10 @@ class StandardInstanceConverter implements InstanceConverter {
       return null;
     } else if (messenger.isPaired(object)) {
       return messenger.getPairedPairedInstance(object);
-    } else if (!messenger.isPaired(object) && object is ReferenceType) {
+    } else /* if (!messenger.isPaired(object) && object is ReferenceType) {
       return messenger.createUnpairedInstance(object.typeChannel.name, object);
-    } else if (object is List) {
+    } else*/
+    if (object is List) {
       return object
           .map<Object?>((_) => convertForRemoteMessenger(messenger, _))
           .toList();

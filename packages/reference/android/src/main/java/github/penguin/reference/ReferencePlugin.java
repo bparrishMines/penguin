@@ -33,7 +33,7 @@ public class ReferencePlugin implements FlutterPlugin {
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
     Log.i("APPLE", "HEREE");
-    Log.i("APPLE", getMsgFromJni(apple));
+    //Log.i("APPLE", getMsgFromJni(apple));
     new PluginTemplate().onAttachedToEngine(binding);
   }
 
@@ -43,14 +43,14 @@ public class ReferencePlugin implements FlutterPlugin {
     messengers.remove(binding.getBinaryMessenger());
   }
 
-  static {
-    System.loadLibrary("native_add");
-  }
-
-  public native String getMsgFromJni(Apple appleClass);
-
-  @Override
-  protected void finalize() throws Throwable {
-    super.finalize();
-  }
+//  static {
+//    System.loadLibrary("native_add");
+//  }
+//
+//  public native String getMsgFromJni(Apple appleClass);
+//
+//  @Override
+//  protected void finalize() throws Throwable {
+//    super.finalize();
+//  }
 }

@@ -12,9 +12,9 @@ final void Function(Pointer<Void> data) _referenceDartDlInitialize =
     _nativeAddLib.lookupFunction<Void Function(Pointer<Void> data),
         void Function(Pointer<Void> data)>("reference_dart_dl_initialize");
 
-final void Function(Pointer<Int8>, Object) _dartAddPair =
-    _nativeAddLib.lookupFunction<Void Function(Pointer<Int8>, Handle),
-        void Function(Pointer<Int8>, Object)>("dart_add_pair");
+final int Function(Pointer<Int8>, Object, int) _dartAddPair =
+    _nativeAddLib.lookupFunction<Int32 Function(Pointer<Int8>, Handle, Int32),
+        int Function(Pointer<Int8>, Object, int)>("dart_add_pair");
 
 final int Function(Object) _dartIsPaired =
     _nativeAddLib.lookupFunction<Int32 Function(Handle), int Function(Object)>(
@@ -36,10 +36,17 @@ class InstancePairManager {
     _referenceDartDlInitialize(NativeApi.initializeApiDLData);
   }
 
-  bool addPair(Object object, String instanceId) {
-    if (isPaired(instanceId)) return false;
-    _dartAddPair(instanceId.toNativeUtf8().cast<Int8>(), object);
-    return true;
+  bool addPair(
+    Object instance,
+    String instanceId, {
+    required bool owner,
+  }) {
+    return 1 ==
+        _dartAddPair(
+          instanceId.toNativeUtf8().cast<Int8>(),
+          instance,
+          owner ? 1 : 0,
+        );
   }
   // /// Adds an instance pair.
   // ///

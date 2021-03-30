@@ -52,6 +52,7 @@ class _MyAppState extends State<MyApp> {
               MethodChannelMessenger.instance.sendCreateNewInstancePair(
                 'channelName',
                 object!,
+                owner: true,
               );
               print(MethodChannelMessenger.instance.isPaired(object!));
             } else {

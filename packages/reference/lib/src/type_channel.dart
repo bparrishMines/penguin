@@ -29,10 +29,10 @@ class TypeChannel<T extends Object> {
     messenger.unregisterHandler(name);
   }
 
-  /// Create a [NewUnpairedInstance] with a registered [TypeChannelHandler].
-  NewUnpairedInstance? createUnpairedInstance(T instance) {
-    return messenger.createUnpairedInstance(name, instance);
-  }
+  // /// Create a [NewUnpairedInstance] with a registered [TypeChannelHandler].
+  // NewUnpairedInstance? createUnpairedInstance(T instance) {
+  //   return messenger.createUnpairedInstance(name, instance);
+  // }
 
   /// Creates a new [PairedInstance] to be paired with [instance].
   ///
@@ -44,10 +44,7 @@ class TypeChannel<T extends Object> {
   ///
   /// Sends a message to another [TypeChannelMessenger] with
   /// [TypeChannelMessenger.messenger].
-  Future<PairedInstance?> createNewInstancePair(
-    T instance, {
-    Object? owner,
-  }) async {
+  Future<PairedInstance?> createNewInstancePair(T instance, {required bool owner,}) async {
     return messenger.sendCreateNewInstancePair(name, instance, owner: owner);
   }
 
@@ -195,8 +192,13 @@ abstract class TypeChannelMessenger {
       <String, TypeChannelHandler>{};
   final InstancePairManager _instancePairManager = InstancePairManager();
 
-  bool _addPair(Object instance, PairedInstance pairedInstance) {
-    return _instancePairManager.addPair(instance, pairedInstance.instanceId);
+  bool _addPair(Object instance, PairedInstance pairedInstance,
+      {required bool owner}) {
+    return _instancePairManager.addPair(
+      instance,
+      pairedInstance.instanceId,
+      owner: owner,
+    );
   }
 
   // bool _addInstancePair({
@@ -284,13 +286,10 @@ abstract class TypeChannelMessenger {
   Future<PairedInstance?> sendCreateNewInstancePair(
     String channelName,
     Object instance, {
-    Object? owner,
+    required bool owner,
   }) async {
-    // final PairedInstance pairedInstance = PairedInstance(
-    //   generateUniqueInstanceId(instance),
-    // );
     final PairedInstance pairedInstance = PairedInstance(
-      instance.hashCode.toString(),
+      generateUniqueInstanceId(instance),
     );
 
     final TypeChannelHandler? handler = getChannelHandler(channelName);
@@ -307,7 +306,7 @@ abstract class TypeChannelMessenger {
     //   owner: owner ?? instance,
     // );
 
-    if (!_addPair(instance, pairedInstance)) return null;
+    if (!_addPair(instance, pairedInstance, owner: owner)) return null;
 
     // await messageDispatcher.sendCreateNewInstancePair(
     //   channelName,
@@ -419,8 +418,9 @@ abstract class TypeChannelMessenger {
   Object? onReceiveCreateNewInstancePair(
     String channelName,
     PairedInstance pairedInstance,
-    List<Object?> arguments,
-  ) {
+    List<Object?> arguments, {
+    required bool owner,
+  }) {
     if (getPairedObject(pairedInstance) != null) return null;
 
     final TypeChannelHandler? handler = getChannelHandler(channelName);
@@ -443,7 +443,7 @@ abstract class TypeChannelMessenger {
     //   pairedInstance: pairedInstance,
     //   owner: instance,
     // );
-    _addPair(instance, pairedInstance);
+    _addPair(instance, pairedInstance, owner: owner);
     return instance;
   }
 
@@ -462,22 +462,22 @@ abstract class TypeChannelMessenger {
     return converter.convertForRemoteMessenger(this, result);
   }
 
-  /// Create a [NewUnpairedInstance] for a type channel.
-  ///
-  /// Returns `null` if no such handler exists for a type channel of name:
-  /// [channelName].
-  NewUnpairedInstance? createUnpairedInstance(
-    String channelName,
-    Object instance,
-  ) {
-    final TypeChannelHandler? handler = getChannelHandler(channelName);
-    if (handler == null) return null;
-
-    return NewUnpairedInstance(
-      channelName,
-      handler.getCreationArguments(this, instance),
-    );
-  }
+  // /// Create a [NewUnpairedInstance] for a type channel.
+  // ///
+  // /// Returns `null` if no such handler exists for a type channel of name:
+  // /// [channelName].
+  // NewUnpairedInstance? createUnpairedInstance(
+  //   String channelName,
+  //   Object instance,
+  // ) {
+  //   final TypeChannelHandler? handler = getChannelHandler(channelName);
+  //   if (handler == null) return null;
+  //
+  //   return NewUnpairedInstance(
+  //     channelName,
+  //     handler.getCreationArguments(this, instance),
+  //   );
+  // }
 
   /// Invoke a method on [pairedInstance] for a type channel.
   Object? onReceiveInvokeMethod(
