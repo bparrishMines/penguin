@@ -1,19 +1,39 @@
 package github.penguin.reference.reference;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.WeakHashMap;
 
 public class InstancePairManager {
-//  private final BiMap<Object, PairedInstance> pairedInstances = new BiMap<>();
-//  private final Map<Object, Set<Object>> owners = new HashMap<>();
+  public static InstancePairManager instance = new InstancePairManager();
 
+  //  private final BiMap<Object, PairedInstance> pairedInstances = new BiMap<>();
+//  private final Map<Object, Set<Object>> owners = new HashMap<>();
   static {
     System.loadLibrary("native_add");
   }
 
-  public native boolean addPair(Object instance, String instanceId, boolean owner);
+  private final WeakHashMap<Object, String> instanceIds = new WeakHashMap<>();
+
+  private InstancePairManager() {
+  }
+
+  public boolean addPair(Object instance, String instanceId, boolean owner) {
+    if (instanceIds.containsKey(instance)) return false;
+    if (getObject(instanceId) != null) throw new AssertionError();
+
+    instanceIds.put(instance, instanceId);
+    nativeAddPair(instance, instanceId, owner);
+    return true;
+  }
+
+  public boolean isPaired(Object instance) {
+    return instanceIds.containsKey(instance);
+  }
+
+  public String getInstanceId(Object instance) {
+    return instanceIds.get(instance);
+  }
+
+  private native void nativeAddPair(Object instance, String instanceId, boolean owner);
 //    final boolean wasPaired = isPaired(object);
 //
 //    if (!wasPaired) {
@@ -39,14 +59,11 @@ public class InstancePairManager {
 //    return true;
 //  }
 
-  public native boolean isPaired(Object instance);
-    //return getPairedPairedInstance(instance) != null;
+  //return getPairedPairedInstance(instance) != null;
 
-
-  public native String getInstanceId(Object instance);
-    //return pairedInstances.get(instance);
+  //return pairedInstances.get(instance);
 
 
   public native Object getObject(String instanceId);
-    //return pairedInstances.inverse.get(pairedInstance);
+  //return pairedInstances.inverse.get(pairedInstance);
 }

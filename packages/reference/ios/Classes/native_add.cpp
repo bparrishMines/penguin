@@ -123,7 +123,6 @@ extern "C" void dart_send_create_new_instance_pair(char *channelName, Dart_Handl
 static std::unordered_map<std::string, Dart_Handle> instanceId_to_dart_handle;
 static std::unordered_map<std::string, Dart_WeakPersistentHandle> instanceId_to_weak_dart_handle;
 
-static std::map<jobject, std::string> jobject_to_instanceId;
 static std::map<std::string, jobject> instanceId_to_jobject;
 
 //static std::map<char *, Dart_Handle, cmp_str> instanceId_to_dart_handle;
@@ -208,21 +207,18 @@ std::string jstring2string(JNIEnv *env, jstring jStr) {
   return ret;
 }
 
+/*
 extern "C"
 JNIEXPORT jboolean JNICALL
 Java_github_penguin_reference_reference_InstancePairManager_isPaired(JNIEnv *env, jobject object, jobject instance) {
   return jobject_to_instanceId.count(instance);
 }
+*/
 
 extern "C"
-JNIEXPORT jboolean JNICALL
-Java_github_penguin_reference_reference_InstancePairManager_addPair(JNIEnv *env,
+JNIEXPORT void JNICALL
+Java_github_penguin_reference_reference_InstancePairManager_nativeAddPair(JNIEnv *env,
  jobject object, jobject instance, jstring instanceId, jboolean owner) {
-  if (Java_github_penguin_reference_reference_InstancePairManager_isPaired(env, object, instance)) {
-    return JNI_FALSE;
-  }
-  std::string strInstanceId = jstring2string(env, instanceId);
-
   jobject ref;
   if (owner) {
     ref = env->NewWeakGlobalRef(instance);
@@ -230,12 +226,11 @@ Java_github_penguin_reference_reference_InstancePairManager_addPair(JNIEnv *env,
     ref = env->NewGlobalRef(instance);
   }
 
+  std::string strInstanceId = jstring2string(env, instanceId);
   instanceId_to_jobject[strInstanceId] = ref;
-  jobject_to_instanceId[ref] = strInstanceId;
-
-  return JNI_TRUE;
 }
 
+/*
 extern "C"
 JNIEXPORT jstring JNICALL
 Java_github_penguin_reference_reference_InstancePairManager_getInstanceId(JNIEnv *env, jobject object, jobject instance) {
@@ -245,6 +240,7 @@ Java_github_penguin_reference_reference_InstancePairManager_getInstanceId(JNIEnv
   std::string instanceId = jobject_to_instanceId[instance];
   return env->NewStringUTF(&instanceId[0]);
 }
+*/
 
 extern "C"
 JNIEXPORT jobject JNICALL

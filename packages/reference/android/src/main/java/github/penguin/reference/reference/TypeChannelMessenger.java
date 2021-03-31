@@ -12,7 +12,7 @@ import github.penguin.reference.async.Completer;
 
 public abstract class TypeChannelMessenger {
   private final Map<String, TypeChannelHandler<?>> channelHandlers = new HashMap<>();
-  private final InstancePairManager instancePairManager = new InstancePairManager();
+  private final InstancePairManager instancePairManager = InstancePairManager.instance;
 
   public abstract TypeChannelMessageDispatcher getMessageDispatcher();
 

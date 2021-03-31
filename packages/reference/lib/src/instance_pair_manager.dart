@@ -124,6 +124,7 @@ class InstancePairManager {
     //return _pairedInstances[object];
   }
 
+  // TODO: `getInstance`
   /// Retrieve the [Object] paired with [pairedInstance].
   ///
   /// Returns null if this [pairedInstance] is not paired.

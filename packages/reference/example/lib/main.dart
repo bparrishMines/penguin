@@ -26,8 +26,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    //MethodChannelMessenger.instance.registerHandler('channelName', MyHandler());
-    //_referenceDartDlInitialize(NativeApi.initializeApiDLData);
+    MethodChannelMessenger.instance.registerHandler('channelName', MyHandler());
   }
 
   @override
@@ -46,52 +45,40 @@ class _MyAppState extends State<MyApp> {
         ]),
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
-            if (object == null) {
-              print('setting object');
-              object = Object();
-              InstancePairManager.instance.addPair(
-                object!,
-                object.hashCode.toString(),
-                owner: true,
-              );
-              print('InstanceId should be ${object.hashCode}');
-              print(InstancePairManager.instance.getInstanceId(object!));
-              print(object == InstancePairManager.instance.getObject(object.hashCode.toString()));
-
-              print(InstancePairManager.instance.getInstanceId(Object()));
-              print(InstancePairManager.instance.getObject('woiefjwoijef'));
-            } else {
-              print('unsetting object');
-              object = null;
-            }
-            //_testMethod(object);
             // if (object == null) {
+            //   print('setting object');
             //   object = Object();
-            //   print(MethodChannelMessenger.instance.isPaired(object!));
-            //   MethodChannelMessenger.instance.sendCreateNewInstancePair(
-            //     'channelName',
+            //   InstancePairManager.instance.addPair(
             //     object!,
+            //     object.hashCode.toString(),
             //     owner: true,
             //   );
-            //   print(MethodChannelMessenger.instance.isPaired(object!));
+            //   print('InstanceId should be ${object.hashCode}');
+            //   print(InstancePairManager.instance.getInstanceId(object!));
+            //   print(object == InstancePairManager.instance.getObject(object.hashCode.toString()));
+            //
+            //   print(InstancePairManager.instance.getInstanceId(Object()));
+            //   print(InstancePairManager.instance.getObject('woiefjwoijef'));
             // } else {
+            //   print('unsetting object');
             //   object = null;
             // }
-            // print(nativeAdd(3, 5));
-            // if (object == null) {
-            //   final Object object1 = Object();
-            //   attachFinalizer(object1);
-            //   object = object1;
-            // } else {
-            //   object = null;
-            // }
-            // trySend('my_channel', Object());
-            //print(object);
-            // final ClassTemplate classTemplate = ClassTemplate(44);
-            // final String result = await classTemplate.methodTemplate('Hello,');
-            // setState(() {
-            //   _text = result;
-            // });
+            if (object == null) {
+              object = Object();
+              MethodChannelMessenger.instance.sendCreateNewInstancePair(
+                'channelName',
+                object!,
+                owner: true,
+              );
+              MethodChannelMessenger.instance.sendInvokeMethod(
+                "channelName",
+                object!,
+                '',
+                <Object?>[],
+              );
+            } else {
+              object = null;
+            }
           },
           child: const Icon(Icons.ac_unit),
         ),

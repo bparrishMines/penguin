@@ -314,19 +314,16 @@ abstract class TypeChannelMessenger {
     // );
 
     if (!_addPair(instance, pairedInstance, owner: owner)) return null;
-    print(_instancePairManager.isPaired(Object()));
-    print(_instancePairManager.isPaired(Object()));
-    print(_instancePairManager.isPaired(Object()));
 
-    // await messageDispatcher.sendCreateNewInstancePair(
-    //   channelName,
-    //   pairedInstance,
-    //   converter.convertForRemoteMessenger(
-    //     this,
-    //     handler.getCreationArguments(this, instance),
-    //   )! as List<Object?>,
-    //   owner: owner,
-    // );
+    await messageDispatcher.sendCreateNewInstancePair(
+      channelName,
+      pairedInstance,
+      converter.convertForRemoteMessenger(
+        this,
+        handler.getCreationArguments(this, instance),
+      )! as List<Object?>,
+      owner: !owner,
+    );
 
     return pairedInstance;
   }
