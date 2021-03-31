@@ -161,13 +161,13 @@ class MethodChannelDispatcher with TypeChannelMessageDispatcher {
   @override
   Future<Object?> sendInvokeMethod(
     String channelName,
-    PairedInstance remoteReference,
+    PairedInstance pairedInstance,
     String methodName,
     List<Object?> arguments,
   ) {
     return channel.invokeMethod<Object>(
       MethodChannelMessenger._methodMethod,
-      <Object>[channelName, remoteReference, methodName, arguments],
+      <Object>[channelName, pairedInstance, methodName, arguments],
     );
   }
 

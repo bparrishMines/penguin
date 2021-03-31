@@ -61,9 +61,12 @@ extern "C" void PassObjectToC(Dart_Handle object/*,
   auto finalizable_handle = Dart_NewFinalizableHandle_DL(object, peer, size, &RunFinalizer);
 }
 
+/*
 static JavaVM *jvm;
 static jobject myApple;
+*/
 
+/*
 extern "C"
 JNIEXPORT jstring JNICALL
 Java_github_penguin_reference_ReferencePlugin_getMsgFromJni(JNIEnv *env, jobject instance, jobject apple) {
@@ -73,6 +76,7 @@ Java_github_penguin_reference_ReferencePlugin_getMsgFromJni(JNIEnv *env, jobject
  myApple = reinterpret_cast<jobject>(env->NewGlobalRef(apple));
  return env->NewStringUTF("Hello From JNI");
 }
+*/
 
 /*
 void GetJniEnv(JavaVM *vm, JNIEnv **env) {
@@ -100,6 +104,7 @@ void GetJniEnv(JavaVM *vm, JNIEnv **env) {
 }
 */
 
+/*
 extern "C" void dart_send_create_new_instance_pair(char *channelName, Dart_Handle object) {
   __android_log_write(ANDROID_LOG_INFO, "Tag", channelName);
 
@@ -118,21 +123,42 @@ extern "C" void dart_send_create_new_instance_pair(char *channelName, Dart_Handl
       __android_log_write(ANDROID_LOG_INFO, "Tag", "not attached");
   }
 }
+*/
 
 //static std::unordered_map<std::string, > instanceId_to_dart_handle;
+static JavaVM *jvm;
+
 static std::unordered_map<std::string, Dart_Handle> instanceId_to_dart_handle;
 static std::unordered_map<std::string, Dart_WeakPersistentHandle> instanceId_to_weak_dart_handle;
 
-static std::map<std::string, jobject> instanceId_to_jobject;
+static std::unordered_map<std::string, jobject> instanceId_to_jobject;
 
 //static std::map<char *, Dart_Handle, cmp_str> instanceId_to_dart_handle;
 
+void release_jobject(std::string instanceId) {
+  JNIEnv* env;
+  jint result = jvm->GetEnv((void**)&env, JNI_VERSION_1_6);
+  if (result == JNI_EDETACHED) {
+      __android_log_print(ANDROID_LOG_INFO, "Tag", "Removing Java instance with id: %s", instanceId.c_str());
+      result = jvm->AttachCurrentThread(&env, NULL);
+
+      jobject instance = instanceId_to_jobject[instanceId];
+      env->DeleteGlobalRef(instance);
+      instanceId_to_jobject.erase(instanceId);
+
+      jvm->DetachCurrentThread();
+  } else if (result != JNI_OK) {
+    __android_log_write(ANDROID_LOG_INFO, "Tag", "Failed to get JNIEnv when releasing jobject.");
+  }
+}
+
 void dart_finalizer(void* isolate_callback_data,
                     void* peer) {
-  char* instanceId = (char*)peer;
-  __android_log_print(ANDROID_LOG_INFO, "Tag", "Removing instance with id: %s", instanceId);
+  std::string instanceId = std::string((char*)peer);
+  __android_log_print(ANDROID_LOG_INFO, "Tag", "Removing Dart instance with id: %s", instanceId.c_str());
 
   instanceId_to_weak_dart_handle.erase(instanceId);
+  release_jobject(instanceId);
 }
 
 Dart_WeakPersistentHandle dart_attach_finalizer(Dart_Handle instance, char *instanceId) {
@@ -248,5 +274,11 @@ Java_github_penguin_reference_reference_InstancePairManager_getObject(JNIEnv *en
   std::string strInstanceId = jstring2string(env, instanceId);
   if (!instanceId_to_jobject.count(strInstanceId)) return NULL;
   return instanceId_to_jobject[strInstanceId];
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_github_penguin_reference_reference_InstancePairManager_passJvm(JNIEnv *env) {
+  env->GetJavaVM(&jvm);
 }
 #endif  // FINALIZER_H

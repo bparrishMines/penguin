@@ -22,6 +22,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   String _text = 'nada';
   Object? object;
+  bool deleted = false;
 
   @override
   void initState() {
@@ -63,8 +64,9 @@ class _MyAppState extends State<MyApp> {
             //   print('unsetting object');
             //   object = null;
             // }
-            if (object == null) {
+            if (object == null && !deleted) {
               object = Object();
+              _text = MethodChannelMessenger.instance.generateUniqueInstanceId(object!);
               MethodChannelMessenger.instance.sendCreateNewInstancePair(
                 'channelName',
                 object!,
@@ -76,8 +78,17 @@ class _MyAppState extends State<MyApp> {
                 '',
                 <Object?>[],
               );
+            } else if (object == null && deleted) {
+              MethodChannelMessenger.instance.messageDispatcher
+                  .sendInvokeMethod(
+                'channelName',
+                PairedInstance(_text),
+                '',
+                <Object?>[],
+              );
             } else {
               object = null;
+              deleted = true;
             }
           },
           child: const Icon(Icons.ac_unit),

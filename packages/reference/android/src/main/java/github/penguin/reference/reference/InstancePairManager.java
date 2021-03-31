@@ -3,18 +3,23 @@ package github.penguin.reference.reference;
 import java.util.WeakHashMap;
 
 public class InstancePairManager {
-  public static InstancePairManager instance = new InstancePairManager();
-
   //  private final BiMap<Object, PairedInstance> pairedInstances = new BiMap<>();
 //  private final Map<Object, Set<Object>> owners = new HashMap<>();
+
+  public static final InstancePairManager instance;
+
   static {
     System.loadLibrary("native_add");
+    instance = new InstancePairManager();
   }
 
   private final WeakHashMap<Object, String> instanceIds = new WeakHashMap<>();
 
   private InstancePairManager() {
+    passJvm();
   }
+
+  public static native void passJvm();
 
   public boolean addPair(Object instance, String instanceId, boolean owner) {
     if (instanceIds.containsKey(instance)) return false;
