@@ -4,49 +4,74 @@ import 'dart:io';
 
 import 'package:ffi/ffi.dart';
 
-final DynamicLibrary _nativeAddLib = Platform.isAndroid
-    ? DynamicLibrary.open("libnative_add.so")
-    : DynamicLibrary.process();
+// final DynamicLibrary _nativeAddLib = Platform.isAndroid
+//     ? DynamicLibrary.open('libnative_add.so')
+//     : DynamicLibrary.process();
+//
+// final void Function(Pointer<Void> data) _referenceDartDlInitialize =
+//     _nativeAddLib.lookupFunction<Void Function(Pointer<Void> data),
+//         void Function(Pointer<Void> data)>('reference_dart_dl_initialize');
+//
+// final int Function(Pointer<Int8>, Object, int) _dartAddPair =
+//     _nativeAddLib.lookupFunction<Int32 Function(Pointer<Int8>, Handle, Int32),
+//         int Function(Pointer<Int8>, Object, int)>('dart_add_pair');
 
-final void Function(Pointer<Void> data) _referenceDartDlInitialize =
-    _nativeAddLib.lookupFunction<Void Function(Pointer<Void> data),
-        void Function(Pointer<Void> data)>("reference_dart_dl_initialize");
+// final int Function(Object) _dartIsPaired =
+//     _nativeAddLib.lookupFunction<Int32 Function(Handle), int Function(Object)>(
+//         'dart_is_paired');
 
-final int Function(Pointer<Int8>, Object, int) _dartAddPair =
-    _nativeAddLib.lookupFunction<Int32 Function(Pointer<Int8>, Handle, Int32),
-        int Function(Pointer<Int8>, Object, int)>("dart_add_pair");
+// final Pointer<Int8>? Function(Object) _dartGetInstanceId =
+//     _nativeAddLib.lookupFunction<Pointer<Int8> Function(Handle),
+//         Pointer<Int8> Function(Object)>('dart_get_instanceId');
 
-final int Function(Object) _dartIsPaired =
-    _nativeAddLib.lookupFunction<Int32 Function(Handle), int Function(Object)>(
-        "dart_is_paired");
-
-final Pointer<Int8>? Function(Object) _dartGetInstanceId =
-    _nativeAddLib.lookupFunction<Pointer<Int8> Function(Handle),
-        Pointer<Int8> Function(Object)>("dart_get_instanceId");
-
-final Object? Function(Pointer<Int8>) _dartGetObject =
-    _nativeAddLib.lookupFunction<Handle Function(Pointer<Int8>),
-        Object Function(Pointer<Int8>)>("dart_get_object");
+// final Object? Function(Pointer<Int8>) _dartGetObject =
+//     _nativeAddLib.lookupFunction<Handle Function(Pointer<Int8>),
+//         Object Function(Pointer<Int8>)>('dart_get_object');
 
 /// Stores instance pair.
 class InstancePairManager {
   // final _pairedInstances = _BiMap<Object, PairedInstance>();
   // final Map<Object, Set<Object>> _owners = <Object, Set<Object>>{};
-  InstancePairManager() {
+  InstancePairManager._() {
     _referenceDartDlInitialize(NativeApi.initializeApiDLData);
   }
+
+  static final InstancePairManager instance = InstancePairManager._();
+
+  static final DynamicLibrary _nativeAddLib = Platform.isAndroid
+      ? DynamicLibrary.open('libnative_add.so')
+      : DynamicLibrary.process();
+
+  static final void Function(Pointer<Void> data) _referenceDartDlInitialize =
+      _nativeAddLib.lookupFunction<Void Function(Pointer<Void> data),
+          void Function(Pointer<Void> data)>('reference_dart_dl_initialize');
+
+  static final void Function(Pointer<Int8>, Object, int) _dartAddPair =
+      _nativeAddLib.lookupFunction<Void Function(Pointer<Int8>, Handle, Int32),
+          void Function(Pointer<Int8>, Object, int)>('dart_add_pair');
+
+  static final Object? Function(Pointer<Int8>) _dartGetObject =
+      _nativeAddLib.lookupFunction<Handle Function(Pointer<Int8>),
+          Object Function(Pointer<Int8>)>('dart_get_object');
+
+  static final int Function(Pointer<Int8>) _dartContainsInstanceId =
+      _nativeAddLib.lookupFunction<Int32 Function(Pointer<Int8>),
+          int Function(Pointer<Int8>)>('dart_contains_instanceId');
+
+  final Expando _instanceIds = Expando();
 
   bool addPair(
     Object instance,
     String instanceId, {
     required bool owner,
   }) {
-    return 1 ==
-        _dartAddPair(
-          instanceId.toNativeUtf8().cast<Int8>(),
-          instance,
-          owner ? 1 : 0,
-        );
+    if (_instanceIds[instance] != null) return false;
+    final Pointer<Int8> charArray = instanceId.toNativeUtf8().cast<Int8>();
+    assert(_dartContainsInstanceId(charArray) == 0);
+
+    _instanceIds[instance] = instanceId;
+    _dartAddPair(charArray, instance, owner ? 1 : 0);
+    return true;
   }
   // /// Adds an instance pair.
   // ///
@@ -87,7 +112,7 @@ class InstancePairManager {
   // }
 
   bool isPaired(Object instance) {
-    return _dartIsPaired(instance) == 1;
+    return _instanceIds[instance] != null;
     //return getPairedPairedInstance(instance) != null;
   }
 
@@ -95,7 +120,7 @@ class InstancePairManager {
   ///
   /// Returns null if this [object] is not paired.
   String? getInstanceId(Object instance) {
-    return _dartGetInstanceId(instance)?.cast<Utf8>().toDartString();
+    return _instanceIds[instance] as String?;
     //return _pairedInstances[object];
   }
 
@@ -103,8 +128,9 @@ class InstancePairManager {
   ///
   /// Returns null if this [pairedInstance] is not paired.
   Object? getObject(String instanceId) {
-    return _dartGetObject(instanceId.toNativeUtf8().cast<Int8>());
-    //return _pairedInstances.inverse[pairedInstance];
+    final Pointer<Int8> charArray = instanceId.toNativeUtf8().cast<Int8>();
+    if (_dartContainsInstanceId(charArray) == 0) return null;
+    return _dartGetObject(charArray);
   }
 }
 

@@ -6,7 +6,7 @@ import github.penguin.reference.async.Completable;
 
 public interface TypeChannelMessageDispatcher {
   Completable<Void> sendCreateNewInstancePair(
-      String channelName, PairedInstance pairedInstance, List<Object> arguments);
+      String channelName, PairedInstance pairedInstance, List<Object> arguments, boolean owner);
 
   Completable<Object> sendInvokeStaticMethod(
       String channelName, String methodName, List<Object> arguments);

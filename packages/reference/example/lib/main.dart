@@ -1,4 +1,5 @@
 import 'dart:ffi';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:reference/reference.dart';
@@ -25,7 +26,8 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    //reference_dart_dl_initialize(NativeApi.initializeApiDLData);
+    //MethodChannelMessenger.instance.registerHandler('channelName', MyHandler());
+    //_referenceDartDlInitialize(NativeApi.initializeApiDLData);
   }
 
   @override
@@ -45,19 +47,36 @@ class _MyAppState extends State<MyApp> {
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
             if (object == null) {
+              print('setting object');
               object = Object();
-              print(MethodChannelMessenger.instance.isPaired(object!));
-              MethodChannelMessenger.instance.registerHandler(
-                  'channelName', MyHandler());
-              MethodChannelMessenger.instance.sendCreateNewInstancePair(
-                'channelName',
+              InstancePairManager.instance.addPair(
                 object!,
+                object.hashCode.toString(),
                 owner: true,
               );
-              print(MethodChannelMessenger.instance.isPaired(object!));
+              print('InstanceId should be ${object.hashCode}');
+              print(InstancePairManager.instance.getInstanceId(object!));
+              print(object == InstancePairManager.instance.getObject(object.hashCode.toString()));
+
+              print(InstancePairManager.instance.getInstanceId(Object()));
+              print(InstancePairManager.instance.getObject('woiefjwoijef'));
             } else {
+              print('unsetting object');
               object = null;
             }
+            //_testMethod(object);
+            // if (object == null) {
+            //   object = Object();
+            //   print(MethodChannelMessenger.instance.isPaired(object!));
+            //   MethodChannelMessenger.instance.sendCreateNewInstancePair(
+            //     'channelName',
+            //     object!,
+            //     owner: true,
+            //   );
+            //   print(MethodChannelMessenger.instance.isPaired(object!));
+            // } else {
+            //   object = null;
+            // }
             // print(nativeAdd(3, 5));
             // if (object == null) {
             //   final Object object1 = Object();
@@ -83,29 +102,31 @@ class _MyAppState extends State<MyApp> {
 
 class MyHandler with TypeChannelHandler {
   @override
-  Object createInstance(TypeChannelMessenger messenger, List<Object?> arguments) {
+  Object createInstance(
+      TypeChannelMessenger messenger, List<Object?> arguments) {
     // TODO: implement createInstance
     throw UnimplementedError();
   }
 
   @override
-  List<Object?> getCreationArguments(TypeChannelMessenger messenger, Object instance) {
-    // TODO: implement getCreationArguments
-    throw UnimplementedError();
+  List<Object?> getCreationArguments(
+      TypeChannelMessenger messenger, Object instance) {
+    return <Object?>[];
   }
 
   @override
-  Object? invokeMethod(TypeChannelMessenger messenger, Object instance, String methodName, List<Object?> arguments) {
+  Object? invokeMethod(TypeChannelMessenger messenger, Object instance,
+      String methodName, List<Object?> arguments) {
     // TODO: implement invokeMethod
     throw UnimplementedError();
   }
 
   @override
-  Object? invokeStaticMethod(TypeChannelMessenger messenger, String methodName, List<Object?> arguments) {
+  Object? invokeStaticMethod(TypeChannelMessenger messenger, String methodName,
+      List<Object?> arguments) {
     // TODO: implement invokeStaticMethod
     throw UnimplementedError();
   }
-
 }
 
 // class MyObject {

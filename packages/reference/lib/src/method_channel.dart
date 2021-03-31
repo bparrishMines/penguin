@@ -137,11 +137,12 @@ class MethodChannelDispatcher with TypeChannelMessageDispatcher {
   Future<void> sendCreateNewInstancePair(
     String channelName,
     PairedInstance remoteReference,
-    List<Object?> arguments,
-  ) {
+    List<Object?> arguments, {
+    required bool owner,
+  }) {
     return channel.invokeMethod<void>(
       MethodChannelMessenger._methodCreate,
-      <Object>[channelName, remoteReference, arguments],
+      <Object>[channelName, remoteReference, arguments, owner],
     );
   }
 

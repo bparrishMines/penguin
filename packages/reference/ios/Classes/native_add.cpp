@@ -4,9 +4,11 @@
 #include <jni.h>
 #include <map>
 #include <string>
+#include <unordered_map>
+#include <any>
 
 #include "include/dart_api.h"
-#include "include/dart_native_api.h"
+//#include "include/dart_native_api.h"
 
 #include "include/dart_api_dl.h"
 
@@ -25,8 +27,8 @@ typedef struct _finalizable_pointer {
 
 extern "C" __attribute__((visibility("default"))) __attribute__((used))
 int32_t native_add(int32_t x, int32_t y) {
-__android_log_write(ANDROID_LOG_INFO, "Tag", "Error here");
-printf("HIIIIIIIII.\n");
+    __android_log_write(ANDROID_LOG_INFO, "Tag", "Error here");
+    printf("HIIIIIIIII.\n");
     return x + y;
 }
 
@@ -117,63 +119,75 @@ extern "C" void dart_send_create_new_instance_pair(char *channelName, Dart_Handl
   }
 }
 
-static std::map<Dart_Handle, std::string> dart_handle_to_instanceId;
-static std::map<std::string, Dart_Handle> instanceId_to_dart_handle;
+//static std::unordered_map<std::string, > instanceId_to_dart_handle;
+static std::unordered_map<std::string, Dart_Handle> instanceId_to_dart_handle;
+static std::unordered_map<std::string, Dart_WeakPersistentHandle> instanceId_to_weak_dart_handle;
 
 static std::map<jobject, std::string> jobject_to_instanceId;
 static std::map<std::string, jobject> instanceId_to_jobject;
 
+//static std::map<char *, Dart_Handle, cmp_str> instanceId_to_dart_handle;
+
 void dart_finalizer(void* isolate_callback_data,
                     void* peer) {
-  std::string instanceId = std::string((char*)peer);
-  __android_log_print(ANDROID_LOG_INFO, "Tag", "Removing instance with id: %s", (char*)peer);
+  char* instanceId = (char*)peer;
+  __android_log_print(ANDROID_LOG_INFO, "Tag", "Removing instance with id: %s", instanceId);
 
-  Dart_Handle instance = instanceId_to_dart_handle[instanceId];
-  instanceId_to_dart_handle.erase(instanceId);
-  dart_handle_to_instanceId.erase(instance);
+  instanceId_to_weak_dart_handle.erase(instanceId);
 }
 
-void dart_attach_finalizer(Dart_Handle instance, char *instanceId) {
-  if (Dart_NewFinalizableHandle_DL == NULL) {
+Dart_WeakPersistentHandle dart_attach_finalizer(Dart_Handle instance, char *instanceId) {
+  if (Dart_NewWeakPersistentHandle_DL == NULL) {
     __android_log_write(ANDROID_LOG_INFO, "Tag", "Finalizer could not be attached.");
   }
 
   intptr_t size = 4096;
-  Dart_NewFinalizableHandle_DL(instance, (void*)instanceId, size, &dart_finalizer);
+  return Dart_NewWeakPersistentHandle_DL(instance, (void*)instanceId, size, &dart_finalizer);
 }
-
+/*
 extern "C" int dart_is_paired(Dart_Handle instance) {
   return dart_handle_to_instanceId.count(instance);
 }
-
-extern "C" int dart_add_pair(char *instanceId, Dart_Handle instance, int owner) {
-  if (dart_is_paired(instance)) return 0;
-  std::string strInstanceId = std::string(instanceId);
-
-  Dart_Handle handle;
+*/
+extern "C" void dart_add_pair(char *instanceId, Dart_Handle instance, int owner) {
   if (owner) {
-    handle = instance;
-    dart_attach_finalizer(instance, instanceId);
+  __android_log_write(ANDROID_LOG_INFO, "Tag", "Creating finalizer");
+    Dart_WeakPersistentHandle handle = dart_attach_finalizer(instance, instanceId);
+    instanceId_to_weak_dart_handle[std::string(instanceId)] = handle;
   } else {
-    handle = Dart_NewPersistentHandle_DL(instance);
+    __android_log_write(ANDROID_LOG_INFO, "Tag", "Not add finalizer");
+    Dart_Handle handle = Dart_NewPersistentHandle_DL(instance);
+    instanceId_to_dart_handle[std::string(instanceId)] = handle;
   }
-
-  instanceId_to_dart_handle[strInstanceId] = handle;
-  dart_handle_to_instanceId[handle] = strInstanceId;
-
-  return 1;
 }
-
+/*
 extern "C" char* dart_get_instanceId(Dart_Handle instance) {
   if(!dart_is_paired(instance)) return NULL;
-  std::string instanceId = dart_handle_to_instanceId[instance];
-  return &instanceId[0];
+  return dart_handle_to_instanceId[instance];
+}
+*/
+
+extern "C" int dart_contains_instanceId(char *instanceId) {
+  std::string strInstanceId = std::string(instanceId);
+  if (instanceId_to_dart_handle.count(strInstanceId) || instanceId_to_weak_dart_handle.count(strInstanceId)) {
+    return 1;
+  }
+
+  return 0;
 }
 
 extern "C" Dart_Handle dart_get_object(char *instanceId) {
-  std::string strId = std::string(instanceId);
-  if (!instanceId_to_dart_handle.count(strId)) return NULL;
-  return instanceId_to_dart_handle[strId];
+  std::string strInstanceId = std::string(instanceId);
+  if (instanceId_to_dart_handle.count(strInstanceId)) {
+    return instanceId_to_dart_handle[strInstanceId];
+  } else if (instanceId_to_weak_dart_handle.count(strInstanceId)) {
+    return Dart_HandleFromWeakPersistent_DL(instanceId_to_weak_dart_handle[strInstanceId]);
+  }
+
+  Dart_Handle error = Dart_NewApiError_DL("Could not find Dart_Handle.");
+  Dart_PropagateError_DL(error);
+
+  return NULL;
 }
 
 std::string jstring2string(JNIEnv *env, jstring jStr) {

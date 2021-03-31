@@ -44,7 +44,10 @@ class TypeChannel<T extends Object> {
   ///
   /// Sends a message to another [TypeChannelMessenger] with
   /// [TypeChannelMessenger.messenger].
-  Future<PairedInstance?> createNewInstancePair(T instance, {required bool owner,}) async {
+  Future<PairedInstance?> createNewInstancePair(
+    T instance, {
+    required bool owner,
+  }) async {
     return messenger.sendCreateNewInstancePair(name, instance, owner: owner);
   }
 
@@ -96,8 +99,9 @@ mixin TypeChannelMessageDispatcher {
   Future<void> sendCreateNewInstancePair(
     String channelName,
     PairedInstance pairedInstance,
-    List<Object?> arguments,
-  );
+    List<Object?> arguments, {
+    required bool owner,
+  });
 
   /// Invoke a static method for type channel of [channelName].
   Future<Object?> sendInvokeStaticMethod(
@@ -190,10 +194,13 @@ mixin TypeChannelHandler<T extends Object> {
 abstract class TypeChannelMessenger {
   final Map<String, TypeChannelHandler> _channelHandlers =
       <String, TypeChannelHandler>{};
-  final InstancePairManager _instancePairManager = InstancePairManager();
+  final InstancePairManager _instancePairManager = InstancePairManager.instance;
 
-  bool _addPair(Object instance, PairedInstance pairedInstance,
-      {required bool owner}) {
+  bool _addPair(
+    Object instance,
+    PairedInstance pairedInstance, {
+    required bool owner,
+  }) {
     return _instancePairManager.addPair(
       instance,
       pairedInstance.instanceId,
@@ -307,6 +314,9 @@ abstract class TypeChannelMessenger {
     // );
 
     if (!_addPair(instance, pairedInstance, owner: owner)) return null;
+    print(_instancePairManager.isPaired(Object()));
+    print(_instancePairManager.isPaired(Object()));
+    print(_instancePairManager.isPaired(Object()));
 
     // await messageDispatcher.sendCreateNewInstancePair(
     //   channelName,
@@ -315,6 +325,7 @@ abstract class TypeChannelMessenger {
     //     this,
     //     handler.getCreationArguments(this, instance),
     //   )! as List<Object?>,
+    //   owner: owner,
     // );
 
     return pairedInstance;

@@ -92,7 +92,8 @@ public abstract class TypeChannelMessenger {
         pairedInstance,
         (List<Object>) getConverter().convertForRemoteMessenger(
             this,
-            handler.getCreationArguments(this, instance))
+            handler.getCreationArguments(this, instance)),
+        owner
     ).setOnCompleteListener(
         new Completable.OnCompleteListener<Void>() {
           @Override

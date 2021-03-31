@@ -27,13 +27,13 @@ public class MethodChannelMessageDispatcher implements TypeChannelMessageDispatc
 
   @Override
   public Completable<Void> sendCreateNewInstancePair(
-      String channelName, PairedInstance pairedInstance, List<Object> arguments) {
+      String channelName, PairedInstance pairedInstance, List<Object> arguments, boolean owner) {
     final Completer<Void> completer = new Completer<>();
     final String method = MethodChannelMessenger.METHOD_CREATE;
 
     channel.invokeMethod(
         method,
-        Arrays.asList(channelName, pairedInstance, arguments),
+        Arrays.asList(channelName, pairedInstance, arguments, owner),
         new MethodChannelMessengerResult<>(completer, method));
 
     return completer.completable;
