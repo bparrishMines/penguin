@@ -311,7 +311,7 @@ Java_github_penguin_reference_reference_InstancePairManager_nativeReleaseDartHan
 
 extern "C"
 JNIEXPORT jobject JNICALL
-Java_github_penguin_reference_reference_InstancePairManager_getObject(JNIEnv *env, jobject object, jstring instanceId) {
+Java_github_penguin_reference_reference_InstancePairManager_getInstance(JNIEnv *env, jobject object, jstring instanceId) {
   std::string strInstanceId = jstring2string(env, instanceId);
   if (!instanceId_to_jobject.count(strInstanceId)) return NULL;
   return instanceId_to_jobject[strInstanceId];

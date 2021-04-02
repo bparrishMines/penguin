@@ -1,0 +1,70 @@
+{
+  "variant": {
+    "module": {
+      "rootBuildGradleFolder": "/Users/mauriceparrish/Development/penguin/packages/reference/example/android",
+      "sdkFolder": "/Users/mauriceparrish/Library/Android/sdk",
+      "isNativeCompilerSettingsCacheEnabled": false,
+      "isBuildOnlyTargetAbiEnabled": true,
+      "splitsAbiFilterSet": [],
+      "intermediatesFolder": "/Users/mauriceparrish/Development/penguin/packages/reference/example/build/reference/intermediates",
+      "gradleModulePathName": ":reference",
+      "moduleRootFolder": "/Users/mauriceparrish/Development/penguin/packages/reference/android",
+      "makeFile": "/Users/mauriceparrish/Development/penguin/packages/reference/android/CMakeLists.txt",
+      "buildSystem": "CMAKE",
+      "compilerSettingsCacheFolder": "/Users/mauriceparrish/Development/penguin/packages/reference/example/android/.cxx",
+      "cxxFolder": "/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx",
+      "ndkFolder": "/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061",
+      "ndkVersion": "22.0.7026061",
+      "ndkSupportedAbiList": [
+        "ARMEABI_V7A",
+        "ARM64_V8A",
+        "X86",
+        "X86_64"
+      ],
+      "ndkDefaultAbiList": [
+        "ARMEABI_V7A",
+        "ARM64_V8A",
+        "X86",
+        "X86_64"
+      ],
+      "cmakeToolchainFile": "."
+    },
+    "buildSystemArgumentList": [],
+    "cFlagList": [],
+    "cppFlagsList": [],
+    "variantName": "profile",
+    "soFolder": "/Users/mauriceparrish/Development/penguin/packages/reference/example/build/reference/intermediates/cmake/profile/lib",
+    "objFolder": "/Users/mauriceparrish/Development/penguin/packages/reference/example/build/reference/intermediates/cmake/profile/obj",
+    "jsonFolder": "/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/profile",
+    "gradleBuildOutputFolder": "/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cxx/profile",
+    "isDebuggableEnabled": false,
+    "validAbiList": [
+      "ARMEABI_V7A",
+      "ARM64_V8A",
+      "X86",
+      "X86_64"
+    ],
+    "buildTargetSet": []
+  },
+  "abi": "ARMEABI_V7A",
+  "abiPlatformVersion": 16,
+  "cxxBuildFolder": "/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/profile/armeabi-v7a",
+  "jsonFile": "/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/profile/armeabi-v7a/android_gradle_build.json",
+  "gradleBuildOutputFolder": "/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cxx/profile/armeabi-v7a",
+  "objFolder": "/Users/mauriceparrish/Development/penguin/packages/reference/example/build/reference/intermediates/cmake/profile/obj/armeabi-v7a",
+  "buildCommandFile": "/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/profile/armeabi-v7a/build_command.txt",
+  "buildOutputFile": "/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/profile/armeabi-v7a/build_output.txt",
+  "modelOutputFile": "/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/profile/armeabi-v7a/build_model.json",
+  "cmake": {
+    "cmakeListsWrapperFile": "/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cxx/profile/armeabi-v7a/CMakeLists.txt",
+    "toolchainWrapperFile": "/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cxx/profile/armeabi-v7a/android_gradle_build.toolchain.cmake",
+    "buildGenerationStateFile": "/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cxx/profile/armeabi-v7a/build_generation_state.json",
+    "cacheKeyFile": "/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cxx/profile/armeabi-v7a/compiler_cache_key.json",
+    "compilerCacheUseFile": "/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cxx/profile/armeabi-v7a/compiler_cache_use.json",
+    "compilerCacheWriteFile": "/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cxx/profile/armeabi-v7a/compiler_cache_write.json",
+    "toolchainSettingsFromCacheFile": "/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cxx/profile/armeabi-v7a/compiler_settings_cache.cmake",
+    "cmakeWrappingBaseFolder": "."
+  },
+  "jsonGenerationLoggingRecordFile": "/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/profile/armeabi-v7a/json_generation_record.json",
+  "compileCommandsJsonFile": "/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/profile/armeabi-v7a/compile_commands.json"
+}

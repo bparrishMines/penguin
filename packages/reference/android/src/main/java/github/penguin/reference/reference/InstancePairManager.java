@@ -1,29 +1,33 @@
 package github.penguin.reference.reference;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
+
 import java.util.WeakHashMap;
 
 public class InstancePairManager {
-  //  private final BiMap<Object, PairedInstance> pairedInstances = new BiMap<>();
-//  private final Map<Object, Set<Object>> owners = new HashMap<>();
-
-  public static final InstancePairManager instance;
-
-  static {
-    System.loadLibrary("native_add");
-    instance = new InstancePairManager();
-  }
+  private static InstancePairManager instance;
 
   private final WeakHashMap<Object, String> instanceIds = new WeakHashMap<>();
 
-  private InstancePairManager() {
-    passJvm();
-  }
+  @VisibleForTesting
+  public InstancePairManager() { }
 
-  public static native void passJvm();
+  private static native void passJvm();
+
+  @NonNull
+  public static InstancePairManager getInstance() {
+    if (instance == null) {
+      System.loadLibrary("native_add");
+      passJvm();
+      instance = new InstancePairManager();
+    }
+    return instance;
+  }
 
   public boolean addPair(Object instance, String instanceId, boolean owner) {
     if (instanceIds.containsKey(instance)) return false;
-    if (getObject(instanceId) != null) throw new AssertionError();
+    if (getInstance(instanceId) != null) throw new AssertionError();
 
     instanceIds.put(instance, instanceId);
     nativeAddPair(instance, instanceId, owner);
@@ -38,45 +42,15 @@ public class InstancePairManager {
     return instanceIds.get(instance);
   }
 
-  private native void nativeAddPair(Object instance, String instanceId, boolean owner);
-//    final boolean wasPaired = isPaired(object);
-//
-//    if (!wasPaired) {
-//      if (pairedInstances.containsValue(pairedInstance)) throw new IllegalStateException();
-//      pairedInstances.put(object, pairedInstance);
-//      owners.put(object, new HashSet<>());
-//    }
-//
-//    owners.get(object).add(owner);
-//    return !wasPaired;
-
-
-//  boolean removePairWithObject(Object object, Object owner, boolean force) {
-//    if (!isPaired(object)) return false;
-//
-//    final Set<Object> objectOwners = owners.get(object);
-//    objectOwners.remove(owner);
-//
-//    if (!force && objectOwners.size() > 0) return false;
-//
-//    pairedInstances.remove(object);
-//    objectOwners.remove(object);
-//    return true;
-//  }
-
-  //return getPairedPairedInstance(instance) != null;
-
-  //return pairedInstances.get(instance);
-
   public void releaseDartHandle(Object instance) {
-    if (!isPaired(instance)) return;
+    if (!isPaired(instance)) throw new AssertionError();
     final String instanceId = instanceIds.remove(instance);
     nativeReleaseDartHandle(instanceId);
   }
 
+  public native Object getInstance(String instanceId);
+
+  private native void nativeAddPair(Object instance, String instanceId, boolean owner);
+
   private native void nativeReleaseDartHandle(String instanceId);
-
-
-  public native Object getObject(String instanceId);
-  //return pairedInstances.inverse.get(pairedInstance);
 }

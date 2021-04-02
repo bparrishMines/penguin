@@ -316,7 +316,7 @@ abstract class TypeChannelMessenger {
   }) {
     assert(
       getPairedObject(pairedInstance) == null,
-      'An object with `$PairedInstance` has already been created.',
+      'An object with `PairedInstance` has already been created.',
     );
 
     final TypeChannelHandler? handler = getChannelHandler(channelName);

@@ -96,16 +96,6 @@ class LibraryTemplate {
       throw new UnsupportedOperationException(
           String.format("%s.%s not supported.", instance, methodName));
     }
-
-//    @Override
-//    public void onInstanceAdded(TypeChannelMessenger messenger, $ClassTemplate instance)
-//        throws Exception {
-//    }
-//
-//    @Override
-//    public void onInstanceRemoved(TypeChannelMessenger messenger, $ClassTemplate instance)
-//        throws Exception {
-//    }
   }
 
   public interface $Channels {

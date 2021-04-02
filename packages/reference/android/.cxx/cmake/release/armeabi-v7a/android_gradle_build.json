@@ -1,0 +1,48 @@
+
+{
+	"buildFiles" : 
+	[
+		"/Users/mauriceparrish/Development/penguin/packages/reference/android/CMakeLists.txt"
+	],
+	"cFileExtensions" : [ "c" ],
+	"cleanCommands" : 
+	[
+		"/Users/mauriceparrish/Library/Android/sdk/cmake/3.6.4111459/bin/cmake --build /Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/release/armeabi-v7a --target clean"
+	],
+	"cppFileExtensions" : [ "cpp" ],
+	"libraries" : 
+	{
+		"native_add-Release-armeabi-v7a" : 
+		{
+			"abi" : "armeabi-v7a",
+			"artifactName" : "native_add",
+			"buildCommand" : "/Users/mauriceparrish/Library/Android/sdk/cmake/3.6.4111459/bin/cmake --build /Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/release/armeabi-v7a --target native_add",
+			"buildType" : "release",
+			"files" : 
+			[
+				
+				{
+					"flags" : "  --target=armv7-none-linux-androideabi16 --gcc-toolchain=/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Dnative_add_EXPORTS -I../../../../../third_party/dart-sdk/src/runtime  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security  -Oz -DNDEBUG  -fPIC      -c ",
+					"src" : "/Users/mauriceparrish/Development/penguin/packages/reference/third_party/dart-sdk/src/runtime/include/dart_api_dl.c",
+					"workingDirectory" : "/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/release/armeabi-v7a"
+				},
+				
+				{
+					"flags" : "  --target=armv7-none-linux-androideabi16 --gcc-toolchain=/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot  -Dnative_add_EXPORTS -I../../../../../third_party/dart-sdk/src/runtime  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security   -Oz -DNDEBUG  -fPIC    -c ",
+					"src" : "/Users/mauriceparrish/Development/penguin/packages/reference/ios/Classes/native_add.cpp",
+					"workingDirectory" : "/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/release/armeabi-v7a"
+				}
+			],
+			"output" : "/Users/mauriceparrish/Development/penguin/packages/reference/example/build/reference/intermediates/cmake/release/obj/armeabi-v7a/libnative_add.so",
+			"toolchain" : "15758239924615289414"
+		}
+	},
+	"toolchains" : 
+	{
+		"15758239924615289414" : 
+		{
+			"cCompilerExecutable" : "/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang",
+			"cppCompilerExecutable" : "/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++"
+		}
+	}
+}

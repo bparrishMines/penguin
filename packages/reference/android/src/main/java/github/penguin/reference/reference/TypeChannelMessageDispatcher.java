@@ -16,9 +16,4 @@ public interface TypeChannelMessageDispatcher {
       PairedInstance pairedInstance,
       String methodName,
       List<Object> arguments);
-
-//  Completable<Object> sendInvokeMethodOnUnpairedReference(
-//      NewUnpairedInstance unpairedInstance, String methodName, List<Object> arguments);
-
-  Completable<Void> sendDisposePair(String channelName, PairedInstance pairedInstance);
 }

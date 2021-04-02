@@ -1,0 +1,70 @@
+{
+  "variant": {
+    "module": {
+      "rootBuildGradleFolder": "/Users/mauriceparrish/Development/penguin/packages/reference/example/android",
+      "sdkFolder": "/Users/mauriceparrish/Library/Android/sdk",
+      "isNativeCompilerSettingsCacheEnabled": false,
+      "isBuildOnlyTargetAbiEnabled": true,
+      "splitsAbiFilterSet": [],
+      "intermediatesFolder": "/Users/mauriceparrish/Development/penguin/packages/reference/example/build/reference/intermediates",
+      "gradleModulePathName": ":reference",
+      "moduleRootFolder": "/Users/mauriceparrish/Development/penguin/packages/reference/android",
+      "makeFile": "/Users/mauriceparrish/Development/penguin/packages/reference/android/CMakeLists.txt",
+      "buildSystem": "CMAKE",
+      "compilerSettingsCacheFolder": "/Users/mauriceparrish/Development/penguin/packages/reference/example/android/.cxx",
+      "cxxFolder": "/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx",
+      "ndkFolder": "/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061",
+      "ndkVersion": "22.0.7026061",
+      "ndkSupportedAbiList": [
+        "ARMEABI_V7A",
+        "ARM64_V8A",
+        "X86",
+        "X86_64"
+      ],
+      "ndkDefaultAbiList": [
+        "ARMEABI_V7A",
+        "ARM64_V8A",
+        "X86",
+        "X86_64"
+      ],
+      "cmakeToolchainFile": "."
+    },
+    "buildSystemArgumentList": [],
+    "cFlagList": [],
+    "cppFlagsList": [],
+    "variantName": "release",
+    "soFolder": "/Users/mauriceparrish/Development/penguin/packages/reference/example/build/reference/intermediates/cmake/release/lib",
+    "objFolder": "/Users/mauriceparrish/Development/penguin/packages/reference/example/build/reference/intermediates/cmake/release/obj",
+    "jsonFolder": "/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/release",
+    "gradleBuildOutputFolder": "/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cxx/release",
+    "isDebuggableEnabled": false,
+    "validAbiList": [
+      "ARMEABI_V7A",
+      "ARM64_V8A",
+      "X86",
+      "X86_64"
+    ],
+    "buildTargetSet": []
+  },
+  "abi": "X86",
+  "abiPlatformVersion": 16,
+  "cxxBuildFolder": "/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/release/x86",
+  "jsonFile": "/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/release/x86/android_gradle_build.json",
+  "gradleBuildOutputFolder": "/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cxx/release/x86",
+  "objFolder": "/Users/mauriceparrish/Development/penguin/packages/reference/example/build/reference/intermediates/cmake/release/obj/x86",
+  "buildCommandFile": "/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/release/x86/build_command.txt",
+  "buildOutputFile": "/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/release/x86/build_output.txt",
+  "modelOutputFile": "/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/release/x86/build_model.json",
+  "cmake": {
+    "cmakeListsWrapperFile": "/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cxx/release/x86/CMakeLists.txt",
+    "toolchainWrapperFile": "/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cxx/release/x86/android_gradle_build.toolchain.cmake",
+    "buildGenerationStateFile": "/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cxx/release/x86/build_generation_state.json",
+    "cacheKeyFile": "/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cxx/release/x86/compiler_cache_key.json",
+    "compilerCacheUseFile": "/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cxx/release/x86/compiler_cache_use.json",
+    "compilerCacheWriteFile": "/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cxx/release/x86/compiler_cache_write.json",
+    "toolchainSettingsFromCacheFile": "/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cxx/release/x86/compiler_settings_cache.cmake",
+    "cmakeWrappingBaseFolder": "."
+  },
+  "jsonGenerationLoggingRecordFile": "/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/release/x86/json_generation_record.json",
+  "compileCommandsJsonFile": "/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/release/x86/compile_commands.json"
+}

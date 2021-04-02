@@ -13,8 +13,4 @@ public interface TypeChannelHandler<T> {
   Object invokeMethod(
       TypeChannelMessenger manager, T instance, String methodName, List<Object> arguments)
       throws Exception;
-
-//  void onInstanceAdded(TypeChannelMessenger manager, T instance) throws Exception;
-//
-//  void onInstanceRemoved(TypeChannelMessenger manager, T instance) throws Exception;
 }

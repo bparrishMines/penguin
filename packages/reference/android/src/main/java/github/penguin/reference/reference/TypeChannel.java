@@ -25,17 +25,9 @@ public class TypeChannel<T> {
     messenger.unregisterHandler(name);
   }
 
-//  public NewUnpairedInstance createUnpairedInstance(T instance) {
-//    return messenger.createUnpairedInstance(name, instance);
-//  }
-
-  public Completable<PairedInstance> createNewInstancePair(T instance) {
-    return createNewInstancePair(instance);
+  public Completable<PairedInstance> createNewInstancePair(T instance, boolean owner) {
+    return messenger.sendCreateNewInstancePair(name, instance, owner);
   }
-
-//  public Completable<PairedInstance> createNewInstancePair(T instance, Object owner) {
-//    return messenger.sendCreateNewInstancePair(name, instance, owner);
-//  }
 
   public Completable<Object> invokeStaticMethod(String methodName, List<Object> arguments) {
     return messenger.sendInvokeStaticMethod(name, methodName, arguments);
@@ -44,12 +36,4 @@ public class TypeChannel<T> {
   public Completable<Object> invokeMethod(T instance, String methodName, List<Object> arguments) {
     return messenger.sendInvokeMethod(name, instance, methodName, arguments);
   }
-
-//  public Completable<Void> disposeInstancePair(Object instance) {
-//    return messenger.sendDisposeInstancePair(name, instance, instance);
-//  }
-//
-//  public Completable<Void> disposeInstancePair(Object instance, Object owner) {
-//    return messenger.sendDisposeInstancePair(name, instance, owner);
-//  }
 }

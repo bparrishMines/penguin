@@ -24,13 +24,17 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: const Text('Plugin example app'),
         ),
-        body: Column(children: <Widget>[
-          Text(_text),
-          ElevatedButton(
-            onPressed: () => debugPrint('HI!'),
-            child: const Text('HI'),
+        body: Center(
+          child: Column(
+            children: <Widget>[
+              Text(_text),
+              ElevatedButton(
+                onPressed: () => debugPrint('HI!'),
+                child: const Text('HI'),
+              ),
+            ],
           ),
-        ]),
+        ),
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
             final ClassTemplate classTemplate = ClassTemplate(23);

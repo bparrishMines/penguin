@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 
 import java.util.List;
 
-import github.penguin.reference.reference.NewUnpairedInstance;
 import github.penguin.reference.reference.PairedInstance;
 import github.penguin.reference.reference.TypeChannelMessageDispatcher;
 import github.penguin.reference.reference.TypeChannelMessenger;
@@ -18,8 +17,6 @@ public class MethodChannelMessenger extends TypeChannelMessenger {
   static final String METHOD_CREATE = "REFERENCE_CREATE";
   static final String METHOD_STATIC_METHOD = "REFERENCE_STATIC_METHOD";
   static final String METHOD_METHOD = "REFERENCE_METHOD";
-  static final String METHOD_UNPAIRED_METHOD = "REFERENCE_UNPAIRED_METHOD";
-  static final String METHOD_DISPOSE = "REFERENCE_DISPOSE";
 
   public final BinaryMessenger binaryMessenger;
   public final String channelName;
@@ -70,22 +67,6 @@ public class MethodChannelMessenger extends TypeChannelMessenger {
                   callResult.success(result);
                   break;
                 }
-                case METHOD_UNPAIRED_METHOD: {
-                  final List<Object> arguments = (List<Object>) call.arguments;
-                  final Object result =
-                      onReceiveInvokeMethodOnUnpairedInstance(
-                          (NewUnpairedInstance) arguments.get(0),
-                          (String) arguments.get(1),
-                          (List<Object>) arguments.get(2));
-                  callResult.success(result);
-                  break;
-                }
-//                case METHOD_DISPOSE:
-//                  final List<Object> arguments = (List<Object>) call.arguments;
-//                  onReceiveDisposeInstancePair(
-//                      (String) arguments.get(0), (PairedInstance) arguments.get(1));
-//                  callResult.success(null);
-//                  break;
                 default:
                   callResult.notImplemented();
               }
