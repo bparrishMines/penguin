@@ -13,14 +13,14 @@ public class InstancePairManager {
   @VisibleForTesting
   public InstancePairManager() { }
 
-  private static native void passJvm();
+  private native void initializeReferenceLib();
 
   @NonNull
   public static InstancePairManager getInstance() {
     if (instance == null) {
       System.loadLibrary("native_add");
-      passJvm();
       instance = new InstancePairManager();
+      instance.initializeReferenceLib();
     }
     return instance;
   }
@@ -48,9 +48,23 @@ public class InstancePairManager {
     nativeReleaseDartHandle(instanceId);
   }
 
+  public void removePair(String instanceId) {
+    final Object instance = getInstance(instanceId);
+    if (instance == null) {
+      throw new IllegalStateException(
+          "The Object with the following instanceId has already been disposed: " + instanceId
+          );
+    }
+
+    instanceIds.remove(instance);
+    nativeRemovePair(instanceId);
+  }
+
   public native Object getInstance(String instanceId);
 
   private native void nativeAddPair(Object instance, String instanceId, boolean owner);
 
   private native void nativeReleaseDartHandle(String instanceId);
+
+  private native void nativeRemovePair(String instanceId);
 }
