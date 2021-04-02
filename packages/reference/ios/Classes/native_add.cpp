@@ -38,12 +38,6 @@ static void RunFinalizer(void* isolate_callback_data,
   aDartHandle = NULL;
 }
 
-extern "C" void reference_dart_dl_initialize(void* initialize_api_dl_data) {
-  if (Dart_InitializeApiDL(initialize_api_dl_data) != 0) {
-     __android_log_write(ANDROID_LOG_INFO, "Tag", "CANT INITIALIZE");
-  }
-}
-
 extern "C" void PassObjectToC(Dart_Handle object/*,
                               reference_finalizer finalizer*/) {
   if (Dart_NewFinalizableHandle_DL == NULL) {
@@ -133,8 +127,30 @@ static std::unordered_map<std::string, Dart_WeakPersistentHandle> instanceId_to_
 
 static std::unordered_map<std::string, jobject> instanceId_to_jobject;
 
+static Dart_Port dart_send_port;
+
+extern "C" void dart_remove_pair(char* instanceId) {
+  __android_log_write(ANDROID_LOG_INFO, "Tag", "dart_remove_pair start");
+  std::string strInstanceId = std::string(instanceId);
+  Dart_Handle handle = instanceId_to_dart_handle[strInstanceId];
+  instanceId_to_dart_handle.erase(strInstanceId);
+  Dart_DeletePersistentHandle_DL(handle);
+  __android_log_write(ANDROID_LOG_INFO, "Tag", "dart_remove_pair end");
+}
+
+extern "C" void register_dart_receive_port(Dart_Port port) {
+  dart_send_port = port;
+}
+
+extern "C" void reference_dart_dl_initialize(void* initialize_api_dl_data) {
+  if (Dart_InitializeApiDL(initialize_api_dl_data) != 0) {
+     __android_log_write(ANDROID_LOG_INFO, "Tag", "CANT INITIALIZE");
+  }
+}
+
 //static std::map<char *, Dart_Handle, cmp_str> instanceId_to_dart_handle;
 
+// TODO: Should release from java weak map
 void release_jobject(std::string instanceId) {
   JNIEnv* env;
   jint result = jvm->GetEnv((void**)&env, JNI_VERSION_1_6);
@@ -180,7 +196,7 @@ extern "C" void dart_add_pair(char *instanceId, Dart_Handle instance, int owner)
     Dart_WeakPersistentHandle handle = dart_attach_finalizer(instance, instanceId);
     instanceId_to_weak_dart_handle[std::string(instanceId)] = handle;
   } else {
-    __android_log_write(ANDROID_LOG_INFO, "Tag", "Not add finalizer");
+    __android_log_write(ANDROID_LOG_INFO, "Tag", "create weak finilizer");
     Dart_Handle handle = Dart_NewPersistentHandle_DL(instance);
     instanceId_to_dart_handle[std::string(instanceId)] = handle;
   }
@@ -269,12 +285,43 @@ Java_github_penguin_reference_reference_InstancePairManager_getInstanceId(JNIEnv
 */
 
 extern "C"
+JNIEXPORT void JNICALL
+Java_github_penguin_reference_reference_InstancePairManager_nativeReleaseDartHandle(JNIEnv *env, jobject object, jstring instanceId) {
+  //__android_log_write(ANDROID_LOG_INFO, "Tag", "before new");
+
+    std::string strInstanceId = jstring2string(env, instanceId);
+
+    jobject instance = instanceId_to_jobject[strInstanceId];
+    instanceId_to_jobject.erase(strInstanceId);
+    env->DeleteWeakGlobalRef(instance);
+
+    Dart_CObject dartInstanceId;
+    dartInstanceId.type = Dart_CObject_kString;
+
+    char* cstr = new char[strInstanceId.length()+1];
+    std::strcpy(cstr, strInstanceId.c_str());
+    dartInstanceId.value.as_string = cstr;
+
+    Dart_PostCObject_DL(dart_send_port, &dartInstanceId);
+
+    delete[] cstr;
+
+  //__android_log_write(ANDROID_LOG_INFO, "Tag", "after new");
+}
+
+extern "C"
 JNIEXPORT jobject JNICALL
 Java_github_penguin_reference_reference_InstancePairManager_getObject(JNIEnv *env, jobject object, jstring instanceId) {
   std::string strInstanceId = jstring2string(env, instanceId);
   if (!instanceId_to_jobject.count(strInstanceId)) return NULL;
   return instanceId_to_jobject[strInstanceId];
 }
+
+/*
+F(Dart_NewNativePort, Dart_Port_DL,                                          \
+    (const char* name, Dart_NativeMessageHandler_DL handler,                   \
+     bool handle_concurrently))
+     F(Dart_PostCObject, bool, (Dart_Port_DL port_id, Dart_CObject * message)) */
 
 extern "C"
 JNIEXPORT void JNICALL

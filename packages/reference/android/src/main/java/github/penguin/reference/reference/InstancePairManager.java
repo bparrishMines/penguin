@@ -68,6 +68,14 @@ public class InstancePairManager {
 
   //return pairedInstances.get(instance);
 
+  public void releaseDartHandle(Object instance) {
+    if (!isPaired(instance)) return;
+    final String instanceId = instanceIds.remove(instance);
+    nativeReleaseDartHandle(instanceId);
+  }
+
+  private native void nativeReleaseDartHandle(String instanceId);
+
 
   public native Object getObject(String instanceId);
   //return pairedInstances.inverse.get(pairedInstance);

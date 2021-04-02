@@ -40,7 +40,7 @@ class _MyAppState extends State<MyApp> {
         body: Column(children: <Widget>[
           Text(_text),
           ElevatedButton(
-            onPressed: () => print(object),
+            onPressed: () => print(object.toString() + MethodChannelMessenger.instance.isPaired(object!).toString()),
             child: const Text('HI'),
           ),
         ]),
@@ -70,7 +70,7 @@ class _MyAppState extends State<MyApp> {
               MethodChannelMessenger.instance.sendCreateNewInstancePair(
                 'channelName',
                 object!,
-                owner: true,
+                owner: false,
               );
               MethodChannelMessenger.instance.sendInvokeMethod(
                 "channelName",

@@ -65,9 +65,16 @@ public class ReferencePlugin implements FlutterPlugin {
     });
   }
 
-  public static class MyObject {
+  public class MyObject {
     void print() {
       Log.i("TAG", "PRINTING");
+      System.gc();
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+      myMessenger.instancePairManager.releaseDartHandle(this);
+      super.finalize();
     }
   }
 

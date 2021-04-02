@@ -1,6 +1,7 @@
 import 'dart:ffi';
 
 import 'dart:io';
+import 'dart:isolate';
 
 import 'package:ffi/ffi.dart';
 
@@ -34,6 +35,8 @@ class InstancePairManager {
   // final Map<Object, Set<Object>> _owners = <Object, Set<Object>>{};
   InstancePairManager._() {
     _referenceDartDlInitialize(NativeApi.initializeApiDLData);
+    _receivePort = ReceivePort()..listen(_removePair);
+    _registerDartReceivePort(_receivePort.sendPort.nativePort);
   }
 
   static final InstancePairManager instance = InstancePairManager._();
@@ -58,7 +61,31 @@ class InstancePairManager {
       _nativeAddLib.lookupFunction<Int32 Function(Pointer<Int8>),
           int Function(Pointer<Int8>)>('dart_contains_instanceId');
 
+  static final void Function(int sendPort) _registerDartReceivePort =
+      _nativeAddLib.lookupFunction<Void Function(Int64 sendPort),
+          void Function(int sendPort)>('register_dart_receive_port');
+
+  static final void Function(Pointer<Int8>) _dartRemovePair =
+      _nativeAddLib.lookupFunction<Void Function(Pointer<Int8>),
+          void Function(Pointer<Int8>)>('dart_remove_pair');
+
+  static Pointer<Int8> _stringAsNativeCharArray(String value) {
+    return value.toNativeUtf8().cast<Int8>();
+  }
+
   final Expando _instanceIds = Expando();
+
+  late final ReceivePort _receivePort;
+
+  void _removePair(dynamic message) {
+    final String instanceId = message.toString();
+
+    final Object? instance = getObject(instanceId);
+    if (instance == null) throw StateError('Object already disposed.');
+
+    _instanceIds[instance] = null;
+    _dartRemovePair(_stringAsNativeCharArray(instanceId));
+  }
 
   bool addPair(
     Object instance,

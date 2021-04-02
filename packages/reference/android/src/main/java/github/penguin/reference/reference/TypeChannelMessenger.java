@@ -12,7 +12,7 @@ import github.penguin.reference.async.Completer;
 
 public abstract class TypeChannelMessenger {
   private final Map<String, TypeChannelHandler<?>> channelHandlers = new HashMap<>();
-  private final InstancePairManager instancePairManager = InstancePairManager.instance;
+  public final InstancePairManager instancePairManager = InstancePairManager.instance;
 
   public abstract TypeChannelMessageDispatcher getMessageDispatcher();
 
@@ -93,7 +93,7 @@ public abstract class TypeChannelMessenger {
         (List<Object>) getConverter().convertForRemoteMessenger(
             this,
             handler.getCreationArguments(this, instance)),
-        owner
+        !owner
     ).setOnCompleteListener(
         new Completable.OnCompleteListener<Void>() {
           @Override
