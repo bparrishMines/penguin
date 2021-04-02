@@ -1,12 +1,7 @@
-import 'dart:ffi';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:reference/reference.dart';
 
 // ignore: implementation_imports
 import 'package:reference/src/template/template.dart';
-import 'package:reference/native_add.dart';
 
 void main() {
   runApp(const MyApp());
@@ -21,14 +16,6 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String _text = 'nada';
-  Object? object;
-  bool deleted = false;
-
-  @override
-  void initState() {
-    super.initState();
-    MethodChannelMessenger.instance.registerHandler('channelName', MyHandler());
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,56 +27,17 @@ class _MyAppState extends State<MyApp> {
         body: Column(children: <Widget>[
           Text(_text),
           ElevatedButton(
-            onPressed: () => print(object.toString() + MethodChannelMessenger.instance.isPaired(object!).toString()),
+            onPressed: () => debugPrint('HI!'),
             child: const Text('HI'),
           ),
         ]),
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
-            // if (object == null) {
-            //   print('setting object');
-            //   object = Object();
-            //   InstancePairManager.instance.addPair(
-            //     object!,
-            //     object.hashCode.toString(),
-            //     owner: true,
-            //   );
-            //   print('InstanceId should be ${object.hashCode}');
-            //   print(InstancePairManager.instance.getInstanceId(object!));
-            //   print(object == InstancePairManager.instance.getObject(object.hashCode.toString()));
-            //
-            //   print(InstancePairManager.instance.getInstanceId(Object()));
-            //   print(InstancePairManager.instance.getObject('woiefjwoijef'));
-            // } else {
-            //   print('unsetting object');
-            //   object = null;
-            // }
-            if (object == null && !deleted) {
-              object = Object();
-              _text = MethodChannelMessenger.instance.generateUniqueInstanceId(object!);
-              MethodChannelMessenger.instance.sendCreateNewInstancePair(
-                'channelName',
-                object!,
-                owner: false,
-              );
-              MethodChannelMessenger.instance.sendInvokeMethod(
-                "channelName",
-                object!,
-                '',
-                <Object?>[],
-              );
-            } else if (object == null && deleted) {
-              MethodChannelMessenger.instance.messageDispatcher
-                  .sendInvokeMethod(
-                'channelName',
-                PairedInstance(_text),
-                '',
-                <Object?>[],
-              );
-            } else {
-              object = null;
-              deleted = true;
-            }
+            final ClassTemplate classTemplate = ClassTemplate(23);
+            final String result = await classTemplate.methodTemplate('Hello, ');
+            setState(() {
+              _text = result;
+            });
           },
           child: const Icon(Icons.ac_unit),
         ),
@@ -97,40 +45,3 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
-
-class MyHandler with TypeChannelHandler {
-  @override
-  Object createInstance(
-      TypeChannelMessenger messenger, List<Object?> arguments) {
-    // TODO: implement createInstance
-    throw UnimplementedError();
-  }
-
-  @override
-  List<Object?> getCreationArguments(
-      TypeChannelMessenger messenger, Object instance) {
-    return <Object?>[];
-  }
-
-  @override
-  Object? invokeMethod(TypeChannelMessenger messenger, Object instance,
-      String methodName, List<Object?> arguments) {
-    // TODO: implement invokeMethod
-    throw UnimplementedError();
-  }
-
-  @override
-  Object? invokeStaticMethod(TypeChannelMessenger messenger, String methodName,
-      List<Object?> arguments) {
-    // TODO: implement invokeStaticMethod
-    throw UnimplementedError();
-  }
-}
-
-// class MyObject {
-//   Pointer<Void> finalizer;
-//
-//   MyObject() {
-//     attachFinalizer()
-//   }
-// }

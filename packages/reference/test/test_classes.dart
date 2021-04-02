@@ -12,6 +12,9 @@ class TestMessenger extends TypeChannelMessenger {
   final TestMessageDispatcher messageDispatcher = TestMessageDispatcher();
 
   @override
+  final TestInstancePairManager instancePairManager = TestInstancePairManager();
+
+  @override
   String generateUniqueInstanceId(Object instance) {
     return 'test_instance_id';
   }
@@ -61,14 +64,12 @@ class TestHandler with TypeChannelHandler<TestClass> {
 
 class TestMessageDispatcher with TypeChannelMessageDispatcher {
   @override
-  Future<void> sendCreateNewInstancePair(String handlerChannel,
-      PairedInstance remoteReference, List<Object?> arguments) {
-    return Future<void>.value();
-  }
-
-  @override
-  Future<void> sendDisposePair(
-      String channelName, PairedInstance remoteReference) {
+  Future<void> sendCreateNewInstancePair(
+    String handlerChannel,
+    PairedInstance remoteReference,
+    List<Object?> arguments, {
+    required bool owner,
+  }) {
     return Future<void>.value();
   }
 
@@ -76,15 +77,6 @@ class TestMessageDispatcher with TypeChannelMessageDispatcher {
   Future<Object?> sendInvokeMethod(
     String handlerChannel,
     PairedInstance remoteReference,
-    String methodName,
-    List<Object?> arguments,
-  ) {
-    return Future<String>.value('return_value');
-  }
-
-  @override
-  Future<Object?> sendInvokeMethodOnUnpairedInstance(
-    NewUnpairedInstance unpairedReference,
     String methodName,
     List<Object?> arguments,
   ) {
@@ -101,14 +93,36 @@ class TestMessageDispatcher with TypeChannelMessageDispatcher {
   }
 }
 
-class TestClass with ReferenceType<TestClass> {
+class TestClass {
   TestClass(this.messenger);
 
   final TypeChannelMessenger messenger;
+}
+
+class TestInstancePairManager implements InstancePairManager {
+  final Map<Object, String> instanceToInstanceId = <Object,String>{};
+  final Map<String, Object> instanceIdToInstance = <String, Object>{};
 
   @override
-  TypeChannel<TestClass> get typeChannel => TypeChannel<TestClass>(
-        messenger,
-        'test_channel',
-      );
+  bool addPair(Object instance, String instanceId, {required bool owner}) {
+    if (isPaired(true)) return false;
+    instanceToInstanceId[instance] = instanceId;
+    instanceIdToInstance[instanceId] = instance;
+    return true;
+  }
+
+  @override
+  Object? getInstance(String instanceId) {
+    return instanceIdToInstance[instanceId];
+  }
+
+  @override
+  String? getInstanceId(Object instance) {
+    return instanceToInstanceId[instance];
+  }
+
+  @override
+  bool isPaired(Object instance) {
+    return instanceToInstanceId.containsKey(instance);
+  }
 }

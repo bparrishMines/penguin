@@ -7,7 +7,7 @@ import github.penguin.reference.reference.TypeChannelMessenger;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.BinaryMessenger;
 
-// TODO(bparrishMines) Shouldn't be public.
+// TODO(bparrishMines) Shouldn't be public. Move code to reference_example
 public class PluginTemplate implements FlutterPlugin {
   private void initialize(final BinaryMessenger binaryMessenger) {
     final TypeChannelMessenger messenger = ReferencePlugin.getMessengerInstance(binaryMessenger);

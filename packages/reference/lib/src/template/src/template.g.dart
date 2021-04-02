@@ -39,8 +39,6 @@ class $ClassTemplateChannel extends TypeChannel<$ClassTemplate> {
 class $ClassTemplateHandler implements TypeChannelHandler<$ClassTemplate> {
   $ClassTemplateHandler({
     this.onCreate,
-    this.onAdded,
-    this.onRemoved,
     this.$onStaticMethodTemplate,
   });
 
@@ -48,12 +46,6 @@ class $ClassTemplateHandler implements TypeChannelHandler<$ClassTemplate> {
     TypeChannelMessenger messenger,
     $ClassTemplateCreationArgs args,
   )? onCreate;
-
-  final void Function(TypeChannelMessenger messenger, $ClassTemplate instance)?
-      onAdded;
-
-  final void Function(TypeChannelMessenger messenger, $ClassTemplate instance)?
-      onRemoved;
 
   final double Function(
           TypeChannelMessenger messenger, String parameterTemplate)?
@@ -126,22 +118,6 @@ class $ClassTemplateHandler implements TypeChannelHandler<$ClassTemplate> {
 
     // ignore: dead_code
     return method();
-  }
-
-  @override
-  void onInstanceAdded(
-    TypeChannelMessenger messenger,
-    $ClassTemplate instance,
-  ) {
-    if (onAdded != null) onAdded!(messenger, instance);
-  }
-
-  @override
-  void onInstanceRemoved(
-    TypeChannelMessenger messenger,
-    $ClassTemplate instance,
-  ) {
-    if (onRemoved != null) onRemoved!(messenger, instance);
   }
 }
 

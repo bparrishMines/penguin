@@ -24,17 +24,6 @@ void main() {
         const PairedInstance('a'),
       );
     });
-
-    test('encode/decode $NewUnpairedInstance', () {
-      final ByteData? byteData = messageCodec.encodeMessage(
-        const NewUnpairedInstance('apple', <Object>[]),
-      );
-
-      expect(
-        messageCodec.decodeMessage(byteData),
-        isUnpairedInstance('apple', <Object>[]),
-      );
-    });
   });
 
   group('$MethodChannelConverter', () {
@@ -98,6 +87,7 @@ void main() {
               'test_channel',
               PairedInstance('test_reference_id'),
               <Object>[],
+              true,
             ],
           ),
         ),
@@ -136,6 +126,7 @@ void main() {
         'test_channel',
         const PairedInstance('test_id'),
         <Object>[],
+        owner: true,
       );
 
       final Completer<String> responseCompleter = Completer<String>();
@@ -161,55 +152,6 @@ void main() {
       );
 
       expect(responseCompleter.future, completion('return_value'));
-    });
-
-    test('onReceiveInvokeMethodOnUnpairedInstance', () async {
-      final Completer<String> responseCompleter = Completer<String>();
-      await testMessenger.channel.binaryMessenger.handlePlatformMessage(
-        'test_method_channel',
-        testMessenger.channel.codec.encodeMethodCall(
-          const MethodCall(
-            'REFERENCE_UNPAIRED_METHOD',
-            <Object>[
-              NewUnpairedInstance('test_channel', <dynamic>[]),
-              'aMethod',
-              <Object>[],
-            ],
-          ),
-        ),
-        (ByteData? data) {
-          responseCompleter.complete(
-            testMessenger.channel.codec.decodeEnvelope(data!)
-                as FutureOr<String>?,
-          );
-        },
-      );
-
-      expect(responseCompleter.future, completion('return_value'));
-    });
-
-    test('onReceiveDisposeInstancePair', () async {
-      testMessenger.onReceiveCreateNewInstancePair(
-        'test_channel',
-        const PairedInstance('test_id'),
-        <Object>[],
-      );
-
-      await testMessenger.channel.binaryMessenger.handlePlatformMessage(
-        'test_method_channel',
-        testMessenger.channel.codec.encodeMethodCall(
-          const MethodCall(
-            'REFERENCE_DISPOSE',
-            <Object>['test_channel', PairedInstance('test_id')],
-          ),
-        ),
-        (ByteData? data) {},
-      );
-
-      expect(
-        testMessenger.isPaired(testMessenger.testHandler.testClassInstance),
-        isFalse,
-      );
     });
   });
 
@@ -242,13 +184,14 @@ void main() {
     });
 
     test('createNewPair', () {
-      testChannel.createNewInstancePair(TestClass(testMessenger));
+      testChannel.createNewInstancePair(TestClass(testMessenger), owner: true);
 
       expect(methodCallLog, <Matcher>[
         isMethodCallWithMatchers('REFERENCE_CREATE', arguments: <Object>[
           'test_channel',
           const PairedInstance('test_reference_id'),
           <Object>[],
+          false,
         ]),
       ]);
     });
@@ -269,7 +212,7 @@ void main() {
 
     test('sendInvokeMethod', () {
       final TestClass testClass = TestClass(testMessenger);
-      testChannel.createNewInstancePair(testClass);
+      testChannel.createNewInstancePair(testClass, owner: true);
 
       methodCallLog.clear();
 
@@ -286,43 +229,6 @@ void main() {
         ]),
       ]);
     });
-
-    test('sendInvokeMethodOnUnpairedReference', () {
-      expect(
-        testChannel
-            .sendInvokeMethod(TestClass(testMessenger), 'aMethod', <Object>[]),
-        completion('return_value'),
-      );
-      expect(methodCallLog, <Matcher>[
-        isMethodCallWithMatchers(
-          'REFERENCE_UNPAIRED_METHOD',
-          arguments: <Object>[
-            isUnpairedInstance('test_channel', <Object>[]),
-            'aMethod',
-            <Object>[],
-          ],
-        ),
-      ]);
-    });
-
-    test('disposePair', () {
-      final TestClass testClass = TestClass(testMessenger);
-      testChannel.createNewInstancePair(testClass);
-
-      methodCallLog.clear();
-
-      testChannel.disposeInstancePair(testClass);
-      expect(testMessenger.isPaired(testClass), isFalse);
-      expect(methodCallLog, <Matcher>[
-        isMethodCall(
-          'REFERENCE_DISPOSE',
-          arguments: <Object>[
-            'test_channel',
-            const PairedInstance('test_reference_id'),
-          ],
-        ),
-      ]);
-    });
   });
 }
 
@@ -333,6 +239,9 @@ class TestMessenger extends MethodChannelMessenger {
   }
 
   late final TestHandler testHandler;
+
+  @override
+  final TestInstancePairManager instancePairManager = TestInstancePairManager();
 
   @override
   String generateUniqueInstanceId(Object instance) {

@@ -5,8 +5,3 @@ class Reference {
 
   final String channel;
 }
-
-void main() {
-  BinaryMessenger messenger;
-  MethodChannel channel;
-}

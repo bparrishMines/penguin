@@ -24,8 +24,6 @@ class MethodChannelMessenger extends TypeChannelMessenger {
   static const String _methodCreate = 'REFERENCE_CREATE';
   static const String _methodStaticMethod = 'REFERENCE_STATIC_METHOD';
   static const String _methodMethod = 'REFERENCE_METHOD';
-  static const String _methodUnpairedMethod = 'REFERENCE_UNPAIRED_METHOD';
-  //static const String _methodDispose = 'REFERENCE_DISPOSE';
 
   /// Global manager maintained by reference plugin.
   ///
@@ -67,20 +65,7 @@ class MethodChannelMessenger extends TypeChannelMessenger {
           call.arguments[2] as String,
           call.arguments[3] as List<Object?>,
         );
-      } else if (call.method == MethodChannelMessenger._methodUnpairedMethod) {
-        return onReceiveInvokeMethodOnUnpairedInstance(
-          call.arguments[0] as NewUnpairedInstance,
-          call.arguments[1] as String,
-          call.arguments[2] as List<Object?>,
-        );
       }
-      // else if (call.method == MethodChannelMessenger._methodDispose) {
-      //   onReceiveDisposeInstancePair(
-      //     call.arguments[0] as String,
-      //     call.arguments[1] as PairedInstance,
-      //   );
-      //   return null;
-      // }
 
       throw StateError(call.method);
     } catch (error, stacktrace) {
@@ -170,29 +155,6 @@ class MethodChannelDispatcher with TypeChannelMessageDispatcher {
       <Object>[channelName, pairedInstance, methodName, arguments],
     );
   }
-
-  // @override
-  // Future<Object?> sendInvokeMethodOnUnpairedInstance(
-  //   NewUnpairedInstance unpairedReference,
-  //   String methodName,
-  //   List<Object?> arguments,
-  // ) {
-  //   return channel.invokeMethod<Object>(
-  //     MethodChannelMessenger._methodUnpairedMethod,
-  //     <Object>[unpairedReference, methodName, arguments],
-  //   );
-  // }
-  //
-  // @override
-  // Future<void> sendDisposePair(
-  //   String channelName,
-  //   PairedInstance remoteReference,
-  // ) {
-  //   return channel.invokeMethod<void>(
-  //     MethodChannelMessenger._methodDispose,
-  //     <Object>[channelName, remoteReference],
-  //   );
-  // }
 }
 
 /// Implementation of [StandardMessageCodec] for reference plugin.
@@ -207,17 +169,12 @@ class ReferenceMessageCodec extends StandardMessageCodec {
   const ReferenceMessageCodec();
 
   static const int _valuePairedInstance = 128;
-  static const int _valueNewUnpairedInstance = 129;
 
   @override
   void writeValue(WriteBuffer buffer, dynamic value) {
     if (value is PairedInstance) {
       buffer.putUint8(_valuePairedInstance);
       writeValue(buffer, value.instanceId);
-    } else if (value is NewUnpairedInstance) {
-      buffer.putUint8(_valueNewUnpairedInstance);
-      writeValue(buffer, value.channelName);
-      writeValue(buffer, value.creationArguments);
     } else {
       super.writeValue(buffer, value);
     }
@@ -229,11 +186,6 @@ class ReferenceMessageCodec extends StandardMessageCodec {
       case _valuePairedInstance:
         return PairedInstance(
           readValueOfType(buffer.getUint8(), buffer) as String,
-        );
-      case _valueNewUnpairedInstance:
-        return NewUnpairedInstance(
-          readValueOfType(buffer.getUint8(), buffer) as String,
-          readValueOfType(buffer.getUint8(), buffer) as List<Object?>,
         );
       default:
         return super.readValueOfType(type, buffer);

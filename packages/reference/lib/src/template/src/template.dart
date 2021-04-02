@@ -7,7 +7,12 @@ import 'template_channels.dart';
 
 @Reference('github.penguin/template/template/ClassTemplate')
 class ClassTemplate with $ClassTemplate {
-  ClassTemplate(this.fieldTemplate);
+  ClassTemplate(this.fieldTemplate) {
+    Channels.instance.classTemplateChannel.createNewInstancePair(
+      this,
+      owner: true,
+    );
+  }
 
   @override
   final int fieldTemplate;
