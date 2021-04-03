@@ -1,2 +1,1 @@
-[1/2] Building CXX object CMakeFiles/reference.dir/Users/mauriceparrish/Development/penguin/packages/reference/ios/Classes/reference.cpp.o
-[2/2] Linking CXX shared library /Users/mauriceparrish/Development/penguin/packages/reference/example/build/reference/intermediates/cmake/debug/obj/armeabi-v7a/libreference.so
+ninja: no work to do.
