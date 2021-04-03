@@ -1,50 +1,46 @@
 [
   {
     "level": "INFO",
-    "message": "Start JSON generation. Platform version: 16 min SDK version: x86_64",
-    "file": "/Users/mauriceparrish/Development/penguin/packages/reference/android/CMakeLists.txt",
-    "tag": "debug|x86_64"
+    "message": "Start JSON generation. Platform version: 16 min SDK version: x86_64"
   },
   {
     "level": "INFO",
-    "message": "No CMake version was specified in build.gradle. Using default version 3.10.2.",
-    "file": "/Users/mauriceparrish/Development/penguin/packages/reference/android/CMakeLists.txt",
-    "tag": "debug|x86_64"
+    "message": "rebuilding JSON /Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/debug/x86_64/android_gradle_build.json due to:"
   },
   {
     "level": "INFO",
-    "message": "Trying to locate CMake in local SDK repository.",
-    "file": "/Users/mauriceparrish/Development/penguin/packages/reference/android/CMakeLists.txt",
-    "tag": "debug|x86_64"
+    "message": "- a dependent build file changed"
   },
   {
     "level": "INFO",
-    "message": "- CMake found in SDK at \u0027/Users/mauriceparrish/Library/Android/sdk/cmake/3.10.2.4988404\u0027 had version \u00273.10.2\u0027",
-    "file": "/Users/mauriceparrish/Development/penguin/packages/reference/android/CMakeLists.txt",
-    "tag": "debug|x86_64"
+    "message": "  - /Users/mauriceparrish/Development/penguin/packages/reference/android/CMakeLists.txt"
   },
   {
     "level": "INFO",
-    "message": "CMake \u00273.18.1\u0027 found in SDK did not match requested version \u00273.10.2\u0027.",
-    "file": "/Users/mauriceparrish/Development/penguin/packages/reference/android/CMakeLists.txt",
-    "tag": "debug|x86_64"
+    "message": "keeping json folder \u0027/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/debug/x86_64\u0027 but regenerating project"
   },
   {
     "level": "INFO",
-    "message": "CMake \u00273.6.0\u0027 found in SDK did not match requested version \u00273.10.2\u0027.",
-    "file": "/Users/mauriceparrish/Development/penguin/packages/reference/android/CMakeLists.txt",
-    "tag": "debug|x86_64"
+    "message": "executing cmake Executable : /Users/mauriceparrish/Library/Android/sdk/cmake/3.6.4111459/bin/cmake\narguments : \n-H/Users/mauriceparrish/Development/penguin/packages/reference/android\n-B/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/debug/x86_64\n-DANDROID_ABI\u003dx86_64\n-DANDROID_PLATFORM\u003dandroid-16\n-DCMAKE_LIBRARY_OUTPUT_DIRECTORY\u003d/Users/mauriceparrish/Development/penguin/packages/reference/example/build/reference/intermediates/cmake/debug/obj/x86_64\n-DCMAKE_BUILD_TYPE\u003dDebug\n-DANDROID_NDK\u003d/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061\n-DCMAKE_TOOLCHAIN_FILE\u003d/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/build/cmake/android.toolchain.cmake\n-DCMAKE_MAKE_PROGRAM\u003d/Users/mauriceparrish/Library/Android/sdk/cmake/3.6.4111459/bin/ninja\n-GAndroid Gradle - Ninja\njvmArgs : \n\n"
   },
   {
     "level": "INFO",
-    "message": "JSON \u0027/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/debug/x86_64/android_gradle_build.json\u0027 was up-to-date",
-    "file": "/Users/mauriceparrish/Development/penguin/packages/reference/android/CMakeLists.txt",
-    "tag": "debug|x86_64"
+    "message": "Executable : /Users/mauriceparrish/Library/Android/sdk/cmake/3.6.4111459/bin/cmake\narguments : \n-H/Users/mauriceparrish/Development/penguin/packages/reference/android\n-B/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/debug/x86_64\n-DANDROID_ABI\u003dx86_64\n-DANDROID_PLATFORM\u003dandroid-16\n-DCMAKE_LIBRARY_OUTPUT_DIRECTORY\u003d/Users/mauriceparrish/Development/penguin/packages/reference/example/build/reference/intermediates/cmake/debug/obj/x86_64\n-DCMAKE_BUILD_TYPE\u003dDebug\n-DANDROID_NDK\u003d/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061\n-DCMAKE_TOOLCHAIN_FILE\u003d/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/build/cmake/android.toolchain.cmake\n-DCMAKE_MAKE_PROGRAM\u003d/Users/mauriceparrish/Library/Android/sdk/cmake/3.6.4111459/bin/ninja\n-GAndroid Gradle - Ninja\njvmArgs : \n\n"
   },
   {
     "level": "INFO",
-    "message": "JSON generation completed without problems",
-    "file": "/Users/mauriceparrish/Development/penguin/packages/reference/android/CMakeLists.txt",
-    "tag": "debug|x86_64"
+    "message": "done executing cmake"
+  },
+  {
+    "level": "INFO",
+    "message": "write build output /Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/debug/x86_64/build_output.txt"
+  },
+  {
+    "level": "INFO",
+    "message": "write command file /Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/debug/x86_64/build_command.txt"
+  },
+  {
+    "level": "INFO",
+    "message": "JSON generation completed without problems"
   }
 ]

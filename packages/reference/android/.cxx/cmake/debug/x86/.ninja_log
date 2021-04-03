@@ -1,4 +1,21 @@
 # ninja log v5
-0	61	1617419467	CMakeFiles/native_add.dir/Users/mauriceparrish/Development/penguin/packages/reference/third_party/dart-sdk/src/runtime/include/dart_api_dl.c.o	4f183174e8d692d3
-0	559	1617419467	CMakeFiles/native_add.dir/Users/mauriceparrish/Development/penguin/packages/reference/ios/Classes/native_add.cpp.o	f43c0c2d626d5f6c
-559	641	1617419467	/Users/mauriceparrish/Development/penguin/packages/penguin_android_camera/example/build/reference/intermediates/cmake/debug/obj/x86/libnative_add.so	d38cb7a17d95c00f
+0	67	0	CMakeFiles/native_add.dir/Users/mauriceparrish/Development/penguin/packages/reference/third_party/dart-sdk/src/runtime/include/dart_api_dl.c.o	bd814a56b305dd4e
+4	827	0	CMakeFiles/native_add.dir/Users/mauriceparrish/Development/penguin/packages/reference/ios/Classes/native_add.cpp.o	3d3b5bbbb87c0526
+827	949	0	/Users/mauriceparrish/Development/penguin/packages/reference/example/build/reference/intermediates/cmake/debug/obj/x86/libnative_add.so	e9ad6fdc0d481097
+1	659	0	CMakeFiles/native_add.dir/Users/mauriceparrish/Development/penguin/packages/reference/ios/Classes/native_add.cpp.o	3d3b5bbbb87c0526
+659	730	0	/Users/mauriceparrish/Development/penguin/packages/reference/example/build/reference/intermediates/cmake/debug/obj/x86/libnative_add.so	e9ad6fdc0d481097
+0	53	0	CMakeFiles/reference.dir/Users/mauriceparrish/Development/penguin/packages/reference/third_party/dart-sdk/src/runtime/include/dart_api_dl.c.o	86ef247dc1ff070b
+2	647	0	CMakeFiles/reference.dir/Users/mauriceparrish/Development/penguin/packages/reference/ios/Classes/reference.cpp.o	ebd8008a8f1f2f97
+647	720	0	/Users/mauriceparrish/Development/penguin/packages/reference/example/build/reference/intermediates/cmake/debug/obj/x86/libreference.so	ff59fae854b2a662
+2	736	0	CMakeFiles/reference.dir/Users/mauriceparrish/Development/penguin/packages/reference/ios/Classes/reference.cpp.o	ebd8008a8f1f2f97
+736	811	0	/Users/mauriceparrish/Development/penguin/packages/reference/example/build/reference/intermediates/cmake/debug/obj/x86/libreference.so	ff59fae854b2a662
+1	656	0	CMakeFiles/reference.dir/Users/mauriceparrish/Development/penguin/packages/reference/ios/Classes/reference.cpp.o	ebd8008a8f1f2f97
+656	732	0	/Users/mauriceparrish/Development/penguin/packages/reference/example/build/reference/intermediates/cmake/debug/obj/x86/libreference.so	ff59fae854b2a662
+1	829	0	CMakeFiles/reference.dir/Users/mauriceparrish/Development/penguin/packages/reference/ios/Classes/reference.cpp.o	ebd8008a8f1f2f97
+829	908	0	/Users/mauriceparrish/Development/penguin/packages/reference/example/build/reference/intermediates/cmake/debug/obj/x86/libreference.so	ff59fae854b2a662
+1	705	0	CMakeFiles/reference.dir/Users/mauriceparrish/Development/penguin/packages/reference/ios/Classes/reference.cpp.o	ebd8008a8f1f2f97
+705	785	0	/Users/mauriceparrish/Development/penguin/packages/reference/example/build/reference/intermediates/cmake/debug/obj/x86/libreference.so	ff59fae854b2a662
+1	724	0	CMakeFiles/reference.dir/Users/mauriceparrish/Development/penguin/packages/reference/ios/Classes/reference.cpp.o	ebd8008a8f1f2f97
+724	824	0	/Users/mauriceparrish/Development/penguin/packages/reference/example/build/reference/intermediates/cmake/debug/obj/x86/libreference.so	ff59fae854b2a662
+0	762	0	CMakeFiles/reference.dir/Users/mauriceparrish/Development/penguin/packages/reference/ios/Classes/reference.cpp.o	ebd8008a8f1f2f97
+762	863	0	/Users/mauriceparrish/Development/penguin/packages/reference/example/build/reference/intermediates/cmake/debug/obj/x86/libreference.so	ff59fae854b2a662

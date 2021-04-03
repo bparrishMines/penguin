@@ -13,14 +13,14 @@ public class InstancePairManager {
   @VisibleForTesting
   public InstancePairManager() { }
 
-  private native void initializeReferenceLib();
+  private native void initializeLib();
 
   @NonNull
   public static InstancePairManager getInstance() {
     if (instance == null) {
-      System.loadLibrary("native_add");
+      System.loadLibrary("reference");
       instance = new InstancePairManager();
-      instance.initializeReferenceLib();
+      instance.initializeLib();
     }
     return instance;
   }

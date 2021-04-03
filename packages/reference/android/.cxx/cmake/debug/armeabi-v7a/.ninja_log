@@ -1,4 +1,21 @@
 # ninja log v5
-0	86	1617419465	CMakeFiles/native_add.dir/Users/mauriceparrish/Development/penguin/packages/reference/third_party/dart-sdk/src/runtime/include/dart_api_dl.c.o	2605da3a7cb1ee17
-0	643	1617419466	CMakeFiles/native_add.dir/Users/mauriceparrish/Development/penguin/packages/reference/ios/Classes/native_add.cpp.o	e8aa2cae3f1ae7db
-643	715	1617419466	/Users/mauriceparrish/Development/penguin/packages/penguin_android_camera/example/build/reference/intermediates/cmake/debug/obj/armeabi-v7a/libnative_add.so	481517afdb03e585
+0	115	0	CMakeFiles/native_add.dir/Users/mauriceparrish/Development/penguin/packages/reference/third_party/dart-sdk/src/runtime/include/dart_api_dl.c.o	202594d70865132a
+3	963	0	CMakeFiles/native_add.dir/Users/mauriceparrish/Development/penguin/packages/reference/ios/Classes/native_add.cpp.o	83eabcb2f43ed271
+963	1084	0	/Users/mauriceparrish/Development/penguin/packages/reference/example/build/reference/intermediates/cmake/debug/obj/armeabi-v7a/libnative_add.so	971973d4d2a0d03f
+1	913	0	CMakeFiles/native_add.dir/Users/mauriceparrish/Development/penguin/packages/reference/ios/Classes/native_add.cpp.o	83eabcb2f43ed271
+914	1051	0	/Users/mauriceparrish/Development/penguin/packages/reference/example/build/reference/intermediates/cmake/debug/obj/armeabi-v7a/libnative_add.so	971973d4d2a0d03f
+0	228	0	CMakeFiles/reference.dir/Users/mauriceparrish/Development/penguin/packages/reference/third_party/dart-sdk/src/runtime/include/dart_api_dl.c.o	661158e108e78faa
+2	955	0	CMakeFiles/reference.dir/Users/mauriceparrish/Development/penguin/packages/reference/ios/Classes/reference.cpp.o	d60d9ebda3cfc45b
+955	1106	0	/Users/mauriceparrish/Development/penguin/packages/reference/example/build/reference/intermediates/cmake/debug/obj/armeabi-v7a/libreference.so	e6751bb7697d09ac
+2	1143	0	CMakeFiles/reference.dir/Users/mauriceparrish/Development/penguin/packages/reference/ios/Classes/reference.cpp.o	d60d9ebda3cfc45b
+1143	1294	0	/Users/mauriceparrish/Development/penguin/packages/reference/example/build/reference/intermediates/cmake/debug/obj/armeabi-v7a/libreference.so	e6751bb7697d09ac
+8	1123	0	CMakeFiles/reference.dir/Users/mauriceparrish/Development/penguin/packages/reference/ios/Classes/reference.cpp.o	d60d9ebda3cfc45b
+1123	1285	0	/Users/mauriceparrish/Development/penguin/packages/reference/example/build/reference/intermediates/cmake/debug/obj/armeabi-v7a/libreference.so	e6751bb7697d09ac
+1	900	0	CMakeFiles/reference.dir/Users/mauriceparrish/Development/penguin/packages/reference/ios/Classes/reference.cpp.o	d60d9ebda3cfc45b
+900	1069	0	/Users/mauriceparrish/Development/penguin/packages/reference/example/build/reference/intermediates/cmake/debug/obj/armeabi-v7a/libreference.so	e6751bb7697d09ac
+0	738	0	CMakeFiles/reference.dir/Users/mauriceparrish/Development/penguin/packages/reference/ios/Classes/reference.cpp.o	d60d9ebda3cfc45b
+739	835	0	/Users/mauriceparrish/Development/penguin/packages/reference/example/build/reference/intermediates/cmake/debug/obj/armeabi-v7a/libreference.so	e6751bb7697d09ac
+1	1083	0	CMakeFiles/reference.dir/Users/mauriceparrish/Development/penguin/packages/reference/ios/Classes/reference.cpp.o	d60d9ebda3cfc45b
+1084	1262	0	/Users/mauriceparrish/Development/penguin/packages/reference/example/build/reference/intermediates/cmake/debug/obj/armeabi-v7a/libreference.so	e6751bb7697d09ac
+1	851	0	CMakeFiles/reference.dir/Users/mauriceparrish/Development/penguin/packages/reference/ios/Classes/reference.cpp.o	d60d9ebda3cfc45b
+851	1001	0	/Users/mauriceparrish/Development/penguin/packages/reference/example/build/reference/intermediates/cmake/debug/obj/armeabi-v7a/libreference.so	e6751bb7697d09ac

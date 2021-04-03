@@ -16,7 +16,7 @@ class InstancePairManager {
   static final InstancePairManager instance = InstancePairManager._();
 
   static final DynamicLibrary _referenceLib = Platform.isAndroid
-      ? DynamicLibrary.open('libnative_add.so')
+      ? DynamicLibrary.open('libreference.so')
       : DynamicLibrary.process();
 
   static final void Function(Pointer<Void> data) _referenceDartDlInitialize =

@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 3.6.0)  # for example
-project(native_add)
+cmake_minimum_required(VERSION 3.6.0)
+project(reference)
 
 enable_language(ASM)
 
@@ -13,35 +13,28 @@ include(
   ../third_party/dart-sdk/sources.cmake
 )
 
-add_library( native_add
+add_library(
+  reference
 
-             # Sets the library as a shared library.
-             SHARED
-
-             ${dart_dl_sources}
-             # Provides a relative path to your source file(s).
-             ../ios/Classes/native_add.cpp
+  SHARED
+  ${dart_dl_sources}
+  ../ios/Classes/reference.cpp
 )
 
 target_include_directories(
-  native_add
+  reference
 
   PUBLIC
-
   ../third_party/dart-sdk/src/runtime/
 )
 
-find_library( # Defines the name of the path variable that stores the
-              # location of the NDK library.
-              log-lib
-
-              # Specifies the name of the NDK library that
-              # CMake needs to locate.
-              log )
-
-target_link_libraries( # Specifies the target library.
-                       native_add
-
-                       # Links the log library to the target library.
-                       ${log-lib} )
+# Provides <android/log.h>
+find_library(
+  log-lib
+  log
+)
+target_link_libraries(
+  reference
+  ${log-lib}
+)
 
