@@ -1,8 +1,7 @@
-Executable : /Users/mauriceparrish/Library/Android/sdk/cmake/3.6.4111459/bin/cmake
+Executable : /Users/mauriceparrish/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja
 arguments : 
---build
+-C
 /Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/debug/arm64-v8a
---target
 native_add
 jvmArgs : 
 

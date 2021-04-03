@@ -2,6 +2,7 @@ package github.bparrishMines.penguin.penguin_android_camera;
 
 import android.hardware.Camera;
 
+import github.penguin.reference.async.Completable;
 import github.penguin.reference.reference.TypeChannelMessenger;
 
 public class PictureCallbackProxy implements CameraChannelLibrary.$PictureCallback {
@@ -21,8 +22,17 @@ public class PictureCallbackProxy implements CameraChannelLibrary.$PictureCallba
   @Override
   public Void onPictureTaken(byte[] data) {
     final Channels.PictureCallbackChannel channel = new Channels.PictureCallbackChannel(messenger);
-    channel.$invokeOnPictureTaken(this, data);
-    channel.disposeInstancePair(this);
+    channel.$invokeOnPictureTaken(this, data).setOnCompleteListener(new Completable.OnCompleteListener<Object>() {
+      @Override
+      public void onComplete(Object result) {
+        messenger.getInstancePairManager().releaseDartHandle(this);
+      }
+
+      @Override
+      public void onError(Throwable throwable) {
+        messenger.getInstancePairManager().releaseDartHandle(this);
+      }
+    });
     return null;
   }
 }

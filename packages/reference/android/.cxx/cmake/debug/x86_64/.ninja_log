@@ -1,8 +1,4 @@
 # ninja log v5
-643	714	0	/Users/mauriceparrish/Development/penguin/packages/reference/example/build/reference/intermediates/cmake/debug/obj/x86_64/libnative_add.so	ae9764fcc62fd0bc
-1	75	0	CMakeFiles/native_add.dir/Users/mauriceparrish/Development/penguin/packages/reference/third_party/dart-sdk/src/runtime/include/dart_api_dl.c.o	40579265ec8b8d66
-1	643	0	CMakeFiles/native_add.dir/Users/mauriceparrish/Development/penguin/packages/reference/ios/Classes/native_add.cpp.o	242d1dd43ec217b0
-2	614	0	CMakeFiles/native_add.dir/Users/mauriceparrish/Development/penguin/packages/reference/ios/Classes/native_add.cpp.o	242d1dd43ec217b0
-615	690	0	/Users/mauriceparrish/Development/penguin/packages/reference/example/build/reference/intermediates/cmake/debug/obj/x86_64/libnative_add.so	ae9764fcc62fd0bc
-1	609	0	CMakeFiles/native_add.dir/Users/mauriceparrish/Development/penguin/packages/reference/ios/Classes/native_add.cpp.o	242d1dd43ec217b0
-609	682	0	/Users/mauriceparrish/Development/penguin/packages/reference/example/build/reference/intermediates/cmake/debug/obj/x86_64/libnative_add.so	ae9764fcc62fd0bc
+0	59	1617419468	CMakeFiles/native_add.dir/Users/mauriceparrish/Development/penguin/packages/reference/third_party/dart-sdk/src/runtime/include/dart_api_dl.c.o	dc21daaf3f224b4b
+1	530	1617419468	CMakeFiles/native_add.dir/Users/mauriceparrish/Development/penguin/packages/reference/ios/Classes/native_add.cpp.o	c4d1ad8c67aa40ae
+530	595	1617419468	/Users/mauriceparrish/Development/penguin/packages/penguin_android_camera/example/build/reference/intermediates/cmake/debug/obj/x86_64/libnative_add.so	65a3666a98bc37f0

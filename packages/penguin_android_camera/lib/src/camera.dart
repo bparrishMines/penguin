@@ -49,12 +49,7 @@ class Camera with $Camera {
   /// You must call this as soon as you're done with the [Camera] object.
   @override
   Future<void> release() {
-    if (!Channels.cameraChannel.messenger.isPaired(this)) {
-      return Future<void>.value();
-    }
-
-    Channels.cameraChannel.$invokeRelease(this);
-    return Channels.cameraChannel.disposeInstancePair(this);
+    return Channels.cameraChannel.$invokeRelease(this);
   }
 
   /// Starts capturing and drawing preview frames to the screen.
@@ -63,7 +58,6 @@ class Camera with $Camera {
   /// [addToTexture].
   @override
   Future<void> startPreview() async {
-    assert(Channels.cameraChannel.messenger.isPaired(this));
     await Channels.cameraChannel.$invokeStartPreview(this);
   }
 
@@ -72,20 +66,17 @@ class Camera with $Camera {
   /// Resets the camera for a future call to [startPreview].
   @override
   Future<void> stopPreview() async {
-    assert(Channels.cameraChannel.messenger.isPaired(this));
     await Channels.cameraChannel.$invokeStopPreview(this);
   }
 
   @override
   Future<int> attachPreviewTexture() async {
-    assert(Channels.cameraChannel.messenger.isPaired(this));
     return _currentTexture ??=
         await Channels.cameraChannel.$invokeAttachPreviewTexture(this) as int;
   }
 
   @override
   Future<void> releasePreviewTexture() async {
-    assert(Channels.cameraChannel.messenger.isPaired(this));
     _currentTexture = null;
     await Channels.cameraChannel.$invokeReleasePreviewTexture(this);
   }
@@ -106,19 +97,6 @@ class Camera with $Camera {
     assert(postView == null || (postView != raw && postView != jpeg));
     assert(jpeg == null || (jpeg != raw && jpeg != postView));
 
-    if (shutter != null) {
-      Channels.shutterCallbackChannel.createNewInstancePair(shutter);
-    }
-    if (raw != null) {
-      Channels.pictureCallbackChannel.createNewInstancePair(raw);
-    }
-    if (postView != null) {
-      Channels.pictureCallbackChannel.createNewInstancePair(postView);
-    }
-    if (jpeg != null) {
-      Channels.pictureCallbackChannel.createNewInstancePair(jpeg);
-    }
-
     await Channels.cameraChannel.$invokeTakePicture(
       this,
       shutter,
@@ -131,12 +109,20 @@ class Camera with $Camera {
 
 @Reference('penguin_android_camera/camera/ShutterCallback')
 abstract class ShutterCallback with $ShutterCallback {
+  ShutterCallback() {
+    Channels.shutterCallbackChannel.createNewInstancePair(this, owner: false);
+  }
+
   @override
   void onShutter();
 }
 
 @Reference('penguin_android_camera/camera/PictureCallback')
 abstract class PictureCallback with $PictureCallback {
+  PictureCallback() {
+    Channels.pictureCallbackChannel.createNewInstancePair(this, owner: false);
+  }
+
   @override
   void onPictureTaken(Uint8List data);
 }
@@ -214,7 +200,9 @@ class MediaRecorder implements $MediaRecorder {
     required this.videoEncoder,
     required this.audioSource,
     required this.audioEncoder,
-  }) : assert(Channels.cameraChannel.messenger.isPaired(camera));
+  }) {
+    Channels.mediaRecorderChannel.createNewInstancePair(this, owner: true);
+  }
 
   @override
   final Camera camera;
@@ -236,28 +224,22 @@ class MediaRecorder implements $MediaRecorder {
 
   @override
   Future<void> prepare() {
-    Channels.mediaRecorderChannel.createNewInstancePair(this);
     return Channels.mediaRecorderChannel.$invokePrepare(this);
   }
 
   @override
   Future<void> start() {
-    assert(Channels.mediaRecorderChannel.messenger.isPaired(this));
     return Channels.mediaRecorderChannel.$invokeStart(this);
   }
 
   @override
   Future<void> stop() {
-    assert(Channels.mediaRecorderChannel.messenger.isPaired(this));
     return Channels.mediaRecorderChannel.$invokeStop(this);
   }
 
   @override
   Future<void> release() async {
-    if (!Channels.mediaRecorderChannel.messenger.isPaired(this)) return;
-
     Channels.mediaRecorderChannel.$invokeRelease(this);
-    await Channels.mediaRecorderChannel.disposeInstancePair(this);
   }
 }
 

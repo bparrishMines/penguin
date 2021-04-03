@@ -1,30 +1,50 @@
 [
   {
     "level": "INFO",
-    "message": "Start JSON generation. Platform version: 16 min SDK version: x86"
+    "message": "Start JSON generation. Platform version: 16 min SDK version: x86",
+    "file": "/Users/mauriceparrish/Development/penguin/packages/reference/android/CMakeLists.txt",
+    "tag": "debug|x86"
   },
   {
     "level": "INFO",
-    "message": "No CMake version was specified in build.gradle. Choosing a suitable version."
+    "message": "No CMake version was specified in build.gradle. Using default version 3.10.2.",
+    "file": "/Users/mauriceparrish/Development/penguin/packages/reference/android/CMakeLists.txt",
+    "tag": "debug|x86"
   },
   {
     "level": "INFO",
-    "message": "Trying to locate CMake in local SDK repository."
+    "message": "Trying to locate CMake in local SDK repository.",
+    "file": "/Users/mauriceparrish/Development/penguin/packages/reference/android/CMakeLists.txt",
+    "tag": "debug|x86"
   },
   {
     "level": "INFO",
-    "message": "CMake \u00273.18.1\u0027 found in SDK did not match requested version \u00273.6.0\u0027."
+    "message": "- CMake found in SDK at \u0027/Users/mauriceparrish/Library/Android/sdk/cmake/3.10.2.4988404\u0027 had version \u00273.10.2\u0027",
+    "file": "/Users/mauriceparrish/Development/penguin/packages/reference/android/CMakeLists.txt",
+    "tag": "debug|x86"
   },
   {
     "level": "INFO",
-    "message": "- CMake found in SDK at \u0027/Users/mauriceparrish/Library/Android/sdk/cmake/3.6.4111459\u0027 had version \u00273.6.0\u0027"
+    "message": "CMake \u00273.18.1\u0027 found in SDK did not match requested version \u00273.10.2\u0027.",
+    "file": "/Users/mauriceparrish/Development/penguin/packages/reference/android/CMakeLists.txt",
+    "tag": "debug|x86"
   },
   {
     "level": "INFO",
-    "message": "JSON \u0027/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/debug/x86/android_gradle_build.json\u0027 was up-to-date"
+    "message": "CMake \u00273.6.0\u0027 found in SDK did not match requested version \u00273.10.2\u0027.",
+    "file": "/Users/mauriceparrish/Development/penguin/packages/reference/android/CMakeLists.txt",
+    "tag": "debug|x86"
   },
   {
     "level": "INFO",
-    "message": "JSON generation completed without problems"
+    "message": "JSON \u0027/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/debug/x86/android_gradle_build.json\u0027 was up-to-date",
+    "file": "/Users/mauriceparrish/Development/penguin/packages/reference/android/CMakeLists.txt",
+    "tag": "debug|x86"
+  },
+  {
+    "level": "INFO",
+    "message": "JSON generation completed without problems",
+    "file": "/Users/mauriceparrish/Development/penguin/packages/reference/android/CMakeLists.txt",
+    "tag": "debug|x86"
   }
 ]

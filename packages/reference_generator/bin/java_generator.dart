@@ -229,8 +229,6 @@ String generateJava({
                 .stringMatch()
                 .replaceAll(handler.className, classNode.name)
                 .replaceAll(handler.typeArgClassName, classNode.name)
-                .replaceAll(handler.onInstanceAddedClassName, classNode.name)
-                .replaceAll(handler.onInstanceRemovedClassName, classNode.name)
                 .replaceAll(
                   handler.theOnCreateMethod.exp,
                   handler.theOnCreateMethod
@@ -676,14 +674,6 @@ class Handler with TemplateRegExp {
   HandlerCreateInstance get theCreateInstance => HandlerCreateInstance(this);
 
   HandlerInvokeMethod get theInvokeMethod => HandlerInvokeMethod(this);
-
-  final RegExp onInstanceAddedClassName = TemplateRegExp.regExp(
-    r'(?<=void onInstanceAdded\([^\$]+\$)ClassTemplate',
-  );
-
-  final RegExp onInstanceRemovedClassName = TemplateRegExp.regExp(
-    r'(?<=void onInstanceRemoved\([^\$]+\$)ClassTemplate',
-  );
 
   @override
   final RegExp exp = TemplateRegExp.regExp(

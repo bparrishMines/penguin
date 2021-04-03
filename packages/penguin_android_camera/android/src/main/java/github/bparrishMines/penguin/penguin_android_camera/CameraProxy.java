@@ -1,6 +1,7 @@
 package github.bparrishMines.penguin.penguin_android_camera;
 
 import android.hardware.Camera;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +21,7 @@ public class CameraProxy implements CameraChannelLibrary.$Camera {
 
   public static CameraProxy open(TypeChannelMessenger messenger, TextureRegistry textureRegistry, int cameraId) {
     final CameraProxy cameraProxy = new CameraProxy(Camera.open(cameraId), textureRegistry);
-    new Channels.CameraChannel(messenger).createNewInstancePair(cameraProxy);
+    new Channels.CameraChannel(messenger).createNewInstancePair(cameraProxy, false);
     return cameraProxy;
   }
 

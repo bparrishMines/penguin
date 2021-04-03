@@ -249,22 +249,6 @@ String generateDart(String template, LibraryNode libraryNode) {
                     classNode.name,
                   )
                   .replaceAll(
-                    library.aHandler.onAddedClassName,
-                    classNode.name,
-                  )
-                  .replaceAll(
-                    library.aHandler.onRemovedClassName,
-                    classNode.name,
-                  )
-                  .replaceAll(
-                    library.aHandler.onInstanceAddedClassName,
-                    classNode.name,
-                  )
-                  .replaceAll(
-                    library.aHandler.onInstanceRemovedClassName,
-                    classNode.name,
-                  )
-                  .replaceAll(
                     library.aHandler.aStaticMethodName.exp,
                     classNode.staticMethods
                         .map<String>(
@@ -482,6 +466,25 @@ String generateDart(String template, LibraryNode libraryNode) {
                   ),
             )
             .join(''),
+      )
+      .replaceAll(
+        library.theChannels.exp,
+        library.theChannels.stringMatch().replaceAll(
+              library.theChannels.aVariable.exp,
+              libraryNode.classes.map<String>(
+                (ClassNode classNode) {
+                  final ChannelsVariable variable =
+                      library.theChannels.aVariable;
+                  return variable
+                      .stringMatch()
+                      .replaceAll(variable.channelClassName, classNode.name)
+                      .replaceAll(
+                        variable.variableClassName,
+                        ReCase(classNode.name).camelCase,
+                      );
+                },
+              ).join('\n'),
+            ),
       );
 }
 
@@ -520,6 +523,8 @@ class Library with TemplateRegExp {
   Channel get aChannel => Channel(this);
 
   Handler get aHandler => Handler(this);
+
+  Channels get theChannels => Channels(this);
 }
 
 class Mixin with TemplateRegExp {
@@ -721,14 +726,6 @@ class Handler with TemplateRegExp {
     r'(?<=\$)ClassTemplate(?=Handler\()',
   );
 
-  final RegExp onAddedClassName = TemplateRegExp.regExp(
-    r'(?<=void Function\(TypeChannelMessenger messenger, \$)ClassTemplate(?= instance\)\?\s+onAdded;)',
-  );
-
-  final RegExp onRemovedClassName = TemplateRegExp.regExp(
-    r'(?<=void Function\(TypeChannelMessenger messenger, \$)ClassTemplate(?= instance\)\?\s+onRemoved;)',
-  );
-
   HandlerStaticMethodName get aStaticMethodName =>
       HandlerStaticMethodName(this);
 
@@ -746,17 +743,9 @@ class Handler with TemplateRegExp {
 
   HandlerInvokeMethod get theHandlerInvokeMethod => HandlerInvokeMethod(this);
 
-  final RegExp onInstanceAddedClassName = TemplateRegExp.regExp(
-    r'(?<=void onInstanceAdded\([^\$]+\$)ClassTemplate',
-  );
-
-  final RegExp onInstanceRemovedClassName = TemplateRegExp.regExp(
-    r'(?<=void onInstanceRemoved\([^\$]+\$)ClassTemplate',
-  );
-
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'class \$ClassTemplateHandler.*}$',
+    r'class \$ClassTemplateHandler.*}(?=\s*mixin \$Channels)',
   );
 
   @override
@@ -930,7 +919,7 @@ class HandlerInvokeMethod with TemplateRegExp {
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'Object\? invokeMethod\(.+(?<=@override\s*void onInstanceAdded\()',
+    r'Object\? invokeMethod\(.+return method\(\);\s+\}(?=\s+\})',
   );
 
   @override
@@ -957,4 +946,36 @@ class HandlerInvokeMethodInvoker with TemplateRegExp {
 
   @override
   final HandlerInvokeMethod parent;
+}
+
+class Channels with TemplateRegExp {
+  Channels(this.parent);
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(r'mixin \$Channels {[^\}]+}');
+
+  @override
+  final Library parent;
+
+  ChannelsVariable get aVariable => ChannelsVariable(this);
+}
+
+class ChannelsVariable with TemplateRegExp {
+  ChannelsVariable(this.parent);
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'\$ClassTemplateChannel get classTemplateChannel;',
+  );
+
+  @override
+  final Channels parent;
+
+  final RegExp channelClassName = TemplateRegExp.regExp(
+    r'(?<=\$)ClassTemplate',
+  );
+
+  final RegExp variableClassName = TemplateRegExp.regExp(
+    r'(?<=get\s+)classTemplate',
+  );
 }

@@ -1,5 +1,3 @@
-import 'package:flutter/services.dart';
-
 class Reference {
   const Reference(this.channel);
 

@@ -48,6 +48,7 @@ public class InstancePairManager {
     nativeReleaseDartHandle(instanceId);
   }
 
+  // TODO: private?
   public void removePair(String instanceId) {
     final Object instance = getInstance(instanceId);
     if (instance == null) {

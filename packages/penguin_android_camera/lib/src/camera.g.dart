@@ -1,5 +1,4 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
-
 import 'dart:typed_data';
 
 import 'package:reference/reference.dart';
@@ -250,8 +249,6 @@ class $MediaRecorderChannel extends TypeChannel<$MediaRecorder> {
 class $CameraHandler implements TypeChannelHandler<$Camera> {
   $CameraHandler({
     this.onCreate,
-    this.onAdded,
-    this.onRemoved,
     this.$onGetAllCameraInfo,
     this.$onOpen,
   });
@@ -260,12 +257,6 @@ class $CameraHandler implements TypeChannelHandler<$Camera> {
     TypeChannelMessenger messenger,
     $CameraCreationArgs args,
   )? onCreate;
-
-  final void Function(TypeChannelMessenger messenger, $Camera instance)?
-      onAdded;
-
-  final void Function(TypeChannelMessenger messenger, $Camera instance)?
-      onRemoved;
 
   final Future<List<$CameraInfo>> Function(
     TypeChannelMessenger messenger,
@@ -367,41 +358,17 @@ class $CameraHandler implements TypeChannelHandler<$Camera> {
     // ignore: dead_code
     return method();
   }
-
-  @override
-  void onInstanceAdded(
-    TypeChannelMessenger messenger,
-    $Camera instance,
-  ) {
-    if (onAdded != null) onAdded!(messenger, instance);
-  }
-
-  @override
-  void onInstanceRemoved(
-    TypeChannelMessenger messenger,
-    $Camera instance,
-  ) {
-    if (onRemoved != null) onRemoved!(messenger, instance);
-  }
 }
 
 class $ShutterCallbackHandler implements TypeChannelHandler<$ShutterCallback> {
   $ShutterCallbackHandler({
     this.onCreate,
-    this.onAdded,
-    this.onRemoved,
   });
 
   final $ShutterCallback Function(
     TypeChannelMessenger messenger,
     $ShutterCallbackCreationArgs args,
   )? onCreate;
-
-  final void Function(
-      TypeChannelMessenger messenger, $ShutterCallback instance)? onAdded;
-
-  final void Function(
-      TypeChannelMessenger messenger, $ShutterCallback instance)? onRemoved;
 
   @override
   Object? invokeStaticMethod(
@@ -467,41 +434,17 @@ class $ShutterCallbackHandler implements TypeChannelHandler<$ShutterCallback> {
     // ignore: dead_code
     return method();
   }
-
-  @override
-  void onInstanceAdded(
-    TypeChannelMessenger messenger,
-    $ShutterCallback instance,
-  ) {
-    if (onAdded != null) onAdded!(messenger, instance);
-  }
-
-  @override
-  void onInstanceRemoved(
-    TypeChannelMessenger messenger,
-    $ShutterCallback instance,
-  ) {
-    if (onRemoved != null) onRemoved!(messenger, instance);
-  }
 }
 
 class $PictureCallbackHandler implements TypeChannelHandler<$PictureCallback> {
   $PictureCallbackHandler({
     this.onCreate,
-    this.onAdded,
-    this.onRemoved,
   });
 
   final $PictureCallback Function(
     TypeChannelMessenger messenger,
     $PictureCallbackCreationArgs args,
   )? onCreate;
-
-  final void Function(
-      TypeChannelMessenger messenger, $PictureCallback instance)? onAdded;
-
-  final void Function(
-      TypeChannelMessenger messenger, $PictureCallback instance)? onRemoved;
 
   @override
   Object? invokeStaticMethod(
@@ -567,41 +510,17 @@ class $PictureCallbackHandler implements TypeChannelHandler<$PictureCallback> {
     // ignore: dead_code
     return method();
   }
-
-  @override
-  void onInstanceAdded(
-    TypeChannelMessenger messenger,
-    $PictureCallback instance,
-  ) {
-    if (onAdded != null) onAdded!(messenger, instance);
-  }
-
-  @override
-  void onInstanceRemoved(
-    TypeChannelMessenger messenger,
-    $PictureCallback instance,
-  ) {
-    if (onRemoved != null) onRemoved!(messenger, instance);
-  }
 }
 
 class $CameraInfoHandler implements TypeChannelHandler<$CameraInfo> {
   $CameraInfoHandler({
     this.onCreate,
-    this.onAdded,
-    this.onRemoved,
   });
 
   final $CameraInfo Function(
     TypeChannelMessenger messenger,
     $CameraInfoCreationArgs args,
   )? onCreate;
-
-  final void Function(TypeChannelMessenger messenger, $CameraInfo instance)?
-      onAdded;
-
-  final void Function(TypeChannelMessenger messenger, $CameraInfo instance)?
-      onRemoved;
 
   @override
   Object? invokeStaticMethod(
@@ -667,41 +586,17 @@ class $CameraInfoHandler implements TypeChannelHandler<$CameraInfo> {
     // ignore: dead_code
     return method();
   }
-
-  @override
-  void onInstanceAdded(
-    TypeChannelMessenger messenger,
-    $CameraInfo instance,
-  ) {
-    if (onAdded != null) onAdded!(messenger, instance);
-  }
-
-  @override
-  void onInstanceRemoved(
-    TypeChannelMessenger messenger,
-    $CameraInfo instance,
-  ) {
-    if (onRemoved != null) onRemoved!(messenger, instance);
-  }
 }
 
 class $MediaRecorderHandler implements TypeChannelHandler<$MediaRecorder> {
   $MediaRecorderHandler({
     this.onCreate,
-    this.onAdded,
-    this.onRemoved,
   });
 
   final $MediaRecorder Function(
     TypeChannelMessenger messenger,
     $MediaRecorderCreationArgs args,
   )? onCreate;
-
-  final void Function(TypeChannelMessenger messenger, $MediaRecorder instance)?
-      onAdded;
-
-  final void Function(TypeChannelMessenger messenger, $MediaRecorder instance)?
-      onRemoved;
 
   @override
   Object? invokeStaticMethod(
@@ -789,20 +684,14 @@ class $MediaRecorderHandler implements TypeChannelHandler<$MediaRecorder> {
     // ignore: dead_code
     return method();
   }
+}
 
-  @override
-  void onInstanceAdded(
-    TypeChannelMessenger messenger,
-    $MediaRecorder instance,
-  ) {
-    if (onAdded != null) onAdded!(messenger, instance);
-  }
-
-  @override
-  void onInstanceRemoved(
-    TypeChannelMessenger messenger,
-    $MediaRecorder instance,
-  ) {
-    if (onRemoved != null) onRemoved!(messenger, instance);
-  }
+mixin $Channels {
+  void registerHandlers();
+  void unregisterHandlers();
+  $CameraChannel get cameraChannel;
+  $ShutterCallbackChannel get shutterCallbackChannel;
+  $PictureCallbackChannel get pictureCallbackChannel;
+  $CameraInfoChannel get cameraInfoChannel;
+  $MediaRecorderChannel get mediaRecorderChannel;
 }
