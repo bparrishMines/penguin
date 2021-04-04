@@ -119,7 +119,7 @@ class $ClassTemplateHandler implements TypeChannelHandler<$ClassTemplate> {
   }
 }
 
-abstract class $LibraryImplementations {
+mixin $LibraryImplementations {
   $ClassTemplateChannel get classTemplateChannel;
   $ClassTemplateHandler get classTemplateHandler;
 }
