@@ -1,21 +1,4 @@
 # ninja log v5
-0	80	0	CMakeFiles/native_add.dir/Users/mauriceparrish/Development/penguin/packages/reference/third_party/dart-sdk/src/runtime/include/dart_api_dl.c.o	e073e5fa78133422
-4	875	0	CMakeFiles/native_add.dir/Users/mauriceparrish/Development/penguin/packages/reference/ios/Classes/native_add.cpp.o	4f1164809107c096
-876	999	0	/Users/mauriceparrish/Development/penguin/packages/reference/example/build/reference/intermediates/cmake/debug/obj/arm64-v8a/libnative_add.so	14899503a01e9b21
-0	657	0	CMakeFiles/native_add.dir/Users/mauriceparrish/Development/penguin/packages/reference/ios/Classes/native_add.cpp.o	4f1164809107c096
-657	734	0	/Users/mauriceparrish/Development/penguin/packages/reference/example/build/reference/intermediates/cmake/debug/obj/arm64-v8a/libnative_add.so	14899503a01e9b21
-1	54	0	CMakeFiles/reference.dir/Users/mauriceparrish/Development/penguin/packages/reference/third_party/dart-sdk/src/runtime/include/dart_api_dl.c.o	f3d969a62b8597c0
-2	656	0	CMakeFiles/reference.dir/Users/mauriceparrish/Development/penguin/packages/reference/ios/Classes/reference.cpp.o	46426d432c280c8e
-656	732	0	/Users/mauriceparrish/Development/penguin/packages/reference/example/build/reference/intermediates/cmake/debug/obj/arm64-v8a/libreference.so	65dbdfc88430ee87
-2	780	0	CMakeFiles/reference.dir/Users/mauriceparrish/Development/penguin/packages/reference/ios/Classes/reference.cpp.o	46426d432c280c8e
-780	889	0	/Users/mauriceparrish/Development/penguin/packages/reference/example/build/reference/intermediates/cmake/debug/obj/arm64-v8a/libreference.so	65dbdfc88430ee87
-1	799	0	CMakeFiles/reference.dir/Users/mauriceparrish/Development/penguin/packages/reference/ios/Classes/reference.cpp.o	46426d432c280c8e
-799	953	0	/Users/mauriceparrish/Development/penguin/packages/reference/example/build/reference/intermediates/cmake/debug/obj/arm64-v8a/libreference.so	65dbdfc88430ee87
-1	731	0	CMakeFiles/reference.dir/Users/mauriceparrish/Development/penguin/packages/reference/ios/Classes/reference.cpp.o	46426d432c280c8e
-731	819	0	/Users/mauriceparrish/Development/penguin/packages/reference/example/build/reference/intermediates/cmake/debug/obj/arm64-v8a/libreference.so	65dbdfc88430ee87
-1	812	0	CMakeFiles/reference.dir/Users/mauriceparrish/Development/penguin/packages/reference/ios/Classes/reference.cpp.o	46426d432c280c8e
-812	890	0	/Users/mauriceparrish/Development/penguin/packages/reference/example/build/reference/intermediates/cmake/debug/obj/arm64-v8a/libreference.so	65dbdfc88430ee87
-1	736	0	CMakeFiles/reference.dir/Users/mauriceparrish/Development/penguin/packages/reference/ios/Classes/reference.cpp.o	46426d432c280c8e
-736	829	0	/Users/mauriceparrish/Development/penguin/packages/reference/example/build/reference/intermediates/cmake/debug/obj/arm64-v8a/libreference.so	65dbdfc88430ee87
-1	797	0	CMakeFiles/reference.dir/Users/mauriceparrish/Development/penguin/packages/reference/ios/Classes/reference.cpp.o	46426d432c280c8e
-797	896	0	/Users/mauriceparrish/Development/penguin/packages/reference/example/build/reference/intermediates/cmake/debug/obj/arm64-v8a/libreference.so	65dbdfc88430ee87
+0	50	0	CMakeFiles/reference.dir/Users/mauriceparrish/Development/penguin/packages/reference/third_party/dart-sdk/src/runtime/include/dart_api_dl.c.o	f3d969a62b8597c0
+4	665	0	CMakeFiles/reference.dir/Users/mauriceparrish/Development/penguin/packages/reference/ios/Classes/reference.cpp.o	46426d432c280c8e
+665	737	0	/Users/mauriceparrish/Development/penguin/packages/reference_example/example/build/reference/intermediates/cmake/debug/obj/arm64-v8a/libreference.so	f03921efd4fe6829

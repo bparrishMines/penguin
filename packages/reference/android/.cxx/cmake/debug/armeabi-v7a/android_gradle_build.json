@@ -33,7 +33,7 @@
 					"workingDirectory" : "/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/debug/armeabi-v7a"
 				}
 			],
-			"output" : "/Users/mauriceparrish/Development/penguin/packages/reference/example/build/reference/intermediates/cmake/debug/obj/armeabi-v7a/libreference.so",
+			"output" : "/Users/mauriceparrish/Development/penguin/packages/reference_example/example/build/reference/intermediates/cmake/debug/obj/armeabi-v7a/libreference.so",
 			"toolchain" : "15758239924615289414"
 		}
 	},

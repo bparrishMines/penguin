@@ -37,19 +37,17 @@ class $ClassTemplateChannel extends TypeChannel<$ClassTemplate> {
 }
 
 class $ClassTemplateHandler implements TypeChannelHandler<$ClassTemplate> {
-  $ClassTemplateHandler({
-    this.onCreate,
-    this.$onStaticMethodTemplate,
-  });
-
-  final $ClassTemplate Function(
+  $ClassTemplate onCreate(
     TypeChannelMessenger messenger,
     $ClassTemplateCreationArgs args,
-  )? onCreate;
+  ) {
+    throw UnimplementedError();
+  }
 
-  final double Function(
-          TypeChannelMessenger messenger, String parameterTemplate)?
-      $onStaticMethodTemplate;
+  double $onStaticMethodTemplate(
+      TypeChannelMessenger messenger, String parameterTemplate) {
+    throw UnimplementedError();
+  }
 
   @override
   Object? invokeStaticMethod(
@@ -62,7 +60,7 @@ class $ClassTemplateHandler implements TypeChannelHandler<$ClassTemplate> {
     switch (methodName) {
       case 'staticMethodTemplate':
         method =
-            () => $onStaticMethodTemplate!(messenger, arguments[0] as String);
+            () => $onStaticMethodTemplate(messenger, arguments[0] as String);
         break;
       default:
         throw ArgumentError.value(
@@ -89,7 +87,7 @@ class $ClassTemplateHandler implements TypeChannelHandler<$ClassTemplate> {
     TypeChannelMessenger messenger,
     List<Object?> arguments,
   ) {
-    return onCreate!(
+    return onCreate(
       messenger,
       $ClassTemplateCreationArgs()..fieldTemplate = arguments[0] as int,
     );
@@ -121,8 +119,23 @@ class $ClassTemplateHandler implements TypeChannelHandler<$ClassTemplate> {
   }
 }
 
-mixin $Channels {
-  void registerHandlers();
-  void unregisterHandlers();
+abstract class $LibraryImplementations {
   $ClassTemplateChannel get classTemplateChannel;
+  $ClassTemplateHandler get classTemplateHandler;
+}
+
+class $ChannelRegistrar {
+  $ChannelRegistrar(this.implementations);
+
+  final $LibraryImplementations implementations;
+
+  void registerHandlers() {
+    implementations.classTemplateChannel.setHandler(
+      implementations.classTemplateHandler,
+    );
+  }
+
+  void unregisterHandlers() {
+    implementations.classTemplateChannel.removeHandler();
+  }
 }

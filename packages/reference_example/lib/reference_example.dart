@@ -1,1 +1,1 @@
-export 'src/my_class.dart';
+export 'src/template.dart';

@@ -3,17 +3,17 @@ The host system is: Darwin - 20.2.0 - x86_64
 Determining if the C compiler works passed with the following output:
 Change Dir: /Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/debug/x86_64/CMakeFiles/CMakeTmp
 
-Run Build Command:"/Users/mauriceparrish/Library/Android/sdk/cmake/3.6.4111459/bin/ninja" "cmTC_5c42f"
-[1/2] Building C object CMakeFiles/cmTC_5c42f.dir/testCCompiler.c.o
-[2/2] Linking C executable cmTC_5c42f
+Run Build Command:"/Users/mauriceparrish/Library/Android/sdk/cmake/3.6.4111459/bin/ninja" "cmTC_c0d58"
+[1/2] Building C object CMakeFiles/cmTC_c0d58.dir/testCCompiler.c.o
+[2/2] Linking C executable cmTC_c0d58
 
 
 Detecting C compiler ABI info compiled with the following output:
 Change Dir: /Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/debug/x86_64/CMakeFiles/CMakeTmp
 
-Run Build Command:"/Users/mauriceparrish/Library/Android/sdk/cmake/3.6.4111459/bin/ninja" "cmTC_7f972"
-[1/2] Building C object CMakeFiles/cmTC_7f972.dir/CMakeCCompilerABI.c.o
-[2/2] Linking C executable cmTC_7f972
+Run Build Command:"/Users/mauriceparrish/Library/Android/sdk/cmake/3.6.4111459/bin/ninja" "cmTC_52129"
+[1/2] Building C object CMakeFiles/cmTC_52129.dir/CMakeCCompilerABI.c.o
+[2/2] Linking C executable cmTC_52129
 Android (6875598, based on r399163b) clang version 11.0.5 (https://android.googlesource.com/toolchain/llvm-project 87f1315dfbea7c137aa2e6d362dbb457e388158d)
 Target: x86_64-none-linux-android21
 Thread model: posix
@@ -23,16 +23,16 @@ Found candidate GCC installation: /Users/mauriceparrish/Library/Android/sdk/ndk/
 Selected GCC installation: /Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/lib/gcc/x86_64-linux-android/4.9.x
 Candidate multilib: .;@m64
 Selected multilib: .;@m64
- "/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/bin/ld" --sysroot=/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -pie -z noexecstack --warn-shared-textrel -z now -z relro --hash-style=both --enable-new-dtags --eh-frame-hdr -m elf_x86_64 -dynamic-linker /system/bin/linker64 -o cmTC_7f972 /Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib/x86_64-linux-android/21/crtbegin_dynamic.o -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/lib64/clang/11.0.5/lib/linux/x86_64 -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/lib/gcc/x86_64-linux-android/4.9.x -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/lib/gcc/x86_64-linux-android/4.9.x/../../../../x86_64-linux-android/lib/../lib64 -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib/x86_64-linux-android/21 -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib/x86_64-linux-android -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/lib/gcc/x86_64-linux-android/4.9.x/../../../../x86_64-linux-android/lib -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib --exclude-libs libgcc.a --exclude-libs libgcc_real.a --exclude-libs libatomic.a --build-id=sha1 --no-rosegment --fatal-warnings --no-undefined --gc-sections CMakeFiles/cmTC_7f972.dir/CMakeCCompilerABI.c.o -lgcc -ldl -lc -lgcc -ldl /Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib/x86_64-linux-android/21/crtend_android.o
+ "/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/bin/ld" --sysroot=/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -pie -z noexecstack --warn-shared-textrel -z now -z relro --hash-style=both --enable-new-dtags --eh-frame-hdr -m elf_x86_64 -dynamic-linker /system/bin/linker64 -o cmTC_52129 /Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib/x86_64-linux-android/21/crtbegin_dynamic.o -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/lib64/clang/11.0.5/lib/linux/x86_64 -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/lib/gcc/x86_64-linux-android/4.9.x -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/lib/gcc/x86_64-linux-android/4.9.x/../../../../x86_64-linux-android/lib/../lib64 -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib/x86_64-linux-android/21 -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib/x86_64-linux-android -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/lib/gcc/x86_64-linux-android/4.9.x/../../../../x86_64-linux-android/lib -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib --exclude-libs libgcc.a --exclude-libs libgcc_real.a --exclude-libs libatomic.a --build-id=sha1 --no-rosegment --fatal-warnings --no-undefined --gc-sections CMakeFiles/cmTC_52129.dir/CMakeCCompilerABI.c.o -lgcc -ldl -lc -lgcc -ldl /Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib/x86_64-linux-android/21/crtend_android.o
 
 
 Parsed C implicit link information from above output:
   link line regex: [^( *|.*[/\])(CMAKE_LINKER-NOTFOUND|([^/\]+-)?ld|collect2)[^/\]*( |$)]
   ignore line: [Change Dir: /Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/debug/x86_64/CMakeFiles/CMakeTmp]
   ignore line: []
-  ignore line: [Run Build Command:"/Users/mauriceparrish/Library/Android/sdk/cmake/3.6.4111459/bin/ninja" "cmTC_7f972"]
-  ignore line: [[1/2] Building C object CMakeFiles/cmTC_7f972.dir/CMakeCCompilerABI.c.o]
-  ignore line: [[2/2] Linking C executable cmTC_7f972]
+  ignore line: [Run Build Command:"/Users/mauriceparrish/Library/Android/sdk/cmake/3.6.4111459/bin/ninja" "cmTC_52129"]
+  ignore line: [[1/2] Building C object CMakeFiles/cmTC_52129.dir/CMakeCCompilerABI.c.o]
+  ignore line: [[2/2] Linking C executable cmTC_52129]
   ignore line: [Android (6875598, based on r399163b) clang version 11.0.5 (https://android.googlesource.com/toolchain/llvm-project 87f1315dfbea7c137aa2e6d362dbb457e388158d)]
   ignore line: [Target: x86_64-none-linux-android21]
   ignore line: [Thread model: posix]
@@ -44,7 +44,7 @@ Parsed C implicit link information from above output:
   ignore line: [@m64]
   ignore line: [Selected multilib: .]
   ignore line: [@m64]
-  link line: [ "/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/bin/ld" --sysroot=/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -pie -z noexecstack --warn-shared-textrel -z now -z relro --hash-style=both --enable-new-dtags --eh-frame-hdr -m elf_x86_64 -dynamic-linker /system/bin/linker64 -o cmTC_7f972 /Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib/x86_64-linux-android/21/crtbegin_dynamic.o -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/lib64/clang/11.0.5/lib/linux/x86_64 -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/lib/gcc/x86_64-linux-android/4.9.x -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/lib/gcc/x86_64-linux-android/4.9.x/../../../../x86_64-linux-android/lib/../lib64 -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib/x86_64-linux-android/21 -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib/x86_64-linux-android -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/lib/gcc/x86_64-linux-android/4.9.x/../../../../x86_64-linux-android/lib -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib --exclude-libs libgcc.a --exclude-libs libgcc_real.a --exclude-libs libatomic.a --build-id=sha1 --no-rosegment --fatal-warnings --no-undefined --gc-sections CMakeFiles/cmTC_7f972.dir/CMakeCCompilerABI.c.o -lgcc -ldl -lc -lgcc -ldl /Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib/x86_64-linux-android/21/crtend_android.o]
+  link line: [ "/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/bin/ld" --sysroot=/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -pie -z noexecstack --warn-shared-textrel -z now -z relro --hash-style=both --enable-new-dtags --eh-frame-hdr -m elf_x86_64 -dynamic-linker /system/bin/linker64 -o cmTC_52129 /Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib/x86_64-linux-android/21/crtbegin_dynamic.o -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/lib64/clang/11.0.5/lib/linux/x86_64 -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/lib/gcc/x86_64-linux-android/4.9.x -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/lib/gcc/x86_64-linux-android/4.9.x/../../../../x86_64-linux-android/lib/../lib64 -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib/x86_64-linux-android/21 -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib/x86_64-linux-android -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/lib/gcc/x86_64-linux-android/4.9.x/../../../../x86_64-linux-android/lib -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib --exclude-libs libgcc.a --exclude-libs libgcc_real.a --exclude-libs libatomic.a --build-id=sha1 --no-rosegment --fatal-warnings --no-undefined --gc-sections CMakeFiles/cmTC_52129.dir/CMakeCCompilerABI.c.o -lgcc -ldl -lc -lgcc -ldl /Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib/x86_64-linux-android/21/crtend_android.o]
     arg [/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/bin/ld] ==> ignore
     arg [--sysroot=/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot] ==> ignore
     arg [-pie] ==> ignore
@@ -60,7 +60,7 @@ Parsed C implicit link information from above output:
     arg [-dynamic-linker] ==> ignore
     arg [/system/bin/linker64] ==> ignore
     arg [-o] ==> ignore
-    arg [cmTC_7f972] ==> ignore
+    arg [cmTC_52129] ==> ignore
     arg [/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib/x86_64-linux-android/21/crtbegin_dynamic.o] ==> ignore
     arg [-L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/lib64/clang/11.0.5/lib/linux/x86_64] ==> dir [/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/lib64/clang/11.0.5/lib/linux/x86_64]
     arg [-L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/lib/gcc/x86_64-linux-android/4.9.x] ==> dir [/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/lib/gcc/x86_64-linux-android/4.9.x]
@@ -80,7 +80,7 @@ Parsed C implicit link information from above output:
     arg [--fatal-warnings] ==> ignore
     arg [--no-undefined] ==> ignore
     arg [--gc-sections] ==> ignore
-    arg [CMakeFiles/cmTC_7f972.dir/CMakeCCompilerABI.c.o] ==> ignore
+    arg [CMakeFiles/cmTC_52129.dir/CMakeCCompilerABI.c.o] ==> ignore
     arg [-lgcc] ==> lib [gcc]
     arg [-ldl] ==> lib [dl]
     arg [-lc] ==> lib [c]
@@ -106,9 +106,9 @@ Parsed C implicit link information from above output:
 Detecting C [-std=c11] compiler features compiled with the following output:
 Change Dir: /Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/debug/x86_64/CMakeFiles/CMakeTmp
 
-Run Build Command:"/Users/mauriceparrish/Library/Android/sdk/cmake/3.6.4111459/bin/ninja" "cmTC_52558"
-[1/2] Building C object CMakeFiles/cmTC_52558.dir/feature_tests.c.o
-[2/2] Linking C executable cmTC_52558
+Run Build Command:"/Users/mauriceparrish/Library/Android/sdk/cmake/3.6.4111459/bin/ninja" "cmTC_cb0cb"
+[1/2] Building C object CMakeFiles/cmTC_cb0cb.dir/feature_tests.c.o
+[2/2] Linking C executable cmTC_cb0cb
 
 
     Feature record: C_FEATURE:1c_function_prototypes
@@ -120,9 +120,9 @@ Run Build Command:"/Users/mauriceparrish/Library/Android/sdk/cmake/3.6.4111459/b
 Detecting C [-std=c99] compiler features compiled with the following output:
 Change Dir: /Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/debug/x86_64/CMakeFiles/CMakeTmp
 
-Run Build Command:"/Users/mauriceparrish/Library/Android/sdk/cmake/3.6.4111459/bin/ninja" "cmTC_81b53"
-[1/2] Building C object CMakeFiles/cmTC_81b53.dir/feature_tests.c.o
-[2/2] Linking C executable cmTC_81b53
+Run Build Command:"/Users/mauriceparrish/Library/Android/sdk/cmake/3.6.4111459/bin/ninja" "cmTC_dbdf1"
+[1/2] Building C object CMakeFiles/cmTC_dbdf1.dir/feature_tests.c.o
+[2/2] Linking C executable cmTC_dbdf1
 
 
     Feature record: C_FEATURE:1c_function_prototypes
@@ -134,9 +134,9 @@ Run Build Command:"/Users/mauriceparrish/Library/Android/sdk/cmake/3.6.4111459/b
 Detecting C [-std=c90] compiler features compiled with the following output:
 Change Dir: /Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/debug/x86_64/CMakeFiles/CMakeTmp
 
-Run Build Command:"/Users/mauriceparrish/Library/Android/sdk/cmake/3.6.4111459/bin/ninja" "cmTC_17bb3"
-[1/2] Building C object CMakeFiles/cmTC_17bb3.dir/feature_tests.c.o
-[2/2] Linking C executable cmTC_17bb3
+Run Build Command:"/Users/mauriceparrish/Library/Android/sdk/cmake/3.6.4111459/bin/ninja" "cmTC_af2c3"
+[1/2] Building C object CMakeFiles/cmTC_af2c3.dir/feature_tests.c.o
+[2/2] Linking C executable cmTC_af2c3
 
 
     Feature record: C_FEATURE:1c_function_prototypes
@@ -146,17 +146,17 @@ Run Build Command:"/Users/mauriceparrish/Library/Android/sdk/cmake/3.6.4111459/b
 Determining if the CXX compiler works passed with the following output:
 Change Dir: /Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/debug/x86_64/CMakeFiles/CMakeTmp
 
-Run Build Command:"/Users/mauriceparrish/Library/Android/sdk/cmake/3.6.4111459/bin/ninja" "cmTC_1658c"
-[1/2] Building CXX object CMakeFiles/cmTC_1658c.dir/testCXXCompiler.cxx.o
-[2/2] Linking CXX executable cmTC_1658c
+Run Build Command:"/Users/mauriceparrish/Library/Android/sdk/cmake/3.6.4111459/bin/ninja" "cmTC_2c10c"
+[1/2] Building CXX object CMakeFiles/cmTC_2c10c.dir/testCXXCompiler.cxx.o
+[2/2] Linking CXX executable cmTC_2c10c
 
 
 Detecting CXX compiler ABI info compiled with the following output:
 Change Dir: /Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/debug/x86_64/CMakeFiles/CMakeTmp
 
-Run Build Command:"/Users/mauriceparrish/Library/Android/sdk/cmake/3.6.4111459/bin/ninja" "cmTC_13c0a"
-[1/2] Building CXX object CMakeFiles/cmTC_13c0a.dir/CMakeCXXCompilerABI.cpp.o
-[2/2] Linking CXX executable cmTC_13c0a
+Run Build Command:"/Users/mauriceparrish/Library/Android/sdk/cmake/3.6.4111459/bin/ninja" "cmTC_34327"
+[1/2] Building CXX object CMakeFiles/cmTC_34327.dir/CMakeCXXCompilerABI.cpp.o
+[2/2] Linking CXX executable cmTC_34327
 Android (6875598, based on r399163b) clang version 11.0.5 (https://android.googlesource.com/toolchain/llvm-project 87f1315dfbea7c137aa2e6d362dbb457e388158d)
 Target: x86_64-none-linux-android21
 Thread model: posix
@@ -166,16 +166,16 @@ Found candidate GCC installation: /Users/mauriceparrish/Library/Android/sdk/ndk/
 Selected GCC installation: /Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/lib/gcc/x86_64-linux-android/4.9.x
 Candidate multilib: .;@m64
 Selected multilib: .;@m64
- "/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/bin/ld" --sysroot=/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -pie -z noexecstack --warn-shared-textrel -z now -z relro --hash-style=both --enable-new-dtags --eh-frame-hdr -m elf_x86_64 -dynamic-linker /system/bin/linker64 -o cmTC_13c0a /Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib/x86_64-linux-android/21/crtbegin_dynamic.o -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/lib64/clang/11.0.5/lib/linux/x86_64 -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/lib/gcc/x86_64-linux-android/4.9.x -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/lib/gcc/x86_64-linux-android/4.9.x/../../../../x86_64-linux-android/lib/../lib64 -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib/x86_64-linux-android/21 -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib/x86_64-linux-android -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/lib/gcc/x86_64-linux-android/4.9.x/../../../../x86_64-linux-android/lib -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib --exclude-libs libgcc.a --exclude-libs libgcc_real.a --exclude-libs libatomic.a --build-id=sha1 --no-rosegment --fatal-warnings --no-undefined --gc-sections CMakeFiles/cmTC_13c0a.dir/CMakeCXXCompilerABI.cpp.o -Bstatic -lc++ -Bdynamic -lm -lgcc -ldl -lc -lgcc -ldl /Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib/x86_64-linux-android/21/crtend_android.o
+ "/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/bin/ld" --sysroot=/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -pie -z noexecstack --warn-shared-textrel -z now -z relro --hash-style=both --enable-new-dtags --eh-frame-hdr -m elf_x86_64 -dynamic-linker /system/bin/linker64 -o cmTC_34327 /Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib/x86_64-linux-android/21/crtbegin_dynamic.o -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/lib64/clang/11.0.5/lib/linux/x86_64 -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/lib/gcc/x86_64-linux-android/4.9.x -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/lib/gcc/x86_64-linux-android/4.9.x/../../../../x86_64-linux-android/lib/../lib64 -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib/x86_64-linux-android/21 -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib/x86_64-linux-android -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/lib/gcc/x86_64-linux-android/4.9.x/../../../../x86_64-linux-android/lib -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib --exclude-libs libgcc.a --exclude-libs libgcc_real.a --exclude-libs libatomic.a --build-id=sha1 --no-rosegment --fatal-warnings --no-undefined --gc-sections CMakeFiles/cmTC_34327.dir/CMakeCXXCompilerABI.cpp.o -Bstatic -lc++ -Bdynamic -lm -lgcc -ldl -lc -lgcc -ldl /Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib/x86_64-linux-android/21/crtend_android.o
 
 
 Parsed CXX implicit link information from above output:
   link line regex: [^( *|.*[/\])(CMAKE_LINKER-NOTFOUND|([^/\]+-)?ld|collect2)[^/\]*( |$)]
   ignore line: [Change Dir: /Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/debug/x86_64/CMakeFiles/CMakeTmp]
   ignore line: []
-  ignore line: [Run Build Command:"/Users/mauriceparrish/Library/Android/sdk/cmake/3.6.4111459/bin/ninja" "cmTC_13c0a"]
-  ignore line: [[1/2] Building CXX object CMakeFiles/cmTC_13c0a.dir/CMakeCXXCompilerABI.cpp.o]
-  ignore line: [[2/2] Linking CXX executable cmTC_13c0a]
+  ignore line: [Run Build Command:"/Users/mauriceparrish/Library/Android/sdk/cmake/3.6.4111459/bin/ninja" "cmTC_34327"]
+  ignore line: [[1/2] Building CXX object CMakeFiles/cmTC_34327.dir/CMakeCXXCompilerABI.cpp.o]
+  ignore line: [[2/2] Linking CXX executable cmTC_34327]
   ignore line: [Android (6875598, based on r399163b) clang version 11.0.5 (https://android.googlesource.com/toolchain/llvm-project 87f1315dfbea7c137aa2e6d362dbb457e388158d)]
   ignore line: [Target: x86_64-none-linux-android21]
   ignore line: [Thread model: posix]
@@ -187,7 +187,7 @@ Parsed CXX implicit link information from above output:
   ignore line: [@m64]
   ignore line: [Selected multilib: .]
   ignore line: [@m64]
-  link line: [ "/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/bin/ld" --sysroot=/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -pie -z noexecstack --warn-shared-textrel -z now -z relro --hash-style=both --enable-new-dtags --eh-frame-hdr -m elf_x86_64 -dynamic-linker /system/bin/linker64 -o cmTC_13c0a /Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib/x86_64-linux-android/21/crtbegin_dynamic.o -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/lib64/clang/11.0.5/lib/linux/x86_64 -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/lib/gcc/x86_64-linux-android/4.9.x -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/lib/gcc/x86_64-linux-android/4.9.x/../../../../x86_64-linux-android/lib/../lib64 -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib/x86_64-linux-android/21 -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib/x86_64-linux-android -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/lib/gcc/x86_64-linux-android/4.9.x/../../../../x86_64-linux-android/lib -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib --exclude-libs libgcc.a --exclude-libs libgcc_real.a --exclude-libs libatomic.a --build-id=sha1 --no-rosegment --fatal-warnings --no-undefined --gc-sections CMakeFiles/cmTC_13c0a.dir/CMakeCXXCompilerABI.cpp.o -Bstatic -lc++ -Bdynamic -lm -lgcc -ldl -lc -lgcc -ldl /Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib/x86_64-linux-android/21/crtend_android.o]
+  link line: [ "/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/bin/ld" --sysroot=/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -pie -z noexecstack --warn-shared-textrel -z now -z relro --hash-style=both --enable-new-dtags --eh-frame-hdr -m elf_x86_64 -dynamic-linker /system/bin/linker64 -o cmTC_34327 /Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib/x86_64-linux-android/21/crtbegin_dynamic.o -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/lib64/clang/11.0.5/lib/linux/x86_64 -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/lib/gcc/x86_64-linux-android/4.9.x -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/lib/gcc/x86_64-linux-android/4.9.x/../../../../x86_64-linux-android/lib/../lib64 -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib/x86_64-linux-android/21 -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib/x86_64-linux-android -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/lib/gcc/x86_64-linux-android/4.9.x/../../../../x86_64-linux-android/lib -L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib --exclude-libs libgcc.a --exclude-libs libgcc_real.a --exclude-libs libatomic.a --build-id=sha1 --no-rosegment --fatal-warnings --no-undefined --gc-sections CMakeFiles/cmTC_34327.dir/CMakeCXXCompilerABI.cpp.o -Bstatic -lc++ -Bdynamic -lm -lgcc -ldl -lc -lgcc -ldl /Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib/x86_64-linux-android/21/crtend_android.o]
     arg [/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/bin/ld] ==> ignore
     arg [--sysroot=/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot] ==> ignore
     arg [-pie] ==> ignore
@@ -203,7 +203,7 @@ Parsed CXX implicit link information from above output:
     arg [-dynamic-linker] ==> ignore
     arg [/system/bin/linker64] ==> ignore
     arg [-o] ==> ignore
-    arg [cmTC_13c0a] ==> ignore
+    arg [cmTC_34327] ==> ignore
     arg [/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot/usr/lib/x86_64-linux-android/21/crtbegin_dynamic.o] ==> ignore
     arg [-L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/lib64/clang/11.0.5/lib/linux/x86_64] ==> dir [/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/lib64/clang/11.0.5/lib/linux/x86_64]
     arg [-L/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/lib/gcc/x86_64-linux-android/4.9.x] ==> dir [/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/lib/gcc/x86_64-linux-android/4.9.x]
@@ -223,7 +223,7 @@ Parsed CXX implicit link information from above output:
     arg [--fatal-warnings] ==> ignore
     arg [--no-undefined] ==> ignore
     arg [--gc-sections] ==> ignore
-    arg [CMakeFiles/cmTC_13c0a.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
+    arg [CMakeFiles/cmTC_34327.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
     arg [-Bstatic] ==> ignore
     arg [-lc++] ==> lib [c++]
     arg [-Bdynamic] ==> ignore
@@ -253,9 +253,9 @@ Parsed CXX implicit link information from above output:
 Detecting CXX [-std=c++14] compiler features compiled with the following output:
 Change Dir: /Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/debug/x86_64/CMakeFiles/CMakeTmp
 
-Run Build Command:"/Users/mauriceparrish/Library/Android/sdk/cmake/3.6.4111459/bin/ninja" "cmTC_330e5"
-[1/2] Building CXX object CMakeFiles/cmTC_330e5.dir/feature_tests.cxx.o
-[2/2] Linking CXX executable cmTC_330e5
+Run Build Command:"/Users/mauriceparrish/Library/Android/sdk/cmake/3.6.4111459/bin/ninja" "cmTC_37458"
+[1/2] Building CXX object CMakeFiles/cmTC_37458.dir/feature_tests.cxx.o
+[2/2] Linking CXX executable cmTC_37458
 
 
     Feature record: CXX_FEATURE:1cxx_aggregate_default_initializers
@@ -320,9 +320,9 @@ Run Build Command:"/Users/mauriceparrish/Library/Android/sdk/cmake/3.6.4111459/b
 Detecting CXX [-std=c++11] compiler features compiled with the following output:
 Change Dir: /Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/debug/x86_64/CMakeFiles/CMakeTmp
 
-Run Build Command:"/Users/mauriceparrish/Library/Android/sdk/cmake/3.6.4111459/bin/ninja" "cmTC_e8894"
-[1/2] Building CXX object CMakeFiles/cmTC_e8894.dir/feature_tests.cxx.o
-[2/2] Linking CXX executable cmTC_e8894
+Run Build Command:"/Users/mauriceparrish/Library/Android/sdk/cmake/3.6.4111459/bin/ninja" "cmTC_ff103"
+[1/2] Building CXX object CMakeFiles/cmTC_ff103.dir/feature_tests.cxx.o
+[2/2] Linking CXX executable cmTC_ff103
 
 
     Feature record: CXX_FEATURE:0cxx_aggregate_default_initializers
@@ -387,9 +387,9 @@ Run Build Command:"/Users/mauriceparrish/Library/Android/sdk/cmake/3.6.4111459/b
 Detecting CXX [-std=c++98] compiler features compiled with the following output:
 Change Dir: /Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/debug/x86_64/CMakeFiles/CMakeTmp
 
-Run Build Command:"/Users/mauriceparrish/Library/Android/sdk/cmake/3.6.4111459/bin/ninja" "cmTC_cde5c"
-[1/2] Building CXX object CMakeFiles/cmTC_cde5c.dir/feature_tests.cxx.o
-[2/2] Linking CXX executable cmTC_cde5c
+Run Build Command:"/Users/mauriceparrish/Library/Android/sdk/cmake/3.6.4111459/bin/ninja" "cmTC_99719"
+[1/2] Building CXX object CMakeFiles/cmTC_99719.dir/feature_tests.cxx.o
+[2/2] Linking CXX executable cmTC_99719
 
 
     Feature record: CXX_FEATURE:0cxx_aggregate_default_initializers

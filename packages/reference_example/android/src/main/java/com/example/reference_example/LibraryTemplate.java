@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-package github.penguin.reference.templates;
+package com.example.reference_example;
 
 import androidx.annotation.NonNull;
 
@@ -98,9 +98,24 @@ class LibraryTemplate {
     }
   }
 
-  public interface $Channels {
-    void registerHandlers();
-    void unregisterHandlers();
+  public interface $LibraryImplementations {
     $ClassTemplateChannel getClassTemplateChannel();
+    $ClassTemplateHandler getClassTemplateHandler();
+  }
+
+  public static class $ChannelRegistrar {
+    public final $LibraryImplementations implementations;
+
+    public $ChannelRegistrar($LibraryImplementations implementations) {
+      this.implementations = implementations;
+    }
+
+    void registerHandlers() {
+      implementations.getClassTemplateChannel().setHandler(implementations.getClassTemplateHandler());
+    }
+
+    void unregisterHandlers() {
+      implementations.getClassTemplateChannel().removeHandler();
+    }
   }
 }

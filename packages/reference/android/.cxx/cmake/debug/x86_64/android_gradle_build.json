@@ -33,7 +33,7 @@
 					"workingDirectory" : "/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/debug/x86_64"
 				}
 			],
-			"output" : "/Users/mauriceparrish/Development/penguin/packages/reference/example/build/reference/intermediates/cmake/debug/obj/x86_64/libreference.so",
+			"output" : "/Users/mauriceparrish/Development/penguin/packages/reference_example/example/build/reference/intermediates/cmake/debug/obj/x86_64/libreference.so",
 			"toolchain" : "15758239924615289414"
 		}
 	},

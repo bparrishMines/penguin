@@ -1,27 +1,26 @@
 package com.example.reference_example;
 
 import androidx.annotation.NonNull;
-import io.flutter.embedding.engine.plugins.FlutterPlugin;
-import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugin.common.PluginRegistry.Registrar;
 
-/** ReferenceExamplePlugin */
+import github.penguin.reference.ReferencePlugin;
+import github.penguin.reference.reference.TypeChannelMessenger;
+import io.flutter.embedding.engine.plugins.FlutterPlugin;
+
+/**
+ * ReferenceExamplePlugin
+ */
 public class ReferenceExamplePlugin implements FlutterPlugin {
-  public static void registerWith(Registrar registrar) {
-    new ReferenceExamplePlugin().initialize(registrar.messenger());
-  }
+  ChannelRegistrar channelRegistrar;
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
-    initialize(flutterPluginBinding.getBinaryMessenger());
+    final TypeChannelMessenger messenger = ReferencePlugin.getMessengerInstance(flutterPluginBinding.getBinaryMessenger());
+    channelRegistrar = new ChannelRegistrar(new ChannelRegistrar.LibraryImplementations(messenger));
+    channelRegistrar.registerHandlers();
   }
 
   @Override
   public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
-    // Do nothing.
-  }
-
-  private void initialize(final BinaryMessenger binaryMessenger) {
-    new MyReferencePairManager(binaryMessenger).initialize();
+    channelRegistrar.unregisterHandlers();
   }
 }

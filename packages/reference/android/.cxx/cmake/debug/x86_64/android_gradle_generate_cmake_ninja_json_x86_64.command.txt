@@ -4,7 +4,7 @@ arguments :
 -B/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/debug/x86_64
 -DANDROID_ABI=x86_64
 -DANDROID_PLATFORM=android-16
--DCMAKE_LIBRARY_OUTPUT_DIRECTORY=/Users/mauriceparrish/Development/penguin/packages/reference/example/build/reference/intermediates/cmake/debug/obj/x86_64
+-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=/Users/mauriceparrish/Development/penguin/packages/reference_example/example/build/reference/intermediates/cmake/debug/obj/x86_64
 -DCMAKE_BUILD_TYPE=Debug
 -DANDROID_NDK=/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061
 -DCMAKE_TOOLCHAIN_FILE=/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/build/cmake/android.toolchain.cmake
