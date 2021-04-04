@@ -1,3 +1,7 @@
+## 0.2.0-beta.5
+
+* Automatically handle disposing object on Android.
+
 ## 0.2.0-beta.4
 
 * Add Dart `TypeChannel.removeHandler`.
