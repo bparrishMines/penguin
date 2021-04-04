@@ -1,4 +1,4 @@
 # ninja log v5
-1	51	0	CMakeFiles/reference.dir/Users/mauriceparrish/Development/penguin/packages/reference/third_party/dart-sdk/src/runtime/include/dart_api_dl.c.o	86ef247dc1ff070b
-2	630	0	CMakeFiles/reference.dir/Users/mauriceparrish/Development/penguin/packages/reference/ios/Classes/reference.cpp.o	ebd8008a8f1f2f97
-631	708	0	/Users/mauriceparrish/Development/penguin/packages/reference_example/example/build/reference/intermediates/cmake/debug/obj/x86/libreference.so	4e11029e52c132ba
+0	78	1617579026	CMakeFiles/reference.dir/Users/mauriceparrish/Development/penguin/packages/reference/third_party/dart-sdk/src/runtime/include/dart_api_dl.c.o	c2e6b11e358d07d9
+1	728	1617579027	CMakeFiles/reference.dir/Users/mauriceparrish/Development/penguin/packages/reference/ios/Classes/reference.cpp.o	2cc2830a922f3578
+729	822	1617579027	/Users/mauriceparrish/Development/penguin/packages/penguin_android_camera/example/build/reference/intermediates/cmake/debug/obj/x86/libreference.so	8557ae09d744ec68

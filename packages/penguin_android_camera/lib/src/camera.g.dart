@@ -247,22 +247,22 @@ class $MediaRecorderChannel extends TypeChannel<$MediaRecorder> {
 }
 
 class $CameraHandler implements TypeChannelHandler<$Camera> {
-  $CameraHandler({
-    this.onCreate,
-    this.$onGetAllCameraInfo,
-    this.$onOpen,
-  });
-
-  final $Camera Function(
+  $Camera onCreate(
     TypeChannelMessenger messenger,
     $CameraCreationArgs args,
-  )? onCreate;
+  ) {
+    throw UnimplementedError();
+  }
 
-  final Future<List<$CameraInfo>> Function(
+  double $onGetAllCameraInfo(
     TypeChannelMessenger messenger,
-  )? $onGetAllCameraInfo;
-  final Future<$Camera> Function(TypeChannelMessenger messenger, int cameraId)?
-      $onOpen;
+  ) {
+    throw UnimplementedError();
+  }
+
+  double $onOpen(TypeChannelMessenger messenger, int cameraId) {
+    throw UnimplementedError();
+  }
 
   @override
   Object? invokeStaticMethod(
@@ -274,12 +274,12 @@ class $CameraHandler implements TypeChannelHandler<$Camera> {
     Function method = () {};
     switch (methodName) {
       case 'getAllCameraInfo':
-        method = () => $onGetAllCameraInfo!(
+        method = () => $onGetAllCameraInfo(
               messenger,
             );
         break;
       case 'open':
-        method = () => $onOpen!(messenger, arguments[0] as int);
+        method = () => $onOpen(messenger, arguments[0] as int);
         break;
       default:
         throw ArgumentError.value(
@@ -306,7 +306,7 @@ class $CameraHandler implements TypeChannelHandler<$Camera> {
     TypeChannelMessenger messenger,
     List<Object?> arguments,
   ) {
-    return onCreate!(
+    return onCreate(
       messenger,
       $CameraCreationArgs(),
     );
@@ -361,14 +361,12 @@ class $CameraHandler implements TypeChannelHandler<$Camera> {
 }
 
 class $ShutterCallbackHandler implements TypeChannelHandler<$ShutterCallback> {
-  $ShutterCallbackHandler({
-    this.onCreate,
-  });
-
-  final $ShutterCallback Function(
+  $ShutterCallback onCreate(
     TypeChannelMessenger messenger,
     $ShutterCallbackCreationArgs args,
-  )? onCreate;
+  ) {
+    throw UnimplementedError();
+  }
 
   @override
   Object? invokeStaticMethod(
@@ -404,7 +402,7 @@ class $ShutterCallbackHandler implements TypeChannelHandler<$ShutterCallback> {
     TypeChannelMessenger messenger,
     List<Object?> arguments,
   ) {
-    return onCreate!(
+    return onCreate(
       messenger,
       $ShutterCallbackCreationArgs(),
     );
@@ -437,14 +435,12 @@ class $ShutterCallbackHandler implements TypeChannelHandler<$ShutterCallback> {
 }
 
 class $PictureCallbackHandler implements TypeChannelHandler<$PictureCallback> {
-  $PictureCallbackHandler({
-    this.onCreate,
-  });
-
-  final $PictureCallback Function(
+  $PictureCallback onCreate(
     TypeChannelMessenger messenger,
     $PictureCallbackCreationArgs args,
-  )? onCreate;
+  ) {
+    throw UnimplementedError();
+  }
 
   @override
   Object? invokeStaticMethod(
@@ -480,7 +476,7 @@ class $PictureCallbackHandler implements TypeChannelHandler<$PictureCallback> {
     TypeChannelMessenger messenger,
     List<Object?> arguments,
   ) {
-    return onCreate!(
+    return onCreate(
       messenger,
       $PictureCallbackCreationArgs(),
     );
@@ -513,14 +509,12 @@ class $PictureCallbackHandler implements TypeChannelHandler<$PictureCallback> {
 }
 
 class $CameraInfoHandler implements TypeChannelHandler<$CameraInfo> {
-  $CameraInfoHandler({
-    this.onCreate,
-  });
-
-  final $CameraInfo Function(
+  $CameraInfo onCreate(
     TypeChannelMessenger messenger,
     $CameraInfoCreationArgs args,
-  )? onCreate;
+  ) {
+    throw UnimplementedError();
+  }
 
   @override
   Object? invokeStaticMethod(
@@ -556,7 +550,7 @@ class $CameraInfoHandler implements TypeChannelHandler<$CameraInfo> {
     TypeChannelMessenger messenger,
     List<Object?> arguments,
   ) {
-    return onCreate!(
+    return onCreate(
       messenger,
       $CameraInfoCreationArgs()
         ..cameraId = arguments[0] as int
@@ -589,14 +583,12 @@ class $CameraInfoHandler implements TypeChannelHandler<$CameraInfo> {
 }
 
 class $MediaRecorderHandler implements TypeChannelHandler<$MediaRecorder> {
-  $MediaRecorderHandler({
-    this.onCreate,
-  });
-
-  final $MediaRecorder Function(
+  $MediaRecorder onCreate(
     TypeChannelMessenger messenger,
     $MediaRecorderCreationArgs args,
-  )? onCreate;
+  ) {
+    throw UnimplementedError();
+  }
 
   @override
   Object? invokeStaticMethod(
@@ -639,7 +631,7 @@ class $MediaRecorderHandler implements TypeChannelHandler<$MediaRecorder> {
     TypeChannelMessenger messenger,
     List<Object?> arguments,
   ) {
-    return onCreate!(
+    return onCreate(
       messenger,
       $MediaRecorderCreationArgs()
         ..camera = arguments[0] as $Camera
@@ -686,12 +678,47 @@ class $MediaRecorderHandler implements TypeChannelHandler<$MediaRecorder> {
   }
 }
 
-mixin $Channels {
-  void registerHandlers();
-  void unregisterHandlers();
+mixin $LibraryImplementations {
   $CameraChannel get cameraChannel;
   $ShutterCallbackChannel get shutterCallbackChannel;
   $PictureCallbackChannel get pictureCallbackChannel;
   $CameraInfoChannel get cameraInfoChannel;
   $MediaRecorderChannel get mediaRecorderChannel;
+  $CameraHandler get cameraHandler;
+  $ShutterCallbackHandler get shutterCallbackHandler;
+  $PictureCallbackHandler get pictureCallbackHandler;
+  $CameraInfoHandler get cameraInfoHandler;
+  $MediaRecorderHandler get mediaRecorderHandler;
+}
+
+class $ChannelRegistrar {
+  $ChannelRegistrar(this.implementations);
+
+  final $LibraryImplementations implementations;
+
+  void registerHandlers() {
+    implementations.cameraChannel.setHandler(
+      implementations.cameraHandler,
+    );
+    implementations.shutterCallbackChannel.setHandler(
+      implementations.shutterCallbackHandler,
+    );
+    implementations.pictureCallbackChannel.setHandler(
+      implementations.pictureCallbackHandler,
+    );
+    implementations.cameraInfoChannel.setHandler(
+      implementations.cameraInfoHandler,
+    );
+    implementations.mediaRecorderChannel.setHandler(
+      implementations.mediaRecorderHandler,
+    );
+  }
+
+  void unregisterHandlers() {
+    implementations.cameraChannel.removeHandler();
+    implementations.shutterCallbackChannel.removeHandler();
+    implementations.pictureCallbackChannel.removeHandler();
+    implementations.cameraInfoChannel.removeHandler();
+    implementations.mediaRecorderChannel.removeHandler();
+  }
 }

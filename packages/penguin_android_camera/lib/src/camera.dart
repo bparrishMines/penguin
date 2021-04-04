@@ -1,11 +1,9 @@
-import 'dart:async';
 import 'dart:typed_data';
 
-import 'package:flutter/services.dart';
 import 'package:reference/annotations.dart';
-import 'package:reference/reference.dart';
 
 import 'camera.g.dart';
+import 'camera_channels.dart';
 
 /// The [Camera] class is used to set image capture settings, start/stop preview, snap pictures, and retrieve frames for encoding for video.
 ///
@@ -18,16 +16,19 @@ import 'camera.g.dart';
 class Camera with $Camera {
   /// Default constructor for [Camera].
   ///
-  /// This should only be used when subclassing. Otherwise, an instance will be
-  /// provided from [open].
+  /// This should only be used when subclassing. Otherwise, an instance should
+  /// be provided from [open].
   Camera();
+
+  static CameraChannel get _channel =>
+      ChannelRegistrar.instance.implementations.cameraChannel as CameraChannel;
 
   int? _currentTexture;
 
   /// Returns the information about each camera.
   static Future<List<CameraInfo>> getAllCameraInfo() async {
-    final List<Object> allInfo =
-        await Channels.cameraChannel.$invokeGetAllCameraInfo() as List<Object>;
+    final List<Object?> allInfo =
+        await _channel.$invokeGetAllCameraInfo() as List<Object?>;
     return allInfo.cast<CameraInfo>();
   }
 
@@ -41,49 +42,43 @@ class Camera with $Camera {
   /// application should only have one [Camera] object active at a time for a
   /// particular hardware camera.
   static Future<Camera> open(int cameraId) async {
-    return await Channels.cameraChannel.$invokeOpen(cameraId) as Camera;
+    return await _channel.$invokeOpen(cameraId) as Camera;
   }
 
   /// Disconnects and releases the [Camera] object resources.
   ///
   /// You must call this as soon as you're done with the [Camera] object.
   @override
-  Future<void> release() {
-    return Channels.cameraChannel.$invokeRelease(this);
-  }
+  Future<void> release() => _channel.$invokeRelease(this);
 
   /// Starts capturing and drawing preview frames to the screen.
   ///
   /// Preview will not actually start until a texture is supplied with
   /// [addToTexture].
   @override
-  Future<void> startPreview() async {
-    await Channels.cameraChannel.$invokeStartPreview(this);
-  }
+  Future<void> startPreview() => _channel.$invokeStartPreview(this);
 
   /// Stops capturing and drawing preview frames to the surface.
   ///
   /// Resets the camera for a future call to [startPreview].
   @override
-  Future<void> stopPreview() async {
-    await Channels.cameraChannel.$invokeStopPreview(this);
-  }
+  Future<void> stopPreview() => _channel.$invokeStopPreview(this);
 
   @override
   Future<int> attachPreviewTexture() async {
     return _currentTexture ??=
-        await Channels.cameraChannel.$invokeAttachPreviewTexture(this) as int;
+        await _channel.$invokeAttachPreviewTexture(this) as int;
   }
 
   @override
   Future<void> releasePreviewTexture() async {
     _currentTexture = null;
-    await Channels.cameraChannel.$invokeReleasePreviewTexture(this);
+    await _channel.$invokeReleasePreviewTexture(this);
   }
 
   @override
   Future<void> unlock() {
-    return Channels.cameraChannel.$invokeUnlock(this);
+    return _channel.$invokeUnlock(this);
   }
 
   @override
@@ -97,7 +92,7 @@ class Camera with $Camera {
     assert(postView == null || (postView != raw && postView != jpeg));
     assert(jpeg == null || (jpeg != raw && jpeg != postView));
 
-    await Channels.cameraChannel.$invokeTakePicture(
+    await _channel.$invokeTakePicture(
       this,
       shutter,
       raw,
@@ -110,7 +105,8 @@ class Camera with $Camera {
 @Reference('penguin_android_camera/camera/ShutterCallback')
 abstract class ShutterCallback with $ShutterCallback {
   ShutterCallback() {
-    Channels.shutterCallbackChannel.createNewInstancePair(this, owner: false);
+    ChannelRegistrar.instance.implementations.shutterCallbackChannel
+        .createNewInstancePair(this, owner: false);
   }
 
   @override
@@ -120,7 +116,8 @@ abstract class ShutterCallback with $ShutterCallback {
 @Reference('penguin_android_camera/camera/PictureCallback')
 abstract class PictureCallback with $PictureCallback {
   PictureCallback() {
-    Channels.pictureCallbackChannel.createNewInstancePair(this, owner: false);
+    ChannelRegistrar.instance.implementations.pictureCallbackChannel
+        .createNewInstancePair(this, owner: false);
   }
 
   @override
@@ -201,8 +198,12 @@ class MediaRecorder implements $MediaRecorder {
     required this.audioSource,
     required this.audioEncoder,
   }) {
-    Channels.mediaRecorderChannel.createNewInstancePair(this, owner: true);
+    _channel.createNewInstancePair(this, owner: true);
   }
+
+  static MediaRecorderChannel get _channel =>
+      ChannelRegistrar.instance.implementations.mediaRecorderChannel
+          as MediaRecorderChannel;
 
   @override
   final Camera camera;
@@ -223,89 +224,14 @@ class MediaRecorder implements $MediaRecorder {
   final int audioEncoder;
 
   @override
-  Future<void> prepare() {
-    return Channels.mediaRecorderChannel.$invokePrepare(this);
-  }
+  Future<void> prepare() => _channel.$invokePrepare(this);
 
   @override
-  Future<void> start() {
-    return Channels.mediaRecorderChannel.$invokeStart(this);
-  }
+  Future<void> start() => _channel.$invokeStart(this);
 
   @override
-  Future<void> stop() {
-    return Channels.mediaRecorderChannel.$invokeStop(this);
-  }
+  Future<void> stop() => _channel.$invokeStop(this);
 
   @override
-  Future<void> release() async {
-    Channels.mediaRecorderChannel.$invokeRelease(this);
-  }
+  Future<void> release() => _channel.$invokeRelease(this);
 }
-
-abstract class Channels {
-  Channels._();
-
-  static CameraChannel cameraChannel = CameraChannel(
-    MethodChannelMessenger.instance,
-  )..setHandler(CameraHandler());
-
-  static CameraInfoChannel cameraInfoChannel = CameraInfoChannel(
-    MethodChannelMessenger.instance,
-  )..setHandler(CameraInfoHandler());
-
-  static ShutterCallbackChannel shutterCallbackChannel = ShutterCallbackChannel(
-    MethodChannelMessenger.instance,
-  )..setHandler(ShutterCallbackHandler());
-
-  static PictureCallbackChannel pictureCallbackChannel = PictureCallbackChannel(
-    MethodChannelMessenger.instance,
-  )..setHandler(PictureCallbackHandler());
-
-  static MediaRecorderChannel mediaRecorderChannel = MediaRecorderChannel(
-    MethodChannelMessenger.instance,
-  )..setHandler(MediaRecorderHandler());
-}
-
-class CameraChannel extends $CameraChannel {
-  CameraChannel(TypeChannelMessenger messenger) : super(messenger);
-}
-
-class CameraInfoChannel extends $CameraInfoChannel {
-  CameraInfoChannel(TypeChannelMessenger messenger) : super(messenger);
-}
-
-class ShutterCallbackChannel extends $ShutterCallbackChannel {
-  ShutterCallbackChannel(TypeChannelMessenger messenger) : super(messenger);
-}
-
-class PictureCallbackChannel extends $PictureCallbackChannel {
-  PictureCallbackChannel(TypeChannelMessenger messenger) : super(messenger);
-}
-
-class MediaRecorderChannel extends $MediaRecorderChannel {
-  MediaRecorderChannel(TypeChannelMessenger messenger) : super(messenger);
-}
-
-class CameraHandler extends $CameraHandler {
-  CameraHandler() : super(onCreate: (_, $CameraCreationArgs args) => Camera());
-}
-
-class CameraInfoHandler extends $CameraInfoHandler {
-  CameraInfoHandler()
-      : super(
-          onCreate: (_, $CameraInfoCreationArgs args) {
-            return CameraInfo(
-              cameraId: args.cameraId,
-              facing: args.facing,
-              orientation: args.orientation,
-            );
-          },
-        );
-}
-
-class ShutterCallbackHandler extends $ShutterCallbackHandler {}
-
-class PictureCallbackHandler extends $PictureCallbackHandler {}
-
-class MediaRecorderHandler extends $MediaRecorderHandler {}

@@ -1,16 +1,21 @@
 {
   "buildFiles": [
-    "/Users/mauriceparrish/Development/penguin/packages/reference/android/CMakeLists.txt"
+    "/Users/mauriceparrish/Development/penguin/packages/reference/android/CMakeLists.txt",
+    "/Users/mauriceparrish/Library/Android/sdk/ndk/21.1.6352462/build/cmake/android.toolchain.cmake",
+    "/Users/mauriceparrish/Library/Android/sdk/ndk/21.1.6352462/build/cmake/platforms.cmake",
+    "/Users/mauriceparrish/Development/penguin/packages/reference/third_party/dart-sdk/sources.cmake"
   ],
   "cleanCommands": [
-    "/Users/mauriceparrish/Library/Android/sdk/cmake/3.6.4111459/bin/cmake --build /Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/debug/x86_64 --target clean"
+    "/Users/mauriceparrish/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/debug/x86_64\" clean"
   ],
+  "buildTargetsCommand": "/Users/mauriceparrish/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja  -C \"/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/debug/x86_64\" {LIST_OF_TARGETS_TO_BUILD}",
   "libraries": {
     "reference-Debug-x86_64": {
       "artifactName": "reference",
-      "buildCommand": "/Users/mauriceparrish/Library/Android/sdk/cmake/3.6.4111459/bin/cmake --build /Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/debug/x86_64 --target reference",
+      "buildCommand": "/Users/mauriceparrish/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/debug/x86_64\" reference",
       "abi": "x86_64",
-      "output": "/Users/mauriceparrish/Development/penguin/packages/reference_example/example/build/reference/intermediates/cmake/debug/obj/x86_64/libreference.so"
+      "output": "/Users/mauriceparrish/Development/penguin/packages/penguin_android_camera/example/build/reference/intermediates/cmake/debug/obj/x86_64/libreference.so",
+      "runtimeFiles": []
     }
   }
 }

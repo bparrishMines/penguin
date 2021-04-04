@@ -4,7 +4,7 @@ import 'package:reference_example/reference_example.dart';
 import 'template.g.dart';
 
 class ChannelRegistrar extends $ChannelRegistrar {
-  ChannelRegistrar($LibraryImplementations implementations)
+  ChannelRegistrar(LibraryImplementations implementations)
       : super(implementations);
 
   static ChannelRegistrar instance =
@@ -20,7 +20,7 @@ class LibraryImplementations with $LibraryImplementations {
   final ClassTemplateChannel classTemplateChannel;
 
   @override
-  ClassTemplateHandler get classTemplateHandler => ClassTemplateHandler();
+  final ClassTemplateHandler classTemplateHandler = ClassTemplateHandler();
 }
 
 class ClassTemplateChannel extends $ClassTemplateChannel {
@@ -29,7 +29,7 @@ class ClassTemplateChannel extends $ClassTemplateChannel {
 
 class ClassTemplateHandler extends $ClassTemplateHandler {
   @override
-  $ClassTemplate onCreate(
+  ClassTemplate onCreate(
     TypeChannelMessenger messenger,
     $ClassTemplateCreationArgs args,
   ) {
