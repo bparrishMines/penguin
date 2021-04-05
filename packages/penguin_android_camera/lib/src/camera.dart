@@ -188,16 +188,13 @@ abstract class AudioEncoder {
   static const int amrNb = 0x00000001;
 }
 
+abstract class VideoSource {
+  static const int camera = 0x00000001;
+}
+
 @Reference('penguin_android_camera/camera/MediaRecorder')
 class MediaRecorder implements $MediaRecorder {
-  MediaRecorder({
-    required this.camera,
-    required this.outputFormat,
-    required this.outputFilePath,
-    required this.videoEncoder,
-    required this.audioSource,
-    required this.audioEncoder,
-  }) {
+  MediaRecorder() {
     _channel.createNewInstancePair(this, owner: true);
   }
 
@@ -206,22 +203,32 @@ class MediaRecorder implements $MediaRecorder {
           as MediaRecorderChannel;
 
   @override
-  final Camera camera;
+  Future<void> setCamera(covariant Camera camera) =>
+      _channel.$invokeSetCamera(this, camera);
 
   @override
-  final String outputFilePath;
+  Future<void> setVideoSource(int source) =>
+      _channel.$invokeSetVideoSource(this, source);
 
   @override
-  final int outputFormat;
+  Future<void> setOutputFilePath(String path) =>
+      _channel.$invokeSetOutputFilePath(this, path);
 
   @override
-  final int videoEncoder;
+  Future<void> setOutputFormat(int format) =>
+      _channel.$invokeSetOutputFormat(this, format);
 
   @override
-  final int audioSource;
+  Future<void> setVideoEncoder(int encoder) =>
+      _channel.$invokeSetVideoEncoder(this, encoder);
 
   @override
-  final int audioEncoder;
+  Future<void> setAudioSource(int source) =>
+      _channel.$invokeSetAudioSource(this, source);
+
+  @override
+  Future<void> setAudioEncoder(int encoder) =>
+      _channel.$invokeSetAudioEncoder(this, encoder);
 
   @override
   Future<void> prepare() => _channel.$invokePrepare(this);

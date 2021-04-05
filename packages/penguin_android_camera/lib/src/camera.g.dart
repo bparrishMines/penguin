@@ -39,12 +39,20 @@ mixin $CameraInfo {
 }
 
 mixin $MediaRecorder {
-  $Camera get camera;
-  int get outputFormat;
-  String get outputFilePath;
-  int get videoEncoder;
-  int get audioSource;
-  int get audioEncoder;
+  Future<void> setCamera($Camera camera);
+
+  Future<void> setVideoSource(int source);
+
+  Future<void> setOutputFilePath(String path);
+
+  Future<void> setOutputFormat(int format);
+
+  Future<void> setVideoEncoder(int encoder);
+
+  Future<void> setAudioSource(int source);
+
+  Future<void> setAudioEncoder(int encoder);
+
   Future<void> prepare();
 
   Future<void> start();
@@ -66,14 +74,7 @@ class $CameraInfoCreationArgs {
   late int orientation;
 }
 
-class $MediaRecorderCreationArgs {
-  late $Camera camera;
-  late int outputFormat;
-  late String outputFilePath;
-  late int videoEncoder;
-  late int audioSource;
-  late int audioEncoder;
-}
+class $MediaRecorderCreationArgs {}
 
 class $CameraChannel extends TypeChannel<$Camera> {
   $CameraChannel(TypeChannelMessenger messenger)
@@ -204,6 +205,63 @@ class $CameraInfoChannel extends TypeChannel<$CameraInfo> {
 class $MediaRecorderChannel extends TypeChannel<$MediaRecorder> {
   $MediaRecorderChannel(TypeChannelMessenger messenger)
       : super(messenger, 'penguin_android_camera/camera/MediaRecorder');
+
+  Future<Object?> $invokeSetCamera($MediaRecorder instance, $Camera camera) {
+    return sendInvokeMethod(
+      instance,
+      'setCamera',
+      <Object?>[camera],
+    );
+  }
+
+  Future<Object?> $invokeSetVideoSource($MediaRecorder instance, int source) {
+    return sendInvokeMethod(
+      instance,
+      'setVideoSource',
+      <Object?>[source],
+    );
+  }
+
+  Future<Object?> $invokeSetOutputFilePath(
+      $MediaRecorder instance, String path) {
+    return sendInvokeMethod(
+      instance,
+      'setOutputFilePath',
+      <Object?>[path],
+    );
+  }
+
+  Future<Object?> $invokeSetOutputFormat($MediaRecorder instance, int format) {
+    return sendInvokeMethod(
+      instance,
+      'setOutputFormat',
+      <Object?>[format],
+    );
+  }
+
+  Future<Object?> $invokeSetVideoEncoder($MediaRecorder instance, int encoder) {
+    return sendInvokeMethod(
+      instance,
+      'setVideoEncoder',
+      <Object?>[encoder],
+    );
+  }
+
+  Future<Object?> $invokeSetAudioSource($MediaRecorder instance, int source) {
+    return sendInvokeMethod(
+      instance,
+      'setAudioSource',
+      <Object?>[source],
+    );
+  }
+
+  Future<Object?> $invokeSetAudioEncoder($MediaRecorder instance, int encoder) {
+    return sendInvokeMethod(
+      instance,
+      'setAudioEncoder',
+      <Object?>[encoder],
+    );
+  }
 
   Future<Object?> $invokePrepare(
     $MediaRecorder instance,
@@ -616,14 +674,7 @@ class $MediaRecorderHandler implements TypeChannelHandler<$MediaRecorder> {
     TypeChannelMessenger messenger,
     $MediaRecorder instance,
   ) {
-    return <Object?>[
-      instance.camera,
-      instance.outputFormat,
-      instance.outputFilePath,
-      instance.videoEncoder,
-      instance.audioSource,
-      instance.audioEncoder
-    ];
+    return <Object?>[];
   }
 
   @override
@@ -633,13 +684,7 @@ class $MediaRecorderHandler implements TypeChannelHandler<$MediaRecorder> {
   ) {
     return onCreate(
       messenger,
-      $MediaRecorderCreationArgs()
-        ..camera = arguments[0] as $Camera
-        ..outputFormat = arguments[1] as int
-        ..outputFilePath = arguments[2] as String
-        ..videoEncoder = arguments[3] as int
-        ..audioSource = arguments[4] as int
-        ..audioEncoder = arguments[5] as int,
+      $MediaRecorderCreationArgs(),
     );
   }
 
@@ -653,6 +698,27 @@ class $MediaRecorderHandler implements TypeChannelHandler<$MediaRecorder> {
     // ignore: prefer_final_locals, prefer_function_declarations_over_variables
     Function method = () {};
     switch (methodName) {
+      case 'setCamera':
+        method = () => instance.setCamera(arguments[0] as $Camera);
+        break;
+      case 'setVideoSource':
+        method = () => instance.setVideoSource(arguments[0] as int);
+        break;
+      case 'setOutputFilePath':
+        method = () => instance.setOutputFilePath(arguments[0] as String);
+        break;
+      case 'setOutputFormat':
+        method = () => instance.setOutputFormat(arguments[0] as int);
+        break;
+      case 'setVideoEncoder':
+        method = () => instance.setVideoEncoder(arguments[0] as int);
+        break;
+      case 'setAudioSource':
+        method = () => instance.setAudioSource(arguments[0] as int);
+        break;
+      case 'setAudioEncoder':
+        method = () => instance.setAudioEncoder(arguments[0] as int);
+        break;
       case 'prepare':
         method = () => instance.prepare();
         break;

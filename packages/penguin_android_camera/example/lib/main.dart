@@ -24,7 +24,7 @@ class _MyAppState extends State<MyApp> {
   Widget _previewWidget = Container();
   int _cameraFacing = CameraInfo.cameraFacingFront;
   final double _deviceRotation = 0;
-  MediaRecorder? _mediaRecorder;
+  late MediaRecorder _mediaRecorder;
 
   @override
   void initState() {
@@ -135,26 +135,26 @@ class _MyAppState extends State<MyApp> {
       debugPrint('Camera is null.');
       return Future<void>.value();
     }
-    if (_mediaRecorder == null) {
-      debugPrint('MediaRecorder is null.');
-      return Future<void>.value();
-    }
 
     final Directory dir = await _storageDir();
-    _mediaRecorder = MediaRecorder(
-      camera: _camera!,
-      outputFormat: OutputFormat.mpeg4,
-      outputFilePath: '${dir.path}/my_video${Random().nextInt(10000)}.mp4',
-      videoEncoder: VideoEncoder.mpeg4Sp,
-      audioSource: AudioSource.defaultSource,
-      audioEncoder: AudioEncoder.amrNb,
+
+    _mediaRecorder = MediaRecorder();
+    _mediaRecorder.setCamera(_camera!);
+    _mediaRecorder.setVideoSource(VideoSource.camera);
+    _mediaRecorder.setAudioSource(AudioSource.defaultSource);
+    _mediaRecorder.setOutputFormat(OutputFormat.mpeg4);
+    _mediaRecorder.setVideoEncoder(VideoEncoder.mpeg4Sp);
+    _mediaRecorder.setAudioEncoder(AudioEncoder.amrNb);
+    _mediaRecorder.setOutputFilePath(
+      '${dir.path}/my_video${Random().nextInt(10000)}.mp4',
     );
+
     _camera!.unlock();
-    _mediaRecorder!.prepare();
-    _mediaRecorder!.start();
+    _mediaRecorder.prepare();
+    _mediaRecorder.start();
     await Future<void>.delayed(const Duration(seconds: 8));
-    _mediaRecorder!.stop();
-    _mediaRecorder!.release();
+    _mediaRecorder.stop();
+    _mediaRecorder.release();
   }
 
   Widget _buildPictureButton() {
