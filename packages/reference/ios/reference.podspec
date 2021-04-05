@@ -22,9 +22,7 @@ Pod::Spec.new do |s|
   s.public_header_files = 'Classes/**/*.h'
   s.dependency 'Flutter'
   s.platform = :ios, '8.0'
-  s.compiler_flags      = [
-    '-GCC_WARN_INHIBIT_ALL_WARNINGS',
-  ]
+
   s.pod_target_xcconfig = {
     'HEADER_SEARCH_PATHS' => [
       '$(PODS_TARGET_SRCROOT)/../third_party/dart-sdk/src/runtime',
