@@ -7,7 +7,6 @@ import java.util.Map;
 
 import github.penguin.reference.method_channel.MethodChannelMessenger;
 import github.penguin.reference.reference.TypeChannelMessenger;
-import github.penguin.reference.templates.PluginTemplate;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.BinaryMessenger;
 
@@ -28,12 +27,11 @@ public class ReferencePlugin implements FlutterPlugin {
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
-    new PluginTemplate().onAttachedToEngine(binding);
+    // Do Nothing
   }
 
   @Override
   public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
-    new PluginTemplate().onDetachedFromEngine(binding);
-    messengers.remove(binding.getBinaryMessenger());
+    // Do nothing.
   }
 }

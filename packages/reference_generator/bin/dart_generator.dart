@@ -249,46 +249,16 @@ String generateDart(String template, LibraryNode libraryNode) {
                     classNode.name,
                   )
                   .replaceAll(
-                    library.aHandler.onAddedClassName,
-                    classNode.name,
-                  )
-                  .replaceAll(
-                    library.aHandler.onRemovedClassName,
-                    classNode.name,
-                  )
-                  .replaceAll(
-                    library.aHandler.onInstanceAddedClassName,
-                    classNode.name,
-                  )
-                  .replaceAll(
-                    library.aHandler.onInstanceRemovedClassName,
-                    classNode.name,
-                  )
-                  .replaceAll(
-                    library.aHandler.aStaticMethodName.exp,
-                    classNode.staticMethods
-                        .map<String>(
-                          (MethodNode methodNode) => library
-                              .aHandler.aStaticMethodName
-                              .stringMatch()
-                              .replaceAll(
-                                library.aHandler.aStaticMethodName.name,
-                                methodNode.name.pascalCase,
-                              ),
-                        )
-                        .join(' '),
-                  )
-                  .replaceAll(
-                    library.aHandler.aOnCreateMethod.exp,
-                    library.aHandler.aOnCreateMethod
+                    library.aHandler.theOnCreateMethod.exp,
+                    library.aHandler.theOnCreateMethod
                         .stringMatch()
                         .replaceAll(
-                          library.aHandler.aOnCreateMethod.returnType,
+                          library.aHandler.theOnCreateMethod.returnType,
                           classNode.name,
                         )
                         .replaceAll(
                           library
-                              .aHandler.aOnCreateMethod.creationArgsClassName,
+                              .aHandler.theOnCreateMethod.creationArgsClassName,
                           classNode.name,
                         ),
                   )
@@ -482,6 +452,80 @@ String generateDart(String template, LibraryNode libraryNode) {
                   ),
             )
             .join(''),
+      )
+      .replaceAll(
+        library.theImplementations.exp,
+        library.theImplementations
+            .stringMatch()
+            .replaceAll(
+              library.theImplementations.aChannel.exp,
+              libraryNode.classes.map<String>(
+                (ClassNode classNode) {
+                  final LibraryImplementationsChannel channel =
+                      library.theImplementations.aChannel;
+                  return channel
+                      .stringMatch()
+                      .replaceAll(channel.channelClassName, classNode.name)
+                      .replaceAll(
+                        channel.variableClassName,
+                        ReCase(classNode.name).camelCase,
+                      );
+                },
+              ).join('\n'),
+            )
+            .replaceAll(
+              library.theImplementations.aHandler.exp,
+              libraryNode.classes.map<String>(
+                (ClassNode classNode) {
+                  final LibraryImplementationsHandler handler =
+                      library.theImplementations.aHandler;
+                  return handler
+                      .stringMatch()
+                      .replaceAll(handler.channelClassName, classNode.name)
+                      .replaceAll(
+                        handler.variableClassName,
+                        ReCase(classNode.name).camelCase,
+                      );
+                },
+              ).join('\n'),
+            ),
+      )
+      .replaceAll(
+        library.theChannelRegistrar.exp,
+        library.theChannelRegistrar
+            .stringMatch()
+            .replaceAll(
+              library.theChannelRegistrar.aSetter.exp,
+              libraryNode.classes.map<String>(
+                (ClassNode classNode) {
+                  final ChannelRegistrarSetter setter =
+                      library.theChannelRegistrar.aSetter;
+                  return setter
+                      .stringMatch()
+                      .replaceAll(
+                        setter.channelClassName,
+                        ReCase(classNode.name).camelCase,
+                      )
+                      .replaceAll(
+                        setter.handlerClassName,
+                        ReCase(classNode.name).camelCase,
+                      );
+                },
+              ).join('\n'),
+            )
+            .replaceAll(
+              library.theChannelRegistrar.aRemover.exp,
+              libraryNode.classes.map<String>(
+                (ClassNode classNode) {
+                  final ChannelRegistrarRemover remover =
+                      library.theChannelRegistrar.aRemover;
+                  return remover.stringMatch().replaceAll(
+                        remover.channelClassName,
+                        ReCase(classNode.name).camelCase,
+                      );
+                },
+              ).join('\n'),
+            ),
       );
 }
 
@@ -520,6 +564,10 @@ class Library with TemplateRegExp {
   Channel get aChannel => Channel(this);
 
   Handler get aHandler => Handler(this);
+
+  LibraryImplementations get theImplementations => LibraryImplementations(this);
+
+  ChannelRegistrar get theChannelRegistrar => ChannelRegistrar(this);
 }
 
 class Mixin with TemplateRegExp {
@@ -721,18 +769,7 @@ class Handler with TemplateRegExp {
     r'(?<=\$)ClassTemplate(?=Handler\()',
   );
 
-  final RegExp onAddedClassName = TemplateRegExp.regExp(
-    r'(?<=void Function\(TypeChannelMessenger messenger, \$)ClassTemplate(?= instance\)\?\s+onAdded;)',
-  );
-
-  final RegExp onRemovedClassName = TemplateRegExp.regExp(
-    r'(?<=void Function\(TypeChannelMessenger messenger, \$)ClassTemplate(?= instance\)\?\s+onRemoved;)',
-  );
-
-  HandlerStaticMethodName get aStaticMethodName =>
-      HandlerStaticMethodName(this);
-
-  HandlerOnCreateMethod get aOnCreateMethod => HandlerOnCreateMethod(this);
+  HandlerOnCreateMethod get theOnCreateMethod => HandlerOnCreateMethod(this);
 
   HandlerStaticMethod get aStaticMethod => HandlerStaticMethod(this);
 
@@ -746,17 +783,9 @@ class Handler with TemplateRegExp {
 
   HandlerInvokeMethod get theHandlerInvokeMethod => HandlerInvokeMethod(this);
 
-  final RegExp onInstanceAddedClassName = TemplateRegExp.regExp(
-    r'(?<=void onInstanceAdded\([^\$]+\$)ClassTemplate',
-  );
-
-  final RegExp onInstanceRemovedClassName = TemplateRegExp.regExp(
-    r'(?<=void onInstanceRemoved\([^\$]+\$)ClassTemplate',
-  );
-
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'class \$ClassTemplateHandler.*}$',
+    r'class \$ClassTemplateHandler.*}(?=\s*mixin \$LibraryImplementations)',
   );
 
   @override
@@ -781,14 +810,14 @@ class HandlerOnCreateMethod with TemplateRegExp {
   HandlerOnCreateMethod(this.parent);
 
   final RegExp returnType =
-      TemplateRegExp.regExp(r'(?<=final \$)ClassTemplate');
+      TemplateRegExp.regExp(r'(?<=\$)ClassTemplate(?= onCreate)');
 
   final RegExp creationArgsClassName =
       TemplateRegExp.regExp(r'(?<=\$)ClassTemplate(?=CreationArgs args)');
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'final \$ClassTemplate Function.*onCreate;',
+    r'\$ClassTemplate onCreate\([^\}]+\}',
   );
 
   @override
@@ -798,7 +827,7 @@ class HandlerOnCreateMethod with TemplateRegExp {
 class HandlerStaticMethod with TemplateRegExp {
   HandlerStaticMethod(this.parent);
 
-  final RegExp name = TemplateRegExp.regExp(r'StaticMethodTemplate(?=;)');
+  final RegExp name = TemplateRegExp.regExp(r'StaticMethodTemplate(?=\()');
 
   final RegExp returnType = TemplateRegExp.regExp(r'(?<=final )double');
 
@@ -806,7 +835,7 @@ class HandlerStaticMethod with TemplateRegExp {
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'final double Function.*\$onStaticMethodTemplate;',
+    r'double \$onStaticMethodTemplate\([^\}]+\}',
   );
 
   @override
@@ -930,7 +959,7 @@ class HandlerInvokeMethod with TemplateRegExp {
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'Object\? invokeMethod\(.+(?<=@override\s*void onInstanceAdded\()',
+    r'Object\? invokeMethod\(.+return method\(\);\s+\}(?=\s+\})',
   );
 
   @override
@@ -957,4 +986,111 @@ class HandlerInvokeMethodInvoker with TemplateRegExp {
 
   @override
   final HandlerInvokeMethod parent;
+}
+
+class LibraryImplementations with TemplateRegExp {
+  LibraryImplementations(this.parent);
+
+  @override
+  final RegExp exp =
+      TemplateRegExp.regExp(r'mixin \$LibraryImplementations {[^\}]+}');
+
+  @override
+  final Library parent;
+
+  LibraryImplementationsChannel get aChannel =>
+      LibraryImplementationsChannel(this);
+
+  LibraryImplementationsHandler get aHandler =>
+      LibraryImplementationsHandler(this);
+}
+
+class LibraryImplementationsChannel with TemplateRegExp {
+  LibraryImplementationsChannel(this.parent);
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'\$ClassTemplateChannel get classTemplateChannel;',
+  );
+
+  @override
+  final LibraryImplementations parent;
+
+  final RegExp channelClassName = TemplateRegExp.regExp(
+    r'(?<=\$)ClassTemplate',
+  );
+
+  final RegExp variableClassName = TemplateRegExp.regExp(
+    r'(?<=get\s+)classTemplate',
+  );
+}
+
+class LibraryImplementationsHandler with TemplateRegExp {
+  LibraryImplementationsHandler(this.parent);
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'\$ClassTemplateHandler get classTemplateHandler;',
+  );
+
+  @override
+  final LibraryImplementations parent;
+
+  final RegExp channelClassName = TemplateRegExp.regExp(
+    r'(?<=\$)ClassTemplate',
+  );
+
+  final RegExp variableClassName = TemplateRegExp.regExp(
+    r'(?<=get\s+)classTemplate',
+  );
+}
+
+class ChannelRegistrar with TemplateRegExp {
+  ChannelRegistrar(this.parent);
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(r'class \$ChannelRegistrar .+$');
+
+  ChannelRegistrarSetter get aSetter => ChannelRegistrarSetter(this);
+
+  ChannelRegistrarRemover get aRemover => ChannelRegistrarRemover(this);
+
+  @override
+  final Library parent;
+}
+
+class ChannelRegistrarSetter with TemplateRegExp {
+  ChannelRegistrarSetter(this.parent);
+
+  @override
+  final ChannelRegistrar parent;
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'implementations.classTemplateChannel.setHandler[^\)]+\);',
+  );
+
+  final RegExp channelClassName = TemplateRegExp.regExp(
+    r'(?<=implementations\.)classTemplate(?=Channel)',
+  );
+
+  final RegExp handlerClassName = TemplateRegExp.regExp(
+    r'(?<=implementations\.)classTemplate(?=Handler)',
+  );
+}
+
+class ChannelRegistrarRemover with TemplateRegExp {
+  ChannelRegistrarRemover(this.parent);
+
+  @override
+  final ChannelRegistrar parent;
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'implementations.classTemplateChannel.removeHandler\(\);',
+  );
+
+  final RegExp channelClassName = TemplateRegExp.regExp(
+    r'(?<=implementations\.)classTemplate(?=Channel)',
+  );
 }

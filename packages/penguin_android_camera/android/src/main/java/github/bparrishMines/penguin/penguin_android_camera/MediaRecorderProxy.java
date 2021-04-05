@@ -4,53 +4,56 @@ import android.media.MediaRecorder;
 
 public class MediaRecorderProxy implements CameraChannelLibrary.$MediaRecorder {
   public final MediaRecorder mediaRecorder;
-  private final Builder builder;
 
-  public MediaRecorderProxy(Builder builder) {
-    this(new MediaRecorder(), builder);
+  public MediaRecorderProxy() {
+    this(new MediaRecorder());
   }
 
-  public MediaRecorderProxy(MediaRecorder mediaRecorder, Builder builder) {
+  public MediaRecorderProxy(MediaRecorder mediaRecorder) {
     this.mediaRecorder = mediaRecorder;
-    this.builder = builder;
-
-    mediaRecorder.setCamera(builder.camera.camera);
-    mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
-    mediaRecorder.setAudioSource(builder.audioSource);
-    mediaRecorder.setOutputFormat(builder.outputFormat);
-    mediaRecorder.setVideoEncoder(builder.videoEncoder);
-    mediaRecorder.setAudioEncoder(builder.audioEncoder);
-    mediaRecorder.setOutputFile(builder.outputFilePath);
   }
 
   @Override
-  public CameraProxy getCamera() {
-    return builder.camera;
+  public Void setCamera(CameraChannelLibrary.$Camera camera) {
+    final CameraProxy cameraProxy = (CameraProxy) camera;
+    mediaRecorder.setCamera(cameraProxy.camera);
+    return null;
   }
 
   @Override
-  public Integer getOutputFormat() {
-    return builder.outputFormat;
+  public Void setVideoSource(Integer source) {
+    mediaRecorder.setVideoSource(source);
+    return null;
   }
 
   @Override
-  public String getOutputFilePath() {
-    return builder.outputFilePath;
+  public Void setOutputFilePath(String path) {
+    mediaRecorder.setOutputFile(path);
+    return null;
   }
 
   @Override
-  public Integer getVideoEncoder() {
-    return builder.videoEncoder;
+  public Void setOutputFormat(Integer format) {
+    mediaRecorder.setOutputFormat(format);
+    return null;
   }
 
   @Override
-  public Integer getAudioSource() {
-    return builder.audioSource;
+  public Void setVideoEncoder(Integer encoder) {
+    mediaRecorder.setVideoEncoder(encoder);
+    return null;
   }
 
   @Override
-  public Integer getAudioEncoder() {
-    return builder.audioEncoder;
+  public Void setAudioSource(Integer source) {
+    mediaRecorder.setAudioSource(source);
+    return null;
+  }
+
+  @Override
+  public Void setAudioEncoder(Integer encoder) {
+    mediaRecorder.setAudioEncoder(encoder);
+    return null;
   }
 
   @Override
@@ -75,14 +78,5 @@ public class MediaRecorderProxy implements CameraChannelLibrary.$MediaRecorder {
   public Void release() {
     mediaRecorder.release();
     return null;
-  }
-
-  public static class Builder {
-    public CameraProxy camera;
-    public Integer outputFormat;
-    public String outputFilePath;
-    public Integer videoEncoder;
-    public Integer audioSource;
-    public Integer audioEncoder;
   }
 }

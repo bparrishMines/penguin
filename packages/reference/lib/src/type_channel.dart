@@ -1,4 +1,5 @@
 import 'instance.dart';
+import 'instance_converter.dart';
 import 'instance_pair_manager.dart';
 
 /// A named channel used to handle communication between platform types.
@@ -28,11 +29,6 @@ class TypeChannel<T extends Object> {
     messenger.unregisterHandler(name);
   }
 
-  /// Create a [NewUnpairedInstance] with a registered [TypeChannelHandler].
-  NewUnpairedInstance? createUnpairedInstance(T instance) {
-    return messenger.createUnpairedInstance(name, instance);
-  }
-
   /// Creates a new [PairedInstance] to be paired with [instance].
   ///
   /// Sends a message to another [TypeChannelMessenger] to instantiate an
@@ -45,9 +41,9 @@ class TypeChannel<T extends Object> {
   /// [TypeChannelMessenger.messenger].
   Future<PairedInstance?> createNewInstancePair(
     T instance, {
-    Object? owner,
+    required bool owner,
   }) async {
-    return messenger.createNewInstancePair(name, instance, owner: owner);
+    return messenger.sendCreateNewInstancePair(name, instance, owner: owner);
   }
 
   /// Invoke static method [methodName] on type channel of [name].
@@ -79,14 +75,6 @@ class TypeChannel<T extends Object> {
   ) async {
     return messenger.sendInvokeMethod(name, instance, methodName, arguments);
   }
-
-  /// Dispose the instance pair containing [instance].
-  ///
-  /// Sends a message to another [TypeChannelMessenger] with
-  /// [TypeChannelMessenger.messenger].
-  Future<void> disposeInstancePair(T instance, {Object? owner}) async {
-    return messenger.disposeInstancePair(name, instance, owner: owner);
-  }
 }
 
 /// Handles sending messages for a [TypeChannelMessenger].
@@ -98,8 +86,9 @@ mixin TypeChannelMessageDispatcher {
   Future<void> sendCreateNewInstancePair(
     String channelName,
     PairedInstance pairedInstance,
-    List<Object?> arguments,
-  );
+    List<Object?> arguments, {
+    required bool owner,
+  });
 
   /// Invoke a static method for type channel of [channelName].
   Future<Object?> sendInvokeStaticMethod(
@@ -114,19 +103,6 @@ mixin TypeChannelMessageDispatcher {
     PairedInstance pairedInstance,
     String methodName,
     List<Object?> arguments,
-  );
-
-  /// Instantiate [unpairedInstance] and invoke a method on the instance.
-  Future<Object?> sendInvokeMethodOnUnpairedInstance(
-    NewUnpairedInstance unpairedInstance,
-    String methodName,
-    List<Object?> arguments,
-  );
-
-  /// Dispose the pair that contains [pairedInstance].
-  Future<void> sendDisposePair(
-    String channelName,
-    PairedInstance pairedInstance,
   );
 }
 
@@ -158,15 +134,6 @@ mixin TypeChannelHandler<T extends Object> {
     String methodName,
     List<Object?> arguments,
   );
-
-  /// Called when an object and a new [PairedInstance] is added to a [TypeChannelMessenger].
-  void onInstanceAdded(TypeChannelMessenger messenger, T instance) {}
-
-  /// Called when an object and its paired [PairedInstance] is removed from a [TypeChannelMessenger].
-  void onInstanceRemoved(
-    TypeChannelMessenger messenger,
-    T instance,
-  ) {}
 }
 
 /// Stores instance pairs and handles communication for [TypeChannel]s.
@@ -192,37 +159,17 @@ mixin TypeChannelHandler<T extends Object> {
 abstract class TypeChannelMessenger {
   final Map<String, TypeChannelHandler> _channelHandlers =
       <String, TypeChannelHandler>{};
-  final InstancePairManager _instancePairManager = InstancePairManager();
 
-  bool _addInstancePair({
-    required String channelName,
-    required Object instance,
-    required PairedInstance pairedInstance,
-    required Object owner,
+  bool _addPair(
+    Object instance,
+    PairedInstance pairedInstance, {
+    required bool owner,
   }) {
-    if (_instancePairManager.addPair(instance, pairedInstance, owner: owner)) {
-      getChannelHandler(channelName)?.onInstanceAdded(this, instance);
-      return true;
-    }
-    return false;
-  }
-
-  bool _removeInstancePair({
-    required String channelName,
-    required Object instance,
-    required Object owner,
-    bool force = false,
-  }) {
-    if (_instancePairManager.removePairWithObject(
+    return instancePairManager.addPair(
       instance,
+      pairedInstance.instanceId,
       owner: owner,
-      force: force,
-    )) {
-      getChannelHandler(channelName)?.onInstanceRemoved(this, instance);
-      return true;
-    }
-
-    return false;
+    );
   }
 
   /// Dispatches send messages to other [TypeChannelMessenger]s.
@@ -231,23 +178,26 @@ abstract class TypeChannelMessenger {
   /// Attempts to convert objects to [PairedInstance]s or [NewUnpairedInstance]s and vice-versa.
   InstanceConverter get converter => const StandardInstanceConverter();
 
+  InstancePairManager get instancePairManager => InstancePairManager.instance;
+
   /// Whether [instance] is paired with a [PairedInstance].
   bool isPaired(Object instance) {
-    return _instancePairManager.isPaired(instance);
+    return instancePairManager.isPaired(instance);
   }
 
   /// Retrieve the [PairedInstanced] paired to [instance].
   ///
   /// Returns `null` if [instance] is not paired.
   PairedInstance? getPairedPairedInstance(Object instance) {
-    return _instancePairManager.getPairedPairedInstance(instance);
+    final String? instanceId = instancePairManager.getInstanceId(instance);
+    return instanceId == null ? null : PairedInstance(instanceId);
   }
 
   /// Retrieve the `Object` paired to [pairedInstance].
   ///
   /// Returns `null` is [pairedInstance] is not paired.
   Object? getPairedObject(PairedInstance pairedInstance) {
-    return _instancePairManager.getPairedObject(pairedInstance);
+    return instancePairManager.getInstance(pairedInstance.instanceId);
   }
 
   /// Set a [TypeChannelHandler] for a type channel with [channelName].
@@ -275,14 +225,12 @@ abstract class TypeChannelMessenger {
   ///
   /// Sends a message to another [TypeChannelMessenger] with
   /// [messageDispatcher].
-  Future<PairedInstance?> createNewInstancePair(
+  Future<PairedInstance?> sendCreateNewInstancePair(
     String channelName,
     Object instance, {
-    Object? owner,
+    required bool owner,
   }) async {
-    final PairedInstance pairedInstance = PairedInstance(
-      generateUniqueInstanceId(instance),
-    );
+    if (isPaired(instance)) return null;
 
     final TypeChannelHandler? handler = getChannelHandler(channelName);
     if (handler == null) {
@@ -291,15 +239,11 @@ abstract class TypeChannelMessenger {
       );
     }
 
-    final bool createdNewInstance = _addInstancePair(
-      channelName: channelName,
-      instance: instance,
-      pairedInstance: pairedInstance,
-      owner: owner ?? instance,
+    final PairedInstance pairedInstance = PairedInstance(
+      generateUniqueInstanceId(instance),
     );
 
-    if (!createdNewInstance) return null;
-
+    _addPair(instance, pairedInstance, owner: owner);
     await messageDispatcher.sendCreateNewInstancePair(
       channelName,
       pairedInstance,
@@ -307,6 +251,7 @@ abstract class TypeChannelMessenger {
         this,
         handler.getCreationArguments(this, instance),
       )! as List<Object?>,
+      owner: !owner,
     );
 
     return pairedInstance;
@@ -347,14 +292,7 @@ abstract class TypeChannelMessenger {
     String methodName,
     List<Object?> arguments,
   ) async {
-    if (!isPaired(instance)) {
-      return _sendInvokeMethodOnUnpairedInstance(
-        channelName,
-        instance,
-        methodName,
-        arguments,
-      );
-    }
+    assert(isPaired(instance));
 
     final Object? result = await messageDispatcher.sendInvokeMethod(
       channelName,
@@ -366,43 +304,6 @@ abstract class TypeChannelMessenger {
     return converter.convertForLocalMessenger(this, result);
   }
 
-  Future<Object?> _sendInvokeMethodOnUnpairedInstance(
-    String channelName,
-    Object object,
-    String methodName,
-    List<Object?> arguments,
-  ) async {
-    final Object? result =
-        await messageDispatcher.sendInvokeMethodOnUnpairedInstance(
-      createUnpairedInstance(channelName, object)!,
-      methodName,
-      converter.convertForRemoteMessenger(this, arguments)! as List<Object?>,
-    );
-
-    return converter.convertForLocalMessenger(this, result);
-  }
-
-  /// Dispose the instance pair containing [instance].
-  ///
-  /// Sends a message to another [TypeChannelMessenger] with
-  /// [messageDispatcher].
-  Future<void> disposeInstancePair(
-    String channelName,
-    Object instance, {
-    Object? owner,
-  }) async {
-    if (!isPaired(instance)) return;
-
-    final PairedInstance pairedInstance = getPairedPairedInstance(instance)!;
-    if (_removeInstancePair(
-      channelName: channelName,
-      instance: instance,
-      owner: owner ?? instance,
-    )) {
-      return messageDispatcher.sendDisposePair(channelName, pairedInstance);
-    }
-  }
-
   /// Create and store a new instance pair for a type channel.
   ///
   /// Returns `null` if a pair with [pairedInstance] has already been added.
@@ -410,9 +311,13 @@ abstract class TypeChannelMessenger {
   Object? onReceiveCreateNewInstancePair(
     String channelName,
     PairedInstance pairedInstance,
-    List<Object?> arguments,
-  ) {
-    if (getPairedObject(pairedInstance) != null) return null;
+    List<Object?> arguments, {
+    required bool owner,
+  }) {
+    assert(
+      getPairedObject(pairedInstance) == null,
+      'An object with `PairedInstance` has already been created.',
+    );
 
     final TypeChannelHandler? handler = getChannelHandler(channelName);
     if (handler == null) {
@@ -426,14 +331,9 @@ abstract class TypeChannelMessenger {
       converter.convertForLocalMessenger(this, arguments)! as List<Object?>,
     );
 
-    assert(!isPaired(instance));
+    assert(!isPaired(instance), '`$instance` has already been paired.');
 
-    _addInstancePair(
-      channelName: channelName,
-      instance: instance,
-      pairedInstance: pairedInstance,
-      owner: instance,
-    );
+    _addPair(instance, pairedInstance, owner: owner);
     return instance;
   }
 
@@ -450,23 +350,6 @@ abstract class TypeChannelMessenger {
     );
 
     return converter.convertForRemoteMessenger(this, result);
-  }
-
-  /// Create a [NewUnpairedInstance] for a type channel.
-  ///
-  /// Returns `null` if no such handler exists for a type channel of name:
-  /// [channelName].
-  NewUnpairedInstance? createUnpairedInstance(
-    String channelName,
-    Object instance,
-  ) {
-    final TypeChannelHandler? handler = getChannelHandler(channelName);
-    if (handler == null) return null;
-
-    return NewUnpairedInstance(
-      channelName,
-      handler.getCreationArguments(this, instance),
-    );
   }
 
   /// Invoke a method on [pairedInstance] for a type channel.
@@ -486,145 +369,8 @@ abstract class TypeChannelMessenger {
     return converter.convertForRemoteMessenger(this, result);
   }
 
-  /// Instantiate an object from [unpairedInstance] and invoke a method.
-  Object? onReceiveInvokeMethodOnUnpairedInstance(
-    NewUnpairedInstance unpairedInstance,
-    String methodName,
-    List<Object?> arguments,
-  ) {
-    final Object? result =
-        getChannelHandler(unpairedInstance.channelName)!.invokeMethod(
-      this,
-      getChannelHandler(unpairedInstance.channelName)!.createInstance(
-        this,
-        converter.convertForLocalMessenger(
-          this,
-          unpairedInstance.creationArguments,
-        )! as List<Object?>,
-      ),
-      methodName,
-      converter.convertForLocalMessenger(this, arguments)! as List<Object?>,
-    );
-
-    return converter.convertForRemoteMessenger(this, result);
-  }
-
-  /// Dispose of the pair containing [pairedInstance].
-  void onReceiveDisposeInstancePair(
-    String channelName,
-    PairedInstance pairedInstance,
-  ) {
-    final Object? instance = getPairedObject(pairedInstance);
-    if (instance == null) return;
-
-    _removeInstancePair(
-      channelName: channelName,
-      instance: instance,
-      owner: instance,
-      force: true,
-    );
-  }
-
   /// Generate a new unique instance id for a [PairedInstance].
   String generateUniqueInstanceId(Object instance) {
     return instance.hashCode.toString();
-  }
-}
-
-/// Handles converting references for a [TypeChannelMessenger].
-///
-/// See [StandardInstanceConverter].
-mixin InstanceConverter {
-  /// Converts arguments to be used by a [PairedInstance].
-  Object? convertForRemoteMessenger(
-    TypeChannelMessenger messenger,
-    Object? object,
-  );
-
-  /// Converts arguments to be used with a object paired to a [PairedInstance].
-  Object? convertForLocalMessenger(
-    TypeChannelMessenger messenger,
-    Object? object,
-  );
-}
-
-/// Standard implementation of [InstanceConverter].
-class StandardInstanceConverter implements InstanceConverter {
-  const StandardInstanceConverter();
-
-  /// Converts arguments to be used with a remote [TypeChannelMessenger].
-  ///
-  /// Conversions:
-  ///   * Objects paired in a [TypeChannelMessenger] are converted to their
-  ///     paired [PairedInstance].
-  ///   * Unpaired instances are converted into [NewUnpairedInstance].
-  ///   * [List]s are converted to `List<Object?>` and this method is applied to
-  ///     each value within the list.
-  ///   * [Map]s are converted to `Map<Object?, Object?>` and this method is
-  ///     applied to each key and each value.
-  @override
-  Object? convertForRemoteMessenger(
-    TypeChannelMessenger messenger,
-    Object? object,
-  ) {
-    if (object == null) {
-      return null;
-    } else if (messenger.isPaired(object)) {
-      return messenger.getPairedPairedInstance(object);
-    } else if (!messenger.isPaired(object) && object is ReferenceType) {
-      return messenger.createUnpairedInstance(object.typeChannel.name, object);
-    } else if (object is List) {
-      return object
-          .map<Object?>((_) => convertForRemoteMessenger(messenger, _))
-          .toList();
-    } else if (object is Map) {
-      return Map<Object?, Object?>.fromIterables(
-        object.keys
-            .map<Object?>((_) => convertForRemoteMessenger(messenger, _)),
-        object.values
-            .map<Object?>((_) => convertForRemoteMessenger(messenger, _)),
-      );
-    }
-
-    return object;
-  }
-
-  /// Converts arguments to be used by a local [TypeChannelMessenger].
-  ///
-  /// Conversions:
-  ///   * [PairedInstance]s are converted to the object instance they're paired
-  ///     to.
-  ///   * [NewUnpairedInstance]s are converted in to an instantiation using the
-  ///     specified channel name.
-  ///   * [List]s are converted to `List<Object?>` and this method is applied to
-  ///     each value within the list.
-  ///   * [Map]s are converted to `Map<Object?, Object?>` and this method is
-  ///     applied to each key and each value.
-  @override
-  Object? convertForLocalMessenger(
-    TypeChannelMessenger messenger,
-    Object? object,
-  ) {
-    if (object is PairedInstance) {
-      return messenger.getPairedObject(object);
-    } else if (object is NewUnpairedInstance) {
-      return messenger.getChannelHandler(object.channelName)!.createInstance(
-            messenger,
-            convertForLocalMessenger(messenger, object.creationArguments)!
-                as List<Object?>,
-          );
-    } else if (object is List) {
-      return object
-          .map<Object?>((_) => convertForLocalMessenger(messenger, _))
-          .toList();
-    } else if (object is Map) {
-      return Map<Object?, Object?>.fromIterables(
-        object.keys.map<Object?>((_) => convertForLocalMessenger(messenger, _)),
-        object.values
-            .map<Object?>((_) => convertForLocalMessenger(messenger, _)),
-      );
-    }
-
-    return object;
   }
 }

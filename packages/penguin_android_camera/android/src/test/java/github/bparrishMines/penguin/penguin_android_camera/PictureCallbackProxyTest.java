@@ -12,7 +12,7 @@ public class PictureCallbackProxyTest {
   public void onPictureTaken() {
     final byte[][] bytes = new byte[1][1];
 
-    final PictureCallbackProxy proxy = new PictureCallbackProxy(mock(TypeChannelMessenger.class)) {
+    final PictureCallbackProxy proxy = new PictureCallbackProxy(mock(ChannelRegistrar.LibraryImplementations.class)) {
       @Override
       public Void onPictureTaken(byte[] data) {
         bytes[0] = new byte[]{1, 2, 3};

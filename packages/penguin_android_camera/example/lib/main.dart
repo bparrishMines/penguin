@@ -1,8 +1,6 @@
-// @dart=2.9
-
+import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -15,23 +13,22 @@ void main() {
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({Key key}) : super(key: key);
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   _MyAppState createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-  Camera _camera;
+  Camera? _camera;
   Widget _previewWidget = Container();
   int _cameraFacing = CameraInfo.cameraFacingFront;
   final double _deviceRotation = 0;
-  MediaRecorder _mediaRecorder;
+  late MediaRecorder _mediaRecorder;
 
   @override
   void initState() {
     super.initState();
-    PenguinAndroidCamera.initialize();
     _getCameraPermission();
 
     SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
@@ -55,8 +52,8 @@ class _MyAppState extends State<MyApp> {
     );
 
     _camera = await Camera.open(cameraInfo.cameraId);
-    _camera.startPreview();
-    final int textureId = await _camera.attachPreviewTexture();
+    _camera!.startPreview();
+    final int textureId = await _camera!.attachPreviewTexture();
 
     setState(() {
       _previewWidget = _createCameraPreview(
@@ -101,7 +98,7 @@ class _MyAppState extends State<MyApp> {
     _camera = null;
 
     setState(() {
-      _previewWidget = null;
+      _previewWidget = Container();
     });
 
     _cameraFacing = (_cameraFacing + 1) % 2;
@@ -110,45 +107,55 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<Directory> _storageDir() async {
-    final List<Directory> dirs =
+    final List<Directory>? dirs =
         await getExternalStorageDirectories(type: StorageDirectory.dcim);
-    print(dirs[0]);
-    print(dirs[0].path);
+    if (dirs == null) {
+      throw StateError('Could not get storage directory.');
+    }
     return dirs[0];
   }
 
+  /*
   void _takePicture() {
     _camera?.takePicture(
       null,
       null,
       null,
-      JpegPictureCallback(_camera, (data) async {
+      JpegPictureCallback(_camera!, (data) async {
         final Directory dir = await _storageDir();
         final File imageFile = File('${dir.path}/my_image${data.hashCode}.jpg');
         imageFile.writeAsBytes(data);
       }),
     );
   }
+  */
 
   Future<void> _recordAVideo() async {
+    if (_camera == null) {
+      debugPrint('Camera is null.');
+      return Future<void>.value();
+    }
+
     final Directory dir = await _storageDir();
-    _mediaRecorder = MediaRecorder(
-      camera: _camera,
-      outputFormat: OutputFormat.mpeg4,
-      outputFilePath: '${dir.path}/my_video${Random().nextInt(10000)}.mp4',
-      videoEncoder: VideoEncoder.mpeg4Sp,
-      audioSource: AudioSource.defaultSource,
-      audioEncoder: AudioEncoder.amrNb,
+
+    _mediaRecorder = MediaRecorder();
+    _mediaRecorder.setCamera(_camera!);
+    _mediaRecorder.setVideoSource(VideoSource.camera);
+    _mediaRecorder.setAudioSource(AudioSource.defaultSource);
+    _mediaRecorder.setOutputFormat(OutputFormat.mpeg4);
+    _mediaRecorder.setVideoEncoder(VideoEncoder.mpeg4Sp);
+    _mediaRecorder.setAudioEncoder(AudioEncoder.amrNb);
+    _mediaRecorder.setOutputFilePath(
+      '${dir.path}/my_video${Random().nextInt(10000)}.mp4',
     );
-    _camera.unlock();
+
+    _camera!.unlock();
     _mediaRecorder.prepare();
     _mediaRecorder.start();
-    await Future<void>.delayed(Duration(seconds: 8));
+    await Future<void>.delayed(const Duration(seconds: 8));
     _mediaRecorder.stop();
     _mediaRecorder.release();
   }
-
-  void _stopRecording() {}
 
   Widget _buildPictureButton() {
     return InkResponse(
@@ -180,7 +187,7 @@ class _MyAppState extends State<MyApp> {
           Expanded(
             child: Container(
               decoration: const BoxDecoration(color: Colors.black),
-              child: _previewWidget ?? Container(),
+              child: _previewWidget,
             ),
           ),
           Container(
@@ -230,7 +237,7 @@ class JpegPictureCallback extends PictureCallback {
 
   @override
   void onPictureTaken(Uint8List data) {
-    print('Image taken with jpeg data length: ${data.length}');
+    debugPrint('Image taken with jpeg data length: ${data.length}');
     onData(data);
     camera.startPreview();
   }

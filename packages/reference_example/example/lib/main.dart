@@ -3,21 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:reference_example/reference_example.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   _MyAppState createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-  String _methodResult = '';
-
-  @override
-  void initState() {
-    super.initState();
-  }
+  String _text = 'nada';
 
   @override
   Widget build(BuildContext context) {
@@ -27,15 +24,25 @@ class _MyAppState extends State<MyApp> {
           title: const Text('Plugin example app'),
         ),
         body: Center(
-          child: Text(_methodResult),
+          child: Column(
+            children: <Widget>[
+              Text(_text),
+              ElevatedButton(
+                onPressed: () => debugPrint('HI!'),
+                child: const Text('HI'),
+              ),
+            ],
+          ),
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
-            final MyClass myClass = MyClass('apple');
-            _methodResult = await myClass.myMethod(23, MyOtherClass(44));
-            setState(() {});
+            final ClassTemplate classTemplate = ClassTemplate(23);
+            final String result = await classTemplate.methodTemplate('Hello,');
+            setState(() {
+              _text = result;
+            });
           },
-          child: Icon(Icons.ac_unit),
+          child: const Icon(Icons.ac_unit),
         ),
       ),
     );

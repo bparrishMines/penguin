@@ -36,4 +36,12 @@ android {
         testImplementation 'org.hamcrest:hamcrest:2.2'
         testImplementation 'org.mockito:mockito-core:2.28.2'
     }
+
+    externalNativeBuild {
+        // Encapsulates your CMake build configurations.
+        cmake {
+            // Provides a relative path to your CMake build script.
+            path "CMakeLists.txt"
+        }
+    }
 }

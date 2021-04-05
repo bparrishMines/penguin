@@ -7,7 +7,6 @@ import java.util.List;
 
 import github.penguin.reference.async.Completable;
 import github.penguin.reference.async.Completer;
-import github.penguin.reference.reference.NewUnpairedInstance;
 import github.penguin.reference.reference.PairedInstance;
 import github.penguin.reference.reference.TypeChannelMessageDispatcher;
 import io.flutter.plugin.common.BinaryMessenger;
@@ -18,7 +17,6 @@ public class MethodChannelMessageDispatcher implements TypeChannelMessageDispatc
   public final BinaryMessenger binaryMessenger;
   public final MethodChannel channel;
 
-  @SuppressWarnings("unused")
   public MethodChannelMessageDispatcher(
       BinaryMessenger binaryMessenger, MethodChannel channel) {
     this.binaryMessenger = binaryMessenger;
@@ -27,13 +25,13 @@ public class MethodChannelMessageDispatcher implements TypeChannelMessageDispatc
 
   @Override
   public Completable<Void> sendCreateNewInstancePair(
-      String channelName, PairedInstance pairedInstance, List<Object> arguments) {
+      String channelName, PairedInstance pairedInstance, List<Object> arguments, boolean owner) {
     final Completer<Void> completer = new Completer<>();
     final String method = MethodChannelMessenger.METHOD_CREATE;
 
     channel.invokeMethod(
         method,
-        Arrays.asList(channelName, pairedInstance, arguments),
+        Arrays.asList(channelName, pairedInstance, arguments, owner),
         new MethodChannelMessengerResult<>(completer, method));
 
     return completer.completable;
@@ -65,33 +63,6 @@ public class MethodChannelMessageDispatcher implements TypeChannelMessageDispatc
     channel.invokeMethod(
         method,
         Arrays.asList(channelName, pairedInstance, methodName, arguments),
-        new MethodChannelMessengerResult<>(completer, method));
-
-    return completer.completable;
-  }
-
-  @Override
-  public Completable<Object> sendInvokeMethodOnUnpairedReference(
-      NewUnpairedInstance unpairedInstance, String methodName, List<Object> arguments) {
-    final Completer<Object> completer = new Completer<>();
-    final String method = MethodChannelMessenger.METHOD_UNPAIRED_METHOD;
-
-    channel.invokeMethod(
-        method,
-        Arrays.asList(unpairedInstance, methodName, arguments),
-        new MethodChannelMessengerResult<>(completer, method));
-
-    return completer.completable;
-  }
-
-  @Override
-  public Completable<Void> sendDisposePair(String channelName, PairedInstance pairedInstance) {
-    final Completer<Void> completer = new Completer<>();
-    final String method = MethodChannelMessenger.METHOD_DISPOSE;
-
-    channel.invokeMethod(
-        method,
-        Arrays.asList(channelName, pairedInstance),
         new MethodChannelMessengerResult<>(completer, method));
 
     return completer.completable;

@@ -1,10 +1,6 @@
 package github.bparrishMines.penguin.penguin_android_camera;
 
-import android.hardware.Camera;
-
 import org.junit.Test;
-
-import github.penguin.reference.reference.TypeChannelMessenger;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -14,7 +10,7 @@ public class ShutterCallbackProxyTest {
   public void onShutter() {
     final Boolean[] onShutterCalled = {false};
 
-    final ShutterCallbackProxy proxy = new ShutterCallbackProxy(mock(TypeChannelMessenger.class)) {
+    final ShutterCallbackProxy proxy = new ShutterCallbackProxy(mock(ChannelRegistrar.LibraryImplementations.class)) {
       @Override
       public Void onShutter() {
         onShutterCalled[0] = true;

@@ -1,5 +1,4 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
-
 import 'dart:typed_data';
 
 import 'package:reference/reference.dart';
@@ -40,12 +39,20 @@ mixin $CameraInfo {
 }
 
 mixin $MediaRecorder {
-  $Camera get camera;
-  int get outputFormat;
-  String get outputFilePath;
-  int get videoEncoder;
-  int get audioSource;
-  int get audioEncoder;
+  Future<void> setCamera($Camera camera);
+
+  Future<void> setVideoSource(int source);
+
+  Future<void> setOutputFilePath(String path);
+
+  Future<void> setOutputFormat(int format);
+
+  Future<void> setVideoEncoder(int encoder);
+
+  Future<void> setAudioSource(int source);
+
+  Future<void> setAudioEncoder(int encoder);
+
   Future<void> prepare();
 
   Future<void> start();
@@ -67,14 +74,7 @@ class $CameraInfoCreationArgs {
   late int orientation;
 }
 
-class $MediaRecorderCreationArgs {
-  late $Camera camera;
-  late int outputFormat;
-  late String outputFilePath;
-  late int videoEncoder;
-  late int audioSource;
-  late int audioEncoder;
-}
+class $MediaRecorderCreationArgs {}
 
 class $CameraChannel extends TypeChannel<$Camera> {
   $CameraChannel(TypeChannelMessenger messenger)
@@ -206,6 +206,63 @@ class $MediaRecorderChannel extends TypeChannel<$MediaRecorder> {
   $MediaRecorderChannel(TypeChannelMessenger messenger)
       : super(messenger, 'penguin_android_camera/camera/MediaRecorder');
 
+  Future<Object?> $invokeSetCamera($MediaRecorder instance, $Camera camera) {
+    return sendInvokeMethod(
+      instance,
+      'setCamera',
+      <Object?>[camera],
+    );
+  }
+
+  Future<Object?> $invokeSetVideoSource($MediaRecorder instance, int source) {
+    return sendInvokeMethod(
+      instance,
+      'setVideoSource',
+      <Object?>[source],
+    );
+  }
+
+  Future<Object?> $invokeSetOutputFilePath(
+      $MediaRecorder instance, String path) {
+    return sendInvokeMethod(
+      instance,
+      'setOutputFilePath',
+      <Object?>[path],
+    );
+  }
+
+  Future<Object?> $invokeSetOutputFormat($MediaRecorder instance, int format) {
+    return sendInvokeMethod(
+      instance,
+      'setOutputFormat',
+      <Object?>[format],
+    );
+  }
+
+  Future<Object?> $invokeSetVideoEncoder($MediaRecorder instance, int encoder) {
+    return sendInvokeMethod(
+      instance,
+      'setVideoEncoder',
+      <Object?>[encoder],
+    );
+  }
+
+  Future<Object?> $invokeSetAudioSource($MediaRecorder instance, int source) {
+    return sendInvokeMethod(
+      instance,
+      'setAudioSource',
+      <Object?>[source],
+    );
+  }
+
+  Future<Object?> $invokeSetAudioEncoder($MediaRecorder instance, int encoder) {
+    return sendInvokeMethod(
+      instance,
+      'setAudioEncoder',
+      <Object?>[encoder],
+    );
+  }
+
   Future<Object?> $invokePrepare(
     $MediaRecorder instance,
   ) {
@@ -248,30 +305,22 @@ class $MediaRecorderChannel extends TypeChannel<$MediaRecorder> {
 }
 
 class $CameraHandler implements TypeChannelHandler<$Camera> {
-  $CameraHandler({
-    this.onCreate,
-    this.onAdded,
-    this.onRemoved,
-    this.$onGetAllCameraInfo,
-    this.$onOpen,
-  });
-
-  final $Camera Function(
+  $Camera onCreate(
     TypeChannelMessenger messenger,
     $CameraCreationArgs args,
-  )? onCreate;
+  ) {
+    throw UnimplementedError();
+  }
 
-  final void Function(TypeChannelMessenger messenger, $Camera instance)?
-      onAdded;
-
-  final void Function(TypeChannelMessenger messenger, $Camera instance)?
-      onRemoved;
-
-  final Future<List<$CameraInfo>> Function(
+  double $onGetAllCameraInfo(
     TypeChannelMessenger messenger,
-  )? $onGetAllCameraInfo;
-  final Future<$Camera> Function(TypeChannelMessenger messenger, int cameraId)?
-      $onOpen;
+  ) {
+    throw UnimplementedError();
+  }
+
+  double $onOpen(TypeChannelMessenger messenger, int cameraId) {
+    throw UnimplementedError();
+  }
 
   @override
   Object? invokeStaticMethod(
@@ -283,12 +332,12 @@ class $CameraHandler implements TypeChannelHandler<$Camera> {
     Function method = () {};
     switch (methodName) {
       case 'getAllCameraInfo':
-        method = () => $onGetAllCameraInfo!(
+        method = () => $onGetAllCameraInfo(
               messenger,
             );
         break;
       case 'open':
-        method = () => $onOpen!(messenger, arguments[0] as int);
+        method = () => $onOpen(messenger, arguments[0] as int);
         break;
       default:
         throw ArgumentError.value(
@@ -315,7 +364,7 @@ class $CameraHandler implements TypeChannelHandler<$Camera> {
     TypeChannelMessenger messenger,
     List<Object?> arguments,
   ) {
-    return onCreate!(
+    return onCreate(
       messenger,
       $CameraCreationArgs(),
     );
@@ -367,41 +416,15 @@ class $CameraHandler implements TypeChannelHandler<$Camera> {
     // ignore: dead_code
     return method();
   }
-
-  @override
-  void onInstanceAdded(
-    TypeChannelMessenger messenger,
-    $Camera instance,
-  ) {
-    if (onAdded != null) onAdded!(messenger, instance);
-  }
-
-  @override
-  void onInstanceRemoved(
-    TypeChannelMessenger messenger,
-    $Camera instance,
-  ) {
-    if (onRemoved != null) onRemoved!(messenger, instance);
-  }
 }
 
 class $ShutterCallbackHandler implements TypeChannelHandler<$ShutterCallback> {
-  $ShutterCallbackHandler({
-    this.onCreate,
-    this.onAdded,
-    this.onRemoved,
-  });
-
-  final $ShutterCallback Function(
+  $ShutterCallback onCreate(
     TypeChannelMessenger messenger,
     $ShutterCallbackCreationArgs args,
-  )? onCreate;
-
-  final void Function(
-      TypeChannelMessenger messenger, $ShutterCallback instance)? onAdded;
-
-  final void Function(
-      TypeChannelMessenger messenger, $ShutterCallback instance)? onRemoved;
+  ) {
+    throw UnimplementedError();
+  }
 
   @override
   Object? invokeStaticMethod(
@@ -437,7 +460,7 @@ class $ShutterCallbackHandler implements TypeChannelHandler<$ShutterCallback> {
     TypeChannelMessenger messenger,
     List<Object?> arguments,
   ) {
-    return onCreate!(
+    return onCreate(
       messenger,
       $ShutterCallbackCreationArgs(),
     );
@@ -467,41 +490,15 @@ class $ShutterCallbackHandler implements TypeChannelHandler<$ShutterCallback> {
     // ignore: dead_code
     return method();
   }
-
-  @override
-  void onInstanceAdded(
-    TypeChannelMessenger messenger,
-    $ShutterCallback instance,
-  ) {
-    if (onAdded != null) onAdded!(messenger, instance);
-  }
-
-  @override
-  void onInstanceRemoved(
-    TypeChannelMessenger messenger,
-    $ShutterCallback instance,
-  ) {
-    if (onRemoved != null) onRemoved!(messenger, instance);
-  }
 }
 
 class $PictureCallbackHandler implements TypeChannelHandler<$PictureCallback> {
-  $PictureCallbackHandler({
-    this.onCreate,
-    this.onAdded,
-    this.onRemoved,
-  });
-
-  final $PictureCallback Function(
+  $PictureCallback onCreate(
     TypeChannelMessenger messenger,
     $PictureCallbackCreationArgs args,
-  )? onCreate;
-
-  final void Function(
-      TypeChannelMessenger messenger, $PictureCallback instance)? onAdded;
-
-  final void Function(
-      TypeChannelMessenger messenger, $PictureCallback instance)? onRemoved;
+  ) {
+    throw UnimplementedError();
+  }
 
   @override
   Object? invokeStaticMethod(
@@ -537,7 +534,7 @@ class $PictureCallbackHandler implements TypeChannelHandler<$PictureCallback> {
     TypeChannelMessenger messenger,
     List<Object?> arguments,
   ) {
-    return onCreate!(
+    return onCreate(
       messenger,
       $PictureCallbackCreationArgs(),
     );
@@ -567,41 +564,15 @@ class $PictureCallbackHandler implements TypeChannelHandler<$PictureCallback> {
     // ignore: dead_code
     return method();
   }
-
-  @override
-  void onInstanceAdded(
-    TypeChannelMessenger messenger,
-    $PictureCallback instance,
-  ) {
-    if (onAdded != null) onAdded!(messenger, instance);
-  }
-
-  @override
-  void onInstanceRemoved(
-    TypeChannelMessenger messenger,
-    $PictureCallback instance,
-  ) {
-    if (onRemoved != null) onRemoved!(messenger, instance);
-  }
 }
 
 class $CameraInfoHandler implements TypeChannelHandler<$CameraInfo> {
-  $CameraInfoHandler({
-    this.onCreate,
-    this.onAdded,
-    this.onRemoved,
-  });
-
-  final $CameraInfo Function(
+  $CameraInfo onCreate(
     TypeChannelMessenger messenger,
     $CameraInfoCreationArgs args,
-  )? onCreate;
-
-  final void Function(TypeChannelMessenger messenger, $CameraInfo instance)?
-      onAdded;
-
-  final void Function(TypeChannelMessenger messenger, $CameraInfo instance)?
-      onRemoved;
+  ) {
+    throw UnimplementedError();
+  }
 
   @override
   Object? invokeStaticMethod(
@@ -637,7 +608,7 @@ class $CameraInfoHandler implements TypeChannelHandler<$CameraInfo> {
     TypeChannelMessenger messenger,
     List<Object?> arguments,
   ) {
-    return onCreate!(
+    return onCreate(
       messenger,
       $CameraInfoCreationArgs()
         ..cameraId = arguments[0] as int
@@ -667,41 +638,15 @@ class $CameraInfoHandler implements TypeChannelHandler<$CameraInfo> {
     // ignore: dead_code
     return method();
   }
-
-  @override
-  void onInstanceAdded(
-    TypeChannelMessenger messenger,
-    $CameraInfo instance,
-  ) {
-    if (onAdded != null) onAdded!(messenger, instance);
-  }
-
-  @override
-  void onInstanceRemoved(
-    TypeChannelMessenger messenger,
-    $CameraInfo instance,
-  ) {
-    if (onRemoved != null) onRemoved!(messenger, instance);
-  }
 }
 
 class $MediaRecorderHandler implements TypeChannelHandler<$MediaRecorder> {
-  $MediaRecorderHandler({
-    this.onCreate,
-    this.onAdded,
-    this.onRemoved,
-  });
-
-  final $MediaRecorder Function(
+  $MediaRecorder onCreate(
     TypeChannelMessenger messenger,
     $MediaRecorderCreationArgs args,
-  )? onCreate;
-
-  final void Function(TypeChannelMessenger messenger, $MediaRecorder instance)?
-      onAdded;
-
-  final void Function(TypeChannelMessenger messenger, $MediaRecorder instance)?
-      onRemoved;
+  ) {
+    throw UnimplementedError();
+  }
 
   @override
   Object? invokeStaticMethod(
@@ -729,14 +674,7 @@ class $MediaRecorderHandler implements TypeChannelHandler<$MediaRecorder> {
     TypeChannelMessenger messenger,
     $MediaRecorder instance,
   ) {
-    return <Object?>[
-      instance.camera,
-      instance.outputFormat,
-      instance.outputFilePath,
-      instance.videoEncoder,
-      instance.audioSource,
-      instance.audioEncoder
-    ];
+    return <Object?>[];
   }
 
   @override
@@ -744,15 +682,9 @@ class $MediaRecorderHandler implements TypeChannelHandler<$MediaRecorder> {
     TypeChannelMessenger messenger,
     List<Object?> arguments,
   ) {
-    return onCreate!(
+    return onCreate(
       messenger,
-      $MediaRecorderCreationArgs()
-        ..camera = arguments[0] as $Camera
-        ..outputFormat = arguments[1] as int
-        ..outputFilePath = arguments[2] as String
-        ..videoEncoder = arguments[3] as int
-        ..audioSource = arguments[4] as int
-        ..audioEncoder = arguments[5] as int,
+      $MediaRecorderCreationArgs(),
     );
   }
 
@@ -766,6 +698,27 @@ class $MediaRecorderHandler implements TypeChannelHandler<$MediaRecorder> {
     // ignore: prefer_final_locals, prefer_function_declarations_over_variables
     Function method = () {};
     switch (methodName) {
+      case 'setCamera':
+        method = () => instance.setCamera(arguments[0] as $Camera);
+        break;
+      case 'setVideoSource':
+        method = () => instance.setVideoSource(arguments[0] as int);
+        break;
+      case 'setOutputFilePath':
+        method = () => instance.setOutputFilePath(arguments[0] as String);
+        break;
+      case 'setOutputFormat':
+        method = () => instance.setOutputFormat(arguments[0] as int);
+        break;
+      case 'setVideoEncoder':
+        method = () => instance.setVideoEncoder(arguments[0] as int);
+        break;
+      case 'setAudioSource':
+        method = () => instance.setAudioSource(arguments[0] as int);
+        break;
+      case 'setAudioEncoder':
+        method = () => instance.setAudioEncoder(arguments[0] as int);
+        break;
       case 'prepare':
         method = () => instance.prepare();
         break;
@@ -789,20 +742,49 @@ class $MediaRecorderHandler implements TypeChannelHandler<$MediaRecorder> {
     // ignore: dead_code
     return method();
   }
+}
 
-  @override
-  void onInstanceAdded(
-    TypeChannelMessenger messenger,
-    $MediaRecorder instance,
-  ) {
-    if (onAdded != null) onAdded!(messenger, instance);
+mixin $LibraryImplementations {
+  $CameraChannel get cameraChannel;
+  $ShutterCallbackChannel get shutterCallbackChannel;
+  $PictureCallbackChannel get pictureCallbackChannel;
+  $CameraInfoChannel get cameraInfoChannel;
+  $MediaRecorderChannel get mediaRecorderChannel;
+  $CameraHandler get cameraHandler;
+  $ShutterCallbackHandler get shutterCallbackHandler;
+  $PictureCallbackHandler get pictureCallbackHandler;
+  $CameraInfoHandler get cameraInfoHandler;
+  $MediaRecorderHandler get mediaRecorderHandler;
+}
+
+class $ChannelRegistrar {
+  $ChannelRegistrar(this.implementations);
+
+  final $LibraryImplementations implementations;
+
+  void registerHandlers() {
+    implementations.cameraChannel.setHandler(
+      implementations.cameraHandler,
+    );
+    implementations.shutterCallbackChannel.setHandler(
+      implementations.shutterCallbackHandler,
+    );
+    implementations.pictureCallbackChannel.setHandler(
+      implementations.pictureCallbackHandler,
+    );
+    implementations.cameraInfoChannel.setHandler(
+      implementations.cameraInfoHandler,
+    );
+    implementations.mediaRecorderChannel.setHandler(
+      implementations.mediaRecorderHandler,
+    );
   }
 
-  @override
-  void onInstanceRemoved(
-    TypeChannelMessenger messenger,
-    $MediaRecorder instance,
-  ) {
-    if (onRemoved != null) onRemoved!(messenger, instance);
+  void unregisterHandlers() {
+    implementations.cameraChannel.removeHandler();
+    implementations.shutterCallbackChannel.removeHandler();
+    implementations.pictureCallbackChannel.removeHandler();
+    implementations.cameraInfoChannel.removeHandler();
+    implementations.mediaRecorderChannel.removeHandler();
   }
 }

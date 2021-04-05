@@ -85,7 +85,7 @@ void main(List<String> arguments) async {
   if (options.dartOut != null) {
     final HttpClientRequest request = await HttpClient().getUrl(
       Uri.parse(
-        'https://raw.githubusercontent.com/bparrishMines/penguin/master/packages/reference/lib/src/template/src/template.g.dart',
+        'https://raw.githubusercontent.com/bparrishMines/penguin/ffi/packages/reference_example/lib/src/template.g.dart',
       ),
     );
     final HttpClientResponse response = await request.close();
@@ -95,6 +95,10 @@ void main(List<String> arguments) async {
 
     final String dartTemplate = buffer.toString();
 
+    if (dartTemplate == '404: Not Found') {
+      throw StateError('Invalid link to Dart template');
+    }
+
     options.dartOut.writeAsStringSync(generateDart(dartTemplate, libraryNode));
   }
 
@@ -102,7 +106,7 @@ void main(List<String> arguments) async {
   if (options.javaOut != null) {
     final HttpClientRequest request = await HttpClient().getUrl(
       Uri.parse(
-        'https://raw.githubusercontent.com/bparrishMines/penguin/master/packages/reference/android/src/main/java/github/penguin/reference/templates/LibraryTemplate.java',
+        'https://raw.githubusercontent.com/bparrishMines/penguin/ffi/packages/reference_example/android/src/main/java/com/example/reference_example/LibraryTemplate.java',
       ),
     );
     final HttpClientResponse response = await request.close();
@@ -111,6 +115,10 @@ void main(List<String> arguments) async {
       ..writeAll(await response.transform(utf8.decoder).toList());
 
     final String javaTemplate = buffer.toString();
+
+    if (javaTemplate == '404: Not Found') {
+      throw StateError('Invalid link to Java template');
+    }
 
     options.javaOut.writeAsStringSync(
       generateJava(
@@ -135,6 +143,10 @@ void main(List<String> arguments) async {
 
     final String objcHeaderTemplate = buffer.toString();
 
+    if (objcHeaderTemplate == '404: Not Found') {
+      throw StateError('Invalid link to objcHeader template');
+    }
+
     options.objcHeaderOut.writeAsStringSync(
       generateObjcHeader(
         template: objcHeaderTemplate,
@@ -156,6 +168,10 @@ void main(List<String> arguments) async {
       ..writeAll(await response.transform(utf8.decoder).toList());
 
     final String objcImplTemplate = buffer.toString();
+
+    if (objcImplTemplate == '404: Not Found') {
+      throw StateError('Invalid link to objcImpl template');
+    }
 
     options.objcImplOut.writeAsStringSync(
       generateObjcImpl(

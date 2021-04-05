@@ -1,21 +1,24 @@
 package github.penguin.reference;
 
+import androidx.annotation.NonNull;
+
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import github.penguin.reference.async.Completable;
 import github.penguin.reference.async.Completer;
-import github.penguin.reference.reference.NewUnpairedInstance;
+import github.penguin.reference.reference.InstancePairManager;
 import github.penguin.reference.reference.PairedInstance;
-import github.penguin.reference.reference.ReferenceType;
-import github.penguin.reference.reference.TypeChannel;
 import github.penguin.reference.reference.TypeChannelHandler;
 import github.penguin.reference.reference.TypeChannelMessageDispatcher;
 import github.penguin.reference.reference.TypeChannelMessenger;
 
 public class TestClasses {
   public static class TestMessenger extends TypeChannelMessenger {
-    public final TestMessageDispatcher testMessenger = new TestMessageDispatcher();
+    public final TestMessageDispatcher testMessageDispatcher = new TestMessageDispatcher();
+    public final TestInstancePairManager testInstancePairManager = new TestInstancePairManager();
     public final TestHandler testHandler;
 
     public TestMessenger() {
@@ -25,7 +28,13 @@ public class TestClasses {
 
     @Override
     public TypeChannelMessageDispatcher getMessageDispatcher() {
-      return testMessenger;
+      return testMessageDispatcher;
+    }
+
+    @NonNull
+    @Override
+    public InstancePairManager getInstancePairManager() {
+      return testInstancePairManager;
     }
 
     @Override
@@ -36,7 +45,7 @@ public class TestClasses {
 
   public static class TestMessageDispatcher implements TypeChannelMessageDispatcher {
     @Override
-    public Completable<Void> sendCreateNewInstancePair(String channelName, PairedInstance pairedInstance, List<Object> arguments) {
+    public Completable<Void> sendCreateNewInstancePair(String channelName, PairedInstance pairedInstance, List<Object> arguments, boolean owner) {
       return new Completer<Void>().complete(null).completable;
     }
 
@@ -48,16 +57,6 @@ public class TestClasses {
     @Override
     public Completable<Object> sendInvokeMethod(String channelName, PairedInstance pairedInstance, String methodName, List<Object> arguments) {
       return new Completer<>().complete("return_value").completable;
-    }
-
-    @Override
-    public Completable<Object> sendInvokeMethodOnUnpairedReference(NewUnpairedInstance unpairedInstance, String methodName, List<Object> arguments) {
-      return new Completer<>().complete("return_value").completable;
-    }
-
-    @Override
-    public Completable<Void> sendDisposePair(String channelName, PairedInstance pairedInstance) {
-      return new Completer<Void>().complete(null).completable;
     }
   }
 
@@ -87,28 +86,46 @@ public class TestClasses {
     public Object invokeMethod(TypeChannelMessenger manager, TestClass instance, String methodName, List<Object> arguments) {
       return "return_value";
     }
+  }
+
+  public static class TestInstancePairManager extends InstancePairManager {
+    final Map<Object, String> instanceToInstanceId = new HashMap<>();
+    final Map<String, Object> instanceIdToInstance = new HashMap <>();
 
     @Override
-    public void onInstanceAdded(TypeChannelMessenger manager, TestClass instance) {
-
+    public boolean addPair(Object instance, String instanceId, boolean owner) {
+      if (isPaired(false)) return false;
+      instanceToInstanceId.put(instance, instanceId);
+      instanceIdToInstance.put(instanceId, instance);
+      return true;
     }
 
     @Override
-    public void onInstanceRemoved(TypeChannelMessenger manager, TestClass instance) {
+    public boolean isPaired(Object instance) {
+      return instanceToInstanceId.containsKey(instance);
+    }
 
+    @Override
+    public String getInstanceId(Object instance) {
+      return instanceToInstanceId.get(instance);
+    }
+
+    @Override
+    public void releaseDartHandle(Object instance) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Object getInstance(String instanceId) {
+      return instanceIdToInstance.get(instanceId);
     }
   }
 
-  public static class TestClass implements ReferenceType<TestClass> {
+  public static class TestClass {
     public final TypeChannelMessenger messenger;
 
     public TestClass(TypeChannelMessenger messenger) {
       this.messenger = messenger;
-    }
-
-    @Override
-    public TypeChannel<TestClass> getTypeChannel() {
-      return new TypeChannel<>(messenger, "test_channel");
     }
   }
 

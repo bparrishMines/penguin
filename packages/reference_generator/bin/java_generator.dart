@@ -222,15 +222,14 @@ String generateJava({
             .join('\n\n'),
       )
       .replaceAll(
-          library.aHandler.exp,
-          libraryNode.classes.map<String>((ClassNode classNode) {
+        library.aHandler.exp,
+        libraryNode.classes.map<String>(
+          (ClassNode classNode) {
             final Handler handler = library.aHandler;
             return handler
                 .stringMatch()
                 .replaceAll(handler.className, classNode.name)
                 .replaceAll(handler.typeArgClassName, classNode.name)
-                .replaceAll(handler.onInstanceAddedClassName, classNode.name)
-                .replaceAll(handler.onInstanceRemovedClassName, classNode.name)
                 .replaceAll(
                   handler.theOnCreateMethod.exp,
                   handler.theOnCreateMethod
@@ -382,7 +381,83 @@ String generateJava({
                         classNode.name,
                       ),
                 );
-          }).join('\n'));
+          },
+        ).join('\n'),
+      )
+      .replaceAll(
+        library.theImplementations.exp,
+        library.theImplementations
+            .stringMatch()
+            .replaceAll(
+              library.theImplementations.aChannel.exp,
+              libraryNode.classes.map<String>(
+                (ClassNode classNode) {
+                  final LibraryImplementationsChannel channel =
+                      library.theImplementations.aChannel;
+                  return channel
+                      .stringMatch()
+                      .replaceAll(channel.channelClassName, classNode.name)
+                      .replaceAll(
+                        channel.variableClassName,
+                        classNode.name,
+                      );
+                },
+              ).join('\n'),
+            )
+            .replaceAll(
+              library.theImplementations.aHandler.exp,
+              libraryNode.classes.map<String>(
+                (ClassNode classNode) {
+                  final LibraryImplementationsHandler handler =
+                      library.theImplementations.aHandler;
+                  return handler
+                      .stringMatch()
+                      .replaceAll(handler.channelClassName, classNode.name)
+                      .replaceAll(
+                        handler.variableClassName,
+                        classNode.name,
+                      );
+                },
+              ).join('\n'),
+            ),
+      )
+      .replaceAll(
+        library.theChannelRegistrar.exp,
+        library.theChannelRegistrar
+            .stringMatch()
+            .replaceAll(
+              library.theChannelRegistrar.aSetter.exp,
+              libraryNode.classes.map<String>(
+                (ClassNode classNode) {
+                  final ChannelRegistrarSetter setter =
+                      library.theChannelRegistrar.aSetter;
+                  return setter
+                      .stringMatch()
+                      .replaceAll(
+                        setter.channelClassName,
+                        classNode.name,
+                      )
+                      .replaceAll(
+                        setter.handlerClassName,
+                        classNode.name,
+                      );
+                },
+              ).join('\n'),
+            )
+            .replaceAll(
+              library.theChannelRegistrar.aRemover.exp,
+              libraryNode.classes.map<String>(
+                (ClassNode classNode) {
+                  final ChannelRegistrarRemover remover =
+                      library.theChannelRegistrar.aRemover;
+                  return remover.stringMatch().replaceAll(
+                        remover.channelClassName,
+                        classNode.name,
+                      );
+                },
+              ).join('\n'),
+            ),
+      );
 }
 
 String getTrueTypeName(ReferenceType type) {
@@ -445,7 +520,7 @@ class Library with TemplateRegExp {
   );
 
   final RegExp package = TemplateRegExp.regExp(
-    r'(?<=package )github.penguin.reference.templates(?=;)',
+    r'(?<=package )com.example.reference_example(?=;)',
   );
 
   Interface get anInterface => Interface(this);
@@ -455,6 +530,10 @@ class Library with TemplateRegExp {
   Channel get aChannel => Channel(this);
 
   Handler get aHandler => Handler(this);
+
+  LibraryImplementations get theImplementations => LibraryImplementations(this);
+
+  ChannelRegistrar get theChannelRegistrar => ChannelRegistrar(this);
 }
 
 class Interface with TemplateRegExp {
@@ -468,7 +547,7 @@ class Interface with TemplateRegExp {
 
   @override
   final RegExp exp =
-      TemplateRegExp.regExp(r'interface \$ClassTemplate \{[^\}]+\}');
+      TemplateRegExp.regExp(r'public interface \$ClassTemplate \{[^\}]+\}');
 
   @override
   final Library parent;
@@ -549,11 +628,11 @@ class CreationArgsClass with TemplateRegExp {
 class CreationArgsClassField with TemplateRegExp {
   CreationArgsClassField(this.parent);
 
-  final RegExp type = TemplateRegExp.regExp(r'^Integer');
+  final RegExp type = TemplateRegExp.regExp(r'(?<=public )Integer');
   final RegExp name = TemplateRegExp.regExp(r'fieldTemplate(?=;)');
 
   @override
-  final RegExp exp = TemplateRegExp.regExp(r'Integer fieldTemplate;');
+  final RegExp exp = TemplateRegExp.regExp(r'public Integer fieldTemplate;');
 
   @override
   final CreationArgsClass parent;
@@ -584,7 +663,7 @@ class Channel with TemplateRegExp {
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'static class \$ClassTemplateChannel.*}(?=\s*static class \$ClassTemplateHandler)',
+    r'public static class \$ClassTemplateChannel.*}(?=\s*public static class \$ClassTemplateHandler)',
   );
 
   @override
@@ -604,7 +683,7 @@ class ChannelStaticMethod with TemplateRegExp {
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'Completable<Object> \$invokeStaticMethodTemplate[^\}]+\}',
+    r'public Completable<Object> \$invokeStaticMethodTemplate[^\}]+\}',
   );
 
   @override
@@ -632,7 +711,7 @@ class ChannelMethod with TemplateRegExp {
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'Completable<Object>\s\$invokeMethodTemplate[^\}]+\}',
+    r'public Completable<Object>\s\$invokeMethodTemplate[^\}]+\}',
   );
 
   @override
@@ -677,17 +756,9 @@ class Handler with TemplateRegExp {
 
   HandlerInvokeMethod get theInvokeMethod => HandlerInvokeMethod(this);
 
-  final RegExp onInstanceAddedClassName = TemplateRegExp.regExp(
-    r'(?<=void onInstanceAdded\([^\$]+\$)ClassTemplate',
-  );
-
-  final RegExp onInstanceRemovedClassName = TemplateRegExp.regExp(
-    r'(?<=void onInstanceRemoved\([^\$]+\$)ClassTemplate',
-  );
-
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'static class \$ClassTemplateHandler.*}(?=\s+\}\s+$)',
+    r'public static class \$ClassTemplateHandler.*}(?=\s*public interface \$LibraryImplementations)',
   );
 
   @override
@@ -862,4 +933,112 @@ class HandlerInvokeMethod with TemplateRegExp {
 
   @override
   final Handler parent;
+}
+
+class LibraryImplementations with TemplateRegExp {
+  LibraryImplementations(this.parent);
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+      r'public interface \$LibraryImplementations {[^\}]+}');
+
+  @override
+  final Library parent;
+
+  LibraryImplementationsChannel get aChannel =>
+      LibraryImplementationsChannel(this);
+
+  LibraryImplementationsHandler get aHandler =>
+      LibraryImplementationsHandler(this);
+}
+
+class LibraryImplementationsChannel with TemplateRegExp {
+  LibraryImplementationsChannel(this.parent);
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'\$ClassTemplateChannel getClassTemplateChannel\(\);',
+  );
+
+  @override
+  final LibraryImplementations parent;
+
+  final RegExp channelClassName = TemplateRegExp.regExp(
+    r'(?<=\$)ClassTemplate',
+  );
+
+  final RegExp variableClassName = TemplateRegExp.regExp(
+    r'(?<=get)ClassTemplate',
+  );
+}
+
+class LibraryImplementationsHandler with TemplateRegExp {
+  LibraryImplementationsHandler(this.parent);
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'\$ClassTemplateHandler getClassTemplateHandler\(\);',
+  );
+
+  @override
+  final LibraryImplementations parent;
+
+  final RegExp channelClassName = TemplateRegExp.regExp(
+    r'(?<=\$)ClassTemplate',
+  );
+
+  final RegExp variableClassName = TemplateRegExp.regExp(
+    r'(?<=get)ClassTemplate',
+  );
+}
+
+class ChannelRegistrar with TemplateRegExp {
+  ChannelRegistrar(this.parent);
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+      r'public static class \$ChannelRegistrar .+(?=\s+}\s+$)');
+
+  ChannelRegistrarSetter get aSetter => ChannelRegistrarSetter(this);
+
+  ChannelRegistrarRemover get aRemover => ChannelRegistrarRemover(this);
+
+  @override
+  final Library parent;
+}
+
+class ChannelRegistrarSetter with TemplateRegExp {
+  ChannelRegistrarSetter(this.parent);
+
+  @override
+  final ChannelRegistrar parent;
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'implementations.getClassTemplateChannel\(\).setHandler[^;]+;',
+  );
+
+  final RegExp channelClassName = TemplateRegExp.regExp(
+    r'(?<=implementations\.get)ClassTemplate(?=Channel)',
+  );
+
+  final RegExp handlerClassName = TemplateRegExp.regExp(
+    r'(?<=implementations\.get)ClassTemplate(?=Handler)',
+  );
+}
+
+class ChannelRegistrarRemover with TemplateRegExp {
+  ChannelRegistrarRemover(this.parent);
+
+  @override
+  final ChannelRegistrar parent;
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'implementations.getClassTemplateChannel\(\).removeHandler[^;]+;',
+  );
+
+  final RegExp channelClassName = TemplateRegExp.regExp(
+    r'(?<=implementations\.get)ClassTemplate(?=Channel)',
+  );
 }

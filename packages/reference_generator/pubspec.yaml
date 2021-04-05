@@ -10,16 +10,17 @@ environment:
 dependencies:
   recase: ^3.0.0
   args: 1.6.0
-  source_gen: 0.9.7+1
-  json_annotation: 3.1.0
-  reference: 0.2.0-beta.3
-  build: ^1.5.0
+  source_gen: 1.0.0
+  json_annotation: 4.0.1
+  reference:
+    path: ../reference
+  build: ^2.0.0
   path: ^1.7.0
 
 dev_dependencies:
-  json_serializable: 3.5.0
-  build_test: ^1.2.2
+  json_serializable: ^4.1.0
+  build_test: ^2.0.0
   build_config: ^0.4.2
-  build_runner: ^1.10.3
+  build_runner: ^1.12.2
   pedantic: ^1.9.0
   test: ^1.14.4

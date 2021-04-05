@@ -1,7 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:reference/reference.dart';
 
-import 'reference_matchers.dart';
 import 'test_classes.dart';
 
 void main() {
@@ -18,6 +17,7 @@ void main() {
         'test_channel',
         const PairedInstance('test_id'),
         <Object>[],
+        owner: true,
       );
 
       expect(
@@ -31,14 +31,6 @@ void main() {
 
     test('convertForRemoteMessenger handles unpaired object', () {
       expect(
-        converter.convertForRemoteMessenger(
-            testMessenger, TestClass(testMessenger)),
-        isUnpairedInstance('test_channel', <Object>[]),
-      );
-    });
-
-    test('convertForRemoteMessenger handles unpaired non-$ReferenceType', () {
-      expect(
         converter.convertForRemoteMessenger(testMessenger, 'potato'),
         equals('potato'),
       );
@@ -50,6 +42,7 @@ void main() {
         'test_channel',
         pairedInstance,
         <Object>[],
+        owner: true,
       );
 
       expect(
@@ -58,13 +51,13 @@ void main() {
       );
     });
 
-    test('convertForLocalMessenger handles $NewUnpairedInstance', () async {
+    test('convertForLocalMessenger handles unpaired object', () async {
       expect(
         converter.convertForLocalMessenger(
           testMessenger,
-          const NewUnpairedInstance('test_channel', <Object>[]),
+          'apple',
         ),
-        testMessenger.testHandler.testClassInstance,
+        equals('apple'),
       );
     });
   });

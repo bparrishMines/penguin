@@ -4,6 +4,6 @@ builders:
     builder_factories: ['referenceAstBuilder']
     build_extensions:
       .dart:
-      - .reference_ast
+        - .reference_ast
     build_to: cache
     auto_apply: dependents

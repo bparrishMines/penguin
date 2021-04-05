@@ -1,6 +1,5 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:reference/reference.dart';
 
 // Extends isMethodCall in package:test/test.dart to support matchers in arguments.
 Matcher isMethodCallWithMatchers(String method, {Object? arguments}) {
@@ -27,41 +26,6 @@ class _IsMethodCallWithMatchers extends Matcher with _DeepEquals {
         .addDescriptionOf(method)
         .add(' and arguments: ')
         .addDescriptionOf(arguments);
-  }
-}
-
-// Extends isMethodCall in packager:test/test.dart to support matchers in arguments.
-Matcher isUnpairedInstance(
-  String channelName,
-  List<Object> creationArguments,
-) {
-  return _IsUnpairedInstance(channelName, creationArguments);
-}
-
-class _IsUnpairedInstance extends Matcher with _DeepEquals {
-  const _IsUnpairedInstance(this.channelName, this.creationArguments);
-
-  final String channelName;
-
-  final List<Object> creationArguments;
-
-  @override
-  Description describe(Description description) {
-    return description
-        .add(' Is an $NewUnpairedInstance with channel name: ')
-        .addDescriptionOf(channelName)
-        .add(' and creation arguments: ')
-        .addDescriptionOf(creationArguments);
-  }
-
-  @override
-  bool matches(
-    covariant NewUnpairedInstance item,
-    Map<dynamic, dynamic> matchState,
-  ) {
-    if (item is! NewUnpairedInstance) return false;
-    if (item.channelName != channelName) return false;
-    return deepEquals(creationArguments, item.creationArguments, matchState);
   }
 }
 

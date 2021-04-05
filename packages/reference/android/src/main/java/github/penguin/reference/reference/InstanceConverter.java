@@ -12,7 +12,7 @@ public interface InstanceConverter {
   Object convertForRemoteMessenger(TypeChannelMessenger manager, @Nullable Object object);
 
   @Nullable
-  Object convertForLocalMessenger(TypeChannelMessenger manager, @Nullable Object object) throws Exception;
+  Object convertForLocalMessenger(TypeChannelMessenger manager, @Nullable Object object);
 
   class StandardInstanceConverter implements InstanceConverter {
     @Nullable
@@ -22,10 +22,6 @@ public interface InstanceConverter {
         return null;
       } else if (manager.isPaired(object)) {
         return manager.getPairedPairedInstance(object);
-      } else if (!manager.isPaired(object) && object instanceof ReferenceType) {
-        final String referenceChannelName =
-            ((ReferenceType<?>) object).getTypeChannel().name;
-        return manager.createUnpairedInstance(referenceChannelName, object);
       } else if (object instanceof List) {
         final List<Object> result = new ArrayList<>();
         for (final Object obj : (List<?>) object) {
@@ -48,20 +44,10 @@ public interface InstanceConverter {
 
     @Nullable
     @Override
-    public Object convertForLocalMessenger(TypeChannelMessenger manager, @Nullable Object object)
-        throws Exception {
+    public Object convertForLocalMessenger(TypeChannelMessenger manager, @Nullable Object object) {
       if (object instanceof PairedInstance) {
         return manager.getPairedObject((PairedInstance) object);
-      } else if (object instanceof NewUnpairedInstance) {
-        final NewUnpairedInstance unpairedInstance = (NewUnpairedInstance) object;
-        return manager
-            .getChannelHandler(unpairedInstance.channelName)
-            .createInstance(
-                manager,
-                (List<Object>)
-                    convertForLocalMessenger(
-                        manager, ((NewUnpairedInstance) object).creationArguments));
-      } else if (object instanceof List) {
+      } if (object instanceof List) {
         final List<Object> result = new ArrayList<>();
         for (final Object obj : (List) object) {
           result.add(convertForLocalMessenger(manager, obj));

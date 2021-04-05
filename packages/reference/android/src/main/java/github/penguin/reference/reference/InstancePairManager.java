@@ -1,49 +1,70 @@
 package github.penguin.reference.reference;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
+
+import java.util.WeakHashMap;
 
 public class InstancePairManager {
-  private final BiMap<Object, PairedInstance> pairedInstances = new BiMap<>();
-  private final Map<Object, Set<Object>> owners = new HashMap<>();
+  private static InstancePairManager instance;
 
-  boolean addPair(Object object, PairedInstance pairedInstance, Object owner) {
-    final boolean wasPaired = isPaired(object);
+  private final WeakHashMap<Object, String> instanceIds = new WeakHashMap<>();
 
-    if (!wasPaired) {
-      if (pairedInstances.containsValue(pairedInstance)) throw new IllegalStateException();
-      pairedInstances.put(object, pairedInstance);
-      owners.put(object, new HashSet<>());
+  @VisibleForTesting
+  public InstancePairManager() { }
+
+  @NonNull
+  public static InstancePairManager getInstance() {
+    if (instance == null) {
+      System.loadLibrary("reference");
+      instance = new InstancePairManager();
+      instance.initializeLib();
     }
-
-    owners.get(object).add(owner);
-    return !wasPaired;
+    return instance;
   }
 
-  boolean removePairWithObject(Object object, Object owner, boolean force) {
-    if (!isPaired(object)) return false;
+  public boolean addPair(Object instance, String instanceId, boolean owner) {
+    if (instanceIds.containsKey(instance)) return false;
+    if (getInstance(instanceId) != null) throw new AssertionError();
 
-    final Set<Object> objectOwners = owners.get(object);
-    objectOwners.remove(owner);
-
-    if (!force && objectOwners.size() > 0) return false;
-
-    pairedInstances.remove(object);
-    objectOwners.remove(object);
+    instanceIds.put(instance, instanceId);
+    nativeAddPair(instance, instanceId, owner);
     return true;
   }
 
-  boolean isPaired(Object instance) {
-    return getPairedPairedInstance(instance) != null;
+  public boolean isPaired(Object instance) {
+    return instanceIds.containsKey(instance);
   }
 
-  PairedInstance getPairedPairedInstance(Object instance) {
-    return pairedInstances.get(instance);
+  public String getInstanceId(Object instance) {
+    return instanceIds.get(instance);
   }
 
-  Object getPairedObject(PairedInstance pairedInstance) {
-    return pairedInstances.inverse.get(pairedInstance);
+  public void releaseDartHandle(Object instance) {
+    if (!isPaired(instance)) throw new AssertionError();
+    final String instanceId = instanceIds.remove(instance);
+    nativeReleaseDartHandle(instanceId);
   }
+
+  private void removePair(String instanceId) {
+    final Object instance = getInstance(instanceId);
+    if (instance == null) {
+      throw new IllegalStateException(
+          "The Object with the following instanceId has already been disposed: " + instanceId
+      );
+    }
+
+    instanceIds.remove(instance);
+    nativeRemovePair(instanceId);
+  }
+
+  public native Object getInstance(String instanceId);
+
+  private native void initializeLib();
+
+  private native void nativeAddPair(Object instance, String instanceId, boolean owner);
+
+  private native void nativeReleaseDartHandle(String instanceId);
+
+  private native void nativeRemovePair(String instanceId);
 }

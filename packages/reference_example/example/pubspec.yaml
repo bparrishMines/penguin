@@ -6,7 +6,7 @@ description: Demonstrates how to use the reference_example plugin.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: ">=2.12.0-0 <3.0.0"
 
 dependencies:
   flutter:
@@ -25,6 +25,10 @@ dependencies:
   cupertino_icons: ^0.1.3
 
 dev_dependencies:
+  reference:
+    path: ../../reference
+  flutter_driver:
+    sdk: flutter
   flutter_test:
     sdk: flutter
 

@@ -17,6 +17,7 @@ void main() {
           'test_channel',
           const PairedInstance('test_id'),
           <Object>[],
+          owner: true,
         ),
         testMessenger.testHandler.testClassInstance,
       );
@@ -25,12 +26,13 @@ void main() {
         isTrue,
       );
       expect(
-        testMessenger.onReceiveCreateNewInstancePair(
+        () => testMessenger.onReceiveCreateNewInstancePair(
           '',
           const PairedInstance('test_id'),
           <Object>[],
+          owner: true,
         ),
-        isNull,
+        throwsAssertionError,
       );
     });
 
@@ -45,21 +47,12 @@ void main() {
       );
     });
 
-    test('createUnpairedInstance', () {
-      final NewUnpairedInstance unpairedReference =
-          testMessenger.createUnpairedInstance(
-        'test_channel',
-        TestClass(testMessenger),
-      )!;
-      expect(unpairedReference.channelName, 'test_channel');
-      expect(unpairedReference.creationArguments, isEmpty);
-    });
-
     test('onReceiveInvokeMethod', () {
       testMessenger.onReceiveCreateNewInstancePair(
         'test_channel',
         const PairedInstance('test_id'),
         <Object>[],
+        owner: true,
       );
 
       expect(
@@ -70,33 +63,6 @@ void main() {
           <Object>[],
         ),
         'return_value',
-      );
-    });
-
-    test('onReceiveInvokeMethodOnUnpairedInstance', () {
-      expect(
-        testMessenger.onReceiveInvokeMethodOnUnpairedInstance(
-          const NewUnpairedInstance('test_channel', <Object>[]),
-          'aMethod',
-          <Object>[],
-        ),
-        'return_value',
-      );
-    });
-
-    test('onReceiveDisposePair', () {
-      testMessenger.onReceiveCreateNewInstancePair(
-        'test_channel',
-        const PairedInstance('test_id'),
-        <Object>[],
-      );
-      testMessenger.onReceiveDisposeInstancePair(
-        'test_channel',
-        const PairedInstance('test_id'),
-      );
-      expect(
-        testMessenger.isPaired(testMessenger.testHandler.testClassInstance),
-        isFalse,
       );
     });
   });
@@ -114,16 +80,22 @@ void main() {
       final TestClass testClass = TestClass(testMessenger);
 
       expect(
-        testChannel.createNewInstancePair(testClass),
+        testChannel.createNewInstancePair(
+          testClass,
+          owner: true,
+        ),
         completion(const PairedInstance('test_instance_id')),
       );
       expect(testMessenger.isPaired(testClass), isTrue);
 
-      expect(testChannel.createNewInstancePair(testClass), completion(isNull));
+      expect(
+        testChannel.createNewInstancePair(testClass, owner: true),
+        completion(isNull),
+      );
       expect(testMessenger.isPaired(testClass), isTrue);
 
       expect(
-        testChannel.createNewInstancePair(testClass, owner: Object()),
+        testChannel.createNewInstancePair(testClass, owner: true),
         completion(isNull),
       );
       expect(testMessenger.isPaired(testClass), isTrue);
@@ -139,43 +111,11 @@ void main() {
     test('invokeMethod', () {
       final TestClass testClass = TestClass(testMessenger);
 
-      testChannel.createNewInstancePair(testClass);
+      testChannel.createNewInstancePair(testClass, owner: true);
       expect(
         testChannel.sendInvokeMethod(testClass, 'aMethod', <Object>[]),
         completion('return_value'),
       );
-    });
-
-    test('invokeMethod on unpaired instance', () {
-      expect(
-        testChannel.sendInvokeMethod(
-          TestClass(testMessenger),
-          'aMethod',
-          <Object>[],
-        ),
-        completion('return_value'),
-      );
-    });
-
-    test('disposeInstancePair', () {
-      final testClass = TestClass(testMessenger);
-
-      testChannel.createNewInstancePair(testClass);
-      expect(testChannel.disposeInstancePair(testClass), completes);
-      expect(testMessenger.isPaired(testClass), isFalse);
-
-      expect(testChannel.disposeInstancePair(testClass), completes);
-
-      final Object owner = Object();
-      testChannel.createNewInstancePair(testClass, owner: owner);
-      expect(testChannel.disposeInstancePair(testClass), completes);
-      expect(testMessenger.isPaired(testClass), isTrue);
-
-      expect(
-        testChannel.disposeInstancePair(testClass, owner: owner),
-        completes,
-      );
-      expect(testMessenger.isPaired(testClass), isFalse);
     });
   });
 }
