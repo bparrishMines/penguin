@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:flutter/cupertino.dart';
 import 'package:reference/annotations.dart';
 
 import 'camera.g.dart';
@@ -14,6 +15,7 @@ import 'camera_channels.dart';
 /// API and is deprecated for Android versions 21+.
 @Reference('penguin_android_camera/camera/Camera')
 class Camera with $Camera {
+  @visibleForTesting
   /// Default constructor for [Camera].
   ///
   /// This should only be used when subclassing. Otherwise, an instance should

@@ -1,10 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:penguin_android_camera/channels.dart';
 import 'package:penguin_android_camera/penguin_android_camera.dart';
+import 'package:reference/reference.dart';
+import 'package:reference/src/type_channel.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  PenguinAndroidCamera.initialize();
 
   group('$CameraInfo', () {
     test('facing constants', () {
@@ -17,19 +18,19 @@ void main() {
   });
 
   group('$Camera', () {
-    late TypeChannelMessenger testMessenger;
-
     setUp(() {
-      testMessenger = TestMessenger();
-      Channels.cameraChannel = CameraChannel(testMessenger)
-        ..setHandler(CameraHandler());
+      ChannelRegistrar.instance =
+          ChannelRegistrar(TestLibraryImplementations());
     });
 
     test('attachPreviewTexture', () async {
       final Camera camera = Camera();
-      await testMessenger.createNewInstancePair(
-        Channels.cameraChannel.name,
+      ChannelRegistrar
+          .instance.implementations.cameraChannel.messenger.instancePairManager
+          .addPair(
         camera,
+        'camera_id',
+        owner: true,
       );
 
       int textureId = await camera.attachPreviewTexture();
@@ -41,9 +42,45 @@ void main() {
   });
 }
 
+class TestLibraryImplementations extends LibraryImplementations {
+  TestLibraryImplementations() : super(TestMessenger());
+}
+
+class TestInstancePairManager implements InstancePairManager {
+  final Map<Object, String> instanceToInstanceId = <Object, String>{};
+  final Map<String, Object> instanceIdToInstance = <String, Object>{};
+
+  @override
+  bool addPair(Object instance, String instanceId, {required bool owner}) {
+    if (isPaired(true)) return false;
+    instanceToInstanceId[instance] = instanceId;
+    instanceIdToInstance[instanceId] = instance;
+    return true;
+  }
+
+  @override
+  Object? getInstance(String instanceId) {
+    return instanceIdToInstance[instanceId];
+  }
+
+  @override
+  String? getInstanceId(Object instance) {
+    return instanceToInstanceId[instance];
+  }
+
+  @override
+  bool isPaired(Object instance) {
+    return instanceToInstanceId.containsKey(instance);
+  }
+}
+
 class TestMessenger extends TypeChannelMessenger {
   @override
-  TypeChannelMessageDispatcher get messageDispatcher => TestMessageDispatcher();
+  final InstancePairManager instancePairManager = TestInstancePairManager();
+
+  @override
+  final TypeChannelMessageDispatcher messageDispatcher =
+      TestMessageDispatcher();
 }
 
 class TestMessageDispatcher implements TypeChannelMessageDispatcher {
@@ -51,17 +88,10 @@ class TestMessageDispatcher implements TypeChannelMessageDispatcher {
   Future<void> sendCreateNewInstancePair(
     String channelName,
     PairedInstance pairedInstance,
-    List<Object?> arguments,
-  ) {
+    List<Object?> arguments, {
+    required bool owner,
+  }) {
     return Future<void>.value();
-  }
-
-  @override
-  Future<void> sendDisposePair(
-    String channelName,
-    PairedInstance pairedInstance,
-  ) {
-    throw UnimplementedError();
   }
 
   @override
@@ -72,15 +102,6 @@ class TestMessageDispatcher implements TypeChannelMessageDispatcher {
     List<Object?> arguments,
   ) async {
     return 5;
-  }
-
-  @override
-  Future<Object?> sendInvokeMethodOnUnpairedInstance(
-    NewUnpairedInstance unpairedInstance,
-    String methodName,
-    List<Object?> arguments,
-  ) {
-    throw UnimplementedError();
   }
 
   @override

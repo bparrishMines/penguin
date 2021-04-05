@@ -2,38 +2,29 @@ package github.bparrishMines.penguin.penguin_android_camera;
 
 import android.hardware.Camera;
 
-import github.penguin.reference.async.Completable;
-import github.penguin.reference.reference.TypeChannelMessenger;
-
 public class ShutterCallbackProxy implements CameraChannelLibrary.$ShutterCallback {
   public final Camera.ShutterCallback shutterCallback;
-  private final TypeChannelMessenger messenger;
+  private final ChannelRegistrar.LibraryImplementations libraryImplementations;
 
-  public ShutterCallbackProxy(TypeChannelMessenger messenger) {
-    this.messenger = messenger;
+  public ShutterCallbackProxy(ChannelRegistrar.LibraryImplementations libraryImplementations) {
+    this.libraryImplementations = libraryImplementations;
     this.shutterCallback = ShutterCallbackProxy.this::onShutter;
   }
 
-  public ShutterCallbackProxy(Camera.ShutterCallback shutterCallback, TypeChannelMessenger messenger) {
+  public ShutterCallbackProxy(Camera.ShutterCallback shutterCallback, ChannelRegistrar.LibraryImplementations libraryImplementations) {
     this.shutterCallback = shutterCallback;
-    this.messenger = messenger;
+    this.libraryImplementations = libraryImplementations;
   }
 
   @Override
   public Void onShutter() {
-    final Channels.ShutterCallbackChannel channel = new Channels.ShutterCallbackChannel(messenger);
-    channel.$invokeOnShutter(this).setOnCompleteListener(new Completable.OnCompleteListener<Object>() {
-      @Override
-      public void onComplete(Object result) {
-        messenger.getInstancePairManager().releaseDartHandle(this);
-      }
-
-      @Override
-      public void onError(Throwable throwable) {
-        messenger.getInstancePairManager().releaseDartHandle(this);
-      }
-    });
-
+    libraryImplementations.getShutterCallbackChannel().$invokeOnShutter(this);
     return null;
+  }
+
+  @Override
+  protected void finalize() throws Throwable {
+    libraryImplementations.getShutterCallbackChannel().releaseDartHandle(this);
+    super.finalize();
   }
 }

@@ -15,12 +15,8 @@ public class PenguinAndroidCameraPlugin implements FlutterPlugin {
     final TypeChannelMessenger messenger = ReferencePlugin.getMessengerInstance(binaryMessenger);
 
     final TextureRegistry textureRegistry = flutterPluginBinding.getTextureRegistry();
-
-    Channels.setupCameraChannel(messenger, textureRegistry);
-    Channels.setupCameraInfoChannel(messenger);
-    Channels.setupShutterCallbackChannel(messenger);
-    Channels.setupPictureCallbackChannel(messenger);
-    Channels.setupMediaRecorderChannel(messenger);
+    final ChannelRegistrar channelRegistrar = new ChannelRegistrar(new ChannelRegistrar.LibraryImplementations(messenger, textureRegistry));
+    channelRegistrar.registerHandlers();
   }
 
   @Override

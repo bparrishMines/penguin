@@ -1,0 +1,62 @@
+name: Reference Example Tests
+
+on:
+  pull_request:
+    paths:
+      - packages/reference/**
+      - .github/workflows/reference_example.yaml
+  push:
+    branches:
+      - master
+
+env:
+  PLUGIN_DIR: packages/reference_example
+
+jobs:
+  verify_android:
+    name: Android Tests
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v1
+        with:
+          java-version: '12.x'
+      - uses: subosito/flutter-action@v1
+        with:
+          channel: dev
+      - name: Android Build Test
+        run: |
+          cd $PLUGIN_DIR/example
+          flutter build apk
+      - uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 29
+          script: cd $PLUGIN_DIR/example && flutter drive test_driver/reference.dart
+
+  verify_ios:
+    name: Ios Tests
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: subosito/flutter-action@v1
+        with:
+          channel: dev
+     # - name: Ios Unit Tests
+     #   run: |
+     #     cd $PLUGIN_DIR/ios
+     #     pod lib lint --verbose
+     #   env:
+     #     DEVELOPER_DIR: /Applications/Xcode_11.4.app/Contents/Developer
+      - name: Ios Build Test
+        run: |
+         cd $PLUGIN_DIR/example
+         flutter build ios --simulator --no-codesign
+     # - name: Start iOS Simulator
+     #   run: |
+     #     xcrun simctl list
+     #     DEVICE_ID=$(xcrun simctl create My-iphoneX com.apple.CoreSimulator.SimDeviceType.iPhone-X com.apple.CoreSimulator.SimRuntime.iOS-14-3)
+     #     xcrun simctl boot $DEVICE_ID
+     # - name: Ios Drive Tests
+     #   run: |
+     #     cd $PLUGIN_DIR/example
+     #     flutter drive test_driver/reference.dart

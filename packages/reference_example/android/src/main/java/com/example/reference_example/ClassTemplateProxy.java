@@ -3,8 +3,8 @@ package com.example.reference_example;
 import com.example.reference_example.fakelibrary.ClassTemplate;
 
 public class ClassTemplateProxy implements LibraryTemplate.$ClassTemplate {
+  public final ClassTemplate classTemplate;
   private final Integer fieldTemplate;
-  private final ClassTemplate classTemplate;
 
   public static Double staticMethodTemplate(String parameterTemplate) {
     return ClassTemplate.staticMethodTemplate(parameterTemplate);
@@ -22,10 +22,6 @@ public class ClassTemplateProxy implements LibraryTemplate.$ClassTemplate {
   @Override
   public Object methodTemplate(String parameterTemplate) {
     return getClassTemplate().methodTemplate(parameterTemplate);
-  }
-
-  public ClassTemplate getClassTemplate() {
-    return classTemplate;
   }
 
   @Override

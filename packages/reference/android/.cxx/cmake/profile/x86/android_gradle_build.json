@@ -1,48 +1,52 @@
-
 {
-	"buildFiles" : 
-	[
-		"/Users/mauriceparrish/Development/penguin/packages/reference/android/CMakeLists.txt"
-	],
-	"cFileExtensions" : [ "c" ],
-	"cleanCommands" : 
-	[
-		"/Users/mauriceparrish/Library/Android/sdk/cmake/3.6.4111459/bin/cmake --build /Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/profile/x86 --target clean"
-	],
-	"cppFileExtensions" : [ "cpp" ],
-	"libraries" : 
-	{
-		"native_add-Release-x86" : 
-		{
-			"abi" : "x86",
-			"artifactName" : "native_add",
-			"buildCommand" : "/Users/mauriceparrish/Library/Android/sdk/cmake/3.6.4111459/bin/cmake --build /Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/profile/x86 --target native_add",
-			"buildType" : "release",
-			"files" : 
-			[
-				
-				{
-					"flags" : "  --target=i686-none-linux-android16 --gcc-toolchain=/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Dnative_add_EXPORTS -I../../../../../third_party/dart-sdk/src/runtime  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -mstackrealign -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security  -O2 -DNDEBUG  -fPIC      -c ",
-					"src" : "/Users/mauriceparrish/Development/penguin/packages/reference/third_party/dart-sdk/src/runtime/include/dart_api_dl.c",
-					"workingDirectory" : "/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/profile/x86"
-				},
-				
-				{
-					"flags" : "  --target=i686-none-linux-android16 --gcc-toolchain=/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/sysroot  -Dnative_add_EXPORTS -I../../../../../third_party/dart-sdk/src/runtime  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -mstackrealign -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -O2 -DNDEBUG  -fPIC    -c ",
-					"src" : "/Users/mauriceparrish/Development/penguin/packages/reference/ios/Classes/native_add.cpp",
-					"workingDirectory" : "/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/profile/x86"
-				}
-			],
-			"output" : "/Users/mauriceparrish/Development/penguin/packages/reference/example/build/reference/intermediates/cmake/profile/obj/x86/libnative_add.so",
-			"toolchain" : "15758239924615289414"
-		}
-	},
-	"toolchains" : 
-	{
-		"15758239924615289414" : 
-		{
-			"cCompilerExecutable" : "/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang",
-			"cppCompilerExecutable" : "/Users/mauriceparrish/Library/Android/sdk/ndk/22.0.7026061/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++"
-		}
-	}
+  "stringTable": {
+    "0": "/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/profile/x86",
+    "1": "--target=i686-none-linux-android16 --gcc-toolchain=/Users/mauriceparrish/Library/Android/sdk/ndk/21.1.6352462/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/mauriceparrish/Library/Android/sdk/ndk/21.1.6352462/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Dreference_EXPORTS -I../../../../../third_party/dart-sdk/src/runtime -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -mstackrealign -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security -O2 -DNDEBUG -fPIC"
+  },
+  "buildFiles": [
+    "/Users/mauriceparrish/Development/penguin/packages/reference/android/CMakeLists.txt",
+    "/Users/mauriceparrish/Library/Android/sdk/ndk/21.1.6352462/build/cmake/android.toolchain.cmake",
+    "/Users/mauriceparrish/Library/Android/sdk/ndk/21.1.6352462/build/cmake/platforms.cmake",
+    "/Users/mauriceparrish/Development/penguin/packages/reference/third_party/dart-sdk/sources.cmake"
+  ],
+  "cleanCommands": [
+    "/Users/mauriceparrish/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/profile/x86\" clean"
+  ],
+  "buildTargetsCommand": "/Users/mauriceparrish/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja  -C \"/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/profile/x86\" {LIST_OF_TARGETS_TO_BUILD}",
+  "libraries": {
+    "reference-Release-x86": {
+      "buildCommand": "/Users/mauriceparrish/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/profile/x86\" reference",
+      "buildType": "release",
+      "toolchain": "2122534404",
+      "abi": "x86",
+      "artifactName": "reference",
+      "files": [
+        {
+          "src": "/Users/mauriceparrish/Development/penguin/packages/reference/ios/Classes/reference.cpp",
+          "flagsOrdinal": 1,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/mauriceparrish/Development/penguin/packages/reference/third_party/dart-sdk/src/runtime/include/dart_api_dl.c",
+          "flagsOrdinal": 1,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [],
+      "output": "/Users/mauriceparrish/Development/penguin/packages/penguin_android_camera/example/build/reference/intermediates/cmake/profile/obj/x86/libreference.so",
+      "runtimeFiles": []
+    }
+  },
+  "toolchains": {
+    "2122534404": {
+      "cCompilerExecutable": "/Users/mauriceparrish/Library/Android/sdk/ndk/21.1.6352462/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang",
+      "cppCompilerExecutable": "/Users/mauriceparrish/Library/Android/sdk/ndk/21.1.6352462/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++"
+    }
+  },
+  "cFileExtensions": [
+    "c"
+  ],
+  "cppFileExtensions": [
+    "cpp"
+  ]
 }

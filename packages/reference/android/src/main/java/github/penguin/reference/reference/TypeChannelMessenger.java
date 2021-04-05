@@ -202,6 +202,10 @@ public abstract class TypeChannelMessenger {
     return getConverter().convertForRemoteMessenger(this, result);
   }
 
+  public void releaseDartHandle(Object instance) {
+    getInstancePairManager().releaseDartHandle(instance);
+  }
+
   protected String generateUniqueInstanceId(Object instance) {
     return String.valueOf(instance.hashCode());
   }

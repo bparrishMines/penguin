@@ -520,7 +520,7 @@ class Library with TemplateRegExp {
   );
 
   final RegExp package = TemplateRegExp.regExp(
-    r'(?<=package )github.penguin.reference.templates(?=;)',
+    r'(?<=package )com.example.reference_example(?=;)',
   );
 
   Interface get anInterface => Interface(this);

@@ -2,18 +2,14 @@ package github.bparrishMines.penguin.penguin_android_camera;
 
 import android.hardware.Camera;
 
-import github.penguin.reference.reference.TypeChannelMessenger;
-
 public class CameraInfoProxy implements CameraChannelLibrary.$CameraInfo {
   public final Camera.CameraInfo cameraInfo;
-  private final CameraChannelLibrary.$CameraInfoChannel channel;
   private final int cameraId;
 
-  public CameraInfoProxy(Camera.CameraInfo cameraInfo, TypeChannelMessenger messenger, int cameraId) {
-    this.channel = new CameraChannelLibrary.$CameraInfoChannel(messenger);
+  public CameraInfoProxy(Camera.CameraInfo cameraInfo, ChannelRegistrar.LibraryImplementations libraryImplementations, int cameraId) {
     this.cameraId = cameraId;
     this.cameraInfo = cameraInfo;
-    channel.createNewInstancePair(this, false);
+    libraryImplementations.getCameraInfoChannel().createNewInstancePair(this, false);
   }
 
   @Override

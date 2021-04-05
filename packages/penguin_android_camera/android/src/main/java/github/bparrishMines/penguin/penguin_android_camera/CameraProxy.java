@@ -1,12 +1,10 @@
 package github.bparrishMines.penguin.penguin_android_camera;
 
 import android.hardware.Camera;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import github.penguin.reference.reference.TypeChannelMessenger;
 import io.flutter.view.TextureRegistry;
 
 public class CameraProxy implements CameraChannelLibrary.$Camera {
@@ -19,20 +17,20 @@ public class CameraProxy implements CameraChannelLibrary.$Camera {
     this.textureRegistry = textureRegistry;
   }
 
-  public static CameraProxy open(TypeChannelMessenger messenger, TextureRegistry textureRegistry, int cameraId) {
+  public static CameraProxy open(ChannelRegistrar.LibraryImplementations libraryImplementations, TextureRegistry textureRegistry, int cameraId) {
     final CameraProxy cameraProxy = new CameraProxy(Camera.open(cameraId), textureRegistry);
-    new Channels.CameraChannel(messenger).createNewInstancePair(cameraProxy, false);
+    libraryImplementations.getCameraChannel().createNewInstancePair(cameraProxy, false);
     return cameraProxy;
   }
 
-  public static List<CameraInfoProxy> getAllCameraInfo(TypeChannelMessenger messenger) {
+  public static List<CameraInfoProxy> getAllCameraInfo(ChannelRegistrar.LibraryImplementations libraryImplementations) {
     final List<CameraInfoProxy> allCameraInfoProxy = new ArrayList<>();
 
     int numOfCameras = Camera.getNumberOfCameras();
     for (int i = 0; i < numOfCameras; i++) {
       final Camera.CameraInfo info = new Camera.CameraInfo();
       Camera.getCameraInfo(i, info);
-      allCameraInfoProxy.add(new CameraInfoProxy(info, messenger, i));
+      allCameraInfoProxy.add(new CameraInfoProxy(info, libraryImplementations, i));
     }
 
     return allCameraInfoProxy;

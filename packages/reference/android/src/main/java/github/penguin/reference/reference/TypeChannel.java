@@ -36,4 +36,8 @@ public class TypeChannel<T> {
   public Completable<Object> invokeMethod(T instance, String methodName, List<Object> arguments) {
     return messenger.sendInvokeMethod(name, instance, methodName, arguments);
   }
+
+  public void releaseDartHandle(T instance) {
+    messenger.releaseDartHandle(instance);
+  }
 }

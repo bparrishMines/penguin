@@ -36,19 +36,19 @@ class CameraChannelLibrary {
     Object takePicture($ShutterCallback shutter, $PictureCallback raw, $PictureCallback postView, $PictureCallback jpeg) throws Exception;
   }
 
-  interface $ShutterCallback {
+  public interface $ShutterCallback {
 
 
     Object onShutter() throws Exception;
   }
 
-  interface $PictureCallback {
+  public interface $PictureCallback {
 
 
     Object onPictureTaken(byte[] data) throws Exception;
   }
 
-  interface $CameraInfo {
+  public interface $CameraInfo {
     Integer getCameraId();
 
     Integer getFacing();
@@ -58,18 +58,22 @@ class CameraChannelLibrary {
 
   }
 
-  interface $MediaRecorder {
-    $Camera getCamera();
+  public interface $MediaRecorder {
 
-    Integer getOutputFormat();
 
-    String getOutputFilePath();
+    Object setCamera($Camera camera) throws Exception;
 
-    Integer getVideoEncoder();
+    Object setVideoSource(Integer source) throws Exception;
 
-    Integer getAudioSource();
+    Object setOutputFilePath(String path) throws Exception;
 
-    Integer getAudioEncoder();
+    Object setOutputFormat(Integer format) throws Exception;
+
+    Object setVideoEncoder(Integer encoder) throws Exception;
+
+    Object setAudioSource(Integer source) throws Exception;
+
+    Object setAudioEncoder(Integer encoder) throws Exception;
 
     Object prepare() throws Exception;
 
@@ -78,6 +82,28 @@ class CameraChannelLibrary {
     Object stop() throws Exception;
 
     Object release() throws Exception;
+  }
+
+  public interface $LibraryImplementations {
+    $CameraChannel getCameraChannel();
+
+    $ShutterCallbackChannel getShutterCallbackChannel();
+
+    $PictureCallbackChannel getPictureCallbackChannel();
+
+    $CameraInfoChannel getCameraInfoChannel();
+
+    $MediaRecorderChannel getMediaRecorderChannel();
+
+    $CameraHandler getCameraHandler();
+
+    $ShutterCallbackHandler getShutterCallbackHandler();
+
+    $PictureCallbackHandler getPictureCallbackHandler();
+
+    $CameraInfoHandler getCameraInfoHandler();
+
+    $MediaRecorderHandler getMediaRecorderHandler();
   }
 
   public static class $CameraCreationArgs {
@@ -93,18 +119,13 @@ class CameraChannelLibrary {
   }
 
   static class $CameraInfoCreationArgs {
-    Integer cameraId;
-    Integer facing;
-    Integer orientation;
+    public Integer cameraId;
+    public Integer facing;
+    public Integer orientation;
   }
 
   static class $MediaRecorderCreationArgs {
-    $Camera camera;
-    Integer outputFormat;
-    String outputFilePath;
-    Integer videoEncoder;
-    Integer audioSource;
-    Integer audioEncoder;
+
   }
 
   public static class $CameraChannel extends TypeChannel<$Camera> {
@@ -116,7 +137,7 @@ class CameraChannelLibrary {
       return invokeStaticMethod("getAllCameraInfo", Arrays.asList());
     }
 
-    Completable<Object> $invokeOpen(Integer cameraId) {
+    public Completable<Object> $invokeOpen(Integer cameraId) {
       return invokeStaticMethod("open", Arrays.asList(cameraId));
     }
 
@@ -124,90 +145,113 @@ class CameraChannelLibrary {
       return invokeMethod(instance, "release", Arrays.asList());
     }
 
-    Completable<Object> $invokeStartPreview($Camera instance) {
+    public Completable<Object> $invokeStartPreview($Camera instance) {
       return invokeMethod(instance, "startPreview", Arrays.asList());
     }
 
-    Completable<Object> $invokeStopPreview($Camera instance) {
+    public Completable<Object> $invokeStopPreview($Camera instance) {
       return invokeMethod(instance, "stopPreview", Arrays.asList());
     }
 
-    Completable<Object> $invokeAttachPreviewTexture($Camera instance) {
+    public Completable<Object> $invokeAttachPreviewTexture($Camera instance) {
       return invokeMethod(instance, "attachPreviewTexture", Arrays.asList());
     }
 
-    Completable<Object> $invokeReleasePreviewTexture($Camera instance) {
+    public Completable<Object> $invokeReleasePreviewTexture($Camera instance) {
       return invokeMethod(instance, "releasePreviewTexture", Arrays.asList());
     }
 
-    Completable<Object> $invokeUnlock($Camera instance) {
+    public Completable<Object> $invokeUnlock($Camera instance) {
       return invokeMethod(instance, "unlock", Arrays.asList());
     }
 
-    Completable<Object> $invokeTakePicture($Camera instance, $ShutterCallback shutter, $PictureCallback raw, $PictureCallback postView, $PictureCallback jpeg) {
+    public Completable<Object> $invokeTakePicture($Camera instance, $ShutterCallback shutter, $PictureCallback raw, $PictureCallback postView, $PictureCallback jpeg) {
       return invokeMethod(instance, "takePicture", Arrays.asList(shutter, raw, postView, jpeg));
     }
   }
 
-  static class $ShutterCallbackChannel extends TypeChannel<$ShutterCallback> {
+  public static class $ShutterCallbackChannel extends TypeChannel<$ShutterCallback> {
     public $ShutterCallbackChannel(@NonNull TypeChannelMessenger messenger) {
       super(messenger, "penguin_android_camera/camera/ShutterCallback");
     }
 
-    //public
 
     public Completable<Object> $invokeOnShutter($ShutterCallback instance) {
       return invokeMethod(instance, "onShutter", Arrays.asList());
     }
   }
 
-  static class $PictureCallbackChannel extends TypeChannel<$PictureCallback> {
+  public static class $PictureCallbackChannel extends TypeChannel<$PictureCallback> {
     public $PictureCallbackChannel(@NonNull TypeChannelMessenger messenger) {
       super(messenger, "penguin_android_camera/camera/PictureCallback");
     }
 
-    //public
 
     public Completable<Object> $invokeOnPictureTaken($PictureCallback instance, byte[] data) {
       return invokeMethod(instance, "onPictureTaken", Arrays.asList(data));
     }
   }
 
-  static class $CameraInfoChannel extends TypeChannel<$CameraInfo> {
+  public static class $CameraInfoChannel extends TypeChannel<$CameraInfo> {
     public $CameraInfoChannel(@NonNull TypeChannelMessenger messenger) {
       super(messenger, "penguin_android_camera/camera/CameraInfo");
     }
 
-    //public
 
-    //public
   }
 
-  static class $MediaRecorderChannel extends TypeChannel<$MediaRecorder> {
+  public static class $MediaRecorderChannel extends TypeChannel<$MediaRecorder> {
     public $MediaRecorderChannel(@NonNull TypeChannelMessenger messenger) {
       super(messenger, "penguin_android_camera/camera/MediaRecorder");
     }
 
-    //public
+
+    public Completable<Object> $invokeSetCamera($MediaRecorder instance, $Camera camera) {
+      return invokeMethod(instance, "setCamera", Arrays.asList(camera));
+    }
+
+    public Completable<Object> $invokeSetVideoSource($MediaRecorder instance, Integer source) {
+      return invokeMethod(instance, "setVideoSource", Arrays.asList(source));
+    }
+
+    public Completable<Object> $invokeSetOutputFilePath($MediaRecorder instance, String path) {
+      return invokeMethod(instance, "setOutputFilePath", Arrays.asList(path));
+    }
+
+    public Completable<Object> $invokeSetOutputFormat($MediaRecorder instance, Integer format) {
+      return invokeMethod(instance, "setOutputFormat", Arrays.asList(format));
+    }
+
+    public Completable<Object> $invokeSetVideoEncoder($MediaRecorder instance, Integer encoder) {
+      return invokeMethod(instance, "setVideoEncoder", Arrays.asList(encoder));
+    }
+
+    public Completable<Object> $invokeSetAudioSource($MediaRecorder instance, Integer source) {
+      return invokeMethod(instance, "setAudioSource", Arrays.asList(source));
+    }
+
+    public Completable<Object> $invokeSetAudioEncoder($MediaRecorder instance, Integer encoder) {
+      return invokeMethod(instance, "setAudioEncoder", Arrays.asList(encoder));
+    }
 
     public Completable<Object> $invokePrepare($MediaRecorder instance) {
       return invokeMethod(instance, "prepare", Arrays.asList());
     }
 
-    Completable<Object> $invokeStart($MediaRecorder instance) {
+    public Completable<Object> $invokeStart($MediaRecorder instance) {
       return invokeMethod(instance, "start", Arrays.asList());
     }
 
-    Completable<Object> $invokeStop($MediaRecorder instance) {
+    public Completable<Object> $invokeStop($MediaRecorder instance) {
       return invokeMethod(instance, "stop", Arrays.asList());
     }
 
-    Completable<Object> $invokeRelease($MediaRecorder instance) {
+    public Completable<Object> $invokeRelease($MediaRecorder instance) {
       return invokeMethod(instance, "release", Arrays.asList());
     }
   }
 
-  static class $CameraHandler implements TypeChannelHandler<$Camera> {
+  public static class $CameraHandler implements TypeChannelHandler<$Camera> {
     public $Camera onCreate(TypeChannelMessenger messenger, $CameraCreationArgs args)
         throws Exception {
       return null;
@@ -270,13 +314,7 @@ class CameraChannelLibrary {
     }
   }
 
-  /*
-    public interface $Channels {
-      void registerHandlers();
-      void unregisterHandlers();
-      $ClassTemplateChannel getClassTemplateChannel();
-    }*/
-  static class $ShutterCallbackHandler implements TypeChannelHandler<$ShutterCallback> {
+  public static class $ShutterCallbackHandler implements TypeChannelHandler<$ShutterCallback> {
     public $ShutterCallback onCreate(TypeChannelMessenger messenger, $ShutterCallbackCreationArgs args)
         throws Exception {
       return null;
@@ -327,14 +365,7 @@ class CameraChannelLibrary {
     }
   }
 
-  /*
-    public interface $Channels {
-      void registerHandlers();
-      void unregisterHandlers();
-      $ClassTemplateChannel getClassTemplateChannel();
-    }
-   */
-  static class $PictureCallbackHandler implements TypeChannelHandler<$PictureCallback> {
+  public static class $PictureCallbackHandler implements TypeChannelHandler<$PictureCallback> {
     public $PictureCallback onCreate(TypeChannelMessenger messenger, $PictureCallbackCreationArgs args)
         throws Exception {
       return null;
@@ -385,13 +416,7 @@ class CameraChannelLibrary {
     }
   }
 
-  /*
-    public interface $Channels {
-      void registerHandlers();
-      void unregisterHandlers();
-      $ClassTemplateChannel getClassTemplateChannel();
-    }*/
-  static class $CameraInfoHandler implements TypeChannelHandler<$CameraInfo> {
+  public static class $CameraInfoHandler implements TypeChannelHandler<$CameraInfo> {
     public $CameraInfo onCreate(TypeChannelMessenger messenger, $CameraInfoCreationArgs args)
         throws Exception {
       return null;
@@ -444,13 +469,7 @@ class CameraChannelLibrary {
     }
   }
 
-  /*
-    public interface $Channels {
-      void registerHandlers();
-      void unregisterHandlers();
-      $ClassTemplateChannel getClassTemplateChannel();
-    }*/
-  static class $MediaRecorderHandler implements TypeChannelHandler<$MediaRecorder> {
+  public static class $MediaRecorderHandler implements TypeChannelHandler<$MediaRecorder> {
     public $MediaRecorder onCreate(TypeChannelMessenger messenger, $MediaRecorderCreationArgs args)
         throws Exception {
       return null;
@@ -472,19 +491,14 @@ class CameraChannelLibrary {
     @Override
     public List<Object> getCreationArguments(
         TypeChannelMessenger messenger, $MediaRecorder instance) {
-      return Arrays.asList(instance.getCamera(), instance.getOutputFormat(), instance.getOutputFilePath(), instance.getVideoEncoder(), instance.getAudioSource(), instance.getAudioEncoder());
+      return Arrays.asList();
     }
 
     @Override
     public $MediaRecorder createInstance(TypeChannelMessenger messenger, List<Object> arguments)
         throws Exception {
       final $MediaRecorderCreationArgs args = new $MediaRecorderCreationArgs();
-      args.camera = ($Camera) arguments.get(0);
-      args.outputFormat = (Integer) arguments.get(1);
-      args.outputFilePath = (String) arguments.get(2);
-      args.videoEncoder = (Integer) arguments.get(3);
-      args.audioSource = (Integer) arguments.get(4);
-      args.audioEncoder = (Integer) arguments.get(5);
+
       return onCreate(messenger, args);
     }
 
@@ -505,12 +519,28 @@ class CameraChannelLibrary {
           String.format("%s.%s not supported.", instance, methodName));
     }
   }
-/*
-  public interface $Channels {
-    void registerHandlers();
-    void unregisterHandlers();
-    $ClassTemplateChannel getClassTemplateChannel();
-  }
 
- */
+  public static class $ChannelRegistrar {
+    public final $LibraryImplementations implementations;
+
+    public $ChannelRegistrar($LibraryImplementations implementations) {
+      this.implementations = implementations;
+    }
+
+    public void registerHandlers() {
+      implementations.getCameraChannel().setHandler(implementations.getCameraHandler());
+      implementations.getShutterCallbackChannel().setHandler(implementations.getShutterCallbackHandler());
+      implementations.getPictureCallbackChannel().setHandler(implementations.getPictureCallbackHandler());
+      implementations.getCameraInfoChannel().setHandler(implementations.getCameraInfoHandler());
+      implementations.getMediaRecorderChannel().setHandler(implementations.getMediaRecorderHandler());
+    }
+
+    public void unregisterHandlers() {
+      implementations.getCameraChannel().removeHandler();
+      implementations.getShutterCallbackChannel().removeHandler();
+      implementations.getPictureCallbackChannel().removeHandler();
+      implementations.getCameraInfoChannel().removeHandler();
+      implementations.getMediaRecorderChannel().removeHandler();
+    }
+  }
 }

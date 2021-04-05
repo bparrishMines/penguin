@@ -22,65 +22,80 @@ public class MediaRecorderProxyTest {
   @Mock
   public MediaRecorder mockMediaRecorder;
 
-  public MediaRecorderProxy.Builder testBuilder = new MediaRecorderProxy.Builder();
+  public MediaRecorderProxy testMediaRecorderProxy;
 
   @Before
   public void setUp() {
-    testBuilder.outputFilePath = "output_file";
-    testBuilder.videoEncoder = 12;
-    testBuilder.outputFormat = 13;
-    testBuilder.camera = mock(CameraProxy.class);
-    testBuilder.audioSource = 45;
-    testBuilder.audioEncoder = 12;
+    testMediaRecorderProxy = new MediaRecorderProxy(mockMediaRecorder);
   }
 
   @Test
-  public void constructorParameters() {
+  public void setCamera() {
     final Camera mockCamera = mock(Camera.class);
-    testBuilder.camera = new CameraProxy(mockCamera, mock(TextureRegistry.class));
+    final CameraProxy cameraProxy = new CameraProxy(mockCamera, mock(TextureRegistry.class));
 
-    new MediaRecorderProxy(mockMediaRecorder, testBuilder);
-    verify(mockMediaRecorder).setOutputFile("output_file");
+    testMediaRecorderProxy.setCamera(cameraProxy);
     verify(mockMediaRecorder).setCamera(mockCamera);
-    verify(mockMediaRecorder).setVideoEncoder(12);
-    verify(mockMediaRecorder).setOutputFormat(13);
-    verify(mockMediaRecorder).setAudioSource(45);
+  }
+
+  @Test
+  public void setVideoSource() {
+    testMediaRecorderProxy.setVideoSource(12);
+    verify(mockMediaRecorder).setVideoSource(12);
+  }
+
+  @Test
+  public void setAudioSource() {
+    testMediaRecorderProxy.setAudioSource(12);
+    verify(mockMediaRecorder).setAudioSource(12);
+  }
+
+  @Test
+  public void setAudioEncoder() {
+    testMediaRecorderProxy.setAudioEncoder(12);
     verify(mockMediaRecorder).setAudioEncoder(12);
   }
 
   @Test
-  public void prepare() throws Exception {
-    final MediaRecorderProxy mediaRecorderProxy = new MediaRecorderProxy(mockMediaRecorder,
-        testBuilder);
+  public void setVideoEncoder() {
+    testMediaRecorderProxy.setVideoEncoder(12);
+    verify(mockMediaRecorder).setVideoEncoder(12);
+  }
 
-    mediaRecorderProxy.prepare();
+
+  @Test
+  public void setOutputFormat() {
+    testMediaRecorderProxy.setOutputFormat(12);
+    verify(mockMediaRecorder).setOutputFormat(12);
+  }
+
+  @Test
+  public void setOutputFile() {
+    testMediaRecorderProxy.setOutputFilePath("apple");
+    verify(mockMediaRecorder).setOutputFile("apple");
+  }
+
+  @Test
+  public void prepare() throws Exception {
+    testMediaRecorderProxy.prepare();
     verify(mockMediaRecorder).prepare();
   }
 
   @Test
   public void start() {
-    final MediaRecorderProxy mediaRecorderProxy = new MediaRecorderProxy(mockMediaRecorder,
-        testBuilder);
-
-    mediaRecorderProxy.start();
+    testMediaRecorderProxy.start();
     verify(mockMediaRecorder).start();
   }
 
   @Test
   public void stop() {
-    final MediaRecorderProxy mediaRecorderProxy = new MediaRecorderProxy(mockMediaRecorder,
-        testBuilder);
-
-    mediaRecorderProxy.stop();
+    testMediaRecorderProxy.stop();
     verify(mockMediaRecorder).stop();
   }
 
   @Test
   public void release() {
-    final MediaRecorderProxy mediaRecorderProxy = new MediaRecorderProxy(mockMediaRecorder,
-        testBuilder);
-
-    mediaRecorderProxy.release();
+    testMediaRecorderProxy.release();
     verify(mockMediaRecorder).release();
   }
 }
