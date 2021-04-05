@@ -1,3 +1,0 @@
-/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/debug/armeabi-v7a/CMakeFiles/rebuild_cache.dir
-/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/debug/armeabi-v7a/CMakeFiles/edit_cache.dir
-/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/debug/armeabi-v7a/CMakeFiles/reference.dir

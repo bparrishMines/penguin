@@ -1,2 +1,0 @@
-ninja: Entering directory `/Users/mauriceparrish/Development/penguin/packages/reference/android/.cxx/cmake/debug/x86_64'
-ninja: no work to do.
