@@ -21,7 +21,7 @@ public class ClassTemplateProxy implements LibraryTemplate.$ClassTemplate {
 
   @Override
   public Object methodTemplate(String parameterTemplate) {
-    return getClassTemplate().methodTemplate(parameterTemplate);
+    return classTemplate.methodTemplate(parameterTemplate);
   }
 
   @Override
