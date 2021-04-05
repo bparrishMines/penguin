@@ -547,7 +547,7 @@ class Interface with TemplateRegExp {
 
   @override
   final RegExp exp =
-      TemplateRegExp.regExp(r'interface \$ClassTemplate \{[^\}]+\}');
+      TemplateRegExp.regExp(r'public interface \$ClassTemplate \{[^\}]+\}');
 
   @override
   final Library parent;

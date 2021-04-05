@@ -24,12 +24,6 @@ class LibraryTemplate {
     Object methodTemplate(String parameterTemplate) throws Exception;
   }
 
-  public interface $LibraryImplementations {
-    $ClassTemplateChannel getClassTemplateChannel();
-
-    $ClassTemplateHandler getClassTemplateHandler();
-  }
-
   public static class $ClassTemplateCreationArgs {
     public Integer fieldTemplate;
   }
@@ -102,6 +96,12 @@ class LibraryTemplate {
       throw new UnsupportedOperationException(
           String.format("%s.%s not supported.", instance, methodName));
     }
+  }
+
+  public interface $LibraryImplementations {
+    $ClassTemplateChannel getClassTemplateChannel();
+
+    $ClassTemplateHandler getClassTemplateHandler();
   }
 
   public static class $ChannelRegistrar {
