@@ -24,8 +24,14 @@ class LibraryTemplate {
     Object methodTemplate(String parameterTemplate) throws Exception;
   }
 
+  public interface $LibraryImplementations {
+    $ClassTemplateChannel getClassTemplateChannel();
+
+    $ClassTemplateHandler getClassTemplateHandler();
+  }
+
   public static class $ClassTemplateCreationArgs {
-    Integer fieldTemplate;
+    public Integer fieldTemplate;
   }
 
   public static class $ClassTemplateChannel extends TypeChannel<$ClassTemplate> {
@@ -42,7 +48,7 @@ class LibraryTemplate {
     }
   }
 
-  static class $ClassTemplateHandler implements TypeChannelHandler<$ClassTemplate> {
+  public static class $ClassTemplateHandler implements TypeChannelHandler<$ClassTemplate> {
     public $ClassTemplate onCreate(TypeChannelMessenger messenger, $ClassTemplateCreationArgs args)
         throws Exception {
       return null;
@@ -98,11 +104,6 @@ class LibraryTemplate {
     }
   }
 
-  public interface $LibraryImplementations {
-    $ClassTemplateChannel getClassTemplateChannel();
-    $ClassTemplateHandler getClassTemplateHandler();
-  }
-
   public static class $ChannelRegistrar {
     public final $LibraryImplementations implementations;
 
@@ -110,11 +111,11 @@ class LibraryTemplate {
       this.implementations = implementations;
     }
 
-    void registerHandlers() {
+    public void registerHandlers() {
       implementations.getClassTemplateChannel().setHandler(implementations.getClassTemplateHandler());
     }
 
-    void unregisterHandlers() {
+    public void unregisterHandlers() {
       implementations.getClassTemplateChannel().removeHandler();
     }
   }
