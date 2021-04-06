@@ -1,18 +1,29 @@
+#ifdef __ANDROID__
 #include <android/log.h>
 #include <jni.h>
+#endif
+
 #include <string>
 #include <unordered_map>
 
 #include "include/dart_api_dl.h"
 
+#ifdef __ANDROID__
+#define LOG(message) __android_log_write(ANDROID_LOG_DEBUG, "reference", message)
+#else
+#define LOG(message) printf(message);
+#endif
+
 static Dart_Port dart_send_port;
 static std::unordered_map<std::string, Dart_PersistentHandle> instanceId_to_dart_handle;
 static std::unordered_map<std::string, Dart_WeakPersistentHandle> instanceId_to_weak_dart_handle;
 
+#ifdef __ANDROID__
 static JavaVM *jvm;
 static jobject java_instance_pair_manager;
 static jmethodID java_remove_pair_id;
 static std::unordered_map<std::string, jobject> instanceId_to_jobject;
+#endif
 
 DART_EXPORT void dart_remove_pair(char* instanceId) {
   std::string strInstanceId = std::string(instanceId);
@@ -27,33 +38,39 @@ DART_EXPORT void register_dart_receive_port(Dart_Port port) {
 
 DART_EXPORT void reference_dart_dl_initialize(void* initialize_api_dl_data) {
   if (Dart_InitializeApiDL(initialize_api_dl_data) != 0) {
-     __android_log_write(ANDROID_LOG_DEBUG, "reference", "Unable to initialize reference library.");
+     LOG("Unable to initialize reference library.");
   } else {
-    __android_log_write(ANDROID_LOG_DEBUG, "reference", "Initialized library for Dart thread.");
+     LOG("Initialized library for Dart thread.");
   }
 }
 
-void release_jobject(std::string instanceId) {
+#ifdef __ANDROID__
+void release_platform_object(std::string instanceId) {
   JNIEnv* env;
   jint result = jvm->GetEnv((void**)&env, JNI_VERSION_1_6);
   if (result == JNI_EDETACHED) {
     result = jvm->AttachCurrentThread(&env, NULL);
     if (result != JNI_OK) {
-      __android_log_write(ANDROID_LOG_DEBUG, "reference", "Failed to attach thread to jvm.");
+      LOG("Failed to attach thread to jvm.");
     } else {
       env->CallVoidMethod(java_instance_pair_manager, java_remove_pair_id, env->NewStringUTF(instanceId.c_str()));
       jvm->DetachCurrentThread();
     }
   } else {
-    __android_log_write(ANDROID_LOG_DEBUG, "reference", "Failed to get JNIEnv to release jobject.");
+    LOG("Failed to get JNIEnv to release jobject.");
   }
 }
+#else
+void release_platform_object(std::string instanceId) {
+
+}
+#endif
 
 void dart_finalizer(void* isolate_callback_data,
                     void* peer) {
   std::string instanceId = std::string((char*)peer);
   instanceId_to_weak_dart_handle.erase(instanceId);
-  release_jobject(instanceId);
+  release_platform_object(instanceId);
 }
 
 Dart_WeakPersistentHandle dart_attach_finalizer(Dart_Handle instance, char *instanceId) {
@@ -61,7 +78,7 @@ Dart_WeakPersistentHandle dart_attach_finalizer(Dart_Handle instance, char *inst
   intptr_t size = 4096;
   Dart_WeakPersistentHandle weakHandle = Dart_NewWeakPersistentHandle_DL(instance, (void*)instanceId, size, &dart_finalizer);
   if (weakHandle == NULL) {
-    __android_log_write(ANDROID_LOG_DEBUG, "reference", "Invalid parameters were passed to Dart_NewWeakPersistentHandle_DL.");
+    LOG("Invalid parameters were passed to Dart_NewWeakPersistentHandle_DL.");
     return NULL;
   }
 
@@ -102,6 +119,7 @@ DART_EXPORT Dart_Handle dart_get_object(char *instanceId) {
   abort();
 }
 
+#ifdef __ANDROID__
 std::string jstring_to_string(JNIEnv *env, jstring jStr) {
   if (!jStr) return "";
 
@@ -187,3 +205,4 @@ Java_github_penguin_reference_reference_InstancePairManager_nativeRemovePair(
   instanceId_to_jobject.erase(strInstanceId);
   env->DeleteGlobalRef(instance);
 }
+#endif

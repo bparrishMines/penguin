@@ -3,6 +3,7 @@ name: Reference Example Tests
 on:
   pull_request:
     paths:
+      - packages/reference_example/**
       - packages/reference/**
       - .github/workflows/reference_example.yaml
   push:
@@ -41,12 +42,6 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           channel: dev
-     # - name: Ios Unit Tests
-     #   run: |
-     #     cd $PLUGIN_DIR/ios
-     #     pod lib lint --verbose
-     #   env:
-     #     DEVELOPER_DIR: /Applications/Xcode_11.4.app/Contents/Developer
       - name: Ios Build Test
         run: |
          cd $PLUGIN_DIR/example

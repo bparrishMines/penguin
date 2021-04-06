@@ -13,12 +13,23 @@ Pod::Spec.new do |s|
   s.author           = { 'Brandon Parrish' => 'bparr2450@gmail.com' }
   s.source           = { :http => 'https://github.com/bparrishMines/penguin/tree/master/packages/reference' }
   s.documentation_url = 'https://pub.dev/documentation/reference/latest'
-  s.source_files = 'Classes/**/*'
+  s.source_files = [
+    'Classes/**/*',
+    # Since we can't embed source from ../third_party/, we have created files
+    # in ios/third_party/... which simply use #include "../...". This is a hack!
+    'third_party/dart-sdk/**/*.{c,h}',
+  ]
   s.public_header_files = 'Classes/**/*.h'
   s.dependency 'Flutter'
   s.platform = :ios, '8.0'
 
-  s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'VALID_ARCHS' => 'armv7 arm64 x86_64' }
+  s.pod_target_xcconfig = {
+    'HEADER_SEARCH_PATHS' => [
+      '$(PODS_TARGET_SRCROOT)/../third_party/dart-sdk/src/runtime',
+    ],
+    'DEFINES_MODULE' => 'YES',
+    'VALID_ARCHS' => 'armv7 arm64 x86_64'
+  }
 
   s.test_spec 'Tests' do |test_spec|
     test_spec.source_files = 'Tests/**/*'
