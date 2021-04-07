@@ -8,11 +8,4 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithInstanceID:(NSString *)instanceID;
 @end
 
-@interface REFNewUnpairedInstance : NSObject <NSCopying>
-@property(readonly) NSString *channelName;
-@property(readonly) NSArray<id> *creationArguments;
-- (instancetype)initWithChannelName:(NSString *)channelName
-                  creationArguments:(NSArray<id> *)creationArguments;
-@end
-
 NS_ASSUME_NONNULL_END

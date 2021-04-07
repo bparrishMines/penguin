@@ -3,12 +3,17 @@ package github.penguin.reference.reference;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 
+import java.lang.ref.WeakReference;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.WeakHashMap;
 
 public class InstancePairManager {
   private static InstancePairManager instance;
 
   private final WeakHashMap<Object, String> instanceIds = new WeakHashMap<>();
+  private final Map<String, WeakReference<Object>> weakReferences = new HashMap<>();
+  private final Map<String, Object> strongReferences = new HashMap<>();
 
   @VisibleForTesting
   public InstancePairManager() { }
@@ -28,7 +33,12 @@ public class InstancePairManager {
     if (getInstance(instanceId) != null) throw new AssertionError();
 
     instanceIds.put(instance, instanceId);
-    nativeAddPair(instance, instanceId, owner);
+
+    if (owner) {
+      weakReferences.put(instanceId, new WeakReference<>(instance));
+    } else {
+      strongReferences.put(instanceId, instance);
+    }
     return true;
   }
 
@@ -43,6 +53,7 @@ public class InstancePairManager {
   public void releaseDartHandle(Object instance) {
     if (!isPaired(instance)) throw new AssertionError();
     final String instanceId = instanceIds.remove(instance);
+    weakReferences.remove(instanceId);
     nativeReleaseDartHandle(instanceId);
   }
 
@@ -55,16 +66,20 @@ public class InstancePairManager {
     }
 
     instanceIds.remove(instance);
-    nativeRemovePair(instanceId);
+    strongReferences.remove(instanceId);
   }
 
-  public native Object getInstance(String instanceId);
+  public Object getInstance(String instanceId) {
+    final Object instance = strongReferences.get(instanceId);
+    if (instance != null) return instance;
+
+    final WeakReference<Object> reference = weakReferences.get(instanceId);
+    if (reference != null) return reference.get();
+
+    return null;
+  }
 
   private native void initializeLib();
 
-  private native void nativeAddPair(Object instance, String instanceId, boolean owner);
-
   private native void nativeReleaseDartHandle(String instanceId);
-
-  private native void nativeRemovePair(String instanceId);
 }

@@ -1,8 +1,11 @@
 #import <Foundation/Foundation.h>
 
-#import "REFInstance.h"
+#import "reference.cpp"
 
 NS_ASSUME_NONNULL_BEGIN
+
+void referenceLog(char *);
+void releaseObject(void *objectInstance);
 
 @interface REFThreadSafeMapTable<KeyType, ObjectType> : NSObject
 - (void)setObject:(ObjectType)object forKey:(KeyType)key;
@@ -12,15 +15,12 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface InstancePairManager : NSObject
-- (BOOL)addPair:(NSObject *)object
- pairedInstance:(REFPairedInstance *)pairedInstance
-          owner:(NSObject *)owner;
-- (BOOL)isPaired:(NSObject *)object;
-- (BOOL)removePairWithObject:(id)object
-                       owner:(NSObject *)owner
-                       force:(BOOL)force;
-- (REFPairedInstance *_Nullable)getPairedPairedInstance:(id)object;
-- (id _Nullable)getPairedObject:(REFPairedInstance *)pairedInstance;
++ (InstancePairManager *)sharedInstance;
+- (BOOL)addPair:(NSObject *)instance instanceID:(NSString *)instanceId owner:(BOOL)owner;
+- (BOOL)isPaired:(NSObject *)instance;
+- (NSString *_Nullable)getInstanceID:(NSObject *)instance;
+- (id _Nullable)getInstance:(NSString *)instanceId;
+- (void)releaseDartHandle:(NSObject *)instance;
 @end
 
 NS_ASSUME_NONNULL_END
