@@ -2,7 +2,7 @@
 #include <android/log.h>
 #include <jni.h>
 #elif __APPLE__
-#import <REFCollections_Internal.h>
+//#import <REFCollections_Internal.h>
 #endif
 
 #include <string>
@@ -43,7 +43,7 @@ void release_platform_object(std::string instanceId) {
 }
 #elif __APPLE__
 void release_platform_object(std::string instanceId) {
-  removePair(instanceId.c_str());
+  //removePair(instanceId.c_str());
 }
 #endif
 

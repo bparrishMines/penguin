@@ -1,6 +1,6 @@
 #import "REFCollections_Internal.h"
 
-#import "reference.cpp"
+//#import "reference.cpp"
 
 @implementation REFThreadSafeMapTable {
   NSMapTable<id, id> *_table;
@@ -162,7 +162,7 @@
   NSString *instanceID = [_instanceIds objectForKey:instance];
   [_weakReferences removeObjectForKey:instanceID];
   [_instanceIds removeObjectForKey:instance];
-  release_dart_handle(std::string(instanceID.UTF8String));
+  //release_dart_handle(std::string(instanceID.UTF8String));
 }
 @end
 
