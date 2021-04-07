@@ -12,8 +12,8 @@ public class InstancePairManager {
   private static InstancePairManager instance;
 
   private final WeakHashMap<Object, String> instanceIds = new WeakHashMap<>();
-  private final Map<String, WeakReference<Object>> weakReferences = new HashMap<>();
   private final Map<String, Object> strongReferences = new HashMap<>();
+  private final Map<String, WeakReference<Object>> weakReferences = new HashMap<>();
 
   @VisibleForTesting
   public InstancePairManager() { }

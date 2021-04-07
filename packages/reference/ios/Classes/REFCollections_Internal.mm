@@ -1,23 +1,37 @@
 #import "REFCollections_Internal.h"
 
-//@interface REFBiMapTable<KeyType, ObjectType> : NSObject
-//// Inverse of inverse is null
-//@property(readonly) REFBiMapTable<ObjectType, KeyType> *_Nullable inverse;
-//- (void)setObject:(ObjectType)object forKey:(KeyType)key;
-//- (void)removeObjectForKey:(KeyType)key;
-//- (ObjectType _Nullable)objectForKey:(KeyType)key;
-//- (NSEnumerator<ObjectType> *)objectEnumerator;
-//@end
-
 @implementation REFThreadSafeMapTable {
   NSMapTable<id, id> *_table;
   dispatch_queue_t _lockQueue;
 }
 
++ (REFThreadSafeMapTable *)weakToStrongObjectsMapTable {
+  REFThreadSafeMapTable *table = [[REFThreadSafeMapTable alloc] init];
+  table->_table = [NSMapTable weakToStrongObjectsMapTable];
+  return table;
+}
+
++ (REFThreadSafeMapTable *)weakToWeakObjectsMapTable {
+  REFThreadSafeMapTable *table = [[REFThreadSafeMapTable alloc] init];
+  table->_table = [NSMapTable weakToWeakObjectsMapTable];
+  return table;
+}
+
++ (REFThreadSafeMapTable *)strongToWeakObjectsMapTable {
+  REFThreadSafeMapTable *table = [[REFThreadSafeMapTable alloc] init];
+  table->_table = [NSMapTable strongToWeakObjectsMapTable];
+  return table;
+}
+
++ (REFThreadSafeMapTable *)strongToStrongObjectsMapTable {
+  REFThreadSafeMapTable *table = [[REFThreadSafeMapTable alloc] init];
+  table->_table = [NSMapTable strongToStrongObjectsMapTable];
+  return table;
+}
+
 - (instancetype _Nonnull)init {
   self = [super init];
   if (self) {
-    _table = [NSMapTable weakToStrongObjectsMapTable];
     _lockQueue = dispatch_queue_create("REFThreadSafeMapTable", DISPATCH_QUEUE_SERIAL);
   }
   return self;
@@ -56,73 +70,28 @@
 }
 @end
 
-//@implementation REFBiMapTable {
-//  REFThreadSafeMapTable<id, id> *_table;
-//  dispatch_queue_t _lockQueue;
-//}
-//
-//- (instancetype)init {
-//  self = [super init];
-//  if (self) {
-//    _table = [[REFThreadSafeMapTable alloc] init];
-//    _inverse = [[REFBiMapTable alloc] initWithoutInverse];
-//  }
-//  return self;
-//}
-//
-//- (instancetype)initWithoutInverse {
-//  self = [super init];
-//  if (self) {
-//    _table = [[REFThreadSafeMapTable alloc] init];
-//  }
-//  return self;
-//}
-//
-//- (void)setObject:(id _Nonnull)object forKey:(id _Nonnull)key {
-//  if (key && object && ![self objectForKey:key] && ![self.inverse objectForKey:object]) {
-//    [_table setObject:object forKey:key];
-//    [_inverse->_table setObject:key forKey:object];
-//  }
-//}
-//
-//- (void)removeObjectForKey:(id _Nonnull)key {
-//  if (key) {
-//    id object = [_table objectForKey:key];
-//    [_table removeObjectForKey:key];
-//    [_inverse->_table removeObjectForKey:object];
-//  }
-//}
-//
-//- (id _Nullable)objectForKey:(id _Nonnull)key {
-//  return [_table objectForKey:key];
-//}
-//
-//- (NSEnumerator<id> *)objectEnumerator {
-//  return _table.objectEnumerator;
-//}
-//@end
-
-@implementation InstancePairManager {
+@implementation REFInstancePairManager {
   REFThreadSafeMapTable<NSObject *, NSString *> *_instanceIds;
-//  REFThreadSafeMapTable<NSObject *, NSMutableSet<NSObject *> *> *_owners;
+  REFThreadSafeMapTable<NSString *, NSObject *> *_strongReferences;
+  REFThreadSafeMapTable<NSString *, NSObject *> *_weakReferences;
 }
 
-+ (InstancePairManager *)sharedInstance {
++ (REFInstancePairManager *)sharedInstance {
   
 }
 
 - (instancetype)init {
   self = [super init];
   if (self) {
-    _instanceIds = [[REFThreadSafeMapTable alloc] init];
-//    _owners = [[REFThreadSafeMapTable alloc] init];
+    _instanceIds = [REFThreadSafeMapTable weakToStrongObjectsMapTable];
+    _strongReferences = [REFThreadSafeMapTable strongToStrongObjectsMapTable];
+    _weakReferences = [REFThreadSafeMapTable strongToWeakObjectsMapTable];
   }
   return self;
 }
 
 - (BOOL)isPaired:(NSObject *)instance {
   return [_instanceIds objectForKey:instance] != nil;
-//  return [self getPairedPairedInstance:object] != nil;
 }
 
 - (BOOL)addPair:(NSObject *)instance instanceID:(NSString *)instanceID owner:(BOOL)owner {
@@ -130,7 +99,12 @@
   NSAssert(![self getInstance:instanceID], @"");
   
   [_instanceIds setObject:instanceID forKey:instance];
-  // TODO: native add pair
+  
+  if (owner) {
+    [_weakReferences setObject:instance forKey:instanceID];
+  } else {
+    [_strongReferences setObject:instance forKey:instanceID];
+  }
 //
 //  if (!wasPaired) {
 //    [_pairedInstances setObject:pairedInstance forKey:object];
@@ -157,17 +131,40 @@
 //  return YES;
 //}
 
-- (NSObject *_Nullable)getInstanceID:(NSString *)instanceID {
-  return nil;
-//  return [_pairedInstances objectForKey:object];
+- (void)removePair:(NSString *)instanceID {
+  NSObject *instance = [self getInstance:instanceID];
+  NSAssert(!instance, @"The Object with the following instanceId has already been disposed: %@", instanceID);
+  
+  [_instanceIds removeObjectForKey:instance];
+  [_strongReferences removeObjectForKey:instanceID];
 }
 
-- (id _Nullable)getInstance:(NSString *)instanceId {
-  return nil;
-//  return [_pairedInstances.inverse objectForKey:pairedInstance];
+- (NSString *_Nullable)getInstanceID:(NSObject *)instance {
+  return [_instanceIds objectForKey:instance];
+}
+
+- (NSObject *_Nullable)getInstance:(NSString *)instanceID {
+  NSObject *instance = [_strongReferences objectForKey:instanceID];
+  if (instance) return instance;
+  return [_weakReferences objectForKey:instanceID];
 }
 
 - (void)releaseDartHandle:(NSObject *)instance {
+  NSAssert([self isPaired:instance], @"");
   
+  NSString *instanceID = [_instanceIds objectForKey:instance];
+  [_weakReferences removeObjectForKey:instanceID];
+  [_instanceIds removeObjectForKey:instance];
+  release_dart_handle(std::string(instanceID.UTF8String));
 }
 @end
+
+void referenceLog(char *message) {
+  NSLog(@"Reference: %@", [NSData dataWithBytes:message length:sizeof(message)]);
+}
+
+void removePair(std::string *instanceID) {
+  NSString *objInstanceID = [NSString stringWithCString:instanceID.c_str()
+                                     encoding:[NSString defaultCStringEncoding]];
+  [[REFInstancePairManager sharedInstance] removePair:objInstanceID];
+}

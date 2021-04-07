@@ -12,20 +12,18 @@
 
 #ifdef __ANDROID__
 #define LOG(message) __android_log_write(ANDROID_LOG_DEBUG, "reference", message)
-#else
+#elif __APPLE__
 #define LOG(message) referenceLog(message);
 #endif
-
-static Dart_Port dart_send_port;
-static std::unordered_map<std::string, Dart_WeakPersistentHandle> instanceId_to_weak_dart_handle;
 
 #ifdef __ANDROID__
 static JavaVM *jvm;
 static jobject java_instance_pair_manager;
 static jmethodID java_remove_pair_id;
-#elif __APPLE__
-static std::unordered_map<std::string, void *> instanceId_to_nsobject;
 #endif
+
+static Dart_Port dart_send_port;
+static std::unordered_map<std::string, Dart_WeakPersistentHandle> instanceId_to_weak_dart_handle;
 
 #ifdef __ANDROID__
 void release_platform_object(std::string instanceId) {
@@ -45,7 +43,7 @@ void release_platform_object(std::string instanceId) {
 }
 #elif __APPLE__
 void release_platform_object(std::string instanceId) {
-  //releaseObject(instanceId_to_nsobject[instanceId]);
+  release_platform_object(instanceId);
 }
 #endif
 

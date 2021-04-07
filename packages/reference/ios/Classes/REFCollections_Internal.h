@@ -4,22 +4,26 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-void referenceLog(char *);
-void releaseObject(void *objectInstance);
+void referenceLog(char *message);
+void removePair(std::string instanceID);
 
 @interface REFThreadSafeMapTable<KeyType, ObjectType> : NSObject
++ (REFThreadSafeMapTable *)weakToStrongObjectsMapTable;
++ (REFThreadSafeMapTable *)weakToWeakObjectsMapTable;
++ (REFThreadSafeMapTable *)strongToWeakObjectsMapTable;
++ (REFThreadSafeMapTable *)strongToStrongObjectsMapTable;
 - (void)setObject:(ObjectType)object forKey:(KeyType)key;
 - (void)removeObjectForKey:(KeyType)key;
 - (ObjectType _Nullable)objectForKey:(KeyType)key;
 - (NSEnumerator<ObjectType> *)objectEnumerator;
 @end
 
-@interface InstancePairManager : NSObject
-+ (InstancePairManager *)sharedInstance;
-- (BOOL)addPair:(NSObject *)instance instanceID:(NSString *)instanceId owner:(BOOL)owner;
+@interface REFInstancePairManager : NSObject
++ (REFInstancePairManager *)sharedInstance;
+- (BOOL)addPair:(NSObject *)instance instanceID:(NSString *)instanceID owner:(BOOL)owner;
 - (BOOL)isPaired:(NSObject *)instance;
 - (NSString *_Nullable)getInstanceID:(NSObject *)instance;
-- (id _Nullable)getInstance:(NSString *)instanceId;
+- (NSObject *_Nullable)getInstance:(NSString *)instanceID;
 - (void)releaseDartHandle:(NSObject *)instance;
 @end
 
