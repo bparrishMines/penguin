@@ -1,11 +1,9 @@
 #import <Foundation/Foundation.h>
 
-#import "reference.cpp"
-
 NS_ASSUME_NONNULL_BEGIN
 
-void referenceLog(char *message);
-void removePair(std::string instanceID);
+void referenceLog(const char *message);
+void removePair(const char *instanceID);
 
 @interface REFThreadSafeMapTable<KeyType, ObjectType> : NSObject
 + (REFThreadSafeMapTable *)weakToStrongObjectsMapTable;

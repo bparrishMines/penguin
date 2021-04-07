@@ -89,9 +89,10 @@ NSString *const REFMethodMethod = @"REFERENCE_METHOD";
 - (void)sendCreateNewInstancePair:(nonnull NSString *)handlerChannel
                    pairedInstance:(nonnull REFPairedInstance *)pairedInstance
                         arguments:(nonnull NSArray<id> *)arguments
+                            owner:(BOOL)owner
                        completion:(nonnull void (^)(NSError * _Nullable))completion {
   [_channel invokeMethod:REFMethodCreate
-               arguments:@[handlerChannel, pairedInstance, arguments]
+               arguments:@[handlerChannel, pairedInstance, arguments, @(owner)]
                   result:^(id result) {
     if ([result isKindOfClass:[FlutterError class]]) {
       completion([[REFMethodChannelError alloc] initWithFlutterError:result]);
@@ -140,6 +141,7 @@ NSString *const REFMethodMethod = @"REFERENCE_METHOD";
     }
   }];
 }
+
 @end
 
 @implementation REFMethodChannelMessenger
@@ -161,9 +163,11 @@ NSString *const REFMethodMethod = @"REFERENCE_METHOD";
       @try {
         if ([REFMethodCreate isEqualToString:call.method]) {
           NSArray *arguments = [call arguments];
+          NSNumber *owner = arguments[3];
           [weakSelf onReceiveCreateNewInstancePair:arguments[0]
                                     pairedInstance:arguments[1]
-                                         arguments:arguments[2]];
+                                         arguments:arguments[2]
+                                             owner:owner.boolValue];
           channelResult(nil);
         } else if ([REFMethodStaticMethod isEqualToString:call.method]) {
           NSArray *arguments = [call arguments];

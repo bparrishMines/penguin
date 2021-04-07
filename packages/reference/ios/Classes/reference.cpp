@@ -43,7 +43,7 @@ void release_platform_object(std::string instanceId) {
 }
 #elif __APPLE__
 void release_platform_object(std::string instanceId) {
-  release_platform_object(instanceId);
+  removePair(instanceId.c_str());
 }
 #endif
 

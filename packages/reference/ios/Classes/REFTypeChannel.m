@@ -5,8 +5,8 @@
   REFThreadSafeMapTable<NSString *, NSObject<REFTypeChannelHandler> *> *_channelHandlers;
 }
 
-- (InstancePairManager *)instancePairManager {
-  return InstancePairManager.sharedInstance;
+- (REFInstancePairManager *)instancePairManager {
+  return REFInstancePairManager.sharedInstance;
 }
 
 - (instancetype)initWithMessageDispatcher:(id<REFTypeChannelMessageDispatcher>)messageDispatcher {
@@ -27,7 +27,7 @@
   //    return YES;
   //  }
   //  return NO;
-  [[self instancePairManager] addPair:instance instanceId:pairedInstance.instanceID owner:owner];
+  [[self instancePairManager] addPair:instance instanceID:pairedInstance.instanceID owner:owner];
 }
 
 //- (BOOL)removeInstancePair:(NSString *)channelName
@@ -88,7 +88,7 @@
     return;
   }
   
-  REFPairedInstance *pairedInstance = [REFPairedInstance fromID:[self generateUniqueInstanceId:instance]];
+  REFPairedInstance *pairedInstance = [REFPairedInstance fromID:[self generateUniqueInstanceID:instance]];
   
   [self addInstancePair:instance
          pairedInstance:pairedInstance
@@ -185,6 +185,10 @@
                                                                          obj:arguments]];
   
   return [[self converter] convertForRemoteMessenger:self obj:object];
+}
+
+- (NSString *)generateUniqueInstanceID:(NSObject *)instance {
+  return [@(instance.hash) stringValue];
 }
 @end
 

@@ -1,5 +1,7 @@
 #import "REFCollections_Internal.h"
 
+#import "reference.cpp"
+
 @implementation REFThreadSafeMapTable {
   NSMapTable<id, id> *_table;
   dispatch_queue_t _lockQueue;
@@ -77,7 +79,12 @@
 }
 
 + (REFInstancePairManager *)sharedInstance {
-  
+  static REFInstancePairManager *sharedInstance = nil;
+  static dispatch_once_t onceToken;
+  dispatch_once(&onceToken, ^{
+    sharedInstance = [[REFInstancePairManager alloc] init];
+  });
+  return sharedInstance;
 }
 
 - (instancetype)init {
@@ -159,12 +166,13 @@
 }
 @end
 
-void referenceLog(char *message) {
-  NSLog(@"Reference: %@", [NSData dataWithBytes:message length:sizeof(message)]);
+void referenceLog(const char *message) {
+  NSLog(@"Reference: %@", [NSString stringWithCString:message
+                                             encoding:[NSString defaultCStringEncoding]]);
 }
 
-void removePair(std::string *instanceID) {
-  NSString *objInstanceID = [NSString stringWithCString:instanceID.c_str()
-                                     encoding:[NSString defaultCStringEncoding]];
+void removePair(const char *instanceID) {
+  NSString *objInstanceID = [NSString stringWithCString:instanceID
+                                               encoding:[NSString defaultCStringEncoding]];
   [[REFInstancePairManager sharedInstance] removePair:objInstanceID];
 }

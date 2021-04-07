@@ -75,7 +75,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)registerHandler:(NSString *)channelName handler:(NSObject<REFTypeChannelHandler> *)handler;
 - (void)unregisterHandler:(NSString *)channelName;
 - (NSObject<REFTypeChannelHandler> *_Nullable)getChannelHandler:(NSString *)channelName;
-- (InstancePairManager *)instancePairManager;
+- (REFInstancePairManager *)instancePairManager;
 - (id<REFInstanceConverter>)converter;
 - (void)sendCreateNewInstancePair:(NSString *)channelName
                          instance:(NSObject *)instance
@@ -101,7 +101,7 @@ NS_ASSUME_NONNULL_BEGIN
                        pairedInstance:(REFPairedInstance *)pairedInstance
                            methodName:(NSString *)methodName
                             arguments:(NSArray *)arguments;
-- (NSString *)generateUniqueInstanceId:(NSObject *)instance;
+- (NSString *)generateUniqueInstanceID:(NSObject *)instance;
 @end
 
 NS_ASSUME_NONNULL_END
