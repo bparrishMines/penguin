@@ -2,7 +2,7 @@
 #include <android/log.h>
 #include <jni.h>
 #elif __APPLE__
-//#import <REFCollections_Internal.h>
+#import <REFCollections_Internal.h>
 #endif
 
 #include <string>
