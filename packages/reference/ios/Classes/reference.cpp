@@ -1,30 +1,37 @@
+/*
 #ifdef __ANDROID__
 #include <android/log.h>
 #include <jni.h>
 #elif __APPLE__
 #import <REFCollections_Internal.h>
 #endif
+*/
 
 #include <string>
 #include <unordered_map>
 
 #include "include/dart_api_dl.h"
 
+/*
 #ifdef __ANDROID__
 #define LOG(message) __android_log_write(ANDROID_LOG_DEBUG, "reference", message)
 #elif __APPLE__
 #define LOG(message) referenceLog(message);
 #endif
+*/
 
+/*
 #ifdef __ANDROID__
 static JavaVM *jvm;
 static jobject java_instance_pair_manager;
 static jmethodID java_remove_pair_id;
 #endif
+*/
 
-static Dart_Port dart_send_port;
-static std::unordered_map<std::string, Dart_WeakPersistentHandle> instanceId_to_weak_dart_handle;
+//static Dart_Port dart_send_port;
+//static std::unordered_map<std::string, Dart_WeakPersistentHandle> instanceId_to_weak_dart_handle;
 
+/*
 #ifdef __ANDROID__
 void release_platform_object(std::string instanceId) {
   JNIEnv* env;
@@ -46,7 +53,80 @@ void release_platform_object(std::string instanceId) {
   //removePair(instanceId.c_str());
 }
 #endif
+*/
 
+struct _FinalizerData {
+  char* instanceId;
+  Dart_Port onFinalizePort;
+};
+
+struct NativeWeakMap {
+  Dart_Port onFinalizePort;
+  void* instanceMap;
+};
+
+DART_EXPORT int reference_dart_dl_initialize(void* initializeApiDLData) {
+  return Dart_InitializeApiDL(initializeApiDLData);
+}
+
+void dart_finalizer(void* isolateCallbackData, void* peer) {
+  _FinalizerData *data = (_FinalizerData *)peer;
+
+  Dart_CObject dartInstanceId;
+  dartInstanceId.type = Dart_CObject_kString;
+  dartInstanceId.value.as_string = strdup(data->instanceId);
+  Dart_PostCObject_DL(data->onFinalizePort, &dartInstanceId);
+}
+
+DART_EXPORT NativeWeakMap create_weak_map(Dart_Port onFinalizePort) {
+  struct NativeWeakMap map;
+  map.onFinalizePort = onFinalizePort;
+
+  std::unordered_map<std::string, Dart_WeakPersistentHandle> instanceMap;
+  map.instanceMap = &instanceMap;
+  return map;
+}
+
+std::unordered_map<std::string, Dart_WeakPersistentHandle> toMap(void *ptr) {
+  std::unordered_map<std::string, Dart_WeakPersistentHandle> *map =
+    (std::unordered_map<std::string, Dart_WeakPersistentHandle> *) ptr;
+  return *map;
+}
+
+DART_EXPORT int put(NativeWeakMap weakMap, char *instanceId, Dart_Handle instance) {
+  struct _FinalizerData data;
+  data.instanceId = instanceId;
+  data.onFinalizePort = weakMap.onFinalizePort;
+
+  intptr_t size = 4096;
+  Dart_WeakPersistentHandle weakHandle = Dart_NewWeakPersistentHandle_DL(instance, (void *)&data, size, &dart_finalizer);
+
+  if (weakHandle == NULL) return 0;
+
+  auto instanceMap = toMap(weakMap.instanceMap);
+  instanceMap[std::string(instanceId)] = weakHandle;
+  return 1;
+}
+
+DART_EXPORT int contains(NativeWeakMap weakMap, char *instanceId) {
+  if (toMap(weakMap.instanceMap).count(std::string(instanceId))) {
+    return 1;
+  }
+
+  return 0;
+}
+
+DART_EXPORT Dart_Handle get(NativeWeakMap weakMap, char *instanceId) {
+  auto instanceMap = toMap(weakMap.instanceMap);
+  std::string strInstanceId = std::string(instanceId);
+  return Dart_HandleFromWeakPersistent_DL(instanceMap[strInstanceId]);
+}
+
+DART_EXPORT void remove_key(NativeWeakMap weakMap, char *instanceId) {
+  toMap(weakMap.instanceMap).erase(std::string(instanceId));
+}
+
+/*
 DART_EXPORT void register_dart_receive_port(Dart_Port port) {
   dart_send_port = port;
 }
@@ -110,7 +190,9 @@ DART_EXPORT Dart_Handle dart_get_weak_handle(char *instanceId) {
   // unreachable
   abort();
 }
+*/
 
+/*
 #ifdef __ANDROID__
 std::string jstring_to_string(JNIEnv *env, jstring jStr) {
   if (!jStr) return "";
@@ -147,3 +229,4 @@ Java_github_penguin_reference_reference_InstancePairManager_initializeLib(
   java_remove_pair_id = env->GetMethodID(classObject, "removePair", "(Ljava/lang/String;)V");
 }
 #endif
+*/

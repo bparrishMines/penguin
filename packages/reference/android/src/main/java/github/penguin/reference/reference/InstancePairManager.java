@@ -23,7 +23,7 @@ public class InstancePairManager {
     if (instance == null) {
       System.loadLibrary("reference");
       instance = new InstancePairManager();
-      instance.initializeLib();
+      //instance.initializeLib();
     }
     return instance;
   }
@@ -54,7 +54,7 @@ public class InstancePairManager {
     if (!isPaired(instance)) throw new AssertionError();
     final String instanceId = instanceIds.remove(instance);
     weakReferences.remove(instanceId);
-    nativeReleaseDartHandle(instanceId);
+    //nativeReleaseDartHandle(instanceId);
   }
 
   private void removePair(String instanceId) {
@@ -79,7 +79,7 @@ public class InstancePairManager {
     return null;
   }
 
-  private native void initializeLib();
+  //private native void initializeLib();
 
-  private native void nativeReleaseDartHandle(String instanceId);
+  //private native void nativeReleaseDartHandle(String instanceId);
 }

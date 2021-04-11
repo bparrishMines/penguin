@@ -178,7 +178,11 @@ abstract class TypeChannelMessenger {
   /// Attempts to convert objects to [PairedInstance]s or [NewUnpairedInstance]s and vice-versa.
   InstanceConverter get converter => const StandardInstanceConverter();
 
-  InstancePairManager get instancePairManager => InstancePairManager.instance;
+  // To overridable
+  late final InstancePairManager instancePairManager =
+      InstancePairManager((String message) {
+    print('removing $message');
+  });
 
   /// Whether [instance] is paired with a [PairedInstance].
   bool isPaired(Object instance) {
