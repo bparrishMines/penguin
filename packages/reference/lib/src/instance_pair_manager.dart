@@ -17,8 +17,8 @@ Pointer<Int8> _stringAsNativeCharArray(String value) {
   return value.toNativeUtf8().cast<Int8>();
 }
 
-final NativeWeakMap Function(int) createWeakMap =
-_referenceLib.lookupFunction<NativeWeakMap Function(Int64),
+final NativeWeakMap Function(int) createWeakMap = _referenceLib.lookupFunction<
+    NativeWeakMap Function(Int64),
     NativeWeakMap Function(int)>('create_weak_map');
 
 class _WeakMap {
@@ -94,12 +94,12 @@ class NativeWeakMap extends Struct {
 
 /// Stores instance pair.
 class InstancePairManager {
-  InstancePairManager(void Function(String) onFinalize)
-      : _weakReferences = _WeakMap(onFinalize) {
+  InstancePairManager(void Function(String) onFinalize) {
     if (!_initialized) {
       _referenceDartDlInitialize(NativeApi.initializeApiDLData);
       _initialized = true;
     }
+    _weakReferences = _WeakMap(onFinalize);
     //_removePairReceivePort = ReceivePort()..listen(_removePair);
     //_dartRegisterReceivePort(_removePairReceivePort.sendPort.nativePort);
   }
@@ -134,7 +134,7 @@ class InstancePairManager {
 
   final Expando _instanceIds = Expando();
   final Map<String, Object> _strongReferences = <String, Object>{};
-  final _WeakMap _weakReferences;
+  late final _WeakMap _weakReferences;
   //late final ReceivePort _removePairReceivePort;
 
   bool addPair(
@@ -149,11 +149,10 @@ class InstancePairManager {
     _instanceIds[instance] = instanceId;
     if (!owner) {
       _strongReferences[instanceId] = instance;
-    } else {
-      _weakReferences.put(instanceId, instance);
-      //_dartAddWeakReference(instance, charArray);
+      return true;
     }
-    return true;
+
+    return _weakReferences.put(instanceId, instance);
   }
 
   bool isPaired(Object instance) {

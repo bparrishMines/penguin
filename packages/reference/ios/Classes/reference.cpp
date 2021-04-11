@@ -7,6 +7,9 @@
 #endif
 */
 
+//#include <android/log.h>
+//#define LOG(message) __android_log_write(ANDROID_LOG_DEBUG, "reference", message)
+
 #include <string>
 #include <unordered_map>
 
@@ -55,7 +58,7 @@ void release_platform_object(std::string instanceId) {
 #endif
 */
 
-struct _FinalizerData {
+struct _finalizer_data {
   char* instanceId;
   Dart_Port onFinalizePort;
 };
@@ -69,38 +72,37 @@ DART_EXPORT int reference_dart_dl_initialize(void* initializeApiDLData) {
   return Dart_InitializeApiDL(initializeApiDLData);
 }
 
-void dart_finalizer(void* isolateCallbackData, void* peer) {
-  _FinalizerData *data = (_FinalizerData *)peer;
+void finalizer_callback(void* isolateCallbackData, void* peer) {
+  _finalizer_data *data = (_finalizer_data *)peer;
 
   Dart_CObject dartInstanceId;
   dartInstanceId.type = Dart_CObject_kString;
   dartInstanceId.value.as_string = strdup(data->instanceId);
   Dart_PostCObject_DL(data->onFinalizePort, &dartInstanceId);
+
+  free(data);
 }
 
 DART_EXPORT NativeWeakMap create_weak_map(Dart_Port onFinalizePort) {
   struct NativeWeakMap map;
   map.onFinalizePort = onFinalizePort;
-
-  std::unordered_map<std::string, Dart_WeakPersistentHandle> instanceMap;
-  map.instanceMap = &instanceMap;
+  new (map.instanceMap) std::unordered_map<std::string, Dart_WeakPersistentHandle>();
   return map;
 }
 
 std::unordered_map<std::string, Dart_WeakPersistentHandle> toMap(void *ptr) {
   std::unordered_map<std::string, Dart_WeakPersistentHandle> *map =
-    (std::unordered_map<std::string, Dart_WeakPersistentHandle> *) ptr;
+    static_cast<std::unordered_map<std::string, Dart_WeakPersistentHandle> *>(ptr);
   return *map;
 }
 
 DART_EXPORT int put(NativeWeakMap weakMap, char *instanceId, Dart_Handle instance) {
-  struct _FinalizerData data;
-  data.instanceId = instanceId;
-  data.onFinalizePort = weakMap.onFinalizePort;
+  _finalizer_data* peer = (_finalizer_data *) malloc(sizeof(_finalizer_data));
+  peer->instanceId = instanceId;
+  peer->onFinalizePort = weakMap.onFinalizePort;
 
   intptr_t size = 4096;
-  Dart_WeakPersistentHandle weakHandle = Dart_NewWeakPersistentHandle_DL(instance, (void *)&data, size, &dart_finalizer);
-
+  Dart_WeakPersistentHandle weakHandle = Dart_NewWeakPersistentHandle_DL(instance, (void *)peer, size, &finalizer_callback);
   if (weakHandle == NULL) return 0;
 
   auto instanceMap = toMap(weakMap.instanceMap);
@@ -109,11 +111,8 @@ DART_EXPORT int put(NativeWeakMap weakMap, char *instanceId, Dart_Handle instanc
 }
 
 DART_EXPORT int contains(NativeWeakMap weakMap, char *instanceId) {
-  if (toMap(weakMap.instanceMap).count(std::string(instanceId))) {
-    return 1;
-  }
-
-  return 0;
+  auto instanceMap = toMap(weakMap.instanceMap);
+  return instanceMap.count(std::string(instanceId));
 }
 
 DART_EXPORT Dart_Handle get(NativeWeakMap weakMap, char *instanceId) {

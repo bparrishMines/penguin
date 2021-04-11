@@ -35,15 +35,16 @@ class _MyAppState extends State<MyApp> {
           child: ElevatedButton(
             onPressed: () {
               debugPrint('HI!');
-              final Object object = Object();
-              instancePairManager.addPair(object, 'yolo', owner: true);
-              // final Point point = createPoint(12, 32);
-              // print(point.x);
-              // print(point.y);
-              // print(add(point));
             },
             child: const Text('HI'),
           ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () async {
+            final Object object = Object();
+            print(instancePairManager.addPair(object, 'yolo', owner: true));
+          },
+          child: const Icon(Icons.ac_unit),
         ),
       ),
     );
