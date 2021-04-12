@@ -4,6 +4,7 @@ import 'type_channel.dart';
 /// Handles converting references for a [TypeChannelMessenger].
 ///
 /// See [StandardInstanceConverter].
+// TODO: new method names
 mixin InstanceConverter {
   /// Converts arguments to be used by a [PairedInstance].
   Object? convertForRemoteMessenger(

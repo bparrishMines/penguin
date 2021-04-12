@@ -3,10 +3,11 @@
 @implementation REFTypeChannelMessenger {
 @public
   REFThreadSafeMapTable<NSString *, NSObject<REFTypeChannelHandler> *> *_channelHandlers;
+  REFInstancePairManager *_instancePairManager;
 }
 
 - (REFInstancePairManager *)instancePairManager {
-  return REFInstancePairManager.sharedInstance;
+  return _instancePairManager;
 }
 
 - (instancetype)initWithMessageDispatcher:(id<REFTypeChannelMessageDispatcher>)messageDispatcher {
@@ -14,11 +15,16 @@
   if (self) {
     _messageDispatcher = messageDispatcher;
     _channelHandlers = [[REFThreadSafeMapTable alloc] init];
+    _instancePairManager = [[REFInstancePairManager alloc] init];
   }
   return self;
 }
 
-- (void)addInstancePair:(NSObject *)instance
+- (void)removeInstancePair:(REFPairedInstance *)pairedInstance {
+  [[self instancePairManager] removePair:pairedInstance.instanceID];
+}
+
+- (BOOL)addInstancePair:(NSObject *)instance
          pairedInstance:(REFPairedInstance *)pairedInstance
                   owner:(BOOL)owner {
   //  if ([[self] addPair:instance pairedInstance:pairedInstance owner:owner]) {
@@ -27,7 +33,7 @@
   //    return YES;
   //  }
   //  return NO;
-  [[self instancePairManager] addPair:instance instanceID:pairedInstance.instanceID owner:owner];
+  return [[self instancePairManager] addPair:instance instanceID:pairedInstance.instanceID owner:owner];
 }
 
 //- (BOOL)removeInstancePair:(NSString *)channelName
@@ -76,7 +82,7 @@
   return [_channelHandlers objectForKey:channelName];
 }
 
-- (void)sendCreateNewInstancePair:(NSString *)channelName
+- (void)createNewInstancePair:(NSString *)channelName
                          instance:(NSObject *)instance
                             owner:(BOOL)owner
                        completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
@@ -149,6 +155,18 @@
   }];
 }
 
+- (void)disposeInstancePair:(NSObject *)instance
+                completion:(void (^)(NSError *_Nullable))completion {
+  if (![self isPaired:instance]) {
+    completion(nil);
+    return;
+  }
+  
+  REFPairedInstance *pairedInstance = [self getPairedPairedInstance:instance];
+  [self removeInstancePair:pairedInstance];
+  [_messageDispatcher sendDisposeInstancePair:pairedInstance completion:completion];
+}
+
 - (NSObject *)onReceiveCreateNewInstancePair:(NSString *)channelName
                               pairedInstance:(REFPairedInstance *)pairedInstance
                                    arguments:(NSArray<id> *)arguments
@@ -187,6 +205,12 @@
   return [[self converter] convertForRemoteMessenger:self obj:object];
 }
 
+- (void)onReceiveDisposeInstancePair:(REFPairedInstance *)pairedInstance {
+  NSObject *instance = [self getPairedObject:pairedInstance];
+  NSAssert(instance, @"The Object with the following PairedInstance has already been disposed: %@", pairedInstance);
+  [self removeInstancePair:pairedInstance];
+}
+
 - (NSString *)generateUniqueInstanceID:(NSObject *)instance {
   return [@(instance.hash) stringValue];
 }
@@ -219,7 +243,7 @@
 - (void)createNewInstancePair:(NSObject *)instance
                         owner:(BOOL)owner
                    completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
-  [_messenger sendCreateNewInstancePair:_name instance:instance owner:owner completion:completion];
+  [_messenger createNewInstancePair:_name instance:instance owner:owner completion:completion];
 }
 
 - (void)invokeStaticMethod:(NSString *)methodName
@@ -240,6 +264,11 @@
                     methodName:methodName
                      arguments:arguments
                     completion:completion];
+}
+
+- (void)disposeInstancePair:(NSObject *)instance
+                 completion:(void (^)(NSError *_Nullable))completion {
+  [_messenger disposeInstancePair:instance completion:completion];
 }
 @end
 

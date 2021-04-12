@@ -141,17 +141,13 @@ class InstancePairManager {
   //late final ReceivePort _removePairReceivePort;
 
   void removePair(String instanceId) {
-    Object? instance = _strongReferences.remove(instanceId);
+    final Object? instance = getInstance(instanceId);
     if (instance != null) {
       _instanceIds[instance] = null;
-      return;
+      _strongReferences.remove(instanceId);
     }
 
-    instance = _weakReferences.get(instanceId);
-    if (instance != null) {
-      _instanceIds[instance] = null;
-      _weakReferences.remove(instanceId);
-    }
+    _weakReferences.remove(instanceId);
   }
 
   bool addPair(

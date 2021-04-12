@@ -7,6 +7,7 @@ typedef NS_ENUM(NSInteger, REFReferenceField) {
 NSString *const REFMethodCreate = @"REFERENCE_CREATE";
 NSString *const REFMethodStaticMethod = @"REFERENCE_STATIC_METHOD";
 NSString *const REFMethodMethod = @"REFERENCE_METHOD";
+NSString *const REFMethodDispose = @"REFERENCE_DISPOSE";
 
 @interface REFReferenceReader : FlutterStandardReader
 @end
@@ -116,7 +117,7 @@ NSString *const REFMethodMethod = @"REFERENCE_METHOD";
       completion(nil, [[REFMethodChannelError alloc] initWithFlutterError:result]);
     } else if ([result isEqual:FlutterMethodNotImplemented]) {
       completion(nil, [[REFMethodChannelError alloc]
-                       initWithUnimplementedMethod:REFMethodMethod]);
+                       initWithUnimplementedMethod:REFMethodStaticMethod]);
     } else {
       completion(result, nil);
     }
@@ -138,6 +139,22 @@ NSString *const REFMethodMethod = @"REFERENCE_METHOD";
                        initWithUnimplementedMethod:REFMethodMethod]);
     } else {
       completion(result, nil);
+    }
+  }];
+}
+
+- (void)sendDisposeInstancePair:(nonnull REFPairedInstance *)pairedInstance
+                     completion:(nonnull void (^)(NSError * _Nullable))completion {
+  [_channel invokeMethod:REFMethodDispose
+               arguments:@[pairedInstance]
+                  result:^(id result) {
+    if ([result isKindOfClass:[FlutterError class]]) {
+      completion([[REFMethodChannelError alloc] initWithFlutterError:result]);
+    } else if ([result isEqual:FlutterMethodNotImplemented]) {
+      completion([[REFMethodChannelError alloc]
+                  initWithUnimplementedMethod:REFMethodDispose]);
+    } else {
+      completion(nil);
     }
   }];
 }
@@ -182,6 +199,10 @@ NSString *const REFMethodMethod = @"REFERENCE_METHOD";
                                                   methodName:arguments[2]
                                                    arguments:arguments[3]];
           channelResult(result);
+        } else if ([REFMethodDispose isEqualToString:call.method]) {
+          NSArray *arguments = [call arguments];
+          [weakSelf onReceiveDisposeInstancePair:arguments[0]];
+          channelResult(nil);
         } else {
           channelResult(FlutterMethodNotImplemented);
         }

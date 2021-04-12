@@ -44,10 +44,13 @@ public class InstancePairManager {
 
   public void removePair(String instanceId) {
     //if (!isPaired(instance)) throw new AssertionError();
-    Object instance = strongReferences.remove(instanceId);;
-    if (instance == null) instance = weakReferences.remove(instanceId);
+    Object instance = getInstance(instanceId);
+    if (instance != null) {
+      instanceIds.remove(instance);
+      strongReferences.remove(instanceId);
+    }
 
-    instanceIds.remove(instance);
+    weakReferences.remove(instanceId);
     //nativeReleaseDartHandle(instanceId);
   }
 

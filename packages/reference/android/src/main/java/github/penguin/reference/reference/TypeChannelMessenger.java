@@ -216,15 +216,12 @@ public abstract class TypeChannelMessenger {
   }
 
   public void onReceiveDisposeInstancePair(PairedInstance pairedInstance) {
-    android.util.Log.d("TAG", "disposing");
     final Object instance = getPairedObject(pairedInstance);
     if (instance == null) {
       throw new AssertionError(
           "The Object with the following PairedInstance has already been disposed: "
               + pairedInstance);
     }
-
-
     removeInstancePair(pairedInstance);
   }
 

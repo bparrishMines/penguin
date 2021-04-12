@@ -1,12 +1,3 @@
-/*
-#ifdef __ANDROID__
-#include <android/log.h>
-#include <jni.h>
-#elif __APPLE__
-#import <REFCollections_Internal.h>
-#endif
-*/
-
 //#include <android/log.h>
 //#define LOG(message) __android_log_write(ANDROID_LOG_DEBUG, "reference", message)
 
@@ -15,48 +6,8 @@
 
 #include "include/dart_api_dl.h"
 
-/*
-#ifdef __ANDROID__
-#define LOG(message) __android_log_write(ANDROID_LOG_DEBUG, "reference", message)
-#elif __APPLE__
-#define LOG(message) referenceLog(message);
-#endif
-*/
-
-/*
-#ifdef __ANDROID__
-static JavaVM *jvm;
-static jobject java_instance_pair_manager;
-static jmethodID java_remove_pair_id;
-#endif
-*/
-
-//static Dart_Port dart_send_port;
-//static std::unordered_map<std::string, Dart_WeakPersistentHandle> instanceId_to_weak_dart_handle;
-
-/*
-#ifdef __ANDROID__
-void release_platform_object(std::string instanceId) {
-  JNIEnv* env;
-  jint result = jvm->GetEnv((void**)&env, JNI_VERSION_1_6);
-  if (result == JNI_EDETACHED) {
-    result = jvm->AttachCurrentThread(&env, NULL);
-    if (result != JNI_OK) {
-      LOG("Failed to attach thread to jvm.");
-    } else {
-      env->CallVoidMethod(java_instance_pair_manager, java_remove_pair_id, env->NewStringUTF(instanceId.c_str()));
-      jvm->DetachCurrentThread();
-    }
-  } else {
-    LOG("Failed to get JNIEnv to release jobject.");
-  }
-}
-#elif __APPLE__
-void release_platform_object(std::string instanceId) {
-  //removePair(instanceId.c_str());
-}
-#endif
-*/
+// TODO: Find out how to instantiate a new one for each NativeWeakMap or maybe use hashmap.h?
+static std::unordered_map<std::string, Dart_WeakPersistentHandle> instanceMap;
 
 struct _finalizer_data {
   char* instanceId;
@@ -82,8 +33,6 @@ void finalizer_callback(void* isolateCallbackData, void* peer) {
 
   free(data);
 }
-
-static std::unordered_map<std::string, Dart_WeakPersistentHandle> instanceMap;
 
 DART_EXPORT NativeWeakMap create_weak_map(Dart_Port onFinalizePort) {
   NativeWeakMap map;

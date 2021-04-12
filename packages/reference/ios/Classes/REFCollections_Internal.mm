@@ -1,7 +1,5 @@
 #import "REFCollections_Internal.h"
 
-//#import "reference.cpp"
-
 @implementation REFThreadSafeMapTable {
   NSMapTable<id, id> *_table;
   dispatch_queue_t _lockQueue;
@@ -78,14 +76,14 @@
   REFThreadSafeMapTable<NSString *, NSObject *> *_weakReferences;
 }
 
-+ (REFInstancePairManager *)sharedInstance {
-  static REFInstancePairManager *sharedInstance = nil;
-  static dispatch_once_t onceToken;
-  dispatch_once(&onceToken, ^{
-    sharedInstance = [[REFInstancePairManager alloc] init];
-  });
-  return sharedInstance;
-}
+//+ (REFInstancePairManager *)sharedInstance {
+//  static REFInstancePairManager *sharedInstance = nil;
+//  static dispatch_once_t onceToken;
+//  dispatch_once(&onceToken, ^{
+//    sharedInstance = [[REFInstancePairManager alloc] init];
+//  });
+//  return sharedInstance;
+//}
 
 - (instancetype)init {
   self = [super init];
@@ -120,7 +118,7 @@
 //
 //  [[_owners objectForKey:object] addObject:owner];
 //  return !wasPaired;
-  return NO;
+  return YES;
 }
 
 //- (BOOL)removePairWithObject:(id)object
@@ -140,10 +138,12 @@
 
 - (void)removePair:(NSString *)instanceID {
   NSObject *instance = [self getInstance:instanceID];
-  NSAssert(!instance, @"The Object with the following instanceId has already been disposed: %@", instanceID);
+  if (instance) {
+    [_instanceIds removeObjectForKey:instance];
+    [_strongReferences removeObjectForKey:instanceID];
+  }
   
-  [_instanceIds removeObjectForKey:instance];
-  [_strongReferences removeObjectForKey:instanceID];
+  [_weakReferences removeObjectForKey:instanceID];
 }
 
 - (NSString *_Nullable)getInstanceID:(NSObject *)instance {
@@ -156,23 +156,23 @@
   return [_weakReferences objectForKey:instanceID];
 }
 
-- (void)releaseDartHandle:(NSObject *)instance {
-  NSAssert([self isPaired:instance], @"");
-  
-  NSString *instanceID = [_instanceIds objectForKey:instance];
-  [_weakReferences removeObjectForKey:instanceID];
-  [_instanceIds removeObjectForKey:instance];
-  //release_dart_handle(std::string(instanceID.UTF8String));
-}
+//- (void)removePair:(NSString *)instanceID {
+//  NSAssert([self isPaired:instance], @"");
+//
+//  NSString *instanceID = [_instanceIds objectForKey:instance];
+//  [_weakReferences removeObjectForKey:instanceID];
+//  [_instanceIds removeObjectForKey:instance];
+//  //release_dart_handle(std::string(instanceID.UTF8String));
+//}
 @end
 
-void referenceLog(const char *message) {
-  NSLog(@"Reference: %@", [NSString stringWithCString:message
-                                             encoding:[NSString defaultCStringEncoding]]);
-}
-
-void removePair(const char *instanceID) {
-  NSString *objInstanceID = [NSString stringWithCString:instanceID
-                                               encoding:[NSString defaultCStringEncoding]];
-  [[REFInstancePairManager sharedInstance] removePair:objInstanceID];
-}
+//void referenceLog(const char *message) {
+//  NSLog(@"Reference: %@", [NSString stringWithCString:message
+//                                             encoding:[NSString defaultCStringEncoding]]);
+//}
+//
+//void removePair(const char *instanceID) {
+//  NSString *objInstanceID = [NSString stringWithCString:instanceID
+//                                               encoding:[NSString defaultCStringEncoding]];
+//  [[REFInstancePairManager sharedInstance] removePair:objInstanceID];
+//}

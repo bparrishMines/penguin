@@ -2,9 +2,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-void referenceLog(const char *message);
-void removePair(const char *instanceID);
-
 @interface REFThreadSafeMapTable<KeyType, ObjectType> : NSObject
 + (REFThreadSafeMapTable *)weakToStrongObjectsMapTable;
 + (REFThreadSafeMapTable *)weakToWeakObjectsMapTable;
@@ -17,12 +14,12 @@ void removePair(const char *instanceID);
 @end
 
 @interface REFInstancePairManager : NSObject
-+ (REFInstancePairManager *)sharedInstance;
+//+ (REFInstancePairManager *)sharedInstance;
 - (BOOL)addPair:(NSObject *)instance instanceID:(NSString *)instanceID owner:(BOOL)owner;
 - (BOOL)isPaired:(NSObject *)instance;
 - (NSString *_Nullable)getInstanceID:(NSObject *)instance;
 - (NSObject *_Nullable)getInstance:(NSString *)instanceID;
-- (void)releaseDartHandle:(NSObject *)instance;
+- (void)removePair:(NSString *)instanceID;
 @end
 
 NS_ASSUME_NONNULL_END
