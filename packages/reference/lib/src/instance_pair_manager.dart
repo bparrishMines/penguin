@@ -9,9 +9,9 @@ final DynamicLibrary _referenceLib = Platform.isAndroid
     ? DynamicLibrary.open('libreference.so')
     : DynamicLibrary.process();
 
-final void Function(Pointer<Void> data) _referenceDartDlInitialize =
-    _referenceLib.lookupFunction<Void Function(Pointer<Void> data),
-        void Function(Pointer<Void> data)>('reference_dart_dl_initialize');
+final int Function(Pointer<Void> data) _referenceDartDlInitialize =
+    _referenceLib.lookupFunction<Int32 Function(Pointer<Void> data),
+        int Function(Pointer<Void> data)>('reference_dart_dl_initialize');
 
 Pointer<Int8> _stringAsNativeCharArray(String value) {
   return value.toNativeUtf8().cast<Int8>();
