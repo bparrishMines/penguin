@@ -7,7 +7,7 @@
 - (instancetype)init {
   self = [super initWithMessageDispatcher:[[REFTestMessageDispatcher alloc] init]];
   if (self) {
-    _testHandler = [[REFTestHandler alloc] initWithMessenger:self];
+    _testHandler = [[REFTestHandler alloc] init];
     [self registerHandler:@"test_channel" handler:_testHandler];
     _testInstancePairManager = [[REFTestInstancePairManager alloc] init];
   }
@@ -81,13 +81,6 @@
   completion(@"return_value", nil);
 }
 
-- (void)sendInvokeMethodOnUnpairedInstance:(REFNewUnpairedInstance *)unpairedReference
-                                methodName:(NSString *)methodName
-                                 arguments:(NSArray<id> *)arguments
-                                completion:(void (^)(id _Nullable, NSError *_Nullable))completion {
-  completion(@"return_value", nil);
-}
-
 - (void)sendDisposeInstancePair:(REFPairedInstance *)pairedInstance
                      completion:(void (^)(NSError *_Nullable))completion {
   completion(nil);
@@ -128,7 +121,8 @@
 }
 
 - (void)removePair:(NSString *)instanceID {
-  NSObject *instance = [_instanceIdToInstance removeObjectForKey:instanceID];
+  NSObject *instance = [self getInstance:instanceID];
+  [_instanceIdToInstance removeObjectForKey:instanceID];
   [_instanceToInstanceId removeObjectForKey:instance];
 }
 @end

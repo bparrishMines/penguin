@@ -21,7 +21,8 @@
 - (void)testConvertInstancesToPairedInstances_handlesPairedObject {
     [_testMessenger onReceiveCreateNewInstancePair:@"test_channel"
                                     pairedInstance:[REFPairedInstance fromID:@"test_id"]
-                                         arguments:@[]];
+                                         arguments:@[]
+                                         owner:YES];
     
     XCTAssertEqualObjects([REFPairedInstance fromID:@"test_id"],
                           [_converter convertInstancesToPairedInstances:_testMessenger
@@ -35,7 +36,8 @@
 - (void)testConvertPairedInstancesToInstances_handlesPairedInstance {
     [_testMessenger onReceiveCreateNewInstancePair:@"test_channel"
                                     pairedInstance:[REFPairedInstance fromID:@"test_id"]
-                                         arguments:@[]];
+                                         arguments:@[]
+                                         owner:YES];
     
     XCTAssertEqualObjects(_testMessenger.testHandler.testClassInstance,
                           [_converter convertPairedInstancesToInstances:_testMessenger
