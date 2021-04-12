@@ -209,7 +209,7 @@ void main() {
     });
 
     test('createNewPair', () {
-      testChannel.createNewInstancePair(TestClass(testMessenger), owner: true);
+      testChannel.createNewInstancePair(TestClass(), owner: true);
 
       expect(methodCallLog, <Matcher>[
         isMethodCallWithMatchers('REFERENCE_CREATE', arguments: <Object>[
@@ -236,7 +236,7 @@ void main() {
     });
 
     test('sendInvokeMethod', () {
-      final TestClass testClass = TestClass(testMessenger);
+      final TestClass testClass = TestClass();
       testChannel.createNewInstancePair(testClass, owner: true);
 
       methodCallLog.clear();
@@ -256,7 +256,7 @@ void main() {
     });
 
     test('disposeInstancePair', () {
-      final TestClass testClass = TestClass(testMessenger);
+      final TestClass testClass = TestClass();
       testChannel.createNewInstancePair(testClass, owner: true);
 
       methodCallLog.clear();
@@ -277,11 +277,10 @@ void main() {
 
 class TestMessenger extends MethodChannelMessenger {
   TestMessenger() : super('test_method_channel') {
-    testHandler = TestHandler(this);
     registerHandler('test_channel', testHandler);
   }
 
-  late final TestHandler testHandler;
+  late final TestHandler testHandler = TestHandler();
 
   @override
   final TestInstancePairManager instancePairManager = TestInstancePairManager();

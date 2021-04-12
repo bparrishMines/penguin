@@ -62,9 +62,9 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @protocol REFInstanceConverter <NSObject>
-- (id _Nullable)convertForRemoteMessenger:(REFTypeChannelMessenger *)messenger
+- (id _Nullable)convertInstancesToPairedInstances:(REFTypeChannelMessenger *)messenger
                                       obj:(id _Nullable)obj;
-- (id _Nullable)convertForLocalMessenger:(REFTypeChannelMessenger *)messenger
+- (id _Nullable)convertPairedInstancesToInstances:(REFTypeChannelMessenger *)messenger
                                      obj:(id _Nullable)obj;
 @end
 
@@ -80,7 +80,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)registerHandler:(NSString *)channelName handler:(NSObject<REFTypeChannelHandler> *)handler;
 - (void)unregisterHandler:(NSString *)channelName;
 - (NSObject<REFTypeChannelHandler> *_Nullable)getChannelHandler:(NSString *)channelName;
-// TODO: should pass in like dispatcher
 - (REFInstancePairManager *)instancePairManager;
 - (id<REFInstanceConverter>)converter;
 - (void)createNewInstancePair:(NSString *)channelName

@@ -2,11 +2,10 @@ import 'package:reference/reference.dart';
 
 class TestMessenger extends TypeChannelMessenger {
   TestMessenger() {
-    testHandler = TestHandler(this);
     registerHandler('test_channel', testHandler);
   }
 
-  late final TestHandler testHandler;
+  late final TestHandler testHandler = TestHandler();
 
   @override
   final TestMessageDispatcher messageDispatcher = TestMessageDispatcher();
@@ -21,10 +20,7 @@ class TestMessenger extends TypeChannelMessenger {
 }
 
 class TestHandler with TypeChannelHandler<TestClass> {
-  TestHandler(TypeChannelMessenger messenger)
-      : testClassInstance = TestClass(messenger);
-
-  final TestClass testClassInstance;
+  final TestClass testClassInstance = TestClass();
 
   @override
   TestClass createInstance(
@@ -98,14 +94,10 @@ class TestMessageDispatcher with TypeChannelMessageDispatcher {
   }
 }
 
-class TestClass {
-  TestClass(this.messenger);
-
-  final TypeChannelMessenger messenger;
-}
+class TestClass {}
 
 class TestInstancePairManager implements InstancePairManager {
-  final Map<Object, String> instanceToInstanceId = <Object,String>{};
+  final Map<Object, String> instanceToInstanceId = <Object, String>{};
   final Map<String, Object> instanceIdToInstance = <String, Object>{};
 
   @override

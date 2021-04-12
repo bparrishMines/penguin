@@ -76,15 +76,6 @@
   REFThreadSafeMapTable<NSString *, NSObject *> *_weakReferences;
 }
 
-//+ (REFInstancePairManager *)sharedInstance {
-//  static REFInstancePairManager *sharedInstance = nil;
-//  static dispatch_once_t onceToken;
-//  dispatch_once(&onceToken, ^{
-//    sharedInstance = [[REFInstancePairManager alloc] init];
-//  });
-//  return sharedInstance;
-//}
-
 - (instancetype)init {
   self = [super init];
   if (self) {
@@ -110,31 +101,8 @@
   } else {
     [_strongReferences setObject:instance forKey:instanceID];
   }
-//
-//  if (!wasPaired) {
-//    [_pairedInstances setObject:pairedInstance forKey:object];
-//    [_owners setObject:[NSMutableSet set] forKey:object];
-//  }
-//
-//  [[_owners objectForKey:object] addObject:owner];
-//  return !wasPaired;
   return YES;
 }
-
-//- (BOOL)removePairWithObject:(id)object
-//                       owner:(NSObject *)owner
-//                       force:(BOOL)force {
-//  if (![self isPaired:object]) return NO;
-//
-//  NSMutableSet *objectOwners = [_owners objectForKey:object];
-//  [objectOwners removeObject:owner];
-//
-//  if (!force && [objectOwners count] > 0) return NO;
-//
-//  [_pairedInstances removeObjectForKey:object];
-//  [_owners removeObjectForKey:object];
-//  return YES;
-//}
 
 - (void)removePair:(NSString *)instanceID {
   NSObject *instance = [self getInstance:instanceID];
@@ -155,24 +123,4 @@
   if (instance) return instance;
   return [_weakReferences objectForKey:instanceID];
 }
-
-//- (void)removePair:(NSString *)instanceID {
-//  NSAssert([self isPaired:instance], @"");
-//
-//  NSString *instanceID = [_instanceIds objectForKey:instance];
-//  [_weakReferences removeObjectForKey:instanceID];
-//  [_instanceIds removeObjectForKey:instance];
-//  //release_dart_handle(std::string(instanceID.UTF8String));
-//}
 @end
-
-//void referenceLog(const char *message) {
-//  NSLog(@"Reference: %@", [NSString stringWithCString:message
-//                                             encoding:[NSString defaultCStringEncoding]]);
-//}
-//
-//void removePair(const char *instanceID) {
-//  NSString *objInstanceID = [NSString stringWithCString:instanceID
-//                                               encoding:[NSString defaultCStringEncoding]];
-//  [[REFInstancePairManager sharedInstance] removePair:objInstanceID];
-//}

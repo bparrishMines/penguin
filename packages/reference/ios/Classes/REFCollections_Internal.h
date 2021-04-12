@@ -14,7 +14,6 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface REFInstancePairManager : NSObject
-//+ (REFInstancePairManager *)sharedInstance;
 - (BOOL)addPair:(NSObject *)instance instanceID:(NSString *)instanceID owner:(BOOL)owner;
 - (BOOL)isPaired:(NSObject *)instance;
 - (NSString *_Nullable)getInstanceID:(NSObject *)instance;

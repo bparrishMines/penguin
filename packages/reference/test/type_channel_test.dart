@@ -93,7 +93,7 @@ void main() {
     });
 
     test('createNewInstancePair', () {
-      final TestClass testClass = TestClass(testMessenger);
+      final TestClass testClass = TestClass();
 
       expect(
         testChannel.createNewInstancePair(
@@ -125,7 +125,7 @@ void main() {
     });
 
     test('invokeMethod', () {
-      final TestClass testClass = TestClass(testMessenger);
+      final TestClass testClass = TestClass();
 
       testChannel.createNewInstancePair(testClass, owner: true);
       expect(
@@ -135,7 +135,7 @@ void main() {
     });
 
     test('disposeInstancePair', () {
-      final testClass = TestClass(testMessenger);
+      final testClass = TestClass();
 
       testChannel.createNewInstancePair(testClass, owner: true);
       expect(testChannel.disposeInstancePair(testClass), completes);

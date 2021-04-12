@@ -19,10 +19,9 @@ public class TestClasses {
   public static class TestMessenger extends TypeChannelMessenger {
     public final TestMessageDispatcher testMessageDispatcher = new TestMessageDispatcher();
     public final TestInstancePairManager testInstancePairManager = new TestInstancePairManager();
-    public final TestHandler testHandler;
+    public final TestHandler testHandler = new TestHandler();
 
     public TestMessenger() {
-      testHandler = new TestHandler(this);
       registerHandler("test_channel", testHandler);
     }
 
@@ -66,11 +65,7 @@ public class TestClasses {
   }
 
   public static class TestHandler implements TypeChannelHandler<TestClass> {
-    public final TestClass testClassInstance;
-
-    public TestHandler(TypeChannelMessenger messenger) {
-      testClassInstance = new TestClass(messenger);
-    }
+    public final TestClass testClassInstance = new TestClass();
 
     @Override
     public List<Object> getCreationArguments(TypeChannelMessenger manager, TestClass instance) {
@@ -99,7 +94,7 @@ public class TestClasses {
 
     @Override
     public boolean addPair(Object instance, String instanceId, boolean owner) {
-      if (isPaired(false)) return false;
+      if (isPaired(instance)) return false;
       instanceToInstanceId.put(instance, instanceId);
       instanceIdToInstance.put(instanceId, instance);
       return true;
@@ -128,11 +123,6 @@ public class TestClasses {
   }
 
   public static class TestClass {
-    public final TypeChannelMessenger messenger;
-
-    public TestClass(TypeChannelMessenger messenger) {
-      this.messenger = messenger;
-    }
   }
 
   public static class TestListener<T> implements Completable.OnCompleteListener<T> {

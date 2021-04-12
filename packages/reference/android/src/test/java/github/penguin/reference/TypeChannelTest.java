@@ -27,7 +27,7 @@ public class TypeChannelTest {
 
   @Test
   public void createNewInstancePair() {
-    final TestClasses.TestClass testClass = new TestClasses.TestClass(testManager);
+    final TestClasses.TestClass testClass = new TestClasses.TestClass();
     final TestListener<PairedInstance> testListener = new TestListener<>();
 
     testChannel.createNewInstancePair(testClass, true).setOnCompleteListener(testListener);
@@ -51,7 +51,7 @@ public class TypeChannelTest {
 
   @Test
   public void invokeMethod() {
-    final TestClass testClass = new TestClass(testManager);
+    final TestClass testClass = new TestClass();
     testChannel.createNewInstancePair(testClass, true);
 
     final TestListener<Object> testListener = new TestListener<>();
@@ -62,7 +62,7 @@ public class TypeChannelTest {
 
   @Test
   public void disposeInstancePair() {
-    final TestClass testClass = new TestClass(testManager);
+    final TestClass testClass = new TestClass();
     final TestListener<Void> testListener = new TestListener<>();
 
     testChannel.createNewInstancePair(testClass, true);

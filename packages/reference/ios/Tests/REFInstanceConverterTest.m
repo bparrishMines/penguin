@@ -18,23 +18,17 @@
     _testMessenger = [[REFTestMessenger alloc] init];
 }
 
-- (void)testConvertForRemoteMessenger_handlesPairedObject {
+- (void)testConvertInstancesToPairedInstances_handlesPairedObject {
     [_testMessenger onReceiveCreateNewInstancePair:@"test_channel"
                                     pairedInstance:[REFPairedInstance fromID:@"test_id"]
                                          arguments:@[]];
     
     XCTAssertEqualObjects([REFPairedInstance fromID:@"test_id"],
-                          [_converter convertForRemoteMessenger:_testMessenger
+                          [_converter convertInstancesToPairedInstances:_testMessenger
                                                             obj:_testMessenger.testHandler.testClassInstance]);
 }
 
-- (void)testConvertForRemoteMessenger_handlesUnpairedObject {
-    assertThat([_converter convertForRemoteMessenger:_testMessenger
-                                                 obj:[[REFTestClass alloc] initWithMessenger:_testMessenger]],
-               isUnpairedInstance(@"test_channel", @[]));
-}
-
-- (void)testConvertForRemoteMessenger_handlesNonPairableInstance {
+- (void)testConvertInstancesToPairedInstances_handlesNonPairableInstance {
     XCTAssertEqualObjects(@"potato", [_converter convertForRemoteMessenger:_testMessenger obj:@"potato"]);
 }
 

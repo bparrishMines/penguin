@@ -115,7 +115,7 @@ public class MethodChannelTest {
 
   @Test
   public void methodChannelMessenger_createNewInstancePair() {
-    testChannel.createNewInstancePair(new TestClass(testMessenger), true);
+    testChannel.createNewInstancePair(new TestClass(), true);
 
     final List<MethodCall> methodCalls = testMessenger.testMessenger.methodCalls;
     assertEquals(1, methodCalls.size());
@@ -144,7 +144,7 @@ public class MethodChannelTest {
 
   @Test
   public void methodChannelMessenger_sendInvokeMethod() {
-    final TestClass testClass = new TestClass(testMessenger);
+    final TestClass testClass = new TestClass();
     testChannel.createNewInstancePair(testClass, true);
     testMessenger.testMessenger.methodCalls.clear();
 
@@ -165,7 +165,7 @@ public class MethodChannelTest {
 
   @Test
   public void methodChannelMessenger_disposeInstancePair() {
-    final TestClass testClass = new TestClass(testMessenger);
+    final TestClass testClass = new TestClass();
     testChannel.createNewInstancePair(testClass, true);
     testMessenger.testMessenger.methodCalls.clear();
 
@@ -253,12 +253,11 @@ public class MethodChannelTest {
   private static class TestMessenger extends MethodChannelMessenger {
     public final TestInstancePairManager testInstancePairManager = new TestInstancePairManager();
     public final TestBinaryMessenger testMessenger;
-    public final TestHandler testHandler;
+    public final TestHandler testHandler = new TestHandler();
 
     private TestMessenger() {
       super(new TestBinaryMessenger(), "test_method_channel");
       this.testMessenger = (TestBinaryMessenger) binaryMessenger;
-      this.testHandler = new TestHandler(this);
       registerHandler("test_channel", testHandler);
     }
 

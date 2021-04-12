@@ -1,14 +1,8 @@
 //#include <android/log.h>
 //#define LOG(message) __android_log_write(ANDROID_LOG_DEBUG, "reference", message)
 
-//#include <string>
-//#include <unordered_map>
-
 #include "include/dart_api_dl.h"
 #include "hashmap.h"
-
-// TODO: Find out how to instantiate a new one for each _NativeWeakMap or maybe use hashmap.h?
-//static std::unordered_map<std::string, Dart_WeakPersistentHandle> instanceMap;
 
 struct _finalizer_data {
   char* instanceId;
@@ -49,12 +43,6 @@ DART_EXPORT _NativeWeakMap create_weak_map(Dart_Port onFinalizePort) {
   return map;
 }
 
-//std::unordered_map<std::string, Dart_WeakPersistentHandle> toMap(void *ptr) {
-//  std::unordered_map<std::string, Dart_WeakPersistentHandle> *map =
-//    static_cast<std::unordered_map<std::string, Dart_WeakPersistentHandle> *>(ptr);
-//  return *map;
-//}
-
 hashmap_s* toMap(void *ptr) {
   return (hashmap_s *)ptr;
 }
@@ -89,108 +77,3 @@ DART_EXPORT void remove_key(_NativeWeakMap weakMap, char *instanceId) {
   hashmap_s *instanceMap = toMap(weakMap.instanceMap);
   hashmap_remove(instanceMap, instanceId, strlen(instanceId));
 }
-
-/*
-DART_EXPORT void register_dart_receive_port(Dart_Port port) {
-  dart_send_port = port;
-}
-
-DART_EXPORT void reference_dart_dl_initialize(void* initialize_api_dl_data) {
-  if (Dart_InitializeApiDL(initialize_api_dl_data) != 0) {
-     LOG("Unable to initialize reference library.");
-  } else {
-     LOG("Initialized library for Dart thread.");
-  }
-}
-
-void release_dart_handle(std::string instanceId) {
-  Dart_CObject dartInstanceId;
-  dartInstanceId.type = Dart_CObject_kString;
-
-  char* cstr = new char[instanceId.length()+1];
-  std::strcpy(cstr, instanceId.c_str());
-  dartInstanceId.value.as_string = cstr;
-
-  Dart_PostCObject_DL(dart_send_port, &dartInstanceId);
-
-  delete[] cstr;
-}
-
-void dart_finalizer(void* isolate_callback_data,
-                    void* peer) {
-  std::string instanceId = std::string((char*)peer);
-  instanceId_to_weak_dart_handle.erase(instanceId);
-  release_platform_object(instanceId);
-}
-
-DART_EXPORT void dart_add_weak_reference(Dart_Handle instance, char *instanceId) {
-  intptr_t size = 4096;
-  Dart_WeakPersistentHandle weakHandle = Dart_NewWeakPersistentHandle_DL(instance, (void*)instanceId, size, &dart_finalizer);
-  if (weakHandle == NULL) {
-    LOG("Invalid parameters were passed to Dart_NewWeakPersistentHandle_DL.");
-  } else {
-    instanceId_to_weak_dart_handle[std::string(instanceId)] = weakHandle;
-  }
-}
-
-DART_EXPORT int dart_contains_weak_handle_instanceId(char *instanceId) {
-  std::string strInstanceId = std::string(instanceId);
-  if (instanceId_to_weak_dart_handle.count(strInstanceId)) {
-    return 1;
-  }
-
-  return 0;
-}
-
-DART_EXPORT Dart_Handle dart_get_weak_handle(char *instanceId) {
-  std::string strInstanceId = std::string(instanceId);
-  if (instanceId_to_weak_dart_handle.count(strInstanceId)) {
-    return Dart_HandleFromWeakPersistent_DL(instanceId_to_weak_dart_handle[strInstanceId]);
-  }
-
-  Dart_Handle error = Dart_NewApiError_DL("Could not find Dart_Handle.");
-  Dart_PropagateError_DL(error);
-
-  // unreachable
-  abort();
-}
-*/
-
-/*
-#ifdef __ANDROID__
-std::string jstring_to_string(JNIEnv *env, jstring jStr) {
-  if (!jStr) return "";
-
-  const jclass stringClass = env->GetObjectClass(jStr);
-  const jmethodID getBytes = env->GetMethodID(stringClass, "getBytes", "(Ljava/lang/String;)[B");
-  const jbyteArray stringJbytes = (jbyteArray) env->CallObjectMethod(jStr, getBytes, env->NewStringUTF("UTF-8"));
-
-  size_t length = (size_t) env->GetArrayLength(stringJbytes);
-  jbyte* pBytes = env->GetByteArrayElements(stringJbytes, NULL);
-
-  std::string ret = std::string((char *)pBytes, length);
-  env->ReleaseByteArrayElements(stringJbytes, pBytes, JNI_ABORT);
-
-  env->DeleteLocalRef(stringJbytes);
-  env->DeleteLocalRef(stringClass);
-  return ret;
-}
-
-extern "C"
-JNIEXPORT void JNICALL
-Java_github_penguin_reference_reference_InstancePairManager_nativeReleaseDartHandle(
-    JNIEnv *env, jobject object, jstring instanceId) {
-  release_dart_handle(jstring_to_string(env, instanceId));
-}
-
-extern "C"
-JNIEXPORT void JNICALL
-Java_github_penguin_reference_reference_InstancePairManager_initializeLib(
-    JNIEnv *env, jobject object) {
-  env->GetJavaVM(&jvm);
-  java_instance_pair_manager = env->NewWeakGlobalRef(object);
-  jclass classObject = env->GetObjectClass(java_instance_pair_manager);
-  java_remove_pair_id = env->GetMethodID(classObject, "removePair", "(Ljava/lang/String;)V");
-}
-#endif
-*/

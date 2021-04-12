@@ -1,13 +1,21 @@
 #import "REFReferenceMatchers.h"
 
-@implementation REFTestMessenger
+@implementation REFTestMessenger {
+  REFTestInstancePairManager *_testInstancePairManager;
+}
+
 - (instancetype)init {
   self = [super initWithMessageDispatcher:[[REFTestMessageDispatcher alloc] init]];
   if (self) {
     _testHandler = [[REFTestHandler alloc] initWithMessenger:self];
     [self registerHandler:@"test_channel" handler:_testHandler];
+    _testInstancePairManager = [[REFTestInstancePairManager alloc] init];
   }
   return self;
+}
+
+- (REFInstancePairManager *)instancePairManager {
+  return _testInstancePairManager;
 }
 
 - (NSString *)generateUniqueInstanceId:(NSObject *)instance {
@@ -16,10 +24,10 @@
 @end
 
 @implementation REFTestHandler
--(instancetype)initWithMessenger:(REFTestMessenger *)messenger {
+-(instancetype)init {
   self = [super init];
   if (self) {
-    _testClassInstance = [[REFTestClass alloc] initWithMessenger:messenger];
+    _testClassInstance = [[REFTestClass alloc] init];
   }
   return self;
 }
@@ -44,35 +52,16 @@
                    arguments:(NSArray *)arguments {
   return @"return_value";
 }
-
-- (void)onInstanceAdded:(nonnull REFTypeChannelMessenger *)messenger instance:(nonnull NSObject *)instance {
-  // Do nothing.
-}
-
-
-- (void)onInstanceRemoved:(nonnull REFTypeChannelMessenger *)messenger instance:(nonnull NSObject *)instance {
-  // Do nothing.
-}
 @end
 
 @implementation REFTestClass
--(instancetype)initWithMessenger:(REFTestMessenger *)messenger {
-  self = [super init];
-  if (self) {
-    _testMessenger = messenger;
-  }
-  return self;
-}
-
-- (REFTypeChannel *)typeChannel {
-  return [[REFTypeChannel alloc] initWithMessenger:_testMessenger name:@"test_channel"];
-}
 @end
 
 @implementation REFTestMessageDispatcher
 - (void)sendCreateNewInstancePair:(NSString *)channelName
                    pairedInstance:(REFPairedInstance *)pairedInstance
                         arguments:(NSArray<id> *)arguments
+                            owner:(BOOL)owner
                        completion:(void (^)(NSError *_Nullable))completion {
   completion(nil);
 }
@@ -99,52 +88,44 @@
   completion(@"return_value", nil);
 }
 
-- (void)sendDisposeInstancePair:(NSString *)channelName
-                 pairedInstance:(REFPairedInstance *)pairedInstance
+- (void)sendDisposeInstancePair:(REFPairedInstance *)pairedInstance
                      completion:(void (^)(NSError *_Nullable))completion {
   completion(nil);
 }
 @end
 
-@implementation IsUnpairedInstance
-- (instancetype _Nonnull)initWithChannelName:(NSString *_Nonnull)channelName
-                           creationArguments:(id _Nonnull)creationArguments {
+@implementation REFTestInstancePairManager {
+  REFThreadSafeMapTable *_instanceIdToInstance;
+  REFThreadSafeMapTable *_instanceToInstanceId;
+}
+
+- (instancetype)init {
   self = [super init];
   if (self) {
-    _channelName = channelName;
-    _creationArguments = creationArguments;
+    _instanceIdToInstance = [REFThreadSafeMapTable strongToStrongObjectsMapTable];
+    _instanceToInstanceId = [REFThreadSafeMapTable strongToStrongObjectsMapTable];
   }
   return self;
 }
 
-- (BOOL)matches:(id)item {
-  if (![item isKindOfClass:[REFNewUnpairedInstance class]]) return NO;
-  REFNewUnpairedInstance *unpairedInstance = item;
-  
-  if (_channelName != unpairedInstance.channelName) return NO;
-  if ([_creationArguments isKindOfClass:[HCBaseMatcher class]]) {
-    return [_creationArguments matches:unpairedInstance.creationArguments];
-  }
-  
-  return [_creationArguments isEqualToArray:unpairedInstance.creationArguments];
+- (BOOL)addPair:(NSObject *)instance instanceID:(NSString *)instanceID owner:(BOOL)owner {
+  if ([self isPaired:instance]) return NO;
+  [_instanceToInstanceId ]
 }
 
-- (void)describeTo:(id<HCDescription>)description {
-  [[[description
-     appendText:[NSString stringWithFormat:@" A %@ with channelName: ",
-                 NSStringFromClass([REFNewUnpairedInstance class])]]
-    appendText:_channelName]
-   appendText:@" and creation arguments: "];
+- (BOOL)isPaired:(NSObject *)instance {
   
-  if ([_creationArguments isKindOfClass:[HCBaseMatcher class]]) {
-    [_creationArguments describeTo:description];
-  } else {
-    [description appendText:[_creationArguments description]];
-  }
+}
+
+- (NSString *_Nullable)getInstanceID:(NSObject *)instance {
+  
+}
+
+- (NSObject *_Nullable)getInstance:(NSString *)instanceID {
+  
+}
+
+- (void)removePair:(NSString *)instanceID {
+  
 }
 @end
-
-id isUnpairedInstance(NSString *_Nonnull channelName, id _Nonnull creationArguments) {
-  return [[IsUnpairedInstance alloc] initWithChannelName:channelName
-                                       creationArguments:creationArguments];
-}
