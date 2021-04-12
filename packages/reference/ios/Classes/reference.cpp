@@ -1,13 +1,14 @@
 //#include <android/log.h>
 //#define LOG(message) __android_log_write(ANDROID_LOG_DEBUG, "reference", message)
 
-#include <string>
-#include <unordered_map>
+//#include <string>
+//#include <unordered_map>
 
 #include "include/dart_api_dl.h"
+#include "hashmap.h"
 
 // TODO: Find out how to instantiate a new one for each NativeWeakMap or maybe use hashmap.h?
-static std::unordered_map<std::string, Dart_WeakPersistentHandle> instanceMap;
+//static std::unordered_map<std::string, Dart_WeakPersistentHandle> instanceMap;
 
 struct _finalizer_data {
   char* instanceId;
@@ -34,17 +35,28 @@ void finalizer_callback(void* isolateCallbackData, void* peer) {
   free(data);
 }
 
+static hashmap_s instanceMap;
+
 DART_EXPORT NativeWeakMap create_weak_map(Dart_Port onFinalizePort) {
   NativeWeakMap map;
   map.onFinalizePort = onFinalizePort;
+  
+  const unsigned initial_size = 2;
+  //struct hashmap_s hashmap;
+  hashmap_create(initial_size, &instanceMap);
+  
   map.instanceMap = &instanceMap;
   return map;
 }
 
-std::unordered_map<std::string, Dart_WeakPersistentHandle> toMap(void *ptr) {
-  std::unordered_map<std::string, Dart_WeakPersistentHandle> *map =
-    static_cast<std::unordered_map<std::string, Dart_WeakPersistentHandle> *>(ptr);
-  return *map;
+//std::unordered_map<std::string, Dart_WeakPersistentHandle> toMap(void *ptr) {
+//  std::unordered_map<std::string, Dart_WeakPersistentHandle> *map =
+//    static_cast<std::unordered_map<std::string, Dart_WeakPersistentHandle> *>(ptr);
+//  return *map;
+//}
+
+hashmap_s* toMap(void *ptr) {
+  return (hashmap_s *)ptr;
 }
 
 DART_EXPORT int put(NativeWeakMap weakMap, char *instanceId, Dart_Handle instance) {
@@ -56,24 +68,30 @@ DART_EXPORT int put(NativeWeakMap weakMap, char *instanceId, Dart_Handle instanc
   Dart_WeakPersistentHandle weakHandle = Dart_NewWeakPersistentHandle_DL(instance, (void *)peer, size, &finalizer_callback);
   if (weakHandle == NULL) return 0;
 
-  auto instanceMap = toMap(weakMap.instanceMap);
-  instanceMap[std::string(instanceId)] = weakHandle;
+  hashmap_s *instanceMap = toMap(weakMap.instanceMap);
+  hashmap_put(instanceMap, instanceId, strlen(instanceId), (void *)weakHandle);
+  //instanceMap[std::string(instanceId)] = weakHandle;
   return 1;
 }
 
 DART_EXPORT int contains(NativeWeakMap weakMap, char *instanceId) {
-  auto instanceMap = toMap(weakMap.instanceMap);
-  return instanceMap.count(std::string(instanceId));
+  hashmap_s *instanceMap = toMap(weakMap.instanceMap);
+  void* const element = hashmap_get(instanceMap, instanceId, strlen(instanceId));
+  if (NULL == element) return 0;
+  return 1;
 }
 
 DART_EXPORT Dart_Handle get(NativeWeakMap weakMap, char *instanceId) {
-  auto instanceMap = toMap(weakMap.instanceMap);
-  std::string strInstanceId = std::string(instanceId);
-  return Dart_HandleFromWeakPersistent_DL(instanceMap[strInstanceId]);
+  hashmap_s *instanceMap = toMap(weakMap.instanceMap);
+  //std::string strInstanceId = std::string(instanceId);
+  return (Dart_Handle) hashmap_get(instanceMap, instanceId, strlen(instanceId));
+  //return Dart_HandleFromWeakPersistent_DL(instanceMap[strInstanceId]);
 }
 
 DART_EXPORT void remove_key(NativeWeakMap weakMap, char *instanceId) {
-  toMap(weakMap.instanceMap).erase(std::string(instanceId));
+  hashmap_s *instanceMap = toMap(weakMap.instanceMap);
+  hashmap_remove(instanceMap, instanceId, strlen(instanceId));
+  //toMap(weakMap.instanceMap).erase(std::string(instanceId));
 }
 
 /*

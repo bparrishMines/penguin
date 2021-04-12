@@ -45,9 +45,11 @@ class _MyAppState extends State<MyApp> {
             // final Object object = Object();
             // print(instancePairManager.addPair(object, 'yolo', owner: true));
             //final Object object = Object();
+            print('start');
             manager = InstancePairManager((message) => print(message));
+            print('start2');
             manager?.addPair(Object(), 'fhwoiefj', owner: true);
-
+            print('start3');
             print('new manager');
             manager = InstancePairManager((_) => print(_));
           },

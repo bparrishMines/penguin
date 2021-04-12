@@ -3,7 +3,6 @@
 
 @implementation DummyClass
 - (instancetype)init {
-  reference_dart_dl_initialize((void *)"fwiejf");
   return nil;
 }
 @end
