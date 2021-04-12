@@ -91,6 +91,11 @@ class TestMessageDispatcher with TypeChannelMessageDispatcher {
   ) {
     return Future<String>.value('return_value');
   }
+
+  @override
+  Future<void> sendDisposeInstancePair(PairedInstance pairedInstance) {
+    return Future<void>.value();
+  }
 }
 
 class TestClass {
@@ -124,5 +129,11 @@ class TestInstancePairManager implements InstancePairManager {
   @override
   bool isPaired(Object instance) {
     return instanceToInstanceId.containsKey(instance);
+  }
+
+  @override
+  void removePair(String instanceId) {
+    final Object? instance = instanceIdToInstance.remove(instanceId);
+    instanceToInstanceId.remove(instance);
   }
 }

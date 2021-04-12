@@ -65,6 +65,22 @@ void main() {
         'return_value',
       );
     });
+
+    test('onReceiveDisposeInstancePair', () {
+      testMessenger.onReceiveCreateNewInstancePair(
+        'test_channel',
+        const PairedInstance('test_id'),
+        <Object>[],
+        owner: true,
+      );
+      testMessenger.onReceiveDisposeInstancePair(
+        const PairedInstance('test_id'),
+      );
+      expect(
+        testMessenger.isPaired(testMessenger.testHandler.testClassInstance),
+        isFalse,
+      );
+    });
   });
 
   group('$TypeChannel', () {
@@ -116,6 +132,17 @@ void main() {
         testChannel.sendInvokeMethod(testClass, 'aMethod', <Object>[]),
         completion('return_value'),
       );
+    });
+
+    test('disposeInstancePair', () {
+      final testClass = TestClass(testMessenger);
+
+      testChannel.createNewInstancePair(testClass, owner: true);
+      expect(testChannel.disposeInstancePair(testClass), completes);
+      expect(testMessenger.isPaired(testClass), isFalse);
+
+      expect(testChannel.disposeInstancePair(testClass), completes);
+      expect(testChannel.disposeInstancePair(testClass), completes);
     });
   });
 }

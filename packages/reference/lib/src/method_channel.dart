@@ -85,7 +85,7 @@ class MethodChannelMessenger extends TypeChannelMessenger {
 /// to be passed without being converted to `List<Object?>`.
 class MethodChannelConverter extends StandardInstanceConverter {
   @override
-  Object? convertForLocalMessenger(
+  Object? convertPairedInstancesToInstances(
     TypeChannelMessenger messenger,
     Object? object,
   ) {
@@ -96,11 +96,11 @@ class MethodChannelConverter extends StandardInstanceConverter {
       return object;
     }
 
-    return super.convertForLocalMessenger(messenger, object);
+    return super.convertPairedInstancesToInstances(messenger, object);
   }
 
   @override
-  Object? convertForRemoteMessenger(
+  Object? convertInstancesToPairedInstances(
     TypeChannelMessenger messenger,
     Object? object,
   ) {
@@ -111,7 +111,7 @@ class MethodChannelConverter extends StandardInstanceConverter {
       return object;
     }
 
-    return super.convertForRemoteMessenger(messenger, object);
+    return super.convertInstancesToPairedInstances(messenger, object);
   }
 }
 

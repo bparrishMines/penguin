@@ -109,7 +109,7 @@
   [_messageDispatcher sendCreateNewInstancePair:channelName
                                  pairedInstance:pairedInstance
                                       arguments:creationArguments
-                                          owner:owner
+                                          owner:!owner
                                      completion:^(NSError *error) {
     if (error) {
       completion(nil, error);

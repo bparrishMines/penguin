@@ -76,8 +76,8 @@ class TypeChannel<T extends Object> {
     return messenger.sendInvokeMethod(name, instance, methodName, arguments);
   }
 
-  Future<void> disposeInstancePair(PairedInstance pairedInstance) {
-    return messenger.disposeInstancePair(pairedInstance);
+  Future<void> disposeInstancePair(T instance) {
+    return messenger.disposeInstancePair(instance);
   }
 }
 
@@ -184,7 +184,6 @@ abstract class TypeChannelMessenger {
     PairedInstance pairedInstance, {
     required bool owner,
   }) {
-    //print('_addPair');
     return instancePairManager.addPair(
       instance,
       pairedInstance.instanceId,
@@ -264,7 +263,7 @@ abstract class TypeChannelMessenger {
     await messageDispatcher.sendCreateNewInstancePair(
       channelName,
       pairedInstance,
-      converter.convertForRemoteMessenger(
+      converter.convertInstancesToPairedInstances(
         this,
         handler.getCreationArguments(this, instance),
       )! as List<Object?>,
@@ -290,10 +289,10 @@ abstract class TypeChannelMessenger {
     final Object? result = await messageDispatcher.sendInvokeStaticMethod(
       channelName,
       methodName,
-      converter.convertForRemoteMessenger(this, arguments)! as List<Object?>,
+      converter.convertInstancesToPairedInstances(this, arguments)! as List<Object?>,
     );
 
-    return converter.convertForLocalMessenger(this, result);
+    return converter.convertPairedInstancesToInstances(this, result);
   }
 
   /// Send a message to invoke a method on [PairedInstance] paired with [instance].
@@ -315,10 +314,10 @@ abstract class TypeChannelMessenger {
       channelName,
       getPairedPairedInstance(instance)!,
       methodName,
-      converter.convertForRemoteMessenger(this, arguments)! as List<Object?>,
+      converter.convertInstancesToPairedInstances(this, arguments)! as List<Object?>,
     );
 
-    return converter.convertForLocalMessenger(this, result);
+    return converter.convertPairedInstancesToInstances(this, result);
   }
 
   /// Dispose the instance pair containing [instance].
@@ -357,7 +356,7 @@ abstract class TypeChannelMessenger {
 
     final Object instance = handler.createInstance(
       this,
-      converter.convertForLocalMessenger(this, arguments)! as List<Object?>,
+      converter.convertPairedInstancesToInstances(this, arguments)! as List<Object?>,
     );
 
     assert(!isPaired(instance), '`$instance` has already been paired.');
@@ -375,10 +374,10 @@ abstract class TypeChannelMessenger {
     final Object? result = getChannelHandler(channelName)!.invokeStaticMethod(
       this,
       methodName,
-      converter.convertForLocalMessenger(this, arguments)! as List<Object?>,
+      converter.convertPairedInstancesToInstances(this, arguments)! as List<Object?>,
     );
 
-    return converter.convertForRemoteMessenger(this, result);
+    return converter.convertInstancesToPairedInstances(this, result);
   }
 
   /// Invoke a method on [pairedInstance] for a type channel.
@@ -392,10 +391,10 @@ abstract class TypeChannelMessenger {
       this,
       getPairedObject(pairedInstance)!,
       methodName,
-      converter.convertForLocalMessenger(this, arguments)! as List<Object?>,
+      converter.convertPairedInstancesToInstances(this, arguments)! as List<Object?>,
     );
 
-    return converter.convertForRemoteMessenger(this, result);
+    return converter.convertInstancesToPairedInstances(this, result);
   }
 
   /// Dispose of the pair containing [pairedInstance].
