@@ -110,22 +110,25 @@
 
 - (BOOL)addPair:(NSObject *)instance instanceID:(NSString *)instanceID owner:(BOOL)owner {
   if ([self isPaired:instance]) return NO;
-  [_instanceToInstanceId ]
+  [_instanceToInstanceId setObject:instanceID forKey:instance];
+  [_instanceIdToInstance setObject:instance forKey:instanceID];
+  return YES;
 }
 
 - (BOOL)isPaired:(NSObject *)instance {
-  
+  return [_instanceToInstanceId objectForKey:instance] != nil;
 }
 
 - (NSString *_Nullable)getInstanceID:(NSObject *)instance {
-  
+  return [_instanceToInstanceId objectForKey:instance];
 }
 
 - (NSObject *_Nullable)getInstance:(NSString *)instanceID {
-  
+  return [_instanceIdToInstance objectForKey:instanceID];
 }
 
 - (void)removePair:(NSString *)instanceID {
-  
+  NSObject *instance = [_instanceIdToInstance removeObjectForKey:instanceID];
+  [_instanceToInstanceId removeObjectForKey:instance];
 }
 @end
