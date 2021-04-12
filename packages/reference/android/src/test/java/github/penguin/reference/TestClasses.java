@@ -58,6 +58,11 @@ public class TestClasses {
     public Completable<Object> sendInvokeMethod(String channelName, PairedInstance pairedInstance, String methodName, List<Object> arguments) {
       return new Completer<>().complete("return_value").completable;
     }
+
+    @Override
+    public Completable<Void> sendDisposeInstancePair(PairedInstance pairedInstance) {
+      return new Completer<Void>().complete(null).completable;
+    }
   }
 
   public static class TestHandler implements TypeChannelHandler<TestClass> {
@@ -111,13 +116,14 @@ public class TestClasses {
     }
 
     @Override
-    public void releaseDartHandle(Object instance) {
-      throw new UnsupportedOperationException();
+    public Object getInstance(String instanceId) {
+      return instanceIdToInstance.get(instanceId);
     }
 
     @Override
-    public Object getInstance(String instanceId) {
-      return instanceIdToInstance.get(instanceId);
+    public void removePair(String instanceId) {
+      final Object instance = instanceIdToInstance.remove(instanceId);
+      instanceToInstanceId.remove(instance);
     }
   }
 

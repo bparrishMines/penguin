@@ -142,6 +142,8 @@ void main() {
       expect(testMessenger.isPaired(testClass), isFalse);
 
       expect(testChannel.disposeInstancePair(testClass), completes);
+
+      // Test that this completes with second call.
       expect(testChannel.disposeInstancePair(testClass), completes);
     });
   });

@@ -9,6 +9,7 @@ import github.penguin.reference.TestClasses.TestMessenger;
 import github.penguin.reference.reference.PairedInstance;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class TypeChannelMessengerTest {
@@ -61,5 +62,17 @@ public class TypeChannelMessengerTest {
             Collections.emptyList()
         )
     );
+  }
+
+  @Test
+  public void onReceiveDisposePair() throws Exception {
+    testMessenger.onReceiveCreateNewInstancePair(
+        "test_channel",
+        new PairedInstance("test_id"),
+        Collections.emptyList(),
+        true
+    );
+    testMessenger.onReceiveDisposeInstancePair(new PairedInstance("test_id"));
+    assertFalse(testMessenger.isPaired(testMessenger.testHandler.testClassInstance));
   }
 }

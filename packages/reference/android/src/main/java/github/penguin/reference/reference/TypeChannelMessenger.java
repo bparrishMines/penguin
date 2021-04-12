@@ -81,7 +81,7 @@ public abstract class TypeChannelMessenger {
     getMessageDispatcher().sendCreateNewInstancePair(
         channelName,
         pairedInstance,
-        (List<Object>) getConverter().convertForRemoteMessenger(
+        (List<Object>) getConverter().convertInstancesToPairedInstances(
             this,
             handler.getCreationArguments(this, instance)),
         !owner
@@ -108,13 +108,13 @@ public abstract class TypeChannelMessenger {
         .sendInvokeStaticMethod(
             channelName,
             methodName,
-            (List<Object>) getConverter().convertForRemoteMessenger(this, arguments))
+            (List<Object>) getConverter().convertInstancesToPairedInstances(this, arguments))
         .setOnCompleteListener(
             new Completable.OnCompleteListener<Object>() {
               @Override
               public void onComplete(Object result) {
                 try {
-                  returnCompleter.complete(getConverter().convertForLocalMessenger(TypeChannelMessenger.this, result));
+                  returnCompleter.complete(getConverter().convertPairedInstancesToInstances(TypeChannelMessenger.this, result));
                 } catch (Exception exception) {
                   onError(exception);
                 }
@@ -139,13 +139,13 @@ public abstract class TypeChannelMessenger {
             channelName,
             getPairedPairedInstance(instance),
             methodName,
-            (List<Object>) getConverter().convertForRemoteMessenger(this, arguments))
+            (List<Object>) getConverter().convertInstancesToPairedInstances(this, arguments))
         .setOnCompleteListener(
             new Completable.OnCompleteListener<Object>() {
               @Override
               public void onComplete(Object result) {
                 try {
-                  returnCompleter.complete(getConverter().convertForLocalMessenger(TypeChannelMessenger.this, result));
+                  returnCompleter.complete(getConverter().convertPairedInstancesToInstances(TypeChannelMessenger.this, result));
                 } catch (Exception exception) {
                   onError(exception);
                 }
@@ -178,7 +178,7 @@ public abstract class TypeChannelMessenger {
     final Object instance =
         getChannelHandler(channelName)
             .createInstance(
-                this, (List<Object>) getConverter().convertForLocalMessenger(this, arguments));
+                this, (List<Object>) getConverter().convertPairedInstancesToInstances(this, arguments));
 
     if (isPaired(instance)) throw new AssertionError();
 
@@ -193,9 +193,9 @@ public abstract class TypeChannelMessenger {
             .invokeStaticMethod(
                 this,
                 methodName,
-                (List<Object>) getConverter().convertForLocalMessenger(this, arguments));
+                (List<Object>) getConverter().convertPairedInstancesToInstances(this, arguments));
 
-    return getConverter().convertForRemoteMessenger(this, result);
+    return getConverter().convertInstancesToPairedInstances(this, result);
   }
 
   public Object onReceiveInvokeMethod(
@@ -210,9 +210,9 @@ public abstract class TypeChannelMessenger {
                 this,
                 getPairedObject(pairedInstance),
                 methodName,
-                (List<Object>) getConverter().convertForLocalMessenger(this, arguments));
+                (List<Object>) getConverter().convertPairedInstancesToInstances(this, arguments));
 
-    return getConverter().convertForRemoteMessenger(this, result);
+    return getConverter().convertInstancesToPairedInstances(this, result);
   }
 
   public void onReceiveDisposeInstancePair(PairedInstance pairedInstance) {

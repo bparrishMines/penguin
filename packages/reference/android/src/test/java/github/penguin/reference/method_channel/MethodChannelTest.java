@@ -30,6 +30,7 @@ import io.flutter.plugin.common.StandardMethodCodec;
 import static github.penguin.reference.ReferenceMatchers.isMethodCall;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -97,7 +98,23 @@ public class MethodChannelTest {
   }
 
   @Test
-  public void methodChannelMessenger_createNewPair() {
+  public void methodChannelManager_onReceiveDisposeInstancePair() throws Exception {
+    testMessenger.onReceiveCreateNewInstancePair("test_channel",
+        new PairedInstance("test_id"),
+        Collections.emptyList(), true);
+
+    final List<Object> arguments = Collections.singletonList((Object) new PairedInstance("test_id"));
+    final MethodCall methodCall = new MethodCall("REFERENCE_DISPOSE", arguments);
+
+    testMessenger.testMessenger.handlePlatformMessage("test_method_channel",
+        methodCodec.encodeMethodCall(methodCall),
+        null);
+
+    assertFalse(testMessenger.isPaired(testMessenger.testHandler.testClassInstance));
+  }
+
+  @Test
+  public void methodChannelMessenger_createNewInstancePair() {
     testChannel.createNewInstancePair(new TestClass(testMessenger), true);
 
     final List<MethodCall> methodCalls = testMessenger.testMessenger.methodCalls;
@@ -144,6 +161,22 @@ public class MethodChannelTest {
                 new PairedInstance("test_instance_id"),
                 "aMethod"
                 , Collections.emptyList())));
+  }
+
+  @Test
+  public void methodChannelMessenger_disposeInstancePair() {
+    final TestClass testClass = new TestClass(testMessenger);
+    testChannel.createNewInstancePair(testClass, true);
+    testMessenger.testMessenger.methodCalls.clear();
+
+
+    testChannel.disposeInstancePair(testClass);
+    final List<MethodCall> methodCalls = testMessenger.testMessenger.methodCalls;
+    assertEquals(1, methodCalls.size());
+    assertThat(methodCalls.get(0),
+        isMethodCall("REFERENCE_DISPOSE",
+            Collections.singletonList(
+                new PairedInstance("test_instance_id"))));
   }
 
   private static class TestMethodCallHandler implements MethodChannel.MethodCallHandler {
