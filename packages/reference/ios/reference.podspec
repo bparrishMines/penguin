@@ -17,16 +17,16 @@ Pod::Spec.new do |s|
     'Classes/**/*',
     # Since we can't embed source from ../third_party/, we have created files
     # in ios/third_party/... which simply use #include "../...". This is a hack!
-    #'third_party/dart-sdk/**/*.{c,h}',
+    'third_party/dart-sdk/**/*.{c,h}',
   ]
   s.public_header_files = 'Classes/**/*.h'
   s.dependency 'Flutter'
   s.platform = :ios, '8.0'
 
   s.pod_target_xcconfig = {
-    #'HEADER_SEARCH_PATHS' => [
-    #  '$(PODS_TARGET_SRCROOT)/../third_party/dart-sdk/src/runtime',
-    #],
+    'HEADER_SEARCH_PATHS' => [
+      '$(PODS_TARGET_SRCROOT)/../third_party/dart-sdk/src/runtime',
+    ],
     'DEFINES_MODULE' => 'YES',
     'VALID_ARCHS' => 'armv7 arm64 x86_64'
   }

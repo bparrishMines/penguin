@@ -1,7 +1,6 @@
 //#include <android/log.h>
 //#define LOG(message) __android_log_write(ANDROID_LOG_DEBUG, "reference", message)
 
-/*
 #include "include/dart_api_dl.h"
 #include "hashmap.h"
 
@@ -78,4 +77,3 @@ DART_EXPORT void remove_key(_NativeWeakMap weakMap, char *instanceId) {
   hashmap_s *instanceMap = toMap(weakMap.instanceMap);
   hashmap_remove(instanceMap, instanceId, strlen(instanceId));
 }
-*/

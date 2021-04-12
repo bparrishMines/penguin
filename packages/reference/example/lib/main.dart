@@ -27,13 +27,6 @@ class _MyAppState extends State<MyApp> {
             child: const Text('HI'),
           ),
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () async {
-            // final Object object = Object();
-            // print(instancePairManager.addPair(object, 'yolo', owner: true));
-          },
-          child: const Icon(Icons.ac_unit),
-        ),
       ),
     );
   }
