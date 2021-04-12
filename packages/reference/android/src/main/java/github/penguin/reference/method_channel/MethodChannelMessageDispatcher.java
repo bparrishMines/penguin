@@ -3,6 +3,7 @@ package github.penguin.reference.method_channel;
 import androidx.annotation.Nullable;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import github.penguin.reference.async.Completable;
@@ -63,6 +64,19 @@ public class MethodChannelMessageDispatcher implements TypeChannelMessageDispatc
     channel.invokeMethod(
         method,
         Arrays.asList(channelName, pairedInstance, methodName, arguments),
+        new MethodChannelMessengerResult<>(completer, method));
+
+    return completer.completable;
+  }
+
+  @Override
+  public Completable<Void> sendDisposeInstancePair(PairedInstance pairedInstance) {
+    final Completer<Void> completer = new Completer<>();
+    final String method = MethodChannelMessenger.METHOD_DISPOSE;
+
+    channel.invokeMethod(
+        method,
+        Collections.singletonList(pairedInstance),
         new MethodChannelMessengerResult<>(completer, method));
 
     return completer.completable;

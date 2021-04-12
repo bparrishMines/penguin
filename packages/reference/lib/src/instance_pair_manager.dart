@@ -17,6 +17,17 @@ Pointer<Int8> _stringAsNativeCharArray(String value) {
   return value.toNativeUtf8().cast<Int8>();
 }
 
+class NativeWeakMap extends Struct {
+  factory NativeWeakMap(int onFinalizePort) {
+    return createWeakMap(onFinalizePort);
+  }
+
+  @Int64()
+  external int onFinalizePort;
+
+  external Pointer<Void> instanceMap;
+}
+
 final NativeWeakMap Function(int) createWeakMap = _referenceLib.lookupFunction<
     NativeWeakMap Function(Int64),
     NativeWeakMap Function(int)>('create_weak_map');
@@ -29,7 +40,9 @@ class _WeakMap {
         remove(instanceId);
         onFinalize(instanceId);
       });
+    //print('create weak map');
     _nativeWeakMap = NativeWeakMap(_onFinalizePort.sendPort.nativePort);
+    //print('create weak ma done');
   }
 
   static final int Function(NativeWeakMap, Pointer<Int8>, Object) _put =
@@ -63,6 +76,7 @@ class _WeakMap {
   }
 
   bool containsKey(String instanceId) {
+    //print('contains');
     return _contains(_nativeWeakMap, _stringAsNativeCharArray(instanceId)) == 1;
   }
 
@@ -79,17 +93,6 @@ class _WeakMap {
       _remove(_nativeWeakMap, _stringAsNativeCharArray(instanceId));
     }
   }
-}
-
-class NativeWeakMap extends Struct {
-  factory NativeWeakMap(int onFinalizePort) {
-    return createWeakMap(onFinalizePort);
-  }
-
-  @Int64()
-  external int onFinalizePort;
-
-  external Pointer<Void> instanceMap;
 }
 
 /// Stores instance pair.
@@ -137,22 +140,37 @@ class InstancePairManager {
   late final _WeakMap _weakReferences;
   //late final ReceivePort _removePairReceivePort;
 
+  void removePair(String instanceId) {
+    Object? instance = _strongReferences.remove(instanceId);
+    if (instance != null) {
+      _instanceIds[instance] = null;
+      return;
+    }
+
+    instance = _weakReferences.get(instanceId);
+    if (instance != null) {
+      _instanceIds[instance] = null;
+      _weakReferences.remove(instanceId);
+    }
+  }
+
   bool addPair(
     Object instance,
     String instanceId, {
     required bool owner,
   }) {
-    if (_instanceIds[instance] != null) return false;
+    //print(instance.runtimeType);
+    if (isPaired(instance)) return false;
     //final Pointer<Int8> charArray = _stringAsNativeCharArray(instanceId);
     assert(getInstance(instanceId) == null);
 
     _instanceIds[instance] = instanceId;
-    if (!owner) {
-      _strongReferences[instanceId] = instance;
-      return true;
+    if (owner) {
+      return _weakReferences.put(instanceId, instance);
     }
 
-    return _weakReferences.put(instanceId, instance);
+    _strongReferences[instanceId] = instance;
+    return true;
   }
 
   bool isPaired(Object instance) {

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:reference_example/reference_example.dart';
 
+import 'package:reference/reference.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -14,6 +16,9 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  final InstancePairManager instancePairManager =
+      InstancePairManager((message) => print(message));
+
   String _text = 'nada';
 
   @override
@@ -36,6 +41,11 @@ class _MyAppState extends State<MyApp> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
+            print('creat');
+            final Object object = Object();
+            //final manager = InstancePairManager((message) => print(message));
+            //InstancePairManager((_) {});
+            //instancePairManager.addPair(object, 'fhwoiefj', owner: true);
             final ClassTemplate classTemplate = ClassTemplate(23);
             final String result = await classTemplate.methodTemplate('Hello,');
             setState(() {

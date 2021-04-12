@@ -16,4 +16,6 @@ public interface TypeChannelMessageDispatcher {
       PairedInstance pairedInstance,
       String methodName,
       List<Object> arguments);
+
+  Completable<Void> sendDisposeInstancePair(PairedInstance pairedInstance);
 }

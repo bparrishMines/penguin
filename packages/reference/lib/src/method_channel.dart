@@ -24,6 +24,7 @@ class MethodChannelMessenger extends TypeChannelMessenger {
   static const String _methodCreate = 'REFERENCE_CREATE';
   static const String _methodStaticMethod = 'REFERENCE_STATIC_METHOD';
   static const String _methodMethod = 'REFERENCE_METHOD';
+  static const String _methodDispose = 'REFERENCE_DISPOSE';
 
   /// Global manager maintained by reference plugin.
   ///
@@ -65,6 +66,9 @@ class MethodChannelMessenger extends TypeChannelMessenger {
           call.arguments[2] as String,
           call.arguments[3] as List<Object?>,
         );
+      } else if (call.method == MethodChannelMessenger._methodDispose) {
+        onReceiveDisposeInstancePair(call.arguments[0] as PairedInstance);
+        return null;
       }
 
       throw StateError(call.method);
@@ -153,6 +157,14 @@ class MethodChannelDispatcher with TypeChannelMessageDispatcher {
     return channel.invokeMethod<Object>(
       MethodChannelMessenger._methodMethod,
       <Object>[channelName, pairedInstance, methodName, arguments],
+    );
+  }
+
+  @override
+  Future<void> sendDisposeInstancePair(PairedInstance pairedInstance) {
+    return channel.invokeMethod<void>(
+      MethodChannelMessenger._methodDispose,
+      <Object>[pairedInstance],
     );
   }
 }

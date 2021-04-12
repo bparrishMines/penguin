@@ -12,11 +12,16 @@ import github.penguin.reference.async.Completer;
 
 public abstract class TypeChannelMessenger {
   private final Map<String, TypeChannelHandler<?>> channelHandlers = new HashMap<>();
+  private final InstancePairManager instancePairManager = new InstancePairManager();
 
   public abstract TypeChannelMessageDispatcher getMessageDispatcher();
 
   private boolean addInstancePair(Object instance, PairedInstance pairedInstance, boolean owner) {
     return getInstancePairManager().addPair(instance, pairedInstance.instanceId, owner);
+  }
+
+  private void removeInstancePair(PairedInstance pairedInstance) {
+    getInstancePairManager().removePair(pairedInstance.instanceId);
   }
 
   public boolean isPaired(@NonNull Object instance) {
@@ -55,11 +60,11 @@ public abstract class TypeChannelMessenger {
 
   @NonNull
   public InstancePairManager getInstancePairManager() {
-    return InstancePairManager.getInstance();
+    return instancePairManager;
   }
 
   @NonNull
-  public Completable<PairedInstance> sendCreateNewInstancePair(String channelName, Object instance, boolean owner) {
+  public Completable<PairedInstance> createNewInstancePair(String channelName, Object instance, boolean owner) {
     if (isPaired(instance)) return new Completer<PairedInstance>().complete(null).completable;
 
     //noinspection rawtypes
@@ -155,6 +160,14 @@ public abstract class TypeChannelMessenger {
     return returnCompleter.completable;
   }
 
+  @NonNull
+  public Completable<Void> disposeInstancePair(Object instance) {
+    if (!isPaired(instance)) return new Completer<Void>().complete(null).completable;
+    final PairedInstance pairedInstance = getPairedPairedInstance(instance);
+    removeInstancePair(pairedInstance);
+    return getMessageDispatcher().sendDisposeInstancePair(pairedInstance);
+  }
+
   public Object onReceiveCreateNewInstancePair(
       String channelName, PairedInstance pairedInstance, List<Object> arguments, boolean owner)
       throws Exception {
@@ -202,8 +215,17 @@ public abstract class TypeChannelMessenger {
     return getConverter().convertForRemoteMessenger(this, result);
   }
 
-  public void releaseDartHandle(Object instance) {
-    getInstancePairManager().releaseDartHandle(instance);
+  public void onReceiveDisposeInstancePair(PairedInstance pairedInstance) {
+    android.util.Log.d("TAG", "disposing");
+    final Object instance = getPairedObject(pairedInstance);
+    if (instance == null) {
+      throw new AssertionError(
+          "The Object with the following PairedInstance has already been disposed: "
+              + pairedInstance);
+    }
+
+
+    removeInstancePair(pairedInstance);
   }
 
   protected String generateUniqueInstanceId(Object instance) {

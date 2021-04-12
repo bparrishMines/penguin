@@ -83,10 +83,12 @@ void finalizer_callback(void* isolateCallbackData, void* peer) {
   free(data);
 }
 
+static std::unordered_map<std::string, Dart_WeakPersistentHandle> instanceMap;
+
 DART_EXPORT NativeWeakMap create_weak_map(Dart_Port onFinalizePort) {
-  struct NativeWeakMap map;
+  NativeWeakMap map;
   map.onFinalizePort = onFinalizePort;
-  new (map.instanceMap) std::unordered_map<std::string, Dart_WeakPersistentHandle>();
+  map.instanceMap = &instanceMap;
   return map;
 }
 

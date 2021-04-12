@@ -42,8 +42,8 @@ class TypeChannel<T extends Object> {
   Future<PairedInstance?> createNewInstancePair(
     T instance, {
     required bool owner,
-  }) async {
-    return messenger.sendCreateNewInstancePair(name, instance, owner: owner);
+  }) {
+    return messenger.createNewInstancePair(name, instance, owner: owner);
   }
 
   /// Invoke static method [methodName] on type channel of [name].
@@ -57,7 +57,7 @@ class TypeChannel<T extends Object> {
   Future<Object?> sendInvokeStaticMethod(
     String methodName,
     List<Object?> arguments,
-  ) async {
+  ) {
     return messenger.sendInvokeStaticMethod(name, methodName, arguments);
   }
 
@@ -72,8 +72,12 @@ class TypeChannel<T extends Object> {
     T instance,
     String methodName,
     List<Object?> arguments,
-  ) async {
+  ) {
     return messenger.sendInvokeMethod(name, instance, methodName, arguments);
+  }
+
+  Future<void> disposeInstancePair(PairedInstance pairedInstance) {
+    return messenger.disposeInstancePair(pairedInstance);
   }
 }
 
@@ -104,6 +108,8 @@ mixin TypeChannelMessageDispatcher {
     String methodName,
     List<Object?> arguments,
   );
+
+  Future<void> sendDisposeInstancePair(PairedInstance pairedInstance);
 }
 
 /// Handles receiving messages for a type channel.
@@ -159,18 +165,11 @@ mixin TypeChannelHandler<T extends Object> {
 abstract class TypeChannelMessenger {
   final Map<String, TypeChannelHandler> _channelHandlers =
       <String, TypeChannelHandler>{};
-
-  bool _addPair(
-    Object instance,
-    PairedInstance pairedInstance, {
-    required bool owner,
-  }) {
-    return instancePairManager.addPair(
-      instance,
-      pairedInstance.instanceId,
-      owner: owner,
-    );
-  }
+  late final InstancePairManager _instancePairManager = InstancePairManager(
+    (String message) {
+      messageDispatcher.sendDisposeInstancePair(PairedInstance(message));
+    },
+  );
 
   /// Dispatches send messages to other [TypeChannelMessenger]s.
   TypeChannelMessageDispatcher get messageDispatcher;
@@ -178,11 +177,24 @@ abstract class TypeChannelMessenger {
   /// Attempts to convert objects to [PairedInstance]s or [NewUnpairedInstance]s and vice-versa.
   InstanceConverter get converter => const StandardInstanceConverter();
 
-  // To overridable
-  late final InstancePairManager instancePairManager =
-      InstancePairManager((String message) {
-    print('removing $message');
-  });
+  InstancePairManager get instancePairManager => _instancePairManager;
+
+  bool _addPair(
+    Object instance,
+    PairedInstance pairedInstance, {
+    required bool owner,
+  }) {
+    //print('_addPair');
+    return instancePairManager.addPair(
+      instance,
+      pairedInstance.instanceId,
+      owner: owner,
+    );
+  }
+
+  void _removePair(PairedInstance pairedInstance) {
+    instancePairManager.removePair(pairedInstance.instanceId);
+  }
 
   /// Whether [instance] is paired with a [PairedInstance].
   bool isPaired(Object instance) {
@@ -229,11 +241,12 @@ abstract class TypeChannelMessenger {
   ///
   /// Sends a message to another [TypeChannelMessenger] with
   /// [messageDispatcher].
-  Future<PairedInstance?> sendCreateNewInstancePair(
+  Future<PairedInstance?> createNewInstancePair(
     String channelName,
     Object instance, {
     required bool owner,
   }) async {
+    //print('createNewInstancePair');
     if (isPaired(instance)) return null;
 
     final TypeChannelHandler? handler = getChannelHandler(channelName);
@@ -308,6 +321,18 @@ abstract class TypeChannelMessenger {
     return converter.convertForLocalMessenger(this, result);
   }
 
+  /// Dispose the instance pair containing [instance].
+  ///
+  /// Sends a message to another [TypeChannelMessenger] with
+  /// [messageDispatcher].
+  Future<void> disposeInstancePair(Object instance) async {
+    if (!isPaired(instance)) return;
+
+    final PairedInstance pairedInstance = getPairedPairedInstance(instance)!;
+    _removePair(pairedInstance);
+    return messageDispatcher.sendDisposeInstancePair(pairedInstance);
+  }
+
   /// Create and store a new instance pair for a type channel.
   ///
   /// Returns `null` if a pair with [pairedInstance] has already been added.
@@ -371,6 +396,17 @@ abstract class TypeChannelMessenger {
     );
 
     return converter.convertForRemoteMessenger(this, result);
+  }
+
+  /// Dispose of the pair containing [pairedInstance].
+  void onReceiveDisposeInstancePair(PairedInstance pairedInstance) {
+    final Object? instance = getPairedObject(pairedInstance);
+    assert(
+      instance != null,
+      'The Object with the following PairedInstance has already been disposed: $pairedInstance',
+    );
+
+    _removePair(pairedInstance);
   }
 
   /// Generate a new unique instance id for a [PairedInstance].

@@ -17,6 +17,7 @@ public class MethodChannelMessenger extends TypeChannelMessenger {
   static final String METHOD_CREATE = "REFERENCE_CREATE";
   static final String METHOD_STATIC_METHOD = "REFERENCE_STATIC_METHOD";
   static final String METHOD_METHOD = "REFERENCE_METHOD";
+  static final String METHOD_DISPOSE = "REFERENCE_DISPOSE";
 
   public final BinaryMessenger binaryMessenger;
   public final String channelName;
@@ -65,6 +66,12 @@ public class MethodChannelMessenger extends TypeChannelMessenger {
                           (String) arguments.get(2),
                           (List<Object>) arguments.get(3));
                   callResult.success(result);
+                  break;
+                }
+                case METHOD_DISPOSE: {
+                  final List<Object> arguments = (List<Object>) call.arguments;
+                  onReceiveDisposeInstancePair((PairedInstance) arguments.get(0));
+                  callResult.success(null);
                   break;
                 }
                 default:

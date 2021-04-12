@@ -1,32 +1,24 @@
 package github.penguin.reference.reference;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.VisibleForTesting;
-
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
 
 public class InstancePairManager {
-  private static InstancePairManager instance;
-
   private final WeakHashMap<Object, String> instanceIds = new WeakHashMap<>();
   private final Map<String, Object> strongReferences = new HashMap<>();
   private final Map<String, WeakReference<Object>> weakReferences = new HashMap<>();
 
-  @VisibleForTesting
-  public InstancePairManager() { }
-
-  @NonNull
-  public static InstancePairManager getInstance() {
-    if (instance == null) {
-      System.loadLibrary("reference");
-      instance = new InstancePairManager();
-      //instance.initializeLib();
-    }
-    return instance;
-  }
+//  @NonNull
+//  public static InstancePairManager getInstance() {
+//    if (instance == null) {
+//      System.loadLibrary("reference");
+//      instance = new InstancePairManager();
+//      //instance.initializeLib();
+//    }
+//    return instance;
+//  }
 
   public boolean addPair(Object instance, String instanceId, boolean owner) {
     if (instanceIds.containsKey(instance)) return false;
@@ -50,24 +42,26 @@ public class InstancePairManager {
     return instanceIds.get(instance);
   }
 
-  public void releaseDartHandle(Object instance) {
-    if (!isPaired(instance)) throw new AssertionError();
-    final String instanceId = instanceIds.remove(instance);
-    weakReferences.remove(instanceId);
+  public void removePair(String instanceId) {
+    //if (!isPaired(instance)) throw new AssertionError();
+    Object instance = strongReferences.remove(instanceId);;
+    if (instance == null) instance = weakReferences.remove(instanceId);
+
+    instanceIds.remove(instance);
     //nativeReleaseDartHandle(instanceId);
   }
 
-  private void removePair(String instanceId) {
-    final Object instance = getInstance(instanceId);
-    if (instance == null) {
-      throw new IllegalStateException(
-          "The Object with the following instanceId has already been disposed: " + instanceId
-      );
-    }
-
-    instanceIds.remove(instance);
-    strongReferences.remove(instanceId);
-  }
+//  public void removePair(String instanceId) {
+//    final Object instance = getInstance(instanceId);
+//    if (instance == null) {
+//      throw new IllegalStateException(
+//          "The Object with the following instanceId has already been disposed: " + instanceId
+//      );
+//    }
+//
+//    instanceIds.remove(instance);
+//    strongReferences.remove(instanceId);
+//  }
 
   public Object getInstance(String instanceId) {
     final Object instance = strongReferences.get(instanceId);

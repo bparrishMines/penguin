@@ -15,8 +15,9 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final InstancePairManager instancePairManager =
-      InstancePairManager((message) => print(message));
+  // final InstancePairManager instancePairManager =
+  //     InstancePairManager((message) => print(message));
+  InstancePairManager? manager;
 
   @override
   void initState() {
@@ -41,8 +42,14 @@ class _MyAppState extends State<MyApp> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
-            final Object object = Object();
-            print(instancePairManager.addPair(object, 'yolo', owner: true));
+            // final Object object = Object();
+            // print(instancePairManager.addPair(object, 'yolo', owner: true));
+            //final Object object = Object();
+            manager = InstancePairManager((message) => print(message));
+            manager?.addPair(Object(), 'fhwoiefj', owner: true);
+
+            print('new manager');
+            manager = InstancePairManager((_) => print(_));
           },
           child: const Icon(Icons.ac_unit),
         ),
