@@ -18,7 +18,7 @@
   return _testInstancePairManager;
 }
 
-- (NSString *)generateUniqueInstanceId:(NSObject *)instance {
+- (NSString *)generateUniqueInstanceID:(NSObject *)instance {
   return @"test_instance_id";
 }
 @end

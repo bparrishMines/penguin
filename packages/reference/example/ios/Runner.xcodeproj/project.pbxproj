@@ -3,13 +3,12 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 50;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
-		51089BA325AF93DD00A374FC /* reference_exampleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 51089BA225AF93DD00A374FC /* reference_exampleTests.m */; };
 		51089BB125AF940000A374FC /* REFTypeChannelMessengerTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 51089BAB25AF940000A374FC /* REFTypeChannelMessengerTest.m */; };
 		51089BB225AF940000A374FC /* REFInstanceConverterTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 51089BAD25AF940000A374FC /* REFInstanceConverterTest.m */; };
 		51089BB325AF940000A374FC /* REFTypeChannelTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 51089BAE25AF940000A374FC /* REFTypeChannelTest.m */; };
@@ -20,6 +19,7 @@
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
+		A5788C860D1A3824A78C3276 /* libPods-Runner-reference_exampleTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D6B12AC8345A82F9C67AE740 /* libPods-Runner-reference_exampleTests.a */; };
 		CA05D872A7E32DD000FDD78A /* libPods-Runner.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 54979C9DB736CBA07F81E1BC /* libPods-Runner.a */; };
 /* End PBXBuildFile section */
 
@@ -51,7 +51,6 @@
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
 		51089BA025AF93DD00A374FC /* reference_exampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = reference_exampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		51089BA225AF93DD00A374FC /* reference_exampleTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = reference_exampleTests.m; sourceTree = "<group>"; };
 		51089BA425AF93DD00A374FC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		51089BAB25AF940000A374FC /* REFTypeChannelMessengerTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = REFTypeChannelMessengerTest.m; path = ../../../ios/Tests/REFTypeChannelMessengerTest.m; sourceTree = "<group>"; };
 		51089BAC25AF940000A374FC /* REFReferenceMatchers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = REFReferenceMatchers.h; path = ../../../ios/Tests/REFReferenceMatchers.h; sourceTree = "<group>"; };
@@ -73,7 +72,11 @@
 		97C146FD1CF9000F007C117D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		97C147001CF9000F007C117D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		97C147021CF9000F007C117D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A540BE7E8802E09343FC556B /* Pods-Runner-reference_exampleTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner-reference_exampleTests.debug.xcconfig"; path = "Target Support Files/Pods-Runner-reference_exampleTests/Pods-Runner-reference_exampleTests.debug.xcconfig"; sourceTree = "<group>"; };
+		A9E4D612F59514155C4B39FC /* Pods-Runner-reference_exampleTests.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner-reference_exampleTests.profile.xcconfig"; path = "Target Support Files/Pods-Runner-reference_exampleTests/Pods-Runner-reference_exampleTests.profile.xcconfig"; sourceTree = "<group>"; };
 		D638EF163774D09C36E8A927 /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
+		D6B12AC8345A82F9C67AE740 /* libPods-Runner-reference_exampleTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Runner-reference_exampleTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		EA65830DE53793B84D59003B /* Pods-Runner-reference_exampleTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner-reference_exampleTests.release.xcconfig"; path = "Target Support Files/Pods-Runner-reference_exampleTests/Pods-Runner-reference_exampleTests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,6 +84,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A5788C860D1A3824A78C3276 /* libPods-Runner-reference_exampleTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -99,6 +103,7 @@
 			isa = PBXGroup;
 			children = (
 				54979C9DB736CBA07F81E1BC /* libPods-Runner.a */,
+				D6B12AC8345A82F9C67AE740 /* libPods-Runner-reference_exampleTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -112,7 +117,6 @@
 				51089BB025AF940000A374FC /* REFReferenceMatchers.m */,
 				51089BAB25AF940000A374FC /* REFTypeChannelMessengerTest.m */,
 				51089BAE25AF940000A374FC /* REFTypeChannelTest.m */,
-				51089BA225AF93DD00A374FC /* reference_exampleTests.m */,
 				51089BA425AF93DD00A374FC /* Info.plist */,
 			);
 			path = reference_exampleTests;
@@ -180,6 +184,9 @@
 				765C31296EB6D4814FD5D2A1 /* Pods-Runner.debug.xcconfig */,
 				D638EF163774D09C36E8A927 /* Pods-Runner.release.xcconfig */,
 				6BBA22405C109BF9054DEAB2 /* Pods-Runner.profile.xcconfig */,
+				A540BE7E8802E09343FC556B /* Pods-Runner-reference_exampleTests.debug.xcconfig */,
+				EA65830DE53793B84D59003B /* Pods-Runner-reference_exampleTests.release.xcconfig */,
+				A9E4D612F59514155C4B39FC /* Pods-Runner-reference_exampleTests.profile.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -191,6 +198,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 51089BAA25AF93DD00A374FC /* Build configuration list for PBXNativeTarget "reference_exampleTests" */;
 			buildPhases = (
+				FF0A0E9E78CBBCC14041581B /* [CP] Check Pods Manifest.lock */,
 				51089B9C25AF93DD00A374FC /* Sources */,
 				51089B9D25AF93DD00A374FC /* Frameworks */,
 				51089B9E25AF93DD00A374FC /* Resources */,
@@ -335,6 +343,28 @@
 			shellPath = /bin/sh;
 			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" build";
 		};
+		FF0A0E9E78CBBCC14041581B /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Runner-reference_exampleTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -343,7 +373,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				51089BB225AF940000A374FC /* REFInstanceConverterTest.m in Sources */,
-				51089BA325AF93DD00A374FC /* reference_exampleTests.m in Sources */,
 				51089BB525AF940000A374FC /* REFReferenceMatchers.m in Sources */,
 				51089BB125AF940000A374FC /* REFTypeChannelMessengerTest.m in Sources */,
 				51089BB325AF940000A374FC /* REFTypeChannelTest.m in Sources */,
@@ -470,6 +499,7 @@
 		};
 		51089BA725AF93DD00A374FC /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A540BE7E8802E09343FC556B /* Pods-Runner-reference_exampleTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -498,6 +528,7 @@
 		};
 		51089BA825AF93DD00A374FC /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = EA65830DE53793B84D59003B /* Pods-Runner-reference_exampleTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -525,6 +556,7 @@
 		};
 		51089BA925AF93DD00A374FC /* Profile */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A9E4D612F59514155C4B39FC /* Pods-Runner-reference_exampleTests.profile.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;

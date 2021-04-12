@@ -1,8 +1,8 @@
 #import <XCTest/XCTest.h>
+#import <OCHamcrest/OCHamcrest.h>
 
 #import "REFReferenceMatchers.h"
 
-@import OCHamcrest;
 @import reference;
 
 @interface REFTypeChannelManagerTest : XCTestCase
@@ -22,10 +22,7 @@
        arguments:@[] owner:YES], _testMessenger.testHandler.testClassInstance);
   
   XCTAssertTrue([_testMessenger isPaired:_testMessenger.testHandler.testClassInstance]);
-  
-  XCTAssertNil([_testMessenger onReceiveCreateNewInstancePair:@""
-  pairedInstance:[REFPairedInstance fromID:@"test_id"]
-       arguments:@[] owner:YES]);
+
 }
 
 - (void)testOnReceiveInvokeStaticMethod {

@@ -1,5 +1,6 @@
+#import <OCHamcrest/OCHamcrest.h>
+
 @import reference;
-@import OCHamcrest;
 
 @class REFTestMessenger;
 @class REFTestClass;

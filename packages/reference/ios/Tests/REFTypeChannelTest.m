@@ -1,8 +1,8 @@
 #import <XCTest/XCTest.h>
+#import <OCHamcrest/OCHamcrest.h>
 
 #import "REFReferenceMatchers.h"
 
-@import OCHamcrest;
 @import reference;
 
 @interface REFTypeChannelTest : XCTestCase
@@ -32,14 +32,6 @@
     blockPairedInstance = pairedInstance;
   }];
   XCTAssertNil(blockPairedInstance);
-
-  [_testChannel createNewInstancePair:testClass
-                                owner:[[NSObject alloc] init]
-                           completion:^(REFPairedInstance *pairedInstance, NSError *error) {
-    blockPairedInstance = pairedInstance;
-  }];
-  XCTAssertNil(blockPairedInstance);
-  XCTAssertTrue([_testMessenger isPaired:testClass]);
 }
 
 - (void)testInvokeStaticMethod {
@@ -56,17 +48,6 @@
   
   __block id blockResult;
   [_testChannel invokeMethod:testClass methodName:@"aMethod" arguments:@[] completion:^(id result, NSError *error) {
-    blockResult = result;
-  }];
-  XCTAssertEqualObjects(@"return_value", blockResult);
-}
-
-- (void)testInvokeMethodOnUnpairedInstance {
-  __block id blockResult;
-  [_testChannel invokeMethod:[[REFTestClass alloc] init]
-                  methodName:@"aMethod"
-                   arguments:@[]
-                  completion:^(id result, NSError *error) {
     blockResult = result;
   }];
   XCTAssertEqualObjects(@"return_value", blockResult);

@@ -1,8 +1,8 @@
 #import <XCTest/XCTest.h>
+#import <OCHamcrest/OCHamcrest.h>
 
 #import "REFReferenceMatchers.h"
 
-@import OCHamcrest;
 @import reference;
 
 @interface REFInstanceConverterTest : XCTestCase
@@ -19,10 +19,10 @@
 }
 
 - (void)testConvertInstancesToPairedInstances_handlesPairedObject {
-    [_testMessenger onReceiveCreateNewInstancePair:@"test_channel"
+    XCTAssertEqualObjects([_testMessenger onReceiveCreateNewInstancePair:@"test_channel"
                                     pairedInstance:[REFPairedInstance fromID:@"test_id"]
                                          arguments:@[]
-                                         owner:YES];
+                                         owner:YES], _testMessenger.testHandler.testClassInstance);
     
     XCTAssertEqualObjects([REFPairedInstance fromID:@"test_id"],
                           [_converter convertInstancesToPairedInstances:_testMessenger

@@ -6,15 +6,11 @@
   REFInstancePairManager *_instancePairManager;
 }
 
-- (REFInstancePairManager *)instancePairManager {
-  return _instancePairManager;
-}
-
 - (instancetype)initWithMessageDispatcher:(id<REFTypeChannelMessageDispatcher>)messageDispatcher {
   self = [super init];
   if (self) {
     _messageDispatcher = messageDispatcher;
-    _channelHandlers = [[REFThreadSafeMapTable alloc] init];
+    _channelHandlers = [REFThreadSafeMapTable strongToStrongObjectsMapTable];
     _instancePairManager = [[REFInstancePairManager alloc] init];
   }
   return self;
@@ -28,6 +24,10 @@
          pairedInstance:(REFPairedInstance *)pairedInstance
                   owner:(BOOL)owner {
   return [[self instancePairManager] addPair:instance instanceID:pairedInstance.instanceID owner:owner];
+}
+
+- (REFInstancePairManager *)instancePairManager {
+  return _instancePairManager;
 }
 
 - (id<REFInstanceConverter>)converter {
@@ -64,7 +64,10 @@
                          instance:(NSObject *)instance
                             owner:(BOOL)owner
                        completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
-  if ([self isPaired:instance]) completion(nil, nil);
+  if ([self isPaired:instance]) {
+    completion(nil, nil);
+    return;
+  }
   
   NSObject<REFTypeChannelHandler> *handler = [self getChannelHandler:channelName];
   if (!handler) {
@@ -149,12 +152,11 @@
                               pairedInstance:(REFPairedInstance *)pairedInstance
                                    arguments:(NSArray<id> *)arguments
                                        owner:(BOOL)owner {
-  if ([self getPairedObject:pairedInstance]) return nil;
-  
-  
+  NSAssert(![self getPairedObject:pairedInstance], @"An object with `PairedInstance` has already been created.");
   NSObject *instance = [[self getChannelHandler:channelName] createInstance:self
                                                                 arguments:[[self converter]
                                                                            convertPairedInstancesToInstances:self obj:arguments]];
+
   NSAssert(![self isPaired:instance], @"");
   [self addInstancePair:instance pairedInstance:pairedInstance owner:owner];
   return instance;

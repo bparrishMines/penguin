@@ -1,9 +1,9 @@
 #import <Flutter/Flutter.h>
 #import <XCTest/XCTest.h>
+#import <OCHamcrest/OCHamcrest.h>
 
 #import "REFReferenceMatchers.h"
 
-@import OCHamcrest;
 @import reference;
 
 @interface REFTestBinaryMessenger : NSObject<FlutterBinaryMessenger>
@@ -97,7 +97,7 @@
   return self;
 }
 
-- (NSString *)generateUniqueInstanceId:(NSObject *)instance {
+- (NSString *)generateUniqueInstanceID:(NSObject *)instance {
   return @"test_instance_id";
 }
 @end
@@ -186,7 +186,7 @@
   FlutterMethodCall *methodCall = _testBinaryMessenger.methodCalls[0];
   XCTAssertEqualObjects(methodCall.method, @"REFERENCE_CREATE");
   
-  NSArray *arugments = @[@"test_channel", [REFPairedInstance fromID:@"test_instance_id"], @[], @(YES)];
+  NSArray *arugments = @[@"test_channel", [REFPairedInstance fromID:@"test_instance_id"], @[], @(NO)];
   XCTAssertEqualObjects(methodCall.arguments, arugments);
 }
 
