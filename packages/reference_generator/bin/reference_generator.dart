@@ -85,7 +85,7 @@ void main(List<String> arguments) async {
   if (options.dartOut != null) {
     final HttpClientRequest request = await HttpClient().getUrl(
       Uri.parse(
-        'https://raw.githubusercontent.com/bparrishMines/penguin/ffi/packages/reference_example/lib/src/template.g.dart',
+        'https://raw.githubusercontent.com/bparrishMines/penguin/master/packages/reference_example/lib/src/template.g.dart',
       ),
     );
     final HttpClientResponse response = await request.close();
@@ -106,7 +106,7 @@ void main(List<String> arguments) async {
   if (options.javaOut != null) {
     final HttpClientRequest request = await HttpClient().getUrl(
       Uri.parse(
-        'https://raw.githubusercontent.com/bparrishMines/penguin/ffi/packages/reference_example/android/src/main/java/com/example/reference_example/LibraryTemplate.java',
+        'https://raw.githubusercontent.com/bparrishMines/penguin/master/packages/reference_example/android/src/main/java/com/example/reference_example/LibraryTemplate.java',
       ),
     );
     final HttpClientResponse response = await request.close();
@@ -133,7 +133,7 @@ void main(List<String> arguments) async {
   if (options.objcHeaderOut != null) {
     final HttpClientRequest request = await HttpClient().getUrl(
       Uri.parse(
-        'https://raw.githubusercontent.com/bparrishMines/penguin/master/packages/reference/ios/Classes/REFLibraryTemplate_Internal.h',
+        'https://raw.githubusercontent.com/bparrishMines/penguin/ios_gen/packages/reference_example/ios/Classes/REFLibraryTemplate.h',
       ),
     );
     final HttpClientResponse response = await request.close();
@@ -159,7 +159,7 @@ void main(List<String> arguments) async {
   if (options.objcImplOut != null) {
     final HttpClientRequest request = await HttpClient().getUrl(
       Uri.parse(
-        'https://raw.githubusercontent.com/bparrishMines/penguin/master/packages/reference/ios/Classes/REFLibraryTemplate_Internal.m',
+        'https://raw.githubusercontent.com/bparrishMines/penguin/ios_gen/packages/reference_example/ios/Classes/REFLibraryTemplate.m',
       ),
     );
     final HttpClientResponse response = await request.close();

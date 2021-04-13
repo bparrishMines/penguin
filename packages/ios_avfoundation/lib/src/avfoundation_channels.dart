@@ -3,24 +3,54 @@ import 'package:reference/reference.dart';
 import 'avfoundation.dart';
 import 'avfoundation.g.dart';
 
-abstract class Channels {
-  Channels._();
+class ChannelRegistrar extends $ChannelRegistrar {
+  ChannelRegistrar($LibraryImplementations implementations)
+      : super(implementations);
 
-  static CaptureDeviceInputChannel captureDeviceInputChannel =
-      CaptureDeviceInputChannel(MethodChannelMessenger.instance)
-        ..setHandler(CaptureDeviceInputHandler());
+  static ChannelRegistrar instance =
+      ChannelRegistrar(LibraryImplementations(MethodChannelMessenger.instance))
+        ..registerHandlers();
+}
 
-  static CaptureSessionChannel captureSessionChannel =
-      CaptureSessionChannel(MethodChannelMessenger.instance)
-        ..setHandler(CaptureSessionHandler());
+class LibraryImplementations with $LibraryImplementations {
+  LibraryImplementations(TypeChannelMessenger messenger)
+      : captureDeviceChannel = CaptureDeviceChannel(messenger),
+        captureDeviceInputChannel = CaptureDeviceInputChannel(messenger),
+        captureSessionChannel = CaptureSessionChannel(messenger),
+        previewControllerChannel = PreviewControllerChannel(messenger),
+        captureInputChannel = CaptureInputChannel(messenger);
 
-  static CaptureDeviceChannel captureDeviceChannel =
-      CaptureDeviceChannel(MethodChannelMessenger.instance)
-        ..setHandler(CaptureDeviceHandler());
+  @override
+  final CaptureDeviceChannel captureDeviceChannel;
 
-  static PreviewControllerChannel previewControllerInputChannel =
-      PreviewControllerChannel(MethodChannelMessenger.instance)
-        ..setHandler(PreviewControllerHandler());
+  @override
+  final CaptureDeviceHandler captureDeviceHandler = CaptureDeviceHandler();
+
+  @override
+  final CaptureDeviceInputChannel captureDeviceInputChannel;
+
+  @override
+  final CaptureDeviceInputHandler captureDeviceInputHandler =
+      CaptureDeviceInputHandler();
+
+  @override
+  final CaptureSessionChannel captureSessionChannel;
+
+  @override
+  final CaptureSessionHandler captureSessionHandler = CaptureSessionHandler();
+
+  @override
+  final PreviewControllerChannel previewControllerChannel;
+
+  @override
+  final PreviewControllerHandler previewControllerHandler =
+      PreviewControllerHandler();
+
+  @override
+  final CaptureInputChannel captureInputChannel;
+
+  @override
+  final CaptureInputHandler captureInputHandler = CaptureInputHandler();
 }
 
 class CaptureDeviceInputChannel extends $CaptureDeviceInputChannel {
@@ -41,56 +71,23 @@ class PreviewControllerChannel extends $PreviewControllerChannel {
 
 class CaptureDeviceInputHandler extends $CaptureDeviceInputHandler {}
 
-class CaptureSessionHandler extends $CaptureSessionHandler {
-  CaptureSessionHandler()
-      : super(
-          onAdded: (manager, instance) {
-            final CaptureSession session = instance as CaptureSession;
-            for (final CaptureDeviceInput input in session.inputs) {
-              Channels.captureDeviceInputChannel
-                  .createNewInstancePair(input, owner: session);
-            }
-          },
-          onRemoved: (manager, instance) {
-            final CaptureSession session = instance as CaptureSession;
-            for (final CaptureDeviceInput input in session.inputs) {
-              Channels.captureDeviceInputChannel
-                  .disposeInstancePair(input, owner: session);
-            }
-          },
-        );
-}
+class CaptureSessionHandler extends $CaptureSessionHandler {}
 
 class CaptureDeviceHandler extends $CaptureDeviceHandler {
-  CaptureDeviceHandler()
-      : super(
-          onCreate: (_, args) {
-            return CaptureDevice(
-              uniqueId: args.uniqueId,
-              position: args.position,
-            );
-          },
-        );
+  @override
+  $CaptureDevice onCreate(
+    TypeChannelMessenger messenger,
+    $CaptureDeviceCreationArgs args,
+  ) {
+    // ignore: invalid_use_of_visible_for_testing_member
+    return CaptureDevice(uniqueId: args.uniqueId, position: args.position);
+  }
 }
 
-class PreviewControllerHandler extends $PreviewControllerHandler {
-  PreviewControllerHandler()
-      : super(
-          onAdded: (manager, instance) {
-            final CaptureSession session =
-                instance.captureSession as CaptureSession;
-            Channels.captureSessionChannel.createNewInstancePair(
-              session,
-              owner: instance,
-            );
-          },
-          onRemoved: (manager, instance) {
-            final CaptureSession session =
-                instance.captureSession as CaptureSession;
-            Channels.captureSessionChannel.disposeInstancePair(
-              session,
-              owner: instance,
-            );
-          },
-        );
+class PreviewControllerHandler extends $PreviewControllerHandler {}
+
+class CaptureInputChannel extends $CaptureInputChannel {
+  CaptureInputChannel(TypeChannelMessenger messenger) : super(messenger);
 }
+
+class CaptureInputHandler extends $CaptureInputHandler {}
