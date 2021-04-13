@@ -1,23 +1,37 @@
 #import "REFCollections_Internal.h"
 
-@interface REFBiMapTable<KeyType, ObjectType> : NSObject
-// Inverse of inverse is null
-@property(readonly) REFBiMapTable<ObjectType, KeyType> *_Nullable inverse;
-- (void)setObject:(ObjectType)object forKey:(KeyType)key;
-- (void)removeObjectForKey:(KeyType)key;
-- (ObjectType _Nullable)objectForKey:(KeyType)key;
-- (NSEnumerator<ObjectType> *)objectEnumerator;
-@end
-
 @implementation REFThreadSafeMapTable {
   NSMapTable<id, id> *_table;
   dispatch_queue_t _lockQueue;
 }
 
++ (REFThreadSafeMapTable *)weakToStrongObjectsMapTable {
+  REFThreadSafeMapTable *table = [[REFThreadSafeMapTable alloc] init];
+  table->_table = [NSMapTable weakToStrongObjectsMapTable];
+  return table;
+}
+
++ (REFThreadSafeMapTable *)weakToWeakObjectsMapTable {
+  REFThreadSafeMapTable *table = [[REFThreadSafeMapTable alloc] init];
+  table->_table = [NSMapTable weakToWeakObjectsMapTable];
+  return table;
+}
+
++ (REFThreadSafeMapTable *)strongToWeakObjectsMapTable {
+  REFThreadSafeMapTable *table = [[REFThreadSafeMapTable alloc] init];
+  table->_table = [NSMapTable strongToWeakObjectsMapTable];
+  return table;
+}
+
++ (REFThreadSafeMapTable *)strongToStrongObjectsMapTable {
+  REFThreadSafeMapTable *table = [[REFThreadSafeMapTable alloc] init];
+  table->_table = [NSMapTable strongToStrongObjectsMapTable];
+  return table;
+}
+
 - (instancetype _Nonnull)init {
   self = [super init];
   if (self) {
-    _table = [NSMapTable strongToStrongObjectsMapTable];
     _lockQueue = dispatch_queue_create("REFThreadSafeMapTable", DISPATCH_QUEUE_SERIAL);
   }
   return self;
@@ -56,105 +70,57 @@
 }
 @end
 
-@implementation REFBiMapTable {
-  REFThreadSafeMapTable<id, id> *_table;
-  dispatch_queue_t _lockQueue;
+@implementation REFInstancePairManager {
+  REFThreadSafeMapTable<NSObject *, NSString *> *_instanceIds;
+  REFThreadSafeMapTable<NSString *, NSObject *> *_strongReferences;
+  REFThreadSafeMapTable<NSString *, NSObject *> *_weakReferences;
 }
 
 - (instancetype)init {
   self = [super init];
   if (self) {
-    _table = [[REFThreadSafeMapTable alloc] init];
-    _inverse = [[REFBiMapTable alloc] initWithoutInverse];
+    _instanceIds = [REFThreadSafeMapTable weakToStrongObjectsMapTable];
+    _strongReferences = [REFThreadSafeMapTable strongToStrongObjectsMapTable];
+    _weakReferences = [REFThreadSafeMapTable strongToWeakObjectsMapTable];
   }
   return self;
 }
 
-- (instancetype)initWithoutInverse {
-  self = [super init];
-  if (self) {
-    _table = [[REFThreadSafeMapTable alloc] init];
-  }
-  return self;
+- (BOOL)isPaired:(NSObject *)instance {
+  return [_instanceIds objectForKey:instance] != nil;
 }
 
-- (void)setObject:(id _Nonnull)object forKey:(id _Nonnull)key {
-  if (key && object && ![self objectForKey:key] && ![self.inverse objectForKey:object]) {
-    [_table setObject:object forKey:key];
-    [_inverse->_table setObject:key forKey:object];
-  }
-}
-
-- (void)removeObjectForKey:(id _Nonnull)key {
-  if (key) {
-    id object = [_table objectForKey:key];
-    [_table removeObjectForKey:key];
-    [_inverse->_table removeObjectForKey:object];
-  }
-}
-
-- (id _Nullable)objectForKey:(id _Nonnull)key {
-  return [_table objectForKey:key];
-}
-
-- (NSEnumerator<id> *)objectEnumerator {
-  return _table.objectEnumerator;
-}
-@end
-
-@implementation InstancePairManager {
-  REFBiMapTable<NSObject *, REFPairedInstance *> *_pairedInstances;
-  // TODO: Need to make thread-safe owner sets
-  REFThreadSafeMapTable<NSObject *, NSMutableSet<NSObject *> *> *_owners;
-}
-
-- (instancetype)init {
-  self = [super init];
-  if (self) {
-    _pairedInstances = [[REFBiMapTable alloc] init];
-    _owners = [[REFThreadSafeMapTable alloc] init];
-  }
-  return self;
-}
-
-- (BOOL)isPaired:(NSObject *)object {
-  return [self getPairedPairedInstance:object] != nil;
-}
-
-- (BOOL)addPair:(NSObject *)object
- pairedInstance:(REFPairedInstance *)pairedInstance
-          owner:(NSObject *)owner {
-  BOOL wasPaired = [self isPaired:object];
+- (BOOL)addPair:(NSObject *)instance instanceID:(NSString *)instanceID owner:(BOOL)owner {
+  if ([self isPaired:instance]) return NO;
+  NSAssert(![self getInstance:instanceID], @"");
   
-  if (!wasPaired) {
-    [_pairedInstances setObject:pairedInstance forKey:object];
-    [_owners setObject:[NSMutableSet set] forKey:object];
+  [_instanceIds setObject:instanceID forKey:instance];
+  
+  if (owner) {
+    [_weakReferences setObject:instance forKey:instanceID];
+  } else {
+    [_strongReferences setObject:instance forKey:instanceID];
   }
-  
-  [[_owners objectForKey:object] addObject:owner];
-  return !wasPaired;
-}
-
-- (BOOL)removePairWithObject:(id)object
-                       owner:(NSObject *)owner
-                       force:(BOOL)force {
-  if (![self isPaired:object]) return NO;
-  
-  NSMutableSet *objectOwners = [_owners objectForKey:object];
-  [objectOwners removeObject:owner];
-  
-  if (!force && [objectOwners count] > 0) return NO;
-  
-  [_pairedInstances removeObjectForKey:object];
-  [_owners removeObjectForKey:object];
   return YES;
 }
 
-- (REFPairedInstance *_Nullable)getPairedPairedInstance:(id)object {
-  return [_pairedInstances objectForKey:object];
+- (void)removePair:(NSString *)instanceID {
+  NSObject *instance = [self getInstance:instanceID];
+  if (instance) {
+    [_instanceIds removeObjectForKey:instance];
+    [_strongReferences removeObjectForKey:instanceID];
+  }
+  
+  [_weakReferences removeObjectForKey:instanceID];
 }
 
-- (id _Nullable)getPairedObject:(REFPairedInstance *)pairedInstance {
-  return [_pairedInstances.inverse objectForKey:pairedInstance];
+- (NSString *_Nullable)getInstanceID:(NSObject *)instance {
+  return [_instanceIds objectForKey:instance];
+}
+
+- (NSObject *_Nullable)getInstance:(NSString *)instanceID {
+  NSObject *instance = [_strongReferences objectForKey:instanceID];
+  if (instance) return instance;
+  return [_weakReferences objectForKey:instanceID];
 }
 @end

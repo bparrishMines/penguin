@@ -26,7 +26,7 @@ public class TypeChannel<T> {
   }
 
   public Completable<PairedInstance> createNewInstancePair(T instance, boolean owner) {
-    return messenger.sendCreateNewInstancePair(name, instance, owner);
+    return messenger.createNewInstancePair(name, instance, owner);
   }
 
   public Completable<Object> invokeStaticMethod(String methodName, List<Object> arguments) {
@@ -37,7 +37,7 @@ public class TypeChannel<T> {
     return messenger.sendInvokeMethod(name, instance, methodName, arguments);
   }
 
-  public void releaseDartHandle(T instance) {
-    messenger.releaseDartHandle(instance);
+  public Completable<Void> disposeInstancePair(T instance) {
+    return messenger.disposeInstancePair(instance);
   }
 }

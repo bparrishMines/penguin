@@ -1,8 +1,8 @@
 #import <XCTest/XCTest.h>
+#import <OCHamcrest/OCHamcrest.h>
 
 #import "REFReferenceMatchers.h"
 
-@import OCHamcrest;
 @import reference;
 
 @interface REFTypeChannelTest : XCTestCase
@@ -19,27 +19,19 @@
 }
 
 - (void)testCreateNewInstancePair {
-  REFTestClass *testClass = [[REFTestClass alloc] initWithMessenger:_testMessenger];
+  REFTestClass *testClass = [[REFTestClass alloc] init];
   
   __block REFPairedInstance *blockPairedInstance;
-  [_testChannel createNewInstancePair:testClass completion:^(REFPairedInstance *pairedInstance, NSError *error) {
+  [_testChannel createNewInstancePair:testClass owner:YES completion:^(REFPairedInstance *pairedInstance, NSError *error) {
     blockPairedInstance = pairedInstance;
   }];
   XCTAssertEqualObjects([REFPairedInstance fromID:@"test_instance_id"], blockPairedInstance);
   XCTAssertTrue([_testMessenger isPaired:testClass]);
   
-  [_testChannel createNewInstancePair:testClass completion:^(REFPairedInstance *pairedInstance, NSError *error) {
+  [_testChannel createNewInstancePair:testClass owner:YES completion:^(REFPairedInstance *pairedInstance, NSError *error) {
     blockPairedInstance = pairedInstance;
   }];
   XCTAssertNil(blockPairedInstance);
-
-  [_testChannel createNewInstancePair:testClass
-                                owner:[[NSObject alloc] init]
-                           completion:^(REFPairedInstance *pairedInstance, NSError *error) {
-    blockPairedInstance = pairedInstance;
-  }];
-  XCTAssertNil(blockPairedInstance);
-  XCTAssertTrue([_testMessenger isPaired:testClass]);
 }
 
 - (void)testInvokeStaticMethod {
@@ -51,8 +43,8 @@
 }
 
 - (void)testInvokeMethod {
-  REFTestClass *testClass = [[REFTestClass alloc] initWithMessenger:_testMessenger];
-  [_testChannel createNewInstancePair:testClass completion:^(REFPairedInstance *pairedInstance, NSError *error) {}];
+  REFTestClass *testClass = [[REFTestClass alloc] init];
+  [_testChannel createNewInstancePair:testClass owner:YES completion:^(REFPairedInstance *pairedInstance, NSError *error) {}];
   
   __block id blockResult;
   [_testChannel invokeMethod:testClass methodName:@"aMethod" arguments:@[] completion:^(id result, NSError *error) {
@@ -61,31 +53,13 @@
   XCTAssertEqualObjects(@"return_value", blockResult);
 }
 
-- (void)testInvokeMethodOnUnpairedInstance {
-  __block id blockResult;
-  [_testChannel invokeMethod:[[REFTestClass alloc] initWithMessenger:_testMessenger]
-                  methodName:@"aMethod"
-                   arguments:@[]
-                  completion:^(id result, NSError *error) {
-    blockResult = result;
-  }];
-  XCTAssertEqualObjects(@"return_value", blockResult);
-}
-
 - (void)testDisposeInstancePair {
-  REFTestClass *testClass = [[REFTestClass alloc] initWithMessenger:_testMessenger];
+  REFTestClass *testClass = [[REFTestClass alloc] init];
   
-  [_testChannel createNewInstancePair:testClass completion:^(REFPairedInstance *pairedInstance, NSError *error) {}];
+  [_testChannel createNewInstancePair:testClass owner:YES completion:^(REFPairedInstance *pairedInstance, NSError *error) {}];
   [_testChannel disposeInstancePair:testClass completion:^(NSError *error) {}];
   XCTAssertFalse([_testMessenger isPaired:testClass]);
 
   [_testChannel disposeInstancePair:testClass completion:^(NSError *error) {}];
-  NSObject *owner = [[NSObject alloc] init];
-  [_testChannel createNewInstancePair:testClass owner:owner completion:^(REFPairedInstance *pairedInstance, NSError *error) {}];
-  [_testChannel disposeInstancePair:testClass completion:^(NSError *error) {}];
-  XCTAssertTrue([_testMessenger isPaired:testClass]);
-  
-  [_testChannel disposeInstancePair:testClass owner:owner completion:^(NSError *error) {}];
-  XCTAssertFalse([_testMessenger isPaired:testClass]);
 }
 @end

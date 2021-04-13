@@ -5,62 +5,134 @@ import 'dart:isolate';
 
 import 'package:ffi/ffi.dart';
 
-/// Stores instance pair.
-class InstancePairManager {
-  InstancePairManager._() {
-    _referenceDartDlInitialize(NativeApi.initializeApiDLData);
-    _removePairReceivePort = ReceivePort()..listen(_removePair);
-    _dartRegisterReceivePort(_removePairReceivePort.sendPort.nativePort);
+final DynamicLibrary _referenceLib = Platform.isAndroid
+    ? DynamicLibrary.open('libreference.so')
+    : DynamicLibrary.process();
+
+final int Function(Pointer<Void> data) _referenceDartDlInitialize =
+    _referenceLib.lookupFunction<Int32 Function(Pointer<Void> data),
+        int Function(Pointer<Void> data)>('reference_dart_dl_initialize');
+
+final _NativeWeakMap Function(int) createWeakMap = _referenceLib.lookupFunction<
+    _NativeWeakMap Function(Int64),
+    _NativeWeakMap Function(int)>('create_weak_map');
+
+class _NativeWeakMap extends Struct {
+  factory _NativeWeakMap(int onFinalizePort) {
+    return createWeakMap(onFinalizePort);
   }
 
-  static final InstancePairManager instance = InstancePairManager._();
+  @Int64()
+  external int onFinalizePort;
 
-  static final DynamicLibrary _referenceLib = Platform.isAndroid
-      ? DynamicLibrary.open('libreference.so')
-      : DynamicLibrary.process();
+  external Pointer<Void> instanceMap;
+}
 
-  static final void Function(Pointer<Void> data) _referenceDartDlInitialize =
-      _referenceLib.lookupFunction<Void Function(Pointer<Void> data),
-          void Function(Pointer<Void> data)>('reference_dart_dl_initialize');
+class _WeakMap {
+  _WeakMap(void Function(String) onFinalize) {
+    _onFinalizePort = ReceivePort()
+      ..listen((message) {
+        final String instanceId = message.toString();
+        remove(instanceId);
+        onFinalize(instanceId);
+      });
+    _nativeWeakMap = _NativeWeakMap(_onFinalizePort.sendPort.nativePort);
+  }
 
-  static final void Function(Pointer<Int8>, Object, int) _dartAddPair =
-      _referenceLib.lookupFunction<Void Function(Pointer<Int8>, Handle, Int32),
-          void Function(Pointer<Int8>, Object, int)>('dart_add_pair');
+  static final int Function(_NativeWeakMap, Pointer<Int8>, Object) _put =
+      _referenceLib.lookupFunction<
+          Int32 Function(_NativeWeakMap, Pointer<Int8>, Handle),
+          int Function(_NativeWeakMap, Pointer<Int8>, Object)>('put');
 
-  static final Object? Function(Pointer<Int8>) _dartGetObject =
-      _referenceLib.lookupFunction<Handle Function(Pointer<Int8>),
-          Object Function(Pointer<Int8>)>('dart_get_object');
+  static final void Function(_NativeWeakMap, Pointer<Int8>) _remove =
+      _referenceLib.lookupFunction<Void Function(_NativeWeakMap, Pointer<Int8>),
+          void Function(_NativeWeakMap, Pointer<Int8>)>('remove_key');
 
-  static final int Function(Pointer<Int8>) _dartContainsInstanceId =
-      _referenceLib.lookupFunction<Int32 Function(Pointer<Int8>),
-          int Function(Pointer<Int8>)>('dart_contains_instanceId');
+  static final int Function(_NativeWeakMap, Pointer<Int8>) _contains =
+      _referenceLib.lookupFunction<
+          Int32 Function(_NativeWeakMap, Pointer<Int8>),
+          int Function(_NativeWeakMap, Pointer<Int8>)>('contains');
 
-  static final void Function(int sendPort) _dartRegisterReceivePort =
-      _referenceLib.lookupFunction<Void Function(Int64 sendPort),
-          void Function(int sendPort)>('register_dart_receive_port');
+  static final Object Function(_NativeWeakMap, Pointer<Int8>) _get =
+      _referenceLib.lookupFunction<
+          Handle Function(_NativeWeakMap, Pointer<Int8>),
+          Object Function(_NativeWeakMap, Pointer<Int8>)>('get');
 
-  static final void Function(Pointer<Int8>) _dartRemovePair =
-      _referenceLib.lookupFunction<Void Function(Pointer<Int8>),
-          void Function(Pointer<Int8>)>('dart_remove_pair');
+  late final ReceivePort _onFinalizePort;
+  late final _NativeWeakMap _nativeWeakMap;
 
-  static Pointer<Int8> _stringAsNativeCharArray(String value) {
+  Pointer<Int8> _stringAsNativeCharArray(String value) {
     return value.toNativeUtf8().cast<Int8>();
   }
 
+  bool put(String instanceId, Object instance) {
+    return _put(
+          _nativeWeakMap,
+          _stringAsNativeCharArray(instanceId),
+          instance,
+        ) ==
+        1;
+  }
+
+  bool containsKey(String instanceId) {
+    return _contains(_nativeWeakMap, _stringAsNativeCharArray(instanceId)) == 1;
+  }
+
+  Object? get(String instanceId) {
+    if (containsKey(instanceId)) {
+      return _get(_nativeWeakMap, _stringAsNativeCharArray(instanceId));
+    }
+
+    return null;
+  }
+
+  void remove(String instanceId) {
+    if (containsKey(instanceId)) {
+      _remove(_nativeWeakMap, _stringAsNativeCharArray(instanceId));
+    }
+  }
+}
+
+/// Stores instance pair.
+class InstancePairManager {
+  InstancePairManager(void Function(String) onFinalize) {
+    if (!_initialized) {
+      _referenceDartDlInitialize(NativeApi.initializeApiDLData);
+      _initialized = true;
+    }
+    _weakReferences = _WeakMap(onFinalize);
+  }
+
+  static bool _initialized = false;
+
   final Expando _instanceIds = Expando();
-  late final ReceivePort _removePairReceivePort;
+  final Map<String, Object> _strongReferences = <String, Object>{};
+  late final _WeakMap _weakReferences;
+
+  void removePair(String instanceId) {
+    final Object? instance = getInstance(instanceId);
+    if (instance != null) {
+      _instanceIds[instance] = null;
+      _strongReferences.remove(instanceId);
+    }
+
+    _weakReferences.remove(instanceId);
+  }
 
   bool addPair(
     Object instance,
     String instanceId, {
     required bool owner,
   }) {
-    if (_instanceIds[instance] != null) return false;
-    final Pointer<Int8> charArray = _stringAsNativeCharArray(instanceId);
-    assert(_dartContainsInstanceId(charArray) == 0);
+    if (isPaired(instance)) return false;
+    assert(getInstance(instanceId) == null);
 
     _instanceIds[instance] = instanceId;
-    _dartAddPair(charArray, instance, owner ? 1 : 0);
+    if (owner) {
+      return _weakReferences.put(instanceId, instance);
+    }
+
+    _strongReferences[instanceId] = instance;
     return true;
   }
 
@@ -80,22 +152,6 @@ class InstancePairManager {
   ///
   /// Returns null if this [pairedInstance] is not paired.
   Object? getInstance(String instanceId) {
-    final Pointer<Int8> charArray = _stringAsNativeCharArray(instanceId);
-    if (_dartContainsInstanceId(charArray) == 0) return null;
-    return _dartGetObject(charArray);
-  }
-
-  void _removePair(dynamic message) {
-    final String instanceId = message.toString();
-
-    final Object? instance = getInstance(instanceId);
-    if (instance == null) {
-      throw StateError(
-        'The Object with the following instanceId has already been disposed: $instanceId',
-      );
-    }
-
-    _instanceIds[instance] = null;
-    _dartRemovePair(_stringAsNativeCharArray(instanceId));
+    return _strongReferences[instanceId] ?? _weakReferences.get(instanceId);
   }
 }

@@ -65,6 +65,22 @@ void main() {
         'return_value',
       );
     });
+
+    test('onReceiveDisposeInstancePair', () {
+      testMessenger.onReceiveCreateNewInstancePair(
+        'test_channel',
+        const PairedInstance('test_id'),
+        <Object>[],
+        owner: true,
+      );
+      testMessenger.onReceiveDisposeInstancePair(
+        const PairedInstance('test_id'),
+      );
+      expect(
+        testMessenger.isPaired(testMessenger.testHandler.testClassInstance),
+        isFalse,
+      );
+    });
   });
 
   group('$TypeChannel', () {
@@ -77,7 +93,7 @@ void main() {
     });
 
     test('createNewInstancePair', () {
-      final TestClass testClass = TestClass(testMessenger);
+      final TestClass testClass = TestClass();
 
       expect(
         testChannel.createNewInstancePair(
@@ -109,13 +125,26 @@ void main() {
     });
 
     test('invokeMethod', () {
-      final TestClass testClass = TestClass(testMessenger);
+      final TestClass testClass = TestClass();
 
       testChannel.createNewInstancePair(testClass, owner: true);
       expect(
         testChannel.sendInvokeMethod(testClass, 'aMethod', <Object>[]),
         completion('return_value'),
       );
+    });
+
+    test('disposeInstancePair', () {
+      final testClass = TestClass();
+
+      testChannel.createNewInstancePair(testClass, owner: true);
+      expect(testChannel.disposeInstancePair(testClass), completes);
+      expect(testMessenger.isPaired(testClass), isFalse);
+
+      expect(testChannel.disposeInstancePair(testClass), completes);
+
+      // Test that this completes with second call.
+      expect(testChannel.disposeInstancePair(testClass), completes);
     });
   });
 }

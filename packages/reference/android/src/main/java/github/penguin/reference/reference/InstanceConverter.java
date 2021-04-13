@@ -9,15 +9,15 @@ import java.util.Map;
 
 public interface InstanceConverter {
   @Nullable
-  Object convertForRemoteMessenger(TypeChannelMessenger manager, @Nullable Object object);
+  Object convertInstancesToPairedInstances(TypeChannelMessenger manager, @Nullable Object object);
 
   @Nullable
-  Object convertForLocalMessenger(TypeChannelMessenger manager, @Nullable Object object);
+  Object convertPairedInstancesToInstances(TypeChannelMessenger manager, @Nullable Object object);
 
   class StandardInstanceConverter implements InstanceConverter {
     @Nullable
     @Override
-    public Object convertForRemoteMessenger(TypeChannelMessenger manager, @Nullable Object object) {
+    public Object convertInstancesToPairedInstances(TypeChannelMessenger manager, @Nullable Object object) {
       if (object == null) {
         return null;
       } else if (manager.isPaired(object)) {
@@ -25,7 +25,7 @@ public interface InstanceConverter {
       } else if (object instanceof List) {
         final List<Object> result = new ArrayList<>();
         for (final Object obj : (List<?>) object) {
-          result.add(convertForRemoteMessenger(manager, obj));
+          result.add(convertInstancesToPairedInstances(manager, obj));
         }
         return result;
       } else if (object instanceof Map) {
@@ -33,8 +33,8 @@ public interface InstanceConverter {
         final Map<Object, Object> newMap = new HashMap<>();
         for (Map.Entry<Object, Object> entry : oldMap.entrySet()) {
           newMap.put(
-              convertForRemoteMessenger(manager, entry.getKey()),
-              convertForRemoteMessenger(manager, entry.getValue()));
+              convertInstancesToPairedInstances(manager, entry.getKey()),
+              convertInstancesToPairedInstances(manager, entry.getValue()));
         }
         return newMap;
       }
@@ -44,13 +44,13 @@ public interface InstanceConverter {
 
     @Nullable
     @Override
-    public Object convertForLocalMessenger(TypeChannelMessenger manager, @Nullable Object object) {
+    public Object convertPairedInstancesToInstances(TypeChannelMessenger manager, @Nullable Object object) {
       if (object instanceof PairedInstance) {
         return manager.getPairedObject((PairedInstance) object);
       } if (object instanceof List) {
         final List<Object> result = new ArrayList<>();
         for (final Object obj : (List) object) {
-          result.add(convertForLocalMessenger(manager, obj));
+          result.add(convertPairedInstancesToInstances(manager, obj));
         }
         return result;
       } else if (object instanceof Map) {
@@ -58,8 +58,8 @@ public interface InstanceConverter {
         final Map<Object, Object> newMap = new HashMap<>();
         for (Map.Entry<Object, Object> entry : oldMap.entrySet()) {
           newMap.put(
-              convertForLocalMessenger(manager, entry.getKey()),
-              convertForLocalMessenger(manager, entry.getValue()));
+              convertPairedInstancesToInstances(manager, entry.getKey()),
+              convertPairedInstancesToInstances(manager, entry.getValue()));
         }
         return newMap;
       }

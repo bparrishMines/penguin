@@ -11,6 +11,7 @@ import github.penguin.reference.reference.PairedInstance;
 import github.penguin.reference.reference.TypeChannel;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -26,7 +27,7 @@ public class TypeChannelTest {
 
   @Test
   public void createNewInstancePair() {
-    final TestClasses.TestClass testClass = new TestClasses.TestClass(testManager);
+    final TestClasses.TestClass testClass = new TestClasses.TestClass();
     final TestListener<PairedInstance> testListener = new TestListener<>();
 
     testChannel.createNewInstancePair(testClass, true).setOnCompleteListener(testListener);
@@ -50,12 +51,25 @@ public class TypeChannelTest {
 
   @Test
   public void invokeMethod() {
-    final TestClass testClass = new TestClass(testManager);
+    final TestClass testClass = new TestClass();
     testChannel.createNewInstancePair(testClass, true);
 
     final TestListener<Object> testListener = new TestListener<>();
 
     testChannel.invokeMethod(testClass, "aMethod", Collections.emptyList()).setOnCompleteListener(testListener);
     assertEquals("return_value", testListener.result);
+  }
+
+  @Test
+  public void disposeInstancePair() {
+    final TestClass testClass = new TestClass();
+    final TestListener<Void> testListener = new TestListener<>();
+
+    testChannel.createNewInstancePair(testClass, true);
+    testChannel.disposeInstancePair(testClass).setOnCompleteListener(testListener);
+    assertFalse(testManager.isPaired(testClass));
+
+    // Test that this completes with second call.
+    testChannel.disposeInstancePair(testClass).setOnCompleteListener(testListener);
   }
 }

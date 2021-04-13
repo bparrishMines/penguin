@@ -65,13 +65,11 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           channel: dev
-      - name: Ios Unit Tests
-        run: |
-          cd $PLUGIN_DIR/ios
-          pod lib lint --verbose --allow-warnings
-        env:
-          DEVELOPER_DIR: /Applications/Xcode_11.4.app/Contents/Developer
       - name: Ios Build Test
         run: |
          cd $PLUGIN_DIR/example
          flutter build ios --simulator --no-codesign
+      - name: Ios Unit Tests
+        run: |
+          cd $PLUGIN_DIR/example/ios
+          xcodebuild -configuration Debug VERBOSE_SCRIPT_LOGGING=YES -workspace Runner.xcworkspace -scheme Runner -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 12,OS=14.4' test

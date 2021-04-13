@@ -1,8 +1,8 @@
 #import <XCTest/XCTest.h>
+#import <OCHamcrest/OCHamcrest.h>
 
 #import "REFReferenceMatchers.h"
 
-@import OCHamcrest;
 @import reference;
 
 @interface REFInstanceConverterTest : XCTestCase
@@ -18,40 +18,33 @@
     _testMessenger = [[REFTestMessenger alloc] init];
 }
 
-- (void)testConvertForRemoteMessenger_handlesPairedObject {
-    [_testMessenger onReceiveCreateNewInstancePair:@"test_channel"
+- (void)testConvertInstancesToPairedInstances_handlesPairedObject {
+    XCTAssertEqualObjects([_testMessenger onReceiveCreateNewInstancePair:@"test_channel"
                                     pairedInstance:[REFPairedInstance fromID:@"test_id"]
-                                         arguments:@[]];
+                                         arguments:@[]
+                                         owner:YES], _testMessenger.testHandler.testClassInstance);
     
     XCTAssertEqualObjects([REFPairedInstance fromID:@"test_id"],
-                          [_converter convertForRemoteMessenger:_testMessenger
+                          [_converter convertInstancesToPairedInstances:_testMessenger
                                                             obj:_testMessenger.testHandler.testClassInstance]);
 }
 
-- (void)testConvertForRemoteMessenger_handlesUnpairedObject {
-    assertThat([_converter convertForRemoteMessenger:_testMessenger
-                                                 obj:[[REFTestClass alloc] initWithMessenger:_testMessenger]],
-               isUnpairedInstance(@"test_channel", @[]));
+- (void)testConvertInstancesToPairedInstances_handlesNonPairableInstance {
+    XCTAssertEqualObjects(@"potato", [_converter convertInstancesToPairedInstances:_testMessenger obj:@"potato"]);
 }
 
-- (void)testConvertForRemoteMessenger_handlesNonPairableInstance {
-    XCTAssertEqualObjects(@"potato", [_converter convertForRemoteMessenger:_testMessenger obj:@"potato"]);
-}
-
-- (void)testConvertForLocalMessenger_handlesPairedInstance {
+- (void)testConvertPairedInstancesToInstances_handlesPairedInstance {
     [_testMessenger onReceiveCreateNewInstancePair:@"test_channel"
                                     pairedInstance:[REFPairedInstance fromID:@"test_id"]
-                                         arguments:@[]];
+                                         arguments:@[]
+                                         owner:YES];
     
     XCTAssertEqualObjects(_testMessenger.testHandler.testClassInstance,
-                          [_converter convertForLocalMessenger:_testMessenger
+                          [_converter convertPairedInstancesToInstances:_testMessenger
                                                            obj:[REFPairedInstance fromID:@"test_id"]]);
 }
 
-- (void)testConvertForLocalMessenger_handlesNewUnpairedInstance {
-    XCTAssertEqualObjects([_converter convertForLocalMessenger:_testMessenger
-                                                           obj:[[REFNewUnpairedInstance alloc] initWithChannelName:@"test_channel"
-                                                                                                 creationArguments:@[]]],
-                          _testMessenger.testHandler.testClassInstance);
+- (void)testConvertPairedInstancesToInstances_handlesNewUnpairedObject {
+    XCTAssertEqualObjects([_converter convertPairedInstancesToInstances:_testMessenger obj:@"apple"], @"apple");
 }
 @end

@@ -12,11 +12,16 @@ import github.penguin.reference.async.Completer;
 
 public abstract class TypeChannelMessenger {
   private final Map<String, TypeChannelHandler<?>> channelHandlers = new HashMap<>();
+  private final InstancePairManager instancePairManager = new InstancePairManager();
 
   public abstract TypeChannelMessageDispatcher getMessageDispatcher();
 
   private boolean addInstancePair(Object instance, PairedInstance pairedInstance, boolean owner) {
     return getInstancePairManager().addPair(instance, pairedInstance.instanceId, owner);
+  }
+
+  private void removeInstancePair(PairedInstance pairedInstance) {
+    getInstancePairManager().removePair(pairedInstance.instanceId);
   }
 
   public boolean isPaired(@NonNull Object instance) {
@@ -55,11 +60,11 @@ public abstract class TypeChannelMessenger {
 
   @NonNull
   public InstancePairManager getInstancePairManager() {
-    return InstancePairManager.getInstance();
+    return instancePairManager;
   }
 
   @NonNull
-  public Completable<PairedInstance> sendCreateNewInstancePair(String channelName, Object instance, boolean owner) {
+  public Completable<PairedInstance> createNewInstancePair(String channelName, Object instance, boolean owner) {
     if (isPaired(instance)) return new Completer<PairedInstance>().complete(null).completable;
 
     //noinspection rawtypes
@@ -76,7 +81,7 @@ public abstract class TypeChannelMessenger {
     getMessageDispatcher().sendCreateNewInstancePair(
         channelName,
         pairedInstance,
-        (List<Object>) getConverter().convertForRemoteMessenger(
+        (List<Object>) getConverter().convertInstancesToPairedInstances(
             this,
             handler.getCreationArguments(this, instance)),
         !owner
@@ -103,13 +108,13 @@ public abstract class TypeChannelMessenger {
         .sendInvokeStaticMethod(
             channelName,
             methodName,
-            (List<Object>) getConverter().convertForRemoteMessenger(this, arguments))
+            (List<Object>) getConverter().convertInstancesToPairedInstances(this, arguments))
         .setOnCompleteListener(
             new Completable.OnCompleteListener<Object>() {
               @Override
               public void onComplete(Object result) {
                 try {
-                  returnCompleter.complete(getConverter().convertForLocalMessenger(TypeChannelMessenger.this, result));
+                  returnCompleter.complete(getConverter().convertPairedInstancesToInstances(TypeChannelMessenger.this, result));
                 } catch (Exception exception) {
                   onError(exception);
                 }
@@ -134,13 +139,13 @@ public abstract class TypeChannelMessenger {
             channelName,
             getPairedPairedInstance(instance),
             methodName,
-            (List<Object>) getConverter().convertForRemoteMessenger(this, arguments))
+            (List<Object>) getConverter().convertInstancesToPairedInstances(this, arguments))
         .setOnCompleteListener(
             new Completable.OnCompleteListener<Object>() {
               @Override
               public void onComplete(Object result) {
                 try {
-                  returnCompleter.complete(getConverter().convertForLocalMessenger(TypeChannelMessenger.this, result));
+                  returnCompleter.complete(getConverter().convertPairedInstancesToInstances(TypeChannelMessenger.this, result));
                 } catch (Exception exception) {
                   onError(exception);
                 }
@@ -155,6 +160,14 @@ public abstract class TypeChannelMessenger {
     return returnCompleter.completable;
   }
 
+  @NonNull
+  public Completable<Void> disposeInstancePair(Object instance) {
+    if (!isPaired(instance)) return new Completer<Void>().complete(null).completable;
+    final PairedInstance pairedInstance = getPairedPairedInstance(instance);
+    removeInstancePair(pairedInstance);
+    return getMessageDispatcher().sendDisposeInstancePair(pairedInstance);
+  }
+
   public Object onReceiveCreateNewInstancePair(
       String channelName, PairedInstance pairedInstance, List<Object> arguments, boolean owner)
       throws Exception {
@@ -165,7 +178,7 @@ public abstract class TypeChannelMessenger {
     final Object instance =
         getChannelHandler(channelName)
             .createInstance(
-                this, (List<Object>) getConverter().convertForLocalMessenger(this, arguments));
+                this, (List<Object>) getConverter().convertPairedInstancesToInstances(this, arguments));
 
     if (isPaired(instance)) throw new AssertionError();
 
@@ -180,9 +193,9 @@ public abstract class TypeChannelMessenger {
             .invokeStaticMethod(
                 this,
                 methodName,
-                (List<Object>) getConverter().convertForLocalMessenger(this, arguments));
+                (List<Object>) getConverter().convertPairedInstancesToInstances(this, arguments));
 
-    return getConverter().convertForRemoteMessenger(this, result);
+    return getConverter().convertInstancesToPairedInstances(this, result);
   }
 
   public Object onReceiveInvokeMethod(
@@ -197,13 +210,19 @@ public abstract class TypeChannelMessenger {
                 this,
                 getPairedObject(pairedInstance),
                 methodName,
-                (List<Object>) getConverter().convertForLocalMessenger(this, arguments));
+                (List<Object>) getConverter().convertPairedInstancesToInstances(this, arguments));
 
-    return getConverter().convertForRemoteMessenger(this, result);
+    return getConverter().convertInstancesToPairedInstances(this, result);
   }
 
-  public void releaseDartHandle(Object instance) {
-    getInstancePairManager().releaseDartHandle(instance);
+  public void onReceiveDisposeInstancePair(PairedInstance pairedInstance) {
+    final Object instance = getPairedObject(pairedInstance);
+    if (instance == null) {
+      throw new AssertionError(
+          "The Object with the following PairedInstance has already been disposed: "
+              + pairedInstance);
+    }
+    removeInstancePair(pairedInstance);
   }
 
   protected String generateUniqueInstanceId(Object instance) {

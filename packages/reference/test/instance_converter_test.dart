@@ -12,7 +12,7 @@ void main() {
       testMessenger = TestMessenger();
     });
 
-    test('convertForRemoteMessenger handles paired Object', () {
+    test('convertInstancesToPairedInstances handles paired Object', () {
       testMessenger.onReceiveCreateNewInstancePair(
         'test_channel',
         const PairedInstance('test_id'),
@@ -21,7 +21,7 @@ void main() {
       );
 
       expect(
-        converter.convertForRemoteMessenger(
+        converter.convertInstancesToPairedInstances(
           testMessenger,
           testMessenger.testHandler.testClassInstance,
         ),
@@ -29,14 +29,14 @@ void main() {
       );
     });
 
-    test('convertForRemoteMessenger handles unpaired object', () {
+    test('convertInstancesToPairedInstances handles unpaired object', () {
       expect(
-        converter.convertForRemoteMessenger(testMessenger, 'potato'),
+        converter.convertInstancesToPairedInstances(testMessenger, 'potato'),
         equals('potato'),
       );
     });
 
-    test('convertForLocalMessenger handles $PairedInstance', () {
+    test('convertPairedInstancesToInstances handles $PairedInstance', () {
       const PairedInstance pairedInstance = PairedInstance('test_id');
       testMessenger.onReceiveCreateNewInstancePair(
         'test_channel',
@@ -46,14 +46,14 @@ void main() {
       );
 
       expect(
-        converter.convertForLocalMessenger(testMessenger, pairedInstance),
+        converter.convertPairedInstancesToInstances(testMessenger, pairedInstance),
         testMessenger.testHandler.testClassInstance,
       );
     });
 
-    test('convertForLocalMessenger handles unpaired object', () async {
+    test('convertPairedInstancesToInstances handles unpaired object', () async {
       expect(
-        converter.convertForLocalMessenger(
+        converter.convertPairedInstancesToInstances(
           testMessenger,
           'apple',
         ),

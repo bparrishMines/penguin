@@ -21,24 +21,24 @@ public class InstanceConverterTest {
   }
 
   @Test
-  public void convertForRemoteManager_handlesPairedObject()
+  public void convertInstancesToPairedInstances_handlesPairedObject()
       throws Exception {
     testMessenger.onReceiveCreateNewInstancePair("test_channel",
         new PairedInstance("test_id"),
         Collections.emptyList(), true);
 
     assertEquals(new PairedInstance("test_id"),
-        converter.convertForRemoteMessenger(testMessenger, testMessenger.testHandler.testClassInstance)
+        converter.convertInstancesToPairedInstances(testMessenger, testMessenger.testHandler.testClassInstance)
     );
   }
 
   @Test
-  public void convertForRemoteManager_handlesUnpairedObject() {
-    assertEquals("potato", converter.convertForRemoteMessenger(testMessenger, "potato"));
+  public void convertInstancesToPairedInstances_handlesUnpairedObject() {
+    assertEquals("potato", converter.convertInstancesToPairedInstances(testMessenger, "potato"));
   }
 
   @Test
-  public void convertForLocalManager_handlesPairedInstance() throws Exception {
+  public void convertPairedInstancesToInstances_handlesPairedInstance() throws Exception {
     testMessenger.onReceiveCreateNewInstancePair(
         "test_channel",
         new PairedInstance("test_id"),
@@ -46,13 +46,13 @@ public class InstanceConverterTest {
     );
 
     assertEquals(
-        converter.convertForLocalMessenger(testMessenger, new PairedInstance("test_id")),
+        converter.convertPairedInstancesToInstances(testMessenger, new PairedInstance("test_id")),
         testMessenger.testHandler.testClassInstance
     );
   }
 
   @Test
-  public void convertForLocalManager_handlesNewUnpairedObject() {
-    assertEquals("potato", converter.convertForLocalMessenger(testMessenger, "potato"));
+  public void convertPairedInstancesToInstances_handlesNewUnpairedObject() {
+    assertEquals("potato", converter.convertPairedInstancesToInstances(testMessenger, "potato"));
   }
 }

@@ -6,13 +6,13 @@ import 'type_channel.dart';
 /// See [StandardInstanceConverter].
 mixin InstanceConverter {
   /// Converts arguments to be used by a [PairedInstance].
-  Object? convertForRemoteMessenger(
+  Object? convertInstancesToPairedInstances(
     TypeChannelMessenger messenger,
     Object? object,
   );
 
   /// Converts arguments to be used with a object paired to a [PairedInstance].
-  Object? convertForLocalMessenger(
+  Object? convertPairedInstancesToInstances(
     TypeChannelMessenger messenger,
     Object? object,
   );
@@ -33,7 +33,7 @@ class StandardInstanceConverter implements InstanceConverter {
   ///   * [Map]s are converted to `Map<Object?, Object?>` and this method is
   ///     applied to each key and each value.
   @override
-  Object? convertForRemoteMessenger(
+  Object? convertInstancesToPairedInstances(
     TypeChannelMessenger messenger,
     Object? object,
   ) {
@@ -43,14 +43,14 @@ class StandardInstanceConverter implements InstanceConverter {
       return messenger.getPairedPairedInstance(object);
     } else if (object is List) {
       return object
-          .map<Object?>((_) => convertForRemoteMessenger(messenger, _))
+          .map<Object?>((_) => convertInstancesToPairedInstances(messenger, _))
           .toList();
     } else if (object is Map) {
       return Map<Object?, Object?>.fromIterables(
-        object.keys
-            .map<Object?>((_) => convertForRemoteMessenger(messenger, _)),
-        object.values
-            .map<Object?>((_) => convertForRemoteMessenger(messenger, _)),
+        object.keys.map<Object?>(
+            (_) => convertInstancesToPairedInstances(messenger, _)),
+        object.values.map<Object?>(
+            (_) => convertInstancesToPairedInstances(messenger, _)),
       );
     }
 
@@ -69,7 +69,7 @@ class StandardInstanceConverter implements InstanceConverter {
   ///   * [Map]s are converted to `Map<Object?, Object?>` and this method is
   ///     applied to each key and each value.
   @override
-  Object? convertForLocalMessenger(
+  Object? convertPairedInstancesToInstances(
     TypeChannelMessenger messenger,
     Object? object,
   ) {
@@ -77,13 +77,14 @@ class StandardInstanceConverter implements InstanceConverter {
       return messenger.getPairedObject(object);
     } else if (object is List) {
       return object
-          .map<Object?>((_) => convertForLocalMessenger(messenger, _))
+          .map<Object?>((_) => convertPairedInstancesToInstances(messenger, _))
           .toList();
     } else if (object is Map) {
       return Map<Object?, Object?>.fromIterables(
-        object.keys.map<Object?>((_) => convertForLocalMessenger(messenger, _)),
-        object.values
-            .map<Object?>((_) => convertForLocalMessenger(messenger, _)),
+        object.keys.map<Object?>(
+            (_) => convertPairedInstancesToInstances(messenger, _)),
+        object.values.map<Object?>(
+            (_) => convertPairedInstancesToInstances(messenger, _)),
       );
     }
 

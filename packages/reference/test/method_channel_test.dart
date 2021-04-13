@@ -32,19 +32,19 @@ void main() {
     test('convertForRemoteMessenger', () {
       final InstanceConverter converter = messenger.converter;
       expect(
-        converter.convertForRemoteMessenger(messenger, Uint8List(2)),
+        converter.convertInstancesToPairedInstances(messenger, Uint8List(2)),
         isA<Uint8List>(),
       );
       expect(
-        converter.convertForRemoteMessenger(messenger, Int32List(2)),
+        converter.convertInstancesToPairedInstances(messenger, Int32List(2)),
         isA<Int32List>(),
       );
       expect(
-        converter.convertForRemoteMessenger(messenger, Int64List(2)),
+        converter.convertInstancesToPairedInstances(messenger, Int64List(2)),
         isA<Int64List>(),
       );
       expect(
-        converter.convertForRemoteMessenger(messenger, Float64List(2)),
+        converter.convertInstancesToPairedInstances(messenger, Float64List(2)),
         isA<Float64List>(),
       );
     });
@@ -52,19 +52,19 @@ void main() {
     test('convertForLocalMessenger', () {
       final InstanceConverter converter = messenger.converter;
       expect(
-        converter.convertForLocalMessenger(messenger, Uint8List(2)),
+        converter.convertPairedInstancesToInstances(messenger, Uint8List(2)),
         isA<Uint8List>(),
       );
       expect(
-        converter.convertForLocalMessenger(messenger, Int32List(2)),
+        converter.convertPairedInstancesToInstances(messenger, Int32List(2)),
         isA<Int32List>(),
       );
       expect(
-        converter.convertForLocalMessenger(messenger, Int64List(2)),
+        converter.convertPairedInstancesToInstances(messenger, Int64List(2)),
         isA<Int64List>(),
       );
       expect(
-        converter.convertForLocalMessenger(messenger, Float64List(2)),
+        converter.convertPairedInstancesToInstances(messenger, Float64List(2)),
         isA<Float64List>(),
       );
     });
@@ -153,6 +153,31 @@ void main() {
 
       expect(responseCompleter.future, completion('return_value'));
     });
+
+    test('onReceiveDisposeInstancePair', () async {
+      testMessenger.onReceiveCreateNewInstancePair(
+        'test_channel',
+        const PairedInstance('test_id'),
+        <Object>[],
+        owner: true,
+      );
+
+      await testMessenger.channel.binaryMessenger.handlePlatformMessage(
+        'test_method_channel',
+        testMessenger.channel.codec.encodeMethodCall(
+          const MethodCall(
+            'REFERENCE_DISPOSE',
+            <Object>[PairedInstance('test_id')],
+          ),
+        ),
+        (ByteData? data) {},
+      );
+
+      expect(
+        testMessenger.isPaired(testMessenger.testHandler.testClassInstance),
+        isFalse,
+      );
+    });
   });
 
   group('$MethodChannelDispatcher', () {
@@ -184,7 +209,7 @@ void main() {
     });
 
     test('createNewPair', () {
-      testChannel.createNewInstancePair(TestClass(testMessenger), owner: true);
+      testChannel.createNewInstancePair(TestClass(), owner: true);
 
       expect(methodCallLog, <Matcher>[
         isMethodCallWithMatchers('REFERENCE_CREATE', arguments: <Object>[
@@ -211,7 +236,7 @@ void main() {
     });
 
     test('sendInvokeMethod', () {
-      final TestClass testClass = TestClass(testMessenger);
+      final TestClass testClass = TestClass();
       testChannel.createNewInstancePair(testClass, owner: true);
 
       methodCallLog.clear();
@@ -229,16 +254,33 @@ void main() {
         ]),
       ]);
     });
+
+    test('disposeInstancePair', () {
+      final TestClass testClass = TestClass();
+      testChannel.createNewInstancePair(testClass, owner: true);
+
+      methodCallLog.clear();
+
+      testChannel.disposeInstancePair(testClass);
+      expect(testMessenger.isPaired(testClass), isFalse);
+      expect(methodCallLog, <Matcher>[
+        isMethodCall(
+          'REFERENCE_DISPOSE',
+          arguments: <Object>[
+            const PairedInstance('test_reference_id'),
+          ],
+        ),
+      ]);
+    });
   });
 }
 
 class TestMessenger extends MethodChannelMessenger {
   TestMessenger() : super('test_method_channel') {
-    testHandler = TestHandler(this);
     registerHandler('test_channel', testHandler);
   }
 
-  late final TestHandler testHandler;
+  late final TestHandler testHandler = TestHandler();
 
   @override
   final TestInstancePairManager instancePairManager = TestInstancePairManager();

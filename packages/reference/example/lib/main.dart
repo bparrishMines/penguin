@@ -21,7 +21,9 @@ class _MyAppState extends State<MyApp> {
         ),
         body: Center(
           child: ElevatedButton(
-            onPressed: () => debugPrint('HI!'),
+            onPressed: () {
+              debugPrint('HI!');
+            },
             child: const Text('HI'),
           ),
         ),

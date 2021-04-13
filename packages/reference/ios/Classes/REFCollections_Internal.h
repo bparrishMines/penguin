@@ -1,26 +1,24 @@
 #import <Foundation/Foundation.h>
 
-#import "REFInstance.h"
-
 NS_ASSUME_NONNULL_BEGIN
 
 @interface REFThreadSafeMapTable<KeyType, ObjectType> : NSObject
++ (REFThreadSafeMapTable *)weakToStrongObjectsMapTable;
++ (REFThreadSafeMapTable *)weakToWeakObjectsMapTable;
++ (REFThreadSafeMapTable *)strongToWeakObjectsMapTable;
++ (REFThreadSafeMapTable *)strongToStrongObjectsMapTable;
 - (void)setObject:(ObjectType)object forKey:(KeyType)key;
 - (void)removeObjectForKey:(KeyType)key;
 - (ObjectType _Nullable)objectForKey:(KeyType)key;
 - (NSEnumerator<ObjectType> *)objectEnumerator;
 @end
 
-@interface InstancePairManager : NSObject
-- (BOOL)addPair:(NSObject *)object
- pairedInstance:(REFPairedInstance *)pairedInstance
-          owner:(NSObject *)owner;
-- (BOOL)isPaired:(NSObject *)object;
-- (BOOL)removePairWithObject:(id)object
-                       owner:(NSObject *)owner
-                       force:(BOOL)force;
-- (REFPairedInstance *_Nullable)getPairedPairedInstance:(id)object;
-- (id _Nullable)getPairedObject:(REFPairedInstance *)pairedInstance;
+@interface REFInstancePairManager : NSObject
+- (BOOL)addPair:(NSObject *)instance instanceID:(NSString *)instanceID owner:(BOOL)owner;
+- (BOOL)isPaired:(NSObject *)instance;
+- (NSString *_Nullable)getInstanceID:(NSObject *)instance;
+- (NSObject *_Nullable)getInstance:(NSString *)instanceID;
+- (void)removePair:(NSString *)instanceID;
 @end
 
 NS_ASSUME_NONNULL_END

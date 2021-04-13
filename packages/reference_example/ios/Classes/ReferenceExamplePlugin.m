@@ -1,5 +1,6 @@
 #import "ReferenceExamplePlugin.h"
 
+/*
 @interface MyOtherClass : NSObject<REFLocalReference>
 @property (readonly) NSNumber *intField;
 + (NSNumber *)myStaticMethod;
@@ -160,9 +161,10 @@ localReference:(id<REFLocalReference>)localReference {
 }
 @end
 
+*/
 @implementation ReferenceExamplePlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
-  MyReferencePairManager *manager = [[MyReferencePairManager alloc] initWithBinaryMessenger:registrar.messenger];
-  [manager initialize];
+  //MyReferencePairManager *manager = [[MyReferencePairManager alloc] initWithBinaryMessenger:registrar.messenger];
+  //[manager initialize];
 }
 @end
