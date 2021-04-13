@@ -32,6 +32,10 @@
   return [self initWithClassTemplate:classTemplate];
 }
 
++(NSNumber *)staticMethodTemplate:(NSString *)parameterTemplate {
+  return @([ClassTemplate staticMethodTemplate:parameterTemplate]);
+}
+
 - (instancetype)initWithClassTemplate:(ClassTemplate *)classTemplate {
   self = [super init];
   if (self) {
@@ -55,5 +59,9 @@
 @implementation EXPClassTemplateHandler
 - (NSObject<REFClassTemplate> *)onCreate:(REFTypeChannelMessenger *)messenger args:(REFClassTemplateCreationArgs *)args {
   return [[EXPClassTemplateProxy alloc] initWithFieldTemplate:args.fieldTemplate];
+}
+
+- (NSNumber *)on_staticMethodTemplate:(REFTypeChannelMessenger *)messenger parameterTemplate:(NSString *)parameterTemplate {
+  return [EXPClassTemplateProxy staticMethodTemplate:parameterTemplate];
 }
 @end

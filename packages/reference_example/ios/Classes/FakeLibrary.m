@@ -12,7 +12,7 @@
   return self;
 }
 
--(double)staticMethodTemplate:(NSString *)parameterTemplate {
++(double)staticMethodTemplate:(NSString *)parameterTemplate {
   return parameterTemplate.length;
 }
 
