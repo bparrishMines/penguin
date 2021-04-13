@@ -115,20 +115,18 @@ class _MyAppState extends State<MyApp> {
     return dirs[0];
   }
 
-  /*
-  void _takePicture() {
-    _camera?.takePicture(
-      null,
-      null,
-      null,
-      JpegPictureCallback(_camera!, (data) async {
-        final Directory dir = await _storageDir();
-        final File imageFile = File('${dir.path}/my_image${data.hashCode}.jpg');
-        imageFile.writeAsBytes(data);
-      }),
-    );
-  }
-  */
+  // void _takePicture() {
+  //   _camera?.takePicture(
+  //     null,
+  //     null,
+  //     null,
+  //     JpegPictureCallback(_camera!, (data) async {
+  //       final Directory dir = await _storageDir();
+  //       final File imageFile = File('${dir.path}/my_image${data.hashCode}.jpg');
+  //       imageFile.writeAsBytes(data);
+  //     }),
+  //   );
+  // }
 
   Future<void> _recordAVideo() async {
     if (_camera == null) {
@@ -160,6 +158,7 @@ class _MyAppState extends State<MyApp> {
   Widget _buildPictureButton() {
     return InkResponse(
       onTap: () {
+        //_takePicture();
         _recordAVideo();
       },
       child: Container(

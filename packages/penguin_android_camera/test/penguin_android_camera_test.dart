@@ -72,6 +72,12 @@ class TestInstancePairManager implements InstancePairManager {
   bool isPaired(Object instance) {
     return instanceToInstanceId.containsKey(instance);
   }
+
+  @override
+  void removePair(String instanceId) {
+    final Object? instance = instanceIdToInstance.remove(instanceId);
+    instanceToInstanceId.remove(instance);
+  }
 }
 
 class TestMessenger extends TypeChannelMessenger {
@@ -110,6 +116,11 @@ class TestMessageDispatcher implements TypeChannelMessageDispatcher {
     String methodName,
     List<Object?> arguments,
   ) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> sendDisposeInstancePair(PairedInstance pairedInstance) {
     throw UnimplementedError();
   }
 }
