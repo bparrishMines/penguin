@@ -1,10 +1,4 @@
-// GENERATED CODE - DO NOT MODIFY BY HAND
-
-#import "REFLibraryTemplate_Internal.h"
-
-// **************************************************************************
-// ReferenceGenerator
-// **************************************************************************
+#import "LibraryTemplate.h"
 
 @implementation REFClassTemplateCreationArgs
 @end
@@ -74,9 +68,22 @@
   NSLog(@"Unable to invoke method %@", methodName);
   return nil;
 }
+@end
 
-- (void)onInstanceAdded:(nonnull REFTypeChannelMessenger *)messenger instance:(nonnull NSObject *)instance {}
+@implementation REFChannelRegistrar
+- (instancetype)initWithImplementation:(id<REFLibraryImplementations>)implementations {
+  self = [super init];
+  if (self) {
+    _implementations = implementations;
+  }
+  return self;
+}
 
-- (void)onInstanceRemoved:(nonnull REFTypeChannelMessenger *)messenger
-                 instance:(nonnull NSObject *)instance {}
+- (void)registerHandlers {
+  [_implementations.classTemplateChannel setHandler:_implementations.classTemplateHandler];
+}
+
+- (void)unregisterHandlers {
+  [_implementations.classTemplateChannel removeHandler];
+}
 @end

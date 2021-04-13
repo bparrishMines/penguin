@@ -41,11 +41,6 @@ class _MyAppState extends State<MyApp> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
-            print('creat');
-            final Object object = Object();
-            //final manager = InstancePairManager((message) => print(message));
-            //InstancePairManager((_) {});
-            //instancePairManager.addPair(object, 'fhwoiefj', owner: true);
             final ClassTemplate classTemplate = ClassTemplate(23);
             final String result = await classTemplate.methodTemplate('Hello,');
             setState(() {

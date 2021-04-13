@@ -1,5 +1,8 @@
 #import <Flutter/Flutter.h>
-@import reference;
+
+#import "EXPChannelRegistrar.h"
+
+#import "ReferencePlugin.h"
 
 @interface ReferenceExamplePlugin : NSObject<FlutterPlugin>
 @end
