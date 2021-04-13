@@ -1,4 +1,4 @@
-#import "LibraryTemplate.h"
+#import "REFLibraryTemplate.h"
 
 @implementation REFClassTemplateCreationArgs
 @end

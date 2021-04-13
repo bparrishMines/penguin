@@ -1,6 +1,5 @@
 #import <Flutter/Flutter.h>
-
-#import "REFPluginTemplate_Internal.h"
+#import "REFMethodChannel.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
