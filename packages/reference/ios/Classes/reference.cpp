@@ -4,6 +4,10 @@
 #include "include/dart_api_dl.h"
 #include "hashmap.h"
 
+// TODO: Replace by instatiating a new one for each _NativeWeakMap in create_weak_map
+static hashmap_s instanceMap;
+static bool initialized = false;
+
 struct _finalizer_data {
   char* instanceId;
   Dart_Port onFinalizePort;
@@ -29,15 +33,15 @@ void finalizer_callback(void* isolateCallbackData, void* peer) {
   free(data);
 }
 
-// TODO: Replace by instatiating a new one for each _NativeWeakMap in create_weak_map
-static hashmap_s instanceMap;
-
 DART_EXPORT _NativeWeakMap create_weak_map(Dart_Port onFinalizePort) {
   _NativeWeakMap map;
   map.onFinalizePort = onFinalizePort;
-  
-  const unsigned initial_size = 2;
-  hashmap_create(initial_size, &instanceMap);
+
+  if (!initialized) {
+    const unsigned initial_size = 8;
+    hashmap_create(initial_size, &instanceMap);
+    initialized = true;
+  }
   
   map.instanceMap = &instanceMap;
   return map;
