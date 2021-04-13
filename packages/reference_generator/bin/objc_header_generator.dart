@@ -1,3 +1,4 @@
+import 'package:recase/recase.dart';
 import 'package:reference_generator/src/ast.dart';
 
 import 'common.dart';
@@ -309,7 +310,61 @@ String generateObjcHeader({
                 );
           },
         ).join('\n'),
+      )
+      .replaceAll(
+        library.theImplementations.exp,
+        library.theImplementations
+            .stringMatch()
+            .replaceAll(library.theImplementations.prefix, prefix)
+            .replaceAll(
+              library.theImplementations.aChannel.exp,
+              libraryNode.classes.map<String>(
+                (ClassNode classNode) {
+                  final LibraryImplementationsChannel channel =
+                      library.theImplementations.aChannel;
+                  return channel
+                      .stringMatch()
+                      .replaceAll(channel.prefix, prefix)
+                      .replaceAll(
+                        channel.channelClassName,
+                        ReCase(classNode.name).camelCase,
+                      )
+                      .replaceAll(
+                        channel.variableClassName,
+                        classNode.name,
+                      );
+                },
+              ).join('\n'),
+            )
+            .replaceAll(
+              library.theImplementations.aHandler.exp,
+              libraryNode.classes.map<String>(
+                (ClassNode classNode) {
+                  final LibraryImplementationsHandler handler =
+                      library.theImplementations.aHandler;
+                  return handler
+                      .stringMatch()
+                      .replaceAll(handler.prefix, prefix)
+                      .replaceAll(
+                        handler.channelClassName,
+                        ReCase(classNode.name).camelCase,
+                      )
+                      .replaceAll(
+                        handler.variableClassName,
+                        classNode.name,
+                      );
+                },
+              ).join('\n'),
+            ),
+      )
+      .replaceAll(
+        library.theChannelRegistrar.exp,
+        library.theChannelRegistrar.stringMatch().replaceAll(
+              library.theChannelRegistrar.prefix,
+              prefix,
+            ),
       );
+  ;
 }
 
 String getTrueTypeName(ReferenceType type, String prefix) {
@@ -380,6 +435,10 @@ class Library with TemplateRegExp {
   Channel get aChannel => Channel(this);
 
   Handler get aHandler => Handler(this);
+
+  LibraryImplementations get theImplementations => LibraryImplementations(this);
+
+  ChannelRegistrar get theChannelRegistrar => ChannelRegistrar(this);
 }
 
 class ProtocolDirective with TemplateRegExp {
@@ -672,291 +731,78 @@ class HandlerStaticMethod with TemplateRegExp {
   FollowingParameter get aFollowingParameter => FollowingParameter(this);
 }
 
-// class Library with TemplateRegExp {
-//   Library({this.template, this.templatePrefix});
-//
-//   @override
-//   final String template;
-//
-//   @override
-//   final String templatePrefix;
-//
-//   final RegExp managerPrefix = TemplateRegExp.regExp(
-//     r'(?<=@interface )_p_(?=ReferencePairManager)',
-//   );
-//
-//   final RegExp remoteHandlerPrefix = TemplateRegExp.regExp(
-//     r'(?<=@interface )_p_(?=RemoteHandler)',
-//   );
-//
-//   ClassDirective get aClassDirective => ClassDirective(this);
-//
-//   Class get aClass => Class(this);
-//
-//   CreationArgsClass get aCreationArgsClass => CreationArgsClass(this);
-//
-//   LocalHandler get aLocalHandler => LocalHandler(this);
-//
-//   @override
-//   final TemplateRegExp parent = null;
-//
-//   @override
-//   final RegExp exp = null;
-// }
-//
-// class ClassDirective with TemplateRegExp {
-//   ClassDirective(this.parent);
-//
-//   final RegExp classPrefix = TemplateRegExp.regExp(r'(?<=@class )_p_');
-//   final RegExp className = TemplateRegExp.regExp(r'ClassTemplate(?=;)');
-//
-//   @override
-//   final RegExp exp = TemplateRegExp.regExp(r'@class _p_ClassTemplate;');
-//
-//   @override
-//   final Library parent;
-// }
-//
-// class Class with TemplateRegExp {
-//   Class(this.parent);
-//
-//   final RegExp name = TemplateRegExp.regExp(
-//     r'(?<=@interface _p_)ClassTemplate(?= :)',
-//   );
-//
-//   final RegExp prefix = TemplateRegExp.regExp(r'(?<=@interface )_p_');
-//
-//   ClassMethod get aMethod => ClassMethod(this);
-//   ClassField get aField => ClassField(this);
-//
-//   ClassProtectedStaticMethod get aProtectedStaticMethod =>
-//       ClassProtectedStaticMethod(this);
-//
-//   ClassProtectedMethod get aProtectedMethod => ClassProtectedMethod(this);
-//
-//   @override
-//   final RegExp exp = TemplateRegExp.regExp(
-//     r'@interface _p_ClassTemplate[^@]*@end',
-//   );
-//
-//   @override
-//   final Library parent;
-// }
-//
-// class ClassField with TemplateRegExp {
-//   ClassField(this.parent);
-//
-//   final RegExp type = TemplateRegExp.regExp(r'NSNumber');
-//   final RegExp name = TemplateRegExp.regExp(r'fieldTemplate');
-//
-//   @override
-//   final RegExp exp = TemplateRegExp.regExp(
-//     r'- \(NSNumber \*_Nullable\)fieldTemplate;',
-//   );
-//
-//   @override
-//   final Class parent;
-// }
-//
-// class ClassMethod with TemplateRegExp {
-//   ClassMethod(this.parent);
-//
-//   final RegExp name = TemplateRegExp.regExp(r'methodTemplate');
-//
-//   Parameter get aParameter => Parameter(this);
-//
-//   @override
-//   final RegExp exp = TemplateRegExp.regExp(
-//     r'- \(NSObject \*_Nullable\)methodTemplate:\(NSString \*_Nullable\)parameterTemplate;',
-//   );
-//
-//   @override
-//   final Class parent;
-// }
-//
-// class Parameter with TemplateRegExp {
-//   Parameter(this.parent);
-//
-//   static const String firstParameter =
-//       r':(NSString *_Nullable)parameterTemplate';
-//   static const String followingParameter =
-//       r'parameterTemplate:(NSString *_Nullable)parameterTemplate';
-//
-//   final RegExp type = TemplateRegExp.regExp(r'NSString(?= \*)');
-//
-//   final RegExp name = TemplateRegExp.regExp(r'parameterTemplate(?=:|\s|$)');
-//
-//   @override
-//   final RegExp exp = TemplateRegExp.regExp(
-//     r'(parameterTemplate)*:*\(NSString \*_Nullable\)parameterTemplate',
-//   );
-//
-//   @override
-//   final PrefixTemplate parent;
-//
-//   String replaceWithFirst(Iterable<ParameterNode> parameterNodes) {
-//     if (parameterNodes.isEmpty) return '';
-//
-//     final String first = Parameter.firstParameter
-//         .replaceAll(
-//           name,
-//           parameterNodes.first.name,
-//         )
-//         .replaceAll(
-//             type, getTrueTypeName(parameterNodes.first.type, templatePrefix));
-//
-//     return '$first ${replace(parameterNodes.skip(1))}';
-//   }
-//
-//   String replace(Iterable<ParameterNode> parameterNodes) {
-//     if (parameterNodes.isEmpty) return '';
-//
-//     final String parameters = parameterNodes
-//         .map<String>((ParameterNode parameterNode) => Parameter
-//             .followingParameter
-//             .replaceAll(
-//               name,
-//               parameterNode.name,
-//             )
-//             .replaceAll(
-//                 type, getTrueTypeName(parameterNode.type, templatePrefix)))
-//         .join(' ');
-//
-//     return parameters;
-//   }
-// }
-//
-// class CreationArgsClass with TemplateRegExp {
-//   CreationArgsClass(this.parent);
-//
-//   final RegExp className =
-//       TemplateRegExp.regExp(r'(?<=@interface _p_)ClassTemplate');
-//
-//   final RegExp classPrefix = TemplateRegExp.regExp(r'(?<=@interface )_p_');
-//
-//   CreationArgsClassField get aField => CreationArgsClassField(this);
-//
-//   @override
-//   final RegExp exp = TemplateRegExp.regExp(
-//     r'@interface _p_ClassTemplateCreationArgs(.*?@end){1}',
-//   );
-//
-//   @override
-//   final Library parent;
-// }
-//
-// class CreationArgsClassField with TemplateRegExp {
-//   CreationArgsClassField(this.parent);
-//
-//   final RegExp type = TemplateRegExp.regExp(r'(?<=@property )NSNumber');
-//   final RegExp name = TemplateRegExp.regExp(r'fieldTemplate(?=;)');
-//
-//   @override
-//   final RegExp exp = TemplateRegExp.regExp(
-//     r'@property NSNumber \*_Nullable fieldTemplate;',
-//   );
-//
-//   @override
-//   final CreationArgsClass parent;
-// }
-//
-// class ClassProtectedStaticMethod with TemplateRegExp {
-//   ClassProtectedStaticMethod(this.parent);
-//
-//   final RegExp name = TemplateRegExp.regExp(r'staticMethodTemplate(?=:)');
-//
-//   final RegExp managerPrefix = TemplateRegExp.regExp(
-//     r'_p_(?=ReferencePairManager \*)',
-//   );
-//
-//   Parameter get aParameter => Parameter(this);
-//
-//   @override
-//   final RegExp exp = TemplateRegExp.regExp(
-//     r'\+ \(void\)_staticMethodTemplate[^;]+;',
-//   );
-//
-//   @override
-//   final Class parent;
-// }
-//
-// class ClassProtectedMethod with TemplateRegExp {
-//   ClassProtectedMethod(this.parent);
-//
-//   final RegExp name = TemplateRegExp.regExp(
-//     r'methodTemplate(?=:)',
-//   );
-//
-//   final RegExp managerPrefix = TemplateRegExp.regExp(
-//     r'_p_(?=ReferencePairManager \*)',
-//   );
-//
-//   Parameter get aParameter => Parameter(this);
-//
-//   @override
-//   final RegExp exp = TemplateRegExp.regExp(
-//     r'- \(void\)_methodTemplate[^;]+;',
-//   );
-//
-//   @override
-//   final Class parent;
-// }
-//
-// class LocalHandler with TemplateRegExp {
-//   LocalHandler(this.parent);
-//
-//   final RegExp prefix = TemplateRegExp.regExp(r'(?<=@interface )_p_');
-//
-//   LocalHandlerStaticMethodAbstractMethod get aStaticMethodAbstractMethod =>
-//       LocalHandlerStaticMethodAbstractMethod(this);
-//
-//   LocalHandlerCreatorAbstractMethod get aCreatorAbstractMethod =>
-//       LocalHandlerCreatorAbstractMethod(this);
-//
-//   @override
-//   final RegExp exp = TemplateRegExp.regExp(
-//     r'@interface _p_LocalHandler[^@]+@end',
-//   );
-//
-//   @override
-//   final Library parent;
-// }
-//
-// class LocalHandlerStaticMethodAbstractMethod
-//     with TemplateRegExp {
-//   LocalHandlerStaticMethodAbstractMethod(this.parent);
-//
-//   final RegExp className = TemplateRegExp.regExp(r'classTemplate(?=_)');
-//   final RegExp name = TemplateRegExp.regExp(r'(?<=_)staticMethodTemplate');
-//
-//   Parameter get aParameter => Parameter(this);
-//
-//   @override
-//   final RegExp exp = TemplateRegExp.regExp(
-//     r'- \(id _Nullable\)classTemplate_staticMethodTemplate[^;]+;',
-//   );
-//
-//   @override
-//   final LocalHandler parent;
-// }
-//
-// class LocalHandlerCreatorAbstractMethod with TemplateRegExp {
-//   LocalHandlerCreatorAbstractMethod(this.parent);
-//
-//   final RegExp classPrefix = TemplateRegExp.regExp(r'(?<=- \(|args:\()_p_');
-//
-//   final RegExp className =
-//       TemplateRegExp.regExp(r'(?<=- \(\w*|\)create)ClassTemplate');
-//
-//   final RegExp creationArgsClassName = TemplateRegExp.regExp(
-//     r'ClassTemplate(?=CreationArgs )',
-//   );
-//
-//   @override
-//   final RegExp exp = TemplateRegExp.regExp(
-//     r'- \(_p_ClassTemplate \*\)createClassTemplate[^;]+;',
-//   );
-//
-//   @override
-//   final LocalHandler parent;
-// }
+class LibraryImplementations with TemplateRegExp {
+  LibraryImplementations(this.parent);
+
+  @override
+  final RegExp exp =
+      TemplateRegExp.regExp(r'@protocol REFLibraryImplementations[^@]+@end');
+
+  @override
+  final Library parent;
+
+  final RegExp prefix = TemplateRegExp.regExp(r'(?<=@protocol )REF');
+
+  LibraryImplementationsChannel get aChannel =>
+      LibraryImplementationsChannel(this);
+
+  LibraryImplementationsHandler get aHandler =>
+      LibraryImplementationsHandler(this);
+}
+
+class LibraryImplementationsChannel with TemplateRegExp {
+  LibraryImplementationsChannel(this.parent);
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'-\(REFClassTemplateChannel \*\)classTemplateChannel;',
+  );
+
+  @override
+  final LibraryImplementations parent;
+
+  final RegExp prefix = TemplateRegExp.regExp(r'(?<=-\()REF');
+
+  final RegExp channelClassName = TemplateRegExp.regExp(
+    r'(?<=\()\w*ClassTemplate(?=Channel )',
+  );
+
+  final RegExp variableClassName = TemplateRegExp.regExp(
+    r'classTemplate(?=Channel;)',
+  );
+}
+
+class LibraryImplementationsHandler with TemplateRegExp {
+  LibraryImplementationsHandler(this.parent);
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'-\(REFClassTemplateHandler \*\)classTemplateHandler;',
+  );
+
+  @override
+  final LibraryImplementations parent;
+
+  final RegExp prefix = TemplateRegExp.regExp(r'(?<=-\()REF');
+
+  final RegExp channelClassName = TemplateRegExp.regExp(
+    r'(?<=\()\w*ClassTemplate(?=Handler )',
+  );
+
+  final RegExp variableClassName = TemplateRegExp.regExp(
+    r'classTemplate(?=Handler;)',
+  );
+}
+
+class ChannelRegistrar with TemplateRegExp {
+  ChannelRegistrar(this.parent);
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+      r'@interface REFChannelRegistrar.+@end\s+(?=NS_ASSUME_NONNULL_END)');
+
+  final RegExp prefix = TemplateRegExp.regExp(r'(?<=@interface )REF');
+
+  @override
+  final Library parent;
+}

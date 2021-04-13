@@ -144,7 +144,7 @@ void main(List<String> arguments) async {
     final String objcHeaderTemplate = buffer.toString();
 
     if (objcHeaderTemplate == '404: Not Found') {
-      throw StateError('Invalid link to objcHeader template');
+      throw StateError('Invalid link to objcHeader template.');
     }
 
     options.objcHeaderOut.writeAsStringSync(
@@ -170,7 +170,7 @@ void main(List<String> arguments) async {
     final String objcImplTemplate = buffer.toString();
 
     if (objcImplTemplate == '404: Not Found') {
-      throw StateError('Invalid link to objcImpl template');
+      throw StateError('Invalid link to objcImpl template.');
     }
 
     options.objcImplOut.writeAsStringSync(

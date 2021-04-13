@@ -1,3 +1,4 @@
+import 'package:recase/recase.dart';
 import 'package:reference_generator/src/ast.dart';
 
 import 'common.dart';
@@ -275,7 +276,8 @@ String generateObjcImpl({
                   handler.theCreationArguments
                       .stringMatch()
                       .replaceAll(handler.theCreationArguments.prefix, prefix)
-                      .replaceAll(handler.theCreationArguments.className, classNode.name)
+                      .replaceAll(handler.theCreationArguments.className,
+                          classNode.name)
                       .replaceAll(
                         handler.theCreationArguments.fieldName.exp,
                         classNode.fields.map<String>(
@@ -361,7 +363,7 @@ String generateObjcImpl({
                                           )
                                           .replaceAll(
                                             argument.index,
-                                            '${index}',
+                                            'index',
                                           );
                                     },
                                   ).join(' '),
@@ -372,6 +374,44 @@ String generateObjcImpl({
                 );
           },
         ).join('\n'),
+      )
+      .replaceAll(
+        library.theChannelRegistrar.exp,
+        library.theChannelRegistrar
+            .stringMatch()
+            .replaceAll(library.theChannelRegistrar.prefix, prefix)
+            .replaceAll(
+              library.theChannelRegistrar.aSetter.exp,
+              libraryNode.classes.map<String>(
+                (ClassNode classNode) {
+                  final ChannelRegistrarSetter setter =
+                      library.theChannelRegistrar.aSetter;
+                  return setter
+                      .stringMatch()
+                      .replaceAll(
+                        setter.channelClassName,
+                        ReCase(classNode.name).camelCase,
+                      )
+                      .replaceAll(
+                        setter.handlerClassName,
+                        ReCase(classNode.name).camelCase,
+                      );
+                },
+              ).join('\n'),
+            )
+            .replaceAll(
+              library.theChannelRegistrar.aRemover.exp,
+              libraryNode.classes.map<String>(
+                (ClassNode classNode) {
+                  final ChannelRegistrarRemover remover =
+                      library.theChannelRegistrar.aRemover;
+                  return remover.stringMatch().replaceAll(
+                        remover.channelClassName,
+                        ReCase(classNode.name).camelCase,
+                      );
+                },
+              ).join('\n'),
+            ),
       );
 }
 
@@ -396,6 +436,8 @@ class Library with TemplateRegExp {
   Channel get aChannel => Channel(this);
 
   Handler get aHandler => Handler(this);
+
+  ChannelRegistrar get theChannelRegistrar => ChannelRegistrar(this);
 }
 
 class CreationArgsClass with TemplateRegExp {
@@ -519,7 +561,7 @@ class Handler with TemplateRegExp {
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'@implementation REFClassTemplateHandler.+$',
+    r'@implementation REFClassTemplateHandler.+@end\s+(?=@implementation)',
   );
 
   @override
@@ -696,7 +738,7 @@ class HandlerMethodInvoker with TemplateRegExp {
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'- \(id _Nullable\)invokeMethod:.*(?=- \(void\)onInstanceAdded:)',
+    r'- \(id _Nullable\)invokeMethod:.*[^@]+(?=@end)',
   );
 
   final RegExp className = TemplateRegExp.regExp(
@@ -748,4 +790,57 @@ class FollowingArgumentComment with TemplateRegExp {
   String stringMatch() {
     return 'parameterTemplate:arguments[0]';
   }
+}
+
+class ChannelRegistrar with TemplateRegExp {
+  ChannelRegistrar(this.parent);
+
+  @override
+  final RegExp exp =
+      TemplateRegExp.regExp(r'@implementation REFChannelRegistrar[^@]+@end');
+
+  final RegExp prefix = TemplateRegExp.regExp(r'(?<=@implementation )REF');
+
+  ChannelRegistrarSetter get aSetter => ChannelRegistrarSetter(this);
+
+  ChannelRegistrarRemover get aRemover => ChannelRegistrarRemover(this);
+
+  @override
+  final Library parent;
+}
+
+class ChannelRegistrarSetter with TemplateRegExp {
+  ChannelRegistrarSetter(this.parent);
+
+  @override
+  final ChannelRegistrar parent;
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'\[_implementations\.classTemplateChannel setHandler[^;]+;',
+  );
+
+  final RegExp channelClassName = TemplateRegExp.regExp(
+    r'(?<=implementations\.)classTemplate(?=Channel)',
+  );
+
+  final RegExp handlerClassName = TemplateRegExp.regExp(
+    r'(?<=implementations\.)classTemplate(?=Handler)',
+  );
+}
+
+class ChannelRegistrarRemover with TemplateRegExp {
+  ChannelRegistrarRemover(this.parent);
+
+  @override
+  final ChannelRegistrar parent;
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'\[_implementations\.classTemplateChannel removeHandler\];',
+  );
+
+  final RegExp channelClassName = TemplateRegExp.regExp(
+    r'(?<=implementations\.)classTemplate(?=Channel)',
+  );
 }
