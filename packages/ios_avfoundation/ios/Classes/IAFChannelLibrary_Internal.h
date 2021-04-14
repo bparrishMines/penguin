@@ -119,21 +119,21 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @protocol _IAFLibraryImplementations
--(captureDeviceInputChannel *)CaptureDeviceInputChannel;
--(captureInputChannel *)CaptureInputChannel;
--(captureSessionChannel *)CaptureSessionChannel;
--(captureDeviceChannel *)CaptureDeviceChannel;
--(previewControllerChannel *)PreviewControllerChannel;
--(captureDeviceInputHandler *)CaptureDeviceInputHandler;
--(captureInputHandler *)CaptureInputHandler;
--(captureSessionHandler *)CaptureSessionHandler;
--(captureDeviceHandler *)CaptureDeviceHandler;
--(previewControllerHandler *)PreviewControllerHandler;
+-(_IAFCaptureDeviceInputChannel *)captureDeviceInputChannel;
+-(_IAFCaptureInputChannel *)captureInputChannel;
+-(_IAFCaptureSessionChannel *)captureSessionChannel;
+-(_IAFCaptureDeviceChannel *)captureDeviceChannel;
+-(_IAFPreviewControllerChannel *)previewControllerChannel;
+-(_IAFCaptureDeviceInputHandler *)captureDeviceInputHandler;
+-(_IAFCaptureInputHandler *)captureInputHandler;
+-(_IAFCaptureSessionHandler *)captureSessionHandler;
+-(_IAFCaptureDeviceHandler *)captureDeviceHandler;
+-(_IAFPreviewControllerHandler *)previewControllerHandler;
 @end
 
 @interface _IAFChannelRegistrar : NSObject
-@property (readonly) id<REFLibraryImplementations> implementations;
-- (instancetype)initWithImplementation:(id<REFLibraryImplementations>)implementations;
+@property (readonly) id<_IAFLibraryImplementations> implementations;
+- (instancetype)initWithImplementation:(id<_IAFLibraryImplementations>)implementations;
 -(void)registerHandlers;
 -(void)unregisterHandlers;
 @end

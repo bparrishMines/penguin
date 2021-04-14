@@ -381,6 +381,10 @@ String generateObjcImpl({
             .stringMatch()
             .replaceAll(library.theChannelRegistrar.prefix, prefix)
             .replaceAll(
+              library.theChannelRegistrar.implementationsParameterPrefix,
+              prefix,
+            )
+            .replaceAll(
               library.theChannelRegistrar.aSetter.exp,
               libraryNode.classes.map<String>(
                 (ClassNode classNode) {
@@ -428,7 +432,7 @@ class Library with TemplateRegExp {
   final RegExp exp = null;
 
   final RegExp headerFilename = TemplateRegExp.regExp(
-    r'(?<=#import ")REFLibraryTemplate_Internal\.h',
+    r'(?<=#import ")REFLibraryTemplate\.h',
   );
 
   CreationArgsClass get aCreationArgsClass => CreationArgsClass(this);
@@ -800,6 +804,9 @@ class ChannelRegistrar with TemplateRegExp {
       TemplateRegExp.regExp(r'@implementation REFChannelRegistrar[^@]+@end');
 
   final RegExp prefix = TemplateRegExp.regExp(r'(?<=@implementation )REF');
+
+  final RegExp implementationsParameterPrefix =
+      TemplateRegExp.regExp(r'(?<=initWithImplementation:\(id<)REF');
 
   ChannelRegistrarSetter get aSetter => ChannelRegistrarSetter(this);
 

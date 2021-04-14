@@ -39,7 +39,7 @@ NS_ASSUME_NONNULL_BEGIN
 -(IAVPreviewControllerChannel *)previewControllerChannel;
 @end
 
-@interface IAVCaptureDeviceProxy : NSObject<GENIAVCaptureDevice, REFReferenceType>
+@interface IAVCaptureDeviceProxy : NSObject<GENIAVCaptureDevice>
 @property (readonly) NSNumber *position;
 @property (readonly) NSString *uniqueId;
 + (NSArray<IAVCaptureDeviceProxy*> *)devicesWithMediaType:(NSString *)mediaType

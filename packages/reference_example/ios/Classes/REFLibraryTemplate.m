@@ -1,4 +1,10 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
 #import "REFLibraryTemplate.h"
+
+// **************************************************************************
+// ReferenceGenerator
+// **************************************************************************
 
 @implementation REFClassTemplateCreationArgs
 @end

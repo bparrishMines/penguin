@@ -325,13 +325,10 @@ String generateObjcHeader({
                   return channel
                       .stringMatch()
                       .replaceAll(channel.prefix, prefix)
-                      .replaceAll(
-                        channel.channelClassName,
-                        ReCase(classNode.name).camelCase,
-                      )
+                      .replaceAll(channel.channelClassName, classNode.name)
                       .replaceAll(
                         channel.variableClassName,
-                        classNode.name,
+                        ReCase(classNode.name).camelCase,
                       );
                 },
               ).join('\n'),
@@ -345,13 +342,10 @@ String generateObjcHeader({
                   return handler
                       .stringMatch()
                       .replaceAll(handler.prefix, prefix)
-                      .replaceAll(
-                        handler.channelClassName,
-                        ReCase(classNode.name).camelCase,
-                      )
+                      .replaceAll(handler.channelClassName, classNode.name)
                       .replaceAll(
                         handler.variableClassName,
-                        classNode.name,
+                        ReCase(classNode.name).camelCase,
                       );
                 },
               ).join('\n'),
@@ -359,7 +353,17 @@ String generateObjcHeader({
       )
       .replaceAll(
         library.theChannelRegistrar.exp,
-        library.theChannelRegistrar.stringMatch().replaceAll(
+        library.theChannelRegistrar
+            .stringMatch()
+            .replaceAll(
+              library.theChannelRegistrar.implementationsParameterPrefix,
+              prefix,
+            )
+            .replaceAll(
+              library.theChannelRegistrar.implementationsPropertyPrefix,
+              prefix,
+            )
+            .replaceAll(
               library.theChannelRegistrar.prefix,
               prefix,
             ),
@@ -764,7 +768,7 @@ class LibraryImplementationsChannel with TemplateRegExp {
   final RegExp prefix = TemplateRegExp.regExp(r'(?<=-\()REF');
 
   final RegExp channelClassName = TemplateRegExp.regExp(
-    r'(?<=\()\w*ClassTemplate(?=Channel )',
+    r'(?<=\(\w*)ClassTemplate(?=Channel )',
   );
 
   final RegExp variableClassName = TemplateRegExp.regExp(
@@ -786,7 +790,7 @@ class LibraryImplementationsHandler with TemplateRegExp {
   final RegExp prefix = TemplateRegExp.regExp(r'(?<=-\()REF');
 
   final RegExp channelClassName = TemplateRegExp.regExp(
-    r'(?<=\()\w*ClassTemplate(?=Handler )',
+    r'(?<=\(\w*)ClassTemplate(?=Handler )',
   );
 
   final RegExp variableClassName = TemplateRegExp.regExp(
@@ -802,6 +806,11 @@ class ChannelRegistrar with TemplateRegExp {
       r'@interface REFChannelRegistrar.+@end\s+(?=NS_ASSUME_NONNULL_END)');
 
   final RegExp prefix = TemplateRegExp.regExp(r'(?<=@interface )REF');
+
+  final RegExp implementationsPropertyPrefix =
+      TemplateRegExp.regExp(r'(?<=@property \(readonly\) id<)REF');
+  final RegExp implementationsParameterPrefix =
+      TemplateRegExp.regExp(r'(?<=initWithImplementation:\(id<)REF');
 
   @override
   final Library parent;

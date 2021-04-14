@@ -1,4 +1,4 @@
-#import "REFLibraryTemplate.h"
+#import "IAFChannelLibrary_Internal.h"
 
 @implementation _IAFCaptureDeviceInputCreationArgs
 @end
@@ -310,7 +310,7 @@ args.position = arguments[1];
 @end
 
 @implementation _IAFChannelRegistrar
-- (instancetype)initWithImplementation:(id<REFLibraryImplementations>)implementations {
+- (instancetype)initWithImplementation:(id<_IAFLibraryImplementations>)implementations {
   self = [super init];
   if (self) {
     _implementations = implementations;
