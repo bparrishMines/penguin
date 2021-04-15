@@ -68,7 +68,7 @@ class CaptureDevice with $CaptureDevice {
   CaptureDevice({required this.uniqueId, required this.position});
 
   static CaptureDeviceChannel get _channel =>
-      ChannelRegistrar.instance.implementations.captureDeviceInputChannel
+      ChannelRegistrar.instance.implementations.captureDeviceChannel
           as CaptureDeviceChannel;
 
   @override

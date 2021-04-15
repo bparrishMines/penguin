@@ -69,6 +69,10 @@ class PreviewControllerChannel extends $PreviewControllerChannel {
   PreviewControllerChannel(TypeChannelMessenger messenger) : super(messenger);
 }
 
+class CaptureInputChannel extends $CaptureInputChannel {
+  CaptureInputChannel(TypeChannelMessenger messenger) : super(messenger);
+}
+
 class CaptureDeviceInputHandler extends $CaptureDeviceInputHandler {}
 
 class CaptureSessionHandler extends $CaptureSessionHandler {}
@@ -85,9 +89,5 @@ class CaptureDeviceHandler extends $CaptureDeviceHandler {
 }
 
 class PreviewControllerHandler extends $PreviewControllerHandler {}
-
-class CaptureInputChannel extends $CaptureInputChannel {
-  CaptureInputChannel(TypeChannelMessenger messenger) : super(messenger);
-}
 
 class CaptureInputHandler extends $CaptureInputHandler {}

@@ -48,6 +48,7 @@ class _MyAppState extends State<MyApp> {
 
     _captureSession = CaptureSession();
     _captureSession.addInput(CaptureDeviceInput(device));
+    _captureSession.startRunning();
 
     setState(() {
       _previewWidget = Preview(controller: PreviewController(_captureSession));
