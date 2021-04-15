@@ -4,13 +4,19 @@
 @import ios_avfoundation;
 
 @interface IAVCaptureDeviceInputTests : XCTestCase
-
 @end
 
-@implementation IAVCaptureDeviceInputTests
+@implementation IAVCaptureDeviceInputTests {
+  IAFLibraryImplementations *_mockImplementations;
+}
+
+- (void)setUp {
+  _mockImplementations = OCMClassMock([IAFLibraryImplementations class]);
+}
 - (void)testInitWithDevice {
   id mockCaptureDevice = OCMClassMock([AVCaptureDevice class]);
-  IAVCaptureDeviceProxy *captureDevice = [[IAVCaptureDeviceProxy alloc] initWithCaptureDevice:mockCaptureDevice channels:nil];
+  IAFCaptureDeviceProxy *captureDevice = [[IAFCaptureDeviceProxy alloc] initWithCaptureDevice:mockCaptureDevice
+                                                                              implementations:_mockImplementations];
   
   id mockDeviceInput = OCMClassMock([AVCaptureDeviceInput class]);
   OCMStub([mockDeviceInput alloc]).andReturn(mockDeviceInput);
@@ -18,6 +24,6 @@
                                     error:((NSError __autoreleasing **)[OCMArg anyPointer])]).andReturn(mockDeviceInput);
 
   XCTAssertEqualObjects(mockDeviceInput,
-                        [[[IAVCaptureDeviceInputProxy alloc] initWithDevice:captureDevice] captureDeviceInput]);
+                        [[IAFCaptureDeviceInputProxy alloc] initWithDevice:captureDevice].captureInput);
 }
 @end
