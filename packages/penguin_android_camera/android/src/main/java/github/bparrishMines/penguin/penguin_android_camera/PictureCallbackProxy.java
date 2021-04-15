@@ -24,7 +24,7 @@ public class PictureCallbackProxy implements CameraChannelLibrary.$PictureCallba
 
   @Override
   protected void finalize() throws Throwable {
-    libraryImplementations.getPictureCallbackChannel().releaseDartHandle(this);
+    libraryImplementations.getPictureCallbackChannel().disposeInstancePair(this);
     super.finalize();
   }
 }

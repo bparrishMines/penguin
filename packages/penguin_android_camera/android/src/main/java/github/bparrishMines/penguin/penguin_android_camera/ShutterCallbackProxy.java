@@ -24,7 +24,7 @@ public class ShutterCallbackProxy implements CameraChannelLibrary.$ShutterCallba
 
   @Override
   protected void finalize() throws Throwable {
-    libraryImplementations.getShutterCallbackChannel().releaseDartHandle(this);
+    libraryImplementations.getShutterCallbackChannel().disposeInstancePair(this);
     super.finalize();
   }
 }

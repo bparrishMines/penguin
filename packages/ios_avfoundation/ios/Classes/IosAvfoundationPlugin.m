@@ -32,8 +32,9 @@
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
   REFTypeChannelMessenger *messenger = [ReferencePlugin getMessengerInstance:registrar.messenger];
   
-  IAVChannels *channels = [[IAVChannels alloc] initWithMessenger:messenger];
-  [channels initialize];
+  IAFLibraryImplementations *implementations = [[IAFLibraryImplementations alloc] initWithMessenger:messenger];
+  IAFChannelRegistrar *channels = [[IAFChannelRegistrar alloc] initWithImplementation:implementations];
+  [channels registerHandlers];
   
   [registrar registerViewFactory:[[MyViewFactory alloc] initWithMessenger:messenger]
                           withId:@"ios_avfoundation/Preview"];

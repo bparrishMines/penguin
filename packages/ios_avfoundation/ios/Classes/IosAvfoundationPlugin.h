@@ -1,7 +1,7 @@
 #import <Flutter/Flutter.h>
 
-#import "ReferencePlugin.h"
-#import "IAVFoundation.h"
+#import "REFTypeChannel.h"
+#import "IAFChannelRegistrar.h"
 
 @interface IosAvfoundationPlugin : NSObject<FlutterPlugin>
 @end

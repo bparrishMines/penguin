@@ -25,10 +25,12 @@
 
 @implementation IAVCaptureDeviceTests {
   TestCaptureDevice *_testCaptureDevice;
+  IAFLibraryImplementations *_mockImplementations;
 }
 
 - (void)setUp {
   _testCaptureDevice = [[TestCaptureDevice alloc] init];
+  _mockImplementations = OCMClassMock([IAFLibraryImplementations class]);
 }
 
 - (void)testDevicesWithMediaType {
@@ -36,21 +38,12 @@
   
   OCMStub(ClassMethod([mockCaptureDevice devicesWithMediaType:@"apple"])).andReturn(@[_testCaptureDevice]);
   
-  NSArray<IAVCaptureDeviceProxy *> *devices = [IAVCaptureDeviceProxy devicesWithMediaType:@"apple" channels:nil];
+  NSArray<IAFCaptureDeviceProxy *> *devices = [IAFCaptureDeviceProxy devicesWithMediaType:@"apple"
+                                                                          implementations:_mockImplementations];
   XCTAssertEqual(devices.count, 1);
   
-  IAVCaptureDeviceProxy *device = devices[0];
+  IAFCaptureDeviceProxy *device = devices[0];
   XCTAssertEqualObjects(device.uniqueId, @"test_uniqueID");
   XCTAssertEqualObjects(device.position, @(2));
-}
-
--(void)testInitWithUniqueID {
-  id mockCaptureDevice = OCMClassMock([AVCaptureDevice class]);
-  
-  OCMStub(ClassMethod([mockCaptureDevice deviceWithUniqueID:@"test_id"])).andReturn(_testCaptureDevice);
-  
-  IAVCaptureDeviceProxy *captureDevice = [[IAVCaptureDeviceProxy alloc] initWithCaptureDevice:_testCaptureDevice
-                                                                                     channels:nil];
-  XCTAssertEqualObjects(_testCaptureDevice, captureDevice.captureDevice);
 }
 @end

@@ -1,4 +1,10 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
 #import "REFMethodChannel.h"
+
+// **************************************************************************
+// ReferenceGenerator
+// **************************************************************************
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -30,10 +36,16 @@ NS_ASSUME_NONNULL_BEGIN
                              parameterTemplate:(NSString *_Nullable)parameterTemplate;
 @end
 
-@protocol REFChannels
+@protocol REFLibraryImplementations
+-(REFClassTemplateChannel *)classTemplateChannel;
+-(REFClassTemplateHandler *)classTemplateHandler;
+@end
+
+@interface REFChannelRegistrar : NSObject
+@property (readonly) id<REFLibraryImplementations> implementations;
+- (instancetype)initWithImplementation:(id<REFLibraryImplementations>)implementations;
 -(void)registerHandlers;
 -(void)unregisterHandlers;
--(REFClassTemplateChannel *)classTemplateChannel;
 @end
 
 NS_ASSUME_NONNULL_END

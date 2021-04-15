@@ -5,7 +5,7 @@ import 'package:reference/annotations.dart';
 import 'package:reference/reference.dart';
 
 import 'avfoundation.g.dart';
-import 'avfoundation_channels.dart' show Channels;
+import 'avfoundation_channels.dart';
 
 abstract class MediaType {
   const MediaType._();
@@ -24,37 +24,52 @@ abstract class CaptureDevicePosition {
 }
 
 @Reference('captureDeviceInput')
-class CaptureDeviceInput with $CaptureDeviceInput {
-  const CaptureDeviceInput(this.device);
+class CaptureDeviceInput extends CaptureInput with $CaptureDeviceInput {
+  CaptureDeviceInput(this.device) {
+    _channel.createNewInstancePair(this, owner: true);
+  }
+
+  static CaptureDeviceInputChannel get _channel =>
+      ChannelRegistrar.instance.implementations.captureDeviceInputChannel
+          as CaptureDeviceInputChannel;
 
   @override
   final CaptureDevice device;
 }
 
+@Reference('captureInput')
+abstract class CaptureInput with $CaptureInput {}
+
 @Reference('captureSession')
 class CaptureSession with $CaptureSession {
-  CaptureSession(this.inputs);
+  CaptureSession() {
+    _channel.createNewInstancePair(this, owner: true);
+  }
+
+  static CaptureSessionChannel get _channel =>
+      ChannelRegistrar.instance.implementations.captureSessionChannel
+          as CaptureSessionChannel;
 
   @override
-  final List<CaptureDeviceInput> inputs;
-
-  @override
-  Future<void> startRunning() async {
-    Channels.captureSessionChannel.createNewInstancePair(this);
-    await Channels.captureSessionChannel.$invokeStartRunning(this);
+  Future<void> addInput(covariant CaptureInput input) {
+    return _channel.$invokeAddInput(this, input);
   }
 
   @override
-  Future<void> stopRunning() async {
-    if (!Channels.captureSessionChannel.messenger.isPaired(this)) return;
-    Channels.captureSessionChannel.$invokeStopRunning(this);
-    return Channels.captureSessionChannel.disposeInstancePair(this);
-  }
+  Future<void> startRunning() => _channel.$invokeStartRunning(this);
+
+  @override
+  Future<void> stopRunning() => _channel.$invokeStopRunning(this);
 }
 
 @Reference('captureDevice')
-class CaptureDevice with $CaptureDevice, ReferenceType {
+class CaptureDevice with $CaptureDevice {
+  @visibleForTesting
   CaptureDevice({required this.uniqueId, required this.position});
+
+  static CaptureDeviceChannel get _channel =>
+      ChannelRegistrar.instance.implementations.captureDeviceChannel
+          as CaptureDeviceChannel;
 
   @override
   final String uniqueId;
@@ -66,54 +81,21 @@ class CaptureDevice with $CaptureDevice, ReferenceType {
     String mediaType,
   ) async {
     assert(mediaType == MediaType.video);
-    final List<Object?> result = await Channels.captureDeviceChannel
-        .$invokeDevicesWithMediaType(mediaType) as List<Object?>;
-    return result.cast<CaptureDevice>().toList();
+    final List<Object?> result =
+        await _channel.$invokeDevicesWithMediaType(mediaType) as List<Object?>;
+    return result.cast<CaptureDevice>();
   }
-
-  @override
-  TypeChannel<Object> get typeChannel => Channels.captureDeviceChannel;
 }
 
-class Preview extends StatefulWidget {
-  const Preview({
-    Key? key,
-    required this.captureSession,
-    this.onPreviewReady,
-  }) : super(key: key);
+class Preview extends StatelessWidget {
+  const Preview({Key? key, required this.controller}) : super(key: key);
 
-  final CaptureSession captureSession;
-  final void Function(PreviewController controller)? onPreviewReady;
-
-  @override
-  State<StatefulWidget> createState() => PreviewState();
-}
-
-class PreviewState extends State<Preview> {
-  late final PreviewController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = PreviewController(widget.captureSession);
-    Channels.previewControllerInputChannel.createNewInstancePair(_controller);
-
-    final void Function(PreviewController controller)? onPreviewReady =
-        widget.onPreviewReady;
-    if (onPreviewReady != null) onPreviewReady(_controller);
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    Channels.previewControllerInputChannel.disposeInstancePair(_controller);
-  }
+  final PreviewController controller;
 
   @override
   Widget build(BuildContext context) {
-    final PairedInstance? pairedInstance = Channels
-        .previewControllerInputChannel.messenger
-        .getPairedPairedInstance(_controller);
+    final PairedInstance? pairedInstance = PreviewController._channel.messenger
+        .getPairedPairedInstance(controller);
     if (pairedInstance == null) {
       throw StateError("PreviewController isn't paired.");
     }
@@ -128,7 +110,13 @@ class PreviewState extends State<Preview> {
 
 @Reference('previewController')
 class PreviewController with $PreviewController {
-  PreviewController(this.captureSession);
+  PreviewController(this.captureSession) {
+    _channel.createNewInstancePair(this, owner: true);
+  }
+
+  static PreviewControllerChannel get _channel =>
+      ChannelRegistrar.instance.implementations.previewControllerChannel
+          as PreviewControllerChannel;
 
   @override
   final CaptureSession captureSession;

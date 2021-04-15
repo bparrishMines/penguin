@@ -15,11 +15,11 @@ import 'camera_channels.dart';
 /// API and is deprecated for Android versions 21+.
 @Reference('penguin_android_camera/camera/Camera')
 class Camera with $Camera {
-  @visibleForTesting
   /// Default constructor for [Camera].
   ///
   /// This should only be used when subclassing. Otherwise, an instance should
   /// be provided from [open].
+  @visibleForTesting
   Camera();
 
   static CameraChannel get _channel =>

@@ -1,21 +1,17 @@
-// GENERATED CODE - DO NOT MODIFY BY HAND
+#import "IAFChannelLibrary_Internal.h"
 
-#import "IAVChannelLibrary_Internal.h"
-
-// **************************************************************************
-// ReferenceGenerator
-// **************************************************************************
-
-@implementation GENIAVCaptureDeviceInputCreationArgs
+@implementation _IAFCaptureDeviceInputCreationArgs
 @end
-@implementation GENIAVCaptureSessionCreationArgs
+@implementation _IAFCaptureInputCreationArgs
 @end
-@implementation GENIAVCaptureDeviceCreationArgs
+@implementation _IAFCaptureSessionCreationArgs
 @end
-@implementation GENIAVPreviewControllerCreationArgs
+@implementation _IAFCaptureDeviceCreationArgs
+@end
+@implementation _IAFPreviewControllerCreationArgs
 @end
 
-@implementation GENIAVCaptureDeviceInputChannel
+@implementation _IAFCaptureDeviceInputChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
   return self = [super initWithMessenger:messenger name:@"captureDeviceInput"];
 }
@@ -26,19 +22,35 @@
 @end
 
 
-@implementation GENIAVCaptureSessionChannel
+@implementation _IAFCaptureInputChannel
+- (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
+  return self = [super initWithMessenger:messenger name:@"captureInput"];
+}
+
+
+
+
+@end
+
+
+@implementation _IAFCaptureSessionChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
   return self = [super initWithMessenger:messenger name:@"captureSession"];
 }
 
 
 
-- (void)invoke_startRunning:(NSObject<GENIAVCaptureSession> *)instance
+- (void)invoke_addInput:(NSObject<_IAFCaptureSession> *)instance
+            input:(NSObject<_IAFCaptureInput> *_Nullable)input
+                   completion:(void (^)(id _Nullable, NSError *_Nullable))completion {
+  [self invokeMethod:instance methodName:@"addInput" arguments:@[input] completion:completion];
+}
+- (void)invoke_startRunning:(NSObject<_IAFCaptureSession> *)instance
             
                    completion:(void (^)(id _Nullable, NSError *_Nullable))completion {
   [self invokeMethod:instance methodName:@"startRunning" arguments:@[] completion:completion];
 }
-- (void)invoke_stopRunning:(NSObject<GENIAVCaptureSession> *)instance
+- (void)invoke_stopRunning:(NSObject<_IAFCaptureSession> *)instance
             
                    completion:(void (^)(id _Nullable, NSError *_Nullable))completion {
   [self invokeMethod:instance methodName:@"stopRunning" arguments:@[] completion:completion];
@@ -46,7 +58,7 @@
 @end
 
 
-@implementation GENIAVCaptureDeviceChannel
+@implementation _IAFCaptureDeviceChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
   return self = [super initWithMessenger:messenger name:@"captureDevice"];
 }
@@ -61,7 +73,7 @@
 @end
 
 
-@implementation GENIAVPreviewControllerChannel
+@implementation _IAFPreviewControllerChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
   return self = [super initWithMessenger:messenger name:@"previewController"];
 }
@@ -71,9 +83,9 @@
 
 @end
 
-@implementation GENIAVCaptureDeviceInputHandler
-- (NSObject<GENIAVCaptureDeviceInput> *)onCreate:(REFTypeChannelMessenger *)messenger
-                                    args:(GENIAVCaptureDeviceInputCreationArgs *)args {
+@implementation _IAFCaptureDeviceInputHandler
+- (NSObject<_IAFCaptureDeviceInput> *)onCreate:(REFTypeChannelMessenger *)messenger
+                                    args:(_IAFCaptureDeviceInputCreationArgs *)args {
   return nil;
 }
 
@@ -90,13 +102,13 @@
 
 - (nonnull NSArray *)getCreationArguments:(nonnull REFTypeChannelMessenger *)messenger
                                  instance:(nonnull NSObject *)instance {
-  NSObject<GENIAVCaptureDeviceInput> *value = (NSObject<GENIAVCaptureDeviceInput> *) instance;
+  NSObject<_IAFCaptureDeviceInput> *value = (NSObject<_IAFCaptureDeviceInput> *) instance;
   return @[value.device];
 }
 
 - (nonnull id)createInstance:(nonnull REFTypeChannelMessenger *)messenger
                    arguments:(nonnull NSArray *)arguments {
-  GENIAVCaptureDeviceInputCreationArgs *args = [[GENIAVCaptureDeviceInputCreationArgs alloc] init];
+  _IAFCaptureDeviceInputCreationArgs *args = [[_IAFCaptureDeviceInputCreationArgs alloc] init];
   args.device = arguments[0];
   return [self onCreate:messenger args:args];
 }
@@ -105,22 +117,18 @@
                     instance:(nonnull NSObject *)instance
                   methodName:(nonnull NSString *)methodName
                    arguments:(nonnull NSArray *)arguments {
-  NSObject<GENIAVCaptureDeviceInput> *value = (NSObject<GENIAVCaptureDeviceInput> *) instance;
+  NSObject<_IAFCaptureDeviceInput> *value = (NSObject<_IAFCaptureDeviceInput> *) instance;
   
   
   NSLog(@"Unable to invoke method %@", methodName);
   return nil;
 }
-
-- (void)onInstanceAdded:(nonnull REFTypeChannelMessenger *)messenger instance:(nonnull NSObject *)instance {}
-
-- (void)onInstanceRemoved:(nonnull REFTypeChannelMessenger *)messenger
-                 instance:(nonnull NSObject *)instance {}
 @end
 
-@implementation GENIAVCaptureSessionHandler
-- (NSObject<GENIAVCaptureSession> *)onCreate:(REFTypeChannelMessenger *)messenger
-                                    args:(GENIAVCaptureSessionCreationArgs *)args {
+
+@implementation _IAFCaptureInputHandler
+- (NSObject<_IAFCaptureInput> *)onCreate:(REFTypeChannelMessenger *)messenger
+                                    args:(_IAFCaptureInputCreationArgs *)args {
   return nil;
 }
 
@@ -137,14 +145,14 @@
 
 - (nonnull NSArray *)getCreationArguments:(nonnull REFTypeChannelMessenger *)messenger
                                  instance:(nonnull NSObject *)instance {
-  NSObject<GENIAVCaptureSession> *value = (NSObject<GENIAVCaptureSession> *) instance;
-  return @[value.inputs];
+  NSObject<_IAFCaptureInput> *value = (NSObject<_IAFCaptureInput> *) instance;
+  return @[];
 }
 
 - (nonnull id)createInstance:(nonnull REFTypeChannelMessenger *)messenger
                    arguments:(nonnull NSArray *)arguments {
-  GENIAVCaptureSessionCreationArgs *args = [[GENIAVCaptureSessionCreationArgs alloc] init];
-  args.inputs = arguments[0];
+  _IAFCaptureInputCreationArgs *args = [[_IAFCaptureInputCreationArgs alloc] init];
+  
   return [self onCreate:messenger args:args];
 }
 
@@ -152,8 +160,53 @@
                     instance:(nonnull NSObject *)instance
                   methodName:(nonnull NSString *)methodName
                    arguments:(nonnull NSArray *)arguments {
-  NSObject<GENIAVCaptureSession> *value = (NSObject<GENIAVCaptureSession> *) instance;
-  if ([@"startRunning" isEqualToString:methodName]) {
+  NSObject<_IAFCaptureInput> *value = (NSObject<_IAFCaptureInput> *) instance;
+  
+  
+  NSLog(@"Unable to invoke method %@", methodName);
+  return nil;
+}
+@end
+
+
+@implementation _IAFCaptureSessionHandler
+- (NSObject<_IAFCaptureSession> *)onCreate:(REFTypeChannelMessenger *)messenger
+                                    args:(_IAFCaptureSessionCreationArgs *)args {
+  return nil;
+}
+
+
+
+- (id _Nullable)invokeStaticMethod:(nonnull REFTypeChannelMessenger *)messenger
+                        methodName:(nonnull NSString *)methodName
+                         arguments:(nonnull NSArray *)arguments {
+  
+  
+  NSLog(@"Unable to invoke static method %@", methodName);
+  return nil;
+}
+
+- (nonnull NSArray *)getCreationArguments:(nonnull REFTypeChannelMessenger *)messenger
+                                 instance:(nonnull NSObject *)instance {
+  NSObject<_IAFCaptureSession> *value = (NSObject<_IAFCaptureSession> *) instance;
+  return @[];
+}
+
+- (nonnull id)createInstance:(nonnull REFTypeChannelMessenger *)messenger
+                   arguments:(nonnull NSArray *)arguments {
+  _IAFCaptureSessionCreationArgs *args = [[_IAFCaptureSessionCreationArgs alloc] init];
+  
+  return [self onCreate:messenger args:args];
+}
+
+- (id _Nullable)invokeMethod:(nonnull REFTypeChannelMessenger *)messenger
+                    instance:(nonnull NSObject *)instance
+                  methodName:(nonnull NSString *)methodName
+                   arguments:(nonnull NSArray *)arguments {
+  NSObject<_IAFCaptureSession> *value = (NSObject<_IAFCaptureSession> *) instance;
+  if ([@"addInput" isEqualToString:methodName]) {
+    return [value addInput:arguments[0] ];
+  } else if ([@"startRunning" isEqualToString:methodName]) {
     return [value startRunning ];
   } else if ([@"stopRunning" isEqualToString:methodName]) {
     return [value stopRunning ];
@@ -162,16 +215,12 @@
   NSLog(@"Unable to invoke method %@", methodName);
   return nil;
 }
-
-- (void)onInstanceAdded:(nonnull REFTypeChannelMessenger *)messenger instance:(nonnull NSObject *)instance {}
-
-- (void)onInstanceRemoved:(nonnull REFTypeChannelMessenger *)messenger
-                 instance:(nonnull NSObject *)instance {}
 @end
 
-@implementation GENIAVCaptureDeviceHandler
-- (NSObject<GENIAVCaptureDevice> *)onCreate:(REFTypeChannelMessenger *)messenger
-                                    args:(GENIAVCaptureDeviceCreationArgs *)args {
+
+@implementation _IAFCaptureDeviceHandler
+- (NSObject<_IAFCaptureDevice> *)onCreate:(REFTypeChannelMessenger *)messenger
+                                    args:(_IAFCaptureDeviceCreationArgs *)args {
   return nil;
 }
 
@@ -193,13 +242,13 @@
 
 - (nonnull NSArray *)getCreationArguments:(nonnull REFTypeChannelMessenger *)messenger
                                  instance:(nonnull NSObject *)instance {
-  NSObject<GENIAVCaptureDevice> *value = (NSObject<GENIAVCaptureDevice> *) instance;
+  NSObject<_IAFCaptureDevice> *value = (NSObject<_IAFCaptureDevice> *) instance;
   return @[value.uniqueId,value.position];
 }
 
 - (nonnull id)createInstance:(nonnull REFTypeChannelMessenger *)messenger
                    arguments:(nonnull NSArray *)arguments {
-  GENIAVCaptureDeviceCreationArgs *args = [[GENIAVCaptureDeviceCreationArgs alloc] init];
+  _IAFCaptureDeviceCreationArgs *args = [[_IAFCaptureDeviceCreationArgs alloc] init];
   args.uniqueId = arguments[0];
 args.position = arguments[1];
   return [self onCreate:messenger args:args];
@@ -209,22 +258,18 @@ args.position = arguments[1];
                     instance:(nonnull NSObject *)instance
                   methodName:(nonnull NSString *)methodName
                    arguments:(nonnull NSArray *)arguments {
-  NSObject<GENIAVCaptureDevice> *value = (NSObject<GENIAVCaptureDevice> *) instance;
+  NSObject<_IAFCaptureDevice> *value = (NSObject<_IAFCaptureDevice> *) instance;
   
   
   NSLog(@"Unable to invoke method %@", methodName);
   return nil;
 }
-
-- (void)onInstanceAdded:(nonnull REFTypeChannelMessenger *)messenger instance:(nonnull NSObject *)instance {}
-
-- (void)onInstanceRemoved:(nonnull REFTypeChannelMessenger *)messenger
-                 instance:(nonnull NSObject *)instance {}
 @end
 
-@implementation GENIAVPreviewControllerHandler
-- (NSObject<GENIAVPreviewController> *)onCreate:(REFTypeChannelMessenger *)messenger
-                                    args:(GENIAVPreviewControllerCreationArgs *)args {
+
+@implementation _IAFPreviewControllerHandler
+- (NSObject<_IAFPreviewController> *)onCreate:(REFTypeChannelMessenger *)messenger
+                                    args:(_IAFPreviewControllerCreationArgs *)args {
   return nil;
 }
 
@@ -241,13 +286,13 @@ args.position = arguments[1];
 
 - (nonnull NSArray *)getCreationArguments:(nonnull REFTypeChannelMessenger *)messenger
                                  instance:(nonnull NSObject *)instance {
-  NSObject<GENIAVPreviewController> *value = (NSObject<GENIAVPreviewController> *) instance;
+  NSObject<_IAFPreviewController> *value = (NSObject<_IAFPreviewController> *) instance;
   return @[value.captureSession];
 }
 
 - (nonnull id)createInstance:(nonnull REFTypeChannelMessenger *)messenger
                    arguments:(nonnull NSArray *)arguments {
-  GENIAVPreviewControllerCreationArgs *args = [[GENIAVPreviewControllerCreationArgs alloc] init];
+  _IAFPreviewControllerCreationArgs *args = [[_IAFPreviewControllerCreationArgs alloc] init];
   args.captureSession = arguments[0];
   return [self onCreate:messenger args:args];
 }
@@ -256,15 +301,36 @@ args.position = arguments[1];
                     instance:(nonnull NSObject *)instance
                   methodName:(nonnull NSString *)methodName
                    arguments:(nonnull NSArray *)arguments {
-  NSObject<GENIAVPreviewController> *value = (NSObject<GENIAVPreviewController> *) instance;
+  NSObject<_IAFPreviewController> *value = (NSObject<_IAFPreviewController> *) instance;
   
   
   NSLog(@"Unable to invoke method %@", methodName);
   return nil;
 }
+@end
 
-- (void)onInstanceAdded:(nonnull REFTypeChannelMessenger *)messenger instance:(nonnull NSObject *)instance {}
+@implementation _IAFChannelRegistrar
+- (instancetype)initWithImplementation:(id<_IAFLibraryImplementations>)implementations {
+  self = [super init];
+  if (self) {
+    _implementations = implementations;
+  }
+  return self;
+}
 
-- (void)onInstanceRemoved:(nonnull REFTypeChannelMessenger *)messenger
-                 instance:(nonnull NSObject *)instance {}
+- (void)registerHandlers {
+  [_implementations.captureDeviceInputChannel setHandler:_implementations.captureDeviceInputHandler];
+[_implementations.captureInputChannel setHandler:_implementations.captureInputHandler];
+[_implementations.captureSessionChannel setHandler:_implementations.captureSessionHandler];
+[_implementations.captureDeviceChannel setHandler:_implementations.captureDeviceHandler];
+[_implementations.previewControllerChannel setHandler:_implementations.previewControllerHandler];
+}
+
+- (void)unregisterHandlers {
+  [_implementations.captureDeviceInputChannel removeHandler];
+[_implementations.captureInputChannel removeHandler];
+[_implementations.captureSessionChannel removeHandler];
+[_implementations.captureDeviceChannel removeHandler];
+[_implementations.previewControllerChannel removeHandler];
+}
 @end

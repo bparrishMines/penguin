@@ -10,8 +10,11 @@ mixin $CaptureDeviceInput {
   $CaptureDevice get device;
 }
 
+mixin $CaptureInput {}
+
 mixin $CaptureSession {
-  List<$CaptureDeviceInput> get inputs;
+  Future<void> addInput($CaptureInput input);
+
   Future<void> startRunning();
 
   Future<void> stopRunning();
@@ -30,9 +33,9 @@ class $CaptureDeviceInputCreationArgs {
   late $CaptureDevice device;
 }
 
-class $CaptureSessionCreationArgs {
-  late List<$CaptureDeviceInput> inputs;
-}
+class $CaptureInputCreationArgs {}
+
+class $CaptureSessionCreationArgs {}
 
 class $CaptureDeviceCreationArgs {
   late String uniqueId;
@@ -48,9 +51,23 @@ class $CaptureDeviceInputChannel extends TypeChannel<$CaptureDeviceInput> {
       : super(messenger, 'captureDeviceInput');
 }
 
+class $CaptureInputChannel extends TypeChannel<$CaptureInput> {
+  $CaptureInputChannel(TypeChannelMessenger messenger)
+      : super(messenger, 'captureInput');
+}
+
 class $CaptureSessionChannel extends TypeChannel<$CaptureSession> {
   $CaptureSessionChannel(TypeChannelMessenger messenger)
       : super(messenger, 'captureSession');
+
+  Future<Object?> $invokeAddInput(
+      $CaptureSession instance, $CaptureInput input) {
+    return sendInvokeMethod(
+      instance,
+      'addInput',
+      <Object?>[input],
+    );
+  }
 
   Future<Object?> $invokeStartRunning(
     $CaptureSession instance,
@@ -92,22 +109,12 @@ class $PreviewControllerChannel extends TypeChannel<$PreviewController> {
 
 class $CaptureDeviceInputHandler
     implements TypeChannelHandler<$CaptureDeviceInput> {
-  $CaptureDeviceInputHandler({
-    this.onCreate,
-    this.onAdded,
-    this.onRemoved,
-  });
-
-  final $CaptureDeviceInput Function(
+  $CaptureDeviceInput onCreate(
     TypeChannelMessenger messenger,
     $CaptureDeviceInputCreationArgs args,
-  )? onCreate;
-
-  final void Function(
-      TypeChannelMessenger messenger, $CaptureDeviceInput instance)? onAdded;
-
-  final void Function(
-      TypeChannelMessenger messenger, $CaptureDeviceInput instance)? onRemoved;
+  ) {
+    throw UnimplementedError();
+  }
 
   @override
   Object? invokeStaticMethod(
@@ -143,7 +150,7 @@ class $CaptureDeviceInputHandler
     TypeChannelMessenger messenger,
     List<Object?> arguments,
   ) {
-    return onCreate!(
+    return onCreate(
       messenger,
       $CaptureDeviceInputCreationArgs()
         ..device = arguments[0] as $CaptureDevice,
@@ -171,41 +178,86 @@ class $CaptureDeviceInputHandler
     // ignore: dead_code
     return method();
   }
+}
 
-  @override
-  void onInstanceAdded(
+class $CaptureInputHandler implements TypeChannelHandler<$CaptureInput> {
+  $CaptureInput onCreate(
     TypeChannelMessenger messenger,
-    $CaptureDeviceInput instance,
+    $CaptureInputCreationArgs args,
   ) {
-    if (onAdded != null) onAdded!(messenger, instance);
+    throw UnimplementedError();
   }
 
   @override
-  void onInstanceRemoved(
+  Object? invokeStaticMethod(
     TypeChannelMessenger messenger,
-    $CaptureDeviceInput instance,
+    String methodName,
+    List<Object?> arguments,
   ) {
-    if (onRemoved != null) onRemoved!(messenger, instance);
+    // ignore: prefer_final_locals, prefer_function_declarations_over_variables
+    Function method = () {};
+    switch (methodName) {
+      default:
+        throw ArgumentError.value(
+          methodName,
+          'methodName',
+          'Unable to invoke static method `$methodName`',
+        );
+    }
+
+    // ignore: dead_code
+    return method();
+  }
+
+  @override
+  List<Object?> getCreationArguments(
+    TypeChannelMessenger messenger,
+    $CaptureInput instance,
+  ) {
+    return <Object?>[];
+  }
+
+  @override
+  $CaptureInput createInstance(
+    TypeChannelMessenger messenger,
+    List<Object?> arguments,
+  ) {
+    return onCreate(
+      messenger,
+      $CaptureInputCreationArgs(),
+    );
+  }
+
+  @override
+  Object? invokeMethod(
+    TypeChannelMessenger messenger,
+    $CaptureInput instance,
+    String methodName,
+    List<Object?> arguments,
+  ) {
+    // ignore: prefer_final_locals, prefer_function_declarations_over_variables
+    Function method = () {};
+    switch (methodName) {
+      default:
+        throw ArgumentError.value(
+          instance,
+          'instance',
+          'Unable to invoke method `$methodName` on',
+        );
+    }
+
+    // ignore: dead_code
+    return method();
   }
 }
 
 class $CaptureSessionHandler implements TypeChannelHandler<$CaptureSession> {
-  $CaptureSessionHandler({
-    this.onCreate,
-    this.onAdded,
-    this.onRemoved,
-  });
-
-  final $CaptureSession Function(
+  $CaptureSession onCreate(
     TypeChannelMessenger messenger,
     $CaptureSessionCreationArgs args,
-  )? onCreate;
-
-  final void Function(TypeChannelMessenger messenger, $CaptureSession instance)?
-      onAdded;
-
-  final void Function(TypeChannelMessenger messenger, $CaptureSession instance)?
-      onRemoved;
+  ) {
+    throw UnimplementedError();
+  }
 
   @override
   Object? invokeStaticMethod(
@@ -233,7 +285,7 @@ class $CaptureSessionHandler implements TypeChannelHandler<$CaptureSession> {
     TypeChannelMessenger messenger,
     $CaptureSession instance,
   ) {
-    return <Object?>[instance.inputs];
+    return <Object?>[];
   }
 
   @override
@@ -241,10 +293,9 @@ class $CaptureSessionHandler implements TypeChannelHandler<$CaptureSession> {
     TypeChannelMessenger messenger,
     List<Object?> arguments,
   ) {
-    return onCreate!(
+    return onCreate(
       messenger,
-      $CaptureSessionCreationArgs()
-        ..inputs = arguments[0] as List<$CaptureDeviceInput>,
+      $CaptureSessionCreationArgs(),
     );
   }
 
@@ -258,6 +309,9 @@ class $CaptureSessionHandler implements TypeChannelHandler<$CaptureSession> {
     // ignore: prefer_final_locals, prefer_function_declarations_over_variables
     Function method = () {};
     switch (methodName) {
+      case 'addInput':
+        method = () => instance.addInput(arguments[0] as $CaptureInput);
+        break;
       case 'startRunning':
         method = () => instance.startRunning();
         break;
@@ -275,46 +329,20 @@ class $CaptureSessionHandler implements TypeChannelHandler<$CaptureSession> {
     // ignore: dead_code
     return method();
   }
-
-  @override
-  void onInstanceAdded(
-    TypeChannelMessenger messenger,
-    $CaptureSession instance,
-  ) {
-    if (onAdded != null) onAdded!(messenger, instance);
-  }
-
-  @override
-  void onInstanceRemoved(
-    TypeChannelMessenger messenger,
-    $CaptureSession instance,
-  ) {
-    if (onRemoved != null) onRemoved!(messenger, instance);
-  }
 }
 
 class $CaptureDeviceHandler implements TypeChannelHandler<$CaptureDevice> {
-  $CaptureDeviceHandler({
-    this.onCreate,
-    this.onAdded,
-    this.onRemoved,
-    this.$onDevicesWithMediaType,
-  });
-
-  final $CaptureDevice Function(
+  $CaptureDevice onCreate(
     TypeChannelMessenger messenger,
     $CaptureDeviceCreationArgs args,
-  )? onCreate;
+  ) {
+    throw UnimplementedError();
+  }
 
-  final void Function(TypeChannelMessenger messenger, $CaptureDevice instance)?
-      onAdded;
-
-  final void Function(TypeChannelMessenger messenger, $CaptureDevice instance)?
-      onRemoved;
-
-  final Future<List<$CaptureDevice>> Function(
-          TypeChannelMessenger messenger, String mediaType)?
-      $onDevicesWithMediaType;
+  double $onDevicesWithMediaType(
+      TypeChannelMessenger messenger, String mediaType) {
+    throw UnimplementedError();
+  }
 
   @override
   Object? invokeStaticMethod(
@@ -327,7 +355,7 @@ class $CaptureDeviceHandler implements TypeChannelHandler<$CaptureDevice> {
     switch (methodName) {
       case 'devicesWithMediaType':
         method =
-            () => $onDevicesWithMediaType!(messenger, arguments[0] as String);
+            () => $onDevicesWithMediaType(messenger, arguments[0] as String);
         break;
       default:
         throw ArgumentError.value(
@@ -354,7 +382,7 @@ class $CaptureDeviceHandler implements TypeChannelHandler<$CaptureDevice> {
     TypeChannelMessenger messenger,
     List<Object?> arguments,
   ) {
-    return onCreate!(
+    return onCreate(
       messenger,
       $CaptureDeviceCreationArgs()
         ..uniqueId = arguments[0] as String
@@ -383,42 +411,16 @@ class $CaptureDeviceHandler implements TypeChannelHandler<$CaptureDevice> {
     // ignore: dead_code
     return method();
   }
-
-  @override
-  void onInstanceAdded(
-    TypeChannelMessenger messenger,
-    $CaptureDevice instance,
-  ) {
-    if (onAdded != null) onAdded!(messenger, instance);
-  }
-
-  @override
-  void onInstanceRemoved(
-    TypeChannelMessenger messenger,
-    $CaptureDevice instance,
-  ) {
-    if (onRemoved != null) onRemoved!(messenger, instance);
-  }
 }
 
 class $PreviewControllerHandler
     implements TypeChannelHandler<$PreviewController> {
-  $PreviewControllerHandler({
-    this.onCreate,
-    this.onAdded,
-    this.onRemoved,
-  });
-
-  final $PreviewController Function(
+  $PreviewController onCreate(
     TypeChannelMessenger messenger,
     $PreviewControllerCreationArgs args,
-  )? onCreate;
-
-  final void Function(
-      TypeChannelMessenger messenger, $PreviewController instance)? onAdded;
-
-  final void Function(
-      TypeChannelMessenger messenger, $PreviewController instance)? onRemoved;
+  ) {
+    throw UnimplementedError();
+  }
 
   @override
   Object? invokeStaticMethod(
@@ -454,7 +456,7 @@ class $PreviewControllerHandler
     TypeChannelMessenger messenger,
     List<Object?> arguments,
   ) {
-    return onCreate!(
+    return onCreate(
       messenger,
       $PreviewControllerCreationArgs()
         ..captureSession = arguments[0] as $CaptureSession,
@@ -482,20 +484,49 @@ class $PreviewControllerHandler
     // ignore: dead_code
     return method();
   }
+}
 
-  @override
-  void onInstanceAdded(
-    TypeChannelMessenger messenger,
-    $PreviewController instance,
-  ) {
-    if (onAdded != null) onAdded!(messenger, instance);
+mixin $LibraryImplementations {
+  $CaptureDeviceInputChannel get captureDeviceInputChannel;
+  $CaptureInputChannel get captureInputChannel;
+  $CaptureSessionChannel get captureSessionChannel;
+  $CaptureDeviceChannel get captureDeviceChannel;
+  $PreviewControllerChannel get previewControllerChannel;
+  $CaptureDeviceInputHandler get captureDeviceInputHandler;
+  $CaptureInputHandler get captureInputHandler;
+  $CaptureSessionHandler get captureSessionHandler;
+  $CaptureDeviceHandler get captureDeviceHandler;
+  $PreviewControllerHandler get previewControllerHandler;
+}
+
+class $ChannelRegistrar {
+  $ChannelRegistrar(this.implementations);
+
+  final $LibraryImplementations implementations;
+
+  void registerHandlers() {
+    implementations.captureDeviceInputChannel.setHandler(
+      implementations.captureDeviceInputHandler,
+    );
+    implementations.captureInputChannel.setHandler(
+      implementations.captureInputHandler,
+    );
+    implementations.captureSessionChannel.setHandler(
+      implementations.captureSessionHandler,
+    );
+    implementations.captureDeviceChannel.setHandler(
+      implementations.captureDeviceHandler,
+    );
+    implementations.previewControllerChannel.setHandler(
+      implementations.previewControllerHandler,
+    );
   }
 
-  @override
-  void onInstanceRemoved(
-    TypeChannelMessenger messenger,
-    $PreviewController instance,
-  ) {
-    if (onRemoved != null) onRemoved!(messenger, instance);
+  void unregisterHandlers() {
+    implementations.captureDeviceInputChannel.removeHandler();
+    implementations.captureInputChannel.removeHandler();
+    implementations.captureSessionChannel.removeHandler();
+    implementations.captureDeviceChannel.removeHandler();
+    implementations.previewControllerChannel.removeHandler();
   }
 }

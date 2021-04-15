@@ -4,13 +4,13 @@ static REFThreadSafeMapTable<NSObject<FlutterBinaryMessenger> *, REFTypeChannelM
 
 @implementation ReferencePlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
-  [PluginTemplate registerWithRegistrar:registrar];
+  // Do nothing.
 }
 
 + (REFTypeChannelMessenger *)getMessengerInstance:(NSObject<FlutterBinaryMessenger> *)binaryMessenger {
   static dispatch_once_t once;
   dispatch_once(&once, ^ {
-    messengers = [[REFThreadSafeMapTable alloc] init];
+    messengers = [REFThreadSafeMapTable strongToStrongObjectsMapTable];
   });
   
   REFTypeChannelMessenger *typeChannelMessenger = [messengers objectForKey:binaryMessenger];
