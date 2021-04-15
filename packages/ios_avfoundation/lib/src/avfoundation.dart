@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:reference/annotations.dart';
@@ -21,6 +22,47 @@ abstract class CaptureDevicePosition {
   static const int back = 1;
 
   static const int front = 2;
+}
+
+@Reference('capturePhotoOutput')
+class CapturePhotoOutput extends CaptureOutput {
+  CapturePhotoOutput() {
+
+  }
+
+  Future<void> capturePhoto(CapturePhotoSettings settings, CapturePhotoCaptureDelegate delegate) {
+
+  }
+}
+
+@Reference('CapturePhotoSettings')
+class CapturePhotoSettings {
+  CapturePhotoSettings(this.processedFormat) {
+
+  }
+
+  final Map<String, Object> processedFormat;
+}
+
+@Reference('CapturePhotoCaptureDelegate')
+class CapturePhotoCaptureDelegate {
+  // TODO: Create AvFoundationError
+  void didFinishProcessingPhoto(CapturePhoto photo) {
+
+  }
+}
+
+@Reference('CaptureOutput')
+abstract class CaptureOutput {
+
+}
+
+@Reference('CapturePhoto')
+class CapturePhoto {
+  @visibleForTesting
+  CapturePhoto(this.fileDataRepresentation);
+
+  final Uint8List? fileDataRepresentation;
 }
 
 @Reference('captureDeviceInput')
@@ -53,6 +95,11 @@ class CaptureSession with $CaptureSession {
   @override
   Future<void> addInput(covariant CaptureInput input) {
     return _channel.$invokeAddInput(this, input);
+  }
+
+  @override
+  Future<void> addOutput(covariant CaptureOutput output) {
+    return _channel.$invokeAddOutput(this, output);
   }
 
   @override
