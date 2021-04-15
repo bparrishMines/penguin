@@ -2,26 +2,52 @@
 
 #import "IAFChannelLibrary_Internal.h"
 #import "REFTypeChannel.h"
+#import "IAFFoundation.h"
+
+@class IAFCaptureSessionProxy;
+@class IAFCaptureDeviceProxy;
+@class IAFCaptureDeviceInputProxy;
+@class IAFPreviewControllerProxy;
+@class IAFCaptureInputProxy;
 
 NS_ASSUME_NONNULL_BEGIN
+
+@interface IAFChannelRegistrar : _IAFChannelRegistrar
+@end
 
 @interface IAFLibraryImplementations : NSObject<_IAFLibraryImplementations>
 -(instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger;
 @end
 
-@interface IAFChannelRegistrar : _IAFChannelRegistrar
+@interface IAFCaptureDeviceInputChannel : _IAFCaptureDeviceInputChannel
 @end
 
-@interface EXPClassTemplateProxy : NSObject<REFClassTemplate>
-@property (readonly) ClassTemplate *classTemplate;
--(instancetype)initWithFieldTemplate:(NSNumber *)fieldTemplate;
--(instancetype)initWithClassTemplate:(ClassTemplate *)classTemplate;
+@interface IAFCaptureSessionChannel : _IAFCaptureSessionChannel
 @end
 
-@interface EXPClassTemplateChannel : REFClassTemplateChannel
+@interface IAFCaptureDeviceChannel : _IAFCaptureDeviceChannel
 @end
 
-@interface EXPClassTemplateHandler : REFClassTemplateHandler
+@interface IAFPreviewControllerChannel : _IAFPreviewControllerChannel
+@end
+
+@interface IAFCaptureInputChannel : _IAFCaptureInputChannel
+@end
+
+@interface IAFCaptureDeviceInputHandler : _IAFCaptureDeviceInputHandler
+@end
+
+@interface IAFCaptureDeviceHandler : _IAFCaptureDeviceHandler
+- (instancetype)initWithImplementations:(IAFLibraryImplementations *)implementations;
+@end
+
+@interface IAFCaptureSessionHandler : _IAFCaptureSessionHandler
+@end
+
+@interface IAFPreviewControllerHandler : _IAFPreviewControllerHandler
+@end
+
+@interface IAFCaptureInputHandler : _IAFCaptureInputHandler
 @end
 
 NS_ASSUME_NONNULL_END

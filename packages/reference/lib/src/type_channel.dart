@@ -240,6 +240,7 @@ abstract class TypeChannelMessenger {
   ///
   /// Sends a message to another [TypeChannelMessenger] with
   /// [messageDispatcher].
+  // TODO: What happens when owner is false. Could GC happen before it is given to an object? Temp strong references?
   Future<PairedInstance?> createNewInstancePair(
     String channelName,
     Object instance, {
