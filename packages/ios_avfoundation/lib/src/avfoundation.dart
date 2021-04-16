@@ -59,6 +59,19 @@ class CapturePhotoSettings with $CapturePhotoSettings {
 
 @Reference('CapturePhotoCaptureDelegate')
 abstract class CapturePhotoCaptureDelegate with $CapturePhotoCaptureDelegate {
+  // TODO: Mention this needs to be kept in memory on this side. Maybe didFinishProcessingPhoto can release pair.
+  CapturePhotoCaptureDelegate() {
+    CapturePhotoCaptureDelegate._channel.createNewInstancePair(
+      this,
+      owner: true,
+    );
+  }
+
+  static CapturePhotoCaptureDelegateChannel get _channel => ChannelRegistrar
+      .instance
+      .implementations
+      .capturePhotoCaptureDelegateChannel as CapturePhotoCaptureDelegateChannel;
+
   // TODO: Create AvFoundationError
   @override
   void didFinishProcessingPhoto(covariant CapturePhoto photo);
