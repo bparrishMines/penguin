@@ -37,5 +37,34 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithView:(UIView *)view;
 @end
 
+@interface IAFCaptureOutputProxy : NSObject<_IAFCaptureOutput>
+@property (readonly) AVCaptureOutput *captureOutput;
+- (instancetype)initWithCaptureOutput:(AVCaptureOutput *)captureOutput;
+@end
+
+API_AVAILABLE(ios(10.0))
+@interface IAFCapturePhotoOutputProxy : IAFCaptureOutputProxy<_IAFCapturePhotoOutput>
+- (instancetype)initWithCapturePhotoOutput:(AVCapturePhotoOutput *)capturePhotoOutput;
+@end
+
+API_AVAILABLE(ios(10.0))
+@interface IAFCapturePhotoSettingsProxy : NSObject<_IAFCapturePhotoSettings>
+@property (readonly) AVCapturePhotoSettings *capturePhotoSettings;
+- (instancetype)initwithProcessedFormat:(NSDictionary<NSString *, NSObject *> *)format;
+- (instancetype)initWithCapturePhotoSettings:(AVCapturePhotoSettings *)capturePhotoSettings;
+@end
+
+API_AVAILABLE(ios(10.0))
+@interface IAFCapturePhotoCaptureDelegateProxy : NSObject<_IAFCapturePhotoCaptureDelegate, AVCapturePhotoCaptureDelegate>
+- (instancetype)initWithImplementations:(IAFLibraryImplementations *)implementations;
+@end
+
+API_AVAILABLE(ios(11.0))
+@interface IAFCapturePhotoProxy : NSObject<_IAFCapturePhoto>
+@property (readonly) AVCapturePhoto *capturePhoto;
+- (instancetype)initWithCapturePhoto:(AVCapturePhoto *)capturePhoto
+                     implementations:(IAFLibraryImplementations *)implementations;
+@end
+
 NS_ASSUME_NONNULL_END
 

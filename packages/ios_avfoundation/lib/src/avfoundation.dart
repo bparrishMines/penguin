@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:reference/annotations.dart';
@@ -21,6 +22,70 @@ abstract class CaptureDevicePosition {
   static const int back = 1;
 
   static const int front = 2;
+}
+
+@Reference('capturePhotoOutput')
+class CapturePhotoOutput extends CaptureOutput with $CapturePhotoOutput {
+  CapturePhotoOutput() {
+    _channel.createNewInstancePair(this, owner: true);
+  }
+
+  static CapturePhotoOutputChannel get _channel =>
+      ChannelRegistrar.instance.implementations.capturePhotoOutputChannel
+          as CapturePhotoOutputChannel;
+
+  @override
+  Future<void> capturePhoto(
+    covariant CapturePhotoSettings settings,
+    covariant CapturePhotoCaptureDelegate delegate,
+  ) {
+    return _channel.$invokeCapturePhoto(this, settings, delegate);
+  }
+}
+
+@Reference('CapturePhotoSettings')
+class CapturePhotoSettings with $CapturePhotoSettings {
+  CapturePhotoSettings(this.processedFormat) {
+    _channel.createNewInstancePair(this, owner: true);
+  }
+
+  static CapturePhotoSettingsChannel get _channel =>
+      ChannelRegistrar.instance.implementations.capturePhotoSettingsChannel
+          as CapturePhotoSettingsChannel;
+
+  @override
+  final Map<String, Object> processedFormat;
+}
+
+@Reference('CapturePhotoCaptureDelegate')
+abstract class CapturePhotoCaptureDelegate with $CapturePhotoCaptureDelegate {
+  // TODO: Mention this needs to be kept in memory on this side. Maybe didFinishProcessingPhoto can release pair.
+  CapturePhotoCaptureDelegate() {
+    CapturePhotoCaptureDelegate._channel.createNewInstancePair(
+      this,
+      owner: true,
+    );
+  }
+
+  static CapturePhotoCaptureDelegateChannel get _channel => ChannelRegistrar
+      .instance
+      .implementations
+      .capturePhotoCaptureDelegateChannel as CapturePhotoCaptureDelegateChannel;
+
+  // TODO: Create AvFoundationError
+  @override
+  void didFinishProcessingPhoto(covariant CapturePhoto photo);
+}
+
+@Reference('CaptureOutput')
+abstract class CaptureOutput with $CaptureOutput {}
+
+@Reference('CapturePhoto')
+class CapturePhoto with $CapturePhoto {
+  CapturePhoto(this.fileDataRepresentation);
+
+  @override
+  final Uint8List? fileDataRepresentation;
 }
 
 @Reference('captureDeviceInput')
@@ -53,6 +118,11 @@ class CaptureSession with $CaptureSession {
   @override
   Future<void> addInput(covariant CaptureInput input) {
     return _channel.$invokeAddInput(this, input);
+  }
+
+  @override
+  Future<void> addOutput(covariant CaptureOutput output) {
+    return _channel.$invokeAddOutput(this, output);
   }
 
   @override

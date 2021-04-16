@@ -17,6 +17,9 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   late CaptureSession _captureSession;
+  final CapturePhotoOutput _capturePhotoOutput = CapturePhotoOutput();
+  final CapturePhotoCaptureDelegate _capturePhotoCaptureDelegate =
+      MyPhotoDelegate();
   Widget _previewWidget = Container();
   int _cameraFacing = CaptureDevicePosition.back;
   final double _deviceRotation = 0;
@@ -31,6 +34,15 @@ class _MyAppState extends State<MyApp> {
 
     _getCameraPermission();
   }
+
+  // Future<Directory> _storageDir() async {
+  //   final List<Directory>? dirs =
+  //   await getExternalStorageDirectories(type: StorageDirectory.dcim);
+  //   if (dirs == null) {
+  //     throw StateError('Could not get storage directory.');
+  //   }
+  //   return dirs[0];
+  // }
 
   Future<void> _getCameraPermission() async {
     while (!await Permission.camera.request().isGranted) {}
@@ -48,11 +60,19 @@ class _MyAppState extends State<MyApp> {
 
     _captureSession = CaptureSession();
     _captureSession.addInput(CaptureDeviceInput(device));
+    _captureSession.addOutput(_capturePhotoOutput);
     _captureSession.startRunning();
 
     setState(() {
       _previewWidget = Preview(controller: PreviewController(_captureSession));
     });
+  }
+
+  void _takePicture() {
+    _capturePhotoOutput.capturePhoto(
+      CapturePhotoSettings(<String, Object>{'AVVideoCodecKey': 'jpeg'}),
+      _capturePhotoCaptureDelegate,
+    );
   }
 
   @override
@@ -77,7 +97,7 @@ class _MyAppState extends State<MyApp> {
   Widget _buildPictureButton() {
     return InkResponse(
       onTap: () {
-        //_recordAVideo();
+        _takePicture();
       },
       child: Container(
         width: 65,
@@ -142,5 +162,13 @@ class _MyAppState extends State<MyApp> {
         ],
       ),
     );
+  }
+}
+
+class MyPhotoDelegate extends CapturePhotoCaptureDelegate {
+  @override
+  void didFinishProcessingPhoto(covariant CapturePhoto photo) {
+    debugPrint('Photo taken');
+    debugPrint('${photo.fileDataRepresentation?.length}');
   }
 }

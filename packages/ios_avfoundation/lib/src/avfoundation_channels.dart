@@ -18,7 +18,13 @@ class LibraryImplementations with $LibraryImplementations {
         captureDeviceInputChannel = CaptureDeviceInputChannel(messenger),
         captureSessionChannel = CaptureSessionChannel(messenger),
         previewControllerChannel = PreviewControllerChannel(messenger),
-        captureInputChannel = CaptureInputChannel(messenger);
+        captureInputChannel = CaptureInputChannel(messenger),
+        captureOutputChannel = CaptureOutputChannel(messenger),
+        capturePhotoCaptureDelegateChannel =
+            CapturePhotoCaptureDelegateChannel(messenger),
+        capturePhotoOutputChannel = CapturePhotoOutputChannel(messenger),
+        capturePhotoChannel = CapturePhotoChannel(messenger),
+        capturePhotoSettingsChannel = CapturePhotoSettingsChannel(messenger);
 
   @override
   final CaptureDeviceChannel captureDeviceChannel;
@@ -51,6 +57,62 @@ class LibraryImplementations with $LibraryImplementations {
 
   @override
   final CaptureInputHandler captureInputHandler = CaptureInputHandler();
+
+  @override
+  final CaptureOutputChannel captureOutputChannel;
+
+  @override
+  final CaptureOutputHandler captureOutputHandler = CaptureOutputHandler();
+
+  @override
+  final CapturePhotoCaptureDelegateChannel capturePhotoCaptureDelegateChannel;
+
+  @override
+  final CapturePhotoCaptureDelegateHandler capturePhotoCaptureDelegateHandler =
+      CapturePhotoCaptureDelegateHandler();
+
+  @override
+  final CapturePhotoChannel capturePhotoChannel;
+
+  @override
+  final CapturePhotoHandler capturePhotoHandler = CapturePhotoHandler();
+
+  @override
+  final CapturePhotoOutputChannel capturePhotoOutputChannel;
+
+  @override
+  final CapturePhotoOutputHandler capturePhotoOutputHandler =
+      CapturePhotoOutputHandler();
+
+  @override
+  final CapturePhotoSettingsChannel capturePhotoSettingsChannel;
+
+  @override
+  final CapturePhotoSettingsHandler capturePhotoSettingsHandler =
+      CapturePhotoSettingsHandler();
+}
+
+class CaptureOutputChannel extends $CaptureOutputChannel {
+  CaptureOutputChannel(TypeChannelMessenger messenger) : super(messenger);
+}
+
+class CapturePhotoOutputChannel extends $CapturePhotoOutputChannel {
+  CapturePhotoOutputChannel(TypeChannelMessenger messenger) : super(messenger);
+}
+
+class CapturePhotoSettingsChannel extends $CapturePhotoSettingsChannel {
+  CapturePhotoSettingsChannel(TypeChannelMessenger messenger)
+      : super(messenger);
+}
+
+class CapturePhotoCaptureDelegateChannel
+    extends $CapturePhotoCaptureDelegateChannel {
+  CapturePhotoCaptureDelegateChannel(TypeChannelMessenger messenger)
+      : super(messenger);
+}
+
+class CapturePhotoChannel extends $CapturePhotoChannel {
+  CapturePhotoChannel(TypeChannelMessenger messenger) : super(messenger);
 }
 
 class CaptureDeviceInputChannel extends $CaptureDeviceInputChannel {
@@ -91,3 +153,22 @@ class CaptureDeviceHandler extends $CaptureDeviceHandler {
 class PreviewControllerHandler extends $PreviewControllerHandler {}
 
 class CaptureInputHandler extends $CaptureInputHandler {}
+
+class CaptureOutputHandler extends $CaptureOutputHandler {}
+
+class CapturePhotoOutputHandler extends $CapturePhotoOutputHandler {}
+
+class CapturePhotoSettingsHandler extends $CapturePhotoSettingsHandler {}
+
+class CapturePhotoCaptureDelegateHandler
+    extends $CapturePhotoCaptureDelegateHandler {}
+
+class CapturePhotoHandler extends $CapturePhotoHandler {
+  @override
+  $CapturePhoto onCreate(
+    TypeChannelMessenger messenger,
+    $CapturePhotoCreationArgs args,
+  ) {
+    return CapturePhoto(args.fileDataRepresentation);
+  }
+}
