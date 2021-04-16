@@ -50,7 +50,7 @@
     _captureOutputHandler = [[IAFCaptureOutputHandler alloc] init];
     _capturePhotoSettingsHandler = [[IAFCapturePhotoSettingsHandler alloc] init];
     _capturePhotoHandler = [[IAFCapturePhotoHandler alloc] init];
-    _capturePhotoCaptureDelegateHandler = [[IAFCapturePhotoCaptureDelegateHandler alloc] init];
+    _capturePhotoCaptureDelegateHandler = [[IAFCapturePhotoCaptureDelegateHandler alloc] initWithImplementations:self];
   }
   return self;
 }

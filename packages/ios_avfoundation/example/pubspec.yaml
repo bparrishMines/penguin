@@ -11,6 +11,7 @@ dependencies:
     sdk: flutter
   ios_avfoundation:
     path: ../
+  path_provider: ^2.0.1
   permission_handler: ^6.1.1
 
 dev_dependencies:

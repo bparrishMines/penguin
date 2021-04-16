@@ -1,5 +1,4 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
-
 import 'dart:typed_data';
 
 import 'package:reference/reference.dart';

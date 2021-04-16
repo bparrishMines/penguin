@@ -74,7 +74,7 @@
 
 @implementation IAFCaptureInputProxy
 - (instancetype)initWithCaptureInput:(AVCaptureInput *)captureInput {
-  self = [self init];
+  self = [super init];
   if (self) {
     _captureInput = captureInput;
   }
@@ -146,7 +146,7 @@
 
 @implementation IAFCaptureOutputProxy
 - (instancetype)initWithCaptureOutput:(AVCaptureOutput *)captureOutput {
-  self = [self init];
+  self = [super init];
   if (self) {
     _captureOutput = captureOutput;
   }
@@ -160,7 +160,7 @@
 }
 
 - (instancetype)initWithCapturePhotoOutput:(AVCapturePhotoOutput *)capturePhotoOutput {
-  return self = [self initWithCaptureOutput:capturePhotoOutput];
+  return [self initWithCaptureOutput:capturePhotoOutput];
 }
 
 - (NSObject *)capturePhoto:(IAFCapturePhotoSettingsProxy *_Nullable)settings
