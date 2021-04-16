@@ -1,14 +1,10 @@
 package com.example.reference_example;
 
-import androidx.annotation.NonNull;
-
 import github.penguin.reference.reference.TypeChannelMessenger;
 
 public class ChannelRegistrar extends LibraryTemplate.$ChannelRegistrar {
-  public static class ClassTemplateChannel extends LibraryTemplate.$ClassTemplateChannel {
-    public ClassTemplateChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger);
-    }
+  public ChannelRegistrar(LibraryImplementations implementations) {
+    super(implementations);
   }
 
   public static class ClassTemplateHandler extends LibraryTemplate.$ClassTemplateHandler {
@@ -23,27 +19,14 @@ public class ChannelRegistrar extends LibraryTemplate.$ChannelRegistrar {
     }
   }
 
-  public static class LibraryImplementations implements LibraryTemplate.$LibraryImplementations {
-    private final ClassTemplateChannel classTemplateChannel;
-    private final ClassTemplateHandler classTemplateHandler;
-
+  public static class LibraryImplementations extends LibraryTemplate.$LibraryImplementations {
     public LibraryImplementations(TypeChannelMessenger messenger) {
-      this.classTemplateChannel = new ClassTemplateChannel(messenger);
-      this.classTemplateHandler = new ClassTemplateHandler();
-    }
-
-    @Override
-    public LibraryTemplate.$ClassTemplateChannel getClassTemplateChannel() {
-      return classTemplateChannel;
+      super(messenger);
     }
 
     @Override
     public LibraryTemplate.$ClassTemplateHandler getClassTemplateHandler() {
-      return classTemplateHandler;
+      return new ClassTemplateHandler();
     }
-  }
-
-  public ChannelRegistrar(LibraryImplementations implementations) {
-    super(implementations);
   }
 }

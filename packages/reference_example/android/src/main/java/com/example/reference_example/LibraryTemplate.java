@@ -17,7 +17,7 @@ import github.penguin.reference.reference.TypeChannelMessenger;
 // ReferenceGenerator
 // **************************************************************************
 
-class LibraryTemplate {
+public class LibraryTemplate {
   public interface $ClassTemplate {
     Integer getFieldTemplate();
 
@@ -98,10 +98,20 @@ class LibraryTemplate {
     }
   }
 
-  public interface $LibraryImplementations {
-    $ClassTemplateChannel getClassTemplateChannel();
+  public static class $LibraryImplementations {
+    public final TypeChannelMessenger messenger;
 
-    $ClassTemplateHandler getClassTemplateHandler();
+    public $LibraryImplementations(TypeChannelMessenger messenger) {
+      this.messenger = messenger;
+    }
+
+    public $ClassTemplateChannel getClassTemplateChannel() {
+      return new $ClassTemplateChannel(messenger);
+    }
+
+    public $ClassTemplateHandler getClassTemplateHandler() {
+      return new $ClassTemplateHandler();
+    }
   }
 
   public static class $ChannelRegistrar {

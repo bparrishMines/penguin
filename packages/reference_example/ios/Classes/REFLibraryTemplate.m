@@ -76,8 +76,26 @@
 }
 @end
 
+@implementation REFLibraryImplementations
+- (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
+  self = [super init];
+  if (self) {
+    _messenger = messenger;
+  }
+  return self;
+}
+
+- (REFClassTemplateChannel *)classTemplateChannel {
+  return [[REFClassTemplateChannel alloc] initWithMessenger:_messenger];
+}
+
+- (REFClassTemplateHandler *)classTemplateHandler {
+  return [[REFClassTemplateHandler alloc] init];
+}
+@end
+
 @implementation REFChannelRegistrar
-- (instancetype)initWithImplementation:(id<REFLibraryImplementations>)implementations {
+- (instancetype)initWithImplementation:(REFLibraryImplementations *)implementations {
   self = [super init];
   if (self) {
     _implementations = implementations;
