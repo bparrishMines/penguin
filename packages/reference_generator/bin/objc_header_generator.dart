@@ -392,6 +392,9 @@ String getTrueTypeName(ReferenceType type, String prefix) {
 // TODO: A user could extend a list/map so we want a boolean flag to check.
 String objcTypeNameConversion(String type) {
   switch (type) {
+    case 'Uint8List':
+    case 'Uint8List?':
+      return 'NSData';
     case 'int':
     case 'int?':
     case 'double':

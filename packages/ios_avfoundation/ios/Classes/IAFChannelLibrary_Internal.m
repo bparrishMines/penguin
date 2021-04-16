@@ -1,5 +1,21 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
 #import "IAFChannelLibrary_Internal.h"
 
+// **************************************************************************
+// ReferenceGenerator
+// **************************************************************************
+
+@implementation _IAFCapturePhotoOutputCreationArgs
+@end
+@implementation _IAFCapturePhotoSettingsCreationArgs
+@end
+@implementation _IAFCapturePhotoCaptureDelegateCreationArgs
+@end
+@implementation _IAFCaptureOutputCreationArgs
+@end
+@implementation _IAFCapturePhotoCreationArgs
+@end
 @implementation _IAFCaptureDeviceInputCreationArgs
 @end
 @implementation _IAFCaptureInputCreationArgs
@@ -10,6 +26,70 @@
 @end
 @implementation _IAFPreviewControllerCreationArgs
 @end
+
+@implementation _IAFCapturePhotoOutputChannel
+- (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
+  return self = [super initWithMessenger:messenger name:@"capturePhotoOutput"];
+}
+
+
+
+- (void)invoke_capturePhoto:(NSObject<_IAFCapturePhotoOutput> *)instance
+            settings:(NSObject<_IAFCapturePhotoSettings> *_Nullable)settings
+delegate:(NSObject<_IAFCapturePhotoCaptureDelegate> *_Nullable)delegate
+                   completion:(void (^)(id _Nullable, NSError *_Nullable))completion {
+  [self invokeMethod:instance methodName:@"capturePhoto" arguments:@[settings,delegate] completion:completion];
+}
+@end
+
+
+@implementation _IAFCapturePhotoSettingsChannel
+- (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
+  return self = [super initWithMessenger:messenger name:@"CapturePhotoSettings"];
+}
+
+
+
+
+@end
+
+
+@implementation _IAFCapturePhotoCaptureDelegateChannel
+- (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
+  return self = [super initWithMessenger:messenger name:@"CapturePhotoCaptureDelegate"];
+}
+
+
+
+- (void)invoke_didFinishProcessingPhoto:(NSObject<_IAFCapturePhotoCaptureDelegate> *)instance
+            photo:(NSObject<_IAFCapturePhoto> *_Nullable)photo
+                   completion:(void (^)(id _Nullable, NSError *_Nullable))completion {
+  [self invokeMethod:instance methodName:@"didFinishProcessingPhoto" arguments:@[photo] completion:completion];
+}
+@end
+
+
+@implementation _IAFCaptureOutputChannel
+- (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
+  return self = [super initWithMessenger:messenger name:@"CaptureOutput"];
+}
+
+
+
+
+@end
+
+
+@implementation _IAFCapturePhotoChannel
+- (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
+  return self = [super initWithMessenger:messenger name:@"CapturePhoto"];
+}
+
+
+
+
+@end
+
 
 @implementation _IAFCaptureDeviceInputChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
@@ -44,6 +124,11 @@
             input:(NSObject<_IAFCaptureInput> *_Nullable)input
                    completion:(void (^)(id _Nullable, NSError *_Nullable))completion {
   [self invokeMethod:instance methodName:@"addInput" arguments:@[input] completion:completion];
+}
+- (void)invoke_addOutput:(NSObject<_IAFCaptureSession> *)instance
+            output:(NSObject<_IAFCaptureOutput> *_Nullable)output
+                   completion:(void (^)(id _Nullable, NSError *_Nullable))completion {
+  [self invokeMethod:instance methodName:@"addOutput" arguments:@[output] completion:completion];
 }
 - (void)invoke_startRunning:(NSObject<_IAFCaptureSession> *)instance
             
@@ -82,6 +167,225 @@
 
 
 @end
+
+@implementation _IAFCapturePhotoOutputHandler
+- (NSObject<_IAFCapturePhotoOutput> *)onCreate:(REFTypeChannelMessenger *)messenger
+                                    args:(_IAFCapturePhotoOutputCreationArgs *)args {
+  return nil;
+}
+
+
+
+- (id _Nullable)invokeStaticMethod:(nonnull REFTypeChannelMessenger *)messenger
+                        methodName:(nonnull NSString *)methodName
+                         arguments:(nonnull NSArray *)arguments {
+  
+  
+  NSLog(@"Unable to invoke static method %@", methodName);
+  return nil;
+}
+
+- (nonnull NSArray *)getCreationArguments:(nonnull REFTypeChannelMessenger *)messenger
+                                 instance:(nonnull NSObject *)instance {
+  NSObject<_IAFCapturePhotoOutput> *value = (NSObject<_IAFCapturePhotoOutput> *) instance;
+  return @[];
+}
+
+- (nonnull id)createInstance:(nonnull REFTypeChannelMessenger *)messenger
+                   arguments:(nonnull NSArray *)arguments {
+  _IAFCapturePhotoOutputCreationArgs *args = [[_IAFCapturePhotoOutputCreationArgs alloc] init];
+  
+  return [self onCreate:messenger args:args];
+}
+
+- (id _Nullable)invokeMethod:(nonnull REFTypeChannelMessenger *)messenger
+                    instance:(nonnull NSObject *)instance
+                  methodName:(nonnull NSString *)methodName
+                   arguments:(nonnull NSArray *)arguments {
+  NSObject<_IAFCapturePhotoOutput> *value = (NSObject<_IAFCapturePhotoOutput> *) instance;
+  if ([@"capturePhoto" isEqualToString:methodName]) {
+    return [value capturePhoto:arguments[0] delegate:arguments[index]];
+  }
+  
+  NSLog(@"Unable to invoke method %@", methodName);
+  return nil;
+}
+@end
+
+
+@implementation _IAFCapturePhotoSettingsHandler
+- (NSObject<_IAFCapturePhotoSettings> *)onCreate:(REFTypeChannelMessenger *)messenger
+                                    args:(_IAFCapturePhotoSettingsCreationArgs *)args {
+  return nil;
+}
+
+
+
+- (id _Nullable)invokeStaticMethod:(nonnull REFTypeChannelMessenger *)messenger
+                        methodName:(nonnull NSString *)methodName
+                         arguments:(nonnull NSArray *)arguments {
+  
+  
+  NSLog(@"Unable to invoke static method %@", methodName);
+  return nil;
+}
+
+- (nonnull NSArray *)getCreationArguments:(nonnull REFTypeChannelMessenger *)messenger
+                                 instance:(nonnull NSObject *)instance {
+  NSObject<_IAFCapturePhotoSettings> *value = (NSObject<_IAFCapturePhotoSettings> *) instance;
+  return @[value.processedFormat];
+}
+
+- (nonnull id)createInstance:(nonnull REFTypeChannelMessenger *)messenger
+                   arguments:(nonnull NSArray *)arguments {
+  _IAFCapturePhotoSettingsCreationArgs *args = [[_IAFCapturePhotoSettingsCreationArgs alloc] init];
+  args.processedFormat = arguments[0];
+  return [self onCreate:messenger args:args];
+}
+
+- (id _Nullable)invokeMethod:(nonnull REFTypeChannelMessenger *)messenger
+                    instance:(nonnull NSObject *)instance
+                  methodName:(nonnull NSString *)methodName
+                   arguments:(nonnull NSArray *)arguments {
+  NSObject<_IAFCapturePhotoSettings> *value = (NSObject<_IAFCapturePhotoSettings> *) instance;
+  
+  
+  NSLog(@"Unable to invoke method %@", methodName);
+  return nil;
+}
+@end
+
+
+@implementation _IAFCapturePhotoCaptureDelegateHandler
+- (NSObject<_IAFCapturePhotoCaptureDelegate> *)onCreate:(REFTypeChannelMessenger *)messenger
+                                    args:(_IAFCapturePhotoCaptureDelegateCreationArgs *)args {
+  return nil;
+}
+
+
+
+- (id _Nullable)invokeStaticMethod:(nonnull REFTypeChannelMessenger *)messenger
+                        methodName:(nonnull NSString *)methodName
+                         arguments:(nonnull NSArray *)arguments {
+  
+  
+  NSLog(@"Unable to invoke static method %@", methodName);
+  return nil;
+}
+
+- (nonnull NSArray *)getCreationArguments:(nonnull REFTypeChannelMessenger *)messenger
+                                 instance:(nonnull NSObject *)instance {
+  NSObject<_IAFCapturePhotoCaptureDelegate> *value = (NSObject<_IAFCapturePhotoCaptureDelegate> *) instance;
+  return @[];
+}
+
+- (nonnull id)createInstance:(nonnull REFTypeChannelMessenger *)messenger
+                   arguments:(nonnull NSArray *)arguments {
+  _IAFCapturePhotoCaptureDelegateCreationArgs *args = [[_IAFCapturePhotoCaptureDelegateCreationArgs alloc] init];
+  
+  return [self onCreate:messenger args:args];
+}
+
+- (id _Nullable)invokeMethod:(nonnull REFTypeChannelMessenger *)messenger
+                    instance:(nonnull NSObject *)instance
+                  methodName:(nonnull NSString *)methodName
+                   arguments:(nonnull NSArray *)arguments {
+  NSObject<_IAFCapturePhotoCaptureDelegate> *value = (NSObject<_IAFCapturePhotoCaptureDelegate> *) instance;
+  if ([@"didFinishProcessingPhoto" isEqualToString:methodName]) {
+    return [value didFinishProcessingPhoto:arguments[0] ];
+  }
+  
+  NSLog(@"Unable to invoke method %@", methodName);
+  return nil;
+}
+@end
+
+
+@implementation _IAFCaptureOutputHandler
+- (NSObject<_IAFCaptureOutput> *)onCreate:(REFTypeChannelMessenger *)messenger
+                                    args:(_IAFCaptureOutputCreationArgs *)args {
+  return nil;
+}
+
+
+
+- (id _Nullable)invokeStaticMethod:(nonnull REFTypeChannelMessenger *)messenger
+                        methodName:(nonnull NSString *)methodName
+                         arguments:(nonnull NSArray *)arguments {
+  
+  
+  NSLog(@"Unable to invoke static method %@", methodName);
+  return nil;
+}
+
+- (nonnull NSArray *)getCreationArguments:(nonnull REFTypeChannelMessenger *)messenger
+                                 instance:(nonnull NSObject *)instance {
+  NSObject<_IAFCaptureOutput> *value = (NSObject<_IAFCaptureOutput> *) instance;
+  return @[];
+}
+
+- (nonnull id)createInstance:(nonnull REFTypeChannelMessenger *)messenger
+                   arguments:(nonnull NSArray *)arguments {
+  _IAFCaptureOutputCreationArgs *args = [[_IAFCaptureOutputCreationArgs alloc] init];
+  
+  return [self onCreate:messenger args:args];
+}
+
+- (id _Nullable)invokeMethod:(nonnull REFTypeChannelMessenger *)messenger
+                    instance:(nonnull NSObject *)instance
+                  methodName:(nonnull NSString *)methodName
+                   arguments:(nonnull NSArray *)arguments {
+  NSObject<_IAFCaptureOutput> *value = (NSObject<_IAFCaptureOutput> *) instance;
+  
+  
+  NSLog(@"Unable to invoke method %@", methodName);
+  return nil;
+}
+@end
+
+
+@implementation _IAFCapturePhotoHandler
+- (NSObject<_IAFCapturePhoto> *)onCreate:(REFTypeChannelMessenger *)messenger
+                                    args:(_IAFCapturePhotoCreationArgs *)args {
+  return nil;
+}
+
+
+
+- (id _Nullable)invokeStaticMethod:(nonnull REFTypeChannelMessenger *)messenger
+                        methodName:(nonnull NSString *)methodName
+                         arguments:(nonnull NSArray *)arguments {
+  
+  
+  NSLog(@"Unable to invoke static method %@", methodName);
+  return nil;
+}
+
+- (nonnull NSArray *)getCreationArguments:(nonnull REFTypeChannelMessenger *)messenger
+                                 instance:(nonnull NSObject *)instance {
+  NSObject<_IAFCapturePhoto> *value = (NSObject<_IAFCapturePhoto> *) instance;
+  return @[value.fileDataRepresentation];
+}
+
+- (nonnull id)createInstance:(nonnull REFTypeChannelMessenger *)messenger
+                   arguments:(nonnull NSArray *)arguments {
+  _IAFCapturePhotoCreationArgs *args = [[_IAFCapturePhotoCreationArgs alloc] init];
+  args.fileDataRepresentation = arguments[0];
+  return [self onCreate:messenger args:args];
+}
+
+- (id _Nullable)invokeMethod:(nonnull REFTypeChannelMessenger *)messenger
+                    instance:(nonnull NSObject *)instance
+                  methodName:(nonnull NSString *)methodName
+                   arguments:(nonnull NSArray *)arguments {
+  NSObject<_IAFCapturePhoto> *value = (NSObject<_IAFCapturePhoto> *) instance;
+  
+  
+  NSLog(@"Unable to invoke method %@", methodName);
+  return nil;
+}
+@end
+
 
 @implementation _IAFCaptureDeviceInputHandler
 - (NSObject<_IAFCaptureDeviceInput> *)onCreate:(REFTypeChannelMessenger *)messenger
@@ -206,6 +510,8 @@
   NSObject<_IAFCaptureSession> *value = (NSObject<_IAFCaptureSession> *) instance;
   if ([@"addInput" isEqualToString:methodName]) {
     return [value addInput:arguments[0] ];
+  } else if ([@"addOutput" isEqualToString:methodName]) {
+    return [value addOutput:arguments[0] ];
   } else if ([@"startRunning" isEqualToString:methodName]) {
     return [value startRunning ];
   } else if ([@"stopRunning" isEqualToString:methodName]) {
@@ -319,7 +625,12 @@ args.position = arguments[1];
 }
 
 - (void)registerHandlers {
-  [_implementations.captureDeviceInputChannel setHandler:_implementations.captureDeviceInputHandler];
+  [_implementations.capturePhotoOutputChannel setHandler:_implementations.capturePhotoOutputHandler];
+[_implementations.capturePhotoSettingsChannel setHandler:_implementations.capturePhotoSettingsHandler];
+[_implementations.capturePhotoCaptureDelegateChannel setHandler:_implementations.capturePhotoCaptureDelegateHandler];
+[_implementations.captureOutputChannel setHandler:_implementations.captureOutputHandler];
+[_implementations.capturePhotoChannel setHandler:_implementations.capturePhotoHandler];
+[_implementations.captureDeviceInputChannel setHandler:_implementations.captureDeviceInputHandler];
 [_implementations.captureInputChannel setHandler:_implementations.captureInputHandler];
 [_implementations.captureSessionChannel setHandler:_implementations.captureSessionHandler];
 [_implementations.captureDeviceChannel setHandler:_implementations.captureDeviceHandler];
@@ -327,7 +638,12 @@ args.position = arguments[1];
 }
 
 - (void)unregisterHandlers {
-  [_implementations.captureDeviceInputChannel removeHandler];
+  [_implementations.capturePhotoOutputChannel removeHandler];
+[_implementations.capturePhotoSettingsChannel removeHandler];
+[_implementations.capturePhotoCaptureDelegateChannel removeHandler];
+[_implementations.captureOutputChannel removeHandler];
+[_implementations.capturePhotoChannel removeHandler];
+[_implementations.captureDeviceInputChannel removeHandler];
 [_implementations.captureInputChannel removeHandler];
 [_implementations.captureSessionChannel removeHandler];
 [_implementations.captureDeviceChannel removeHandler];
