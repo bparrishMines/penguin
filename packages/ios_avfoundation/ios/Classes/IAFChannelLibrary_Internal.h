@@ -36,7 +36,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 @protocol _IAFCapturePhoto <NSObject>
-- (Uint8List? *_Nullable)fileDataRepresentation;
+- (NSData *_Nullable)fileDataRepresentation;
 
 @end
 @protocol _IAFCaptureDeviceInput <NSObject>
@@ -77,7 +77,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 @interface _IAFCapturePhotoCreationArgs : NSObject
-@property Uint8List? *_Nullable fileDataRepresentation;
+@property NSData *_Nullable fileDataRepresentation;
 @end
 @interface _IAFCaptureDeviceInputCreationArgs : NSObject
 @property NSObject<_IAFCaptureDevice> *_Nullable device;
@@ -133,6 +133,7 @@ delegate:(NSObject<_IAFCapturePhotoCaptureDelegate> *_Nullable)delegate
 @end
 @interface _IAFCaptureInputChannel : REFTypeChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger;
+
 
 @end
 @interface _IAFCaptureSessionChannel : REFTypeChannel

@@ -163,4 +163,12 @@ class CapturePhotoSettingsHandler extends $CapturePhotoSettingsHandler {}
 class CapturePhotoCaptureDelegateHandler
     extends $CapturePhotoCaptureDelegateHandler {}
 
-class CapturePhotoHandler extends $CapturePhotoHandler {}
+class CapturePhotoHandler extends $CapturePhotoHandler {
+  @override
+  $CapturePhoto onCreate(
+    TypeChannelMessenger messenger,
+    $CapturePhotoCreationArgs args,
+  ) {
+    return CapturePhoto(args.fileDataRepresentation);
+  }
+}

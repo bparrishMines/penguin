@@ -74,6 +74,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface IAFCapturePhotoCaptureDelegateHandler : _IAFCapturePhotoCaptureDelegateHandler
+- (instancetype)initWithImplementations:(IAFLibraryImplementations *)implementations;
 @end
 
 @interface IAFCapturePhotoSettingsHandler : _IAFCapturePhotoSettingsHandler

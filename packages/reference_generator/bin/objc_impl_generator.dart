@@ -363,7 +363,7 @@ String generateObjcImpl({
                                           )
                                           .replaceAll(
                                             argument.index,
-                                            'index',
+                                            '$index',
                                           );
                                     },
                                   ).join(' '),

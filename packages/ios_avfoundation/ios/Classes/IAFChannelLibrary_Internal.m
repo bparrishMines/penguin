@@ -204,7 +204,7 @@ delegate:(NSObject<_IAFCapturePhotoCaptureDelegate> *_Nullable)delegate
                    arguments:(nonnull NSArray *)arguments {
   NSObject<_IAFCapturePhotoOutput> *value = (NSObject<_IAFCapturePhotoOutput> *) instance;
   if ([@"capturePhoto" isEqualToString:methodName]) {
-    return [value capturePhoto:arguments[0] delegate:arguments[index]];
+    return [value capturePhoto:arguments[0] delegate:arguments[1]];
   }
   
   NSLog(@"Unable to invoke method %@", methodName);

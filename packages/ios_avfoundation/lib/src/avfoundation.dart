@@ -82,7 +82,6 @@ abstract class CaptureOutput with $CaptureOutput {}
 
 @Reference('CapturePhoto')
 class CapturePhoto with $CapturePhoto {
-  @visibleForTesting
   CapturePhoto(this.fileDataRepresentation);
 
   @override
