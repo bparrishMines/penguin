@@ -75,6 +75,56 @@
   return _previewControllerHandler;
 }
 
+- (nonnull _IAFCaptureOutputChannel *)captureOutputChannel {
+  <#code#>
+}
+
+
+- (nonnull _IAFCaptureOutputHandler *)captureOutputHandler {
+  <#code#>
+}
+
+
+- (nonnull _IAFCapturePhotoCaptureDelegateChannel *)capturePhotoCaptureDelegateChannel {
+  <#code#>
+}
+
+
+- (nonnull _IAFCapturePhotoCaptureDelegateHandler *)capturePhotoCaptureDelegateHandler {
+  <#code#>
+}
+
+
+- (nonnull _IAFCapturePhotoChannel *)capturePhotoChannel {
+  <#code#>
+}
+
+
+- (nonnull _IAFCapturePhotoHandler *)capturePhotoHandler {
+  <#code#>
+}
+
+
+- (nonnull _IAFCapturePhotoOutputChannel *)capturePhotoOutputChannel {
+  <#code#>
+}
+
+
+- (nonnull _IAFCapturePhotoOutputHandler *)capturePhotoOutputHandler {
+  <#code#>
+}
+
+
+- (nonnull _IAFCapturePhotoSettingsChannel *)capturePhotoSettingsChannel {
+  <#code#>
+}
+
+
+- (nonnull _IAFCapturePhotoSettingsHandler *)capturePhotoSettingsHandler {
+  <#code#>
+}
+
+
 @end
 
 @implementation IAFCaptureDeviceInputChannel
@@ -90,6 +140,21 @@
 @end
 
 @implementation IAFCaptureInputChannel
+@end
+
+@implementation IAFCapturePhotoChannel
+@end
+
+@implementation IAFCaptureOutputChannel
+@end
+
+@implementation IAFCapturePhotoCaptureDelegateChannel
+@end
+
+@implementation IAFCapturePhotoSettingsChannel
+@end
+
+@implementation IAFCapturePhotoOutputChannel
 @end
 
 @implementation IAFCaptureDeviceHandler {
@@ -132,4 +197,19 @@
 @end
 
 @implementation IAFCaptureInputHandler
+@end
+
+@implementation IAFCapturePhotoHandler
+@end
+
+@implementation IAFCaptureOutputHandler
+@end
+
+@implementation IAFCapturePhotoCaptureDelegateHandler
+@end
+
+@implementation IAFCapturePhotoSettingsHandler
+@end
+
+@implementation IAFCapturePhotoOutputHandler
 @end

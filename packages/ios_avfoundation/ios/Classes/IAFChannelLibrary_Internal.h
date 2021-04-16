@@ -134,7 +134,6 @@ delegate:(NSObject<_IAFCapturePhotoCaptureDelegate> *_Nullable)delegate
 @interface _IAFCaptureInputChannel : REFTypeChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger;
 
-
 @end
 @interface _IAFCaptureSessionChannel : REFTypeChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger;

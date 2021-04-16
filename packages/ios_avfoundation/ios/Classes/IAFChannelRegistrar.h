@@ -4,11 +4,13 @@
 #import "REFTypeChannel.h"
 #import "IAFFoundation.h"
 
+/*
 @class IAFCaptureSessionProxy;
 @class IAFCaptureDeviceProxy;
 @class IAFCaptureDeviceInputProxy;
 @class IAFPreviewControllerProxy;
 @class IAFCaptureInputProxy;
+ */
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -34,6 +36,21 @@ NS_ASSUME_NONNULL_BEGIN
 @interface IAFCaptureInputChannel : _IAFCaptureInputChannel
 @end
 
+@interface IAFCapturePhotoChannel : _IAFCapturePhotoChannel
+@end
+
+@interface IAFCaptureOutputChannel : _IAFCaptureOutputChannel
+@end
+
+@interface IAFCapturePhotoCaptureDelegateChannel : _IAFCapturePhotoCaptureDelegateChannel
+@end
+
+@interface IAFCapturePhotoSettingsChannel : _IAFCapturePhotoSettingsChannel
+@end
+
+@interface IAFCapturePhotoOutputChannel : _IAFCapturePhotoOutputChannel
+@end
+
 @interface IAFCaptureDeviceInputHandler : _IAFCaptureDeviceInputHandler
 @end
 
@@ -48,6 +65,21 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface IAFCaptureInputHandler : _IAFCaptureInputHandler
+@end
+
+@interface IAFCapturePhotoHandler : _IAFCapturePhotoHandler
+@end
+
+@interface IAFCaptureOutputHandler : _IAFCaptureOutputHandler
+@end
+
+@interface IAFCapturePhotoCaptureDelegateHandler : _IAFCapturePhotoCaptureDelegateHandler
+@end
+
+@interface IAFCapturePhotoSettingsHandler : _IAFCapturePhotoSettingsHandler
+@end
+
+@interface IAFCapturePhotoOutputHandler : _IAFCapturePhotoOutputHandler
 @end
 
 NS_ASSUME_NONNULL_END

@@ -64,6 +64,10 @@
   [_captureSession addInput:inputProxy.captureInput];
   return nil;
 }
+
+
+
+
 @end
 
 @implementation IAFCaptureInputProxy
@@ -82,7 +86,7 @@
   AVCaptureDeviceInput *captureDeviceInput = [[AVCaptureDeviceInput alloc] initWithDevice:device.captureDevice
                                                                                     error:&error];
   if (error) NSLog(@"Error creating AVCaptureDeviceInput: %@: %@", error.domain, error.description);
-  return [self initWithCaptureInput:captureDeviceInput];
+  return self = [self initWithCaptureInput:captureDeviceInput];
 }
 
 - (NSObject<_IAFCaptureDevice> * _Nullable)device {
@@ -138,3 +142,67 @@
 }
 @end
 
+@implementation IAFCaptureOutputProxy
+- (instancetype)initWithCaptureOutput:(AVCaptureOutput *)captureOutput {
+  self = [self init];
+  if (self) {
+    _captureOutput = captureOutput;
+  }
+  return self;
+}
+@end
+
+@implementation IAFCapturePhotoOutputProxy
+- (instancetype)initWithCapturePhotoOutput:(AVCapturePhotoOutput *)capturePhotoOutput {
+  return self = [self initWithCaptureOutput:capturePhotoOutput];
+}
+
+- (NSObject *)capturePhoto:(IAFCapturePhotoSettingsProxy *_Nullable)settings
+                  delegate:(IAFCapturePhotoCaptureDelegateProxy *_Nullable)delegate {
+  [((AVCapturePhotoOutput *)self.captureOutput) capturePhotoWithSettings:settings.capturePhotoSettings delegate:delegate];
+}
+@end
+
+@implementation IAFCapturePhotoSettingsProxy
+
+- (NSDictionary<NSString *,NSObject *> * _Nullable)processedFormat {
+  return nil;
+}
+@end
+
+@implementation IAFCapturePhotoCaptureDelegateProxy {
+  IAFLibraryImplementations *_implementations;
+}
+
+- (instancetype)initWithImplementations:(IAFLibraryImplementations *)implementations {
+  self = [self init];
+  if (self) {
+    _implementations = implementations;
+  }
+  return self;
+}
+
+- (NSObject * _Nullable)didFinishProcessingPhoto:(AVCapturePhoto *_Nullable)photo {
+  [_implementations.capturePhotoCaptureDelegateChannel invoke_didFinishProcessingPhoto:self
+                                                                                 photo:[[IAFCapturePhotoProxy alloc] initWithCapturePhoto:photo]
+                                                                            completion:^(id result _Nullable, NSError *error _Nullable) {}];
+}
+
+- (void)captureOutput:(AVCapturePhotoOutput *)output didFinishProcessingPhoto:(AVCapturePhoto *)photo error:(NSError *)error  API_AVAILABLE(ios(11.0)){
+  [self didFinishProcessingPhoto:nil];
+}
+@end
+
+@implementation IAFCapturePhotoProxy
+- (instancetype)initWithCapturePhoto:(AVCapturePhoto *)capturePhoto {
+  self = [self init];
+  if (self) {
+    _capturePhoto = capturePhoto;
+  }
+  return self;
+}
+
+- (NSData *)fileDataRepresentation {
+  return _capturePhoto.fileDataRepresentation;
+}
+@end
