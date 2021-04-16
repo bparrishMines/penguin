@@ -11,9 +11,8 @@ class ClassTemplate with $ClassTemplate {
     _channel.createNewInstancePair(this, owner: true);
   }
 
-  static ClassTemplateChannel get _channel =>
-      ChannelRegistrar.instance.implementations.classTemplateChannel
-          as ClassTemplateChannel;
+  static $ClassTemplateChannel get _channel =>
+      ChannelRegistrar.instance.implementations.classTemplateChannel;
 
   @override
   final int fieldTemplate;
