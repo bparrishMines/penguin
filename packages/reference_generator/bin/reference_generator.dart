@@ -133,7 +133,7 @@ void main(List<String> arguments) async {
   if (options.objcHeaderOut != null) {
     final HttpClientRequest request = await HttpClient().getUrl(
       Uri.parse(
-        'https://raw.githubusercontent.com/bparrishMines/penguin/ios_gen/packages/reference_example/ios/Classes/REFLibraryTemplate.h',
+        'https://raw.githubusercontent.com/bparrishMines/penguin/master/packages/reference_example/ios/Classes/REFLibraryTemplate.h',
       ),
     );
     final HttpClientResponse response = await request.close();
@@ -159,7 +159,7 @@ void main(List<String> arguments) async {
   if (options.objcImplOut != null) {
     final HttpClientRequest request = await HttpClient().getUrl(
       Uri.parse(
-        'https://raw.githubusercontent.com/bparrishMines/penguin/ios_gen/packages/reference_example/ios/Classes/REFLibraryTemplate.m',
+        'https://raw.githubusercontent.com/bparrishMines/penguin/master/packages/reference_example/ios/Classes/REFLibraryTemplate.m',
       ),
     );
     final HttpClientResponse response = await request.close();

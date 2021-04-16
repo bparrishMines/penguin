@@ -8,12 +8,37 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@protocol _IAFCapturePhotoOutput;
+@protocol _IAFCapturePhotoSettings;
+@protocol _IAFCapturePhotoCaptureDelegate;
+@protocol _IAFCaptureOutput;
+@protocol _IAFCapturePhoto;
 @protocol _IAFCaptureDeviceInput;
 @protocol _IAFCaptureInput;
 @protocol _IAFCaptureSession;
 @protocol _IAFCaptureDevice;
 @protocol _IAFPreviewController;
 
+@protocol _IAFCapturePhotoOutput <NSObject>
+
+- (NSObject *_Nullable)capturePhoto:(NSObject<_IAFCapturePhotoSettings> *_Nullable)settings delegate:(NSObject<_IAFCapturePhotoCaptureDelegate> *_Nullable)delegate;
+@end
+@protocol _IAFCapturePhotoSettings <NSObject>
+- (NSDictionary<NSString *,NSObject *> *_Nullable)processedFormat;
+
+@end
+@protocol _IAFCapturePhotoCaptureDelegate <NSObject>
+
+- (NSObject *_Nullable)didFinishProcessingPhoto:(NSObject<_IAFCapturePhoto> *_Nullable)photo ;
+@end
+@protocol _IAFCaptureOutput <NSObject>
+
+
+@end
+@protocol _IAFCapturePhoto <NSObject>
+- (NSData *_Nullable)fileDataRepresentation;
+
+@end
 @protocol _IAFCaptureDeviceInput <NSObject>
 - (NSObject<_IAFCaptureDevice> *_Nullable)device;
 
@@ -25,6 +50,7 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol _IAFCaptureSession <NSObject>
 
 - (NSObject *_Nullable)addInput:(NSObject<_IAFCaptureInput> *_Nullable)input ;
+- (NSObject *_Nullable)addOutput:(NSObject<_IAFCaptureOutput> *_Nullable)output ;
 - (NSObject *_Nullable)startRunning ;
 - (NSObject *_Nullable)stopRunning ;
 @end
@@ -38,6 +64,21 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+@interface _IAFCapturePhotoOutputCreationArgs : NSObject
+
+@end
+@interface _IAFCapturePhotoSettingsCreationArgs : NSObject
+@property NSDictionary<NSString *,NSObject *> *_Nullable processedFormat;
+@end
+@interface _IAFCapturePhotoCaptureDelegateCreationArgs : NSObject
+
+@end
+@interface _IAFCaptureOutputCreationArgs : NSObject
+
+@end
+@interface _IAFCapturePhotoCreationArgs : NSObject
+@property NSData *_Nullable fileDataRepresentation;
+@end
 @interface _IAFCaptureDeviceInputCreationArgs : NSObject
 @property NSObject<_IAFCaptureDevice> *_Nullable device;
 @end
@@ -55,6 +96,36 @@ NS_ASSUME_NONNULL_BEGIN
 @property NSObject<_IAFCaptureSession> *_Nullable captureSession;
 @end
 
+@interface _IAFCapturePhotoOutputChannel : REFTypeChannel
+- (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger;
+
+- (void)invoke_capturePhoto:(NSObject<_IAFCapturePhotoOutput> *)instance
+            settings:(NSObject<_IAFCapturePhotoSettings> *_Nullable)settings
+delegate:(NSObject<_IAFCapturePhotoCaptureDelegate> *_Nullable)delegate
+                   completion:(void (^)(id _Nullable, NSError *_Nullable))completion;
+@end
+@interface _IAFCapturePhotoSettingsChannel : REFTypeChannel
+- (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger;
+
+
+@end
+@interface _IAFCapturePhotoCaptureDelegateChannel : REFTypeChannel
+- (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger;
+
+- (void)invoke_didFinishProcessingPhoto:(NSObject<_IAFCapturePhotoCaptureDelegate> *)instance
+            photo:(NSObject<_IAFCapturePhoto> *_Nullable)photo
+                   completion:(void (^)(id _Nullable, NSError *_Nullable))completion;
+@end
+@interface _IAFCaptureOutputChannel : REFTypeChannel
+- (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger;
+
+
+@end
+@interface _IAFCapturePhotoChannel : REFTypeChannel
+- (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger;
+
+
+@end
 @interface _IAFCaptureDeviceInputChannel : REFTypeChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger;
 
@@ -70,6 +141,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)invoke_addInput:(NSObject<_IAFCaptureSession> *)instance
             input:(NSObject<_IAFCaptureInput> *_Nullable)input
+                   completion:(void (^)(id _Nullable, NSError *_Nullable))completion;
+- (void)invoke_addOutput:(NSObject<_IAFCaptureSession> *)instance
+            output:(NSObject<_IAFCaptureOutput> *_Nullable)output
                    completion:(void (^)(id _Nullable, NSError *_Nullable))completion;
 - (void)invoke_startRunning:(NSObject<_IAFCaptureSession> *)instance
             
@@ -91,6 +165,31 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+@interface _IAFCapturePhotoOutputHandler : NSObject<REFTypeChannelHandler>
+- (NSObject<_IAFCapturePhotoOutput> *)onCreate:(REFTypeChannelMessenger *)messenger
+                                    args:(_IAFCapturePhotoOutputCreationArgs *)args;
+
+@end
+@interface _IAFCapturePhotoSettingsHandler : NSObject<REFTypeChannelHandler>
+- (NSObject<_IAFCapturePhotoSettings> *)onCreate:(REFTypeChannelMessenger *)messenger
+                                    args:(_IAFCapturePhotoSettingsCreationArgs *)args;
+
+@end
+@interface _IAFCapturePhotoCaptureDelegateHandler : NSObject<REFTypeChannelHandler>
+- (NSObject<_IAFCapturePhotoCaptureDelegate> *)onCreate:(REFTypeChannelMessenger *)messenger
+                                    args:(_IAFCapturePhotoCaptureDelegateCreationArgs *)args;
+
+@end
+@interface _IAFCaptureOutputHandler : NSObject<REFTypeChannelHandler>
+- (NSObject<_IAFCaptureOutput> *)onCreate:(REFTypeChannelMessenger *)messenger
+                                    args:(_IAFCaptureOutputCreationArgs *)args;
+
+@end
+@interface _IAFCapturePhotoHandler : NSObject<REFTypeChannelHandler>
+- (NSObject<_IAFCapturePhoto> *)onCreate:(REFTypeChannelMessenger *)messenger
+                                    args:(_IAFCapturePhotoCreationArgs *)args;
+
+@end
 @interface _IAFCaptureDeviceInputHandler : NSObject<REFTypeChannelHandler>
 - (NSObject<_IAFCaptureDeviceInput> *)onCreate:(REFTypeChannelMessenger *)messenger
                                     args:(_IAFCaptureDeviceInputCreationArgs *)args;
@@ -119,11 +218,21 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @protocol _IAFLibraryImplementations
+-(_IAFCapturePhotoOutputChannel *)capturePhotoOutputChannel;
+-(_IAFCapturePhotoSettingsChannel *)capturePhotoSettingsChannel;
+-(_IAFCapturePhotoCaptureDelegateChannel *)capturePhotoCaptureDelegateChannel;
+-(_IAFCaptureOutputChannel *)captureOutputChannel;
+-(_IAFCapturePhotoChannel *)capturePhotoChannel;
 -(_IAFCaptureDeviceInputChannel *)captureDeviceInputChannel;
 -(_IAFCaptureInputChannel *)captureInputChannel;
 -(_IAFCaptureSessionChannel *)captureSessionChannel;
 -(_IAFCaptureDeviceChannel *)captureDeviceChannel;
 -(_IAFPreviewControllerChannel *)previewControllerChannel;
+-(_IAFCapturePhotoOutputHandler *)capturePhotoOutputHandler;
+-(_IAFCapturePhotoSettingsHandler *)capturePhotoSettingsHandler;
+-(_IAFCapturePhotoCaptureDelegateHandler *)capturePhotoCaptureDelegateHandler;
+-(_IAFCaptureOutputHandler *)captureOutputHandler;
+-(_IAFCapturePhotoHandler *)capturePhotoHandler;
 -(_IAFCaptureDeviceInputHandler *)captureDeviceInputHandler;
 -(_IAFCaptureInputHandler *)captureInputHandler;
 -(_IAFCaptureSessionHandler *)captureSessionHandler;
