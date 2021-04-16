@@ -25,43 +25,54 @@ abstract class CaptureDevicePosition {
 }
 
 @Reference('capturePhotoOutput')
-class CapturePhotoOutput extends CaptureOutput {
+class CapturePhotoOutput extends CaptureOutput with $CapturePhotoOutput {
   CapturePhotoOutput() {
-
+    _channel.createNewInstancePair(this, owner: true);
   }
 
-  Future<void> capturePhoto(CapturePhotoSettings settings, CapturePhotoCaptureDelegate delegate) {
+  static CapturePhotoOutputChannel get _channel =>
+      ChannelRegistrar.instance.implementations.capturePhotoOutputChannel
+          as CapturePhotoOutputChannel;
 
+  @override
+  Future<void> capturePhoto(
+    covariant CapturePhotoSettings settings,
+    covariant CapturePhotoCaptureDelegate delegate,
+  ) {
+    return _channel.$invokeCapturePhoto(this, settings, delegate);
   }
 }
 
 @Reference('CapturePhotoSettings')
-class CapturePhotoSettings {
+class CapturePhotoSettings with $CapturePhotoSettings {
   CapturePhotoSettings(this.processedFormat) {
-
+    _channel.createNewInstancePair(this, owner: true);
   }
 
+  static CapturePhotoSettingsChannel get _channel =>
+      ChannelRegistrar.instance.implementations.capturePhotoSettingsChannel
+          as CapturePhotoSettingsChannel;
+
+  @override
   final Map<String, Object> processedFormat;
 }
 
 @Reference('CapturePhotoCaptureDelegate')
-class CapturePhotoCaptureDelegate {
+abstract class CapturePhotoCaptureDelegate with $CapturePhotoCaptureDelegate {
   // TODO: Create AvFoundationError
-  void didFinishProcessingPhoto(CapturePhoto photo) {
-
-  }
+  @override
+  void didFinishProcessingPhoto(covariant CapturePhoto photo);
 }
 
 @Reference('CaptureOutput')
-abstract class CaptureOutput {
-
-}
+abstract class CaptureOutput with $CaptureOutput {}
 
 @Reference('CapturePhoto')
-class CapturePhoto {
+class CapturePhoto with $CapturePhoto {
   @visibleForTesting
   CapturePhoto(this.fileDataRepresentation);
 
+  @override
   final Uint8List? fileDataRepresentation;
 }
 
