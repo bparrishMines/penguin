@@ -168,7 +168,7 @@ class _MyAppState extends State<MyApp> {
 class MyPhotoDelegate extends CapturePhotoCaptureDelegate {
   @override
   void didFinishProcessingPhoto(covariant CapturePhoto photo) {
-    print('Photo taken');
-    print(photo.fileDataRepresentation?.length);
+    debugPrint('Photo taken');
+    debugPrint('${photo.fileDataRepresentation?.length}');
   }
 }
