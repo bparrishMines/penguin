@@ -8,13 +8,11 @@ import 'template_channels.dart';
 @Reference('github.penguin/template/template/ClassTemplate')
 class ClassTemplate with $ClassTemplate {
   ClassTemplate(this.fieldTemplate) {
-    // TODO: Make this overridable. Maybe using an optional param? This would require updating ref_generator though
     _channel.createNewInstancePair(this, owner: true);
   }
 
-  static ClassTemplateChannel get _channel =>
-      ChannelRegistrar.instance.implementations.classTemplateChannel
-          as ClassTemplateChannel;
+  static $ClassTemplateChannel get _channel =>
+      ChannelRegistrar.instance.implementations.classTemplateChannel;
 
   @override
   final int fieldTemplate;

@@ -119,9 +119,14 @@ class $ClassTemplateHandler implements TypeChannelHandler<$ClassTemplate> {
   }
 }
 
-mixin $LibraryImplementations {
-  $ClassTemplateChannel get classTemplateChannel;
-  $ClassTemplateHandler get classTemplateHandler;
+class $LibraryImplementations {
+  $LibraryImplementations(this.messenger);
+
+  final TypeChannelMessenger messenger;
+
+  $ClassTemplateChannel get classTemplateChannel =>
+      $ClassTemplateChannel(messenger);
+  $ClassTemplateHandler get classTemplateHandler => $ClassTemplateHandler();
 }
 
 class $ChannelRegistrar {

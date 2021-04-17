@@ -12,19 +12,11 @@ class ChannelRegistrar extends $ChannelRegistrar {
         ..registerHandlers();
 }
 
-class LibraryImplementations with $LibraryImplementations {
-  LibraryImplementations(TypeChannelMessenger messenger)
-      : classTemplateChannel = ClassTemplateChannel(messenger);
+class LibraryImplementations extends $LibraryImplementations {
+  LibraryImplementations(TypeChannelMessenger messenger) : super(messenger);
 
   @override
-  final ClassTemplateChannel classTemplateChannel;
-
-  @override
-  final ClassTemplateHandler classTemplateHandler = ClassTemplateHandler();
-}
-
-class ClassTemplateChannel extends $ClassTemplateChannel {
-  ClassTemplateChannel(TypeChannelMessenger messenger) : super(messenger);
+  $ClassTemplateHandler get classTemplateHandler => ClassTemplateHandler();
 }
 
 class ClassTemplateHandler extends $ClassTemplateHandler {
