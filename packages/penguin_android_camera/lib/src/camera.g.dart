@@ -744,17 +744,26 @@ class $MediaRecorderHandler implements TypeChannelHandler<$MediaRecorder> {
   }
 }
 
-mixin $LibraryImplementations {
-  $CameraChannel get cameraChannel;
-  $ShutterCallbackChannel get shutterCallbackChannel;
-  $PictureCallbackChannel get pictureCallbackChannel;
-  $CameraInfoChannel get cameraInfoChannel;
-  $MediaRecorderChannel get mediaRecorderChannel;
-  $CameraHandler get cameraHandler;
-  $ShutterCallbackHandler get shutterCallbackHandler;
-  $PictureCallbackHandler get pictureCallbackHandler;
-  $CameraInfoHandler get cameraInfoHandler;
-  $MediaRecorderHandler get mediaRecorderHandler;
+class $LibraryImplementations {
+  $LibraryImplementations(this.messenger);
+
+  final TypeChannelMessenger messenger;
+
+  $CameraChannel get cameraChannel => $CameraChannel(messenger);
+  $ShutterCallbackChannel get shutterCallbackChannel =>
+      $ShutterCallbackChannel(messenger);
+  $PictureCallbackChannel get pictureCallbackChannel =>
+      $PictureCallbackChannel(messenger);
+  $CameraInfoChannel get cameraInfoChannel => $CameraInfoChannel(messenger);
+  $MediaRecorderChannel get mediaRecorderChannel =>
+      $MediaRecorderChannel(messenger);
+  $CameraHandler get cameraHandler => $CameraHandler();
+  $ShutterCallbackHandler get shutterCallbackHandler =>
+      $ShutterCallbackHandler();
+  $PictureCallbackHandler get pictureCallbackHandler =>
+      $PictureCallbackHandler();
+  $CameraInfoHandler get cameraInfoHandler => $CameraInfoHandler();
+  $MediaRecorderHandler get mediaRecorderHandler => $MediaRecorderHandler();
 }
 
 class $ChannelRegistrar {

@@ -54,7 +54,7 @@ public class CameraProxyTest {
   public void open() {
     PowerMockito.mockStatic(android.hardware.Camera.class);
 
-    final ChannelRegistrar.CameraChannel mockCameraChannel = mock(ChannelRegistrar.CameraChannel.class);
+    final CameraChannelLibrary.$CameraChannel mockCameraChannel = mock(CameraChannelLibrary.$CameraChannel.class);
     when(mockLibraryImplementations.getCameraChannel()).thenReturn(mockCameraChannel);
     CameraProxy.open(mockLibraryImplementations, mockTextureRegistry, 12);
 
@@ -75,7 +75,7 @@ public class CameraProxyTest {
     }).when(android.hardware.Camera.class);
     android.hardware.Camera.getCameraInfo(eq(0), any(android.hardware.Camera.CameraInfo.class));
 
-    final ChannelRegistrar.CameraInfoChannel mockCameraInfoChannel = mock(ChannelRegistrar.CameraInfoChannel.class);
+    final CameraChannelLibrary.$CameraInfoChannel mockCameraInfoChannel = mock(CameraChannelLibrary.$CameraInfoChannel.class);
     when(mockLibraryImplementations.getCameraInfoChannel()).thenReturn(mockCameraInfoChannel);
     final List<CameraInfoProxy> allInfo = CameraProxy.getAllCameraInfo(mockLibraryImplementations);
 

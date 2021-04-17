@@ -17,7 +17,7 @@ import github.penguin.reference.reference.TypeChannelMessenger;
 // ReferenceGenerator
 // **************************************************************************
 
-class CameraChannelLibrary {
+public class CameraChannelLibrary {
   public interface $Camera {
 
 
@@ -82,28 +82,6 @@ class CameraChannelLibrary {
     Object stop() throws Exception;
 
     Object release() throws Exception;
-  }
-
-  public interface $LibraryImplementations {
-    $CameraChannel getCameraChannel();
-
-    $ShutterCallbackChannel getShutterCallbackChannel();
-
-    $PictureCallbackChannel getPictureCallbackChannel();
-
-    $CameraInfoChannel getCameraInfoChannel();
-
-    $MediaRecorderChannel getMediaRecorderChannel();
-
-    $CameraHandler getCameraHandler();
-
-    $ShutterCallbackHandler getShutterCallbackHandler();
-
-    $PictureCallbackHandler getPictureCallbackHandler();
-
-    $CameraInfoHandler getCameraInfoHandler();
-
-    $MediaRecorderHandler getMediaRecorderHandler();
   }
 
   public static class $CameraCreationArgs {
@@ -517,6 +495,54 @@ class CameraChannelLibrary {
 
       throw new UnsupportedOperationException(
           String.format("%s.%s not supported.", instance, methodName));
+    }
+  }
+
+  public static class $LibraryImplementations {
+    public final TypeChannelMessenger messenger;
+
+    public $LibraryImplementations(TypeChannelMessenger messenger) {
+      this.messenger = messenger;
+    }
+
+    public $CameraChannel getCameraChannel() {
+      return new $CameraChannel(messenger);
+    }
+
+    public $ShutterCallbackChannel getShutterCallbackChannel() {
+      return new $ShutterCallbackChannel(messenger);
+    }
+
+    public $PictureCallbackChannel getPictureCallbackChannel() {
+      return new $PictureCallbackChannel(messenger);
+    }
+
+    public $CameraInfoChannel getCameraInfoChannel() {
+      return new $CameraInfoChannel(messenger);
+    }
+
+    public $MediaRecorderChannel getMediaRecorderChannel() {
+      return new $MediaRecorderChannel(messenger);
+    }
+
+    public $CameraHandler getCameraHandler() {
+      return new $CameraHandler();
+    }
+
+    public $ShutterCallbackHandler getShutterCallbackHandler() {
+      return new $ShutterCallbackHandler();
+    }
+
+    public $PictureCallbackHandler getPictureCallbackHandler() {
+      return new $PictureCallbackHandler();
+    }
+
+    public $CameraInfoHandler getCameraInfoHandler() {
+      return new $CameraInfoHandler();
+    }
+
+    public $MediaRecorderHandler getMediaRecorderHandler() {
+      return new $MediaRecorderHandler();
     }
   }
 

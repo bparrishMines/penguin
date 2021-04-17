@@ -516,7 +516,7 @@ class Library with TemplateRegExp {
   final RegExp exp = null;
 
   final RegExp name = TemplateRegExp.regExp(
-    r'(?<=^class )LibraryTemplate(?= \{)',
+    r'(?<=^public class )LibraryTemplate(?= \{)',
   );
 
   final RegExp package = TemplateRegExp.regExp(
@@ -758,7 +758,7 @@ class Handler with TemplateRegExp {
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'public static class \$ClassTemplateHandler.*}(?=\s*public interface \$LibraryImplementations)',
+    r'public static class \$ClassTemplateHandler.*}(?=\s*public static class \$LibraryImplementations)',
   );
 
   @override
@@ -940,7 +940,7 @@ class LibraryImplementations with TemplateRegExp {
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-      r'public interface \$LibraryImplementations {[^\}]+}');
+      r'public static class \$LibraryImplementations.+\}(?=\s+public static class \$ChannelRegistrar)');
 
   @override
   final Library parent;
@@ -957,7 +957,7 @@ class LibraryImplementationsChannel with TemplateRegExp {
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'\$ClassTemplateChannel getClassTemplateChannel\(\);',
+    r'public \$ClassTemplateChannel getClassTemplateChannel[^\}]+\}',
   );
 
   @override
@@ -977,7 +977,7 @@ class LibraryImplementationsHandler with TemplateRegExp {
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'\$ClassTemplateHandler getClassTemplateHandler\(\);',
+    r'public \$ClassTemplateHandler getClassTemplateHandler[^\}]+\}',
   );
 
   @override
