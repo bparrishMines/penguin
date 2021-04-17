@@ -785,7 +785,7 @@ class Handler with TemplateRegExp {
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'class \$ClassTemplateHandler.*}(?=\s*mixin \$LibraryImplementations)',
+    r'class \$ClassTemplateHandler.*}(?=\s*class \$LibraryImplementations)',
   );
 
   @override
@@ -993,7 +993,7 @@ class LibraryImplementations with TemplateRegExp {
 
   @override
   final RegExp exp =
-      TemplateRegExp.regExp(r'mixin \$LibraryImplementations {[^\}]+}');
+      TemplateRegExp.regExp(r'class \$LibraryImplementations \{[^\}]+\}');
 
   @override
   final Library parent;
@@ -1010,7 +1010,7 @@ class LibraryImplementationsChannel with TemplateRegExp {
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'\$ClassTemplateChannel get classTemplateChannel;',
+    r'\$ClassTemplateChannel get classTemplateChannel[^;]+;',
   );
 
   @override
@@ -1030,7 +1030,7 @@ class LibraryImplementationsHandler with TemplateRegExp {
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'\$ClassTemplateHandler get classTemplateHandler;',
+    r'\$ClassTemplateHandler get classTemplateHandler[^;]+;',
   );
 
   @override

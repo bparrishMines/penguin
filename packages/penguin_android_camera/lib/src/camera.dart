@@ -22,8 +22,8 @@ class Camera with $Camera {
   @visibleForTesting
   Camera();
 
-  static CameraChannel get _channel =>
-      ChannelRegistrar.instance.implementations.cameraChannel as CameraChannel;
+  static $CameraChannel get _channel =>
+      ChannelRegistrar.instance.implementations.cameraChannel;
 
   int? _currentTexture;
 
@@ -200,9 +200,8 @@ class MediaRecorder implements $MediaRecorder {
     _channel.createNewInstancePair(this, owner: true);
   }
 
-  static MediaRecorderChannel get _channel =>
-      ChannelRegistrar.instance.implementations.mediaRecorderChannel
-          as MediaRecorderChannel;
+  static $MediaRecorderChannel get _channel =>
+      ChannelRegistrar.instance.implementations.mediaRecorderChannel;
 
   @override
   Future<void> setCamera(covariant Camera camera) =>
