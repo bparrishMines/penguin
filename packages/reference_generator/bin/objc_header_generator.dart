@@ -342,7 +342,7 @@ String generateObjcHeader({
                   return handler
                       .stringMatch()
                       .replaceAll(handler.prefix, prefix)
-                      .replaceAll(handler.channelClassName, classNode.name)
+                      .replaceAll(handler.handlerClassName, classNode.name)
                       .replaceAll(
                         handler.variableClassName,
                         ReCase(classNode.name).camelCase,
@@ -368,7 +368,6 @@ String generateObjcHeader({
               prefix,
             ),
       );
-  ;
 }
 
 String getTrueTypeName(ReferenceType type, String prefix) {
@@ -742,13 +741,13 @@ class LibraryImplementations with TemplateRegExp {
   LibraryImplementations(this.parent);
 
   @override
-  final RegExp exp =
-      TemplateRegExp.regExp(r'@protocol REFLibraryImplementations[^@]+@end');
+  final RegExp exp = TemplateRegExp.regExp(
+      r'@interface\s+REFLibraryImplementations.+@end(?=\s+@interface REFChannelRegistrar)');
 
   @override
   final Library parent;
 
-  final RegExp prefix = TemplateRegExp.regExp(r'(?<=@protocol )REF');
+  final RegExp prefix = TemplateRegExp.regExp(r'(?<=@interface\s+)REF');
 
   LibraryImplementationsChannel get aChannel =>
       LibraryImplementationsChannel(this);
@@ -792,7 +791,7 @@ class LibraryImplementationsHandler with TemplateRegExp {
 
   final RegExp prefix = TemplateRegExp.regExp(r'(?<=-\()REF');
 
-  final RegExp channelClassName = TemplateRegExp.regExp(
+  final RegExp handlerClassName = TemplateRegExp.regExp(
     r'(?<=\(\w*)ClassTemplate(?=Handler )',
   );
 
@@ -806,14 +805,15 @@ class ChannelRegistrar with TemplateRegExp {
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-      r'@interface REFChannelRegistrar.+@end\s+(?=NS_ASSUME_NONNULL_END)');
+      r'@interface REFChannelRegistrar.+@end(?=\s+NS_ASSUME_NONNULL_END)');
 
   final RegExp prefix = TemplateRegExp.regExp(r'(?<=@interface )REF');
 
   final RegExp implementationsPropertyPrefix =
-      TemplateRegExp.regExp(r'(?<=@property \(readonly\) id<)REF');
+      TemplateRegExp.regExp(r'(?<=@property \(readonly\) )REF');
+
   final RegExp implementationsParameterPrefix =
-      TemplateRegExp.regExp(r'(?<=initWithImplementation:\(id<)REF');
+      TemplateRegExp.regExp(r'(?<=initWithImplementation:\()REF');
 
   @override
   final Library parent;

@@ -36,7 +36,7 @@ NS_ASSUME_NONNULL_BEGIN
                              parameterTemplate:(NSString *_Nullable)parameterTemplate;
 @end
 
-@interface  REFLibraryImplementations : NSObject
+@interface REFLibraryImplementations : NSObject
 @property (readonly) REFTypeChannelMessenger *messenger;
 -(instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger;
 -(REFClassTemplateChannel *)classTemplateChannel;
@@ -46,8 +46,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface REFChannelRegistrar : NSObject
 @property (readonly) REFLibraryImplementations *implementations;
 - (instancetype)initWithImplementation:(REFLibraryImplementations *)implementations;
--(void)registerHandlers;
--(void)unregisterHandlers;
+- (void)registerHandlers;
+- (void)unregisterHandlers;
 @end
 
 NS_ASSUME_NONNULL_END

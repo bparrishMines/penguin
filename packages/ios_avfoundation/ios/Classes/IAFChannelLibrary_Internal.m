@@ -211,8 +211,6 @@ delegate:(NSObject<_IAFCapturePhotoCaptureDelegate> *_Nullable)delegate
   return nil;
 }
 @end
-
-
 @implementation _IAFCapturePhotoSettingsHandler
 - (NSObject<_IAFCapturePhotoSettings> *)onCreate:(REFTypeChannelMessenger *)messenger
                                     args:(_IAFCapturePhotoSettingsCreationArgs *)args {
@@ -254,8 +252,6 @@ delegate:(NSObject<_IAFCapturePhotoCaptureDelegate> *_Nullable)delegate
   return nil;
 }
 @end
-
-
 @implementation _IAFCapturePhotoCaptureDelegateHandler
 - (NSObject<_IAFCapturePhotoCaptureDelegate> *)onCreate:(REFTypeChannelMessenger *)messenger
                                     args:(_IAFCapturePhotoCaptureDelegateCreationArgs *)args {
@@ -299,8 +295,6 @@ delegate:(NSObject<_IAFCapturePhotoCaptureDelegate> *_Nullable)delegate
   return nil;
 }
 @end
-
-
 @implementation _IAFCaptureOutputHandler
 - (NSObject<_IAFCaptureOutput> *)onCreate:(REFTypeChannelMessenger *)messenger
                                     args:(_IAFCaptureOutputCreationArgs *)args {
@@ -342,8 +336,6 @@ delegate:(NSObject<_IAFCapturePhotoCaptureDelegate> *_Nullable)delegate
   return nil;
 }
 @end
-
-
 @implementation _IAFCapturePhotoHandler
 - (NSObject<_IAFCapturePhoto> *)onCreate:(REFTypeChannelMessenger *)messenger
                                     args:(_IAFCapturePhotoCreationArgs *)args {
@@ -385,8 +377,6 @@ delegate:(NSObject<_IAFCapturePhotoCaptureDelegate> *_Nullable)delegate
   return nil;
 }
 @end
-
-
 @implementation _IAFCaptureDeviceInputHandler
 - (NSObject<_IAFCaptureDeviceInput> *)onCreate:(REFTypeChannelMessenger *)messenger
                                     args:(_IAFCaptureDeviceInputCreationArgs *)args {
@@ -428,8 +418,6 @@ delegate:(NSObject<_IAFCapturePhotoCaptureDelegate> *_Nullable)delegate
   return nil;
 }
 @end
-
-
 @implementation _IAFCaptureInputHandler
 - (NSObject<_IAFCaptureInput> *)onCreate:(REFTypeChannelMessenger *)messenger
                                     args:(_IAFCaptureInputCreationArgs *)args {
@@ -471,8 +459,6 @@ delegate:(NSObject<_IAFCapturePhotoCaptureDelegate> *_Nullable)delegate
   return nil;
 }
 @end
-
-
 @implementation _IAFCaptureSessionHandler
 - (NSObject<_IAFCaptureSession> *)onCreate:(REFTypeChannelMessenger *)messenger
                                     args:(_IAFCaptureSessionCreationArgs *)args {
@@ -522,8 +508,6 @@ delegate:(NSObject<_IAFCapturePhotoCaptureDelegate> *_Nullable)delegate
   return nil;
 }
 @end
-
-
 @implementation _IAFCaptureDeviceHandler
 - (NSObject<_IAFCaptureDevice> *)onCreate:(REFTypeChannelMessenger *)messenger
                                     args:(_IAFCaptureDeviceCreationArgs *)args {
@@ -571,8 +555,6 @@ args.position = arguments[1];
   return nil;
 }
 @end
-
-
 @implementation _IAFPreviewControllerHandler
 - (NSObject<_IAFPreviewController> *)onCreate:(REFTypeChannelMessenger *)messenger
                                     args:(_IAFPreviewControllerCreationArgs *)args {
@@ -615,8 +597,80 @@ args.position = arguments[1];
 }
 @end
 
+@implementation _IAFLibraryImplementations
+- (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
+  self = [super init];
+  if (self) {
+    _messenger = messenger;
+  }
+  return self;
+}
+
+- (_IAFCapturePhotoOutputChannel *)capturePhotoOutputChannel {
+  return [[_IAFCapturePhotoOutputChannel alloc] initWithMessenger:_messenger];
+}
+- (_IAFCapturePhotoSettingsChannel *)capturePhotoSettingsChannel {
+  return [[_IAFCapturePhotoSettingsChannel alloc] initWithMessenger:_messenger];
+}
+- (_IAFCapturePhotoCaptureDelegateChannel *)capturePhotoCaptureDelegateChannel {
+  return [[_IAFCapturePhotoCaptureDelegateChannel alloc] initWithMessenger:_messenger];
+}
+- (_IAFCaptureOutputChannel *)captureOutputChannel {
+  return [[_IAFCaptureOutputChannel alloc] initWithMessenger:_messenger];
+}
+- (_IAFCapturePhotoChannel *)capturePhotoChannel {
+  return [[_IAFCapturePhotoChannel alloc] initWithMessenger:_messenger];
+}
+- (_IAFCaptureDeviceInputChannel *)captureDeviceInputChannel {
+  return [[_IAFCaptureDeviceInputChannel alloc] initWithMessenger:_messenger];
+}
+- (_IAFCaptureInputChannel *)captureInputChannel {
+  return [[_IAFCaptureInputChannel alloc] initWithMessenger:_messenger];
+}
+- (_IAFCaptureSessionChannel *)captureSessionChannel {
+  return [[_IAFCaptureSessionChannel alloc] initWithMessenger:_messenger];
+}
+- (_IAFCaptureDeviceChannel *)captureDeviceChannel {
+  return [[_IAFCaptureDeviceChannel alloc] initWithMessenger:_messenger];
+}
+- (_IAFPreviewControllerChannel *)previewControllerChannel {
+  return [[_IAFPreviewControllerChannel alloc] initWithMessenger:_messenger];
+}
+
+- (_IAFCapturePhotoOutputHandler *)capturePhotoOutputHandler {
+  return [[_IAFCapturePhotoOutputHandler alloc] init];
+}
+- (_IAFCapturePhotoSettingsHandler *)capturePhotoSettingsHandler {
+  return [[_IAFCapturePhotoSettingsHandler alloc] init];
+}
+- (_IAFCapturePhotoCaptureDelegateHandler *)capturePhotoCaptureDelegateHandler {
+  return [[_IAFCapturePhotoCaptureDelegateHandler alloc] init];
+}
+- (_IAFCaptureOutputHandler *)captureOutputHandler {
+  return [[_IAFCaptureOutputHandler alloc] init];
+}
+- (_IAFCapturePhotoHandler *)capturePhotoHandler {
+  return [[_IAFCapturePhotoHandler alloc] init];
+}
+- (_IAFCaptureDeviceInputHandler *)captureDeviceInputHandler {
+  return [[_IAFCaptureDeviceInputHandler alloc] init];
+}
+- (_IAFCaptureInputHandler *)captureInputHandler {
+  return [[_IAFCaptureInputHandler alloc] init];
+}
+- (_IAFCaptureSessionHandler *)captureSessionHandler {
+  return [[_IAFCaptureSessionHandler alloc] init];
+}
+- (_IAFCaptureDeviceHandler *)captureDeviceHandler {
+  return [[_IAFCaptureDeviceHandler alloc] init];
+}
+- (_IAFPreviewControllerHandler *)previewControllerHandler {
+  return [[_IAFPreviewControllerHandler alloc] init];
+}
+@end
+
 @implementation _IAFChannelRegistrar
-- (instancetype)initWithImplementation:(id<_IAFLibraryImplementations>)implementations {
+- (instancetype)initWithImplementation:(_IAFLibraryImplementations *)implementations {
   self = [super init];
   if (self) {
     _implementations = implementations;

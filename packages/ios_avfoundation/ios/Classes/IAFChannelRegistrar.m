@@ -3,176 +3,34 @@
 @implementation IAFChannelRegistrar
 @end
 
-@implementation IAFLibraryImplementations {
-  IAFCaptureDeviceInputChannel *_captureDeviceInputChannel;
-  IAFCaptureSessionChannel *_captureSessionChannel;
-  IAFCaptureDeviceChannel *_captureDeviceChannel;
-  IAFPreviewControllerChannel *_previewControllerChannel;
-  IAFCaptureInputChannel *_captureInputChannel;
-  IAFCapturePhotoOutputChannel *_capturePhotoOutputChannel;
-  IAFCaptureOutputChannel *_captureOutputChannel;
-  IAFCapturePhotoSettingsChannel *_capturePhotoSettingsChannel;
-  IAFCapturePhotoChannel *_capturePhotoChannel;
-  IAFCapturePhotoCaptureDelegateChannel *_capturePhotoCaptureDelegateChannel;
-  
-  IAFCaptureDeviceInputHandler *_captureDeviceInputHandler;
-  IAFCaptureSessionHandler *_captureSessionHandler;
-  IAFCaptureDeviceHandler *_captureDeviceHandler;
-  IAFPreviewControllerHandler *_previewControllerHandler;
-  IAFCaptureInputHandler *_captureInputHandler;
-  IAFCapturePhotoOutputHandler *_capturePhotoOutputHandler;
-  IAFCaptureOutputHandler *_captureOutputHandler;
-  IAFCapturePhotoSettingsHandler *_capturePhotoSettingsHandler;
-  IAFCapturePhotoHandler *_capturePhotoHandler;
-  IAFCapturePhotoCaptureDelegateHandler *_capturePhotoCaptureDelegateHandler;
+@implementation IAFLibraryImplementations
+- (IAFCaptureDeviceHandler *)captureDeviceHandler {
+  return [[IAFCaptureDeviceHandler alloc] initWithImplementations:self];
 }
 
--(instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
-  self = [super init];
-  if (self) {
-    _captureDeviceInputChannel = [[IAFCaptureDeviceInputChannel alloc] initWithMessenger:messenger];
-    _captureSessionChannel = [[IAFCaptureSessionChannel alloc] initWithMessenger:messenger];
-    _captureDeviceChannel = [[IAFCaptureDeviceChannel alloc] initWithMessenger:messenger];
-    _previewControllerChannel = [[IAFPreviewControllerChannel alloc] initWithMessenger:messenger];
-    _captureInputChannel = [[IAFCaptureInputChannel alloc] initWithMessenger:messenger];
-    _capturePhotoOutputChannel = [[IAFCapturePhotoOutputChannel alloc] initWithMessenger:messenger];
-    _captureOutputChannel = [[IAFCaptureOutputChannel alloc] initWithMessenger:messenger];
-    _capturePhotoSettingsChannel = [[IAFCapturePhotoSettingsChannel alloc] initWithMessenger:messenger];
-    _capturePhotoChannel = [[IAFCapturePhotoChannel alloc] initWithMessenger:messenger];
-    _capturePhotoCaptureDelegateChannel = [[IAFCapturePhotoCaptureDelegateChannel alloc] initWithMessenger:messenger];
-    
-    _captureDeviceInputHandler = [[IAFCaptureDeviceInputHandler alloc] init];
-    _captureSessionHandler = [[IAFCaptureSessionHandler alloc] init];
-    _captureDeviceHandler = [[IAFCaptureDeviceHandler alloc] initWithImplementations:self];
-    _previewControllerHandler = [[IAFPreviewControllerHandler alloc] init];
-    _captureInputHandler = [[IAFCaptureInputHandler alloc] init];
-    _capturePhotoOutputHandler = [[IAFCapturePhotoOutputHandler alloc] init];
-    _captureOutputHandler = [[IAFCaptureOutputHandler alloc] init];
-    _capturePhotoSettingsHandler = [[IAFCapturePhotoSettingsHandler alloc] init];
-    _capturePhotoHandler = [[IAFCapturePhotoHandler alloc] init];
-    _capturePhotoCaptureDelegateHandler = [[IAFCapturePhotoCaptureDelegateHandler alloc] initWithImplementations:self];
-  }
-  return self;
+- (IAFCaptureDeviceInputHandler *)captureDeviceInputHandler {
+  return [[IAFCaptureDeviceInputHandler alloc] init];
 }
 
-- (nonnull IAFCaptureDeviceChannel *)captureDeviceChannel {
-  return _captureDeviceChannel;
+- (IAFCaptureSessionHandler *)captureSessionHandler {
+  return [[IAFCaptureSessionHandler alloc] init];
 }
 
-- (nonnull IAFCaptureDeviceHandler *)captureDeviceHandler {
-  return _captureDeviceHandler;
+- (IAFPreviewControllerHandler *)previewControllerHandler {
+  return [[IAFPreviewControllerHandler alloc] init];
 }
 
-- (nonnull IAFCaptureDeviceInputChannel *)captureDeviceInputChannel {
-  return _captureDeviceInputChannel;
+- (IAFCapturePhotoCaptureDelegateHandler *)capturePhotoCaptureDelegateHandler {
+  return [[IAFCapturePhotoCaptureDelegateHandler alloc] initWithImplementations:self];
 }
 
-- (nonnull IAFCaptureDeviceInputHandler *)captureDeviceInputHandler {
-  return _captureDeviceInputHandler;
+- (IAFCapturePhotoSettingsHandler *)capturePhotoSettingsHandler {
+  return [[IAFCapturePhotoSettingsHandler alloc] init];
 }
 
-- (nonnull IAFCaptureInputChannel *)captureInputChannel {
-  return _captureInputChannel;
+- (IAFCapturePhotoOutputHandler *)capturePhotoOutputHandler {
+  return [[IAFCapturePhotoOutputHandler alloc] init];
 }
-
-- (nonnull IAFCaptureInputHandler *)captureInputHandler {
-  return _captureInputHandler;
-}
-
-- (nonnull IAFCaptureSessionChannel *)captureSessionChannel {
-  return _captureSessionChannel;
-}
-
-- (nonnull IAFCaptureSessionHandler *)captureSessionHandler {
-  return _captureSessionHandler;
-}
-
-- (nonnull IAFPreviewControllerChannel *)previewControllerChannel {
-  return _previewControllerChannel;
-}
-
-- (nonnull IAFPreviewControllerHandler *)previewControllerHandler {
-  return _previewControllerHandler;
-}
-
-- (nonnull IAFCaptureOutputChannel *)captureOutputChannel {
-  return _captureOutputChannel;
-}
-
-
-- (nonnull IAFCaptureOutputHandler *)captureOutputHandler {
-  return _captureOutputHandler;
-}
-
-
-- (nonnull IAFCapturePhotoCaptureDelegateChannel *)capturePhotoCaptureDelegateChannel {
-  return _capturePhotoCaptureDelegateChannel;
-}
-
-
-- (nonnull IAFCapturePhotoCaptureDelegateHandler *)capturePhotoCaptureDelegateHandler {
-  return _capturePhotoCaptureDelegateHandler;
-}
-
-
-- (nonnull IAFCapturePhotoChannel *)capturePhotoChannel {
-  return _capturePhotoChannel;
-}
-
-
-- (nonnull IAFCapturePhotoHandler *)capturePhotoHandler {
-  return _capturePhotoHandler;
-}
-
-
-- (nonnull IAFCapturePhotoOutputChannel *)capturePhotoOutputChannel {
-  return _capturePhotoOutputChannel;
-}
-
-
-- (nonnull IAFCapturePhotoOutputHandler *)capturePhotoOutputHandler {
-  return _capturePhotoOutputHandler;
-}
-
-
-- (nonnull IAFCapturePhotoSettingsChannel *)capturePhotoSettingsChannel {
-  return _capturePhotoSettingsChannel;
-}
-
-
-- (nonnull IAFCapturePhotoSettingsHandler *)capturePhotoSettingsHandler {
-  return _capturePhotoSettingsHandler;
-}
-@end
-
-@implementation IAFCaptureDeviceInputChannel
-@end
-
-@implementation IAFCaptureSessionChannel
-@end
-
-@implementation IAFCaptureDeviceChannel
-@end
-
-@implementation IAFPreviewControllerChannel
-@end
-
-@implementation IAFCaptureInputChannel
-@end
-
-@implementation IAFCapturePhotoChannel
-@end
-
-@implementation IAFCaptureOutputChannel
-@end
-
-@implementation IAFCapturePhotoCaptureDelegateChannel
-@end
-
-@implementation IAFCapturePhotoSettingsChannel
-@end
-
-@implementation IAFCapturePhotoOutputChannel
 @end
 
 @implementation IAFCaptureDeviceHandler {
@@ -212,15 +70,6 @@
                                    args:(_IAFPreviewControllerCreationArgs *)args {
   return [[IAFPreviewControllerProxy alloc] initWithCaptureSession:((IAFCaptureSessionProxy *)args.captureSession)];
 }
-@end
-
-@implementation IAFCaptureInputHandler
-@end
-
-@implementation IAFCapturePhotoHandler
-@end
-
-@implementation IAFCaptureOutputHandler
 @end
 
 @implementation IAFCapturePhotoCaptureDelegateHandler {
