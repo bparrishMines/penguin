@@ -30,9 +30,8 @@ class CapturePhotoOutput extends CaptureOutput with $CapturePhotoOutput {
     _channel.createNewInstancePair(this, owner: true);
   }
 
-  static CapturePhotoOutputChannel get _channel =>
-      ChannelRegistrar.instance.implementations.capturePhotoOutputChannel
-          as CapturePhotoOutputChannel;
+  static $CapturePhotoOutputChannel get _channel =>
+      ChannelRegistrar.instance.implementations.capturePhotoOutputChannel;
 
   @override
   Future<void> capturePhoto(
@@ -49,9 +48,8 @@ class CapturePhotoSettings with $CapturePhotoSettings {
     _channel.createNewInstancePair(this, owner: true);
   }
 
-  static CapturePhotoSettingsChannel get _channel =>
-      ChannelRegistrar.instance.implementations.capturePhotoSettingsChannel
-          as CapturePhotoSettingsChannel;
+  static $CapturePhotoSettingsChannel get _channel =>
+      ChannelRegistrar.instance.implementations.capturePhotoSettingsChannel;
 
   @override
   final Map<String, Object> processedFormat;
@@ -61,18 +59,13 @@ class CapturePhotoSettings with $CapturePhotoSettings {
 abstract class CapturePhotoCaptureDelegate with $CapturePhotoCaptureDelegate {
   // TODO: Mention this needs to be kept in memory on this side. Maybe didFinishProcessingPhoto can release pair.
   CapturePhotoCaptureDelegate() {
-    CapturePhotoCaptureDelegate._channel.createNewInstancePair(
-      this,
-      owner: true,
-    );
+    _channel.createNewInstancePair(this, owner: true);
   }
 
-  static CapturePhotoCaptureDelegateChannel get _channel => ChannelRegistrar
-      .instance
-      .implementations
-      .capturePhotoCaptureDelegateChannel as CapturePhotoCaptureDelegateChannel;
+  static $CapturePhotoCaptureDelegateChannel get _channel => ChannelRegistrar
+      .instance.implementations.capturePhotoCaptureDelegateChannel;
 
-  // TODO: Create AvFoundationError
+  // TODO: Create AvFoundationError?
   @override
   void didFinishProcessingPhoto(covariant CapturePhoto photo);
 }
@@ -94,9 +87,8 @@ class CaptureDeviceInput extends CaptureInput with $CaptureDeviceInput {
     _channel.createNewInstancePair(this, owner: true);
   }
 
-  static CaptureDeviceInputChannel get _channel =>
-      ChannelRegistrar.instance.implementations.captureDeviceInputChannel
-          as CaptureDeviceInputChannel;
+  static $CaptureDeviceInputChannel get _channel =>
+      ChannelRegistrar.instance.implementations.captureDeviceInputChannel;
 
   @override
   final CaptureDevice device;
@@ -111,9 +103,8 @@ class CaptureSession with $CaptureSession {
     _channel.createNewInstancePair(this, owner: true);
   }
 
-  static CaptureSessionChannel get _channel =>
-      ChannelRegistrar.instance.implementations.captureSessionChannel
-          as CaptureSessionChannel;
+  static $CaptureSessionChannel get _channel =>
+      ChannelRegistrar.instance.implementations.captureSessionChannel;
 
   @override
   Future<void> addInput(covariant CaptureInput input) {
@@ -137,9 +128,8 @@ class CaptureDevice with $CaptureDevice {
   @visibleForTesting
   CaptureDevice({required this.uniqueId, required this.position});
 
-  static CaptureDeviceChannel get _channel =>
-      ChannelRegistrar.instance.implementations.captureDeviceChannel
-          as CaptureDeviceChannel;
+  static $CaptureDeviceChannel get _channel =>
+      ChannelRegistrar.instance.implementations.captureDeviceChannel;
 
   @override
   final String uniqueId;
@@ -184,9 +174,8 @@ class PreviewController with $PreviewController {
     _channel.createNewInstancePair(this, owner: true);
   }
 
-  static PreviewControllerChannel get _channel =>
-      ChannelRegistrar.instance.implementations.previewControllerChannel
-          as PreviewControllerChannel;
+  static $PreviewControllerChannel get _channel =>
+      ChannelRegistrar.instance.implementations.previewControllerChannel;
 
   @override
   final CaptureSession captureSession;

@@ -17,38 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface IAFChannelRegistrar : _IAFChannelRegistrar
 @end
 
-@interface IAFLibraryImplementations : NSObject<_IAFLibraryImplementations>
--(instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger;
-@end
-
-@interface IAFCaptureDeviceInputChannel : _IAFCaptureDeviceInputChannel
-@end
-
-@interface IAFCaptureSessionChannel : _IAFCaptureSessionChannel
-@end
-
-@interface IAFCaptureDeviceChannel : _IAFCaptureDeviceChannel
-@end
-
-@interface IAFPreviewControllerChannel : _IAFPreviewControllerChannel
-@end
-
-@interface IAFCaptureInputChannel : _IAFCaptureInputChannel
-@end
-
-@interface IAFCapturePhotoChannel : _IAFCapturePhotoChannel
-@end
-
-@interface IAFCaptureOutputChannel : _IAFCaptureOutputChannel
-@end
-
-@interface IAFCapturePhotoCaptureDelegateChannel : _IAFCapturePhotoCaptureDelegateChannel
-@end
-
-@interface IAFCapturePhotoSettingsChannel : _IAFCapturePhotoSettingsChannel
-@end
-
-@interface IAFCapturePhotoOutputChannel : _IAFCapturePhotoOutputChannel
+@interface IAFLibraryImplementations : _IAFLibraryImplementations
 @end
 
 @interface IAFCaptureDeviceInputHandler : _IAFCaptureDeviceInputHandler
@@ -62,15 +31,6 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface IAFPreviewControllerHandler : _IAFPreviewControllerHandler
-@end
-
-@interface IAFCaptureInputHandler : _IAFCaptureInputHandler
-@end
-
-@interface IAFCapturePhotoHandler : _IAFCapturePhotoHandler
-@end
-
-@interface IAFCaptureOutputHandler : _IAFCaptureOutputHandler
 @end
 
 @interface IAFCapturePhotoCaptureDelegateHandler : _IAFCapturePhotoCaptureDelegateHandler

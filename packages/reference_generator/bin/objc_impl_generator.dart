@@ -376,6 +376,52 @@ String generateObjcImpl({
         ).join('\n'),
       )
       .replaceAll(
+        library.theImplementations.exp,
+        library.theImplementations
+            .stringMatch()
+            .replaceAll(library.theImplementations.prefix, prefix)
+            .replaceAll(
+              library.theImplementations.aChannel.exp,
+              libraryNode.classes.map<String>(
+                (ClassNode classNode) {
+                  final LibraryImplementationsChannel channel =
+                      library.theImplementations.aChannel;
+                  return channel
+                      .stringMatch()
+                      .replaceAll(channel.allocChannelClassName, classNode.name)
+                      .replaceAll(
+                          channel.prefixAllocChannelClassName, prefix)
+                      .replaceAll(channel.prefix, prefix)
+                      .replaceAll(channel.channelClassName, classNode.name)
+                      .replaceAll(
+                        channel.variableClassName,
+                        ReCase(classNode.name).camelCase,
+                      );
+                },
+              ).join('\n'),
+            )
+            .replaceAll(
+              library.theImplementations.aHandler.exp,
+              libraryNode.classes.map<String>(
+                (ClassNode classNode) {
+                  final LibraryImplementationsHandler handler =
+                      library.theImplementations.aHandler;
+                  return handler
+                      .stringMatch()
+                      .replaceAll(handler.allocHandlerClassName, classNode.name)
+                      .replaceAll(
+                          handler.prefixAllocHandlerClassName, prefix)
+                      .replaceAll(handler.prefix, prefix)
+                      .replaceAll(handler.handlerClassName, classNode.name)
+                      .replaceAll(
+                        handler.variableClassName,
+                        ReCase(classNode.name).camelCase,
+                      );
+                },
+              ).join('\n'),
+            ),
+      )
+      .replaceAll(
         library.theChannelRegistrar.exp,
         library.theChannelRegistrar
             .stringMatch()
@@ -440,6 +486,8 @@ class Library with TemplateRegExp {
   Channel get aChannel => Channel(this);
 
   Handler get aHandler => Handler(this);
+
+  LibraryImplementations get theImplementations => LibraryImplementations(this);
 
   ChannelRegistrar get theChannelRegistrar => ChannelRegistrar(this);
 }
@@ -565,7 +613,7 @@ class Handler with TemplateRegExp {
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'@implementation REFClassTemplateHandler.+@end\s+(?=@implementation)',
+    r'@implementation REFClassTemplateHandler.+@end(?=\s+@implementation)',
   );
 
   @override
@@ -796,6 +844,84 @@ class FollowingArgumentComment with TemplateRegExp {
   }
 }
 
+class LibraryImplementations with TemplateRegExp {
+  LibraryImplementations(this.parent);
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+      r'@implementation\s+REFLibraryImplementations.+@end(?=\s+@implementation)');
+
+  @override
+  final Library parent;
+
+  final RegExp prefix = TemplateRegExp.regExp(r'(?<=@implementation\s+)REF');
+
+  LibraryImplementationsChannel get aChannel =>
+      LibraryImplementationsChannel(this);
+
+  LibraryImplementationsHandler get aHandler =>
+      LibraryImplementationsHandler(this);
+}
+
+class LibraryImplementationsChannel with TemplateRegExp {
+  LibraryImplementationsChannel(this.parent);
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'- \(REFClassTemplateChannel \*\)classTemplateChannel[^\}]+\}',
+  );
+
+  @override
+  final LibraryImplementations parent;
+
+  final RegExp prefix = TemplateRegExp.regExp(r'(?<=- \()REF');
+
+  final RegExp channelClassName = TemplateRegExp.regExp(
+    r'(?<=\(\w*)ClassTemplate(?=Channel )',
+  );
+
+  final RegExp variableClassName = TemplateRegExp.regExp(
+    r'classTemplate(?=Channel)',
+  );
+
+  final RegExp allocChannelClassName = TemplateRegExp.regExp(
+    r'(?<=\[\w*)ClassTemplate(?=Channel )',
+  );
+
+  final RegExp prefixAllocChannelClassName = TemplateRegExp.regExp(
+    r'(?<=\[)REF',
+  );
+}
+
+class LibraryImplementationsHandler with TemplateRegExp {
+  LibraryImplementationsHandler(this.parent);
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'- \(REFClassTemplateHandler \*\)classTemplateHandler[^\}]+\}',
+  );
+
+  @override
+  final LibraryImplementations parent;
+
+  final RegExp prefix = TemplateRegExp.regExp(r'(?<=- \()REF');
+
+  final RegExp handlerClassName = TemplateRegExp.regExp(
+    r'(?<=\(\w*)ClassTemplate(?=Handler )',
+  );
+
+  final RegExp variableClassName = TemplateRegExp.regExp(
+    r'classTemplate(?=Handler)',
+  );
+
+  final RegExp allocHandlerClassName = TemplateRegExp.regExp(
+    r'(?<=\[\w*)ClassTemplate(?=Handler )',
+  );
+
+  final RegExp prefixAllocHandlerClassName =
+      TemplateRegExp.regExp(r'(?<=\[)REF',);
+}
+
 class ChannelRegistrar with TemplateRegExp {
   ChannelRegistrar(this.parent);
 
@@ -806,7 +932,7 @@ class ChannelRegistrar with TemplateRegExp {
   final RegExp prefix = TemplateRegExp.regExp(r'(?<=@implementation )REF');
 
   final RegExp implementationsParameterPrefix =
-      TemplateRegExp.regExp(r'(?<=initWithImplementation:\(id<)REF');
+      TemplateRegExp.regExp(r'(?<=initWithImplementation:\()REF');
 
   ChannelRegistrarSetter get aSetter => ChannelRegistrarSetter(this);
 

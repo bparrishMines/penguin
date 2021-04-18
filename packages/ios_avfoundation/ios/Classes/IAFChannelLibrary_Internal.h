@@ -217,7 +217,9 @@ delegate:(NSObject<_IAFCapturePhotoCaptureDelegate> *_Nullable)delegate
 
 @end
 
-@protocol _IAFLibraryImplementations
+@interface  _IAFLibraryImplementations : NSObject
+@property (readonly) REFTypeChannelMessenger *messenger;
+-(instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger;
 -(_IAFCapturePhotoOutputChannel *)capturePhotoOutputChannel;
 -(_IAFCapturePhotoSettingsChannel *)capturePhotoSettingsChannel;
 -(_IAFCapturePhotoCaptureDelegateChannel *)capturePhotoCaptureDelegateChannel;
@@ -241,8 +243,8 @@ delegate:(NSObject<_IAFCapturePhotoCaptureDelegate> *_Nullable)delegate
 @end
 
 @interface _IAFChannelRegistrar : NSObject
-@property (readonly) id<_IAFLibraryImplementations> implementations;
-- (instancetype)initWithImplementation:(id<_IAFLibraryImplementations>)implementations;
+@property (readonly) _IAFLibraryImplementations *implementations;
+- (instancetype)initWithImplementation:(_IAFLibraryImplementations *)implementations;
 -(void)registerHandlers;
 -(void)unregisterHandlers;
 @end

@@ -947,27 +947,46 @@ class $PreviewControllerHandler
   }
 }
 
-mixin $LibraryImplementations {
-  $CapturePhotoOutputChannel get capturePhotoOutputChannel;
-  $CapturePhotoSettingsChannel get capturePhotoSettingsChannel;
-  $CapturePhotoCaptureDelegateChannel get capturePhotoCaptureDelegateChannel;
-  $CaptureOutputChannel get captureOutputChannel;
-  $CapturePhotoChannel get capturePhotoChannel;
-  $CaptureDeviceInputChannel get captureDeviceInputChannel;
-  $CaptureInputChannel get captureInputChannel;
-  $CaptureSessionChannel get captureSessionChannel;
-  $CaptureDeviceChannel get captureDeviceChannel;
-  $PreviewControllerChannel get previewControllerChannel;
-  $CapturePhotoOutputHandler get capturePhotoOutputHandler;
-  $CapturePhotoSettingsHandler get capturePhotoSettingsHandler;
-  $CapturePhotoCaptureDelegateHandler get capturePhotoCaptureDelegateHandler;
-  $CaptureOutputHandler get captureOutputHandler;
-  $CapturePhotoHandler get capturePhotoHandler;
-  $CaptureDeviceInputHandler get captureDeviceInputHandler;
-  $CaptureInputHandler get captureInputHandler;
-  $CaptureSessionHandler get captureSessionHandler;
-  $CaptureDeviceHandler get captureDeviceHandler;
-  $PreviewControllerHandler get previewControllerHandler;
+class $LibraryImplementations {
+  $LibraryImplementations(this.messenger);
+
+  final TypeChannelMessenger messenger;
+
+  $CapturePhotoOutputChannel get capturePhotoOutputChannel =>
+      $CapturePhotoOutputChannel(messenger);
+  $CapturePhotoSettingsChannel get capturePhotoSettingsChannel =>
+      $CapturePhotoSettingsChannel(messenger);
+  $CapturePhotoCaptureDelegateChannel get capturePhotoCaptureDelegateChannel =>
+      $CapturePhotoCaptureDelegateChannel(messenger);
+  $CaptureOutputChannel get captureOutputChannel =>
+      $CaptureOutputChannel(messenger);
+  $CapturePhotoChannel get capturePhotoChannel =>
+      $CapturePhotoChannel(messenger);
+  $CaptureDeviceInputChannel get captureDeviceInputChannel =>
+      $CaptureDeviceInputChannel(messenger);
+  $CaptureInputChannel get captureInputChannel =>
+      $CaptureInputChannel(messenger);
+  $CaptureSessionChannel get captureSessionChannel =>
+      $CaptureSessionChannel(messenger);
+  $CaptureDeviceChannel get captureDeviceChannel =>
+      $CaptureDeviceChannel(messenger);
+  $PreviewControllerChannel get previewControllerChannel =>
+      $PreviewControllerChannel(messenger);
+  $CapturePhotoOutputHandler get capturePhotoOutputHandler =>
+      $CapturePhotoOutputHandler();
+  $CapturePhotoSettingsHandler get capturePhotoSettingsHandler =>
+      $CapturePhotoSettingsHandler();
+  $CapturePhotoCaptureDelegateHandler get capturePhotoCaptureDelegateHandler =>
+      $CapturePhotoCaptureDelegateHandler();
+  $CaptureOutputHandler get captureOutputHandler => $CaptureOutputHandler();
+  $CapturePhotoHandler get capturePhotoHandler => $CapturePhotoHandler();
+  $CaptureDeviceInputHandler get captureDeviceInputHandler =>
+      $CaptureDeviceInputHandler();
+  $CaptureInputHandler get captureInputHandler => $CaptureInputHandler();
+  $CaptureSessionHandler get captureSessionHandler => $CaptureSessionHandler();
+  $CaptureDeviceHandler get captureDeviceHandler => $CaptureDeviceHandler();
+  $PreviewControllerHandler get previewControllerHandler =>
+      $PreviewControllerHandler();
 }
 
 class $ChannelRegistrar {
