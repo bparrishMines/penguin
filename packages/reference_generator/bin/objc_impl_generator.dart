@@ -613,7 +613,7 @@ class Handler with TemplateRegExp {
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'@implementation REFClassTemplateHandler.+@end(?=\s+@implementation)',
+    r'@implementation REFClassTemplateHandler.+@end(?=\s+@implementation REFLibraryImplementations)',
   );
 
   @override

@@ -209,7 +209,8 @@
   return nil;
 }
 
-- (void)captureOutput:(AVCapturePhotoOutput *)output didFinishProcessingPhoto:(AVCapturePhoto *)photo error:(NSError *)error  API_AVAILABLE(ios(11.0)) {
+- (void)captureOutput:(AVCapturePhotoOutput *)output didFinishProcessingPhoto:(AVCapturePhoto *)photo
+                error:(NSError *)error  API_AVAILABLE(ios(11.0)) {
   [self didFinishProcessingPhoto:[[IAFCapturePhotoProxy alloc] initWithCapturePhoto:photo implementations:_implementations]];
 }
 @end
