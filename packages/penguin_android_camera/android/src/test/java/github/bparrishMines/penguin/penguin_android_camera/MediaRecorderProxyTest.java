@@ -9,11 +9,13 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+import org.powermock.api.mockito.PowerMockito;
 
 import io.flutter.view.TextureRegistry;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class MediaRecorderProxyTest {
   @Rule
@@ -21,6 +23,9 @@ public class MediaRecorderProxyTest {
 
   @Mock
   public MediaRecorder mockMediaRecorder;
+
+  @Mock
+  ChannelRegistrar.LibraryImplementations mockImplementations;
 
   public MediaRecorderProxy testMediaRecorderProxy;
 
@@ -32,7 +37,9 @@ public class MediaRecorderProxyTest {
   @Test
   public void setCamera() {
     final Camera mockCamera = mock(Camera.class);
-    final CameraProxy cameraProxy = new CameraProxy(mockCamera, mock(TextureRegistry.class));
+    final CameraChannelLibrary.$CameraChannel mockCameraChannel = mock(CameraChannelLibrary.$CameraChannel.class);
+    when(mockImplementations.getCameraChannel()).thenReturn(mockCameraChannel);
+    final CameraProxy cameraProxy = new CameraProxy(mockCamera, mock(TextureRegistry.class), mockImplementations);
 
     testMediaRecorderProxy.setCamera(cameraProxy);
     verify(mockMediaRecorder).setCamera(mockCamera);

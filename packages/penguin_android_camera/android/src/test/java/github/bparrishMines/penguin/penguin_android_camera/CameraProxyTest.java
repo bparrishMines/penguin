@@ -8,6 +8,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.mockito.stubbing.Answer;
@@ -38,7 +39,7 @@ public class CameraProxyTest {
   TextureRegistry mockTextureRegistry;
 
   @Mock
-  ChannelRegistrar.LibraryImplementations mockLibraryImplementations;
+  ChannelRegistrar.LibraryImplementations mockImplementations;
 
   @Mock
   android.hardware.Camera mockCamera;
@@ -47,7 +48,9 @@ public class CameraProxyTest {
 
   @Before
   public void setUp() {
-    testCameraProxy = new CameraProxy(mockCamera, mockTextureRegistry);
+    final CameraChannelLibrary.$CameraChannel mockCameraChannel = Mockito.mock(CameraChannelLibrary.$CameraChannel.class);
+    Mockito.when(mockImplementations.getCameraChannel()).thenReturn(mockCameraChannel);
+    testCameraProxy = new CameraProxy(mockCamera, mockTextureRegistry, mockImplementations);
   }
 
   @Test
@@ -55,8 +58,8 @@ public class CameraProxyTest {
     PowerMockito.mockStatic(android.hardware.Camera.class);
 
     final CameraChannelLibrary.$CameraChannel mockCameraChannel = mock(CameraChannelLibrary.$CameraChannel.class);
-    when(mockLibraryImplementations.getCameraChannel()).thenReturn(mockCameraChannel);
-    CameraProxy.open(mockLibraryImplementations, mockTextureRegistry, 12);
+    when(mockImplementations.getCameraChannel()).thenReturn(mockCameraChannel);
+    CameraProxy.open(mockImplementations, mockTextureRegistry, 12);
 
     verifyStatic();
     android.hardware.Camera.open(12);
@@ -76,8 +79,8 @@ public class CameraProxyTest {
     android.hardware.Camera.getCameraInfo(eq(0), any(android.hardware.Camera.CameraInfo.class));
 
     final CameraChannelLibrary.$CameraInfoChannel mockCameraInfoChannel = mock(CameraChannelLibrary.$CameraInfoChannel.class);
-    when(mockLibraryImplementations.getCameraInfoChannel()).thenReturn(mockCameraInfoChannel);
-    final List<CameraInfoProxy> allInfo = CameraProxy.getAllCameraInfo(mockLibraryImplementations);
+    when(mockImplementations.getCameraInfoChannel()).thenReturn(mockCameraInfoChannel);
+    final List<CameraInfoProxy> allInfo = CameraProxy.getAllCameraInfo(mockImplementations);
 
     assertEquals(allInfo.size(), 1);
     assertEquals(allInfo.get(0).getFacing(), (Integer) 11);
@@ -133,11 +136,11 @@ public class CameraProxyTest {
   public void takePicture() {
     final Camera.ShutterCallback shutterCallback = () -> {
     };
-    final ShutterCallbackProxy shutterCallbackProxy = new ShutterCallbackProxy(shutterCallback, mockLibraryImplementations);
+    final ShutterCallbackProxy shutterCallbackProxy = new ShutterCallbackProxy(shutterCallback, mockImplementations);
 
     final Camera.PictureCallback pictureCallback = (data, camera) -> {
     };
-    final PictureCallbackProxy pictureCallbackProxy = new PictureCallbackProxy(pictureCallback, mockLibraryImplementations);
+    final PictureCallbackProxy pictureCallbackProxy = new PictureCallbackProxy(pictureCallback, mockImplementations);
 
     testCameraProxy.takePicture(shutterCallbackProxy, pictureCallbackProxy, pictureCallbackProxy, pictureCallbackProxy);
     verify(mockCamera).takePicture(shutterCallback, pictureCallback, pictureCallback, pictureCallback);
