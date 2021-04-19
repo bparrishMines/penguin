@@ -52,35 +52,22 @@ class _MyAppState extends State<MyApp> {
     );
 
     _camera = await Camera.open(cameraInfo.cameraId);
+
+    late int result;
+    if (cameraInfo.facing == CameraInfo.cameraFacingFront) {
+      result = cameraInfo.orientation % 360;
+      result = (360 - result) % 360;
+    } else {
+      result = (cameraInfo.orientation + 360) % 360;
+    }
+    _camera!.setDisplayOrientation(result);
+
     _camera!.startPreview();
     final int textureId = await _camera!.attachPreviewTexture();
 
     setState(() {
-      _previewWidget = _createCameraPreview(
-        cameraInfo,
-        Texture(textureId: textureId),
-      );
+      _previewWidget = Texture(textureId: textureId);
     });
-  }
-
-  RotatedBox _createCameraPreview(CameraInfo cameraInfo, Texture texture) {
-    Widget cameraWidget = texture;
-    int rotation = 0;
-    if (cameraInfo.facing == CameraInfo.cameraFacingFront) {
-      rotation = (cameraInfo.orientation + 180) % 360;
-      cameraWidget = Transform(
-        transform: Matrix4.rotationY(pi),
-        alignment: Alignment.center,
-        child: cameraWidget,
-      );
-    } else if (cameraInfo.facing == CameraInfo.cameraFacingBack) {
-      rotation = cameraInfo.orientation;
-    }
-
-    return RotatedBox(
-      quarterTurns: (rotation / 90).floor(),
-      child: cameraWidget,
-    );
   }
 
   @override

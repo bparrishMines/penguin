@@ -11,6 +11,7 @@ public class CameraParametersProxy implements CameraChannelLibrary.$CameraParame
   public CameraParametersProxy(Camera.Parameters cameraParameters, ChannelRegistrar.LibraryImplementations implementations) {
     this.cameraParameters = cameraParameters;
     this.implementations = implementations;
+    implementations.getCameraParametersChannel().createNewInstancePair(this, false);
   }
 
   @Override

@@ -243,6 +243,11 @@ class CameraSize with $CameraSize {
 
   @override
   final int height;
+
+  @override
+  String toString() {
+    return 'CameraSize($width, $height)';
+  }
 }
 
 @Reference('ErrorCallback')
