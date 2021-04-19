@@ -34,6 +34,76 @@ public class CameraChannelLibrary {
     Object unlock() throws Exception;
 
     Object takePicture($ShutterCallback shutter, $PictureCallback raw, $PictureCallback postView, $PictureCallback jpeg) throws Exception;
+
+    Object autoFocus($AutoFocusCallback callback) throws Exception;
+
+    Object cancelAutoFocus() throws Exception;
+
+    Object setDisplayOrientation(Integer degrees) throws Exception;
+
+    Object setErrorCallback($ErrorCallback callback) throws Exception;
+
+    Object startSmoothZoom(Integer value) throws Exception;
+
+    Object stopSmoothZoom() throws Exception;
+
+    Object getParameters() throws Exception;
+
+    Object setParameters($CameraParameters parameters) throws Exception;
+  }
+
+  public interface $CameraParameters {
+
+
+    Object getFlashMode() throws Exception;
+
+    Object getMaxZoom() throws Exception;
+
+    Object getPictureSize() throws Exception;
+
+    Object getPreviewSize() throws Exception;
+
+    Object getSupportedPreviewSizes() throws Exception;
+
+    Object getSupportedPictureSizes() throws Exception;
+
+    Object getSupportedFlashModes() throws Exception;
+
+    Object getZoom() throws Exception;
+
+    Object isSmoothZoomSupported() throws Exception;
+
+    Object setFlashMode(String mode) throws Exception;
+
+    Object setPictureSize(Integer width, Integer height) throws Exception;
+
+    Object setRecordingHint(Boolean hint) throws Exception;
+
+    Object setRotation(Integer rotation) throws Exception;
+
+    Object setZoom(Integer value) throws Exception;
+
+    Object setPreviewSize(Integer width, Integer height) throws Exception;
+  }
+
+  public interface $CameraSize {
+    Integer getWidth();
+
+    Integer getHeight();
+
+
+  }
+
+  public interface $ErrorCallback {
+
+
+    Object onError(Integer error) throws Exception;
+  }
+
+  public interface $AutoFocusCallback {
+
+
+    Object onAutoFocus(Boolean success) throws Exception;
   }
 
   public interface $ShutterCallback {
@@ -88,6 +158,23 @@ public class CameraChannelLibrary {
 
   }
 
+  static class $CameraParametersCreationArgs {
+
+  }
+
+  static class $CameraSizeCreationArgs {
+    public Integer width;
+    public Integer height;
+  }
+
+  static class $ErrorCallbackCreationArgs {
+
+  }
+
+  static class $AutoFocusCallbackCreationArgs {
+
+  }
+
   static class $ShutterCallbackCreationArgs {
 
   }
@@ -112,39 +199,168 @@ public class CameraChannelLibrary {
     }
 
     public Completable<Object> $invokeGetAllCameraInfo() {
-      return invokeStaticMethod("getAllCameraInfo", Arrays.asList());
+      return invokeStaticMethod("getAllCameraInfo", Arrays.<Object>asList());
     }
 
     public Completable<Object> $invokeOpen(Integer cameraId) {
-      return invokeStaticMethod("open", Arrays.asList(cameraId));
+      return invokeStaticMethod("open", Arrays.<Object>asList(cameraId));
     }
 
     public Completable<Object> $invokeRelease($Camera instance) {
-      return invokeMethod(instance, "release", Arrays.asList());
+      return invokeMethod(instance, "release", Arrays.<Object>asList());
     }
 
     public Completable<Object> $invokeStartPreview($Camera instance) {
-      return invokeMethod(instance, "startPreview", Arrays.asList());
+      return invokeMethod(instance, "startPreview", Arrays.<Object>asList());
     }
 
     public Completable<Object> $invokeStopPreview($Camera instance) {
-      return invokeMethod(instance, "stopPreview", Arrays.asList());
+      return invokeMethod(instance, "stopPreview", Arrays.<Object>asList());
     }
 
     public Completable<Object> $invokeAttachPreviewTexture($Camera instance) {
-      return invokeMethod(instance, "attachPreviewTexture", Arrays.asList());
+      return invokeMethod(instance, "attachPreviewTexture", Arrays.<Object>asList());
     }
 
     public Completable<Object> $invokeReleasePreviewTexture($Camera instance) {
-      return invokeMethod(instance, "releasePreviewTexture", Arrays.asList());
+      return invokeMethod(instance, "releasePreviewTexture", Arrays.<Object>asList());
     }
 
     public Completable<Object> $invokeUnlock($Camera instance) {
-      return invokeMethod(instance, "unlock", Arrays.asList());
+      return invokeMethod(instance, "unlock", Arrays.<Object>asList());
     }
 
     public Completable<Object> $invokeTakePicture($Camera instance, $ShutterCallback shutter, $PictureCallback raw, $PictureCallback postView, $PictureCallback jpeg) {
-      return invokeMethod(instance, "takePicture", Arrays.asList(shutter, raw, postView, jpeg));
+      return invokeMethod(instance, "takePicture", Arrays.<Object>asList(shutter, raw, postView, jpeg));
+    }
+
+    public Completable<Object> $invokeAutoFocus($Camera instance, $AutoFocusCallback callback) {
+      return invokeMethod(instance, "autoFocus", Arrays.<Object>asList(callback));
+    }
+
+    public Completable<Object> $invokeCancelAutoFocus($Camera instance) {
+      return invokeMethod(instance, "cancelAutoFocus", Arrays.<Object>asList());
+    }
+
+    public Completable<Object> $invokeSetDisplayOrientation($Camera instance, Integer degrees) {
+      return invokeMethod(instance, "setDisplayOrientation", Arrays.<Object>asList(degrees));
+    }
+
+    public Completable<Object> $invokeSetErrorCallback($Camera instance, $ErrorCallback callback) {
+      return invokeMethod(instance, "setErrorCallback", Arrays.<Object>asList(callback));
+    }
+
+    public Completable<Object> $invokeStartSmoothZoom($Camera instance, Integer value) {
+      return invokeMethod(instance, "startSmoothZoom", Arrays.<Object>asList(value));
+    }
+
+    public Completable<Object> $invokeStopSmoothZoom($Camera instance) {
+      return invokeMethod(instance, "stopSmoothZoom", Arrays.<Object>asList());
+    }
+
+    public Completable<Object> $invokeGetParameters($Camera instance) {
+      return invokeMethod(instance, "getParameters", Arrays.<Object>asList());
+    }
+
+    public Completable<Object> $invokeSetParameters($Camera instance, $CameraParameters parameters) {
+      return invokeMethod(instance, "setParameters", Arrays.<Object>asList(parameters));
+    }
+  }
+
+  public static class $CameraParametersChannel extends TypeChannel<$CameraParameters> {
+    public $CameraParametersChannel(@NonNull TypeChannelMessenger messenger) {
+      super(messenger, "CameraParameters");
+    }
+
+
+    public Completable<Object> $invokeGetFlashMode($CameraParameters instance) {
+      return invokeMethod(instance, "getFlashMode", Arrays.<Object>asList());
+    }
+
+    public Completable<Object> $invokeGetMaxZoom($CameraParameters instance) {
+      return invokeMethod(instance, "getMaxZoom", Arrays.<Object>asList());
+    }
+
+    public Completable<Object> $invokeGetPictureSize($CameraParameters instance) {
+      return invokeMethod(instance, "getPictureSize", Arrays.<Object>asList());
+    }
+
+    public Completable<Object> $invokeGetPreviewSize($CameraParameters instance) {
+      return invokeMethod(instance, "getPreviewSize", Arrays.<Object>asList());
+    }
+
+    public Completable<Object> $invokeGetSupportedPreviewSizes($CameraParameters instance) {
+      return invokeMethod(instance, "getSupportedPreviewSizes", Arrays.<Object>asList());
+    }
+
+    public Completable<Object> $invokeGetSupportedPictureSizes($CameraParameters instance) {
+      return invokeMethod(instance, "getSupportedPictureSizes", Arrays.<Object>asList());
+    }
+
+    public Completable<Object> $invokeGetSupportedFlashModes($CameraParameters instance) {
+      return invokeMethod(instance, "getSupportedFlashModes", Arrays.<Object>asList());
+    }
+
+    public Completable<Object> $invokeGetZoom($CameraParameters instance) {
+      return invokeMethod(instance, "getZoom", Arrays.<Object>asList());
+    }
+
+    public Completable<Object> $invokeIsSmoothZoomSupported($CameraParameters instance) {
+      return invokeMethod(instance, "isSmoothZoomSupported", Arrays.<Object>asList());
+    }
+
+    public Completable<Object> $invokeSetFlashMode($CameraParameters instance, String mode) {
+      return invokeMethod(instance, "setFlashMode", Arrays.<Object>asList(mode));
+    }
+
+    public Completable<Object> $invokeSetPictureSize($CameraParameters instance, Integer width, Integer height) {
+      return invokeMethod(instance, "setPictureSize", Arrays.<Object>asList(width, height));
+    }
+
+    public Completable<Object> $invokeSetRecordingHint($CameraParameters instance, Boolean hint) {
+      return invokeMethod(instance, "setRecordingHint", Arrays.<Object>asList(hint));
+    }
+
+    public Completable<Object> $invokeSetRotation($CameraParameters instance, Integer rotation) {
+      return invokeMethod(instance, "setRotation", Arrays.<Object>asList(rotation));
+    }
+
+    public Completable<Object> $invokeSetZoom($CameraParameters instance, Integer value) {
+      return invokeMethod(instance, "setZoom", Arrays.<Object>asList(value));
+    }
+
+    public Completable<Object> $invokeSetPreviewSize($CameraParameters instance, Integer width, Integer height) {
+      return invokeMethod(instance, "setPreviewSize", Arrays.<Object>asList(width, height));
+    }
+  }
+
+  public static class $CameraSizeChannel extends TypeChannel<$CameraSize> {
+    public $CameraSizeChannel(@NonNull TypeChannelMessenger messenger) {
+      super(messenger, "CameraSize");
+    }
+
+
+  }
+
+  public static class $ErrorCallbackChannel extends TypeChannel<$ErrorCallback> {
+    public $ErrorCallbackChannel(@NonNull TypeChannelMessenger messenger) {
+      super(messenger, "ErrorCallback");
+    }
+
+
+    public Completable<Object> $invokeOnError($ErrorCallback instance, Integer error) {
+      return invokeMethod(instance, "onError", Arrays.<Object>asList(error));
+    }
+  }
+
+  public static class $AutoFocusCallbackChannel extends TypeChannel<$AutoFocusCallback> {
+    public $AutoFocusCallbackChannel(@NonNull TypeChannelMessenger messenger) {
+      super(messenger, "AutoFocusCallback");
+    }
+
+
+    public Completable<Object> $invokeOnAutoFocus($AutoFocusCallback instance, Boolean success) {
+      return invokeMethod(instance, "onAutoFocus", Arrays.<Object>asList(success));
     }
   }
 
@@ -155,7 +371,7 @@ public class CameraChannelLibrary {
 
 
     public Completable<Object> $invokeOnShutter($ShutterCallback instance) {
-      return invokeMethod(instance, "onShutter", Arrays.asList());
+      return invokeMethod(instance, "onShutter", Arrays.<Object>asList());
     }
   }
 
@@ -166,7 +382,7 @@ public class CameraChannelLibrary {
 
 
     public Completable<Object> $invokeOnPictureTaken($PictureCallback instance, byte[] data) {
-      return invokeMethod(instance, "onPictureTaken", Arrays.asList(data));
+      return invokeMethod(instance, "onPictureTaken", Arrays.<Object>asList(data));
     }
   }
 
@@ -185,47 +401,47 @@ public class CameraChannelLibrary {
 
 
     public Completable<Object> $invokeSetCamera($MediaRecorder instance, $Camera camera) {
-      return invokeMethod(instance, "setCamera", Arrays.asList(camera));
+      return invokeMethod(instance, "setCamera", Arrays.<Object>asList(camera));
     }
 
     public Completable<Object> $invokeSetVideoSource($MediaRecorder instance, Integer source) {
-      return invokeMethod(instance, "setVideoSource", Arrays.asList(source));
+      return invokeMethod(instance, "setVideoSource", Arrays.<Object>asList(source));
     }
 
     public Completable<Object> $invokeSetOutputFilePath($MediaRecorder instance, String path) {
-      return invokeMethod(instance, "setOutputFilePath", Arrays.asList(path));
+      return invokeMethod(instance, "setOutputFilePath", Arrays.<Object>asList(path));
     }
 
     public Completable<Object> $invokeSetOutputFormat($MediaRecorder instance, Integer format) {
-      return invokeMethod(instance, "setOutputFormat", Arrays.asList(format));
+      return invokeMethod(instance, "setOutputFormat", Arrays.<Object>asList(format));
     }
 
     public Completable<Object> $invokeSetVideoEncoder($MediaRecorder instance, Integer encoder) {
-      return invokeMethod(instance, "setVideoEncoder", Arrays.asList(encoder));
+      return invokeMethod(instance, "setVideoEncoder", Arrays.<Object>asList(encoder));
     }
 
     public Completable<Object> $invokeSetAudioSource($MediaRecorder instance, Integer source) {
-      return invokeMethod(instance, "setAudioSource", Arrays.asList(source));
+      return invokeMethod(instance, "setAudioSource", Arrays.<Object>asList(source));
     }
 
     public Completable<Object> $invokeSetAudioEncoder($MediaRecorder instance, Integer encoder) {
-      return invokeMethod(instance, "setAudioEncoder", Arrays.asList(encoder));
+      return invokeMethod(instance, "setAudioEncoder", Arrays.<Object>asList(encoder));
     }
 
     public Completable<Object> $invokePrepare($MediaRecorder instance) {
-      return invokeMethod(instance, "prepare", Arrays.asList());
+      return invokeMethod(instance, "prepare", Arrays.<Object>asList());
     }
 
     public Completable<Object> $invokeStart($MediaRecorder instance) {
-      return invokeMethod(instance, "start", Arrays.asList());
+      return invokeMethod(instance, "start", Arrays.<Object>asList());
     }
 
     public Completable<Object> $invokeStop($MediaRecorder instance) {
-      return invokeMethod(instance, "stop", Arrays.asList());
+      return invokeMethod(instance, "stop", Arrays.<Object>asList());
     }
 
     public Completable<Object> $invokeRelease($MediaRecorder instance) {
-      return invokeMethod(instance, "release", Arrays.asList());
+      return invokeMethod(instance, "release", Arrays.<Object>asList());
     }
   }
 
@@ -263,7 +479,7 @@ public class CameraChannelLibrary {
     @Override
     public List<Object> getCreationArguments(
         TypeChannelMessenger messenger, $Camera instance) {
-      return Arrays.asList();
+      return Arrays.<Object>asList();
     }
 
     @Override
@@ -282,6 +498,211 @@ public class CameraChannelLibrary {
         List<Object> arguments)
         throws Exception {
       for (Method method : $Camera.class.getMethods()) {
+        if (method.getName().equals(methodName)) {
+          return method.invoke(instance, arguments.toArray());
+        }
+      }
+
+      throw new UnsupportedOperationException(
+          String.format("%s.%s not supported.", instance, methodName));
+    }
+  }
+
+  public static class $CameraParametersHandler implements TypeChannelHandler<$CameraParameters> {
+    public $CameraParameters onCreate(TypeChannelMessenger messenger, $CameraParametersCreationArgs args)
+        throws Exception {
+      return null;
+    }
+
+
+    @Override
+    public Object invokeStaticMethod(
+        TypeChannelMessenger messenger, String methodName, List<Object> arguments)
+        throws Exception {
+      switch (methodName) {
+
+      }
+
+      throw new UnsupportedOperationException(
+          String.format("Unable to invoke static method %s", methodName));
+    }
+
+    @Override
+    public List<Object> getCreationArguments(
+        TypeChannelMessenger messenger, $CameraParameters instance) {
+      return Arrays.<Object>asList();
+    }
+
+    @Override
+    public $CameraParameters createInstance(TypeChannelMessenger messenger, List<Object> arguments)
+        throws Exception {
+      final $CameraParametersCreationArgs args = new $CameraParametersCreationArgs();
+
+      return onCreate(messenger, args);
+    }
+
+    @Override
+    public Object invokeMethod(
+        TypeChannelMessenger messenger,
+        $CameraParameters instance,
+        String methodName,
+        List<Object> arguments)
+        throws Exception {
+      for (Method method : $CameraParameters.class.getMethods()) {
+        if (method.getName().equals(methodName)) {
+          return method.invoke(instance, arguments.toArray());
+        }
+      }
+
+      throw new UnsupportedOperationException(
+          String.format("%s.%s not supported.", instance, methodName));
+    }
+  }
+
+  public static class $CameraSizeHandler implements TypeChannelHandler<$CameraSize> {
+    public $CameraSize onCreate(TypeChannelMessenger messenger, $CameraSizeCreationArgs args)
+        throws Exception {
+      return null;
+    }
+
+
+    @Override
+    public Object invokeStaticMethod(
+        TypeChannelMessenger messenger, String methodName, List<Object> arguments)
+        throws Exception {
+      switch (methodName) {
+
+      }
+
+      throw new UnsupportedOperationException(
+          String.format("Unable to invoke static method %s", methodName));
+    }
+
+    @Override
+    public List<Object> getCreationArguments(
+        TypeChannelMessenger messenger, $CameraSize instance) {
+      return Arrays.<Object>asList(instance.getWidth(), instance.getHeight());
+    }
+
+    @Override
+    public $CameraSize createInstance(TypeChannelMessenger messenger, List<Object> arguments)
+        throws Exception {
+      final $CameraSizeCreationArgs args = new $CameraSizeCreationArgs();
+      args.width = (Integer) arguments.get(0);
+      args.height = (Integer) arguments.get(1);
+      return onCreate(messenger, args);
+    }
+
+    @Override
+    public Object invokeMethod(
+        TypeChannelMessenger messenger,
+        $CameraSize instance,
+        String methodName,
+        List<Object> arguments)
+        throws Exception {
+      for (Method method : $CameraSize.class.getMethods()) {
+        if (method.getName().equals(methodName)) {
+          return method.invoke(instance, arguments.toArray());
+        }
+      }
+
+      throw new UnsupportedOperationException(
+          String.format("%s.%s not supported.", instance, methodName));
+    }
+  }
+
+  public static class $ErrorCallbackHandler implements TypeChannelHandler<$ErrorCallback> {
+    public $ErrorCallback onCreate(TypeChannelMessenger messenger, $ErrorCallbackCreationArgs args)
+        throws Exception {
+      return null;
+    }
+
+
+    @Override
+    public Object invokeStaticMethod(
+        TypeChannelMessenger messenger, String methodName, List<Object> arguments)
+        throws Exception {
+      switch (methodName) {
+
+      }
+
+      throw new UnsupportedOperationException(
+          String.format("Unable to invoke static method %s", methodName));
+    }
+
+    @Override
+    public List<Object> getCreationArguments(
+        TypeChannelMessenger messenger, $ErrorCallback instance) {
+      return Arrays.<Object>asList();
+    }
+
+    @Override
+    public $ErrorCallback createInstance(TypeChannelMessenger messenger, List<Object> arguments)
+        throws Exception {
+      final $ErrorCallbackCreationArgs args = new $ErrorCallbackCreationArgs();
+
+      return onCreate(messenger, args);
+    }
+
+    @Override
+    public Object invokeMethod(
+        TypeChannelMessenger messenger,
+        $ErrorCallback instance,
+        String methodName,
+        List<Object> arguments)
+        throws Exception {
+      for (Method method : $ErrorCallback.class.getMethods()) {
+        if (method.getName().equals(methodName)) {
+          return method.invoke(instance, arguments.toArray());
+        }
+      }
+
+      throw new UnsupportedOperationException(
+          String.format("%s.%s not supported.", instance, methodName));
+    }
+  }
+
+  public static class $AutoFocusCallbackHandler implements TypeChannelHandler<$AutoFocusCallback> {
+    public $AutoFocusCallback onCreate(TypeChannelMessenger messenger, $AutoFocusCallbackCreationArgs args)
+        throws Exception {
+      return null;
+    }
+
+
+    @Override
+    public Object invokeStaticMethod(
+        TypeChannelMessenger messenger, String methodName, List<Object> arguments)
+        throws Exception {
+      switch (methodName) {
+
+      }
+
+      throw new UnsupportedOperationException(
+          String.format("Unable to invoke static method %s", methodName));
+    }
+
+    @Override
+    public List<Object> getCreationArguments(
+        TypeChannelMessenger messenger, $AutoFocusCallback instance) {
+      return Arrays.<Object>asList();
+    }
+
+    @Override
+    public $AutoFocusCallback createInstance(TypeChannelMessenger messenger, List<Object> arguments)
+        throws Exception {
+      final $AutoFocusCallbackCreationArgs args = new $AutoFocusCallbackCreationArgs();
+
+      return onCreate(messenger, args);
+    }
+
+    @Override
+    public Object invokeMethod(
+        TypeChannelMessenger messenger,
+        $AutoFocusCallback instance,
+        String methodName,
+        List<Object> arguments)
+        throws Exception {
+      for (Method method : $AutoFocusCallback.class.getMethods()) {
         if (method.getName().equals(methodName)) {
           return method.invoke(instance, arguments.toArray());
         }
@@ -314,7 +735,7 @@ public class CameraChannelLibrary {
     @Override
     public List<Object> getCreationArguments(
         TypeChannelMessenger messenger, $ShutterCallback instance) {
-      return Arrays.asList();
+      return Arrays.<Object>asList();
     }
 
     @Override
@@ -365,7 +786,7 @@ public class CameraChannelLibrary {
     @Override
     public List<Object> getCreationArguments(
         TypeChannelMessenger messenger, $PictureCallback instance) {
-      return Arrays.asList();
+      return Arrays.<Object>asList();
     }
 
     @Override
@@ -416,7 +837,7 @@ public class CameraChannelLibrary {
     @Override
     public List<Object> getCreationArguments(
         TypeChannelMessenger messenger, $CameraInfo instance) {
-      return Arrays.asList(instance.getCameraId(), instance.getFacing(), instance.getOrientation());
+      return Arrays.<Object>asList(instance.getCameraId(), instance.getFacing(), instance.getOrientation());
     }
 
     @Override
@@ -469,7 +890,7 @@ public class CameraChannelLibrary {
     @Override
     public List<Object> getCreationArguments(
         TypeChannelMessenger messenger, $MediaRecorder instance) {
-      return Arrays.asList();
+      return Arrays.<Object>asList();
     }
 
     @Override
@@ -509,6 +930,22 @@ public class CameraChannelLibrary {
       return new $CameraChannel(messenger);
     }
 
+    public $CameraParametersChannel getCameraParametersChannel() {
+      return new $CameraParametersChannel(messenger);
+    }
+
+    public $CameraSizeChannel getCameraSizeChannel() {
+      return new $CameraSizeChannel(messenger);
+    }
+
+    public $ErrorCallbackChannel getErrorCallbackChannel() {
+      return new $ErrorCallbackChannel(messenger);
+    }
+
+    public $AutoFocusCallbackChannel getAutoFocusCallbackChannel() {
+      return new $AutoFocusCallbackChannel(messenger);
+    }
+
     public $ShutterCallbackChannel getShutterCallbackChannel() {
       return new $ShutterCallbackChannel(messenger);
     }
@@ -527,6 +964,22 @@ public class CameraChannelLibrary {
 
     public $CameraHandler getCameraHandler() {
       return new $CameraHandler();
+    }
+
+    public $CameraParametersHandler getCameraParametersHandler() {
+      return new $CameraParametersHandler();
+    }
+
+    public $CameraSizeHandler getCameraSizeHandler() {
+      return new $CameraSizeHandler();
+    }
+
+    public $ErrorCallbackHandler getErrorCallbackHandler() {
+      return new $ErrorCallbackHandler();
+    }
+
+    public $AutoFocusCallbackHandler getAutoFocusCallbackHandler() {
+      return new $AutoFocusCallbackHandler();
     }
 
     public $ShutterCallbackHandler getShutterCallbackHandler() {
@@ -555,6 +1008,10 @@ public class CameraChannelLibrary {
 
     public void registerHandlers() {
       implementations.getCameraChannel().setHandler(implementations.getCameraHandler());
+      implementations.getCameraParametersChannel().setHandler(implementations.getCameraParametersHandler());
+      implementations.getCameraSizeChannel().setHandler(implementations.getCameraSizeHandler());
+      implementations.getErrorCallbackChannel().setHandler(implementations.getErrorCallbackHandler());
+      implementations.getAutoFocusCallbackChannel().setHandler(implementations.getAutoFocusCallbackHandler());
       implementations.getShutterCallbackChannel().setHandler(implementations.getShutterCallbackHandler());
       implementations.getPictureCallbackChannel().setHandler(implementations.getPictureCallbackHandler());
       implementations.getCameraInfoChannel().setHandler(implementations.getCameraInfoHandler());
@@ -563,6 +1020,10 @@ public class CameraChannelLibrary {
 
     public void unregisterHandlers() {
       implementations.getCameraChannel().removeHandler();
+      implementations.getCameraParametersChannel().removeHandler();
+      implementations.getCameraSizeChannel().removeHandler();
+      implementations.getErrorCallbackChannel().removeHandler();
+      implementations.getAutoFocusCallbackChannel().removeHandler();
       implementations.getShutterCallbackChannel().removeHandler();
       implementations.getPictureCallbackChannel().removeHandler();
       implementations.getCameraInfoChannel().removeHandler();

@@ -20,6 +20,13 @@ class LibraryImplementations extends $LibraryImplementations {
 
   @override
   final CameraInfoHandler cameraInfoHandler = CameraInfoHandler();
+
+  @override
+  final CameraParametersHandler cameraParametersHandler =
+      CameraParametersHandler();
+
+  @override
+  final CameraSizeHandler cameraSizeHandler = CameraSizeHandler();
 }
 
 class CameraHandler extends $CameraHandler {
@@ -41,5 +48,26 @@ class CameraInfoHandler extends $CameraInfoHandler {
       facing: args.facing,
       orientation: args.orientation,
     );
+  }
+}
+
+class CameraParametersHandler extends $CameraParametersHandler {
+  @override
+  CameraParameters onCreate(
+    TypeChannelMessenger messenger,
+    $CameraParametersCreationArgs args,
+  ) {
+    // ignore: invalid_use_of_visible_for_testing_member
+    return CameraParameters();
+  }
+}
+
+class CameraSizeHandler extends $CameraSizeHandler {
+  @override
+  $CameraSize onCreate(
+    TypeChannelMessenger messenger,
+    $CameraSizeCreationArgs args,
+  ) {
+    return CameraSize(args.width, args.height);
   }
 }
