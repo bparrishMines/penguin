@@ -246,7 +246,6 @@ abstract class TypeChannelMessenger {
     Object instance, {
     required bool owner,
   }) async {
-    //print('createNewInstancePair');
     if (isPaired(instance)) return null;
 
     final TypeChannelHandler? handler = getChannelHandler(channelName);

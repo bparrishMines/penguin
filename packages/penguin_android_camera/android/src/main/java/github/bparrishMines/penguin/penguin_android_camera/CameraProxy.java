@@ -10,17 +10,18 @@ import io.flutter.view.TextureRegistry;
 public class CameraProxy implements CameraChannelLibrary.$Camera {
   public final Camera camera;
   public final TextureRegistry textureRegistry;
+  public final ChannelRegistrar.LibraryImplementations implementations;
   private TextureRegistry.SurfaceTextureEntry currentTextureEntry;
 
-  public CameraProxy(Camera camera, TextureRegistry textureRegistry) {
+  public CameraProxy(Camera camera, TextureRegistry textureRegistry, ChannelRegistrar.LibraryImplementations implementations) {
     this.camera = camera;
     this.textureRegistry = textureRegistry;
+    this.implementations = implementations;
+    implementations.getCameraChannel().createNewInstancePair(this, false);
   }
 
-  public static CameraProxy open(ChannelRegistrar.LibraryImplementations libraryImplementations, TextureRegistry textureRegistry, int cameraId) {
-    final CameraProxy cameraProxy = new CameraProxy(Camera.open(cameraId), textureRegistry);
-    libraryImplementations.getCameraChannel().createNewInstancePair(cameraProxy, false);
-    return cameraProxy;
+  public static CameraProxy open(ChannelRegistrar.LibraryImplementations implementations, TextureRegistry textureRegistry, int cameraId) {
+    return new CameraProxy(Camera.open(cameraId), textureRegistry, implementations);
   }
 
   public static List<CameraInfoProxy> getAllCameraInfo(ChannelRegistrar.LibraryImplementations libraryImplementations) {
@@ -60,6 +61,53 @@ public class CameraProxy implements CameraChannelLibrary.$Camera {
                           CameraChannelLibrary.$PictureCallback postView,
                           CameraChannelLibrary.$PictureCallback jpeg) {
     takePicture((ShutterCallbackProxy) shutter, (PictureCallbackProxy) raw, (PictureCallbackProxy) postView, (PictureCallbackProxy) jpeg);
+    return null;
+  }
+
+  @Override
+  public Void autoFocus(CameraChannelLibrary.$AutoFocusCallback callback) {
+    camera.autoFocus((AutoFocusCallbackProxy) callback);
+    return null;
+  }
+
+  @Override
+  public Void cancelAutoFocus() {
+    camera.cancelAutoFocus();
+    return null;
+  }
+
+  @Override
+  public Void setDisplayOrientation(Integer degrees) {
+    camera.setDisplayOrientation(degrees);
+    return null;
+  }
+
+  @Override
+  public Void setErrorCallback(CameraChannelLibrary.$ErrorCallback callback) {
+    camera.setErrorCallback((ErrorCallbackProxy) callback);
+    return null;
+  }
+
+  @Override
+  public Void startSmoothZoom(Integer value) {
+    camera.startSmoothZoom(value);
+    return null;
+  }
+
+  @Override
+  public Void stopSmoothZoom() {
+    camera.stopSmoothZoom();
+    return null;
+  }
+
+  @Override
+  public CameraParametersProxy getParameters() {
+    return new CameraParametersProxy(camera.getParameters(), implementations);
+  }
+
+  @Override
+  public Void setParameters(CameraChannelLibrary.$CameraParameters parameters) {
+    camera.setParameters(((CameraParametersProxy) parameters).cameraParameters);
     return null;
   }
 

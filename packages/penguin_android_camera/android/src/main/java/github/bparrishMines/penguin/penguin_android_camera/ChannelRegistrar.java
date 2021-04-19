@@ -36,6 +36,16 @@ public class ChannelRegistrar extends CameraChannelLibrary.$ChannelRegistrar {
     public MediaRecorderHandler getMediaRecorderHandler() {
       return new MediaRecorderHandler();
     }
+
+    @Override
+    public CameraChannelLibrary.$ErrorCallbackHandler getErrorCallbackHandler() {
+      return new ErrorCallbackHandler(this);
+    }
+
+    @Override
+    public CameraChannelLibrary.$AutoFocusCallbackHandler getAutoFocusCallbackHandler() {
+      return new AutoFocusCallbackHandler(this);
+    }
   }
 
   public static class CameraHandler extends CameraChannelLibrary.$CameraHandler {
@@ -88,6 +98,32 @@ public class ChannelRegistrar extends CameraChannelLibrary.$ChannelRegistrar {
     @Override
     public MediaRecorderProxy onCreate(TypeChannelMessenger messenger, CameraChannelLibrary.$MediaRecorderCreationArgs args) {
       return new MediaRecorderProxy();
+    }
+  }
+
+  public static class ErrorCallbackHandler extends CameraChannelLibrary.$ErrorCallbackHandler {
+    public final LibraryImplementations implementations;
+
+    public ErrorCallbackHandler( LibraryImplementations implementations) {
+      this.implementations = implementations;
+    }
+
+    @Override
+    public CameraChannelLibrary.$ErrorCallback onCreate(TypeChannelMessenger messenger, CameraChannelLibrary.$ErrorCallbackCreationArgs args) throws Exception {
+      return new ErrorCallbackProxy(implementations);
+    }
+  }
+
+  public static class AutoFocusCallbackHandler extends CameraChannelLibrary.$AutoFocusCallbackHandler {
+    public final LibraryImplementations implementations;
+
+    public AutoFocusCallbackHandler( LibraryImplementations implementations) {
+      this.implementations = implementations;
+    }
+
+    @Override
+    public CameraChannelLibrary.$AutoFocusCallback onCreate(TypeChannelMessenger messenger, CameraChannelLibrary.$AutoFocusCallbackCreationArgs args) throws Exception {
+      return new AutoFocusCallbackProxy(implementations);
     }
   }
 }
