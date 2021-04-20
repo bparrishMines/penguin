@@ -1,10 +1,10 @@
 name: reference
 description: Reduce plugin maintenance burden for plugins that have to maintain platform object instances in memory.
-version: 0.2.0-beta.5
+version: 0.2.0
 homepage: https://github.com/bparrishMines/penguin/tree/master/packages/reference
 
 environment:
-  sdk: ">=2.12.0-0 <3.0.0"
+  sdk: ">=2.12.0 <3.0.0"
   flutter: ">=1.22.0"
 
 dependencies:

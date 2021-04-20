@@ -19,7 +19,10 @@ mixin InstanceConverter {
 }
 
 /// Standard implementation of [InstanceConverter].
+///
+/// Converts paired objects, lists, and maps.
 class StandardInstanceConverter implements InstanceConverter {
+  /// Default constructor for [StandardInstanceConverter].
   const StandardInstanceConverter();
 
   /// Converts arguments to be used with a remote [TypeChannelMessenger].
@@ -27,7 +30,6 @@ class StandardInstanceConverter implements InstanceConverter {
   /// Conversions:
   ///   * Objects paired in a [TypeChannelMessenger] are converted to their
   ///     paired [PairedInstance].
-  ///   * Unpaired instances are converted into [NewUnpairedInstance].
   ///   * [List]s are converted to `List<Object?>` and this method is applied to
   ///     each value within the list.
   ///   * [Map]s are converted to `Map<Object?, Object?>` and this method is
@@ -62,8 +64,6 @@ class StandardInstanceConverter implements InstanceConverter {
   /// Conversions:
   ///   * [PairedInstance]s are converted to the object instance they're paired
   ///     to.
-  ///   * [NewUnpairedInstance]s are converted in to an instantiation using the
-  ///     specified channel name.
   ///   * [List]s are converted to `List<Object?>` and this method is applied to
   ///     each value within the list.
   ///   * [Map]s are converted to `Map<Object?, Object?>` and this method is

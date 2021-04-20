@@ -1,6 +1,7 @@
-## 0.2.0-beta.5
+## 0.2.0
 
-* Automatically handle disposing object on Android.
+* Use garbage collection in Dart to automatically dispose objects.
+* Removed `TypeChannelHandler.onInstanceAdded` with `TypeChannelHandler.onInstanceRemoved`.
 
 ## 0.2.0-beta.4
 
@@ -8,7 +9,7 @@
 
 ## 0.2.0-beta.3
 
-* `MethodChannelMessenger` on iOS now handles exceptions when receiving messsages.
+* `MethodChannelMessenger` on iOS now handles exceptions when receiving messages.
 
 ## 0.2.0-beta.2
 

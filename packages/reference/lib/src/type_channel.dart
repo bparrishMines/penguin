@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+
 import 'instance.dart';
 import 'instance_converter.dart';
 import 'instance_pair_manager.dart';
@@ -7,24 +9,22 @@ class TypeChannel<T extends Object> {
   /// Default constructor for [TypeChannel].
   TypeChannel(this.messenger, this.name);
 
-  /// Manages instances created and disposed by this [TypeChannel].
-  ///
-  /// Also handles communication with other platform [TypeChannelMessenger]s.
+  /// Handles communication and manages instances for type channels.
   final TypeChannelMessenger messenger;
 
-  /// The channel used to handle communication.
+  /// The name of the channel.
   final String name;
 
-  /// Register a [TypeChannelHandler] for channel [name] in a [messenger].
+  /// Register a [TypeChannelHandler] for channel with [name] in [messenger].
   ///
   /// See [TypeChannelMessenger.registerHandler].
   void setHandler(TypeChannelHandler<T> handler) {
     messenger.registerHandler(name, handler);
   }
 
-  /// Unregister a [TypeChannelHandler] for channel [name] in a [messenger].
+  /// Unregister a [TypeChannelHandler] for channel with [name] in [messenger].
   ///
-  /// See [TypeChannelMessenger.registerHandler].
+  /// See [TypeChannelMessenger.unregisterHandler].
   void removeHandler() {
     messenger.unregisterHandler(name);
   }
@@ -32,13 +32,10 @@ class TypeChannel<T extends Object> {
   /// Creates a new [PairedInstance] to be paired with [instance].
   ///
   /// Sends a message to another [TypeChannelMessenger] to instantiate an
-  /// object for [TypeChannel] with name: [name].
+  /// object for [TypeChannel] with named with [name].
   ///
   /// Returns `null` if a pair with [instance] has already been added to
-  /// messenger. Otherwise, it returns the paired [PairedInstance].
-  ///
-  /// Sends a message to another [TypeChannelMessenger] with
-  /// [TypeChannelMessenger.messenger].
+  /// [messenger]. Otherwise, it returns the paired [PairedInstance].
   Future<PairedInstance?> createNewInstancePair(
     T instance, {
     required bool owner,
@@ -50,10 +47,7 @@ class TypeChannel<T extends Object> {
   ///
   /// Sends a message to another [TypeChannelMessenger] to invoke a static
   /// method on the [TypeChannelHandler] registered to [TypeChannel]
-  /// with name: [name]. See [TypeChannelMessenger.registerHandler].
-  ///
-  /// Sends a message to another [TypeChannelMessenger] with
-  /// [TypeChannelMessenger.messenger].
+  /// of [name]. See [TypeChannelMessenger.registerHandler].
   Future<Object?> sendInvokeStaticMethod(
     String methodName,
     List<Object?> arguments,
@@ -76,6 +70,7 @@ class TypeChannel<T extends Object> {
     return messenger.sendInvokeMethod(name, instance, methodName, arguments);
   }
 
+  /// Removes an instance pair containing [instance] from [messenger].
   Future<void> disposeInstancePair(T instance) {
     return messenger.disposeInstancePair(instance);
   }
@@ -109,12 +104,13 @@ mixin TypeChannelMessageDispatcher {
     List<Object?> arguments,
   );
 
+  /// Communicate to another [TypeChannelMessenger] to dispose the instance pair containing [pairedInstance].
   Future<void> sendDisposeInstancePair(PairedInstance pairedInstance);
 }
 
-/// Handles receiving messages for a type channel.
+/// Handles receiving messages and retrieving type arguments for a type channel.
 mixin TypeChannelHandler<T extends Object> {
-  /// Retrieves arguments to instantiate an object for a type channel.
+  /// Retrieves arguments to instantiate an object.
   List<Object?> getCreationArguments(
     TypeChannelMessenger messenger,
     T instance,
@@ -151,12 +147,14 @@ mixin TypeChannelHandler<T extends Object> {
 /// call methods on that instance.
 ///
 /// To control specific instances for a type channel, this class pairs Dart
-/// instances to instances in another language (e.g. Java/Obj-c). A paired
-/// object then acts as the key to communicate with it's paired object in
-/// another language and can be used to represent its paired instance when
+/// instances to instances in another language (e.g. Java/Obj-c). This API
+/// refers to this as an instance pair.
+///
+/// A paired object then acts as the key to communicate with it's paired object
+/// in another language and can be used to represent its paired instance when
 /// passed as an argument.
 ///
-/// TypeChannelManager 1           TypeChannelManager 2
+/// TypeChannelMessenger 1         TypeChannelMessenger 2
 /// |------------------|           |------------------|
 /// |  Dart Instances  |<--------->|  Java Instances  |
 /// |------------------|           |------------------|
@@ -171,12 +169,14 @@ abstract class TypeChannelMessenger {
     },
   );
 
-  /// Dispatches send messages to other [TypeChannelMessenger]s.
+  /// Dispatches messages to other [TypeChannelMessenger]s.
   TypeChannelMessageDispatcher get messageDispatcher;
 
   /// Attempts to convert objects to [PairedInstance]s or [NewUnpairedInstance]s and vice-versa.
   InstanceConverter get converter => const StandardInstanceConverter();
 
+  /// Maintains access to instance pairs.
+  @visibleForTesting
   InstancePairManager get instancePairManager => _instancePairManager;
 
   bool _addPair(
@@ -200,7 +200,7 @@ abstract class TypeChannelMessenger {
     return instancePairManager.isPaired(instance);
   }
 
-  /// Retrieve the [PairedInstanced] paired to [instance].
+  /// Retrieve the [PairedInstance] paired to [instance].
   ///
   /// Returns `null` if [instance] is not paired.
   PairedInstance? getPairedPairedInstance(Object instance) {
@@ -215,7 +215,7 @@ abstract class TypeChannelMessenger {
     return instancePairManager.getInstance(pairedInstance.instanceId);
   }
 
-  /// Set a [TypeChannelHandler] for a type channel with [channelName].
+  /// Sets a [TypeChannelHandler] for a type channel with [channelName].
   void registerHandler(String channelName, TypeChannelHandler handler) {
     _channelHandlers[channelName] = handler;
   }
@@ -237,9 +237,6 @@ abstract class TypeChannelMessenger {
   ///
   /// Returns `null` if a pair with [instance] has already been added to
   /// messenger. Otherwise, it returns the paired [PairedInstance].
-  ///
-  /// Sends a message to another [TypeChannelMessenger] with
-  /// [messageDispatcher].
   // TODO: What happens when owner is false. Could GC happen before it is given to an object? Temp strong references?
   Future<PairedInstance?> createNewInstancePair(
     String channelName,
@@ -278,9 +275,6 @@ abstract class TypeChannelMessenger {
   /// Also sends a message to another [TypeChannelMessenger] to invoke a static
   /// method on the [TypeChannelHandler] registered to [TypeChannel]
   /// with name: [name]. See [TypeChannelMessenger.registerHandler].
-  ///
-  /// Sends a message to another [TypeChannelMessenger] with
-  /// [messageDispatcher].
   Future<Object?> sendInvokeStaticMethod(
     String channelName,
     String methodName,
@@ -289,19 +283,14 @@ abstract class TypeChannelMessenger {
     final Object? result = await messageDispatcher.sendInvokeStaticMethod(
       channelName,
       methodName,
-      converter.convertInstancesToPairedInstances(this, arguments)! as List<Object?>,
+      converter.convertInstancesToPairedInstances(this, arguments)!
+          as List<Object?>,
     );
 
     return converter.convertPairedInstancesToInstances(this, result);
   }
 
-  /// Send a message to invoke a method on [PairedInstance] paired with [instance].
-  ///
-  /// If [instance] isn't paired, the method will be invoked on a
-  /// [NewUnpairedInstance].
-  ///
-  /// Sends a message to another [TypeChannelMessenger] with
-  /// [messageDispatcher].
+  /// Send a message to invoke a method on the [PairedInstance] paired with [instance].
   Future<Object?> sendInvokeMethod(
     String channelName,
     Object instance,
@@ -314,7 +303,8 @@ abstract class TypeChannelMessenger {
       channelName,
       getPairedPairedInstance(instance)!,
       methodName,
-      converter.convertInstancesToPairedInstances(this, arguments)! as List<Object?>,
+      converter.convertInstancesToPairedInstances(this, arguments)!
+          as List<Object?>,
     );
 
     return converter.convertPairedInstancesToInstances(this, result);
@@ -334,7 +324,7 @@ abstract class TypeChannelMessenger {
 
   /// Create and store a new instance pair for a type channel.
   ///
-  /// Returns `null` if a pair with [pairedInstance] has already been added.
+  /// Throw an assertion error if [pairedInstance] has already been added.
   /// Otherwise, it returns the paired object.
   Object? onReceiveCreateNewInstancePair(
     String channelName,
@@ -356,7 +346,8 @@ abstract class TypeChannelMessenger {
 
     final Object instance = handler.createInstance(
       this,
-      converter.convertPairedInstancesToInstances(this, arguments)! as List<Object?>,
+      converter.convertPairedInstancesToInstances(this, arguments)!
+          as List<Object?>,
     );
 
     assert(!isPaired(instance), '`$instance` has already been paired.');
@@ -374,7 +365,8 @@ abstract class TypeChannelMessenger {
     final Object? result = getChannelHandler(channelName)!.invokeStaticMethod(
       this,
       methodName,
-      converter.convertPairedInstancesToInstances(this, arguments)! as List<Object?>,
+      converter.convertPairedInstancesToInstances(this, arguments)!
+          as List<Object?>,
     );
 
     return converter.convertInstancesToPairedInstances(this, result);
@@ -391,7 +383,8 @@ abstract class TypeChannelMessenger {
       this,
       getPairedObject(pairedInstance)!,
       methodName,
-      converter.convertPairedInstancesToInstances(this, arguments)! as List<Object?>,
+      converter.convertPairedInstancesToInstances(this, arguments)!
+          as List<Object?>,
     );
 
     return converter.convertInstancesToPairedInstances(this, result);
@@ -409,6 +402,7 @@ abstract class TypeChannelMessenger {
   }
 
   /// Generate a new unique instance id for a [PairedInstance].
+  // TODO: combine with class name to make more unique and descriptive.
   String generateUniqueInstanceId(Object instance) {
     return instance.hashCode.toString();
   }

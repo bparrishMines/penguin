@@ -1,3 +1,4 @@
+// For debugging on Android
 //#include <android/log.h>
 //#define LOG(message) __android_log_write(ANDROID_LOG_DEBUG, "reference", message)
 
@@ -33,6 +34,7 @@ void finalizer_callback(void* isolateCallbackData, void* peer) {
   free(data);
 }
 
+/// Create a new weak map with the callback port to notify Dart.
 DART_EXPORT _NativeWeakMap create_weak_map(Dart_Port onFinalizePort) {
   _NativeWeakMap map;
   map.onFinalizePort = onFinalizePort;
@@ -47,10 +49,12 @@ DART_EXPORT _NativeWeakMap create_weak_map(Dart_Port onFinalizePort) {
   return map;
 }
 
+/// Cast void pointer to hashmap pointer.
 hashmap_s* toMap(void *ptr) {
   return (hashmap_s *)ptr;
 }
 
+/// Store the instanceId and Dart_Handle as a key value pair in weakMap.
 DART_EXPORT int put(_NativeWeakMap weakMap, char *instanceId, Dart_Handle instance) {
   _finalizer_data* peer = (_finalizer_data *) malloc(sizeof(_finalizer_data));
   peer->instanceId = instanceId;
@@ -65,6 +69,7 @@ DART_EXPORT int put(_NativeWeakMap weakMap, char *instanceId, Dart_Handle instan
   return 1;
 }
 
+/// Whether the weak map contains the key instanceId.
 DART_EXPORT int contains(_NativeWeakMap weakMap, char *instanceId) {
   hashmap_s *instanceMap = toMap(weakMap.instanceMap);
   void* const element = hashmap_get(instanceMap, instanceId, strlen(instanceId));
@@ -72,11 +77,13 @@ DART_EXPORT int contains(_NativeWeakMap weakMap, char *instanceId) {
   return 1;
 }
 
+/// Retrive the Dart_Handle value stored under instanceId key.
 DART_EXPORT Dart_Handle get(_NativeWeakMap weakMap, char *instanceId) {
   hashmap_s *instanceMap = toMap(weakMap.instanceMap);
   return (Dart_Handle) hashmap_get(instanceMap, instanceId, strlen(instanceId));
 }
 
+/// Remove instanceId key and the Dart_Handle stored as its value.
 DART_EXPORT void remove_key(_NativeWeakMap weakMap, char *instanceId) {
   hashmap_s *instanceMap = toMap(weakMap.instanceMap);
   hashmap_remove(instanceMap, instanceId, strlen(instanceId));
