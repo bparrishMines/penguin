@@ -117,6 +117,7 @@ class MethodChannelConverter extends StandardInstanceConverter {
 
 /// Implementation of [TypeChannelMessageDispatcher] using a [MethodChannel].
 class MethodChannelDispatcher with TypeChannelMessageDispatcher {
+  /// Default constructor for [MethodChannelDispatcher].
   MethodChannelDispatcher(this.channel);
 
   /// [MethodChannel] used to communicate with a platform [TypeChannelMessenger].
