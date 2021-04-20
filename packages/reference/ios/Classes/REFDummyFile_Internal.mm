@@ -1,4 +1,4 @@
-#import "DummyFile_Internal.h"
+#import "REFDummyFile_Internal.h"
 #import "reference.cpp"
 
 @implementation REFDummyClass
