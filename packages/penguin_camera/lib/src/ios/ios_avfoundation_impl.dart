@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/widgets.dart';
+import 'package:ios_avfoundation/ios_avfoundation.dart';
 
-import 'av_foundation.dart';
 import '../platform_interface.dart' as intf;
 
 class CameraDevice implements intf.CameraDevice {
@@ -15,23 +15,18 @@ class CameraDevice implements intf.CameraDevice {
 }
 
 class CameraController implements intf.CameraController {
-  CameraController(this.device) {
-    session = CaptureSession(
-      <CaptureDeviceInput>[CaptureDeviceInput(device.device)],
-    );
-    preview = Preview(controller: PreviewController(session));
-  }
+  CameraController(this.device);
 
   @override
   final CameraDevice device;
 
-  late final CaptureSession session;
+  final CaptureSession session = CaptureSession();
 
-  late final Preview preview;
+  late final Preview preview = Preview(controller: PreviewController(session));
 
   @override
   Future<void> initialize() async {
-    // Do nothing.
+    // No-op
   }
 
   @override
@@ -40,19 +35,13 @@ class CameraController implements intf.CameraController {
   }
 
   @override
-  Future<void> start() async {
-    await session.startRunning();
-  }
+  Future<void> start() => session.startRunning();
 
   @override
-  Future<void> stop() async {
-    await session.stopRunning();
-  }
+  Future<void> stop() => session.stopRunning();
 
   @override
-  Future<void> dispose() async {
-    return stop();
-  }
+  Future<void> dispose() => stop();
 }
 
 class CameraPlatform extends intf.PenguinCameraPlatform {
@@ -63,14 +52,10 @@ class CameraPlatform extends intf.PenguinCameraPlatform {
 
   @override
   Future<List<CameraDevice>> getAllCameraDevices() async {
-    return (await CaptureDevice.devicesWithMediaType(MediaType.video))
-        .map<CameraDevice>((CaptureDevice device) {
-      return CameraDevice(device);
-    }).toList();
-  }
-
-  @override
-  void initialize() {
-    initializeChannels();
+    final List<CaptureDevice> devices =
+        await CaptureDevice.devicesWithMediaType(MediaType.video);
+    return devices
+        .map<CameraDevice>((CaptureDevice device) => CameraDevice(device))
+        .toList();
   }
 }
