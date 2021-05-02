@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:reference/annotations.dart';
 
 import 'camera.g.dart';
@@ -144,13 +144,182 @@ class Camera with $Camera {
   }
 }
 
-@Reference('CameraParameters')
+@Reference('penguin_android_camera/camera/CameraParameters')
 class CameraParameters with $CameraParameters {
   @visibleForTesting
   CameraParameters();
 
+  /// Flash will be fired automatically when required.
+  ///
+  /// The flash may be fired during preview, auto-focus, or snapshot depending
+  /// on the driver.
+  static const String flashModeAuto = 'auto';
+
+  /// Flash will not be fired.
+  static const String flashModeOff = 'off';
+
+  /// Flash will always be fired during snapshot.
+  ///
+  /// The flash may also be fired during preview or auto-focus depending on the
+  /// driver.
+  static const String flashModeOn = 'on';
+
+  /// Flash will be fired in red-eye reduction mode.
+  static const String flashModeRedEye = 'red-eye';
+
+  /// Constant emission of light during preview, auto-focus and snapshot.
+  ///
+  /// This can also be used for video recording.
+  static const String flashModeTorch = 'torch';
+
+  /// The array index of far focus distance for use with [getFocusDistances].
+  static const int focusDistanceFarIndex = 0x00000002;
+
+  /// The array index of near focus distance for use with [getFocusDistances].
+  static const int focusDistanceNearIndex = 0x00000000;
+
+  /// The array index of optimal focus distance for use with [getFocusDistances].
+  static const int focusDistanceOptimalIndex = 0x00000001;
+
+  /// Auto-focus mode.
+  ///
+  /// Applications should call [Camera.autoFocus] to start the focus in this
+  /// mode.
+  static const String focusModeAuto = 'auto';
+
+  /// Continuous auto focus mode intended for taking pictures.
+  ///
+  /// The camera continuously tries to focus. The speed of focus change is more
+  /// aggressive than [focusModeContinuousVideo]. Auto focus starts when the
+  /// parameter is set.
+  ///
+  /// Applications can call [Camera.autoFocus] in this mode. If the autofocus is
+  /// in the middle of scanning, the focus callback will return when it
+  /// completes. If the autofocus is not scanning, the focus callback will
+  /// immediately return with a boolean that indicates whether the focus is
+  /// sharp or not. The apps can then decide if they want to take a picture
+  /// immediately or to change the focus mode to auto, and run a full autoFocus
+  /// cycle. The focus position is locked after autoFocus call. If applications
+  /// want to resume the continuous focus, [Camera.cancelAutoFocus] must be
+  /// called. Restarting the preview will not resume the continuous autoFocus.
+  /// To stop continuous focus, applications should change the focus mode to
+  /// other modes.
+  static const String focusModeContinuousPicture = 'continuous-picture';
+
+  /// Continuous auto focus mode intended for video recording.
+  ///
+  /// The camera continuously tries to focus. This is the best choice for video
+  /// recording because the focus changes smoothly . Applications still can call
+  /// [Camera.takePicture] in this mode but the subject may not be in focus.
+  /// Auto focus starts when the parameter is set.
+  ///
+  /// Since API level 14, applications can call [Camera.autoFocus] in this mode.
+  /// The focus callback will immediately return with a boolean that indicates
+  /// whether the focus is sharp or not. The focus position is locked after
+  /// autoFocus call. If applications want to resume the continuous focus,
+  /// [Camera.cancelAutoFocus] must be called. Restarting the preview will not
+  /// resume the continuous autoFocus. To stop continuous focus, applications
+  /// should change the focus mode to other modes.
+  static const String focusModeContinuousVideo = 'continuous-video';
+
+  /// Extended depth of field (EDOF).
+  ///
+  /// Focusing is done digitally and continuously. Applications should not call
+  /// [Camera.autoFocus] in this mode.
+  static const String focusModeEDOF = 'edof';
+
+  /// Focus is fixed.
+  ///
+  /// The camera is always in this mode if the focus is not adjustable.
+  /// If the camera has auto-focus, this mode can fix the focus, which is
+  /// usually at hyperfocal distance. Applications should not call
+  /// [Camera.autoFocus] in this mode.
+  static const String focusModeFixed = 'fixed';
+
+  /// Focus is set at infinity.
+  ///
+  /// Applications should not call [Camera.autoFocus] in this mode.
+  static const String focusModeInfinity = 'infinity';
+
+  /// Macro (close-up) focus mode.
+  ///
+  /// Applications should call [Camera.autoFocus] to start the focus in this
+  /// mode.
+  static const String focusModeMacro = 'macro';
+
   static $CameraParametersChannel get _channel =>
       ChannelRegistrar.instance.implementations.cameraParametersChannel;
+
+  @override
+  Future<bool> getAutoExposureLock() async {
+    return await _channel.$invokeGetAutoExposureLock(this) as bool;
+  }
+
+  @override
+  Future<List<CameraArea>> getFocusAreas() async {
+    final List<Object?> focusAreas =
+        await _channel.$invokeGetFocusAreas(this) as List<Object?>;
+    return focusAreas.cast<CameraArea>();
+  }
+
+  @override
+  Future<List<double>> getFocusDistances() async {
+    final List<Object?> distances =
+        await _channel.$invokeGetFocusDistances(this) as List<Object?>;
+    return distances.cast<double>();
+  }
+
+  @override
+  Future<int> getMaxExposureCompensation() async {
+    return await _channel.$invokeGetMaxExposureCompensation(this) as int;
+  }
+
+  @override
+  Future<int> getMaxNumFocusAreas() async {
+    return await _channel.$invokeGetMaxNumFocusAreas(this) as int;
+  }
+
+  @override
+  Future<int> getMinExposureCompensation() async {
+    return await _channel.$invokeGetMinExposureCompensation(this) as int;
+  }
+
+  @override
+  Future<List<String>> getSupportedFocusModes() async {
+    final List<Object?> modes =
+        await _channel.$invokeGetSupportedFocusModes(this) as List<Object?>;
+    return modes.cast<String>();
+  }
+
+  @override
+  Future<bool> isAutoExposureLockSupported() async {
+    return await _channel.$invokeIsAutoExposureLockSupported(this) as bool;
+  }
+
+  @override
+  Future<bool> isZoomSupported() async {
+    return await _channel.$invokeIsZoomSupported(this) as bool;
+  }
+
+  @override
+  Future<void> setAutoExposureLock(bool toggle) {
+    return _channel.$invokeSetAutoExposureLock(this, toggle);
+  }
+
+  @override
+  Future<void> setExposureCompensation(int value) {
+    return _channel.$invokeSetExposureCompensation(this, value);
+  }
+
+  @override
+  Future<void> setFocusAreas(covariant List<CameraArea> focusAreas) {
+    return _channel.$invokeSetFocusAreas(this, focusAreas);
+  }
+
+  @override
+  Future<void> setFocusMode(String value) {
+    return _channel.$invokeSetFocusMode(this, value);
+  }
 
   @override
   Future<String> getFlashMode() async {
@@ -232,9 +401,63 @@ class CameraParameters with $CameraParameters {
   Future<void> setPreviewSize(int width, int height) {
     return _channel.$invokeSetPreviewSize(this, width, height);
   }
+
+  @override
+  Future<int> getExposureCompensation() async {
+    return await _channel.$invokeGetExposureCompensation(this) as int;
+  }
+
+  @override
+  Future<double> getExposureCompensationStep() async {
+    return await _channel.$invokeGetExposureCompensationStep(this) as double;
+  }
 }
 
-@Reference('CameraSize')
+@Reference('penguin_android_camera/camera/CameraArea')
+class CameraArea with $CameraArea {
+  CameraArea(this.rect, this.weight, {bool createInstancePair = true}) {
+    if (createInstancePair) _channel.createNewInstancePair(this, owner: true);
+  }
+
+  static $CameraAreaChannel get _channel =>
+      ChannelRegistrar.instance.implementations.cameraAreaChannel;
+
+  @override
+  final CameraRect rect;
+
+  @override
+  final int weight;
+}
+
+@Reference('penguin_android_camera/camera/CameraArea')
+class CameraRect with $CameraRect {
+  CameraRect({
+    required this.top,
+    required this.bottom,
+    required this.right,
+    required this.left,
+    bool createInstancePair = true,
+  }) {
+    if (createInstancePair) _channel.createNewInstancePair(this, owner: true);
+  }
+
+  static $CameraRectChannel get _channel =>
+      ChannelRegistrar.instance.implementations.cameraRectChannel;
+
+  @override
+  final int top;
+
+  @override
+  final int bottom;
+
+  @override
+  final int right;
+
+  @override
+  final int left;
+}
+
+@Reference('penguin_android_camera/camera/CameraSize')
 class CameraSize with $CameraSize {
   CameraSize(this.width, this.height);
 
@@ -250,7 +473,7 @@ class CameraSize with $CameraSize {
   }
 }
 
-@Reference('ErrorCallback')
+@Reference('penguin_android_camera/camera/ErrorCallback')
 abstract class ErrorCallback with $ErrorCallback {
   ErrorCallback() {
     _channel.createNewInstancePair(this, owner: true);
@@ -263,7 +486,7 @@ abstract class ErrorCallback with $ErrorCallback {
   void onError(int error);
 }
 
-@Reference('AutoFocusCallback')
+@Reference('penguin_android_camera/camera/AutoFocusCallback')
 abstract class AutoFocusCallback with $AutoFocusCallback {
   AutoFocusCallback() {
     _channel.createNewInstancePair(this, owner: true);
@@ -272,7 +495,6 @@ abstract class AutoFocusCallback with $AutoFocusCallback {
   static $AutoFocusCallbackChannel get _channel =>
       ChannelRegistrar.instance.implementations.autoFocusCallbackChannel;
 
-  // ignore: avoid_positional_boolean_parameters
   @override
   void onAutoFocus(bool success);
 }
@@ -415,4 +637,10 @@ class MediaRecorder implements $MediaRecorder {
 
   @override
   Future<void> release() => _channel.$invokeRelease(this);
+
+  @override
+  Future<void> pause() => _channel.$invokePause(this);
+
+  @override
+  Future<void> resume() => _channel.$invokeResume(this);
 }

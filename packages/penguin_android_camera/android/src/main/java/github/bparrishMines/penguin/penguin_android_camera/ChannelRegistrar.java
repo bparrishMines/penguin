@@ -46,6 +46,16 @@ public class ChannelRegistrar extends CameraChannelLibrary.$ChannelRegistrar {
     public CameraChannelLibrary.$AutoFocusCallbackHandler getAutoFocusCallbackHandler() {
       return new AutoFocusCallbackHandler(this);
     }
+
+    @Override
+    public CameraChannelLibrary.$CameraAreaHandler getCameraAreaHandler() {
+      return new CameraAreaHandler(this);
+    }
+
+    @Override
+    public CameraChannelLibrary.$CameraRectHandler getCameraRectHandler() {
+      return new CameraRectHandler(this);
+    }
   }
 
   public static class CameraHandler extends CameraChannelLibrary.$CameraHandler {
@@ -109,7 +119,7 @@ public class ChannelRegistrar extends CameraChannelLibrary.$ChannelRegistrar {
     }
 
     @Override
-    public CameraChannelLibrary.$ErrorCallback onCreate(TypeChannelMessenger messenger, CameraChannelLibrary.$ErrorCallbackCreationArgs args) throws Exception {
+    public ErrorCallbackProxy onCreate(TypeChannelMessenger messenger, CameraChannelLibrary.$ErrorCallbackCreationArgs args) {
       return new ErrorCallbackProxy(implementations);
     }
   }
@@ -122,8 +132,34 @@ public class ChannelRegistrar extends CameraChannelLibrary.$ChannelRegistrar {
     }
 
     @Override
-    public CameraChannelLibrary.$AutoFocusCallback onCreate(TypeChannelMessenger messenger, CameraChannelLibrary.$AutoFocusCallbackCreationArgs args) throws Exception {
+    public AutoFocusCallbackProxy onCreate(TypeChannelMessenger messenger, CameraChannelLibrary.$AutoFocusCallbackCreationArgs args) {
       return new AutoFocusCallbackProxy(implementations);
+    }
+  }
+
+  public static class CameraAreaHandler extends CameraChannelLibrary.$CameraAreaHandler {
+    public final LibraryImplementations implementations;
+
+    public CameraAreaHandler(LibraryImplementations implementations) {
+      this.implementations = implementations;
+    }
+
+    @Override
+    public CameraAreaProxy onCreate(TypeChannelMessenger messenger, CameraChannelLibrary.$CameraAreaCreationArgs args) {
+      return new CameraAreaProxy((CameraRectProxy) args.rect, args.weight, implementations);
+    }
+  }
+
+  public static class CameraRectHandler extends CameraChannelLibrary.$CameraRectHandler {
+    public final LibraryImplementations implementations;
+
+    public CameraRectHandler(LibraryImplementations implementations) {
+      this.implementations = implementations;
+    }
+
+    @Override
+    public CameraRectProxy onCreate(TypeChannelMessenger messenger, CameraChannelLibrary.$CameraRectCreationArgs args) {
+      return new CameraRectProxy(args.left, args.top, args.right, args.bottom, implementations);
     }
   }
 }

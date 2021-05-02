@@ -71,3 +71,31 @@ class CameraSizeHandler extends $CameraSizeHandler {
     return CameraSize(args.width, args.height);
   }
 }
+
+class CameraRectHandler extends $CameraRectHandler {
+  @override
+  CameraRect onCreate(
+    TypeChannelMessenger messenger,
+    $CameraRectCreationArgs args,
+  ) {
+    return CameraRect(
+      top: args.top,
+      bottom: args.bottom,
+      right: args.right,
+      left: args.left,
+      createInstancePair: false,
+    );
+  }
+}
+
+class CameraAreaHandler extends $CameraAreaHandler {
+  @override
+  CameraArea onCreate(
+      TypeChannelMessenger messenger, $CameraAreaCreationArgs args) {
+    return CameraArea(
+      args.rect as CameraRect,
+      args.weight,
+      createInstancePair: false,
+    );
+  }
+}

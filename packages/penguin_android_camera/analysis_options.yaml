@@ -6,5 +6,5 @@ linter:
   rules:
     avoid_classes_with_only_static_members: false
     cast_nullable_to_non_nullable: false
-    # public_member_api_docs: true
+    public_member_api_docs: true
 

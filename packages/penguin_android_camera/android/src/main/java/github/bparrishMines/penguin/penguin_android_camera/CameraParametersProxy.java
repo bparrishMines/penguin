@@ -2,6 +2,7 @@ package github.bparrishMines.penguin.penguin_android_camera;
 
 import android.hardware.Camera;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CameraParametersProxy implements CameraChannelLibrary.$CameraParameters {
@@ -12,6 +13,81 @@ public class CameraParametersProxy implements CameraChannelLibrary.$CameraParame
     this.cameraParameters = cameraParameters;
     this.implementations = implementations;
     implementations.getCameraParametersChannel().createNewInstancePair(this, false);
+  }
+
+  @Override
+  public Boolean getAutoExposureLock() {
+    return cameraParameters.getAutoExposureLock();
+  }
+
+  @Override
+  public List<CameraAreaProxy> getFocusAreas() {
+    return CameraAreaProxy.fromList(cameraParameters.getFocusAreas(), implementations);
+  }
+
+  @Override
+  public List<Float> getFocusDistances() {
+    final float[] distances = new float[3];
+    cameraParameters.getFocusDistances(distances);
+    final List<Float> floatList = new ArrayList<>(distances.length);
+    for (float distance : distances) {
+      floatList.add(distance);
+    }
+    return floatList;
+  }
+
+  @Override
+  public Integer getMaxExposureCompensation() {
+    return cameraParameters.getMaxExposureCompensation();
+  }
+
+  @Override
+  public Integer getMaxNumFocusAreas() {
+    return cameraParameters.getMaxNumFocusAreas();
+  }
+
+  @Override
+  public Integer getMinExposureCompensation() {
+    return cameraParameters.getMinExposureCompensation();
+  }
+
+  @Override
+  public List<String> getSupportedFocusModes()  {
+    return cameraParameters.getSupportedFocusModes();
+  }
+
+  @Override
+  public Boolean isAutoExposureLockSupported()  {
+    return cameraParameters.isAutoExposureLockSupported();
+  }
+
+  @Override
+  public Boolean isZoomSupported() {
+    return cameraParameters.isZoomSupported();
+  }
+
+  @Override
+  public Void setAutoExposureLock(Boolean toggle)  {
+    cameraParameters.setAutoExposureLock(toggle);
+    return null;
+  }
+
+  @Override
+  public Void setExposureCompensation(Integer value)  {
+    cameraParameters.setExposureCompensation(value);
+    return null;
+  }
+
+  @Override
+  public Void setFocusAreas(List<CameraChannelLibrary.$CameraArea> focusAreas)  {
+    cameraParameters.setFocusAreas(CameraAreaProxy.toAreaList(focusAreas));
+    return null;
+  }
+
+  @Override
+  public Void setFocusMode(String value)  {
+    cameraParameters.setFocusMode(value);
+    return null;
   }
 
   @Override
@@ -93,5 +169,15 @@ public class CameraParametersProxy implements CameraChannelLibrary.$CameraParame
   public Void setPreviewSize(Integer width, Integer height) {
     cameraParameters.setPreviewSize(width, height);
     return null;
+  }
+
+  @Override
+  public Integer getExposureCompensation() {
+    return cameraParameters.getExposureCompensation();
+  }
+
+  @Override
+  public Float getExposureCompensationStep() {
+    return cameraParameters.getExposureCompensationStep();
   }
 }

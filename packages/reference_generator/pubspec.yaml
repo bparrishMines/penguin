@@ -12,8 +12,7 @@ dependencies:
   args: 1.6.0
   source_gen: 1.0.0
   json_annotation: 4.0.1
-  reference:
-    path: ../reference
+  reference: 0.2.0
   build: ^2.0.0
   path: ^1.7.0
 
