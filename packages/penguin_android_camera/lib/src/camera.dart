@@ -844,6 +844,11 @@ class CameraArea with $CameraArea {
 
   @override
   final int weight;
+
+  @override
+  String toString() {
+    return 'CameraArea($rect, $weight)';
+  }
 }
 
 /// Holds four integer coordinates for a rectangle.
@@ -880,6 +885,11 @@ class CameraRect with $CameraRect {
 
   @override
   final int left;
+
+  @override
+  String toString() {
+    return 'CameraRect($top, $bottom, $right, $left)';
+  }
 }
 
 /// Image size (width and height dimensions).

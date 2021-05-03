@@ -11,8 +11,9 @@ public class CameraAreaProxy implements CameraChannelLibrary.$CameraArea {
 
   public static List<CameraAreaProxy> fromList(List<Camera.Area> areas, ChannelRegistrar.LibraryImplementations implementations) {
     final List<CameraAreaProxy> proxyList = new ArrayList<>();
+    if (areas == null) return proxyList;
     for (Camera.Area area : areas) {
-      proxyList.add(new CameraAreaProxy(area, new CameraRectProxy(area.rect, implementations), implementations));
+      proxyList.add(new CameraAreaProxy(new CameraRectProxy(area.rect, implementations), area.weight, implementations));
     }
     return proxyList;
   }

@@ -2,6 +2,7 @@ package github.bparrishMines.penguin.penguin_android_camera;
 
 import android.hardware.Camera;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -143,6 +144,12 @@ public class CameraProxy implements CameraChannelLibrary.$Camera {
   @Override
   public Void unlock() {
     camera.unlock();
+    return null;
+  }
+
+  @Override
+  public Void reconnect() throws IOException {
+    camera.reconnect();
     return null;
   }
 }

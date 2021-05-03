@@ -9,17 +9,17 @@ import 'package:penguin_android_camera/penguin_android_camera.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 void main() {
-  runApp(const MaterialApp(home: MyApp()));
+  runApp(const MaterialApp(home: _MyApp()));
 }
 
-class MyApp extends StatefulWidget {
-  const MyApp({Key? key}) : super(key: key);
+class _MyApp extends StatefulWidget {
+  const _MyApp({Key? key}) : super(key: key);
 
   @override
   _MyAppState createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends State<_MyApp> {
   Camera? _camera;
   Widget _previewWidget = Container();
   int _cameraFacing = CameraInfo.cameraFacingFront;
@@ -52,6 +52,8 @@ class _MyAppState extends State<MyApp> {
     );
 
     _camera = await Camera.open(cameraInfo.cameraId);
+    final CameraParameters params = await _camera!.getParameters();
+    print(await params.getFocusAreas());
 
     late int result;
     if (cameraInfo.facing == CameraInfo.cameraFacingFront) {
@@ -214,8 +216,9 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
-class JpegPictureCallback extends PictureCallback {
-  JpegPictureCallback(this.camera, this.onData);
+// ignore: unused_element
+class _JpegPictureCallback extends PictureCallback {
+  _JpegPictureCallback(this.camera, this.onData);
 
   final Camera camera;
 

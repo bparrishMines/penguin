@@ -179,7 +179,6 @@ class $CameraParametersCreationArgs {}
 class $CameraAreaCreationArgs {
   late $CameraRect rect;
   late int weight;
-  late bool createInstancePair;
 }
 
 class $CameraRectCreationArgs {
@@ -187,7 +186,6 @@ class $CameraRectCreationArgs {
   late int bottom;
   late int right;
   late int left;
-  late bool createInstancePair;
 }
 
 class $CameraSizeCreationArgs {
@@ -1231,7 +1229,6 @@ class $CameraAreaHandler implements TypeChannelHandler<$CameraArea> {
     return <Object?>[
       instance.rect,
       instance.weight,
-      instance.createInstancePair
     ];
   }
 
@@ -1244,8 +1241,7 @@ class $CameraAreaHandler implements TypeChannelHandler<$CameraArea> {
       messenger,
       $CameraAreaCreationArgs()
         ..rect = arguments[0] as $CameraRect
-        ..weight = arguments[1] as int
-        ..createInstancePair = arguments[2] as bool,
+        ..weight = arguments[1] as int,
     );
   }
 
@@ -1311,7 +1307,6 @@ class $CameraRectHandler implements TypeChannelHandler<$CameraRect> {
       instance.bottom,
       instance.right,
       instance.left,
-      instance.createInstancePair
     ];
   }
 
@@ -1327,7 +1322,6 @@ class $CameraRectHandler implements TypeChannelHandler<$CameraRect> {
         ..bottom = arguments[1] as int
         ..right = arguments[2] as int
         ..left = arguments[3] as int
-        ..createInstancePair = arguments[4] as bool,
     );
   }
 
