@@ -16,6 +16,9 @@ dependencies:
     sdk: flutter
 
 dev_dependencies:
+  build_runner: ^1.12.2
+  reference_generator:
+    path: ../reference_generator
   flutter_test:
     sdk: flutter
 

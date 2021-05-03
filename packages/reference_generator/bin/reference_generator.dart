@@ -48,7 +48,7 @@ void main(List<String> arguments) async {
   if (options.build) {
     final Process process = await Process.start(
       'flutter',
-      ['pub', 'run', 'build_runner', 'build', '-v'],
+      ['pub', 'run', 'build_runner', 'build'],
       workingDirectory: options.packageRoot.path,
     );
 

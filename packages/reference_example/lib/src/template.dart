@@ -29,4 +29,10 @@ class ClassTemplate with $ClassTemplate {
       parameterTemplate,
     ) as String;
   }
+
+  @ReferenceMethod(ignore: true)
+  @override
+  String toString() {
+    return 'ClassTemplate($fieldTemplate)';
+  }
 }
