@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
-import 'package:penguin_android_camera/penguin_android_camera.dart';
 import 'package:reference/annotations.dart';
 
 import 'camera.g.dart';
@@ -595,7 +594,7 @@ class CameraParameters with $CameraParameters {
   ///   [flashModeTorch]
   @override
   Future<String?> getFlashMode() async {
-    return await _channel.$invokeGetFlashMode(this) as String;
+    return await _channel.$invokeGetFlashMode(this) as String?;
   }
 
   /// Gets the maximum zoom value allowed for snapshot.
@@ -955,24 +954,41 @@ abstract class AutoFocusCallback with $AutoFocusCallback {
   void onAutoFocus(bool success);
 }
 
+/// Callback interface used to signal the moment of actual image capture.
+///
+/// See: [Camera.takePicture].
 @Reference('penguin_android_camera/camera/ShutterCallback')
 abstract class ShutterCallback with $ShutterCallback {
+  /// Default constructor for [ShutterCallback].
   ShutterCallback() {
     ChannelRegistrar.instance.implementations.shutterCallbackChannel
         .createNewInstancePair(this, owner: false);
   }
 
+  /// Called as near as possible to the moment when a photo is captured from the sensor.
+  ///
+  /// This is a good opportunity to play a shutter sound or give other feedback
+  /// of camera operation. This may be some time after the photo was triggered,
+  /// but some time before the actual data is available.
   @override
   void onShutter();
 }
 
+/// Callback interface used to supply image data from a photo capture.
+///
+/// See: [Camera.takePicture].
 @Reference('penguin_android_camera/camera/PictureCallback')
 abstract class PictureCallback with $PictureCallback {
+  /// Default constructor for [PictureCallback].
   PictureCallback() {
     ChannelRegistrar.instance.implementations.pictureCallbackChannel
         .createNewInstancePair(this, owner: false);
   }
 
+  /// Called when image data is available after a picture is taken.
+  ///
+  /// The format of the data depends on the context of the callback and
+  /// Camera.Parameters settings.
   @override
   void onPictureTaken(Uint8List data);
 }
@@ -982,6 +998,7 @@ abstract class PictureCallback with $PictureCallback {
 /// Retrieve by calling [Camera.getAllCameraInfo].
 @Reference('penguin_android_camera/camera/CameraInfo')
 class CameraInfo with $CameraInfo {
+  /// Default constructor for [CameraInfo].
   CameraInfo({
     required this.cameraId,
     required this.facing,
@@ -1023,30 +1040,85 @@ class CameraInfo with $CameraInfo {
   final int orientation;
 }
 
+/// Defines the output format.
+///
+/// These constants are used with [MediaRecorder.setOutputFormat].
 abstract class OutputFormat {
   OutputFormat._();
 
+  /// AAC ADTS file format.
+  static const int aacAdts = 0x00000006;
+
+  /// AMR NB file format.
+  static const int amrNb = 0x00000003;
+
+  /// AMR WB file format.
+  static const int amrWb = 0x00000004;
+
+  /// Default format used by the device.
+  static const int defaultFormat = 0x00000000;
+
+  /// H.264/AAC data encapsulated in MPEG2/TS.
+  static const int mpeg2Ts = 0x00000008;
+
+  /// MPEG4 media file format.
   static const int mpeg4 = 0x00000002;
+
+  /// Opus data in a Ogg container.
+  static const int ogg = 0x0000000b;
+
+  /// AMR NB file format.
+  @Deprecated('Please use `OutputFormat.amrNb`')
+  static const int rawAmr = 0x00000003;
+
+  /// 3GPP media file format.
+  static const int threeGpp = 0x00000001;
+
+  /// VP8/VORBIS data in a WEBM container.
+  static const int webm = 0x00000009;
 }
 
+/// Defines the video encoding.
+///
+/// These constants are used with [MediaRecorder.setVideoEncoder].
 abstract class VideoEncoder {
+  /// Android MediaRecorder.VideoEncoder.MPEG_4_SP format
   static const int mpeg4Sp = 0x00000003;
 }
 
+/// Defines the audio source.
+///
+/// An audio source defines both a default physical source of audio signal, and
+/// a recording configuration. These constants are for instance used in
+/// [MediaRecorder.setAudioSource].
 abstract class AudioSource {
+  /// Default audio source *
   static const int defaultSource = 0x00000000;
 }
 
+/// Defines the audio encoding.
+///
+/// These constants are used with [MediaRecorder.setAudioEncoder].
 abstract class AudioEncoder {
+  /// AMR (Narrowband) audio codec.
   static const int amrNb = 0x00000001;
 }
 
+/// Defines the video source.
+///
+/// These constants are used with [MediaRecorder.setVideoSource].
 abstract class VideoSource {
+  /// Using the Camera API as video source.
   static const int camera = 0x00000001;
 }
 
+/// Used to record audio and video.
+///
+/// For a more detailed explanation:
+/// https://developer.android.com/reference/android/media/MediaRecorder
 @Reference('penguin_android_camera/camera/MediaRecorder')
 class MediaRecorder implements $MediaRecorder {
+  /// Default constructor for [MediaRecorder].
   MediaRecorder() {
     _channel.createNewInstancePair(this, owner: true);
   }
@@ -1054,49 +1126,131 @@ class MediaRecorder implements $MediaRecorder {
   static $MediaRecorderChannel get _channel =>
       ChannelRegistrar.instance.implementations.mediaRecorderChannel;
 
+  /// Sets a Camera to use for recording.
+  ///
+  /// Use this function to switch quickly between preview and capture mode
+  /// without a teardown of the camera object. [Camera.unlock] should be called
+  /// before this. Must call before [prepare].
   @override
   Future<void> setCamera(covariant Camera camera) =>
       _channel.$invokeSetCamera(this, camera);
 
+  /// Sets the video source to be used for recording.
+  ///
+  /// If this method is not called, the output file will not contain a video
+  /// track. The source needs to be specified before setting
+  /// recording-parameters or encoders. Call this only before [setOutputFormat].
+  ///
+  /// Throws [PlatformException] if it is called after [setOutputFormat].
   @override
   Future<void> setVideoSource(int source) =>
       _channel.$invokeSetVideoSource(this, source);
 
+  /// Sets the path of the output file to be produced.
+  ///
+  /// Call this after [setOutputFormat] but before [prepare].
   @override
   Future<void> setOutputFilePath(String path) =>
       _channel.$invokeSetOutputFilePath(this, path);
 
+  /// Sets the format of the output file produced during recording. Call this
+  /// after [setAudioSource]/[setVideoSource] but before [prepare].
+  ///
+  /// It is recommended to always use 3GP format when using the H.263 video
+  /// encoder and AMR audio encoder. Using an MPEG-4 container format may
+  /// confuse some desktop players.
   @override
   Future<void> setOutputFormat(int format) =>
       _channel.$invokeSetOutputFormat(this, format);
 
+  /// Sets the video encoder to be used for recording.
+  ///
+  /// If this method is not called, the output file will not contain an video
+  /// track. Call this after [setOutputFormat] and before [prepare].
   @override
   Future<void> setVideoEncoder(int encoder) =>
       _channel.$invokeSetVideoEncoder(this, encoder);
 
+  /// Sets the audio source to be used for recording.
+  ///
+  /// If this method is not called, the output file will not contain an audio
+  /// track. The source needs to be specified before setting
+  /// recording-parameters or encoders. Call this only before [setOutputFormat].
   @override
   Future<void> setAudioSource(int source) =>
       _channel.$invokeSetAudioSource(this, source);
 
+  /// Sets the audio encoder to be used for recording.
+  ///
+  /// If this method is not called, the output file will not contain an audio
+  /// track. Call this after [setOutputFormat] but before [prepare].
   @override
   Future<void> setAudioEncoder(int encoder) =>
       _channel.$invokeSetAudioEncoder(this, encoder);
 
+  /// Prepares the recorder to begin capturing and encoding data.
+  ///
+  /// This method must be called after setting up the desired audio and video
+  /// sources, encoders, file format, etc., but before [start].
   @override
   Future<void> prepare() => _channel.$invokePrepare(this);
 
+  /// Begins capturing and encoding data to the file specified with [setOutputFile].
+  ///
+  /// Call this after [prepare].
+  ///
+  /// If applications set a camera via [setCamera], the apps can use the camera
+  /// after this method call. The apps do not need to lock the camera again.
+  /// However, if this method fails, the apps should still lock the camera back.
+  /// The apps should not start another recording session during recording.
   @override
   Future<void> start() => _channel.$invokeStart(this);
 
+  /// Stops recording.
+  ///
+  /// Call this after [start]. Once recording is stopped, you will have to
+  /// configure it again as if it has just been constructed. Note that a
+  /// [PlatformException] is intentionally thrown to the application, if no
+  /// valid audio/video data has been received when [stop] is called. This
+  /// happens if [stop] is called immediately after start(). The failure lets
+  /// the application take action accordingly to clean up the output file
+  /// (delete the output file, for instance), since the output file is not
+  /// properly constructed when this happens.
   @override
   Future<void> stop() => _channel.$invokeStop(this);
 
+  /// Releases resources associated with this MediaRecorder object.
+  ///
+  /// It is good practice to call this method when you're done using the
+  /// [MediaRecorder]. In particular, whenever a user leaves the application,
+  /// this method should be invoked to release the [MediaRecorder] object,
+  /// unless the application has a special need to keep the object around. In
+  /// addition to unnecessary resources (such as memory and instances of codecs)
+  /// being held, failure to call this method immediately if a [MediaRecorder]
+  /// object is no longer needed may also lead to continuous battery consumption
+  /// for mobile devices, and recording failure for other applications if no
+  /// multiple instances of the same codec are supported on a device. Even if
+  /// multiple instances of the same codec are supported, some performance
+  /// degradation may be expected when unnecessary multiple instances are used
+  /// at the same time.
   @override
   Future<void> release() => _channel.$invokeRelease(this);
 
+  /// Pauses recording.
+  ///
+  /// Call this after [start]. You may resume recording with [resume] without
+  /// reconfiguration, as opposed to [stop]. It does nothing if the recording
+  /// is already paused. When the recording is paused and resumed, the resulting
+  /// output would be as if nothing happened during paused period, immediately
+  /// switching to the resumed scene.
+  ///
+  /// This is only supported on Android versions 24+.
   @override
   Future<void> pause() => _channel.$invokePause(this);
 
+  /// Resumes recording.
+  ///
+  /// Call this after [start]. It does nothing if the recording is not paused.
   @override
   Future<void> resume() => _channel.$invokeResume(this);
 }

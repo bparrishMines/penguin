@@ -27,6 +27,7 @@ Object stopPreview() throws Exception;
 Object attachPreviewTexture() throws Exception;
 Object releasePreviewTexture() throws Exception;
 Object unlock() throws Exception;
+Object reconnect() throws Exception;
 Object takePicture($ShutterCallback shutter,$PictureCallback raw,$PictureCallback postView,$PictureCallback jpeg) throws Exception;
 Object autoFocus($AutoFocusCallback callback) throws Exception;
 Object cancelAutoFocus() throws Exception;
@@ -74,6 +75,7 @@ Object getExposureCompensationStep() throws Exception;
 public interface $CameraArea {
     $CameraRect getRect();
 Integer getWeight();
+Boolean getCreateInstancePair();
 
     
   }
@@ -82,6 +84,7 @@ public interface $CameraRect {
 Integer getBottom();
 Integer getRight();
 Integer getLeft();
+Boolean getCreateInstancePair();
 
     
   }
@@ -89,7 +92,7 @@ public interface $CameraSize {
     Integer getWidth();
 Integer getHeight();
 
-
+    Object toString() throws Exception;
   }
 public interface $ErrorCallback {
     
@@ -147,6 +150,7 @@ static class $CameraParametersCreationArgs {
 static class $CameraAreaCreationArgs {
     public $CameraRect rect;
 public Integer weight;
+public Boolean createInstancePair;
   }
 
 static class $CameraRectCreationArgs {
@@ -154,6 +158,7 @@ static class $CameraRectCreationArgs {
 public Integer bottom;
 public Integer right;
 public Integer left;
+public Boolean createInstancePair;
   }
 
 static class $CameraSizeCreationArgs {
@@ -222,6 +227,10 @@ public Completable<Object> $invokeReleasePreviewTexture($Camera instance) {
 
 public Completable<Object> $invokeUnlock($Camera instance) {
       return invokeMethod(instance, "unlock", Arrays.<Object>asList());
+    }
+
+public Completable<Object> $invokeReconnect($Camera instance) {
+      return invokeMethod(instance, "reconnect", Arrays.<Object>asList());
     }
 
 public Completable<Object> $invokeTakePicture($Camera instance, $ShutterCallback shutter , $PictureCallback raw , $PictureCallback postView , $PictureCallback jpeg) {
@@ -412,6 +421,12 @@ public static class $CameraRectChannel extends TypeChannel<$CameraRect> {
 public static class $CameraSizeChannel extends TypeChannel<$CameraSize> {
     public $CameraSizeChannel(@NonNull TypeChannelMessenger messenger) {
       super(messenger, "penguin_android_camera/camera/CameraSize");
+    }
+
+    
+
+    public Completable<Object> $invokeToString($CameraSize instance) {
+      return invokeMethod(instance, "toString", Arrays.<Object>asList());
     }
   }
 
@@ -668,7 +683,7 @@ public static class $CameraAreaHandler implements TypeChannelHandler<$CameraArea
     @Override
     public List<Object> getCreationArguments(
         TypeChannelMessenger messenger, $CameraArea instance) {
-      return Arrays.<Object>asList(instance.getRect(),instance.getWeight());
+      return Arrays.<Object>asList(instance.getRect(),instance.getWeight(),instance.getCreateInstancePair());
     }
 
     @Override
@@ -677,6 +692,7 @@ public static class $CameraAreaHandler implements TypeChannelHandler<$CameraArea
       final $CameraAreaCreationArgs args = new $CameraAreaCreationArgs();
       args.rect = ($CameraRect) arguments.get(0);
 args.weight = (Integer) arguments.get(1);
+args.createInstancePair = (Boolean) arguments.get(2);
       return onCreate(messenger, args);
     }
 
@@ -720,7 +736,7 @@ public static class $CameraRectHandler implements TypeChannelHandler<$CameraRect
     @Override
     public List<Object> getCreationArguments(
         TypeChannelMessenger messenger, $CameraRect instance) {
-      return Arrays.<Object>asList(instance.getTop(),instance.getBottom(),instance.getRight(),instance.getLeft());
+      return Arrays.<Object>asList(instance.getTop(),instance.getBottom(),instance.getRight(),instance.getLeft(),instance.getCreateInstancePair());
     }
 
     @Override
@@ -731,6 +747,7 @@ public static class $CameraRectHandler implements TypeChannelHandler<$CameraRect
 args.bottom = (Integer) arguments.get(1);
 args.right = (Integer) arguments.get(2);
 args.left = (Integer) arguments.get(3);
+args.createInstancePair = (Boolean) arguments.get(4);
       return onCreate(messenger, args);
     }
 

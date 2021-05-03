@@ -1,5 +1,4 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
-
 import 'dart:typed_data';
 
 import 'package:reference/reference.dart';
@@ -20,6 +19,8 @@ mixin $Camera {
   Future<void> releasePreviewTexture();
 
   Future<void> unlock();
+
+  Future<void> reconnect();
 
   Future<void> takePicture($ShutterCallback? shutter, $PictureCallback? raw,
       $PictureCallback? postView, $PictureCallback? jpeg);
@@ -64,11 +65,11 @@ mixin $CameraParameters {
 
   Future<void> setExposureCompensation(int value);
 
-  Future<void> setFocusAreas(List<$CameraArea> focusAreas);
+  Future<void> setFocusAreas(List<$CameraArea>? focusAreas);
 
   Future<void> setFocusMode(String value);
 
-  Future<String> getFlashMode();
+  Future<String?> getFlashMode();
 
   Future<int> getMaxZoom();
 
@@ -178,6 +179,7 @@ class $CameraParametersCreationArgs {}
 class $CameraAreaCreationArgs {
   late $CameraRect rect;
   late int weight;
+  late bool createInstancePair;
 }
 
 class $CameraRectCreationArgs {
@@ -185,6 +187,7 @@ class $CameraRectCreationArgs {
   late int bottom;
   late int right;
   late int left;
+  late bool createInstancePair;
 }
 
 class $CameraSizeCreationArgs {
@@ -282,6 +285,16 @@ class $CameraChannel extends TypeChannel<$Camera> {
     return sendInvokeMethod(
       instance,
       'unlock',
+      <Object?>[],
+    );
+  }
+
+  Future<Object?> $invokeReconnect(
+    $Camera instance,
+  ) {
+    return sendInvokeMethod(
+      instance,
+      'reconnect',
       <Object?>[],
     );
   }
@@ -486,7 +499,7 @@ class $CameraParametersChannel extends TypeChannel<$CameraParameters> {
   }
 
   Future<Object?> $invokeSetFocusAreas(
-      $CameraParameters instance, List<$CameraArea> focusAreas) {
+      $CameraParameters instance, List<$CameraArea>? focusAreas) {
     return sendInvokeMethod(
       instance,
       'setFocusAreas',
@@ -967,6 +980,9 @@ class $CameraHandler implements TypeChannelHandler<$Camera> {
       case 'unlock':
         method = () => instance.unlock();
         break;
+      case 'reconnect':
+        method = () => instance.reconnect();
+        break;
       case 'takePicture':
         method = () => instance.takePicture(
             arguments[0] as $ShutterCallback?,
@@ -1107,7 +1123,7 @@ class $CameraParametersHandler
         break;
       case 'setFocusAreas':
         method =
-            () => instance.setFocusAreas(arguments[0] as List<$CameraArea>);
+            () => instance.setFocusAreas(arguments[0] as List<$CameraArea>?);
         break;
       case 'setFocusMode':
         method = () => instance.setFocusMode(arguments[0] as String);
@@ -1212,7 +1228,11 @@ class $CameraAreaHandler implements TypeChannelHandler<$CameraArea> {
     TypeChannelMessenger messenger,
     $CameraArea instance,
   ) {
-    return <Object?>[instance.rect, instance.weight];
+    return <Object?>[
+      instance.rect,
+      instance.weight,
+      instance.createInstancePair
+    ];
   }
 
   @override
@@ -1224,7 +1244,8 @@ class $CameraAreaHandler implements TypeChannelHandler<$CameraArea> {
       messenger,
       $CameraAreaCreationArgs()
         ..rect = arguments[0] as $CameraRect
-        ..weight = arguments[1] as int,
+        ..weight = arguments[1] as int
+        ..createInstancePair = arguments[2] as bool,
     );
   }
 
@@ -1289,7 +1310,8 @@ class $CameraRectHandler implements TypeChannelHandler<$CameraRect> {
       instance.top,
       instance.bottom,
       instance.right,
-      instance.left
+      instance.left,
+      instance.createInstancePair
     ];
   }
 
@@ -1304,7 +1326,8 @@ class $CameraRectHandler implements TypeChannelHandler<$CameraRect> {
         ..top = arguments[0] as int
         ..bottom = arguments[1] as int
         ..right = arguments[2] as int
-        ..left = arguments[3] as int,
+        ..left = arguments[3] as int
+        ..createInstancePair = arguments[4] as bool,
     );
   }
 
