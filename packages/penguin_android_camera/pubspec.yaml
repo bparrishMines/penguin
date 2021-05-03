@@ -1,8 +1,7 @@
 name: penguin_android_camera
-description: A new flutter plugin project.
+description: Provides access to the [Android Camera API](https://developer.android.com/guide/topics/media/camera).
 version: 0.0.1
-author:
-homepage:
+homepage: https://github.com/bparrishMines/penguin/tree/master/packages/penguin_android_camera
 
 environment:
   sdk: ">=2.12.0-0 <3.0.0"

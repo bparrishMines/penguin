@@ -122,7 +122,9 @@ public class CameraParametersProxy implements CameraChannelLibrary.$CameraParame
 
   @Override
   public List<String> getSupportedFlashModes() {
-    return cameraParameters.getSupportedFlashModes();
+    final List<String> modes = cameraParameters.getSupportedFlashModes();
+    if (modes != null) return modes;
+    return new ArrayList<>();
   }
 
   @Override
