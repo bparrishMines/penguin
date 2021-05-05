@@ -11,12 +11,7 @@ class TestMessenger extends TypeChannelMessenger {
   final TestMessageDispatcher messageDispatcher = TestMessageDispatcher();
 
   @override
-  final TestInstancePairManager instancePairManager = TestInstancePairManager();
-
-  @override
-  String generateUniqueInstanceId(Object instance) {
-    return 'test_instance_id';
-  }
+  final TestInstancePairManager instanceManager = TestInstancePairManager();
 }
 
 class TestHandler with TypeChannelHandler<TestClass> {
@@ -96,17 +91,9 @@ class TestMessageDispatcher with TypeChannelMessageDispatcher {
 
 class TestClass {}
 
-class TestInstancePairManager implements InstancePairManager {
+class TestInstancePairManager implements InstanceManager {
   final Map<Object, String> instanceToInstanceId = <Object, String>{};
   final Map<String, Object> instanceIdToInstance = <String, Object>{};
-
-  @override
-  bool addPair(Object instance, String instanceId, {required bool owner}) {
-    if (isPaired(true)) return false;
-    instanceToInstanceId[instance] = instanceId;
-    instanceIdToInstance[instanceId] = instance;
-    return true;
-  }
 
   @override
   Object? getInstance(String instanceId) {
@@ -119,13 +106,36 @@ class TestInstancePairManager implements InstancePairManager {
   }
 
   @override
-  bool isPaired(Object instance) {
+  bool containsInstance(Object instance) {
     return instanceToInstanceId.containsKey(instance);
   }
 
   @override
-  void removePair(String instanceId) {
+  void removeInstance(String instanceId) {
     final Object? instance = instanceIdToInstance.remove(instanceId);
     instanceToInstanceId.remove(instance);
+  }
+
+  @override
+  bool addStrongReference(Object instance, String instanceId) {
+    if (containsInstance(true)) return false;
+    instanceToInstanceId[instance] = instanceId;
+    instanceIdToInstance[instanceId] = instance;
+    return true;
+  }
+
+  @override
+  bool addWeakInstance(
+    Object instance, {
+    required void Function(String instanceId) onFinalize,
+  }) {
+    if (containsInstance(true)) return false;
+    final String instanceId = generateUniqueInstanceId(instance);
+    return addStrongReference(instance, instanceId);
+  }
+
+  @override
+  String generateUniqueInstanceId(Object instance) {
+    return 'test_reference_id';
   }
 }

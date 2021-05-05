@@ -283,10 +283,5 @@ class TestMessenger extends MethodChannelMessenger {
   late final TestHandler testHandler = TestHandler();
 
   @override
-  final TestInstancePairManager instancePairManager = TestInstancePairManager();
-
-  @override
-  String generateUniqueInstanceId(Object instance) {
-    return 'test_reference_id';
-  }
+  final TestInstancePairManager instanceManager = TestInstancePairManager();
 }

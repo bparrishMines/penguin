@@ -71,7 +71,7 @@ class _WeakMap {
     return value.toNativeUtf8().cast<Int8>();
   }
 
-  /// Add a new pair.
+  /// Add a new instance.
   bool put(String instanceId, Object instance) {
     return _put(
           _nativeWeakMap,
@@ -103,36 +103,39 @@ class _WeakMap {
   }
 }
 
-/// Manages instance pairs.
+/// Manages instances.
 ///
-/// Maintains two types of instance pairs
+/// Maintains two types of instances
 ///   * A strongly typed key mapped to a strongly typed object.
 ///   * A strongly typed key mapped to a weakly typed object.
 ///
 /// When a strongly referenced object is added, it must be removed manually.
 /// When a weakly referenced object is added, it it removed when it is garbage
 /// collected.
-class InstancePairManager {
-  /// Constructs an [InstancePairManager].
-  ///
-  /// When a weakly referenced object is removed from the manager through
-  /// by GC, [onFinalize] is called with the instanceId used as its key.
-  InstancePairManager(void Function(String) onFinalize) {
+class InstanceManager {
+  /// Default constructor for an [InstanceManager].
+  InstanceManager() {
     if (!_initialized) {
       _referenceDartDlInitialize(NativeApi.initializeApiDLData);
       _initialized = true;
     }
-    _weakReferences = _WeakMap(onFinalize);
+    _weakReferences = _WeakMap((String instanceId) {
+      _weakReferenceCallbacks[instanceId]!(instanceId);
+    });
   }
 
   static bool _initialized = false;
 
   final Expando _instanceIds = Expando();
+
   final Map<String, Object> _strongReferences = <String, Object>{};
   late final _WeakMap _weakReferences;
 
-  /// Remove the pair with [instancedId] as key.
-  void removePair(String instanceId) {
+  final Map<String, void Function(String)> _weakReferenceCallbacks =
+      <String, void Function(String)>{};
+
+  /// Remove the instance with [instancedId] as key.
+  void removeInstance(String instanceId) {
     final Object? instance = getInstance(instanceId);
     if (instance != null) {
       _instanceIds[instance] = null;
@@ -142,52 +145,74 @@ class InstancePairManager {
     _weakReferences.remove(instanceId);
   }
 
-  /// Add a new pair with [instanceId] as key and [instance] as the value.
+  /// Add a new instance with [instanceId] as key and [instance] as the value.
   ///
-  /// [owner] sets whether [instance] is stored as strongly referenced or
-  /// weakly referenced.
-  ///   * If [owner] == `true`, it is stored as weakly referenced.
-  ///   * If [owner] == 'false`, it is stored as strongly referenced.
+  /// [instance] is stored as a weak reference and [onFinalize] is called
+  /// when [instance] is garbage collected.
+  ///
+  /// Returns `true` if the instance is successfully added. Returns `false` if
+  /// the [instanceId] or [instance] is already contained in the manager or the
+  /// [instance] is a [num], [bool], or [String].
+  bool addWeakInstance(
+    Object instance, {
+    required void Function(String instanceId) onFinalize,
+  }) {
+    if (!_isValidInstance(instance)) return false;
+
+    final String instanceId = generateUniqueInstanceId(instance);
+
+    _instanceIds[instance] = instanceId;
+    _weakReferenceCallbacks[instanceId] = onFinalize;
+    return _weakReferences.put(instanceId, instance);
+  }
+
+  /// Add a new instance with [instanceId] as key and [instance] as the value.
+  ///
+  /// [instance] is stored as a strong reference.
   ///
   /// Returns `true` if the pair is successfully added. Returns `false` if
   /// the [instanceId] or [instance] is already contained in the manager or the
   /// [instance] is a [num], [bool], or [String].
-  bool addPair(
-    Object instance,
-    String instanceId, {
-    required bool owner,
-  }) {
-    if (instance is num || instance is bool || instance is String) return false;
-    if (isPaired(instance)) return false;
-    assert(getInstance(instanceId) == null);
-
+  bool addStrongReference(Object instance, String instanceId) {
+    if (!_isValidInstance(instance)) return false;
     _instanceIds[instance] = instanceId;
-    if (owner) {
-      return _weakReferences.put(instanceId, instance);
-    }
-
     _strongReferences[instanceId] = instance;
     return true;
   }
 
+  bool _isValidInstance(Object instance) {
+    if (instance is num ||
+        instance is bool ||
+        instance is String ||
+        containsInstance(instance)) {
+      return false;
+    }
+    return true;
+  }
+
   /// Whether [instance] is contained in this manager.
-  bool isPaired(Object instance) {
+  bool containsInstance(Object instance) {
     if (instance is num || instance is bool || instance is String) return false;
     return _instanceIds[instance] != null;
   }
 
-  /// Retrieve the [PairedInstance] paired with [object].
+  /// Retrieve the instanceId paired with [object].
   ///
-  /// Returns null if this [object] is not paired.
+  /// Returns null if this [instance] is not paired.
   String? getInstanceId(Object instance) {
-    if (isPaired(instance)) return _instanceIds[instance] as String?;
+    if (containsInstance(instance)) return _instanceIds[instance] as String?;
     return null;
   }
 
-  /// Retrieve the [Object] paired with [pairedInstance].
+  /// Retrieve the [Object] paired with [instanceId].
   ///
-  /// Returns null if this [pairedInstance] is not paired.
+  /// Returns null if this [instanceId] is not paired.
   Object? getInstance(String instanceId) {
     return _strongReferences[instanceId] ?? _weakReferences.get(instanceId);
+  }
+
+  /// Generate a new unique instance id for instance.
+  String generateUniqueInstanceId(Object instance) {
+    return '${instance.runtimeType}(${instance.hashCode})';
   }
 }

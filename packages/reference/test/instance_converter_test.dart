@@ -46,7 +46,8 @@ void main() {
       );
 
       expect(
-        converter.convertPairedInstancesToInstances(testMessenger, pairedInstance),
+        converter.convertPairedInstancesToInstances(
+            testMessenger, pairedInstance),
         testMessenger.testHandler.testClassInstance,
       );
     });
