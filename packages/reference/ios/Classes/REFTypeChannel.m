@@ -3,7 +3,7 @@
 @implementation REFTypeChannelMessenger {
 @public
   REFThreadSafeMapTable<NSString *, NSObject<REFTypeChannelHandler> *> *_channelHandlers;
-  REFInstancePairManager *_instancePairManager;
+  REFInstanceManager *_instanceManager;
 }
 
 - (instancetype)initWithMessageDispatcher:(id<REFTypeChannelMessageDispatcher>)messageDispatcher {
@@ -11,23 +11,23 @@
   if (self) {
     _messageDispatcher = messageDispatcher;
     _channelHandlers = [REFThreadSafeMapTable strongToStrongObjectsMapTable];
-    _instancePairManager = [[REFInstancePairManager alloc] init];
+    _instanceManager = [[REFInstanceManager alloc] init];
   }
   return self;
 }
 
-- (void)removeInstancePair:(REFPairedInstance *)pairedInstance {
-  [[self instancePairManager] removePair:pairedInstance.instanceID];
-}
-
 - (BOOL)addInstancePair:(NSObject *)instance
-         pairedInstance:(REFPairedInstance *)pairedInstance
+             instanceID:(NSString *_Nullable)instanceID
                   owner:(BOOL)owner {
-  return [[self instancePairManager] addPair:instance instanceID:pairedInstance.instanceID owner:owner];
+  if (owner) {
+    return [[self instanceManager] addWeakReference:instance instanceID:instanceID];
+  } else {
+    return [[self instanceManager] addStrongReference:instance instanceID:instanceID];
+  }
 }
 
-- (REFInstancePairManager *)instancePairManager {
-  return _instancePairManager;
+- (REFInstanceManager *)instanceManager {
+  return _instanceManager;
 }
 
 - (id<REFInstanceConverter>)converter {
@@ -35,17 +35,17 @@
 }
 
 - (BOOL)isPaired:(NSObject *)instance {
-  return [[self instancePairManager] isPaired:instance];
+  return [[self instanceManager] containsInstance:instance];
 }
 
 - (REFPairedInstance *)getPairedPairedInstance:(NSObject *)instance {
-  NSString *instanceID = [[self instancePairManager] getInstanceID:instance];
+  NSString *instanceID = [[self instanceManager] getInstanceID:instance];
   if (instanceID) return [REFPairedInstance fromID:instanceID];
   return nil;
 }
 
 - (NSObject *)getPairedObject:(REFPairedInstance *)pairedInstance {
-  return [[self instancePairManager] getInstance:pairedInstance.instanceID];
+  return [[self instanceManager] getInstance:pairedInstance.instanceID];
 }
 
 - (void)registerHandler:(NSString *)channelName handler:(NSObject<REFTypeChannelHandler> *)handler {
@@ -75,12 +75,9 @@
     return;
   }
   
-  REFPairedInstance *pairedInstance = [REFPairedInstance fromID:[self generateUniqueInstanceID:instance]];
   
-  [self addInstancePair:instance
-         pairedInstance:pairedInstance
-                  owner:owner];
-  
+  [self addInstancePair:instance instanceID:nil owner:owner];
+  REFPairedInstance *pairedInstance = [self getPairedPairedInstance:instance];
   NSArray<id> *creationArguments = [self.converter convertInstancesToPairedInstances:self
                                                                          obj:[[self
                                                                                getChannelHandler:channelName]
@@ -144,7 +141,7 @@
   }
   
   REFPairedInstance *pairedInstance = [self getPairedPairedInstance:instance];
-  [self removeInstancePair:pairedInstance];
+  [[self instanceManager] removeInstance:pairedInstance.instanceID];
   [_messageDispatcher sendDisposeInstancePair:pairedInstance completion:completion];
 }
 
@@ -158,7 +155,7 @@
                                                                            convertPairedInstancesToInstances:self obj:arguments]];
 
   NSAssert(![self isPaired:instance], @"");
-  [self addInstancePair:instance pairedInstance:pairedInstance owner:owner];
+  [self addInstancePair:instance instanceID:pairedInstance.instanceID owner:owner];
   return instance;
 }
 
@@ -187,11 +184,7 @@
 
 - (void)onReceiveDisposeInstancePair:(REFPairedInstance *)pairedInstance {
   NSAssert([self getPairedObject:pairedInstance], @"The Object with the following PairedInstance has already been disposed: %@", pairedInstance);
-  [self removeInstancePair:pairedInstance];
-}
-
-- (NSString *)generateUniqueInstanceID:(NSObject *)instance {
-  return [@(instance.hash) stringValue];
+  [[self instanceManager] removeInstance:pairedInstance.instanceID];
 }
 @end
 

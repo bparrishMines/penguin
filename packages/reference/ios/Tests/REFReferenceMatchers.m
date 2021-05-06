@@ -1,7 +1,7 @@
 #import "REFReferenceMatchers.h"
 
 @implementation REFTestMessenger {
-  REFTestInstancePairManager *_testInstancePairManager;
+  REFTestInstanceManager *_testInstancePairManager;
 }
 
 - (instancetype)init {
@@ -9,17 +9,13 @@
   if (self) {
     _testHandler = [[REFTestHandler alloc] init];
     [self registerHandler:@"test_channel" handler:_testHandler];
-    _testInstancePairManager = [[REFTestInstancePairManager alloc] init];
+    _testInstancePairManager = [[REFTestInstanceManager alloc] init];
   }
   return self;
 }
 
-- (REFInstancePairManager *)instancePairManager {
+- (REFInstanceManager *)instanceManager {
   return _testInstancePairManager;
-}
-
-- (NSString *)generateUniqueInstanceID:(NSObject *)instance {
-  return @"test_instance_id";
 }
 @end
 
@@ -87,42 +83,8 @@
 }
 @end
 
-@implementation REFTestInstancePairManager {
-  REFThreadSafeMapTable *_instanceIdToInstance;
-  REFThreadSafeMapTable *_instanceToInstanceId;
-}
-
-- (instancetype)init {
-  self = [super init];
-  if (self) {
-    _instanceIdToInstance = [REFThreadSafeMapTable strongToStrongObjectsMapTable];
-    _instanceToInstanceId = [REFThreadSafeMapTable strongToStrongObjectsMapTable];
-  }
-  return self;
-}
-
-- (BOOL)addPair:(NSObject *)instance instanceID:(NSString *)instanceID owner:(BOOL)owner {
-  if ([self isPaired:instance]) return NO;
-  [_instanceToInstanceId setObject:instanceID forKey:instance];
-  [_instanceIdToInstance setObject:instance forKey:instanceID];
-  return YES;
-}
-
-- (BOOL)isPaired:(NSObject *)instance {
-  return [_instanceToInstanceId objectForKey:instance] != nil;
-}
-
-- (NSString *_Nullable)getInstanceID:(NSObject *)instance {
-  return [_instanceToInstanceId objectForKey:instance];
-}
-
-- (NSObject *_Nullable)getInstance:(NSString *)instanceID {
-  return [_instanceIdToInstance objectForKey:instanceID];
-}
-
-- (void)removePair:(NSString *)instanceID {
-  NSObject *instance = [self getInstance:instanceID];
-  [_instanceIdToInstance removeObjectForKey:instanceID];
-  [_instanceToInstanceId removeObjectForKey:instance];
+@implementation REFTestInstanceManager
+- (NSString *)generateUniqueInstanceID:(NSObject *)instance {
+  return @"test_instance_id";
 }
 @end
