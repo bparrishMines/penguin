@@ -168,7 +168,7 @@ abstract class TypeChannelMessenger {
   /// Dispatches messages to other [TypeChannelMessenger]s.
   TypeChannelMessageDispatcher get messageDispatcher;
 
-  /// Attempts to convert objects to [PairedInstance]s or [NewUnpairedInstance]s and vice-versa.
+  /// Attempts to convert objects to [PairedInstance]s and vice-versa.
   InstanceConverter get converter => const StandardInstanceConverter();
 
   /// Maintains access to instances.
@@ -255,8 +255,8 @@ abstract class TypeChannelMessenger {
     await messageDispatcher.sendCreateNewInstancePair(
       channelName,
       pairedInstance,
-      converter.convertInstancesToPairedInstances(
-        this,
+      converter.convertInstances(
+        instanceManager,
         handler.getCreationArguments(this, instance),
       )! as List<Object?>,
       owner: !owner,
@@ -278,11 +278,10 @@ abstract class TypeChannelMessenger {
     final Object? result = await messageDispatcher.sendInvokeStaticMethod(
       channelName,
       methodName,
-      converter.convertInstancesToPairedInstances(this, arguments)!
-          as List<Object?>,
+      converter.convertInstances(instanceManager, arguments)! as List<Object?>,
     );
 
-    return converter.convertPairedInstancesToInstances(this, result);
+    return converter.convertPairedInstances(instanceManager, result);
   }
 
   /// Send a message to invoke a method on the [PairedInstance] paired with [instance].
@@ -298,11 +297,10 @@ abstract class TypeChannelMessenger {
       channelName,
       getPairedPairedInstance(instance)!,
       methodName,
-      converter.convertInstancesToPairedInstances(this, arguments)!
-          as List<Object?>,
+      converter.convertInstances(instanceManager, arguments)! as List<Object?>,
     );
 
-    return converter.convertPairedInstancesToInstances(this, result);
+    return converter.convertPairedInstances(instanceManager, result);
   }
 
   /// Dispose the instance pair containing [instance].
@@ -341,7 +339,7 @@ abstract class TypeChannelMessenger {
 
     final Object instance = handler.createInstance(
       this,
-      converter.convertPairedInstancesToInstances(this, arguments)!
+      converter.convertPairedInstances(instanceManager, arguments)!
           as List<Object?>,
     );
 
@@ -364,11 +362,11 @@ abstract class TypeChannelMessenger {
     final Object? result = getChannelHandler(channelName)!.invokeStaticMethod(
       this,
       methodName,
-      converter.convertPairedInstancesToInstances(this, arguments)!
+      converter.convertPairedInstances(instanceManager, arguments)!
           as List<Object?>,
     );
 
-    return converter.convertInstancesToPairedInstances(this, result);
+    return converter.convertInstances(instanceManager, result);
   }
 
   /// Invoke a method on [pairedInstance] for a type channel.
@@ -382,11 +380,11 @@ abstract class TypeChannelMessenger {
       this,
       getPairedObject(pairedInstance)!,
       methodName,
-      converter.convertPairedInstancesToInstances(this, arguments)!
+      converter.convertPairedInstances(instanceManager, arguments)!
           as List<Object?>,
     );
 
-    return converter.convertInstancesToPairedInstances(this, result);
+    return converter.convertInstances(instanceManager, result);
   }
 
   /// Dispose of the pair containing [pairedInstance].

@@ -11,7 +11,7 @@ class TestMessenger extends TypeChannelMessenger {
   final TestMessageDispatcher messageDispatcher = TestMessageDispatcher();
 
   @override
-  final TestInstancePairManager instanceManager = TestInstancePairManager();
+  final TestInstanceManager instanceManager = TestInstanceManager();
 }
 
 class TestHandler with TypeChannelHandler<TestClass> {
@@ -91,7 +91,7 @@ class TestMessageDispatcher with TypeChannelMessageDispatcher {
 
 class TestClass {}
 
-class TestInstancePairManager implements InstanceManager {
+class TestInstanceManager implements InstanceManager {
   final Map<Object, String> instanceToInstanceId = <Object, String>{};
   final Map<String, Object> instanceIdToInstance = <String, Object>{};
 

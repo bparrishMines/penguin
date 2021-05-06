@@ -12,7 +12,7 @@ void main() {
       testMessenger = TestMessenger();
     });
 
-    test('convertInstancesToPairedInstances handles paired Object', () {
+    test('convertInstances handles paired Object', () {
       testMessenger.onReceiveCreateNewInstancePair(
         'test_channel',
         const PairedInstance('test_id'),
@@ -21,22 +21,22 @@ void main() {
       );
 
       expect(
-        converter.convertInstancesToPairedInstances(
-          testMessenger,
+        converter.convertInstances(
+          testMessenger.instanceManager,
           testMessenger.testHandler.testClassInstance,
         ),
         const PairedInstance('test_id'),
       );
     });
 
-    test('convertInstancesToPairedInstances handles unpaired object', () {
+    test('convertInstances handles unpaired object', () {
       expect(
-        converter.convertInstancesToPairedInstances(testMessenger, 'potato'),
+        converter.convertInstances(testMessenger.instanceManager, 'potato'),
         equals('potato'),
       );
     });
 
-    test('convertPairedInstancesToInstances handles $PairedInstance', () {
+    test('convertPairedInstances handles $PairedInstance', () {
       const PairedInstance pairedInstance = PairedInstance('test_id');
       testMessenger.onReceiveCreateNewInstancePair(
         'test_channel',
@@ -46,16 +46,18 @@ void main() {
       );
 
       expect(
-        converter.convertPairedInstancesToInstances(
-            testMessenger, pairedInstance),
+        converter.convertPairedInstances(
+          testMessenger.instanceManager,
+          pairedInstance,
+        ),
         testMessenger.testHandler.testClassInstance,
       );
     });
 
-    test('convertPairedInstancesToInstances handles unpaired object', () async {
+    test('convertPairedInstances handles unpaired object', () async {
       expect(
-        converter.convertPairedInstancesToInstances(
-          testMessenger,
+        converter.convertPairedInstances(
+          testMessenger.instanceManager,
           'apple',
         ),
         equals('apple'),
