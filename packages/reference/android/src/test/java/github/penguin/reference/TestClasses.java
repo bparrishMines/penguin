@@ -18,8 +18,8 @@ import github.penguin.reference.reference.TypeChannelMessenger;
 
 public class TestClasses {
   public static class TestMessenger extends TypeChannelMessenger {
-    public final TestMessageDispatcher testMessageDispatcher = new TestMessageDispatcher();
-    public final TestInstanceManager testInstancePairManager = new TestInstanceManager();
+    private final TestMessageDispatcher testMessageDispatcher = new TestMessageDispatcher();
+    private final TestInstanceManager testInstancePairManager = new TestInstanceManager();
     public final TestHandler testHandler = new TestHandler();
 
     public TestMessenger() {
