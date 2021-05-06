@@ -90,20 +90,6 @@
   return [_instanceIds objectForKey:instance] != nil;
 }
 
-- (BOOL)addPair:(NSObject *)instance instanceID:(NSString *)instanceID owner:(BOOL)owner {
-  if ([self containsInstance:instance]) return NO;
-  NSAssert(![self getInstance:instanceID], @"");
-  
-  [_instanceIds setObject:instanceID forKey:instance];
-  
-  if (owner) {
-    [_weakReferences setObject:instance forKey:instanceID];
-  } else {
-    [_strongReferences setObject:instance forKey:instanceID];
-  }
-  return YES;
-}
-
 - (BOOL)addWeakReference:(NSObject *)instance instanceID:(NSString *_Nullable)instanceID {
   if ([self containsInstance:instance]) return NO;
   
