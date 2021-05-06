@@ -14,7 +14,7 @@ public interface InstanceConverter {
   @Nullable
   Object convertPairedInstances(InstanceManager manager, @Nullable Object object);
 
-  class StandardInstanceConverter implements InstanceConverter {
+  public class StandardInstanceConverter implements InstanceConverter {
     @Nullable
     @Override
     public Object convertInstances(InstanceManager manager, @Nullable Object object) {
