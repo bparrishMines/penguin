@@ -120,7 +120,9 @@ class InstanceManager {
       _initialized = true;
     }
     _weakReferences = _WeakMap((String instanceId) {
-      _weakReferenceCallbacks[instanceId]!(instanceId);
+      final void Function(String)? callback =
+          _weakReferenceCallbacks[instanceId];
+      if (callback != null) callback(instanceId);
     });
   }
 
@@ -137,12 +139,11 @@ class InstanceManager {
   /// Remove the instance with [instancedId] as key.
   void removeInstance(String instanceId) {
     final Object? instance = getInstance(instanceId);
-    if (instance != null) {
-      _instanceIds[instance] = null;
-      _strongReferences.remove(instanceId);
-    }
+    if (instance != null) _instanceIds[instance] = null;
 
+    _strongReferences.remove(instanceId);
     _weakReferences.remove(instanceId);
+    _weakReferenceCallbacks.remove(instanceId);
   }
 
   /// Add a new instance with [instanceId] as key and [instance] as the value.

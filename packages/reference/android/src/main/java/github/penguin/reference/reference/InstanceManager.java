@@ -43,12 +43,10 @@ public class InstanceManager {
   }
 
   public void removeInstance(String instanceId) {
-    Object instance = getInstance(instanceId);
-    if (instance != null) {
-      instanceIds.remove(instance);
-      strongReferences.remove(instanceId);
-    }
+    final Object instance = getInstance(instanceId);
+    if (instance != null) instanceIds.remove(instance);
 
+    strongReferences.remove(instanceId);
     weakReferences.remove(instanceId);
   }
 

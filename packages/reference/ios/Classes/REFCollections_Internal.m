@@ -112,11 +112,9 @@
 
 - (void)removeInstance:(NSString *)instanceID {
   NSObject *instance = [self getInstance:instanceID];
-  if (instance) {
-    [_instanceIds removeObjectForKey:instance];
-    [_strongReferences removeObjectForKey:instanceID];
-  }
-  
+  if (instance) [_instanceIds removeObjectForKey:instance];
+
+  [_strongReferences removeObjectForKey:instanceID];
   [_weakReferences removeObjectForKey:instanceID];
 }
 
