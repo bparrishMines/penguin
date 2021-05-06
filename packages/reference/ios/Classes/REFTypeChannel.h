@@ -62,10 +62,10 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @protocol REFInstanceConverter <NSObject>
-- (id _Nullable)convertInstancesToPairedInstances:(REFTypeChannelMessenger *)messenger
-                                      obj:(id _Nullable)obj;
-- (id _Nullable)convertPairedInstancesToInstances:(REFTypeChannelMessenger *)messenger
-                                     obj:(id _Nullable)obj;
+- (id _Nullable)convertInstances:(REFInstanceManager *)manager
+                             obj:(id _Nullable)obj;
+- (id _Nullable)convertPairedInstances:(REFInstanceManager *)manager
+                                   obj:(id _Nullable)obj;
 @end
 
 @interface REFStandardInstanceConverter : NSObject <REFInstanceConverter>
@@ -83,7 +83,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (REFInstanceManager *)instanceManager;
 - (id<REFInstanceConverter>)converter;
 - (void)createNewInstancePair:(NSString *)channelName
-                    instance:(NSObject *)instance
+                     instance:(NSObject *)instance
                         owner:(BOOL)owner
                    completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion;
 - (void)sendInvokeStaticMethod:(NSString *)channelName

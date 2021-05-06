@@ -61,9 +61,9 @@
 }
 
 - (void)createNewInstancePair:(NSString *)channelName
-                         instance:(NSObject *)instance
-                            owner:(BOOL)owner
-                       completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
+                     instance:(NSObject *)instance
+                        owner:(BOOL)owner
+                   completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
   if ([self isPaired:instance]) {
     completion(nil, nil);
     return;
@@ -78,11 +78,11 @@
   
   [self addInstancePair:instance instanceID:nil owner:owner];
   REFPairedInstance *pairedInstance = [self getPairedPairedInstance:instance];
-  NSArray<id> *creationArguments = [self.converter convertInstancesToPairedInstances:self
-                                                                         obj:[[self
-                                                                               getChannelHandler:channelName]
-                                                                              getCreationArguments:self
-                                                                              instance:instance]];
+  NSArray<id> *creationArguments = [self.converter convertInstances:[self instanceManager]
+                                                                obj:[[self
+                                                                      getChannelHandler:channelName]
+                                                                     getCreationArguments:self
+                                                                     instance:instance]];
   
   [_messageDispatcher sendCreateNewInstancePair:channelName
                                  pairedInstance:pairedInstance
@@ -103,12 +103,12 @@
                     completion:(void (^)(id _Nullable, NSError *_Nullable))completion {
   [_messageDispatcher sendInvokeStaticMethod:channelName
                                   methodName:methodName
-                                   arguments:[self.converter convertInstancesToPairedInstances:self obj:arguments]
+                                   arguments:[self.converter convertInstances:[self instanceManager] obj:arguments]
                                   completion:^(id result, NSError *error) {
     if (error) {
       completion(nil, error);
     } else {
-      completion([self.converter convertPairedInstancesToInstances:self obj:result], nil);
+      completion([self.converter convertPairedInstances:[self instanceManager] obj:result], nil);
     }
   }];
 }
@@ -123,18 +123,18 @@
   [_messageDispatcher sendInvokeMethod:channelName
                         pairedInstance:[self getPairedPairedInstance:instance]
                             methodName:methodName
-                             arguments:[self.converter convertInstancesToPairedInstances:self obj:arguments]
+                             arguments:[self.converter convertInstances:[self instanceManager] obj:arguments]
                             completion:^(id result, NSError *error) {
     if (error) {
       completion(nil, error);
     } else {
-      completion([self.converter convertPairedInstancesToInstances:self obj:result], nil);
+      completion([self.converter convertPairedInstances:[self instanceManager] obj:result], nil);
     }
   }];
 }
 
 - (void)disposeInstancePair:(NSObject *)instance
-                completion:(void (^)(NSError *_Nullable))completion {
+                 completion:(void (^)(NSError *_Nullable))completion {
   if (![self isPaired:instance]) {
     completion(nil);
     return;
@@ -151,9 +151,9 @@
                                        owner:(BOOL)owner {
   NSAssert(![self getPairedObject:pairedInstance], @"An object with `PairedInstance` has already been created.");
   NSObject *instance = [[self getChannelHandler:channelName] createInstance:self
-                                                                arguments:[[self converter]
-                                                                           convertPairedInstancesToInstances:self obj:arguments]];
-
+                                                                  arguments:[[self converter]
+                                                                             convertPairedInstances:[self instanceManager] obj:arguments]];
+  
   NSAssert(![self isPaired:instance], @"");
   [self addInstancePair:instance instanceID:pairedInstance.instanceID owner:owner];
   return instance;
@@ -164,8 +164,8 @@
                         arguments:(NSArray<id> *)arguments {
   NSObject *object = [[self getChannelHandler:channelName] invokeStaticMethod:self
                                                                    methodName:methodName
-                                                                    arguments:[[self converter] convertPairedInstancesToInstances:self obj:arguments]];
-  return [[self converter] convertInstancesToPairedInstances:self obj:object];
+                                                                    arguments:[[self converter] convertPairedInstances:[self instanceManager] obj:arguments]];
+  return [[self converter] convertInstances:[self instanceManager] obj:object];
 }
 
 - (id)onReceiveInvokeMethod:(NSString *)channelName
@@ -176,10 +176,10 @@
                                                                instance:[self getPairedObject:pairedInstance]
                                                              methodName:methodName
                                                               arguments:[[self converter]
-                                                                         convertPairedInstancesToInstances:self
+                                                                         convertPairedInstances:[self instanceManager]
                                                                          obj:arguments]];
   
-  return [[self converter] convertInstancesToPairedInstances:self obj:object];
+  return [[self converter] convertInstances:[self instanceManager] obj:object];
 }
 
 - (void)onReceiveDisposeInstancePair:(REFPairedInstance *)pairedInstance {
@@ -245,15 +245,15 @@
 @end
 
 @implementation REFStandardInstanceConverter
-- (id _Nullable)convertInstancesToPairedInstances:(REFTypeChannelMessenger *)messenger
-                                      obj:(id _Nullable)obj {
-  if ([messenger isPaired:obj]) {
-    return [messenger getPairedPairedInstance:obj];
+- (id _Nullable)convertInstances:(REFInstanceManager *)manager
+                             obj:(id _Nullable)obj {
+  if ([manager containsInstance:obj]) {
+    return [REFPairedInstance fromID:[manager getInstanceID:obj]];
   } else if ([obj isKindOfClass:[NSArray class]]) {
     NSArray *array = obj;
     NSMutableArray *newArray = [NSMutableArray arrayWithCapacity:array.count];
     for (id object in array) {
-      [newArray addObject:[self convertInstancesToPairedInstances:messenger obj:object]];
+      [newArray addObject:[self convertInstances:manager obj:object]];
     }
     return newArray;
   } else if ([obj isKindOfClass:[NSDictionary class]]) {
@@ -262,8 +262,8 @@
     [NSMutableDictionary dictionaryWithCapacity:dictionary.count];
     [dictionary enumerateKeysAndObjectsUsingBlock:^(id _Nonnull key, id _Nonnull object,
                                                     BOOL *_Nonnull stop) {
-      [newDictionary setObject:[self convertInstancesToPairedInstances:messenger obj:object]
-                        forKey:[self convertInstancesToPairedInstances:messenger obj:key]];
+      [newDictionary setObject:[self convertInstances:manager obj:object]
+                        forKey:[self convertInstances:manager obj:key]];
     }];
     
     return newDictionary;
@@ -272,15 +272,16 @@
   return obj;
 }
 
-- (id _Nullable)convertPairedInstancesToInstances:(REFTypeChannelMessenger *)messenger
-                                     obj:(id _Nullable)obj {
+- (id _Nullable)convertPairedInstances:(REFInstanceManager *)manager
+                                   obj:(id _Nullable)obj {
   if ([obj isKindOfClass:[REFPairedInstance class]]) {
-    return [messenger getPairedObject:obj];
+    REFPairedInstance *pairedInstance = (REFPairedInstance *) obj;
+    return [manager getInstance:pairedInstance.instanceID];
   } else if ([obj isKindOfClass:[NSArray class]]) {
     NSArray *array = obj;
     NSMutableArray *newArray = [NSMutableArray arrayWithCapacity:array.count];
     for (id object in array) {
-      [newArray addObject:[self convertPairedInstancesToInstances:messenger obj:object]];
+      [newArray addObject:[self convertPairedInstances:manager obj:object]];
     }
     return newArray;
   } else if ([obj isKindOfClass:[NSDictionary class]]) {
@@ -289,8 +290,8 @@
     [NSMutableDictionary dictionaryWithCapacity:dictionary.count];
     [dictionary enumerateKeysAndObjectsUsingBlock:^(id _Nonnull key, id _Nonnull object,
                                                     BOOL *_Nonnull stop) {
-      [newDictionary setObject:[self convertPairedInstancesToInstances:messenger obj:object]
-                        forKey:[self convertPairedInstancesToInstances:messenger obj:key]];
+      [newDictionary setObject:[self convertPairedInstances:manager obj:object]
+                        forKey:[self convertPairedInstances:manager obj:key]];
     }];
     
     return newDictionary;
