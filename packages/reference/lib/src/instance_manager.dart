@@ -153,17 +153,18 @@ class InstanceManager {
   /// Returns `true` if the instance is successfully added. Returns `false` if
   /// the [instanceId] or [instance] is already contained in the manager or the
   /// [instance] is a [num], [bool], or [String].
-  bool addWeakInstance(
-    Object instance, {
+  bool addWeakReference({
+    required Object instance,
+    String? instanceId,
     required void Function(String instanceId) onFinalize,
   }) {
     if (!_isValidInstance(instance)) return false;
 
-    final String instanceId = generateUniqueInstanceId(instance);
+    final String newId = instanceId ?? generateUniqueInstanceId(instance);
 
-    _instanceIds[instance] = instanceId;
-    _weakReferenceCallbacks[instanceId] = onFinalize;
-    return _weakReferences.put(instanceId, instance);
+    _instanceIds[instance] = newId;
+    _weakReferenceCallbacks[newId] = onFinalize;
+    return _weakReferences.put(newId, instance);
   }
 
   /// Add a new instance with [instanceId] as key and [instance] as the value.
@@ -173,10 +174,12 @@ class InstanceManager {
   /// Returns `true` if the pair is successfully added. Returns `false` if
   /// the [instanceId] or [instance] is already contained in the manager or the
   /// [instance] is a [num], [bool], or [String].
-  bool addStrongReference(Object instance, String instanceId) {
+  bool addStrongReference({required Object instance, String? instanceId}) {
     if (!_isValidInstance(instance)) return false;
-    _instanceIds[instance] = instanceId;
-    _strongReferences[instanceId] = instance;
+
+    final String newId = instanceId ?? generateUniqueInstanceId(instance);
+    _instanceIds[instance] = newId;
+    _strongReferences[newId] = instance;
     return true;
   }
 

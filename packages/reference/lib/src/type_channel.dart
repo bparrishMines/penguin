@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 
 import 'instance.dart';
 import 'instance_converter.dart';
-import 'instance_pair_manager.dart';
+import 'instance_manager.dart';
 
 /// A named channel used to handle communication between platform types.
 class TypeChannel<T extends Object> {
@@ -175,6 +175,24 @@ abstract class TypeChannelMessenger {
   @visibleForTesting
   InstanceManager get instanceManager => _instanceManager;
 
+  void _addInstancePair({
+    required Object instance,
+    required String? instanceId,
+    required bool owner,
+  }) {
+    if (owner) {
+      instanceManager.addWeakReference(
+        instance: instance,
+        instanceId: instanceId,
+        onFinalize: (String instanceId) {
+          messageDispatcher.sendDisposeInstancePair(PairedInstance(instanceId));
+        },
+      );
+    } else {
+      instanceManager.addStrongReference(instance: instance);
+    }
+  }
+
   /// Whether [instance] is paired with a [PairedInstance].
   bool isPaired(Object instance) {
     return instanceManager.containsInstance(instance);
@@ -232,12 +250,7 @@ abstract class TypeChannelMessenger {
       );
     }
 
-    instanceManager.addWeakInstance(
-      instance,
-      onFinalize: (String instanceId) {
-        messageDispatcher.sendDisposeInstancePair(PairedInstance(instanceId));
-      },
-    );
+    _addInstancePair(instance: instance, instanceId: null, owner: owner);
     final PairedInstance pairedInstance = getPairedPairedInstance(instance)!;
     await messageDispatcher.sendCreateNewInstancePair(
       channelName,
@@ -334,7 +347,11 @@ abstract class TypeChannelMessenger {
 
     assert(!isPaired(instance), '`$instance` has already been paired.');
 
-    instanceManager.addStrongReference(instance, pairedInstance.instanceId);
+    _addInstancePair(
+      instance: instance,
+      instanceId: pairedInstance.instanceId,
+      owner: owner,
+    );
     return instance;
   }
 

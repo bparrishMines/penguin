@@ -117,21 +117,24 @@ class TestInstancePairManager implements InstanceManager {
   }
 
   @override
-  bool addStrongReference(Object instance, String instanceId) {
+  bool addStrongReference({required Object instance, String? instanceId}) {
     if (containsInstance(true)) return false;
-    instanceToInstanceId[instance] = instanceId;
-    instanceIdToInstance[instanceId] = instance;
+
+    final String newId = instanceId ?? generateUniqueInstanceId(instance);
+    instanceToInstanceId[instance] = newId;
+    instanceIdToInstance[newId] = instance;
     return true;
   }
 
   @override
-  bool addWeakInstance(
-    Object instance, {
+  bool addWeakReference({
+    required Object instance,
+    String? instanceId,
     required void Function(String instanceId) onFinalize,
   }) {
     if (containsInstance(true)) return false;
-    final String instanceId = generateUniqueInstanceId(instance);
-    return addStrongReference(instance, instanceId);
+    final String newId = instanceId ?? generateUniqueInstanceId(instance);
+    return addStrongReference(instance: instance, instanceId: newId);
   }
 
   @override

@@ -1,6 +1,7 @@
 package github.penguin.reference;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -9,7 +10,7 @@ import java.util.Map;
 
 import github.penguin.reference.async.Completable;
 import github.penguin.reference.async.Completer;
-import github.penguin.reference.reference.InstancePairManager;
+import github.penguin.reference.reference.InstanceManager;
 import github.penguin.reference.reference.PairedInstance;
 import github.penguin.reference.reference.TypeChannelHandler;
 import github.penguin.reference.reference.TypeChannelMessageDispatcher;
@@ -18,7 +19,7 @@ import github.penguin.reference.reference.TypeChannelMessenger;
 public class TestClasses {
   public static class TestMessenger extends TypeChannelMessenger {
     public final TestMessageDispatcher testMessageDispatcher = new TestMessageDispatcher();
-    public final TestInstancePairManager testInstancePairManager = new TestInstancePairManager();
+    public final TestInstanceManager testInstancePairManager = new TestInstanceManager();
     public final TestHandler testHandler = new TestHandler();
 
     public TestMessenger() {
@@ -32,13 +33,8 @@ public class TestClasses {
 
     @NonNull
     @Override
-    public InstancePairManager getInstancePairManager() {
+    public InstanceManager getInstanceManager() {
       return testInstancePairManager;
-    }
-
-    @Override
-    public String generateUniqueInstanceId(Object instance) {
-      return "test_instance_id";
     }
   }
 
@@ -88,20 +84,28 @@ public class TestClasses {
     }
   }
 
-  public static class TestInstancePairManager extends InstancePairManager {
+  public static class TestInstanceManager extends InstanceManager {
     final Map<Object, String> instanceToInstanceId = new HashMap<>();
     final Map<String, Object> instanceIdToInstance = new HashMap <>();
 
     @Override
-    public boolean addPair(Object instance, String instanceId, boolean owner) {
-      if (isPaired(instance)) return false;
-      instanceToInstanceId.put(instance, instanceId);
-      instanceIdToInstance.put(instanceId, instance);
+    public boolean addStrongReference(Object instance, @Nullable String instanceId) {
+      if (containsInstance(instance)) return false;
+
+      final String newId = instanceId != null ? instanceId : generateUniqueInstanceId(instance);
+
+      instanceToInstanceId.put(instance, newId);
+      instanceIdToInstance.put(newId, instance);
       return true;
     }
 
     @Override
-    public boolean isPaired(Object instance) {
+    public boolean addWeakReference(Object instance, @Nullable String instanceId) {
+      return addStrongReference(instance, instanceId);
+    }
+
+    @Override
+    public boolean containsInstance(Object instance) {
       return instanceToInstanceId.containsKey(instance);
     }
 
@@ -116,9 +120,14 @@ public class TestClasses {
     }
 
     @Override
-    public void removePair(String instanceId) {
+    public void removeInstance(String instanceId) {
       final Object instance = instanceIdToInstance.remove(instanceId);
       instanceToInstanceId.remove(instance);
+    }
+
+    @Override
+    protected String generateUniqueInstanceId(Object instance) {
+      return "test_instance_id";
     }
   }
 

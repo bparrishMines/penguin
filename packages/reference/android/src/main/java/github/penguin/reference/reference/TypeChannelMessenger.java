@@ -12,31 +12,32 @@ import github.penguin.reference.async.Completer;
 
 public abstract class TypeChannelMessenger {
   private final Map<String, TypeChannelHandler<?>> channelHandlers = new HashMap<>();
-  private final InstancePairManager instancePairManager = new InstancePairManager();
+  private final InstanceManager instanceManager = new InstanceManager();
 
   public abstract TypeChannelMessageDispatcher getMessageDispatcher();
 
-  private boolean addInstancePair(Object instance, PairedInstance pairedInstance, boolean owner) {
-    return getInstancePairManager().addPair(instance, pairedInstance.instanceId, owner);
-  }
-
-  private void removeInstancePair(PairedInstance pairedInstance) {
-    getInstancePairManager().removePair(pairedInstance.instanceId);
+  // TODO: Handle failed add.
+  private void addInstancePair(Object instance, @Nullable String instanceId, boolean owner) {
+    if (owner) {
+      getInstanceManager().addWeakReference(instance, instanceId);
+    } else {
+      getInstanceManager().addStrongReference(instance, instanceId);
+    }
   }
 
   public boolean isPaired(@NonNull Object instance) {
-    return getInstancePairManager().isPaired(instance);
+    return getInstanceManager().containsInstance(instance);
   }
 
   @Nullable
   PairedInstance getPairedPairedInstance(@NonNull Object instance) {
-    final String instanceId = getInstancePairManager().getInstanceId(instance);
+    final String instanceId = getInstanceManager().getInstanceId(instance);
     return instanceId == null ? null : new PairedInstance(instanceId);
   }
 
   @Nullable
   Object getPairedObject(@NonNull PairedInstance pairedInstance) {
-    return getInstancePairManager().getInstance(pairedInstance.instanceId);
+    return getInstanceManager().getInstance(pairedInstance.instanceId);
   }
 
   public void registerHandler(String channelName, @NonNull TypeChannelHandler<?> handler) {
@@ -59,8 +60,8 @@ public abstract class TypeChannelMessenger {
   }
 
   @NonNull
-  public InstancePairManager getInstancePairManager() {
-    return instancePairManager;
+  public InstanceManager getInstanceManager() {
+    return instanceManager;
   }
 
   @NonNull
@@ -73,10 +74,8 @@ public abstract class TypeChannelMessenger {
       throw new IllegalArgumentException("A `TypeChannelHandler` must be set for channel of: $channelName.");
     }
 
-    final PairedInstance pairedInstance = new PairedInstance(generateUniqueInstanceId(instance));
-
-    addInstancePair(instance, pairedInstance, owner);
-
+    addInstancePair(instance, null, owner);
+    final PairedInstance pairedInstance = getPairedPairedInstance(instance);
     final Completer<PairedInstance> instanceCompleter = new Completer<>();
     getMessageDispatcher().sendCreateNewInstancePair(
         channelName,
@@ -164,7 +163,8 @@ public abstract class TypeChannelMessenger {
   public Completable<Void> disposeInstancePair(Object instance) {
     if (!isPaired(instance)) return new Completer<Void>().complete(null).completable;
     final PairedInstance pairedInstance = getPairedPairedInstance(instance);
-    removeInstancePair(pairedInstance);
+    //noinspection ConstantConditions
+    getInstanceManager().removeInstance(pairedInstance.instanceId);
     return getMessageDispatcher().sendDisposeInstancePair(pairedInstance);
   }
 
@@ -182,7 +182,7 @@ public abstract class TypeChannelMessenger {
 
     if (isPaired(instance)) throw new AssertionError();
 
-    addInstancePair(instance, pairedInstance, owner);
+    addInstancePair(instance, pairedInstance.instanceId, owner);
     return instance;
   }
 
@@ -222,10 +222,6 @@ public abstract class TypeChannelMessenger {
           "The Object with the following PairedInstance has already been disposed: "
               + pairedInstance);
     }
-    removeInstancePair(pairedInstance);
-  }
-
-  protected String generateUniqueInstanceId(Object instance) {
-    return String.valueOf(instance.hashCode());
+    getInstanceManager().removeInstance(pairedInstance.instanceId);
   }
 }
