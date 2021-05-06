@@ -1,3 +1,7 @@
+## 0.3.0+1
+
+* Make Java classes public.
+
 ## 0.3.0
 
 **Breaking Change** `InstancePairManager` has been replaced by `InstanceManager`.
