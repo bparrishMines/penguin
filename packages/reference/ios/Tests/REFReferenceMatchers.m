@@ -1,7 +1,7 @@
 #import "REFReferenceMatchers.h"
 
 @implementation REFTestMessenger {
-  REFTestInstanceManager *_testInstancePairManager;
+  REFTestInstanceManager *_testInstanceManager;
 }
 
 - (instancetype)init {
@@ -9,13 +9,13 @@
   if (self) {
     _testHandler = [[REFTestHandler alloc] init];
     [self registerHandler:@"test_channel" handler:_testHandler];
-    _testInstancePairManager = [[REFTestInstanceManager alloc] init];
+    _testInstanceManager = [[REFTestInstanceManager alloc] init];
   }
   return self;
 }
 
 - (REFInstanceManager *)instanceManager {
-  return _testInstancePairManager;
+  return _testInstanceManager;
 }
 @end
 

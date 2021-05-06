@@ -30,8 +30,6 @@
         result(@"return_value");
       } else if ([@"REFERENCE_STATIC_METHOD" isEqualToString:call.method] && [call.arguments[1] isEqualToString:@"aStaticMethod"]) {
         result(@"return_value");
-      } else if ([@"REFERENCE_UNPAIRED_METHOD" isEqualToString:call.method] && [call.arguments[1] isEqualToString:@"aMethod"]) {
-        result(@"return_value");
       } else {
         result(nil);
       }
@@ -86,19 +84,22 @@
 }
 @end
 
-@implementation REFTestMethodChannelMessenger
+@implementation REFTestMethodChannelMessenger {
+  REFTestInstanceManager *_testInstanceManager;
+}
 - (instancetype)init {
   self = [super initWithBinaryMessenger:[[REFTestBinaryMessenger alloc] init]
                             channelName:@"test_method_channel"];
   if (self) {
     _testHandler = [[REFTestHandler alloc] init];
     [self registerHandler:@"test_channel" handler:_testHandler];
+    _testInstanceManager = [[REFTestInstanceManager alloc] init];
   }
   return self;
 }
 
-- (NSString *)generateUniqueInstanceID:(NSObject *)instance {
-  return @"test_instance_id";
+- (REFInstanceManager *)instanceManager {
+  return _testInstanceManager;
 }
 @end
 

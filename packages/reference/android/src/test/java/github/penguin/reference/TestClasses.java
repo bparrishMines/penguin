@@ -85,46 +85,6 @@ public class TestClasses {
   }
 
   public static class TestInstanceManager extends InstanceManager {
-    final Map<Object, String> instanceToInstanceId = new HashMap<>();
-    final Map<String, Object> instanceIdToInstance = new HashMap <>();
-
-    @Override
-    public boolean addStrongReference(Object instance, @Nullable String instanceId) {
-      if (containsInstance(instance)) return false;
-
-      final String newId = instanceId != null ? instanceId : generateUniqueInstanceId(instance);
-
-      instanceToInstanceId.put(instance, newId);
-      instanceIdToInstance.put(newId, instance);
-      return true;
-    }
-
-    @Override
-    public boolean addWeakReference(Object instance, @Nullable String instanceId) {
-      return addStrongReference(instance, instanceId);
-    }
-
-    @Override
-    public boolean containsInstance(Object instance) {
-      return instanceToInstanceId.containsKey(instance);
-    }
-
-    @Override
-    public String getInstanceId(Object instance) {
-      return instanceToInstanceId.get(instance);
-    }
-
-    @Override
-    public Object getInstance(String instanceId) {
-      return instanceIdToInstance.get(instanceId);
-    }
-
-    @Override
-    public void removeInstance(String instanceId) {
-      final Object instance = instanceIdToInstance.remove(instanceId);
-      instanceToInstanceId.remove(instance);
-    }
-
     @Override
     protected String generateUniqueInstanceId(Object instance) {
       return "test_instance_id";
