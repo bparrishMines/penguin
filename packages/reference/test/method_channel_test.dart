@@ -26,45 +26,67 @@ void main() {
     });
   });
 
-  group('$MethodChannelConverter', () {
-    final MethodChannelMessenger messenger = MethodChannelMessenger('a_name');
+  group('$StandardMessageCodecConverter', () {
+    final TestMessenger messenger = TestMessenger();
 
-    test('convertForRemoteMessenger', () {
-      final InstanceConverter converter = messenger.converter;
+    test('convertInstances', () {
       expect(
-        converter.convertInstancesToPairedInstances(messenger, Uint8List(2)),
+        messenger.converter.convertInstances(
+          messenger.instanceManager,
+          Uint8List(2),
+        ),
         isA<Uint8List>(),
       );
       expect(
-        converter.convertInstancesToPairedInstances(messenger, Int32List(2)),
+        messenger.converter.convertInstances(
+          messenger.instanceManager,
+          Int32List(2),
+        ),
         isA<Int32List>(),
       );
       expect(
-        converter.convertInstancesToPairedInstances(messenger, Int64List(2)),
+        messenger.converter.convertInstances(
+          messenger.instanceManager,
+          Int64List(2),
+        ),
         isA<Int64List>(),
       );
       expect(
-        converter.convertInstancesToPairedInstances(messenger, Float64List(2)),
+        messenger.converter.convertInstances(
+          messenger.instanceManager,
+          Float64List(2),
+        ),
         isA<Float64List>(),
       );
     });
 
-    test('convertForLocalMessenger', () {
-      final InstanceConverter converter = messenger.converter;
+    test('convertPairedInstances', () {
       expect(
-        converter.convertPairedInstancesToInstances(messenger, Uint8List(2)),
+        messenger.converter.convertPairedInstances(
+          messenger.instanceManager,
+          Uint8List(2),
+        ),
         isA<Uint8List>(),
       );
       expect(
-        converter.convertPairedInstancesToInstances(messenger, Int32List(2)),
+        messenger.converter.convertPairedInstances(
+          messenger.instanceManager,
+          Int32List(2),
+        ),
         isA<Int32List>(),
       );
       expect(
-        converter.convertPairedInstancesToInstances(messenger, Int64List(2)),
+        messenger.converter.convertPairedInstances(
+          messenger.instanceManager,
+          Int64List(2),
+        ),
         isA<Int64List>(),
       );
       expect(
-        converter.convertPairedInstancesToInstances(messenger, Float64List(2)),
+        messenger.converter.convertPairedInstances(
+          messenger.instanceManager,
+          Float64List(2),
+        ),
         isA<Float64List>(),
       );
     });
@@ -283,10 +305,5 @@ class TestMessenger extends MethodChannelMessenger {
   late final TestHandler testHandler = TestHandler();
 
   @override
-  final TestInstancePairManager instancePairManager = TestInstancePairManager();
-
-  @override
-  String generateUniqueInstanceId(Object instance) {
-    return 'test_reference_id';
-  }
+  final TestInstanceManager instanceManager = TestInstanceManager();
 }

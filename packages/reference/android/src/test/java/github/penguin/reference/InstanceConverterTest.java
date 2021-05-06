@@ -28,13 +28,13 @@ public class InstanceConverterTest {
         Collections.emptyList(), true);
 
     assertEquals(new PairedInstance("test_id"),
-        converter.convertInstancesToPairedInstances(testMessenger, testMessenger.testHandler.testClassInstance)
+        converter.convertInstances(testMessenger.getInstanceManager(), testMessenger.testHandler.testClassInstance)
     );
   }
 
   @Test
   public void convertInstancesToPairedInstances_handlesUnpairedObject() {
-    assertEquals("potato", converter.convertInstancesToPairedInstances(testMessenger, "potato"));
+    assertEquals("potato", converter.convertInstances(testMessenger.getInstanceManager(), "potato"));
   }
 
   @Test
@@ -46,13 +46,13 @@ public class InstanceConverterTest {
     );
 
     assertEquals(
-        converter.convertPairedInstancesToInstances(testMessenger, new PairedInstance("test_id")),
+        converter.convertPairedInstances(testMessenger.getInstanceManager(), new PairedInstance("test_id")),
         testMessenger.testHandler.testClassInstance
     );
   }
 
   @Test
   public void convertPairedInstancesToInstances_handlesNewUnpairedObject() {
-    assertEquals("potato", converter.convertPairedInstancesToInstances(testMessenger, "potato"));
+    assertEquals("potato", converter.convertPairedInstances(testMessenger.getInstanceManager(), "potato"));
   }
 }

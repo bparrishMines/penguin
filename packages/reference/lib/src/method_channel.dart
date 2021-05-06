@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 
 import 'instance.dart';
 import 'instance_converter.dart';
+import 'instance_manager.dart';
 import 'type_channel.dart';
 
 /// Implementation of a [TypeChannelMessenger] using a [MethodChannel].
@@ -41,7 +42,8 @@ class MethodChannelMessenger extends TypeChannelMessenger {
       MethodChannelDispatcher(channel);
 
   @override
-  final MethodChannelConverter converter = MethodChannelConverter();
+  final StandardMessageCodecConverter converter =
+      StandardMessageCodecConverter();
 
   Future<dynamic> _handleMethodCall(MethodCall call) async {
     try {
@@ -79,16 +81,13 @@ class MethodChannelMessenger extends TypeChannelMessenger {
   }
 }
 
-/// Implementation of [StandardInstanceConverter] for [MethodChannel]s.
+/// Implementation of [StandardInstanceConverter] for [StandardMessageCodec]s.
 ///
 /// This allows [Uint8List]s, [Int32List]s, [Int64List]s, and [Float64List]s
 /// to be passed without being converted to `List<Object?>`.
-class MethodChannelConverter extends StandardInstanceConverter {
+class StandardMessageCodecConverter extends StandardInstanceConverter {
   @override
-  Object? convertPairedInstancesToInstances(
-    TypeChannelMessenger messenger,
-    Object? object,
-  ) {
+  Object? convertPairedInstances(InstanceManager manager, Object? object) {
     if (object is Uint8List ||
         object is Int32List ||
         object is Int64List ||
@@ -96,14 +95,11 @@ class MethodChannelConverter extends StandardInstanceConverter {
       return object;
     }
 
-    return super.convertPairedInstancesToInstances(messenger, object);
+    return super.convertPairedInstances(manager, object);
   }
 
   @override
-  Object? convertInstancesToPairedInstances(
-    TypeChannelMessenger messenger,
-    Object? object,
-  ) {
+  Object? convertInstances(InstanceManager manager, Object? object) {
     if (object is Uint8List ||
         object is Int32List ||
         object is Int64List ||
@@ -111,7 +107,7 @@ class MethodChannelConverter extends StandardInstanceConverter {
       return object;
     }
 
-    return super.convertInstancesToPairedInstances(messenger, object);
+    return super.convertInstances(manager, object);
   }
 }
 

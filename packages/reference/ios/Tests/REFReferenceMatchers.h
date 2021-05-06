@@ -21,5 +21,5 @@
 @interface REFTestMessageDispatcher : NSObject<REFTypeChannelMessageDispatcher>
 @end
 
-@interface REFTestInstancePairManager : REFInstancePairManager
+@interface REFTestInstanceManager : REFInstanceManager
 @end

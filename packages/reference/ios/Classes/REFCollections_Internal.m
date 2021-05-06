@@ -70,7 +70,7 @@
 }
 @end
 
-@implementation REFInstancePairManager {
+@implementation REFInstanceManager {
   REFThreadSafeMapTable<NSObject *, NSString *> *_instanceIds;
   REFThreadSafeMapTable<NSString *, NSObject *> *_strongReferences;
   REFThreadSafeMapTable<NSString *, NSObject *> *_weakReferences;
@@ -86,31 +86,35 @@
   return self;
 }
 
-- (BOOL)isPaired:(NSObject *)instance {
+- (BOOL)containsInstance:(NSObject *)instance {
   return [_instanceIds objectForKey:instance] != nil;
 }
 
-- (BOOL)addPair:(NSObject *)instance instanceID:(NSString *)instanceID owner:(BOOL)owner {
-  if ([self isPaired:instance]) return NO;
-  NSAssert(![self getInstance:instanceID], @"");
+- (BOOL)addWeakReference:(NSObject *)instance instanceID:(NSString *_Nullable)instanceID {
+  if ([self containsInstance:instance]) return NO;
   
-  [_instanceIds setObject:instanceID forKey:instance];
-  
-  if (owner) {
-    [_weakReferences setObject:instance forKey:instanceID];
-  } else {
-    [_strongReferences setObject:instance forKey:instanceID];
-  }
+  NSString *newID = instanceID ? instanceID : [self generateUniqueInstanceID:instance];
+
+  [_instanceIds setObject:newID forKey:instance];
+  [_weakReferences setObject:instance forKey:newID];
   return YES;
 }
 
-- (void)removePair:(NSString *)instanceID {
-  NSObject *instance = [self getInstance:instanceID];
-  if (instance) {
-    [_instanceIds removeObjectForKey:instance];
-    [_strongReferences removeObjectForKey:instanceID];
-  }
+- (BOOL)addStrongReference:(NSObject *)instance instanceID:(NSString *_Nullable)instanceID {
+  if ([self containsInstance:instance]) return NO;
   
+  NSString *newID = instanceID ? instanceID : [self generateUniqueInstanceID:instance];
+  
+  [_instanceIds setObject:newID forKey:instance];
+  [_strongReferences setObject:instance forKey:newID];
+  return YES;
+}
+
+- (void)removeInstance:(NSString *)instanceID {
+  NSObject *instance = [self getInstance:instanceID];
+  if (instance) [_instanceIds removeObjectForKey:instance];
+
+  [_strongReferences removeObjectForKey:instanceID];
   [_weakReferences removeObjectForKey:instanceID];
 }
 
@@ -122,5 +126,9 @@
   NSObject *instance = [_strongReferences objectForKey:instanceID];
   if (instance) return instance;
   return [_weakReferences objectForKey:instanceID];
+}
+
+- (NSString *)generateUniqueInstanceID:(NSObject *)instance {
+  return [NSString stringWithFormat:@"%@(%@)", NSStringFromClass(instance.class), [@(instance.hash) stringValue]];
 }
 @end
