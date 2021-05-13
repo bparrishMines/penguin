@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 
 import 'instance.dart';
 import 'instance_converter.dart';
-import 'instance_pair_manager.dart';
+import 'instance_manager.dart';
 
 /// A named channel used to handle communication between platform types.
 class TypeChannel<T extends Object> {
@@ -163,48 +163,46 @@ mixin TypeChannelHandler<T extends Object> {
 abstract class TypeChannelMessenger {
   final Map<String, TypeChannelHandler> _channelHandlers =
       <String, TypeChannelHandler>{};
-  late final InstancePairManager _instancePairManager = InstancePairManager(
-    (String message) {
-      messageDispatcher.sendDisposeInstancePair(PairedInstance(message));
-    },
-  );
+  late final InstanceManager _instanceManager = InstanceManager();
 
   /// Dispatches messages to other [TypeChannelMessenger]s.
   TypeChannelMessageDispatcher get messageDispatcher;
 
-  /// Attempts to convert objects to [PairedInstance]s or [NewUnpairedInstance]s and vice-versa.
+  /// Attempts to convert objects to [PairedInstance]s and vice-versa.
   InstanceConverter get converter => const StandardInstanceConverter();
 
-  /// Maintains access to instance pairs.
+  /// Maintains access to instances.
   @visibleForTesting
-  InstancePairManager get instancePairManager => _instancePairManager;
+  InstanceManager get instanceManager => _instanceManager;
 
-  bool _addPair(
-    Object instance,
-    PairedInstance pairedInstance, {
+  void _addInstancePair({
+    required Object instance,
+    required String? instanceId,
     required bool owner,
   }) {
-    return instancePairManager.addPair(
-      instance,
-      pairedInstance.instanceId,
-      owner: owner,
-    );
-  }
-
-  void _removePair(PairedInstance pairedInstance) {
-    instancePairManager.removePair(pairedInstance.instanceId);
+    if (owner) {
+      instanceManager.addWeakReference(
+        instance: instance,
+        instanceId: instanceId,
+        onFinalize: (String instanceId) {
+          messageDispatcher.sendDisposeInstancePair(PairedInstance(instanceId));
+        },
+      );
+    } else {
+      instanceManager.addStrongReference(instance: instance);
+    }
   }
 
   /// Whether [instance] is paired with a [PairedInstance].
   bool isPaired(Object instance) {
-    return instancePairManager.isPaired(instance);
+    return instanceManager.containsInstance(instance);
   }
 
   /// Retrieve the [PairedInstance] paired to [instance].
   ///
   /// Returns `null` if [instance] is not paired.
   PairedInstance? getPairedPairedInstance(Object instance) {
-    final String? instanceId = instancePairManager.getInstanceId(instance);
+    final String? instanceId = instanceManager.getInstanceId(instance);
     return instanceId == null ? null : PairedInstance(instanceId);
   }
 
@@ -212,7 +210,7 @@ abstract class TypeChannelMessenger {
   ///
   /// Returns `null` is [pairedInstance] is not paired.
   Object? getPairedObject(PairedInstance pairedInstance) {
-    return instancePairManager.getInstance(pairedInstance.instanceId);
+    return instanceManager.getInstance(pairedInstance.instanceId);
   }
 
   /// Sets a [TypeChannelHandler] for a type channel with [channelName].
@@ -252,16 +250,13 @@ abstract class TypeChannelMessenger {
       );
     }
 
-    final PairedInstance pairedInstance = PairedInstance(
-      generateUniqueInstanceId(instance),
-    );
-
-    _addPair(instance, pairedInstance, owner: owner);
+    _addInstancePair(instance: instance, instanceId: null, owner: owner);
+    final PairedInstance pairedInstance = getPairedPairedInstance(instance)!;
     await messageDispatcher.sendCreateNewInstancePair(
       channelName,
       pairedInstance,
-      converter.convertInstancesToPairedInstances(
-        this,
+      converter.convertInstances(
+        instanceManager,
         handler.getCreationArguments(this, instance),
       )! as List<Object?>,
       owner: !owner,
@@ -283,11 +278,10 @@ abstract class TypeChannelMessenger {
     final Object? result = await messageDispatcher.sendInvokeStaticMethod(
       channelName,
       methodName,
-      converter.convertInstancesToPairedInstances(this, arguments)!
-          as List<Object?>,
+      converter.convertInstances(instanceManager, arguments)! as List<Object?>,
     );
 
-    return converter.convertPairedInstancesToInstances(this, result);
+    return converter.convertPairedInstances(instanceManager, result);
   }
 
   /// Send a message to invoke a method on the [PairedInstance] paired with [instance].
@@ -303,11 +297,10 @@ abstract class TypeChannelMessenger {
       channelName,
       getPairedPairedInstance(instance)!,
       methodName,
-      converter.convertInstancesToPairedInstances(this, arguments)!
-          as List<Object?>,
+      converter.convertInstances(instanceManager, arguments)! as List<Object?>,
     );
 
-    return converter.convertPairedInstancesToInstances(this, result);
+    return converter.convertPairedInstances(instanceManager, result);
   }
 
   /// Dispose the instance pair containing [instance].
@@ -318,7 +311,7 @@ abstract class TypeChannelMessenger {
     if (!isPaired(instance)) return;
 
     final PairedInstance pairedInstance = getPairedPairedInstance(instance)!;
-    _removePair(pairedInstance);
+    instanceManager.removeInstance(pairedInstance.instanceId);
     return messageDispatcher.sendDisposeInstancePair(pairedInstance);
   }
 
@@ -346,13 +339,17 @@ abstract class TypeChannelMessenger {
 
     final Object instance = handler.createInstance(
       this,
-      converter.convertPairedInstancesToInstances(this, arguments)!
+      converter.convertPairedInstances(instanceManager, arguments)!
           as List<Object?>,
     );
 
     assert(!isPaired(instance), '`$instance` has already been paired.');
 
-    _addPair(instance, pairedInstance, owner: owner);
+    _addInstancePair(
+      instance: instance,
+      instanceId: pairedInstance.instanceId,
+      owner: owner,
+    );
     return instance;
   }
 
@@ -365,11 +362,11 @@ abstract class TypeChannelMessenger {
     final Object? result = getChannelHandler(channelName)!.invokeStaticMethod(
       this,
       methodName,
-      converter.convertPairedInstancesToInstances(this, arguments)!
+      converter.convertPairedInstances(instanceManager, arguments)!
           as List<Object?>,
     );
 
-    return converter.convertInstancesToPairedInstances(this, result);
+    return converter.convertInstances(instanceManager, result);
   }
 
   /// Invoke a method on [pairedInstance] for a type channel.
@@ -383,11 +380,11 @@ abstract class TypeChannelMessenger {
       this,
       getPairedObject(pairedInstance)!,
       methodName,
-      converter.convertPairedInstancesToInstances(this, arguments)!
+      converter.convertPairedInstances(instanceManager, arguments)!
           as List<Object?>,
     );
 
-    return converter.convertInstancesToPairedInstances(this, result);
+    return converter.convertInstances(instanceManager, result);
   }
 
   /// Dispose of the pair containing [pairedInstance].
@@ -398,12 +395,6 @@ abstract class TypeChannelMessenger {
       'The Object with the following PairedInstance has already been disposed: $pairedInstance',
     );
 
-    _removePair(pairedInstance);
-  }
-
-  /// Generate a new unique instance id for a [PairedInstance].
-  // TODO: combine with class name to make more unique and descriptive.
-  String generateUniqueInstanceId(Object instance) {
-    return instance.hashCode.toString();
+    instanceManager.removeInstance(pairedInstance.instanceId);
   }
 }

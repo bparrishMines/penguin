@@ -100,7 +100,7 @@ void main() {
           testClass,
           owner: true,
         ),
-        completion(const PairedInstance('test_instance_id')),
+        completion(const PairedInstance('test_reference_id')),
       );
       expect(testMessenger.isPaired(testClass), isTrue);
 

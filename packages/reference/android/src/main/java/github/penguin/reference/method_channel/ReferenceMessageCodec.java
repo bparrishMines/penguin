@@ -6,7 +6,7 @@ import java.nio.ByteBuffer;
 import github.penguin.reference.reference.PairedInstance;
 import io.flutter.plugin.common.StandardMessageCodec;
 
-class ReferenceMessageCodec extends StandardMessageCodec {
+public class ReferenceMessageCodec extends StandardMessageCodec {
   private static final byte PAIRED_INSTANCE = (byte) 128;
 
   @Override

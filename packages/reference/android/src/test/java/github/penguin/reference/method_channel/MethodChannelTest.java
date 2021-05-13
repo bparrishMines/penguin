@@ -14,11 +14,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import github.penguin.reference.TestClasses.TestInstancePairManager;
+import github.penguin.reference.TestClasses.TestInstanceManager;
 import github.penguin.reference.TestClasses.TestClass;
 import github.penguin.reference.TestClasses.TestHandler;
 import github.penguin.reference.TestClasses.TestListener;
-import github.penguin.reference.reference.InstancePairManager;
+import github.penguin.reference.reference.InstanceManager;
 import github.penguin.reference.reference.PairedInstance;
 import github.penguin.reference.reference.TypeChannel;
 import io.flutter.plugin.common.BinaryMessenger;
@@ -251,7 +251,7 @@ public class MethodChannelTest {
   }
 
   private static class TestMessenger extends MethodChannelMessenger {
-    public final TestInstancePairManager testInstancePairManager = new TestInstancePairManager();
+    public final TestInstanceManager testInstancePairManager = new TestInstanceManager();
     public final TestBinaryMessenger testMessenger;
     public final TestHandler testHandler = new TestHandler();
 
@@ -263,13 +263,8 @@ public class MethodChannelTest {
 
     @NonNull
     @Override
-    public InstancePairManager getInstancePairManager() {
+    public InstanceManager getInstanceManager() {
       return testInstancePairManager;
-    }
-
-    @Override
-    public String generateUniqueInstanceId(Object instance) {
-      return "test_instance_id";
     }
   }
 

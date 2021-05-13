@@ -13,12 +13,14 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSEnumerator<ObjectType> *)objectEnumerator;
 @end
 
-@interface REFInstancePairManager : NSObject
-- (BOOL)addPair:(NSObject *)instance instanceID:(NSString *)instanceID owner:(BOOL)owner;
-- (BOOL)isPaired:(NSObject *)instance;
+@interface REFInstanceManager : NSObject
+- (BOOL)addWeakReference:(NSObject *)instance instanceID:(NSString *_Nullable)instanceID;
+- (BOOL)addStrongReference:(NSObject *)instance instanceID:(NSString *_Nullable)instanceID;
+- (BOOL)containsInstance:(NSObject *)instance;
 - (NSString *_Nullable)getInstanceID:(NSObject *)instance;
 - (NSObject *_Nullable)getInstance:(NSString *)instanceID;
-- (void)removePair:(NSString *)instanceID;
+- (void)removeInstance:(NSString *)instanceID;
+- (NSString *)generateUniqueInstanceID:(NSObject *)instance;
 @end
 
 NS_ASSUME_NONNULL_END
