@@ -15,6 +15,7 @@ dependencies:
   reference:
     git:
       url: git@github.com:bparrishMines/penguin.git
+      ref: update_generator
       path: packages/reference
   build: ^2.0.0
   path: ^1.7.0
