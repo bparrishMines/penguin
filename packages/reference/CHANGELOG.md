@@ -1,4 +1,4 @@
-## 0.3.0+2
+## 0.3.1
 
 * Add annotations that can ignore a param or method.
 
