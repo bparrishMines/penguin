@@ -1,3 +1,7 @@
+## 0.3.0+2
+
+* Add annotations that can ignore a param or method.
+
 ## 0.3.0+1
 
 * Make Java classes public.
