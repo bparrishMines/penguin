@@ -37,10 +37,16 @@ class TypeChannel<T extends Object> {
   /// Returns `null` if a pair with [instance] has already been added to
   /// [messenger]. Otherwise, it returns the paired [PairedInstance].
   Future<PairedInstance?> createNewInstancePair(
-    T instance, {
+    T instance,
+    List<Object?> arguments, {
     required bool owner,
   }) {
-    return messenger.createNewInstancePair(name, instance, owner: owner);
+    return messenger.createNewInstancePair(
+      name,
+      instance,
+      arguments,
+      owner: owner,
+    );
   }
 
   /// Invoke static method [methodName] on type channel of [name].
@@ -110,12 +116,6 @@ mixin TypeChannelMessageDispatcher {
 
 /// Handles receiving messages and retrieving type arguments for a type channel.
 mixin TypeChannelHandler<T extends Object> {
-  /// Retrieves arguments to instantiate an object.
-  List<Object?> getCreationArguments(
-    TypeChannelMessenger messenger,
-    T instance,
-  );
-
   /// Instantiates a new object with [arguments].
   T createInstance(
     TypeChannelMessenger messenger,
@@ -238,17 +238,11 @@ abstract class TypeChannelMessenger {
   // TODO: What happens when owner is false. Could GC happen before it is given to an object? Temp strong references?
   Future<PairedInstance?> createNewInstancePair(
     String channelName,
-    Object instance, {
+    Object instance,
+    List<Object?> arguments, {
     required bool owner,
   }) async {
     if (isPaired(instance)) return null;
-
-    final TypeChannelHandler? handler = getChannelHandler(channelName);
-    if (handler == null) {
-      throw ArgumentError(
-        'A `TypeChannelHandler` must be set for channel of: $channelName.',
-      );
-    }
 
     _addInstancePair(instance: instance, instanceId: null, owner: owner);
     final PairedInstance pairedInstance = getPairedPairedInstance(instance)!;
@@ -257,7 +251,7 @@ abstract class TypeChannelMessenger {
       pairedInstance,
       converter.convertInstances(
         instanceManager,
-        handler.getCreationArguments(this, instance),
+        arguments,
       )! as List<Object?>,
       owner: !owner,
     );

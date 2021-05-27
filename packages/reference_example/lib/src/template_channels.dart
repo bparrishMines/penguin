@@ -21,10 +21,7 @@ class LibraryImplementations extends $LibraryImplementations {
 
 class ClassTemplateHandler extends $ClassTemplateHandler {
   @override
-  ClassTemplate onCreate(
-    TypeChannelMessenger messenger,
-    $ClassTemplateCreationArgs args,
-  ) {
-    return ClassTemplate(args.fieldTemplate);
+  $ClassTemplate $create(TypeChannelMessenger messenger, int fieldTemplate) {
+    return ClassTemplate(fieldTemplate);
   }
 }

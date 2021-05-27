@@ -6,18 +6,23 @@ import 'package:reference/reference.dart';
 // ReferenceGenerator
 // **************************************************************************
 
-mixin $ClassTemplate {
-  int get fieldTemplate;
-  Future<String> methodTemplate(String parameterTemplate);
-}
-
-class $ClassTemplateCreationArgs {
-  late int fieldTemplate;
-}
+mixin $ClassTemplate {}
 
 class $ClassTemplateChannel extends TypeChannel<$ClassTemplate> {
   $ClassTemplateChannel(TypeChannelMessenger messenger)
       : super(messenger, 'github.penguin/template/template/ClassTemplate');
+
+  Future<PairedInstance?> $create(
+    $ClassTemplate $instance, {
+    required bool $owner,
+    required int fieldTemplate,
+  }) {
+    return createNewInstancePair(
+      $instance,
+      <Object?>[fieldTemplate],
+      owner: $owner,
+    );
+  }
 
   Future<Object?> $invokeStaticMethodTemplate(String parameterTemplate) {
     return sendInvokeStaticMethod(
@@ -37,15 +42,16 @@ class $ClassTemplateChannel extends TypeChannel<$ClassTemplate> {
 }
 
 class $ClassTemplateHandler implements TypeChannelHandler<$ClassTemplate> {
-  $ClassTemplate onCreate(
-    TypeChannelMessenger messenger,
-    $ClassTemplateCreationArgs args,
-  ) {
+  $ClassTemplate $create(TypeChannelMessenger messenger, int fieldTemplate) {
     throw UnimplementedError();
   }
 
   double $onStaticMethodTemplate(
       TypeChannelMessenger messenger, String parameterTemplate) {
+    throw UnimplementedError();
+  }
+
+  String $onMethodTemplate($ClassTemplate $instance, String parameterTemplate) {
     throw UnimplementedError();
   }
 
@@ -75,22 +81,11 @@ class $ClassTemplateHandler implements TypeChannelHandler<$ClassTemplate> {
   }
 
   @override
-  List<Object?> getCreationArguments(
-    TypeChannelMessenger messenger,
-    $ClassTemplate instance,
-  ) {
-    return <Object?>[instance.fieldTemplate];
-  }
-
-  @override
   $ClassTemplate createInstance(
     TypeChannelMessenger messenger,
     List<Object?> arguments,
   ) {
-    return onCreate(
-      messenger,
-      $ClassTemplateCreationArgs()..fieldTemplate = arguments[0] as int,
-    );
+    return $create(messenger, arguments[0] as int);
   }
 
   @override
@@ -104,7 +99,7 @@ class $ClassTemplateHandler implements TypeChannelHandler<$ClassTemplate> {
     Function method = () {};
     switch (methodName) {
       case 'methodTemplate':
-        method = () => instance.methodTemplate(arguments[0] as String);
+        method = () => $onMethodTemplate(instance, arguments[0] as String);
         break;
       default:
         throw ArgumentError.value(

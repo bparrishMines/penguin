@@ -5,100 +5,14 @@ import 'common.dart';
 
 String generateDart(String template, LibraryNode libraryNode) {
   final Library library = Library(template);
+  print(library.aChannel.stringMatch());
   return template
       .replaceAll(
         library.aMixin.exp,
         libraryNode.classes
-            .map<String>(
-              (ClassNode classNode) => library.aMixin
-                  .stringMatch()
-                  .replaceAll(library.aMixin.name, classNode.name)
-                  .replaceAll(
-                    library.aMixin.aField.exp,
-                    classNode.fields
-                        .map<String>(
-                          (FieldNode fieldNode) => library.aMixin.aField
-                              .stringMatch()
-                              .replaceAll(
-                                  library.aMixin.aField.name, fieldNode.name)
-                              .replaceAll(
-                                library.aMixin.aField.type,
-                                getTrueTypeName(fieldNode.type),
-                              ),
-                        )
-                        .join('\n'),
-                  )
-                  .replaceAll(
-                    library.aMixin.aMethod.exp,
-                    classNode.methods
-                        .map<String>(
-                          (MethodNode methodNode) => library.aMixin.aMethod
-                              .stringMatch()
-                              .replaceAll(
-                                library.aMixin.aMethod.returnType,
-                                getTrueTypeName(methodNode.returnType),
-                              )
-                              .replaceAll(
-                                library.aMixin.aMethod.name,
-                                methodNode.name,
-                              )
-                              .replaceAll(
-                                library.aMixin.aMethod.aParameter.exp,
-                                methodNode.parameters
-                                    .map<String>(
-                                      (ParameterNode parameterNode) =>
-                                          library.aMixin.aMethod.aParameter
-                                              .stringMatch()
-                                              .replaceAll(
-                                                library.aMixin.aMethod
-                                                    .aParameter.type,
-                                                getTrueTypeName(
-                                                  parameterNode.type,
-                                                ),
-                                              )
-                                              .replaceAll(
-                                                library.aMixin.aMethod
-                                                    .aParameter.name,
-                                                parameterNode.name,
-                                              ),
-                                    )
-                                    .join(', '),
-                              ),
-                        )
-                        .join('\n\n'),
-                  ),
-            )
-            .join('\n\n'),
-      )
-      .replaceAll(
-        library.aCreationArgsClass.exp,
-        libraryNode.classes
-            .map<String>(
-              (ClassNode classNode) => library.aCreationArgsClass
-                  .stringMatch()
-                  .replaceAll(
-                    library.aCreationArgsClass.className,
-                    classNode.name,
-                  )
-                  .replaceAll(
-                    library.aCreationArgsClass.aField.exp,
-                    classNode.fields
-                        .map<String>(
-                          (FieldNode fieldNode) =>
-                              library.aCreationArgsClass.aField
-                                  .stringMatch()
-                                  .replaceAll(
-                                    library.aCreationArgsClass.aField.name,
-                                    fieldNode.name,
-                                  )
-                                  .replaceAll(
-                                    library.aCreationArgsClass.aField.type,
-                                    getTrueTypeName(fieldNode.type),
-                                  ),
-                        )
-                        .join('\n'),
-                  ),
-            )
+            .map<String>((ClassNode classNode) => library.aMixin
+                .stringMatch()
+                .replaceAll(library.aMixin.name, classNode.name))
             .join('\n\n'),
       )
       .replaceAll(
@@ -122,6 +36,42 @@ String generateDart(String template, LibraryNode libraryNode) {
                   .replaceAll(
                     library.aChannel.channel,
                     classNode.channelName,
+                  )
+                  .replaceAll(
+                    library.aChannel.theChannelCreateMethod.exp,
+                    library.aChannel.theChannelCreateMethod
+                        .stringMatch()
+                        .replaceAll(
+                          library.aChannel.theChannelCreateMethod
+                              .instanceClassName,
+                          classNode.name,
+                        )
+                        .replaceAll(
+                          library.aChannel.theChannelCreateMethod.aFieldName,
+                          classNode.fields
+                              .map<String>(
+                                (FieldNode fieldNode) => fieldNode.name,
+                              )
+                              .join(', '),
+                        )
+                        .replaceAll(
+                          library
+                              .aChannel.theChannelCreateMethod.aParameter.exp,
+                          classNode.fields.map<String>(
+                            (FieldNode fieldNode) {
+                              final ChannelCreateMethodParameter parameter =
+                                  library.aChannel.theChannelCreateMethod
+                                      .aParameter;
+                              return parameter
+                                  .stringMatch()
+                                  .replaceAll(parameter.name, fieldNode.name)
+                                  .replaceAll(
+                                    parameter.type,
+                                    getTrueTypeName(fieldNode.type),
+                                  );
+                            },
+                          ).join(),
+                        ),
                   )
                   .replaceAll(
                     library.aChannel.aStaticMethod.exp,
@@ -257,9 +207,18 @@ String generateDart(String template, LibraryNode libraryNode) {
                           classNode.name,
                         )
                         .replaceAll(
-                          library
-                              .aHandler.theOnCreateMethod.creationArgsClassName,
-                          classNode.name,
+                          library.aHandler.theOnCreateMethod.aField.exp,
+                          classNode.fields.map<String>((FieldNode fieldNode) {
+                            final HandlerOnCreateMethodField field =
+                                library.aHandler.theOnCreateMethod.aField;
+                            return field
+                                .stringMatch()
+                                .replaceAll(field.name, fieldNode.name)
+                                .replaceAll(
+                                  field.type,
+                                  getTrueTypeName(fieldNode.type),
+                                );
+                          }).join(','),
                         ),
                   )
                   .replaceAll(
@@ -292,6 +251,43 @@ String generateDart(String template, LibraryNode libraryNode) {
                                           .replaceAll(
                                             library.aHandler.aStaticMethod
                                                 .aParameter.type,
+                                            getTrueTypeName(parameterNode.type),
+                                          ),
+                                    )
+                                    .join(', '),
+                              ),
+                        )
+                        .join('\n'),
+                  )
+                  .replaceAll(
+                    library.aHandler.aMethod.exp,
+                    classNode.methods
+                        .map<String>(
+                          (MethodNode methodNode) => library.aHandler.aMethod
+                              .stringMatch()
+                              .replaceAll(
+                                library.aHandler.aMethod.name,
+                                methodNode.name.pascalCase,
+                              )
+                              .replaceAll(
+                                library.aHandler.aMethod.returnType,
+                                getTrueTypeName(methodNode.returnType),
+                              )
+                              .replaceAll(
+                                library.aHandler.aMethod.aParameter.exp,
+                                methodNode.parameters
+                                    .map<String>(
+                                      (ParameterNode parameterNode) => library
+                                          .aHandler.aMethod.aParameter
+                                          .stringMatch()
+                                          .replaceAll(
+                                            library.aHandler.aMethod.aParameter
+                                                .name,
+                                            parameterNode.name,
+                                          )
+                                          .replaceAll(
+                                            library.aHandler.aMethod.aParameter
+                                                .type,
                                             getTrueTypeName(parameterNode.type),
                                           ),
                                     )
@@ -336,39 +332,11 @@ String generateDart(String template, LibraryNode libraryNode) {
                     ).join('\n'),
                   )
                   .replaceAll(
-                    library.aHandler.theCreationArguments.exp,
-                    library.aHandler.theCreationArguments
-                        .stringMatch()
-                        .replaceAll(
-                          library.aHandler.theCreationArguments.className,
-                          classNode.name,
-                        )
-                        .replaceAll(
-                          library.aHandler.theCreationArguments.aFieldName.exp,
-                          classNode.fields
-                              .map<String>(
-                                (FieldNode fieldNode) => library
-                                    .aHandler.theCreationArguments.aFieldName
-                                    .stringMatch()
-                                    .replaceAll(
-                                      library.aHandler.theCreationArguments
-                                          .aFieldName.name,
-                                      fieldNode.name,
-                                    ),
-                              )
-                              .join(', '),
-                        ),
-                  )
-                  .replaceAll(
                     library.aHandler.theCreateInstance.exp,
                     library.aHandler.theCreateInstance
                         .stringMatch()
                         .replaceAll(
                           library.aHandler.theCreateInstance.className,
-                          classNode.name,
-                        )
-                        .replaceAll(
-                          library.aHandler.theCreateInstance.argsClassName,
                           classNode.name,
                         )
                         .replaceAll(
@@ -384,10 +352,6 @@ String generateDart(String template, LibraryNode libraryNode) {
                                     getTrueTypeName(
                                       classNode.fields[index].type,
                                     ),
-                                  )
-                                  .replaceAll(
-                                    field.name,
-                                    classNode.fields[index].name,
                                   )
                                   .replaceAll(field.index, index.toString());
                             },
@@ -417,7 +381,7 @@ String generateDart(String template, LibraryNode libraryNode) {
                                   )
                                   .replaceAll(
                                     invoker.instanceMethodName,
-                                    methodNode.name,
+                                    methodNode.name.pascalCase,
                                   )
                                   .replaceAll(
                                     invoker.anArgument.exp,
@@ -559,8 +523,6 @@ class Library with TemplateRegExp {
 
   Mixin get aMixin => Mixin(this);
 
-  CreationArgsClass get aCreationArgsClass => CreationArgsClass(this);
-
   Channel get aChannel => Channel(this);
 
   Handler get aHandler => Handler(this);
@@ -582,40 +544,6 @@ class Mixin with TemplateRegExp {
   final Library parent;
 
   final RegExp name = TemplateRegExp.regExp(r'(?<=mixin \$)ClassTemplate');
-
-  ClassMethod get aMethod => ClassMethod(this);
-  ClassField get aField => ClassField(this);
-}
-
-class ClassField with TemplateRegExp {
-  ClassField(this.parent);
-
-  final RegExp type = TemplateRegExp.regExp(r'^int');
-  final RegExp name = TemplateRegExp.regExp(r'fieldTemplate(?=;)');
-
-  @override
-  final RegExp exp = TemplateRegExp.regExp('int get fieldTemplate;');
-
-  @override
-  final Mixin parent;
-}
-
-class ClassMethod with TemplateRegExp {
-  ClassMethod(this.parent);
-
-  final RegExp returnType = TemplateRegExp.regExp(r'^Future<String>');
-
-  final RegExp name = TemplateRegExp.regExp(r'methodTemplate');
-
-  Parameter get aParameter => Parameter(this);
-
-  @override
-  final RegExp exp = TemplateRegExp.regExp(
-    r'Future<String> methodTemplate\([^;]+;',
-  );
-
-  @override
-  final Mixin parent;
 }
 
 class Parameter with TemplateRegExp {
@@ -630,35 +558,6 @@ class Parameter with TemplateRegExp {
 
   @override
   final TemplateRegExp parent;
-}
-
-class CreationArgsClass with TemplateRegExp {
-  CreationArgsClass(this.parent);
-
-  final RegExp className = TemplateRegExp.regExp(r'(?<=class \$)ClassTemplate');
-
-  CreationArgsClassField get aField => CreationArgsClassField(this);
-
-  @override
-  final RegExp exp = TemplateRegExp.regExp(
-    r'class \$ClassTemplateCreationArgs[^\}]+\}',
-  );
-
-  @override
-  final Library parent;
-}
-
-class CreationArgsClassField with TemplateRegExp {
-  CreationArgsClassField(this.parent);
-
-  final RegExp type = TemplateRegExp.regExp(r'(?<=late )int');
-  final RegExp name = TemplateRegExp.regExp(r'fieldTemplate(?=;)');
-
-  @override
-  final RegExp exp = TemplateRegExp.regExp(r'late int fieldTemplate;');
-
-  @override
-  final CreationArgsClass parent;
 }
 
 class Channel with TemplateRegExp {
@@ -680,6 +579,8 @@ class Channel with TemplateRegExp {
     r"(?<=super\(messenger, ')github\.penguin/template/template/ClassTemplate",
   );
 
+  ChannelCreateMethod get theChannelCreateMethod => ChannelCreateMethod(this);
+
   ChannelStaticMethod get aStaticMethod => ChannelStaticMethod(this);
 
   ChannelMethod get aMethod => ChannelMethod(this);
@@ -691,6 +592,41 @@ class Channel with TemplateRegExp {
 
   @override
   final Library parent;
+}
+
+class ChannelCreateMethod with TemplateRegExp {
+  ChannelCreateMethod(this.parent);
+
+  final RegExp instanceClassName = TemplateRegExp.regExp(
+    r'(?<=\$)ClassTemplate(?= \$instance)',
+  );
+
+  ChannelCreateMethodParameter get aParameter =>
+      ChannelCreateMethodParameter(this);
+
+  final RegExp aFieldName =
+      TemplateRegExp.regExp(r'(?<=<Object\?>\[)fieldTemplate(?=\])');
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'Future<PairedInstance\?> \$create[^\}]+\}[^\}]+\}',
+  );
+
+  @override
+  final Channel parent;
+}
+
+class ChannelCreateMethodParameter with TemplateRegExp {
+  ChannelCreateMethodParameter(this.parent);
+
+  final RegExp type = TemplateRegExp.regExp(r'(?<=required )int');
+  final RegExp name = TemplateRegExp.regExp(r'fieldTemplate(?=,)');
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp('required int fieldTemplate,');
+
+  @override
+  final ChannelCreateMethod parent;
 }
 
 class ChannelStaticMethod with TemplateRegExp {
@@ -773,11 +709,10 @@ class Handler with TemplateRegExp {
 
   HandlerStaticMethod get aStaticMethod => HandlerStaticMethod(this);
 
+  HandlerMethod get aMethod => HandlerMethod(this);
+
   HandlerStaticMethodInvoker get aStaticMethodInvoker =>
       HandlerStaticMethodInvoker(this);
-
-  HandlerCreationArguments get theCreationArguments =>
-      HandlerCreationArguments(this);
 
   HandlerCreateInstance get theCreateInstance => HandlerCreateInstance(this);
 
@@ -792,36 +727,34 @@ class Handler with TemplateRegExp {
   final Library parent;
 }
 
-class HandlerStaticMethodName with TemplateRegExp {
-  HandlerStaticMethodName(this.parent);
-
-  final RegExp name = TemplateRegExp.regExp(r'StaticMethodTemplate');
-
-  @override
-  final RegExp exp = TemplateRegExp.regExp(
-    r'this\.\$onStaticMethodTemplate,',
-  );
-
-  @override
-  final Handler parent;
-}
-
 class HandlerOnCreateMethod with TemplateRegExp {
   HandlerOnCreateMethod(this.parent);
 
   final RegExp returnType =
       TemplateRegExp.regExp(r'(?<=\$)ClassTemplate(?= onCreate)');
 
-  final RegExp creationArgsClassName =
-      TemplateRegExp.regExp(r'(?<=\$)ClassTemplate(?=CreationArgs args)');
+  HandlerOnCreateMethodField get aField => HandlerOnCreateMethodField(this);
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'\$ClassTemplate onCreate\([^\}]+\}',
+    r'\$ClassTemplate \$create\([^\}]+\}',
   );
 
   @override
   final Handler parent;
+}
+
+class HandlerOnCreateMethodField with TemplateRegExp {
+  HandlerOnCreateMethodField(this.parent);
+
+  final RegExp type = TemplateRegExp.regExp(r'^int');
+  final RegExp name = TemplateRegExp.regExp(r'fieldTemplate$');
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp('int fieldTemplate');
+
+  @override
+  final HandlerOnCreateMethod parent;
 }
 
 class HandlerStaticMethod with TemplateRegExp {
@@ -829,13 +762,31 @@ class HandlerStaticMethod with TemplateRegExp {
 
   final RegExp name = TemplateRegExp.regExp(r'StaticMethodTemplate(?=\()');
 
-  final RegExp returnType = TemplateRegExp.regExp(r'(?<=final )double');
+  final RegExp returnType = TemplateRegExp.regExp(r'^double');
 
   Parameter get aParameter => Parameter(this);
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
     r'double \$onStaticMethodTemplate\([^\}]+\}',
+  );
+
+  @override
+  final Handler parent;
+}
+
+class HandlerMethod with TemplateRegExp {
+  HandlerMethod(this.parent);
+
+  final RegExp name = TemplateRegExp.regExp(r'MethodTemplate(?=\()');
+
+  final RegExp returnType = TemplateRegExp.regExp(r'^String');
+
+  Parameter get aParameter => Parameter(this);
+
+  @override
+  final RegExp exp = TemplateRegExp.regExp(
+    r'String \$onMethodTemplate\([^\}]+\}',
   );
 
   @override
@@ -878,47 +829,12 @@ class MethodArgument with TemplateRegExp {
   final TemplateRegExp parent;
 }
 
-class HandlerCreationArguments with TemplateRegExp {
-  HandlerCreationArguments(this.parent);
-
-  final RegExp className = TemplateRegExp.regExp(
-    r'(?<=\$)ClassTemplate(?= instance,)',
-  );
-
-  HandlerCreationArgumentsFieldName get aFieldName =>
-      HandlerCreationArgumentsFieldName(this);
-
-  @override
-  final RegExp exp = TemplateRegExp.regExp(
-    r'getCreationArguments[^\}]+\}',
-  );
-
-  @override
-  final Handler parent;
-}
-
-class HandlerCreationArgumentsFieldName with TemplateRegExp {
-  HandlerCreationArgumentsFieldName(this.parent);
-
-  final RegExp name = TemplateRegExp.regExp(r'fieldTemplate');
-
-  @override
-  final RegExp exp =
-      TemplateRegExp.regExp(r'(?<=<Object\?>\[\s*)instance\.fieldTemplate');
-
-  @override
-  final HandlerCreationArguments parent;
-}
-
 class HandlerCreateInstance with TemplateRegExp {
   HandlerCreateInstance(this.parent);
 
   final RegExp className = TemplateRegExp.regExp(
     r'ClassTemplate(?= createInstance\()',
   );
-
-  final RegExp argsClassName =
-      TemplateRegExp.regExp(r'ClassTemplate(?=CreationArgs\()');
 
   HandlerCreateInstanceField get aField => HandlerCreateInstanceField(this);
 
@@ -934,15 +850,12 @@ class HandlerCreateInstance with TemplateRegExp {
 class HandlerCreateInstanceField with TemplateRegExp {
   HandlerCreateInstanceField(this.parent);
 
-  final RegExp name = TemplateRegExp.regExp(r'fieldTemplate');
-
   final RegExp index = TemplateRegExp.regExp(r'0(?=\])');
 
   final RegExp type = TemplateRegExp.regExp(r'int$');
 
   @override
-  final RegExp exp =
-      TemplateRegExp.regExp(r'\.\.fieldTemplate = arguments\[0\] as int');
+  final RegExp exp = TemplateRegExp.regExp(r'arguments\[0\] as int');
 
   @override
   final HandlerCreateInstance parent;
@@ -974,7 +887,7 @@ class HandlerInvokeMethodInvoker with TemplateRegExp {
   );
 
   final RegExp instanceMethodName = TemplateRegExp.regExp(
-    r'(?<=instance\.)methodTemplate',
+    r'(?<=\$on)MethodTemplate',
   );
 
   MethodArgument get anArgument => MethodArgument(this);
