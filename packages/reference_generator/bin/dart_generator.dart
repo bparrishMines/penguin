@@ -5,7 +5,6 @@ import 'common.dart';
 
 String generateDart(String template, LibraryNode libraryNode) {
   final Library library = Library(template);
-  print(library.aChannel.stringMatch());
   return template
       .replaceAll(
         library.aMixin.exp,
@@ -233,10 +232,6 @@ String generateDart(String template, LibraryNode libraryNode) {
                                 methodNode.name.pascalCase,
                               )
                               .replaceAll(
-                                library.aHandler.aStaticMethod.returnType,
-                                getTrueTypeName(methodNode.returnType),
-                              )
-                              .replaceAll(
                                 library.aHandler.aStaticMethod.aParameter.exp,
                                 methodNode.parameters
                                     .map<String>(
@@ -268,10 +263,6 @@ String generateDart(String template, LibraryNode libraryNode) {
                               .replaceAll(
                                 library.aHandler.aMethod.name,
                                 methodNode.name.pascalCase,
-                              )
-                              .replaceAll(
-                                library.aHandler.aMethod.returnType,
-                                getTrueTypeName(methodNode.returnType),
                               )
                               .replaceAll(
                                 library.aHandler.aMethod.aParameter.exp,
@@ -537,7 +528,7 @@ class Mixin with TemplateRegExp {
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'mixin \$ClassTemplate \{[^\}]+\}',
+    r'mixin \$ClassTemplate \{\}',
   );
 
   @override
@@ -762,13 +753,11 @@ class HandlerStaticMethod with TemplateRegExp {
 
   final RegExp name = TemplateRegExp.regExp(r'StaticMethodTemplate(?=\()');
 
-  final RegExp returnType = TemplateRegExp.regExp(r'^double');
-
   Parameter get aParameter => Parameter(this);
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'double \$onStaticMethodTemplate\([^\}]+\}',
+    r'Object\? \$onStaticMethodTemplate\([^\}]+\}',
   );
 
   @override
@@ -780,13 +769,11 @@ class HandlerMethod with TemplateRegExp {
 
   final RegExp name = TemplateRegExp.regExp(r'MethodTemplate(?=\()');
 
-  final RegExp returnType = TemplateRegExp.regExp(r'^String');
-
   Parameter get aParameter => Parameter(this);
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'String \$onMethodTemplate\([^\}]+\}',
+    r'Object\? \$onMethodTemplate\([^\}]+\}',
   );
 
   @override

@@ -46,12 +46,13 @@ class $ClassTemplateHandler implements TypeChannelHandler<$ClassTemplate> {
     throw UnimplementedError();
   }
 
-  double $onStaticMethodTemplate(
+  Object? $onStaticMethodTemplate(
       TypeChannelMessenger messenger, String parameterTemplate) {
     throw UnimplementedError();
   }
 
-  String $onMethodTemplate($ClassTemplate $instance, String parameterTemplate) {
+  Object? $onMethodTemplate(
+      $ClassTemplate $instance, String parameterTemplate) {
     throw UnimplementedError();
   }
 
