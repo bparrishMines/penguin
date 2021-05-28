@@ -37,16 +37,16 @@ String generateDart(String template, LibraryNode libraryNode) {
                     classNode.channelName,
                   )
                   .replaceAll(
-                    library.aChannel.theChannelCreateMethod.exp,
-                    library.aChannel.theChannelCreateMethod
+                    library.aChannel.theCreateMethod.exp,
+                    library.aChannel.theCreateMethod
                         .stringMatch()
                         .replaceAll(
-                          library.aChannel.theChannelCreateMethod
+                          library.aChannel.theCreateMethod
                               .instanceClassName,
                           classNode.name,
                         )
                         .replaceAll(
-                          library.aChannel.theChannelCreateMethod.aFieldName,
+                          library.aChannel.theCreateMethod.aFieldName,
                           classNode.fields
                               .map<String>(
                                 (FieldNode fieldNode) => fieldNode.name,
@@ -55,11 +55,11 @@ String generateDart(String template, LibraryNode libraryNode) {
                         )
                         .replaceAll(
                           library
-                              .aChannel.theChannelCreateMethod.aParameter.exp,
+                              .aChannel.theCreateMethod.aParameter.exp,
                           classNode.fields.map<String>(
                             (FieldNode fieldNode) {
                               final ChannelCreateMethodParameter parameter =
-                                  library.aChannel.theChannelCreateMethod
+                                  library.aChannel.theCreateMethod
                                       .aParameter;
                               return parameter
                                   .stringMatch()
@@ -574,7 +574,7 @@ class Channel with TemplateRegExp {
     r"(?<=super\(messenger, ')github\.penguin/template/template/ClassTemplate",
   );
 
-  ChannelCreateMethod get theChannelCreateMethod => ChannelCreateMethod(this);
+  ChannelCreateMethod get theCreateMethod => ChannelCreateMethod(this);
 
   ChannelStaticMethod get aStaticMethod => ChannelStaticMethod(this);
 
