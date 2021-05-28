@@ -32,7 +32,7 @@ jobs:
       - uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 29
-          script: cd $PLUGIN_DIR/example && flutter drive test_driver/reference.dart
+          script: cd $PLUGIN_DIR/example && flutter drive test_driver/reference_example.dart
 
   verify_ios:
     name: Ios Tests
@@ -54,4 +54,4 @@ jobs:
       - name: Ios Drive Tests
         run: |
           cd $PLUGIN_DIR/example
-          flutter drive test_driver/reference.dart
+          flutter drive test_driver/reference_example.dart
