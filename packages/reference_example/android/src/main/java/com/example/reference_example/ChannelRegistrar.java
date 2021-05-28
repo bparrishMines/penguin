@@ -9,13 +9,18 @@ public class ChannelRegistrar extends LibraryTemplate.$ChannelRegistrar {
 
   public static class ClassTemplateHandler extends LibraryTemplate.$ClassTemplateHandler {
     @Override
-    public ClassTemplateProxy onCreate(TypeChannelMessenger messenger, LibraryTemplate.$ClassTemplateCreationArgs args) {
-      return new ClassTemplateProxy(args.fieldTemplate);
+    public ClassTemplateProxy $create(TypeChannelMessenger messenger, Integer fieldTemplate) {
+      return new ClassTemplateProxy(fieldTemplate);
     }
 
     @Override
-    public Object $onStaticMethodTemplate(TypeChannelMessenger messenger, String parameterTemplate) {
+    public Double $onStaticMethodTemplate(TypeChannelMessenger messenger, String parameterTemplate) {
       return ClassTemplateProxy.staticMethodTemplate(parameterTemplate);
+    }
+
+    @Override
+    public String $onMethodTemplate(LibraryTemplate.$ClassTemplate $instance, String parameterTemplate) {
+      return ((ClassTemplateProxy) $instance).methodTemplate(parameterTemplate);
     }
   }
 
@@ -25,7 +30,7 @@ public class ChannelRegistrar extends LibraryTemplate.$ChannelRegistrar {
     }
 
     @Override
-    public LibraryTemplate.$ClassTemplateHandler getClassTemplateHandler() {
+    public ClassTemplateHandler getClassTemplateHandler() {
       return new ClassTemplateHandler();
     }
   }

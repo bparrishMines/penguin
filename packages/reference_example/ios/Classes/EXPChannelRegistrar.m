@@ -7,7 +7,7 @@
 @end
 
 @implementation EXPClassTemplateProxy
-+(NSNumber *)staticMethodTemplate:(NSString *)parameterTemplate {
++ (NSNumber *)staticMethodTemplate:(NSString *)parameterTemplate {
   return @([ClassTemplate staticMethodTemplate:parameterTemplate]);
 }
 
@@ -24,21 +24,22 @@
   return self;
 }
 
-- (NSNumber * _Nullable)fieldTemplate {
-  return nil;
-}
-
 - (NSString *_Nullable)methodTemplate:(NSString *_Nullable)parameterTemplate {
   return [_classTemplate methodTemplate:parameterTemplate];
 }
 @end
 
 @implementation EXPClassTemplateHandler
-- (NSObject<REFClassTemplate> *)onCreate:(REFTypeChannelMessenger *)messenger args:(REFClassTemplateCreationArgs *)args {
-  return [[EXPClassTemplateProxy alloc] initWithFieldTemplate:args.fieldTemplate];
+- (EXPClassTemplateProxy *)_create:(REFTypeChannelMessenger *)messenger fieldTemplate:(NSNumber *)fieldTemplate {
+  return [[EXPClassTemplateProxy alloc] initWithFieldTemplate:fieldTemplate];
 }
 
-- (NSNumber *)on_staticMethodTemplate:(REFTypeChannelMessenger *)messenger parameterTemplate:(NSString *)parameterTemplate {
+- (NSNumber *)_onStaticMethodTemplate:(REFTypeChannelMessenger *)messenger parameterTemplate:(NSString *)parameterTemplate {
   return [EXPClassTemplateProxy staticMethodTemplate:parameterTemplate];
+}
+
+- (NSString *)_onMethodTemplate:(NSObject<REFClassTemplate> *)_instance parameterTemplate:(NSString *)parameterTemplate {
+  EXPClassTemplateProxy *proxy = (EXPClassTemplateProxy *)_instance;
+  return [proxy methodTemplate:parameterTemplate];
 }
 @end

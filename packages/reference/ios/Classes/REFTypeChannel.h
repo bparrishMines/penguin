@@ -7,7 +7,6 @@ NS_ASSUME_NONNULL_BEGIN
 @class REFTypeChannelMessenger;
 
 @protocol REFTypeChannelHandler <NSObject>
-- (NSArray *)getCreationArguments:(REFTypeChannelMessenger *)messenger instance:(NSObject *)instance;
 - (id)createInstance:(REFTypeChannelMessenger *)messenger arguments:(NSArray *)arguments;
 - (id _Nullable)invokeStaticMethod:(REFTypeChannelMessenger *)messenger
                         methodName:(NSString *)methodName
@@ -26,6 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setHandler:(NSObject<REFTypeChannelHandler> *_Nullable)handler;
 - (void)removeHandler;
 - (void)createNewInstancePair:(ObjectType)instance
+                    arguments:(NSArray<id> *)arguments
                         owner:(BOOL)owner
                    completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion;
 - (void)invokeStaticMethod:(NSString *)methodName
@@ -84,6 +84,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (id<REFInstanceConverter>)converter;
 - (void)createNewInstancePair:(NSString *)channelName
                      instance:(NSObject *)instance
+                    arguments:(NSArray<id> *)arguments
                         owner:(BOOL)owner
                    completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion;
 - (void)sendInvokeStaticMethod:(NSString *)channelName

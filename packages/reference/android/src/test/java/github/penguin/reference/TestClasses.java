@@ -1,12 +1,7 @@
 package github.penguin.reference;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import github.penguin.reference.async.Completable;
 import github.penguin.reference.async.Completer;
@@ -62,11 +57,6 @@ public class TestClasses {
 
   public static class TestHandler implements TypeChannelHandler<TestClass> {
     public final TestClass testClassInstance = new TestClass();
-
-    @Override
-    public List<Object> getCreationArguments(TypeChannelMessenger manager, TestClass instance) {
-      return Collections.emptyList();
-    }
 
     @Override
     public TestClass createInstance(TypeChannelMessenger manager, List<Object> arguments) {

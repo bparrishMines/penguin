@@ -4,28 +4,20 @@ import com.example.reference_example.fakelibrary.ClassTemplate;
 
 public class ClassTemplateProxy implements LibraryTemplate.$ClassTemplate {
   public final ClassTemplate classTemplate;
-  private final Integer fieldTemplate;
 
   public static Double staticMethodTemplate(String parameterTemplate) {
     return ClassTemplate.staticMethodTemplate(parameterTemplate);
   }
 
   public ClassTemplateProxy(Integer fieldTemplate) {
-    this(new ClassTemplate(fieldTemplate), fieldTemplate);
+    this(new ClassTemplate(fieldTemplate));
   }
 
-  public ClassTemplateProxy(ClassTemplate classTemplate, Integer fieldTemplate) {
+  public ClassTemplateProxy(ClassTemplate classTemplate) {
     this.classTemplate = classTemplate;
-    this.fieldTemplate = fieldTemplate;
   }
 
-  @Override
-  public Object methodTemplate(String parameterTemplate) {
+  public String methodTemplate(String parameterTemplate) {
     return classTemplate.methodTemplate(parameterTemplate);
-  }
-
-  @Override
-  public Integer getFieldTemplate() {
-    return fieldTemplate;
   }
 }

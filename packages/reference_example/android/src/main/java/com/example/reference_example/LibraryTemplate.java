@@ -4,11 +4,11 @@ package com.example.reference_example;
 
 import androidx.annotation.NonNull;
 
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 
 import github.penguin.reference.async.Completable;
+import github.penguin.reference.reference.PairedInstance;
 import github.penguin.reference.reference.TypeChannel;
 import github.penguin.reference.reference.TypeChannelHandler;
 import github.penguin.reference.reference.TypeChannelMessenger;
@@ -18,19 +18,15 @@ import github.penguin.reference.reference.TypeChannelMessenger;
 // **************************************************************************
 
 public class LibraryTemplate {
-  public interface $ClassTemplate {
-    Integer getFieldTemplate();
-
-    Object methodTemplate(String parameterTemplate) throws Exception;
-  }
-
-  public static class $ClassTemplateCreationArgs {
-    public Integer fieldTemplate;
-  }
+  public interface $ClassTemplate { }
 
   public static class $ClassTemplateChannel extends TypeChannel<$ClassTemplate> {
     public $ClassTemplateChannel(@NonNull TypeChannelMessenger messenger) {
       super(messenger, "github.penguin/template/template/ClassTemplate");
+    }
+
+    public Completable<PairedInstance> $create($ClassTemplate $instance, boolean $owner, Integer fieldTemplate) {
+      return createNewInstancePair($instance, Arrays.<Object>asList(fieldTemplate), $owner);
     }
 
     public Completable<Object> $invokeStaticMethodTemplate(String parameterTemplate) {
@@ -43,14 +39,18 @@ public class LibraryTemplate {
   }
 
   public static class $ClassTemplateHandler implements TypeChannelHandler<$ClassTemplate> {
-    public $ClassTemplate onCreate(TypeChannelMessenger messenger, $ClassTemplateCreationArgs args)
+    public $ClassTemplate $create(TypeChannelMessenger messenger, Integer fieldTemplate)
         throws Exception {
-      return null;
+      throw new UnsupportedOperationException();
     }
 
     public Object $onStaticMethodTemplate(TypeChannelMessenger messenger, String parameterTemplate)
         throws Exception {
-      return null;
+      throw new UnsupportedOperationException();
+    }
+
+    public Object $onMethodTemplate($ClassTemplate $instance, String parameterTemplate) throws Exception {
+      throw new UnsupportedOperationException();
     }
 
     @Override
@@ -67,17 +67,9 @@ public class LibraryTemplate {
     }
 
     @Override
-    public List<Object> getCreationArguments(
-        TypeChannelMessenger messenger, $ClassTemplate instance) {
-      return Arrays.<Object>asList(instance.getFieldTemplate());
-    }
-
-    @Override
     public $ClassTemplate createInstance(TypeChannelMessenger messenger, List<Object> arguments)
         throws Exception {
-      final $ClassTemplateCreationArgs args = new $ClassTemplateCreationArgs();
-      args.fieldTemplate = (Integer) arguments.get(0);
-      return onCreate(messenger, args);
+      return $create(messenger, (Integer) arguments.get(0));
     }
 
     @Override
@@ -87,10 +79,9 @@ public class LibraryTemplate {
         String methodName,
         List<Object> arguments)
         throws Exception {
-      for (Method method : $ClassTemplate.class.getMethods()) {
-        if (method.getName().equals(methodName)) {
-          return method.invoke(instance, arguments.toArray());
-        }
+      switch(methodName) {
+        case "methodTemplate":
+          return $onMethodTemplate(instance, (String) arguments.get(0));
       }
 
       throw new UnsupportedOperationException(

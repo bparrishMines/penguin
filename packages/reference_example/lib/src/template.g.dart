@@ -62,23 +62,16 @@ class $ClassTemplateHandler implements TypeChannelHandler<$ClassTemplate> {
     String methodName,
     List<Object?> arguments,
   ) {
-    // ignore: prefer_final_locals, prefer_function_declarations_over_variables
-    Function method = () {};
     switch (methodName) {
       case 'staticMethodTemplate':
-        method =
-            () => $onStaticMethodTemplate(messenger, arguments[0] as String);
-        break;
-      default:
-        throw ArgumentError.value(
-          methodName,
-          'methodName',
-          'Unable to invoke static method `$methodName`',
-        );
+        return $onStaticMethodTemplate(messenger, arguments[0] as String);
     }
 
-    // ignore: dead_code
-    return method();
+    throw ArgumentError.value(
+      methodName,
+      'methodName',
+      'Unable to invoke static method `$methodName`',
+    );
   }
 
   @override
@@ -96,12 +89,9 @@ class $ClassTemplateHandler implements TypeChannelHandler<$ClassTemplate> {
     String methodName,
     List<Object?> arguments,
   ) {
-    // ignore: prefer_final_locals, prefer_function_declarations_over_variables
-    Function method = () {};
     switch (methodName) {
       case 'methodTemplate':
-        method = () => $onMethodTemplate(instance, arguments[0] as String);
-        break;
+        return $onMethodTemplate(instance, arguments[0] as String);
       default:
         throw ArgumentError.value(
           instance,
@@ -109,9 +99,6 @@ class $ClassTemplateHandler implements TypeChannelHandler<$ClassTemplate> {
           'Unable to invoke method `$methodName` on',
         );
     }
-
-    // ignore: dead_code
-    return method();
   }
 }
 

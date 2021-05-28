@@ -26,14 +26,6 @@ class TestHandler with TypeChannelHandler<TestClass> {
   }
 
   @override
-  List<Object?> getCreationArguments(
-    TypeChannelMessenger manager,
-    TestClass instance,
-  ) {
-    return <Object?>[];
-  }
-
-  @override
   Object? invokeMethod(
     TypeChannelMessenger manager,
     TestClass instance,
