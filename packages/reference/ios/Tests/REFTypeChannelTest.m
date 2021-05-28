@@ -22,13 +22,19 @@
   REFTestClass *testClass = [[REFTestClass alloc] init];
   
   __block REFPairedInstance *blockPairedInstance;
-  [_testChannel createNewInstancePair:testClass owner:YES completion:^(REFPairedInstance *pairedInstance, NSError *error) {
+  [_testChannel createNewInstancePair:testClass
+                            arguments:@[]
+                                owner:YES
+                           completion:^(REFPairedInstance *pairedInstance, NSError *error) {
     blockPairedInstance = pairedInstance;
   }];
   XCTAssertEqualObjects([REFPairedInstance fromID:@"test_instance_id"], blockPairedInstance);
   XCTAssertTrue([_testMessenger isPaired:testClass]);
   
-  [_testChannel createNewInstancePair:testClass owner:YES completion:^(REFPairedInstance *pairedInstance, NSError *error) {
+  [_testChannel createNewInstancePair:testClass
+                            arguments:@[]
+                                owner:YES
+                           completion:^(REFPairedInstance *pairedInstance, NSError *error) {
     blockPairedInstance = pairedInstance;
   }];
   XCTAssertNil(blockPairedInstance);
@@ -44,7 +50,10 @@
 
 - (void)testInvokeMethod {
   REFTestClass *testClass = [[REFTestClass alloc] init];
-  [_testChannel createNewInstancePair:testClass owner:YES completion:^(REFPairedInstance *pairedInstance, NSError *error) {}];
+  [_testChannel createNewInstancePair:testClass
+                            arguments:@[]
+                                owner:YES
+                           completion:^(REFPairedInstance *pairedInstance, NSError *error) {}];
   
   __block id blockResult;
   [_testChannel invokeMethod:testClass methodName:@"aMethod" arguments:@[] completion:^(id result, NSError *error) {
@@ -56,7 +65,10 @@
 - (void)testDisposeInstancePair {
   REFTestClass *testClass = [[REFTestClass alloc] init];
   
-  [_testChannel createNewInstancePair:testClass owner:YES completion:^(REFPairedInstance *pairedInstance, NSError *error) {}];
+  [_testChannel createNewInstancePair:testClass
+                            arguments:@[]
+                                owner:YES
+                           completion:^(REFPairedInstance *pairedInstance, NSError *error) {}];
   [_testChannel disposeInstancePair:testClass completion:^(NSError *error) {}];
   XCTAssertFalse([_testMessenger isPaired:testClass]);
 
