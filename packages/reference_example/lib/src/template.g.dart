@@ -92,13 +92,13 @@ class $ClassTemplateHandler implements TypeChannelHandler<$ClassTemplate> {
     switch (methodName) {
       case 'methodTemplate':
         return $onMethodTemplate(instance, arguments[0] as String);
-      default:
-        throw ArgumentError.value(
-          instance,
-          'instance',
-          'Unable to invoke method `$methodName` on',
-        );
     }
+
+    throw ArgumentError.value(
+      instance,
+      'instance',
+      'Unable to invoke method `$methodName` on',
+    );
   }
 }
 
