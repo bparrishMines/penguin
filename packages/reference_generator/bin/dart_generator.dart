@@ -265,6 +265,10 @@ String generateDart(String template, LibraryNode libraryNode) {
                                 methodNode.name.pascalCase,
                               )
                               .replaceAll(
+                                library.aHandler.aMethod.className,
+                                classNode.name,
+                              )
+                              .replaceAll(
                                 library.aHandler.aMethod.aParameter.exp,
                                 methodNode.parameters
                                     .map<String>(
@@ -722,7 +726,7 @@ class HandlerOnCreateMethod with TemplateRegExp {
   HandlerOnCreateMethod(this.parent);
 
   final RegExp returnType =
-      TemplateRegExp.regExp(r'(?<=\$)ClassTemplate(?= onCreate)');
+      TemplateRegExp.regExp(r'(?<=\$)ClassTemplate(?= \$create)');
 
   HandlerOnCreateMethodField get aField => HandlerOnCreateMethodField(this);
 
@@ -769,6 +773,9 @@ class HandlerMethod with TemplateRegExp {
 
   final RegExp name = TemplateRegExp.regExp(r'MethodTemplate(?=\()');
 
+  final RegExp className =
+      TemplateRegExp.regExp(r'(?<=\$)ClassTemplate(?= \$instance)');
+
   Parameter get aParameter => Parameter(this);
 
   @override
@@ -795,7 +802,7 @@ class HandlerStaticMethodInvoker with TemplateRegExp {
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r"case 'staticMethodTemplate'[^;]+;[^;]+;",
+    r"case 'staticMethodTemplate'[^;]+;",
   );
 
   @override
@@ -859,7 +866,7 @@ class HandlerInvokeMethod with TemplateRegExp {
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r'Object\? invokeMethod\(.+return method\(\);\s+\}(?=\s+\})',
+    r'Object\? invokeMethod\([^\}]+\}[^\}]+\}',
   );
 
   @override
@@ -881,7 +888,7 @@ class HandlerInvokeMethodInvoker with TemplateRegExp {
 
   @override
   final RegExp exp = TemplateRegExp.regExp(
-    r"case 'methodTemplate'[^;]+;[^;]+;",
+    r"case 'methodTemplate'[^;]+;",
   );
 
   @override
