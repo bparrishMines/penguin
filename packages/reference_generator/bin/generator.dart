@@ -47,7 +47,6 @@ String runGenerator(
               '\$\$${currentToken.replacement}\$\$',
             );
       } else {
-        print(currentToken.replacement);
         return resultBuffer.toString().replaceAll(
               currentToken.from ?? resultBuffer.toString(),
               data[currentToken.replacement],
