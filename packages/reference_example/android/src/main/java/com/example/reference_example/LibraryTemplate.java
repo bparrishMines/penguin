@@ -19,7 +19,7 @@ import github.penguin.reference.reference.TypeChannelMessenger;
 // ReferenceGenerator
 // **************************************************************************
 
-public class LibraryTemplate {
+public class /*replace libraryName*/LibraryTemplate/**/ {
   /*iterate classes class*/
   public interface $__class_name__ { }
   /**/
