@@ -15,11 +15,11 @@ class $__class_name__Channel extends TypeChannel<$__class_name__> {
   $__class_name__Channel(TypeChannelMessenger messenger)
       : super(messenger, '__class_channel__');
 
-  Future<PairedInstance?> $$create(
+  Future<PairedInstance?> $create$(
     $__class_name__ $instance, {
     required bool $owner,
     /*iterate fields field*/
-    required /*replace field.type*/ int /**/ $$field_name$$,
+    required /*replace field_type*/ int /**/ $$field_name$$,
     /**/
   }) {
     return createNewInstancePair(
@@ -33,7 +33,7 @@ class $__class_name__Channel extends TypeChannel<$__class_name__> {
 
   /*iterate staticMethods staticMethod*/
   Future<Object?> $__staticMethod_name__(
-    /*iterate parameters parameter*/ /*replace parameter.type*/ String /**/ $$parameter_name$$,
+    /*iterate parameters parameter*/ /*replace parameter_type*/ String /**/ $$parameter_name$$,
     /**/
   ) {
     return sendInvokeStaticMethod(
@@ -48,7 +48,7 @@ class $__class_name__Channel extends TypeChannel<$__class_name__> {
   /*iterate methods method*/
   Future<Object?> $__method_name__(
     $__class_name__ $instance,
-    /*iterate parameters parameter*/ /*replace parameter.type*/ String /**/ $$parameter_name$$,
+    /*iterate parameters parameter*/ /*replace parameter_type*/ String /**/ $$parameter_name$$,
     /**/
   ) {
     return sendInvokeMethod(
