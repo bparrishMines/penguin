@@ -30,18 +30,18 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
       super(messenger, "__class_channel__");
     }
 
-    public Completable<PairedInstance> $$create($__class_name__ $instance, boolean $owner, /*iterate fields field*//*replace field.type*/Integer/**/ __field_name__/**/) {
+    public Completable<PairedInstance> $$create($__class_name__ $instance, boolean $owner, /*iterate fields field*//*replace field_type*/Integer/**/ __field_name__/**/) {
       return createNewInstancePair($instance, Arrays.<Object>asList(/*iterate fields field*/__field_name__/**/), $owner);
     }
 
     /*iterate staticMethods staticMethod*/
-    public Completable<Object> $__staticMethod_name__(/*iterate parameters parameter*//*replace parameter.type*/String/**/ __parameter_name__/**/) {
+    public Completable<Object> $__staticMethod_name__(/*iterate parameters parameter*//*replace parameter_type*/String/**/ __parameter_name__/**/) {
       return invokeStaticMethod("__staticMethod_name__", Arrays.<Object>asList(/*iterate parameters parameter*/__parameter_name__/**/));
     }
     /**/
 
     /*iterate methods method*/
-    public Completable<Object> $__method_name__($__class_name__ $instance, /*iterate parameters parameter*//*replace parameter.type*/String/**/ __parameter_name__/**/) {
+    public Completable<Object> $__method_name__($__class_name__ $instance, /*iterate parameters parameter*//*replace parameter_type*/String/**/ __parameter_name__/**/) {
       return invokeMethod($instance, "__method_name__", Arrays.<Object>asList(/*iterate parameters parameter*/__parameter_name__/**/));
     }
     /**/
@@ -50,20 +50,20 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
 
   /*iterate classes class*/
   public static class $__class_name__Handler implements TypeChannelHandler<$__class_name__> {
-    public $__class_name__ $$create(TypeChannelMessenger messenger, /*iterate fields field*//*replace field.type*/Integer/**/ __field_name__/**/)
+    public $__class_name__ $$create(TypeChannelMessenger messenger, /*iterate fields field*//*replace field_type*/Integer/**/ __field_name__/**/)
         throws Exception {
       throw new UnsupportedOperationException();
     }
 
     /*iterate staticMethods staticMethod*/
-    public Object $__staticMethod_name__(TypeChannelMessenger messenger, /*iterate parameters parameter*//*replace parameter.type*/String/**/ __parameter_name__/**/)
+    public Object $__staticMethod_name__(TypeChannelMessenger messenger, /*iterate parameters parameter*//*replace parameter_type*/String/**/ __parameter_name__/**/)
         throws Exception {
       throw new UnsupportedOperationException();
     }
     /**/
 
     /*iterate methods method*/
-    public Object $__method_name__($__class_name__ $instance, /*iterate parameters parameter*//*replace parameter.type*/String/**/ __parameter_name__/**/) throws Exception {
+    public Object $__method_name__($__class_name__ $instance, /*iterate parameters parameter*//*replace parameter_type*/String/**/ __parameter_name__/**/) throws Exception {
       throw new UnsupportedOperationException();
     }
     /**/
