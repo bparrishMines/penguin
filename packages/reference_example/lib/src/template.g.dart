@@ -6,40 +6,62 @@ import 'package:reference/reference.dart';
 // ReferenceGenerator
 // **************************************************************************
 
-mixin $ClassTemplate {}
+/*iterate classes class*/
+mixin $__class_name__ {}
+/**/
 
-class $ClassTemplateChannel extends TypeChannel<$ClassTemplate> {
-  $ClassTemplateChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'github.penguin/template/template/ClassTemplate');
+/*iterate classes class*/
+class $__class_name__Channel extends TypeChannel<$__class_name__> {
+  $__class_name__Channel(TypeChannelMessenger messenger)
+      : super(messenger, '__class_channel__');
 
-  Future<PairedInstance?> $create(
-    $ClassTemplate $instance, {
+  Future<PairedInstance?> $$create(
+    $__class_name__ $instance, {
     required bool $owner,
-    required int fieldTemplate,
+    /*iterate fields field*/
+    required /*replace field.type*/ int /**/ $$field_name$$,
+    /**/
   }) {
     return createNewInstancePair(
       $instance,
-      <Object?>[fieldTemplate],
+      <Object?>[
+        /*iterate fields field*/ $$field_name$$, /**/
+      ],
       owner: $owner,
     );
   }
 
-  Future<Object?> $invokeStaticMethodTemplate(String parameterTemplate) {
+  /*iterate staticMethods staticMethod*/
+  Future<Object?> $__staticMethod_name__(
+    /*iterate parameters parameter*/ /*replace parameter.type*/ String /**/ $$parameter_name$$,
+    /**/
+  ) {
     return sendInvokeStaticMethod(
-      'staticMethodTemplate',
-      <Object?>[parameterTemplate],
+      '__staticMethod_name__',
+      <Object?>[
+        /*iterate parameters parameter*/ $$parameter_name$$, /**/
+      ],
     );
   }
+  /**/
 
-  Future<Object?> $invokeMethodTemplate(
-      $ClassTemplate instance, String parameterTemplate) {
+  /*iterate methods method*/
+  Future<Object?> $__method_name__(
+    $__class_name__ $instance,
+    /*iterate parameters parameter*/ /*replace parameter.type*/ String /**/ $$parameter_name$$,
+    /**/
+  ) {
     return sendInvokeMethod(
-      instance,
-      'methodTemplate',
-      <Object?>[parameterTemplate],
+      $instance,
+      '__method_name__',
+      <Object?>[
+        /*iterate parameters parameter*/ $$parameter_name$$, /**/
+      ],
     );
   }
+  /**/
 }
+/**/
 
 class $ClassTemplateHandler implements TypeChannelHandler<$ClassTemplate> {
   $ClassTemplate $create(TypeChannelMessenger messenger, int fieldTemplate) {
