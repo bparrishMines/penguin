@@ -2,18 +2,18 @@ package com.example.reference_example;
 
 import com.example.reference_example.fakelibrary.ClassTemplate;
 
-public class ClassTemplateProxy implements LibraryTemplate.$ClassTemplate {
+public class classnameProxy implements LibraryTemplate.$__class_name__ {
   public final ClassTemplate classTemplate;
 
   public static Double staticMethodTemplate(String parameterTemplate) {
     return ClassTemplate.staticMethodTemplate(parameterTemplate);
   }
 
-  public ClassTemplateProxy(Integer fieldTemplate) {
+  public classnameProxy(Integer fieldTemplate) {
     this(new ClassTemplate(fieldTemplate));
   }
 
-  public ClassTemplateProxy(ClassTemplate classTemplate) {
+  public classnameProxy(ClassTemplate classTemplate) {
     this.classTemplate = classTemplate;
   }
 

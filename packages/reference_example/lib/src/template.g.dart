@@ -107,7 +107,7 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$$class_name$$> {
       case '__staticMethod_name__':
         return $__staticMethod_name__(
             messenger,
-            /*iterate parameters parameter*/ arguments[0]
+            /*iterate parameters parameter*/ arguments[/*replace parameter_index*/ 0 /**/]
                 as /*replace parameter_type*/ String /**/ /**/);
       /**/
     }
@@ -126,7 +126,7 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$$class_name$$> {
   ) {
     return $$create(
         messenger,
-        /*iterate fields field*/ arguments[0]
+        /*iterate fields field*/ arguments[/*replace field_index*/ 0 /**/]
             as /*replace field_type*/ int /**/ /**/);
   }
 
@@ -142,7 +142,7 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$$class_name$$> {
       case '__method_name__':
         return $__method_name__(
             instance,
-            /*iterate parameters parameter*/ arguments[0]
+            /*iterate parameters parameter*/ arguments[/*replace parameter_index*/ 0 /**/]
                 as /*replace parameter_type*/ String /**/ /**/);
       /**/
     }
