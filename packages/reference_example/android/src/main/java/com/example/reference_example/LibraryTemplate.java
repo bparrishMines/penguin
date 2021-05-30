@@ -31,18 +31,18 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
     }
 
     public Completable<PairedInstance> $$create($__class_name__ $instance, boolean $owner/*iterate fields field*/,/*replace field_type*/Integer/**/ __field_name__/**/) {
-      return createNewInstancePair($instance, Arrays.<Object>asList(/*iterate fields field*/__field_name__/**/), $owner);
+      return createNewInstancePair($instance, Arrays.<Object>asList(/*iterate :join=',' fields field*/__field_name__/**/), $owner);
     }
 
     /*iterate staticMethods staticMethod*/
     public Completable<Object> $__staticMethod_name__(/*iterate :join=',' parameters parameter*//*replace parameter_type*/String/**/ __parameter_name__/**/) {
-      return invokeStaticMethod("__staticMethod_name__", Arrays.<Object>asList(/*iterate parameters parameter*/__parameter_name__/**/));
+      return invokeStaticMethod("__staticMethod_name__", Arrays.<Object>asList(/*iterate :join=',' parameters parameter*/__parameter_name__/**/));
     }
     /**/
 
     /*iterate methods method*/
     public Completable<Object> $__method_name__($__class_name__ $instance/*iterate parameters parameter*/,/*replace parameter_type*/String/**/ __parameter_name__/**/) {
-      return invokeMethod($instance, "__method_name__", Arrays.<Object>asList(/*iterate parameters parameter*/__parameter_name__/**/));
+      return invokeMethod($instance, "__method_name__", Arrays.<Object>asList(/*iterate :join=',' parameters parameter*/__parameter_name__/**/));
     }
     /**/
   }
