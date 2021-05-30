@@ -1,8 +1,80 @@
-import 'package:recase/recase.dart';
+import 'dart:collection';
+
 import 'package:reference_generator/src/ast.dart';
 
-import 'common.dart';
+import 'generator.dart';
 
+String generateDart(String template, LibraryNode libraryNode) {
+  final Map<String, Object> data = <String, Object>{};
+
+  final List<Map<String, Object>> classes = <Map<String, Object>>[];
+  for (ClassNode classNode in libraryNode.classes) {
+    final Map<String, Object> classData = <String, Object>{};
+    classData['name'] = classNode.name;
+    classData['channel'] = classNode.channelName;
+
+    final List<Map<String, Object>> fields = <Map<String, Object>>[];
+    for (FieldNode fieldNode in classNode.fields) {
+      final Map<String, Object> fieldData = <String, Object>{};
+      fieldData['name'] = fieldNode.name;
+      fieldData['type'] = getTrueTypeName(fieldNode.type);
+
+      fields.add(fieldData);
+    }
+    classData['fields'] = fields;
+
+    final List<Map<String, Object>> staticMethods = <Map<String, Object>>[];
+    for (MethodNode methodNode in classNode.staticMethods) {
+      final Map<String, Object> methodData = <String, Object>{};
+      methodData['name'] = methodNode.name;
+
+      final List<Map<String, Object>> parameters = <Map<String, Object>>[];
+      for (ParameterNode parameterNode in methodNode.parameters) {
+        final Map<String, Object> parameterData = <String, Object>{};
+        parameterData['name'] = parameterNode.name;
+        parameterData['type'] = getTrueTypeName(parameterNode.type);
+
+        parameters.add(parameterData);
+      }
+      methodData['parameters'] = parameters;
+
+      staticMethods.add(methodData);
+    }
+    classData['staticMethods'] = staticMethods;
+
+    final List<Map<String, Object>> methods = <Map<String, Object>>[];
+    for (MethodNode methodNode in classNode.methods) {
+      final Map<String, Object> methodData = <String, Object>{};
+      methodData['name'] = methodNode.name;
+
+      final List<Map<String, Object>> parameters = <Map<String, Object>>[];
+      for (ParameterNode parameterNode in methodNode.parameters) {
+        final Map<String, Object> parameterData = <String, Object>{};
+        parameterData['name'] = parameterNode.name;
+        parameterData['type'] = getTrueTypeName(parameterNode.type);
+
+        parameters.add(parameterData);
+      }
+      methodData['parameters'] = parameters;
+
+      methods.add(methodData);
+    }
+    classData['methods'] = methods;
+
+    classes.add(classData);
+  }
+
+  data['classes'] = classes;
+
+  final Queue<String> templateQueue = Queue<String>();
+  for (int i = 0; i < template.length; i++) {
+    templateQueue.addLast(template[i]);
+  }
+
+  return runGenerator(templateQueue, Queue<Token>(), StringBuffer(), data);
+}
+
+/*
 String generateDart(String template, LibraryNode libraryNode) {
   final Library library = Library(template);
   return template
@@ -487,7 +559,7 @@ String generateDart(String template, LibraryNode libraryNode) {
             ),
       );
 }
-
+*/
 String getTrueTypeName(ReferenceType type) {
   final Iterable<String> typeArguments = type.typeArguments.map<String>(
     (ReferenceType type) => getTrueTypeName(type),
@@ -504,500 +576,500 @@ String getTrueTypeName(ReferenceType type) {
   return type.name;
 }
 
-class Library with TemplateRegExp {
-  Library(this.template);
-
-  @override
-  final String template;
-
-  @override
-  RegExp get exp => null;
-
-  @override
-  TemplateRegExp get parent => null;
-
-  Mixin get aMixin => Mixin(this);
-
-  Channel get aChannel => Channel(this);
-
-  Handler get aHandler => Handler(this);
-
-  LibraryImplementations get theImplementations => LibraryImplementations(this);
-
-  ChannelRegistrar get theChannelRegistrar => ChannelRegistrar(this);
-}
-
-class Mixin with TemplateRegExp {
-  Mixin(this.parent);
-
-  @override
-  final RegExp exp = TemplateRegExp.regExp(
-    r'mixin \$ClassTemplate \{\}',
-  );
-
-  @override
-  final Library parent;
-
-  final RegExp name = TemplateRegExp.regExp(r'(?<=mixin \$)ClassTemplate');
-}
-
-class Parameter with TemplateRegExp {
-  Parameter(this.parent);
-
-  final RegExp type = TemplateRegExp.regExp(r'^String');
-
-  final RegExp name = TemplateRegExp.regExp(r'parameterTemplate$');
-
-  @override
-  final RegExp exp = TemplateRegExp.regExp(r'String parameterTemplate');
-
-  @override
-  final TemplateRegExp parent;
-}
-
-class Channel with TemplateRegExp {
-  Channel(this.parent);
-
-  final RegExp className = TemplateRegExp.regExp(
-    r'(?<=class \$)ClassTemplate',
-  );
-
-  final RegExp typeArgumentClassName = TemplateRegExp.regExp(
-    r'(?<=extends TypeChannel<\$)ClassTemplate',
-  );
-
-  final RegExp constructorClassName = TemplateRegExp.regExp(
-    r'(?<=\$)ClassTemplate(?=Channel\()',
-  );
-
-  final RegExp channel = TemplateRegExp.regExp(
-    r"(?<=super\(messenger, ')github\.penguin/template/template/ClassTemplate",
-  );
-
-  ChannelCreateMethod get theCreateMethod => ChannelCreateMethod(this);
-
-  ChannelStaticMethod get aStaticMethod => ChannelStaticMethod(this);
-
-  ChannelMethod get aMethod => ChannelMethod(this);
-
-  @override
-  final RegExp exp = TemplateRegExp.regExp(
-    r'class \$ClassTemplateChannel.*}(?=\s*class \$ClassTemplateHandler)',
-  );
-
-  @override
-  final Library parent;
-}
-
-class ChannelCreateMethod with TemplateRegExp {
-  ChannelCreateMethod(this.parent);
-
-  final RegExp instanceClassName = TemplateRegExp.regExp(
-    r'(?<=\$)ClassTemplate(?= \$instance)',
-  );
-
-  ChannelCreateMethodParameter get aParameter =>
-      ChannelCreateMethodParameter(this);
-
-  final RegExp aFieldName =
-      TemplateRegExp.regExp(r'(?<=<Object\?>\[)fieldTemplate(?=\])');
-
-  @override
-  final RegExp exp = TemplateRegExp.regExp(
-    r'Future<PairedInstance\?> \$create[^\}]+\}[^\}]+\}',
-  );
-
-  @override
-  final Channel parent;
-}
-
-class ChannelCreateMethodParameter with TemplateRegExp {
-  ChannelCreateMethodParameter(this.parent);
-
-  final RegExp type = TemplateRegExp.regExp(r'(?<=required )int');
-  final RegExp name = TemplateRegExp.regExp(r'fieldTemplate(?=,)');
-
-  @override
-  final RegExp exp = TemplateRegExp.regExp('required int fieldTemplate,');
-
-  @override
-  final ChannelCreateMethod parent;
-}
-
-class ChannelStaticMethod with TemplateRegExp {
-  ChannelStaticMethod(this.parent);
-
-  final RegExp name = TemplateRegExp.regExp(r'StaticMethodTemplate');
-
-  final RegExp nameAsParameter = TemplateRegExp.regExp(r'staticMethodTemplate');
-
-  Parameter get aParameter => Parameter(this);
-
-  ParameterName get aParameterName => ParameterName(this);
-
-  @override
-  final RegExp exp = TemplateRegExp.regExp(
-    r'Future<Object\?> \$invokeStaticMethodTemplate[^\}]+\}',
-  );
-
-  @override
-  final Channel parent;
-}
-
-class ChannelMethod with TemplateRegExp {
-  ChannelMethod(this.parent);
-
-  final RegExp name = TemplateRegExp.regExp(
-    r'(?<=Future<Object\?>\s\$invoke)MethodTemplate',
-  );
-
-  final RegExp instanceClassName = TemplateRegExp.regExp(
-    r'(?<=\$)ClassTemplate(?= instance)',
-  );
-
-  final RegExp channelMethodName = TemplateRegExp.regExp(
-    r"(?<=')methodTemplate(?=')",
-  );
-
-  Parameter get aParameter => Parameter(this);
-
-  ParameterName get aParameterName => ParameterName(this);
-
-  @override
-  final RegExp exp = TemplateRegExp.regExp(
-    r'Future<Object\?>\s\$invokeMethodTemplate[^\}]+\}',
-  );
-
-  @override
-  final Channel parent;
-}
-
-class ParameterName with TemplateRegExp {
-  ParameterName(this.parent);
-
-  final RegExp name = TemplateRegExp.regExp(r'parameterTemplate');
-
-  @override
-  final RegExp exp =
-      TemplateRegExp.regExp(r'(?<=<Object\?>\[\s*)parameterTemplate');
-
-  @override
-  final TemplateRegExp parent;
-}
-
-class Handler with TemplateRegExp {
-  Handler(this.parent);
-
-  final RegExp className = TemplateRegExp.regExp(
-    r'(?<=class \$)ClassTemplate(?=Handler)',
-  );
-
-  final RegExp typeArgClassName = TemplateRegExp.regExp(
-    r'(?<=TypeChannelHandler<\$)ClassTemplate',
-  );
-
-  final RegExp constructorClassName = TemplateRegExp.regExp(
-    r'(?<=\$)ClassTemplate(?=Handler\()',
-  );
-
-  HandlerOnCreateMethod get theOnCreateMethod => HandlerOnCreateMethod(this);
-
-  HandlerStaticMethod get aStaticMethod => HandlerStaticMethod(this);
-
-  HandlerMethod get aMethod => HandlerMethod(this);
-
-  HandlerStaticMethodInvoker get aStaticMethodInvoker =>
-      HandlerStaticMethodInvoker(this);
-
-  HandlerCreateInstance get theCreateInstance => HandlerCreateInstance(this);
-
-  HandlerInvokeMethod get theHandlerInvokeMethod => HandlerInvokeMethod(this);
-
-  @override
-  final RegExp exp = TemplateRegExp.regExp(
-    r'class \$ClassTemplateHandler.*}(?=\s*class \$LibraryImplementations)',
-  );
-
-  @override
-  final Library parent;
-}
-
-class HandlerOnCreateMethod with TemplateRegExp {
-  HandlerOnCreateMethod(this.parent);
-
-  final RegExp returnType =
-      TemplateRegExp.regExp(r'(?<=\$)ClassTemplate(?= \$create)');
-
-  HandlerOnCreateMethodField get aField => HandlerOnCreateMethodField(this);
-
-  @override
-  final RegExp exp = TemplateRegExp.regExp(
-    r'\$ClassTemplate \$create\([^\}]+\}',
-  );
-
-  @override
-  final Handler parent;
-}
-
-class HandlerOnCreateMethodField with TemplateRegExp {
-  HandlerOnCreateMethodField(this.parent);
-
-  final RegExp type = TemplateRegExp.regExp(r'^int');
-  final RegExp name = TemplateRegExp.regExp(r'fieldTemplate$');
-
-  @override
-  final RegExp exp = TemplateRegExp.regExp('int fieldTemplate');
-
-  @override
-  final HandlerOnCreateMethod parent;
-}
-
-class HandlerStaticMethod with TemplateRegExp {
-  HandlerStaticMethod(this.parent);
-
-  final RegExp name = TemplateRegExp.regExp(r'StaticMethodTemplate(?=\()');
-
-  Parameter get aParameter => Parameter(this);
-
-  @override
-  final RegExp exp = TemplateRegExp.regExp(
-    r'Object\? \$onStaticMethodTemplate\([^\}]+\}',
-  );
-
-  @override
-  final Handler parent;
-}
-
-class HandlerMethod with TemplateRegExp {
-  HandlerMethod(this.parent);
-
-  final RegExp name = TemplateRegExp.regExp(r'MethodTemplate(?=\()');
-
-  final RegExp className =
-      TemplateRegExp.regExp(r'(?<=\$)ClassTemplate(?= \$instance)');
-
-  Parameter get aParameter => Parameter(this);
-
-  @override
-  final RegExp exp = TemplateRegExp.regExp(
-    r'Object\? \$onMethodTemplate\([^\}]+\}',
-  );
-
-  @override
-  final Handler parent;
-}
-
-class HandlerStaticMethodInvoker with TemplateRegExp {
-  HandlerStaticMethodInvoker(this.parent);
-
-  final RegExp methodName = TemplateRegExp.regExp(
-    r"(?<=')staticMethodTemplate(?=')",
-  );
-
-  final RegExp methodHandler = TemplateRegExp.regExp(
-    r'(?<=\$on)StaticMethodTemplate',
-  );
-
-  MethodArgument get anArgument => MethodArgument(this);
-
-  @override
-  final RegExp exp = TemplateRegExp.regExp(
-    r"case 'staticMethodTemplate'[^;]+;",
-  );
-
-  @override
-  final Handler parent;
-}
-
-class MethodArgument with TemplateRegExp {
-  MethodArgument(this.parent);
-
-  final RegExp type = TemplateRegExp.regExp(r'(?<=as )String');
-
-  final RegExp index = TemplateRegExp.regExp(r'(?<=\[)0');
-
-  @override
-  final RegExp exp = TemplateRegExp.regExp(r'arguments\[0\] as String');
-
-  @override
-  final TemplateRegExp parent;
-}
-
-class HandlerCreateInstance with TemplateRegExp {
-  HandlerCreateInstance(this.parent);
-
-  final RegExp className = TemplateRegExp.regExp(
-    r'ClassTemplate(?= createInstance\()',
-  );
-
-  HandlerCreateInstanceField get aField => HandlerCreateInstanceField(this);
-
-  @override
-  final RegExp exp = TemplateRegExp.regExp(
-    r'\$ClassTemplate createInstance[^\}]+\}',
-  );
-
-  @override
-  final Handler parent;
-}
-
-class HandlerCreateInstanceField with TemplateRegExp {
-  HandlerCreateInstanceField(this.parent);
-
-  final RegExp index = TemplateRegExp.regExp(r'0(?=\])');
-
-  final RegExp type = TemplateRegExp.regExp(r'int$');
-
-  @override
-  final RegExp exp = TemplateRegExp.regExp(r'arguments\[0\] as int');
-
-  @override
-  final HandlerCreateInstance parent;
-}
-
-class HandlerInvokeMethod with TemplateRegExp {
-  HandlerInvokeMethod(this.parent);
-
-  final RegExp instanceClassName = TemplateRegExp.regExp(
-    r'ClassTemplate(?= instance,)',
-  );
-
-  HandlerInvokeMethodInvoker get anInvoker => HandlerInvokeMethodInvoker(this);
-
-  @override
-  final RegExp exp = TemplateRegExp.regExp(
-    r'Object\? invokeMethod\([^\}]+\}[^\}]+\}',
-  );
-
-  @override
-  final Handler parent;
-}
-
-class HandlerInvokeMethodInvoker with TemplateRegExp {
-  HandlerInvokeMethodInvoker(this.parent);
-
-  final RegExp methodName = TemplateRegExp.regExp(
-    r"(?<=')methodTemplate(?=')",
-  );
-
-  final RegExp instanceMethodName = TemplateRegExp.regExp(
-    r'(?<=\$on)MethodTemplate',
-  );
-
-  MethodArgument get anArgument => MethodArgument(this);
-
-  @override
-  final RegExp exp = TemplateRegExp.regExp(
-    r"case 'methodTemplate'[^;]+;",
-  );
-
-  @override
-  final HandlerInvokeMethod parent;
-}
-
-class LibraryImplementations with TemplateRegExp {
-  LibraryImplementations(this.parent);
-
-  @override
-  final RegExp exp =
-      TemplateRegExp.regExp(r'class \$LibraryImplementations \{[^\}]+\}');
-
-  @override
-  final Library parent;
-
-  LibraryImplementationsChannel get aChannel =>
-      LibraryImplementationsChannel(this);
-
-  LibraryImplementationsHandler get aHandler =>
-      LibraryImplementationsHandler(this);
-}
-
-class LibraryImplementationsChannel with TemplateRegExp {
-  LibraryImplementationsChannel(this.parent);
-
-  @override
-  final RegExp exp = TemplateRegExp.regExp(
-    r'\$ClassTemplateChannel get classTemplateChannel[^;]+;',
-  );
-
-  @override
-  final LibraryImplementations parent;
-
-  final RegExp channelClassName = TemplateRegExp.regExp(
-    r'(?<=\$)ClassTemplate',
-  );
-
-  final RegExp variableClassName = TemplateRegExp.regExp(
-    r'(?<=get\s+)classTemplate',
-  );
-}
-
-class LibraryImplementationsHandler with TemplateRegExp {
-  LibraryImplementationsHandler(this.parent);
-
-  @override
-  final RegExp exp = TemplateRegExp.regExp(
-    r'\$ClassTemplateHandler get classTemplateHandler[^;]+;',
-  );
-
-  @override
-  final LibraryImplementations parent;
-
-  final RegExp channelClassName = TemplateRegExp.regExp(
-    r'(?<=\$)ClassTemplate',
-  );
-
-  final RegExp variableClassName = TemplateRegExp.regExp(
-    r'(?<=get\s+)classTemplate',
-  );
-}
-
-class ChannelRegistrar with TemplateRegExp {
-  ChannelRegistrar(this.parent);
-
-  @override
-  final RegExp exp = TemplateRegExp.regExp(r'class \$ChannelRegistrar .+$');
-
-  ChannelRegistrarSetter get aSetter => ChannelRegistrarSetter(this);
-
-  ChannelRegistrarRemover get aRemover => ChannelRegistrarRemover(this);
-
-  @override
-  final Library parent;
-}
-
-class ChannelRegistrarSetter with TemplateRegExp {
-  ChannelRegistrarSetter(this.parent);
-
-  @override
-  final ChannelRegistrar parent;
-
-  @override
-  final RegExp exp = TemplateRegExp.regExp(
-    r'implementations.classTemplateChannel.setHandler[^\)]+\);',
-  );
-
-  final RegExp channelClassName = TemplateRegExp.regExp(
-    r'(?<=implementations\.)classTemplate(?=Channel)',
-  );
-
-  final RegExp handlerClassName = TemplateRegExp.regExp(
-    r'(?<=implementations\.)classTemplate(?=Handler)',
-  );
-}
-
-class ChannelRegistrarRemover with TemplateRegExp {
-  ChannelRegistrarRemover(this.parent);
-
-  @override
-  final ChannelRegistrar parent;
-
-  @override
-  final RegExp exp = TemplateRegExp.regExp(
-    r'implementations.classTemplateChannel.removeHandler\(\);',
-  );
-
-  final RegExp channelClassName = TemplateRegExp.regExp(
-    r'(?<=implementations\.)classTemplate(?=Channel)',
-  );
-}
+// class Library with TemplateRegExp {
+//   Library(this.template);
+//
+//   @override
+//   final String template;
+//
+//   @override
+//   RegExp get exp => null;
+//
+//   @override
+//   TemplateRegExp get parent => null;
+//
+//   Mixin get aMixin => Mixin(this);
+//
+//   Channel get aChannel => Channel(this);
+//
+//   Handler get aHandler => Handler(this);
+//
+//   LibraryImplementations get theImplementations => LibraryImplementations(this);
+//
+//   ChannelRegistrar get theChannelRegistrar => ChannelRegistrar(this);
+// }
+//
+// class Mixin with TemplateRegExp {
+//   Mixin(this.parent);
+//
+//   @override
+//   final RegExp exp = TemplateRegExp.regExp(
+//     r'mixin \$ClassTemplate \{\}',
+//   );
+//
+//   @override
+//   final Library parent;
+//
+//   final RegExp name = TemplateRegExp.regExp(r'(?<=mixin \$)ClassTemplate');
+// }
+//
+// class Parameter with TemplateRegExp {
+//   Parameter(this.parent);
+//
+//   final RegExp type = TemplateRegExp.regExp(r'^String');
+//
+//   final RegExp name = TemplateRegExp.regExp(r'parameterTemplate$');
+//
+//   @override
+//   final RegExp exp = TemplateRegExp.regExp(r'String parameterTemplate');
+//
+//   @override
+//   final TemplateRegExp parent;
+// }
+//
+// class Channel with TemplateRegExp {
+//   Channel(this.parent);
+//
+//   final RegExp className = TemplateRegExp.regExp(
+//     r'(?<=class \$)ClassTemplate',
+//   );
+//
+//   final RegExp typeArgumentClassName = TemplateRegExp.regExp(
+//     r'(?<=extends TypeChannel<\$)ClassTemplate',
+//   );
+//
+//   final RegExp constructorClassName = TemplateRegExp.regExp(
+//     r'(?<=\$)ClassTemplate(?=Channel\()',
+//   );
+//
+//   final RegExp channel = TemplateRegExp.regExp(
+//     r"(?<=super\(messenger, ')github\.penguin/template/template/ClassTemplate",
+//   );
+//
+//   ChannelCreateMethod get theCreateMethod => ChannelCreateMethod(this);
+//
+//   ChannelStaticMethod get aStaticMethod => ChannelStaticMethod(this);
+//
+//   ChannelMethod get aMethod => ChannelMethod(this);
+//
+//   @override
+//   final RegExp exp = TemplateRegExp.regExp(
+//     r'class \$ClassTemplateChannel.*}(?=\s*class \$ClassTemplateHandler)',
+//   );
+//
+//   @override
+//   final Library parent;
+// }
+//
+// class ChannelCreateMethod with TemplateRegExp {
+//   ChannelCreateMethod(this.parent);
+//
+//   final RegExp instanceClassName = TemplateRegExp.regExp(
+//     r'(?<=\$)ClassTemplate(?= \$instance)',
+//   );
+//
+//   ChannelCreateMethodParameter get aParameter =>
+//       ChannelCreateMethodParameter(this);
+//
+//   final RegExp aFieldName =
+//       TemplateRegExp.regExp(r'(?<=<Object\?>\[)fieldTemplate(?=\])');
+//
+//   @override
+//   final RegExp exp = TemplateRegExp.regExp(
+//     r'Future<PairedInstance\?> \$create[^\}]+\}[^\}]+\}',
+//   );
+//
+//   @override
+//   final Channel parent;
+// }
+//
+// class ChannelCreateMethodParameter with TemplateRegExp {
+//   ChannelCreateMethodParameter(this.parent);
+//
+//   final RegExp type = TemplateRegExp.regExp(r'(?<=required )int');
+//   final RegExp name = TemplateRegExp.regExp(r'fieldTemplate(?=,)');
+//
+//   @override
+//   final RegExp exp = TemplateRegExp.regExp('required int fieldTemplate,');
+//
+//   @override
+//   final ChannelCreateMethod parent;
+// }
+//
+// class ChannelStaticMethod with TemplateRegExp {
+//   ChannelStaticMethod(this.parent);
+//
+//   final RegExp name = TemplateRegExp.regExp(r'StaticMethodTemplate');
+//
+//   final RegExp nameAsParameter = TemplateRegExp.regExp(r'staticMethodTemplate');
+//
+//   Parameter get aParameter => Parameter(this);
+//
+//   ParameterName get aParameterName => ParameterName(this);
+//
+//   @override
+//   final RegExp exp = TemplateRegExp.regExp(
+//     r'Future<Object\?> \$invokeStaticMethodTemplate[^\}]+\}',
+//   );
+//
+//   @override
+//   final Channel parent;
+// }
+//
+// class ChannelMethod with TemplateRegExp {
+//   ChannelMethod(this.parent);
+//
+//   final RegExp name = TemplateRegExp.regExp(
+//     r'(?<=Future<Object\?>\s\$invoke)MethodTemplate',
+//   );
+//
+//   final RegExp instanceClassName = TemplateRegExp.regExp(
+//     r'(?<=\$)ClassTemplate(?= instance)',
+//   );
+//
+//   final RegExp channelMethodName = TemplateRegExp.regExp(
+//     r"(?<=')methodTemplate(?=')",
+//   );
+//
+//   Parameter get aParameter => Parameter(this);
+//
+//   ParameterName get aParameterName => ParameterName(this);
+//
+//   @override
+//   final RegExp exp = TemplateRegExp.regExp(
+//     r'Future<Object\?>\s\$invokeMethodTemplate[^\}]+\}',
+//   );
+//
+//   @override
+//   final Channel parent;
+// }
+//
+// class ParameterName with TemplateRegExp {
+//   ParameterName(this.parent);
+//
+//   final RegExp name = TemplateRegExp.regExp(r'parameterTemplate');
+//
+//   @override
+//   final RegExp exp =
+//       TemplateRegExp.regExp(r'(?<=<Object\?>\[\s*)parameterTemplate');
+//
+//   @override
+//   final TemplateRegExp parent;
+// }
+//
+// class Handler with TemplateRegExp {
+//   Handler(this.parent);
+//
+//   final RegExp className = TemplateRegExp.regExp(
+//     r'(?<=class \$)ClassTemplate(?=Handler)',
+//   );
+//
+//   final RegExp typeArgClassName = TemplateRegExp.regExp(
+//     r'(?<=TypeChannelHandler<\$)ClassTemplate',
+//   );
+//
+//   final RegExp constructorClassName = TemplateRegExp.regExp(
+//     r'(?<=\$)ClassTemplate(?=Handler\()',
+//   );
+//
+//   HandlerOnCreateMethod get theOnCreateMethod => HandlerOnCreateMethod(this);
+//
+//   HandlerStaticMethod get aStaticMethod => HandlerStaticMethod(this);
+//
+//   HandlerMethod get aMethod => HandlerMethod(this);
+//
+//   HandlerStaticMethodInvoker get aStaticMethodInvoker =>
+//       HandlerStaticMethodInvoker(this);
+//
+//   HandlerCreateInstance get theCreateInstance => HandlerCreateInstance(this);
+//
+//   HandlerInvokeMethod get theHandlerInvokeMethod => HandlerInvokeMethod(this);
+//
+//   @override
+//   final RegExp exp = TemplateRegExp.regExp(
+//     r'class \$ClassTemplateHandler.*}(?=\s*class \$LibraryImplementations)',
+//   );
+//
+//   @override
+//   final Library parent;
+// }
+//
+// class HandlerOnCreateMethod with TemplateRegExp {
+//   HandlerOnCreateMethod(this.parent);
+//
+//   final RegExp returnType =
+//       TemplateRegExp.regExp(r'(?<=\$)ClassTemplate(?= \$create)');
+//
+//   HandlerOnCreateMethodField get aField => HandlerOnCreateMethodField(this);
+//
+//   @override
+//   final RegExp exp = TemplateRegExp.regExp(
+//     r'\$ClassTemplate \$create\([^\}]+\}',
+//   );
+//
+//   @override
+//   final Handler parent;
+// }
+//
+// class HandlerOnCreateMethodField with TemplateRegExp {
+//   HandlerOnCreateMethodField(this.parent);
+//
+//   final RegExp type = TemplateRegExp.regExp(r'^int');
+//   final RegExp name = TemplateRegExp.regExp(r'fieldTemplate$');
+//
+//   @override
+//   final RegExp exp = TemplateRegExp.regExp('int fieldTemplate');
+//
+//   @override
+//   final HandlerOnCreateMethod parent;
+// }
+//
+// class HandlerStaticMethod with TemplateRegExp {
+//   HandlerStaticMethod(this.parent);
+//
+//   final RegExp name = TemplateRegExp.regExp(r'StaticMethodTemplate(?=\()');
+//
+//   Parameter get aParameter => Parameter(this);
+//
+//   @override
+//   final RegExp exp = TemplateRegExp.regExp(
+//     r'Object\? \$onStaticMethodTemplate\([^\}]+\}',
+//   );
+//
+//   @override
+//   final Handler parent;
+// }
+//
+// class HandlerMethod with TemplateRegExp {
+//   HandlerMethod(this.parent);
+//
+//   final RegExp name = TemplateRegExp.regExp(r'MethodTemplate(?=\()');
+//
+//   final RegExp className =
+//       TemplateRegExp.regExp(r'(?<=\$)ClassTemplate(?= \$instance)');
+//
+//   Parameter get aParameter => Parameter(this);
+//
+//   @override
+//   final RegExp exp = TemplateRegExp.regExp(
+//     r'Object\? \$onMethodTemplate\([^\}]+\}',
+//   );
+//
+//   @override
+//   final Handler parent;
+// }
+//
+// class HandlerStaticMethodInvoker with TemplateRegExp {
+//   HandlerStaticMethodInvoker(this.parent);
+//
+//   final RegExp methodName = TemplateRegExp.regExp(
+//     r"(?<=')staticMethodTemplate(?=')",
+//   );
+//
+//   final RegExp methodHandler = TemplateRegExp.regExp(
+//     r'(?<=\$on)StaticMethodTemplate',
+//   );
+//
+//   MethodArgument get anArgument => MethodArgument(this);
+//
+//   @override
+//   final RegExp exp = TemplateRegExp.regExp(
+//     r"case 'staticMethodTemplate'[^;]+;",
+//   );
+//
+//   @override
+//   final Handler parent;
+// }
+//
+// class MethodArgument with TemplateRegExp {
+//   MethodArgument(this.parent);
+//
+//   final RegExp type = TemplateRegExp.regExp(r'(?<=as )String');
+//
+//   final RegExp index = TemplateRegExp.regExp(r'(?<=\[)0');
+//
+//   @override
+//   final RegExp exp = TemplateRegExp.regExp(r'arguments\[0\] as String');
+//
+//   @override
+//   final TemplateRegExp parent;
+// }
+//
+// class HandlerCreateInstance with TemplateRegExp {
+//   HandlerCreateInstance(this.parent);
+//
+//   final RegExp className = TemplateRegExp.regExp(
+//     r'ClassTemplate(?= createInstance\()',
+//   );
+//
+//   HandlerCreateInstanceField get aField => HandlerCreateInstanceField(this);
+//
+//   @override
+//   final RegExp exp = TemplateRegExp.regExp(
+//     r'\$ClassTemplate createInstance[^\}]+\}',
+//   );
+//
+//   @override
+//   final Handler parent;
+// }
+//
+// class HandlerCreateInstanceField with TemplateRegExp {
+//   HandlerCreateInstanceField(this.parent);
+//
+//   final RegExp index = TemplateRegExp.regExp(r'0(?=\])');
+//
+//   final RegExp type = TemplateRegExp.regExp(r'int$');
+//
+//   @override
+//   final RegExp exp = TemplateRegExp.regExp(r'arguments\[0\] as int');
+//
+//   @override
+//   final HandlerCreateInstance parent;
+// }
+//
+// class HandlerInvokeMethod with TemplateRegExp {
+//   HandlerInvokeMethod(this.parent);
+//
+//   final RegExp instanceClassName = TemplateRegExp.regExp(
+//     r'ClassTemplate(?= instance,)',
+//   );
+//
+//   HandlerInvokeMethodInvoker get anInvoker => HandlerInvokeMethodInvoker(this);
+//
+//   @override
+//   final RegExp exp = TemplateRegExp.regExp(
+//     r'Object\? invokeMethod\([^\}]+\}[^\}]+\}',
+//   );
+//
+//   @override
+//   final Handler parent;
+// }
+//
+// class HandlerInvokeMethodInvoker with TemplateRegExp {
+//   HandlerInvokeMethodInvoker(this.parent);
+//
+//   final RegExp methodName = TemplateRegExp.regExp(
+//     r"(?<=')methodTemplate(?=')",
+//   );
+//
+//   final RegExp instanceMethodName = TemplateRegExp.regExp(
+//     r'(?<=\$on)MethodTemplate',
+//   );
+//
+//   MethodArgument get anArgument => MethodArgument(this);
+//
+//   @override
+//   final RegExp exp = TemplateRegExp.regExp(
+//     r"case 'methodTemplate'[^;]+;",
+//   );
+//
+//   @override
+//   final HandlerInvokeMethod parent;
+// }
+//
+// class LibraryImplementations with TemplateRegExp {
+//   LibraryImplementations(this.parent);
+//
+//   @override
+//   final RegExp exp =
+//       TemplateRegExp.regExp(r'class \$LibraryImplementations \{[^\}]+\}');
+//
+//   @override
+//   final Library parent;
+//
+//   LibraryImplementationsChannel get aChannel =>
+//       LibraryImplementationsChannel(this);
+//
+//   LibraryImplementationsHandler get aHandler =>
+//       LibraryImplementationsHandler(this);
+// }
+//
+// class LibraryImplementationsChannel with TemplateRegExp {
+//   LibraryImplementationsChannel(this.parent);
+//
+//   @override
+//   final RegExp exp = TemplateRegExp.regExp(
+//     r'\$ClassTemplateChannel get classTemplateChannel[^;]+;',
+//   );
+//
+//   @override
+//   final LibraryImplementations parent;
+//
+//   final RegExp channelClassName = TemplateRegExp.regExp(
+//     r'(?<=\$)ClassTemplate',
+//   );
+//
+//   final RegExp variableClassName = TemplateRegExp.regExp(
+//     r'(?<=get\s+)classTemplate',
+//   );
+// }
+//
+// class LibraryImplementationsHandler with TemplateRegExp {
+//   LibraryImplementationsHandler(this.parent);
+//
+//   @override
+//   final RegExp exp = TemplateRegExp.regExp(
+//     r'\$ClassTemplateHandler get classTemplateHandler[^;]+;',
+//   );
+//
+//   @override
+//   final LibraryImplementations parent;
+//
+//   final RegExp channelClassName = TemplateRegExp.regExp(
+//     r'(?<=\$)ClassTemplate',
+//   );
+//
+//   final RegExp variableClassName = TemplateRegExp.regExp(
+//     r'(?<=get\s+)classTemplate',
+//   );
+// }
+//
+// class ChannelRegistrar with TemplateRegExp {
+//   ChannelRegistrar(this.parent);
+//
+//   @override
+//   final RegExp exp = TemplateRegExp.regExp(r'class \$ChannelRegistrar .+$');
+//
+//   ChannelRegistrarSetter get aSetter => ChannelRegistrarSetter(this);
+//
+//   ChannelRegistrarRemover get aRemover => ChannelRegistrarRemover(this);
+//
+//   @override
+//   final Library parent;
+// }
+//
+// class ChannelRegistrarSetter with TemplateRegExp {
+//   ChannelRegistrarSetter(this.parent);
+//
+//   @override
+//   final ChannelRegistrar parent;
+//
+//   @override
+//   final RegExp exp = TemplateRegExp.regExp(
+//     r'implementations.classTemplateChannel.setHandler[^\)]+\);',
+//   );
+//
+//   final RegExp channelClassName = TemplateRegExp.regExp(
+//     r'(?<=implementations\.)classTemplate(?=Channel)',
+//   );
+//
+//   final RegExp handlerClassName = TemplateRegExp.regExp(
+//     r'(?<=implementations\.)classTemplate(?=Handler)',
+//   );
+// }
+//
+// class ChannelRegistrarRemover with TemplateRegExp {
+//   ChannelRegistrarRemover(this.parent);
+//
+//   @override
+//   final ChannelRegistrar parent;
+//
+//   @override
+//   final RegExp exp = TemplateRegExp.regExp(
+//     r'implementations.classTemplateChannel.removeHandler\(\);',
+//   );
+//
+//   final RegExp channelClassName = TemplateRegExp.regExp(
+//     r'(?<=implementations\.)classTemplate(?=Channel)',
+//   );
+// }

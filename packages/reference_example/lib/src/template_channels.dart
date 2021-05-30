@@ -1,6 +1,6 @@
 import 'package:reference/reference.dart';
-import 'package:reference_example/reference_example.dart';
 
+import 'template.dart';
 import 'template.g.dart';
 
 class ChannelRegistrar extends $ChannelRegistrar {
@@ -16,12 +16,12 @@ class LibraryImplementations extends $LibraryImplementations {
   LibraryImplementations(TypeChannelMessenger messenger) : super(messenger);
 
   @override
-  $ClassTemplateHandler get classTemplateHandler => ClassTemplateHandler();
+  $$$class_name$$Handler get __class_name__Handler => $$$class_name$$Handler();
 }
 
-class ClassTemplateHandler extends $ClassTemplateHandler {
+class ClassTemplateHandler extends $$$class_name$$Handler {
   @override
-  $ClassTemplate $create(TypeChannelMessenger messenger, int fieldTemplate) {
-    return ClassTemplate(fieldTemplate);
+  $$class_name$$ $$create(TypeChannelMessenger messenger, int $$field_name$$) {
+    return $$class_name$$($$field_name$$);
   }
 }

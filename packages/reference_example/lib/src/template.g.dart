@@ -7,16 +7,16 @@ import 'package:reference/reference.dart';
 // **************************************************************************
 
 /*iterate classes class*/
-mixin $__class_name__ {}
+mixin $$$class_name$$ {}
 /**/
 
 /*iterate classes class*/
-class $__class_name__Channel extends TypeChannel<$__class_name__> {
-  $__class_name__Channel(TypeChannelMessenger messenger)
+class $$$class_name$$Channel extends TypeChannel<$$$class_name$$> {
+  $$$class_name$$Channel(TypeChannelMessenger messenger)
       : super(messenger, '__class_channel__');
 
-  Future<PairedInstance?> $create$(
-    $__class_name__ $instance, {
+  Future<PairedInstance?> $$create(
+    $$$class_name$$ $instance, {
     required bool $owner,
     /*iterate fields field*/
     required /*replace field_type*/ int /**/ $$field_name$$,
@@ -47,7 +47,7 @@ class $__class_name__Channel extends TypeChannel<$__class_name__> {
 
   /*iterate methods method*/
   Future<Object?> $__method_name__(
-    $__class_name__ $instance,
+    $$$class_name$$ $instance,
     /*iterate parameters parameter*/ /*replace parameter_type*/ String /**/ $$parameter_name$$,
     /**/
   ) {
@@ -63,20 +63,38 @@ class $__class_name__Channel extends TypeChannel<$__class_name__> {
 }
 /**/
 
-class $ClassTemplateHandler implements TypeChannelHandler<$ClassTemplate> {
-  $ClassTemplate $create(TypeChannelMessenger messenger, int fieldTemplate) {
+/*iterate classes class*/
+class $$$class_name$$Handler implements TypeChannelHandler<$$$class_name$$> {
+  $$$class_name$$ $$create(
+    TypeChannelMessenger messenger,
+    /*iterate fields field*/
+    /*replace field_type*/ int /**/ $$field_name$$,
+    /**/
+  ) {
     throw UnimplementedError();
   }
 
-  Object? $onStaticMethodTemplate(
-      TypeChannelMessenger messenger, String parameterTemplate) {
+  /*iterate staticMethods staticMethod*/
+  Object? $__staticMethod_name__(
+    TypeChannelMessenger messenger,
+    /*iterate parameters parameter*/
+    /*replace parameter_type*/ String /**/ $$parameter_name$$,
+    /**/
+  ) {
     throw UnimplementedError();
   }
+  /**/
 
-  Object? $onMethodTemplate(
-      $ClassTemplate $instance, String parameterTemplate) {
+  /*iterate methods method*/
+  Object? $__method_name__(
+    $$$class_name$$ $instance,
+    /*iterate parameters parameter*/
+    /*replace parameter_type*/ String /**/ $$parameter_name$$,
+    /**/
+  ) {
     throw UnimplementedError();
   }
+  /**/
 
   @override
   Object? invokeStaticMethod(
@@ -85,8 +103,13 @@ class $ClassTemplateHandler implements TypeChannelHandler<$ClassTemplate> {
     List<Object?> arguments,
   ) {
     switch (methodName) {
-      case 'staticMethodTemplate':
-        return $onStaticMethodTemplate(messenger, arguments[0] as String);
+      /*iterate staticMethods staticMethod*/
+      case '__staticMethod_name__':
+        return $__staticMethod_name__(
+            messenger,
+            /*iterate parameters parameter*/ arguments[0]
+                as /*replace parameter_type*/ String /**/ /**/);
+      /**/
     }
 
     throw ArgumentError.value(
@@ -97,23 +120,31 @@ class $ClassTemplateHandler implements TypeChannelHandler<$ClassTemplate> {
   }
 
   @override
-  $ClassTemplate createInstance(
+  $$$class_name$$ createInstance(
     TypeChannelMessenger messenger,
     List<Object?> arguments,
   ) {
-    return $create(messenger, arguments[0] as int);
+    return $$create(
+        messenger,
+        /*iterate fields field*/ arguments[0]
+            as /*replace field_type*/ int /**/ /**/);
   }
 
   @override
   Object? invokeMethod(
     TypeChannelMessenger messenger,
-    $ClassTemplate instance,
+    $$$class_name$$ instance,
     String methodName,
     List<Object?> arguments,
   ) {
     switch (methodName) {
-      case 'methodTemplate':
-        return $onMethodTemplate(instance, arguments[0] as String);
+      /*iterate methods method*/
+      case '__method_name__':
+        return $__method_name__(
+            instance,
+            /*iterate parameters parameter*/ arguments[0]
+                as /*replace parameter_type*/ String /**/ /**/);
+      /**/
     }
 
     throw ArgumentError.value(
@@ -123,15 +154,18 @@ class $ClassTemplateHandler implements TypeChannelHandler<$ClassTemplate> {
     );
   }
 }
+/**/
 
 class $LibraryImplementations {
   $LibraryImplementations(this.messenger);
 
   final TypeChannelMessenger messenger;
 
-  $ClassTemplateChannel get classTemplateChannel =>
-      $ClassTemplateChannel(messenger);
-  $ClassTemplateHandler get classTemplateHandler => $ClassTemplateHandler();
+  /*iterate classes class*/
+  $$$class_name$$Channel get channel__class_name__ =>
+      $$$class_name$$Channel(messenger);
+  $$$class_name$$Handler get handler__class_name__ => $$$class_name$$Handler();
+  /**/
 }
 
 class $ChannelRegistrar {
@@ -140,12 +174,16 @@ class $ChannelRegistrar {
   final $LibraryImplementations implementations;
 
   void registerHandlers() {
-    implementations.classTemplateChannel.setHandler(
-      implementations.classTemplateHandler,
+    /*iterate classes class*/
+    implementations.channel__class_name__.setHandler(
+      implementations.handler__class_name__,
     );
+    /**/
   }
 
   void unregisterHandlers() {
-    implementations.classTemplateChannel.removeHandler();
+    /*iterate classes class*/
+    implementations.channel__class_name__.removeHandler();
+    /**/
   }
 }

@@ -67,6 +67,7 @@ class MethodNode {
   MethodNode({this.name, this.returnType, this.parameters});
 
   final String name;
+  // TODO: unused
   final ReferenceType returnType;
   final List<ParameterNode> parameters;
 
