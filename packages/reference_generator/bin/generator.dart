@@ -11,7 +11,7 @@ String runGenerator(
 
     if (newToken == null) {
       resultBuffer.write(templateQueue.removeFirst());
-    } else if (newToken is ReplaceToken) {
+    } else if (newToken is ReplaceToken || newToken is ConditionalToken) {
       tokens.addFirst(newToken);
       resultBuffer.write(runGenerator(
         templateQueue,
@@ -69,6 +69,9 @@ String runGenerator(
         }
       }
       return result;
+    } else if (newToken is EndToken && tokens.first is ConditionalToken) {
+      final ConditionalToken currentToken = tokens.first;
+      return data[currentToken.identifier] ? resultBuffer.toString() : '';
     }
   }
 
@@ -143,6 +146,11 @@ Token tryParseToken(Queue<String> templateQueue) {
       replacement: replacement,
       $case: caseModifier,
     );
+  } else if (tokenType == '/*if') {
+    final String identifier =
+        RegExp(r'(?<=\s)[^\s]+(?=\*/)', multiLine: true, dotAll: true)
+            .stringMatch(tokenString);
+    return ConditionalToken(identifier);
   }
 
   return null;
@@ -166,6 +174,12 @@ class ReplaceToken extends Token {
   final String from;
   final String replacement;
   final String $case;
+}
+
+class ConditionalToken extends Token {
+  ConditionalToken(this.identifier);
+
+  final String identifier;
 }
 
 class EndToken extends Token {}

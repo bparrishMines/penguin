@@ -173,14 +173,14 @@ void main(List<String> arguments) async {
       throw StateError('Invalid link to objcImpl template.');
     }
 
-    options.objcImplOut.writeAsStringSync(
-      generateObjcImpl(
-        template: objcImplTemplate,
-        libraryNode: libraryNode,
-        prefix: options.objcPrefix,
-        headerFilename: path.basename(options.objcHeaderOut.path),
-      ),
-    );
+    // options.objcImplOut.writeAsStringSync(
+    //   generateObjcImpl(
+    //     template: objcImplTemplate,
+    //     libraryNode: libraryNode,
+    //     prefix: options.objcPrefix,
+    //     headerFilename: path.basename(options.objcHeaderOut.path),
+    //   ),
+    // );
   }
 }
 
