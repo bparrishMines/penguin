@@ -84,6 +84,7 @@
 /**/ {
   @throw [NSException exceptionWithName:@"__prefix__UnimplementedException" reason:nil userInfo:nil];
 }
+/**/
 
 - (id _Nullable)invokeStaticMethod:(nonnull REFTypeChannelMessenger *)messenger
                         methodName:(nonnull NSString *)methodName
