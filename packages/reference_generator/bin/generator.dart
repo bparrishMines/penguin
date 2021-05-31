@@ -70,7 +70,7 @@ String runGenerator(
       }
       return result;
     } else if (newToken is EndToken && tokens.first is ConditionalToken) {
-      final ConditionalToken currentToken = tokens.first;
+      final ConditionalToken currentToken = tokens.removeFirst();
       return data[currentToken.identifier] ? resultBuffer.toString() : '';
     }
   }

@@ -47,13 +47,13 @@ String generateObjcHeader({
 
       final List<Map<String, Object>> followingParameters =
           <Map<String, Object>>[];
-      final List<ParameterNode> followingParameterNodes =
-          methodNode.parameters.skip(1).toList();
-      for (int i = 0; i < followingParameterNodes.length; i++) {
+      for (int i = 1; i < methodNode.parameters.length; i++) {
         final Map<String, Object> parameterData = <String, Object>{};
-        parameterData['name'] = followingParameterNodes[i].name;
-        parameterData['type'] =
-            getTrueTypeName(followingParameterNodes[i].type, prefix);
+        parameterData['name'] = methodNode.parameters[i].name;
+        parameterData['type'] = getTrueTypeName(
+          methodNode.parameters[i].type,
+          prefix,
+        );
         parameterData['index'] = '$i';
 
         followingParameters.add(parameterData);
@@ -145,5 +145,5 @@ String objcTypeNameConversion(String type) {
       return 'NSDictionary';
   }
 
-  return type;
+  return type.replaceAll('?', '');
 }
