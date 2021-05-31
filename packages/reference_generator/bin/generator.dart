@@ -11,7 +11,17 @@ String runGenerator(
 
     if (newToken == null) {
       resultBuffer.write(templateQueue.removeFirst());
-    } else if (newToken is ReplaceToken || newToken is ConditionalToken) {
+    } else if (newToken is ConditionalToken && !data[newToken.identifier]) {
+      flush(templateQueue);
+    } else if (newToken is ConditionalToken && data[newToken.identifier]) {
+      tokens.addFirst(newToken);
+      resultBuffer.write(runGenerator(
+        templateQueue,
+        tokens,
+        StringBuffer(),
+        data,
+      ));
+    } else if (newToken is ReplaceToken) {
       tokens.addFirst(newToken);
       resultBuffer.write(runGenerator(
         templateQueue,
@@ -27,7 +37,8 @@ String runGenerator(
       final List<Map<String, Object>> dataList =
           data[currentToken.listName] as List<Map<String, Object>>;
       final List<String> outputs = <String>[];
-      for (int i = 0; i < dataList.length; i++) {
+      final int end = currentToken?.end ?? dataList.length;
+      for (int i = int.parse(currentToken.start); i < end; i++) {
         outputs.add(runGenerator(
           Queue<String>.from(templateQueue),
           tokens,
@@ -70,8 +81,8 @@ String runGenerator(
       }
       return result;
     } else if (newToken is EndToken && tokens.first is ConditionalToken) {
-      final ConditionalToken currentToken = tokens.removeFirst();
-      return data[currentToken.identifier] ? resultBuffer.toString() : '';
+      tokens.removeFirst();
+      return resultBuffer.toString();
     }
   }
 
@@ -124,18 +135,23 @@ Token tryParseToken(Queue<String> templateQueue) {
     final String listName =
         RegExp(r'(?<=\s)[^\s]+(?=\s+[^\s]+\*/)', multiLine: true, dotAll: true)
             .stringMatch(tokenString);
+    final String startModifier =
+        RegExp(r'(?<=:start=)\w+(?=\s)', multiLine: true, dotAll: true)
+            .stringMatch(tokenString);
+    final String endModifier =
+        RegExp(r'(?<=:end=)\w+(?=\s)', multiLine: true, dotAll: true)
+            .stringMatch(tokenString);
 
     return IterateToken(
       listName: listName,
       identifier: identifier,
       join: joinModifier ?? '',
+      start: startModifier ?? 0,
+      end: endModifier,
     );
   } else if (tokenType == '/*replace') {
     final String fromModifier =
         RegExp(r"(?<=:from=')[^']*(?=')", multiLine: true, dotAll: true)
-            .stringMatch(tokenString);
-    final String caseModifier =
-        RegExp(r'(?<=:case=)\w+', multiLine: true, dotAll: true)
             .stringMatch(tokenString);
     final String replacement =
         RegExp(r'(?<=\s)[^\s]+(?=\*/)', multiLine: true, dotAll: true)
@@ -144,7 +160,6 @@ Token tryParseToken(Queue<String> templateQueue) {
     return ReplaceToken(
       from: fromModifier,
       replacement: replacement,
-      $case: caseModifier,
     );
   } else if (tokenType == '/*if') {
     final String identifier =
@@ -159,21 +174,23 @@ Token tryParseToken(Queue<String> templateQueue) {
 abstract class Token {}
 
 class IterateToken extends Token {
-  IterateToken({this.listName, this.identifier, this.join = ''})
+  IterateToken(
+      {this.listName, this.identifier, this.join, this.start, this.end})
       : assert(listName != null),
         assert(identifier != null);
 
   final String listName;
   final String identifier;
   final String join;
+  final String start;
+  final String end;
 }
 
 class ReplaceToken extends Token {
-  ReplaceToken({this.from, this.replacement, this.$case});
+  ReplaceToken({this.from, this.replacement});
 
   final String from;
   final String replacement;
-  final String $case;
 }
 
 class ConditionalToken extends Token {

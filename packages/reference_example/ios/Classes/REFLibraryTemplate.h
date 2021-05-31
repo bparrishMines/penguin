@@ -29,8 +29,12 @@ NS_ASSUME_NONNULL_BEGIN
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion;
 
 /*iterate staticMethods staticMethod*/
-- (void)___staticMethod_name__:/*if hasParameters*/(/*replace firstParameterType*/NSString/**/ *_Nullable)/*replace firstParameterName*/parameterTemplate/**//**/
-/*iterate followingParameters followingParameter*/
+- (void)___staticMethod_name__:
+/*if hasParameters*/
+/*iterate :end=1 parameters parameter*/
+(/*replace parameter_type*/NSString/**/ *_Nullable)__parameter_name__
+/**//**/
+/*iterate :start=1 parameters followingParameter*/
    __followingParameter_name__:(/*replace followingParameter_type*/NSString/**/ *_Nullable)__followingParameter_name__
 /**/
 /*if hasParameters*/completion:/**/(void (^)(id _Nullable, NSError *_Nullable))completion;
@@ -54,17 +58,16 @@ NS_ASSUME_NONNULL_BEGIN
 /**/;
 /*iterate staticMethods staticMethod*/
 - (NSObject *_Nullable)___staticMethod_name__:(REFTypeChannelMessenger *)messenger
-    parameterTemplate:(/*replace firstParameterType*/NSString/**/ *_Nullable)/*replace firstParameterName*/parameterTemplate/**/
-/*iterate followingParameters followingParameter*/
-   __followingParameter_name__:(/*replace followingParameter_type*/NSString/**/ *_Nullable)__followingParameter_name__
+/*iterate parameters parameter*/
+                           __parameter_name__:(/*replace parameter_type*/NSString/**/ *_Nullable)__parameter_name__
 /**/;
 /**/
+
 /*iterate methods method*/
 - (NSObject *_Nullable)___method_name__:(NSObject<__prefix____class_name__> *)_instance
 /*iterate parameters parameter*/
   __parameter_name__:(/*replace parameter_type*/NSString/**/ *_Nullable)__parameter_name__
-/**/
-;
+/**/;
 /**/
 @end
 /**/

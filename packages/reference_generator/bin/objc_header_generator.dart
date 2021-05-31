@@ -33,32 +33,19 @@ String generateObjcHeader({
     for (MethodNode methodNode in classNode.staticMethods) {
       final Map<String, Object> methodData = <String, Object>{};
       methodData['name'] = methodNode.name;
+      methodData['hasParameters'] = methodNode.parameters.isNotEmpty;
 
-      final bool hasParameters = methodNode.parameters.isNotEmpty;
-      methodData['hasParameters'] = hasParameters;
-      methodData['firstParameterType'] = hasParameters
-          ? getTrueTypeName(
-              methodNode.parameters.first.type,
-              prefix,
-            )
-          : '';
-      methodData['firstParameterName'] =
-          hasParameters ? methodNode.parameters.first.name : '';
-
-      final List<Map<String, Object>> followingParameters =
-          <Map<String, Object>>[];
-      for (int i = 1; i < methodNode.parameters.length; i++) {
+      final List<Map<String, Object>> parameters = <Map<String, Object>>[];
+      for (int i = 0; i < methodNode.parameters.length; i++) {
         final Map<String, Object> parameterData = <String, Object>{};
         parameterData['name'] = methodNode.parameters[i].name;
-        parameterData['type'] = getTrueTypeName(
-          methodNode.parameters[i].type,
-          prefix,
-        );
+        parameterData['type'] =
+            getTrueTypeName(methodNode.parameters[i].type, prefix);
         parameterData['index'] = '$i';
 
-        followingParameters.add(parameterData);
+        parameters.add(parameterData);
       }
-      methodData['followingParameters'] = followingParameters;
+      methodData['parameters'] = parameters;
 
       staticMethods.add(methodData);
     }
