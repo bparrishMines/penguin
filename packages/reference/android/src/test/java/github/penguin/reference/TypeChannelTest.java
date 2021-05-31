@@ -30,15 +30,15 @@ public class TypeChannelTest {
     final TestClasses.TestClass testClass = new TestClasses.TestClass();
     final TestListener<PairedInstance> testListener = new TestListener<>();
 
-    testChannel.createNewInstancePair(testClass, true).setOnCompleteListener(testListener);
+    testChannel.createNewInstancePair(testClass, Collections.emptyList(),true).setOnCompleteListener(testListener);
     assertEquals(new PairedInstance("test_instance_id"), testListener.result);
 
-    testChannel.createNewInstancePair(testClass, true).setOnCompleteListener(testListener);
+    testChannel.createNewInstancePair(testClass, Collections.emptyList(),true).setOnCompleteListener(testListener);
     assertNull(testListener.result);
 
     assertTrue(testManager.isPaired(testClass));
 
-    testChannel.createNewInstancePair(testClass, true).setOnCompleteListener(testListener);
+    testChannel.createNewInstancePair(testClass, Collections.emptyList(),true).setOnCompleteListener(testListener);
     assertNull(testListener.result);
   }
 
@@ -52,7 +52,7 @@ public class TypeChannelTest {
   @Test
   public void invokeMethod() {
     final TestClass testClass = new TestClass();
-    testChannel.createNewInstancePair(testClass, true);
+    testChannel.createNewInstancePair(testClass, Collections.emptyList(),true);
 
     final TestListener<Object> testListener = new TestListener<>();
 
@@ -65,7 +65,7 @@ public class TypeChannelTest {
     final TestClass testClass = new TestClass();
     final TestListener<Void> testListener = new TestListener<>();
 
-    testChannel.createNewInstancePair(testClass, true);
+    testChannel.createNewInstancePair(testClass, Collections.emptyList(),true);
     testChannel.disposeInstancePair(testClass).setOnCompleteListener(testListener);
     assertFalse(testManager.isPaired(testClass));
 

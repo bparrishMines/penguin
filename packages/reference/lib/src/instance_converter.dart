@@ -1,21 +1,15 @@
 import 'instance.dart';
-import 'type_channel.dart';
+import 'instance_manager.dart';
 
-/// Handles converting references for a [TypeChannelMessenger].
+/// Handles converting paired instances for an [InstanceManager].
 ///
 /// See [StandardInstanceConverter].
 mixin InstanceConverter {
-  /// Converts arguments to be used by a [PairedInstance].
-  Object? convertInstancesToPairedInstances(
-    TypeChannelMessenger messenger,
-    Object? object,
-  );
+  /// Converts objects to [PairedInstance]s with ids stored in [manager].
+  Object? convertInstances(InstanceManager manager, Object? object);
 
-  /// Converts arguments to be used with a object paired to a [PairedInstance].
-  Object? convertPairedInstancesToInstances(
-    TypeChannelMessenger messenger,
-    Object? object,
-  );
+  /// Converts [PairedInstances] to objects stored in [manager].
+  Object? convertPairedInstances(InstanceManager manager, Object? object);
 }
 
 /// Standard implementation of [InstanceConverter].
@@ -25,7 +19,7 @@ class StandardInstanceConverter implements InstanceConverter {
   /// Default constructor for [StandardInstanceConverter].
   const StandardInstanceConverter();
 
-  /// Converts arguments to be used with a remote [TypeChannelMessenger].
+  /// Converts objects to [PairedInstance]s with ids stored in [manager].
   ///
   /// Conversions:
   ///   * Objects paired in a [TypeChannelMessenger] are converted to their
@@ -35,31 +29,24 @@ class StandardInstanceConverter implements InstanceConverter {
   ///   * [Map]s are converted to `Map<Object?, Object?>` and this method is
   ///     applied to each key and each value.
   @override
-  Object? convertInstancesToPairedInstances(
-    TypeChannelMessenger messenger,
-    Object? object,
-  ) {
+  Object? convertInstances(InstanceManager manager, Object? object) {
     if (object == null) {
       return null;
-    } else if (messenger.isPaired(object)) {
-      return messenger.getPairedPairedInstance(object);
+    } else if (manager.containsInstance(object)) {
+      return PairedInstance(manager.getInstanceId(object)!);
     } else if (object is List) {
-      return object
-          .map<Object?>((_) => convertInstancesToPairedInstances(messenger, _))
-          .toList();
+      return object.map<Object?>((_) => convertInstances(manager, _)).toList();
     } else if (object is Map) {
       return Map<Object?, Object?>.fromIterables(
-        object.keys.map<Object?>(
-            (_) => convertInstancesToPairedInstances(messenger, _)),
-        object.values.map<Object?>(
-            (_) => convertInstancesToPairedInstances(messenger, _)),
+        object.keys.map<Object?>((_) => convertInstances(manager, _)),
+        object.values.map<Object?>((_) => convertInstances(manager, _)),
       );
     }
 
     return object;
   }
 
-  /// Converts arguments to be used by a local [TypeChannelMessenger].
+  /// Converts [PairedInstances] to objects stored in [manager].
   ///
   /// Conversions:
   ///   * [PairedInstance]s are converted to the object instance they're paired
@@ -69,22 +56,17 @@ class StandardInstanceConverter implements InstanceConverter {
   ///   * [Map]s are converted to `Map<Object?, Object?>` and this method is
   ///     applied to each key and each value.
   @override
-  Object? convertPairedInstancesToInstances(
-    TypeChannelMessenger messenger,
-    Object? object,
-  ) {
+  Object? convertPairedInstances(InstanceManager manager, Object? object) {
     if (object is PairedInstance) {
-      return messenger.getPairedObject(object);
+      return manager.getInstance(object.instanceId);
     } else if (object is List) {
       return object
-          .map<Object?>((_) => convertPairedInstancesToInstances(messenger, _))
+          .map<Object?>((_) => convertPairedInstances(manager, _))
           .toList();
     } else if (object is Map) {
       return Map<Object?, Object?>.fromIterables(
-        object.keys.map<Object?>(
-            (_) => convertPairedInstancesToInstances(messenger, _)),
-        object.values.map<Object?>(
-            (_) => convertPairedInstancesToInstances(messenger, _)),
+        object.keys.map<Object?>((_) => convertPairedInstances(manager, _)),
+        object.values.map<Object?>((_) => convertPairedInstances(manager, _)),
       );
     }
 

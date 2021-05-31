@@ -3,7 +3,7 @@
 @implementation REFTypeChannelMessenger {
 @public
   REFThreadSafeMapTable<NSString *, NSObject<REFTypeChannelHandler> *> *_channelHandlers;
-  REFInstancePairManager *_instancePairManager;
+  REFInstanceManager *_instanceManager;
 }
 
 - (instancetype)initWithMessageDispatcher:(id<REFTypeChannelMessageDispatcher>)messageDispatcher {
@@ -11,23 +11,23 @@
   if (self) {
     _messageDispatcher = messageDispatcher;
     _channelHandlers = [REFThreadSafeMapTable strongToStrongObjectsMapTable];
-    _instancePairManager = [[REFInstancePairManager alloc] init];
+    _instanceManager = [[REFInstanceManager alloc] init];
   }
   return self;
 }
 
-- (void)removeInstancePair:(REFPairedInstance *)pairedInstance {
-  [[self instancePairManager] removePair:pairedInstance.instanceID];
-}
-
 - (BOOL)addInstancePair:(NSObject *)instance
-         pairedInstance:(REFPairedInstance *)pairedInstance
+             instanceID:(NSString *_Nullable)instanceID
                   owner:(BOOL)owner {
-  return [[self instancePairManager] addPair:instance instanceID:pairedInstance.instanceID owner:owner];
+  if (owner) {
+    return [[self instanceManager] addWeakReference:instance instanceID:instanceID];
+  } else {
+    return [[self instanceManager] addStrongReference:instance instanceID:instanceID];
+  }
 }
 
-- (REFInstancePairManager *)instancePairManager {
-  return _instancePairManager;
+- (REFInstanceManager *)instanceManager {
+  return _instanceManager;
 }
 
 - (id<REFInstanceConverter>)converter {
@@ -35,17 +35,17 @@
 }
 
 - (BOOL)isPaired:(NSObject *)instance {
-  return [[self instancePairManager] isPaired:instance];
+  return [[self instanceManager] containsInstance:instance];
 }
 
 - (REFPairedInstance *)getPairedPairedInstance:(NSObject *)instance {
-  NSString *instanceID = [[self instancePairManager] getInstanceID:instance];
+  NSString *instanceID = [[self instanceManager] getInstanceID:instance];
   if (instanceID) return [REFPairedInstance fromID:instanceID];
   return nil;
 }
 
 - (NSObject *)getPairedObject:(REFPairedInstance *)pairedInstance {
-  return [[self instancePairManager] getInstance:pairedInstance.instanceID];
+  return [[self instanceManager] getInstance:pairedInstance.instanceID];
 }
 
 - (void)registerHandler:(NSString *)channelName handler:(NSObject<REFTypeChannelHandler> *)handler {
@@ -61,31 +61,19 @@
 }
 
 - (void)createNewInstancePair:(NSString *)channelName
-                         instance:(NSObject *)instance
-                            owner:(BOOL)owner
-                       completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
+                     instance:(NSObject *)instance
+                    arguments:(nonnull NSArray<id> *)arguments
+                        owner:(BOOL)owner
+                   completion:(nonnull void (^)(REFPairedInstance * _Nullable, NSError * _Nullable))completion {
   if ([self isPaired:instance]) {
     completion(nil, nil);
     return;
   }
   
-  NSObject<REFTypeChannelHandler> *handler = [self getChannelHandler:channelName];
-  if (!handler) {
-    NSLog(@"A `REFTypeChannelHandler` must be set for channel of: %@.", channelName);
-    return;
-  }
-  
-  REFPairedInstance *pairedInstance = [REFPairedInstance fromID:[self generateUniqueInstanceID:instance]];
-  
-  [self addInstancePair:instance
-         pairedInstance:pairedInstance
-                  owner:owner];
-  
-  NSArray<id> *creationArguments = [self.converter convertInstancesToPairedInstances:self
-                                                                         obj:[[self
-                                                                               getChannelHandler:channelName]
-                                                                              getCreationArguments:self
-                                                                              instance:instance]];
+  [self addInstancePair:instance instanceID:nil owner:owner];
+  REFPairedInstance *pairedInstance = [self getPairedPairedInstance:instance];
+  NSArray<id> *creationArguments = [self.converter convertInstances:[self instanceManager]
+                                                                obj:arguments];
   
   [_messageDispatcher sendCreateNewInstancePair:channelName
                                  pairedInstance:pairedInstance
@@ -106,12 +94,12 @@
                     completion:(void (^)(id _Nullable, NSError *_Nullable))completion {
   [_messageDispatcher sendInvokeStaticMethod:channelName
                                   methodName:methodName
-                                   arguments:[self.converter convertInstancesToPairedInstances:self obj:arguments]
+                                   arguments:[self.converter convertInstances:[self instanceManager] obj:arguments]
                                   completion:^(id result, NSError *error) {
     if (error) {
       completion(nil, error);
     } else {
-      completion([self.converter convertPairedInstancesToInstances:self obj:result], nil);
+      completion([self.converter convertPairedInstances:[self instanceManager] obj:result], nil);
     }
   }];
 }
@@ -126,25 +114,25 @@
   [_messageDispatcher sendInvokeMethod:channelName
                         pairedInstance:[self getPairedPairedInstance:instance]
                             methodName:methodName
-                             arguments:[self.converter convertInstancesToPairedInstances:self obj:arguments]
+                             arguments:[self.converter convertInstances:[self instanceManager] obj:arguments]
                             completion:^(id result, NSError *error) {
     if (error) {
       completion(nil, error);
     } else {
-      completion([self.converter convertPairedInstancesToInstances:self obj:result], nil);
+      completion([self.converter convertPairedInstances:[self instanceManager] obj:result], nil);
     }
   }];
 }
 
 - (void)disposeInstancePair:(NSObject *)instance
-                completion:(void (^)(NSError *_Nullable))completion {
+                 completion:(void (^)(NSError *_Nullable))completion {
   if (![self isPaired:instance]) {
     completion(nil);
     return;
   }
   
   REFPairedInstance *pairedInstance = [self getPairedPairedInstance:instance];
-  [self removeInstancePair:pairedInstance];
+  [[self instanceManager] removeInstance:pairedInstance.instanceID];
   [_messageDispatcher sendDisposeInstancePair:pairedInstance completion:completion];
 }
 
@@ -154,11 +142,11 @@
                                        owner:(BOOL)owner {
   NSAssert(![self getPairedObject:pairedInstance], @"An object with `PairedInstance` has already been created.");
   NSObject *instance = [[self getChannelHandler:channelName] createInstance:self
-                                                                arguments:[[self converter]
-                                                                           convertPairedInstancesToInstances:self obj:arguments]];
-
+                                                                  arguments:[[self converter]
+                                                                             convertPairedInstances:[self instanceManager] obj:arguments]];
+  
   NSAssert(![self isPaired:instance], @"");
-  [self addInstancePair:instance pairedInstance:pairedInstance owner:owner];
+  [self addInstancePair:instance instanceID:pairedInstance.instanceID owner:owner];
   return instance;
 }
 
@@ -167,8 +155,8 @@
                         arguments:(NSArray<id> *)arguments {
   NSObject *object = [[self getChannelHandler:channelName] invokeStaticMethod:self
                                                                    methodName:methodName
-                                                                    arguments:[[self converter] convertPairedInstancesToInstances:self obj:arguments]];
-  return [[self converter] convertInstancesToPairedInstances:self obj:object];
+                                                                    arguments:[[self converter] convertPairedInstances:[self instanceManager] obj:arguments]];
+  return [[self converter] convertInstances:[self instanceManager] obj:object];
 }
 
 - (id)onReceiveInvokeMethod:(NSString *)channelName
@@ -179,19 +167,15 @@
                                                                instance:[self getPairedObject:pairedInstance]
                                                              methodName:methodName
                                                               arguments:[[self converter]
-                                                                         convertPairedInstancesToInstances:self
+                                                                         convertPairedInstances:[self instanceManager]
                                                                          obj:arguments]];
   
-  return [[self converter] convertInstancesToPairedInstances:self obj:object];
+  return [[self converter] convertInstances:[self instanceManager] obj:object];
 }
 
 - (void)onReceiveDisposeInstancePair:(REFPairedInstance *)pairedInstance {
   NSAssert([self getPairedObject:pairedInstance], @"The Object with the following PairedInstance has already been disposed: %@", pairedInstance);
-  [self removeInstancePair:pairedInstance];
-}
-
-- (NSString *)generateUniqueInstanceID:(NSObject *)instance {
-  return [@(instance.hash) stringValue];
+  [[self instanceManager] removeInstance:pairedInstance.instanceID];
 }
 @end
 
@@ -215,14 +199,10 @@
 }
 
 - (void)createNewInstancePair:(NSObject *)instance
-                   completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
-  return [self createNewInstancePair:instance owner:instance completion:completion];
-}
-
-- (void)createNewInstancePair:(NSObject *)instance
+                    arguments:(nonnull NSArray<id> *)arguments
                         owner:(BOOL)owner
-                   completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
-  [_messenger createNewInstancePair:_name instance:instance owner:owner completion:completion];
+                   completion:(nonnull void (^)(REFPairedInstance * _Nullable, NSError * _Nullable))completion {
+  [_messenger createNewInstancePair:_name instance:instance arguments:arguments owner:owner completion:completion];
 }
 
 - (void)invokeStaticMethod:(NSString *)methodName
@@ -252,15 +232,15 @@
 @end
 
 @implementation REFStandardInstanceConverter
-- (id _Nullable)convertInstancesToPairedInstances:(REFTypeChannelMessenger *)messenger
-                                      obj:(id _Nullable)obj {
-  if ([messenger isPaired:obj]) {
-    return [messenger getPairedPairedInstance:obj];
+- (id _Nullable)convertInstances:(REFInstanceManager *)manager
+                             obj:(id _Nullable)obj {
+  if ([manager containsInstance:obj]) {
+    return [REFPairedInstance fromID:[manager getInstanceID:obj]];
   } else if ([obj isKindOfClass:[NSArray class]]) {
     NSArray *array = obj;
     NSMutableArray *newArray = [NSMutableArray arrayWithCapacity:array.count];
     for (id object in array) {
-      [newArray addObject:[self convertInstancesToPairedInstances:messenger obj:object]];
+      [newArray addObject:[self convertInstances:manager obj:object]];
     }
     return newArray;
   } else if ([obj isKindOfClass:[NSDictionary class]]) {
@@ -269,8 +249,8 @@
     [NSMutableDictionary dictionaryWithCapacity:dictionary.count];
     [dictionary enumerateKeysAndObjectsUsingBlock:^(id _Nonnull key, id _Nonnull object,
                                                     BOOL *_Nonnull stop) {
-      [newDictionary setObject:[self convertInstancesToPairedInstances:messenger obj:object]
-                        forKey:[self convertInstancesToPairedInstances:messenger obj:key]];
+      [newDictionary setObject:[self convertInstances:manager obj:object]
+                        forKey:[self convertInstances:manager obj:key]];
     }];
     
     return newDictionary;
@@ -279,15 +259,16 @@
   return obj;
 }
 
-- (id _Nullable)convertPairedInstancesToInstances:(REFTypeChannelMessenger *)messenger
-                                     obj:(id _Nullable)obj {
+- (id _Nullable)convertPairedInstances:(REFInstanceManager *)manager
+                                   obj:(id _Nullable)obj {
   if ([obj isKindOfClass:[REFPairedInstance class]]) {
-    return [messenger getPairedObject:obj];
+    REFPairedInstance *pairedInstance = (REFPairedInstance *) obj;
+    return [manager getInstance:pairedInstance.instanceID];
   } else if ([obj isKindOfClass:[NSArray class]]) {
     NSArray *array = obj;
     NSMutableArray *newArray = [NSMutableArray arrayWithCapacity:array.count];
     for (id object in array) {
-      [newArray addObject:[self convertPairedInstancesToInstances:messenger obj:object]];
+      [newArray addObject:[self convertPairedInstances:manager obj:object]];
     }
     return newArray;
   } else if ([obj isKindOfClass:[NSDictionary class]]) {
@@ -296,8 +277,8 @@
     [NSMutableDictionary dictionaryWithCapacity:dictionary.count];
     [dictionary enumerateKeysAndObjectsUsingBlock:^(id _Nonnull key, id _Nonnull object,
                                                     BOOL *_Nonnull stop) {
-      [newDictionary setObject:[self convertPairedInstancesToInstances:messenger obj:object]
-                        forKey:[self convertPairedInstancesToInstances:messenger obj:key]];
+      [newDictionary setObject:[self convertPairedInstances:manager obj:object]
+                        forKey:[self convertPairedInstances:manager obj:key]];
     }];
     
     return newDictionary;

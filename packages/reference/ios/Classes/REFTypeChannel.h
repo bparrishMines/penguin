@@ -7,7 +7,6 @@ NS_ASSUME_NONNULL_BEGIN
 @class REFTypeChannelMessenger;
 
 @protocol REFTypeChannelHandler <NSObject>
-- (NSArray *)getCreationArguments:(REFTypeChannelMessenger *)messenger instance:(NSObject *)instance;
 - (id)createInstance:(REFTypeChannelMessenger *)messenger arguments:(NSArray *)arguments;
 - (id _Nullable)invokeStaticMethod:(REFTypeChannelMessenger *)messenger
                         methodName:(NSString *)methodName
@@ -26,6 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setHandler:(NSObject<REFTypeChannelHandler> *_Nullable)handler;
 - (void)removeHandler;
 - (void)createNewInstancePair:(ObjectType)instance
+                    arguments:(NSArray<id> *)arguments
                         owner:(BOOL)owner
                    completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion;
 - (void)invokeStaticMethod:(NSString *)methodName
@@ -62,10 +62,10 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @protocol REFInstanceConverter <NSObject>
-- (id _Nullable)convertInstancesToPairedInstances:(REFTypeChannelMessenger *)messenger
-                                      obj:(id _Nullable)obj;
-- (id _Nullable)convertPairedInstancesToInstances:(REFTypeChannelMessenger *)messenger
-                                     obj:(id _Nullable)obj;
+- (id _Nullable)convertInstances:(REFInstanceManager *)manager
+                             obj:(id _Nullable)obj;
+- (id _Nullable)convertPairedInstances:(REFInstanceManager *)manager
+                                   obj:(id _Nullable)obj;
 @end
 
 @interface REFStandardInstanceConverter : NSObject <REFInstanceConverter>
@@ -80,10 +80,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)registerHandler:(NSString *)channelName handler:(NSObject<REFTypeChannelHandler> *)handler;
 - (void)unregisterHandler:(NSString *)channelName;
 - (NSObject<REFTypeChannelHandler> *_Nullable)getChannelHandler:(NSString *)channelName;
-- (REFInstancePairManager *)instancePairManager;
+- (REFInstanceManager *)instanceManager;
 - (id<REFInstanceConverter>)converter;
 - (void)createNewInstancePair:(NSString *)channelName
-                    instance:(NSObject *)instance
+                     instance:(NSObject *)instance
+                    arguments:(NSArray<id> *)arguments
                         owner:(BOOL)owner
                    completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion;
 - (void)sendInvokeStaticMethod:(NSString *)channelName
@@ -109,7 +110,6 @@ NS_ASSUME_NONNULL_BEGIN
                            methodName:(NSString *)methodName
                             arguments:(NSArray *)arguments;
 - (void)onReceiveDisposeInstancePair:(REFPairedInstance *)pairedInstance;
-- (NSString *)generateUniqueInstanceID:(NSObject *)instance;
 @end
 
 NS_ASSUME_NONNULL_END

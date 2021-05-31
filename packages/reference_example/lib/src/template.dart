@@ -6,27 +6,24 @@ import 'template.g.dart';
 import 'template_channels.dart';
 
 @Reference('github.penguin/template/template/ClassTemplate')
-class ClassTemplate with $ClassTemplate {
-  ClassTemplate(this.fieldTemplate) {
-    _channel.createNewInstancePair(this, owner: true);
+class $$class_name$$ with $$$class_name$$ {
+  $$class_name$$(int $$field_name$$) {
+    _channel.$$create(this, $owner: true, $$field_name$$: $$field_name$$);
   }
 
-  static $ClassTemplateChannel get _channel =>
-      ChannelRegistrar.instance.implementations.classTemplateChannel;
+  static $$$class_name$$Channel get _channel =>
+      ChannelRegistrar.instance.implementations.channel__class_name__;
 
-  @override
-  final int fieldTemplate;
-
-  static Future<double> staticMethodTemplate(String parameterTemplate) async {
-    return await _channel.$invokeStaticMethodTemplate(parameterTemplate)
-        as double;
+  static Future<double> $__staticMethod_name__(
+    String $$parameter_name$$,
+  ) async {
+    return await _channel.$__staticMethod_name__($$parameter_name$$) as double;
   }
 
-  @override
-  Future<String> methodTemplate(String parameterTemplate) async {
-    return await _channel.$invokeMethodTemplate(
+  Future<String> $__method_name__(String $$parameter_name$$) async {
+    return await _channel.$__method_name__(
       this,
-      parameterTemplate,
+      $$parameter_name$$,
     ) as String;
   }
 }

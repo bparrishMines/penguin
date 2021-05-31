@@ -98,20 +98,21 @@ void main() {
       expect(
         testChannel.createNewInstancePair(
           testClass,
+          <Object?>[],
           owner: true,
         ),
-        completion(const PairedInstance('test_instance_id')),
+        completion(const PairedInstance('test_reference_id')),
       );
       expect(testMessenger.isPaired(testClass), isTrue);
 
       expect(
-        testChannel.createNewInstancePair(testClass, owner: true),
+        testChannel.createNewInstancePair(testClass, <Object?>[], owner: true),
         completion(isNull),
       );
       expect(testMessenger.isPaired(testClass), isTrue);
 
       expect(
-        testChannel.createNewInstancePair(testClass, owner: true),
+        testChannel.createNewInstancePair(testClass, <Object?>[], owner: true),
         completion(isNull),
       );
       expect(testMessenger.isPaired(testClass), isTrue);
@@ -127,7 +128,7 @@ void main() {
     test('invokeMethod', () {
       final TestClass testClass = TestClass();
 
-      testChannel.createNewInstancePair(testClass, owner: true);
+      testChannel.createNewInstancePair(testClass, <Object?>[], owner: true);
       expect(
         testChannel.sendInvokeMethod(testClass, 'aMethod', <Object>[]),
         completion('return_value'),
@@ -137,7 +138,7 @@ void main() {
     test('disposeInstancePair', () {
       final testClass = TestClass();
 
-      testChannel.createNewInstancePair(testClass, owner: true);
+      testChannel.createNewInstancePair(testClass, <Object?>[], owner: true);
       expect(testChannel.disposeInstancePair(testClass), completes);
       expect(testMessenger.isPaired(testClass), isFalse);
 

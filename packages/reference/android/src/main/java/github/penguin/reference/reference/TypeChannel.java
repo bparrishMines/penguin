@@ -25,8 +25,8 @@ public class TypeChannel<T> {
     messenger.unregisterHandler(name);
   }
 
-  public Completable<PairedInstance> createNewInstancePair(T instance, boolean owner) {
-    return messenger.createNewInstancePair(name, instance, owner);
+  public Completable<PairedInstance> createNewInstancePair(T instance, List<Object> arguments, boolean owner) {
+    return messenger.createNewInstancePair(name, instance, arguments, owner);
   }
 
   public Completable<Object> invokeStaticMethod(String methodName, List<Object> arguments) {

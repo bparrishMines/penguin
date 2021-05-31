@@ -10,6 +10,29 @@ import 'package:source_gen/source_gen.dart';
 import 'ast.dart';
 
 class ReferenceAstBuilder extends Builder {
+  static const TypeChecker methodAnnotation =
+      TypeChecker.fromRuntime(ReferenceMethod);
+  static const TypeChecker parameterAnnotation =
+      TypeChecker.fromRuntime(ReferenceParameter);
+
+  static ReferenceMethod tryReadMethodAnnotation(MethodElement element) {
+    if (!methodAnnotation.hasAnnotationOfExact(element)) return null;
+    final ConstantReader reader = ConstantReader(
+      methodAnnotation.firstAnnotationOfExact(element),
+    );
+    return ReferenceMethod(ignore: reader.read('ignore').boolValue);
+  }
+
+  static ReferenceParameter tryReadParameterAnnotation(
+    ParameterElement element,
+  ) {
+    if (!parameterAnnotation.hasAnnotationOfExact(element)) return null;
+    final ConstantReader reader = ConstantReader(
+      parameterAnnotation.firstAnnotationOfExact(element),
+    );
+    return ReferenceParameter(ignore: reader.read('ignore').boolValue);
+  }
+
   @override
   FutureOr<void> build(BuildStep buildStep) async {
     final AssetId newFile = buildStep.inputId.changeExtension('.reference_ast');
@@ -68,12 +91,24 @@ class ReferenceAstBuilder extends Builder {
       name: classElement.name,
       channelName: _getChannel(classElement.thisType),
       fields: parameters
+          .where((ParameterElement element) {
+            final ReferenceParameter referenceParameter =
+                tryReadParameterAnnotation(element);
+            if (referenceParameter == null) return true;
+            return !referenceParameter.ignore;
+          })
           .map<FieldNode>((ParameterElement parameterElement) =>
               _toFieldNode(parameterElement, allGeneratedClasses))
           .toList(),
       methods: classElement.methods
           .where((MethodElement element) => !element.isPrivate)
           .where((MethodElement methodElement) => !methodElement.isStatic)
+          .where((MethodElement element) {
+            final ReferenceMethod referenceMethod =
+                tryReadMethodAnnotation(element);
+            if (referenceMethod == null) return true;
+            return !referenceMethod.ignore;
+          })
           .map<MethodNode>(
             (MethodElement methodElement) =>
                 _toMethodNode(methodElement, allGeneratedClasses),
@@ -82,6 +117,12 @@ class ReferenceAstBuilder extends Builder {
       staticMethods: classElement.methods
           .where((MethodElement element) => !element.isPrivate)
           .where((MethodElement methodElement) => methodElement.isStatic)
+          .where((MethodElement element) {
+            final ReferenceMethod referenceMethod =
+                tryReadMethodAnnotation(element);
+            if (referenceMethod == null) return true;
+            return !referenceMethod.ignore;
+          })
           .map<MethodNode>(
             (MethodElement methodElement) =>
                 _toMethodNode(methodElement, allGeneratedClasses),
@@ -111,6 +152,12 @@ class ReferenceAstBuilder extends Builder {
         allGeneratedClasses,
       ),
       parameters: methodElement.parameters
+          .where((ParameterElement element) {
+            final ReferenceParameter referenceParameter =
+                tryReadParameterAnnotation(element);
+            if (referenceParameter == null) return true;
+            return !referenceParameter.ignore;
+          })
           .map<ParameterNode>(
             (ParameterElement parameterElement) =>
                 _toParameterNode(parameterElement, allGeneratedClasses),

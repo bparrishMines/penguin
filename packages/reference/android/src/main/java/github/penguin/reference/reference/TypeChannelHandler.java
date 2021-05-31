@@ -3,8 +3,6 @@ package github.penguin.reference.reference;
 import java.util.List;
 
 public interface TypeChannelHandler<T> {
-  List<Object> getCreationArguments(TypeChannelMessenger manager, T instance);
-
   T createInstance(TypeChannelMessenger manager, List<Object> arguments) throws Exception;
 
   Object invokeStaticMethod(

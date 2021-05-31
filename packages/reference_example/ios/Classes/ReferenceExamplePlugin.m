@@ -5,7 +5,8 @@
   REFTypeChannelMessenger *messenger = [ReferencePlugin getMessengerInstance:registrar.messenger];
   
   EXPLibraryImplementations *implementations = [[EXPLibraryImplementations alloc] initWithMessenger:messenger];
-  REFChannelRegistrar *libraryRegistrar = [[REFChannelRegistrar alloc] initWithImplementation:implementations];
+  __prefix__ChannelRegistrar *libraryRegistrar = [[__prefix__ChannelRegistrar alloc]
+                                                  initWithImplementation:implementations];
   [libraryRegistrar registerHandlers];
 }
 @end

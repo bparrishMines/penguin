@@ -11,18 +11,18 @@ Future<void> main() async {
   tearDownAll(() => completer.complete('lul'));
 
   group('reference_example', () {
-    test('$ClassTemplate.methodTemplate', () async {
-      final ClassTemplate classTemplate = ClassTemplate(44);
+    test('methodTemplate', () async {
+      final $$class_name$$ classTemplate = $$class_name$$(44);
 
       expect(
-        classTemplate.methodTemplate('Hello,'),
+        classTemplate.$__method_name__('Hello,'),
         completion('Hello, World!'),
       );
     });
 
-    test('$ClassTemplate.staticMethodTemplate', () async {
+    test('staticMethodTemplate', () async {
       expect(
-        ClassTemplate.staticMethodTemplate('howmanycharacters'),
+        $$class_name$$.$__staticMethod_name__('howmanycharacters'),
         completion(17),
       );
     });
