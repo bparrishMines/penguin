@@ -35,6 +35,8 @@ String generateJava({
     for (MethodNode methodNode in classNode.staticMethods) {
       final Map<String, Object> methodData = <String, Object>{};
       methodData['name'] = methodNode.name;
+      methodData['returnType'] = getTrueTypeName(methodNode.returnType);
+      methodData['notReturnsVoid'] = methodNode.returnType.name == 'void';
 
       final List<Map<String, Object>> parameters = <Map<String, Object>>[];
       for (int i = 0; i < methodNode.parameters.length; i++) {
@@ -55,6 +57,8 @@ String generateJava({
     for (MethodNode methodNode in classNode.methods) {
       final Map<String, Object> methodData = <String, Object>{};
       methodData['name'] = methodNode.name;
+      methodData['returnType'] = getTrueTypeName(methodNode.returnType);
+      methodData['notReturnsVoid'] = methodNode.returnType.name == 'void';
 
       final List<Map<String, Object>> parameters = <Map<String, Object>>[];
       for (int i = 0; i < methodNode.parameters.length; i++) {

@@ -2,33 +2,339 @@
 
 import 'package:reference/reference.dart';
 
-import 'dart:typed_data';
+import  'dart:typed_data' ;
+
 
 // **************************************************************************
 // ReferenceGenerator
 // **************************************************************************
 
-mixin $Camera {}
 
-mixin $CameraParameters {}
+mixin $Camera {
+  void $release();
+  
+  void $startPreview(
+    
+  );
+  
+  void $stopPreview(
+    
+  );
+  
+  int $attachPreviewTexture(
+    
+  );
+  
+  void $releasePreviewTexture(
+    
+  );
+  
+  void $unlock(
+    
+  );
+  
+  void $reconnect(
+    
+  );
+  
+  void $takePicture(
+     $ShutterCallback? shutter,
+     $PictureCallback? raw,
+     $PictureCallback? postView,
+     $PictureCallback? jpeg,
+    
+  );
+  
+  void $autoFocus(
+     $AutoFocusCallback callback,
+    
+  );
+  
+  void $cancelAutoFocus(
+    
+  );
+  
+  void $setDisplayOrientation(
+     int degrees,
+    
+  );
+  
+  void $setErrorCallback(
+     $ErrorCallback callback,
+    
+  );
+  
+  void $startSmoothZoom(
+     int value,
+    
+  );
+  
+  void $stopSmoothZoom(
+    
+  );
+  
+  $CameraParameters $getParameters(
+    
+  );
+  
+  void $setParameters(
+     $CameraParameters parameters,
+    
+  );
+  
+}
 
-mixin $CameraArea {}
+mixin $CameraParameters {
+  
+  bool $getAutoExposureLock(
+    
+  );
+  
+  List<$CameraArea>? $getFocusAreas(
+    
+  );
+  
+  List<double> $getFocusDistances(
+    
+  );
+  
+  int $getMaxExposureCompensation(
+    
+  );
+  
+  int $getMaxNumFocusAreas(
+    
+  );
+  
+  int $getMinExposureCompensation(
+    
+  );
+  
+  List<String> $getSupportedFocusModes(
+    
+  );
+  
+  bool $isAutoExposureLockSupported(
+    
+  );
+  
+  bool $isZoomSupported(
+    
+  );
+  
+  void $setAutoExposureLock(
+     bool toggle,
+    
+  );
+  
+  void $setExposureCompensation(
+     int value,
+    
+  );
+  
+  void $setFocusAreas(
+     List<$CameraArea>? focusAreas,
+    
+  );
+  
+  void $setFocusMode(
+     String value,
+    
+  );
+  
+  String? $getFlashMode(
+    
+  );
+  
+  int $getMaxZoom(
+    
+  );
+  
+  $CameraSize $getPictureSize(
+    
+  );
+  
+  $CameraSize $getPreviewSize(
+    
+  );
+  
+  List<$CameraSize> $getSupportedPreviewSizes(
+    
+  );
+  
+  List<$CameraSize> $getSupportedPictureSizes(
+    
+  );
+  
+  List<String> $getSupportedFlashModes(
+    
+  );
+  
+  int $getZoom(
+    
+  );
+  
+  bool $isSmoothZoomSupported(
+    
+  );
+  
+  void $setFlashMode(
+     String mode,
+    
+  );
+  
+  void $setPictureSize(
+     int width,
+     int height,
+    
+  );
+  
+  void $setRecordingHint(
+     bool hint,
+    
+  );
+  
+  void $setRotation(
+     int rotation,
+    
+  );
+  
+  void $setZoom(
+     int value,
+    
+  );
+  
+  void $setPreviewSize(
+     int width,
+     int height,
+    
+  );
+  
+  int $getExposureCompensation(
+    
+  );
+  
+  double $getExposureCompensationStep(
+    
+  );
+  
+}
 
-mixin $CameraRect {}
+mixin $CameraArea {
+  
+}
 
-mixin $CameraSize {}
+mixin $CameraRect {
+  
+}
 
-mixin $ErrorCallback {}
+mixin $CameraSize {
+  
+}
 
-mixin $AutoFocusCallback {}
+mixin $ErrorCallback {
+  
+  void $onError(
+     int error,
+    
+  );
+  
+}
 
-mixin $ShutterCallback {}
+mixin $AutoFocusCallback {
+  
+  void $onAutoFocus(
+     bool success,
+    
+  );
+  
+}
 
-mixin $PictureCallback {}
+mixin $ShutterCallback {
+  
+  void $onShutter(
+    
+  );
+  
+}
 
-mixin $CameraInfo {}
+mixin $PictureCallback {
+  
+  void $onPictureTaken(
+     Uint8List data,
+    
+  );
+  
+}
 
-mixin $MediaRecorder {}
+mixin $CameraInfo {
+  
+}
+
+mixin $MediaRecorder {
+  
+  void $setCamera(
+     $Camera camera,
+    
+  );
+  
+  void $setVideoSource(
+     int source,
+    
+  );
+  
+  void $setOutputFilePath(
+     String path,
+    
+  );
+  
+  void $setOutputFormat(
+     int format,
+    
+  );
+  
+  void $setVideoEncoder(
+     int encoder,
+    
+  );
+  
+  void $setAudioSource(
+     int source,
+    
+  );
+  
+  void $setAudioEncoder(
+     int encoder,
+    
+  );
+  
+  void $prepare(
+    
+  );
+  
+  void $start(
+    
+  );
+  
+  void $stop(
+    
+  );
+  
+  void $release(
+    
+  );
+  
+  void $pause(
+    
+  );
+  
+  void $resume(
+    
+  );
+  
+}
+
+
 
 class $CameraChannel extends TypeChannel<$Camera> {
   $CameraChannel(TypeChannelMessenger messenger)
@@ -37,215 +343,254 @@ class $CameraChannel extends TypeChannel<$Camera> {
   Future<PairedInstance?> $$create(
     $Camera $instance, {
     required bool $owner,
+    
   }) {
     return createNewInstancePair(
       $instance,
-      <Object?>[],
+      <Object?>[
+        
+      ],
       owner: $owner,
     );
   }
 
-  Future<Object?> $getAllCameraInfo() {
-    return sendInvokeStaticMethod(
+  
+  Future< List<$CameraInfo> > $getAllCameraInfo() async {
+     await sendInvokeStaticMethod(
       'getAllCameraInfo',
       <Object?>[],
-    );
+    ) as List<$CameraInfo>;
   }
-
-  Future<Object?> $open(
-    int cameraId,
-  ) {
-    return sendInvokeStaticMethod(
+  
+  Future< $Camera >
+      $open(
+     int cameraId,
+    
+  ) async {
+     await sendInvokeStaticMethod(
       'open',
       <Object?>[
-        cameraId,
+         cameraId, 
       ],
-    );
+    ) as $Camera;
   }
+  
 
-  Future<Object?> $release(
+  
+  Future< void > $release(
     $Camera $instance,
-  ) {
-    return sendInvokeMethod(
+    
+  ) async {
+     return  await sendInvokeMethod(
       $instance,
       'release',
-      <Object?>[],
-    );
+      <Object?>[
+        
+      ],
+    ) as void;
   }
-
-  Future<Object?> $startPreview(
-    $Camera $instance,
-  ) {
-    return sendInvokeMethod(
+  
+  Future< void > $startPreview($Camera $instance,) async {
+     return  await sendInvokeMethod(
       $instance,
       'startPreview',
-      <Object?>[],
-    );
+      <Object?>[
+        
+      ],
+    ) as void;
   }
-
-  Future<Object?> $stopPreview(
+  
+  Future< void > $stopPreview(
     $Camera $instance,
-  ) {
-    return sendInvokeMethod(
+    
+  ) async {
+     return  await sendInvokeMethod(
       $instance,
       'stopPreview',
-      <Object?>[],
-    );
+      <Object?>[
+        
+      ],
+    ) as void;
   }
-
-  Future<Object?> $attachPreviewTexture(
+  
+  Future< int > $attachPreviewTexture(
     $Camera $instance,
-  ) {
-    return sendInvokeMethod(
+    
+  ) async {
+     await sendInvokeMethod(
       $instance,
       'attachPreviewTexture',
-      <Object?>[],
-    );
+      <Object?>[
+        
+      ],
+    ) as int;
   }
-
-  Future<Object?> $releasePreviewTexture(
+  
+  Future< void > $releasePreviewTexture(
     $Camera $instance,
-  ) {
-    return sendInvokeMethod(
+    
+  ) async {
+     return  await sendInvokeMethod(
       $instance,
       'releasePreviewTexture',
-      <Object?>[],
-    );
+      <Object?>[
+        
+      ],
+    ) as void;
   }
-
-  Future<Object?> $unlock(
+  
+  Future< void > $unlock(
     $Camera $instance,
-  ) {
-    return sendInvokeMethod(
+    
+  ) async {
+     return  await sendInvokeMethod(
       $instance,
       'unlock',
-      <Object?>[],
-    );
+      <Object?>[
+        
+      ],
+    ) as void;
   }
-
-  Future<Object?> $reconnect(
+  
+  Future< void > $reconnect(
     $Camera $instance,
-  ) {
-    return sendInvokeMethod(
+    
+  ) async {
+     return  await sendInvokeMethod(
       $instance,
       'reconnect',
-      <Object?>[],
-    );
+      <Object?>[
+        
+      ],
+    ) as void;
   }
-
-  Future<Object?> $takePicture(
+  
+  Future< void > $takePicture(
     $Camera $instance,
-    $ShutterCallback? shutter,
-    $PictureCallback? raw,
-    $PictureCallback? postView,
-    $PictureCallback? jpeg,
-  ) {
-    return sendInvokeMethod(
+     $ShutterCallback? shutter,
+     $PictureCallback? raw,
+     $PictureCallback? postView,
+     $PictureCallback? jpeg,
+    
+  ) async {
+     return  await sendInvokeMethod(
       $instance,
       'takePicture',
       <Object?>[
-        shutter,
-        raw,
-        postView,
-        jpeg,
+         shutter,  raw,  postView,  jpeg, 
       ],
-    );
+    ) as void;
   }
-
-  Future<Object?> $autoFocus(
+  
+  Future< void > $autoFocus(
     $Camera $instance,
-    $AutoFocusCallback callback,
-  ) {
-    return sendInvokeMethod(
+     $AutoFocusCallback callback,
+    
+  ) async {
+     return  await sendInvokeMethod(
       $instance,
       'autoFocus',
       <Object?>[
-        callback,
+         callback, 
       ],
-    );
+    ) as void;
   }
-
-  Future<Object?> $cancelAutoFocus(
+  
+  Future< void > $cancelAutoFocus(
     $Camera $instance,
-  ) {
-    return sendInvokeMethod(
+    
+  ) async {
+     return  await sendInvokeMethod(
       $instance,
       'cancelAutoFocus',
-      <Object?>[],
-    );
+      <Object?>[
+        
+      ],
+    ) as void;
   }
-
-  Future<Object?> $setDisplayOrientation(
+  
+  Future< void > $setDisplayOrientation(
     $Camera $instance,
-    int degrees,
-  ) {
-    return sendInvokeMethod(
+     int degrees,
+    
+  ) async {
+     return  await sendInvokeMethod(
       $instance,
       'setDisplayOrientation',
       <Object?>[
-        degrees,
+         degrees, 
       ],
-    );
+    ) as void;
   }
-
-  Future<Object?> $setErrorCallback(
+  
+  Future< void > $setErrorCallback(
     $Camera $instance,
-    $ErrorCallback callback,
-  ) {
-    return sendInvokeMethod(
+     $ErrorCallback callback,
+    
+  ) async {
+     return  await sendInvokeMethod(
       $instance,
       'setErrorCallback',
       <Object?>[
-        callback,
+         callback, 
       ],
-    );
+    ) as void;
   }
-
-  Future<Object?> $startSmoothZoom(
+  
+  Future< void > $startSmoothZoom(
     $Camera $instance,
-    int value,
-  ) {
-    return sendInvokeMethod(
+     int value,
+    
+  ) async {
+     return  await sendInvokeMethod(
       $instance,
       'startSmoothZoom',
       <Object?>[
-        value,
+         value, 
       ],
-    );
+    ) as void;
   }
-
-  Future<Object?> $stopSmoothZoom(
+  
+  Future< void > $stopSmoothZoom(
     $Camera $instance,
-  ) {
-    return sendInvokeMethod(
+    
+  ) async {
+     return  await sendInvokeMethod(
       $instance,
       'stopSmoothZoom',
-      <Object?>[],
-    );
+      <Object?>[
+        
+      ],
+    ) as void;
   }
-
-  Future<Object?> $getParameters(
+  
+  Future< $CameraParameters > $getParameters(
     $Camera $instance,
-  ) {
-    return sendInvokeMethod(
+    
+  ) async {
+     await sendInvokeMethod(
       $instance,
       'getParameters',
-      <Object?>[],
-    );
+      <Object?>[
+        
+      ],
+    ) as $CameraParameters;
   }
-
-  Future<Object?> $setParameters(
+  
+  Future< void > $setParameters(
     $Camera $instance,
-    $CameraParameters parameters,
-  ) {
-    return sendInvokeMethod(
+     $CameraParameters parameters,
+    
+  ) async {
+     return  await sendInvokeMethod(
       $instance,
       'setParameters',
       <Object?>[
-        parameters,
+         parameters, 
       ],
-    );
+    ) as void;
   }
+  
 }
 
 class $CameraParametersChannel extends TypeChannel<$CameraParameters> {
@@ -255,347 +600,422 @@ class $CameraParametersChannel extends TypeChannel<$CameraParameters> {
   Future<PairedInstance?> $$create(
     $CameraParameters $instance, {
     required bool $owner,
+    
   }) {
     return createNewInstancePair(
       $instance,
-      <Object?>[],
+      <Object?>[
+        
+      ],
       owner: $owner,
     );
   }
 
-  Future<Object?> $getAutoExposureLock(
+  
+
+  
+  Future< bool > $getAutoExposureLock(
     $CameraParameters $instance,
-  ) {
-    return sendInvokeMethod(
+    
+  ) async {
+     await sendInvokeMethod(
       $instance,
       'getAutoExposureLock',
-      <Object?>[],
-    );
+      <Object?>[
+        
+      ],
+    ) as bool;
   }
-
-  Future<Object?> $getFocusAreas(
+  
+  Future< List<$CameraArea>? > $getFocusAreas(
     $CameraParameters $instance,
-  ) {
-    return sendInvokeMethod(
+    
+  ) async {
+     await sendInvokeMethod(
       $instance,
       'getFocusAreas',
-      <Object?>[],
-    );
+      <Object?>[
+        
+      ],
+    ) as List<$CameraArea>?;
   }
-
-  Future<Object?> $getFocusDistances(
+  
+  Future< List<double> > $getFocusDistances(
     $CameraParameters $instance,
-  ) {
-    return sendInvokeMethod(
+    
+  ) async {
+     await sendInvokeMethod(
       $instance,
       'getFocusDistances',
-      <Object?>[],
-    );
+      <Object?>[
+        
+      ],
+    ) as List<double>;
   }
-
-  Future<Object?> $getMaxExposureCompensation(
+  
+  Future< int > $getMaxExposureCompensation(
     $CameraParameters $instance,
-  ) {
-    return sendInvokeMethod(
+    
+  ) async {
+     await sendInvokeMethod(
       $instance,
       'getMaxExposureCompensation',
-      <Object?>[],
-    );
+      <Object?>[
+        
+      ],
+    ) as int;
   }
-
-  Future<Object?> $getMaxNumFocusAreas(
+  
+  Future< int > $getMaxNumFocusAreas(
     $CameraParameters $instance,
-  ) {
-    return sendInvokeMethod(
+    
+  ) async {
+     await sendInvokeMethod(
       $instance,
       'getMaxNumFocusAreas',
-      <Object?>[],
-    );
+      <Object?>[
+        
+      ],
+    ) as int;
   }
-
-  Future<Object?> $getMinExposureCompensation(
+  
+  Future< int > $getMinExposureCompensation(
     $CameraParameters $instance,
-  ) {
-    return sendInvokeMethod(
+    
+  ) async {
+     await sendInvokeMethod(
       $instance,
       'getMinExposureCompensation',
-      <Object?>[],
-    );
+      <Object?>[
+        
+      ],
+    ) as int;
   }
-
-  Future<Object?> $getSupportedFocusModes(
+  
+  Future< List<String> > $getSupportedFocusModes(
     $CameraParameters $instance,
-  ) {
-    return sendInvokeMethod(
+    
+  ) async {
+     await sendInvokeMethod(
       $instance,
       'getSupportedFocusModes',
-      <Object?>[],
-    );
+      <Object?>[
+        
+      ],
+    ) as List<String>;
   }
-
-  Future<Object?> $isAutoExposureLockSupported(
+  
+  Future< bool > $isAutoExposureLockSupported(
     $CameraParameters $instance,
-  ) {
-    return sendInvokeMethod(
+    
+  ) async {
+     await sendInvokeMethod(
       $instance,
       'isAutoExposureLockSupported',
-      <Object?>[],
-    );
+      <Object?>[
+        
+      ],
+    ) as bool;
   }
-
-  Future<Object?> $isZoomSupported(
+  
+  Future< bool > $isZoomSupported(
     $CameraParameters $instance,
-  ) {
-    return sendInvokeMethod(
+    
+  ) async {
+     await sendInvokeMethod(
       $instance,
       'isZoomSupported',
-      <Object?>[],
-    );
+      <Object?>[
+        
+      ],
+    ) as bool;
   }
-
-  Future<Object?> $setAutoExposureLock(
+  
+  Future< void > $setAutoExposureLock(
     $CameraParameters $instance,
-    bool toggle,
-  ) {
-    return sendInvokeMethod(
+     bool toggle,
+    
+  ) async {
+     return  await sendInvokeMethod(
       $instance,
       'setAutoExposureLock',
       <Object?>[
-        toggle,
+         toggle, 
       ],
-    );
+    ) as void;
   }
-
-  Future<Object?> $setExposureCompensation(
+  
+  Future< void > $setExposureCompensation(
     $CameraParameters $instance,
-    int value,
-  ) {
-    return sendInvokeMethod(
+     int value,
+    
+  ) async {
+     return  await sendInvokeMethod(
       $instance,
       'setExposureCompensation',
       <Object?>[
-        value,
+         value, 
       ],
-    );
+    ) as void;
   }
-
-  Future<Object?> $setFocusAreas(
+  
+  Future< void > $setFocusAreas(
     $CameraParameters $instance,
-    List<$CameraArea>? focusAreas,
-  ) {
-    return sendInvokeMethod(
+     List<$CameraArea>? focusAreas,
+    
+  ) async {
+     return  await sendInvokeMethod(
       $instance,
       'setFocusAreas',
       <Object?>[
-        focusAreas,
+         focusAreas, 
       ],
-    );
+    ) as void;
   }
-
-  Future<Object?> $setFocusMode(
+  
+  Future< void > $setFocusMode(
     $CameraParameters $instance,
-    String value,
-  ) {
-    return sendInvokeMethod(
+     String value,
+    
+  ) async {
+     return  await sendInvokeMethod(
       $instance,
       'setFocusMode',
       <Object?>[
-        value,
+         value, 
       ],
-    );
+    ) as void;
   }
-
-  Future<Object?> $getFlashMode(
+  
+  Future< String? > $getFlashMode(
     $CameraParameters $instance,
-  ) {
-    return sendInvokeMethod(
+    
+  ) async {
+     await sendInvokeMethod(
       $instance,
       'getFlashMode',
-      <Object?>[],
-    );
+      <Object?>[
+        
+      ],
+    ) as String?;
   }
-
-  Future<Object?> $getMaxZoom(
+  
+  Future< int > $getMaxZoom(
     $CameraParameters $instance,
-  ) {
-    return sendInvokeMethod(
+    
+  ) async {
+     await sendInvokeMethod(
       $instance,
       'getMaxZoom',
-      <Object?>[],
-    );
+      <Object?>[
+        
+      ],
+    ) as int;
   }
-
-  Future<Object?> $getPictureSize(
+  
+  Future< $CameraSize > $getPictureSize(
     $CameraParameters $instance,
-  ) {
-    return sendInvokeMethod(
+    
+  ) async {
+     await sendInvokeMethod(
       $instance,
       'getPictureSize',
-      <Object?>[],
-    );
+      <Object?>[
+        
+      ],
+    ) as $CameraSize;
   }
-
-  Future<Object?> $getPreviewSize(
+  
+  Future< $CameraSize > $getPreviewSize(
     $CameraParameters $instance,
-  ) {
-    return sendInvokeMethod(
+    
+  ) async {
+     await sendInvokeMethod(
       $instance,
       'getPreviewSize',
-      <Object?>[],
-    );
+      <Object?>[
+        
+      ],
+    ) as $CameraSize;
   }
-
-  Future<Object?> $getSupportedPreviewSizes(
+  
+  Future< List<$CameraSize> > $getSupportedPreviewSizes(
     $CameraParameters $instance,
-  ) {
-    return sendInvokeMethod(
+    
+  ) async {
+     await sendInvokeMethod(
       $instance,
       'getSupportedPreviewSizes',
-      <Object?>[],
-    );
+      <Object?>[
+        
+      ],
+    ) as List<$CameraSize>;
   }
-
-  Future<Object?> $getSupportedPictureSizes(
+  
+  Future< List<$CameraSize> > $getSupportedPictureSizes(
     $CameraParameters $instance,
-  ) {
-    return sendInvokeMethod(
+    
+  ) async {
+     await sendInvokeMethod(
       $instance,
       'getSupportedPictureSizes',
-      <Object?>[],
-    );
+      <Object?>[
+        
+      ],
+    ) as List<$CameraSize>;
   }
-
-  Future<Object?> $getSupportedFlashModes(
+  
+  Future< List<String> > $getSupportedFlashModes(
     $CameraParameters $instance,
-  ) {
-    return sendInvokeMethod(
+    
+  ) async {
+     await sendInvokeMethod(
       $instance,
       'getSupportedFlashModes',
-      <Object?>[],
-    );
+      <Object?>[
+        
+      ],
+    ) as List<String>;
   }
-
-  Future<Object?> $getZoom(
+  
+  Future< int > $getZoom(
     $CameraParameters $instance,
-  ) {
-    return sendInvokeMethod(
+    
+  ) async {
+     await sendInvokeMethod(
       $instance,
       'getZoom',
-      <Object?>[],
-    );
+      <Object?>[
+        
+      ],
+    ) as int;
   }
-
-  Future<Object?> $isSmoothZoomSupported(
+  
+  Future< bool > $isSmoothZoomSupported(
     $CameraParameters $instance,
-  ) {
-    return sendInvokeMethod(
+    
+  ) async {
+     await sendInvokeMethod(
       $instance,
       'isSmoothZoomSupported',
-      <Object?>[],
-    );
+      <Object?>[
+        
+      ],
+    ) as bool;
   }
-
-  Future<Object?> $setFlashMode(
+  
+  Future< void > $setFlashMode(
     $CameraParameters $instance,
-    String mode,
-  ) {
-    return sendInvokeMethod(
+     String mode,
+    
+  ) async {
+     return  await sendInvokeMethod(
       $instance,
       'setFlashMode',
       <Object?>[
-        mode,
+         mode, 
       ],
-    );
+    ) as void;
   }
-
-  Future<Object?> $setPictureSize(
+  
+  Future< void > $setPictureSize(
     $CameraParameters $instance,
-    int width,
-    int height,
-  ) {
-    return sendInvokeMethod(
+     int width,
+     int height,
+    
+  ) async {
+     return  await sendInvokeMethod(
       $instance,
       'setPictureSize',
       <Object?>[
-        width,
-        height,
+         width,  height, 
       ],
-    );
+    ) as void;
   }
-
-  Future<Object?> $setRecordingHint(
+  
+  Future< void > $setRecordingHint(
     $CameraParameters $instance,
-    bool hint,
-  ) {
-    return sendInvokeMethod(
+     bool hint,
+    
+  ) async {
+     return  await sendInvokeMethod(
       $instance,
       'setRecordingHint',
       <Object?>[
-        hint,
+         hint, 
       ],
-    );
+    ) as void;
   }
-
-  Future<Object?> $setRotation(
+  
+  Future< void > $setRotation(
     $CameraParameters $instance,
-    int rotation,
-  ) {
-    return sendInvokeMethod(
+     int rotation,
+    
+  ) async {
+     return  await sendInvokeMethod(
       $instance,
       'setRotation',
       <Object?>[
-        rotation,
+         rotation, 
       ],
-    );
+    ) as void;
   }
-
-  Future<Object?> $setZoom(
+  
+  Future< void > $setZoom(
     $CameraParameters $instance,
-    int value,
-  ) {
-    return sendInvokeMethod(
+     int value,
+    
+  ) async {
+     return  await sendInvokeMethod(
       $instance,
       'setZoom',
       <Object?>[
-        value,
+         value, 
       ],
-    );
+    ) as void;
   }
-
-  Future<Object?> $setPreviewSize(
+  
+  Future< void > $setPreviewSize(
     $CameraParameters $instance,
-    int width,
-    int height,
-  ) {
-    return sendInvokeMethod(
+     int width,
+     int height,
+    
+  ) async {
+     return  await sendInvokeMethod(
       $instance,
       'setPreviewSize',
       <Object?>[
-        width,
-        height,
+         width,  height, 
       ],
-    );
+    ) as void;
   }
-
-  Future<Object?> $getExposureCompensation(
+  
+  Future< int > $getExposureCompensation(
     $CameraParameters $instance,
-  ) {
-    return sendInvokeMethod(
+    
+  ) async {
+     await sendInvokeMethod(
       $instance,
       'getExposureCompensation',
-      <Object?>[],
-    );
+      <Object?>[
+        
+      ],
+    ) as int;
   }
-
-  Future<Object?> $getExposureCompensationStep(
+  
+  Future< double > $getExposureCompensationStep(
     $CameraParameters $instance,
-  ) {
-    return sendInvokeMethod(
+    
+  ) async {
+     await sendInvokeMethod(
       $instance,
       'getExposureCompensationStep',
-      <Object?>[],
-    );
+      <Object?>[
+        
+      ],
+    ) as double;
   }
+  
 }
 
 class $CameraAreaChannel extends TypeChannel<$CameraArea> {
@@ -605,18 +1025,24 @@ class $CameraAreaChannel extends TypeChannel<$CameraArea> {
   Future<PairedInstance?> $$create(
     $CameraArea $instance, {
     required bool $owner,
+    
     required $CameraRect rect,
+    
     required int weight,
+    
   }) {
     return createNewInstancePair(
       $instance,
       <Object?>[
-        rect,
-        weight,
+         rect,  weight, 
       ],
       owner: $owner,
     );
   }
+
+  
+
+  
 }
 
 class $CameraRectChannel extends TypeChannel<$CameraRect> {
@@ -626,22 +1052,28 @@ class $CameraRectChannel extends TypeChannel<$CameraRect> {
   Future<PairedInstance?> $$create(
     $CameraRect $instance, {
     required bool $owner,
+    
     required int top,
+    
     required int bottom,
+    
     required int right,
+    
     required int left,
+    
   }) {
     return createNewInstancePair(
       $instance,
       <Object?>[
-        top,
-        bottom,
-        right,
-        left,
+         top,  bottom,  right,  left, 
       ],
       owner: $owner,
     );
   }
+
+  
+
+  
 }
 
 class $CameraSizeChannel extends TypeChannel<$CameraSize> {
@@ -651,18 +1083,24 @@ class $CameraSizeChannel extends TypeChannel<$CameraSize> {
   Future<PairedInstance?> $$create(
     $CameraSize $instance, {
     required bool $owner,
+    
     required int width,
+    
     required int height,
+    
   }) {
     return createNewInstancePair(
       $instance,
       <Object?>[
-        width,
-        height,
+         width,  height, 
       ],
       owner: $owner,
     );
   }
+
+  
+
+  
 }
 
 class $ErrorCallbackChannel extends TypeChannel<$ErrorCallback> {
@@ -672,26 +1110,34 @@ class $ErrorCallbackChannel extends TypeChannel<$ErrorCallback> {
   Future<PairedInstance?> $$create(
     $ErrorCallback $instance, {
     required bool $owner,
+    
   }) {
     return createNewInstancePair(
       $instance,
-      <Object?>[],
+      <Object?>[
+        
+      ],
       owner: $owner,
     );
   }
 
-  Future<Object?> $onError(
+  
+
+  
+  Future< void > $onError(
     $ErrorCallback $instance,
-    int error,
-  ) {
-    return sendInvokeMethod(
+     int error,
+    
+  ) async {
+     return  await sendInvokeMethod(
       $instance,
       'onError',
       <Object?>[
-        error,
+         error, 
       ],
-    );
+    ) as void;
   }
+  
 }
 
 class $AutoFocusCallbackChannel extends TypeChannel<$AutoFocusCallback> {
@@ -701,26 +1147,34 @@ class $AutoFocusCallbackChannel extends TypeChannel<$AutoFocusCallback> {
   Future<PairedInstance?> $$create(
     $AutoFocusCallback $instance, {
     required bool $owner,
+    
   }) {
     return createNewInstancePair(
       $instance,
-      <Object?>[],
+      <Object?>[
+        
+      ],
       owner: $owner,
     );
   }
 
-  Future<Object?> $onAutoFocus(
+  
+
+  
+  Future< void > $onAutoFocus(
     $AutoFocusCallback $instance,
-    bool success,
-  ) {
-    return sendInvokeMethod(
+     bool success,
+    
+  ) async {
+     return  await sendInvokeMethod(
       $instance,
       'onAutoFocus',
       <Object?>[
-        success,
+         success, 
       ],
-    );
+    ) as void;
   }
+  
 }
 
 class $ShutterCallbackChannel extends TypeChannel<$ShutterCallback> {
@@ -730,23 +1184,33 @@ class $ShutterCallbackChannel extends TypeChannel<$ShutterCallback> {
   Future<PairedInstance?> $$create(
     $ShutterCallback $instance, {
     required bool $owner,
+    
   }) {
     return createNewInstancePair(
       $instance,
-      <Object?>[],
+      <Object?>[
+        
+      ],
       owner: $owner,
     );
   }
 
-  Future<Object?> $onShutter(
+  
+
+  
+  Future< void > $onShutter(
     $ShutterCallback $instance,
-  ) {
-    return sendInvokeMethod(
+    
+  ) async {
+     return  await sendInvokeMethod(
       $instance,
       'onShutter',
-      <Object?>[],
-    );
+      <Object?>[
+        
+      ],
+    ) as void;
   }
+  
 }
 
 class $PictureCallbackChannel extends TypeChannel<$PictureCallback> {
@@ -756,26 +1220,34 @@ class $PictureCallbackChannel extends TypeChannel<$PictureCallback> {
   Future<PairedInstance?> $$create(
     $PictureCallback $instance, {
     required bool $owner,
+    
   }) {
     return createNewInstancePair(
       $instance,
-      <Object?>[],
+      <Object?>[
+        
+      ],
       owner: $owner,
     );
   }
 
-  Future<Object?> $onPictureTaken(
+  
+
+  
+  Future< void > $onPictureTaken(
     $PictureCallback $instance,
-    Uint8List data,
-  ) {
-    return sendInvokeMethod(
+     Uint8List data,
+    
+  ) async {
+     return  await sendInvokeMethod(
       $instance,
       'onPictureTaken',
       <Object?>[
-        data,
+         data, 
       ],
-    );
+    ) as void;
   }
+  
 }
 
 class $CameraInfoChannel extends TypeChannel<$CameraInfo> {
@@ -785,20 +1257,26 @@ class $CameraInfoChannel extends TypeChannel<$CameraInfo> {
   Future<PairedInstance?> $$create(
     $CameraInfo $instance, {
     required bool $owner,
+    
     required int cameraId,
+    
     required int facing,
+    
     required int orientation,
+    
   }) {
     return createNewInstancePair(
       $instance,
       <Object?>[
-        cameraId,
-        facing,
-        orientation,
+         cameraId,  facing,  orientation, 
       ],
       owner: $owner,
     );
   }
+
+  
+
+  
 }
 
 class $MediaRecorderChannel extends TypeChannel<$MediaRecorder> {
@@ -808,290 +1286,389 @@ class $MediaRecorderChannel extends TypeChannel<$MediaRecorder> {
   Future<PairedInstance?> $$create(
     $MediaRecorder $instance, {
     required bool $owner,
+    
   }) {
     return createNewInstancePair(
       $instance,
-      <Object?>[],
+      <Object?>[
+        
+      ],
       owner: $owner,
     );
   }
 
-  Future<Object?> $setCamera(
+  
+
+  
+  Future< void > $setCamera(
     $MediaRecorder $instance,
-    $Camera camera,
-  ) {
-    return sendInvokeMethod(
+     $Camera camera,
+    
+  ) async {
+     return  await sendInvokeMethod(
       $instance,
       'setCamera',
       <Object?>[
-        camera,
+         camera, 
       ],
-    );
+    ) as void;
   }
-
-  Future<Object?> $setVideoSource(
+  
+  Future< void > $setVideoSource(
     $MediaRecorder $instance,
-    int source,
-  ) {
-    return sendInvokeMethod(
+     int source,
+    
+  ) async {
+     return  await sendInvokeMethod(
       $instance,
       'setVideoSource',
       <Object?>[
-        source,
+         source, 
       ],
-    );
+    ) as void;
   }
-
-  Future<Object?> $setOutputFilePath(
+  
+  Future< void > $setOutputFilePath(
     $MediaRecorder $instance,
-    String path,
-  ) {
-    return sendInvokeMethod(
+     String path,
+    
+  ) async {
+     return  await sendInvokeMethod(
       $instance,
       'setOutputFilePath',
       <Object?>[
-        path,
+         path, 
       ],
-    );
+    ) as void;
   }
-
-  Future<Object?> $setOutputFormat(
+  
+  Future< void > $setOutputFormat(
     $MediaRecorder $instance,
-    int format,
-  ) {
-    return sendInvokeMethod(
+     int format,
+    
+  ) async {
+     return  await sendInvokeMethod(
       $instance,
       'setOutputFormat',
       <Object?>[
-        format,
+         format, 
       ],
-    );
+    ) as void;
   }
-
-  Future<Object?> $setVideoEncoder(
+  
+  Future< void > $setVideoEncoder(
     $MediaRecorder $instance,
-    int encoder,
-  ) {
-    return sendInvokeMethod(
+     int encoder,
+    
+  ) async {
+     return  await sendInvokeMethod(
       $instance,
       'setVideoEncoder',
       <Object?>[
-        encoder,
+         encoder, 
       ],
-    );
+    ) as void;
   }
-
-  Future<Object?> $setAudioSource(
+  
+  Future< void > $setAudioSource(
     $MediaRecorder $instance,
-    int source,
-  ) {
-    return sendInvokeMethod(
+     int source,
+    
+  ) async {
+     return  await sendInvokeMethod(
       $instance,
       'setAudioSource',
       <Object?>[
-        source,
+         source, 
       ],
-    );
+    ) as void;
   }
-
-  Future<Object?> $setAudioEncoder(
+  
+  Future< void > $setAudioEncoder(
     $MediaRecorder $instance,
-    int encoder,
-  ) {
-    return sendInvokeMethod(
+     int encoder,
+    
+  ) async {
+     return  await sendInvokeMethod(
       $instance,
       'setAudioEncoder',
       <Object?>[
-        encoder,
+         encoder, 
       ],
-    );
+    ) as void;
   }
-
-  Future<Object?> $prepare(
+  
+  Future< void > $prepare(
     $MediaRecorder $instance,
-  ) {
-    return sendInvokeMethod(
+    
+  ) async {
+     return  await sendInvokeMethod(
       $instance,
       'prepare',
-      <Object?>[],
-    );
+      <Object?>[
+        
+      ],
+    ) as void;
   }
-
-  Future<Object?> $start(
+  
+  Future< void > $start(
     $MediaRecorder $instance,
-  ) {
-    return sendInvokeMethod(
+    
+  ) async {
+     return  await sendInvokeMethod(
       $instance,
       'start',
-      <Object?>[],
-    );
+      <Object?>[
+        
+      ],
+    ) as void;
   }
-
-  Future<Object?> $stop(
+  
+  Future< void > $stop(
     $MediaRecorder $instance,
-  ) {
-    return sendInvokeMethod(
+    
+  ) async {
+     return  await sendInvokeMethod(
       $instance,
       'stop',
-      <Object?>[],
-    );
+      <Object?>[
+        
+      ],
+    ) as void;
   }
-
-  Future<Object?> $release(
+  
+  Future< void > $release(
     $MediaRecorder $instance,
-  ) {
-    return sendInvokeMethod(
+    
+  ) async {
+     return  await sendInvokeMethod(
       $instance,
       'release',
-      <Object?>[],
-    );
+      <Object?>[
+        
+      ],
+    ) as void;
   }
-
-  Future<Object?> $pause(
+  
+  Future< void > $pause(
     $MediaRecorder $instance,
-  ) {
-    return sendInvokeMethod(
+    
+  ) async {
+     return  await sendInvokeMethod(
       $instance,
       'pause',
-      <Object?>[],
-    );
+      <Object?>[
+        
+      ],
+    ) as void;
   }
-
-  Future<Object?> $resume(
+  
+  Future< void > $resume(
     $MediaRecorder $instance,
-  ) {
-    return sendInvokeMethod(
+    
+  ) async {
+     return  await sendInvokeMethod(
       $instance,
       'resume',
-      <Object?>[],
-    );
+      <Object?>[
+        
+      ],
+    ) as void;
   }
+  
 }
+
+
 
 class $CameraHandler implements TypeChannelHandler<$Camera> {
   $Camera $$create(
     TypeChannelMessenger messenger,
+    
   ) {
     throw UnimplementedError();
   }
 
-  Object? $getAllCameraInfo(
+  
+  List<$CameraInfo> $getAllCameraInfo(
     TypeChannelMessenger messenger,
+    
   ) {
     throw UnimplementedError();
   }
-
-  Object? $open(
+  
+  $Camera $open(
     TypeChannelMessenger messenger,
+    
     int cameraId,
+    
   ) {
     throw UnimplementedError();
   }
+  
 
-  Object? $release(
+  
+  void $release(
     $Camera $instance,
+    
   ) {
-    throw UnimplementedError();
+     return  $instance.$release(
+      
+    );
   }
-
-  Object? $startPreview(
+  
+  void $startPreview(
     $Camera $instance,
+    
   ) {
-    throw UnimplementedError();
+     return  $instance.$startPreview(
+      
+    );
   }
-
-  Object? $stopPreview(
+  
+  void $stopPreview(
     $Camera $instance,
+    
   ) {
-    throw UnimplementedError();
+     return  $instance.$stopPreview(
+      
+    );
   }
-
-  Object? $attachPreviewTexture(
+  
+  int $attachPreviewTexture(
     $Camera $instance,
+    
   ) {
-    throw UnimplementedError();
+     $instance.$attachPreviewTexture(
+      
+    );
   }
-
-  Object? $releasePreviewTexture(
+  
+  void $releasePreviewTexture(
     $Camera $instance,
+    
   ) {
-    throw UnimplementedError();
+     return  $instance.$releasePreviewTexture(
+      
+    );
   }
-
-  Object? $unlock(
+  
+  void $unlock(
     $Camera $instance,
+    
   ) {
-    throw UnimplementedError();
+     return  $instance.$unlock(
+      
+    );
   }
-
-  Object? $reconnect(
+  
+  void $reconnect(
     $Camera $instance,
+    
   ) {
-    throw UnimplementedError();
+     return  $instance.$reconnect(
+      
+    );
   }
-
-  Object? $takePicture(
+  
+  void $takePicture(
     $Camera $instance,
+    
     $ShutterCallback? shutter,
+    
     $PictureCallback? raw,
+    
     $PictureCallback? postView,
+    
     $PictureCallback? jpeg,
+    
   ) {
-    throw UnimplementedError();
+     return  $instance.$takePicture(
+       shutter,  raw,  postView,  jpeg, 
+    );
   }
-
-  Object? $autoFocus(
+  
+  void $autoFocus(
     $Camera $instance,
+    
     $AutoFocusCallback callback,
+    
   ) {
-    throw UnimplementedError();
+     return  $instance.$autoFocus(
+       callback, 
+    );
   }
-
-  Object? $cancelAutoFocus(
+  
+  void $cancelAutoFocus(
     $Camera $instance,
+    
   ) {
-    throw UnimplementedError();
+     return  $instance.$cancelAutoFocus(
+      
+    );
   }
-
-  Object? $setDisplayOrientation(
+  
+  void $setDisplayOrientation(
     $Camera $instance,
+    
     int degrees,
+    
   ) {
-    throw UnimplementedError();
+     return  $instance.$setDisplayOrientation(
+       degrees, 
+    );
   }
-
-  Object? $setErrorCallback(
+  
+  void $setErrorCallback(
     $Camera $instance,
+    
     $ErrorCallback callback,
+    
   ) {
-    throw UnimplementedError();
+     return  $instance.$setErrorCallback(
+       callback, 
+    );
   }
-
-  Object? $startSmoothZoom(
+  
+  void $startSmoothZoom(
     $Camera $instance,
+    
     int value,
+    
   ) {
-    throw UnimplementedError();
+     return  $instance.$startSmoothZoom(
+       value, 
+    );
   }
-
-  Object? $stopSmoothZoom(
+  
+  void $stopSmoothZoom(
     $Camera $instance,
+    
   ) {
-    throw UnimplementedError();
+     return  $instance.$stopSmoothZoom(
+      
+    );
   }
-
-  Object? $getParameters(
+  
+  $CameraParameters $getParameters(
     $Camera $instance,
+    
   ) {
-    throw UnimplementedError();
+     $instance.$getParameters(
+      
+    );
   }
-
-  Object? $setParameters(
+  
+  void $setParameters(
     $Camera $instance,
+    
     $CameraParameters parameters,
+    
   ) {
-    throw UnimplementedError();
+     return  $instance.$setParameters(
+       parameters, 
+    );
   }
+  
 
   @override
   Object? invokeStaticMethod(
@@ -1100,16 +1677,21 @@ class $CameraHandler implements TypeChannelHandler<$Camera> {
     List<Object?> arguments,
   ) {
     switch (methodName) {
+      
       case 'getAllCameraInfo':
         return $getAllCameraInfo(
           messenger,
+          
         );
-
+      
       case 'open':
         return $open(
           messenger,
-          arguments[0] as int,
+           arguments[
+                  0]
+              as int, 
         );
+      
     }
 
     throw ArgumentError.value(
@@ -1126,6 +1708,7 @@ class $CameraHandler implements TypeChannelHandler<$Camera> {
   ) {
     return $$create(
       messenger,
+      
     );
   }
 
@@ -1137,94 +1720,121 @@ class $CameraHandler implements TypeChannelHandler<$Camera> {
     List<Object?> arguments,
   ) {
     switch (methodName) {
+      
       case 'release':
         return $release(
           instance,
+          
         );
-
+      
       case 'startPreview':
         return $startPreview(
           instance,
+          
         );
-
+      
       case 'stopPreview':
         return $stopPreview(
           instance,
+          
         );
-
+      
       case 'attachPreviewTexture':
         return $attachPreviewTexture(
           instance,
+          
         );
-
+      
       case 'releasePreviewTexture':
         return $releasePreviewTexture(
           instance,
+          
         );
-
+      
       case 'unlock':
         return $unlock(
           instance,
+          
         );
-
+      
       case 'reconnect':
         return $reconnect(
           instance,
+          
         );
-
+      
       case 'takePicture':
         return $takePicture(
           instance,
-          arguments[0] as $ShutterCallback?,
-          arguments[1] as $PictureCallback?,
-          arguments[2] as $PictureCallback?,
-          arguments[3] as $PictureCallback?,
+           arguments[
+                  0]
+              as $ShutterCallback?,  arguments[
+                  1]
+              as $PictureCallback?,  arguments[
+                  2]
+              as $PictureCallback?,  arguments[
+                  3]
+              as $PictureCallback?, 
         );
-
+      
       case 'autoFocus':
         return $autoFocus(
           instance,
-          arguments[0] as $AutoFocusCallback,
+           arguments[
+                  0]
+              as $AutoFocusCallback, 
         );
-
+      
       case 'cancelAutoFocus':
         return $cancelAutoFocus(
           instance,
+          
         );
-
+      
       case 'setDisplayOrientation':
         return $setDisplayOrientation(
           instance,
-          arguments[0] as int,
+           arguments[
+                  0]
+              as int, 
         );
-
+      
       case 'setErrorCallback':
         return $setErrorCallback(
           instance,
-          arguments[0] as $ErrorCallback,
+           arguments[
+                  0]
+              as $ErrorCallback, 
         );
-
+      
       case 'startSmoothZoom':
         return $startSmoothZoom(
           instance,
-          arguments[0] as int,
+           arguments[
+                  0]
+              as int, 
         );
-
+      
       case 'stopSmoothZoom':
         return $stopSmoothZoom(
           instance,
+          
         );
-
+      
       case 'getParameters':
         return $getParameters(
           instance,
+          
         );
-
+      
       case 'setParameters':
         return $setParameters(
           instance,
-          arguments[0] as $CameraParameters,
+           arguments[
+                  0]
+              as $CameraParameters, 
         );
+      
     }
 
     throw ArgumentError.value(
@@ -1235,205 +1845,311 @@ class $CameraHandler implements TypeChannelHandler<$Camera> {
   }
 }
 
-class $CameraParametersHandler
-    implements TypeChannelHandler<$CameraParameters> {
+class $CameraParametersHandler implements TypeChannelHandler<$CameraParameters> {
   $CameraParameters $$create(
     TypeChannelMessenger messenger,
+    
   ) {
     throw UnimplementedError();
   }
 
-  Object? $getAutoExposureLock(
-    $CameraParameters $instance,
-  ) {
-    throw UnimplementedError();
-  }
+  
 
-  Object? $getFocusAreas(
+  
+  bool $getAutoExposureLock(
     $CameraParameters $instance,
+    
   ) {
-    throw UnimplementedError();
+     $instance.$getAutoExposureLock(
+      
+    );
   }
-
-  Object? $getFocusDistances(
+  
+  List<$CameraArea>? $getFocusAreas(
     $CameraParameters $instance,
+    
   ) {
-    throw UnimplementedError();
+     $instance.$getFocusAreas(
+      
+    );
   }
-
-  Object? $getMaxExposureCompensation(
+  
+  List<double> $getFocusDistances(
     $CameraParameters $instance,
+    
   ) {
-    throw UnimplementedError();
+     $instance.$getFocusDistances(
+      
+    );
   }
-
-  Object? $getMaxNumFocusAreas(
+  
+  int $getMaxExposureCompensation(
     $CameraParameters $instance,
+    
   ) {
-    throw UnimplementedError();
+     $instance.$getMaxExposureCompensation(
+      
+    );
   }
-
-  Object? $getMinExposureCompensation(
+  
+  int $getMaxNumFocusAreas(
     $CameraParameters $instance,
+    
   ) {
-    throw UnimplementedError();
+     $instance.$getMaxNumFocusAreas(
+      
+    );
   }
-
-  Object? $getSupportedFocusModes(
+  
+  int $getMinExposureCompensation(
     $CameraParameters $instance,
+    
   ) {
-    throw UnimplementedError();
+     $instance.$getMinExposureCompensation(
+      
+    );
   }
-
-  Object? $isAutoExposureLockSupported(
+  
+  List<String> $getSupportedFocusModes(
     $CameraParameters $instance,
+    
   ) {
-    throw UnimplementedError();
+     $instance.$getSupportedFocusModes(
+      
+    );
   }
-
-  Object? $isZoomSupported(
+  
+  bool $isAutoExposureLockSupported(
     $CameraParameters $instance,
+    
   ) {
-    throw UnimplementedError();
+     $instance.$isAutoExposureLockSupported(
+      
+    );
   }
-
-  Object? $setAutoExposureLock(
+  
+  bool $isZoomSupported(
     $CameraParameters $instance,
+    
+  ) {
+     $instance.$isZoomSupported(
+      
+    );
+  }
+  
+  void $setAutoExposureLock(
+    $CameraParameters $instance,
+    
     bool toggle,
+    
   ) {
-    throw UnimplementedError();
+     return  $instance.$setAutoExposureLock(
+       toggle, 
+    );
   }
-
-  Object? $setExposureCompensation(
+  
+  void $setExposureCompensation(
     $CameraParameters $instance,
+    
     int value,
+    
   ) {
-    throw UnimplementedError();
+     return  $instance.$setExposureCompensation(
+       value, 
+    );
   }
-
-  Object? $setFocusAreas(
+  
+  void $setFocusAreas(
     $CameraParameters $instance,
+    
     List<$CameraArea>? focusAreas,
+    
   ) {
-    throw UnimplementedError();
+     return  $instance.$setFocusAreas(
+       focusAreas, 
+    );
   }
-
-  Object? $setFocusMode(
+  
+  void $setFocusMode(
     $CameraParameters $instance,
+    
     String value,
+    
   ) {
-    throw UnimplementedError();
+     return  $instance.$setFocusMode(
+       value, 
+    );
   }
-
-  Object? $getFlashMode(
+  
+  String? $getFlashMode(
     $CameraParameters $instance,
+    
   ) {
-    throw UnimplementedError();
+     $instance.$getFlashMode(
+      
+    );
   }
-
-  Object? $getMaxZoom(
+  
+  int $getMaxZoom(
     $CameraParameters $instance,
+    
   ) {
-    throw UnimplementedError();
+     $instance.$getMaxZoom(
+      
+    );
   }
-
-  Object? $getPictureSize(
+  
+  $CameraSize $getPictureSize(
     $CameraParameters $instance,
+    
   ) {
-    throw UnimplementedError();
+     $instance.$getPictureSize(
+      
+    );
   }
-
-  Object? $getPreviewSize(
+  
+  $CameraSize $getPreviewSize(
     $CameraParameters $instance,
+    
   ) {
-    throw UnimplementedError();
+     $instance.$getPreviewSize(
+      
+    );
   }
-
-  Object? $getSupportedPreviewSizes(
+  
+  List<$CameraSize> $getSupportedPreviewSizes(
     $CameraParameters $instance,
+    
   ) {
-    throw UnimplementedError();
+     $instance.$getSupportedPreviewSizes(
+      
+    );
   }
-
-  Object? $getSupportedPictureSizes(
+  
+  List<$CameraSize> $getSupportedPictureSizes(
     $CameraParameters $instance,
+    
   ) {
-    throw UnimplementedError();
+     $instance.$getSupportedPictureSizes(
+      
+    );
   }
-
-  Object? $getSupportedFlashModes(
+  
+  List<String> $getSupportedFlashModes(
     $CameraParameters $instance,
+    
   ) {
-    throw UnimplementedError();
+     $instance.$getSupportedFlashModes(
+      
+    );
   }
-
-  Object? $getZoom(
+  
+  int $getZoom(
     $CameraParameters $instance,
+    
   ) {
-    throw UnimplementedError();
+     $instance.$getZoom(
+      
+    );
   }
-
-  Object? $isSmoothZoomSupported(
+  
+  bool $isSmoothZoomSupported(
     $CameraParameters $instance,
+    
   ) {
-    throw UnimplementedError();
+     $instance.$isSmoothZoomSupported(
+      
+    );
   }
-
-  Object? $setFlashMode(
+  
+  void $setFlashMode(
     $CameraParameters $instance,
+    
     String mode,
+    
   ) {
-    throw UnimplementedError();
+     return  $instance.$setFlashMode(
+       mode, 
+    );
   }
-
-  Object? $setPictureSize(
+  
+  void $setPictureSize(
     $CameraParameters $instance,
+    
     int width,
+    
     int height,
+    
   ) {
-    throw UnimplementedError();
+     return  $instance.$setPictureSize(
+       width,  height, 
+    );
   }
-
-  Object? $setRecordingHint(
+  
+  void $setRecordingHint(
     $CameraParameters $instance,
+    
     bool hint,
+    
   ) {
-    throw UnimplementedError();
+     return  $instance.$setRecordingHint(
+       hint, 
+    );
   }
-
-  Object? $setRotation(
+  
+  void $setRotation(
     $CameraParameters $instance,
+    
     int rotation,
+    
   ) {
-    throw UnimplementedError();
+     return  $instance.$setRotation(
+       rotation, 
+    );
   }
-
-  Object? $setZoom(
+  
+  void $setZoom(
     $CameraParameters $instance,
+    
     int value,
+    
   ) {
-    throw UnimplementedError();
+     return  $instance.$setZoom(
+       value, 
+    );
   }
-
-  Object? $setPreviewSize(
+  
+  void $setPreviewSize(
     $CameraParameters $instance,
+    
     int width,
+    
     int height,
+    
   ) {
-    throw UnimplementedError();
+     return  $instance.$setPreviewSize(
+       width,  height, 
+    );
   }
-
-  Object? $getExposureCompensation(
+  
+  int $getExposureCompensation(
     $CameraParameters $instance,
+    
   ) {
-    throw UnimplementedError();
+     $instance.$getExposureCompensation(
+      
+    );
   }
-
-  Object? $getExposureCompensationStep(
+  
+  double $getExposureCompensationStep(
     $CameraParameters $instance,
+    
   ) {
-    throw UnimplementedError();
+     $instance.$getExposureCompensationStep(
+      
+    );
   }
+  
 
   @override
   Object? invokeStaticMethod(
@@ -1442,6 +2158,7 @@ class $CameraParametersHandler
     List<Object?> arguments,
   ) {
     switch (methodName) {
+      
     }
 
     throw ArgumentError.value(
@@ -1458,6 +2175,7 @@ class $CameraParametersHandler
   ) {
     return $$create(
       messenger,
+      
     );
   }
 
@@ -1469,167 +2187,211 @@ class $CameraParametersHandler
     List<Object?> arguments,
   ) {
     switch (methodName) {
+      
       case 'getAutoExposureLock':
         return $getAutoExposureLock(
           instance,
+          
         );
-
+      
       case 'getFocusAreas':
         return $getFocusAreas(
           instance,
+          
         );
-
+      
       case 'getFocusDistances':
         return $getFocusDistances(
           instance,
+          
         );
-
+      
       case 'getMaxExposureCompensation':
         return $getMaxExposureCompensation(
           instance,
+          
         );
-
+      
       case 'getMaxNumFocusAreas':
         return $getMaxNumFocusAreas(
           instance,
+          
         );
-
+      
       case 'getMinExposureCompensation':
         return $getMinExposureCompensation(
           instance,
+          
         );
-
+      
       case 'getSupportedFocusModes':
         return $getSupportedFocusModes(
           instance,
+          
         );
-
+      
       case 'isAutoExposureLockSupported':
         return $isAutoExposureLockSupported(
           instance,
+          
         );
-
+      
       case 'isZoomSupported':
         return $isZoomSupported(
           instance,
+          
         );
-
+      
       case 'setAutoExposureLock':
         return $setAutoExposureLock(
           instance,
-          arguments[0] as bool,
+           arguments[
+                  0]
+              as bool, 
         );
-
+      
       case 'setExposureCompensation':
         return $setExposureCompensation(
           instance,
-          arguments[0] as int,
+           arguments[
+                  0]
+              as int, 
         );
-
+      
       case 'setFocusAreas':
         return $setFocusAreas(
           instance,
-          arguments[0] as List<$CameraArea>?,
+           arguments[
+                  0]
+              as List<$CameraArea>?, 
         );
-
+      
       case 'setFocusMode':
         return $setFocusMode(
           instance,
-          arguments[0] as String,
+           arguments[
+                  0]
+              as String, 
         );
-
+      
       case 'getFlashMode':
         return $getFlashMode(
           instance,
+          
         );
-
+      
       case 'getMaxZoom':
         return $getMaxZoom(
           instance,
+          
         );
-
+      
       case 'getPictureSize':
         return $getPictureSize(
           instance,
+          
         );
-
+      
       case 'getPreviewSize':
         return $getPreviewSize(
           instance,
+          
         );
-
+      
       case 'getSupportedPreviewSizes':
         return $getSupportedPreviewSizes(
           instance,
+          
         );
-
+      
       case 'getSupportedPictureSizes':
         return $getSupportedPictureSizes(
           instance,
+          
         );
-
+      
       case 'getSupportedFlashModes':
         return $getSupportedFlashModes(
           instance,
+          
         );
-
+      
       case 'getZoom':
         return $getZoom(
           instance,
+          
         );
-
+      
       case 'isSmoothZoomSupported':
         return $isSmoothZoomSupported(
           instance,
+          
         );
-
+      
       case 'setFlashMode':
         return $setFlashMode(
           instance,
-          arguments[0] as String,
+           arguments[
+                  0]
+              as String, 
         );
-
+      
       case 'setPictureSize':
         return $setPictureSize(
           instance,
-          arguments[0] as int,
-          arguments[1] as int,
+           arguments[
+                  0]
+              as int,  arguments[
+                  1]
+              as int, 
         );
-
+      
       case 'setRecordingHint':
         return $setRecordingHint(
           instance,
-          arguments[0] as bool,
+           arguments[
+                  0]
+              as bool, 
         );
-
+      
       case 'setRotation':
         return $setRotation(
           instance,
-          arguments[0] as int,
+           arguments[
+                  0]
+              as int, 
         );
-
+      
       case 'setZoom':
         return $setZoom(
           instance,
-          arguments[0] as int,
+           arguments[
+                  0]
+              as int, 
         );
-
+      
       case 'setPreviewSize':
         return $setPreviewSize(
           instance,
-          arguments[0] as int,
-          arguments[1] as int,
+           arguments[
+                  0]
+              as int,  arguments[
+                  1]
+              as int, 
         );
-
+      
       case 'getExposureCompensation':
         return $getExposureCompensation(
           instance,
+          
         );
-
+      
       case 'getExposureCompensationStep':
         return $getExposureCompensationStep(
           instance,
+          
         );
+      
     }
 
     throw ArgumentError.value(
@@ -1643,11 +2405,18 @@ class $CameraParametersHandler
 class $CameraAreaHandler implements TypeChannelHandler<$CameraArea> {
   $CameraArea $$create(
     TypeChannelMessenger messenger,
+    
     $CameraRect rect,
+    
     int weight,
+    
   ) {
     throw UnimplementedError();
   }
+
+  
+
+  
 
   @override
   Object? invokeStaticMethod(
@@ -1656,6 +2425,7 @@ class $CameraAreaHandler implements TypeChannelHandler<$CameraArea> {
     List<Object?> arguments,
   ) {
     switch (methodName) {
+      
     }
 
     throw ArgumentError.value(
@@ -1672,8 +2442,9 @@ class $CameraAreaHandler implements TypeChannelHandler<$CameraArea> {
   ) {
     return $$create(
       messenger,
-      arguments[0] as $CameraRect,
-      arguments[1] as int,
+       arguments[0]
+          as $CameraRect,  arguments[1]
+          as int, 
     );
   }
 
@@ -1685,6 +2456,7 @@ class $CameraAreaHandler implements TypeChannelHandler<$CameraArea> {
     List<Object?> arguments,
   ) {
     switch (methodName) {
+      
     }
 
     throw ArgumentError.value(
@@ -1698,13 +2470,22 @@ class $CameraAreaHandler implements TypeChannelHandler<$CameraArea> {
 class $CameraRectHandler implements TypeChannelHandler<$CameraRect> {
   $CameraRect $$create(
     TypeChannelMessenger messenger,
+    
     int top,
+    
     int bottom,
+    
     int right,
+    
     int left,
+    
   ) {
     throw UnimplementedError();
   }
+
+  
+
+  
 
   @override
   Object? invokeStaticMethod(
@@ -1713,6 +2494,7 @@ class $CameraRectHandler implements TypeChannelHandler<$CameraRect> {
     List<Object?> arguments,
   ) {
     switch (methodName) {
+      
     }
 
     throw ArgumentError.value(
@@ -1729,10 +2511,11 @@ class $CameraRectHandler implements TypeChannelHandler<$CameraRect> {
   ) {
     return $$create(
       messenger,
-      arguments[0] as int,
-      arguments[1] as int,
-      arguments[2] as int,
-      arguments[3] as int,
+       arguments[0]
+          as int,  arguments[1]
+          as int,  arguments[2]
+          as int,  arguments[3]
+          as int, 
     );
   }
 
@@ -1744,6 +2527,7 @@ class $CameraRectHandler implements TypeChannelHandler<$CameraRect> {
     List<Object?> arguments,
   ) {
     switch (methodName) {
+      
     }
 
     throw ArgumentError.value(
@@ -1757,11 +2541,18 @@ class $CameraRectHandler implements TypeChannelHandler<$CameraRect> {
 class $CameraSizeHandler implements TypeChannelHandler<$CameraSize> {
   $CameraSize $$create(
     TypeChannelMessenger messenger,
+    
     int width,
+    
     int height,
+    
   ) {
     throw UnimplementedError();
   }
+
+  
+
+  
 
   @override
   Object? invokeStaticMethod(
@@ -1770,6 +2561,7 @@ class $CameraSizeHandler implements TypeChannelHandler<$CameraSize> {
     List<Object?> arguments,
   ) {
     switch (methodName) {
+      
     }
 
     throw ArgumentError.value(
@@ -1786,8 +2578,9 @@ class $CameraSizeHandler implements TypeChannelHandler<$CameraSize> {
   ) {
     return $$create(
       messenger,
-      arguments[0] as int,
-      arguments[1] as int,
+       arguments[0]
+          as int,  arguments[1]
+          as int, 
     );
   }
 
@@ -1799,6 +2592,7 @@ class $CameraSizeHandler implements TypeChannelHandler<$CameraSize> {
     List<Object?> arguments,
   ) {
     switch (methodName) {
+      
     }
 
     throw ArgumentError.value(
@@ -1812,16 +2606,25 @@ class $CameraSizeHandler implements TypeChannelHandler<$CameraSize> {
 class $ErrorCallbackHandler implements TypeChannelHandler<$ErrorCallback> {
   $ErrorCallback $$create(
     TypeChannelMessenger messenger,
+    
   ) {
     throw UnimplementedError();
   }
 
-  Object? $onError(
+  
+
+  
+  void $onError(
     $ErrorCallback $instance,
+    
     int error,
+    
   ) {
-    throw UnimplementedError();
+     return  $instance.$onError(
+       error, 
+    );
   }
+  
 
   @override
   Object? invokeStaticMethod(
@@ -1830,6 +2633,7 @@ class $ErrorCallbackHandler implements TypeChannelHandler<$ErrorCallback> {
     List<Object?> arguments,
   ) {
     switch (methodName) {
+      
     }
 
     throw ArgumentError.value(
@@ -1846,6 +2650,7 @@ class $ErrorCallbackHandler implements TypeChannelHandler<$ErrorCallback> {
   ) {
     return $$create(
       messenger,
+      
     );
   }
 
@@ -1857,11 +2662,15 @@ class $ErrorCallbackHandler implements TypeChannelHandler<$ErrorCallback> {
     List<Object?> arguments,
   ) {
     switch (methodName) {
+      
       case 'onError':
         return $onError(
           instance,
-          arguments[0] as int,
+           arguments[
+                  0]
+              as int, 
         );
+      
     }
 
     throw ArgumentError.value(
@@ -1872,20 +2681,28 @@ class $ErrorCallbackHandler implements TypeChannelHandler<$ErrorCallback> {
   }
 }
 
-class $AutoFocusCallbackHandler
-    implements TypeChannelHandler<$AutoFocusCallback> {
+class $AutoFocusCallbackHandler implements TypeChannelHandler<$AutoFocusCallback> {
   $AutoFocusCallback $$create(
     TypeChannelMessenger messenger,
+    
   ) {
     throw UnimplementedError();
   }
 
-  Object? $onAutoFocus(
+  
+
+  
+  void $onAutoFocus(
     $AutoFocusCallback $instance,
+    
     bool success,
+    
   ) {
-    throw UnimplementedError();
+     return  $instance.$onAutoFocus(
+       success, 
+    );
   }
+  
 
   @override
   Object? invokeStaticMethod(
@@ -1894,6 +2711,7 @@ class $AutoFocusCallbackHandler
     List<Object?> arguments,
   ) {
     switch (methodName) {
+      
     }
 
     throw ArgumentError.value(
@@ -1910,6 +2728,7 @@ class $AutoFocusCallbackHandler
   ) {
     return $$create(
       messenger,
+      
     );
   }
 
@@ -1921,11 +2740,15 @@ class $AutoFocusCallbackHandler
     List<Object?> arguments,
   ) {
     switch (methodName) {
+      
       case 'onAutoFocus':
         return $onAutoFocus(
           instance,
-          arguments[0] as bool,
+           arguments[
+                  0]
+              as bool, 
         );
+      
     }
 
     throw ArgumentError.value(
@@ -1939,15 +2762,23 @@ class $AutoFocusCallbackHandler
 class $ShutterCallbackHandler implements TypeChannelHandler<$ShutterCallback> {
   $ShutterCallback $$create(
     TypeChannelMessenger messenger,
+    
   ) {
     throw UnimplementedError();
   }
 
-  Object? $onShutter(
+  
+
+  
+  void $onShutter(
     $ShutterCallback $instance,
+    
   ) {
-    throw UnimplementedError();
+     return  $instance.$onShutter(
+      
+    );
   }
+  
 
   @override
   Object? invokeStaticMethod(
@@ -1956,6 +2787,7 @@ class $ShutterCallbackHandler implements TypeChannelHandler<$ShutterCallback> {
     List<Object?> arguments,
   ) {
     switch (methodName) {
+      
     }
 
     throw ArgumentError.value(
@@ -1972,6 +2804,7 @@ class $ShutterCallbackHandler implements TypeChannelHandler<$ShutterCallback> {
   ) {
     return $$create(
       messenger,
+      
     );
   }
 
@@ -1983,10 +2816,13 @@ class $ShutterCallbackHandler implements TypeChannelHandler<$ShutterCallback> {
     List<Object?> arguments,
   ) {
     switch (methodName) {
+      
       case 'onShutter':
         return $onShutter(
           instance,
+          
         );
+      
     }
 
     throw ArgumentError.value(
@@ -2000,16 +2836,25 @@ class $ShutterCallbackHandler implements TypeChannelHandler<$ShutterCallback> {
 class $PictureCallbackHandler implements TypeChannelHandler<$PictureCallback> {
   $PictureCallback $$create(
     TypeChannelMessenger messenger,
+    
   ) {
     throw UnimplementedError();
   }
 
-  Object? $onPictureTaken(
+  
+
+  
+  void $onPictureTaken(
     $PictureCallback $instance,
+    
     Uint8List data,
+    
   ) {
-    throw UnimplementedError();
+     return  $instance.$onPictureTaken(
+       data, 
+    );
   }
+  
 
   @override
   Object? invokeStaticMethod(
@@ -2018,6 +2863,7 @@ class $PictureCallbackHandler implements TypeChannelHandler<$PictureCallback> {
     List<Object?> arguments,
   ) {
     switch (methodName) {
+      
     }
 
     throw ArgumentError.value(
@@ -2034,6 +2880,7 @@ class $PictureCallbackHandler implements TypeChannelHandler<$PictureCallback> {
   ) {
     return $$create(
       messenger,
+      
     );
   }
 
@@ -2045,11 +2892,15 @@ class $PictureCallbackHandler implements TypeChannelHandler<$PictureCallback> {
     List<Object?> arguments,
   ) {
     switch (methodName) {
+      
       case 'onPictureTaken':
         return $onPictureTaken(
           instance,
-          arguments[0] as Uint8List,
+           arguments[
+                  0]
+              as Uint8List, 
         );
+      
     }
 
     throw ArgumentError.value(
@@ -2063,12 +2914,20 @@ class $PictureCallbackHandler implements TypeChannelHandler<$PictureCallback> {
 class $CameraInfoHandler implements TypeChannelHandler<$CameraInfo> {
   $CameraInfo $$create(
     TypeChannelMessenger messenger,
+    
     int cameraId,
+    
     int facing,
+    
     int orientation,
+    
   ) {
     throw UnimplementedError();
   }
+
+  
+
+  
 
   @override
   Object? invokeStaticMethod(
@@ -2077,6 +2936,7 @@ class $CameraInfoHandler implements TypeChannelHandler<$CameraInfo> {
     List<Object?> arguments,
   ) {
     switch (methodName) {
+      
     }
 
     throw ArgumentError.value(
@@ -2093,9 +2953,10 @@ class $CameraInfoHandler implements TypeChannelHandler<$CameraInfo> {
   ) {
     return $$create(
       messenger,
-      arguments[0] as int,
-      arguments[1] as int,
-      arguments[2] as int,
+       arguments[0]
+          as int,  arguments[1]
+          as int,  arguments[2]
+          as int, 
     );
   }
 
@@ -2107,6 +2968,7 @@ class $CameraInfoHandler implements TypeChannelHandler<$CameraInfo> {
     List<Object?> arguments,
   ) {
     switch (methodName) {
+      
     }
 
     throw ArgumentError.value(
@@ -2120,94 +2982,145 @@ class $CameraInfoHandler implements TypeChannelHandler<$CameraInfo> {
 class $MediaRecorderHandler implements TypeChannelHandler<$MediaRecorder> {
   $MediaRecorder $$create(
     TypeChannelMessenger messenger,
+    
   ) {
     throw UnimplementedError();
   }
 
-  Object? $setCamera(
+  
+
+  
+  void $setCamera(
     $MediaRecorder $instance,
+    
     $Camera camera,
+    
   ) {
-    throw UnimplementedError();
+     return  $instance.$setCamera(
+       camera, 
+    );
   }
-
-  Object? $setVideoSource(
+  
+  void $setVideoSource(
     $MediaRecorder $instance,
+    
     int source,
+    
   ) {
-    throw UnimplementedError();
+     return  $instance.$setVideoSource(
+       source, 
+    );
   }
-
-  Object? $setOutputFilePath(
+  
+  void $setOutputFilePath(
     $MediaRecorder $instance,
+    
     String path,
+    
   ) {
-    throw UnimplementedError();
+     return  $instance.$setOutputFilePath(
+       path, 
+    );
   }
-
-  Object? $setOutputFormat(
+  
+  void $setOutputFormat(
     $MediaRecorder $instance,
+    
     int format,
+    
   ) {
-    throw UnimplementedError();
+     return  $instance.$setOutputFormat(
+       format, 
+    );
   }
-
-  Object? $setVideoEncoder(
+  
+  void $setVideoEncoder(
     $MediaRecorder $instance,
+    
     int encoder,
+    
   ) {
-    throw UnimplementedError();
+     return  $instance.$setVideoEncoder(
+       encoder, 
+    );
   }
-
-  Object? $setAudioSource(
+  
+  void $setAudioSource(
     $MediaRecorder $instance,
+    
     int source,
+    
   ) {
-    throw UnimplementedError();
+     return  $instance.$setAudioSource(
+       source, 
+    );
   }
-
-  Object? $setAudioEncoder(
+  
+  void $setAudioEncoder(
     $MediaRecorder $instance,
+    
     int encoder,
+    
   ) {
-    throw UnimplementedError();
+     return  $instance.$setAudioEncoder(
+       encoder, 
+    );
   }
-
-  Object? $prepare(
+  
+  void $prepare(
     $MediaRecorder $instance,
+    
   ) {
-    throw UnimplementedError();
+     return  $instance.$prepare(
+      
+    );
   }
-
-  Object? $start(
+  
+  void $start(
     $MediaRecorder $instance,
+    
   ) {
-    throw UnimplementedError();
+     return  $instance.$start(
+      
+    );
   }
-
-  Object? $stop(
+  
+  void $stop(
     $MediaRecorder $instance,
+    
   ) {
-    throw UnimplementedError();
+     return  $instance.$stop(
+      
+    );
   }
-
-  Object? $release(
+  
+  void $release(
     $MediaRecorder $instance,
+    
   ) {
-    throw UnimplementedError();
+     return  $instance.$release(
+      
+    );
   }
-
-  Object? $pause(
+  
+  void $pause(
     $MediaRecorder $instance,
+    
   ) {
-    throw UnimplementedError();
+     return  $instance.$pause(
+      
+    );
   }
-
-  Object? $resume(
+  
+  void $resume(
     $MediaRecorder $instance,
+    
   ) {
-    throw UnimplementedError();
+     return  $instance.$resume(
+      
+    );
   }
+  
 
   @override
   Object? invokeStaticMethod(
@@ -2216,6 +3129,7 @@ class $MediaRecorderHandler implements TypeChannelHandler<$MediaRecorder> {
     List<Object?> arguments,
   ) {
     switch (methodName) {
+      
     }
 
     throw ArgumentError.value(
@@ -2232,6 +3146,7 @@ class $MediaRecorderHandler implements TypeChannelHandler<$MediaRecorder> {
   ) {
     return $$create(
       messenger,
+      
     );
   }
 
@@ -2243,77 +3158,99 @@ class $MediaRecorderHandler implements TypeChannelHandler<$MediaRecorder> {
     List<Object?> arguments,
   ) {
     switch (methodName) {
+      
       case 'setCamera':
         return $setCamera(
           instance,
-          arguments[0] as $Camera,
+           arguments[
+                  0]
+              as $Camera, 
         );
-
+      
       case 'setVideoSource':
         return $setVideoSource(
           instance,
-          arguments[0] as int,
+           arguments[
+                  0]
+              as int, 
         );
-
+      
       case 'setOutputFilePath':
         return $setOutputFilePath(
           instance,
-          arguments[0] as String,
+           arguments[
+                  0]
+              as String, 
         );
-
+      
       case 'setOutputFormat':
         return $setOutputFormat(
           instance,
-          arguments[0] as int,
+           arguments[
+                  0]
+              as int, 
         );
-
+      
       case 'setVideoEncoder':
         return $setVideoEncoder(
           instance,
-          arguments[0] as int,
+           arguments[
+                  0]
+              as int, 
         );
-
+      
       case 'setAudioSource':
         return $setAudioSource(
           instance,
-          arguments[0] as int,
+           arguments[
+                  0]
+              as int, 
         );
-
+      
       case 'setAudioEncoder':
         return $setAudioEncoder(
           instance,
-          arguments[0] as int,
+           arguments[
+                  0]
+              as int, 
         );
-
+      
       case 'prepare':
         return $prepare(
           instance,
+          
         );
-
+      
       case 'start':
         return $start(
           instance,
+          
         );
-
+      
       case 'stop':
         return $stop(
           instance,
+          
         );
-
+      
       case 'release':
         return $release(
           instance,
+          
         );
-
+      
       case 'pause':
         return $pause(
           instance,
+          
         );
-
+      
       case 'resume':
         return $resume(
           instance,
+          
         );
+      
     }
 
     throw ArgumentError.value(
@@ -2324,53 +3261,57 @@ class $MediaRecorderHandler implements TypeChannelHandler<$MediaRecorder> {
   }
 }
 
+
 class $LibraryImplementations {
   $LibraryImplementations(this.messenger);
 
   final TypeChannelMessenger messenger;
 
-  $CameraChannel get channelCamera => $CameraChannel(messenger);
+  
+  $CameraChannel get channelCamera =>
+      $CameraChannel(messenger);
   $CameraHandler get handlerCamera => $CameraHandler();
-
+  
   $CameraParametersChannel get channelCameraParameters =>
       $CameraParametersChannel(messenger);
-  $CameraParametersHandler get handlerCameraParameters =>
-      $CameraParametersHandler();
-
-  $CameraAreaChannel get channelCameraArea => $CameraAreaChannel(messenger);
+  $CameraParametersHandler get handlerCameraParameters => $CameraParametersHandler();
+  
+  $CameraAreaChannel get channelCameraArea =>
+      $CameraAreaChannel(messenger);
   $CameraAreaHandler get handlerCameraArea => $CameraAreaHandler();
-
-  $CameraRectChannel get channelCameraRect => $CameraRectChannel(messenger);
+  
+  $CameraRectChannel get channelCameraRect =>
+      $CameraRectChannel(messenger);
   $CameraRectHandler get handlerCameraRect => $CameraRectHandler();
-
-  $CameraSizeChannel get channelCameraSize => $CameraSizeChannel(messenger);
+  
+  $CameraSizeChannel get channelCameraSize =>
+      $CameraSizeChannel(messenger);
   $CameraSizeHandler get handlerCameraSize => $CameraSizeHandler();
-
+  
   $ErrorCallbackChannel get channelErrorCallback =>
       $ErrorCallbackChannel(messenger);
   $ErrorCallbackHandler get handlerErrorCallback => $ErrorCallbackHandler();
-
+  
   $AutoFocusCallbackChannel get channelAutoFocusCallback =>
       $AutoFocusCallbackChannel(messenger);
-  $AutoFocusCallbackHandler get handlerAutoFocusCallback =>
-      $AutoFocusCallbackHandler();
-
+  $AutoFocusCallbackHandler get handlerAutoFocusCallback => $AutoFocusCallbackHandler();
+  
   $ShutterCallbackChannel get channelShutterCallback =>
       $ShutterCallbackChannel(messenger);
-  $ShutterCallbackHandler get handlerShutterCallback =>
-      $ShutterCallbackHandler();
-
+  $ShutterCallbackHandler get handlerShutterCallback => $ShutterCallbackHandler();
+  
   $PictureCallbackChannel get channelPictureCallback =>
       $PictureCallbackChannel(messenger);
-  $PictureCallbackHandler get handlerPictureCallback =>
-      $PictureCallbackHandler();
-
-  $CameraInfoChannel get channelCameraInfo => $CameraInfoChannel(messenger);
+  $PictureCallbackHandler get handlerPictureCallback => $PictureCallbackHandler();
+  
+  $CameraInfoChannel get channelCameraInfo =>
+      $CameraInfoChannel(messenger);
   $CameraInfoHandler get handlerCameraInfo => $CameraInfoHandler();
-
+  
   $MediaRecorderChannel get channelMediaRecorder =>
       $MediaRecorderChannel(messenger);
   $MediaRecorderHandler get handlerMediaRecorder => $MediaRecorderHandler();
+  
 }
 
 class $ChannelRegistrar {
@@ -2379,72 +3320,76 @@ class $ChannelRegistrar {
   final $LibraryImplementations implementations;
 
   void registerHandlers() {
+    
     implementations.channelCamera.setHandler(
       implementations.handlerCamera,
     );
-
+    
     implementations.channelCameraParameters.setHandler(
       implementations.handlerCameraParameters,
     );
-
+    
     implementations.channelCameraArea.setHandler(
       implementations.handlerCameraArea,
     );
-
+    
     implementations.channelCameraRect.setHandler(
       implementations.handlerCameraRect,
     );
-
+    
     implementations.channelCameraSize.setHandler(
       implementations.handlerCameraSize,
     );
-
+    
     implementations.channelErrorCallback.setHandler(
       implementations.handlerErrorCallback,
     );
-
+    
     implementations.channelAutoFocusCallback.setHandler(
       implementations.handlerAutoFocusCallback,
     );
-
+    
     implementations.channelShutterCallback.setHandler(
       implementations.handlerShutterCallback,
     );
-
+    
     implementations.channelPictureCallback.setHandler(
       implementations.handlerPictureCallback,
     );
-
+    
     implementations.channelCameraInfo.setHandler(
       implementations.handlerCameraInfo,
     );
-
+    
     implementations.channelMediaRecorder.setHandler(
       implementations.handlerMediaRecorder,
     );
+    
   }
 
   void unregisterHandlers() {
+    
     implementations.channelCamera.removeHandler();
-
+    
     implementations.channelCameraParameters.removeHandler();
-
+    
     implementations.channelCameraArea.removeHandler();
-
+    
     implementations.channelCameraRect.removeHandler();
-
+    
     implementations.channelCameraSize.removeHandler();
-
+    
     implementations.channelErrorCallback.removeHandler();
-
+    
     implementations.channelAutoFocusCallback.removeHandler();
-
+    
     implementations.channelShutterCallback.removeHandler();
-
+    
     implementations.channelPictureCallback.removeHandler();
-
+    
     implementations.channelCameraInfo.removeHandler();
-
+    
     implementations.channelMediaRecorder.removeHandler();
+    
   }
 }

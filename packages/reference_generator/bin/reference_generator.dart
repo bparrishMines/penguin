@@ -19,6 +19,7 @@ const String objcHeaderOutOption = 'objc-header-out';
 const String objcImplOutOption = 'objc-impl-out';
 const String objcPrefixOption = 'objc-prefix';
 const String dartImportsOption = 'dart-imports';
+const String branchOption = 'branch';
 
 final ArgParser parser = ArgParser()
   ..addOption(packageRootOption, defaultsTo: '.')
@@ -28,6 +29,7 @@ final ArgParser parser = ArgParser()
   ..addOption(objcHeaderOutOption)
   ..addOption(objcImplOutOption)
   ..addOption(objcPrefixOption)
+  ..addOption(branchOption)
   ..addMultiOption(dartImportsOption)
   ..addFlag('help', abbr: 'h')
   ..addFlag(buildFlag, abbr: 'b', defaultsTo: true);
@@ -69,11 +71,11 @@ void main(List<String> arguments) async {
       .listSync(recursive: true)
       .cast<FileSystemEntity?>()
       .firstWhere(
-        (FileSystemEntity? entity) {
-          return entity is File && path.basename(entity.path) == astFileName;
-        },
-        orElse: () => null,
-      ) as File?;
+    (FileSystemEntity? entity) {
+      return entity is File && path.basename(entity.path) == astFileName;
+    },
+    orElse: () => null,
+  ) as File?;
 
   if (astInputFile == null) {
     final String message =
@@ -90,7 +92,7 @@ void main(List<String> arguments) async {
   if (options.dartOut != null) {
     final HttpClientRequest request = await HttpClient().getUrl(
       Uri.parse(
-        'https://raw.githubusercontent.com/bparrishMines/penguin/master/packages/reference_example/lib/src/template.g.dart',
+        'https://raw.githubusercontent.com/bparrishMines/penguin/${options.branch}/packages/reference_example/lib/src/template.g.dart',
       ),
     );
     final HttpClientResponse response = await request.close();
@@ -113,7 +115,7 @@ void main(List<String> arguments) async {
   if (options.javaOut != null) {
     final HttpClientRequest request = await HttpClient().getUrl(
       Uri.parse(
-        'https://raw.githubusercontent.com/bparrishMines/penguin/master/packages/reference_example/android/src/main/java/com/example/reference_example/LibraryTemplate.java',
+        'https://raw.githubusercontent.com/bparrishMines/penguin/${options.branch}/packages/reference_example/android/src/main/java/com/example/reference_example/LibraryTemplate.java',
       ),
     );
     final HttpClientResponse response = await request.close();
@@ -140,7 +142,7 @@ void main(List<String> arguments) async {
   if (options.objcHeaderOut != null) {
     final HttpClientRequest request = await HttpClient().getUrl(
       Uri.parse(
-        'https://raw.githubusercontent.com/bparrishMines/penguin/master/packages/reference_example/ios/Classes/REFLibraryTemplate.h',
+        'https://raw.githubusercontent.com/bparrishMines/penguin/${options.branch}/packages/reference_example/ios/Classes/REFLibraryTemplate.h',
       ),
     );
     final HttpClientResponse response = await request.close();
@@ -166,7 +168,7 @@ void main(List<String> arguments) async {
   if (options.objcImplOut != null) {
     final HttpClientRequest request = await HttpClient().getUrl(
       Uri.parse(
-        'https://raw.githubusercontent.com/bparrishMines/penguin/master/packages/reference_example/ios/Classes/REFLibraryTemplate.m',
+        'https://raw.githubusercontent.com/bparrishMines/penguin/${options.branch}/packages/reference_example/ios/Classes/REFLibraryTemplate.m',
       ),
     );
     final HttpClientResponse response = await request.close();
@@ -203,6 +205,7 @@ class ReferenceGeneratorOptions {
     this.objcImplOut,
     this.objcPrefix,
     this.dartImports,
+    required this.branch,
   });
 
   factory ReferenceGeneratorOptions.parse(ArgResults results) {
@@ -236,6 +239,7 @@ class ReferenceGeneratorOptions {
           : null,
       objcPrefix: results[objcPrefixOption],
       dartImports: results[dartImportsOption],
+      branch: results[branchOption] ?? 'master',
     );
 
     if (options.javaOut != null && options.javaPackage == null) {
@@ -266,4 +270,5 @@ class ReferenceGeneratorOptions {
   final File? objcImplOut;
   final String? objcPrefix;
   final List<String>? dartImports;
+  final String branch;
 }
