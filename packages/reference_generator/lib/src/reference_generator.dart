@@ -182,20 +182,14 @@ class ReferenceAstBuilder extends Builder {
     DartType type,
     Set<ClassElement> allGeneratedClasses,
   ) {
-    late final DartType trueType;
-    if (type.isDartAsyncFuture || type.isDartAsyncFutureOr) {
-      trueType = (type as ParameterizedType).typeArguments.first;
-    } else {
-      trueType = type;
-    }
-    final String displayName = trueType.getDisplayString(withNullability: true);
+    final String displayName = type.getDisplayString(withNullability: true);
     return ReferenceType(
       name: displayName.split(RegExp('[<?]')).first,
       nullable: displayName.endsWith('?'),
-      codeGeneratedClass: allGeneratedClasses.contains(trueType.element),
-      typeArguments: trueType is! ParameterizedType
+      codeGeneratedClass: allGeneratedClasses.contains(type.element),
+      typeArguments: type is! ParameterizedType
           ? <ReferenceType>[]
-          : trueType.typeArguments
+          : type.typeArguments
               .map<ReferenceType>(
                 (DartType type) => _toReferenceType(type, allGeneratedClasses),
               )

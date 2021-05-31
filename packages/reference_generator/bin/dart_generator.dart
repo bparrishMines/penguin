@@ -4,7 +4,8 @@ import 'package:reference_generator/src/ast.dart';
 
 import 'generator.dart';
 
-String generateDart(String template, LibraryNode libraryNode, List<String>? imports) {
+String generateDart(
+    String template, LibraryNode libraryNode, List<String>? imports) {
   final Map<String, Object> data = <String, Object>{};
 
   final List<Map<String, Object>> importData = <Map<String, Object>>[];
@@ -35,7 +36,8 @@ String generateDart(String template, LibraryNode libraryNode, List<String>? impo
       final Map<String, Object> methodData = <String, Object>{};
       methodData['name'] = methodNode.name;
       methodData['returnType'] = getTrueTypeName(methodNode.returnType);
-      methodData['notReturnsVoid'] = methodNode.returnType.name != 'void';
+      methodData['returnsVoid'] = methodNode.returnType.name == 'void';
+      methodData['returnsFuture'] = methodNode.returnType.name == 'Future';
 
       final List<Map<String, Object>> parameters = <Map<String, Object>>[];
       for (int i = 0; i < methodNode.parameters.length; i++) {
@@ -57,7 +59,8 @@ String generateDart(String template, LibraryNode libraryNode, List<String>? impo
       final Map<String, Object> methodData = <String, Object>{};
       methodData['name'] = methodNode.name;
       methodData['returnType'] = getTrueTypeName(methodNode.returnType);
-      methodData['notReturnsVoid'] = methodNode.returnType.name != 'void';
+      methodData['returnsVoid'] = methodNode.returnType.name == 'void';
+      methodData['returnsFuture'] = methodNode.returnType.name == 'Future';
 
       final List<Map<String, Object>> parameters = <Map<String, Object>>[];
       for (int i = 0; i < methodNode.parameters.length; i++) {

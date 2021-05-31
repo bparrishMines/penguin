@@ -19,7 +19,7 @@ class $$class_name$$ with $$$class_name$$ {
   }
 
   @override
-  Future<String> $__method_name__(String $$parameter_name$$) {
+  Future<String> $$method_name$$(String $$parameter_name$$) {
     return _channel.$__method_name__(
       this,
       $$parameter_name$$,

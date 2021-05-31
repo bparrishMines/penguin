@@ -12,7 +12,7 @@ import /*replace :from='dart:core' value*/ 'dart:core' /**/;
 /*iterate classes class*/
 mixin $$$class_name$$ {
   /*iterate methods method*/
-  /*replace method_returnType*/Future<String>/**/ $__method_name__(
+  /*replace method_returnType*/ Future<String> /**/ $$method_name$$(
     /*iterate parameters parameter*/ /*replace parameter_type*/ String /**/ $$parameter_name$$,
     /**/
   );
@@ -43,7 +43,7 @@ class $$$class_name$$Channel extends TypeChannel<$$$class_name$$> {
 
   /*iterate staticMethods staticMethod*/
   /*if returnsFuture*/
-  /*replace staticMethod_returnType*/Future<double>/**/
+  /*replace staticMethod_returnType*/ Future<double> /**/
       $__staticMethod_name__(
     /*iterate parameters parameter*/ /*replace parameter_type*/ String /**/ $$parameter_name$$,
     /**/
@@ -60,7 +60,7 @@ class $$$class_name$$Channel extends TypeChannel<$$$class_name$$> {
 
   /*iterate methods method*/
   /*if returnsFuture*/
-  /*replace method_returnType*/Future<String>/**/ $__method_name__(
+  /*replace method_returnType*/ Future<String> /**/ $__method_name__(
     $$$class_name$$ $instance,
     /*iterate parameters parameter*/ /*replace parameter_type*/ String /**/ $$parameter_name$$,
     /**/
@@ -104,13 +104,13 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$$class_name$$> {
 
   /*iterate methods method*/
   /*if! returnsFuture*/
-  /*replace method_returnType*/Object?/**/ $__method_name__(
+  /*replace method_returnType*/ Object? /**/ $__method_name__(
     $$$class_name$$ $instance,
     /*iterate parameters parameter*/
     /*replace parameter_type*/ String /**/ $$parameter_name$$,
     /**/
   ) {
-    /*if! returnsVoid*/ return /**/ $instance.$__method_name__(
+    /*if! returnsVoid*/ return /**/ $instance.$$method_name$$(
       /*iterate parameters parameter*/ $$parameter_name$$, /**/
     );
   }

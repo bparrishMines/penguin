@@ -11,18 +11,14 @@ String runGenerator(
 
     if (newToken == null) {
       resultBuffer.write(templateQueue.removeFirst());
-    } else if (newToken is ConditionalToken &&
-        !(data[newToken.identifier] as bool)) {
-      flush(templateQueue);
-    } else if (newToken is ConditionalToken &&
-        (data[newToken.identifier] as bool)) {
-      tokens.addFirst(newToken);
-      resultBuffer.write(runGenerator(
+    } else if (newToken is ConditionalToken) {
+      handleConditionalToken(
+        newToken,
         templateQueue,
         tokens,
-        StringBuffer(),
+        resultBuffer,
         data,
-      ));
+      );
     } else if (newToken is ReplaceToken) {
       tokens.addFirst(newToken);
       resultBuffer.write(runGenerator(
@@ -99,6 +95,28 @@ String runGenerator(
   return resultBuffer.toString();
 }
 
+void handleConditionalToken(
+  ConditionalToken token,
+  Queue<String> templateQueue,
+  Queue<Token> tokens,
+  StringBuffer resultBuffer,
+  Map<String, Object> data,
+) {
+  bool condition = data[token.identifier] as bool;
+  if (token.inverse) condition = !condition;
+  if (condition) {
+    tokens.addFirst(token);
+    resultBuffer.write(runGenerator(
+      templateQueue,
+      tokens,
+      StringBuffer(),
+      data,
+    ));
+  } else {
+    flush(templateQueue);
+  }
+}
+
 void flush(Queue<String> templateQueue) {
   int tokenCount = 1;
   while (tokenCount != 0) {
@@ -171,11 +189,15 @@ Token? tryParseToken(Queue<String> templateQueue) {
       from: fromModifier,
       replacement: replacement,
     );
-  } else if (tokenType == '/*if') {
+  } else if (tokenType.startsWith('/*if')) {
     final String identifier =
         RegExp(r'(?<=\s)[^\s]+(?=\*/)', multiLine: true, dotAll: true)
             .stringMatch(tokenString)!;
-    return ConditionalToken(identifier);
+
+    return ConditionalToken(
+      identifier: identifier,
+      inverse: tokenType == '/*if!',
+    );
   }
 
   return null;
@@ -207,9 +229,10 @@ class ReplaceToken extends Token {
 }
 
 class ConditionalToken extends Token {
-  ConditionalToken(this.identifier);
+  ConditionalToken({required this.identifier, required this.inverse});
 
   final String identifier;
+  final bool inverse;
 }
 
 class EndToken extends Token {}
