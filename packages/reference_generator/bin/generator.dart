@@ -38,7 +38,7 @@ String runGenerator(
           data[currentToken.listName] as List<Map<String, Object>>;
       final List<String> outputs = <String>[];
       final int end = currentToken?.end ?? dataList.length;
-      for (int i = int.parse(currentToken.start); i < end; i++) {
+      for (int i = currentToken.start; i < end; i++) {
         outputs.add(runGenerator(
           Queue<String>.from(templateQueue),
           tokens,
@@ -146,8 +146,8 @@ Token tryParseToken(Queue<String> templateQueue) {
       listName: listName,
       identifier: identifier,
       join: joinModifier ?? '',
-      start: startModifier ?? 0,
-      end: endModifier,
+      start: startModifier == null ? 0 : int.parse(startModifier),
+      end: endModifier == null ? null : int.parse(endModifier),
     );
   } else if (tokenType == '/*replace') {
     final String fromModifier =
@@ -182,8 +182,8 @@ class IterateToken extends Token {
   final String listName;
   final String identifier;
   final String join;
-  final String start;
-  final String end;
+  final int start;
+  final int end;
 }
 
 class ReplaceToken extends Token {
