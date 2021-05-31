@@ -6,10 +6,10 @@ import 'generator.dart';
 import 'objc_header_generator.dart' show getTrueTypeName;
 
 String generateObjcImpl({
-  String template,
-  LibraryNode libraryNode,
-  String prefix,
-  String headerFilename,
+  required String template,
+  required LibraryNode libraryNode,
+  required String prefix,
+  required String headerFilename,
 }) {
   final Map<String, Object> data = <String, Object>{};
   data['prefix'] = prefix;
@@ -19,7 +19,7 @@ String generateObjcImpl({
   for (ClassNode classNode in libraryNode.classes) {
     final Map<String, Object> classData = <String, Object>{};
     classData['name'] = classNode.name;
-    classData['channel'] = classNode.channelName;
+    classData['channel'] = classNode.channelName!;
 
     final List<Map<String, Object>> fields = <Map<String, Object>>[];
     for (int i = 0; i < classNode.fields.length; i++) {

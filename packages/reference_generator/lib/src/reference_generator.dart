@@ -15,7 +15,7 @@ class ReferenceAstBuilder extends Builder {
   static const TypeChecker parameterAnnotation =
       TypeChecker.fromRuntime(ReferenceParameter);
 
-  static ReferenceMethod tryReadMethodAnnotation(MethodElement element) {
+  static ReferenceMethod? tryReadMethodAnnotation(MethodElement element) {
     if (!methodAnnotation.hasAnnotationOfExact(element)) return null;
     final ConstantReader reader = ConstantReader(
       methodAnnotation.firstAnnotationOfExact(element),
@@ -23,7 +23,7 @@ class ReferenceAstBuilder extends Builder {
     return ReferenceMethod(ignore: reader.read('ignore').boolValue);
   }
 
-  static ReferenceParameter tryReadParameterAnnotation(
+  static ReferenceParameter? tryReadParameterAnnotation(
     ParameterElement element,
   ) {
     if (!parameterAnnotation.hasAnnotationOfExact(element)) return null;
@@ -45,7 +45,8 @@ class ReferenceAstBuilder extends Builder {
     final Iterable<ClassElement> classes = reader
         .annotatedWith(const TypeChecker.fromRuntime(Reference))
         .map<ClassElement>(
-          (AnnotatedElement annotatedElement) => annotatedElement.element,
+          (AnnotatedElement annotatedElement) =>
+              annotatedElement.element as ClassElement,
         );
 
     if (classes.isEmpty) return;
@@ -76,10 +77,11 @@ class ReferenceAstBuilder extends Builder {
     Set<ClassElement> allGeneratedClasses,
   ) {
     List<ParameterElement> parameters;
-    final ConstructorElement defaultConstructor = classElement.constructors
+    final ConstructorElement? defaultConstructor = classElement.constructors
+        .cast<ConstructorElement?>()
         .firstWhere(
-            (ConstructorElement constructorElement) =>
-                constructorElement.name.isEmpty,
+            (ConstructorElement? constructorElement) =>
+                constructorElement != null && constructorElement.name.isEmpty,
             orElse: () => null);
     if (defaultConstructor == null) {
       parameters = <ParameterElement>[];
@@ -92,7 +94,7 @@ class ReferenceAstBuilder extends Builder {
       channelName: _getChannel(classElement.thisType),
       fields: parameters
           .where((ParameterElement element) {
-            final ReferenceParameter referenceParameter =
+            final ReferenceParameter? referenceParameter =
                 tryReadParameterAnnotation(element);
             if (referenceParameter == null) return true;
             return !referenceParameter.ignore;
@@ -104,7 +106,7 @@ class ReferenceAstBuilder extends Builder {
           .where((MethodElement element) => !element.isPrivate)
           .where((MethodElement methodElement) => !methodElement.isStatic)
           .where((MethodElement element) {
-            final ReferenceMethod referenceMethod =
+            final ReferenceMethod? referenceMethod =
                 tryReadMethodAnnotation(element);
             if (referenceMethod == null) return true;
             return !referenceMethod.ignore;
@@ -118,7 +120,7 @@ class ReferenceAstBuilder extends Builder {
           .where((MethodElement element) => !element.isPrivate)
           .where((MethodElement methodElement) => methodElement.isStatic)
           .where((MethodElement element) {
-            final ReferenceMethod referenceMethod =
+            final ReferenceMethod? referenceMethod =
                 tryReadMethodAnnotation(element);
             if (referenceMethod == null) return true;
             return !referenceMethod.ignore;
@@ -153,7 +155,7 @@ class ReferenceAstBuilder extends Builder {
       ),
       parameters: methodElement.parameters
           .where((ParameterElement element) {
-            final ReferenceParameter referenceParameter =
+            final ReferenceParameter? referenceParameter =
                 tryReadParameterAnnotation(element);
             if (referenceParameter == null) return true;
             return !referenceParameter.ignore;
@@ -180,14 +182,14 @@ class ReferenceAstBuilder extends Builder {
     DartType type,
     Set<ClassElement> allGeneratedClasses,
   ) {
+    final String displayName = type.getDisplayString(withNullability: true);
     return ReferenceType(
-      name: type.getDisplayString(withNullability: true).split('<').first,
+      name: displayName.split(RegExp('[<?]')).first,
+      nullable: displayName.endsWith('?'),
       codeGeneratedClass: allGeneratedClasses.contains(type.element),
-      referenceChannel: _getChannel(type),
       typeArguments: type is! ParameterizedType
           ? <ReferenceType>[]
-          : (type as ParameterizedType)
-              .typeArguments
+          : type.typeArguments
               .map<ReferenceType>(
                 (DartType type) => _toReferenceType(type, allGeneratedClasses),
               )
@@ -195,13 +197,18 @@ class ReferenceAstBuilder extends Builder {
     );
   }
 
-  String _getChannel(DartType type) {
+  String? _getChannel(DartType type) {
     final TypeChecker typeChecker = TypeChecker.fromRuntime(Reference);
+    final Element? element = type.element;
 
-    if (type.isVoid || !typeChecker.hasAnnotationOf(type.element)) return null;
+    if (element == null) {
+      return null;
+    } else if (type.isVoid || !typeChecker.hasAnnotationOf(element)) {
+      return null;
+    }
 
     final ConstantReader constantReader =
-        ConstantReader(typeChecker.firstAnnotationOf(type.element));
+        ConstantReader(typeChecker.firstAnnotationOf(element));
     return constantReader.read('channel').stringValue;
   }
 

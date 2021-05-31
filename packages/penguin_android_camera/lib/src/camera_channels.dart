@@ -31,7 +31,7 @@ class LibraryImplementations extends $LibraryImplementations {
 
 class CameraHandler extends $CameraHandler {
   @override
-  Camera onCreate(TypeChannelMessenger messenger, $CameraCreationArgs args) {
+  Camera $$create(TypeChannelMessenger messenger) {
     // ignore: invalid_use_of_visible_for_testing_member
     return Camera();
   }
@@ -39,50 +39,48 @@ class CameraHandler extends $CameraHandler {
 
 class CameraInfoHandler extends $CameraInfoHandler {
   @override
-  CameraInfo onCreate(
+  CameraInfo $$create(
     TypeChannelMessenger messenger,
-    $CameraInfoCreationArgs args,
+    int cameraId,
+    int facing,
+    int orientation,
   ) {
     return CameraInfo(
-      cameraId: args.cameraId,
-      facing: args.facing,
-      orientation: args.orientation,
+      cameraId: cameraId,
+      facing: facing,
+      orientation: orientation,
     );
   }
 }
 
 class CameraParametersHandler extends $CameraParametersHandler {
   @override
-  CameraParameters onCreate(
-    TypeChannelMessenger messenger,
-    $CameraParametersCreationArgs args,
-  ) {
-    // ignore: invalid_use_of_visible_for_testing_member
+  CameraParameters $$create(TypeChannelMessenger messenger) {
     return CameraParameters();
   }
 }
 
 class CameraSizeHandler extends $CameraSizeHandler {
   @override
-  $CameraSize onCreate(
-    TypeChannelMessenger messenger,
-    $CameraSizeCreationArgs args,
-  ) {
-    return CameraSize(args.width, args.height);
+  CameraSize $$create(TypeChannelMessenger messenger, int width, int height) {
+    return CameraSize(width, height);
   }
 }
 
 class CameraRectHandler extends $CameraRectHandler {
   @override
-  CameraRect onCreate(
+  CameraRect $$create(
     TypeChannelMessenger messenger,
-    $CameraRectCreationArgs args,
+    int top,
+    int bottom,
+    int right,
+    int left,
   ) {
     return CameraRect(
-      top: args.top,
-      bottom: args.bottom,
-      right: args.right,
-      left: args.left,
+      top: top,
+      bottom: bottom,
+      right: right,
+      left: left,
       createInstancePair: false,
     );
   }
@@ -90,11 +88,14 @@ class CameraRectHandler extends $CameraRectHandler {
 
 class CameraAreaHandler extends $CameraAreaHandler {
   @override
-  CameraArea onCreate(
-      TypeChannelMessenger messenger, $CameraAreaCreationArgs args) {
+  CameraArea $$create(
+    TypeChannelMessenger messenger,
+    $CameraRect rect,
+    int weight,
+  ) {
     return CameraArea(
-      args.rect as CameraRect,
-      args.weight,
+      rect as CameraRect,
+      weight,
       createInstancePair: false,
     );
   }

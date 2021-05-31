@@ -23,7 +23,7 @@ class Camera with $Camera {
   Camera();
 
   static $CameraChannel get _channel =>
-      ChannelRegistrar.instance.implementations.cameraChannel;
+      ChannelRegistrar.instance.implementations.channelCamera;
 
   /// Unspecified camera error.
   static const int cameraErrorUnknown = 0x00000001;
@@ -42,7 +42,7 @@ class Camera with $Camera {
   /// Returns the information about each camera.
   static Future<List<CameraInfo>> getAllCameraInfo() async {
     final List<Object?> allInfo =
-        await _channel.$invokeGetAllCameraInfo() as List<Object?>;
+        await _channel.$getAllCameraInfo() as List<Object?>;
     return allInfo.cast<CameraInfo>();
   }
 
@@ -56,42 +56,37 @@ class Camera with $Camera {
   /// application should only have one [Camera] object active at a time for a
   /// particular hardware camera.
   static Future<Camera> open(int cameraId) async {
-    return await _channel.$invokeOpen(cameraId) as Camera;
+    return await _channel.$open(cameraId) as Camera;
   }
 
   /// Disconnects and releases the [Camera] object resources.
   ///
   /// You must call this as soon as you're done with the [Camera] object.
-  @override
-  Future<void> release() => _channel.$invokeRelease(this);
+  Future<void> release() => _channel.$release(this);
 
   /// Starts capturing and drawing preview frames to the screen.
   ///
   /// Preview will not actually start until a texture is supplied with
   /// [addToTexture].
-  @override
-  Future<void> startPreview() => _channel.$invokeStartPreview(this);
+  Future<void> startPreview() => _channel.$startPreview(this);
 
   /// Stops capturing and drawing preview frames to the surface.
   ///
   /// Resets the camera for a future call to [startPreview].
-  @override
-  Future<void> stopPreview() => _channel.$invokeStopPreview(this);
+  Future<void> stopPreview() => _channel.$stopPreview(this);
 
   /// Attach preview frames to a new Flutter texture.
   ///
   /// If the [Camera] is already using a texture, the same id will be returned.
-  @override
   Future<int> attachPreviewTexture() async {
     return _currentTexture ??=
-        await _channel.$invokeAttachPreviewTexture(this) as int;
+        await _channel.$attachPreviewTexture(this) as int;
   }
 
   /// Release the Flutter texture receiving preview frames.
-  @override
   Future<void> releasePreviewTexture() async {
     _currentTexture = null;
-    await _channel.$invokeReleasePreviewTexture(this);
+    await _channel.$releasePreviewTexture(this);
   }
 
   /// Unlocks the camera to allow another process to access it.
@@ -106,9 +101,8 @@ class Camera with $Camera {
   /// be called after recording starts.
   ///
   /// If you are not recording video, you probably do not need this method.
-  @override
   Future<void> unlock() {
-    return _channel.$invokeUnlock(this);
+    return _channel.$unlock(this);
   }
 
   /// Reconnects to the camera service after another process used it.
@@ -122,8 +116,7 @@ class Camera with $Camera {
   /// There is no need to call this after recording starts or stops.
   ///
   /// If you are not recording video, you probably do not need this method.
-  @override
-  Future<void> reconnect() => _channel.$invokeReconnect(this);
+  Future<void> reconnect() => _channel.$reconnect(this);
 
   /// Triggers an asynchronous image capture.
   ///
@@ -147,7 +140,6 @@ class Camera with $Camera {
   ///
   /// After calling this method, you must not call [startPreview] or take
   /// another picture until the JPEG callback has returned.
-  @override
   Future<void> takePicture(
     covariant ShutterCallback? shutter,
     covariant PictureCallback? raw,
@@ -158,7 +150,7 @@ class Camera with $Camera {
     assert(postView == null || (postView != raw && postView != jpeg));
     assert(jpeg == null || (jpeg != raw && jpeg != postView));
 
-    await _channel.$invokeTakePicture(
+    await _channel.$takePicture(
       this,
       shutter,
       raw,
@@ -197,9 +189,8 @@ class Camera with $Camera {
   ///
   /// If auto-focus is successful, consider playing back an auto-focus success
   /// sound to the user.
-  @override
   Future<void> autoFocus(covariant AutoFocusCallback callback) {
-    return _channel.$invokeAutoFocus(this, callback);
+    return _channel.$autoFocus(this, callback);
   }
 
   /// Cancels any auto-focus function in progress.
@@ -207,9 +198,8 @@ class Camera with $Camera {
   /// Whether or not auto-focus is currently in progress, this function will
   /// return the focus position to the default. If the camera does not support
   /// auto-focus, this is a no-op.
-  @override
   Future<void> cancelAutoFocus() {
-    return _channel.$invokeCancelAutoFocus(this);
+    return _channel.$cancelAutoFocus(this);
   }
 
   // TODO: PreviewCallback.onPreviewFrame
@@ -228,15 +218,13 @@ class Camera with $Camera {
   ///
   /// If you want to make the camera image show in the same orientation as the
   /// display, you can use the following code.
-  @override
   Future<void> setDisplayOrientation(int degrees) {
-    return _channel.$invokeSetDisplayOrientation(this, degrees);
+    return _channel.$setDisplayOrientation(this, degrees);
   }
 
   /// Registers a callback to be invoked when an error occurs.
-  @override
   Future<void> setErrorCallback(covariant ErrorCallback callback) {
-    return _channel.$invokeSetErrorCallback(this, callback);
+    return _channel.$setErrorCallback(this, callback);
   }
 
   //TODO: OnZoomChangeListener
@@ -251,9 +239,8 @@ class Camera with $Camera {
   /// change the zoom value before zoom stops. If the supplied zoom value equals
   /// to the current zoom value, no zoom callback will be generated. This method
   /// is supported if [CameraParameters.isSmoothZoomSupported] returns `true`.
-  @override
   Future<void> startSmoothZoom(int value) {
-    return _channel.$invokeStartSmoothZoom(this, value);
+    return _channel.$startSmoothZoom(this, value);
   }
 
   /// Stops the smooth zoom.
@@ -261,24 +248,21 @@ class Camera with $Camera {
   /// Applications should wait for the [OnZoomChangeListener] to know when the
   /// zoom is actually stopped. This method is supported if
   /// [CameraParameters.isSmoothZoomSupported] is `true`.
-  @override
   Future<void> stopSmoothZoom() {
-    return _channel.$invokeStopSmoothZoom(this);
+    return _channel.$stopSmoothZoom(this);
   }
 
   /// Returns the current settings for this Camera service.
   ///
   /// If modifications are made to the returned Parameters, they must be passed
   /// to [setParameters] to take effect.
-  @override
   Future<CameraParameters> getParameters() async {
-    return await _channel.$invokeGetParameters(this) as CameraParameters;
+    return await _channel.$getParameters(this) as CameraParameters;
   }
 
   /// Changes the settings for this Camera service.
-  @override
   Future<void> setParameters(covariant CameraParameters parameters) {
-    return _channel.$invokeSetParameters(this, parameters);
+    return _channel.$setParameters(this, parameters);
   }
 }
 
@@ -406,15 +390,14 @@ class CameraParameters with $CameraParameters {
   static const String focusModeMacro = 'macro';
 
   static $CameraParametersChannel get _channel =>
-      ChannelRegistrar.instance.implementations.cameraParametersChannel;
+      ChannelRegistrar.instance.implementations.channelCameraParameters;
 
   /// Gets the state of the auto-exposure lock.
   ///
   /// Applications should check [isAutoExposureLockSupported] before using this
   /// method. See [setAutoExposureLock] for details about the lock.
-  @override
   Future<bool> getAutoExposureLock() async {
-    return await _channel.$invokeGetAutoExposureLock(this) as bool;
+    return await _channel.$getAutoExposureLock(this) as bool;
   }
 
   /// Gets the current focus areas.
@@ -454,10 +437,9 @@ class CameraParameters with $CameraParameters {
   /// Focus area only has effect if the current focus mode is
   /// [focusModeAuto], [focusModeMacro], [focusModeContinuousVideo], or
   /// [focusModeContinuousPicture].
-  @override
   Future<List<CameraArea>> getFocusAreas() async {
     final List<Object?> focusAreas =
-        await _channel.$invokeGetFocusAreas(this) as List<Object?>;
+        await _channel.$getFocusAreas(this) as List<Object?>;
     return focusAreas.cast<CameraArea>();
   }
 
@@ -481,39 +463,34 @@ class CameraParameters with $CameraParameters {
   ///
   /// Far focus distance >= optimal focus distance >= near focus distance. If
   /// the focus distance is infinity, the value will be Float.POSITIVE_INFINITY.
-  @override
   Future<List<double>> getFocusDistances() async {
     final List<Object?> distances =
-        await _channel.$invokeGetFocusDistances(this) as List<Object?>;
+        await _channel.$getFocusDistances(this) as List<Object?>;
     return distances.cast<double>();
   }
 
   /// Gets the maximum exposure compensation index.
-  @override
   Future<int> getMaxExposureCompensation() async {
-    return await _channel.$invokeGetMaxExposureCompensation(this) as int;
+    return await _channel.$getMaxExposureCompensation(this) as int;
   }
 
   /// Gets the maximum number of focus areas supported.
   ///
   /// This is the maximum length of the list in [setFocusAreas] and
   /// [getFocusAreas].
-  @override
   Future<int> getMaxNumFocusAreas() async {
-    return await _channel.$invokeGetMaxNumFocusAreas(this) as int;
+    return await _channel.$getMaxNumFocusAreas(this) as int;
   }
 
   /// Gets the minimum exposure compensation index.
-  @override
   Future<int> getMinExposureCompensation() async {
-    return await _channel.$invokeGetMinExposureCompensation(this) as int;
+    return await _channel.$getMinExposureCompensation(this) as int;
   }
 
   /// Gets the supported focus modes.
-  @override
   Future<List<String>> getSupportedFocusModes() async {
     final List<Object?> modes =
-        await _channel.$invokeGetSupportedFocusModes(this) as List<Object?>;
+        await _channel.$getSupportedFocusModes(this) as List<Object?>;
     return modes.cast<String>();
   }
 
@@ -521,17 +498,15 @@ class CameraParameters with $CameraParameters {
   ///
   /// Applications should call this before trying to lock auto-exposure.
   /// See [setAutoExposureLock] for details about the lock.
-  @override
   Future<bool> isAutoExposureLockSupported() async {
-    return await _channel.$invokeIsAutoExposureLockSupported(this) as bool;
+    return await _channel.$isAutoExposureLockSupported(this) as bool;
   }
 
   /// Returns `true` if zoom is supported.
   ///
   /// Applications should call this before using other zoom methods.
-  @override
   Future<bool> isZoomSupported() async {
-    return await _channel.$invokeIsZoomSupported(this) as bool;
+    return await _channel.$isZoomSupported(this) as bool;
   }
 
   /// Sets the auto-exposure lock state.
@@ -557,29 +532,26 @@ class CameraParameters with $CameraParameters {
   /// [Camera.open] but before the first call to [Camera.startPreview] will not
   /// allow the auto-exposure routine to run at all, and may result in severely
   /// over- or under-exposed images.
-  @override
+  // ignore: avoid_positional_boolean_parameters
   Future<void> setAutoExposureLock(bool toggle) {
-    return _channel.$invokeSetAutoExposureLock(this, toggle);
+    return _channel.$setAutoExposureLock(this, toggle);
   }
 
   /// Sets the exposure compensation index.
-  @override
   Future<void> setExposureCompensation(int value) {
-    return _channel.$invokeSetExposureCompensation(this, value);
+    return _channel.$setExposureCompensation(this, value);
   }
 
   /// Sets focus areas.
   ///
   /// See [getFocusAreas] for documentation.
-  @override
   Future<void> setFocusAreas(covariant List<CameraArea>? focusAreas) {
-    return _channel.$invokeSetFocusAreas(this, focusAreas);
+    return _channel.$setFocusAreas(this, focusAreas);
   }
 
   /// Sets the focus mode.
-  @override
   Future<void> setFocusMode(String value) {
-    return _channel.$invokeSetFocusMode(this, value);
+    return _channel.$setFocusMode(this, value);
   }
 
   /// Gets the current flash mode setting.
@@ -592,9 +564,8 @@ class CameraParameters with $CameraParameters {
   ///   [flashModeOn]
   ///   [flashModeOff]
   ///   [flashModeTorch]
-  @override
   Future<String?> getFlashMode() async {
-    return await _channel.$invokeGetFlashMode(this) as String?;
+    return await _channel.$getFlashMode(this) as String?;
   }
 
   /// Gets the maximum zoom value allowed for snapshot.
@@ -603,50 +574,44 @@ class CameraParameters with $CameraParameters {
   /// Applications should call [isZoomSupported] before using this method.
   /// This value may change in different preview size. Applications should call
   /// this again after setting preview size.
-  @override
   Future<int> getMaxZoom() async {
-    return await _channel.$invokeGetMaxZoom(this) as int;
+    return await _channel.$getMaxZoom(this) as int;
   }
 
   /// Returns the dimension setting for pictures.
-  @override
   Future<CameraSize> getPictureSize() async {
-    return await _channel.$invokeGetPictureSize(this) as CameraSize;
+    return await _channel.$getPictureSize(this) as CameraSize;
   }
 
   /// Returns the dimensions setting for preview pictures.
-  @override
   Future<CameraSize> getPreviewSize() async {
-    return await _channel.$invokeGetPreviewSize(this) as CameraSize;
+    return await _channel.$getPreviewSize(this) as CameraSize;
   }
 
   /// Gets the supported preview sizes.
   ///
   /// This method will always return a list with at least one element.
-  @override
   Future<List<CameraSize>> getSupportedPreviewSizes() async {
     final List<Object?> sizes =
-        await _channel.$invokeGetSupportedPreviewSizes(this) as List<Object?>;
+        await _channel.$getSupportedPreviewSizes(this) as List<Object?>;
     return sizes.cast<CameraSize>();
   }
 
   /// Gets the supported picture sizes.
   ///
   /// This method will always return a list with at least one element.
-  @override
   Future<List<CameraSize>> getSupportedPictureSizes() async {
     final List<Object?> sizes =
-        await _channel.$invokeGetSupportedPictureSizes(this) as List<Object?>;
+        await _channel.$getSupportedPictureSizes(this) as List<Object?>;
     return sizes.cast<CameraSize>();
   }
 
   /// Gets the supported flash modes.
   ///
   /// Empty if flash mode setting is not supported.
-  @override
   Future<List<String>> getSupportedFlashModes() async {
     final List<Object?> modes =
-        await _channel.$invokeGetSupportedFlashModes(this) as List<Object?>;
+        await _channel.$getSupportedFlashModes(this) as List<Object?>;
     return modes.cast<String>();
   }
 
@@ -654,23 +619,20 @@ class CameraParameters with $CameraParameters {
   ///
   /// This also works when smooth zoom is in progress. Applications should check
   /// [isZoomSupported] before using this method.
-  @override
   Future<int> getZoom() async {
-    return _channel.$invokeGetZoom(this) as int;
+    return _channel.$getZoom(this) as int;
   }
 
   /// Whether smooth zoom is supported.
   ///
   /// Applications should call this before using other smooth zoom methods.
-  @override
   Future<bool> isSmoothZoomSupported() async {
-    return await _channel.$invokeIsSmoothZoomSupported(this) as bool;
+    return await _channel.$isSmoothZoomSupported(this) as bool;
   }
 
   /// Sets the flash mode.
-  @override
   Future<void> setFlashMode(String mode) {
-    return _channel.$invokeSetFlashMode(this, mode);
+    return _channel.$setFlashMode(this, mode);
   }
 
   /// Sets the dimensions for pictures.
@@ -685,9 +647,8 @@ class CameraParameters with $CameraParameters {
   /// trying to configure a QCIF picture size with any preview or video size
   /// larger than 1920x1080 (either width or height) might not be supported,
   /// and [Camera.setParameters] might throw a RuntimeException if it is not.
-  @override
   Future<void> setPictureSize(int width, int height) {
-    return _channel.$invokeSetPictureSize(this, width, height);
+    return _channel.$setPictureSize(this, width, height);
   }
 
   /// Sets recording mode hint.
@@ -700,9 +661,9 @@ class CameraParameters with $CameraParameters {
   /// preview is active. The default value is false. The app can still call
   /// [Camera.takePicture] when the hint is true or call [MediaRecorder.start]
   /// when the hint is false. But the performance may be worse.
-  @override
+  // ignore: avoid_positional_boolean_parameters
   Future<void> setRecordingHint(bool hint) {
-    return _channel.$invokeSetRecordingHint(this, hint);
+    return _channel.$setRecordingHint(this, hint);
   }
 
   /// Sets the clockwise rotation angle in degrees relative to the orientation of the camera.
@@ -742,9 +703,8 @@ class CameraParameters with $CameraParameters {
   /// ```
   ///
   /// [rotation] can only be 0, 90, 180 or 270.
-  @override
   Future<void> setRotation(int rotation) {
-    return _channel.$invokeSetRotation(this, rotation);
+    return _channel.$setRotation(this, rotation);
   }
 
   /// Sets current zoom value.
@@ -756,9 +716,8 @@ class CameraParameters with $CameraParameters {
   /// before using this method.
   ///
   /// The valid range is 0 to [getMaxZoom].
-  @override
   Future<void> setZoom(int value) {
-    return _channel.$invokeSetZoom(this, value);
+    return _channel.$setZoom(this, value);
   }
 
   /// Sets the dimensions for preview pictures.
@@ -781,18 +740,16 @@ class CameraParameters with $CameraParameters {
   /// picture or video size larger than 1920x1080 (either width or height)
   /// might not be supported, and [Camera.setParameters] might throw a
   /// [PlatformException] if it is not.
-  @override
   Future<void> setPreviewSize(int width, int height) {
-    return _channel.$invokeSetPreviewSize(this, width, height);
+    return _channel.$setPreviewSize(this, width, height);
   }
 
   /// Gets the current exposure compensation index.
   ///
   /// The range is [getMinExposureCompensation] to [getMaxExposureCompensation].
   /// 0 means exposure is not adjusted.
-  @override
   Future<int> getExposureCompensation() async {
-    return await _channel.$invokeGetExposureCompensation(this) as int;
+    return await _channel.$getExposureCompensation(this) as int;
   }
 
   /// Gets the exposure compensation step.
@@ -800,9 +757,8 @@ class CameraParameters with $CameraParameters {
   /// Applications can get EV by multiplying the exposure compensation index and
   /// step. Ex: if exposure compensation index is -6 and step is 0.333333333, EV
   /// is -2.
-  @override
   Future<double> getExposureCompensationStep() async {
-    return await _channel.$invokeGetExposureCompensationStep(this) as double;
+    return await _channel.$getExposureCompensationStep(this) as double;
   }
 }
 
@@ -832,19 +788,42 @@ class CameraArea with $CameraArea {
   ///
   /// [createInstancePair] is whether a paired instance should be created on
   /// construction. This is only used internally and defaults to `true`.
-  CameraArea(this.rect, this.weight, {bool createInstancePair = true}) {
-    if (createInstancePair) _channel.createNewInstancePair(this, owner: true);
+  CameraArea(
+    this.rect,
+    this.weight, {
+    @ignoreParam bool createInstancePair = true,
+  }) {
+    if (createInstancePair) {
+      _channel.$$create(
+        this,
+        $owner: true,
+        rect: rect,
+        weight: weight,
+      );
+    }
   }
 
   static $CameraAreaChannel get _channel =>
-      ChannelRegistrar.instance.implementations.cameraAreaChannel;
+      ChannelRegistrar.instance.implementations.channelCameraArea;
 
-  @override
+  /// Bounds of the area.
+  ///
+  /// (-1000, -1000) represents the top-left of the camera field of view, and
+  /// (1000, 1000) represents the bottom-right of the field of view.
+  /// Setting bounds outside that range is not allowed. Bounds with zero or
+  /// negative width or height are not allowed.
   final CameraRect rect;
 
-  @override
+  /// Weight of the area.
+  ///
+  /// The weight must range from 1 to 1000, and represents a weight for every
+  /// pixel in the area. This means that a large metering area with the same
+  /// weight as a smaller area will have more effect in the metering result.
+  /// Metering areas can overlap and the driver will add the weights in the
+  /// overlap region.
   final int weight;
 
+  @ReferenceMethod(ignore: true)
   @override
   String toString() {
     return 'CameraArea($rect, $weight)';
@@ -861,31 +840,43 @@ class CameraRect with $CameraRect {
   ///
   /// [createInstancePair] is whether a paired instance should be created on
   /// construction. This is only used internally and defaults to `true`.
+  ///
+  /// left <= right and top <= bottom
   CameraRect({
     required this.top,
     required this.bottom,
     required this.right,
     required this.left,
-    bool createInstancePair = true,
+    @ignoreParam bool createInstancePair = true,
   }) {
-    if (createInstancePair) _channel.createNewInstancePair(this, owner: true);
+    if (createInstancePair) {
+      _channel.$$create(
+        this,
+        $owner: true,
+        top: top,
+        bottom: bottom,
+        right: right,
+        left: left,
+      );
+    }
   }
 
   static $CameraRectChannel get _channel =>
-      ChannelRegistrar.instance.implementations.cameraRectChannel;
+      ChannelRegistrar.instance.implementations.channelCameraRect;
 
-  @override
+  /// The offset of the top edge of this rectangle from the y axis.
   final int top;
 
-  @override
+  /// The offset of the bottom edge of this rectangle from the y axis.
   final int bottom;
 
-  @override
+  /// The offset of the right edge of this rectangle from the x axis.
   final int right;
 
-  @override
+  /// The offset of the left edge of this rectangle from the x axis.
   final int left;
 
+  @ReferenceMethod(ignore: true)
   @override
   String toString() {
     return 'CameraRect($top, $bottom, $right, $left)';
@@ -899,13 +890,12 @@ class CameraSize with $CameraSize {
   CameraSize(this.width, this.height);
 
   /// Height of a picture.
-  @override
   final int width;
 
   /// Width of a picture.
-  @override
   final int height;
 
+  @ReferenceMethod(ignore: true)
   @override
   String toString() {
     return 'CameraSize($width, $height)';
@@ -917,11 +907,11 @@ class CameraSize with $CameraSize {
 abstract class ErrorCallback with $ErrorCallback {
   /// Default constructor for an [ErrorCallback].
   ErrorCallback() {
-    _channel.createNewInstancePair(this, owner: true);
+    _channel.$$create(this, $owner: true);
   }
 
   static $ErrorCallbackChannel get _channel =>
-      ChannelRegistrar.instance.implementations.errorCallbackChannel;
+      ChannelRegistrar.instance.implementations.channelErrorCallback;
 
   /// Callback for camera errors.
   ///
@@ -929,7 +919,6 @@ abstract class ErrorCallback with $ErrorCallback {
   ///   [Camera.cameraErrorUnknown]
   ///   [Camera.cameraErrorServerDied]
   ///   [Camera.cameraErrorEvicted]
-  @override
   void onError(int error);
 }
 
@@ -946,11 +935,11 @@ abstract class ErrorCallback with $ErrorCallback {
 abstract class AutoFocusCallback with $AutoFocusCallback {
   /// Default constructor for [AutoFocusCallback].
   AutoFocusCallback() {
-    _channel.createNewInstancePair(this, owner: true);
+    _channel.$$create(this, $owner: true);
   }
 
   static $AutoFocusCallbackChannel get _channel =>
-      ChannelRegistrar.instance.implementations.autoFocusCallbackChannel;
+      ChannelRegistrar.instance.implementations.channelAutoFocusCallback;
 
   /// Called when the camera auto focus completes.
   ///
@@ -960,7 +949,7 @@ abstract class AutoFocusCallback with $AutoFocusCallback {
   /// and auto-white balance after it completes.
   ///
   /// Returns whether the auto-focus was successful.
-  @override
+  // ignore: avoid_positional_boolean_parameters
   void onAutoFocus(bool success);
 }
 
@@ -971,8 +960,8 @@ abstract class AutoFocusCallback with $AutoFocusCallback {
 abstract class ShutterCallback with $ShutterCallback {
   /// Default constructor for [ShutterCallback].
   ShutterCallback() {
-    ChannelRegistrar.instance.implementations.shutterCallbackChannel
-        .createNewInstancePair(this, owner: false);
+    ChannelRegistrar.instance.implementations.channelShutterCallback
+        .$$create(this, $owner: false);
   }
 
   /// Called as near as possible to the moment when a photo is captured from the sensor.
@@ -980,7 +969,6 @@ abstract class ShutterCallback with $ShutterCallback {
   /// This is a good opportunity to play a shutter sound or give other feedback
   /// of camera operation. This may be some time after the photo was triggered,
   /// but some time before the actual data is available.
-  @override
   void onShutter();
 }
 
@@ -991,15 +979,14 @@ abstract class ShutterCallback with $ShutterCallback {
 abstract class PictureCallback with $PictureCallback {
   /// Default constructor for [PictureCallback].
   PictureCallback() {
-    ChannelRegistrar.instance.implementations.pictureCallbackChannel
-        .createNewInstancePair(this, owner: false);
+    ChannelRegistrar.instance.implementations.channelPictureCallback
+        .$$create(this, $owner: false);
   }
 
   /// Called when image data is available after a picture is taken.
   ///
   /// The format of the data depends on the context of the callback and
   /// Camera.Parameters settings.
-  @override
   void onPictureTaken(Uint8List data);
 }
 
@@ -1007,7 +994,7 @@ abstract class PictureCallback with $PictureCallback {
 ///
 /// Retrieve by calling [Camera.getAllCameraInfo].
 @Reference('penguin_android_camera/camera/CameraInfo')
-class CameraInfo with $CameraInfo {
+class CameraInfo implements $CameraInfo {
   /// Default constructor for [CameraInfo].
   CameraInfo({
     required this.cameraId,
@@ -1024,14 +1011,12 @@ class CameraInfo with $CameraInfo {
   /// The identifier for this camera device.
   ///
   /// This can be used in [Camera.open].
-  @override
   final int cameraId;
 
   /// The direction that the camera faces.
   ///
   /// It should be [CameraInfo.cameraFacingBack] or
   /// [CameraInfo.cameraFacingFront].
-  @override
   final int facing;
 
   /// The orientation of the camera image.
@@ -1046,7 +1031,6 @@ class CameraInfo with $CameraInfo {
   /// screen in natural orientation, the value should be 90. If the top side of
   /// a front-facing camera sensor is aligned with the right of the screen,
   /// the value should be 270.
-  @override
   final int orientation;
 }
 
@@ -1130,20 +1114,19 @@ abstract class VideoSource {
 class MediaRecorder implements $MediaRecorder {
   /// Default constructor for [MediaRecorder].
   MediaRecorder() {
-    _channel.createNewInstancePair(this, owner: true);
+    _channel.$$create(this, $owner: true);
   }
 
   static $MediaRecorderChannel get _channel =>
-      ChannelRegistrar.instance.implementations.mediaRecorderChannel;
+      ChannelRegistrar.instance.implementations.channelMediaRecorder;
 
   /// Sets a Camera to use for recording.
   ///
   /// Use this function to switch quickly between preview and capture mode
   /// without a teardown of the camera object. [Camera.unlock] should be called
   /// before this. Must call before [prepare].
-  @override
   Future<void> setCamera(covariant Camera camera) =>
-      _channel.$invokeSetCamera(this, camera);
+      _channel.$setCamera(this, camera);
 
   /// Sets the video source to be used for recording.
   ///
@@ -1152,16 +1135,14 @@ class MediaRecorder implements $MediaRecorder {
   /// recording-parameters or encoders. Call this only before [setOutputFormat].
   ///
   /// Throws [PlatformException] if it is called after [setOutputFormat].
-  @override
   Future<void> setVideoSource(int source) =>
-      _channel.$invokeSetVideoSource(this, source);
+      _channel.$setVideoSource(this, source);
 
   /// Sets the path of the output file to be produced.
   ///
   /// Call this after [setOutputFormat] but before [prepare].
-  @override
   Future<void> setOutputFilePath(String path) =>
-      _channel.$invokeSetOutputFilePath(this, path);
+      _channel.$setOutputFilePath(this, path);
 
   /// Sets the format of the output file produced during recording. Call this
   /// after [setAudioSource]/[setVideoSource] but before [prepare].
@@ -1169,41 +1150,36 @@ class MediaRecorder implements $MediaRecorder {
   /// It is recommended to always use 3GP format when using the H.263 video
   /// encoder and AMR audio encoder. Using an MPEG-4 container format may
   /// confuse some desktop players.
-  @override
   Future<void> setOutputFormat(int format) =>
-      _channel.$invokeSetOutputFormat(this, format);
+      _channel.$setOutputFormat(this, format);
 
   /// Sets the video encoder to be used for recording.
   ///
   /// If this method is not called, the output file will not contain an video
   /// track. Call this after [setOutputFormat] and before [prepare].
-  @override
   Future<void> setVideoEncoder(int encoder) =>
-      _channel.$invokeSetVideoEncoder(this, encoder);
+      _channel.$setVideoEncoder(this, encoder);
 
   /// Sets the audio source to be used for recording.
   ///
   /// If this method is not called, the output file will not contain an audio
   /// track. The source needs to be specified before setting
   /// recording-parameters or encoders. Call this only before [setOutputFormat].
-  @override
   Future<void> setAudioSource(int source) =>
-      _channel.$invokeSetAudioSource(this, source);
+      _channel.$setAudioSource(this, source);
 
   /// Sets the audio encoder to be used for recording.
   ///
   /// If this method is not called, the output file will not contain an audio
   /// track. Call this after [setOutputFormat] but before [prepare].
-  @override
   Future<void> setAudioEncoder(int encoder) =>
-      _channel.$invokeSetAudioEncoder(this, encoder);
+      _channel.$setAudioEncoder(this, encoder);
 
   /// Prepares the recorder to begin capturing and encoding data.
   ///
   /// This method must be called after setting up the desired audio and video
   /// sources, encoders, file format, etc., but before [start].
-  @override
-  Future<void> prepare() => _channel.$invokePrepare(this);
+  Future<void> prepare() => _channel.$prepare(this);
 
   /// Begins capturing and encoding data to the file specified with [setOutputFile].
   ///
@@ -1213,8 +1189,7 @@ class MediaRecorder implements $MediaRecorder {
   /// after this method call. The apps do not need to lock the camera again.
   /// However, if this method fails, the apps should still lock the camera back.
   /// The apps should not start another recording session during recording.
-  @override
-  Future<void> start() => _channel.$invokeStart(this);
+  Future<void> start() => _channel.$start(this);
 
   /// Stops recording.
   ///
@@ -1226,8 +1201,7 @@ class MediaRecorder implements $MediaRecorder {
   /// the application take action accordingly to clean up the output file
   /// (delete the output file, for instance), since the output file is not
   /// properly constructed when this happens.
-  @override
-  Future<void> stop() => _channel.$invokeStop(this);
+  Future<void> stop() => _channel.$stop(this);
 
   /// Releases resources associated with this MediaRecorder object.
   ///
@@ -1243,8 +1217,7 @@ class MediaRecorder implements $MediaRecorder {
   /// multiple instances of the same codec are supported, some performance
   /// degradation may be expected when unnecessary multiple instances are used
   /// at the same time.
-  @override
-  Future<void> release() => _channel.$invokeRelease(this);
+  Future<void> release() => _channel.$release(this);
 
   /// Pauses recording.
   ///
@@ -1255,12 +1228,10 @@ class MediaRecorder implements $MediaRecorder {
   /// switching to the resumed scene.
   ///
   /// This is only supported on Android versions 24+.
-  @override
-  Future<void> pause() => _channel.$invokePause(this);
+  Future<void> pause() => _channel.$pause(this);
 
   /// Resumes recording.
   ///
   /// Call this after [start]. It does nothing if the recording is not paused.
-  @override
-  Future<void> resume() => _channel.$invokeResume(this);
+  Future<void> resume() => _channel.$resume(this);
 }
