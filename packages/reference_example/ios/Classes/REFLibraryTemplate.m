@@ -12,18 +12,18 @@
 /*iterate classes class*/
 @implementation __prefix____class_name__Channel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
-  return self = [super initWithMessenger:messenger name:@"__class_channel"];
+  return self = [super initWithMessenger:messenger name:@"__class__channel"];
 }
 
 
-- (void)_create:(NSObject<__prefix____class_name__> *)_instance
+- (void)__create:(NSObject<__prefix____class_name__> *)_instance
          _owner:(BOOL)_owner
 /*iterate fields field*/
  __field_name__:(/*replace field_type*/NSNumber/**/ *_Nullable)__field_name__
 /**/
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
   [self createNewInstancePair:_instance
-                    arguments:@[/*iterate fields field*/__field_name__/**/]
+                    arguments:@[/*iterate fields field*/__field_name__,/**/]
                         owner:_owner
                    completion:completion];
 }
@@ -61,7 +61,7 @@
 
 /*iterate classes class*/
 @implementation __prefix____class_name__Handler
-- (NSObject<__prefix____class_name__> *)_create:(REFTypeChannelMessenger *)messenger
+- (NSObject<__prefix____class_name__> *)__create:(REFTypeChannelMessenger *)messenger
                                  /*iterate fields field*/
                                  __field_name__:(/*replace field_type*/NSNumber/**/ *)__field_name__
 /**/{
@@ -111,7 +111,7 @@
                   methodName:(nonnull NSString *)methodName
                    arguments:(nonnull NSArray *)arguments {
   NSObject<__prefix____class_name__> *value = (NSObject<__prefix____class_name__> *) instance;
-  /*iterate methods method*/
+  /*iterate :join='else' methods method*/
   if ([@"__method_name__" isEqualToString:methodName]) {
     return [self ___method_name__:value
                /*iterate parameters parameter*/

@@ -21,8 +21,8 @@ NS_ASSUME_NONNULL_BEGIN
 /*iterate classes class*/
 @interface __prefix____class_name__Channel : REFTypeChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger;
-- (void)_create:(NSObject<__prefix____class_name__> *)_instance
-         _owner:(BOOL)_owner
+- (void)__create:(NSObject<__prefix____class_name__> *)_instance
+          _owner:(BOOL)_owner
 /*iterate fields field*/
  __field_name__:(/*replace field_type*/NSNumber/**/ *_Nullable)__field_name__
 /**/
@@ -52,9 +52,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 /*iterate classes class*/
 @interface __prefix____class_name__Handler : NSObject<REFTypeChannelHandler>
-- (NSObject<__prefix____class_name__> *)_create:(REFTypeChannelMessenger *)messenger
+- (NSObject<__prefix____class_name__> *)__create:(REFTypeChannelMessenger *)messenger
 /*iterate fields field*/
-                                 __field_name__:(/*replace field_type*/NSNumber/**/ *)__field_name__
+                                  __field_name__:(/*replace field_type*/NSNumber/**/ *)__field_name__
 /**/;
 /*iterate staticMethods staticMethod*/
 - (NSObject *_Nullable)___staticMethod_name__:(REFTypeChannelMessenger *)messenger

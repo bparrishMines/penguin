@@ -37,9 +37,6 @@ String runGenerator(
       final List<Map<String, Object>> dataList =
           data[currentToken.listName] as List<Map<String, Object>>;
       final List<String> outputs = <String>[];
-      print(data);
-      print(currentToken.listName);
-      print(resultBuffer.toString());
       final int end = currentToken?.end ?? dataList.length;
       for (int i = currentToken.start; i < end; i++) {
         outputs.add(runGenerator(
