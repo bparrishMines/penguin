@@ -180,7 +180,9 @@
 }
 
 - (void)testMethodChannelMessenger_createNewInstancePair {
-  [_testChannel createNewInstancePair:[[REFTestClass alloc] init] owner:YES
+  [_testChannel createNewInstancePair:[[REFTestClass alloc] init]
+                            arguments:@[]
+                                owner:YES
                            completion:^(REFPairedInstance *pairedInstance, NSError *error) {}];
   
   XCTAssertEqual(1, _testBinaryMessenger.methodCalls.count);
@@ -210,8 +212,10 @@
 - (void)testMethodChannelMessenger_sendInvokeMethod {
   REFTestClass *testClass = [[REFTestClass alloc] init];
   
-  [_testChannel createNewInstancePair:testClass owner:YES
-  completion:^(REFPairedInstance *pairedInstance, NSError *error) {}];
+  [_testChannel createNewInstancePair:testClass
+                            arguments:@[]
+                                owner:YES
+                           completion:^(REFPairedInstance *pairedInstance, NSError *error) {}];
   [_testBinaryMessenger.methodCalls removeAllObjects];
   
   __block id blockResult;
@@ -231,8 +235,10 @@
 - (void)testMethodChannelMessenger_disposeInstancePair {
   REFTestClass *testClass = [[REFTestClass alloc] init];
   
-  [_testChannel createNewInstancePair:testClass owner:YES
-  completion:^(REFPairedInstance *pairedInstance, NSError *error) {}];
+  [_testChannel createNewInstancePair:testClass
+                            arguments:@[]
+                                owner:YES
+                           completion:^(REFPairedInstance *pairedInstance, NSError *error) {}];
   [_testBinaryMessenger.methodCalls removeAllObjects];
   
   [_testChannel disposeInstancePair:testClass completion:^(NSError *error) {}];

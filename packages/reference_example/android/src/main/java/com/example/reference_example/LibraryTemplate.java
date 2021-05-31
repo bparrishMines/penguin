@@ -1,14 +1,16 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
+/*replace :from='com.example.reference_example' package*/
 package com.example.reference_example;
+/**/
 
 import androidx.annotation.NonNull;
 
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 
 import github.penguin.reference.async.Completable;
+import github.penguin.reference.reference.PairedInstance;
 import github.penguin.reference.reference.TypeChannel;
 import github.penguin.reference.reference.TypeChannelHandler;
 import github.penguin.reference.reference.TypeChannelMessenger;
@@ -17,49 +19,64 @@ import github.penguin.reference.reference.TypeChannelMessenger;
 // ReferenceGenerator
 // **************************************************************************
 
-public class LibraryTemplate {
-  public interface $ClassTemplate {
-    Integer getFieldTemplate();
+public class /*replace libraryName*/LibraryTemplate/**/ {
+  /*iterate classes class*/
+  public interface $__class_name__ { }
+  /**/
 
-    Object methodTemplate(String parameterTemplate) throws Exception;
-  }
-
-  public static class $ClassTemplateCreationArgs {
-    public Integer fieldTemplate;
-  }
-
-  public static class $ClassTemplateChannel extends TypeChannel<$ClassTemplate> {
-    public $ClassTemplateChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "github.penguin/template/template/ClassTemplate");
+  /*iterate classes class*/
+  public static class $__class_name__Channel extends TypeChannel<$__class_name__> {
+    public $__class_name__Channel(@NonNull TypeChannelMessenger messenger) {
+      super(messenger, "__class_channel__");
     }
 
-    public Completable<Object> $invokeStaticMethodTemplate(String parameterTemplate) {
-      return invokeStaticMethod("staticMethodTemplate", Arrays.<Object>asList(parameterTemplate));
+    public Completable<PairedInstance> $$create($__class_name__ $instance, boolean $owner/*iterate fields field*/,/*replace field_type*/Integer/**/ __field_name__/**/) {
+      return createNewInstancePair($instance, Arrays.<Object>asList(/*iterate :join=',' fields field*/__field_name__/**/), $owner);
     }
 
-    public Completable<Object> $invokeMethodTemplate($ClassTemplate instance, String parameterTemplate) {
-      return invokeMethod(instance, "methodTemplate", Arrays.<Object>asList(parameterTemplate));
+    /*iterate staticMethods staticMethod*/
+    public Completable<Object> $__staticMethod_name__(/*iterate :join=',' parameters parameter*//*replace parameter_type*/String/**/ __parameter_name__/**/) {
+      return invokeStaticMethod("__staticMethod_name__", Arrays.<Object>asList(/*iterate :join=',' parameters parameter*/__parameter_name__/**/));
     }
+    /**/
+
+    /*iterate methods method*/
+    public Completable<Object> $__method_name__($__class_name__ $instance/*iterate parameters parameter*/,/*replace parameter_type*/String/**/ __parameter_name__/**/) {
+      return invokeMethod($instance, "__method_name__", Arrays.<Object>asList(/*iterate :join=',' parameters parameter*/__parameter_name__/**/));
+    }
+    /**/
   }
+  /**/
 
-  public static class $ClassTemplateHandler implements TypeChannelHandler<$ClassTemplate> {
-    public $ClassTemplate onCreate(TypeChannelMessenger messenger, $ClassTemplateCreationArgs args)
+  /*iterate classes class*/
+  public static class $__class_name__Handler implements TypeChannelHandler<$__class_name__> {
+    public $__class_name__ $$create(TypeChannelMessenger messenger/*iterate fields field*/,/*replace field_type*/Integer/**/ __field_name__/**/)
         throws Exception {
-      return null;
+      throw new UnsupportedOperationException();
     }
 
-    public Object $onStaticMethodTemplate(TypeChannelMessenger messenger, String parameterTemplate)
+    /*iterate staticMethods staticMethod*/
+    public Object $__staticMethod_name__(TypeChannelMessenger messenger/*iterate parameters parameter*/,/*replace parameter_type*/String/**/ __parameter_name__/**/)
         throws Exception {
-      return null;
+      throw new UnsupportedOperationException();
     }
+    /**/
+
+    /*iterate methods method*/
+    public Object $__method_name__($__class_name__ $instance/*iterate parameters parameter*/,/*replace parameter_type*/String/**/ __parameter_name__/**/) throws Exception {
+      throw new UnsupportedOperationException();
+    }
+    /**/
 
     @Override
     public Object invokeStaticMethod(
         TypeChannelMessenger messenger, String methodName, List<Object> arguments)
         throws Exception {
       switch (methodName) {
-        case "staticMethodTemplate":
-          return $onStaticMethodTemplate(messenger, (String) arguments.get(0));
+        /*iterate staticMethods staticMethod*/
+        case "__staticMethod_name__":
+          return $__staticMethod_name__(messenger/*iterate parameters parameter*/,(/*replace parameter_type*/String/**/) arguments.get(/*replace parameter_index*/0/**/)/**/);
+        /**/
       }
 
       throw new UnsupportedOperationException(
@@ -67,36 +84,30 @@ public class LibraryTemplate {
     }
 
     @Override
-    public List<Object> getCreationArguments(
-        TypeChannelMessenger messenger, $ClassTemplate instance) {
-      return Arrays.<Object>asList(instance.getFieldTemplate());
-    }
-
-    @Override
-    public $ClassTemplate createInstance(TypeChannelMessenger messenger, List<Object> arguments)
+    public $__class_name__ createInstance(TypeChannelMessenger messenger, List<Object> arguments)
         throws Exception {
-      final $ClassTemplateCreationArgs args = new $ClassTemplateCreationArgs();
-      args.fieldTemplate = (Integer) arguments.get(0);
-      return onCreate(messenger, args);
+      return $$create(messenger/*iterate fields field*/,(/*replace field_type*/Integer/**/) arguments.get(/*replace field_index*/0/**/)/**/);
     }
 
     @Override
     public Object invokeMethod(
         TypeChannelMessenger messenger,
-        $ClassTemplate instance,
+        $__class_name__ instance,
         String methodName,
         List<Object> arguments)
         throws Exception {
-      for (Method method : $ClassTemplate.class.getMethods()) {
-        if (method.getName().equals(methodName)) {
-          return method.invoke(instance, arguments.toArray());
-        }
+      switch(methodName) {
+        /*iterate methods method*/
+        case "__method_name__":
+          return $__method_name__(instance/*iterate parameters parameter*/,(/*replace parameter_type*/String/**/) arguments.get(/*replace parameter_index*/0/**/)/**/);
+        /**/
       }
 
       throw new UnsupportedOperationException(
           String.format("%s.%s not supported.", instance, methodName));
     }
   }
+  /**/
 
   public static class $LibraryImplementations {
     public final TypeChannelMessenger messenger;
@@ -105,13 +116,15 @@ public class LibraryTemplate {
       this.messenger = messenger;
     }
 
-    public $ClassTemplateChannel getClassTemplateChannel() {
-      return new $ClassTemplateChannel(messenger);
+    /*iterate classes class*/
+    public $__class_name__Channel getChannel__class_name__() {
+      return new $__class_name__Channel(messenger);
     }
 
-    public $ClassTemplateHandler getClassTemplateHandler() {
-      return new $ClassTemplateHandler();
+    public $__class_name__Handler getHandler__class_name__() {
+      return new $__class_name__Handler();
     }
+    /**/
   }
 
   public static class $ChannelRegistrar {
@@ -121,12 +134,17 @@ public class LibraryTemplate {
       this.implementations = implementations;
     }
 
+
     public void registerHandlers() {
-      implementations.getClassTemplateChannel().setHandler(implementations.getClassTemplateHandler());
+      /*iterate classes class*/
+      implementations.getChannel__class_name__().setHandler(implementations.getHandler__class_name__());
+      /**/
     }
 
     public void unregisterHandlers() {
-      implementations.getClassTemplateChannel().removeHandler();
+      /*iterate classes class*/
+      implementations.getChannel__class_name__().removeHandler();
+      /**/
     }
   }
 }

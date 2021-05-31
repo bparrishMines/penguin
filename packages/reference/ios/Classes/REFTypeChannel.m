@@ -62,27 +62,18 @@
 
 - (void)createNewInstancePair:(NSString *)channelName
                      instance:(NSObject *)instance
+                    arguments:(nonnull NSArray<id> *)arguments
                         owner:(BOOL)owner
-                   completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
+                   completion:(nonnull void (^)(REFPairedInstance * _Nullable, NSError * _Nullable))completion {
   if ([self isPaired:instance]) {
     completion(nil, nil);
     return;
   }
   
-  NSObject<REFTypeChannelHandler> *handler = [self getChannelHandler:channelName];
-  if (!handler) {
-    NSLog(@"A `REFTypeChannelHandler` must be set for channel of: %@.", channelName);
-    return;
-  }
-  
-  
   [self addInstancePair:instance instanceID:nil owner:owner];
   REFPairedInstance *pairedInstance = [self getPairedPairedInstance:instance];
   NSArray<id> *creationArguments = [self.converter convertInstances:[self instanceManager]
-                                                                obj:[[self
-                                                                      getChannelHandler:channelName]
-                                                                     getCreationArguments:self
-                                                                     instance:instance]];
+                                                                obj:arguments];
   
   [_messageDispatcher sendCreateNewInstancePair:channelName
                                  pairedInstance:pairedInstance
@@ -208,14 +199,10 @@
 }
 
 - (void)createNewInstancePair:(NSObject *)instance
-                   completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
-  return [self createNewInstancePair:instance owner:instance completion:completion];
-}
-
-- (void)createNewInstancePair:(NSObject *)instance
+                    arguments:(nonnull NSArray<id> *)arguments
                         owner:(BOOL)owner
-                   completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
-  [_messenger createNewInstancePair:_name instance:instance owner:owner completion:completion];
+                   completion:(nonnull void (^)(REFPairedInstance * _Nullable, NSError * _Nullable))completion {
+  [_messenger createNewInstancePair:_name instance:instance arguments:arguments owner:owner completion:completion];
 }
 
 - (void)invokeStaticMethod:(NSString *)methodName

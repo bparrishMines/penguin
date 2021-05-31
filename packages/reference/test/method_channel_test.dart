@@ -230,8 +230,8 @@ void main() {
       );
     });
 
-    test('createNewPair', () {
-      testChannel.createNewInstancePair(TestClass(), owner: true);
+    test('createNewInstancePair', () {
+      testChannel.createNewInstancePair(TestClass(), <Object?>[], owner: true);
 
       expect(methodCallLog, <Matcher>[
         isMethodCallWithMatchers('REFERENCE_CREATE', arguments: <Object>[
@@ -259,7 +259,7 @@ void main() {
 
     test('sendInvokeMethod', () {
       final TestClass testClass = TestClass();
-      testChannel.createNewInstancePair(testClass, owner: true);
+      testChannel.createNewInstancePair(testClass, <Object?>[], owner: true);
 
       methodCallLog.clear();
 
@@ -279,7 +279,7 @@ void main() {
 
     test('disposeInstancePair', () {
       final TestClass testClass = TestClass();
-      testChannel.createNewInstancePair(testClass, owner: true);
+      testChannel.createNewInstancePair(testClass, <Object?>[], owner: true);
 
       methodCallLog.clear();
 

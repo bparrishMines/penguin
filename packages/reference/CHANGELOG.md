@@ -1,3 +1,12 @@
+## 0.4.0
+
+* **Breaking Change** `TypeChannelHandler.getCreationArguments` has been removed and is replaced by
+  passing arguments to `TypeChannel.createNewInstancePair` and `TypeChannelMessenger.createNewInstancePair`.
+
+## 0.3.1
+
+* Add annotations that can ignore a param or method.
+
 ## 0.3.0+1
 
 * Make Java classes public.

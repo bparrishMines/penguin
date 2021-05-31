@@ -1,53 +1,103 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
 import 'package:reference/reference.dart';
+/*iterate imports import*/
+import /*replace :from='dart:core' value*/ 'dart:core' /**/;
+/**/
 
 // **************************************************************************
 // ReferenceGenerator
 // **************************************************************************
 
-mixin $ClassTemplate {
-  int get fieldTemplate;
-  Future<String> methodTemplate(String parameterTemplate);
-}
+/*iterate classes class*/
+mixin $$$class_name$$ {}
+/**/
 
-class $ClassTemplateCreationArgs {
-  late int fieldTemplate;
-}
+/*iterate classes class*/
+class $$$class_name$$Channel extends TypeChannel<$$$class_name$$> {
+  $$$class_name$$Channel(TypeChannelMessenger messenger)
+      : super(messenger, '__class_channel__');
 
-class $ClassTemplateChannel extends TypeChannel<$ClassTemplate> {
-  $ClassTemplateChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'github.penguin/template/template/ClassTemplate');
+  Future<PairedInstance?> $$create(
+    $$$class_name$$ $instance, {
+    required bool $owner,
+    /*iterate fields field*/
+    required /*replace field_type*/ int /**/ $$field_name$$,
+    /**/
+  }) {
+    return createNewInstancePair(
+      $instance,
+      <Object?>[
+        /*iterate fields field*/ $$field_name$$, /**/
+      ],
+      owner: $owner,
+    );
+  }
 
-  Future<Object?> $invokeStaticMethodTemplate(String parameterTemplate) {
+  /*iterate staticMethods staticMethod*/
+  Future<Object?> $__staticMethod_name__(
+    /*iterate parameters parameter*/ /*replace parameter_type*/ String /**/ $$parameter_name$$,
+    /**/
+  ) {
     return sendInvokeStaticMethod(
-      'staticMethodTemplate',
-      <Object?>[parameterTemplate],
+      '__staticMethod_name__',
+      <Object?>[
+        /*iterate parameters parameter*/ $$parameter_name$$, /**/
+      ],
     );
   }
+  /**/
 
-  Future<Object?> $invokeMethodTemplate(
-      $ClassTemplate instance, String parameterTemplate) {
+  /*iterate methods method*/
+  Future<Object?> $__method_name__(
+    $$$class_name$$ $instance,
+    /*iterate parameters parameter*/ /*replace parameter_type*/ String /**/ $$parameter_name$$,
+    /**/
+  ) {
     return sendInvokeMethod(
-      instance,
-      'methodTemplate',
-      <Object?>[parameterTemplate],
+      $instance,
+      '__method_name__',
+      <Object?>[
+        /*iterate parameters parameter*/ $$parameter_name$$, /**/
+      ],
     );
   }
+  /**/
 }
+/**/
 
-class $ClassTemplateHandler implements TypeChannelHandler<$ClassTemplate> {
-  $ClassTemplate onCreate(
+/*iterate classes class*/
+class $$$class_name$$Handler implements TypeChannelHandler<$$$class_name$$> {
+  $$$class_name$$ $$create(
     TypeChannelMessenger messenger,
-    $ClassTemplateCreationArgs args,
+    /*iterate fields field*/
+    /*replace field_type*/ int /**/ $$field_name$$,
+    /**/
   ) {
     throw UnimplementedError();
   }
 
-  double $onStaticMethodTemplate(
-      TypeChannelMessenger messenger, String parameterTemplate) {
+  /*iterate staticMethods staticMethod*/
+  Object? $__staticMethod_name__(
+    TypeChannelMessenger messenger,
+    /*iterate parameters parameter*/
+    /*replace parameter_type*/ String /**/ $$parameter_name$$,
+    /**/
+  ) {
     throw UnimplementedError();
   }
+  /**/
+
+  /*iterate methods method*/
+  Object? $__method_name__(
+    $$$class_name$$ $instance,
+    /*iterate parameters parameter*/
+    /*replace parameter_type*/ String /**/ $$parameter_name$$,
+    /**/
+  ) {
+    throw UnimplementedError();
+  }
+  /**/
 
   @override
   Object? invokeStaticMethod(
@@ -55,78 +105,75 @@ class $ClassTemplateHandler implements TypeChannelHandler<$ClassTemplate> {
     String methodName,
     List<Object?> arguments,
   ) {
-    // ignore: prefer_final_locals, prefer_function_declarations_over_variables
-    Function method = () {};
     switch (methodName) {
-      case 'staticMethodTemplate':
-        method =
-            () => $onStaticMethodTemplate(messenger, arguments[0] as String);
-        break;
-      default:
-        throw ArgumentError.value(
-          methodName,
-          'methodName',
-          'Unable to invoke static method `$methodName`',
+      /*iterate staticMethods staticMethod*/
+      case '__staticMethod_name__':
+        return $__staticMethod_name__(
+          messenger,
+          /*iterate parameters parameter*/ arguments[
+                  /*replace parameter_index*/ 0 /**/]
+              as /*replace parameter_type*/ String /**/, /**/
         );
+      /**/
     }
 
-    // ignore: dead_code
-    return method();
+    throw ArgumentError.value(
+      methodName,
+      'methodName',
+      'Unable to invoke static method `$methodName`',
+    );
   }
 
   @override
-  List<Object?> getCreationArguments(
-    TypeChannelMessenger messenger,
-    $ClassTemplate instance,
-  ) {
-    return <Object?>[instance.fieldTemplate];
-  }
-
-  @override
-  $ClassTemplate createInstance(
+  $$$class_name$$ createInstance(
     TypeChannelMessenger messenger,
     List<Object?> arguments,
   ) {
-    return onCreate(
+    return $$create(
       messenger,
-      $ClassTemplateCreationArgs()..fieldTemplate = arguments[0] as int,
+      /*iterate fields field*/ arguments[/*replace field_index*/ 0 /**/]
+          as /*replace field_type*/ int /**/, /**/
     );
   }
 
   @override
   Object? invokeMethod(
     TypeChannelMessenger messenger,
-    $ClassTemplate instance,
+    $$$class_name$$ instance,
     String methodName,
     List<Object?> arguments,
   ) {
-    // ignore: prefer_final_locals, prefer_function_declarations_over_variables
-    Function method = () {};
     switch (methodName) {
-      case 'methodTemplate':
-        method = () => instance.methodTemplate(arguments[0] as String);
-        break;
-      default:
-        throw ArgumentError.value(
+      /*iterate methods method*/
+      case '__method_name__':
+        return $__method_name__(
           instance,
-          'instance',
-          'Unable to invoke method `$methodName` on',
+          /*iterate parameters parameter*/ arguments[
+                  /*replace parameter_index*/ 0 /**/]
+              as /*replace parameter_type*/ String /**/, /**/
         );
+      /**/
     }
 
-    // ignore: dead_code
-    return method();
+    throw ArgumentError.value(
+      instance,
+      'instance',
+      'Unable to invoke method `$methodName` on',
+    );
   }
 }
+/**/
 
 class $LibraryImplementations {
   $LibraryImplementations(this.messenger);
 
   final TypeChannelMessenger messenger;
 
-  $ClassTemplateChannel get classTemplateChannel =>
-      $ClassTemplateChannel(messenger);
-  $ClassTemplateHandler get classTemplateHandler => $ClassTemplateHandler();
+  /*iterate classes class*/
+  $$$class_name$$Channel get channel__class_name__ =>
+      $$$class_name$$Channel(messenger);
+  $$$class_name$$Handler get handler__class_name__ => $$$class_name$$Handler();
+  /**/
 }
 
 class $ChannelRegistrar {
@@ -135,12 +182,16 @@ class $ChannelRegistrar {
   final $LibraryImplementations implementations;
 
   void registerHandlers() {
-    implementations.classTemplateChannel.setHandler(
-      implementations.classTemplateHandler,
+    /*iterate classes class*/
+    implementations.channel__class_name__.setHandler(
+      implementations.handler__class_name__,
     );
+    /**/
   }
 
   void unregisterHandlers() {
-    implementations.classTemplateChannel.removeHandler();
+    /*iterate classes class*/
+    implementations.channel__class_name__.removeHandler();
+    /**/
   }
 }

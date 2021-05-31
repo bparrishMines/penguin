@@ -65,14 +65,8 @@ public abstract class TypeChannelMessenger {
   }
 
   @NonNull
-  public Completable<PairedInstance> createNewInstancePair(String channelName, Object instance, boolean owner) {
+  public Completable<PairedInstance> createNewInstancePair(String channelName, Object instance, List<Object> arguments, boolean owner) {
     if (isPaired(instance)) return new Completer<PairedInstance>().complete(null).completable;
-
-    //noinspection rawtypes
-    final TypeChannelHandler handler = getChannelHandler(channelName);
-    if (handler == null) {
-      throw new IllegalArgumentException("A `TypeChannelHandler` must be set for channel of: $channelName.");
-    }
 
     addInstancePair(instance, null, owner);
     final PairedInstance pairedInstance = getPairedPairedInstance(instance);
@@ -80,9 +74,7 @@ public abstract class TypeChannelMessenger {
     getMessageDispatcher().sendCreateNewInstancePair(
         channelName,
         pairedInstance,
-        (List<Object>) getConverter().convertInstances(
-            getInstanceManager(),
-            handler.getCreationArguments(this, instance)),
+        (List<Object>) getConverter().convertInstances(getInstanceManager(), arguments),
         !owner
     ).setOnCompleteListener(
         new Completable.OnCompleteListener<Void>() {
