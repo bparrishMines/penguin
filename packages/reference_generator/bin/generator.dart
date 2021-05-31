@@ -174,9 +174,13 @@ Token tryParseToken(Queue<String> templateQueue) {
 abstract class Token {}
 
 class IterateToken extends Token {
-  IterateToken(
-      {this.listName, this.identifier, this.join, this.start, this.end})
-      : assert(listName != null),
+  IterateToken({
+    this.listName,
+    this.identifier,
+    this.join,
+    this.start,
+    this.end,
+  })  : assert(listName != null),
         assert(identifier != null);
 
   final String listName;
