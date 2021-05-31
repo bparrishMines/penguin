@@ -1,7 +1,7 @@
 #import "EXPChannelRegistrar.h"
 
 @implementation EXPLibraryImplementations
-- (nonnull EXPClassTemplateHandler *)classTemplateHandler {
+- (nonnull EXPClassTemplateHandler *)handler__class_name__ {
   return [[EXPClassTemplateHandler alloc] init];
 }
 @end
@@ -30,16 +30,19 @@
 @end
 
 @implementation EXPClassTemplateHandler
-- (EXPClassTemplateProxy *)_create:(REFTypeChannelMessenger *)messenger fieldTemplate:(NSNumber *)fieldTemplate {
-  return [[EXPClassTemplateProxy alloc] initWithFieldTemplate:fieldTemplate];
+- (NSObject<__prefix____class_name__> *)__create:(REFTypeChannelMessenger *)messenger
+                                  __field_name__:(NSNumber *)__field_name__ {
+  return [[EXPClassTemplateProxy alloc] initWithFieldTemplate:__field_name__];
 }
 
-- (NSNumber *)_onStaticMethodTemplate:(REFTypeChannelMessenger *)messenger parameterTemplate:(NSString *)parameterTemplate {
-  return [EXPClassTemplateProxy staticMethodTemplate:parameterTemplate];
+- (NSObject *)___staticMethod_name__:(REFTypeChannelMessenger *)messenger
+                  __parameter_name__:(NSString *)__parameter_name__ {
+  return [EXPClassTemplateProxy staticMethodTemplate:__parameter_name__];
 }
 
-- (NSString *)_onMethodTemplate:(NSObject<REFClassTemplate> *)_instance parameterTemplate:(NSString *)parameterTemplate {
+- (NSObject *)___method_name__:(NSObject<__prefix____class_name__> *)_instance
+            __parameter_name__:(NSString *)__parameter_name__ {
   EXPClassTemplateProxy *proxy = (EXPClassTemplateProxy *)_instance;
-  return [proxy methodTemplate:parameterTemplate];
+  return [proxy methodTemplate:__parameter_name__];
 }
 @end

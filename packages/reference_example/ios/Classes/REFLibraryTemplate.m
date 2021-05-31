@@ -103,7 +103,7 @@
 
 - (nonnull id)createInstance:(nonnull REFTypeChannelMessenger *)messenger
                    arguments:(nonnull NSArray *)arguments {
-  return [self _create:messenger /*iterate fields field*/__field_name__:arguments[/*replace field_index*/0/**/] /**/];
+  return [self __create:messenger /*iterate fields field*/__field_name__:arguments[/*replace field_index*/0/**/] /**/];
 }
 
 - (id _Nullable)invokeMethod:(nonnull REFTypeChannelMessenger *)messenger

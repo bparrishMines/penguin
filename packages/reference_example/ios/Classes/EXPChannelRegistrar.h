@@ -3,16 +3,16 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface EXPClassTemplateProxy : NSObject<REFClassTemplate>
+@interface EXPClassTemplateProxy : NSObject<__prefix____class_name__>
 @property (readonly) ClassTemplate *classTemplate;
 -(instancetype)initWithFieldTemplate:(NSNumber *)fieldTemplate;
 -(instancetype)initWithClassTemplate:(ClassTemplate *)classTemplate;
 @end
 
-@interface EXPLibraryImplementations : REFLibraryImplementations
+@interface EXPLibraryImplementations : __prefix__LibraryImplementations
 @end
 
-@interface EXPClassTemplateHandler : REFClassTemplateHandler
+@interface EXPClassTemplateHandler : __prefix____class_name__Handler
 @end
 
 NS_ASSUME_NONNULL_END

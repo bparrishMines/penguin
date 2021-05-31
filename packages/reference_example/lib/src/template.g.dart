@@ -2,7 +2,7 @@
 
 import 'package:reference/reference.dart';
 /*iterate imports import*/
-import /*replace :from='dart:core' value*/'dart:core'/**/;
+import /*replace :from='dart:core' value*/ 'dart:core' /**/;
 /**/
 
 // **************************************************************************
@@ -109,9 +109,11 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$$class_name$$> {
       /*iterate staticMethods staticMethod*/
       case '__staticMethod_name__':
         return $__staticMethod_name__(
-            messenger,
-            /*iterate parameters parameter*/ arguments[/*replace parameter_index*/ 0 /**/]
-                as /*replace parameter_type*/ String /**/, /**/);
+          messenger,
+          /*iterate parameters parameter*/ arguments[
+                  /*replace parameter_index*/ 0 /**/]
+              as /*replace parameter_type*/ String /**/, /**/
+        );
       /**/
     }
 
@@ -128,9 +130,10 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$$class_name$$> {
     List<Object?> arguments,
   ) {
     return $$create(
-        messenger,
-        /*iterate fields field*/ arguments[/*replace field_index*/ 0 /**/]
-            as /*replace field_type*/ int /**/, /**/);
+      messenger,
+      /*iterate fields field*/ arguments[/*replace field_index*/ 0 /**/]
+          as /*replace field_type*/ int /**/, /**/
+    );
   }
 
   @override
@@ -144,9 +147,11 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$$class_name$$> {
       /*iterate methods method*/
       case '__method_name__':
         return $__method_name__(
-            instance,
-            /*iterate parameters parameter*/ arguments[/*replace parameter_index*/ 0 /**/]
-                as /*replace parameter_type*/ String /**/, /**/);
+          instance,
+          /*iterate parameters parameter*/ arguments[
+                  /*replace parameter_index*/ 0 /**/]
+              as /*replace parameter_type*/ String /**/, /**/
+        );
       /**/
     }
 
