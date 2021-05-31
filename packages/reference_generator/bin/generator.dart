@@ -37,6 +37,14 @@ String runGenerator(
       final List<Map<String, Object>> dataList =
           data[currentToken.listName] as List<Map<String, Object>>;
       final List<String> outputs = <String>[];
+
+      if (dataList == null) {
+        print(data);
+        print(currentToken.listName);
+        print(resultBuffer.toString());
+        throw StateError('Failed to find data!');
+      }
+
       final int end = currentToken?.end ?? dataList.length;
       for (int i = currentToken.start; i < end; i++) {
         outputs.add(runGenerator(

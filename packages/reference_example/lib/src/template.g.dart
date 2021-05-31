@@ -2,7 +2,7 @@
 
 import 'package:reference/reference.dart';
 /*iterate imports import*/
-import /*replace :from='dart:core' value*/'dart:core';
+import /*replace :from='dart:core' value*/'dart:core'/**/;
 /**/
 
 // **************************************************************************
