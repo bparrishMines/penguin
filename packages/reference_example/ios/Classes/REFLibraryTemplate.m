@@ -1,12 +1,14 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
+/*replace :from='__prefix__' prefix*/
+/*replace :from='REFLibraryTemplate.h' headerFilename*/
 #import "REFLibraryTemplate.h"
+/**/
 
 // **************************************************************************
 // ReferenceGenerator
 // **************************************************************************
 
-/*replace :from='__prefix__' prefix*/
 /*iterate classes class*/
 @implementation __prefix____class_name__Channel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
