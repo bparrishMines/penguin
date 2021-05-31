@@ -14,16 +14,15 @@ class $$class_name$$ with $$$class_name$$ {
   static $$$class_name$$Channel get _channel =>
       ChannelRegistrar.instance.implementations.channel__class_name__;
 
-  static Future<double> $__staticMethod_name__(
-    String $$parameter_name$$,
-  ) async {
-    return await _channel.$__staticMethod_name__($$parameter_name$$) as double;
+  static Future<double> $__staticMethod_name__(String $$parameter_name$$) {
+    return _channel.$__staticMethod_name__($$parameter_name$$);
   }
 
-  Future<String> $__method_name__(String $$parameter_name$$) async {
-    return await _channel.$__method_name__(
+  @override
+  Future<String> $__method_name__(String $$parameter_name$$) {
+    return _channel.$__method_name__(
       this,
       $$parameter_name$$,
-    ) as String;
+    );
   }
 }

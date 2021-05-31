@@ -10,7 +10,14 @@ import /*replace :from='dart:core' value*/ 'dart:core' /**/;
 // **************************************************************************
 
 /*iterate classes class*/
-mixin $$$class_name$$ {}
+mixin $$$class_name$$ {
+  /*iterate methods method*/
+  /*replace method_returnType*/ Object? /**/ $__method_name__(
+    /*iterate parameters parameter*/ /*replace parameter_type*/ String /**/ $$parameter_name$$,
+    /**/
+  );
+  /**/
+}
 /**/
 
 /*iterate classes class*/
@@ -35,32 +42,33 @@ class $$$class_name$$Channel extends TypeChannel<$$$class_name$$> {
   }
 
   /*iterate staticMethods staticMethod*/
-  Future<Object?> $__staticMethod_name__(
+  Future< /*replace staticMethod_returnType*/ double /**/ >
+      $__staticMethod_name__(
     /*iterate parameters parameter*/ /*replace parameter_type*/ String /**/ $$parameter_name$$,
     /**/
-  ) {
-    return sendInvokeStaticMethod(
+  ) async {
+    /*if returnsVoid*/ return /**/ await sendInvokeStaticMethod(
       '__staticMethod_name__',
       <Object?>[
         /*iterate parameters parameter*/ $$parameter_name$$, /**/
       ],
-    );
+    ) as /*replace staticMethod_returnType*/ double /**/;
   }
   /**/
 
   /*iterate methods method*/
-  Future<Object?> $__method_name__(
+  Future< /*replace method_returnType*/ String /**/ > $__method_name__(
     $$$class_name$$ $instance,
     /*iterate parameters parameter*/ /*replace parameter_type*/ String /**/ $$parameter_name$$,
     /**/
-  ) {
-    return sendInvokeMethod(
+  ) async {
+    /*if returnsVoid*/ return /**/ await sendInvokeMethod(
       $instance,
       '__method_name__',
       <Object?>[
         /*iterate parameters parameter*/ $$parameter_name$$, /**/
       ],
-    );
+    ) as /*replace method_returnType*/ String /**/;
   }
   /**/
 }
@@ -78,7 +86,7 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$$class_name$$> {
   }
 
   /*iterate staticMethods staticMethod*/
-  Object? $__staticMethod_name__(
+  /*replace staticMethod_returnType*/ Object? /**/ $__staticMethod_name__(
     TypeChannelMessenger messenger,
     /*iterate parameters parameter*/
     /*replace parameter_type*/ String /**/ $$parameter_name$$,
@@ -89,13 +97,15 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$$class_name$$> {
   /**/
 
   /*iterate methods method*/
-  Object? $__method_name__(
+  /*replace method_returnType*/ Object? /**/ $__method_name__(
     $$$class_name$$ $instance,
     /*iterate parameters parameter*/
     /*replace parameter_type*/ String /**/ $$parameter_name$$,
     /**/
   ) {
-    throw UnimplementedError();
+    /*if returnsVoid*/ return /**/ $instance.$__method_name__(
+      /*iterate parameters parameter*/ $$parameter_name$$, /**/
+    );
   }
   /**/
 

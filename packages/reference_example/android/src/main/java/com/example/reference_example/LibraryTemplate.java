@@ -21,7 +21,11 @@ import github.penguin.reference.reference.TypeChannelMessenger;
 
 public class /*replace libraryName*/LibraryTemplate/**/ {
   /*iterate classes class*/
-  public interface $__class_name__ { }
+  public interface $__class_name__ {
+    /*iterate methods method*/
+    /*replace method_returnType*/String/**/ $__method_name__(/*iterate :join=',' parameters parameter*//*replace parameter_type*/String/**/ __parameter_name__/**/);
+    /**/
+  }
   /**/
 
   /*iterate classes class*/
@@ -56,15 +60,16 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
     }
 
     /*iterate staticMethods staticMethod*/
-    public Object $__staticMethod_name__(TypeChannelMessenger messenger/*iterate parameters parameter*/,/*replace parameter_type*/String/**/ __parameter_name__/**/)
+    public /*replace staticMethod_returnType*/Double/**/ $__staticMethod_name__(TypeChannelMessenger messenger/*iterate parameters parameter*/,/*replace parameter_type*/String/**/ __parameter_name__/**/)
         throws Exception {
       throw new UnsupportedOperationException();
     }
     /**/
 
     /*iterate methods method*/
-    public Object $__method_name__($__class_name__ $instance/*iterate parameters parameter*/,/*replace parameter_type*/String/**/ __parameter_name__/**/) throws Exception {
-      throw new UnsupportedOperationException();
+    public /*replace method_returnType*/String/**/ $__method_name__($__class_name__ $instance/*iterate parameters parameter*/,/*replace parameter_type*/String/**/ __parameter_name__/**/) throws Exception {
+      /*if returnsVoid*/ return /**/ $instance
+          .$__method_name__(/*iterate :join',' parameters parameter*/ __parameter_name__ /**/);
     }
     /**/
 
