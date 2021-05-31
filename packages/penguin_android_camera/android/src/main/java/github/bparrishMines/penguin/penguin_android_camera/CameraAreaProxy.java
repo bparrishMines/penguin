@@ -7,7 +7,7 @@ import java.util.List;
 
 public class CameraAreaProxy implements CameraChannelLibrary.$CameraArea {
   public final Camera.Area area;
-  private final CameraRectProxy rect;
+  public final CameraRectProxy rect;
 
   public static List<CameraAreaProxy> fromList(List<Camera.Area> areas, ChannelRegistrar.LibraryImplementations implementations) {
     final List<CameraAreaProxy> proxyList = new ArrayList<>();
@@ -33,16 +33,6 @@ public class CameraAreaProxy implements CameraChannelLibrary.$CameraArea {
   public CameraAreaProxy(Camera.Area area, CameraRectProxy rect, ChannelRegistrar.LibraryImplementations implementations) {
     this.area = area;
     this.rect = rect;
-    implementations.getCameraAreaChannel().createNewInstancePair(this, false);
-  }
-
-  @Override
-  public CameraRectProxy getRect() {
-    return rect;
-  }
-
-  @Override
-  public Integer getWeight() {
-    return area.weight;
+    implementations.getChannelCameraArea().$$create(this, false, rect, area.weight);
   }
 }

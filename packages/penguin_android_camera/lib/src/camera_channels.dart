@@ -1,7 +1,9 @@
-import 'package:penguin_android_camera/src/camera.g.dart';
+import 'dart:typed_data';
+
 import 'package:reference/reference.dart';
 
 import 'camera.dart';
+import 'camera.g.dart';
 
 class ChannelRegistrar extends $ChannelRegistrar {
   ChannelRegistrar(LibraryImplementations implementations)
@@ -16,17 +18,38 @@ class LibraryImplementations extends $LibraryImplementations {
   LibraryImplementations(TypeChannelMessenger messenger) : super(messenger);
 
   @override
-  final CameraHandler cameraHandler = CameraHandler();
+  final CameraHandler handlerCamera = CameraHandler();
 
   @override
-  final CameraInfoHandler cameraInfoHandler = CameraInfoHandler();
+  final CameraInfoHandler handlerCameraInfo = CameraInfoHandler();
 
   @override
-  final CameraParametersHandler cameraParametersHandler =
+  final CameraParametersHandler handlerCameraParameters =
       CameraParametersHandler();
 
   @override
-  final CameraSizeHandler cameraSizeHandler = CameraSizeHandler();
+  final CameraSizeHandler handlerCameraSize = CameraSizeHandler();
+
+  @override
+  final CameraAreaHandler handlerCameraArea = CameraAreaHandler();
+
+  @override
+  final CameraRectHandler handlerCameraRect = CameraRectHandler();
+
+  @override
+  final PictureCallbackHandler handlerPictureCallback =
+      PictureCallbackHandler();
+
+  @override
+  final ErrorCallbackHandler handlerErrorCallback = ErrorCallbackHandler();
+
+  @override
+  final ShutterCallbackHandler handlerShutterCallback =
+      ShutterCallbackHandler();
+
+  @override
+  AutoFocusCallbackHandler handlerAutoFocusCallback =
+      AutoFocusCallbackHandler();
 }
 
 class CameraHandler extends $CameraHandler {
@@ -98,5 +121,33 @@ class CameraAreaHandler extends $CameraAreaHandler {
       weight,
       createInstancePair: false,
     );
+  }
+}
+
+class PictureCallbackHandler extends $PictureCallbackHandler {
+  @override
+  Object? $onPictureTaken(covariant PictureCallback $instance, Uint8List data) {
+    $instance.onPictureTaken(data);
+  }
+}
+
+class ErrorCallbackHandler extends $ErrorCallbackHandler {
+  @override
+  Object? $onError(covariant ErrorCallback $instance, int error) {
+    $instance.onError(error);
+  }
+}
+
+class AutoFocusCallbackHandler extends $AutoFocusCallbackHandler {
+  @override
+  Object? $onAutoFocus(covariant AutoFocusCallback $instance, bool success) {
+    $instance.onAutoFocus(success);
+  }
+}
+
+class ShutterCallbackHandler extends $ShutterCallbackHandler {
+  @override
+  Object? $onShutter(covariant ShutterCallback $instance) {
+    $instance.onShutter();
   }
 }

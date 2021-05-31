@@ -437,10 +437,10 @@ class CameraParameters with $CameraParameters {
   /// Focus area only has effect if the current focus mode is
   /// [focusModeAuto], [focusModeMacro], [focusModeContinuousVideo], or
   /// [focusModeContinuousPicture].
-  Future<List<CameraArea>> getFocusAreas() async {
-    final List<Object?> focusAreas =
-        await _channel.$getFocusAreas(this) as List<Object?>;
-    return focusAreas.cast<CameraArea>();
+  Future<List<CameraArea>?> getFocusAreas() async {
+    final List<Object?>? focusAreas =
+        await _channel.$getFocusAreas(this) as List<Object?>?;
+    return focusAreas?.cast<CameraArea>();
   }
 
   // TODO: This can return Float.POSITIVE_INFINITY?

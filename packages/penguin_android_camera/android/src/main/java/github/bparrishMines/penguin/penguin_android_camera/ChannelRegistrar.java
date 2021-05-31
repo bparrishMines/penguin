@@ -18,42 +18,42 @@ public class ChannelRegistrar extends CameraChannelLibrary.$ChannelRegistrar {
     }
 
     @Override
-    public CameraHandler getCameraHandler() {
+    public CameraHandler getHandlerCamera() {
       return new CameraHandler(this, textureRegistry);
     }
 
     @Override
-    public PictureCallbackHandler getPictureCallbackHandler() {
+    public PictureCallbackHandler getHandlerPictureCallback() {
       return new PictureCallbackHandler(this);
     }
 
     @Override
-    public ShutterCallbackHandler getShutterCallbackHandler() {
+    public ShutterCallbackHandler getHandlerShutterCallback() {
       return new ShutterCallbackHandler(this);
     }
 
     @Override
-    public MediaRecorderHandler getMediaRecorderHandler() {
+    public MediaRecorderHandler getHandlerMediaRecorder() {
       return new MediaRecorderHandler();
     }
 
     @Override
-    public CameraChannelLibrary.$ErrorCallbackHandler getErrorCallbackHandler() {
+    public ErrorCallbackHandler getHandlerErrorCallback() {
       return new ErrorCallbackHandler(this);
     }
 
     @Override
-    public CameraChannelLibrary.$AutoFocusCallbackHandler getAutoFocusCallbackHandler() {
+    public AutoFocusCallbackHandler getHandlerAutoFocusCallback() {
       return new AutoFocusCallbackHandler(this);
     }
 
     @Override
-    public CameraChannelLibrary.$CameraAreaHandler getCameraAreaHandler() {
+    public CameraAreaHandler getHandlerCameraArea() {
       return new CameraAreaHandler(this);
     }
 
     @Override
-    public CameraChannelLibrary.$CameraRectHandler getCameraRectHandler() {
+    public CameraRectHandler getHandlerCameraRect() {
       return new CameraRectHandler(this);
     }
   }
@@ -68,12 +68,12 @@ public class ChannelRegistrar extends CameraChannelLibrary.$ChannelRegistrar {
     }
 
     @Override
-    public List<CameraInfoProxy> $onGetAllCameraInfo(TypeChannelMessenger messenger) {
+    public List<CameraInfoProxy> $getAllCameraInfo(TypeChannelMessenger messenger) {
       return CameraProxy.getAllCameraInfo(libraryImplementations);
     }
 
     @Override
-    public CameraProxy $onOpen(TypeChannelMessenger messenger, Integer cameraId) {
+    public CameraProxy $open(TypeChannelMessenger messenger, Integer cameraId) {
       return CameraProxy.open(libraryImplementations, textureRegistry, cameraId);
     }
   }
@@ -119,7 +119,7 @@ public class ChannelRegistrar extends CameraChannelLibrary.$ChannelRegistrar {
     }
 
     @Override
-    public ErrorCallbackProxy onCreate(TypeChannelMessenger messenger, CameraChannelLibrary.$ErrorCallbackCreationArgs args) {
+    public ErrorCallbackProxy $$create(TypeChannelMessenger messenger) {
       return new ErrorCallbackProxy(implementations);
     }
   }
@@ -132,7 +132,7 @@ public class ChannelRegistrar extends CameraChannelLibrary.$ChannelRegistrar {
     }
 
     @Override
-    public AutoFocusCallbackProxy onCreate(TypeChannelMessenger messenger, CameraChannelLibrary.$AutoFocusCallbackCreationArgs args) {
+    public AutoFocusCallbackProxy $$create(TypeChannelMessenger messenger) {
       return new AutoFocusCallbackProxy(implementations);
     }
   }
@@ -145,8 +145,176 @@ public class ChannelRegistrar extends CameraChannelLibrary.$ChannelRegistrar {
     }
 
     @Override
-    public CameraAreaProxy onCreate(TypeChannelMessenger messenger, CameraChannelLibrary.$CameraAreaCreationArgs args) {
-      return new CameraAreaProxy((CameraRectProxy) args.rect, args.weight, implementations);
+    public CameraAreaProxy $$create(TypeChannelMessenger messenger, CameraChannelLibrary.$CameraRect rect, Integer weight) throws Exception {
+      return new CameraAreaProxy((CameraRectProxy) rect, weight, implementations);
+    }
+  }
+
+  public static class CameraParametersHandler extends CameraChannelLibrary.$CameraParametersHandler {
+    public final LibraryImplementations implementations;
+
+    public CameraParametersHandler( LibraryImplementations implementations) {
+      this.implementations = implementations;
+    }
+
+    @Override
+    public Object $getAutoExposureLock(CameraChannelLibrary.$CameraParameters $instance) {
+      return ((CameraParametersProxy) $instance).getAutoExposureLock();
+    }
+
+    @Override
+    public Object $getFocusAreas(CameraChannelLibrary.$CameraParameters $instance) {
+      return ((CameraParametersProxy) $instance).getFocusAreas();
+    }
+
+    @Override
+    public Object $getFocusDistances(CameraChannelLibrary.$CameraParameters $instance)  {
+      return ((CameraParametersProxy) $instance).getFocusDistances();
+    }
+
+    @Override
+    public Object $getMaxExposureCompensation(CameraChannelLibrary.$CameraParameters $instance)  {
+      return ((CameraParametersProxy) $instance).getMaxExposureCompensation();
+    }
+
+    @Override
+    public Object $getMaxNumFocusAreas(CameraChannelLibrary.$CameraParameters $instance)  {
+      return ((CameraParametersProxy) $instance).getMaxNumFocusAreas();
+    }
+
+    @Override
+    public Object $getMinExposureCompensation(CameraChannelLibrary.$CameraParameters $instance)  {
+      return ((CameraParametersProxy) $instance).getMinExposureCompensation();
+    }
+
+    @Override
+    public Object $getSupportedFocusModes(CameraChannelLibrary.$CameraParameters $instance)  {
+      return ((CameraParametersProxy) $instance).getSupportedFocusModes();
+    }
+
+    @Override
+    public Object $isAutoExposureLockSupported(CameraChannelLibrary.$CameraParameters $instance)  {
+      return ((CameraParametersProxy) $instance).isAutoExposureLockSupported();
+    }
+
+    @Override
+    public Object $isZoomSupported(CameraChannelLibrary.$CameraParameters $instance)  {
+      return ((CameraParametersProxy) $instance).isZoomSupported();
+    }
+
+    @Override
+    public Void $setAutoExposureLock(CameraChannelLibrary.$CameraParameters $instance, Boolean toggle)  {
+      ((CameraParametersProxy) $instance).setAutoExposureLock(toggle);
+      return null;
+    }
+
+    @Override
+    public Void $setExposureCompensation(CameraChannelLibrary.$CameraParameters $instance, Integer value)  {
+      ((CameraParametersProxy) $instance).setExposureCompensation(value);
+      return null;
+    }
+
+    @Override
+    public Void $setFocusAreas(CameraChannelLibrary.$CameraParameters $instance, List<CameraChannelLibrary.$CameraArea> focusAreas)  {
+      ((CameraParametersProxy) $instance).setFocusAreas(focusAreas);
+      return null;
+    }
+
+    @Override
+    public Void $setFocusMode(CameraChannelLibrary.$CameraParameters $instance, String value)  {
+      ((CameraParametersProxy) $instance).setFocusMode(value);
+      return null;
+    }
+
+    @Override
+    public Object $getFlashMode(CameraChannelLibrary.$CameraParameters $instance)  {
+      return ((CameraParametersProxy) $instance).getFlashMode();
+    }
+
+    @Override
+    public Object $getMaxZoom(CameraChannelLibrary.$CameraParameters $instance)  {
+      return ((CameraParametersProxy) $instance).getMaxZoom();
+    }
+
+    @Override
+    public Object $getPictureSize(CameraChannelLibrary.$CameraParameters $instance)  {
+      return ((CameraParametersProxy) $instance).getPictureSize();
+    }
+
+    @Override
+    public Object $getPreviewSize(CameraChannelLibrary.$CameraParameters $instance)  {
+      return ((CameraParametersProxy) $instance).getPreviewSize();
+    }
+
+    @Override
+    public Object $getSupportedPreviewSizes(CameraChannelLibrary.$CameraParameters $instance)  {
+      return ((CameraParametersProxy) $instance).getSupportedPreviewSizes();
+    }
+
+    @Override
+    public Object $getSupportedPictureSizes(CameraChannelLibrary.$CameraParameters $instance)  {
+      return ((CameraParametersProxy) $instance).getSupportedPictureSizes();
+    }
+
+    @Override
+    public Object $getSupportedFlashModes(CameraChannelLibrary.$CameraParameters $instance)  {
+      return ((CameraParametersProxy) $instance).getSupportedFlashModes();
+    }
+
+    @Override
+    public Object $getZoom(CameraChannelLibrary.$CameraParameters $instance)  {
+      return ((CameraParametersProxy) $instance).getZoom();
+    }
+
+    @Override
+    public Object $isSmoothZoomSupported(CameraChannelLibrary.$CameraParameters $instance)  {
+      return ((CameraParametersProxy) $instance).isSmoothZoomSupported();
+    }
+
+    @Override
+    public Void $setFlashMode(CameraChannelLibrary.$CameraParameters $instance, String mode)  {
+      ((CameraParametersProxy) $instance).setFlashMode(mode);
+      return null;
+    }
+
+    @Override
+    public Void $setPictureSize(CameraChannelLibrary.$CameraParameters $instance, Integer width, Integer height)  {
+      ((CameraParametersProxy) $instance).setPictureSize(width, height);
+      return null;
+    }
+
+    @Override
+    public Object $setRecordingHint(CameraChannelLibrary.$CameraParameters $instance, Boolean hint)  {
+      ((CameraParametersProxy) $instance).setRecordingHint(hint);
+      return null;
+    }
+
+    @Override
+    public Object $setRotation(CameraChannelLibrary.$CameraParameters $instance, Integer rotation)  {
+      ((CameraParametersProxy) $instance).setRotation(rotation);
+      return null;
+    }
+
+    @Override
+    public Object $setZoom(CameraChannelLibrary.$CameraParameters $instance, Integer value) {
+      ((CameraParametersProxy) $instance).setZoom(value);
+      return null;
+    }
+
+    @Override
+    public Object $setPreviewSize(CameraChannelLibrary.$CameraParameters $instance, Integer width, Integer height) {
+      ((CameraParametersProxy) $instance).setPreviewSize(width, height);
+      return null;
+    }
+
+    @Override
+    public Object $getExposureCompensation(CameraChannelLibrary.$CameraParameters $instance)  {
+      return ((CameraParametersProxy) $instance).getExposureCompensation();
+    }
+
+    @Override
+    public Object $getExposureCompensationStep(CameraChannelLibrary.$CameraParameters $instance)  {
+      throw new UnsupportedOperationException();
     }
   }
 
@@ -155,11 +323,6 @@ public class ChannelRegistrar extends CameraChannelLibrary.$ChannelRegistrar {
 
     public CameraRectHandler(LibraryImplementations implementations) {
       this.implementations = implementations;
-    }
-
-    @Override
-    public CameraRectProxy onCreate(TypeChannelMessenger messenger, CameraChannelLibrary.$CameraRectCreationArgs args) {
-      return new CameraRectProxy(args.left, args.top, args.right, args.bottom, implementations);
     }
   }
 }

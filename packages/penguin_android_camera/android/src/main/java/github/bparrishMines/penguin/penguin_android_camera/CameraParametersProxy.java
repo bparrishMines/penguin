@@ -12,20 +12,17 @@ public class CameraParametersProxy implements CameraChannelLibrary.$CameraParame
   public CameraParametersProxy(Camera.Parameters cameraParameters, ChannelRegistrar.LibraryImplementations implementations) {
     this.cameraParameters = cameraParameters;
     this.implementations = implementations;
-    implementations.getCameraParametersChannel().createNewInstancePair(this, false);
+    implementations.getChannelCameraParameters().$$create(this, false);
   }
 
-  @Override
   public Boolean getAutoExposureLock() {
     return cameraParameters.getAutoExposureLock();
   }
 
-  @Override
   public List<CameraAreaProxy> getFocusAreas() {
     return CameraAreaProxy.fromList(cameraParameters.getFocusAreas(), implementations);
   }
 
-  @Override
   public List<Float> getFocusDistances() {
     final float[] distances = new float[3];
     cameraParameters.getFocusDistances(distances);
@@ -36,149 +33,112 @@ public class CameraParametersProxy implements CameraChannelLibrary.$CameraParame
     return floatList;
   }
 
-  @Override
   public Integer getMaxExposureCompensation() {
     return cameraParameters.getMaxExposureCompensation();
   }
 
-  @Override
   public Integer getMaxNumFocusAreas() {
     return cameraParameters.getMaxNumFocusAreas();
   }
 
-  @Override
   public Integer getMinExposureCompensation() {
     return cameraParameters.getMinExposureCompensation();
   }
 
-  @Override
   public List<String> getSupportedFocusModes()  {
     return cameraParameters.getSupportedFocusModes();
   }
 
-  @Override
   public Boolean isAutoExposureLockSupported()  {
     return cameraParameters.isAutoExposureLockSupported();
   }
 
-  @Override
   public Boolean isZoomSupported() {
     return cameraParameters.isZoomSupported();
   }
 
-  @Override
-  public Void setAutoExposureLock(Boolean toggle)  {
+  public void setAutoExposureLock(Boolean toggle)  {
     cameraParameters.setAutoExposureLock(toggle);
-    return null;
   }
 
-  @Override
-  public Void setExposureCompensation(Integer value)  {
+  public void setExposureCompensation(Integer value)  {
     cameraParameters.setExposureCompensation(value);
-    return null;
   }
 
-  @Override
-  public Void setFocusAreas(List<CameraChannelLibrary.$CameraArea> focusAreas)  {
+  public void setFocusAreas(List<CameraChannelLibrary.$CameraArea> focusAreas)  {
     cameraParameters.setFocusAreas(CameraAreaProxy.toAreaList(focusAreas));
-    return null;
   }
 
-  @Override
-  public Void setFocusMode(String value)  {
+  public void setFocusMode(String value)  {
     cameraParameters.setFocusMode(value);
-    return null;
   }
 
-  @Override
   public String getFlashMode() {
     return cameraParameters.getFlashMode();
   }
 
-  @Override
   public Integer getMaxZoom() {
     return cameraParameters.getMaxZoom();
   }
 
-  @Override
   public CameraSizeProxy getPictureSize() {
     return new CameraSizeProxy(cameraParameters.getPictureSize(), implementations);
   }
 
-  @Override
   public CameraSizeProxy getPreviewSize() {
     return new CameraSizeProxy(cameraParameters.getPreviewSize(), implementations);
   }
 
-  @Override
   public List<CameraSizeProxy> getSupportedPreviewSizes() {
     return CameraSizeProxy.fromList(cameraParameters.getSupportedPreviewSizes(), implementations);
   }
 
-  @Override
   public List<CameraSizeProxy> getSupportedPictureSizes() {
     return CameraSizeProxy.fromList(cameraParameters.getSupportedPictureSizes(), implementations);
   }
 
-  @Override
   public List<String> getSupportedFlashModes() {
     final List<String> modes = cameraParameters.getSupportedFlashModes();
     if (modes != null) return modes;
     return new ArrayList<>();
   }
 
-  @Override
   public Integer getZoom() {
     return cameraParameters.getZoom();
   }
 
-  @Override
   public Boolean isSmoothZoomSupported() {
     return cameraParameters.isSmoothZoomSupported();
   }
 
-  @Override
-  public Void setFlashMode(String mode) {
+  public void setFlashMode(String mode) {
     cameraParameters.setFlashMode(mode);
-    return null;
   }
 
-  @Override
-  public Void setPictureSize(Integer width, Integer height) {
+  public void setPictureSize(Integer width, Integer height) {
     cameraParameters.setPictureSize(width, height);
-    return null;
   }
 
-  @Override
-  public Void setRecordingHint(Boolean hint) {
+  public void setRecordingHint(Boolean hint) {
     cameraParameters.setRecordingHint(hint);
-    return null;
   }
 
-  @Override
-  public Void setRotation(Integer rotation) {
+  public void setRotation(Integer rotation) {
     cameraParameters.setRotation(rotation);
-    return null;
   }
 
-  @Override
-  public Void setZoom(Integer value) {
+  public void setZoom(Integer value) {
     cameraParameters.setZoom(value);
-    return null;
   }
 
-  @Override
-  public Void setPreviewSize(Integer width, Integer height) {
+  public void setPreviewSize(Integer width, Integer height) {
     cameraParameters.setPreviewSize(width, height);
-    return null;
   }
 
-  @Override
   public Integer getExposureCompensation() {
     return cameraParameters.getExposureCompensation();
   }
 
-  @Override
   public Float getExposureCompensationStep() {
     return cameraParameters.getExposureCompensationStep();
   }
