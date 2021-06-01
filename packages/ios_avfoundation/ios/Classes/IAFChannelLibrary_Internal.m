@@ -275,7 +275,7 @@
 
                      delegate:(NSObject<_IAFCapturePhotoCaptureDelegate> *_Nullable)delegate
  {
-  return [_instance _capturePhoto:settings
+  return [_instance capturePhoto:settings
           delegate:delegate];
 }
 
@@ -556,7 +556,7 @@
 
                      input:(NSObject<_IAFCaptureInput> *_Nullable)input
  {
-  return [_instance _addInput:input
+  return [_instance addInput:input
           ];
 }
 
@@ -566,7 +566,7 @@
 
                      output:(NSObject<_IAFCaptureOutput> *_Nullable)output
  {
-  return [_instance _addOutput:output
+  return [_instance addOutput:output
           ];
 }
 
@@ -574,7 +574,7 @@
 
 - (id _Nullable)_startRunning:(NSObject<_IAFCaptureSession> *)_instance
  {
-  return [_instance _startRunning
+  return [_instance startRunning
           ];
 }
 
@@ -582,7 +582,7 @@
 
 - (id _Nullable)_stopRunning:(NSObject<_IAFCaptureSession> *)_instance
  {
-  return [_instance _stopRunning
+  return [_instance stopRunning
           ];
 }
 

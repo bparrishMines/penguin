@@ -51,17 +51,17 @@
   return self;
 }
 
-- (NSObject * _Nullable)startRunning {
+- (id)startRunning {
   [_captureSession startRunning];
   return nil;
 }
 
-- (NSObject * _Nullable)stopRunning {
+- (id)stopRunning {
   [_captureSession stopRunning];
   return nil;
 }
 
-- (NSObject *_Nullable)addInput:(NSObject<_IAFCaptureInput> * _Nullable)input {
+- (id)addInput:(NSObject<_IAFCaptureInput> * _Nullable)input {
   IAFCaptureInputProxy *inputProxy = (IAFCaptureInputProxy *)input;
   [_captureSession addInput:inputProxy.captureInput];
   return nil;
