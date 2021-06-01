@@ -53,7 +53,7 @@ class _MyAppState extends State<_MyApp> {
 
     _camera = await Camera.open(cameraInfo.cameraId);
     final CameraParameters params = await _camera!.getParameters();
-    print(await params.getFocusAreas());
+    debugPrint((await params.getSupportedPreviewSizes()).toString());
 
     late int result;
     if (cameraInfo.facing == CameraInfo.cameraFacingFront) {

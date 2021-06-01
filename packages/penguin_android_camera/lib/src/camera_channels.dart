@@ -1,20 +1,27 @@
-import 'dart:typed_data';
-
 import 'package:reference/reference.dart';
 
 import 'camera.dart';
 import 'camera.g.dart';
 
+/// Register channels for camera classes.
 class ChannelRegistrar extends $ChannelRegistrar {
+  /// Default constructor for [ChannelRegistrar].
   ChannelRegistrar(LibraryImplementations implementations)
       : super(implementations);
 
+  /// Default [ChannelRegistrar] instance.
+  ///
+  /// Replace this for custom usability.
   static ChannelRegistrar instance =
       ChannelRegistrar(LibraryImplementations(MethodChannelMessenger.instance))
         ..registerHandlers();
 }
 
+/// Type channel implementation for camera classes.
+///
+/// Most implementations are generated.
 class LibraryImplementations extends $LibraryImplementations {
+  /// Default constructor for [LibraryImplementations].
   LibraryImplementations(TypeChannelMessenger messenger) : super(messenger);
 
   @override
@@ -37,6 +44,7 @@ class LibraryImplementations extends $LibraryImplementations {
   final CameraRectHandler handlerCameraRect = CameraRectHandler();
 }
 
+/// [TypeChannelHandler] implementation for [Camera].
 class CameraHandler extends $CameraHandler {
   @override
   Camera $$create(TypeChannelMessenger messenger) {
@@ -45,6 +53,7 @@ class CameraHandler extends $CameraHandler {
   }
 }
 
+/// [TypeChannelHandler] implementation for [CameraInfo].
 class CameraInfoHandler extends $CameraInfoHandler {
   @override
   CameraInfo $$create(
@@ -61,6 +70,7 @@ class CameraInfoHandler extends $CameraInfoHandler {
   }
 }
 
+/// [TypeChannelHandler] implementation for [CameraParametersHandler].
 class CameraParametersHandler extends $CameraParametersHandler {
   @override
   CameraParameters $$create(TypeChannelMessenger messenger) {
@@ -69,6 +79,7 @@ class CameraParametersHandler extends $CameraParametersHandler {
   }
 }
 
+/// [TypeChannelHandler] implementation for [CameraSize].
 class CameraSizeHandler extends $CameraSizeHandler {
   @override
   CameraSize $$create(TypeChannelMessenger messenger, int width, int height) {
@@ -76,6 +87,7 @@ class CameraSizeHandler extends $CameraSizeHandler {
   }
 }
 
+/// [TypeChannelHandler] implementation for [CameraRect].
 class CameraRectHandler extends $CameraRectHandler {
   @override
   CameraRect $$create(
@@ -95,6 +107,7 @@ class CameraRectHandler extends $CameraRectHandler {
   }
 }
 
+/// [TypeChannelHandler] implementation for [CameraArea].
 class CameraAreaHandler extends $CameraAreaHandler {
   @override
   CameraArea $$create(

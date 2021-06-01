@@ -28,63 +28,63 @@ public class CameraChannelLibrary {
     
     
     
-    Object startPreview();
+    Object startPreview() throws Exception;
     
     
     
-    Object stopPreview();
+    Object stopPreview() throws Exception;
     
     
     
-    Object attachPreviewTexture();
+    Object attachPreviewTexture() throws Exception;
     
     
     
-    Object releasePreviewTexture();
+    Object releasePreviewTexture() throws Exception;
     
     
     
-    Object unlock();
+    Object unlock() throws Exception;
     
     
     
-    Object reconnect();
+    Object reconnect() throws Exception;
     
     
     
-    Object takePicture($ShutterCallback shutter,$PictureCallback raw,$PictureCallback postView,$PictureCallback jpeg);
+    Object takePicture($ShutterCallback shutter,$PictureCallback raw,$PictureCallback postView,$PictureCallback jpeg) throws Exception;
     
     
     
-    Object autoFocus($AutoFocusCallback callback);
+    Object autoFocus($AutoFocusCallback callback) throws Exception;
     
     
     
-    Object cancelAutoFocus();
+    Object cancelAutoFocus() throws Exception;
     
     
     
-    Object setDisplayOrientation(Integer degrees);
+    Object setDisplayOrientation(Integer degrees) throws Exception;
     
     
     
-    Object setErrorCallback($ErrorCallback callback);
+    Object setErrorCallback($ErrorCallback callback) throws Exception;
     
     
     
-    Object startSmoothZoom(Integer value);
+    Object startSmoothZoom(Integer value) throws Exception;
     
     
     
-    Object stopSmoothZoom();
+    Object stopSmoothZoom() throws Exception;
     
     
     
-    Object getParameters();
+    Object getParameters() throws Exception;
     
     
     
-    Object setParameters($CameraParameters parameters);
+    Object setParameters($CameraParameters parameters) throws Exception;
     
     
   }
@@ -92,123 +92,123 @@ public class CameraChannelLibrary {
   public interface $CameraParameters {
     
     
-    Object getAutoExposureLock();
+    Object getAutoExposureLock() throws Exception;
     
     
     
-    Object getFocusAreas();
+    Object getFocusAreas() throws Exception;
     
     
     
-    Object getFocusDistances();
+    Object getFocusDistances() throws Exception;
     
     
     
-    Object getMaxExposureCompensation();
+    Object getMaxExposureCompensation() throws Exception;
     
     
     
-    Object getMaxNumFocusAreas();
+    Object getMaxNumFocusAreas() throws Exception;
     
     
     
-    Object getMinExposureCompensation();
+    Object getMinExposureCompensation() throws Exception;
     
     
     
-    Object getSupportedFocusModes();
+    Object getSupportedFocusModes() throws Exception;
     
     
     
-    Object isAutoExposureLockSupported();
+    Object isAutoExposureLockSupported() throws Exception;
     
     
     
-    Object isZoomSupported();
+    Object isZoomSupported() throws Exception;
     
     
     
-    Object setAutoExposureLock(Boolean toggle);
+    Object setAutoExposureLock(Boolean toggle) throws Exception;
     
     
     
-    Object setExposureCompensation(Integer value);
+    Object setExposureCompensation(Integer value) throws Exception;
     
     
     
-    Object setFocusAreas(List<$CameraArea> focusAreas);
+    Object setFocusAreas(List<$CameraArea> focusAreas) throws Exception;
     
     
     
-    Object setFocusMode(String value);
+    Object setFocusMode(String value) throws Exception;
     
     
     
-    Object getFlashMode();
+    Object getFlashMode() throws Exception;
     
     
     
-    Object getMaxZoom();
+    Object getMaxZoom() throws Exception;
     
     
     
-    Object getPictureSize();
+    Object getPictureSize() throws Exception;
     
     
     
-    Object getPreviewSize();
+    Object getPreviewSize() throws Exception;
     
     
     
-    Object getSupportedPreviewSizes();
+    Object getSupportedPreviewSizes() throws Exception;
     
     
     
-    Object getSupportedPictureSizes();
+    Object getSupportedPictureSizes() throws Exception;
     
     
     
-    Object getSupportedFlashModes();
+    Object getSupportedFlashModes() throws Exception;
     
     
     
-    Object getZoom();
+    Object getZoom() throws Exception;
     
     
     
-    Object isSmoothZoomSupported();
+    Object isSmoothZoomSupported() throws Exception;
     
     
     
-    Object setFlashMode(String mode);
+    Object setFlashMode(String mode) throws Exception;
     
     
     
-    Object setPictureSize(Integer width,Integer height);
+    Object setPictureSize(Integer width,Integer height) throws Exception;
     
     
     
-    Object setRecordingHint(Boolean hint);
+    Object setRecordingHint(Boolean hint) throws Exception;
     
     
     
-    Object setRotation(Integer rotation);
+    Object setRotation(Integer rotation) throws Exception;
     
     
     
-    Object setZoom(Integer value);
+    Object setZoom(Integer value) throws Exception;
     
     
     
-    Object setPreviewSize(Integer width,Integer height);
+    Object setPreviewSize(Integer width,Integer height) throws Exception;
     
     
     
-    Object getExposureCompensation();
+    Object getExposureCompensation() throws Exception;
     
     
     
-    Object getExposureCompensationStep();
+    Object getExposureCompensationStep() throws Exception;
     
     
   }
@@ -256,55 +256,55 @@ public class CameraChannelLibrary {
   public interface $MediaRecorder {
     
     
-    Object setCamera($Camera camera);
+    Object setCamera($Camera camera) throws Exception;
     
     
     
-    Object setVideoSource(Integer source);
+    Object setVideoSource(Integer source) throws Exception;
     
     
     
-    Object setOutputFilePath(String path);
+    Object setOutputFilePath(String path) throws Exception;
     
     
     
-    Object setOutputFormat(Integer format);
+    Object setOutputFormat(Integer format) throws Exception;
     
     
     
-    Object setVideoEncoder(Integer encoder);
+    Object setVideoEncoder(Integer encoder) throws Exception;
     
     
     
-    Object setAudioSource(Integer source);
+    Object setAudioSource(Integer source) throws Exception;
     
     
     
-    Object setAudioEncoder(Integer encoder);
+    Object setAudioEncoder(Integer encoder) throws Exception;
     
     
     
-    Object prepare();
+    Object prepare() throws Exception;
     
     
     
-    Object start();
+    Object start() throws Exception;
     
     
     
-    Object stop();
+    Object stop() throws Exception;
     
     
     
-    Object release();
+    Object release() throws Exception;
     
     
     
-    Object pause();
+    Object pause() throws Exception;
     
     
     
-    Object resume();
+    Object resume() throws Exception;
     
     
   }
