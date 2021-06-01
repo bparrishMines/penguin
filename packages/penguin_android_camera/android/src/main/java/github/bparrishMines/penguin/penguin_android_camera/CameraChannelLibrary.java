@@ -24,7 +24,7 @@ public class CameraChannelLibrary {
   public interface $Camera {
     
     
-    Object release();
+    Object release() throws Exception;
     
     
     
@@ -680,7 +680,7 @@ public class CameraChannelLibrary {
     
     
     public Object $takePicture($Camera $instance,$ShutterCallback shutter,$PictureCallback raw,$PictureCallback postView,$PictureCallback jpeg) throws Exception {
-      return $instance.takePicture( shutter  raw  postView  jpeg );
+      return $instance.takePicture( shutter , raw , postView , jpeg );
     }
     
     
@@ -1006,7 +1006,7 @@ public class CameraChannelLibrary {
     
     
     public Object $setPictureSize($CameraParameters $instance,Integer width,Integer height) throws Exception {
-      return $instance.setPictureSize( width  height );
+      return $instance.setPictureSize( width , height );
     }
     
     
@@ -1030,7 +1030,7 @@ public class CameraChannelLibrary {
     
     
     public Object $setPreviewSize($CameraParameters $instance,Integer width,Integer height) throws Exception {
-      return $instance.setPreviewSize( width  height );
+      return $instance.setPreviewSize( width , height );
     }
     
     

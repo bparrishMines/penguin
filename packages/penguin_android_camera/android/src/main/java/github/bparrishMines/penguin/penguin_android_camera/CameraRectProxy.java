@@ -11,26 +11,6 @@ public class CameraRectProxy implements CameraChannelLibrary.$CameraRect {
 
   public CameraRectProxy(Rect rect, ChannelRegistrar.LibraryImplementations implementations) {
     this.rect = rect;
-    implementations.getCameraRectChannel().createNewInstancePair(this, false);
-  }
-
-  @Override
-  public Integer getTop() {
-    return rect.top;
-  }
-
-  @Override
-  public Integer getBottom() {
-    return rect.bottom;
-  }
-
-  @Override
-  public Integer getRight() {
-    return rect.right;
-  }
-
-  @Override
-  public Integer getLeft() {
-    return rect.left;
+    implementations.getChannelCameraRect().$$create(this, false, rect.top, rect.bottom, rect.right, rect.left);
   }
 }

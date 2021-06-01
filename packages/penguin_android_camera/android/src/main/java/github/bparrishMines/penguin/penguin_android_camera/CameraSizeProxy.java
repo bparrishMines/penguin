@@ -18,16 +18,6 @@ public class CameraSizeProxy implements CameraChannelLibrary.$CameraSize {
 
   public CameraSizeProxy(Camera.Size cameraSize, ChannelRegistrar.LibraryImplementations implementations) {
     this.cameraSize = cameraSize;
-    implementations.getCameraSizeChannel().createNewInstancePair(this, false);
-  }
-
-  @Override
-  public Integer getWidth() {
-    return cameraSize.width;
-  }
-
-  @Override
-  public Integer getHeight() {
-    return cameraSize.height;
+    implementations.getChannelCameraSize().$$create(this, false, cameraSize.width, cameraSize.height);
   }
 }

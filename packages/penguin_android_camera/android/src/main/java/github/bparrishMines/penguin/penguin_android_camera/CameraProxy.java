@@ -18,7 +18,7 @@ public class CameraProxy implements CameraChannelLibrary.$Camera {
     this.camera = camera;
     this.textureRegistry = textureRegistry;
     this.implementations = implementations;
-    implementations.getCameraChannel().createNewInstancePair(this, false);
+    implementations.getChannelCamera().$$create(this, false);
   }
 
   public static CameraProxy open(ChannelRegistrar.LibraryImplementations implementations, TextureRegistry textureRegistry, int cameraId) {

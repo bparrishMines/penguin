@@ -49,7 +49,7 @@ public class CameraProxyTest {
   @Before
   public void setUp() {
     final CameraChannelLibrary.$CameraChannel mockCameraChannel = Mockito.mock(CameraChannelLibrary.$CameraChannel.class);
-    Mockito.when(mockImplementations.getCameraChannel()).thenReturn(mockCameraChannel);
+    Mockito.when(mockImplementations.getChannelCamera()).thenReturn(mockCameraChannel);
     testCameraProxy = new CameraProxy(mockCamera, mockTextureRegistry, mockImplementations);
   }
 
@@ -58,7 +58,7 @@ public class CameraProxyTest {
     PowerMockito.mockStatic(android.hardware.Camera.class);
 
     final CameraChannelLibrary.$CameraChannel mockCameraChannel = mock(CameraChannelLibrary.$CameraChannel.class);
-    when(mockImplementations.getCameraChannel()).thenReturn(mockCameraChannel);
+    when(mockImplementations.getChannelCamera()).thenReturn(mockCameraChannel);
     CameraProxy.open(mockImplementations, mockTextureRegistry, 12);
 
     verifyStatic();
@@ -79,12 +79,12 @@ public class CameraProxyTest {
     android.hardware.Camera.getCameraInfo(eq(0), any(android.hardware.Camera.CameraInfo.class));
 
     final CameraChannelLibrary.$CameraInfoChannel mockCameraInfoChannel = mock(CameraChannelLibrary.$CameraInfoChannel.class);
-    when(mockImplementations.getCameraInfoChannel()).thenReturn(mockCameraInfoChannel);
+    when(mockImplementations.getChannelCameraInfo()).thenReturn(mockCameraInfoChannel);
     final List<CameraInfoProxy> allInfo = CameraProxy.getAllCameraInfo(mockImplementations);
 
     assertEquals(allInfo.size(), 1);
-    assertEquals(allInfo.get(0).getFacing(), (Integer) 11);
-    assertEquals(allInfo.get(0).getOrientation(), (Integer) 12);
+    assertEquals(allInfo.get(0).cameraInfo.facing, 11);
+    assertEquals(allInfo.get(0).cameraInfo.orientation, 12);
   }
 
   @Test

@@ -41,9 +41,9 @@ public class CameraParametersTest {
     final CameraChannelLibrary.$CameraRectChannel mockRectChannel = mock(CameraChannelLibrary.$CameraRectChannel.class);
     final CameraChannelLibrary.$CameraAreaChannel mockAreaChannel = mock(CameraChannelLibrary.$CameraAreaChannel.class);
 
-    when(mockImplementations.getCameraParametersChannel()).thenReturn(mockParametersChannel);
-    when(mockImplementations.getCameraRectChannel()).thenReturn(mockRectChannel);
-    when(mockImplementations.getCameraAreaChannel()).thenReturn(mockAreaChannel);
+    when(mockImplementations.getChannelCameraParameters()).thenReturn(mockParametersChannel);
+    when(mockImplementations.getChannelCameraRect()).thenReturn(mockRectChannel);
+    when(mockImplementations.getChannelCameraArea()).thenReturn(mockAreaChannel);
     testCameraParametersProxy = new CameraParametersProxy(mockParameters, mockImplementations);
   }
 
