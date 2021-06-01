@@ -24,8 +24,9 @@
   return self;
 }
 
-- (NSString *_Nullable)methodTemplate:(NSString *_Nullable)parameterTemplate {
-  return [_classTemplate methodTemplate:parameterTemplate];
+- (nonnull id)___method_name__:(NSString * _Nullable)__parameter_name__
+   __followingParameter_name__:(NSString * _Nullable)__followingParameter_name__ {
+  return [_classTemplate methodTemplate:__parameter_name__];
 }
 @end
 
@@ -38,11 +39,5 @@
 - (NSObject *)___staticMethod_name__:(REFTypeChannelMessenger *)messenger
                   __parameter_name__:(NSString *)__parameter_name__ {
   return [EXPClassTemplateProxy staticMethodTemplate:__parameter_name__];
-}
-
-- (NSObject *)___method_name__:(NSObject<__prefix____class_name__> *)_instance
-            __parameter_name__:(NSString *)__parameter_name__ {
-  EXPClassTemplateProxy *proxy = (EXPClassTemplateProxy *)_instance;
-  return [proxy methodTemplate:__parameter_name__];
 }
 @end

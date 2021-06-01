@@ -29,6 +29,7 @@
 }
 
 /*iterate staticMethods staticMethod*/
+/*if! returnsFuture*/
 - (void)___staticMethod_name__:
 /*if hasParameters*/
 /*iterate :end=1 parameters parameter*/
@@ -43,8 +44,10 @@
                 completion:completion];
 }
 /**/
+/**/
 
 /*iterate methods method*/
+/*if! returnsFuture*/
 - (void)___method_name__:(NSObject<__prefix____class_name__> *)_instance
 /*iterate parameters parameter*/
       __parameter_name__:(/*replace parameter_type*/NSString/**/ *_Nullable)__parameter_name__
@@ -55,6 +58,7 @@
            arguments:@[/*iterate parameters parameter*/__parameter_name__,/**/]
           completion:completion];
 }
+/**/
 /**/
 @end
 /**/
@@ -69,32 +73,39 @@
 }
 
 /*iterate staticMethods staticMethod*/
-- (NSObject *_Nullable)___staticMethod_name__:(REFTypeChannelMessenger *)messenger
+/*if returnsFuture*/
+- (id _Nullable)___staticMethod_name__:(REFTypeChannelMessenger *)messenger
 /*iterate parameters parameter*/
                            __parameter_name__:(/*replace parameter_type*/NSString/**/ *_Nullable)__parameter_name__
 /**/ {
   @throw [NSException exceptionWithName:@"__prefix__UnimplementedException" reason:nil userInfo:nil];
 }
 /**/
+/**/
 
 /*iterate methods method*/
-- (NSObject *_Nullable)___method_name__:(NSObject<__prefix____class_name__> *)_instance
+/*if returnsFuture*/
+- (id _Nullable)___method_name__:(NSObject<__prefix____class_name__> *)_instance
 /*iterate parameters parameter*/
                      __parameter_name__:(/*replace parameter_type*/NSString/**/ *_Nullable)__parameter_name__
 /**/ {
-  @throw [NSException exceptionWithName:@"__prefix__UnimplementedException" reason:nil userInfo:nil];
+  return [_instance ___method_name__/*iterate :end=1 parameters parameter*/:__parameter_name__/**/
+          /*iterate :start=1 parameters followingParameter*/__followingParameter_name__:/*replace followingParameter_name*/nil/**//**/];
 }
+/**/
 /**/
 
 - (id _Nullable)invokeStaticMethod:(nonnull REFTypeChannelMessenger *)messenger
                         methodName:(nonnull NSString *)methodName
                          arguments:(nonnull NSArray *)arguments {
   /*iterate :join='else' staticMethods staticMethod*/
+  /*if returnsFuture*/
   if ([@"__staticMethod_name__" isEqualToString:methodName]) {
     return [self ___staticMethod_name__:messenger
                     /*iterate parameters parameter*/
                      __parameter_name__:arguments[/*replace parameter_index*/0/**/]] /**/;
   }
+  /**/
   /**/
   
   NSLog(@"Unable to invoke static method %@", methodName);
@@ -112,11 +123,13 @@
                    arguments:(nonnull NSArray *)arguments {
   NSObject<__prefix____class_name__> *value = (NSObject<__prefix____class_name__> *) instance;
   /*iterate :join='else' methods method*/
+  /*if returnsFuture*/
   if ([@"__method_name__" isEqualToString:methodName]) {
     return [self ___method_name__:value
                /*iterate parameters parameter*/
                __parameter_name__:arguments[/*replace parameter_index*/0/**/] /**/];
   }
+  /**/
   /**/
   
   NSLog(@"Unable to invoke %@.%@", instance, methodName);
