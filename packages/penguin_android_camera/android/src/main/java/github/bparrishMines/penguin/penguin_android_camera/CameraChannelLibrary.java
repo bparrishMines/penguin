@@ -23,101 +23,193 @@ public class CameraChannelLibrary {
   
   public interface $Camera {
     
-    void $release();
     
-    void $startPreview();
+    Object release();
     
-    void $stopPreview();
     
-    Integer $attachPreviewTexture();
     
-    void $releasePreviewTexture();
+    Object startPreview();
     
-    void $unlock();
     
-    void $reconnect();
     
-    void $takePicture($ShutterCallback shutter,$PictureCallback raw,$PictureCallback postView,$PictureCallback jpeg);
+    Object stopPreview();
     
-    void $autoFocus($AutoFocusCallback callback);
     
-    void $cancelAutoFocus();
     
-    void $setDisplayOrientation(Integer degrees);
+    Object attachPreviewTexture();
     
-    void $setErrorCallback($ErrorCallback callback);
     
-    void $startSmoothZoom(Integer value);
     
-    void $stopSmoothZoom();
+    Object releasePreviewTexture();
     
-    $CameraParameters $getParameters();
     
-    void $setParameters($CameraParameters parameters);
+    
+    Object unlock();
+    
+    
+    
+    Object reconnect();
+    
+    
+    
+    Object takePicture($ShutterCallback shutter,$PictureCallback raw,$PictureCallback postView,$PictureCallback jpeg);
+    
+    
+    
+    Object autoFocus($AutoFocusCallback callback);
+    
+    
+    
+    Object cancelAutoFocus();
+    
+    
+    
+    Object setDisplayOrientation(Integer degrees);
+    
+    
+    
+    Object setErrorCallback($ErrorCallback callback);
+    
+    
+    
+    Object startSmoothZoom(Integer value);
+    
+    
+    
+    Object stopSmoothZoom();
+    
+    
+    
+    Object getParameters();
+    
+    
+    
+    Object setParameters($CameraParameters parameters);
+    
     
   }
   
   public interface $CameraParameters {
     
-    Boolean $getAutoExposureLock();
     
-    List<$CameraArea> $getFocusAreas();
+    Object getAutoExposureLock();
     
-    List<Double> $getFocusDistances();
     
-    Integer $getMaxExposureCompensation();
     
-    Integer $getMaxNumFocusAreas();
+    Object getFocusAreas();
     
-    Integer $getMinExposureCompensation();
     
-    List<String> $getSupportedFocusModes();
     
-    Boolean $isAutoExposureLockSupported();
+    Object getFocusDistances();
     
-    Boolean $isZoomSupported();
     
-    void $setAutoExposureLock(Boolean toggle);
     
-    void $setExposureCompensation(Integer value);
+    Object getMaxExposureCompensation();
     
-    void $setFocusAreas(List<$CameraArea> focusAreas);
     
-    void $setFocusMode(String value);
     
-    String $getFlashMode();
+    Object getMaxNumFocusAreas();
     
-    Integer $getMaxZoom();
     
-    $CameraSize $getPictureSize();
     
-    $CameraSize $getPreviewSize();
+    Object getMinExposureCompensation();
     
-    List<$CameraSize> $getSupportedPreviewSizes();
     
-    List<$CameraSize> $getSupportedPictureSizes();
     
-    List<String> $getSupportedFlashModes();
+    Object getSupportedFocusModes();
     
-    Integer $getZoom();
     
-    Boolean $isSmoothZoomSupported();
     
-    void $setFlashMode(String mode);
+    Object isAutoExposureLockSupported();
     
-    void $setPictureSize(Integer width,Integer height);
     
-    void $setRecordingHint(Boolean hint);
     
-    void $setRotation(Integer rotation);
+    Object isZoomSupported();
     
-    void $setZoom(Integer value);
     
-    void $setPreviewSize(Integer width,Integer height);
     
-    Integer $getExposureCompensation();
+    Object setAutoExposureLock(Boolean toggle);
     
-    Double $getExposureCompensationStep();
+    
+    
+    Object setExposureCompensation(Integer value);
+    
+    
+    
+    Object setFocusAreas(List<$CameraArea> focusAreas);
+    
+    
+    
+    Object setFocusMode(String value);
+    
+    
+    
+    Object getFlashMode();
+    
+    
+    
+    Object getMaxZoom();
+    
+    
+    
+    Object getPictureSize();
+    
+    
+    
+    Object getPreviewSize();
+    
+    
+    
+    Object getSupportedPreviewSizes();
+    
+    
+    
+    Object getSupportedPictureSizes();
+    
+    
+    
+    Object getSupportedFlashModes();
+    
+    
+    
+    Object getZoom();
+    
+    
+    
+    Object isSmoothZoomSupported();
+    
+    
+    
+    Object setFlashMode(String mode);
+    
+    
+    
+    Object setPictureSize(Integer width,Integer height);
+    
+    
+    
+    Object setRecordingHint(Boolean hint);
+    
+    
+    
+    Object setRotation(Integer rotation);
+    
+    
+    
+    Object setZoom(Integer value);
+    
+    
+    
+    Object setPreviewSize(Integer width,Integer height);
+    
+    
+    
+    Object getExposureCompensation();
+    
+    
+    
+    Object getExposureCompensationStep();
+    
     
   }
   
@@ -135,25 +227,25 @@ public class CameraChannelLibrary {
   
   public interface $ErrorCallback {
     
-    void $onError(Integer error);
+    
     
   }
   
   public interface $AutoFocusCallback {
     
-    void $onAutoFocus(Boolean success);
+    
     
   }
   
   public interface $ShutterCallback {
     
-    void $onShutter();
+    
     
   }
   
   public interface $PictureCallback {
     
-    void $onPictureTaken(byte[] data);
+    
     
   }
   
@@ -163,31 +255,57 @@ public class CameraChannelLibrary {
   
   public interface $MediaRecorder {
     
-    void $setCamera($Camera camera);
     
-    void $setVideoSource(Integer source);
+    Object setCamera($Camera camera);
     
-    void $setOutputFilePath(String path);
     
-    void $setOutputFormat(Integer format);
     
-    void $setVideoEncoder(Integer encoder);
+    Object setVideoSource(Integer source);
     
-    void $setAudioSource(Integer source);
     
-    void $setAudioEncoder(Integer encoder);
     
-    void $prepare();
+    Object setOutputFilePath(String path);
     
-    void $start();
     
-    void $stop();
     
-    void $release();
+    Object setOutputFormat(Integer format);
     
-    void $pause();
     
-    void $resume();
+    
+    Object setVideoEncoder(Integer encoder);
+    
+    
+    
+    Object setAudioSource(Integer source);
+    
+    
+    
+    Object setAudioEncoder(Integer encoder);
+    
+    
+    
+    Object prepare();
+    
+    
+    
+    Object start();
+    
+    
+    
+    Object stop();
+    
+    
+    
+    Object release();
+    
+    
+    
+    Object pause();
+    
+    
+    
+    Object resume();
+    
     
   }
   
@@ -203,79 +321,43 @@ public class CameraChannelLibrary {
     }
 
     
-    public Completable<Object> $getAllCameraInfo() {
-      return invokeStaticMethod("getAllCameraInfo", Arrays.<Object>asList());
-    }
     
-    public Completable<Object> $open(Integer cameraId) {
-      return invokeStaticMethod("open", Arrays.<Object>asList(cameraId));
-    }
+    
+    
     
 
     
-    public Completable<Object> $release($Camera $instance) {
-      return invokeMethod($instance, "release", Arrays.<Object>asList());
-    }
     
-    public Completable<Object> $startPreview($Camera $instance) {
-      return invokeMethod($instance, "startPreview", Arrays.<Object>asList());
-    }
     
-    public Completable<Object> $stopPreview($Camera $instance) {
-      return invokeMethod($instance, "stopPreview", Arrays.<Object>asList());
-    }
     
-    public Completable<Object> $attachPreviewTexture($Camera $instance) {
-      return invokeMethod($instance, "attachPreviewTexture", Arrays.<Object>asList());
-    }
     
-    public Completable<Object> $releasePreviewTexture($Camera $instance) {
-      return invokeMethod($instance, "releasePreviewTexture", Arrays.<Object>asList());
-    }
     
-    public Completable<Object> $unlock($Camera $instance) {
-      return invokeMethod($instance, "unlock", Arrays.<Object>asList());
-    }
     
-    public Completable<Object> $reconnect($Camera $instance) {
-      return invokeMethod($instance, "reconnect", Arrays.<Object>asList());
-    }
     
-    public Completable<Object> $takePicture($Camera $instance,$ShutterCallback shutter,$PictureCallback raw,$PictureCallback postView,$PictureCallback jpeg) {
-      return invokeMethod($instance, "takePicture", Arrays.<Object>asList(shutter,raw,postView,jpeg));
-    }
     
-    public Completable<Object> $autoFocus($Camera $instance,$AutoFocusCallback callback) {
-      return invokeMethod($instance, "autoFocus", Arrays.<Object>asList(callback));
-    }
     
-    public Completable<Object> $cancelAutoFocus($Camera $instance) {
-      return invokeMethod($instance, "cancelAutoFocus", Arrays.<Object>asList());
-    }
     
-    public Completable<Object> $setDisplayOrientation($Camera $instance,Integer degrees) {
-      return invokeMethod($instance, "setDisplayOrientation", Arrays.<Object>asList(degrees));
-    }
     
-    public Completable<Object> $setErrorCallback($Camera $instance,$ErrorCallback callback) {
-      return invokeMethod($instance, "setErrorCallback", Arrays.<Object>asList(callback));
-    }
     
-    public Completable<Object> $startSmoothZoom($Camera $instance,Integer value) {
-      return invokeMethod($instance, "startSmoothZoom", Arrays.<Object>asList(value));
-    }
     
-    public Completable<Object> $stopSmoothZoom($Camera $instance) {
-      return invokeMethod($instance, "stopSmoothZoom", Arrays.<Object>asList());
-    }
     
-    public Completable<Object> $getParameters($Camera $instance) {
-      return invokeMethod($instance, "getParameters", Arrays.<Object>asList());
-    }
     
-    public Completable<Object> $setParameters($Camera $instance,$CameraParameters parameters) {
-      return invokeMethod($instance, "setParameters", Arrays.<Object>asList(parameters));
-    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
   }
   
@@ -291,125 +373,65 @@ public class CameraChannelLibrary {
     
 
     
-    public Completable<Object> $getAutoExposureLock($CameraParameters $instance) {
-      return invokeMethod($instance, "getAutoExposureLock", Arrays.<Object>asList());
-    }
     
-    public Completable<Object> $getFocusAreas($CameraParameters $instance) {
-      return invokeMethod($instance, "getFocusAreas", Arrays.<Object>asList());
-    }
     
-    public Completable<Object> $getFocusDistances($CameraParameters $instance) {
-      return invokeMethod($instance, "getFocusDistances", Arrays.<Object>asList());
-    }
     
-    public Completable<Object> $getMaxExposureCompensation($CameraParameters $instance) {
-      return invokeMethod($instance, "getMaxExposureCompensation", Arrays.<Object>asList());
-    }
     
-    public Completable<Object> $getMaxNumFocusAreas($CameraParameters $instance) {
-      return invokeMethod($instance, "getMaxNumFocusAreas", Arrays.<Object>asList());
-    }
     
-    public Completable<Object> $getMinExposureCompensation($CameraParameters $instance) {
-      return invokeMethod($instance, "getMinExposureCompensation", Arrays.<Object>asList());
-    }
     
-    public Completable<Object> $getSupportedFocusModes($CameraParameters $instance) {
-      return invokeMethod($instance, "getSupportedFocusModes", Arrays.<Object>asList());
-    }
     
-    public Completable<Object> $isAutoExposureLockSupported($CameraParameters $instance) {
-      return invokeMethod($instance, "isAutoExposureLockSupported", Arrays.<Object>asList());
-    }
     
-    public Completable<Object> $isZoomSupported($CameraParameters $instance) {
-      return invokeMethod($instance, "isZoomSupported", Arrays.<Object>asList());
-    }
     
-    public Completable<Object> $setAutoExposureLock($CameraParameters $instance,Boolean toggle) {
-      return invokeMethod($instance, "setAutoExposureLock", Arrays.<Object>asList(toggle));
-    }
     
-    public Completable<Object> $setExposureCompensation($CameraParameters $instance,Integer value) {
-      return invokeMethod($instance, "setExposureCompensation", Arrays.<Object>asList(value));
-    }
     
-    public Completable<Object> $setFocusAreas($CameraParameters $instance,List<$CameraArea> focusAreas) {
-      return invokeMethod($instance, "setFocusAreas", Arrays.<Object>asList(focusAreas));
-    }
     
-    public Completable<Object> $setFocusMode($CameraParameters $instance,String value) {
-      return invokeMethod($instance, "setFocusMode", Arrays.<Object>asList(value));
-    }
     
-    public Completable<Object> $getFlashMode($CameraParameters $instance) {
-      return invokeMethod($instance, "getFlashMode", Arrays.<Object>asList());
-    }
     
-    public Completable<Object> $getMaxZoom($CameraParameters $instance) {
-      return invokeMethod($instance, "getMaxZoom", Arrays.<Object>asList());
-    }
     
-    public Completable<Object> $getPictureSize($CameraParameters $instance) {
-      return invokeMethod($instance, "getPictureSize", Arrays.<Object>asList());
-    }
     
-    public Completable<Object> $getPreviewSize($CameraParameters $instance) {
-      return invokeMethod($instance, "getPreviewSize", Arrays.<Object>asList());
-    }
     
-    public Completable<Object> $getSupportedPreviewSizes($CameraParameters $instance) {
-      return invokeMethod($instance, "getSupportedPreviewSizes", Arrays.<Object>asList());
-    }
     
-    public Completable<Object> $getSupportedPictureSizes($CameraParameters $instance) {
-      return invokeMethod($instance, "getSupportedPictureSizes", Arrays.<Object>asList());
-    }
     
-    public Completable<Object> $getSupportedFlashModes($CameraParameters $instance) {
-      return invokeMethod($instance, "getSupportedFlashModes", Arrays.<Object>asList());
-    }
     
-    public Completable<Object> $getZoom($CameraParameters $instance) {
-      return invokeMethod($instance, "getZoom", Arrays.<Object>asList());
-    }
     
-    public Completable<Object> $isSmoothZoomSupported($CameraParameters $instance) {
-      return invokeMethod($instance, "isSmoothZoomSupported", Arrays.<Object>asList());
-    }
     
-    public Completable<Object> $setFlashMode($CameraParameters $instance,String mode) {
-      return invokeMethod($instance, "setFlashMode", Arrays.<Object>asList(mode));
-    }
     
-    public Completable<Object> $setPictureSize($CameraParameters $instance,Integer width,Integer height) {
-      return invokeMethod($instance, "setPictureSize", Arrays.<Object>asList(width,height));
-    }
     
-    public Completable<Object> $setRecordingHint($CameraParameters $instance,Boolean hint) {
-      return invokeMethod($instance, "setRecordingHint", Arrays.<Object>asList(hint));
-    }
     
-    public Completable<Object> $setRotation($CameraParameters $instance,Integer rotation) {
-      return invokeMethod($instance, "setRotation", Arrays.<Object>asList(rotation));
-    }
     
-    public Completable<Object> $setZoom($CameraParameters $instance,Integer value) {
-      return invokeMethod($instance, "setZoom", Arrays.<Object>asList(value));
-    }
     
-    public Completable<Object> $setPreviewSize($CameraParameters $instance,Integer width,Integer height) {
-      return invokeMethod($instance, "setPreviewSize", Arrays.<Object>asList(width,height));
-    }
     
-    public Completable<Object> $getExposureCompensation($CameraParameters $instance) {
-      return invokeMethod($instance, "getExposureCompensation", Arrays.<Object>asList());
-    }
     
-    public Completable<Object> $getExposureCompensationStep($CameraParameters $instance) {
-      return invokeMethod($instance, "getExposureCompensationStep", Arrays.<Object>asList());
-    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
   }
   
@@ -467,9 +489,11 @@ public class CameraChannelLibrary {
     
 
     
+    
     public Completable<Object> $onError($ErrorCallback $instance,Integer error) {
       return invokeMethod($instance, "onError", Arrays.<Object>asList(error));
     }
+    
     
   }
   
@@ -485,9 +509,11 @@ public class CameraChannelLibrary {
     
 
     
+    
     public Completable<Object> $onAutoFocus($AutoFocusCallback $instance,Boolean success) {
       return invokeMethod($instance, "onAutoFocus", Arrays.<Object>asList(success));
     }
+    
     
   }
   
@@ -503,9 +529,11 @@ public class CameraChannelLibrary {
     
 
     
+    
     public Completable<Object> $onShutter($ShutterCallback $instance) {
       return invokeMethod($instance, "onShutter", Arrays.<Object>asList());
     }
+    
     
   }
   
@@ -521,9 +549,11 @@ public class CameraChannelLibrary {
     
 
     
+    
     public Completable<Object> $onPictureTaken($PictureCallback $instance,byte[] data) {
       return invokeMethod($instance, "onPictureTaken", Arrays.<Object>asList(data));
     }
+    
     
   }
   
@@ -553,57 +583,31 @@ public class CameraChannelLibrary {
     
 
     
-    public Completable<Object> $setCamera($MediaRecorder $instance,$Camera camera) {
-      return invokeMethod($instance, "setCamera", Arrays.<Object>asList(camera));
-    }
     
-    public Completable<Object> $setVideoSource($MediaRecorder $instance,Integer source) {
-      return invokeMethod($instance, "setVideoSource", Arrays.<Object>asList(source));
-    }
     
-    public Completable<Object> $setOutputFilePath($MediaRecorder $instance,String path) {
-      return invokeMethod($instance, "setOutputFilePath", Arrays.<Object>asList(path));
-    }
     
-    public Completable<Object> $setOutputFormat($MediaRecorder $instance,Integer format) {
-      return invokeMethod($instance, "setOutputFormat", Arrays.<Object>asList(format));
-    }
     
-    public Completable<Object> $setVideoEncoder($MediaRecorder $instance,Integer encoder) {
-      return invokeMethod($instance, "setVideoEncoder", Arrays.<Object>asList(encoder));
-    }
     
-    public Completable<Object> $setAudioSource($MediaRecorder $instance,Integer source) {
-      return invokeMethod($instance, "setAudioSource", Arrays.<Object>asList(source));
-    }
     
-    public Completable<Object> $setAudioEncoder($MediaRecorder $instance,Integer encoder) {
-      return invokeMethod($instance, "setAudioEncoder", Arrays.<Object>asList(encoder));
-    }
     
-    public Completable<Object> $prepare($MediaRecorder $instance) {
-      return invokeMethod($instance, "prepare", Arrays.<Object>asList());
-    }
     
-    public Completable<Object> $start($MediaRecorder $instance) {
-      return invokeMethod($instance, "start", Arrays.<Object>asList());
-    }
     
-    public Completable<Object> $stop($MediaRecorder $instance) {
-      return invokeMethod($instance, "stop", Arrays.<Object>asList());
-    }
     
-    public Completable<Object> $release($MediaRecorder $instance) {
-      return invokeMethod($instance, "release", Arrays.<Object>asList());
-    }
     
-    public Completable<Object> $pause($MediaRecorder $instance) {
-      return invokeMethod($instance, "pause", Arrays.<Object>asList());
-    }
     
-    public Completable<Object> $resume($MediaRecorder $instance) {
-      return invokeMethod($instance, "resume", Arrays.<Object>asList());
-    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
   }
   
@@ -616,97 +620,117 @@ public class CameraChannelLibrary {
     }
 
     
-    public List<$CameraInfo> $getAllCameraInfo(TypeChannelMessenger messenger)
+    
+    public Object $getAllCameraInfo(TypeChannelMessenger messenger)
         throws Exception {
       throw new UnsupportedOperationException();
     }
     
-    public $Camera $open(TypeChannelMessenger messenger,Integer cameraId)
+    
+    
+    public Object $open(TypeChannelMessenger messenger,Integer cameraId)
         throws Exception {
       throw new UnsupportedOperationException();
     }
+    
     
 
     
-    public void $release($Camera $instance) throws Exception {
-       return  $instance
-          .$release();
+    
+    public Object $release($Camera $instance) throws Exception {
+      return $instance.release();
     }
     
-    public void $startPreview($Camera $instance) throws Exception {
-       return  $instance
-          .$startPreview();
+    
+    
+    public Object $startPreview($Camera $instance) throws Exception {
+      return $instance.startPreview();
     }
     
-    public void $stopPreview($Camera $instance) throws Exception {
-       return  $instance
-          .$stopPreview();
+    
+    
+    public Object $stopPreview($Camera $instance) throws Exception {
+      return $instance.stopPreview();
     }
     
-    public Integer $attachPreviewTexture($Camera $instance) throws Exception {
-       $instance
-          .$attachPreviewTexture();
+    
+    
+    public Object $attachPreviewTexture($Camera $instance) throws Exception {
+      return $instance.attachPreviewTexture();
     }
     
-    public void $releasePreviewTexture($Camera $instance) throws Exception {
-       return  $instance
-          .$releasePreviewTexture();
+    
+    
+    public Object $releasePreviewTexture($Camera $instance) throws Exception {
+      return $instance.releasePreviewTexture();
     }
     
-    public void $unlock($Camera $instance) throws Exception {
-       return  $instance
-          .$unlock();
+    
+    
+    public Object $unlock($Camera $instance) throws Exception {
+      return $instance.unlock();
     }
     
-    public void $reconnect($Camera $instance) throws Exception {
-       return  $instance
-          .$reconnect();
+    
+    
+    public Object $reconnect($Camera $instance) throws Exception {
+      return $instance.reconnect();
     }
     
-    public void $takePicture($Camera $instance,$ShutterCallback shutter,$PictureCallback raw,$PictureCallback postView,$PictureCallback jpeg) throws Exception {
-       return  $instance
-          .$takePicture( shutter  raw  postView  jpeg );
+    
+    
+    public Object $takePicture($Camera $instance,$ShutterCallback shutter,$PictureCallback raw,$PictureCallback postView,$PictureCallback jpeg) throws Exception {
+      return $instance.takePicture( shutter  raw  postView  jpeg );
     }
     
-    public void $autoFocus($Camera $instance,$AutoFocusCallback callback) throws Exception {
-       return  $instance
-          .$autoFocus( callback );
+    
+    
+    public Object $autoFocus($Camera $instance,$AutoFocusCallback callback) throws Exception {
+      return $instance.autoFocus( callback );
     }
     
-    public void $cancelAutoFocus($Camera $instance) throws Exception {
-       return  $instance
-          .$cancelAutoFocus();
+    
+    
+    public Object $cancelAutoFocus($Camera $instance) throws Exception {
+      return $instance.cancelAutoFocus();
     }
     
-    public void $setDisplayOrientation($Camera $instance,Integer degrees) throws Exception {
-       return  $instance
-          .$setDisplayOrientation( degrees );
+    
+    
+    public Object $setDisplayOrientation($Camera $instance,Integer degrees) throws Exception {
+      return $instance.setDisplayOrientation( degrees );
     }
     
-    public void $setErrorCallback($Camera $instance,$ErrorCallback callback) throws Exception {
-       return  $instance
-          .$setErrorCallback( callback );
+    
+    
+    public Object $setErrorCallback($Camera $instance,$ErrorCallback callback) throws Exception {
+      return $instance.setErrorCallback( callback );
     }
     
-    public void $startSmoothZoom($Camera $instance,Integer value) throws Exception {
-       return  $instance
-          .$startSmoothZoom( value );
+    
+    
+    public Object $startSmoothZoom($Camera $instance,Integer value) throws Exception {
+      return $instance.startSmoothZoom( value );
     }
     
-    public void $stopSmoothZoom($Camera $instance) throws Exception {
-       return  $instance
-          .$stopSmoothZoom();
+    
+    
+    public Object $stopSmoothZoom($Camera $instance) throws Exception {
+      return $instance.stopSmoothZoom();
     }
     
-    public $CameraParameters $getParameters($Camera $instance) throws Exception {
-       $instance
-          .$getParameters();
+    
+    
+    public Object $getParameters($Camera $instance) throws Exception {
+      return $instance.getParameters();
     }
     
-    public void $setParameters($Camera $instance,$CameraParameters parameters) throws Exception {
-       return  $instance
-          .$setParameters( parameters );
+    
+    
+    public Object $setParameters($Camera $instance,$CameraParameters parameters) throws Exception {
+      return $instance.setParameters( parameters );
     }
+    
     
 
     @Override
@@ -715,11 +739,15 @@ public class CameraChannelLibrary {
         throws Exception {
       switch (methodName) {
         
+        
         case "getAllCameraInfo":
           return $getAllCameraInfo(messenger);
         
+        
+        
         case "open":
           return $open(messenger,(Integer) arguments.get(0));
+        
         
       }
 
@@ -742,53 +770,85 @@ public class CameraChannelLibrary {
         throws Exception {
       switch(methodName) {
         
+        
         case "release":
           return $release(instance);
+        
+        
         
         case "startPreview":
           return $startPreview(instance);
         
+        
+        
         case "stopPreview":
           return $stopPreview(instance);
+        
+        
         
         case "attachPreviewTexture":
           return $attachPreviewTexture(instance);
         
+        
+        
         case "releasePreviewTexture":
           return $releasePreviewTexture(instance);
+        
+        
         
         case "unlock":
           return $unlock(instance);
         
+        
+        
         case "reconnect":
           return $reconnect(instance);
+        
+        
         
         case "takePicture":
           return $takePicture(instance,($ShutterCallback) arguments.get(0),($PictureCallback) arguments.get(1),($PictureCallback) arguments.get(2),($PictureCallback) arguments.get(3));
         
+        
+        
         case "autoFocus":
           return $autoFocus(instance,($AutoFocusCallback) arguments.get(0));
+        
+        
         
         case "cancelAutoFocus":
           return $cancelAutoFocus(instance);
         
+        
+        
         case "setDisplayOrientation":
           return $setDisplayOrientation(instance,(Integer) arguments.get(0));
+        
+        
         
         case "setErrorCallback":
           return $setErrorCallback(instance,($ErrorCallback) arguments.get(0));
         
+        
+        
         case "startSmoothZoom":
           return $startSmoothZoom(instance,(Integer) arguments.get(0));
+        
+        
         
         case "stopSmoothZoom":
           return $stopSmoothZoom(instance);
         
+        
+        
         case "getParameters":
           return $getParameters(instance);
         
+        
+        
         case "setParameters":
           return $setParameters(instance,($CameraParameters) arguments.get(0));
+        
         
       }
 
@@ -806,155 +866,185 @@ public class CameraChannelLibrary {
     
 
     
-    public Boolean $getAutoExposureLock($CameraParameters $instance) throws Exception {
-       $instance
-          .$getAutoExposureLock();
+    
+    public Object $getAutoExposureLock($CameraParameters $instance) throws Exception {
+      return $instance.getAutoExposureLock();
     }
     
-    public List<$CameraArea> $getFocusAreas($CameraParameters $instance) throws Exception {
-       $instance
-          .$getFocusAreas();
+    
+    
+    public Object $getFocusAreas($CameraParameters $instance) throws Exception {
+      return $instance.getFocusAreas();
     }
     
-    public List<Double> $getFocusDistances($CameraParameters $instance) throws Exception {
-       $instance
-          .$getFocusDistances();
+    
+    
+    public Object $getFocusDistances($CameraParameters $instance) throws Exception {
+      return $instance.getFocusDistances();
     }
     
-    public Integer $getMaxExposureCompensation($CameraParameters $instance) throws Exception {
-       $instance
-          .$getMaxExposureCompensation();
+    
+    
+    public Object $getMaxExposureCompensation($CameraParameters $instance) throws Exception {
+      return $instance.getMaxExposureCompensation();
     }
     
-    public Integer $getMaxNumFocusAreas($CameraParameters $instance) throws Exception {
-       $instance
-          .$getMaxNumFocusAreas();
+    
+    
+    public Object $getMaxNumFocusAreas($CameraParameters $instance) throws Exception {
+      return $instance.getMaxNumFocusAreas();
     }
     
-    public Integer $getMinExposureCompensation($CameraParameters $instance) throws Exception {
-       $instance
-          .$getMinExposureCompensation();
+    
+    
+    public Object $getMinExposureCompensation($CameraParameters $instance) throws Exception {
+      return $instance.getMinExposureCompensation();
     }
     
-    public List<String> $getSupportedFocusModes($CameraParameters $instance) throws Exception {
-       $instance
-          .$getSupportedFocusModes();
+    
+    
+    public Object $getSupportedFocusModes($CameraParameters $instance) throws Exception {
+      return $instance.getSupportedFocusModes();
     }
     
-    public Boolean $isAutoExposureLockSupported($CameraParameters $instance) throws Exception {
-       $instance
-          .$isAutoExposureLockSupported();
+    
+    
+    public Object $isAutoExposureLockSupported($CameraParameters $instance) throws Exception {
+      return $instance.isAutoExposureLockSupported();
     }
     
-    public Boolean $isZoomSupported($CameraParameters $instance) throws Exception {
-       $instance
-          .$isZoomSupported();
+    
+    
+    public Object $isZoomSupported($CameraParameters $instance) throws Exception {
+      return $instance.isZoomSupported();
     }
     
-    public void $setAutoExposureLock($CameraParameters $instance,Boolean toggle) throws Exception {
-       return  $instance
-          .$setAutoExposureLock( toggle );
+    
+    
+    public Object $setAutoExposureLock($CameraParameters $instance,Boolean toggle) throws Exception {
+      return $instance.setAutoExposureLock( toggle );
     }
     
-    public void $setExposureCompensation($CameraParameters $instance,Integer value) throws Exception {
-       return  $instance
-          .$setExposureCompensation( value );
+    
+    
+    public Object $setExposureCompensation($CameraParameters $instance,Integer value) throws Exception {
+      return $instance.setExposureCompensation( value );
     }
     
-    public void $setFocusAreas($CameraParameters $instance,List<$CameraArea> focusAreas) throws Exception {
-       return  $instance
-          .$setFocusAreas( focusAreas );
+    
+    
+    public Object $setFocusAreas($CameraParameters $instance,List<$CameraArea> focusAreas) throws Exception {
+      return $instance.setFocusAreas( focusAreas );
     }
     
-    public void $setFocusMode($CameraParameters $instance,String value) throws Exception {
-       return  $instance
-          .$setFocusMode( value );
+    
+    
+    public Object $setFocusMode($CameraParameters $instance,String value) throws Exception {
+      return $instance.setFocusMode( value );
     }
     
-    public String $getFlashMode($CameraParameters $instance) throws Exception {
-       $instance
-          .$getFlashMode();
+    
+    
+    public Object $getFlashMode($CameraParameters $instance) throws Exception {
+      return $instance.getFlashMode();
     }
     
-    public Integer $getMaxZoom($CameraParameters $instance) throws Exception {
-       $instance
-          .$getMaxZoom();
+    
+    
+    public Object $getMaxZoom($CameraParameters $instance) throws Exception {
+      return $instance.getMaxZoom();
     }
     
-    public $CameraSize $getPictureSize($CameraParameters $instance) throws Exception {
-       $instance
-          .$getPictureSize();
+    
+    
+    public Object $getPictureSize($CameraParameters $instance) throws Exception {
+      return $instance.getPictureSize();
     }
     
-    public $CameraSize $getPreviewSize($CameraParameters $instance) throws Exception {
-       $instance
-          .$getPreviewSize();
+    
+    
+    public Object $getPreviewSize($CameraParameters $instance) throws Exception {
+      return $instance.getPreviewSize();
     }
     
-    public List<$CameraSize> $getSupportedPreviewSizes($CameraParameters $instance) throws Exception {
-       $instance
-          .$getSupportedPreviewSizes();
+    
+    
+    public Object $getSupportedPreviewSizes($CameraParameters $instance) throws Exception {
+      return $instance.getSupportedPreviewSizes();
     }
     
-    public List<$CameraSize> $getSupportedPictureSizes($CameraParameters $instance) throws Exception {
-       $instance
-          .$getSupportedPictureSizes();
+    
+    
+    public Object $getSupportedPictureSizes($CameraParameters $instance) throws Exception {
+      return $instance.getSupportedPictureSizes();
     }
     
-    public List<String> $getSupportedFlashModes($CameraParameters $instance) throws Exception {
-       $instance
-          .$getSupportedFlashModes();
+    
+    
+    public Object $getSupportedFlashModes($CameraParameters $instance) throws Exception {
+      return $instance.getSupportedFlashModes();
     }
     
-    public Integer $getZoom($CameraParameters $instance) throws Exception {
-       $instance
-          .$getZoom();
+    
+    
+    public Object $getZoom($CameraParameters $instance) throws Exception {
+      return $instance.getZoom();
     }
     
-    public Boolean $isSmoothZoomSupported($CameraParameters $instance) throws Exception {
-       $instance
-          .$isSmoothZoomSupported();
+    
+    
+    public Object $isSmoothZoomSupported($CameraParameters $instance) throws Exception {
+      return $instance.isSmoothZoomSupported();
     }
     
-    public void $setFlashMode($CameraParameters $instance,String mode) throws Exception {
-       return  $instance
-          .$setFlashMode( mode );
+    
+    
+    public Object $setFlashMode($CameraParameters $instance,String mode) throws Exception {
+      return $instance.setFlashMode( mode );
     }
     
-    public void $setPictureSize($CameraParameters $instance,Integer width,Integer height) throws Exception {
-       return  $instance
-          .$setPictureSize( width  height );
+    
+    
+    public Object $setPictureSize($CameraParameters $instance,Integer width,Integer height) throws Exception {
+      return $instance.setPictureSize( width  height );
     }
     
-    public void $setRecordingHint($CameraParameters $instance,Boolean hint) throws Exception {
-       return  $instance
-          .$setRecordingHint( hint );
+    
+    
+    public Object $setRecordingHint($CameraParameters $instance,Boolean hint) throws Exception {
+      return $instance.setRecordingHint( hint );
     }
     
-    public void $setRotation($CameraParameters $instance,Integer rotation) throws Exception {
-       return  $instance
-          .$setRotation( rotation );
+    
+    
+    public Object $setRotation($CameraParameters $instance,Integer rotation) throws Exception {
+      return $instance.setRotation( rotation );
     }
     
-    public void $setZoom($CameraParameters $instance,Integer value) throws Exception {
-       return  $instance
-          .$setZoom( value );
+    
+    
+    public Object $setZoom($CameraParameters $instance,Integer value) throws Exception {
+      return $instance.setZoom( value );
     }
     
-    public void $setPreviewSize($CameraParameters $instance,Integer width,Integer height) throws Exception {
-       return  $instance
-          .$setPreviewSize( width  height );
+    
+    
+    public Object $setPreviewSize($CameraParameters $instance,Integer width,Integer height) throws Exception {
+      return $instance.setPreviewSize( width  height );
     }
     
-    public Integer $getExposureCompensation($CameraParameters $instance) throws Exception {
-       $instance
-          .$getExposureCompensation();
+    
+    
+    public Object $getExposureCompensation($CameraParameters $instance) throws Exception {
+      return $instance.getExposureCompensation();
     }
     
-    public Double $getExposureCompensationStep($CameraParameters $instance) throws Exception {
-       $instance
-          .$getExposureCompensationStep();
+    
+    
+    public Object $getExposureCompensationStep($CameraParameters $instance) throws Exception {
+      return $instance.getExposureCompensationStep();
     }
+    
     
 
     @Override
@@ -984,95 +1074,155 @@ public class CameraChannelLibrary {
         throws Exception {
       switch(methodName) {
         
+        
         case "getAutoExposureLock":
           return $getAutoExposureLock(instance);
+        
+        
         
         case "getFocusAreas":
           return $getFocusAreas(instance);
         
+        
+        
         case "getFocusDistances":
           return $getFocusDistances(instance);
+        
+        
         
         case "getMaxExposureCompensation":
           return $getMaxExposureCompensation(instance);
         
+        
+        
         case "getMaxNumFocusAreas":
           return $getMaxNumFocusAreas(instance);
+        
+        
         
         case "getMinExposureCompensation":
           return $getMinExposureCompensation(instance);
         
+        
+        
         case "getSupportedFocusModes":
           return $getSupportedFocusModes(instance);
+        
+        
         
         case "isAutoExposureLockSupported":
           return $isAutoExposureLockSupported(instance);
         
+        
+        
         case "isZoomSupported":
           return $isZoomSupported(instance);
+        
+        
         
         case "setAutoExposureLock":
           return $setAutoExposureLock(instance,(Boolean) arguments.get(0));
         
+        
+        
         case "setExposureCompensation":
           return $setExposureCompensation(instance,(Integer) arguments.get(0));
+        
+        
         
         case "setFocusAreas":
           return $setFocusAreas(instance,(List<$CameraArea>) arguments.get(0));
         
+        
+        
         case "setFocusMode":
           return $setFocusMode(instance,(String) arguments.get(0));
+        
+        
         
         case "getFlashMode":
           return $getFlashMode(instance);
         
+        
+        
         case "getMaxZoom":
           return $getMaxZoom(instance);
+        
+        
         
         case "getPictureSize":
           return $getPictureSize(instance);
         
+        
+        
         case "getPreviewSize":
           return $getPreviewSize(instance);
+        
+        
         
         case "getSupportedPreviewSizes":
           return $getSupportedPreviewSizes(instance);
         
+        
+        
         case "getSupportedPictureSizes":
           return $getSupportedPictureSizes(instance);
+        
+        
         
         case "getSupportedFlashModes":
           return $getSupportedFlashModes(instance);
         
+        
+        
         case "getZoom":
           return $getZoom(instance);
+        
+        
         
         case "isSmoothZoomSupported":
           return $isSmoothZoomSupported(instance);
         
+        
+        
         case "setFlashMode":
           return $setFlashMode(instance,(String) arguments.get(0));
+        
+        
         
         case "setPictureSize":
           return $setPictureSize(instance,(Integer) arguments.get(0),(Integer) arguments.get(1));
         
+        
+        
         case "setRecordingHint":
           return $setRecordingHint(instance,(Boolean) arguments.get(0));
+        
+        
         
         case "setRotation":
           return $setRotation(instance,(Integer) arguments.get(0));
         
+        
+        
         case "setZoom":
           return $setZoom(instance,(Integer) arguments.get(0));
+        
+        
         
         case "setPreviewSize":
           return $setPreviewSize(instance,(Integer) arguments.get(0),(Integer) arguments.get(1));
         
+        
+        
         case "getExposureCompensation":
           return $getExposureCompensation(instance);
         
+        
+        
         case "getExposureCompensationStep":
           return $getExposureCompensationStep(instance);
+        
         
       }
 
@@ -1222,10 +1372,7 @@ public class CameraChannelLibrary {
     
 
     
-    public void $onError($ErrorCallback $instance,Integer error) throws Exception {
-       return  $instance
-          .$onError( error );
-    }
+    
     
 
     @Override
@@ -1255,8 +1402,7 @@ public class CameraChannelLibrary {
         throws Exception {
       switch(methodName) {
         
-        case "onError":
-          return $onError(instance,(Integer) arguments.get(0));
+        
         
       }
 
@@ -1274,10 +1420,7 @@ public class CameraChannelLibrary {
     
 
     
-    public void $onAutoFocus($AutoFocusCallback $instance,Boolean success) throws Exception {
-       return  $instance
-          .$onAutoFocus( success );
-    }
+    
     
 
     @Override
@@ -1307,8 +1450,7 @@ public class CameraChannelLibrary {
         throws Exception {
       switch(methodName) {
         
-        case "onAutoFocus":
-          return $onAutoFocus(instance,(Boolean) arguments.get(0));
+        
         
       }
 
@@ -1326,10 +1468,7 @@ public class CameraChannelLibrary {
     
 
     
-    public void $onShutter($ShutterCallback $instance) throws Exception {
-       return  $instance
-          .$onShutter();
-    }
+    
     
 
     @Override
@@ -1359,8 +1498,7 @@ public class CameraChannelLibrary {
         throws Exception {
       switch(methodName) {
         
-        case "onShutter":
-          return $onShutter(instance);
+        
         
       }
 
@@ -1378,10 +1516,7 @@ public class CameraChannelLibrary {
     
 
     
-    public void $onPictureTaken($PictureCallback $instance,byte[] data) throws Exception {
-       return  $instance
-          .$onPictureTaken( data );
-    }
+    
     
 
     @Override
@@ -1411,8 +1546,7 @@ public class CameraChannelLibrary {
         throws Exception {
       switch(methodName) {
         
-        case "onPictureTaken":
-          return $onPictureTaken(instance,(byte[]) arguments.get(0));
+        
         
       }
 
@@ -1474,70 +1608,83 @@ public class CameraChannelLibrary {
     
 
     
-    public void $setCamera($MediaRecorder $instance,$Camera camera) throws Exception {
-       return  $instance
-          .$setCamera( camera );
+    
+    public Object $setCamera($MediaRecorder $instance,$Camera camera) throws Exception {
+      return $instance.setCamera( camera );
     }
     
-    public void $setVideoSource($MediaRecorder $instance,Integer source) throws Exception {
-       return  $instance
-          .$setVideoSource( source );
+    
+    
+    public Object $setVideoSource($MediaRecorder $instance,Integer source) throws Exception {
+      return $instance.setVideoSource( source );
     }
     
-    public void $setOutputFilePath($MediaRecorder $instance,String path) throws Exception {
-       return  $instance
-          .$setOutputFilePath( path );
+    
+    
+    public Object $setOutputFilePath($MediaRecorder $instance,String path) throws Exception {
+      return $instance.setOutputFilePath( path );
     }
     
-    public void $setOutputFormat($MediaRecorder $instance,Integer format) throws Exception {
-       return  $instance
-          .$setOutputFormat( format );
+    
+    
+    public Object $setOutputFormat($MediaRecorder $instance,Integer format) throws Exception {
+      return $instance.setOutputFormat( format );
     }
     
-    public void $setVideoEncoder($MediaRecorder $instance,Integer encoder) throws Exception {
-       return  $instance
-          .$setVideoEncoder( encoder );
+    
+    
+    public Object $setVideoEncoder($MediaRecorder $instance,Integer encoder) throws Exception {
+      return $instance.setVideoEncoder( encoder );
     }
     
-    public void $setAudioSource($MediaRecorder $instance,Integer source) throws Exception {
-       return  $instance
-          .$setAudioSource( source );
+    
+    
+    public Object $setAudioSource($MediaRecorder $instance,Integer source) throws Exception {
+      return $instance.setAudioSource( source );
     }
     
-    public void $setAudioEncoder($MediaRecorder $instance,Integer encoder) throws Exception {
-       return  $instance
-          .$setAudioEncoder( encoder );
+    
+    
+    public Object $setAudioEncoder($MediaRecorder $instance,Integer encoder) throws Exception {
+      return $instance.setAudioEncoder( encoder );
     }
     
-    public void $prepare($MediaRecorder $instance) throws Exception {
-       return  $instance
-          .$prepare();
+    
+    
+    public Object $prepare($MediaRecorder $instance) throws Exception {
+      return $instance.prepare();
     }
     
-    public void $start($MediaRecorder $instance) throws Exception {
-       return  $instance
-          .$start();
+    
+    
+    public Object $start($MediaRecorder $instance) throws Exception {
+      return $instance.start();
     }
     
-    public void $stop($MediaRecorder $instance) throws Exception {
-       return  $instance
-          .$stop();
+    
+    
+    public Object $stop($MediaRecorder $instance) throws Exception {
+      return $instance.stop();
     }
     
-    public void $release($MediaRecorder $instance) throws Exception {
-       return  $instance
-          .$release();
+    
+    
+    public Object $release($MediaRecorder $instance) throws Exception {
+      return $instance.release();
     }
     
-    public void $pause($MediaRecorder $instance) throws Exception {
-       return  $instance
-          .$pause();
+    
+    
+    public Object $pause($MediaRecorder $instance) throws Exception {
+      return $instance.pause();
     }
     
-    public void $resume($MediaRecorder $instance) throws Exception {
-       return  $instance
-          .$resume();
+    
+    
+    public Object $resume($MediaRecorder $instance) throws Exception {
+      return $instance.resume();
     }
+    
     
 
     @Override
@@ -1567,44 +1714,70 @@ public class CameraChannelLibrary {
         throws Exception {
       switch(methodName) {
         
+        
         case "setCamera":
           return $setCamera(instance,($Camera) arguments.get(0));
+        
+        
         
         case "setVideoSource":
           return $setVideoSource(instance,(Integer) arguments.get(0));
         
+        
+        
         case "setOutputFilePath":
           return $setOutputFilePath(instance,(String) arguments.get(0));
+        
+        
         
         case "setOutputFormat":
           return $setOutputFormat(instance,(Integer) arguments.get(0));
         
+        
+        
         case "setVideoEncoder":
           return $setVideoEncoder(instance,(Integer) arguments.get(0));
+        
+        
         
         case "setAudioSource":
           return $setAudioSource(instance,(Integer) arguments.get(0));
         
+        
+        
         case "setAudioEncoder":
           return $setAudioEncoder(instance,(Integer) arguments.get(0));
+        
+        
         
         case "prepare":
           return $prepare(instance);
         
+        
+        
         case "start":
           return $start(instance);
+        
+        
         
         case "stop":
           return $stop(instance);
         
+        
+        
         case "release":
           return $release(instance);
+        
+        
         
         case "pause":
           return $pause(instance);
         
+        
+        
         case "resume":
           return $resume(instance);
+        
         
       }
 
