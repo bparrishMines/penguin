@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol __prefix____class_name__ <NSObject>
 /*iterate methods method*/
 /*if returnsFuture*/
-- (id)___method_name__/*iterate :end=1 parameters parameter*/
+- (id)__method_name__/*iterate :end=1 parameters parameter*/
                                 :(/*replace parameter_type*/NSString/**/*_Nullable)__parameter_name__
 /**/
 /*iterate :start=1 parameters followingParameter*/

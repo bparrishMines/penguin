@@ -21,9 +21,11 @@
   if (self) {
     _captureDevice = captureDevice;
   }
-  [implementations.captureDeviceChannel createNewInstancePair:self
-                                                        owner:NO
-                                                   completion:^(REFPairedInstance *pairedInstance, NSError *error) {}];
+  [implementations.channelCaptureDevice __create:self
+                                          _owner:NO
+                                        uniqueId:captureDevice.uniqueID
+                                        position:@(captureDevice.position)
+                                      completion:^(REFPairedInstance *pairedInstance, NSError *error) {}];
   return self;
 }
 
@@ -59,13 +61,13 @@
   return nil;
 }
 
-- (NSObject * _Nullable)addInput:(NSObject<_IAFCaptureInput> * _Nullable)input {
+- (NSObject *_Nullable)addInput:(NSObject<_IAFCaptureInput> * _Nullable)input {
   IAFCaptureInputProxy *inputProxy = (IAFCaptureInputProxy *)input;
   [_captureSession addInput:inputProxy.captureInput];
   return nil;
 }
 
-- (NSObject * _Nullable)addOutput:(NSObject<_IAFCaptureOutput> * _Nullable)output {
+- (id)addOutput:(NSObject<_IAFCaptureOutput> * _Nullable)output {
   IAFCaptureOutputProxy *outputProxy = (IAFCaptureOutputProxy *)output;
   [_captureSession addOutput:outputProxy.captureOutput];
   return nil;
@@ -87,7 +89,9 @@
   NSError *error;
   AVCaptureDeviceInput *captureDeviceInput = [[AVCaptureDeviceInput alloc] initWithDevice:device.captureDevice
                                                                                     error:&error];
-  if (error) NSLog(@"Error creating AVCaptureDeviceInput: %@: %@", error.domain, error.description);
+  if (error) {
+    @throw [NSException exceptionWithName:error.domain reason:error.description userInfo:nil];
+  }
   return self = [self initWithCaptureInput:captureDeviceInput];
 }
 
@@ -202,10 +206,9 @@
 }
 
 - (NSObject *)didFinishProcessingPhoto:(IAFCapturePhotoProxy *_Nullable)photo  API_AVAILABLE(ios(11.0)){
-  [_implementations.capturePhotoCaptureDelegateChannel invoke_didFinishProcessingPhoto:self
-                                                                                 photo:photo
-                                                                            completion:^(id result, NSError *error) {
-  }];
+  [_implementations.channelCapturePhotoCaptureDelegate _didFinishProcessingPhoto:self
+                                                                           photo:photo
+                                                                      completion:^(id result, NSError *error) {}];
   return nil;
 }
 
@@ -222,13 +225,10 @@
   if (self) {
     _capturePhoto = capturePhoto;
   }
-  [implementations.capturePhotoChannel createNewInstancePair:self
-                                                       owner:false
-                                                  completion:^(REFPairedInstance *instance, NSError * error) {}];
+  [implementations.channelCapturePhoto __create:self
+                                         _owner:false
+                         fileDataRepresentation:capturePhoto.fileDataRepresentation
+                                     completion:^(REFPairedInstance *instance, NSError * error) {}];
   return self;
-}
-
-- (NSData *)fileDataRepresentation {
-  return _capturePhoto.fileDataRepresentation;
 }
 @end

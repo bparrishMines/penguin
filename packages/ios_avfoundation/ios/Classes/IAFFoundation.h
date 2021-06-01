@@ -28,7 +28,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface IAFCaptureSessionProxy : NSObject<_IAFCaptureSession>
 @property (readonly) AVCaptureSession *captureSession;
-@property (readonly) NSNumber *number;
 - (instancetype)initWithCaptureSession:(AVCaptureSession *)captureSession;
 @end
 

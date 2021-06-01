@@ -1,5 +1,7 @@
 import 'dart:collection';
 
+import 'dart:math';
+
 String runGenerator(
   Queue<String> templateQueue,
   Queue<Token> tokens,
@@ -43,7 +45,7 @@ String runGenerator(
         throw StateError('Failed to find data!');
       }
 
-      final int end = currentToken.end ?? dataList.length;
+      final int end = min(currentToken.end ?? dataList.length, dataList.length);
       for (int i = currentToken.start; i < end; i++) {
         outputs.add(runGenerator(
           Queue<String>.from(templateQueue),
