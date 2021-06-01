@@ -12,10 +12,12 @@ import /*replace :from='dart:core' value*/ 'dart:core' /**/;
 /*iterate classes class*/
 mixin $$$class_name$$ {
   /*iterate methods method*/
+  /*if! returnsFuture*/
   dynamic $$method_name$$(
     /*iterate parameters parameter*/ /*replace parameter_type*/ String /**/ $$parameter_name$$,
     /**/
   );
+  /**/
   /**/
 }
 /**/
