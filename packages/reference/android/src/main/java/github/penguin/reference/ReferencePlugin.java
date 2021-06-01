@@ -1,7 +1,6 @@
 package github.penguin.reference;
 
 import androidx.annotation.NonNull;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,11 +26,14 @@ public class ReferencePlugin implements FlutterPlugin {
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
-    // Do Nothing
+    final TypeChannelMessenger messenger = getMessengerInstance(binding.getBinaryMessenger());
+    binding.getPlatformViewRegistry().registerViewFactory(
+        "github.penguin.reference/AndroidReferenceWidget",
+        new ReferenceViewFactory(messenger.getInstanceManager()));
   }
 
   @Override
   public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
-    // Do nothing.
+    messengers.remove(binding.getBinaryMessenger());
   }
 }

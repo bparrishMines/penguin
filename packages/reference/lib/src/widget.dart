@@ -3,9 +3,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:reference/reference.dart';
-
-import 'method_channel.dart';
 
 // TODO: Widget tests for Android and IOS
 
@@ -116,8 +113,8 @@ class AndroidReferenceWidget extends StatelessWidget {
           id: params.id,
           viewType: viewType,
           layoutDirection: layoutDirection,
-          creationParams: PairedInstance(instanceId),
-          creationParamsCodec: const ReferenceMessageCodec(),
+          creationParams: instanceId,
+          creationParamsCodec: const StandardMessageCodec(),
           onFocus: onFocus,
         );
 
@@ -147,7 +144,7 @@ class UiKitReferenceWidget extends StatelessWidget {
   UiKitReferenceWidget({
     Key? key,
     required this.instanceId,
-    this.viewType = 'github.penguin.reference/IosReferenceWidget',
+    this.viewType = 'github.penguin.reference/UiKitReferenceWidget',
     this.hitTestBehavior = PlatformViewHitTestBehavior.opaque,
     this.gestureRecognizers = const <Factory<OneSequenceGestureRecognizer>>{},
     this.layoutDirection = TextDirection.rtl,
@@ -223,8 +220,8 @@ class UiKitReferenceWidget extends StatelessWidget {
       hitTestBehavior: hitTestBehavior,
       gestureRecognizers: gestureRecognizers,
       onPlatformViewCreated: platformViewCreatedListener,
-      creationParams: PairedInstance(instanceId),
-      creationParamsCodec: const ReferenceMessageCodec(),
+      creationParams: instanceId,
+      creationParamsCodec: const StandardMessageCodec(),
     );
   }
 }
