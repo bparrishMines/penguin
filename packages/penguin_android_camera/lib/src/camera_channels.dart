@@ -35,21 +35,6 @@ class LibraryImplementations extends $LibraryImplementations {
 
   @override
   final CameraRectHandler handlerCameraRect = CameraRectHandler();
-
-  @override
-  final PictureCallbackHandler handlerPictureCallback =
-      PictureCallbackHandler();
-
-  @override
-  final ErrorCallbackHandler handlerErrorCallback = ErrorCallbackHandler();
-
-  @override
-  final ShutterCallbackHandler handlerShutterCallback =
-      ShutterCallbackHandler();
-
-  @override
-  AutoFocusCallbackHandler handlerAutoFocusCallback =
-      AutoFocusCallbackHandler();
 }
 
 class CameraHandler extends $CameraHandler {
@@ -79,6 +64,7 @@ class CameraInfoHandler extends $CameraInfoHandler {
 class CameraParametersHandler extends $CameraParametersHandler {
   @override
   CameraParameters $$create(TypeChannelMessenger messenger) {
+    // ignore: invalid_use_of_visible_for_testing_member
     return CameraParameters();
   }
 }
@@ -121,33 +107,5 @@ class CameraAreaHandler extends $CameraAreaHandler {
       weight,
       createInstancePair: false,
     );
-  }
-}
-
-class PictureCallbackHandler extends $PictureCallbackHandler {
-  @override
-  Object? $onPictureTaken(covariant PictureCallback $instance, Uint8List data) {
-    $instance.onPictureTaken(data);
-  }
-}
-
-class ErrorCallbackHandler extends $ErrorCallbackHandler {
-  @override
-  Object? $onError(covariant ErrorCallback $instance, int error) {
-    $instance.onError(error);
-  }
-}
-
-class AutoFocusCallbackHandler extends $AutoFocusCallbackHandler {
-  @override
-  Object? $onAutoFocus(covariant AutoFocusCallback $instance, bool success) {
-    $instance.onAutoFocus(success);
-  }
-}
-
-class ShutterCallbackHandler extends $ShutterCallbackHandler {
-  @override
-  Object? $onShutter(covariant ShutterCallback $instance) {
-    $instance.onShutter();
   }
 }

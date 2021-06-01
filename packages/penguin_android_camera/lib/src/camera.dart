@@ -919,6 +919,7 @@ abstract class ErrorCallback with $ErrorCallback {
   ///   [Camera.cameraErrorUnknown]
   ///   [Camera.cameraErrorServerDied]
   ///   [Camera.cameraErrorEvicted]
+  @override
   void onError(int error);
 }
 
@@ -949,7 +950,7 @@ abstract class AutoFocusCallback with $AutoFocusCallback {
   /// and auto-white balance after it completes.
   ///
   /// Returns whether the auto-focus was successful.
-  // ignore: avoid_positional_boolean_parameters
+  @override
   void onAutoFocus(bool success);
 }
 
@@ -969,6 +970,7 @@ abstract class ShutterCallback with $ShutterCallback {
   /// This is a good opportunity to play a shutter sound or give other feedback
   /// of camera operation. This may be some time after the photo was triggered,
   /// but some time before the actual data is available.
+  @override
   void onShutter();
 }
 
@@ -987,6 +989,7 @@ abstract class PictureCallback with $PictureCallback {
   ///
   /// The format of the data depends on the context of the callback and
   /// Camera.Parameters settings.
+  @override
   void onPictureTaken(Uint8List data);
 }
 
