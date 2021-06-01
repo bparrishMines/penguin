@@ -25,6 +25,12 @@
                         owner:_owner
                    completion:completion];
 }
+
+
+
+
+
+
 @end
 
 @implementation _IAFCapturePhotoSettingsChannel
@@ -187,12 +193,25 @@
                         owner:_owner
                    completion:completion];
 }
+
+
+
+
+
+
+
+
+
+
+
+
 @end
 
 @implementation _IAFCaptureDeviceChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
   return self = [super initWithMessenger:messenger name:@"__class__channel"];
 }
+
 
 - (void)__create:(NSObject<_IAFCaptureDevice> *)_instance
          _owner:(BOOL)_owner
@@ -328,6 +347,8 @@
                   methodName:(nonnull NSString *)methodName
                    arguments:(nonnull NSArray *)arguments {
   NSObject<_IAFCapturePhotoSettings> *value = (NSObject<_IAFCapturePhotoSettings> *) instance;
+  
+  
   NSLog(@"Unable to invoke %@.%@", instance, methodName);
   return nil;
 }
@@ -545,21 +566,24 @@
 
                      output:(NSObject<_IAFCaptureOutput> *_Nullable)output
  {
-  return [_instance _addOutput:output];
+  return [_instance _addOutput:output
+          ];
 }
 
 
 
 - (id _Nullable)_startRunning:(NSObject<_IAFCaptureSession> *)_instance
  {
-  return [_instance _startRunning];
+  return [_instance _startRunning
+          ];
 }
 
 
 
 - (id _Nullable)_stopRunning:(NSObject<_IAFCaptureSession> *)_instance
  {
-  return [_instance _stopRunning];
+  return [_instance _stopRunning
+          ];
 }
 
 
@@ -708,6 +732,8 @@
                   methodName:(nonnull NSString *)methodName
                    arguments:(nonnull NSArray *)arguments {
   NSObject<_IAFPreviewController> *value = (NSObject<_IAFPreviewController> *) instance;
+  
+  
   NSLog(@"Unable to invoke %@.%@", instance, methodName);
   return nil;
 }

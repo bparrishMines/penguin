@@ -89,7 +89,7 @@
 /*iterate parameters parameter*/
                      __parameter_name__:(/*replace parameter_type*/NSString/**/ *_Nullable)__parameter_name__
 /**/ {
-  return [_instance ___method_name__/*iterate :end=1 parameters parameter*/:__parameter_name__/**/
+  return [_instance __method_name__/*iterate :end=1 parameters parameter*/:__parameter_name__/**/
           /*iterate :start=1 parameters followingParameter*/__followingParameter_name__:/*replace followingParameter_name*/nil/**//**/];
 }
 /**/
