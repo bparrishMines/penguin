@@ -9,136 +9,136 @@ import 'dart:typed_data';
 // **************************************************************************
 
 mixin $Camera {
-  Future<void> $release();
+  Future<void> release();
 
-  Future<void> $startPreview();
+  Future<void> startPreview();
 
-  Future<void> $stopPreview();
+  Future<void> stopPreview();
 
-  Future<int> $attachPreviewTexture();
+  Future<int> attachPreviewTexture();
 
-  Future<void> $releasePreviewTexture();
+  Future<void> releasePreviewTexture();
 
-  Future<void> $unlock();
+  Future<void> unlock();
 
-  Future<void> $reconnect();
+  Future<void> reconnect();
 
-  Future<void> $takePicture(
+  Future<void> takePicture(
     $ShutterCallback? shutter,
     $PictureCallback? raw,
     $PictureCallback? postView,
     $PictureCallback? jpeg,
   );
 
-  Future<void> $autoFocus(
+  Future<void> autoFocus(
     $AutoFocusCallback callback,
   );
 
-  Future<void> $cancelAutoFocus();
+  Future<void> cancelAutoFocus();
 
-  Future<void> $setDisplayOrientation(
+  Future<void> setDisplayOrientation(
     int degrees,
   );
 
-  Future<void> $setErrorCallback(
+  Future<void> setErrorCallback(
     $ErrorCallback callback,
   );
 
-  Future<void> $startSmoothZoom(
+  Future<void> startSmoothZoom(
     int value,
   );
 
-  Future<void> $stopSmoothZoom();
+  Future<void> stopSmoothZoom();
 
-  Future<$CameraParameters> $getParameters();
+  Future<$CameraParameters> getParameters();
 
-  Future<void> $setParameters(
+  Future<void> setParameters(
     $CameraParameters parameters,
   );
 }
 
 mixin $CameraParameters {
-  Future<bool> $getAutoExposureLock();
+  Future<bool> getAutoExposureLock();
 
-  Future<List<$CameraArea>?> $getFocusAreas();
+  Future<List<$CameraArea>?> getFocusAreas();
 
-  Future<List<double>> $getFocusDistances();
+  Future<List<double>> getFocusDistances();
 
-  Future<int> $getMaxExposureCompensation();
+  Future<int> getMaxExposureCompensation();
 
-  Future<int> $getMaxNumFocusAreas();
+  Future<int> getMaxNumFocusAreas();
 
-  Future<int> $getMinExposureCompensation();
+  Future<int> getMinExposureCompensation();
 
-  Future<List<String>> $getSupportedFocusModes();
+  Future<List<String>> getSupportedFocusModes();
 
-  Future<bool> $isAutoExposureLockSupported();
+  Future<bool> isAutoExposureLockSupported();
 
-  Future<bool> $isZoomSupported();
+  Future<bool> isZoomSupported();
 
-  Future<void> $setAutoExposureLock(
+  Future<void> setAutoExposureLock(
     bool toggle,
   );
 
-  Future<void> $setExposureCompensation(
+  Future<void> setExposureCompensation(
     int value,
   );
 
-  Future<void> $setFocusAreas(
+  Future<void> setFocusAreas(
     List<$CameraArea>? focusAreas,
   );
 
-  Future<void> $setFocusMode(
+  Future<void> setFocusMode(
     String value,
   );
 
-  Future<String?> $getFlashMode();
+  Future<String?> getFlashMode();
 
-  Future<int> $getMaxZoom();
+  Future<int> getMaxZoom();
 
-  Future<$CameraSize> $getPictureSize();
+  Future<$CameraSize> getPictureSize();
 
-  Future<$CameraSize> $getPreviewSize();
+  Future<$CameraSize> getPreviewSize();
 
-  Future<List<$CameraSize>> $getSupportedPreviewSizes();
+  Future<List<$CameraSize>> getSupportedPreviewSizes();
 
-  Future<List<$CameraSize>> $getSupportedPictureSizes();
+  Future<List<$CameraSize>> getSupportedPictureSizes();
 
-  Future<List<String>> $getSupportedFlashModes();
+  Future<List<String>> getSupportedFlashModes();
 
-  Future<int> $getZoom();
+  Future<int> getZoom();
 
-  Future<bool> $isSmoothZoomSupported();
+  Future<bool> isSmoothZoomSupported();
 
-  Future<void> $setFlashMode(
+  Future<void> setFlashMode(
     String mode,
   );
 
-  Future<void> $setPictureSize(
+  Future<void> setPictureSize(
     int width,
     int height,
   );
 
-  Future<void> $setRecordingHint(
+  Future<void> setRecordingHint(
     bool hint,
   );
 
-  Future<void> $setRotation(
+  Future<void> setRotation(
     int rotation,
   );
 
-  Future<void> $setZoom(
+  Future<void> setZoom(
     int value,
   );
 
-  Future<void> $setPreviewSize(
+  Future<void> setPreviewSize(
     int width,
     int height,
   );
 
-  Future<int> $getExposureCompensation();
+  Future<int> getExposureCompensation();
 
-  Future<double> $getExposureCompensationStep();
+  Future<double> getExposureCompensationStep();
 }
 
 mixin $CameraArea {}
@@ -148,23 +148,23 @@ mixin $CameraRect {}
 mixin $CameraSize {}
 
 mixin $ErrorCallback {
-  void $onError(
+  void onError(
     int error,
   );
 }
 
 mixin $AutoFocusCallback {
-  void $onAutoFocus(
+  void onAutoFocus(
     bool success,
   );
 }
 
 mixin $ShutterCallback {
-  void $onShutter();
+  void onShutter();
 }
 
 mixin $PictureCallback {
-  void $onPictureTaken(
+  void onPictureTaken(
     Uint8List data,
   );
 }
@@ -172,45 +172,45 @@ mixin $PictureCallback {
 mixin $CameraInfo {}
 
 mixin $MediaRecorder {
-  Future<void> $setCamera(
+  Future<void> setCamera(
     $Camera camera,
   );
 
-  Future<void> $setVideoSource(
+  Future<void> setVideoSource(
     int source,
   );
 
-  Future<void> $setOutputFilePath(
+  Future<void> setOutputFilePath(
     String path,
   );
 
-  Future<void> $setOutputFormat(
+  Future<void> setOutputFormat(
     int format,
   );
 
-  Future<void> $setVideoEncoder(
+  Future<void> setVideoEncoder(
     int encoder,
   );
 
-  Future<void> $setAudioSource(
+  Future<void> setAudioSource(
     int source,
   );
 
-  Future<void> $setAudioEncoder(
+  Future<void> setAudioEncoder(
     int encoder,
   );
 
-  Future<void> $prepare();
+  Future<void> prepare();
 
-  Future<void> $start();
+  Future<void> start();
 
-  Future<void> $stop();
+  Future<void> stop();
 
-  Future<void> $release();
+  Future<void> release();
 
-  Future<void> $pause();
+  Future<void> pause();
 
-  Future<void> $resume();
+  Future<void> resume();
 }
 
 class $CameraChannel extends TypeChannel<$Camera> {
@@ -228,11 +228,11 @@ class $CameraChannel extends TypeChannel<$Camera> {
     );
   }
 
-  Future<List<$CameraInfo>> $getAllCameraInfo() async {
+  Future<List> $getAllCameraInfo() async {
     return await sendInvokeStaticMethod(
       'getAllCameraInfo',
       <Object?>[],
-    ) as Future<List<$CameraInfo>>;
+    ) as List;
   }
 
   Future<$Camera> $open(
@@ -1644,7 +1644,7 @@ class $ErrorCallbackHandler implements TypeChannelHandler<$ErrorCallback> {
     $ErrorCallback $instance,
     int error,
   ) {
-    $instance.$onError(
+    $instance.onError(
       error,
     );
   }
@@ -1710,7 +1710,7 @@ class $AutoFocusCallbackHandler
     $AutoFocusCallback $instance,
     bool success,
   ) {
-    $instance.$onAutoFocus(
+    $instance.onAutoFocus(
       success,
     );
   }
@@ -1774,7 +1774,7 @@ class $ShutterCallbackHandler implements TypeChannelHandler<$ShutterCallback> {
   void $onShutter(
     $ShutterCallback $instance,
   ) {
-    $instance.$onShutter();
+    $instance.onShutter();
   }
 
   @override
@@ -1836,7 +1836,7 @@ class $PictureCallbackHandler implements TypeChannelHandler<$PictureCallback> {
     $PictureCallback $instance,
     Uint8List data,
   ) {
-    $instance.$onPictureTaken(
+    $instance.onPictureTaken(
       data,
     );
   }
@@ -2192,4 +2192,8 @@ class $ChannelRegistrar {
 
     implementations.channelMediaRecorder.removeHandler();
   }
+}
+
+List<T>? listCast<T>(Object? list) {
+  return (list as List<Object?>)?.cast<T>();
 }

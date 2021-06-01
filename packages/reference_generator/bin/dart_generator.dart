@@ -35,8 +35,6 @@ String generateDart(
     for (MethodNode methodNode in classNode.staticMethods) {
       final Map<String, Object> methodData = <String, Object>{};
       methodData['name'] = methodNode.name;
-      methodData['returnType'] = getTrueTypeName(methodNode.returnType);
-      methodData['returnsVoid'] = methodNode.returnType.name == 'void';
       methodData['returnsFuture'] = methodNode.returnType.name == 'Future';
 
       final List<Map<String, Object>> parameters = <Map<String, Object>>[];
@@ -58,8 +56,6 @@ String generateDart(
     for (MethodNode methodNode in classNode.methods) {
       final Map<String, Object> methodData = <String, Object>{};
       methodData['name'] = methodNode.name;
-      methodData['returnType'] = getTrueTypeName(methodNode.returnType);
-      methodData['returnsVoid'] = methodNode.returnType.name == 'void';
       methodData['returnsFuture'] = methodNode.returnType.name == 'Future';
 
       final List<Map<String, Object>> parameters = <Map<String, Object>>[];

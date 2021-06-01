@@ -200,7 +200,7 @@ Token? tryParseToken(Queue<String> templateQueue) {
     );
   }
 
-  return null;
+  throw StateError('Failed to parse token');
 }
 
 abstract class Token {}

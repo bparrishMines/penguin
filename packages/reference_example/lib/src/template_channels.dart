@@ -16,7 +16,7 @@ class LibraryImplementations extends $LibraryImplementations {
   LibraryImplementations(TypeChannelMessenger messenger) : super(messenger);
 
   @override
-  $$$class_name$$Handler get __class_name__Handler => $$$class_name$$Handler();
+  $$$class_name$$Handler get handler__class_name__ => $$$class_name$$Handler();
 }
 
 class ClassTemplateHandler extends $$$class_name$$Handler {

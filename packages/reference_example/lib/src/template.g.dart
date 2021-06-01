@@ -12,7 +12,7 @@ import /*replace :from='dart:core' value*/ 'dart:core' /**/;
 /*iterate classes class*/
 mixin $$$class_name$$ {
   /*iterate methods method*/
-  /*replace method_returnType*/ Future<String> /**/ $$method_name$$(
+  dynamic $$method_name$$(
     /*iterate parameters parameter*/ /*replace parameter_type*/ String /**/ $$parameter_name$$,
     /**/
   );
@@ -43,35 +43,34 @@ class $$$class_name$$Channel extends TypeChannel<$$$class_name$$> {
 
   /*iterate staticMethods staticMethod*/
   /*if returnsFuture*/
-  /*replace staticMethod_returnType*/ Future<double> /**/
-      $__staticMethod_name__(
+  Future<Object?> $__staticMethod_name__(
     /*iterate parameters parameter*/ /*replace parameter_type*/ String /**/ $$parameter_name$$,
     /**/
-  ) async {
-    /*if! returnsVoid*/ return /**/ await sendInvokeStaticMethod(
+  ) {
+    return sendInvokeStaticMethod(
       '__staticMethod_name__',
       <Object?>[
         /*iterate parameters parameter*/ $$parameter_name$$, /**/
       ],
-    ) /*if! returnsVoid*/ as /*replace staticMethod_returnType*/ double /**/ /**/;
+    );
   }
   /**/
   /**/
 
   /*iterate methods method*/
   /*if returnsFuture*/
-  /*replace method_returnType*/ Future<String> /**/ $__method_name__(
+  Future<Object?> $__method_name__(
     $$$class_name$$ $instance,
     /*iterate parameters parameter*/ /*replace parameter_type*/ String /**/ $$parameter_name$$,
     /**/
-  ) async {
-    /*if! returnsVoid*/ return /**/ await sendInvokeMethod(
+  ) {
+    return sendInvokeMethod(
       $instance,
       '__method_name__',
       <Object?>[
         /*iterate parameters parameter*/ $$parameter_name$$, /**/
       ],
-    ) /*if! returnsVoid*/ as /*replace method_returnType*/ String /**/ /**/;
+    );
   }
   /**/
   /**/
@@ -91,7 +90,7 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$$class_name$$> {
 
   /*iterate staticMethods staticMethod*/
   /*if! returnsFuture*/
-  /*replace staticMethod_returnType*/ Object? /**/ $__staticMethod_name__(
+  dynamic $__staticMethod_name__(
     TypeChannelMessenger messenger,
     /*iterate parameters parameter*/
     /*replace parameter_type*/ String /**/ $$parameter_name$$,
@@ -104,13 +103,13 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$$class_name$$> {
 
   /*iterate methods method*/
   /*if! returnsFuture*/
-  /*replace method_returnType*/ Object? /**/ $__method_name__(
+  dynamic $__method_name__(
     $$$class_name$$ $instance,
     /*iterate parameters parameter*/
     /*replace parameter_type*/ String /**/ $$parameter_name$$,
     /**/
   ) {
-    /*if! returnsVoid*/ return /**/ $instance.$$method_name$$(
+    return $instance.$$method_name$$(
       /*iterate parameters parameter*/ $$parameter_name$$, /**/
     );
   }
@@ -125,6 +124,7 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$$class_name$$> {
   ) {
     switch (methodName) {
       /*iterate staticMethods staticMethod*/
+      /*if! returnsFuture*/
       case '__staticMethod_name__':
         return $__staticMethod_name__(
           messenger,
@@ -132,6 +132,7 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$$class_name$$> {
                   /*replace parameter_index*/ 0 /**/]
               as /*replace parameter_type*/ String /**/, /**/
         );
+      /**/
       /**/
     }
 
@@ -163,6 +164,7 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$$class_name$$> {
   ) {
     switch (methodName) {
       /*iterate methods method*/
+      /*if! returnsFuture*/
       case '__method_name__':
         return $__method_name__(
           instance,
@@ -170,6 +172,7 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$$class_name$$> {
                   /*replace parameter_index*/ 0 /**/]
               as /*replace parameter_type*/ String /**/, /**/
         );
+      /**/
       /**/
     }
 
