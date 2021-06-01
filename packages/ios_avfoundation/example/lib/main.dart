@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:ios_avfoundation/ios_avfoundation.dart';
-import 'package:ios_avfoundation/channels.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 void main() {
@@ -18,7 +17,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   late CaptureSession _captureSession;
-  final CapturePhotoOutput _capturePhotoOutput = CapturePhotoOutput();
+  late CapturePhotoOutput _capturePhotoOutput;
   final CapturePhotoCaptureDelegate _capturePhotoCaptureDelegate =
       MyPhotoDelegate();
   Widget _previewWidget = Container();
@@ -60,6 +59,7 @@ class _MyAppState extends State<MyApp> {
     );
 
     _captureSession = CaptureSession();
+    _capturePhotoOutput = CapturePhotoOutput();
     _captureSession.addInput(CaptureDeviceInput(device));
     _captureSession.addOutput(_capturePhotoOutput);
     _captureSession.startRunning();

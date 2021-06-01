@@ -4,31 +4,31 @@
 @end
 
 @implementation IAFLibraryImplementations
-- (IAFCaptureDeviceHandler *)captureDeviceHandler {
+- (IAFCaptureDeviceHandler *)handlerCaptureDevice {
   return [[IAFCaptureDeviceHandler alloc] initWithImplementations:self];
 }
 
-- (IAFCaptureDeviceInputHandler *)captureDeviceInputHandler {
+- (IAFCaptureDeviceInputHandler *)handlerCaptureDeviceInput {
   return [[IAFCaptureDeviceInputHandler alloc] init];
 }
 
-- (IAFCaptureSessionHandler *)captureSessionHandler {
+- (IAFCaptureSessionHandler *)handlerCaptureSession {
   return [[IAFCaptureSessionHandler alloc] init];
 }
 
-- (IAFPreviewControllerHandler *)previewControllerHandler {
+- (IAFPreviewControllerHandler *)handlerPreviewController {
   return [[IAFPreviewControllerHandler alloc] init];
 }
 
-- (IAFCapturePhotoCaptureDelegateHandler *)capturePhotoCaptureDelegateHandler {
+- (IAFCapturePhotoCaptureDelegateHandler *)handlerCapturePhotoCaptureDelegate {
   return [[IAFCapturePhotoCaptureDelegateHandler alloc] initWithImplementations:self];
 }
 
-- (IAFCapturePhotoSettingsHandler *)capturePhotoSettingsHandler {
+- (IAFCapturePhotoSettingsHandler *)handlerCapturePhotoSettings {
   return [[IAFCapturePhotoSettingsHandler alloc] init];
 }
 
-- (IAFCapturePhotoOutputHandler *)capturePhotoOutputHandler {
+- (IAFCapturePhotoOutputHandler *)handlerCapturePhotoOutput {
   return [[IAFCapturePhotoOutputHandler alloc] init];
 }
 @end
@@ -45,30 +45,29 @@
   return self;
 }
 
-- (NSArray<IAFCaptureDeviceProxy *> *)on_devicesWithMediaType:(REFTypeChannelMessenger *)messenger
+- (NSArray<IAFCaptureDeviceProxy *> *)_devicesWithMediaType:(REFTypeChannelMessenger *)messenger
                                                     mediaType:(NSString *_Nullable)mediaType {
   return [IAFCaptureDeviceProxy devicesWithMediaType:mediaType implementations:_implementations];
 }
 @end
 
 @implementation IAFCaptureDeviceInputHandler
-- (IAFCaptureDeviceInputProxy *)onCreate:(REFTypeChannelMessenger *)messenger
-                                    args:(_IAFCaptureDeviceInputCreationArgs *)args {
-  return [[IAFCaptureDeviceInputProxy alloc] initWithDevice:((IAFCaptureDeviceProxy *)args.device)];
+- (IAFCaptureDeviceInputProxy *)__create:(REFTypeChannelMessenger *)messenger
+                                        device:(NSObject<_IAFCaptureDevice> *)device {
+  return [[IAFCaptureDeviceInputProxy alloc] initWithDevice:((IAFCaptureDeviceProxy *)device)];
 }
 @end
 
 @implementation IAFCaptureSessionHandler
-- (IAFCaptureSessionProxy *)onCreate:(REFTypeChannelMessenger *)messenger
-                                args:(_IAFCaptureSessionCreationArgs *)args {
+- (IAFCaptureSessionProxy *)__create:(REFTypeChannelMessenger *)messenger {
   return [[IAFCaptureSessionProxy alloc] init];
 }
 @end
 
 @implementation IAFPreviewControllerHandler
-- (IAFPreviewControllerProxy *)onCreate:(REFTypeChannelMessenger *)messenger
-                                   args:(_IAFPreviewControllerCreationArgs *)args {
-  return [[IAFPreviewControllerProxy alloc] initWithCaptureSession:((IAFCaptureSessionProxy *)args.captureSession)];
+- (IAFPreviewControllerProxy *)__create:(REFTypeChannelMessenger *)messenger
+                               captureSession:(NSObject<_IAFCaptureSession> *)captureSession {
+  return [[IAFPreviewControllerProxy alloc] initWithCaptureSession:((IAFCaptureSessionProxy *)captureSession)];
 }
 @end
 
@@ -84,8 +83,7 @@
   return self;
 }
 
-- (IAFCapturePhotoCaptureDelegateProxy *)onCreate:(REFTypeChannelMessenger *)messenger
-                                             args:(_IAFCapturePhotoCaptureDelegateCreationArgs *)args API_AVAILABLE(ios(10.0)){
+- (NSObject<_IAFCapturePhotoCaptureDelegate> *)__create:(REFTypeChannelMessenger *)messenger {
   if (@available(iOS 10.0, *)) {
     return [[IAFCapturePhotoCaptureDelegateProxy alloc] initWithImplementations:_implementations];
   }
@@ -95,10 +93,9 @@
 @end
 
 @implementation IAFCapturePhotoSettingsHandler
-- (IAFCapturePhotoSettingsProxy *)onCreate:(REFTypeChannelMessenger *)messenger
-                                      args:(_IAFCapturePhotoSettingsCreationArgs *)args  API_AVAILABLE(ios(10.0)){
+- (NSObject<_IAFCapturePhotoSettings> *)__create:(REFTypeChannelMessenger *)messenger processedFormat:(NSDictionary<NSString *,NSObject *> *)processedFormat {
   if (@available(iOS 10.0, *)) {
-    return [[IAFCapturePhotoSettingsProxy alloc] initwithProcessedFormat:args.processedFormat];
+    return [[IAFCapturePhotoSettingsProxy alloc] initwithProcessedFormat:processedFormat];
   }
   NSLog(@"IAFCapturePhotoSettings is only supported on iOS 10+");
   return nil;
@@ -106,8 +103,7 @@
 @end
 
 @implementation IAFCapturePhotoOutputHandler
-- (IAFCapturePhotoOutputProxy *)onCreate:(REFTypeChannelMessenger *)messenger
-                                    args:(_IAFCapturePhotoOutputCreationArgs *)args  API_AVAILABLE(ios(10.0)){
+- (NSObject<_IAFCapturePhotoOutput> *)__create:(REFTypeChannelMessenger *)messenger {
   if (@available(iOS 10.0, *)) {
     return [[IAFCapturePhotoOutputProxy alloc] init];
   }

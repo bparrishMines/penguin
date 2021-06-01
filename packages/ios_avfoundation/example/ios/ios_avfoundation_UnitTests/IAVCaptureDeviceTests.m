@@ -43,7 +43,7 @@
   XCTAssertEqual(devices.count, 1);
   
   IAFCaptureDeviceProxy *device = devices[0];
-  XCTAssertEqualObjects(device.uniqueId, @"test_uniqueID");
-  XCTAssertEqualObjects(device.position, @(2));
+  XCTAssertEqualObjects(device.captureDevice.uniqueID, @"test_uniqueID");
+  XCTAssertEqualObjects(@(device.captureDevice.position), @(2));
 }
 @end

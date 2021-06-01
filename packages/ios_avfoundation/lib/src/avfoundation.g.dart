@@ -1,178 +1,231 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
-import 'dart:typed_data';
 
 import 'package:reference/reference.dart';
+
+import 'dart:typed_data';
 
 // **************************************************************************
 // ReferenceGenerator
 // **************************************************************************
 
-mixin $CapturePhotoOutput {
-  Future<void> capturePhoto(
-      $CapturePhotoSettings settings, $CapturePhotoCaptureDelegate delegate);
-}
+mixin $CapturePhotoOutput {}
 
-mixin $CapturePhotoSettings {
-  Map<String, Object> get processedFormat;
-}
+mixin $CapturePhotoSettings {}
 
 mixin $CapturePhotoCaptureDelegate {
-  void didFinishProcessingPhoto($CapturePhoto photo);
+  dynamic didFinishProcessingPhoto(
+    $CapturePhoto photo,
+  );
 }
 
 mixin $CaptureOutput {}
 
-mixin $CapturePhoto {
-  Uint8List? get fileDataRepresentation;
-}
+mixin $CapturePhoto {}
 
-mixin $CaptureDeviceInput {
-  $CaptureDevice get device;
-}
+mixin $CaptureDeviceInput {}
 
 mixin $CaptureInput {}
 
-mixin $CaptureSession {
-  Future<void> addInput($CaptureInput input);
+mixin $CaptureSession {}
 
-  Future<void> addOutput($CaptureOutput output);
+mixin $CaptureDevice {}
 
-  Future<void> startRunning();
-
-  Future<void> stopRunning();
-}
-
-mixin $CaptureDevice {
-  String get uniqueId;
-  int get position;
-}
-
-mixin $PreviewController {
-  $CaptureSession get captureSession;
-}
-
-class $CapturePhotoOutputCreationArgs {}
-
-class $CapturePhotoSettingsCreationArgs {
-  late Map<String, Object> processedFormat;
-}
-
-class $CapturePhotoCaptureDelegateCreationArgs {}
-
-class $CaptureOutputCreationArgs {}
-
-class $CapturePhotoCreationArgs {
-  late Uint8List? fileDataRepresentation;
-}
-
-class $CaptureDeviceInputCreationArgs {
-  late $CaptureDevice device;
-}
-
-class $CaptureInputCreationArgs {}
-
-class $CaptureSessionCreationArgs {}
-
-class $CaptureDeviceCreationArgs {
-  late String uniqueId;
-  late int position;
-}
-
-class $PreviewControllerCreationArgs {
-  late $CaptureSession captureSession;
-}
+mixin $PreviewController {}
 
 class $CapturePhotoOutputChannel extends TypeChannel<$CapturePhotoOutput> {
   $CapturePhotoOutputChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'capturePhotoOutput');
+      : super(messenger, 'ios_avfoundatoin/avfoundation/CapturePhotoOutput');
 
-  Future<Object?> $invokeCapturePhoto($CapturePhotoOutput instance,
-      $CapturePhotoSettings settings, $CapturePhotoCaptureDelegate delegate) {
+  Future<PairedInstance?> $$create(
+    $CapturePhotoOutput $instance, {
+    required bool $owner,
+  }) {
+    return createNewInstancePair(
+      $instance,
+      <Object?>[],
+      owner: $owner,
+    );
+  }
+
+  Future<Object?> $capturePhoto(
+    $CapturePhotoOutput $instance,
+    $CapturePhotoSettings settings,
+    $CapturePhotoCaptureDelegate delegate,
+  ) {
     return sendInvokeMethod(
-      instance,
+      $instance,
       'capturePhoto',
-      <Object?>[settings, delegate],
+      <Object?>[
+        settings,
+        delegate,
+      ],
     );
   }
 }
 
 class $CapturePhotoSettingsChannel extends TypeChannel<$CapturePhotoSettings> {
   $CapturePhotoSettingsChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'CapturePhotoSettings');
+      : super(messenger, 'ios_avfoundatoin/avfoundation/CapturePhotoSettings');
+
+  Future<PairedInstance?> $$create(
+    $CapturePhotoSettings $instance, {
+    required bool $owner,
+    required Map<String, Object> processedFormat,
+  }) {
+    return createNewInstancePair(
+      $instance,
+      <Object?>[
+        processedFormat,
+      ],
+      owner: $owner,
+    );
+  }
 }
 
 class $CapturePhotoCaptureDelegateChannel
     extends TypeChannel<$CapturePhotoCaptureDelegate> {
   $CapturePhotoCaptureDelegateChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'CapturePhotoCaptureDelegate');
+      : super(messenger,
+            'ios_avfoundatoin/avfoundation/CapturePhotoCaptureDelegate');
 
-  Future<Object?> $invokeDidFinishProcessingPhoto(
-      $CapturePhotoCaptureDelegate instance, $CapturePhoto photo) {
-    return sendInvokeMethod(
-      instance,
-      'didFinishProcessingPhoto',
-      <Object?>[photo],
+  Future<PairedInstance?> $$create(
+    $CapturePhotoCaptureDelegate $instance, {
+    required bool $owner,
+  }) {
+    return createNewInstancePair(
+      $instance,
+      <Object?>[],
+      owner: $owner,
     );
   }
 }
 
 class $CaptureOutputChannel extends TypeChannel<$CaptureOutput> {
   $CaptureOutputChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'CaptureOutput');
+      : super(messenger, 'ios_avfoundatoin/avfoundation/CaptureOutput');
+
+  Future<PairedInstance?> $$create(
+    $CaptureOutput $instance, {
+    required bool $owner,
+  }) {
+    return createNewInstancePair(
+      $instance,
+      <Object?>[],
+      owner: $owner,
+    );
+  }
 }
 
 class $CapturePhotoChannel extends TypeChannel<$CapturePhoto> {
   $CapturePhotoChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'CapturePhoto');
+      : super(messenger, 'ios_avfoundatoin/avfoundation/CapturePhoto');
+
+  Future<PairedInstance?> $$create(
+    $CapturePhoto $instance, {
+    required bool $owner,
+    required Uint8List? fileDataRepresentation,
+  }) {
+    return createNewInstancePair(
+      $instance,
+      <Object?>[
+        fileDataRepresentation,
+      ],
+      owner: $owner,
+    );
+  }
 }
 
 class $CaptureDeviceInputChannel extends TypeChannel<$CaptureDeviceInput> {
   $CaptureDeviceInputChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'captureDeviceInput');
+      : super(messenger, 'ios_avfoundatoin/avfoundation/CaptureDeviceInput');
+
+  Future<PairedInstance?> $$create(
+    $CaptureDeviceInput $instance, {
+    required bool $owner,
+    required $CaptureDevice device,
+  }) {
+    return createNewInstancePair(
+      $instance,
+      <Object?>[
+        device,
+      ],
+      owner: $owner,
+    );
+  }
 }
 
 class $CaptureInputChannel extends TypeChannel<$CaptureInput> {
   $CaptureInputChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'captureInput');
+      : super(messenger, 'ios_avfoundatoin/avfoundation/CaptureInput');
+
+  Future<PairedInstance?> $$create(
+    $CaptureInput $instance, {
+    required bool $owner,
+  }) {
+    return createNewInstancePair(
+      $instance,
+      <Object?>[],
+      owner: $owner,
+    );
+  }
 }
 
 class $CaptureSessionChannel extends TypeChannel<$CaptureSession> {
   $CaptureSessionChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'captureSession');
+      : super(messenger, 'ios_avfoundatoin/avfoundation/CaptureSession');
 
-  Future<Object?> $invokeAddInput(
-      $CaptureSession instance, $CaptureInput input) {
-    return sendInvokeMethod(
-      instance,
-      'addInput',
-      <Object?>[input],
+  Future<PairedInstance?> $$create(
+    $CaptureSession $instance, {
+    required bool $owner,
+  }) {
+    return createNewInstancePair(
+      $instance,
+      <Object?>[],
+      owner: $owner,
     );
   }
 
-  Future<Object?> $invokeAddOutput(
-      $CaptureSession instance, $CaptureOutput output) {
-    return sendInvokeMethod(
-      instance,
-      'addOutput',
-      <Object?>[output],
-    );
-  }
-
-  Future<Object?> $invokeStartRunning(
-    $CaptureSession instance,
+  Future<Object?> $addInput(
+    $CaptureSession $instance,
+    $CaptureInput input,
   ) {
     return sendInvokeMethod(
-      instance,
+      $instance,
+      'addInput',
+      <Object?>[
+        input,
+      ],
+    );
+  }
+
+  Future<Object?> $addOutput(
+    $CaptureSession $instance,
+    $CaptureOutput output,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'addOutput',
+      <Object?>[
+        output,
+      ],
+    );
+  }
+
+  Future<Object?> $startRunning(
+    $CaptureSession $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
       'startRunning',
       <Object?>[],
     );
   }
 
-  Future<Object?> $invokeStopRunning(
-    $CaptureSession instance,
+  Future<Object?> $stopRunning(
+    $CaptureSession $instance,
   ) {
     return sendInvokeMethod(
-      instance,
+      $instance,
       'stopRunning',
       <Object?>[],
     );
@@ -181,26 +234,59 @@ class $CaptureSessionChannel extends TypeChannel<$CaptureSession> {
 
 class $CaptureDeviceChannel extends TypeChannel<$CaptureDevice> {
   $CaptureDeviceChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'captureDevice');
+      : super(messenger, 'ios_avfoundatoin/avfoundation/CaptureDevice');
 
-  Future<Object?> $invokeDevicesWithMediaType(String mediaType) {
+  Future<PairedInstance?> $$create(
+    $CaptureDevice $instance, {
+    required bool $owner,
+    required String uniqueId,
+    required int position,
+  }) {
+    return createNewInstancePair(
+      $instance,
+      <Object?>[
+        uniqueId,
+        position,
+      ],
+      owner: $owner,
+    );
+  }
+
+  Future<Object?> $devicesWithMediaType(
+    String mediaType,
+  ) {
     return sendInvokeStaticMethod(
       'devicesWithMediaType',
-      <Object?>[mediaType],
+      <Object?>[
+        mediaType,
+      ],
     );
   }
 }
 
 class $PreviewControllerChannel extends TypeChannel<$PreviewController> {
   $PreviewControllerChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'previewController');
+      : super(messenger, 'ios_avfoundatoin/avfoundation/PreviewController');
+
+  Future<PairedInstance?> $$create(
+    $PreviewController $instance, {
+    required bool $owner,
+    required $CaptureSession captureSession,
+  }) {
+    return createNewInstancePair(
+      $instance,
+      <Object?>[
+        captureSession,
+      ],
+      owner: $owner,
+    );
+  }
 }
 
 class $CapturePhotoOutputHandler
     implements TypeChannelHandler<$CapturePhotoOutput> {
-  $CapturePhotoOutput onCreate(
+  $CapturePhotoOutput $$create(
     TypeChannelMessenger messenger,
-    $CapturePhotoOutputCreationArgs args,
   ) {
     throw UnimplementedError();
   }
@@ -211,27 +297,14 @@ class $CapturePhotoOutputHandler
     String methodName,
     List<Object?> arguments,
   ) {
-    // ignore: prefer_final_locals, prefer_function_declarations_over_variables
-    Function method = () {};
     switch (methodName) {
-      default:
-        throw ArgumentError.value(
-          methodName,
-          'methodName',
-          'Unable to invoke static method `$methodName`',
-        );
     }
 
-    // ignore: dead_code
-    return method();
-  }
-
-  @override
-  List<Object?> getCreationArguments(
-    TypeChannelMessenger messenger,
-    $CapturePhotoOutput instance,
-  ) {
-    return <Object?>[];
+    throw ArgumentError.value(
+      methodName,
+      'methodName',
+      'Unable to invoke static method `$methodName`',
+    );
   }
 
   @override
@@ -239,9 +312,8 @@ class $CapturePhotoOutputHandler
     TypeChannelMessenger messenger,
     List<Object?> arguments,
   ) {
-    return onCreate(
+    return $$create(
       messenger,
-      $CapturePhotoOutputCreationArgs(),
     );
   }
 
@@ -252,32 +324,22 @@ class $CapturePhotoOutputHandler
     String methodName,
     List<Object?> arguments,
   ) {
-    // ignore: prefer_final_locals, prefer_function_declarations_over_variables
-    Function method = () {};
     switch (methodName) {
-      case 'capturePhoto':
-        method = () => instance.capturePhoto(
-            arguments[0] as $CapturePhotoSettings,
-            arguments[1] as $CapturePhotoCaptureDelegate);
-        break;
-      default:
-        throw ArgumentError.value(
-          instance,
-          'instance',
-          'Unable to invoke method `$methodName` on',
-        );
     }
 
-    // ignore: dead_code
-    return method();
+    throw ArgumentError.value(
+      instance,
+      'instance',
+      'Unable to invoke method `$methodName` on',
+    );
   }
 }
 
 class $CapturePhotoSettingsHandler
     implements TypeChannelHandler<$CapturePhotoSettings> {
-  $CapturePhotoSettings onCreate(
+  $CapturePhotoSettings $$create(
     TypeChannelMessenger messenger,
-    $CapturePhotoSettingsCreationArgs args,
+    Map<String, Object> processedFormat,
   ) {
     throw UnimplementedError();
   }
@@ -288,27 +350,14 @@ class $CapturePhotoSettingsHandler
     String methodName,
     List<Object?> arguments,
   ) {
-    // ignore: prefer_final_locals, prefer_function_declarations_over_variables
-    Function method = () {};
     switch (methodName) {
-      default:
-        throw ArgumentError.value(
-          methodName,
-          'methodName',
-          'Unable to invoke static method `$methodName`',
-        );
     }
 
-    // ignore: dead_code
-    return method();
-  }
-
-  @override
-  List<Object?> getCreationArguments(
-    TypeChannelMessenger messenger,
-    $CapturePhotoSettings instance,
-  ) {
-    return <Object?>[instance.processedFormat];
+    throw ArgumentError.value(
+      methodName,
+      'methodName',
+      'Unable to invoke static method `$methodName`',
+    );
   }
 
   @override
@@ -316,10 +365,9 @@ class $CapturePhotoSettingsHandler
     TypeChannelMessenger messenger,
     List<Object?> arguments,
   ) {
-    return onCreate(
+    return $$create(
       messenger,
-      $CapturePhotoSettingsCreationArgs()
-        ..processedFormat = arguments[0] as Map<String, Object>,
+      arguments[0] as Map<String, Object>,
     );
   }
 
@@ -330,29 +378,32 @@ class $CapturePhotoSettingsHandler
     String methodName,
     List<Object?> arguments,
   ) {
-    // ignore: prefer_final_locals, prefer_function_declarations_over_variables
-    Function method = () {};
     switch (methodName) {
-      default:
-        throw ArgumentError.value(
-          instance,
-          'instance',
-          'Unable to invoke method `$methodName` on',
-        );
     }
 
-    // ignore: dead_code
-    return method();
+    throw ArgumentError.value(
+      instance,
+      'instance',
+      'Unable to invoke method `$methodName` on',
+    );
   }
 }
 
 class $CapturePhotoCaptureDelegateHandler
     implements TypeChannelHandler<$CapturePhotoCaptureDelegate> {
-  $CapturePhotoCaptureDelegate onCreate(
+  $CapturePhotoCaptureDelegate $$create(
     TypeChannelMessenger messenger,
-    $CapturePhotoCaptureDelegateCreationArgs args,
   ) {
     throw UnimplementedError();
+  }
+
+  dynamic $didFinishProcessingPhoto(
+    $CapturePhotoCaptureDelegate $instance,
+    $CapturePhoto photo,
+  ) {
+    return $instance.didFinishProcessingPhoto(
+      photo,
+    );
   }
 
   @override
@@ -361,27 +412,14 @@ class $CapturePhotoCaptureDelegateHandler
     String methodName,
     List<Object?> arguments,
   ) {
-    // ignore: prefer_final_locals, prefer_function_declarations_over_variables
-    Function method = () {};
     switch (methodName) {
-      default:
-        throw ArgumentError.value(
-          methodName,
-          'methodName',
-          'Unable to invoke static method `$methodName`',
-        );
     }
 
-    // ignore: dead_code
-    return method();
-  }
-
-  @override
-  List<Object?> getCreationArguments(
-    TypeChannelMessenger messenger,
-    $CapturePhotoCaptureDelegate instance,
-  ) {
-    return <Object?>[];
+    throw ArgumentError.value(
+      methodName,
+      'methodName',
+      'Unable to invoke static method `$methodName`',
+    );
   }
 
   @override
@@ -389,9 +427,8 @@ class $CapturePhotoCaptureDelegateHandler
     TypeChannelMessenger messenger,
     List<Object?> arguments,
   ) {
-    return onCreate(
+    return $$create(
       messenger,
-      $CapturePhotoCaptureDelegateCreationArgs(),
     );
   }
 
@@ -402,30 +439,25 @@ class $CapturePhotoCaptureDelegateHandler
     String methodName,
     List<Object?> arguments,
   ) {
-    // ignore: prefer_final_locals, prefer_function_declarations_over_variables
-    Function method = () {};
     switch (methodName) {
       case 'didFinishProcessingPhoto':
-        method = () =>
-            instance.didFinishProcessingPhoto(arguments[0] as $CapturePhoto);
-        break;
-      default:
-        throw ArgumentError.value(
+        return $didFinishProcessingPhoto(
           instance,
-          'instance',
-          'Unable to invoke method `$methodName` on',
+          arguments[0] as $CapturePhoto,
         );
     }
 
-    // ignore: dead_code
-    return method();
+    throw ArgumentError.value(
+      instance,
+      'instance',
+      'Unable to invoke method `$methodName` on',
+    );
   }
 }
 
 class $CaptureOutputHandler implements TypeChannelHandler<$CaptureOutput> {
-  $CaptureOutput onCreate(
+  $CaptureOutput $$create(
     TypeChannelMessenger messenger,
-    $CaptureOutputCreationArgs args,
   ) {
     throw UnimplementedError();
   }
@@ -436,27 +468,14 @@ class $CaptureOutputHandler implements TypeChannelHandler<$CaptureOutput> {
     String methodName,
     List<Object?> arguments,
   ) {
-    // ignore: prefer_final_locals, prefer_function_declarations_over_variables
-    Function method = () {};
     switch (methodName) {
-      default:
-        throw ArgumentError.value(
-          methodName,
-          'methodName',
-          'Unable to invoke static method `$methodName`',
-        );
     }
 
-    // ignore: dead_code
-    return method();
-  }
-
-  @override
-  List<Object?> getCreationArguments(
-    TypeChannelMessenger messenger,
-    $CaptureOutput instance,
-  ) {
-    return <Object?>[];
+    throw ArgumentError.value(
+      methodName,
+      'methodName',
+      'Unable to invoke static method `$methodName`',
+    );
   }
 
   @override
@@ -464,9 +483,8 @@ class $CaptureOutputHandler implements TypeChannelHandler<$CaptureOutput> {
     TypeChannelMessenger messenger,
     List<Object?> arguments,
   ) {
-    return onCreate(
+    return $$create(
       messenger,
-      $CaptureOutputCreationArgs(),
     );
   }
 
@@ -477,26 +495,21 @@ class $CaptureOutputHandler implements TypeChannelHandler<$CaptureOutput> {
     String methodName,
     List<Object?> arguments,
   ) {
-    // ignore: prefer_final_locals, prefer_function_declarations_over_variables
-    Function method = () {};
     switch (methodName) {
-      default:
-        throw ArgumentError.value(
-          instance,
-          'instance',
-          'Unable to invoke method `$methodName` on',
-        );
     }
 
-    // ignore: dead_code
-    return method();
+    throw ArgumentError.value(
+      instance,
+      'instance',
+      'Unable to invoke method `$methodName` on',
+    );
   }
 }
 
 class $CapturePhotoHandler implements TypeChannelHandler<$CapturePhoto> {
-  $CapturePhoto onCreate(
+  $CapturePhoto $$create(
     TypeChannelMessenger messenger,
-    $CapturePhotoCreationArgs args,
+    Uint8List? fileDataRepresentation,
   ) {
     throw UnimplementedError();
   }
@@ -507,27 +520,14 @@ class $CapturePhotoHandler implements TypeChannelHandler<$CapturePhoto> {
     String methodName,
     List<Object?> arguments,
   ) {
-    // ignore: prefer_final_locals, prefer_function_declarations_over_variables
-    Function method = () {};
     switch (methodName) {
-      default:
-        throw ArgumentError.value(
-          methodName,
-          'methodName',
-          'Unable to invoke static method `$methodName`',
-        );
     }
 
-    // ignore: dead_code
-    return method();
-  }
-
-  @override
-  List<Object?> getCreationArguments(
-    TypeChannelMessenger messenger,
-    $CapturePhoto instance,
-  ) {
-    return <Object?>[instance.fileDataRepresentation];
+    throw ArgumentError.value(
+      methodName,
+      'methodName',
+      'Unable to invoke static method `$methodName`',
+    );
   }
 
   @override
@@ -535,10 +535,9 @@ class $CapturePhotoHandler implements TypeChannelHandler<$CapturePhoto> {
     TypeChannelMessenger messenger,
     List<Object?> arguments,
   ) {
-    return onCreate(
+    return $$create(
       messenger,
-      $CapturePhotoCreationArgs()
-        ..fileDataRepresentation = arguments[0] as Uint8List?,
+      arguments[0] as Uint8List?,
     );
   }
 
@@ -549,27 +548,22 @@ class $CapturePhotoHandler implements TypeChannelHandler<$CapturePhoto> {
     String methodName,
     List<Object?> arguments,
   ) {
-    // ignore: prefer_final_locals, prefer_function_declarations_over_variables
-    Function method = () {};
     switch (methodName) {
-      default:
-        throw ArgumentError.value(
-          instance,
-          'instance',
-          'Unable to invoke method `$methodName` on',
-        );
     }
 
-    // ignore: dead_code
-    return method();
+    throw ArgumentError.value(
+      instance,
+      'instance',
+      'Unable to invoke method `$methodName` on',
+    );
   }
 }
 
 class $CaptureDeviceInputHandler
     implements TypeChannelHandler<$CaptureDeviceInput> {
-  $CaptureDeviceInput onCreate(
+  $CaptureDeviceInput $$create(
     TypeChannelMessenger messenger,
-    $CaptureDeviceInputCreationArgs args,
+    $CaptureDevice device,
   ) {
     throw UnimplementedError();
   }
@@ -580,27 +574,14 @@ class $CaptureDeviceInputHandler
     String methodName,
     List<Object?> arguments,
   ) {
-    // ignore: prefer_final_locals, prefer_function_declarations_over_variables
-    Function method = () {};
     switch (methodName) {
-      default:
-        throw ArgumentError.value(
-          methodName,
-          'methodName',
-          'Unable to invoke static method `$methodName`',
-        );
     }
 
-    // ignore: dead_code
-    return method();
-  }
-
-  @override
-  List<Object?> getCreationArguments(
-    TypeChannelMessenger messenger,
-    $CaptureDeviceInput instance,
-  ) {
-    return <Object?>[instance.device];
+    throw ArgumentError.value(
+      methodName,
+      'methodName',
+      'Unable to invoke static method `$methodName`',
+    );
   }
 
   @override
@@ -608,10 +589,9 @@ class $CaptureDeviceInputHandler
     TypeChannelMessenger messenger,
     List<Object?> arguments,
   ) {
-    return onCreate(
+    return $$create(
       messenger,
-      $CaptureDeviceInputCreationArgs()
-        ..device = arguments[0] as $CaptureDevice,
+      arguments[0] as $CaptureDevice,
     );
   }
 
@@ -622,26 +602,20 @@ class $CaptureDeviceInputHandler
     String methodName,
     List<Object?> arguments,
   ) {
-    // ignore: prefer_final_locals, prefer_function_declarations_over_variables
-    Function method = () {};
     switch (methodName) {
-      default:
-        throw ArgumentError.value(
-          instance,
-          'instance',
-          'Unable to invoke method `$methodName` on',
-        );
     }
 
-    // ignore: dead_code
-    return method();
+    throw ArgumentError.value(
+      instance,
+      'instance',
+      'Unable to invoke method `$methodName` on',
+    );
   }
 }
 
 class $CaptureInputHandler implements TypeChannelHandler<$CaptureInput> {
-  $CaptureInput onCreate(
+  $CaptureInput $$create(
     TypeChannelMessenger messenger,
-    $CaptureInputCreationArgs args,
   ) {
     throw UnimplementedError();
   }
@@ -652,27 +626,14 @@ class $CaptureInputHandler implements TypeChannelHandler<$CaptureInput> {
     String methodName,
     List<Object?> arguments,
   ) {
-    // ignore: prefer_final_locals, prefer_function_declarations_over_variables
-    Function method = () {};
     switch (methodName) {
-      default:
-        throw ArgumentError.value(
-          methodName,
-          'methodName',
-          'Unable to invoke static method `$methodName`',
-        );
     }
 
-    // ignore: dead_code
-    return method();
-  }
-
-  @override
-  List<Object?> getCreationArguments(
-    TypeChannelMessenger messenger,
-    $CaptureInput instance,
-  ) {
-    return <Object?>[];
+    throw ArgumentError.value(
+      methodName,
+      'methodName',
+      'Unable to invoke static method `$methodName`',
+    );
   }
 
   @override
@@ -680,9 +641,8 @@ class $CaptureInputHandler implements TypeChannelHandler<$CaptureInput> {
     TypeChannelMessenger messenger,
     List<Object?> arguments,
   ) {
-    return onCreate(
+    return $$create(
       messenger,
-      $CaptureInputCreationArgs(),
     );
   }
 
@@ -693,26 +653,20 @@ class $CaptureInputHandler implements TypeChannelHandler<$CaptureInput> {
     String methodName,
     List<Object?> arguments,
   ) {
-    // ignore: prefer_final_locals, prefer_function_declarations_over_variables
-    Function method = () {};
     switch (methodName) {
-      default:
-        throw ArgumentError.value(
-          instance,
-          'instance',
-          'Unable to invoke method `$methodName` on',
-        );
     }
 
-    // ignore: dead_code
-    return method();
+    throw ArgumentError.value(
+      instance,
+      'instance',
+      'Unable to invoke method `$methodName` on',
+    );
   }
 }
 
 class $CaptureSessionHandler implements TypeChannelHandler<$CaptureSession> {
-  $CaptureSession onCreate(
+  $CaptureSession $$create(
     TypeChannelMessenger messenger,
-    $CaptureSessionCreationArgs args,
   ) {
     throw UnimplementedError();
   }
@@ -723,27 +677,14 @@ class $CaptureSessionHandler implements TypeChannelHandler<$CaptureSession> {
     String methodName,
     List<Object?> arguments,
   ) {
-    // ignore: prefer_final_locals, prefer_function_declarations_over_variables
-    Function method = () {};
     switch (methodName) {
-      default:
-        throw ArgumentError.value(
-          methodName,
-          'methodName',
-          'Unable to invoke static method `$methodName`',
-        );
     }
 
-    // ignore: dead_code
-    return method();
-  }
-
-  @override
-  List<Object?> getCreationArguments(
-    TypeChannelMessenger messenger,
-    $CaptureSession instance,
-  ) {
-    return <Object?>[];
+    throw ArgumentError.value(
+      methodName,
+      'methodName',
+      'Unable to invoke static method `$methodName`',
+    );
   }
 
   @override
@@ -751,9 +692,8 @@ class $CaptureSessionHandler implements TypeChannelHandler<$CaptureSession> {
     TypeChannelMessenger messenger,
     List<Object?> arguments,
   ) {
-    return onCreate(
+    return $$create(
       messenger,
-      $CaptureSessionCreationArgs(),
     );
   }
 
@@ -764,44 +704,23 @@ class $CaptureSessionHandler implements TypeChannelHandler<$CaptureSession> {
     String methodName,
     List<Object?> arguments,
   ) {
-    // ignore: prefer_final_locals, prefer_function_declarations_over_variables
-    Function method = () {};
     switch (methodName) {
-      case 'addInput':
-        method = () => instance.addInput(arguments[0] as $CaptureInput);
-        break;
-      case 'addOutput':
-        method = () => instance.addOutput(arguments[0] as $CaptureOutput);
-        break;
-      case 'startRunning':
-        method = () => instance.startRunning();
-        break;
-      case 'stopRunning':
-        method = () => instance.stopRunning();
-        break;
-      default:
-        throw ArgumentError.value(
-          instance,
-          'instance',
-          'Unable to invoke method `$methodName` on',
-        );
     }
 
-    // ignore: dead_code
-    return method();
+    throw ArgumentError.value(
+      instance,
+      'instance',
+      'Unable to invoke method `$methodName` on',
+    );
   }
 }
 
 class $CaptureDeviceHandler implements TypeChannelHandler<$CaptureDevice> {
-  $CaptureDevice onCreate(
+  $CaptureDevice $$create(
     TypeChannelMessenger messenger,
-    $CaptureDeviceCreationArgs args,
+    String uniqueId,
+    int position,
   ) {
-    throw UnimplementedError();
-  }
-
-  double $onDevicesWithMediaType(
-      TypeChannelMessenger messenger, String mediaType) {
     throw UnimplementedError();
   }
 
@@ -811,31 +730,14 @@ class $CaptureDeviceHandler implements TypeChannelHandler<$CaptureDevice> {
     String methodName,
     List<Object?> arguments,
   ) {
-    // ignore: prefer_final_locals, prefer_function_declarations_over_variables
-    Function method = () {};
     switch (methodName) {
-      case 'devicesWithMediaType':
-        method =
-            () => $onDevicesWithMediaType(messenger, arguments[0] as String);
-        break;
-      default:
-        throw ArgumentError.value(
-          methodName,
-          'methodName',
-          'Unable to invoke static method `$methodName`',
-        );
     }
 
-    // ignore: dead_code
-    return method();
-  }
-
-  @override
-  List<Object?> getCreationArguments(
-    TypeChannelMessenger messenger,
-    $CaptureDevice instance,
-  ) {
-    return <Object?>[instance.uniqueId, instance.position];
+    throw ArgumentError.value(
+      methodName,
+      'methodName',
+      'Unable to invoke static method `$methodName`',
+    );
   }
 
   @override
@@ -843,11 +745,10 @@ class $CaptureDeviceHandler implements TypeChannelHandler<$CaptureDevice> {
     TypeChannelMessenger messenger,
     List<Object?> arguments,
   ) {
-    return onCreate(
+    return $$create(
       messenger,
-      $CaptureDeviceCreationArgs()
-        ..uniqueId = arguments[0] as String
-        ..position = arguments[1] as int,
+      arguments[0] as String,
+      arguments[1] as int,
     );
   }
 
@@ -858,27 +759,22 @@ class $CaptureDeviceHandler implements TypeChannelHandler<$CaptureDevice> {
     String methodName,
     List<Object?> arguments,
   ) {
-    // ignore: prefer_final_locals, prefer_function_declarations_over_variables
-    Function method = () {};
     switch (methodName) {
-      default:
-        throw ArgumentError.value(
-          instance,
-          'instance',
-          'Unable to invoke method `$methodName` on',
-        );
     }
 
-    // ignore: dead_code
-    return method();
+    throw ArgumentError.value(
+      instance,
+      'instance',
+      'Unable to invoke method `$methodName` on',
+    );
   }
 }
 
 class $PreviewControllerHandler
     implements TypeChannelHandler<$PreviewController> {
-  $PreviewController onCreate(
+  $PreviewController $$create(
     TypeChannelMessenger messenger,
-    $PreviewControllerCreationArgs args,
+    $CaptureSession captureSession,
   ) {
     throw UnimplementedError();
   }
@@ -889,27 +785,14 @@ class $PreviewControllerHandler
     String methodName,
     List<Object?> arguments,
   ) {
-    // ignore: prefer_final_locals, prefer_function_declarations_over_variables
-    Function method = () {};
     switch (methodName) {
-      default:
-        throw ArgumentError.value(
-          methodName,
-          'methodName',
-          'Unable to invoke static method `$methodName`',
-        );
     }
 
-    // ignore: dead_code
-    return method();
-  }
-
-  @override
-  List<Object?> getCreationArguments(
-    TypeChannelMessenger messenger,
-    $PreviewController instance,
-  ) {
-    return <Object?>[instance.captureSession];
+    throw ArgumentError.value(
+      methodName,
+      'methodName',
+      'Unable to invoke static method `$methodName`',
+    );
   }
 
   @override
@@ -917,10 +800,9 @@ class $PreviewControllerHandler
     TypeChannelMessenger messenger,
     List<Object?> arguments,
   ) {
-    return onCreate(
+    return $$create(
       messenger,
-      $PreviewControllerCreationArgs()
-        ..captureSession = arguments[0] as $CaptureSession,
+      arguments[0] as $CaptureSession,
     );
   }
 
@@ -931,19 +813,14 @@ class $PreviewControllerHandler
     String methodName,
     List<Object?> arguments,
   ) {
-    // ignore: prefer_final_locals, prefer_function_declarations_over_variables
-    Function method = () {};
     switch (methodName) {
-      default:
-        throw ArgumentError.value(
-          instance,
-          'instance',
-          'Unable to invoke method `$methodName` on',
-        );
     }
 
-    // ignore: dead_code
-    return method();
+    throw ArgumentError.value(
+      instance,
+      'instance',
+      'Unable to invoke method `$methodName` on',
+    );
   }
 }
 
@@ -952,40 +829,49 @@ class $LibraryImplementations {
 
   final TypeChannelMessenger messenger;
 
-  $CapturePhotoOutputChannel get capturePhotoOutputChannel =>
+  $CapturePhotoOutputChannel get channelCapturePhotoOutput =>
       $CapturePhotoOutputChannel(messenger);
-  $CapturePhotoSettingsChannel get capturePhotoSettingsChannel =>
-      $CapturePhotoSettingsChannel(messenger);
-  $CapturePhotoCaptureDelegateChannel get capturePhotoCaptureDelegateChannel =>
-      $CapturePhotoCaptureDelegateChannel(messenger);
-  $CaptureOutputChannel get captureOutputChannel =>
-      $CaptureOutputChannel(messenger);
-  $CapturePhotoChannel get capturePhotoChannel =>
-      $CapturePhotoChannel(messenger);
-  $CaptureDeviceInputChannel get captureDeviceInputChannel =>
-      $CaptureDeviceInputChannel(messenger);
-  $CaptureInputChannel get captureInputChannel =>
-      $CaptureInputChannel(messenger);
-  $CaptureSessionChannel get captureSessionChannel =>
-      $CaptureSessionChannel(messenger);
-  $CaptureDeviceChannel get captureDeviceChannel =>
-      $CaptureDeviceChannel(messenger);
-  $PreviewControllerChannel get previewControllerChannel =>
-      $PreviewControllerChannel(messenger);
-  $CapturePhotoOutputHandler get capturePhotoOutputHandler =>
+  $CapturePhotoOutputHandler get handlerCapturePhotoOutput =>
       $CapturePhotoOutputHandler();
-  $CapturePhotoSettingsHandler get capturePhotoSettingsHandler =>
+
+  $CapturePhotoSettingsChannel get channelCapturePhotoSettings =>
+      $CapturePhotoSettingsChannel(messenger);
+  $CapturePhotoSettingsHandler get handlerCapturePhotoSettings =>
       $CapturePhotoSettingsHandler();
-  $CapturePhotoCaptureDelegateHandler get capturePhotoCaptureDelegateHandler =>
+
+  $CapturePhotoCaptureDelegateChannel get channelCapturePhotoCaptureDelegate =>
+      $CapturePhotoCaptureDelegateChannel(messenger);
+  $CapturePhotoCaptureDelegateHandler get handlerCapturePhotoCaptureDelegate =>
       $CapturePhotoCaptureDelegateHandler();
-  $CaptureOutputHandler get captureOutputHandler => $CaptureOutputHandler();
-  $CapturePhotoHandler get capturePhotoHandler => $CapturePhotoHandler();
-  $CaptureDeviceInputHandler get captureDeviceInputHandler =>
+
+  $CaptureOutputChannel get channelCaptureOutput =>
+      $CaptureOutputChannel(messenger);
+  $CaptureOutputHandler get handlerCaptureOutput => $CaptureOutputHandler();
+
+  $CapturePhotoChannel get channelCapturePhoto =>
+      $CapturePhotoChannel(messenger);
+  $CapturePhotoHandler get handlerCapturePhoto => $CapturePhotoHandler();
+
+  $CaptureDeviceInputChannel get channelCaptureDeviceInput =>
+      $CaptureDeviceInputChannel(messenger);
+  $CaptureDeviceInputHandler get handlerCaptureDeviceInput =>
       $CaptureDeviceInputHandler();
-  $CaptureInputHandler get captureInputHandler => $CaptureInputHandler();
-  $CaptureSessionHandler get captureSessionHandler => $CaptureSessionHandler();
-  $CaptureDeviceHandler get captureDeviceHandler => $CaptureDeviceHandler();
-  $PreviewControllerHandler get previewControllerHandler =>
+
+  $CaptureInputChannel get channelCaptureInput =>
+      $CaptureInputChannel(messenger);
+  $CaptureInputHandler get handlerCaptureInput => $CaptureInputHandler();
+
+  $CaptureSessionChannel get channelCaptureSession =>
+      $CaptureSessionChannel(messenger);
+  $CaptureSessionHandler get handlerCaptureSession => $CaptureSessionHandler();
+
+  $CaptureDeviceChannel get channelCaptureDevice =>
+      $CaptureDeviceChannel(messenger);
+  $CaptureDeviceHandler get handlerCaptureDevice => $CaptureDeviceHandler();
+
+  $PreviewControllerChannel get channelPreviewController =>
+      $PreviewControllerChannel(messenger);
+  $PreviewControllerHandler get handlerPreviewController =>
       $PreviewControllerHandler();
 }
 
@@ -995,48 +881,66 @@ class $ChannelRegistrar {
   final $LibraryImplementations implementations;
 
   void registerHandlers() {
-    implementations.capturePhotoOutputChannel.setHandler(
-      implementations.capturePhotoOutputHandler,
+    implementations.channelCapturePhotoOutput.setHandler(
+      implementations.handlerCapturePhotoOutput,
     );
-    implementations.capturePhotoSettingsChannel.setHandler(
-      implementations.capturePhotoSettingsHandler,
+
+    implementations.channelCapturePhotoSettings.setHandler(
+      implementations.handlerCapturePhotoSettings,
     );
-    implementations.capturePhotoCaptureDelegateChannel.setHandler(
-      implementations.capturePhotoCaptureDelegateHandler,
+
+    implementations.channelCapturePhotoCaptureDelegate.setHandler(
+      implementations.handlerCapturePhotoCaptureDelegate,
     );
-    implementations.captureOutputChannel.setHandler(
-      implementations.captureOutputHandler,
+
+    implementations.channelCaptureOutput.setHandler(
+      implementations.handlerCaptureOutput,
     );
-    implementations.capturePhotoChannel.setHandler(
-      implementations.capturePhotoHandler,
+
+    implementations.channelCapturePhoto.setHandler(
+      implementations.handlerCapturePhoto,
     );
-    implementations.captureDeviceInputChannel.setHandler(
-      implementations.captureDeviceInputHandler,
+
+    implementations.channelCaptureDeviceInput.setHandler(
+      implementations.handlerCaptureDeviceInput,
     );
-    implementations.captureInputChannel.setHandler(
-      implementations.captureInputHandler,
+
+    implementations.channelCaptureInput.setHandler(
+      implementations.handlerCaptureInput,
     );
-    implementations.captureSessionChannel.setHandler(
-      implementations.captureSessionHandler,
+
+    implementations.channelCaptureSession.setHandler(
+      implementations.handlerCaptureSession,
     );
-    implementations.captureDeviceChannel.setHandler(
-      implementations.captureDeviceHandler,
+
+    implementations.channelCaptureDevice.setHandler(
+      implementations.handlerCaptureDevice,
     );
-    implementations.previewControllerChannel.setHandler(
-      implementations.previewControllerHandler,
+
+    implementations.channelPreviewController.setHandler(
+      implementations.handlerPreviewController,
     );
   }
 
   void unregisterHandlers() {
-    implementations.capturePhotoOutputChannel.removeHandler();
-    implementations.capturePhotoSettingsChannel.removeHandler();
-    implementations.capturePhotoCaptureDelegateChannel.removeHandler();
-    implementations.captureOutputChannel.removeHandler();
-    implementations.capturePhotoChannel.removeHandler();
-    implementations.captureDeviceInputChannel.removeHandler();
-    implementations.captureInputChannel.removeHandler();
-    implementations.captureSessionChannel.removeHandler();
-    implementations.captureDeviceChannel.removeHandler();
-    implementations.previewControllerChannel.removeHandler();
+    implementations.channelCapturePhotoOutput.removeHandler();
+
+    implementations.channelCapturePhotoSettings.removeHandler();
+
+    implementations.channelCapturePhotoCaptureDelegate.removeHandler();
+
+    implementations.channelCaptureOutput.removeHandler();
+
+    implementations.channelCapturePhoto.removeHandler();
+
+    implementations.channelCaptureDeviceInput.removeHandler();
+
+    implementations.channelCaptureInput.removeHandler();
+
+    implementations.channelCaptureSession.removeHandler();
+
+    implementations.channelCaptureDevice.removeHandler();
+
+    implementations.channelPreviewController.removeHandler();
   }
 }

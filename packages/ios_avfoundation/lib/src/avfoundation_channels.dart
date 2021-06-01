@@ -1,11 +1,15 @@
+import 'dart:typed_data';
+
 import 'package:reference/reference.dart';
 
 import 'avfoundation.dart';
 import 'avfoundation.g.dart';
 
 class ChannelRegistrar extends $ChannelRegistrar {
-  ChannelRegistrar($LibraryImplementations implementations)
-      : super(implementations);
+  ChannelRegistrar(this.implementations) : super(implementations);
+
+  @override
+  final LibraryImplementations implementations;
 
   static ChannelRegistrar instance =
       ChannelRegistrar(LibraryImplementations(MethodChannelMessenger.instance))
@@ -16,29 +20,27 @@ class LibraryImplementations extends $LibraryImplementations {
   LibraryImplementations(TypeChannelMessenger messenger) : super(messenger);
 
   @override
-  CaptureDeviceHandler get captureDeviceHandler => CaptureDeviceHandler();
+  CaptureDeviceHandler get handlerCaptureDevice => CaptureDeviceHandler();
 
   @override
-  CapturePhotoHandler get capturePhotoHandler => CapturePhotoHandler();
+  CapturePhotoHandler get handlerCapturePhoto => CapturePhotoHandler();
 }
 
 class CaptureDeviceHandler extends $CaptureDeviceHandler {
   @override
-  $CaptureDevice onCreate(
-    TypeChannelMessenger messenger,
-    $CaptureDeviceCreationArgs args,
-  ) {
+  CaptureDevice $$create(
+      TypeChannelMessenger messenger, String uniqueId, int position) {
     // ignore: invalid_use_of_visible_for_testing_member
-    return CaptureDevice(uniqueId: args.uniqueId, position: args.position);
+    return CaptureDevice(uniqueId: uniqueId, position: position);
   }
 }
 
 class CapturePhotoHandler extends $CapturePhotoHandler {
   @override
-  $CapturePhoto onCreate(
+  CapturePhoto $$create(
     TypeChannelMessenger messenger,
-    $CapturePhotoCreationArgs args,
+    Uint8List? fileDataRepresentation,
   ) {
-    return CapturePhoto(args.fileDataRepresentation);
+    return CapturePhoto(fileDataRepresentation);
   }
 }

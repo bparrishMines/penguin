@@ -4,14 +4,6 @@
 #import "REFTypeChannel.h"
 #import "IAFFoundation.h"
 
-/*
-@class IAFCaptureSessionProxy;
-@class IAFCaptureDeviceProxy;
-@class IAFCaptureDeviceInputProxy;
-@class IAFPreviewControllerProxy;
-@class IAFCaptureInputProxy;
- */
-
 NS_ASSUME_NONNULL_BEGIN
 
 @interface IAFChannelRegistrar : _IAFChannelRegistrar

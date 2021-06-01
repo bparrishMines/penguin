@@ -37,6 +37,7 @@ String generateObjcImpl({
       final Map<String, Object> methodData = <String, Object>{};
       methodData['name'] = methodNode.name;
       methodData['hasParameters'] = methodNode.parameters.isNotEmpty;
+      methodData['returnsFuture'] = methodNode.returnType.name == 'Future';
 
       final List<Map<String, Object>> parameters = <Map<String, Object>>[];
       for (int i = 0; i < methodNode.parameters.length; i++) {
@@ -58,6 +59,7 @@ String generateObjcImpl({
     for (MethodNode methodNode in classNode.methods) {
       final Map<String, Object> methodData = <String, Object>{};
       methodData['name'] = methodNode.name;
+      methodData['returnsFuture'] = methodNode.returnType.name == 'Future';
 
       final List<Map<String, Object>> parameters = <Map<String, Object>>[];
       for (int i = 0; i < methodNode.parameters.length; i++) {

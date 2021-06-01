@@ -24,117 +24,107 @@ abstract class CaptureDevicePosition {
   static const int front = 2;
 }
 
-@Reference('capturePhotoOutput')
+@Reference('ios_avfoundatoin/avfoundation/CapturePhotoOutput')
 class CapturePhotoOutput extends CaptureOutput with $CapturePhotoOutput {
   CapturePhotoOutput() {
-    _channel.createNewInstancePair(this, owner: true);
+    _channel.$$create(this, $owner: true);
   }
 
   static $CapturePhotoOutputChannel get _channel =>
-      ChannelRegistrar.instance.implementations.capturePhotoOutputChannel;
+      ChannelRegistrar.instance.implementations.channelCapturePhotoOutput;
 
-  @override
   Future<void> capturePhoto(
     covariant CapturePhotoSettings settings,
     covariant CapturePhotoCaptureDelegate delegate,
   ) {
-    return _channel.$invokeCapturePhoto(this, settings, delegate);
+    return _channel.$capturePhoto(this, settings, delegate);
   }
 }
 
-@Reference('CapturePhotoSettings')
+@Reference('ios_avfoundatoin/avfoundation/CapturePhotoSettings')
 class CapturePhotoSettings with $CapturePhotoSettings {
   CapturePhotoSettings(this.processedFormat) {
-    _channel.createNewInstancePair(this, owner: true);
+    _channel.$$create(this, $owner: true, processedFormat: processedFormat);
   }
 
   static $CapturePhotoSettingsChannel get _channel =>
-      ChannelRegistrar.instance.implementations.capturePhotoSettingsChannel;
+      ChannelRegistrar.instance.implementations.channelCapturePhotoSettings;
 
-  @override
   final Map<String, Object> processedFormat;
 }
 
-@Reference('CapturePhotoCaptureDelegate')
+@Reference('ios_avfoundatoin/avfoundation/CapturePhotoCaptureDelegate')
 abstract class CapturePhotoCaptureDelegate with $CapturePhotoCaptureDelegate {
   // TODO: Mention this needs to be kept in memory on this side. Maybe didFinishProcessingPhoto can release pair.
   CapturePhotoCaptureDelegate() {
-    _channel.createNewInstancePair(this, owner: true);
+    _channel.$$create(this, $owner: true);
   }
 
   static $CapturePhotoCaptureDelegateChannel get _channel => ChannelRegistrar
-      .instance.implementations.capturePhotoCaptureDelegateChannel;
+      .instance.implementations.channelCapturePhotoCaptureDelegate;
 
   // TODO: Create AvFoundationError?
   @override
   void didFinishProcessingPhoto(covariant CapturePhoto photo);
 }
 
-@Reference('CaptureOutput')
+@Reference('ios_avfoundatoin/avfoundation/CaptureOutput')
 abstract class CaptureOutput with $CaptureOutput {}
 
-@Reference('CapturePhoto')
+@Reference('ios_avfoundatoin/avfoundation/CapturePhoto')
 class CapturePhoto with $CapturePhoto {
   CapturePhoto(this.fileDataRepresentation);
 
-  @override
   final Uint8List? fileDataRepresentation;
 }
 
-@Reference('captureDeviceInput')
+@Reference('ios_avfoundatoin/avfoundation/CaptureDeviceInput')
 class CaptureDeviceInput extends CaptureInput with $CaptureDeviceInput {
   CaptureDeviceInput(this.device) {
-    _channel.createNewInstancePair(this, owner: true);
+    _channel.$$create(this, $owner: true, device: device);
   }
 
   static $CaptureDeviceInputChannel get _channel =>
-      ChannelRegistrar.instance.implementations.captureDeviceInputChannel;
+      ChannelRegistrar.instance.implementations.channelCaptureDeviceInput;
 
-  @override
   final CaptureDevice device;
 }
 
-@Reference('captureInput')
+@Reference('ios_avfoundatoin/avfoundation/CaptureInput')
 abstract class CaptureInput with $CaptureInput {}
 
-@Reference('captureSession')
+@Reference('ios_avfoundatoin/avfoundation/CaptureSession')
 class CaptureSession with $CaptureSession {
   CaptureSession() {
-    _channel.createNewInstancePair(this, owner: true);
+    _channel.$$create(this, $owner: true);
   }
 
   static $CaptureSessionChannel get _channel =>
-      ChannelRegistrar.instance.implementations.captureSessionChannel;
+      ChannelRegistrar.instance.implementations.channelCaptureSession;
 
-  @override
   Future<void> addInput(covariant CaptureInput input) {
-    return _channel.$invokeAddInput(this, input);
+    return _channel.$addInput(this, input);
   }
 
-  @override
   Future<void> addOutput(covariant CaptureOutput output) {
-    return _channel.$invokeAddOutput(this, output);
+    return _channel.$addOutput(this, output);
   }
 
-  @override
-  Future<void> startRunning() => _channel.$invokeStartRunning(this);
+  Future<void> startRunning() => _channel.$startRunning(this);
 
-  @override
-  Future<void> stopRunning() => _channel.$invokeStopRunning(this);
+  Future<void> stopRunning() => _channel.$stopRunning(this);
 }
 
-@Reference('captureDevice')
+@Reference('ios_avfoundatoin/avfoundation/CaptureDevice')
 class CaptureDevice with $CaptureDevice {
   @visibleForTesting
   CaptureDevice({required this.uniqueId, required this.position});
 
   static $CaptureDeviceChannel get _channel =>
-      ChannelRegistrar.instance.implementations.captureDeviceChannel;
+      ChannelRegistrar.instance.implementations.channelCaptureDevice;
 
-  @override
   final String uniqueId;
 
-  @override
   final int position;
 
   static Future<List<CaptureDevice>> devicesWithMediaType(
@@ -142,7 +132,7 @@ class CaptureDevice with $CaptureDevice {
   ) async {
     assert(mediaType == MediaType.video);
     final List<Object?> result =
-        await _channel.$invokeDevicesWithMediaType(mediaType) as List<Object?>;
+        await _channel.$devicesWithMediaType(mediaType) as List<Object?>;
     return result.cast<CaptureDevice>();
   }
 }
@@ -168,15 +158,14 @@ class Preview extends StatelessWidget {
   }
 }
 
-@Reference('previewController')
+@Reference('ios_avfoundatoin/avfoundation/PreviewController')
 class PreviewController with $PreviewController {
   PreviewController(this.captureSession) {
-    _channel.createNewInstancePair(this, owner: true);
+    _channel.$$create(this, $owner: true, captureSession: captureSession);
   }
 
   static $PreviewControllerChannel get _channel =>
-      ChannelRegistrar.instance.implementations.previewControllerChannel;
+      ChannelRegistrar.instance.implementations.channelPreviewController;
 
-  @override
   final CaptureSession captureSession;
 }

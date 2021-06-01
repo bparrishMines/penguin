@@ -1,6 +1,9 @@
 include: package:lint/analysis_options_package.yaml
+analyzer:
+  exclude: ['lib/src/avfoundation.g.dart']
 
 linter:
   rules:
     avoid_classes_with_only_static_members: false
     cast_nullable_to_non_nullable: false
+    overridden_fields: false
