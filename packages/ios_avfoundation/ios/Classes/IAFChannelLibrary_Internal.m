@@ -12,7 +12,7 @@
 
 @implementation _IAFCapturePhotoOutputChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
-  return self = [super initWithMessenger:messenger name:@"__class__channel"];
+  return self = [super initWithMessenger:messenger name:@"ios_avfoundatoin/avfoundation/CapturePhotoOutput"];
 }
 
 
@@ -35,7 +35,7 @@
 
 @implementation _IAFCapturePhotoSettingsChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
-  return self = [super initWithMessenger:messenger name:@"__class__channel"];
+  return self = [super initWithMessenger:messenger name:@"ios_avfoundatoin/avfoundation/CapturePhotoSettings"];
 }
 
 
@@ -58,7 +58,7 @@
 
 @implementation _IAFCapturePhotoCaptureDelegateChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
-  return self = [super initWithMessenger:messenger name:@"__class__channel"];
+  return self = [super initWithMessenger:messenger name:@"ios_avfoundatoin/avfoundation/CapturePhotoCaptureDelegate"];
 }
 
 
@@ -92,7 +92,7 @@
 
 @implementation _IAFCaptureOutputChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
-  return self = [super initWithMessenger:messenger name:@"__class__channel"];
+  return self = [super initWithMessenger:messenger name:@"ios_avfoundatoin/avfoundation/CaptureOutput"];
 }
 
 
@@ -113,7 +113,7 @@
 
 @implementation _IAFCapturePhotoChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
-  return self = [super initWithMessenger:messenger name:@"__class__channel"];
+  return self = [super initWithMessenger:messenger name:@"ios_avfoundatoin/avfoundation/CapturePhoto"];
 }
 
 
@@ -136,7 +136,7 @@
 
 @implementation _IAFCaptureDeviceInputChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
-  return self = [super initWithMessenger:messenger name:@"__class__channel"];
+  return self = [super initWithMessenger:messenger name:@"ios_avfoundatoin/avfoundation/CaptureDeviceInput"];
 }
 
 
@@ -159,7 +159,7 @@
 
 @implementation _IAFCaptureInputChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
-  return self = [super initWithMessenger:messenger name:@"__class__channel"];
+  return self = [super initWithMessenger:messenger name:@"ios_avfoundatoin/avfoundation/CaptureInput"];
 }
 
 
@@ -180,7 +180,7 @@
 
 @implementation _IAFCaptureSessionChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
-  return self = [super initWithMessenger:messenger name:@"__class__channel"];
+  return self = [super initWithMessenger:messenger name:@"ios_avfoundatoin/avfoundation/CaptureSession"];
 }
 
 
@@ -209,7 +209,7 @@
 
 @implementation _IAFCaptureDeviceChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
-  return self = [super initWithMessenger:messenger name:@"__class__channel"];
+  return self = [super initWithMessenger:messenger name:@"ios_avfoundatoin/avfoundation/CaptureDevice"];
 }
 
 
@@ -236,7 +236,7 @@
 
 @implementation _IAFPreviewControllerChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
-  return self = [super initWithMessenger:messenger name:@"__class__channel"];
+  return self = [super initWithMessenger:messenger name:@"ios_avfoundatoin/avfoundation/PreviewController"];
 }
 
 

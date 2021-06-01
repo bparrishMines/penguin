@@ -17,7 +17,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   late CaptureSession _captureSession;
-  final CapturePhotoOutput _capturePhotoOutput = CapturePhotoOutput();
+  late CapturePhotoOutput _capturePhotoOutput;
   final CapturePhotoCaptureDelegate _capturePhotoCaptureDelegate =
       MyPhotoDelegate();
   Widget _previewWidget = Container();
@@ -59,6 +59,7 @@ class _MyAppState extends State<MyApp> {
     );
 
     _captureSession = CaptureSession();
+    _capturePhotoOutput = CapturePhotoOutput();
     _captureSession.addInput(CaptureDeviceInput(device));
     _captureSession.addOutput(_capturePhotoOutput);
     _captureSession.startRunning();

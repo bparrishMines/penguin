@@ -4,31 +4,31 @@
 @end
 
 @implementation IAFLibraryImplementations
-- (IAFCaptureDeviceHandler *)captureDeviceHandler {
+- (IAFCaptureDeviceHandler *)handlerCaptureDevice {
   return [[IAFCaptureDeviceHandler alloc] initWithImplementations:self];
 }
 
-- (IAFCaptureDeviceInputHandler *)captureDeviceInputHandler {
+- (IAFCaptureDeviceInputHandler *)handlerCaptureDeviceInput {
   return [[IAFCaptureDeviceInputHandler alloc] init];
 }
 
-- (IAFCaptureSessionHandler *)captureSessionHandler {
+- (IAFCaptureSessionHandler *)handlerCaptureSession {
   return [[IAFCaptureSessionHandler alloc] init];
 }
 
-- (IAFPreviewControllerHandler *)previewControllerHandler {
+- (IAFPreviewControllerHandler *)handlerPreviewController {
   return [[IAFPreviewControllerHandler alloc] init];
 }
 
-- (IAFCapturePhotoCaptureDelegateHandler *)capturePhotoCaptureDelegateHandler {
+- (IAFCapturePhotoCaptureDelegateHandler *)handlerCapturePhotoCaptureDelegate {
   return [[IAFCapturePhotoCaptureDelegateHandler alloc] initWithImplementations:self];
 }
 
-- (IAFCapturePhotoSettingsHandler *)capturePhotoSettingsHandler {
+- (IAFCapturePhotoSettingsHandler *)handlerCapturePhotoSettings {
   return [[IAFCapturePhotoSettingsHandler alloc] init];
 }
 
-- (IAFCapturePhotoOutputHandler *)capturePhotoOutputHandler {
+- (IAFCapturePhotoOutputHandler *)handlerCapturePhotoOutput {
   return [[IAFCapturePhotoOutputHandler alloc] init];
 }
 @end
