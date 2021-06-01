@@ -24,7 +24,7 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
   public interface $__class_name__ {
     /*iterate methods method*/
     /*if returnsFuture*/
-    Object $__method_name__(/*iterate :join=',' parameters parameter*//*replace parameter_type*/String/**/ __parameter_name__/**/);
+    Object __method_name__(/*iterate :join=',' parameters parameter*//*replace parameter_type*/String/**/ __parameter_name__/**/);
     /**/
     /**/
   }
@@ -77,7 +77,7 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
     /*iterate methods method*/
     /*if returnsFuture*/
     public Object $__method_name__($__class_name__ $instance/*iterate parameters parameter*/,/*replace parameter_type*/String/**/ __parameter_name__/**/) throws Exception {
-      return $instance.$__method_name__(/*iterate :join',' parameters parameter*/ __parameter_name__ /**/);
+      return $instance.__method_name__(/*iterate :join',' parameters parameter*/ __parameter_name__ /**/);
     }
     /**/
     /**/

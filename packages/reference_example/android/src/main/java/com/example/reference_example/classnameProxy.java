@@ -18,7 +18,7 @@ public class classnameProxy implements LibraryTemplate.$__class_name__ {
   }
 
   @Override
-  public String $__method_name__(String __parameter_name__) {
+  public String __method_name__(String __parameter_name__) {
     return classTemplate.methodTemplate(__parameter_name__);
   }
 }
