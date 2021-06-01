@@ -35,7 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol _IAFCapturePhotoOutput <NSObject>
 
 
-- (id)capturePhoto
+- (id _Nullable)capturePhoto
                                 :(NSObject<_IAFCapturePhotoSettings>*_Nullable)settings
 
 
@@ -75,7 +75,7 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol _IAFCaptureSession <NSObject>
 
 
-- (id)addInput
+- (id _Nullable)addInput
                                 :(NSObject<_IAFCaptureInput>*_Nullable)input
 
 
@@ -83,7 +83,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 
-- (id)addOutput
+- (id _Nullable)addOutput
                                 :(NSObject<_IAFCaptureOutput>*_Nullable)output
 
 
@@ -91,13 +91,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 
-- (id)startRunning
+- (id _Nullable)startRunning
 
 ;
 
 
 
-- (id)stopRunning
+- (id _Nullable)stopRunning
 
 ;
 

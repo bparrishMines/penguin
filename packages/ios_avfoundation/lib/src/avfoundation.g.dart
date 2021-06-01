@@ -34,7 +34,7 @@ mixin $PreviewController {}
 
 class $CapturePhotoOutputChannel extends TypeChannel<$CapturePhotoOutput> {
   $CapturePhotoOutputChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'capturePhotoOutput');
+      : super(messenger, 'ios_avfoundatoin/avfoundation/CapturePhotoOutput');
 
   Future<PairedInstance?> $$create(
     $CapturePhotoOutput $instance, {
@@ -65,7 +65,7 @@ class $CapturePhotoOutputChannel extends TypeChannel<$CapturePhotoOutput> {
 
 class $CapturePhotoSettingsChannel extends TypeChannel<$CapturePhotoSettings> {
   $CapturePhotoSettingsChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'CapturePhotoSettings');
+      : super(messenger, 'ios_avfoundatoin/avfoundation/CapturePhotoSettings');
 
   Future<PairedInstance?> $$create(
     $CapturePhotoSettings $instance, {
@@ -85,7 +85,8 @@ class $CapturePhotoSettingsChannel extends TypeChannel<$CapturePhotoSettings> {
 class $CapturePhotoCaptureDelegateChannel
     extends TypeChannel<$CapturePhotoCaptureDelegate> {
   $CapturePhotoCaptureDelegateChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'CapturePhotoCaptureDelegate');
+      : super(messenger,
+            'ios_avfoundatoin/avfoundation/CapturePhotoCaptureDelegate');
 
   Future<PairedInstance?> $$create(
     $CapturePhotoCaptureDelegate $instance, {
@@ -101,7 +102,7 @@ class $CapturePhotoCaptureDelegateChannel
 
 class $CaptureOutputChannel extends TypeChannel<$CaptureOutput> {
   $CaptureOutputChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'CaptureOutput');
+      : super(messenger, 'ios_avfoundatoin/avfoundation/CaptureOutput');
 
   Future<PairedInstance?> $$create(
     $CaptureOutput $instance, {
@@ -117,7 +118,7 @@ class $CaptureOutputChannel extends TypeChannel<$CaptureOutput> {
 
 class $CapturePhotoChannel extends TypeChannel<$CapturePhoto> {
   $CapturePhotoChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'CapturePhoto');
+      : super(messenger, 'ios_avfoundatoin/avfoundation/CapturePhoto');
 
   Future<PairedInstance?> $$create(
     $CapturePhoto $instance, {
@@ -136,7 +137,7 @@ class $CapturePhotoChannel extends TypeChannel<$CapturePhoto> {
 
 class $CaptureDeviceInputChannel extends TypeChannel<$CaptureDeviceInput> {
   $CaptureDeviceInputChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'captureDeviceInput');
+      : super(messenger, 'ios_avfoundatoin/avfoundation/CaptureDeviceInput');
 
   Future<PairedInstance?> $$create(
     $CaptureDeviceInput $instance, {
@@ -155,7 +156,7 @@ class $CaptureDeviceInputChannel extends TypeChannel<$CaptureDeviceInput> {
 
 class $CaptureInputChannel extends TypeChannel<$CaptureInput> {
   $CaptureInputChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'captureInput');
+      : super(messenger, 'ios_avfoundatoin/avfoundation/CaptureInput');
 
   Future<PairedInstance?> $$create(
     $CaptureInput $instance, {
@@ -171,7 +172,7 @@ class $CaptureInputChannel extends TypeChannel<$CaptureInput> {
 
 class $CaptureSessionChannel extends TypeChannel<$CaptureSession> {
   $CaptureSessionChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'captureSession');
+      : super(messenger, 'ios_avfoundatoin/avfoundation/CaptureSession');
 
   Future<PairedInstance?> $$create(
     $CaptureSession $instance, {
@@ -233,7 +234,7 @@ class $CaptureSessionChannel extends TypeChannel<$CaptureSession> {
 
 class $CaptureDeviceChannel extends TypeChannel<$CaptureDevice> {
   $CaptureDeviceChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'captureDevice');
+      : super(messenger, 'ios_avfoundatoin/avfoundation/CaptureDevice');
 
   Future<PairedInstance?> $$create(
     $CaptureDevice $instance, {
@@ -265,7 +266,7 @@ class $CaptureDeviceChannel extends TypeChannel<$CaptureDevice> {
 
 class $PreviewControllerChannel extends TypeChannel<$PreviewController> {
   $PreviewControllerChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'previewController');
+      : super(messenger, 'ios_avfoundatoin/avfoundation/PreviewController');
 
   Future<PairedInstance?> $$create(
     $PreviewController $instance, {

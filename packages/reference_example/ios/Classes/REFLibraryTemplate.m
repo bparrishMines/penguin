@@ -12,7 +12,7 @@
 /*iterate classes class*/
 @implementation __prefix____class_name__Channel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
-  return self = [super initWithMessenger:messenger name:@"__class__channel"];
+  return self = [super initWithMessenger:messenger name:@"__class_channel__"];
 }
 
 
