@@ -16,8 +16,7 @@ public class AutoFocusCallbackProxy implements CameraChannelLibrary.$AutoFocusCa
     onAutoFocus(success);
   }
 
-  @Override
   public Completable<Object> onAutoFocus(Boolean success) {
-    return implementations.getAutoFocusCallbackChannel().$invokeOnAutoFocus(this, success);
+    return implementations.getChannelAutoFocusCallback().$onAutoFocus(this, success);
   }
 }

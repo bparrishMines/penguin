@@ -1,73 +1,124 @@
-import 'package:penguin_android_camera/src/camera.g.dart';
 import 'package:reference/reference.dart';
 
 import 'camera.dart';
+import 'camera.g.dart';
 
+/// Register channels for camera classes.
 class ChannelRegistrar extends $ChannelRegistrar {
+  /// Default constructor for [ChannelRegistrar].
   ChannelRegistrar(LibraryImplementations implementations)
       : super(implementations);
 
+  /// Default [ChannelRegistrar] instance.
+  ///
+  /// Replace this for custom usability.
   static ChannelRegistrar instance =
       ChannelRegistrar(LibraryImplementations(MethodChannelMessenger.instance))
         ..registerHandlers();
 }
 
+/// Type channel implementation for camera classes.
+///
+/// Most implementations are generated.
 class LibraryImplementations extends $LibraryImplementations {
+  /// Default constructor for [LibraryImplementations].
   LibraryImplementations(TypeChannelMessenger messenger) : super(messenger);
 
   @override
-  final CameraHandler cameraHandler = CameraHandler();
+  final CameraHandler handlerCamera = CameraHandler();
 
   @override
-  final CameraInfoHandler cameraInfoHandler = CameraInfoHandler();
+  final CameraInfoHandler handlerCameraInfo = CameraInfoHandler();
 
   @override
-  final CameraParametersHandler cameraParametersHandler =
+  final CameraParametersHandler handlerCameraParameters =
       CameraParametersHandler();
 
   @override
-  final CameraSizeHandler cameraSizeHandler = CameraSizeHandler();
+  final CameraSizeHandler handlerCameraSize = CameraSizeHandler();
+
+  @override
+  final CameraAreaHandler handlerCameraArea = CameraAreaHandler();
+
+  @override
+  final CameraRectHandler handlerCameraRect = CameraRectHandler();
 }
 
+/// [TypeChannelHandler] implementation for [Camera].
 class CameraHandler extends $CameraHandler {
   @override
-  Camera onCreate(TypeChannelMessenger messenger, $CameraCreationArgs args) {
+  Camera $$create(TypeChannelMessenger messenger) {
     // ignore: invalid_use_of_visible_for_testing_member
     return Camera();
   }
 }
 
+/// [TypeChannelHandler] implementation for [CameraInfo].
 class CameraInfoHandler extends $CameraInfoHandler {
   @override
-  CameraInfo onCreate(
+  CameraInfo $$create(
     TypeChannelMessenger messenger,
-    $CameraInfoCreationArgs args,
+    int cameraId,
+    int facing,
+    int orientation,
   ) {
     return CameraInfo(
-      cameraId: args.cameraId,
-      facing: args.facing,
-      orientation: args.orientation,
+      cameraId: cameraId,
+      facing: facing,
+      orientation: orientation,
     );
   }
 }
 
+/// [TypeChannelHandler] implementation for [CameraParametersHandler].
 class CameraParametersHandler extends $CameraParametersHandler {
   @override
-  CameraParameters onCreate(
-    TypeChannelMessenger messenger,
-    $CameraParametersCreationArgs args,
-  ) {
+  CameraParameters $$create(TypeChannelMessenger messenger) {
     // ignore: invalid_use_of_visible_for_testing_member
     return CameraParameters();
   }
 }
 
+/// [TypeChannelHandler] implementation for [CameraSize].
 class CameraSizeHandler extends $CameraSizeHandler {
   @override
-  $CameraSize onCreate(
+  CameraSize $$create(TypeChannelMessenger messenger, int width, int height) {
+    return CameraSize(width, height);
+  }
+}
+
+/// [TypeChannelHandler] implementation for [CameraRect].
+class CameraRectHandler extends $CameraRectHandler {
+  @override
+  CameraRect $$create(
     TypeChannelMessenger messenger,
-    $CameraSizeCreationArgs args,
+    int top,
+    int bottom,
+    int right,
+    int left,
   ) {
-    return CameraSize(args.width, args.height);
+    return CameraRect(
+      top: top,
+      bottom: bottom,
+      right: right,
+      left: left,
+      createInstancePair: false,
+    );
+  }
+}
+
+/// [TypeChannelHandler] implementation for [CameraArea].
+class CameraAreaHandler extends $CameraAreaHandler {
+  @override
+  CameraArea $$create(
+    TypeChannelMessenger messenger,
+    $CameraRect rect,
+    int weight,
+  ) {
+    return CameraArea(
+      rect as CameraRect,
+      weight,
+      createInstancePair: false,
+    );
   }
 }

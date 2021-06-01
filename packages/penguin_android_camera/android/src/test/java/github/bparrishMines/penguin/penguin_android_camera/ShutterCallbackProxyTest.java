@@ -12,9 +12,8 @@ public class ShutterCallbackProxyTest {
 
     final ShutterCallbackProxy proxy = new ShutterCallbackProxy(mock(ChannelRegistrar.LibraryImplementations.class)) {
       @Override
-      public Void onShutter() {
+      public void onShutter() {
         onShutterCalled[0] = true;
-        return null;
       }
     };
 

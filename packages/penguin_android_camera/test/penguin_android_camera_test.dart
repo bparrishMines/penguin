@@ -26,11 +26,10 @@ void main() {
     test('attachPreviewTexture', () async {
       final Camera camera = Camera();
       ChannelRegistrar
-          .instance.implementations.cameraChannel.messenger.instancePairManager
-          .addPair(
-        camera,
-        'camera_id',
-        owner: true,
+          .instance.implementations.channelCamera.messenger.instanceManager
+          .addStrongReference(
+        instance: camera,
+        instanceId: 'camera_id',
       );
 
       int textureId = await camera.attachPreviewTexture();
@@ -46,17 +45,9 @@ class TestLibraryImplementations extends LibraryImplementations {
   TestLibraryImplementations() : super(TestMessenger());
 }
 
-class TestInstancePairManager implements InstancePairManager {
+class TestInstanceManager implements InstanceManager {
   final Map<Object, String> instanceToInstanceId = <Object, String>{};
   final Map<String, Object> instanceIdToInstance = <String, Object>{};
-
-  @override
-  bool addPair(Object instance, String instanceId, {required bool owner}) {
-    if (isPaired(true)) return false;
-    instanceToInstanceId[instance] = instanceId;
-    instanceIdToInstance[instanceId] = instance;
-    return true;
-  }
 
   @override
   Object? getInstance(String instanceId) {
@@ -69,20 +60,46 @@ class TestInstancePairManager implements InstancePairManager {
   }
 
   @override
-  bool isPaired(Object instance) {
+  bool containsInstance(Object instance) {
     return instanceToInstanceId.containsKey(instance);
   }
 
   @override
-  void removePair(String instanceId) {
+  void removeInstance(String instanceId) {
     final Object? instance = instanceIdToInstance.remove(instanceId);
     instanceToInstanceId.remove(instance);
+  }
+
+  @override
+  bool addStrongReference({required Object instance, String? instanceId}) {
+    if (containsInstance(true)) return false;
+
+    final String newId = instanceId ?? generateUniqueInstanceId(instance);
+    instanceToInstanceId[instance] = newId;
+    instanceIdToInstance[newId] = instance;
+    return true;
+  }
+
+  @override
+  bool addWeakReference({
+    required Object instance,
+    String? instanceId,
+    required void Function(String instanceId) onFinalize,
+  }) {
+    if (containsInstance(true)) return false;
+    final String newId = instanceId ?? generateUniqueInstanceId(instance);
+    return addStrongReference(instance: instance, instanceId: newId);
+  }
+
+  @override
+  String generateUniqueInstanceId(Object instance) {
+    return '$instance${instance.hashCode}';
   }
 }
 
 class TestMessenger extends TypeChannelMessenger {
   @override
-  final InstancePairManager instancePairManager = TestInstancePairManager();
+  final InstanceManager instanceManager = TestInstanceManager();
 
   @override
   final TypeChannelMessageDispatcher messageDispatcher =

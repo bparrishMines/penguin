@@ -15,7 +15,7 @@ Future<void> main() async {
       final $$class_name$$ classTemplate = $$class_name$$(44);
 
       expect(
-        classTemplate.$__method_name__('Hello,'),
+        classTemplate.$$method_name$$('Hello,'),
         completion('Hello, World!'),
       );
     });

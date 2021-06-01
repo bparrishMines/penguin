@@ -20,16 +20,16 @@ class LibraryNode {
 @JsonSerializable()
 class ClassNode {
   ClassNode({
-    this.name,
-    this.channelName,
-    this.fields,
-    this.methods,
-    this.staticMethods,
+    required this.name,
+    required this.channelName,
+    required this.fields,
+    required this.methods,
+    required this.staticMethods,
   });
 
   final String name;
 
-  final String channelName;
+  final String? channelName;
 
   final List<FieldNode> fields;
 
@@ -48,7 +48,7 @@ class ClassNode {
 
 @JsonSerializable()
 class FieldNode {
-  FieldNode({this.name, this.type});
+  FieldNode({required this.name, required this.type});
 
   final String name;
   final ReferenceType type;
@@ -64,10 +64,9 @@ class FieldNode {
 
 @JsonSerializable()
 class MethodNode {
-  MethodNode({this.name, this.returnType, this.parameters});
+  MethodNode({required this.name, required this.returnType, required this.parameters});
 
   final String name;
-  // TODO: unused
   final ReferenceType returnType;
   final List<ParameterNode> parameters;
 
@@ -82,7 +81,7 @@ class MethodNode {
 
 @JsonSerializable()
 class ParameterNode {
-  ParameterNode({this.name, this.type});
+  ParameterNode({required this.name, required this.type});
 
   final String name;
   final ReferenceType type;
@@ -99,19 +98,16 @@ class ParameterNode {
 @JsonSerializable()
 class ReferenceType {
   ReferenceType({
-    this.name,
-    this.codeGeneratedClass,
-    this.referenceChannel,
-    this.typeArguments,
+    required this.name,
+    required this.nullable,
+    required this.codeGeneratedClass,
+    required this.typeArguments,
   });
 
   final String name;
+  final bool nullable;
   final bool codeGeneratedClass;
-  // TODO: remove
-  final String referenceChannel;
   final List<ReferenceType> typeArguments;
-
-  bool get hasReferenceChannel => referenceChannel != null;
 
   factory ReferenceType.fromJson(Map<String, dynamic> json) =>
       _$ReferenceTypeFromJson(json);

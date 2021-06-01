@@ -16,15 +16,13 @@ public class ShutterCallbackProxy implements CameraChannelLibrary.$ShutterCallba
     this.libraryImplementations = libraryImplementations;
   }
 
-  @Override
-  public Void onShutter() {
-    libraryImplementations.getShutterCallbackChannel().$invokeOnShutter(this);
-    return null;
+  public void onShutter() {
+    libraryImplementations.getChannelShutterCallback().$onShutter(this);
   }
 
   @Override
   protected void finalize() throws Throwable {
-    libraryImplementations.getShutterCallbackChannel().disposeInstancePair(this);
+    libraryImplementations.getChannelShutterCallback().disposeInstancePair(this);
     super.finalize();
   }
 }

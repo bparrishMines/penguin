@@ -5,10 +5,10 @@ import 'package:reference_generator/src/ast.dart';
 import 'generator.dart';
 
 String generateJava({
-  String template,
-  LibraryNode libraryNode,
-  String libraryName,
-  String package,
+  required String template,
+  required LibraryNode libraryNode,
+  required String libraryName,
+  required String package,
 }) {
   final Map<String, Object> data = <String, Object>{};
   data['libraryName'] = libraryName;
@@ -18,7 +18,7 @@ String generateJava({
   for (ClassNode classNode in libraryNode.classes) {
     final Map<String, Object> classData = <String, Object>{};
     classData['name'] = classNode.name;
-    classData['channel'] = classNode.channelName;
+    classData['channel'] = classNode.channelName!;
 
     final List<Map<String, Object>> fields = <Map<String, Object>>[];
     for (int i = 0; i < classNode.fields.length; i++) {
@@ -35,6 +35,7 @@ String generateJava({
     for (MethodNode methodNode in classNode.staticMethods) {
       final Map<String, Object> methodData = <String, Object>{};
       methodData['name'] = methodNode.name;
+      methodData['returnsFuture'] = methodNode.returnType.name == 'Future';
 
       final List<Map<String, Object>> parameters = <Map<String, Object>>[];
       for (int i = 0; i < methodNode.parameters.length; i++) {
@@ -55,6 +56,7 @@ String generateJava({
     for (MethodNode methodNode in classNode.methods) {
       final Map<String, Object> methodData = <String, Object>{};
       methodData['name'] = methodNode.name;
+      methodData['returnsFuture'] = methodNode.returnType.name == 'Future';
 
       final List<Map<String, Object>> parameters = <Map<String, Object>>[];
       for (int i = 0; i < methodNode.parameters.length; i++) {
@@ -105,24 +107,18 @@ String getTrueTypeName(ReferenceType type) {
 String javaTypeNameConversion(String type) {
   switch (type) {
     case 'Uint8List':
-    case 'Uint8List?':
       return 'byte[]';
     case 'int':
-    case 'int?':
       return 'Integer';
     case 'double':
-    case 'double?':
       return 'Double';
     case 'bool':
-    case 'bool?':
       return 'Boolean';
     case 'num':
-    case 'num?':
       return 'Number';
     case 'String':
-    case 'String?':
       return 'String';
   }
 
-  return type.replaceAll('?', '');
+  return type;
 }

@@ -38,7 +38,7 @@ public class MediaRecorderProxyTest {
   public void setCamera() {
     final Camera mockCamera = mock(Camera.class);
     final CameraChannelLibrary.$CameraChannel mockCameraChannel = mock(CameraChannelLibrary.$CameraChannel.class);
-    when(mockImplementations.getCameraChannel()).thenReturn(mockCameraChannel);
+    when(mockImplementations.getChannelCamera()).thenReturn(mockCameraChannel);
     final CameraProxy cameraProxy = new CameraProxy(mockCamera, mock(TextureRegistry.class), mockImplementations);
 
     testMediaRecorderProxy.setCamera(cameraProxy);

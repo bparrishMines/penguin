@@ -19,6 +19,7 @@ const String objcHeaderOutOption = 'objc-header-out';
 const String objcImplOutOption = 'objc-impl-out';
 const String objcPrefixOption = 'objc-prefix';
 const String dartImportsOption = 'dart-imports';
+const String branchOption = 'branch';
 
 final ArgParser parser = ArgParser()
   ..addOption(packageRootOption, defaultsTo: '.')
@@ -28,6 +29,7 @@ final ArgParser parser = ArgParser()
   ..addOption(objcHeaderOutOption)
   ..addOption(objcImplOutOption)
   ..addOption(objcPrefixOption)
+  ..addOption(branchOption)
   ..addMultiOption(dartImportsOption)
   ..addFlag('help', abbr: 'h')
   ..addFlag(buildFlag, abbr: 'b', defaultsTo: true);
@@ -65,12 +67,15 @@ void main(List<String> arguments) async {
     '.reference_ast',
   );
 
-  final File astInputFile =
-      options.packageRoot.listSync(recursive: true).firstWhere(
-            (FileSystemEntity entity) =>
-                entity is File && path.basename(entity.path) == astFileName,
-            orElse: () => null,
-          );
+  final File? astInputFile = options.packageRoot
+      .listSync(recursive: true)
+      .cast<FileSystemEntity?>()
+      .firstWhere(
+    (FileSystemEntity? entity) {
+      return entity is File && path.basename(entity.path) == astFileName;
+    },
+    orElse: () => null,
+  ) as File?;
 
   if (astInputFile == null) {
     final String message =
@@ -87,7 +92,7 @@ void main(List<String> arguments) async {
   if (options.dartOut != null) {
     final HttpClientRequest request = await HttpClient().getUrl(
       Uri.parse(
-        'https://raw.githubusercontent.com/bparrishMines/penguin/update_generator/packages/reference_example/lib/src/template.g.dart',
+        'https://raw.githubusercontent.com/bparrishMines/penguin/${options.branch}/packages/reference_example/lib/src/template.g.dart',
       ),
     );
     final HttpClientResponse response = await request.close();
@@ -101,7 +106,7 @@ void main(List<String> arguments) async {
       throw StateError('Invalid link to Dart template');
     }
 
-    options.dartOut.writeAsStringSync(
+    options.dartOut!.writeAsStringSync(
       generateDart(dartTemplate, libraryNode, options.dartImports),
     );
   }
@@ -110,7 +115,7 @@ void main(List<String> arguments) async {
   if (options.javaOut != null) {
     final HttpClientRequest request = await HttpClient().getUrl(
       Uri.parse(
-        'https://raw.githubusercontent.com/bparrishMines/penguin/update_generator/packages/reference_example/android/src/main/java/com/example/reference_example/LibraryTemplate.java',
+        'https://raw.githubusercontent.com/bparrishMines/penguin/${options.branch}/packages/reference_example/android/src/main/java/com/example/reference_example/LibraryTemplate.java',
       ),
     );
     final HttpClientResponse response = await request.close();
@@ -124,12 +129,12 @@ void main(List<String> arguments) async {
       throw StateError('Invalid link to Java template');
     }
 
-    options.javaOut.writeAsStringSync(
+    options.javaOut!.writeAsStringSync(
       generateJava(
         template: javaTemplate,
         libraryNode: libraryNode,
-        libraryName: path.basenameWithoutExtension(options.javaOut.path),
-        package: options.javaPackage,
+        libraryName: path.basenameWithoutExtension(options.javaOut!.path),
+        package: options.javaPackage!,
       ),
     );
   }
@@ -137,7 +142,7 @@ void main(List<String> arguments) async {
   if (options.objcHeaderOut != null) {
     final HttpClientRequest request = await HttpClient().getUrl(
       Uri.parse(
-        'https://raw.githubusercontent.com/bparrishMines/penguin/update_generator/packages/reference_example/ios/Classes/REFLibraryTemplate.h',
+        'https://raw.githubusercontent.com/bparrishMines/penguin/${options.branch}/packages/reference_example/ios/Classes/REFLibraryTemplate.h',
       ),
     );
     final HttpClientResponse response = await request.close();
@@ -151,11 +156,11 @@ void main(List<String> arguments) async {
       throw StateError('Invalid link to objcHeader template.');
     }
 
-    options.objcHeaderOut.writeAsStringSync(
+    options.objcHeaderOut!.writeAsStringSync(
       generateObjcHeader(
         template: objcHeaderTemplate,
         libraryNode: libraryNode,
-        prefix: options.objcPrefix,
+        prefix: options.objcPrefix!,
       ),
     );
   }
@@ -163,7 +168,7 @@ void main(List<String> arguments) async {
   if (options.objcImplOut != null) {
     final HttpClientRequest request = await HttpClient().getUrl(
       Uri.parse(
-        'https://raw.githubusercontent.com/bparrishMines/penguin/update_generator/packages/reference_example/ios/Classes/REFLibraryTemplate.m',
+        'https://raw.githubusercontent.com/bparrishMines/penguin/${options.branch}/packages/reference_example/ios/Classes/REFLibraryTemplate.m',
       ),
     );
     final HttpClientResponse response = await request.close();
@@ -177,12 +182,12 @@ void main(List<String> arguments) async {
       throw StateError('Invalid link to objcImpl template.');
     }
 
-    options.objcImplOut.writeAsStringSync(
+    options.objcImplOut!.writeAsStringSync(
       generateObjcImpl(
         template: objcImplTemplate,
         libraryNode: libraryNode,
-        prefix: options.objcPrefix,
-        headerFilename: path.basename(options.objcHeaderOut.path),
+        prefix: options.objcPrefix!,
+        headerFilename: path.basename(options.objcHeaderOut!.path),
       ),
     );
   }
@@ -190,16 +195,17 @@ void main(List<String> arguments) async {
 
 class ReferenceGeneratorOptions {
   ReferenceGeneratorOptions._({
-    this.packageRoot,
+    required this.packageRoot,
     this.dartOut,
-    this.inputFile,
+    required this.inputFile,
     this.javaOut,
-    this.build,
+    required this.build,
     this.javaPackage,
     this.objcHeaderOut,
     this.objcImplOut,
     this.objcPrefix,
     this.dartImports,
+    required this.branch,
   });
 
   factory ReferenceGeneratorOptions.parse(ArgResults results) {
@@ -233,6 +239,7 @@ class ReferenceGeneratorOptions {
           : null,
       objcPrefix: results[objcPrefixOption],
       dartImports: results[dartImportsOption],
+      branch: results[branchOption] ?? 'master',
     );
 
     if (options.javaOut != null && options.javaPackage == null) {
@@ -254,13 +261,14 @@ class ReferenceGeneratorOptions {
   }
 
   final Directory packageRoot;
-  final File dartOut;
+  final File? dartOut;
   final File inputFile;
   final bool build;
-  final File javaOut;
-  final String javaPackage;
-  final File objcHeaderOut;
-  final File objcImplOut;
-  final String objcPrefix;
-  final List<String> dartImports;
+  final File? javaOut;
+  final String? javaPackage;
+  final File? objcHeaderOut;
+  final File? objcImplOut;
+  final String? objcPrefix;
+  final List<String>? dartImports;
+  final String branch;
 }

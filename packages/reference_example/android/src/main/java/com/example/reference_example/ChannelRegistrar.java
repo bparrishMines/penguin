@@ -19,8 +19,8 @@ public class ChannelRegistrar extends LibraryTemplate.$ChannelRegistrar {
     }
 
     @Override
-    public Object $__method_name__(LibraryTemplate.$__class_name__ $instance, String __parameter_name__) {
-      return ((classnameProxy) $instance).methodTemplate(__parameter_name__);
+    public String $__method_name__(LibraryTemplate.$__class_name__ $instance, String __parameter_name__) {
+      return ((classnameProxy) $instance).__method_name__(__parameter_name__);
     }
   }
 

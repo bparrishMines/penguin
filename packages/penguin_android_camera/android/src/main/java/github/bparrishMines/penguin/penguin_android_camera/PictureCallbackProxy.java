@@ -16,15 +16,13 @@ public class PictureCallbackProxy implements CameraChannelLibrary.$PictureCallba
     this.libraryImplementations = libraryImplementations;
   }
 
-  @Override
-  public Void onPictureTaken(byte[] data) {
-    libraryImplementations.getPictureCallbackChannel().$invokeOnPictureTaken(this, data);
-    return null;
+  public void onPictureTaken(byte[] data) {
+    libraryImplementations.getChannelPictureCallback().$onPictureTaken(this, data);
   }
 
   @Override
   protected void finalize() throws Throwable {
-    libraryImplementations.getPictureCallbackChannel().disposeInstancePair(this);
+    libraryImplementations.getChannelPictureCallback().disposeInstancePair(this);
     super.finalize();
   }
 }

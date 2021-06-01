@@ -10,7 +10,16 @@ import /*replace :from='dart:core' value*/ 'dart:core' /**/;
 // **************************************************************************
 
 /*iterate classes class*/
-mixin $$$class_name$$ {}
+mixin $$$class_name$$ {
+  /*iterate methods method*/
+  /*if! returnsFuture*/
+  dynamic $$method_name$$(
+    /*iterate parameters parameter*/ /*replace parameter_type*/ String /**/ $$parameter_name$$,
+    /**/
+  );
+  /**/
+  /**/
+}
 /**/
 
 /*iterate classes class*/
@@ -35,6 +44,7 @@ class $$$class_name$$Channel extends TypeChannel<$$$class_name$$> {
   }
 
   /*iterate staticMethods staticMethod*/
+  /*if returnsFuture*/
   Future<Object?> $__staticMethod_name__(
     /*iterate parameters parameter*/ /*replace parameter_type*/ String /**/ $$parameter_name$$,
     /**/
@@ -47,8 +57,10 @@ class $$$class_name$$Channel extends TypeChannel<$$$class_name$$> {
     );
   }
   /**/
+  /**/
 
   /*iterate methods method*/
+  /*if returnsFuture*/
   Future<Object?> $__method_name__(
     $$$class_name$$ $instance,
     /*iterate parameters parameter*/ /*replace parameter_type*/ String /**/ $$parameter_name$$,
@@ -62,6 +74,7 @@ class $$$class_name$$Channel extends TypeChannel<$$$class_name$$> {
       ],
     );
   }
+  /**/
   /**/
 }
 /**/
@@ -78,7 +91,8 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$$class_name$$> {
   }
 
   /*iterate staticMethods staticMethod*/
-  Object? $__staticMethod_name__(
+  /*if! returnsFuture*/
+  dynamic $__staticMethod_name__(
     TypeChannelMessenger messenger,
     /*iterate parameters parameter*/
     /*replace parameter_type*/ String /**/ $$parameter_name$$,
@@ -87,16 +101,21 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$$class_name$$> {
     throw UnimplementedError();
   }
   /**/
+  /**/
 
   /*iterate methods method*/
-  Object? $__method_name__(
+  /*if! returnsFuture*/
+  dynamic $__method_name__(
     $$$class_name$$ $instance,
     /*iterate parameters parameter*/
     /*replace parameter_type*/ String /**/ $$parameter_name$$,
     /**/
   ) {
-    throw UnimplementedError();
+    return $instance.$$method_name$$(
+      /*iterate parameters parameter*/ $$parameter_name$$, /**/
+    );
   }
+  /**/
   /**/
 
   @override
@@ -107,6 +126,7 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$$class_name$$> {
   ) {
     switch (methodName) {
       /*iterate staticMethods staticMethod*/
+      /*if! returnsFuture*/
       case '__staticMethod_name__':
         return $__staticMethod_name__(
           messenger,
@@ -114,6 +134,7 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$$class_name$$> {
                   /*replace parameter_index*/ 0 /**/]
               as /*replace parameter_type*/ String /**/, /**/
         );
+      /**/
       /**/
     }
 
@@ -145,6 +166,7 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$$class_name$$> {
   ) {
     switch (methodName) {
       /*iterate methods method*/
+      /*if! returnsFuture*/
       case '__method_name__':
         return $__method_name__(
           instance,
@@ -152,6 +174,7 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$$class_name$$> {
                   /*replace parameter_index*/ 0 /**/]
               as /*replace parameter_type*/ String /**/, /**/
         );
+      /**/
       /**/
     }
 

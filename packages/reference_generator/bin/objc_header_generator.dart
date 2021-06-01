@@ -5,9 +5,9 @@ import 'package:reference_generator/src/ast.dart';
 import 'generator.dart';
 
 String generateObjcHeader({
-  String template,
-  LibraryNode libraryNode,
-  String prefix,
+  required String template,
+  required LibraryNode libraryNode,
+  required String prefix,
 }) {
   final Map<String, Object> data = <String, Object>{};
   data['prefix'] = prefix;
@@ -16,7 +16,7 @@ String generateObjcHeader({
   for (ClassNode classNode in libraryNode.classes) {
     final Map<String, Object> classData = <String, Object>{};
     classData['name'] = classNode.name;
-    classData['channel'] = classNode.channelName;
+    classData['channel'] = classNode.channelName!;
 
     final List<Map<String, Object>> fields = <Map<String, Object>>[];
     for (int i = 0; i < classNode.fields.length; i++) {
@@ -107,30 +107,21 @@ String getTrueTypeName(ReferenceType type, String prefix) {
 String objcTypeNameConversion(String type) {
   switch (type) {
     case 'Uint8List':
-    case 'Uint8List?':
       return 'NSData';
     case 'int':
-    case 'int?':
     case 'double':
-    case 'double?':
     case 'num':
-    case 'num?':
     case 'bool':
-    case 'bool?':
       return 'NSNumber';
     case 'String':
-    case 'String?':
       return 'NSString';
     case 'Object':
-    case 'Object?':
       return 'NSObject';
     case 'List':
-    case 'List?':
       return 'NSArray';
     case 'Map':
-    case 'Map?':
       return 'NSDictionary';
   }
 
-  return type.replaceAll('?', '');
+  return type;
 }

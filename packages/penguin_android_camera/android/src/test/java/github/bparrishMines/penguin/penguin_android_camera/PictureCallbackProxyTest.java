@@ -14,9 +14,8 @@ public class PictureCallbackProxyTest {
 
     final PictureCallbackProxy proxy = new PictureCallbackProxy(mock(ChannelRegistrar.LibraryImplementations.class)) {
       @Override
-      public Void onPictureTaken(byte[] data) {
+      public void onPictureTaken(byte[] data) {
         bytes[0] = new byte[]{1, 2, 3};
-        return null;
       }
     };
 

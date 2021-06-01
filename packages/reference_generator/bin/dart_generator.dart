@@ -4,7 +4,8 @@ import 'package:reference_generator/src/ast.dart';
 
 import 'generator.dart';
 
-String generateDart(String template, LibraryNode libraryNode, List<String> imports) {
+String generateDart(
+    String template, LibraryNode libraryNode, List<String>? imports) {
   final Map<String, Object> data = <String, Object>{};
 
   final List<Map<String, Object>> importData = <Map<String, Object>>[];
@@ -17,7 +18,7 @@ String generateDart(String template, LibraryNode libraryNode, List<String> impor
   for (ClassNode classNode in libraryNode.classes) {
     final Map<String, Object> classData = <String, Object>{};
     classData['name'] = classNode.name;
-    classData['channel'] = classNode.channelName;
+    classData['channel'] = classNode.channelName!;
 
     final List<Map<String, Object>> fields = <Map<String, Object>>[];
     for (int i = 0; i < classNode.fields.length; i++) {
@@ -34,6 +35,7 @@ String generateDart(String template, LibraryNode libraryNode, List<String> impor
     for (MethodNode methodNode in classNode.staticMethods) {
       final Map<String, Object> methodData = <String, Object>{};
       methodData['name'] = methodNode.name;
+      methodData['returnsFuture'] = methodNode.returnType.name == 'Future';
 
       final List<Map<String, Object>> parameters = <Map<String, Object>>[];
       for (int i = 0; i < methodNode.parameters.length; i++) {
@@ -54,6 +56,7 @@ String generateDart(String template, LibraryNode libraryNode, List<String> impor
     for (MethodNode methodNode in classNode.methods) {
       final Map<String, Object> methodData = <String, Object>{};
       methodData['name'] = methodNode.name;
+      methodData['returnsFuture'] = methodNode.returnType.name == 'Future';
 
       final List<Map<String, Object>> parameters = <Map<String, Object>>[];
       for (int i = 0; i < methodNode.parameters.length; i++) {
@@ -88,13 +91,15 @@ String getTrueTypeName(ReferenceType type) {
     (ReferenceType type) => getTrueTypeName(type),
   );
 
+  final String nullability = type.nullable ? '?' : '';
+
   if (type.codeGeneratedClass && typeArguments.isEmpty) {
-    return '\$${type.name}';
+    return '\$${type.name}$nullability';
   } else if (type.codeGeneratedClass && typeArguments.isNotEmpty) {
-    return '\$${type.name}<${typeArguments.join(',')}>';
+    return '\$${type.name}<${typeArguments.join(',')}>$nullability';
   } else if (!type.codeGeneratedClass && typeArguments.isNotEmpty) {
-    return '${type.name}<${typeArguments.join(',')}>';
+    return '${type.name}<${typeArguments.join(',')}>$nullability';
   }
 
-  return type.name;
+  return '${type.name}$nullability';
 }

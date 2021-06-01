@@ -1,6 +1,7 @@
 package github.bparrishMines.penguin.penguin_android_camera;
 
 import android.media.MediaRecorder;
+import android.os.Build;
 
 public class MediaRecorderProxy implements CameraChannelLibrary.$MediaRecorder {
   public final MediaRecorder mediaRecorder;
@@ -77,6 +78,26 @@ public class MediaRecorderProxy implements CameraChannelLibrary.$MediaRecorder {
   @Override
   public Void release() {
     mediaRecorder.release();
+    return null;
+  }
+
+  @Override
+  public Void pause() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+      mediaRecorder.pause();
+    } else {
+      throw new UnsupportedOperationException("Requires version >= Build.VERSION_CODES.N.");
+    }
+    return null;
+  }
+
+  @Override
+  public Void resume() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+      mediaRecorder.resume();
+    } else {
+      throw new UnsupportedOperationException("Requires version >= Build.VERSION_CODES.N.");
+    }
     return null;
   }
 }

@@ -20,7 +20,8 @@ class $$class_name$$ with $$$class_name$$ {
     return await _channel.$__staticMethod_name__($$parameter_name$$) as double;
   }
 
-  Future<String> $__method_name__(String $$parameter_name$$) async {
+  @override
+  Future<String> $$method_name$$(String $$parameter_name$$) async {
     return await _channel.$__method_name__(
       this,
       $$parameter_name$$,

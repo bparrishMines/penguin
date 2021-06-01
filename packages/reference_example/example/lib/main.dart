@@ -37,7 +37,7 @@ class _MyAppState extends State<MyApp> {
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
             final $$class_name$$ classTemplate = $$class_name$$(23);
-            final String result = await classTemplate.$__method_name__('Hello,');
+            final String result = await classTemplate.$$method_name$$('Hello,');
             setState(() {
               _text = result;
             });
