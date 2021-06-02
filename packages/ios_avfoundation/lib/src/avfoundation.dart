@@ -137,25 +137,11 @@ class CaptureDevice with $CaptureDevice {
   }
 }
 
-class Preview extends StatelessWidget {
-  const Preview({Key? key, required this.controller}) : super(key: key);
+class Preview extends UiKitReferenceWidget {
+  Preview({Key? key, required this.controller})
+      : super(key: key, instance: controller);
 
   final PreviewController controller;
-
-  @override
-  Widget build(BuildContext context) {
-    final PairedInstance? pairedInstance = PreviewController._channel.messenger
-        .getPairedPairedInstance(controller);
-    if (pairedInstance == null) {
-      throw StateError("PreviewController isn't paired.");
-    }
-
-    return UiKitView(
-      viewType: 'ios_avfoundation/Preview',
-      creationParams: pairedInstance,
-      creationParamsCodec: const ReferenceMessageCodec(),
-    );
-  }
 }
 
 @Reference('ios_avfoundatoin/avfoundation/PreviewController')

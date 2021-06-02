@@ -1,3 +1,7 @@
+## 0.4.1
+
+* Implement ReferenceWidgets for easier PlatformView use with instances in `InstanceManager`.
+
 ## 0.4.0
 
 * **Breaking Change** `TypeChannelHandler.getCreationArguments` has been removed and is replaced by

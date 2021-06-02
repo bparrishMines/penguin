@@ -1,5 +1,3 @@
-import 'package:flutter/cupertino.dart';
-
 import 'instance.dart';
 import 'instance_converter.dart';
 import 'instance_manager.dart';
@@ -172,7 +170,6 @@ abstract class TypeChannelMessenger {
   InstanceConverter get converter => const StandardInstanceConverter();
 
   /// Maintains access to instances.
-  @visibleForTesting
   InstanceManager get instanceManager => _instanceManager;
 
   void _addInstancePair({
