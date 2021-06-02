@@ -31,8 +31,8 @@ class AndroidReferenceWidget extends StatelessWidget {
 
   /// The instanceId of an object stored in an [InstanceManager].
   ///
-  /// The Android object paired with this instance should extend the Android
-  /// `View` class.
+  /// The Android object paired with this instance should implement the Android
+  /// `PlatformView` class.
   final String instanceId;
 
   /// The unique identifier for the view type to be embedded.
@@ -154,8 +154,8 @@ class UiKitReferenceWidget extends StatelessWidget {
 
   /// The instanceId of an object stored in an [InstanceManager].
   ///
-  /// The Android object paired with this instance should extend the Android
-  /// `View` class.
+  /// The iOS object paired with this instance should implement the iOS
+  /// `FlutterPlatformView` class.
   final String instanceId;
 
   /// The unique identifier for the view type to be embedded.
