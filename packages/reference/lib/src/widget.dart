@@ -4,6 +4,9 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 
+import 'instance_manager.dart';
+import 'method_channel.dart';
+
 // TODO: Widget tests for Android and IOS
 
 /// Embeds an Android view from an [InstanceManager] in the Widget hierarchy.
@@ -19,21 +22,26 @@ class AndroidReferenceWidget extends StatelessWidget {
   /// Construct a [AndroidReferenceWidget] widget.
   AndroidReferenceWidget({
     Key? key,
-    required this.instanceId,
+    required this.instance,
+    InstanceManager? instanceManager,
     this.viewType = 'github.penguin.reference/AndroidReferenceWidget',
     this.hitTestBehavior = PlatformViewHitTestBehavior.opaque,
     this.gestureRecognizers = const <Factory<OneSequenceGestureRecognizer>>{},
     this.layoutDirection = TextDirection.rtl,
     this.platformViewCreatedListener,
     this.onFocus,
-  })  : assert(defaultTargetPlatform == TargetPlatform.android),
+  })  : _instanceManager =
+            instanceManager ?? MethodChannelMessenger.instance.instanceManager,
+        assert(defaultTargetPlatform == TargetPlatform.android),
         super(key: key);
 
-  /// The instanceId of an object stored in an [InstanceManager].
+  final InstanceManager _instanceManager;
+
+  /// The object that will be stored in [instanceManager].
   ///
-  /// The Android object paired with this instance should implement the Android
+  /// The Android object paired with this instance MUST implement the Android
   /// `PlatformView` class.
-  final String instanceId;
+  final Object instance;
 
   /// The unique identifier for the view type to be embedded.
   ///
@@ -95,6 +103,7 @@ class AndroidReferenceWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    assert(_instanceManager.containsInstance(instance));
     return PlatformViewLink(
       viewType: viewType,
       surfaceFactory: (
@@ -113,7 +122,7 @@ class AndroidReferenceWidget extends StatelessWidget {
           id: params.id,
           viewType: viewType,
           layoutDirection: layoutDirection,
-          creationParams: instanceId,
+          creationParams: _instanceManager.getInstanceId(instance),
           creationParamsCodec: const StandardMessageCodec(),
           onFocus: onFocus,
         );
@@ -143,20 +152,25 @@ class UiKitReferenceWidget extends StatelessWidget {
   /// Construct a [UiKitReferenceWidget] widget.
   UiKitReferenceWidget({
     Key? key,
-    required this.instanceId,
+    required this.instance,
+    InstanceManager? instanceManager,
     this.viewType = 'github.penguin.reference/UiKitReferenceWidget',
     this.hitTestBehavior = PlatformViewHitTestBehavior.opaque,
     this.gestureRecognizers = const <Factory<OneSequenceGestureRecognizer>>{},
     this.layoutDirection = TextDirection.rtl,
     this.platformViewCreatedListener,
-  })  : assert(defaultTargetPlatform == TargetPlatform.iOS),
+  })  : _instanceManager =
+            instanceManager ?? MethodChannelMessenger.instance.instanceManager,
+        assert(defaultTargetPlatform == TargetPlatform.iOS),
         super(key: key);
 
-  /// The instanceId of an object stored in an [InstanceManager].
+  final InstanceManager _instanceManager;
+
+  /// The object that will be stored in [instanceManager].
   ///
-  /// The iOS object paired with this instance should implement the iOS
+  /// The iOS object paired with this instance MUST implement the iOS
   /// `FlutterPlatformView` class.
-  final String instanceId;
+  final Object instance;
 
   /// The unique identifier for the view type to be embedded.
   ///
@@ -215,12 +229,13 @@ class UiKitReferenceWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    assert(_instanceManager.containsInstance(instance));
     return UiKitView(
       viewType: viewType,
       hitTestBehavior: hitTestBehavior,
       gestureRecognizers: gestureRecognizers,
       onPlatformViewCreated: platformViewCreatedListener,
-      creationParams: instanceId,
+      creationParams: _instanceManager.getInstanceId(instance),
       creationParamsCodec: const StandardMessageCodec(),
     );
   }

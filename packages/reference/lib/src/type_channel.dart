@@ -172,7 +172,6 @@ abstract class TypeChannelMessenger {
   InstanceConverter get converter => const StandardInstanceConverter();
 
   /// Maintains access to instances.
-  @visibleForTesting
   InstanceManager get instanceManager => _instanceManager;
 
   void _addInstancePair({
