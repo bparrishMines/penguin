@@ -233,7 +233,12 @@ class ReferenceAstBuilder extends Builder {
     DartType type,
     Set<ClassElement> allGeneratedClasses,
   ) {
-    final String displayName = type.getDisplayString(withNullability: true);
+    late final String displayName;
+    if (type.isDartCoreFunction) {
+      displayName = 'Function';
+    } else {
+      displayName = type.getDisplayString(withNullability: true);
+    }
     return ReferenceType(
       name: displayName.split(RegExp('[<?]')).first,
       nullable: displayName.endsWith('?'),
