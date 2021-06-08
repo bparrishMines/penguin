@@ -4,9 +4,11 @@ part 'ast.g.dart';
 
 @JsonSerializable()
 class LibraryNode {
-  LibraryNode(this.classes);
+  LibraryNode({required this.classes, required this.functions});
 
   final List<ClassNode> classes;
+
+  final List<FunctionNode> functions;
 
   factory LibraryNode.fromJson(Map<String, dynamic> json) =>
       _$LibraryNodeFromJson(json);
@@ -64,7 +66,8 @@ class FieldNode {
 
 @JsonSerializable()
 class MethodNode {
-  MethodNode({required this.name, required this.returnType, required this.parameters});
+  MethodNode(
+      {required this.name, required this.returnType, required this.parameters});
 
   final String name;
   final ReferenceType returnType;
@@ -113,6 +116,27 @@ class ReferenceType {
       _$ReferenceTypeFromJson(json);
 
   Map<String, dynamic> toJson() => _$ReferenceTypeToJson(this);
+
+  @override
+  String toString() => '$runtimeType(${toJson().toString()})';
+}
+
+@JsonSerializable()
+class FunctionNode {
+  FunctionNode({
+    required this.name,
+    required this.returnType,
+    required this.parameters,
+  });
+
+  final String name;
+  final ReferenceType returnType;
+  final List<ParameterNode> parameters;
+
+  factory FunctionNode.fromJson(Map<String, dynamic> json) =>
+      _$FunctionNodeFromJson(json);
+
+  Map<String, dynamic> toJson() => _$FunctionNodeToJson(this);
 
   @override
   String toString() => '$runtimeType(${toJson().toString()})';

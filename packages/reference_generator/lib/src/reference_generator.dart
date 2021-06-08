@@ -44,14 +44,31 @@ class ReferenceAstBuilder extends Builder {
 
     final Iterable<ClassElement> classes = reader
         .annotatedWith(const TypeChecker.fromRuntime(Reference))
+        .where(
+          (AnnotatedElement annotatedElement) =>
+              annotatedElement.element is ClassElement,
+        )
         .map<ClassElement>(
           (AnnotatedElement annotatedElement) =>
               annotatedElement.element as ClassElement,
         );
 
-    if (classes.isEmpty) return;
+    final Iterable<TypeAliasElement> functions = reader
+        .annotatedWith(const TypeChecker.fromRuntime(Reference))
+        .where(
+          (AnnotatedElement annotatedElement) =>
+              annotatedElement.element is TypeAliasElement,
+        )
+        .map<TypeAliasElement>(
+          (AnnotatedElement annotatedElement) =>
+              annotatedElement.element as TypeAliasElement,
+        );
 
-    final LibraryNode ast = _toLibraryNode(reader.element, classes);
+    if (classes.isEmpty && functions.isEmpty) return;
+
+    final LibraryNode ast = _toLibraryNode(reader.element, classes, functions);
+    print('-' * 20);
+    print(ast.functions);
 
     await buildStep.writeAsString(newFile, jsonEncode(ast));
   }
@@ -59,12 +76,21 @@ class ReferenceAstBuilder extends Builder {
   LibraryNode _toLibraryNode(
     LibraryElement libraryElement,
     Iterable<ClassElement> classes,
+    Iterable<TypeAliasElement> functions,
   ) {
     return LibraryNode(
-      classes
+      classes: classes
           .map<ClassNode>(
             (ClassElement classElement) => _toClassNode(
               classElement,
+              classes.toSet(),
+            ),
+          )
+          .toList(),
+      functions: functions
+          .map<FunctionNode>(
+            (TypeAliasElement typeAliasElement) => _toFunctionNode(
+              typeAliasElement,
               classes.toSet(),
             ),
           )
@@ -154,6 +180,33 @@ class ReferenceAstBuilder extends Builder {
         allGeneratedClasses,
       ),
       parameters: methodElement.parameters
+          .where((ParameterElement element) {
+            final ReferenceParameter? referenceParameter =
+                tryReadParameterAnnotation(element);
+            if (referenceParameter == null) return true;
+            return !referenceParameter.ignore;
+          })
+          .map<ParameterNode>(
+            (ParameterElement parameterElement) =>
+                _toParameterNode(parameterElement, allGeneratedClasses),
+          )
+          .toList(),
+    );
+  }
+
+  FunctionNode _toFunctionNode(
+    TypeAliasElement typeAliasElement,
+    Set<ClassElement> allGeneratedClasses,
+  ) {
+    final FunctionType functionType =
+        typeAliasElement.aliasedType as FunctionType;
+    return FunctionNode(
+      name: typeAliasElement.name,
+      returnType: _toReferenceType(
+        functionType,
+        allGeneratedClasses,
+      ),
+      parameters: functionType.parameters
           .where((ParameterElement element) {
             final ReferenceParameter? referenceParameter =
                 tryReadParameterAnnotation(element);
