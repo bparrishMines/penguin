@@ -9,6 +9,76 @@ import /*replace :from='dart:core' value*/ 'dart:core' /**/;
 // ReferenceGenerator
 // **************************************************************************
 
+class _FunctionHolder {
+  late Function function;
+}
+
+class ACallbackChannel extends TypeChannel<Object> {
+  ACallbackChannel(TypeChannelMessenger messenger)
+      : super(messenger, 'github.penguin/template/template/ACallback');
+
+  Future<PairedInstance?> $$create(
+    dynamic Function(String value) $instance, {
+    required bool $owner,
+  }) {
+    return createNewInstancePair(
+      $instance,
+      <Object?>[],
+      owner: $owner,
+    );
+  }
+
+  Future<Object?> _invoke(
+    _FunctionHolder $instance,
+    String value,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      '',
+      <Object?>[
+        value,
+      ],
+    );
+  }
+}
+
+class ACallbackHandler implements TypeChannelHandler<Object> {
+  ACallbackHandler(this.libraryImplementations);
+
+  final $LibraryImplementations libraryImplementations;
+
+  @override
+  _FunctionHolder createInstance(
+    TypeChannelMessenger messenger,
+    List<Object?> arguments,
+  ) {
+    final _FunctionHolder functionHolder = _FunctionHolder();
+    functionHolder.function = (String value) {
+      libraryImplementations.channelACallback._invoke(functionHolder, value);
+    };
+    return functionHolder;
+  }
+
+  @override
+  Object? invokeMethod(
+    TypeChannelMessenger messenger,
+    covariant dynamic Function(String value) instance,
+    String methodName,
+    List<Object?> arguments,
+  ) {
+    return instance(arguments[0] as String);
+  }
+
+  @override
+  Object? invokeStaticMethod(
+    TypeChannelMessenger messenger,
+    String methodName,
+    List<Object?> arguments,
+  ) {
+    throw UnimplementedError();
+  }
+}
+
 /*iterate classes class*/
 mixin $$$class_name$$ {
   /*iterate methods method*/
@@ -197,6 +267,9 @@ class $LibraryImplementations {
       $$$class_name$$Channel(messenger);
   $$$class_name$$Handler get handler__class_name__ => $$$class_name$$Handler();
   /**/
+
+  ACallbackChannel get channelACallback => ACallbackChannel(messenger);
+  ACallbackHandler get handlerACallback => ACallbackHandler(this);
 }
 
 class $ChannelRegistrar {
@@ -210,11 +283,15 @@ class $ChannelRegistrar {
       implementations.handler__class_name__,
     );
     /**/
+    implementations.channelACallback.setHandler(
+      implementations.handlerACallback,
+    );
   }
 
   void unregisterHandlers() {
     /*iterate classes class*/
     implementations.channel__class_name__.removeHandler();
     /**/
+    implementations.channelACallback.removeHandler();
   }
 }

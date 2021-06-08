@@ -7,6 +7,7 @@ package com.example.reference_example;
 import androidx.annotation.NonNull;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import github.penguin.reference.async.Completable;
@@ -20,6 +21,52 @@ import github.penguin.reference.reference.TypeChannelMessenger;
 // **************************************************************************
 
 public class /*replace libraryName*/LibraryTemplate/**/ {
+  public interface ACallback {
+    Object invoke(String value) throws Exception;
+  }
+
+  public static class ACallbackChannel extends TypeChannel<ACallback> {
+    public ACallbackChannel(@NonNull TypeChannelMessenger messenger) {
+      super(messenger, "github.penguin/template/template/ACallback");
+    }
+
+    public Completable<PairedInstance> $$create(ACallback $instance, boolean $owner) {
+      return createNewInstancePair($instance, Collections.emptyList(), $owner);
+    }
+
+    private Completable<Object> invoke(ACallback $instance, String value) {
+      return invokeMethod($instance, "", Arrays.asList(value));
+    }
+  }
+
+  public static class ACallbackHandler implements TypeChannelHandler<ACallback> {
+    public final $LibraryImplementations implementations;
+
+    public ACallbackHandler($LibraryImplementations implementations) {
+      this.implementations = implementations;
+    }
+
+    @Override
+    public ACallback createInstance(TypeChannelMessenger messenger, List<Object> arguments) {
+      return new ACallback() {
+        @Override
+        public Object invoke(String value) {
+          return implementations.getChannelACallback().invoke(this, value);
+        }
+      };
+    }
+
+    @Override
+    public Void invokeStaticMethod(TypeChannelMessenger messenger, String methodName, List<Object> arguments) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Object invokeMethod(TypeChannelMessenger messenger, ACallback instance, String methodName, List<Object> arguments) throws Exception {
+      return instance.invoke((String) arguments.get(0));
+    }
+  }
+
   /*iterate classes class*/
   public interface $__class_name__ {
     /*iterate methods method*/
@@ -143,6 +190,14 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
       return new $__class_name__Handler();
     }
     /**/
+
+    public ACallbackChannel getChannelACallback() {
+      return new ACallbackChannel(messenger);
+    }
+
+    public ACallbackHandler getHandlerACallback() {
+      return new ACallbackHandler(this);
+    }
   }
 
   public static class $ChannelRegistrar {
@@ -152,17 +207,18 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
       this.implementations = implementations;
     }
 
-
     public void registerHandlers() {
       /*iterate classes class*/
       implementations.getChannel__class_name__().setHandler(implementations.getHandler__class_name__());
       /**/
+      implementations.getChannelACallback().setHandler(implementations.getHandlerACallback());
     }
 
     public void unregisterHandlers() {
       /*iterate classes class*/
       implementations.getChannel__class_name__().removeHandler();
       /**/
+      implementations.getChannelACallback().removeHandler();
     }
   }
 }

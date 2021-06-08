@@ -5,6 +5,9 @@ import 'package:reference/annotations.dart';
 import 'template.g.dart';
 import 'template_channels.dart';
 
+@Reference('github.penguin/template/template/ACallback')
+typedef ACallback = void Function(String value);
+
 @Reference('github.penguin/template/template/ClassTemplate')
 class $$class_name$$ with $$$class_name$$ {
   $$class_name$$(int $$field_name$$) {
