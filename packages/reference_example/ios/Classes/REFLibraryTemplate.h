@@ -1,5 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
+#import <Foundation/Foundation.h>
 #import "REFMethodChannel.h"
 
 // **************************************************************************
@@ -12,6 +13,27 @@ NS_ASSUME_NONNULL_BEGIN
 /*iterate classes class*/
 @protocol __prefix____class_name__;
 /**/
+
+//@class __prefix__LibraryImplementations;
+//
+//@interface _BlockHolder : NSObject
+//@property NSObject *block;
+//@end
+//
+//typedef NSObject *_Nullable (^ACallback) (NSString *_Nullable value);
+//
+//@interface ACallbackChannel : REFTypeChannel
+//- (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger;
+//- (void)__create:(NSObject *_Nullable (^) (NSString *_Nullable))_instance
+//          _owner:(BOOL)_owner
+//     completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion;
+//@end
+//
+//@interface ACallbackHandler : NSObject<REFTypeChannelHandler>
+//@property (readonly) __prefix__LibraryImplementations *implementations;
+//-(instancetype)initWithImplementations:(__prefix__LibraryImplementations *)implementations;
+//@end
+
 
 /*iterate classes class*/
 @protocol __prefix____class_name__ <NSObject>

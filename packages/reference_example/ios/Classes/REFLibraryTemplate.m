@@ -9,6 +9,52 @@
 // ReferenceGenerator
 // **************************************************************************
 
+//@implementation _BlockHolder
+//@end
+//
+//@implementation ACallbackChannel
+//- (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
+//  return self = [super initWithMessenger:messenger name:@"github.penguin/template/template/ACallback"];
+//}
+//
+//- (void)__create:(NSObject * _Nullable (^)(NSString * _Nullable))_instance
+//          _owner:(BOOL)_owner
+//      completion:(void (^)(REFPairedInstance * _Nullable, NSError * _Nullable))completion {
+//  [self createNewInstancePair:_instance arguments:@[] owner:_owner completion:completion];
+//}
+//
+//- (void)invoke:(_BlockHolder *)_instance
+//         value:(NSString *)value
+//    completion:(void (^)(id _Nullable, NSError *_Nullable))completion {
+//  [self invokeMethod:_instance methodName:@"" arguments:@[value] completion:completion];
+//}
+//@end
+//
+//@implementation ACallbackHandler
+//-(instancetype)initWithImplementations:(__prefix__LibraryImplementations *)implementations {
+//  self = [super init];
+//  if (self) {
+//    _implementations = implementations;
+//  }
+//  return self;
+//}
+//
+//- (nonnull id)createInstance:(nonnull REFTypeChannelMessenger *)messenger arguments:(nonnull NSArray *)arguments {
+//  _BlockHolder *blockHolder = [[_BlockHolder alloc] init];
+//  blockHolder.block = ^(NSString *value) {
+//
+//  };
+//}
+//
+//- (id _Nullable)invokeMethod:(nonnull REFTypeChannelMessenger *)messenger instance:(nonnull NSObject *)instance methodName:(nonnull NSString *)methodName arguments:(nonnull NSArray *)arguments {
+//  <#code#>
+//}
+//
+//- (id _Nullable)invokeStaticMethod:(nonnull REFTypeChannelMessenger *)messenger methodName:(nonnull NSString *)methodName arguments:(nonnull NSArray *)arguments {
+//  <#code#>
+//}
+//@end
+
 /*iterate classes class*/
 @implementation __prefix____class_name__Channel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
