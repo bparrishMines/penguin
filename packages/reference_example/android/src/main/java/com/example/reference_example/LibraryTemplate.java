@@ -6,9 +6,7 @@ package com.example.reference_example;
 
 import androidx.annotation.NonNull;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import github.penguin.reference.async.Completable;
 import github.penguin.reference.reference.PairedInstance;
@@ -21,37 +19,43 @@ import github.penguin.reference.reference.TypeChannelMessenger;
 // **************************************************************************
 
 public class /*replace libraryName*/LibraryTemplate/**/ {
-  public interface ACallback {
-    Object invoke(String value) throws Exception;
+  /*iterate functions function*/
+  public static abstract class $__function_name__ {
+    public abstract Object invoke(/*iterate :join=',' parameters parameter*//*replace parameter_type*/String/**/ __parameter_name__/**/) throws Exception;
   }
+  /**/
 
-  public static class ACallbackChannel extends TypeChannel<ACallback> {
-    public ACallbackChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "github.penguin/template/template/ACallback");
+  /*iterate functions function*/
+  public static class $__function_name__Channel extends TypeChannel<$__function_name__> {
+    public $__function_name__Channel(@NonNull TypeChannelMessenger messenger) {
+      super(messenger, "__function_channel__");
     }
 
-    public Completable<PairedInstance> $$create(ACallback $instance, boolean $owner) {
+    public Completable<PairedInstance> $$create($__function_name__ $instance, boolean $owner) {
       return createNewInstancePair($instance, Collections.emptyList(), $owner);
     }
 
-    private Completable<Object> invoke(ACallback $instance, String value) {
-      return invokeMethod($instance, "", Arrays.asList(value));
+    private Completable<Object> invoke($__function_name__ $instance
+        /*iterate parameters parameter*/,/*replace parameter_type*/String/**/ __parameter_name__/**/) {
+      return invokeMethod($instance, "", Arrays.asList(/*iterate :join=',' parameters parameter*/__parameter_name__/**/));
     }
   }
+  /**/
 
-  public static class ACallbackHandler implements TypeChannelHandler<ACallback> {
+  /*iterate functions function*/
+  public static class $__function_name__Handler implements TypeChannelHandler<$__function_name__> {
     public final $LibraryImplementations implementations;
 
-    public ACallbackHandler($LibraryImplementations implementations) {
+    public $__function_name__Handler($LibraryImplementations implementations) {
       this.implementations = implementations;
     }
 
     @Override
-    public ACallback createInstance(TypeChannelMessenger messenger, List<Object> arguments) {
-      return new ACallback() {
+    public $__function_name__ createInstance(TypeChannelMessenger messenger, List<Object> arguments) {
+      return new $__function_name__() {
         @Override
-        public Object invoke(String value) {
-          return implementations.getChannelACallback().invoke(this, value);
+        public Object invoke(/*iterate :join=',' parameters parameter*//*replace parameter_type*/String/**/ __parameter_name__/**/) {
+          return implementations.getChannel__function_name__().invoke(this/*iterate parameters parameter*/,__parameter_name__/**/);
         }
       };
     }
@@ -62,10 +66,11 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
     }
 
     @Override
-    public Object invokeMethod(TypeChannelMessenger messenger, ACallback instance, String methodName, List<Object> arguments) throws Exception {
-      return instance.invoke((String) arguments.get(0));
+    public Object invokeMethod(TypeChannelMessenger messenger, $__function_name__ instance, String methodName, List<Object> arguments) throws Exception {
+      return instance.invoke(/*iterate :join=',' parameters parameter*/(/*replace parameter_type*/String/**/) arguments.get(/*replace parameter_index*/0/**/)/**/);
     }
   }
+  /**/
 
   /*iterate classes class*/
   public interface $__class_name__ {
@@ -191,13 +196,15 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
     }
     /**/
 
-    public ACallbackChannel getChannelACallback() {
-      return new ACallbackChannel(messenger);
+    /*iterate functions function*/
+    public $__function_name__Channel getChannel__function_name__() {
+      return new $__function_name__Channel(messenger);
     }
 
-    public ACallbackHandler getHandlerACallback() {
-      return new ACallbackHandler(this);
+    public $__function_name__Handler getHandler__function_name__() {
+      return new $__function_name__Handler(this);
     }
+    /**/
   }
 
   public static class $ChannelRegistrar {
@@ -211,14 +218,18 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
       /*iterate classes class*/
       implementations.getChannel__class_name__().setHandler(implementations.getHandler__class_name__());
       /**/
-      implementations.getChannelACallback().setHandler(implementations.getHandlerACallback());
+      /*iterate functions function*/
+      implementations.getChannel__function_name__().setHandler(implementations.getHandler__function_name__());
+      /**/
     }
 
     public void unregisterHandlers() {
       /*iterate classes class*/
       implementations.getChannel__class_name__().removeHandler();
       /**/
-      implementations.getChannelACallback().removeHandler();
+      /*iterate functions function*/
+      implementations.getChannel__function_name__().removeHandler();
+      /**/
     }
   }
 }

@@ -6,7 +6,7 @@ import 'template.g.dart';
 import 'template_channels.dart';
 
 @Reference('github.penguin/template/template/ACallback')
-typedef ACallback = void Function(String value);
+typedef $$function_name$$ = void Function(String value);
 
 @Reference('github.penguin/template/template/ClassTemplate')
 class $$class_name$$ with $$$class_name$$ {

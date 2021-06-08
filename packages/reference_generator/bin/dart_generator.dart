@@ -5,7 +5,10 @@ import 'package:reference_generator/src/ast.dart';
 import 'generator.dart';
 
 String generateDart(
-    String template, LibraryNode libraryNode, List<String>? imports) {
+  String template,
+  LibraryNode libraryNode,
+  List<String>? imports,
+) {
   final Map<String, Object> data = <String, Object>{};
 
   final List<Map<String, Object>> importData = <Map<String, Object>>[];
@@ -75,8 +78,27 @@ String generateDart(
 
     classes.add(classData);
   }
-
   data['classes'] = classes;
+
+  final List<Map<String, Object>> functions = <Map<String, Object>>[];
+  for (FunctionNode functionNode in libraryNode.functions) {
+    final Map<String, Object> functionData = <String, Object>{};
+    functionData['name'] = functionNode.name;
+
+    final List<Map<String, Object>> parameters = <Map<String, Object>>[];
+    for (int i = 0; i < functionNode.parameters.length; i++) {
+      final Map<String, Object> parameterData = <String, Object>{};
+      parameterData['name'] = functionNode.parameters[i].name;
+      parameterData['type'] = getTrueTypeName(functionNode.parameters[i].type);
+      parameterData['index'] = '$i';
+
+      parameters.add(parameterData);
+    }
+    functionData['parameters'] = parameters;
+
+    functions.add(functionData);
+  }
+  data['functions'] = functions;
 
   final Queue<String> templateQueue = Queue<String>();
   for (int i = 0; i < template.length; i++) {

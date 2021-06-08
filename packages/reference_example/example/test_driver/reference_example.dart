@@ -30,10 +30,11 @@ Future<void> main() async {
 
     test('ACallback', () async {
       late final String returnValue;
-      final void Function(String value) callback = (String value) {
+      final $$function_name$$ callback = (String value) {
         returnValue = value;
       };
-      ChannelRegistrar.instance.implementations.channelACallback.$$create(
+      ChannelRegistrar.instance.implementations.channel__function_name__
+          .$$create(
         callback,
         $owner: false,
       );

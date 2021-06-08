@@ -67,8 +67,6 @@ class ReferenceAstBuilder extends Builder {
     if (classes.isEmpty && functions.isEmpty) return;
 
     final LibraryNode ast = _toLibraryNode(reader.element, classes, functions);
-    print('-' * 20);
-    print(ast.functions);
 
     await buildStep.writeAsString(newFile, jsonEncode(ast));
   }

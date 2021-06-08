@@ -13,12 +13,17 @@ class _FunctionHolder {
   late Function function;
 }
 
-class ACallbackChannel extends TypeChannel<Object> {
-  ACallbackChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'github.penguin/template/template/ACallback');
+/*iterate functions function*/
+class $$$function_name$$Channel extends TypeChannel<Object> {
+  $$$function_name$$Channel(TypeChannelMessenger messenger)
+      : super(messenger, '__function_channel__');
 
   Future<PairedInstance?> $$create(
-    dynamic Function(String value) $instance, {
+    dynamic Function(
+      /*iterate parameters parameter*/ /*replace parameter_type*/ String /**/ $$parameter_name$$,
+      /**/
+    )
+        $instance, {
     required bool $owner,
   }) {
     return createNewInstancePair(
@@ -30,22 +35,25 @@ class ACallbackChannel extends TypeChannel<Object> {
 
   Future<Object?> _invoke(
     _FunctionHolder $instance,
-    String value,
+    /*iterate parameters parameter*/ /*replace parameter_type*/ String /**/ $$parameter_name$$,
+    /**/
   ) {
     return sendInvokeMethod(
       $instance,
       '',
       <Object?>[
-        value,
+        /*iterate parameters parameter*/ $$parameter_name$$, /**/
       ],
     );
   }
 }
+/**/
 
-class ACallbackHandler implements TypeChannelHandler<Object> {
-  ACallbackHandler(this.libraryImplementations);
+/*iterate functions function*/
+class $$$function_name$$Handler implements TypeChannelHandler<Object> {
+  $$$function_name$$Handler(this.implementations);
 
-  final $LibraryImplementations libraryImplementations;
+  final $LibraryImplementations implementations;
 
   @override
   _FunctionHolder createInstance(
@@ -53,8 +61,14 @@ class ACallbackHandler implements TypeChannelHandler<Object> {
     List<Object?> arguments,
   ) {
     final _FunctionHolder functionHolder = _FunctionHolder();
-    functionHolder.function = (String value) {
-      libraryImplementations.channelACallback._invoke(functionHolder, value);
+    functionHolder.function = (
+      /*iterate parameters parameter*/ /*replace parameter_type*/ String /**/ $$parameter_name$$,
+      /**/
+    ) {
+      implementations.channel__function_name__._invoke(
+        functionHolder,
+        /*iterate parameters parameter*/ $$parameter_name$$, /**/
+      );
     };
     return functionHolder;
   }
@@ -62,11 +76,19 @@ class ACallbackHandler implements TypeChannelHandler<Object> {
   @override
   Object? invokeMethod(
     TypeChannelMessenger messenger,
-    covariant dynamic Function(String value) instance,
+    covariant dynamic Function(
+      /*iterate parameters parameter*/ /*replace parameter_type*/ String /**/ $$parameter_name$$,
+      /**/
+    )
+        instance,
     String methodName,
     List<Object?> arguments,
   ) {
-    return instance(arguments[0] as String);
+    return instance(
+      /*iterate parameters parameter*/ arguments[
+              /*replace parameter_index*/ 0 /**/]
+          as /*replace parameter_type*/ String /**/, /**/
+    );
   }
 
   @override
@@ -78,6 +100,7 @@ class ACallbackHandler implements TypeChannelHandler<Object> {
     throw UnimplementedError();
   }
 }
+/**/
 
 /*iterate classes class*/
 mixin $$$class_name$$ {
@@ -268,8 +291,12 @@ class $LibraryImplementations {
   $$$class_name$$Handler get handler__class_name__ => $$$class_name$$Handler();
   /**/
 
-  ACallbackChannel get channelACallback => ACallbackChannel(messenger);
-  ACallbackHandler get handlerACallback => ACallbackHandler(this);
+  /*iterate functions function*/
+  $$$function_name$$Channel get channel__function_name__ =>
+      $$$function_name$$Channel(messenger);
+  $$$function_name$$Handler get handler__function_name__ =>
+      $$$function_name$$Handler(this);
+  /**/
 }
 
 class $ChannelRegistrar {
@@ -283,15 +310,19 @@ class $ChannelRegistrar {
       implementations.handler__class_name__,
     );
     /**/
-    implementations.channelACallback.setHandler(
-      implementations.handlerACallback,
+    /*iterate functions function*/
+    implementations.channel__function_name__.setHandler(
+      implementations.handler__function_name__,
     );
+    /**/
   }
 
   void unregisterHandlers() {
     /*iterate classes class*/
     implementations.channel__class_name__.removeHandler();
     /**/
-    implementations.channelACallback.removeHandler();
+    /*iterate functions function*/
+    implementations.channel__function_name__.removeHandler();
+    /**/
   }
 }
