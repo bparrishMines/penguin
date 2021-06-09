@@ -205,6 +205,7 @@ class ReferenceAstBuilder extends Builder {
         typeAliasElement.aliasedType as FunctionType;
     return FunctionNode(
       name: typeAliasElement.name,
+      channelName: _getChannelFromTypeAlias(typeAliasElement),
       returnType: _toReferenceType(
         functionType,
         allGeneratedElements,
@@ -261,6 +262,13 @@ class ReferenceAstBuilder extends Builder {
               )
               .toList(),
     );
+  }
+
+  String _getChannelFromTypeAlias(TypeAliasElement element) {
+    final TypeChecker typeChecker = TypeChecker.fromRuntime(Reference);
+    final ConstantReader constantReader =
+        ConstantReader(typeChecker.firstAnnotationOf(element));
+    return constantReader.read('channel').stringValue;
   }
 
   String? _getChannel(DartType type) {

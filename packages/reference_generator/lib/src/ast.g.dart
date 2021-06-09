@@ -117,12 +117,14 @@ FunctionNode _$FunctionNodeFromJson(Map<String, dynamic> json) {
     parameters: (json['parameters'] as List<dynamic>)
         .map((e) => ParameterNode.fromJson(e as Map<String, dynamic>))
         .toList(),
+    channelName: json['channelName'] as String,
   );
 }
 
 Map<String, dynamic> _$FunctionNodeToJson(FunctionNode instance) =>
     <String, dynamic>{
       'name': instance.name,
+      'channelName': instance.channelName,
       'returnType': instance.returnType,
       'parameters': instance.parameters,
     };

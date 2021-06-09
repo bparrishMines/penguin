@@ -84,6 +84,7 @@ String generateDart(
   for (FunctionNode functionNode in libraryNode.functions) {
     final Map<String, Object> functionData = <String, Object>{};
     functionData['name'] = functionNode.name;
+    functionData['channel'] = functionNode.channelName;
 
     final List<Map<String, Object>> parameters = <Map<String, Object>>[];
     for (int i = 0; i < functionNode.parameters.length; i++) {

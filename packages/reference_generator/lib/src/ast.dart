@@ -127,9 +127,11 @@ class FunctionNode {
     required this.name,
     required this.returnType,
     required this.parameters,
+    required this.channelName,
   });
 
   final String name;
+  final String channelName;
   final ReferenceType returnType;
   final List<ParameterNode> parameters;
 
