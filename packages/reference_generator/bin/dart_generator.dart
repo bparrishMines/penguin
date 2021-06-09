@@ -90,7 +90,10 @@ String generateDart(
     for (int i = 0; i < functionNode.parameters.length; i++) {
       final Map<String, Object> parameterData = <String, Object>{};
       parameterData['name'] = functionNode.parameters[i].name;
-      parameterData['type'] = getTrueTypeName(functionNode.parameters[i].type);
+      parameterData['type'] = getTrueTypeName(
+        functionNode.parameters[i].type,
+        generatedSymbol: '',
+      );
       parameterData['index'] = '$i';
 
       parameters.add(parameterData);
@@ -109,21 +112,20 @@ String generateDart(
   return runGenerator(templateQueue, Queue<Token>(), StringBuffer(), data);
 }
 
-String getTrueTypeName(ReferenceType type) {
+String getTrueTypeName(ReferenceType type, {String generatedSymbol = '\$'}) {
   final Iterable<String> typeArguments = type.typeArguments.map<String>(
-    (ReferenceType type) => getTrueTypeName(type),
+    (ReferenceType type) => getTrueTypeName(
+      type,
+      generatedSymbol: generatedSymbol,
+    ),
   );
 
   final String nullability = type.nullable ? '?' : '';
 
-  if (type.codeGeneratedType && typeArguments.isEmpty && type.functionType) {
-    return '${type.name}$nullability';
-  } else if (type.codeGeneratedType &&
-      typeArguments.isEmpty &&
-      !type.functionType) {
-    return '\$${type.name}$nullability';
+  if (type.codeGeneratedType && typeArguments.isEmpty) {
+    return '$generatedSymbol${type.name}$nullability';
   } else if (type.codeGeneratedType && typeArguments.isNotEmpty) {
-    return '\$${type.name}<${typeArguments.join(',')}>$nullability';
+    return '$generatedSymbol${type.name}<${typeArguments.join(',')}>$nullability';
   } else if (!type.codeGeneratedType && typeArguments.isNotEmpty) {
     return '${type.name}<${typeArguments.join(',')}>$nullability';
   }
