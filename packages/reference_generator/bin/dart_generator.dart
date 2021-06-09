@@ -116,11 +116,15 @@ String getTrueTypeName(ReferenceType type) {
 
   final String nullability = type.nullable ? '?' : '';
 
-  if (type.codeGeneratedClass && typeArguments.isEmpty) {
+  if (type.codeGeneratedType && typeArguments.isEmpty && type.functionType) {
+    return '${type.name}$nullability';
+  } else if (type.codeGeneratedType &&
+      typeArguments.isEmpty &&
+      !type.functionType) {
     return '\$${type.name}$nullability';
-  } else if (type.codeGeneratedClass && typeArguments.isNotEmpty) {
+  } else if (type.codeGeneratedType && typeArguments.isNotEmpty) {
     return '\$${type.name}<${typeArguments.join(',')}>$nullability';
-  } else if (!type.codeGeneratedClass && typeArguments.isNotEmpty) {
+  } else if (!type.codeGeneratedType && typeArguments.isNotEmpty) {
     return '${type.name}<${typeArguments.join(',')}>$nullability';
   }
 

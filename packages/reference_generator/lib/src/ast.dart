@@ -103,13 +103,15 @@ class ReferenceType {
   ReferenceType({
     required this.name,
     required this.nullable,
-    required this.codeGeneratedClass,
+    required this.codeGeneratedType,
     required this.typeArguments,
+    required this.functionType,
   });
 
   final String name;
   final bool nullable;
-  final bool codeGeneratedClass;
+  final bool codeGeneratedType;
+  final bool functionType;
   final List<ReferenceType> typeArguments;
 
   factory ReferenceType.fromJson(Map<String, dynamic> json) =>

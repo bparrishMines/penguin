@@ -94,10 +94,11 @@ ReferenceType _$ReferenceTypeFromJson(Map<String, dynamic> json) {
   return ReferenceType(
     name: json['name'] as String,
     nullable: json['nullable'] as bool,
-    codeGeneratedClass: json['codeGeneratedClass'] as bool,
+    codeGeneratedType: json['codeGeneratedType'] as bool,
     typeArguments: (json['typeArguments'] as List<dynamic>)
         .map((e) => ReferenceType.fromJson(e as Map<String, dynamic>))
         .toList(),
+    functionType: json['functionType'] as bool,
   );
 }
 
@@ -105,7 +106,8 @@ Map<String, dynamic> _$ReferenceTypeToJson(ReferenceType instance) =>
     <String, dynamic>{
       'name': instance.name,
       'nullable': instance.nullable,
-      'codeGeneratedClass': instance.codeGeneratedClass,
+      'codeGeneratedType': instance.codeGeneratedType,
+      'functionType': instance.functionType,
       'typeArguments': instance.typeArguments,
     };
 

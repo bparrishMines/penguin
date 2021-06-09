@@ -112,11 +112,11 @@ String getTrueTypeName(ReferenceType type) {
     (ReferenceType type) => getTrueTypeName(type),
   );
 
-  if (type.codeGeneratedClass && typeArguments.isEmpty) {
+  if (type.codeGeneratedType && typeArguments.isEmpty) {
     return '\$$javaName';
-  } else if (type.codeGeneratedClass && typeArguments.isNotEmpty) {
+  } else if (type.codeGeneratedType && typeArguments.isNotEmpty) {
     return '\$$javaName<${typeArguments.join(',')}>';
-  } else if (!type.codeGeneratedClass && typeArguments.isNotEmpty) {
+  } else if (!type.codeGeneratedType && typeArguments.isNotEmpty) {
     return '$javaName<${typeArguments.join(',')}>';
   }
 

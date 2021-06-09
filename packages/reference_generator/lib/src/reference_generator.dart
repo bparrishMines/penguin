@@ -67,7 +67,6 @@ class ReferenceAstBuilder extends Builder {
     if (classes.isEmpty && functions.isEmpty) return;
 
     final LibraryNode ast = _toLibraryNode(reader.element, classes, functions);
-    print(ast);
 
     await buildStep.writeAsString(newFile, jsonEncode(ast));
   }
@@ -246,14 +245,16 @@ class ReferenceAstBuilder extends Builder {
       return ReferenceType(
         name: aliasElement.name,
         nullable: displayName.endsWith('?'),
-        codeGeneratedClass: allGeneratedElements.contains(aliasElement),
+        codeGeneratedType: allGeneratedElements.contains(aliasElement),
         typeArguments: <ReferenceType>[],
+        functionType: true,
       );
     }
     return ReferenceType(
       name: displayName.split(RegExp('[<?]')).first,
       nullable: displayName.endsWith('?'),
-      codeGeneratedClass: allGeneratedElements.contains(type.element),
+      codeGeneratedType: allGeneratedElements.contains(type.element),
+      functionType: false,
       typeArguments: type is! ParameterizedType || type.isDartCoreMap
           ? <ReferenceType>[]
           : type.typeArguments

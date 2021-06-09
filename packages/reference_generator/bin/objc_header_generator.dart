@@ -94,11 +94,11 @@ String getTrueTypeName(ReferenceType type, String prefix) {
     (ReferenceType type) => getTrueTypeName(type, prefix),
   );
 
-  if (type.codeGeneratedClass && typeArguments.isEmpty) {
+  if (type.codeGeneratedType && typeArguments.isEmpty) {
     return 'NSObject<$prefix$objcName>';
-  } else if (type.codeGeneratedClass && typeArguments.isNotEmpty) {
+  } else if (type.codeGeneratedType && typeArguments.isNotEmpty) {
     return 'NSObject<$prefix$objcName<${typeArguments.join(' *,')} *>>';
-  } else if (!type.codeGeneratedClass && typeArguments.isNotEmpty) {
+  } else if (!type.codeGeneratedType && typeArguments.isNotEmpty) {
     return '$objcName<${typeArguments.join(' *,')} *>';
   }
 
