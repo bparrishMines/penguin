@@ -113,14 +113,15 @@ String generateDart(
 }
 
 String getTrueTypeName(ReferenceType type, {String generatedSymbol = '\$'}) {
+  final String nullability = type.nullable ? '?' : '';
+  if (type.name == 'Map') return 'Map$nullability';
+
   final Iterable<String> typeArguments = type.typeArguments.map<String>(
     (ReferenceType type) => getTrueTypeName(
       type,
       generatedSymbol: generatedSymbol,
     ),
   );
-
-  final String nullability = type.nullable ? '?' : '';
 
   if (type.codeGeneratedType && typeArguments.isEmpty) {
     return '$generatedSymbol${type.name}$nullability';

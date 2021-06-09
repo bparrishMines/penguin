@@ -255,7 +255,7 @@ class ReferenceAstBuilder extends Builder {
       nullable: displayName.endsWith('?'),
       codeGeneratedType: allGeneratedElements.contains(type.element),
       functionType: false,
-      typeArguments: type is! ParameterizedType || type.isDartCoreMap
+      typeArguments: type is! ParameterizedType
           ? <ReferenceType>[]
           : type.typeArguments
               .map<ReferenceType>(
