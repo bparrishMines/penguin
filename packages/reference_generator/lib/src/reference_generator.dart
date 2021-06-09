@@ -67,6 +67,7 @@ class ReferenceAstBuilder extends Builder {
     if (classes.isEmpty && functions.isEmpty) return;
 
     final LibraryNode ast = _toLibraryNode(reader.element, classes, functions);
+    print(ast);
 
     await buildStep.writeAsString(newFile, jsonEncode(ast));
   }
@@ -76,12 +77,16 @@ class ReferenceAstBuilder extends Builder {
     Iterable<ClassElement> classes,
     Iterable<TypeAliasElement> functions,
   ) {
+    final Set<Element> allGeneratedElements = <Element>{
+      ...classes,
+      ...functions
+    };
     return LibraryNode(
       classes: classes
           .map<ClassNode>(
             (ClassElement classElement) => _toClassNode(
               classElement,
-              classes.toSet(),
+              allGeneratedElements,
             ),
           )
           .toList(),
@@ -89,7 +94,7 @@ class ReferenceAstBuilder extends Builder {
           .map<FunctionNode>(
             (TypeAliasElement typeAliasElement) => _toFunctionNode(
               typeAliasElement,
-              classes.toSet(),
+              allGeneratedElements,
             ),
           )
           .toList(),
@@ -98,7 +103,7 @@ class ReferenceAstBuilder extends Builder {
 
   ClassNode _toClassNode(
     ClassElement classElement,
-    Set<ClassElement> allGeneratedClasses,
+    Set<Element> allGeneratedElements,
   ) {
     List<ParameterElement> parameters;
     final ConstructorElement? defaultConstructor = classElement.constructors
@@ -124,7 +129,7 @@ class ReferenceAstBuilder extends Builder {
             return !referenceParameter.ignore;
           })
           .map<FieldNode>((ParameterElement parameterElement) =>
-              _toFieldNode(parameterElement, allGeneratedClasses))
+              _toFieldNode(parameterElement, allGeneratedElements))
           .toList(),
       methods: classElement.methods
           .where((MethodElement element) => !element.isPrivate)
@@ -137,7 +142,7 @@ class ReferenceAstBuilder extends Builder {
           })
           .map<MethodNode>(
             (MethodElement methodElement) =>
-                _toMethodNode(methodElement, allGeneratedClasses),
+                _toMethodNode(methodElement, allGeneratedElements),
           )
           .toList(),
       staticMethods: classElement.methods
@@ -151,7 +156,7 @@ class ReferenceAstBuilder extends Builder {
           })
           .map<MethodNode>(
             (MethodElement methodElement) =>
-                _toMethodNode(methodElement, allGeneratedClasses),
+                _toMethodNode(methodElement, allGeneratedElements),
           )
           .toList(),
     );
@@ -159,23 +164,23 @@ class ReferenceAstBuilder extends Builder {
 
   FieldNode _toFieldNode(
     ParameterElement parameterElement,
-    Set<ClassElement> allGeneratedClasses,
+    Set<Element> allGeneratedElements,
   ) {
     return FieldNode(
       name: parameterElement.name,
-      type: _toReferenceType(parameterElement.type, allGeneratedClasses),
+      type: _toReferenceType(parameterElement.type, allGeneratedElements),
     );
   }
 
   MethodNode _toMethodNode(
     MethodElement methodElement,
-    Set<ClassElement> allGeneratedClasses,
+    Set<Element> allGeneratedElements,
   ) {
     return MethodNode(
       name: methodElement.name,
       returnType: _toReferenceType(
         methodElement.returnType,
-        allGeneratedClasses,
+        allGeneratedElements,
       ),
       parameters: methodElement.parameters
           .where((ParameterElement element) {
@@ -186,7 +191,7 @@ class ReferenceAstBuilder extends Builder {
           })
           .map<ParameterNode>(
             (ParameterElement parameterElement) =>
-                _toParameterNode(parameterElement, allGeneratedClasses),
+                _toParameterNode(parameterElement, allGeneratedElements),
           )
           .toList(),
     );
@@ -194,7 +199,7 @@ class ReferenceAstBuilder extends Builder {
 
   FunctionNode _toFunctionNode(
     TypeAliasElement typeAliasElement,
-    Set<ClassElement> allGeneratedClasses,
+    Set<Element> allGeneratedElements,
   ) {
     final FunctionType functionType =
         typeAliasElement.aliasedType as FunctionType;
@@ -202,7 +207,7 @@ class ReferenceAstBuilder extends Builder {
       name: typeAliasElement.name,
       returnType: _toReferenceType(
         functionType,
-        allGeneratedClasses,
+        allGeneratedElements,
       ),
       parameters: functionType.parameters
           .where((ParameterElement element) {
@@ -213,7 +218,7 @@ class ReferenceAstBuilder extends Builder {
           })
           .map<ParameterNode>(
             (ParameterElement parameterElement) =>
-                _toParameterNode(parameterElement, allGeneratedClasses),
+                _toParameterNode(parameterElement, allGeneratedElements),
           )
           .toList(),
     );
@@ -221,33 +226,38 @@ class ReferenceAstBuilder extends Builder {
 
   ParameterNode _toParameterNode(
     ParameterElement parameterElement,
-    Set<ClassElement> allGeneratedClasses,
+    Set<Element> allGeneratedElements,
   ) {
     return ParameterNode(
       name: parameterElement.name,
-      type: _toReferenceType(parameterElement.type, allGeneratedClasses),
+      type: _toReferenceType(parameterElement.type, allGeneratedElements),
     );
   }
 
   ReferenceType _toReferenceType(
     DartType type,
-    Set<ClassElement> allGeneratedClasses,
+    Set<Element> allGeneratedElements,
   ) {
-    late final String displayName;
-    if (type.isDartCoreFunction) {
-      displayName = 'Function';
-    } else {
-      displayName = type.getDisplayString(withNullability: true);
+    final String displayName = type.getDisplayString(withNullability: true);
+    // TODO: Use type.nullabilitySuffix
+    final TypeAliasElement? aliasElement = type.aliasElement;
+    if (aliasElement != null) {
+      return ReferenceType(
+        name: aliasElement.name,
+        nullable: displayName.endsWith('?'),
+        codeGeneratedClass: allGeneratedElements.contains(aliasElement),
+        typeArguments: <ReferenceType>[],
+      );
     }
     return ReferenceType(
       name: displayName.split(RegExp('[<?]')).first,
       nullable: displayName.endsWith('?'),
-      codeGeneratedClass: allGeneratedClasses.contains(type.element),
-      typeArguments: type is! ParameterizedType
+      codeGeneratedClass: allGeneratedElements.contains(type.element),
+      typeArguments: type is! ParameterizedType || type.isDartCoreMap
           ? <ReferenceType>[]
           : type.typeArguments
               .map<ReferenceType>(
-                (DartType type) => _toReferenceType(type, allGeneratedClasses),
+                (DartType type) => _toReferenceType(type, allGeneratedElements),
               )
               .toList(),
     );

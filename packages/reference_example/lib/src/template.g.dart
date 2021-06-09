@@ -14,16 +14,19 @@ class _FunctionHolder {
 }
 
 /*iterate functions function*/
+typedef $$$function_name$$ = dynamic Function(
+  /*iterate parameters parameter*/ /*replace parameter_type*/ String /**/ $$parameter_name$$,
+  /**/
+);
+/**/
+
+/*iterate functions function*/
 class $$$function_name$$Channel extends TypeChannel<Object> {
   $$$function_name$$Channel(TypeChannelMessenger messenger)
       : super(messenger, '__function_channel__');
 
   Future<PairedInstance?> $$create(
-    dynamic Function(
-      /*iterate parameters parameter*/ /*replace parameter_type*/ String /**/ $$parameter_name$$,
-      /**/
-    )
-        $instance, {
+    $$$function_name$$ $instance, {
     required bool $owner,
   }) {
     return createNewInstancePair(
@@ -76,11 +79,7 @@ class $$$function_name$$Handler implements TypeChannelHandler<Object> {
   @override
   Object? invokeMethod(
     TypeChannelMessenger messenger,
-    covariant dynamic Function(
-      /*iterate parameters parameter*/ /*replace parameter_type*/ String /**/ $$parameter_name$$,
-      /**/
-    )
-        instance,
+    covariant $$$function_name$$ instance,
     String methodName,
     List<Object?> arguments,
   ) {
