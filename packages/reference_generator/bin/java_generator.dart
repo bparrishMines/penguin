@@ -81,6 +81,7 @@ String generateJava({
   for (FunctionNode functionNode in libraryNode.functions) {
     final Map<String, Object> functionData = <String, Object>{};
     functionData['name'] = functionNode.name;
+    functionData['channel'] = functionNode.channelName;
     functionData['returnsFuture'] = functionNode.returnType.name == 'Future';
 
     final List<Map<String, Object>> parameters = <Map<String, Object>>[];
