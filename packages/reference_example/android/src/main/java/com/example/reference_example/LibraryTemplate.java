@@ -37,7 +37,7 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
 
     private Completable<Object> invoke($__function_name__ $instance
         /*iterate parameters parameter*/,/*replace parameter_type*/String/**/ __parameter_name__/**/) {
-      return invokeMethod($instance, "", Arrays.asList(/*iterate :join=',' parameters parameter*/__parameter_name__/**/));
+      return invokeMethod($instance, "", Arrays.<Object>asList(/*iterate :join=',' parameters parameter*/__parameter_name__/**/));
     }
   }
   /**/

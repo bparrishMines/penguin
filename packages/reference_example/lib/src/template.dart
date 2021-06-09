@@ -10,7 +10,7 @@ typedef $$function_name$$ = void Function(String value);
 
 @Reference('github.penguin/template/template/ClassTemplate')
 class $$class_name$$ with $$$class_name$$ {
-  $$class_name$$(int $$field_name$$, $$function_name$$ aFunction) {
+  $$class_name$$(int $$field_name$$) {
     _channel.$$create(this, $owner: true, $$field_name$$: $$field_name$$);
   }
 
