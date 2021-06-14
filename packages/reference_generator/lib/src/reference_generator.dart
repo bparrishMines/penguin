@@ -44,14 +44,29 @@ class ReferenceAstBuilder extends Builder {
 
     final Iterable<ClassElement> classes = reader
         .annotatedWith(const TypeChecker.fromRuntime(Reference))
+        .where(
+          (AnnotatedElement annotatedElement) =>
+              annotatedElement.element is ClassElement,
+        )
         .map<ClassElement>(
           (AnnotatedElement annotatedElement) =>
               annotatedElement.element as ClassElement,
         );
 
-    if (classes.isEmpty) return;
+    final Iterable<TypeAliasElement> functions = reader
+        .annotatedWith(const TypeChecker.fromRuntime(Reference))
+        .where(
+          (AnnotatedElement annotatedElement) =>
+              annotatedElement.element is TypeAliasElement,
+        )
+        .map<TypeAliasElement>(
+          (AnnotatedElement annotatedElement) =>
+              annotatedElement.element as TypeAliasElement,
+        );
 
-    final LibraryNode ast = _toLibraryNode(reader.element, classes);
+    if (classes.isEmpty && functions.isEmpty) return;
+
+    final LibraryNode ast = _toLibraryNode(reader.element, classes, functions);
 
     await buildStep.writeAsString(newFile, jsonEncode(ast));
   }
@@ -59,13 +74,26 @@ class ReferenceAstBuilder extends Builder {
   LibraryNode _toLibraryNode(
     LibraryElement libraryElement,
     Iterable<ClassElement> classes,
+    Iterable<TypeAliasElement> functions,
   ) {
+    final Set<Element> allGeneratedElements = <Element>{
+      ...classes,
+      ...functions
+    };
     return LibraryNode(
-      classes
+      classes: classes
           .map<ClassNode>(
             (ClassElement classElement) => _toClassNode(
               classElement,
-              classes.toSet(),
+              allGeneratedElements,
+            ),
+          )
+          .toList(),
+      functions: functions
+          .map<FunctionNode>(
+            (TypeAliasElement typeAliasElement) => _toFunctionNode(
+              typeAliasElement,
+              allGeneratedElements,
             ),
           )
           .toList(),
@@ -74,7 +102,7 @@ class ReferenceAstBuilder extends Builder {
 
   ClassNode _toClassNode(
     ClassElement classElement,
-    Set<ClassElement> allGeneratedClasses,
+    Set<Element> allGeneratedElements,
   ) {
     List<ParameterElement> parameters;
     final ConstructorElement? defaultConstructor = classElement.constructors
@@ -100,7 +128,7 @@ class ReferenceAstBuilder extends Builder {
             return !referenceParameter.ignore;
           })
           .map<FieldNode>((ParameterElement parameterElement) =>
-              _toFieldNode(parameterElement, allGeneratedClasses))
+              _toFieldNode(parameterElement, allGeneratedElements))
           .toList(),
       methods: classElement.methods
           .where((MethodElement element) => !element.isPrivate)
@@ -113,7 +141,7 @@ class ReferenceAstBuilder extends Builder {
           })
           .map<MethodNode>(
             (MethodElement methodElement) =>
-                _toMethodNode(methodElement, allGeneratedClasses),
+                _toMethodNode(methodElement, allGeneratedElements),
           )
           .toList(),
       staticMethods: classElement.methods
@@ -127,7 +155,7 @@ class ReferenceAstBuilder extends Builder {
           })
           .map<MethodNode>(
             (MethodElement methodElement) =>
-                _toMethodNode(methodElement, allGeneratedClasses),
+                _toMethodNode(methodElement, allGeneratedElements),
           )
           .toList(),
     );
@@ -135,23 +163,23 @@ class ReferenceAstBuilder extends Builder {
 
   FieldNode _toFieldNode(
     ParameterElement parameterElement,
-    Set<ClassElement> allGeneratedClasses,
+    Set<Element> allGeneratedElements,
   ) {
     return FieldNode(
       name: parameterElement.name,
-      type: _toReferenceType(parameterElement.type, allGeneratedClasses),
+      type: _toReferenceType(parameterElement.type, allGeneratedElements),
     );
   }
 
   MethodNode _toMethodNode(
     MethodElement methodElement,
-    Set<ClassElement> allGeneratedClasses,
+    Set<Element> allGeneratedElements,
   ) {
     return MethodNode(
       name: methodElement.name,
       returnType: _toReferenceType(
         methodElement.returnType,
-        allGeneratedClasses,
+        allGeneratedElements,
       ),
       parameters: methodElement.parameters
           .where((ParameterElement element) {
@@ -162,7 +190,35 @@ class ReferenceAstBuilder extends Builder {
           })
           .map<ParameterNode>(
             (ParameterElement parameterElement) =>
-                _toParameterNode(parameterElement, allGeneratedClasses),
+                _toParameterNode(parameterElement, allGeneratedElements),
+          )
+          .toList(),
+    );
+  }
+
+  FunctionNode _toFunctionNode(
+    TypeAliasElement typeAliasElement,
+    Set<Element> allGeneratedElements,
+  ) {
+    final FunctionType functionType =
+        typeAliasElement.aliasedType as FunctionType;
+    return FunctionNode(
+      name: typeAliasElement.name,
+      channelName: _getChannelFromTypeAlias(typeAliasElement),
+      returnType: _toReferenceType(
+        functionType,
+        allGeneratedElements,
+      ),
+      parameters: functionType.parameters
+          .where((ParameterElement element) {
+            final ReferenceParameter? referenceParameter =
+                tryReadParameterAnnotation(element);
+            if (referenceParameter == null) return true;
+            return !referenceParameter.ignore;
+          })
+          .map<ParameterNode>(
+            (ParameterElement parameterElement) =>
+                _toParameterNode(parameterElement, allGeneratedElements),
           )
           .toList(),
     );
@@ -170,31 +226,50 @@ class ReferenceAstBuilder extends Builder {
 
   ParameterNode _toParameterNode(
     ParameterElement parameterElement,
-    Set<ClassElement> allGeneratedClasses,
+    Set<Element> allGeneratedElements,
   ) {
     return ParameterNode(
       name: parameterElement.name,
-      type: _toReferenceType(parameterElement.type, allGeneratedClasses),
+      type: _toReferenceType(parameterElement.type, allGeneratedElements),
     );
   }
 
   ReferenceType _toReferenceType(
     DartType type,
-    Set<ClassElement> allGeneratedClasses,
+    Set<Element> allGeneratedElements,
   ) {
     final String displayName = type.getDisplayString(withNullability: true);
+    // TODO: Use type.nullabilitySuffix
+    final TypeAliasElement? aliasElement = type.aliasElement;
+    if (aliasElement != null) {
+      return ReferenceType(
+        name: aliasElement.name,
+        nullable: displayName.endsWith('?'),
+        codeGeneratedType: allGeneratedElements.contains(aliasElement),
+        typeArguments: <ReferenceType>[],
+        functionType: true,
+      );
+    }
     return ReferenceType(
       name: displayName.split(RegExp('[<?]')).first,
       nullable: displayName.endsWith('?'),
-      codeGeneratedClass: allGeneratedClasses.contains(type.element),
+      codeGeneratedType: allGeneratedElements.contains(type.element),
+      functionType: false,
       typeArguments: type is! ParameterizedType
           ? <ReferenceType>[]
           : type.typeArguments
               .map<ReferenceType>(
-                (DartType type) => _toReferenceType(type, allGeneratedClasses),
+                (DartType type) => _toReferenceType(type, allGeneratedElements),
               )
               .toList(),
     );
+  }
+
+  String _getChannelFromTypeAlias(TypeAliasElement element) {
+    final TypeChecker typeChecker = TypeChecker.fromRuntime(Reference);
+    final ConstantReader constantReader =
+        ConstantReader(typeChecker.firstAnnotationOf(element));
+    return constantReader.read('channel').stringValue;
   }
 
   String? _getChannel(DartType type) {

@@ -1,5 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
+#import <Foundation/Foundation.h>
 #import "REFMethodChannel.h"
 
 // **************************************************************************
@@ -11,6 +12,28 @@ NS_ASSUME_NONNULL_BEGIN
 /*replace :from='__prefix__' prefix*/
 /*iterate classes class*/
 @protocol __prefix____class_name__;
+/**/
+
+@class __prefix__LibraryImplementations;
+
+/*iterate functions function*/
+typedef NSObject *_Nullable (^__prefix____function_name__) (/*iterate :join=',' parameters parameter*//*replace parameter_type*/NSString/**/ *_Nullable __parameter_name__/**/);
+/**/
+
+/*iterate functions function*/
+@interface __prefix____function_name__Channel : REFTypeChannel
+- (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger;
+- (void)__create:(__prefix____function_name__)_instance
+          _owner:(BOOL)_owner
+      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion;
+@end
+/**/
+
+/*iterate functions function*/
+@interface __prefix____function_name__Handler : NSObject<REFTypeChannelHandler>
+@property (readonly) __prefix__LibraryImplementations *implementations;
+-(instancetype)initWithImplementations:(__prefix__LibraryImplementations *)implementations;
+@end
 /**/
 
 /*iterate classes class*/
@@ -97,6 +120,11 @@ NS_ASSUME_NONNULL_BEGIN
 /*iterate classes class*/
 -(__prefix____class_name__Channel *)channel__class_name__;
 -(__prefix____class_name__Handler *)handler__class_name__;
+/**/
+
+/*iterate functions function*/
+- (__prefix____function_name__Channel *)channel__function_name__;
+- (__prefix____function_name__Handler *)handler__function_name__;
 /**/
 @end
 

@@ -76,8 +76,31 @@ String generateObjcHeader({
 
     classes.add(classData);
   }
-
   data['classes'] = classes;
+
+  final List<Map<String, Object>> functions = <Map<String, Object>>[];
+  for (FunctionNode functionNode in libraryNode.functions) {
+    final Map<String, Object> functionData = <String, Object>{};
+    functionData['name'] = functionNode.name;
+    functionData['channel'] = functionNode.channelName;
+
+    final List<Map<String, Object>> parameters = <Map<String, Object>>[];
+    for (int i = 0; i < functionNode.parameters.length; i++) {
+      final Map<String, Object> parameterData = <String, Object>{};
+      parameterData['name'] = functionNode.parameters[i].name;
+      parameterData['type'] = getTrueTypeName(
+        functionNode.parameters[i].type,
+        prefix,
+      );
+      parameterData['index'] = '$i';
+
+      parameters.add(parameterData);
+    }
+    functionData['parameters'] = parameters;
+
+    functions.add(functionData);
+  }
+  data['functions'] = functions;
 
   final Queue<String> templateQueue = Queue<String>();
   for (int i = 0; i < template.length; i++) {
@@ -94,11 +117,11 @@ String getTrueTypeName(ReferenceType type, String prefix) {
     (ReferenceType type) => getTrueTypeName(type, prefix),
   );
 
-  if (type.codeGeneratedClass && typeArguments.isEmpty) {
+  if (type.codeGeneratedType && typeArguments.isEmpty) {
     return 'NSObject<$prefix$objcName>';
-  } else if (type.codeGeneratedClass && typeArguments.isNotEmpty) {
+  } else if (type.codeGeneratedType && typeArguments.isNotEmpty) {
     return 'NSObject<$prefix$objcName<${typeArguments.join(' *,')} *>>';
-  } else if (!type.codeGeneratedClass && typeArguments.isNotEmpty) {
+  } else if (!type.codeGeneratedType && typeArguments.isNotEmpty) {
     return '$objcName<${typeArguments.join(' *,')} *>';
   }
 
