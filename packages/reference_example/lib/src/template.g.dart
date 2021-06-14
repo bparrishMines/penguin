@@ -9,10 +9,6 @@ import /*replace :from='dart:core' value*/ 'dart:core' /**/;
 // ReferenceGenerator
 // **************************************************************************
 
-class _FunctionHolder {
-  late Function function;
-}
-
 /*iterate functions function*/
 typedef $$$function_name$$ = dynamic Function(
   /*iterate parameters parameter*/ /*replace parameter_type*/ String /**/ $$parameter_name$$,
@@ -37,7 +33,7 @@ class $$$function_name$$Channel extends TypeChannel<Object> {
   }
 
   Future<Object?> _invoke(
-    _FunctionHolder $instance,
+    $$$function_name$$ $instance,
     /*iterate parameters parameter*/ /*replace parameter_type*/ String /**/ $$parameter_name$$,
     /**/
   ) {
@@ -53,27 +49,28 @@ class $$$function_name$$Channel extends TypeChannel<Object> {
 /**/
 
 /*iterate functions function*/
-class $$$function_name$$Handler implements TypeChannelHandler<Object> {
+class $$$function_name$$Handler
+    implements TypeChannelHandler<Object> {
   $$$function_name$$Handler(this.implementations);
 
   final $LibraryImplementations implementations;
 
   @override
-  _FunctionHolder createInstance(
+  $$$function_name$$ createInstance(
     TypeChannelMessenger messenger,
     List<Object?> arguments,
   ) {
-    final _FunctionHolder functionHolder = _FunctionHolder();
-    functionHolder.function = (
+    function(
       /*iterate parameters parameter*/ /*replace parameter_type*/ String /**/ $$parameter_name$$,
       /**/
     ) {
       implementations.channel__function_name__._invoke(
-        functionHolder,
+        function,
         /*iterate parameters parameter*/ $$parameter_name$$, /**/
       );
-    };
-    return functionHolder;
+    }
+
+    return function;
   }
 
   @override

@@ -9,51 +9,60 @@
 // ReferenceGenerator
 // **************************************************************************
 
-//@implementation _BlockHolder
-//@end
-//
-//@implementation ACallbackChannel
-//- (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
-//  return self = [super initWithMessenger:messenger name:@"github.penguin/template/template/ACallback"];
-//}
-//
-//- (void)__create:(NSObject * _Nullable (^)(NSString * _Nullable))_instance
-//          _owner:(BOOL)_owner
-//      completion:(void (^)(REFPairedInstance * _Nullable, NSError * _Nullable))completion {
-//  [self createNewInstancePair:_instance arguments:@[] owner:_owner completion:completion];
-//}
-//
-//- (void)invoke:(_BlockHolder *)_instance
-//         value:(NSString *)value
-//    completion:(void (^)(id _Nullable, NSError *_Nullable))completion {
-//  [self invokeMethod:_instance methodName:@"" arguments:@[value] completion:completion];
-//}
-//@end
-//
-//@implementation ACallbackHandler
-//-(instancetype)initWithImplementations:(__prefix__LibraryImplementations *)implementations {
-//  self = [super init];
-//  if (self) {
-//    _implementations = implementations;
-//  }
-//  return self;
-//}
-//
-//- (nonnull id)createInstance:(nonnull REFTypeChannelMessenger *)messenger arguments:(nonnull NSArray *)arguments {
-//  _BlockHolder *blockHolder = [[_BlockHolder alloc] init];
-//  blockHolder.block = ^(NSString *value) {
-//
-//  };
-//}
-//
-//- (id _Nullable)invokeMethod:(nonnull REFTypeChannelMessenger *)messenger instance:(nonnull NSObject *)instance methodName:(nonnull NSString *)methodName arguments:(nonnull NSArray *)arguments {
-//  <#code#>
-//}
-//
-//- (id _Nullable)invokeStaticMethod:(nonnull REFTypeChannelMessenger *)messenger methodName:(nonnull NSString *)methodName arguments:(nonnull NSArray *)arguments {
-//  <#code#>
-//}
-//@end
+@implementation ACallbackChannel
+- (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
+  return self = [super initWithMessenger:messenger name:@"__function_channel__"];
+}
+
+- (void)__create:(NSObject *_Nullable (^)(NSString * _Nullable))_instance
+          _owner:(BOOL)_owner
+      completion:(void (^)(REFPairedInstance * _Nullable, NSError * _Nullable))completion {
+  [self createNewInstancePair:_instance arguments:@[] owner:_owner completion:completion];
+}
+
+- (void)invoke:(ACallback)_instance
+         value:(NSString *)value
+    completion:(void (^)(id _Nullable, NSError *_Nullable))completion {
+  [self invokeMethod:_instance methodName:@"" arguments:@[value] completion:completion];
+}
+@end
+
+@implementation ACallbackHandler
+-(instancetype)initWithImplementations:(__prefix__LibraryImplementations *)implementations {
+  self = [super init];
+  if (self) {
+    _implementations = implementations;
+  }
+  return self;
+}
+
+- (nonnull id)createInstance:(nonnull REFTypeChannelMessenger *)messenger
+                   arguments:(nonnull NSArray *)arguments {
+  __block __weak ACallback function;
+  ACallback functionInstance = ^(NSString *value) {
+    [self->_implementations.channelACallback invoke:function
+                                              value:value
+                                         completion:^(id result, NSError *error) {}];
+    return (NSObject *) nil;
+  };
+  function = functionInstance;
+  return functionInstance;
+}
+
+- (id _Nullable)invokeMethod:(nonnull REFTypeChannelMessenger *)messenger
+                    instance:(nonnull NSObject *)instance
+                  methodName:(nonnull NSString *)methodName
+                   arguments:(nonnull NSArray *)arguments {
+  ACallback function = (ACallback) instance;
+  return function(arguments[0]);
+}
+
+- (id _Nullable)invokeStaticMethod:(nonnull REFTypeChannelMessenger *)messenger
+                        methodName:(nonnull NSString *)methodName
+                         arguments:(nonnull NSArray *)arguments {
+  @throw [NSException exceptionWithName:@"__prefix__UnimplementedException" reason:nil userInfo:nil];
+}
+@end
 
 /*iterate classes class*/
 @implementation __prefix____class_name__Channel
@@ -202,6 +211,16 @@
   return [[__prefix____class_name__Handler alloc] init];
 }
 /**/
+
+/*iterate functions function*/
+- (ACallbackChannel *)channelACallback {
+  return [[ACallbackChannel alloc] initWithMessenger:_messenger];
+}
+
+- (ACallbackHandler *)handlerACallback {
+  return [[ACallbackHandler alloc] initWithImplementations:self];
+}
+/**/
 @end
 
 @implementation __prefix__ChannelRegistrar
@@ -217,11 +236,17 @@
   /*iterate classes class*/
   [_implementations.channel__class_name__ setHandler:_implementations.handler__class_name__];
   /**/
+  /*iterate functions function*/
+  [_implementations.channelACallback setHandler:_implementations.handlerACallback];
+  /**/
 }
 
 - (void)unregisterHandlers {
   /*iterate classes class*/
   [_implementations.channel__class_name__ removeHandler];
+  /**/
+  /*iterate functions function*/
+  [_implementations.channelACallback removeHandler];
   /**/
 }
 @end

@@ -24,8 +24,8 @@
   return self;
 }
 
-- (nonnull id)___method_name__:(NSString * _Nullable)__parameter_name__
-   __followingParameter_name__:(NSString * _Nullable)__followingParameter_name__ {
+- (id _Nullable)__method_name__:(NSString * _Nullable)__parameter_name__
+    __followingParameter_name__:(NSString * _Nullable)__followingParameter_name__ {
   return [_classTemplate methodTemplate:__parameter_name__];
 }
 @end
@@ -34,6 +34,20 @@
 - (NSObject<__prefix____class_name__> *)__create:(REFTypeChannelMessenger *)messenger
                                   __field_name__:(NSNumber *)__field_name__ {
   return [[EXPClassTemplateProxy alloc] initWithFieldTemplate:__field_name__];
+}
+
+- (id)invokeMethod:(REFTypeChannelMessenger *)messenger
+          instance:(NSObject *)instance
+        methodName:(NSString *)methodName
+         arguments:(NSArray *)arguments {
+  if ([@"callbackTest" isEqualToString:methodName]) {
+    NSLog(@"before Callbcak test");
+    ACallback callback = (ACallback) arguments[0];
+    NSLog(@"Callbcak test %@", callback);
+    callback(@"Eureka!");
+    return nil;
+  }
+  return [super invokeMethod:messenger instance:instance methodName:methodName arguments:arguments];
 }
 
 - (NSObject *)___staticMethod_name__:(REFTypeChannelMessenger *)messenger

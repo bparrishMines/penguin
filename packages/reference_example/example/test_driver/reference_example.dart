@@ -29,14 +29,14 @@ Future<void> main() async {
     });
 
     test('ACallback', () async {
-      late final String returnValue;
+      String? returnValue;
       final $$function_name$$ callback = (String value) {
         returnValue = value;
       };
       ChannelRegistrar.instance.implementations.channel__function_name__
           .$$create(
         callback,
-        $owner: false,
+        $owner: true,
       );
       final $$class_name$$ classTemplate = $$class_name$$(44);
       ChannelRegistrar.instance.implementations.channel__class_name__
