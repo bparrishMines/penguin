@@ -41,9 +41,7 @@
         methodName:(NSString *)methodName
          arguments:(NSArray *)arguments {
   if ([@"callbackTest" isEqualToString:methodName]) {
-    NSLog(@"before Callbcak test");
-    ACallback callback = (ACallback) arguments[0];
-    NSLog(@"Callbcak test %@", callback);
+    __prefix____function_name__ callback = (__prefix____function_name__) arguments[0];
     callback(@"Eureka!");
     return nil;
   }
