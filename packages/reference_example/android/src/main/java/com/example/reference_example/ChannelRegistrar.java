@@ -40,7 +40,7 @@ public class ChannelRegistrar extends LibraryTemplate.$ChannelRegistrar {
     @Override
     public Object invokeMethod(TypeChannelMessenger messenger, LibraryTemplate.$__class_name__ instance, String methodName, List<Object> arguments) throws Exception {
       if (methodName.equals("callbackTest")) {
-        final LibraryTemplate.ACallback callback = (LibraryTemplate.ACallback) arguments.get(0);
+        final LibraryTemplate.$__function_name__ callback = (LibraryTemplate.$__function_name__) arguments.get(0);
         callback.invoke("Eureka!");
         return null;
       }

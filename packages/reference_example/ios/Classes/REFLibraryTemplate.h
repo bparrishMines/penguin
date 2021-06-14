@@ -16,19 +16,25 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class __prefix__LibraryImplementations;
 
-typedef NSObject *_Nullable (^ACallback) (NSString *_Nullable value);
+/*iterate functions function*/
+typedef NSObject *_Nullable (^__prefix____function_name__) (/*iterate :join=',' parameters parameter*//*replace parameter_type*/NSString/**/ *_Nullable __parameter_name__/**/);
+/**/
 
-@interface ACallbackChannel : REFTypeChannel
+/*iterate functions function*/
+@interface __prefix____function_name__Channel : REFTypeChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger;
-- (void)__create:(NSObject *_Nullable (^) (NSString *_Nullable))_instance
+- (void)__create:(__prefix____function_name__)_instance
           _owner:(BOOL)_owner
       completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion;
 @end
+/**/
 
-@interface ACallbackHandler : NSObject<REFTypeChannelHandler>
+/*iterate functions function*/
+@interface __prefix____function_name__Handler : NSObject<REFTypeChannelHandler>
 @property (readonly) __prefix__LibraryImplementations *implementations;
 -(instancetype)initWithImplementations:(__prefix__LibraryImplementations *)implementations;
 @end
+/**/
 
 /*iterate classes class*/
 @protocol __prefix____class_name__ <NSObject>
@@ -117,8 +123,8 @@ typedef NSObject *_Nullable (^ACallback) (NSString *_Nullable value);
 /**/
 
 /*iterate functions function*/
-- (ACallbackChannel *)channelACallback;
-- (ACallbackHandler *)handlerACallback;
+- (__prefix____function_name__Channel *)channel__function_name__;
+- (__prefix____function_name__Handler *)handler__function_name__;
 /**/
 @end
 
