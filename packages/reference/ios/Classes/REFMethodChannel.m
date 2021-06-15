@@ -209,7 +209,7 @@ NSString *const REFMethodDispose = @"REFERENCE_DISPOSE";
       } @catch(NSException *exception) {
         channelResult([FlutterError errorWithCode:@"REFMethodChannelMessenger"
                                           message:[NSString stringWithFormat:@"%@: %@", exception.name, exception.reason]
-                                          details:[exception callStackSymbols]]);
+                                          details:[exception.callStackSymbols componentsJoinedByString:@"\n"]]);
       }
     }];
   }

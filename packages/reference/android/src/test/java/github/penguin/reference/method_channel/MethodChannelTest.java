@@ -169,7 +169,6 @@ public class MethodChannelTest {
     testChannel.createNewInstancePair(testClass, Collections.emptyList(),true);
     testMessenger.testMessenger.methodCalls.clear();
 
-
     testChannel.disposeInstancePair(testClass);
     final List<MethodCall> methodCalls = testMessenger.testMessenger.methodCalls;
     assertEquals(1, methodCalls.size());
