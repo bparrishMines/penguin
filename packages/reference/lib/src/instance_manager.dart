@@ -119,11 +119,6 @@ class InstanceManager {
       _referenceDartDlInitialize(NativeApi.initializeApiDLData);
       _initialized = true;
     }
-    _weakReferences = _WeakMap((String instanceId) {
-      final void Function(String)? callback =
-          _weakReferenceCallbacks[instanceId];
-      if (callback != null) callback(instanceId);
-    });
   }
 
   static bool _initialized = false;
@@ -131,7 +126,13 @@ class InstanceManager {
   final Expando _instanceIds = Expando();
 
   final Map<String, Object> _strongReferences = <String, Object>{};
-  late final _WeakMap _weakReferences;
+  final Map<String, Object> _temporaryStrongReferences = <String, Object>{};
+
+  // TODO(bparrishMines): Temporary workaround until https://github.com/dart-lang/sdk/issues/45455 is available.
+  late final _WeakMap _weakReferences = _WeakMap((String instanceId) {
+    final void Function(String)? callback = _weakReferenceCallbacks[instanceId];
+    if (callback != null) callback(instanceId);
+  });
 
   final Map<String, void Function(String)> _weakReferenceCallbacks =
       <String, void Function(String)>{};
@@ -142,6 +143,7 @@ class InstanceManager {
     if (instance != null) _instanceIds[instance] = null;
 
     _strongReferences.remove(instanceId);
+    _temporaryStrongReferences.remove(instanceId);
     _weakReferences.remove(instanceId);
     _weakReferenceCallbacks.remove(instanceId);
   }
@@ -149,7 +151,7 @@ class InstanceManager {
   /// Add a new instance with [instanceId] as key and [instance] as the value.
   ///
   /// [instance] is stored as a weak reference and [onFinalize] is called
-  /// when [instance] is garbage collected.
+  /// after [instance] is garbage collected.
   ///
   /// Returns `true` if the instance is successfully added. Returns `false` if
   /// the [instanceId] or [instance] is already contained in the manager or the
@@ -184,14 +186,25 @@ class InstanceManager {
     return true;
   }
 
-  bool _isValidInstance(Object instance) {
-    if (instance is num ||
-        instance is bool ||
-        instance is String ||
-        containsInstance(instance)) {
-      return false;
-    }
+  bool addTemporaryStrongReference({
+    required Object instance,
+    String? instanceId,
+    required void Function(String instanceId) onFinalize,
+  }) {
+    if (!_isValidInstance(instance)) return false;
+
+    final String newId = instanceId ?? generateUniqueInstanceId(instance);
+    _instanceIds[instance] = newId;
+    _temporaryStrongReferences[newId] = instance;
+    _weakReferenceCallbacks[newId] = onFinalize;
     return true;
+  }
+
+  bool _isValidInstance(Object instance) {
+    return instance is! num &&
+        instance is! bool &&
+        instance is! String &&
+        !containsInstance(instance);
   }
 
   /// Whether [instance] is contained in this manager.
@@ -212,6 +225,18 @@ class InstanceManager {
   ///
   /// Returns null if this [instanceId] is not paired.
   Object? getInstance(String instanceId) {
+    final Object? instance = _temporaryStrongReferences[instanceId];
+    if (instance != null) {
+      final void Function(String instanceId) onFinalize =
+          _weakReferenceCallbacks[instanceId]!;
+      removeInstance(instanceId);
+      addWeakReference(
+        instance: instance,
+        instanceId: instanceId,
+        onFinalize: onFinalize,
+      );
+      return instance;
+    }
     return _strongReferences[instanceId] ?? _weakReferences.get(instanceId);
   }
 

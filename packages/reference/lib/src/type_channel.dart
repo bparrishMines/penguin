@@ -178,7 +178,7 @@ abstract class TypeChannelMessenger {
     required bool owner,
   }) {
     if (owner) {
-      instanceManager.addWeakReference(
+      instanceManager.addTemporaryStrongReference(
         instance: instance,
         instanceId: instanceId,
         onFinalize: (String instanceId) {
