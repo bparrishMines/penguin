@@ -18,8 +18,10 @@ public abstract class TypeChannelMessenger {
 
   // TODO: Handle failed add.
   private void addInstancePair(Object instance, @Nullable String instanceId, boolean owner) {
-    if (owner) {
-      getInstanceManager().addWeakReference(instance, instanceId);
+    if (owner && instanceId != null) {
+      getInstanceManager().addTemporaryStrongReference(instance, instanceId);
+    } else if (owner) {
+      getInstanceManager().addWeakReference(instance, null);
     } else {
       getInstanceManager().addStrongReference(instance, instanceId);
     }

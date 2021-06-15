@@ -177,10 +177,19 @@ abstract class TypeChannelMessenger {
     required String? instanceId,
     required bool owner,
   }) {
-    if (owner) {
+    if (owner && instanceId != null) {
+      // Receiving weak reference
       instanceManager.addTemporaryStrongReference(
         instance: instance,
         instanceId: instanceId,
+        onFinalize: (String instanceId) {
+          messageDispatcher.sendDisposeInstancePair(PairedInstance(instanceId));
+        },
+      );
+    } else if (owner && instanceId == null) {
+      // Creating weak reference
+      instanceManager.addWeakReference(
+        instance: instance,
         onFinalize: (String instanceId) {
           messageDispatcher.sendDisposeInstancePair(PairedInstance(instanceId));
         },
