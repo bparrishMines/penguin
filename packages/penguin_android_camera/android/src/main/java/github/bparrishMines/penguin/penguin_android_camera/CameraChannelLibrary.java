@@ -6,8 +6,7 @@ package github.bparrishMines.penguin.penguin_android_camera;
 
 import androidx.annotation.NonNull;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import github.penguin.reference.async.Completable;
 import github.penguin.reference.reference.PairedInstance;
@@ -20,6 +19,200 @@ import github.penguin.reference.reference.TypeChannelMessenger;
 // **************************************************************************
 
 public class CameraChannelLibrary {
+  
+  public static abstract class $ErrorCallback {
+    public abstract Object invoke(Integer error);
+  }
+  
+  public static abstract class $AutoFocusCallback {
+    public abstract Object invoke(Boolean success);
+  }
+  
+  public static abstract class $ShutterCallback {
+    public abstract Object invoke();
+  }
+  
+  public static abstract class $PictureCallback {
+    public abstract Object invoke(byte[] data);
+  }
+  
+
+  
+  public static class $ErrorCallbackChannel extends TypeChannel<$ErrorCallback> {
+    public $ErrorCallbackChannel(@NonNull TypeChannelMessenger messenger) {
+      super(messenger, "penguin_android_camera/camera/ErrorCallback");
+    }
+
+    public Completable<PairedInstance> $$create($ErrorCallback $instance, boolean $owner) {
+      return createNewInstancePair($instance, Collections.emptyList(), $owner);
+    }
+
+    private Completable<Object> invoke($ErrorCallback $instance
+        ,Integer error) {
+      return invokeMethod($instance, "", Arrays.<Object>asList(error));
+    }
+  }
+  
+  public static class $AutoFocusCallbackChannel extends TypeChannel<$AutoFocusCallback> {
+    public $AutoFocusCallbackChannel(@NonNull TypeChannelMessenger messenger) {
+      super(messenger, "penguin_android_camera/camera/AutoFocusCallback");
+    }
+
+    public Completable<PairedInstance> $$create($AutoFocusCallback $instance, boolean $owner) {
+      return createNewInstancePair($instance, Collections.emptyList(), $owner);
+    }
+
+    private Completable<Object> invoke($AutoFocusCallback $instance
+        ,Boolean success) {
+      return invokeMethod($instance, "", Arrays.<Object>asList(success));
+    }
+  }
+  
+  public static class $ShutterCallbackChannel extends TypeChannel<$ShutterCallback> {
+    public $ShutterCallbackChannel(@NonNull TypeChannelMessenger messenger) {
+      super(messenger, "penguin_android_camera/camera/ShutterCallback");
+    }
+
+    public Completable<PairedInstance> $$create($ShutterCallback $instance, boolean $owner) {
+      return createNewInstancePair($instance, Collections.emptyList(), $owner);
+    }
+
+    private Completable<Object> invoke($ShutterCallback $instance
+        ) {
+      return invokeMethod($instance, "", Arrays.<Object>asList());
+    }
+  }
+  
+  public static class $PictureCallbackChannel extends TypeChannel<$PictureCallback> {
+    public $PictureCallbackChannel(@NonNull TypeChannelMessenger messenger) {
+      super(messenger, "penguin_android_camera/camera/PictureCallback");
+    }
+
+    public Completable<PairedInstance> $$create($PictureCallback $instance, boolean $owner) {
+      return createNewInstancePair($instance, Collections.emptyList(), $owner);
+    }
+
+    private Completable<Object> invoke($PictureCallback $instance
+        ,byte[] data) {
+      return invokeMethod($instance, "", Arrays.<Object>asList(data));
+    }
+  }
+  
+
+  
+  public static class $ErrorCallbackHandler implements TypeChannelHandler<$ErrorCallback> {
+    public final $LibraryImplementations implementations;
+
+    public $ErrorCallbackHandler($LibraryImplementations implementations) {
+      this.implementations = implementations;
+    }
+
+    @Override
+    public $ErrorCallback createInstance(TypeChannelMessenger messenger, List<Object> arguments) {
+      return new $ErrorCallback() {
+        @Override
+        public Object invoke(Integer error) {
+          return implementations.getChannelErrorCallback().invoke(this,error);
+        }
+      };
+    }
+
+    @Override
+    public Void invokeStaticMethod(TypeChannelMessenger messenger, String methodName, List<Object> arguments) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Object invokeMethod(TypeChannelMessenger messenger, $ErrorCallback instance, String methodName, List<Object> arguments) throws Exception {
+      return instance.invoke((Integer) arguments.get(0));
+    }
+  }
+  
+  public static class $AutoFocusCallbackHandler implements TypeChannelHandler<$AutoFocusCallback> {
+    public final $LibraryImplementations implementations;
+
+    public $AutoFocusCallbackHandler($LibraryImplementations implementations) {
+      this.implementations = implementations;
+    }
+
+    @Override
+    public $AutoFocusCallback createInstance(TypeChannelMessenger messenger, List<Object> arguments) {
+      return new $AutoFocusCallback() {
+        @Override
+        public Object invoke(Boolean success) {
+          return implementations.getChannelAutoFocusCallback().invoke(this,success);
+        }
+      };
+    }
+
+    @Override
+    public Void invokeStaticMethod(TypeChannelMessenger messenger, String methodName, List<Object> arguments) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Object invokeMethod(TypeChannelMessenger messenger, $AutoFocusCallback instance, String methodName, List<Object> arguments) throws Exception {
+      return instance.invoke((Boolean) arguments.get(0));
+    }
+  }
+  
+  public static class $ShutterCallbackHandler implements TypeChannelHandler<$ShutterCallback> {
+    public final $LibraryImplementations implementations;
+
+    public $ShutterCallbackHandler($LibraryImplementations implementations) {
+      this.implementations = implementations;
+    }
+
+    @Override
+    public $ShutterCallback createInstance(TypeChannelMessenger messenger, List<Object> arguments) {
+      return new $ShutterCallback() {
+        @Override
+        public Object invoke() {
+          return implementations.getChannelShutterCallback().invoke(this);
+        }
+      };
+    }
+
+    @Override
+    public Void invokeStaticMethod(TypeChannelMessenger messenger, String methodName, List<Object> arguments) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Object invokeMethod(TypeChannelMessenger messenger, $ShutterCallback instance, String methodName, List<Object> arguments) throws Exception {
+      return instance.invoke();
+    }
+  }
+  
+  public static class $PictureCallbackHandler implements TypeChannelHandler<$PictureCallback> {
+    public final $LibraryImplementations implementations;
+
+    public $PictureCallbackHandler($LibraryImplementations implementations) {
+      this.implementations = implementations;
+    }
+
+    @Override
+    public $PictureCallback createInstance(TypeChannelMessenger messenger, List<Object> arguments) {
+      return new $PictureCallback() {
+        @Override
+        public Object invoke(byte[] data) {
+          return implementations.getChannelPictureCallback().invoke(this,data);
+        }
+      };
+    }
+
+    @Override
+    public Void invokeStaticMethod(TypeChannelMessenger messenger, String methodName, List<Object> arguments) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Object invokeMethod(TypeChannelMessenger messenger, $PictureCallback instance, String methodName, List<Object> arguments) throws Exception {
+      return instance.invoke((byte[]) arguments.get(0));
+    }
+  }
+  
+
   
   public interface $Camera {
     
@@ -222,30 +415,6 @@ public class CameraChannelLibrary {
   }
   
   public interface $CameraSize {
-    
-  }
-  
-  public interface $ErrorCallback {
-    
-    
-    
-  }
-  
-  public interface $AutoFocusCallback {
-    
-    
-    
-  }
-  
-  public interface $ShutterCallback {
-    
-    
-    
-  }
-  
-  public interface $PictureCallback {
-    
-    
     
   }
   
@@ -474,86 +643,6 @@ public class CameraChannelLibrary {
 
     
 
-    
-  }
-  
-  public static class $ErrorCallbackChannel extends TypeChannel<$ErrorCallback> {
-    public $ErrorCallbackChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "penguin_android_camera/camera/ErrorCallback");
-    }
-
-    public Completable<PairedInstance> $$create($ErrorCallback $instance, boolean $owner) {
-      return createNewInstancePair($instance, Arrays.<Object>asList(), $owner);
-    }
-
-    
-
-    
-    
-    public Completable<Object> $onError($ErrorCallback $instance,Integer error) {
-      return invokeMethod($instance, "onError", Arrays.<Object>asList(error));
-    }
-    
-    
-  }
-  
-  public static class $AutoFocusCallbackChannel extends TypeChannel<$AutoFocusCallback> {
-    public $AutoFocusCallbackChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "penguin_android_camera/camera/AutoFocusCallback");
-    }
-
-    public Completable<PairedInstance> $$create($AutoFocusCallback $instance, boolean $owner) {
-      return createNewInstancePair($instance, Arrays.<Object>asList(), $owner);
-    }
-
-    
-
-    
-    
-    public Completable<Object> $onAutoFocus($AutoFocusCallback $instance,Boolean success) {
-      return invokeMethod($instance, "onAutoFocus", Arrays.<Object>asList(success));
-    }
-    
-    
-  }
-  
-  public static class $ShutterCallbackChannel extends TypeChannel<$ShutterCallback> {
-    public $ShutterCallbackChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "penguin_android_camera/camera/ShutterCallback");
-    }
-
-    public Completable<PairedInstance> $$create($ShutterCallback $instance, boolean $owner) {
-      return createNewInstancePair($instance, Arrays.<Object>asList(), $owner);
-    }
-
-    
-
-    
-    
-    public Completable<Object> $onShutter($ShutterCallback $instance) {
-      return invokeMethod($instance, "onShutter", Arrays.<Object>asList());
-    }
-    
-    
-  }
-  
-  public static class $PictureCallbackChannel extends TypeChannel<$PictureCallback> {
-    public $PictureCallbackChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "penguin_android_camera/camera/PictureCallback");
-    }
-
-    public Completable<PairedInstance> $$create($PictureCallback $instance, boolean $owner) {
-      return createNewInstancePair($instance, Arrays.<Object>asList(), $owner);
-    }
-
-    
-
-    
-    
-    public Completable<Object> $onPictureTaken($PictureCallback $instance,byte[] data) {
-      return invokeMethod($instance, "onPictureTaken", Arrays.<Object>asList(data));
-    }
-    
     
   }
   
@@ -1363,198 +1452,6 @@ public class CameraChannelLibrary {
     }
   }
   
-  public static class $ErrorCallbackHandler implements TypeChannelHandler<$ErrorCallback> {
-    public $ErrorCallback $$create(TypeChannelMessenger messenger)
-        throws Exception {
-      throw new UnsupportedOperationException();
-    }
-
-    
-
-    
-    
-    
-
-    @Override
-    public Object invokeStaticMethod(
-        TypeChannelMessenger messenger, String methodName, List<Object> arguments)
-        throws Exception {
-      switch (methodName) {
-        
-      }
-
-      throw new UnsupportedOperationException(
-          String.format("Unable to invoke static method %s", methodName));
-    }
-
-    @Override
-    public $ErrorCallback createInstance(TypeChannelMessenger messenger, List<Object> arguments)
-        throws Exception {
-      return $$create(messenger);
-    }
-
-    @Override
-    public Object invokeMethod(
-        TypeChannelMessenger messenger,
-        $ErrorCallback instance,
-        String methodName,
-        List<Object> arguments)
-        throws Exception {
-      switch(methodName) {
-        
-        
-        
-      }
-
-      throw new UnsupportedOperationException(
-          String.format("%s.%s not supported.", instance, methodName));
-    }
-  }
-  
-  public static class $AutoFocusCallbackHandler implements TypeChannelHandler<$AutoFocusCallback> {
-    public $AutoFocusCallback $$create(TypeChannelMessenger messenger)
-        throws Exception {
-      throw new UnsupportedOperationException();
-    }
-
-    
-
-    
-    
-    
-
-    @Override
-    public Object invokeStaticMethod(
-        TypeChannelMessenger messenger, String methodName, List<Object> arguments)
-        throws Exception {
-      switch (methodName) {
-        
-      }
-
-      throw new UnsupportedOperationException(
-          String.format("Unable to invoke static method %s", methodName));
-    }
-
-    @Override
-    public $AutoFocusCallback createInstance(TypeChannelMessenger messenger, List<Object> arguments)
-        throws Exception {
-      return $$create(messenger);
-    }
-
-    @Override
-    public Object invokeMethod(
-        TypeChannelMessenger messenger,
-        $AutoFocusCallback instance,
-        String methodName,
-        List<Object> arguments)
-        throws Exception {
-      switch(methodName) {
-        
-        
-        
-      }
-
-      throw new UnsupportedOperationException(
-          String.format("%s.%s not supported.", instance, methodName));
-    }
-  }
-  
-  public static class $ShutterCallbackHandler implements TypeChannelHandler<$ShutterCallback> {
-    public $ShutterCallback $$create(TypeChannelMessenger messenger)
-        throws Exception {
-      throw new UnsupportedOperationException();
-    }
-
-    
-
-    
-    
-    
-
-    @Override
-    public Object invokeStaticMethod(
-        TypeChannelMessenger messenger, String methodName, List<Object> arguments)
-        throws Exception {
-      switch (methodName) {
-        
-      }
-
-      throw new UnsupportedOperationException(
-          String.format("Unable to invoke static method %s", methodName));
-    }
-
-    @Override
-    public $ShutterCallback createInstance(TypeChannelMessenger messenger, List<Object> arguments)
-        throws Exception {
-      return $$create(messenger);
-    }
-
-    @Override
-    public Object invokeMethod(
-        TypeChannelMessenger messenger,
-        $ShutterCallback instance,
-        String methodName,
-        List<Object> arguments)
-        throws Exception {
-      switch(methodName) {
-        
-        
-        
-      }
-
-      throw new UnsupportedOperationException(
-          String.format("%s.%s not supported.", instance, methodName));
-    }
-  }
-  
-  public static class $PictureCallbackHandler implements TypeChannelHandler<$PictureCallback> {
-    public $PictureCallback $$create(TypeChannelMessenger messenger)
-        throws Exception {
-      throw new UnsupportedOperationException();
-    }
-
-    
-
-    
-    
-    
-
-    @Override
-    public Object invokeStaticMethod(
-        TypeChannelMessenger messenger, String methodName, List<Object> arguments)
-        throws Exception {
-      switch (methodName) {
-        
-      }
-
-      throw new UnsupportedOperationException(
-          String.format("Unable to invoke static method %s", methodName));
-    }
-
-    @Override
-    public $PictureCallback createInstance(TypeChannelMessenger messenger, List<Object> arguments)
-        throws Exception {
-      return $$create(messenger);
-    }
-
-    @Override
-    public Object invokeMethod(
-        TypeChannelMessenger messenger,
-        $PictureCallback instance,
-        String methodName,
-        List<Object> arguments)
-        throws Exception {
-      switch(methodName) {
-        
-        
-        
-      }
-
-      throw new UnsupportedOperationException(
-          String.format("%s.%s not supported.", instance, methodName));
-    }
-  }
-  
   public static class $CameraInfoHandler implements TypeChannelHandler<$CameraInfo> {
     public $CameraInfo $$create(TypeChannelMessenger messenger,Integer cameraId,Integer facing,Integer orientation)
         throws Exception {
@@ -1835,38 +1732,6 @@ public class CameraChannelLibrary {
       return new $CameraSizeHandler();
     }
     
-    public $ErrorCallbackChannel getChannelErrorCallback() {
-      return new $ErrorCallbackChannel(messenger);
-    }
-
-    public $ErrorCallbackHandler getHandlerErrorCallback() {
-      return new $ErrorCallbackHandler();
-    }
-    
-    public $AutoFocusCallbackChannel getChannelAutoFocusCallback() {
-      return new $AutoFocusCallbackChannel(messenger);
-    }
-
-    public $AutoFocusCallbackHandler getHandlerAutoFocusCallback() {
-      return new $AutoFocusCallbackHandler();
-    }
-    
-    public $ShutterCallbackChannel getChannelShutterCallback() {
-      return new $ShutterCallbackChannel(messenger);
-    }
-
-    public $ShutterCallbackHandler getHandlerShutterCallback() {
-      return new $ShutterCallbackHandler();
-    }
-    
-    public $PictureCallbackChannel getChannelPictureCallback() {
-      return new $PictureCallbackChannel(messenger);
-    }
-
-    public $PictureCallbackHandler getHandlerPictureCallback() {
-      return new $PictureCallbackHandler();
-    }
-    
     public $CameraInfoChannel getChannelCameraInfo() {
       return new $CameraInfoChannel(messenger);
     }
@@ -1883,6 +1748,40 @@ public class CameraChannelLibrary {
       return new $MediaRecorderHandler();
     }
     
+
+    
+    public $ErrorCallbackChannel getChannelErrorCallback() {
+      return new $ErrorCallbackChannel(messenger);
+    }
+
+    public $ErrorCallbackHandler getHandlerErrorCallback() {
+      return new $ErrorCallbackHandler(this);
+    }
+    
+    public $AutoFocusCallbackChannel getChannelAutoFocusCallback() {
+      return new $AutoFocusCallbackChannel(messenger);
+    }
+
+    public $AutoFocusCallbackHandler getHandlerAutoFocusCallback() {
+      return new $AutoFocusCallbackHandler(this);
+    }
+    
+    public $ShutterCallbackChannel getChannelShutterCallback() {
+      return new $ShutterCallbackChannel(messenger);
+    }
+
+    public $ShutterCallbackHandler getHandlerShutterCallback() {
+      return new $ShutterCallbackHandler(this);
+    }
+    
+    public $PictureCallbackChannel getChannelPictureCallback() {
+      return new $PictureCallbackChannel(messenger);
+    }
+
+    public $PictureCallbackHandler getHandlerPictureCallback() {
+      return new $PictureCallbackHandler(this);
+    }
+    
   }
 
   public static class $ChannelRegistrar {
@@ -1891,7 +1790,6 @@ public class CameraChannelLibrary {
     public $ChannelRegistrar($LibraryImplementations implementations) {
       this.implementations = implementations;
     }
-
 
     public void registerHandlers() {
       
@@ -1905,6 +1803,11 @@ public class CameraChannelLibrary {
       
       implementations.getChannelCameraSize().setHandler(implementations.getHandlerCameraSize());
       
+      implementations.getChannelCameraInfo().setHandler(implementations.getHandlerCameraInfo());
+      
+      implementations.getChannelMediaRecorder().setHandler(implementations.getHandlerMediaRecorder());
+      
+      
       implementations.getChannelErrorCallback().setHandler(implementations.getHandlerErrorCallback());
       
       implementations.getChannelAutoFocusCallback().setHandler(implementations.getHandlerAutoFocusCallback());
@@ -1912,10 +1815,6 @@ public class CameraChannelLibrary {
       implementations.getChannelShutterCallback().setHandler(implementations.getHandlerShutterCallback());
       
       implementations.getChannelPictureCallback().setHandler(implementations.getHandlerPictureCallback());
-      
-      implementations.getChannelCameraInfo().setHandler(implementations.getHandlerCameraInfo());
-      
-      implementations.getChannelMediaRecorder().setHandler(implementations.getHandlerMediaRecorder());
       
     }
 
@@ -1931,6 +1830,11 @@ public class CameraChannelLibrary {
       
       implementations.getChannelCameraSize().removeHandler();
       
+      implementations.getChannelCameraInfo().removeHandler();
+      
+      implementations.getChannelMediaRecorder().removeHandler();
+      
+      
       implementations.getChannelErrorCallback().removeHandler();
       
       implementations.getChannelAutoFocusCallback().removeHandler();
@@ -1938,10 +1842,6 @@ public class CameraChannelLibrary {
       implementations.getChannelShutterCallback().removeHandler();
       
       implementations.getChannelPictureCallback().removeHandler();
-      
-      implementations.getChannelCameraInfo().removeHandler();
-      
-      implementations.getChannelMediaRecorder().removeHandler();
       
     }
   }

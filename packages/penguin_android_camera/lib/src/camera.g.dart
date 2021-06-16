@@ -8,6 +8,304 @@ import 'dart:typed_data';
 // ReferenceGenerator
 // **************************************************************************
 
+typedef $ErrorCallback = dynamic Function(
+  int error,
+);
+
+typedef $AutoFocusCallback = dynamic Function(
+  bool success,
+);
+
+typedef $ShutterCallback = dynamic Function();
+
+typedef $PictureCallback = dynamic Function(
+  Uint8List data,
+);
+
+class $ErrorCallbackChannel extends TypeChannel<Object> {
+  $ErrorCallbackChannel(TypeChannelMessenger messenger)
+      : super(messenger, 'penguin_android_camera/camera/ErrorCallback');
+
+  Future<PairedInstance?> $$create(
+    $ErrorCallback $instance, {
+    required bool $owner,
+  }) {
+    return createNewInstancePair(
+      $instance,
+      <Object?>[],
+      owner: $owner,
+    );
+  }
+
+  Future<Object?> _invoke(
+    $ErrorCallback $instance,
+    int error,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      '',
+      <Object?>[
+        error,
+      ],
+    );
+  }
+}
+
+class $AutoFocusCallbackChannel extends TypeChannel<Object> {
+  $AutoFocusCallbackChannel(TypeChannelMessenger messenger)
+      : super(messenger, 'penguin_android_camera/camera/AutoFocusCallback');
+
+  Future<PairedInstance?> $$create(
+    $AutoFocusCallback $instance, {
+    required bool $owner,
+  }) {
+    return createNewInstancePair(
+      $instance,
+      <Object?>[],
+      owner: $owner,
+    );
+  }
+
+  Future<Object?> _invoke(
+    $AutoFocusCallback $instance,
+    bool success,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      '',
+      <Object?>[
+        success,
+      ],
+    );
+  }
+}
+
+class $ShutterCallbackChannel extends TypeChannel<Object> {
+  $ShutterCallbackChannel(TypeChannelMessenger messenger)
+      : super(messenger, 'penguin_android_camera/camera/ShutterCallback');
+
+  Future<PairedInstance?> $$create(
+    $ShutterCallback $instance, {
+    required bool $owner,
+  }) {
+    return createNewInstancePair(
+      $instance,
+      <Object?>[],
+      owner: $owner,
+    );
+  }
+
+  Future<Object?> _invoke(
+    $ShutterCallback $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      '',
+      <Object?>[],
+    );
+  }
+}
+
+class $PictureCallbackChannel extends TypeChannel<Object> {
+  $PictureCallbackChannel(TypeChannelMessenger messenger)
+      : super(messenger, 'penguin_android_camera/camera/PictureCallback');
+
+  Future<PairedInstance?> $$create(
+    $PictureCallback $instance, {
+    required bool $owner,
+  }) {
+    return createNewInstancePair(
+      $instance,
+      <Object?>[],
+      owner: $owner,
+    );
+  }
+
+  Future<Object?> _invoke(
+    $PictureCallback $instance,
+    Uint8List data,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      '',
+      <Object?>[
+        data,
+      ],
+    );
+  }
+}
+
+class $ErrorCallbackHandler implements TypeChannelHandler<Object> {
+  $ErrorCallbackHandler(this.implementations);
+
+  final $LibraryImplementations implementations;
+
+  @override
+  $ErrorCallback createInstance(
+    TypeChannelMessenger messenger,
+    List<Object?> arguments,
+  ) {
+    function(
+      int error,
+    ) {
+      implementations.channelErrorCallback._invoke(
+        function,
+        error,
+      );
+    }
+
+    return function;
+  }
+
+  @override
+  Object? invokeMethod(
+    TypeChannelMessenger messenger,
+    covariant $ErrorCallback instance,
+    String methodName,
+    List<Object?> arguments,
+  ) {
+    return instance(
+      arguments[0] as int,
+    );
+  }
+
+  @override
+  Object? invokeStaticMethod(
+    TypeChannelMessenger messenger,
+    String methodName,
+    List<Object?> arguments,
+  ) {
+    throw UnimplementedError();
+  }
+}
+
+class $AutoFocusCallbackHandler implements TypeChannelHandler<Object> {
+  $AutoFocusCallbackHandler(this.implementations);
+
+  final $LibraryImplementations implementations;
+
+  @override
+  $AutoFocusCallback createInstance(
+    TypeChannelMessenger messenger,
+    List<Object?> arguments,
+  ) {
+    function(
+      bool success,
+    ) {
+      implementations.channelAutoFocusCallback._invoke(
+        function,
+        success,
+      );
+    }
+
+    return function;
+  }
+
+  @override
+  Object? invokeMethod(
+    TypeChannelMessenger messenger,
+    covariant $AutoFocusCallback instance,
+    String methodName,
+    List<Object?> arguments,
+  ) {
+    return instance(
+      arguments[0] as bool,
+    );
+  }
+
+  @override
+  Object? invokeStaticMethod(
+    TypeChannelMessenger messenger,
+    String methodName,
+    List<Object?> arguments,
+  ) {
+    throw UnimplementedError();
+  }
+}
+
+class $ShutterCallbackHandler implements TypeChannelHandler<Object> {
+  $ShutterCallbackHandler(this.implementations);
+
+  final $LibraryImplementations implementations;
+
+  @override
+  $ShutterCallback createInstance(
+    TypeChannelMessenger messenger,
+    List<Object?> arguments,
+  ) {
+    function() {
+      implementations.channelShutterCallback._invoke(
+        function,
+      );
+    }
+
+    return function;
+  }
+
+  @override
+  Object? invokeMethod(
+    TypeChannelMessenger messenger,
+    covariant $ShutterCallback instance,
+    String methodName,
+    List<Object?> arguments,
+  ) {
+    return instance();
+  }
+
+  @override
+  Object? invokeStaticMethod(
+    TypeChannelMessenger messenger,
+    String methodName,
+    List<Object?> arguments,
+  ) {
+    throw UnimplementedError();
+  }
+}
+
+class $PictureCallbackHandler implements TypeChannelHandler<Object> {
+  $PictureCallbackHandler(this.implementations);
+
+  final $LibraryImplementations implementations;
+
+  @override
+  $PictureCallback createInstance(
+    TypeChannelMessenger messenger,
+    List<Object?> arguments,
+  ) {
+    function(
+      Uint8List data,
+    ) {
+      implementations.channelPictureCallback._invoke(
+        function,
+        data,
+      );
+    }
+
+    return function;
+  }
+
+  @override
+  Object? invokeMethod(
+    TypeChannelMessenger messenger,
+    covariant $PictureCallback instance,
+    String methodName,
+    List<Object?> arguments,
+  ) {
+    return instance(
+      arguments[0] as Uint8List,
+    );
+  }
+
+  @override
+  Object? invokeStaticMethod(
+    TypeChannelMessenger messenger,
+    String methodName,
+    List<Object?> arguments,
+  ) {
+    throw UnimplementedError();
+  }
+}
+
 mixin $Camera {}
 
 mixin $CameraParameters {}
@@ -17,28 +315,6 @@ mixin $CameraArea {}
 mixin $CameraRect {}
 
 mixin $CameraSize {}
-
-mixin $ErrorCallback {
-  dynamic onError(
-    int error,
-  );
-}
-
-mixin $AutoFocusCallback {
-  dynamic onAutoFocus(
-    bool success,
-  );
-}
-
-mixin $ShutterCallback {
-  dynamic onShutter();
-}
-
-mixin $PictureCallback {
-  dynamic onPictureTaken(
-    Uint8List data,
-  );
-}
 
 mixin $CameraInfo {}
 
@@ -679,70 +955,6 @@ class $CameraSizeChannel extends TypeChannel<$CameraSize> {
   }
 }
 
-class $ErrorCallbackChannel extends TypeChannel<$ErrorCallback> {
-  $ErrorCallbackChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'penguin_android_camera/camera/ErrorCallback');
-
-  Future<PairedInstance?> $$create(
-    $ErrorCallback $instance, {
-    required bool $owner,
-  }) {
-    return createNewInstancePair(
-      $instance,
-      <Object?>[],
-      owner: $owner,
-    );
-  }
-}
-
-class $AutoFocusCallbackChannel extends TypeChannel<$AutoFocusCallback> {
-  $AutoFocusCallbackChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'penguin_android_camera/camera/AutoFocusCallback');
-
-  Future<PairedInstance?> $$create(
-    $AutoFocusCallback $instance, {
-    required bool $owner,
-  }) {
-    return createNewInstancePair(
-      $instance,
-      <Object?>[],
-      owner: $owner,
-    );
-  }
-}
-
-class $ShutterCallbackChannel extends TypeChannel<$ShutterCallback> {
-  $ShutterCallbackChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'penguin_android_camera/camera/ShutterCallback');
-
-  Future<PairedInstance?> $$create(
-    $ShutterCallback $instance, {
-    required bool $owner,
-  }) {
-    return createNewInstancePair(
-      $instance,
-      <Object?>[],
-      owner: $owner,
-    );
-  }
-}
-
-class $PictureCallbackChannel extends TypeChannel<$PictureCallback> {
-  $PictureCallbackChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'penguin_android_camera/camera/PictureCallback');
-
-  Future<PairedInstance?> $$create(
-    $PictureCallback $instance, {
-    required bool $owner,
-  }) {
-    return createNewInstancePair(
-      $instance,
-      <Object?>[],
-      owner: $owner,
-    );
-  }
-}
-
 class $CameraInfoChannel extends TypeChannel<$CameraInfo> {
   $CameraInfoChannel(TypeChannelMessenger messenger)
       : super(messenger, 'penguin_android_camera/camera/CameraInfo');
@@ -1205,263 +1417,6 @@ class $CameraSizeHandler implements TypeChannelHandler<$CameraSize> {
   }
 }
 
-class $ErrorCallbackHandler implements TypeChannelHandler<$ErrorCallback> {
-  $ErrorCallback $$create(
-    TypeChannelMessenger messenger,
-  ) {
-    throw UnimplementedError();
-  }
-
-  dynamic $onError(
-    $ErrorCallback $instance,
-    int error,
-  ) {
-    return $instance.onError(
-      error,
-    );
-  }
-
-  @override
-  Object? invokeStaticMethod(
-    TypeChannelMessenger messenger,
-    String methodName,
-    List<Object?> arguments,
-  ) {
-    switch (methodName) {
-    }
-
-    throw ArgumentError.value(
-      methodName,
-      'methodName',
-      'Unable to invoke static method `$methodName`',
-    );
-  }
-
-  @override
-  $ErrorCallback createInstance(
-    TypeChannelMessenger messenger,
-    List<Object?> arguments,
-  ) {
-    return $$create(
-      messenger,
-    );
-  }
-
-  @override
-  Object? invokeMethod(
-    TypeChannelMessenger messenger,
-    $ErrorCallback instance,
-    String methodName,
-    List<Object?> arguments,
-  ) {
-    switch (methodName) {
-      case 'onError':
-        return $onError(
-          instance,
-          arguments[0] as int,
-        );
-    }
-
-    throw ArgumentError.value(
-      instance,
-      'instance',
-      'Unable to invoke method `$methodName` on',
-    );
-  }
-}
-
-class $AutoFocusCallbackHandler
-    implements TypeChannelHandler<$AutoFocusCallback> {
-  $AutoFocusCallback $$create(
-    TypeChannelMessenger messenger,
-  ) {
-    throw UnimplementedError();
-  }
-
-  dynamic $onAutoFocus(
-    $AutoFocusCallback $instance,
-    bool success,
-  ) {
-    return $instance.onAutoFocus(
-      success,
-    );
-  }
-
-  @override
-  Object? invokeStaticMethod(
-    TypeChannelMessenger messenger,
-    String methodName,
-    List<Object?> arguments,
-  ) {
-    switch (methodName) {
-    }
-
-    throw ArgumentError.value(
-      methodName,
-      'methodName',
-      'Unable to invoke static method `$methodName`',
-    );
-  }
-
-  @override
-  $AutoFocusCallback createInstance(
-    TypeChannelMessenger messenger,
-    List<Object?> arguments,
-  ) {
-    return $$create(
-      messenger,
-    );
-  }
-
-  @override
-  Object? invokeMethod(
-    TypeChannelMessenger messenger,
-    $AutoFocusCallback instance,
-    String methodName,
-    List<Object?> arguments,
-  ) {
-    switch (methodName) {
-      case 'onAutoFocus':
-        return $onAutoFocus(
-          instance,
-          arguments[0] as bool,
-        );
-    }
-
-    throw ArgumentError.value(
-      instance,
-      'instance',
-      'Unable to invoke method `$methodName` on',
-    );
-  }
-}
-
-class $ShutterCallbackHandler implements TypeChannelHandler<$ShutterCallback> {
-  $ShutterCallback $$create(
-    TypeChannelMessenger messenger,
-  ) {
-    throw UnimplementedError();
-  }
-
-  dynamic $onShutter(
-    $ShutterCallback $instance,
-  ) {
-    return $instance.onShutter();
-  }
-
-  @override
-  Object? invokeStaticMethod(
-    TypeChannelMessenger messenger,
-    String methodName,
-    List<Object?> arguments,
-  ) {
-    switch (methodName) {
-    }
-
-    throw ArgumentError.value(
-      methodName,
-      'methodName',
-      'Unable to invoke static method `$methodName`',
-    );
-  }
-
-  @override
-  $ShutterCallback createInstance(
-    TypeChannelMessenger messenger,
-    List<Object?> arguments,
-  ) {
-    return $$create(
-      messenger,
-    );
-  }
-
-  @override
-  Object? invokeMethod(
-    TypeChannelMessenger messenger,
-    $ShutterCallback instance,
-    String methodName,
-    List<Object?> arguments,
-  ) {
-    switch (methodName) {
-      case 'onShutter':
-        return $onShutter(
-          instance,
-        );
-    }
-
-    throw ArgumentError.value(
-      instance,
-      'instance',
-      'Unable to invoke method `$methodName` on',
-    );
-  }
-}
-
-class $PictureCallbackHandler implements TypeChannelHandler<$PictureCallback> {
-  $PictureCallback $$create(
-    TypeChannelMessenger messenger,
-  ) {
-    throw UnimplementedError();
-  }
-
-  dynamic $onPictureTaken(
-    $PictureCallback $instance,
-    Uint8List data,
-  ) {
-    return $instance.onPictureTaken(
-      data,
-    );
-  }
-
-  @override
-  Object? invokeStaticMethod(
-    TypeChannelMessenger messenger,
-    String methodName,
-    List<Object?> arguments,
-  ) {
-    switch (methodName) {
-    }
-
-    throw ArgumentError.value(
-      methodName,
-      'methodName',
-      'Unable to invoke static method `$methodName`',
-    );
-  }
-
-  @override
-  $PictureCallback createInstance(
-    TypeChannelMessenger messenger,
-    List<Object?> arguments,
-  ) {
-    return $$create(
-      messenger,
-    );
-  }
-
-  @override
-  Object? invokeMethod(
-    TypeChannelMessenger messenger,
-    $PictureCallback instance,
-    String methodName,
-    List<Object?> arguments,
-  ) {
-    switch (methodName) {
-      case 'onPictureTaken':
-        return $onPictureTaken(
-          instance,
-          arguments[0] as Uint8List,
-        );
-    }
-
-    throw ArgumentError.value(
-      instance,
-      'instance',
-      'Unable to invoke method `$methodName` on',
-    );
-  }
-}
-
 class $CameraInfoHandler implements TypeChannelHandler<$CameraInfo> {
   $CameraInfo $$create(
     TypeChannelMessenger messenger,
@@ -1592,31 +1547,31 @@ class $LibraryImplementations {
   $CameraSizeChannel get channelCameraSize => $CameraSizeChannel(messenger);
   $CameraSizeHandler get handlerCameraSize => $CameraSizeHandler();
 
-  $ErrorCallbackChannel get channelErrorCallback =>
-      $ErrorCallbackChannel(messenger);
-  $ErrorCallbackHandler get handlerErrorCallback => $ErrorCallbackHandler();
-
-  $AutoFocusCallbackChannel get channelAutoFocusCallback =>
-      $AutoFocusCallbackChannel(messenger);
-  $AutoFocusCallbackHandler get handlerAutoFocusCallback =>
-      $AutoFocusCallbackHandler();
-
-  $ShutterCallbackChannel get channelShutterCallback =>
-      $ShutterCallbackChannel(messenger);
-  $ShutterCallbackHandler get handlerShutterCallback =>
-      $ShutterCallbackHandler();
-
-  $PictureCallbackChannel get channelPictureCallback =>
-      $PictureCallbackChannel(messenger);
-  $PictureCallbackHandler get handlerPictureCallback =>
-      $PictureCallbackHandler();
-
   $CameraInfoChannel get channelCameraInfo => $CameraInfoChannel(messenger);
   $CameraInfoHandler get handlerCameraInfo => $CameraInfoHandler();
 
   $MediaRecorderChannel get channelMediaRecorder =>
       $MediaRecorderChannel(messenger);
   $MediaRecorderHandler get handlerMediaRecorder => $MediaRecorderHandler();
+
+  $ErrorCallbackChannel get channelErrorCallback =>
+      $ErrorCallbackChannel(messenger);
+  $ErrorCallbackHandler get handlerErrorCallback => $ErrorCallbackHandler(this);
+
+  $AutoFocusCallbackChannel get channelAutoFocusCallback =>
+      $AutoFocusCallbackChannel(messenger);
+  $AutoFocusCallbackHandler get handlerAutoFocusCallback =>
+      $AutoFocusCallbackHandler(this);
+
+  $ShutterCallbackChannel get channelShutterCallback =>
+      $ShutterCallbackChannel(messenger);
+  $ShutterCallbackHandler get handlerShutterCallback =>
+      $ShutterCallbackHandler(this);
+
+  $PictureCallbackChannel get channelPictureCallback =>
+      $PictureCallbackChannel(messenger);
+  $PictureCallbackHandler get handlerPictureCallback =>
+      $PictureCallbackHandler(this);
 }
 
 class $ChannelRegistrar {
@@ -1645,6 +1600,14 @@ class $ChannelRegistrar {
       implementations.handlerCameraSize,
     );
 
+    implementations.channelCameraInfo.setHandler(
+      implementations.handlerCameraInfo,
+    );
+
+    implementations.channelMediaRecorder.setHandler(
+      implementations.handlerMediaRecorder,
+    );
+
     implementations.channelErrorCallback.setHandler(
       implementations.handlerErrorCallback,
     );
@@ -1660,14 +1623,6 @@ class $ChannelRegistrar {
     implementations.channelPictureCallback.setHandler(
       implementations.handlerPictureCallback,
     );
-
-    implementations.channelCameraInfo.setHandler(
-      implementations.handlerCameraInfo,
-    );
-
-    implementations.channelMediaRecorder.setHandler(
-      implementations.handlerMediaRecorder,
-    );
   }
 
   void unregisterHandlers() {
@@ -1681,6 +1636,10 @@ class $ChannelRegistrar {
 
     implementations.channelCameraSize.removeHandler();
 
+    implementations.channelCameraInfo.removeHandler();
+
+    implementations.channelMediaRecorder.removeHandler();
+
     implementations.channelErrorCallback.removeHandler();
 
     implementations.channelAutoFocusCallback.removeHandler();
@@ -1688,9 +1647,5 @@ class $ChannelRegistrar {
     implementations.channelShutterCallback.removeHandler();
 
     implementations.channelPictureCallback.removeHandler();
-
-    implementations.channelCameraInfo.removeHandler();
-
-    implementations.channelMediaRecorder.removeHandler();
   }
 }

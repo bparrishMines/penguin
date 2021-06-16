@@ -109,11 +109,14 @@ class _MyAppState extends State<_MyApp> {
   //     null,
   //     null,
   //     null,
-  //     JpegPictureCallback(_camera!, (data) async {
+  //     (Uint8List data) async {
+  //       debugPrint('Image taken with jpeg data length: ${data.length}');
   //       final Directory dir = await _storageDir();
   //       final File imageFile = File('${dir.path}/my_image${data.hashCode}.jpg');
   //       imageFile.writeAsBytes(data);
-  //     }),
+  //
+  //       _camera!.startPreview();
+  //     },
   //   );
   // }
 
@@ -213,21 +216,5 @@ class _MyAppState extends State<_MyApp> {
         ],
       ),
     );
-  }
-}
-
-// ignore: unused_element
-class _JpegPictureCallback extends PictureCallback {
-  _JpegPictureCallback(this.camera, this.onData);
-
-  final Camera camera;
-
-  void Function(Uint8List data) onData;
-
-  @override
-  void onPictureTaken(Uint8List data) {
-    debugPrint('Image taken with jpeg data length: ${data.length}');
-    onData(data);
-    camera.startPreview();
   }
 }
