@@ -65,7 +65,8 @@ public class InstanceManager {
   public Object getInstance(String instanceId) {
     final Object tempInstance = temporaryStrongReferences.get(instanceId);
     if (tempInstance != null) {
-      removeInstance(instanceId);
+      instanceIds.remove(tempInstance);
+      temporaryStrongReferences.remove(instanceId);
       addWeakReference(tempInstance, instanceId);
       return tempInstance;
     }

@@ -19,7 +19,7 @@
 - (BOOL)addInstancePair:(NSObject *)instance
              instanceID:(NSString *_Nullable)instanceID
                   owner:(BOOL)owner {
-  if (owner && !instanceID) {
+  if (owner && instanceID) {
     return [[self instanceManager] addTemporaryStrongReference:instance instanceID:instanceID];
   } else if (owner) {
     return [[self instanceManager] addWeakReference:instance instanceID:instanceID];

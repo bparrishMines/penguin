@@ -138,7 +138,8 @@
 - (NSObject *_Nullable)getInstance:(NSString *)instanceID {
   NSObject *tempInstance = [_temporaryStrongReferences objectForKey:instanceID];
   if (tempInstance) {
-    [self removeInstance:instanceID];
+    [_instanceIds removeObjectForKey:tempInstance];
+    [_temporaryStrongReferences removeObjectForKey:instanceID];
     [self addWeakReference:tempInstance instanceID:instanceID];
     return tempInstance;
   }
