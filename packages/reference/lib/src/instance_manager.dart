@@ -186,6 +186,21 @@ class InstanceManager {
     return true;
   }
 
+  /// Add a new instance with [instanceId] as key and [instance] as the value.
+  ///
+  /// [instance] is temporarily stored as a strong reference. [instance] is
+  /// changed to a weak reference once [getInstance] is called once with
+  /// [instanceId].
+  ///
+  /// [onFinalize] is called after [instance] is garbage collected after being
+  /// switched to aa weak reference.
+  ///
+  /// This is mainly used when the native platform wants to create a new
+  /// instance pair, but doesn't want to claim ownership of it.
+  ///
+  /// Returns `true` if the pair is successfully added. Returns `false` if
+  /// the [instanceId] or [instance] is already contained in the manager or the
+  /// [instance] is a [num], [bool], or [String].
   bool addTemporaryStrongReference({
     required Object instance,
     String? instanceId,
@@ -229,7 +244,8 @@ class InstanceManager {
     if (instance != null) {
       final void Function(String instanceId) onFinalize =
           _weakReferenceCallbacks[instanceId]!;
-      removeInstance(instanceId);
+      _temporaryStrongReferences.remove(instanceId);
+      _instanceIds[instance] = null;
       addWeakReference(
         instance: instance,
         instanceId: instanceId,

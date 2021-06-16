@@ -241,7 +241,6 @@ abstract class TypeChannelMessenger {
   ///
   /// Returns `null` if a pair with [instance] has already been added to
   /// messenger. Otherwise, it returns the paired [PairedInstance].
-  // TODO: What happens when owner is false. Could GC happen before it is given to an object? Temp strong references?
   Future<PairedInstance?> createNewInstancePair(
     String channelName,
     Object instance,
