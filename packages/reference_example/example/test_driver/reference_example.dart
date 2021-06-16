@@ -36,7 +36,7 @@ Future<void> main() async {
       ChannelRegistrar.instance.implementations.channel__function_name__
           .$$create(
         callback,
-        $owner: true,
+        $owner: false,
       );
       final $$class_name$$ classTemplate = $$class_name$$(44);
       ChannelRegistrar.instance.implementations.channel__class_name__

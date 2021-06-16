@@ -133,4 +133,17 @@ class TestInstanceManager implements InstanceManager {
   String generateUniqueInstanceId(Object instance) {
     return 'test_reference_id';
   }
+
+  @override
+  bool addTemporaryStrongReference({
+    required Object instance,
+    String? instanceId,
+    required void Function(String instanceId) onFinalize,
+  }) {
+    return addWeakReference(
+      instance: instance,
+      instanceId: instanceId,
+      onFinalize: onFinalize,
+    );
+  }
 }

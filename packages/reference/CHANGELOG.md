@@ -1,3 +1,9 @@
+## 0.4.1+1
+
+* Format platform exceptions caught by `MethodChannelMessenger`.
+* Temporarily hold onto created instance pairs not owned by the `TypeChannelMessenger` that creates
+  them.
+
 ## 0.4.1
 
 * Implement ReferenceWidgets for easier PlatformView use with instances in `InstanceManager`.

@@ -177,10 +177,19 @@ abstract class TypeChannelMessenger {
     required String? instanceId,
     required bool owner,
   }) {
-    if (owner) {
-      instanceManager.addWeakReference(
+    if (owner && instanceId != null) {
+      // Receiving weak reference
+      instanceManager.addTemporaryStrongReference(
         instance: instance,
         instanceId: instanceId,
+        onFinalize: (String instanceId) {
+          messageDispatcher.sendDisposeInstancePair(PairedInstance(instanceId));
+        },
+      );
+    } else if (owner && instanceId == null) {
+      // Creating weak reference
+      instanceManager.addWeakReference(
+        instance: instance,
         onFinalize: (String instanceId) {
           messageDispatcher.sendDisposeInstancePair(PairedInstance(instanceId));
         },
@@ -232,7 +241,6 @@ abstract class TypeChannelMessenger {
   ///
   /// Returns `null` if a pair with [instance] has already been added to
   /// messenger. Otherwise, it returns the paired [PairedInstance].
-  // TODO: What happens when owner is false. Could GC happen before it is given to an object? Temp strong references?
   Future<PairedInstance?> createNewInstancePair(
     String channelName,
     Object instance,

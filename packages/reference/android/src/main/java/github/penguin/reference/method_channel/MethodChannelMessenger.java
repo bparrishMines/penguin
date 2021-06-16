@@ -2,6 +2,9 @@ package github.penguin.reference.method_channel;
 
 import androidx.annotation.NonNull;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.List;
 
 import github.penguin.reference.reference.PairedInstance;
@@ -81,8 +84,14 @@ public class MethodChannelMessenger extends TypeChannelMessenger {
               callResult.error(
                   exception.getClass().getName(),
                   exception.getLocalizedMessage(),
-                  android.util.Log.getStackTraceString(exception));
+                  getStackTrace(exception));
             }
+          }
+
+          private String getStackTrace(Exception exception) {
+            Writer result = new StringWriter();
+            exception.printStackTrace(new PrintWriter(result));
+            return result.toString();
           }
         });
   }

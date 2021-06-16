@@ -16,6 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface REFInstanceManager : NSObject
 - (BOOL)addWeakReference:(NSObject *)instance instanceID:(NSString *_Nullable)instanceID;
 - (BOOL)addStrongReference:(NSObject *)instance instanceID:(NSString *_Nullable)instanceID;
+- (BOOL)addTemporaryStrongReference:(NSObject *)instance instanceID:(NSString *_Nullable)instanceID;
 - (BOOL)containsInstance:(NSObject *)instance;
 - (NSString *_Nullable)getInstanceID:(NSObject *)instance;
 - (NSObject *_Nullable)getInstance:(NSString *)instanceID;
