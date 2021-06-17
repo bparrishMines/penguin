@@ -196,12 +196,21 @@ class Camera with $Camera {
     PictureCallback? raw,
     PictureCallback? postView,
     PictureCallback? jpeg,
-  ) async {
-    assert(raw == null || (raw != postView && raw != jpeg));
-    assert(postView == null || (postView != raw && postView != jpeg));
-    assert(jpeg == null || (jpeg != raw && jpeg != postView));
+  ) {
+    if (shutter != null) {
+      ChannelRegistrar.instance.implementations.channelShutterCallback
+          .$$create(shutter, $owner: false);
+    }
 
-    await _channel.$takePicture(
+    final $PictureCallbackChannel pictureCallbackChannel =
+        ChannelRegistrar.instance.implementations.channelPictureCallback;
+    if (jpeg != null) pictureCallbackChannel.$$create(jpeg, $owner: false);
+    if (raw != null) pictureCallbackChannel.$$create(raw, $owner: false);
+    if (postView != null) {
+      pictureCallbackChannel.$$create(postView, $owner: false);
+    }
+
+    return _channel.$takePicture(
       this,
       shutter,
       raw,
@@ -241,6 +250,10 @@ class Camera with $Camera {
   /// If auto-focus is successful, consider playing back an auto-focus success
   /// sound to the user.
   Future<void> autoFocus(AutoFocusCallback callback) {
+    ChannelRegistrar.instance.implementations.channelAutoFocusCallback.$$create(
+      callback,
+      $owner: false,
+    );
     return _channel.$autoFocus(this, callback);
   }
 
@@ -275,6 +288,10 @@ class Camera with $Camera {
 
   /// Registers a callback to be invoked when an error occurs.
   Future<void> setErrorCallback(ErrorCallback callback) {
+    ChannelRegistrar.instance.implementations.channelErrorCallback.$$create(
+      callback,
+      $owner: false,
+    );
     return _channel.$setErrorCallback(this, callback);
   }
 
@@ -950,97 +967,6 @@ class CameraSize with $CameraSize {
     return 'CameraSize($width, $height)';
   }
 }
-
-// /// Callback interface for camera error notification.
-// @Reference('penguin_android_camera/camera/ErrorCallback')
-// abstract class ErrorCallback with $ErrorCallback {
-//   /// Default constructor for an [ErrorCallback].
-//   ErrorCallback() {
-//     _channel.$$create(this, $owner: true);
-//   }
-//
-//   static $ErrorCallbackChannel get _channel =>
-//       ChannelRegistrar.instance.implementations.channelErrorCallback;
-//
-//   /// Callback for camera errors.
-//   ///
-//   /// See:
-//   ///   [Camera.cameraErrorUnknown]
-//   ///   [Camera.cameraErrorServerDied]
-//   ///   [Camera.cameraErrorEvicted]
-//   @override
-//   void onError(int error);
-// }
-
-// /// Callback interface used to notify on completion of camera auto focus.
-// ///
-// /// Devices that do not support auto-focus will receive a "fake" callback to
-// /// this interface. If your application needs auto-focus and should not be
-// /// installed on devices without auto-focus, you must declare that your app use
-// /// s the android.hardware.camera.autofocus feature, in the <uses-feature>
-// /// manifest element.
-// ///
-// /// See: [Camera.autoFocus].
-// @Reference('penguin_android_camera/camera/AutoFocusCallback')
-// abstract class AutoFocusCallback with $AutoFocusCallback {
-//   /// Default constructor for [AutoFocusCallback].
-//   AutoFocusCallback() {
-//     _channel.$$create(this, $owner: true);
-//   }
-//
-//   static $AutoFocusCallbackChannel get _channel =>
-//       ChannelRegistrar.instance.implementations.channelAutoFocusCallback;
-//
-//   /// Called when the camera auto focus completes.
-//   ///
-//   /// If the camera does not support auto-focus and [Camera.autoFocus] is
-//   /// called, [onAutoFocus] will be called immediately with a fake value of
-//   /// success set to true. The auto-focus routine does not lock auto-exposure
-//   /// and auto-white balance after it completes.
-//   ///
-//   /// Returns whether the auto-focus was successful.
-//   @override
-//   void onAutoFocus(bool success);
-// }
-
-// /// Callback interface used to signal the moment of actual image capture.
-// ///
-// /// See: [Camera.takePicture].
-// @Reference('penguin_android_camera/camera/ShutterCallback')
-// abstract class ShutterCallback with $ShutterCallback {
-//   /// Default constructor for [ShutterCallback].
-//   ShutterCallback() {
-//     ChannelRegistrar.instance.implementations.channelShutterCallback
-//         .$$create(this, $owner: false);
-//   }
-//
-//   /// Called as near as possible to the moment when a photo is captured from the sensor.
-//   ///
-//   /// This is a good opportunity to play a shutter sound or give other feedback
-//   /// of camera operation. This may be some time after the photo was triggered,
-//   /// but some time before the actual data is available.
-//   @override
-//   void onShutter();
-// }
-
-// /// Callback interface used to supply image data from a photo capture.
-// ///
-// /// See: [Camera.takePicture].
-// @Reference('penguin_android_camera/camera/PictureCallback')
-// abstract class PictureCallback with $PictureCallback {
-//   /// Default constructor for [PictureCallback].
-//   PictureCallback() {
-//     ChannelRegistrar.instance.implementations.channelPictureCallback
-//         .$$create(this, $owner: false);
-//   }
-//
-//   /// Called when image data is available after a picture is taken.
-//   ///
-//   /// The format of the data depends on the context of the callback and
-//   /// Camera.Parameters settings.
-//   @override
-//   void onPictureTaken(Uint8List data);
-// }
 
 /// Information about a camera.
 ///

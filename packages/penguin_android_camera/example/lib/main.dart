@@ -51,8 +51,11 @@ class _MyAppState extends State<_MyApp> {
       (CameraInfo info) => info.facing == _cameraFacing,
     );
 
-    _camera = await Camera.open(cameraInfo.cameraId);
-    final CameraParameters params = await _camera!.getParameters();
+    final Camera camera = await Camera.open(cameraInfo.cameraId);
+    final CameraParameters params = await camera.getParameters();
+    params.setFocusMode(CameraParameters.focusModeAuto);
+    camera.setParameters(params);
+
     debugPrint((await params.getSupportedPreviewSizes()).toString());
 
     late int result;
@@ -62,14 +65,17 @@ class _MyAppState extends State<_MyApp> {
     } else {
       result = (cameraInfo.orientation + 360) % 360;
     }
-    _camera!.setDisplayOrientation(result);
+    camera.setDisplayOrientation(result);
 
-    _camera!.startPreview();
-    final int textureId = await _camera!.attachPreviewTexture();
+    camera.startPreview();
+    camera.autoFocus((bool success) => debugPrint('AutoFocus: $success'));
+    final int textureId = await camera.attachPreviewTexture();
 
     setState(() {
       _previewWidget = Texture(textureId: textureId);
     });
+
+    _camera = camera;
   }
 
   @override
@@ -104,22 +110,23 @@ class _MyAppState extends State<_MyApp> {
     return dirs[0];
   }
 
-  // void _takePicture() {
-  //   _camera?.takePicture(
-  //     null,
-  //     null,
-  //     null,
-  //     (Uint8List data) async {
-  //       debugPrint('Image taken with jpeg data length: ${data.length}');
-  //       final Directory dir = await _storageDir();
-  //       final File imageFile = File('${dir.path}/my_image${data.hashCode}.jpg');
-  //       imageFile.writeAsBytes(data);
-  //
-  //       _camera!.startPreview();
-  //     },
-  //   );
-  // }
+  void _takePicture() {
+    _camera?.takePicture(
+      null,
+      null,
+      null,
+      (Uint8List data) async {
+        debugPrint('Image taken with jpeg data length: ${data.length}');
+        final Directory dir = await _storageDir();
+        final File imageFile = File('${dir.path}/my_image${data.hashCode}.jpg');
+        imageFile.writeAsBytes(data);
 
+        _camera!.startPreview();
+      },
+    );
+  }
+
+  // ignore: unused_element
   Future<void> _recordAVideo() async {
     if (_camera == null) {
       debugPrint('Camera is null.');
@@ -150,8 +157,8 @@ class _MyAppState extends State<_MyApp> {
   Widget _buildPictureButton() {
     return InkResponse(
       onTap: () {
-        //_takePicture();
-        _recordAVideo();
+        _takePicture();
+        //_recordAVideo();
       },
       child: Container(
         width: 65,
