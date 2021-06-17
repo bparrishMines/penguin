@@ -1,3 +1,7 @@
+## 0.4.2
+
+* Garbage collection on Android is now handled automatically by `PhantomReference`s.
+
 ## 0.4.1+1
 
 * Format platform exceptions caught by `MethodChannelMessenger`.

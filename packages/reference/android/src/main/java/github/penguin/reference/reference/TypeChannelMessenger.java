@@ -19,9 +19,11 @@ public abstract class TypeChannelMessenger {
   // TODO: Handle failed add.
   private void addInstancePair(Object instance, @Nullable String instanceId, boolean owner) {
     if (owner && instanceId != null) {
-      getInstanceManager().addTemporaryStrongReference(instance, instanceId);
+      getInstanceManager().addTemporaryStrongReference(instance, instanceId,
+          instanceId1 -> getMessageDispatcher().sendDisposeInstancePair(new PairedInstance(instanceId1)));
     } else if (owner) {
-      getInstanceManager().addWeakReference(instance, null);
+      getInstanceManager().addWeakReference(instance, null,
+          instanceId1 -> getMessageDispatcher().sendDisposeInstancePair(new PairedInstance(instanceId1)));
     } else {
       getInstanceManager().addStrongReference(instance, instanceId);
     }
