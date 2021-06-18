@@ -1,3 +1,7 @@
+## 0.4.2+1
+
+* Switch to `WeakReference`s on Android.
+
 ## 0.4.2
 
 * Garbage collection on Android is now handled automatically by `PhantomReference`s.

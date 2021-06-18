@@ -206,13 +206,16 @@ class InstanceManager {
     String? instanceId,
     required void Function(String instanceId) onFinalize,
   }) {
-    if (!_isValidInstance(instance)) return false;
-
     final String newId = instanceId ?? generateUniqueInstanceId(instance);
-    _instanceIds[instance] = newId;
-    _temporaryStrongReferences[newId] = instance;
-    _weakReferenceCallbacks[newId] = onFinalize;
-    return true;
+    if (addWeakReference(
+      instance: instance,
+      instanceId: newId,
+      onFinalize: onFinalize,
+    )) {
+      _temporaryStrongReferences[newId] = instance;
+      return true;
+    }
+    return false;
   }
 
   bool _isValidInstance(Object instance) {
@@ -240,18 +243,8 @@ class InstanceManager {
   ///
   /// Returns null if this [instanceId] is not paired.
   Object? getInstance(String instanceId) {
-    final Object? instance = _temporaryStrongReferences[instanceId];
-    if (instance != null) {
-      final void Function(String instanceId) onFinalize =
-          _weakReferenceCallbacks[instanceId]!;
-      _temporaryStrongReferences.remove(instanceId);
-      _instanceIds[instance] = null;
-      addWeakReference(
-        instance: instance,
-        instanceId: instanceId,
-        onFinalize: onFinalize,
-      );
-      return instance;
+    if (_temporaryStrongReferences.containsKey(instanceId)) {
+      return _temporaryStrongReferences.remove(instanceId);
     }
     return _strongReferences[instanceId] ?? _weakReferences.get(instanceId);
   }

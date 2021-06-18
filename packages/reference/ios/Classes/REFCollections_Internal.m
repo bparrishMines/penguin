@@ -113,13 +113,14 @@
 }
 
 - (BOOL)addTemporaryStrongReference:(NSObject *)instance instanceID:(NSString *_Nullable)instanceID {
-  if ([self containsInstance:instance]) return NO;
-  
   NSString *newID = instanceID ? instanceID : [self generateUniqueInstanceID:instance];
-  
-  [_instanceIds setObject:newID forKey:instance];
-  [_temporaryStrongReferences setObject:instance forKey:newID];
-  return YES;
+
+  if ([self addWeakReference:instance instanceID:newID]) {
+    [_temporaryStrongReferences setObject:instance forKey:newID];
+    return YES;
+  }
+
+  return NO;
 }
 
 - (void)removeInstance:(NSString *)instanceID {
@@ -138,14 +139,13 @@
 - (NSObject *_Nullable)getInstance:(NSString *)instanceID {
   NSObject *tempInstance = [_temporaryStrongReferences objectForKey:instanceID];
   if (tempInstance) {
-    [_instanceIds removeObjectForKey:tempInstance];
     [_temporaryStrongReferences removeObjectForKey:instanceID];
-    [self addWeakReference:tempInstance instanceID:instanceID];
     return tempInstance;
   }
   
   NSObject *instance = [_strongReferences objectForKey:instanceID];
   if (instance) return instance;
+
   return [_weakReferences objectForKey:instanceID];
 }
 
