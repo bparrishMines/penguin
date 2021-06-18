@@ -23,28 +23,8 @@ public class ChannelRegistrar extends CameraChannelLibrary.$ChannelRegistrar {
     }
 
     @Override
-    public PictureCallbackHandler getHandlerPictureCallback() {
-      return new PictureCallbackHandler(this);
-    }
-
-    @Override
-    public ShutterCallbackHandler getHandlerShutterCallback() {
-      return new ShutterCallbackHandler(this);
-    }
-
-    @Override
     public MediaRecorderHandler getHandlerMediaRecorder() {
       return new MediaRecorderHandler();
-    }
-
-    @Override
-    public ErrorCallbackHandler getHandlerErrorCallback() {
-      return new ErrorCallbackHandler(this);
-    }
-
-    @Override
-    public AutoFocusCallbackHandler getHandlerAutoFocusCallback() {
-      return new AutoFocusCallbackHandler(this);
     }
 
     @Override
@@ -78,62 +58,10 @@ public class ChannelRegistrar extends CameraChannelLibrary.$ChannelRegistrar {
     }
   }
 
-  public static class ShutterCallbackHandler extends CameraChannelLibrary.$ShutterCallbackHandler {
-    public final LibraryImplementations libraryImplementations;
-
-    public ShutterCallbackHandler( LibraryImplementations libraryImplementations) {
-      this.libraryImplementations = libraryImplementations;
-    }
-
-    @Override
-    public CameraChannelLibrary.$ShutterCallback $$create(TypeChannelMessenger messenger) throws Exception {
-      return new ShutterCallbackProxy(libraryImplementations);
-    }
-  }
-
-  public static class PictureCallbackHandler extends CameraChannelLibrary.$PictureCallbackHandler {
-    public final LibraryImplementations libraryImplementations;
-
-    public PictureCallbackHandler( LibraryImplementations libraryImplementations) {
-      this.libraryImplementations = libraryImplementations;
-    }
-
-    @Override
-    public CameraChannelLibrary.$PictureCallback $$create(TypeChannelMessenger messenger) throws Exception {
-      return new PictureCallbackProxy(libraryImplementations);
-    }
-  }
-
   public static class MediaRecorderHandler extends CameraChannelLibrary.$MediaRecorderHandler {
     @Override
-    public CameraChannelLibrary.$MediaRecorder $$create(TypeChannelMessenger messenger) throws Exception {
+    public CameraChannelLibrary.$MediaRecorder $$create(TypeChannelMessenger messenger) {
       return new MediaRecorderProxy();
-    }
-  }
-
-  public static class ErrorCallbackHandler extends CameraChannelLibrary.$ErrorCallbackHandler {
-    public final LibraryImplementations implementations;
-
-    public ErrorCallbackHandler( LibraryImplementations implementations) {
-      this.implementations = implementations;
-    }
-
-    @Override
-    public ErrorCallbackProxy $$create(TypeChannelMessenger messenger) {
-      return new ErrorCallbackProxy(implementations);
-    }
-  }
-
-  public static class AutoFocusCallbackHandler extends CameraChannelLibrary.$AutoFocusCallbackHandler {
-    public final LibraryImplementations implementations;
-
-    public AutoFocusCallbackHandler( LibraryImplementations implementations) {
-      this.implementations = implementations;
-    }
-
-    @Override
-    public AutoFocusCallbackProxy $$create(TypeChannelMessenger messenger) {
-      return new AutoFocusCallbackProxy(implementations);
     }
   }
 
@@ -145,7 +73,7 @@ public class ChannelRegistrar extends CameraChannelLibrary.$ChannelRegistrar {
     }
 
     @Override
-    public CameraAreaProxy $$create(TypeChannelMessenger messenger, CameraChannelLibrary.$CameraRect rect, Integer weight) throws Exception {
+    public CameraAreaProxy $$create(TypeChannelMessenger messenger, CameraChannelLibrary.$CameraRect rect, Integer weight) {
       return new CameraAreaProxy((CameraRectProxy) rect, weight, implementations);
     }
   }
@@ -158,7 +86,7 @@ public class ChannelRegistrar extends CameraChannelLibrary.$ChannelRegistrar {
     }
 
     @Override
-    public CameraRectProxy $$create(TypeChannelMessenger messenger, Integer top, Integer bottom, Integer right, Integer left) throws Exception {
+    public CameraRectProxy $$create(TypeChannelMessenger messenger, Integer top, Integer bottom, Integer right, Integer left) {
       return new CameraRectProxy(left, top, right, bottom, implementations);
     }
   }

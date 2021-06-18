@@ -53,8 +53,14 @@ class _MyAppState extends State<_MyApp> {
 
     final Camera camera = await Camera.open(cameraInfo.cameraId);
     final CameraParameters params = await camera.getParameters();
-    params.setFocusMode(CameraParameters.focusModeAuto);
-    camera.setParameters(params);
+
+    bool hasAutoFocus = false;
+    final List<String> focusModes = await params.getSupportedFocusModes();
+    if (focusModes.contains(CameraParameters.focusModeAuto)) {
+      params.setFocusMode(CameraParameters.focusModeAuto);
+      camera.setParameters(params);
+      hasAutoFocus = true;
+    }
 
     debugPrint((await params.getSupportedPreviewSizes()).toString());
 
@@ -68,12 +74,15 @@ class _MyAppState extends State<_MyApp> {
     camera.setDisplayOrientation(result);
 
     camera.startPreview();
-    camera.autoFocus((bool success) => debugPrint('AutoFocus: $success'));
     final int textureId = await camera.attachPreviewTexture();
 
     setState(() {
       _previewWidget = Texture(textureId: textureId);
     });
+
+    if (hasAutoFocus) {
+      camera.autoFocus((bool success) => debugPrint('AutoFocus: $success'));
+    }
 
     _camera = camera;
   }

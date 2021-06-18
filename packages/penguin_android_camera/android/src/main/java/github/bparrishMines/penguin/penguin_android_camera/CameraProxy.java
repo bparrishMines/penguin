@@ -57,17 +57,8 @@ public class CameraProxy implements CameraChannelLibrary.$Camera {
   }
 
   @Override
-  public Void takePicture(CameraChannelLibrary.$ShutterCallback shutter,
-                          CameraChannelLibrary.$PictureCallback raw,
-                          CameraChannelLibrary.$PictureCallback postView,
-                          CameraChannelLibrary.$PictureCallback jpeg) {
-    takePicture((ShutterCallbackProxy) shutter, (PictureCallbackProxy) raw, (PictureCallbackProxy) postView, (PictureCallbackProxy) jpeg);
-    return null;
-  }
-
-  @Override
   public Void autoFocus(CameraChannelLibrary.$AutoFocusCallback callback) {
-    camera.autoFocus((AutoFocusCallbackProxy) callback);
+    camera.autoFocus((success, camera) -> callback.invoke(success));
     return null;
   }
 
@@ -85,7 +76,7 @@ public class CameraProxy implements CameraChannelLibrary.$Camera {
 
   @Override
   public Void setErrorCallback(CameraChannelLibrary.$ErrorCallback callback) {
-    camera.setErrorCallback((ErrorCallbackProxy) callback);
+    camera.setErrorCallback((error, camera) -> callback.invoke(error));
     return null;
   }
 
@@ -112,14 +103,20 @@ public class CameraProxy implements CameraChannelLibrary.$Camera {
     return null;
   }
 
-  private Void takePicture(ShutterCallbackProxy shutter,
-                           PictureCallbackProxy raw,
-                           PictureCallbackProxy postView,
-                           PictureCallbackProxy jpeg) {
-    camera.takePicture(shutter != null ? shutter.shutterCallback : null,
-        raw != null ? raw.pictureCallback : null,
-        postView != null ? postView.pictureCallback : null,
-        jpeg != null ? jpeg.pictureCallback : null);
+  @Override
+  public Void takePicture(CameraChannelLibrary.$ShutterCallback shutter,
+                            CameraChannelLibrary.$PictureCallback raw,
+                            CameraChannelLibrary.$PictureCallback postView,
+                            CameraChannelLibrary.$PictureCallback jpeg) {
+    camera.takePicture(() -> {
+      if (shutter != null) shutter.invoke();
+    }, (data, camera) -> {
+      if (raw != null) raw.invoke(data);
+    }, (data, camera) -> {
+      if (postView != null) postView.invoke(data);
+    }, (data, camera) -> {
+      if (jpeg != null) jpeg.invoke(data);
+    });
     return null;
   }
 
