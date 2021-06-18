@@ -145,6 +145,18 @@ public class CameraProxy implements CameraChannelLibrary.$Camera {
   }
 
   @Override
+  public Void setOneShotPreviewCallback(CameraChannelLibrary.$PreviewCallback callback) {
+    camera.setOneShotPreviewCallback((data, camera) -> callback.invoke(data));
+    return null;
+  }
+
+  @Override
+  public Void setPreviewCallback(CameraChannelLibrary.$PreviewCallback callback) {
+    camera.setPreviewCallback((data, camera) -> callback.invoke(data));
+    return null;
+  }
+
+  @Override
   public Void reconnect() throws IOException {
     camera.reconnect();
     return null;

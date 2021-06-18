@@ -6,7 +6,7 @@ import 'package:reference/annotations.dart';
 import 'camera.g.dart';
 import 'camera_channels.dart';
 
-/// Callback interface for camera error notification.
+/// Callback for camera error notification.
 ///
 /// See:
 ///   [Camera.cameraErrorUnknown]
@@ -15,12 +15,12 @@ import 'camera_channels.dart';
 @Reference('penguin_android_camera/camera/ErrorCallback')
 typedef ErrorCallback = void Function(int error);
 
-/// Callback interface used to notify on completion of camera auto focus.
+/// Callback used to notify on completion of camera auto focus.
 ///
 /// Devices that do not support auto-focus will receive a "fake" callback to
 /// this interface. If your application needs auto-focus and should not be
-/// installed on devices without auto-focus, you must declare that your app use
-/// s the android.hardware.camera.autofocus feature, in the <uses-feature>
+/// installed on devices without auto-focus, you must declare that your app uses
+/// the android.hardware.camera.autofocus feature, in the <uses-feature>
 /// manifest element.
 ///
 /// If the camera does not support auto-focus and [Camera.autoFocus] is
@@ -56,6 +56,10 @@ typedef ShutterCallback = void Function();
 /// See: [Camera.takePicture].
 @Reference('penguin_android_camera/camera/PictureCallback')
 typedef PictureCallback = void Function(Uint8List data);
+
+/// Callback used to deliver copies of preview frames as they are displayed.
+@Reference('penguin_android_camera/camera/PreviewCallback')
+typedef PreviewCallback = void Function(Uint8List data);
 
 /// The [Camera] class is used to set image capture settings, start/stop preview, snap pictures, and retrieve frames for encoding for video.
 ///
@@ -154,6 +158,40 @@ class Camera with $Camera {
   /// If you are not recording video, you probably do not need this method.
   Future<void> unlock() {
     return _channel.$unlock(this);
+  }
+
+  /// Installs a callback to be invoked for the next preview frame in addition to displaying it on the screen.
+  ///
+  /// After one invocation, the callback is cleared. This method can be called
+  /// any time, even when preview is live. Any other preview callbacks are
+  /// overridden.
+  ///
+  /// If you are using the preview data to create video or still images,
+  /// strongly consider using a sound to properly indicate image capture or
+  /// recording start/stop to the user.
+  Future<void> setOneShotPreviewCallback(PreviewCallback callback) {
+    ChannelRegistrar.instance.implementations.channelPreviewCallback.$$create(
+      callback,
+      $owner: false,
+    );
+    return _channel.$setOneShotPreviewCallback(this, callback);
+  }
+
+  /// Installs a callback to be invoked for every preview frame in addition to displaying them on the screen.
+  ///
+  /// The callback will be repeatedly called for as long as preview is active
+  /// . This method can be called at any time, even while preview is live. Any
+  /// other preview callbacks are overridden.
+  ///
+  /// If you are using the preview data to create video or still images,
+  /// strongly consider using MediaActionSound to properly indicate image
+  /// capture or recording start/stop to the user.
+  Future<void> setPreviewCallback(PreviewCallback callback) {
+    ChannelRegistrar.instance.implementations.channelPreviewCallback.$$create(
+      callback,
+      $owner: false,
+    );
+    return _channel.$setPreviewCallback(this, callback);
   }
 
   /// Reconnects to the camera service after another process used it.

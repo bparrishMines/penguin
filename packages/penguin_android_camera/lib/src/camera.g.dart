@@ -22,6 +22,10 @@ typedef $PictureCallback = dynamic Function(
   Uint8List data,
 );
 
+typedef $PreviewCallback = dynamic Function(
+  Uint8List data,
+);
+
 class $ErrorCallbackChannel extends TypeChannel<Object> {
   $ErrorCallbackChannel(TypeChannelMessenger messenger)
       : super(messenger, 'penguin_android_camera/camera/ErrorCallback');
@@ -123,6 +127,35 @@ class $PictureCallbackChannel extends TypeChannel<Object> {
 
   Future<Object?> _invoke(
     $PictureCallback $instance,
+    Uint8List data,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      '',
+      <Object?>[
+        data,
+      ],
+    );
+  }
+}
+
+class $PreviewCallbackChannel extends TypeChannel<Object> {
+  $PreviewCallbackChannel(TypeChannelMessenger messenger)
+      : super(messenger, 'penguin_android_camera/camera/PreviewCallback');
+
+  Future<PairedInstance?> $$create(
+    $PreviewCallback $instance, {
+    required bool $owner,
+  }) {
+    return createNewInstancePair(
+      $instance,
+      <Object?>[],
+      owner: $owner,
+    );
+  }
+
+  Future<Object?> _invoke(
+    $PreviewCallback $instance,
     Uint8List data,
   ) {
     return sendInvokeMethod(
@@ -306,6 +339,50 @@ class $PictureCallbackHandler implements TypeChannelHandler<Object> {
   }
 }
 
+class $PreviewCallbackHandler implements TypeChannelHandler<Object> {
+  $PreviewCallbackHandler(this.implementations);
+
+  final $LibraryImplementations implementations;
+
+  @override
+  $PreviewCallback createInstance(
+    TypeChannelMessenger messenger,
+    List<Object?> arguments,
+  ) {
+    function(
+      Uint8List data,
+    ) {
+      implementations.channelPreviewCallback._invoke(
+        function,
+        data,
+      );
+    }
+
+    return function;
+  }
+
+  @override
+  Object? invokeMethod(
+    TypeChannelMessenger messenger,
+    covariant $PreviewCallback instance,
+    String methodName,
+    List<Object?> arguments,
+  ) {
+    return instance(
+      arguments[0] as Uint8List,
+    );
+  }
+
+  @override
+  Object? invokeStaticMethod(
+    TypeChannelMessenger messenger,
+    String methodName,
+    List<Object?> arguments,
+  ) {
+    throw UnimplementedError();
+  }
+}
+
 mixin $Camera {}
 
 mixin $CameraParameters {}
@@ -410,6 +487,32 @@ class $CameraChannel extends TypeChannel<$Camera> {
       $instance,
       'unlock',
       <Object?>[],
+    );
+  }
+
+  Future<Object?> $setOneShotPreviewCallback(
+    $Camera $instance,
+    $PreviewCallback callback,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'setOneShotPreviewCallback',
+      <Object?>[
+        callback,
+      ],
+    );
+  }
+
+  Future<Object?> $setPreviewCallback(
+    $Camera $instance,
+    $PreviewCallback callback,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'setPreviewCallback',
+      <Object?>[
+        callback,
+      ],
     );
   }
 
@@ -1572,6 +1675,11 @@ class $LibraryImplementations {
       $PictureCallbackChannel(messenger);
   $PictureCallbackHandler get handlerPictureCallback =>
       $PictureCallbackHandler(this);
+
+  $PreviewCallbackChannel get channelPreviewCallback =>
+      $PreviewCallbackChannel(messenger);
+  $PreviewCallbackHandler get handlerPreviewCallback =>
+      $PreviewCallbackHandler(this);
 }
 
 class $ChannelRegistrar {
@@ -1623,6 +1731,10 @@ class $ChannelRegistrar {
     implementations.channelPictureCallback.setHandler(
       implementations.handlerPictureCallback,
     );
+
+    implementations.channelPreviewCallback.setHandler(
+      implementations.handlerPreviewCallback,
+    );
   }
 
   void unregisterHandlers() {
@@ -1647,5 +1759,7 @@ class $ChannelRegistrar {
     implementations.channelShutterCallback.removeHandler();
 
     implementations.channelPictureCallback.removeHandler();
+
+    implementations.channelPreviewCallback.removeHandler();
   }
 }
