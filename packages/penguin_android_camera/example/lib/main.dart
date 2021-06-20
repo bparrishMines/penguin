@@ -63,6 +63,7 @@ class _MyAppState extends State<_MyApp> {
     }
 
     debugPrint((await params.getSupportedPreviewSizes()).toString());
+    debugPrint((await params.getFocusAreas()).toString());
 
     late int result;
     if (cameraInfo.facing == CameraInfo.cameraFacingFront) {

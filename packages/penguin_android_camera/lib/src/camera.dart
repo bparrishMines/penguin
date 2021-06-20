@@ -795,7 +795,7 @@ class CameraParameters with $CameraParameters {
   ///
   /// The reference code is as follows for android 24+:
   ///
-  /// ```
+  /// ```dart
   /// late int result;
   /// if (cameraInfo.facing == CameraInfo.cameraFacingFront) {
   ///   result = cameraInfo.orientation % 360;

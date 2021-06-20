@@ -1,26 +1,21 @@
 package github.bparrishMines.penguin.penguin_android_camera;
 
-import android.graphics.Rect;
 import android.hardware.Camera;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.internal.util.reflection.FieldSetter;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class CameraParametersTest {
@@ -31,19 +26,28 @@ public class CameraParametersTest {
   ChannelRegistrar.LibraryImplementations mockImplementations;
 
   @Mock
+  CameraChannelLibrary.$CameraParametersChannel mockCameraParametersChannel;
+
+  @Mock
+  CameraChannelLibrary.$CameraAreaChannel mockCameraAreaChannel;
+
+  @Mock
+  CameraChannelLibrary.$CameraRectChannel mockCameraRectChannel;
+
+  @Mock
+  CameraChannelLibrary.$CameraSizeChannel mockCameraSizeChannel;
+
+  @Mock
   Camera.Parameters mockParameters;
 
   public CameraParametersProxy testCameraParametersProxy;
 
   @Before
   public void setUp() {
-    final CameraChannelLibrary.$CameraParametersChannel mockParametersChannel = mock(CameraChannelLibrary.$CameraParametersChannel.class);
-    final CameraChannelLibrary.$CameraRectChannel mockRectChannel = mock(CameraChannelLibrary.$CameraRectChannel.class);
-    final CameraChannelLibrary.$CameraAreaChannel mockAreaChannel = mock(CameraChannelLibrary.$CameraAreaChannel.class);
-
-    when(mockImplementations.getChannelCameraParameters()).thenReturn(mockParametersChannel);
-    when(mockImplementations.getChannelCameraRect()).thenReturn(mockRectChannel);
-    when(mockImplementations.getChannelCameraArea()).thenReturn(mockAreaChannel);
+    when(mockImplementations.getChannelCameraParameters()).thenReturn(mockCameraParametersChannel);
+    when(mockImplementations.getChannelCameraRect()).thenReturn(mockCameraRectChannel);
+    when(mockImplementations.getChannelCameraArea()).thenReturn(mockCameraAreaChannel);
+    when(mockImplementations.getChannelCameraSize()).thenReturn(mockCameraSizeChannel);
     testCameraParametersProxy = new CameraParametersProxy(mockParameters, mockImplementations);
   }
 
@@ -55,17 +59,7 @@ public class CameraParametersTest {
 
   @Test
   public void getFocusAreas() {
-    // For some reason, the code below doesn't work so this test is being skipped.
-//    final Camera.Area testArea = new Camera.Area(new Rect(null), 23);
-//    assertEquals(testArea.weight, 23);
-  }
-
-  public static class A {
-    final int weight;
-
-    public A(int weight) {
-      this.weight = weight;
-    }
+    // Not possible to test since Camera.Area doesn't set values.
   }
 
   @Test
@@ -81,111 +75,172 @@ public class CameraParametersTest {
     assertEquals(testCameraParametersProxy.getFocusDistances(), Arrays.asList(1f, 2f, 3f));
   }
 
-  public Object getMaxExposureCompensation() {
-    return null;
+  @Test
+  public void getMaxExposureCompensation() {
+    when(mockParameters.getMaxExposureCompensation()).thenReturn(23);
+    assertEquals(testCameraParametersProxy.getMaxExposureCompensation(), (Integer) 23);
   }
 
-  public Object getMaxNumFocusAreas() throws Exception {
-    return null;
+  @Test
+  public void getSupportedFocusModes() {
+    when(mockParameters.getSupportedFocusModes()).thenReturn(Arrays.asList("hello", "goodbye"));
+    assertEquals(testCameraParametersProxy.getSupportedFocusModes(), Arrays.asList("hello", "goodbye"));
   }
 
-  public Object getMinExposureCompensation() throws Exception {
-    return null;
+  @Test
+  public void isAutoExposureLockSupported() {
+    when(mockParameters.isAutoExposureLockSupported()).thenReturn(true);
+    assertEquals(testCameraParametersProxy.isAutoExposureLockSupported(), true);
   }
 
-  public Object getSupportedFocusModes() throws Exception {
-    return null;
+  @Test
+  public void isZoomSupported() {
+    when(mockParameters.isZoomSupported()).thenReturn(false);
+    assertEquals(testCameraParametersProxy.isZoomSupported(), false);
   }
 
-  public Object isAutoExposureLockSupported() throws Exception {
-    return null;
+  @Test
+  public void setAutoExposureLock() {
+    testCameraParametersProxy.setAutoExposureLock(true);
+    verify(mockParameters).setAutoExposureLock(true);
   }
 
-  public Object isZoomSupported() throws Exception {
-    return null;
+  @Test
+  public void setExposureCompensation() {
+    testCameraParametersProxy.setExposureCompensation(24);
+    verify(mockParameters).setExposureCompensation(24);
   }
 
-  public Object setAutoExposureLock(Boolean toggle) throws Exception {
-    return null;
+  @Test
+  public void setFocusAreas() {
+    // Camera.Area always returns a null rect and 0 weight.
   }
 
-  public Object setExposureCompensation(Integer value) throws Exception {
-    return null;
+  @Test
+  public void setFocusMode() {
+    testCameraParametersProxy.setFocusMode("hola amigo");
+    verify(mockParameters).setFocusMode("hola amigo");
   }
 
-  public Object setFocusAreas(List<CameraChannelLibrary.$CameraArea> focusAreas) throws Exception {
-    return null;
+  @Test
+  public void getFlashMode() {
+    when(mockParameters.getFlashMode()).thenReturn("flashy flash");
+    assertEquals(testCameraParametersProxy.getFlashMode(), "flashy flash");
   }
 
-  public Object setFocusMode(String value) throws Exception {
-    return null;
+  @Test
+  public void getMaxZoom() {
+    when(mockParameters.getMaxZoom()).thenReturn(11);
+    assertEquals(testCameraParametersProxy.getMaxZoom(), (Integer) 11);
   }
 
-  public Object getFlashMode() throws Exception {
-    return null;
+  @Test
+  public void getPictureSize() {
+    final Camera.Size size = mock(Camera.Size.class);
+    size.width = 12;
+    size.height = 54;
+
+    when(mockParameters.getPictureSize()).thenReturn(size);
+    assertEquals(testCameraParametersProxy.getPictureSize().cameraSize.width, 12);
+    assertEquals(testCameraParametersProxy.getPictureSize().cameraSize.height, 54);
   }
 
-  public Object getMaxZoom() throws Exception {
-    return null;
+  @Test
+  public void getPreviewSize() {
+    final Camera.Size size = mock(Camera.Size.class);
+    size.width = 12;
+    size.height = 54;
+
+    when(mockParameters.getPreviewSize()).thenReturn(size);
+    assertEquals(testCameraParametersProxy.getPreviewSize().cameraSize.width, 12);
+    assertEquals(testCameraParametersProxy.getPreviewSize().cameraSize.height, 54);
   }
 
-  public Object getPictureSize() throws Exception {
-    return null;
+  @Test
+  public void getSupportedPreviewSizes() {
+    final Camera.Size size = mock(Camera.Size.class);
+    size.width = 12;
+    size.height = 54;
+
+    when(mockParameters.getSupportedPreviewSizes()).thenReturn(Collections.singletonList(size));
+    assertEquals(testCameraParametersProxy.getSupportedPreviewSizes().get(0).cameraSize.width, 12);
+    assertEquals(testCameraParametersProxy.getSupportedPreviewSizes().get(0).cameraSize.height, 54);
   }
 
-  public Object getPreviewSize() throws Exception {
-    return null;
+  @Test
+  public void getSupportedPictureSizes() {
+    final Camera.Size size = mock(Camera.Size.class);
+    size.width = 12;
+    size.height = 54;
+
+    when(mockParameters.getSupportedPictureSizes()).thenReturn(Collections.singletonList(size));
+    assertEquals(testCameraParametersProxy.getSupportedPictureSizes().get(0).cameraSize.width, 12);
+    assertEquals(testCameraParametersProxy.getSupportedPictureSizes().get(0).cameraSize.height, 54);
   }
 
-  public Object getSupportedPreviewSizes() throws Exception {
-    return null;
+  @Test
+  public void getSupportedFlashModes() {
+    when(mockParameters.getSupportedFlashModes()).thenReturn(Arrays.asList("hello", "goodbye"));
+    assertEquals(testCameraParametersProxy.getSupportedFlashModes(), Arrays.asList("hello", "goodbye"));
   }
 
-  public Object getSupportedPictureSizes() throws Exception {
-    return null;
+  @Test
+  public void getZoom() {
+    when(mockParameters.getZoom()).thenReturn(11);
+    assertEquals(testCameraParametersProxy.getZoom(), (Integer) 11);
   }
 
-  public Object getSupportedFlashModes() throws Exception {
-    return null;
+  @Test
+  public void isSmoothZoomSupported() {
+    when(mockParameters.isSmoothZoomSupported()).thenReturn(true);
+    assertEquals(testCameraParametersProxy.isSmoothZoomSupported(), true);
   }
 
-  public Object getZoom() throws Exception {
-    return null;
+  @Test
+  public void setFlashMode() {
+    testCameraParametersProxy.setFlashMode("hola amigo");
+    verify(mockParameters).setFlashMode("hola amigo");
   }
 
-  public Object isSmoothZoomSupported() throws Exception {
-    return null;
+  @Test
+  public void setPictureSize() {
+    testCameraParametersProxy.setPictureSize(100, 100);
+    verify(mockParameters).setPictureSize(100, 100);
   }
 
-  public Object setFlashMode(String mode) throws Exception {
-    return null;
+  @Test
+  public void setRecordingHint() {
+    testCameraParametersProxy.setRecordingHint(false);
+    verify(mockParameters).setRecordingHint(false);
   }
 
-  public Object setPictureSize(Integer width, Integer height) throws Exception {
-    return null;
+  @Test
+  public void setRotation() {
+    testCameraParametersProxy.setRotation(23);
+    verify(mockParameters).setRotation(23);
   }
 
-  public Object setRecordingHint(Boolean hint) throws Exception {
-    return null;
+  @Test
+  public void setZoom() {
+    testCameraParametersProxy.setZoom(14);
+    verify(mockParameters).setZoom(14);
   }
 
-  public Object setRotation(Integer rotation) throws Exception {
-    return null;
+  @Test
+  public void setPreviewSize() {
+    testCameraParametersProxy.setPreviewSize(100, 100);
+    verify(mockParameters).setPreviewSize(100, 100);
   }
 
-  public Object setZoom(Integer value) throws Exception {
-    return null;
+  @Test
+  public void getExposureCompensation() {
+    when(mockParameters.getExposureCompensation()).thenReturn(11);
+    assertEquals(testCameraParametersProxy.getExposureCompensation(), (Integer) 11);
   }
 
-  public Object setPreviewSize(Integer width, Integer height) throws Exception {
-    return null;
-  }
-
-  public Object getExposureCompensation() throws Exception {
-    return null;
-  }
-
-  public Object getExposureCompensationStep() throws Exception {
-    return null;
+  @Test
+  public void getExposureCompensationStep() {
+    when(mockParameters.getExposureCompensationStep()).thenReturn(11.2F);
+    assertEquals(testCameraParametersProxy.getExposureCompensationStep(), (Float) 11.2F);
   }
 }

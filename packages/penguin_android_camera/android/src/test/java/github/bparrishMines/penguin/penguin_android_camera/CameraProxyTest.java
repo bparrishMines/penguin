@@ -23,6 +23,7 @@ import io.flutter.view.TextureRegistry;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.doAnswer;
 import static org.powermock.api.mockito.PowerMockito.mock;
@@ -134,16 +135,27 @@ public class CameraProxyTest {
 
   @Test
   public void takePicture() {
-    final Camera.ShutterCallback shutterCallback = () -> {
-    };
-    final ShutterCallbackProxy shutterCallbackProxy = new ShutterCallbackProxy(shutterCallback, mockImplementations);
+    final CameraChannelLibrary.$ShutterCallback shutterCallback = new CameraChannelLibrary.$ShutterCallback() {
 
-    final Camera.PictureCallback pictureCallback = (data, camera) -> {
+      @Override
+      public Object invoke() {
+        return null;
+      }
     };
-    final PictureCallbackProxy pictureCallbackProxy = new PictureCallbackProxy(pictureCallback, mockImplementations);
 
-    testCameraProxy.takePicture(shutterCallbackProxy, pictureCallbackProxy, pictureCallbackProxy, pictureCallbackProxy);
-    verify(mockCamera).takePicture(shutterCallback, pictureCallback, pictureCallback, pictureCallback);
+    final CameraChannelLibrary.$PictureCallback pictureCallback = new CameraChannelLibrary.$PictureCallback() {
+      @Override
+      public Object invoke(byte[] data) {
+        return null;
+      }
+    };
+
+    testCameraProxy.takePicture(shutterCallback, pictureCallback, pictureCallback, pictureCallback);
+    verify(mockCamera).takePicture(
+        isA(Camera.ShutterCallback.class),
+        isA(Camera.PictureCallback.class),
+        isA(Camera.PictureCallback.class),
+        isA(Camera.PictureCallback.class));
   }
 
   @Test
