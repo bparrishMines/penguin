@@ -13,6 +13,7 @@ import org.mockito.junit.MockitoRule;
 import github.penguin.reference.reference.TypeChannelMessenger;
 import io.flutter.view.TextureRegistry;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -36,6 +37,41 @@ public class MediaRecorderProxyTest {
   @Before
   public void setUp() {
     testMediaRecorderProxy = new MediaRecorderProxy(mockMediaRecorder);
+  }
+
+  @Test
+  public void outputFormat() {
+    assertEquals(MediaRecorder.OutputFormat.AAC_ADTS, 0x00000006);
+    assertEquals(MediaRecorder.OutputFormat.AMR_NB, 0x00000003);
+    assertEquals(MediaRecorder.OutputFormat.AMR_WB, 0x00000004);
+    assertEquals(MediaRecorder.OutputFormat.DEFAULT, 0x00000000);
+    assertEquals(MediaRecorder.OutputFormat.MPEG_2_TS, 0x00000008);
+    assertEquals(MediaRecorder.OutputFormat.MPEG_4, 0x00000002);
+    assertEquals(MediaRecorder.OutputFormat.OGG, 0x0000000b);
+    //noinspection deprecation
+    assertEquals(MediaRecorder.OutputFormat.RAW_AMR, 0x00000003);
+    assertEquals(MediaRecorder.OutputFormat.THREE_GPP, 0x00000001);
+    assertEquals(MediaRecorder.OutputFormat.WEBM, 0x00000009);
+  }
+
+  @Test
+  public void videoEncoder() {
+    assertEquals(MediaRecorder.VideoEncoder.MPEG_4_SP, 0x00000003);
+  }
+
+  @Test
+  public void audioSource() {
+    assertEquals(MediaRecorder.AudioSource.DEFAULT, 0x00000000);
+  }
+
+  @Test
+  public void audioEncoder() {
+    assertEquals(MediaRecorder.AudioEncoder.AMR_NB, 0x00000001);
+  }
+
+  @Test
+  public void videoSource() {
+    assertEquals(MediaRecorder.VideoSource.CAMERA, 0x00000001);
   }
 
   @Test
