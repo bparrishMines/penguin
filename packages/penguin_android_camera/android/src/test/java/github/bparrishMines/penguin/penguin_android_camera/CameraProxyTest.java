@@ -16,12 +16,14 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import java.io.IOException;
 import java.util.List;
 
 import github.penguin.reference.reference.TypeChannelMessenger;
 import io.flutter.view.TextureRegistry;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isA;
@@ -50,6 +52,9 @@ public class CameraProxyTest {
   CameraChannelLibrary.$CameraChannel mockCameraChannel;
 
   @Mock
+  CameraChannelLibrary.$CameraParametersChannel mockCameraParametersChannel;
+
+  @Mock
   android.hardware.Camera mockCamera;
 
   public CameraProxy testCameraProxy;
@@ -57,7 +62,15 @@ public class CameraProxyTest {
   @Before
   public void setUp() {
     Mockito.when(mockImplementations.getChannelCamera()).thenReturn(mockCameraChannel);
+    Mockito.when(mockImplementations.getChannelCameraParameters()).thenReturn(mockCameraParametersChannel);
     testCameraProxy = new CameraProxy(mockCamera, mockTextureRegistry, mockImplementations);
+  }
+
+  @Test
+  public void cameraError() {
+    assertEquals(Camera.CAMERA_ERROR_UNKNOWN, 0x00000001);
+    assertEquals(Camera.CAMERA_ERROR_SERVER_DIED, 0x00000064);
+    assertEquals(Camera.CAMERA_ERROR_EVICTED, 0x00000002);
   }
 
   @Test
@@ -89,8 +102,6 @@ public class CameraProxyTest {
       return null;
     }).when(android.hardware.Camera.class);
     android.hardware.Camera.getCameraInfo(eq(0), any(android.hardware.Camera.CameraInfo.class));
-
-    final CameraChannelLibrary.$CameraInfoChannel mockCameraInfoChannel = mock(CameraChannelLibrary.$CameraInfoChannel.class);
 
     final ChannelRegistrar.LibraryImplementations libraryImplementations =
         new ChannelRegistrar.LibraryImplementations(mockTypeChannelMessenger, mockTextureRegistry);
@@ -175,5 +186,91 @@ public class CameraProxyTest {
   public void unlock() {
     testCameraProxy.unlock();
     verify(mockCamera).unlock();
+  }
+
+  @Test
+  public void autoFocus() {
+    final CameraChannelLibrary.$AutoFocusCallback autoFocusCallback = new CameraChannelLibrary.$AutoFocusCallback() {
+      @Override
+      public Void invoke(Boolean success) {
+        return null;
+      }
+    };
+    testCameraProxy.autoFocus(autoFocusCallback);
+    verify(mockCamera).autoFocus(isA(Camera.AutoFocusCallback.class));
+  }
+
+  @Test
+  public void cancelAutoFocus() {
+    testCameraProxy.cancelAutoFocus();
+    verify(mockCamera).cancelAutoFocus();
+  }
+
+  @Test
+  public void setDisplayOrientation() {
+    testCameraProxy.setDisplayOrientation(15);
+    verify(mockCamera).setDisplayOrientation(15);
+  }
+
+  @Test
+  public void setErrorCallback() {
+    final CameraChannelLibrary.$ErrorCallback errorCallback = new CameraChannelLibrary.$ErrorCallback() {
+      @Override
+      public Void invoke(Integer error) {
+        return null;
+      }
+    };
+    testCameraProxy.setErrorCallback(errorCallback);
+    verify(mockCamera).setErrorCallback(isA(Camera.ErrorCallback.class));
+  }
+
+  @Test
+  public void startSmoothZoom() {
+    testCameraProxy.startSmoothZoom(15);
+    verify(mockCamera).startSmoothZoom(15);
+  }
+
+  @Test
+  public void stopSmoothZoom() {
+    testCameraProxy.stopSmoothZoom();
+    verify(mockCamera).stopSmoothZoom();
+  }
+
+  @Test
+  public void getParameters() {
+    final CameraParametersProxy cameraParametersProxy = testCameraProxy.getParameters();
+    verify(mockCamera).getParameters();
+    assertNotNull(cameraParametersProxy);
+  }
+
+  // TODO(bparrishMines): Test that invoke is called.
+  @Test
+  public void setOneShotPreviewCallback() {
+    final CameraChannelLibrary.$PreviewCallback previewCallback = new CameraChannelLibrary.$PreviewCallback() {
+      @Override
+      public Void invoke(byte[] data) {
+        return null;
+      }
+    };
+    testCameraProxy.setOneShotPreviewCallback(previewCallback);
+    verify(mockCamera).setOneShotPreviewCallback(isA(Camera.PreviewCallback.class));
+  }
+
+  @Test
+  public void setPreviewCallback() {
+    final CameraChannelLibrary.$PreviewCallback previewCallback = new CameraChannelLibrary.$PreviewCallback() {
+      @Override
+      public Void invoke(byte[] data) {
+        return null;
+      }
+    };
+    testCameraProxy.setPreviewCallback(previewCallback);
+    verify(mockCamera).setPreviewCallback(isA(Camera.PreviewCallback.class));
+  }
+
+  @Test
+  public void reconnect() throws IOException {
+    testCameraProxy.reconnect();
+    verify(mockCamera).reconnect();
   }
 }
