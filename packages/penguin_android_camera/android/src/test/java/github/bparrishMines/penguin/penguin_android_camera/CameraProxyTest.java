@@ -18,6 +18,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.List;
 
+import github.penguin.reference.reference.TypeChannelMessenger;
 import io.flutter.view.TextureRegistry;
 
 import static org.junit.Assert.assertEquals;
@@ -37,10 +38,16 @@ public class CameraProxyTest {
   public MockitoRule mockitoRule = MockitoJUnit.rule();
 
   @Mock
+  TypeChannelMessenger mockTypeChannelMessenger;
+
+  @Mock
   TextureRegistry mockTextureRegistry;
 
   @Mock
   ChannelRegistrar.LibraryImplementations mockImplementations;
+
+  @Mock
+  CameraChannelLibrary.$CameraChannel mockCameraChannel;
 
   @Mock
   android.hardware.Camera mockCamera;
@@ -49,18 +56,22 @@ public class CameraProxyTest {
 
   @Before
   public void setUp() {
-    final CameraChannelLibrary.$CameraChannel mockCameraChannel = Mockito.mock(CameraChannelLibrary.$CameraChannel.class);
     Mockito.when(mockImplementations.getChannelCamera()).thenReturn(mockCameraChannel);
     testCameraProxy = new CameraProxy(mockCamera, mockTextureRegistry, mockImplementations);
+  }
+
+  @Test
+  public void createCamera() {
+    verify(mockCameraChannel).$$create(testCameraProxy, false);
   }
 
   @Test
   public void open() {
     PowerMockito.mockStatic(android.hardware.Camera.class);
 
-    final CameraChannelLibrary.$CameraChannel mockCameraChannel = mock(CameraChannelLibrary.$CameraChannel.class);
-    when(mockImplementations.getChannelCamera()).thenReturn(mockCameraChannel);
-    CameraProxy.open(mockImplementations, mockTextureRegistry, 12);
+    final ChannelRegistrar.LibraryImplementations libraryImplementations =
+        new ChannelRegistrar.LibraryImplementations(mockTypeChannelMessenger, mockTextureRegistry);
+    libraryImplementations.getHandlerCamera().$open(mockTypeChannelMessenger, 12);
 
     verifyStatic();
     android.hardware.Camera.open(12);
@@ -80,8 +91,10 @@ public class CameraProxyTest {
     android.hardware.Camera.getCameraInfo(eq(0), any(android.hardware.Camera.CameraInfo.class));
 
     final CameraChannelLibrary.$CameraInfoChannel mockCameraInfoChannel = mock(CameraChannelLibrary.$CameraInfoChannel.class);
-    when(mockImplementations.getChannelCameraInfo()).thenReturn(mockCameraInfoChannel);
-    final List<CameraInfoProxy> allInfo = CameraProxy.getAllCameraInfo(mockImplementations);
+
+    final ChannelRegistrar.LibraryImplementations libraryImplementations =
+        new ChannelRegistrar.LibraryImplementations(mockTypeChannelMessenger, mockTextureRegistry);
+    final List<CameraInfoProxy> allInfo = libraryImplementations.getHandlerCamera().$getAllCameraInfo(mockTypeChannelMessenger);
 
     assertEquals(allInfo.size(), 1);
     assertEquals(allInfo.get(0).cameraInfo.facing, 11);

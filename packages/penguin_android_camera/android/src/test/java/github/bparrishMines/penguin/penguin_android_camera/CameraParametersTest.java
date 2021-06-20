@@ -5,7 +5,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.mockito.internal.util.reflection.FieldSetter;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import java.util.Arrays;
@@ -49,6 +48,38 @@ public class CameraParametersTest {
     when(mockImplementations.getChannelCameraArea()).thenReturn(mockCameraAreaChannel);
     when(mockImplementations.getChannelCameraSize()).thenReturn(mockCameraSizeChannel);
     testCameraParametersProxy = new CameraParametersProxy(mockParameters, mockImplementations);
+  }
+
+  @Test
+  public void flashModes() {
+    assertEquals(Camera.Parameters.FLASH_MODE_AUTO, "auto");
+    assertEquals(Camera.Parameters.FLASH_MODE_OFF, "off");
+    assertEquals(Camera.Parameters.FLASH_MODE_ON, "on");
+    assertEquals(Camera.Parameters.FLASH_MODE_RED_EYE, "red-eye");
+    assertEquals(Camera.Parameters.FLASH_MODE_TORCH, "torch");
+  }
+
+  @Test
+  public void focusDistances() {
+    assertEquals(Camera.Parameters.FOCUS_DISTANCE_NEAR_INDEX, 0x00000000);
+    assertEquals(Camera.Parameters.FOCUS_DISTANCE_FAR_INDEX, 0x00000002);
+    assertEquals(Camera.Parameters.FOCUS_DISTANCE_OPTIMAL_INDEX, 0x00000001);
+  }
+
+  @Test
+  public void focusModes() {
+    assertEquals(Camera.Parameters.FOCUS_MODE_AUTO, "auto");
+    assertEquals(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE, "continuous-picture");
+    assertEquals(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO, "continuous-video");
+    assertEquals(Camera.Parameters.FOCUS_MODE_EDOF, "edof");
+    assertEquals(Camera.Parameters.FOCUS_MODE_FIXED, "fixed");
+    assertEquals(Camera.Parameters.FOCUS_MODE_INFINITY, "infinity");
+    assertEquals(Camera.Parameters.FOCUS_MODE_MACRO, "macro");
+  }
+
+  @Test
+  public void createCameraParameters() {
+    verify(mockCameraParametersChannel).$$create(testCameraParametersProxy, false);
   }
 
   @Test
