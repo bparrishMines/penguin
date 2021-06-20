@@ -60,7 +60,7 @@ public class ChannelRegistrar extends CameraChannelLibrary.$ChannelRegistrar {
 
   public static class MediaRecorderHandler extends CameraChannelLibrary.$MediaRecorderHandler {
     @Override
-    public CameraChannelLibrary.$MediaRecorder $$create(TypeChannelMessenger messenger) {
+    public MediaRecorderProxy $$create(TypeChannelMessenger messenger) {
       return new MediaRecorderProxy();
     }
   }

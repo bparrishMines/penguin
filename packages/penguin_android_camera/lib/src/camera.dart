@@ -895,7 +895,7 @@ class CameraArea with $CameraArea {
   CameraArea(
     this.rect,
     this.weight, {
-    @ignoreParam bool create = true,
+    @ignoreParam bool create = false,
   }) {
     if (create) {
       _channel.$$create(
@@ -951,7 +951,7 @@ class CameraRect with $CameraRect {
     required this.bottom,
     required this.right,
     required this.left,
-    @ignoreParam bool create = true,
+    @ignoreParam bool create = false,
   }) {
     if (create) {
       _channel.$$create(

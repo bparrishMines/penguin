@@ -9,10 +9,11 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
-import org.powermock.api.mockito.PowerMockito;
 
+import github.penguin.reference.reference.TypeChannelMessenger;
 import io.flutter.view.TextureRegistry;
 
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -22,16 +23,29 @@ public class MediaRecorderProxyTest {
   public MockitoRule mockitoRule = MockitoJUnit.rule();
 
   @Mock
-  public MediaRecorder mockMediaRecorder;
+  TypeChannelMessenger mockTypeChannelMessenger;
 
   @Mock
   ChannelRegistrar.LibraryImplementations mockImplementations;
+
+  @Mock
+  public MediaRecorder mockMediaRecorder;
 
   public MediaRecorderProxy testMediaRecorderProxy;
 
   @Before
   public void setUp() {
     testMediaRecorderProxy = new MediaRecorderProxy(mockMediaRecorder);
+  }
+
+  @Test
+  public void createMediaRecorder() {
+    final ChannelRegistrar.LibraryImplementations libraryImplementations =
+        new ChannelRegistrar.LibraryImplementations(mockTypeChannelMessenger, mock(TextureRegistry.class));
+
+    final MediaRecorderProxy mediaRecorderProxy = libraryImplementations.getHandlerMediaRecorder().$$create(mockTypeChannelMessenger);
+
+    assertNotNull(mediaRecorderProxy);
   }
 
   @Test
@@ -49,6 +63,12 @@ public class MediaRecorderProxyTest {
   public void setVideoSource() {
     testMediaRecorderProxy.setVideoSource(12);
     verify(mockMediaRecorder).setVideoSource(12);
+  }
+
+  @Test
+  public void setOutputFilePath() {
+    testMediaRecorderProxy.setOutputFilePath("apple");
+    verify(mockMediaRecorder).setOutputFile("apple");
   }
 
   @Test
@@ -104,5 +124,18 @@ public class MediaRecorderProxyTest {
   public void release() {
     testMediaRecorderProxy.release();
     verify(mockMediaRecorder).release();
+  }
+
+  // TODO(bparrishMines): test by overriding sdk int
+  @Test(expected = UnsupportedOperationException.class)
+  public void pause() {
+    testMediaRecorderProxy.pause();
+    verify(mockMediaRecorder).pause();
+  }
+
+  @Test(expected = UnsupportedOperationException.class)
+  public void resume() {
+    testMediaRecorderProxy.resume();
+    verify(mockMediaRecorder).resume();
   }
 }
