@@ -78,6 +78,27 @@ public class CameraParametersTest {
   }
 
   @Test
+  public void antibanding() {
+    assertEquals(Camera.Parameters.ANTIBANDING_50HZ, "50hz");
+    assertEquals(Camera.Parameters.ANTIBANDING_60HZ, "60hz");
+    assertEquals(Camera.Parameters.ANTIBANDING_AUTO, "auto");
+    assertEquals(Camera.Parameters.ANTIBANDING_OFF, "off");
+  }
+
+  @Test
+  public void effect() {
+    assertEquals(Camera.Parameters.EFFECT_NONE, "none");
+    assertEquals(Camera.Parameters.EFFECT_MONO, "mono");
+    assertEquals(Camera.Parameters.EFFECT_NEGATIVE, "negative");
+    assertEquals(Camera.Parameters.EFFECT_SOLARIZE, "solarize");
+    assertEquals(Camera.Parameters.EFFECT_SEPIA, "sepia");
+    assertEquals(Camera.Parameters.EFFECT_POSTERIZE, "posterize");
+    assertEquals(Camera.Parameters.EFFECT_WHITEBOARD, "whiteboard");
+    assertEquals(Camera.Parameters.EFFECT_BLACKBOARD, "blackboard");
+    assertEquals(Camera.Parameters.EFFECT_AQUA, "aqua");
+  }
+
+  @Test
   public void createCameraParameters() {
     verify(mockCameraParametersChannel).$$create(testCameraParametersProxy, false);
   }

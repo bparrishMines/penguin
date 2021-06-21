@@ -571,6 +571,45 @@ class CameraParameters with $CameraParameters {
   /// mode.
   static const String focusModeMacro = 'macro';
 
+  /// Antibanding at 50hz.
+  static const String antibanding50hz = '50hz';
+
+  /// Antibanding at 60hz.
+  static const String antibanding60hz = '60hz';
+
+  /// Allow the sensor to detect the best setting for antibanding.
+  static const String antibandingAuto = 'auto';
+
+  /// Turns off antibanding.
+  static const String antibandingOff = 'off';
+
+  /// No color effect.
+  static const String effectNone = 'none';
+
+  /// Color effect mono.
+  static const String effectMono = 'mono';
+
+  /// Color effect negative.
+  static const String effectNegative = 'negative';
+
+  /// Color effect solarize.
+  static const String effectSolarize = 'solarize';
+
+  /// Color effect sepia.
+  static const String effectSepia = 'sepia';
+
+  /// Color effect posterize.
+  static const String effectPosterize = 'posterize';
+
+  /// Color effect whiteboard.
+  static const String effectWhiteboard = 'whiteboard';
+
+  /// Color effect blackboard.
+  static const String effectBlackboard = 'blackboard';
+
+  /// Color effect aqua.
+  static const String effectAqua = 'aqua';
+
   static $CameraParametersChannel get _channel =>
       ChannelRegistrar.instance.implementations.channelCameraParameters;
 
@@ -939,6 +978,156 @@ class CameraParameters with $CameraParameters {
   /// is -2.
   Future<double> getExposureCompensationStep() async {
     return await _channel.$getExposureCompensationStep(this) as double;
+  }
+
+  /// Creates a single string with all the parameters set in this Parameters object.
+  ///
+  /// Returns a `String` with all values from this Parameters object, in
+  /// semi-colon delimited key-value pairs
+  ///
+  /// The [unflatten] method does the reverse.
+  Future<String> flatten() async {
+    return await _channel.$flatten(this) as String;
+  }
+
+  /// Returns the value of a `String` parameter.
+  Future<String> get(String key) async {
+    return await _channel.$get(this) as String;
+  }
+
+  /// Gets the current antibanding setting.
+  ///
+  /// See:
+  ///   [antibandingAuto]
+  ///   [antibanding50hz]
+  ///   [antibanding60hz]
+  ///   [antibandingOff]
+  Future<String> getAntibanding() async {
+    return await _channel.$getAntibanding(this) as String;
+  }
+
+  /// Gets the state of the auto-white balance lock.
+  ///
+  /// Applications should check [isAutoWhiteBalanceLockSupported] before using
+  /// this method. See [setAutoWhiteBalanceLock] for details about the lock.
+  ///
+  /// Returns true if auto-white balance is currently locked, and false
+  /// otherwise.
+  Future<bool> getAutoWhiteBalanceLock() async {
+    return await _channel.$getAutoWhiteBalanceLock(this) as bool;
+  }
+
+  /// Gets the current color effect setting.
+  ///
+  /// See:
+  ///   [effectNone]
+  ///   [effectMono]
+  ///   [effectNegative]
+  ///   [effectSolarize]
+  ///   [effectSepia]
+  ///   [effectPosterize]
+  ///   [effectWhiteboard]
+  ///   [effectBlackboard]
+  ///   [effectAqua]
+  Future<String> getColorEffect() async {
+    return await _channel.$getColorEffect(this) as String;
+  }
+
+  /// Gets the focal length (in millimeter) of the camera.
+  ///
+  /// Returns -1.0 when the device doesn't report focal length information.
+  Future<double> getFocalLength() async {
+    return await _channel.$getFocalLength(this) as double;
+  }
+
+  /// Gets the current focus mode setting.
+  ///
+  /// See:
+  ///   [focusModeAuto]
+  ///   [focusModeInfinity]
+  ///   [focusModeMacro]
+  ///   [focusModeFixed]
+  ///   [focusModeEDOF]
+  ///   [focusModeContinuousVideo]
+  ///   [focusModeContinuousPicture]
+  Future<String> getFocusMode() async {
+    return await _channel.$getFocusMode(this) as String;
+  }
+
+  /// Gets the horizontal angle of view in degrees.
+  ///
+  /// Returns -1.0 when the device doesn't report view angle information.
+  Future<double> getHorizontalViewAngle() async {
+    return await _channel.$getHorizontalViewAngle(this) as double;
+  }
+
+  /// Returns the value of an integer parameter.
+  Future<int> getInt(String key) async {
+    return await _channel.$getInt(this) as int;
+  }
+
+  /// Returns the quality setting for the JPEG picture.
+  Future<int> getJpegQuality() async {
+    return await _channel.$getJpegQuality(this) as int;
+  }
+
+  /// Returns the quality setting for the EXIF thumbnail in Jpeg picture.
+  Future<int> getJpegThumbnailQuality() async {
+    return await _channel.$getJpegThumbnailQuality(this) as int;
+  }
+
+  /// Returns the dimensions for EXIF thumbnail in Jpeg picture.
+  Future<CameraSize> getJpegThumbnailSize() async {
+    return await _channel.$getJpegThumbnailSize(this) as CameraSize;
+  }
+
+  /// Gets the maximum number of metering areas supported.
+  ///
+  /// This is the maximum length of the list in [setMeteringAreas] and
+  /// [getMeteringAreas].
+  Future<int> getMaxNumMeteringAreas() async {
+    return await _channel.$getMaxNumMeteringAreas(this) as int;
+  }
+
+  /// Gets the current metering areas.
+  ///
+  /// Camera driver uses these areas to decide exposure.
+  ///
+  /// Before using this API or [setMeteringAreas], apps should call
+  /// [getMaxNumMeteringAreas] to know the maximum number of metering areas
+  /// first. If the value is 0, metering area is not supported.
+  ///
+  /// Each metering area is a rectangle with specified weight. The direction is
+  /// relative to the sensor orientation, that is, what the sensor sees. The
+  /// direction is not affected by the rotation or mirroring of
+  /// [Camera.setDisplayOrientation]. Coordinates of the rectangle range from
+  /// -1000 to 1000. (-1000, -1000) is the upper left point. (1000, 1000) is the
+  /// lower right point. The width and height of metering areas cannot be 0 or
+  /// negative.
+  ///
+  /// The weight must range from 1 to 1000, and represents a weight for every
+  /// pixel in the area. This means that a large metering area with the same
+  /// weight as a smaller area will have more effect in the metering result.
+  /// Metering areas can partially overlap and the driver will add the weights
+  /// in the overlap region.
+  ///
+  /// A special case of a `null` metering area list means the driver is free to
+  /// meter as it chooses. For example, the driver may use more signals to
+  /// select metering areas and change them dynamically. Apps can set the
+  /// metering area list to `null` if they want the driver to completely control
+  /// metering.
+  ///
+  /// Metering areas are relative to the current field of view ([getZoom]). No
+  /// matter what the zoom level is, (-1000,-1000) represents the top of the
+  /// currently visible camera frame. The metering area cannot be set to be
+  /// outside the current field of view, even when using zoom.
+  ///
+  /// No matter what metering areas are, the final exposure are compensated by
+  /// [setExposureCompensation].
+  Future<List<CameraArea>?> getMeteringAreas() async {
+    final List<Object?> areas =
+        await _channel.$getMeteringAreas(this) as List<Object?>;
+    return areas.cast<CameraArea>();
   }
 }
 
