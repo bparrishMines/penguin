@@ -2,6 +2,7 @@ package github.bparrishMines.penguin.penguin_android_camera;
 
 import android.hardware.Camera;
 import android.media.MediaRecorder;
+import android.os.Build;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -13,6 +14,7 @@ import org.mockito.junit.MockitoRule;
 import github.penguin.reference.reference.TypeChannelMessenger;
 import io.flutter.view.TextureRegistry;
 
+import static github.bparrishMines.penguin.penguin_android_camera.Utils.setFinalStatic;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
@@ -162,15 +164,18 @@ public class MediaRecorderProxyTest {
     verify(mockMediaRecorder).release();
   }
 
-  // TODO(bparrishMines): test by overriding sdk int
-  @Test(expected = UnsupportedOperationException.class)
-  public void pause() {
+  @Test
+  public void pause() throws Exception {
+    setFinalStatic(Build.VERSION.class.getField("SDK_INT"), Build.VERSION_CODES.N);
+
     testMediaRecorderProxy.pause();
     verify(mockMediaRecorder).pause();
   }
 
-  @Test(expected = UnsupportedOperationException.class)
-  public void resume() {
+  @Test
+  public void resume() throws Exception {
+    setFinalStatic(Build.VERSION.class.getField("SDK_INT"), Build.VERSION_CODES.N);
+
     testMediaRecorderProxy.resume();
     verify(mockMediaRecorder).resume();
   }

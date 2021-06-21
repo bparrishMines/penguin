@@ -1,6 +1,7 @@
 package github.bparrishMines.penguin.penguin_android_camera;
 
 import android.hardware.Camera;
+import android.os.Build;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -101,6 +102,34 @@ public class CameraProxy implements CameraChannelLibrary.$Camera {
   public Void setParameters(CameraChannelLibrary.$CameraParameters parameters) {
     camera.setParameters(((CameraParametersProxy) parameters).cameraParameters);
     return null;
+  }
+
+  @Override
+  public Void setZoomChangeListener(CameraChannelLibrary.$OnZoomChangeListener listener) {
+    camera.setZoomChangeListener((zoomValue, stopped, camera) -> listener.invoke(zoomValue, stopped));
+    return null;
+  }
+
+  @Override
+  public Void setAutoFocusMoveCallback(CameraChannelLibrary.$AutoFocusMoveCallback callback) {
+    camera.setAutoFocusMoveCallback((start, camera) -> callback.invoke(start));
+    return null;
+  }
+
+  @Override
+  public Void lock() {
+    camera.lock();
+    return null;
+  }
+
+  // TODO(bparrishMines): Test when correct version.
+  @Override
+  public Boolean enableShutterSound(Boolean enabled) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+      return camera.enableShutterSound(enabled);
+    } else {
+      throw new UnsupportedOperationException("Requires version >= Build.VERSION_CODES.JELLY_BEAN_MR1.");
+    }
   }
 
   @Override

@@ -61,11 +61,13 @@ class CameraInfoHandler extends $CameraInfoHandler {
     int cameraId,
     int facing,
     int orientation,
+    bool? canDisableShutterSound,
   ) {
     return CameraInfo(
       cameraId: cameraId,
       facing: facing,
       orientation: orientation,
+      canDisableShutterSound: canDisableShutterSound,
     );
   }
 }

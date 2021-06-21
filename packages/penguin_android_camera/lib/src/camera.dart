@@ -61,6 +61,19 @@ typedef PictureCallback = void Function(Uint8List data);
 @Reference('penguin_android_camera/camera/PreviewCallback')
 typedef PreviewCallback = void Function(Uint8List data);
 
+/// Callback for zoom changes during a smooth zoom operation.
+@Reference('penguin_android_camera/camera/OnZoomChangeListener')
+typedef OnZoomChangeListener = void Function(int zoomValue, bool stopped);
+
+/// Callback used to notify on auto focus start and stop.
+///
+/// This is only supported in continuous autofocus modes --
+/// [CameraParameters.focusModeContinuousVideo] and
+/// [CameraParameters.focusModeContinuousPicture]. Applications can show
+/// autofocus animation based on this.
+@Reference('penguin_android_camera/camera/AutoFocusMoveCallback')
+typedef AutoFocusMoveCallback = void Function(bool start);
+
 /// The [Camera] class is used to set image capture settings, start/stop preview, snap pictures, and retrieve frames for encoding for video.
 ///
 /// This class is a client for the Camera service, which manages the actual
@@ -369,6 +382,69 @@ class Camera with $Camera {
   /// Changes the settings for this Camera service.
   Future<void> setParameters(CameraParameters parameters) {
     return _channel.$setParameters(this, parameters);
+  }
+
+  /// Registers a listener to be notified when the zoom value is updated by the camera driver during smooth zoom.
+  Future<void> setZoomChangeListener(OnZoomChangeListener listener) {
+    ChannelRegistrar.instance.implementations.channelOnZoomChangeListener
+        .$$create(
+      listener,
+      $owner: false,
+    );
+    return _channel.$setZoomChangeListener(this, listener);
+  }
+
+  /// Sets camera auto-focus move callback.
+  ///
+  /// If enabling the focus move callback fails; usually this would be because
+  /// of a hardware or other low-level error, or because [release] has been
+  /// called on this Camera instance.
+  Future<void> setAutoFocusMoveCallback(AutoFocusMoveCallback callback) {
+    ChannelRegistrar.instance.implementations.channelAutoFocusMoveCallback
+        .$$create(
+      callback,
+      $owner: false,
+    );
+    return _channel.$setAutoFocusMoveCallback(this, callback);
+  }
+
+  /// Re-locks the camera to prevent other processes from accessing it.
+  ///
+  /// Camera objects are locked by default unless [unlock] is called. Normally
+  /// [reconnect] is used instead.
+  ///
+  /// Camera is automatically locked for applications in [MediaRecorder.start].
+  /// Applications can use the camera (ex: zoom) after recording starts. There
+  /// is no need to call this after recording starts or stops.
+  ///
+  /// If you are not recording video, you probably do not need this method.
+  ///
+  /// If the camera cannot be re-locked (for example, if the camera is still in
+  /// use by another process) throws a [PlatformException].
+  Future<void> lock() {
+    return _channel.$lock(this);
+  }
+
+  /// Enable or disable the default shutter sound when taking a picture.
+  ///
+  /// By default, the camera plays the system-defined camera shutter sound when
+  /// [takePicture] is called. Using this method, the shutter sound can be
+  /// disabled. It is strongly recommended that an alternative shutter sound is
+  /// played in the [ShutterCallback] when the system shutter sound is disabled.
+  ///
+  /// Note that devices may not always allow disabling the camera shutter sound.
+  /// If the shutter sound state cannot be set to the desired value, this method
+  /// will return false. [CameraInfo.canDisableShutterSound] can be used to
+  /// determine whether the device will allow the shutter sound to be disabled.
+  ///
+  /// If the call fails; usually this would be because of a hardware or other
+  /// low-level error, or because [release] has been called on this Camera instance.
+  ///
+  /// This is only supported on Android
+  /// versions >= `Build.VERSION_CODES.JELLY_BEAN_MR1`. A [PlatformException]
+  /// will be thrown if the android version is below this.
+  Future<bool> enableShutterSound({required bool enabled}) async {
+    return await _channel.$enableShutterSound(this, enabled) as bool;
   }
 }
 
@@ -1016,6 +1092,7 @@ class CameraInfo implements $CameraInfo {
     required this.cameraId,
     required this.facing,
     required this.orientation,
+    required this.canDisableShutterSound,
   }) : assert(facing == cameraFacingBack || facing == cameraFacingFront);
 
   /// The facing of the camera is opposite to that of the screen.
@@ -1048,6 +1125,22 @@ class CameraInfo implements $CameraInfo {
   /// a front-facing camera sensor is aligned with the right of the screen,
   /// the value should be 270.
   final int orientation;
+
+  /// Whether the shutter sound can be disabled.
+  ///
+  /// On some devices, the camera shutter sound cannot be turned off through
+  /// [Camera.enableShutterSound]. This field can be used to determine whether
+  /// a call to disable the shutter sound will succeed.
+  ///
+  /// If this field is set to true, then a call of
+  /// [Camera.enableShutterSound](false) will be successful. If set to false,
+  /// then that call will fail, and the shutter sound will be played when
+  /// [Camera.takePicture] is called.
+  ///
+  /// This is only supported on Android
+  /// versions >= `Build.VERSION_CODES.JELLY_BEAN_MR1`. This value will be
+  /// `null` for all version below this one.
+  final bool? canDisableShutterSound;
 }
 
 /// Defines the output format.

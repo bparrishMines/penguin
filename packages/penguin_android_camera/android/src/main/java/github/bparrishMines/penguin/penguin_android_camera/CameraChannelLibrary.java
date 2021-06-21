@@ -40,6 +40,14 @@ public class CameraChannelLibrary {
     public abstract Object invoke(byte[] data);
   }
   
+  public static abstract class $OnZoomChangeListener {
+    public abstract Object invoke(Integer zoomValue,Boolean stopped);
+  }
+  
+  public static abstract class $AutoFocusMoveCallback {
+    public abstract Object invoke(Boolean start);
+  }
+  
 
   
   public static class $ErrorCallbackChannel extends TypeChannel<$ErrorCallback> {
@@ -114,6 +122,36 @@ public class CameraChannelLibrary {
     private Completable<Object> invoke($PreviewCallback $instance
         ,byte[] data) {
       return invokeMethod($instance, "", Arrays.<Object>asList(data));
+    }
+  }
+  
+  public static class $OnZoomChangeListenerChannel extends TypeChannel<$OnZoomChangeListener> {
+    public $OnZoomChangeListenerChannel(@NonNull TypeChannelMessenger messenger) {
+      super(messenger, "penguin_android_camera/camera/OnZoomChangeListener");
+    }
+
+    public Completable<PairedInstance> $$create($OnZoomChangeListener $instance, boolean $owner) {
+      return createNewInstancePair($instance, Collections.emptyList(), $owner);
+    }
+
+    private Completable<Object> invoke($OnZoomChangeListener $instance
+        ,Integer zoomValue,Boolean stopped) {
+      return invokeMethod($instance, "", Arrays.<Object>asList(zoomValue,stopped));
+    }
+  }
+  
+  public static class $AutoFocusMoveCallbackChannel extends TypeChannel<$AutoFocusMoveCallback> {
+    public $AutoFocusMoveCallbackChannel(@NonNull TypeChannelMessenger messenger) {
+      super(messenger, "penguin_android_camera/camera/AutoFocusMoveCallback");
+    }
+
+    public Completable<PairedInstance> $$create($AutoFocusMoveCallback $instance, boolean $owner) {
+      return createNewInstancePair($instance, Collections.emptyList(), $owner);
+    }
+
+    private Completable<Object> invoke($AutoFocusMoveCallback $instance
+        ,Boolean start) {
+      return invokeMethod($instance, "", Arrays.<Object>asList(start));
     }
   }
   
@@ -259,6 +297,62 @@ public class CameraChannelLibrary {
     }
   }
   
+  public static class $OnZoomChangeListenerHandler implements TypeChannelHandler<$OnZoomChangeListener> {
+    public final $LibraryImplementations implementations;
+
+    public $OnZoomChangeListenerHandler($LibraryImplementations implementations) {
+      this.implementations = implementations;
+    }
+
+    @Override
+    public $OnZoomChangeListener createInstance(TypeChannelMessenger messenger, List<Object> arguments) {
+      return new $OnZoomChangeListener() {
+        @Override
+        public Object invoke(Integer zoomValue,Boolean stopped) {
+          return implementations.getChannelOnZoomChangeListener().invoke(this,zoomValue,stopped);
+        }
+      };
+    }
+
+    @Override
+    public Void invokeStaticMethod(TypeChannelMessenger messenger, String methodName, List<Object> arguments) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Object invokeMethod(TypeChannelMessenger messenger, $OnZoomChangeListener instance, String methodName, List<Object> arguments) throws Exception {
+      return instance.invoke((Integer) arguments.get(0),(Boolean) arguments.get(1));
+    }
+  }
+  
+  public static class $AutoFocusMoveCallbackHandler implements TypeChannelHandler<$AutoFocusMoveCallback> {
+    public final $LibraryImplementations implementations;
+
+    public $AutoFocusMoveCallbackHandler($LibraryImplementations implementations) {
+      this.implementations = implementations;
+    }
+
+    @Override
+    public $AutoFocusMoveCallback createInstance(TypeChannelMessenger messenger, List<Object> arguments) {
+      return new $AutoFocusMoveCallback() {
+        @Override
+        public Object invoke(Boolean start) {
+          return implementations.getChannelAutoFocusMoveCallback().invoke(this,start);
+        }
+      };
+    }
+
+    @Override
+    public Void invokeStaticMethod(TypeChannelMessenger messenger, String methodName, List<Object> arguments) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Object invokeMethod(TypeChannelMessenger messenger, $AutoFocusMoveCallback instance, String methodName, List<Object> arguments) throws Exception {
+      return instance.invoke((Boolean) arguments.get(0));
+    }
+  }
+  
 
   
   public interface $Camera {
@@ -333,6 +427,22 @@ public class CameraChannelLibrary {
     
     
     Object setParameters($CameraParameters parameters) throws Exception;
+    
+    
+    
+    Object setZoomChangeListener($OnZoomChangeListener listener) throws Exception;
+    
+    
+    
+    Object setAutoFocusMoveCallback($AutoFocusMoveCallback callback) throws Exception;
+    
+    
+    
+    Object lock() throws Exception;
+    
+    
+    
+    Object enableShutterSound(Boolean enabled) throws Exception;
     
     
   }
@@ -587,6 +697,14 @@ public class CameraChannelLibrary {
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
   }
   
   public static class $CameraParametersChannel extends TypeChannel<$CameraParameters> {
@@ -710,8 +828,8 @@ public class CameraChannelLibrary {
       super(messenger, "penguin_android_camera/camera/CameraInfo");
     }
 
-    public Completable<PairedInstance> $$create($CameraInfo $instance, boolean $owner,Integer cameraId,Integer facing,Integer orientation) {
-      return createNewInstancePair($instance, Arrays.<Object>asList(cameraId,facing,orientation), $owner);
+    public Completable<PairedInstance> $$create($CameraInfo $instance, boolean $owner,Integer cameraId,Integer facing,Integer orientation,Boolean canDisableShutterSound) {
+      return createNewInstancePair($instance, Arrays.<Object>asList(cameraId,facing,orientation,canDisableShutterSound), $owner);
     }
 
     
@@ -892,6 +1010,30 @@ public class CameraChannelLibrary {
     }
     
     
+    
+    public Object $setZoomChangeListener($Camera $instance,$OnZoomChangeListener listener) throws Exception {
+      return $instance.setZoomChangeListener( listener );
+    }
+    
+    
+    
+    public Object $setAutoFocusMoveCallback($Camera $instance,$AutoFocusMoveCallback callback) throws Exception {
+      return $instance.setAutoFocusMoveCallback( callback );
+    }
+    
+    
+    
+    public Object $lock($Camera $instance) throws Exception {
+      return $instance.lock();
+    }
+    
+    
+    
+    public Object $enableShutterSound($Camera $instance,Boolean enabled) throws Exception {
+      return $instance.enableShutterSound( enabled );
+    }
+    
+    
 
     @Override
     public Object invokeStaticMethod(
@@ -1018,6 +1160,26 @@ public class CameraChannelLibrary {
         
         case "setParameters":
           return $setParameters(instance,($CameraParameters) arguments.get(0));
+        
+        
+        
+        case "setZoomChangeListener":
+          return $setZoomChangeListener(instance,($OnZoomChangeListener) arguments.get(0));
+        
+        
+        
+        case "setAutoFocusMoveCallback":
+          return $setAutoFocusMoveCallback(instance,($AutoFocusMoveCallback) arguments.get(0));
+        
+        
+        
+        case "lock":
+          return $lock(instance);
+        
+        
+        
+        case "enableShutterSound":
+          return $enableShutterSound(instance,(Boolean) arguments.get(0));
         
         
       }
@@ -1534,7 +1696,7 @@ public class CameraChannelLibrary {
   }
   
   public static class $CameraInfoHandler implements TypeChannelHandler<$CameraInfo> {
-    public $CameraInfo $$create(TypeChannelMessenger messenger,Integer cameraId,Integer facing,Integer orientation)
+    public $CameraInfo $$create(TypeChannelMessenger messenger,Integer cameraId,Integer facing,Integer orientation,Boolean canDisableShutterSound)
         throws Exception {
       throw new UnsupportedOperationException();
     }
@@ -1558,7 +1720,7 @@ public class CameraChannelLibrary {
     @Override
     public $CameraInfo createInstance(TypeChannelMessenger messenger, List<Object> arguments)
         throws Exception {
-      return $$create(messenger,(Integer) arguments.get(0),(Integer) arguments.get(1),(Integer) arguments.get(2));
+      return $$create(messenger,(Integer) arguments.get(0),(Integer) arguments.get(1),(Integer) arguments.get(2),(Boolean) arguments.get(3));
     }
 
     @Override
@@ -1871,6 +2033,22 @@ public class CameraChannelLibrary {
       return new $PreviewCallbackHandler(this);
     }
     
+    public $OnZoomChangeListenerChannel getChannelOnZoomChangeListener() {
+      return new $OnZoomChangeListenerChannel(messenger);
+    }
+
+    public $OnZoomChangeListenerHandler getHandlerOnZoomChangeListener() {
+      return new $OnZoomChangeListenerHandler(this);
+    }
+    
+    public $AutoFocusMoveCallbackChannel getChannelAutoFocusMoveCallback() {
+      return new $AutoFocusMoveCallbackChannel(messenger);
+    }
+
+    public $AutoFocusMoveCallbackHandler getHandlerAutoFocusMoveCallback() {
+      return new $AutoFocusMoveCallbackHandler(this);
+    }
+    
   }
 
   public static class $ChannelRegistrar {
@@ -1907,6 +2085,10 @@ public class CameraChannelLibrary {
       
       implementations.getChannelPreviewCallback().setHandler(implementations.getHandlerPreviewCallback());
       
+      implementations.getChannelOnZoomChangeListener().setHandler(implementations.getHandlerOnZoomChangeListener());
+      
+      implementations.getChannelAutoFocusMoveCallback().setHandler(implementations.getHandlerAutoFocusMoveCallback());
+      
     }
 
     public void unregisterHandlers() {
@@ -1935,6 +2117,10 @@ public class CameraChannelLibrary {
       implementations.getChannelPictureCallback().removeHandler();
       
       implementations.getChannelPreviewCallback().removeHandler();
+      
+      implementations.getChannelOnZoomChangeListener().removeHandler();
+      
+      implementations.getChannelAutoFocusMoveCallback().removeHandler();
       
     }
   }

@@ -26,6 +26,15 @@ typedef $PreviewCallback = dynamic Function(
   Uint8List data,
 );
 
+typedef $OnZoomChangeListener = dynamic Function(
+  int zoomValue,
+  bool stopped,
+);
+
+typedef $AutoFocusMoveCallback = dynamic Function(
+  bool start,
+);
+
 class $ErrorCallbackChannel extends TypeChannel<Object> {
   $ErrorCallbackChannel(TypeChannelMessenger messenger)
       : super(messenger, 'penguin_android_camera/camera/ErrorCallback');
@@ -163,6 +172,66 @@ class $PreviewCallbackChannel extends TypeChannel<Object> {
       '',
       <Object?>[
         data,
+      ],
+    );
+  }
+}
+
+class $OnZoomChangeListenerChannel extends TypeChannel<Object> {
+  $OnZoomChangeListenerChannel(TypeChannelMessenger messenger)
+      : super(messenger, 'penguin_android_camera/camera/OnZoomChangeListener');
+
+  Future<PairedInstance?> $$create(
+    $OnZoomChangeListener $instance, {
+    required bool $owner,
+  }) {
+    return createNewInstancePair(
+      $instance,
+      <Object?>[],
+      owner: $owner,
+    );
+  }
+
+  Future<Object?> _invoke(
+    $OnZoomChangeListener $instance,
+    int zoomValue,
+    bool stopped,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      '',
+      <Object?>[
+        zoomValue,
+        stopped,
+      ],
+    );
+  }
+}
+
+class $AutoFocusMoveCallbackChannel extends TypeChannel<Object> {
+  $AutoFocusMoveCallbackChannel(TypeChannelMessenger messenger)
+      : super(messenger, 'penguin_android_camera/camera/AutoFocusMoveCallback');
+
+  Future<PairedInstance?> $$create(
+    $AutoFocusMoveCallback $instance, {
+    required bool $owner,
+  }) {
+    return createNewInstancePair(
+      $instance,
+      <Object?>[],
+      owner: $owner,
+    );
+  }
+
+  Future<Object?> _invoke(
+    $AutoFocusMoveCallback $instance,
+    bool start,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      '',
+      <Object?>[
+        start,
       ],
     );
   }
@@ -370,6 +439,97 @@ class $PreviewCallbackHandler implements TypeChannelHandler<Object> {
   ) {
     return instance(
       arguments[0] as Uint8List,
+    );
+  }
+
+  @override
+  Object? invokeStaticMethod(
+    TypeChannelMessenger messenger,
+    String methodName,
+    List<Object?> arguments,
+  ) {
+    throw UnimplementedError();
+  }
+}
+
+class $OnZoomChangeListenerHandler implements TypeChannelHandler<Object> {
+  $OnZoomChangeListenerHandler(this.implementations);
+
+  final $LibraryImplementations implementations;
+
+  @override
+  $OnZoomChangeListener createInstance(
+    TypeChannelMessenger messenger,
+    List<Object?> arguments,
+  ) {
+    function(
+      int zoomValue,
+      bool stopped,
+    ) {
+      implementations.channelOnZoomChangeListener._invoke(
+        function,
+        zoomValue,
+        stopped,
+      );
+    }
+
+    return function;
+  }
+
+  @override
+  Object? invokeMethod(
+    TypeChannelMessenger messenger,
+    covariant $OnZoomChangeListener instance,
+    String methodName,
+    List<Object?> arguments,
+  ) {
+    return instance(
+      arguments[0] as int,
+      arguments[1] as bool,
+    );
+  }
+
+  @override
+  Object? invokeStaticMethod(
+    TypeChannelMessenger messenger,
+    String methodName,
+    List<Object?> arguments,
+  ) {
+    throw UnimplementedError();
+  }
+}
+
+class $AutoFocusMoveCallbackHandler implements TypeChannelHandler<Object> {
+  $AutoFocusMoveCallbackHandler(this.implementations);
+
+  final $LibraryImplementations implementations;
+
+  @override
+  $AutoFocusMoveCallback createInstance(
+    TypeChannelMessenger messenger,
+    List<Object?> arguments,
+  ) {
+    function(
+      bool start,
+    ) {
+      implementations.channelAutoFocusMoveCallback._invoke(
+        function,
+        start,
+      );
+    }
+
+    return function;
+  }
+
+  @override
+  Object? invokeMethod(
+    TypeChannelMessenger messenger,
+    covariant $AutoFocusMoveCallback instance,
+    String methodName,
+    List<Object?> arguments,
+  ) {
+    return instance(
+      arguments[0] as bool,
     );
   }
 
@@ -636,6 +796,55 @@ class $CameraChannel extends TypeChannel<$Camera> {
       'setParameters',
       <Object?>[
         parameters,
+      ],
+    );
+  }
+
+  Future<Object?> $setZoomChangeListener(
+    $Camera $instance,
+    $OnZoomChangeListener listener,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'setZoomChangeListener',
+      <Object?>[
+        listener,
+      ],
+    );
+  }
+
+  Future<Object?> $setAutoFocusMoveCallback(
+    $Camera $instance,
+    $AutoFocusMoveCallback callback,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'setAutoFocusMoveCallback',
+      <Object?>[
+        callback,
+      ],
+    );
+  }
+
+  Future<Object?> $lock(
+    $Camera $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'lock',
+      <Object?>[],
+    );
+  }
+
+  Future<Object?> $enableShutterSound(
+    $Camera $instance,
+    bool enabled,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'enableShutterSound',
+      <Object?>[
+        enabled,
       ],
     );
   }
@@ -1068,6 +1277,7 @@ class $CameraInfoChannel extends TypeChannel<$CameraInfo> {
     required int cameraId,
     required int facing,
     required int orientation,
+    required bool? canDisableShutterSound,
   }) {
     return createNewInstancePair(
       $instance,
@@ -1075,6 +1285,7 @@ class $CameraInfoChannel extends TypeChannel<$CameraInfo> {
         cameraId,
         facing,
         orientation,
+        canDisableShutterSound,
       ],
       owner: $owner,
     );
@@ -1526,6 +1737,7 @@ class $CameraInfoHandler implements TypeChannelHandler<$CameraInfo> {
     int cameraId,
     int facing,
     int orientation,
+    bool? canDisableShutterSound,
   ) {
     throw UnimplementedError();
   }
@@ -1556,6 +1768,7 @@ class $CameraInfoHandler implements TypeChannelHandler<$CameraInfo> {
       arguments[0] as int,
       arguments[1] as int,
       arguments[2] as int,
+      arguments[3] as bool?,
     );
   }
 
@@ -1680,6 +1893,16 @@ class $LibraryImplementations {
       $PreviewCallbackChannel(messenger);
   $PreviewCallbackHandler get handlerPreviewCallback =>
       $PreviewCallbackHandler(this);
+
+  $OnZoomChangeListenerChannel get channelOnZoomChangeListener =>
+      $OnZoomChangeListenerChannel(messenger);
+  $OnZoomChangeListenerHandler get handlerOnZoomChangeListener =>
+      $OnZoomChangeListenerHandler(this);
+
+  $AutoFocusMoveCallbackChannel get channelAutoFocusMoveCallback =>
+      $AutoFocusMoveCallbackChannel(messenger);
+  $AutoFocusMoveCallbackHandler get handlerAutoFocusMoveCallback =>
+      $AutoFocusMoveCallbackHandler(this);
 }
 
 class $ChannelRegistrar {
@@ -1735,6 +1958,14 @@ class $ChannelRegistrar {
     implementations.channelPreviewCallback.setHandler(
       implementations.handlerPreviewCallback,
     );
+
+    implementations.channelOnZoomChangeListener.setHandler(
+      implementations.handlerOnZoomChangeListener,
+    );
+
+    implementations.channelAutoFocusMoveCallback.setHandler(
+      implementations.handlerAutoFocusMoveCallback,
+    );
   }
 
   void unregisterHandlers() {
@@ -1761,5 +1992,9 @@ class $ChannelRegistrar {
     implementations.channelPictureCallback.removeHandler();
 
     implementations.channelPreviewCallback.removeHandler();
+
+    implementations.channelOnZoomChangeListener.removeHandler();
+
+    implementations.channelAutoFocusMoveCallback.removeHandler();
   }
 }
