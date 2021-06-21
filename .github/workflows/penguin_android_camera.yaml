@@ -25,14 +25,14 @@ jobs:
         run: |
           cd $PLUGIN_DIR
           flutter test
-      - name: Dart Analyze
-        run: |
-          cd $PLUGIN_DIR
-          flutter analyze
       - name: Dart Publish
         run: |
           cd $PLUGIN_DIR
           flutter pub publish --dry-run
+      - name: Dart Analyze
+        run: |
+          cd $PLUGIN_DIR
+          flutter analyze
 
   verify_android:
     name: Android Tests

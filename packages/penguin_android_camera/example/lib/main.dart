@@ -53,12 +53,12 @@ class _MyAppState extends State<_MyApp> {
   }
 
   Future<void> _getPicturePermission() async {
-    while (!await Permission.camera.request().isGranted) {}
-    while (!await Permission.storage.request().isGranted) {}
+    while (!(await Permission.camera.request().isGranted)) {}
+    while (!(await Permission.storage.request().isGranted)) {}
   }
 
   Future<void> _getAudioPermission() async {
-    while (!await Permission.microphone.request().isGranted) {}
+    while (!(await Permission.microphone.request().isGranted)) {}
   }
 
   Future<void> _setupForPicture() async {
