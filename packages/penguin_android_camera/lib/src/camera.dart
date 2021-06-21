@@ -610,6 +610,69 @@ class CameraParameters with $CameraParameters {
   /// Color effect aqua.
   static const String effectAqua = 'aqua';
 
+  /// The array index of minimum preview fps for use with [getPreviewFpsRange] or [getSupportedPreviewFpsRange].
+  static const previewFpsMinIndex = 0x00000000;
+
+  /// The array index of maximum preview fps for use with [getPreviewFpsRange] or [getSupportedPreviewFpsRange].
+  static const previewFpsMaxIndex = 0x00000001;
+
+  /// Scene mode is off.
+  static const String sceneModeAuto = 'auto';
+
+  /// Take photos of fast moving objects. Same as [sceneModeSports].
+  static const String sceneModeAction = 'action';
+
+  /// Take people pictures.
+  static const String sceneModePortrait = 'portrait';
+
+  /// Take pictures on distant objects.
+  static const String sceneModeLandscape = 'landscape';
+
+  /// Take photos at night.
+  static const String sceneModeNight = 'night';
+
+  /// Take people pictures at night.
+  static const String sceneModeNightPortrait = 'night-portrait';
+
+  /// Take photos in a theater. Flash light is off.
+  static const String sceneModeTheatre = 'theatre';
+
+  /// Take pictures on the beach.
+  static const String sceneModeBeach = 'beach';
+
+  /// Take pictures on the snow.
+  static const String sceneModeSnow = 'snow';
+
+  /// Take sunset photos.
+  static const String sceneModeSunset = 'sunset';
+
+  /// Avoid blurry pictures (for example, due to hand shake).
+  static const String sceneModeSteadyPhoto = 'steadyphoto';
+
+  /// For shooting firework displays.
+  static const String sceneModeFireworks = 'fireworks';
+
+  /// Take photos of fast moving objects. Same as [sceneModeAction].
+  static const String sceneModeSports = 'sports';
+
+  /// Take indoor low-light shot.
+  static const String sceneModeParty = 'party';
+
+  /// Capture a scene using high dynamic range imaging techniques.
+  ///
+  /// The camera will return an image that has an extended dynamic range
+  /// compared to a regular capture. Capturing such an image may take longer
+  /// than a regular capture.
+  static const String sceneModeHdr = 'hdr';
+
+  /// Capture the naturally warm color of scenes lit by candles.
+  static const String sceneModeCandlelight = 'candlelight';
+
+  /// Applications are looking for a barcode.
+  ///
+  /// Camera driver will be optimized for barcode reading.
+  static const String sceneModeBarcode = 'barcode';
+
   static $CameraParametersChannel get _channel =>
       ChannelRegistrar.instance.implementations.channelCameraParameters;
 
@@ -1125,9 +1188,81 @@ class CameraParameters with $CameraParameters {
   /// No matter what metering areas are, the final exposure are compensated by
   /// [setExposureCompensation].
   Future<List<CameraArea>?> getMeteringAreas() async {
+    final List<Object?>? areas =
+        await _channel.$getMeteringAreas(this) as List<Object?>?;
+    return areas?.cast<CameraArea>();
+  }
+
+  /// Returns the image format for pictures.
+  ///
+  /// See:
+  ///   [ImageFormat]
+  Future<int> getPictureFormat() async {
+    return await _channel.$getPictureFormat(this) as int;
+  }
+
+  /// Returns the preferred or recommended preview size (width and height) in pixels for video recording.
+  ///
+  /// Camcorder applications should set the preview size to a value that is not
+  /// larger than the preferred preview size. In other words, the product of the
+  /// width and height of the preview size should not be larger than that of the
+  /// preferred preview size. In addition, we recommend to choose a preview size
+  /// that has the same aspect ratio as the resolution of video to be recorded.
+  ///
+  /// If [getSupportedVideoSizes] returns null; null is returned.
+  Future<CameraSize?> getPreferredPreviewSizeForVideo() async {
+    return await _channel.$getPreferredPreviewSizeForVideo(this) as CameraSize?;
+  }
+
+  /// Returns the image format for preview frames got from [PreviewCallback].
+  ///
+  /// See:
+  ///   [ImageFormat].
+  Future<int> getPreviewFormat() async {
+    return await _channel.$getPreviewFormat(this) as int;
+  }
+
+  /// Returns the current minimum and maximum preview fps.
+  ///
+  /// The values are one of the elements returned by
+  /// [getSupportedPreviewFpsRange].
+  ///
+  /// Returns the range of the minimum and maximum preview fps (scaled by 1000).
+  Future<List<int>> getPreviewFpsRange() async {
     final List<Object?> areas =
-        await _channel.$getMeteringAreas(this) as List<Object?>;
-    return areas.cast<CameraArea>();
+        await _channel.$getPreviewFpsRange(this) as List<Object?>;
+    return areas.cast<int>();
+  }
+
+  /// Gets the current scene mode setting.
+  ///
+  /// Returns `null` if scene mode setting is not supported.
+  ///
+  /// See:
+  ///   [sceneModeAuto]
+  ///   [sceneModeAction]
+  ///   [sceneModePortrait]
+  ///   [sceneModeLandscape]
+  ///   [sceneModeNight]
+  ///   [sceneModeNightPortrait]
+  ///   [sceneModeTheatre]
+  ///   [sceneModeBeach]
+  ///   [sceneModeSnow]
+  ///   [sceneModeSunset]
+  ///   [sceneModeSteadyPhoto]
+  ///   [sceneModeFireworks]
+  ///   [sceneModeSports]
+  ///   [sceneModeParty]
+  ///   [sceneModeCandlelight]
+  ///   [sceneModeBarcode]
+  ///   [sceneModeHdr]
+  Future<String?> getSceneMode() async {
+    return await _channel.$getSceneMode(this) as String;
+  }
+
+  Future<List<String>?> getSupportedAntibanding() async {
+    final List<Object?> areas = await _channel.$getSupportedAntibanding(this) as List<Object?>?;
+    return areas?.cast<String>();
   }
 }
 
@@ -1532,4 +1667,30 @@ class MediaRecorder implements $MediaRecorder {
   ///
   /// Call this after [start]. It does nothing if the recording is not paused.
   Future<void> resume() => _channel.$resume(this);
+}
+
+/// Image format constants.
+abstract class ImageFormat {
+  ImageFormat._();
+
+  /// Android dense depth image format.
+  ///
+  /// Each pixel is 16 bits, representing a depth ranging measurement from a
+  /// depth camera or similar sensor. The 16-bit sample consists of a confidence
+  /// value and the actual ranging measurement.
+  ///
+  /// The confidence value is an estimate of correctness for this sample. It is
+  /// encoded in the 3 most significant bits of the sample, with a value of 0
+  /// representing 100% confidence, a value of 1 representing 0% confidence, a
+  /// value of 2 representing 1/7, a value of 3 representing 2/7, and so on.
+  ///
+  /// This format assumes
+  ///   * an even width
+  ///   * an even height
+  ///   * a horizontal stride multiple of 16 pixels
+  ///
+  /// `y_size = stride * height`
+  ///
+  /// When produced by a camera, the units for the range are millimeters.
+  static const int depth16 = 0x44363159;
 }

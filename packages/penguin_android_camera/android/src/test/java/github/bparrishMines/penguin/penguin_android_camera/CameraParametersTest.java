@@ -99,6 +99,33 @@ public class CameraParametersTest {
   }
 
   @Test
+  public void sceneMode() {
+    assertEquals(Camera.Parameters.SCENE_MODE_AUTO, "auto");
+    assertEquals(Camera.Parameters.SCENE_MODE_ACTION, "action");
+    assertEquals(Camera.Parameters.SCENE_MODE_PORTRAIT, "portrait");
+    assertEquals(Camera.Parameters.SCENE_MODE_LANDSCAPE, "landscape");
+    assertEquals(Camera.Parameters.SCENE_MODE_NIGHT, "night");
+    assertEquals(Camera.Parameters.SCENE_MODE_NIGHT_PORTRAIT, "night-portrait");
+    assertEquals(Camera.Parameters.SCENE_MODE_THEATRE, "theatre");
+    assertEquals(Camera.Parameters.SCENE_MODE_BEACH, "beach");
+    assertEquals(Camera.Parameters.SCENE_MODE_SNOW, "snow");
+    assertEquals(Camera.Parameters.SCENE_MODE_SUNSET, "sunset");
+    assertEquals(Camera.Parameters.SCENE_MODE_STEADYPHOTO, "steadyphoto");
+    assertEquals(Camera.Parameters.SCENE_MODE_FIREWORKS, "fireworks");
+    assertEquals(Camera.Parameters.SCENE_MODE_SPORTS, "sports");
+    assertEquals(Camera.Parameters.SCENE_MODE_PARTY, "party");
+    assertEquals(Camera.Parameters.SCENE_MODE_HDR, "hdr");
+    assertEquals(Camera.Parameters.SCENE_MODE_CANDLELIGHT, "candlelight");
+    assertEquals(Camera.Parameters.SCENE_MODE_BARCODE, "barcode");
+  }
+
+  @Test
+  public void previewFpsIndex() {
+    assertEquals(Camera.Parameters.PREVIEW_FPS_MAX_INDEX, 0x00000001);
+    assertEquals(Camera.Parameters.PREVIEW_FPS_MIN_INDEX, 0x00000000);
+  }
+
+  @Test
   public void createCameraParameters() {
     verify(mockCameraParametersChannel).$$create(testCameraParametersProxy, false);
   }
