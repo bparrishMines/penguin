@@ -457,7 +457,7 @@ class CameraParameters with $CameraParameters {
   /// Continuous auto focus mode intended for video recording.
   ///
   /// The camera continuously tries to focus. This is the best choice for video
-  /// recording because the focus changes smoothly . Applications still can call
+  /// recording because the focus changes smoothly. Applications still can call
   /// [Camera.takePicture] in this mode but the subject may not be in focus.
   /// Auto focus starts when the parameter is set.
   ///
