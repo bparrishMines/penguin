@@ -31,7 +31,7 @@ jobs:
           flutter analyze
       - name: Dart Publish
         run: |
-	  cd $PLUGIN_DIR
+          cd $PLUGIN_DIR
           flutter pub publish --dry-run
 
   verify_android:
