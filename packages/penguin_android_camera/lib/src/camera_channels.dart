@@ -104,6 +104,7 @@ class CameraRectHandler extends $CameraRectHandler {
       bottom: bottom,
       right: right,
       left: left,
+      create: false,
     );
   }
 }
@@ -119,6 +120,7 @@ class CameraAreaHandler extends $CameraAreaHandler {
     return CameraArea(
       rect as CameraRect,
       weight,
+      create: false,
     );
   }
 }

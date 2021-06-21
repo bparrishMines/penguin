@@ -673,6 +673,30 @@ class CameraParameters with $CameraParameters {
   /// Camera driver will be optimized for barcode reading.
   static const String sceneModeBarcode = 'barcode';
 
+  // ignore: public_member_api_docs
+  static const String whiteBalanceAuto = 'auto';
+
+  // ignore: public_member_api_docs
+  static const String whiteBalanceIncandescent = 'incandescent';
+
+  // ignore: public_member_api_docs
+  static const String whiteBalanceFluorescent = 'fluorescent';
+
+  // ignore: public_member_api_docs
+  static const String whiteBalanceWarmFluorescent = 'warm-fluorescent';
+
+  // ignore: public_member_api_docs
+  static const String whiteBalanceDaylight = 'daylight';
+
+  // ignore: public_member_api_docs
+  static const String whiteBalanceCloudyDaylight = 'cloudy-daylight';
+
+  // ignore: public_member_api_docs
+  static const String whiteBalanceTwilight = 'twilight';
+
+  // ignore: public_member_api_docs
+  static const String whiteBalanceShade = 'shade';
+
   static $CameraParametersChannel get _channel =>
       ChannelRegistrar.instance.implementations.channelCameraParameters;
 
@@ -754,6 +778,10 @@ class CameraParameters with $CameraParameters {
   }
 
   /// Gets the maximum exposure compensation index.
+  ///
+  /// Maximum exposure compensation index (>=0). If both this method and
+  /// [getMinExposureCompensation] return 0, exposure compensation is not
+  /// supported.
   Future<int> getMaxExposureCompensation() async {
     return await _channel.$getMaxExposureCompensation(this) as int;
   }
@@ -821,6 +849,12 @@ class CameraParameters with $CameraParameters {
   }
 
   /// Sets the exposure compensation index.
+  ///
+  /// The valid value range is from [getMinExposureCompensation] (inclusive) to
+  /// [getMaxExposureCompensation] (inclusive). 0 means exposure is not
+  /// adjusted. Application should call [getMinExposureCompensation] and
+  /// [getMaxExposureCompensation] to know if exposure compensation is
+  /// supported.
   Future<void> setExposureCompensation(int value) {
     return _channel.$setExposureCompensation(this, value);
   }
@@ -833,6 +867,8 @@ class CameraParameters with $CameraParameters {
   }
 
   /// Sets the focus mode.
+  ///
+  /// See: [getFocusMode].
   Future<void> setFocusMode(String value) {
     return _channel.$setFocusMode(this, value);
   }
@@ -1055,7 +1091,7 @@ class CameraParameters with $CameraParameters {
 
   /// Returns the value of a `String` parameter.
   Future<String> get(String key) async {
-    return await _channel.$get(this) as String;
+    return await _channel.$get(this, key) as String;
   }
 
   /// Gets the current antibanding setting.
@@ -1126,7 +1162,7 @@ class CameraParameters with $CameraParameters {
 
   /// Returns the value of an integer parameter.
   Future<int> getInt(String key) async {
-    return await _channel.$getInt(this) as int;
+    return await _channel.$getInt(this, key) as int;
   }
 
   /// Returns the quality setting for the JPEG picture.
@@ -1260,17 +1296,355 @@ class CameraParameters with $CameraParameters {
     return await _channel.$getSceneMode(this) as String;
   }
 
+  /// Gets the supported antibanding values.
+  ///
+  /// Returns `null` if antibanding setting is not supported.
   Future<List<String>?> getSupportedAntibanding() async {
-    final List<Object?> areas = await _channel.$getSupportedAntibanding(this) as List<Object?>?;
+    final List<Object?>? areas =
+        await _channel.$getSupportedAntibanding(this) as List<Object?>?;
     return areas?.cast<String>();
+  }
+
+  /// A list of supported color effects.
+  ///
+  /// Returns `null` if color effect setting is not supported.
+  ///
+  /// See:
+  ///   [getColorEffect]
+  Future<List<String>?> getSupportedColorEffects() async {
+    final List<Object?>? effects =
+        await _channel.$getSupportedColorEffects(this) as List<Object?>?;
+    return effects?.cast<String>();
+  }
+
+  /// Gets the supported jpeg thumbnail sizes.
+  ///
+  /// This method will always return a list with at least two elements. Size
+  /// 0,0 (no thumbnail) is always supported.
+  Future<CameraSize> getSupportedJpegThumbnailSizes() async {
+    return await _channel.$getSupportedJpegThumbnailSizes(this) as CameraSize;
+  }
+
+  /// Gets the supported picture formats.
+  ///
+  /// This method will always return a list with at least one element.
+  Future<List<int>> getSupportedPictureFormats() async {
+    final List<Object?> formats =
+        await _channel.$getSupportedPictureFormats(this) as List<Object?>;
+    return formats.cast<int>();
+  }
+
+  /// Gets the supported preview formats.
+  ///
+  /// [ImageFormat.nv21] is always supported. [ImageFormat.yv12] is always
+  /// supported.
+  Future<List<int>> getSupportedPreviewFormats() async {
+    final List<Object?> formats =
+        await _channel.$getSupportedPreviewFormats(this) as List<Object?>;
+    return formats.cast<int>();
+  }
+
+  // TODO: Manually test casting works
+  /// Gets the supported preview fps (frame-per-second) ranges.
+  ///
+  /// Each range contains a minimum fps and maximum fps. If minimum fps equals
+  /// to maximum fps, the camera outputs frames in fixed frame rate. If not,
+  /// the camera outputs frames in auto frame rate. The actual frame rate
+  /// fluctuates between the minimum and the maximum. The values are multiplied
+  /// by 1000 and represented in integers. For example, if frame rate is 26.623
+  /// frames per second, the value is 26623.
+  ///
+  /// This method returns a list with at least one element. Every element is an
+  /// int list of two values - minimum fps and maximum fps. The list is sorted
+  /// from small to large (first by maximum fps and then minimum fps).
+  ///
+  /// See:
+  ///   [previewFpsMinIndex]
+  ///   [previewFpsMaxIndex]
+  Future<List<List<int>>> getSupportedPreviewFpsRange() async {
+    final List<Object?> formats =
+        await _channel.$getSupportedPreviewFpsRange(this) as List<Object?>;
+    return formats.cast<List<int>>();
+  }
+
+  /// Gets the supported scene modes.
+  ///
+  /// Returns null if scene mode setting is not supported.
+  Future<List<String>?> getSupportedSceneModes() async {
+    final List<Object?>? modes =
+        await _channel.$getSupportedSceneModes(this) as List<Object?>?;
+    return modes?.cast<String>();
+  }
+
+  /// Gets the supported video frame sizes that can be used by [MediaRecorder].
+  ///
+  /// If the returned list is not null, the returned list will contain at least
+  /// one Size and one of the sizes in the returned list must be passed to
+  /// [MediaRecorder.setVideoSize] for camcorder application if camera is used
+  /// as the video source. In this case, the size of the preview can be
+  /// different from the resolution of the recorded video during video
+  /// recording.
+  ///
+  /// Exception on 176x144 (QCIF) resolution: Camera devices usually have a
+  /// fixed capability for downscaling from larger resolution to smaller, and
+  /// the QCIF resolution sometimes is not fully supported due to this
+  /// limitation on devices with high-resolution image sensors. Therefore,
+  /// trying to configure a QCIF video resolution with any preview or picture
+  /// size larger than 1920x1080 (either width or height) might not be
+  /// supported, and [Camera.setParameters] will throw a RuntimeException if it
+  /// is not.
+  ///
+  /// Returns a list of [CameraSize] object if camera has separate preview and
+  /// video output; otherwise, null is returned.
+  ///
+  /// See:
+  ///   [getPreferredPreviewSizeForVideo]
+  Future<List<CameraSize>?> getSupportedVideoSizes() async {
+    final List<Object?>? sizes =
+        await _channel.$getSupportedVideoSizes(this) as List<Object?>?;
+    return sizes?.cast<CameraSize>();
+  }
+
+  /// Gets the supported white balance.
+  ///
+  /// Returns null if white balance setting is not supported.
+  ///
+  /// See:
+  ///   [getWhiteBalance]
+  Future<List<String>?> getSupportedWhiteBalance() async {
+    final List<Object?>? sizes =
+        await _channel.$getSupportedWhiteBalance(this) as List<Object?>?;
+    return sizes?.cast<String>();
+  }
+
+  /// Gets the vertical angle of view in degrees.
+  ///
+  /// Returns -1.0 when the device doesn't report view angle information.
+  Future<double> getVerticalViewAngle() async {
+    return await _channel.$getVerticalViewAngle(this) as double;
+  }
+
+  /// Get the current state of video stabilization.
+  ///
+  /// Returns `true` if video stabilization is enabled.
+  Future<bool> getVideoStabilization() async {
+    return await _channel.$getVideoStabilization(this) as bool;
+  }
+
+  /// Gets the current white balance setting.
+  ///
+  /// Returns null if white balance setting is not supported.
+  ///
+  /// See:
+  ///   [whiteBalanceAuto]
+  ///   [whiteBalanceFluorescent]
+  ///   [whiteBalanceWarmFluorescent]
+  ///   [whiteBalanceIncandescent]
+  ///   [whiteBalanceDaylight]
+  ///   [whiteBalanceCloudyDaylight]
+  ///   [whiteBalanceTwilight]
+  ///   [whiteBalanceShade]
+  Future<String?> getWhiteBalance() async {
+    return await _channel.$getWhiteBalance(this) as String?;
+  }
+
+  /// Gets the zoom ratios of all zoom values.
+  ///
+  /// Applications should check [isZoomSupported] before using this method.
+  ///
+  /// Returns the zoom ratios in 1/100 increments. Ex: a zoom of 3.2x is
+  /// returned as 320. The number of elements is [getMaxZoom] + 1. The list is
+  /// sorted from small to large. The first element is always 100. The last
+  /// element is the zoom ratio of the maximum zoom value.
+  Future<int> getZoomRatios() async {
+    return await _channel.$getZoomRatios(this) as int;
+  }
+
+  /// If auto-white balance locking is supported.
+  ///
+  /// Applications should call this before trying to lock auto-white balance.
+  /// See [setAutoWhiteBalanceLock] for details about the lock.
+  Future<bool> isAutoWhiteBalanceLockSupported() async {
+    return await _channel.$isAutoWhiteBalanceLockSupported(this) as bool;
+  }
+
+  /// If video snapshot is supported.
+  ///
+  /// That is, applications can call [Camera.takePicture] during recording.
+  /// Applications do not need to call [Camera.startPreview] after taking a
+  /// picture. The preview will be still active. Other than that, taking a
+  /// picture during recording is identical to taking a picture normally. All
+  /// settings and methods related to [takePicture] work identically. Ex:
+  /// [getPictureSize], [getSupportedPictureSizes], [setJpegQuality],
+  /// [setRotation], and etc. The picture will have an EXIF header.
+  /// [flashModeAuto] and [flashModeOn] also still work, but the video will
+  /// record the flash.
+  ///
+  /// Applications can set shutter callback as null to avoid the shutter sound.
+  /// It is also recommended to set raw picture and post view callbacks to null
+  /// to avoid the interrupt of preview display.
+  ///
+  /// Field-of-view of the recorded video may be different from that of the
+  /// captured pictures. The maximum size of a video snapshot may be smaller
+  /// than that for regular still captures. If the current picture size is set
+  /// higher than can be supported by video snapshot, the picture will be
+  /// captured at the maximum supported size instead.
+  Future<bool> isVideoSnapshotSupported() async {
+    return await _channel.$isVideoSnapshotSupported(this) as bool;
+  }
+
+  /// If video stabilization is supported.
+  ///
+  /// See [setVideoStabilization] for details of video stabilization.
+  Future<bool> isVideoStabilizationSupported() async {
+    return await _channel.$isVideoStabilizationSupported(this) as bool;
+  }
+
+  // TODO: Document
+  // ignore: public_member_api_docs
+  Future<void> remove(String key) {
+    return _channel.$remove(this, key);
+  }
+
+  /// Removes GPS latitude, longitude, altitude, and timestamp from the parameters.
+  Future<void> removeGpsData() {
+    return _channel.$removeGpsData(this);
+  }
+
+  /// Sets a String parameter.
+  ///
+  /// [value] should be either a [String] or [int].
+  Future<void> set(String key, Object value) {
+    assert(value is String || value is int);
+    return _channel.$set(this, key, value);
+  }
+
+  /// Sets the antibanding.
+  ///
+  /// See: [getAntibanding].
+  Future<void> setAntibanding(String antibanding) {
+    return _channel.$setAntibanding(this, antibanding);
+  }
+
+  /// Sets the auto-white balance lock state.
+  ///
+  /// Applications should check [isAutoWhiteBalanceLockSupported] before using
+  /// this method.
+  ///
+  /// If set to true, the camera auto-white balance routine will immediately
+  /// pause until the lock is set to false.
+  ///
+  /// If auto-white balance is already locked, setting this to true again has
+  /// no effect (the driver will not recalculate white balance values).
+  ///
+  /// Stopping preview with [Camera.stopPreview], or triggering still image
+  /// capture with [Camera.takePicture], will not change the the lock.
+  ///
+  /// Changing the white balance mode with [setWhiteBalance] will release the
+  /// auto-white balance lock if it is set.
+  ///
+  /// Exposure compensation, AE lock, and AWB lock can be used to capture an
+  /// exposure-bracketed burst of images, for example. Auto-white balance state,
+  /// including the lock state, will not be maintained after camera
+  /// [Camera.release] is called. Locking auto-white balance after [Camera.open]
+  /// but before the first call to [Camera.startPreview] will not allow the
+  /// auto-white balance routine to run at all, and may result in severely
+  /// incorrect color in captured images.
+  Future<void> setAutoWhiteBalanceLock({required bool toggle}) {
+    return _channel.$setAutoWhiteBalanceLock(this, toggle);
+  }
+
+  /// Sets the current color effect setting.
+  ///
+  /// See: [getColorEffect].
+  Future<void> setColorEffect(String effect) {
+    return _channel.$setColorEffect(this, effect);
+  }
+
+  /// Sets GPS altitude in meters.
+  ///
+  /// This will be stored in JPEG EXIF header.
+  Future<void> setGpsAltitude(double meters) {
+    return _channel.$setGpsAltitude(this, meters);
+  }
+
+  /// Sets GPS latitude coordinate.
+  ///
+  /// This will be stored in JPEG EXIF header.
+  Future<void> setGpsLatitude(double latitude) {
+    return _channel.$setGpsLatitude(this, latitude);
+  }
+
+  /// Sets GPS longitude coordinate.
+  ///
+  /// This will be stored in JPEG EXIF header.
+  Future<void> setGpsLongitude(double longitude) {
+    return _channel.$setGpsLongitude(this, longitude);
+  }
+
+  /// Sets GPS processing method.
+  ///
+  /// The method will be stored in a UTF-8 string up to 31 bytes long, in the
+  /// JPEG EXIF header.
+  Future<void> setGpsProcessingMethod(String processingMethod) {
+    return _channel.$setGpsProcessingMethod(this, processingMethod);
+  }
+
+  // TODO: In java this is actually passed to a long?
+  /// Sets GPS timestamp.
+  ///
+  /// This will be stored in JPEG EXIF header. GPS timestamp
+  /// (UTC in seconds since January 1, 1970).
+  Future<void> setGpsTimestamp(int timestamp) {
+    return _channel.$setGpsTimestamp(this, timestamp);
+  }
+
+  /// Sets Jpeg quality of captured picture.
+  ///
+  /// The range is 1 to 100, with 100 being the best.
+  Future<void> setJpegQuality(int quality) {
+    return _channel.$setJpegQuality(this, quality);
+  }
+
+  /// Sets the quality of the EXIF thumbnail in Jpeg picture.
+  ///
+  /// The range is 1 to 100, with 100 being the best.
+  Future<void> setJpegThumbnailQuality(int quality) {
+    return _channel.$setJpegThumbnailQuality(this, quality);
+  }
+
+  /// Sets the dimensions for EXIF thumbnail in Jpeg picture in pixels.
+  ///
+  /// If applications set both width and height to 0, EXIF will not contain
+  /// thumbnail.
+  ///
+  /// Applications need to consider the display orientation. See
+  /// [setPreviewSize] for reference.
+  Future<void> setJpegThumbnailSize(int width, int height) {
+    return _channel.$setJpegThumbnailSize(this, width, height);
+  }
+
+  /// Sets metering areas.
+  ///
+  /// See [getMeteringAreas] for documentation.
+  Future<void> setMeteringAreas(List<CameraArea> meteringArea) {
+    return _channel.$setMeteringAreas(this, meteringArea);
+  }
+
+  /// Sets the image format for pictures.
+  ///
+  /// See:
+  ///   [ImageFormat]
+  Future<void> setPictureFormat(int pixelFormat) {
+    return _channel.$setPictureFormat(this, pixelFormat);
   }
 }
 
 /// Used for choosing specific metering and focus areas for the camera to use when calculating auto-exposure, auto-white balance, and auto-focus.
 ///
 /// To find out how many simultaneous areas a given camera supports, use
-/// *Unsupported*[Parameters.getMaxNumMeteringAreas] and
-/// *Unsupported*[Parameters.getMaxNumFocusAreas]. If metering or focusing area
+/// [CameraParameters.getMaxNumMeteringAreas] and
+/// [CameraParameters.getMaxNumFocusAreas]. If metering or focusing area
 /// selection is unsupported, these methods will return 0.
 ///
 /// Each Area consists of a rectangle specifying its bounds, and a weight that
@@ -1295,7 +1669,7 @@ class CameraArea with $CameraArea {
   CameraArea(
     this.rect,
     this.weight, {
-    @ignoreParam bool create = false,
+    @ignoreParam bool create = true,
   }) {
     if (create) {
       _channel.$$create(
@@ -1351,7 +1725,7 @@ class CameraRect with $CameraRect {
     required this.bottom,
     required this.right,
     required this.left,
-    @ignoreParam bool create = false,
+    @ignoreParam bool create = true,
   }) {
     if (create) {
       _channel.$$create(

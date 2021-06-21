@@ -126,6 +126,18 @@ public class CameraParametersTest {
   }
 
   @Test
+  public void whiteBalance() {
+    assertEquals(Camera.Parameters.WHITE_BALANCE_AUTO, "auto");
+    assertEquals(Camera.Parameters.WHITE_BALANCE_INCANDESCENT, "incandescent");
+    assertEquals(Camera.Parameters.WHITE_BALANCE_FLUORESCENT, "fluorescent");
+    assertEquals(Camera.Parameters.WHITE_BALANCE_WARM_FLUORESCENT, "warm-fluorescent");
+    assertEquals(Camera.Parameters.WHITE_BALANCE_DAYLIGHT, "daylight");
+    assertEquals(Camera.Parameters.WHITE_BALANCE_CLOUDY_DAYLIGHT, "cloudy-daylight");
+    assertEquals(Camera.Parameters.WHITE_BALANCE_TWILIGHT, "twilight");
+    assertEquals(Camera.Parameters.WHITE_BALANCE_SHADE, "shade");
+  }
+
+  @Test
   public void createCameraParameters() {
     verify(mockCameraParametersChannel).$$create(testCameraParametersProxy, false);
   }

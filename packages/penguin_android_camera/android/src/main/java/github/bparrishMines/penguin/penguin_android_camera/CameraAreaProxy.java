@@ -27,12 +27,18 @@ public class CameraAreaProxy implements CameraChannelLibrary.$CameraArea {
   }
 
   public CameraAreaProxy(CameraRectProxy rect, Integer weight, ChannelRegistrar.LibraryImplementations implementations) {
-    this(new Camera.Area(rect.rect, weight), rect, implementations);
+    this(new Camera.Area(rect.rect, weight), rect, implementations, false);
   }
 
   public CameraAreaProxy(Camera.Area area, CameraRectProxy rect, ChannelRegistrar.LibraryImplementations implementations) {
+    this(area, rect, implementations, true);
+  }
+
+  public CameraAreaProxy(Camera.Area area, CameraRectProxy rect, ChannelRegistrar.LibraryImplementations implementations, boolean create) {
     this.area = area;
     this.rect = rect;
-    implementations.getChannelCameraArea().$$create(this, false, rect, area.weight);
+    if (create) {
+      implementations.getChannelCameraArea().$$create(this, false, rect, area.weight);
+    }
   }
 }

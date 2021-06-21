@@ -569,6 +569,214 @@ public class CameraChannelLibrary {
     Object getExposureCompensationStep() throws Exception;
     
     
+    
+    Object flatten() throws Exception;
+    
+    
+    
+    Object get(String key) throws Exception;
+    
+    
+    
+    Object getAntibanding() throws Exception;
+    
+    
+    
+    Object getAutoWhiteBalanceLock() throws Exception;
+    
+    
+    
+    Object getColorEffect() throws Exception;
+    
+    
+    
+    Object getFocalLength() throws Exception;
+    
+    
+    
+    Object getFocusMode() throws Exception;
+    
+    
+    
+    Object getHorizontalViewAngle() throws Exception;
+    
+    
+    
+    Object getInt(String key) throws Exception;
+    
+    
+    
+    Object getJpegQuality() throws Exception;
+    
+    
+    
+    Object getJpegThumbnailQuality() throws Exception;
+    
+    
+    
+    Object getJpegThumbnailSize() throws Exception;
+    
+    
+    
+    Object getMaxNumMeteringAreas() throws Exception;
+    
+    
+    
+    Object getMeteringAreas() throws Exception;
+    
+    
+    
+    Object getPictureFormat() throws Exception;
+    
+    
+    
+    Object getPreferredPreviewSizeForVideo() throws Exception;
+    
+    
+    
+    Object getPreviewFormat() throws Exception;
+    
+    
+    
+    Object getPreviewFpsRange() throws Exception;
+    
+    
+    
+    Object getSceneMode() throws Exception;
+    
+    
+    
+    Object getSupportedAntibanding() throws Exception;
+    
+    
+    
+    Object getSupportedColorEffects() throws Exception;
+    
+    
+    
+    Object getSupportedJpegThumbnailSizes() throws Exception;
+    
+    
+    
+    Object getSupportedPictureFormats() throws Exception;
+    
+    
+    
+    Object getSupportedPreviewFormats() throws Exception;
+    
+    
+    
+    Object getSupportedPreviewFpsRange() throws Exception;
+    
+    
+    
+    Object getSupportedSceneModes() throws Exception;
+    
+    
+    
+    Object getSupportedVideoSizes() throws Exception;
+    
+    
+    
+    Object getSupportedWhiteBalance() throws Exception;
+    
+    
+    
+    Object getVerticalViewAngle() throws Exception;
+    
+    
+    
+    Object getVideoStabilization() throws Exception;
+    
+    
+    
+    Object getWhiteBalance() throws Exception;
+    
+    
+    
+    Object getZoomRatios() throws Exception;
+    
+    
+    
+    Object isAutoWhiteBalanceLockSupported() throws Exception;
+    
+    
+    
+    Object isVideoSnapshotSupported() throws Exception;
+    
+    
+    
+    Object isVideoStabilizationSupported() throws Exception;
+    
+    
+    
+    Object remove(String key) throws Exception;
+    
+    
+    
+    Object removeGpsData() throws Exception;
+    
+    
+    
+    Object set(String key,Object value) throws Exception;
+    
+    
+    
+    Object setAntibanding(String antibanding) throws Exception;
+    
+    
+    
+    Object setAutoWhiteBalanceLock(Boolean toggle) throws Exception;
+    
+    
+    
+    Object setColorEffect(String effect) throws Exception;
+    
+    
+    
+    Object setFocusMode(String mode) throws Exception;
+    
+    
+    
+    Object setGpsAltitude(Double meters) throws Exception;
+    
+    
+    
+    Object setGpsLatitude(Double latitude) throws Exception;
+    
+    
+    
+    Object setGpsLongitude(Double longitude) throws Exception;
+    
+    
+    
+    Object setGpsProcessingMethod(String processingMethod) throws Exception;
+    
+    
+    
+    Object setGpsTimestamp(Integer timestamp) throws Exception;
+    
+    
+    
+    Object setJpegQuality(Integer quality) throws Exception;
+    
+    
+    
+    Object setJpegThumbnailQuality(Integer quality) throws Exception;
+    
+    
+    
+    Object setJpegThumbnailSize(Integer width,Integer height) throws Exception;
+    
+    
+    
+    Object setMeteringAreas(List<$CameraArea> meteringArea) throws Exception;
+    
+    
+    
+    Object setPictureFormat(Integer pixelFormat) throws Exception;
+    
+    
   }
   
   public interface $CameraArea {
@@ -718,6 +926,110 @@ public class CameraChannelLibrary {
 
     
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     
@@ -1378,6 +1690,318 @@ public class CameraChannelLibrary {
     }
     
     
+    
+    public Object $flatten($CameraParameters $instance) throws Exception {
+      return $instance.flatten();
+    }
+    
+    
+    
+    public Object $get($CameraParameters $instance,String key) throws Exception {
+      return $instance.get( key );
+    }
+    
+    
+    
+    public Object $getAntibanding($CameraParameters $instance) throws Exception {
+      return $instance.getAntibanding();
+    }
+    
+    
+    
+    public Object $getAutoWhiteBalanceLock($CameraParameters $instance) throws Exception {
+      return $instance.getAutoWhiteBalanceLock();
+    }
+    
+    
+    
+    public Object $getColorEffect($CameraParameters $instance) throws Exception {
+      return $instance.getColorEffect();
+    }
+    
+    
+    
+    public Object $getFocalLength($CameraParameters $instance) throws Exception {
+      return $instance.getFocalLength();
+    }
+    
+    
+    
+    public Object $getFocusMode($CameraParameters $instance) throws Exception {
+      return $instance.getFocusMode();
+    }
+    
+    
+    
+    public Object $getHorizontalViewAngle($CameraParameters $instance) throws Exception {
+      return $instance.getHorizontalViewAngle();
+    }
+    
+    
+    
+    public Object $getInt($CameraParameters $instance,String key) throws Exception {
+      return $instance.getInt( key );
+    }
+    
+    
+    
+    public Object $getJpegQuality($CameraParameters $instance) throws Exception {
+      return $instance.getJpegQuality();
+    }
+    
+    
+    
+    public Object $getJpegThumbnailQuality($CameraParameters $instance) throws Exception {
+      return $instance.getJpegThumbnailQuality();
+    }
+    
+    
+    
+    public Object $getJpegThumbnailSize($CameraParameters $instance) throws Exception {
+      return $instance.getJpegThumbnailSize();
+    }
+    
+    
+    
+    public Object $getMaxNumMeteringAreas($CameraParameters $instance) throws Exception {
+      return $instance.getMaxNumMeteringAreas();
+    }
+    
+    
+    
+    public Object $getMeteringAreas($CameraParameters $instance) throws Exception {
+      return $instance.getMeteringAreas();
+    }
+    
+    
+    
+    public Object $getPictureFormat($CameraParameters $instance) throws Exception {
+      return $instance.getPictureFormat();
+    }
+    
+    
+    
+    public Object $getPreferredPreviewSizeForVideo($CameraParameters $instance) throws Exception {
+      return $instance.getPreferredPreviewSizeForVideo();
+    }
+    
+    
+    
+    public Object $getPreviewFormat($CameraParameters $instance) throws Exception {
+      return $instance.getPreviewFormat();
+    }
+    
+    
+    
+    public Object $getPreviewFpsRange($CameraParameters $instance) throws Exception {
+      return $instance.getPreviewFpsRange();
+    }
+    
+    
+    
+    public Object $getSceneMode($CameraParameters $instance) throws Exception {
+      return $instance.getSceneMode();
+    }
+    
+    
+    
+    public Object $getSupportedAntibanding($CameraParameters $instance) throws Exception {
+      return $instance.getSupportedAntibanding();
+    }
+    
+    
+    
+    public Object $getSupportedColorEffects($CameraParameters $instance) throws Exception {
+      return $instance.getSupportedColorEffects();
+    }
+    
+    
+    
+    public Object $getSupportedJpegThumbnailSizes($CameraParameters $instance) throws Exception {
+      return $instance.getSupportedJpegThumbnailSizes();
+    }
+    
+    
+    
+    public Object $getSupportedPictureFormats($CameraParameters $instance) throws Exception {
+      return $instance.getSupportedPictureFormats();
+    }
+    
+    
+    
+    public Object $getSupportedPreviewFormats($CameraParameters $instance) throws Exception {
+      return $instance.getSupportedPreviewFormats();
+    }
+    
+    
+    
+    public Object $getSupportedPreviewFpsRange($CameraParameters $instance) throws Exception {
+      return $instance.getSupportedPreviewFpsRange();
+    }
+    
+    
+    
+    public Object $getSupportedSceneModes($CameraParameters $instance) throws Exception {
+      return $instance.getSupportedSceneModes();
+    }
+    
+    
+    
+    public Object $getSupportedVideoSizes($CameraParameters $instance) throws Exception {
+      return $instance.getSupportedVideoSizes();
+    }
+    
+    
+    
+    public Object $getSupportedWhiteBalance($CameraParameters $instance) throws Exception {
+      return $instance.getSupportedWhiteBalance();
+    }
+    
+    
+    
+    public Object $getVerticalViewAngle($CameraParameters $instance) throws Exception {
+      return $instance.getVerticalViewAngle();
+    }
+    
+    
+    
+    public Object $getVideoStabilization($CameraParameters $instance) throws Exception {
+      return $instance.getVideoStabilization();
+    }
+    
+    
+    
+    public Object $getWhiteBalance($CameraParameters $instance) throws Exception {
+      return $instance.getWhiteBalance();
+    }
+    
+    
+    
+    public Object $getZoomRatios($CameraParameters $instance) throws Exception {
+      return $instance.getZoomRatios();
+    }
+    
+    
+    
+    public Object $isAutoWhiteBalanceLockSupported($CameraParameters $instance) throws Exception {
+      return $instance.isAutoWhiteBalanceLockSupported();
+    }
+    
+    
+    
+    public Object $isVideoSnapshotSupported($CameraParameters $instance) throws Exception {
+      return $instance.isVideoSnapshotSupported();
+    }
+    
+    
+    
+    public Object $isVideoStabilizationSupported($CameraParameters $instance) throws Exception {
+      return $instance.isVideoStabilizationSupported();
+    }
+    
+    
+    
+    public Object $remove($CameraParameters $instance,String key) throws Exception {
+      return $instance.remove( key );
+    }
+    
+    
+    
+    public Object $removeGpsData($CameraParameters $instance) throws Exception {
+      return $instance.removeGpsData();
+    }
+    
+    
+    
+    public Object $set($CameraParameters $instance,String key,Object value) throws Exception {
+      return $instance.set( key , value );
+    }
+    
+    
+    
+    public Object $setAntibanding($CameraParameters $instance,String antibanding) throws Exception {
+      return $instance.setAntibanding( antibanding );
+    }
+    
+    
+    
+    public Object $setAutoWhiteBalanceLock($CameraParameters $instance,Boolean toggle) throws Exception {
+      return $instance.setAutoWhiteBalanceLock( toggle );
+    }
+    
+    
+    
+    public Object $setColorEffect($CameraParameters $instance,String effect) throws Exception {
+      return $instance.setColorEffect( effect );
+    }
+    
+    
+    
+    public Object $setFocusMode($CameraParameters $instance,String mode) throws Exception {
+      return $instance.setFocusMode( mode );
+    }
+    
+    
+    
+    public Object $setGpsAltitude($CameraParameters $instance,Double meters) throws Exception {
+      return $instance.setGpsAltitude( meters );
+    }
+    
+    
+    
+    public Object $setGpsLatitude($CameraParameters $instance,Double latitude) throws Exception {
+      return $instance.setGpsLatitude( latitude );
+    }
+    
+    
+    
+    public Object $setGpsLongitude($CameraParameters $instance,Double longitude) throws Exception {
+      return $instance.setGpsLongitude( longitude );
+    }
+    
+    
+    
+    public Object $setGpsProcessingMethod($CameraParameters $instance,String processingMethod) throws Exception {
+      return $instance.setGpsProcessingMethod( processingMethod );
+    }
+    
+    
+    
+    public Object $setGpsTimestamp($CameraParameters $instance,Integer timestamp) throws Exception {
+      return $instance.setGpsTimestamp( timestamp );
+    }
+    
+    
+    
+    public Object $setJpegQuality($CameraParameters $instance,Integer quality) throws Exception {
+      return $instance.setJpegQuality( quality );
+    }
+    
+    
+    
+    public Object $setJpegThumbnailQuality($CameraParameters $instance,Integer quality) throws Exception {
+      return $instance.setJpegThumbnailQuality( quality );
+    }
+    
+    
+    
+    public Object $setJpegThumbnailSize($CameraParameters $instance,Integer width,Integer height) throws Exception {
+      return $instance.setJpegThumbnailSize( width , height );
+    }
+    
+    
+    
+    public Object $setMeteringAreas($CameraParameters $instance,List<$CameraArea> meteringArea) throws Exception {
+      return $instance.setMeteringAreas( meteringArea );
+    }
+    
+    
+    
+    public Object $setPictureFormat($CameraParameters $instance,Integer pixelFormat) throws Exception {
+      return $instance.setPictureFormat( pixelFormat );
+    }
+    
+    
 
     @Override
     public Object invokeStaticMethod(
@@ -1554,6 +2178,266 @@ public class CameraChannelLibrary {
         
         case "getExposureCompensationStep":
           return $getExposureCompensationStep(instance);
+        
+        
+        
+        case "flatten":
+          return $flatten(instance);
+        
+        
+        
+        case "get":
+          return $get(instance,(String) arguments.get(0));
+        
+        
+        
+        case "getAntibanding":
+          return $getAntibanding(instance);
+        
+        
+        
+        case "getAutoWhiteBalanceLock":
+          return $getAutoWhiteBalanceLock(instance);
+        
+        
+        
+        case "getColorEffect":
+          return $getColorEffect(instance);
+        
+        
+        
+        case "getFocalLength":
+          return $getFocalLength(instance);
+        
+        
+        
+        case "getFocusMode":
+          return $getFocusMode(instance);
+        
+        
+        
+        case "getHorizontalViewAngle":
+          return $getHorizontalViewAngle(instance);
+        
+        
+        
+        case "getInt":
+          return $getInt(instance,(String) arguments.get(0));
+        
+        
+        
+        case "getJpegQuality":
+          return $getJpegQuality(instance);
+        
+        
+        
+        case "getJpegThumbnailQuality":
+          return $getJpegThumbnailQuality(instance);
+        
+        
+        
+        case "getJpegThumbnailSize":
+          return $getJpegThumbnailSize(instance);
+        
+        
+        
+        case "getMaxNumMeteringAreas":
+          return $getMaxNumMeteringAreas(instance);
+        
+        
+        
+        case "getMeteringAreas":
+          return $getMeteringAreas(instance);
+        
+        
+        
+        case "getPictureFormat":
+          return $getPictureFormat(instance);
+        
+        
+        
+        case "getPreferredPreviewSizeForVideo":
+          return $getPreferredPreviewSizeForVideo(instance);
+        
+        
+        
+        case "getPreviewFormat":
+          return $getPreviewFormat(instance);
+        
+        
+        
+        case "getPreviewFpsRange":
+          return $getPreviewFpsRange(instance);
+        
+        
+        
+        case "getSceneMode":
+          return $getSceneMode(instance);
+        
+        
+        
+        case "getSupportedAntibanding":
+          return $getSupportedAntibanding(instance);
+        
+        
+        
+        case "getSupportedColorEffects":
+          return $getSupportedColorEffects(instance);
+        
+        
+        
+        case "getSupportedJpegThumbnailSizes":
+          return $getSupportedJpegThumbnailSizes(instance);
+        
+        
+        
+        case "getSupportedPictureFormats":
+          return $getSupportedPictureFormats(instance);
+        
+        
+        
+        case "getSupportedPreviewFormats":
+          return $getSupportedPreviewFormats(instance);
+        
+        
+        
+        case "getSupportedPreviewFpsRange":
+          return $getSupportedPreviewFpsRange(instance);
+        
+        
+        
+        case "getSupportedSceneModes":
+          return $getSupportedSceneModes(instance);
+        
+        
+        
+        case "getSupportedVideoSizes":
+          return $getSupportedVideoSizes(instance);
+        
+        
+        
+        case "getSupportedWhiteBalance":
+          return $getSupportedWhiteBalance(instance);
+        
+        
+        
+        case "getVerticalViewAngle":
+          return $getVerticalViewAngle(instance);
+        
+        
+        
+        case "getVideoStabilization":
+          return $getVideoStabilization(instance);
+        
+        
+        
+        case "getWhiteBalance":
+          return $getWhiteBalance(instance);
+        
+        
+        
+        case "getZoomRatios":
+          return $getZoomRatios(instance);
+        
+        
+        
+        case "isAutoWhiteBalanceLockSupported":
+          return $isAutoWhiteBalanceLockSupported(instance);
+        
+        
+        
+        case "isVideoSnapshotSupported":
+          return $isVideoSnapshotSupported(instance);
+        
+        
+        
+        case "isVideoStabilizationSupported":
+          return $isVideoStabilizationSupported(instance);
+        
+        
+        
+        case "remove":
+          return $remove(instance,(String) arguments.get(0));
+        
+        
+        
+        case "removeGpsData":
+          return $removeGpsData(instance);
+        
+        
+        
+        case "set":
+          return $set(instance,(String) arguments.get(0),(Object) arguments.get(1));
+        
+        
+        
+        case "setAntibanding":
+          return $setAntibanding(instance,(String) arguments.get(0));
+        
+        
+        
+        case "setAutoWhiteBalanceLock":
+          return $setAutoWhiteBalanceLock(instance,(Boolean) arguments.get(0));
+        
+        
+        
+        case "setColorEffect":
+          return $setColorEffect(instance,(String) arguments.get(0));
+        
+        
+        
+        case "setFocusMode":
+          return $setFocusMode(instance,(String) arguments.get(0));
+        
+        
+        
+        case "setGpsAltitude":
+          return $setGpsAltitude(instance,(Double) arguments.get(0));
+        
+        
+        
+        case "setGpsLatitude":
+          return $setGpsLatitude(instance,(Double) arguments.get(0));
+        
+        
+        
+        case "setGpsLongitude":
+          return $setGpsLongitude(instance,(Double) arguments.get(0));
+        
+        
+        
+        case "setGpsProcessingMethod":
+          return $setGpsProcessingMethod(instance,(String) arguments.get(0));
+        
+        
+        
+        case "setGpsTimestamp":
+          return $setGpsTimestamp(instance,(Integer) arguments.get(0));
+        
+        
+        
+        case "setJpegQuality":
+          return $setJpegQuality(instance,(Integer) arguments.get(0));
+        
+        
+        
+        case "setJpegThumbnailQuality":
+          return $setJpegThumbnailQuality(instance,(Integer) arguments.get(0));
+        
+        
+        
+        case "setJpegThumbnailSize":
+          return $setJpegThumbnailSize(instance,(Integer) arguments.get(0),(Integer) arguments.get(1));
+        
+        
+        
+        case "setMeteringAreas":
+          return $setMeteringAreas(instance,(List<$CameraArea>) arguments.get(0));
+        
+        
+        
+        case "setPictureFormat":
+          return $setPictureFormat(instance,(Integer) arguments.get(0));
         
         
       }

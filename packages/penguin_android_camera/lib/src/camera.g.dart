@@ -1198,6 +1198,584 @@ class $CameraParametersChannel extends TypeChannel<$CameraParameters> {
       <Object?>[],
     );
   }
+
+  Future<Object?> $flatten(
+    $CameraParameters $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'flatten',
+      <Object?>[],
+    );
+  }
+
+  Future<Object?> $get(
+    $CameraParameters $instance,
+    String key,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'get',
+      <Object?>[
+        key,
+      ],
+    );
+  }
+
+  Future<Object?> $getAntibanding(
+    $CameraParameters $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'getAntibanding',
+      <Object?>[],
+    );
+  }
+
+  Future<Object?> $getAutoWhiteBalanceLock(
+    $CameraParameters $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'getAutoWhiteBalanceLock',
+      <Object?>[],
+    );
+  }
+
+  Future<Object?> $getColorEffect(
+    $CameraParameters $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'getColorEffect',
+      <Object?>[],
+    );
+  }
+
+  Future<Object?> $getFocalLength(
+    $CameraParameters $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'getFocalLength',
+      <Object?>[],
+    );
+  }
+
+  Future<Object?> $getFocusMode(
+    $CameraParameters $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'getFocusMode',
+      <Object?>[],
+    );
+  }
+
+  Future<Object?> $getHorizontalViewAngle(
+    $CameraParameters $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'getHorizontalViewAngle',
+      <Object?>[],
+    );
+  }
+
+  Future<Object?> $getInt(
+    $CameraParameters $instance,
+    String key,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'getInt',
+      <Object?>[
+        key,
+      ],
+    );
+  }
+
+  Future<Object?> $getJpegQuality(
+    $CameraParameters $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'getJpegQuality',
+      <Object?>[],
+    );
+  }
+
+  Future<Object?> $getJpegThumbnailQuality(
+    $CameraParameters $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'getJpegThumbnailQuality',
+      <Object?>[],
+    );
+  }
+
+  Future<Object?> $getJpegThumbnailSize(
+    $CameraParameters $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'getJpegThumbnailSize',
+      <Object?>[],
+    );
+  }
+
+  Future<Object?> $getMaxNumMeteringAreas(
+    $CameraParameters $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'getMaxNumMeteringAreas',
+      <Object?>[],
+    );
+  }
+
+  Future<Object?> $getMeteringAreas(
+    $CameraParameters $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'getMeteringAreas',
+      <Object?>[],
+    );
+  }
+
+  Future<Object?> $getPictureFormat(
+    $CameraParameters $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'getPictureFormat',
+      <Object?>[],
+    );
+  }
+
+  Future<Object?> $getPreferredPreviewSizeForVideo(
+    $CameraParameters $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'getPreferredPreviewSizeForVideo',
+      <Object?>[],
+    );
+  }
+
+  Future<Object?> $getPreviewFormat(
+    $CameraParameters $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'getPreviewFormat',
+      <Object?>[],
+    );
+  }
+
+  Future<Object?> $getPreviewFpsRange(
+    $CameraParameters $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'getPreviewFpsRange',
+      <Object?>[],
+    );
+  }
+
+  Future<Object?> $getSceneMode(
+    $CameraParameters $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'getSceneMode',
+      <Object?>[],
+    );
+  }
+
+  Future<Object?> $getSupportedAntibanding(
+    $CameraParameters $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'getSupportedAntibanding',
+      <Object?>[],
+    );
+  }
+
+  Future<Object?> $getSupportedColorEffects(
+    $CameraParameters $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'getSupportedColorEffects',
+      <Object?>[],
+    );
+  }
+
+  Future<Object?> $getSupportedJpegThumbnailSizes(
+    $CameraParameters $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'getSupportedJpegThumbnailSizes',
+      <Object?>[],
+    );
+  }
+
+  Future<Object?> $getSupportedPictureFormats(
+    $CameraParameters $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'getSupportedPictureFormats',
+      <Object?>[],
+    );
+  }
+
+  Future<Object?> $getSupportedPreviewFormats(
+    $CameraParameters $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'getSupportedPreviewFormats',
+      <Object?>[],
+    );
+  }
+
+  Future<Object?> $getSupportedPreviewFpsRange(
+    $CameraParameters $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'getSupportedPreviewFpsRange',
+      <Object?>[],
+    );
+  }
+
+  Future<Object?> $getSupportedSceneModes(
+    $CameraParameters $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'getSupportedSceneModes',
+      <Object?>[],
+    );
+  }
+
+  Future<Object?> $getSupportedVideoSizes(
+    $CameraParameters $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'getSupportedVideoSizes',
+      <Object?>[],
+    );
+  }
+
+  Future<Object?> $getSupportedWhiteBalance(
+    $CameraParameters $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'getSupportedWhiteBalance',
+      <Object?>[],
+    );
+  }
+
+  Future<Object?> $getVerticalViewAngle(
+    $CameraParameters $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'getVerticalViewAngle',
+      <Object?>[],
+    );
+  }
+
+  Future<Object?> $getVideoStabilization(
+    $CameraParameters $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'getVideoStabilization',
+      <Object?>[],
+    );
+  }
+
+  Future<Object?> $getWhiteBalance(
+    $CameraParameters $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'getWhiteBalance',
+      <Object?>[],
+    );
+  }
+
+  Future<Object?> $getZoomRatios(
+    $CameraParameters $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'getZoomRatios',
+      <Object?>[],
+    );
+  }
+
+  Future<Object?> $isAutoWhiteBalanceLockSupported(
+    $CameraParameters $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'isAutoWhiteBalanceLockSupported',
+      <Object?>[],
+    );
+  }
+
+  Future<Object?> $isVideoSnapshotSupported(
+    $CameraParameters $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'isVideoSnapshotSupported',
+      <Object?>[],
+    );
+  }
+
+  Future<Object?> $isVideoStabilizationSupported(
+    $CameraParameters $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'isVideoStabilizationSupported',
+      <Object?>[],
+    );
+  }
+
+  Future<Object?> $remove(
+    $CameraParameters $instance,
+    String key,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'remove',
+      <Object?>[
+        key,
+      ],
+    );
+  }
+
+  Future<Object?> $removeGpsData(
+    $CameraParameters $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'removeGpsData',
+      <Object?>[],
+    );
+  }
+
+  Future<Object?> $set(
+    $CameraParameters $instance,
+    String key,
+    Object value,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'set',
+      <Object?>[
+        key,
+        value,
+      ],
+    );
+  }
+
+  Future<Object?> $setAntibanding(
+    $CameraParameters $instance,
+    String antibanding,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'setAntibanding',
+      <Object?>[
+        antibanding,
+      ],
+    );
+  }
+
+  Future<Object?> $setAutoWhiteBalanceLock(
+    $CameraParameters $instance,
+    bool toggle,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'setAutoWhiteBalanceLock',
+      <Object?>[
+        toggle,
+      ],
+    );
+  }
+
+  Future<Object?> $setColorEffect(
+    $CameraParameters $instance,
+    String effect,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'setColorEffect',
+      <Object?>[
+        effect,
+      ],
+    );
+  }
+
+  Future<Object?> $setFocusMode(
+    $CameraParameters $instance,
+    String mode,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'setFocusMode',
+      <Object?>[
+        mode,
+      ],
+    );
+  }
+
+  Future<Object?> $setGpsAltitude(
+    $CameraParameters $instance,
+    double meters,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'setGpsAltitude',
+      <Object?>[
+        meters,
+      ],
+    );
+  }
+
+  Future<Object?> $setGpsLatitude(
+    $CameraParameters $instance,
+    double latitude,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'setGpsLatitude',
+      <Object?>[
+        latitude,
+      ],
+    );
+  }
+
+  Future<Object?> $setGpsLongitude(
+    $CameraParameters $instance,
+    double longitude,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'setGpsLongitude',
+      <Object?>[
+        longitude,
+      ],
+    );
+  }
+
+  Future<Object?> $setGpsProcessingMethod(
+    $CameraParameters $instance,
+    String processingMethod,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'setGpsProcessingMethod',
+      <Object?>[
+        processingMethod,
+      ],
+    );
+  }
+
+  Future<Object?> $setGpsTimestamp(
+    $CameraParameters $instance,
+    int timestamp,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'setGpsTimestamp',
+      <Object?>[
+        timestamp,
+      ],
+    );
+  }
+
+  Future<Object?> $setJpegQuality(
+    $CameraParameters $instance,
+    int quality,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'setJpegQuality',
+      <Object?>[
+        quality,
+      ],
+    );
+  }
+
+  Future<Object?> $setJpegThumbnailQuality(
+    $CameraParameters $instance,
+    int quality,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'setJpegThumbnailQuality',
+      <Object?>[
+        quality,
+      ],
+    );
+  }
+
+  Future<Object?> $setJpegThumbnailSize(
+    $CameraParameters $instance,
+    int width,
+    int height,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'setJpegThumbnailSize',
+      <Object?>[
+        width,
+        height,
+      ],
+    );
+  }
+
+  Future<Object?> $setMeteringAreas(
+    $CameraParameters $instance,
+    List<$CameraArea> meteringArea,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'setMeteringAreas',
+      <Object?>[
+        meteringArea,
+      ],
+    );
+  }
+
+  Future<Object?> $setPictureFormat(
+    $CameraParameters $instance,
+    int pixelFormat,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'setPictureFormat',
+      <Object?>[
+        pixelFormat,
+      ],
+    );
+  }
 }
 
 class $CameraAreaChannel extends TypeChannel<$CameraArea> {
