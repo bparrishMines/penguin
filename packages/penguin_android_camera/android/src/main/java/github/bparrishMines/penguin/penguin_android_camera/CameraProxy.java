@@ -122,10 +122,10 @@ public class CameraProxy implements CameraChannelLibrary.$Camera {
     return null;
   }
 
-  // TODO(bparrishMines): Test when correct version.
   @Override
   public Boolean enableShutterSound(Boolean enabled) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+      //noinspection deprecation
       return camera.enableShutterSound(enabled);
     } else {
       throw new UnsupportedOperationException("Requires version >= Build.VERSION_CODES.JELLY_BEAN_MR1.");

@@ -1086,7 +1086,7 @@ class CameraParameters with $CameraParameters {
   }
 
   /// Returns the value of a `String` parameter.
-  Future<String> get(String key) async {
+  Future<String?> get(String key) async {
     return await _channel.$get(this, key) as String;
   }
 
@@ -1622,8 +1622,8 @@ class CameraParameters with $CameraParameters {
   /// Sets metering areas.
   ///
   /// See [getMeteringAreas] for documentation.
-  Future<void> setMeteringAreas(List<CameraArea> meteringArea) {
-    return _channel.$setMeteringAreas(this, meteringArea);
+  Future<void> setMeteringAreas(List<CameraArea> meteringAreas) {
+    return _channel.$setMeteringAreas(this, meteringAreas);
   }
 
   /// Sets the image format for pictures.
