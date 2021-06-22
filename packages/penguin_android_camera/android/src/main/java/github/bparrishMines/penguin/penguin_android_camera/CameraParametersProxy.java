@@ -249,7 +249,7 @@ public class CameraParametersProxy implements CameraChannelLibrary.$CameraParame
   }
 
   @Override
-  public Object getMaxNumMeteringAreas() {
+  public Integer getMaxNumMeteringAreas() {
     return cameraParameters.getMaxNumMeteringAreas();
   }
 

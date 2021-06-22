@@ -28,7 +28,7 @@ public class CameraRectTest {
 
   @Test
   public void createCameraRect() {
-    final CameraRectProxy cameraRectProxy = new CameraRectProxy(0, 1, 2, 3, mockImplementations);
+    final CameraRectProxy cameraRectProxy = new CameraRectProxy(new Rect(), mockImplementations);
 
     // Rect always returns 0 values for some reason?
     verify(mockCameraRectChannel).$$create(cameraRectProxy, false, 0, 0, 0, 0);
