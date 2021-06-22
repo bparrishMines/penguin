@@ -1632,19 +1632,6 @@ class $CameraParametersChannel extends TypeChannel<$CameraParameters> {
     );
   }
 
-  Future<Object?> $setFocusMode(
-    $CameraParameters $instance,
-    String mode,
-  ) {
-    return sendInvokeMethod(
-      $instance,
-      'setFocusMode',
-      <Object?>[
-        mode,
-      ],
-    );
-  }
-
   Future<Object?> $setGpsAltitude(
     $CameraParameters $instance,
     double meters,
@@ -1773,6 +1760,86 @@ class $CameraParametersChannel extends TypeChannel<$CameraParameters> {
       'setPictureFormat',
       <Object?>[
         pixelFormat,
+      ],
+    );
+  }
+
+  Future<Object?> $setPreviewFormat(
+    $CameraParameters $instance,
+    int pixelFormat,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'setPreviewFormat',
+      <Object?>[
+        pixelFormat,
+      ],
+    );
+  }
+
+  Future<Object?> $setPreviewFpsRange(
+    $CameraParameters $instance,
+    int min,
+    int max,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'setPreviewFpsRange',
+      <Object?>[
+        min,
+        max,
+      ],
+    );
+  }
+
+  Future<Object?> $setSceneMode(
+    $CameraParameters $instance,
+    String mode,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'setSceneMode',
+      <Object?>[
+        mode,
+      ],
+    );
+  }
+
+  Future<Object?> $setVideoStabilization(
+    $CameraParameters $instance,
+    bool toggle,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'setVideoStabilization',
+      <Object?>[
+        toggle,
+      ],
+    );
+  }
+
+  Future<Object?> $setWhiteBalance(
+    $CameraParameters $instance,
+    String value,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'setWhiteBalance',
+      <Object?>[
+        value,
+      ],
+    );
+  }
+
+  Future<Object?> $unflatten(
+    $CameraParameters $instance,
+    String flattened,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'unflatten',
+      <Object?>[
+        flattened,
       ],
     );
   }

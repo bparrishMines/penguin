@@ -270,7 +270,6 @@ class Camera with $Camera {
     );
   }
 
-  // TODO: CameraParameters.getAutoWhiteBalanceLock
   /// Starts camera auto-focus and registers a callback function to run when the camera is focused.
   ///
   /// This method is only valid when preview is active (between [startPreview]
@@ -317,7 +316,6 @@ class Camera with $Camera {
     return _channel.$cancelAutoFocus(this);
   }
 
-  // TODO: PreviewCallback.onPreviewFrame
   /// Set the clockwise rotation of preview display in degrees.
   ///
   /// This affects the preview frames and the picture displayed after snapshot.
@@ -328,8 +326,8 @@ class Camera with $Camera {
   /// mirror.
   ///
   /// This does not affect the order of byte array passed in
-  /// [PreviewCallback.onPreviewFrame], JPEG pictures, or recorded videos. This
-  /// method is not allowed to be called during preview.
+  /// [PreviewCallback], JPEG pictures, or recorded videos. This method is not
+  /// allowed to be called during preview.
   ///
   /// If you want to make the camera image show in the same orientation as the
   /// display, you can use the following code.
@@ -346,7 +344,6 @@ class Camera with $Camera {
     return _channel.$setErrorCallback(this, callback);
   }
 
-  //TODO: OnZoomChangeListener
   /// Zooms to the requested value smoothly.
   ///
   /// The driver will notify [OnZoomChangeListener] of the zoom value and
@@ -448,8 +445,6 @@ class Camera with $Camera {
   }
 }
 
-// TODO: CameraParameters.setWhiteBalance
-// TODO: Color set and get effects
 /// Camera service settings.
 ///
 /// To make camera parameters take effect, applications have to call
@@ -770,7 +765,8 @@ class CameraParameters with $CameraParameters {
   /// can be large and it should be only used as a reference.
   ///
   /// Far focus distance >= optimal focus distance >= near focus distance. If
-  /// the focus distance is infinity, the value will be Float.POSITIVE_INFINITY.
+  /// the focus distance is infinity, the value will be
+  /// Float.POSITIVE_INFINITY (Java).
   Future<List<double>> getFocusDistances() async {
     final List<Object?> distances =
         await _channel.$getFocusDistances(this) as List<Object?>;
@@ -1344,7 +1340,6 @@ class CameraParameters with $CameraParameters {
     return formats.cast<int>();
   }
 
-  // TODO: Manually test casting works
   /// Gets the supported preview fps (frame-per-second) ranges.
   ///
   /// Each range contains a minimum fps and maximum fps. If minimum fps equals
@@ -1637,6 +1632,107 @@ class CameraParameters with $CameraParameters {
   ///   [ImageFormat]
   Future<void> setPictureFormat(int pixelFormat) {
     return _channel.$setPictureFormat(this, pixelFormat);
+  }
+
+  /// Sets the image format for preview pictures.
+  ///
+  /// If this is never called, the default format will be [ImageFormat.nv21],
+  /// which uses the NV21 encoding format.
+  ///
+  /// Use [CameraParameters.getSupportedPreviewFormats] to get a list of the
+  /// available preview formats.
+  ///
+  /// It is strongly recommended that either [ImageFormat.nv21] or
+  /// [ImageFormat.yv12] is used, since they are supported by all camera devices.
+  ///
+  /// For YV12, the image buffer that is received is not necessarily tightly
+  /// packed, as there may be padding at the end of each row of pixel data, as
+  /// described in [ImageFormat.yv12]. For camera callback data, it can be
+  /// assumed that the stride of the Y and UV data is the smallest possible
+  /// that meets the alignment requirements. That is, if the preview size is
+  /// width x height, then the following equations describe the buffer index for
+  /// the beginning of row y for the Y plane and row c for the U and V planes:
+  ///
+  /// ```
+  /// yStride   = (int) ceil(width / 16.0) * 16;
+  /// uvStride  = (int) ceil( (yStride / 2) / 16.0) * 16;
+  /// ySize     = yStride * height;
+  /// uvSize    = uvStride * height / 2;
+  /// yRowIndex = yStride * y;
+  /// uRowIndex = ySize + uvSize + uvStride * c;
+  /// vRowIndex = ySize + uvStride * c;
+  /// size      = ySize + uvSize * 2;
+  /// ```
+  Future<void> setPreviewFormat(int pixelFormat) {
+    return _channel.$setPreviewFormat(this, pixelFormat);
+  }
+
+  /// Sets the minimum and maximum preview fps.
+  ///
+  /// This controls the rate of preview frames received in [PreviewCallback].
+  /// The minimum and maximum preview fps must be one of the elements from
+  /// [getSupportedPreviewFpsRange].
+  ///
+  /// `min`: the minimum preview fps (scaled by 1000).
+  /// `max`: the maximum preview fps (scaled by 1000).
+  ///
+  /// Throws a [PlatformException] if fps range is invalid.
+  Future<void> setPreviewFpsRange({required int min, required int max}) {
+    return _channel.$setPreviewFpsRange(this, min, max);
+  }
+
+  /// Sets the scene mode.
+  ///
+  /// Changing scene mode may override other parameters (such as flash mode,
+  /// focus mode, white balance). For example, suppose originally flash mode is
+  /// on and supported flash modes are on/off. In night scene mode, both flash
+  /// mode and supported flash mode may be changed to off. After setting scene
+  /// mode, applications should call [getParameters] to know if some parameters
+  /// are changed.
+  Future<void> setSceneMode(String mode) {
+    return _channel.$setSceneMode(this, mode);
+  }
+
+  /// Enables and disables video stabilization.
+  ///
+  /// Use [isVideoStabilizationSupported] to determine if calling this method is
+  /// valid.
+  ///
+  /// Video stabilization reduces the shaking due to the motion of the camera in
+  /// both the preview stream and in recorded videos, including data received
+  /// from the preview callback. It does not reduce motion blur in images
+  /// captured with [Camera.takePicture].
+  ///
+  /// Video stabilization can be enabled and disabled while preview or recording
+  /// is active, but toggling it may cause a jump in the video stream that may
+  /// be undesirable in a recorded video.
+  ///
+  /// See:
+  ///   [getVideoStabilization]
+  Future<void> setVideoStabilization({required bool toggle}) {
+    return _channel.$setVideoStabilization(this, toggle);
+  }
+
+  /// Sets the white balance.
+  ///
+  /// Changing the setting will release the auto-white balance lock. It is
+  /// recommended not to change white balance and AWB lock at the same time.
+  ///
+  /// See:
+  ///   [getWhiteBalance]
+  ///   [setAutoWhiteBalanceLock]
+  Future<void> setWhiteBalance(String value) {
+    return _channel.$setWhiteBalance(this, value);
+  }
+
+  /// Takes a flattened string of parameters and adds each one to this [CameraParameter]s object.
+  ///
+  /// The [flatten] method does the reverse.
+  ///
+  /// [flattened] is a String of parameters (key-value paired) that are
+  /// semi-colon delimited.
+  Future<void> unflatten(String flattened) {
+    return _channel.$unflatten(this, flattened);
   }
 }
 

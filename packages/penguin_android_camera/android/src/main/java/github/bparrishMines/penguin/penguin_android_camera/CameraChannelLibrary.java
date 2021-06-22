@@ -734,10 +734,6 @@ public class CameraChannelLibrary {
     
     
     
-    Object setFocusMode(String mode) throws Exception;
-    
-    
-    
     Object setGpsAltitude(Double meters) throws Exception;
     
     
@@ -775,6 +771,30 @@ public class CameraChannelLibrary {
     
     
     Object setPictureFormat(Integer pixelFormat) throws Exception;
+    
+    
+    
+    Object setPreviewFormat(Integer pixelFormat) throws Exception;
+    
+    
+    
+    Object setPreviewFpsRange(Integer min,Integer max) throws Exception;
+    
+    
+    
+    Object setSceneMode(String mode) throws Exception;
+    
+    
+    
+    Object setVideoStabilization(Boolean toggle) throws Exception;
+    
+    
+    
+    Object setWhiteBalance(String value) throws Exception;
+    
+    
+    
+    Object unflatten(String flattened) throws Exception;
     
     
   }
@@ -926,6 +946,16 @@ public class CameraChannelLibrary {
 
     
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     
@@ -1937,12 +1967,6 @@ public class CameraChannelLibrary {
     
     
     
-    public Object $setFocusMode($CameraParameters $instance,String mode) throws Exception {
-      return $instance.setFocusMode( mode );
-    }
-    
-    
-    
     public Object $setGpsAltitude($CameraParameters $instance,Double meters) throws Exception {
       return $instance.setGpsAltitude( meters );
     }
@@ -1999,6 +2023,42 @@ public class CameraChannelLibrary {
     
     public Object $setPictureFormat($CameraParameters $instance,Integer pixelFormat) throws Exception {
       return $instance.setPictureFormat( pixelFormat );
+    }
+    
+    
+    
+    public Object $setPreviewFormat($CameraParameters $instance,Integer pixelFormat) throws Exception {
+      return $instance.setPreviewFormat( pixelFormat );
+    }
+    
+    
+    
+    public Object $setPreviewFpsRange($CameraParameters $instance,Integer min,Integer max) throws Exception {
+      return $instance.setPreviewFpsRange( min , max );
+    }
+    
+    
+    
+    public Object $setSceneMode($CameraParameters $instance,String mode) throws Exception {
+      return $instance.setSceneMode( mode );
+    }
+    
+    
+    
+    public Object $setVideoStabilization($CameraParameters $instance,Boolean toggle) throws Exception {
+      return $instance.setVideoStabilization( toggle );
+    }
+    
+    
+    
+    public Object $setWhiteBalance($CameraParameters $instance,String value) throws Exception {
+      return $instance.setWhiteBalance( value );
+    }
+    
+    
+    
+    public Object $unflatten($CameraParameters $instance,String flattened) throws Exception {
+      return $instance.unflatten( flattened );
     }
     
     
@@ -2386,11 +2446,6 @@ public class CameraChannelLibrary {
         
         
         
-        case "setFocusMode":
-          return $setFocusMode(instance,(String) arguments.get(0));
-        
-        
-        
         case "setGpsAltitude":
           return $setGpsAltitude(instance,(Double) arguments.get(0));
         
@@ -2438,6 +2493,36 @@ public class CameraChannelLibrary {
         
         case "setPictureFormat":
           return $setPictureFormat(instance,(Integer) arguments.get(0));
+        
+        
+        
+        case "setPreviewFormat":
+          return $setPreviewFormat(instance,(Integer) arguments.get(0));
+        
+        
+        
+        case "setPreviewFpsRange":
+          return $setPreviewFpsRange(instance,(Integer) arguments.get(0),(Integer) arguments.get(1));
+        
+        
+        
+        case "setSceneMode":
+          return $setSceneMode(instance,(String) arguments.get(0));
+        
+        
+        
+        case "setVideoStabilization":
+          return $setVideoStabilization(instance,(Boolean) arguments.get(0));
+        
+        
+        
+        case "setWhiteBalance":
+          return $setWhiteBalance(instance,(String) arguments.get(0));
+        
+        
+        
+        case "unflatten":
+          return $unflatten(instance,(String) arguments.get(0));
         
         
       }
