@@ -45,6 +45,18 @@ typedef $AutoFocusMoveCallback = dynamic Function(
   
 );
 
+typedef $OnErrorListener = dynamic Function(
+   int what,
+   int extra,
+  
+);
+
+typedef $OnInfoListener = dynamic Function(
+   int what,
+   int extra,
+  
+);
+
 
 
 class $ErrorCallbackChannel extends TypeChannel<Object> {
@@ -252,6 +264,68 @@ class $AutoFocusMoveCallbackChannel extends TypeChannel<Object> {
       '',
       <Object?>[
          start, 
+      ],
+    );
+  }
+}
+
+class $OnErrorListenerChannel extends TypeChannel<Object> {
+  $OnErrorListenerChannel(TypeChannelMessenger messenger)
+      : super(messenger, 'penguin_android_camera/camera/OnErrorListener');
+
+  Future<PairedInstance?> $$create(
+    $OnErrorListener $instance, {
+    required bool $owner,
+  }) {
+    return createNewInstancePair(
+      $instance,
+      <Object?>[],
+      owner: $owner,
+    );
+  }
+
+  Future<Object?> _invoke(
+    $OnErrorListener $instance,
+     int what,
+     int extra,
+    
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      '',
+      <Object?>[
+         what,  extra, 
+      ],
+    );
+  }
+}
+
+class $OnInfoListenerChannel extends TypeChannel<Object> {
+  $OnInfoListenerChannel(TypeChannelMessenger messenger)
+      : super(messenger, 'penguin_android_camera/camera/OnInfoListener');
+
+  Future<PairedInstance?> $$create(
+    $OnInfoListener $instance, {
+    required bool $owner,
+  }) {
+    return createNewInstancePair(
+      $instance,
+      <Object?>[],
+      owner: $owner,
+    );
+  }
+
+  Future<Object?> _invoke(
+    $OnInfoListener $instance,
+     int what,
+     int extra,
+    
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      '',
+      <Object?>[
+         what,  extra, 
       ],
     );
   }
@@ -595,6 +669,108 @@ class $AutoFocusMoveCallbackHandler
   }
 }
 
+class $OnErrorListenerHandler
+    implements TypeChannelHandler<Object> {
+  $OnErrorListenerHandler(this.implementations);
+
+  final $LibraryImplementations implementations;
+
+  @override
+  $OnErrorListener createInstance(
+    TypeChannelMessenger messenger,
+    List<Object?> arguments,
+  ) {
+    function(
+       int what,
+       int extra,
+      
+    ) {
+      implementations.channelOnErrorListener._invoke(
+        function,
+         what,  extra, 
+      );
+    }
+
+    return function;
+  }
+
+  @override
+  Object? invokeMethod(
+    TypeChannelMessenger messenger,
+    covariant $OnErrorListener instance,
+    String methodName,
+    List<Object?> arguments,
+  ) {
+    return instance(
+       arguments[
+              0]
+          as int,  arguments[
+              1]
+          as int, 
+    );
+  }
+
+  @override
+  Object? invokeStaticMethod(
+    TypeChannelMessenger messenger,
+    String methodName,
+    List<Object?> arguments,
+  ) {
+    throw UnimplementedError();
+  }
+}
+
+class $OnInfoListenerHandler
+    implements TypeChannelHandler<Object> {
+  $OnInfoListenerHandler(this.implementations);
+
+  final $LibraryImplementations implementations;
+
+  @override
+  $OnInfoListener createInstance(
+    TypeChannelMessenger messenger,
+    List<Object?> arguments,
+  ) {
+    function(
+       int what,
+       int extra,
+      
+    ) {
+      implementations.channelOnInfoListener._invoke(
+        function,
+         what,  extra, 
+      );
+    }
+
+    return function;
+  }
+
+  @override
+  Object? invokeMethod(
+    TypeChannelMessenger messenger,
+    covariant $OnInfoListener instance,
+    String methodName,
+    List<Object?> arguments,
+  ) {
+    return instance(
+       arguments[
+              0]
+          as int,  arguments[
+              1]
+          as int, 
+    );
+  }
+
+  @override
+  Object? invokeStaticMethod(
+    TypeChannelMessenger messenger,
+    String methodName,
+    List<Object?> arguments,
+  ) {
+    throw UnimplementedError();
+  }
+}
+
 
 
 mixin $Camera {
@@ -840,6 +1016,36 @@ mixin $CameraInfo {
 }
 
 mixin $MediaRecorder {
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   
   
   
@@ -2770,6 +2976,19 @@ class $MediaRecorderChannel extends TypeChannel<$MediaRecorder> {
   }
 
   
+  
+  Future<Object?> $getAudioSourceMax(
+    
+  ) {
+    return sendInvokeStaticMethod(
+      'getAudioSourceMax',
+      <Object?>[
+        
+      ],
+    );
+  }
+  
+  
 
   
   
@@ -2969,6 +3188,246 @@ class $MediaRecorderChannel extends TypeChannel<$MediaRecorder> {
       'resume',
       <Object?>[
         
+      ],
+    );
+  }
+  
+  
+  
+  Future<Object?> $getMaxAmplitude(
+    $MediaRecorder $instance,
+    
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'getMaxAmplitude',
+      <Object?>[
+        
+      ],
+    );
+  }
+  
+  
+  
+  Future<Object?> $reset(
+    $MediaRecorder $instance,
+    
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'reset',
+      <Object?>[
+        
+      ],
+    );
+  }
+  
+  
+  
+  Future<Object?> $setAudioChannels(
+    $MediaRecorder $instance,
+     int numChannels,
+    
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'setAudioChannels',
+      <Object?>[
+         numChannels, 
+      ],
+    );
+  }
+  
+  
+  
+  Future<Object?> $setAudioEncodingBitRate(
+    $MediaRecorder $instance,
+     int bitRate,
+    
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'setAudioEncodingBitRate',
+      <Object?>[
+         bitRate, 
+      ],
+    );
+  }
+  
+  
+  
+  Future<Object?> $setAudioSamplingRate(
+    $MediaRecorder $instance,
+     int samplingRate,
+    
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'setAudioSamplingRate',
+      <Object?>[
+         samplingRate, 
+      ],
+    );
+  }
+  
+  
+  
+  Future<Object?> $setCaptureRate(
+    $MediaRecorder $instance,
+     double fps,
+    
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'setCaptureRate',
+      <Object?>[
+         fps, 
+      ],
+    );
+  }
+  
+  
+  
+  Future<Object?> $setLocation(
+    $MediaRecorder $instance,
+     double latitude,
+     double longitude,
+    
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'setLocation',
+      <Object?>[
+         latitude,  longitude, 
+      ],
+    );
+  }
+  
+  
+  
+  Future<Object?> $setMaxDuration(
+    $MediaRecorder $instance,
+     int maxDurationMs,
+    
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'setMaxDuration',
+      <Object?>[
+         maxDurationMs, 
+      ],
+    );
+  }
+  
+  
+  
+  Future<Object?> $setMaxFileSize(
+    $MediaRecorder $instance,
+     int maxFilesizeBytes,
+    
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'setMaxFileSize',
+      <Object?>[
+         maxFilesizeBytes, 
+      ],
+    );
+  }
+  
+  
+  
+  Future<Object?> $setOnErrorListener(
+    $MediaRecorder $instance,
+     $OnErrorListener onError,
+    
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'setOnErrorListener',
+      <Object?>[
+         onError, 
+      ],
+    );
+  }
+  
+  
+  
+  Future<Object?> $setOnInfoListener(
+    $MediaRecorder $instance,
+     $OnInfoListener onInfo,
+    
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'setOnInfoListener',
+      <Object?>[
+         onInfo, 
+      ],
+    );
+  }
+  
+  
+  
+  Future<Object?> $setOrientationHint(
+    $MediaRecorder $instance,
+     int degrees,
+    
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'setOrientationHint',
+      <Object?>[
+         degrees, 
+      ],
+    );
+  }
+  
+  
+  
+  Future<Object?> $setVideoEncodingBitRate(
+    $MediaRecorder $instance,
+     int bitRate,
+    
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'setVideoEncodingBitRate',
+      <Object?>[
+         bitRate, 
+      ],
+    );
+  }
+  
+  
+  
+  Future<Object?> $setVideoFrameRate(
+    $MediaRecorder $instance,
+     int rate,
+    
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'setVideoFrameRate',
+      <Object?>[
+         rate, 
+      ],
+    );
+  }
+  
+  
+  
+  Future<Object?> $setVideoSize(
+    $MediaRecorder $instance,
+     int width,
+     int height,
+    
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'setVideoSize',
+      <Object?>[
+         width,  height, 
       ],
     );
   }
@@ -3858,7 +4317,39 @@ class $MediaRecorderHandler implements TypeChannelHandler<$MediaRecorder> {
   }
 
   
+  
+  
 
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   
   
   
@@ -3895,6 +4386,8 @@ class $MediaRecorderHandler implements TypeChannelHandler<$MediaRecorder> {
   ) {
     switch (methodName) {
       
+      
+      
     }
 
     throw ArgumentError.value(
@@ -3923,6 +4416,36 @@ class $MediaRecorderHandler implements TypeChannelHandler<$MediaRecorder> {
     List<Object?> arguments,
   ) {
     switch (methodName) {
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
       
       
       
@@ -4099,6 +4622,16 @@ class $LibraryImplementations {
   $AutoFocusMoveCallbackHandler get handlerAutoFocusMoveCallback =>
       $AutoFocusMoveCallbackHandler(this);
   
+  $OnErrorListenerChannel get channelOnErrorListener =>
+      $OnErrorListenerChannel(messenger);
+  $OnErrorListenerHandler get handlerOnErrorListener =>
+      $OnErrorListenerHandler(this);
+  
+  $OnInfoListenerChannel get channelOnInfoListener =>
+      $OnInfoListenerChannel(messenger);
+  $OnInfoListenerHandler get handlerOnInfoListener =>
+      $OnInfoListenerHandler(this);
+  
 }
 
 class $ChannelRegistrar {
@@ -4169,6 +4702,14 @@ class $ChannelRegistrar {
       implementations.handlerAutoFocusMoveCallback,
     );
     
+    implementations.channelOnErrorListener.setHandler(
+      implementations.handlerOnErrorListener,
+    );
+    
+    implementations.channelOnInfoListener.setHandler(
+      implementations.handlerOnInfoListener,
+    );
+    
   }
 
   void unregisterHandlers() {
@@ -4203,6 +4744,10 @@ class $ChannelRegistrar {
     implementations.channelOnZoomChangeListener.removeHandler();
     
     implementations.channelAutoFocusMoveCallback.removeHandler();
+    
+    implementations.channelOnErrorListener.removeHandler();
+    
+    implementations.channelOnInfoListener.removeHandler();
     
   }
 }

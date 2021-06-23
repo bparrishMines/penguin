@@ -9,9 +9,9 @@ import 'camera_channels.dart';
 /// Callback for camera error notification.
 ///
 /// See:
-///   [Camera.cameraErrorUnknown]
-///   [Camera.cameraErrorServerDied]
-///   [Camera.cameraErrorEvicted]
+///   [Camera.errorUnknown]
+///   [Camera.errorServerDied]
+///   [Camera.errorEvicted]
 @Reference('penguin_android_camera/camera/ErrorCallback')
 typedef ErrorCallback = void Function(int error);
 
@@ -74,6 +74,27 @@ typedef OnZoomChangeListener = void Function(int zoomValue, bool stopped);
 @Reference('penguin_android_camera/camera/AutoFocusMoveCallback')
 typedef AutoFocusMoveCallback = void Function(bool start);
 
+/// Called when an error occurs while recording with [MediaRecoder].
+///
+/// `what`: the type of error that has occurred:
+///    * [MediaRecorder.errorUnknown]
+///    * [MediaRecorder.errorServerDied]
+///
+/// `extra`: an extra code, specific to the info type
+@Reference('penguin_android_camera/camera/OnErrorListener')
+typedef OnErrorListener = void Function(int what, int extra);
+
+/// Called to indicate an info or a warning during recording with [MediaRecoder].
+///
+/// `what`: the type of error that has occurred:
+///    * [MediaRecorder.infoUnknown]
+///    * [MediaRecorder.infoMaxDurationReached]
+///    * [MediaRecorder.infoMaxFilesizeReached]
+///
+/// `extra`: an extra code, specific to the info type
+@Reference('penguin_android_camera/camera/OnInfoListener')
+typedef OnInfoListener = void Function(int what, int extra);
+
 /// The [Camera] class is used to set image capture settings, start/stop preview, snap pictures, and retrieve frames for encoding for video.
 ///
 /// This class is a client for the Camera service, which manages the actual
@@ -94,16 +115,16 @@ class Camera with $Camera {
       ChannelRegistrar.instance.implementations.channelCamera;
 
   /// Unspecified camera error.
-  static const int cameraErrorUnknown = 0x00000001;
+  static const int errorUnknown = 0x00000001;
 
   /// Media server died.
   ///
   /// In this case, the application must release the Camera object and
   /// instantiate a new one.
-  static const int cameraErrorServerDied = 0x00000064;
+  static const int errorServerDied = 0x00000064;
 
   /// Camera was disconnected due to use by higher priority user.
-  static const int cameraErrorEvicted = 0x00000002;
+  static const int errorEvicted = 0x00000002;
 
   int? _currentTexture;
 
@@ -2124,8 +2145,36 @@ class MediaRecorder implements $MediaRecorder {
     if (create) _channel.$$create(this, $owner: true);
   }
 
+  /// Media server died.
+  ///
+  /// In this case, the application must release the [MediaRecorder] object and
+  /// instantiate a new one.
+  static const int errorServerDied = 0x00000064;
+
+  /// Unspecified media recorder error.
+  static const int errorUnknown = 0x00000001;
+
+  /// A maximum duration had been setup and has now been reached.
+  static const int infoMaxDurationReached = 0x00000320;
+
+  /// A maximum filesize had been setup and has now been reached.
+  ///
+  /// Note: This event will not be sent if application already set next output
+  /// file through [setNextOutputFile].
+  static const int infoMaxFilesizeReached = 0x00000321;
+
+  /// Unspecified media recorder info.
+  static const int infoUnknown = 0x00000001;
+
   static $MediaRecorderChannel get _channel =>
       ChannelRegistrar.instance.implementations.channelMediaRecorder;
+
+  /// Gets the maximum value for audio sources.
+  ///
+  /// See: [AudioSource]
+  static Future<int> getAudioSourceMax() async {
+    return await _channel.$getAudioSourceMax() as int;
+  }
 
   /// Sets a Camera to use for recording.
   ///
@@ -2234,13 +2283,208 @@ class MediaRecorder implements $MediaRecorder {
   /// output would be as if nothing happened during paused period, immediately
   /// switching to the resumed scene.
   ///
-  /// This is only supported on Android versions 24+.
+  /// This is only supported on Android versions >= `Build.VERSION_CODES.N`. A
+  /// [PlatformException] will be thrown on lower versions.
   Future<void> pause() => _channel.$pause(this);
 
   /// Resumes recording.
   ///
   /// Call this after [start]. It does nothing if the recording is not paused.
+  ///
+  /// This is only supported on Android versions >= `Build.VERSION_CODES.N`. A
+  /// [PlatformException] will be thrown on lower versions.
   Future<void> resume() => _channel.$resume(this);
+
+  /// Returns the maximum absolute amplitude that was sampled since the last call to this method.
+  ///
+  /// Call this only after the [setAudioSource].
+  ///
+  /// Returns 0 when called for the first time.
+  ///
+  /// Throws [PlatformException] if called before audio source has been set.
+  Future<int> getMaxAmplitude() async {
+    return await _channel.$getMaxAmplitude(this) as int;
+  }
+
+  /// Restarts the MediaRecorder to its idle state.
+  ///
+  /// After calling this method, you will have to configure it again as if it
+  /// had just been constructed.
+  Future<void> reset() {
+    return _channel.$reset(this);
+  }
+
+  /// Sets the number of audio channels for recording.
+  ///
+  /// Call this method before [prepare]. [prepare] may perform additional checks
+  /// on the parameter to make sure whether the specified number of audio
+  /// channels are applicable.
+  ///
+  /// Usually it is either 1 (mono) or 2 (stereo).
+  Future<void> setAudioChannels(int numChannels) {
+    return _channel.$setAudioChannels(this, numChannels);
+  }
+
+  /// Sets the audio encoding bit rate for recording in bits per second.
+  ///
+  /// Call this method before [prepare]. [prepare] may perform additional checks
+  /// on the parameter to make sure whether the specified bit rate is
+  /// applicable, and sometimes the passed bitRate will be clipped internally to
+  /// ensure the audio recording can proceed smoothly based on the capabilities
+  /// of the platform.
+  Future<void> setAudioEncodingBitRate(int bitRate) {
+    return _channel.$setAudioEncodingBitRate(this, bitRate);
+  }
+
+  /// Sets the audio sampling rate for recording in samples per second.
+  ///
+  /// Call this method before [prepare]. [prepare] may perform additional checks
+  /// on the parameter to make sure whether the specified audio sampling rate is
+  /// applicable. The sampling rate really depends on the format for the audio
+  /// recording, as well as the capabilities of the platform. For instance, the
+  /// sampling rate supported by AAC audio coding standard ranges from 8 to 96
+  /// kHz, the sampling rate supported by AMRNB is 8kHz, and the sampling rate
+  /// supported by AMRWB is 16kHz. Please consult with the related audio coding
+  /// standard for the supported audio sampling rate.
+  Future<void> setAudioSamplingRate(int samplingRate) {
+    return _channel.$setAudioSamplingRate(this, samplingRate);
+  }
+
+  /// Set video frame capture rate.
+  ///
+  /// This can be used to set a different video frame capture rate than the
+  /// recorded video's playback rate. This method also sets the recording mode
+  /// to time lapse. In time lapse video recording, only video is recorded.
+  /// Audio related parameters are ignored when a time lapse recording session
+  /// starts, if an application sets them.
+  ///
+  /// `fps`: Rate at which frames should be captured in frames per second.
+  /// The fps can go as low as desired. However the fastest fps will be limited
+  /// by the hardware. For resolutions that can be captured by the video camera,
+  /// the fastest fps can be computed using
+  /// [CameraParameters.getPreviewFpsRange] For higher resolutions the fastest
+  /// fps may be more restrictive. Note that the recorder cannot guarantee that
+  /// frames will be captured at the given rate due to camera/encoder
+  /// limitations. However it tries to be as close as possible.
+  Future<void> setCaptureRate(double fps) {
+    return _channel.$setCaptureRate(this, fps);
+  }
+
+  /// Set and store the geodata (latitude and longitude) in the output file.
+  ///
+  /// This method should be called before [prepare]. The geodata is stored in
+  /// udta box if the output format is [OutputFormat.threeGpp] or
+  /// [OutputFormat.mpeg4], and is ignored for other output formats. The geodata
+  /// is stored according to ISO-6709 standard.
+  ///
+  /// `latitude`: latitude in degrees. Its value must be in the range [-90, 90].
+  /// `longitude`: longitude in degrees. Its value must be in the range
+  /// [-180, 180].
+  ///
+  /// Throws a [PlatformException] if latitude or longitude are out of range.
+  Future<void> setLocation(double latitude, double longitude) {
+    return _channel.$setLocation(this, latitude, longitude);
+  }
+
+  /// Sets the maximum duration (in ms) of the recording session.
+  ///
+  /// Call this after [setOutputFormat] but before [prepare]. After recording
+  /// reaches the specified duration, a notification will be sent to the
+  /// [OnInfoListener] with a "what" code of [infoMaxDurationReached] and
+  /// recording will be stopped. Stopping happens asynchronously, there is no
+  /// guarantee that the recorder will have stopped by the time the listener is
+  /// notified.
+  ///
+  /// When using MPEG-4 container ([setOutputFormat] with [OutputFormat.mpeg4]),
+  /// it is recommended to set maximum duration that fits the use case. Setting
+  /// a larger than required duration may result in a larger than needed output
+  /// file because of space reserved for MOOV box expecting large movie data in
+  /// this recording session. Unused space of MOOV box is turned into FREE box
+  /// in the output file.
+  Future<void> setMaxDuration(int maxDurationMs) {
+    return _channel.$setMaxDuration(this, maxDurationMs);
+  }
+
+  /// Sets the maximum filesize (in bytes) of the recording session.
+  ///
+  /// Call this after [setOutputFormat] but before [prepare]. After recording
+  /// reaches the specified filesize, a notification will be sent to the
+  /// [OnInfoListener] with a "what" code of [infoMaxFilesizeReached] and
+  /// recording will be stopped. Stopping happens asynchronously, there is no
+  /// guarantee that the recorder will have stopped by the time the listener is
+  /// notified.
+  ///
+  /// When using MPEG-4 container ([setOutputFormat] with [OutputFormat.mpeg4]),
+  /// it is recommended to set maximum filesize that fits the use case. Setting
+  /// a larger than required filesize may result in a larger than needed output
+  /// file because of space reserved for MOOV box expecting large movie data in
+  /// this recording session. Unused space of MOOV box is turned into FREE box
+  /// in the output file.
+  Future<void> setMaxFileSize(int maxFilesizeBytes) {
+    return _channel.$setMaxFileSize(this, maxFilesizeBytes);
+  }
+
+  /// Register a callback to be invoked when an error occurs while recording.
+  Future<void> setOnErrorListener({required OnErrorListener onError}) {
+    return _channel.$setOnErrorListener(this, onError);
+  }
+
+  /// Register a callback to be invoked when an informational event occurs while recording.
+  Future<void> setOnInfoListener({required OnInfoListener onInfo}) {
+    return _channel.$setOnInfoListener(this, onInfo);
+  }
+
+  /// Sets the orientation hint for output video playback.
+  ///
+  /// This method should be called before [prepare]. This method will not
+  /// trigger the source video frame to rotate during video recording, but to
+  /// add a composition matrix containing the rotation angle in the output video
+  /// if the output format is [OutputFormat.threeGpp] or [OutputFormat.mpeg4] so
+  /// that a video player can choose the proper orientation for playback. Note
+  /// that some video players may choose to ignore the compostion matrix in a
+  /// video during playback.
+  ///
+  /// The supported angles are 0, 90, 180, and 270 degrees.
+  ///
+  /// Throws a [PlatformException] is the angle is not supported.
+  Future<void> setOrientationHint(int degrees) {
+    return _channel.$setOrientationHint(this, degrees);
+  }
+
+  /// Sets the video encoding bit rate for recording in bits per seconds.
+  ///
+  /// Call this method before [prepare]. [prepare] may perform additional checks
+  /// on the parameter to make sure whether the specified bit rate is
+  /// applicable, and sometimes the passed bitRate will be clipped internally to
+  /// ensure the video recording can proceed smoothly based on the capabilities
+  /// of the platform.
+  Future<void> setVideoEncodingBitRate(int bitRate) {
+    return _channel.$setVideoEncodingBitRate(this, bitRate);
+  }
+
+  /// Sets the frame rate of the video to be captured in frames per second.
+  ///
+  /// Must be called after [setVideoSource]. Call this after [setOutputFormat]
+  /// but before [prepare].
+  ///
+  /// Throws [PlatformException] if it is called after [prepare] or before
+  /// [setOutputFormat]. NOTE: On some devices that have auto-frame rate, this
+  /// sets the maximum frame rate, not a constant frame rate. Actual frame rate
+  /// will vary according to lighting conditions.
+  Future<void> setVideoFrameRate(int rate) {
+    return _channel.$setVideoFrameRate(this, rate);
+  }
+
+  /// Sets the width and height of the video to be captured.
+  ///
+  /// Must be called after [setVideoSource]. Call this after [setOutputFormat]
+  /// but before [prepare].
+  ///
+  /// Throws [PlatformException] if it is called after [prepare] or before
+  /// [setOutputFormat].
+  Future<void> setVideoSize(int width, int height) {
+    return _channel.$setVideoSize(this, width, height);
+  }
 }
 
 /// Image format constants.
