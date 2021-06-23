@@ -7,6 +7,7 @@ import android.os.Build;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
@@ -97,6 +98,19 @@ public class MediaRecorderProxyTest {
   public void videoSource() {
     assertEquals(MediaRecorder.VideoSource.CAMERA, 0x00000001);
     assertEquals(MediaRecorder.VideoSource.DEFAULT, 0x00000000);
+  }
+
+  @Test
+  public void error() {
+    assertEquals(MediaRecorder.MEDIA_ERROR_SERVER_DIED, 0x00000064);
+    assertEquals(MediaRecorder.MEDIA_RECORDER_ERROR_UNKNOWN, 0x00000001);
+  }
+
+  @Test
+  public void info() {
+    assertEquals(MediaRecorder.MEDIA_RECORDER_INFO_MAX_DURATION_REACHED, 0x00000320);
+    assertEquals(MediaRecorder.MEDIA_RECORDER_INFO_MAX_FILESIZE_REACHED, 0x00000321);
+    assertEquals(MediaRecorder.MEDIA_RECORDER_INFO_UNKNOWN, 0x00000001);
   }
 
   @Test
@@ -201,5 +215,107 @@ public class MediaRecorderProxyTest {
 
     testMediaRecorderProxy.resume();
     verify(mockMediaRecorder).resume();
+  }
+
+  @Test
+  public void getMaxAmplitude() {
+    when(mockMediaRecorder.getMaxAmplitude()).thenReturn(12);
+    assertEquals(testMediaRecorderProxy.getMaxAmplitude(), (Integer) 12);
+  }
+
+  @Test
+  public void reset() {
+    testMediaRecorderProxy.reset();
+    verify(mockMediaRecorder).reset();
+  }
+
+  @Test
+  public void setAudioChannels() {
+    testMediaRecorderProxy.setAudioChannels(12);
+    verify(mockMediaRecorder).setAudioChannels(12);
+  }
+
+  @Test
+  public void setAudioEncodingBitRate() {
+    testMediaRecorderProxy.setAudioEncodingBitRate(12);
+    verify(mockMediaRecorder).setAudioEncodingBitRate(12);
+  }
+
+  @Test
+  public void setAudioSamplingRate() {
+    testMediaRecorderProxy.setAudioSamplingRate(12);
+    verify(mockMediaRecorder).setAudioSamplingRate(12);
+  }
+
+  @Test
+  public void setCaptureRate() {
+    testMediaRecorderProxy.setCaptureRate(12.0);
+    verify(mockMediaRecorder).setCaptureRate(12.0);
+  }
+
+  @Test
+  public void setLocation() {
+    testMediaRecorderProxy.setLocation(12.0, 13.0);
+    verify(mockMediaRecorder).setLocation(12F, 13F);
+  }
+
+  @Test
+  public void setMaxDuration() {
+    testMediaRecorderProxy.setMaxDuration(12);
+    verify(mockMediaRecorder).setMaxDuration(12);
+  }
+
+  @Test
+  public void setMaxFileSize() {
+    testMediaRecorderProxy.setMaxFileSize(12);
+    verify(mockMediaRecorder).setMaxFileSize(12);
+  }
+
+  @Test
+  public void setOnErrorListener() {
+    final CameraChannelLibrary.$OnErrorListener mockListener = mock(CameraChannelLibrary.$OnErrorListener.class);
+
+    testMediaRecorderProxy.setOnErrorListener(mockListener);
+
+    final ArgumentCaptor<MediaRecorder.OnErrorListener> callbackCaptor = ArgumentCaptor.forClass(MediaRecorder.OnErrorListener.class);
+    verify(mockMediaRecorder).setOnErrorListener(callbackCaptor.capture());
+    callbackCaptor.getValue().onError(mockMediaRecorder, 2, 3);
+    verify(mockListener).invoke(2, 3);
+  }
+
+  @Test
+  public void setOnInfoListener() {
+    final CameraChannelLibrary.$OnInfoListener mockListener = mock(CameraChannelLibrary.$OnInfoListener.class);
+
+    testMediaRecorderProxy.setOnInfoListener(mockListener);
+
+    final ArgumentCaptor<MediaRecorder.OnInfoListener> callbackCaptor = ArgumentCaptor.forClass(MediaRecorder.OnInfoListener.class);
+    verify(mockMediaRecorder).setOnInfoListener(callbackCaptor.capture());
+    callbackCaptor.getValue().onInfo(mockMediaRecorder, 2, 3);
+    verify(mockListener).invoke(2, 3);
+  }
+
+  @Test
+  public void setOrientationHint() {
+    testMediaRecorderProxy.setOrientationHint(12);
+    verify(mockMediaRecorder).setOrientationHint(12);
+  }
+
+  @Test
+  public void setVideoEncodingBitRate() {
+    testMediaRecorderProxy.setVideoEncodingBitRate(12);
+    verify(mockMediaRecorder).setVideoEncodingBitRate(12);
+  }
+
+  @Test
+  public void setVideoFrameRate() {
+    testMediaRecorderProxy.setVideoFrameRate(12);
+    verify(mockMediaRecorder).setVideoFrameRate(12);
+  }
+
+  @Test
+  public void setVideoSize() {
+    testMediaRecorderProxy.setVideoSize(12, 15);
+    verify(mockMediaRecorder).setVideoSize(12, 15);
   }
 }

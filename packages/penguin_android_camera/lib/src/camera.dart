@@ -2426,11 +2426,19 @@ class MediaRecorder implements $MediaRecorder {
 
   /// Register a callback to be invoked when an error occurs while recording.
   Future<void> setOnErrorListener({required OnErrorListener onError}) {
+    ChannelRegistrar.instance.implementations.channelOnErrorListener.$$create(
+      onError,
+      $owner: false,
+    );
     return _channel.$setOnErrorListener(this, onError);
   }
 
   /// Register a callback to be invoked when an informational event occurs while recording.
   Future<void> setOnInfoListener({required OnInfoListener onInfo}) {
+    ChannelRegistrar.instance.implementations.channelOnInfoListener.$$create(
+      onInfo,
+      $owner: false,
+    );
     return _channel.$setOnInfoListener(this, onInfo);
   }
 

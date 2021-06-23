@@ -100,4 +100,93 @@ public class MediaRecorderProxy implements CameraChannelLibrary.$MediaRecorder {
     }
     return null;
   }
+
+  @Override
+  public Integer getMaxAmplitude() {
+    return mediaRecorder.getMaxAmplitude();
+  }
+
+  @Override
+  public Void reset() {
+    mediaRecorder.reset();
+    return null;
+  }
+
+  @Override
+  public Void setAudioChannels(Integer numChannels) {
+    mediaRecorder.setAudioChannels(numChannels);
+    return null;
+  }
+
+  @Override
+  public Void setAudioEncodingBitRate(Integer bitRate) {
+    mediaRecorder.setAudioEncodingBitRate(bitRate);
+    return null;
+  }
+
+  @Override
+  public Void setAudioSamplingRate(Integer samplingRate) {
+    mediaRecorder.setAudioSamplingRate(samplingRate);
+    return null;
+  }
+
+  @Override
+  public Void setCaptureRate(Double fps) {
+    mediaRecorder.setCaptureRate(fps);
+    return null;
+  }
+
+  @Override
+  public Void setLocation(Double latitude, Double longitude) {
+    mediaRecorder.setLocation(latitude.floatValue(), longitude.floatValue());
+    return null;
+  }
+
+  @Override
+  public Void setMaxDuration(Integer maxDurationMs) {
+    mediaRecorder.setMaxDuration(maxDurationMs);
+    return null;
+  }
+
+  @Override
+  public Void setMaxFileSize(Integer maxFilesizeBytes) {
+    mediaRecorder.setMaxFileSize(maxFilesizeBytes);
+    return null;
+  }
+
+  @Override
+  public Void setOnErrorListener(CameraChannelLibrary.$OnErrorListener onError) {
+    mediaRecorder.setOnErrorListener((mr, what, extra) -> onError.invoke(what, extra));
+    return null;
+  }
+
+  @Override
+  public Void setOnInfoListener(CameraChannelLibrary.$OnInfoListener onInfo) {
+    mediaRecorder.setOnInfoListener((mr, what, extra) -> onInfo.invoke(what, extra));
+    return null;
+  }
+
+  @Override
+  public Void setOrientationHint(Integer degrees) {
+    mediaRecorder.setOrientationHint(degrees);
+    return null;
+  }
+
+  @Override
+  public Void setVideoEncodingBitRate(Integer bitRate) {
+    mediaRecorder.setVideoEncodingBitRate(bitRate);
+    return null;
+  }
+
+  @Override
+  public Void setVideoFrameRate(Integer rate) {
+    mediaRecorder.setVideoFrameRate(rate);
+    return null;
+  }
+
+  @Override
+  public Void setVideoSize(Integer width, Integer height) {
+    mediaRecorder.setVideoSize(width, height);
+    return null;
+  }
 }
