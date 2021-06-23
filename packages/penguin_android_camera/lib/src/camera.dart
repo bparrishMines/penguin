@@ -1989,7 +1989,7 @@ abstract class VideoEncoder {
   static const int h264 = 0x00000002;
 
   /// Android MediaRecorder.VideoEncoder.HEVC format.
-  static const int hvec = 0x00000005;
+  static const int hevc = 0x00000005;
 
   /// Android MediaRecorder.VideoEncoder.VP8 format.
   static const int vp8 = 0x00000004;
@@ -2106,7 +2106,7 @@ abstract class AudioEncoder {
 ///
 /// These constants are used with [MediaRecorder.setVideoSource].
 abstract class VideoSource {
-  /// Using the Camera API as video source.
+  /// Using the Android Camera API as video source. (e.x. [Camera]).
   static const int camera = 0x00000001;
 
   /// Android `MediaRecorder.VideoSource.DEFAULT` source.

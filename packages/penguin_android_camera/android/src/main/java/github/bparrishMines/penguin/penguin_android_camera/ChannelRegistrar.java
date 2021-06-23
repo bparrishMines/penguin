@@ -36,6 +36,11 @@ public class ChannelRegistrar extends CameraChannelLibrary.$ChannelRegistrar {
     public CameraRectHandler getHandlerCameraRect() {
       return new CameraRectHandler(this);
     }
+
+    @Override
+    public ImageFormatHandler getHandlerImageFormat() {
+      return new ImageFormatHandler();
+    }
   }
 
   public static class CameraHandler extends CameraChannelLibrary.$CameraHandler {
@@ -88,6 +93,13 @@ public class ChannelRegistrar extends CameraChannelLibrary.$ChannelRegistrar {
     @Override
     public CameraRectProxy $$create(TypeChannelMessenger messenger, Integer top, Integer bottom, Integer right, Integer left) {
       return new CameraRectProxy(left, top, right, bottom, implementations);
+    }
+  }
+
+  public static class ImageFormatHandler extends CameraChannelLibrary.$ImageFormatHandler {
+    @Override
+    public Integer $getBitsPerPixel(TypeChannelMessenger messenger, Integer format) {
+      return ImageFormatProxy.getBitsPerPixel(format);
     }
   }
 }

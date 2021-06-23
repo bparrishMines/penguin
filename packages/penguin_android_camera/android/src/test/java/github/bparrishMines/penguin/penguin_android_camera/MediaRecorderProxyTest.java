@@ -59,21 +59,44 @@ public class MediaRecorderProxyTest {
   @Test
   public void videoEncoder() {
     assertEquals(MediaRecorder.VideoEncoder.MPEG_4_SP, 0x00000003);
+    assertEquals(MediaRecorder.VideoEncoder.H263, 0x00000001);
+    assertEquals(MediaRecorder.VideoEncoder.H264, 0x00000002);
+    assertEquals(MediaRecorder.VideoEncoder.HEVC, 0x00000005);
+    assertEquals(MediaRecorder.VideoEncoder.VP8, 0x00000004);
+    assertEquals(MediaRecorder.VideoEncoder.DEFAULT, 0x00000000);
   }
 
   @Test
   public void audioSource() {
+    assertEquals(MediaRecorder.AudioSource.CAMCORDER, 0x00000005);
     assertEquals(MediaRecorder.AudioSource.DEFAULT, 0x00000000);
+    assertEquals(MediaRecorder.AudioSource.MIC, 0x00000001);
+    assertEquals(MediaRecorder.AudioSource.REMOTE_SUBMIX, 0x00000008);
+    assertEquals(MediaRecorder.AudioSource.UNPROCESSED, 0x00000009);
+    assertEquals(MediaRecorder.AudioSource.VOICE_CALL, 0x00000004);
+    assertEquals(MediaRecorder.AudioSource.VOICE_COMMUNICATION, 0x00000007);
+    assertEquals(MediaRecorder.AudioSource.VOICE_DOWNLINK, 0x00000003);
+    assertEquals(MediaRecorder.AudioSource.VOICE_PERFORMANCE, 0x0000000a);
+    assertEquals(MediaRecorder.AudioSource.VOICE_RECOGNITION, 0x00000006);
+    assertEquals(MediaRecorder.AudioSource.VOICE_UPLINK, 0x00000002);
   }
 
   @Test
   public void audioEncoder() {
+    assertEquals(MediaRecorder.AudioEncoder.AAC, 0x00000003);
+    assertEquals(MediaRecorder.AudioEncoder.AAC_ELD, 0x00000005);
     assertEquals(MediaRecorder.AudioEncoder.AMR_NB, 0x00000001);
+    assertEquals(MediaRecorder.AudioEncoder.AMR_WB, 0x00000002);
+    assertEquals(MediaRecorder.AudioEncoder.DEFAULT, 0x00000000);
+    assertEquals(MediaRecorder.AudioEncoder.HE_AAC, 0x00000004);
+    assertEquals(MediaRecorder.AudioEncoder.OPUS, 0x00000007);
+    assertEquals(MediaRecorder.AudioEncoder.VORBIS, 0x00000006);
   }
 
   @Test
   public void videoSource() {
     assertEquals(MediaRecorder.VideoSource.CAMERA, 0x00000001);
+    assertEquals(MediaRecorder.VideoSource.DEFAULT, 0x00000000);
   }
 
   @Test
