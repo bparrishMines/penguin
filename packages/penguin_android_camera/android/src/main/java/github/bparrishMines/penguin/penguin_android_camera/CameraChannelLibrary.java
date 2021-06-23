@@ -766,7 +766,7 @@ public class CameraChannelLibrary {
     
     
     
-    Object setMeteringAreas(List<$CameraArea> meteringArea) throws Exception;
+    Object setMeteringAreas(List<$CameraArea> meteringAreas) throws Exception;
     
     
     
@@ -868,6 +868,10 @@ public class CameraChannelLibrary {
     
     Object resume() throws Exception;
     
+    
+  }
+  
+  public interface $ImageFormat {
     
   }
   
@@ -1216,6 +1220,22 @@ public class CameraChannelLibrary {
     
     
     
+    
+  }
+  
+  public static class $ImageFormatChannel extends TypeChannel<$ImageFormat> {
+    public $ImageFormatChannel(@NonNull TypeChannelMessenger messenger) {
+      super(messenger, "penguin_android_camera/camera/ImageFormat");
+    }
+
+    public Completable<PairedInstance> $$create($ImageFormat $instance, boolean $owner) {
+      return createNewInstancePair($instance, Arrays.<Object>asList(), $owner);
+    }
+
+    
+    
+    
+
     
   }
   
@@ -2015,8 +2035,8 @@ public class CameraChannelLibrary {
     
     
     
-    public Object $setMeteringAreas($CameraParameters $instance,List<$CameraArea> meteringArea) throws Exception {
-      return $instance.setMeteringAreas( meteringArea );
+    public Object $setMeteringAreas($CameraParameters $instance,List<$CameraArea> meteringAreas) throws Exception {
+      return $instance.setMeteringAreas( meteringAreas );
     }
     
     
@@ -2895,6 +2915,62 @@ public class CameraChannelLibrary {
     }
   }
   
+  public static class $ImageFormatHandler implements TypeChannelHandler<$ImageFormat> {
+    public $ImageFormat $$create(TypeChannelMessenger messenger)
+        throws Exception {
+      throw new UnsupportedOperationException();
+    }
+
+    
+    
+    public Object $getBitsPerPixel(TypeChannelMessenger messenger,Integer format)
+        throws Exception {
+      throw new UnsupportedOperationException();
+    }
+    
+    
+
+    
+
+    @Override
+    public Object invokeStaticMethod(
+        TypeChannelMessenger messenger, String methodName, List<Object> arguments)
+        throws Exception {
+      switch (methodName) {
+        
+        
+        case "getBitsPerPixel":
+          return $getBitsPerPixel(messenger,(Integer) arguments.get(0));
+        
+        
+      }
+
+      throw new UnsupportedOperationException(
+          String.format("Unable to invoke static method %s", methodName));
+    }
+
+    @Override
+    public $ImageFormat createInstance(TypeChannelMessenger messenger, List<Object> arguments)
+        throws Exception {
+      return $$create(messenger);
+    }
+
+    @Override
+    public Object invokeMethod(
+        TypeChannelMessenger messenger,
+        $ImageFormat instance,
+        String methodName,
+        List<Object> arguments)
+        throws Exception {
+      switch(methodName) {
+        
+      }
+
+      throw new UnsupportedOperationException(
+          String.format("%s.%s not supported.", instance, methodName));
+    }
+  }
+  
 
   public static class $LibraryImplementations {
     public final TypeChannelMessenger messenger;
@@ -2958,6 +3034,14 @@ public class CameraChannelLibrary {
 
     public $MediaRecorderHandler getHandlerMediaRecorder() {
       return new $MediaRecorderHandler();
+    }
+    
+    public $ImageFormatChannel getChannelImageFormat() {
+      return new $ImageFormatChannel(messenger);
+    }
+
+    public $ImageFormatHandler getHandlerImageFormat() {
+      return new $ImageFormatHandler();
     }
     
 
@@ -3043,6 +3127,8 @@ public class CameraChannelLibrary {
       
       implementations.getChannelMediaRecorder().setHandler(implementations.getHandlerMediaRecorder());
       
+      implementations.getChannelImageFormat().setHandler(implementations.getHandlerImageFormat());
+      
       
       implementations.getChannelErrorCallback().setHandler(implementations.getHandlerErrorCallback());
       
@@ -3075,6 +3161,8 @@ public class CameraChannelLibrary {
       implementations.getChannelCameraInfo().removeHandler();
       
       implementations.getChannelMediaRecorder().removeHandler();
+      
+      implementations.getChannelImageFormat().removeHandler();
       
       
       implementations.getChannelErrorCallback().removeHandler();

@@ -1979,8 +1979,23 @@ abstract class OutputFormat {
 ///
 /// These constants are used with [MediaRecorder.setVideoEncoder].
 abstract class VideoEncoder {
-  /// Android MediaRecorder.VideoEncoder.MPEG_4_SP format
+  /// Android MediaRecorder.VideoEncoder.MPEG_4_SP format.
   static const int mpeg4Sp = 0x00000003;
+
+  /// Android MediaRecorder.VideoEncoder.H263 format.
+  static const int h263 = 0x00000001;
+
+  /// Android MediaRecorder.VideoEncoder.H264 format.
+  static const int h264 = 0x00000002;
+
+  /// Android MediaRecorder.VideoEncoder.HEVC format.
+  static const int hvec = 0x00000005;
+
+  /// Android MediaRecorder.VideoEncoder.VP8 format.
+  static const int vp8 = 0x00000004;
+
+  /// Android MediaRecorder.VideoEncoder.DEFAULT format.
+  static const int defaultEncoding = 0x00000000;
 }
 
 /// Defines the audio source.
@@ -1989,16 +2004,102 @@ abstract class VideoEncoder {
 /// a recording configuration. These constants are for instance used in
 /// [MediaRecorder.setAudioSource].
 abstract class AudioSource {
-  /// Default audio source *
+  /// Microphone audio source tuned for video recording, with the same orientation as the camera if available.
+  static const int camcorder = 0x00000005;
+
+  /// Default audio source.
   static const int defaultSource = 0x00000000;
+
+  /// Microphone audio source
+  static const int mic = 0x00000001;
+
+  /// Audio source for a submix of audio streams to be presented remotely.
+  ///
+  /// An application can use this audio source to capture a mix of audio streams
+  /// that should be transmitted to a remote receiver such as a Wifi display.
+  /// While recording is active, these audio streams are redirected to the
+  /// remote submix instead of being played on the device speaker or headset.
+  ///
+  /// Certain streams are excluded from the remote submix, including Android
+  /// AudioManager#STREAM_RING, AudioManager#STREAM_ALARM, and
+  /// AudioManager#STREAM_NOTIFICATION. These streams will continue to be
+  /// presented locally as usual.
+  ///
+  /// Capturing the remote submix audio requires the Android
+  /// `Manifest.permission.CAPTURE_AUDIO_OUTPUT` permission. This permission is
+  /// reserved for use by system components and is not available to third-party
+  /// applications.
+  static const int remoteSubmix = 0x00000008;
+
+  /// Microphone audio source tuned for unprocessed (raw) sound if available, behaves like [defaultSource] otherwise.
+  static const int unprocessed = 0x00000009;
+
+  /// Voice call uplink + downlink audio source.
+  ///
+  /// Capturing from [voiceCall] source requires the Android
+  /// `Manifest.permission.CAPTURE_AUDIO_OUTPUT` permission. This permission is
+  /// reserved for use by system components and is not available to third-party
+  /// applications.
+  static const int voiceCall = 0x00000004;
+
+  /// Microphone audio source tuned for voice communications such as VoIP.
+  ///
+  /// It will for instance take advantage of echo cancellation or automatic gain
+  /// control if available.
+  static const int voiceCommunication = 0x00000007;
+
+  /// Voice call downlink (Rx) audio source.
+  ///
+  /// Capturing from [voiceDownlink] source requires the Android
+  /// `Manifest.permission.CAPTURE_AUDIO_OUTPUT` permission. This permission is
+  /// reserved for use by system components and is not available to third-party
+  /// applications.
+  static const int voiceDownlink = 0x00000003;
+
+  /// Source for capturing audio meant to be processed in real time and played back for live performance (e.g karaoke).
+  ///
+  /// The capture path will minimize latency and coupling with playback path.
+  static const int voicePerformance = 0x0000000a;
+
+  /// Microphone audio source tuned for voice recognition.
+  static const int voiceRecognition = 0x00000006;
+
+  /// Voice call uplink (Tx) audio source.
+  ///
+  /// Capturing from [voiceUplink] source requires the Android
+  /// `Manifest.permission.CAPTURE_AUDIO_OUTPUT` permission. This permission is
+  /// reserved for use by system components and is not available to third-party
+  /// applications.
+  static const int voiceUplink = 0x00000002;
 }
 
 /// Defines the audio encoding.
 ///
 /// These constants are used with [MediaRecorder.setAudioEncoder].
 abstract class AudioEncoder {
+  /// AAC Low Complexity (AAC-LC) audio codec.
+  static const int aac = 0x00000003;
+
+  /// Enhanced Low Delay AAC (AAC-ELD) audio codec.
+  static const int aacEld = 0x00000005;
+
   /// AMR (Narrowband) audio codec.
   static const int amrNb = 0x00000001;
+
+  /// AMR (Wideband) audio codec.
+  static const int amrWb = 0x00000002;
+
+  /// Android `MediaRecorder.AudioEncoder.DEFAULT` format.
+  static const int defaultEncoding = 0x00000000;
+
+  /// High Efficiency AAC (HE-AAC) audio codec.
+  static const int heAcc = 0x00000004;
+
+  /// Opus audio codec.
+  static const int opus = 0x00000007;
+
+  /// Ogg Vorbis audio codec (Support is optional).
+  static const int vorbis = 0x00000006;
 }
 
 /// Defines the video source.
@@ -2007,6 +2108,9 @@ abstract class AudioEncoder {
 abstract class VideoSource {
   /// Using the Camera API as video source.
   static const int camera = 0x00000001;
+
+  /// Android `MediaRecorder.VideoSource.DEFAULT` source.
+  static const int defaultSource = 0x00000000;
 }
 
 /// Used to record audio and video.
@@ -2140,8 +2244,12 @@ class MediaRecorder implements $MediaRecorder {
 }
 
 /// Image format constants.
+@Reference('penguin_android_camera/camera/ImageFormat')
 abstract class ImageFormat {
   ImageFormat._();
+
+  static $ImageFormatChannel get _channel =>
+      ChannelRegistrar.instance.implementations.channelImageFormat;
 
   /// Android dense depth image format.
   ///
@@ -2162,5 +2270,104 @@ abstract class ImageFormat {
   /// `y_size = stride * height`
   ///
   /// When produced by a camera, the units for the range are millimeters.
+  ///
+  /// See:
+  ///   https://developer.android.com/reference/android/graphics/ImageFormat#DEPTH16
   static const int depth16 = 0x44363159;
+
+  /// Depth augmented compressed JPEG format.
+  ///
+  /// JPEG compressed main image along with XMP embedded depth metadata
+  /// following ISO 16684-1:2011(E).
+  static const int depthJpeg = 0x69656963;
+
+  /// Compressed HEIC format.
+  ///
+  /// This format defines the HEIC brand of High Efficiency Image File Format as
+  /// described in ISO/IEC 23008-12.
+  static const int heic = 0x48454946;
+
+  /// Compressed JPEG format.
+  ///
+  /// This format is always supported as an output format for the
+  /// android.hardware.camera2 API, and as a picture format for the older
+  /// Camera API.
+  static const int jpeg = 0x00000100;
+
+  /// YCbCr format, used for video.
+  ///
+  /// Whether this format is supported by the old camera API can be determined
+  /// by [CameraParameters.getSupportedPreviewFormats].
+  static const int nv16 = 0x00000010;
+
+  /// YCrCb format used for images, which uses the NV21 encoding format.
+  ///
+  /// This is the default format for Camera preview images, when not otherwise
+  /// set with [CameraParameters.setPreviewFormat].
+  static const int nv21 = 0x00000011;
+
+  /// Private raw camera sensor image format, a single channel image with implementation depedent pixel layout.
+  ///
+  /// [rawPrivate] is a format for unprocessed raw image buffers coming from an
+  /// image sensor. The actual structure of buffers of this format is
+  /// implementation-dependent.
+  static const int rawPrivate = 0x00000024;
+
+  /// RGB format used for pictures encoded as RGB_565.
+  ///
+  /// See [CameraParameters.setPictureFormat].
+  static const int rgb565 = 0x00000004;
+
+  // ignore: public_member_api_docs
+  static const int unknown = 0x00000000;
+
+  /// YCbCr format used for images, which uses YUYV (YUY2) encoding format.
+  ///
+  /// This is an alternative format for Camera preview images. Whether this
+  /// format is supported by the camera hardware can be determined by
+  /// [CameraParameters.getSupportedPreviewFormats].
+  static const int yuy2 = 0x00000014;
+
+  /// Android YUV format.
+  ///
+  /// This format is exposed to software decoders and applications.
+  ///
+  /// YV12 is a 4:2:0 YCrCb planar format comprised of a WxH Y plane followed by
+  /// (W/2) x (H/2) Cr and Cb planes.
+  ///
+  /// This format assumes:
+  ///   * an even width
+  ///   * an even height
+  ///   * a horizontal stride multiple of 16 pixels
+  ///   * a vertical stride equal to the height
+  ///
+  /// ```dart
+  ///  y_size = stride * height
+  ///  c_stride = ALIGN(stride/2, 16)
+  ///  c_size = c_stride * height/2
+  ///  size = y_size + c_size * 2
+  ///  cr_offset = y_size
+  ///  cb_offset = y_size + c_size
+  /// ``
+  ///
+  /// This format is guaranteed to be supported for Camera preview images; for
+  /// earlier API versions.
+  ///
+  /// Note that for camera preview callback use (see
+  /// [Camera.setPreviewCallback]), the stride value is the smallest possible;
+  /// that is, it is equal to:
+  ///
+  /// `stride = ALIGN(width, 16)`
+  ///
+  /// See:
+  ///   https://developer.android.com/reference/android/graphics/ImageFormat#YV12
+  static const int yv12 = 0x32315659;
+
+  /// Use this function to retrieve the number of bits per pixel of an [ImageFormat].
+  ///
+  /// Returns the number of bits per pixel of the given format or -1 if the
+  /// format doesn't exist or is not supported.
+  static Future<int> getBitsPerPixel(int format) async {
+    return await _channel.$getBitsPerPixel(format) as int;
+  }
 }
