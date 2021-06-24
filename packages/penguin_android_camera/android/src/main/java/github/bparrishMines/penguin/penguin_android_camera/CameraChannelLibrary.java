@@ -1023,9 +1023,17 @@ public class CameraChannelLibrary {
     Object setVideoSize(Integer width,Integer height) throws Exception;
     
     
+    
+    Object setProfile($CamcorderProfile profile) throws Exception;
+    
+    
   }
   
   public interface $ImageFormat {
+    
+  }
+  
+  public interface $CamcorderProfile {
     
   }
   
@@ -1407,6 +1415,8 @@ public class CameraChannelLibrary {
     
     
     
+    
+    
   }
   
   public static class $ImageFormatChannel extends TypeChannel<$ImageFormat> {
@@ -1418,6 +1428,24 @@ public class CameraChannelLibrary {
       return createNewInstancePair($instance, Arrays.<Object>asList(), $owner);
     }
 
+    
+    
+    
+
+    
+  }
+  
+  public static class $CamcorderProfileChannel extends TypeChannel<$CamcorderProfile> {
+    public $CamcorderProfileChannel(@NonNull TypeChannelMessenger messenger) {
+      super(messenger, "penguin_android_camera/camera/ImageFormat");
+    }
+
+    public Completable<PairedInstance> $$create($CamcorderProfile $instance, boolean $owner,Integer audioBitRate,Integer audioChannels,Integer audioCodec,Integer audioSampleRate,Integer duration,Integer fileFormat,Integer quality,Integer videoBitRate,Integer videoCodec,Integer videoFrameHeight,Integer videoFrameRate,Integer videoFrameWidth) {
+      return createNewInstancePair($instance, Arrays.<Object>asList(audioBitRate,audioChannels,audioCodec,audioSampleRate,duration,fileFormat,quality,videoBitRate,videoCodec,videoFrameHeight,videoFrameRate,videoFrameWidth), $owner);
+    }
+
+    
+    
     
     
     
@@ -3098,6 +3126,12 @@ public class CameraChannelLibrary {
     }
     
     
+    
+    public Object $setProfile($MediaRecorder $instance,$CamcorderProfile profile) throws Exception {
+      return $instance.setProfile( profile );
+    }
+    
+    
 
     @Override
     public Object invokeStaticMethod(
@@ -3271,6 +3305,11 @@ public class CameraChannelLibrary {
           return $setVideoSize(instance,(Integer) arguments.get(0),(Integer) arguments.get(1));
         
         
+        
+        case "setProfile":
+          return $setProfile(instance,($CamcorderProfile) arguments.get(0));
+        
+        
       }
 
       throw new UnsupportedOperationException(
@@ -3322,6 +3361,74 @@ public class CameraChannelLibrary {
     public Object invokeMethod(
         TypeChannelMessenger messenger,
         $ImageFormat instance,
+        String methodName,
+        List<Object> arguments)
+        throws Exception {
+      switch(methodName) {
+        
+      }
+
+      throw new UnsupportedOperationException(
+          String.format("%s.%s not supported.", instance, methodName));
+    }
+  }
+  
+  public static class $CamcorderProfileHandler implements TypeChannelHandler<$CamcorderProfile> {
+    public $CamcorderProfile $$create(TypeChannelMessenger messenger,Integer audioBitRate,Integer audioChannels,Integer audioCodec,Integer audioSampleRate,Integer duration,Integer fileFormat,Integer quality,Integer videoBitRate,Integer videoCodec,Integer videoFrameHeight,Integer videoFrameRate,Integer videoFrameWidth)
+        throws Exception {
+      throw new UnsupportedOperationException();
+    }
+
+    
+    
+    public Object $get(TypeChannelMessenger messenger,Integer cameraId,Integer quality)
+        throws Exception {
+      throw new UnsupportedOperationException();
+    }
+    
+    
+    
+    public Object $hasProfile(TypeChannelMessenger messenger,Integer cameraId,Integer quality)
+        throws Exception {
+      throw new UnsupportedOperationException();
+    }
+    
+    
+
+    
+
+    @Override
+    public Object invokeStaticMethod(
+        TypeChannelMessenger messenger, String methodName, List<Object> arguments)
+        throws Exception {
+      switch (methodName) {
+        
+        
+        case "get":
+          return $get(messenger,(Integer) arguments.get(0),(Integer) arguments.get(1));
+        
+        
+        
+        case "hasProfile":
+          return $hasProfile(messenger,(Integer) arguments.get(0),(Integer) arguments.get(1));
+        
+        
+      }
+
+      throw new UnsupportedOperationException(
+          String.format("Unable to invoke static method %s", methodName));
+    }
+
+    @Override
+    public $CamcorderProfile createInstance(TypeChannelMessenger messenger, List<Object> arguments)
+        throws Exception {
+      return $$create(messenger,(Integer) arguments.get(0),(Integer) arguments.get(1),(Integer) arguments.get(2),(Integer) arguments.get(3),(Integer) arguments.get(4),(Integer) arguments.get(5),(Integer) arguments.get(6),(Integer) arguments.get(7),(Integer) arguments.get(8),(Integer) arguments.get(9),(Integer) arguments.get(10),(Integer) arguments.get(11));
+    }
+
+    @Override
+    public Object invokeMethod(
+        TypeChannelMessenger messenger,
+        $CamcorderProfile instance,
         String methodName,
         List<Object> arguments)
         throws Exception {
@@ -3405,6 +3512,14 @@ public class CameraChannelLibrary {
 
     public $ImageFormatHandler getHandlerImageFormat() {
       return new $ImageFormatHandler();
+    }
+    
+    public $CamcorderProfileChannel getChannelCamcorderProfile() {
+      return new $CamcorderProfileChannel(messenger);
+    }
+
+    public $CamcorderProfileHandler getHandlerCamcorderProfile() {
+      return new $CamcorderProfileHandler();
     }
     
 
@@ -3508,6 +3623,8 @@ public class CameraChannelLibrary {
       
       implementations.getChannelImageFormat().setHandler(implementations.getHandlerImageFormat());
       
+      implementations.getChannelCamcorderProfile().setHandler(implementations.getHandlerCamcorderProfile());
+      
       
       implementations.getChannelErrorCallback().setHandler(implementations.getHandlerErrorCallback());
       
@@ -3546,6 +3663,8 @@ public class CameraChannelLibrary {
       implementations.getChannelMediaRecorder().removeHandler();
       
       implementations.getChannelImageFormat().removeHandler();
+      
+      implementations.getChannelCamcorderProfile().removeHandler();
       
       
       implementations.getChannelErrorCallback().removeHandler();

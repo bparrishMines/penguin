@@ -2493,6 +2493,15 @@ class MediaRecorder implements $MediaRecorder {
   Future<void> setVideoSize(int width, int height) {
     return _channel.$setVideoSize(this, width, height);
   }
+
+  /// Uses the settings from a [CamcorderProfile] object for recording.
+  ///
+  /// This method should be called after the video AND audio sources are set,
+  /// and before [setOutputFile]. If a time lapse CamcorderProfile is used,
+  /// audio related source or recording parameters are ignored.
+  Future<void> setProfile(CamcorderProfile profile) {
+    return _channel.$setProfile(this, profile);
+  }
 }
 
 /// Image format constants.
@@ -2621,5 +2630,282 @@ abstract class ImageFormat {
   /// format doesn't exist or is not supported.
   static Future<int> getBitsPerPixel(int format) async {
     return await _channel.$getBitsPerPixel(format) as int;
+  }
+}
+
+/// Retrieves the predefined camcorder profile settings for camcorder applications.
+///
+/// These settings are read-only.
+///
+/// The compressed output from a recording session with a given CamcorderProfile
+/// contains two tracks: one for audio and one for video.
+///
+/// Each profile specifies the following set of parameters:
+///   * File output format
+///   * Video codec format
+///   * Video bit rate in bits per second
+///   * Video frame rate in frames per second
+///   * Video frame width and height,
+///   * Audio codec format
+///   * Audio bit rate in bits per second,
+///   * Audio sample rate
+///   * Number of audio channels for recording
+@Reference('penguin_android_camera/camera/ImageFormat')
+class CamcorderProfile implements $CamcorderProfile {
+  /// Default constructor for [CamcorderProfile].
+  ///
+  /// See: [MediaRecorder].
+  CamcorderProfile({
+    required this.audioBitRate,
+    required this.audioChannels,
+    required this.audioCodec,
+    required this.audioSampleRate,
+    required this.duration,
+    required this.fileFormat,
+    required this.quality,
+    required this.videoBitRate,
+    required this.videoCodec,
+    required this.videoFrameHeight,
+    required this.videoFrameRate,
+    required this.videoFrameWidth,
+    @ignoreParam bool create = true,
+  }) {
+    if (create) {
+      _channel.$$create(
+        this,
+        $owner: true,
+        audioBitRate: audioBitRate,
+        audioChannels: audioChannels,
+        audioCodec: audioCodec,
+        audioSampleRate: audioSampleRate,
+        duration: duration,
+        fileFormat: fileFormat,
+        quality: quality,
+        videoBitRate: videoBitRate,
+        videoCodec: videoCodec,
+        videoFrameHeight: videoFrameHeight,
+        videoFrameRate: videoFrameRate,
+        videoFrameWidth: videoFrameWidth,
+      );
+    }
+  }
+
+  /// Quality level corresponding to the 1080p (1920 x 1080) resolution.
+  ///
+  /// Note that the vertical resolution for 1080p can also be 1088, instead of
+  /// 1080 (used by some vendors to avoid cropping during video playback).
+  static const int quality1080p = 0x00000006;
+
+  /// Quality level corresponding to the 2160p (3840x2160) resolution.
+  static const int quality2160p = 0x00000008;
+
+  /// Quality level corresponding to the 480p (720 x 480) resolution.
+  ///
+  /// Note that the horizontal resolution for 480p can also be other values,
+  /// such as 640 or 704, instead of 720.
+  static const int quality480p = 0x00000004;
+
+  /// Quality level corresponding to the 720p (1280 x 720) resolution.
+  static const int quality720p = 0x00000005;
+
+  /// Quality level corresponding to the cif (352 x 288) resolution.
+  static const int qualityCif = 0x00000003;
+
+  /// Quality level corresponding to the highest available resolution.
+  static const int qualityHigh = 0x00000001;
+
+  /// High speed ( >= 100fps) quality level corresponding to the 1080p (1920 x 1080 or 1920x1088) resolution.
+  static const int qualityHighSpeed1080p = 0x000007d4;
+
+  /// High speed ( >= 100fps) quality level corresponding to the 2160p (3840 x 2160) resolution.
+  static const int qualityHighSpeed2160p = 0x000007d5;
+
+  /// High speed ( >= 100fps) quality level corresponding to the 480p (720 x 480) resolution.
+  ///
+  /// Note that the horizontal resolution for 480p can also be other values,
+  /// such as 640 or 704, instead of 720.
+  static const int qualityHighSpeed480p = 0x000007d2;
+
+  /// High speed ( >= 100fps) quality level corresponding to the 720p (1280 x 720) resolution.
+  static const int qualityHighSpeed720p = 0x000007d3;
+
+  /// High speed ( >= 100fps) quality level corresponding to the highest available resolution.
+  static const int qualityHighSpeedHigh = 0x000007d1;
+
+  /// High speed ( >= 100fps) quality level corresponding to the lowest available resolution.
+  ///
+  /// For all the high speed profiles defined below
+  /// ((from [qualityHighSpeedLow] to [qualityHighSpeed2160p]), they are similar
+  /// as normal recording profiles, with just higher output frame rate and bit
+  /// rate. Therefore, setting these profiles with [MediaRecorder.setProfile]
+  /// without specifying any other encoding parameters will produce high speed
+  /// videos rather than slow motion videos that have different capture and
+  /// output (playback) frame rates. To record slow motion videos, the
+  /// application must set video output (playback) frame rate and bit rate
+  /// appropriately via [MediaRecorder.setVideoFrameRate] and
+  /// [MediaRecorder.setVideoEncodingBitRate] based on the slow motion factor.
+  ///
+  /// In native code:
+  /// If the application intends to do the video recording with MediaCodec
+  /// encoder, it must set each individual field of MediaFormat similarly
+  /// according to this [CamcorderProfile].
+  static const int qualityHighSpeedLow = 0x000007d0;
+
+  /// High speed ( >= 100fps) quality level corresponding to the VGA (640 x 480).
+  static const int qualityHighSpeedVga = 0x000007d7;
+
+  /// Quality level corresponding to the lowest available resolution.
+  static const int qualityLow = 0x00000000;
+
+  /// Quality level corresponding to the qcif (176 x 144) resolution.
+  static const int qualityQcif = 0x00000002;
+
+  /// Quality level corresponding to the QVGA (320x240) resolution.
+  static const int qualityQvga = 0x00000007;
+
+  /// Time lapse quality level corresponding to the 1080p (1920 x 1088) resolution.
+  static const int qualityTimeLapse1080p = 0x000003ee;
+
+  /// Time lapse quality level corresponding to the 2160p (3840 x 2160) resolution.
+  static const int qualityTimeLapse2160p = 0x000003f0;
+
+  /// Time lapse quality level corresponding to the 480p (720 x 480) resolution.
+  static const int qualityTimeLapse480p = 0x000003ec;
+
+  /// Time lapse quality level corresponding to the 720p (1280 x 720) resolution.
+  static const int qualityTimeLapse720p = 0x000003ed;
+
+  /// Time lapse quality level corresponding to the cif (352 x 288) resolution.
+  static const int qualityTimeLapseCif = 0x000003eb;
+
+  /// Time lapse quality level corresponding to the highest available resolution.
+  static const int qualityTimeLapseHigh = 0x000003e9;
+
+  /// Time lapse quality level corresponding to the lowest available resolution.
+  static const int qualityTimeLapseLow = 0x000003e8;
+
+  /// Time lapse quality level corresponding to the qcif (176 x 144) resolution.
+  static const int qualityTimeLapseQcif = 0x00000007;
+
+  /// Time lapse quality level corresponding to the QVGA (320 x 240) resolution.
+  static const int qualityTimeLapseQvga = 0x000003ef;
+
+  static $CamcorderProfileChannel get _channel =>
+      ChannelRegistrar.instance.implementations.channelCamcorderProfile;
+
+  /// The target audio output bit rate in bits per second.
+  final int audioBitRate;
+
+  /// The number of audio channels used for the audio track.
+  final int audioChannels;
+
+  /// The audio encoder being used for the audio track.
+  final int audioCodec;
+
+  /// The audio sampling rate used for the audio track.
+  final int audioSampleRate;
+
+  /// Default recording duration in seconds before the session is terminated.
+  ///
+  /// This is useful for applications like MMS has limited file size requirement.
+  final int duration;
+
+  /// The file output format of the camcorder profile.
+  final int fileFormat;
+
+  /// The quality level of the camcorder profile.
+  final int quality;
+
+  /// The target video output bit rate in bits per second.
+  ///
+  /// This is the target recorded video output bit rate if the application
+  /// configures the video recording via [MediaRecorder.setProfile] without
+  /// specifying any other [MediaRecorder] encoding parameters. For example, for
+  /// high speed quality profiles (from [qualityHighSpeedLow] to
+  /// [qualityHighSpeed2160p]), this is the bit rate where the video is recorded
+  /// with. If the application intends to record slow motion videos with the
+  /// high speed quality profiles, it must set a different video bit rate that
+  /// is corresponding to the desired recording output bit rate (i.e., the
+  /// encoded video bit rate during normal playback) via
+  /// [MediaRecorder.setVideoEncodingBitRate]. For example, if
+  /// [qualityHighSpeed720p] advertises 240fps [videoFrameRate] and 64Mbps
+  /// [videoBitRate] in the high speed [CamcorderProfile], and the application
+  /// intends to record 1/8 factor slow motion recording videos, the application
+  /// must set 30fps via [MediaRecorder.setVideoFrameRate] and 8Mbps
+  /// (`videoBitRate * slow motion factor`) via
+  /// [MediaRecorder.setVideoEncodingBitRate]. Failing to do so will result in
+  /// videos with unexpected frame rate and bit rate, or [MediaRecorder] error
+  /// if the output bit rate exceeds the encoder limit.
+  ///
+  /// In native Android code:
+  /// If the application intends to do the video recording with MediaCodec
+  /// encoder, it must set each individual field of MediaFormat similarly
+  /// according to this [CamcorderProfile].
+  final int videoBitRate;
+
+  /// The video encoder being used for the video track.
+  final int videoCodec;
+
+  /// The target video frame height in pixels.
+  final int videoFrameHeight;
+
+  /// The target video frame rate in frames per second.
+  ///
+  /// This is the target recorded video output frame rate per second if the
+  /// application configures the video recording via [MediaRecorder.setProfile]
+  /// without specifying any other [MediaRecorder] encoding parameters. For
+  /// example, for high speed quality profiles (from [qualityHighSpeedLow] to
+  /// [qualityHighSpeed2160p]), this is the frame rate where the video is
+  /// recorded and played back with. If the application intends to create slow
+  /// motion use case with the high speed quality profiles, it must set a
+  /// different video frame rate that is corresponding to the desired output
+  /// (playback) frame rate via [MediaRecorder.setVideoFrameRate]. For example,
+  /// if [qualityHighSpeed720p] advertises 240fps [videoFrameRate] in the
+  /// [CamcorderProfile], and the application intends to create 1/8 factor slow
+  /// motion recording videos, the application must set 30fps via
+  /// [MediaRecorder.setVideoFrameRate]. Failing to do so will result in high
+  /// speed videos with normal speed playback frame rate (240fps for above
+  /// example).
+  ///
+  /// In Android native code:
+  /// If the application intends to do the video recording with MediaCodec
+  /// encoder, it must set each individual field of MediaFormat similarly
+  /// according to this [CamcorderProfile].
+  final int videoFrameRate;
+
+  /// The target video frame width in pixels.
+  final int videoFrameWidth;
+
+  /// Returns the default camcorder profile for the given camera at the given quality level.
+  ///
+  /// Quality levels [qualityLow], [qualityHigh] are guaranteed to be supported,
+  /// while other levels may or may not be supported. The supported levels can
+  /// be checked using [CamcorderProfile.hasProfile]. [qualityLow] refers to the
+  /// lowest quality available, while [qualityHigh] refers to the highest
+  /// quality available. [qualityLow]/[qualityHigh] have to match one of
+  /// qcif, cif, 480p, 720p, 1080p or 2160p. E.g. if the device supports 480p,
+  /// 720p, 1080p and 2160p, then low is 480p and high is 2160p. The same is
+  /// true for time lapse quality levels, i.e. [qualityTimeLapseLow],
+  /// [qualityTimeLapseHigh] are guaranteed to be supported and have to match
+  /// one of qcif, cif, 480p, 720p, 1080p, or 2160p. For high speed quality
+  /// levels, they may or may not be supported. If a subset of the levels are
+  /// supported, [qualityHighSpeedLow] and [qualityHighSpeedHigh] are guaranteed
+  /// to be supported and have to match one of 480p, 720p, or 1080p. A camcorder
+  /// recording session with higher quality level usually has higher output bit
+  /// rate, better video and/or audio recording quality, larger video frame
+  /// resolution and higher audio sampling rate, etc, than those with lower
+  /// quality level.
+  ///
+  /// `cameraId`: id from [CameraInfo] from [Camera.getAllCameraInfo].
+  ///
+  /// Throws an [PlatformException] if  quality is not one of the defined
+  /// `quality...` const values.
+  static Future<CamcorderProfile> get(int cameraId, int quality) async {
+    return await _channel.$get(cameraId, quality) as CamcorderProfile;
+  }
+
+  /// Returns true if a camcorder profile exists for the given camera at the given quality level.
+  static Future<bool> hasProfile(int cameraId, int quality) async {
+    return await _channel.$hasProfile(cameraId, quality) as bool;
   }
 }
