@@ -189,4 +189,10 @@ public class MediaRecorderProxy implements CameraChannelLibrary.$MediaRecorder {
     mediaRecorder.setVideoSize(width, height);
     return null;
   }
+
+  @Override
+  public Void setProfile(CameraChannelLibrary.$CamcorderProfile profile) {
+    mediaRecorder.setProfile(((CamcorderProfileProxy)profile).camcorderProfile);
+    return null;
+  }
 }

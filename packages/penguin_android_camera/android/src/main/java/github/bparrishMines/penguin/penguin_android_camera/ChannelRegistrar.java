@@ -41,6 +41,11 @@ public class ChannelRegistrar extends CameraChannelLibrary.$ChannelRegistrar {
     public ImageFormatHandler getHandlerImageFormat() {
       return new ImageFormatHandler();
     }
+
+    @Override
+    public CameraChannelLibrary.$CamcorderProfileHandler getHandlerCamcorderProfile() {
+      return new CamcorderProfileHandler(this);
+    }
   }
 
   public static class CameraHandler extends CameraChannelLibrary.$CameraHandler {
@@ -100,6 +105,24 @@ public class ChannelRegistrar extends CameraChannelLibrary.$ChannelRegistrar {
     @Override
     public Integer $getBitsPerPixel(TypeChannelMessenger messenger, Integer format) {
       return ImageFormatProxy.getBitsPerPixel(format);
+    }
+  }
+
+  public static class CamcorderProfileHandler extends CameraChannelLibrary.$CamcorderProfileHandler {
+    public final LibraryImplementations implementations;
+
+    public CamcorderProfileHandler(LibraryImplementations implementations) {
+      this.implementations = implementations;
+    }
+
+    @Override
+    public CamcorderProfileProxy $get(TypeChannelMessenger messenger, Integer cameraId, Integer quality) {
+      return CamcorderProfileProxy.get(cameraId, quality, implementations);
+    }
+
+    @Override
+    public Boolean $hasProfile(TypeChannelMessenger messenger, Integer cameraId, Integer quality){
+      return CamcorderProfileProxy.hasProfile(cameraId, quality);
     }
   }
 }

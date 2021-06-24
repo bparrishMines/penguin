@@ -142,6 +142,7 @@ class CamcorderProfileHandler extends $CamcorderProfileHandler {
       int videoFrameHeight,
       int videoFrameRate,
       int videoFrameWidth) {
+    // ignore: invalid_use_of_visible_for_testing_member
     return CamcorderProfile(
       audioBitRate: audioBitRate,
       audioChannels: audioChannels,
@@ -155,7 +156,6 @@ class CamcorderProfileHandler extends $CamcorderProfileHandler {
       videoFrameHeight: videoFrameHeight,
       videoFrameRate: videoFrameRate,
       videoFrameWidth: videoFrameWidth,
-      create: false,
     );
   }
 }

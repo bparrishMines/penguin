@@ -1,6 +1,7 @@
 package github.bparrishMines.penguin.penguin_android_camera;
 
 import android.hardware.Camera;
+import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.os.Build;
 
@@ -33,12 +34,16 @@ public class MediaRecorderProxyTest {
   ChannelRegistrar.LibraryImplementations mockImplementations;
 
   @Mock
+  CameraChannelLibrary.$CamcorderProfileChannel mockCamcorderProfileChannel;
+
+  @Mock
   public MediaRecorder mockMediaRecorder;
 
   public MediaRecorderProxy testMediaRecorderProxy;
 
   @Before
   public void setUp() {
+    when(mockImplementations.getChannelCamcorderProfile()).thenReturn(mockCamcorderProfileChannel);
     testMediaRecorderProxy = new MediaRecorderProxy(mockMediaRecorder);
   }
 
@@ -317,5 +322,15 @@ public class MediaRecorderProxyTest {
   public void setVideoSize() {
     testMediaRecorderProxy.setVideoSize(12, 15);
     verify(mockMediaRecorder).setVideoSize(12, 15);
+  }
+
+  @Test
+  public void setProfile() {
+    final CamcorderProfileProxy camcorderProfileProxy = new CamcorderProfileProxy(
+        mock(CamcorderProfile.class),
+        mockImplementations);
+
+    testMediaRecorderProxy.setProfile(camcorderProfileProxy);
+    verify(mockMediaRecorder).setProfile(camcorderProfileProxy.camcorderProfile);
   }
 }

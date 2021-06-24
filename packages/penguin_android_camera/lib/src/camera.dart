@@ -2654,7 +2654,10 @@ abstract class ImageFormat {
 class CamcorderProfile implements $CamcorderProfile {
   /// Default constructor for [CamcorderProfile].
   ///
-  /// See: [MediaRecorder].
+  /// See:
+  ///   [MediaRecorder]
+  ///   [CamcorderProfile.get]
+  @visibleForTesting
   CamcorderProfile({
     required this.audioBitRate,
     required this.audioChannels,
@@ -2668,27 +2671,7 @@ class CamcorderProfile implements $CamcorderProfile {
     required this.videoFrameHeight,
     required this.videoFrameRate,
     required this.videoFrameWidth,
-    @ignoreParam bool create = true,
-  }) {
-    if (create) {
-      _channel.$$create(
-        this,
-        $owner: true,
-        audioBitRate: audioBitRate,
-        audioChannels: audioChannels,
-        audioCodec: audioCodec,
-        audioSampleRate: audioSampleRate,
-        duration: duration,
-        fileFormat: fileFormat,
-        quality: quality,
-        videoBitRate: videoBitRate,
-        videoCodec: videoCodec,
-        videoFrameHeight: videoFrameHeight,
-        videoFrameRate: videoFrameRate,
-        videoFrameWidth: videoFrameWidth,
-      );
-    }
-  }
+  });
 
   /// Quality level corresponding to the 1080p (1920 x 1080) resolution.
   ///
@@ -2785,7 +2768,7 @@ class CamcorderProfile implements $CamcorderProfile {
   static const int qualityTimeLapseLow = 0x000003e8;
 
   /// Time lapse quality level corresponding to the qcif (176 x 144) resolution.
-  static const int qualityTimeLapseQcif = 0x00000007;
+  static const int qualityTimeLapseQcif = 0x000003ea;
 
   /// Time lapse quality level corresponding to the QVGA (320 x 240) resolution.
   static const int qualityTimeLapseQvga = 0x000003ef;
