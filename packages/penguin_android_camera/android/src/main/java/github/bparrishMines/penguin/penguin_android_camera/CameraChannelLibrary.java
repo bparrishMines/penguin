@@ -32,11 +32,7 @@ public class CameraChannelLibrary {
     public abstract Object invoke();
   }
   
-  public static abstract class $PictureCallback {
-    public abstract Object invoke(byte[] data);
-  }
-  
-  public static abstract class $PreviewCallback {
+  public static abstract class $DataCallback {
     public abstract Object invoke(byte[] data);
   }
   
@@ -103,31 +99,16 @@ public class CameraChannelLibrary {
     }
   }
   
-  public static class $PictureCallbackChannel extends TypeChannel<$PictureCallback> {
-    public $PictureCallbackChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "penguin_android_camera/camera/PictureCallback");
+  public static class $DataCallbackChannel extends TypeChannel<$DataCallback> {
+    public $DataCallbackChannel(@NonNull TypeChannelMessenger messenger) {
+      super(messenger, "penguin_android_camera/camera/DataCallback");
     }
 
-    public Completable<PairedInstance> $$create($PictureCallback $instance, boolean $owner) {
+    public Completable<PairedInstance> $$create($DataCallback $instance, boolean $owner) {
       return createNewInstancePair($instance, Collections.emptyList(), $owner);
     }
 
-    private Completable<Object> invoke($PictureCallback $instance
-        ,byte[] data) {
-      return invokeMethod($instance, "", Arrays.<Object>asList(data));
-    }
-  }
-  
-  public static class $PreviewCallbackChannel extends TypeChannel<$PreviewCallback> {
-    public $PreviewCallbackChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "penguin_android_camera/camera/PreviewCallback");
-    }
-
-    public Completable<PairedInstance> $$create($PreviewCallback $instance, boolean $owner) {
-      return createNewInstancePair($instance, Collections.emptyList(), $owner);
-    }
-
-    private Completable<Object> invoke($PreviewCallback $instance
+    private Completable<Object> invoke($DataCallback $instance
         ,byte[] data) {
       return invokeMethod($instance, "", Arrays.<Object>asList(data));
     }
@@ -279,19 +260,19 @@ public class CameraChannelLibrary {
     }
   }
   
-  public static class $PictureCallbackHandler implements TypeChannelHandler<$PictureCallback> {
+  public static class $DataCallbackHandler implements TypeChannelHandler<$DataCallback> {
     public final $LibraryImplementations implementations;
 
-    public $PictureCallbackHandler($LibraryImplementations implementations) {
+    public $DataCallbackHandler($LibraryImplementations implementations) {
       this.implementations = implementations;
     }
 
     @Override
-    public $PictureCallback createInstance(TypeChannelMessenger messenger, List<Object> arguments) {
-      return new $PictureCallback() {
+    public $DataCallback createInstance(TypeChannelMessenger messenger, List<Object> arguments) {
+      return new $DataCallback() {
         @Override
         public Object invoke(byte[] data) {
-          return implementations.getChannelPictureCallback().invoke(this,data);
+          return implementations.getChannelDataCallback().invoke(this,data);
         }
       };
     }
@@ -302,35 +283,7 @@ public class CameraChannelLibrary {
     }
 
     @Override
-    public Object invokeMethod(TypeChannelMessenger messenger, $PictureCallback instance, String methodName, List<Object> arguments) throws Exception {
-      return instance.invoke((byte[]) arguments.get(0));
-    }
-  }
-  
-  public static class $PreviewCallbackHandler implements TypeChannelHandler<$PreviewCallback> {
-    public final $LibraryImplementations implementations;
-
-    public $PreviewCallbackHandler($LibraryImplementations implementations) {
-      this.implementations = implementations;
-    }
-
-    @Override
-    public $PreviewCallback createInstance(TypeChannelMessenger messenger, List<Object> arguments) {
-      return new $PreviewCallback() {
-        @Override
-        public Object invoke(byte[] data) {
-          return implementations.getChannelPreviewCallback().invoke(this,data);
-        }
-      };
-    }
-
-    @Override
-    public Void invokeStaticMethod(TypeChannelMessenger messenger, String methodName, List<Object> arguments) {
-      throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Object invokeMethod(TypeChannelMessenger messenger, $PreviewCallback instance, String methodName, List<Object> arguments) throws Exception {
+    public Object invokeMethod(TypeChannelMessenger messenger, $DataCallback instance, String methodName, List<Object> arguments) throws Exception {
       return instance.invoke((byte[]) arguments.get(0));
     }
   }
@@ -448,6 +401,14 @@ public class CameraChannelLibrary {
   }
   
 
+  
+  public interface $PictureCallback {
+    
+  }
+  
+  public interface $PreviewCallback {
+    
+  }
   
   public interface $Camera {
     
@@ -1039,6 +1000,34 @@ public class CameraChannelLibrary {
   
 
   
+  public static class $PictureCallbackChannel extends TypeChannel<$PictureCallback> {
+    public $PictureCallbackChannel(@NonNull TypeChannelMessenger messenger) {
+      super(messenger, "penguin_android_camera/camera/PictureCallback");
+    }
+
+    public Completable<PairedInstance> $$create($PictureCallback $instance, boolean $owner,$DataCallback onPictureTaken) {
+      return createNewInstancePair($instance, Arrays.<Object>asList(onPictureTaken), $owner);
+    }
+
+    
+
+    
+  }
+  
+  public static class $PreviewCallbackChannel extends TypeChannel<$PreviewCallback> {
+    public $PreviewCallbackChannel(@NonNull TypeChannelMessenger messenger) {
+      super(messenger, "penguin_android_camera/camera/PreviewCallback");
+    }
+
+    public Completable<PairedInstance> $$create($PreviewCallback $instance, boolean $owner,$DataCallback onPreviewFrame) {
+      return createNewInstancePair($instance, Arrays.<Object>asList(onPreviewFrame), $owner);
+    }
+
+    
+
+    
+  }
+  
   public static class $CameraChannel extends TypeChannel<$Camera> {
     public $CameraChannel(@NonNull TypeChannelMessenger messenger) {
       super(messenger, "penguin_android_camera/camera/Camera");
@@ -1454,6 +1443,94 @@ public class CameraChannelLibrary {
   }
   
 
+  
+  public static class $PictureCallbackHandler implements TypeChannelHandler<$PictureCallback> {
+    public $PictureCallback $$create(TypeChannelMessenger messenger,$DataCallback onPictureTaken)
+        throws Exception {
+      throw new UnsupportedOperationException();
+    }
+
+    
+
+    
+
+    @Override
+    public Object invokeStaticMethod(
+        TypeChannelMessenger messenger, String methodName, List<Object> arguments)
+        throws Exception {
+      switch (methodName) {
+        
+      }
+
+      throw new UnsupportedOperationException(
+          String.format("Unable to invoke static method %s", methodName));
+    }
+
+    @Override
+    public $PictureCallback createInstance(TypeChannelMessenger messenger, List<Object> arguments)
+        throws Exception {
+      return $$create(messenger,($DataCallback) arguments.get(0));
+    }
+
+    @Override
+    public Object invokeMethod(
+        TypeChannelMessenger messenger,
+        $PictureCallback instance,
+        String methodName,
+        List<Object> arguments)
+        throws Exception {
+      switch(methodName) {
+        
+      }
+
+      throw new UnsupportedOperationException(
+          String.format("%s.%s not supported.", instance, methodName));
+    }
+  }
+  
+  public static class $PreviewCallbackHandler implements TypeChannelHandler<$PreviewCallback> {
+    public $PreviewCallback $$create(TypeChannelMessenger messenger,$DataCallback onPreviewFrame)
+        throws Exception {
+      throw new UnsupportedOperationException();
+    }
+
+    
+
+    
+
+    @Override
+    public Object invokeStaticMethod(
+        TypeChannelMessenger messenger, String methodName, List<Object> arguments)
+        throws Exception {
+      switch (methodName) {
+        
+      }
+
+      throw new UnsupportedOperationException(
+          String.format("Unable to invoke static method %s", methodName));
+    }
+
+    @Override
+    public $PreviewCallback createInstance(TypeChannelMessenger messenger, List<Object> arguments)
+        throws Exception {
+      return $$create(messenger,($DataCallback) arguments.get(0));
+    }
+
+    @Override
+    public Object invokeMethod(
+        TypeChannelMessenger messenger,
+        $PreviewCallback instance,
+        String methodName,
+        List<Object> arguments)
+        throws Exception {
+      switch(methodName) {
+        
+      }
+
+      throw new UnsupportedOperationException(
+          String.format("%s.%s not supported.", instance, methodName));
+    }
+  }
   
   public static class $CameraHandler implements TypeChannelHandler<$Camera> {
     public $Camera $$create(TypeChannelMessenger messenger)
@@ -3450,6 +3527,22 @@ public class CameraChannelLibrary {
     }
 
     
+    public $PictureCallbackChannel getChannelPictureCallback() {
+      return new $PictureCallbackChannel(messenger);
+    }
+
+    public $PictureCallbackHandler getHandlerPictureCallback() {
+      return new $PictureCallbackHandler();
+    }
+    
+    public $PreviewCallbackChannel getChannelPreviewCallback() {
+      return new $PreviewCallbackChannel(messenger);
+    }
+
+    public $PreviewCallbackHandler getHandlerPreviewCallback() {
+      return new $PreviewCallbackHandler();
+    }
+    
     public $CameraChannel getChannelCamera() {
       return new $CameraChannel(messenger);
     }
@@ -3548,20 +3641,12 @@ public class CameraChannelLibrary {
       return new $ShutterCallbackHandler(this);
     }
     
-    public $PictureCallbackChannel getChannelPictureCallback() {
-      return new $PictureCallbackChannel(messenger);
+    public $DataCallbackChannel getChannelDataCallback() {
+      return new $DataCallbackChannel(messenger);
     }
 
-    public $PictureCallbackHandler getHandlerPictureCallback() {
-      return new $PictureCallbackHandler(this);
-    }
-    
-    public $PreviewCallbackChannel getChannelPreviewCallback() {
-      return new $PreviewCallbackChannel(messenger);
-    }
-
-    public $PreviewCallbackHandler getHandlerPreviewCallback() {
-      return new $PreviewCallbackHandler(this);
+    public $DataCallbackHandler getHandlerDataCallback() {
+      return new $DataCallbackHandler(this);
     }
     
     public $OnZoomChangeListenerChannel getChannelOnZoomChangeListener() {
@@ -3607,6 +3692,10 @@ public class CameraChannelLibrary {
 
     public void registerHandlers() {
       
+      implementations.getChannelPictureCallback().setHandler(implementations.getHandlerPictureCallback());
+      
+      implementations.getChannelPreviewCallback().setHandler(implementations.getHandlerPreviewCallback());
+      
       implementations.getChannelCamera().setHandler(implementations.getHandlerCamera());
       
       implementations.getChannelCameraParameters().setHandler(implementations.getHandlerCameraParameters());
@@ -3632,9 +3721,7 @@ public class CameraChannelLibrary {
       
       implementations.getChannelShutterCallback().setHandler(implementations.getHandlerShutterCallback());
       
-      implementations.getChannelPictureCallback().setHandler(implementations.getHandlerPictureCallback());
-      
-      implementations.getChannelPreviewCallback().setHandler(implementations.getHandlerPreviewCallback());
+      implementations.getChannelDataCallback().setHandler(implementations.getHandlerDataCallback());
       
       implementations.getChannelOnZoomChangeListener().setHandler(implementations.getHandlerOnZoomChangeListener());
       
@@ -3647,6 +3734,10 @@ public class CameraChannelLibrary {
     }
 
     public void unregisterHandlers() {
+      
+      implementations.getChannelPictureCallback().removeHandler();
+      
+      implementations.getChannelPreviewCallback().removeHandler();
       
       implementations.getChannelCamera().removeHandler();
       
@@ -3673,9 +3764,7 @@ public class CameraChannelLibrary {
       
       implementations.getChannelShutterCallback().removeHandler();
       
-      implementations.getChannelPictureCallback().removeHandler();
-      
-      implementations.getChannelPreviewCallback().removeHandler();
+      implementations.getChannelDataCallback().removeHandler();
       
       implementations.getChannelOnZoomChangeListener().removeHandler();
       

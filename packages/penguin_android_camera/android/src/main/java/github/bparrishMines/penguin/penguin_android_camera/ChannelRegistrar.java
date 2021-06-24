@@ -43,8 +43,18 @@ public class ChannelRegistrar extends CameraChannelLibrary.$ChannelRegistrar {
     }
 
     @Override
-    public CameraChannelLibrary.$CamcorderProfileHandler getHandlerCamcorderProfile() {
+    public CamcorderProfileHandler getHandlerCamcorderProfile() {
       return new CamcorderProfileHandler(this);
+    }
+
+    @Override
+    public PreviewCallbackHandler getHandlerPreviewCallback() {
+      return new PreviewCallbackHandler();
+    }
+
+    @Override
+    public PictureCallbackHandler getHandlerPictureCallback() {
+      return new PictureCallbackHandler();
     }
   }
 
@@ -123,6 +133,20 @@ public class ChannelRegistrar extends CameraChannelLibrary.$ChannelRegistrar {
     @Override
     public Boolean $hasProfile(TypeChannelMessenger messenger, Integer cameraId, Integer quality){
       return CamcorderProfileProxy.hasProfile(cameraId, quality);
+    }
+  }
+
+  public static class PictureCallbackHandler extends CameraChannelLibrary.$PictureCallbackHandler {
+    @Override
+    public PictureCallbackProxy $$create(TypeChannelMessenger messenger, CameraChannelLibrary.$DataCallback onPictureTaken) {
+      return new PictureCallbackProxy(onPictureTaken);
+    }
+  }
+
+  public static class PreviewCallbackHandler extends CameraChannelLibrary.$PreviewCallbackHandler {
+    @Override
+    public PreviewCallbackProxy $$create(TypeChannelMessenger messenger, CameraChannelLibrary.$DataCallback onPreviewFrame) {
+      return new PreviewCallbackProxy(onPreviewFrame);
     }
   }
 }

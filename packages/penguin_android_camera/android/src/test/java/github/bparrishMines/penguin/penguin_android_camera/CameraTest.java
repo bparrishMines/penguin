@@ -166,21 +166,20 @@ public class CameraTest {
   @Test
   public void takePicture() {
     final CameraChannelLibrary.$ShutterCallback shutterCallback = new CameraChannelLibrary.$ShutterCallback() {
-
       @Override
       public Object invoke() {
         return null;
       }
     };
 
-    final CameraChannelLibrary.$PictureCallback pictureCallback = new CameraChannelLibrary.$PictureCallback() {
+    final PictureCallbackProxy pictureCallbackProxy = new PictureCallbackProxy(new CameraChannelLibrary.$DataCallback() {
       @Override
       public Object invoke(byte[] data) {
         return null;
       }
-    };
+    });
 
-    testCameraProxy.takePicture(shutterCallback, pictureCallback, pictureCallback, pictureCallback);
+    testCameraProxy.takePicture(shutterCallback, pictureCallbackProxy, pictureCallbackProxy, pictureCallbackProxy);
     verify(mockCamera).takePicture(
         isA(Camera.ShutterCallback.class),
         isA(Camera.PictureCallback.class),
@@ -253,30 +252,30 @@ public class CameraTest {
   
   @Test
   public void setOneShotPreviewCallback() {
-    final CameraChannelLibrary.$PreviewCallback mockPreviewCallback =
-        mock(CameraChannelLibrary.$PreviewCallback.class);
+    final CameraChannelLibrary.$DataCallback mockDataCallback = mock(CameraChannelLibrary.$DataCallback.class);
+    final PreviewCallbackProxy previewCallbackProxy = new PreviewCallbackProxy(mockDataCallback);
 
-    testCameraProxy.setOneShotPreviewCallback(mockPreviewCallback);
+    testCameraProxy.setOneShotPreviewCallback(previewCallbackProxy);
 
     final byte[] data = new byte[0];
     final ArgumentCaptor<Camera.PreviewCallback> callbackCaptor = ArgumentCaptor.forClass(Camera.PreviewCallback.class);
     verify(mockCamera).setOneShotPreviewCallback(callbackCaptor.capture());
     callbackCaptor.getValue().onPreviewFrame(data, mockCamera);
-    verify(mockPreviewCallback).invoke(data);
+    verify(mockDataCallback).invoke(data);
   }
   
   @Test
   public void setPreviewCallback() {
-    final CameraChannelLibrary.$PreviewCallback mockPreviewCallback =
-        mock(CameraChannelLibrary.$PreviewCallback.class);
+    final CameraChannelLibrary.$DataCallback mockDataCallback = mock(CameraChannelLibrary.$DataCallback.class);
+    final PreviewCallbackProxy previewCallbackProxy = new PreviewCallbackProxy(mockDataCallback);
 
-    testCameraProxy.setPreviewCallback(mockPreviewCallback);
+    testCameraProxy.setPreviewCallback(previewCallbackProxy);
 
     final byte[] data = new byte[0];
     final ArgumentCaptor<Camera.PreviewCallback> callbackCaptor = ArgumentCaptor.forClass(Camera.PreviewCallback.class);
     verify(mockCamera).setPreviewCallback(callbackCaptor.capture());
     callbackCaptor.getValue().onPreviewFrame(data, mockCamera);
-    verify(mockPreviewCallback).invoke(data);
+    verify(mockDataCallback).invoke(data);
   }
 
   @Test

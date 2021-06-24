@@ -197,7 +197,7 @@ class _MyAppState extends State<_MyApp> {
       null,
       null,
       null,
-      (Uint8List data) async {
+      PictureCallback((Uint8List data) async {
         debugPrint('Image taken with jpeg data length: ${data.length}');
         final Directory dir = await _getStorageDir();
         final File imageFile = File('${dir.path}/my_image${data.hashCode}.jpg');
@@ -210,7 +210,7 @@ class _MyAppState extends State<_MyApp> {
         );
 
         _camera.startPreview();
-      },
+      }),
     );
   }
 

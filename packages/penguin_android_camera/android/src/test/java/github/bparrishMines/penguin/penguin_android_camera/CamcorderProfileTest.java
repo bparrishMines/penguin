@@ -106,7 +106,7 @@ public class CamcorderProfileTest {
   }
 
   @Test
-  public void get() throws Exception {
+  public void get() {
     PowerMockito.mockStatic(CamcorderProfile.class);
     when(CamcorderProfile.get(23, 15)).thenReturn(mock(CamcorderProfile.class));
 
@@ -119,7 +119,7 @@ public class CamcorderProfileTest {
   }
 
   @Test
-  public void hasProfile() throws Exception {
+  public void hasProfile() {
     PowerMockito.mockStatic(CamcorderProfile.class);
 
     final ChannelRegistrar.LibraryImplementations libraryImplementations =

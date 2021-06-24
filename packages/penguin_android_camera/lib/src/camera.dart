@@ -46,20 +46,9 @@ typedef AutoFocusCallback = void Function(bool success);
 @Reference('penguin_android_camera/camera/ShutterCallback')
 typedef ShutterCallback = void Function();
 
-/// Callback used to supply image data from a photo capture.
-///
-/// Called when image data is available after a picture is taken.
-///
-/// The format of the data depends on the context of the callback and
-/// [CameraParameters] settings.
-///
-/// See: [Camera.takePicture].
-@Reference('penguin_android_camera/camera/PictureCallback')
-typedef PictureCallback = void Function(Uint8List data);
-
-/// Callback used to deliver copies of preview frames as they are displayed.
-@Reference('penguin_android_camera/camera/PreviewCallback')
-typedef PreviewCallback = void Function(Uint8List data);
+/// Callback when receiving a byte array.
+@Reference('penguin_android_camera/camera/DataCallback')
+typedef DataCallback = void Function(Uint8List data);
 
 /// Callback for zoom changes during a smooth zoom operation.
 @Reference('penguin_android_camera/camera/OnZoomChangeListener')
@@ -94,6 +83,57 @@ typedef OnErrorListener = void Function(int what, int extra);
 /// `extra`: an extra code, specific to the info type
 @Reference('penguin_android_camera/camera/OnInfoListener')
 typedef OnInfoListener = void Function(int what, int extra);
+
+/// Callback used to supply image data from a photo capture.
+///
+/// Called when image data is available after a picture is taken.
+///
+/// The format of the data depends on the context of the callback and
+/// [CameraParameters] settings.
+///
+/// See: [Camera.takePicture].
+@Reference('penguin_android_camera/camera/PictureCallback')
+class PictureCallback implements $PictureCallback {
+  /// Construct a [PictureCallback].
+  PictureCallback(this.onPictureTaken) {
+    ChannelRegistrar.instance.implementations.channelDataCallback.$$create(
+      onPictureTaken,
+      $owner: true,
+    );
+  }
+
+  static $PictureCallbackChannel get _channel =>
+      ChannelRegistrar.instance.implementations.channelPictureCallback;
+
+  /// Callback used to supply image data from a photo capture.
+  ///
+  /// Called when image data is available after a picture is taken.
+  ///
+  /// The format of the data depends on the context of the callback and
+  /// [CameraParameters] settings.
+  ///
+  /// See: [Camera.takePicture].
+  final DataCallback onPictureTaken;
+}
+
+// TODO: Pretty good chance the reference chain doesn't work.
+/// Callback used to deliver copies of preview frames as they are displayed.
+@Reference('penguin_android_camera/camera/PreviewCallback')
+class PreviewCallback implements $PreviewCallback {
+  /// Construct a [PreviewCallback].
+  PreviewCallback(this.onPreviewFrame) {
+    ChannelRegistrar.instance.implementations.channelDataCallback.$$create(
+      onPreviewFrame,
+      $owner: true,
+    );
+  }
+
+  static $PreviewCallbackChannel get _channel =>
+      ChannelRegistrar.instance.implementations.channelPreviewCallback;
+
+  /// Callback used to deliver copies of preview frames as they are displayed.
+  final DataCallback onPreviewFrame;
+}
 
 /// The [Camera] class is used to set image capture settings, start/stop preview, snap pictures, and retrieve frames for encoding for video.
 ///
@@ -204,9 +244,10 @@ class Camera with $Camera {
   /// strongly consider using a sound to properly indicate image capture or
   /// recording start/stop to the user.
   Future<void> setOneShotPreviewCallback(PreviewCallback callback) {
-    ChannelRegistrar.instance.implementations.channelPreviewCallback.$$create(
+    PreviewCallback._channel.$$create(
       callback,
       $owner: false,
+      onPreviewFrame: callback.onPreviewFrame,
     );
     return _channel.$setOneShotPreviewCallback(this, callback);
   }
@@ -221,9 +262,10 @@ class Camera with $Camera {
   /// strongly consider using MediaActionSound to properly indicate image
   /// capture or recording start/stop to the user.
   Future<void> setPreviewCallback(PreviewCallback callback) {
-    ChannelRegistrar.instance.implementations.channelPreviewCallback.$$create(
+    PreviewCallback._channel.$$create(
       callback,
       $owner: false,
+      onPreviewFrame: callback.onPreviewFrame,
     );
     return _channel.$setPreviewCallback(this, callback);
   }
@@ -275,11 +317,27 @@ class Camera with $Camera {
     }
 
     final $PictureCallbackChannel pictureCallbackChannel =
-        ChannelRegistrar.instance.implementations.channelPictureCallback;
-    if (jpeg != null) pictureCallbackChannel.$$create(jpeg, $owner: false);
-    if (raw != null) pictureCallbackChannel.$$create(raw, $owner: false);
+        PictureCallback._channel;
+    if (jpeg != null) {
+      pictureCallbackChannel.$$create(
+        jpeg,
+        $owner: false,
+        onPictureTaken: jpeg.onPictureTaken,
+      );
+    }
+    if (raw != null) {
+      pictureCallbackChannel.$$create(
+        raw,
+        $owner: false,
+        onPictureTaken: raw.onPictureTaken,
+      );
+    }
     if (postView != null) {
-      pictureCallbackChannel.$$create(postView, $owner: false);
+      pictureCallbackChannel.$$create(
+        postView,
+        $owner: false,
+        onPictureTaken: postView.onPictureTaken,
+      );
     }
 
     return _channel.$takePicture(

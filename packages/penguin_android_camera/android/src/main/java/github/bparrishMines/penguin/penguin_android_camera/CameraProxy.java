@@ -139,13 +139,10 @@ public class CameraProxy implements CameraChannelLibrary.$Camera {
                             CameraChannelLibrary.$PictureCallback jpeg) {
     camera.takePicture(() -> {
       if (shutter != null) shutter.invoke();
-    }, (data, camera) -> {
-      if (raw != null) raw.invoke(data);
-    }, (data, camera) -> {
-      if (postView != null) postView.invoke(data);
-    }, (data, camera) -> {
-      if (jpeg != null) jpeg.invoke(data);
-    });
+    },
+        raw != null ? ((PictureCallbackProxy)raw).pictureCallback : null,
+        postView != null ? ((PictureCallbackProxy)postView).pictureCallback : null,
+        jpeg != null ? ((PictureCallbackProxy)jpeg).pictureCallback : null);
     return null;
   }
 
@@ -175,13 +172,13 @@ public class CameraProxy implements CameraChannelLibrary.$Camera {
 
   @Override
   public Void setOneShotPreviewCallback(CameraChannelLibrary.$PreviewCallback callback) {
-    camera.setOneShotPreviewCallback((data, camera) -> callback.invoke(data));
+    camera.setOneShotPreviewCallback(((PreviewCallbackProxy)callback).previewCallback);
     return null;
   }
 
   @Override
   public Void setPreviewCallback(CameraChannelLibrary.$PreviewCallback callback) {
-    camera.setPreviewCallback((data, camera) -> callback.invoke(data));
+    camera.setPreviewCallback(((PreviewCallbackProxy)callback).previewCallback);
     return null;
   }
 
