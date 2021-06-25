@@ -13,7 +13,7 @@ public class CameraAreaProxy implements CameraChannelLibrary.$CameraArea {
     final List<CameraAreaProxy> proxyList = new ArrayList<>();
     if (areas == null) return proxyList;
     for (Camera.Area area : areas) {
-      proxyList.add(new CameraAreaProxy(new CameraRectProxy(area.rect, implementations), area.weight, implementations));
+      proxyList.add(new CameraAreaProxy(area, implementations));
     }
     return proxyList;
   }
@@ -27,12 +27,18 @@ public class CameraAreaProxy implements CameraChannelLibrary.$CameraArea {
   }
 
   public CameraAreaProxy(CameraRectProxy rect, Integer weight, ChannelRegistrar.LibraryImplementations implementations) {
-    this(new Camera.Area(rect.rect, weight), rect, implementations);
+    this(new Camera.Area(rect.rect, weight), rect, implementations, false);
   }
 
-  public CameraAreaProxy(Camera.Area area, CameraRectProxy rect, ChannelRegistrar.LibraryImplementations implementations) {
+  public CameraAreaProxy(Camera.Area area, ChannelRegistrar.LibraryImplementations implementations) {
+    this(area, new CameraRectProxy(area.rect, implementations), implementations, true);
+  }
+
+  public CameraAreaProxy(Camera.Area area, CameraRectProxy rect, ChannelRegistrar.LibraryImplementations implementations, boolean create) {
     this.area = area;
     this.rect = rect;
-    implementations.getChannelCameraArea().$$create(this, false, rect, area.weight);
+    if (create) {
+      implementations.getChannelCameraArea().$$create(this, false, rect, area.weight);
+    }
   }
 }

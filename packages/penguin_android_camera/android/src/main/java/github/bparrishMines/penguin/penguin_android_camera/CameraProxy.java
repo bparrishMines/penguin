@@ -1,6 +1,7 @@
 package github.bparrishMines.penguin.penguin_android_camera;
 
 import android.hardware.Camera;
+import android.os.Build;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -57,17 +58,8 @@ public class CameraProxy implements CameraChannelLibrary.$Camera {
   }
 
   @Override
-  public Void takePicture(CameraChannelLibrary.$ShutterCallback shutter,
-                          CameraChannelLibrary.$PictureCallback raw,
-                          CameraChannelLibrary.$PictureCallback postView,
-                          CameraChannelLibrary.$PictureCallback jpeg) {
-    takePicture((ShutterCallbackProxy) shutter, (PictureCallbackProxy) raw, (PictureCallbackProxy) postView, (PictureCallbackProxy) jpeg);
-    return null;
-  }
-
-  @Override
   public Void autoFocus(CameraChannelLibrary.$AutoFocusCallback callback) {
-    camera.autoFocus((AutoFocusCallbackProxy) callback);
+    camera.autoFocus((success, camera) -> callback.invoke(success));
     return null;
   }
 
@@ -85,7 +77,7 @@ public class CameraProxy implements CameraChannelLibrary.$Camera {
 
   @Override
   public Void setErrorCallback(CameraChannelLibrary.$ErrorCallback callback) {
-    camera.setErrorCallback((ErrorCallbackProxy) callback);
+    camera.setErrorCallback((error, camera) -> callback.invoke(error));
     return null;
   }
 
@@ -112,14 +104,45 @@ public class CameraProxy implements CameraChannelLibrary.$Camera {
     return null;
   }
 
-  private Void takePicture(ShutterCallbackProxy shutter,
-                           PictureCallbackProxy raw,
-                           PictureCallbackProxy postView,
-                           PictureCallbackProxy jpeg) {
-    camera.takePicture(shutter != null ? shutter.shutterCallback : null,
-        raw != null ? raw.pictureCallback : null,
-        postView != null ? postView.pictureCallback : null,
-        jpeg != null ? jpeg.pictureCallback : null);
+  @Override
+  public Void setZoomChangeListener(CameraChannelLibrary.$OnZoomChangeListener listener) {
+    camera.setZoomChangeListener((zoomValue, stopped, camera) -> listener.invoke(zoomValue, stopped));
+    return null;
+  }
+
+  @Override
+  public Void setAutoFocusMoveCallback(CameraChannelLibrary.$AutoFocusMoveCallback callback) {
+    camera.setAutoFocusMoveCallback((start, camera) -> callback.invoke(start));
+    return null;
+  }
+
+  @Override
+  public Void lock() {
+    camera.lock();
+    return null;
+  }
+
+  @Override
+  public Boolean enableShutterSound(Boolean enabled) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+      //noinspection deprecation
+      return camera.enableShutterSound(enabled);
+    } else {
+      throw new UnsupportedOperationException("Requires version >= Build.VERSION_CODES.JELLY_BEAN_MR1.");
+    }
+  }
+
+  @Override
+  public Void takePicture(CameraChannelLibrary.$ShutterCallback shutter,
+                            CameraChannelLibrary.$PictureCallback raw,
+                            CameraChannelLibrary.$PictureCallback postView,
+                            CameraChannelLibrary.$PictureCallback jpeg) {
+    camera.takePicture(() -> {
+      if (shutter != null) shutter.invoke();
+    },
+        raw != null ? ((PictureCallbackProxy)raw).pictureCallback : null,
+        postView != null ? ((PictureCallbackProxy)postView).pictureCallback : null,
+        jpeg != null ? ((PictureCallbackProxy)jpeg).pictureCallback : null);
     return null;
   }
 
@@ -144,6 +167,18 @@ public class CameraProxy implements CameraChannelLibrary.$Camera {
   @Override
   public Void unlock() {
     camera.unlock();
+    return null;
+  }
+
+  @Override
+  public Void setOneShotPreviewCallback(CameraChannelLibrary.$PreviewCallback callback) {
+    camera.setOneShotPreviewCallback(((PreviewCallbackProxy)callback).previewCallback);
+    return null;
+  }
+
+  @Override
+  public Void setPreviewCallback(CameraChannelLibrary.$PreviewCallback callback) {
+    camera.setPreviewCallback(((PreviewCallbackProxy)callback).previewCallback);
     return null;
   }
 

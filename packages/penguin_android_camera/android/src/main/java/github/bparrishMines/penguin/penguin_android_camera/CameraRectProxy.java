@@ -6,11 +6,17 @@ public class CameraRectProxy implements CameraChannelLibrary.$CameraRect {
   public final Rect rect;
 
   public CameraRectProxy(Integer left, Integer top, Integer right, Integer bottom, ChannelRegistrar.LibraryImplementations implementations) {
-    this(new Rect(left, top, right, bottom), implementations);
+    this(new Rect(left, top, right, bottom), implementations, false);
   }
 
   public CameraRectProxy(Rect rect, ChannelRegistrar.LibraryImplementations implementations) {
+    this(rect, implementations, true);
+  }
+
+  public CameraRectProxy(Rect rect, ChannelRegistrar.LibraryImplementations implementations, boolean create) {
     this.rect = rect;
-    implementations.getChannelCameraRect().$$create(this, false, rect.top, rect.bottom, rect.right, rect.left);
+    if (create) {
+      implementations.getChannelCameraRect().$$create(this, false, rect.top, rect.bottom, rect.right, rect.left);
+    }
   }
 }

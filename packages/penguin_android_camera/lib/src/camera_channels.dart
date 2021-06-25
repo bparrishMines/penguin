@@ -61,11 +61,13 @@ class CameraInfoHandler extends $CameraInfoHandler {
     int cameraId,
     int facing,
     int orientation,
+    bool? canDisableShutterSound,
   ) {
     return CameraInfo(
       cameraId: cameraId,
       facing: facing,
       orientation: orientation,
+      canDisableShutterSound: canDisableShutterSound,
     );
   }
 }
@@ -102,7 +104,7 @@ class CameraRectHandler extends $CameraRectHandler {
       bottom: bottom,
       right: right,
       left: left,
-      createInstancePair: false,
+      create: false,
     );
   }
 }
@@ -118,7 +120,42 @@ class CameraAreaHandler extends $CameraAreaHandler {
     return CameraArea(
       rect as CameraRect,
       weight,
-      createInstancePair: false,
+      create: false,
+    );
+  }
+}
+
+/// [TypeChannelHandler] implementation for [CamcorderProfile].
+class CamcorderProfileHandler extends $CamcorderProfileHandler {
+  @override
+  CamcorderProfile $$create(
+      TypeChannelMessenger messenger,
+      int audioBitRate,
+      int audioChannels,
+      int audioCodec,
+      int audioSampleRate,
+      int duration,
+      int fileFormat,
+      int quality,
+      int videoBitRate,
+      int videoCodec,
+      int videoFrameHeight,
+      int videoFrameRate,
+      int videoFrameWidth) {
+    // ignore: invalid_use_of_visible_for_testing_member
+    return CamcorderProfile(
+      audioBitRate: audioBitRate,
+      audioChannels: audioChannels,
+      audioCodec: audioCodec,
+      audioSampleRate: audioSampleRate,
+      duration: duration,
+      fileFormat: fileFormat,
+      quality: quality,
+      videoBitRate: videoBitRate,
+      videoCodec: videoCodec,
+      videoFrameHeight: videoFrameHeight,
+      videoFrameRate: videoFrameRate,
+      videoFrameWidth: videoFrameWidth,
     );
   }
 }

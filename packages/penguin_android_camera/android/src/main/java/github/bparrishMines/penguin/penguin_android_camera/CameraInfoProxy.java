@@ -1,6 +1,7 @@
 package github.bparrishMines.penguin.penguin_android_camera;
 
 import android.hardware.Camera;
+import android.os.Build;
 
 public class CameraInfoProxy implements CameraChannelLibrary.$CameraInfo {
   public final Camera.CameraInfo cameraInfo;
@@ -9,6 +10,17 @@ public class CameraInfoProxy implements CameraChannelLibrary.$CameraInfo {
   public CameraInfoProxy(Camera.CameraInfo cameraInfo, ChannelRegistrar.LibraryImplementations libraryImplementations, int cameraId) {
     this.cameraId = cameraId;
     this.cameraInfo = cameraInfo;
-    libraryImplementations.getChannelCameraInfo().$$create(this, false, cameraId, cameraInfo.facing, cameraInfo.orientation);
+    
+    final Boolean canDisableShutterSound;
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+      canDisableShutterSound = cameraInfo.canDisableShutterSound;
+    } else {
+      canDisableShutterSound = null;
+    }
+    libraryImplementations.getChannelCameraInfo().$$create(this, false,
+        cameraId,
+        cameraInfo.facing,
+        cameraInfo.orientation,
+        canDisableShutterSound);
   }
 }
