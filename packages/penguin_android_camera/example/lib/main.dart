@@ -74,6 +74,9 @@ class _CameraWidgetState extends State<_CameraWidget> {
     }
 
     await _startCamera(camera);
+    setState(() {
+      currentMode = CameraMode.picture;
+    });
   }
 
   Future<void> _setupForVideo() async {
@@ -90,14 +93,14 @@ class _CameraWidgetState extends State<_CameraWidget> {
     camera.setParameters(params);
 
     await _startCamera(camera);
+    setState(() {
+      currentMode = CameraMode.video;
+    });
   }
 
   Future<void> _startCamera(Camera camera) async {
     camera.startPreview();
     _cameraPreviewTextureId = await camera.attachPreviewTexture();
-    setState(() {
-      currentMode = CameraMode.video;
-    });
   }
 
   Future<Camera> _setupCamera() async {
