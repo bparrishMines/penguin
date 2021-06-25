@@ -1994,7 +1994,7 @@ class CameraInfo implements $CameraInfo {
   ///
   /// This is only supported on Android
   /// versions >= `Build.VERSION_CODES.JELLY_BEAN_MR1`. This value will be
-  /// `null` for all version below this one.
+  /// `null` for all versions below this one.
   final bool? canDisableShutterSound;
 }
 

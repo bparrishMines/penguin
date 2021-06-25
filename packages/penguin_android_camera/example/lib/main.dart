@@ -11,7 +11,7 @@ import 'package:penguin_android_camera/penguin_android_camera.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 void main() {
-  runApp(const MaterialApp(home: _MyApp()));
+  runApp(const MaterialApp(home: _CameraWidget()));
 }
 
 enum CameraMode {
@@ -23,14 +23,14 @@ enum CameraMode {
   videoRecording,
 }
 
-class _MyApp extends StatefulWidget {
-  const _MyApp({Key? key}) : super(key: key);
+class _CameraWidget extends StatefulWidget {
+  const _CameraWidget({Key? key}) : super(key: key);
 
   @override
-  _MyAppState createState() => _MyAppState();
+  _CameraWidgetState createState() => _CameraWidgetState();
 }
 
-class _MyAppState extends State<_MyApp> {
+class _CameraWidgetState extends State<_CameraWidget> {
   CameraMode currentMode = CameraMode.none;
 
   late Camera _camera;
@@ -73,11 +73,7 @@ class _MyAppState extends State<_MyApp> {
       camera.setParameters(params);
     }
 
-    camera.startPreview();
-    _cameraPreviewTextureId = await camera.attachPreviewTexture();
-    setState(() {
-      currentMode = CameraMode.picture;
-    });
+    await _startCamera(camera);
   }
 
   Future<void> _setupForVideo() async {
@@ -85,14 +81,18 @@ class _MyAppState extends State<_MyApp> {
     final Camera camera = await _setupCamera();
 
     final CameraParameters params = await camera.getParameters();
+    params.setRecordingHint(hint: true);
 
     final List<String> focusModes = await params.getSupportedFocusModes();
     if (focusModes.contains(CameraParameters.focusModeContinuousVideo)) {
       params.setFocusMode(CameraParameters.focusModeContinuousVideo);
-      params.setRecordingHint(hint: true);
-      camera.setParameters(params);
     }
+    camera.setParameters(params);
 
+    await _startCamera(camera);
+  }
+
+  Future<void> _startCamera(Camera camera) async {
     camera.startPreview();
     _cameraPreviewTextureId = await camera.attachPreviewTexture();
     setState(() {
@@ -126,9 +126,14 @@ class _MyAppState extends State<_MyApp> {
   void dispose() {
     super.dispose();
     if (currentMode != CameraMode.none) {
-      _camera.releasePreviewTexture();
-      _camera.release();
+      _releaseCamera();
+      currentMode = CameraMode.none;
     }
+  }
+
+  Future<void> _releaseCamera() {
+    _camera.releasePreviewTexture();
+    return _camera.release();
   }
 
   Future<void> _toggleCameraMode() {
@@ -139,13 +144,11 @@ class _MyAppState extends State<_MyApp> {
         return Future<void>.value();
       case CameraMode.picture:
         setState(() => currentMode = CameraMode.preVideo);
-        _camera.releasePreviewTexture();
-        _camera.release();
+        _releaseCamera();
         return _setupForVideo();
       case CameraMode.video:
         setState(() => currentMode = CameraMode.prePicture);
-        _camera.releasePreviewTexture();
-        _camera.release();
+        _releaseCamera();
         return _setupForPicture();
       case CameraMode.videoRecording:
         const SnackBar snackBar = SnackBar(
@@ -409,9 +412,7 @@ class CircledIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkResponse(
-      onTap: () {
-        if (onTap != null) onTap!();
-      },
+      onTap: () => onTap?.call(),
       child: Container(
         width: 65,
         height: 65,
