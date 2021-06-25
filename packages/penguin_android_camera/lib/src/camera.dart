@@ -95,11 +95,14 @@ typedef OnInfoListener = void Function(int what, int extra);
 @Reference('penguin_android_camera/camera/PictureCallback')
 class PictureCallback implements $PictureCallback {
   /// Construct a [PictureCallback].
-  PictureCallback(this.onPictureTaken) {
+  PictureCallback(this.onPictureTaken, {bool create = true}) {
     ChannelRegistrar.instance.implementations.channelDataCallback.$$create(
       onPictureTaken,
-      $owner: true,
+      $owner: false,
     );
+    if (create) {
+      _channel.$$create(this, $owner: true, onPictureTaken: onPictureTaken);
+    }
   }
 
   static $PictureCallbackChannel get _channel =>
@@ -116,16 +119,18 @@ class PictureCallback implements $PictureCallback {
   final DataCallback onPictureTaken;
 }
 
-// TODO: Pretty good chance the reference chain doesn't work.
 /// Callback used to deliver copies of preview frames as they are displayed.
 @Reference('penguin_android_camera/camera/PreviewCallback')
 class PreviewCallback implements $PreviewCallback {
   /// Construct a [PreviewCallback].
-  PreviewCallback(this.onPreviewFrame) {
+  PreviewCallback(this.onPreviewFrame, {bool create = true}) {
     ChannelRegistrar.instance.implementations.channelDataCallback.$$create(
       onPreviewFrame,
-      $owner: true,
+      $owner: false,
     );
+    if (create) {
+      _channel.$$create(this, $owner: true, onPreviewFrame: onPreviewFrame);
+    }
   }
 
   static $PreviewCallbackChannel get _channel =>
@@ -312,34 +317,11 @@ class Camera with $Camera {
     PictureCallback? jpeg,
   ) {
     if (shutter != null) {
-      ChannelRegistrar.instance.implementations.channelShutterCallback
-          .$$create(shutter, $owner: false);
-    }
-
-    final $PictureCallbackChannel pictureCallbackChannel =
-        PictureCallback._channel;
-    if (jpeg != null) {
-      pictureCallbackChannel.$$create(
-        jpeg,
+      ChannelRegistrar.instance.implementations.channelShutterCallback.$$create(
+        shutter,
         $owner: false,
-        onPictureTaken: jpeg.onPictureTaken,
       );
     }
-    if (raw != null) {
-      pictureCallbackChannel.$$create(
-        raw,
-        $owner: false,
-        onPictureTaken: raw.onPictureTaken,
-      );
-    }
-    if (postView != null) {
-      pictureCallbackChannel.$$create(
-        postView,
-        $owner: false,
-        onPictureTaken: postView.onPictureTaken,
-      );
-    }
-
     return _channel.$takePicture(
       this,
       shutter,
