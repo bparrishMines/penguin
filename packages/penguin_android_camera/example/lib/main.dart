@@ -89,6 +89,7 @@ class _MyAppState extends State<_MyApp> {
     final List<String> focusModes = await params.getSupportedFocusModes();
     if (focusModes.contains(CameraParameters.focusModeContinuousVideo)) {
       params.setFocusMode(CameraParameters.focusModeContinuousVideo);
+      params.setRecordingHint(hint: true);
       camera.setParameters(params);
     }
 
@@ -297,25 +298,32 @@ class _MyAppState extends State<_MyApp> {
               ],
             ),
           ),
-          ToggleButtons(
-            onPressed: (int index) {
-              if (index == 0 && currentMode != CameraMode.picture) {
-                _toggleCameraMode();
-              } else if (index == 1 && currentMode != CameraMode.video) {
-                _toggleCameraMode();
-              }
-            },
-            isSelected: <bool>[
-              currentMode == CameraMode.picture ||
-                  currentMode == CameraMode.prePicture,
-              currentMode == CameraMode.video ||
-                  currentMode == CameraMode.preVideo ||
-                  currentMode == CameraMode.videoRecording,
-            ],
-            children: const <Widget>[
-              Icon(Icons.camera_alt),
-              Icon(Icons.videocam),
-            ],
+          Container(
+            alignment: Alignment.center,
+            decoration: const BoxDecoration(color: Colors.black),
+            child: ToggleButtons(
+              color: Colors.blue,
+              fillColor: Colors.grey,
+              selectedColor: Colors.blue,
+              onPressed: (int index) {
+                if (index == 0 && currentMode != CameraMode.picture) {
+                  _toggleCameraMode();
+                } else if (index == 1 && currentMode != CameraMode.video) {
+                  _toggleCameraMode();
+                }
+              },
+              isSelected: <bool>[
+                currentMode == CameraMode.picture ||
+                    currentMode == CameraMode.prePicture,
+                currentMode == CameraMode.video ||
+                    currentMode == CameraMode.preVideo ||
+                    currentMode == CameraMode.videoRecording,
+              ],
+              children: const <Widget>[
+                Icon(Icons.camera_alt),
+                Icon(Icons.videocam),
+              ],
+            ),
           ),
         ],
       ),

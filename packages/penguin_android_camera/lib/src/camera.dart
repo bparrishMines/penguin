@@ -259,8 +259,8 @@ class Camera with $Camera {
 
   /// Installs a callback to be invoked for every preview frame in addition to displaying them on the screen.
   ///
-  /// The callback will be repeatedly called for as long as preview is active
-  /// . This method can be called at any time, even while preview is live. Any
+  /// The callback will be repeatedly called for as long as preview is active.
+  /// This method can be called at any time, even while preview is live. Any
   /// other preview callbacks are overridden.
   ///
   /// If you are using the preview data to create video or still images,
