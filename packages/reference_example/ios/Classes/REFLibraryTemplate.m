@@ -47,7 +47,7 @@
 - (nonnull id)createInstance:(nonnull REFTypeChannelMessenger *)messenger
                    arguments:(nonnull NSArray *)arguments {
   __block __weak __prefix____function_name__ function;
-  __prefix____function_name__ functionInstance = ^(/*iterate :join=',' parameters parameter*//*replace parameter_type*/NSString/**/ */**/ _Nullable __parameter_name__/**/) {
+  __prefix____function_name__ functionInstance = ^(/*iterate :join=',' parameters parameter*//*replace parameter_type*/NSString */**/ _Nullable __parameter_name__/**/) {
     [self->_implementations.channel__function_name__ invoke:function
                                          /*iterate parameters parameter*/
                                          __parameter_name__:__parameter_name__
