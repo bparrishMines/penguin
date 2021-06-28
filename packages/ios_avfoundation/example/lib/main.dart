@@ -18,8 +18,6 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   late CaptureSession _captureSession;
   late CapturePhotoOutput _capturePhotoOutput;
-  final CapturePhotoCaptureDelegate _capturePhotoCaptureDelegate =
-      MyPhotoDelegate();
   Widget _previewWidget = Container();
   int _cameraFacing = CaptureDevicePosition.back;
   final double _deviceRotation = 0;
@@ -72,7 +70,12 @@ class _MyAppState extends State<MyApp> {
   void _takePicture() {
     _capturePhotoOutput.capturePhoto(
       CapturePhotoSettings(<String, Object>{'AVVideoCodecKey': 'jpeg'}),
-      _capturePhotoCaptureDelegate,
+      CapturePhotoCaptureDelegate(
+        didFinishProcessingPhoto: (CapturePhoto photo) {
+          debugPrint('Photo taken');
+          debugPrint('${photo.fileDataRepresentation?.length}');
+        },
+      ),
     );
   }
 
@@ -163,13 +166,5 @@ class _MyAppState extends State<MyApp> {
         ],
       ),
     );
-  }
-}
-
-class MyPhotoDelegate extends CapturePhotoCaptureDelegate {
-  @override
-  void didFinishProcessingPhoto(covariant CapturePhoto photo) {
-    debugPrint('Photo taken');
-    debugPrint('${photo.fileDataRepresentation?.length}');
   }
 }

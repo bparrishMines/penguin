@@ -10,6 +10,72 @@
 // **************************************************************************
 
 
+@implementation _IAFFinishProcessingPhotoCallbackChannel
+- (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
+  return self = [super initWithMessenger:messenger name:@"ios_avfoundatoin/avfoundation/FinishProcessingPhotoCallback"];
+}
+
+- (void)__create:(_IAFFinishProcessingPhotoCallback)_instance
+          _owner:(BOOL)_owner
+      completion:(void (^)(REFPairedInstance * _Nullable, NSError * _Nullable))completion {
+  [self createNewInstancePair:_instance arguments:@[] owner:_owner completion:completion];
+}
+
+- (void)invoke:(_IAFFinishProcessingPhotoCallback)_instance
+
+      photo:(NSObject<_IAFCapturePhoto> * _Nullable)photo
+
+    completion:(void (^)(id _Nullable, NSError *_Nullable))completion {
+  [self invokeMethod:_instance
+          methodName:@""
+           arguments:@[photo,]
+          completion:completion];
+}
+@end
+
+
+
+@implementation _IAFFinishProcessingPhotoCallbackHandler
+-(instancetype)initWithImplementations:(_IAFLibraryImplementations *)implementations {
+  self = [super init];
+  if (self) {
+    _implementations = implementations;
+  }
+  return self;
+}
+
+- (nonnull id)createInstance:(nonnull REFTypeChannelMessenger *)messenger
+                   arguments:(nonnull NSArray *)arguments {
+  __block __weak _IAFFinishProcessingPhotoCallback function;
+  _IAFFinishProcessingPhotoCallback functionInstance = ^(NSObject<_IAFCapturePhoto> * _Nullable photo) {
+    [self->_implementations.channelFinishProcessingPhotoCallback invoke:function
+                                         
+                                         photo:photo
+                                         
+                                         completion:^(id result, NSError *error) {}];
+    return (NSObject *) nil;
+  };
+  function = functionInstance;
+  return functionInstance;
+}
+
+- (id _Nullable)invokeMethod:(nonnull REFTypeChannelMessenger *)messenger
+                    instance:(nonnull NSObject *)instance
+                  methodName:(nonnull NSString *)methodName
+                   arguments:(nonnull NSArray *)arguments {
+  _IAFFinishProcessingPhotoCallback function = (_IAFFinishProcessingPhotoCallback) instance;
+  return function(arguments[0]);
+}
+
+- (id _Nullable)invokeStaticMethod:(nonnull REFTypeChannelMessenger *)messenger
+                        methodName:(nonnull NSString *)methodName
+                         arguments:(nonnull NSArray *)arguments {
+  @throw [NSException exceptionWithName:@"_IAFUnimplementedException" reason:nil userInfo:nil];
+}
+@end
+
+
+
 @implementation _IAFCapturePhotoOutputChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
   return self = [super initWithMessenger:messenger name:@"ios_avfoundatoin/avfoundation/CapturePhotoOutput"];
@@ -42,7 +108,7 @@
 - (void)__create:(NSObject<_IAFCapturePhotoSettings> *)_instance
          _owner:(BOOL)_owner
 
- processedFormat:(NSDictionary<NSString *,NSObject *> *_Nullable)processedFormat
+ processedFormat:(NSDictionary<NSString *, NSObject *> * _Nullable)processedFormat
 
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
   [self createNewInstancePair:_instance
@@ -65,27 +131,16 @@
 - (void)__create:(NSObject<_IAFCapturePhotoCaptureDelegate> *)_instance
          _owner:(BOOL)_owner
 
+ didFinishProcessingPhoto:(_IAFFinishProcessingPhotoCallback _Nullable)didFinishProcessingPhoto
+
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
   [self createNewInstancePair:_instance
-                    arguments:@[]
+                    arguments:@[didFinishProcessingPhoto,]
                         owner:_owner
                    completion:completion];
 }
 
 
-
-
-
-- (void)_didFinishProcessingPhoto:(NSObject<_IAFCapturePhotoCaptureDelegate> *)_instance
-
-      photo:(NSObject<_IAFCapturePhoto> *_Nullable)photo
-
-              completion:(void (^)(id _Nullable, NSError *_Nullable))completion {
-  [self invokeMethod:_instance
-          methodName:@"didFinishProcessingPhoto"
-           arguments:@[photo,]
-          completion:completion];
-}
 
 
 @end
@@ -120,7 +175,7 @@
 - (void)__create:(NSObject<_IAFCapturePhoto> *)_instance
          _owner:(BOOL)_owner
 
- fileDataRepresentation:(NSData *_Nullable)fileDataRepresentation
+ fileDataRepresentation:(NSData * _Nullable)fileDataRepresentation
 
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
   [self createNewInstancePair:_instance
@@ -143,7 +198,7 @@
 - (void)__create:(NSObject<_IAFCaptureDeviceInput> *)_instance
          _owner:(BOOL)_owner
 
- device:(NSObject<_IAFCaptureDevice> *_Nullable)device
+ device:(NSObject<_IAFCaptureDevice> * _Nullable)device
 
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
   [self createNewInstancePair:_instance
@@ -216,9 +271,9 @@
 - (void)__create:(NSObject<_IAFCaptureDevice> *)_instance
          _owner:(BOOL)_owner
 
- uniqueId:(NSString *_Nullable)uniqueId
+ uniqueId:(NSString * _Nullable)uniqueId
 
- position:(NSNumber *_Nullable)position
+ position:(NSNumber * _Nullable)position
 
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
   [self createNewInstancePair:_instance
@@ -243,7 +298,7 @@
 - (void)__create:(NSObject<_IAFPreviewController> *)_instance
          _owner:(BOOL)_owner
 
- captureSession:(NSObject<_IAFCaptureSession> *_Nullable)captureSession
+ captureSession:(NSObject<_IAFCaptureSession> * _Nullable)captureSession
 
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
   [self createNewInstancePair:_instance
@@ -271,9 +326,9 @@
 
 - (id _Nullable)_capturePhoto:(NSObject<_IAFCapturePhotoOutput> *)_instance
 
-                     settings:(NSObject<_IAFCapturePhotoSettings> *_Nullable)settings
+                     settings:(NSObject<_IAFCapturePhotoSettings> * _Nullable)settings
 
-                     delegate:(NSObject<_IAFCapturePhotoCaptureDelegate> *_Nullable)delegate
+                     delegate:(NSObject<_IAFCapturePhotoCaptureDelegate> * _Nullable)delegate
  {
   return [_instance capturePhoto:settings
           delegate:delegate];
@@ -319,7 +374,7 @@
 @implementation _IAFCapturePhotoSettingsHandler
 - (NSObject<_IAFCapturePhotoSettings> *)__create:(REFTypeChannelMessenger *)messenger
                                  
-                                 processedFormat:(NSDictionary<NSString *,NSObject *> *)processedFormat
+                                 processedFormat:(NSDictionary<NSString *, NSObject *> *)processedFormat
 {
   @throw [NSException exceptionWithName:@"_IAFUnimplementedException" reason:nil userInfo:nil];
 }
@@ -356,11 +411,11 @@
 
 @implementation _IAFCapturePhotoCaptureDelegateHandler
 - (NSObject<_IAFCapturePhotoCaptureDelegate> *)__create:(REFTypeChannelMessenger *)messenger
-                                 {
+                                 
+                                 didFinishProcessingPhoto:(_IAFFinishProcessingPhotoCallback)didFinishProcessingPhoto
+{
   @throw [NSException exceptionWithName:@"_IAFUnimplementedException" reason:nil userInfo:nil];
 }
-
-
 
 
 
@@ -377,7 +432,7 @@
 
 - (nonnull id)createInstance:(nonnull REFTypeChannelMessenger *)messenger
                    arguments:(nonnull NSArray *)arguments {
-  return [self __create:messenger ];
+  return [self __create:messenger didFinishProcessingPhoto:arguments[0] ];
 }
 
 - (id _Nullable)invokeMethod:(nonnull REFTypeChannelMessenger *)messenger
@@ -385,8 +440,6 @@
                   methodName:(nonnull NSString *)methodName
                    arguments:(nonnull NSArray *)arguments {
   NSObject<_IAFCapturePhotoCaptureDelegate> *value = (NSObject<_IAFCapturePhotoCaptureDelegate> *) instance;
-  
-  
   
   
   NSLog(@"Unable to invoke %@.%@", instance, methodName);
@@ -554,7 +607,7 @@
 
 - (id _Nullable)_addInput:(NSObject<_IAFCaptureSession> *)_instance
 
-                     input:(NSObject<_IAFCaptureInput> *_Nullable)input
+                     input:(NSObject<_IAFCaptureInput> * _Nullable)input
  {
   return [_instance addInput:input
           ];
@@ -564,7 +617,7 @@
 
 - (id _Nullable)_addOutput:(NSObject<_IAFCaptureSession> *)_instance
 
-                     output:(NSObject<_IAFCaptureOutput> *_Nullable)output
+                     output:(NSObject<_IAFCaptureOutput> * _Nullable)output
  {
   return [_instance addOutput:output
           ];
@@ -658,7 +711,7 @@
 
 - (id _Nullable)_devicesWithMediaType:(REFTypeChannelMessenger *)messenger
 
-                           mediaType:(NSString *_Nullable)mediaType
+                           mediaType:(NSString * _Nullable)mediaType
  {
   @throw [NSException exceptionWithName:@"_IAFUnimplementedException" reason:nil userInfo:nil];
 }
@@ -830,6 +883,16 @@
   return [[_IAFPreviewControllerHandler alloc] init];
 }
 
+
+
+- (_IAFFinishProcessingPhotoCallbackChannel *)channelFinishProcessingPhotoCallback {
+  return [[_IAFFinishProcessingPhotoCallbackChannel alloc] initWithMessenger:_messenger];
+}
+
+- (_IAFFinishProcessingPhotoCallbackHandler *)handlerFinishProcessingPhotoCallback {
+  return [[_IAFFinishProcessingPhotoCallbackHandler alloc] initWithImplementations:self];
+}
+
 @end
 
 @implementation _IAFChannelRegistrar
@@ -863,6 +926,9 @@
   
   [_implementations.channelPreviewController setHandler:_implementations.handlerPreviewController];
   
+  
+  [_implementations.channelFinishProcessingPhotoCallback setHandler:_implementations.handlerFinishProcessingPhotoCallback];
+  
 }
 
 - (void)unregisterHandlers {
@@ -886,6 +952,9 @@
   [_implementations.channelCaptureDevice removeHandler];
   
   [_implementations.channelPreviewController removeHandler];
+  
+  
+  [_implementations.channelFinishProcessingPhotoCallback removeHandler];
   
 }
 @end

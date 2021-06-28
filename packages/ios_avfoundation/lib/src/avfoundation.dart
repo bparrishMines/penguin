@@ -8,6 +8,9 @@ import 'package:reference/reference.dart';
 import 'avfoundation.g.dart';
 import 'avfoundation_channels.dart';
 
+@Reference('ios_avfoundatoin/avfoundation/FinishProcessingPhotoCallback')
+typedef FinishProcessingPhotoCallback = Function(CapturePhoto photo);
+
 abstract class MediaType {
   const MediaType._();
 
@@ -54,18 +57,26 @@ class CapturePhotoSettings with $CapturePhotoSettings {
 }
 
 @Reference('ios_avfoundatoin/avfoundation/CapturePhotoCaptureDelegate')
-abstract class CapturePhotoCaptureDelegate with $CapturePhotoCaptureDelegate {
-  // TODO: Mention this needs to be kept in memory on this side. Maybe didFinishProcessingPhoto can release pair.
-  CapturePhotoCaptureDelegate() {
-    _channel.$$create(this, $owner: true);
+class CapturePhotoCaptureDelegate with $CapturePhotoCaptureDelegate {
+  CapturePhotoCaptureDelegate({required this.didFinishProcessingPhoto}) {
+    ChannelRegistrar
+        .instance.implementations.channelFinishProcessingPhotoCallback
+        .$$create(
+      didFinishProcessingPhoto,
+      $owner: false,
+    );
+    _channel.$$create(
+      this,
+      $owner: true,
+      didFinishProcessingPhoto: didFinishProcessingPhoto,
+    );
   }
 
   static $CapturePhotoCaptureDelegateChannel get _channel => ChannelRegistrar
       .instance.implementations.channelCapturePhotoCaptureDelegate;
 
   // TODO: Create AvFoundationError?
-  @override
-  void didFinishProcessingPhoto(covariant CapturePhoto photo);
+  final FinishProcessingPhotoCallback didFinishProcessingPhoto;
 }
 
 @Reference('ios_avfoundatoin/avfoundation/CaptureOutput')

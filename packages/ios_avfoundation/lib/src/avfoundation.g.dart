@@ -4,19 +4,96 @@ import 'package:reference/reference.dart';
 
 import 'dart:typed_data';
 
+import 'avfoundation.dart';
+
 // **************************************************************************
 // ReferenceGenerator
 // **************************************************************************
+
+typedef $FinishProcessingPhotoCallback = dynamic Function(
+  CapturePhoto photo,
+);
+
+class $FinishProcessingPhotoCallbackChannel extends TypeChannel<Object> {
+  $FinishProcessingPhotoCallbackChannel(TypeChannelMessenger messenger)
+      : super(messenger,
+            'ios_avfoundatoin/avfoundation/FinishProcessingPhotoCallback');
+
+  Future<PairedInstance?> $$create(
+    $FinishProcessingPhotoCallback $instance, {
+    required bool $owner,
+  }) {
+    return createNewInstancePair(
+      $instance,
+      <Object?>[],
+      owner: $owner,
+    );
+  }
+
+  Future<Object?> _invoke(
+    $FinishProcessingPhotoCallback $instance,
+    CapturePhoto photo,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      '',
+      <Object?>[
+        photo,
+      ],
+    );
+  }
+}
+
+class $FinishProcessingPhotoCallbackHandler
+    implements TypeChannelHandler<Object> {
+  $FinishProcessingPhotoCallbackHandler(this.implementations);
+
+  final $LibraryImplementations implementations;
+
+  @override
+  $FinishProcessingPhotoCallback createInstance(
+    TypeChannelMessenger messenger,
+    List<Object?> arguments,
+  ) {
+    function(
+      CapturePhoto photo,
+    ) {
+      implementations.channelFinishProcessingPhotoCallback._invoke(
+        function,
+        photo,
+      );
+    }
+
+    return function;
+  }
+
+  @override
+  Object? invokeMethod(
+    TypeChannelMessenger messenger,
+    covariant $FinishProcessingPhotoCallback instance,
+    String methodName,
+    List<Object?> arguments,
+  ) {
+    return instance(
+      arguments[0] as CapturePhoto,
+    );
+  }
+
+  @override
+  Object? invokeStaticMethod(
+    TypeChannelMessenger messenger,
+    String methodName,
+    List<Object?> arguments,
+  ) {
+    throw UnimplementedError();
+  }
+}
 
 mixin $CapturePhotoOutput {}
 
 mixin $CapturePhotoSettings {}
 
-mixin $CapturePhotoCaptureDelegate {
-  dynamic didFinishProcessingPhoto(
-    $CapturePhoto photo,
-  );
-}
+mixin $CapturePhotoCaptureDelegate {}
 
 mixin $CaptureOutput {}
 
@@ -70,7 +147,7 @@ class $CapturePhotoSettingsChannel extends TypeChannel<$CapturePhotoSettings> {
   Future<PairedInstance?> $$create(
     $CapturePhotoSettings $instance, {
     required bool $owner,
-    required Map<String, Object> processedFormat,
+    required Map processedFormat,
   }) {
     return createNewInstancePair(
       $instance,
@@ -91,10 +168,13 @@ class $CapturePhotoCaptureDelegateChannel
   Future<PairedInstance?> $$create(
     $CapturePhotoCaptureDelegate $instance, {
     required bool $owner,
+    required $FinishProcessingPhotoCallback didFinishProcessingPhoto,
   }) {
     return createNewInstancePair(
       $instance,
-      <Object?>[],
+      <Object?>[
+        didFinishProcessingPhoto,
+      ],
       owner: $owner,
     );
   }
@@ -339,7 +419,7 @@ class $CapturePhotoSettingsHandler
     implements TypeChannelHandler<$CapturePhotoSettings> {
   $CapturePhotoSettings $$create(
     TypeChannelMessenger messenger,
-    Map<String, Object> processedFormat,
+    Map processedFormat,
   ) {
     throw UnimplementedError();
   }
@@ -367,7 +447,7 @@ class $CapturePhotoSettingsHandler
   ) {
     return $$create(
       messenger,
-      arguments[0] as Map<String, Object>,
+      arguments[0] as Map,
     );
   }
 
@@ -393,17 +473,9 @@ class $CapturePhotoCaptureDelegateHandler
     implements TypeChannelHandler<$CapturePhotoCaptureDelegate> {
   $CapturePhotoCaptureDelegate $$create(
     TypeChannelMessenger messenger,
+    $FinishProcessingPhotoCallback didFinishProcessingPhoto,
   ) {
     throw UnimplementedError();
-  }
-
-  dynamic $didFinishProcessingPhoto(
-    $CapturePhotoCaptureDelegate $instance,
-    $CapturePhoto photo,
-  ) {
-    return $instance.didFinishProcessingPhoto(
-      photo,
-    );
   }
 
   @override
@@ -429,6 +501,7 @@ class $CapturePhotoCaptureDelegateHandler
   ) {
     return $$create(
       messenger,
+      arguments[0] as $FinishProcessingPhotoCallback,
     );
   }
 
@@ -440,11 +513,6 @@ class $CapturePhotoCaptureDelegateHandler
     List<Object?> arguments,
   ) {
     switch (methodName) {
-      case 'didFinishProcessingPhoto':
-        return $didFinishProcessingPhoto(
-          instance,
-          arguments[0] as $CapturePhoto,
-        );
     }
 
     throw ArgumentError.value(
@@ -873,6 +941,13 @@ class $LibraryImplementations {
       $PreviewControllerChannel(messenger);
   $PreviewControllerHandler get handlerPreviewController =>
       $PreviewControllerHandler();
+
+  $FinishProcessingPhotoCallbackChannel
+      get channelFinishProcessingPhotoCallback =>
+          $FinishProcessingPhotoCallbackChannel(messenger);
+  $FinishProcessingPhotoCallbackHandler
+      get handlerFinishProcessingPhotoCallback =>
+          $FinishProcessingPhotoCallbackHandler(this);
 }
 
 class $ChannelRegistrar {
@@ -920,6 +995,10 @@ class $ChannelRegistrar {
     implementations.channelPreviewController.setHandler(
       implementations.handlerPreviewController,
     );
+
+    implementations.channelFinishProcessingPhotoCallback.setHandler(
+      implementations.handlerFinishProcessingPhotoCallback,
+    );
   }
 
   void unregisterHandlers() {
@@ -942,5 +1021,7 @@ class $ChannelRegistrar {
     implementations.channelCaptureDevice.removeHandler();
 
     implementations.channelPreviewController.removeHandler();
+
+    implementations.channelFinishProcessingPhotoCallback.removeHandler();
   }
 }
