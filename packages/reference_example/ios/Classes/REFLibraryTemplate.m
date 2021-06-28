@@ -23,7 +23,7 @@
 
 - (void)invoke:(__prefix____function_name__)_instance
 /*iterate parameters parameter*/
-      __parameter_name__:(/*replace parameter_type*/NSString/**/ *_Nullable)__parameter_name__
+      __parameter_name__:(/*replace parameter_type*/NSString */**/ _Nullable)__parameter_name__
 /**/
     completion:(void (^)(id _Nullable, NSError *_Nullable))completion {
   [self invokeMethod:_instance
@@ -47,7 +47,7 @@
 - (nonnull id)createInstance:(nonnull REFTypeChannelMessenger *)messenger
                    arguments:(nonnull NSArray *)arguments {
   __block __weak __prefix____function_name__ function;
-  __prefix____function_name__ functionInstance = ^(/*iterate :join=',' parameters parameter*//*replace parameter_type*/NSString/**/ *_Nullable __parameter_name__/**/) {
+  __prefix____function_name__ functionInstance = ^(/*iterate :join=',' parameters parameter*//*replace parameter_type*/NSString/**/ */**/ _Nullable __parameter_name__/**/) {
     [self->_implementations.channel__function_name__ invoke:function
                                          /*iterate parameters parameter*/
                                          __parameter_name__:__parameter_name__
@@ -85,7 +85,7 @@
 - (void)__create:(NSObject<__prefix____class_name__> *)_instance
          _owner:(BOOL)_owner
 /*iterate fields field*/
- __field_name__:(/*replace field_type*/NSNumber/**/ *_Nullable)__field_name__
+ __field_name__:(/*replace field_type*/NSNumber */**/ _Nullable)__field_name__
 /**/
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
   [self createNewInstancePair:_instance
@@ -102,7 +102,7 @@
 (/*replace parameter_type*/NSString/**/ *_Nullable)__parameter_name__
 /**//**/
 /*iterate :start=1 parameters followingParameter*/
-   __followingParameter_name__:(/*replace followingParameter_type*/NSString/**/ *_Nullable)__followingParameter_name__
+   __followingParameter_name__:(/*replace followingParameter_type*/NSString */**/ _Nullable)__followingParameter_name__
 /**/
 /*if hasParameters*/completion:/**/(void (^)(id _Nullable, NSError *_Nullable))completion {
   [self invokeStaticMethod:@"__staticMethod_name__"
@@ -116,7 +116,7 @@
 /*if! returnsFuture*/
 - (void)___method_name__:(NSObject<__prefix____class_name__> *)_instance
 /*iterate parameters parameter*/
-      __parameter_name__:(/*replace parameter_type*/NSString/**/ *_Nullable)__parameter_name__
+      __parameter_name__:(/*replace parameter_type*/NSString */**/ _Nullable)__parameter_name__
 /**/
               completion:(void (^)(id _Nullable, NSError *_Nullable))completion {
   [self invokeMethod:_instance
@@ -133,7 +133,7 @@
 @implementation __prefix____class_name__Handler
 - (NSObject<__prefix____class_name__> *)__create:(REFTypeChannelMessenger *)messenger
                                  /*iterate fields field*/
-                                 __field_name__:(/*replace field_type*/NSNumber/**/ *)__field_name__
+                                 __field_name__:(/*replace field_type*/NSNumber */**/)__field_name__
 /**/{
   @throw [NSException exceptionWithName:@"__prefix__UnimplementedException" reason:nil userInfo:nil];
 }
@@ -142,7 +142,7 @@
 /*if returnsFuture*/
 - (id _Nullable)___staticMethod_name__:(REFTypeChannelMessenger *)messenger
 /*iterate parameters parameter*/
-                           __parameter_name__:(/*replace parameter_type*/NSString/**/ *_Nullable)__parameter_name__
+                           __parameter_name__:(/*replace parameter_type*/NSString */**/_Nullable)__parameter_name__
 /**/ {
   @throw [NSException exceptionWithName:@"__prefix__UnimplementedException" reason:nil userInfo:nil];
 }
@@ -153,7 +153,7 @@
 /*if returnsFuture*/
 - (id _Nullable)___method_name__:(NSObject<__prefix____class_name__> *)_instance
 /*iterate parameters parameter*/
-                     __parameter_name__:(/*replace parameter_type*/NSString/**/ *_Nullable)__parameter_name__
+                     __parameter_name__:(/*replace parameter_type*/NSString */**/ _Nullable)__parameter_name__
 /**/ {
   return [_instance __method_name__/*iterate :end=1 parameters parameter*/:__parameter_name__/**/
           /*iterate :start=1 parameters followingParameter*/__followingParameter_name__:/*replace followingParameter_name*/nil/**//**/];
