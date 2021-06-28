@@ -142,7 +142,7 @@
 /*if returnsFuture*/
 - (id _Nullable)___staticMethod_name__:(REFTypeChannelMessenger *)messenger
 /*iterate parameters parameter*/
-                           __parameter_name__:(/*replace parameter_type*/NSString */**/_Nullable)__parameter_name__
+                           __parameter_name__:(/*replace parameter_type*/NSString */**/ _Nullable)__parameter_name__
 /**/ {
   @throw [NSException exceptionWithName:@"__prefix__UnimplementedException" reason:nil userInfo:nil];
 }

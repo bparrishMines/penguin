@@ -58,7 +58,7 @@ typedef NSObject *_Nullable (^__prefix____function_name__) (/*iterate :join=',' 
 - (void)__create:(NSObject<__prefix____class_name__> *)_instance
           _owner:(BOOL)_owner
 /*iterate fields field*/
- __field_name__:(/*replace field_type*/NSNumber */**/_Nullable)__field_name__
+ __field_name__:(/*replace field_type*/NSNumber */**/ _Nullable)__field_name__
 /**/
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion;
 
