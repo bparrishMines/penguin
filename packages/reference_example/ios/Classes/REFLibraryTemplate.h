@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class __prefix__LibraryImplementations;
 
 /*iterate functions function*/
-typedef NSObject *_Nullable (^__prefix____function_name__) (/*iterate :join=',' parameters parameter*//*replace parameter_type*/NSString/**/ *_Nullable __parameter_name__/**/);
+typedef NSObject *_Nullable (^__prefix____function_name__) (/*iterate :join=',' parameters parameter*//*replace parameter_type*/NSString */**/ _Nullable __parameter_name__/**/);
 /**/
 
 /*iterate functions function*/
