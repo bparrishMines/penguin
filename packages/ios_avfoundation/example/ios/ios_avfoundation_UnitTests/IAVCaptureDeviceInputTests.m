@@ -8,12 +8,18 @@
 
 @implementation IAVCaptureDeviceInputTests {
   IAFLibraryImplementations *_mockImplementations;
+  REFTypeChannelMessenger *_mockTypeChannelMessenger;
 }
 
 - (void)setUp {
   _mockImplementations = OCMClassMock([IAFLibraryImplementations class]);
+  _mockTypeChannelMessenger = OCMClassMock([REFTypeChannelMessenger class]);
 }
-- (void)testInitWithDevice {
+
+- (void)testCreateCaptureDeviceInput {
+  IAFLibraryImplementations *implementations = [[IAFLibraryImplementations alloc]
+                                                initWithMessenger:_mockTypeChannelMessenger];
+
   id mockCaptureDevice = OCMClassMock([AVCaptureDevice class]);
   IAFCaptureDeviceProxy *captureDevice = [[IAFCaptureDeviceProxy alloc] initWithCaptureDevice:mockCaptureDevice
                                                                               implementations:_mockImplementations];
@@ -22,8 +28,11 @@
   OCMStub([mockDeviceInput alloc]).andReturn(mockDeviceInput);
   OCMStub([mockDeviceInput initWithDevice:mockCaptureDevice
                                     error:((NSError __autoreleasing **)[OCMArg anyPointer])]).andReturn(mockDeviceInput);
+  
+  IAFCaptureDeviceInputProxy *captureDeviceProxy = (IAFCaptureDeviceInputProxy *) [implementations.handlerCaptureDeviceInput
+                                                    __create:_mockTypeChannelMessenger
+                                                    device:captureDevice];
 
-  XCTAssertEqualObjects(mockDeviceInput,
-                        [[IAFCaptureDeviceInputProxy alloc] initWithDevice:captureDevice].captureInput);
+  XCTAssertEqualObjects(mockDeviceInput, captureDeviceProxy.captureInput);
 }
 @end

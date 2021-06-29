@@ -28,7 +28,7 @@
     completion:(void (^)(id _Nullable, NSError *_Nullable))completion {
   [self invokeMethod:_instance
           methodName:@""
-           arguments:@[/*iterate parameters parameter*/__parameter_name__,/**/]
+           arguments:@[/*iterate parameters parameter*/__parameter_name__ ? __parameter_name__ : [NSNull null],/**/]
           completion:completion];
 }
 @end
@@ -89,7 +89,7 @@
 /**/
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
   [self createNewInstancePair:_instance
-                    arguments:@[/*iterate fields field*/__field_name__,/**/]
+                    arguments:@[/*iterate fields field*/__field_name__ ? __field_name__ : [NSNull null],/**/]
                         owner:_owner
                    completion:completion];
 }
@@ -106,7 +106,7 @@
 /**/
 /*if hasParameters*/completion:/**/(void (^)(id _Nullable, NSError *_Nullable))completion {
   [self invokeStaticMethod:@"__staticMethod_name__"
-                 arguments:@[/*iterate parameters parameter*/__parameter_name__,/**/]
+                 arguments:@[/*iterate parameters parameter*/__parameter_name__ ? __parameter_name__ : [NSNull null],/**/]
                 completion:completion];
 }
 /**/
@@ -121,7 +121,7 @@
               completion:(void (^)(id _Nullable, NSError *_Nullable))completion {
   [self invokeMethod:_instance
           methodName:@"__method_name__"
-           arguments:@[/*iterate parameters parameter*/__parameter_name__,/**/]
+           arguments:@[/*iterate parameters parameter*/__parameter_name__ ? __parameter_name__ : [NSNull null],/**/]
           completion:completion];
 }
 /**/

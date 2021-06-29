@@ -3,6 +3,7 @@
 
 @import ios_avfoundation;
 
+// AVCaptureDevice can't be mocked so this is used in its place.
 @interface TestCaptureDevice : NSObject
 @end
 
@@ -26,11 +27,23 @@
 @implementation IAVCaptureDeviceTests {
   TestCaptureDevice *_testCaptureDevice;
   IAFLibraryImplementations *_mockImplementations;
+  _IAFCaptureDeviceChannel *_mockCaptureDeviceChannel;
 }
 
 - (void)setUp {
   _testCaptureDevice = [[TestCaptureDevice alloc] init];
   _mockImplementations = OCMClassMock([IAFLibraryImplementations class]);
+  _mockCaptureDeviceChannel = OCMClassMock([_IAFCaptureDeviceChannel class]);
+  OCMStub([_mockImplementations channelCaptureDevice]).andReturn(_mockCaptureDeviceChannel);
+}
+
+- (void)testCreateCapturePhoto {
+  IAFCaptureDeviceProxy *captureDeviceProxy = [[IAFCaptureDeviceProxy alloc] initWithCaptureDevice:_testCaptureDevice
+                                                                                   implementations:_mockImplementations];
+  OCMVerify([_mockCaptureDeviceChannel __create:captureDeviceProxy
+                                         _owner:NO
+                                       uniqueId:@"test_uniqueID"
+                                       position:@2 completion:OCMOCK_ANY]);
 }
 
 - (void)testDevicesWithMediaType {

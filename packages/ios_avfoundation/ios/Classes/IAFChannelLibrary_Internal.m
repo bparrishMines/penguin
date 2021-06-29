@@ -179,7 +179,7 @@
 
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
   [self createNewInstancePair:_instance
-                    arguments:@[fileDataRepresentation,]
+                    arguments:@[fileDataRepresentation ? fileDataRepresentation : [NSNull null]]
                         owner:_owner
                    completion:completion];
 }
