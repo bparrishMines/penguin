@@ -16,8 +16,11 @@
   XCTAssertEqualObjects(AVMediaTypeVideo, @"vide");
 }
 
-- (void)testCaiwej {
+- (void)testVideoSettingsKeys {
   XCTAssertEqualObjects(AVVideoCodecKey, @"AVVideoCodecKey");
+}
+
+- (void) testVideoCodecType {
   XCTAssertEqualObjects(AVVideoCodecTypeJPEG, @"jpeg");
 }
 @end
