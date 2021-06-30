@@ -1,4 +1,7 @@
+// ignore_for_file: public_member_api_docs
+
 import 'package:flutter/material.dart';
+
 import 'package:flutter/services.dart';
 
 import 'package:ios_avfoundation/ios_avfoundation.dart';
@@ -49,7 +52,9 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> _setupCamera() async {
+    // TODO: replace
     final List<CaptureDevice> devices =
+        // ignore: deprecated_member_use
         await CaptureDevice.devicesWithMediaType(MediaType.video);
 
     final CaptureDevice device = devices.firstWhere(

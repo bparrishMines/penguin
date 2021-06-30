@@ -10,7 +10,7 @@ Pod::Spec.new do |s|
   s.description      = pubspec['description']
   s.homepage         = pubspec['homepage']
   s.license          = { :type => 'MIT', :file => '../LICENSE' }
-  s.author           = pubspec['author']
+  s.author           = 'Maurice Parrish'
   s.source           = { :http => pubspec['homepage'] }
   s.source_files = 'Classes/**/*'
   s.public_header_files = 'Classes/**/*.h'
