@@ -55,7 +55,8 @@ API_AVAILABLE(ios(10.0))
 
 API_AVAILABLE(ios(10.0))
 @interface IAFCapturePhotoCaptureDelegateProxy : NSObject<_IAFCapturePhotoCaptureDelegate, AVCapturePhotoCaptureDelegate>
-- (instancetype)initWithImplementations:(IAFLibraryImplementations *)implementations;
+- (instancetype)initWithCallback:(_IAFFinishProcessingPhotoCallback)callback
+                 implementations:(IAFLibraryImplementations *)implementations;
 @end
 
 API_AVAILABLE(ios(11.0))

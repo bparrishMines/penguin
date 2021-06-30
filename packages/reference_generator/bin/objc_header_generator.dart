@@ -117,12 +117,14 @@ String getTrueTypeName(ReferenceType type, String prefix) {
     (ReferenceType type) => getTrueTypeName(type, prefix),
   );
 
-  if (type.codeGeneratedType && typeArguments.isEmpty) {
-    return 'NSObject<$prefix$objcName>';
+  if (type.codeGeneratedType && type.functionType) {
+    return '$prefix$objcName';
+  } else if (type.codeGeneratedType && typeArguments.isEmpty) {
+    return 'NSObject<$prefix$objcName> *';
   } else if (type.codeGeneratedType && typeArguments.isNotEmpty) {
-    return 'NSObject<$prefix$objcName<${typeArguments.join(' *,')} *>>';
+    return 'NSObject<$prefix$objcName<${typeArguments.join(', ')}>> *';
   } else if (!type.codeGeneratedType && typeArguments.isNotEmpty) {
-    return '$objcName<${typeArguments.join(' *,')} *>';
+    return '$objcName<${typeArguments.join(', ')}> *';
   }
 
   return '$objcName';
@@ -132,16 +134,16 @@ String getTrueTypeName(ReferenceType type, String prefix) {
 String objcTypeNameConversion(String type) {
   switch (type) {
     case 'Uint8List':
-      return 'NSData';
+      return 'NSData *';
     case 'int':
     case 'double':
     case 'num':
     case 'bool':
-      return 'NSNumber';
+      return 'NSNumber *';
     case 'String':
-      return 'NSString';
+      return 'NSString *';
     case 'Object':
-      return 'NSObject';
+      return 'NSObject *';
     case 'List':
       return 'NSArray';
     case 'Map':

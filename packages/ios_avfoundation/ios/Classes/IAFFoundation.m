@@ -194,27 +194,24 @@
 @end
 
 @implementation IAFCapturePhotoCaptureDelegateProxy {
+  _IAFFinishProcessingPhotoCallback _callback;
   IAFLibraryImplementations *_implementations;
 }
 
-- (instancetype)initWithImplementations:(IAFLibraryImplementations *)implementations {
+- (instancetype)initWithCallback:(_IAFFinishProcessingPhotoCallback)callback
+                 implementations:(IAFLibraryImplementations *)implementations {
   self = [self init];
   if (self) {
+    _callback = callback;
     _implementations = implementations;
   }
   return self;
 }
 
-- (NSObject *)didFinishProcessingPhoto:(IAFCapturePhotoProxy *_Nullable)photo  API_AVAILABLE(ios(11.0)){
-  [_implementations.channelCapturePhotoCaptureDelegate _didFinishProcessingPhoto:self
-                                                                           photo:photo
-                                                                      completion:^(id result, NSError *error) {}];
-  return nil;
-}
-
-- (void)captureOutput:(AVCapturePhotoOutput *)output didFinishProcessingPhoto:(AVCapturePhoto *)photo
+- (void)captureOutput:(AVCapturePhotoOutput *)output
+didFinishProcessingPhoto:(AVCapturePhoto *)photo
                 error:(NSError *)error  API_AVAILABLE(ios(11.0)) {
-  [self didFinishProcessingPhoto:[[IAFCapturePhotoProxy alloc] initWithCapturePhoto:photo implementations:_implementations]];
+  _callback([[IAFCapturePhotoProxy alloc] initWithCapturePhoto:photo implementations:_implementations]);
 }
 @end
 

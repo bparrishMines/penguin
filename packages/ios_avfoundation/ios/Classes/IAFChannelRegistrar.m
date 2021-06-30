@@ -83,12 +83,14 @@
   return self;
 }
 
-- (NSObject<_IAFCapturePhotoCaptureDelegate> *)__create:(REFTypeChannelMessenger *)messenger {
+- (NSObject<_IAFCapturePhotoCaptureDelegate> *)__create:(REFTypeChannelMessenger *)messenger didFinishProcessingPhoto:(_IAFFinishProcessingPhotoCallback)didFinishProcessingPhoto {
   if (@available(iOS 10.0, *)) {
-    return [[IAFCapturePhotoCaptureDelegateProxy alloc] initWithImplementations:_implementations];
+    return [[IAFCapturePhotoCaptureDelegateProxy alloc] initWithCallback:didFinishProcessingPhoto
+                                                         implementations:_implementations];
   }
-  NSLog(@"CapturePhotoCaptureDelegate is only supported on iOS 10+");
-  return nil;
+  @throw [NSException exceptionWithName:@"IosAvfoundationPluginException"
+                                 reason:@"Requires version >= ios 10.0"
+                               userInfo:nil];
 }
 @end
 
@@ -97,8 +99,9 @@
   if (@available(iOS 10.0, *)) {
     return [[IAFCapturePhotoSettingsProxy alloc] initwithProcessedFormat:processedFormat];
   }
-  NSLog(@"IAFCapturePhotoSettings is only supported on iOS 10+");
-  return nil;
+  @throw [NSException exceptionWithName:@"IosAvfoundationPluginException"
+                                 reason:@"Requires version >= ios 10.0"
+                               userInfo:nil];
 }
 @end
 
@@ -107,7 +110,8 @@
   if (@available(iOS 10.0, *)) {
     return [[IAFCapturePhotoOutputProxy alloc] init];
   }
-  NSLog(@"IAFCapturePhotoOutput is only supported on iOS 10+");
-  return nil;
+  @throw [NSException exceptionWithName:@"IosAvfoundationPluginException"
+                                 reason:@"Requires version >= ios 10.0"
+                               userInfo:nil];
 }
 @end

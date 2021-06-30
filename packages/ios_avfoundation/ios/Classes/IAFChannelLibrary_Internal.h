@@ -1,5 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
+#import <Foundation/Foundation.h>
 #import "REFMethodChannel.h"
 
 // **************************************************************************
@@ -31,15 +32,37 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol _IAFPreviewController;
 
 
+@class _IAFLibraryImplementations;
+
+
+typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFCapturePhoto> * _Nullable photo);
+
+
+
+@interface _IAFFinishProcessingPhotoCallbackChannel : REFTypeChannel
+- (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger;
+- (void)__create:(_IAFFinishProcessingPhotoCallback)_instance
+          _owner:(BOOL)_owner
+      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion;
+@end
+
+
+
+@interface _IAFFinishProcessingPhotoCallbackHandler : NSObject<REFTypeChannelHandler>
+@property (readonly) _IAFLibraryImplementations *implementations;
+-(instancetype)initWithImplementations:(_IAFLibraryImplementations *)implementations;
+@end
+
+
 
 @protocol _IAFCapturePhotoOutput <NSObject>
 
 
 - (id _Nullable)capturePhoto
-                                :(NSObject<_IAFCapturePhotoSettings>*_Nullable)settings
+                                :(NSObject<_IAFCapturePhotoSettings> * _Nullable)settings
 
 
-     delegate:(NSObject<_IAFCapturePhotoCaptureDelegate> *_Nullable)delegate
+     delegate:(NSObject<_IAFCapturePhotoCaptureDelegate> * _Nullable)delegate
 
 ;
 
@@ -51,8 +74,6 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @protocol _IAFCapturePhotoCaptureDelegate <NSObject>
-
-
 
 @end
 
@@ -76,7 +97,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 - (id _Nullable)addInput
-                                :(NSObject<_IAFCaptureInput>*_Nullable)input
+                                :(NSObject<_IAFCaptureInput> * _Nullable)input
 
 
 ;
@@ -84,7 +105,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 - (id _Nullable)addOutput
-                                :(NSObject<_IAFCaptureOutput>*_Nullable)output
+                                :(NSObject<_IAFCaptureOutput> * _Nullable)output
 
 
 ;
@@ -133,7 +154,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)__create:(NSObject<_IAFCapturePhotoSettings> *)_instance
           _owner:(BOOL)_owner
 
- processedFormat:(NSDictionary<NSString *,NSObject *> *_Nullable)processedFormat
+ processedFormat:(NSDictionary<NSString *, NSObject *> * _Nullable)processedFormat
 
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion;
 
@@ -147,17 +168,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)__create:(NSObject<_IAFCapturePhotoCaptureDelegate> *)_instance
           _owner:(BOOL)_owner
 
+ didFinishProcessingPhoto:(_IAFFinishProcessingPhotoCallback _Nullable)didFinishProcessingPhoto
+
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion;
 
 
-
-
-
-- (void)_didFinishProcessingPhoto:(NSObject<_IAFCapturePhotoCaptureDelegate> *)_instance
-
-  photo:(NSObject<_IAFCapturePhoto> *_Nullable)photo
-
-                   completion:(void (^)(id _Nullable, NSError *_Nullable))completion;
 
 
 @end
@@ -179,7 +194,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)__create:(NSObject<_IAFCapturePhoto> *)_instance
           _owner:(BOOL)_owner
 
- fileDataRepresentation:(NSData *_Nullable)fileDataRepresentation
+ fileDataRepresentation:(NSData * _Nullable)fileDataRepresentation
 
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion;
 
@@ -193,7 +208,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)__create:(NSObject<_IAFCaptureDeviceInput> *)_instance
           _owner:(BOOL)_owner
 
- device:(NSObject<_IAFCaptureDevice> *_Nullable)device
+ device:(NSObject<_IAFCaptureDevice> * _Nullable)device
 
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion;
 
@@ -239,9 +254,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)__create:(NSObject<_IAFCaptureDevice> *)_instance
           _owner:(BOOL)_owner
 
- uniqueId:(NSString *_Nullable)uniqueId
+ uniqueId:(NSString * _Nullable)uniqueId
 
- position:(NSNumber *_Nullable)position
+ position:(NSNumber * _Nullable)position
 
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion;
 
@@ -257,7 +272,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)__create:(NSObject<_IAFPreviewController> *)_instance
           _owner:(BOOL)_owner
 
- captureSession:(NSObject<_IAFCaptureSession> *_Nullable)captureSession
+ captureSession:(NSObject<_IAFCaptureSession> * _Nullable)captureSession
 
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion;
 
@@ -277,9 +292,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (id _Nullable)_capturePhoto:(NSObject<_IAFCapturePhotoOutput> *)_instance
 
-  settings:(NSObject<_IAFCapturePhotoSettings> *_Nullable)settings
+  settings:(NSObject<_IAFCapturePhotoSettings> * _Nullable)settings
 
-  delegate:(NSObject<_IAFCapturePhotoCaptureDelegate> *_Nullable)delegate
+  delegate:(NSObject<_IAFCapturePhotoCaptureDelegate> * _Nullable)delegate
 ;
 
 
@@ -288,7 +303,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface _IAFCapturePhotoSettingsHandler : NSObject<REFTypeChannelHandler>
 - (NSObject<_IAFCapturePhotoSettings> *)__create:(REFTypeChannelMessenger *)messenger
 
-                                  processedFormat:(NSDictionary<NSString *,NSObject *> *)processedFormat
+                                  processedFormat:(NSDictionary<NSString *, NSObject *> * _Nullable)processedFormat
 ;
 
 
@@ -297,9 +312,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface _IAFCapturePhotoCaptureDelegateHandler : NSObject<REFTypeChannelHandler>
 - (NSObject<_IAFCapturePhotoCaptureDelegate> *)__create:(REFTypeChannelMessenger *)messenger
+
+                                  didFinishProcessingPhoto:(_IAFFinishProcessingPhotoCallback _Nullable)didFinishProcessingPhoto
 ;
-
-
 
 
 
@@ -316,7 +331,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface _IAFCapturePhotoHandler : NSObject<REFTypeChannelHandler>
 - (NSObject<_IAFCapturePhoto> *)__create:(REFTypeChannelMessenger *)messenger
 
-                                  fileDataRepresentation:(NSData *)fileDataRepresentation
+                                  fileDataRepresentation:(NSData * _Nullable)fileDataRepresentation
 ;
 
 
@@ -326,7 +341,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface _IAFCaptureDeviceInputHandler : NSObject<REFTypeChannelHandler>
 - (NSObject<_IAFCaptureDeviceInput> *)__create:(REFTypeChannelMessenger *)messenger
 
-                                  device:(NSObject<_IAFCaptureDevice> *)device
+                                  device:(NSObject<_IAFCaptureDevice> * _Nullable)device
 ;
 
 
@@ -350,14 +365,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (id _Nullable)_addInput:(NSObject<_IAFCaptureSession> *)_instance
 
-  input:(NSObject<_IAFCaptureInput> *_Nullable)input
+  input:(NSObject<_IAFCaptureInput> * _Nullable)input
 ;
 
 
 
 - (id _Nullable)_addOutput:(NSObject<_IAFCaptureSession> *)_instance
 
-  output:(NSObject<_IAFCaptureOutput> *_Nullable)output
+  output:(NSObject<_IAFCaptureOutput> * _Nullable)output
 ;
 
 
@@ -376,15 +391,15 @@ NS_ASSUME_NONNULL_BEGIN
 @interface _IAFCaptureDeviceHandler : NSObject<REFTypeChannelHandler>
 - (NSObject<_IAFCaptureDevice> *)__create:(REFTypeChannelMessenger *)messenger
 
-                                  uniqueId:(NSString *)uniqueId
+                                  uniqueId:(NSString * _Nullable)uniqueId
 
-                                  position:(NSNumber *)position
+                                  position:(NSNumber * _Nullable)position
 ;
 
 
 - (id _Nullable)_devicesWithMediaType:(REFTypeChannelMessenger *)messenger
 
-                           mediaType:(NSString *_Nullable)mediaType
+                           mediaType:(NSString * _Nullable)mediaType
 ;
 
 
@@ -395,7 +410,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface _IAFPreviewControllerHandler : NSObject<REFTypeChannelHandler>
 - (NSObject<_IAFPreviewController> *)__create:(REFTypeChannelMessenger *)messenger
 
-                                  captureSession:(NSObject<_IAFCaptureSession> *)captureSession
+                                  captureSession:(NSObject<_IAFCaptureSession> * _Nullable)captureSession
 ;
 
 
@@ -436,6 +451,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 -(_IAFPreviewControllerChannel *)channelPreviewController;
 -(_IAFPreviewControllerHandler *)handlerPreviewController;
+
+
+
+- (_IAFFinishProcessingPhotoCallbackChannel *)channelFinishProcessingPhotoCallback;
+- (_IAFFinishProcessingPhotoCallbackHandler *)handlerFinishProcessingPhotoCallback;
 
 @end
 

@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class __prefix__LibraryImplementations;
 
 /*iterate functions function*/
-typedef NSObject *_Nullable (^__prefix____function_name__) (/*iterate :join=',' parameters parameter*//*replace parameter_type*/NSString/**/ *_Nullable __parameter_name__/**/);
+typedef NSObject *_Nullable (^__prefix____function_name__) (/*iterate :join=',' parameters parameter*//*replace parameter_type*/NSString */**/ _Nullable __parameter_name__/**/);
 /**/
 
 /*iterate functions function*/
@@ -41,10 +41,10 @@ typedef NSObject *_Nullable (^__prefix____function_name__) (/*iterate :join=',' 
 /*iterate methods method*/
 /*if returnsFuture*/
 - (id _Nullable)__method_name__/*iterate :end=1 parameters parameter*/
-                                :(/*replace parameter_type*/NSString/**/*_Nullable)__parameter_name__
+                                :(/*replace parameter_type*/NSString */**/ _Nullable)__parameter_name__
 /**/
 /*iterate :start=1 parameters followingParameter*/
-     __followingParameter_name__:(/*replace followingParameter_type*/NSString/**/ *_Nullable)__followingParameter_name__
+     __followingParameter_name__:(/*replace followingParameter_type*/NSString */**/ _Nullable)__followingParameter_name__
 /**/
 ;
 /**/
@@ -58,7 +58,7 @@ typedef NSObject *_Nullable (^__prefix____function_name__) (/*iterate :join=',' 
 - (void)__create:(NSObject<__prefix____class_name__> *)_instance
           _owner:(BOOL)_owner
 /*iterate fields field*/
- __field_name__:(/*replace field_type*/NSNumber/**/ *_Nullable)__field_name__
+ __field_name__:(/*replace field_type*/NSNumber */**/ _Nullable)__field_name__
 /**/
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion;
 
@@ -67,10 +67,10 @@ typedef NSObject *_Nullable (^__prefix____function_name__) (/*iterate :join=',' 
 - (void)___staticMethod_name__:
 /*if hasParameters*/
 /*iterate :end=1 parameters parameter*/
-(/*replace parameter_type*/NSString/**/ *_Nullable)__parameter_name__
+(/*replace parameter_type*/NSString */**/ _Nullable)__parameter_name__
 /**//**/
 /*iterate :start=1 parameters followingParameter*/
-   __followingParameter_name__:(/*replace followingParameter_type*/NSString/**/ *_Nullable)__followingParameter_name__
+   __followingParameter_name__:(/*replace followingParameter_type*/NSString */**/ _Nullable)__followingParameter_name__
 /**/
 /*if hasParameters*/completion:/**/(void (^)(id _Nullable, NSError *_Nullable))completion;
 /**/
@@ -80,7 +80,7 @@ typedef NSObject *_Nullable (^__prefix____function_name__) (/*iterate :join=',' 
 /*if! returnsFuture*/
 - (void)___method_name__:(NSObject<__prefix____class_name__> *)_instance
 /*iterate parameters parameter*/
-  __parameter_name__:(/*replace parameter_type*/NSString/**/ *_Nullable)__parameter_name__
+  __parameter_name__:(/*replace parameter_type*/NSString */**/ _Nullable)__parameter_name__
 /**/
                    completion:(void (^)(id _Nullable, NSError *_Nullable))completion;
 /**/
@@ -92,13 +92,13 @@ typedef NSObject *_Nullable (^__prefix____function_name__) (/*iterate :join=',' 
 @interface __prefix____class_name__Handler : NSObject<REFTypeChannelHandler>
 - (NSObject<__prefix____class_name__> *)__create:(REFTypeChannelMessenger *)messenger
 /*iterate fields field*/
-                                  __field_name__:(/*replace field_type*/NSNumber/**/ *)__field_name__
+                                  __field_name__:(/*replace field_type*/NSNumber */**/ _Nullable)__field_name__
 /**/;
 /*iterate staticMethods staticMethod*/
 /*if returnsFuture*/
 - (id _Nullable)___staticMethod_name__:(REFTypeChannelMessenger *)messenger
 /*iterate parameters parameter*/
-                           __parameter_name__:(/*replace parameter_type*/NSString/**/ *_Nullable)__parameter_name__
+                           __parameter_name__:(/*replace parameter_type*/NSString */**/ _Nullable)__parameter_name__
 /**/;
 /**/
 /**/
@@ -107,7 +107,7 @@ typedef NSObject *_Nullable (^__prefix____function_name__) (/*iterate :join=',' 
 /*if returnsFuture*/
 - (id _Nullable)___method_name__:(NSObject<__prefix____class_name__> *)_instance
 /*iterate parameters parameter*/
-  __parameter_name__:(/*replace parameter_type*/NSString/**/ *_Nullable)__parameter_name__
+  __parameter_name__:(/*replace parameter_type*/NSString */**/ _Nullable)__parameter_name__
 /**/;
 /**/
 /**/

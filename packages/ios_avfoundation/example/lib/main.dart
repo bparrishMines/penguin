@@ -1,4 +1,7 @@
+// ignore_for_file: public_member_api_docs
+
 import 'package:flutter/material.dart';
+
 import 'package:flutter/services.dart';
 
 import 'package:ios_avfoundation/ios_avfoundation.dart';
@@ -18,8 +21,6 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   late CaptureSession _captureSession;
   late CapturePhotoOutput _capturePhotoOutput;
-  final CapturePhotoCaptureDelegate _capturePhotoCaptureDelegate =
-      MyPhotoDelegate();
   Widget _previewWidget = Container();
   int _cameraFacing = CaptureDevicePosition.back;
   final double _deviceRotation = 0;
@@ -51,7 +52,9 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> _setupCamera() async {
+    // TODO: replace
     final List<CaptureDevice> devices =
+        // ignore: deprecated_member_use
         await CaptureDevice.devicesWithMediaType(MediaType.video);
 
     final CaptureDevice device = devices.firstWhere(
@@ -72,7 +75,12 @@ class _MyAppState extends State<MyApp> {
   void _takePicture() {
     _capturePhotoOutput.capturePhoto(
       CapturePhotoSettings(<String, Object>{'AVVideoCodecKey': 'jpeg'}),
-      _capturePhotoCaptureDelegate,
+      CapturePhotoCaptureDelegate(
+        didFinishProcessingPhoto: (CapturePhoto photo) {
+          debugPrint('Photo taken');
+          debugPrint('${photo.fileDataRepresentation?.length}');
+        },
+      ),
     );
   }
 
@@ -163,13 +171,5 @@ class _MyAppState extends State<MyApp> {
         ],
       ),
     );
-  }
-}
-
-class MyPhotoDelegate extends CapturePhotoCaptureDelegate {
-  @override
-  void didFinishProcessingPhoto(covariant CapturePhoto photo) {
-    debugPrint('Photo taken');
-    debugPrint('${photo.fileDataRepresentation?.length}');
   }
 }
