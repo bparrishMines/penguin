@@ -1,7 +1,6 @@
 name: ios_avfoundation
 description: A Flutter plugin that provides access to the AVFoundation dependency on iOS.
 version: 0.0.1
-author: Brandon Parrish
 homepage: 'https://github.com/bparrishMines/penguin/tree/master/packages/ios_avfoundation'
 
 environment:
