@@ -469,32 +469,154 @@ class CaptureSession with $CaptureSession {
   static $CaptureSessionChannel get _channel =>
       ChannelRegistrar.instance.implementations.channelCaptureSession;
 
+  // TODO: can add input
+  /// Adds a given input to the session.
+  ///
+  /// You can only add an input to a session using this method if [canAddInput]
+  /// returns true. This method throws an exception when invoked and
+  /// [canAddInput] returns false.
+  ///
+  /// You can invoke this method while the session is running.
   Future<void> addInput(covariant CaptureInput input) {
     return _channel.$addInput(this, input);
   }
 
+  // TODO: can add output
+  /// Adds a given output to the session.
+  ///
+  /// You can only add an output to a session using this method if
+  /// [canAddOutput] returns true. This method throws an exception when invoked
+  /// and [canAddOutput] returns false.
+  ///
+  /// You can invoke this method while the session is running.
   Future<void> addOutput(covariant CaptureOutput output) {
     return _channel.$addOutput(this, output);
   }
 
+  /// Tells the receiver to start running.
+  ///
+  /// This method is used to start the flow of data from the inputs to the
+  /// outputs connected to the [CaptureSession] instance that is the receiver.
+  // If an error occurs during this process and the receiver fails to start
+  // running, you receive an AVCaptureSessionRuntimeErrorNotification.
   Future<void> startRunning() => _channel.$startRunning(this);
 
+  /// Tells the receiver to stop running.
+  ///
+  /// This method is used to stop the flow of data from the inputs to the
+  /// outputs connected to the [CaptureSession] instance that is the receiver.
   Future<void> stopRunning() => _channel.$stopRunning(this);
 }
 
+// TODO: lockForConfiguration
+// TODO: unlockForConfiguration
+// TODO: all methods in code sample
+// TODO: setActiveFormat
+// TODO: AVCaptureSessionPresetInputPriority
+// TODO: CaptureSession.commitConfiguration
+/// A device that provides input (such as audio or video) for capture sessions and offers controls for hardware-specific capture features.
+///
+/// A [CaptureDevice] object represents a physical capture device and the
+/// properties associated with that device. You use a capture device to
+/// configure the properties of the underlying hardware. A capture device also
+/// provides input data (such as audio or video) to an [CaptureSession] object.
+///
+/// You use the methods of the [CaptureDevice] class to enumerate the available
+/// devices, query their capabilities, and be informed about when devices come
+/// and go. Before you attempt to set properties of a capture device
+/// (its focus mode, exposure mode, and so on), you must first acquire a lock on
+/// the device using the [lockForConfiguration] method. You should also query
+/// the device’s capabilities to ensure that the new modes you intend to set are
+/// valid for that device. You can then set the properties and release the lock
+/// using the [unlockForConfiguration] method. You may hold the lock if you want
+/// all settable device properties to remain unchanged. However, holding the
+/// device lock unnecessarily may degrade capture quality in other applications
+/// sharing the device and is not recommended.
+///
+/// Most common configurations of capture settings are available through the
+/// [CaptureSession] object and its available presets. However, on iOS devices,
+/// some specialized options (such as high frame rate) require directly setting
+/// a capture format on an [CaptureDevice] instance. The following code example
+/// illustrates how to select an iOS device’s highest possible frame rate:
+///
+/// ```dart
+/// func configureCameraForHighestFrameRate(device: AVCaptureDevice) {
+///
+///   var bestFormat: AVCaptureDevice.Format?
+///   var bestFrameRateRange: AVFrameRateRange?
+///
+///   for format in device.formats {
+///       for range in format.videoSupportedFrameRateRanges {
+///           if range.maxFrameRate > bestFrameRateRange?.maxFrameRate ?? 0 {
+///               bestFormat = format
+///               bestFrameRateRange = range
+///           }
+///       }
+///   }
+///
+///   if let bestFormat = bestFormat,
+///      let bestFrameRateRange = bestFrameRateRange {
+///       do {
+///           try device.lockForConfiguration()
+///
+///           // Set the device's active format.
+///           device.activeFormat = bestFormat
+///
+///           // Set the device's min/max frame duration.
+///           let duration = bestFrameRateRange.minFrameDuration
+///           device.activeVideoMinFrameDuration = duration
+///           device.activeVideoMaxFrameDuration = duration
+///
+///           device.unlockForConfiguration()
+///       } catch {
+///           // Handle error.
+///       }
+///   }
+/// }
+/// ```
+///
+/// In iOS, directly configuring a capture device’s [setActiveFormat] changes
+/// the capture session’s preset to [CaptureSessionPreset.inputPriority]. Upon
+/// making this change, the capture session no longer automatically configures
+/// the capture format when you call the [startRunning] method or call the
+/// [CaptureSession.commitConfiguration] method after changing the session
+/// topology.
+///
+/// In macOS, a capture session can still automatically configure the capture
+/// format after you make changes. To prevent automatic changes to the capture
+/// format in macOS, follow the advice listed under the [lockForConfiguration]
+/// method.
 @Reference('ios_avfoundatoin/avfoundation/CaptureDevice')
 class CaptureDevice with $CaptureDevice {
+  /// Construct a [CaptureDevice].
+  ///
+  // ignore: deprecated_member_use_from_same_package
+  /// This is only visible for testing. See [devicesWithMediaType].
   @visibleForTesting
   CaptureDevice({required this.uniqueId, required this.position});
 
   static $CaptureDeviceChannel get _channel =>
       ChannelRegistrar.instance.implementations.channelCaptureDevice;
 
+  /// An ID unique to the model of device corresponding to the receiver.
+  ///
+  /// Every available capture device has a unique ID that persists on one system
+  /// across device connections and disconnections, application restarts, and
+  /// reboots of the system itself. You can store the value returned by this
+  /// property to recall or track the status of a specific device in the future.
   final String uniqueId;
 
+  /// Indicates the physical position of the device hardware on the system.
+  ///
+  /// You can observe changes to the value of this property using Key-value
+  /// observing.
+  ///
+  /// See [CaptureDevicePosition] for possible values.
   final int position;
 
-  // TODO: deprecated
+  // TODO: AVCaptureDeviceDiscoverySession
+  /// Returns an array of the devices able to capture data of a given media type.
+  @Deprecated('Please use AVCaptureDeviceDiscoverySession instead.')
   static Future<List<CaptureDevice>> devicesWithMediaType(
     String mediaType,
   ) async {
@@ -505,15 +627,22 @@ class CaptureDevice with $CaptureDevice {
   }
 }
 
+/// Widget for displaying preview frames from a [CaptureSession].
 class Preview extends UiKitReferenceWidget {
+  /// Construct a [Preview].
   Preview({Key? key, required this.controller})
       : super(key: key, instance: controller);
 
+  /// Controls the underlying iOS UIView that displays the preview frames.
   final PreviewController controller;
 }
 
+/// Controls an iOS UIView that displays frames from a [CaptureSession].
+///
+/// See: [Preview]
 @Reference('ios_avfoundatoin/avfoundation/PreviewController')
 class PreviewController with $PreviewController {
+  /// Construct a [PreviewController].
   PreviewController(this.captureSession) {
     _channel.$$create(this, $owner: true, captureSession: captureSession);
   }
@@ -521,5 +650,6 @@ class PreviewController with $PreviewController {
   static $PreviewControllerChannel get _channel =>
       ChannelRegistrar.instance.implementations.channelPreviewController;
 
+  /// The [CaptureSession] that provides preview frames to the iOS UiView.
   final CaptureSession captureSession;
 }

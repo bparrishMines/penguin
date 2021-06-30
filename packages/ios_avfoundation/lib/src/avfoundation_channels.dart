@@ -5,18 +5,25 @@ import 'package:reference/reference.dart';
 import 'avfoundation.dart';
 import 'avfoundation.g.dart';
 
+/// Registers type channels for AVFoundation classes.
 class ChannelRegistrar extends $ChannelRegistrar {
-  ChannelRegistrar(this.implementations) : super(implementations);
+  /// Default constructor for [ChannelRegistrar].
+  ChannelRegistrar(LibraryImplementations implementations)
+      : super(implementations);
 
-  @override
-  final LibraryImplementations implementations;
-
+  /// Default [ChannelRegistrar] instance.
+  ///
+  /// Replace this for custom usability.
   static ChannelRegistrar instance =
       ChannelRegistrar(LibraryImplementations(MethodChannelMessenger.instance))
         ..registerHandlers();
 }
 
+/// Type channel implementation for AVFoundation classes.
+///
+/// Most implementations are generated.
 class LibraryImplementations extends $LibraryImplementations {
+  /// Default constructor for [LibraryImplementations].
   LibraryImplementations(TypeChannelMessenger messenger) : super(messenger);
 
   @override
@@ -26,6 +33,7 @@ class LibraryImplementations extends $LibraryImplementations {
   CapturePhotoHandler get handlerCapturePhoto => CapturePhotoHandler();
 }
 
+/// [TypeChannelHandler] implementation for [CaptureDevice].
 class CaptureDeviceHandler extends $CaptureDeviceHandler {
   @override
   CaptureDevice $$create(
@@ -35,12 +43,14 @@ class CaptureDeviceHandler extends $CaptureDeviceHandler {
   }
 }
 
+/// [TypeChannelHandler] implementation for [CapturePhoto].
 class CapturePhotoHandler extends $CapturePhotoHandler {
   @override
   CapturePhoto $$create(
     TypeChannelMessenger messenger,
     Uint8List? fileDataRepresentation,
   ) {
+    // ignore: invalid_use_of_visible_for_testing_member
     return CapturePhoto(fileDataRepresentation);
   }
 }
