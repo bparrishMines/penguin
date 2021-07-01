@@ -85,7 +85,7 @@ abstract class CaptureDeviceType {
   ///
   /// Note that devices of this type may only be discovered using an
   /// [CaptureDeviceDiscoverySession] or
-  /// [AVCaptureDevice.defaultDeviceWithDeviceType].
+  /// [CaptureDevice.defaultDeviceWithDeviceType].
   ///
   /// A device of this device type supports the following features:
   ///  - Auto switching from one camera to the other when zoom factor, light level,
@@ -753,7 +753,7 @@ class CaptureDevice with $CaptureDevice {
   /// See [CaptureDevicePosition] for possible values.
   final int position;
 
-  // TODO: defaultDeviceWithMediaType:mediaType:position
+  // TODO: defaultDeviceWithDeviceType
   /// Returns the default device used to capture data of a given media type.
   ///
   /// `mediaType`: A media type identifier. See [MediaType].
@@ -761,7 +761,7 @@ class CaptureDevice with $CaptureDevice {
   /// When you use this method to request a camera (using the [MediaType.video]
   /// media type), the returned device is always of the
   /// [CaptureDeviceType.builtInWideAngleCamera] device type. To request other
-  /// device types, use the [defaultDeviceWithDeviceType:mediaType:position]
+  /// device types, use the [CaptureDevice.defaultDeviceWithDeviceType]
   /// method instead.
   static Future<CaptureDevice?> defaultDeviceWithMediaType(
     String mediaType,
