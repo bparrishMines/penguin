@@ -80,7 +80,7 @@ class $$$function_name$$Handler implements TypeChannelHandler<Object> {
     List<Object?> arguments,
   ) {
     return instance(
-      /*iterate parameter parameters*/
+      /*iterate parameters parameter*/
       /*replace parameter_argumentCasting*/
       arguments[0] as String,
       /**/
@@ -220,7 +220,7 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$$class_name$$> {
       case '__staticMethod_name__':
         return $__staticMethod_name__(
           messenger,
-          /*iterate parameter parameters*/
+          /*iterate parameters parameter*/
           /*replace parameter_argumentCasting*/
           arguments[0] as String,
           /**/
@@ -265,7 +265,7 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$$class_name$$> {
       case '__method_name__':
         return $__method_name__(
           instance,
-          /*iterate parameter parameters*/
+          /*iterate parameters parameter*/
           /*replace parameter_argumentCasting*/
           arguments[0] as String,
           /**/
