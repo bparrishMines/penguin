@@ -54,3 +54,20 @@ class CapturePhotoHandler extends $CapturePhotoHandler {
     return CapturePhoto(fileDataRepresentation);
   }
 }
+
+/// [TypeChannelHandler] implementation for [CaptureDeviceDiscoverySession].
+class CaptureDeviceDiscoverySessionHandler
+    extends $CaptureDeviceDiscoverySessionHandler {
+  @override
+  CaptureDeviceDiscoverySession $$create(
+    TypeChannelMessenger messenger,
+    List<$CaptureDevice> devices,
+    List<List<$CaptureDevice>> supportedMultiCamDeviceSets,
+  ) {
+    // ignore: invalid_use_of_visible_for_testing_member
+    return CaptureDeviceDiscoverySession(
+      devices: devices.cast<CaptureDevice>(),
+      supportedMultiCamDeviceSets: supportedMultiCamDeviceSets.cast<List<CaptureDevice>>(),
+    );
+  }
+}

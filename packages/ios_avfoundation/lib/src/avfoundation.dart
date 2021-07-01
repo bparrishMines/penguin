@@ -14,7 +14,7 @@ import 'avfoundation_channels.dart';
 /// this object still contains metadata for the intended capture.
 ///
 /// See: [CapturePhotoCaptureDelegate.didFinishProcessingPhoto]
-@Reference('ios_avfoundatoin/avfoundation/FinishProcessingPhotoCallback')
+@Reference('ios_avfoundation/avfoundation/FinishProcessingPhotoCallback')
 typedef FinishProcessingPhotoCallback = Function(CapturePhoto photo);
 
 // TODO: keys in kCVPixelBuffer* keys in <CoreVideo/CVPixelBuffer.h>
@@ -40,11 +40,150 @@ typedef FinishProcessingPhotoCallback = Function(CapturePhoto photo);
 ///
 /// It is an error to add any other keys to an uncompressed video settings
 /// map.
-class VideoSettingsKeys {
+abstract class VideoSettingsKeys {
   const VideoSettingsKeys._();
 
   /// Key used to set the video codec.
   static const String videoCodec = 'AVVideoCodecKey';
+}
+
+/// CaptureDeviceType string constants.
+///
+/// The [CaptureDeviceType] string constants are intended to be used in
+/// combination with the [CaptureDeviceDiscoverySession] class to obtain a list
+/// of devices matching certain search criteria.
+abstract class CaptureDeviceType {
+  /// A built-in microphone.
+  static const String builtInMicrophone =
+      'AVCaptureDeviceTypeBuiltInMicrophone';
+
+  /// A built-in wide angle camera device.
+  ///
+  /// These devices are suitable for general purpose use.
+  static const String builtInWideAngleCamera =
+      'AVCaptureDeviceTypeBuiltInWideAngleCamera';
+
+  /// A built-in camera device with a longer focal length than a wide angle camera.
+  ///
+  /// Note that devices of this type may only be discovered using an
+  /// [CaptureDeviceDiscoverySession].
+  static const String builtInTelephotoCamera =
+      'AVCaptureDeviceTypeBuiltInTelephotoCamera';
+
+  /// A built-in camera device with a shorter focal length than a wide angle camera.
+  ///
+  /// Note that devices of this type may only be discovered using an
+  /// [CaptureDeviceDiscoverySession].
+  static const String builtInUltraWideCamera =
+      'AVCaptureDeviceTypeBuiltInUltraWideCamera';
+
+  // TODO: AVCaptureExposureModeCustom
+  // TODO: AVCaptureLensPositionCurrent
+  // TODO: AVCaptureWhiteBalanceGainsCurrent
+  // TODO: AVCaptureDevice.defaultDeviceWithDeviceType
+  /// A device that consists of two fixed focal length cameras, one wide and one telephoto.
+  ///
+  /// Note that devices of this type may only be discovered using an
+  /// [CaptureDeviceDiscoverySession] or
+  /// [AVCaptureDevice.defaultDeviceWithDeviceType].
+  ///
+  /// A device of this device type supports the following features:
+  ///  - Auto switching from one camera to the other when zoom factor, light level,
+  /// and focus position allow this.
+  ///  - Higher quality zoom for still captures by fusing images from both
+  /// cameras.
+  ///  - Depth data delivery by measuring the disparity of matched features
+  /// between the wide and telephoto cameras.
+  ///  - Delivery of photos from constituent devices (wide and telephoto
+  /// cameras) via a single photo capture request.
+  ///
+  /// A device of this device type does not support the following features:
+  ///  - [CaptureExposureModeCustom] and manual exposure bracketing.
+  ///  - Locking focus with a lens position other than
+  /// [CaptureLensPositionCurrent].
+  ///  - Locking auto white balance with device white balance gains other than
+  /// [CaptureWhiteBalanceGainsCurrent].
+  ///
+  /// Even when locked, exposure duration, ISO, aperture, white balance gains,
+  /// or lens position may change when the device switches from one camera to
+  /// the other. The overall exposure, white balance, and focus position however
+  /// should be consistent.
+  static const String builtInDualCamera =
+      'AVCaptureDeviceTypeBuiltInDualCamera';
+
+  // TODO: AVCaptureExposureModeCustom
+  // TODO: AVCaptureLensPositionCurrent
+  // TODO: AVCaptureWhiteBalanceGainsCurrent
+  // TODO: AVCaptureDevice.defaultDeviceWithDeviceType
+  /// A device that consists of two fixed focal length cameras, one ultra wide and one wide angle.
+  ///
+  /// Note that devices of this type may only be discovered using an
+  /// [CaptureDeviceDiscoverySession] or
+  /// [AVCaptureDevice.defaultDeviceWithDeviceType].
+  ///
+  /// A device of this device type supports the following features:
+  ///  - Auto switching from one camera to the other when zoom factor, light
+  /// level, and focus position allow this.
+  ///  - Depth data delivery by measuring the disparity of matched features
+  /// between the ultra wide and wide cameras.
+  ///  - Delivery of photos from constituent devices (ultra wide and wide) via a
+  /// single photo capture request.
+  ///
+  /// A device of this device type does not support the following features:
+  ///  - [CaptureExposureModeCustom] and manual exposure bracketing.
+  ///  - Locking focus with a lens position other than
+  /// [CaptureLensPositionCurrent].
+  ///  - Locking auto white balance with device white balance gains other than
+  /// [CaptureWhiteBalanceGainsCurrent].
+  ///
+  /// Even when locked, exposure duration, ISO, aperture, white balance gains,
+  /// or lens position may change when the device switches from one camera to
+  /// the other. The overall exposure, white balance, and focus position however
+  /// should be consistent.
+  static const String builtInDualWideCamera =
+      'AVCaptureDeviceTypeBuiltInDualWideCamera';
+
+  // TODO: AVCaptureExposureModeCustom
+  // TODO: AVCaptureLensPositionCurrent
+  // TODO: AVCaptureWhiteBalanceGainsCurrent
+  // TODO: AVCaptureDevice.defaultDeviceWithDeviceType
+  /// A device that consists of three fixed focal length cameras, one ultra wide, one wide angle, and one telephoto.
+  ///
+  /// Note that devices of this type may only be discovered using an
+  /// [CaptureDeviceDiscoverySession] or
+  /// [AVCaptureDevice.defaultDeviceWithDeviceType].
+  ///
+  /// A device of this device type supports the following features:
+  ///  - Auto switching from one camera to the other when zoom factor, light
+  /// level, and focus position allow this.
+  ///  - Delivery of photos from constituent devices (ultra wide, wide and
+  /// telephoto cameras) via a single photo capture request.
+  ///
+  /// A device of this device type does not support the following features:
+  ///  - [CaptureExposureModeCustom] and manual exposure bracketing.
+  ///  - Locking focus with a lens position other than
+  /// [CaptureLensPositionCurrent].
+  ///  - Locking auto white balance with device white balance gains other than
+  /// [CaptureWhiteBalanceGainsCurrent].
+  ///
+  /// Even when locked, exposure duration, ISO, aperture, white balance gains,
+  /// or lens position may change when the device switches from one camera to
+  /// the other. The overall exposure, white balance, and focus position however
+  /// should be consistent.
+  static const String builtInTripleCamera =
+      'AVCaptureDeviceTypeBuiltInTripleCamera';
+
+  // TODO: AVCaptureDevice.defaultDeviceWithDeviceType
+  /// A device that consists of two cameras, one YUV and one Infrared.
+  ///
+  /// The infrared camera provides high quality depth information that is
+  /// synchronized and perspective corrected to frames produced by the YUV
+  /// camera. While the resolution of the depth data and YUV frames may differ,
+  /// their field of view and aspect ratio always match. Note that devices of
+  /// this type may only be discovered using an [CaptureDeviceDiscoverySession]
+  /// or [AVCaptureDevice.defaultDeviceWithDeviceType].
+  static const String builtInTrueDepthCamera =
+      'AVCaptureDeviceTypeBuiltInTrueDepthCamera';
 }
 
 /// An identifier for various media types.
@@ -153,7 +292,7 @@ abstract class VideoCodecType {
 /// [AVCaptureColorSpace_P3_D65], the capture output produces photos with wide
 /// color information (unless your [CapturePhotoSettings] object specifies an
 /// output format that doesn’t support wide color).
-@Reference('ios_avfoundatoin/avfoundation/CapturePhotoOutput')
+@Reference('ios_avfoundation/avfoundation/CapturePhotoOutput')
 class CapturePhotoOutput extends CaptureOutput with $CapturePhotoOutput {
   /// Constructs a [CapturePhotoOutput].
   CapturePhotoOutput() {
@@ -215,7 +354,7 @@ class CapturePhotoOutput extends CaptureOutput with $CapturePhotoOutput {
 /// To reuse a specific combination of settings, use the
 /// [photoSettingsFromPhotoSettings] initializer to create a new, unique
 /// [CapturePhotoSettings] instance from an existing photo settings object.
-@Reference('ios_avfoundatoin/avfoundation/CapturePhotoSettings')
+@Reference('ios_avfoundation/avfoundation/CapturePhotoSettings')
 class CapturePhotoSettings with $CapturePhotoSettings {
   /// Construct a [CapturePhotoSettings].
   CapturePhotoSettings(this.processedFormat) {
@@ -308,7 +447,7 @@ class CapturePhotoSettings with $CapturePhotoSettings {
 /// The photo output may call a callback more than once, or not at all,
 /// depending on your photo settings. See the description of each callback for
 /// details.
-@Reference('ios_avfoundatoin/avfoundation/CapturePhotoCaptureDelegate')
+@Reference('ios_avfoundation/avfoundation/CapturePhotoCaptureDelegate')
 class CapturePhotoCaptureDelegate with $CapturePhotoCaptureDelegate {
   /// Construct a [CapturePhotoCaptureDelegate].
   CapturePhotoCaptureDelegate({required this.didFinishProcessingPhoto}) {
@@ -351,7 +490,7 @@ class CapturePhotoCaptureDelegate with $CapturePhotoCaptureDelegate {
 ///
 /// You can add concrete [CaptureOutput] instances to a capture session using
 /// [CaptureSession.addOutput].
-@Reference('ios_avfoundatoin/avfoundation/CaptureOutput')
+@Reference('ios_avfoundation/avfoundation/CaptureOutput')
 abstract class CaptureOutput with $CaptureOutput {}
 
 /// A container for image data collected by a photo capture output.
@@ -371,7 +510,7 @@ abstract class CaptureOutput with $CaptureOutput {}
 /// An [CapturePhoto] instance wraps a single image result. For example, if you
 /// request a bracketed capture of three images, your callback is called three
 /// times, each time delivering a single [CapturePhoto] object.
-@Reference('ios_avfoundatoin/avfoundation/CapturePhoto')
+@Reference('ios_avfoundation/avfoundation/CapturePhoto')
 class CapturePhoto with $CapturePhoto {
   /// Construct a [CapturePhoto].
   @visibleForTesting
@@ -399,7 +538,7 @@ class CapturePhoto with $CapturePhoto {
 ///
 /// [CaptureDeviceInput] is a concrete subclass of [CaptureInput] that you use
 /// to capture data from an [CaptureDevice] object.
-@Reference('ios_avfoundatoin/avfoundation/CaptureDeviceInput')
+@Reference('ios_avfoundation/avfoundation/CaptureDeviceInput')
 class CaptureDeviceInput extends CaptureInput with $CaptureDeviceInput {
   /// Construct a [CaptureDeviceInput].
   CaptureDeviceInput(this.device) {
@@ -422,7 +561,7 @@ class CaptureDeviceInput extends CaptureInput with $CaptureDeviceInput {
 /// [CaptureInput] objects have one or more ports (instances of
 /// [CaptureInputPort]), one for each data stream they can produce. For example,
 /// a [CaptureDevice] object presenting one video data stream has one port.
-@Reference('ios_avfoundatoin/avfoundation/CaptureInput')
+@Reference('ios_avfoundation/avfoundation/CaptureInput')
 abstract class CaptureInput with $CaptureInput {}
 
 // TODO: CaptureDevice.defaultDeviceWithMediaType(
@@ -459,7 +598,7 @@ abstract class CaptureInput with $CaptureInput {}
 /// configurations are available through session presets; however, some
 /// specialized options (such as high frame rate) require directly setting a
 /// capture format on an [CaptureDevice] instance.
-@Reference('ios_avfoundatoin/avfoundation/CaptureSession')
+@Reference('ios_avfoundation/avfoundation/CaptureSession')
 class CaptureSession with $CaptureSession {
   /// Construct a [CaptureSession].
   CaptureSession() {
@@ -586,7 +725,7 @@ class CaptureSession with $CaptureSession {
 /// format after you make changes. To prevent automatic changes to the capture
 /// format in macOS, follow the advice listed under the [lockForConfiguration]
 /// method.
-@Reference('ios_avfoundatoin/avfoundation/CaptureDevice')
+@Reference('ios_avfoundation/avfoundation/CaptureDevice')
 class CaptureDevice with $CaptureDevice {
   /// Construct a [CaptureDevice].
   ///
@@ -627,6 +766,80 @@ class CaptureDevice with $CaptureDevice {
   }
 }
 
+/// A query for finding and monitoring available capture devices.
+///
+/// Use this class to find all available capture devices matching a specific
+/// device type (such as microphone or wide-angle camera), supported media types
+/// for capture (such as audio, video, or both), and position (front- or
+/// back-facing).
+///
+/// After creating a device discovery session, you can inspect its devices list
+/// to choose a device for capture.
+@Reference('ios_avfoundation/avfoundation/CaptureDeviceDiscoverySession')
+class CaptureDeviceDiscoverySession with $CaptureDeviceDiscoverySession {
+  /// Construct a [CaptureDeviceDiscoverySession].
+  @visibleForTesting
+  CaptureDeviceDiscoverySession({
+    required this.devices,
+    required this.supportedMultiCamDeviceSets,
+  });
+
+  static $CaptureDeviceDiscoverySessionChannel get _channel => ChannelRegistrar
+      .instance.implementations.channelCaptureDeviceDiscoverySession;
+
+  /// Creates a discovery session for finding devices with the specified criteria.
+  ///
+  /// `deviceTypes`: A list of device types to search for, such as
+  /// [CaptureDeviceType.builtInMicrophone] and
+  /// [CaptureDeviceType.builtInWideAngleCamera]. This list must contain at
+  /// least one valid [CaptureDeviceType] value.
+  ///
+  /// `mediaType`: The media type to capture, such as [MediaType.audio]. Pass
+  /// `null` to search for devices regardless of supported media types.
+  ///
+  /// `position`: The position of capture device to search for, relative to
+  /// system hardware (front- or back-facing). See [CaptureDevicePosition]. Pass
+  /// [CaptureDevicePosition.unspecified] to search for devices regardless of
+  /// position.
+  ///
+  /// After creating a device discovery session, read its devices array to
+  /// examine matching devices and choose one for capture.
+  static Future<CaptureDeviceDiscoverySession> discoverySessionWithDeviceTypes({
+    required List<int> deviceTypes,
+    String? mediaType,
+    required int position,
+  }) async {
+    assert(deviceTypes.isNotEmpty);
+    return await _channel.$discoverySessionWithDeviceTypes(
+      deviceTypes,
+      mediaType,
+      position,
+    ) as CaptureDeviceDiscoverySession;
+  }
+
+  /// A list of currently available devices matching the session’s criteria.
+  ///
+  /// This property contains only capture devices that are currently available
+  /// and that meet the criteria you specified when creating the device
+  /// discovery session with
+  /// [CaptureDeviceDiscoverySession.discoverySessionWithDeviceTypes].
+  ///
+  /// In iOS 11.0 and later, the order of this list matches that of the
+  /// deviceTypes parameter that you used to create the discovery session, so
+  /// you can quickly choose a device matching your preferred types (see Sort
+  /// and Filter Devices with a Discovery Session). In older iOS versions,
+  /// search the entire array to find preferred devices.
+  final List<CaptureDevice> devices;
+
+  // TODO: [CaptureMultiCamSession]
+  /// A list of lists of capture devices that you can use simultaneously in a multi-camera session.
+  ///
+  /// You may use multiple cameras as device inputs to an
+  /// [CaptureMultiCamSession], as long as one of the supported multi-camera
+  /// device sets includes the device.
+  final List<Set<CaptureDevice>> supportedMultiCamDeviceSets;
+}
+
 /// Widget for displaying preview frames from a [CaptureSession].
 class Preview extends UiKitReferenceWidget {
   /// Construct a [Preview].
@@ -640,7 +853,7 @@ class Preview extends UiKitReferenceWidget {
 /// Controls an iOS UIView that displays frames from a [CaptureSession].
 ///
 /// See: [Preview]
-@Reference('ios_avfoundatoin/avfoundation/PreviewController')
+@Reference('ios_avfoundation/avfoundation/PreviewController')
 class PreviewController with $PreviewController {
   /// Construct a [PreviewController].
   PreviewController(this.captureSession) {

@@ -139,6 +139,8 @@ String javaTypeNameConversion(String type) {
       return 'Number';
     case 'String':
       return 'String';
+    case 'Set':
+      return 'List';
   }
 
   return type;

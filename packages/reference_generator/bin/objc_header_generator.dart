@@ -144,6 +144,7 @@ String objcTypeNameConversion(String type) {
       return 'NSString *';
     case 'Object':
       return 'NSObject *';
+    case 'Set':
     case 'List':
       return 'NSArray';
     case 'Map':

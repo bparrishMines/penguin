@@ -17,7 +17,7 @@ typedef $FinishProcessingPhotoCallback = dynamic Function(
 class $FinishProcessingPhotoCallbackChannel extends TypeChannel<Object> {
   $FinishProcessingPhotoCallbackChannel(TypeChannelMessenger messenger)
       : super(messenger,
-            'ios_avfoundatoin/avfoundation/FinishProcessingPhotoCallback');
+            'ios_avfoundation/avfoundation/FinishProcessingPhotoCallback');
 
   Future<PairedInstance?> $$create(
     $FinishProcessingPhotoCallback $instance, {
@@ -107,11 +107,13 @@ mixin $CaptureSession {}
 
 mixin $CaptureDevice {}
 
+mixin $CaptureDeviceDiscoverySession {}
+
 mixin $PreviewController {}
 
 class $CapturePhotoOutputChannel extends TypeChannel<$CapturePhotoOutput> {
   $CapturePhotoOutputChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'ios_avfoundatoin/avfoundation/CapturePhotoOutput');
+      : super(messenger, 'ios_avfoundation/avfoundation/CapturePhotoOutput');
 
   Future<PairedInstance?> $$create(
     $CapturePhotoOutput $instance, {
@@ -142,7 +144,7 @@ class $CapturePhotoOutputChannel extends TypeChannel<$CapturePhotoOutput> {
 
 class $CapturePhotoSettingsChannel extends TypeChannel<$CapturePhotoSettings> {
   $CapturePhotoSettingsChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'ios_avfoundatoin/avfoundation/CapturePhotoSettings');
+      : super(messenger, 'ios_avfoundation/avfoundation/CapturePhotoSettings');
 
   Future<PairedInstance?> $$create(
     $CapturePhotoSettings $instance, {
@@ -163,7 +165,7 @@ class $CapturePhotoCaptureDelegateChannel
     extends TypeChannel<$CapturePhotoCaptureDelegate> {
   $CapturePhotoCaptureDelegateChannel(TypeChannelMessenger messenger)
       : super(messenger,
-            'ios_avfoundatoin/avfoundation/CapturePhotoCaptureDelegate');
+            'ios_avfoundation/avfoundation/CapturePhotoCaptureDelegate');
 
   Future<PairedInstance?> $$create(
     $CapturePhotoCaptureDelegate $instance, {
@@ -182,7 +184,7 @@ class $CapturePhotoCaptureDelegateChannel
 
 class $CaptureOutputChannel extends TypeChannel<$CaptureOutput> {
   $CaptureOutputChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'ios_avfoundatoin/avfoundation/CaptureOutput');
+      : super(messenger, 'ios_avfoundation/avfoundation/CaptureOutput');
 
   Future<PairedInstance?> $$create(
     $CaptureOutput $instance, {
@@ -198,7 +200,7 @@ class $CaptureOutputChannel extends TypeChannel<$CaptureOutput> {
 
 class $CapturePhotoChannel extends TypeChannel<$CapturePhoto> {
   $CapturePhotoChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'ios_avfoundatoin/avfoundation/CapturePhoto');
+      : super(messenger, 'ios_avfoundation/avfoundation/CapturePhoto');
 
   Future<PairedInstance?> $$create(
     $CapturePhoto $instance, {
@@ -217,7 +219,7 @@ class $CapturePhotoChannel extends TypeChannel<$CapturePhoto> {
 
 class $CaptureDeviceInputChannel extends TypeChannel<$CaptureDeviceInput> {
   $CaptureDeviceInputChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'ios_avfoundatoin/avfoundation/CaptureDeviceInput');
+      : super(messenger, 'ios_avfoundation/avfoundation/CaptureDeviceInput');
 
   Future<PairedInstance?> $$create(
     $CaptureDeviceInput $instance, {
@@ -236,7 +238,7 @@ class $CaptureDeviceInputChannel extends TypeChannel<$CaptureDeviceInput> {
 
 class $CaptureInputChannel extends TypeChannel<$CaptureInput> {
   $CaptureInputChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'ios_avfoundatoin/avfoundation/CaptureInput');
+      : super(messenger, 'ios_avfoundation/avfoundation/CaptureInput');
 
   Future<PairedInstance?> $$create(
     $CaptureInput $instance, {
@@ -252,7 +254,7 @@ class $CaptureInputChannel extends TypeChannel<$CaptureInput> {
 
 class $CaptureSessionChannel extends TypeChannel<$CaptureSession> {
   $CaptureSessionChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'ios_avfoundatoin/avfoundation/CaptureSession');
+      : super(messenger, 'ios_avfoundation/avfoundation/CaptureSession');
 
   Future<PairedInstance?> $$create(
     $CaptureSession $instance, {
@@ -314,7 +316,7 @@ class $CaptureSessionChannel extends TypeChannel<$CaptureSession> {
 
 class $CaptureDeviceChannel extends TypeChannel<$CaptureDevice> {
   $CaptureDeviceChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'ios_avfoundatoin/avfoundation/CaptureDevice');
+      : super(messenger, 'ios_avfoundation/avfoundation/CaptureDevice');
 
   Future<PairedInstance?> $$create(
     $CaptureDevice $instance, {
@@ -344,9 +346,47 @@ class $CaptureDeviceChannel extends TypeChannel<$CaptureDevice> {
   }
 }
 
+class $CaptureDeviceDiscoverySessionChannel
+    extends TypeChannel<$CaptureDeviceDiscoverySession> {
+  $CaptureDeviceDiscoverySessionChannel(TypeChannelMessenger messenger)
+      : super(messenger,
+            'ios_avfoundation/avfoundation/CaptureDeviceDiscoverySession');
+
+  Future<PairedInstance?> $$create(
+    $CaptureDeviceDiscoverySession $instance, {
+    required bool $owner,
+    required List<$CaptureDevice> devices,
+    required List<List<$CaptureDevice>> supportedMultiCamDeviceSets,
+  }) {
+    return createNewInstancePair(
+      $instance,
+      <Object?>[
+        devices,
+        supportedMultiCamDeviceSets,
+      ],
+      owner: $owner,
+    );
+  }
+
+  Future<Object?> $discoverySessionWithDeviceTypes(
+    List<int> deviceTypes,
+    String? mediaType,
+    int position,
+  ) {
+    return sendInvokeStaticMethod(
+      'discoverySessionWithDeviceTypes',
+      <Object?>[
+        deviceTypes,
+        mediaType,
+        position,
+      ],
+    );
+  }
+}
+
 class $PreviewControllerChannel extends TypeChannel<$PreviewController> {
   $PreviewControllerChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'ios_avfoundatoin/avfoundation/PreviewController');
+      : super(messenger, 'ios_avfoundation/avfoundation/PreviewController');
 
   Future<PairedInstance?> $$create(
     $PreviewController $instance, {
@@ -838,6 +878,62 @@ class $CaptureDeviceHandler implements TypeChannelHandler<$CaptureDevice> {
   }
 }
 
+class $CaptureDeviceDiscoverySessionHandler
+    implements TypeChannelHandler<$CaptureDeviceDiscoverySession> {
+  $CaptureDeviceDiscoverySession $$create(
+    TypeChannelMessenger messenger,
+    List<$CaptureDevice> devices,
+    List<List<$CaptureDevice>> supportedMultiCamDeviceSets,
+  ) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Object? invokeStaticMethod(
+    TypeChannelMessenger messenger,
+    String methodName,
+    List<Object?> arguments,
+  ) {
+    switch (methodName) {
+    }
+
+    throw ArgumentError.value(
+      methodName,
+      'methodName',
+      'Unable to invoke static method `$methodName`',
+    );
+  }
+
+  @override
+  $CaptureDeviceDiscoverySession createInstance(
+    TypeChannelMessenger messenger,
+    List<Object?> arguments,
+  ) {
+    return $$create(
+      messenger,
+      arguments[0] as List<$CaptureDevice>,
+      arguments[1] as List<List<$CaptureDevice>>,
+    );
+  }
+
+  @override
+  Object? invokeMethod(
+    TypeChannelMessenger messenger,
+    $CaptureDeviceDiscoverySession instance,
+    String methodName,
+    List<Object?> arguments,
+  ) {
+    switch (methodName) {
+    }
+
+    throw ArgumentError.value(
+      instance,
+      'instance',
+      'Unable to invoke method `$methodName` on',
+    );
+  }
+}
+
 class $PreviewControllerHandler
     implements TypeChannelHandler<$PreviewController> {
   $PreviewController $$create(
@@ -937,6 +1033,13 @@ class $LibraryImplementations {
       $CaptureDeviceChannel(messenger);
   $CaptureDeviceHandler get handlerCaptureDevice => $CaptureDeviceHandler();
 
+  $CaptureDeviceDiscoverySessionChannel
+      get channelCaptureDeviceDiscoverySession =>
+          $CaptureDeviceDiscoverySessionChannel(messenger);
+  $CaptureDeviceDiscoverySessionHandler
+      get handlerCaptureDeviceDiscoverySession =>
+          $CaptureDeviceDiscoverySessionHandler();
+
   $PreviewControllerChannel get channelPreviewController =>
       $PreviewControllerChannel(messenger);
   $PreviewControllerHandler get handlerPreviewController =>
@@ -992,6 +1095,10 @@ class $ChannelRegistrar {
       implementations.handlerCaptureDevice,
     );
 
+    implementations.channelCaptureDeviceDiscoverySession.setHandler(
+      implementations.handlerCaptureDeviceDiscoverySession,
+    );
+
     implementations.channelPreviewController.setHandler(
       implementations.handlerPreviewController,
     );
@@ -1019,6 +1126,8 @@ class $ChannelRegistrar {
     implementations.channelCaptureSession.removeHandler();
 
     implementations.channelCaptureDevice.removeHandler();
+
+    implementations.channelCaptureDeviceDiscoverySession.removeHandler();
 
     implementations.channelPreviewController.removeHandler();
 

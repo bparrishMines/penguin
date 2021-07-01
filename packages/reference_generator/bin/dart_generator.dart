@@ -113,8 +113,10 @@ String generateDart(
 }
 
 String getTrueTypeName(ReferenceType type, {String generatedSymbol = '\$'}) {
+  final String dartName = dartTypeNameConversion(type.name);
+
   final String nullability = type.nullable ? '?' : '';
-  if (type.name == 'Map') return 'Map$nullability';
+  if (dartName == 'Map') return 'Map$nullability';
 
   final Iterable<String> typeArguments = type.typeArguments.map<String>(
     (ReferenceType type) => getTrueTypeName(
@@ -124,12 +126,21 @@ String getTrueTypeName(ReferenceType type, {String generatedSymbol = '\$'}) {
   );
 
   if (type.codeGeneratedType && typeArguments.isEmpty) {
-    return '$generatedSymbol${type.name}$nullability';
+    return '$generatedSymbol$dartName$nullability';
   } else if (type.codeGeneratedType && typeArguments.isNotEmpty) {
-    return '$generatedSymbol${type.name}<${typeArguments.join(',')}>$nullability';
+    return '$generatedSymbol$dartName<${typeArguments.join(',')}>$nullability';
   } else if (!type.codeGeneratedType && typeArguments.isNotEmpty) {
-    return '${type.name}<${typeArguments.join(',')}>$nullability';
+    return '$dartName<${typeArguments.join(',')}>$nullability';
   }
 
-  return '${type.name}$nullability';
+  return '$dartName$nullability';
+}
+
+String dartTypeNameConversion(String type) {
+  switch (type) {
+    case 'Set':
+      return 'List';
+  }
+
+  return type;
 }

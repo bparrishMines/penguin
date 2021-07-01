@@ -29,6 +29,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol _IAFCaptureDevice;
 
+@protocol _IAFCaptureDeviceDiscoverySession;
+
 @protocol _IAFPreviewController;
 
 
@@ -126,6 +128,10 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 @end
 
 @protocol _IAFCaptureDevice <NSObject>
+
+@end
+
+@protocol _IAFCaptureDeviceDiscoverySession <NSObject>
 
 @end
 
@@ -257,6 +263,24 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
  uniqueId:(NSString * _Nullable)uniqueId
 
  position:(NSNumber * _Nullable)position
+
+     completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion;
+
+
+
+
+
+
+@end
+
+@interface _IAFCaptureDeviceDiscoverySessionChannel : REFTypeChannel
+- (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger;
+- (void)__create:(NSObject<_IAFCaptureDeviceDiscoverySession> *)_instance
+          _owner:(BOOL)_owner
+
+ devices:(NSArray<NSObject<_IAFCaptureDevice> *> * _Nullable)devices
+
+ supportedMultiCamDeviceSets:(NSArray<NSArray<NSObject<_IAFCaptureDevice> *> *> * _Nullable)supportedMultiCamDeviceSets
 
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion;
 
@@ -407,6 +431,29 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 
 @end
 
+@interface _IAFCaptureDeviceDiscoverySessionHandler : NSObject<REFTypeChannelHandler>
+- (NSObject<_IAFCaptureDeviceDiscoverySession> *)__create:(REFTypeChannelMessenger *)messenger
+
+                                  devices:(NSArray<NSObject<_IAFCaptureDevice> *> * _Nullable)devices
+
+                                  supportedMultiCamDeviceSets:(NSArray<NSArray<NSObject<_IAFCaptureDevice> *> *> * _Nullable)supportedMultiCamDeviceSets
+;
+
+
+- (id _Nullable)_discoverySessionWithDeviceTypes:(REFTypeChannelMessenger *)messenger
+
+                           deviceTypes:(NSArray<NSNumber *> * _Nullable)deviceTypes
+
+                           mediaType:(NSString * _Nullable)mediaType
+
+                           position:(NSNumber * _Nullable)position
+;
+
+
+
+
+@end
+
 @interface _IAFPreviewControllerHandler : NSObject<REFTypeChannelHandler>
 - (NSObject<_IAFPreviewController> *)__create:(REFTypeChannelMessenger *)messenger
 
@@ -448,6 +495,9 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 
 -(_IAFCaptureDeviceChannel *)channelCaptureDevice;
 -(_IAFCaptureDeviceHandler *)handlerCaptureDevice;
+
+-(_IAFCaptureDeviceDiscoverySessionChannel *)channelCaptureDeviceDiscoverySession;
+-(_IAFCaptureDeviceDiscoverySessionHandler *)handlerCaptureDeviceDiscoverySession;
 
 -(_IAFPreviewControllerChannel *)channelPreviewController;
 -(_IAFPreviewControllerHandler *)handlerPreviewController;
