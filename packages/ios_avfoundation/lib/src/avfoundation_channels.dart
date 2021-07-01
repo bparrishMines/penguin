@@ -67,7 +67,9 @@ class CaptureDeviceDiscoverySessionHandler
     // ignore: invalid_use_of_visible_for_testing_member
     return CaptureDeviceDiscoverySession(
       devices: devices.cast<CaptureDevice>(),
-      supportedMultiCamDeviceSets: supportedMultiCamDeviceSets.cast<List<CaptureDevice>>(),
+      supportedMultiCamDeviceSets: supportedMultiCamDeviceSets
+          .map((_) => _.map((_) => _ as CaptureDevice).toSet())
+          .toList(),
     );
   }
 }

@@ -795,7 +795,7 @@
 
 - (id _Nullable)_discoverySessionWithDeviceTypes:(REFTypeChannelMessenger *)messenger
 
-                           deviceTypes:(NSArray<NSNumber *> * _Nullable)deviceTypes
+                           deviceTypes:(NSArray<NSString *> * _Nullable)deviceTypes
 
                            mediaType:(NSString * _Nullable)mediaType
 
@@ -812,12 +812,12 @@
                         methodName:(nonnull NSString *)methodName
                          arguments:(nonnull NSArray *)arguments {
   
-  
+  [self _discoverySessionWithDeviceTypes:messenger deviceTypes:arguments[0] mediaType:arguments[0] position:arguments[0]];
   if ([@"discoverySessionWithDeviceTypes" isEqualToString:methodName]) {
     return [self _discoverySessionWithDeviceTypes:messenger
                     
-                     deviceTypes:arguments[0]] 
-                     mediaType:arguments[1]] 
+                     deviceTypes:arguments[0]
+                     mediaType:arguments[1]]
                      position:arguments[2]] ;
   }
   

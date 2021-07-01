@@ -52,12 +52,14 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> _setupCamera() async {
-    // TODO: replace
-    final List<CaptureDevice> devices =
-        // ignore: deprecated_member_use
-        await CaptureDevice.devicesWithMediaType(MediaType.video);
+    final CaptureDeviceDiscoverySession deviceDiscoverySession =
+        await CaptureDeviceDiscoverySession.discoverySessionWithDeviceTypes(
+      deviceTypes: <String>[CaptureDeviceType.builtInWideAngleCamera],
+      mediaType: MediaType.video,
+      position: CaptureDevicePosition.unspecified,
+    );
 
-    final CaptureDevice device = devices.firstWhere(
+    final CaptureDevice device = deviceDiscoverySession.devices.firstWhere(
       (CaptureDevice device) => device.position == _cameraFacing,
     );
 

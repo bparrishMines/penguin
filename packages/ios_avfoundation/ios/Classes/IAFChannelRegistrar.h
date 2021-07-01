@@ -35,4 +35,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface IAFCapturePhotoOutputHandler : _IAFCapturePhotoOutputHandler
 @end
 
+@interface IAFCaptureDeviceDiscoverySessionHandler : _IAFCaptureDeviceDiscoverySessionHandler
+- (instancetype)initWithImplementations:(IAFLibraryImplementations *)implementations;
+@end
+
 NS_ASSUME_NONNULL_END

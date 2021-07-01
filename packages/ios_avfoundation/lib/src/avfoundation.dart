@@ -778,6 +778,8 @@ class CaptureDevice with $CaptureDevice {
 @Reference('ios_avfoundation/avfoundation/CaptureDeviceDiscoverySession')
 class CaptureDeviceDiscoverySession with $CaptureDeviceDiscoverySession {
   /// Construct a [CaptureDeviceDiscoverySession].
+  ///
+  /// This only visible for testing. See [discoverySessionWithDeviceTypes].
   @visibleForTesting
   CaptureDeviceDiscoverySession({
     required this.devices,
@@ -805,7 +807,7 @@ class CaptureDeviceDiscoverySession with $CaptureDeviceDiscoverySession {
   /// After creating a device discovery session, read its devices array to
   /// examine matching devices and choose one for capture.
   static Future<CaptureDeviceDiscoverySession> discoverySessionWithDeviceTypes({
-    required List<int> deviceTypes,
+    required List<String> deviceTypes,
     String? mediaType,
     required int position,
   }) async {
@@ -821,8 +823,7 @@ class CaptureDeviceDiscoverySession with $CaptureDeviceDiscoverySession {
   ///
   /// This property contains only capture devices that are currently available
   /// and that meet the criteria you specified when creating the device
-  /// discovery session with
-  /// [CaptureDeviceDiscoverySession.discoverySessionWithDeviceTypes].
+  /// discovery session with [discoverySessionWithDeviceTypes].
   ///
   /// In iOS 11.0 and later, the order of this list matches that of the
   /// deviceTypes parameter that you used to create the discovery session, so
@@ -837,6 +838,9 @@ class CaptureDeviceDiscoverySession with $CaptureDeviceDiscoverySession {
   /// You may use multiple cameras as device inputs to an
   /// [CaptureMultiCamSession], as long as one of the supported multi-camera
   /// device sets includes the device.
+  ///
+  /// This is only supported on iOS 13+. This list will always be empty for
+  /// iOS version < 13.
   final List<Set<CaptureDevice>> supportedMultiCamDeviceSets;
 }
 

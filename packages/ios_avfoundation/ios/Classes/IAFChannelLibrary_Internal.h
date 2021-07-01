@@ -442,7 +442,7 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 
 - (id _Nullable)_discoverySessionWithDeviceTypes:(REFTypeChannelMessenger *)messenger
 
-                           deviceTypes:(NSArray<NSNumber *> * _Nullable)deviceTypes
+                           deviceTypes:(NSArray<NSString *> * _Nullable)deviceTypes
 
                            mediaType:(NSString * _Nullable)mediaType
 

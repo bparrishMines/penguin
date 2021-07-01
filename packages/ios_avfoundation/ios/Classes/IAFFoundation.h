@@ -66,5 +66,14 @@ API_AVAILABLE(ios(11.0))
                      implementations:(IAFLibraryImplementations *)implementations;
 @end
 
+@interface IAFCaptureDeviceDiscoverySessionProxy : NSObject<_IAFCaptureDeviceDiscoverySession>
+@property (readonly) AVCaptureDeviceDiscoverySession *captureDeviceDiscoverySession;
++ (IAFCaptureDeviceDiscoverySessionProxy *)discoverySessionWithDeviceTypes:(NSArray<NSString *> *)deviceTypes
+                                                                 mediaType:(NSString *_Nullable)mediaType
+                                                                  position:(NSNumber *)position
+                                                           implementations:(IAFLibraryImplementations *)implementations;
+- (instancetype)initWithCaptureDeviceDiscoverySession:(AVCaptureDeviceDiscoverySession *)captureDeviceDiscoverySession
+                                      implementations:(IAFLibraryImplementations *)implementations;
+@end
 NS_ASSUME_NONNULL_END
 

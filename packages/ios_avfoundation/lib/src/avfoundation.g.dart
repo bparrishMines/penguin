@@ -369,7 +369,7 @@ class $CaptureDeviceDiscoverySessionChannel
   }
 
   Future<Object?> $discoverySessionWithDeviceTypes(
-    List<int> deviceTypes,
+    List<String> deviceTypes,
     String? mediaType,
     int position,
   ) {
@@ -911,8 +911,11 @@ class $CaptureDeviceDiscoverySessionHandler
   ) {
     return $$create(
       messenger,
-      arguments[0] as List<$CaptureDevice>,
-      arguments[1] as List<List<$CaptureDevice>>,
+      (arguments[0] as List<dynamic>).map((_) => _ as $CaptureDevice).toList(),
+      (arguments[1] as List<dynamic>)
+          .map((_) =>
+              (_ as List<dynamic>).map((_) => _ as $CaptureDevice).toList())
+          .toList(),
     );
   }
 
