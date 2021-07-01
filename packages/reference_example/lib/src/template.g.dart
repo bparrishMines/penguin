@@ -49,8 +49,7 @@ class $$$function_name$$Channel extends TypeChannel<Object> {
 /**/
 
 /*iterate functions function*/
-class $$$function_name$$Handler
-    implements TypeChannelHandler<Object> {
+class $$$function_name$$Handler implements TypeChannelHandler<Object> {
   $$$function_name$$Handler(this.implementations);
 
   final $LibraryImplementations implementations;
@@ -259,9 +258,11 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$$class_name$$> {
       case '__method_name__':
         return $__method_name__(
           instance,
-          /*iterate parameters parameter*/ arguments[
-                  /*replace parameter_index*/ 0 /**/]
-              as /*replace parameter_type*/ String /**/, /**/
+          /*iterate parameter parameters*/
+          /*replace parameter_argumentCasting*/
+          arguments[0] as String,
+          /**/
+          /**/
         );
       /**/
       /**/
