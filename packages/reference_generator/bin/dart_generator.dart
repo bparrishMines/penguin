@@ -145,17 +145,19 @@ String getArgumentCasting({
   }
 
   if (dartName == 'List') {
-    final String typeCast = getListArgumentCasting(
+    final String typeCast = _getListArgumentCasting(
       type: type.typeArguments.first,
       generatedSymbol: generatedSymbol,
     );
     return '(arguments[$index] as List<dynamic>).map((_) => $typeCast).toList(),';
+  } else if (dartName == 'Map') {
+    return 'arguments[$index] as Map,';
   }
 
   throw UnimplementedError();
 }
 
-String getListArgumentCasting({
+String _getListArgumentCasting({
   required ReferenceType type,
   String generatedSymbol = '\$',
 }) {
@@ -170,7 +172,7 @@ String getListArgumentCasting({
   }
 
   if (dartName == 'List') {
-    final String typeCast = getListArgumentCasting(
+    final String typeCast = _getListArgumentCasting(
       type: type.typeArguments.first,
       generatedSymbol: generatedSymbol,
     );
