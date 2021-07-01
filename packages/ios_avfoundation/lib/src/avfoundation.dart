@@ -753,16 +753,27 @@ class CaptureDevice with $CaptureDevice {
   /// See [CaptureDevicePosition] for possible values.
   final int position;
 
-  // TODO: AVCaptureDeviceDiscoverySession
-  /// Returns an array of the devices able to capture data of a given media type.
-  @Deprecated('Please use AVCaptureDeviceDiscoverySession instead.')
-  static Future<List<CaptureDevice>> devicesWithMediaType(
+  // TODO: defaultDeviceWithMediaType:mediaType:position
+  /// Returns the default device used to capture data of a given media type.
+  ///
+  /// `mediaType`: A media type identifier. See [MediaType].
+  ///
+  /// When you use this method to request a camera (using the [MediaType.video]
+  /// media type), the returned device is always of the
+  /// [CaptureDeviceType.builtInWideAngleCamera] device type. To request other
+  /// device types, use the [defaultDeviceWithDeviceType:mediaType:position]
+  /// method instead.
+  static Future<CaptureDevice?> defaultDeviceWithMediaType(
     String mediaType,
   ) async {
-    assert(mediaType == MediaType.video);
-    final List<Object?> result =
-        await _channel.$devicesWithMediaType(mediaType) as List<Object?>;
-    return result.cast<CaptureDevice>();
+    return await _channel.$defaultDeviceWithMediaType(mediaType)
+        as CaptureDevice?;
+  }
+
+  @ReferenceMethod(ignore: true)
+  @override
+  String toString() {
+    return 'CaptureDevice(uniqueId: $uniqueId, position: $position)';
   }
 }
 

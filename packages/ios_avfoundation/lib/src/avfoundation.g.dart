@@ -334,11 +334,11 @@ class $CaptureDeviceChannel extends TypeChannel<$CaptureDevice> {
     );
   }
 
-  Future<Object?> $devicesWithMediaType(
+  Future<Object?> $defaultDeviceWithMediaType(
     String mediaType,
   ) {
     return sendInvokeStaticMethod(
-      'devicesWithMediaType',
+      'defaultDeviceWithMediaType',
       <Object?>[
         mediaType,
       ],

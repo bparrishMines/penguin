@@ -49,9 +49,8 @@
   return self;
 }
 
-- (NSArray<IAFCaptureDeviceProxy *> *)_devicesWithMediaType:(REFTypeChannelMessenger *)messenger
-                                                    mediaType:(NSString *_Nullable)mediaType {
-  return [IAFCaptureDeviceProxy devicesWithMediaType:mediaType implementations:_implementations];
+- (id)_defaultDeviceWithMediaType:(REFTypeChannelMessenger *)messenger mediaType:(NSString *)mediaType {
+  return [IAFCaptureDeviceProxy defaultDeviceWithMediaType:mediaType implementations:_implementations];
 }
 @end
 

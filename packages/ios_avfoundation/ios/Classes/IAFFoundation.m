@@ -13,10 +13,12 @@
   return deviceProxies;
 }
 
-+ (NSArray<IAFCaptureDeviceProxy*> *)devicesWithMediaType:(NSString *)mediaType
-                                          implementations:(IAFLibraryImplementations *)implementations {
-  NSArray<AVCaptureDevice *> *devices = [AVCaptureDevice devicesWithMediaType:mediaType];
-  return [IAFCaptureDeviceProxy asProxyList:devices implementations:implementations];
++ (IAFCaptureDeviceProxy *_Nullable)defaultDeviceWithMediaType:(NSString *)mediaType
+                                      implementations:(IAFLibraryImplementations *)implementations {
+  AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:mediaType];
+  if (!device) return nil;
+
+  return [[IAFCaptureDeviceProxy alloc] initWithCaptureDevice:device implementations:implementations];
 }
 
 - (instancetype)initWithCaptureDevice:(AVCaptureDevice *)captureDevice

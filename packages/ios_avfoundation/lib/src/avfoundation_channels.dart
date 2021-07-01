@@ -31,6 +31,11 @@ class LibraryImplementations extends $LibraryImplementations {
 
   @override
   CapturePhotoHandler get handlerCapturePhoto => CapturePhotoHandler();
+
+  @override
+  CaptureDeviceDiscoverySessionHandler
+      get handlerCaptureDeviceDiscoverySession =>
+          CaptureDeviceDiscoverySessionHandler();
 }
 
 /// [TypeChannelHandler] implementation for [CaptureDevice].

@@ -421,7 +421,7 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 ;
 
 
-- (id _Nullable)_devicesWithMediaType:(REFTypeChannelMessenger *)messenger
+- (id _Nullable)_defaultDeviceWithMediaType:(REFTypeChannelMessenger *)messenger
 
                            mediaType:(NSString * _Nullable)mediaType
 ;

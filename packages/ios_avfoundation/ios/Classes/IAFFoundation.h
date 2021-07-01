@@ -11,8 +11,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface IAFCaptureDeviceProxy : NSObject<_IAFCaptureDevice>
 @property (readonly) AVCaptureDevice *captureDevice;
-+ (NSArray<IAFCaptureDeviceProxy*> *)devicesWithMediaType:(NSString *)mediaType
-                                          implementations:(IAFLibraryImplementations *)implementations;
++ (IAFCaptureDeviceProxy *_Nullable)defaultDeviceWithMediaType:(NSString *)mediaType
+                                               implementations:(IAFLibraryImplementations *)implementations;
 - (instancetype)initWithCaptureDevice:(AVCaptureDevice *)captureDevice
                       implementations:(IAFLibraryImplementations *)implementations;
 @end

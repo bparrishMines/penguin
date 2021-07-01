@@ -28,7 +28,7 @@
     completion:(void (^)(id _Nullable, NSError *_Nullable))completion {
   [self invokeMethod:_instance
           methodName:@""
-           arguments:@[photo ? photo : [NSNull null],]
+           arguments:@[photo ? (NSObject *) photo : [NSNull null],]
           completion:completion];
 }
 @end
@@ -112,7 +112,7 @@
 
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
   [self createNewInstancePair:_instance
-                    arguments:@[processedFormat ? processedFormat : [NSNull null],]
+                    arguments:@[processedFormat ? (NSObject *) processedFormat : [NSNull null],]
                         owner:_owner
                    completion:completion];
 }
@@ -135,7 +135,7 @@
 
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
   [self createNewInstancePair:_instance
-                    arguments:@[didFinishProcessingPhoto ? didFinishProcessingPhoto : [NSNull null],]
+                    arguments:@[didFinishProcessingPhoto ? (NSObject *) didFinishProcessingPhoto : [NSNull null],]
                         owner:_owner
                    completion:completion];
 }
@@ -179,7 +179,7 @@
 
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
   [self createNewInstancePair:_instance
-                    arguments:@[fileDataRepresentation ? fileDataRepresentation : [NSNull null],]
+                    arguments:@[fileDataRepresentation ? (NSObject *) fileDataRepresentation : [NSNull null],]
                         owner:_owner
                    completion:completion];
 }
@@ -202,7 +202,7 @@
 
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
   [self createNewInstancePair:_instance
-                    arguments:@[device ? device : [NSNull null],]
+                    arguments:@[device ? (NSObject *) device : [NSNull null],]
                         owner:_owner
                    completion:completion];
 }
@@ -277,7 +277,7 @@
 
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
   [self createNewInstancePair:_instance
-                    arguments:@[uniqueId ? uniqueId : [NSNull null],position ? position : [NSNull null],]
+                    arguments:@[uniqueId ? (NSObject *) uniqueId : [NSNull null],position ? (NSObject *) position : [NSNull null],]
                         owner:_owner
                    completion:completion];
 }
@@ -304,7 +304,7 @@
 
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
   [self createNewInstancePair:_instance
-                    arguments:@[devices ? devices : [NSNull null],supportedMultiCamDeviceSets ? supportedMultiCamDeviceSets : [NSNull null],]
+                    arguments:@[devices ? (NSObject *) devices : [NSNull null],supportedMultiCamDeviceSets ? (NSObject *) supportedMultiCamDeviceSets : [NSNull null],]
                         owner:_owner
                    completion:completion];
 }
@@ -329,7 +329,7 @@
 
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
   [self createNewInstancePair:_instance
-                    arguments:@[captureSession ? captureSession : [NSNull null],]
+                    arguments:@[captureSession ? (NSObject *) captureSession : [NSNull null],]
                         owner:_owner
                    completion:completion];
 }
@@ -736,7 +736,7 @@
 
 
 
-- (id _Nullable)_devicesWithMediaType:(REFTypeChannelMessenger *)messenger
+- (id _Nullable)_defaultDeviceWithMediaType:(REFTypeChannelMessenger *)messenger
 
                            mediaType:(NSString * _Nullable)mediaType
  {
@@ -752,10 +752,10 @@
                          arguments:(nonnull NSArray *)arguments {
   
   
-  if ([@"devicesWithMediaType" isEqualToString:methodName]) {
-    return [self _devicesWithMediaType:messenger
+  if ([@"defaultDeviceWithMediaType" isEqualToString:methodName]) {
+    return [self _defaultDeviceWithMediaType:messenger
                     
-                     mediaType:arguments[0]] ;
+                     mediaType:arguments[0] ];
   }
   
   
@@ -812,13 +812,13 @@
                         methodName:(nonnull NSString *)methodName
                          arguments:(nonnull NSArray *)arguments {
   
-  [self _discoverySessionWithDeviceTypes:messenger deviceTypes:arguments[0] mediaType:arguments[0] position:arguments[0]];
+  
   if ([@"discoverySessionWithDeviceTypes" isEqualToString:methodName]) {
     return [self _discoverySessionWithDeviceTypes:messenger
                     
-                     deviceTypes:arguments[0]
-                     mediaType:arguments[1]]
-                     position:arguments[2]] ;
+                     deviceTypes:arguments[0] 
+                     mediaType:arguments[1] 
+                     position:arguments[2] ];
   }
   
   
