@@ -14,7 +14,7 @@
 }
 
 + (IAFCaptureDeviceProxy *_Nullable)defaultDeviceWithMediaType:(NSString *)mediaType
-                                      implementations:(IAFLibraryImplementations *)implementations {
+                                               implementations:(IAFLibraryImplementations *)implementations {
   AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:mediaType];
   if (!device) return nil;
 

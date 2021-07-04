@@ -46,17 +46,16 @@
                                        position:@2 completion:OCMOCK_ANY]);
 }
 
-- (void)testDevicesWithMediaType {
+- (void)testDefaultDeviceWithMediaType {
   id mockCaptureDevice = OCMClassMock([AVCaptureDevice class]);
   
-  OCMStub(ClassMethod([mockCaptureDevice devicesWithMediaType:@"apple"])).andReturn(@[_testCaptureDevice]);
+  OCMStub(ClassMethod([mockCaptureDevice defaultDeviceWithMediaType:@"apple"])).andReturn(_testCaptureDevice);
   
-  NSArray<IAFCaptureDeviceProxy *> *devices = [IAFCaptureDeviceProxy devicesWithMediaType:@"apple"
-                                                                          implementations:_mockImplementations];
-  XCTAssertEqual(devices.count, 1);
+  IAFCaptureDeviceProxy *deviceProxy = [IAFCaptureDeviceProxy defaultDeviceWithMediaType:@"apple"
+                                                                         implementations:_mockImplementations];
   
-  IAFCaptureDeviceProxy *device = devices[0];
-  XCTAssertEqualObjects(device.captureDevice.uniqueID, @"test_uniqueID");
-  XCTAssertEqualObjects(@(device.captureDevice.position), @(2));
+
+  XCTAssertEqualObjects(deviceProxy.captureDevice.uniqueID, @"test_uniqueID");
+  XCTAssertEqualObjects(@(deviceProxy.captureDevice.position), @(2));
 }
 @end
