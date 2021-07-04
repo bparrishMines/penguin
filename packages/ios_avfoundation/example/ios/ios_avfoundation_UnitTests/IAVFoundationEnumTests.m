@@ -23,4 +23,15 @@
 - (void) testVideoCodecType {
   XCTAssertEqualObjects(AVVideoCodecTypeJPEG, @"jpeg");
 }
+
+- (void) testCaptureDeviceType {
+  XCTAssertEqualObjects(AVCaptureDeviceTypeBuiltInMicrophone, @"AVCaptureDeviceTypeBuiltInMicrophone");
+  XCTAssertEqualObjects(AVCaptureDeviceTypeBuiltInWideAngleCamera, @"AVCaptureDeviceTypeBuiltInWideAngleCamera");
+  XCTAssertEqualObjects(AVCaptureDeviceTypeBuiltInTelephotoCamera, @"AVCaptureDeviceTypeBuiltInTelephotoCamera");
+  XCTAssertEqualObjects(AVCaptureDeviceTypeBuiltInUltraWideCamera, @"AVCaptureDeviceTypeBuiltInUltraWideCamera");
+  XCTAssertEqualObjects(AVCaptureDeviceTypeBuiltInDualCamera, @"AVCaptureDeviceTypeBuiltInDualCamera");
+  XCTAssertEqualObjects(AVCaptureDeviceTypeBuiltInDualWideCamera, @"AVCaptureDeviceTypeBuiltInDualWideCamera");
+  XCTAssertEqualObjects(AVCaptureDeviceTypeBuiltInTripleCamera, @"AVCaptureDeviceTypeBuiltInTripleCamera");
+  XCTAssertEqualObjects(AVCaptureDeviceTypeBuiltInTrueDepthCamera, @"AVCaptureDeviceTypeBuiltInTrueDepthCamera");
+}
 @end

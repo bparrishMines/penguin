@@ -11,8 +11,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface IAFCaptureDeviceProxy : NSObject<_IAFCaptureDevice>
 @property (readonly) AVCaptureDevice *captureDevice;
-+ (NSArray<IAFCaptureDeviceProxy*> *)devicesWithMediaType:(NSString *)mediaType
-                                          implementations:(IAFLibraryImplementations *)implementations;
++ (IAFCaptureDeviceProxy *_Nullable)defaultDeviceWithMediaType:(NSString *)mediaType
+                                               implementations:(IAFLibraryImplementations *)implementations;
 - (instancetype)initWithCaptureDevice:(AVCaptureDevice *)captureDevice
                       implementations:(IAFLibraryImplementations *)implementations;
 @end
@@ -66,5 +66,14 @@ API_AVAILABLE(ios(11.0))
                      implementations:(IAFLibraryImplementations *)implementations;
 @end
 
+@interface IAFCaptureDeviceDiscoverySessionProxy : NSObject<_IAFCaptureDeviceDiscoverySession>
+@property (readonly) AVCaptureDeviceDiscoverySession *captureDeviceDiscoverySession;
++ (IAFCaptureDeviceDiscoverySessionProxy *)discoverySessionWithDeviceTypes:(NSArray<NSString *> *)deviceTypes
+                                                                 mediaType:(NSString *_Nullable)mediaType
+                                                                  position:(NSNumber *)position
+                                                           implementations:(IAFLibraryImplementations *)implementations;
+- (instancetype)initWithCaptureDeviceDiscoverySession:(AVCaptureDeviceDiscoverySession *)captureDeviceDiscoverySession
+                                      implementations:(IAFLibraryImplementations *)implementations;
+@end
 NS_ASSUME_NONNULL_END
 

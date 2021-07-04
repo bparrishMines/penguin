@@ -31,6 +31,10 @@
 - (IAFCapturePhotoOutputHandler *)handlerCapturePhotoOutput {
   return [[IAFCapturePhotoOutputHandler alloc] init];
 }
+
+- (IAFCaptureDeviceDiscoverySessionHandler *)handlerCaptureDeviceDiscoverySession {
+  return [[IAFCaptureDeviceDiscoverySessionHandler alloc] initWithImplementations:self];
+}
 @end
 
 @implementation IAFCaptureDeviceHandler {
@@ -45,9 +49,8 @@
   return self;
 }
 
-- (NSArray<IAFCaptureDeviceProxy *> *)_devicesWithMediaType:(REFTypeChannelMessenger *)messenger
-                                                    mediaType:(NSString *_Nullable)mediaType {
-  return [IAFCaptureDeviceProxy devicesWithMediaType:mediaType implementations:_implementations];
+- (id)_defaultDeviceWithMediaType:(REFTypeChannelMessenger *)messenger mediaType:(NSString *)mediaType {
+  return [IAFCaptureDeviceProxy defaultDeviceWithMediaType:mediaType implementations:_implementations];
 }
 @end
 
@@ -113,5 +116,28 @@
   @throw [NSException exceptionWithName:@"IosAvfoundationPluginException"
                                  reason:@"Requires version >= ios 10.0"
                                userInfo:nil];
+}
+@end
+
+@implementation IAFCaptureDeviceDiscoverySessionHandler {
+  IAFLibraryImplementations *_implementations;
+}
+
+- (instancetype)initWithImplementations:(IAFLibraryImplementations *)implementations {
+  self = [super init];
+  if (self) {
+    _implementations = implementations;
+  }
+  return self;
+}
+
+- (id)_discoverySessionWithDeviceTypes:(REFTypeChannelMessenger *)messenger
+                           deviceTypes:(NSArray<NSString *> *)deviceTypes
+                             mediaType:(NSString *)mediaType
+                              position:(NSNumber *)position {
+  return [IAFCaptureDeviceDiscoverySessionProxy discoverySessionWithDeviceTypes:deviceTypes
+                                                                      mediaType:mediaType
+                                                                       position:position
+                                                                implementations:_implementations];
 }
 @end

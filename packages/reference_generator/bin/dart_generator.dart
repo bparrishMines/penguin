@@ -29,6 +29,10 @@ String generateDart(
       fieldData['name'] = classNode.fields[i].name;
       fieldData['type'] = getTrueTypeName(classNode.fields[i].type);
       fieldData['index'] = '$i';
+      fieldData['argumentCasting'] = getArgumentCasting(
+        type: classNode.fields[i].type,
+        index: i,
+      );
 
       fields.add(fieldData);
     }
@@ -46,6 +50,10 @@ String generateDart(
         parameterData['name'] = methodNode.parameters[i].name;
         parameterData['type'] = getTrueTypeName(methodNode.parameters[i].type);
         parameterData['index'] = '$i';
+        parameterData['argumentCasting'] = getArgumentCasting(
+          type: methodNode.parameters[i].type,
+          index: i,
+        );
 
         parameters.add(parameterData);
       }
@@ -67,6 +75,10 @@ String generateDart(
         parameterData['name'] = methodNode.parameters[i].name;
         parameterData['type'] = getTrueTypeName(methodNode.parameters[i].type);
         parameterData['index'] = '$i';
+        parameterData['argumentCasting'] = getArgumentCasting(
+          type: methodNode.parameters[i].type,
+          index: i,
+        );
 
         parameters.add(parameterData);
       }
@@ -95,6 +107,11 @@ String generateDart(
         generatedSymbol: '',
       );
       parameterData['index'] = '$i';
+      parameterData['argumentCasting'] = getArgumentCasting(
+        type: functionNode.parameters[i].type,
+        index: i,
+        generatedSymbol: '',
+      );
 
       parameters.add(parameterData);
     }
@@ -112,9 +129,64 @@ String generateDart(
   return runGenerator(templateQueue, Queue<Token>(), StringBuffer(), data);
 }
 
+String getArgumentCasting({
+  required ReferenceType type,
+  required int index,
+  String generatedSymbol = '\$',
+}) {
+  final String dartName = dartTypeNameConversion(type.name);
+
+  if ((dartName != 'List' && dartName != 'Map') || type.typeArguments.isEmpty) {
+    final String typeName = getTrueTypeName(
+      type,
+      generatedSymbol: generatedSymbol,
+    );
+    return 'arguments[$index] as $typeName,';
+  }
+
+  if (dartName == 'List') {
+    final String typeCast = _getListArgumentCasting(
+      type: type.typeArguments.first,
+      generatedSymbol: generatedSymbol,
+    );
+    return '(arguments[$index] as List<dynamic>).map((_) => $typeCast).toList(),';
+  } else if (dartName == 'Map') {
+    return 'arguments[$index] as Map,';
+  }
+
+  throw UnimplementedError();
+}
+
+String _getListArgumentCasting({
+  required ReferenceType type,
+  String generatedSymbol = '\$',
+}) {
+  final String dartName = dartTypeNameConversion(type.name);
+
+  if ((dartName != 'List' && dartName != 'Map') || type.typeArguments.isEmpty) {
+    final String typeName = getTrueTypeName(
+      type,
+      generatedSymbol: generatedSymbol,
+    );
+    return '_ as $typeName';
+  }
+
+  if (dartName == 'List') {
+    final String typeCast = _getListArgumentCasting(
+      type: type.typeArguments.first,
+      generatedSymbol: generatedSymbol,
+    );
+    return '(_ as List<dynamic>).map((_) => $typeCast).toList()';
+  }
+
+  throw UnimplementedError();
+}
+
 String getTrueTypeName(ReferenceType type, {String generatedSymbol = '\$'}) {
+  final String dartName = dartTypeNameConversion(type.name);
+
   final String nullability = type.nullable ? '?' : '';
-  if (type.name == 'Map') return 'Map$nullability';
+  if (dartName == 'Map') return 'Map$nullability';
 
   final Iterable<String> typeArguments = type.typeArguments.map<String>(
     (ReferenceType type) => getTrueTypeName(
@@ -124,12 +196,21 @@ String getTrueTypeName(ReferenceType type, {String generatedSymbol = '\$'}) {
   );
 
   if (type.codeGeneratedType && typeArguments.isEmpty) {
-    return '$generatedSymbol${type.name}$nullability';
+    return '$generatedSymbol$dartName$nullability';
   } else if (type.codeGeneratedType && typeArguments.isNotEmpty) {
-    return '$generatedSymbol${type.name}<${typeArguments.join(',')}>$nullability';
+    return '$generatedSymbol$dartName<${typeArguments.join(',')}>$nullability';
   } else if (!type.codeGeneratedType && typeArguments.isNotEmpty) {
-    return '${type.name}<${typeArguments.join(',')}>$nullability';
+    return '$dartName<${typeArguments.join(',')}>$nullability';
   }
 
-  return '${type.name}$nullability';
+  return '$dartName$nullability';
+}
+
+String dartTypeNameConversion(String type) {
+  switch (type) {
+    case 'Set':
+      return 'List';
+  }
+
+  return type;
 }

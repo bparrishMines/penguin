@@ -12,7 +12,7 @@
 
 @implementation _IAFFinishProcessingPhotoCallbackChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
-  return self = [super initWithMessenger:messenger name:@"ios_avfoundatoin/avfoundation/FinishProcessingPhotoCallback"];
+  return self = [super initWithMessenger:messenger name:@"ios_avfoundation/avfoundation/FinishProcessingPhotoCallback"];
 }
 
 - (void)__create:(_IAFFinishProcessingPhotoCallback)_instance
@@ -28,7 +28,7 @@
     completion:(void (^)(id _Nullable, NSError *_Nullable))completion {
   [self invokeMethod:_instance
           methodName:@""
-           arguments:@[photo,]
+           arguments:@[photo ? (NSObject *) photo : [NSNull null],]
           completion:completion];
 }
 @end
@@ -78,7 +78,7 @@
 
 @implementation _IAFCapturePhotoOutputChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
-  return self = [super initWithMessenger:messenger name:@"ios_avfoundatoin/avfoundation/CapturePhotoOutput"];
+  return self = [super initWithMessenger:messenger name:@"ios_avfoundation/avfoundation/CapturePhotoOutput"];
 }
 
 
@@ -101,7 +101,7 @@
 
 @implementation _IAFCapturePhotoSettingsChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
-  return self = [super initWithMessenger:messenger name:@"ios_avfoundatoin/avfoundation/CapturePhotoSettings"];
+  return self = [super initWithMessenger:messenger name:@"ios_avfoundation/avfoundation/CapturePhotoSettings"];
 }
 
 
@@ -112,7 +112,7 @@
 
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
   [self createNewInstancePair:_instance
-                    arguments:@[processedFormat,]
+                    arguments:@[processedFormat ? (NSObject *) processedFormat : [NSNull null],]
                         owner:_owner
                    completion:completion];
 }
@@ -124,7 +124,7 @@
 
 @implementation _IAFCapturePhotoCaptureDelegateChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
-  return self = [super initWithMessenger:messenger name:@"ios_avfoundatoin/avfoundation/CapturePhotoCaptureDelegate"];
+  return self = [super initWithMessenger:messenger name:@"ios_avfoundation/avfoundation/CapturePhotoCaptureDelegate"];
 }
 
 
@@ -135,7 +135,7 @@
 
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
   [self createNewInstancePair:_instance
-                    arguments:@[didFinishProcessingPhoto,]
+                    arguments:@[didFinishProcessingPhoto ? (NSObject *) didFinishProcessingPhoto : [NSNull null],]
                         owner:_owner
                    completion:completion];
 }
@@ -147,7 +147,7 @@
 
 @implementation _IAFCaptureOutputChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
-  return self = [super initWithMessenger:messenger name:@"ios_avfoundatoin/avfoundation/CaptureOutput"];
+  return self = [super initWithMessenger:messenger name:@"ios_avfoundation/avfoundation/CaptureOutput"];
 }
 
 
@@ -168,7 +168,7 @@
 
 @implementation _IAFCapturePhotoChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
-  return self = [super initWithMessenger:messenger name:@"ios_avfoundatoin/avfoundation/CapturePhoto"];
+  return self = [super initWithMessenger:messenger name:@"ios_avfoundation/avfoundation/CapturePhoto"];
 }
 
 
@@ -179,7 +179,7 @@
 
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
   [self createNewInstancePair:_instance
-                    arguments:@[fileDataRepresentation ? fileDataRepresentation : [NSNull null]]
+                    arguments:@[fileDataRepresentation ? (NSObject *) fileDataRepresentation : [NSNull null],]
                         owner:_owner
                    completion:completion];
 }
@@ -191,7 +191,7 @@
 
 @implementation _IAFCaptureDeviceInputChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
-  return self = [super initWithMessenger:messenger name:@"ios_avfoundatoin/avfoundation/CaptureDeviceInput"];
+  return self = [super initWithMessenger:messenger name:@"ios_avfoundation/avfoundation/CaptureDeviceInput"];
 }
 
 
@@ -202,7 +202,7 @@
 
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
   [self createNewInstancePair:_instance
-                    arguments:@[device,]
+                    arguments:@[device ? (NSObject *) device : [NSNull null],]
                         owner:_owner
                    completion:completion];
 }
@@ -214,7 +214,7 @@
 
 @implementation _IAFCaptureInputChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
-  return self = [super initWithMessenger:messenger name:@"ios_avfoundatoin/avfoundation/CaptureInput"];
+  return self = [super initWithMessenger:messenger name:@"ios_avfoundation/avfoundation/CaptureInput"];
 }
 
 
@@ -235,7 +235,7 @@
 
 @implementation _IAFCaptureSessionChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
-  return self = [super initWithMessenger:messenger name:@"ios_avfoundatoin/avfoundation/CaptureSession"];
+  return self = [super initWithMessenger:messenger name:@"ios_avfoundation/avfoundation/CaptureSession"];
 }
 
 
@@ -264,7 +264,7 @@
 
 @implementation _IAFCaptureDeviceChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
-  return self = [super initWithMessenger:messenger name:@"ios_avfoundatoin/avfoundation/CaptureDevice"];
+  return self = [super initWithMessenger:messenger name:@"ios_avfoundation/avfoundation/CaptureDevice"];
 }
 
 
@@ -277,7 +277,34 @@
 
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
   [self createNewInstancePair:_instance
-                    arguments:@[uniqueId,position,]
+                    arguments:@[uniqueId ? (NSObject *) uniqueId : [NSNull null],position ? (NSObject *) position : [NSNull null],]
+                        owner:_owner
+                   completion:completion];
+}
+
+
+
+
+
+
+@end
+
+@implementation _IAFCaptureDeviceDiscoverySessionChannel
+- (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
+  return self = [super initWithMessenger:messenger name:@"ios_avfoundation/avfoundation/CaptureDeviceDiscoverySession"];
+}
+
+
+- (void)__create:(NSObject<_IAFCaptureDeviceDiscoverySession> *)_instance
+         _owner:(BOOL)_owner
+
+ devices:(NSArray<NSObject<_IAFCaptureDevice> *> * _Nullable)devices
+
+ supportedMultiCamDeviceSets:(NSArray<NSArray<NSObject<_IAFCaptureDevice> *> *> * _Nullable)supportedMultiCamDeviceSets
+
+     completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
+  [self createNewInstancePair:_instance
+                    arguments:@[devices ? (NSObject *) devices : [NSNull null],supportedMultiCamDeviceSets ? (NSObject *) supportedMultiCamDeviceSets : [NSNull null],]
                         owner:_owner
                    completion:completion];
 }
@@ -291,7 +318,7 @@
 
 @implementation _IAFPreviewControllerChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
-  return self = [super initWithMessenger:messenger name:@"ios_avfoundatoin/avfoundation/PreviewController"];
+  return self = [super initWithMessenger:messenger name:@"ios_avfoundation/avfoundation/PreviewController"];
 }
 
 
@@ -302,7 +329,7 @@
 
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
   [self createNewInstancePair:_instance
-                    arguments:@[captureSession,]
+                    arguments:@[captureSession ? (NSObject *) captureSession : [NSNull null],]
                         owner:_owner
                    completion:completion];
 }
@@ -709,7 +736,7 @@
 
 
 
-- (id _Nullable)_devicesWithMediaType:(REFTypeChannelMessenger *)messenger
+- (id _Nullable)_defaultDeviceWithMediaType:(REFTypeChannelMessenger *)messenger
 
                            mediaType:(NSString * _Nullable)mediaType
  {
@@ -725,10 +752,10 @@
                          arguments:(nonnull NSArray *)arguments {
   
   
-  if ([@"devicesWithMediaType" isEqualToString:methodName]) {
-    return [self _devicesWithMediaType:messenger
+  if ([@"defaultDeviceWithMediaType" isEqualToString:methodName]) {
+    return [self _defaultDeviceWithMediaType:messenger
                     
-                     mediaType:arguments[0]] ;
+                     mediaType:arguments[0] ];
   }
   
   
@@ -747,6 +774,69 @@
                   methodName:(nonnull NSString *)methodName
                    arguments:(nonnull NSArray *)arguments {
   NSObject<_IAFCaptureDevice> *value = (NSObject<_IAFCaptureDevice> *) instance;
+  
+  
+  NSLog(@"Unable to invoke %@.%@", instance, methodName);
+  return nil;
+}
+@end
+
+@implementation _IAFCaptureDeviceDiscoverySessionHandler
+- (NSObject<_IAFCaptureDeviceDiscoverySession> *)__create:(REFTypeChannelMessenger *)messenger
+                                 
+                                 devices:(NSArray<NSObject<_IAFCaptureDevice> *> *)devices
+
+                                 supportedMultiCamDeviceSets:(NSArray<NSArray<NSObject<_IAFCaptureDevice> *> *> *)supportedMultiCamDeviceSets
+{
+  @throw [NSException exceptionWithName:@"_IAFUnimplementedException" reason:nil userInfo:nil];
+}
+
+
+
+- (id _Nullable)_discoverySessionWithDeviceTypes:(REFTypeChannelMessenger *)messenger
+
+                           deviceTypes:(NSArray<NSString *> * _Nullable)deviceTypes
+
+                           mediaType:(NSString * _Nullable)mediaType
+
+                           position:(NSNumber * _Nullable)position
+ {
+  @throw [NSException exceptionWithName:@"_IAFUnimplementedException" reason:nil userInfo:nil];
+}
+
+
+
+
+
+- (id _Nullable)invokeStaticMethod:(nonnull REFTypeChannelMessenger *)messenger
+                        methodName:(nonnull NSString *)methodName
+                         arguments:(nonnull NSArray *)arguments {
+  
+  
+  if ([@"discoverySessionWithDeviceTypes" isEqualToString:methodName]) {
+    return [self _discoverySessionWithDeviceTypes:messenger
+                    
+                     deviceTypes:arguments[0] 
+                     mediaType:arguments[1] 
+                     position:arguments[2] ];
+  }
+  
+  
+  
+  NSLog(@"Unable to invoke static method %@", methodName);
+  return nil;
+}
+
+- (nonnull id)createInstance:(nonnull REFTypeChannelMessenger *)messenger
+                   arguments:(nonnull NSArray *)arguments {
+  return [self __create:messenger devices:arguments[0] supportedMultiCamDeviceSets:arguments[1] ];
+}
+
+- (id _Nullable)invokeMethod:(nonnull REFTypeChannelMessenger *)messenger
+                    instance:(nonnull NSObject *)instance
+                  methodName:(nonnull NSString *)methodName
+                   arguments:(nonnull NSArray *)arguments {
+  NSObject<_IAFCaptureDeviceDiscoverySession> *value = (NSObject<_IAFCaptureDeviceDiscoverySession> *) instance;
   
   
   NSLog(@"Unable to invoke %@.%@", instance, methodName);
@@ -875,6 +965,14 @@
   return [[_IAFCaptureDeviceHandler alloc] init];
 }
 
+- (_IAFCaptureDeviceDiscoverySessionChannel *)channelCaptureDeviceDiscoverySession {
+  return [[_IAFCaptureDeviceDiscoverySessionChannel alloc] initWithMessenger:_messenger];
+}
+
+- (_IAFCaptureDeviceDiscoverySessionHandler *)handlerCaptureDeviceDiscoverySession {
+  return [[_IAFCaptureDeviceDiscoverySessionHandler alloc] init];
+}
+
 - (_IAFPreviewControllerChannel *)channelPreviewController {
   return [[_IAFPreviewControllerChannel alloc] initWithMessenger:_messenger];
 }
@@ -924,6 +1022,8 @@
   
   [_implementations.channelCaptureDevice setHandler:_implementations.handlerCaptureDevice];
   
+  [_implementations.channelCaptureDeviceDiscoverySession setHandler:_implementations.handlerCaptureDeviceDiscoverySession];
+  
   [_implementations.channelPreviewController setHandler:_implementations.handlerPreviewController];
   
   
@@ -950,6 +1050,8 @@
   [_implementations.channelCaptureSession removeHandler];
   
   [_implementations.channelCaptureDevice removeHandler];
+  
+  [_implementations.channelCaptureDeviceDiscoverySession removeHandler];
   
   [_implementations.channelPreviewController removeHandler];
   

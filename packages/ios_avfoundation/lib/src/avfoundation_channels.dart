@@ -31,6 +31,11 @@ class LibraryImplementations extends $LibraryImplementations {
 
   @override
   CapturePhotoHandler get handlerCapturePhoto => CapturePhotoHandler();
+
+  @override
+  CaptureDeviceDiscoverySessionHandler
+      get handlerCaptureDeviceDiscoverySession =>
+          CaptureDeviceDiscoverySessionHandler();
 }
 
 /// [TypeChannelHandler] implementation for [CaptureDevice].
@@ -52,5 +57,24 @@ class CapturePhotoHandler extends $CapturePhotoHandler {
   ) {
     // ignore: invalid_use_of_visible_for_testing_member
     return CapturePhoto(fileDataRepresentation);
+  }
+}
+
+/// [TypeChannelHandler] implementation for [CaptureDeviceDiscoverySession].
+class CaptureDeviceDiscoverySessionHandler
+    extends $CaptureDeviceDiscoverySessionHandler {
+  @override
+  CaptureDeviceDiscoverySession $$create(
+    TypeChannelMessenger messenger,
+    List<$CaptureDevice> devices,
+    List<List<$CaptureDevice>> supportedMultiCamDeviceSets,
+  ) {
+    // ignore: invalid_use_of_visible_for_testing_member
+    return CaptureDeviceDiscoverySession(
+      devices: devices.cast<CaptureDevice>(),
+      supportedMultiCamDeviceSets: supportedMultiCamDeviceSets
+          .map((_) => _.map((_) => _ as CaptureDevice).toSet())
+          .toList(),
+    );
   }
 }

@@ -4,15 +4,21 @@
 @end
 
 @implementation IAFCaptureDeviceProxy
-+ (NSArray<IAFCaptureDeviceProxy*> *)devicesWithMediaType:(NSString *)mediaType
-                                          implementations:(IAFLibraryImplementations *)implementations {
-  NSArray<AVCaptureDevice *> *devices = [AVCaptureDevice devicesWithMediaType:mediaType];
-  
-  NSMutableArray<IAFCaptureDeviceProxy *> *deviceProxies = [NSMutableArray arrayWithCapacity:devices.count];
-  for (AVCaptureDevice *device in devices) {
++ (NSArray<IAFCaptureDeviceProxy*> *)asProxyList:(NSArray<AVCaptureDevice *> *)captureDevices
+                                 implementations:(IAFLibraryImplementations *)implementations {
+  NSMutableArray<IAFCaptureDeviceProxy *> *deviceProxies = [NSMutableArray arrayWithCapacity:captureDevices.count];
+  for (AVCaptureDevice *device in captureDevices) {
     [deviceProxies addObject:[[IAFCaptureDeviceProxy alloc] initWithCaptureDevice:device implementations:implementations]];
   }
   return deviceProxies;
+}
+
++ (IAFCaptureDeviceProxy *_Nullable)defaultDeviceWithMediaType:(NSString *)mediaType
+                                               implementations:(IAFLibraryImplementations *)implementations {
+  AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:mediaType];
+  if (!device) return nil;
+
+  return [[IAFCaptureDeviceProxy alloc] initWithCaptureDevice:device implementations:implementations];
 }
 
 - (instancetype)initWithCaptureDevice:(AVCaptureDevice *)captureDevice
@@ -226,6 +232,46 @@ didFinishProcessingPhoto:(AVCapturePhoto *)photo
                                          _owner:false
                          fileDataRepresentation:capturePhoto.fileDataRepresentation
                                      completion:^(REFPairedInstance *instance, NSError * error) {}];
+  return self;
+}
+@end
+
+@implementation IAFCaptureDeviceDiscoverySessionProxy
++ (IAFCaptureDeviceDiscoverySessionProxy *)discoverySessionWithDeviceTypes:(NSArray<NSString *> *)deviceTypes
+                                                                 mediaType:(NSString *)mediaType
+                                                                  position:(NSNumber *)position
+                                                           implementations:(IAFLibraryImplementations *)implementations {
+  AVCaptureDeviceDiscoverySession *captureDeviceDiscovertySession = [AVCaptureDeviceDiscoverySession
+                                                                     discoverySessionWithDeviceTypes:deviceTypes
+                                                                     mediaType:mediaType
+                                                                     position:position.intValue];
+  return [[IAFCaptureDeviceDiscoverySessionProxy alloc] initWithCaptureDeviceDiscoverySession:captureDeviceDiscovertySession
+                                                                              implementations:implementations];
+}
+
+- (instancetype)initWithCaptureDeviceDiscoverySession:(AVCaptureDeviceDiscoverySession *)captureDeviceDiscoverySession
+                                      implementations:(IAFLibraryImplementations *)implementations {
+  self = [self init];
+  if (self) {
+    _captureDeviceDiscoverySession = captureDeviceDiscoverySession;
+  }
+  
+  NSArray<IAFCaptureDeviceProxy *> *devices = [IAFCaptureDeviceProxy asProxyList:captureDeviceDiscoverySession.devices
+                                                                implementations:implementations];
+  NSMutableArray<NSArray<IAFCaptureDeviceProxy *> *> *supportedMultiCamDeviceSets = [NSMutableArray array];
+  if (@available(iOS 13.0, *)) {
+    for (NSSet<AVCaptureDevice *> *deviceSet in captureDeviceDiscoverySession.supportedMultiCamDeviceSets) {
+      NSArray<IAFCaptureDeviceProxy *> *deviceProxies = [IAFCaptureDeviceProxy asProxyList:deviceSet.allObjects
+                                                                          implementations:implementations];
+      [supportedMultiCamDeviceSets addObject:deviceProxies];
+    }
+  }
+  [implementations.channelCaptureDeviceDiscoverySession __create:self
+                                                          _owner:NO
+                                                         devices:devices
+                                     supportedMultiCamDeviceSets:supportedMultiCamDeviceSets
+                                                      completion:^(REFPairedInstance * instance, NSError *error) {
+  }];
   return self;
 }
 @end
