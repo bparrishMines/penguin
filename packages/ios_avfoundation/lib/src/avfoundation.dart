@@ -17,6 +17,125 @@ import 'avfoundation_channels.dart';
 @Reference('ios_avfoundation/avfoundation/FinishProcessingPhotoCallback')
 typedef FinishProcessingPhotoCallback = Function(CapturePhoto photo);
 
+// TODO: CaptureSession.sessionPreset
+/// [CaptureSessionPreset] string constants.
+///
+/// Clients may use an [CaptureSessionPreset] to set the format for output on an
+/// [CaptureSession].
+class CaptureSessionPreset {
+  /// A [CaptureSession] preset suitable for high resolution photo quality output.
+  ///
+  /// Clients may set a [CaptureSession] instance's `sessionPreset` to
+  /// [CaptureSessionPreset.Photo] for full resolution photo quality output.
+  static const String photo = 'AVCaptureSessionPresetPhoto';
+
+  /// A [CaptureSession] preset suitable for high quality video and audio output.
+  ///
+  /// Clients may set a [CaptureSession] instance's `sessionPreset` to
+  /// [CaptureSessionPreset.high] to achieve high quality video and audio
+  /// output. [CaptureSessionPreset.high] is the default `sessionPreset` value.
+  static const String high = 'AVCaptureSessionPresetHigh';
+
+  /// A [CaptureSession] preset suitable for medium quality output.
+  ///
+  /// Clients may set a [CaptureSession] instance's `sessionPreset` to
+  /// [CaptureSessionPreset.medium] to achieve output video and audio bitrates
+  /// suitable for sharing over WiFi.
+  static const String medium = 'AVCaptureSessionPresetMedium';
+
+  /// A [CaptureSession] preset suitable for low quality output.
+  ///
+  /// Clients may set a [CaptureSession] instance's `sessionPreset` to
+  /// [CaptureSessionPreset.low] to achieve output video and audio bitrates
+  /// suitable for sharing over 3G.
+  static const String low = 'AVCaptureSessionPresetLow';
+
+  /// A [CaptureSession] preset suitable for 320x240 video output.
+  ///
+  /// Clients may set a [CaptureSession] instance's `sessionPreset` to
+  /// [CaptureSessionPreset.preset320x240] to achieve 320x240 output.
+  ///
+  /// This is only supported on macos.
+  static const String preset320x240 = 'AVCaptureSessionPreset320x240';
+
+  /// A [CaptureSession] preset suitable for 352x288 video output.
+  ///
+  /// Clients may set a [CaptureSession] instance's `sessionPreset` to
+  /// [CaptureSessionPreset.preset352x288] to achieve CIF quality (352x288)
+  /// output.
+  static const String preset352x288 = 'AVCaptureSessionPreset352x288';
+
+  /// A [CaptureSession] preset suitable for 640x480 video output.
+  ///
+  /// Clients may set a [CaptureSession] instance's `sessionPreset` to
+  /// [CaptureSessionPreset.preset640x480] to achieve VGA quality (640x480)
+  /// output.
+  static const String preset640x480 = 'AVCaptureSessionPreset640x480';
+
+  /// A [CaptureSession] preset suitable for 960x540 video output.
+  ///
+  /// Clients may set a [CaptureSession] instance's `sessionPreset` to
+  /// [CaptureSessionPreset.preset960x540] to achieve quarter HD quality
+  /// (960x540) output.
+  ///
+  /// This is only supported on macos.
+  static const String preset960x540 = 'AVCaptureSessionPreset960x540';
+
+  /// A [CaptureSession] preset suitable for 1280x720 video output.
+  ///
+  /// Clients may set a [CaptureSession] instance's `sessionPreset` to
+  /// [CaptureSessionPreset.preset1280x720] to achieve 1280x720 output.
+  static const String preset1280x720 = 'AVCaptureSessionPreset1280x720';
+
+  /// A [CaptureSession] preset suitable for 1920x1080 video output.
+  ///
+  /// Clients may set a [CaptureSession] instance's `sessionPreset` to
+  /// [CaptureSessionPreset.preset1920x1080] to achieve 1920x1080 output.
+  static const String preset1920x1080 = 'AVCaptureSessionPreset1920x1080';
+
+  /// A [CaptureSession] preset suitable for 3840x2160 (UHD 4K) video output.
+  ///
+  /// Clients may set a [CaptureSession] instance's `sessionPreset` to
+  /// [CaptureSessionPreset.preset3840x2160] to achieve 3840x2160 output.
+  ///
+  /// Only supported on macos.
+  static const String preset3840x2160 = 'AVCaptureSessionPreset3840x2160';
+
+  /// A [CaptureSession] preset producing 960x540 Apple iFrame video and audio content.
+  ///
+  /// Clients may set a [CaptureSession] instance's `sessionPreset` to
+  /// [CaptureSessionPreset.iFrame960x540] to achieve 960x540 quality iFrame
+  /// H.264 video at ~30 Mbits/sec with AAC audio. QuickTime movies captured in
+  /// iFrame format are optimal for editing applications.
+  static const String iFrame960x540 = 'AVCaptureSessionPresetiFrame960x540';
+
+  /// A [CaptureSession] preset producing 1280x720 Apple iFrame video and audio content.
+  ///
+  /// Clients may set a [CaptureSession] instance's `sessionPreset` to
+  /// [CaptureSessionPreset.iFrame1280x720] to achieve 1280x720 quality iFrame
+  /// H.264 video at ~40 Mbits/sec with AAC audio. QuickTime movies captured in
+  /// iFrame format are optimal for editing applications.
+  static const String iFrame1280x720 = 'AVCaptureSessionPresetiFrame1280x720';
+
+  // TODO: CaptureDevice.setActiveFormat
+  /// A [CaptureSession] preset indicating that the formats of the session's inputs are being given priority.
+  ///
+  /// By calling [CameraSession.setSessionPreset], clients can easily
+  /// configure a [CaptureSession] to produce a desired quality of service
+  /// level. The session configures its inputs and outputs optimally to produce
+  /// the QoS level indicated. Clients who need to ensure a particular input
+  /// format is chosen can use [CaptureDevice.setActiveFormat] method. When a
+  /// client sets the active format on a device, the associated session's
+  /// `setSessionPreset` method automatically changes to
+  /// [CaptureSessionPreset.inputPriority]. This change indicates that the input
+  /// format selected by the client now dictates the quality of service level
+  /// provided at the outputs. When a client sets the session preset to anything
+  /// other than [CaptureSessionPreset.inputPriority], the session resumes
+  /// responsibility for configuring inputs and outputs, and is free to change
+  /// its inputs' `activeFormat` as needed.
+  static const String inputPriority = 'AVCaptureSessionPresetInputPriority';
+}
+
 // TODO: keys in kCVPixelBuffer* keys in <CoreVideo/CVPixelBuffer.h>
 // TODO: videoPixelAspectRatio
 // TODO: videoCleanAperture
