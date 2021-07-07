@@ -22,7 +22,9 @@ typedef FinishProcessingPhotoCallback = Function(CapturePhoto photo);
 ///
 /// Clients may use an [CaptureSessionPreset] to set the format for output on an
 /// [CaptureSession].
-class CaptureSessionPreset {
+abstract class CaptureSessionPreset {
+  CaptureSessionPreset._();
+
   /// A [CaptureSession] preset suitable for high resolution photo quality output.
   ///
   /// Clients may set a [CaptureSession] instance's `sessionPreset` to
@@ -764,6 +766,28 @@ class CaptureSession with $CaptureSession {
   /// This method is used to stop the flow of data from the inputs to the
   /// outputs connected to the [CaptureSession] instance that is the receiver.
   Future<void> stopRunning() => _channel.$stopRunning(this);
+
+  /// A constant value indicating the quality level or bit rate of the output.
+  ///
+  /// You use this property to customize the quality level or bit rate of the
+  /// output. For possible values of `sessionPreset`, see
+  /// [CaptureSessionPreset]. The default value is [CaptureSessionPreset.high].
+  ///
+  /// You can set this value while the session is running.
+  ///
+  /// You can only set a preset if [canSetSessionPresets] contains that preset.
+  Future<void> setSessionPreset(String preset) {
+    return _channel.$setSessionPreset(this, preset);
+  }
+
+  /// Returns a subset of preset values that indicates which presets can be used by the session.
+  ///
+  /// `presets`: Presets you would like to set for the receiver.
+  Future<List<String>> canSetSessionPresets(List<String> presets) async {
+    final List<Object?> returnedPresets =
+        await _channel.$canSetSessionPresets(this, presets) as List<Object?>;
+    return returnedPresets.cast<String>();
+  }
 }
 
 // TODO: lockForConfiguration

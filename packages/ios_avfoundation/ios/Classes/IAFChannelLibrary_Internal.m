@@ -260,6 +260,10 @@
 
 
 
+
+
+
+
 @end
 
 @implementation _IAFCaptureDeviceChannel
@@ -668,6 +672,26 @@
 
 
 
+- (id _Nullable)_setSessionPreset:(NSObject<_IAFCaptureSession> *)_instance
+
+                     preset:(NSString * _Nullable)preset
+ {
+  return [_instance setSessionPreset:preset
+          ];
+}
+
+
+
+- (id _Nullable)_canSetSessionPresets:(NSObject<_IAFCaptureSession> *)_instance
+
+                     presets:(NSArray<NSString *> * _Nullable)presets
+ {
+  return [_instance canSetSessionPresets:presets
+          ];
+}
+
+
+
 - (id _Nullable)invokeStaticMethod:(nonnull REFTypeChannelMessenger *)messenger
                         methodName:(nonnull NSString *)methodName
                          arguments:(nonnull NSArray *)arguments {
@@ -715,6 +739,22 @@
   if ([@"stopRunning" isEqualToString:methodName]) {
     return [self _stopRunning:value
                ];
+  }
+  
+  else
+  
+  if ([@"setSessionPreset" isEqualToString:methodName]) {
+    return [self _setSessionPreset:value
+               
+               preset:arguments[0] ];
+  }
+  
+  else
+  
+  if ([@"canSetSessionPresets" isEqualToString:methodName]) {
+    return [self _canSetSessionPresets:value
+               
+               presets:arguments[0] ];
   }
   
   

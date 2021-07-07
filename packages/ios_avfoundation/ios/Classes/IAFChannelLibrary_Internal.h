@@ -125,6 +125,22 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 ;
 
 
+
+- (id _Nullable)setSessionPreset
+                                :(NSString * _Nullable)preset
+
+
+;
+
+
+
+- (id _Nullable)canSetSessionPresets
+                                :(NSArray<NSString *> * _Nullable)presets
+
+
+;
+
+
 @end
 
 @protocol _IAFCaptureDevice <NSObject>
@@ -241,6 +257,10 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
           _owner:(BOOL)_owner
 
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion;
+
+
+
+
 
 
 
@@ -407,6 +427,20 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 
 
 - (id _Nullable)_stopRunning:(NSObject<_IAFCaptureSession> *)_instance
+;
+
+
+
+- (id _Nullable)_setSessionPreset:(NSObject<_IAFCaptureSession> *)_instance
+
+  preset:(NSString * _Nullable)preset
+;
+
+
+
+- (id _Nullable)_canSetSessionPresets:(NSObject<_IAFCaptureSession> *)_instance
+
+  presets:(NSArray<NSString *> * _Nullable)presets
 ;
 
 

@@ -312,6 +312,32 @@ class $CaptureSessionChannel extends TypeChannel<$CaptureSession> {
       <Object?>[],
     );
   }
+
+  Future<Object?> $setSessionPreset(
+    $CaptureSession $instance,
+    String preset,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'setSessionPreset',
+      <Object?>[
+        preset,
+      ],
+    );
+  }
+
+  Future<Object?> $canSetSessionPresets(
+    $CaptureSession $instance,
+    List<String> presets,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'canSetSessionPresets',
+      <Object?>[
+        presets,
+      ],
+    );
+  }
 }
 
 class $CaptureDeviceChannel extends TypeChannel<$CaptureDevice> {
