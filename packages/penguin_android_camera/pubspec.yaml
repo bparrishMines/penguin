@@ -17,6 +17,8 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   lint: ^1.5.1
+  path_provider: ^2.0.1
+  permission_handler: ^8.0.0+2
   reference_generator:
     path: ../reference_generator
 
