@@ -343,6 +343,81 @@
 
 @end
 
+@implementation _IAFCaptureFileOutputChannel
+- (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
+  return self = [super initWithMessenger:messenger name:@"ios_avfoundation/avfoundation/CaptureFileOutput"];
+}
+
+
+- (void)__create:(NSObject<_IAFCaptureFileOutput> *)_instance
+         _owner:(BOOL)_owner
+
+     completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
+  [self createNewInstancePair:_instance
+                    arguments:@[]
+                        owner:_owner
+                   completion:completion];
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@end
+
+@implementation _IAFCaptureMovieFileOutputChannel
+- (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
+  return self = [super initWithMessenger:messenger name:@"ios_avfoundation/avfoundation/CaptureMovieFileOutput"];
+}
+
+
+- (void)__create:(NSObject<_IAFCaptureMovieFileOutput> *)_instance
+         _owner:(BOOL)_owner
+
+     completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
+  [self createNewInstancePair:_instance
+                    arguments:@[]
+                        owner:_owner
+                   completion:completion];
+}
+
+
+
+
+
+
+@end
+
+@implementation _IAFCaptureFileOutputRecordingDelegateChannel
+- (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
+  return self = [super initWithMessenger:messenger name:@"ios_avfoundation/avfoundation/CaptureFileOutputRecordingDelegate"];
+}
+
+
+- (void)__create:(NSObject<_IAFCaptureFileOutputRecordingDelegate> *)_instance
+         _owner:(BOOL)_owner
+
+     completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
+  [self createNewInstancePair:_instance
+                    arguments:@[]
+                        owner:_owner
+                   completion:completion];
+}
+
+
+
+
+@end
+
 
 
 @implementation _IAFCapturePhotoOutputHandler
@@ -355,13 +430,13 @@
 
 
 
-- (id _Nullable)_capturePhoto:(NSObject<_IAFCapturePhotoOutput> *)_instance
+- (id _Nullable)_capturePhotoWithSettings:(NSObject<_IAFCapturePhotoOutput> *)_instance
 
                      settings:(NSObject<_IAFCapturePhotoSettings> * _Nullable)settings
 
                      delegate:(NSObject<_IAFCapturePhotoCaptureDelegate> * _Nullable)delegate
  {
-  return [_instance capturePhoto:settings
+  return [_instance capturePhotoWithSettings:settings
           delegate:delegate];
 }
 
@@ -388,8 +463,8 @@
   NSObject<_IAFCapturePhotoOutput> *value = (NSObject<_IAFCapturePhotoOutput> *) instance;
   
   
-  if ([@"capturePhoto" isEqualToString:methodName]) {
-    return [self _capturePhoto:value
+  if ([@"capturePhotoWithSettings" isEqualToString:methodName]) {
+    return [self _capturePhotoWithSettings:value
                
                settings:arguments[0] 
                delegate:arguments[1] ];
@@ -922,6 +997,216 @@
 }
 @end
 
+@implementation _IAFCaptureFileOutputHandler
+- (NSObject<_IAFCaptureFileOutput> *)__create:(REFTypeChannelMessenger *)messenger
+                                 {
+  @throw [NSException exceptionWithName:@"_IAFUnimplementedException" reason:nil userInfo:nil];
+}
+
+
+
+
+
+- (id _Nullable)_setOutputFileURL:(NSObject<_IAFCaptureFileOutput> *)_instance
+
+                     url:(NSString * _Nullable)url
+ {
+  return [_instance setOutputFileURL:url
+          ];
+}
+
+
+
+- (id _Nullable)_setMaxRecordedFileSize:(NSObject<_IAFCaptureFileOutput> *)_instance
+
+                     fileSize:(NSNumber * _Nullable)fileSize
+ {
+  return [_instance setMaxRecordedFileSize:fileSize
+          ];
+}
+
+
+
+- (id _Nullable)_isRecording:(NSObject<_IAFCaptureFileOutput> *)_instance
+ {
+  return [_instance isRecording
+          ];
+}
+
+
+
+- (id _Nullable)_startRecordingToOutputFileURL:(NSObject<_IAFCaptureFileOutput> *)_instance
+
+                     outputFileURL:(NSString * _Nullable)outputFileURL
+
+                     delegate:(NSObject<_IAFCaptureFileOutputRecordingDelegate> * _Nullable)delegate
+ {
+  return [_instance startRecordingToOutputFileURL:outputFileURL
+          delegate:delegate];
+}
+
+
+
+- (id _Nullable)_stopRecording:(NSObject<_IAFCaptureFileOutput> *)_instance
+ {
+  return [_instance stopRecording
+          ];
+}
+
+
+
+- (id _Nullable)invokeStaticMethod:(nonnull REFTypeChannelMessenger *)messenger
+                        methodName:(nonnull NSString *)methodName
+                         arguments:(nonnull NSArray *)arguments {
+  
+  
+  NSLog(@"Unable to invoke static method %@", methodName);
+  return nil;
+}
+
+- (nonnull id)createInstance:(nonnull REFTypeChannelMessenger *)messenger
+                   arguments:(nonnull NSArray *)arguments {
+  return [self __create:messenger ];
+}
+
+- (id _Nullable)invokeMethod:(nonnull REFTypeChannelMessenger *)messenger
+                    instance:(nonnull NSObject *)instance
+                  methodName:(nonnull NSString *)methodName
+                   arguments:(nonnull NSArray *)arguments {
+  NSObject<_IAFCaptureFileOutput> *value = (NSObject<_IAFCaptureFileOutput> *) instance;
+  
+  
+  if ([@"setOutputFileURL" isEqualToString:methodName]) {
+    return [self _setOutputFileURL:value
+               
+               url:arguments[0] ];
+  }
+  
+  else
+  
+  if ([@"setMaxRecordedFileSize" isEqualToString:methodName]) {
+    return [self _setMaxRecordedFileSize:value
+               
+               fileSize:arguments[0] ];
+  }
+  
+  else
+  
+  if ([@"isRecording" isEqualToString:methodName]) {
+    return [self _isRecording:value
+               ];
+  }
+  
+  else
+  
+  if ([@"startRecordingToOutputFileURL" isEqualToString:methodName]) {
+    return [self _startRecordingToOutputFileURL:value
+               
+               outputFileURL:arguments[0] 
+               delegate:arguments[1] ];
+  }
+  
+  else
+  
+  if ([@"stopRecording" isEqualToString:methodName]) {
+    return [self _stopRecording:value
+               ];
+  }
+  
+  
+  
+  NSLog(@"Unable to invoke %@.%@", instance, methodName);
+  return nil;
+}
+@end
+
+@implementation _IAFCaptureMovieFileOutputHandler
+- (NSObject<_IAFCaptureMovieFileOutput> *)__create:(REFTypeChannelMessenger *)messenger
+                                 {
+  @throw [NSException exceptionWithName:@"_IAFUnimplementedException" reason:nil userInfo:nil];
+}
+
+
+
+
+
+- (id _Nullable)_availableVideoCodecTypes:(NSObject<_IAFCaptureMovieFileOutput> *)_instance
+ {
+  return [_instance availableVideoCodecTypes
+          ];
+}
+
+
+
+- (id _Nullable)invokeStaticMethod:(nonnull REFTypeChannelMessenger *)messenger
+                        methodName:(nonnull NSString *)methodName
+                         arguments:(nonnull NSArray *)arguments {
+  
+  
+  NSLog(@"Unable to invoke static method %@", methodName);
+  return nil;
+}
+
+- (nonnull id)createInstance:(nonnull REFTypeChannelMessenger *)messenger
+                   arguments:(nonnull NSArray *)arguments {
+  return [self __create:messenger ];
+}
+
+- (id _Nullable)invokeMethod:(nonnull REFTypeChannelMessenger *)messenger
+                    instance:(nonnull NSObject *)instance
+                  methodName:(nonnull NSString *)methodName
+                   arguments:(nonnull NSArray *)arguments {
+  NSObject<_IAFCaptureMovieFileOutput> *value = (NSObject<_IAFCaptureMovieFileOutput> *) instance;
+  
+  
+  if ([@"availableVideoCodecTypes" isEqualToString:methodName]) {
+    return [self _availableVideoCodecTypes:value
+               ];
+  }
+  
+  
+  
+  NSLog(@"Unable to invoke %@.%@", instance, methodName);
+  return nil;
+}
+@end
+
+@implementation _IAFCaptureFileOutputRecordingDelegateHandler
+- (NSObject<_IAFCaptureFileOutputRecordingDelegate> *)__create:(REFTypeChannelMessenger *)messenger
+                                 {
+  @throw [NSException exceptionWithName:@"_IAFUnimplementedException" reason:nil userInfo:nil];
+}
+
+
+
+
+
+- (id _Nullable)invokeStaticMethod:(nonnull REFTypeChannelMessenger *)messenger
+                        methodName:(nonnull NSString *)methodName
+                         arguments:(nonnull NSArray *)arguments {
+  
+  
+  NSLog(@"Unable to invoke static method %@", methodName);
+  return nil;
+}
+
+- (nonnull id)createInstance:(nonnull REFTypeChannelMessenger *)messenger
+                   arguments:(nonnull NSArray *)arguments {
+  return [self __create:messenger ];
+}
+
+- (id _Nullable)invokeMethod:(nonnull REFTypeChannelMessenger *)messenger
+                    instance:(nonnull NSObject *)instance
+                  methodName:(nonnull NSString *)methodName
+                   arguments:(nonnull NSArray *)arguments {
+  NSObject<_IAFCaptureFileOutputRecordingDelegate> *value = (NSObject<_IAFCaptureFileOutputRecordingDelegate> *) instance;
+  
+  
+  NSLog(@"Unable to invoke %@.%@", instance, methodName);
+  return nil;
+}
+@end
+
 
 @implementation _IAFLibraryImplementations
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
@@ -1021,6 +1306,30 @@
   return [[_IAFPreviewControllerHandler alloc] init];
 }
 
+- (_IAFCaptureFileOutputChannel *)channelCaptureFileOutput {
+  return [[_IAFCaptureFileOutputChannel alloc] initWithMessenger:_messenger];
+}
+
+- (_IAFCaptureFileOutputHandler *)handlerCaptureFileOutput {
+  return [[_IAFCaptureFileOutputHandler alloc] init];
+}
+
+- (_IAFCaptureMovieFileOutputChannel *)channelCaptureMovieFileOutput {
+  return [[_IAFCaptureMovieFileOutputChannel alloc] initWithMessenger:_messenger];
+}
+
+- (_IAFCaptureMovieFileOutputHandler *)handlerCaptureMovieFileOutput {
+  return [[_IAFCaptureMovieFileOutputHandler alloc] init];
+}
+
+- (_IAFCaptureFileOutputRecordingDelegateChannel *)channelCaptureFileOutputRecordingDelegate {
+  return [[_IAFCaptureFileOutputRecordingDelegateChannel alloc] initWithMessenger:_messenger];
+}
+
+- (_IAFCaptureFileOutputRecordingDelegateHandler *)handlerCaptureFileOutputRecordingDelegate {
+  return [[_IAFCaptureFileOutputRecordingDelegateHandler alloc] init];
+}
+
 
 
 - (_IAFFinishProcessingPhotoCallbackChannel *)channelFinishProcessingPhotoCallback {
@@ -1066,6 +1375,12 @@
   
   [_implementations.channelPreviewController setHandler:_implementations.handlerPreviewController];
   
+  [_implementations.channelCaptureFileOutput setHandler:_implementations.handlerCaptureFileOutput];
+  
+  [_implementations.channelCaptureMovieFileOutput setHandler:_implementations.handlerCaptureMovieFileOutput];
+  
+  [_implementations.channelCaptureFileOutputRecordingDelegate setHandler:_implementations.handlerCaptureFileOutputRecordingDelegate];
+  
   
   [_implementations.channelFinishProcessingPhotoCallback setHandler:_implementations.handlerFinishProcessingPhotoCallback];
   
@@ -1094,6 +1409,12 @@
   [_implementations.channelCaptureDeviceDiscoverySession removeHandler];
   
   [_implementations.channelPreviewController removeHandler];
+  
+  [_implementations.channelCaptureFileOutput removeHandler];
+  
+  [_implementations.channelCaptureMovieFileOutput removeHandler];
+  
+  [_implementations.channelCaptureFileOutputRecordingDelegate removeHandler];
   
   
   [_implementations.channelFinishProcessingPhotoCallback removeHandler];

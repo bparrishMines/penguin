@@ -111,6 +111,12 @@ mixin $CaptureDeviceDiscoverySession {}
 
 mixin $PreviewController {}
 
+mixin $CaptureFileOutput {}
+
+mixin $CaptureMovieFileOutput {}
+
+mixin $CaptureFileOutputRecordingDelegate {}
+
 class $CapturePhotoOutputChannel extends TypeChannel<$CapturePhotoOutput> {
   $CapturePhotoOutputChannel(TypeChannelMessenger messenger)
       : super(messenger, 'ios_avfoundation/avfoundation/CapturePhotoOutput');
@@ -126,14 +132,14 @@ class $CapturePhotoOutputChannel extends TypeChannel<$CapturePhotoOutput> {
     );
   }
 
-  Future<Object?> $capturePhoto(
+  Future<Object?> $capturePhotoWithSettings(
     $CapturePhotoOutput $instance,
     $CapturePhotoSettings settings,
     $CapturePhotoCaptureDelegate delegate,
   ) {
     return sendInvokeMethod(
       $instance,
-      'capturePhoto',
+      'capturePhotoWithSettings',
       <Object?>[
         settings,
         delegate,
@@ -424,6 +430,129 @@ class $PreviewControllerChannel extends TypeChannel<$PreviewController> {
       <Object?>[
         captureSession,
       ],
+      owner: $owner,
+    );
+  }
+}
+
+class $CaptureFileOutputChannel extends TypeChannel<$CaptureFileOutput> {
+  $CaptureFileOutputChannel(TypeChannelMessenger messenger)
+      : super(messenger, 'ios_avfoundation/avfoundation/CaptureFileOutput');
+
+  Future<PairedInstance?> $$create(
+    $CaptureFileOutput $instance, {
+    required bool $owner,
+  }) {
+    return createNewInstancePair(
+      $instance,
+      <Object?>[],
+      owner: $owner,
+    );
+  }
+
+  Future<Object?> $setOutputFileURL(
+    $CaptureFileOutput $instance,
+    String url,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'setOutputFileURL',
+      <Object?>[
+        url,
+      ],
+    );
+  }
+
+  Future<Object?> $setMaxRecordedFileSize(
+    $CaptureFileOutput $instance,
+    int fileSize,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'setMaxRecordedFileSize',
+      <Object?>[
+        fileSize,
+      ],
+    );
+  }
+
+  Future<Object?> $isRecording(
+    $CaptureFileOutput $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'isRecording',
+      <Object?>[],
+    );
+  }
+
+  Future<Object?> $startRecordingToOutputFileURL(
+    $CaptureFileOutput $instance,
+    String outputFileURL,
+    $CaptureFileOutputRecordingDelegate delegate,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'startRecordingToOutputFileURL',
+      <Object?>[
+        outputFileURL,
+        delegate,
+      ],
+    );
+  }
+
+  Future<Object?> $stopRecording(
+    $CaptureFileOutput $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'stopRecording',
+      <Object?>[],
+    );
+  }
+}
+
+class $CaptureMovieFileOutputChannel
+    extends TypeChannel<$CaptureMovieFileOutput> {
+  $CaptureMovieFileOutputChannel(TypeChannelMessenger messenger)
+      : super(
+            messenger, 'ios_avfoundation/avfoundation/CaptureMovieFileOutput');
+
+  Future<PairedInstance?> $$create(
+    $CaptureMovieFileOutput $instance, {
+    required bool $owner,
+  }) {
+    return createNewInstancePair(
+      $instance,
+      <Object?>[],
+      owner: $owner,
+    );
+  }
+
+  Future<Object?> $availableVideoCodecTypes(
+    $CaptureMovieFileOutput $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'availableVideoCodecTypes',
+      <Object?>[],
+    );
+  }
+}
+
+class $CaptureFileOutputRecordingDelegateChannel
+    extends TypeChannel<$CaptureFileOutputRecordingDelegate> {
+  $CaptureFileOutputRecordingDelegateChannel(TypeChannelMessenger messenger)
+      : super(messenger,
+            'ios_avfoundation/avfoundation/CaptureFileOutputRecordingDelegate');
+
+  Future<PairedInstance?> $$create(
+    $CaptureFileOutputRecordingDelegate $instance, {
+    required bool $owner,
+  }) {
+    return createNewInstancePair(
+      $instance,
+      <Object?>[],
       owner: $owner,
     );
   }
@@ -1017,6 +1146,162 @@ class $PreviewControllerHandler
   }
 }
 
+class $CaptureFileOutputHandler
+    implements TypeChannelHandler<$CaptureFileOutput> {
+  $CaptureFileOutput $$create(
+    TypeChannelMessenger messenger,
+  ) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Object? invokeStaticMethod(
+    TypeChannelMessenger messenger,
+    String methodName,
+    List<Object?> arguments,
+  ) {
+    switch (methodName) {
+    }
+
+    throw ArgumentError.value(
+      methodName,
+      'methodName',
+      'Unable to invoke static method `$methodName`',
+    );
+  }
+
+  @override
+  $CaptureFileOutput createInstance(
+    TypeChannelMessenger messenger,
+    List<Object?> arguments,
+  ) {
+    return $$create(
+      messenger,
+    );
+  }
+
+  @override
+  Object? invokeMethod(
+    TypeChannelMessenger messenger,
+    $CaptureFileOutput instance,
+    String methodName,
+    List<Object?> arguments,
+  ) {
+    switch (methodName) {
+    }
+
+    throw ArgumentError.value(
+      instance,
+      'instance',
+      'Unable to invoke method `$methodName` on',
+    );
+  }
+}
+
+class $CaptureMovieFileOutputHandler
+    implements TypeChannelHandler<$CaptureMovieFileOutput> {
+  $CaptureMovieFileOutput $$create(
+    TypeChannelMessenger messenger,
+  ) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Object? invokeStaticMethod(
+    TypeChannelMessenger messenger,
+    String methodName,
+    List<Object?> arguments,
+  ) {
+    switch (methodName) {
+    }
+
+    throw ArgumentError.value(
+      methodName,
+      'methodName',
+      'Unable to invoke static method `$methodName`',
+    );
+  }
+
+  @override
+  $CaptureMovieFileOutput createInstance(
+    TypeChannelMessenger messenger,
+    List<Object?> arguments,
+  ) {
+    return $$create(
+      messenger,
+    );
+  }
+
+  @override
+  Object? invokeMethod(
+    TypeChannelMessenger messenger,
+    $CaptureMovieFileOutput instance,
+    String methodName,
+    List<Object?> arguments,
+  ) {
+    switch (methodName) {
+    }
+
+    throw ArgumentError.value(
+      instance,
+      'instance',
+      'Unable to invoke method `$methodName` on',
+    );
+  }
+}
+
+class $CaptureFileOutputRecordingDelegateHandler
+    implements TypeChannelHandler<$CaptureFileOutputRecordingDelegate> {
+  $CaptureFileOutputRecordingDelegate $$create(
+    TypeChannelMessenger messenger,
+  ) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Object? invokeStaticMethod(
+    TypeChannelMessenger messenger,
+    String methodName,
+    List<Object?> arguments,
+  ) {
+    switch (methodName) {
+    }
+
+    throw ArgumentError.value(
+      methodName,
+      'methodName',
+      'Unable to invoke static method `$methodName`',
+    );
+  }
+
+  @override
+  $CaptureFileOutputRecordingDelegate createInstance(
+    TypeChannelMessenger messenger,
+    List<Object?> arguments,
+  ) {
+    return $$create(
+      messenger,
+    );
+  }
+
+  @override
+  Object? invokeMethod(
+    TypeChannelMessenger messenger,
+    $CaptureFileOutputRecordingDelegate instance,
+    String methodName,
+    List<Object?> arguments,
+  ) {
+    switch (methodName) {
+    }
+
+    throw ArgumentError.value(
+      instance,
+      'instance',
+      'Unable to invoke method `$methodName` on',
+    );
+  }
+}
+
 class $LibraryImplementations {
   $LibraryImplementations(this.messenger);
 
@@ -1073,6 +1358,23 @@ class $LibraryImplementations {
       $PreviewControllerChannel(messenger);
   $PreviewControllerHandler get handlerPreviewController =>
       $PreviewControllerHandler();
+
+  $CaptureFileOutputChannel get channelCaptureFileOutput =>
+      $CaptureFileOutputChannel(messenger);
+  $CaptureFileOutputHandler get handlerCaptureFileOutput =>
+      $CaptureFileOutputHandler();
+
+  $CaptureMovieFileOutputChannel get channelCaptureMovieFileOutput =>
+      $CaptureMovieFileOutputChannel(messenger);
+  $CaptureMovieFileOutputHandler get handlerCaptureMovieFileOutput =>
+      $CaptureMovieFileOutputHandler();
+
+  $CaptureFileOutputRecordingDelegateChannel
+      get channelCaptureFileOutputRecordingDelegate =>
+          $CaptureFileOutputRecordingDelegateChannel(messenger);
+  $CaptureFileOutputRecordingDelegateHandler
+      get handlerCaptureFileOutputRecordingDelegate =>
+          $CaptureFileOutputRecordingDelegateHandler();
 
   $FinishProcessingPhotoCallbackChannel
       get channelFinishProcessingPhotoCallback =>
@@ -1132,6 +1434,18 @@ class $ChannelRegistrar {
       implementations.handlerPreviewController,
     );
 
+    implementations.channelCaptureFileOutput.setHandler(
+      implementations.handlerCaptureFileOutput,
+    );
+
+    implementations.channelCaptureMovieFileOutput.setHandler(
+      implementations.handlerCaptureMovieFileOutput,
+    );
+
+    implementations.channelCaptureFileOutputRecordingDelegate.setHandler(
+      implementations.handlerCaptureFileOutputRecordingDelegate,
+    );
+
     implementations.channelFinishProcessingPhotoCallback.setHandler(
       implementations.handlerFinishProcessingPhotoCallback,
     );
@@ -1159,6 +1473,12 @@ class $ChannelRegistrar {
     implementations.channelCaptureDeviceDiscoverySession.removeHandler();
 
     implementations.channelPreviewController.removeHandler();
+
+    implementations.channelCaptureFileOutput.removeHandler();
+
+    implementations.channelCaptureMovieFileOutput.removeHandler();
+
+    implementations.channelCaptureFileOutputRecordingDelegate.removeHandler();
 
     implementations.channelFinishProcessingPhotoCallback.removeHandler();
   }

@@ -33,6 +33,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol _IAFPreviewController;
 
+@protocol _IAFCaptureFileOutput;
+
+@protocol _IAFCaptureMovieFileOutput;
+
+@protocol _IAFCaptureFileOutputRecordingDelegate;
+
 
 @class _IAFLibraryImplementations;
 
@@ -60,7 +66,7 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 @protocol _IAFCapturePhotoOutput <NSObject>
 
 
-- (id _Nullable)capturePhoto
+- (id _Nullable)capturePhotoWithSettings
                                 :(NSObject<_IAFCapturePhotoSettings> * _Nullable)settings
 
 
@@ -152,6 +158,62 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 @end
 
 @protocol _IAFPreviewController <NSObject>
+
+@end
+
+@protocol _IAFCaptureFileOutput <NSObject>
+
+
+- (id _Nullable)setOutputFileURL
+                                :(NSString * _Nullable)url
+
+
+;
+
+
+
+- (id _Nullable)setMaxRecordedFileSize
+                                :(NSNumber * _Nullable)fileSize
+
+
+;
+
+
+
+- (id _Nullable)isRecording
+
+;
+
+
+
+- (id _Nullable)startRecordingToOutputFileURL
+                                :(NSString * _Nullable)outputFileURL
+
+
+     delegate:(NSObject<_IAFCaptureFileOutputRecordingDelegate> * _Nullable)delegate
+
+;
+
+
+
+- (id _Nullable)stopRecording
+
+;
+
+
+@end
+
+@protocol _IAFCaptureMovieFileOutput <NSObject>
+
+
+- (id _Nullable)availableVideoCodecTypes
+
+;
+
+
+@end
+
+@protocol _IAFCaptureFileOutputRecordingDelegate <NSObject>
 
 @end
 
@@ -325,6 +387,54 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 
 @end
 
+@interface _IAFCaptureFileOutputChannel : REFTypeChannel
+- (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger;
+- (void)__create:(NSObject<_IAFCaptureFileOutput> *)_instance
+          _owner:(BOOL)_owner
+
+     completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@end
+
+@interface _IAFCaptureMovieFileOutputChannel : REFTypeChannel
+- (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger;
+- (void)__create:(NSObject<_IAFCaptureMovieFileOutput> *)_instance
+          _owner:(BOOL)_owner
+
+     completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion;
+
+
+
+
+
+
+@end
+
+@interface _IAFCaptureFileOutputRecordingDelegateChannel : REFTypeChannel
+- (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger;
+- (void)__create:(NSObject<_IAFCaptureFileOutputRecordingDelegate> *)_instance
+          _owner:(BOOL)_owner
+
+     completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion;
+
+
+
+
+@end
+
 
 
 @interface _IAFCapturePhotoOutputHandler : NSObject<REFTypeChannelHandler>
@@ -334,7 +444,7 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 
 
 
-- (id _Nullable)_capturePhoto:(NSObject<_IAFCapturePhotoOutput> *)_instance
+- (id _Nullable)_capturePhotoWithSettings:(NSObject<_IAFCapturePhotoOutput> *)_instance
 
   settings:(NSObject<_IAFCapturePhotoSettings> * _Nullable)settings
 
@@ -498,6 +608,68 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 
 @end
 
+@interface _IAFCaptureFileOutputHandler : NSObject<REFTypeChannelHandler>
+- (NSObject<_IAFCaptureFileOutput> *)__create:(REFTypeChannelMessenger *)messenger
+;
+
+
+
+
+- (id _Nullable)_setOutputFileURL:(NSObject<_IAFCaptureFileOutput> *)_instance
+
+  url:(NSString * _Nullable)url
+;
+
+
+
+- (id _Nullable)_setMaxRecordedFileSize:(NSObject<_IAFCaptureFileOutput> *)_instance
+
+  fileSize:(NSNumber * _Nullable)fileSize
+;
+
+
+
+- (id _Nullable)_isRecording:(NSObject<_IAFCaptureFileOutput> *)_instance
+;
+
+
+
+- (id _Nullable)_startRecordingToOutputFileURL:(NSObject<_IAFCaptureFileOutput> *)_instance
+
+  outputFileURL:(NSString * _Nullable)outputFileURL
+
+  delegate:(NSObject<_IAFCaptureFileOutputRecordingDelegate> * _Nullable)delegate
+;
+
+
+
+- (id _Nullable)_stopRecording:(NSObject<_IAFCaptureFileOutput> *)_instance
+;
+
+
+@end
+
+@interface _IAFCaptureMovieFileOutputHandler : NSObject<REFTypeChannelHandler>
+- (NSObject<_IAFCaptureMovieFileOutput> *)__create:(REFTypeChannelMessenger *)messenger
+;
+
+
+
+
+- (id _Nullable)_availableVideoCodecTypes:(NSObject<_IAFCaptureMovieFileOutput> *)_instance
+;
+
+
+@end
+
+@interface _IAFCaptureFileOutputRecordingDelegateHandler : NSObject<REFTypeChannelHandler>
+- (NSObject<_IAFCaptureFileOutputRecordingDelegate> *)__create:(REFTypeChannelMessenger *)messenger
+;
+
+
+
+@end
+
 
 @interface _IAFLibraryImplementations : NSObject
 @property (readonly) REFTypeChannelMessenger *messenger;
@@ -535,6 +707,15 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 
 -(_IAFPreviewControllerChannel *)channelPreviewController;
 -(_IAFPreviewControllerHandler *)handlerPreviewController;
+
+-(_IAFCaptureFileOutputChannel *)channelCaptureFileOutput;
+-(_IAFCaptureFileOutputHandler *)handlerCaptureFileOutput;
+
+-(_IAFCaptureMovieFileOutputChannel *)channelCaptureMovieFileOutput;
+-(_IAFCaptureMovieFileOutputHandler *)handlerCaptureMovieFileOutput;
+
+-(_IAFCaptureFileOutputRecordingDelegateChannel *)channelCaptureFileOutputRecordingDelegate;
+-(_IAFCaptureFileOutputRecordingDelegateHandler *)handlerCaptureFileOutputRecordingDelegate;
 
 
 

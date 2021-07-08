@@ -17,7 +17,6 @@ import 'avfoundation_channels.dart';
 @Reference('ios_avfoundation/avfoundation/FinishProcessingPhotoCallback')
 typedef FinishProcessingPhotoCallback = Function(CapturePhoto photo);
 
-// TODO: CaptureSession.sessionPreset
 /// [CaptureSessionPreset] string constants.
 ///
 /// Clients may use an [CaptureSessionPreset] to set the format for output on an
@@ -441,11 +440,11 @@ class CapturePhotoOutput extends CaptureOutput with $CapturePhotoOutput {
   /// captures. Calling this method throws an exception
   /// ([PlatformException]) if the settings object’s `uniqueID` value matches
   /// that of any previously used settings object.
-  Future<void> capturePhoto(
-    covariant CapturePhotoSettings settings,
-    covariant CapturePhotoCaptureDelegate delegate,
+  Future<void> capturePhotoWithSettings(
+    CapturePhotoSettings settings,
+    CapturePhotoCaptureDelegate delegate,
   ) {
-    return _channel.$capturePhoto(this, settings, delegate);
+    return _channel.$capturePhotoWithSettings(this, settings, delegate);
   }
 }
 
@@ -781,8 +780,6 @@ class CaptureSession with $CaptureSession {
   }
 
   /// Returns a subset of preset values that indicates which presets can be used by the session.
-  ///
-  /// `presets`: Presets you would like to set for the receiver.
   Future<List<String>> canSetSessionPresets(List<String> presets) async {
     final List<Object?> returnedPresets =
         await _channel.$canSetSessionPresets(this, presets) as List<Object?>;
@@ -1023,4 +1020,202 @@ class PreviewController with $PreviewController {
 
   /// The [CaptureSession] that provides preview frames to the iOS UiView.
   final CaptureSession captureSession;
+}
+
+// TODO: [startRecordingToOutputFileURL]
+// TODO: CaptureFileOutputDelegate.captureOutput is for MacOS
+// TODO: CaptureMovieFileOutput
+// TODO: CaptureAudioFileOutput
+/// The abstract superclass for capture outputs that can record captured data to a file.
+///
+/// This abstract superclass defines the interface for outputs that record media
+/// samples to files. File outputs can start recording to a new file using the
+/// [startRecordingToOutputFileURL] method. On successive
+/// invocations of this method on Mac OS X, the output file can by changed
+/// dynamically without losing media samples. A file output can stop recording
+/// using the stopRecording method. Because files are recorded in the
+/// background, applications will need to specify a delegate for each new file
+/// so that they can be notified when recorded files are finished.
+///
+/// On Mac OS X, clients can also set a delegate on the file output itself that
+/// can be used to control recording along exact media sample boundaries using
+/// the [CaptureFileOutputDelegate.captureOutput] method.
+///
+/// The concrete subclasses of [CaptureFileOutput] are [CaptureMovieFileOutput],
+/// which records media to a QuickTime movie file, and [CaptureAudioFileOutput],
+/// which writes audio media to a variety of audio file formats.
+@Reference('ios_avfoundation/avfoundation/CaptureFileOutput')
+abstract class CaptureFileOutput extends CaptureOutput with $CaptureFileOutput {
+  static $CaptureFileOutputChannel get _channel =>
+      ChannelRegistrar.instance.implementations.channelCaptureFileOutput;
+
+  // TODO: support URL is ReferenceMessageCodec in reference plugin
+  /// The file URL of the file to which the receiver is currently recording incoming buffers.
+  ///
+  /// The value of [url] is converted to an iOS NSURL object containing the file
+  /// URL of the file currently being written by the receiver.
+  Future<void> setOutputFileURL(String url) {
+    return _channel.$setOutputFileURL(this, url);
+  }
+
+  // TODO: CaptureFileOutputRecordingDelegate.captureOutput:didFinishRecordingToOutputFileAtURL:fromConnections:error:
+  /// Specifies the maximum size, in bytes, of the data that should be recorded by the receiver.
+  ///
+  /// This property specifies a hard limit on the data size of recorded files.
+  /// Recording is stopped when the limit is reached and the
+  /// [CaptureFileOutputRecordingDelegate.captureOutput:didFinishRecordingToOutputFileAtURL:fromConnections:error:]
+  /// delegate method is invoked with an appropriate error. The default value of
+  /// this property is 0, which indicates no limit.
+  Future<void> setMaxRecordedFileSize(int fileSize) {
+    return _channel.$setMaxRecordedFileSize(this, fileSize);
+  }
+
+  /// Indicates whether recording is in progress.
+  ///
+  /// The value of this property is true when the file output currently has a
+  /// file to which it is writing new samples, false otherwise.
+  Future<bool> isRecording() async {
+    return await _channel.$isRecording(this) as bool;
+  }
+
+  // TODO: MacOS -> captureOutput:didOutputSampleBuffer:fromConnection:
+  // TODO: delegate.captureOutput:didFinishRecordingToOutputFileAtURL:fromConnections:error:
+  /// Starts recording media to the specified output URL.
+  ///
+  /// [outputFileURL]: This method throws aa [PlatformException] if the argument
+  /// isn’t a valid file URL.
+  ///
+  /// [delegate]: A delegate object that’s notified of changes to the recording
+  /// state.
+  ///
+  /// A failure occurs if you attempt to record to a URL where a file exists. To
+  /// overwrite the content, delete the old file before calling this method.
+  ///
+  /// In macOS, calling this method from within the
+  /// captureOutput:didOutputSampleBuffer:fromConnection: method guarantees that
+  /// the first samples written to the new file are those passed to the delegate
+  /// method.
+  ///
+  /// When you stop recording by calling [stopRecording], by changing files
+  /// using this method, or because of an error, the framework writes any
+  /// remaining file data in the background. Therefore, for the system to notify
+  /// you upon completion, you must adopt the
+  /// captureOutput:didFinishRecordingToOutputFileAtURL:fromConnections:error:
+  /// delegate method. The recording delegate can also optionally implement
+  /// methods that inform it when the output object starts writing data, when it
+  /// pauses or resumes recording, and when it’s about to finish recording.
+  ///
+  /// In macOS, you don’t need to call [stopRecording] before calling this
+  /// method while another recording is in progress. If you call this method
+  /// while the output object is recording, the framework preserves media
+  /// samples between the old file and the new file. In iOS, to avoid any
+  /// errors, you must call [stopRecording] before calling this method again.
+  Future<void> startRecordingToOutputFileURL(
+    String outputFileURL,
+    CaptureFileOutputRecordingDelegate delegate,
+  ) {
+    return _channel.$startRecordingToOutputFileURL(
+      this,
+      outputFileURL,
+      delegate,
+    );
+  }
+
+  // TODO: delegate.captureOutput:didFinishRecordingToOutputFileAtURL:fromConnections:error:
+  /// Tells the receiver to stop recording to the current file.
+  ///
+  /// You can call this method when they want to stop recording new samples to
+  /// the current file, and do not want to continue recording to another file.
+  /// If you want to switch from one file to another, you should not call this
+  /// method. Instead you should simply call [startRecordingToOutputFileURL]
+  /// with the new file URL.
+  ///
+  /// When recording is stopped either by calling this method, by changing files
+  /// using [startRecordingToOutputFileURL], or because of an error, the
+  /// remaining data that needs to be included to the file will be written in
+  /// the background. Therefore, before using the file, you must wait until the
+  /// delegate that was specified in [startRecordingToOutputFileURL] is notified
+  /// when all data has been written to the file using the
+  /// [captureOutput:didFinishRecordingToOutputFileAtURL:fromConnections:error:]
+  /// method.
+  ///
+  /// In macOS, if this method is called within the
+  /// [captureOutput:didOutputSampleBuffer:fromConnection:] delegate method, the
+  /// last samples written to the current file are guaranteed to be those that
+  /// were output immediately before those in the sample buffer passed to that
+  /// method.
+  Future<void> stopRecording() {
+    return _channel.$stopRecording(this);
+  }
+}
+
+// TODO: kCMTimeZero
+// TODO: timeMapping.target.start?
+// TODO: CMTimeRangeGetEnd
+// TODO: AVCompositionTrackSegment
+// TODO: MutableCompositionTrack.validateTrackSegments:error:
+// TODO: CaptureVideoDataOutput
+// TODO: CaptureSession.automaticallyConfiguresCaptureDeviceForWideColor
+/// A capture output that records video and audio to a QuickTime movie file.
+///
+/// This class is the movie file equivalent of [CapturePhotoOutput]. Use it to
+/// export or save movie files from capture session content.
+///
+/// The timeMapping.target.start of the first track segment must be kCMTimeZero,
+/// and the timeMapping.target.start of each subsequent track segment must equal
+/// [CMTimeRangeGetEnd], when passing in the previous [CompositionTrackSegment]'s
+/// timeMapping.target. You can use validateTrackSegments:error: to ensure that
+/// an array of track segments conforms to this rule.
+///
+/// Starting in iOS 12, photo formats no longer list the
+/// [CaptureMovieFileOutput] as being unsupported. If you construct a session
+/// with a photo format as input and a movie file output, you can record movies.
+/// The resolution of the video track in the movie follows the conventions
+/// established by the [CaptureVideoDataOutput]; namely, when using the photo
+/// preset, you receive video buffers with size approximating the screen size.
+/// Video outputs are a proxy for photo preview in this configuration.
+///
+/// If you set the [CaptureDevice] format to a high-resolution photo format, you
+/// receive full-resolution (5, 8, or 12 MP depending on the device) video
+/// buffers into your movie. If the capture session’s
+/// [automaticallyConfiguresCaptureDeviceForWideColor] property is true, the
+/// session selects sRGB as the video colorspace in your movie. You can override
+/// this behavior by adding an [CapturePhotoOutput] to your session and
+/// configuring its photo format or [CaptureSessionPreset.photo] preset for a
+/// photo output.
+@Reference('ios_avfoundation/avfoundation/CaptureMovieFileOutput')
+class CaptureMovieFileOutput extends CaptureFileOutput
+    with $CaptureMovieFileOutput {
+  static $CaptureMovieFileOutputChannel get _channel =>
+      ChannelRegistrar.instance.implementations.channelCaptureMovieFileOutput;
+
+  // TODO: setOutputSettings
+  /// The video codec types currently supported for recording movie files.
+  ///
+  /// The first codec in this list is the default for recording movie files. To
+  /// record using a different codec, call the [setOutputSettings] method,
+  /// passing a video settings dictionary with a value for
+  /// [VideoSettingsKeys.videoCodec] that matches one of the other values in
+  /// this list.
+  Future<List<String>> availableVideoCodecTypes() async {
+    final List<Object?> codecTypes =
+        await _channel.$availableVideoCodecTypes(this) as List<Object?>;
+    return codecTypes.cast<String>();
+  }
+}
+
+/// Methods for responding to events that occur while recording captured media to a file.
+///
+/// Defines an interface for delegates of [CaptureFileOutput] to respond to
+/// events that occur in the process of recording a single file.
+///
+/// The delegate of an [CaptureFileOutput] object must adopt the
+/// [CaptureFileOutputRecordingDelegate] protocol.
+@Reference('ios_avfoundation/avfoundation/CaptureFileOutputRecordingDelegate')
+class CaptureFileOutputRecordingDelegate
+    with $CaptureFileOutputRecordingDelegate {
+  // ignore: unused_element
+  static $CaptureFileOutputRecordingDelegateChannel get _channel =>
+      ChannelRegistrar
+          .instance.implementations.channelCaptureFileOutputRecordingDelegate;
 }
