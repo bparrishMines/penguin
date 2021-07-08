@@ -78,6 +78,21 @@
   [_captureSession addOutput:outputProxy.captureOutput];
   return nil;
 }
+
+- (id)setSessionPreset:(NSString *)preset {
+  [_captureSession setSessionPreset:preset];
+  return nil;
+}
+
+- (NSArray<NSString *> *)canSetSessionPresets:(NSArray<NSString *> *)presets {
+  NSMutableArray<NSString *> *validPresets = [NSMutableArray array];
+  for (NSString *preset in presets) {
+    if ([_captureSession canSetSessionPreset:preset]) {
+      [validPresets addObject:preset];
+    }
+  }
+  return validPresets;
+}
 @end
 
 @implementation IAFCaptureInputProxy

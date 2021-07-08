@@ -122,7 +122,7 @@ abstract class CaptureSessionPreset {
   // TODO: CaptureDevice.setActiveFormat
   /// A [CaptureSession] preset indicating that the formats of the session's inputs are being given priority.
   ///
-  /// By calling [CameraSession.setSessionPreset], clients can easily
+  /// By calling [CaptureSession.setSessionPreset], clients can easily
   /// configure a [CaptureSession] to produce a desired quality of service
   /// level. The session configures its inputs and outputs optimally to produce
   /// the QoS level indicated. Clients who need to ensure a particular input
