@@ -450,16 +450,13 @@ class $CaptureFileOutputChannel extends TypeChannel<$CaptureFileOutput> {
     );
   }
 
-  Future<Object?> $setOutputFileURL(
+  Future<Object?> $outputFileURL(
     $CaptureFileOutput $instance,
-    String url,
   ) {
     return sendInvokeMethod(
       $instance,
-      'setOutputFileURL',
-      <Object?>[
-        url,
-      ],
+      'outputFileURL',
+      <Object?>[],
     );
   }
 

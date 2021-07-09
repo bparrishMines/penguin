@@ -1007,11 +1007,9 @@
 
 
 
-- (id _Nullable)_setOutputFileURL:(NSObject<_IAFCaptureFileOutput> *)_instance
-
-                     url:(NSString * _Nullable)url
+- (id _Nullable)_outputFileURL:(NSObject<_IAFCaptureFileOutput> *)_instance
  {
-  return [_instance setOutputFileURL:url
+  return [_instance outputFileURL
           ];
 }
 
@@ -1076,10 +1074,9 @@
   NSObject<_IAFCaptureFileOutput> *value = (NSObject<_IAFCaptureFileOutput> *) instance;
   
   
-  if ([@"setOutputFileURL" isEqualToString:methodName]) {
-    return [self _setOutputFileURL:value
-               
-               url:arguments[0] ];
+  if ([@"outputFileURL" isEqualToString:methodName]) {
+    return [self _outputFileURL:value
+               ];
   }
   
   else

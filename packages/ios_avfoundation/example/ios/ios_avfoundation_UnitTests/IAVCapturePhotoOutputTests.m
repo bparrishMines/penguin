@@ -32,7 +32,7 @@
   XCTAssertNotNil(capturePhotoOutputProxy);
 }
 
-- (void)testCapturePhoto {
+- (void)testCapturePhotoWithSettings {
   IAFCapturePhotoSettingsProxy *settingsProxy = [[IAFCapturePhotoSettingsProxy alloc]
                                                  initwithProcessedFormat:@{@"AVVideoCodecKey": @"jpeg"}];
   
@@ -40,7 +40,7 @@
     return nil;
   } implementations:_mockImplementations];
   
-  [_testCapturePhotoOutputProxy capturePhoto:settingsProxy delegate:delegateProxy];
+  [_testCapturePhotoOutputProxy capturePhotoWithSettings:settingsProxy delegate:delegateProxy];
   OCMVerify([_mockCapturePhotoOutput capturePhotoWithSettings:settingsProxy.capturePhotoSettings
                                                      delegate:delegateProxy]);
 }

@@ -1022,9 +1022,7 @@ class PreviewController with $PreviewController {
   final CaptureSession captureSession;
 }
 
-// TODO: [startRecordingToOutputFileURL]
 // TODO: CaptureFileOutputDelegate.captureOutput is for MacOS
-// TODO: CaptureMovieFileOutput
 // TODO: CaptureAudioFileOutput
 /// The abstract superclass for capture outputs that can record captured data to a file.
 ///
@@ -1051,11 +1049,8 @@ abstract class CaptureFileOutput extends CaptureOutput with $CaptureFileOutput {
 
   // TODO: support URL is ReferenceMessageCodec in reference plugin
   /// The file URL of the file to which the receiver is currently recording incoming buffers.
-  ///
-  /// The value of [url] is converted to an iOS NSURL object containing the file
-  /// URL of the file currently being written by the receiver.
-  Future<void> setOutputFileURL(String url) {
-    return _channel.$setOutputFileURL(this, url);
+  Future<Uri> outputFileURL() async {
+    return Uri.dataFromString(await _channel.$outputFileURL(this) as String);
   }
 
   // TODO: CaptureFileOutputRecordingDelegate.captureOutput:didFinishRecordingToOutputFileAtURL:fromConnections:error:

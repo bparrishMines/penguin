@@ -35,6 +35,14 @@
 - (IAFCaptureDeviceDiscoverySessionHandler *)handlerCaptureDeviceDiscoverySession {
   return [[IAFCaptureDeviceDiscoverySessionHandler alloc] initWithImplementations:self];
 }
+
+- (IAFCaptureMovieFileOutputHandler *)handlerCaptureMovieFileOutput {
+  return [[IAFCaptureMovieFileOutputHandler alloc] init];
+}
+
+- (IAFCaptureFileOutputRecordingDelegateHandler *)handlerCaptureFileOutputRecordingDelegate {
+  return [[IAFCaptureFileOutputRecordingDelegateHandler alloc] init];
+}
 @end
 
 @implementation IAFCaptureDeviceHandler {
@@ -139,5 +147,17 @@
                                                                       mediaType:mediaType
                                                                        position:position
                                                                 implementations:_implementations];
+}
+@end
+
+@implementation IAFCaptureMovieFileOutputHandler
+- (IAFCaptureMovieFileOutputProxy *)__create:(REFTypeChannelMessenger *)messenger {
+  return [[IAFCaptureMovieFileOutputProxy alloc] init];
+}
+@end
+
+@implementation IAFCaptureFileOutputRecordingDelegateHandler
+- (IAFCaptureFileOutputRecordingDelegateProxy *)__create:(REFTypeChannelMessenger *)messenger {
+  return [[IAFCaptureFileOutputRecordingDelegateProxy alloc] init];
 }
 @end

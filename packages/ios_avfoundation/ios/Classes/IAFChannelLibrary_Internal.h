@@ -164,9 +164,7 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 @protocol _IAFCaptureFileOutput <NSObject>
 
 
-- (id _Nullable)setOutputFileURL
-                                :(NSString * _Nullable)url
-
+- (id _Nullable)outputFileURL
 
 ;
 
@@ -615,9 +613,7 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 
 
 
-- (id _Nullable)_setOutputFileURL:(NSObject<_IAFCaptureFileOutput> *)_instance
-
-  url:(NSString * _Nullable)url
+- (id _Nullable)_outputFileURL:(NSObject<_IAFCaptureFileOutput> *)_instance
 ;
 
 
