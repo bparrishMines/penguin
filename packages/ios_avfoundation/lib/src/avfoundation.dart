@@ -17,6 +17,34 @@ import 'avfoundation_channels.dart';
 @Reference('ios_avfoundation/avfoundation/FinishProcessingPhotoCallback')
 typedef FinishProcessingPhotoCallback = Function(CapturePhoto photo);
 
+/// Constants indicating the mode of the exposure on the receiver's device, if it has adjustable exposure.
+abstract class CaptureExposureMode {
+  CaptureExposureMode._();
+
+  /// Indicates that the exposure should be locked at its current value.
+  static const int locked = 0;
+
+  /// Indicates that the device should automatically adjust exposure once and then change the exposure mode to [locked].
+  static const int autoExpose = 1;
+
+  /// Indicates that the device should automatically adjust exposure when needed.
+  static const int continuousAutoExposure = 2;
+}
+
+/// Constants indicating the mode of the focus on the receiver's device, if it has one.
+abstract class CaptureFocusMode {
+  CaptureFocusMode._();
+
+  /// Indicates that the focus should be locked at the lens' current position.
+  static const int locked = 0;
+
+  /// Indicates that the device should autofocus once and then change the focus mode to [locked].
+  static const int autoFocus = 1;
+
+  /// Indicates that the device should automatically focus when needed.
+  static const int continuousAutoFocus = 2;
+}
+
 /// [CaptureSessionPreset] string constants.
 ///
 /// Clients may use an [CaptureSessionPreset] to set the format for output on an
@@ -377,7 +405,7 @@ abstract class VideoCodecType {
 /// Some photo capture settings, such as the flashMode property, include options
 /// for automatic behavior. For such settings, the photo output determines
 /// whether to use that feature at the moment of capture—you don’t know when
-/// requesting a capture whether the feature will be enabled when the captur
+/// requesting a capture whether the feature will be enabled when the capture
 /// completes. When the photo capture output calls your
 /// [CapturePhotoCaptureDelegate] callbacks with information about the completed
 /// or in-progress capture, it also provides an [CaptureResolvedPhotoSettings]
@@ -869,10 +897,15 @@ class CaptureSession with $CaptureSession {
 class CaptureDevice with $CaptureDevice {
   /// Construct a [CaptureDevice].
   ///
-  // ignore: deprecated_member_use_from_same_package
-  /// This is only visible for testing. See [devicesWithMediaType].
+  /// This is only visible for testing. See:
+  ///   [defaultDeviceWithMediaType]
+  ///   [CaptureDeviceDiscoverySession]
   @visibleForTesting
-  CaptureDevice({required this.uniqueId, required this.position});
+  CaptureDevice({
+    required this.uniqueId,
+    required this.position,
+    required this.isSmoothAutoFocusSupported,
+  });
 
   static $CaptureDeviceChannel get _channel =>
       ChannelRegistrar.instance.implementations.channelCaptureDevice;
@@ -893,6 +926,13 @@ class CaptureDevice with $CaptureDevice {
   /// See [CaptureDevicePosition] for possible values.
   final int position;
 
+  /// A Boolean value that indicates whether the device supports smooth autofocus.
+  ///
+  /// The smooth focusing mode is available only on compatible devices. If this
+  /// property’s value is false, setting the value of
+  /// [setSmoothAutoFocusEnabled] to true raises an exception.
+  final bool isSmoothAutoFocusSupported;
+
   // TODO: defaultDeviceWithDeviceType
   /// Returns the default device used to capture data of a given media type.
   ///
@@ -909,6 +949,117 @@ class CaptureDevice with $CaptureDevice {
     return await _channel.$defaultDeviceWithMediaType(mediaType)
         as CaptureDevice?;
   }
+
+  // TODO: activeFormat
+  // TODO: CaptureSession.commitConfiguration
+  /// Requests exclusive access to the device’s hardware properties.
+  ///
+  /// You must call this method before attempting to configure the hardware
+  /// related properties of the device. This method returns true when it
+  /// successfully locks the device for configuration by your code. After
+  /// configuring the device properties, call [unlockForConfiguration] to
+  /// release the configuration lock and allow other apps to make changes.
+  ///
+  /// You may hold onto a lock (instead of releasing it) if you require the
+  /// device properties to remain unchanged. However, holding the device lock
+  /// unnecessarily may degrade capture quality in other apps sharing the
+  /// device.
+  ///
+  /// Note:
+  ///   In iOS, directly configuring a capture device’s [activeFormat] property
+  ///   changes the capture session’s preset to
+  ///   [CaptureSessionPreset.inputPriority]. Upon making this change, the
+  ///   capture session no longer automatically configures the capture format
+  ///   when you call the [CaptureSession.startRunning] method or call the
+  ///   [CaptureSession.commitConfiguration] method after changing the session
+  ///   topology (that is, adding, removing, or rearranging capture inputs and
+  ///   outputs). In macOS, a capture session can still automatically configure
+  ///   the capture format after you make changes. To prevent automatic changes
+  ///   to the capture format in macOS, follow these steps:
+  ///
+  ///     1. Lock the device with the [lockForConfiguration] method.
+  ///
+  ///     2. Change the device’s [activeFormat] property.
+  ///
+  ///     3. Begin capture with the session’s `startRunning` method.
+  ///
+  ///     4. Unlock the device with the [unlockForConfiguration] method.
+  ///
+  ///   Or, to prevent automatic changes after modifying session topology in
+  ///   macOS:
+  ///
+  ///     1. Lock the device with the [lockForConfiguration] method.
+  ///
+  ///     2. Call the session’s `beginConfiguration` method, change topology,
+  ///     then call the `commitConfiguration` method.
+  ///
+  ///     3. Unlock the device with the `unlockForConfiguration` method.
+  Future<bool> lockForConfiguration() {}
+
+  /// Relinquishes exclusive control over the device’s configuration.
+  ///
+  /// Call this method to release the lock acquired using the
+  /// [lockForConfiguration] method when you are done configuring the device.
+  Future<void> unlockForConfiguration() {}
+
+  /// Returns a subset of preset values that indicate whether the receiver can be used in a capture session configured with the given presets.
+  ///
+  /// A [CaptureSession] instance can be associated with a preset that
+  /// configures its inputs and outputs to fulfill common use cases. You can use
+  /// this method to determine if the receiver can be used in a capture session
+  /// with any of the given presets. For a list of preset constants, see
+  /// [CaptureSessionPreset].
+  Future<List<String>> supportsCaptureSessionPresets(List<String> presets) {}
+
+  /// Indicates whether the device is currently adjusting its exposure setting.
+  Future<bool> isAdjustingExposure() {}
+
+  /// The exposure mode for the device.
+  ///
+  /// Before changing the value of this property, you must call
+  /// [lockForConfiguration] to acquire exclusive access to the device’s
+  /// configuration properties. Otherwise, setting the value of this property
+  /// raises an exception. When you are done configuring the device, call
+  /// [unlockForConfiguration] to release the lock and allow other devices to
+  /// configure the settings.
+  ///
+  /// See [CaptureExposureMode] for possible values.
+  Future<void> setExposureMode(int mode) {}
+
+  /// Returns a subset of values that indicates whether the given exposure modes are supported.
+  Future<List<int>> exposureModesSupported(List<int> int) {}
+
+  /// The capture device’s focus mode.
+  ///
+  /// Before changing the value of this property, you must call
+  /// [lockForConfiguration] to acquire exclusive access to the device’s
+  /// configuration properties. Otherwise, setting the value of this property
+  /// raises an exception. When you finish configuring the device, call
+  /// [unlockForConfiguration] to release the lock and allow other devices to
+  /// configure the settings.
+  ///
+  /// See [CaptureFocusMode] for possible values.
+  Future<void> setFocusMode(int mode) {}
+
+  /// Returns a subset of values that indicates whether the given focus modes are supported.
+  Future<List<int>> focusModesSupported(List<int> int) {}
+
+  /// A Boolean value that indicates whether the device is currently adjusting its focus setting.
+  Future<bool> isAdjustingFocus() {}
+
+  /// A Boolean value that determines whether smooth autofocus is in an enabled state on the device.
+  ///
+  /// On capable devices, you can enable a “smooth” focusing mode in which the
+  /// camera makes lens movements more slowly. This mode make focus transitions
+  /// less visually intrusive, a behavior that you may want for video capture.
+  ///
+  /// Before changing the value of this property, you must call
+  /// [lockForConfiguration] to acquire exclusive access to the device’s
+  /// configuration properties. Otherwise, setting the value of this property
+  /// raises an exception. When you finish configuring the device, call
+  /// [unlockForConfiguration] to release the lock and allow other devices to
+  /// configure the settings.
+  Future<void> setSmoothAutoFocusEnabled({required bool enabled}) {}
 
   @ReferenceMethod(ignore: true)
   @override
