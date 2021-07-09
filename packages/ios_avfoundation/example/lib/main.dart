@@ -75,7 +75,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _takePicture() {
-    _capturePhotoOutput.capturePhoto(
+    _capturePhotoOutput.capturePhotoWithSettings(
       CapturePhotoSettings(<String, Object>{
         VideoSettingsKeys.videoCodec: VideoCodecType.jpeg,
       }),

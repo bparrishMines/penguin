@@ -54,4 +54,17 @@
   [_testCaptureSessionProxy addOutput:testCaptureOutputProxy];
   OCMVerify([_mockCaptureSession addOutput:mockCaptureOutput]);
 }
+
+- (void)testSetSessionPreset {
+  [_testCaptureSessionProxy setSessionPreset:AVCaptureSessionPresetMedium];
+  OCMVerify([_mockCaptureSession setSessionPreset:AVCaptureSessionPresetMedium]);
+}
+
+- (void)testCanSetSessionPreset {
+  OCMStub([_mockCaptureSession canSetSessionPreset:AVCaptureSessionPresetMedium]).andReturn(YES);
+  OCMStub([_mockCaptureSession canSetSessionPreset:AVCaptureSessionPresetLow]).andReturn(NO);
+
+  NSArray<NSString *> *validPresets = [_testCaptureSessionProxy canSetSessionPresets:@[AVCaptureSessionPresetMedium, AVCaptureSessionPresetLow]];
+  XCTAssertEqualObjects(validPresets, @[AVCaptureSessionPresetMedium]);
+}
 @end

@@ -19,6 +19,9 @@
 		6421F601268A696C007F088F /* IAFCapturePhotoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6421F600268A696C007F088F /* IAFCapturePhotoTests.m */; };
 		6421F603268A6A0B007F088F /* IAFPreviewControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6421F602268A6A0B007F088F /* IAFPreviewControllerTests.m */; };
 		6421F605268E2DDE007F088F /* IAFCaptureDeviceDiscoverySessionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6421F604268E2DDE007F088F /* IAFCaptureDeviceDiscoverySessionTests.m */; };
+		6449CDBD2698AD0A0015AD3C /* IAFCaptureFileOutputTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6449CDBC2698AD0A0015AD3C /* IAFCaptureFileOutputTests.m */; };
+		6449CDBF2698B3290015AD3C /* IAFCaptureMovieFileOutputTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6449CDBE2698B3290015AD3C /* IAFCaptureMovieFileOutputTests.m */; };
+		6449CDC12698B5950015AD3C /* IAFCaptureFileOutputRecordingDelegateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6449CDC02698B5950015AD3C /* IAFCaptureFileOutputRecordingDelegateTests.m */; };
 		85ADE24E0D35B47AF6154958 /* libPods-Runner-ios_avfoundation_UnitTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4975CEB442815A81CCF093D3 /* libPods-Runner-ios_avfoundation_UnitTests.a */; };
 		978B8F6F1D3862AE00F588F7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7AFFD8EE1D35381100E5BB4D /* AppDelegate.m */; };
 		97C146F31CF9000F007C117D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 97C146F21CF9000F007C117D /* main.m */; };
@@ -73,6 +76,9 @@
 		6421F600268A696C007F088F /* IAFCapturePhotoTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = IAFCapturePhotoTests.m; sourceTree = "<group>"; };
 		6421F602268A6A0B007F088F /* IAFPreviewControllerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = IAFPreviewControllerTests.m; sourceTree = "<group>"; };
 		6421F604268E2DDE007F088F /* IAFCaptureDeviceDiscoverySessionTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = IAFCaptureDeviceDiscoverySessionTests.m; sourceTree = "<group>"; };
+		6449CDBC2698AD0A0015AD3C /* IAFCaptureFileOutputTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = IAFCaptureFileOutputTests.m; sourceTree = "<group>"; };
+		6449CDBE2698B3290015AD3C /* IAFCaptureMovieFileOutputTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = IAFCaptureMovieFileOutputTests.m; sourceTree = "<group>"; };
+		6449CDC02698B5950015AD3C /* IAFCaptureFileOutputRecordingDelegateTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = IAFCaptureFileOutputRecordingDelegateTests.m; sourceTree = "<group>"; };
 		7469730072D806B6F59B3522 /* libPods-Runner.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Runner.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Flutter/Release.xcconfig; sourceTree = "<group>"; };
 		7AFFD8ED1D35381100E5BB4D /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -134,6 +140,9 @@
 				6421F600268A696C007F088F /* IAFCapturePhotoTests.m */,
 				6421F602268A6A0B007F088F /* IAFPreviewControllerTests.m */,
 				6421F604268E2DDE007F088F /* IAFCaptureDeviceDiscoverySessionTests.m */,
+				6449CDBC2698AD0A0015AD3C /* IAFCaptureFileOutputTests.m */,
+				6449CDBE2698B3290015AD3C /* IAFCaptureMovieFileOutputTests.m */,
+				6449CDC02698B5950015AD3C /* IAFCaptureFileOutputRecordingDelegateTests.m */,
 			);
 			path = ios_avfoundation_UnitTests;
 			sourceTree = "<group>";
@@ -395,11 +404,14 @@
 				640291A825E0F9C90047D502 /* IAVCaptureSessionTests.m in Sources */,
 				6421F601268A696C007F088F /* IAFCapturePhotoTests.m in Sources */,
 				6421F603268A6A0B007F088F /* IAFPreviewControllerTests.m in Sources */,
+				6449CDBD2698AD0A0015AD3C /* IAFCaptureFileOutputTests.m in Sources */,
 				640291AA25E0F9C90047D502 /* IAVCaptureDeviceInputTests.m in Sources */,
+				6449CDC12698B5950015AD3C /* IAFCaptureFileOutputRecordingDelegateTests.m in Sources */,
 				6421F5FB268A5F89007F088F /* IAVCapturePhotoOutputTests.m in Sources */,
 				640291AB25E0F9C90047D502 /* IAVCaptureDeviceTests.m in Sources */,
 				6421F605268E2DDE007F088F /* IAFCaptureDeviceDiscoverySessionTests.m in Sources */,
 				6421F5FD268A64B8007F088F /* IAFCapturePhotoSettingsTests.m in Sources */,
+				6449CDBF2698B3290015AD3C /* IAFCaptureMovieFileOutputTests.m in Sources */,
 				6421F5FF268A662D007F088F /* IAFCapturePhotoCaptureDelegateTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

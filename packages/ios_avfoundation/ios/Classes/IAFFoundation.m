@@ -78,6 +78,21 @@
   [_captureSession addOutput:outputProxy.captureOutput];
   return nil;
 }
+
+- (id)setSessionPreset:(NSString *)preset {
+  [_captureSession setSessionPreset:preset];
+  return nil;
+}
+
+- (NSArray<NSString *> *)canSetSessionPresets:(NSArray<NSString *> *)presets {
+  NSMutableArray<NSString *> *validPresets = [NSMutableArray array];
+  for (NSString *preset in presets) {
+    if ([_captureSession canSetSessionPreset:preset]) {
+      [validPresets addObject:preset];
+    }
+  }
+  return validPresets;
+}
 @end
 
 @implementation IAFCaptureInputProxy
@@ -178,6 +193,12 @@
   [((AVCapturePhotoOutput *)self.captureOutput) capturePhotoWithSettings:settings.capturePhotoSettings delegate:delegate];
   return nil;
 }
+- (id _Nullable)capturePhotoWithSettings:(IAFCapturePhotoSettingsProxy *)settings
+                                delegate:(IAFCapturePhotoCaptureDelegateProxy *)delegate {
+  [((AVCapturePhotoOutput *)self.captureOutput) capturePhotoWithSettings:settings.capturePhotoSettings delegate:delegate];
+  return nil;
+}
+
 @end
 
 @implementation IAFCapturePhotoSettingsProxy
@@ -273,5 +294,66 @@ didFinishProcessingPhoto:(AVCapturePhoto *)photo
                                                       completion:^(REFPairedInstance * instance, NSError *error) {
   }];
   return self;
+}
+@end
+
+@implementation IAFCaptureFileOutputProxy
+- (instancetype)initWithCaptureFileOutput:(AVCaptureFileOutput *)captureFileOutput {
+  return [self initWithCaptureOutput:captureFileOutput];
+}
+
+- (NSNumber *)isRecording {
+  AVCaptureFileOutput *captureFileOuput = (AVCaptureFileOutput *) [self captureOutput];
+  return @([captureFileOuput isRecording]);
+}
+
+- (id _Nullable)setMaxRecordedFileSize:(NSNumber *)fileSize {
+  AVCaptureFileOutput *captureFileOuput = (AVCaptureFileOutput *) [self captureOutput];
+  [captureFileOuput setMaxRecordedFileSize:fileSize.intValue];
+  return nil;
+}
+
+- (id _Nullable)startRecordingToOutputFileURL:(NSString *)outputFileURL
+                                     delegate:(NSObject<_IAFCaptureFileOutputRecordingDelegate> *)delegate {
+  AVCaptureFileOutput *captureFileOuput = (AVCaptureFileOutput *) [self captureOutput];
+  [captureFileOuput startRecordingToOutputFileURL:[NSURL URLWithString:outputFileURL]
+                                recordingDelegate:(IAFCaptureFileOutputRecordingDelegateProxy *)delegate];
+  return nil;
+}
+
+- (id _Nullable)stopRecording {
+  AVCaptureFileOutput *captureFileOuput = (AVCaptureFileOutput *) [self captureOutput];
+  [captureFileOuput stopRecording];
+  return nil;
+}
+
+- (NSString *)outputFileURL {
+  AVCaptureFileOutput *captureFileOuput = (AVCaptureFileOutput *) [self captureOutput];
+  return captureFileOuput.outputFileURL.absoluteString;
+}
+@end
+
+@implementation IAFCaptureMovieFileOutputProxy
+- (instancetype)init {
+  return [self initWithCaptureMovieFileOutput:[[AVCaptureMovieFileOutput alloc] init]];
+}
+
+- (instancetype)initWithCaptureMovieFileOutput:(AVCaptureMovieFileOutput *)captureMovieFileOutput {
+  return [self initWithCaptureFileOutput:captureMovieFileOutput];
+}
+
+- (NSArray<NSString *> *)availableVideoCodecTypes {
+  AVCaptureMovieFileOutput *captureMovieFileOutput = (AVCaptureMovieFileOutput *) [self captureOutput];
+  return [captureMovieFileOutput availableVideoCodecTypes];
+}
+@end
+
+@implementation IAFCaptureFileOutputRecordingDelegateProxy
+- (void)captureOutput:(nonnull AVCaptureFileOutput *)output
+didFinishRecordingToOutputFileAtURL:(nonnull NSURL *)outputFileURL
+      fromConnections:(nonnull NSArray<AVCaptureConnection *> *)connections
+                error:(nullable NSError *)error {
+  // TODO:
+  NSLog(@"FINISHED RECORDING TO FILE");
 }
 @end

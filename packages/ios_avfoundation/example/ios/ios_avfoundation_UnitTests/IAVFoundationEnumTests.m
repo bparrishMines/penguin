@@ -34,4 +34,17 @@
   XCTAssertEqualObjects(AVCaptureDeviceTypeBuiltInTripleCamera, @"AVCaptureDeviceTypeBuiltInTripleCamera");
   XCTAssertEqualObjects(AVCaptureDeviceTypeBuiltInTrueDepthCamera, @"AVCaptureDeviceTypeBuiltInTrueDepthCamera");
 }
+
+- (void) testCaptureSessionPreset {
+  XCTAssertEqualObjects(AVCaptureSessionPresetPhoto, @"AVCaptureSessionPresetPhoto");
+  XCTAssertEqualObjects(AVCaptureSessionPresetHigh, @"AVCaptureSessionPresetHigh");
+  XCTAssertEqualObjects(AVCaptureSessionPresetMedium, @"AVCaptureSessionPresetMedium");
+  XCTAssertEqualObjects(AVCaptureSessionPresetLow, @"AVCaptureSessionPresetLow");
+  XCTAssertEqualObjects(AVCaptureSessionPreset352x288, @"AVCaptureSessionPreset352x288");
+  XCTAssertEqualObjects(AVCaptureSessionPreset640x480, @"AVCaptureSessionPreset640x480");
+  XCTAssertEqualObjects(AVCaptureSessionPreset1280x720, @"AVCaptureSessionPreset1280x720");
+  XCTAssertEqualObjects(AVCaptureSessionPreset1920x1080, @"AVCaptureSessionPreset1920x1080");
+  XCTAssertEqualObjects(AVCaptureSessionPresetiFrame960x540, @"AVCaptureSessionPresetiFrame960x540");
+  XCTAssertEqualObjects(AVCaptureSessionPresetiFrame1280x720, @"AVCaptureSessionPresetiFrame1280x720");
+}
 @end

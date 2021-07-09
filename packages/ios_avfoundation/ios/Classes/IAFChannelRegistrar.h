@@ -39,4 +39,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithImplementations:(IAFLibraryImplementations *)implementations;
 @end
 
+@interface IAFCaptureMovieFileOutputHandler : _IAFCaptureMovieFileOutputHandler
+@end
+
+@interface IAFCaptureFileOutputRecordingDelegateHandler : _IAFCaptureFileOutputRecordingDelegateHandler
+@end
 NS_ASSUME_NONNULL_END

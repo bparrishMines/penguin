@@ -17,6 +17,126 @@ import 'avfoundation_channels.dart';
 @Reference('ios_avfoundation/avfoundation/FinishProcessingPhotoCallback')
 typedef FinishProcessingPhotoCallback = Function(CapturePhoto photo);
 
+/// [CaptureSessionPreset] string constants.
+///
+/// Clients may use an [CaptureSessionPreset] to set the format for output on an
+/// [CaptureSession].
+abstract class CaptureSessionPreset {
+  CaptureSessionPreset._();
+
+  /// A [CaptureSession] preset suitable for high resolution photo quality output.
+  ///
+  /// Clients may set a [CaptureSession] instance's `sessionPreset` to
+  /// [CaptureSessionPreset.Photo] for full resolution photo quality output.
+  static const String photo = 'AVCaptureSessionPresetPhoto';
+
+  /// A [CaptureSession] preset suitable for high quality video and audio output.
+  ///
+  /// Clients may set a [CaptureSession] instance's `sessionPreset` to
+  /// [CaptureSessionPreset.high] to achieve high quality video and audio
+  /// output. [CaptureSessionPreset.high] is the default `sessionPreset` value.
+  static const String high = 'AVCaptureSessionPresetHigh';
+
+  /// A [CaptureSession] preset suitable for medium quality output.
+  ///
+  /// Clients may set a [CaptureSession] instance's `sessionPreset` to
+  /// [CaptureSessionPreset.medium] to achieve output video and audio bitrates
+  /// suitable for sharing over WiFi.
+  static const String medium = 'AVCaptureSessionPresetMedium';
+
+  /// A [CaptureSession] preset suitable for low quality output.
+  ///
+  /// Clients may set a [CaptureSession] instance's `sessionPreset` to
+  /// [CaptureSessionPreset.low] to achieve output video and audio bitrates
+  /// suitable for sharing over 3G.
+  static const String low = 'AVCaptureSessionPresetLow';
+
+  /// A [CaptureSession] preset suitable for 320x240 video output.
+  ///
+  /// Clients may set a [CaptureSession] instance's `sessionPreset` to
+  /// [CaptureSessionPreset.preset320x240] to achieve 320x240 output.
+  ///
+  /// This is only supported on macos.
+  static const String preset320x240 = 'AVCaptureSessionPreset320x240';
+
+  /// A [CaptureSession] preset suitable for 352x288 video output.
+  ///
+  /// Clients may set a [CaptureSession] instance's `sessionPreset` to
+  /// [CaptureSessionPreset.preset352x288] to achieve CIF quality (352x288)
+  /// output.
+  static const String preset352x288 = 'AVCaptureSessionPreset352x288';
+
+  /// A [CaptureSession] preset suitable for 640x480 video output.
+  ///
+  /// Clients may set a [CaptureSession] instance's `sessionPreset` to
+  /// [CaptureSessionPreset.preset640x480] to achieve VGA quality (640x480)
+  /// output.
+  static const String preset640x480 = 'AVCaptureSessionPreset640x480';
+
+  /// A [CaptureSession] preset suitable for 960x540 video output.
+  ///
+  /// Clients may set a [CaptureSession] instance's `sessionPreset` to
+  /// [CaptureSessionPreset.preset960x540] to achieve quarter HD quality
+  /// (960x540) output.
+  ///
+  /// This is only supported on macos.
+  static const String preset960x540 = 'AVCaptureSessionPreset960x540';
+
+  /// A [CaptureSession] preset suitable for 1280x720 video output.
+  ///
+  /// Clients may set a [CaptureSession] instance's `sessionPreset` to
+  /// [CaptureSessionPreset.preset1280x720] to achieve 1280x720 output.
+  static const String preset1280x720 = 'AVCaptureSessionPreset1280x720';
+
+  /// A [CaptureSession] preset suitable for 1920x1080 video output.
+  ///
+  /// Clients may set a [CaptureSession] instance's `sessionPreset` to
+  /// [CaptureSessionPreset.preset1920x1080] to achieve 1920x1080 output.
+  static const String preset1920x1080 = 'AVCaptureSessionPreset1920x1080';
+
+  /// A [CaptureSession] preset suitable for 3840x2160 (UHD 4K) video output.
+  ///
+  /// Clients may set a [CaptureSession] instance's `sessionPreset` to
+  /// [CaptureSessionPreset.preset3840x2160] to achieve 3840x2160 output.
+  ///
+  /// Only supported on macos.
+  static const String preset3840x2160 = 'AVCaptureSessionPreset3840x2160';
+
+  /// A [CaptureSession] preset producing 960x540 Apple iFrame video and audio content.
+  ///
+  /// Clients may set a [CaptureSession] instance's `sessionPreset` to
+  /// [CaptureSessionPreset.iFrame960x540] to achieve 960x540 quality iFrame
+  /// H.264 video at ~30 Mbits/sec with AAC audio. QuickTime movies captured in
+  /// iFrame format are optimal for editing applications.
+  static const String iFrame960x540 = 'AVCaptureSessionPresetiFrame960x540';
+
+  /// A [CaptureSession] preset producing 1280x720 Apple iFrame video and audio content.
+  ///
+  /// Clients may set a [CaptureSession] instance's `sessionPreset` to
+  /// [CaptureSessionPreset.iFrame1280x720] to achieve 1280x720 quality iFrame
+  /// H.264 video at ~40 Mbits/sec with AAC audio. QuickTime movies captured in
+  /// iFrame format are optimal for editing applications.
+  static const String iFrame1280x720 = 'AVCaptureSessionPresetiFrame1280x720';
+
+  // TODO: CaptureDevice.setActiveFormat
+  /// A [CaptureSession] preset indicating that the formats of the session's inputs are being given priority.
+  ///
+  /// By calling [CaptureSession.setSessionPreset], clients can easily
+  /// configure a [CaptureSession] to produce a desired quality of service
+  /// level. The session configures its inputs and outputs optimally to produce
+  /// the QoS level indicated. Clients who need to ensure a particular input
+  /// format is chosen can use [CaptureDevice.setActiveFormat] method. When a
+  /// client sets the active format on a device, the associated session's
+  /// `setSessionPreset` method automatically changes to
+  /// [CaptureSessionPreset.inputPriority]. This change indicates that the input
+  /// format selected by the client now dictates the quality of service level
+  /// provided at the outputs. When a client sets the session preset to anything
+  /// other than [CaptureSessionPreset.inputPriority], the session resumes
+  /// responsibility for configuring inputs and outputs, and is free to change
+  /// its inputs' `activeFormat` as needed.
+  static const String inputPriority = 'AVCaptureSessionPresetInputPriority';
+}
+
 // TODO: keys in kCVPixelBuffer* keys in <CoreVideo/CVPixelBuffer.h>
 // TODO: videoPixelAspectRatio
 // TODO: videoCleanAperture
@@ -320,11 +440,11 @@ class CapturePhotoOutput extends CaptureOutput with $CapturePhotoOutput {
   /// captures. Calling this method throws an exception
   /// ([PlatformException]) if the settings object’s `uniqueID` value matches
   /// that of any previously used settings object.
-  Future<void> capturePhoto(
-    covariant CapturePhotoSettings settings,
-    covariant CapturePhotoCaptureDelegate delegate,
+  Future<void> capturePhotoWithSettings(
+    CapturePhotoSettings settings,
+    CapturePhotoCaptureDelegate delegate,
   ) {
-    return _channel.$capturePhoto(this, settings, delegate);
+    return _channel.$capturePhotoWithSettings(this, settings, delegate);
   }
 }
 
@@ -645,6 +765,26 @@ class CaptureSession with $CaptureSession {
   /// This method is used to stop the flow of data from the inputs to the
   /// outputs connected to the [CaptureSession] instance that is the receiver.
   Future<void> stopRunning() => _channel.$stopRunning(this);
+
+  /// A constant value indicating the quality level or bit rate of the output.
+  ///
+  /// You use this property to customize the quality level or bit rate of the
+  /// output. For possible values of `sessionPreset`, see
+  /// [CaptureSessionPreset]. The default value is [CaptureSessionPreset.high].
+  ///
+  /// You can set this value while the session is running.
+  ///
+  /// You can only set a preset if [canSetSessionPresets] contains that preset.
+  Future<void> setSessionPreset(String preset) {
+    return _channel.$setSessionPreset(this, preset);
+  }
+
+  /// Returns a subset of preset values that indicates which presets can be used by the session.
+  Future<List<String>> canSetSessionPresets(List<String> presets) async {
+    final List<Object?> returnedPresets =
+        await _channel.$canSetSessionPresets(this, presets) as List<Object?>;
+    return returnedPresets.cast<String>();
+  }
 }
 
 // TODO: lockForConfiguration
@@ -880,4 +1020,197 @@ class PreviewController with $PreviewController {
 
   /// The [CaptureSession] that provides preview frames to the iOS UiView.
   final CaptureSession captureSession;
+}
+
+// TODO: CaptureFileOutputDelegate.captureOutput is for MacOS
+// TODO: CaptureAudioFileOutput
+/// The abstract superclass for capture outputs that can record captured data to a file.
+///
+/// This abstract superclass defines the interface for outputs that record media
+/// samples to files. File outputs can start recording to a new file using the
+/// [startRecordingToOutputFileURL] method. On successive
+/// invocations of this method on Mac OS X, the output file can by changed
+/// dynamically without losing media samples. A file output can stop recording
+/// using the stopRecording method. Because files are recorded in the
+/// background, applications will need to specify a delegate for each new file
+/// so that they can be notified when recorded files are finished.
+///
+/// On Mac OS X, clients can also set a delegate on the file output itself that
+/// can be used to control recording along exact media sample boundaries using
+/// the [CaptureFileOutputDelegate.captureOutput] method.
+///
+/// The concrete subclasses of [CaptureFileOutput] are [CaptureMovieFileOutput],
+/// which records media to a QuickTime movie file, and [CaptureAudioFileOutput],
+/// which writes audio media to a variety of audio file formats.
+@Reference('ios_avfoundation/avfoundation/CaptureFileOutput')
+abstract class CaptureFileOutput extends CaptureOutput with $CaptureFileOutput {
+  static $CaptureFileOutputChannel get _channel =>
+      ChannelRegistrar.instance.implementations.channelCaptureFileOutput;
+
+  // TODO: support URL is ReferenceMessageCodec in reference plugin
+  /// The file URL of the file to which the receiver is currently recording incoming buffers.
+  Future<Uri> outputFileURL() async {
+    return Uri.dataFromString(await _channel.$outputFileURL(this) as String);
+  }
+
+  // TODO: CaptureFileOutputRecordingDelegate.captureOutput:didFinishRecordingToOutputFileAtURL:fromConnections:error:
+  /// Specifies the maximum size, in bytes, of the data that should be recorded by the receiver.
+  ///
+  /// This property specifies a hard limit on the data size of recorded files.
+  /// Recording is stopped when the limit is reached and the
+  /// [CaptureFileOutputRecordingDelegate.captureOutput:didFinishRecordingToOutputFileAtURL:fromConnections:error:]
+  /// delegate method is invoked with an appropriate error. The default value of
+  /// this property is 0, which indicates no limit.
+  Future<void> setMaxRecordedFileSize(int fileSize) {
+    return _channel.$setMaxRecordedFileSize(this, fileSize);
+  }
+
+  /// Indicates whether recording is in progress.
+  ///
+  /// The value of this property is true when the file output currently has a
+  /// file to which it is writing new samples, false otherwise.
+  Future<bool> isRecording() async {
+    return await _channel.$isRecording(this) as bool;
+  }
+
+  // TODO: MacOS -> captureOutput:didOutputSampleBuffer:fromConnection:
+  // TODO: delegate.captureOutput:didFinishRecordingToOutputFileAtURL:fromConnections:error:
+  /// Starts recording media to the specified output URL.
+  ///
+  /// [outputFileURL]: This method throws aa [PlatformException] if the argument
+  /// isn’t a valid file URL.
+  ///
+  /// [delegate]: A delegate object that’s notified of changes to the recording
+  /// state.
+  ///
+  /// A failure occurs if you attempt to record to a URL where a file exists. To
+  /// overwrite the content, delete the old file before calling this method.
+  ///
+  /// In macOS, calling this method from within the
+  /// captureOutput:didOutputSampleBuffer:fromConnection: method guarantees that
+  /// the first samples written to the new file are those passed to the delegate
+  /// method.
+  ///
+  /// When you stop recording by calling [stopRecording], by changing files
+  /// using this method, or because of an error, the framework writes any
+  /// remaining file data in the background. Therefore, for the system to notify
+  /// you upon completion, you must adopt the
+  /// captureOutput:didFinishRecordingToOutputFileAtURL:fromConnections:error:
+  /// delegate method. The recording delegate can also optionally implement
+  /// methods that inform it when the output object starts writing data, when it
+  /// pauses or resumes recording, and when it’s about to finish recording.
+  ///
+  /// In macOS, you don’t need to call [stopRecording] before calling this
+  /// method while another recording is in progress. If you call this method
+  /// while the output object is recording, the framework preserves media
+  /// samples between the old file and the new file. In iOS, to avoid any
+  /// errors, you must call [stopRecording] before calling this method again.
+  Future<void> startRecordingToOutputFileURL(
+    String outputFileURL,
+    CaptureFileOutputRecordingDelegate delegate,
+  ) {
+    return _channel.$startRecordingToOutputFileURL(
+      this,
+      outputFileURL,
+      delegate,
+    );
+  }
+
+  // TODO: delegate.captureOutput:didFinishRecordingToOutputFileAtURL:fromConnections:error:
+  /// Tells the receiver to stop recording to the current file.
+  ///
+  /// You can call this method when they want to stop recording new samples to
+  /// the current file, and do not want to continue recording to another file.
+  /// If you want to switch from one file to another, you should not call this
+  /// method. Instead you should simply call [startRecordingToOutputFileURL]
+  /// with the new file URL.
+  ///
+  /// When recording is stopped either by calling this method, by changing files
+  /// using [startRecordingToOutputFileURL], or because of an error, the
+  /// remaining data that needs to be included to the file will be written in
+  /// the background. Therefore, before using the file, you must wait until the
+  /// delegate that was specified in [startRecordingToOutputFileURL] is notified
+  /// when all data has been written to the file using the
+  /// [captureOutput:didFinishRecordingToOutputFileAtURL:fromConnections:error:]
+  /// method.
+  ///
+  /// In macOS, if this method is called within the
+  /// [captureOutput:didOutputSampleBuffer:fromConnection:] delegate method, the
+  /// last samples written to the current file are guaranteed to be those that
+  /// were output immediately before those in the sample buffer passed to that
+  /// method.
+  Future<void> stopRecording() {
+    return _channel.$stopRecording(this);
+  }
+}
+
+// TODO: kCMTimeZero
+// TODO: timeMapping.target.start?
+// TODO: CMTimeRangeGetEnd
+// TODO: AVCompositionTrackSegment
+// TODO: MutableCompositionTrack.validateTrackSegments:error:
+// TODO: CaptureVideoDataOutput
+// TODO: CaptureSession.automaticallyConfiguresCaptureDeviceForWideColor
+/// A capture output that records video and audio to a QuickTime movie file.
+///
+/// This class is the movie file equivalent of [CapturePhotoOutput]. Use it to
+/// export or save movie files from capture session content.
+///
+/// The timeMapping.target.start of the first track segment must be kCMTimeZero,
+/// and the timeMapping.target.start of each subsequent track segment must equal
+/// [CMTimeRangeGetEnd], when passing in the previous [CompositionTrackSegment]'s
+/// timeMapping.target. You can use validateTrackSegments:error: to ensure that
+/// an array of track segments conforms to this rule.
+///
+/// Starting in iOS 12, photo formats no longer list the
+/// [CaptureMovieFileOutput] as being unsupported. If you construct a session
+/// with a photo format as input and a movie file output, you can record movies.
+/// The resolution of the video track in the movie follows the conventions
+/// established by the [CaptureVideoDataOutput]; namely, when using the photo
+/// preset, you receive video buffers with size approximating the screen size.
+/// Video outputs are a proxy for photo preview in this configuration.
+///
+/// If you set the [CaptureDevice] format to a high-resolution photo format, you
+/// receive full-resolution (5, 8, or 12 MP depending on the device) video
+/// buffers into your movie. If the capture session’s
+/// [automaticallyConfiguresCaptureDeviceForWideColor] property is true, the
+/// session selects sRGB as the video colorspace in your movie. You can override
+/// this behavior by adding an [CapturePhotoOutput] to your session and
+/// configuring its photo format or [CaptureSessionPreset.photo] preset for a
+/// photo output.
+@Reference('ios_avfoundation/avfoundation/CaptureMovieFileOutput')
+class CaptureMovieFileOutput extends CaptureFileOutput
+    with $CaptureMovieFileOutput {
+  static $CaptureMovieFileOutputChannel get _channel =>
+      ChannelRegistrar.instance.implementations.channelCaptureMovieFileOutput;
+
+  // TODO: setOutputSettings
+  /// The video codec types currently supported for recording movie files.
+  ///
+  /// The first codec in this list is the default for recording movie files. To
+  /// record using a different codec, call the [setOutputSettings] method,
+  /// passing a video settings dictionary with a value for
+  /// [VideoSettingsKeys.videoCodec] that matches one of the other values in
+  /// this list.
+  Future<List<String>> availableVideoCodecTypes() async {
+    final List<Object?> codecTypes =
+        await _channel.$availableVideoCodecTypes(this) as List<Object?>;
+    return codecTypes.cast<String>();
+  }
+}
+
+/// Methods for responding to events that occur while recording captured media to a file.
+///
+/// Defines an interface for delegates of [CaptureFileOutput] to respond to
+/// events that occur in the process of recording a single file.
+///
+/// The delegate of an [CaptureFileOutput] object must adopt the
+/// [CaptureFileOutputRecordingDelegate] protocol.
+@Reference('ios_avfoundation/avfoundation/CaptureFileOutputRecordingDelegate')
+class CaptureFileOutputRecordingDelegate
+    with $CaptureFileOutputRecordingDelegate {
+  // ignore: unused_element
+  static $CaptureFileOutputRecordingDelegateChannel get _channel =>
+      ChannelRegistrar
+          .instance.implementations.channelCaptureFileOutputRecordingDelegate;
 }

@@ -75,5 +75,17 @@ API_AVAILABLE(ios(11.0))
 - (instancetype)initWithCaptureDeviceDiscoverySession:(AVCaptureDeviceDiscoverySession *)captureDeviceDiscoverySession
                                       implementations:(IAFLibraryImplementations *)implementations;
 @end
+
+@interface IAFCaptureFileOutputProxy : IAFCaptureOutputProxy<_IAFCaptureFileOutput>
+- (instancetype)initWithCaptureFileOutput:(AVCaptureFileOutput *)captureFileOutput;
+@end
+
+@interface IAFCaptureMovieFileOutputProxy : IAFCaptureFileOutputProxy<_IAFCaptureMovieFileOutput>
+- (instancetype)init;
+- (instancetype)initWithCaptureMovieFileOutput:(AVCaptureMovieFileOutput *)captureMovieFileOutput;
+@end
+
+@interface IAFCaptureFileOutputRecordingDelegateProxy : NSObject<_IAFCaptureFileOutputRecordingDelegate, AVCaptureFileOutputRecordingDelegate>
+@end
 NS_ASSUME_NONNULL_END
 
