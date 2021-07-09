@@ -14,6 +14,7 @@
 
 - (void)testMediaType {
   XCTAssertEqualObjects(AVMediaTypeVideo, @"vide");
+  XCTAssertEqualObjects(AVMediaTypeAudio, @"soun");
 }
 
 - (void)testVideoSettingsKeys {
@@ -58,5 +59,11 @@
   XCTAssertEqual(AVCaptureFocusModeLocked, 0);
   XCTAssertEqual(AVCaptureFocusModeAutoFocus, 1);
   XCTAssertEqual(AVCaptureFocusModeContinuousAutoFocus, 2);
+}
+
+- (void)testFlashMode {
+  XCTAssertEqual(AVCaptureFlashModeOff, 0);
+  XCTAssertEqual(AVCaptureFlashModeOn, 1);
+  XCTAssertEqual(AVCaptureFlashModeAuto, 2);
 }
 @end

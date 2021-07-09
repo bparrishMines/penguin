@@ -31,6 +31,8 @@
                                           _owner:NO
                                         uniqueId:captureDevice.uniqueID
                                         position:@(captureDevice.position)
+                      isSmoothAutoFocusSupported:@(captureDevice.isSmoothAutoFocusSupported)
+                                        hasFlash:@(captureDevice.hasFlash)
                                       completion:^(REFPairedInstance *pairedInstance, NSError *error) {}];
   return self;
 }

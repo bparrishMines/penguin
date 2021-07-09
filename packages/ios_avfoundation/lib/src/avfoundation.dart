@@ -45,6 +45,20 @@ abstract class CaptureFocusMode {
   static const int continuousAutoFocus = 2;
 }
 
+/// Constants indicating the mode of the flash on the receiver's device, if it has one.
+abstract class CaptureFlashMode {
+  CaptureFlashMode._();
+
+  /// Indicates that the flash should always be off.
+  static const int off = 0;
+
+  /// Indicates that the flash should always be on.
+  static const int on = 1;
+
+  /// Indicates that the flash should be used automatically depending on ambient light conditions.
+  static const int auto = 2;
+}
+
 /// [CaptureSessionPreset] string constants.
 ///
 /// Clients may use an [CaptureSessionPreset] to set the format for output on an
@@ -340,6 +354,9 @@ abstract class MediaType {
 
   /// The media contains video.
   static const String video = 'vide';
+
+  /// The media contains audio.
+  static const String audio = 'soun';
 }
 
 /// Constants indicating the physical position of an AVCaptureDevice's hardware on the system.
@@ -905,6 +922,7 @@ class CaptureDevice with $CaptureDevice {
     required this.uniqueId,
     required this.position,
     required this.isSmoothAutoFocusSupported,
+    required this.hasFlash,
   });
 
   static $CaptureDeviceChannel get _channel =>
@@ -932,6 +950,9 @@ class CaptureDevice with $CaptureDevice {
   /// property’s value is false, setting the value of
   /// [setSmoothAutoFocusEnabled] to true raises an exception.
   final bool isSmoothAutoFocusSupported;
+
+  /// Indicates whether the capture device has a flash.
+  final bool hasFlash;
 
   // TODO: defaultDeviceWithDeviceType
   /// Returns the default device used to capture data of a given media type.
@@ -994,13 +1015,17 @@ class CaptureDevice with $CaptureDevice {
   ///     then call the `commitConfiguration` method.
   ///
   ///     3. Unlock the device with the `unlockForConfiguration` method.
-  Future<bool> lockForConfiguration() {}
+  Future<bool> lockForConfiguration() async {
+    return await _channel.$lockForConfiguration(this) as bool;
+  }
 
   /// Relinquishes exclusive control over the device’s configuration.
   ///
   /// Call this method to release the lock acquired using the
   /// [lockForConfiguration] method when you are done configuring the device.
-  Future<void> unlockForConfiguration() {}
+  Future<void> unlockForConfiguration() {
+    return _channel.$unlockForConfiguration(this);
+  }
 
   /// Returns a subset of preset values that indicate whether the receiver can be used in a capture session configured with the given presets.
   ///
@@ -1009,10 +1034,17 @@ class CaptureDevice with $CaptureDevice {
   /// this method to determine if the receiver can be used in a capture session
   /// with any of the given presets. For a list of preset constants, see
   /// [CaptureSessionPreset].
-  Future<List<String>> supportsCaptureSessionPresets(List<String> presets) {}
+  Future<List<String>> supportsCaptureSessionPresets(
+      List<String> presets) async {
+    final List<Object?> supportedPresets = await _channel
+        .$supportsCaptureSessionPresets(this, presets) as List<Object?>;
+    return supportedPresets.cast<String>();
+  }
 
   /// Indicates whether the device is currently adjusting its exposure setting.
-  Future<bool> isAdjustingExposure() {}
+  Future<bool> isAdjustingExposure() async {
+    return await _channel.$isAdjustingExposure(this) as bool;
+  }
 
   /// The exposure mode for the device.
   ///
@@ -1024,10 +1056,18 @@ class CaptureDevice with $CaptureDevice {
   /// configure the settings.
   ///
   /// See [CaptureExposureMode] for possible values.
-  Future<void> setExposureMode(int mode) {}
+  Future<void> setExposureMode(int mode) {
+    return _channel.$setExposureMode(this, mode);
+  }
 
   /// Returns a subset of values that indicates whether the given exposure modes are supported.
-  Future<List<int>> exposureModesSupported(List<int> int) {}
+  ///
+  /// See [CaptureExposureMode].
+  Future<List<int>> exposureModesSupported(List<int> modes) async {
+    final List<Object?> supportedModes =
+        await _channel.$exposureModesSupported(this, modes) as List<Object?>;
+    return supportedModes.cast<int>();
+  }
 
   /// The capture device’s focus mode.
   ///
@@ -1039,13 +1079,23 @@ class CaptureDevice with $CaptureDevice {
   /// configure the settings.
   ///
   /// See [CaptureFocusMode] for possible values.
-  Future<void> setFocusMode(int mode) {}
+  Future<void> setFocusMode(int mode) {
+    return _channel.$setFocusMode(this, mode);
+  }
 
   /// Returns a subset of values that indicates whether the given focus modes are supported.
-  Future<List<int>> focusModesSupported(List<int> int) {}
+  ///
+  /// See [CaptureFocusMode].
+  Future<List<int>> focusModesSupported(List<int> modes) async {
+    final List<Object?> supportedModes =
+        await _channel.$focusModesSupported(this, modes) as List<Object?>;
+    return supportedModes.cast<int>();
+  }
 
   /// A Boolean value that indicates whether the device is currently adjusting its focus setting.
-  Future<bool> isAdjustingFocus() {}
+  Future<bool> isAdjustingFocus() async {
+    return await _channel.$isAdjustingFocus(this) as bool;
+  }
 
   /// A Boolean value that determines whether smooth autofocus is in an enabled state on the device.
   ///
@@ -1059,12 +1109,47 @@ class CaptureDevice with $CaptureDevice {
   /// raises an exception. When you finish configuring the device, call
   /// [unlockForConfiguration] to release the lock and allow other devices to
   /// configure the settings.
-  Future<void> setSmoothAutoFocusEnabled({required bool enabled}) {}
+  Future<void> setSmoothAutoFocusEnabled({required bool enabled}) {
+    return _channel.$setSmoothAutoFocusEnabled(this, enabled);
+  }
+
+  /// Indicates whether the flash is currently available for use.
+  ///
+  /// The flash may become unavailable if, for example, the device overheats and
+  /// needs to cool off.
+  Future<bool> isFlashAvailable() async {
+    return await _channel.$isFlashAvailable(this) as bool;
+  }
+
+  /// The device’s current flash mode.
+  ///
+  /// Before changing the value of this property, you must call
+  /// [lockForConfiguration] to acquire exclusive access to the device’s
+  /// configuration properties. Otherwise, setting the value of this property
+  /// raises an exception. When you finish configuring the device, call
+  /// [unlockForConfiguration] to release the lock and allow other devices to
+  /// configure the settings.
+  ///
+  /// See [CaptureFlashMode] for possible values.
+  Future<void> setFlashMode(int mode) {
+    return _channel.$setFlashMode(this, mode);
+  }
+
+  /// Returns a subset of values that indicates whether the given flash modes are supported.
+  ///
+  /// See [CaptureFlashMode].
+  Future<List<int>> flashModesSupported(List<int> modes) async {
+    final List<Object?> supportedModes =
+        await _channel.$flashModesSupported(this, modes) as List<Object?>;
+    return supportedModes.cast<int>();
+  }
 
   @ReferenceMethod(ignore: true)
   @override
   String toString() {
-    return 'CaptureDevice(uniqueId: $uniqueId, position: $position)';
+    return 'CaptureDevice(uniqueId: $uniqueId, position: $position, '
+        'isSmoothAutoFocusSupported:$isSmoothAutoFocusSupported'
+        ' hasFlash: $hasFlash)';
   }
 }
 

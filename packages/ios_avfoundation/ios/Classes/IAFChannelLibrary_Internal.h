@@ -151,6 +151,100 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 
 @protocol _IAFCaptureDevice <NSObject>
 
+
+- (id _Nullable)lockForConfiguration
+
+;
+
+
+
+- (id _Nullable)unlockForConfiguration
+
+;
+
+
+
+- (id _Nullable)supportsCaptureSessionPresets
+                                :(NSArray<NSString *> * _Nullable)presets
+
+
+;
+
+
+
+- (id _Nullable)isAdjustingExposure
+
+;
+
+
+
+- (id _Nullable)setExposureMode
+                                :(NSNumber * _Nullable)mode
+
+
+;
+
+
+
+- (id _Nullable)exposureModesSupported
+                                :(NSArray<NSNumber *> * _Nullable)modes
+
+
+;
+
+
+
+- (id _Nullable)setFocusMode
+                                :(NSNumber * _Nullable)mode
+
+
+;
+
+
+
+- (id _Nullable)focusModesSupported
+                                :(NSArray<NSNumber *> * _Nullable)modes
+
+
+;
+
+
+
+- (id _Nullable)isAdjustingFocus
+
+;
+
+
+
+- (id _Nullable)setSmoothAutoFocusEnabled
+                                :(NSNumber * _Nullable)enabled
+
+
+;
+
+
+
+- (id _Nullable)isFlashAvailable
+
+;
+
+
+
+- (id _Nullable)setFlashMode
+                                :(NSNumber * _Nullable)mode
+
+
+;
+
+
+
+- (id _Nullable)flashModesSupported
+                                :(NSArray<NSNumber *> * _Nullable)modes
+
+
+;
+
+
 @end
 
 @protocol _IAFCaptureDeviceDiscoverySession <NSObject>
@@ -344,7 +438,37 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 
  position:(NSNumber * _Nullable)position
 
+ isSmoothAutoFocusSupported:(NSNumber * _Nullable)isSmoothAutoFocusSupported
+
+ hasFlash:(NSNumber * _Nullable)hasFlash
+
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -560,6 +684,10 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
                                   uniqueId:(NSString * _Nullable)uniqueId
 
                                   position:(NSNumber * _Nullable)position
+
+                                  isSmoothAutoFocusSupported:(NSNumber * _Nullable)isSmoothAutoFocusSupported
+
+                                  hasFlash:(NSNumber * _Nullable)hasFlash
 ;
 
 
@@ -569,6 +697,87 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 ;
 
 
+
+
+
+- (id _Nullable)_lockForConfiguration:(NSObject<_IAFCaptureDevice> *)_instance
+;
+
+
+
+- (id _Nullable)_unlockForConfiguration:(NSObject<_IAFCaptureDevice> *)_instance
+;
+
+
+
+- (id _Nullable)_supportsCaptureSessionPresets:(NSObject<_IAFCaptureDevice> *)_instance
+
+  presets:(NSArray<NSString *> * _Nullable)presets
+;
+
+
+
+- (id _Nullable)_isAdjustingExposure:(NSObject<_IAFCaptureDevice> *)_instance
+;
+
+
+
+- (id _Nullable)_setExposureMode:(NSObject<_IAFCaptureDevice> *)_instance
+
+  mode:(NSNumber * _Nullable)mode
+;
+
+
+
+- (id _Nullable)_exposureModesSupported:(NSObject<_IAFCaptureDevice> *)_instance
+
+  modes:(NSArray<NSNumber *> * _Nullable)modes
+;
+
+
+
+- (id _Nullable)_setFocusMode:(NSObject<_IAFCaptureDevice> *)_instance
+
+  mode:(NSNumber * _Nullable)mode
+;
+
+
+
+- (id _Nullable)_focusModesSupported:(NSObject<_IAFCaptureDevice> *)_instance
+
+  modes:(NSArray<NSNumber *> * _Nullable)modes
+;
+
+
+
+- (id _Nullable)_isAdjustingFocus:(NSObject<_IAFCaptureDevice> *)_instance
+;
+
+
+
+- (id _Nullable)_setSmoothAutoFocusEnabled:(NSObject<_IAFCaptureDevice> *)_instance
+
+  enabled:(NSNumber * _Nullable)enabled
+;
+
+
+
+- (id _Nullable)_isFlashAvailable:(NSObject<_IAFCaptureDevice> *)_instance
+;
+
+
+
+- (id _Nullable)_setFlashMode:(NSObject<_IAFCaptureDevice> *)_instance
+
+  mode:(NSNumber * _Nullable)mode
+;
+
+
+
+- (id _Nullable)_flashModesSupported:(NSObject<_IAFCaptureDevice> *)_instance
+
+  modes:(NSArray<NSNumber *> * _Nullable)modes
+;
 
 
 @end

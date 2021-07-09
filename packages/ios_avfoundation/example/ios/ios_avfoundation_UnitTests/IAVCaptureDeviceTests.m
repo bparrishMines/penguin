@@ -19,6 +19,14 @@
 - (NSString *)uniqueID {
   return @"test_uniqueID";
 }
+
+- (BOOL)isSmoothAutoFocusSupported {
+  return YES;
+}
+
+- (BOOL)hasFlash {
+  return NO;
+}
 @end
 
 @interface IAVCaptureDeviceTests : XCTestCase
@@ -41,9 +49,12 @@
   IAFCaptureDeviceProxy *captureDeviceProxy = [[IAFCaptureDeviceProxy alloc] initWithCaptureDevice:_testCaptureDevice
                                                                                    implementations:_mockImplementations];
   OCMVerify([_mockCaptureDeviceChannel __create:captureDeviceProxy
-                                         _owner:NO
-                                       uniqueId:@"test_uniqueID"
-                                       position:@2 completion:OCMOCK_ANY]);
+                                          _owner:NO
+                                        uniqueId:@"test_uniqueID"
+                                        position:@2
+                      isSmoothAutoFocusSupported:@(YES)
+                                        hasFlash:@(NO)
+                                      completion:OCMOCK_ANY]);
 }
 
 - (void)testDefaultDeviceWithMediaType {

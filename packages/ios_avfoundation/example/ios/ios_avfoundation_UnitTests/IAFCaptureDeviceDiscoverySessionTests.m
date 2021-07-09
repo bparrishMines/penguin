@@ -18,6 +18,14 @@
 - (NSString *)uniqueID {
   return @"test_uniqueID";
 }
+
+- (BOOL)isSmoothAutoFocusSupported {
+  return YES;
+}
+
+- (BOOL)hasFlash {
+  return NO;
+}
 @end
 
 @interface IAFCaptureDeviceDiscoverySessionTests : XCTestCase
