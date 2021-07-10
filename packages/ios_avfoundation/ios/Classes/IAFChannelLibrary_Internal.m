@@ -279,12 +279,38 @@
 
  position:(NSNumber * _Nullable)position
 
+ isSmoothAutoFocusSupported:(NSNumber * _Nullable)isSmoothAutoFocusSupported
+
+ hasFlash:(NSNumber * _Nullable)hasFlash
+
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
   [self createNewInstancePair:_instance
-                    arguments:@[uniqueId ? (NSObject *) uniqueId : [NSNull null],position ? (NSObject *) position : [NSNull null],]
+                    arguments:@[uniqueId ? (NSObject *) uniqueId : [NSNull null],position ? (NSObject *) position : [NSNull null],isSmoothAutoFocusSupported ? (NSObject *) isSmoothAutoFocusSupported : [NSNull null],hasFlash ? (NSObject *) hasFlash : [NSNull null],]
                         owner:_owner
                    completion:completion];
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -845,6 +871,10 @@
                                  uniqueId:(NSString *)uniqueId
 
                                  position:(NSNumber *)position
+
+                                 isSmoothAutoFocusSupported:(NSNumber *)isSmoothAutoFocusSupported
+
+                                 hasFlash:(NSNumber *)hasFlash
 {
   @throw [NSException exceptionWithName:@"_IAFUnimplementedException" reason:nil userInfo:nil];
 }
@@ -859,6 +889,106 @@
 }
 
 
+
+
+
+- (id _Nullable)_lockForConfiguration:(NSObject<_IAFCaptureDevice> *)_instance
+ {
+  return [_instance lockForConfiguration
+          ];
+}
+
+
+
+- (id _Nullable)_unlockForConfiguration:(NSObject<_IAFCaptureDevice> *)_instance
+ {
+  return [_instance unlockForConfiguration
+          ];
+}
+
+
+
+- (id _Nullable)_supportsCaptureSessionPresets:(NSObject<_IAFCaptureDevice> *)_instance
+
+                     presets:(NSArray<NSString *> * _Nullable)presets
+ {
+  return [_instance supportsCaptureSessionPresets:presets
+          ];
+}
+
+
+
+- (id _Nullable)_isAdjustingExposure:(NSObject<_IAFCaptureDevice> *)_instance
+ {
+  return [_instance isAdjustingExposure
+          ];
+}
+
+
+
+- (id _Nullable)_setExposureMode:(NSObject<_IAFCaptureDevice> *)_instance
+
+                     mode:(NSNumber * _Nullable)mode
+ {
+  return [_instance setExposureMode:mode
+          ];
+}
+
+
+
+- (id _Nullable)_exposureModesSupported:(NSObject<_IAFCaptureDevice> *)_instance
+
+                     modes:(NSArray<NSNumber *> * _Nullable)modes
+ {
+  return [_instance exposureModesSupported:modes
+          ];
+}
+
+
+
+- (id _Nullable)_setFocusMode:(NSObject<_IAFCaptureDevice> *)_instance
+
+                     mode:(NSNumber * _Nullable)mode
+ {
+  return [_instance setFocusMode:mode
+          ];
+}
+
+
+
+- (id _Nullable)_focusModesSupported:(NSObject<_IAFCaptureDevice> *)_instance
+
+                     modes:(NSArray<NSNumber *> * _Nullable)modes
+ {
+  return [_instance focusModesSupported:modes
+          ];
+}
+
+
+
+- (id _Nullable)_isAdjustingFocus:(NSObject<_IAFCaptureDevice> *)_instance
+ {
+  return [_instance isAdjustingFocus
+          ];
+}
+
+
+
+- (id _Nullable)_setSmoothAutoFocusEnabled:(NSObject<_IAFCaptureDevice> *)_instance
+
+                     enabled:(NSNumber * _Nullable)enabled
+ {
+  return [_instance setSmoothAutoFocusEnabled:enabled
+          ];
+}
+
+
+
+- (id _Nullable)_isFlashAvailable:(NSObject<_IAFCaptureDevice> *)_instance
+ {
+  return [_instance isFlashAvailable
+          ];
+}
 
 
 
@@ -881,7 +1011,7 @@
 
 - (nonnull id)createInstance:(nonnull REFTypeChannelMessenger *)messenger
                    arguments:(nonnull NSArray *)arguments {
-  return [self __create:messenger uniqueId:arguments[0] position:arguments[1] ];
+  return [self __create:messenger uniqueId:arguments[0] position:arguments[1] isSmoothAutoFocusSupported:arguments[2] hasFlash:arguments[3] ];
 }
 
 - (id _Nullable)invokeMethod:(nonnull REFTypeChannelMessenger *)messenger
@@ -889,6 +1019,89 @@
                   methodName:(nonnull NSString *)methodName
                    arguments:(nonnull NSArray *)arguments {
   NSObject<_IAFCaptureDevice> *value = (NSObject<_IAFCaptureDevice> *) instance;
+  
+  
+  if ([@"lockForConfiguration" isEqualToString:methodName]) {
+    return [self _lockForConfiguration:value
+               ];
+  }
+  
+  else
+  
+  if ([@"unlockForConfiguration" isEqualToString:methodName]) {
+    return [self _unlockForConfiguration:value
+               ];
+  }
+  
+  else
+  
+  if ([@"supportsCaptureSessionPresets" isEqualToString:methodName]) {
+    return [self _supportsCaptureSessionPresets:value
+               
+               presets:arguments[0] ];
+  }
+  
+  else
+  
+  if ([@"isAdjustingExposure" isEqualToString:methodName]) {
+    return [self _isAdjustingExposure:value
+               ];
+  }
+  
+  else
+  
+  if ([@"setExposureMode" isEqualToString:methodName]) {
+    return [self _setExposureMode:value
+               
+               mode:arguments[0] ];
+  }
+  
+  else
+  
+  if ([@"exposureModesSupported" isEqualToString:methodName]) {
+    return [self _exposureModesSupported:value
+               
+               modes:arguments[0] ];
+  }
+  
+  else
+  
+  if ([@"setFocusMode" isEqualToString:methodName]) {
+    return [self _setFocusMode:value
+               
+               mode:arguments[0] ];
+  }
+  
+  else
+  
+  if ([@"focusModesSupported" isEqualToString:methodName]) {
+    return [self _focusModesSupported:value
+               
+               modes:arguments[0] ];
+  }
+  
+  else
+  
+  if ([@"isAdjustingFocus" isEqualToString:methodName]) {
+    return [self _isAdjustingFocus:value
+               ];
+  }
+  
+  else
+  
+  if ([@"setSmoothAutoFocusEnabled" isEqualToString:methodName]) {
+    return [self _setSmoothAutoFocusEnabled:value
+               
+               enabled:arguments[0] ];
+  }
+  
+  else
+  
+  if ([@"isFlashAvailable" isEqualToString:methodName]) {
+    return [self _isFlashAvailable:value
+               ];
+  }
+  
   
   
   NSLog(@"Unable to invoke %@.%@", instance, methodName);

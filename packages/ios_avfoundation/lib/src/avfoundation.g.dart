@@ -355,12 +355,16 @@ class $CaptureDeviceChannel extends TypeChannel<$CaptureDevice> {
     required bool $owner,
     required String uniqueId,
     required int position,
+    required bool isSmoothAutoFocusSupported,
+    required bool hasFlash,
   }) {
     return createNewInstancePair(
       $instance,
       <Object?>[
         uniqueId,
         position,
+        isSmoothAutoFocusSupported,
+        hasFlash,
       ],
       owner: $owner,
     );
@@ -374,6 +378,134 @@ class $CaptureDeviceChannel extends TypeChannel<$CaptureDevice> {
       <Object?>[
         mediaType,
       ],
+    );
+  }
+
+  Future<Object?> $lockForConfiguration(
+    $CaptureDevice $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'lockForConfiguration',
+      <Object?>[],
+    );
+  }
+
+  Future<Object?> $unlockForConfiguration(
+    $CaptureDevice $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'unlockForConfiguration',
+      <Object?>[],
+    );
+  }
+
+  Future<Object?> $supportsCaptureSessionPresets(
+    $CaptureDevice $instance,
+    List<String> presets,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'supportsCaptureSessionPresets',
+      <Object?>[
+        presets,
+      ],
+    );
+  }
+
+  Future<Object?> $isAdjustingExposure(
+    $CaptureDevice $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'isAdjustingExposure',
+      <Object?>[],
+    );
+  }
+
+  Future<Object?> $setExposureMode(
+    $CaptureDevice $instance,
+    int mode,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'setExposureMode',
+      <Object?>[
+        mode,
+      ],
+    );
+  }
+
+  Future<Object?> $exposureModesSupported(
+    $CaptureDevice $instance,
+    List<int> modes,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'exposureModesSupported',
+      <Object?>[
+        modes,
+      ],
+    );
+  }
+
+  Future<Object?> $setFocusMode(
+    $CaptureDevice $instance,
+    int mode,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'setFocusMode',
+      <Object?>[
+        mode,
+      ],
+    );
+  }
+
+  Future<Object?> $focusModesSupported(
+    $CaptureDevice $instance,
+    List<int> modes,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'focusModesSupported',
+      <Object?>[
+        modes,
+      ],
+    );
+  }
+
+  Future<Object?> $isAdjustingFocus(
+    $CaptureDevice $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'isAdjustingFocus',
+      <Object?>[],
+    );
+  }
+
+  Future<Object?> $setSmoothAutoFocusEnabled(
+    $CaptureDevice $instance,
+    bool enabled,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'setSmoothAutoFocusEnabled',
+      <Object?>[
+        enabled,
+      ],
+    );
+  }
+
+  Future<Object?> $isFlashAvailable(
+    $CaptureDevice $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'isFlashAvailable',
+      <Object?>[],
     );
   }
 }
@@ -980,6 +1112,8 @@ class $CaptureDeviceHandler implements TypeChannelHandler<$CaptureDevice> {
     TypeChannelMessenger messenger,
     String uniqueId,
     int position,
+    bool isSmoothAutoFocusSupported,
+    bool hasFlash,
   ) {
     throw UnimplementedError();
   }
@@ -1009,6 +1143,8 @@ class $CaptureDeviceHandler implements TypeChannelHandler<$CaptureDevice> {
       messenger,
       arguments[0] as String,
       arguments[1] as int,
+      arguments[2] as bool,
+      arguments[3] as bool,
     );
   }
 

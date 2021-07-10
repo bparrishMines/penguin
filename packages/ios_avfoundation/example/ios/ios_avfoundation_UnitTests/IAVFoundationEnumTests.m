@@ -14,6 +14,7 @@
 
 - (void)testMediaType {
   XCTAssertEqualObjects(AVMediaTypeVideo, @"vide");
+  XCTAssertEqualObjects(AVMediaTypeAudio, @"soun");
 }
 
 - (void)testVideoSettingsKeys {
@@ -46,5 +47,23 @@
   XCTAssertEqualObjects(AVCaptureSessionPreset1920x1080, @"AVCaptureSessionPreset1920x1080");
   XCTAssertEqualObjects(AVCaptureSessionPresetiFrame960x540, @"AVCaptureSessionPresetiFrame960x540");
   XCTAssertEqualObjects(AVCaptureSessionPresetiFrame1280x720, @"AVCaptureSessionPresetiFrame1280x720");
+}
+
+- (void)testExposureMode {
+  XCTAssertEqual(AVCaptureExposureModeLocked, 0);
+  XCTAssertEqual(AVCaptureExposureModeAutoExpose, 1);
+  XCTAssertEqual(AVCaptureExposureModeContinuousAutoExposure, 2);
+}
+
+- (void)testFocusMode {
+  XCTAssertEqual(AVCaptureFocusModeLocked, 0);
+  XCTAssertEqual(AVCaptureFocusModeAutoFocus, 1);
+  XCTAssertEqual(AVCaptureFocusModeContinuousAutoFocus, 2);
+}
+
+- (void)testFlashMode {
+  XCTAssertEqual(AVCaptureFlashModeOff, 0);
+  XCTAssertEqual(AVCaptureFlashModeOn, 1);
+  XCTAssertEqual(AVCaptureFlashModeAuto, 2);
 }
 @end
