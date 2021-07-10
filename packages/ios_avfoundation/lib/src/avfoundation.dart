@@ -1121,29 +1121,6 @@ class CaptureDevice with $CaptureDevice {
     return await _channel.$isFlashAvailable(this) as bool;
   }
 
-  /// The device’s current flash mode.
-  ///
-  /// Before changing the value of this property, you must call
-  /// [lockForConfiguration] to acquire exclusive access to the device’s
-  /// configuration properties. Otherwise, setting the value of this property
-  /// raises an exception. When you finish configuring the device, call
-  /// [unlockForConfiguration] to release the lock and allow other devices to
-  /// configure the settings.
-  ///
-  /// See [CaptureFlashMode] for possible values.
-  Future<void> setFlashMode(int mode) {
-    return _channel.$setFlashMode(this, mode);
-  }
-
-  /// Returns a subset of values that indicates whether the given flash modes are supported.
-  ///
-  /// See [CaptureFlashMode].
-  Future<List<int>> flashModesSupported(List<int> modes) async {
-    final List<Object?> supportedModes =
-        await _channel.$flashModesSupported(this, modes) as List<Object?>;
-    return supportedModes.cast<int>();
-  }
-
   @ReferenceMethod(ignore: true)
   @override
   String toString() {

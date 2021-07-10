@@ -44,6 +44,77 @@
 - (NSString * _Nullable)uniqueId {
   return _captureDevice.uniqueID;
 }
+
+- (NSArray<NSNumber *> *)exposureModesSupported:(NSArray<NSNumber *> * _Nullable)modes {
+  NSMutableArray<NSNumber *> *validModes = [NSMutableArray array];
+  for (NSNumber *mode in modes) {
+    if ([_captureDevice isExposureModeSupported:mode.intValue]) {
+      [validModes addObject:mode];
+    }
+  }
+  return validModes;
+}
+
+- (NSArray<NSNumber *> *)focusModesSupported:(NSArray<NSNumber *> * _Nullable)modes {
+  NSMutableArray<NSNumber *> *validModes = [NSMutableArray array];
+  for (NSNumber *mode in modes) {
+    if ([_captureDevice isFocusModeSupported:mode.intValue]) {
+      [validModes addObject:mode];
+    }
+  }
+  return validModes;
+}
+
+- (NSNumber *)isAdjustingExposure {
+  return @([_captureDevice isAdjustingExposure]);
+}
+
+- (NSNumber *)isAdjustingFocus {
+  return @([_captureDevice isAdjustingFocus]);
+}
+
+- (NSNumber *)isFlashAvailable {
+  return @([_captureDevice isFlashAvailable]);
+}
+
+- (NSNumber *)lockForConfiguration {
+  NSError *error;
+  BOOL locked = [_captureDevice lockForConfiguration:&error];
+  if (error) {
+    @throw [NSException exceptionWithName:error.domain reason:error.localizedDescription userInfo:nil];
+  }
+  return @(locked);
+}
+
+- (id _Nullable)setExposureMode:(NSNumber * _Nullable)mode {
+  [_captureDevice setExposureMode:mode.intValue];
+  return nil;
+}
+
+- (id _Nullable)setFocusMode:(NSNumber * _Nullable)mode {
+  [_captureDevice setFocusMode:mode.intValue];
+  return nil;
+}
+
+- (id _Nullable)setSmoothAutoFocusEnabled:(NSNumber * _Nullable)enabled {
+  [_captureDevice setSmoothAutoFocusEnabled:enabled.boolValue];
+  return nil;
+}
+
+- (NSArray<NSString *> *)supportsCaptureSessionPresets:(NSArray<NSString *> * _Nullable)presets {
+  NSMutableArray<NSString *> *validPresets = [NSMutableArray array];
+  for (NSString *preset in presets) {
+    if ([_captureDevice supportsAVCaptureSessionPreset:preset]) {
+      [validPresets addObject:preset];
+    }
+  }
+  return validPresets;
+}
+
+- (id _Nullable)unlockForConfiguration {
+  [_captureDevice unlockForConfiguration];
+  return nil;
+}
 @end
 
 @implementation IAFCaptureSessionProxy

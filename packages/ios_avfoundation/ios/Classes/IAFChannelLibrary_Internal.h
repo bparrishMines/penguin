@@ -229,22 +229,6 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 ;
 
 
-
-- (id _Nullable)setFlashMode
-                                :(NSNumber * _Nullable)mode
-
-
-;
-
-
-
-- (id _Nullable)flashModesSupported
-                                :(NSArray<NSNumber *> * _Nullable)modes
-
-
-;
-
-
 @end
 
 @protocol _IAFCaptureDeviceDiscoverySession <NSObject>
@@ -443,10 +427,6 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
  hasFlash:(NSNumber * _Nullable)hasFlash
 
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion;
-
-
-
-
 
 
 
@@ -763,20 +743,6 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 
 
 - (id _Nullable)_isFlashAvailable:(NSObject<_IAFCaptureDevice> *)_instance
-;
-
-
-
-- (id _Nullable)_setFlashMode:(NSObject<_IAFCaptureDevice> *)_instance
-
-  mode:(NSNumber * _Nullable)mode
-;
-
-
-
-- (id _Nullable)_flashModesSupported:(NSObject<_IAFCaptureDevice> *)_instance
-
-  modes:(NSArray<NSNumber *> * _Nullable)modes
 ;
 
 

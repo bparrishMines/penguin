@@ -317,10 +317,6 @@
 
 
 
-
-
-
-
 @end
 
 @implementation _IAFCaptureDeviceDiscoverySessionChannel
@@ -996,26 +992,6 @@
 
 
 
-- (id _Nullable)_setFlashMode:(NSObject<_IAFCaptureDevice> *)_instance
-
-                     mode:(NSNumber * _Nullable)mode
- {
-  return [_instance setFlashMode:mode
-          ];
-}
-
-
-
-- (id _Nullable)_flashModesSupported:(NSObject<_IAFCaptureDevice> *)_instance
-
-                     modes:(NSArray<NSNumber *> * _Nullable)modes
- {
-  return [_instance flashModesSupported:modes
-          ];
-}
-
-
-
 - (id _Nullable)invokeStaticMethod:(nonnull REFTypeChannelMessenger *)messenger
                         methodName:(nonnull NSString *)methodName
                          arguments:(nonnull NSArray *)arguments {
@@ -1124,22 +1100,6 @@
   if ([@"isFlashAvailable" isEqualToString:methodName]) {
     return [self _isFlashAvailable:value
                ];
-  }
-  
-  else
-  
-  if ([@"setFlashMode" isEqualToString:methodName]) {
-    return [self _setFlashMode:value
-               
-               mode:arguments[0] ];
-  }
-  
-  else
-  
-  if ([@"flashModesSupported" isEqualToString:methodName]) {
-    return [self _flashModesSupported:value
-               
-               modes:arguments[0] ];
   }
   
   

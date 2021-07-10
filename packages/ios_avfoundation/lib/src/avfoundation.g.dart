@@ -2,26 +2,22 @@
 
 import 'package:reference/reference.dart';
 
-import  'dart:typed_data' ;
+import 'dart:typed_data';
 
-import  'avfoundation.dart' ;
-
+import 'avfoundation.dart';
 
 // **************************************************************************
 // ReferenceGenerator
 // **************************************************************************
 
-
 typedef $FinishProcessingPhotoCallback = dynamic Function(
-   CapturePhoto photo,
-  
+  CapturePhoto photo,
 );
-
-
 
 class $FinishProcessingPhotoCallbackChannel extends TypeChannel<Object> {
   $FinishProcessingPhotoCallbackChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'ios_avfoundation/avfoundation/FinishProcessingPhotoCallback');
+      : super(messenger,
+            'ios_avfoundation/avfoundation/FinishProcessingPhotoCallback');
 
   Future<PairedInstance?> $$create(
     $FinishProcessingPhotoCallback $instance, {
@@ -36,22 +32,20 @@ class $FinishProcessingPhotoCallbackChannel extends TypeChannel<Object> {
 
   Future<Object?> _invoke(
     $FinishProcessingPhotoCallback $instance,
-     CapturePhoto photo,
-    
+    CapturePhoto photo,
   ) {
     return sendInvokeMethod(
       $instance,
       '',
       <Object?>[
-         photo, 
+        photo,
       ],
     );
   }
 }
 
-
-
-class $FinishProcessingPhotoCallbackHandler implements TypeChannelHandler<Object> {
+class $FinishProcessingPhotoCallbackHandler
+    implements TypeChannelHandler<Object> {
   $FinishProcessingPhotoCallbackHandler(this.implementations);
 
   final $LibraryImplementations implementations;
@@ -62,12 +56,11 @@ class $FinishProcessingPhotoCallbackHandler implements TypeChannelHandler<Object
     List<Object?> arguments,
   ) {
     function(
-       CapturePhoto photo,
-      
+      CapturePhoto photo,
     ) {
       implementations.channelFinishProcessingPhotoCallback._invoke(
         function,
-         photo, 
+        photo,
       );
     }
 
@@ -82,9 +75,7 @@ class $FinishProcessingPhotoCallbackHandler implements TypeChannelHandler<Object
     List<Object?> arguments,
   ) {
     return instance(
-      
       arguments[0] as CapturePhoto,
-      
     );
   }
 
@@ -98,117 +89,33 @@ class $FinishProcessingPhotoCallbackHandler implements TypeChannelHandler<Object
   }
 }
 
+mixin $CapturePhotoOutput {}
 
+mixin $CapturePhotoSettings {}
 
-mixin $CapturePhotoOutput {
-  
-  
-  
-}
+mixin $CapturePhotoCaptureDelegate {}
 
-mixin $CapturePhotoSettings {
-  
-}
+mixin $CaptureOutput {}
 
-mixin $CapturePhotoCaptureDelegate {
-  
-}
+mixin $CapturePhoto {}
 
-mixin $CaptureOutput {
-  
-}
+mixin $CaptureDeviceInput {}
 
-mixin $CapturePhoto {
-  
-}
+mixin $CaptureInput {}
 
-mixin $CaptureDeviceInput {
-  
-}
+mixin $CaptureSession {}
 
-mixin $CaptureInput {
-  
-}
+mixin $CaptureDevice {}
 
-mixin $CaptureSession {
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-}
+mixin $CaptureDeviceDiscoverySession {}
 
-mixin $CaptureDevice {
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-}
+mixin $PreviewController {}
 
-mixin $CaptureDeviceDiscoverySession {
-  
-}
+mixin $CaptureFileOutput {}
 
-mixin $PreviewController {
-  
-}
+mixin $CaptureMovieFileOutput {}
 
-mixin $CaptureFileOutput {
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-}
-
-mixin $CaptureMovieFileOutput {
-  
-  
-  
-}
-
-mixin $CaptureFileOutputRecordingDelegate {
-  
-}
-
-
+mixin $CaptureFileOutputRecordingDelegate {}
 
 class $CapturePhotoOutputChannel extends TypeChannel<$CapturePhotoOutput> {
   $CapturePhotoOutputChannel(TypeChannelMessenger messenger)
@@ -217,37 +124,28 @@ class $CapturePhotoOutputChannel extends TypeChannel<$CapturePhotoOutput> {
   Future<PairedInstance?> $$create(
     $CapturePhotoOutput $instance, {
     required bool $owner,
-    
   }) {
     return createNewInstancePair(
       $instance,
-      <Object?>[
-        
-      ],
+      <Object?>[],
       owner: $owner,
     );
   }
 
-  
-
-  
-  
   Future<Object?> $capturePhotoWithSettings(
     $CapturePhotoOutput $instance,
-     $CapturePhotoSettings settings,
-     $CapturePhotoCaptureDelegate delegate,
-    
+    $CapturePhotoSettings settings,
+    $CapturePhotoCaptureDelegate delegate,
   ) {
     return sendInvokeMethod(
       $instance,
       'capturePhotoWithSettings',
       <Object?>[
-         settings,  delegate, 
+        settings,
+        delegate,
       ],
     );
   }
-  
-  
 }
 
 class $CapturePhotoSettingsChannel extends TypeChannel<$CapturePhotoSettings> {
@@ -257,47 +155,37 @@ class $CapturePhotoSettingsChannel extends TypeChannel<$CapturePhotoSettings> {
   Future<PairedInstance?> $$create(
     $CapturePhotoSettings $instance, {
     required bool $owner,
-    
     required Map processedFormat,
-    
   }) {
     return createNewInstancePair(
       $instance,
       <Object?>[
-         processedFormat, 
+        processedFormat,
       ],
       owner: $owner,
     );
   }
-
-  
-
-  
 }
 
-class $CapturePhotoCaptureDelegateChannel extends TypeChannel<$CapturePhotoCaptureDelegate> {
+class $CapturePhotoCaptureDelegateChannel
+    extends TypeChannel<$CapturePhotoCaptureDelegate> {
   $CapturePhotoCaptureDelegateChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'ios_avfoundation/avfoundation/CapturePhotoCaptureDelegate');
+      : super(messenger,
+            'ios_avfoundation/avfoundation/CapturePhotoCaptureDelegate');
 
   Future<PairedInstance?> $$create(
     $CapturePhotoCaptureDelegate $instance, {
     required bool $owner,
-    
     required $FinishProcessingPhotoCallback didFinishProcessingPhoto,
-    
   }) {
     return createNewInstancePair(
       $instance,
       <Object?>[
-         didFinishProcessingPhoto, 
+        didFinishProcessingPhoto,
       ],
       owner: $owner,
     );
   }
-
-  
-
-  
 }
 
 class $CaptureOutputChannel extends TypeChannel<$CaptureOutput> {
@@ -307,20 +195,13 @@ class $CaptureOutputChannel extends TypeChannel<$CaptureOutput> {
   Future<PairedInstance?> $$create(
     $CaptureOutput $instance, {
     required bool $owner,
-    
   }) {
     return createNewInstancePair(
       $instance,
-      <Object?>[
-        
-      ],
+      <Object?>[],
       owner: $owner,
     );
   }
-
-  
-
-  
 }
 
 class $CapturePhotoChannel extends TypeChannel<$CapturePhoto> {
@@ -330,22 +211,16 @@ class $CapturePhotoChannel extends TypeChannel<$CapturePhoto> {
   Future<PairedInstance?> $$create(
     $CapturePhoto $instance, {
     required bool $owner,
-    
     required Uint8List? fileDataRepresentation,
-    
   }) {
     return createNewInstancePair(
       $instance,
       <Object?>[
-         fileDataRepresentation, 
+        fileDataRepresentation,
       ],
       owner: $owner,
     );
   }
-
-  
-
-  
 }
 
 class $CaptureDeviceInputChannel extends TypeChannel<$CaptureDeviceInput> {
@@ -355,22 +230,16 @@ class $CaptureDeviceInputChannel extends TypeChannel<$CaptureDeviceInput> {
   Future<PairedInstance?> $$create(
     $CaptureDeviceInput $instance, {
     required bool $owner,
-    
     required $CaptureDevice device,
-    
   }) {
     return createNewInstancePair(
       $instance,
       <Object?>[
-         device, 
+        device,
       ],
       owner: $owner,
     );
   }
-
-  
-
-  
 }
 
 class $CaptureInputChannel extends TypeChannel<$CaptureInput> {
@@ -380,20 +249,13 @@ class $CaptureInputChannel extends TypeChannel<$CaptureInput> {
   Future<PairedInstance?> $$create(
     $CaptureInput $instance, {
     required bool $owner,
-    
   }) {
     return createNewInstancePair(
       $instance,
-      <Object?>[
-        
-      ],
+      <Object?>[],
       owner: $owner,
     );
   }
-
-  
-
-  
 }
 
 class $CaptureSessionChannel extends TypeChannel<$CaptureSession> {
@@ -403,114 +265,85 @@ class $CaptureSessionChannel extends TypeChannel<$CaptureSession> {
   Future<PairedInstance?> $$create(
     $CaptureSession $instance, {
     required bool $owner,
-    
   }) {
     return createNewInstancePair(
       $instance,
-      <Object?>[
-        
-      ],
+      <Object?>[],
       owner: $owner,
     );
   }
 
-  
-
-  
-  
   Future<Object?> $addInput(
     $CaptureSession $instance,
-     $CaptureInput input,
-    
+    $CaptureInput input,
   ) {
     return sendInvokeMethod(
       $instance,
       'addInput',
       <Object?>[
-         input, 
+        input,
       ],
     );
   }
-  
-  
-  
+
   Future<Object?> $addOutput(
     $CaptureSession $instance,
-     $CaptureOutput output,
-    
+    $CaptureOutput output,
   ) {
     return sendInvokeMethod(
       $instance,
       'addOutput',
       <Object?>[
-         output, 
+        output,
       ],
     );
   }
-  
-  
-  
+
   Future<Object?> $startRunning(
     $CaptureSession $instance,
-    
   ) {
     return sendInvokeMethod(
       $instance,
       'startRunning',
-      <Object?>[
-        
-      ],
+      <Object?>[],
     );
   }
-  
-  
-  
+
   Future<Object?> $stopRunning(
     $CaptureSession $instance,
-    
   ) {
     return sendInvokeMethod(
       $instance,
       'stopRunning',
-      <Object?>[
-        
-      ],
+      <Object?>[],
     );
   }
-  
-  
-  
+
   Future<Object?> $setSessionPreset(
     $CaptureSession $instance,
-     String preset,
-    
+    String preset,
   ) {
     return sendInvokeMethod(
       $instance,
       'setSessionPreset',
       <Object?>[
-         preset, 
+        preset,
       ],
     );
   }
-  
-  
-  
+
   Future<Object?> $canSetSessionPresets(
     $CaptureSession $instance,
-     List<String> presets,
-    
+    List<String> presets,
   ) {
     return sendInvokeMethod(
       $instance,
       'canSetSessionPresets',
       <Object?>[
-         presets, 
+        presets,
       ],
     );
   }
-  
-  
 }
 
 class $CaptureDeviceChannel extends TypeChannel<$CaptureDevice> {
@@ -520,288 +353,199 @@ class $CaptureDeviceChannel extends TypeChannel<$CaptureDevice> {
   Future<PairedInstance?> $$create(
     $CaptureDevice $instance, {
     required bool $owner,
-    
     required String uniqueId,
-    
     required int position,
-    
     required bool isSmoothAutoFocusSupported,
-    
     required bool hasFlash,
-    
   }) {
     return createNewInstancePair(
       $instance,
       <Object?>[
-         uniqueId,  position,  isSmoothAutoFocusSupported,  hasFlash, 
+        uniqueId,
+        position,
+        isSmoothAutoFocusSupported,
+        hasFlash,
       ],
       owner: $owner,
     );
   }
 
-  
-  
   Future<Object?> $defaultDeviceWithMediaType(
-     String mediaType,
-    
+    String mediaType,
   ) {
     return sendInvokeStaticMethod(
       'defaultDeviceWithMediaType',
       <Object?>[
-         mediaType, 
+        mediaType,
       ],
     );
   }
-  
-  
 
-  
-  
   Future<Object?> $lockForConfiguration(
     $CaptureDevice $instance,
-    
   ) {
     return sendInvokeMethod(
       $instance,
       'lockForConfiguration',
-      <Object?>[
-        
-      ],
+      <Object?>[],
     );
   }
-  
-  
-  
+
   Future<Object?> $unlockForConfiguration(
     $CaptureDevice $instance,
-    
   ) {
     return sendInvokeMethod(
       $instance,
       'unlockForConfiguration',
-      <Object?>[
-        
-      ],
+      <Object?>[],
     );
   }
-  
-  
-  
+
   Future<Object?> $supportsCaptureSessionPresets(
     $CaptureDevice $instance,
-     List<String> presets,
-    
+    List<String> presets,
   ) {
     return sendInvokeMethod(
       $instance,
       'supportsCaptureSessionPresets',
       <Object?>[
-         presets, 
+        presets,
       ],
     );
   }
-  
-  
-  
+
   Future<Object?> $isAdjustingExposure(
     $CaptureDevice $instance,
-    
   ) {
     return sendInvokeMethod(
       $instance,
       'isAdjustingExposure',
-      <Object?>[
-        
-      ],
+      <Object?>[],
     );
   }
-  
-  
-  
+
   Future<Object?> $setExposureMode(
     $CaptureDevice $instance,
-     int mode,
-    
+    int mode,
   ) {
     return sendInvokeMethod(
       $instance,
       'setExposureMode',
       <Object?>[
-         mode, 
+        mode,
       ],
     );
   }
-  
-  
-  
+
   Future<Object?> $exposureModesSupported(
     $CaptureDevice $instance,
-     List<int> modes,
-    
+    List<int> modes,
   ) {
     return sendInvokeMethod(
       $instance,
       'exposureModesSupported',
       <Object?>[
-         modes, 
+        modes,
       ],
     );
   }
-  
-  
-  
+
   Future<Object?> $setFocusMode(
     $CaptureDevice $instance,
-     int mode,
-    
+    int mode,
   ) {
     return sendInvokeMethod(
       $instance,
       'setFocusMode',
       <Object?>[
-         mode, 
+        mode,
       ],
     );
   }
-  
-  
-  
+
   Future<Object?> $focusModesSupported(
     $CaptureDevice $instance,
-     List<int> modes,
-    
+    List<int> modes,
   ) {
     return sendInvokeMethod(
       $instance,
       'focusModesSupported',
       <Object?>[
-         modes, 
+        modes,
       ],
     );
   }
-  
-  
-  
+
   Future<Object?> $isAdjustingFocus(
     $CaptureDevice $instance,
-    
   ) {
     return sendInvokeMethod(
       $instance,
       'isAdjustingFocus',
-      <Object?>[
-        
-      ],
+      <Object?>[],
     );
   }
-  
-  
-  
+
   Future<Object?> $setSmoothAutoFocusEnabled(
     $CaptureDevice $instance,
-     bool enabled,
-    
+    bool enabled,
   ) {
     return sendInvokeMethod(
       $instance,
       'setSmoothAutoFocusEnabled',
       <Object?>[
-         enabled, 
+        enabled,
       ],
     );
   }
-  
-  
-  
+
   Future<Object?> $isFlashAvailable(
     $CaptureDevice $instance,
-    
   ) {
     return sendInvokeMethod(
       $instance,
       'isFlashAvailable',
-      <Object?>[
-        
-      ],
+      <Object?>[],
     );
   }
-  
-  
-  
-  Future<Object?> $setFlashMode(
-    $CaptureDevice $instance,
-     int mode,
-    
-  ) {
-    return sendInvokeMethod(
-      $instance,
-      'setFlashMode',
-      <Object?>[
-         mode, 
-      ],
-    );
-  }
-  
-  
-  
-  Future<Object?> $flashModesSupported(
-    $CaptureDevice $instance,
-     List<int> modes,
-    
-  ) {
-    return sendInvokeMethod(
-      $instance,
-      'flashModesSupported',
-      <Object?>[
-         modes, 
-      ],
-    );
-  }
-  
-  
 }
 
-class $CaptureDeviceDiscoverySessionChannel extends TypeChannel<$CaptureDeviceDiscoverySession> {
+class $CaptureDeviceDiscoverySessionChannel
+    extends TypeChannel<$CaptureDeviceDiscoverySession> {
   $CaptureDeviceDiscoverySessionChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'ios_avfoundation/avfoundation/CaptureDeviceDiscoverySession');
+      : super(messenger,
+            'ios_avfoundation/avfoundation/CaptureDeviceDiscoverySession');
 
   Future<PairedInstance?> $$create(
     $CaptureDeviceDiscoverySession $instance, {
     required bool $owner,
-    
     required List<$CaptureDevice> devices,
-    
     required List<List<$CaptureDevice>> supportedMultiCamDeviceSets,
-    
   }) {
     return createNewInstancePair(
       $instance,
       <Object?>[
-         devices,  supportedMultiCamDeviceSets, 
+        devices,
+        supportedMultiCamDeviceSets,
       ],
       owner: $owner,
     );
   }
 
-  
-  
   Future<Object?> $discoverySessionWithDeviceTypes(
-     List<String> deviceTypes,
-     String? mediaType,
-     int position,
-    
+    List<String> deviceTypes,
+    String? mediaType,
+    int position,
   ) {
     return sendInvokeStaticMethod(
       'discoverySessionWithDeviceTypes',
       <Object?>[
-         deviceTypes,  mediaType,  position, 
+        deviceTypes,
+        mediaType,
+        position,
       ],
     );
   }
-  
-  
-
-  
 }
 
 class $PreviewControllerChannel extends TypeChannel<$PreviewController> {
@@ -811,22 +555,16 @@ class $PreviewControllerChannel extends TypeChannel<$PreviewController> {
   Future<PairedInstance?> $$create(
     $PreviewController $instance, {
     required bool $owner,
-    
     required $CaptureSession captureSession,
-    
   }) {
     return createNewInstancePair(
       $instance,
       <Object?>[
-         captureSession, 
+        captureSession,
       ],
       owner: $owner,
     );
   }
-
-  
-
-  
 }
 
 class $CaptureFileOutputChannel extends TypeChannel<$CaptureFileOutput> {
@@ -836,176 +574,126 @@ class $CaptureFileOutputChannel extends TypeChannel<$CaptureFileOutput> {
   Future<PairedInstance?> $$create(
     $CaptureFileOutput $instance, {
     required bool $owner,
-    
   }) {
     return createNewInstancePair(
       $instance,
-      <Object?>[
-        
-      ],
+      <Object?>[],
       owner: $owner,
     );
   }
 
-  
-
-  
-  
   Future<Object?> $outputFileURL(
     $CaptureFileOutput $instance,
-    
   ) {
     return sendInvokeMethod(
       $instance,
       'outputFileURL',
-      <Object?>[
-        
-      ],
+      <Object?>[],
     );
   }
-  
-  
-  
+
   Future<Object?> $setMaxRecordedFileSize(
     $CaptureFileOutput $instance,
-     int fileSize,
-    
+    int fileSize,
   ) {
     return sendInvokeMethod(
       $instance,
       'setMaxRecordedFileSize',
       <Object?>[
-         fileSize, 
+        fileSize,
       ],
     );
   }
-  
-  
-  
+
   Future<Object?> $isRecording(
     $CaptureFileOutput $instance,
-    
   ) {
     return sendInvokeMethod(
       $instance,
       'isRecording',
-      <Object?>[
-        
-      ],
+      <Object?>[],
     );
   }
-  
-  
-  
+
   Future<Object?> $startRecordingToOutputFileURL(
     $CaptureFileOutput $instance,
-     String outputFileURL,
-     $CaptureFileOutputRecordingDelegate delegate,
-    
+    String outputFileURL,
+    $CaptureFileOutputRecordingDelegate delegate,
   ) {
     return sendInvokeMethod(
       $instance,
       'startRecordingToOutputFileURL',
       <Object?>[
-         outputFileURL,  delegate, 
+        outputFileURL,
+        delegate,
       ],
     );
   }
-  
-  
-  
+
   Future<Object?> $stopRecording(
     $CaptureFileOutput $instance,
-    
   ) {
     return sendInvokeMethod(
       $instance,
       'stopRecording',
-      <Object?>[
-        
-      ],
+      <Object?>[],
     );
   }
-  
-  
 }
 
-class $CaptureMovieFileOutputChannel extends TypeChannel<$CaptureMovieFileOutput> {
+class $CaptureMovieFileOutputChannel
+    extends TypeChannel<$CaptureMovieFileOutput> {
   $CaptureMovieFileOutputChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'ios_avfoundation/avfoundation/CaptureMovieFileOutput');
+      : super(
+            messenger, 'ios_avfoundation/avfoundation/CaptureMovieFileOutput');
 
   Future<PairedInstance?> $$create(
     $CaptureMovieFileOutput $instance, {
     required bool $owner,
-    
   }) {
     return createNewInstancePair(
       $instance,
-      <Object?>[
-        
-      ],
+      <Object?>[],
       owner: $owner,
     );
   }
 
-  
-
-  
-  
   Future<Object?> $availableVideoCodecTypes(
     $CaptureMovieFileOutput $instance,
-    
   ) {
     return sendInvokeMethod(
       $instance,
       'availableVideoCodecTypes',
-      <Object?>[
-        
-      ],
+      <Object?>[],
     );
   }
-  
-  
 }
 
-class $CaptureFileOutputRecordingDelegateChannel extends TypeChannel<$CaptureFileOutputRecordingDelegate> {
+class $CaptureFileOutputRecordingDelegateChannel
+    extends TypeChannel<$CaptureFileOutputRecordingDelegate> {
   $CaptureFileOutputRecordingDelegateChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'ios_avfoundation/avfoundation/CaptureFileOutputRecordingDelegate');
+      : super(messenger,
+            'ios_avfoundation/avfoundation/CaptureFileOutputRecordingDelegate');
 
   Future<PairedInstance?> $$create(
     $CaptureFileOutputRecordingDelegate $instance, {
     required bool $owner,
-    
   }) {
     return createNewInstancePair(
       $instance,
-      <Object?>[
-        
-      ],
+      <Object?>[],
       owner: $owner,
     );
   }
-
-  
-
-  
 }
 
-
-
-class $CapturePhotoOutputHandler implements TypeChannelHandler<$CapturePhotoOutput> {
+class $CapturePhotoOutputHandler
+    implements TypeChannelHandler<$CapturePhotoOutput> {
   $CapturePhotoOutput $$create(
     TypeChannelMessenger messenger,
-    
   ) {
     throw UnimplementedError();
   }
-
-  
-
-  
-  
-  
 
   @override
   Object? invokeStaticMethod(
@@ -1014,7 +702,6 @@ class $CapturePhotoOutputHandler implements TypeChannelHandler<$CapturePhotoOutp
     List<Object?> arguments,
   ) {
     switch (methodName) {
-      
     }
 
     throw ArgumentError.value(
@@ -1031,7 +718,6 @@ class $CapturePhotoOutputHandler implements TypeChannelHandler<$CapturePhotoOutp
   ) {
     return $$create(
       messenger,
-      
     );
   }
 
@@ -1043,9 +729,6 @@ class $CapturePhotoOutputHandler implements TypeChannelHandler<$CapturePhotoOutp
     List<Object?> arguments,
   ) {
     switch (methodName) {
-      
-      
-      
     }
 
     throw ArgumentError.value(
@@ -1056,19 +739,14 @@ class $CapturePhotoOutputHandler implements TypeChannelHandler<$CapturePhotoOutp
   }
 }
 
-class $CapturePhotoSettingsHandler implements TypeChannelHandler<$CapturePhotoSettings> {
+class $CapturePhotoSettingsHandler
+    implements TypeChannelHandler<$CapturePhotoSettings> {
   $CapturePhotoSettings $$create(
     TypeChannelMessenger messenger,
-    
     Map processedFormat,
-    
   ) {
     throw UnimplementedError();
   }
-
-  
-
-  
 
   @override
   Object? invokeStaticMethod(
@@ -1077,7 +755,6 @@ class $CapturePhotoSettingsHandler implements TypeChannelHandler<$CapturePhotoSe
     List<Object?> arguments,
   ) {
     switch (methodName) {
-      
     }
 
     throw ArgumentError.value(
@@ -1094,9 +771,7 @@ class $CapturePhotoSettingsHandler implements TypeChannelHandler<$CapturePhotoSe
   ) {
     return $$create(
       messenger,
-      
       arguments[0] as Map,
-      
     );
   }
 
@@ -1108,7 +783,6 @@ class $CapturePhotoSettingsHandler implements TypeChannelHandler<$CapturePhotoSe
     List<Object?> arguments,
   ) {
     switch (methodName) {
-      
     }
 
     throw ArgumentError.value(
@@ -1119,19 +793,14 @@ class $CapturePhotoSettingsHandler implements TypeChannelHandler<$CapturePhotoSe
   }
 }
 
-class $CapturePhotoCaptureDelegateHandler implements TypeChannelHandler<$CapturePhotoCaptureDelegate> {
+class $CapturePhotoCaptureDelegateHandler
+    implements TypeChannelHandler<$CapturePhotoCaptureDelegate> {
   $CapturePhotoCaptureDelegate $$create(
     TypeChannelMessenger messenger,
-    
     $FinishProcessingPhotoCallback didFinishProcessingPhoto,
-    
   ) {
     throw UnimplementedError();
   }
-
-  
-
-  
 
   @override
   Object? invokeStaticMethod(
@@ -1140,7 +809,6 @@ class $CapturePhotoCaptureDelegateHandler implements TypeChannelHandler<$Capture
     List<Object?> arguments,
   ) {
     switch (methodName) {
-      
     }
 
     throw ArgumentError.value(
@@ -1157,9 +825,7 @@ class $CapturePhotoCaptureDelegateHandler implements TypeChannelHandler<$Capture
   ) {
     return $$create(
       messenger,
-      
       arguments[0] as $FinishProcessingPhotoCallback,
-      
     );
   }
 
@@ -1171,7 +837,6 @@ class $CapturePhotoCaptureDelegateHandler implements TypeChannelHandler<$Capture
     List<Object?> arguments,
   ) {
     switch (methodName) {
-      
     }
 
     throw ArgumentError.value(
@@ -1185,14 +850,9 @@ class $CapturePhotoCaptureDelegateHandler implements TypeChannelHandler<$Capture
 class $CaptureOutputHandler implements TypeChannelHandler<$CaptureOutput> {
   $CaptureOutput $$create(
     TypeChannelMessenger messenger,
-    
   ) {
     throw UnimplementedError();
   }
-
-  
-
-  
 
   @override
   Object? invokeStaticMethod(
@@ -1201,7 +861,6 @@ class $CaptureOutputHandler implements TypeChannelHandler<$CaptureOutput> {
     List<Object?> arguments,
   ) {
     switch (methodName) {
-      
     }
 
     throw ArgumentError.value(
@@ -1218,7 +877,6 @@ class $CaptureOutputHandler implements TypeChannelHandler<$CaptureOutput> {
   ) {
     return $$create(
       messenger,
-      
     );
   }
 
@@ -1230,7 +888,6 @@ class $CaptureOutputHandler implements TypeChannelHandler<$CaptureOutput> {
     List<Object?> arguments,
   ) {
     switch (methodName) {
-      
     }
 
     throw ArgumentError.value(
@@ -1244,16 +901,10 @@ class $CaptureOutputHandler implements TypeChannelHandler<$CaptureOutput> {
 class $CapturePhotoHandler implements TypeChannelHandler<$CapturePhoto> {
   $CapturePhoto $$create(
     TypeChannelMessenger messenger,
-    
     Uint8List? fileDataRepresentation,
-    
   ) {
     throw UnimplementedError();
   }
-
-  
-
-  
 
   @override
   Object? invokeStaticMethod(
@@ -1262,7 +913,6 @@ class $CapturePhotoHandler implements TypeChannelHandler<$CapturePhoto> {
     List<Object?> arguments,
   ) {
     switch (methodName) {
-      
     }
 
     throw ArgumentError.value(
@@ -1279,9 +929,7 @@ class $CapturePhotoHandler implements TypeChannelHandler<$CapturePhoto> {
   ) {
     return $$create(
       messenger,
-      
       arguments[0] as Uint8List?,
-      
     );
   }
 
@@ -1293,7 +941,6 @@ class $CapturePhotoHandler implements TypeChannelHandler<$CapturePhoto> {
     List<Object?> arguments,
   ) {
     switch (methodName) {
-      
     }
 
     throw ArgumentError.value(
@@ -1304,19 +951,14 @@ class $CapturePhotoHandler implements TypeChannelHandler<$CapturePhoto> {
   }
 }
 
-class $CaptureDeviceInputHandler implements TypeChannelHandler<$CaptureDeviceInput> {
+class $CaptureDeviceInputHandler
+    implements TypeChannelHandler<$CaptureDeviceInput> {
   $CaptureDeviceInput $$create(
     TypeChannelMessenger messenger,
-    
     $CaptureDevice device,
-    
   ) {
     throw UnimplementedError();
   }
-
-  
-
-  
 
   @override
   Object? invokeStaticMethod(
@@ -1325,7 +967,6 @@ class $CaptureDeviceInputHandler implements TypeChannelHandler<$CaptureDeviceInp
     List<Object?> arguments,
   ) {
     switch (methodName) {
-      
     }
 
     throw ArgumentError.value(
@@ -1342,9 +983,7 @@ class $CaptureDeviceInputHandler implements TypeChannelHandler<$CaptureDeviceInp
   ) {
     return $$create(
       messenger,
-      
       arguments[0] as $CaptureDevice,
-      
     );
   }
 
@@ -1356,7 +995,6 @@ class $CaptureDeviceInputHandler implements TypeChannelHandler<$CaptureDeviceInp
     List<Object?> arguments,
   ) {
     switch (methodName) {
-      
     }
 
     throw ArgumentError.value(
@@ -1370,14 +1008,9 @@ class $CaptureDeviceInputHandler implements TypeChannelHandler<$CaptureDeviceInp
 class $CaptureInputHandler implements TypeChannelHandler<$CaptureInput> {
   $CaptureInput $$create(
     TypeChannelMessenger messenger,
-    
   ) {
     throw UnimplementedError();
   }
-
-  
-
-  
 
   @override
   Object? invokeStaticMethod(
@@ -1386,7 +1019,6 @@ class $CaptureInputHandler implements TypeChannelHandler<$CaptureInput> {
     List<Object?> arguments,
   ) {
     switch (methodName) {
-      
     }
 
     throw ArgumentError.value(
@@ -1403,7 +1035,6 @@ class $CaptureInputHandler implements TypeChannelHandler<$CaptureInput> {
   ) {
     return $$create(
       messenger,
-      
     );
   }
 
@@ -1415,7 +1046,6 @@ class $CaptureInputHandler implements TypeChannelHandler<$CaptureInput> {
     List<Object?> arguments,
   ) {
     switch (methodName) {
-      
     }
 
     throw ArgumentError.value(
@@ -1429,26 +1059,9 @@ class $CaptureInputHandler implements TypeChannelHandler<$CaptureInput> {
 class $CaptureSessionHandler implements TypeChannelHandler<$CaptureSession> {
   $CaptureSession $$create(
     TypeChannelMessenger messenger,
-    
   ) {
     throw UnimplementedError();
   }
-
-  
-
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
 
   @override
   Object? invokeStaticMethod(
@@ -1457,7 +1070,6 @@ class $CaptureSessionHandler implements TypeChannelHandler<$CaptureSession> {
     List<Object?> arguments,
   ) {
     switch (methodName) {
-      
     }
 
     throw ArgumentError.value(
@@ -1474,7 +1086,6 @@ class $CaptureSessionHandler implements TypeChannelHandler<$CaptureSession> {
   ) {
     return $$create(
       messenger,
-      
     );
   }
 
@@ -1486,19 +1097,6 @@ class $CaptureSessionHandler implements TypeChannelHandler<$CaptureSession> {
     List<Object?> arguments,
   ) {
     switch (methodName) {
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
     }
 
     throw ArgumentError.value(
@@ -1512,50 +1110,13 @@ class $CaptureSessionHandler implements TypeChannelHandler<$CaptureSession> {
 class $CaptureDeviceHandler implements TypeChannelHandler<$CaptureDevice> {
   $CaptureDevice $$create(
     TypeChannelMessenger messenger,
-    
     String uniqueId,
-    
     int position,
-    
     bool isSmoothAutoFocusSupported,
-    
     bool hasFlash,
-    
   ) {
     throw UnimplementedError();
   }
-
-  
-  
-  
-
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
 
   @override
   Object? invokeStaticMethod(
@@ -1564,9 +1125,6 @@ class $CaptureDeviceHandler implements TypeChannelHandler<$CaptureDevice> {
     List<Object?> arguments,
   ) {
     switch (methodName) {
-      
-      
-      
     }
 
     throw ArgumentError.value(
@@ -1583,15 +1141,10 @@ class $CaptureDeviceHandler implements TypeChannelHandler<$CaptureDevice> {
   ) {
     return $$create(
       messenger,
-      
       arguments[0] as String,
-      
       arguments[1] as int,
-      
       arguments[2] as bool,
-      
       arguments[3] as bool,
-      
     );
   }
 
@@ -1603,33 +1156,6 @@ class $CaptureDeviceHandler implements TypeChannelHandler<$CaptureDevice> {
     List<Object?> arguments,
   ) {
     switch (methodName) {
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
     }
 
     throw ArgumentError.value(
@@ -1640,23 +1166,15 @@ class $CaptureDeviceHandler implements TypeChannelHandler<$CaptureDevice> {
   }
 }
 
-class $CaptureDeviceDiscoverySessionHandler implements TypeChannelHandler<$CaptureDeviceDiscoverySession> {
+class $CaptureDeviceDiscoverySessionHandler
+    implements TypeChannelHandler<$CaptureDeviceDiscoverySession> {
   $CaptureDeviceDiscoverySession $$create(
     TypeChannelMessenger messenger,
-    
     List<$CaptureDevice> devices,
-    
     List<List<$CaptureDevice>> supportedMultiCamDeviceSets,
-    
   ) {
     throw UnimplementedError();
   }
-
-  
-  
-  
-
-  
 
   @override
   Object? invokeStaticMethod(
@@ -1665,9 +1183,6 @@ class $CaptureDeviceDiscoverySessionHandler implements TypeChannelHandler<$Captu
     List<Object?> arguments,
   ) {
     switch (methodName) {
-      
-      
-      
     }
 
     throw ArgumentError.value(
@@ -1684,11 +1199,11 @@ class $CaptureDeviceDiscoverySessionHandler implements TypeChannelHandler<$Captu
   ) {
     return $$create(
       messenger,
-      
       (arguments[0] as List<dynamic>).map((_) => _ as $CaptureDevice).toList(),
-      
-      (arguments[1] as List<dynamic>).map((_) => (_ as List<dynamic>).map((_) => _ as $CaptureDevice).toList()).toList(),
-      
+      (arguments[1] as List<dynamic>)
+          .map((_) =>
+              (_ as List<dynamic>).map((_) => _ as $CaptureDevice).toList())
+          .toList(),
     );
   }
 
@@ -1700,7 +1215,6 @@ class $CaptureDeviceDiscoverySessionHandler implements TypeChannelHandler<$Captu
     List<Object?> arguments,
   ) {
     switch (methodName) {
-      
     }
 
     throw ArgumentError.value(
@@ -1711,19 +1225,14 @@ class $CaptureDeviceDiscoverySessionHandler implements TypeChannelHandler<$Captu
   }
 }
 
-class $PreviewControllerHandler implements TypeChannelHandler<$PreviewController> {
+class $PreviewControllerHandler
+    implements TypeChannelHandler<$PreviewController> {
   $PreviewController $$create(
     TypeChannelMessenger messenger,
-    
     $CaptureSession captureSession,
-    
   ) {
     throw UnimplementedError();
   }
-
-  
-
-  
 
   @override
   Object? invokeStaticMethod(
@@ -1732,7 +1241,6 @@ class $PreviewControllerHandler implements TypeChannelHandler<$PreviewController
     List<Object?> arguments,
   ) {
     switch (methodName) {
-      
     }
 
     throw ArgumentError.value(
@@ -1749,9 +1257,7 @@ class $PreviewControllerHandler implements TypeChannelHandler<$PreviewController
   ) {
     return $$create(
       messenger,
-      
       arguments[0] as $CaptureSession,
-      
     );
   }
 
@@ -1763,7 +1269,6 @@ class $PreviewControllerHandler implements TypeChannelHandler<$PreviewController
     List<Object?> arguments,
   ) {
     switch (methodName) {
-      
     }
 
     throw ArgumentError.value(
@@ -1774,27 +1279,13 @@ class $PreviewControllerHandler implements TypeChannelHandler<$PreviewController
   }
 }
 
-class $CaptureFileOutputHandler implements TypeChannelHandler<$CaptureFileOutput> {
+class $CaptureFileOutputHandler
+    implements TypeChannelHandler<$CaptureFileOutput> {
   $CaptureFileOutput $$create(
     TypeChannelMessenger messenger,
-    
   ) {
     throw UnimplementedError();
   }
-
-  
-
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
 
   @override
   Object? invokeStaticMethod(
@@ -1803,7 +1294,6 @@ class $CaptureFileOutputHandler implements TypeChannelHandler<$CaptureFileOutput
     List<Object?> arguments,
   ) {
     switch (methodName) {
-      
     }
 
     throw ArgumentError.value(
@@ -1820,7 +1310,6 @@ class $CaptureFileOutputHandler implements TypeChannelHandler<$CaptureFileOutput
   ) {
     return $$create(
       messenger,
-      
     );
   }
 
@@ -1832,17 +1321,6 @@ class $CaptureFileOutputHandler implements TypeChannelHandler<$CaptureFileOutput
     List<Object?> arguments,
   ) {
     switch (methodName) {
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
     }
 
     throw ArgumentError.value(
@@ -1853,19 +1331,13 @@ class $CaptureFileOutputHandler implements TypeChannelHandler<$CaptureFileOutput
   }
 }
 
-class $CaptureMovieFileOutputHandler implements TypeChannelHandler<$CaptureMovieFileOutput> {
+class $CaptureMovieFileOutputHandler
+    implements TypeChannelHandler<$CaptureMovieFileOutput> {
   $CaptureMovieFileOutput $$create(
     TypeChannelMessenger messenger,
-    
   ) {
     throw UnimplementedError();
   }
-
-  
-
-  
-  
-  
 
   @override
   Object? invokeStaticMethod(
@@ -1874,7 +1346,6 @@ class $CaptureMovieFileOutputHandler implements TypeChannelHandler<$CaptureMovie
     List<Object?> arguments,
   ) {
     switch (methodName) {
-      
     }
 
     throw ArgumentError.value(
@@ -1891,7 +1362,6 @@ class $CaptureMovieFileOutputHandler implements TypeChannelHandler<$CaptureMovie
   ) {
     return $$create(
       messenger,
-      
     );
   }
 
@@ -1903,9 +1373,6 @@ class $CaptureMovieFileOutputHandler implements TypeChannelHandler<$CaptureMovie
     List<Object?> arguments,
   ) {
     switch (methodName) {
-      
-      
-      
     }
 
     throw ArgumentError.value(
@@ -1916,17 +1383,13 @@ class $CaptureMovieFileOutputHandler implements TypeChannelHandler<$CaptureMovie
   }
 }
 
-class $CaptureFileOutputRecordingDelegateHandler implements TypeChannelHandler<$CaptureFileOutputRecordingDelegate> {
+class $CaptureFileOutputRecordingDelegateHandler
+    implements TypeChannelHandler<$CaptureFileOutputRecordingDelegate> {
   $CaptureFileOutputRecordingDelegate $$create(
     TypeChannelMessenger messenger,
-    
   ) {
     throw UnimplementedError();
   }
-
-  
-
-  
 
   @override
   Object? invokeStaticMethod(
@@ -1935,7 +1398,6 @@ class $CaptureFileOutputRecordingDelegateHandler implements TypeChannelHandler<$
     List<Object?> arguments,
   ) {
     switch (methodName) {
-      
     }
 
     throw ArgumentError.value(
@@ -1952,7 +1414,6 @@ class $CaptureFileOutputRecordingDelegateHandler implements TypeChannelHandler<$
   ) {
     return $$create(
       messenger,
-      
     );
   }
 
@@ -1964,7 +1425,6 @@ class $CaptureFileOutputRecordingDelegateHandler implements TypeChannelHandler<$
     List<Object?> arguments,
   ) {
     switch (methodName) {
-      
     }
 
     throw ArgumentError.value(
@@ -1975,76 +1435,86 @@ class $CaptureFileOutputRecordingDelegateHandler implements TypeChannelHandler<$
   }
 }
 
-
 class $LibraryImplementations {
   $LibraryImplementations(this.messenger);
 
   final TypeChannelMessenger messenger;
 
-  
   $CapturePhotoOutputChannel get channelCapturePhotoOutput =>
       $CapturePhotoOutputChannel(messenger);
-  $CapturePhotoOutputHandler get handlerCapturePhotoOutput => $CapturePhotoOutputHandler();
-  
+  $CapturePhotoOutputHandler get handlerCapturePhotoOutput =>
+      $CapturePhotoOutputHandler();
+
   $CapturePhotoSettingsChannel get channelCapturePhotoSettings =>
       $CapturePhotoSettingsChannel(messenger);
-  $CapturePhotoSettingsHandler get handlerCapturePhotoSettings => $CapturePhotoSettingsHandler();
-  
+  $CapturePhotoSettingsHandler get handlerCapturePhotoSettings =>
+      $CapturePhotoSettingsHandler();
+
   $CapturePhotoCaptureDelegateChannel get channelCapturePhotoCaptureDelegate =>
       $CapturePhotoCaptureDelegateChannel(messenger);
-  $CapturePhotoCaptureDelegateHandler get handlerCapturePhotoCaptureDelegate => $CapturePhotoCaptureDelegateHandler();
-  
+  $CapturePhotoCaptureDelegateHandler get handlerCapturePhotoCaptureDelegate =>
+      $CapturePhotoCaptureDelegateHandler();
+
   $CaptureOutputChannel get channelCaptureOutput =>
       $CaptureOutputChannel(messenger);
   $CaptureOutputHandler get handlerCaptureOutput => $CaptureOutputHandler();
-  
+
   $CapturePhotoChannel get channelCapturePhoto =>
       $CapturePhotoChannel(messenger);
   $CapturePhotoHandler get handlerCapturePhoto => $CapturePhotoHandler();
-  
+
   $CaptureDeviceInputChannel get channelCaptureDeviceInput =>
       $CaptureDeviceInputChannel(messenger);
-  $CaptureDeviceInputHandler get handlerCaptureDeviceInput => $CaptureDeviceInputHandler();
-  
+  $CaptureDeviceInputHandler get handlerCaptureDeviceInput =>
+      $CaptureDeviceInputHandler();
+
   $CaptureInputChannel get channelCaptureInput =>
       $CaptureInputChannel(messenger);
   $CaptureInputHandler get handlerCaptureInput => $CaptureInputHandler();
-  
+
   $CaptureSessionChannel get channelCaptureSession =>
       $CaptureSessionChannel(messenger);
   $CaptureSessionHandler get handlerCaptureSession => $CaptureSessionHandler();
-  
+
   $CaptureDeviceChannel get channelCaptureDevice =>
       $CaptureDeviceChannel(messenger);
   $CaptureDeviceHandler get handlerCaptureDevice => $CaptureDeviceHandler();
-  
-  $CaptureDeviceDiscoverySessionChannel get channelCaptureDeviceDiscoverySession =>
-      $CaptureDeviceDiscoverySessionChannel(messenger);
-  $CaptureDeviceDiscoverySessionHandler get handlerCaptureDeviceDiscoverySession => $CaptureDeviceDiscoverySessionHandler();
-  
+
+  $CaptureDeviceDiscoverySessionChannel
+      get channelCaptureDeviceDiscoverySession =>
+          $CaptureDeviceDiscoverySessionChannel(messenger);
+  $CaptureDeviceDiscoverySessionHandler
+      get handlerCaptureDeviceDiscoverySession =>
+          $CaptureDeviceDiscoverySessionHandler();
+
   $PreviewControllerChannel get channelPreviewController =>
       $PreviewControllerChannel(messenger);
-  $PreviewControllerHandler get handlerPreviewController => $PreviewControllerHandler();
-  
+  $PreviewControllerHandler get handlerPreviewController =>
+      $PreviewControllerHandler();
+
   $CaptureFileOutputChannel get channelCaptureFileOutput =>
       $CaptureFileOutputChannel(messenger);
-  $CaptureFileOutputHandler get handlerCaptureFileOutput => $CaptureFileOutputHandler();
-  
+  $CaptureFileOutputHandler get handlerCaptureFileOutput =>
+      $CaptureFileOutputHandler();
+
   $CaptureMovieFileOutputChannel get channelCaptureMovieFileOutput =>
       $CaptureMovieFileOutputChannel(messenger);
-  $CaptureMovieFileOutputHandler get handlerCaptureMovieFileOutput => $CaptureMovieFileOutputHandler();
-  
-  $CaptureFileOutputRecordingDelegateChannel get channelCaptureFileOutputRecordingDelegate =>
-      $CaptureFileOutputRecordingDelegateChannel(messenger);
-  $CaptureFileOutputRecordingDelegateHandler get handlerCaptureFileOutputRecordingDelegate => $CaptureFileOutputRecordingDelegateHandler();
-  
+  $CaptureMovieFileOutputHandler get handlerCaptureMovieFileOutput =>
+      $CaptureMovieFileOutputHandler();
 
-  
-  $FinishProcessingPhotoCallbackChannel get channelFinishProcessingPhotoCallback =>
-      $FinishProcessingPhotoCallbackChannel(messenger);
-  $FinishProcessingPhotoCallbackHandler get handlerFinishProcessingPhotoCallback =>
-      $FinishProcessingPhotoCallbackHandler(this);
-  
+  $CaptureFileOutputRecordingDelegateChannel
+      get channelCaptureFileOutputRecordingDelegate =>
+          $CaptureFileOutputRecordingDelegateChannel(messenger);
+  $CaptureFileOutputRecordingDelegateHandler
+      get handlerCaptureFileOutputRecordingDelegate =>
+          $CaptureFileOutputRecordingDelegateHandler();
+
+  $FinishProcessingPhotoCallbackChannel
+      get channelFinishProcessingPhotoCallback =>
+          $FinishProcessingPhotoCallbackChannel(messenger);
+  $FinishProcessingPhotoCallbackHandler
+      get handlerFinishProcessingPhotoCallback =>
+          $FinishProcessingPhotoCallbackHandler(this);
 }
 
 class $ChannelRegistrar {
@@ -2053,102 +1523,96 @@ class $ChannelRegistrar {
   final $LibraryImplementations implementations;
 
   void registerHandlers() {
-    
     implementations.channelCapturePhotoOutput.setHandler(
       implementations.handlerCapturePhotoOutput,
     );
-    
+
     implementations.channelCapturePhotoSettings.setHandler(
       implementations.handlerCapturePhotoSettings,
     );
-    
+
     implementations.channelCapturePhotoCaptureDelegate.setHandler(
       implementations.handlerCapturePhotoCaptureDelegate,
     );
-    
+
     implementations.channelCaptureOutput.setHandler(
       implementations.handlerCaptureOutput,
     );
-    
+
     implementations.channelCapturePhoto.setHandler(
       implementations.handlerCapturePhoto,
     );
-    
+
     implementations.channelCaptureDeviceInput.setHandler(
       implementations.handlerCaptureDeviceInput,
     );
-    
+
     implementations.channelCaptureInput.setHandler(
       implementations.handlerCaptureInput,
     );
-    
+
     implementations.channelCaptureSession.setHandler(
       implementations.handlerCaptureSession,
     );
-    
+
     implementations.channelCaptureDevice.setHandler(
       implementations.handlerCaptureDevice,
     );
-    
+
     implementations.channelCaptureDeviceDiscoverySession.setHandler(
       implementations.handlerCaptureDeviceDiscoverySession,
     );
-    
+
     implementations.channelPreviewController.setHandler(
       implementations.handlerPreviewController,
     );
-    
+
     implementations.channelCaptureFileOutput.setHandler(
       implementations.handlerCaptureFileOutput,
     );
-    
+
     implementations.channelCaptureMovieFileOutput.setHandler(
       implementations.handlerCaptureMovieFileOutput,
     );
-    
+
     implementations.channelCaptureFileOutputRecordingDelegate.setHandler(
       implementations.handlerCaptureFileOutputRecordingDelegate,
     );
-    
-    
+
     implementations.channelFinishProcessingPhotoCallback.setHandler(
       implementations.handlerFinishProcessingPhotoCallback,
     );
-    
   }
 
   void unregisterHandlers() {
-    
     implementations.channelCapturePhotoOutput.removeHandler();
-    
+
     implementations.channelCapturePhotoSettings.removeHandler();
-    
+
     implementations.channelCapturePhotoCaptureDelegate.removeHandler();
-    
+
     implementations.channelCaptureOutput.removeHandler();
-    
+
     implementations.channelCapturePhoto.removeHandler();
-    
+
     implementations.channelCaptureDeviceInput.removeHandler();
-    
+
     implementations.channelCaptureInput.removeHandler();
-    
+
     implementations.channelCaptureSession.removeHandler();
-    
+
     implementations.channelCaptureDevice.removeHandler();
-    
+
     implementations.channelCaptureDeviceDiscoverySession.removeHandler();
-    
+
     implementations.channelPreviewController.removeHandler();
-    
+
     implementations.channelCaptureFileOutput.removeHandler();
-    
+
     implementations.channelCaptureMovieFileOutput.removeHandler();
-    
+
     implementations.channelCaptureFileOutputRecordingDelegate.removeHandler();
-    
-    
+
     implementations.channelFinishProcessingPhotoCallback.removeHandler();
-    
   }
 }
