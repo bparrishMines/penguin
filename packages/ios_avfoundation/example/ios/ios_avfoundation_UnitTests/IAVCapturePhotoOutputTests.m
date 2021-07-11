@@ -33,8 +33,7 @@
 }
 
 - (void)testCapturePhotoWithSettings {
-  IAFCapturePhotoSettingsProxy *settingsProxy = [[IAFCapturePhotoSettingsProxy alloc]
-                                                 initwithProcessedFormat:@{@"AVVideoCodecKey": @"jpeg"}];
+  IAFCapturePhotoSettingsProxy *settingsProxy = [[IAFCapturePhotoSettingsProxy alloc] init];
   
   IAFCapturePhotoCaptureDelegateProxy *delegateProxy = [[IAFCapturePhotoCaptureDelegateProxy alloc] initWithCallback:^NSObject * _Nullable(NSObject<_IAFCapturePhoto> * _Nullable photo) {
     return nil;
@@ -43,5 +42,10 @@
   [_testCapturePhotoOutputProxy capturePhotoWithSettings:settingsProxy delegate:delegateProxy];
   OCMVerify([_mockCapturePhotoOutput capturePhotoWithSettings:settingsProxy.capturePhotoSettings
                                                      delegate:delegateProxy]);
+}
+
+- (void)testSupportedFlashModes {
+  OCMStub([_mockCapturePhotoOutput supportedFlashModes]).andReturn(@[@(AVCaptureFlashModeAuto)]);
+  XCTAssertEqualObjects([_testCapturePhotoOutputProxy supportedFlashModes], @[@(AVCaptureFlashModeAuto)]);
 }
 @end

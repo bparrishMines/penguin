@@ -146,6 +146,16 @@ class $CapturePhotoOutputChannel extends TypeChannel<$CapturePhotoOutput> {
       ],
     );
   }
+
+  Future<Object?> $supportedFlashModes(
+    $CapturePhotoOutput $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'supportedFlashModes',
+      <Object?>[],
+    );
+  }
 }
 
 class $CapturePhotoSettingsChannel extends TypeChannel<$CapturePhotoSettings> {
@@ -155,14 +165,47 @@ class $CapturePhotoSettingsChannel extends TypeChannel<$CapturePhotoSettings> {
   Future<PairedInstance?> $$create(
     $CapturePhotoSettings $instance, {
     required bool $owner,
-    required Map processedFormat,
   }) {
     return createNewInstancePair(
       $instance,
-      <Object?>[
-        processedFormat,
-      ],
+      <Object?>[],
       owner: $owner,
+    );
+  }
+
+  Future<Object?> $photoSettingsWithFormat(
+    $CapturePhotoSettings $instance,
+    Map format,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'photoSettingsWithFormat',
+      <Object?>[
+        format,
+      ],
+    );
+  }
+
+  Future<Object?> $uniqueID(
+    $CapturePhotoSettings $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'uniqueID',
+      <Object?>[],
+    );
+  }
+
+  Future<Object?> $setFlashMode(
+    $CapturePhotoSettings $instance,
+    int mode,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'setFlashMode',
+      <Object?>[
+        mode,
+      ],
     );
   }
 }
@@ -508,6 +551,74 @@ class $CaptureDeviceChannel extends TypeChannel<$CaptureDevice> {
       <Object?>[],
     );
   }
+
+  Future<Object?> $setVideoZoomFactor(
+    $CaptureDevice $instance,
+    double factor,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'setVideoZoomFactor',
+      <Object?>[
+        factor,
+      ],
+    );
+  }
+
+  Future<Object?> $minAvailableVideoZoomFactor(
+    $CaptureDevice $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'minAvailableVideoZoomFactor',
+      <Object?>[],
+    );
+  }
+
+  Future<Object?> $maxAvailableVideoZoomFactor(
+    $CaptureDevice $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'maxAvailableVideoZoomFactor',
+      <Object?>[],
+    );
+  }
+
+  Future<Object?> $rampToVideoZoomFactor(
+    $CaptureDevice $instance,
+    double factor,
+    double rate,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'rampToVideoZoomFactor',
+      <Object?>[
+        factor,
+        rate,
+      ],
+    );
+  }
+
+  Future<Object?> $isRampingVideoZoom(
+    $CaptureDevice $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'isRampingVideoZoom',
+      <Object?>[],
+    );
+  }
+
+  Future<Object?> $cancelVideoZoomRamp(
+    $CaptureDevice $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'cancelVideoZoomRamp',
+      <Object?>[],
+    );
+  }
 }
 
 class $CaptureDeviceDiscoverySessionChannel
@@ -743,7 +854,6 @@ class $CapturePhotoSettingsHandler
     implements TypeChannelHandler<$CapturePhotoSettings> {
   $CapturePhotoSettings $$create(
     TypeChannelMessenger messenger,
-    Map processedFormat,
   ) {
     throw UnimplementedError();
   }
@@ -771,7 +881,6 @@ class $CapturePhotoSettingsHandler
   ) {
     return $$create(
       messenger,
-      arguments[0] as Map,
     );
   }
 

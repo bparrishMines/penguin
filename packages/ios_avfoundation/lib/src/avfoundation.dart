@@ -467,8 +467,6 @@ class CapturePhotoOutput extends CaptureOutput with $CapturePhotoOutput {
   static $CapturePhotoOutputChannel get _channel =>
       ChannelRegistrar.instance.implementations.channelCapturePhotoOutput;
 
-  // TODO: supportedFlashModes
-  // TODO: CapturePhotoSettings.uniqueID
   /// Initiates a photo capture using the specified settings.
   ///
   /// Use this method for all variations of still photography, including single
@@ -478,29 +476,40 @@ class CapturePhotoOutput extends CaptureOutput with $CapturePhotoOutput {
   /// When you call this method, the photo output validates the properties of
   /// your settings object to ensure deterministic behavior. For example, the
   /// flashMode setting must specify a value that is present in the photo
-  /// output’s [getSupportedFlashModes] list. See each property’s description in
-  /// the [CapturePhotoSettings] class reference for detailed validation rules.
+  /// output’s [CapturePhotoOutput.supportedFlashModes] list. See each
+  /// property’s description in he [CapturePhotoSettings] class reference for
+  /// detailed validation rules.
   ///
   /// It is illegal to reuse a [CapturePhotoSettings] instance for multiple
   /// captures. Calling this method throws an exception
   /// ([PlatformException]) if the settings object’s `uniqueID` value matches
-  /// that of any previously used settings object.
+  /// that of any previously used settings object. Call any of the
+  /// `CapturePhotoSettings.photoSettingsWith...` methods to reset the settings
+  /// object.
   Future<void> capturePhotoWithSettings(
     CapturePhotoSettings settings,
     CapturePhotoCaptureDelegate delegate,
   ) {
     return _channel.$capturePhotoWithSettings(this, settings, delegate);
   }
+
+  /// The flash settings this capture output currently supports.
+  ///
+  /// To set the flash mode for a capture, set the `setFlashMode` method of your
+  /// photo settings object to one of the [CaptureFlashMode] values listed in
+  /// this list.
+  Future<List<int>> supportedFlashModes() async {
+    final List<Object?> supportedModes =
+        await _channel.$supportedFlashModes(this) as List<Object?>;
+    return supportedModes.cast<int>();
+  }
 }
 
-// TODO: Create with static async methods?
-// TODO: CapturePhotoOutput.supportedFlashModes
-// TODO: CapturePhotoSettings.uniqueID
 // TODO: photoSettingsFromPhotoSettings
 /// A specification of the features and settings to use for a single photo capture request.
 ///
 /// To take a photo, you create and configure a [CapturePhotoSettings] object,
-/// then pass it to the [CapturePhotoOutput.capturePhoto] method.
+/// then pass it to the [CapturePhotoOutput.capturePhotoWithSettings] method.
 ///
 /// A [CapturePhotoSettings] instance can include any combination of settings,
 /// regardless of whether that combination is valid for a given capture session.
@@ -508,13 +517,14 @@ class CapturePhotoOutput extends CaptureOutput with $CapturePhotoOutput {
 /// [CapturePhotoOutput.capturePhoto] method, the photo capture output validate
 /// s your settings to ensure deterministic behavior. For example, the flashMode
 /// setting must specify a value that is present in the photo output’s
-/// [CapturePhotoOutput.getSupportedFlashModes] list. For detailed validation
+/// [CapturePhotoOutput.supportedFlashModes] list. For detailed validation
 /// rules, see each field's description below.
 ///
 /// It is illegal to reuse a [CapturePhotoSettings] instance for multiple
-/// captures. Calling the [CapturePhotoOutput.capturePhoto] method throws an
-/// exception (PlatformException) if the settings object’s `uniqueID` value
-/// matches that of any previously used settings object.
+/// captures. Calling the [CapturePhotoOutput.capturePhotoWithSettings] method
+/// throws an exception ([PlatformException]) if the settings object’s
+/// `uniqueID` value matches that of any previously used settings object. Call
+/// any of the `photoSettingsWith...` methods to reset the settings object.
 ///
 /// To reuse a specific combination of settings, use the
 /// [photoSettingsFromPhotoSettings] initializer to create a new, unique
@@ -522,48 +532,109 @@ class CapturePhotoOutput extends CaptureOutput with $CapturePhotoOutput {
 @Reference('ios_avfoundation/avfoundation/CapturePhotoSettings')
 class CapturePhotoSettings with $CapturePhotoSettings {
   /// Construct a [CapturePhotoSettings].
-  CapturePhotoSettings(this.processedFormat) {
-    _channel.$$create(this, $owner: true, processedFormat: processedFormat);
+  CapturePhotoSettings() {
+    _channel.$$create(this, $owner: true);
   }
 
   static $CapturePhotoSettingsChannel get _channel =>
       ChannelRegistrar.instance.implementations.channelCapturePhotoSettings;
 
-  // TODO: rename to format?
-  // TODO: static methods photoSettings, photoSettingsWithFormat, photoSettingsWithRawPixelFormatType
   // TODO: kCVPixelBufferPixelFormatTypeKey (not from avfoundation. from core video)
   // TODO: CapturePhotoOutput.getAvailablePhotoPixelFormatTypes
   // TODO: CapturePhotoOutput.getAvailablePhotoCodecTypes
-  // TODO: CapturePhotoCaptureDelegate.didFinishProcessingPhotoSampleBuffer:previewPhotoSampleBuffer:resolvedSettings:bracketSettings:error:
-  /// A dictionary describing the processed format (for example, JPEG) to deliver captured photos in.
+  // TODO: AVVideoQualityKey
+  /// Resets the photo settings object with the specified output format.
   ///
-  /// This property is read-only—you specify a processed format when creating a
-  /// settings object with the [photoSettings], [photoSettingsWithFormat], or
-  /// [photoSettingsWithRawPixelFormatType] initializer.
+  /// `format`: A dictionary of Core Video pixel buffer attributes or
+  ///   AVFoundation video settings constants (see Video Settings).
   ///
-  /// When capturing images in processed formats, the following requirements
-  /// apply:
+  ///   To capture a photo in an uncompressed format, such as 420f, 420v, or
+  ///   BGRA, set the key [kCVPixelBufferPixelFormatTypeKey] in the format
+  ///   dictionary. The corresponding value must be one of the pixel format
+  ///   identifiers listed in the [availablePhotoPixelFormatTypes] array of your
+  ///   photo capture output.
   ///
-  /// This dictionary must contain a value for either the
-  /// [kCVPixelBufferPixelFormatTypeKey] (to request an uncompressed format) or
-  /// [VideoCodecType] (to request a compressed format such as JPEG) key, but
-  /// not both.
+  ///   To capture a photo in a compressed format, such as JPEG, set the key
+  ///   [VideoSettingsKeys.videoCodec] in the format dictionary. The
+  ///   corresponding value must be one of the codec identifiers listed in the
+  ///   [availablePhotoCodecTypes] array of your photo capture output. For a
+  ///   compressed format, you can also specify a compression level with the key
+  ///   [AVVideoQualityKey].
+  Future<void> photoSettingsWithFormat(Map<String, Object> format) {
+    return _channel.$photoSettingsWithFormat(this, format);
+  }
+
+  // TODO: CaptureResolvedPhotoSettings
+  /// A unique identifier for this photo settings instance.
   ///
-  /// If this dictionary has the [kCVPixelBufferPixelFormatTypeKey] key, the
-  /// value for that key must be listed in the photo output’s
-  /// [CapturePhotoOutput.getAvailablePhotoPixelFormatTypes] list.
+  /// Creating a [CapturePhotoSettings] instance automatically assigns a unique
+  /// value to this property.
   ///
-  /// If this dictionary has the [VideoCodecType] key, the value for that key
-  /// must be listed in the photo output’s
-  /// [CapturePhotoOutput.getAvailablePhotoCodecTypes] list.
+  /// Use this property to track a photo capture request. After you call the
+  /// capturePhotoWithSettings:delegate: method, the photo capture output calls
+  /// your delegate object to provide information about the progress and results
+  /// of the capture. Each delegate method includes a
+  /// [CaptureResolvedPhotoSettings] whose [uniqueID] property matches the
+  /// [uniqueID] value of the [CapturePhotoSettings] object you used to request
+  /// capture.
   ///
-  /// Your delegate method must implement the
-  /// [CapturePhotoCaptureDelegate.captureOutput] method.
+  /// It is illegal to reuse a [CapturePhotoSettings] instance for multiple
+  /// captures. Calling the [CapturePhotoOutput.capturePhotoWithSettings] method
+  /// throws an exception ([PlatformException]) if the settings object’s
+  /// [uniqueID] value matches that of any previously used settings object. Call
+  /// any of the `photoSettingsWith...` methods to reset the settings object.
+  Future<int> uniqueID() async {
+    return await _channel.$uniqueID(this) as int;
+  }
+
+  // TODO: CapturePhotoOutput.isFlashScene
+  // TODO: CaptureResolvedPhotoSettings
+  // TODO: CaptureResolvedPhotoSettings.flashEnabled
+  // TODO: CapturePhotoOUtput.supportedFlashModes
+  // TODO: CapturePhotoOUtput.autoStillImageStabilizationEnabled
+  /// A setting for whether to fire the flash when capturing photos.
+  ///
+  /// The default value for this setting is [CaptureFlashMode.off].
+  ///
+  /// Assuming a static scene, using the [CaptureFlashMode.auto] setting is
+  /// equivalent to testing the [CapturePhotoOutput.isFlashScene] method
+  /// (which indicates whether flash is recommended for the scene currently
+  /// visible to the camera), and then setting the `flashMode` property of your
+  /// photo settings output accordingly before requesting a capture. However,
+  /// the visible scene can change between when you request a capture and when
+  /// the camera hardware captures an image—the automatic setting ensures that
+  /// the flash is enabled or disabled appropriately at the moment of capture.
+  /// When the capture occurs, your [CapturePhotoCaptureDelegate] methods
+  /// receive an [CaptureResolvedPhotoSettings] object whose `flashEnabled`
+  /// property indicates which flash mode was used for that capture.
+  ///
+  /// **Note:**
+  /// When the device becomes very hot, the flash becomes temporarily
+  /// unavailable until the device cools down (see the
+  /// [CaptureDevice.isFlashAvailable] property). While the flash is
+  /// unavailable, a photo output’s supportedFlashModes method still reports the
+  /// [CaptureFlashMode.on] and [CaptureFlashMode.auto] options as available, so
+  /// you can still enable the flash in your photo settings even when the flash
+  /// is temporarily unavailable.
+  ///
+  /// When the photo output calls your [CapturePhotoCaptureDelegate] methods,
+  /// check the `flashEnabled` property of the provided
+  /// [CaptureResolvedPhotoSettings] to verify whether the flash is in use.
+  ///
+  /// When specifying a flash mode, the following requirements apply:
+  ///   * The specified mode must be present in the photo output’s
+  ///   `supportedFlashModes` list.
+  ///
+  ///   * You may not enable image stabilization if the flash mode is
+  ///   [CaptureFlashMode.on]. (Enabling the flash takes priority over the
+  ///   `autoStillImageStabilizationEnabled` setting).
   ///
   /// The capture output validates these requirements when you call the
-  /// [CapturePhotoOutput.capturePhoto] method. If your settings and delegate do
+  /// [CapturePhotoOutput.capturePhotoWithSettings] method. If your settings do
   /// not meet these requirements, that method raises an exception.
-  final Map<String, Object> processedFormat;
+  Future<void> setFlashMode(int mode) {
+    return _channel.$setFlashMode(this, mode);
+  }
 }
 
 // TODO: CapturePhotoSettings.livePhotoMovieFileURL
@@ -1119,6 +1190,108 @@ class CaptureDevice with $CaptureDevice {
   /// needs to cool off.
   Future<bool> isFlashAvailable() async {
     return await _channel.$isFlashAvailable(this) as bool;
+  }
+
+  // TODO: active format videoZoomFactorUpscaleThreshold, videoMaxZoomFactor
+  /// A value that controls the cropping and enlargement of images captured by the device.
+  ///
+  /// This value is a multiplier. For example, a value of 2.0 doubles the size
+  /// of an image’s subject (and halves the field of view). Allowed values range
+  /// from 1.0 (full field of view) to the value of the active format’s
+  /// `videoMaxZoomFactor` property. Setting the value of this property jumps
+  /// immediately to the new zoom factor. For a smooth transition, use the
+  /// [rampToVideoZoomFactor]
+  ///
+  /// The device achieves a zoom effect by cropping around the center of the
+  /// image captured by the sensor. At low zoom factors, the cropped images is
+  /// equal to or larger than the output size. At higher zoom factors, the
+  /// device must scale the cropped image up to the output size, resulting in a
+  /// loss of image quality. The active format’s
+  /// `videoZoomFactorUpscaleThreshold` property indicates the factors at which
+  /// upscaling occurs.
+  ///
+  /// Before changing the value of this property, you must call
+  /// [lockForConfiguration] to acquire exclusive access to the device’s
+  /// configuration properties. Otherwise, setting the value of this property
+  /// raises an exception. When you finish configuring the device, call
+  /// [unlockForConfiguration] to release the lock and allow other devices to
+  /// configure the settings.
+  Future<void> setVideoZoomFactor(double factor) {
+    return _channel.$setVideoZoomFactor(this, factor);
+  }
+
+  /// The minimum zoom factor allowed in the current capture configuration.
+  ///
+  /// On single-camera devices, this value is always 1.0. On a dual-camera
+  /// device, the allowed range of video zoom factors can change if the device
+  /// is delivering depth data to one or more capture outputs.
+  ///
+  /// Setting the [setVideoZoomFactor] method to (or calling the
+  /// [rampToVideoZoomFactor] method with) a value less than 1.0 always raises
+  /// an exception. Setting the video zoom factor to a value between 1.0 and the
+  /// minimum available zoom factor clamps the zoom setting to the minimum.
+  Future<double> minAvailableVideoZoomFactor() async {
+    return await _channel.$minAvailableVideoZoomFactor(this) as double;
+  }
+
+  /// The maximum zoom factor allowed in the current capture configuration.
+  ///
+  /// On single-camera devices, this value is always equal to the device
+  /// format’s `videoMaxZoomFactor` value. On a dual-camera device, the allowed
+  /// range of video zoom factors can change if the device is delivering depth
+  /// data to one or more capture outputs.
+  ///
+  /// Setting the [setVideoZoomFactor] method to (or calling the
+  /// [rampToVideoZoomFactor] method with) a value greater than the device
+  /// format’s `videoMaxZoomFactor` value always raises an exception. Setting
+  /// the video zoom factor to a value between the maximum available zoom factor
+  /// and the device format’s maximum clamps the zoom setting to the maximum
+  /// available value.
+  Future<double> maxAvailableVideoZoomFactor() async {
+    return await _channel.$maxAvailableVideoZoomFactor(this) as double;
+  }
+
+  /// Begins a smooth transition from the current zoom factor to another.
+  ///
+  /// `rate` is specified in powers of two per second.
+  ///
+  /// Allowed values for factor range from 1.0 (full field of view) to the
+  /// `videoMaxZoomFactor` specified by the active capture format.
+  ///
+  /// During a ramp, the zoom factor changes at an exponential rate, but this
+  /// yields a visually linear transition. The rate parameter controls the speed
+  /// of this transition independent of direction; for example, a value of 1.0
+  /// causes zoom factor to double every second if zooming in (that is, if the
+  /// specified factor is greater than the current `videoZoomFactor`) or halve
+  /// every second if zooming out.
+  ///
+  /// Before calling this method, you must call [lockForConfiguration] to
+  /// acquire exclusive access to the device’s configuration properties. If you
+  /// do not, calling this method raises an exception. When you finish
+  /// configuring the device, call [unlockForConfiguration] to release the lock
+  /// and allow other devices to configure the settings.
+  Future<void> rampToVideoZoomFactor(double factor, double rate) {
+    return _channel.$rampToVideoZoomFactor(this, factor, rate);
+  }
+
+  /// A Boolean value that indicates whether a zoom transition is in progress.
+  Future<bool> isRampingVideoZoom() async {
+    return await _channel.$isRampingVideoZoom(this) as bool;
+  }
+
+  /// Smoothly ends a zoom transition in progress.
+  ///
+  /// Calling this method is equivalent to calling [rampToVideoZoomFactor] with
+  /// a rate of zero. If a zoom transition is in progress, the transition slows
+  /// to a stop (instead of stopping abruptly).
+  ///
+  /// Before calling this method, you must call [lockForConfiguration] to
+  /// acquire exclusive access to the device’s configuration properties. If you
+  /// do not, calling this method raises an exception. When you finish
+  /// configuring the device, call [unlockForConfiguration] to release the lock
+  /// and allow other devices to configure the settings.
+  Future<void> cancelVideoZoomRamp() {
+    return _channel.$cancelVideoZoomRamp(this);
   }
 
   @ReferenceMethod(ignore: true)

@@ -97,6 +97,8 @@
 
 
 
+
+
 @end
 
 @implementation _IAFCapturePhotoSettingsChannel
@@ -108,14 +110,18 @@
 - (void)__create:(NSObject<_IAFCapturePhotoSettings> *)_instance
          _owner:(BOOL)_owner
 
- processedFormat:(NSDictionary<NSString *, NSObject *> * _Nullable)processedFormat
-
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
   [self createNewInstancePair:_instance
-                    arguments:@[processedFormat ? (NSObject *) processedFormat : [NSNull null],]
+                    arguments:@[]
                         owner:_owner
                    completion:completion];
 }
+
+
+
+
+
+
 
 
 
@@ -317,6 +323,18 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 @end
 
 @implementation _IAFCaptureDeviceDiscoverySessionChannel
@@ -468,6 +486,14 @@
 
 
 
+- (id _Nullable)_supportedFlashModes:(NSObject<_IAFCapturePhotoOutput> *)_instance
+ {
+  return [_instance supportedFlashModes
+          ];
+}
+
+
+
 - (id _Nullable)invokeStaticMethod:(nonnull REFTypeChannelMessenger *)messenger
                         methodName:(nonnull NSString *)methodName
                          arguments:(nonnull NSArray *)arguments {
@@ -496,6 +522,13 @@
                delegate:arguments[1] ];
   }
   
+  else
+  
+  if ([@"supportedFlashModes" isEqualToString:methodName]) {
+    return [self _supportedFlashModes:value
+               ];
+  }
+  
   
   
   NSLog(@"Unable to invoke %@.%@", instance, methodName);
@@ -505,13 +538,39 @@
 
 @implementation _IAFCapturePhotoSettingsHandler
 - (NSObject<_IAFCapturePhotoSettings> *)__create:(REFTypeChannelMessenger *)messenger
-                                 
-                                 processedFormat:(NSDictionary<NSString *, NSObject *> *)processedFormat
-{
+                                 {
   @throw [NSException exceptionWithName:@"_IAFUnimplementedException" reason:nil userInfo:nil];
 }
 
 
+
+
+
+- (id _Nullable)_photoSettingsWithFormat:(NSObject<_IAFCapturePhotoSettings> *)_instance
+
+                     format:(NSDictionary<NSString *, NSObject *> * _Nullable)format
+ {
+  return [_instance photoSettingsWithFormat:format
+          ];
+}
+
+
+
+- (id _Nullable)_uniqueID:(NSObject<_IAFCapturePhotoSettings> *)_instance
+ {
+  return [_instance uniqueID
+          ];
+}
+
+
+
+- (id _Nullable)_setFlashMode:(NSObject<_IAFCapturePhotoSettings> *)_instance
+
+                     mode:(NSNumber * _Nullable)mode
+ {
+  return [_instance setFlashMode:mode
+          ];
+}
 
 
 
@@ -526,7 +585,7 @@
 
 - (nonnull id)createInstance:(nonnull REFTypeChannelMessenger *)messenger
                    arguments:(nonnull NSArray *)arguments {
-  return [self __create:messenger processedFormat:arguments[0] ];
+  return [self __create:messenger ];
 }
 
 - (id _Nullable)invokeMethod:(nonnull REFTypeChannelMessenger *)messenger
@@ -534,6 +593,29 @@
                   methodName:(nonnull NSString *)methodName
                    arguments:(nonnull NSArray *)arguments {
   NSObject<_IAFCapturePhotoSettings> *value = (NSObject<_IAFCapturePhotoSettings> *) instance;
+  
+  
+  if ([@"photoSettingsWithFormat" isEqualToString:methodName]) {
+    return [self _photoSettingsWithFormat:value
+               
+               format:arguments[0] ];
+  }
+  
+  else
+  
+  if ([@"uniqueID" isEqualToString:methodName]) {
+    return [self _uniqueID:value
+               ];
+  }
+  
+  else
+  
+  if ([@"setFlashMode" isEqualToString:methodName]) {
+    return [self _setFlashMode:value
+               
+               mode:arguments[0] ];
+  }
+  
   
   
   NSLog(@"Unable to invoke %@.%@", instance, methodName);
@@ -992,6 +1074,60 @@
 
 
 
+- (id _Nullable)_setVideoZoomFactor:(NSObject<_IAFCaptureDevice> *)_instance
+
+                     factor:(NSNumber * _Nullable)factor
+ {
+  return [_instance setVideoZoomFactor:factor
+          ];
+}
+
+
+
+- (id _Nullable)_minAvailableVideoZoomFactor:(NSObject<_IAFCaptureDevice> *)_instance
+ {
+  return [_instance minAvailableVideoZoomFactor
+          ];
+}
+
+
+
+- (id _Nullable)_maxAvailableVideoZoomFactor:(NSObject<_IAFCaptureDevice> *)_instance
+ {
+  return [_instance maxAvailableVideoZoomFactor
+          ];
+}
+
+
+
+- (id _Nullable)_rampToVideoZoomFactor:(NSObject<_IAFCaptureDevice> *)_instance
+
+                     factor:(NSNumber * _Nullable)factor
+
+                     rate:(NSNumber * _Nullable)rate
+ {
+  return [_instance rampToVideoZoomFactor:factor
+          rate:rate];
+}
+
+
+
+- (id _Nullable)_isRampingVideoZoom:(NSObject<_IAFCaptureDevice> *)_instance
+ {
+  return [_instance isRampingVideoZoom
+          ];
+}
+
+
+
+- (id _Nullable)_cancelVideoZoomRamp:(NSObject<_IAFCaptureDevice> *)_instance
+ {
+  return [_instance cancelVideoZoomRamp
+          ];
+}
+
+
+
 - (id _Nullable)invokeStaticMethod:(nonnull REFTypeChannelMessenger *)messenger
                         methodName:(nonnull NSString *)methodName
                          arguments:(nonnull NSArray *)arguments {
@@ -1099,6 +1235,51 @@
   
   if ([@"isFlashAvailable" isEqualToString:methodName]) {
     return [self _isFlashAvailable:value
+               ];
+  }
+  
+  else
+  
+  if ([@"setVideoZoomFactor" isEqualToString:methodName]) {
+    return [self _setVideoZoomFactor:value
+               
+               factor:arguments[0] ];
+  }
+  
+  else
+  
+  if ([@"minAvailableVideoZoomFactor" isEqualToString:methodName]) {
+    return [self _minAvailableVideoZoomFactor:value
+               ];
+  }
+  
+  else
+  
+  if ([@"maxAvailableVideoZoomFactor" isEqualToString:methodName]) {
+    return [self _maxAvailableVideoZoomFactor:value
+               ];
+  }
+  
+  else
+  
+  if ([@"rampToVideoZoomFactor" isEqualToString:methodName]) {
+    return [self _rampToVideoZoomFactor:value
+               
+               factor:arguments[0] 
+               rate:arguments[1] ];
+  }
+  
+  else
+  
+  if ([@"isRampingVideoZoom" isEqualToString:methodName]) {
+    return [self _isRampingVideoZoom:value
+               ];
+  }
+  
+  else
+  
+  if ([@"cancelVideoZoomRamp" isEqualToString:methodName]) {
+    return [self _cancelVideoZoomRamp:value
                ];
   }
   

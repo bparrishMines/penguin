@@ -9,6 +9,10 @@
 @property AVCaptureFocusMode focusMode;
 @property BOOL smoothAutoFocusEnabled;
 @property BOOL lockedForConfiguration;
+@property BOOL videoZoomRampCanceled;
+@property CGFloat rampZoomFactor;
+@property float rampZoomRate;
+@property CGFloat videoZoomFactor;
 @end
 
 @implementation TestCaptureDevice
@@ -16,6 +20,7 @@
   self = [super init];
   if (self) {
     _lockedForConfiguration = NO;
+    _videoZoomRampCanceled = NO;
   }
   return self;
 }
@@ -79,6 +84,27 @@
 
 - (void)unlockForConfiguration {
   _lockedForConfiguration = NO;
+}
+
+- (void)cancelVideoZoomRamp {
+  _videoZoomRampCanceled = YES;
+}
+
+- (BOOL)isRampingVideoZoom {
+  return NO;
+}
+
+- (CGFloat)maxAvailableVideoZoomFactor {
+  return 23.23;
+}
+
+- (CGFloat)minAvailableVideoZoomFactor {
+  return 23.24;
+}
+
+- (void)rampToVideoZoomFactor:(CGFloat)factor withRate:(float)rate {
+  _rampZoomFactor = factor;
+  _rampZoomRate = rate;
 }
 @end
 
@@ -178,5 +204,33 @@
   
   [_testCaptureDeviceProxy unlockForConfiguration];
   XCTAssertFalse(_testCaptureDevice.lockedForConfiguration);
+}
+
+- (void)testCancelVideoZoomRamp {
+  [_testCaptureDeviceProxy cancelVideoZoomRamp];
+  XCTAssertTrue(_testCaptureDevice.videoZoomRampCanceled);
+}
+
+- (void)testIsRampingVideoZoom {
+  XCTAssertEqualObjects([_testCaptureDeviceProxy isRampingVideoZoom], @(NO));
+}
+
+- (void)testMaxAvailableVideoZoomFactor {
+  XCTAssertEqualObjects([_testCaptureDeviceProxy maxAvailableVideoZoomFactor], @(23.23));
+}
+
+- (void)testMinAvailableVideoZoomFactor {
+  XCTAssertEqualObjects([_testCaptureDeviceProxy minAvailableVideoZoomFactor], @(23.24));
+}
+
+- (void)testRampToVideoZoomFactor {
+  [_testCaptureDeviceProxy rampToVideoZoomFactor:@(11.00) rate:@(12.0)];
+  XCTAssertEqual(_testCaptureDevice.rampZoomFactor, 11.0);
+  XCTAssertEqual(_testCaptureDevice.rampZoomRate, 12.0);
+}
+
+-(void)testSetVideoZoomFactor {
+  [_testCaptureDeviceProxy setVideoZoomFactor:@(23.00)];
+  XCTAssertEqual(_testCaptureDevice.videoZoomFactor, 23.00);
 }
 @end
