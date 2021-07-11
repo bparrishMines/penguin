@@ -115,6 +115,50 @@
   [_captureDevice unlockForConfiguration];
   return nil;
 }
+
+- (id _Nullable)cancelVideoZoomRamp {
+  [_captureDevice cancelVideoZoomRamp];
+  return nil;
+}
+
+
+- (NSNumber *)isRampingVideoZoom {
+  return @([_captureDevice isRampingVideoZoom]);
+}
+
+
+- (NSNumber *)maxAvailableVideoZoomFactor {
+  if (@available(iOS 11.0, *)) {
+    return @([_captureDevice maxAvailableVideoZoomFactor]);
+  } else {
+    @throw [NSException exceptionWithName:@"IosAvfoundationPluginException"
+                                   reason:@"Requires version >= ios 11.0"
+                                 userInfo:nil];
+  }
+}
+
+
+- (NSNumber *)minAvailableVideoZoomFactor {
+  if (@available(iOS 11.0, *)) {
+    return @([_captureDevice minAvailableVideoZoomFactor]);
+  } else {
+    @throw [NSException exceptionWithName:@"IosAvfoundationPluginException"
+                                   reason:@"Requires version >= ios 11.0"
+                                 userInfo:nil];
+  }
+}
+
+
+- (id _Nullable)rampToVideoZoomFactor:(NSNumber * _Nullable)factor rate:(NSNumber * _Nullable)rate {
+  [_captureDevice rampToVideoZoomFactor:factor.floatValue withRate:rate.floatValue];
+  return nil;
+}
+
+
+- (id _Nullable)setVideoZoomFactor:(NSNumber * _Nullable)factor {
+  [_captureDevice setVideoZoomFactor:factor.floatValue];
+  return nil;
+}
 @end
 
 @implementation IAFCaptureSessionProxy
@@ -272,24 +316,36 @@
   return nil;
 }
 
+- (NSArray<NSNumber *> *)supportedFlashModes {
+  return [((AVCapturePhotoOutput *)self.captureOutput) supportedFlashModes];
+}
 @end
 
 @implementation IAFCapturePhotoSettingsProxy
-- (instancetype)initwithProcessedFormat:(NSDictionary<NSString *,NSObject *> *)format {
-  AVCapturePhotoSettings *settings = [AVCapturePhotoSettings photoSettingsWithFormat:format];
-  return [self initWithCapturePhotoSettings:settings];
+- (instancetype)init {
+  return [self initWithCapturePhotoSettings:[AVCapturePhotoSettings photoSettings]];
 }
 
 - (instancetype)initWithCapturePhotoSettings:(AVCapturePhotoSettings *)capturePhotoSettings {
-  self = [self init];
+  self = [super init];
   if (self) {
     _capturePhotoSettings = capturePhotoSettings;
   }
   return self;
 }
 
-- (NSDictionary<NSString *,NSObject *> * _Nullable)processedFormat {
+- (id _Nullable)photoSettingsWithFormat:(NSDictionary<NSString *,NSObject *> * _Nullable)format {
+  _capturePhotoSettings = [AVCapturePhotoSettings photoSettingsWithFormat:format];
   return nil;
+}
+
+- (id _Nullable)setFlashMode:(NSNumber * _Nullable)mode {
+  [_capturePhotoSettings setFlashMode:mode.intValue];
+  return nil;
+}
+
+- (NSNumber *)uniqueID {
+  return @([_capturePhotoSettings uniqueID]);
 }
 @end
 

@@ -75,9 +75,37 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 ;
 
 
+
+- (id _Nullable)supportedFlashModes
+
+;
+
+
 @end
 
 @protocol _IAFCapturePhotoSettings <NSObject>
+
+
+- (id _Nullable)photoSettingsWithFormat
+                                :(NSDictionary<NSString *, NSObject *> * _Nullable)format
+
+
+;
+
+
+
+- (id _Nullable)uniqueID
+
+;
+
+
+
+- (id _Nullable)setFlashMode
+                                :(NSNumber * _Nullable)mode
+
+
+;
+
 
 @end
 
@@ -229,6 +257,48 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 ;
 
 
+
+- (id _Nullable)setVideoZoomFactor
+                                :(NSNumber * _Nullable)factor
+
+
+;
+
+
+
+- (id _Nullable)minAvailableVideoZoomFactor
+
+;
+
+
+
+- (id _Nullable)maxAvailableVideoZoomFactor
+
+;
+
+
+
+- (id _Nullable)rampToVideoZoomFactor
+                                :(NSNumber * _Nullable)factor
+
+
+     rate:(NSNumber * _Nullable)rate
+
+;
+
+
+
+- (id _Nullable)isRampingVideoZoom
+
+;
+
+
+
+- (id _Nullable)cancelVideoZoomRamp
+
+;
+
+
 @end
 
 @protocol _IAFCaptureDeviceDiscoverySession <NSObject>
@@ -307,6 +377,8 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 
 
 
+
+
 @end
 
 @interface _IAFCapturePhotoSettingsChannel : REFTypeChannel
@@ -314,9 +386,13 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 - (void)__create:(NSObject<_IAFCapturePhotoSettings> *)_instance
           _owner:(BOOL)_owner
 
- processedFormat:(NSDictionary<NSString *, NSObject *> * _Nullable)processedFormat
-
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion;
+
+
+
+
+
+
 
 
 
@@ -455,6 +531,18 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 @end
 
 @interface _IAFCaptureDeviceDiscoverySessionChannel : REFTypeChannel
@@ -554,14 +642,36 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 ;
 
 
+
+- (id _Nullable)_supportedFlashModes:(NSObject<_IAFCapturePhotoOutput> *)_instance
+;
+
+
 @end
 
 @interface _IAFCapturePhotoSettingsHandler : NSObject<REFTypeChannelHandler>
 - (NSObject<_IAFCapturePhotoSettings> *)__create:(REFTypeChannelMessenger *)messenger
-
-                                  processedFormat:(NSDictionary<NSString *, NSObject *> * _Nullable)processedFormat
 ;
 
+
+
+
+- (id _Nullable)_photoSettingsWithFormat:(NSObject<_IAFCapturePhotoSettings> *)_instance
+
+  format:(NSDictionary<NSString *, NSObject *> * _Nullable)format
+;
+
+
+
+- (id _Nullable)_uniqueID:(NSObject<_IAFCapturePhotoSettings> *)_instance
+;
+
+
+
+- (id _Nullable)_setFlashMode:(NSObject<_IAFCapturePhotoSettings> *)_instance
+
+  mode:(NSNumber * _Nullable)mode
+;
 
 
 @end
@@ -743,6 +853,42 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 
 
 - (id _Nullable)_isFlashAvailable:(NSObject<_IAFCaptureDevice> *)_instance
+;
+
+
+
+- (id _Nullable)_setVideoZoomFactor:(NSObject<_IAFCaptureDevice> *)_instance
+
+  factor:(NSNumber * _Nullable)factor
+;
+
+
+
+- (id _Nullable)_minAvailableVideoZoomFactor:(NSObject<_IAFCaptureDevice> *)_instance
+;
+
+
+
+- (id _Nullable)_maxAvailableVideoZoomFactor:(NSObject<_IAFCaptureDevice> *)_instance
+;
+
+
+
+- (id _Nullable)_rampToVideoZoomFactor:(NSObject<_IAFCaptureDevice> *)_instance
+
+  factor:(NSNumber * _Nullable)factor
+
+  rate:(NSNumber * _Nullable)rate
+;
+
+
+
+- (id _Nullable)_isRampingVideoZoom:(NSObject<_IAFCaptureDevice> *)_instance
+;
+
+
+
+- (id _Nullable)_cancelVideoZoomRamp:(NSObject<_IAFCaptureDevice> *)_instance
 ;
 
 

@@ -106,18 +106,13 @@
 @end
 
 @implementation IAFCapturePhotoSettingsHandler
-- (NSObject<_IAFCapturePhotoSettings> *)__create:(REFTypeChannelMessenger *)messenger processedFormat:(NSDictionary<NSString *,NSObject *> *)processedFormat {
-  if (@available(iOS 10.0, *)) {
-    return [[IAFCapturePhotoSettingsProxy alloc] initwithProcessedFormat:processedFormat];
-  }
-  @throw [NSException exceptionWithName:@"IosAvfoundationPluginException"
-                                 reason:@"Requires version >= ios 10.0"
-                               userInfo:nil];
+- (IAFCapturePhotoSettingsProxy *)__create:(REFTypeChannelMessenger *)messenger {
+  return [[IAFCapturePhotoSettingsProxy alloc] init];
 }
 @end
 
 @implementation IAFCapturePhotoOutputHandler
-- (NSObject<_IAFCapturePhotoOutput> *)__create:(REFTypeChannelMessenger *)messenger {
+- (IAFCapturePhotoOutputProxy *)__create:(REFTypeChannelMessenger *)messenger {
   if (@available(iOS 10.0, *)) {
     return [[IAFCapturePhotoOutputProxy alloc] init];
   }

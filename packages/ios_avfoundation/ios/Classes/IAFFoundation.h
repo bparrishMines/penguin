@@ -49,7 +49,6 @@ API_AVAILABLE(ios(10.0))
 API_AVAILABLE(ios(10.0))
 @interface IAFCapturePhotoSettingsProxy : NSObject<_IAFCapturePhotoSettings>
 @property (readonly) AVCapturePhotoSettings *capturePhotoSettings;
-- (instancetype)initwithProcessedFormat:(NSDictionary<NSString *, NSObject *> *)format;
 - (instancetype)initWithCapturePhotoSettings:(AVCapturePhotoSettings *)capturePhotoSettings;
 @end
 
