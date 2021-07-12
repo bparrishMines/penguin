@@ -255,7 +255,7 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$$class_name$$> {
           messenger,
           /*iterate fields field*/
           /*replace field_argumentCasting*/
-          arguments[0] as int,
+          arguments[1] as int,
           /**/
           /**/
         );
