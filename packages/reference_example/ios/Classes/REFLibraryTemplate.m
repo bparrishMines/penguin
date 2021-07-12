@@ -82,17 +82,20 @@
 }
 
 
-- (void)__create:(NSObject<__prefix____class_name__> *)_instance
+/*iterate constructors constructor*/
+- (void)__create___constructor_name__:(NSObject<__prefix____class_name__> *)_instance
          _owner:(BOOL)_owner
 /*iterate fields field*/
  __field_name__:(/*replace field_type*/NSNumber */**/ _Nullable)__field_name__
 /**/
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
   [self createNewInstancePair:_instance
-                    arguments:@[/*iterate fields field*/__field_name__ ? (NSObject *) __field_name__ : [NSNull null],/**/]
+                    arguments:@[@"__constructor_name__",
+  /*iterate fields field*/__field_name__ ? (NSObject *) __field_name__ : [NSNull null],/**/]
                         owner:_owner
                    completion:completion];
 }
+/**/
 
 /*iterate staticMethods staticMethod*/
 /*if! returnsFuture*/
@@ -131,12 +134,14 @@
 
 /*iterate classes class*/
 @implementation __prefix____class_name__Handler
-- (NSObject<__prefix____class_name__> *)__create:(REFTypeChannelMessenger *)messenger
+/*iterate constructors constructor*/
+- (NSObject<__prefix____class_name__> *)__create___constructor_name__:(REFTypeChannelMessenger *)messenger
                                  /*iterate fields field*/
                                  __field_name__:(/*replace field_type*/NSNumber */**/)__field_name__
 /**/{
   @throw [NSException exceptionWithName:@"__prefix__UnimplementedException" reason:nil userInfo:nil];
 }
+/**/
 
 /*iterate staticMethods staticMethod*/
 /*if returnsFuture*/
@@ -180,7 +185,16 @@
 
 - (nonnull id)createInstance:(nonnull REFTypeChannelMessenger *)messenger
                    arguments:(nonnull NSArray *)arguments {
-  return [self __create:messenger /*iterate fields field*/__field_name__:arguments[/*replace field_index*/0/**/] /**/];
+  NSString *constructorName = arguments[0];
+  /*iterate :join='else' constructors constructor*/
+  if ([@"__constructor_name__" isEqualToString:constructorName]) {
+    return [self __create___constructor_name__:messenger
+            /*iterate fields field*/__field_name__:arguments[/*replace field_index*/1/**/] /**/];
+  }
+  /**/
+  
+  NSString *reason = [NSString stringWithFormat:@"Unable to create a '__class_name__' with constructor name `%@`", constructorName];
+  @throw [NSException exceptionWithName:@"__prefix__UnimplementedException" reason:reason userInfo:nil];
 }
 
 - (id _Nullable)invokeMethod:(nonnull REFTypeChannelMessenger *)messenger

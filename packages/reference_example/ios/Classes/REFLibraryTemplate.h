@@ -55,12 +55,14 @@ typedef NSObject *_Nullable (^__prefix____function_name__) (/*iterate :join=',' 
 /*iterate classes class*/
 @interface __prefix____class_name__Channel : REFTypeChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger;
-- (void)__create:(NSObject<__prefix____class_name__> *)_instance
+/*iterate constructors constructor*/
+- (void)__create___constructor_name__:(NSObject<__prefix____class_name__> *)_instance
           _owner:(BOOL)_owner
 /*iterate fields field*/
  __field_name__:(/*replace field_type*/NSNumber */**/ _Nullable)__field_name__
 /**/
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion;
+/**/
 
 /*iterate staticMethods staticMethod*/
 /*if! returnsFuture*/
@@ -90,10 +92,12 @@ typedef NSObject *_Nullable (^__prefix____function_name__) (/*iterate :join=',' 
 
 /*iterate classes class*/
 @interface __prefix____class_name__Handler : NSObject<REFTypeChannelHandler>
-- (NSObject<__prefix____class_name__> *)__create:(REFTypeChannelMessenger *)messenger
+/*iterate constructors constructor*/
+- (NSObject<__prefix____class_name__> *)__create___constructor_name__:(REFTypeChannelMessenger *)messenger
 /*iterate fields field*/
                                   __field_name__:(/*replace field_type*/NSNumber */**/ _Nullable)__field_name__
 /**/;
+/**/
 /*iterate staticMethods staticMethod*/
 /*if returnsFuture*/
 - (id _Nullable)___staticMethod_name__:(REFTypeChannelMessenger *)messenger
