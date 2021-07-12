@@ -21,7 +21,10 @@ class LibraryImplementations extends $LibraryImplementations {
 
 class ClassTemplateHandler extends $$$class_name$$Handler {
   @override
-  $$class_name$$ $$create(TypeChannelMessenger messenger, int $$field_name$$) {
-    return $$class_name$$($$field_name$$);
+  $$$class_name$$ $create$__constructor_name__(
+    TypeChannelMessenger messenger,
+    int $$field_name$$,
+  ) {
+    return $$class_name$$.$$constructor_name$$($$field_name$$);
   }
 }
