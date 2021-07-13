@@ -58,8 +58,8 @@ typedef NSObject *_Nullable (^__prefix____function_name__) (/*iterate :join=',' 
 /*iterate constructors constructor*/
 - (void)__create___constructor_name__:(NSObject<__prefix____class_name__> *)_instance
           _owner:(BOOL)_owner
-/*iterate fields field*/
- __field_name__:(/*replace field_type*/NSNumber */**/ _Nullable)__field_name__
+/*iterate parameters parameter*/
+ __parameter_name__:(/*replace parameter_type*/NSNumber */**/ _Nullable)__parameter_name__
 /**/
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion;
 /**/
@@ -94,8 +94,8 @@ typedef NSObject *_Nullable (^__prefix____function_name__) (/*iterate :join=',' 
 @interface __prefix____class_name__Handler : NSObject<REFTypeChannelHandler>
 /*iterate constructors constructor*/
 - (NSObject<__prefix____class_name__> *)__create___constructor_name__:(REFTypeChannelMessenger *)messenger
-/*iterate fields field*/
-                                  __field_name__:(/*replace field_type*/NSNumber */**/ _Nullable)__field_name__
+/*iterate parameters parameter*/
+                                  __parameter_name__:(/*replace parameter_type*/NSNumber */**/ _Nullable)__parameter_name__
 /**/;
 /**/
 /*iterate staticMethods staticMethod*/

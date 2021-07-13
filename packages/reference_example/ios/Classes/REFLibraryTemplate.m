@@ -85,13 +85,13 @@
 /*iterate constructors constructor*/
 - (void)__create___constructor_name__:(NSObject<__prefix____class_name__> *)_instance
          _owner:(BOOL)_owner
-/*iterate fields field*/
- __field_name__:(/*replace field_type*/NSNumber */**/ _Nullable)__field_name__
+/*iterate parameters parameter*/
+ __parameter_name__:(/*replace parameter_type*/NSNumber */**/ _Nullable)__parameter_name__
 /**/
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
   [self createNewInstancePair:_instance
                     arguments:@[@"__constructor_name__",
-  /*iterate fields field*/__field_name__ ? (NSObject *) __field_name__ : [NSNull null],/**/]
+  /*iterate parameters parameter*/__parameter_name__ ? (NSObject *) __parameter_name__ : [NSNull null],/**/]
                         owner:_owner
                    completion:completion];
 }
@@ -136,8 +136,8 @@
 @implementation __prefix____class_name__Handler
 /*iterate constructors constructor*/
 - (NSObject<__prefix____class_name__> *)__create___constructor_name__:(REFTypeChannelMessenger *)messenger
-                                 /*iterate fields field*/
-                                 __field_name__:(/*replace field_type*/NSNumber */**/)__field_name__
+                                 /*iterate parameters parameter*/
+                                 __parameter_name__:(/*replace parameter_type*/NSNumber */**/)__parameter_name__
 /**/{
   @throw [NSException exceptionWithName:@"__prefix__UnimplementedException" reason:nil userInfo:nil];
 }
@@ -189,7 +189,7 @@
   /*iterate :join='else' constructors constructor*/
   if ([@"__constructor_name__" isEqualToString:constructorName]) {
     return [self __create___constructor_name__:messenger
-            /*iterate fields field*/__field_name__:arguments[/*replace field_index*/1/**/] /**/];
+            /*iterate parameters parameter*/__parameter_name__:arguments[/*replace parameter_index*/1/**/] /**/];
   }
   /**/
   

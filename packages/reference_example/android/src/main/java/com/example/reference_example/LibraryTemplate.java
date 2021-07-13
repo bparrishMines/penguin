@@ -89,8 +89,8 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
     }
 
     /*iterate constructors constructor*/
-    public Completable<PairedInstance> $$create$__constructor_name__($__class_name__ $instance, boolean $owner/*iterate fields field*/,/*replace field_type*/Integer/**/ __field_name__/**/) {
-      return createNewInstancePair($instance, Arrays.<Object>asList("__constructor_name__", /*iterate :join=',' fields field*/__field_name__/**/), $owner);
+    public Completable<PairedInstance> $$create$__constructor_name__($__class_name__ $instance, boolean $owner/*iterate parameters parameter*/,/*replace parameter_type*/Integer/**/ __parameter_name__/**/) {
+      return createNewInstancePair($instance, Arrays.<Object>asList("__constructor_name__", /*iterate :join=',' parameters parameter*/__parameter_name__/**/), $owner);
     }
     /**/
 
@@ -115,7 +115,7 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
   /*iterate classes class*/
   public static class $__class_name__Handler implements TypeChannelHandler<$__class_name__> {
     /*iterate constructors constructor*/
-    public $__class_name__ $create$__constructor_name__(TypeChannelMessenger messenger/*iterate fields field*/,/*replace field_type*/Integer/**/ __field_name__/**/)
+    public $__class_name__ $create$__constructor_name__(TypeChannelMessenger messenger/*iterate parameters parameter*/,/*replace parameter_type*/Integer/**/ __parameter_name__/**/)
         throws Exception {
       throw new UnsupportedOperationException();
     }
@@ -162,7 +162,7 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
       switch(constructorName) {
         /*iterate constructors constructor*/
         case "__constructor_name__":
-          return $create$__constructor_name__(messenger/*iterate fields field*/,(/*replace field_type*/Integer/**/) arguments.get(/*replace field_index*/1/**/)/**/);
+          return $create$__constructor_name__(messenger/*iterate parameters parameter*/,(/*replace parameter_type*/Integer/**/) arguments.get(/*replace parameter_index*/1/**/)/**/);
         /**/
       }
 

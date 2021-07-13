@@ -10,11 +10,11 @@ typedef $$function_name$$ = void Function(String value);
 
 @Reference('github.penguin/template/template/ClassTemplate')
 class $$class_name$$ with $$$class_name$$ {
-  $$class_name$$.$$constructor_name$$(int $$field_name$$) {
+  $$class_name$$.$$constructor_name$$(int $$parameter_name$$) {
     _channel.$create$__constructor_name__(
       this,
       $owner: true,
-      $$field_name$$: $$field_name$$,
+      $$parameter_name$$: $$parameter_name$$,
     );
   }
 

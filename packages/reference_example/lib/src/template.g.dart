@@ -121,15 +121,15 @@ class $$$class_name$$Channel extends TypeChannel<$$$class_name$$> {
   Future<PairedInstance?> $create$__constructor_name__(
     $$$class_name$$ $instance, {
     required bool $owner,
-    /*iterate fields field*/
-    required /*replace field_type*/ int /**/ $$field_name$$,
+    /*iterate parameters parameter*/
+    required /*replace parameter_type*/ int /**/ $$parameter_name$$,
     /**/
   }) {
     return createNewInstancePair(
       $instance,
       <Object?>[
         '__constructor_name__',
-        /*iterate fields field*/ $$field_name$$, /**/
+        /*iterate parameters parameter*/ $$parameter_name$$, /**/
       ],
       owner: $owner,
     );
@@ -177,8 +177,8 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$$class_name$$> {
   /*iterate constructors constructor*/
   $$$class_name$$ $create$__constructor_name__(
     TypeChannelMessenger messenger,
-    /*iterate fields field*/
-    /*replace field_type*/ int /**/ $$field_name$$,
+    /*iterate parameters parameter*/
+    /*replace parameter_type*/ int /**/ $$parameter_name$$,
     /**/
   ) {
     throw UnimplementedError();
@@ -253,8 +253,8 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$$class_name$$> {
       case '__constructor_name__':
         return $create$__constructor_name__(
           messenger,
-          /*iterate fields field*/
-          /*replace field_argumentCasting*/
+          /*iterate parameters parameter*/
+          /*replace parameter_argumentCasting*/
           arguments[1] as int,
           /**/
           /**/
