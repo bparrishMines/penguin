@@ -27,14 +27,14 @@ ClassNode _$ClassNodeFromJson(Map<String, dynamic> json) {
   return ClassNode(
     name: json['name'] as String,
     channelName: json['channelName'] as String?,
-    fields: (json['fields'] as List<dynamic>)
-        .map((e) => FieldNode.fromJson(e as Map<String, dynamic>))
-        .toList(),
     methods: (json['methods'] as List<dynamic>)
         .map((e) => MethodNode.fromJson(e as Map<String, dynamic>))
         .toList(),
     staticMethods: (json['staticMethods'] as List<dynamic>)
         .map((e) => MethodNode.fromJson(e as Map<String, dynamic>))
+        .toList(),
+    constructors: (json['constructors'] as List<dynamic>)
+        .map((e) => ConstructorNode.fromJson(e as Map<String, dynamic>))
         .toList(),
   );
 }
@@ -42,21 +42,9 @@ ClassNode _$ClassNodeFromJson(Map<String, dynamic> json) {
 Map<String, dynamic> _$ClassNodeToJson(ClassNode instance) => <String, dynamic>{
       'name': instance.name,
       'channelName': instance.channelName,
-      'fields': instance.fields,
       'methods': instance.methods,
       'staticMethods': instance.staticMethods,
-    };
-
-FieldNode _$FieldNodeFromJson(Map<String, dynamic> json) {
-  return FieldNode(
-    name: json['name'] as String,
-    type: ReferenceType.fromJson(json['type'] as Map<String, dynamic>),
-  );
-}
-
-Map<String, dynamic> _$FieldNodeToJson(FieldNode instance) => <String, dynamic>{
-      'name': instance.name,
-      'type': instance.type,
+      'constructors': instance.constructors,
     };
 
 MethodNode _$MethodNodeFromJson(Map<String, dynamic> json) {
@@ -128,5 +116,20 @@ Map<String, dynamic> _$FunctionNodeToJson(FunctionNode instance) =>
       'name': instance.name,
       'channelName': instance.channelName,
       'returnType': instance.returnType,
+      'parameters': instance.parameters,
+    };
+
+ConstructorNode _$ConstructorNodeFromJson(Map<String, dynamic> json) {
+  return ConstructorNode(
+    name: json['name'] as String,
+    parameters: (json['parameters'] as List<dynamic>)
+        .map((e) => ParameterNode.fromJson(e as Map<String, dynamic>))
+        .toList(),
+  );
+}
+
+Map<String, dynamic> _$ConstructorNodeToJson(ConstructorNode instance) =>
+    <String, dynamic>{
+      'name': instance.name,
       'parameters': instance.parameters,
     };

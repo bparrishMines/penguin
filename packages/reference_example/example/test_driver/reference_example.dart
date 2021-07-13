@@ -13,7 +13,8 @@ Future<void> main() async {
 
   group('reference_example', () {
     test('methodTemplate', () {
-      final $$class_name$$ classTemplate = $$class_name$$(44);
+      final $$class_name$$ classTemplate =
+          $$class_name$$.$$constructor_name$$(44);
 
       expect(
         classTemplate.$$method_name$$('Hello,'),
@@ -38,7 +39,8 @@ Future<void> main() async {
         callback,
         $owner: false,
       );
-      final $$class_name$$ classTemplate = $$class_name$$(44);
+      final $$class_name$$ classTemplate =
+          $$class_name$$.$$constructor_name$$(44);
       ChannelRegistrar.instance.implementations.channel__class_name__
           .sendInvokeMethod(
         classTemplate,

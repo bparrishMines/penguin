@@ -117,21 +117,24 @@ class $$$class_name$$Channel extends TypeChannel<$$$class_name$$> {
   $$$class_name$$Channel(TypeChannelMessenger messenger)
       : super(messenger, '__class_channel__');
 
-  Future<PairedInstance?> $$create(
+  /*iterate constructors constructor*/
+  Future<PairedInstance?> $create$__constructor_name__(
     $$$class_name$$ $instance, {
     required bool $owner,
-    /*iterate fields field*/
-    required /*replace field_type*/ int /**/ $$field_name$$,
+    /*iterate parameters parameter*/
+    required /*replace parameter_type*/ int /**/ $$parameter_name$$,
     /**/
   }) {
     return createNewInstancePair(
       $instance,
       <Object?>[
-        /*iterate fields field*/ $$field_name$$, /**/
+        '__constructor_name__',
+        /*iterate parameters parameter*/ $$parameter_name$$, /**/
       ],
       owner: $owner,
     );
   }
+  /**/
 
   /*iterate staticMethods staticMethod*/
   /*if returnsFuture*/
@@ -171,14 +174,16 @@ class $$$class_name$$Channel extends TypeChannel<$$$class_name$$> {
 
 /*iterate classes class*/
 class $$$class_name$$Handler implements TypeChannelHandler<$$$class_name$$> {
-  $$$class_name$$ $$create(
+  /*iterate constructors constructor*/
+  $$$class_name$$ $create$__constructor_name__(
     TypeChannelMessenger messenger,
-    /*iterate fields field*/
-    /*replace field_type*/ int /**/ $$field_name$$,
+    /*iterate parameters parameter*/
+    /*replace parameter_type*/ int /**/ $$parameter_name$$,
     /**/
   ) {
     throw UnimplementedError();
   }
+  /**/
 
   /*iterate staticMethods staticMethod*/
   /*if! returnsFuture*/
@@ -242,13 +247,25 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$$class_name$$> {
     TypeChannelMessenger messenger,
     List<Object?> arguments,
   ) {
-    return $$create(
-      messenger,
-      /*iterate fields field*/
-      /*replace field_argumentCasting*/
-      arguments[0] as int,
+    final String constructorName = arguments[0] as String;
+    switch (constructorName) {
+      /*iterate constructors constructor*/
+      case '__constructor_name__':
+        return $create$__constructor_name__(
+          messenger,
+          /*iterate parameters parameter*/
+          /*replace parameter_argumentCasting*/
+          arguments[1] as int,
+          /**/
+          /**/
+        );
       /**/
-      /**/
+    }
+
+    throw ArgumentError.value(
+      constructorName,
+      'constructorName',
+      'Unable to invoke constructor of',
     );
   }
 

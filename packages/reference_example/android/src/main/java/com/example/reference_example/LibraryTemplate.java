@@ -88,9 +88,11 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
       super(messenger, "__class_channel__");
     }
 
-    public Completable<PairedInstance> $$create($__class_name__ $instance, boolean $owner/*iterate fields field*/,/*replace field_type*/Integer/**/ __field_name__/**/) {
-      return createNewInstancePair($instance, Arrays.<Object>asList(/*iterate :join=',' fields field*/__field_name__/**/), $owner);
+    /*iterate constructors constructor*/
+    public Completable<PairedInstance> $$create$__constructor_name__($__class_name__ $instance, boolean $owner/*iterate parameters parameter*/,/*replace parameter_type*/Integer/**/ __parameter_name__/**/) {
+      return createNewInstancePair($instance, Arrays.<Object>asList("__constructor_name__", /*iterate :join=',' parameters parameter*/__parameter_name__/**/), $owner);
     }
+    /**/
 
     /*iterate staticMethods staticMethod*/
     /*if! returnsFuture*/
@@ -112,10 +114,12 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
 
   /*iterate classes class*/
   public static class $__class_name__Handler implements TypeChannelHandler<$__class_name__> {
-    public $__class_name__ $$create(TypeChannelMessenger messenger/*iterate fields field*/,/*replace field_type*/Integer/**/ __field_name__/**/)
+    /*iterate constructors constructor*/
+    public $__class_name__ $create$__constructor_name__(TypeChannelMessenger messenger/*iterate parameters parameter*/,/*replace parameter_type*/Integer/**/ __parameter_name__/**/)
         throws Exception {
       throw new UnsupportedOperationException();
     }
+    /**/
 
     /*iterate staticMethods staticMethod*/
     /*if returnsFuture*/
@@ -154,7 +158,16 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
     @Override
     public $__class_name__ createInstance(TypeChannelMessenger messenger, List<Object> arguments)
         throws Exception {
-      return $$create(messenger/*iterate fields field*/,(/*replace field_type*/Integer/**/) arguments.get(/*replace field_index*/0/**/)/**/);
+      final String constructorName = (String) arguments.get(0);
+      switch(constructorName) {
+        /*iterate constructors constructor*/
+        case "__constructor_name__":
+          return $create$__constructor_name__(messenger/*iterate parameters parameter*/,(/*replace parameter_type*/Integer/**/) arguments.get(/*replace parameter_index*/1/**/)/**/);
+        /**/
+      }
+
+      throw new UnsupportedOperationException(
+          String.format("Unable to invoke constructor of %s", constructorName));
     }
 
     @Override

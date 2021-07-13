@@ -23,8 +23,8 @@ public class ChannelRegistrar extends LibraryTemplate.$ChannelRegistrar {
   public static class ClassTemplateHandler extends LibraryTemplate.$__class_name__Handler {
 
     @Override
-    public LibraryTemplate.$__class_name__ $$create(TypeChannelMessenger messenger, Integer __field_name__) {
-      return new classnameProxy(__field_name__);
+    public LibraryTemplate.$__class_name__ $create$__constructor_name__(TypeChannelMessenger messenger, Integer __parameter_name__) {
+      return new classnameProxy(__parameter_name__);
     }
 
     @Override

@@ -31,9 +31,9 @@
 @end
 
 @implementation EXPClassTemplateHandler
-- (NSObject<__prefix____class_name__> *)__create:(REFTypeChannelMessenger *)messenger
-                                  __field_name__:(NSNumber *)__field_name__ {
-  return [[EXPClassTemplateProxy alloc] initWithFieldTemplate:__field_name__];
+- (NSObject<__prefix____class_name__> *)__create___constructor_name__:(REFTypeChannelMessenger *)messenger
+                                                        _parameter_name__:(NSNumber *)__parameter_name__ {
+  return [[EXPClassTemplateProxy alloc] initWithFieldTemplate:__parameter_name__];
 }
 
 - (id)invokeMethod:(REFTypeChannelMessenger *)messenger

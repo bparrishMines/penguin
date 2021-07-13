@@ -18,16 +18,26 @@ String generateObjcHeader({
     classData['name'] = classNode.name;
     classData['channel'] = classNode.channelName!;
 
-    final List<Map<String, Object>> fields = <Map<String, Object>>[];
-    for (int i = 0; i < classNode.fields.length; i++) {
-      final Map<String, Object> fieldData = <String, Object>{};
-      fieldData['name'] = classNode.fields[i].name;
-      fieldData['type'] = getTrueTypeName(classNode.fields[i].type, prefix);
-      fieldData['index'] = '$i';
+    final List<Map<String, Object>> constructors = <Map<String, Object>>[];
+    for (ConstructorNode constructorNode in classNode.constructors) {
+      final Map<String, Object> constructorData = <String, Object>{};
+      constructorData['name'] = constructorNode.name;
 
-      fields.add(fieldData);
+      final List<Map<String, Object>> parameters = <Map<String, Object>>[];
+      for (int i = 0; i < constructorNode.parameters.length; i++) {
+        final Map<String, Object> parameterData = <String, Object>{};
+        parameterData['name'] = constructorNode.parameters[i].name;
+        parameterData['type'] =
+            getTrueTypeName(constructorNode.parameters[i].type, prefix);
+        parameterData['index'] = '${i + 1}';
+
+        parameters.add(parameterData);
+      }
+      constructorData['parameters'] = parameters;
+
+      constructors.add(constructorData);
     }
-    classData['fields'] = fields;
+    classData['constructors'] = constructors;
 
     final List<Map<String, Object>> staticMethods = <Map<String, Object>>[];
     for (MethodNode methodNode in classNode.staticMethods) {
