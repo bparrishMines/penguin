@@ -177,16 +177,18 @@ class $CapturePhotoSettingsChannel extends TypeChannel<$CapturePhotoSettings> {
     );
   }
 
-  Future<Object?> $photoSettingsWithFormat(
-    $CapturePhotoSettings $instance,
-    Map format,
-  ) {
-    return sendInvokeMethod(
+  Future<PairedInstance?> $create$photoSettingsWithFormat(
+    $CapturePhotoSettings $instance, {
+    required bool $owner,
+    required Map format,
+  }) {
+    return createNewInstancePair(
       $instance,
-      'photoSettingsWithFormat',
       <Object?>[
+        'photoSettingsWithFormat',
         format,
       ],
+      owner: $owner,
     );
   }
 
@@ -890,6 +892,13 @@ class $CapturePhotoSettingsHandler
     throw UnimplementedError();
   }
 
+  $CapturePhotoSettings $create$photoSettingsWithFormat(
+    TypeChannelMessenger messenger,
+    Map format,
+  ) {
+    throw UnimplementedError();
+  }
+
   @override
   Object? invokeStaticMethod(
     TypeChannelMessenger messenger,
@@ -916,6 +925,12 @@ class $CapturePhotoSettingsHandler
       case '':
         return $create$(
           messenger,
+        );
+
+      case 'photoSettingsWithFormat':
+        return $create$photoSettingsWithFormat(
+          messenger,
+          arguments[1] as Map,
         );
     }
 

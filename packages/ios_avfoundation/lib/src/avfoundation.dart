@@ -531,7 +531,16 @@ class CapturePhotoOutput extends CaptureOutput with $CapturePhotoOutput {
 /// [CapturePhotoSettings] instance from an existing photo settings object.
 @Reference('ios_avfoundation/avfoundation/CapturePhotoSettings')
 class CapturePhotoSettings with $CapturePhotoSettings {
-  /// Construct a [CapturePhotoSettings].
+  /// Creates a photo settings object with default settings.
+  ///
+  /// Capturing a photo with default settings delivers a single image in JPEG
+  /// format.
+  ///
+  /// Requesting capture in a processed format (such as JPEG) adds requirements
+  /// for other photo settings: for details, see the format property. The
+  /// capture output validates these requirement when you call the
+  /// [CapturePhotoOutput.capturePhotoWithSettings] method. If your settings and
+  /// delegate don’t meet these requirement, that method raises an exception.
   CapturePhotoSettings() {
     _channel.$create$(this, $owner: true);
   }
@@ -543,7 +552,7 @@ class CapturePhotoSettings with $CapturePhotoSettings {
   // TODO: CapturePhotoOutput.getAvailablePhotoPixelFormatTypes
   // TODO: CapturePhotoOutput.getAvailablePhotoCodecTypes
   // TODO: AVVideoQualityKey
-  /// Resets the photo settings object with the specified output format.
+  /// Creates a photo settings object with the specified output format.
   ///
   /// `format`: A dictionary of Core Video pixel buffer attributes or
   ///   AVFoundation video settings constants (see Video Settings).
@@ -560,8 +569,12 @@ class CapturePhotoSettings with $CapturePhotoSettings {
   ///   [availablePhotoCodecTypes] array of your photo capture output. For a
   ///   compressed format, you can also specify a compression level with the key
   ///   [AVVideoQualityKey].
-  Future<void> photoSettingsWithFormat(Map<String, Object> format) {
-    return _channel.$photoSettingsWithFormat(this, format);
+  CapturePhotoSettings.photoSettingsWithFormat(Map<String, Object> format) {
+    _channel.$create$photoSettingsWithFormat(
+      this,
+      $owner: true,
+      format: format,
+    );
   }
 
   // TODO: CaptureResolvedPhotoSettings

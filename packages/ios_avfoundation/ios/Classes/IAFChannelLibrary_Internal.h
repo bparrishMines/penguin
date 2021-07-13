@@ -86,14 +86,6 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 @protocol _IAFCapturePhotoSettings <NSObject>
 
 
-- (id _Nullable)photoSettingsWithFormat
-                                :(NSDictionary<NSString *, NSObject *> * _Nullable)format
-
-
-;
-
-
-
 - (id _Nullable)uniqueID
 
 ;
@@ -391,7 +383,12 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion;
 
+- (void)_create_photoSettingsWithFormat:(NSObject<_IAFCapturePhotoSettings> *)_instance
+          _owner:(BOOL)_owner
 
+ format:(NSDictionary<NSString *, NSObject *> * _Nullable)format
+
+     completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion;
 
 
 
@@ -684,14 +681,12 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 - (NSObject<_IAFCapturePhotoSettings> *)_create_:(REFTypeChannelMessenger *)messenger
 ;
 
+- (NSObject<_IAFCapturePhotoSettings> *)_create_photoSettingsWithFormat:(REFTypeChannelMessenger *)messenger
 
-
-
-
-- (id _Nullable)_photoSettingsWithFormat:(NSObject<_IAFCapturePhotoSettings> *)_instance
-
-  format:(NSDictionary<NSString *, NSObject *> * _Nullable)format
+                                  format:(NSDictionary<NSString *, NSObject *> * _Nullable)format
 ;
+
+
 
 
 

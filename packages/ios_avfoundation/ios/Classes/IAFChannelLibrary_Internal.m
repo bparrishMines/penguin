@@ -122,7 +122,18 @@
                    completion:completion];
 }
 
+- (void)_create_photoSettingsWithFormat:(NSObject<_IAFCapturePhotoSettings> *)_instance
+         _owner:(BOOL)_owner
 
+ format:(NSDictionary<NSString *, NSObject *> * _Nullable)format
+
+     completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
+  [self createNewInstancePair:_instance
+                    arguments:@[@"photoSettingsWithFormat",
+  format ? (NSObject *) format : [NSNull null],]
+                        owner:_owner
+                   completion:completion];
+}
 
 
 
@@ -596,18 +607,15 @@
   @throw [NSException exceptionWithName:@"_IAFUnimplementedException" reason:nil userInfo:nil];
 }
 
-
-
-
-
-
-- (id _Nullable)_photoSettingsWithFormat:(NSObject<_IAFCapturePhotoSettings> *)_instance
-
-                     format:(NSDictionary<NSString *, NSObject *> * _Nullable)format
- {
-  return [_instance photoSettingsWithFormat:format
-          ];
+- (NSObject<_IAFCapturePhotoSettings> *)_create_photoSettingsWithFormat:(REFTypeChannelMessenger *)messenger
+                                 
+                                 format:(NSDictionary<NSString *, NSObject *> *)format
+{
+  @throw [NSException exceptionWithName:@"_IAFUnimplementedException" reason:nil userInfo:nil];
 }
+
+
+
 
 
 
@@ -646,6 +654,11 @@
     return [self _create_:messenger
             ];
   }
+  else
+  if ([@"photoSettingsWithFormat" isEqualToString:constructorName]) {
+    return [self _create_photoSettingsWithFormat:messenger
+            format:arguments[1] ];
+  }
   
   
   NSString *reason = [NSString stringWithFormat:@"Unable to create a 'CapturePhotoSettings' with constructor name `%@`", constructorName];
@@ -658,14 +671,6 @@
                    arguments:(nonnull NSArray *)arguments {
   NSObject<_IAFCapturePhotoSettings> *value = (NSObject<_IAFCapturePhotoSettings> *) instance;
   
-  
-  if ([@"photoSettingsWithFormat" isEqualToString:methodName]) {
-    return [self _photoSettingsWithFormat:value
-               
-               format:arguments[0] ];
-  }
-  
-  else
   
   if ([@"uniqueID" isEqualToString:methodName]) {
     return [self _uniqueID:value

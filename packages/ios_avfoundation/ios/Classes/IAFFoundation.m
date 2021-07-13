@@ -326,6 +326,10 @@
   return [self initWithCapturePhotoSettings:[AVCapturePhotoSettings photoSettings]];
 }
 
+- (instancetype)initWithFormat:(NSDictionary<NSString *, NSObject *> *)format {
+  return [self initWithCapturePhotoSettings:[AVCapturePhotoSettings photoSettingsWithFormat:format]];
+}
+
 - (instancetype)initWithCapturePhotoSettings:(AVCapturePhotoSettings *)capturePhotoSettings {
   self = [super init];
   if (self) {

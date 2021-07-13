@@ -109,6 +109,11 @@
 - (IAFCapturePhotoSettingsProxy *)_create_:(REFTypeChannelMessenger *)messenger {
   return [[IAFCapturePhotoSettingsProxy alloc] init];
 }
+
+- (IAFCapturePhotoSettingsProxy *)_create_photoSettingsWithFormat:(REFTypeChannelMessenger *)messenger
+                                                           format:(NSDictionary<NSString *,NSObject *> *)format {
+  return [[IAFCapturePhotoSettingsProxy alloc] initWithFormat:format];
+}
 @end
 
 @implementation IAFCapturePhotoOutputHandler
