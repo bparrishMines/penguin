@@ -93,7 +93,7 @@ typedef NSObject *_Nullable (^__prefix____function_name__) (/*iterate :join=',' 
 /*iterate classes class*/
 @interface __prefix____class_name__Handler : NSObject<REFTypeChannelHandler>
 /*iterate constructors constructor*/
-- (NSObject<__prefix____class_name__> *)__create___constructor_name__:(REFTypeChannelMessenger *)messenger
+- (NSObject<__prefix____class_name__> *)_create___constructor_name__:(REFTypeChannelMessenger *)messenger
 /*iterate parameters parameter*/
                                   __parameter_name__:(/*replace parameter_type*/NSNumber */**/ _Nullable)__parameter_name__
 /**/;
