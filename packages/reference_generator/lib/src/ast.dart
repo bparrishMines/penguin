@@ -24,41 +24,25 @@ class ClassNode {
   ClassNode({
     required this.name,
     required this.channelName,
-    required this.fields,
     required this.methods,
     required this.staticMethods,
+    required this.constructors,
   });
 
   final String name;
 
   final String? channelName;
 
-  final List<FieldNode> fields;
-
   final List<MethodNode> methods;
 
   final List<MethodNode> staticMethods;
+
+  final List<ConstructorNode> constructors;
 
   factory ClassNode.fromJson(Map<String, dynamic> json) =>
       _$ClassNodeFromJson(json);
 
   Map<String, dynamic> toJson() => _$ClassNodeToJson(this);
-
-  @override
-  String toString() => '$runtimeType(${toJson().toString()})';
-}
-
-@JsonSerializable()
-class FieldNode {
-  FieldNode({required this.name, required this.type});
-
-  final String name;
-  final ReferenceType type;
-
-  factory FieldNode.fromJson(Map<String, dynamic> json) =>
-      _$FieldNodeFromJson(json);
-
-  Map<String, dynamic> toJson() => _$FieldNodeToJson(this);
 
   @override
   String toString() => '$runtimeType(${toJson().toString()})';
@@ -141,6 +125,22 @@ class FunctionNode {
       _$FunctionNodeFromJson(json);
 
   Map<String, dynamic> toJson() => _$FunctionNodeToJson(this);
+
+  @override
+  String toString() => '$runtimeType(${toJson().toString()})';
+}
+
+@JsonSerializable()
+class ConstructorNode {
+  ConstructorNode({required this.name, required this.parameters});
+
+  factory ConstructorNode.fromJson(Map<String, dynamic> json) =>
+      _$ConstructorNodeFromJson(json);
+
+  final String name;
+  final List<ParameterNode> parameters;
+
+  Map<String, dynamic> toJson() => _$ConstructorNodeToJson(this);
 
   @override
   String toString() => '$runtimeType(${toJson().toString()})';

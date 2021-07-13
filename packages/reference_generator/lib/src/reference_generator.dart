@@ -104,32 +104,16 @@ class ReferenceAstBuilder extends Builder {
     ClassElement classElement,
     Set<Element> allGeneratedElements,
   ) {
-    List<ParameterElement> parameters;
-    final ConstructorElement? defaultConstructor = classElement.constructors
-        .cast<ConstructorElement?>()
-        .firstWhere(
-            (ConstructorElement? constructorElement) =>
-                constructorElement != null && constructorElement.name.isEmpty,
-            orElse: () => null);
-    if (defaultConstructor == null) {
-      parameters = <ParameterElement>[];
-    } else {
-      parameters = defaultConstructor.parameters;
-    }
-
     return ClassNode(
       name: classElement.name,
       channelName: _getChannel(classElement.thisType),
-      fields: parameters
-          .where((ParameterElement element) {
-            final ReferenceParameter? referenceParameter =
-                tryReadParameterAnnotation(element);
-            if (referenceParameter == null) return true;
-            return !referenceParameter.ignore;
-          })
-          .map<FieldNode>((ParameterElement parameterElement) =>
-              _toFieldNode(parameterElement, allGeneratedElements))
-          .toList(),
+      constructors: classElement.constructors
+          .where((ConstructorElement element) => !element.isPrivate)
+          .map<ConstructorNode>(
+        (ConstructorElement constructorElement) {
+          return _toConstructorNode(constructorElement, allGeneratedElements);
+        },
+      ).toList(),
       methods: classElement.methods
           .where((MethodElement element) => !element.isPrivate)
           .where((MethodElement methodElement) => !methodElement.isStatic)
@@ -161,13 +145,24 @@ class ReferenceAstBuilder extends Builder {
     );
   }
 
-  FieldNode _toFieldNode(
-    ParameterElement parameterElement,
+  ConstructorNode _toConstructorNode(
+    ConstructorElement constructorElement,
     Set<Element> allGeneratedElements,
   ) {
-    return FieldNode(
-      name: parameterElement.name,
-      type: _toReferenceType(parameterElement.type, allGeneratedElements),
+    return ConstructorNode(
+      name: constructorElement.name,
+      parameters: constructorElement.parameters
+          .where((ParameterElement element) {
+            final ReferenceParameter? referenceParameter =
+                tryReadParameterAnnotation(element);
+            if (referenceParameter == null) return true;
+            return !referenceParameter.ignore;
+          })
+          .map<ParameterNode>(
+            (ParameterElement parameterElement) =>
+                _toParameterNode(parameterElement, allGeneratedElements),
+          )
+          .toList(),
     );
   }
 
