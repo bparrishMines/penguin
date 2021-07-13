@@ -22,7 +22,7 @@
                                                 initWithMessenger:_mockTypeChannelMessenger];
 
   __block BOOL callbackCalled = NO;
-  IAFCapturePhotoCaptureDelegateProxy *delegateProxy = (IAFCapturePhotoCaptureDelegateProxy *) [implementations.handlerCapturePhotoCaptureDelegate __create:_mockTypeChannelMessenger didFinishProcessingPhoto:^NSObject * _Nullable(NSObject<_IAFCapturePhoto> * _Nullable photo) {
+  IAFCapturePhotoCaptureDelegateProxy *delegateProxy = (IAFCapturePhotoCaptureDelegateProxy *) [implementations.handlerCapturePhotoCaptureDelegate _create_:_mockTypeChannelMessenger didFinishProcessingPhoto:^NSObject * _Nullable(NSObject<_IAFCapturePhoto> * _Nullable photo) {
     callbackCalled = YES;
     return nil;
   }];

@@ -82,15 +82,18 @@
 }
 
 
-- (void)__create:(NSObject<_IAFCapturePhotoOutput> *)_instance
+
+- (void)_create_:(NSObject<_IAFCapturePhotoOutput> *)_instance
          _owner:(BOOL)_owner
 
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
   [self createNewInstancePair:_instance
-                    arguments:@[]
+                    arguments:@[@"",
+  ]
                         owner:_owner
                    completion:completion];
 }
+
 
 
 
@@ -107,15 +110,18 @@
 }
 
 
-- (void)__create:(NSObject<_IAFCapturePhotoSettings> *)_instance
+
+- (void)_create_:(NSObject<_IAFCapturePhotoSettings> *)_instance
          _owner:(BOOL)_owner
 
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
   [self createNewInstancePair:_instance
-                    arguments:@[]
+                    arguments:@[@"",
+  ]
                         owner:_owner
                    completion:completion];
 }
+
 
 
 
@@ -134,17 +140,20 @@
 }
 
 
-- (void)__create:(NSObject<_IAFCapturePhotoCaptureDelegate> *)_instance
+
+- (void)_create_:(NSObject<_IAFCapturePhotoCaptureDelegate> *)_instance
          _owner:(BOOL)_owner
 
  didFinishProcessingPhoto:(_IAFFinishProcessingPhotoCallback _Nullable)didFinishProcessingPhoto
 
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
   [self createNewInstancePair:_instance
-                    arguments:@[didFinishProcessingPhoto ? (NSObject *) didFinishProcessingPhoto : [NSNull null],]
+                    arguments:@[@"",
+  didFinishProcessingPhoto ? (NSObject *) didFinishProcessingPhoto : [NSNull null],]
                         owner:_owner
                    completion:completion];
 }
+
 
 
 
@@ -157,15 +166,18 @@
 }
 
 
-- (void)__create:(NSObject<_IAFCaptureOutput> *)_instance
+
+- (void)_create_:(NSObject<_IAFCaptureOutput> *)_instance
          _owner:(BOOL)_owner
 
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
   [self createNewInstancePair:_instance
-                    arguments:@[]
+                    arguments:@[@"",
+  ]
                         owner:_owner
                    completion:completion];
 }
+
 
 
 
@@ -178,17 +190,20 @@
 }
 
 
-- (void)__create:(NSObject<_IAFCapturePhoto> *)_instance
+
+- (void)_create_:(NSObject<_IAFCapturePhoto> *)_instance
          _owner:(BOOL)_owner
 
  fileDataRepresentation:(NSData * _Nullable)fileDataRepresentation
 
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
   [self createNewInstancePair:_instance
-                    arguments:@[fileDataRepresentation ? (NSObject *) fileDataRepresentation : [NSNull null],]
+                    arguments:@[@"",
+  fileDataRepresentation ? (NSObject *) fileDataRepresentation : [NSNull null],]
                         owner:_owner
                    completion:completion];
 }
+
 
 
 
@@ -201,17 +216,20 @@
 }
 
 
-- (void)__create:(NSObject<_IAFCaptureDeviceInput> *)_instance
+
+- (void)_create_:(NSObject<_IAFCaptureDeviceInput> *)_instance
          _owner:(BOOL)_owner
 
  device:(NSObject<_IAFCaptureDevice> * _Nullable)device
 
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
   [self createNewInstancePair:_instance
-                    arguments:@[device ? (NSObject *) device : [NSNull null],]
+                    arguments:@[@"",
+  device ? (NSObject *) device : [NSNull null],]
                         owner:_owner
                    completion:completion];
 }
+
 
 
 
@@ -224,15 +242,18 @@
 }
 
 
-- (void)__create:(NSObject<_IAFCaptureInput> *)_instance
+
+- (void)_create_:(NSObject<_IAFCaptureInput> *)_instance
          _owner:(BOOL)_owner
 
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
   [self createNewInstancePair:_instance
-                    arguments:@[]
+                    arguments:@[@"",
+  ]
                         owner:_owner
                    completion:completion];
 }
+
 
 
 
@@ -245,15 +266,18 @@
 }
 
 
-- (void)__create:(NSObject<_IAFCaptureSession> *)_instance
+
+- (void)_create_:(NSObject<_IAFCaptureSession> *)_instance
          _owner:(BOOL)_owner
 
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
   [self createNewInstancePair:_instance
-                    arguments:@[]
+                    arguments:@[@"",
+  ]
                         owner:_owner
                    completion:completion];
 }
+
 
 
 
@@ -278,7 +302,8 @@
 }
 
 
-- (void)__create:(NSObject<_IAFCaptureDevice> *)_instance
+
+- (void)_create_:(NSObject<_IAFCaptureDevice> *)_instance
          _owner:(BOOL)_owner
 
  uniqueId:(NSString * _Nullable)uniqueId
@@ -291,10 +316,12 @@
 
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
   [self createNewInstancePair:_instance
-                    arguments:@[uniqueId ? (NSObject *) uniqueId : [NSNull null],position ? (NSObject *) position : [NSNull null],isSmoothAutoFocusSupported ? (NSObject *) isSmoothAutoFocusSupported : [NSNull null],hasFlash ? (NSObject *) hasFlash : [NSNull null],]
+                    arguments:@[@"",
+  uniqueId ? (NSObject *) uniqueId : [NSNull null],position ? (NSObject *) position : [NSNull null],isSmoothAutoFocusSupported ? (NSObject *) isSmoothAutoFocusSupported : [NSNull null],hasFlash ? (NSObject *) hasFlash : [NSNull null],]
                         owner:_owner
                    completion:completion];
 }
+
 
 
 
@@ -343,7 +370,8 @@
 }
 
 
-- (void)__create:(NSObject<_IAFCaptureDeviceDiscoverySession> *)_instance
+
+- (void)_create_:(NSObject<_IAFCaptureDeviceDiscoverySession> *)_instance
          _owner:(BOOL)_owner
 
  devices:(NSArray<NSObject<_IAFCaptureDevice> *> * _Nullable)devices
@@ -352,10 +380,12 @@
 
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
   [self createNewInstancePair:_instance
-                    arguments:@[devices ? (NSObject *) devices : [NSNull null],supportedMultiCamDeviceSets ? (NSObject *) supportedMultiCamDeviceSets : [NSNull null],]
+                    arguments:@[@"",
+  devices ? (NSObject *) devices : [NSNull null],supportedMultiCamDeviceSets ? (NSObject *) supportedMultiCamDeviceSets : [NSNull null],]
                         owner:_owner
                    completion:completion];
 }
+
 
 
 
@@ -370,17 +400,20 @@
 }
 
 
-- (void)__create:(NSObject<_IAFPreviewController> *)_instance
+
+- (void)_create_:(NSObject<_IAFPreviewController> *)_instance
          _owner:(BOOL)_owner
 
  captureSession:(NSObject<_IAFCaptureSession> * _Nullable)captureSession
 
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
   [self createNewInstancePair:_instance
-                    arguments:@[captureSession ? (NSObject *) captureSession : [NSNull null],]
+                    arguments:@[@"",
+  captureSession ? (NSObject *) captureSession : [NSNull null],]
                         owner:_owner
                    completion:completion];
 }
+
 
 
 
@@ -393,15 +426,18 @@
 }
 
 
-- (void)__create:(NSObject<_IAFCaptureFileOutput> *)_instance
+
+- (void)_create_:(NSObject<_IAFCaptureFileOutput> *)_instance
          _owner:(BOOL)_owner
 
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
   [self createNewInstancePair:_instance
-                    arguments:@[]
+                    arguments:@[@"",
+  ]
                         owner:_owner
                    completion:completion];
 }
+
 
 
 
@@ -424,15 +460,18 @@
 }
 
 
-- (void)__create:(NSObject<_IAFCaptureMovieFileOutput> *)_instance
+
+- (void)_create_:(NSObject<_IAFCaptureMovieFileOutput> *)_instance
          _owner:(BOOL)_owner
 
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
   [self createNewInstancePair:_instance
-                    arguments:@[]
+                    arguments:@[@"",
+  ]
                         owner:_owner
                    completion:completion];
 }
+
 
 
 
@@ -447,15 +486,18 @@
 }
 
 
-- (void)__create:(NSObject<_IAFCaptureFileOutputRecordingDelegate> *)_instance
+
+- (void)_create_:(NSObject<_IAFCaptureFileOutputRecordingDelegate> *)_instance
          _owner:(BOOL)_owner
 
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
   [self createNewInstancePair:_instance
-                    arguments:@[]
+                    arguments:@[@"",
+  ]
                         owner:_owner
                    completion:completion];
 }
+
 
 
 
@@ -465,10 +507,12 @@
 
 
 @implementation _IAFCapturePhotoOutputHandler
-- (NSObject<_IAFCapturePhotoOutput> *)__create:(REFTypeChannelMessenger *)messenger
+
+- (NSObject<_IAFCapturePhotoOutput> *)_create_:(REFTypeChannelMessenger *)messenger
                                  {
   @throw [NSException exceptionWithName:@"_IAFUnimplementedException" reason:nil userInfo:nil];
 }
+
 
 
 
@@ -505,7 +549,16 @@
 
 - (nonnull id)createInstance:(nonnull REFTypeChannelMessenger *)messenger
                    arguments:(nonnull NSArray *)arguments {
-  return [self __create:messenger ];
+  NSString *constructorName = arguments[0];
+  
+  if ([@"" isEqualToString:constructorName]) {
+    return [self _create_:messenger
+            ];
+  }
+  
+  
+  NSString *reason = [NSString stringWithFormat:@"Unable to create a 'CapturePhotoOutput' with constructor name `%@`", constructorName];
+  @throw [NSException exceptionWithName:@"_IAFUnimplementedException" reason:reason userInfo:nil];
 }
 
 - (id _Nullable)invokeMethod:(nonnull REFTypeChannelMessenger *)messenger
@@ -537,10 +590,12 @@
 @end
 
 @implementation _IAFCapturePhotoSettingsHandler
-- (NSObject<_IAFCapturePhotoSettings> *)__create:(REFTypeChannelMessenger *)messenger
+
+- (NSObject<_IAFCapturePhotoSettings> *)_create_:(REFTypeChannelMessenger *)messenger
                                  {
   @throw [NSException exceptionWithName:@"_IAFUnimplementedException" reason:nil userInfo:nil];
 }
+
 
 
 
@@ -585,7 +640,16 @@
 
 - (nonnull id)createInstance:(nonnull REFTypeChannelMessenger *)messenger
                    arguments:(nonnull NSArray *)arguments {
-  return [self __create:messenger ];
+  NSString *constructorName = arguments[0];
+  
+  if ([@"" isEqualToString:constructorName]) {
+    return [self _create_:messenger
+            ];
+  }
+  
+  
+  NSString *reason = [NSString stringWithFormat:@"Unable to create a 'CapturePhotoSettings' with constructor name `%@`", constructorName];
+  @throw [NSException exceptionWithName:@"_IAFUnimplementedException" reason:reason userInfo:nil];
 }
 
 - (id _Nullable)invokeMethod:(nonnull REFTypeChannelMessenger *)messenger
@@ -624,12 +688,14 @@
 @end
 
 @implementation _IAFCapturePhotoCaptureDelegateHandler
-- (NSObject<_IAFCapturePhotoCaptureDelegate> *)__create:(REFTypeChannelMessenger *)messenger
+
+- (NSObject<_IAFCapturePhotoCaptureDelegate> *)_create_:(REFTypeChannelMessenger *)messenger
                                  
                                  didFinishProcessingPhoto:(_IAFFinishProcessingPhotoCallback)didFinishProcessingPhoto
 {
   @throw [NSException exceptionWithName:@"_IAFUnimplementedException" reason:nil userInfo:nil];
 }
+
 
 
 
@@ -646,7 +712,16 @@
 
 - (nonnull id)createInstance:(nonnull REFTypeChannelMessenger *)messenger
                    arguments:(nonnull NSArray *)arguments {
-  return [self __create:messenger didFinishProcessingPhoto:arguments[0] ];
+  NSString *constructorName = arguments[0];
+  
+  if ([@"" isEqualToString:constructorName]) {
+    return [self _create_:messenger
+            didFinishProcessingPhoto:arguments[1] ];
+  }
+  
+  
+  NSString *reason = [NSString stringWithFormat:@"Unable to create a 'CapturePhotoCaptureDelegate' with constructor name `%@`", constructorName];
+  @throw [NSException exceptionWithName:@"_IAFUnimplementedException" reason:reason userInfo:nil];
 }
 
 - (id _Nullable)invokeMethod:(nonnull REFTypeChannelMessenger *)messenger
@@ -662,10 +737,12 @@
 @end
 
 @implementation _IAFCaptureOutputHandler
-- (NSObject<_IAFCaptureOutput> *)__create:(REFTypeChannelMessenger *)messenger
+
+- (NSObject<_IAFCaptureOutput> *)_create_:(REFTypeChannelMessenger *)messenger
                                  {
   @throw [NSException exceptionWithName:@"_IAFUnimplementedException" reason:nil userInfo:nil];
 }
+
 
 
 
@@ -682,7 +759,16 @@
 
 - (nonnull id)createInstance:(nonnull REFTypeChannelMessenger *)messenger
                    arguments:(nonnull NSArray *)arguments {
-  return [self __create:messenger ];
+  NSString *constructorName = arguments[0];
+  
+  if ([@"" isEqualToString:constructorName]) {
+    return [self _create_:messenger
+            ];
+  }
+  
+  
+  NSString *reason = [NSString stringWithFormat:@"Unable to create a 'CaptureOutput' with constructor name `%@`", constructorName];
+  @throw [NSException exceptionWithName:@"_IAFUnimplementedException" reason:reason userInfo:nil];
 }
 
 - (id _Nullable)invokeMethod:(nonnull REFTypeChannelMessenger *)messenger
@@ -698,12 +784,14 @@
 @end
 
 @implementation _IAFCapturePhotoHandler
-- (NSObject<_IAFCapturePhoto> *)__create:(REFTypeChannelMessenger *)messenger
+
+- (NSObject<_IAFCapturePhoto> *)_create_:(REFTypeChannelMessenger *)messenger
                                  
                                  fileDataRepresentation:(NSData *)fileDataRepresentation
 {
   @throw [NSException exceptionWithName:@"_IAFUnimplementedException" reason:nil userInfo:nil];
 }
+
 
 
 
@@ -720,7 +808,16 @@
 
 - (nonnull id)createInstance:(nonnull REFTypeChannelMessenger *)messenger
                    arguments:(nonnull NSArray *)arguments {
-  return [self __create:messenger fileDataRepresentation:arguments[0] ];
+  NSString *constructorName = arguments[0];
+  
+  if ([@"" isEqualToString:constructorName]) {
+    return [self _create_:messenger
+            fileDataRepresentation:arguments[1] ];
+  }
+  
+  
+  NSString *reason = [NSString stringWithFormat:@"Unable to create a 'CapturePhoto' with constructor name `%@`", constructorName];
+  @throw [NSException exceptionWithName:@"_IAFUnimplementedException" reason:reason userInfo:nil];
 }
 
 - (id _Nullable)invokeMethod:(nonnull REFTypeChannelMessenger *)messenger
@@ -736,12 +833,14 @@
 @end
 
 @implementation _IAFCaptureDeviceInputHandler
-- (NSObject<_IAFCaptureDeviceInput> *)__create:(REFTypeChannelMessenger *)messenger
+
+- (NSObject<_IAFCaptureDeviceInput> *)_create_:(REFTypeChannelMessenger *)messenger
                                  
                                  device:(NSObject<_IAFCaptureDevice> *)device
 {
   @throw [NSException exceptionWithName:@"_IAFUnimplementedException" reason:nil userInfo:nil];
 }
+
 
 
 
@@ -758,7 +857,16 @@
 
 - (nonnull id)createInstance:(nonnull REFTypeChannelMessenger *)messenger
                    arguments:(nonnull NSArray *)arguments {
-  return [self __create:messenger device:arguments[0] ];
+  NSString *constructorName = arguments[0];
+  
+  if ([@"" isEqualToString:constructorName]) {
+    return [self _create_:messenger
+            device:arguments[1] ];
+  }
+  
+  
+  NSString *reason = [NSString stringWithFormat:@"Unable to create a 'CaptureDeviceInput' with constructor name `%@`", constructorName];
+  @throw [NSException exceptionWithName:@"_IAFUnimplementedException" reason:reason userInfo:nil];
 }
 
 - (id _Nullable)invokeMethod:(nonnull REFTypeChannelMessenger *)messenger
@@ -774,10 +882,12 @@
 @end
 
 @implementation _IAFCaptureInputHandler
-- (NSObject<_IAFCaptureInput> *)__create:(REFTypeChannelMessenger *)messenger
+
+- (NSObject<_IAFCaptureInput> *)_create_:(REFTypeChannelMessenger *)messenger
                                  {
   @throw [NSException exceptionWithName:@"_IAFUnimplementedException" reason:nil userInfo:nil];
 }
+
 
 
 
@@ -794,7 +904,16 @@
 
 - (nonnull id)createInstance:(nonnull REFTypeChannelMessenger *)messenger
                    arguments:(nonnull NSArray *)arguments {
-  return [self __create:messenger ];
+  NSString *constructorName = arguments[0];
+  
+  if ([@"" isEqualToString:constructorName]) {
+    return [self _create_:messenger
+            ];
+  }
+  
+  
+  NSString *reason = [NSString stringWithFormat:@"Unable to create a 'CaptureInput' with constructor name `%@`", constructorName];
+  @throw [NSException exceptionWithName:@"_IAFUnimplementedException" reason:reason userInfo:nil];
 }
 
 - (id _Nullable)invokeMethod:(nonnull REFTypeChannelMessenger *)messenger
@@ -810,10 +929,12 @@
 @end
 
 @implementation _IAFCaptureSessionHandler
-- (NSObject<_IAFCaptureSession> *)__create:(REFTypeChannelMessenger *)messenger
+
+- (NSObject<_IAFCaptureSession> *)_create_:(REFTypeChannelMessenger *)messenger
                                  {
   @throw [NSException exceptionWithName:@"_IAFUnimplementedException" reason:nil userInfo:nil];
 }
+
 
 
 
@@ -886,7 +1007,16 @@
 
 - (nonnull id)createInstance:(nonnull REFTypeChannelMessenger *)messenger
                    arguments:(nonnull NSArray *)arguments {
-  return [self __create:messenger ];
+  NSString *constructorName = arguments[0];
+  
+  if ([@"" isEqualToString:constructorName]) {
+    return [self _create_:messenger
+            ];
+  }
+  
+  
+  NSString *reason = [NSString stringWithFormat:@"Unable to create a 'CaptureSession' with constructor name `%@`", constructorName];
+  @throw [NSException exceptionWithName:@"_IAFUnimplementedException" reason:reason userInfo:nil];
 }
 
 - (id _Nullable)invokeMethod:(nonnull REFTypeChannelMessenger *)messenger
@@ -948,7 +1078,8 @@
 @end
 
 @implementation _IAFCaptureDeviceHandler
-- (NSObject<_IAFCaptureDevice> *)__create:(REFTypeChannelMessenger *)messenger
+
+- (NSObject<_IAFCaptureDevice> *)_create_:(REFTypeChannelMessenger *)messenger
                                  
                                  uniqueId:(NSString *)uniqueId
 
@@ -960,6 +1091,7 @@
 {
   @throw [NSException exceptionWithName:@"_IAFUnimplementedException" reason:nil userInfo:nil];
 }
+
 
 
 
@@ -1147,7 +1279,16 @@
 
 - (nonnull id)createInstance:(nonnull REFTypeChannelMessenger *)messenger
                    arguments:(nonnull NSArray *)arguments {
-  return [self __create:messenger uniqueId:arguments[0] position:arguments[1] isSmoothAutoFocusSupported:arguments[2] hasFlash:arguments[3] ];
+  NSString *constructorName = arguments[0];
+  
+  if ([@"" isEqualToString:constructorName]) {
+    return [self _create_:messenger
+            uniqueId:arguments[1] position:arguments[2] isSmoothAutoFocusSupported:arguments[3] hasFlash:arguments[4] ];
+  }
+  
+  
+  NSString *reason = [NSString stringWithFormat:@"Unable to create a 'CaptureDevice' with constructor name `%@`", constructorName];
+  @throw [NSException exceptionWithName:@"_IAFUnimplementedException" reason:reason userInfo:nil];
 }
 
 - (id _Nullable)invokeMethod:(nonnull REFTypeChannelMessenger *)messenger
@@ -1291,7 +1432,8 @@
 @end
 
 @implementation _IAFCaptureDeviceDiscoverySessionHandler
-- (NSObject<_IAFCaptureDeviceDiscoverySession> *)__create:(REFTypeChannelMessenger *)messenger
+
+- (NSObject<_IAFCaptureDeviceDiscoverySession> *)_create_:(REFTypeChannelMessenger *)messenger
                                  
                                  devices:(NSArray<NSObject<_IAFCaptureDevice> *> *)devices
 
@@ -1299,6 +1441,7 @@
 {
   @throw [NSException exceptionWithName:@"_IAFUnimplementedException" reason:nil userInfo:nil];
 }
+
 
 
 
@@ -1338,7 +1481,16 @@
 
 - (nonnull id)createInstance:(nonnull REFTypeChannelMessenger *)messenger
                    arguments:(nonnull NSArray *)arguments {
-  return [self __create:messenger devices:arguments[0] supportedMultiCamDeviceSets:arguments[1] ];
+  NSString *constructorName = arguments[0];
+  
+  if ([@"" isEqualToString:constructorName]) {
+    return [self _create_:messenger
+            devices:arguments[1] supportedMultiCamDeviceSets:arguments[2] ];
+  }
+  
+  
+  NSString *reason = [NSString stringWithFormat:@"Unable to create a 'CaptureDeviceDiscoverySession' with constructor name `%@`", constructorName];
+  @throw [NSException exceptionWithName:@"_IAFUnimplementedException" reason:reason userInfo:nil];
 }
 
 - (id _Nullable)invokeMethod:(nonnull REFTypeChannelMessenger *)messenger
@@ -1354,12 +1506,14 @@
 @end
 
 @implementation _IAFPreviewControllerHandler
-- (NSObject<_IAFPreviewController> *)__create:(REFTypeChannelMessenger *)messenger
+
+- (NSObject<_IAFPreviewController> *)_create_:(REFTypeChannelMessenger *)messenger
                                  
                                  captureSession:(NSObject<_IAFCaptureSession> *)captureSession
 {
   @throw [NSException exceptionWithName:@"_IAFUnimplementedException" reason:nil userInfo:nil];
 }
+
 
 
 
@@ -1376,7 +1530,16 @@
 
 - (nonnull id)createInstance:(nonnull REFTypeChannelMessenger *)messenger
                    arguments:(nonnull NSArray *)arguments {
-  return [self __create:messenger captureSession:arguments[0] ];
+  NSString *constructorName = arguments[0];
+  
+  if ([@"" isEqualToString:constructorName]) {
+    return [self _create_:messenger
+            captureSession:arguments[1] ];
+  }
+  
+  
+  NSString *reason = [NSString stringWithFormat:@"Unable to create a 'PreviewController' with constructor name `%@`", constructorName];
+  @throw [NSException exceptionWithName:@"_IAFUnimplementedException" reason:reason userInfo:nil];
 }
 
 - (id _Nullable)invokeMethod:(nonnull REFTypeChannelMessenger *)messenger
@@ -1392,10 +1555,12 @@
 @end
 
 @implementation _IAFCaptureFileOutputHandler
-- (NSObject<_IAFCaptureFileOutput> *)__create:(REFTypeChannelMessenger *)messenger
+
+- (NSObject<_IAFCaptureFileOutput> *)_create_:(REFTypeChannelMessenger *)messenger
                                  {
   @throw [NSException exceptionWithName:@"_IAFUnimplementedException" reason:nil userInfo:nil];
 }
+
 
 
 
@@ -1458,7 +1623,16 @@
 
 - (nonnull id)createInstance:(nonnull REFTypeChannelMessenger *)messenger
                    arguments:(nonnull NSArray *)arguments {
-  return [self __create:messenger ];
+  NSString *constructorName = arguments[0];
+  
+  if ([@"" isEqualToString:constructorName]) {
+    return [self _create_:messenger
+            ];
+  }
+  
+  
+  NSString *reason = [NSString stringWithFormat:@"Unable to create a 'CaptureFileOutput' with constructor name `%@`", constructorName];
+  @throw [NSException exceptionWithName:@"_IAFUnimplementedException" reason:reason userInfo:nil];
 }
 
 - (id _Nullable)invokeMethod:(nonnull REFTypeChannelMessenger *)messenger
@@ -1512,10 +1686,12 @@
 @end
 
 @implementation _IAFCaptureMovieFileOutputHandler
-- (NSObject<_IAFCaptureMovieFileOutput> *)__create:(REFTypeChannelMessenger *)messenger
+
+- (NSObject<_IAFCaptureMovieFileOutput> *)_create_:(REFTypeChannelMessenger *)messenger
                                  {
   @throw [NSException exceptionWithName:@"_IAFUnimplementedException" reason:nil userInfo:nil];
 }
+
 
 
 
@@ -1540,7 +1716,16 @@
 
 - (nonnull id)createInstance:(nonnull REFTypeChannelMessenger *)messenger
                    arguments:(nonnull NSArray *)arguments {
-  return [self __create:messenger ];
+  NSString *constructorName = arguments[0];
+  
+  if ([@"" isEqualToString:constructorName]) {
+    return [self _create_:messenger
+            ];
+  }
+  
+  
+  NSString *reason = [NSString stringWithFormat:@"Unable to create a 'CaptureMovieFileOutput' with constructor name `%@`", constructorName];
+  @throw [NSException exceptionWithName:@"_IAFUnimplementedException" reason:reason userInfo:nil];
 }
 
 - (id _Nullable)invokeMethod:(nonnull REFTypeChannelMessenger *)messenger
@@ -1563,10 +1748,12 @@
 @end
 
 @implementation _IAFCaptureFileOutputRecordingDelegateHandler
-- (NSObject<_IAFCaptureFileOutputRecordingDelegate> *)__create:(REFTypeChannelMessenger *)messenger
+
+- (NSObject<_IAFCaptureFileOutputRecordingDelegate> *)_create_:(REFTypeChannelMessenger *)messenger
                                  {
   @throw [NSException exceptionWithName:@"_IAFUnimplementedException" reason:nil userInfo:nil];
 }
+
 
 
 
@@ -1583,7 +1770,16 @@
 
 - (nonnull id)createInstance:(nonnull REFTypeChannelMessenger *)messenger
                    arguments:(nonnull NSArray *)arguments {
-  return [self __create:messenger ];
+  NSString *constructorName = arguments[0];
+  
+  if ([@"" isEqualToString:constructorName]) {
+    return [self _create_:messenger
+            ];
+  }
+  
+  
+  NSString *reason = [NSString stringWithFormat:@"Unable to create a 'CaptureFileOutputRecordingDelegate' with constructor name `%@`", constructorName];
+  @throw [NSException exceptionWithName:@"_IAFUnimplementedException" reason:reason userInfo:nil];
 }
 
 - (id _Nullable)invokeMethod:(nonnull REFTypeChannelMessenger *)messenger

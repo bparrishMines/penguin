@@ -461,7 +461,7 @@ abstract class VideoCodecType {
 class CapturePhotoOutput extends CaptureOutput with $CapturePhotoOutput {
   /// Constructs a [CapturePhotoOutput].
   CapturePhotoOutput() {
-    _channel.$$create(this, $owner: true);
+    _channel.$create$(this, $owner: true);
   }
 
   static $CapturePhotoOutputChannel get _channel =>
@@ -533,7 +533,7 @@ class CapturePhotoOutput extends CaptureOutput with $CapturePhotoOutput {
 class CapturePhotoSettings with $CapturePhotoSettings {
   /// Construct a [CapturePhotoSettings].
   CapturePhotoSettings() {
-    _channel.$$create(this, $owner: true);
+    _channel.$create$(this, $owner: true);
   }
 
   static $CapturePhotoSettingsChannel get _channel =>
@@ -693,7 +693,7 @@ class CapturePhotoCaptureDelegate with $CapturePhotoCaptureDelegate {
       didFinishProcessingPhoto,
       $owner: false,
     );
-    _channel.$$create(
+    _channel.$create$(
       this,
       $owner: true,
       didFinishProcessingPhoto: didFinishProcessingPhoto,
@@ -778,7 +778,7 @@ class CapturePhoto with $CapturePhoto {
 class CaptureDeviceInput extends CaptureInput with $CaptureDeviceInput {
   /// Construct a [CaptureDeviceInput].
   CaptureDeviceInput(this.device) {
-    _channel.$$create(this, $owner: true, device: device);
+    _channel.$create$(this, $owner: true, device: device);
   }
 
   static $CaptureDeviceInputChannel get _channel =>
@@ -838,7 +838,7 @@ abstract class CaptureInput with $CaptureInput {}
 class CaptureSession with $CaptureSession {
   /// Construct a [CaptureSession].
   CaptureSession() {
-    _channel.$$create(this, $owner: true);
+    _channel.$create$(this, $owner: true);
   }
 
   static $CaptureSessionChannel get _channel =>
@@ -1398,7 +1398,7 @@ class Preview extends UiKitReferenceWidget {
 class PreviewController with $PreviewController {
   /// Construct a [PreviewController].
   PreviewController(this.captureSession) {
-    _channel.$$create(this, $owner: true, captureSession: captureSession);
+    _channel.$create$(this, $owner: true, captureSession: captureSession);
   }
 
   static $PreviewControllerChannel get _channel =>

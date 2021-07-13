@@ -25,6 +25,6 @@
   
   IAFCapturePhotoProxy *capturePhotoProxy = [[IAFCapturePhotoProxy alloc] initWithCapturePhoto:mockCapturePhoto
                                                                                implementations:_mockImplementations];
-  OCMVerify([_mockCapturePhotoChannel __create:capturePhotoProxy _owner:NO fileDataRepresentation:mockData completion:OCMOCK_ANY]);
+  OCMVerify([_mockCapturePhotoChannel _create_:capturePhotoProxy _owner:NO fileDataRepresentation:mockData completion:OCMOCK_ANY]);
 }
 @end

@@ -26,7 +26,7 @@
                                                 initWithMessenger:_mockTypeChannelMessenger];
 
   IAFCapturePhotoSettingsProxy *settingsProxy = (IAFCapturePhotoSettingsProxy *) [implementations.handlerCapturePhotoSettings
-                                                                                  __create:_mockTypeChannelMessenger];
+                                                                                  _create_:_mockTypeChannelMessenger];
   
   XCTAssertNotNil(settingsProxy);
   XCTAssertNotNil(settingsProxy.capturePhotoSettings);

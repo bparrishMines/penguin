@@ -24,7 +24,7 @@
   IAFLibraryImplementations *implementations = [[IAFLibraryImplementations alloc]
                                                 initWithMessenger:_mockTypeChannelMessenger];
   
-  XCTAssertNoThrowSpecificNamed([implementations.handlerPreviewController __create:_mockTypeChannelMessenger
+  XCTAssertNoThrowSpecificNamed([implementations.handlerPreviewController _create_:_mockTypeChannelMessenger
                                                       captureSession:_testCaptureSessionProxy], NSException, @"_IAFUnimplementedException");
 }
 @end

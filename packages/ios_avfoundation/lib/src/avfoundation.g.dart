@@ -121,13 +121,15 @@ class $CapturePhotoOutputChannel extends TypeChannel<$CapturePhotoOutput> {
   $CapturePhotoOutputChannel(TypeChannelMessenger messenger)
       : super(messenger, 'ios_avfoundation/avfoundation/CapturePhotoOutput');
 
-  Future<PairedInstance?> $$create(
+  Future<PairedInstance?> $create$(
     $CapturePhotoOutput $instance, {
     required bool $owner,
   }) {
     return createNewInstancePair(
       $instance,
-      <Object?>[],
+      <Object?>[
+        '',
+      ],
       owner: $owner,
     );
   }
@@ -162,13 +164,15 @@ class $CapturePhotoSettingsChannel extends TypeChannel<$CapturePhotoSettings> {
   $CapturePhotoSettingsChannel(TypeChannelMessenger messenger)
       : super(messenger, 'ios_avfoundation/avfoundation/CapturePhotoSettings');
 
-  Future<PairedInstance?> $$create(
+  Future<PairedInstance?> $create$(
     $CapturePhotoSettings $instance, {
     required bool $owner,
   }) {
     return createNewInstancePair(
       $instance,
-      <Object?>[],
+      <Object?>[
+        '',
+      ],
       owner: $owner,
     );
   }
@@ -216,7 +220,7 @@ class $CapturePhotoCaptureDelegateChannel
       : super(messenger,
             'ios_avfoundation/avfoundation/CapturePhotoCaptureDelegate');
 
-  Future<PairedInstance?> $$create(
+  Future<PairedInstance?> $create$(
     $CapturePhotoCaptureDelegate $instance, {
     required bool $owner,
     required $FinishProcessingPhotoCallback didFinishProcessingPhoto,
@@ -224,6 +228,7 @@ class $CapturePhotoCaptureDelegateChannel
     return createNewInstancePair(
       $instance,
       <Object?>[
+        '',
         didFinishProcessingPhoto,
       ],
       owner: $owner,
@@ -235,13 +240,15 @@ class $CaptureOutputChannel extends TypeChannel<$CaptureOutput> {
   $CaptureOutputChannel(TypeChannelMessenger messenger)
       : super(messenger, 'ios_avfoundation/avfoundation/CaptureOutput');
 
-  Future<PairedInstance?> $$create(
+  Future<PairedInstance?> $create$(
     $CaptureOutput $instance, {
     required bool $owner,
   }) {
     return createNewInstancePair(
       $instance,
-      <Object?>[],
+      <Object?>[
+        '',
+      ],
       owner: $owner,
     );
   }
@@ -251,7 +258,7 @@ class $CapturePhotoChannel extends TypeChannel<$CapturePhoto> {
   $CapturePhotoChannel(TypeChannelMessenger messenger)
       : super(messenger, 'ios_avfoundation/avfoundation/CapturePhoto');
 
-  Future<PairedInstance?> $$create(
+  Future<PairedInstance?> $create$(
     $CapturePhoto $instance, {
     required bool $owner,
     required Uint8List? fileDataRepresentation,
@@ -259,6 +266,7 @@ class $CapturePhotoChannel extends TypeChannel<$CapturePhoto> {
     return createNewInstancePair(
       $instance,
       <Object?>[
+        '',
         fileDataRepresentation,
       ],
       owner: $owner,
@@ -270,7 +278,7 @@ class $CaptureDeviceInputChannel extends TypeChannel<$CaptureDeviceInput> {
   $CaptureDeviceInputChannel(TypeChannelMessenger messenger)
       : super(messenger, 'ios_avfoundation/avfoundation/CaptureDeviceInput');
 
-  Future<PairedInstance?> $$create(
+  Future<PairedInstance?> $create$(
     $CaptureDeviceInput $instance, {
     required bool $owner,
     required $CaptureDevice device,
@@ -278,6 +286,7 @@ class $CaptureDeviceInputChannel extends TypeChannel<$CaptureDeviceInput> {
     return createNewInstancePair(
       $instance,
       <Object?>[
+        '',
         device,
       ],
       owner: $owner,
@@ -289,13 +298,15 @@ class $CaptureInputChannel extends TypeChannel<$CaptureInput> {
   $CaptureInputChannel(TypeChannelMessenger messenger)
       : super(messenger, 'ios_avfoundation/avfoundation/CaptureInput');
 
-  Future<PairedInstance?> $$create(
+  Future<PairedInstance?> $create$(
     $CaptureInput $instance, {
     required bool $owner,
   }) {
     return createNewInstancePair(
       $instance,
-      <Object?>[],
+      <Object?>[
+        '',
+      ],
       owner: $owner,
     );
   }
@@ -305,13 +316,15 @@ class $CaptureSessionChannel extends TypeChannel<$CaptureSession> {
   $CaptureSessionChannel(TypeChannelMessenger messenger)
       : super(messenger, 'ios_avfoundation/avfoundation/CaptureSession');
 
-  Future<PairedInstance?> $$create(
+  Future<PairedInstance?> $create$(
     $CaptureSession $instance, {
     required bool $owner,
   }) {
     return createNewInstancePair(
       $instance,
-      <Object?>[],
+      <Object?>[
+        '',
+      ],
       owner: $owner,
     );
   }
@@ -393,7 +406,7 @@ class $CaptureDeviceChannel extends TypeChannel<$CaptureDevice> {
   $CaptureDeviceChannel(TypeChannelMessenger messenger)
       : super(messenger, 'ios_avfoundation/avfoundation/CaptureDevice');
 
-  Future<PairedInstance?> $$create(
+  Future<PairedInstance?> $create$(
     $CaptureDevice $instance, {
     required bool $owner,
     required String uniqueId,
@@ -404,6 +417,7 @@ class $CaptureDeviceChannel extends TypeChannel<$CaptureDevice> {
     return createNewInstancePair(
       $instance,
       <Object?>[
+        '',
         uniqueId,
         position,
         isSmoothAutoFocusSupported,
@@ -627,7 +641,7 @@ class $CaptureDeviceDiscoverySessionChannel
       : super(messenger,
             'ios_avfoundation/avfoundation/CaptureDeviceDiscoverySession');
 
-  Future<PairedInstance?> $$create(
+  Future<PairedInstance?> $create$(
     $CaptureDeviceDiscoverySession $instance, {
     required bool $owner,
     required List<$CaptureDevice> devices,
@@ -636,6 +650,7 @@ class $CaptureDeviceDiscoverySessionChannel
     return createNewInstancePair(
       $instance,
       <Object?>[
+        '',
         devices,
         supportedMultiCamDeviceSets,
       ],
@@ -663,7 +678,7 @@ class $PreviewControllerChannel extends TypeChannel<$PreviewController> {
   $PreviewControllerChannel(TypeChannelMessenger messenger)
       : super(messenger, 'ios_avfoundation/avfoundation/PreviewController');
 
-  Future<PairedInstance?> $$create(
+  Future<PairedInstance?> $create$(
     $PreviewController $instance, {
     required bool $owner,
     required $CaptureSession captureSession,
@@ -671,6 +686,7 @@ class $PreviewControllerChannel extends TypeChannel<$PreviewController> {
     return createNewInstancePair(
       $instance,
       <Object?>[
+        '',
         captureSession,
       ],
       owner: $owner,
@@ -682,13 +698,15 @@ class $CaptureFileOutputChannel extends TypeChannel<$CaptureFileOutput> {
   $CaptureFileOutputChannel(TypeChannelMessenger messenger)
       : super(messenger, 'ios_avfoundation/avfoundation/CaptureFileOutput');
 
-  Future<PairedInstance?> $$create(
+  Future<PairedInstance?> $create$(
     $CaptureFileOutput $instance, {
     required bool $owner,
   }) {
     return createNewInstancePair(
       $instance,
-      <Object?>[],
+      <Object?>[
+        '',
+      ],
       owner: $owner,
     );
   }
@@ -758,13 +776,15 @@ class $CaptureMovieFileOutputChannel
       : super(
             messenger, 'ios_avfoundation/avfoundation/CaptureMovieFileOutput');
 
-  Future<PairedInstance?> $$create(
+  Future<PairedInstance?> $create$(
     $CaptureMovieFileOutput $instance, {
     required bool $owner,
   }) {
     return createNewInstancePair(
       $instance,
-      <Object?>[],
+      <Object?>[
+        '',
+      ],
       owner: $owner,
     );
   }
@@ -786,13 +806,15 @@ class $CaptureFileOutputRecordingDelegateChannel
       : super(messenger,
             'ios_avfoundation/avfoundation/CaptureFileOutputRecordingDelegate');
 
-  Future<PairedInstance?> $$create(
+  Future<PairedInstance?> $create$(
     $CaptureFileOutputRecordingDelegate $instance, {
     required bool $owner,
   }) {
     return createNewInstancePair(
       $instance,
-      <Object?>[],
+      <Object?>[
+        '',
+      ],
       owner: $owner,
     );
   }
@@ -800,7 +822,7 @@ class $CaptureFileOutputRecordingDelegateChannel
 
 class $CapturePhotoOutputHandler
     implements TypeChannelHandler<$CapturePhotoOutput> {
-  $CapturePhotoOutput $$create(
+  $CapturePhotoOutput $create$(
     TypeChannelMessenger messenger,
   ) {
     throw UnimplementedError();
@@ -827,8 +849,18 @@ class $CapturePhotoOutputHandler
     TypeChannelMessenger messenger,
     List<Object?> arguments,
   ) {
-    return $$create(
-      messenger,
+    final String constructorName = arguments[0] as String;
+    switch (constructorName) {
+      case '':
+        return $create$(
+          messenger,
+        );
+    }
+
+    throw ArgumentError.value(
+      constructorName,
+      'constructorName',
+      'Unable to invoke constructor of',
     );
   }
 
@@ -852,7 +884,7 @@ class $CapturePhotoOutputHandler
 
 class $CapturePhotoSettingsHandler
     implements TypeChannelHandler<$CapturePhotoSettings> {
-  $CapturePhotoSettings $$create(
+  $CapturePhotoSettings $create$(
     TypeChannelMessenger messenger,
   ) {
     throw UnimplementedError();
@@ -879,8 +911,18 @@ class $CapturePhotoSettingsHandler
     TypeChannelMessenger messenger,
     List<Object?> arguments,
   ) {
-    return $$create(
-      messenger,
+    final String constructorName = arguments[0] as String;
+    switch (constructorName) {
+      case '':
+        return $create$(
+          messenger,
+        );
+    }
+
+    throw ArgumentError.value(
+      constructorName,
+      'constructorName',
+      'Unable to invoke constructor of',
     );
   }
 
@@ -904,7 +946,7 @@ class $CapturePhotoSettingsHandler
 
 class $CapturePhotoCaptureDelegateHandler
     implements TypeChannelHandler<$CapturePhotoCaptureDelegate> {
-  $CapturePhotoCaptureDelegate $$create(
+  $CapturePhotoCaptureDelegate $create$(
     TypeChannelMessenger messenger,
     $FinishProcessingPhotoCallback didFinishProcessingPhoto,
   ) {
@@ -932,9 +974,19 @@ class $CapturePhotoCaptureDelegateHandler
     TypeChannelMessenger messenger,
     List<Object?> arguments,
   ) {
-    return $$create(
-      messenger,
-      arguments[0] as $FinishProcessingPhotoCallback,
+    final String constructorName = arguments[0] as String;
+    switch (constructorName) {
+      case '':
+        return $create$(
+          messenger,
+          arguments[1] as $FinishProcessingPhotoCallback,
+        );
+    }
+
+    throw ArgumentError.value(
+      constructorName,
+      'constructorName',
+      'Unable to invoke constructor of',
     );
   }
 
@@ -957,7 +1009,7 @@ class $CapturePhotoCaptureDelegateHandler
 }
 
 class $CaptureOutputHandler implements TypeChannelHandler<$CaptureOutput> {
-  $CaptureOutput $$create(
+  $CaptureOutput $create$(
     TypeChannelMessenger messenger,
   ) {
     throw UnimplementedError();
@@ -984,8 +1036,18 @@ class $CaptureOutputHandler implements TypeChannelHandler<$CaptureOutput> {
     TypeChannelMessenger messenger,
     List<Object?> arguments,
   ) {
-    return $$create(
-      messenger,
+    final String constructorName = arguments[0] as String;
+    switch (constructorName) {
+      case '':
+        return $create$(
+          messenger,
+        );
+    }
+
+    throw ArgumentError.value(
+      constructorName,
+      'constructorName',
+      'Unable to invoke constructor of',
     );
   }
 
@@ -1008,7 +1070,7 @@ class $CaptureOutputHandler implements TypeChannelHandler<$CaptureOutput> {
 }
 
 class $CapturePhotoHandler implements TypeChannelHandler<$CapturePhoto> {
-  $CapturePhoto $$create(
+  $CapturePhoto $create$(
     TypeChannelMessenger messenger,
     Uint8List? fileDataRepresentation,
   ) {
@@ -1036,9 +1098,19 @@ class $CapturePhotoHandler implements TypeChannelHandler<$CapturePhoto> {
     TypeChannelMessenger messenger,
     List<Object?> arguments,
   ) {
-    return $$create(
-      messenger,
-      arguments[0] as Uint8List?,
+    final String constructorName = arguments[0] as String;
+    switch (constructorName) {
+      case '':
+        return $create$(
+          messenger,
+          arguments[1] as Uint8List?,
+        );
+    }
+
+    throw ArgumentError.value(
+      constructorName,
+      'constructorName',
+      'Unable to invoke constructor of',
     );
   }
 
@@ -1062,7 +1134,7 @@ class $CapturePhotoHandler implements TypeChannelHandler<$CapturePhoto> {
 
 class $CaptureDeviceInputHandler
     implements TypeChannelHandler<$CaptureDeviceInput> {
-  $CaptureDeviceInput $$create(
+  $CaptureDeviceInput $create$(
     TypeChannelMessenger messenger,
     $CaptureDevice device,
   ) {
@@ -1090,9 +1162,19 @@ class $CaptureDeviceInputHandler
     TypeChannelMessenger messenger,
     List<Object?> arguments,
   ) {
-    return $$create(
-      messenger,
-      arguments[0] as $CaptureDevice,
+    final String constructorName = arguments[0] as String;
+    switch (constructorName) {
+      case '':
+        return $create$(
+          messenger,
+          arguments[1] as $CaptureDevice,
+        );
+    }
+
+    throw ArgumentError.value(
+      constructorName,
+      'constructorName',
+      'Unable to invoke constructor of',
     );
   }
 
@@ -1115,7 +1197,7 @@ class $CaptureDeviceInputHandler
 }
 
 class $CaptureInputHandler implements TypeChannelHandler<$CaptureInput> {
-  $CaptureInput $$create(
+  $CaptureInput $create$(
     TypeChannelMessenger messenger,
   ) {
     throw UnimplementedError();
@@ -1142,8 +1224,18 @@ class $CaptureInputHandler implements TypeChannelHandler<$CaptureInput> {
     TypeChannelMessenger messenger,
     List<Object?> arguments,
   ) {
-    return $$create(
-      messenger,
+    final String constructorName = arguments[0] as String;
+    switch (constructorName) {
+      case '':
+        return $create$(
+          messenger,
+        );
+    }
+
+    throw ArgumentError.value(
+      constructorName,
+      'constructorName',
+      'Unable to invoke constructor of',
     );
   }
 
@@ -1166,7 +1258,7 @@ class $CaptureInputHandler implements TypeChannelHandler<$CaptureInput> {
 }
 
 class $CaptureSessionHandler implements TypeChannelHandler<$CaptureSession> {
-  $CaptureSession $$create(
+  $CaptureSession $create$(
     TypeChannelMessenger messenger,
   ) {
     throw UnimplementedError();
@@ -1193,8 +1285,18 @@ class $CaptureSessionHandler implements TypeChannelHandler<$CaptureSession> {
     TypeChannelMessenger messenger,
     List<Object?> arguments,
   ) {
-    return $$create(
-      messenger,
+    final String constructorName = arguments[0] as String;
+    switch (constructorName) {
+      case '':
+        return $create$(
+          messenger,
+        );
+    }
+
+    throw ArgumentError.value(
+      constructorName,
+      'constructorName',
+      'Unable to invoke constructor of',
     );
   }
 
@@ -1217,7 +1319,7 @@ class $CaptureSessionHandler implements TypeChannelHandler<$CaptureSession> {
 }
 
 class $CaptureDeviceHandler implements TypeChannelHandler<$CaptureDevice> {
-  $CaptureDevice $$create(
+  $CaptureDevice $create$(
     TypeChannelMessenger messenger,
     String uniqueId,
     int position,
@@ -1248,12 +1350,22 @@ class $CaptureDeviceHandler implements TypeChannelHandler<$CaptureDevice> {
     TypeChannelMessenger messenger,
     List<Object?> arguments,
   ) {
-    return $$create(
-      messenger,
-      arguments[0] as String,
-      arguments[1] as int,
-      arguments[2] as bool,
-      arguments[3] as bool,
+    final String constructorName = arguments[0] as String;
+    switch (constructorName) {
+      case '':
+        return $create$(
+          messenger,
+          arguments[1] as String,
+          arguments[2] as int,
+          arguments[3] as bool,
+          arguments[4] as bool,
+        );
+    }
+
+    throw ArgumentError.value(
+      constructorName,
+      'constructorName',
+      'Unable to invoke constructor of',
     );
   }
 
@@ -1277,7 +1389,7 @@ class $CaptureDeviceHandler implements TypeChannelHandler<$CaptureDevice> {
 
 class $CaptureDeviceDiscoverySessionHandler
     implements TypeChannelHandler<$CaptureDeviceDiscoverySession> {
-  $CaptureDeviceDiscoverySession $$create(
+  $CaptureDeviceDiscoverySession $create$(
     TypeChannelMessenger messenger,
     List<$CaptureDevice> devices,
     List<List<$CaptureDevice>> supportedMultiCamDeviceSets,
@@ -1306,13 +1418,25 @@ class $CaptureDeviceDiscoverySessionHandler
     TypeChannelMessenger messenger,
     List<Object?> arguments,
   ) {
-    return $$create(
-      messenger,
-      (arguments[0] as List<dynamic>).map((_) => _ as $CaptureDevice).toList(),
-      (arguments[1] as List<dynamic>)
-          .map((_) =>
-              (_ as List<dynamic>).map((_) => _ as $CaptureDevice).toList())
-          .toList(),
+    final String constructorName = arguments[0] as String;
+    switch (constructorName) {
+      case '':
+        return $create$(
+          messenger,
+          (arguments[1] as List<dynamic>)
+              .map((_) => _ as $CaptureDevice)
+              .toList(),
+          (arguments[2] as List<dynamic>)
+              .map((_) =>
+                  (_ as List<dynamic>).map((_) => _ as $CaptureDevice).toList())
+              .toList(),
+        );
+    }
+
+    throw ArgumentError.value(
+      constructorName,
+      'constructorName',
+      'Unable to invoke constructor of',
     );
   }
 
@@ -1336,7 +1460,7 @@ class $CaptureDeviceDiscoverySessionHandler
 
 class $PreviewControllerHandler
     implements TypeChannelHandler<$PreviewController> {
-  $PreviewController $$create(
+  $PreviewController $create$(
     TypeChannelMessenger messenger,
     $CaptureSession captureSession,
   ) {
@@ -1364,9 +1488,19 @@ class $PreviewControllerHandler
     TypeChannelMessenger messenger,
     List<Object?> arguments,
   ) {
-    return $$create(
-      messenger,
-      arguments[0] as $CaptureSession,
+    final String constructorName = arguments[0] as String;
+    switch (constructorName) {
+      case '':
+        return $create$(
+          messenger,
+          arguments[1] as $CaptureSession,
+        );
+    }
+
+    throw ArgumentError.value(
+      constructorName,
+      'constructorName',
+      'Unable to invoke constructor of',
     );
   }
 
@@ -1390,7 +1524,7 @@ class $PreviewControllerHandler
 
 class $CaptureFileOutputHandler
     implements TypeChannelHandler<$CaptureFileOutput> {
-  $CaptureFileOutput $$create(
+  $CaptureFileOutput $create$(
     TypeChannelMessenger messenger,
   ) {
     throw UnimplementedError();
@@ -1417,8 +1551,18 @@ class $CaptureFileOutputHandler
     TypeChannelMessenger messenger,
     List<Object?> arguments,
   ) {
-    return $$create(
-      messenger,
+    final String constructorName = arguments[0] as String;
+    switch (constructorName) {
+      case '':
+        return $create$(
+          messenger,
+        );
+    }
+
+    throw ArgumentError.value(
+      constructorName,
+      'constructorName',
+      'Unable to invoke constructor of',
     );
   }
 
@@ -1442,7 +1586,7 @@ class $CaptureFileOutputHandler
 
 class $CaptureMovieFileOutputHandler
     implements TypeChannelHandler<$CaptureMovieFileOutput> {
-  $CaptureMovieFileOutput $$create(
+  $CaptureMovieFileOutput $create$(
     TypeChannelMessenger messenger,
   ) {
     throw UnimplementedError();
@@ -1469,8 +1613,18 @@ class $CaptureMovieFileOutputHandler
     TypeChannelMessenger messenger,
     List<Object?> arguments,
   ) {
-    return $$create(
-      messenger,
+    final String constructorName = arguments[0] as String;
+    switch (constructorName) {
+      case '':
+        return $create$(
+          messenger,
+        );
+    }
+
+    throw ArgumentError.value(
+      constructorName,
+      'constructorName',
+      'Unable to invoke constructor of',
     );
   }
 
@@ -1494,7 +1648,7 @@ class $CaptureMovieFileOutputHandler
 
 class $CaptureFileOutputRecordingDelegateHandler
     implements TypeChannelHandler<$CaptureFileOutputRecordingDelegate> {
-  $CaptureFileOutputRecordingDelegate $$create(
+  $CaptureFileOutputRecordingDelegate $create$(
     TypeChannelMessenger messenger,
   ) {
     throw UnimplementedError();
@@ -1521,8 +1675,18 @@ class $CaptureFileOutputRecordingDelegateHandler
     TypeChannelMessenger messenger,
     List<Object?> arguments,
   ) {
-    return $$create(
-      messenger,
+    final String constructorName = arguments[0] as String;
+    switch (constructorName) {
+      case '':
+        return $create$(
+          messenger,
+        );
+    }
+
+    throw ArgumentError.value(
+      constructorName,
+      'constructorName',
+      'Unable to invoke constructor of',
     );
   }
 

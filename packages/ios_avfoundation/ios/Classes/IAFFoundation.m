@@ -27,7 +27,7 @@
   if (self) {
     _captureDevice = captureDevice;
   }
-  [implementations.channelCaptureDevice __create:self
+  [implementations.channelCaptureDevice _create_:self
                                           _owner:NO
                                         uniqueId:captureDevice.uniqueID
                                         position:@(captureDevice.position)
@@ -378,7 +378,7 @@ didFinishProcessingPhoto:(AVCapturePhoto *)photo
   if (self) {
     _capturePhoto = capturePhoto;
   }
-  [implementations.channelCapturePhoto __create:self
+  [implementations.channelCapturePhoto _create_:self
                                          _owner:false
                          fileDataRepresentation:capturePhoto.fileDataRepresentation
                                      completion:^(REFPairedInstance *instance, NSError * error) {}];
@@ -416,7 +416,7 @@ didFinishProcessingPhoto:(AVCapturePhoto *)photo
       [supportedMultiCamDeviceSets addObject:deviceProxies];
     }
   }
-  [implementations.channelCaptureDeviceDiscoverySession __create:self
+  [implementations.channelCaptureDeviceDiscoverySession _create_:self
                                                           _owner:NO
                                                          devices:devices
                                      supportedMultiCamDeviceSets:supportedMultiCamDeviceSets

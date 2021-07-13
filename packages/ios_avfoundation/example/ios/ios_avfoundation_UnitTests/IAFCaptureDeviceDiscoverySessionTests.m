@@ -69,7 +69,7 @@
     XCTAssertEqualObjects([devices[0] captureDevice], self->_testCaptureDevice);
     XCTAssertEqualObjects([supportedMultiCamDeviceSets[0][0] captureDevice], self->_testCaptureDevice);
   };
-  [[[_mockCaptureDeviceDiscoverySessionChannel stub] andDo:theBlock] __create:[OCMArg any]
+  [[[_mockCaptureDeviceDiscoverySessionChannel stub] andDo:theBlock] _create_:[OCMArg any]
                                                                        _owner:NO
                                                                      devices:[OCMArg isNotNil]
                                                  supportedMultiCamDeviceSets:[OCMArg any] completion:[OCMArg any]];

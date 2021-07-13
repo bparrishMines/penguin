@@ -63,20 +63,20 @@
 @end
 
 @implementation IAFCaptureDeviceInputHandler
-- (IAFCaptureDeviceInputProxy *)__create:(REFTypeChannelMessenger *)messenger
+- (IAFCaptureDeviceInputProxy *)_create_:(REFTypeChannelMessenger *)messenger
                                         device:(NSObject<_IAFCaptureDevice> *)device {
   return [[IAFCaptureDeviceInputProxy alloc] initWithDevice:((IAFCaptureDeviceProxy *)device)];
 }
 @end
 
 @implementation IAFCaptureSessionHandler
-- (IAFCaptureSessionProxy *)__create:(REFTypeChannelMessenger *)messenger {
+- (IAFCaptureSessionProxy *)_create_:(REFTypeChannelMessenger *)messenger {
   return [[IAFCaptureSessionProxy alloc] init];
 }
 @end
 
 @implementation IAFPreviewControllerHandler
-- (IAFPreviewControllerProxy *)__create:(REFTypeChannelMessenger *)messenger
+- (IAFPreviewControllerProxy *)_create_:(REFTypeChannelMessenger *)messenger
                                captureSession:(NSObject<_IAFCaptureSession> *)captureSession {
   return [[IAFPreviewControllerProxy alloc] initWithCaptureSession:((IAFCaptureSessionProxy *)captureSession)];
 }
@@ -94,7 +94,7 @@
   return self;
 }
 
-- (NSObject<_IAFCapturePhotoCaptureDelegate> *)__create:(REFTypeChannelMessenger *)messenger didFinishProcessingPhoto:(_IAFFinishProcessingPhotoCallback)didFinishProcessingPhoto {
+- (NSObject<_IAFCapturePhotoCaptureDelegate> *)_create_:(REFTypeChannelMessenger *)messenger didFinishProcessingPhoto:(_IAFFinishProcessingPhotoCallback)didFinishProcessingPhoto {
   if (@available(iOS 10.0, *)) {
     return [[IAFCapturePhotoCaptureDelegateProxy alloc] initWithCallback:didFinishProcessingPhoto
                                                          implementations:_implementations];
@@ -106,13 +106,13 @@
 @end
 
 @implementation IAFCapturePhotoSettingsHandler
-- (IAFCapturePhotoSettingsProxy *)__create:(REFTypeChannelMessenger *)messenger {
+- (IAFCapturePhotoSettingsProxy *)_create_:(REFTypeChannelMessenger *)messenger {
   return [[IAFCapturePhotoSettingsProxy alloc] init];
 }
 @end
 
 @implementation IAFCapturePhotoOutputHandler
-- (IAFCapturePhotoOutputProxy *)__create:(REFTypeChannelMessenger *)messenger {
+- (IAFCapturePhotoOutputProxy *)_create_:(REFTypeChannelMessenger *)messenger {
   if (@available(iOS 10.0, *)) {
     return [[IAFCapturePhotoOutputProxy alloc] init];
   }
@@ -146,13 +146,13 @@
 @end
 
 @implementation IAFCaptureMovieFileOutputHandler
-- (IAFCaptureMovieFileOutputProxy *)__create:(REFTypeChannelMessenger *)messenger {
+- (IAFCaptureMovieFileOutputProxy *)_create_:(REFTypeChannelMessenger *)messenger {
   return [[IAFCaptureMovieFileOutputProxy alloc] init];
 }
 @end
 
 @implementation IAFCaptureFileOutputRecordingDelegateHandler
-- (IAFCaptureFileOutputRecordingDelegateProxy *)__create:(REFTypeChannelMessenger *)messenger {
+- (IAFCaptureFileOutputRecordingDelegateProxy *)_create_:(REFTypeChannelMessenger *)messenger {
   return [[IAFCaptureFileOutputRecordingDelegateProxy alloc] init];
 }
 @end
