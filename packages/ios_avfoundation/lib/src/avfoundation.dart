@@ -31,6 +31,30 @@ abstract class CaptureExposureMode {
   static const int continuousAutoExposure = 2;
 }
 
+// TODO: CaptureVideoPreviewLayer
+/// Constants indicating video orientation.
+///
+/// For use with [CaptureVideoPreviewLayer] and [CaptureConnection].
+///
+/// You use these constants in conjunction with an
+/// [CaptureVideoPreviewLayer] object; see
+/// [CaptureConnection.setVideoOrientation].
+abstract class CaptureVideoOrientation {
+  CaptureVideoOrientation._();
+
+  /// Indicates that video should be oriented vertically, home button on the bottom.
+  static const int portrait = 1;
+
+  /// Indicates that video should be oriented vertically, home button on the top.
+  static const int portraitUpsideDown = 2;
+
+  /// Indicates that video should be oriented horizontally, home button on the right.
+  static const int landscapeRight = 3;
+
+  /// Indicates that video should be oriented horizontally, home button on the left.
+  static const int landscapeLeft = 4;
+}
+
 /// Constants indicating the mode of the focus on the receiver's device, if it has one.
 abstract class CaptureFocusMode {
   CaptureFocusMode._();
@@ -603,7 +627,6 @@ class CapturePhotoSettings with $CapturePhotoSettings {
   // TODO: CapturePhotoOutput.isFlashScene
   // TODO: CaptureResolvedPhotoSettings
   // TODO: CaptureResolvedPhotoSettings.flashEnabled
-  // TODO: CapturePhotoOUtput.supportedFlashModes
   // TODO: CapturePhotoOUtput.autoStillImageStabilizationEnabled
   /// A setting for whether to fire the flash when capturing photos.
   ///
@@ -725,7 +748,6 @@ class CapturePhotoCaptureDelegate with $CapturePhotoCaptureDelegate {
   final FinishProcessingPhotoCallback didFinishProcessingPhoto;
 }
 
-// TODO: CaptureConnection
 /// The abstract superclass for objects that output the media recorded in a capture session.
 ///
 /// [CaptureOutput] provides an abstract interface for connecting capture output
@@ -801,7 +823,6 @@ class CaptureDeviceInput extends CaptureInput with $CaptureDeviceInput {
   final CaptureDevice device;
 }
 
-// TODO: CaptureInputPort
 /// The abstract superclass for objects that provide input data to a capture session.
 ///
 /// To associate an [CaptureInput] object with a session, call
@@ -814,10 +835,8 @@ class CaptureDeviceInput extends CaptureInput with $CaptureDeviceInput {
 abstract class CaptureInput with $CaptureInput {}
 
 // TODO: CaptureDevice.defaultDeviceWithMediaType(
-// TODO: MediaType.audio
 // TODO: fix example code
 // TODO: captureSession.canAddInput
-// TODO: sessionPreset
 /// An object that manages capture activity and coordinates the flow of data from input devices to capture outputs.
 ///
 /// To perform real-time capture, you instantiate an [CaptureSession] object and
@@ -1598,6 +1617,7 @@ class CaptureMovieFileOutput extends CaptureFileOutput
   }
 }
 
+// TODO: at least ad required callback
 /// Methods for responding to events that occur while recording captured media to a file.
 ///
 /// Defines an interface for delegates of [CaptureFileOutput] to respond to
@@ -1612,4 +1632,215 @@ class CaptureFileOutputRecordingDelegate
   static $CaptureFileOutputRecordingDelegateChannel get _channel =>
       ChannelRegistrar
           .instance.implementations.channelCaptureFileOutputRecordingDelegate;
+}
+
+// TODO: CaptureSession.addConnection
+// TODO: CaptureSession.canAddConnections
+/// A connection between a specific pair of capture input and capture output objects in a capture session.
+///
+/// Capture inputs have one or more input ports (instances of
+/// [CaptureInputPort]). Capture outputs can accept data from one or more
+/// sources (for example, an [CaptureMovieFileOutput] object accepts both video
+/// and audio data).
+///
+/// You can add an [CaptureConnection] instance to a session using the
+/// [CaptureSession.addConnection] method only if the
+/// [CaptureSession.canAddConnections] includes the connection. When using the
+/// [CaptureSession.addInput] or [CaptureSession.addOutput] method, the session
+/// forms connections automatically between all compatible inputs and outputs.
+/// You only need to add connections manually when adding an input or output
+/// with no connections. You can also use connections to enable or disable the
+/// flow of data from a given input or to a given output.
+@Reference('ios_avfoundation/avfoundation/CaptureConnection')
+class CaptureConnection with $CaptureConnection {
+  // TODO: [CaptureSession.addConnection]
+  // TODO: CaptureSession.addInputWithNoConnections
+  // TODO: CaptureSession.addOutputWithNoConnections
+  /// Initializes a capture connection to describe a connection between the specified input ports and the specified output.
+  ///
+  /// `ports`
+  ///   An list of [CaptureInputPort] objects associated with [CaptureInput]
+  ///   objects.
+  ///
+  /// `output`
+  ///   A [CaptureOutput] object. You can add the connection returned by this
+  ///   method to an [CaptureSession] instance using the
+  ///   [CaptureSession.addConnection] method.
+  ///
+  /// When using [CaptureSession.addInput] or [CaptureSession.addOutput],
+  /// connections are automatically formed between all compatible inputs and
+  /// outputs. You do not need to manually create and add connections to the
+  /// session unless you use the primitive
+  /// [CaptureSession.addInputWithNoConnections] and
+  /// [CaptureSession.addOutputWithNoConnections] methods.
+  CaptureConnection(this.inputPorts, this.output) {
+    _channel.$create$(
+      this,
+      $owner: true,
+      inputPorts: inputPorts,
+      output: output,
+    );
+  }
+
+  static $CaptureConnectionChannel get _channel =>
+      ChannelRegistrar.instance.implementations.channelCaptureConnection;
+
+  /// The connection’s input ports.
+  ///
+  /// Input ports are instances of [CaptureInputPort].
+  final List<CaptureInputPort> inputPorts;
+
+  /// The connection’s output port.
+  final CaptureOutput output;
+
+  // TODO: CaptureVideoDataOutput
+  // TODO: CaptureVideoDataOutput.captureOutput:didOutputSampleBuffer:fromConnection:
+  /// Indicates whether to rotate the video flowing through the connection to a given orientation.
+  ///
+  /// This property is only applicable to connections involving video.
+  ///
+  /// If the value of [isVideoOrientationSupported] is true, you can set
+  /// `videoOrientation` to rotate the video buffers consumed by the
+  /// connection’s output. Setting `videoOrientation` doesn’t necessarily result
+  /// in a physical rotation of video buffers. For example, a video connection
+  /// to an [CaptureMovieFileOutput] object handles orientation using a
+  /// QuickTime track matrix.
+  ///
+  /// [CaptureVideoDataOutput] clients may receive physically rotated pixel
+  /// buffers in their `captureOutput:didOutputSampleBuffer:fromConnection:`
+  /// delegate callback. The [CaptureVideoDataOutput] hardware accelerates the
+  /// rotation operation and supports all four [CaptureVideoOrientation] modes.
+  /// A client sets `videoOrientation` or `videoMirrored` on the video data
+  /// output’s video [CaptureConnection] to request physical buffer rotation.
+  Future<void> setVideoOrientation(int orientation) {
+    return _channel.$setVideoOrientation(this, orientation);
+  }
+
+  /// A Boolean value that indicates whether the connection supports changing the orientation of the video.
+  Future<bool> isVideoOrientationSupported() async {
+    return _channel.$isVideoOrientationSupported(this) as bool;
+  }
+
+  /// A Boolean value that indicates whether the value of `videoMirrored` can change based on configuration of the session.
+  ///
+  /// For some session configurations, video data flowing through the connection
+  /// will be mirrored by default. When the value of this property is true, the
+  /// value of [setVideoMirrored] may change depending on the configuration of
+  /// the session, for example after switching to a different capture device
+  /// input.
+  ///
+  /// The default value is true.
+  Future<void> setAutomaticallyAdjustsVideoMirroring({required bool adjust}) {
+    return _channel.$setAutomaticallyAdjustsVideoMirroring(this, adjust);
+  }
+
+  /// A Boolean value that indicates whether the video flowing through the connection should be mirrored about its vertical axis.
+  ///
+  /// This property is only applicable to connections involving video.
+  ///
+  /// If the value of [isVideoMirroringSupported] is true, you can set
+  /// `videoMirrored` to true to flip the video about its vertical axis and
+  /// produce a mirror-image effect.
+  Future<void> setVideoMirrored({required bool mirrored}) {
+    return _channel.$setVideoMirrored(this, mirrored);
+  }
+
+  /// A Boolean value that indicates whether the connection supports video mirroring.
+  Future<bool> isVideoMirroringSupported() async {
+    return await _channel.$isVideoMirroringSupported(this) as bool;
+  }
+}
+
+/// A specific stream of data provided by a capture input.
+///
+/// Instances of [CaptureInput] have one or more input ports, one for each data
+/// stream they can produce. For example, an [CaptureDeviceInput] object
+/// presenting one video data stream has one port.
+@Reference('ios_avfoundation/avfoundation/CaptureInputPort')
+class CaptureInputPort with $CaptureInputPort {
+  /// Construct a [CaptureInputPort].
+  @visibleForTesting
+  CaptureInputPort({
+    required this.input,
+    required this.mediaType,
+    this.sourceDeviceType,
+    required this.sourceDevicePosition,
+  });
+
+  static $CaptureInputPortChannel get _channel =>
+      ChannelRegistrar.instance.implementations.channelCaptureInputPort;
+
+  /// The input object that owns the port.
+  final CaptureInput input;
+
+  /// The port’s media type.
+  final int mediaType;
+
+  /// The device type of the source camera providing the photo.
+  ///
+  /// When capturing a photo using a virtual device, you may query this property
+  /// to find out the source type of the photo. For example, on a dual camera,
+  /// resulting photos have a source device type of
+  /// [CaptureDeviceType.builtInDualCamera] or
+  /// [CaptureDeviceType.builtInTelephotoCamera]. For all other types of
+  /// capture, the source device type is the same as the device type of the
+  /// capture device connected to the photo output.
+  ///
+  /// This method returns null if the source of the photo is not a capture
+  /// device.
+  final String? sourceDeviceType;
+
+  // TODO: CaptureMultiCamSession
+  // TODO: CaptureInput.portsWithMediaType
+  /// The position of the source device providing input through this port.
+  ///
+  /// All ports contained in an [CaptureInput] object’s ports array have the
+  /// same [sourceDevicePosition] value.
+  ///
+  /// When working with a microphone input in an [CaptureMultiCamSession], it’s
+  /// possible to record multiple microphone directions simultaneously. For
+  /// example, you can record audio from the front microphone input to pair with
+  /// video from the front camera, and record audio from the back microphone
+  /// input to pair with video from the back camera.
+  ///
+  /// By calling the input’s [CaptureInput.portsWithMediaType] method, you ma
+  /// discover additional hidden ports originating from the source audio device.
+  /// These ports represent individual microphones positioned to pick up audio
+  /// from one particular direction.
+  ///
+  /// ```dart
+  /// // Get input ports
+  /// final List<CaptureInputPort> ports = ...
+  ///
+  /// //Find the audio port that captures omnidirectional audio.
+  /// final omniAudioPort = ports.where((port) {
+  ///   return port.mediaType == MediaType.audio &&
+  ///       port.sourceDeviceType == CaptureDeviceType.builtInMicrophone &&
+  ///       port.sourceDevicePosition == CaptureDevicePosition.unspecified;
+  /// }).first;
+  ///
+  /// // Find the audio port that captures front audio.
+  /// final frontAudioPort = ports.where((port) {
+  ///   return port.mediaType == MediaType.audio &&
+  ///       port.sourceDeviceType == CaptureDeviceType.builtInMicrophone &&
+  ///       port.sourceDevicePosition == CaptureDevicePosition.front;
+  /// }).first;
+  ///
+  /// // Find the audio port that captures back audio.
+  /// final backAudioPort = ports.where((port) {
+  ///   return port.mediaType == MediaType.audio &&
+  ///       port.sourceDeviceType == CaptureDeviceType.builtInMicrophone &&
+  ///       port.sourceDevicePosition == CaptureDevicePosition.back;
+  /// }).first;
+  /// ```
+  final int sourceDevicePosition;
+
+  /// Indicates whether the port is enabled.
+  ///
+  /// The value of this property defaults to true. If you want to capture only a
+  /// subset of the media streams provided by an [CaptureInput] object, use this
+  /// property to selectively disable streams.
+  Future<void> setEnabled({required bool enabled}) {
+    return _channel.$setEnabled(this, enabled);
+  }
 }
