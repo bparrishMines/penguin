@@ -27,7 +27,7 @@
                                                 initWithMessenger:_mockTypeChannelMessenger];
 
   IAFCapturePhotoOutputProxy *capturePhotoOutputProxy = (IAFCapturePhotoOutputProxy *) [implementations.handlerCapturePhotoOutput
-                                                         __create:_mockTypeChannelMessenger];
+                                                         _create_:_mockTypeChannelMessenger];
   
   XCTAssertNotNil(capturePhotoOutputProxy);
 }

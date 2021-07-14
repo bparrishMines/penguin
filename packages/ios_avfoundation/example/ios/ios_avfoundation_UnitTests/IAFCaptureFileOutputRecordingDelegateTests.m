@@ -21,7 +21,7 @@
                                                 initWithMessenger:_mockTypeChannelMessenger];
 
   IAFCaptureFileOutputRecordingDelegateProxy *captureFileOutputRecordingDelegateProxy = (IAFCaptureFileOutputRecordingDelegateProxy *) [implementations.handlerCaptureFileOutputRecordingDelegate
-                                                         __create:_mockTypeChannelMessenger];
+                                                         _create_:_mockTypeChannelMessenger];
   
   XCTAssertNotNil(captureFileOutputRecordingDelegateProxy);
 }

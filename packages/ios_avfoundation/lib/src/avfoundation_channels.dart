@@ -41,7 +41,7 @@ class LibraryImplementations extends $LibraryImplementations {
 /// [TypeChannelHandler] implementation for [CaptureDevice].
 class CaptureDeviceHandler extends $CaptureDeviceHandler {
   @override
-  $CaptureDevice $$create(TypeChannelMessenger messenger, String uniqueId,
+  $CaptureDevice $create$(TypeChannelMessenger messenger, String uniqueId,
       int position, bool isSmoothAutoFocusSupported, bool hasFlash) {
     // ignore: invalid_use_of_visible_for_testing_member
     return CaptureDevice(
@@ -56,7 +56,7 @@ class CaptureDeviceHandler extends $CaptureDeviceHandler {
 /// [TypeChannelHandler] implementation for [CapturePhoto].
 class CapturePhotoHandler extends $CapturePhotoHandler {
   @override
-  CapturePhoto $$create(
+  CapturePhoto $create$(
     TypeChannelMessenger messenger,
     Uint8List? fileDataRepresentation,
   ) {
@@ -69,7 +69,7 @@ class CapturePhotoHandler extends $CapturePhotoHandler {
 class CaptureDeviceDiscoverySessionHandler
     extends $CaptureDeviceDiscoverySessionHandler {
   @override
-  CaptureDeviceDiscoverySession $$create(
+  CaptureDeviceDiscoverySession $create$(
     TypeChannelMessenger messenger,
     List<$CaptureDevice> devices,
     List<List<$CaptureDevice>> supportedMultiCamDeviceSets,

@@ -26,7 +26,7 @@
                                                 initWithMessenger:_mockTypeChannelMessenger];
 
   IAFCaptureMovieFileOutputProxy *captureMovieFileOutputProxy = (IAFCaptureMovieFileOutputProxy *) [implementations.handlerCaptureMovieFileOutput
-                                                         __create:_mockTypeChannelMessenger];
+                                                         _create_:_mockTypeChannelMessenger];
   
   XCTAssertNotNil(captureMovieFileOutputProxy);
 }

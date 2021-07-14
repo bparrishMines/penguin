@@ -30,7 +30,7 @@
                                     error:((NSError __autoreleasing **)[OCMArg anyPointer])]).andReturn(mockDeviceInput);
   
   IAFCaptureDeviceInputProxy *captureDeviceProxy = (IAFCaptureDeviceInputProxy *) [implementations.handlerCaptureDeviceInput
-                                                    __create:_mockTypeChannelMessenger
+                                                    _create_:_mockTypeChannelMessenger
                                                     device:captureDevice];
 
   XCTAssertEqualObjects(mockDeviceInput, captureDeviceProxy.captureInput);

@@ -83,7 +83,7 @@
 
 
 /*iterate constructors constructor*/
-- (void)__create___constructor_name__:(NSObject<__prefix____class_name__> *)_instance
+- (void)_create___constructor_name__:(NSObject<__prefix____class_name__> *)_instance
          _owner:(BOOL)_owner
 /*iterate parameters parameter*/
  __parameter_name__:(/*replace parameter_type*/NSNumber */**/ _Nullable)__parameter_name__
@@ -135,7 +135,7 @@
 /*iterate classes class*/
 @implementation __prefix____class_name__Handler
 /*iterate constructors constructor*/
-- (NSObject<__prefix____class_name__> *)__create___constructor_name__:(REFTypeChannelMessenger *)messenger
+- (NSObject<__prefix____class_name__> *)_create___constructor_name__:(REFTypeChannelMessenger *)messenger
                                  /*iterate parameters parameter*/
                                  __parameter_name__:(/*replace parameter_type*/NSNumber */**/)__parameter_name__
 /**/{
@@ -188,7 +188,7 @@
   NSString *constructorName = arguments[0];
   /*iterate :join='else' constructors constructor*/
   if ([@"__constructor_name__" isEqualToString:constructorName]) {
-    return [self __create___constructor_name__:messenger
+    return [self _create___constructor_name__:messenger
             /*iterate parameters parameter*/__parameter_name__:arguments[/*replace parameter_index*/1/**/] /**/];
   }
   /**/

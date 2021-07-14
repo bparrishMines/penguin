@@ -26,15 +26,20 @@
                                                 initWithMessenger:_mockTypeChannelMessenger];
 
   IAFCapturePhotoSettingsProxy *settingsProxy = (IAFCapturePhotoSettingsProxy *) [implementations.handlerCapturePhotoSettings
-                                                                                  __create:_mockTypeChannelMessenger];
+                                                                                  _create_:_mockTypeChannelMessenger];
   
   XCTAssertNotNil(settingsProxy);
   XCTAssertNotNil(settingsProxy.capturePhotoSettings);
 }
 
-- (void)testPhotoSettingsWithFormat {
-  [_testCapturePhotoSettingsProxy photoSettingsWithFormat:@{@"AVVideoCodecKey": @"jpeg"}];
-  XCTAssertEqualObjects(_testCapturePhotoSettingsProxy.capturePhotoSettings.format, @{@"AVVideoCodecKey": @"jpeg"});
+- (void)testCreatePhotoSettingsWithFormat {
+  IAFLibraryImplementations *implementations = [[IAFLibraryImplementations alloc]
+                                                initWithMessenger:_mockTypeChannelMessenger];
+  
+  IAFCapturePhotoSettingsProxy *settingsProxy = (IAFCapturePhotoSettingsProxy *) [implementations.handlerCapturePhotoSettings
+                                                 _create_photoSettingsWithFormat:_mockTypeChannelMessenger
+                                                 format:@{@"AVVideoCodecKey": @"jpeg"}];
+  XCTAssertEqualObjects(settingsProxy.capturePhotoSettings.format, @{@"AVVideoCodecKey": @"jpeg"});
 }
 
 - (void)testSetFlashMode {

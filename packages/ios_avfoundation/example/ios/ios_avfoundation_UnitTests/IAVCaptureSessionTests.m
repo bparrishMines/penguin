@@ -22,7 +22,7 @@
   IAFLibraryImplementations *implementations = [[IAFLibraryImplementations alloc]
                                                 initWithMessenger:_mockTypeChannelMessenger];
 
-  IAFCaptureSessionProxy *captureSessionProxy = (IAFCaptureSessionProxy *) [implementations.handlerCaptureSession __create:_mockTypeChannelMessenger];
+  IAFCaptureSessionProxy *captureSessionProxy = (IAFCaptureSessionProxy *) [implementations.handlerCaptureSession _create_:_mockTypeChannelMessenger];
   
   XCTAssertNotNil(captureSessionProxy);
   XCTAssertNotNil(captureSessionProxy.captureSession);

@@ -86,14 +86,6 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 @protocol _IAFCapturePhotoSettings <NSObject>
 
 
-- (id _Nullable)photoSettingsWithFormat
-                                :(NSDictionary<NSString *, NSObject *> * _Nullable)format
-
-
-;
-
-
-
 - (id _Nullable)uniqueID
 
 ;
@@ -367,10 +359,12 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 
 @interface _IAFCapturePhotoOutputChannel : REFTypeChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger;
-- (void)__create:(NSObject<_IAFCapturePhotoOutput> *)_instance
+
+- (void)_create_:(NSObject<_IAFCapturePhotoOutput> *)_instance
           _owner:(BOOL)_owner
 
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion;
+
 
 
 
@@ -383,11 +377,18 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 
 @interface _IAFCapturePhotoSettingsChannel : REFTypeChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger;
-- (void)__create:(NSObject<_IAFCapturePhotoSettings> *)_instance
+
+- (void)_create_:(NSObject<_IAFCapturePhotoSettings> *)_instance
           _owner:(BOOL)_owner
 
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion;
 
+- (void)_create_photoSettingsWithFormat:(NSObject<_IAFCapturePhotoSettings> *)_instance
+          _owner:(BOOL)_owner
+
+ format:(NSDictionary<NSString *, NSObject *> * _Nullable)format
+
+     completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion;
 
 
 
@@ -401,7 +402,8 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 
 @interface _IAFCapturePhotoCaptureDelegateChannel : REFTypeChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger;
-- (void)__create:(NSObject<_IAFCapturePhotoCaptureDelegate> *)_instance
+
+- (void)_create_:(NSObject<_IAFCapturePhotoCaptureDelegate> *)_instance
           _owner:(BOOL)_owner
 
  didFinishProcessingPhoto:(_IAFFinishProcessingPhotoCallback _Nullable)didFinishProcessingPhoto
@@ -411,14 +413,17 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 
 
 
+
 @end
 
 @interface _IAFCaptureOutputChannel : REFTypeChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger;
-- (void)__create:(NSObject<_IAFCaptureOutput> *)_instance
+
+- (void)_create_:(NSObject<_IAFCaptureOutput> *)_instance
           _owner:(BOOL)_owner
 
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion;
+
 
 
 
@@ -427,7 +432,8 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 
 @interface _IAFCapturePhotoChannel : REFTypeChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger;
-- (void)__create:(NSObject<_IAFCapturePhoto> *)_instance
+
+- (void)_create_:(NSObject<_IAFCapturePhoto> *)_instance
           _owner:(BOOL)_owner
 
  fileDataRepresentation:(NSData * _Nullable)fileDataRepresentation
@@ -437,11 +443,13 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 
 
 
+
 @end
 
 @interface _IAFCaptureDeviceInputChannel : REFTypeChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger;
-- (void)__create:(NSObject<_IAFCaptureDeviceInput> *)_instance
+
+- (void)_create_:(NSObject<_IAFCaptureDeviceInput> *)_instance
           _owner:(BOOL)_owner
 
  device:(NSObject<_IAFCaptureDevice> * _Nullable)device
@@ -451,14 +459,17 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 
 
 
+
 @end
 
 @interface _IAFCaptureInputChannel : REFTypeChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger;
-- (void)__create:(NSObject<_IAFCaptureInput> *)_instance
+
+- (void)_create_:(NSObject<_IAFCaptureInput> *)_instance
           _owner:(BOOL)_owner
 
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion;
+
 
 
 
@@ -467,10 +478,12 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 
 @interface _IAFCaptureSessionChannel : REFTypeChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger;
-- (void)__create:(NSObject<_IAFCaptureSession> *)_instance
+
+- (void)_create_:(NSObject<_IAFCaptureSession> *)_instance
           _owner:(BOOL)_owner
 
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion;
+
 
 
 
@@ -491,7 +504,8 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 
 @interface _IAFCaptureDeviceChannel : REFTypeChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger;
-- (void)__create:(NSObject<_IAFCaptureDevice> *)_instance
+
+- (void)_create_:(NSObject<_IAFCaptureDevice> *)_instance
           _owner:(BOOL)_owner
 
  uniqueId:(NSString * _Nullable)uniqueId
@@ -543,11 +557,13 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 
 
 
+
 @end
 
 @interface _IAFCaptureDeviceDiscoverySessionChannel : REFTypeChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger;
-- (void)__create:(NSObject<_IAFCaptureDeviceDiscoverySession> *)_instance
+
+- (void)_create_:(NSObject<_IAFCaptureDeviceDiscoverySession> *)_instance
           _owner:(BOOL)_owner
 
  devices:(NSArray<NSObject<_IAFCaptureDevice> *> * _Nullable)devices
@@ -561,11 +577,13 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 
 
 
+
 @end
 
 @interface _IAFPreviewControllerChannel : REFTypeChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger;
-- (void)__create:(NSObject<_IAFPreviewController> *)_instance
+
+- (void)_create_:(NSObject<_IAFPreviewController> *)_instance
           _owner:(BOOL)_owner
 
  captureSession:(NSObject<_IAFCaptureSession> * _Nullable)captureSession
@@ -575,14 +593,17 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 
 
 
+
 @end
 
 @interface _IAFCaptureFileOutputChannel : REFTypeChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger;
-- (void)__create:(NSObject<_IAFCaptureFileOutput> *)_instance
+
+- (void)_create_:(NSObject<_IAFCaptureFileOutput> *)_instance
           _owner:(BOOL)_owner
 
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion;
+
 
 
 
@@ -601,10 +622,12 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 
 @interface _IAFCaptureMovieFileOutputChannel : REFTypeChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger;
-- (void)__create:(NSObject<_IAFCaptureMovieFileOutput> *)_instance
+
+- (void)_create_:(NSObject<_IAFCaptureMovieFileOutput> *)_instance
           _owner:(BOOL)_owner
 
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion;
+
 
 
 
@@ -615,10 +638,12 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 
 @interface _IAFCaptureFileOutputRecordingDelegateChannel : REFTypeChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger;
-- (void)__create:(NSObject<_IAFCaptureFileOutputRecordingDelegate> *)_instance
+
+- (void)_create_:(NSObject<_IAFCaptureFileOutputRecordingDelegate> *)_instance
           _owner:(BOOL)_owner
 
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion;
+
 
 
 
@@ -628,8 +653,10 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 
 
 @interface _IAFCapturePhotoOutputHandler : NSObject<REFTypeChannelHandler>
-- (NSObject<_IAFCapturePhotoOutput> *)__create:(REFTypeChannelMessenger *)messenger
+
+- (NSObject<_IAFCapturePhotoOutput> *)_create_:(REFTypeChannelMessenger *)messenger
 ;
+
 
 
 
@@ -650,16 +677,16 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 @end
 
 @interface _IAFCapturePhotoSettingsHandler : NSObject<REFTypeChannelHandler>
-- (NSObject<_IAFCapturePhotoSettings> *)__create:(REFTypeChannelMessenger *)messenger
+
+- (NSObject<_IAFCapturePhotoSettings> *)_create_:(REFTypeChannelMessenger *)messenger
+;
+
+- (NSObject<_IAFCapturePhotoSettings> *)_create_photoSettingsWithFormat:(REFTypeChannelMessenger *)messenger
+
+                                  format:(NSDictionary<NSString *, NSObject *> * _Nullable)format
 ;
 
 
-
-
-- (id _Nullable)_photoSettingsWithFormat:(NSObject<_IAFCapturePhotoSettings> *)_instance
-
-  format:(NSDictionary<NSString *, NSObject *> * _Nullable)format
-;
 
 
 
@@ -677,54 +704,66 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 @end
 
 @interface _IAFCapturePhotoCaptureDelegateHandler : NSObject<REFTypeChannelHandler>
-- (NSObject<_IAFCapturePhotoCaptureDelegate> *)__create:(REFTypeChannelMessenger *)messenger
+
+- (NSObject<_IAFCapturePhotoCaptureDelegate> *)_create_:(REFTypeChannelMessenger *)messenger
 
                                   didFinishProcessingPhoto:(_IAFFinishProcessingPhotoCallback _Nullable)didFinishProcessingPhoto
 ;
 
 
 
+
 @end
 
 @interface _IAFCaptureOutputHandler : NSObject<REFTypeChannelHandler>
-- (NSObject<_IAFCaptureOutput> *)__create:(REFTypeChannelMessenger *)messenger
+
+- (NSObject<_IAFCaptureOutput> *)_create_:(REFTypeChannelMessenger *)messenger
 ;
+
 
 
 
 @end
 
 @interface _IAFCapturePhotoHandler : NSObject<REFTypeChannelHandler>
-- (NSObject<_IAFCapturePhoto> *)__create:(REFTypeChannelMessenger *)messenger
+
+- (NSObject<_IAFCapturePhoto> *)_create_:(REFTypeChannelMessenger *)messenger
 
                                   fileDataRepresentation:(NSData * _Nullable)fileDataRepresentation
 ;
 
 
 
+
 @end
 
 @interface _IAFCaptureDeviceInputHandler : NSObject<REFTypeChannelHandler>
-- (NSObject<_IAFCaptureDeviceInput> *)__create:(REFTypeChannelMessenger *)messenger
+
+- (NSObject<_IAFCaptureDeviceInput> *)_create_:(REFTypeChannelMessenger *)messenger
 
                                   device:(NSObject<_IAFCaptureDevice> * _Nullable)device
 ;
 
 
 
+
 @end
 
 @interface _IAFCaptureInputHandler : NSObject<REFTypeChannelHandler>
-- (NSObject<_IAFCaptureInput> *)__create:(REFTypeChannelMessenger *)messenger
+
+- (NSObject<_IAFCaptureInput> *)_create_:(REFTypeChannelMessenger *)messenger
 ;
+
 
 
 
 @end
 
 @interface _IAFCaptureSessionHandler : NSObject<REFTypeChannelHandler>
-- (NSObject<_IAFCaptureSession> *)__create:(REFTypeChannelMessenger *)messenger
+
+- (NSObject<_IAFCaptureSession> *)_create_:(REFTypeChannelMessenger *)messenger
 ;
+
 
 
 
@@ -769,7 +808,8 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 @end
 
 @interface _IAFCaptureDeviceHandler : NSObject<REFTypeChannelHandler>
-- (NSObject<_IAFCaptureDevice> *)__create:(REFTypeChannelMessenger *)messenger
+
+- (NSObject<_IAFCaptureDevice> *)_create_:(REFTypeChannelMessenger *)messenger
 
                                   uniqueId:(NSString * _Nullable)uniqueId
 
@@ -779,6 +819,7 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 
                                   hasFlash:(NSNumber * _Nullable)hasFlash
 ;
+
 
 
 - (id _Nullable)_defaultDeviceWithMediaType:(REFTypeChannelMessenger *)messenger
@@ -895,12 +936,14 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 @end
 
 @interface _IAFCaptureDeviceDiscoverySessionHandler : NSObject<REFTypeChannelHandler>
-- (NSObject<_IAFCaptureDeviceDiscoverySession> *)__create:(REFTypeChannelMessenger *)messenger
+
+- (NSObject<_IAFCaptureDeviceDiscoverySession> *)_create_:(REFTypeChannelMessenger *)messenger
 
                                   devices:(NSArray<NSObject<_IAFCaptureDevice> *> * _Nullable)devices
 
                                   supportedMultiCamDeviceSets:(NSArray<NSArray<NSObject<_IAFCaptureDevice> *> *> * _Nullable)supportedMultiCamDeviceSets
 ;
+
 
 
 - (id _Nullable)_discoverySessionWithDeviceTypes:(REFTypeChannelMessenger *)messenger
@@ -918,18 +961,22 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 @end
 
 @interface _IAFPreviewControllerHandler : NSObject<REFTypeChannelHandler>
-- (NSObject<_IAFPreviewController> *)__create:(REFTypeChannelMessenger *)messenger
+
+- (NSObject<_IAFPreviewController> *)_create_:(REFTypeChannelMessenger *)messenger
 
                                   captureSession:(NSObject<_IAFCaptureSession> * _Nullable)captureSession
 ;
 
 
 
+
 @end
 
 @interface _IAFCaptureFileOutputHandler : NSObject<REFTypeChannelHandler>
-- (NSObject<_IAFCaptureFileOutput> *)__create:(REFTypeChannelMessenger *)messenger
+
+- (NSObject<_IAFCaptureFileOutput> *)_create_:(REFTypeChannelMessenger *)messenger
 ;
+
 
 
 
@@ -967,8 +1014,10 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 @end
 
 @interface _IAFCaptureMovieFileOutputHandler : NSObject<REFTypeChannelHandler>
-- (NSObject<_IAFCaptureMovieFileOutput> *)__create:(REFTypeChannelMessenger *)messenger
+
+- (NSObject<_IAFCaptureMovieFileOutput> *)_create_:(REFTypeChannelMessenger *)messenger
 ;
+
 
 
 
@@ -980,8 +1029,10 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 @end
 
 @interface _IAFCaptureFileOutputRecordingDelegateHandler : NSObject<REFTypeChannelHandler>
-- (NSObject<_IAFCaptureFileOutputRecordingDelegate> *)__create:(REFTypeChannelMessenger *)messenger
+
+- (NSObject<_IAFCaptureFileOutputRecordingDelegate> *)_create_:(REFTypeChannelMessenger *)messenger
 ;
+
 
 
 

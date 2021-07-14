@@ -130,7 +130,7 @@
 - (void)testCreateCapturePhoto {
   IAFCaptureDeviceProxy *captureDeviceProxy = [[IAFCaptureDeviceProxy alloc] initWithCaptureDevice:_testCaptureDevice
                                                                                    implementations:_mockImplementations];
-  OCMVerify([_mockCaptureDeviceChannel __create:captureDeviceProxy
+  OCMVerify([_mockCaptureDeviceChannel _create_:captureDeviceProxy
                                           _owner:NO
                                         uniqueId:@"test_uniqueID"
                                         position:@2
