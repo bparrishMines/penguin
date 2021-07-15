@@ -43,6 +43,10 @@
 - (IAFCaptureFileOutputRecordingDelegateHandler *)handlerCaptureFileOutputRecordingDelegate {
   return [[IAFCaptureFileOutputRecordingDelegateHandler alloc] init];
 }
+
+- (IAFCaptureConnectionHandler *)handlerCaptureConnection {
+  return [[IAFCaptureConnectionHandler alloc] init];
+}
 @end
 
 @implementation IAFCaptureDeviceHandler {
@@ -159,5 +163,13 @@
 @implementation IAFCaptureFileOutputRecordingDelegateHandler
 - (IAFCaptureFileOutputRecordingDelegateProxy *)_create_:(REFTypeChannelMessenger *)messenger {
   return [[IAFCaptureFileOutputRecordingDelegateProxy alloc] init];
+}
+@end
+
+@implementation IAFCaptureConnectionHandler
+- (IAFCaptureConnectionProxy *)_create_:(REFTypeChannelMessenger *)messenger
+                             inputPorts:(NSArray<NSObject<_IAFCaptureInputPort> *> *)inputPorts output:(NSObject<_IAFCaptureOutput> *)output {
+  return [[IAFCaptureConnectionProxy alloc] initWithInputPorts:(NSArray<IAFCaptureInputPortProxy *> *)inputPorts
+                                                        output:(IAFCaptureOutputProxy *)output];
 }
 @end

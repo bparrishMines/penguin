@@ -742,7 +742,7 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 
  input:(NSObject<_IAFCaptureInput> * _Nullable)input
 
- mediaType:(NSNumber * _Nullable)mediaType
+ mediaType:(NSString * _Nullable)mediaType
 
  sourceDeviceType:(NSString * _Nullable)sourceDeviceType
 
@@ -1197,7 +1197,7 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 
                                   input:(NSObject<_IAFCaptureInput> * _Nullable)input
 
-                                  mediaType:(NSNumber * _Nullable)mediaType
+                                  mediaType:(NSString * _Nullable)mediaType
 
                                   sourceDeviceType:(NSString * _Nullable)sourceDeviceType
 

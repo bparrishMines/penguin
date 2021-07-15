@@ -915,7 +915,7 @@ class $CaptureInputPortChannel extends TypeChannel<$CaptureInputPort> {
     $CaptureInputPort $instance, {
     required bool $owner,
     required $CaptureInput input,
-    required int mediaType,
+    required String mediaType,
     required String? sourceDeviceType,
     required int sourceDevicePosition,
   }) {
@@ -1920,7 +1920,7 @@ class $CaptureInputPortHandler
   $CaptureInputPort $create$(
     TypeChannelMessenger messenger,
     $CaptureInput input,
-    int mediaType,
+    String mediaType,
     String? sourceDeviceType,
     int sourceDevicePosition,
   ) {
@@ -1954,7 +1954,7 @@ class $CaptureInputPortHandler
         return $create$(
           messenger,
           arguments[1] as $CaptureInput,
-          arguments[2] as int,
+          arguments[2] as String,
           arguments[3] as String?,
           arguments[4] as int,
         );

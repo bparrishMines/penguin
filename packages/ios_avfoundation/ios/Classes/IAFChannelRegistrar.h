@@ -44,4 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface IAFCaptureFileOutputRecordingDelegateHandler : _IAFCaptureFileOutputRecordingDelegateHandler
 @end
+
+@interface IAFCaptureConnectionHandler : _IAFCaptureConnectionHandler
+@end
 NS_ASSUME_NONNULL_END

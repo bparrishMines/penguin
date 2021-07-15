@@ -1774,7 +1774,7 @@ class CaptureInputPort with $CaptureInputPort {
   final CaptureInput input;
 
   /// The port’s media type.
-  final int mediaType;
+  final String mediaType;
 
   /// The device type of the source camera providing the photo.
   ///
@@ -1787,7 +1787,7 @@ class CaptureInputPort with $CaptureInputPort {
   /// capture device connected to the photo output.
   ///
   /// This method returns null if the source of the photo is not a capture
-  /// device.
+  /// device or iOS version is < 13.
   final String? sourceDeviceType;
 
   // TODO: CaptureMultiCamSession
@@ -1833,6 +1833,9 @@ class CaptureInputPort with $CaptureInputPort {
   ///       port.sourceDevicePosition == CaptureDevicePosition.back;
   /// }).first;
   /// ```
+  ///
+  /// This will always return [CaptureDevicePosition.unspecified] for iOS
+  /// versions < 13;
   final int sourceDevicePosition;
 
   /// Indicates whether the port is enabled.

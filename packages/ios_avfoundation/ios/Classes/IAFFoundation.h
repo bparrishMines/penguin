@@ -11,6 +11,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface IAFCaptureDeviceProxy : NSObject<_IAFCaptureDevice>
 @property (readonly) AVCaptureDevice *captureDevice;
++ (NSArray<IAFCaptureDeviceProxy*> *)asProxyList:(NSArray<AVCaptureDevice *> *)captureDevices
+                                 implementations:(IAFLibraryImplementations *)implementations;
 + (IAFCaptureDeviceProxy *_Nullable)defaultDeviceWithMediaType:(NSString *)mediaType
                                                implementations:(IAFLibraryImplementations *)implementations;
 - (instancetype)initWithCaptureDevice:(AVCaptureDevice *)captureDevice
@@ -86,6 +88,21 @@ API_AVAILABLE(ios(11.0))
 @end
 
 @interface IAFCaptureFileOutputRecordingDelegateProxy : NSObject<_IAFCaptureFileOutputRecordingDelegate, AVCaptureFileOutputRecordingDelegate>
+@end
+
+@interface IAFCaptureInputPortProxy : NSObject<_IAFCaptureInputPort>
+@property (readonly) AVCaptureInputPort *captureInputPort;
++ (NSArray<IAFCaptureInputPortProxy *> *)asProxyList:(NSArray<AVCaptureInputPort *> *)captureInputPorts
+                                     implementations:(IAFLibraryImplementations *)implementations;
+- (instancetype)initWithCaptureInputPort:(AVCaptureInputPort *)captureInputPort
+                         implementations:(IAFLibraryImplementations *)implementations;
+@end
+
+@interface IAFCaptureConnectionProxy : NSObject<_IAFCaptureConnection>
+@property (readonly) AVCaptureConnection *captureConnection;
+- (instancetype)initWithInputPorts:(NSArray<IAFCaptureInputPortProxy *> *)ports
+                            output:(IAFCaptureOutputProxy *)output;
+- (instancetype)initWithCaptureConnection:(AVCaptureConnection *)captureConnection;
 @end
 NS_ASSUME_NONNULL_END
 

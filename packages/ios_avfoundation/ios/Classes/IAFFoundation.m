@@ -490,3 +490,88 @@ didFinishRecordingToOutputFileAtURL:(nonnull NSURL *)outputFileURL
   NSLog(@"FINISHED RECORDING TO FILE");
 }
 @end
+
+@implementation IAFCaptureInputPortProxy
++ (NSArray<IAFCaptureInputPortProxy *> *)asProxyList:(NSArray<AVCaptureInputPort *> *)captureInputPorts
+                                     implementations:(IAFLibraryImplementations *)implementations {
+  NSMutableArray<IAFCaptureInputPortProxy *> *portProxies = [NSMutableArray arrayWithCapacity:captureInputPorts.count];
+  for (AVCaptureInputPort *port in captureInputPorts) {
+    [portProxies addObject:[[IAFCaptureInputPortProxy alloc] initWithCaptureInputPort:port
+                                                                      implementations:implementations]];
+  }
+  return portProxies;
+}
+
+- (instancetype)initWithCaptureInputPort:(AVCaptureInputPort *)captureInputPort
+                         implementations:(IAFLibraryImplementations *)implementations {
+  self = [super init];
+  if (self) {
+    _captureInputPort = captureInputPort;
+    NSString *sourceDeviceType;
+    NSInteger sourceDevicePosition = AVCaptureDevicePositionUnspecified;
+    if (@available(iOS 13.0, *)) {
+      sourceDeviceType = captureInputPort.sourceDeviceType;
+      sourceDevicePosition = captureInputPort.sourceDevicePosition;
+    }
+    [implementations.channelCaptureInputPort _create_:self
+                                               _owner:false
+                                                input:nil
+                                            mediaType:captureInputPort.mediaType
+                                     sourceDeviceType:sourceDeviceType
+                                 sourceDevicePosition:@(sourceDevicePosition)
+                                           completion:^(REFPairedInstance *instance, NSError *error) {
+      
+    }];
+  }
+  return self;
+}
+
+- (id)setEnabled:(NSNumber * _Nullable)enabled {
+  [_captureInputPort setEnabled:enabled.boolValue];
+  return nil;
+}
+@end
+
+@implementation IAFCaptureConnectionProxy
+- (instancetype)initWithInputPorts:(NSArray<IAFCaptureInputPortProxy *> *)ports
+                            output:(IAFCaptureOutputProxy *)output {
+  NSMutableArray<AVCaptureInputPort *> *portValues = [NSMutableArray arrayWithCapacity:ports.count];
+  for (IAFCaptureInputPortProxy *portProxy in ports) {
+    [portValues addObject:portProxy.captureInputPort];
+  }
+  return [self initWithCaptureConnection:[[AVCaptureConnection alloc] initWithInputPorts:portValues
+                                                                                  output:output.captureOutput]];
+}
+
+- (instancetype)initWithCaptureConnection:(AVCaptureConnection *)captureConnection {
+  self = [super init];
+  if (self) {
+    _captureConnection = captureConnection;
+  }
+  return self;
+}
+
+- (NSNumber *)isVideoMirroringSupported {
+  return @([_captureConnection isVideoMirroringSupported]);
+}
+
+- (NSNumber *)isVideoOrientationSupported {
+  return @([_captureConnection isVideoOrientationSupported]);
+}
+
+- (id _Nullable)setAutomaticallyAdjustsVideoMirroring:(NSNumber * _Nullable)adjust {
+  [_captureConnection setAutomaticallyAdjustsVideoMirroring:adjust.boolValue];
+  return nil;
+}
+
+- (id _Nullable)setVideoMirrored:(NSNumber * _Nullable)mirrored {
+  [_captureConnection setVideoMirrored:mirrored.boolValue];
+  return nil;
+}
+
+- (id _Nullable)setVideoOrientation:(NSNumber * _Nullable)orientation {
+  [_captureConnection setVideoOrientation:orientation.intValue];
+  return nil;
+}
+@end
+

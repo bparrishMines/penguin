@@ -565,7 +565,7 @@
 
  input:(NSObject<_IAFCaptureInput> * _Nullable)input
 
- mediaType:(NSNumber * _Nullable)mediaType
+ mediaType:(NSString * _Nullable)mediaType
 
  sourceDeviceType:(NSString * _Nullable)sourceDeviceType
 
@@ -2012,7 +2012,7 @@
                                  
                                  input:(NSObject<_IAFCaptureInput> *)input
 
-                                 mediaType:(NSNumber *)mediaType
+                                 mediaType:(NSString *)mediaType
 
                                  sourceDeviceType:(NSString *)sourceDeviceType
 
