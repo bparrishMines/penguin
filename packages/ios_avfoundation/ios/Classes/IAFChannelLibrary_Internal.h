@@ -740,8 +740,6 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 - (void)_create_:(NSObject<_IAFCaptureInputPort> *)_instance
           _owner:(BOOL)_owner
 
- input:(NSObject<_IAFCaptureInput> * _Nullable)input
-
  mediaType:(NSString * _Nullable)mediaType
 
  sourceDeviceType:(NSString * _Nullable)sourceDeviceType
@@ -1194,8 +1192,6 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 @interface _IAFCaptureInputPortHandler : NSObject<REFTypeChannelHandler>
 
 - (NSObject<_IAFCaptureInputPort> *)_create_:(REFTypeChannelMessenger *)messenger
-
-                                  input:(NSObject<_IAFCaptureInput> * _Nullable)input
 
                                   mediaType:(NSString * _Nullable)mediaType
 

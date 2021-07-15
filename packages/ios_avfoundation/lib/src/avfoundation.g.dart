@@ -914,7 +914,6 @@ class $CaptureInputPortChannel extends TypeChannel<$CaptureInputPort> {
   Future<PairedInstance?> $create$(
     $CaptureInputPort $instance, {
     required bool $owner,
-    required $CaptureInput input,
     required String mediaType,
     required String? sourceDeviceType,
     required int sourceDevicePosition,
@@ -923,7 +922,6 @@ class $CaptureInputPortChannel extends TypeChannel<$CaptureInputPort> {
       $instance,
       <Object?>[
         '',
-        input,
         mediaType,
         sourceDeviceType,
         sourceDevicePosition,
@@ -1919,7 +1917,6 @@ class $CaptureInputPortHandler
     implements TypeChannelHandler<$CaptureInputPort> {
   $CaptureInputPort $create$(
     TypeChannelMessenger messenger,
-    $CaptureInput input,
     String mediaType,
     String? sourceDeviceType,
     int sourceDevicePosition,
@@ -1953,10 +1950,9 @@ class $CaptureInputPortHandler
       case '':
         return $create$(
           messenger,
-          arguments[1] as $CaptureInput,
-          arguments[2] as String,
-          arguments[3] as String?,
-          arguments[4] as int,
+          arguments[1] as String,
+          arguments[2] as String?,
+          arguments[3] as int,
         );
     }
 

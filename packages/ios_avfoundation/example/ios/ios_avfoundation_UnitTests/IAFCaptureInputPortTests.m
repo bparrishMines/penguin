@@ -32,11 +32,8 @@
   IAFCaptureInputPortProxy *captureInputPortProxy = [[IAFCaptureInputPortProxy alloc] initWithCaptureInputPort:_mockCaptureInputPort
                implementations:_mockImplementations];
   
-  // input can't equal null.
-  XCTAssertEqual(1, 2);
   OCMVerify([_mockCaptureInputPortChannel _create_:captureInputPortProxy
                                             _owner:NO
-                                             input:nil
                                          mediaType:@"apple"
                                   sourceDeviceType:@"banana"
                               sourceDevicePosition:@(23)

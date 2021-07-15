@@ -93,15 +93,14 @@ class CaptureInputPortHandler extends $CaptureInputPortHandler {
   @override
   CaptureInputPort $create$(
     TypeChannelMessenger messenger,
-    covariant CaptureInput input,
     String mediaType,
     String? sourceDeviceType,
     int sourceDevicePosition,
   ) {
     // ignore: invalid_use_of_visible_for_testing_member
     return CaptureInputPort(
-      input: input,
       mediaType: mediaType,
+      sourceDeviceType: sourceDeviceType,
       sourceDevicePosition: sourceDevicePosition,
     );
   }

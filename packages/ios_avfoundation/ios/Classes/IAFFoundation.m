@@ -515,7 +515,6 @@ didFinishRecordingToOutputFileAtURL:(nonnull NSURL *)outputFileURL
     }
     [implementations.channelCaptureInputPort _create_:self
                                                _owner:false
-                                                input:nil
                                             mediaType:captureInputPort.mediaType
                                      sourceDeviceType:sourceDeviceType
                                  sourceDevicePosition:@(sourceDevicePosition)

@@ -563,8 +563,6 @@
 - (void)_create_:(NSObject<_IAFCaptureInputPort> *)_instance
          _owner:(BOOL)_owner
 
- input:(NSObject<_IAFCaptureInput> * _Nullable)input
-
  mediaType:(NSString * _Nullable)mediaType
 
  sourceDeviceType:(NSString * _Nullable)sourceDeviceType
@@ -574,7 +572,7 @@
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
   [self createNewInstancePair:_instance
                     arguments:@[@"",
-  input ? (NSObject *) input : [NSNull null],mediaType ? (NSObject *) mediaType : [NSNull null],sourceDeviceType ? (NSObject *) sourceDeviceType : [NSNull null],sourceDevicePosition ? (NSObject *) sourceDevicePosition : [NSNull null],]
+  mediaType ? (NSObject *) mediaType : [NSNull null],sourceDeviceType ? (NSObject *) sourceDeviceType : [NSNull null],sourceDevicePosition ? (NSObject *) sourceDevicePosition : [NSNull null],]
                         owner:_owner
                    completion:completion];
 }
@@ -2010,8 +2008,6 @@
 
 - (NSObject<_IAFCaptureInputPort> *)_create_:(REFTypeChannelMessenger *)messenger
                                  
-                                 input:(NSObject<_IAFCaptureInput> *)input
-
                                  mediaType:(NSString *)mediaType
 
                                  sourceDeviceType:(NSString *)sourceDeviceType
@@ -2051,7 +2047,7 @@
   
   if ([@"" isEqualToString:constructorName]) {
     return [self _create_:messenger
-            input:arguments[1] mediaType:arguments[2] sourceDeviceType:arguments[3] sourceDevicePosition:arguments[4] ];
+            mediaType:arguments[1] sourceDeviceType:arguments[2] sourceDevicePosition:arguments[3] ];
   }
   
   

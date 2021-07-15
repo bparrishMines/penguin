@@ -1761,7 +1761,6 @@ class CaptureInputPort with $CaptureInputPort {
   /// Construct a [CaptureInputPort].
   @visibleForTesting
   CaptureInputPort({
-    required this.input,
     required this.mediaType,
     this.sourceDeviceType,
     required this.sourceDevicePosition,
@@ -1769,9 +1768,6 @@ class CaptureInputPort with $CaptureInputPort {
 
   static $CaptureInputPortChannel get _channel =>
       ChannelRegistrar.instance.implementations.channelCaptureInputPort;
-
-  /// The input object that owns the port.
-  final CaptureInput input;
 
   /// The port’s media type.
   final String mediaType;
