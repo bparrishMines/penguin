@@ -3,6 +3,10 @@
 #import <Foundation/Foundation.h>
 #import "REFMethodChannel.h"
 
+/*iterate imports import*/
+#import /*replace :from='dart:core' value*/ <string.h> /**/
+/**/
+
 // **************************************************************************
 // ReferenceGenerator
 // **************************************************************************

@@ -35,7 +35,7 @@ class ReferenceAstBuilder extends Builder {
     return ReferenceParameter(ignore: reader.read('ignore').boolValue);
   }
 
-  static ReferenceParameter? tryReadConstructorAnnotation(
+  static ReferenceConstructor? tryReadConstructorAnnotation(
     ConstructorElement element,
   ) {
     if (!constructorAnnotation.hasAnnotationOfExact(element)) return null;

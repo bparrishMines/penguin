@@ -12,13 +12,15 @@ import 'objc_header_generator.dart' show generateObjcHeader;
 
 const String packageRootOption = 'package-root';
 const String dartOutOption = 'dart-out';
+const String dartImportsOption = 'dart-imports';
 const String javaOutOption = 'java-out';
 const String buildFlag = 'build';
 const String javaPackageOption = 'java-package';
+const String javaImportsOption = 'java-imports';
 const String objcHeaderOutOption = 'objc-header-out';
 const String objcImplOutOption = 'objc-impl-out';
 const String objcPrefixOption = 'objc-prefix';
-const String dartImportsOption = 'dart-imports';
+const String objcHeaderImportsOption = 'objc-header-imports';
 const String branchOption = 'branch';
 
 final ArgParser parser = ArgParser()
@@ -31,6 +33,8 @@ final ArgParser parser = ArgParser()
   ..addOption(objcPrefixOption)
   ..addOption(branchOption)
   ..addMultiOption(dartImportsOption)
+  ..addMultiOption(objcHeaderImportsOption)
+  ..addMultiOption(javaImportsOption)
   ..addFlag('help', abbr: 'h')
   ..addFlag(buildFlag, abbr: 'b', defaultsTo: true);
 
@@ -107,7 +111,11 @@ void main(List<String> arguments) async {
     }
 
     options.dartOut!.writeAsStringSync(
-      generateDart(dartTemplate, libraryNode, options.dartImports),
+      generateDart(
+        template: dartTemplate,
+        libraryNode: libraryNode,
+        imports: options.dartImports ?? <String>[],
+      ),
     );
   }
 
@@ -135,6 +143,7 @@ void main(List<String> arguments) async {
         libraryNode: libraryNode,
         libraryName: path.basenameWithoutExtension(options.javaOut!.path),
         package: options.javaPackage!,
+        imports: options.javaImports ?? <String>[],
       ),
     );
   }
@@ -161,6 +170,7 @@ void main(List<String> arguments) async {
         template: objcHeaderTemplate,
         libraryNode: libraryNode,
         prefix: options.objcPrefix!,
+        imports: options.objcHeaderImports ?? <String>[],
       ),
     );
   }
@@ -205,6 +215,8 @@ class ReferenceGeneratorOptions {
     this.objcImplOut,
     this.objcPrefix,
     this.dartImports,
+    this.objcHeaderImports,
+    this.javaImports,
     required this.branch,
   });
 
@@ -239,6 +251,8 @@ class ReferenceGeneratorOptions {
           : null,
       objcPrefix: results[objcPrefixOption],
       dartImports: results[dartImportsOption],
+      objcHeaderImports: results[objcHeaderImportsOption],
+      javaImports: results[javaImportsOption],
       branch: results[branchOption] ?? 'master',
     );
 
@@ -270,5 +284,7 @@ class ReferenceGeneratorOptions {
   final File? objcImplOut;
   final String? objcPrefix;
   final List<String>? dartImports;
+  final List<String>? objcHeaderImports;
+  final List<String>? javaImports;
   final String branch;
 }

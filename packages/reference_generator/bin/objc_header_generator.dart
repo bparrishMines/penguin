@@ -8,9 +8,16 @@ String generateObjcHeader({
   required String template,
   required LibraryNode libraryNode,
   required String prefix,
+  required List<String> imports,
 }) {
   final Map<String, Object> data = <String, Object>{};
   data['prefix'] = prefix;
+
+  final List<Map<String, Object>> importData = <Map<String, Object>>[];
+  for (String import in imports) {
+    importData.add(<String, Object>{'value': import});
+  }
+  data['imports'] = importData;
 
   final List<Map<String, Object>> classes = <Map<String, Object>>[];
   for (ClassNode classNode in libraryNode.classes) {
