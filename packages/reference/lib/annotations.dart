@@ -19,6 +19,15 @@ class ReferenceMethod {
   final bool ignore;
 }
 
+/// Annotation to customize constructors for reference_generator plugin.
+class ReferenceConstructor {
+  /// Default constructor for [ReferenceConstructor].
+  const ReferenceConstructor({this.ignore = false});
+
+  /// Ignore this constructor.
+  final bool ignore;
+}
+
 /// Annotation to customize parameters for reference_generator plugin.
 class ReferenceParameter {
   /// Default constructor for [ReferenceParameter].

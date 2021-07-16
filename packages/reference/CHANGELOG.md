@@ -1,3 +1,7 @@
+## 0.4.2+2
+
+* Fix struct generative constructor requirement and add `ReferenceConstructor` annotation.
+
 ## 0.4.2+1
 
 * Switch to `WeakReference`s on Android.
