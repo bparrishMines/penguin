@@ -46,7 +46,10 @@ class _MyAppState extends State<_MyApp> {
     super.initState();
     _setupForPicture();
 
-    SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
+    SystemChrome.setEnabledSystemUIMode(
+      SystemUiMode.manual,
+      overlays: [SystemUiOverlay.bottom],
+    );
     SystemChrome.setPreferredOrientations(<DeviceOrientation>[
       DeviceOrientation.portraitUp,
     ]);

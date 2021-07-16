@@ -22,10 +22,6 @@ final _NativeWeakMap Function(int) _createWeakMap =
 
 /// Dart representation of a struct in reference c library.
 class _NativeWeakMap extends Struct {
-  factory _NativeWeakMap(int onFinalizePort) {
-    return _createWeakMap(onFinalizePort);
-  }
-
   @Int64()
   external int onFinalizePort;
 
@@ -41,7 +37,7 @@ class _WeakMap {
         remove(instanceId);
         onFinalize(instanceId);
       });
-    _nativeWeakMap = _NativeWeakMap(_onFinalizePort.sendPort.nativePort);
+    _nativeWeakMap = _createWeakMap(_onFinalizePort.sendPort.nativePort);
   }
 
   static final int Function(_NativeWeakMap, Pointer<Int8>, Object) _put =

@@ -14,6 +14,8 @@ class ReferenceAstBuilder extends Builder {
       TypeChecker.fromRuntime(ReferenceMethod);
   static const TypeChecker parameterAnnotation =
       TypeChecker.fromRuntime(ReferenceParameter);
+  static const TypeChecker constructorAnnotation =
+      TypeChecker.fromRuntime(ReferenceConstructor);
 
   static ReferenceMethod? tryReadMethodAnnotation(MethodElement element) {
     if (!methodAnnotation.hasAnnotationOfExact(element)) return null;
@@ -31,6 +33,16 @@ class ReferenceAstBuilder extends Builder {
       parameterAnnotation.firstAnnotationOfExact(element),
     );
     return ReferenceParameter(ignore: reader.read('ignore').boolValue);
+  }
+
+  static ReferenceParameter? tryReadConstructorAnnotation(
+    ConstructorElement element,
+  ) {
+    if (!constructorAnnotation.hasAnnotationOfExact(element)) return null;
+    final ConstantReader reader = ConstantReader(
+      constructorAnnotation.firstAnnotationOfExact(element),
+    );
+    return ReferenceConstructor(ignore: reader.read('ignore').boolValue);
   }
 
   @override
@@ -109,7 +121,14 @@ class ReferenceAstBuilder extends Builder {
       channelName: _getChannel(classElement.thisType),
       constructors: classElement.constructors
           .where((ConstructorElement element) => !element.isPrivate)
-          .map<ConstructorNode>(
+          .where(
+        (ConstructorElement element) {
+          final ReferenceConstructor? referenceConstructor =
+              tryReadConstructorAnnotation(element);
+          if (referenceConstructor == null) return true;
+          return !referenceConstructor.ignore;
+        },
+      ).map<ConstructorNode>(
         (ConstructorElement constructorElement) {
           return _toConstructorNode(constructorElement, allGeneratedElements);
         },
