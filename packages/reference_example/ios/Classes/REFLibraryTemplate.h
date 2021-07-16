@@ -4,7 +4,7 @@
 #import "REFMethodChannel.h"
 
 /*iterate imports import*/
-#import /*replace :from='dart:core' value*/ <string.h> /**/
+#import /*replace value*/ <string.h> /**/
 /**/
 
 // **************************************************************************
