@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:analyzer/dart/element/element.dart';
+import 'package:analyzer/dart/element/nullability_suffix.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
 import 'package:reference/annotations.dart';
@@ -252,21 +253,20 @@ class ReferenceAstBuilder extends Builder {
     DartType type,
     Set<Element> allGeneratedElements,
   ) {
-    final String displayName = type.getDisplayString(withNullability: true);
-    // TODO: Use type.nullabilitySuffix
+    final String displayName = type.getDisplayString(withNullability: false);
     final TypeAliasElement? aliasElement = type.aliasElement;
     if (aliasElement != null) {
       return ReferenceType(
         name: aliasElement.name,
-        nullable: displayName.endsWith('?'),
+        nullable: type.nullabilitySuffix == NullabilitySuffix.question,
         codeGeneratedType: allGeneratedElements.contains(aliasElement),
         typeArguments: <ReferenceType>[],
         functionType: true,
       );
     }
     return ReferenceType(
-      name: displayName.split(RegExp('[<?]')).first,
-      nullable: displayName.endsWith('?'),
+      name: displayName.split(RegExp('[<]')).first,
+      nullable: type.nullabilitySuffix == NullabilitySuffix.question,
       codeGeneratedType: allGeneratedElements.contains(type.element),
       functionType: false,
       typeArguments: type is! ParameterizedType
