@@ -2,6 +2,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef void (^REFOnFinalizeCallback) (NSString *instanceID);
+
 @interface REFThreadSafeMapTable<KeyType, ObjectType> : NSObject
 + (REFThreadSafeMapTable *)weakToStrongObjectsMapTable;
 + (REFThreadSafeMapTable *)weakToWeakObjectsMapTable;
@@ -14,9 +16,13 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface REFInstanceManager : NSObject
-- (BOOL)addWeakReference:(NSObject *)instance instanceID:(NSString *_Nullable)instanceID;
+- (BOOL)addWeakReference:(NSObject *)instance
+              instanceID:(NSString *_Nullable)instanceID
+              onFinalize:(REFOnFinalizeCallback)onFinalize;
 - (BOOL)addStrongReference:(NSObject *)instance instanceID:(NSString *_Nullable)instanceID;
-- (BOOL)addTemporaryStrongReference:(NSObject *)instance instanceID:(NSString *_Nullable)instanceID;
+- (BOOL)addTemporaryStrongReference:(NSObject *)instance
+                         instanceID:(NSString *_Nullable)instanceID
+                         onFinalize:(REFOnFinalizeCallback)onFinalize;
 - (BOOL)containsInstance:(NSObject *)instance;
 - (NSString *_Nullable)getInstanceID:(NSObject *)instance;
 - (NSObject *_Nullable)getInstance:(NSString *)instanceID;
