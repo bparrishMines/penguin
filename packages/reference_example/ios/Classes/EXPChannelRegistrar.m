@@ -32,7 +32,7 @@
 
 @implementation EXPClassTemplateHandler
 - (NSObject<__prefix____class_name__> *)_create___constructor_name__:(REFTypeChannelMessenger *)messenger
-                                                        _parameter_name__:(NSNumber *)__parameter_name__ {
+                                                  __parameter_name__:(NSNumber *)__parameter_name__ {
   return [[EXPClassTemplateProxy alloc] initWithFieldTemplate:__parameter_name__];
 }
 
