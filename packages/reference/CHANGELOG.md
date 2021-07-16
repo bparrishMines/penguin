@@ -1,6 +1,7 @@
-## 0.4.2+2
+## 0.4.3
 
 * Fix struct generative constructor requirement and add `ReferenceConstructor` annotation.
+* Add Add auto garbage collection to iOS.
 
 ## 0.4.2+1
 
