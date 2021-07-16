@@ -20,9 +20,19 @@
              instanceID:(NSString *_Nullable)instanceID
                   owner:(BOOL)owner {
   if (owner && instanceID) {
-    return [[self instanceManager] addTemporaryStrongReference:instance instanceID:instanceID];
+    return [[self instanceManager] addTemporaryStrongReference:instance
+                                                    instanceID:instanceID
+                                                    onFinalize:^(NSString *instanceID) {
+      [[self messageDispatcher] sendDisposeInstancePair:[REFPairedInstance fromID:instanceID]
+                                             completion:^(NSError *error) {}];
+    }];
   } else if (owner) {
-    return [[self instanceManager] addWeakReference:instance instanceID:instanceID];
+    return [[self instanceManager] addWeakReference:instance
+                                         instanceID:instanceID
+                                         onFinalize:^(NSString *instanceID) {
+      [[self messageDispatcher] sendDisposeInstancePair:[REFPairedInstance fromID:instanceID]
+                                             completion:^(NSError *error) {}];
+    }];
   } else {
     return [[self instanceManager] addStrongReference:instance instanceID:instanceID];
   }

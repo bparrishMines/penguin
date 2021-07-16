@@ -47,7 +47,7 @@ public class InstanceManager {
       final String instanceId = weakReferenceIds.remove(referenceFromQueue);
       final OnFinalizeListener listener = weakReferenceListeners.remove(referenceFromQueue);
 
-      // TODO: remove
+      // TODO: remove once InstanceManager is testable.
       android.util.Log.d("ReferencePlugin", "Releasing instanceId: " + instanceId);
 
       removeInstance(instanceId);

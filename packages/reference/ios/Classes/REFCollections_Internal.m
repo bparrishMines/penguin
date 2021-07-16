@@ -1,4 +1,25 @@
 #import "REFCollections_Internal.h"
+#import <objc/runtime.h>
+
+// Tracks when an object is garbage collected.
+@interface REFObjectTracker : NSObject
+@property (nonatomic) REFOnFinalizeCallback callback;
+@property (nonatomic, copy) NSString *instanceID;
++ (void)trackObject:(NSObject *)object instanceID:(NSString *)instanceID callback:(REFOnFinalizeCallback)callback;
+@end
+
+@implementation REFObjectTracker
+-(void) dealloc {
+  _callback(_instanceID);
+}
+
++ (void)trackObject:(NSObject *)object instanceID:(NSString *)instanceID callback:(REFOnFinalizeCallback)callback {
+  REFObjectTracker *tracker = [[self alloc] init];
+  tracker.instanceID = instanceID;
+  tracker.callback = callback;
+  objc_setAssociatedObject(object, _cmd, tracker, OBJC_ASSOCIATION_RETAIN);
+}
+@end
 
 @implementation REFThreadSafeMapTable {
   NSMapTable<id, id> *_table;
@@ -72,8 +93,8 @@
 
 @implementation REFInstanceManager {
   REFThreadSafeMapTable<NSObject *, NSString *> *_instanceIds;
-  REFThreadSafeMapTable<NSString *, NSObject *> *_temporaryStrongReferences;
   REFThreadSafeMapTable<NSString *, NSObject *> *_strongReferences;
+  REFThreadSafeMapTable<NSString *, NSObject *> *_temporaryStrongReferences;
   REFThreadSafeMapTable<NSString *, NSObject *> *_weakReferences;
 }
 
@@ -81,24 +102,28 @@
   self = [super init];
   if (self) {
     _instanceIds = [REFThreadSafeMapTable weakToStrongObjectsMapTable];
-    _temporaryStrongReferences = [REFThreadSafeMapTable strongToStrongObjectsMapTable];
     _strongReferences = [REFThreadSafeMapTable strongToStrongObjectsMapTable];
+    _temporaryStrongReferences = [REFThreadSafeMapTable strongToStrongObjectsMapTable];
     _weakReferences = [REFThreadSafeMapTable strongToWeakObjectsMapTable];
   }
   return self;
 }
 
-- (BOOL)containsInstance:(NSObject *)instance {
-  return [_instanceIds objectForKey:instance] != nil;
-}
-
-- (BOOL)addWeakReference:(NSObject *)instance instanceID:(NSString *_Nullable)instanceID {
+- (BOOL)addWeakReference:(NSObject *)instance
+              instanceID:(NSString *_Nullable)instanceID
+              onFinalize:(REFOnFinalizeCallback)onFinalize {
   if ([self containsInstance:instance]) return NO;
   
   NSString *newID = instanceID ? instanceID : [self generateUniqueInstanceID:instance];
 
   [_instanceIds setObject:newID forKey:instance];
   [_weakReferences setObject:instance forKey:newID];
+  
+  __weak __block REFInstanceManager *weakSelf = self;
+  [REFObjectTracker trackObject:instance instanceID:instanceID callback:^(NSString * _Nonnull instanceID) {
+    [weakSelf removeInstance:instanceID];
+    onFinalize(instanceID);
+  }];
   return YES;
 }
 
@@ -112,15 +137,21 @@
   return YES;
 }
 
-- (BOOL)addTemporaryStrongReference:(NSObject *)instance instanceID:(NSString *_Nullable)instanceID {
+- (BOOL)addTemporaryStrongReference:(NSObject *)instance
+                         instanceID:(NSString *_Nullable)instanceID
+                         onFinalize:(REFOnFinalizeCallback)onFinalize {
   NSString *newID = instanceID ? instanceID : [self generateUniqueInstanceID:instance];
 
-  if ([self addWeakReference:instance instanceID:newID]) {
+  if ([self addWeakReference:instance instanceID:newID onFinalize:onFinalize]) {
     [_temporaryStrongReferences setObject:instance forKey:newID];
     return YES;
   }
 
   return NO;
+}
+
+- (BOOL)containsInstance:(NSObject *)instance {
+  return [_instanceIds objectForKey:instance] != nil;
 }
 
 - (void)removeInstance:(NSString *)instanceID {
