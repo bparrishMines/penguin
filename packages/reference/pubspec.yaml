@@ -1,6 +1,6 @@
 name: reference
 description: Reduce plugin maintenance burden for plugins that have to maintain platform object instances in memory.
-version: 0.4.3
+version: 0.4.3+1
 homepage: https://github.com/bparrishMines/penguin/tree/master/packages/reference
 
 environment:

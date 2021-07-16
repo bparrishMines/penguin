@@ -9,10 +9,18 @@ String generateJava({
   required LibraryNode libraryNode,
   required String libraryName,
   required String package,
+  required List<String> imports,
+  required Map<String, String> typeAliases,
 }) {
   final Map<String, Object> data = <String, Object>{};
   data['libraryName'] = libraryName;
   data['package'] = package;
+
+  final List<Map<String, Object>> importData = <Map<String, Object>>[];
+  for (String import in imports) {
+    importData.add(<String, Object>{'value': import});
+  }
+  data['imports'] = importData;
 
   final List<Map<String, Object>> classes = <Map<String, Object>>[];
   for (ClassNode classNode in libraryNode.classes) {
@@ -29,8 +37,10 @@ String generateJava({
       for (int i = 0; i < constructorNode.parameters.length; i++) {
         final Map<String, Object> parameterData = <String, Object>{};
         parameterData['name'] = constructorNode.parameters[i].name;
-        parameterData['type'] =
-            getTrueTypeName(constructorNode.parameters[i].type);
+        parameterData['type'] = getTrueTypeName(
+          constructorNode.parameters[i].type,
+          typeAliases,
+        );
         parameterData['index'] = '${i + 1}';
 
         parameters.add(parameterData);
@@ -51,7 +61,10 @@ String generateJava({
       for (int i = 0; i < methodNode.parameters.length; i++) {
         final Map<String, Object> parameterData = <String, Object>{};
         parameterData['name'] = methodNode.parameters[i].name;
-        parameterData['type'] = getTrueTypeName(methodNode.parameters[i].type);
+        parameterData['type'] = getTrueTypeName(
+          methodNode.parameters[i].type,
+          typeAliases,
+        );
         parameterData['index'] = '$i';
 
         parameters.add(parameterData);
@@ -72,7 +85,10 @@ String generateJava({
       for (int i = 0; i < methodNode.parameters.length; i++) {
         final Map<String, Object> parameterData = <String, Object>{};
         parameterData['name'] = methodNode.parameters[i].name;
-        parameterData['type'] = getTrueTypeName(methodNode.parameters[i].type);
+        parameterData['type'] = getTrueTypeName(
+          methodNode.parameters[i].type,
+          typeAliases,
+        );
         parameterData['index'] = '$i';
 
         parameters.add(parameterData);
@@ -98,7 +114,10 @@ String generateJava({
     for (int i = 0; i < functionNode.parameters.length; i++) {
       final Map<String, Object> parameterData = <String, Object>{};
       parameterData['name'] = functionNode.parameters[i].name;
-      parameterData['type'] = getTrueTypeName(functionNode.parameters[i].type);
+      parameterData['type'] = getTrueTypeName(
+        functionNode.parameters[i].type,
+        typeAliases,
+      );
       parameterData['index'] = '$i';
 
       parameters.add(parameterData);
@@ -117,11 +136,16 @@ String generateJava({
   return runGenerator(templateQueue, Queue<Token>(), StringBuffer(), data);
 }
 
-String getTrueTypeName(ReferenceType type) {
-  final String javaName = javaTypeNameConversion(type.name);
+String getTrueTypeName(ReferenceType type, Map<String, String> typeAliases) {
+  final String javaName;
+  if (typeAliases.containsKey(type.name)) {
+    javaName = typeAliases[type.name]!;
+  } else {
+    javaName = javaTypeNameConversion(type.name);
+  }
 
   final Iterable<String> typeArguments = type.typeArguments.map<String>(
-    (ReferenceType type) => getTrueTypeName(type),
+    (ReferenceType type) => getTrueTypeName(type, typeAliases),
   );
 
   if (type.codeGeneratedType && typeArguments.isEmpty) {

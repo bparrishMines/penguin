@@ -6,11 +6,12 @@
 @property (nonatomic) REFOnFinalizeCallback callback;
 @property (nonatomic, copy) NSString *instanceID;
 + (void)trackObject:(NSObject *)object instanceID:(NSString *)instanceID callback:(REFOnFinalizeCallback)callback;
++ (void)untrackObject:(NSObject *)object;
 @end
 
 @implementation REFObjectTracker
 -(void) dealloc {
-  _callback(_instanceID);
+  if (_callback) _callback(_instanceID);
 }
 
 + (void)trackObject:(NSObject *)object instanceID:(NSString *)instanceID callback:(REFOnFinalizeCallback)callback {
@@ -18,6 +19,11 @@
   tracker.instanceID = instanceID;
   tracker.callback = callback;
   objc_setAssociatedObject(object, _cmd, tracker, OBJC_ASSOCIATION_RETAIN);
+}
+
++ (void)untrackObject:(NSObject *)object {
+  REFObjectTracker *tracker = objc_getAssociatedObject(object, @selector(trackObject:instanceID:callback:));
+  [tracker setCallback:nil];
 }
 @end
 
@@ -121,8 +127,8 @@
   
   __weak __block REFInstanceManager *weakSelf = self;
   [REFObjectTracker trackObject:instance instanceID:instanceID callback:^(NSString * _Nonnull instanceID) {
-    [weakSelf removeInstance:instanceID];
     onFinalize(instanceID);
+    [weakSelf removeInstance:instanceID];
   }];
   return YES;
 }
@@ -156,7 +162,10 @@
 
 - (void)removeInstance:(NSString *)instanceID {
   NSObject *instance = [self getInstance:instanceID];
-  if (instance) [_instanceIds removeObjectForKey:instance];
+  if (instance) {
+    [_instanceIds removeObjectForKey:instance];
+    [REFObjectTracker untrackObject:instance];
+  }
 
   [_temporaryStrongReferences removeObjectForKey:instanceID];
   [_strongReferences removeObjectForKey:instanceID];
