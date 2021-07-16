@@ -36,6 +36,10 @@ class LibraryImplementations extends $LibraryImplementations {
   CaptureDeviceDiscoverySessionHandler
       get handlerCaptureDeviceDiscoverySession =>
           CaptureDeviceDiscoverySessionHandler();
+
+  @override
+  $CaptureInputPortHandler get handlerCaptureInputPort =>
+      CaptureInputPortHandler();
 }
 
 /// [TypeChannelHandler] implementation for [CaptureDevice].
@@ -80,6 +84,24 @@ class CaptureDeviceDiscoverySessionHandler
       supportedMultiCamDeviceSets: supportedMultiCamDeviceSets
           .map((_) => _.map((_) => _ as CaptureDevice).toSet())
           .toList(),
+    );
+  }
+}
+
+/// [TypeChannelHandler] implementation for [CaptureInputPort].
+class CaptureInputPortHandler extends $CaptureInputPortHandler {
+  @override
+  CaptureInputPort $create$(
+    TypeChannelMessenger messenger,
+    String mediaType,
+    String? sourceDeviceType,
+    int sourceDevicePosition,
+  ) {
+    // ignore: invalid_use_of_visible_for_testing_member
+    return CaptureInputPort(
+      mediaType: mediaType,
+      sourceDeviceType: sourceDeviceType,
+      sourceDevicePosition: sourceDevicePosition,
     );
   }
 }

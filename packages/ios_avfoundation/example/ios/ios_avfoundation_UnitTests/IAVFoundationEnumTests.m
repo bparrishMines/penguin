@@ -66,4 +66,11 @@
   XCTAssertEqual(AVCaptureFlashModeOn, 1);
   XCTAssertEqual(AVCaptureFlashModeAuto, 2);
 }
+
+- (void)testVideoOrientation {
+  XCTAssertEqual(AVCaptureVideoOrientationPortrait, 1);
+  XCTAssertEqual(AVCaptureVideoOrientationPortraitUpsideDown, 2);
+  XCTAssertEqual(AVCaptureVideoOrientationLandscapeRight, 3);
+  XCTAssertEqual(AVCaptureVideoOrientationLandscapeLeft, 4);
+}
 @end

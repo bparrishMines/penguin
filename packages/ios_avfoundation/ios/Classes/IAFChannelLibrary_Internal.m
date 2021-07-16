@@ -515,6 +515,76 @@
 
 @end
 
+@implementation _IAFCaptureConnectionChannel
+- (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
+  return self = [super initWithMessenger:messenger name:@"ios_avfoundation/avfoundation/CaptureConnection"];
+}
+
+
+
+- (void)_create_:(NSObject<_IAFCaptureConnection> *)_instance
+         _owner:(BOOL)_owner
+
+ inputPorts:(NSArray<NSObject<_IAFCaptureInputPort> *> * _Nullable)inputPorts
+
+ output:(NSObject<_IAFCaptureOutput> * _Nullable)output
+
+     completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
+  [self createNewInstancePair:_instance
+                    arguments:@[@"",
+  inputPorts ? (NSObject *) inputPorts : [NSNull null],output ? (NSObject *) output : [NSNull null],]
+                        owner:_owner
+                   completion:completion];
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@end
+
+@implementation _IAFCaptureInputPortChannel
+- (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
+  return self = [super initWithMessenger:messenger name:@"ios_avfoundation/avfoundation/CaptureInputPort"];
+}
+
+
+
+- (void)_create_:(NSObject<_IAFCaptureInputPort> *)_instance
+         _owner:(BOOL)_owner
+
+ mediaType:(NSString * _Nullable)mediaType
+
+ sourceDeviceType:(NSString * _Nullable)sourceDeviceType
+
+ sourceDevicePosition:(NSNumber * _Nullable)sourceDevicePosition
+
+     completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
+  [self createNewInstancePair:_instance
+                    arguments:@[@"",
+  mediaType ? (NSObject *) mediaType : [NSNull null],sourceDeviceType ? (NSObject *) sourceDeviceType : [NSNull null],sourceDevicePosition ? (NSObject *) sourceDevicePosition : [NSNull null],]
+                        owner:_owner
+                   completion:completion];
+}
+
+
+
+
+
+
+
+@end
+
 
 
 @implementation _IAFCapturePhotoOutputHandler
@@ -1799,6 +1869,212 @@
 }
 @end
 
+@implementation _IAFCaptureConnectionHandler
+
+- (NSObject<_IAFCaptureConnection> *)_create_:(REFTypeChannelMessenger *)messenger
+                                 
+                                 inputPorts:(NSArray<NSObject<_IAFCaptureInputPort> *> *)inputPorts
+
+                                 output:(NSObject<_IAFCaptureOutput> *)output
+{
+  @throw [NSException exceptionWithName:@"_IAFUnimplementedException" reason:nil userInfo:nil];
+}
+
+
+
+
+
+
+- (id _Nullable)_setVideoOrientation:(NSObject<_IAFCaptureConnection> *)_instance
+
+                     orientation:(NSNumber * _Nullable)orientation
+ {
+  return [_instance setVideoOrientation:orientation
+          ];
+}
+
+
+
+- (id _Nullable)_isVideoOrientationSupported:(NSObject<_IAFCaptureConnection> *)_instance
+ {
+  return [_instance isVideoOrientationSupported
+          ];
+}
+
+
+
+- (id _Nullable)_setAutomaticallyAdjustsVideoMirroring:(NSObject<_IAFCaptureConnection> *)_instance
+
+                     adjust:(NSNumber * _Nullable)adjust
+ {
+  return [_instance setAutomaticallyAdjustsVideoMirroring:adjust
+          ];
+}
+
+
+
+- (id _Nullable)_setVideoMirrored:(NSObject<_IAFCaptureConnection> *)_instance
+
+                     mirrored:(NSNumber * _Nullable)mirrored
+ {
+  return [_instance setVideoMirrored:mirrored
+          ];
+}
+
+
+
+- (id _Nullable)_isVideoMirroringSupported:(NSObject<_IAFCaptureConnection> *)_instance
+ {
+  return [_instance isVideoMirroringSupported
+          ];
+}
+
+
+
+- (id _Nullable)invokeStaticMethod:(nonnull REFTypeChannelMessenger *)messenger
+                        methodName:(nonnull NSString *)methodName
+                         arguments:(nonnull NSArray *)arguments {
+  
+  
+  NSLog(@"Unable to invoke static method %@", methodName);
+  return nil;
+}
+
+- (nonnull id)createInstance:(nonnull REFTypeChannelMessenger *)messenger
+                   arguments:(nonnull NSArray *)arguments {
+  NSString *constructorName = arguments[0];
+  
+  if ([@"" isEqualToString:constructorName]) {
+    return [self _create_:messenger
+            inputPorts:arguments[1] output:arguments[2] ];
+  }
+  
+  
+  NSString *reason = [NSString stringWithFormat:@"Unable to create a 'CaptureConnection' with constructor name `%@`", constructorName];
+  @throw [NSException exceptionWithName:@"_IAFUnimplementedException" reason:reason userInfo:nil];
+}
+
+- (id _Nullable)invokeMethod:(nonnull REFTypeChannelMessenger *)messenger
+                    instance:(nonnull NSObject *)instance
+                  methodName:(nonnull NSString *)methodName
+                   arguments:(nonnull NSArray *)arguments {
+  NSObject<_IAFCaptureConnection> *value = (NSObject<_IAFCaptureConnection> *) instance;
+  
+  
+  if ([@"setVideoOrientation" isEqualToString:methodName]) {
+    return [self _setVideoOrientation:value
+               
+               orientation:arguments[0] ];
+  }
+  
+  else
+  
+  if ([@"isVideoOrientationSupported" isEqualToString:methodName]) {
+    return [self _isVideoOrientationSupported:value
+               ];
+  }
+  
+  else
+  
+  if ([@"setAutomaticallyAdjustsVideoMirroring" isEqualToString:methodName]) {
+    return [self _setAutomaticallyAdjustsVideoMirroring:value
+               
+               adjust:arguments[0] ];
+  }
+  
+  else
+  
+  if ([@"setVideoMirrored" isEqualToString:methodName]) {
+    return [self _setVideoMirrored:value
+               
+               mirrored:arguments[0] ];
+  }
+  
+  else
+  
+  if ([@"isVideoMirroringSupported" isEqualToString:methodName]) {
+    return [self _isVideoMirroringSupported:value
+               ];
+  }
+  
+  
+  
+  NSLog(@"Unable to invoke %@.%@", instance, methodName);
+  return nil;
+}
+@end
+
+@implementation _IAFCaptureInputPortHandler
+
+- (NSObject<_IAFCaptureInputPort> *)_create_:(REFTypeChannelMessenger *)messenger
+                                 
+                                 mediaType:(NSString *)mediaType
+
+                                 sourceDeviceType:(NSString *)sourceDeviceType
+
+                                 sourceDevicePosition:(NSNumber *)sourceDevicePosition
+{
+  @throw [NSException exceptionWithName:@"_IAFUnimplementedException" reason:nil userInfo:nil];
+}
+
+
+
+
+
+
+- (id _Nullable)_setEnabled:(NSObject<_IAFCaptureInputPort> *)_instance
+
+                     enabled:(NSNumber * _Nullable)enabled
+ {
+  return [_instance setEnabled:enabled
+          ];
+}
+
+
+
+- (id _Nullable)invokeStaticMethod:(nonnull REFTypeChannelMessenger *)messenger
+                        methodName:(nonnull NSString *)methodName
+                         arguments:(nonnull NSArray *)arguments {
+  
+  
+  NSLog(@"Unable to invoke static method %@", methodName);
+  return nil;
+}
+
+- (nonnull id)createInstance:(nonnull REFTypeChannelMessenger *)messenger
+                   arguments:(nonnull NSArray *)arguments {
+  NSString *constructorName = arguments[0];
+  
+  if ([@"" isEqualToString:constructorName]) {
+    return [self _create_:messenger
+            mediaType:arguments[1] sourceDeviceType:arguments[2] sourceDevicePosition:arguments[3] ];
+  }
+  
+  
+  NSString *reason = [NSString stringWithFormat:@"Unable to create a 'CaptureInputPort' with constructor name `%@`", constructorName];
+  @throw [NSException exceptionWithName:@"_IAFUnimplementedException" reason:reason userInfo:nil];
+}
+
+- (id _Nullable)invokeMethod:(nonnull REFTypeChannelMessenger *)messenger
+                    instance:(nonnull NSObject *)instance
+                  methodName:(nonnull NSString *)methodName
+                   arguments:(nonnull NSArray *)arguments {
+  NSObject<_IAFCaptureInputPort> *value = (NSObject<_IAFCaptureInputPort> *) instance;
+  
+  
+  if ([@"setEnabled" isEqualToString:methodName]) {
+    return [self _setEnabled:value
+               
+               enabled:arguments[0] ];
+  }
+  
+  
+  
+  NSLog(@"Unable to invoke %@.%@", instance, methodName);
+  return nil;
+}
+@end
+
 
 @implementation _IAFLibraryImplementations
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
@@ -1922,6 +2198,22 @@
   return [[_IAFCaptureFileOutputRecordingDelegateHandler alloc] init];
 }
 
+- (_IAFCaptureConnectionChannel *)channelCaptureConnection {
+  return [[_IAFCaptureConnectionChannel alloc] initWithMessenger:_messenger];
+}
+
+- (_IAFCaptureConnectionHandler *)handlerCaptureConnection {
+  return [[_IAFCaptureConnectionHandler alloc] init];
+}
+
+- (_IAFCaptureInputPortChannel *)channelCaptureInputPort {
+  return [[_IAFCaptureInputPortChannel alloc] initWithMessenger:_messenger];
+}
+
+- (_IAFCaptureInputPortHandler *)handlerCaptureInputPort {
+  return [[_IAFCaptureInputPortHandler alloc] init];
+}
+
 
 
 - (_IAFFinishProcessingPhotoCallbackChannel *)channelFinishProcessingPhotoCallback {
@@ -1973,6 +2265,10 @@
   
   [_implementations.channelCaptureFileOutputRecordingDelegate setHandler:_implementations.handlerCaptureFileOutputRecordingDelegate];
   
+  [_implementations.channelCaptureConnection setHandler:_implementations.handlerCaptureConnection];
+  
+  [_implementations.channelCaptureInputPort setHandler:_implementations.handlerCaptureInputPort];
+  
   
   [_implementations.channelFinishProcessingPhotoCallback setHandler:_implementations.handlerFinishProcessingPhotoCallback];
   
@@ -2007,6 +2303,10 @@
   [_implementations.channelCaptureMovieFileOutput removeHandler];
   
   [_implementations.channelCaptureFileOutputRecordingDelegate removeHandler];
+  
+  [_implementations.channelCaptureConnection removeHandler];
+  
+  [_implementations.channelCaptureInputPort removeHandler];
   
   
   [_implementations.channelFinishProcessingPhotoCallback removeHandler];

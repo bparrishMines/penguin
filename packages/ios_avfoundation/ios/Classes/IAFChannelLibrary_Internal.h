@@ -39,6 +39,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol _IAFCaptureFileOutputRecordingDelegate;
 
+@protocol _IAFCaptureConnection;
+
+@protocol _IAFCaptureInputPort;
+
 
 @class _IAFLibraryImplementations;
 
@@ -355,6 +359,58 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 
 @end
 
+@protocol _IAFCaptureConnection <NSObject>
+
+
+- (id _Nullable)setVideoOrientation
+                                :(NSNumber * _Nullable)orientation
+
+
+;
+
+
+
+- (id _Nullable)isVideoOrientationSupported
+
+;
+
+
+
+- (id _Nullable)setAutomaticallyAdjustsVideoMirroring
+                                :(NSNumber * _Nullable)adjust
+
+
+;
+
+
+
+- (id _Nullable)setVideoMirrored
+                                :(NSNumber * _Nullable)mirrored
+
+
+;
+
+
+
+- (id _Nullable)isVideoMirroringSupported
+
+;
+
+
+@end
+
+@protocol _IAFCaptureInputPort <NSObject>
+
+
+- (id _Nullable)setEnabled
+                                :(NSNumber * _Nullable)enabled
+
+
+;
+
+
+@end
+
 
 
 @interface _IAFCapturePhotoOutputChannel : REFTypeChannel
@@ -643,6 +699,56 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
           _owner:(BOOL)_owner
 
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion;
+
+
+
+
+
+@end
+
+@interface _IAFCaptureConnectionChannel : REFTypeChannel
+- (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger;
+
+- (void)_create_:(NSObject<_IAFCaptureConnection> *)_instance
+          _owner:(BOOL)_owner
+
+ inputPorts:(NSArray<NSObject<_IAFCaptureInputPort> *> * _Nullable)inputPorts
+
+ output:(NSObject<_IAFCaptureOutput> * _Nullable)output
+
+     completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@end
+
+@interface _IAFCaptureInputPortChannel : REFTypeChannel
+- (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger;
+
+- (void)_create_:(NSObject<_IAFCaptureInputPort> *)_instance
+          _owner:(BOOL)_owner
+
+ mediaType:(NSString * _Nullable)mediaType
+
+ sourceDeviceType:(NSString * _Nullable)sourceDeviceType
+
+ sourceDevicePosition:(NSNumber * _Nullable)sourceDevicePosition
+
+     completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion;
+
+
 
 
 
@@ -1038,6 +1144,74 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 
 @end
 
+@interface _IAFCaptureConnectionHandler : NSObject<REFTypeChannelHandler>
+
+- (NSObject<_IAFCaptureConnection> *)_create_:(REFTypeChannelMessenger *)messenger
+
+                                  inputPorts:(NSArray<NSObject<_IAFCaptureInputPort> *> * _Nullable)inputPorts
+
+                                  output:(NSObject<_IAFCaptureOutput> * _Nullable)output
+;
+
+
+
+
+
+- (id _Nullable)_setVideoOrientation:(NSObject<_IAFCaptureConnection> *)_instance
+
+  orientation:(NSNumber * _Nullable)orientation
+;
+
+
+
+- (id _Nullable)_isVideoOrientationSupported:(NSObject<_IAFCaptureConnection> *)_instance
+;
+
+
+
+- (id _Nullable)_setAutomaticallyAdjustsVideoMirroring:(NSObject<_IAFCaptureConnection> *)_instance
+
+  adjust:(NSNumber * _Nullable)adjust
+;
+
+
+
+- (id _Nullable)_setVideoMirrored:(NSObject<_IAFCaptureConnection> *)_instance
+
+  mirrored:(NSNumber * _Nullable)mirrored
+;
+
+
+
+- (id _Nullable)_isVideoMirroringSupported:(NSObject<_IAFCaptureConnection> *)_instance
+;
+
+
+@end
+
+@interface _IAFCaptureInputPortHandler : NSObject<REFTypeChannelHandler>
+
+- (NSObject<_IAFCaptureInputPort> *)_create_:(REFTypeChannelMessenger *)messenger
+
+                                  mediaType:(NSString * _Nullable)mediaType
+
+                                  sourceDeviceType:(NSString * _Nullable)sourceDeviceType
+
+                                  sourceDevicePosition:(NSNumber * _Nullable)sourceDevicePosition
+;
+
+
+
+
+
+- (id _Nullable)_setEnabled:(NSObject<_IAFCaptureInputPort> *)_instance
+
+  enabled:(NSNumber * _Nullable)enabled
+;
+
+
+@end
+
 
 @interface _IAFLibraryImplementations : NSObject
 @property (readonly) REFTypeChannelMessenger *messenger;
@@ -1084,6 +1258,12 @@ typedef NSObject *_Nullable (^_IAFFinishProcessingPhotoCallback) (NSObject<_IAFC
 
 -(_IAFCaptureFileOutputRecordingDelegateChannel *)channelCaptureFileOutputRecordingDelegate;
 -(_IAFCaptureFileOutputRecordingDelegateHandler *)handlerCaptureFileOutputRecordingDelegate;
+
+-(_IAFCaptureConnectionChannel *)channelCaptureConnection;
+-(_IAFCaptureConnectionHandler *)handlerCaptureConnection;
+
+-(_IAFCaptureInputPortChannel *)channelCaptureInputPort;
+-(_IAFCaptureInputPortHandler *)handlerCaptureInputPort;
 
 
 

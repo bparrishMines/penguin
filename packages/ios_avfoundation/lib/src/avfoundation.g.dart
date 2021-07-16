@@ -117,6 +117,10 @@ mixin $CaptureMovieFileOutput {}
 
 mixin $CaptureFileOutputRecordingDelegate {}
 
+mixin $CaptureConnection {}
+
+mixin $CaptureInputPort {}
+
 class $CapturePhotoOutputChannel extends TypeChannel<$CapturePhotoOutput> {
   $CapturePhotoOutputChannel(TypeChannelMessenger messenger)
       : super(messenger, 'ios_avfoundation/avfoundation/CapturePhotoOutput');
@@ -818,6 +822,124 @@ class $CaptureFileOutputRecordingDelegateChannel
         '',
       ],
       owner: $owner,
+    );
+  }
+}
+
+class $CaptureConnectionChannel extends TypeChannel<$CaptureConnection> {
+  $CaptureConnectionChannel(TypeChannelMessenger messenger)
+      : super(messenger, 'ios_avfoundation/avfoundation/CaptureConnection');
+
+  Future<PairedInstance?> $create$(
+    $CaptureConnection $instance, {
+    required bool $owner,
+    required List<$CaptureInputPort> inputPorts,
+    required $CaptureOutput output,
+  }) {
+    return createNewInstancePair(
+      $instance,
+      <Object?>[
+        '',
+        inputPorts,
+        output,
+      ],
+      owner: $owner,
+    );
+  }
+
+  Future<Object?> $setVideoOrientation(
+    $CaptureConnection $instance,
+    int orientation,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'setVideoOrientation',
+      <Object?>[
+        orientation,
+      ],
+    );
+  }
+
+  Future<Object?> $isVideoOrientationSupported(
+    $CaptureConnection $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'isVideoOrientationSupported',
+      <Object?>[],
+    );
+  }
+
+  Future<Object?> $setAutomaticallyAdjustsVideoMirroring(
+    $CaptureConnection $instance,
+    bool adjust,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'setAutomaticallyAdjustsVideoMirroring',
+      <Object?>[
+        adjust,
+      ],
+    );
+  }
+
+  Future<Object?> $setVideoMirrored(
+    $CaptureConnection $instance,
+    bool mirrored,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'setVideoMirrored',
+      <Object?>[
+        mirrored,
+      ],
+    );
+  }
+
+  Future<Object?> $isVideoMirroringSupported(
+    $CaptureConnection $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'isVideoMirroringSupported',
+      <Object?>[],
+    );
+  }
+}
+
+class $CaptureInputPortChannel extends TypeChannel<$CaptureInputPort> {
+  $CaptureInputPortChannel(TypeChannelMessenger messenger)
+      : super(messenger, 'ios_avfoundation/avfoundation/CaptureInputPort');
+
+  Future<PairedInstance?> $create$(
+    $CaptureInputPort $instance, {
+    required bool $owner,
+    required String mediaType,
+    required String? sourceDeviceType,
+    required int sourceDevicePosition,
+  }) {
+    return createNewInstancePair(
+      $instance,
+      <Object?>[
+        '',
+        mediaType,
+        sourceDeviceType,
+        sourceDevicePosition,
+      ],
+      owner: $owner,
+    );
+  }
+
+  Future<Object?> $setEnabled(
+    $CaptureInputPort $instance,
+    bool enabled,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'setEnabled',
+      <Object?>[
+        enabled,
+      ],
     );
   }
 }
@@ -1723,6 +1845,142 @@ class $CaptureFileOutputRecordingDelegateHandler
   }
 }
 
+class $CaptureConnectionHandler
+    implements TypeChannelHandler<$CaptureConnection> {
+  $CaptureConnection $create$(
+    TypeChannelMessenger messenger,
+    List<$CaptureInputPort> inputPorts,
+    $CaptureOutput output,
+  ) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Object? invokeStaticMethod(
+    TypeChannelMessenger messenger,
+    String methodName,
+    List<Object?> arguments,
+  ) {
+    switch (methodName) {
+    }
+
+    throw ArgumentError.value(
+      methodName,
+      'methodName',
+      'Unable to invoke static method `$methodName`',
+    );
+  }
+
+  @override
+  $CaptureConnection createInstance(
+    TypeChannelMessenger messenger,
+    List<Object?> arguments,
+  ) {
+    final String constructorName = arguments[0] as String;
+    switch (constructorName) {
+      case '':
+        return $create$(
+          messenger,
+          (arguments[1] as List<dynamic>)
+              .map((_) => _ as $CaptureInputPort)
+              .toList(),
+          arguments[2] as $CaptureOutput,
+        );
+    }
+
+    throw ArgumentError.value(
+      constructorName,
+      'constructorName',
+      'Unable to invoke constructor of',
+    );
+  }
+
+  @override
+  Object? invokeMethod(
+    TypeChannelMessenger messenger,
+    $CaptureConnection instance,
+    String methodName,
+    List<Object?> arguments,
+  ) {
+    switch (methodName) {
+    }
+
+    throw ArgumentError.value(
+      instance,
+      'instance',
+      'Unable to invoke method `$methodName` on',
+    );
+  }
+}
+
+class $CaptureInputPortHandler
+    implements TypeChannelHandler<$CaptureInputPort> {
+  $CaptureInputPort $create$(
+    TypeChannelMessenger messenger,
+    String mediaType,
+    String? sourceDeviceType,
+    int sourceDevicePosition,
+  ) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Object? invokeStaticMethod(
+    TypeChannelMessenger messenger,
+    String methodName,
+    List<Object?> arguments,
+  ) {
+    switch (methodName) {
+    }
+
+    throw ArgumentError.value(
+      methodName,
+      'methodName',
+      'Unable to invoke static method `$methodName`',
+    );
+  }
+
+  @override
+  $CaptureInputPort createInstance(
+    TypeChannelMessenger messenger,
+    List<Object?> arguments,
+  ) {
+    final String constructorName = arguments[0] as String;
+    switch (constructorName) {
+      case '':
+        return $create$(
+          messenger,
+          arguments[1] as String,
+          arguments[2] as String?,
+          arguments[3] as int,
+        );
+    }
+
+    throw ArgumentError.value(
+      constructorName,
+      'constructorName',
+      'Unable to invoke constructor of',
+    );
+  }
+
+  @override
+  Object? invokeMethod(
+    TypeChannelMessenger messenger,
+    $CaptureInputPort instance,
+    String methodName,
+    List<Object?> arguments,
+  ) {
+    switch (methodName) {
+    }
+
+    throw ArgumentError.value(
+      instance,
+      'instance',
+      'Unable to invoke method `$methodName` on',
+    );
+  }
+}
+
 class $LibraryImplementations {
   $LibraryImplementations(this.messenger);
 
@@ -1797,6 +2055,16 @@ class $LibraryImplementations {
       get handlerCaptureFileOutputRecordingDelegate =>
           $CaptureFileOutputRecordingDelegateHandler();
 
+  $CaptureConnectionChannel get channelCaptureConnection =>
+      $CaptureConnectionChannel(messenger);
+  $CaptureConnectionHandler get handlerCaptureConnection =>
+      $CaptureConnectionHandler();
+
+  $CaptureInputPortChannel get channelCaptureInputPort =>
+      $CaptureInputPortChannel(messenger);
+  $CaptureInputPortHandler get handlerCaptureInputPort =>
+      $CaptureInputPortHandler();
+
   $FinishProcessingPhotoCallbackChannel
       get channelFinishProcessingPhotoCallback =>
           $FinishProcessingPhotoCallbackChannel(messenger);
@@ -1867,6 +2135,14 @@ class $ChannelRegistrar {
       implementations.handlerCaptureFileOutputRecordingDelegate,
     );
 
+    implementations.channelCaptureConnection.setHandler(
+      implementations.handlerCaptureConnection,
+    );
+
+    implementations.channelCaptureInputPort.setHandler(
+      implementations.handlerCaptureInputPort,
+    );
+
     implementations.channelFinishProcessingPhotoCallback.setHandler(
       implementations.handlerFinishProcessingPhotoCallback,
     );
@@ -1900,6 +2176,10 @@ class $ChannelRegistrar {
     implementations.channelCaptureMovieFileOutput.removeHandler();
 
     implementations.channelCaptureFileOutputRecordingDelegate.removeHandler();
+
+    implementations.channelCaptureConnection.removeHandler();
+
+    implementations.channelCaptureInputPort.removeHandler();
 
     implementations.channelFinishProcessingPhotoCallback.removeHandler();
   }
