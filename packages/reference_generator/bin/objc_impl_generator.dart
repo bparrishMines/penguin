@@ -10,6 +10,7 @@ String generateObjcImpl({
   required LibraryNode libraryNode,
   required String prefix,
   required String headerFilename,
+  required Map<String, String> typeAliases,
 }) {
   final Map<String, Object> data = <String, Object>{};
   data['prefix'] = prefix;
@@ -30,8 +31,11 @@ String generateObjcImpl({
       for (int i = 0; i < constructorNode.parameters.length; i++) {
         final Map<String, Object> parameterData = <String, Object>{};
         parameterData['name'] = constructorNode.parameters[i].name;
-        parameterData['type'] =
-            getTrueTypeName(constructorNode.parameters[i].type, prefix);
+        parameterData['type'] = getTrueTypeName(
+          type: constructorNode.parameters[i].type,
+          prefix: prefix,
+          typeAliases: typeAliases,
+        );
         parameterData['index'] = '${i + 1}';
 
         parameters.add(parameterData);
@@ -53,8 +57,11 @@ String generateObjcImpl({
       for (int i = 0; i < methodNode.parameters.length; i++) {
         final Map<String, Object> parameterData = <String, Object>{};
         parameterData['name'] = methodNode.parameters[i].name;
-        parameterData['type'] =
-            getTrueTypeName(methodNode.parameters[i].type, prefix);
+        parameterData['type'] = getTrueTypeName(
+          type: methodNode.parameters[i].type,
+          prefix: prefix,
+          typeAliases: typeAliases,
+        );
         parameterData['index'] = '$i';
 
         parameters.add(parameterData);
@@ -75,8 +82,11 @@ String generateObjcImpl({
       for (int i = 0; i < methodNode.parameters.length; i++) {
         final Map<String, Object> parameterData = <String, Object>{};
         parameterData['name'] = methodNode.parameters[i].name;
-        parameterData['type'] =
-            getTrueTypeName(methodNode.parameters[i].type, prefix);
+        parameterData['type'] = getTrueTypeName(
+          type: methodNode.parameters[i].type,
+          prefix: prefix,
+          typeAliases: typeAliases,
+        );
         parameterData['index'] = '$i';
 
         parameters.add(parameterData);
@@ -102,8 +112,9 @@ String generateObjcImpl({
       final Map<String, Object> parameterData = <String, Object>{};
       parameterData['name'] = functionNode.parameters[i].name;
       parameterData['type'] = getTrueTypeName(
-        functionNode.parameters[i].type,
-        prefix,
+        type: functionNode.parameters[i].type,
+        prefix: prefix,
+        typeAliases: typeAliases,
       );
       parameterData['index'] = '$i';
 

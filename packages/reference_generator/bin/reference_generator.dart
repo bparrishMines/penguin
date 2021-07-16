@@ -22,6 +22,8 @@ const String objcImplOutOption = 'objc-impl-out';
 const String objcPrefixOption = 'objc-prefix';
 const String objcHeaderImportsOption = 'objc-header-imports';
 const String branchOption = 'branch';
+const String javaTypeAliasesOption = 'java-type-aliases';
+const String objcTypeAliasesOption = 'objc-type-aliases';
 
 final ArgParser parser = ArgParser()
   ..addOption(packageRootOption, defaultsTo: '.')
@@ -35,6 +37,8 @@ final ArgParser parser = ArgParser()
   ..addMultiOption(dartImportsOption)
   ..addMultiOption(objcHeaderImportsOption)
   ..addMultiOption(javaImportsOption)
+  ..addMultiOption(javaTypeAliasesOption)
+  ..addMultiOption(objcTypeAliasesOption)
   ..addFlag('help', abbr: 'h')
   ..addFlag(buildFlag, abbr: 'b', defaultsTo: true);
 
@@ -144,6 +148,7 @@ void main(List<String> arguments) async {
         libraryName: path.basenameWithoutExtension(options.javaOut!.path),
         package: options.javaPackage!,
         imports: options.javaImports ?? <String>[],
+        typeAliases: options.javaTypeAliases,
       ),
     );
   }
@@ -171,6 +176,7 @@ void main(List<String> arguments) async {
         libraryNode: libraryNode,
         prefix: options.objcPrefix!,
         imports: options.objcHeaderImports ?? <String>[],
+        typeAliases: options.objcTypeAliases,
       ),
     );
   }
@@ -198,6 +204,7 @@ void main(List<String> arguments) async {
         libraryNode: libraryNode,
         prefix: options.objcPrefix!,
         headerFilename: path.basename(options.objcHeaderOut!.path),
+        typeAliases: options.objcTypeAliases,
       ),
     );
   }
@@ -206,18 +213,20 @@ void main(List<String> arguments) async {
 class ReferenceGeneratorOptions {
   ReferenceGeneratorOptions._({
     required this.packageRoot,
-    this.dartOut,
+    required this.dartOut,
     required this.inputFile,
-    this.javaOut,
+    required this.javaOut,
     required this.build,
-    this.javaPackage,
-    this.objcHeaderOut,
-    this.objcImplOut,
-    this.objcPrefix,
-    this.dartImports,
-    this.objcHeaderImports,
-    this.javaImports,
+    required this.javaPackage,
+    required this.objcHeaderOut,
+    required this.objcImplOut,
+    required this.objcPrefix,
+    required this.dartImports,
+    required this.objcHeaderImports,
+    required this.javaImports,
     required this.branch,
+    required this.javaTypeAliases,
+    required this.objcTypeAliases,
   });
 
   factory ReferenceGeneratorOptions.parse(ArgResults results) {
@@ -254,6 +263,12 @@ class ReferenceGeneratorOptions {
       objcHeaderImports: results[objcHeaderImportsOption],
       javaImports: results[javaImportsOption],
       branch: results[branchOption] ?? 'master',
+      javaTypeAliases: results.wasParsed(javaTypeAliasesOption)
+          ? _parseTypeAliases(results[javaTypeAliasesOption])
+          : <String, String>{},
+      objcTypeAliases: results.wasParsed(objcTypeAliasesOption)
+          ? _parseTypeAliases(results[objcTypeAliasesOption])
+          : <String, String>{},
     );
 
     if (options.javaOut != null && options.javaPackage == null) {
@@ -287,4 +302,31 @@ class ReferenceGeneratorOptions {
   final List<String>? objcHeaderImports;
   final List<String>? javaImports;
   final String branch;
+  final Map<String, String> javaTypeAliases;
+  final Map<String, String> objcTypeAliases;
+
+  static Map<String, String> _parseTypeAliases(List<String> aliases) {
+    final Map<String, String> aliasMap = <String, String>{};
+    for (String alias in aliases) {
+      final List<String> values = alias.split('=');
+
+      if (values.length != 2) {
+        throw ArgumentError.value(
+          alias,
+          'alias',
+          "TypeAlias should provide in the format of 'original=replacement': ",
+        );
+      } else if (aliasMap.containsKey(values[0])) {
+        throw ArgumentError.value(
+          alias,
+          'alias',
+          'Multiple alias contain the same key: ',
+        );
+      }
+
+      aliasMap[values[0]] = values[1];
+    }
+
+    return _parseTypeAliases(aliases);
+  }
 }
