@@ -127,8 +127,8 @@
   
   __weak __block REFInstanceManager *weakSelf = self;
   [REFObjectTracker trackObject:instance instanceID:instanceID callback:^(NSString * _Nonnull instanceID) {
-    [weakSelf removeInstance:instanceID];
     onFinalize(instanceID);
+    [weakSelf removeInstance:instanceID];
   }];
   return YES;
 }
