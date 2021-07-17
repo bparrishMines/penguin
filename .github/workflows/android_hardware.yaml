@@ -1,4 +1,4 @@
-name: Penguin Android Camera Tests
+name: Android Hardware Tests
 
 on:
   pull_request:
