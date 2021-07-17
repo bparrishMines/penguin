@@ -1,15 +1,9 @@
 # android_hardware
 
-A new flutter plugin project.
+Provides support for Android hardware features, such as the camera and other sensors. Be aware that
+not all Android-powered devices support all hardware features, so you should declare hardware that
+your application requires using the [<uses-feature>](https://developer.android.com/guide/topics/manifest/uses-feature-element)
+manifest element.
 
-## Getting Started
-
-This project is a starting point for a Flutter
-[plug-in package](https://flutter.dev/developing-packages/),
-a specialized package that includes platform-specific implementation code for
-Android and/or iOS.
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-
+All the features in this plugin come from the [android.hardware](https://developer.android.com/reference/android/hardware/package-summary)
+dependency.

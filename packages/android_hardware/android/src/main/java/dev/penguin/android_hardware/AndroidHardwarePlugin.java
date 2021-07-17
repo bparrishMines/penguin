@@ -2,37 +2,26 @@ package dev.penguin.android_hardware;
 
 import androidx.annotation.NonNull;
 
+import github.penguin.reference.ReferencePlugin;
+import github.penguin.reference.reference.TypeChannelMessenger;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
-import io.flutter.plugin.common.MethodCall;
-import io.flutter.plugin.common.MethodChannel;
-import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
-import io.flutter.plugin.common.MethodChannel.Result;
+import io.flutter.plugin.common.BinaryMessenger;
+import io.flutter.view.TextureRegistry;
 
 /** AndroidHardwarePlugin */
-public class AndroidHardwarePlugin implements FlutterPlugin, MethodCallHandler {
-  /// The MethodChannel that will the communication between Flutter and native Android
-  ///
-  /// This local reference serves to register the plugin with the Flutter Engine and unregister it
-  /// when the Flutter Engine is detached from the Activity
-  private MethodChannel channel;
-
+public class AndroidHardwarePlugin implements FlutterPlugin {
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
-    channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "android_hardware");
-    channel.setMethodCallHandler(this);
-  }
+    final BinaryMessenger binaryMessenger = flutterPluginBinding.getBinaryMessenger();
+    final TypeChannelMessenger messenger = ReferencePlugin.getMessengerInstance(binaryMessenger);
 
-  @Override
-  public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
-    if (call.method.equals("getPlatformVersion")) {
-      result.success("Android " + android.os.Build.VERSION.RELEASE);
-    } else {
-      result.notImplemented();
-    }
+    final TextureRegistry textureRegistry = flutterPluginBinding.getTextureRegistry();
+    final ChannelRegistrar channelRegistrar = new ChannelRegistrar(new ChannelRegistrar.LibraryImplementations(messenger, textureRegistry));
+    channelRegistrar.registerHandlers();
   }
 
   @Override
   public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
-    channel.setMethodCallHandler(null);
+    // Do nothing.
   }
 }

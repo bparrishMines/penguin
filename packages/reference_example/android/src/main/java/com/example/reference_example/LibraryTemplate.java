@@ -92,7 +92,7 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
 
     /*iterate constructors constructor*/
     public Completable<PairedInstance> $create$__constructor_name__($__class_name__ $instance, boolean $owner/*iterate parameters parameter*/,/*replace parameter_type*/Integer/**/ __parameter_name__/**/) {
-      return createNewInstancePair($instance, Arrays.<Object>asList("__constructor_name__", /*iterate :join=',' parameters parameter*/__parameter_name__/**/), $owner);
+      return createNewInstancePair($instance, Arrays.<Object>asList("__constructor_name__"/*iterate parameters parameter*/, __parameter_name__/**/), $owner);
     }
     /**/
 
