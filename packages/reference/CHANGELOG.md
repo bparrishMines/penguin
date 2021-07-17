@@ -1,3 +1,7 @@
+## 0.4.3+1
+
+* Remove tracker callback when weak reference is removed on iOS.
+
 ## 0.4.3
 
 * Fix struct generative constructor requirement and add `ReferenceConstructor` annotation.

@@ -4,10 +4,12 @@
 package com.example.reference_example;
 /**/
 
+/*iterate imports import*/
+import /*replace value*/ java.lang.Object /**/;
+/**/
+
 import androidx.annotation.NonNull;
-
 import java.util.*;
-
 import github.penguin.reference.async.Completable;
 import github.penguin.reference.reference.PairedInstance;
 import github.penguin.reference.reference.TypeChannel;

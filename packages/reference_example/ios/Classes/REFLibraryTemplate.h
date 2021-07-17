@@ -3,6 +3,10 @@
 #import <Foundation/Foundation.h>
 #import "REFMethodChannel.h"
 
+/*iterate imports import*/
+#import /*replace value*/ <string.h> /**/
+/**/
+
 // **************************************************************************
 // ReferenceGenerator
 // **************************************************************************

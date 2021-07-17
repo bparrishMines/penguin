@@ -4,15 +4,15 @@ import 'package:reference_generator/src/ast.dart';
 
 import 'generator.dart';
 
-String generateDart(
-  String template,
-  LibraryNode libraryNode,
-  List<String>? imports,
-) {
+String generateDart({
+  required String template,
+  required LibraryNode libraryNode,
+  required List<String> imports,
+}) {
   final Map<String, Object> data = <String, Object>{};
 
   final List<Map<String, Object>> importData = <Map<String, Object>>[];
-  for (String import in imports ?? <String>[]) {
+  for (String import in imports) {
     importData.add(<String, Object>{'value': import});
   }
   data['imports'] = importData;
