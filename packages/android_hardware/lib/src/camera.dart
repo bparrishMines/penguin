@@ -12,7 +12,7 @@ import 'camera_channels.dart';
 ///   [Camera.errorUnknown]
 ///   [Camera.errorServerDied]
 ///   [Camera.errorEvicted]
-@Reference('penguin_android_camera/camera/ErrorCallback')
+@Reference('android_hardware/camera/ErrorCallback')
 typedef ErrorCallback = void Function(int error);
 
 /// Callback used to notify on completion of camera auto focus.
@@ -31,7 +31,7 @@ typedef ErrorCallback = void Function(int error);
 /// `success`: whether the auto-focus was successful.
 ///
 /// See: [Camera.autoFocus].
-@Reference('penguin_android_camera/camera/AutoFocusCallback')
+@Reference('android_hardware/camera/AutoFocusCallback')
 typedef AutoFocusCallback = void Function(bool success);
 
 /// Callback used to signal the moment of actual image capture.
@@ -43,15 +43,15 @@ typedef AutoFocusCallback = void Function(bool success);
 /// but some time before the actual data is available.
 ///
 /// See: [Camera.takePicture].
-@Reference('penguin_android_camera/camera/ShutterCallback')
+@Reference('android_hardware/camera/ShutterCallback')
 typedef ShutterCallback = void Function();
 
 /// Callback when receiving a byte array.
-@Reference('penguin_android_camera/camera/DataCallback')
+@Reference('android_hardware/camera/DataCallback')
 typedef DataCallback = void Function(Uint8List data);
 
 /// Callback for zoom changes during a smooth zoom operation.
-@Reference('penguin_android_camera/camera/OnZoomChangeListener')
+@Reference('android_hardware/camera/OnZoomChangeListener')
 typedef OnZoomChangeListener = void Function(int zoomValue, bool stopped);
 
 /// Callback used to notify on auto focus start and stop.
@@ -60,29 +60,8 @@ typedef OnZoomChangeListener = void Function(int zoomValue, bool stopped);
 /// [CameraParameters.focusModeContinuousVideo] and
 /// [CameraParameters.focusModeContinuousPicture]. Applications can show
 /// autofocus animation based on this.
-@Reference('penguin_android_camera/camera/AutoFocusMoveCallback')
+@Reference('android_hardware/camera/AutoFocusMoveCallback')
 typedef AutoFocusMoveCallback = void Function(bool start);
-
-/// Called when an error occurs while recording with [MediaRecoder].
-///
-/// `what`: the type of error that has occurred:
-///    * [MediaRecorder.errorUnknown]
-///    * [MediaRecorder.errorServerDied]
-///
-/// `extra`: an extra code, specific to the info type
-@Reference('penguin_android_camera/camera/OnErrorListener')
-typedef OnErrorListener = void Function(int what, int extra);
-
-/// Called to indicate an info or a warning during recording with [MediaRecoder].
-///
-/// `what`: the type of error that has occurred:
-///    * [MediaRecorder.infoUnknown]
-///    * [MediaRecorder.infoMaxDurationReached]
-///    * [MediaRecorder.infoMaxFilesizeReached]
-///
-/// `extra`: an extra code, specific to the info type
-@Reference('penguin_android_camera/camera/OnInfoListener')
-typedef OnInfoListener = void Function(int what, int extra);
 
 /// Callback used to supply image data from a photo capture.
 ///
@@ -92,7 +71,7 @@ typedef OnInfoListener = void Function(int what, int extra);
 /// [CameraParameters] settings.
 ///
 /// See: [Camera.takePicture].
-@Reference('penguin_android_camera/camera/PictureCallback')
+@Reference('android_hardware/camera/PictureCallback')
 class PictureCallback implements $PictureCallback {
   /// Construct a [PictureCallback].
   PictureCallback(this.onPictureTaken, {@ignoreParam bool create = true}) {
@@ -120,7 +99,7 @@ class PictureCallback implements $PictureCallback {
 }
 
 /// Callback used to deliver copies of preview frames as they are displayed.
-@Reference('penguin_android_camera/camera/PreviewCallback')
+@Reference('android_hardware/camera/PreviewCallback')
 class PreviewCallback implements $PreviewCallback {
   /// Construct a [PreviewCallback].
   PreviewCallback(this.onPreviewFrame, {@ignoreParam bool create = true}) {
@@ -147,7 +126,7 @@ class PreviewCallback implements $PreviewCallback {
 ///
 /// This uses the [Camera](https://developer.android.com/reference/android/hardware/Camera)
 /// API and is deprecated for Android versions 21+.
-@Reference('penguin_android_camera/camera/Camera')
+@Reference('android_hardware/camera/Camera')
 class Camera with $Camera {
   /// Default constructor for [Camera].
   ///
@@ -520,7 +499,7 @@ class Camera with $Camera {
 /// [CameraParameters.getSupportedColorEffects] before calling
 /// [CameraParameters.setColorEffect]. If the camera does not support color
 /// effects, [CameraParameters.getSupportedColorEffects] will return `null`.
-@Reference('penguin_android_camera/camera/CameraParameters')
+@Reference('android_hardware/camera/CameraParameters')
 class CameraParameters with $CameraParameters {
   /// Default Constructor for [CameraParameters].
   ///
@@ -1817,7 +1796,7 @@ class CameraParameters with $CameraParameters {
 /// weight as a smaller area will have more effect in the metering result.
 /// Metering areas can overlap and the driver will add the weights in the
 /// overlap region.
-@Reference('penguin_android_camera/camera/CameraArea')
+@Reference('android_hardware/camera/CameraArea')
 class CameraArea with $CameraArea {
   /// Default constructor for [CameraArea].
   ///
@@ -1869,7 +1848,7 @@ class CameraArea with $CameraArea {
 ///
 /// The rectangle is represented by the coordinates of its 4 edges
 /// (left, top, right bottom).
-@Reference('penguin_android_camera/camera/CameraArea')
+@Reference('android_hardware/camera/CameraRect')
 class CameraRect with $CameraRect {
   /// Default constructor for [CameraRect].
   ///
@@ -1919,7 +1898,7 @@ class CameraRect with $CameraRect {
 }
 
 /// Image size (width and height dimensions).
-@Reference('penguin_android_camera/camera/CameraSize')
+@Reference('android_hardware/camera/CameraSize')
 class CameraSize with $CameraSize {
   /// Default constructor for [CameraSize].
   CameraSize(this.width, this.height);
@@ -1940,7 +1919,7 @@ class CameraSize with $CameraSize {
 /// Information about a camera.
 ///
 /// Retrieve by calling [Camera.getAllCameraInfo].
-@Reference('penguin_android_camera/camera/CameraInfo')
+@Reference('android_hardware/camera/CameraInfo')
 class CameraInfo implements $CameraInfo {
   /// Default constructor for [CameraInfo].
   CameraInfo({
@@ -1999,7 +1978,7 @@ class CameraInfo implements $CameraInfo {
 }
 
 /// Image format constants.
-@Reference('penguin_android_camera/camera/ImageFormat')
+@Reference('android_hardware/camera/ImageFormat')
 abstract class ImageFormat {
   ImageFormat._();
 

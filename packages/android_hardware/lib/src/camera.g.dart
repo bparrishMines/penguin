@@ -31,19 +31,9 @@ typedef $AutoFocusMoveCallback = dynamic Function(
   bool start,
 );
 
-typedef $OnErrorListener = dynamic Function(
-  int what,
-  int extra,
-);
-
-typedef $OnInfoListener = dynamic Function(
-  int what,
-  int extra,
-);
-
 class $ErrorCallbackChannel extends TypeChannel<Object> {
   $ErrorCallbackChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'penguin_android_camera/camera/ErrorCallback');
+      : super(messenger, 'android_hardware/camera/ErrorCallback');
 
   Future<PairedInstance?> $$create(
     $ErrorCallback $instance, {
@@ -72,7 +62,7 @@ class $ErrorCallbackChannel extends TypeChannel<Object> {
 
 class $AutoFocusCallbackChannel extends TypeChannel<Object> {
   $AutoFocusCallbackChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'penguin_android_camera/camera/AutoFocusCallback');
+      : super(messenger, 'android_hardware/camera/AutoFocusCallback');
 
   Future<PairedInstance?> $$create(
     $AutoFocusCallback $instance, {
@@ -101,7 +91,7 @@ class $AutoFocusCallbackChannel extends TypeChannel<Object> {
 
 class $ShutterCallbackChannel extends TypeChannel<Object> {
   $ShutterCallbackChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'penguin_android_camera/camera/ShutterCallback');
+      : super(messenger, 'android_hardware/camera/ShutterCallback');
 
   Future<PairedInstance?> $$create(
     $ShutterCallback $instance, {
@@ -127,7 +117,7 @@ class $ShutterCallbackChannel extends TypeChannel<Object> {
 
 class $DataCallbackChannel extends TypeChannel<Object> {
   $DataCallbackChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'penguin_android_camera/camera/DataCallback');
+      : super(messenger, 'android_hardware/camera/DataCallback');
 
   Future<PairedInstance?> $$create(
     $DataCallback $instance, {
@@ -156,7 +146,7 @@ class $DataCallbackChannel extends TypeChannel<Object> {
 
 class $OnZoomChangeListenerChannel extends TypeChannel<Object> {
   $OnZoomChangeListenerChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'penguin_android_camera/camera/OnZoomChangeListener');
+      : super(messenger, 'android_hardware/camera/OnZoomChangeListener');
 
   Future<PairedInstance?> $$create(
     $OnZoomChangeListener $instance, {
@@ -187,7 +177,7 @@ class $OnZoomChangeListenerChannel extends TypeChannel<Object> {
 
 class $AutoFocusMoveCallbackChannel extends TypeChannel<Object> {
   $AutoFocusMoveCallbackChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'penguin_android_camera/camera/AutoFocusMoveCallback');
+      : super(messenger, 'android_hardware/camera/AutoFocusMoveCallback');
 
   Future<PairedInstance?> $$create(
     $AutoFocusMoveCallback $instance, {
@@ -209,68 +199,6 @@ class $AutoFocusMoveCallbackChannel extends TypeChannel<Object> {
       '',
       <Object?>[
         start,
-      ],
-    );
-  }
-}
-
-class $OnErrorListenerChannel extends TypeChannel<Object> {
-  $OnErrorListenerChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'penguin_android_camera/camera/OnErrorListener');
-
-  Future<PairedInstance?> $$create(
-    $OnErrorListener $instance, {
-    required bool $owner,
-  }) {
-    return createNewInstancePair(
-      $instance,
-      <Object?>[],
-      owner: $owner,
-    );
-  }
-
-  Future<Object?> _invoke(
-    $OnErrorListener $instance,
-    int what,
-    int extra,
-  ) {
-    return sendInvokeMethod(
-      $instance,
-      '',
-      <Object?>[
-        what,
-        extra,
-      ],
-    );
-  }
-}
-
-class $OnInfoListenerChannel extends TypeChannel<Object> {
-  $OnInfoListenerChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'penguin_android_camera/camera/OnInfoListener');
-
-  Future<PairedInstance?> $$create(
-    $OnInfoListener $instance, {
-    required bool $owner,
-  }) {
-    return createNewInstancePair(
-      $instance,
-      <Object?>[],
-      owner: $owner,
-    );
-  }
-
-  Future<Object?> _invoke(
-    $OnInfoListener $instance,
-    int what,
-    int extra,
-  ) {
-    return sendInvokeMethod(
-      $instance,
-      '',
-      <Object?>[
-        what,
-        extra,
       ],
     );
   }
@@ -538,100 +466,6 @@ class $AutoFocusMoveCallbackHandler implements TypeChannelHandler<Object> {
   }
 }
 
-class $OnErrorListenerHandler implements TypeChannelHandler<Object> {
-  $OnErrorListenerHandler(this.implementations);
-
-  final $LibraryImplementations implementations;
-
-  @override
-  $OnErrorListener createInstance(
-    TypeChannelMessenger messenger,
-    List<Object?> arguments,
-  ) {
-    function(
-      int what,
-      int extra,
-    ) {
-      implementations.channelOnErrorListener._invoke(
-        function,
-        what,
-        extra,
-      );
-    }
-
-    return function;
-  }
-
-  @override
-  Object? invokeMethod(
-    TypeChannelMessenger messenger,
-    covariant $OnErrorListener instance,
-    String methodName,
-    List<Object?> arguments,
-  ) {
-    return instance(
-      arguments[0] as int,
-      arguments[1] as int,
-    );
-  }
-
-  @override
-  Object? invokeStaticMethod(
-    TypeChannelMessenger messenger,
-    String methodName,
-    List<Object?> arguments,
-  ) {
-    throw UnimplementedError();
-  }
-}
-
-class $OnInfoListenerHandler implements TypeChannelHandler<Object> {
-  $OnInfoListenerHandler(this.implementations);
-
-  final $LibraryImplementations implementations;
-
-  @override
-  $OnInfoListener createInstance(
-    TypeChannelMessenger messenger,
-    List<Object?> arguments,
-  ) {
-    function(
-      int what,
-      int extra,
-    ) {
-      implementations.channelOnInfoListener._invoke(
-        function,
-        what,
-        extra,
-      );
-    }
-
-    return function;
-  }
-
-  @override
-  Object? invokeMethod(
-    TypeChannelMessenger messenger,
-    covariant $OnInfoListener instance,
-    String methodName,
-    List<Object?> arguments,
-  ) {
-    return instance(
-      arguments[0] as int,
-      arguments[1] as int,
-    );
-  }
-
-  @override
-  Object? invokeStaticMethod(
-    TypeChannelMessenger messenger,
-    String methodName,
-    List<Object?> arguments,
-  ) {
-    throw UnimplementedError();
-  }
-}
-
 mixin $PictureCallback {}
 
 mixin $PreviewCallback {}
@@ -652,7 +486,7 @@ mixin $ImageFormat {}
 
 class $PictureCallbackChannel extends TypeChannel<$PictureCallback> {
   $PictureCallbackChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'penguin_android_camera/camera/PictureCallback');
+      : super(messenger, 'android_hardware/camera/PictureCallback');
 
   Future<PairedInstance?> $create$(
     $PictureCallback $instance, {
@@ -672,7 +506,7 @@ class $PictureCallbackChannel extends TypeChannel<$PictureCallback> {
 
 class $PreviewCallbackChannel extends TypeChannel<$PreviewCallback> {
   $PreviewCallbackChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'penguin_android_camera/camera/PreviewCallback');
+      : super(messenger, 'android_hardware/camera/PreviewCallback');
 
   Future<PairedInstance?> $create$(
     $PreviewCallback $instance, {
@@ -692,7 +526,7 @@ class $PreviewCallbackChannel extends TypeChannel<$PreviewCallback> {
 
 class $CameraChannel extends TypeChannel<$Camera> {
   $CameraChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'penguin_android_camera/camera/Camera');
+      : super(messenger, 'android_hardware/camera/Camera');
 
   Future<PairedInstance?> $create$(
     $Camera $instance, {
@@ -987,7 +821,7 @@ class $CameraChannel extends TypeChannel<$Camera> {
 
 class $CameraParametersChannel extends TypeChannel<$CameraParameters> {
   $CameraParametersChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'penguin_android_camera/camera/CameraParameters');
+      : super(messenger, 'android_hardware/camera/CameraParameters');
 
   Future<PairedInstance?> $create$(
     $CameraParameters $instance, {
@@ -1984,7 +1818,7 @@ class $CameraParametersChannel extends TypeChannel<$CameraParameters> {
 
 class $CameraAreaChannel extends TypeChannel<$CameraArea> {
   $CameraAreaChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'penguin_android_camera/camera/CameraArea');
+      : super(messenger, 'android_hardware/camera/CameraArea');
 
   Future<PairedInstance?> $create$(
     $CameraArea $instance, {
@@ -2006,7 +1840,7 @@ class $CameraAreaChannel extends TypeChannel<$CameraArea> {
 
 class $CameraRectChannel extends TypeChannel<$CameraRect> {
   $CameraRectChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'penguin_android_camera/camera/CameraArea');
+      : super(messenger, 'android_hardware/camera/CameraRect');
 
   Future<PairedInstance?> $create$(
     $CameraRect $instance, {
@@ -2032,7 +1866,7 @@ class $CameraRectChannel extends TypeChannel<$CameraRect> {
 
 class $CameraSizeChannel extends TypeChannel<$CameraSize> {
   $CameraSizeChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'penguin_android_camera/camera/CameraSize');
+      : super(messenger, 'android_hardware/camera/CameraSize');
 
   Future<PairedInstance?> $create$(
     $CameraSize $instance, {
@@ -2054,7 +1888,7 @@ class $CameraSizeChannel extends TypeChannel<$CameraSize> {
 
 class $CameraInfoChannel extends TypeChannel<$CameraInfo> {
   $CameraInfoChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'penguin_android_camera/camera/CameraInfo');
+      : super(messenger, 'android_hardware/camera/CameraInfo');
 
   Future<PairedInstance?> $create$(
     $CameraInfo $instance, {
@@ -2080,7 +1914,7 @@ class $CameraInfoChannel extends TypeChannel<$CameraInfo> {
 
 class $ImageFormatChannel extends TypeChannel<$ImageFormat> {
   $ImageFormatChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'penguin_android_camera/camera/ImageFormat');
+      : super(messenger, 'android_hardware/camera/ImageFormat');
 
   Future<Object?> $getBitsPerPixel(
     int format,
@@ -2727,16 +2561,6 @@ class $LibraryImplementations {
       $AutoFocusMoveCallbackChannel(messenger);
   $AutoFocusMoveCallbackHandler get handlerAutoFocusMoveCallback =>
       $AutoFocusMoveCallbackHandler(this);
-
-  $OnErrorListenerChannel get channelOnErrorListener =>
-      $OnErrorListenerChannel(messenger);
-  $OnErrorListenerHandler get handlerOnErrorListener =>
-      $OnErrorListenerHandler(this);
-
-  $OnInfoListenerChannel get channelOnInfoListener =>
-      $OnInfoListenerChannel(messenger);
-  $OnInfoListenerHandler get handlerOnInfoListener =>
-      $OnInfoListenerHandler(this);
 }
 
 class $ChannelRegistrar {
@@ -2804,14 +2628,6 @@ class $ChannelRegistrar {
     implementations.channelAutoFocusMoveCallback.setHandler(
       implementations.handlerAutoFocusMoveCallback,
     );
-
-    implementations.channelOnErrorListener.setHandler(
-      implementations.handlerOnErrorListener,
-    );
-
-    implementations.channelOnInfoListener.setHandler(
-      implementations.handlerOnInfoListener,
-    );
   }
 
   void unregisterHandlers() {
@@ -2844,9 +2660,5 @@ class $ChannelRegistrar {
     implementations.channelOnZoomChangeListener.removeHandler();
 
     implementations.channelAutoFocusMoveCallback.removeHandler();
-
-    implementations.channelOnErrorListener.removeHandler();
-
-    implementations.channelOnInfoListener.removeHandler();
   }
 }
