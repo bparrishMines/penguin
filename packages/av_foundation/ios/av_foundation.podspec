@@ -1,23 +1,27 @@
-#
-# To learn more about a Podspec see http://guides.cocoapods.org/syntax/podspec.html.
-# Run `pod lib lint av_foundation.podspec` to validate before publishing.
-#
+require 'yaml'
+
+pubspec = YAML.load_file(File.join('..', 'pubspec.yaml'))
+library_version = pubspec['version'].gsub('+', '-')
+
 Pod::Spec.new do |s|
-  s.name             = 'av_foundation'
-  s.version          = '0.0.1'
-  s.summary          = 'A new flutter plugin project.'
+  s.name             = pubspec['name']
+  s.version          = library_version
+  s.summary          = pubspec['description']
   s.description      = <<-DESC
-A new flutter plugin project.
+av_foundation is the full featured framework for working with time-based audiovisual media on iOS.
+Using av_foundation, you can easily play, create, and edit QuickTime movies and MPEG-4 files, play
+HLS streams, and build powerful media functionality into your apps.
                        DESC
-  s.homepage         = 'http://example.com'
-  s.license          = { :file => '../LICENSE' }
-  s.author           = { 'Your Company' => 'email@example.com' }
-  s.source           = { :path => '.' }
+  s.homepage         = pubspec['homepage']
+  s.license          = { :type => 'MIT', :file => '../LICENSE' }
+  s.author           = 'Maurice Parrish'
+  s.source           = { :http => pubspec['homepage'] }
   s.source_files = 'Classes/**/*'
   s.public_header_files = 'Classes/**/*.h'
   s.dependency 'Flutter'
-  s.platform = :ios, '8.0'
+  s.dependency 'reference'
+  s.platform = :ios, '10.0'
 
   # Flutter.framework does not contain a i386 slice.
-  s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }
+  s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'VALID_ARCHS' => 'armv7 arm64 x86_64', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }
 end
