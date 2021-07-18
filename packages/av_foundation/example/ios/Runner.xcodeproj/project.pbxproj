@@ -11,7 +11,21 @@
 		259603D1C4E966660F62D9BF /* libPods-Runner.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C167782F866B19B33B53AF16 /* libPods-Runner.a */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		4C4FE66729F06DC526EF0FAE /* libPods-Runner-av_foundation_unitTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F9D14E10F9A6F4E0B999128 /* libPods-Runner-av_foundation_unitTests.a */; };
-		6449CDDE26A4CFF20015AD3C /* av_foundation_unitTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6449CDDD26A4CFF20015AD3C /* av_foundation_unitTests.m */; };
+		6449CDF926A4D48D0015AD3C /* IAFPreviewControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6449CDEA26A4D48C0015AD3C /* IAFPreviewControllerTests.m */; };
+		6449CDFA26A4D48D0015AD3C /* IAVCaptureDeviceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6449CDEB26A4D48C0015AD3C /* IAVCaptureDeviceTests.m */; };
+		6449CDFB26A4D48D0015AD3C /* IAFCapturePhotoSettingsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6449CDEC26A4D48C0015AD3C /* IAFCapturePhotoSettingsTests.m */; };
+		6449CDFC26A4D48D0015AD3C /* IAFCaptureMovieFileOutputTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6449CDED26A4D48C0015AD3C /* IAFCaptureMovieFileOutputTests.m */; };
+		6449CDFD26A4D48D0015AD3C /* IAVCapturePhotoOutputTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6449CDEE26A4D48C0015AD3C /* IAVCapturePhotoOutputTests.m */; };
+		6449CDFE26A4D48D0015AD3C /* IAVFoundationEnumTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6449CDEF26A4D48D0015AD3C /* IAVFoundationEnumTests.m */; };
+		6449CDFF26A4D48D0015AD3C /* IAVCaptureSessionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6449CDF026A4D48D0015AD3C /* IAVCaptureSessionTests.m */; };
+		6449CE0026A4D48D0015AD3C /* AFPCaptureDeviceDiscoverySessionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6449CDF126A4D48D0015AD3C /* AFPCaptureDeviceDiscoverySessionTests.m */; };
+		6449CE0126A4D48D0015AD3C /* IAFCapturePhotoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6449CDF226A4D48D0015AD3C /* IAFCapturePhotoTests.m */; };
+		6449CE0226A4D48D0015AD3C /* IAFCaptureFileOutputRecordingDelegateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6449CDF326A4D48D0015AD3C /* IAFCaptureFileOutputRecordingDelegateTests.m */; };
+		6449CE0326A4D48D0015AD3C /* IAVCaptureDeviceInputTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6449CDF426A4D48D0015AD3C /* IAVCaptureDeviceInputTests.m */; };
+		6449CE0426A4D48D0015AD3C /* AFPCaptureConnectionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6449CDF526A4D48D0015AD3C /* AFPCaptureConnectionTests.m */; };
+		6449CE0526A4D48D0015AD3C /* IAFCaptureInputPortTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6449CDF626A4D48D0015AD3C /* IAFCaptureInputPortTests.m */; };
+		6449CE0626A4D48D0015AD3C /* IAFCapturePhotoCaptureDelegateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6449CDF726A4D48D0015AD3C /* IAFCapturePhotoCaptureDelegateTests.m */; };
+		6449CE0726A4D48D0015AD3C /* IAFCaptureFileOutputTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6449CDF826A4D48D0015AD3C /* IAFCaptureFileOutputTests.m */; };
 		978B8F6F1D3862AE00F588F7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7AFFD8EE1D35381100E5BB4D /* AppDelegate.m */; };
 		97C146F31CF9000F007C117D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 97C146F21CF9000F007C117D /* main.m */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
@@ -52,8 +66,22 @@
 		4FD310A9C1C3DE9D6256C5D3 /* Pods-Runner-av_foundation_unitTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner-av_foundation_unitTests.release.xcconfig"; path = "Target Support Files/Pods-Runner-av_foundation_unitTests/Pods-Runner-av_foundation_unitTests.release.xcconfig"; sourceTree = "<group>"; };
 		5EAE58BFF281D89EABFCD6B1 /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
 		6449CDDB26A4CFF20015AD3C /* av_foundation_unitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = av_foundation_unitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		6449CDDD26A4CFF20015AD3C /* av_foundation_unitTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = av_foundation_unitTests.m; sourceTree = "<group>"; };
 		6449CDDF26A4CFF20015AD3C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6449CDEA26A4D48C0015AD3C /* IAFPreviewControllerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IAFPreviewControllerTests.m; sourceTree = "<group>"; };
+		6449CDEB26A4D48C0015AD3C /* IAVCaptureDeviceTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IAVCaptureDeviceTests.m; sourceTree = "<group>"; };
+		6449CDEC26A4D48C0015AD3C /* IAFCapturePhotoSettingsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IAFCapturePhotoSettingsTests.m; sourceTree = "<group>"; };
+		6449CDED26A4D48C0015AD3C /* IAFCaptureMovieFileOutputTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IAFCaptureMovieFileOutputTests.m; sourceTree = "<group>"; };
+		6449CDEE26A4D48C0015AD3C /* IAVCapturePhotoOutputTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IAVCapturePhotoOutputTests.m; sourceTree = "<group>"; };
+		6449CDEF26A4D48D0015AD3C /* IAVFoundationEnumTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IAVFoundationEnumTests.m; sourceTree = "<group>"; };
+		6449CDF026A4D48D0015AD3C /* IAVCaptureSessionTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IAVCaptureSessionTests.m; sourceTree = "<group>"; };
+		6449CDF126A4D48D0015AD3C /* AFPCaptureDeviceDiscoverySessionTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFPCaptureDeviceDiscoverySessionTests.m; sourceTree = "<group>"; };
+		6449CDF226A4D48D0015AD3C /* IAFCapturePhotoTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IAFCapturePhotoTests.m; sourceTree = "<group>"; };
+		6449CDF326A4D48D0015AD3C /* IAFCaptureFileOutputRecordingDelegateTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IAFCaptureFileOutputRecordingDelegateTests.m; sourceTree = "<group>"; };
+		6449CDF426A4D48D0015AD3C /* IAVCaptureDeviceInputTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IAVCaptureDeviceInputTests.m; sourceTree = "<group>"; };
+		6449CDF526A4D48D0015AD3C /* AFPCaptureConnectionTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFPCaptureConnectionTests.m; sourceTree = "<group>"; };
+		6449CDF626A4D48D0015AD3C /* IAFCaptureInputPortTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IAFCaptureInputPortTests.m; sourceTree = "<group>"; };
+		6449CDF726A4D48D0015AD3C /* IAFCapturePhotoCaptureDelegateTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IAFCapturePhotoCaptureDelegateTests.m; sourceTree = "<group>"; };
+		6449CDF826A4D48D0015AD3C /* IAFCaptureFileOutputTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IAFCaptureFileOutputTests.m; sourceTree = "<group>"; };
 		7A355B6EA520124356567A70 /* Pods-Runner-av_foundation_unitTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner-av_foundation_unitTests.debug.xcconfig"; path = "Target Support Files/Pods-Runner-av_foundation_unitTests/Pods-Runner-av_foundation_unitTests.debug.xcconfig"; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Flutter/Release.xcconfig; sourceTree = "<group>"; };
 		7AFFD8ED1D35381100E5BB4D /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -115,7 +143,21 @@
 		6449CDDC26A4CFF20015AD3C /* av_foundation_unitTests */ = {
 			isa = PBXGroup;
 			children = (
-				6449CDDD26A4CFF20015AD3C /* av_foundation_unitTests.m */,
+				6449CDF526A4D48D0015AD3C /* AFPCaptureConnectionTests.m */,
+				6449CDF126A4D48D0015AD3C /* AFPCaptureDeviceDiscoverySessionTests.m */,
+				6449CDF326A4D48D0015AD3C /* IAFCaptureFileOutputRecordingDelegateTests.m */,
+				6449CDF826A4D48D0015AD3C /* IAFCaptureFileOutputTests.m */,
+				6449CDF626A4D48D0015AD3C /* IAFCaptureInputPortTests.m */,
+				6449CDED26A4D48C0015AD3C /* IAFCaptureMovieFileOutputTests.m */,
+				6449CDF726A4D48D0015AD3C /* IAFCapturePhotoCaptureDelegateTests.m */,
+				6449CDEC26A4D48C0015AD3C /* IAFCapturePhotoSettingsTests.m */,
+				6449CDF226A4D48D0015AD3C /* IAFCapturePhotoTests.m */,
+				6449CDEA26A4D48C0015AD3C /* IAFPreviewControllerTests.m */,
+				6449CDF426A4D48D0015AD3C /* IAVCaptureDeviceInputTests.m */,
+				6449CDEB26A4D48C0015AD3C /* IAVCaptureDeviceTests.m */,
+				6449CDEE26A4D48C0015AD3C /* IAVCapturePhotoOutputTests.m */,
+				6449CDF026A4D48D0015AD3C /* IAVCaptureSessionTests.m */,
+				6449CDEF26A4D48D0015AD3C /* IAVFoundationEnumTests.m */,
 				6449CDDF26A4CFF20015AD3C /* Info.plist */,
 			);
 			path = av_foundation_unitTests;
@@ -358,7 +400,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6449CDDE26A4CFF20015AD3C /* av_foundation_unitTests.m in Sources */,
+				6449CDFE26A4D48D0015AD3C /* IAVFoundationEnumTests.m in Sources */,
+				6449CDFB26A4D48D0015AD3C /* IAFCapturePhotoSettingsTests.m in Sources */,
+				6449CDF926A4D48D0015AD3C /* IAFPreviewControllerTests.m in Sources */,
+				6449CDFC26A4D48D0015AD3C /* IAFCaptureMovieFileOutputTests.m in Sources */,
+				6449CE0726A4D48D0015AD3C /* IAFCaptureFileOutputTests.m in Sources */,
+				6449CE0326A4D48D0015AD3C /* IAVCaptureDeviceInputTests.m in Sources */,
+				6449CE0026A4D48D0015AD3C /* AFPCaptureDeviceDiscoverySessionTests.m in Sources */,
+				6449CE0626A4D48D0015AD3C /* IAFCapturePhotoCaptureDelegateTests.m in Sources */,
+				6449CE0226A4D48D0015AD3C /* IAFCaptureFileOutputRecordingDelegateTests.m in Sources */,
+				6449CDFD26A4D48D0015AD3C /* IAVCapturePhotoOutputTests.m in Sources */,
+				6449CE0426A4D48D0015AD3C /* AFPCaptureConnectionTests.m in Sources */,
+				6449CE0126A4D48D0015AD3C /* IAFCapturePhotoTests.m in Sources */,
+				6449CE0526A4D48D0015AD3C /* IAFCaptureInputPortTests.m in Sources */,
+				6449CDFA26A4D48D0015AD3C /* IAVCaptureDeviceTests.m in Sources */,
+				6449CDFF26A4D48D0015AD3C /* IAVCaptureSessionTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

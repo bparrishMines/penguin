@@ -3,5 +3,5 @@
 #import "REFTypeChannel.h"
 #import "AFPChannelRegistrar.h"
 
-@interface AvFoundationPlugin : NSObject
+@interface AvFoundationPlugin : NSObject<FlutterPlugin>
 @end
