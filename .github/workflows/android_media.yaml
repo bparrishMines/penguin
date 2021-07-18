@@ -1,16 +1,16 @@
-name: Android Hardware Tests
+name: Android Media Tests
 
 on:
   pull_request:
     paths:
-      - packages/android_hardware/**
-      - .github/workflows/android_hardware.yaml
+      - packages/android_media/**
+      - .github/workflows/android_media.yaml
   push:
     branches:
       - master
 
 env:
-  PLUGIN_DIR: packages/android_hardware
+  PLUGIN_DIR: packages/android_media
 
 jobs:
   verify_dart:
@@ -25,14 +25,14 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           channel: dev
-      - name: Dart Unit Tests
-        run: |
-          cd $PLUGIN_DIR
-          flutter test
-      - name: Dart Publish
-        run: |
-          cd $PLUGIN_DIR
-          flutter pub publish --dry-run
+#      - name: Dart Unit Tests
+#        run: |
+#          cd $PLUGIN_DIR
+#          flutter test
+#      - name: Dart Publish
+#        run: |
+#          cd $PLUGIN_DIR
+#          flutter pub publish --dry-run
       - name: Dart Analyze
         run: |
           cd $PLUGIN_DIR

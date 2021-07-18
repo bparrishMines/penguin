@@ -327,6 +327,6 @@ class ReferenceGeneratorOptions {
       aliasMap[values[0]] = values[1];
     }
 
-    return _parseTypeAliases(aliases);
+    return aliasMap;
   }
 }

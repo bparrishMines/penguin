@@ -44,19 +44,11 @@ public class CameraChannelLibrary {
     public abstract Object invoke(Boolean start);
   }
   
-  public static abstract class $OnErrorListener {
-    public abstract Object invoke(Integer what,Integer extra);
-  }
-  
-  public static abstract class $OnInfoListener {
-    public abstract Object invoke(Integer what,Integer extra);
-  }
-  
 
   
   public static class $ErrorCallbackChannel extends TypeChannel<$ErrorCallback> {
     public $ErrorCallbackChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "penguin_android_camera/camera/ErrorCallback");
+      super(messenger, "android_hardware/camera/ErrorCallback");
     }
 
     public Completable<PairedInstance> $$create($ErrorCallback $instance, boolean $owner) {
@@ -71,7 +63,7 @@ public class CameraChannelLibrary {
   
   public static class $AutoFocusCallbackChannel extends TypeChannel<$AutoFocusCallback> {
     public $AutoFocusCallbackChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "penguin_android_camera/camera/AutoFocusCallback");
+      super(messenger, "android_hardware/camera/AutoFocusCallback");
     }
 
     public Completable<PairedInstance> $$create($AutoFocusCallback $instance, boolean $owner) {
@@ -86,7 +78,7 @@ public class CameraChannelLibrary {
   
   public static class $ShutterCallbackChannel extends TypeChannel<$ShutterCallback> {
     public $ShutterCallbackChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "penguin_android_camera/camera/ShutterCallback");
+      super(messenger, "android_hardware/camera/ShutterCallback");
     }
 
     public Completable<PairedInstance> $$create($ShutterCallback $instance, boolean $owner) {
@@ -101,7 +93,7 @@ public class CameraChannelLibrary {
   
   public static class $DataCallbackChannel extends TypeChannel<$DataCallback> {
     public $DataCallbackChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "penguin_android_camera/camera/DataCallback");
+      super(messenger, "android_hardware/camera/DataCallback");
     }
 
     public Completable<PairedInstance> $$create($DataCallback $instance, boolean $owner) {
@@ -116,7 +108,7 @@ public class CameraChannelLibrary {
   
   public static class $OnZoomChangeListenerChannel extends TypeChannel<$OnZoomChangeListener> {
     public $OnZoomChangeListenerChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "penguin_android_camera/camera/OnZoomChangeListener");
+      super(messenger, "android_hardware/camera/OnZoomChangeListener");
     }
 
     public Completable<PairedInstance> $$create($OnZoomChangeListener $instance, boolean $owner) {
@@ -131,7 +123,7 @@ public class CameraChannelLibrary {
   
   public static class $AutoFocusMoveCallbackChannel extends TypeChannel<$AutoFocusMoveCallback> {
     public $AutoFocusMoveCallbackChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "penguin_android_camera/camera/AutoFocusMoveCallback");
+      super(messenger, "android_hardware/camera/AutoFocusMoveCallback");
     }
 
     public Completable<PairedInstance> $$create($AutoFocusMoveCallback $instance, boolean $owner) {
@@ -141,36 +133,6 @@ public class CameraChannelLibrary {
     private Completable<Object> invoke($AutoFocusMoveCallback $instance
         ,Boolean start) {
       return invokeMethod($instance, "", Arrays.<Object>asList(start));
-    }
-  }
-  
-  public static class $OnErrorListenerChannel extends TypeChannel<$OnErrorListener> {
-    public $OnErrorListenerChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "penguin_android_camera/camera/OnErrorListener");
-    }
-
-    public Completable<PairedInstance> $$create($OnErrorListener $instance, boolean $owner) {
-      return createNewInstancePair($instance, Collections.emptyList(), $owner);
-    }
-
-    private Completable<Object> invoke($OnErrorListener $instance
-        ,Integer what,Integer extra) {
-      return invokeMethod($instance, "", Arrays.<Object>asList(what,extra));
-    }
-  }
-  
-  public static class $OnInfoListenerChannel extends TypeChannel<$OnInfoListener> {
-    public $OnInfoListenerChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "penguin_android_camera/camera/OnInfoListener");
-    }
-
-    public Completable<PairedInstance> $$create($OnInfoListener $instance, boolean $owner) {
-      return createNewInstancePair($instance, Collections.emptyList(), $owner);
-    }
-
-    private Completable<Object> invoke($OnInfoListener $instance
-        ,Integer what,Integer extra) {
-      return invokeMethod($instance, "", Arrays.<Object>asList(what,extra));
     }
   }
   
@@ -341,62 +303,6 @@ public class CameraChannelLibrary {
     @Override
     public Object invokeMethod(TypeChannelMessenger messenger, $AutoFocusMoveCallback instance, String methodName, List<Object> arguments) throws Exception {
       return instance.invoke((Boolean) arguments.get(0));
-    }
-  }
-  
-  public static class $OnErrorListenerHandler implements TypeChannelHandler<$OnErrorListener> {
-    public final $LibraryImplementations implementations;
-
-    public $OnErrorListenerHandler($LibraryImplementations implementations) {
-      this.implementations = implementations;
-    }
-
-    @Override
-    public $OnErrorListener createInstance(TypeChannelMessenger messenger, List<Object> arguments) {
-      return new $OnErrorListener() {
-        @Override
-        public Object invoke(Integer what,Integer extra) {
-          return implementations.getChannelOnErrorListener().invoke(this,what,extra);
-        }
-      };
-    }
-
-    @Override
-    public Void invokeStaticMethod(TypeChannelMessenger messenger, String methodName, List<Object> arguments) {
-      throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Object invokeMethod(TypeChannelMessenger messenger, $OnErrorListener instance, String methodName, List<Object> arguments) throws Exception {
-      return instance.invoke((Integer) arguments.get(0),(Integer) arguments.get(1));
-    }
-  }
-  
-  public static class $OnInfoListenerHandler implements TypeChannelHandler<$OnInfoListener> {
-    public final $LibraryImplementations implementations;
-
-    public $OnInfoListenerHandler($LibraryImplementations implementations) {
-      this.implementations = implementations;
-    }
-
-    @Override
-    public $OnInfoListener createInstance(TypeChannelMessenger messenger, List<Object> arguments) {
-      return new $OnInfoListener() {
-        @Override
-        public Object invoke(Integer what,Integer extra) {
-          return implementations.getChannelOnInfoListener().invoke(this,what,extra);
-        }
-      };
-    }
-
-    @Override
-    public Void invokeStaticMethod(TypeChannelMessenger messenger, String methodName, List<Object> arguments) {
-      throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Object invokeMethod(TypeChannelMessenger messenger, $OnInfoListener instance, String methodName, List<Object> arguments) throws Exception {
-      return instance.invoke((Integer) arguments.get(0),(Integer) arguments.get(1));
     }
   }
   
@@ -878,7 +784,7 @@ public class CameraChannelLibrary {
   
   public static class $PictureCallbackChannel extends TypeChannel<$PictureCallback> {
     public $PictureCallbackChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "penguin_android_camera/camera/PictureCallback");
+      super(messenger, "android_hardware/camera/PictureCallback");
     }
 
     
@@ -894,7 +800,7 @@ public class CameraChannelLibrary {
   
   public static class $PreviewCallbackChannel extends TypeChannel<$PreviewCallback> {
     public $PreviewCallbackChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "penguin_android_camera/camera/PreviewCallback");
+      super(messenger, "android_hardware/camera/PreviewCallback");
     }
 
     
@@ -910,7 +816,7 @@ public class CameraChannelLibrary {
   
   public static class $CameraChannel extends TypeChannel<$Camera> {
     public $CameraChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "penguin_android_camera/camera/Camera");
+      super(messenger, "android_hardware/camera/Camera");
     }
 
     
@@ -974,7 +880,7 @@ public class CameraChannelLibrary {
   
   public static class $CameraParametersChannel extends TypeChannel<$CameraParameters> {
     public $CameraParametersChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "penguin_android_camera/camera/CameraParameters");
+      super(messenger, "android_hardware/camera/CameraParameters");
     }
 
     
@@ -1164,12 +1070,12 @@ public class CameraChannelLibrary {
   
   public static class $CameraAreaChannel extends TypeChannel<$CameraArea> {
     public $CameraAreaChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "penguin_android_camera/camera/CameraArea");
+      super(messenger, "android_hardware/camera/CameraArea");
     }
 
     
     public Completable<PairedInstance> $create$($CameraArea $instance, boolean $owner,$CameraRect rect,Integer weight) {
-      return createNewInstancePair($instance, Arrays.<Object>asList("", rect,weight), $owner);
+      return createNewInstancePair($instance, Arrays.<Object>asList("", rect, weight), $owner);
     }
     
 
@@ -1180,12 +1086,12 @@ public class CameraChannelLibrary {
   
   public static class $CameraRectChannel extends TypeChannel<$CameraRect> {
     public $CameraRectChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "penguin_android_camera/camera/CameraArea");
+      super(messenger, "android_hardware/camera/CameraRect");
     }
 
     
     public Completable<PairedInstance> $create$($CameraRect $instance, boolean $owner,Integer top,Integer bottom,Integer right,Integer left) {
-      return createNewInstancePair($instance, Arrays.<Object>asList("", top,bottom,right,left), $owner);
+      return createNewInstancePair($instance, Arrays.<Object>asList("", top, bottom, right, left), $owner);
     }
     
 
@@ -1196,12 +1102,12 @@ public class CameraChannelLibrary {
   
   public static class $CameraSizeChannel extends TypeChannel<$CameraSize> {
     public $CameraSizeChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "penguin_android_camera/camera/CameraSize");
+      super(messenger, "android_hardware/camera/CameraSize");
     }
 
     
     public Completable<PairedInstance> $create$($CameraSize $instance, boolean $owner,Integer width,Integer height) {
-      return createNewInstancePair($instance, Arrays.<Object>asList("", width,height), $owner);
+      return createNewInstancePair($instance, Arrays.<Object>asList("", width, height), $owner);
     }
     
 
@@ -1212,12 +1118,12 @@ public class CameraChannelLibrary {
   
   public static class $CameraInfoChannel extends TypeChannel<$CameraInfo> {
     public $CameraInfoChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "penguin_android_camera/camera/CameraInfo");
+      super(messenger, "android_hardware/camera/CameraInfo");
     }
 
     
     public Completable<PairedInstance> $create$($CameraInfo $instance, boolean $owner,Integer cameraId,Integer facing,Integer orientation,Boolean canDisableShutterSound) {
-      return createNewInstancePair($instance, Arrays.<Object>asList("", cameraId,facing,orientation,canDisableShutterSound), $owner);
+      return createNewInstancePair($instance, Arrays.<Object>asList("", cameraId, facing, orientation, canDisableShutterSound), $owner);
     }
     
 
@@ -1228,7 +1134,7 @@ public class CameraChannelLibrary {
   
   public static class $ImageFormatChannel extends TypeChannel<$ImageFormat> {
     public $ImageFormatChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "penguin_android_camera/camera/ImageFormat");
+      super(messenger, "android_hardware/camera/ImageFormat");
     }
 
     
@@ -3095,22 +3001,6 @@ public class CameraChannelLibrary {
       return new $AutoFocusMoveCallbackHandler(this);
     }
     
-    public $OnErrorListenerChannel getChannelOnErrorListener() {
-      return new $OnErrorListenerChannel(messenger);
-    }
-
-    public $OnErrorListenerHandler getHandlerOnErrorListener() {
-      return new $OnErrorListenerHandler(this);
-    }
-    
-    public $OnInfoListenerChannel getChannelOnInfoListener() {
-      return new $OnInfoListenerChannel(messenger);
-    }
-
-    public $OnInfoListenerHandler getHandlerOnInfoListener() {
-      return new $OnInfoListenerHandler(this);
-    }
-    
   }
 
   public static class $ChannelRegistrar {
@@ -3153,10 +3043,6 @@ public class CameraChannelLibrary {
       
       implementations.getChannelAutoFocusMoveCallback().setHandler(implementations.getHandlerAutoFocusMoveCallback());
       
-      implementations.getChannelOnErrorListener().setHandler(implementations.getHandlerOnErrorListener());
-      
-      implementations.getChannelOnInfoListener().setHandler(implementations.getHandlerOnInfoListener());
-      
     }
 
     public void unregisterHandlers() {
@@ -3191,10 +3077,6 @@ public class CameraChannelLibrary {
       implementations.getChannelOnZoomChangeListener().removeHandler();
       
       implementations.getChannelAutoFocusMoveCallback().removeHandler();
-      
-      implementations.getChannelOnErrorListener().removeHandler();
-      
-      implementations.getChannelOnInfoListener().removeHandler();
       
     }
   }
