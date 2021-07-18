@@ -1,15 +1,12 @@
 # av_foundation
 
-A new flutter plugin project.
+`av_foundation` is the full featured framework for working with time-based audiovisual media on iOS.
+Using av_foundation, you can easily play, create, and edit QuickTime movies and MPEG-4 files, play
+HLS streams, and build powerful media functionality into your apps.
 
-## Getting Started
+All the features in this plugin come from the [AVFoundation](https://developer.apple.com/av-foundation/)
+dependency.
 
-This project is a starting point for a Flutter
-[plug-in package](https://flutter.dev/developing-packages/),
-a specialized package that includes platform-specific implementation code for
-Android and/or iOS.
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-
+*Note:*
+This package is still under construction and is missing some features. See documentation for a list
+of available classes.

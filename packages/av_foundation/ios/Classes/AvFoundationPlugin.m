@@ -2,19 +2,10 @@
 
 @implementation AvFoundationPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
-  FlutterMethodChannel* channel = [FlutterMethodChannel
-      methodChannelWithName:@"av_foundation"
-            binaryMessenger:[registrar messenger]];
-  AvFoundationPlugin* instance = [[AvFoundationPlugin alloc] init];
-  [registrar addMethodCallDelegate:instance channel:channel];
+  REFTypeChannelMessenger *messenger = [ReferencePlugin getMessengerInstance:registrar.messenger];
+    
+  AFPLibraryImplementations *implementations = [[AFPLibraryImplementations alloc] initWithMessenger:messenger];
+  AFPChannelRegistrar *channels = [[AFPChannelRegistrar alloc] initWithImplementation:implementations];
+  [channels registerHandlers];
 }
-
-- (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
-  if ([@"getPlatformVersion" isEqualToString:call.method]) {
-    result([@"iOS " stringByAppendingString:[[UIDevice currentDevice] systemVersion]]);
-  } else {
-    result(FlutterMethodNotImplemented);
-  }
-}
-
 @end
