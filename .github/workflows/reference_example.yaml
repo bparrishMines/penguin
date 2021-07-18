@@ -32,7 +32,7 @@ jobs:
       - uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 29
-          script: temp_file=$(mktemp) && flutter drive test_driver/reference_example.dart 2>&1 | tee $temp_file && if (grep "All tests passed\!" $temp_file) ; then (echo 0) else (echo 1) fi
+          script: cd $PLUGIN_DIR/example && temp_file=$(mktemp) && flutter drive test_driver/reference_example.dart 2>&1 | tee $temp_file && if (grep "All tests passed\!" $temp_file) ; then (echo 0) else (echo 1) fi
 
   verify_ios:
     name: Ios Tests
