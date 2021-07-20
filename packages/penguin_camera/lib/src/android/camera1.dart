@@ -52,6 +52,14 @@ class CameraController implements intf.CameraController {
       outputs.map<Future<void>>((CameraOutput output) => output.attach(this)),
       eagerError: true,
     );
+
+    final CameraParameters params = await camera.getParameters();
+
+    final List<String> focusModes = await params.getSupportedFocusModes();
+    if (focusModes.contains(CameraParameters.focusModeContinuousPicture)) {
+      params.setFocusMode(CameraParameters.focusModeContinuousPicture);
+      camera.setParameters(params);
+    }
   }
 
   @override
@@ -118,6 +126,8 @@ class PreviewOutput implements intf.PreviewOutput {
 
   @override
   Future<void> attach(covariant CameraController controller) async {
+    _previewWidgetCompleter = Completer<Texture>();
+
     late int rotation;
     final CameraInfo cameraInfo = controller.device.info;
     if (cameraInfo.facing == CameraInfo.cameraFacingFront) {

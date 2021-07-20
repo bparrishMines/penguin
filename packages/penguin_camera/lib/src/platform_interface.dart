@@ -15,14 +15,14 @@ abstract class PenguinCameraPlatform extends PlatformInterface {
   static final Object _token = Object();
 
   static PenguinCameraPlatform get instance {
-    if (PenguinCameraPlatform.instance is! _EmptyPenguinCameraPlatform) {
+    if (_instance is! _EmptyPenguinCameraPlatform) {
       return _instance;
     }
 
     if (defaultTargetPlatform == TargetPlatform.android) {
-      PenguinCameraPlatform.instance = android.CameraPlatform();
+      _instance = android.CameraPlatform();
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {
-      PenguinCameraPlatform.instance = ios.CameraPlatform();
+      _instance = ios.CameraPlatform();
     } else {
       throw AssertionError('Current platform is not supported.');
     }

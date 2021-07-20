@@ -49,6 +49,7 @@ class CameraController implements intf.CameraController {
     assert(!_disposed, 'CameraController has already been disposed.');
     _initialized = true;
 
+    session.addInput(CaptureDeviceInput(device.device));
     await Future.wait(
       outputs.map<Future<void>>((CameraOutput output) => output.attach(this)),
       eagerError: true,
@@ -81,6 +82,7 @@ class CameraPlatform extends intf.PenguinCameraPlatform {
     final CaptureDeviceDiscoverySession session =
         await CaptureDeviceDiscoverySession.discoverySessionWithDeviceTypes(
       deviceTypes: <String>[CaptureDeviceType.builtInWideAngleCamera],
+      mediaType: MediaType.video,
       position: CaptureDevicePosition.unspecified,
     );
     return session.devices
