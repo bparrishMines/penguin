@@ -76,9 +76,9 @@ class CameraController implements intf.CameraController {
   Future<void> dispose() async {
     assert(_initialized, 'CameraController has not been initialized.');
     if (_disposed) return Future<void>.value();
+    stop();
     _disposed = true;
 
-    stop();
     await Future.wait(
       outputs.map<Future<void>>((CameraOutput output) => output.detach(this)),
       eagerError: true,
@@ -179,12 +179,13 @@ class ImageCaptureOutput implements intf.ImageCaptureOutput {
 }
 
 class VideoCaptureOutput implements intf.VideoCaptureOutput {
+  late CameraController _controller;
   late MediaRecorder mediaRecorder;
 
   @override
   Future<void> attach(covariant CameraController controller) {
+    _controller = controller;
     mediaRecorder = MediaRecorder();
-    controller.camera.unlock();
     return mediaRecorder.setCamera(controller.camera);
   }
 
@@ -203,6 +204,7 @@ class VideoCaptureOutput implements intf.VideoCaptureOutput {
     mediaRecorder.setAudioEncoder(AudioEncoder.amrNb);
     mediaRecorder.setOutputFilePath(fileOutput);
 
+    _controller.camera.unlock();
     mediaRecorder.prepare();
     return mediaRecorder.start();
   }

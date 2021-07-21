@@ -2,6 +2,8 @@
 
 import 'package:reference/reference.dart';
 
+import 'package:android_hardware/android_hardware.dart';
+
 // **************************************************************************
 // ReferenceGenerator
 // **************************************************************************

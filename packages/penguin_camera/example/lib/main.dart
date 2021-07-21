@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
@@ -175,13 +176,19 @@ class _MyAppState extends State<_MyApp> {
   }
 
   Future<Directory> _getStorageDir() async {
-    final List<Directory>? dirs = await getExternalStorageDirectories(
-      type: StorageDirectory.dcim,
-    );
-    if (dirs == null) {
+    final Directory? directory;
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      final List<Directory>? directories = await getExternalStorageDirectories(
+        type: StorageDirectory.dcim,
+      );
+      directory = directories?.first;
+    } else {
+      directory = await getApplicationDocumentsDirectory();
+    }
+    if (directory == null) {
       throw StateError('Could not get storage directory.');
     }
-    return dirs[0];
+    return directory;
   }
 
   void _takePicture(BuildContext context) {

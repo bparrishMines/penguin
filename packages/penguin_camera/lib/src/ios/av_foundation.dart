@@ -75,9 +75,9 @@ class CameraController implements intf.CameraController {
   Future<void> dispose() async {
     assert(_initialized, 'CameraController has not been initialized.');
     if (_disposed) return Future<void>.value();
+    stop();
     _disposed = true;
 
-    stop();
     await Future.wait(
       outputs.map<Future<void>>((CameraOutput output) => output.detach(this)),
       eagerError: true,
