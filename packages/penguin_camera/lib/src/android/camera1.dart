@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:android_media/android_media.dart';
 import 'package:flutter/widgets.dart';
@@ -41,6 +42,7 @@ class CameraController implements intf.CameraController {
   final List<CameraOutput> outputs;
 
   late final Camera camera;
+  late final CameraParameters cameraParameters;
 
   @override
   Future<void> initialize() async {
@@ -49,18 +51,11 @@ class CameraController implements intf.CameraController {
     _initialized = true;
 
     camera = await Camera.open(device.info.cameraId);
+    cameraParameters = await camera.getParameters();
     await Future.wait(
       outputs.map<Future<void>>((CameraOutput output) => output.attach(this)),
       eagerError: true,
     );
-
-    final CameraParameters params = await camera.getParameters();
-
-    final List<String> focusModes = await params.getSupportedFocusModes();
-    if (focusModes.contains(CameraParameters.focusModeContinuousPicture)) {
-      params.setFocusMode(CameraParameters.focusModeContinuousPicture);
-      camera.setParameters(params);
-    }
   }
 
   @override
@@ -175,22 +170,22 @@ class ImageCaptureOutput implements intf.ImageCaptureOutput {
       null,
       null,
       null,
-      PictureCallback(callback),
+      PictureCallback((Uint8List bytes) {
+        _controller.camera.startPreview();
+        callback(bytes);
+      }),
     );
   }
 }
 
 class VideoCaptureOutput implements intf.VideoCaptureOutput {
-  late CameraController _controller;
   late MediaRecorder mediaRecorder;
 
   @override
-  Future<void> attach(covariant CameraController controller) async {
-    _controller = controller;
+  Future<void> attach(covariant CameraController controller) {
     mediaRecorder = MediaRecorder();
-
-    _controller.camera.unlock();
-    return mediaRecorder.setCamera(_controller.camera);
+    controller.camera.unlock();
+    return mediaRecorder.setCamera(controller.camera);
   }
 
   @override

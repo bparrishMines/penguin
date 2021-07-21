@@ -1,6 +1,8 @@
 // ignore_for_file: public_member_api_docs
 
 import 'dart:io';
+import 'dart:math';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -55,7 +57,7 @@ class _MyAppState extends State<_MyApp> {
 
   Future<void> _getPicturePermission() async {
     while (!(await Permission.camera.request().isGranted)) {}
-    //while (!(await Permission.storage.request().isGranted)) {}
+    while (!(await Permission.storage.request().isGranted)) {}
   }
 
   Future<void> _getAudioPermission() async {
@@ -64,7 +66,11 @@ class _MyAppState extends State<_MyApp> {
 
   Future<void> _setupForPicture() async {
     await _getPicturePermission();
-    final CameraController cameraController = await _setupCameraController();
+
+    _imageCaptureOutput = ImageCaptureOutput();
+    final CameraController cameraController = await _setupCameraController(
+      _imageCaptureOutput,
+    );
 
     cameraController.start();
     setState(() {
@@ -75,7 +81,11 @@ class _MyAppState extends State<_MyApp> {
   Future<void> _setupForVideo() async {
     await _getPicturePermission();
     await _getAudioPermission();
-    final CameraController cameraController = await _setupCameraController();
+
+    _videoCaptureOutput = VideoCaptureOutput();
+    final CameraController cameraController = await _setupCameraController(
+      _videoCaptureOutput,
+    );
 
     cameraController.start();
     setState(() {
@@ -83,7 +93,7 @@ class _MyAppState extends State<_MyApp> {
     });
   }
 
-  Future<CameraController> _setupCameraController() async {
+  Future<CameraController> _setupCameraController(CameraOutput output) async {
     final List<CameraDevice> allCameraDevices =
         await PenguinCamera.getAllCameraDevices();
 
@@ -94,7 +104,7 @@ class _MyAppState extends State<_MyApp> {
     _previewOutput = PreviewOutput();
     final CameraController cameraController = CameraController(
       device: device,
-      outputs: <CameraOutput>[_previewOutput],
+      outputs: <CameraOutput>[_previewOutput, output],
     );
     await cameraController.initialize();
 
@@ -175,56 +185,36 @@ class _MyAppState extends State<_MyApp> {
   }
 
   void _takePicture(BuildContext context) {
-    // _camera.takePicture(
-    //   null,
-    //   null,
-    //   null,
-    //   PictureCallback((Uint8List data) async {
-    //     debugPrint('Image taken with jpeg data length: ${data.length}');
-    //     final Directory dir = await _getStorageDir();
-    //     final File imageFile = File('${dir.path}/my_image${data.hashCode}.jpg');
-    //     imageFile.writeAsBytes(data);
-    //
-    //     final String message = 'Pictured stored at: $imageFile';
-    //     debugPrint(message);
-    //     ScaffoldMessenger.of(context).showSnackBar(
-    //       SnackBar(content: Text(message)),
-    //     );
-    //
-    //     _camera.startPreview();
-    //   }),
-    // );
+    _imageCaptureOutput.takePicture((Uint8List bytes) async {
+      debugPrint('Image taken with jpeg data length: ${bytes.length}');
+      final Directory dir = await _getStorageDir();
+      final File imageFile = File('${dir.path}/my_image${bytes.hashCode}.jpg');
+      imageFile.writeAsBytes(bytes);
+
+      final String message = 'Pictured stored at: $imageFile';
+      debugPrint(message);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message)),
+      );
+    });
   }
 
   Future<void> _startRecording() async {
-    // final Directory dir = await _getStorageDir();
-    //
-    // _mediaRecorder = MediaRecorder();
-    // _mediaRecorder.setCamera(_camera);
-    // _mediaRecorder.setVideoSource(VideoSource.camera);
-    // _mediaRecorder.setAudioSource(AudioSource.defaultSource);
-    // _mediaRecorder.setOutputFormat(OutputFormat.mpeg4);
-    // _mediaRecorder.setVideoEncoder(VideoEncoder.mpeg4Sp);
-    // _mediaRecorder.setAudioEncoder(AudioEncoder.amrNb);
-    // _mediaRecorder.setOutputFilePath(
-    //   '${dir.path}/my_video${Random().nextInt(10000)}.mp4',
-    // );
-    // _camera.unlock();
-    // _mediaRecorder.prepare();
-    // _mediaRecorder.start();
-    //
-    // setState(() {
-    //   currentMode = CameraMode.videoRecording;
-    // });
+    final Directory dir = await _getStorageDir();
+    _videoCaptureOutput.startRecording(
+      fileOutput: '${dir.path}/my_video${Random().nextInt(10000)}.mp4',
+    );
+
+    setState(() {
+      currentMode = CameraMode.videoRecording;
+    });
   }
 
   void _stopRecording() {
-    // _mediaRecorder.stop();
-    // _mediaRecorder.release();
-    //
-    // setState(() {
-    //   currentMode = CameraMode.video;
-    // });
+    _videoCaptureOutput.stopRecording();
+    setState(() {
+      currentMode = CameraMode.video;
+    });
   }
 
   @override
