@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:av_foundation/av_foundation.dart';
 import 'package:flutter/widgets.dart';
@@ -57,10 +58,18 @@ class CameraController implements intf.CameraController {
   }
 
   @override
-  Future<void> start() => session.startRunning();
+  Future<void> start() {
+    assert(_initialized, 'CameraController has not been initialized.');
+    assert(!_disposed, 'CameraController has already been disposed.');
+    return session.startRunning();
+  }
 
   @override
-  Future<void> stop() => session.stopRunning();
+  Future<void> stop() {
+    assert(_initialized, 'CameraController has not been initialized.');
+    assert(!_disposed, 'CameraController has already been disposed.');
+    return session.stopRunning();
+  }
 
   @override
   Future<void> dispose() async {
@@ -133,29 +142,74 @@ class PreviewOutput implements intf.PreviewOutput {
 }
 
 class ImageCaptureOutput implements intf.ImageCaptureOutput {
+  late CapturePhotoOutput capturePhotoOutput;
+  late CapturePhotoCaptureDelegate photoCaptureDelegate;
+  late CapturePhotoSettings nextPhotoSettings =
+      CapturePhotoSettings.photoSettingsWithFormat(
+    <String, Object>{VideoSettingsKeys.videoCodec: VideoCodecType.jpeg},
+  );
+
   @override
   Future<void> attach(covariant CameraController controller) {
-    // TODO: implement attach
-    throw UnimplementedError();
+    capturePhotoOutput = CapturePhotoOutput();
+    return controller.session.addOutput(capturePhotoOutput);
   }
 
   @override
-  Future<void> detach(covariant CameraController controller) {
-    // TODO: implement detach
-    throw UnimplementedError();
+  Future<void> detach(covariant CameraController controller) async {
+    // TODO: remove capturePhotoOutput
+  }
+
+  @override
+  Future<void> takePicture(ImageCallback callback) async {
+    final CapturePhotoSettings oldSettings = nextPhotoSettings;
+    nextPhotoSettings = CapturePhotoSettings.photoSettingsWithFormat(
+      <String, Object>{VideoSettingsKeys.videoCodec: VideoCodecType.jpeg},
+    );
+    await capturePhotoOutput.capturePhotoWithSettings(
+      oldSettings,
+      CapturePhotoCaptureDelegate(
+        didFinishProcessingPhoto: (CapturePhoto photo) {
+          final Uint8List? photoData = photo.fileDataRepresentation;
+          if (photoData == null) {
+            throw ArgumentError.value(
+              photo.fileDataRepresentation,
+              'photo.fileDataRepresentation',
+              'Byte data returned empty. This could be due to the video codec type.',
+            );
+          } else {
+            callback(photoData);
+          }
+        },
+      ),
+    );
   }
 }
 
 class VideoCaptureOutput implements intf.VideoCaptureOutput {
+  late CaptureMovieFileOutput movieFileOutput;
+
   @override
   Future<void> attach(covariant CameraController controller) {
-    // TODO: implement attach
-    throw UnimplementedError();
+    movieFileOutput = CaptureMovieFileOutput();
+    return controller.session.addOutput(movieFileOutput);
   }
 
   @override
-  Future<void> detach(covariant CameraController controller) {
-    // TODO: implement detach
-    throw UnimplementedError();
+  Future<void> detach(covariant CameraController controller) async {
+    // TODO: Remove movieFileOutput
+  }
+
+  @override
+  Future<void> startRecording({required String fileOutput}) {
+    return movieFileOutput.startRecordingToOutputFileURL(
+      fileOutput,
+      CaptureFileOutputRecordingDelegate(),
+    );
+  }
+
+  @override
+  Future<void> stopRecording() {
+    return movieFileOutput.stopRecording();
   }
 }

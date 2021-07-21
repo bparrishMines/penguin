@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
@@ -55,16 +56,24 @@ abstract class PreviewOutput extends CameraOutput {
   Future<Widget> getPreviewWidget();
 }
 
+typedef ImageCallback = void Function(Uint8List bytes);
+
 abstract class ImageCaptureOutput extends CameraOutput {
   factory ImageCaptureOutput() {
     return PenguinCameraPlatform.instance.createImageCaptureOutput();
   }
+
+  Future<void> takePicture(ImageCallback callback);
 }
 
 abstract class VideoCaptureOutput extends CameraOutput {
   factory VideoCaptureOutput() {
     return PenguinCameraPlatform.instance.createVideoCaptureOutput();
   }
+
+  Future<void> startRecording({required String fileOutput});
+
+  Future<void> stopRecording();
 }
 
 abstract class CameraOutput {

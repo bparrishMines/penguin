@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:android_media/android_media.dart';
 import 'package:flutter/widgets.dart';
 import 'package:android_hardware/android_hardware.dart';
 import 'package:penguin_camera/penguin_camera.dart';
@@ -63,10 +64,18 @@ class CameraController implements intf.CameraController {
   }
 
   @override
-  Future<void> start() => camera.startPreview();
+  Future<void> start() {
+    assert(_initialized, 'CameraController has not been initialized.');
+    assert(!_disposed, 'CameraController has already been disposed.');
+    return camera.startPreview();
+  }
 
   @override
-  Future<void> stop() => camera.stopPreview();
+  Future<void> stop() {
+    assert(_initialized, 'CameraController has not been initialized.');
+    assert(!_disposed, 'CameraController has already been disposed.');
+    return camera.stopPreview();
+  }
 
   @override
   Future<void> dispose() async {
@@ -150,29 +159,61 @@ class PreviewOutput implements intf.PreviewOutput {
 }
 
 class ImageCaptureOutput implements intf.ImageCaptureOutput {
+  late CameraController _controller;
+
   @override
-  Future<void> attach(covariant CameraController controller) {
-    // TODO: implement attach
-    throw UnimplementedError();
+  Future<void> attach(covariant CameraController controller) async {
+    _controller = controller;
   }
 
   @override
-  Future<void> detach(covariant CameraController controller) {
-    // TODO: implement detach
-    throw UnimplementedError();
+  Future<void> detach(covariant CameraController controller) async {}
+
+  @override
+  Future<void> takePicture(intf.ImageCallback callback) {
+    return _controller.camera.takePicture(
+      null,
+      null,
+      null,
+      PictureCallback(callback),
+    );
   }
 }
 
 class VideoCaptureOutput implements intf.VideoCaptureOutput {
+  late CameraController _controller;
+  late MediaRecorder mediaRecorder;
+
   @override
-  Future<void> attach(covariant CameraController controller) {
-    // TODO: implement attach
-    throw UnimplementedError();
+  Future<void> attach(covariant CameraController controller) async {
+    _controller = controller;
+    mediaRecorder = MediaRecorder();
+
+    _controller.camera.unlock();
+    return mediaRecorder.setCamera(_controller.camera);
   }
 
   @override
   Future<void> detach(covariant CameraController controller) {
-    // TODO: implement detach
-    throw UnimplementedError();
+    return mediaRecorder.release();
+  }
+
+  @override
+  Future<void> startRecording({required String fileOutput}) {
+    mediaRecorder.reset();
+    mediaRecorder.setVideoSource(VideoSource.camera);
+    mediaRecorder.setAudioSource(AudioSource.defaultSource);
+    mediaRecorder.setOutputFormat(OutputFormat.mpeg4);
+    mediaRecorder.setVideoEncoder(VideoEncoder.mpeg4Sp);
+    mediaRecorder.setAudioEncoder(AudioEncoder.amrNb);
+    mediaRecorder.setOutputFilePath(fileOutput);
+
+    mediaRecorder.prepare();
+    return mediaRecorder.start();
+  }
+
+  @override
+  Future<void> stopRecording() {
+    return mediaRecorder.stop();
   }
 }
