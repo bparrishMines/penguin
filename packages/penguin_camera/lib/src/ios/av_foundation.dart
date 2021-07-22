@@ -85,15 +85,20 @@ class CameraController implements intf.CameraController {
   }
 
   @override
-  Future<void> setAutoFocus(FocusMode mode) {
+  Future<void> setFocusMode(FocusMode mode) {
+    device.device.lockForConfiguration();
     switch (mode) {
       case FocusMode.fixed:
-        return device.device.setFocusMode(CaptureFocusMode.locked);
+        device.device.setFocusMode(CaptureFocusMode.locked);
+        break;
       case FocusMode.continuousImageAutoFocus:
-        return device.device.setFocusMode(CaptureFocusMode.continuousAutoFocus);
+        device.device.setFocusMode(CaptureFocusMode.continuousAutoFocus);
+        break;
       case FocusMode.continuousVideoAutoFocus:
-        return device.device.setFocusMode(CaptureFocusMode.continuousAutoFocus);
+        device.device.setFocusMode(CaptureFocusMode.continuousAutoFocus);
+        break;
     }
+    return device.device.unlockForConfiguration();
   }
 
   @override
@@ -178,10 +183,8 @@ class PreviewOutput implements intf.PreviewOutput {
 class ImageCaptureOutput implements intf.ImageCaptureOutput {
   late CapturePhotoOutput capturePhotoOutput;
   late CapturePhotoCaptureDelegate photoCaptureDelegate;
-  late CapturePhotoSettings nextPhotoSettings =
-      CapturePhotoSettings.photoSettingsWithFormat(
-    <String, Object>{VideoSettingsKeys.videoCodec: VideoCodecType.jpeg},
-  );
+  late CapturePhotoSettings nextPhotoSettings = _createNextPhotoSettings();
+  int? flashMode;
 
   @override
   Future<void> attach(covariant CameraController controller) {
@@ -194,12 +197,20 @@ class ImageCaptureOutput implements intf.ImageCaptureOutput {
     // TODO: remove capturePhotoOutput
   }
 
+  CapturePhotoSettings _createNextPhotoSettings() {
+    final CapturePhotoSettings settings =
+        CapturePhotoSettings.photoSettingsWithFormat(
+      <String, Object>{VideoSettingsKeys.videoCodec: VideoCodecType.jpeg},
+    );
+    if (flashMode != null) nextPhotoSettings.setFlashMode(flashMode!);
+    return settings;
+  }
+
   @override
   Future<void> takePicture(ImageCallback callback) async {
     final CapturePhotoSettings oldSettings = nextPhotoSettings;
-    nextPhotoSettings = CapturePhotoSettings.photoSettingsWithFormat(
-      <String, Object>{VideoSettingsKeys.videoCodec: VideoCodecType.jpeg},
-    );
+    nextPhotoSettings = _createNextPhotoSettings();
+
     photoCaptureDelegate = CapturePhotoCaptureDelegate(
       didFinishProcessingPhoto: (CapturePhoto photo) {
         final Uint8List? photoData = photo.fileDataRepresentation;
@@ -218,6 +229,42 @@ class ImageCaptureOutput implements intf.ImageCaptureOutput {
       oldSettings,
       photoCaptureDelegate,
     );
+  }
+
+  @override
+  Future<List<FlashMode>> getSupportedFlashModes() async {
+    final List<int> flashModes = await capturePhotoOutput.supportedFlashModes();
+
+    final List<FlashMode> supportedModes = <FlashMode>[];
+    for (int mode in flashModes) {
+      switch (mode) {
+        case CaptureFlashMode.auto:
+          supportedModes.add(FlashMode.auto);
+          break;
+        case CaptureFlashMode.on:
+          supportedModes.add(FlashMode.on);
+          break;
+        case CaptureFlashMode.off:
+          supportedModes.add(FlashMode.off);
+          break;
+      }
+    }
+    return supportedModes;
+  }
+
+  @override
+  Future<void> setFlashMode(FlashMode mode) async {
+    switch (mode) {
+      case FlashMode.on:
+        flashMode = CaptureFlashMode.on;
+        break;
+      case FlashMode.off:
+        flashMode = CaptureFlashMode.off;
+        break;
+      case FlashMode.auto:
+        flashMode = CaptureFlashMode.auto;
+        break;
+    }
   }
 }
 

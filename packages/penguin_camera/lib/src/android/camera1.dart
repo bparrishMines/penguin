@@ -87,7 +87,7 @@ class CameraController implements intf.CameraController {
   }
 
   @override
-  Future<void> setAutoFocus(FocusMode mode) {
+  Future<void> setFocusMode(FocusMode mode) {
     switch (mode) {
       case FocusMode.fixed:
         cameraParameters.setFocusMode(CameraParameters.focusModeFixed);
@@ -217,6 +217,48 @@ class ImageCaptureOutput implements intf.ImageCaptureOutput {
         callback(bytes);
       }),
     );
+  }
+
+  @override
+  Future<List<FlashMode>> getSupportedFlashModes() async {
+    final List<String> flashModes =
+        await _controller.cameraParameters.getSupportedFlashModes();
+
+    final List<FlashMode> supportedModes = <FlashMode>[];
+    for (String mode in flashModes) {
+      switch (mode) {
+        case CameraParameters.flashModeAuto:
+          supportedModes.add(FlashMode.auto);
+          break;
+        case CameraParameters.flashModeOff:
+          supportedModes.add(FlashMode.off);
+          break;
+        case CameraParameters.flashModeOn:
+          supportedModes.add(FlashMode.on);
+          break;
+      }
+    }
+    return supportedModes;
+  }
+
+  @override
+  Future<void> setFlashMode(FlashMode mode) {
+    switch (mode) {
+      case FlashMode.on:
+        _controller.cameraParameters.setFlashMode(CameraParameters.flashModeOn);
+        break;
+      case FlashMode.off:
+        _controller.cameraParameters.setFlashMode(
+          CameraParameters.flashModeOff,
+        );
+        break;
+      case FlashMode.auto:
+        _controller.cameraParameters.setFlashMode(
+          CameraParameters.flashModeAuto,
+        );
+        break;
+    }
+    return _controller.camera.setParameters(_controller.cameraParameters);
   }
 }
 

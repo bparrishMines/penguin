@@ -54,6 +54,8 @@ enum FocusMode {
   continuousVideoAutoFocus,
 }
 
+enum FlashMode { on, off, auto }
+
 abstract class PreviewOutput extends CameraOutput {
   factory PreviewOutput() {
     return PenguinCameraPlatform.instance.createPreviewOutput();
@@ -70,6 +72,8 @@ abstract class ImageCaptureOutput extends CameraOutput {
   }
 
   Future<void> takePicture(ImageCallback callback);
+  Future<void> setFlashMode(FlashMode mode);
+  Future<List<FlashMode>> getSupportedFlashModes();
 }
 
 abstract class VideoCaptureOutput extends CameraOutput {
@@ -119,7 +123,7 @@ abstract class CameraController {
   Future<void> start();
   Future<void> stop();
   Future<void> dispose();
-  Future<void> setAutoFocus(FocusMode mode);
+  Future<void> setFocusMode(FocusMode mode);
   Future<List<FocusMode>> getSupportedFocusModes();
 }
 

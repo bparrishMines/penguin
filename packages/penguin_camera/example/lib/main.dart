@@ -74,7 +74,7 @@ class _MyAppState extends State<_MyApp> {
     final List<FocusMode> supportedFocusMode =
         await _cameraController.getSupportedFocusModes();
     if (supportedFocusMode.contains(FocusMode.continuousImageAutoFocus)) {
-      _cameraController.setAutoFocus(FocusMode.continuousImageAutoFocus);
+      _cameraController.setFocusMode(FocusMode.continuousImageAutoFocus);
     }
 
     _cameraController.start();
@@ -93,7 +93,7 @@ class _MyAppState extends State<_MyApp> {
     final List<FocusMode> supportedFocusMode =
         await _cameraController.getSupportedFocusModes();
     if (supportedFocusMode.contains(FocusMode.continuousVideoAutoFocus)) {
-      _cameraController.setAutoFocus(FocusMode.continuousVideoAutoFocus);
+      _cameraController.setFocusMode(FocusMode.continuousVideoAutoFocus);
     }
 
     _cameraController.start();
