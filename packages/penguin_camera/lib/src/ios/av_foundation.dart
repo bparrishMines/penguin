@@ -166,22 +166,23 @@ class ImageCaptureOutput implements intf.ImageCaptureOutput {
     nextPhotoSettings = CapturePhotoSettings.photoSettingsWithFormat(
       <String, Object>{VideoSettingsKeys.videoCodec: VideoCodecType.jpeg},
     );
+    photoCaptureDelegate = CapturePhotoCaptureDelegate(
+      didFinishProcessingPhoto: (CapturePhoto photo) {
+        final Uint8List? photoData = photo.fileDataRepresentation;
+        if (photoData == null) {
+          throw ArgumentError.value(
+            photo.fileDataRepresentation,
+            'photo.fileDataRepresentation',
+            'Byte data returned empty. This could be due to the video codec type.',
+          );
+        } else {
+          callback(photoData);
+        }
+      },
+    );
     await capturePhotoOutput.capturePhotoWithSettings(
       oldSettings,
-      CapturePhotoCaptureDelegate(
-        didFinishProcessingPhoto: (CapturePhoto photo) {
-          final Uint8List? photoData = photo.fileDataRepresentation;
-          if (photoData == null) {
-            throw ArgumentError.value(
-              photo.fileDataRepresentation,
-              'photo.fileDataRepresentation',
-              'Byte data returned empty. This could be due to the video codec type.',
-            );
-          } else {
-            callback(photoData);
-          }
-        },
-      ),
+      photoCaptureDelegate,
     );
   }
 }

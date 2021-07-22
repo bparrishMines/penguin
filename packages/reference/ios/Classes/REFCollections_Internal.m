@@ -124,11 +124,11 @@
 
   [_instanceIds setObject:newID forKey:instance];
   [_weakReferences setObject:instance forKey:newID];
-  
-  __weak __block REFInstanceManager *weakSelf = self;
-  [REFObjectTracker trackObject:instance instanceID:instanceID callback:^(NSString * _Nonnull instanceID) {
-    onFinalize(instanceID);
-    [weakSelf removeInstance:instanceID];
+
+  __block REFOnFinalizeCallback blockOnFinalize = onFinalize;
+  [REFObjectTracker trackObject:instance instanceID:newID callback:^(NSString * _Nonnull callbackID) {
+    blockOnFinalize(callbackID);
+    [self->_weakReferences removeObjectForKey:callbackID];
   }];
   return YES;
 }

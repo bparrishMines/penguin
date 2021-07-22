@@ -191,7 +191,7 @@ class _MyAppState extends State<_MyApp> {
     return directory;
   }
 
-  void _takePicture(BuildContext context) {
+  void _takeImage(BuildContext context) {
     _imageCaptureOutput.takePicture((Uint8List bytes) async {
       debugPrint('Image taken with jpeg data length: ${bytes.length}');
       final Directory dir = await _getStorageDir();
@@ -268,7 +268,7 @@ class _MyAppState extends State<_MyApp> {
                   alignment: Alignment.center,
                   child: CameraButton(
                     cameraMode: currentMode,
-                    onTakePicture: () => _takePicture(context),
+                    onTakePicture: () => _takeImage(context),
                     onStartRecording: _startRecording,
                     onStopRecording: _stopRecording,
                   ),
