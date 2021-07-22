@@ -69,11 +69,15 @@ class _MyAppState extends State<_MyApp> {
     await _getPicturePermission();
 
     _imageCaptureOutput = ImageCaptureOutput();
-    final CameraController cameraController = await _setupCameraController(
-      _imageCaptureOutput,
-    );
+    _cameraController = await _setupCameraController(_imageCaptureOutput);
 
-    cameraController.start();
+    final List<FocusMode> supportedFocusMode =
+        await _cameraController.getSupportedFocusModes();
+    if (supportedFocusMode.contains(FocusMode.continuousImageAutoFocus)) {
+      _cameraController.setAutoFocus(FocusMode.continuousImageAutoFocus);
+    }
+
+    _cameraController.start();
     setState(() {
       currentMode = CameraMode.picture;
     });
@@ -84,11 +88,15 @@ class _MyAppState extends State<_MyApp> {
     await _getAudioPermission();
 
     _videoCaptureOutput = VideoCaptureOutput();
-    final CameraController cameraController = await _setupCameraController(
-      _videoCaptureOutput,
-    );
+    _cameraController = await _setupCameraController(_videoCaptureOutput);
 
-    cameraController.start();
+    final List<FocusMode> supportedFocusMode =
+        await _cameraController.getSupportedFocusModes();
+    if (supportedFocusMode.contains(FocusMode.continuousVideoAutoFocus)) {
+      _cameraController.setAutoFocus(FocusMode.continuousVideoAutoFocus);
+    }
+
+    _cameraController.start();
     setState(() {
       currentMode = CameraMode.video;
     });
@@ -107,9 +115,8 @@ class _MyAppState extends State<_MyApp> {
       device: device,
       outputs: <CameraOutput>[_previewOutput, output],
     );
-    await cameraController.initialize();
 
-    _cameraController = cameraController;
+    await cameraController.initialize();
     return cameraController;
   }
 

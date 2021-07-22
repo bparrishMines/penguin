@@ -48,6 +48,12 @@ abstract class PenguinCameraPlatform extends PlatformInterface {
   VideoCaptureOutput createVideoCaptureOutput();
 }
 
+enum FocusMode {
+  fixed,
+  continuousImageAutoFocus,
+  continuousVideoAutoFocus,
+}
+
 abstract class PreviewOutput extends CameraOutput {
   factory PreviewOutput() {
     return PenguinCameraPlatform.instance.createPreviewOutput();
@@ -113,6 +119,8 @@ abstract class CameraController {
   Future<void> start();
   Future<void> stop();
   Future<void> dispose();
+  Future<void> setAutoFocus(FocusMode mode);
+  Future<List<FocusMode>> getSupportedFocusModes();
 }
 
 class _EmptyPenguinCameraPlatform implements PenguinCameraPlatform {

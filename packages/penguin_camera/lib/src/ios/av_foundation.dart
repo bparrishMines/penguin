@@ -83,6 +83,40 @@ class CameraController implements intf.CameraController {
       eagerError: true,
     );
   }
+
+  @override
+  Future<void> setAutoFocus(FocusMode mode) {
+    switch (mode) {
+      case FocusMode.fixed:
+        return device.device.setFocusMode(CaptureFocusMode.locked);
+      case FocusMode.continuousImageAutoFocus:
+        return device.device.setFocusMode(CaptureFocusMode.continuousAutoFocus);
+      case FocusMode.continuousVideoAutoFocus:
+        return device.device.setFocusMode(CaptureFocusMode.continuousAutoFocus);
+    }
+  }
+
+  @override
+  Future<List<FocusMode>> getSupportedFocusModes() async {
+    final List<int> focusModes = await device.device.focusModesSupported(<int>[
+      CaptureFocusMode.locked,
+      CaptureFocusMode.continuousAutoFocus,
+    ]);
+
+    final List<FocusMode> supportedModes = <FocusMode>[];
+    for (int mode in focusModes) {
+      switch (mode) {
+        case CaptureFocusMode.locked:
+          supportedModes.add(FocusMode.fixed);
+          break;
+        case CaptureFocusMode.continuousAutoFocus:
+          supportedModes.add(FocusMode.continuousImageAutoFocus);
+          supportedModes.add(FocusMode.continuousVideoAutoFocus);
+          break;
+      }
+    }
+    return supportedModes;
+  }
 }
 
 class CameraPlatform extends intf.PenguinCameraPlatform {
