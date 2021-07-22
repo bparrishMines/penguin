@@ -54,6 +54,8 @@ enum FocusMode {
   continuousVideoAutoFocus,
 }
 
+enum ExposureMode { locked, continuous }
+
 enum FlashMode { on, off, auto }
 
 abstract class PreviewOutput extends CameraOutput {
@@ -125,6 +127,8 @@ abstract class CameraController {
   Future<void> dispose();
   Future<void> setFocusMode(FocusMode mode);
   Future<List<FocusMode>> getSupportedFocusModes();
+  Future<void> setExposureMode(ExposureMode mode);
+  Future<List<ExposureMode>> getSupportedExposureModes();
 }
 
 class _EmptyPenguinCameraPlatform implements PenguinCameraPlatform {

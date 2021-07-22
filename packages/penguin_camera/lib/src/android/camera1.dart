@@ -127,6 +127,26 @@ class CameraController implements intf.CameraController {
     }
     return supportedModes;
   }
+
+  @override
+  Future<List<ExposureMode>> getSupportedExposureModes() async {
+    final bool lockSupported =
+        await cameraParameters.isAutoExposureLockSupported();
+    return <ExposureMode>[
+      ExposureMode.continuous,
+      if (lockSupported) ExposureMode.locked,
+    ];
+  }
+
+  @override
+  Future<void> setExposureMode(ExposureMode mode) {
+    switch (mode) {
+      case ExposureMode.locked:
+        return cameraParameters.setAutoExposureLock(toggle: true);
+      case ExposureMode.continuous:
+        return cameraParameters.setAutoExposureLock(toggle: false);
+    }
+  }
 }
 
 class CameraPlatform extends intf.PenguinCameraPlatform {
