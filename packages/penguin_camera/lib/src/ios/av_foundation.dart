@@ -160,6 +160,52 @@ class CameraController implements intf.CameraController {
     }
     return device.device.unlockForConfiguration();
   }
+
+  @override
+  Future<List<Size>> getSupportedOutputSizes() async {
+    final List<String> supportedPresets =
+        await session.canSetSessionPresets(<String>[
+      CaptureSessionPreset.preset352x288,
+      CaptureSessionPreset.preset640x480,
+      CaptureSessionPreset.iFrame960x540,
+      CaptureSessionPreset.preset1280x720,
+      CaptureSessionPreset.preset1920x1080,
+    ]);
+
+    return supportedPresets.map<Size>((String preset) {
+      switch (preset) {
+        case CaptureSessionPreset.preset352x288:
+          return Size(352, 288);
+        case CaptureSessionPreset.preset640x480:
+          return Size(640, 480);
+        case CaptureSessionPreset.iFrame960x540:
+          return Size(960, 540);
+        case CaptureSessionPreset.preset1280x720:
+          return Size(1280, 720);
+        case CaptureSessionPreset.preset1920x1080:
+          return Size(1920, 1080);
+      }
+
+      throw StateError('Unexpected preset returned: $preset');
+    }).toList();
+  }
+
+  @override
+  Future<void> setOutputSize(Size size) {
+    if (size.width == 352 && size.height == 288) {
+      return session.setSessionPreset(CaptureSessionPreset.preset352x288);
+    } else if (size.width == 640 && size.height == 480) {
+      return session.setSessionPreset(CaptureSessionPreset.preset640x480);
+    } else if (size.width == 960 && size.height == 540) {
+      return session.setSessionPreset(CaptureSessionPreset.iFrame960x540);
+    } else if (size.width == 1280 && size.height == 720) {
+      return session.setSessionPreset(CaptureSessionPreset.preset1280x720);
+    } else if (size.width == 1920 && size.height == 1080) {
+      return session.setSessionPreset(CaptureSessionPreset.preset1920x1080);
+    }
+
+    throw ArgumentError.value(size, 'size', 'Size is not supported: ');
+  }
 }
 
 class CameraPlatform extends intf.PenguinCameraPlatform {

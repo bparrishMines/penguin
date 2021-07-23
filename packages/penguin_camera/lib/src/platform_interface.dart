@@ -129,6 +129,10 @@ abstract class CameraController {
   Future<List<FocusMode>> getSupportedFocusModes();
   Future<void> setExposureMode(ExposureMode mode);
   Future<List<ExposureMode>> getSupportedExposureModes();
+
+  // Try to find overlap of picture/preview/video sizes
+  Future<List<Size>> getSupportedOutputSizes();
+  Future<void> setOutputSize(Size size);
 }
 
 class _EmptyPenguinCameraPlatform implements PenguinCameraPlatform {

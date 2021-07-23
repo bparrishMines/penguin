@@ -147,6 +147,39 @@ class CameraController implements intf.CameraController {
         return cameraParameters.setAutoExposureLock(toggle: false);
     }
   }
+
+  @override
+  Future<List<Size>> getSupportedOutputSizes() async {
+    final Set<CameraSize> supportedPreviewSizes =
+        (await cameraParameters.getSupportedPreviewSizes()).toSet();
+    final Set<CameraSize> supportedPictureSizes =
+        (await cameraParameters.getSupportedPictureSizes()).toSet();
+    final Set<CameraSize>? supportedVideoSizes =
+        (await cameraParameters.getSupportedVideoSizes())?.toSet();
+
+    Set<CameraSize> supportedOutputSizes =
+        supportedPreviewSizes.union(supportedPictureSizes);
+    if (supportedVideoSizes != null) {
+      supportedOutputSizes = supportedOutputSizes.union(supportedVideoSizes);
+    }
+
+    return supportedOutputSizes
+        .map<Size>(
+          (CameraSize size) =>
+              Size(size.width.toDouble(), size.height.toDouble()),
+        )
+        .toList();
+  }
+
+  @override
+  Future<void> setOutputSize(Size size) async {
+    await Future.wait(
+      outputs.cast<OutputSizeChangeListener>().map<Future<void>>(
+          (OutputSizeChangeListener listener) =>
+              listener.updateOutputSize(size)),
+      eagerError: true,
+    );
+  }
 }
 
 class CameraPlatform extends intf.PenguinCameraPlatform {
@@ -182,7 +215,10 @@ class CameraPlatform extends intf.PenguinCameraPlatform {
   }
 }
 
-class PreviewOutput implements intf.PreviewOutput {
+class PreviewOutput
+    with OutputSizeChangeListener
+    implements intf.PreviewOutput {
+  late CameraController _controller;
   late Completer<Texture> _previewWidgetCompleter;
 
   @override
@@ -192,6 +228,7 @@ class PreviewOutput implements intf.PreviewOutput {
 
   @override
   Future<void> attach(covariant CameraController controller) async {
+    _controller = controller;
     _previewWidgetCompleter = Completer<Texture>();
 
     late int rotation;
@@ -213,9 +250,20 @@ class PreviewOutput implements intf.PreviewOutput {
   Future<void> detach(covariant CameraController controller) {
     return controller.camera.releasePreviewTexture();
   }
+
+  @override
+  Future<void> updateOutputSize(Size size) {
+    _controller.cameraParameters.setPreviewSize(
+      size.width.round(),
+      size.height.round(),
+    );
+    return _controller.camera.setParameters(_controller.cameraParameters);
+  }
 }
 
-class ImageCaptureOutput implements intf.ImageCaptureOutput {
+class ImageCaptureOutput
+    with OutputSizeChangeListener
+    implements intf.ImageCaptureOutput {
   late CameraController _controller;
 
   @override
@@ -280,11 +328,23 @@ class ImageCaptureOutput implements intf.ImageCaptureOutput {
     }
     return _controller.camera.setParameters(_controller.cameraParameters);
   }
+
+  @override
+  Future<void> updateOutputSize(Size size) {
+    _controller.cameraParameters.setPictureSize(
+      size.width.round(),
+      size.height.round(),
+    );
+    return _controller.camera.setParameters(_controller.cameraParameters);
+  }
 }
 
-class VideoCaptureOutput implements intf.VideoCaptureOutput {
+class VideoCaptureOutput
+    with OutputSizeChangeListener
+    implements intf.VideoCaptureOutput {
   late CameraController _controller;
   late MediaRecorder mediaRecorder;
+  Size? specifiedOutputSize;
 
   @override
   Future<void> attach(covariant CameraController controller) {
@@ -306,6 +366,12 @@ class VideoCaptureOutput implements intf.VideoCaptureOutput {
     mediaRecorder.setOutputFormat(OutputFormat.mpeg4);
     mediaRecorder.setVideoEncoder(VideoEncoder.mpeg4Sp);
     mediaRecorder.setAudioEncoder(AudioEncoder.amrNb);
+    if (specifiedOutputSize != null) {
+      mediaRecorder.setVideoSize(
+        specifiedOutputSize!.width.round(),
+        specifiedOutputSize!.height.round(),
+      );
+    }
     mediaRecorder.setOutputFilePath(fileOutput);
 
     _controller.camera.unlock();
@@ -317,4 +383,13 @@ class VideoCaptureOutput implements intf.VideoCaptureOutput {
   Future<void> stopRecording() {
     return mediaRecorder.stop();
   }
+
+  @override
+  Future<void> updateOutputSize(Size size) async {
+    specifiedOutputSize = size;
+  }
+}
+
+mixin OutputSizeChangeListener {
+  Future<void> updateOutputSize(Size size);
 }
