@@ -95,6 +95,8 @@ abstract class CameraOutput {
 
 enum CameraPosition { front, back, unspecified }
 
+enum CameraControllerPreset { low, medium, high }
+
 abstract class PenguinCamera {
   PenguinCamera._();
 
@@ -129,10 +131,7 @@ abstract class CameraController {
   Future<List<FocusMode>> getSupportedFocusModes();
   Future<void> setExposureMode(ExposureMode mode);
   Future<List<ExposureMode>> getSupportedExposureModes();
-
-  // Try to find overlap of picture/preview/video sizes
-  Future<List<Size>> getSupportedOutputSizes();
-  Future<void> setOutputSize(Size size);
+  Future<void> setControllerPreset(CameraControllerPreset preset);
 }
 
 class _EmptyPenguinCameraPlatform implements PenguinCameraPlatform {

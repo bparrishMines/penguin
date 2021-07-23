@@ -117,6 +117,10 @@ class _MyAppState extends State<_MyApp> {
     );
 
     await cameraController.initialize();
+
+    print(await cameraController.getSupportedFocusModes());
+    print(await cameraController.getSupportedExposureModes());
+    print(await cameraController.getSupportedOutputSizes());
     return cameraController;
   }
 

@@ -149,34 +149,10 @@ class CameraController implements intf.CameraController {
   }
 
   @override
-  Future<List<Size>> getSupportedOutputSizes() async {
-    final Set<CameraSize> supportedPreviewSizes =
-        (await cameraParameters.getSupportedPreviewSizes()).toSet();
-    final Set<CameraSize> supportedPictureSizes =
-        (await cameraParameters.getSupportedPictureSizes()).toSet();
-    final Set<CameraSize>? supportedVideoSizes =
-        (await cameraParameters.getSupportedVideoSizes())?.toSet();
-
-    Set<CameraSize> supportedOutputSizes =
-        supportedPreviewSizes.union(supportedPictureSizes);
-    if (supportedVideoSizes != null) {
-      supportedOutputSizes = supportedOutputSizes.union(supportedVideoSizes);
-    }
-
-    return supportedOutputSizes
-        .map<Size>(
-          (CameraSize size) =>
-              Size(size.width.toDouble(), size.height.toDouble()),
-        )
-        .toList();
-  }
-
-  @override
-  Future<void> setOutputSize(Size size) async {
+  Future<void> setControllerPreset(CameraControllerPreset preset) async {
     await Future.wait(
-      outputs.cast<OutputSizeChangeListener>().map<Future<void>>(
-          (OutputSizeChangeListener listener) =>
-              listener.updateOutputSize(size)),
+      outputs.cast<PresetChangeListener>().map<Future<void>>(
+          (PresetChangeListener listener) => listener.updatePreset(preset)),
       eagerError: true,
     );
   }
@@ -215,9 +191,7 @@ class CameraPlatform extends intf.PenguinCameraPlatform {
   }
 }
 
-class PreviewOutput
-    with OutputSizeChangeListener
-    implements intf.PreviewOutput {
+class PreviewOutput with PresetChangeListener implements intf.PreviewOutput {
   late CameraController _controller;
   late Completer<Texture> _previewWidgetCompleter;
 
@@ -252,17 +226,39 @@ class PreviewOutput
   }
 
   @override
-  Future<void> updateOutputSize(Size size) {
-    _controller.cameraParameters.setPreviewSize(
-      size.width.round(),
-      size.height.round(),
-    );
+  Future<void> updatePreset(CameraControllerPreset preset) async {
+    final List<CameraSize> supportedSizes =
+        await _controller.cameraParameters.getSupportedPreviewSizes();
+
+    _sortCameraSizes(supportedSizes);
+    switch (preset) {
+      case CameraControllerPreset.low:
+        _controller.cameraParameters.setPreviewSize(
+          supportedSizes.first.width,
+          supportedSizes.first.height,
+        );
+        break;
+      case CameraControllerPreset.medium:
+        final int midIndex = ((supportedSizes.length - 1) / 2).round();
+        _controller.cameraParameters.setPreviewSize(
+          supportedSizes[midIndex].width,
+          supportedSizes[midIndex].height,
+        );
+        break;
+      case CameraControllerPreset.high:
+        _controller.cameraParameters.setPreviewSize(
+          supportedSizes.last.width,
+          supportedSizes.last.height,
+        );
+        break;
+    }
+
     return _controller.camera.setParameters(_controller.cameraParameters);
   }
 }
 
 class ImageCaptureOutput
-    with OutputSizeChangeListener
+    with PresetChangeListener
     implements intf.ImageCaptureOutput {
   late CameraController _controller;
 
@@ -330,21 +326,43 @@ class ImageCaptureOutput
   }
 
   @override
-  Future<void> updateOutputSize(Size size) {
-    _controller.cameraParameters.setPictureSize(
-      size.width.round(),
-      size.height.round(),
-    );
+  Future<void> updatePreset(CameraControllerPreset preset) async {
+    final List<CameraSize> supportedSizes =
+        await _controller.cameraParameters.getSupportedPictureSizes();
+
+    _sortCameraSizes(supportedSizes);
+    switch (preset) {
+      case CameraControllerPreset.low:
+        _controller.cameraParameters.setPictureSize(
+          supportedSizes.first.width,
+          supportedSizes.first.height,
+        );
+        break;
+      case CameraControllerPreset.medium:
+        final int midIndex = ((supportedSizes.length - 1) / 2).round();
+        _controller.cameraParameters.setPictureSize(
+          supportedSizes[midIndex].width,
+          supportedSizes[midIndex].height,
+        );
+        break;
+      case CameraControllerPreset.high:
+        _controller.cameraParameters.setPictureSize(
+          supportedSizes.last.width,
+          supportedSizes.last.height,
+        );
+        break;
+    }
+
     return _controller.camera.setParameters(_controller.cameraParameters);
   }
 }
 
 class VideoCaptureOutput
-    with OutputSizeChangeListener
+    with PresetChangeListener
     implements intf.VideoCaptureOutput {
   late CameraController _controller;
   late MediaRecorder mediaRecorder;
-  Size? specifiedOutputSize;
+  CameraSize? specifiedOutputSize;
 
   @override
   Future<void> attach(covariant CameraController controller) {
@@ -368,8 +386,8 @@ class VideoCaptureOutput
     mediaRecorder.setAudioEncoder(AudioEncoder.amrNb);
     if (specifiedOutputSize != null) {
       mediaRecorder.setVideoSize(
-        specifiedOutputSize!.width.round(),
-        specifiedOutputSize!.height.round(),
+        specifiedOutputSize!.width,
+        specifiedOutputSize!.height,
       );
     }
     mediaRecorder.setOutputFilePath(fileOutput);
@@ -385,11 +403,38 @@ class VideoCaptureOutput
   }
 
   @override
-  Future<void> updateOutputSize(Size size) async {
-    specifiedOutputSize = size;
+  Future<void> updatePreset(CameraControllerPreset preset) async {
+    final List<CameraSize> supportedSizes =
+        await _controller.cameraParameters.getSupportedVideoSizes() ??
+            await _controller.cameraParameters.getSupportedPreviewSizes();
+
+    _sortCameraSizes(supportedSizes);
+    switch (preset) {
+      case CameraControllerPreset.low:
+        specifiedOutputSize = supportedSizes.first;
+        break;
+      case CameraControllerPreset.medium:
+        final int midIndex = ((supportedSizes.length - 1) / 2).round();
+        specifiedOutputSize = supportedSizes[midIndex];
+        break;
+      case CameraControllerPreset.high:
+        specifiedOutputSize = supportedSizes.last;
+        break;
+    }
+    return;
   }
 }
 
-mixin OutputSizeChangeListener {
-  Future<void> updateOutputSize(Size size);
+mixin PresetChangeListener {
+  Future<void> updatePreset(CameraControllerPreset preset);
+}
+
+void _sortCameraSizes(List<CameraSize> sizes) {
+  sizes.sort((CameraSize a, CameraSize b) {
+    final int aArea = a.width * a.height;
+    final int bArea = b.width * b.height;
+    if (aArea > bArea) return 1;
+    if (bArea > aArea) return -1;
+    return 0;
+  });
 }

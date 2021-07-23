@@ -161,7 +161,6 @@ class CameraController implements intf.CameraController {
     return device.device.unlockForConfiguration();
   }
 
-  @override
   Future<List<Size>> getSupportedOutputSizes() async {
     final List<String> supportedPresets =
         await session.canSetSessionPresets(<String>[
@@ -190,7 +189,6 @@ class CameraController implements intf.CameraController {
     }).toList();
   }
 
-  @override
   Future<void> setOutputSize(Size size) {
     if (size.width == 352 && size.height == 288) {
       return session.setSessionPreset(CaptureSessionPreset.preset352x288);
@@ -205,6 +203,28 @@ class CameraController implements intf.CameraController {
     }
 
     throw ArgumentError.value(size, 'size', 'Size is not supported: ');
+  }
+
+  @override
+  Future<void> setControllerPreset(CameraControllerPreset preset) async {
+    final List<String> supportedPresets =
+        await session.canSetSessionPresets(<String>[
+      CaptureSessionPreset.preset352x288,
+      CaptureSessionPreset.preset640x480,
+      CaptureSessionPreset.iFrame960x540,
+      CaptureSessionPreset.preset1280x720,
+      CaptureSessionPreset.preset1920x1080,
+    ]);
+
+    switch (preset) {
+      case CameraControllerPreset.low:
+        return session.setSessionPreset(supportedPresets.first);
+      case CameraControllerPreset.medium:
+        final int midIndex = ((supportedPresets.length - 1) / 2).round();
+        return session.setSessionPreset(supportedPresets[midIndex]);
+      case CameraControllerPreset.high:
+        return session.setSessionPreset(supportedPresets.last);
+    }
   }
 }
 
