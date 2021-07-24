@@ -118,9 +118,9 @@ class _MyAppState extends State<_MyApp> {
 
     await cameraController.initialize();
 
-    print(await cameraController.getSupportedFocusModes());
-    print(await cameraController.getSupportedExposureModes());
-    print(await cameraController.getSupportedOutputSizes());
+    await cameraController.setControllerPreset(CameraControllerPreset.high);
+    print(await _previewOutput.getOutputSize());
+    print(await output.getOutputSize());
     return cameraController;
   }
 

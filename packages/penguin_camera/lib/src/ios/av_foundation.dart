@@ -43,6 +43,7 @@ class CameraController implements intf.CameraController {
   final List<CameraOutput> outputs;
 
   final CaptureSession session = CaptureSession();
+  String? capturePreset;
 
   @override
   Future<void> initialize() async {
@@ -161,50 +162,6 @@ class CameraController implements intf.CameraController {
     return device.device.unlockForConfiguration();
   }
 
-  Future<List<Size>> getSupportedOutputSizes() async {
-    final List<String> supportedPresets =
-        await session.canSetSessionPresets(<String>[
-      CaptureSessionPreset.preset352x288,
-      CaptureSessionPreset.preset640x480,
-      CaptureSessionPreset.iFrame960x540,
-      CaptureSessionPreset.preset1280x720,
-      CaptureSessionPreset.preset1920x1080,
-    ]);
-
-    return supportedPresets.map<Size>((String preset) {
-      switch (preset) {
-        case CaptureSessionPreset.preset352x288:
-          return Size(352, 288);
-        case CaptureSessionPreset.preset640x480:
-          return Size(640, 480);
-        case CaptureSessionPreset.iFrame960x540:
-          return Size(960, 540);
-        case CaptureSessionPreset.preset1280x720:
-          return Size(1280, 720);
-        case CaptureSessionPreset.preset1920x1080:
-          return Size(1920, 1080);
-      }
-
-      throw StateError('Unexpected preset returned: $preset');
-    }).toList();
-  }
-
-  Future<void> setOutputSize(Size size) {
-    if (size.width == 352 && size.height == 288) {
-      return session.setSessionPreset(CaptureSessionPreset.preset352x288);
-    } else if (size.width == 640 && size.height == 480) {
-      return session.setSessionPreset(CaptureSessionPreset.preset640x480);
-    } else if (size.width == 960 && size.height == 540) {
-      return session.setSessionPreset(CaptureSessionPreset.iFrame960x540);
-    } else if (size.width == 1280 && size.height == 720) {
-      return session.setSessionPreset(CaptureSessionPreset.preset1280x720);
-    } else if (size.width == 1920 && size.height == 1080) {
-      return session.setSessionPreset(CaptureSessionPreset.preset1920x1080);
-    }
-
-    throw ArgumentError.value(size, 'size', 'Size is not supported: ');
-  }
-
   @override
   Future<void> setControllerPreset(CameraControllerPreset preset) async {
     final List<String> supportedPresets =
@@ -218,11 +175,14 @@ class CameraController implements intf.CameraController {
 
     switch (preset) {
       case CameraControllerPreset.low:
+        capturePreset = supportedPresets.first;
         return session.setSessionPreset(supportedPresets.first);
       case CameraControllerPreset.medium:
         final int midIndex = ((supportedPresets.length - 1) / 2).round();
+        capturePreset = supportedPresets[midIndex];
         return session.setSessionPreset(supportedPresets[midIndex]);
       case CameraControllerPreset.high:
+        capturePreset = supportedPresets.last;
         return session.setSessionPreset(supportedPresets.last);
     }
   }
@@ -267,10 +227,12 @@ class CameraPlatform extends intf.PenguinCameraPlatform {
 }
 
 class PreviewOutput implements intf.PreviewOutput {
+  late CameraController _controller;
   late final Preview preview;
 
   @override
   Future<void> attach(covariant CameraController controller) {
+    _controller = controller;
     preview = Preview(controller: PreviewController(controller.session));
     return Future<void>.value();
   }
@@ -282,9 +244,27 @@ class PreviewOutput implements intf.PreviewOutput {
 
   @override
   Future<Widget> getPreviewWidget() => Future<Widget>.value(preview);
+
+  @override
+  Future<Size?> getOutputSize() async {
+    if (_controller.capturePreset == null) return null;
+    switch (_controller.capturePreset) {
+      case CaptureSessionPreset.preset352x288:
+        return Size(352, 288);
+      case CaptureSessionPreset.preset640x480:
+        return Size(640, 480);
+      case CaptureSessionPreset.iFrame1280x720:
+        return Size(1280, 720);
+      case CaptureSessionPreset.preset1280x720:
+        return Size(1280, 720);
+      case CaptureSessionPreset.preset1920x1080:
+        return Size(1920, 1080);
+    }
+  }
 }
 
 class ImageCaptureOutput implements intf.ImageCaptureOutput {
+  late CameraController _controller;
   late CapturePhotoOutput capturePhotoOutput;
   late CapturePhotoCaptureDelegate photoCaptureDelegate;
   late CapturePhotoSettings nextPhotoSettings = _createNextPhotoSettings();
@@ -292,6 +272,7 @@ class ImageCaptureOutput implements intf.ImageCaptureOutput {
 
   @override
   Future<void> attach(covariant CameraController controller) {
+    _controller = controller;
     capturePhotoOutput = CapturePhotoOutput();
     return controller.session.addOutput(capturePhotoOutput);
   }
@@ -370,13 +351,32 @@ class ImageCaptureOutput implements intf.ImageCaptureOutput {
         break;
     }
   }
+
+  @override
+  Future<Size?> getOutputSize() async {
+    if (_controller.capturePreset == null) return null;
+    switch (_controller.capturePreset) {
+      case CaptureSessionPreset.preset352x288:
+        return Size(352, 288);
+      case CaptureSessionPreset.preset640x480:
+        return Size(640, 480);
+      case CaptureSessionPreset.iFrame1280x720:
+        return Size(1280, 720);
+      case CaptureSessionPreset.preset1280x720:
+        return Size(1280, 720);
+      case CaptureSessionPreset.preset1920x1080:
+        return Size(1920, 1080);
+    }
+  }
 }
 
 class VideoCaptureOutput implements intf.VideoCaptureOutput {
+  late CameraController _controller;
   late CaptureMovieFileOutput movieFileOutput;
 
   @override
   Future<void> attach(covariant CameraController controller) {
+    _controller = controller;
     movieFileOutput = CaptureMovieFileOutput();
     return controller.session.addOutput(movieFileOutput);
   }
@@ -397,5 +397,22 @@ class VideoCaptureOutput implements intf.VideoCaptureOutput {
   @override
   Future<void> stopRecording() {
     return movieFileOutput.stopRecording();
+  }
+
+  @override
+  Future<Size?> getOutputSize() async {
+    if (_controller.capturePreset == null) return null;
+    switch (_controller.capturePreset) {
+      case CaptureSessionPreset.preset352x288:
+        return Size(352, 288);
+      case CaptureSessionPreset.preset640x480:
+        return Size(640, 480);
+      case CaptureSessionPreset.iFrame1280x720:
+        return Size(1280, 720);
+      case CaptureSessionPreset.preset1280x720:
+        return Size(1280, 720);
+      case CaptureSessionPreset.preset1920x1080:
+        return Size(1920, 1080);
+    }
   }
 }

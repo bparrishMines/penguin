@@ -91,6 +91,7 @@ abstract class VideoCaptureOutput extends CameraOutput {
 abstract class CameraOutput {
   Future<void> attach(CameraController controller);
   Future<void> detach(CameraController controller);
+  Future<Size?> getOutputSize();
 }
 
 enum CameraPosition { front, back, unspecified }

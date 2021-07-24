@@ -255,6 +255,12 @@ class PreviewOutput with PresetChangeListener implements intf.PreviewOutput {
 
     return _controller.camera.setParameters(_controller.cameraParameters);
   }
+
+  @override
+  Future<Size> getOutputSize() async {
+    final CameraSize size = await _controller.cameraParameters.getPreviewSize();
+    return Size(size.width.toDouble(), size.height.toDouble());
+  }
 }
 
 class ImageCaptureOutput
@@ -355,6 +361,12 @@ class ImageCaptureOutput
 
     return _controller.camera.setParameters(_controller.cameraParameters);
   }
+
+  @override
+  Future<Size> getOutputSize() async {
+    final CameraSize size = await _controller.cameraParameters.getPictureSize();
+    return Size(size.width.toDouble(), size.height.toDouble());
+  }
 }
 
 class VideoCaptureOutput
@@ -362,13 +374,20 @@ class VideoCaptureOutput
     implements intf.VideoCaptureOutput {
   late CameraController _controller;
   late MediaRecorder mediaRecorder;
-  CameraSize? specifiedOutputSize;
+  CameraSize? specifiedSize;
 
   @override
   Future<void> attach(covariant CameraController controller) {
     _controller = controller;
     mediaRecorder = MediaRecorder();
-    return mediaRecorder.setCamera(controller.camera);
+    mediaRecorder.setCamera(controller.camera);
+    mediaRecorder.setVideoSource(VideoSource.camera);
+    mediaRecorder.setAudioSource(AudioSource.defaultSource);
+    mediaRecorder.setOutputFormat(OutputFormat.mpeg4);
+    mediaRecorder.setVideoEncoder(VideoEncoder.mpeg4Sp);
+    mediaRecorder.setAudioEncoder(AudioEncoder.amrNb);
+    controller.camera.unlock();
+    return mediaRecorder.prepare();
   }
 
   @override
@@ -378,22 +397,7 @@ class VideoCaptureOutput
 
   @override
   Future<void> startRecording({required String fileOutput}) {
-    mediaRecorder.reset();
-    mediaRecorder.setVideoSource(VideoSource.camera);
-    mediaRecorder.setAudioSource(AudioSource.defaultSource);
-    mediaRecorder.setOutputFormat(OutputFormat.mpeg4);
-    mediaRecorder.setVideoEncoder(VideoEncoder.mpeg4Sp);
-    mediaRecorder.setAudioEncoder(AudioEncoder.amrNb);
-    if (specifiedOutputSize != null) {
-      mediaRecorder.setVideoSize(
-        specifiedOutputSize!.width,
-        specifiedOutputSize!.height,
-      );
-    }
     mediaRecorder.setOutputFilePath(fileOutput);
-
-    _controller.camera.unlock();
-    mediaRecorder.prepare();
     return mediaRecorder.start();
   }
 
@@ -404,24 +408,76 @@ class VideoCaptureOutput
 
   @override
   Future<void> updatePreset(CameraControllerPreset preset) async {
-    final List<CameraSize> supportedSizes =
-        await _controller.cameraParameters.getSupportedVideoSizes() ??
-            await _controller.cameraParameters.getSupportedPreviewSizes();
+    final List<CameraSize>? supportedSizes =
+        await _controller.cameraParameters.getSupportedVideoSizes();
 
-    _sortCameraSizes(supportedSizes);
+    if (supportedSizes != null) {
+      _sortCameraSizes(supportedSizes);
+      switch (preset) {
+        case CameraControllerPreset.low:
+          specifiedSize = supportedSizes.first;
+          mediaRecorder.setVideoSize(
+            supportedSizes.first.width,
+            supportedSizes.first.height,
+          );
+          break;
+        case CameraControllerPreset.medium:
+          final int midIndex = ((supportedSizes.length - 1) / 2).round();
+          specifiedSize = supportedSizes[midIndex];
+          mediaRecorder.setVideoSize(
+            supportedSizes[midIndex].width,
+            supportedSizes[midIndex].height,
+          );
+          break;
+        case CameraControllerPreset.high:
+          specifiedSize = supportedSizes.last;
+          mediaRecorder.setVideoSize(
+            supportedSizes.last.width,
+            supportedSizes.last.height,
+          );
+          break;
+      }
+      return;
+    }
+
+    final List<CameraSize> previewSizes =
+        await _controller.cameraParameters.getSupportedPreviewSizes();
+    _sortCameraSizes(previewSizes);
     switch (preset) {
       case CameraControllerPreset.low:
-        specifiedOutputSize = supportedSizes.first;
+        specifiedSize = previewSizes.first;
+        _controller.cameraParameters.setPreviewSize(
+          previewSizes.first.width,
+          previewSizes.first.height,
+        );
         break;
       case CameraControllerPreset.medium:
-        final int midIndex = ((supportedSizes.length - 1) / 2).round();
-        specifiedOutputSize = supportedSizes[midIndex];
+        final int midIndex = ((previewSizes.length - 1) / 2).round();
+        specifiedSize = previewSizes[midIndex];
+        _controller.cameraParameters.setPreviewSize(
+          previewSizes[midIndex].width,
+          previewSizes[midIndex].height,
+        );
         break;
       case CameraControllerPreset.high:
-        specifiedOutputSize = supportedSizes.last;
+        specifiedSize = previewSizes.last;
+        _controller.cameraParameters.setPreviewSize(
+          previewSizes.last.width,
+          previewSizes.last.height,
+        );
         break;
     }
-    return;
+
+    return _controller.camera.setParameters(_controller.cameraParameters);
+  }
+
+  @override
+  Future<Size?> getOutputSize() async {
+    if (specifiedSize == null) return null;
+    return Size(
+      specifiedSize!.width.toDouble(),
+      specifiedSize!.height.toDouble(),
+    );
   }
 }
 
