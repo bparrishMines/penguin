@@ -45,7 +45,7 @@ abstract class PenguinCameraPlatform extends PlatformInterface {
   });
   PreviewOutput createPreviewOutput();
   ImageCaptureOutput createImageCaptureOutput();
-  VideoCaptureOutput createVideoCaptureOutput();
+  VideoCaptureOutput createVideoCaptureOutput({bool includeAudio = false});
 }
 
 enum FocusMode {
@@ -79,7 +79,7 @@ abstract class ImageCaptureOutput extends CameraOutput {
 }
 
 abstract class VideoCaptureOutput extends CameraOutput {
-  factory VideoCaptureOutput() {
+  factory VideoCaptureOutput({bool includeAudio = false}) {
     return PenguinCameraPlatform.instance.createVideoCaptureOutput();
   }
 
@@ -160,7 +160,7 @@ class _EmptyPenguinCameraPlatform implements PenguinCameraPlatform {
   }
 
   @override
-  VideoCaptureOutput createVideoCaptureOutput() {
+  VideoCaptureOutput createVideoCaptureOutput({bool includeAudio = false}) {
     throw UnimplementedError();
   }
 }

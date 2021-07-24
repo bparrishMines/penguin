@@ -221,8 +221,8 @@ class CameraPlatform extends intf.PenguinCameraPlatform {
   }
 
   @override
-  VideoCaptureOutput createVideoCaptureOutput() {
-    return VideoCaptureOutput();
+  VideoCaptureOutput createVideoCaptureOutput({bool includeAudio = false}) {
+    return VideoCaptureOutput(includeAudio: includeAudio);
   }
 }
 
@@ -371,12 +371,28 @@ class ImageCaptureOutput implements intf.ImageCaptureOutput {
 }
 
 class VideoCaptureOutput implements intf.VideoCaptureOutput {
+  VideoCaptureOutput({bool includeAudio = false})
+      : _includeAudio = includeAudio;
+
+  final bool _includeAudio;
   late CameraController _controller;
   late CaptureMovieFileOutput movieFileOutput;
 
   @override
-  Future<void> attach(covariant CameraController controller) {
+  Future<void> attach(covariant CameraController controller) async {
     _controller = controller;
+
+    if (_includeAudio) {
+      final CaptureDevice? audioDevice =
+          await CaptureDevice.defaultDeviceWithMediaType(MediaType.audio);
+
+      if (audioDevice == null) {
+        throw StateError('Could not find an audio device for this device.');
+      }
+
+      controller.session.addInput(CaptureDeviceInput(audioDevice));
+    }
+
     movieFileOutput = CaptureMovieFileOutput();
     return controller.session.addOutput(movieFileOutput);
   }

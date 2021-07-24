@@ -186,8 +186,8 @@ class CameraPlatform extends intf.PenguinCameraPlatform {
   }
 
   @override
-  VideoCaptureOutput createVideoCaptureOutput() {
-    return VideoCaptureOutput();
+  VideoCaptureOutput createVideoCaptureOutput({bool includeAudio = false}) {
+    return VideoCaptureOutput(includeAudio: includeAudio);
   }
 }
 
@@ -372,6 +372,11 @@ class ImageCaptureOutput
 class VideoCaptureOutput
     with PresetChangeListener
     implements intf.VideoCaptureOutput {
+  VideoCaptureOutput({bool includeAudio = false})
+      : _includeAudio = includeAudio;
+
+  final bool _includeAudio;
+
   late CameraController _controller;
   late MediaRecorder mediaRecorder;
   CameraSize? specifiedSize;
@@ -382,10 +387,10 @@ class VideoCaptureOutput
     mediaRecorder = MediaRecorder();
     mediaRecorder.setCamera(controller.camera);
     mediaRecorder.setVideoSource(VideoSource.camera);
-    mediaRecorder.setAudioSource(AudioSource.defaultSource);
+    if (_includeAudio) mediaRecorder.setAudioSource(AudioSource.defaultSource);
     mediaRecorder.setOutputFormat(OutputFormat.mpeg4);
     mediaRecorder.setVideoEncoder(VideoEncoder.mpeg4Sp);
-    mediaRecorder.setAudioEncoder(AudioEncoder.amrNb);
+    if (_includeAudio) mediaRecorder.setAudioEncoder(AudioEncoder.amrNb);
     controller.camera.unlock();
     return mediaRecorder.prepare();
   }
