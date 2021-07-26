@@ -34,7 +34,7 @@
 - (void)testStartRecordingToOutputFileURL {
   AFPCaptureFileOutputRecordingDelegateProxy *testDelegateProxy = [[AFPCaptureFileOutputRecordingDelegateProxy alloc] init];
   [_testCaptureFileOutputProxy startRecordingToOutputFileURL:@"https://www.google.com" delegate:testDelegateProxy];
-  OCMVerify([_mockCaptureFileOutput startRecordingToOutputFileURL:[NSURL URLWithString:@"https://www.google.com"]
+  OCMVerify([_mockCaptureFileOutput startRecordingToOutputFileURL:[NSURL fileURLWithPath:@"https://www.google.com"]
                                                 recordingDelegate:testDelegateProxy]);
 }
 
