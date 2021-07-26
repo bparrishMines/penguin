@@ -1627,12 +1627,10 @@ class CaptureMovieFileOutput extends CaptureFileOutput
 ///
 /// Defines an interface for delegates of [CaptureFileOutput] to respond to
 /// events that occur in the process of recording a single file.
-///
-/// The delegate of an [CaptureFileOutput] object must adopt the
-/// [CaptureFileOutputRecordingDelegate] protocol.
 @Reference('av_foundation/av_foundation/CaptureFileOutputRecordingDelegate')
 class CaptureFileOutputRecordingDelegate
     with $CaptureFileOutputRecordingDelegate {
+  /// Creates a [CaptureFileOutputRecordingDelegate].
   CaptureFileOutputRecordingDelegate() {
     _channel.$create$(this, $owner: true);
   }
