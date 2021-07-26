@@ -67,4 +67,44 @@
   NSArray<NSString *> *validPresets = [_testCaptureSessionProxy canSetSessionPresets:@[AVCaptureSessionPresetMedium, AVCaptureSessionPresetLow]];
   XCTAssertEqualObjects(validPresets, @[AVCaptureSessionPresetMedium]);
 }
+
+- (void)testCanAddInput {
+  OCMStub([_mockCaptureSession canAddInput:OCMOCK_ANY]).andReturn(NO);
+  XCTAssertEqualObjects([_testCaptureSessionProxy canAddInput:nil], @(NO));
+}
+
+- (void)testCanAddOutput {
+  OCMStub([_mockCaptureSession canAddOutput:OCMOCK_ANY]).andReturn(YES);
+  XCTAssertEqualObjects([_testCaptureSessionProxy canAddOutput:nil], @(YES));
+}
+
+
+- (void)testIsInterrupted {
+  OCMStub([_mockCaptureSession isInterrupted]).andReturn(NO);
+  XCTAssertEqualObjects([_testCaptureSessionProxy isInterrupted], @(NO));
+}
+
+
+- (void)testIsRunning {
+  OCMStub([_mockCaptureSession isRunning]).andReturn(YES);
+  XCTAssertEqualObjects([_testCaptureSessionProxy isRunning], @(YES));
+}
+
+- (void)testRemoveInput {
+  id mockCaptureInput = OCMClassMock([AVCaptureInput class]);
+  AFPCaptureInputProxy *testCaptureInputProxy = [[AFPCaptureInputProxy alloc] initWithCaptureInput:mockCaptureInput];
+
+  
+  [_testCaptureSessionProxy removeInput:testCaptureInputProxy];
+  OCMVerify([_mockCaptureSession removeInput:mockCaptureInput]);
+}
+
+- (void)testRemoveOutput {
+  id mockCaptureOutput = OCMClassMock([AVCaptureOutput class]);
+  AFPCaptureOutputProxy *testCaptureOutputProxy = [[AFPCaptureOutputProxy alloc]
+                                                  initWithCaptureOutput:mockCaptureOutput];
+  
+  [_testCaptureSessionProxy removeOutput:testCaptureOutputProxy];
+  OCMVerify([_mockCaptureSession removeOutput:mockCaptureOutput]);
+}
 @end

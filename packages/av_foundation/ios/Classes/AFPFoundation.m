@@ -33,6 +33,8 @@
                                         position:@(captureDevice.position)
                       isSmoothAutoFocusSupported:@(captureDevice.isSmoothAutoFocusSupported)
                                         hasFlash:@(captureDevice.hasFlash)
+                                        hasTorch:@(captureDevice.hasTorch)
+                          maxAvailableTorchLevel:@(AVCaptureMaxAvailableTorchLevel)
                                       completion:^(REFPairedInstance *pairedInstance, NSError *error) {}];
   return self;
 }
@@ -159,6 +161,48 @@
   [_captureDevice setVideoZoomFactor:factor.floatValue];
   return nil;
 }
+
+- (NSNumber *)isTorchActive {
+  return @(_captureDevice.isTorchActive);
+}
+
+
+- (NSNumber *)isTorchAvailable {
+  return @(_captureDevice.isTorchAvailable);
+}
+
+
+- (id _Nullable)setTorchMode:(NSNumber * _Nullable)mode {
+  [_captureDevice setTorchMode:mode.intValue];
+  return nil;
+}
+
+
+- (id _Nullable)setTorchModeOnWithLevel:(NSNumber * _Nullable)torchLevel {
+  NSError *error;
+  [_captureDevice setTorchModeOnWithLevel:torchLevel.floatValue error:&error];
+  if (error) {
+    @throw [NSException exceptionWithName:@"AFPTorchException" reason:error.description userInfo:nil];
+  }
+  return nil;
+}
+
+
+- (NSNumber *)torchLevel {
+  return @(_captureDevice.torchLevel);
+}
+
+
+- (NSArray<NSNumber *> *)torchModesSupported:(NSArray<NSNumber *> * _Nullable)modes {
+  NSMutableArray<NSNumber *> *validModes = [NSMutableArray array];
+  for (NSNumber *mode in modes) {
+    if ([_captureDevice isTorchModeSupported:mode.intValue]) {
+      [validModes addObject:mode];
+    }
+  }
+  return validModes;
+}
+
 @end
 
 @implementation AFPCaptureSessionProxy
@@ -209,6 +253,41 @@
     }
   }
   return validPresets;
+}
+
+- (NSNumber *)canAddInput:(NSObject<_AFPCaptureInput> * _Nullable)input {
+  AFPCaptureInputProxy *inputProxy = (AFPCaptureInputProxy *)input;
+  return @([_captureSession canAddInput:inputProxy.captureInput]);
+}
+
+
+- (id _Nullable)canAddOutput:(NSObject<_AFPCaptureOutput> * _Nullable)output {
+  AFPCaptureOutputProxy *outputProxy = (AFPCaptureOutputProxy *)output;
+  return @([_captureSession canAddOutput:outputProxy.captureOutput]);
+}
+
+
+- (NSNumber *)isInterrupted {
+  return @(_captureSession.isInterrupted);
+}
+
+
+- (NSNumber *)isRunning {
+  return @(_captureSession.isRunning);
+}
+
+
+- (id _Nullable)removeInput:(NSObject<_AFPCaptureInput> * _Nullable)input {
+  AFPCaptureInputProxy *inputProxy = (AFPCaptureInputProxy *)input;
+  [_captureSession removeInput:inputProxy.captureInput];
+  return nil;
+}
+
+
+- (id _Nullable)removeOutput:(NSObject<_AFPCaptureOutput> * _Nullable)output {
+  AFPCaptureOutputProxy *outputProxy = (AFPCaptureOutputProxy *)output;
+  [_captureSession removeOutput:outputProxy.captureOutput];
+  return nil;
 }
 @end
 
@@ -293,6 +372,24 @@
     _captureOutput = captureOutput;
   }
   return self;
+}
+
+- (instancetype)initWithCaptureOutput:(AVCaptureOutput *)captureOutput
+                      implementations:(AFPLibraryImplementations *)implementations {
+  self = [self initWithCaptureOutput:captureOutput];
+  [implementations.channelCaptureOutput _create_:self
+                                          _owner:NO
+                                      completion:^(REFPairedInstance *instance, NSError * error) {}];
+  return self;
+}
+
+- (AFPCaptureConnectionProxy *_Nullable)connectionWithMediaType:(NSString * _Nullable)mediaType {
+  AVCaptureConnection *connection = [_captureOutput connectionWithMediaType:mediaType];
+  if (connection) {
+    AFPCaptureConnectionProxy *proxy = [[AFPCaptureConnectionProxy alloc] initWithCaptureConnection:connection];
+    return proxy;
+  }
+  return nil;
 }
 @end
 
@@ -547,6 +644,23 @@ didFinishRecordingToOutputFileAtURL:(nonnull NSURL *)outputFileURL
   if (self) {
     _captureConnection = captureConnection;
   }
+  return self;
+}
+
+- (instancetype)initWithCaptureConnection:(AVCaptureConnection *)captureConnection
+                          implementations:(AFPLibraryImplementations *)implementations {
+  self = [self initWithCaptureConnection:captureConnection];
+  
+  AFPCaptureOutputProxy *outputProxy = [[AFPCaptureOutputProxy alloc] initWithCaptureOutput:captureConnection.output
+                                                                            implementations:implementations];
+  [implementations.channelCaptureConnection _create_:self
+                                              _owner:false
+                                          inputPorts:[AFPCaptureInputPortProxy asProxyList:captureConnection.inputPorts
+                                                                           implementations:implementations]
+                                              output:outputProxy
+                                          completion:^(REFPairedInstance *instance, NSError *error) {
+    
+  }];
   return self;
 }
 

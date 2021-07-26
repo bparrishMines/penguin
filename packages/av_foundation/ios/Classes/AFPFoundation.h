@@ -41,6 +41,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface AFPCaptureOutputProxy : NSObject<_AFPCaptureOutput>
 @property (readonly) AVCaptureOutput *captureOutput;
 - (instancetype)initWithCaptureOutput:(AVCaptureOutput *)captureOutput;
+- (instancetype)initWithCaptureOutput:(AVCaptureOutput *)captureOutput
+                      implementations:(AFPLibraryImplementations *)implementations;
 @end
 
 API_AVAILABLE(ios(10.0))
@@ -103,6 +105,8 @@ API_AVAILABLE(ios(11.0))
 - (instancetype)initWithInputPorts:(NSArray<AFPCaptureInputPortProxy *> *)ports
                             output:(AFPCaptureOutputProxy *)output;
 - (instancetype)initWithCaptureConnection:(AVCaptureConnection *)captureConnection;
+- (instancetype)initWithCaptureConnection:(AVCaptureConnection *)captureConnection
+                          implementations:(AFPLibraryImplementations *)implementations;
 @end
 NS_ASSUME_NONNULL_END
 

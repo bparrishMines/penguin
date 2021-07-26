@@ -26,6 +26,10 @@
 - (BOOL)hasFlash {
   return NO;
 }
+
+- (BOOL)hasTorch {
+  return YES;
+}
 @end
 
 @interface AFPCaptureDeviceDiscoverySessionTests : XCTestCase

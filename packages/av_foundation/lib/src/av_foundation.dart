@@ -776,7 +776,11 @@ class CapturePhotoCaptureDelegate with $CapturePhotoCaptureDelegate {
 /// You can add concrete [CaptureOutput] instances to a capture session using
 /// [CaptureSession.addOutput].
 @Reference('av_foundation/av_foundation/CaptureOutput')
-abstract class CaptureOutput with $CaptureOutput {
+class CaptureOutput with $CaptureOutput {
+  /// Construct a [CaptureOutput].
+  @visibleForTesting
+  CaptureOutput();
+
   static $CaptureOutputChannel get _channel =>
       ChannelRegistrar.instance.implementations.channelCaptureOutput;
 
@@ -1847,6 +1851,10 @@ class CaptureConnection with $CaptureConnection {
       output: output,
     );
   }
+
+  /// Constructs a Dart [CaptureConnection] without creating the ios object;
+  @ReferenceConstructor(ignore: true)
+  CaptureConnection.withoutCreate(this.inputPorts, this.output);
 
   static $CaptureConnectionChannel get _channel =>
       ChannelRegistrar.instance.implementations.channelCaptureConnection;
