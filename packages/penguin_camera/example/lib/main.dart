@@ -38,6 +38,7 @@ class _MyAppState extends State<_MyApp> {
   PreviewOutput _previewOutput = PreviewOutput();
   late ImageCaptureOutput _imageCaptureOutput;
   late VideoCaptureOutput _videoCaptureOutput;
+  Size? _previewOutputSize;
 
   CameraPosition _cameraPosition = CameraPosition.front;
 
@@ -87,7 +88,7 @@ class _MyAppState extends State<_MyApp> {
     await _getPicturePermission();
     await _getAudioPermission();
 
-    _videoCaptureOutput = VideoCaptureOutput();
+    _videoCaptureOutput = VideoCaptureOutput(includeAudio: true);
     _cameraController = await _setupCameraController(_videoCaptureOutput);
 
     final List<FocusMode> supportedFocusMode =
@@ -119,8 +120,7 @@ class _MyAppState extends State<_MyApp> {
     await cameraController.initialize();
 
     await cameraController.setControllerPreset(CameraControllerPreset.high);
-    print(await _previewOutput.getOutputSize());
-    print(await output.getOutputSize());
+    _previewOutputSize = await _previewOutput.getOutputSize();
     return cameraController;
   }
 
@@ -242,14 +242,16 @@ class _MyAppState extends State<_MyApp> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
           Expanded(
-            child: Container(
-              decoration: const BoxDecoration(color: Colors.black),
+              child: Container(
+            decoration: const BoxDecoration(color: Colors.black),
+            child: Center(
               child: CameraPreview(
                 previewOutput: _previewOutput,
                 cameraMode: currentMode,
+                size: _previewOutputSize,
               ),
             ),
-          ),
+          )),
           Container(
             decoration: const BoxDecoration(color: Colors.black),
             padding: const EdgeInsets.only(
@@ -325,11 +327,14 @@ class CameraPreview extends StatelessWidget {
     Key? key,
     required this.previewOutput,
     required this.cameraMode,
+    this.size,
   }) : super(key: key);
 
   final PreviewOutput previewOutput;
 
   final CameraMode cameraMode;
+
+  final Size? size;
 
   @override
   Widget build(BuildContext context) {
@@ -341,6 +346,12 @@ class CameraPreview extends StatelessWidget {
           future: previewOutput.getPreviewWidget(),
           builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
             if (snapshot.hasData) {
+              if (size != null) {
+                return AspectRatio(
+                  aspectRatio: size!.height / size!.width,
+                  child: snapshot.data!,
+                );
+              }
               return snapshot.data!;
             }
 
