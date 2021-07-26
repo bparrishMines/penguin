@@ -1,6 +1,7 @@
 ## 0.4.3+1
 
 * Remove tracker callback when weak reference is removed on iOS.
+* Fix crash from null callback.
 
 ## 0.4.3
 

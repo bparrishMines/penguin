@@ -449,7 +449,7 @@ didFinishProcessingPhoto:(AVCapturePhoto *)photo
 - (id _Nullable)startRecordingToOutputFileURL:(NSString *)outputFileURL
                                      delegate:(NSObject<_AFPCaptureFileOutputRecordingDelegate> *)delegate {
   AVCaptureFileOutput *captureFileOuput = (AVCaptureFileOutput *) [self captureOutput];
-  [captureFileOuput startRecordingToOutputFileURL:[NSURL URLWithString:outputFileURL]
+  [captureFileOuput startRecordingToOutputFileURL:[NSURL fileURLWithPath:outputFileURL]
                                 recordingDelegate:(AFPCaptureFileOutputRecordingDelegateProxy *)delegate];
   return nil;
 }

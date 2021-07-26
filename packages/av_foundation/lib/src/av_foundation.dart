@@ -1599,6 +1599,11 @@ abstract class CaptureFileOutput extends CaptureOutput with $CaptureFileOutput {
 @Reference('av_foundation/av_foundation/CaptureMovieFileOutput')
 class CaptureMovieFileOutput extends CaptureFileOutput
     with $CaptureMovieFileOutput {
+  /// Creates a movie file output.
+  CaptureMovieFileOutput() {
+    _channel.$create$(this, $owner: true);
+  }
+
   static $CaptureMovieFileOutputChannel get _channel =>
       ChannelRegistrar.instance.implementations.channelCaptureMovieFileOutput;
 
@@ -1622,12 +1627,14 @@ class CaptureMovieFileOutput extends CaptureFileOutput
 ///
 /// Defines an interface for delegates of [CaptureFileOutput] to respond to
 /// events that occur in the process of recording a single file.
-///
-/// The delegate of an [CaptureFileOutput] object must adopt the
-/// [CaptureFileOutputRecordingDelegate] protocol.
 @Reference('av_foundation/av_foundation/CaptureFileOutputRecordingDelegate')
 class CaptureFileOutputRecordingDelegate
     with $CaptureFileOutputRecordingDelegate {
+  /// Creates a [CaptureFileOutputRecordingDelegate].
+  CaptureFileOutputRecordingDelegate() {
+    _channel.$create$(this, $owner: true);
+  }
+
   // ignore: unused_element
   static $CaptureFileOutputRecordingDelegateChannel get _channel =>
       ChannelRegistrar
