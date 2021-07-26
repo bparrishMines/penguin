@@ -12,7 +12,7 @@
 
 @implementation _AFPFinishProcessingPhotoCallbackChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
-  return self = [super initWithMessenger:messenger name:@"ios_avfoundation/avfoundation/FinishProcessingPhotoCallback"];
+  return self = [super initWithMessenger:messenger name:@"av_foundation/av_foundation/FinishProcessingPhotoCallback"];
 }
 
 - (void)__create:(_AFPFinishProcessingPhotoCallback)_instance
@@ -78,7 +78,7 @@
 
 @implementation _AFPCapturePhotoOutputChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
-  return self = [super initWithMessenger:messenger name:@"ios_avfoundation/avfoundation/CapturePhotoOutput"];
+  return self = [super initWithMessenger:messenger name:@"av_foundation/av_foundation/CapturePhotoOutput"];
 }
 
 
@@ -106,7 +106,7 @@
 
 @implementation _AFPCapturePhotoSettingsChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
-  return self = [super initWithMessenger:messenger name:@"ios_avfoundation/avfoundation/CapturePhotoSettings"];
+  return self = [super initWithMessenger:messenger name:@"av_foundation/av_foundation/CapturePhotoSettings"];
 }
 
 
@@ -147,7 +147,7 @@
 
 @implementation _AFPCapturePhotoCaptureDelegateChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
-  return self = [super initWithMessenger:messenger name:@"ios_avfoundation/avfoundation/CapturePhotoCaptureDelegate"];
+  return self = [super initWithMessenger:messenger name:@"av_foundation/av_foundation/CapturePhotoCaptureDelegate"];
 }
 
 
@@ -173,7 +173,7 @@
 
 @implementation _AFPCaptureOutputChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
-  return self = [super initWithMessenger:messenger name:@"ios_avfoundation/avfoundation/CaptureOutput"];
+  return self = [super initWithMessenger:messenger name:@"av_foundation/av_foundation/CaptureOutput"];
 }
 
 
@@ -193,11 +193,13 @@
 
 
 
+
+
 @end
 
 @implementation _AFPCapturePhotoChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
-  return self = [super initWithMessenger:messenger name:@"ios_avfoundation/avfoundation/CapturePhoto"];
+  return self = [super initWithMessenger:messenger name:@"av_foundation/av_foundation/CapturePhoto"];
 }
 
 
@@ -223,7 +225,7 @@
 
 @implementation _AFPCaptureDeviceInputChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
-  return self = [super initWithMessenger:messenger name:@"ios_avfoundation/avfoundation/CaptureDeviceInput"];
+  return self = [super initWithMessenger:messenger name:@"av_foundation/av_foundation/CaptureDeviceInput"];
 }
 
 
@@ -249,7 +251,7 @@
 
 @implementation _AFPCaptureInputChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
-  return self = [super initWithMessenger:messenger name:@"ios_avfoundation/avfoundation/CaptureInput"];
+  return self = [super initWithMessenger:messenger name:@"av_foundation/av_foundation/CaptureInput"];
 }
 
 
@@ -273,7 +275,7 @@
 
 @implementation _AFPCaptureSessionChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
-  return self = [super initWithMessenger:messenger name:@"ios_avfoundation/avfoundation/CaptureSession"];
+  return self = [super initWithMessenger:messenger name:@"av_foundation/av_foundation/CaptureSession"];
 }
 
 
@@ -305,11 +307,23 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 @end
 
 @implementation _AFPCaptureDeviceChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
-  return self = [super initWithMessenger:messenger name:@"ios_avfoundation/avfoundation/CaptureDevice"];
+  return self = [super initWithMessenger:messenger name:@"av_foundation/av_foundation/CaptureDevice"];
 }
 
 
@@ -325,13 +339,29 @@
 
  hasFlash:(NSNumber * _Nullable)hasFlash
 
+ hasTorch:(NSNumber * _Nullable)hasTorch
+
+ maxAvailableTorchLevel:(NSNumber * _Nullable)maxAvailableTorchLevel
+
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
   [self createNewInstancePair:_instance
                     arguments:@[@"",
-  uniqueId ? (NSObject *) uniqueId : [NSNull null],position ? (NSObject *) position : [NSNull null],isSmoothAutoFocusSupported ? (NSObject *) isSmoothAutoFocusSupported : [NSNull null],hasFlash ? (NSObject *) hasFlash : [NSNull null],]
+  uniqueId ? (NSObject *) uniqueId : [NSNull null],position ? (NSObject *) position : [NSNull null],isSmoothAutoFocusSupported ? (NSObject *) isSmoothAutoFocusSupported : [NSNull null],hasFlash ? (NSObject *) hasFlash : [NSNull null],hasTorch ? (NSObject *) hasTorch : [NSNull null],maxAvailableTorchLevel ? (NSObject *) maxAvailableTorchLevel : [NSNull null],]
                         owner:_owner
                    completion:completion];
 }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -377,7 +407,7 @@
 
 @implementation _AFPCaptureDeviceDiscoverySessionChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
-  return self = [super initWithMessenger:messenger name:@"ios_avfoundation/avfoundation/CaptureDeviceDiscoverySession"];
+  return self = [super initWithMessenger:messenger name:@"av_foundation/av_foundation/CaptureDeviceDiscoverySession"];
 }
 
 
@@ -407,7 +437,7 @@
 
 @implementation _AFPPreviewControllerChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
-  return self = [super initWithMessenger:messenger name:@"ios_avfoundation/avfoundation/PreviewController"];
+  return self = [super initWithMessenger:messenger name:@"av_foundation/av_foundation/PreviewController"];
 }
 
 
@@ -433,7 +463,7 @@
 
 @implementation _AFPCaptureFileOutputChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
-  return self = [super initWithMessenger:messenger name:@"ios_avfoundation/avfoundation/CaptureFileOutput"];
+  return self = [super initWithMessenger:messenger name:@"av_foundation/av_foundation/CaptureFileOutput"];
 }
 
 
@@ -467,7 +497,7 @@
 
 @implementation _AFPCaptureMovieFileOutputChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
-  return self = [super initWithMessenger:messenger name:@"ios_avfoundation/avfoundation/CaptureMovieFileOutput"];
+  return self = [super initWithMessenger:messenger name:@"av_foundation/av_foundation/CaptureMovieFileOutput"];
 }
 
 
@@ -493,7 +523,7 @@
 
 @implementation _AFPCaptureFileOutputRecordingDelegateChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
-  return self = [super initWithMessenger:messenger name:@"ios_avfoundation/avfoundation/CaptureFileOutputRecordingDelegate"];
+  return self = [super initWithMessenger:messenger name:@"av_foundation/av_foundation/CaptureFileOutputRecordingDelegate"];
 }
 
 
@@ -517,7 +547,7 @@
 
 @implementation _AFPCaptureConnectionChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
-  return self = [super initWithMessenger:messenger name:@"ios_avfoundation/avfoundation/CaptureConnection"];
+  return self = [super initWithMessenger:messenger name:@"av_foundation/av_foundation/CaptureConnection"];
 }
 
 
@@ -555,7 +585,7 @@
 
 @implementation _AFPCaptureInputPortChannel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
-  return self = [super initWithMessenger:messenger name:@"ios_avfoundation/avfoundation/CaptureInputPort"];
+  return self = [super initWithMessenger:messenger name:@"av_foundation/av_foundation/CaptureInputPort"];
 }
 
 
@@ -823,6 +853,16 @@
 
 
 
+- (id _Nullable)_connectionWithMediaType:(NSObject<_AFPCaptureOutput> *)_instance
+
+                     mediaType:(NSString * _Nullable)mediaType
+ {
+  return [_instance connectionWithMediaType:mediaType
+          ];
+}
+
+
+
 - (id _Nullable)invokeStaticMethod:(nonnull REFTypeChannelMessenger *)messenger
                         methodName:(nonnull NSString *)methodName
                          arguments:(nonnull NSArray *)arguments {
@@ -851,6 +891,14 @@
                   methodName:(nonnull NSString *)methodName
                    arguments:(nonnull NSArray *)arguments {
   NSObject<_AFPCaptureOutput> *value = (NSObject<_AFPCaptureOutput> *) instance;
+  
+  
+  if ([@"connectionWithMediaType" isEqualToString:methodName]) {
+    return [self _connectionWithMediaType:value
+               
+               mediaType:arguments[0] ];
+  }
+  
   
   
   NSLog(@"Unable to invoke %@.%@", instance, methodName);
@@ -1071,6 +1119,62 @@
 
 
 
+- (id _Nullable)_canAddInput:(NSObject<_AFPCaptureSession> *)_instance
+
+                     input:(NSObject<_AFPCaptureInput> * _Nullable)input
+ {
+  return [_instance canAddInput:input
+          ];
+}
+
+
+
+- (id _Nullable)_removeInput:(NSObject<_AFPCaptureSession> *)_instance
+
+                     input:(NSObject<_AFPCaptureInput> * _Nullable)input
+ {
+  return [_instance removeInput:input
+          ];
+}
+
+
+
+- (id _Nullable)_canAddOutput:(NSObject<_AFPCaptureSession> *)_instance
+
+                     output:(NSObject<_AFPCaptureOutput> * _Nullable)output
+ {
+  return [_instance canAddOutput:output
+          ];
+}
+
+
+
+- (id _Nullable)_removeOutput:(NSObject<_AFPCaptureSession> *)_instance
+
+                     output:(NSObject<_AFPCaptureOutput> * _Nullable)output
+ {
+  return [_instance removeOutput:output
+          ];
+}
+
+
+
+- (id _Nullable)_isRunning:(NSObject<_AFPCaptureSession> *)_instance
+ {
+  return [_instance isRunning
+          ];
+}
+
+
+
+- (id _Nullable)_isInterrupted:(NSObject<_AFPCaptureSession> *)_instance
+ {
+  return [_instance isInterrupted
+          ];
+}
+
+
+
 - (id _Nullable)invokeStaticMethod:(nonnull REFTypeChannelMessenger *)messenger
                         methodName:(nonnull NSString *)methodName
                          arguments:(nonnull NSArray *)arguments {
@@ -1145,6 +1249,52 @@
                presets:arguments[0] ];
   }
   
+  else
+  
+  if ([@"canAddInput" isEqualToString:methodName]) {
+    return [self _canAddInput:value
+               
+               input:arguments[0] ];
+  }
+  
+  else
+  
+  if ([@"removeInput" isEqualToString:methodName]) {
+    return [self _removeInput:value
+               
+               input:arguments[0] ];
+  }
+  
+  else
+  
+  if ([@"canAddOutput" isEqualToString:methodName]) {
+    return [self _canAddOutput:value
+               
+               output:arguments[0] ];
+  }
+  
+  else
+  
+  if ([@"removeOutput" isEqualToString:methodName]) {
+    return [self _removeOutput:value
+               
+               output:arguments[0] ];
+  }
+  
+  else
+  
+  if ([@"isRunning" isEqualToString:methodName]) {
+    return [self _isRunning:value
+               ];
+  }
+  
+  else
+  
+  if ([@"isInterrupted" isEqualToString:methodName]) {
+    return [self _isInterrupted:value
+               ];
+  }
+  
   
   
   NSLog(@"Unable to invoke %@.%@", instance, methodName);
@@ -1163,6 +1313,10 @@
                                  isSmoothAutoFocusSupported:(NSNumber *)isSmoothAutoFocusSupported
 
                                  hasFlash:(NSNumber *)hasFlash
+
+                                 hasTorch:(NSNumber *)hasTorch
+
+                                 maxAvailableTorchLevel:(NSNumber *)maxAvailableTorchLevel
 {
   @throw [NSException exceptionWithName:@"_AFPUnimplementedException" reason:nil userInfo:nil];
 }
@@ -1335,6 +1489,60 @@
 
 
 
+- (id _Nullable)_isTorchAvailable:(NSObject<_AFPCaptureDevice> *)_instance
+ {
+  return [_instance isTorchAvailable
+          ];
+}
+
+
+
+- (id _Nullable)_isTorchActive:(NSObject<_AFPCaptureDevice> *)_instance
+ {
+  return [_instance isTorchActive
+          ];
+}
+
+
+
+- (id _Nullable)_torchLevel:(NSObject<_AFPCaptureDevice> *)_instance
+ {
+  return [_instance torchLevel
+          ];
+}
+
+
+
+- (id _Nullable)_setTorchMode:(NSObject<_AFPCaptureDevice> *)_instance
+
+                     mode:(NSNumber * _Nullable)mode
+ {
+  return [_instance setTorchMode:mode
+          ];
+}
+
+
+
+- (id _Nullable)_torchModesSupported:(NSObject<_AFPCaptureDevice> *)_instance
+
+                     modes:(NSArray<NSNumber *> * _Nullable)modes
+ {
+  return [_instance torchModesSupported:modes
+          ];
+}
+
+
+
+- (id _Nullable)_setTorchModeOnWithLevel:(NSObject<_AFPCaptureDevice> *)_instance
+
+                     torchLevel:(NSNumber * _Nullable)torchLevel
+ {
+  return [_instance setTorchModeOnWithLevel:torchLevel
+          ];
+}
+
+
+
 - (id _Nullable)invokeStaticMethod:(nonnull REFTypeChannelMessenger *)messenger
                         methodName:(nonnull NSString *)methodName
                          arguments:(nonnull NSArray *)arguments {
@@ -1358,7 +1566,7 @@
   
   if ([@"" isEqualToString:constructorName]) {
     return [self _create_:messenger
-            uniqueId:arguments[1] position:arguments[2] isSmoothAutoFocusSupported:arguments[3] hasFlash:arguments[4] ];
+            uniqueId:arguments[1] position:arguments[2] isSmoothAutoFocusSupported:arguments[3] hasFlash:arguments[4] hasTorch:arguments[5] maxAvailableTorchLevel:arguments[6] ];
   }
   
   
@@ -1497,6 +1705,51 @@
   if ([@"cancelVideoZoomRamp" isEqualToString:methodName]) {
     return [self _cancelVideoZoomRamp:value
                ];
+  }
+  
+  else
+  
+  if ([@"isTorchAvailable" isEqualToString:methodName]) {
+    return [self _isTorchAvailable:value
+               ];
+  }
+  
+  else
+  
+  if ([@"isTorchActive" isEqualToString:methodName]) {
+    return [self _isTorchActive:value
+               ];
+  }
+  
+  else
+  
+  if ([@"torchLevel" isEqualToString:methodName]) {
+    return [self _torchLevel:value
+               ];
+  }
+  
+  else
+  
+  if ([@"setTorchMode" isEqualToString:methodName]) {
+    return [self _setTorchMode:value
+               
+               mode:arguments[0] ];
+  }
+  
+  else
+  
+  if ([@"torchModesSupported" isEqualToString:methodName]) {
+    return [self _torchModesSupported:value
+               
+               modes:arguments[0] ];
+  }
+  
+  else
+  
+  if ([@"setTorchModeOnWithLevel" isEqualToString:methodName]) {
+    return [self _setTorchModeOnWithLevel:value
+               
+               torchLevel:arguments[0] ];
   }
   
   

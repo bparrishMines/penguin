@@ -15,7 +15,6 @@
 }
 
 - (void)setUp {
-  AVCaptureVideoOrientation
   _mockImplementations = OCMClassMock([AFPLibraryImplementations class]);
   _mockTypeChannelMessenger = OCMClassMock([REFTypeChannelMessenger class]);
   _mockCapturePhotoSettings = OCMClassMock([AVCapturePhotoSettings class]);

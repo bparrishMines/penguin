@@ -31,6 +31,20 @@ abstract class CaptureExposureMode {
   static const int continuousAutoExposure = 2;
 }
 
+/// Constants to specify the capture device’s torch mode.
+abstract class CaptureTorchMode {
+  CaptureTorchMode._();
+
+  /// The capture device torch is always off.
+  static const int off = 0;
+
+  /// The capture device torch is always on.
+  static const int on = 1;
+
+  /// The capture device continuously monitors light levels and uses the torch when necessary.
+  static const int auto = 2;
+}
+
 // TODO: CaptureVideoPreviewLayer
 /// Constants indicating video orientation.
 ///
@@ -762,7 +776,23 @@ class CapturePhotoCaptureDelegate with $CapturePhotoCaptureDelegate {
 /// You can add concrete [CaptureOutput] instances to a capture session using
 /// [CaptureSession.addOutput].
 @Reference('av_foundation/av_foundation/CaptureOutput')
-abstract class CaptureOutput with $CaptureOutput {}
+abstract class CaptureOutput with $CaptureOutput {
+  static $CaptureOutputChannel get _channel =>
+      ChannelRegistrar.instance.implementations.channelCaptureOutput;
+
+  /// Returns the first connection in the connections array with an input port of a specified media type.
+  ///
+  /// `mediaType`:
+  /// A media type constant (such as [MediaType.video] or [MediaType.audio]).
+  ///
+  /// The first capture connection in the connections array that has an
+  /// [CaptureInputPort] with media type [mediaType], or null if no connection
+  /// with the specified media type is found.
+  Future<CaptureConnection?> connectionWithMediaType(String mediaType) async {
+    return await _channel.$connectionWithMediaType(this, mediaType)
+        as CaptureConnection?;
+  }
+}
 
 /// A container for image data collected by a photo capture output.
 ///
@@ -933,6 +963,36 @@ class CaptureSession with $CaptureSession {
         await _channel.$canSetSessionPresets(this, presets) as List<Object?>;
     return returnedPresets.cast<String>();
   }
+
+  /// Returns a Boolean value that indicates whether a given input can be added to the session.
+  Future<bool> canAddInput(CaptureInput input) async {
+    return await _channel.$canAddInput(this, input) as bool;
+  }
+
+  /// Removes a given input.
+  Future<void> removeInput(CaptureInput input) {
+    return _channel.$removeInput(this, input);
+  }
+
+  /// Returns a Boolean value that indicates whether a given output can be added to the session.
+  Future<bool> canAddOutput(CaptureOutput output) async {
+    return await _channel.$canAddOutput(this, output) as bool;
+  }
+
+  /// Removes a given output.
+  Future<void> removeOutput(CaptureOutput output) {
+    return _channel.$removeOutput(this, output);
+  }
+
+  /// Indicates whether the receiver has been interrupted.
+  Future<bool> isRunning() async {
+    return await _channel.$isRunning(this) as bool;
+  }
+
+  /// Indicates whether the receiver has been interrupted.
+  Future<bool> isInterrupted() async {
+    return await _channel.$isInterrupted(this) as bool;
+  }
 }
 
 // TODO: lockForConfiguration
@@ -1026,6 +1086,8 @@ class CaptureDevice with $CaptureDevice {
     required this.position,
     required this.isSmoothAutoFocusSupported,
     required this.hasFlash,
+    required this.hasTorch,
+    required this.maxAvailableTorchLevel,
   });
 
   static $CaptureDeviceChannel get _channel =>
@@ -1056,6 +1118,26 @@ class CaptureDevice with $CaptureDevice {
 
   /// Indicates whether the capture device has a flash.
   final bool hasFlash;
+
+  /// A Boolean value that specifies whether the capture device has a torch.
+  ///
+  /// A torch is a light source, such as an LED flash, that is available on the
+  /// device and used for illuminating captured content or providing general
+  /// illumination. This property reflects whether the current device has such
+  /// illumination hardware built-in.
+  ///
+  /// Even if the device has a torch, that torch might not be available for use.
+  /// Thus, you should also check the value of the [isTorchAvailable] method
+  /// before using it.
+  final bool hasTorch;
+
+  /// This constant always represents the maximum available torch level, independent of the actual maximum value currently supported by the device.
+  ///
+  /// Thus, pass this constant to the [setTorchModeOnWithLevel] in situations
+  /// where you want to specify the maximum torch level without having to worry
+  /// about whether the device is overheating and might not accept a value of
+  /// 1.0 as the maximum.
+  final double maxAvailableTorchLevel;
 
   // TODO: defaultDeviceWithDeviceType
   /// Returns the default device used to capture data of a given media type.
@@ -1324,6 +1406,83 @@ class CaptureDevice with $CaptureDevice {
   /// and allow other devices to configure the settings.
   Future<void> cancelVideoZoomRamp() {
     return _channel.$cancelVideoZoomRamp(this);
+  }
+
+  /// Indicates whether the torch is currently available for use.
+  ///
+  /// The torch may become unavailable if, for example, the device overheats and
+  /// needs to cool off.
+  Future<bool> isTorchAvailable() async {
+    return await _channel.$isTorchAvailable(this) as bool;
+  }
+
+  /// A Boolean value indicating whether the device’s torch is currently active.
+  ///
+  /// A torch must be present on the device and currently available before it
+  /// can be active.
+  Future<bool> isTorchActive() async {
+    return await _channel.$isTorchActive(this) as bool;
+  }
+
+  /// The current torch brightness level.
+  ///
+  /// The value of this property is a floating-point number whose value is in
+  /// the range 0.0 to 1.0. A torch level of 0.0 indicates that the torch is
+  /// off. A torch level of 1.0 represents the theoretical maximum value,
+  /// although the actual maximum value may be lower if the device is currently
+  /// overheated.
+  Future<double> torchLevel() async {
+    return await _channel.$torchLevel(this) as double;
+  }
+
+  /// Sets the current torch mode.
+  ///
+  /// Setting the value of this method also sets the torch level to its maximum
+  /// current value.
+  ///
+  /// Before setting the value of this property, call the [torchModesSupported]
+  /// method to make sure the device supports the desired mode. Setting the
+  /// device to an unsupported torch mode results in the raising of an
+  /// exception. For a list of possible values for this property, see
+  /// [CaptureTorchMode].
+  ///
+  /// Before changing the value of this property, you must call
+  /// [lockForConfiguration] to acquire exclusive access to the device’s
+  /// configuration properties. Otherwise, setting the value of this property
+  /// raises an exception. When you finish configuring the device, call
+  /// [unlockForConfiguration] to release the lock and allow other devices to
+  /// configure the settings.
+  Future<void> setTorchMode(int mode) {
+    return _channel.$setTorchMode(this, mode);
+  }
+
+  /// Returns a subset of values that indicate whether the device supports the specified torch modes.
+  Future<List<int>> torchModesSupported(List<int> modes) async {
+    final List<Object?> supportedModes =
+        await _channel.$torchModesSupported(this, modes) as List<Object?>;
+    return supportedModes.cast<int>();
+  }
+
+  /// Sets the illumination level when in torch mode.
+  ///
+  /// `torchLevel`: The new torch mode level. This value must be a
+  /// floating-point number between 0.0 and 1.0. To set the torch mode level to
+  /// the currently available maximum, specify the value
+  /// [maxAvailableTorchLevel] for this parameter.
+  ///
+  /// If an error occurs, this method throws a [PlatformException] to the with
+  /// information about what happened.
+  ///
+  /// This method sets the torch mode to AVCaptureTorchModeOn and sets the level to the specified value. If the device does not support this mode or if you specify a value for torchLevel that is outside the accepted range, this method raises an exception. If the torch value is within the accepted range but greater than the currently supported maximum—perhaps because the device is overheating—this method returns NO.
+  ///
+  /// Before changing the value of this property, you must call
+  /// [lockForConfiguration] to acquire exclusive access to the device’s
+  /// configuration properties. Otherwise, calling this method raises an
+  /// exception. When you finish configuring the device, call
+  /// [unlockForConfiguration] to release the lock and allow other devices to
+  /// configure the settings.
+  Future<void> setTorchModeOnWithLevel(double torchLevel) {
+    return _channel.$setTorchModeOnWithLevel(this, torchLevel);
   }
 
   @ReferenceMethod(ignore: true)

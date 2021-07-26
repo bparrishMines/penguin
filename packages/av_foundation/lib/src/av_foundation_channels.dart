@@ -45,14 +45,23 @@ class LibraryImplementations extends $LibraryImplementations {
 /// [TypeChannelHandler] implementation for [CaptureDevice].
 class CaptureDeviceHandler extends $CaptureDeviceHandler {
   @override
-  $CaptureDevice $create$(TypeChannelMessenger messenger, String uniqueId,
-      int position, bool isSmoothAutoFocusSupported, bool hasFlash) {
+  $CaptureDevice $create$(
+    TypeChannelMessenger messenger,
+    String uniqueId,
+    int position,
+    bool isSmoothAutoFocusSupported,
+    bool hasFlash,
+    bool hasTorch,
+    double maxAvailableTorchLevel,
+  ) {
     // ignore: invalid_use_of_visible_for_testing_member
     return CaptureDevice(
       uniqueId: uniqueId,
       position: position,
       isSmoothAutoFocusSupported: isSmoothAutoFocusSupported,
       hasFlash: hasFlash,
+      hasTorch: hasTorch,
+      maxAvailableTorchLevel: maxAvailableTorchLevel,
     );
   }
 }

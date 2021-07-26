@@ -21,7 +21,7 @@ typedef $FinishProcessingPhotoCallback = dynamic Function(
 
 class $FinishProcessingPhotoCallbackChannel extends TypeChannel<Object> {
   $FinishProcessingPhotoCallbackChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'ios_avfoundation/avfoundation/FinishProcessingPhotoCallback');
+      : super(messenger, 'av_foundation/av_foundation/FinishProcessingPhotoCallback');
 
   Future<PairedInstance?> $$create(
     $FinishProcessingPhotoCallback $instance, {
@@ -122,6 +122,8 @@ mixin $CapturePhotoCaptureDelegate {
 
 mixin $CaptureOutput {
   
+  
+  
 }
 
 mixin $CapturePhoto {
@@ -150,9 +152,33 @@ mixin $CaptureSession {
   
   
   
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
 }
 
 mixin $CaptureDevice {
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   
   
   
@@ -246,7 +272,7 @@ mixin $CaptureInputPort {
 
 class $CapturePhotoOutputChannel extends TypeChannel<$CapturePhotoOutput> {
   $CapturePhotoOutputChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'ios_avfoundation/avfoundation/CapturePhotoOutput');
+      : super(messenger, 'av_foundation/av_foundation/CapturePhotoOutput');
 
   
   Future<PairedInstance?> $create$(
@@ -304,7 +330,7 @@ class $CapturePhotoOutputChannel extends TypeChannel<$CapturePhotoOutput> {
 
 class $CapturePhotoSettingsChannel extends TypeChannel<$CapturePhotoSettings> {
   $CapturePhotoSettingsChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'ios_avfoundation/avfoundation/CapturePhotoSettings');
+      : super(messenger, 'av_foundation/av_foundation/CapturePhotoSettings');
 
   
   Future<PairedInstance?> $create$(
@@ -378,7 +404,7 @@ class $CapturePhotoSettingsChannel extends TypeChannel<$CapturePhotoSettings> {
 
 class $CapturePhotoCaptureDelegateChannel extends TypeChannel<$CapturePhotoCaptureDelegate> {
   $CapturePhotoCaptureDelegateChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'ios_avfoundation/avfoundation/CapturePhotoCaptureDelegate');
+      : super(messenger, 'av_foundation/av_foundation/CapturePhotoCaptureDelegate');
 
   
   Future<PairedInstance?> $create$(
@@ -406,7 +432,7 @@ class $CapturePhotoCaptureDelegateChannel extends TypeChannel<$CapturePhotoCaptu
 
 class $CaptureOutputChannel extends TypeChannel<$CaptureOutput> {
   $CaptureOutputChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'ios_avfoundation/avfoundation/CaptureOutput');
+      : super(messenger, 'av_foundation/av_foundation/CaptureOutput');
 
   
   Future<PairedInstance?> $create$(
@@ -428,11 +454,27 @@ class $CaptureOutputChannel extends TypeChannel<$CaptureOutput> {
   
 
   
+  
+  Future<Object?> $connectionWithMediaType(
+    $CaptureOutput $instance,
+     String mediaType,
+    
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'connectionWithMediaType',
+      <Object?>[
+         mediaType, 
+      ],
+    );
+  }
+  
+  
 }
 
 class $CapturePhotoChannel extends TypeChannel<$CapturePhoto> {
   $CapturePhotoChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'ios_avfoundation/avfoundation/CapturePhoto');
+      : super(messenger, 'av_foundation/av_foundation/CapturePhoto');
 
   
   Future<PairedInstance?> $create$(
@@ -460,7 +502,7 @@ class $CapturePhotoChannel extends TypeChannel<$CapturePhoto> {
 
 class $CaptureDeviceInputChannel extends TypeChannel<$CaptureDeviceInput> {
   $CaptureDeviceInputChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'ios_avfoundation/avfoundation/CaptureDeviceInput');
+      : super(messenger, 'av_foundation/av_foundation/CaptureDeviceInput');
 
   
   Future<PairedInstance?> $create$(
@@ -488,7 +530,7 @@ class $CaptureDeviceInputChannel extends TypeChannel<$CaptureDeviceInput> {
 
 class $CaptureInputChannel extends TypeChannel<$CaptureInput> {
   $CaptureInputChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'ios_avfoundation/avfoundation/CaptureInput');
+      : super(messenger, 'av_foundation/av_foundation/CaptureInput');
 
   
   Future<PairedInstance?> $create$(
@@ -514,7 +556,7 @@ class $CaptureInputChannel extends TypeChannel<$CaptureInput> {
 
 class $CaptureSessionChannel extends TypeChannel<$CaptureSession> {
   $CaptureSessionChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'ios_avfoundation/avfoundation/CaptureSession');
+      : super(messenger, 'av_foundation/av_foundation/CaptureSession');
 
   
   Future<PairedInstance?> $create$(
@@ -630,11 +672,105 @@ class $CaptureSessionChannel extends TypeChannel<$CaptureSession> {
   }
   
   
+  
+  Future<Object?> $canAddInput(
+    $CaptureSession $instance,
+     $CaptureInput input,
+    
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'canAddInput',
+      <Object?>[
+         input, 
+      ],
+    );
+  }
+  
+  
+  
+  Future<Object?> $removeInput(
+    $CaptureSession $instance,
+     $CaptureInput input,
+    
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'removeInput',
+      <Object?>[
+         input, 
+      ],
+    );
+  }
+  
+  
+  
+  Future<Object?> $canAddOutput(
+    $CaptureSession $instance,
+     $CaptureOutput output,
+    
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'canAddOutput',
+      <Object?>[
+         output, 
+      ],
+    );
+  }
+  
+  
+  
+  Future<Object?> $removeOutput(
+    $CaptureSession $instance,
+     $CaptureOutput output,
+    
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'removeOutput',
+      <Object?>[
+         output, 
+      ],
+    );
+  }
+  
+  
+  
+  Future<Object?> $isRunning(
+    $CaptureSession $instance,
+    
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'isRunning',
+      <Object?>[
+        
+      ],
+    );
+  }
+  
+  
+  
+  Future<Object?> $isInterrupted(
+    $CaptureSession $instance,
+    
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'isInterrupted',
+      <Object?>[
+        
+      ],
+    );
+  }
+  
+  
 }
 
 class $CaptureDeviceChannel extends TypeChannel<$CaptureDevice> {
   $CaptureDeviceChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'ios_avfoundation/avfoundation/CaptureDevice');
+      : super(messenger, 'av_foundation/av_foundation/CaptureDevice');
 
   
   Future<PairedInstance?> $create$(
@@ -649,12 +785,16 @@ class $CaptureDeviceChannel extends TypeChannel<$CaptureDevice> {
     
     required bool hasFlash,
     
+    required bool hasTorch,
+    
+    required double maxAvailableTorchLevel,
+    
   }) {
     return createNewInstancePair(
       $instance,
       <Object?>[
         '',
-         uniqueId,  position,  isSmoothAutoFocusSupported,  hasFlash, 
+         uniqueId,  position,  isSmoothAutoFocusSupported,  hasFlash,  hasTorch,  maxAvailableTorchLevel, 
       ],
       owner: $owner,
     );
@@ -942,11 +1082,104 @@ class $CaptureDeviceChannel extends TypeChannel<$CaptureDevice> {
   }
   
   
+  
+  Future<Object?> $isTorchAvailable(
+    $CaptureDevice $instance,
+    
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'isTorchAvailable',
+      <Object?>[
+        
+      ],
+    );
+  }
+  
+  
+  
+  Future<Object?> $isTorchActive(
+    $CaptureDevice $instance,
+    
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'isTorchActive',
+      <Object?>[
+        
+      ],
+    );
+  }
+  
+  
+  
+  Future<Object?> $torchLevel(
+    $CaptureDevice $instance,
+    
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'torchLevel',
+      <Object?>[
+        
+      ],
+    );
+  }
+  
+  
+  
+  Future<Object?> $setTorchMode(
+    $CaptureDevice $instance,
+     int mode,
+    
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'setTorchMode',
+      <Object?>[
+         mode, 
+      ],
+    );
+  }
+  
+  
+  
+  Future<Object?> $torchModesSupported(
+    $CaptureDevice $instance,
+     List<int> modes,
+    
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'torchModesSupported',
+      <Object?>[
+         modes, 
+      ],
+    );
+  }
+  
+  
+  
+  Future<Object?> $setTorchModeOnWithLevel(
+    $CaptureDevice $instance,
+     double torchLevel,
+    
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'setTorchModeOnWithLevel',
+      <Object?>[
+         torchLevel, 
+      ],
+    );
+  }
+  
+  
 }
 
 class $CaptureDeviceDiscoverySessionChannel extends TypeChannel<$CaptureDeviceDiscoverySession> {
   $CaptureDeviceDiscoverySessionChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'ios_avfoundation/avfoundation/CaptureDeviceDiscoverySession');
+      : super(messenger, 'av_foundation/av_foundation/CaptureDeviceDiscoverySession');
 
   
   Future<PairedInstance?> $create$(
@@ -992,7 +1225,7 @@ class $CaptureDeviceDiscoverySessionChannel extends TypeChannel<$CaptureDeviceDi
 
 class $PreviewControllerChannel extends TypeChannel<$PreviewController> {
   $PreviewControllerChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'ios_avfoundation/avfoundation/PreviewController');
+      : super(messenger, 'av_foundation/av_foundation/PreviewController');
 
   
   Future<PairedInstance?> $create$(
@@ -1020,7 +1253,7 @@ class $PreviewControllerChannel extends TypeChannel<$PreviewController> {
 
 class $CaptureFileOutputChannel extends TypeChannel<$CaptureFileOutput> {
   $CaptureFileOutputChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'ios_avfoundation/avfoundation/CaptureFileOutput');
+      : super(messenger, 'av_foundation/av_foundation/CaptureFileOutput');
 
   
   Future<PairedInstance?> $create$(
@@ -1124,7 +1357,7 @@ class $CaptureFileOutputChannel extends TypeChannel<$CaptureFileOutput> {
 
 class $CaptureMovieFileOutputChannel extends TypeChannel<$CaptureMovieFileOutput> {
   $CaptureMovieFileOutputChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'ios_avfoundation/avfoundation/CaptureMovieFileOutput');
+      : super(messenger, 'av_foundation/av_foundation/CaptureMovieFileOutput');
 
   
   Future<PairedInstance?> $create$(
@@ -1165,7 +1398,7 @@ class $CaptureMovieFileOutputChannel extends TypeChannel<$CaptureMovieFileOutput
 
 class $CaptureFileOutputRecordingDelegateChannel extends TypeChannel<$CaptureFileOutputRecordingDelegate> {
   $CaptureFileOutputRecordingDelegateChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'ios_avfoundation/avfoundation/CaptureFileOutputRecordingDelegate');
+      : super(messenger, 'av_foundation/av_foundation/CaptureFileOutputRecordingDelegate');
 
   
   Future<PairedInstance?> $create$(
@@ -1191,7 +1424,7 @@ class $CaptureFileOutputRecordingDelegateChannel extends TypeChannel<$CaptureFil
 
 class $CaptureConnectionChannel extends TypeChannel<$CaptureConnection> {
   $CaptureConnectionChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'ios_avfoundation/avfoundation/CaptureConnection');
+      : super(messenger, 'av_foundation/av_foundation/CaptureConnection');
 
   
   Future<PairedInstance?> $create$(
@@ -1299,7 +1532,7 @@ class $CaptureConnectionChannel extends TypeChannel<$CaptureConnection> {
 
 class $CaptureInputPortChannel extends TypeChannel<$CaptureInputPort> {
   $CaptureInputPortChannel(TypeChannelMessenger messenger)
-      : super(messenger, 'ios_avfoundation/avfoundation/CaptureInputPort');
+      : super(messenger, 'av_foundation/av_foundation/CaptureInputPort');
 
   
   Future<PairedInstance?> $create$(
@@ -1616,6 +1849,8 @@ class $CaptureOutputHandler implements TypeChannelHandler<$CaptureOutput> {
   
 
   
+  
+  
 
   @override
   Object? invokeStaticMethod(
@@ -1665,6 +1900,8 @@ class $CaptureOutputHandler implements TypeChannelHandler<$CaptureOutput> {
     List<Object?> arguments,
   ) {
     switch (methodName) {
+      
+      
       
     }
 
@@ -1928,6 +2165,18 @@ class $CaptureSessionHandler implements TypeChannelHandler<$CaptureSession> {
   
   
   
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
 
   @override
   Object? invokeStaticMethod(
@@ -1990,6 +2239,18 @@ class $CaptureSessionHandler implements TypeChannelHandler<$CaptureSession> {
       
       
       
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
     }
 
     throw ArgumentError.value(
@@ -2013,6 +2274,10 @@ class $CaptureDeviceHandler implements TypeChannelHandler<$CaptureDevice> {
     
     bool hasFlash,
     
+    bool hasTorch,
+    
+    double maxAvailableTorchLevel,
+    
   ) {
     throw UnimplementedError();
   }
@@ -2022,6 +2287,18 @@ class $CaptureDeviceHandler implements TypeChannelHandler<$CaptureDevice> {
   
   
 
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   
   
   
@@ -2097,6 +2374,10 @@ class $CaptureDeviceHandler implements TypeChannelHandler<$CaptureDevice> {
           
           arguments[4] as bool,
           
+          arguments[5] as bool,
+          
+          arguments[6] as double,
+          
         );
       
     }
@@ -2116,6 +2397,18 @@ class $CaptureDeviceHandler implements TypeChannelHandler<$CaptureDevice> {
     List<Object?> arguments,
   ) {
     switch (methodName) {
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
       
       
       
