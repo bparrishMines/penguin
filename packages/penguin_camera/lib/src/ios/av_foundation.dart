@@ -186,6 +186,37 @@ class CameraController implements intf.CameraController {
         return session.setSessionPreset(supportedPresets.last);
     }
   }
+
+  @override
+  Future<void> setTorchMode(TorchMode mode) {
+    device.device.lockForConfiguration();
+    switch (mode) {
+      case TorchMode.on:
+        device.device.setTorchMode(CaptureTorchMode.on);
+        break;
+      case TorchMode.off:
+        device.device.setTorchMode(CaptureTorchMode.off);
+        break;
+    }
+    return device.device.unlockForConfiguration();
+  }
+
+  @override
+  Future<List<TorchMode>> getSupportedTorchModes() async {
+    if (!device.device.hasTorch) return <TorchMode>[];
+
+    final List<int> torchModes = await device.device.torchModesSupported(
+      <int>[CaptureTorchMode.on, CaptureTorchMode.off],
+    );
+
+    for (int mode in torchModes) {
+      if (mode == CaptureTorchMode.on) {
+        return <TorchMode>[TorchMode.on, TorchMode.off];
+      }
+    }
+
+    return <TorchMode>[];
+  }
 }
 
 class CameraPlatform extends intf.PenguinCameraPlatform {

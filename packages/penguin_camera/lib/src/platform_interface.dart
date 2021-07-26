@@ -58,6 +58,8 @@ enum ExposureMode { locked, continuous }
 
 enum FlashMode { on, off, auto }
 
+enum TorchMode { on, off }
+
 abstract class PreviewOutput extends CameraOutput {
   factory PreviewOutput() {
     return PenguinCameraPlatform.instance.createPreviewOutput();
@@ -133,6 +135,8 @@ abstract class CameraController {
   Future<void> setExposureMode(ExposureMode mode);
   Future<List<ExposureMode>> getSupportedExposureModes();
   Future<void> setControllerPreset(CameraControllerPreset preset);
+  Future<void> setTorchMode(TorchMode mode);
+  Future<List<TorchMode>> getSupportedTorchModes();
 }
 
 class _EmptyPenguinCameraPlatform implements PenguinCameraPlatform {

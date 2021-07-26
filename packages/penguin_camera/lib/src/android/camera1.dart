@@ -156,6 +156,34 @@ class CameraController implements intf.CameraController {
       eagerError: true,
     );
   }
+
+  @override
+  Future<void> setTorchMode(TorchMode mode) {
+    switch (mode) {
+      case TorchMode.on:
+        cameraParameters.setFlashMode(CameraParameters.flashModeTorch);
+        break;
+      case TorchMode.off:
+        cameraParameters.setFlashMode(CameraParameters.flashModeOff);
+        break;
+    }
+
+    return camera.setParameters(cameraParameters);
+  }
+
+  @override
+  Future<List<TorchMode>> getSupportedTorchModes() async {
+    final List<String> flashModes =
+        await cameraParameters.getSupportedFlashModes();
+
+    for (String mode in flashModes) {
+      if (mode == CameraParameters.flashModeTorch) {
+        return <TorchMode>[TorchMode.on, TorchMode.off];
+      }
+    }
+
+    return <TorchMode>[];
+  }
 }
 
 class CameraPlatform extends intf.PenguinCameraPlatform {
