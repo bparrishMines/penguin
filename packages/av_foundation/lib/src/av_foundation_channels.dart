@@ -127,10 +127,13 @@ class CaptureConnectionHandler extends $CaptureConnectionHandler {
   @override
   $CaptureConnection $create$(
     TypeChannelMessenger messenger,
-    covariant List<CaptureInputPort> inputPorts,
+    List<$CaptureInputPort> inputPorts,
     covariant CaptureOutput output,
   ) {
-    return CaptureConnection.withoutCreate(inputPorts, output);
+    return CaptureConnection.withoutCreate(
+      inputPorts.cast<CaptureInputPort>(),
+      output,
+    );
   }
 }
 

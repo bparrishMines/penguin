@@ -60,6 +60,10 @@ class _MyAppState extends State<_MyApp> {
   Future<void> _getPicturePermission() async {
     while (!(await Permission.camera.request().isGranted)) {}
     while (!(await Permission.storage.request().isGranted)) {}
+
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
+      while (!(await Permission.photosAddOnly.request().isGranted)) {}
+    }
   }
 
   Future<void> _getAudioPermission() async {
@@ -119,7 +123,7 @@ class _MyAppState extends State<_MyApp> {
 
     await cameraController.setControllerPreset(CameraControllerPreset.high);
     //_previewOutput.setRotation(OutputRotation.rotation0);
-    //output.setRotation(OutputRotation.rotation0);
+    output.setRotation(OutputRotation.rotation0);
     _previewOutputSize = await _previewOutput.getOutputSize();
     return cameraController;
   }
