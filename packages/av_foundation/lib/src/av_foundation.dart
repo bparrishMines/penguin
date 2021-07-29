@@ -1852,7 +1852,7 @@ class CaptureConnection with $CaptureConnection {
     );
   }
 
-  /// Constructs a Dart [CaptureConnection] without creating the ios object;
+  /// Constructs a Dart [CaptureConnection] without creating the Objective-C object.
   @ReferenceConstructor(ignore: true)
   CaptureConnection.withoutCreate(this.inputPorts, this.output);
 

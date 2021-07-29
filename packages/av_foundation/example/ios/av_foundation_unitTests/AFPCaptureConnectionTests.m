@@ -29,7 +29,8 @@
                                                                                    implementations:_mockImplementations];
   
   AVCaptureOutput *mockOutput = OCMClassMock([AVCaptureOutput class]);
-  AFPCaptureOutputProxy *outputProxy = [[AFPCaptureOutputProxy alloc] initWithCaptureOutput:mockOutput];
+  AFPCaptureOutputProxy *outputProxy = [[AFPCaptureOutputProxy alloc] initWithCaptureOutput:mockOutput
+                                                                            implementations:_mockImplementations];
 
   AFPCaptureConnectionProxy *captureConnectionProxy = (AFPCaptureConnectionProxy *)
   [implementations.handlerCaptureConnection _create_:_mockTypeChannelMessenger

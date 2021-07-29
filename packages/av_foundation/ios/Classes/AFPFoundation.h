@@ -40,14 +40,17 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface AFPCaptureOutputProxy : NSObject<_AFPCaptureOutput>
 @property (readonly) AVCaptureOutput *captureOutput;
-- (instancetype)initWithCaptureOutput:(AVCaptureOutput *)captureOutput;
 - (instancetype)initWithCaptureOutput:(AVCaptureOutput *)captureOutput
                       implementations:(AFPLibraryImplementations *)implementations;
+- (instancetype)initWithCaptureOutputWithoutCreate:(AVCaptureOutput *)captureOutput
+                                   implementations:(AFPLibraryImplementations *)implementations;
 @end
 
 API_AVAILABLE(ios(10.0))
 @interface AFPCapturePhotoOutputProxy : AFPCaptureOutputProxy<_AFPCapturePhotoOutput>
-- (instancetype)initWithCapturePhotoOutput:(AVCapturePhotoOutput *)capturePhotoOutput;
+- (instancetype)initWithImplementations:(AFPLibraryImplementations *)implementations;
+- (instancetype)initWithCapturePhotoOutput:(AVCapturePhotoOutput *)capturePhotoOutput
+                           implementations:(AFPLibraryImplementations *)implementations;
 @end
 
 API_AVAILABLE(ios(10.0))
@@ -81,12 +84,14 @@ API_AVAILABLE(ios(11.0))
 @end
 
 @interface AFPCaptureFileOutputProxy : AFPCaptureOutputProxy<_AFPCaptureFileOutput>
-- (instancetype)initWithCaptureFileOutput:(AVCaptureFileOutput *)captureFileOutput;
+- (instancetype)initWithCaptureFileOutput:(AVCaptureFileOutput *)captureFileOutput
+                          implementations:(AFPLibraryImplementations *)implementations;
 @end
 
 @interface AFPCaptureMovieFileOutputProxy : AFPCaptureFileOutputProxy<_AFPCaptureMovieFileOutput>
-- (instancetype)init;
-- (instancetype)initWithCaptureMovieFileOutput:(AVCaptureMovieFileOutput *)captureMovieFileOutput;
+- (instancetype)initWithImplementations:(AFPLibraryImplementations *)implementations;
+- (instancetype)initWithCaptureMovieFileOutput:(AVCaptureMovieFileOutput *)captureMovieFileOutput
+                               implementations:(AFPLibraryImplementations *)implementations;
 @end
 
 @interface AFPCaptureFileOutputRecordingDelegateProxy : NSObject<_AFPCaptureFileOutputRecordingDelegate, AVCaptureFileOutputRecordingDelegate>

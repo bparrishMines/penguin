@@ -8,11 +8,13 @@
 
 @implementation IAVCaptureSessionTests {
   AVCaptureSession *_mockCaptureSession;
+  AFPLibraryImplementations *_mockImplementations;
   AFPCaptureSessionProxy *_testCaptureSessionProxy;
   REFTypeChannelMessenger *_mockTypeChannelMessenger;
 }
 
 - (void)setUp {
+  _mockImplementations = OCMClassMock([AFPLibraryImplementations class]);
   _mockCaptureSession = OCMClassMock([AVCaptureSession class]);
   _mockTypeChannelMessenger = OCMClassMock([REFTypeChannelMessenger class]);
   _testCaptureSessionProxy = [[AFPCaptureSessionProxy alloc] initWithCaptureSession:_mockCaptureSession];
@@ -49,7 +51,7 @@
 - (void)testAddOutput {
   id mockCaptureOutput = OCMClassMock([AVCaptureOutput class]);
   AFPCaptureOutputProxy *testCaptureOutputProxy = [[AFPCaptureOutputProxy alloc]
-                                                  initWithCaptureOutput:mockCaptureOutput];
+                                                  initWithCaptureOutput:mockCaptureOutput implementations:_mockImplementations];
   
   [_testCaptureSessionProxy addOutput:testCaptureOutputProxy];
   OCMVerify([_mockCaptureSession addOutput:mockCaptureOutput]);
@@ -102,7 +104,7 @@
 - (void)testRemoveOutput {
   id mockCaptureOutput = OCMClassMock([AVCaptureOutput class]);
   AFPCaptureOutputProxy *testCaptureOutputProxy = [[AFPCaptureOutputProxy alloc]
-                                                  initWithCaptureOutput:mockCaptureOutput];
+                                                  initWithCaptureOutput:mockCaptureOutput implementations:_mockImplementations];
   
   [_testCaptureSessionProxy removeOutput:testCaptureOutputProxy];
   OCMVerify([_mockCaptureSession removeOutput:mockCaptureOutput]);

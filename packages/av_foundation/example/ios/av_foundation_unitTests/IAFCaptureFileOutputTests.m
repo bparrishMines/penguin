@@ -18,7 +18,7 @@
   _mockTypeChannelMessenger = OCMClassMock([REFTypeChannelMessenger class]);
   _mockCaptureFileOutput = OCMClassMock([AVCaptureFileOutput class]);
   _testCaptureFileOutputProxy = [[AFPCaptureFileOutputProxy alloc]
-                                 initWithCaptureFileOutput:_mockCaptureFileOutput];
+                                 initWithCaptureFileOutput:_mockCaptureFileOutput implementations:_mockImplementations];
 }
 
 - (void)testIsRecording {

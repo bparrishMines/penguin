@@ -54,6 +54,8 @@ enum FocusMode {
   continuousVideoAutoFocus,
 }
 
+enum OutputRotation { rotation0, rotation90, rotation180, rotation270 }
+
 enum ExposureMode { locked, continuous }
 
 enum FlashMode { on, off, auto }
@@ -94,6 +96,7 @@ abstract class CameraOutput {
   Future<void> attach(CameraController controller);
   Future<void> detach(CameraController controller);
   Future<Size?> getOutputSize();
+  Future<void> setRotation(OutputRotation rotation);
 }
 
 enum CameraPosition { front, back, unspecified }

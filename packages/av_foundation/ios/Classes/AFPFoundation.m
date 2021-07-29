@@ -365,28 +365,36 @@
 }
 @end
 
-@implementation AFPCaptureOutputProxy
-- (instancetype)initWithCaptureOutput:(AVCaptureOutput *)captureOutput {
+@implementation AFPCaptureOutputProxy {
+  AFPLibraryImplementations *_implementations;
+}
+
+- (instancetype)initWithCaptureOutputWithoutCreate:(AVCaptureOutput *)captureOutput
+                                   implementations:(AFPLibraryImplementations *)implementations {
   self = [super init];
   if (self) {
     _captureOutput = captureOutput;
+    _implementations = implementations;
   }
   return self;
 }
 
 - (instancetype)initWithCaptureOutput:(AVCaptureOutput *)captureOutput
                       implementations:(AFPLibraryImplementations *)implementations {
-  self = [self initWithCaptureOutput:captureOutput];
-  [implementations.channelCaptureOutput _create_:self
-                                          _owner:NO
-                                      completion:^(REFPairedInstance *instance, NSError * error) {}];
+  self = [self initWithCaptureOutputWithoutCreate:captureOutput implementations:implementations];
+  if (self) {
+    [implementations.channelCaptureOutput _create_:self
+                                            _owner:NO
+                                        completion:^(REFPairedInstance *instance, NSError * error) {}];
+  }
   return self;
 }
 
 - (AFPCaptureConnectionProxy *_Nullable)connectionWithMediaType:(NSString * _Nullable)mediaType {
   AVCaptureConnection *connection = [_captureOutput connectionWithMediaType:mediaType];
   if (connection) {
-    AFPCaptureConnectionProxy *proxy = [[AFPCaptureConnectionProxy alloc] initWithCaptureConnection:connection];
+    AFPCaptureConnectionProxy *proxy = [[AFPCaptureConnectionProxy alloc] initWithCaptureConnection:connection
+                                                                                    implementations:_implementations];
     return proxy;
   }
   return nil;
@@ -394,12 +402,13 @@
 @end
 
 @implementation AFPCapturePhotoOutputProxy
-- (instancetype)init {
-  return [self initWithCapturePhotoOutput:[AVCapturePhotoOutput new]];
+- (instancetype)initWithImplementations:(AFPLibraryImplementations *)implementations {
+  return [self initWithCapturePhotoOutput:[AVCapturePhotoOutput new] implementations:implementations];
 }
 
-- (instancetype)initWithCapturePhotoOutput:(AVCapturePhotoOutput *)capturePhotoOutput {
-  return [self initWithCaptureOutput:capturePhotoOutput];
+- (instancetype)initWithCapturePhotoOutput:(AVCapturePhotoOutput *)capturePhotoOutput
+                           implementations:(AFPLibraryImplementations *)implementations {
+  return [self initWithCaptureOutputWithoutCreate:capturePhotoOutput implementations:implementations];
 }
 
 - (NSObject *)capturePhoto:(AFPCapturePhotoSettingsProxy *_Nullable)settings
@@ -528,8 +537,9 @@ didFinishProcessingPhoto:(AVCapturePhoto *)photo
 @end
 
 @implementation AFPCaptureFileOutputProxy
-- (instancetype)initWithCaptureFileOutput:(AVCaptureFileOutput *)captureFileOutput {
-  return [self initWithCaptureOutput:captureFileOutput];
+- (instancetype)initWithCaptureFileOutput:(AVCaptureFileOutput *)captureFileOutput
+                          implementations:(AFPLibraryImplementations *)implementations {
+  return [self initWithCaptureOutputWithoutCreate:captureFileOutput implementations:implementations];
 }
 
 - (NSNumber *)isRecording {
@@ -564,12 +574,14 @@ didFinishProcessingPhoto:(AVCapturePhoto *)photo
 @end
 
 @implementation AFPCaptureMovieFileOutputProxy
-- (instancetype)init {
-  return [self initWithCaptureMovieFileOutput:[[AVCaptureMovieFileOutput alloc] init]];
+- (instancetype)initWithImplementations:(AFPLibraryImplementations *)implementations {
+  return [self initWithCaptureMovieFileOutput:[[AVCaptureMovieFileOutput alloc] init]
+                              implementations:implementations];
 }
 
-- (instancetype)initWithCaptureMovieFileOutput:(AVCaptureMovieFileOutput *)captureMovieFileOutput {
-  return [self initWithCaptureFileOutput:captureMovieFileOutput];
+- (instancetype)initWithCaptureMovieFileOutput:(AVCaptureMovieFileOutput *)captureMovieFileOutput
+                               implementations:(AFPLibraryImplementations *)implementations; {
+  return [self initWithCaptureFileOutput:captureMovieFileOutput implementations:implementations];
 }
 
 - (NSArray<NSString *> *)availableVideoCodecTypes {

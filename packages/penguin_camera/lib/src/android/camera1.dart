@@ -232,17 +232,6 @@ class PreviewOutput with PresetChangeListener implements intf.PreviewOutput {
   Future<void> attach(covariant CameraController controller) async {
     _controller = controller;
     _previewWidgetCompleter = Completer<Texture>();
-
-    late int rotation;
-    final CameraInfo cameraInfo = controller.device.info;
-    if (cameraInfo.facing == CameraInfo.cameraFacingFront) {
-      rotation = cameraInfo.orientation % 360;
-      rotation = (360 - rotation) % 360;
-    } else {
-      rotation = (cameraInfo.orientation + 360) % 360;
-    }
-    controller.camera.setDisplayOrientation(rotation);
-
     _previewWidgetCompleter.complete(
       Texture(textureId: await controller.camera.attachPreviewTexture()),
     );
@@ -288,6 +277,35 @@ class PreviewOutput with PresetChangeListener implements intf.PreviewOutput {
   Future<Size> getOutputSize() async {
     final CameraSize size = await _controller.cameraParameters.getPreviewSize();
     return Size(size.width.toDouble(), size.height.toDouble());
+  }
+
+  @override
+  Future<void> setRotation(OutputRotation rotation) {
+    late final int angle;
+    switch (rotation) {
+      case OutputRotation.rotation0:
+        angle = 0;
+        break;
+      case OutputRotation.rotation90:
+        throw UnsupportedError('This rotation is not supported by this API.');
+      case OutputRotation.rotation180:
+        angle = 180;
+        break;
+      case OutputRotation.rotation270:
+        angle = 270;
+        break;
+    }
+
+    late int displayOrientation;
+    final CameraInfo cameraInfo = _controller.device.info;
+    if (cameraInfo.facing == CameraInfo.cameraFacingFront) {
+      displayOrientation = (cameraInfo.orientation + angle) % 360;
+      displayOrientation = (360 - displayOrientation) % 360;
+    } else {
+      displayOrientation = (cameraInfo.orientation - angle + 360) % 360;
+    }
+
+    return _controller.camera.setDisplayOrientation(displayOrientation);
   }
 }
 
@@ -395,15 +413,46 @@ class ImageCaptureOutput
     final CameraSize size = await _controller.cameraParameters.getPictureSize();
     return Size(size.width.toDouble(), size.height.toDouble());
   }
+
+  @override
+  Future<void> setRotation(OutputRotation rotation) {
+    final CameraInfo cameraInfo = _controller.device.info;
+
+    late final int imageRotation;
+    switch (rotation) {
+      case OutputRotation.rotation0:
+        imageRotation = cameraInfo.orientation;
+        break;
+      case OutputRotation.rotation90:
+        if (cameraInfo.facing == CameraInfo.cameraFacingFront) {
+          imageRotation = (cameraInfo.orientation + 270) % 360;
+        } else {
+          imageRotation = (cameraInfo.orientation + 90) % 360;
+        }
+        break;
+      case OutputRotation.rotation180:
+        imageRotation = (cameraInfo.orientation + 180) % 360;
+        break;
+      case OutputRotation.rotation270:
+        if (cameraInfo.facing == CameraInfo.cameraFacingFront) {
+          imageRotation = (cameraInfo.orientation + 90) % 360;
+        } else {
+          imageRotation = (cameraInfo.orientation + 270) % 360;
+        }
+        break;
+    }
+
+    _controller.cameraParameters.setRotation(imageRotation);
+    return _controller.camera.setParameters(_controller.cameraParameters);
+  }
 }
 
 class VideoCaptureOutput
     with PresetChangeListener
     implements intf.VideoCaptureOutput {
-  VideoCaptureOutput({bool includeAudio = false})
-      : _includeAudio = includeAudio;
+  VideoCaptureOutput({this.includeAudio = false});
 
-  final bool _includeAudio;
+  final bool includeAudio;
 
   late CameraController _controller;
   late MediaRecorder mediaRecorder;
@@ -415,12 +464,10 @@ class VideoCaptureOutput
     mediaRecorder = MediaRecorder();
     mediaRecorder.setCamera(controller.camera);
     mediaRecorder.setVideoSource(VideoSource.camera);
-    if (_includeAudio) mediaRecorder.setAudioSource(AudioSource.defaultSource);
+    if (includeAudio) mediaRecorder.setAudioSource(AudioSource.defaultSource);
     mediaRecorder.setOutputFormat(OutputFormat.mpeg4);
-    mediaRecorder.setVideoEncoder(VideoEncoder.mpeg4Sp);
-    if (_includeAudio) mediaRecorder.setAudioEncoder(AudioEncoder.amrNb);
-    controller.camera.unlock();
-    return mediaRecorder.prepare();
+    if (includeAudio) mediaRecorder.setAudioEncoder(AudioEncoder.amrNb);
+    return mediaRecorder.setVideoEncoder(VideoEncoder.mpeg4Sp);
   }
 
   @override
@@ -429,8 +476,10 @@ class VideoCaptureOutput
   }
 
   @override
-  Future<void> startRecording({required String fileOutput}) {
+  Future<void> startRecording({required String fileOutput}) async {
     mediaRecorder.setOutputFilePath(fileOutput);
+    await _controller.camera.unlock();
+    mediaRecorder.prepare();
     return mediaRecorder.start();
   }
 
@@ -511,6 +560,37 @@ class VideoCaptureOutput
       specifiedSize!.width.toDouble(),
       specifiedSize!.height.toDouble(),
     );
+  }
+
+  @override
+  Future<void> setRotation(OutputRotation rotation) {
+    final CameraInfo cameraInfo = _controller.device.info;
+
+    late final int videoRotation;
+    switch (rotation) {
+      case OutputRotation.rotation0:
+        videoRotation = cameraInfo.orientation;
+        break;
+      case OutputRotation.rotation90:
+        if (cameraInfo.facing == CameraInfo.cameraFacingFront) {
+          videoRotation = (cameraInfo.orientation + 270) % 360;
+        } else {
+          videoRotation = (cameraInfo.orientation + 90) % 360;
+        }
+        break;
+      case OutputRotation.rotation180:
+        videoRotation = (cameraInfo.orientation + 180) % 360;
+        break;
+      case OutputRotation.rotation270:
+        if (cameraInfo.facing == CameraInfo.cameraFacingFront) {
+          videoRotation = (cameraInfo.orientation + 90) % 360;
+        } else {
+          videoRotation = (cameraInfo.orientation + 270) % 360;
+        }
+        break;
+    }
+
+    return mediaRecorder.setOrientationHint(videoRotation);
   }
 }
 
