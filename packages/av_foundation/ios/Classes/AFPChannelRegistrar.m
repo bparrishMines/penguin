@@ -17,7 +17,7 @@
 }
 
 - (AFPPreviewControllerHandler *)handlerPreviewController {
-  return [[AFPPreviewControllerHandler alloc] init];
+  return [[AFPPreviewControllerHandler alloc] initWithImplementations:self];
 }
 
 - (AFPCapturePhotoCaptureDelegateHandler *)handlerCapturePhotoCaptureDelegate {
@@ -79,10 +79,22 @@
 }
 @end
 
-@implementation AFPPreviewControllerHandler
+@implementation AFPPreviewControllerHandler {
+  AFPLibraryImplementations *_implementations;
+}
+
+- (instancetype)initWithImplementations:(AFPLibraryImplementations *)implementations {
+  self = [super init];
+  if (self) {
+    _implementations = implementations;
+  }
+  return self;
+}
+
 - (AFPPreviewControllerProxy *)_create_:(REFTypeChannelMessenger *)messenger
                                captureSession:(NSObject<_AFPCaptureSession> *)captureSession {
-  return [[AFPPreviewControllerProxy alloc] initWithCaptureSession:((AFPCaptureSessionProxy *)captureSession)];
+  return [[AFPPreviewControllerProxy alloc] initWithCaptureSession:((AFPCaptureSessionProxy *)captureSession)
+                                                   implementations:_implementations];
 }
 @end
 

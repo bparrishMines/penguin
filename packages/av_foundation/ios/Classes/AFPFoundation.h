@@ -19,6 +19,11 @@ NS_ASSUME_NONNULL_BEGIN
                       implementations:(AFPLibraryImplementations *)implementations;
 @end
 
+@interface AFPPreviewView : UIView
+-(instancetype)initWithCaptureSession:(AVCaptureSession *)captureSession;
+- (AVCaptureConnection *_Nullable)connection;
+@end
+
 @interface AFPCaptureInputProxy : NSObject<_AFPCaptureInput>
 @property (readonly) AVCaptureInput *captureInput;
 - (instancetype)initWithCaptureInput:(AVCaptureInput *)captureInput;
@@ -34,8 +39,9 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface AFPPreviewControllerProxy : NSObject<_AFPPreviewController, FlutterPlatformView>
-- (instancetype)initWithCaptureSession:(AFPCaptureSessionProxy *)captureSession;
-- (instancetype)initWithView:(UIView *)view;
+- (instancetype)initWithCaptureSession:(AFPCaptureSessionProxy *)captureSession
+                       implementations:(AFPLibraryImplementations *)implementations;
+- (instancetype)initWithView:(AFPPreviewView *)view implementations:(AFPLibraryImplementations *)implementations;
 @end
 
 @interface AFPCaptureOutputProxy : NSObject<_AFPCaptureOutput>

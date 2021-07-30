@@ -1,8 +1,5 @@
 #import "AFPFoundation.h"
 
-@interface AFPPreviewView : UIView
-@end
-
 @implementation AFPCaptureDeviceProxy
 + (NSArray<AFPCaptureDeviceProxy*> *)asProxyList:(NSArray<AVCaptureDevice *> *)captureDevices
                                  implementations:(AFPLibraryImplementations *)implementations {
@@ -337,21 +334,28 @@
     for (CALayer *layer in sublayers) layer.frame = self.bounds;
   }
 }
+
+- (AVCaptureConnection *_Nullable)connection {
+  return _layer.connection;
+}
 @end
 
 @implementation AFPPreviewControllerProxy {
-  UIView *_view;
+  AFPPreviewView *_view;
+  AFPLibraryImplementations *_implementations;
 }
 
-- (instancetype)initWithCaptureSession:(AFPCaptureSessionProxy *)captureSession {
-  UIView *view = [[AFPPreviewView alloc] initWithCaptureSession:captureSession.captureSession];
-  return [self initWithView:view];
+- (instancetype)initWithCaptureSession:(AFPCaptureSessionProxy *)captureSession
+                       implementations:(AFPLibraryImplementations *)implementations {
+  AFPPreviewView *view = [[AFPPreviewView alloc] initWithCaptureSession:captureSession.captureSession];
+  return [self initWithView:view implementations:implementations];
 }
 
-- (instancetype)initWithView:(UIView *)view {
+- (instancetype)initWithView:(AFPPreviewView *)view implementations:(AFPLibraryImplementations *)implementations {
   self = [super init];
   if (self) {
     _view = view;
+    _implementations = implementations;
   }
   return self;
 }
@@ -360,7 +364,11 @@
   return _view;
 }
 
-- (NSObject<_AFPCaptureSession> * _Nullable)captureSession {
+- (AFPCaptureConnectionProxy *_Nullable)connection {
+  AVCaptureConnection *connection = _view.connection;
+  if (connection) {
+    return [[AFPCaptureConnectionProxy alloc] initWithCaptureConnection:connection implementations:_implementations];
+  }
   return nil;
 }
 @end

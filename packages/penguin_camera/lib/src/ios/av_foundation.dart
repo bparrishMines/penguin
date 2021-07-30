@@ -296,9 +296,31 @@ class PreviewOutput implements intf.PreviewOutput {
   }
 
   @override
-  Future<void> setRotation(OutputRotation rotation) {
-    // TODO:
-    throw UnimplementedError();
+  Future<void> setRotation(OutputRotation rotation) async {
+    final CaptureConnection? connection = await preview.controller.connection();
+
+    if (connection == null) {
+      throw StateError(
+        'Could not find a connection for this output. This may not be attached to a CameraController.',
+      );
+    }
+
+    switch (rotation) {
+      case OutputRotation.rotation0:
+        return connection.setVideoOrientation(CaptureVideoOrientation.portrait);
+      case OutputRotation.rotation270:
+        return connection.setVideoOrientation(
+          CaptureVideoOrientation.landscapeLeft,
+        );
+      case OutputRotation.rotation180:
+        return connection.setVideoOrientation(
+          CaptureVideoOrientation.portraitUpsideDown,
+        );
+      case OutputRotation.rotation90:
+        return connection.setVideoOrientation(
+          CaptureVideoOrientation.landscapeRight,
+        );
+    }
   }
 }
 

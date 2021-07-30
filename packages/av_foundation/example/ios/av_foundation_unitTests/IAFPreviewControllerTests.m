@@ -8,12 +8,14 @@
 @end
 
 @implementation AFPPreviewControllerTests {
+  AFPLibraryImplementations *_mockImplementations;
   AVCaptureSession *_mockCaptureSession;
   AFPCaptureSessionProxy *_testCaptureSessionProxy;
   REFTypeChannelMessenger *_mockTypeChannelMessenger;
 }
 
 - (void)setUp {
+  _mockImplementations = OCMClassMock([AFPLibraryImplementations class]);
   _mockCaptureSession = OCMClassMock([AVCaptureSession class]);
   _mockTypeChannelMessenger = OCMClassMock([REFTypeChannelMessenger class]);
   _testCaptureSessionProxy = [[AFPCaptureSessionProxy alloc] initWithCaptureSession:_mockCaptureSession];

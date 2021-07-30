@@ -122,8 +122,8 @@ class _MyAppState extends State<_MyApp> {
     await cameraController.initialize();
 
     await cameraController.setControllerPreset(CameraControllerPreset.high);
-    //_previewOutput.setRotation(OutputRotation.rotation0);
-    output.setRotation(OutputRotation.rotation0);
+    _previewOutput.setRotation(OutputRotation.rotation0);
+    output.setRotation(OutputRotation.rotation270);
     _previewOutputSize = await _previewOutput.getOutputSize();
     return cameraController;
   }

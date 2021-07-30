@@ -856,6 +856,16 @@ class $PreviewControllerChannel extends TypeChannel<$PreviewController> {
       owner: $owner,
     );
   }
+
+  Future<Object?> $connection(
+    $PreviewController $instance,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'connection',
+      <Object?>[],
+    );
+  }
 }
 
 class $CaptureFileOutputChannel extends TypeChannel<$CaptureFileOutput> {

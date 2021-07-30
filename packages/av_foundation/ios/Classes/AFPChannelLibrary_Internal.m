@@ -459,6 +459,8 @@
 
 
 
+
+
 @end
 
 @implementation _AFPCaptureFileOutputChannel
@@ -1847,6 +1849,14 @@
 
 
 
+- (id _Nullable)_connection:(NSObject<_AFPPreviewController> *)_instance
+ {
+  return [_instance connection
+          ];
+}
+
+
+
 - (id _Nullable)invokeStaticMethod:(nonnull REFTypeChannelMessenger *)messenger
                         methodName:(nonnull NSString *)methodName
                          arguments:(nonnull NSArray *)arguments {
@@ -1875,6 +1885,13 @@
                   methodName:(nonnull NSString *)methodName
                    arguments:(nonnull NSArray *)arguments {
   NSObject<_AFPPreviewController> *value = (NSObject<_AFPPreviewController> *) instance;
+  
+  
+  if ([@"connection" isEqualToString:methodName]) {
+    return [self _connection:value
+               ];
+  }
+  
   
   
   NSLog(@"Unable to invoke %@.%@", instance, methodName);

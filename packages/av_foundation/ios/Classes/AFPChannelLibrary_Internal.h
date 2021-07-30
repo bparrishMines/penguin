@@ -399,6 +399,12 @@ typedef NSObject *_Nullable (^_AFPFinishProcessingPhotoCallback) (NSObject<_AFPC
 
 @protocol _AFPPreviewController <NSObject>
 
+
+- (id _Nullable)connection
+
+;
+
+
 @end
 
 @protocol _AFPCaptureFileOutput <NSObject>
@@ -771,6 +777,8 @@ typedef NSObject *_Nullable (^_AFPFinishProcessingPhotoCallback) (NSObject<_AFPC
  captureSession:(NSObject<_AFPCaptureSession> * _Nullable)captureSession
 
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion;
+
+
 
 
 
@@ -1285,6 +1293,11 @@ typedef NSObject *_Nullable (^_AFPFinishProcessingPhotoCallback) (NSObject<_AFPC
 ;
 
 
+
+
+
+- (id _Nullable)_connection:(NSObject<_AFPPreviewController> *)_instance
+;
 
 
 @end

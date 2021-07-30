@@ -1601,6 +1601,15 @@ class PreviewController with $PreviewController {
 
   /// The [CaptureSession] that provides preview frames to the iOS UiView.
   final CaptureSession captureSession;
+
+  /// The [CaptureConnection] instance describing the [CaptureInputPort] to which the receiver is connected.
+  ///
+  /// When this instantiated with a valid [CaptureSession] instance, a
+  /// connection is formed to the first eligible video [CaptureInput]. If the
+  /// receiver is detached from a session, the connection value becomes null.
+  Future<CaptureConnection?> connection() async {
+    return await _channel.$connection(this) as CaptureConnection?;
+  }
 }
 
 // TODO: CaptureFileOutputDelegate.captureOutput is for MacOS
