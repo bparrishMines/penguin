@@ -140,6 +140,13 @@ abstract class CameraController {
   Future<void> setControllerPreset(CameraControllerPreset preset);
   Future<void> setTorchMode(TorchMode mode);
   Future<List<TorchMode>> getSupportedTorchModes();
+
+  Future<bool> isZoomSupported();
+  Future<bool> isSmoothZoomSupported();
+  Future<double> getMinZoom();
+  Future<double> getMaxZoom();
+  Future<void> setZoom(double value);
+  Future<void> smoothZoomTo(double value);
 }
 
 class _EmptyPenguinCameraPlatform implements PenguinCameraPlatform {

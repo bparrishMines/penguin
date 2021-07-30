@@ -16,6 +16,7 @@ dependencies:
     path: ../android_media
   av_foundation:
     path: ../av_foundation
+  collection: ^1.15.0
   flutter:
     sdk: flutter
 
