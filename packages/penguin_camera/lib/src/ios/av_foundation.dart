@@ -31,7 +31,8 @@ class CameraDevice implements intf.CameraDevice {
 }
 
 class CameraController implements intf.CameraController {
-  CameraController({required this.device, required this.outputs});
+  CameraController({required this.device, required this.outputs})
+      : captureDeviceInput = CaptureDeviceInput(device.device);
 
   bool _initialized = false;
   bool _disposed = false;
@@ -43,6 +44,7 @@ class CameraController implements intf.CameraController {
   final List<CameraOutput> outputs;
 
   final CaptureSession session = CaptureSession();
+  final CaptureDeviceInput captureDeviceInput;
   String? capturePreset;
 
   @override
@@ -51,7 +53,7 @@ class CameraController implements intf.CameraController {
     assert(!_disposed, 'CameraController has already been disposed.');
     _initialized = true;
 
-    session.addInput(CaptureDeviceInput(device.device));
+    session.addInput(captureDeviceInput);
     await Future.wait(
       outputs.map<Future<void>>((CameraOutput output) => output.attach(this)),
       eagerError: true,
@@ -186,6 +188,37 @@ class CameraController implements intf.CameraController {
         return session.setSessionPreset(supportedPresets.last);
     }
   }
+
+  @override
+  Future<void> setTorchMode(TorchMode mode) {
+    device.device.lockForConfiguration();
+    switch (mode) {
+      case TorchMode.on:
+        device.device.setTorchMode(CaptureTorchMode.on);
+        break;
+      case TorchMode.off:
+        device.device.setTorchMode(CaptureTorchMode.off);
+        break;
+    }
+    return device.device.unlockForConfiguration();
+  }
+
+  @override
+  Future<List<TorchMode>> getSupportedTorchModes() async {
+    if (!device.device.hasTorch) return <TorchMode>[];
+
+    final List<int> torchModes = await device.device.torchModesSupported(
+      <int>[CaptureTorchMode.on, CaptureTorchMode.off],
+    );
+
+    for (int mode in torchModes) {
+      if (mode == CaptureTorchMode.on) {
+        return <TorchMode>[TorchMode.on, TorchMode.off];
+      }
+    }
+
+    return <TorchMode>[];
+  }
 }
 
 class CameraPlatform extends intf.PenguinCameraPlatform {
@@ -253,12 +286,40 @@ class PreviewOutput implements intf.PreviewOutput {
         return Size(352, 288);
       case CaptureSessionPreset.preset640x480:
         return Size(640, 480);
-      case CaptureSessionPreset.iFrame1280x720:
-        return Size(1280, 720);
+      case CaptureSessionPreset.iFrame960x540:
+        return Size(960, 540);
       case CaptureSessionPreset.preset1280x720:
         return Size(1280, 720);
       case CaptureSessionPreset.preset1920x1080:
         return Size(1920, 1080);
+    }
+  }
+
+  @override
+  Future<void> setRotation(OutputRotation rotation) async {
+    final CaptureConnection? connection = await preview.controller.connection();
+
+    if (connection == null) {
+      throw StateError(
+        'Could not find a connection for this output. This may not be attached to a CameraController.',
+      );
+    }
+
+    switch (rotation) {
+      case OutputRotation.rotation0:
+        return connection.setVideoOrientation(CaptureVideoOrientation.portrait);
+      case OutputRotation.rotation270:
+        return connection.setVideoOrientation(
+          CaptureVideoOrientation.landscapeLeft,
+        );
+      case OutputRotation.rotation180:
+        return connection.setVideoOrientation(
+          CaptureVideoOrientation.portraitUpsideDown,
+        );
+      case OutputRotation.rotation90:
+        return connection.setVideoOrientation(
+          CaptureVideoOrientation.landscapeRight,
+        );
     }
   }
 }
@@ -278,8 +339,8 @@ class ImageCaptureOutput implements intf.ImageCaptureOutput {
   }
 
   @override
-  Future<void> detach(covariant CameraController controller) async {
-    // TODO: remove capturePhotoOutput
+  Future<void> detach(covariant CameraController controller) {
+    return _controller.session.removeOutput(capturePhotoOutput);
   }
 
   CapturePhotoSettings _createNextPhotoSettings() {
@@ -360,12 +421,41 @@ class ImageCaptureOutput implements intf.ImageCaptureOutput {
         return Size(352, 288);
       case CaptureSessionPreset.preset640x480:
         return Size(640, 480);
-      case CaptureSessionPreset.iFrame1280x720:
-        return Size(1280, 720);
+      case CaptureSessionPreset.iFrame960x540:
+        return Size(960, 540);
       case CaptureSessionPreset.preset1280x720:
         return Size(1280, 720);
       case CaptureSessionPreset.preset1920x1080:
         return Size(1920, 1080);
+    }
+  }
+
+  @override
+  Future<void> setRotation(OutputRotation rotation) async {
+    final CaptureConnection? connection =
+        await capturePhotoOutput.connectionWithMediaType(MediaType.video);
+
+    if (connection == null) {
+      throw StateError(
+        'Could not find a connection for this output. This may not be attached to a CameraController.',
+      );
+    }
+
+    switch (rotation) {
+      case OutputRotation.rotation0:
+        return connection.setVideoOrientation(CaptureVideoOrientation.portrait);
+      case OutputRotation.rotation90:
+        return connection.setVideoOrientation(
+          CaptureVideoOrientation.landscapeLeft,
+        );
+      case OutputRotation.rotation180:
+        return connection.setVideoOrientation(
+          CaptureVideoOrientation.portraitUpsideDown,
+        );
+      case OutputRotation.rotation270:
+        return connection.setVideoOrientation(
+          CaptureVideoOrientation.landscapeRight,
+        );
     }
   }
 }
@@ -398,8 +488,8 @@ class VideoCaptureOutput implements intf.VideoCaptureOutput {
   }
 
   @override
-  Future<void> detach(covariant CameraController controller) async {
-    // TODO: Remove movieFileOutput
+  Future<void> detach(covariant CameraController controller) {
+    return _controller.session.removeOutput(movieFileOutput);
   }
 
   @override
@@ -423,12 +513,41 @@ class VideoCaptureOutput implements intf.VideoCaptureOutput {
         return Size(352, 288);
       case CaptureSessionPreset.preset640x480:
         return Size(640, 480);
-      case CaptureSessionPreset.iFrame1280x720:
-        return Size(1280, 720);
+      case CaptureSessionPreset.iFrame960x540:
+        return Size(960, 540);
       case CaptureSessionPreset.preset1280x720:
         return Size(1280, 720);
       case CaptureSessionPreset.preset1920x1080:
         return Size(1920, 1080);
+    }
+  }
+
+  @override
+  Future<void> setRotation(OutputRotation rotation) async {
+    final CaptureConnection? connection =
+        await movieFileOutput.connectionWithMediaType(MediaType.video);
+
+    if (connection == null) {
+      throw StateError(
+        'Could not find a connection for this output. This may not be attached to a CameraController.',
+      );
+    }
+
+    switch (rotation) {
+      case OutputRotation.rotation0:
+        return connection.setVideoOrientation(CaptureVideoOrientation.portrait);
+      case OutputRotation.rotation90:
+        return connection.setVideoOrientation(
+          CaptureVideoOrientation.landscapeLeft,
+        );
+      case OutputRotation.rotation180:
+        return connection.setVideoOrientation(
+          CaptureVideoOrientation.portraitUpsideDown,
+        );
+      case OutputRotation.rotation270:
+        return connection.setVideoOrientation(
+          CaptureVideoOrientation.landscapeRight,
+        );
     }
   }
 }

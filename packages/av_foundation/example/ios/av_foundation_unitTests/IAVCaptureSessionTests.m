@@ -8,11 +8,13 @@
 
 @implementation IAVCaptureSessionTests {
   AVCaptureSession *_mockCaptureSession;
+  AFPLibraryImplementations *_mockImplementations;
   AFPCaptureSessionProxy *_testCaptureSessionProxy;
   REFTypeChannelMessenger *_mockTypeChannelMessenger;
 }
 
 - (void)setUp {
+  _mockImplementations = OCMClassMock([AFPLibraryImplementations class]);
   _mockCaptureSession = OCMClassMock([AVCaptureSession class]);
   _mockTypeChannelMessenger = OCMClassMock([REFTypeChannelMessenger class]);
   _testCaptureSessionProxy = [[AFPCaptureSessionProxy alloc] initWithCaptureSession:_mockCaptureSession];
@@ -49,7 +51,7 @@
 - (void)testAddOutput {
   id mockCaptureOutput = OCMClassMock([AVCaptureOutput class]);
   AFPCaptureOutputProxy *testCaptureOutputProxy = [[AFPCaptureOutputProxy alloc]
-                                                  initWithCaptureOutput:mockCaptureOutput];
+                                                  initWithCaptureOutput:mockCaptureOutput implementations:_mockImplementations];
   
   [_testCaptureSessionProxy addOutput:testCaptureOutputProxy];
   OCMVerify([_mockCaptureSession addOutput:mockCaptureOutput]);
@@ -66,5 +68,45 @@
 
   NSArray<NSString *> *validPresets = [_testCaptureSessionProxy canSetSessionPresets:@[AVCaptureSessionPresetMedium, AVCaptureSessionPresetLow]];
   XCTAssertEqualObjects(validPresets, @[AVCaptureSessionPresetMedium]);
+}
+
+- (void)testCanAddInput {
+  OCMStub([_mockCaptureSession canAddInput:OCMOCK_ANY]).andReturn(NO);
+  XCTAssertEqualObjects([_testCaptureSessionProxy canAddInput:nil], @(NO));
+}
+
+- (void)testCanAddOutput {
+  OCMStub([_mockCaptureSession canAddOutput:OCMOCK_ANY]).andReturn(YES);
+  XCTAssertEqualObjects([_testCaptureSessionProxy canAddOutput:nil], @(YES));
+}
+
+
+- (void)testIsInterrupted {
+  OCMStub([_mockCaptureSession isInterrupted]).andReturn(NO);
+  XCTAssertEqualObjects([_testCaptureSessionProxy isInterrupted], @(NO));
+}
+
+
+- (void)testIsRunning {
+  OCMStub([_mockCaptureSession isRunning]).andReturn(YES);
+  XCTAssertEqualObjects([_testCaptureSessionProxy isRunning], @(YES));
+}
+
+- (void)testRemoveInput {
+  id mockCaptureInput = OCMClassMock([AVCaptureInput class]);
+  AFPCaptureInputProxy *testCaptureInputProxy = [[AFPCaptureInputProxy alloc] initWithCaptureInput:mockCaptureInput];
+
+  
+  [_testCaptureSessionProxy removeInput:testCaptureInputProxy];
+  OCMVerify([_mockCaptureSession removeInput:mockCaptureInput]);
+}
+
+- (void)testRemoveOutput {
+  id mockCaptureOutput = OCMClassMock([AVCaptureOutput class]);
+  AFPCaptureOutputProxy *testCaptureOutputProxy = [[AFPCaptureOutputProxy alloc]
+                                                  initWithCaptureOutput:mockCaptureOutput implementations:_mockImplementations];
+  
+  [_testCaptureSessionProxy removeOutput:testCaptureOutputProxy];
+  OCMVerify([_mockCaptureSession removeOutput:mockCaptureOutput]);
 }
 @end

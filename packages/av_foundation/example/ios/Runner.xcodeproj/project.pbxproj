@@ -26,6 +26,7 @@
 		6449CE0526A4D48D0015AD3C /* IAFCaptureInputPortTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6449CDF626A4D48D0015AD3C /* IAFCaptureInputPortTests.m */; };
 		6449CE0626A4D48D0015AD3C /* IAFCapturePhotoCaptureDelegateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6449CDF726A4D48D0015AD3C /* IAFCapturePhotoCaptureDelegateTests.m */; };
 		6449CE0726A4D48D0015AD3C /* IAFCaptureFileOutputTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6449CDF826A4D48D0015AD3C /* IAFCaptureFileOutputTests.m */; };
+		6449CE0926AE83050015AD3C /* AFPCaptureOutputTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6449CE0826AE83050015AD3C /* AFPCaptureOutputTests.m */; };
 		978B8F6F1D3862AE00F588F7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7AFFD8EE1D35381100E5BB4D /* AppDelegate.m */; };
 		97C146F31CF9000F007C117D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 97C146F21CF9000F007C117D /* main.m */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
@@ -82,6 +83,7 @@
 		6449CDF626A4D48D0015AD3C /* IAFCaptureInputPortTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IAFCaptureInputPortTests.m; sourceTree = "<group>"; };
 		6449CDF726A4D48D0015AD3C /* IAFCapturePhotoCaptureDelegateTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IAFCapturePhotoCaptureDelegateTests.m; sourceTree = "<group>"; };
 		6449CDF826A4D48D0015AD3C /* IAFCaptureFileOutputTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IAFCaptureFileOutputTests.m; sourceTree = "<group>"; };
+		6449CE0826AE83050015AD3C /* AFPCaptureOutputTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AFPCaptureOutputTests.m; sourceTree = "<group>"; };
 		7A355B6EA520124356567A70 /* Pods-Runner-av_foundation_unitTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner-av_foundation_unitTests.debug.xcconfig"; path = "Target Support Files/Pods-Runner-av_foundation_unitTests/Pods-Runner-av_foundation_unitTests.debug.xcconfig"; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Flutter/Release.xcconfig; sourceTree = "<group>"; };
 		7AFFD8ED1D35381100E5BB4D /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -159,6 +161,7 @@
 				6449CDF026A4D48D0015AD3C /* IAVCaptureSessionTests.m */,
 				6449CDEF26A4D48D0015AD3C /* IAVFoundationEnumTests.m */,
 				6449CDDF26A4CFF20015AD3C /* Info.plist */,
+				6449CE0826AE83050015AD3C /* AFPCaptureOutputTests.m */,
 			);
 			path = av_foundation_unitTests;
 			sourceTree = "<group>";
@@ -401,6 +404,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6449CDFE26A4D48D0015AD3C /* IAVFoundationEnumTests.m in Sources */,
+				6449CE0926AE83050015AD3C /* AFPCaptureOutputTests.m in Sources */,
 				6449CDFB26A4D48D0015AD3C /* IAFCapturePhotoSettingsTests.m in Sources */,
 				6449CDF926A4D48D0015AD3C /* IAFPreviewControllerTests.m in Sources */,
 				6449CDFC26A4D48D0015AD3C /* IAFCaptureMovieFileOutputTests.m in Sources */,

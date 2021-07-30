@@ -19,6 +19,11 @@ NS_ASSUME_NONNULL_BEGIN
                       implementations:(AFPLibraryImplementations *)implementations;
 @end
 
+@interface AFPPreviewView : UIView
+-(instancetype)initWithCaptureSession:(AVCaptureSession *)captureSession;
+- (AVCaptureConnection *_Nullable)connection;
+@end
+
 @interface AFPCaptureInputProxy : NSObject<_AFPCaptureInput>
 @property (readonly) AVCaptureInput *captureInput;
 - (instancetype)initWithCaptureInput:(AVCaptureInput *)captureInput;
@@ -34,18 +39,24 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface AFPPreviewControllerProxy : NSObject<_AFPPreviewController, FlutterPlatformView>
-- (instancetype)initWithCaptureSession:(AFPCaptureSessionProxy *)captureSession;
-- (instancetype)initWithView:(UIView *)view;
+- (instancetype)initWithCaptureSession:(AFPCaptureSessionProxy *)captureSession
+                       implementations:(AFPLibraryImplementations *)implementations;
+- (instancetype)initWithView:(AFPPreviewView *)view implementations:(AFPLibraryImplementations *)implementations;
 @end
 
 @interface AFPCaptureOutputProxy : NSObject<_AFPCaptureOutput>
 @property (readonly) AVCaptureOutput *captureOutput;
-- (instancetype)initWithCaptureOutput:(AVCaptureOutput *)captureOutput;
+- (instancetype)initWithCaptureOutput:(AVCaptureOutput *)captureOutput
+                      implementations:(AFPLibraryImplementations *)implementations;
+- (instancetype)initWithCaptureOutputWithoutCreate:(AVCaptureOutput *)captureOutput
+                                   implementations:(AFPLibraryImplementations *)implementations;
 @end
 
 API_AVAILABLE(ios(10.0))
 @interface AFPCapturePhotoOutputProxy : AFPCaptureOutputProxy<_AFPCapturePhotoOutput>
-- (instancetype)initWithCapturePhotoOutput:(AVCapturePhotoOutput *)capturePhotoOutput;
+- (instancetype)initWithImplementations:(AFPLibraryImplementations *)implementations;
+- (instancetype)initWithCapturePhotoOutput:(AVCapturePhotoOutput *)capturePhotoOutput
+                           implementations:(AFPLibraryImplementations *)implementations;
 @end
 
 API_AVAILABLE(ios(10.0))
@@ -79,12 +90,14 @@ API_AVAILABLE(ios(11.0))
 @end
 
 @interface AFPCaptureFileOutputProxy : AFPCaptureOutputProxy<_AFPCaptureFileOutput>
-- (instancetype)initWithCaptureFileOutput:(AVCaptureFileOutput *)captureFileOutput;
+- (instancetype)initWithCaptureFileOutput:(AVCaptureFileOutput *)captureFileOutput
+                          implementations:(AFPLibraryImplementations *)implementations;
 @end
 
 @interface AFPCaptureMovieFileOutputProxy : AFPCaptureFileOutputProxy<_AFPCaptureMovieFileOutput>
-- (instancetype)init;
-- (instancetype)initWithCaptureMovieFileOutput:(AVCaptureMovieFileOutput *)captureMovieFileOutput;
+- (instancetype)initWithImplementations:(AFPLibraryImplementations *)implementations;
+- (instancetype)initWithCaptureMovieFileOutput:(AVCaptureMovieFileOutput *)captureMovieFileOutput
+                               implementations:(AFPLibraryImplementations *)implementations;
 @end
 
 @interface AFPCaptureFileOutputRecordingDelegateProxy : NSObject<_AFPCaptureFileOutputRecordingDelegate, AVCaptureFileOutputRecordingDelegate>
@@ -103,6 +116,8 @@ API_AVAILABLE(ios(11.0))
 - (instancetype)initWithInputPorts:(NSArray<AFPCaptureInputPortProxy *> *)ports
                             output:(AFPCaptureOutputProxy *)output;
 - (instancetype)initWithCaptureConnection:(AVCaptureConnection *)captureConnection;
+- (instancetype)initWithCaptureConnection:(AVCaptureConnection *)captureConnection
+                          implementations:(AFPLibraryImplementations *)implementations;
 @end
 NS_ASSUME_NONNULL_END
 

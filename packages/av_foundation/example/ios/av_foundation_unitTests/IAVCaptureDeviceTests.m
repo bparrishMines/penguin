@@ -13,6 +13,8 @@
 @property CGFloat rampZoomFactor;
 @property float rampZoomRate;
 @property CGFloat videoZoomFactor;
+@property AVCaptureTorchMode torchMode;
+@property float torchLevel;
 @end
 
 @implementation TestCaptureDevice
@@ -106,6 +108,32 @@
   _rampZoomFactor = factor;
   _rampZoomRate = rate;
 }
+
+-(BOOL)hasTorch {
+  return YES;
+}
+
+- (BOOL)isTorchActive {
+  return YES;
+}
+
+- (BOOL)isTorchAvailable {
+  return false;
+}
+
+- (BOOL)setTorchModeOnWithLevel:(float)torchLevel error:(NSError * _Nullable * _Nullable)outError {
+  _torchMode = AVCaptureTorchModeOn;
+  _torchLevel = torchLevel;
+  return YES;
+}
+
+- (BOOL)isTorchModeSupported:(AVCaptureTorchMode)mode {
+  if (mode == AVCaptureTorchModeAuto) {
+    return YES;
+  }
+  
+  return NO;
+}
 @end
 
 @interface IAVCaptureDeviceTests : XCTestCase
@@ -136,6 +164,8 @@
                                         position:@2
                       isSmoothAutoFocusSupported:@(YES)
                                         hasFlash:@(NO)
+                                       hasTorch:@(YES)
+                         maxAvailableTorchLevel:@(AVCaptureMaxAvailableTorchLevel)
                                       completion:OCMOCK_ANY]);
 }
 
@@ -232,5 +262,40 @@
 -(void)testSetVideoZoomFactor {
   [_testCaptureDeviceProxy setVideoZoomFactor:@(23.00)];
   XCTAssertEqual(_testCaptureDevice.videoZoomFactor, 23.00);
+}
+
+
+- (void)testIsTorchActive {
+  XCTAssertEqualObjects([_testCaptureDeviceProxy isTorchActive], @(YES));
+}
+
+
+- (void)testIsTorchAvailable {
+  XCTAssertEqualObjects([_testCaptureDeviceProxy isTorchAvailable], @(NO));
+}
+
+
+- (void)testSetTorchMode:(NSNumber * _Nullable)mode {
+  [_testCaptureDeviceProxy setTorchMode:@(1)];
+  XCTAssertEqual(_testCaptureDevice.torchMode, 1);
+}
+
+
+- (void)setTorchModeOnWithLevel:(NSNumber * _Nullable)torchLevel {
+  [_testCaptureDeviceProxy setTorchModeOnWithLevel:@(11.00)];
+  XCTAssertEqual(_testCaptureDevice.torchMode, 2);
+  XCTAssertEqual(_testCaptureDevice.torchLevel, 11.00);
+}
+
+
+- (void)testTorchLevel {
+  [_testCaptureDeviceProxy setTorchModeOnWithLevel:@(12.00)];
+  XCTAssertEqualObjects([_testCaptureDeviceProxy torchLevel], @(12.00));
+}
+
+
+- (void)testTorchModesSupported:(NSArray<NSNumber *> * _Nullable)modes {
+  NSArray<NSNumber *> *validModes = [_testCaptureDeviceProxy torchModesSupported:@[@(AVCaptureTorchModeOn), @(AVCaptureTorchModeAuto)]];
+  XCTAssertEqualObjects(validModes, @[@(AVCaptureTorchModeAuto)]);
 }
 @end

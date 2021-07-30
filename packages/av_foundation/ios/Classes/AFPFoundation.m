@@ -1,8 +1,5 @@
 #import "AFPFoundation.h"
 
-@interface AFPPreviewView : UIView
-@end
-
 @implementation AFPCaptureDeviceProxy
 + (NSArray<AFPCaptureDeviceProxy*> *)asProxyList:(NSArray<AVCaptureDevice *> *)captureDevices
                                  implementations:(AFPLibraryImplementations *)implementations {
@@ -33,6 +30,8 @@
                                         position:@(captureDevice.position)
                       isSmoothAutoFocusSupported:@(captureDevice.isSmoothAutoFocusSupported)
                                         hasFlash:@(captureDevice.hasFlash)
+                                        hasTorch:@(captureDevice.hasTorch)
+                          maxAvailableTorchLevel:@(AVCaptureMaxAvailableTorchLevel)
                                       completion:^(REFPairedInstance *pairedInstance, NSError *error) {}];
   return self;
 }
@@ -159,6 +158,48 @@
   [_captureDevice setVideoZoomFactor:factor.floatValue];
   return nil;
 }
+
+- (NSNumber *)isTorchActive {
+  return @(_captureDevice.isTorchActive);
+}
+
+
+- (NSNumber *)isTorchAvailable {
+  return @(_captureDevice.isTorchAvailable);
+}
+
+
+- (id _Nullable)setTorchMode:(NSNumber * _Nullable)mode {
+  [_captureDevice setTorchMode:mode.intValue];
+  return nil;
+}
+
+
+- (id _Nullable)setTorchModeOnWithLevel:(NSNumber * _Nullable)torchLevel {
+  NSError *error;
+  [_captureDevice setTorchModeOnWithLevel:torchLevel.floatValue error:&error];
+  if (error) {
+    @throw [NSException exceptionWithName:@"AFPTorchException" reason:error.description userInfo:nil];
+  }
+  return nil;
+}
+
+
+- (NSNumber *)torchLevel {
+  return @(_captureDevice.torchLevel);
+}
+
+
+- (NSArray<NSNumber *> *)torchModesSupported:(NSArray<NSNumber *> * _Nullable)modes {
+  NSMutableArray<NSNumber *> *validModes = [NSMutableArray array];
+  for (NSNumber *mode in modes) {
+    if ([_captureDevice isTorchModeSupported:mode.intValue]) {
+      [validModes addObject:mode];
+    }
+  }
+  return validModes;
+}
+
 @end
 
 @implementation AFPCaptureSessionProxy
@@ -210,6 +251,41 @@
   }
   return validPresets;
 }
+
+- (NSNumber *)canAddInput:(NSObject<_AFPCaptureInput> * _Nullable)input {
+  AFPCaptureInputProxy *inputProxy = (AFPCaptureInputProxy *)input;
+  return @([_captureSession canAddInput:inputProxy.captureInput]);
+}
+
+
+- (id _Nullable)canAddOutput:(NSObject<_AFPCaptureOutput> * _Nullable)output {
+  AFPCaptureOutputProxy *outputProxy = (AFPCaptureOutputProxy *)output;
+  return @([_captureSession canAddOutput:outputProxy.captureOutput]);
+}
+
+
+- (NSNumber *)isInterrupted {
+  return @(_captureSession.isInterrupted);
+}
+
+
+- (NSNumber *)isRunning {
+  return @(_captureSession.isRunning);
+}
+
+
+- (id _Nullable)removeInput:(NSObject<_AFPCaptureInput> * _Nullable)input {
+  AFPCaptureInputProxy *inputProxy = (AFPCaptureInputProxy *)input;
+  [_captureSession removeInput:inputProxy.captureInput];
+  return nil;
+}
+
+
+- (id _Nullable)removeOutput:(NSObject<_AFPCaptureOutput> * _Nullable)output {
+  AFPCaptureOutputProxy *outputProxy = (AFPCaptureOutputProxy *)output;
+  [_captureSession removeOutput:outputProxy.captureOutput];
+  return nil;
+}
 @end
 
 @implementation AFPCaptureInputProxy
@@ -258,21 +334,28 @@
     for (CALayer *layer in sublayers) layer.frame = self.bounds;
   }
 }
+
+- (AVCaptureConnection *_Nullable)connection {
+  return _layer.connection;
+}
 @end
 
 @implementation AFPPreviewControllerProxy {
-  UIView *_view;
+  AFPPreviewView *_view;
+  AFPLibraryImplementations *_implementations;
 }
 
-- (instancetype)initWithCaptureSession:(AFPCaptureSessionProxy *)captureSession {
-  UIView *view = [[AFPPreviewView alloc] initWithCaptureSession:captureSession.captureSession];
-  return [self initWithView:view];
+- (instancetype)initWithCaptureSession:(AFPCaptureSessionProxy *)captureSession
+                       implementations:(AFPLibraryImplementations *)implementations {
+  AFPPreviewView *view = [[AFPPreviewView alloc] initWithCaptureSession:captureSession.captureSession];
+  return [self initWithView:view implementations:implementations];
 }
 
-- (instancetype)initWithView:(UIView *)view {
+- (instancetype)initWithView:(AFPPreviewView *)view implementations:(AFPLibraryImplementations *)implementations {
   self = [super init];
   if (self) {
     _view = view;
+    _implementations = implementations;
   }
   return self;
 }
@@ -281,28 +364,59 @@
   return _view;
 }
 
-- (NSObject<_AFPCaptureSession> * _Nullable)captureSession {
+- (AFPCaptureConnectionProxy *_Nullable)connection {
+  AVCaptureConnection *connection = _view.connection;
+  if (connection) {
+    return [[AFPCaptureConnectionProxy alloc] initWithCaptureConnection:connection implementations:_implementations];
+  }
   return nil;
 }
 @end
 
-@implementation AFPCaptureOutputProxy
-- (instancetype)initWithCaptureOutput:(AVCaptureOutput *)captureOutput {
+@implementation AFPCaptureOutputProxy {
+  AFPLibraryImplementations *_implementations;
+}
+
+- (instancetype)initWithCaptureOutputWithoutCreate:(AVCaptureOutput *)captureOutput
+                                   implementations:(AFPLibraryImplementations *)implementations {
   self = [super init];
   if (self) {
     _captureOutput = captureOutput;
+    _implementations = implementations;
   }
   return self;
+}
+
+- (instancetype)initWithCaptureOutput:(AVCaptureOutput *)captureOutput
+                      implementations:(AFPLibraryImplementations *)implementations {
+  self = [self initWithCaptureOutputWithoutCreate:captureOutput implementations:implementations];
+  if (self) {
+    [implementations.channelCaptureOutput _create_:self
+                                            _owner:NO
+                                        completion:^(REFPairedInstance *instance, NSError * error) {}];
+  }
+  return self;
+}
+
+- (AFPCaptureConnectionProxy *_Nullable)connectionWithMediaType:(NSString * _Nullable)mediaType {
+  AVCaptureConnection *connection = [_captureOutput connectionWithMediaType:mediaType];
+  if (connection) {
+    AFPCaptureConnectionProxy *proxy = [[AFPCaptureConnectionProxy alloc] initWithCaptureConnection:connection
+                                                                                    implementations:_implementations];
+    return proxy;
+  }
+  return nil;
 }
 @end
 
 @implementation AFPCapturePhotoOutputProxy
-- (instancetype)init {
-  return [self initWithCapturePhotoOutput:[AVCapturePhotoOutput new]];
+- (instancetype)initWithImplementations:(AFPLibraryImplementations *)implementations {
+  return [self initWithCapturePhotoOutput:[AVCapturePhotoOutput new] implementations:implementations];
 }
 
-- (instancetype)initWithCapturePhotoOutput:(AVCapturePhotoOutput *)capturePhotoOutput {
-  return [self initWithCaptureOutput:capturePhotoOutput];
+- (instancetype)initWithCapturePhotoOutput:(AVCapturePhotoOutput *)capturePhotoOutput
+                           implementations:(AFPLibraryImplementations *)implementations {
+  return [self initWithCaptureOutputWithoutCreate:capturePhotoOutput implementations:implementations];
 }
 
 - (NSObject *)capturePhoto:(AFPCapturePhotoSettingsProxy *_Nullable)settings
@@ -431,8 +545,9 @@ didFinishProcessingPhoto:(AVCapturePhoto *)photo
 @end
 
 @implementation AFPCaptureFileOutputProxy
-- (instancetype)initWithCaptureFileOutput:(AVCaptureFileOutput *)captureFileOutput {
-  return [self initWithCaptureOutput:captureFileOutput];
+- (instancetype)initWithCaptureFileOutput:(AVCaptureFileOutput *)captureFileOutput
+                          implementations:(AFPLibraryImplementations *)implementations {
+  return [self initWithCaptureOutputWithoutCreate:captureFileOutput implementations:implementations];
 }
 
 - (NSNumber *)isRecording {
@@ -467,12 +582,14 @@ didFinishProcessingPhoto:(AVCapturePhoto *)photo
 @end
 
 @implementation AFPCaptureMovieFileOutputProxy
-- (instancetype)init {
-  return [self initWithCaptureMovieFileOutput:[[AVCaptureMovieFileOutput alloc] init]];
+- (instancetype)initWithImplementations:(AFPLibraryImplementations *)implementations {
+  return [self initWithCaptureMovieFileOutput:[[AVCaptureMovieFileOutput alloc] init]
+                              implementations:implementations];
 }
 
-- (instancetype)initWithCaptureMovieFileOutput:(AVCaptureMovieFileOutput *)captureMovieFileOutput {
-  return [self initWithCaptureFileOutput:captureMovieFileOutput];
+- (instancetype)initWithCaptureMovieFileOutput:(AVCaptureMovieFileOutput *)captureMovieFileOutput
+                               implementations:(AFPLibraryImplementations *)implementations; {
+  return [self initWithCaptureFileOutput:captureMovieFileOutput implementations:implementations];
 }
 
 - (NSArray<NSString *> *)availableVideoCodecTypes {
@@ -547,6 +664,23 @@ didFinishRecordingToOutputFileAtURL:(nonnull NSURL *)outputFileURL
   if (self) {
     _captureConnection = captureConnection;
   }
+  return self;
+}
+
+- (instancetype)initWithCaptureConnection:(AVCaptureConnection *)captureConnection
+                          implementations:(AFPLibraryImplementations *)implementations {
+  self = [self initWithCaptureConnection:captureConnection];
+  
+  AFPCaptureOutputProxy *outputProxy = [[AFPCaptureOutputProxy alloc] initWithCaptureOutput:captureConnection.output
+                                                                            implementations:implementations];
+  [implementations.channelCaptureConnection _create_:self
+                                              _owner:false
+                                          inputPorts:[AFPCaptureInputPortProxy asProxyList:captureConnection.inputPorts
+                                                                           implementations:implementations]
+                                              output:outputProxy
+                                          completion:^(REFPairedInstance *instance, NSError *error) {
+    
+  }];
   return self;
 }
 

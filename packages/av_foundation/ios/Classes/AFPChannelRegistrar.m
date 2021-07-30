@@ -17,7 +17,7 @@
 }
 
 - (AFPPreviewControllerHandler *)handlerPreviewController {
-  return [[AFPPreviewControllerHandler alloc] init];
+  return [[AFPPreviewControllerHandler alloc] initWithImplementations:self];
 }
 
 - (AFPCapturePhotoCaptureDelegateHandler *)handlerCapturePhotoCaptureDelegate {
@@ -29,7 +29,7 @@
 }
 
 - (AFPCapturePhotoOutputHandler *)handlerCapturePhotoOutput {
-  return [[AFPCapturePhotoOutputHandler alloc] init];
+  return [[AFPCapturePhotoOutputHandler alloc] initWithImplementations:self];
 }
 
 - (AFPCaptureDeviceDiscoverySessionHandler *)handlerCaptureDeviceDiscoverySession {
@@ -37,7 +37,7 @@
 }
 
 - (AFPCaptureMovieFileOutputHandler *)handlerCaptureMovieFileOutput {
-  return [[AFPCaptureMovieFileOutputHandler alloc] init];
+  return [[AFPCaptureMovieFileOutputHandler alloc] initWithImplementations:self];
 }
 
 - (AFPCaptureFileOutputRecordingDelegateHandler *)handlerCaptureFileOutputRecordingDelegate {
@@ -79,10 +79,22 @@
 }
 @end
 
-@implementation AFPPreviewControllerHandler
+@implementation AFPPreviewControllerHandler {
+  AFPLibraryImplementations *_implementations;
+}
+
+- (instancetype)initWithImplementations:(AFPLibraryImplementations *)implementations {
+  self = [super init];
+  if (self) {
+    _implementations = implementations;
+  }
+  return self;
+}
+
 - (AFPPreviewControllerProxy *)_create_:(REFTypeChannelMessenger *)messenger
                                captureSession:(NSObject<_AFPCaptureSession> *)captureSession {
-  return [[AFPPreviewControllerProxy alloc] initWithCaptureSession:((AFPCaptureSessionProxy *)captureSession)];
+  return [[AFPPreviewControllerProxy alloc] initWithCaptureSession:((AFPCaptureSessionProxy *)captureSession)
+                                                   implementations:_implementations];
 }
 @end
 
@@ -120,10 +132,21 @@
 }
 @end
 
-@implementation AFPCapturePhotoOutputHandler
+@implementation AFPCapturePhotoOutputHandler {
+  AFPLibraryImplementations *_implementations;
+}
+
+- (instancetype)initWithImplementations:(AFPLibraryImplementations *)implementations {
+  self = [super init];
+  if (self) {
+    _implementations = implementations;
+  }
+  return self;
+}
+
 - (AFPCapturePhotoOutputProxy *)_create_:(REFTypeChannelMessenger *)messenger {
   if (@available(iOS 10.0, *)) {
-    return [[AFPCapturePhotoOutputProxy alloc] init];
+    return [[AFPCapturePhotoOutputProxy alloc] initWithImplementations:_implementations];
   }
   @throw [NSException exceptionWithName:@"IosAvfoundationPluginException"
                                  reason:@"Requires version >= ios 10.0"
@@ -154,9 +177,20 @@
 }
 @end
 
-@implementation AFPCaptureMovieFileOutputHandler
+@implementation AFPCaptureMovieFileOutputHandler {
+  AFPLibraryImplementations *_implementations;
+}
+
+- (instancetype)initWithImplementations:(AFPLibraryImplementations *)implementations {
+  self = [super init];
+  if (self) {
+    _implementations = implementations;
+  }
+  return self;
+}
+
 - (AFPCaptureMovieFileOutputProxy *)_create_:(REFTypeChannelMessenger *)messenger {
-  return [[AFPCaptureMovieFileOutputProxy alloc] init];
+  return [[AFPCaptureMovieFileOutputProxy alloc] initWithImplementations:_implementations];
 }
 @end
 

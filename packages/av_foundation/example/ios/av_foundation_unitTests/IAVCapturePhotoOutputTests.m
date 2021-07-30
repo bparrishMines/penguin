@@ -19,7 +19,8 @@
   _mockTypeChannelMessenger = OCMClassMock([REFTypeChannelMessenger class]);
   _mockCapturePhotoOutput = OCMClassMock([AVCapturePhotoOutput class]);
   _testCapturePhotoOutputProxy = [[AFPCapturePhotoOutputProxy alloc]
-                                  initWithCapturePhotoOutput:_mockCapturePhotoOutput];
+                                  initWithCapturePhotoOutput:_mockCapturePhotoOutput
+                                  implementations:_mockImplementations];
 }
 
 - (void)testCreateCapturePhotoOutput {

@@ -73,4 +73,10 @@
   XCTAssertEqual(AVCaptureVideoOrientationLandscapeRight, 3);
   XCTAssertEqual(AVCaptureVideoOrientationLandscapeLeft, 4);
 }
+
+- (void)testTorchMode {
+  XCTAssertEqual(AVCaptureTorchModeOff, 0);
+  XCTAssertEqual(AVCaptureTorchModeOn, 1);
+  XCTAssertEqual(AVCaptureTorchModeAuto, 2);
+}
 @end

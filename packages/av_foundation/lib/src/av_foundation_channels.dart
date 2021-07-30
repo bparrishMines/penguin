@@ -38,21 +38,37 @@ class LibraryImplementations extends $LibraryImplementations {
           CaptureDeviceDiscoverySessionHandler();
 
   @override
-  $CaptureInputPortHandler get handlerCaptureInputPort =>
+  CaptureInputPortHandler get handlerCaptureInputPort =>
       CaptureInputPortHandler();
+
+  @override
+  CaptureConnectionHandler get handlerCaptureConnection =>
+      CaptureConnectionHandler();
+
+  @override
+  CaptureOutputHandler get handlerCaptureOutput => CaptureOutputHandler();
 }
 
 /// [TypeChannelHandler] implementation for [CaptureDevice].
 class CaptureDeviceHandler extends $CaptureDeviceHandler {
   @override
-  $CaptureDevice $create$(TypeChannelMessenger messenger, String uniqueId,
-      int position, bool isSmoothAutoFocusSupported, bool hasFlash) {
+  $CaptureDevice $create$(
+    TypeChannelMessenger messenger,
+    String uniqueId,
+    int position,
+    bool isSmoothAutoFocusSupported,
+    bool hasFlash,
+    bool hasTorch,
+    double maxAvailableTorchLevel,
+  ) {
     // ignore: invalid_use_of_visible_for_testing_member
     return CaptureDevice(
       uniqueId: uniqueId,
       position: position,
       isSmoothAutoFocusSupported: isSmoothAutoFocusSupported,
       hasFlash: hasFlash,
+      hasTorch: hasTorch,
+      maxAvailableTorchLevel: maxAvailableTorchLevel,
     );
   }
 }
@@ -103,5 +119,29 @@ class CaptureInputPortHandler extends $CaptureInputPortHandler {
       sourceDeviceType: sourceDeviceType,
       sourceDevicePosition: sourceDevicePosition,
     );
+  }
+}
+
+/// [TypeChannelHandler] implementation for [CaptureConnection].
+class CaptureConnectionHandler extends $CaptureConnectionHandler {
+  @override
+  $CaptureConnection $create$(
+    TypeChannelMessenger messenger,
+    List<$CaptureInputPort> inputPorts,
+    covariant CaptureOutput output,
+  ) {
+    return CaptureConnection.withoutCreate(
+      inputPorts.cast<CaptureInputPort>(),
+      output,
+    );
+  }
+}
+
+/// [TypeChannelHandler] implementation for [CaptureOutput].
+class CaptureOutputHandler extends $CaptureOutputHandler {
+  @override
+  CaptureOutput $create$(TypeChannelMessenger messenger) {
+    // ignore: invalid_use_of_visible_for_testing_member
+    return CaptureOutput();
   }
 }

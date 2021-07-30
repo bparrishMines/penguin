@@ -60,6 +60,10 @@ class _MyAppState extends State<_MyApp> {
   Future<void> _getPicturePermission() async {
     while (!(await Permission.camera.request().isGranted)) {}
     while (!(await Permission.storage.request().isGranted)) {}
+
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
+      while (!(await Permission.photosAddOnly.request().isGranted)) {}
+    }
   }
 
   Future<void> _getAudioPermission() async {
@@ -90,13 +94,11 @@ class _MyAppState extends State<_MyApp> {
 
     _videoCaptureOutput = VideoCaptureOutput(includeAudio: true);
     _cameraController = await _setupCameraController(_videoCaptureOutput);
-
     final List<FocusMode> supportedFocusMode =
         await _cameraController.getSupportedFocusModes();
     if (supportedFocusMode.contains(FocusMode.continuousVideoAutoFocus)) {
       _cameraController.setFocusMode(FocusMode.continuousVideoAutoFocus);
     }
-
     _cameraController.start();
     setState(() {
       currentMode = CameraMode.video;
@@ -120,6 +122,8 @@ class _MyAppState extends State<_MyApp> {
     await cameraController.initialize();
 
     await cameraController.setControllerPreset(CameraControllerPreset.high);
+    _previewOutput.setRotation(OutputRotation.rotation0);
+    output.setRotation(OutputRotation.rotation270);
     _previewOutputSize = await _previewOutput.getOutputSize();
     return cameraController;
   }

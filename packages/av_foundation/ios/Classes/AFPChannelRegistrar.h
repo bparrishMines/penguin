@@ -23,6 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface AFPPreviewControllerHandler : _AFPPreviewControllerHandler
+- (instancetype)initWithImplementations:(AFPLibraryImplementations *)implementations;
 @end
 
 @interface AFPCapturePhotoCaptureDelegateHandler : _AFPCapturePhotoCaptureDelegateHandler
@@ -33,6 +34,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface AFPCapturePhotoOutputHandler : _AFPCapturePhotoOutputHandler
+- (instancetype)initWithImplementations:(AFPLibraryImplementations *)implementations;
 @end
 
 @interface AFPCaptureDeviceDiscoverySessionHandler : _AFPCaptureDeviceDiscoverySessionHandler
@@ -40,6 +42,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface AFPCaptureMovieFileOutputHandler : _AFPCaptureMovieFileOutputHandler
+- (instancetype)initWithImplementations:(AFPLibraryImplementations *)implementations;
 @end
 
 @interface AFPCaptureFileOutputRecordingDelegateHandler : _AFPCaptureFileOutputRecordingDelegateHandler

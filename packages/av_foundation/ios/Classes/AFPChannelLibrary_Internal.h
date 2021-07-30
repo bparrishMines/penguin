@@ -113,6 +113,14 @@ typedef NSObject *_Nullable (^_AFPFinishProcessingPhotoCallback) (NSObject<_AFPC
 
 @protocol _AFPCaptureOutput <NSObject>
 
+
+- (id _Nullable)connectionWithMediaType
+                                :(NSString * _Nullable)mediaType
+
+
+;
+
+
 @end
 
 @protocol _AFPCapturePhoto <NSObject>
@@ -169,6 +177,50 @@ typedef NSObject *_Nullable (^_AFPFinishProcessingPhotoCallback) (NSObject<_AFPC
 - (id _Nullable)canSetSessionPresets
                                 :(NSArray<NSString *> * _Nullable)presets
 
+
+;
+
+
+
+- (id _Nullable)canAddInput
+                                :(NSObject<_AFPCaptureInput> * _Nullable)input
+
+
+;
+
+
+
+- (id _Nullable)removeInput
+                                :(NSObject<_AFPCaptureInput> * _Nullable)input
+
+
+;
+
+
+
+- (id _Nullable)canAddOutput
+                                :(NSObject<_AFPCaptureOutput> * _Nullable)output
+
+
+;
+
+
+
+- (id _Nullable)removeOutput
+                                :(NSObject<_AFPCaptureOutput> * _Nullable)output
+
+
+;
+
+
+
+- (id _Nullable)isRunning
+
+;
+
+
+
+- (id _Nullable)isInterrupted
 
 ;
 
@@ -297,6 +349,48 @@ typedef NSObject *_Nullable (^_AFPFinishProcessingPhotoCallback) (NSObject<_AFPC
 ;
 
 
+
+- (id _Nullable)isTorchAvailable
+
+;
+
+
+
+- (id _Nullable)isTorchActive
+
+;
+
+
+
+- (id _Nullable)torchLevel
+
+;
+
+
+
+- (id _Nullable)setTorchMode
+                                :(NSNumber * _Nullable)mode
+
+
+;
+
+
+
+- (id _Nullable)torchModesSupported
+                                :(NSArray<NSNumber *> * _Nullable)modes
+
+
+;
+
+
+
+- (id _Nullable)setTorchModeOnWithLevel
+                                :(NSNumber * _Nullable)torchLevel
+
+
+;
+
+
 @end
 
 @protocol _AFPCaptureDeviceDiscoverySession <NSObject>
@@ -304,6 +398,12 @@ typedef NSObject *_Nullable (^_AFPFinishProcessingPhotoCallback) (NSObject<_AFPC
 @end
 
 @protocol _AFPPreviewController <NSObject>
+
+
+- (id _Nullable)connection
+
+;
+
 
 @end
 
@@ -486,6 +586,8 @@ typedef NSObject *_Nullable (^_AFPFinishProcessingPhotoCallback) (NSObject<_AFPC
 
 
 
+
+
 @end
 
 @interface _AFPCapturePhotoChannel : REFTypeChannel
@@ -558,6 +660,18 @@ typedef NSObject *_Nullable (^_AFPFinishProcessingPhotoCallback) (NSObject<_AFPC
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 @end
 
 @interface _AFPCaptureDeviceChannel : REFTypeChannel
@@ -574,7 +688,23 @@ typedef NSObject *_Nullable (^_AFPFinishProcessingPhotoCallback) (NSObject<_AFPC
 
  hasFlash:(NSNumber * _Nullable)hasFlash
 
+ hasTorch:(NSNumber * _Nullable)hasTorch
+
+ maxAvailableTorchLevel:(NSNumber * _Nullable)maxAvailableTorchLevel
+
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion;
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -647,6 +777,8 @@ typedef NSObject *_Nullable (^_AFPFinishProcessingPhotoCallback) (NSObject<_AFPC
  captureSession:(NSObject<_AFPCaptureSession> * _Nullable)captureSession
 
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion;
+
+
 
 
 
@@ -831,6 +963,13 @@ typedef NSObject *_Nullable (^_AFPFinishProcessingPhotoCallback) (NSObject<_AFPC
 
 
 
+
+- (id _Nullable)_connectionWithMediaType:(NSObject<_AFPCaptureOutput> *)_instance
+
+  mediaType:(NSString * _Nullable)mediaType
+;
+
+
 @end
 
 @interface _AFPCapturePhotoHandler : NSObject<REFTypeChannelHandler>
@@ -913,6 +1052,44 @@ typedef NSObject *_Nullable (^_AFPFinishProcessingPhotoCallback) (NSObject<_AFPC
 ;
 
 
+
+- (id _Nullable)_canAddInput:(NSObject<_AFPCaptureSession> *)_instance
+
+  input:(NSObject<_AFPCaptureInput> * _Nullable)input
+;
+
+
+
+- (id _Nullable)_removeInput:(NSObject<_AFPCaptureSession> *)_instance
+
+  input:(NSObject<_AFPCaptureInput> * _Nullable)input
+;
+
+
+
+- (id _Nullable)_canAddOutput:(NSObject<_AFPCaptureSession> *)_instance
+
+  output:(NSObject<_AFPCaptureOutput> * _Nullable)output
+;
+
+
+
+- (id _Nullable)_removeOutput:(NSObject<_AFPCaptureSession> *)_instance
+
+  output:(NSObject<_AFPCaptureOutput> * _Nullable)output
+;
+
+
+
+- (id _Nullable)_isRunning:(NSObject<_AFPCaptureSession> *)_instance
+;
+
+
+
+- (id _Nullable)_isInterrupted:(NSObject<_AFPCaptureSession> *)_instance
+;
+
+
 @end
 
 @interface _AFPCaptureDeviceHandler : NSObject<REFTypeChannelHandler>
@@ -926,6 +1103,10 @@ typedef NSObject *_Nullable (^_AFPFinishProcessingPhotoCallback) (NSObject<_AFPC
                                   isSmoothAutoFocusSupported:(NSNumber * _Nullable)isSmoothAutoFocusSupported
 
                                   hasFlash:(NSNumber * _Nullable)hasFlash
+
+                                  hasTorch:(NSNumber * _Nullable)hasTorch
+
+                                  maxAvailableTorchLevel:(NSNumber * _Nullable)maxAvailableTorchLevel
 ;
 
 
@@ -1041,6 +1222,42 @@ typedef NSObject *_Nullable (^_AFPFinishProcessingPhotoCallback) (NSObject<_AFPC
 ;
 
 
+
+- (id _Nullable)_isTorchAvailable:(NSObject<_AFPCaptureDevice> *)_instance
+;
+
+
+
+- (id _Nullable)_isTorchActive:(NSObject<_AFPCaptureDevice> *)_instance
+;
+
+
+
+- (id _Nullable)_torchLevel:(NSObject<_AFPCaptureDevice> *)_instance
+;
+
+
+
+- (id _Nullable)_setTorchMode:(NSObject<_AFPCaptureDevice> *)_instance
+
+  mode:(NSNumber * _Nullable)mode
+;
+
+
+
+- (id _Nullable)_torchModesSupported:(NSObject<_AFPCaptureDevice> *)_instance
+
+  modes:(NSArray<NSNumber *> * _Nullable)modes
+;
+
+
+
+- (id _Nullable)_setTorchModeOnWithLevel:(NSObject<_AFPCaptureDevice> *)_instance
+
+  torchLevel:(NSNumber * _Nullable)torchLevel
+;
+
+
 @end
 
 @interface _AFPCaptureDeviceDiscoverySessionHandler : NSObject<REFTypeChannelHandler>
@@ -1076,6 +1293,11 @@ typedef NSObject *_Nullable (^_AFPFinishProcessingPhotoCallback) (NSObject<_AFPC
 ;
 
 
+
+
+
+- (id _Nullable)_connection:(NSObject<_AFPPreviewController> *)_instance
+;
 
 
 @end

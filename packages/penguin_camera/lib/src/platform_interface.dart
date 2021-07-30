@@ -54,9 +54,13 @@ enum FocusMode {
   continuousVideoAutoFocus,
 }
 
+enum OutputRotation { rotation0, rotation90, rotation180, rotation270 }
+
 enum ExposureMode { locked, continuous }
 
 enum FlashMode { on, off, auto }
+
+enum TorchMode { on, off }
 
 abstract class PreviewOutput extends CameraOutput {
   factory PreviewOutput() {
@@ -92,6 +96,7 @@ abstract class CameraOutput {
   Future<void> attach(CameraController controller);
   Future<void> detach(CameraController controller);
   Future<Size?> getOutputSize();
+  Future<void> setRotation(OutputRotation rotation);
 }
 
 enum CameraPosition { front, back, unspecified }
@@ -133,6 +138,8 @@ abstract class CameraController {
   Future<void> setExposureMode(ExposureMode mode);
   Future<List<ExposureMode>> getSupportedExposureModes();
   Future<void> setControllerPreset(CameraControllerPreset preset);
+  Future<void> setTorchMode(TorchMode mode);
+  Future<List<TorchMode>> getSupportedTorchModes();
 }
 
 class _EmptyPenguinCameraPlatform implements PenguinCameraPlatform {

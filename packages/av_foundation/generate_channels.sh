@@ -1,4 +1,4 @@
-flutter pub run reference_generator --no-build \
+flutter pub run reference_generator \
   --dart-out lib/src/av_foundation.g.dart \
   --dart-imports 'dart:typed_data','av_foundation.dart' \
   --objc-prefix _AFP \
