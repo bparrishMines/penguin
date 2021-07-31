@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:android_media/android_media.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
 import 'package:android_hardware/android_hardware.dart';
 import 'package:penguin_camera/penguin_camera.dart';
@@ -183,6 +184,52 @@ class CameraController implements intf.CameraController {
     }
 
     return <TorchMode>[];
+  }
+
+  @override
+  Future<double> getMaxZoom() async {
+    final List<int> zoomRatios = await cameraParameters.getZoomRatios();
+    return zoomRatios.last / 100;
+  }
+
+  @override
+  Future<double> getMinZoom() {
+    return Future<double>.value(1.0);
+  }
+
+  @override
+  Future<bool> isSmoothZoomSupported() {
+    return cameraParameters.isSmoothZoomSupported();
+  }
+
+  @override
+  Future<bool> isZoomSupported() {
+    return cameraParameters.isZoomSupported();
+  }
+
+  @override
+  Future<void> smoothZoomTo(double value) async {
+    final List<int> zoomRatios = await cameraParameters.getZoomRatios();
+
+    final int valueZoomRatio = (value * 100).round();
+    assert(valueZoomRatio >= 100);
+    assert(valueZoomRatio < (zoomRatios.last + 1));
+
+    final int index = lowerBound<int>(zoomRatios, (value * 100).round());
+    return camera.startSmoothZoom(index);
+  }
+
+  @override
+  Future<void> setZoom(double value) async {
+    final List<int> zoomRatios = await cameraParameters.getZoomRatios();
+
+    final int valueZoomRatio = (value * 100).round();
+    assert(valueZoomRatio >= 100);
+    assert(valueZoomRatio < (zoomRatios.last + 1));
+
+    final int index = lowerBound<int>(zoomRatios, (value * 100).round());
+    cameraParameters.setZoom(index);
+    return camera.setParameters(cameraParameters);
   }
 }
 

@@ -219,6 +219,40 @@ class CameraController implements intf.CameraController {
 
     return <TorchMode>[];
   }
+
+  @override
+  Future<double> getMaxZoom() {
+    return device.device.maxAvailableVideoZoomFactor();
+  }
+
+  @override
+  Future<double> getMinZoom() {
+    return device.device.minAvailableVideoZoomFactor();
+  }
+
+  @override
+  Future<bool> isSmoothZoomSupported() {
+    return Future<bool>.value(true);
+  }
+
+  @override
+  Future<bool> isZoomSupported() {
+    return Future<bool>.value(true);
+  }
+
+  @override
+  Future<void> setZoom(double value) {
+    device.device.lockForConfiguration();
+    device.device.setVideoZoomFactor(value);
+    return device.device.unlockForConfiguration();
+  }
+
+  @override
+  Future<void> smoothZoomTo(double value) {
+    device.device.lockForConfiguration();
+    device.device.rampToVideoZoomFactor(value, 1.0);
+    return device.device.unlockForConfiguration();
+  }
 }
 
 class CameraPlatform extends intf.PenguinCameraPlatform {

@@ -123,7 +123,7 @@ class _MyAppState extends State<_MyApp> {
 
     await cameraController.setControllerPreset(CameraControllerPreset.high);
     _previewOutput.setRotation(OutputRotation.rotation0);
-    output.setRotation(OutputRotation.rotation270);
+    output.setRotation(OutputRotation.rotation0);
     _previewOutputSize = await _previewOutput.getOutputSize();
     return cameraController;
   }
@@ -242,86 +242,179 @@ class _MyAppState extends State<_MyApp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: <Widget>[
-          Expanded(
+      body: SafeArea(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: <Widget>[
+            Expanded(
               child: Container(
-            decoration: const BoxDecoration(color: Colors.black),
-            child: Center(
-              child: CameraPreview(
-                previewOutput: _previewOutput,
-                cameraMode: currentMode,
-                size: _previewOutputSize,
-              ),
-            ),
-          )),
-          Container(
-            decoration: const BoxDecoration(color: Colors.black),
-            padding: const EdgeInsets.only(
-              bottom: 30,
-              left: 10,
-              right: 10,
-              top: 15,
-            ),
-            child: Stack(
-              children: <Widget>[
-                Container(
-                  margin: const EdgeInsets.only(top: 10),
-                  alignment: Alignment.centerLeft,
-                  child: Transform.rotate(
-                    angle: _deviceRotation,
-                    child: IconButton(
-                      icon: const Icon(
-                        Icons.switch_camera,
-                        color: Colors.white,
-                        size: 32,
+                decoration: const BoxDecoration(color: Colors.black),
+                child: Center(
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: <Widget>[
+                      CameraPreview(
+                        previewOutput: _previewOutput,
+                        cameraMode: currentMode,
+                        size: _previewOutputSize,
                       ),
-                      onPressed: () => _toggleCameraPosition(context),
-                    ),
+                      if (currentMode == CameraMode.picture ||
+                          currentMode == CameraMode.video ||
+                          currentMode == CameraMode.videoRecording)
+                        Positioned(
+                          bottom: 0,
+                          child: ZoomWidget(_cameraController),
+                        )
+                    ],
                   ),
                 ),
-                Container(
-                  alignment: Alignment.center,
-                  child: CameraButton(
-                    cameraMode: currentMode,
-                    onTakePicture: () => _takeImage(context),
-                    onStartRecording: _startRecording,
-                    onStopRecording: _stopRecording,
+              ),
+            ),
+            Container(
+              decoration: const BoxDecoration(color: Colors.black),
+              padding: const EdgeInsets.only(
+                bottom: 30,
+                left: 10,
+                right: 10,
+                top: 15,
+              ),
+              child: Stack(
+                children: <Widget>[
+                  Container(
+                    margin: const EdgeInsets.only(top: 10),
+                    alignment: Alignment.centerLeft,
+                    child: Transform.rotate(
+                      angle: _deviceRotation,
+                      child: IconButton(
+                        icon: const Icon(
+                          Icons.switch_camera,
+                          color: Colors.white,
+                          size: 32,
+                        ),
+                        onPressed: () => _toggleCameraPosition(context),
+                      ),
+                    ),
                   ),
-                )
-              ],
+                  Container(
+                    alignment: Alignment.center,
+                    child: CameraButton(
+                      cameraMode: currentMode,
+                      onTakePicture: () => _takeImage(context),
+                      onStartRecording: _startRecording,
+                      onStopRecording: _stopRecording,
+                    ),
+                  )
+                ],
+              ),
             ),
-          ),
-          Container(
-            alignment: Alignment.center,
-            decoration: const BoxDecoration(color: Colors.black),
-            child: ToggleButtons(
-              color: Colors.blue,
-              fillColor: Colors.grey,
-              selectedColor: Colors.blue,
-              onPressed: (int index) {
-                if (index == 0 && currentMode != CameraMode.picture) {
-                  _toggleCameraMode();
-                } else if (index == 1 && currentMode != CameraMode.video) {
-                  _toggleCameraMode();
-                }
-              },
-              isSelected: <bool>[
-                currentMode == CameraMode.picture ||
-                    currentMode == CameraMode.prePicture,
-                currentMode == CameraMode.video ||
-                    currentMode == CameraMode.preVideo ||
-                    currentMode == CameraMode.videoRecording,
-              ],
-              children: const <Widget>[
-                Icon(Icons.camera_alt),
-                Icon(Icons.videocam),
-              ],
+            Container(
+              alignment: Alignment.center,
+              decoration: const BoxDecoration(color: Colors.black),
+              child: ToggleButtons(
+                color: Colors.blue,
+                fillColor: Colors.grey,
+                selectedColor: Colors.blue,
+                onPressed: (int index) {
+                  if (index == 0 && currentMode != CameraMode.picture) {
+                    _toggleCameraMode();
+                  } else if (index == 1 && currentMode != CameraMode.video) {
+                    _toggleCameraMode();
+                  }
+                },
+                isSelected: <bool>[
+                  currentMode == CameraMode.picture ||
+                      currentMode == CameraMode.prePicture,
+                  currentMode == CameraMode.video ||
+                      currentMode == CameraMode.preVideo ||
+                      currentMode == CameraMode.videoRecording,
+                ],
+                children: const <Widget>[
+                  Icon(Icons.camera_alt),
+                  Icon(Icons.videocam),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
+    );
+  }
+}
+
+class ZoomWidget extends StatefulWidget {
+  const ZoomWidget(this.controller, {Key? key}) : super(key: key);
+
+  final CameraController controller;
+
+  @override
+  State<StatefulWidget> createState() {
+    return ZoomWidgetState();
+  }
+}
+
+class ZoomWidgetState extends State<ZoomWidget> {
+  static const _maxAllowedZoom = 5;
+
+  late int _minZoom;
+  late int _maxZoom;
+  late int _currentZoom;
+  bool _supportsZoom = false;
+  bool _supportsSmoothZoom = false;
+
+  @override
+  void initState() {
+    super.initState();
+    getZoomInfo();
+  }
+
+  Future<void> getZoomInfo() async {
+    final CameraController controller = widget.controller;
+
+    final bool supportsZoom = await controller.isZoomSupported();
+    if (!supportsZoom) return;
+
+    final bool supportsSmoothZoom = await controller.isSmoothZoomSupported();
+    final int minZoom = (await controller.getMinZoom()).ceil();
+    final int maxZoom = min(
+      (await controller.getMaxZoom()).floor(),
+      _maxAllowedZoom,
+    );
+
+    setState(() {
+      _supportsZoom = supportsZoom;
+      _supportsSmoothZoom = supportsSmoothZoom;
+      _currentZoom = 0;
+      _minZoom = minZoom;
+      _maxZoom = maxZoom;
+    });
+  }
+
+  Future<void> zoom(int value) {
+    if (_supportsSmoothZoom) {
+      return widget.controller.smoothZoomTo((value + _minZoom).toDouble());
+    }
+    return widget.controller.setZoom((value + _minZoom).toDouble());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_supportsZoom) return Container();
+
+    final int length = _maxZoom - _minZoom + 1;
+    return ToggleButtons(
+      color: Colors.blue,
+      fillColor: Colors.grey,
+      selectedColor: Colors.blue,
+      onPressed: (int index) {
+        setState(() => _currentZoom = index);
+        zoom(index);
+      },
+      isSelected: List<int>.generate(length, (index) => index)
+          .map<bool>((int value) => value == _currentZoom)
+          .toList(),
+      children: List<int>.generate(length, (index) => index)
+          .map<Widget>((int value) => Text('${value + 1}x'))
+          .toList(),
     );
   }
 }

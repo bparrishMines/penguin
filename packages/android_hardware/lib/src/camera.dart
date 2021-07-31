@@ -1491,8 +1491,10 @@ class CameraParameters with $CameraParameters {
   /// returned as 320. The number of elements is [getMaxZoom] + 1. The list is
   /// sorted from small to large. The first element is always 100. The last
   /// element is the zoom ratio of the maximum zoom value.
-  Future<int> getZoomRatios() async {
-    return await _channel.$getZoomRatios(this) as int;
+  Future<List<int>> getZoomRatios() async {
+    final List<Object?> zoomRatios =
+        await _channel.$getZoomRatios(this) as List<Object?>;
+    return zoomRatios.cast<int>();
   }
 
   /// If auto-white balance locking is supported.
