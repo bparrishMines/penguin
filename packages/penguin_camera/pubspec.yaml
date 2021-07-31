@@ -9,16 +9,15 @@ environment:
   flutter: ">=1.17.0"
 
 dependencies:
-  plugin_platform_interface: 2.0.0
   android_hardware:
     path: ../android_hardware
   android_media:
     path: ../android_media
   av_foundation:
     path: ../av_foundation
-  collection: ^1.15.0
   flutter:
     sdk: flutter
+  plugin_platform_interface: 2.0.0
 
 dev_dependencies:
   flutter_test:
