@@ -98,10 +98,7 @@
 }
 @end
 
-@implementation AFPCapturePhotoCaptureDelegateHandler {
-  AFPLibraryImplementations *_implementations;
-}
-
+@implementation AFPCapturePhotoCaptureDelegateHandler
 - (instancetype)initWithImplementations:(AFPLibraryImplementations *)implementations {
   self = [super init];
   if (self) {
