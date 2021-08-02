@@ -27,6 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface AFPCapturePhotoCaptureDelegateHandler : _AFPCapturePhotoCaptureDelegateHandler
+@property (readonly) AFPLibraryImplementations *implementations;
 - (instancetype)initWithImplementations:(AFPLibraryImplementations *)implementations;
 @end
 
