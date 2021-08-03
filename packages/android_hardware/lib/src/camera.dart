@@ -201,7 +201,6 @@ class PreviewCallback implements $PreviewCallback {
 /// specifications, such as megapixel ratings and auto-focus capabilities. In
 /// order for your application to be compatible with more devices, you should
 /// not make assumptions about the device camera specifications.
-///
 @Reference('android_hardware/camera/Camera')
 class Camera with $Camera {
   /// Default constructor for [Camera].
@@ -228,22 +227,30 @@ class Camera with $Camera {
 
   int? _currentTexture;
 
-  /// Returns the information about each camera.
+  /// Returns the information about each available camera.
+  ///
+  /// Throws [PlatformException] if there is an error retrieving the information
+  /// (generally due to a hardware or other low-level failure).
   static Future<List<CameraInfo>> getAllCameraInfo() async {
     final List<Object?> allInfo =
         await _channel.$getAllCameraInfo() as List<Object?>;
     return allInfo.cast<CameraInfo>();
   }
 
+  // TODO: Best practice is to call this method on a worker thread in Java.
   /// Creates a new [Camera] object to access a particular hardware camera.
   ///
   /// If the same camera is opened by other applications, this will throw a
   /// [PlatformException].
   ///
-  /// You must call [Camera.release] when you are done using the camera, otherwise it
+  /// You must call [release] when you are done using the camera, otherwise it
   /// will remain locked and be unavailable to other applications. Your
   /// application should only have one [Camera] object active at a time for a
   /// particular hardware camera.
+  ///
+  /// Throws a [PlatformException] if opening the camera fails (for example, if
+  /// the camera is in use by another process or device policy manager has
+  /// disabled the camera).
   static Future<Camera> open(int cameraId) async {
     return await _channel.$open(cameraId) as Camera;
   }
@@ -255,8 +262,18 @@ class Camera with $Camera {
 
   /// Starts capturing and drawing preview frames to the screen.
   ///
-  /// Preview will not actually start until a texture is supplied with
-  /// [addToTexture].
+  /// Preview will not actually start until a texture is attached with
+  /// [attachPreviewTexture].
+  ///
+  /// If [setPreviewCallback] or [setOneShotPreviewCallback] were called,
+  /// [PreviewCallback.onPreviewFrame] will be called when preview data becomes
+  /// available.
+  ///
+  /// Throws a [PlatformException] if starting preview fails; usually this would
+  /// be because of a hardware or other low-level error, or because [release]
+  /// has been called on this Camera instance. The QCIF (176x144) exception
+  /// mentioned in [CameraParameters.setPreviewSize] and
+  /// [CameraParameters.setPictureSize] can also cause this exception be thrown.
   Future<void> startPreview() => _channel.$startPreview(this);
 
   /// Stops capturing and drawing preview frames to the surface.
@@ -264,15 +281,25 @@ class Camera with $Camera {
   /// Resets the camera for a future call to [startPreview].
   Future<void> stopPreview() => _channel.$stopPreview(this);
 
-  /// Attach preview frames to a new Flutter texture.
+  /// Attach preview frames to a Flutter [Texture].
+  ///
+  /// Returns the id to passed a [Texture].
   ///
   /// If the [Camera] is already using a texture, the same id will be returned.
+  /// call [releasePreviewTexture] to detach and release the current texture.
+  ///
+  /// Throws a [PlatformException] if stopping preview fails; usually this would
+  /// be because of a hardware or other low-level error, or because [release]
+  /// has been called on this Camera instance.
   Future<int> attachPreviewTexture() async {
     return _currentTexture ??=
         await _channel.$attachPreviewTexture(this) as int;
   }
 
-  /// Release the Flutter texture receiving preview frames.
+  /// Release the Flutter [Texture] receiving preview frames.
+  ///
+  /// This does nothing if [attachPreviewTexture] is not called or the texture
+  /// has already been released.
   Future<void> releasePreviewTexture() async {
     _currentTexture = null;
     await _channel.$releasePreviewTexture(this);
@@ -286,10 +313,12 @@ class Camera with $Camera {
   /// another process to use; once the other process is done you can call
   /// [reconnect] to reclaim the camera.
   ///
-  /// This must be done before calling [MediaRecorder.setCamera]. This cannot
-  /// be called after recording starts.
+  /// This must be done before calling [MediaRecorder.setCamera](https://pub.dev/documentation/android_media/latest/android_media/MediaRecorder/setCamera.html).
+  /// This cannot be called after recording starts.
   ///
   /// If you are not recording video, you probably do not need this method.
+  ///
+  /// Throws [PlatformException] if the camera cannot be unlocked.
   Future<void> unlock() {
     return _channel.$unlock(this);
   }
@@ -303,6 +332,9 @@ class Camera with $Camera {
   /// If you are using the preview data to create video or still images,
   /// strongly consider using a sound to properly indicate image capture or
   /// recording start/stop to the user.
+  ///
+  /// Throws [PlatformException] if [release] has been called on this Camera
+  /// instance.
   Future<void> setOneShotPreviewCallback(PreviewCallback callback) {
     PreviewCallback._channel.$create$(
       callback,
@@ -321,12 +353,20 @@ class Camera with $Camera {
   /// If you are using the preview data to create video or still images,
   /// strongly consider using MediaActionSound to properly indicate image
   /// capture or recording start/stop to the user.
-  Future<void> setPreviewCallback(PreviewCallback callback) {
-    PreviewCallback._channel.$create$(
-      callback,
-      $owner: false,
-      onPreviewFrame: callback.onPreviewFrame,
-    );
+  ///
+  /// `callback`: a callback object that receives a copy of each preview frame,
+  /// or null to stop receiving callbacks.
+  ///
+  /// Throws [PlatformException] if [release] has been called on this Camera
+  /// instance.
+  Future<void> setPreviewCallback(PreviewCallback? callback) {
+    if (callback != null) {
+      PreviewCallback._channel.$create$(
+        callback,
+        $owner: false,
+        onPreviewFrame: callback.onPreviewFrame,
+      );
+    }
     return _channel.$setPreviewCallback(this, callback);
   }
 
@@ -336,11 +376,15 @@ class Camera with $Camera {
   /// process is done, you must reconnect to the camera, which will re-acquire
   /// the lock and allow you to continue using the camera.
   ///
-  /// Camera is automatically locked for applications in [MediaRecorder.start].
+  /// Camera is automatically locked for applications in [MediaRecorder.start](https://pub.dev/documentation/android_media/latest/android_media/MediaRecorder/start.html).
   /// Applications can use the camera (ex: zoom) after recording starts.
   /// There is no need to call this after recording starts or stops.
   ///
   /// If you are not recording video, you probably do not need this method.
+  ///
+  /// Throws [PlatformException] if a connection cannot be re-established
+  /// (for example, if the camera is still in use by another process) or
+  /// [release] has been called on this Camera instance.
   Future<void> reconnect() => _channel.$reconnect(this);
 
   /// Triggers an asynchronous image capture.
@@ -509,9 +553,9 @@ class Camera with $Camera {
 
   /// Sets camera auto-focus move callback.
   ///
-  /// If enabling the focus move callback fails; usually this would be because
-  /// of a hardware or other low-level error, or because [release] has been
-  /// called on this Camera instance.
+  /// Throws a [PlatformException] if enabling the focus move callback fails;
+  /// usually this would be because of a hardware or other low-level error, or
+  /// because [release] has been called on this Camera instance.
   Future<void> setAutoFocusMoveCallback(AutoFocusMoveCallback callback) {
     ChannelRegistrar.instance.implementations.channelAutoFocusMoveCallback
         .$$create(
