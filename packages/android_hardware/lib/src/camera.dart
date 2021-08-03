@@ -49,7 +49,7 @@ typedef ShutterCallback = void Function();
 
 /// Callback when receiving an image or preview byte array.
 @Reference('android_hardware/camera/DataCallback')
-typedef DataCallback = void Function(Uint8List data);
+typedef DataCallback = void Function(Uint8List? data);
 
 /// Callback for zoom changes during a smooth zoom operation.
 ///
@@ -404,17 +404,27 @@ class Camera with $Camera {
   /// This method is only valid when preview is active (after [startPreview]).
   /// Preview will be stopped after the image is taken; callers must call
   /// [startPreview] again if they want to re-start preview or take more
-  /// pictures. This should not be called between [MediaRecorder.start] and
-  /// [MediaRecorder.stop].
+  /// pictures. This should not be called between
+  /// [MediaRecorder.start](https://pub.dev/documentation/android_media/latest/android_media/MediaRecorder/start.html) and
+  /// [MediaRecorder.stop](https://pub.dev/documentation/android_media/latest/android_media/MediaRecorder/stop.html).
   ///
   /// After calling this method, you must not call [startPreview] or take
   /// another picture until the JPEG callback has returned.
-  Future<void> takePicture(
+  ///
+  /// `shutter`: the callback for image capture moment, or null
+  /// `raw`: the callback for raw (uncompressed) image data, or null
+  /// `postview`: callback with postview image data, may be null
+  /// `jpeg`: the callback for JPEG image data, or null
+  ///
+  /// Throws [PlatformException] if starting picture capture fails; usually this
+  /// would be because of a hardware or other low-level error, or because
+  /// [release] has been called on this Camera instance.
+  Future<void> takePicture({
     ShutterCallback? shutter,
     PictureCallback? raw,
     PictureCallback? postView,
     PictureCallback? jpeg,
-  ) {
+  }) {
     if (shutter != null) {
       ChannelRegistrar.instance.implementations.channelShutterCallback.$$create(
         shutter,
@@ -437,12 +447,12 @@ class Camera with $Camera {
   ///
   /// Callers should check [CameraParameters.getFocusMode] to determine if
   /// this method should be called. If the camera does not support auto-focus,
-  /// it is a no-op and [AutoFocusCallback.onAutoFocus] callback will be called
-  /// immediately.
+  /// it is a no-op and `callback` will be called immediately.
   ///
   /// If your application should not be installed on devices without auto-focus,
   /// you must declare that your application uses auto-focus with the
-  /// <uses-feature> manifest element.
+  /// [<uses-feature>](https://developer.android.com/guide/topics/manifest/uses-feature-element)
+  /// manifest element.
   ///
   /// If the current flash mode is not [CameraParameters.flashModeOff], flash
   /// may be fired during auto-focus, depending on the driver and camera
@@ -459,6 +469,10 @@ class Camera with $Camera {
   ///
   /// If auto-focus is successful, consider playing back an auto-focus success
   /// sound to the user.
+  ///
+  /// Throws [PlatformException] if starting autofocus fails; usually this would
+  /// be because of a hardware or other low-level error, or because [release]
+  /// has been called on this [Camera] instance.
   Future<void> autoFocus(AutoFocusCallback callback) {
     ChannelRegistrar.instance.implementations.channelAutoFocusCallback.$$create(
       callback,
@@ -472,6 +486,10 @@ class Camera with $Camera {
   /// Whether or not auto-focus is currently in progress, this function will
   /// return the focus position to the default. If the camera does not support
   /// auto-focus, this is a no-op.
+  ///
+  /// Throws [PlatformException] if canceling autofocus fails; usually this
+  /// would be because of a hardware or other low-level error, or because
+  /// [release] has been called on this [Camera] instance.
   Future<void> cancelAutoFocus() {
     return _channel.$cancelAutoFocus(this);
   }
@@ -491,6 +509,49 @@ class Camera with $Camera {
   ///
   /// If you want to make the camera image show in the same orientation as the
   /// display, you can use the following code.
+  ///
+  /// ```dart
+  /// Future<void> setCameraDisplayOrientation(
+  ///   Camera camera,
+  ///   CameraInfo cameraInfo,
+  ///   Orientation orientation,
+  /// ) {
+  ///   late final int angle;
+  ///   switch (orientation) {
+  ///     case Orientation.portrait:
+  ///       angle = 0;
+  ///       break;
+  ///     case Orientation.landscape:
+  ///       angle = 270;
+  ///       break;
+  ///   }
+  ///
+  ///   late int displayOrientation;
+  ///   if (cameraInfo.facing == CameraInfo.cameraFacingFront) {
+  ///     displayOrientation = (cameraInfo.orientation + angle) % 360;
+  ///     displayOrientation = (360 - displayOrientation) % 360;
+  ///   } else {
+  ///     displayOrientation = (cameraInfo.orientation - angle + 360) % 360;
+  ///   }
+  ///
+  ///   return camera.setDisplayOrientation(displayOrientation);
+  /// }
+  /// ```
+  ///
+  /// *Note*: Before API level 24, the default value for orientation is 0.
+  /// Starting in API level 24, the default orientation will be such that
+  /// applications in forced-landscape mode will have correct preview
+  /// orientation, which may be either a default of 0 or 180. Applications that
+  /// operate in portrait mode or allow for changing orientation must still call
+  /// this method after each orientation change to ensure correct preview
+  /// display in all cases.
+  ///
+  /// `degrees`: the angle that the picture will be rotated clockwise. Valid
+  /// values are 0, 90, 180, and 270.
+  ///
+  /// Throws [PlatformException] if setting orientation fails; usually this
+  /// would be because of a hardware or other low-level error, or because
+  /// [release] has been called on this [Camera] instance.
   Future<void> setDisplayOrientation(int degrees) {
     return _channel.$setDisplayOrientation(this, degrees);
   }
