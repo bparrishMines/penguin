@@ -119,14 +119,24 @@ class PictureCallback implements $PictureCallback {
 @Reference('android_hardware/camera/PreviewCallback')
 class PreviewCallback implements $PreviewCallback {
   /// Construct a [PreviewCallback].
-  PreviewCallback(this.onPreviewFrame, {@ignoreParam bool create = true}) {
+  PreviewCallback(this.onPreviewFrame) {
     ChannelRegistrar.instance.implementations.channelDataCallback.$$create(
       onPreviewFrame,
       $owner: false,
     );
-    if (create) {
-      _channel.$create$(this, $owner: true, onPreviewFrame: onPreviewFrame);
-    }
+    _channel.$create$(this, $owner: true, onPreviewFrame: onPreviewFrame);
+  }
+
+  /// Construct a [PreviewCallback] without creating the paired Java object.
+  ///
+  /// This should only be used when creating a custom type channel
+  /// implementation of this class.
+  @ReferenceConstructor(ignore: true)
+  PreviewCallback.withoutCreate(this.onPreviewFrame) {
+    ChannelRegistrar.instance.implementations.channelDataCallback.$$create(
+      onPreviewFrame,
+      $owner: false,
+    );
   }
 
   static $PreviewCallbackChannel get _channel =>
@@ -203,12 +213,12 @@ class PreviewCallback implements $PreviewCallback {
 /// not make assumptions about the device camera specifications.
 @Reference('android_hardware/camera/Camera')
 class Camera with $Camera {
-  /// Default constructor for [Camera].
+  /// Construct a [Camera].
   ///
-  /// This should only be used when subclassing. Otherwise, an instance should
-  /// be provided from [open].
-  @visibleForTesting
-  Camera();
+  /// This should only be used for testing or when creating a custom type
+  /// channel implementation of this class. Otherwise, an instance should be
+  /// provided from [open].
+  Camera.withoutCreate();
 
   static $CameraChannel get _channel =>
       ChannelRegistrar.instance.implementations.channelCamera;
@@ -251,6 +261,8 @@ class Camera with $Camera {
   /// Throws a [PlatformException] if opening the camera fails (for example, if
   /// the camera is in use by another process or device policy manager has
   /// disabled the camera).
+  ///
+  /// See: [getAllCameraInfo]
   static Future<Camera> open(int cameraId) async {
     return await _channel.$open(cameraId) as Camera;
   }
@@ -697,12 +709,13 @@ class Camera with $Camera {
 /// effects, [CameraParameters.getSupportedColorEffects] will return `null`.
 @Reference('android_hardware/camera/CameraParameters')
 class CameraParameters with $CameraParameters {
-  /// Default Constructor for [CameraParameters].
+  /// Construct a [CameraParameters].
   ///
-  /// This should only be used for testing. Otherwise use
+  /// This should only be used for testing or when creating a custom type
+  /// channel implementation of this class. Otherwise, use
   /// [Camera.getParameters].
-  @visibleForTesting
-  CameraParameters();
+  @ReferenceConstructor(ignore: true)
+  CameraParameters.withoutCreate();
 
   /// Flash will be fired automatically when required.
   ///
@@ -2017,20 +2030,21 @@ class CameraArea with $CameraArea {
   ///
   /// [createInstancePair] is whether a paired instance should be created on
   /// construction. This is only used internally and defaults to `true`.
-  CameraArea(
-    this.rect,
-    this.weight, {
-    @ignoreParam bool create = true,
-  }) {
-    if (create) {
-      _channel.$create$(
-        this,
-        $owner: true,
-        rect: rect,
-        weight: weight,
-      );
-    }
+  CameraArea(this.rect, this.weight) {
+    _channel.$create$(
+      this,
+      $owner: true,
+      rect: rect,
+      weight: weight,
+    );
   }
+
+  /// Construct a [CameraArea] without creating the paired Java object.
+  ///
+  /// This should only be used when creating a custom type channel
+  /// implementation of this class.
+  @ReferenceConstructor(ignore: true)
+  CameraArea.withoutCreate(this.rect, this.weight);
 
   static $CameraAreaChannel get _channel =>
       ChannelRegistrar.instance.implementations.channelCameraArea;
@@ -2076,19 +2090,28 @@ class CameraRect with $CameraRect {
     required this.bottom,
     required this.right,
     required this.left,
-    @ignoreParam bool create = true,
   }) {
-    if (create) {
-      _channel.$create$(
-        this,
-        $owner: true,
-        top: top,
-        bottom: bottom,
-        right: right,
-        left: left,
-      );
-    }
+    _channel.$create$(
+      this,
+      $owner: true,
+      top: top,
+      bottom: bottom,
+      right: right,
+      left: left,
+    );
   }
+
+  /// Construct a [CameraArea] without creating the paired Java object.
+  ///
+  /// This should only be used when creating a custom type channel
+  /// implementation of this class.
+  @ReferenceConstructor(ignore: true)
+  CameraRect.withoutCreate({
+    required this.top,
+    required this.bottom,
+    required this.right,
+    required this.left,
+  });
 
   static $CameraRectChannel get _channel =>
       ChannelRegistrar.instance.implementations.channelCameraRect;
