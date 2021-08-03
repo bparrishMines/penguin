@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 
-import 'package:flutter/foundation.dart';
 import 'package:reference/annotations.dart';
 
 import 'camera.g.dart';
@@ -218,7 +217,7 @@ class Camera with $Camera {
   /// This should only be used for testing or when creating a custom type
   /// channel implementation of this class. Otherwise, an instance should be
   /// provided from [open].
-  Camera.withoutCreate();
+  Camera();
 
   static $CameraChannel get _channel =>
       ChannelRegistrar.instance.implementations.channelCamera;
@@ -715,7 +714,7 @@ class CameraParameters with $CameraParameters {
   /// channel implementation of this class. Otherwise, use
   /// [Camera.getParameters].
   @ReferenceConstructor(ignore: true)
-  CameraParameters.withoutCreate();
+  CameraParameters();
 
   /// Flash will be fired automatically when required.
   ///

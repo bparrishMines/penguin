@@ -77,7 +77,7 @@ public class ChannelRegistrar extends CameraChannelLibrary.$ChannelRegistrar {
 
     @Override
     public CameraAreaProxy $create$(TypeChannelMessenger messenger, CameraChannelLibrary.$CameraRect rect, Integer weight) {
-      return new CameraAreaProxy((CameraRectProxy) rect, weight, implementations);
+      return new CameraAreaProxy((CameraRectProxy) rect, weight, implementations, false);
     }
   }
 

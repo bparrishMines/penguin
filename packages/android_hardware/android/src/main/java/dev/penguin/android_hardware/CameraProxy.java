@@ -15,15 +15,17 @@ public class CameraProxy implements CameraChannelLibrary.$Camera {
   public final ChannelRegistrar.LibraryImplementations implementations;
   private TextureRegistry.SurfaceTextureEntry currentTextureEntry;
 
-  public CameraProxy(Camera camera, TextureRegistry textureRegistry, ChannelRegistrar.LibraryImplementations implementations) {
+  public CameraProxy(Camera camera, TextureRegistry textureRegistry, ChannelRegistrar.LibraryImplementations implementations, boolean create) {
     this.camera = camera;
     this.textureRegistry = textureRegistry;
     this.implementations = implementations;
-    implementations.getChannelCamera().$create$(this, false);
+    if (create) {
+      implementations.getChannelCamera().$create$(this, false);
+    }
   }
 
   public static CameraProxy open(ChannelRegistrar.LibraryImplementations implementations, TextureRegistry textureRegistry, int cameraId) {
-    return new CameraProxy(Camera.open(cameraId), textureRegistry, implementations);
+    return new CameraProxy(Camera.open(cameraId), textureRegistry, implementations, true);
   }
 
   public static List<CameraInfoProxy> getAllCameraInfo(ChannelRegistrar.LibraryImplementations libraryImplementations) {
@@ -33,7 +35,7 @@ public class CameraProxy implements CameraChannelLibrary.$Camera {
     for (int i = 0; i < numOfCameras; i++) {
       final Camera.CameraInfo info = new Camera.CameraInfo();
       Camera.getCameraInfo(i, info);
-      allCameraInfoProxy.add(new CameraInfoProxy(info, libraryImplementations, i));
+      allCameraInfoProxy.add(new CameraInfoProxy(info, libraryImplementations, i, true));
     }
 
     return allCameraInfoProxy;
@@ -95,7 +97,7 @@ public class CameraProxy implements CameraChannelLibrary.$Camera {
 
   @Override
   public CameraParametersProxy getParameters() {
-    return new CameraParametersProxy(camera.getParameters(), implementations);
+    return new CameraParametersProxy(camera.getParameters(), implementations, true);
   }
 
   @Override

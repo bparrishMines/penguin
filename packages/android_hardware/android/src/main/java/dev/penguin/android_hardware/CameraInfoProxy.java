@@ -7,7 +7,7 @@ public class CameraInfoProxy implements CameraChannelLibrary.$CameraInfo {
   public final Camera.CameraInfo cameraInfo;
   public final int cameraId;
 
-  public CameraInfoProxy(Camera.CameraInfo cameraInfo, ChannelRegistrar.LibraryImplementations libraryImplementations, int cameraId) {
+  public CameraInfoProxy(Camera.CameraInfo cameraInfo, ChannelRegistrar.LibraryImplementations libraryImplementations, int cameraId, boolean create) {
     this.cameraId = cameraId;
     this.cameraInfo = cameraInfo;
     
@@ -17,10 +17,12 @@ public class CameraInfoProxy implements CameraChannelLibrary.$CameraInfo {
     } else {
       canDisableShutterSound = null;
     }
-    libraryImplementations.getChannelCameraInfo().$create$(this, false,
-        cameraId,
-        cameraInfo.facing,
-        cameraInfo.orientation,
-        canDisableShutterSound);
+    if (create) {
+      libraryImplementations.getChannelCameraInfo().$create$(this, false,
+          cameraId,
+          cameraInfo.facing,
+          cameraInfo.orientation,
+          canDisableShutterSound);
+    }
   }
 }

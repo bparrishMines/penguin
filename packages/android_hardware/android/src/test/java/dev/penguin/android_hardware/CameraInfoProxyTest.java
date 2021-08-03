@@ -38,7 +38,7 @@ public class CameraInfoProxyTest {
     cameraInfo.facing = 2;
     cameraInfo.orientation = 180;
     cameraInfo.canDisableShutterSound = true;
-    final CameraInfoProxy cameraInfoProxy = new CameraInfoProxy(cameraInfo, mockImplementations, 15);
+    final CameraInfoProxy cameraInfoProxy = new CameraInfoProxy(cameraInfo, mockImplementations, 15, true);
 
     verify(mockCameraInfoChannel).$create$(cameraInfoProxy, false, 15, 2, 180, true);
   }

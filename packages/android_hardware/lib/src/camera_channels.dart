@@ -48,7 +48,7 @@ class LibraryImplementations extends $LibraryImplementations {
 class CameraHandler extends $CameraHandler {
   @override
   Camera $create$(TypeChannelMessenger messenger) {
-    return Camera.withoutCreate();
+    return Camera();
   }
 }
 
@@ -75,7 +75,7 @@ class CameraInfoHandler extends $CameraInfoHandler {
 class CameraParametersHandler extends $CameraParametersHandler {
   @override
   CameraParameters $create$(TypeChannelMessenger messenger) {
-    return CameraParameters.withoutCreate();
+    return CameraParameters();
   }
 }
 
