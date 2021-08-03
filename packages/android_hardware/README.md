@@ -7,3 +7,10 @@ manifest element.
 
 All the features in this plugin come from the [android.hardware](https://developer.android.com/reference/android/hardware/package-summary)
 dependency.
+
+| Syntax | Description |
+| --- | ----------- |
+| Header | Title |
+| Paragraph | Text |
+
+**Note:** This plugin is still under development, and some APIs might not be available yet.

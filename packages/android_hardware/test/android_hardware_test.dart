@@ -116,36 +116,36 @@ class TestMessenger extends TypeChannelMessenger {
 
   @override
   final TypeChannelMessageDispatcher messageDispatcher =
-  TestMessageDispatcher();
+      TestMessageDispatcher();
 }
 
 class TestMessageDispatcher implements TypeChannelMessageDispatcher {
   @override
   Future<void> sendCreateNewInstancePair(
-      String channelName,
-      PairedInstance pairedInstance,
-      List<Object?> arguments, {
-        required bool owner,
-      }) {
+    String channelName,
+    PairedInstance pairedInstance,
+    List<Object?> arguments, {
+    required bool owner,
+  }) {
     return Future<void>.value();
   }
 
   @override
   Future<Object?> sendInvokeMethod(
-      String channelName,
-      PairedInstance pairedInstance,
-      String methodName,
-      List<Object?> arguments,
-      ) async {
+    String channelName,
+    PairedInstance pairedInstance,
+    String methodName,
+    List<Object?> arguments,
+  ) async {
     return 5;
   }
 
   @override
   Future<Object?> sendInvokeStaticMethod(
-      String channelName,
-      String methodName,
-      List<Object?> arguments,
-      ) {
+    String channelName,
+    String methodName,
+    List<Object?> arguments,
+  ) {
     throw UnimplementedError();
   }
 

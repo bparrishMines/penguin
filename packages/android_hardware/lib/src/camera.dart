@@ -18,9 +18,10 @@ typedef ErrorCallback = void Function(int error);
 /// Callback used to notify on completion of camera auto focus.
 ///
 /// Devices that do not support auto-focus will receive a "fake" callback to
-/// this interface. If your application needs auto-focus and should not be
+/// this callback. If your application needs auto-focus and should not be
 /// installed on devices without auto-focus, you must declare that your app uses
-/// the android.hardware.camera.autofocus feature, in the <uses-feature>
+/// the android.hardware.camera.autofocus feature, in the
+/// [<uses-feature>](https://developer.android.com/guide/topics/manifest/uses-feature-element)
 /// manifest element.
 ///
 /// If the camera does not support auto-focus and [Camera.autoFocus] is
@@ -46,11 +47,17 @@ typedef AutoFocusCallback = void Function(bool success);
 @Reference('android_hardware/camera/ShutterCallback')
 typedef ShutterCallback = void Function();
 
-/// Callback when receiving a byte array.
+/// Callback when receiving an image or preview byte array.
 @Reference('android_hardware/camera/DataCallback')
 typedef DataCallback = void Function(Uint8List data);
 
 /// Callback for zoom changes during a smooth zoom operation.
+///
+/// `zoomValue`: the current zoom value. In smooth zoom mode, camera calls this
+/// for every new zoom value.
+///
+/// `stopped`: whether smooth zoom is stopped. If the value is true, this is the
+/// last zoom update for the application.
 @Reference('android_hardware/camera/OnZoomChangeListener')
 typedef OnZoomChangeListener = void Function(int zoomValue, bool stopped);
 
@@ -74,14 +81,24 @@ typedef AutoFocusMoveCallback = void Function(bool start);
 @Reference('android_hardware/camera/PictureCallback')
 class PictureCallback implements $PictureCallback {
   /// Construct a [PictureCallback].
-  PictureCallback(this.onPictureTaken, {@ignoreParam bool create = true}) {
+  PictureCallback(this.onPictureTaken) {
     ChannelRegistrar.instance.implementations.channelDataCallback.$$create(
       onPictureTaken,
       $owner: false,
     );
-    if (create) {
-      _channel.$create$(this, $owner: true, onPictureTaken: onPictureTaken);
-    }
+    _channel.$create$(this, $owner: true, onPictureTaken: onPictureTaken);
+  }
+
+  /// Construct a [PictureCallback] without creating the paired Java object.
+  ///
+  /// This should only be used when creating a custom type channel
+  /// implementation of this class.
+  @ReferenceConstructor(ignore: true)
+  PictureCallback.withoutCreate(this.onPictureTaken) {
+    ChannelRegistrar.instance.implementations.channelDataCallback.$$create(
+      onPictureTaken,
+      $owner: false,
+    );
   }
 
   static $PictureCallbackChannel get _channel =>
@@ -115,17 +132,76 @@ class PreviewCallback implements $PreviewCallback {
   static $PreviewCallbackChannel get _channel =>
       ChannelRegistrar.instance.implementations.channelPreviewCallback;
 
-  /// Callback used to deliver copies of preview frames as they are displayed.
+  /// Called as preview frames are displayed.
+  ///
+  /// If using the [ImageFormat.yv12] format, refer to the equations in
+  /// [CameraParameters.setPreviewFormat] for the arrangement of the pixel data
+  /// in the preview callback buffers.
+  ///
+  /// `data`: The contents of the preview frame in the format defined by
+  /// [ImageFormat], which can be queried with
+  /// [CameraParameters.getPreviewFormat]. If
+  /// [CameraParameters.setPreviewFormat] is never called, the default will be
+  /// the YCbCr_420_SP ([ImageFormat.nv21]) format.
   final DataCallback onPreviewFrame;
 }
 
 /// The [Camera] class is used to set image capture settings, start/stop preview, snap pictures, and retrieve frames for encoding for video.
 ///
+/// This uses the [Camera](https://developer.android.com/reference/android/hardware/Camera)
+/// API and is deprecated for Android versions 21+.
+///
 /// This class is a client for the Camera service, which manages the actual
 /// camera hardware.
 ///
-/// This uses the [Camera](https://developer.android.com/reference/android/hardware/Camera)
-/// API and is deprecated for Android versions 21+.
+/// To access the device camera, you must declare the
+/// [Manifest.permission.CAMERA](https://developer.android.com/reference/android/Manifest.permission#CAMERA)
+/// permission in your Android Manifest. Also be sure to include the
+/// [<uses-feature>](https://developer.android.com/guide/topics/manifest/uses-feature-element)
+/// manifest element to declare camera features used by your application. For
+/// example, if you use the camera and auto-focus feature, your Manifest should
+/// include the following:
+///
+/// ```xml
+/// <uses-permission android:name="android.permission.CAMERA" />
+///  <uses-feature android:name="android.hardware.camera" />
+///  <uses-feature android:name="android.hardware.camera.autofocus" />
+/// ```
+///
+/// To take pictures with this class, use the following steps:
+///   1. Obtain an instance of Camera from [open].
+///   2. Get existing (default) settings with [getParameters].
+///   3. If necessary, modify the returned [CameraParameters] object and call
+///      [setParameters].
+///   4. Call [setDisplayOrientation] to ensure correct orientation of preview.
+///   5. Attach preview frames to a Flutter texture with [attachPreviewTexture].
+///   6. *Important*: Call [startPreview] to start updating the preview surface.
+///      Preview must be started before you can take a picture.
+///   7. When you want, call [takePicture] to capture a photo. Wait for the
+///      callbacks to provide the actual image data.
+///   8. After taking a picture, preview display will have stopped. To take more
+///      photos, call [startPreview] again first.
+///   9. Call [stopPreview] to stop updating the preview surface.
+///  10. *Important*: Call [release] to release the camera for use by other
+///      applications. Applications should release the camera immediately with
+///      [AppLifecycleState.paused] (and re-open() it in AppLifecycleState.resumed)
+///
+/// To quickly switch to video recording mode, use these steps:
+///   1. Obtain and initialize a Camera and start preview as described above.
+///   2. Call [unlock] to allow the media process to access the camera.
+///   3. Pass the camera to [MediaRecorder.setCamera](https://pub.dev/documentation/android_media/latest/android_media/MediaRecorder/setCamera.html).
+///      See [MediaRecorder](https://pub.dev/documentation/android_media/latest/android_media/MediaRecorder-class.html)
+///      information about video recording.
+///   4. When finished recording, call [reconnect] to re-acquire and re-lock the
+///      camera.
+///   5. If desired, restart preview and take more photos or videos.
+///   6. Call [stopPreview] and [release] as described above.
+///
+/// *Caution*: Different Android-powered devices may have different hardware
+/// specifications, such as megapixel ratings and auto-focus capabilities. In
+/// order for your application to be compatible with more devices, you should
+/// not make assumptions about the device camera specifications.
+///
 @Reference('android_hardware/camera/Camera')
 class Camera with $Camera {
   /// Default constructor for [Camera].
