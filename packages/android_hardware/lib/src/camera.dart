@@ -570,12 +570,16 @@ class Camera with $Camera {
   /// The driver will notify [OnZoomChangeListener] of the zoom value and
   /// whether zoom is stopped at the time. For example, suppose the current zoom
   /// is 0 and [startSmoothZoom] is called with value 3. The
-  /// [OnZoomChangeListener.onZoomChange] method will be called three times with
-  /// zoom values 1, 2, and 3. Applications can call [stopSmoothZoom] to stop
-  /// the zoom earlier. Applications should not call startSmoothZoom again or
-  /// change the zoom value before zoom stops. If the supplied zoom value equals
-  /// to the current zoom value, no zoom callback will be generated. This method
-  /// is supported if [CameraParameters.isSmoothZoomSupported] returns `true`.
+  /// [OnZoomChangeListener] method will be called three times with zoom values
+  /// 1, 2, and 3. Applications can call [stopSmoothZoom] to stop the zoom
+  /// earlier. Applications should not call [startSmoothZoom] again or change
+  /// the zoom value before zoom stops. If the supplied zoom value equals to the
+  /// current zoom value, no zoom callback will be generated. This method is
+  /// supported if [CameraParameters.isSmoothZoomSupported] returns `true`.
+  ///
+  /// `value`: The valid range is 0 to [CameraParameters.getMaxZoom].
+  ///
+  /// Throws [PlatformException] if the zoom value is invalid.
   Future<void> startSmoothZoom(int value) {
     return _channel.$startSmoothZoom(this, value);
   }
@@ -593,11 +597,20 @@ class Camera with $Camera {
   ///
   /// If modifications are made to the returned Parameters, they must be passed
   /// to [setParameters] to take effect.
+  ///
+  /// Throws [PlatformException] if reading parameters fails; usually this would
+  /// be because of a hardware or other low-level error, or because [release]
+  /// has been called on this [Camera] instance.
   Future<CameraParameters> getParameters() async {
     return await _channel.$getParameters(this) as CameraParameters;
   }
 
   /// Changes the settings for this Camera service.
+  ///
+  /// Throws [PlatformException] if any parameter is invalid or not supported.
+  ///
+  /// See also:
+  ///   [getParameters]
   Future<void> setParameters(CameraParameters parameters) {
     return _channel.$setParameters(this, parameters);
   }
@@ -616,7 +629,7 @@ class Camera with $Camera {
   ///
   /// Throws a [PlatformException] if enabling the focus move callback fails;
   /// usually this would be because of a hardware or other low-level error, or
-  /// because [release] has been called on this Camera instance.
+  /// because [release] has been called on this [Camera] instance.
   Future<void> setAutoFocusMoveCallback(AutoFocusMoveCallback callback) {
     ChannelRegistrar.instance.implementations.channelAutoFocusMoveCallback
         .$$create(
@@ -631,14 +644,15 @@ class Camera with $Camera {
   /// Camera objects are locked by default unless [unlock] is called. Normally
   /// [reconnect] is used instead.
   ///
-  /// Camera is automatically locked for applications in [MediaRecorder.start].
+  /// Camera is automatically locked for applications in
+  /// [MediaRecorder.start](https://pub.dev/documentation/android_media/latest/android_media/MediaRecorder/start.html).
   /// Applications can use the camera (ex: zoom) after recording starts. There
   /// is no need to call this after recording starts or stops.
   ///
   /// If you are not recording video, you probably do not need this method.
   ///
   /// If the camera cannot be re-locked (for example, if the camera is still in
-  /// use by another process) throws a [PlatformException].
+  /// use by another process) this throws a [PlatformException].
   Future<void> lock() {
     return _channel.$lock(this);
   }
@@ -656,7 +670,8 @@ class Camera with $Camera {
   /// determine whether the device will allow the shutter sound to be disabled.
   ///
   /// If the call fails; usually this would be because of a hardware or other
-  /// low-level error, or because [release] has been called on this Camera instance.
+  /// low-level error, or because [release] has been called on this [Camera]
+  /// instance.
   ///
   /// This is only supported on Android
   /// versions >= `Build.VERSION_CODES.JELLY_BEAN_MR1`. A [PlatformException]
@@ -753,13 +768,13 @@ class CameraParameters with $CameraParameters {
   /// [Camera.takePicture] in this mode but the subject may not be in focus.
   /// Auto focus starts when the parameter is set.
   ///
-  /// Since API level 14, applications can call [Camera.autoFocus] in this mode.
-  /// The focus callback will immediately return with a boolean that indicates
-  /// whether the focus is sharp or not. The focus position is locked after
-  /// autoFocus call. If applications want to resume the continuous focus,
-  /// [Camera.cancelAutoFocus] must be called. Restarting the preview will not
-  /// resume the continuous autoFocus. To stop continuous focus, applications
-  /// should change the focus mode to other modes.
+  /// Applications can call [Camera.autoFocus] in this mode. The focus callback
+  /// will immediately return with a boolean that indicates whether the focus is
+  /// sharp or not. The focus position is locked after autoFocus call. If
+  /// applications want to resume the continuous focus, [Camera.cancelAutoFocus]
+  /// must be called. Restarting the preview will not resume the continuous
+  /// autoFocus. To stop continuous focus, applications should change the focus
+  /// mode to other modes.
   static const String focusModeContinuousVideo = 'continuous-video';
 
   /// Extended depth of field (EDOF).
@@ -1210,7 +1225,7 @@ class CameraParameters with $CameraParameters {
   /// missing or 1 (row #0 is top and column #0 is left side).
   ///
   /// If applications want to rotate the picture to match the orientation of
-  /// what users see, apps should use OrientationBuilder and [CameraInfo].
+  /// what users see, apps should use `OrientationBuilder` and [CameraInfo].
   /// [CameraInfo.orientation] is the angle between camera orientation and
   /// natural device orientation. The sum of the two is the rotation angle for
   /// back-facing camera. The difference of the two is the rotation angle for
@@ -1227,17 +1242,34 @@ class CameraParameters with $CameraParameters {
   /// The reference code is as follows for android 24+:
   ///
   /// ```dart
-  /// late int result;
-  /// if (cameraInfo.facing == CameraInfo.cameraFacingFront) {
-  ///   result = cameraInfo.orientation % 360;
-  ///   result = (360 - result) % 360;
-  /// } else {
-  ///   result = (cameraInfo.orientation + 360) % 360;
+  /// Future<void> onOrientationChanged(
+  ///   Orientation orientation,
+  ///   Camera camera,
+  ///   CameraInfo cameraInfo,
+  /// ) async {
+  ///   final CameraParameters parameters = await camera.getParameters();
+  ///
+  ///   late final int rotation;
+  ///   switch (orientation) {
+  ///     case Orientation.portrait:
+  ///       rotation = cameraInfo.orientation;
+  ///       break;
+  ///     case Orientation.landscape:
+  ///       if (cameraInfo.facing == CameraInfo.cameraFacingFront) {
+  ///         rotation = (cameraInfo.orientation + 90) % 360;
+  ///       } else {
+  ///         rotation = (cameraInfo.orientation + 270) % 360;
+  ///       }
+  ///       break;
+  ///   }
+  ///
+  ///   return camera.setParameters(parameters);
   /// }
-  /// camera.setDisplayOrientation(result);
   /// ```
   ///
   /// [rotation] can only be 0, 90, 180 or 270.
+  ///
+  /// Throws [PlatformException] if rotation value is invalid.
   Future<void> setRotation(int rotation) {
     return _channel.$setRotation(this, rotation);
   }
@@ -1296,7 +1328,7 @@ class CameraParameters with $CameraParameters {
     return await _channel.$getExposureCompensationStep(this) as double;
   }
 
-  /// Creates a single string with all the parameters set in this Parameters object.
+  /// Creates a single string with all the parameters set in this [CameraParameters] object.
   ///
   /// Returns a `String` with all values from this Parameters object, in
   /// semi-colon delimited key-value pairs
@@ -1592,11 +1624,11 @@ class CameraParameters with $CameraParameters {
     return modes?.cast<String>();
   }
 
-  /// Gets the supported video frame sizes that can be used by [MediaRecorder].
+  /// Gets the supported video frame sizes that can be used by [MediaRecorder](https://pub.dev/documentation/android_media/latest/android_media/MediaRecorder-class.html).
   ///
   /// If the returned list is not null, the returned list will contain at least
   /// one Size and one of the sizes in the returned list must be passed to
-  /// [MediaRecorder.setVideoSize] for camcorder application if camera is used
+  /// [MediaRecorder.setVideoSize](https://pub.dev/documentation/android_media/latest/android_media/MediaRecorder/setVideoSize.html) for camcorder application if camera is used
   /// as the video source. In this case, the size of the preview can be
   /// different from the resolution of the recorded video during video
   /// recording.
@@ -1649,7 +1681,7 @@ class CameraParameters with $CameraParameters {
 
   /// Gets the current white balance setting.
   ///
-  /// Returns null if white balance setting is not supported.
+  /// Returns `null` if white balance setting is not supported.
   ///
   /// See:
   ///   [whiteBalanceAuto]

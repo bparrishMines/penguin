@@ -374,6 +374,9 @@ class ImageCaptureOutput
     return _controller.camera.takePicture(
       jpeg: PictureCallback((Uint8List? bytes) {
         _controller.camera.startPreview();
+        // This default implementations of this output should always return a
+        // byte array. If the settings of this output is overriden, this could
+        // return a null value.
         callback(bytes!);
       }),
     );
@@ -650,30 +653,4 @@ void _sortCameraSizes(List<CameraSize> sizes) {
     if (bArea > aArea) return -1;
     return 0;
   });
-}
-
-Future<void> setCameraDisplayOrientation(
-  Camera camera,
-  CameraInfo cameraInfo,
-  Orientation orientation,
-) {
-  late final int angle;
-  switch (orientation) {
-    case Orientation.portrait:
-      angle = 0;
-      break;
-    case Orientation.landscape:
-      angle = 270;
-      break;
-  }
-
-  late int displayOrientation;
-  if (cameraInfo.facing == CameraInfo.cameraFacingFront) {
-    displayOrientation = (cameraInfo.orientation + angle) % 360;
-    displayOrientation = (360 - displayOrientation) % 360;
-  } else {
-    displayOrientation = (cameraInfo.orientation - angle + 360) % 360;
-  }
-
-  return camera.setDisplayOrientation(displayOrientation);
 }
