@@ -10,7 +10,7 @@ import java.util.List;
 
 public class CameraParametersProxy implements CameraChannelLibrary.$CameraParameters {
   public final Camera.Parameters cameraParameters;
-  private final ChannelRegistrar.LibraryImplementations implementations;
+  public final ChannelRegistrar.LibraryImplementations implementations;
 
   public CameraParametersProxy(Camera.Parameters cameraParameters, ChannelRegistrar.LibraryImplementations implementations, boolean create) {
     this.cameraParameters = cameraParameters;
