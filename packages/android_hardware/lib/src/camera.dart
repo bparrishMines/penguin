@@ -21,7 +21,7 @@ typedef ErrorCallback = void Function(int error);
 /// this callback. If your application needs auto-focus and should not be
 /// installed on devices without auto-focus, you must declare that your app uses
 /// the android.hardware.camera.autofocus feature, in the
-/// [<uses-feature>](https://developer.android.com/guide/topics/manifest/uses-feature-element)
+/// [\<uses-feature\>](https://developer.android.com/guide/topics/manifest/uses-feature-element)
 /// manifest element.
 ///
 /// If the camera does not support auto-focus and [Camera.autoFocus] is
@@ -167,7 +167,7 @@ class PreviewCallback implements $PreviewCallback {
 /// To access the device camera, you must declare the
 /// [Manifest.permission.CAMERA](https://developer.android.com/reference/android/Manifest.permission#CAMERA)
 /// permission in your Android Manifest. Also be sure to include the
-/// [<uses-feature>](https://developer.android.com/guide/topics/manifest/uses-feature-element)
+/// [\<uses-feature\>](https://developer.android.com/guide/topics/manifest/uses-feature-element)
 /// manifest element to declare camera features used by your application. For
 /// example, if you use the camera and auto-focus feature, your Manifest should
 /// include the following:
@@ -463,7 +463,7 @@ class Camera with $Camera {
   ///
   /// If your application should not be installed on devices without auto-focus,
   /// you must declare that your application uses auto-focus with the
-  /// [<uses-feature>](https://developer.android.com/guide/topics/manifest/uses-feature-element)
+  /// [\<uses-feature\>](https://developer.android.com/guide/topics/manifest/uses-feature-element)
   /// manifest element.
   ///
   /// If the current flash mode is not [CameraParameters.flashModeOff], flash
