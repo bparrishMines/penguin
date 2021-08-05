@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:flutter/services.dart';
 import 'package:reference/annotations.dart';
 
 import 'camera.g.dart';
@@ -24,7 +25,7 @@ typedef ErrorCallback = void Function(int error);
 /// manifest element.
 ///
 /// If the camera does not support auto-focus and [Camera.autoFocus] is
-/// called, [onAutoFocus] will be called immediately with a fake value of
+/// called, [AutoFocusCallback] will be called immediately with a fake value of
 /// success set to true. The auto-focus routine does not lock auto-exposure
 /// and auto-white balance after it completes.
 ///
@@ -1736,7 +1737,7 @@ class CameraParameters with $CameraParameters {
   /// Applications do not need to call [Camera.startPreview] after taking a
   /// picture. The preview will be still active. Other than that, taking a
   /// picture during recording is identical to taking a picture normally. All
-  /// settings and methods related to [takePicture] work identically. Ex:
+  /// settings and methods related to [Camera.takePicture] work identically. Ex:
   /// [getPictureSize], [getSupportedPictureSizes], [setJpegQuality],
   /// [setRotation], and etc. The picture will have an EXIF header.
   /// [flashModeAuto] and [flashModeOn] also still work, but the video will
@@ -1954,8 +1955,8 @@ class CameraParameters with $CameraParameters {
   /// focus mode, white balance). For example, suppose originally flash mode is
   /// on and supported flash modes are on/off. In night scene mode, both flash
   /// mode and supported flash mode may be changed to off. After setting scene
-  /// mode, applications should call [getParameters] to know if some parameters
-  /// are changed.
+  /// mode, applications should call [Camera.getParameters] to know if some
+  /// parameters are changed.
   Future<void> setSceneMode(String mode) {
     return _channel.$setSceneMode(this, mode);
   }
@@ -1992,7 +1993,7 @@ class CameraParameters with $CameraParameters {
     return _channel.$setWhiteBalance(this, value);
   }
 
-  /// Takes a flattened string of parameters and adds each one to this [CameraParameter]s object.
+  /// Takes a flattened string of parameters and adds each one to this [CameraParameters]s object.
   ///
   /// The [flatten] method does the reverse.
   ///
@@ -2026,9 +2027,6 @@ class CameraParameters with $CameraParameters {
 @Reference('android_hardware/camera/CameraArea')
 class CameraArea with $CameraArea {
   /// Default constructor for [CameraArea].
-  ///
-  /// [createInstancePair] is whether a paired instance should be created on
-  /// construction. This is only used internally and defaults to `true`.
   CameraArea(this.rect, this.weight) {
     _channel.$create$(
       this,
@@ -2079,9 +2077,6 @@ class CameraArea with $CameraArea {
 @Reference('android_hardware/camera/CameraRect')
 class CameraRect with $CameraRect {
   /// Default constructor for [CameraRect].
-  ///
-  /// [createInstancePair] is whether a paired instance should be created on
-  /// construction. This is only used internally and defaults to `true`.
   ///
   /// left <= right and top <= bottom
   CameraRect({
