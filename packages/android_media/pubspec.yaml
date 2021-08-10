@@ -2,15 +2,13 @@ name: android_media
 description: Provides Android classes that manage various media interfaces in audio and video.
 version: 0.0.1
 homepage: https://github.com/bparrishMines/penguin/tree/master/packages/android_media
-publish_to: none
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
   flutter: ">=1.20.0"
 
 dependencies:
-  android_hardware:
-    path: ../android_hardware
+  android_hardware: 0.0.1
   flutter:
     sdk: flutter
   reference: ^0.4.3

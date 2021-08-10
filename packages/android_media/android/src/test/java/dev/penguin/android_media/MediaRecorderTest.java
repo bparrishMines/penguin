@@ -138,7 +138,7 @@ public class MediaRecorderTest {
     when(mockCameraChannelImplementations.getChannelCamera()).thenReturn(mockCameraChannel);
     
     final CameraProxy cameraProxy = new CameraProxy(mockCamera, mock(TextureRegistry.class),
-        mockCameraChannelImplementations);
+        mockCameraChannelImplementations, false);
 
     testMediaRecorderProxy.setCamera(cameraProxy);
     verify(mockMediaRecorder).setCamera(mockCamera);
@@ -333,7 +333,7 @@ public class MediaRecorderTest {
   public void setProfile() {
     final CamcorderProfileProxy camcorderProfileProxy = new CamcorderProfileProxy(
         mock(CamcorderProfile.class),
-        mockImplementations);
+        mockImplementations, false);
 
     testMediaRecorderProxy.setProfile(camcorderProfileProxy);
     verify(mockMediaRecorder).setProfile(camcorderProfileProxy.camcorderProfile);

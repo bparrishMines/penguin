@@ -102,6 +102,7 @@ abstract class AudioSource {
   /// Microphone audio source
   static const int mic = 0x00000001;
 
+  // TODO: AudioManager.STREAM_RING, AudioManager.STREAM_ALARM, AudioManager.STREAM_NOTIFICATION,
   /// Audio source for a submix of audio streams to be presented remotely.
   ///
   /// An application can use this audio source to capture a mix of audio streams
@@ -304,7 +305,7 @@ class MediaRecorder implements $MediaRecorder {
   /// sources, encoders, file format, etc., but before [start].
   Future<void> prepare() => _channel.$prepare(this);
 
-  /// Begins capturing and encoding data to the file specified with [setOutputFile].
+  /// Begins capturing and encoding data to the file specified with [setOutputFilePath].
   ///
   /// Call this after [prepare].
   ///
@@ -564,7 +565,7 @@ class MediaRecorder implements $MediaRecorder {
   /// Uses the settings from a [CamcorderProfile] object for recording.
   ///
   /// This method should be called after the video AND audio sources are set,
-  /// and before [setOutputFile]. If a time lapse CamcorderProfile is used,
+  /// and before [setOutputFilePath]. If a time lapse CamcorderProfile is used,
   /// audio related source or recording parameters are ignored.
   Future<void> setProfile(CamcorderProfile profile) {
     return _channel.$setProfile(this, profile);
@@ -592,11 +593,13 @@ class MediaRecorder implements $MediaRecorder {
 class CamcorderProfile implements $CamcorderProfile {
   /// Default constructor for [CamcorderProfile].
   ///
+  /// Doesn't create the Java Object when instantiated and should only be used
+  /// for testing or extending. Please use [CamcorderProfile.get].
+  ///
   /// See:
   ///   [MediaRecorder]
   ///   [CamcorderProfile.get]
-  @visibleForTesting
-  CamcorderProfile({
+  CamcorderProfile.withoutCreate({
     required this.audioBitRate,
     required this.audioChannels,
     required this.audioCodec,
