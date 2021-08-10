@@ -19,7 +19,7 @@ typedef $AutoFocusCallback = dynamic Function(
 typedef $ShutterCallback = dynamic Function();
 
 typedef $DataCallback = dynamic Function(
-  Uint8List data,
+  Uint8List? data,
 );
 
 typedef $OnZoomChangeListener = dynamic Function(
@@ -132,7 +132,7 @@ class $DataCallbackChannel extends TypeChannel<Object> {
 
   Future<Object?> _invoke(
     $DataCallback $instance,
-    Uint8List data,
+    Uint8List? data,
   ) {
     return sendInvokeMethod(
       $instance,
@@ -342,7 +342,7 @@ class $DataCallbackHandler implements TypeChannelHandler<Object> {
     List<Object?> arguments,
   ) {
     function(
-      Uint8List data,
+      Uint8List? data,
     ) {
       implementations.channelDataCallback._invoke(
         function,
@@ -361,7 +361,7 @@ class $DataCallbackHandler implements TypeChannelHandler<Object> {
     List<Object?> arguments,
   ) {
     return instance(
-      arguments[0] as Uint8List,
+      arguments[0] as Uint8List?,
     );
   }
 
@@ -634,7 +634,7 @@ class $CameraChannel extends TypeChannel<$Camera> {
 
   Future<Object?> $setPreviewCallback(
     $Camera $instance,
-    $PreviewCallback callback,
+    $PreviewCallback? callback,
   ) {
     return sendInvokeMethod(
       $instance,

@@ -34,7 +34,7 @@ public class CameraSizeTest {
     size.width = 12;
     size.height = 54;
 
-    final CameraSizeProxy cameraSizeProxy = new CameraSizeProxy(size, mockImplementations);
+    final CameraSizeProxy cameraSizeProxy = new CameraSizeProxy(size, mockImplementations, true);
     verify(mockCameraSizeChannel).$create$(cameraSizeProxy, false, 12, 54);
   }
 }

@@ -68,7 +68,7 @@ public class CameraTest {
   public void setUp() {
     Mockito.when(mockImplementations.getChannelCamera()).thenReturn(mockCameraChannel);
     Mockito.when(mockImplementations.getChannelCameraParameters()).thenReturn(mockCameraParametersChannel);
-    testCameraProxy = new CameraProxy(mockCamera, mockTextureRegistry, mockImplementations);
+    testCameraProxy = new CameraProxy(mockCamera, mockTextureRegistry, mockImplementations, true);
   }
 
   @Test

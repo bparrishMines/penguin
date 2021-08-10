@@ -35,7 +35,7 @@ public class CameraAreaTest {
 
   @Test(expected = NullPointerException.class)
   public void createCameraArea() {
-    final CameraAreaProxy cameraAreaProxy = new CameraAreaProxy(new Camera.Area(new Rect(), 23), mockImplementations);
+    final CameraAreaProxy cameraAreaProxy = new CameraAreaProxy(new Camera.Area(new Rect(), 23), mockImplementations, true);
 
     // Rect always returns null and weight always returns 0 for some reason.
     assertEquals(new Camera.Area(new Rect(), 23).weight, 0);

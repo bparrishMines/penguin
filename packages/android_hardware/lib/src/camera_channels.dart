@@ -48,7 +48,6 @@ class LibraryImplementations extends $LibraryImplementations {
 class CameraHandler extends $CameraHandler {
   @override
   Camera $create$(TypeChannelMessenger messenger) {
-    // ignore: invalid_use_of_visible_for_testing_member
     return Camera();
   }
 }
@@ -76,7 +75,6 @@ class CameraInfoHandler extends $CameraInfoHandler {
 class CameraParametersHandler extends $CameraParametersHandler {
   @override
   CameraParameters $create$(TypeChannelMessenger messenger) {
-    // ignore: invalid_use_of_visible_for_testing_member
     return CameraParameters();
   }
 }
@@ -99,12 +97,11 @@ class CameraRectHandler extends $CameraRectHandler {
     int right,
     int left,
   ) {
-    return CameraRect(
+    return CameraRect.withoutCreate(
       top: top,
       bottom: bottom,
       right: right,
       left: left,
-      create: false,
     );
   }
 }
@@ -117,10 +114,6 @@ class CameraAreaHandler extends $CameraAreaHandler {
     $CameraRect rect,
     int weight,
   ) {
-    return CameraArea(
-      rect as CameraRect,
-      weight,
-      create: false,
-    );
+    return CameraArea.withoutCreate(rect as CameraRect, weight);
   }
 }

@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:reference/annotations.dart';
 
 import 'camera.g.dart';
@@ -18,13 +18,14 @@ typedef ErrorCallback = void Function(int error);
 /// Callback used to notify on completion of camera auto focus.
 ///
 /// Devices that do not support auto-focus will receive a "fake" callback to
-/// this interface. If your application needs auto-focus and should not be
+/// this callback. If your application needs auto-focus and should not be
 /// installed on devices without auto-focus, you must declare that your app uses
-/// the android.hardware.camera.autofocus feature, in the <uses-feature>
+/// the android.hardware.camera.autofocus feature, in the
+/// [\<uses-feature\>](https://developer.android.com/guide/topics/manifest/uses-feature-element)
 /// manifest element.
 ///
 /// If the camera does not support auto-focus and [Camera.autoFocus] is
-/// called, [onAutoFocus] will be called immediately with a fake value of
+/// called, [AutoFocusCallback] will be called immediately with a fake value of
 /// success set to true. The auto-focus routine does not lock auto-exposure
 /// and auto-white balance after it completes.
 ///
@@ -46,11 +47,17 @@ typedef AutoFocusCallback = void Function(bool success);
 @Reference('android_hardware/camera/ShutterCallback')
 typedef ShutterCallback = void Function();
 
-/// Callback when receiving a byte array.
+/// Callback when receiving an image or preview byte array.
 @Reference('android_hardware/camera/DataCallback')
-typedef DataCallback = void Function(Uint8List data);
+typedef DataCallback = void Function(Uint8List? data);
 
 /// Callback for zoom changes during a smooth zoom operation.
+///
+/// `zoomValue`: the current zoom value. In smooth zoom mode, camera calls this
+/// for every new zoom value.
+///
+/// `stopped`: whether smooth zoom is stopped. If the value is true, this is the
+/// last zoom update for the application.
 @Reference('android_hardware/camera/OnZoomChangeListener')
 typedef OnZoomChangeListener = void Function(int zoomValue, bool stopped);
 
@@ -74,14 +81,24 @@ typedef AutoFocusMoveCallback = void Function(bool start);
 @Reference('android_hardware/camera/PictureCallback')
 class PictureCallback implements $PictureCallback {
   /// Construct a [PictureCallback].
-  PictureCallback(this.onPictureTaken, {@ignoreParam bool create = true}) {
+  PictureCallback(this.onPictureTaken) {
     ChannelRegistrar.instance.implementations.channelDataCallback.$$create(
       onPictureTaken,
       $owner: false,
     );
-    if (create) {
-      _channel.$create$(this, $owner: true, onPictureTaken: onPictureTaken);
-    }
+    _channel.$create$(this, $owner: true, onPictureTaken: onPictureTaken);
+  }
+
+  /// Construct a [PictureCallback] without creating the paired Java object.
+  ///
+  /// This should only be used when creating a custom type channel
+  /// implementation of this class.
+  @ReferenceConstructor(ignore: true)
+  PictureCallback.withoutCreate(this.onPictureTaken) {
+    ChannelRegistrar.instance.implementations.channelDataCallback.$$create(
+      onPictureTaken,
+      $owner: false,
+    );
   }
 
   static $PictureCallbackChannel get _channel =>
@@ -102,37 +119,105 @@ class PictureCallback implements $PictureCallback {
 @Reference('android_hardware/camera/PreviewCallback')
 class PreviewCallback implements $PreviewCallback {
   /// Construct a [PreviewCallback].
-  PreviewCallback(this.onPreviewFrame, {@ignoreParam bool create = true}) {
+  PreviewCallback(this.onPreviewFrame) {
     ChannelRegistrar.instance.implementations.channelDataCallback.$$create(
       onPreviewFrame,
       $owner: false,
     );
-    if (create) {
-      _channel.$create$(this, $owner: true, onPreviewFrame: onPreviewFrame);
-    }
+    _channel.$create$(this, $owner: true, onPreviewFrame: onPreviewFrame);
+  }
+
+  /// Construct a [PreviewCallback] without creating the paired Java object.
+  ///
+  /// This should only be used when creating a custom type channel
+  /// implementation of this class.
+  @ReferenceConstructor(ignore: true)
+  PreviewCallback.withoutCreate(this.onPreviewFrame) {
+    ChannelRegistrar.instance.implementations.channelDataCallback.$$create(
+      onPreviewFrame,
+      $owner: false,
+    );
   }
 
   static $PreviewCallbackChannel get _channel =>
       ChannelRegistrar.instance.implementations.channelPreviewCallback;
 
-  /// Callback used to deliver copies of preview frames as they are displayed.
+  /// Called as preview frames are displayed.
+  ///
+  /// If using the [ImageFormat.yv12] format, refer to the equations in
+  /// [CameraParameters.setPreviewFormat] for the arrangement of the pixel data
+  /// in the preview callback buffers.
+  ///
+  /// `data`: The contents of the preview frame in the format defined by
+  /// [ImageFormat], which can be queried with
+  /// [CameraParameters.getPreviewFormat]. If
+  /// [CameraParameters.setPreviewFormat] is never called, the default will be
+  /// the YCbCr_420_SP ([ImageFormat.nv21]) format.
   final DataCallback onPreviewFrame;
 }
 
 /// The [Camera] class is used to set image capture settings, start/stop preview, snap pictures, and retrieve frames for encoding for video.
 ///
+/// This uses the [Camera](https://developer.android.com/reference/android/hardware/Camera)
+/// API and is deprecated for Android versions 21+.
+///
 /// This class is a client for the Camera service, which manages the actual
 /// camera hardware.
 ///
-/// This uses the [Camera](https://developer.android.com/reference/android/hardware/Camera)
-/// API and is deprecated for Android versions 21+.
+/// To access the device camera, you must declare the
+/// [Manifest.permission.CAMERA](https://developer.android.com/reference/android/Manifest.permission#CAMERA)
+/// permission in your Android Manifest. Also be sure to include the
+/// [\<uses-feature\>](https://developer.android.com/guide/topics/manifest/uses-feature-element)
+/// manifest element to declare camera features used by your application. For
+/// example, if you use the camera and auto-focus feature, your Manifest should
+/// include the following:
+///
+/// ```xml
+/// <uses-permission android:name="android.permission.CAMERA" />
+///  <uses-feature android:name="android.hardware.camera" />
+///  <uses-feature android:name="android.hardware.camera.autofocus" />
+/// ```
+///
+/// To take pictures with this class, use the following steps:
+///   1. Obtain an instance of Camera from [open].
+///   2. Get existing (default) settings with [getParameters].
+///   3. If necessary, modify the returned [CameraParameters] object and call
+///      [setParameters].
+///   4. Call [setDisplayOrientation] to ensure correct orientation of preview.
+///   5. Attach preview frames to a Flutter texture with [attachPreviewTexture].
+///   6. *Important*: Call [startPreview] to start updating the preview surface.
+///      Preview must be started before you can take a picture.
+///   7. When you want, call [takePicture] to capture a photo. Wait for the
+///      callbacks to provide the actual image data.
+///   8. After taking a picture, preview display will have stopped. To take more
+///      photos, call [startPreview] again first.
+///   9. Call [stopPreview] to stop updating the preview surface.
+///  10. *Important*: Call [release] to release the camera for use by other
+///      applications. Applications should release the camera immediately with
+///      [AppLifecycleState.paused] (and re-open() it in AppLifecycleState.resumed)
+///
+/// To quickly switch to video recording mode, use these steps:
+///   1. Obtain and initialize a Camera and start preview as described above.
+///   2. Call [unlock] to allow the media process to access the camera.
+///   3. Pass the camera to [MediaRecorder.setCamera](https://pub.dev/documentation/android_media/latest/android_media/MediaRecorder/setCamera.html).
+///      See [MediaRecorder](https://pub.dev/documentation/android_media/latest/android_media/MediaRecorder-class.html)
+///      information about video recording.
+///   4. When finished recording, call [reconnect] to re-acquire and re-lock the
+///      camera.
+///   5. If desired, restart preview and take more photos or videos.
+///   6. Call [stopPreview] and [release] as described above.
+///
+/// *Caution*: Different Android-powered devices may have different hardware
+/// specifications, such as megapixel ratings and auto-focus capabilities. In
+/// order for your application to be compatible with more devices, you should
+/// not make assumptions about the device camera specifications.
 @Reference('android_hardware/camera/Camera')
 class Camera with $Camera {
-  /// Default constructor for [Camera].
+  /// Construct a [Camera].
   ///
-  /// This should only be used when subclassing. Otherwise, an instance should
-  /// be provided from [open].
-  @visibleForTesting
+  /// This should only be used for testing or when creating a custom type
+  /// channel implementation of this class. Otherwise, an instance should be
+  /// provided from [open].
   Camera();
 
   static $CameraChannel get _channel =>
@@ -152,22 +237,32 @@ class Camera with $Camera {
 
   int? _currentTexture;
 
-  /// Returns the information about each camera.
+  /// Returns the information about each available camera.
+  ///
+  /// Throws [PlatformException] if there is an error retrieving the information
+  /// (generally due to a hardware or other low-level failure).
   static Future<List<CameraInfo>> getAllCameraInfo() async {
     final List<Object?> allInfo =
         await _channel.$getAllCameraInfo() as List<Object?>;
     return allInfo.cast<CameraInfo>();
   }
 
+  // TODO: Best practice is to call this method on a worker thread in Java.
   /// Creates a new [Camera] object to access a particular hardware camera.
   ///
   /// If the same camera is opened by other applications, this will throw a
   /// [PlatformException].
   ///
-  /// You must call [Camera.release] when you are done using the camera, otherwise it
+  /// You must call [release] when you are done using the camera, otherwise it
   /// will remain locked and be unavailable to other applications. Your
   /// application should only have one [Camera] object active at a time for a
   /// particular hardware camera.
+  ///
+  /// Throws a [PlatformException] if opening the camera fails (for example, if
+  /// the camera is in use by another process or device policy manager has
+  /// disabled the camera).
+  ///
+  /// See: [getAllCameraInfo]
   static Future<Camera> open(int cameraId) async {
     return await _channel.$open(cameraId) as Camera;
   }
@@ -179,8 +274,18 @@ class Camera with $Camera {
 
   /// Starts capturing and drawing preview frames to the screen.
   ///
-  /// Preview will not actually start until a texture is supplied with
-  /// [addToTexture].
+  /// Preview will not actually start until a texture is attached with
+  /// [attachPreviewTexture].
+  ///
+  /// If [setPreviewCallback] or [setOneShotPreviewCallback] were called,
+  /// [PreviewCallback.onPreviewFrame] will be called when preview data becomes
+  /// available.
+  ///
+  /// Throws a [PlatformException] if starting preview fails; usually this would
+  /// be because of a hardware or other low-level error, or because [release]
+  /// has been called on this Camera instance. The QCIF (176x144) exception
+  /// mentioned in [CameraParameters.setPreviewSize] and
+  /// [CameraParameters.setPictureSize] can also cause this exception be thrown.
   Future<void> startPreview() => _channel.$startPreview(this);
 
   /// Stops capturing and drawing preview frames to the surface.
@@ -188,15 +293,25 @@ class Camera with $Camera {
   /// Resets the camera for a future call to [startPreview].
   Future<void> stopPreview() => _channel.$stopPreview(this);
 
-  /// Attach preview frames to a new Flutter texture.
+  /// Attach preview frames to a Flutter [Texture].
+  ///
+  /// Returns the id to passed a [Texture].
   ///
   /// If the [Camera] is already using a texture, the same id will be returned.
+  /// call [releasePreviewTexture] to detach and release the current texture.
+  ///
+  /// Throws a [PlatformException] if stopping preview fails; usually this would
+  /// be because of a hardware or other low-level error, or because [release]
+  /// has been called on this Camera instance.
   Future<int> attachPreviewTexture() async {
     return _currentTexture ??=
         await _channel.$attachPreviewTexture(this) as int;
   }
 
-  /// Release the Flutter texture receiving preview frames.
+  /// Release the Flutter [Texture] receiving preview frames.
+  ///
+  /// This does nothing if [attachPreviewTexture] is not called or the texture
+  /// has already been released.
   Future<void> releasePreviewTexture() async {
     _currentTexture = null;
     await _channel.$releasePreviewTexture(this);
@@ -210,10 +325,12 @@ class Camera with $Camera {
   /// another process to use; once the other process is done you can call
   /// [reconnect] to reclaim the camera.
   ///
-  /// This must be done before calling [MediaRecorder.setCamera]. This cannot
-  /// be called after recording starts.
+  /// This must be done before calling [MediaRecorder.setCamera](https://pub.dev/documentation/android_media/latest/android_media/MediaRecorder/setCamera.html).
+  /// This cannot be called after recording starts.
   ///
   /// If you are not recording video, you probably do not need this method.
+  ///
+  /// Throws [PlatformException] if the camera cannot be unlocked.
   Future<void> unlock() {
     return _channel.$unlock(this);
   }
@@ -227,6 +344,9 @@ class Camera with $Camera {
   /// If you are using the preview data to create video or still images,
   /// strongly consider using a sound to properly indicate image capture or
   /// recording start/stop to the user.
+  ///
+  /// Throws [PlatformException] if [release] has been called on this Camera
+  /// instance.
   Future<void> setOneShotPreviewCallback(PreviewCallback callback) {
     PreviewCallback._channel.$create$(
       callback,
@@ -245,12 +365,20 @@ class Camera with $Camera {
   /// If you are using the preview data to create video or still images,
   /// strongly consider using MediaActionSound to properly indicate image
   /// capture or recording start/stop to the user.
-  Future<void> setPreviewCallback(PreviewCallback callback) {
-    PreviewCallback._channel.$create$(
-      callback,
-      $owner: false,
-      onPreviewFrame: callback.onPreviewFrame,
-    );
+  ///
+  /// `callback`: a callback object that receives a copy of each preview frame,
+  /// or null to stop receiving callbacks.
+  ///
+  /// Throws [PlatformException] if [release] has been called on this Camera
+  /// instance.
+  Future<void> setPreviewCallback(PreviewCallback? callback) {
+    if (callback != null) {
+      PreviewCallback._channel.$create$(
+        callback,
+        $owner: false,
+        onPreviewFrame: callback.onPreviewFrame,
+      );
+    }
     return _channel.$setPreviewCallback(this, callback);
   }
 
@@ -260,11 +388,15 @@ class Camera with $Camera {
   /// process is done, you must reconnect to the camera, which will re-acquire
   /// the lock and allow you to continue using the camera.
   ///
-  /// Camera is automatically locked for applications in [MediaRecorder.start].
+  /// Camera is automatically locked for applications in [MediaRecorder.start](https://pub.dev/documentation/android_media/latest/android_media/MediaRecorder/start.html).
   /// Applications can use the camera (ex: zoom) after recording starts.
   /// There is no need to call this after recording starts or stops.
   ///
   /// If you are not recording video, you probably do not need this method.
+  ///
+  /// Throws [PlatformException] if a connection cannot be re-established
+  /// (for example, if the camera is still in use by another process) or
+  /// [release] has been called on this Camera instance.
   Future<void> reconnect() => _channel.$reconnect(this);
 
   /// Triggers an asynchronous image capture.
@@ -284,17 +416,27 @@ class Camera with $Camera {
   /// This method is only valid when preview is active (after [startPreview]).
   /// Preview will be stopped after the image is taken; callers must call
   /// [startPreview] again if they want to re-start preview or take more
-  /// pictures. This should not be called between [MediaRecorder.start] and
-  /// [MediaRecorder.stop].
+  /// pictures. This should not be called between
+  /// [MediaRecorder.start](https://pub.dev/documentation/android_media/latest/android_media/MediaRecorder/start.html) and
+  /// [MediaRecorder.stop](https://pub.dev/documentation/android_media/latest/android_media/MediaRecorder/stop.html).
   ///
   /// After calling this method, you must not call [startPreview] or take
   /// another picture until the JPEG callback has returned.
-  Future<void> takePicture(
+  ///
+  /// `shutter`: the callback for image capture moment, or null
+  /// `raw`: the callback for raw (uncompressed) image data, or null
+  /// `postview`: callback with postview image data, may be null
+  /// `jpeg`: the callback for JPEG image data, or null
+  ///
+  /// Throws [PlatformException] if starting picture capture fails; usually this
+  /// would be because of a hardware or other low-level error, or because
+  /// [release] has been called on this Camera instance.
+  Future<void> takePicture({
     ShutterCallback? shutter,
     PictureCallback? raw,
     PictureCallback? postView,
     PictureCallback? jpeg,
-  ) {
+  }) {
     if (shutter != null) {
       ChannelRegistrar.instance.implementations.channelShutterCallback.$$create(
         shutter,
@@ -317,12 +459,12 @@ class Camera with $Camera {
   ///
   /// Callers should check [CameraParameters.getFocusMode] to determine if
   /// this method should be called. If the camera does not support auto-focus,
-  /// it is a no-op and [AutoFocusCallback.onAutoFocus] callback will be called
-  /// immediately.
+  /// it is a no-op and `callback` will be called immediately.
   ///
   /// If your application should not be installed on devices without auto-focus,
   /// you must declare that your application uses auto-focus with the
-  /// <uses-feature> manifest element.
+  /// [\<uses-feature\>](https://developer.android.com/guide/topics/manifest/uses-feature-element)
+  /// manifest element.
   ///
   /// If the current flash mode is not [CameraParameters.flashModeOff], flash
   /// may be fired during auto-focus, depending on the driver and camera
@@ -339,6 +481,10 @@ class Camera with $Camera {
   ///
   /// If auto-focus is successful, consider playing back an auto-focus success
   /// sound to the user.
+  ///
+  /// Throws [PlatformException] if starting autofocus fails; usually this would
+  /// be because of a hardware or other low-level error, or because [release]
+  /// has been called on this [Camera] instance.
   Future<void> autoFocus(AutoFocusCallback callback) {
     ChannelRegistrar.instance.implementations.channelAutoFocusCallback.$$create(
       callback,
@@ -352,6 +498,10 @@ class Camera with $Camera {
   /// Whether or not auto-focus is currently in progress, this function will
   /// return the focus position to the default. If the camera does not support
   /// auto-focus, this is a no-op.
+  ///
+  /// Throws [PlatformException] if canceling autofocus fails; usually this
+  /// would be because of a hardware or other low-level error, or because
+  /// [release] has been called on this [Camera] instance.
   Future<void> cancelAutoFocus() {
     return _channel.$cancelAutoFocus(this);
   }
@@ -371,6 +521,49 @@ class Camera with $Camera {
   ///
   /// If you want to make the camera image show in the same orientation as the
   /// display, you can use the following code.
+  ///
+  /// ```dart
+  /// Future<void> setCameraDisplayOrientation(
+  ///   Camera camera,
+  ///   CameraInfo cameraInfo,
+  ///   Orientation orientation,
+  /// ) {
+  ///   late final int angle;
+  ///   switch (orientation) {
+  ///     case Orientation.portrait:
+  ///       angle = 0;
+  ///       break;
+  ///     case Orientation.landscape:
+  ///       angle = 270;
+  ///       break;
+  ///   }
+  ///
+  ///   late int displayOrientation;
+  ///   if (cameraInfo.facing == CameraInfo.cameraFacingFront) {
+  ///     displayOrientation = (cameraInfo.orientation + angle) % 360;
+  ///     displayOrientation = (360 - displayOrientation) % 360;
+  ///   } else {
+  ///     displayOrientation = (cameraInfo.orientation - angle + 360) % 360;
+  ///   }
+  ///
+  ///   return camera.setDisplayOrientation(displayOrientation);
+  /// }
+  /// ```
+  ///
+  /// *Note*: Before API level 24, the default value for orientation is 0.
+  /// Starting in API level 24, the default orientation will be such that
+  /// applications in forced-landscape mode will have correct preview
+  /// orientation, which may be either a default of 0 or 180. Applications that
+  /// operate in portrait mode or allow for changing orientation must still call
+  /// this method after each orientation change to ensure correct preview
+  /// display in all cases.
+  ///
+  /// `degrees`: the angle that the picture will be rotated clockwise. Valid
+  /// values are 0, 90, 180, and 270.
+  ///
+  /// Throws [PlatformException] if setting orientation fails; usually this
+  /// would be because of a hardware or other low-level error, or because
+  /// [release] has been called on this [Camera] instance.
   Future<void> setDisplayOrientation(int degrees) {
     return _channel.$setDisplayOrientation(this, degrees);
   }
@@ -389,12 +582,16 @@ class Camera with $Camera {
   /// The driver will notify [OnZoomChangeListener] of the zoom value and
   /// whether zoom is stopped at the time. For example, suppose the current zoom
   /// is 0 and [startSmoothZoom] is called with value 3. The
-  /// [OnZoomChangeListener.onZoomChange] method will be called three times with
-  /// zoom values 1, 2, and 3. Applications can call [stopSmoothZoom] to stop
-  /// the zoom earlier. Applications should not call startSmoothZoom again or
-  /// change the zoom value before zoom stops. If the supplied zoom value equals
-  /// to the current zoom value, no zoom callback will be generated. This method
-  /// is supported if [CameraParameters.isSmoothZoomSupported] returns `true`.
+  /// [OnZoomChangeListener] method will be called three times with zoom values
+  /// 1, 2, and 3. Applications can call [stopSmoothZoom] to stop the zoom
+  /// earlier. Applications should not call [startSmoothZoom] again or change
+  /// the zoom value before zoom stops. If the supplied zoom value equals to the
+  /// current zoom value, no zoom callback will be generated. This method is
+  /// supported if [CameraParameters.isSmoothZoomSupported] returns `true`.
+  ///
+  /// `value`: The valid range is 0 to [CameraParameters.getMaxZoom].
+  ///
+  /// Throws [PlatformException] if the zoom value is invalid.
   Future<void> startSmoothZoom(int value) {
     return _channel.$startSmoothZoom(this, value);
   }
@@ -412,11 +609,20 @@ class Camera with $Camera {
   ///
   /// If modifications are made to the returned Parameters, they must be passed
   /// to [setParameters] to take effect.
+  ///
+  /// Throws [PlatformException] if reading parameters fails; usually this would
+  /// be because of a hardware or other low-level error, or because [release]
+  /// has been called on this [Camera] instance.
   Future<CameraParameters> getParameters() async {
     return await _channel.$getParameters(this) as CameraParameters;
   }
 
   /// Changes the settings for this Camera service.
+  ///
+  /// Throws [PlatformException] if any parameter is invalid or not supported.
+  ///
+  /// See also:
+  ///   [getParameters]
   Future<void> setParameters(CameraParameters parameters) {
     return _channel.$setParameters(this, parameters);
   }
@@ -433,9 +639,9 @@ class Camera with $Camera {
 
   /// Sets camera auto-focus move callback.
   ///
-  /// If enabling the focus move callback fails; usually this would be because
-  /// of a hardware or other low-level error, or because [release] has been
-  /// called on this Camera instance.
+  /// Throws a [PlatformException] if enabling the focus move callback fails;
+  /// usually this would be because of a hardware or other low-level error, or
+  /// because [release] has been called on this [Camera] instance.
   Future<void> setAutoFocusMoveCallback(AutoFocusMoveCallback callback) {
     ChannelRegistrar.instance.implementations.channelAutoFocusMoveCallback
         .$$create(
@@ -450,14 +656,15 @@ class Camera with $Camera {
   /// Camera objects are locked by default unless [unlock] is called. Normally
   /// [reconnect] is used instead.
   ///
-  /// Camera is automatically locked for applications in [MediaRecorder.start].
+  /// Camera is automatically locked for applications in
+  /// [MediaRecorder.start](https://pub.dev/documentation/android_media/latest/android_media/MediaRecorder/start.html).
   /// Applications can use the camera (ex: zoom) after recording starts. There
   /// is no need to call this after recording starts or stops.
   ///
   /// If you are not recording video, you probably do not need this method.
   ///
   /// If the camera cannot be re-locked (for example, if the camera is still in
-  /// use by another process) throws a [PlatformException].
+  /// use by another process) this throws a [PlatformException].
   Future<void> lock() {
     return _channel.$lock(this);
   }
@@ -475,7 +682,8 @@ class Camera with $Camera {
   /// determine whether the device will allow the shutter sound to be disabled.
   ///
   /// If the call fails; usually this would be because of a hardware or other
-  /// low-level error, or because [release] has been called on this Camera instance.
+  /// low-level error, or because [release] has been called on this [Camera]
+  /// instance.
   ///
   /// This is only supported on Android
   /// versions >= `Build.VERSION_CODES.JELLY_BEAN_MR1`. A [PlatformException]
@@ -501,11 +709,12 @@ class Camera with $Camera {
 /// effects, [CameraParameters.getSupportedColorEffects] will return `null`.
 @Reference('android_hardware/camera/CameraParameters')
 class CameraParameters with $CameraParameters {
-  /// Default Constructor for [CameraParameters].
+  /// Construct a [CameraParameters].
   ///
-  /// This should only be used for testing. Otherwise use
+  /// This should only be used for testing or when creating a custom type
+  /// channel implementation of this class. Otherwise, use
   /// [Camera.getParameters].
-  @visibleForTesting
+  @ReferenceConstructor(ignore: true)
   CameraParameters();
 
   /// Flash will be fired automatically when required.
@@ -572,13 +781,13 @@ class CameraParameters with $CameraParameters {
   /// [Camera.takePicture] in this mode but the subject may not be in focus.
   /// Auto focus starts when the parameter is set.
   ///
-  /// Since API level 14, applications can call [Camera.autoFocus] in this mode.
-  /// The focus callback will immediately return with a boolean that indicates
-  /// whether the focus is sharp or not. The focus position is locked after
-  /// autoFocus call. If applications want to resume the continuous focus,
-  /// [Camera.cancelAutoFocus] must be called. Restarting the preview will not
-  /// resume the continuous autoFocus. To stop continuous focus, applications
-  /// should change the focus mode to other modes.
+  /// Applications can call [Camera.autoFocus] in this mode. The focus callback
+  /// will immediately return with a boolean that indicates whether the focus is
+  /// sharp or not. The focus position is locked after autoFocus call. If
+  /// applications want to resume the continuous focus, [Camera.cancelAutoFocus]
+  /// must be called. Restarting the preview will not resume the continuous
+  /// autoFocus. To stop continuous focus, applications should change the focus
+  /// mode to other modes.
   static const String focusModeContinuousVideo = 'continuous-video';
 
   /// Extended depth of field (EDOF).
@@ -1029,7 +1238,7 @@ class CameraParameters with $CameraParameters {
   /// missing or 1 (row #0 is top and column #0 is left side).
   ///
   /// If applications want to rotate the picture to match the orientation of
-  /// what users see, apps should use OrientationBuilder and [CameraInfo].
+  /// what users see, apps should use `OrientationBuilder` and [CameraInfo].
   /// [CameraInfo.orientation] is the angle between camera orientation and
   /// natural device orientation. The sum of the two is the rotation angle for
   /// back-facing camera. The difference of the two is the rotation angle for
@@ -1046,17 +1255,34 @@ class CameraParameters with $CameraParameters {
   /// The reference code is as follows for android 24+:
   ///
   /// ```dart
-  /// late int result;
-  /// if (cameraInfo.facing == CameraInfo.cameraFacingFront) {
-  ///   result = cameraInfo.orientation % 360;
-  ///   result = (360 - result) % 360;
-  /// } else {
-  ///   result = (cameraInfo.orientation + 360) % 360;
+  /// Future<void> onOrientationChanged(
+  ///   Orientation orientation,
+  ///   Camera camera,
+  ///   CameraInfo cameraInfo,
+  /// ) async {
+  ///   final CameraParameters parameters = await camera.getParameters();
+  ///
+  ///   late final int rotation;
+  ///   switch (orientation) {
+  ///     case Orientation.portrait:
+  ///       rotation = cameraInfo.orientation;
+  ///       break;
+  ///     case Orientation.landscape:
+  ///       if (cameraInfo.facing == CameraInfo.cameraFacingFront) {
+  ///         rotation = (cameraInfo.orientation + 90) % 360;
+  ///       } else {
+  ///         rotation = (cameraInfo.orientation + 270) % 360;
+  ///       }
+  ///       break;
+  ///   }
+  ///
+  ///   return camera.setParameters(parameters);
   /// }
-  /// camera.setDisplayOrientation(result);
   /// ```
   ///
   /// [rotation] can only be 0, 90, 180 or 270.
+  ///
+  /// Throws [PlatformException] if rotation value is invalid.
   Future<void> setRotation(int rotation) {
     return _channel.$setRotation(this, rotation);
   }
@@ -1115,7 +1341,7 @@ class CameraParameters with $CameraParameters {
     return await _channel.$getExposureCompensationStep(this) as double;
   }
 
-  /// Creates a single string with all the parameters set in this Parameters object.
+  /// Creates a single string with all the parameters set in this [CameraParameters] object.
   ///
   /// Returns a `String` with all values from this Parameters object, in
   /// semi-colon delimited key-value pairs
@@ -1411,11 +1637,11 @@ class CameraParameters with $CameraParameters {
     return modes?.cast<String>();
   }
 
-  /// Gets the supported video frame sizes that can be used by [MediaRecorder].
+  /// Gets the supported video frame sizes that can be used by [MediaRecorder](https://pub.dev/documentation/android_media/latest/android_media/MediaRecorder-class.html).
   ///
   /// If the returned list is not null, the returned list will contain at least
   /// one Size and one of the sizes in the returned list must be passed to
-  /// [MediaRecorder.setVideoSize] for camcorder application if camera is used
+  /// [MediaRecorder.setVideoSize](https://pub.dev/documentation/android_media/latest/android_media/MediaRecorder/setVideoSize.html) for camcorder application if camera is used
   /// as the video source. In this case, the size of the preview can be
   /// different from the resolution of the recorded video during video
   /// recording.
@@ -1468,7 +1694,7 @@ class CameraParameters with $CameraParameters {
 
   /// Gets the current white balance setting.
   ///
-  /// Returns null if white balance setting is not supported.
+  /// Returns `null` if white balance setting is not supported.
   ///
   /// See:
   ///   [whiteBalanceAuto]
@@ -1511,7 +1737,7 @@ class CameraParameters with $CameraParameters {
   /// Applications do not need to call [Camera.startPreview] after taking a
   /// picture. The preview will be still active. Other than that, taking a
   /// picture during recording is identical to taking a picture normally. All
-  /// settings and methods related to [takePicture] work identically. Ex:
+  /// settings and methods related to [Camera.takePicture] work identically. Ex:
   /// [getPictureSize], [getSupportedPictureSizes], [setJpegQuality],
   /// [setRotation], and etc. The picture will have an EXIF header.
   /// [flashModeAuto] and [flashModeOn] also still work, but the video will
@@ -1729,8 +1955,8 @@ class CameraParameters with $CameraParameters {
   /// focus mode, white balance). For example, suppose originally flash mode is
   /// on and supported flash modes are on/off. In night scene mode, both flash
   /// mode and supported flash mode may be changed to off. After setting scene
-  /// mode, applications should call [getParameters] to know if some parameters
-  /// are changed.
+  /// mode, applications should call [Camera.getParameters] to know if some
+  /// parameters are changed.
   Future<void> setSceneMode(String mode) {
     return _channel.$setSceneMode(this, mode);
   }
@@ -1767,7 +1993,7 @@ class CameraParameters with $CameraParameters {
     return _channel.$setWhiteBalance(this, value);
   }
 
-  /// Takes a flattened string of parameters and adds each one to this [CameraParameter]s object.
+  /// Takes a flattened string of parameters and adds each one to this [CameraParameters]s object.
   ///
   /// The [flatten] method does the reverse.
   ///
@@ -1801,23 +2027,21 @@ class CameraParameters with $CameraParameters {
 @Reference('android_hardware/camera/CameraArea')
 class CameraArea with $CameraArea {
   /// Default constructor for [CameraArea].
-  ///
-  /// [createInstancePair] is whether a paired instance should be created on
-  /// construction. This is only used internally and defaults to `true`.
-  CameraArea(
-    this.rect,
-    this.weight, {
-    @ignoreParam bool create = true,
-  }) {
-    if (create) {
-      _channel.$create$(
-        this,
-        $owner: true,
-        rect: rect,
-        weight: weight,
-      );
-    }
+  CameraArea(this.rect, this.weight) {
+    _channel.$create$(
+      this,
+      $owner: true,
+      rect: rect,
+      weight: weight,
+    );
   }
+
+  /// Construct a [CameraArea] without creating the paired Java object.
+  ///
+  /// This should only be used when creating a custom type channel
+  /// implementation of this class.
+  @ReferenceConstructor(ignore: true)
+  CameraArea.withoutCreate(this.rect, this.weight);
 
   static $CameraAreaChannel get _channel =>
       ChannelRegistrar.instance.implementations.channelCameraArea;
@@ -1854,28 +2078,34 @@ class CameraArea with $CameraArea {
 class CameraRect with $CameraRect {
   /// Default constructor for [CameraRect].
   ///
-  /// [createInstancePair] is whether a paired instance should be created on
-  /// construction. This is only used internally and defaults to `true`.
-  ///
   /// left <= right and top <= bottom
   CameraRect({
     required this.top,
     required this.bottom,
     required this.right,
     required this.left,
-    @ignoreParam bool create = true,
   }) {
-    if (create) {
-      _channel.$create$(
-        this,
-        $owner: true,
-        top: top,
-        bottom: bottom,
-        right: right,
-        left: left,
-      );
-    }
+    _channel.$create$(
+      this,
+      $owner: true,
+      top: top,
+      bottom: bottom,
+      right: right,
+      left: left,
+    );
   }
+
+  /// Construct a [CameraArea] without creating the paired Java object.
+  ///
+  /// This should only be used when creating a custom type channel
+  /// implementation of this class.
+  @ReferenceConstructor(ignore: true)
+  CameraRect.withoutCreate({
+    required this.top,
+    required this.bottom,
+    required this.right,
+    required this.left,
+  });
 
   static $CameraRectChannel get _channel =>
       ChannelRegistrar.instance.implementations.channelCameraRect;

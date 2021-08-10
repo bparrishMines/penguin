@@ -372,12 +372,12 @@ class ImageCaptureOutput
   @override
   Future<void> takePicture(intf.ImageCallback callback) {
     return _controller.camera.takePicture(
-      null,
-      null,
-      null,
-      PictureCallback((Uint8List bytes) {
+      jpeg: PictureCallback((Uint8List? bytes) {
         _controller.camera.startPreview();
-        callback(bytes);
+        // This default implementations of this output should always return a
+        // byte array. If the settings of this output is overriden, this could
+        // return a null value.
+        callback(bytes!);
       }),
     );
   }

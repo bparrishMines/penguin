@@ -10,12 +10,14 @@ import java.util.List;
 
 public class CameraParametersProxy implements CameraChannelLibrary.$CameraParameters {
   public final Camera.Parameters cameraParameters;
-  private final ChannelRegistrar.LibraryImplementations implementations;
+  public final ChannelRegistrar.LibraryImplementations implementations;
 
-  public CameraParametersProxy(Camera.Parameters cameraParameters, ChannelRegistrar.LibraryImplementations implementations) {
+  public CameraParametersProxy(Camera.Parameters cameraParameters, ChannelRegistrar.LibraryImplementations implementations, boolean create) {
     this.cameraParameters = cameraParameters;
     this.implementations = implementations;
-    implementations.getChannelCameraParameters().$create$(this, false);
+    if (create) {
+      implementations.getChannelCameraParameters().$create$(this, false);
+    }
   }
 
   @Override
@@ -104,12 +106,12 @@ public class CameraParametersProxy implements CameraChannelLibrary.$CameraParame
 
   @Override
   public CameraSizeProxy getPictureSize() {
-    return new CameraSizeProxy(cameraParameters.getPictureSize(), implementations);
+    return new CameraSizeProxy(cameraParameters.getPictureSize(), implementations, true);
   }
 
   @Override
   public CameraSizeProxy getPreviewSize() {
-    return new CameraSizeProxy(cameraParameters.getPreviewSize(), implementations);
+    return new CameraSizeProxy(cameraParameters.getPreviewSize(), implementations, true);
   }
 
   @Override
@@ -245,7 +247,7 @@ public class CameraParametersProxy implements CameraChannelLibrary.$CameraParame
   public CameraSizeProxy getJpegThumbnailSize() {
     final Camera.Size size = cameraParameters.getJpegThumbnailSize();
     if (size == null) return null;
-    return new CameraSizeProxy(size, implementations);
+    return new CameraSizeProxy(size, implementations, true);
   }
 
   @Override
@@ -269,7 +271,7 @@ public class CameraParametersProxy implements CameraChannelLibrary.$CameraParame
   public CameraSizeProxy getPreferredPreviewSizeForVideo() {
     final Camera.Size size = cameraParameters.getPreferredPreviewSizeForVideo();
     if (size == null) return null;
-    return new CameraSizeProxy(size, implementations);
+    return new CameraSizeProxy(size, implementations, true);
   }
 
   @Override
