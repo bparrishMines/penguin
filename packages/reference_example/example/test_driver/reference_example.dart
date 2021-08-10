@@ -34,14 +34,14 @@ Future<void> main() async {
       final $$function_name$$ callback = (String value) {
         returnValue = value;
       };
-      ChannelRegistrar.instance.implementations.channel__function_name__
-          .$$create(
+      $ChannelRegistrar.instance.implementations.channel__function_name__
+          .$create(
         callback,
         $owner: false,
       );
       final $$class_name$$ classTemplate =
           $$class_name$$.$$constructor_name$$(44);
-      ChannelRegistrar.instance.implementations.channel__class_name__
+      $ChannelRegistrar.instance.implementations.channel__class_name__
           .sendInvokeMethod(
         classTemplate,
         'callbackTest',

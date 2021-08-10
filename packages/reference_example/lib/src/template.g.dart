@@ -5,24 +5,19 @@ import 'package:reference/reference.dart';
 import /*replace :from='dart:core' value*/ 'dart:core' /**/;
 /**/
 
+import 'template.dart';
+
 // **************************************************************************
 // ReferenceGenerator
 // **************************************************************************
-
-/*iterate functions function*/
-typedef $$$function_name$$ = dynamic Function(
-  /*iterate parameters parameter*/ /*replace parameter_type*/ String /**/ $$parameter_name$$,
-  /**/
-);
-/**/
 
 /*iterate functions function*/
 class $$$function_name$$Channel extends TypeChannel<Object> {
   $$$function_name$$Channel(TypeChannelMessenger messenger)
       : super(messenger, '__function_channel__');
 
-  Future<PairedInstance?> $$create(
-    $$$function_name$$ $instance, {
+  Future<PairedInstance?> $create(
+    $$function_name$$ $instance, {
     required bool $owner,
   }) {
     return createNewInstancePair(
@@ -33,8 +28,9 @@ class $$$function_name$$Channel extends TypeChannel<Object> {
   }
 
   Future<Object?> _invoke(
-    $$$function_name$$ $instance,
-    /*iterate parameters parameter*/ /*replace parameter_type*/ String /**/ $$parameter_name$$,
+    $$function_name$$ $instance,
+    /*iterate parameters parameter*/ /*replace parameter_type*/ String
+        /**/ $$parameter_name$$,
     /**/
   ) {
     return sendInvokeMethod(
@@ -55,12 +51,13 @@ class $$$function_name$$Handler implements TypeChannelHandler<Object> {
   final $LibraryImplementations implementations;
 
   @override
-  $$$function_name$$ createInstance(
+  $$function_name$$ createInstance(
     TypeChannelMessenger messenger,
     List<Object?> arguments,
   ) {
-    function(
-      /*iterate parameters parameter*/ /*replace parameter_type*/ String /**/ $$parameter_name$$,
+    void function(
+      /*iterate parameters parameter*/ /*replace parameter_type*/ String
+          /**/ $$parameter_name$$,
       /**/
     ) {
       implementations.channel__function_name__._invoke(
@@ -75,17 +72,18 @@ class $$$function_name$$Handler implements TypeChannelHandler<Object> {
   @override
   Object? invokeMethod(
     TypeChannelMessenger messenger,
-    covariant $$$function_name$$ instance,
+    covariant $$function_name$$ instance,
     String methodName,
     List<Object?> arguments,
   ) {
-    return instance(
-      /*iterate parameters parameter*/
-      /*replace parameter_argumentCasting*/
-      arguments[0] as String,
-      /**/
-      /**/
-    );
+    final Function function = () => instance(
+          /*iterate parameters parameter*/
+          /*replace parameter_argumentCasting*/
+          arguments[0] as String,
+          /**/
+          /**/
+        );
+    return function();
   }
 
   @override
@@ -100,26 +98,32 @@ class $$$function_name$$Handler implements TypeChannelHandler<Object> {
 /**/
 
 /*iterate classes class*/
-mixin $$$class_name$$ {
-  /*iterate methods method*/
-  /*if! returnsFuture*/
-  dynamic $$method_name$$(
-    /*iterate parameters parameter*/ /*replace parameter_type*/ String /**/ $$parameter_name$$,
-    /**/
-  );
-  /**/
-  /**/
-}
-/**/
-
-/*iterate classes class*/
-class $$$class_name$$Channel extends TypeChannel<$$$class_name$$> {
+class $$$class_name$$Channel extends TypeChannel<$$class_name$$> {
   $$$class_name$$Channel(TypeChannelMessenger messenger)
       : super(messenger, '__class_channel__');
 
   /*iterate constructors constructor*/
+  Future<PairedInstance?> $create(
+    $$class_name$$ $instance, {
+    required bool $owner,
+    /*iterate parameters parameter*/
+    required /*replace parameter_type*/ int /**/ $$parameter_name$$,
+    /**/
+  }) {
+    return createNewInstancePair(
+      $instance,
+      <Object?>[
+        '',
+        /*iterate parameters parameter*/ $$parameter_name$$, /**/
+      ],
+      owner: $owner,
+    );
+  }
+  /**/
+
+  /*iterate constructors constructor*/
   Future<PairedInstance?> $create$__constructor_name__(
-    $$$class_name$$ $instance, {
+    $$class_name$$ $instance, {
     required bool $owner,
     /*iterate parameters parameter*/
     required /*replace parameter_type*/ int /**/ $$parameter_name$$,
@@ -138,34 +142,36 @@ class $$$class_name$$Channel extends TypeChannel<$$$class_name$$> {
 
   /*iterate staticMethods staticMethod*/
   /*if returnsFuture*/
-  Future<Object?> $__staticMethod_name__(
-    /*iterate parameters parameter*/ /*replace parameter_type*/ String /**/ $$parameter_name$$,
+  Future<double> $__staticMethod_name__(
+    /*iterate parameters parameter*/ /*replace parameter_type*/ String
+        /**/ $$parameter_name$$,
     /**/
-  ) {
-    return sendInvokeStaticMethod(
+  ) async {
+    return await sendInvokeStaticMethod(
       '__staticMethod_name__',
       <Object?>[
         /*iterate parameters parameter*/ $$parameter_name$$, /**/
       ],
-    );
+    ) as double;
   }
   /**/
   /**/
 
   /*iterate methods method*/
   /*if returnsFuture*/
-  Future<Object?> $__method_name__(
-    $$$class_name$$ $instance,
-    /*iterate parameters parameter*/ /*replace parameter_type*/ String /**/ $$parameter_name$$,
+  Future<String> $__method_name__(
+    $$class_name$$ $instance,
+    /*iterate parameters parameter*/ /*replace parameter_type*/ String
+        /**/ $$parameter_name$$,
     /**/
-  ) {
-    return sendInvokeMethod(
+  ) async {
+    return await sendInvokeMethod(
       $instance,
       '__method_name__',
       <Object?>[
         /*iterate parameters parameter*/ $$parameter_name$$, /**/
       ],
-    );
+    ) as String;
   }
   /**/
   /**/
@@ -173,9 +179,20 @@ class $$$class_name$$Channel extends TypeChannel<$$$class_name$$> {
 /**/
 
 /*iterate classes class*/
-class $$$class_name$$Handler implements TypeChannelHandler<$$$class_name$$> {
+class $$$class_name$$Handler implements TypeChannelHandler<$$class_name$$> {
   /*iterate constructors constructor*/
-  $$$class_name$$ $create$__constructor_name__(
+  $$class_name$$ $create(
+    TypeChannelMessenger messenger,
+    /*iterate parameters parameter*/
+    /*replace parameter_type*/ int /**/ $$parameter_name$$,
+    /**/
+  ) {
+    throw UnimplementedError();
+  }
+  /**/
+
+  /*iterate constructors constructor*/
+  $$class_name$$ $create$__constructor_name__(
     TypeChannelMessenger messenger,
     /*iterate parameters parameter*/
     /*replace parameter_type*/ int /**/ $$parameter_name$$,
@@ -187,7 +204,7 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$$class_name$$> {
 
   /*iterate staticMethods staticMethod*/
   /*if! returnsFuture*/
-  dynamic $__staticMethod_name__(
+  double $__staticMethod_name__(
     TypeChannelMessenger messenger,
     /*iterate parameters parameter*/
     /*replace parameter_type*/ String /**/ $$parameter_name$$,
@@ -200,15 +217,15 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$$class_name$$> {
 
   /*iterate methods method*/
   /*if! returnsFuture*/
-  dynamic $__method_name__(
-    $$$class_name$$ $instance,
+  String $__method_name__(
+    $$class_name$$ $instance,
     /*iterate parameters parameter*/
     /*replace parameter_type*/ String /**/ $$parameter_name$$,
     /**/
   ) {
     return $instance.$$method_name$$(
       /*iterate parameters parameter*/ $$parameter_name$$, /**/
-    );
+    ) as String;
   }
   /**/
   /**/
@@ -243,12 +260,23 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$$class_name$$> {
   }
 
   @override
-  $$$class_name$$ createInstance(
+  $$class_name$$ createInstance(
     TypeChannelMessenger messenger,
     List<Object?> arguments,
   ) {
     final String constructorName = arguments[0] as String;
     switch (constructorName) {
+      /*iterate constructors constructor*/
+      case '':
+        return $create(
+          messenger,
+          /*iterate parameters parameter*/
+          /*replace parameter_argumentCasting*/
+          arguments[1] as int,
+          /**/
+          /**/
+        );
+      /**/
       /*iterate constructors constructor*/
       case '__constructor_name__':
         return $create$__constructor_name__(
@@ -272,7 +300,7 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$$class_name$$> {
   @override
   Object? invokeMethod(
     TypeChannelMessenger messenger,
-    $$$class_name$$ instance,
+    $$class_name$$ instance,
     String methodName,
     List<Object?> arguments,
   ) {
@@ -322,6 +350,10 @@ class $LibraryImplementations {
 
 class $ChannelRegistrar {
   $ChannelRegistrar(this.implementations);
+
+  static $ChannelRegistrar instance = $ChannelRegistrar(
+      $LibraryImplementations(MethodChannelMessenger.instance))
+    ..registerHandlers();
 
   final $LibraryImplementations implementations;
 

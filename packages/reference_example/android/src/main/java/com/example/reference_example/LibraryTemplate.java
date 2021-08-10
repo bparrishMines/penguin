@@ -11,6 +11,7 @@ import /*replace value*/ java.lang.Object /**/;
 import androidx.annotation.NonNull;
 import java.util.*;
 import github.penguin.reference.async.Completable;
+import github.penguin.reference.async.Completer;
 import github.penguin.reference.reference.PairedInstance;
 import github.penguin.reference.reference.TypeChannel;
 import github.penguin.reference.reference.TypeChannelHandler;
@@ -23,7 +24,7 @@ import github.penguin.reference.reference.TypeChannelMessenger;
 public class /*replace libraryName*/LibraryTemplate/**/ {
   /*iterate functions function*/
   public static abstract class $__function_name__ {
-    public abstract Object invoke(/*iterate :join=',' parameters parameter*//*replace parameter_type*/String/**/ __parameter_name__/**/)/*if returnsFuture*/throws Exception/**/;
+    public abstract Completable<Void> invoke(/*iterate :join=',' parameters parameter*//*replace parameter_type*/String/**/ __parameter_name__/**/)/*if returnsFuture*/throws Exception/**/;
   }
   /**/
 
@@ -37,9 +38,21 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
       return createNewInstancePair($instance, Collections.emptyList(), $owner);
     }
 
-    private Completable<Object> invoke($__function_name__ $instance
+    private Completable<Void> invoke($__function_name__ $instance
         /*iterate parameters parameter*/,/*replace parameter_type*/String/**/ __parameter_name__/**/) {
-      return invokeMethod($instance, "", Arrays.<Object>asList(/*iterate :join=',' parameters parameter*/__parameter_name__/**/));
+      final Completer<Void> completer = new Completer<>();
+      invokeMethod($instance, "", Arrays.<Object>asList(/*iterate :join=',' parameters parameter*/__parameter_name__/**/)).setOnCompleteListener(new Completable.OnCompleteListener<Object>() {
+        @Override
+        public void onComplete(Object result) {
+          completer.complete((Void) result);
+        }
+
+        @Override
+        public void onError(Throwable throwable) {
+          completer.completeWithError(throwable);
+        }
+      });
+      return completer.completable;
     }
   }
   /**/
@@ -56,7 +69,7 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
     public $__function_name__ createInstance(TypeChannelMessenger messenger, List<Object> arguments) {
       return new $__function_name__() {
         @Override
-        public Object invoke(/*iterate :join=',' parameters parameter*//*replace parameter_type*/String/**/ __parameter_name__/**/) {
+        public Completable<Void> invoke(/*iterate :join=',' parameters parameter*//*replace parameter_type*/String/**/ __parameter_name__/**/) {
           return implementations.getChannel__function_name__().invoke(this/*iterate parameters parameter*/,__parameter_name__/**/);
         }
       };
@@ -74,18 +87,28 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
   }
   /**/
 
-  /*iterate classes class*/
-  public interface $__class_name__ {
-    /*iterate methods method*/
-    /*if returnsFuture*/
-    Object __method_name__(/*iterate :join=',' parameters parameter*//*replace parameter_type*/String/**/ __parameter_name__/**/) throws Exception;
-    /**/
-    /**/
-  }
-  /**/
+//  /*iterate classes class*/
+//  public static abstract class $__class_name__ {
+//    public static classnameProxy noCreate(Integer __parameter_name__) {
+//      return classnameProxy.noCreate(__parameter_name__);
+//    }
+//
+//    public final $LibraryImplementations implementations;
+//    public $__class_name__($LibraryImplementations implementations, Integer __parameter_name__) {
+//      this.implementations = implementations;
+//      //implementations.getChannel__class_name__().$create()
+//    }
+//
+//    /*iterate methods method*/
+//    /*if returnsFuture*/
+//    abstract String __method_name__(/*iterate :join=',' parameters parameter*//*replace parameter_type*/String/**/ __parameter_name__/**/) throws Exception;
+//    /**/
+//    /**/
+//  }
+//  /**/
 
   /*iterate classes class*/
-  public static class $__class_name__Channel extends TypeChannel<$__class_name__> {
+  public static class $__class_name__Channel extends TypeChannel<classnameProxy> {
     public $__class_name__Channel(@NonNull TypeChannelMessenger messenger) {
       super(messenger, "__class_channel__");
     }
@@ -116,6 +139,19 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
 
   /*iterate classes class*/
   public static class $__class_name__Handler implements TypeChannelHandler<$__class_name__> {
+    public final $LibraryImplementations implementations;
+
+    public $__class_name__Handler($LibraryImplementations implementations) {
+      this.implementations = implementations;
+    }
+
+    /*iterate constructors constructor*/
+    public $__class_name__ $create(TypeChannelMessenger messenger/*iterate parameters parameter*/,/*replace parameter_type*/Integer/**/ __parameter_name__/**/)
+        throws Exception {
+      return classnameProxy(implementations, __parameter_name__);
+    }
+    /**/
+
     /*iterate constructors constructor*/
     public $__class_name__ $create$__constructor_name__(TypeChannelMessenger messenger/*iterate parameters parameter*/,/*replace parameter_type*/Integer/**/ __parameter_name__/**/)
         throws Exception {
@@ -207,7 +243,7 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
     }
 
     public $__class_name__Handler getHandler__class_name__() {
-      return new $__class_name__Handler();
+      return new $__class_name__Handler(implementations);
     }
     /**/
 
