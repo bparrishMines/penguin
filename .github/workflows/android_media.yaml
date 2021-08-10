@@ -29,14 +29,19 @@ jobs:
 #        run: |
 #          cd $PLUGIN_DIR
 #          flutter test
-#      - name: Dart Publish
-#        run: |
-#          cd $PLUGIN_DIR
-#          flutter pub publish --dry-run
+      - name: Dart Publish
+        run: |
+          cd $PLUGIN_DIR
+          flutter pub publish --dry-run
       - name: Dart Analyze
         run: |
           cd $PLUGIN_DIR
           flutter analyze
+      - name: Dart Documentation
+        run: |
+          cd $PLUGIN_DIR
+          flutter pub global activate dartdoc
+          flutter pub global run dartdoc --no-generate-docs --errors='broken-link,unresolved-doc-reference' --verbose-warnings
 
   verify_android:
     name: Android Tests

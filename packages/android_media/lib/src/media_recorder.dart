@@ -1,26 +1,28 @@
 import 'package:android_hardware/android_hardware.dart';
+// To use [PlatformException] in documentation.
+// ignore: unused_import
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:reference/annotations.dart';
 
 import 'media_recorder.g.dart';
 import 'media_recorder_channels.dart';
 
-/// Called when an error occurs while recording with [MediaRecoder].
+/// Called when an error occurs while recording with [MediaRecorder].
 ///
 /// `what`: the type of error that has occurred:
-///    * [MediaRecorder.errorUnknown]
-///    * [MediaRecorder.errorServerDied]
-///
+///  * [MediaRecorder.errorUnknown]
+///  * [MediaRecorder.errorServerDied]
 /// `extra`: an extra code, specific to the info type
 @Reference('android_media/media_recorder/OnErrorListener')
 typedef OnErrorListener = void Function(int what, int extra);
 
-/// Called to indicate an info or a warning during recording with [MediaRecoder].
+/// Called to indicate an info or a warning during recording with [MediaRecorder].
 ///
 /// `what`: the type of error that has occurred:
-///    * [MediaRecorder.infoUnknown]
-///    * [MediaRecorder.infoMaxDurationReached]
-///    * [MediaRecorder.infoMaxFilesizeReached]
+///  * [MediaRecorder.infoUnknown]
+///  * [MediaRecorder.infoMaxDurationReached]
+///  * [MediaRecorder.infoMaxFilesizeReached]
 ///
 /// `extra`: an extra code, specific to the info type
 @Reference('android_media/media_recorder/OnInfoListener')
@@ -445,9 +447,10 @@ class MediaRecorder implements $MediaRecorder {
   /// [OutputFormat.mpeg4], and is ignored for other output formats. The geodata
   /// is stored according to ISO-6709 standard.
   ///
-  /// `latitude`: latitude in degrees. Its value must be in the range [-90, 90].
+  /// `latitude`: latitude in degrees. Its value must be in the range \[-90,
+  /// 90\].
   /// `longitude`: longitude in degrees. Its value must be in the range
-  /// [-180, 180].
+  /// \[-180, 180\].
   ///
   /// Throws a [PlatformException] if latitude or longitude are out of range.
   Future<void> setLocation(double latitude, double longitude) {
