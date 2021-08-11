@@ -59,6 +59,7 @@
   XCTAssertEqual(AVCaptureFocusModeLocked, 0);
   XCTAssertEqual(AVCaptureFocusModeAutoFocus, 1);
   XCTAssertEqual(AVCaptureFocusModeContinuousAutoFocus, 2);
+  XCTAssertEqual(AVCaptureFocusModeCustom, 3);
 }
 
 - (void)testFlashMode {
