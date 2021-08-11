@@ -3,6 +3,8 @@ package dev.penguin.android_media;
 import android.media.MediaRecorder;
 import android.os.Build;
 
+import java.io.File;
+
 import dev.penguin.android_hardware.CameraProxy;
 
 public class MediaRecorderProxy implements MediaRecorderChannelLibrary.$MediaRecorder {
@@ -193,7 +195,17 @@ public class MediaRecorderProxy implements MediaRecorderChannelLibrary.$MediaRec
 
   @Override
   public Void setProfile(MediaRecorderChannelLibrary.$CamcorderProfile profile) {
-    mediaRecorder.setProfile(((CamcorderProfileProxy)profile).camcorderProfile);
+    mediaRecorder.setProfile(((CamcorderProfileProxy) profile).camcorderProfile);
     return null;
+  }
+
+  @Override
+  public Void setNextOutputFilePath(String path) throws Exception {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      mediaRecorder.setNextOutputFile(new File(path));
+      return null;
+    }
+    throw new UnsupportedOperationException(
+        "Only supported on Android versions >= Build.VERSION_CODES.O.");
   }
 }

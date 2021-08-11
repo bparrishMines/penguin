@@ -558,6 +558,19 @@ class $MediaRecorderChannel extends TypeChannel<$MediaRecorder> {
       ],
     );
   }
+
+  Future<Object?> $setNextOutputFilePath(
+    $MediaRecorder $instance,
+    String path,
+  ) {
+    return sendInvokeMethod(
+      $instance,
+      'setNextOutputFilePath',
+      <Object?>[
+        path,
+      ],
+    );
+  }
 }
 
 class $CamcorderProfileChannel extends TypeChannel<$CamcorderProfile> {

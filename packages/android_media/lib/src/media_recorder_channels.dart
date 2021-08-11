@@ -43,7 +43,7 @@ class CamcorderProfileHandler extends $CamcorderProfileHandler {
     int videoFrameRate,
     int videoFrameWidth,
   ) {
-    return CamcorderProfile.withoutCreate(
+    return CamcorderProfile(
       audioBitRate: audioBitRate,
       audioChannels: audioChannels,
       audioCodec: audioCodec,

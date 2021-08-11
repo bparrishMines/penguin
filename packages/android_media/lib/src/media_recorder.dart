@@ -228,14 +228,31 @@ class MediaRecorder implements $MediaRecorder {
   /// A maximum duration had been setup and has now been reached.
   static const int infoMaxDurationReached = 0x00000320;
 
+  /// A maximum filesize had been setup and current recorded file size has reached 90% of the limit.
+  ///
+  /// This is sent once per file upon reaching/passing the 90% limit. To
+  /// continue the recording, applicaiton should use [setNextOutputFilePath] to
+  /// set the next output file. Otherwise, recording will stop when reaching
+  /// maximum file size.
+  static const int infoMaxFilesizeApproaching = 0x00000322;
+
   /// A maximum filesize had been setup and has now been reached.
   ///
   /// Note: This event will not be sent if application already set next output
-  /// file through [setNextOutputFile].
+  /// file through [setNextOutputFilePath].
   static const int infoMaxFilesizeReached = 0x00000321;
 
   /// Unspecified media recorder info.
   static const int infoUnknown = 0x00000001;
+
+  /// A maximum filesize had been reached and [MediaRecorder] has switched output to a new file set by application [setNextOutputFilePath].
+  ///
+  /// For best practice, application should use this event to keep track of
+  /// whether the file previously set has been used or not.
+  ///
+  /// See:
+  ///   [OnInfoListener].
+  static const int infoNextOutputFileStarted = 0x00000323;
 
   static $MediaRecorderChannel get _channel =>
       ChannelRegistrar.instance.implementations.channelMediaRecorder;
@@ -573,14 +590,32 @@ class MediaRecorder implements $MediaRecorder {
   Future<void> setProfile(CamcorderProfile profile) {
     return _channel.$setProfile(this, profile);
   }
+
+  /// Sets the next output file to be used when the maximum filesize is reached on the prior output [setOutputFilePath] or [setNextOutputFilePath].
+  ///
+  /// File should be seekable. After setting the next output file, application
+  /// should not use the file until [stop]. Application must call this after
+  /// receiving on the [OnInfoListener] a "what" code of
+  /// [infoMaxFilesizeApproaching] and before receiving a "what" code of
+  /// [infoMaxFilesizeReached]. The file is not used until switching to that
+  /// output. Application will receive [infoNextOutputFileStarted] when the next
+  /// output file is used. Application will not be able to set a new output file
+  /// if the previous one has not been used. Application is responsible for
+  /// cleaning up unused files after [stop] is called.
+  ///
+  /// Throws [PlatformException] if called before [prepare], used on Android
+  /// versions < Build.VERSION_CODES.O, or operation fails.
+  Future<void> setNextOutputFilePath(String path) {
+    return _channel.$setNextOutputFilePath(this, path);
+  }
 }
 
 /// Retrieves the predefined camcorder profile settings for camcorder applications.
 ///
 /// These settings are read-only.
 ///
-/// The compressed output from a recording session with a given CamcorderProfile
-/// contains two tracks: one for audio and one for video.
+/// The compressed output from a recording session with a given
+/// [CamcorderProfile] contains two tracks: one for audio and one for video.
 ///
 /// Each profile specifies the following set of parameters:
 ///   * File output format
@@ -592,6 +627,8 @@ class MediaRecorder implements $MediaRecorder {
 ///   * Audio bit rate in bits per second,
 ///   * Audio sample rate
 ///   * Number of audio channels for recording
+///
+/// See: [CamcorderProfile.get]
 @Reference('android_media/media_recorder/CamcorderProfile')
 class CamcorderProfile implements $CamcorderProfile {
   /// Default constructor for [CamcorderProfile].
@@ -602,7 +639,7 @@ class CamcorderProfile implements $CamcorderProfile {
   /// See:
   ///   [MediaRecorder]
   ///   [CamcorderProfile.get]
-  CamcorderProfile.withoutCreate({
+  CamcorderProfile({
     required this.audioBitRate,
     required this.audioChannels,
     required this.audioCodec,
