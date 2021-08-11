@@ -53,13 +53,13 @@
   XCTAssertEqual(AVCaptureExposureModeLocked, 0);
   XCTAssertEqual(AVCaptureExposureModeAutoExpose, 1);
   XCTAssertEqual(AVCaptureExposureModeContinuousAutoExposure, 2);
+  XCTAssertEqual(AVCaptureExposureModeCustom, 3);
 }
 
 - (void)testFocusMode {
   XCTAssertEqual(AVCaptureFocusModeLocked, 0);
   XCTAssertEqual(AVCaptureFocusModeAutoFocus, 1);
   XCTAssertEqual(AVCaptureFocusModeContinuousAutoFocus, 2);
-  XCTAssertEqual(AVCaptureFocusModeCustom, 3);
 }
 
 - (void)testFlashMode {
