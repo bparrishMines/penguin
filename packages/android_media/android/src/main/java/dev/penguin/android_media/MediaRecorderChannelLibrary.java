@@ -240,6 +240,10 @@ public class MediaRecorderChannelLibrary {
     Object setProfile($CamcorderProfile profile) throws Exception;
     
     
+    
+    Object setNextOutputFilePath(String path) throws Exception;
+    
+    
   }
   
   public interface $CamcorderProfile {
@@ -263,6 +267,8 @@ public class MediaRecorderChannelLibrary {
     
     
 
+    
+    
     
     
     
@@ -538,6 +544,12 @@ public class MediaRecorderChannelLibrary {
     }
     
     
+    
+    public Object $setNextOutputFilePath($MediaRecorder $instance,String path) throws Exception {
+      return $instance.setNextOutputFilePath( path );
+    }
+    
+    
 
     @Override
     public Object invokeStaticMethod(
@@ -723,6 +735,11 @@ public class MediaRecorderChannelLibrary {
         
         case "setProfile":
           return $setProfile(instance,($CamcorderProfile) arguments.get(0));
+        
+        
+        
+        case "setNextOutputFilePath":
+          return $setNextOutputFilePath(instance,(String) arguments.get(0));
         
         
       }

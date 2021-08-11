@@ -1,26 +1,28 @@
 import 'package:android_hardware/android_hardware.dart';
+// To use [PlatformException] in documentation.
+// ignore: unused_import
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:reference/annotations.dart';
 
 import 'media_recorder.g.dart';
 import 'media_recorder_channels.dart';
 
-/// Called when an error occurs while recording with [MediaRecoder].
+/// Called when an error occurs while recording with [MediaRecorder].
 ///
 /// `what`: the type of error that has occurred:
-///    * [MediaRecorder.errorUnknown]
-///    * [MediaRecorder.errorServerDied]
-///
+///  * [MediaRecorder.errorUnknown]
+///  * [MediaRecorder.errorServerDied]
 /// `extra`: an extra code, specific to the info type
 @Reference('android_media/media_recorder/OnErrorListener')
 typedef OnErrorListener = void Function(int what, int extra);
 
-/// Called to indicate an info or a warning during recording with [MediaRecoder].
+/// Called to indicate an info or a warning during recording with [MediaRecorder].
 ///
 /// `what`: the type of error that has occurred:
-///    * [MediaRecorder.infoUnknown]
-///    * [MediaRecorder.infoMaxDurationReached]
-///    * [MediaRecorder.infoMaxFilesizeReached]
+///  * [MediaRecorder.infoUnknown]
+///  * [MediaRecorder.infoMaxDurationReached]
+///  * [MediaRecorder.infoMaxFilesizeReached]
 ///
 /// `extra`: an extra code, specific to the info type
 @Reference('android_media/media_recorder/OnInfoListener')
@@ -102,6 +104,7 @@ abstract class AudioSource {
   /// Microphone audio source
   static const int mic = 0x00000001;
 
+  // TODO: AudioManager.STREAM_RING, AudioManager.STREAM_ALARM, AudioManager.STREAM_NOTIFICATION,
   /// Audio source for a submix of audio streams to be presented remotely.
   ///
   /// An application can use this audio source to capture a mix of audio streams
@@ -225,14 +228,31 @@ class MediaRecorder implements $MediaRecorder {
   /// A maximum duration had been setup and has now been reached.
   static const int infoMaxDurationReached = 0x00000320;
 
+  /// A maximum filesize had been setup and current recorded file size has reached 90% of the limit.
+  ///
+  /// This is sent once per file upon reaching/passing the 90% limit. To
+  /// continue the recording, applicaiton should use [setNextOutputFilePath] to
+  /// set the next output file. Otherwise, recording will stop when reaching
+  /// maximum file size.
+  static const int infoMaxFilesizeApproaching = 0x00000322;
+
   /// A maximum filesize had been setup and has now been reached.
   ///
   /// Note: This event will not be sent if application already set next output
-  /// file through [setNextOutputFile].
+  /// file through [setNextOutputFilePath].
   static const int infoMaxFilesizeReached = 0x00000321;
 
   /// Unspecified media recorder info.
   static const int infoUnknown = 0x00000001;
+
+  /// A maximum filesize had been reached and [MediaRecorder] has switched output to a new file set by application [setNextOutputFilePath].
+  ///
+  /// For best practice, application should use this event to keep track of
+  /// whether the file previously set has been used or not.
+  ///
+  /// See:
+  ///   [OnInfoListener].
+  static const int infoNextOutputFileStarted = 0x00000323;
 
   static $MediaRecorderChannel get _channel =>
       ChannelRegistrar.instance.implementations.channelMediaRecorder;
@@ -304,7 +324,7 @@ class MediaRecorder implements $MediaRecorder {
   /// sources, encoders, file format, etc., but before [start].
   Future<void> prepare() => _channel.$prepare(this);
 
-  /// Begins capturing and encoding data to the file specified with [setOutputFile].
+  /// Begins capturing and encoding data to the file specified with [setOutputFilePath].
   ///
   /// Call this after [prepare].
   ///
@@ -444,9 +464,10 @@ class MediaRecorder implements $MediaRecorder {
   /// [OutputFormat.mpeg4], and is ignored for other output formats. The geodata
   /// is stored according to ISO-6709 standard.
   ///
-  /// `latitude`: latitude in degrees. Its value must be in the range [-90, 90].
+  /// `latitude`: latitude in degrees. Its value must be in the range \[-90,
+  /// 90\].
   /// `longitude`: longitude in degrees. Its value must be in the range
-  /// [-180, 180].
+  /// \[-180, 180\].
   ///
   /// Throws a [PlatformException] if latitude or longitude are out of range.
   Future<void> setLocation(double latitude, double longitude) {
@@ -564,10 +585,28 @@ class MediaRecorder implements $MediaRecorder {
   /// Uses the settings from a [CamcorderProfile] object for recording.
   ///
   /// This method should be called after the video AND audio sources are set,
-  /// and before [setOutputFile]. If a time lapse CamcorderProfile is used,
+  /// and before [setOutputFilePath]. If a time lapse CamcorderProfile is used,
   /// audio related source or recording parameters are ignored.
   Future<void> setProfile(CamcorderProfile profile) {
     return _channel.$setProfile(this, profile);
+  }
+
+  /// Sets the next output file to be used when the maximum filesize is reached on the prior output [setOutputFilePath] or [setNextOutputFilePath].
+  ///
+  /// File should be seekable. After setting the next output file, application
+  /// should not use the file until [stop]. Application must call this after
+  /// receiving on the [OnInfoListener] a "what" code of
+  /// [infoMaxFilesizeApproaching] and before receiving a "what" code of
+  /// [infoMaxFilesizeReached]. The file is not used until switching to that
+  /// output. Application will receive [infoNextOutputFileStarted] when the next
+  /// output file is used. Application will not be able to set a new output file
+  /// if the previous one has not been used. Application is responsible for
+  /// cleaning up unused files after [stop] is called.
+  ///
+  /// Throws [PlatformException] if called before [prepare], used on Android
+  /// versions < Build.VERSION_CODES.O, or operation fails.
+  Future<void> setNextOutputFilePath(String path) {
+    return _channel.$setNextOutputFilePath(this, path);
   }
 }
 
@@ -575,8 +614,8 @@ class MediaRecorder implements $MediaRecorder {
 ///
 /// These settings are read-only.
 ///
-/// The compressed output from a recording session with a given CamcorderProfile
-/// contains two tracks: one for audio and one for video.
+/// The compressed output from a recording session with a given
+/// [CamcorderProfile] contains two tracks: one for audio and one for video.
 ///
 /// Each profile specifies the following set of parameters:
 ///   * File output format
@@ -588,14 +627,18 @@ class MediaRecorder implements $MediaRecorder {
 ///   * Audio bit rate in bits per second,
 ///   * Audio sample rate
 ///   * Number of audio channels for recording
+///
+/// See: [CamcorderProfile.get]
 @Reference('android_media/media_recorder/CamcorderProfile')
 class CamcorderProfile implements $CamcorderProfile {
   /// Default constructor for [CamcorderProfile].
   ///
+  /// Doesn't create the Java Object when instantiated and should only be used
+  /// for testing or extending. Please use [CamcorderProfile.get].
+  ///
   /// See:
   ///   [MediaRecorder]
   ///   [CamcorderProfile.get]
-  @visibleForTesting
   CamcorderProfile({
     required this.audioBitRate,
     required this.audioChannels,

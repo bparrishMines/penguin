@@ -25,6 +25,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.File;
+
 public class MediaRecorderTest {
   @Rule
   public MockitoRule mockitoRule = MockitoJUnit.rule();
@@ -118,6 +120,8 @@ public class MediaRecorderTest {
     assertEquals(MediaRecorder.MEDIA_RECORDER_INFO_MAX_DURATION_REACHED, 0x00000320);
     assertEquals(MediaRecorder.MEDIA_RECORDER_INFO_MAX_FILESIZE_REACHED, 0x00000321);
     assertEquals(MediaRecorder.MEDIA_RECORDER_INFO_UNKNOWN, 0x00000001);
+    assertEquals(MediaRecorder.MEDIA_RECORDER_INFO_MAX_FILESIZE_APPROACHING, 0x00000322);
+    assertEquals(MediaRecorder.MEDIA_RECORDER_INFO_NEXT_OUTPUT_FILE_STARTED, 0x00000323);
   }
 
   @Test
@@ -138,7 +142,7 @@ public class MediaRecorderTest {
     when(mockCameraChannelImplementations.getChannelCamera()).thenReturn(mockCameraChannel);
     
     final CameraProxy cameraProxy = new CameraProxy(mockCamera, mock(TextureRegistry.class),
-        mockCameraChannelImplementations);
+        mockCameraChannelImplementations, false);
 
     testMediaRecorderProxy.setCamera(cameraProxy);
     verify(mockMediaRecorder).setCamera(mockCamera);
@@ -333,9 +337,17 @@ public class MediaRecorderTest {
   public void setProfile() {
     final CamcorderProfileProxy camcorderProfileProxy = new CamcorderProfileProxy(
         mock(CamcorderProfile.class),
-        mockImplementations);
+        mockImplementations, false);
 
     testMediaRecorderProxy.setProfile(camcorderProfileProxy);
     verify(mockMediaRecorder).setProfile(camcorderProfileProxy.camcorderProfile);
+  }
+
+  @Test
+  public void setNextOutputFilePath() throws Exception {
+    setFinalStatic(Build.VERSION.class.getField("SDK_INT"), Build.VERSION_CODES.O);
+
+    testMediaRecorderProxy.setNextOutputFilePath("apple.jpb");
+    verify(mockMediaRecorder).setNextOutputFile(new File("apple.jpb"));
   }
 }

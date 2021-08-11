@@ -14,7 +14,6 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import github.penguin.reference.reference.TypeChannelMessenger;
-import io.flutter.view.TextureRegistry;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -31,9 +30,6 @@ public class CamcorderProfileTest {
 
   @Mock
   TypeChannelMessenger mockTypeChannelMessenger;
-
-  @Mock
-  TextureRegistry mockTextureRegistry;
 
   @Mock
   ChannelRegistrar.LibraryImplementations mockImplementations;
@@ -87,7 +83,7 @@ public class CamcorderProfileTest {
 
     when(mockImplementations.getChannelCamcorderProfile()).thenReturn(mockCamcorderProfileChannel);
     final CamcorderProfileProxy camcorderProfileProxy = new CamcorderProfileProxy(mockCamcorderProfile,
-        mockImplementations);
+        mockImplementations, true);
 
     verify(mockCamcorderProfileChannel).$create$(camcorderProfileProxy, false,
         1,

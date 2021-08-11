@@ -13,8 +13,8 @@ class ChannelRegistrar extends $ChannelRegistrar {
   ///
   /// Replace this for custom usability.
   static ChannelRegistrar instance =
-  ChannelRegistrar(LibraryImplementations(MethodChannelMessenger.instance))
-    ..registerHandlers();
+      ChannelRegistrar(LibraryImplementations(MethodChannelMessenger.instance))
+        ..registerHandlers();
 }
 
 /// Type channel implementation for camera classes.
@@ -29,20 +29,20 @@ class LibraryImplementations extends $LibraryImplementations {
 class CamcorderProfileHandler extends $CamcorderProfileHandler {
   @override
   CamcorderProfile $create$(
-      TypeChannelMessenger messenger,
-      int audioBitRate,
-      int audioChannels,
-      int audioCodec,
-      int audioSampleRate,
-      int duration,
-      int fileFormat,
-      int quality,
-      int videoBitRate,
-      int videoCodec,
-      int videoFrameHeight,
-      int videoFrameRate,
-      int videoFrameWidth) {
-    // ignore: invalid_use_of_visible_for_testing_member
+    TypeChannelMessenger messenger,
+    int audioBitRate,
+    int audioChannels,
+    int audioCodec,
+    int audioSampleRate,
+    int duration,
+    int fileFormat,
+    int quality,
+    int videoBitRate,
+    int videoCodec,
+    int videoFrameHeight,
+    int videoFrameRate,
+    int videoFrameWidth,
+  ) {
     return CamcorderProfile(
       audioBitRate: audioBitRate,
       audioChannels: audioChannels,
