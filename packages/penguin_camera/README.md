@@ -1,6 +1,11 @@
 # penguin_camera
 
-A new Flutter package project.
+A framework for accessing various cameras and camera features available on devices, allowing you to
+capture pictures and videos in your applications.
+
+## Supported Platform
+
+
 
 ## Getting Started
 

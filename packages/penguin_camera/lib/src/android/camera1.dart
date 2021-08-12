@@ -9,9 +9,12 @@ import 'package:penguin_camera/penguin_camera.dart';
 
 import '../platform_interface.dart' as intf;
 
+/// Implementation of [intf.CameraDevice] using Android Camera1 API.
 class CameraDevice implements intf.CameraDevice {
+  /// Construct a [CameraDevice].
   CameraDevice(this.info);
 
+  /// Additional information about a camera.
   final CameraInfo info;
 
   @override
@@ -30,7 +33,9 @@ class CameraDevice implements intf.CameraDevice {
   }
 }
 
+/// Implementation of [intf.CameraController] using Android Camera1 API.
 class CameraController implements intf.CameraController {
+  /// Construct a [CameraController].
   CameraController({required this.device, required this.outputs});
 
   bool _initialized = false;
@@ -42,7 +47,12 @@ class CameraController implements intf.CameraController {
   @override
   final List<CameraOutput> outputs;
 
+  /// The camera controlled by this controller.
+  ///
+  /// This should not be accessed until after initialized.
   late final Camera camera;
+
+  /// The parameters used to configure this device.
   late final CameraParameters cameraParameters;
 
   @override
@@ -108,7 +118,7 @@ class CameraController implements intf.CameraController {
   }
 
   @override
-  Future<List<FocusMode>> getSupportedFocusModes() async {
+  Future<List<FocusMode>> supportedFocusModes() async {
     final List<String> focusModes =
         await cameraParameters.getSupportedFocusModes();
 
@@ -130,7 +140,7 @@ class CameraController implements intf.CameraController {
   }
 
   @override
-  Future<List<ExposureMode>> getSupportedExposureModes() async {
+  Future<List<ExposureMode>> supportedExposureModes() async {
     final bool lockSupported =
         await cameraParameters.isAutoExposureLockSupported();
     return <ExposureMode>[
@@ -173,7 +183,7 @@ class CameraController implements intf.CameraController {
   }
 
   @override
-  Future<List<TorchMode>> getSupportedTorchModes() async {
+  Future<List<TorchMode>> supportedTorchModes() async {
     final List<String> flashModes =
         await cameraParameters.getSupportedFlashModes();
 
@@ -187,23 +197,23 @@ class CameraController implements intf.CameraController {
   }
 
   @override
-  Future<double> getMaxZoom() async {
+  Future<double> maxZoom() async {
     final List<int> zoomRatios = await cameraParameters.getZoomRatios();
     return zoomRatios.last / 100;
   }
 
   @override
-  Future<double> getMinZoom() {
+  Future<double> minZoom() {
     return Future<double>.value(1.0);
   }
 
   @override
-  Future<bool> isSmoothZoomSupported() {
+  Future<bool> smoothZoomSupported() {
     return cameraParameters.isSmoothZoomSupported();
   }
 
   @override
-  Future<bool> isZoomSupported() {
+  Future<bool> zoomSupported() {
     return cameraParameters.isZoomSupported();
   }
 
@@ -233,6 +243,7 @@ class CameraController implements intf.CameraController {
   }
 }
 
+/// Implementation of [intf.PenguinCameraPlatform] using Android Camera1 API.
 class CameraPlatform extends intf.PenguinCameraPlatform {
   @override
   CameraController createCameraController({
@@ -266,12 +277,13 @@ class CameraPlatform extends intf.PenguinCameraPlatform {
   }
 }
 
+/// Implementation of [intf.PreviewOutput] using Android Camera1 API.
 class PreviewOutput with PresetChangeListener implements intf.PreviewOutput {
   late CameraController _controller;
   late Completer<Texture> _previewWidgetCompleter;
 
   @override
-  Future<Widget> getPreviewWidget() {
+  Future<Widget> previewWidget() {
     return _previewWidgetCompleter.future;
   }
 
@@ -321,7 +333,7 @@ class PreviewOutput with PresetChangeListener implements intf.PreviewOutput {
   }
 
   @override
-  Future<Size> getOutputSize() async {
+  Future<Size> outputSize() async {
     final CameraSize size = await _controller.cameraParameters.getPreviewSize();
     return Size(size.width.toDouble(), size.height.toDouble());
   }
@@ -356,6 +368,7 @@ class PreviewOutput with PresetChangeListener implements intf.PreviewOutput {
   }
 }
 
+/// Implementation of [intf.ImageCaptureOutput] using Android Camera1 API.
 class ImageCaptureOutput
     with PresetChangeListener
     implements intf.ImageCaptureOutput {
@@ -383,7 +396,7 @@ class ImageCaptureOutput
   }
 
   @override
-  Future<List<FlashMode>> getSupportedFlashModes() async {
+  Future<List<FlashMode>> supportedFlashModes() async {
     final List<String> flashModes =
         await _controller.cameraParameters.getSupportedFlashModes();
 
@@ -456,7 +469,7 @@ class ImageCaptureOutput
   }
 
   @override
-  Future<Size> getOutputSize() async {
+  Future<Size> outputSize() async {
     final CameraSize size = await _controller.cameraParameters.getPictureSize();
     return Size(size.width.toDouble(), size.height.toDouble());
   }
@@ -494,15 +507,28 @@ class ImageCaptureOutput
   }
 }
 
+/// Implementation of [intf.VideoCaptureOutput] using Android Camera1 API.
 class VideoCaptureOutput
     with PresetChangeListener
     implements intf.VideoCaptureOutput {
+  /// Construct a [VideoCaptureOutput].
   VideoCaptureOutput({this.includeAudio = false});
 
+  /// Whether [mediaController] should include audio settings.
+  ///
+  /// Defaults to false. A user should make sure audio permissions have been
+  /// provided by the user.
   final bool includeAudio;
 
   late CameraController _controller;
+
+  /// Handles recording video and audio for a [Camera].
   late MediaRecorder mediaRecorder;
+
+  /// Output size in pixels specified by the user.
+  ///
+  /// This value is null if a user has not awaited
+  /// [CameraController.setControllerPreset].
   CameraSize? specifiedSize;
 
   @override
@@ -601,7 +627,7 @@ class VideoCaptureOutput
   }
 
   @override
-  Future<Size?> getOutputSize() async {
+  Future<Size?> outputSize() async {
     if (specifiedSize == null) return null;
     return Size(
       specifiedSize!.width.toDouble(),
@@ -641,7 +667,9 @@ class VideoCaptureOutput
   }
 }
 
+/// Listens when a [CameraController] changes [CameraControllerPreset]s.
 mixin PresetChangeListener {
+  /// Called when a [CameraController] has changed [CameraControllerPreset]s.
   Future<void> updatePreset(CameraControllerPreset preset);
 }
 

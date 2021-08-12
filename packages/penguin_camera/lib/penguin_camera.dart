@@ -1,3 +1,3 @@
 library penguin_camera;
 
-export 'src/platform_interface.dart' hide PenguinCameraPlatform;
+export 'src/platform_interface.dart';
