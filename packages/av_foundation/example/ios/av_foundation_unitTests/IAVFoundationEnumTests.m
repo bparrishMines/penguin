@@ -53,6 +53,7 @@
   XCTAssertEqual(AVCaptureExposureModeLocked, 0);
   XCTAssertEqual(AVCaptureExposureModeAutoExpose, 1);
   XCTAssertEqual(AVCaptureExposureModeContinuousAutoExposure, 2);
+  XCTAssertEqual(AVCaptureExposureModeCustom, 3);
 }
 
 - (void)testFocusMode {

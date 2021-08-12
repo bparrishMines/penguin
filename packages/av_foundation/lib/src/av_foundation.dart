@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:reference/annotations.dart';
 import 'package:reference/reference.dart';
 
@@ -15,7 +16,7 @@ import 'av_foundation_channels.dart';
 ///
 /// See: [CapturePhotoCaptureDelegate.didFinishProcessingPhoto]
 @Reference('av_foundation/av_foundation/FinishProcessingPhotoCallback')
-typedef FinishProcessingPhotoCallback = Function(CapturePhoto photo);
+typedef FinishProcessingPhotoCallback = void Function(CapturePhoto photo);
 
 /// Constants indicating the mode of the exposure on the receiver's device, if it has adjustable exposure.
 abstract class CaptureExposureMode {
@@ -29,6 +30,11 @@ abstract class CaptureExposureMode {
 
   /// Indicates that the device should automatically adjust exposure when needed.
   static const int continuousAutoExposure = 2;
+
+  // TODO: CaptureDevice.exposureDuration
+  // TODO: CaptureDevice.ISO
+  /// The device should only adjust exposure according to user provided `CaptureDevice.ISO` and `CaptureDevice.exposureDuration` values.
+  static const int custom = 3;
 }
 
 /// Constants to specify the capture device’s torch mode.
@@ -48,10 +54,10 @@ abstract class CaptureTorchMode {
 // TODO: CaptureVideoPreviewLayer
 /// Constants indicating video orientation.
 ///
-/// For use with [CaptureVideoPreviewLayer] and [CaptureConnection].
+/// For use with `CaptureVideoPreviewLayer` and [CaptureConnection].
 ///
 /// You use these constants in conjunction with an
-/// [CaptureVideoPreviewLayer] object; see
+/// `CaptureVideoPreviewLayer` object; see
 /// [CaptureConnection.setVideoOrientation].
 abstract class CaptureVideoOrientation {
   CaptureVideoOrientation._();
@@ -99,7 +105,7 @@ abstract class CaptureFlashMode {
 
 /// [CaptureSessionPreset] string constants.
 ///
-/// Clients may use an [CaptureSessionPreset] to set the format for output on an
+/// Clients may use a [CaptureSessionPreset] to set the format for output on a
 /// [CaptureSession].
 abstract class CaptureSessionPreset {
   CaptureSessionPreset._();
@@ -107,7 +113,7 @@ abstract class CaptureSessionPreset {
   /// A [CaptureSession] preset suitable for high resolution photo quality output.
   ///
   /// Clients may set a [CaptureSession] instance's `sessionPreset` to
-  /// [CaptureSessionPreset.Photo] for full resolution photo quality output.
+  /// [CaptureSessionPreset.photo] for full resolution photo quality output.
   static const String photo = 'AVCaptureSessionPresetPhoto';
 
   /// A [CaptureSession] preset suitable for high quality video and audio output.
@@ -205,7 +211,7 @@ abstract class CaptureSessionPreset {
   /// configure a [CaptureSession] to produce a desired quality of service
   /// level. The session configures its inputs and outputs optimally to produce
   /// the QoS level indicated. Clients who need to ensure a particular input
-  /// format is chosen can use [CaptureDevice.setActiveFormat] method. When a
+  /// format is chosen can use `CaptureDevice.setActiveFormat` method. When a
   /// client sets the active format on a device, the associated session's
   /// `setSessionPreset` method automatically changes to
   /// [CaptureSessionPreset.inputPriority]. This change indicates that the input
@@ -232,11 +238,11 @@ abstract class CaptureSessionPreset {
 ///
 /// In addition to the keys in CVPixelBuffer.h, uncompressed video settings dictionaries may also contain the following keys:
 ///
-/// [videoPixelAspectRatio]
-/// [videoCleanAperture]
-/// [videoScalingMode]
-/// [videoColorProperties]
-/// [videoAllowWideColor]
+/// `videoPixelAspectRatio`
+/// `videoCleanAperture`
+/// `videoScalingMode`
+/// `videoColorProperties`
+/// `videoAllowWideColor`
 ///
 /// It is an error to add any other keys to an uncompressed video settings
 /// map.
@@ -277,7 +283,6 @@ abstract class CaptureDeviceType {
   static const String builtInUltraWideCamera =
       'AVCaptureDeviceTypeBuiltInUltraWideCamera';
 
-  // TODO: AVCaptureExposureModeCustom
   // TODO: AVCaptureLensPositionCurrent
   // TODO: AVCaptureWhiteBalanceGainsCurrent
   // TODO: AVCaptureDevice.defaultDeviceWithDeviceType
@@ -285,7 +290,7 @@ abstract class CaptureDeviceType {
   ///
   /// Note that devices of this type may only be discovered using an
   /// [CaptureDeviceDiscoverySession] or
-  /// [CaptureDevice.defaultDeviceWithDeviceType].
+  /// `CaptureDevice.defaultDeviceWithDeviceType`.
   ///
   /// A device of this device type supports the following features:
   ///  - Auto switching from one camera to the other when zoom factor, light level,
@@ -298,11 +303,11 @@ abstract class CaptureDeviceType {
   /// cameras) via a single photo capture request.
   ///
   /// A device of this device type does not support the following features:
-  ///  - [CaptureExposureModeCustom] and manual exposure bracketing.
+  ///  - [CaptureExposureMode.custom] and manual exposure bracketing.
   ///  - Locking focus with a lens position other than
-  /// [CaptureLensPositionCurrent].
+  /// `CaptureLensPositionCurrent`.
   ///  - Locking auto white balance with device white balance gains other than
-  /// [CaptureWhiteBalanceGainsCurrent].
+  /// `CaptureWhiteBalanceGainsCurrent`.
   ///
   /// Even when locked, exposure duration, ISO, aperture, white balance gains,
   /// or lens position may change when the device switches from one camera to
@@ -311,7 +316,6 @@ abstract class CaptureDeviceType {
   static const String builtInDualCamera =
       'AVCaptureDeviceTypeBuiltInDualCamera';
 
-  // TODO: AVCaptureExposureModeCustom
   // TODO: AVCaptureLensPositionCurrent
   // TODO: AVCaptureWhiteBalanceGainsCurrent
   // TODO: AVCaptureDevice.defaultDeviceWithDeviceType
@@ -319,7 +323,7 @@ abstract class CaptureDeviceType {
   ///
   /// Note that devices of this type may only be discovered using an
   /// [CaptureDeviceDiscoverySession] or
-  /// [AVCaptureDevice.defaultDeviceWithDeviceType].
+  /// `AVCaptureDevice.defaultDeviceWithDeviceType`.
   ///
   /// A device of this device type supports the following features:
   ///  - Auto switching from one camera to the other when zoom factor, light
@@ -330,11 +334,11 @@ abstract class CaptureDeviceType {
   /// single photo capture request.
   ///
   /// A device of this device type does not support the following features:
-  ///  - [CaptureExposureModeCustom] and manual exposure bracketing.
+  ///  - [CaptureExposureMode.custom] and manual exposure bracketing.
   ///  - Locking focus with a lens position other than
-  /// [CaptureLensPositionCurrent].
+  /// `CaptureLensPositionCurrent`.
   ///  - Locking auto white balance with device white balance gains other than
-  /// [CaptureWhiteBalanceGainsCurrent].
+  /// `CaptureWhiteBalanceGainsCurrent`.
   ///
   /// Even when locked, exposure duration, ISO, aperture, white balance gains,
   /// or lens position may change when the device switches from one camera to
@@ -343,7 +347,6 @@ abstract class CaptureDeviceType {
   static const String builtInDualWideCamera =
       'AVCaptureDeviceTypeBuiltInDualWideCamera';
 
-  // TODO: AVCaptureExposureModeCustom
   // TODO: AVCaptureLensPositionCurrent
   // TODO: AVCaptureWhiteBalanceGainsCurrent
   // TODO: AVCaptureDevice.defaultDeviceWithDeviceType
@@ -351,7 +354,7 @@ abstract class CaptureDeviceType {
   ///
   /// Note that devices of this type may only be discovered using an
   /// [CaptureDeviceDiscoverySession] or
-  /// [AVCaptureDevice.defaultDeviceWithDeviceType].
+  /// `AVCaptureDevice.defaultDeviceWithDeviceType`.
   ///
   /// A device of this device type supports the following features:
   ///  - Auto switching from one camera to the other when zoom factor, light
@@ -360,11 +363,11 @@ abstract class CaptureDeviceType {
   /// telephoto cameras) via a single photo capture request.
   ///
   /// A device of this device type does not support the following features:
-  ///  - [CaptureExposureModeCustom] and manual exposure bracketing.
+  ///  - [CaptureExposureMode.custom] and manual exposure bracketing.
   ///  - Locking focus with a lens position other than
-  /// [CaptureLensPositionCurrent].
+  /// `CaptureLensPositionCurrent`.
   ///  - Locking auto white balance with device white balance gains other than
-  /// [CaptureWhiteBalanceGainsCurrent].
+  /// `CaptureWhiteBalanceGainsCurrent`.
   ///
   /// Even when locked, exposure duration, ISO, aperture, white balance gains,
   /// or lens position may change when the device switches from one camera to
@@ -381,7 +384,7 @@ abstract class CaptureDeviceType {
   /// camera. While the resolution of the depth data and YUV frames may differ,
   /// their field of view and aspect ratio always match. Note that devices of
   /// this type may only be discovered using an [CaptureDeviceDiscoverySession]
-  /// or [AVCaptureDevice.defaultDeviceWithDeviceType].
+  /// or `AVCaptureDevice.defaultDeviceWithDeviceType`.
   static const String builtInTrueDepthCamera =
       'AVCaptureDeviceTypeBuiltInTrueDepthCamera';
 }
@@ -397,7 +400,7 @@ abstract class MediaType {
   static const String audio = 'soun';
 }
 
-/// Constants indicating the physical position of an AVCaptureDevice's hardware on the system.
+/// Constants indicating the physical position of an [CaptureDevice]'s hardware on the system.
 abstract class CaptureDevicePosition {
   const CaptureDevicePosition._();
 
@@ -423,11 +426,9 @@ abstract class VideoCodecType {
 }
 
 // TODO: AVCaptureResolvedPhotoSettings
-// TODO: CapturePhotoSettings.uniqueId
 // TODO: setHighResolutionCaptureEnabled
 // TODO: setLivePhotoCaptureEnabled
 // TODO: setLivePhotoAutoTrimmingEnabled
-// TODO: AVCaptureMovieFileOutput
 // TODO: AVCaptureVideoDataOutput
 // TODO: CaptureStillImageOutput
 // TODO: CaptureDevice.activeColorSpace
@@ -452,8 +453,8 @@ abstract class VideoCodecType {
 /// stabilization or flash).
 ///
 /// 3. Capture an image by passing your photo settings object to the
-/// [capturePhoto] method along with a delegate object implementing the
-/// [CapturePhotoCaptureDelegate] class. The photo capture output then calls
+/// [capturePhotoWithSettings] method along with a delegate object implementing
+/// the [CapturePhotoCaptureDelegate] class. The photo capture output then calls
 /// your delegate to notify you of significant events during the capture
 /// process.
 ///
@@ -463,15 +464,15 @@ abstract class VideoCodecType {
 /// requesting a capture whether the feature will be enabled when the capture
 /// completes. When the photo capture output calls your
 /// [CapturePhotoCaptureDelegate] callbacks with information about the completed
-/// or in-progress capture, it also provides an [CaptureResolvedPhotoSettings]
+/// or in-progress capture, it also provides an `CaptureResolvedPhotoSettings`
 /// object that details which automatic features are set for that capture. The
 /// resolved settings object’s uniqueID property matches the uniqueID value of
 /// the [CapturePhotoSettings] object you used to request capture.
 ///
 /// Enabling certain photo features (Live Photo capture and high resolution
 /// capture) requires a reconfiguration of the capture render pipeline. To opt
-/// into these features, set the [setHighResolutionCaptureEnabled],
-/// [setLivePhotoCaptureEnabled], and [setLivePhotoAutoTrimmingEnabled]
+/// into these features, set the `setHighResolutionCaptureEnabled`,
+/// `setLivePhotoCaptureEnabled`, and `setLivePhotoAutoTrimmingEnabled`
 /// properties before calling your [CaptureSession.startRunning] method.
 /// Changing any of these properties while the session is running disrupts the
 /// capture render pipeline: Live Photo captures in progress end immediately,
@@ -482,17 +483,17 @@ abstract class VideoCodecType {
 ///
 /// A capture session can’t support both Live Photo capture and movie file
 /// output. If your capture session includes an [CaptureMovieFileOutput] object,
-/// the [setLivePhotoCaptureSupported] value becomes false. (As an alternative,
-/// you can use the [CaptureVideoDataOutput] class to output video buffers at
+/// the `setLivePhotoCaptureSupported` value becomes false. (As an alternative,
+/// you can use the `CaptureVideoDataOutput` class to output video buffers at
 /// the same resolution as a simultaneous Live Photo capture).
 ///
 /// A capture session can’t contain both an [CapturePhotoOutput] object and an
-/// [CaptureStillImageOutput] object. The [CapturePhotoOutput] class includes
-/// all functionality of (and deprecates) the [CaptureStillImageOutput] class.
+/// `CaptureStillImageOutput` object. The [CapturePhotoOutput] class includes
+/// all functionality of (and deprecates) the `CaptureStillImageOutput` class.
 ///
 /// The [CapturePhotoOutput] class implicitly supports wide-gamut color
-/// photography. If the source [CaptureDevice.activeColorSpace] value is
-/// [AVCaptureColorSpace_P3_D65], the capture output produces photos with wide
+/// photography. If the source `CaptureDevice.activeColorSpace` value is
+/// `AVCaptureColorSpace_P3_D65`, the capture output produces photos with wide
 /// color information (unless your [CapturePhotoSettings] object specifies an
 /// output format that doesn’t support wide color).
 @Reference('av_foundation/av_foundation/CapturePhotoOutput')
@@ -552,7 +553,7 @@ class CapturePhotoOutput extends CaptureOutput with $CapturePhotoOutput {
 /// A [CapturePhotoSettings] instance can include any combination of settings,
 /// regardless of whether that combination is valid for a given capture session.
 /// When you initiate a capture by passing a photo settings object to the
-/// [CapturePhotoOutput.capturePhoto] method, the photo capture output validate
+/// [CapturePhotoOutput.capturePhotoWithSettings] method, the photo capture output validate
 /// s your settings to ensure deterministic behavior. For example, the flashMode
 /// setting must specify a value that is present in the photo output’s
 /// [CapturePhotoOutput.supportedFlashModes] list. For detailed validation
@@ -565,7 +566,7 @@ class CapturePhotoOutput extends CaptureOutput with $CapturePhotoOutput {
 /// any of the `photoSettingsWith...` methods to reset the settings object.
 ///
 /// To reuse a specific combination of settings, use the
-/// [photoSettingsFromPhotoSettings] initializer to create a new, unique
+/// `photoSettingsFromPhotoSettings` initializer to create a new, unique
 /// [CapturePhotoSettings] instance from an existing photo settings object.
 @Reference('av_foundation/av_foundation/CapturePhotoSettings')
 class CapturePhotoSettings with $CapturePhotoSettings {
@@ -596,17 +597,17 @@ class CapturePhotoSettings with $CapturePhotoSettings {
   ///   AVFoundation video settings constants (see Video Settings).
   ///
   ///   To capture a photo in an uncompressed format, such as 420f, 420v, or
-  ///   BGRA, set the key [kCVPixelBufferPixelFormatTypeKey] in the format
+  ///   BGRA, set the key `kCVPixelBufferPixelFormatTypeKey` in the format
   ///   dictionary. The corresponding value must be one of the pixel format
-  ///   identifiers listed in the [availablePhotoPixelFormatTypes] array of your
+  ///   identifiers listed in the `availablePhotoPixelFormatTypes` array of your
   ///   photo capture output.
   ///
   ///   To capture a photo in a compressed format, such as JPEG, set the key
   ///   [VideoSettingsKeys.videoCodec] in the format dictionary. The
   ///   corresponding value must be one of the codec identifiers listed in the
-  ///   [availablePhotoCodecTypes] array of your photo capture output. For a
+  ///   `availablePhotoCodecTypes` array of your photo capture output. For a
   ///   compressed format, you can also specify a compression level with the key
-  ///   [AVVideoQualityKey].
+  ///   `AVVideoQualityKey`.
   CapturePhotoSettings.photoSettingsWithFormat(Map<String, Object> format) {
     _channel.$create$photoSettingsWithFormat(
       this,
@@ -625,7 +626,7 @@ class CapturePhotoSettings with $CapturePhotoSettings {
   /// capturePhotoWithSettings:delegate: method, the photo capture output calls
   /// your delegate object to provide information about the progress and results
   /// of the capture. Each delegate method includes a
-  /// [CaptureResolvedPhotoSettings] whose [uniqueID] property matches the
+  /// `CaptureResolvedPhotoSettings` whose [uniqueID] property matches the
   /// [uniqueID] value of the [CapturePhotoSettings] object you used to request
   /// capture.
   ///
@@ -647,7 +648,7 @@ class CapturePhotoSettings with $CapturePhotoSettings {
   /// The default value for this setting is [CaptureFlashMode.off].
   ///
   /// Assuming a static scene, using the [CaptureFlashMode.auto] setting is
-  /// equivalent to testing the [CapturePhotoOutput.isFlashScene] method
+  /// equivalent to testing the `CapturePhotoOutput.isFlashScene` method
   /// (which indicates whether flash is recommended for the scene currently
   /// visible to the camera), and then setting the `flashMode` property of your
   /// photo settings output accordingly before requesting a capture. However,
@@ -655,7 +656,7 @@ class CapturePhotoSettings with $CapturePhotoSettings {
   /// the camera hardware captures an image—the automatic setting ensures that
   /// the flash is enabled or disabled appropriately at the moment of capture.
   /// When the capture occurs, your [CapturePhotoCaptureDelegate] methods
-  /// receive an [CaptureResolvedPhotoSettings] object whose `flashEnabled`
+  /// receive an `CaptureResolvedPhotoSettings` object whose `flashEnabled`
   /// property indicates which flash mode was used for that capture.
   ///
   /// **Note:**
@@ -669,7 +670,7 @@ class CapturePhotoSettings with $CapturePhotoSettings {
   ///
   /// When the photo output calls your [CapturePhotoCaptureDelegate] methods,
   /// check the `flashEnabled` property of the provided
-  /// [CaptureResolvedPhotoSettings] to verify whether the flash is in use.
+  /// `CaptureResolvedPhotoSettings` to verify whether the flash is in use.
   ///
   /// When specifying a flash mode, the following requirements apply:
   ///   * The specified mode must be present in the photo output’s
@@ -698,11 +699,11 @@ class CapturePhotoSettings with $CapturePhotoSettings {
 /// class.
 ///
 /// To capture a photo, you pass an instance of this class to the
-/// [CapturePhotoOutput.capturePhoto] method, along with a settings object that
-/// describes the capture to be performed. As the capture proceeds, the photo
-/// output calls several of the callbacks in this protocol on your delegate
-/// object, providing information about the capture’s progress and delivering
-/// the resulting photos.
+/// [CapturePhotoOutput.capturePhotoWithSettings] method, along with a settings
+/// object that describes the capture to be performed. As the capture proceeds,
+/// the photo output calls several of the callbacks in this protocol on your
+/// delegate object, providing information about the capture’s progress and
+/// delivering the resulting photos.
 ///
 /// Which callbacks methods the photo output calls depends on the photo settings
 /// you initiate capture with. All callbacks in this class are optional at
@@ -715,17 +716,17 @@ class CapturePhotoSettings with $CapturePhotoSettings {
 /// you request capture in RAW format, processed format, or both.
 ///
 ///  * If you request Live Photo capture (by setting the
-/// [CapturePhotoSettings.livePhotoMovieFileURL] property to a non-nil value),
-/// your delegate must implement the [didFinishProcessingLivePhotoToMovieFile]
+/// `CapturePhotoSettings.livePhotoMovieFileURL` property to a non-nil value),
+/// your delegate must implement the `didFinishProcessingLivePhotoToMovieFile`
 /// callback.
 ///
 /// The capture output validates these requirements when you call the
-/// [CaptureOutput.capturePhoto] method. If your delegate does not meet these
-/// requirements, that method raises an exception.
+/// [CapturePhotoOutput.capturePhotoWithSettings] method. If your delegate does
+/// not meet these requirements, that method raises an exception.
 ///
 /// You must use a unique [CapturePhotoSettings] object for each capture
 /// request. When the photo output calls your delegate methods, it provides an
-/// [CaptureResolvedPhotoSettings] object whose `uniqueID` property matches that
+/// `CaptureResolvedPhotoSettings` object whose `uniqueID` property matches that
 /// of the photo settings you requested capture with. When making multiple
 /// captures, use this unique ID to determine which delegate method calls
 /// correspond to which requests.
@@ -859,7 +860,7 @@ class CaptureDeviceInput extends CaptureInput with $CaptureDeviceInput {
 
 /// The abstract superclass for objects that provide input data to a capture session.
 ///
-/// To associate an [CaptureInput] object with a session, call
+/// To associate a [CaptureInput] object with a session, call
 /// [CaptureSession.addInput] on the session.
 ///
 /// [CaptureInput] objects have one or more ports (instances of
@@ -910,7 +911,6 @@ class CaptureSession with $CaptureSession {
   static $CaptureSessionChannel get _channel =>
       ChannelRegistrar.instance.implementations.channelCaptureSession;
 
-  // TODO: can add input
   /// Adds a given input to the session.
   ///
   /// You can only add an input to a session using this method if [canAddInput]
@@ -922,7 +922,6 @@ class CaptureSession with $CaptureSession {
     return _channel.$addInput(this, input);
   }
 
-  // TODO: can add output
   /// Adds a given output to the session.
   ///
   /// You can only add an output to a session using this method if
@@ -938,8 +937,6 @@ class CaptureSession with $CaptureSession {
   ///
   /// This method is used to start the flow of data from the inputs to the
   /// outputs connected to the [CaptureSession] instance that is the receiver.
-  // If an error occurs during this process and the receiver fails to start
-  // running, you receive an AVCaptureSessionRuntimeErrorNotification.
   Future<void> startRunning() => _channel.$startRunning(this);
 
   /// Tells the receiver to stop running.
@@ -999,8 +996,6 @@ class CaptureSession with $CaptureSession {
   }
 }
 
-// TODO: lockForConfiguration
-// TODO: unlockForConfiguration
 // TODO: all methods in code sample
 // TODO: setActiveFormat
 // TODO: AVCaptureSessionPresetInputPriority
@@ -1030,8 +1025,9 @@ class CaptureSession with $CaptureSession {
 /// a capture format on an [CaptureDevice] instance. The following code example
 /// illustrates how to select an iOS device’s highest possible frame rate:
 ///
-/// ```dart
-/// func configureCameraForHighestFrameRate(device: AVCaptureDevice) {
+/// *NOTE*: Example code below is yet supported.
+/// ```
+/// void configureCameraForHighestFrameRate(device: AVCaptureDevice) {
 ///
 ///   var bestFormat: AVCaptureDevice.Format?
 ///   var bestFrameRateRange: AVFrameRateRange?
@@ -1066,12 +1062,12 @@ class CaptureSession with $CaptureSession {
 /// }
 /// ```
 ///
-/// In iOS, directly configuring a capture device’s [setActiveFormat] changes
+/// In iOS, directly configuring a capture device’s `setActiveFormat]`changes
 /// the capture session’s preset to [CaptureSessionPreset.inputPriority]. Upon
 /// making this change, the capture session no longer automatically configures
-/// the capture format when you call the [startRunning] method or call the
-/// [CaptureSession.commitConfiguration] method after changing the session
-/// topology.
+/// the capture format when you call the [CaptureSession.startRunning] method or
+/// call the `CaptureSession.commitConfiguration` method after changing the
+/// session topology.
 ///
 /// In macOS, a capture session can still automatically configure the capture
 /// format after you make changes. To prevent automatic changes to the capture
@@ -1081,10 +1077,9 @@ class CaptureSession with $CaptureSession {
 class CaptureDevice with $CaptureDevice {
   /// Construct a [CaptureDevice].
   ///
-  /// This is only visible for testing. See:
+  /// This is only visible for testing or extending. See:
   ///   [defaultDeviceWithMediaType]
   ///   [CaptureDeviceDiscoverySession]
-  @visibleForTesting
   CaptureDevice({
     required this.uniqueId,
     required this.position,
@@ -1151,7 +1146,7 @@ class CaptureDevice with $CaptureDevice {
   /// When you use this method to request a camera (using the [MediaType.video]
   /// media type), the returned device is always of the
   /// [CaptureDeviceType.builtInWideAngleCamera] device type. To request other
-  /// device types, use the [CaptureDevice.defaultDeviceWithDeviceType]
+  /// device types, use the `CaptureDevice.defaultDeviceWithDeviceType`
   /// method instead.
   static Future<CaptureDevice?> defaultDeviceWithMediaType(
     String mediaType,
@@ -1176,12 +1171,12 @@ class CaptureDevice with $CaptureDevice {
   /// device.
   ///
   /// Note:
-  ///   In iOS, directly configuring a capture device’s [activeFormat] property
+  ///   In iOS, directly configuring a capture device’s `activeFormat` property
   ///   changes the capture session’s preset to
   ///   [CaptureSessionPreset.inputPriority]. Upon making this change, the
   ///   capture session no longer automatically configures the capture format
   ///   when you call the [CaptureSession.startRunning] method or call the
-  ///   [CaptureSession.commitConfiguration] method after changing the session
+  ///   `CaptureSession.commitConfiguration` method after changing the session
   ///   topology (that is, adding, removing, or rearranging capture inputs and
   ///   outputs). In macOS, a capture session can still automatically configure
   ///   the capture format after you make changes. To prevent automatic changes
@@ -1568,7 +1563,7 @@ class CaptureDeviceDiscoverySession with $CaptureDeviceDiscoverySession {
   /// A list of lists of capture devices that you can use simultaneously in a multi-camera session.
   ///
   /// You may use multiple cameras as device inputs to an
-  /// [CaptureMultiCamSession], as long as one of the supported multi-camera
+  /// `CaptureMultiCamSession`, as long as one of the supported multi-camera
   /// device sets includes the device.
   ///
   /// This is only supported on iOS 13+. This list will always be empty for
@@ -1627,10 +1622,10 @@ class PreviewController with $PreviewController {
 ///
 /// On Mac OS X, clients can also set a delegate on the file output itself that
 /// can be used to control recording along exact media sample boundaries using
-/// the [CaptureFileOutputDelegate.captureOutput] method.
+/// the `CaptureFileOutputDelegate.captureOutput` method.
 ///
 /// The concrete subclasses of [CaptureFileOutput] are [CaptureMovieFileOutput],
-/// which records media to a QuickTime movie file, and [CaptureAudioFileOutput],
+/// which records media to a QuickTime movie file, and `CaptureAudioFileOutput`,
 /// which writes audio media to a variety of audio file formats.
 @Reference('av_foundation/av_foundation/CaptureFileOutput')
 abstract class CaptureFileOutput extends CaptureOutput with $CaptureFileOutput {
@@ -1648,7 +1643,7 @@ abstract class CaptureFileOutput extends CaptureOutput with $CaptureFileOutput {
   ///
   /// This property specifies a hard limit on the data size of recorded files.
   /// Recording is stopped when the limit is reached and the
-  /// [CaptureFileOutputRecordingDelegate.captureOutput:didFinishRecordingToOutputFileAtURL:fromConnections:error:]
+  /// `CaptureFileOutputRecordingDelegate.captureOutput:didFinishRecordingToOutputFileAtURL:fromConnections:error:`
   /// delegate method is invoked with an appropriate error. The default value of
   /// this property is 0, which indicates no limit.
   Future<void> setMaxRecordedFileSize(int fileSize) {
@@ -1707,6 +1702,7 @@ abstract class CaptureFileOutput extends CaptureOutput with $CaptureFileOutput {
   }
 
   // TODO: delegate.captureOutput:didFinishRecordingToOutputFileAtURL:fromConnections:error:
+  // TODO: [captureOutput:didOutputSampleBuffer:fromConnection:]
   /// Tells the receiver to stop recording to the current file.
   ///
   /// You can call this method when they want to stop recording new samples to
@@ -1721,11 +1717,11 @@ abstract class CaptureFileOutput extends CaptureOutput with $CaptureFileOutput {
   /// the background. Therefore, before using the file, you must wait until the
   /// delegate that was specified in [startRecordingToOutputFileURL] is notified
   /// when all data has been written to the file using the
-  /// [captureOutput:didFinishRecordingToOutputFileAtURL:fromConnections:error:]
+  /// `captureOutput:didFinishRecordingToOutputFileAtURL:fromConnections:error:`
   /// method.
   ///
   /// In macOS, if this method is called within the
-  /// [captureOutput:didOutputSampleBuffer:fromConnection:] delegate method, the
+  /// `captureOutput:didOutputSampleBuffer:fromConnection:` delegate method, the
   /// last samples written to the current file are guaranteed to be those that
   /// were output immediately before those in the sample buffer passed to that
   /// method.
@@ -1748,7 +1744,7 @@ abstract class CaptureFileOutput extends CaptureOutput with $CaptureFileOutput {
 ///
 /// The timeMapping.target.start of the first track segment must be kCMTimeZero,
 /// and the timeMapping.target.start of each subsequent track segment must equal
-/// [CMTimeRangeGetEnd], when passing in the previous [CompositionTrackSegment]'s
+/// `CMTimeRangeGetEnd`, when passing in the previous `CompositionTrackSegment`'s
 /// timeMapping.target. You can use validateTrackSegments:error: to ensure that
 /// an array of track segments conforms to this rule.
 ///
@@ -1756,14 +1752,14 @@ abstract class CaptureFileOutput extends CaptureOutput with $CaptureFileOutput {
 /// [CaptureMovieFileOutput] as being unsupported. If you construct a session
 /// with a photo format as input and a movie file output, you can record movies.
 /// The resolution of the video track in the movie follows the conventions
-/// established by the [CaptureVideoDataOutput]; namely, when using the photo
+/// established by the `CaptureVideoDataOutput`; namely, when using the photo
 /// preset, you receive video buffers with size approximating the screen size.
 /// Video outputs are a proxy for photo preview in this configuration.
 ///
 /// If you set the [CaptureDevice] format to a high-resolution photo format, you
 /// receive full-resolution (5, 8, or 12 MP depending on the device) video
 /// buffers into your movie. If the capture session’s
-/// [automaticallyConfiguresCaptureDeviceForWideColor] property is true, the
+/// `automaticallyConfiguresCaptureDeviceForWideColor` property is true, the
 /// session selects sRGB as the video colorspace in your movie. You can override
 /// this behavior by adding an [CapturePhotoOutput] to your session and
 /// configuring its photo format or [CaptureSessionPreset.photo] preset for a
@@ -1783,7 +1779,7 @@ class CaptureMovieFileOutput extends CaptureFileOutput
   /// The video codec types currently supported for recording movie files.
   ///
   /// The first codec in this list is the default for recording movie files. To
-  /// record using a different codec, call the [setOutputSettings] method,
+  /// record using a different codec, call the `setOutputSettings` method,
   /// passing a video settings dictionary with a value for
   /// [VideoSettingsKeys.videoCodec] that matches one of the other values in
   /// this list.
@@ -1794,7 +1790,7 @@ class CaptureMovieFileOutput extends CaptureFileOutput
   }
 }
 
-// TODO: at least ad required callback
+// TODO: at least add required callback
 /// Methods for responding to events that occur while recording captured media to a file.
 ///
 /// Defines an interface for delegates of [CaptureFileOutput] to respond to
@@ -1823,8 +1819,8 @@ class CaptureFileOutputRecordingDelegate
 /// and audio data).
 ///
 /// You can add an [CaptureConnection] instance to a session using the
-/// [CaptureSession.addConnection] method only if the
-/// [CaptureSession.canAddConnections] includes the connection. When using the
+/// `CaptureSession.addConnection` method only if the
+/// `CaptureSession.canAddConnections` includes the connection. When using the
 /// [CaptureSession.addInput] or [CaptureSession.addOutput] method, the session
 /// forms connections automatically between all compatible inputs and outputs.
 /// You only need to add connections manually when adding an input or output
@@ -1844,14 +1840,14 @@ class CaptureConnection with $CaptureConnection {
   /// `output`
   ///   A [CaptureOutput] object. You can add the connection returned by this
   ///   method to an [CaptureSession] instance using the
-  ///   [CaptureSession.addConnection] method.
+  ///   `CaptureSession.addConnection` method.
   ///
   /// When using [CaptureSession.addInput] or [CaptureSession.addOutput],
   /// connections are automatically formed between all compatible inputs and
   /// outputs. You do not need to manually create and add connections to the
   /// session unless you use the primitive
-  /// [CaptureSession.addInputWithNoConnections] and
-  /// [CaptureSession.addOutputWithNoConnections] methods.
+  /// `CaptureSession.addInputWithNoConnections` and
+  /// `CaptureSession.addOutputWithNoConnections` methods.
   CaptureConnection(this.inputPorts, this.output) {
     _channel.$create$(
       this,
@@ -1889,9 +1885,9 @@ class CaptureConnection with $CaptureConnection {
   /// to an [CaptureMovieFileOutput] object handles orientation using a
   /// QuickTime track matrix.
   ///
-  /// [CaptureVideoDataOutput] clients may receive physically rotated pixel
+  /// `CaptureVideoDataOutput` clients may receive physically rotated pixel
   /// buffers in their `captureOutput:didOutputSampleBuffer:fromConnection:`
-  /// delegate callback. The [CaptureVideoDataOutput] hardware accelerates the
+  /// delegate callback. The `CaptureVideoDataOutput` hardware accelerates the
   /// rotation operation and supports all four [CaptureVideoOrientation] modes.
   /// A client sets `videoOrientation` or `videoMirrored` on the video data
   /// output’s video [CaptureConnection] to request physical buffer rotation.
@@ -1976,13 +1972,13 @@ class CaptureInputPort with $CaptureInputPort {
   /// All ports contained in an [CaptureInput] object’s ports array have the
   /// same [sourceDevicePosition] value.
   ///
-  /// When working with a microphone input in an [CaptureMultiCamSession], it’s
+  /// When working with a microphone input in an `CaptureMultiCamSession`, it’s
   /// possible to record multiple microphone directions simultaneously. For
   /// example, you can record audio from the front microphone input to pair with
   /// video from the front camera, and record audio from the back microphone
   /// input to pair with video from the back camera.
   ///
-  /// By calling the input’s [CaptureInput.portsWithMediaType] method, you ma
+  /// By calling the input’s `CaptureInput.portsWithMediaType` method, you ma
   /// discover additional hidden ports originating from the source audio device.
   /// These ports represent individual microphones positioned to pick up audio
   /// from one particular direction.
