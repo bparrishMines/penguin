@@ -330,8 +330,8 @@ abstract class CameraDevice {
 ///
 /// final ImageCaptureOutput imageOutput = ImageCaptureOutput();
 /// final CameraController controller =
-/// CameraController(device: device, outputs: <CameraOutput>[imageOutput]);
-/// controller.initialize();
+/// CameraController(device: device, outputs: <CameraOutput>[PreviewOutput(), imageOutput]);
+/// await controller.initialize();
 /// controller.start();
 ///
 /// imageOutput.takePicture((Uint8List data) {
@@ -364,9 +364,14 @@ abstract class CameraController {
   List<CameraOutput> get outputs;
 
   /// Initializes this controller and attaches the [outputs].
+  ///
+  /// This should be awaited before calling any other methods.
   Future<void> initialize();
 
   /// Start the flow of data from [device] to [outputs].
+  ///
+  /// *Note*: For some platform, this won't run if at least a [PreviewOutput]
+  /// was not added to [outputs]. Specifically, Android.
   Future<void> start();
 
   /// Stop the flow of data from [device] to [outputs].

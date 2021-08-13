@@ -36,7 +36,11 @@ class CameraDevice implements intf.CameraDevice {
 /// Implementation of [intf.CameraController] using Android Camera1 API.
 class CameraController implements intf.CameraController {
   /// Construct a [CameraController].
-  CameraController({required this.device, required this.outputs});
+  CameraController({required this.device, required this.outputs})
+      : assert(
+          outputs.any((CameraOutput output) => output is PreviewOutput),
+          'At least one output should be a PreviewOutput.',
+        );
 
   bool _initialized = false;
   bool _disposed = false;
