@@ -11,6 +11,7 @@ dependencies:
   av_foundation: ^0.0.1
   android_hardware: ^0.0.1
   android_media: ^0.0.1
+  collection: ^1.15.0
   flutter:
     sdk: flutter
   flutter_lints: ^1.0.0

@@ -10,7 +10,7 @@ import 'package:penguin_camera/penguin_camera.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-// These tests are only run manually since the require permissions and CI
+// These tests are only ran manually since they require permissions and CI
 // isn't setup to test on physical devices.
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -164,7 +164,7 @@ Future<CameraController> setupCamera([List<CameraOutput>? outputs]) async {
 }
 
 Future<Directory> getStorageDir() async {
-  final Directory? directory;
+  late final Directory? directory;
   if (defaultTargetPlatform == TargetPlatform.android) {
     final List<Directory>? directories = await getExternalStorageDirectories(
       type: StorageDirectory.dcim,
@@ -173,8 +173,7 @@ Future<Directory> getStorageDir() async {
   } else {
     directory = await getApplicationDocumentsDirectory();
   }
-  if (directory == null) {
-    throw StateError('Could not get storage directory.');
-  }
+
+  if (directory == null) throw StateError('Could not get storage directory.');
   return directory;
 }

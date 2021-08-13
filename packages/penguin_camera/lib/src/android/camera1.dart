@@ -518,7 +518,7 @@ class VideoCaptureOutput
   /// Construct a [VideoCaptureOutput].
   VideoCaptureOutput({this.includeAudio = false});
 
-  /// Whether [mediaController] should include audio settings.
+  /// Whether [MediaRecorder] should include audio settings.
   ///
   /// Defaults to false. A user should make sure audio permissions have been
   /// provided by the user.

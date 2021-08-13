@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
@@ -353,7 +354,7 @@ abstract class CameraController {
     );
   }
 
-  /// Retrieve information for available [CameraDevices].
+  /// Retrieve information for available [CameraDevice]s.
   static Future<List<CameraDevice>> getAllCameraDevices() =>
       PenguinCameraPlatform.instance.getAllCameraDevices();
 
