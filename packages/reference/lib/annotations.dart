@@ -50,11 +50,11 @@ class JavaReference {
   /// Documentation
   const JavaReference({
     required this.channel,
-    required this.package,
+    required this.import,
     required this.className,
   });
 
   final String channel;
-  final String package;
+  final String import;
   final String className;
 }

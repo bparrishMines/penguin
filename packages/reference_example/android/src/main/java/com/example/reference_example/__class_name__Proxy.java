@@ -18,7 +18,7 @@ public class __class_name__Proxy {
     this.implementations = implementations;
     this.classTemplate = classTemplate;
     if (create) {
-      implementations.__class_name__Channel.$create(this, false, classTemplate.fieldTemplate);
+      implementations.channel__class_name__.$create(this, false, classTemplate.fieldTemplate);
     }
   }
 

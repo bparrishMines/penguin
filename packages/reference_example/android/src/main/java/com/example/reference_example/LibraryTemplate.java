@@ -71,7 +71,7 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
       return new $__function_name__() {
         @Override
         public Completable<Void> invoke(/*iterate :join=',' parameters parameter*//*replace parameter_type*/String/**/ __parameter_name__/**/) {
-          return implementations.__function_name__Channel.invoke(this/*iterate parameters parameter*/,__parameter_name__/**/);
+          return implementations.channel__function_name__.invoke(this/*iterate parameters parameter*/,__parameter_name__/**/);
         }
       };
     }
@@ -226,21 +226,21 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
     public final TypeChannelMessenger messenger;
 
     /*iterate classes class*/
-    public $__class_name__Channel __class_name__Channel;
-    public $__class_name__Handler __class_name__Handler;
+    public $__class_name__Channel channel__class_name__;
+    public $__class_name__Handler handler__class_name__;
     /**/
 
     /*iterate functions function*/
-    public $__function_name__Channel __function_name__Channel;
-    public $__function_name__Handler __function_name__Handler;
+    public $__function_name__Channel channel__function_name__;
+    public $__function_name__Handler handler__function_name__;
     /**/
 
     public $LibraryImplementations(TypeChannelMessenger messenger) {
       this.messenger = messenger;
-      this.__class_name__Channel = new $__class_name__Channel(messenger);
-      this.__class_name__Handler = new $__class_name__Handler(this);
-      this.__function_name__Channel = new $__function_name__Channel(messenger);
-      this.__function_name__Handler = new $__function_name__Handler(this);
+      this.channel__class_name__ = new $__class_name__Channel(messenger);
+      this.handler__class_name__ = new $__class_name__Handler(this);
+      this.channel__function_name__ = new $__function_name__Channel(messenger);
+      this.handler__function_name__ = new $__function_name__Handler(this);
     }
   }
 
@@ -253,19 +253,19 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
 
     public void registerHandlers() {
       /*iterate classes class*/
-      implementations.__class_name__Channel.setHandler(implementations.__class_name__Handler);
+      implementations.channel__class_name__.setHandler(implementations.handler__class_name__);
       /**/
       /*iterate functions function*/
-      implementations.__function_name__Channel.setHandler(implementations.__function_name__Handler);
+      implementations.channel__function_name__.setHandler(implementations.handler__function_name__);
       /**/
     }
 
     public void unregisterHandlers() {
       /*iterate classes class*/
-      implementations.__class_name__Channel.removeHandler();
+      implementations.channel__class_name__.removeHandler();
       /**/
       /*iterate functions function*/
-      implementations.__function_name__Channel.removeHandler();
+      implementations.channel__function_name__.removeHandler();
       /**/
     }
   }

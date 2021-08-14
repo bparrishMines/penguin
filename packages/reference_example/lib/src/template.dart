@@ -9,8 +9,8 @@ typedef $$function_name$$ = void Function(String value);
 
 @JavaReference(
   channel: r'github.penguin/template/template/$$class_name$$',
-  package: 'com.example.reference_example',
-  className: 'classNameProxy.java',
+  import: 'com.example.reference_example.__class_name__Proxy',
+  className: '__class_name__Proxy',
 )
 class $$class_name$$ {
   $$class_name$$({required this.$$parameter_name$$, bool create = true}) {

@@ -12,7 +12,7 @@ import 'template.dart';
 // **************************************************************************
 
 /*iterate functions function*/
-class $$$function_name$$Channel extends TypeChannel<$$function_name$$> {
+class $$$function_name$$Channel extends TypeChannel<Object> {
   $$$function_name$$Channel(TypeChannelMessenger messenger)
       : super(messenger, '__function_channel__');
 
@@ -45,8 +45,7 @@ class $$$function_name$$Channel extends TypeChannel<$$function_name$$> {
 /**/
 
 /*iterate functions function*/
-class $$$function_name$$Handler
-    implements TypeChannelHandler<$$function_name$$> {
+class $$$function_name$$Handler implements TypeChannelHandler<Object> {
   $$$function_name$$Handler(this.implementations);
 
   final $LibraryImplementations implementations;
@@ -358,7 +357,7 @@ class $LibraryImplementations {
 class $ChannelRegistrar {
   $ChannelRegistrar(this.implementations);
 
-  static $ChannelRegistrar instance = $ChannelRegistrar(
+  static final $ChannelRegistrar instance = $ChannelRegistrar(
       $LibraryImplementations(MethodChannelMessenger.instance))
     ..registerHandlers();
 

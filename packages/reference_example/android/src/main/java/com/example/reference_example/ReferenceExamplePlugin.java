@@ -15,7 +15,7 @@ import io.flutter.embedding.engine.plugins.FlutterPlugin;
  * ReferenceExamplePlugin
  */
 public class ReferenceExamplePlugin implements FlutterPlugin {
-  public LibraryTemplate.$ChannelRegistrar channelRegistrar;
+  private LibraryTemplate.$ChannelRegistrar channelRegistrar;
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
@@ -23,7 +23,7 @@ public class ReferenceExamplePlugin implements FlutterPlugin {
     channelRegistrar = new $ChannelRegistrar(new $LibraryImplementations(messenger));
 
     // For testing the anonymous function.
-    channelRegistrar.implementations.__class_name__Handler = new LibraryTemplate.$__class_name__Handler(channelRegistrar.implementations) {
+    channelRegistrar.implementations.handler__class_name__ = new LibraryTemplate.$__class_name__Handler(channelRegistrar.implementations) {
       @Override
       public Object invokeMethod(TypeChannelMessenger messenger, __class_name__Proxy instance, String methodName, List<Object> arguments) throws Exception {
         if (methodName.equals("callbackTest")) {
@@ -41,5 +41,9 @@ public class ReferenceExamplePlugin implements FlutterPlugin {
   @Override
   public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
     channelRegistrar.unregisterHandlers();
+  }
+
+  public $ChannelRegistrar getChannelRegistrar() {
+    return channelRegistrar;
   }
 }
