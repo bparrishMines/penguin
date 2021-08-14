@@ -9,6 +9,7 @@ import /*replace value*/ java.lang.Object /**/;
 /**/
 
 import androidx.annotation.NonNull;
+
 import java.util.*;
 import github.penguin.reference.async.Completable;
 import github.penguin.reference.async.Completer;
@@ -39,7 +40,7 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
     }
 
     private Completable<Void> invoke($__function_name__ $instance
-        /*iterate parameters parameter*/,/*replace parameter_type*/String/**/ __parameter_name__/**/) {
+        /*iterate parameters parameter*/, /*replace parameter_type*/String/**/ __parameter_name__/**/) {
       final Completer<Void> completer = new Completer<>();
       invokeMethod($instance, "", Arrays.<Object>asList(/*iterate :join=',' parameters parameter*/__parameter_name__/**/)).setOnCompleteListener(new Completable.OnCompleteListener<Object>() {
         @Override
@@ -70,7 +71,7 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
       return new $__function_name__() {
         @Override
         public Completable<Void> invoke(/*iterate :join=',' parameters parameter*//*replace parameter_type*/String/**/ __parameter_name__/**/) {
-          return implementations.getChannel__function_name__().invoke(this/*iterate parameters parameter*/,__parameter_name__/**/);
+          return implementations.__function_name__Channel.invoke(this/*iterate parameters parameter*/,__parameter_name__/**/);
         }
       };
     }
@@ -87,34 +88,20 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
   }
   /**/
 
-//  /*iterate classes class*/
-//  public static abstract class $__class_name__ {
-//    public static classnameProxy noCreate(Integer __parameter_name__) {
-//      return classnameProxy.noCreate(__parameter_name__);
-//    }
-//
-//    public final $LibraryImplementations implementations;
-//    public $__class_name__($LibraryImplementations implementations, Integer __parameter_name__) {
-//      this.implementations = implementations;
-//      //implementations.getChannel__class_name__().$create()
-//    }
-//
-//    /*iterate methods method*/
-//    /*if returnsFuture*/
-//    abstract String __method_name__(/*iterate :join=',' parameters parameter*//*replace parameter_type*/String/**/ __parameter_name__/**/) throws Exception;
-//    /**/
-//    /**/
-//  }
-//  /**/
-
   /*iterate classes class*/
-  public static class $__class_name__Channel extends TypeChannel<classnameProxy> {
+  public static class $__class_name__Channel extends TypeChannel<__class_name__Proxy> {
     public $__class_name__Channel(@NonNull TypeChannelMessenger messenger) {
       super(messenger, "__class_channel__");
     }
 
     /*iterate constructors constructor*/
-    public Completable<PairedInstance> $create$__constructor_name__($__class_name__ $instance, boolean $owner/*iterate parameters parameter*/,/*replace parameter_type*/Integer/**/ __parameter_name__/**/) {
+    public Completable<PairedInstance> $create(__class_name__Proxy $instance, boolean $owner/*iterate parameters parameter*/,/*replace parameter_type*/Integer/**/ __parameter_name__/**/) {
+      return createNewInstancePair($instance, Arrays.<Object>asList("__constructor_name__"/*iterate parameters parameter*/, __parameter_name__/**/), $owner);
+    }
+    /**/
+
+    /*iterate constructors constructor*/
+    public Completable<PairedInstance> $create$__constructor_name__(__class_name__Proxy $instance, boolean $owner/*iterate parameters parameter*/,/*replace parameter_type*/Integer/**/ __parameter_name__/**/) {
       return createNewInstancePair($instance, Arrays.<Object>asList("__constructor_name__"/*iterate parameters parameter*/, __parameter_name__/**/), $owner);
     }
     /**/
@@ -129,7 +116,7 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
 
     /*iterate methods method*/
     /*if! returnsFuture*/
-    public Completable<Object> $__method_name__($__class_name__ $instance/*iterate parameters parameter*/,/*replace parameter_type*/String/**/ __parameter_name__/**/) {
+    public Completable<Object> $__method_name__(__class_name__Proxy $instance/*iterate parameters parameter*/,/*replace parameter_type*/String/**/ __parameter_name__/**/) {
       return invokeMethod($instance, "__method_name__", Arrays.<Object>asList(/*iterate :join=',' parameters parameter*/__parameter_name__/**/));
     }
     /**/
@@ -138,7 +125,7 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
   /**/
 
   /*iterate classes class*/
-  public static class $__class_name__Handler implements TypeChannelHandler<$__class_name__> {
+  public static class $__class_name__Handler implements TypeChannelHandler<__class_name__Proxy> {
     public final $LibraryImplementations implementations;
 
     public $__class_name__Handler($LibraryImplementations implementations) {
@@ -146,31 +133,31 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
     }
 
     /*iterate constructors constructor*/
-    public $__class_name__ $create(TypeChannelMessenger messenger/*iterate parameters parameter*/,/*replace parameter_type*/Integer/**/ __parameter_name__/**/)
+    public __class_name__Proxy $create(/*replace parameter_type*/Integer/**/ __parameter_name__/**/)
         throws Exception {
-      return classnameProxy(implementations, __parameter_name__);
+      return new __class_name__Proxy(implementations, __parameter_name__);
     }
     /**/
 
     /*iterate constructors constructor*/
-    public $__class_name__ $create$__constructor_name__(TypeChannelMessenger messenger/*iterate parameters parameter*/,/*replace parameter_type*/Integer/**/ __parameter_name__/**/)
+    public __class_name__Proxy $create$__constructor_name__(/*replace parameter_type*/Integer/**/ __parameter_name__/**/)
         throws Exception {
-      throw new UnsupportedOperationException();
+      return new __class_name__Proxy(implementations, __parameter_name__);
     }
     /**/
 
     /*iterate staticMethods staticMethod*/
     /*if returnsFuture*/
-    public Object $__staticMethod_name__(TypeChannelMessenger messenger/*iterate parameters parameter*/,/*replace parameter_type*/String/**/ __parameter_name__/**/)
+    public Double $__staticMethod_name__(/*replace parameter_type*/String/**/ __parameter_name__/**/)
         throws Exception {
-      throw new UnsupportedOperationException();
+      return __class_name__Proxy.staticMethodTemplate(implementations, __parameter_name__);
     }
     /**/
     /**/
 
     /*iterate methods method*/
     /*if returnsFuture*/
-    public Object $__method_name__($__class_name__ $instance/*iterate parameters parameter*/,/*replace parameter_type*/String/**/ __parameter_name__/**/) throws Exception {
+    public String $__method_name__(__class_name__Proxy $instance/*iterate parameters parameter*/,/*replace parameter_type*/String/**/ __parameter_name__/**/) throws Exception {
       return $instance.__method_name__(/*iterate :join=',' parameters parameter*/ __parameter_name__ /**/);
     }
     /**/
@@ -184,7 +171,7 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
         /*iterate staticMethods staticMethod*/
         /*if returnsFuture*/
         case "__staticMethod_name__":
-          return $__staticMethod_name__(messenger/*iterate parameters parameter*/,(/*replace parameter_type*/String/**/) arguments.get(/*replace parameter_index*/0/**/)/**/);
+          return $__staticMethod_name__(/*iterate :join=',' parameters parameter*/(/*replace parameter_type*/String/**/) arguments.get(/*replace parameter_index*/0/**/)/**/);
         /**/
         /**/
       }
@@ -194,13 +181,18 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
     }
 
     @Override
-    public $__class_name__ createInstance(TypeChannelMessenger messenger, List<Object> arguments)
+    public __class_name__Proxy createInstance(TypeChannelMessenger messenger, List<Object> arguments)
         throws Exception {
       final String constructorName = (String) arguments.get(0);
       switch(constructorName) {
         /*iterate constructors constructor*/
+        case "":
+          return $create(/*iterate :join=',' parameters parameter*/(/*replace parameter_type*/Integer/**/) arguments.get(/*replace parameter_index*/1/**/)/**/);
+        /**/
+
+        /*iterate constructors constructor*/
         case "__constructor_name__":
-          return $create$__constructor_name__(messenger/*iterate parameters parameter*/,(/*replace parameter_type*/Integer/**/) arguments.get(/*replace parameter_index*/1/**/)/**/);
+          return $create$__constructor_name__(/*iterate :join=',' parameters parameter*/(/*replace parameter_type*/Integer/**/) arguments.get(/*replace parameter_index*/1/**/)/**/);
         /**/
       }
 
@@ -211,7 +203,7 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
     @Override
     public Object invokeMethod(
         TypeChannelMessenger messenger,
-        $__class_name__ instance,
+        __class_name__Proxy instance,
         String methodName,
         List<Object> arguments)
         throws Exception {
@@ -233,29 +225,23 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
   public static class $LibraryImplementations {
     public final TypeChannelMessenger messenger;
 
-    public $LibraryImplementations(TypeChannelMessenger messenger) {
-      this.messenger = messenger;
-    }
-
     /*iterate classes class*/
-    public $__class_name__Channel getChannel__class_name__() {
-      return new $__class_name__Channel(messenger);
-    }
-
-    public $__class_name__Handler getHandler__class_name__() {
-      return new $__class_name__Handler(implementations);
-    }
+    public $__class_name__Channel __class_name__Channel;
+    public $__class_name__Handler __class_name__Handler;
     /**/
 
     /*iterate functions function*/
-    public $__function_name__Channel getChannel__function_name__() {
-      return new $__function_name__Channel(messenger);
-    }
-
-    public $__function_name__Handler getHandler__function_name__() {
-      return new $__function_name__Handler(this);
-    }
+    public $__function_name__Channel __function_name__Channel;
+    public $__function_name__Handler __function_name__Handler;
     /**/
+
+    public $LibraryImplementations(TypeChannelMessenger messenger) {
+      this.messenger = messenger;
+      this.__class_name__Channel = new $__class_name__Channel(messenger);
+      this.__class_name__Handler = new $__class_name__Handler(this);
+      this.__function_name__Channel = new $__function_name__Channel(messenger);
+      this.__function_name__Handler = new $__function_name__Handler(this);
+    }
   }
 
   public static class $ChannelRegistrar {
@@ -267,19 +253,19 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
 
     public void registerHandlers() {
       /*iterate classes class*/
-      implementations.getChannel__class_name__().setHandler(implementations.getHandler__class_name__());
+      implementations.__class_name__Channel.setHandler(implementations.__class_name__Handler);
       /**/
       /*iterate functions function*/
-      implementations.getChannel__function_name__().setHandler(implementations.getHandler__function_name__());
+      implementations.__function_name__Channel.setHandler(implementations.__function_name__Handler);
       /**/
     }
 
     public void unregisterHandlers() {
       /*iterate classes class*/
-      implementations.getChannel__class_name__().removeHandler();
+      implementations.__class_name__Channel.removeHandler();
       /**/
       /*iterate functions function*/
-      implementations.getChannel__function_name__().removeHandler();
+      implementations.__function_name__Channel.removeHandler();
       /**/
     }
   }

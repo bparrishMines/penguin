@@ -12,9 +12,8 @@ typedef $$function_name$$ = void Function(String value);
   package: 'com.example.reference_example',
   className: 'classNameProxy.java',
 )
-//@Reference(r'github.penguin/template/template/$$class_name$$')
 class $$class_name$$ {
-  $$class_name$$(this.$$parameter_name$$, {bool create = true}) {
+  $$class_name$$({required this.$$parameter_name$$, bool create = true}) {
     if (create) {
       _channel.$create(
         this,
@@ -24,8 +23,10 @@ class $$class_name$$ {
     }
   }
 
-  $$class_name$$.$$constructor_name$$(this.$$parameter_name$$,
-      {bool create = true}) {
+  $$class_name$$.$$constructor_name$$({
+    required this.$$parameter_name$$,
+    bool create = true,
+  }) {
     if (create) {
       _channel.$create$__constructor_name__(
         this,

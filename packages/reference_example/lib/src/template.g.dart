@@ -12,7 +12,7 @@ import 'template.dart';
 // **************************************************************************
 
 /*iterate functions function*/
-class $$$function_name$$Channel extends TypeChannel<Object> {
+class $$$function_name$$Channel extends TypeChannel<$$function_name$$> {
   $$$function_name$$Channel(TypeChannelMessenger messenger)
       : super(messenger, '__function_channel__');
 
@@ -45,7 +45,8 @@ class $$$function_name$$Channel extends TypeChannel<Object> {
 /**/
 
 /*iterate functions function*/
-class $$$function_name$$Handler implements TypeChannelHandler<Object> {
+class $$$function_name$$Handler
+    implements TypeChannelHandler<$$function_name$$> {
   $$$function_name$$Handler(this.implementations);
 
   final $LibraryImplementations implementations;
@@ -187,7 +188,10 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$class_name$$> {
     /*replace parameter_type*/ int /**/ $$parameter_name$$,
     /**/
   ) {
-    throw UnimplementedError();
+    return $$class_name$$(
+      $$parameter_name$$: $$parameter_name$$,
+      create: false,
+    );
   }
   /**/
 
@@ -198,7 +202,10 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$class_name$$> {
     /*replace parameter_type*/ int /**/ $$parameter_name$$,
     /**/
   ) {
-    throw UnimplementedError();
+    return $$class_name$$.$$constructor_name$$(
+      $$parameter_name$$: $$parameter_name$$,
+      create: false,
+    );
   }
   /**/
 
@@ -210,7 +217,7 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$class_name$$> {
     /*replace parameter_type*/ String /**/ $$parameter_name$$,
     /**/
   ) {
-    throw UnimplementedError();
+    return $$class_name$$.$$staticMethod_name$$($$parameter_name$$) as double;
   }
   /**/
   /**/
@@ -335,15 +342,15 @@ class $LibraryImplementations {
   final TypeChannelMessenger messenger;
 
   /*iterate classes class*/
-  $$$class_name$$Channel get channel__class_name__ =>
+  late $$$class_name$$Channel channel__class_name__ =
       $$$class_name$$Channel(messenger);
-  $$$class_name$$Handler get handler__class_name__ => $$$class_name$$Handler();
+  $$$class_name$$Handler handler__class_name__ = $$$class_name$$Handler();
   /**/
 
   /*iterate functions function*/
-  $$$function_name$$Channel get channel__function_name__ =>
+  late $$$function_name$$Channel channel__function_name__ =
       $$$function_name$$Channel(messenger);
-  $$$function_name$$Handler get handler__function_name__ =>
+  late $$$function_name$$Handler handler__function_name__ =
       $$$function_name$$Handler(this);
   /**/
 }

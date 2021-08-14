@@ -14,7 +14,7 @@ Future<void> main() async {
   group('reference_example', () {
     test('methodTemplate', () {
       final $$class_name$$ classTemplate =
-          $$class_name$$.$$constructor_name$$(44);
+          $$class_name$$.$$constructor_name$$($$parameter_name$$: 44);
 
       expect(
         classTemplate.$$method_name$$('Hello,'),
@@ -24,7 +24,7 @@ Future<void> main() async {
 
     test('staticMethodTemplate', () {
       expect(
-        $$class_name$$.$__staticMethod_name__('howmanycharacters'),
+        $$class_name$$.$$staticMethod_name$$('howmanycharacters'),
         completion(17),
       );
     });
@@ -40,7 +40,7 @@ Future<void> main() async {
         $owner: false,
       );
       final $$class_name$$ classTemplate =
-          $$class_name$$.$$constructor_name$$(44);
+          $$class_name$$.$$constructor_name$$($$parameter_name$$: 44);
       $ChannelRegistrar.instance.implementations.channel__class_name__
           .sendInvokeMethod(
         classTemplate,
