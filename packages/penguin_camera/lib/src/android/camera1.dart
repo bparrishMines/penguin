@@ -8,6 +8,7 @@ import 'package:android_hardware/android_hardware.dart';
 import 'package:penguin_camera/penguin_camera.dart';
 
 import '../platform_interface.dart' as intf;
+import '../standard_platform_interface.dart';
 
 /// Implementation of [intf.CameraDevice] using Android Camera1 API.
 class CameraDevice implements intf.CameraDevice {
@@ -34,16 +35,13 @@ class CameraDevice implements intf.CameraDevice {
 }
 
 /// Implementation of [intf.CameraController] using Android Camera1 API.
-class CameraController implements intf.CameraController {
+class CameraController extends StandardCameraController {
   /// Construct a [CameraController].
   CameraController({required this.device, required this.outputs})
       : assert(
           outputs.any((CameraOutput output) => output is PreviewOutput),
           'At least one output should be a PreviewOutput.',
         );
-
-  bool _initialized = false;
-  bool _disposed = false;
 
   @override
   final CameraDevice device;
@@ -61,9 +59,7 @@ class CameraController implements intf.CameraController {
 
   @override
   Future<void> initialize() async {
-    assert(!_initialized, 'CameraController has already been initialized.');
-    assert(!_disposed, 'CameraController has already been disposed.');
-    _initialized = true;
+    super.initialize();
 
     camera = await Camera.open(device.info.cameraId);
     cameraParameters = await camera.getParameters();
@@ -75,24 +71,23 @@ class CameraController implements intf.CameraController {
 
   @override
   Future<void> start() {
-    assert(_initialized, 'CameraController has not been initialized.');
-    assert(!_disposed, 'CameraController has already been disposed.');
+    verifyInitialized();
+    verifyNotDisposed();
     return camera.startPreview();
   }
 
   @override
   Future<void> stop() {
-    assert(_initialized, 'CameraController has not been initialized.');
-    assert(!_disposed, 'CameraController has already been disposed.');
+    verifyInitialized();
+    verifyNotDisposed();
     return camera.stopPreview();
   }
 
   @override
   Future<void> dispose() async {
-    assert(_initialized, 'CameraController has not been initialized.');
-    if (_disposed) return Future<void>.value();
+    if (disposed) return Future<void>.value();
     stop();
-    _disposed = true;
+    super.dispose();
 
     await Future.wait(
       outputs.map<Future<void>>((CameraOutput output) => output.detach(this)),
@@ -103,6 +98,8 @@ class CameraController implements intf.CameraController {
 
   @override
   Future<void> setFocusMode(FocusMode mode) {
+    verifyInitialized();
+    verifyNotDisposed();
     switch (mode) {
       case FocusMode.fixed:
         cameraParameters.setFocusMode(CameraParameters.focusModeFixed);
@@ -123,6 +120,8 @@ class CameraController implements intf.CameraController {
 
   @override
   Future<List<FocusMode>> supportedFocusModes() async {
+    verifyInitialized();
+    verifyNotDisposed();
     final List<String> focusModes =
         await cameraParameters.getSupportedFocusModes();
 
@@ -145,6 +144,8 @@ class CameraController implements intf.CameraController {
 
   @override
   Future<List<ExposureMode>> supportedExposureModes() async {
+    verifyInitialized();
+    verifyNotDisposed();
     final bool lockSupported =
         await cameraParameters.isAutoExposureLockSupported();
     return <ExposureMode>[
@@ -155,6 +156,8 @@ class CameraController implements intf.CameraController {
 
   @override
   Future<void> setExposureMode(ExposureMode mode) {
+    verifyInitialized();
+    verifyNotDisposed();
     switch (mode) {
       case ExposureMode.locked:
         return cameraParameters.setAutoExposureLock(toggle: true);
@@ -165,6 +168,8 @@ class CameraController implements intf.CameraController {
 
   @override
   Future<void> setControllerPreset(CameraControllerPreset preset) async {
+    verifyInitialized();
+    verifyNotDisposed();
     await Future.wait(
       outputs.cast<PresetChangeListener>().map<Future<void>>(
           (PresetChangeListener listener) => listener.updatePreset(preset)),
@@ -174,6 +179,8 @@ class CameraController implements intf.CameraController {
 
   @override
   Future<void> setTorchMode(TorchMode mode) {
+    verifyInitialized();
+    verifyNotDisposed();
     switch (mode) {
       case TorchMode.on:
         cameraParameters.setFlashMode(CameraParameters.flashModeTorch);
@@ -188,6 +195,8 @@ class CameraController implements intf.CameraController {
 
   @override
   Future<List<TorchMode>> supportedTorchModes() async {
+    verifyInitialized();
+    verifyNotDisposed();
     final List<String> flashModes =
         await cameraParameters.getSupportedFlashModes();
 
@@ -202,27 +211,37 @@ class CameraController implements intf.CameraController {
 
   @override
   Future<double> maxZoom() async {
+    verifyInitialized();
+    verifyNotDisposed();
     final List<int> zoomRatios = await cameraParameters.getZoomRatios();
     return zoomRatios.last / 100;
   }
 
   @override
   Future<double> minZoom() {
+    verifyInitialized();
+    verifyNotDisposed();
     return Future<double>.value(1.0);
   }
 
   @override
   Future<bool> smoothZoomSupported() {
+    verifyInitialized();
+    verifyNotDisposed();
     return cameraParameters.isSmoothZoomSupported();
   }
 
   @override
   Future<bool> zoomSupported() {
+    verifyInitialized();
+    verifyNotDisposed();
     return cameraParameters.isZoomSupported();
   }
 
   @override
   Future<void> smoothZoomTo(double value) async {
+    verifyInitialized();
+    verifyNotDisposed();
     final List<int> zoomRatios = await cameraParameters.getZoomRatios();
 
     final int valueZoomRatio = (value * 100).round();
@@ -235,6 +254,8 @@ class CameraController implements intf.CameraController {
 
   @override
   Future<void> setZoom(double value) async {
+    verifyInitialized();
+    verifyNotDisposed();
     final List<int> zoomRatios = await cameraParameters.getZoomRatios();
 
     final int valueZoomRatio = (value * 100).round();
@@ -282,17 +303,19 @@ class CameraPlatform extends intf.PenguinCameraPlatform {
 }
 
 /// Implementation of [intf.PreviewOutput] using Android Camera1 API.
-class PreviewOutput with PresetChangeListener implements intf.PreviewOutput {
+class PreviewOutput extends StandardPreviewOutput with PresetChangeListener {
   late CameraController _controller;
   late Completer<Texture> _previewWidgetCompleter;
 
   @override
   Future<Widget> previewWidget() {
+    verifyAttached();
     return _previewWidgetCompleter.future;
   }
 
   @override
   Future<void> attach(covariant CameraController controller) async {
+    super.attach(controller);
     _controller = controller;
     _previewWidgetCompleter = Completer<Texture>();
     _previewWidgetCompleter.complete(
@@ -302,11 +325,13 @@ class PreviewOutput with PresetChangeListener implements intf.PreviewOutput {
 
   @override
   Future<void> detach(covariant CameraController controller) {
+    super.detach(controller);
     return controller.camera.releasePreviewTexture();
   }
 
   @override
   Future<void> updatePreset(CameraControllerPreset preset) async {
+    verifyAttached();
     final List<CameraSize> supportedSizes =
         await _controller.cameraParameters.getSupportedPreviewSizes();
 
@@ -338,12 +363,15 @@ class PreviewOutput with PresetChangeListener implements intf.PreviewOutput {
 
   @override
   Future<Size> outputSize() async {
+    verifyAttached();
     final CameraSize size = await _controller.cameraParameters.getPreviewSize();
     return Size(size.width.toDouble(), size.height.toDouble());
   }
 
   @override
   Future<void> setRotation(OutputRotation rotation) {
+    verifyAttached();
+
     late final int angle;
     switch (rotation) {
       case OutputRotation.rotation0:
@@ -373,21 +401,24 @@ class PreviewOutput with PresetChangeListener implements intf.PreviewOutput {
 }
 
 /// Implementation of [intf.ImageCaptureOutput] using Android Camera1 API.
-class ImageCaptureOutput
-    with PresetChangeListener
-    implements intf.ImageCaptureOutput {
+class ImageCaptureOutput extends StandardImageCaptureOutput
+    with PresetChangeListener {
   late CameraController _controller;
 
   @override
   Future<void> attach(covariant CameraController controller) async {
+    super.attach(controller);
     _controller = controller;
   }
 
   @override
-  Future<void> detach(covariant CameraController controller) async {}
+  Future<void> detach(covariant CameraController controller) async {
+    return super.detach(controller);
+  }
 
   @override
   Future<void> takePicture(intf.ImageCallback callback) {
+    verifyAttached();
     return _controller.camera.takePicture(
       jpeg: PictureCallback((Uint8List? bytes) {
         _controller.camera.startPreview();
@@ -401,6 +432,7 @@ class ImageCaptureOutput
 
   @override
   Future<List<FlashMode>> supportedFlashModes() async {
+    verifyAttached();
     final List<String> flashModes =
         await _controller.cameraParameters.getSupportedFlashModes();
 
@@ -423,6 +455,7 @@ class ImageCaptureOutput
 
   @override
   Future<void> setFlashMode(FlashMode mode) {
+    verifyAttached();
     switch (mode) {
       case FlashMode.on:
         _controller.cameraParameters.setFlashMode(CameraParameters.flashModeOn);
@@ -443,6 +476,7 @@ class ImageCaptureOutput
 
   @override
   Future<void> updatePreset(CameraControllerPreset preset) async {
+    verifyAttached();
     final List<CameraSize> supportedSizes =
         await _controller.cameraParameters.getSupportedPictureSizes();
 
@@ -474,12 +508,14 @@ class ImageCaptureOutput
 
   @override
   Future<Size> outputSize() async {
+    verifyAttached();
     final CameraSize size = await _controller.cameraParameters.getPictureSize();
     return Size(size.width.toDouble(), size.height.toDouble());
   }
 
   @override
   Future<void> setRotation(OutputRotation rotation) {
+    verifyAttached();
     final CameraInfo cameraInfo = _controller.device.info;
 
     late final int imageRotation;
@@ -512,9 +548,8 @@ class ImageCaptureOutput
 }
 
 /// Implementation of [intf.VideoCaptureOutput] using Android Camera1 API.
-class VideoCaptureOutput
-    with PresetChangeListener
-    implements intf.VideoCaptureOutput {
+class VideoCaptureOutput extends StandardVideoCaptureOutput
+    with PresetChangeListener {
   /// Construct a [VideoCaptureOutput].
   VideoCaptureOutput({this.includeAudio = false});
 
@@ -537,6 +572,7 @@ class VideoCaptureOutput
 
   @override
   Future<void> attach(covariant CameraController controller) {
+    super.attach(controller);
     _controller = controller;
     mediaRecorder = MediaRecorder();
     mediaRecorder.setCamera(controller.camera);
@@ -549,11 +585,13 @@ class VideoCaptureOutput
 
   @override
   Future<void> detach(covariant CameraController controller) {
+    super.detach(controller);
     return mediaRecorder.release();
   }
 
   @override
   Future<void> startRecording({required String fileOutput}) async {
+    verifyAttached();
     mediaRecorder.setOutputFilePath(fileOutput);
     await _controller.camera.unlock();
     mediaRecorder.prepare();
@@ -562,11 +600,13 @@ class VideoCaptureOutput
 
   @override
   Future<void> stopRecording() {
+    verifyAttached();
     return mediaRecorder.stop();
   }
 
   @override
   Future<void> updatePreset(CameraControllerPreset preset) async {
+    verifyAttached();
     final List<CameraSize>? supportedSizes =
         await _controller.cameraParameters.getSupportedVideoSizes();
 
@@ -632,6 +672,7 @@ class VideoCaptureOutput
 
   @override
   Future<Size?> outputSize() async {
+    verifyAttached();
     if (specifiedSize == null) return null;
     return Size(
       specifiedSize!.width.toDouble(),
@@ -641,6 +682,7 @@ class VideoCaptureOutput
 
   @override
   Future<void> setRotation(OutputRotation rotation) {
+    verifyAttached();
     final CameraInfo cameraInfo = _controller.device.info;
 
     late final int videoRotation;

@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:penguin_camera/penguin_camera.dart';
 
 import '../platform_interface.dart' as intf;
+import '../standard_platform_interface.dart';
 
 /// Implementation of [intf.CameraDevice] using iOS AVFoundation API.
 class CameraDevice implements intf.CameraDevice {
@@ -36,13 +37,10 @@ class CameraDevice implements intf.CameraDevice {
 }
 
 /// Implementation of [intf.CameraController] using iOS AVFoundation API.
-class CameraController implements intf.CameraController {
+class CameraController extends StandardCameraController {
   /// Construct a [CameraController].
   CameraController({required this.device, required this.outputs})
       : captureDeviceInput = CaptureDeviceInput(device.device);
-
-  bool _initialized = false;
-  bool _disposed = false;
 
   @override
   final CameraDevice device;
@@ -61,9 +59,7 @@ class CameraController implements intf.CameraController {
 
   @override
   Future<void> initialize() async {
-    assert(!_initialized, 'CameraController has already been initialized.');
-    assert(!_disposed, 'CameraController has already been disposed.');
-    _initialized = true;
+    super.initialize();
 
     session.addInput(captureDeviceInput);
     await Future.wait(
@@ -74,24 +70,23 @@ class CameraController implements intf.CameraController {
 
   @override
   Future<void> start() {
-    assert(_initialized, 'CameraController has not been initialized.');
-    assert(!_disposed, 'CameraController has already been disposed.');
+    verifyInitialized();
+    verifyNotDisposed();
     return session.startRunning();
   }
 
   @override
   Future<void> stop() {
-    assert(_initialized, 'CameraController has not been initialized.');
-    assert(!_disposed, 'CameraController has already been disposed.');
+    verifyInitialized();
+    verifyNotDisposed();
     return session.stopRunning();
   }
 
   @override
   Future<void> dispose() async {
-    assert(_initialized, 'CameraController has not been initialized.');
-    if (_disposed) return Future<void>.value();
+    if (disposed) return Future<void>.value();
     stop();
-    _disposed = true;
+    super.dispose();
 
     await Future.wait(
       outputs.map<Future<void>>((CameraOutput output) => output.detach(this)),
@@ -101,6 +96,8 @@ class CameraController implements intf.CameraController {
 
   @override
   Future<void> setFocusMode(FocusMode mode) {
+    verifyInitialized();
+    verifyNotDisposed();
     device.device.lockForConfiguration();
     switch (mode) {
       case FocusMode.fixed:
@@ -118,6 +115,8 @@ class CameraController implements intf.CameraController {
 
   @override
   Future<List<FocusMode>> supportedFocusModes() async {
+    verifyInitialized();
+    verifyNotDisposed();
     final List<int> focusModes = await device.device.focusModesSupported(<int>[
       CaptureFocusMode.locked,
       CaptureFocusMode.continuousAutoFocus,
@@ -140,6 +139,8 @@ class CameraController implements intf.CameraController {
 
   @override
   Future<List<ExposureMode>> supportedExposureModes() async {
+    verifyInitialized();
+    verifyNotDisposed();
     final List<int> exposureModes =
         await device.device.exposureModesSupported(<int>[
       CaptureExposureMode.locked,
@@ -162,6 +163,8 @@ class CameraController implements intf.CameraController {
 
   @override
   Future<void> setExposureMode(ExposureMode mode) {
+    verifyInitialized();
+    verifyNotDisposed();
     device.device.lockForConfiguration();
     switch (mode) {
       case ExposureMode.locked:
@@ -178,6 +181,8 @@ class CameraController implements intf.CameraController {
 
   @override
   Future<void> setControllerPreset(CameraControllerPreset preset) async {
+    verifyInitialized();
+    verifyNotDisposed();
     final List<String> supportedPresets =
         await session.canSetSessionPresets(<String>[
       CaptureSessionPreset.preset352x288,
@@ -203,6 +208,8 @@ class CameraController implements intf.CameraController {
 
   @override
   Future<void> setTorchMode(TorchMode mode) {
+    verifyInitialized();
+    verifyNotDisposed();
     device.device.lockForConfiguration();
     switch (mode) {
       case TorchMode.on:
@@ -217,6 +224,8 @@ class CameraController implements intf.CameraController {
 
   @override
   Future<List<TorchMode>> supportedTorchModes() async {
+    verifyInitialized();
+    verifyNotDisposed();
     if (!device.device.hasTorch) return <TorchMode>[];
 
     final List<int> torchModes = await device.device.torchModesSupported(
@@ -234,26 +243,36 @@ class CameraController implements intf.CameraController {
 
   @override
   Future<double> maxZoom() {
+    verifyInitialized();
+    verifyNotDisposed();
     return device.device.maxAvailableVideoZoomFactor();
   }
 
   @override
   Future<double> minZoom() {
+    verifyInitialized();
+    verifyNotDisposed();
     return device.device.minAvailableVideoZoomFactor();
   }
 
   @override
   Future<bool> smoothZoomSupported() {
+    verifyInitialized();
+    verifyNotDisposed();
     return Future<bool>.value(true);
   }
 
   @override
   Future<bool> zoomSupported() {
+    verifyInitialized();
+    verifyNotDisposed();
     return Future<bool>.value(true);
   }
 
   @override
   Future<void> setZoom(double value) {
+    verifyInitialized();
+    verifyNotDisposed();
     device.device.lockForConfiguration();
     device.device.setVideoZoomFactor(value);
     return device.device.unlockForConfiguration();
@@ -261,6 +280,8 @@ class CameraController implements intf.CameraController {
 
   @override
   Future<void> smoothZoomTo(double value) {
+    verifyInitialized();
+    verifyNotDisposed();
     device.device.lockForConfiguration();
     device.device.rampToVideoZoomFactor(value, 1.0);
     return device.device.unlockForConfiguration();
@@ -307,7 +328,7 @@ class CameraPlatform extends intf.PenguinCameraPlatform {
 }
 
 /// Implementation of [intf.PreviewOutput] using iOS AVFoundation API.
-class PreviewOutput implements intf.PreviewOutput {
+class PreviewOutput extends StandardPreviewOutput {
   late CameraController _controller;
 
   /// Widget to display preview frames of a [CaptureDevice].
@@ -317,6 +338,7 @@ class PreviewOutput implements intf.PreviewOutput {
 
   @override
   Future<void> attach(covariant CameraController controller) {
+    super.attach(controller);
     _controller = controller;
     preview = Preview(controller: PreviewController(controller.session));
     return Future<void>.value();
@@ -324,6 +346,7 @@ class PreviewOutput implements intf.PreviewOutput {
 
   @override
   Future<void> detach(covariant CameraController controller) {
+    super.detach(controller);
     return Future<void>.value();
   }
 
@@ -332,6 +355,7 @@ class PreviewOutput implements intf.PreviewOutput {
 
   @override
   Future<Size?> outputSize() async {
+    verifyAttached();
     if (_controller.capturePreset == null) return null;
     switch (_controller.capturePreset) {
       case CaptureSessionPreset.preset352x288:
@@ -349,6 +373,7 @@ class PreviewOutput implements intf.PreviewOutput {
 
   @override
   Future<void> setRotation(OutputRotation rotation) async {
+    verifyAttached();
     final CaptureConnection? connection = await preview.controller.connection();
 
     if (connection == null) {
@@ -377,7 +402,7 @@ class PreviewOutput implements intf.PreviewOutput {
 }
 
 /// Implementation of [intf.ImageCaptureOutput] using iOS AVFoundation API.
-class ImageCaptureOutput implements intf.ImageCaptureOutput {
+class ImageCaptureOutput extends StandardImageCaptureOutput {
   late CameraController _controller;
 
   /// Handles capturing photos when added to a [CaptureSession].
@@ -400,6 +425,7 @@ class ImageCaptureOutput implements intf.ImageCaptureOutput {
 
   @override
   Future<void> attach(covariant CameraController controller) {
+    super.attach(controller);
     _controller = controller;
     capturePhotoOutput = CapturePhotoOutput();
     return controller.session.addOutput(capturePhotoOutput);
@@ -407,6 +433,7 @@ class ImageCaptureOutput implements intf.ImageCaptureOutput {
 
   @override
   Future<void> detach(covariant CameraController controller) {
+    super.detach(controller);
     return _controller.session.removeOutput(capturePhotoOutput);
   }
 
@@ -421,6 +448,7 @@ class ImageCaptureOutput implements intf.ImageCaptureOutput {
 
   @override
   Future<void> takePicture(ImageCallback callback) async {
+    verifyAttached();
     final CapturePhotoSettings oldSettings = nextPhotoSettings;
     nextPhotoSettings = _createNextPhotoSettings();
 
@@ -446,6 +474,7 @@ class ImageCaptureOutput implements intf.ImageCaptureOutput {
 
   @override
   Future<List<FlashMode>> supportedFlashModes() async {
+    verifyAttached();
     final List<int> flashModes = await capturePhotoOutput.supportedFlashModes();
 
     final List<FlashMode> supportedModes = <FlashMode>[];
@@ -467,6 +496,7 @@ class ImageCaptureOutput implements intf.ImageCaptureOutput {
 
   @override
   Future<void> setFlashMode(FlashMode mode) async {
+    verifyAttached();
     switch (mode) {
       case FlashMode.on:
         flashMode = CaptureFlashMode.on;
@@ -482,6 +512,7 @@ class ImageCaptureOutput implements intf.ImageCaptureOutput {
 
   @override
   Future<Size?> outputSize() async {
+    verifyAttached();
     if (_controller.capturePreset == null) return null;
     switch (_controller.capturePreset) {
       case CaptureSessionPreset.preset352x288:
@@ -499,6 +530,7 @@ class ImageCaptureOutput implements intf.ImageCaptureOutput {
 
   @override
   Future<void> setRotation(OutputRotation rotation) async {
+    verifyAttached();
     final CaptureConnection? connection =
         await capturePhotoOutput.connectionWithMediaType(MediaType.video);
 
@@ -528,7 +560,7 @@ class ImageCaptureOutput implements intf.ImageCaptureOutput {
 }
 
 /// Implementation of [intf.VideoCaptureOutput] using iOS AVFoundation API.
-class VideoCaptureOutput implements intf.VideoCaptureOutput {
+class VideoCaptureOutput extends StandardVideoCaptureOutput {
   /// Construct a [VideoCaptureOutput].
   VideoCaptureOutput({this.includeAudio = false});
 
@@ -548,6 +580,7 @@ class VideoCaptureOutput implements intf.VideoCaptureOutput {
 
   @override
   Future<void> attach(covariant CameraController controller) async {
+    super.attach(controller);
     _controller = controller;
 
     if (includeAudio) {
@@ -567,11 +600,13 @@ class VideoCaptureOutput implements intf.VideoCaptureOutput {
 
   @override
   Future<void> detach(covariant CameraController controller) {
+    super.detach(controller);
     return _controller.session.removeOutput(movieFileOutput);
   }
 
   @override
   Future<void> startRecording({required String fileOutput}) {
+    verifyAttached();
     return movieFileOutput.startRecordingToOutputFileURL(
       fileOutput,
       CaptureFileOutputRecordingDelegate(),
@@ -580,11 +615,13 @@ class VideoCaptureOutput implements intf.VideoCaptureOutput {
 
   @override
   Future<void> stopRecording() {
+    verifyAttached();
     return movieFileOutput.stopRecording();
   }
 
   @override
   Future<Size?> outputSize() async {
+    verifyAttached();
     if (_controller.capturePreset == null) return null;
     switch (_controller.capturePreset) {
       case CaptureSessionPreset.preset352x288:
@@ -602,6 +639,7 @@ class VideoCaptureOutput implements intf.VideoCaptureOutput {
 
   @override
   Future<void> setRotation(OutputRotation rotation) async {
+    verifyAttached();
     final CaptureConnection? connection =
         await movieFileOutput.connectionWithMediaType(MediaType.video);
 
