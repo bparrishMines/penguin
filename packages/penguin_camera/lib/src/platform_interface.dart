@@ -326,14 +326,15 @@ abstract class CameraDevice {
 /// Controls a device's camera and provides access to camera features.
 ///
 /// This class takes a [device] and a list of [CameraOutput]s. After
-/// instantiation, [initialize] should be called before any other method.
+/// instantiation, [initialize] should be *AWAITED* before any other method.
 ///
 /// After [initialize], calling [start] begins the flow of data from [device] to
 /// the [outputs]. Each output should contain additional methods that provide a
 /// preview widget, take a picture, or record a video.
 ///
-/// [dispose] should be called when camera resources are no longer needed. Also,
-/// consider calling [dispose] when a user leaves the app.
+/// [dispose] should be called when camera resources are no longer needed. No
+/// other methods can be called after a controller is disposed. Also, consider
+/// calling [dispose] when a user leaves the app.
 ///
 /// Example usage to add an ImageCaptureOutput and take a photo:
 ///
@@ -387,7 +388,7 @@ abstract class CameraController {
 
   /// Initializes this controller and attaches the [outputs].
   ///
-  /// This returned [Future] of this method should be AWAITED before calling any
+  /// The returned [Future] of this method should be AWAITED before calling any
   /// other methods.
   Future<void> initialize();
 
@@ -403,6 +404,8 @@ abstract class CameraController {
   Future<void> stop();
 
   /// Release all resources held by [device] and detach all [outputs].
+  ///
+  /// No other methods can be called after a controller is disposed.
   Future<void> dispose();
 
   /// Set the focus mode of the device.
