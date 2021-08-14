@@ -77,7 +77,7 @@ class _MyAppState extends State<_MyApp> {
     _cameraController = await _setupCameraController(_imageCaptureOutput);
 
     final List<FocusMode> supportedFocusMode =
-        await _cameraController.getSupportedFocusModes();
+        await _cameraController.supportedFocusModes();
     if (supportedFocusMode.contains(FocusMode.continuousImageAutoFocus)) {
       _cameraController.setFocusMode(FocusMode.continuousImageAutoFocus);
     }
@@ -95,7 +95,7 @@ class _MyAppState extends State<_MyApp> {
     _videoCaptureOutput = VideoCaptureOutput(includeAudio: true);
     _cameraController = await _setupCameraController(_videoCaptureOutput);
     final List<FocusMode> supportedFocusMode =
-        await _cameraController.getSupportedFocusModes();
+        await _cameraController.supportedFocusModes();
     if (supportedFocusMode.contains(FocusMode.continuousVideoAutoFocus)) {
       _cameraController.setFocusMode(FocusMode.continuousVideoAutoFocus);
     }
@@ -107,7 +107,7 @@ class _MyAppState extends State<_MyApp> {
 
   Future<CameraController> _setupCameraController(CameraOutput output) async {
     final List<CameraDevice> allCameraDevices =
-        await PenguinCamera.getAllCameraDevices();
+        await CameraController.getAllCameraDevices();
 
     final CameraDevice device = allCameraDevices.firstWhere(
       (CameraDevice device) => device.position == _cameraPosition,
@@ -124,7 +124,7 @@ class _MyAppState extends State<_MyApp> {
     await cameraController.setControllerPreset(CameraControllerPreset.high);
     _previewOutput.setRotation(OutputRotation.rotation0);
     output.setRotation(OutputRotation.rotation0);
-    _previewOutputSize = await _previewOutput.getOutputSize();
+    _previewOutputSize = await _previewOutput.outputSize();
     return cameraController;
   }
 
@@ -370,13 +370,13 @@ class ZoomWidgetState extends State<ZoomWidget> {
   Future<void> getZoomInfo() async {
     final CameraController controller = widget.controller;
 
-    final bool supportsZoom = await controller.isZoomSupported();
+    final bool supportsZoom = await controller.zoomSupported();
     if (!supportsZoom) return;
 
-    final bool supportsSmoothZoom = await controller.isSmoothZoomSupported();
-    final int minZoom = (await controller.getMinZoom()).ceil();
+    final bool supportsSmoothZoom = await controller.smoothZoomSupported();
+    final int minZoom = (await controller.minZoom()).ceil();
     final int maxZoom = min(
-      (await controller.getMaxZoom()).floor(),
+      (await controller.maxZoom()).floor(),
       _maxAllowedZoom,
     );
 
@@ -440,7 +440,7 @@ class CameraPreview extends StatelessWidget {
       case CameraMode.video:
       case CameraMode.videoRecording:
         return FutureBuilder<Widget>(
-          future: previewOutput.getPreviewWidget(),
+          future: previewOutput.previewWidget(),
           builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
             if (snapshot.hasData) {
               if (size != null) {
