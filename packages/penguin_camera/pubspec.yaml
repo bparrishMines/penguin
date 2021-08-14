@@ -1,6 +1,6 @@
 name: penguin_camera
 description: Provides a platform-agnostic interface for accessing cameras camera features.
-version: 0.0.1
+version: 0.0.2
 homepage: https://github.com/bparrishMines/penguin/tree/master/packages/penguin_camera
 
 environment:

@@ -8,7 +8,7 @@ specific features.
 
 ## Supported Platform
 
-Android, iOS
+Android 16+, iOS 10.0+
 
 ## Permissions
 
