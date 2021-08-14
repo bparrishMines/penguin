@@ -254,7 +254,12 @@ abstract class VideoCaptureOutput extends CameraOutput {
   Future<void> stopRecording();
 }
 
-/// Abstract class for output of a [CameraController].
+/// Abstract class for outputs of a [CameraController].
+///
+/// See:
+///   [PreviewOutput]
+///   [ImageCaptureOutput]
+///   [VideoCaptureOutput]
 abstract class CameraOutput {
   /// Called when an output should be attached to a [CameraController].
   ///
@@ -320,7 +325,17 @@ abstract class CameraDevice {
 
 /// Controls a device's camera and provides access to camera features.
 ///
-/// Example usage to take a photo:
+/// This class takes a [device] and a list of [CameraOutput]s. After
+/// instantiation, [initialize] should be called before any other method.
+///
+/// After [initialize], calling [start] begins the flow of data from [device] to
+/// the [outputs]. Each output should contain additional methods that provide a
+/// preview widget, take a picture, or record a video.
+///
+/// [dispose] should be called when camera resources are no longer needed. Also,
+/// consider calling [dispose] when a user leaves the app.
+///
+/// Example usage to add an ImageCaptureOutput and take a photo:
 ///
 /// ```dart
 /// final List<CameraDevice> devices =
@@ -332,6 +347,7 @@ abstract class CameraDevice {
 /// final ImageCaptureOutput imageOutput = ImageCaptureOutput();
 /// final CameraController controller =
 /// CameraController(device: device, outputs: <CameraOutput>[PreviewOutput(), imageOutput]);
+/// // This should be awaited before calling any other methods.
 /// await controller.initialize();
 /// controller.start();
 ///
@@ -342,6 +358,11 @@ abstract class CameraDevice {
 /// controller.stop();
 /// controller.dispose();
 /// ```
+///
+/// See:
+///   [PreviewOutput]
+///   [ImageCaptureOutput]
+///   [VideoCaptureOutput]
 abstract class CameraController {
   /// Construct a [CameraController].
   factory CameraController({
@@ -366,7 +387,8 @@ abstract class CameraController {
 
   /// Initializes this controller and attaches the [outputs].
   ///
-  /// This should be awaited before calling any other methods.
+  /// This returned [Future] of this method should be AWAITED before calling any
+  /// other methods.
   Future<void> initialize();
 
   /// Start the flow of data from [device] to [outputs].
@@ -376,6 +398,8 @@ abstract class CameraController {
   Future<void> start();
 
   /// Stop the flow of data from [device] to [outputs].
+  ///
+  /// It is safe to call [start] again after calling this method.
   Future<void> stop();
 
   /// Release all resources held by [device] and detach all [outputs].
