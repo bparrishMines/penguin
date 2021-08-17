@@ -1,9 +1,9 @@
-#builders:
-#  referenceAstBuilder:
-#    import: 'package:reference_generator/builder.dart'
-#    builder_factories: ['referenceAstBuilder']
-#    build_extensions:
-#      .dart:
-#        - .reference_ast
-#    build_to: cache
-#    auto_apply: dependents
+builders:
+  referenceAstBuilder:
+    import: 'package:reference_generator/builder.dart'
+    builder_factories: ['referenceAstBuilder']
+    build_extensions:
+      .dart:
+        - .reference_ast
+    build_to: cache
+    auto_apply: dependents

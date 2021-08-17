@@ -4,6 +4,7 @@ import 'package:reference_generator/src/ast.dart';
 
 import 'generator.dart';
 
+// TODO: returnType casting
 String generateDart({
   required String template,
   required LibraryNode libraryNode,
@@ -35,6 +36,7 @@ String generateDart({
         parameterData['type'] =
             getTrueTypeName(constructorNode.parameters[i].type);
         parameterData['index'] = '${i + 1}';
+        parameterData['isNamed'] = constructorNode.parameters[i].isNamed;
         parameterData['argumentCasting'] = getArgumentCasting(
           type: constructorNode.parameters[i].type,
           index: i + 1,
@@ -52,7 +54,8 @@ String generateDart({
     for (MethodNode methodNode in classNode.staticMethods) {
       final Map<String, Object> methodData = <String, Object>{};
       methodData['name'] = methodNode.name;
-      methodData['returnsFuture'] = methodNode.returnType.dartName == 'Future';
+      methodData['returnsFuture'] = methodNode.returnType.isFuture;
+      methodData['returnType'] = getTrueTypeName(methodNode.returnType);
 
       final List<Map<String, Object>> parameters = <Map<String, Object>>[];
       for (int i = 0; i < methodNode.parameters.length; i++) {
@@ -60,6 +63,7 @@ String generateDart({
         parameterData['name'] = methodNode.parameters[i].name;
         parameterData['type'] = getTrueTypeName(methodNode.parameters[i].type);
         parameterData['index'] = '$i';
+        parameterData['isNamed'] = methodNode.parameters[i].isNamed;
         parameterData['argumentCasting'] = getArgumentCasting(
           type: methodNode.parameters[i].type,
           index: i,
@@ -77,7 +81,8 @@ String generateDart({
     for (MethodNode methodNode in classNode.methods) {
       final Map<String, Object> methodData = <String, Object>{};
       methodData['name'] = methodNode.name;
-      methodData['returnsFuture'] = methodNode.returnType.dartName == 'Future';
+      methodData['returnsFuture'] = methodNode.returnType.isFuture;
+      methodData['returnType'] = getTrueTypeName(methodNode.returnType);
 
       final List<Map<String, Object>> parameters = <Map<String, Object>>[];
       for (int i = 0; i < methodNode.parameters.length; i++) {
@@ -85,6 +90,7 @@ String generateDart({
         parameterData['name'] = methodNode.parameters[i].name;
         parameterData['type'] = getTrueTypeName(methodNode.parameters[i].type);
         parameterData['index'] = '$i';
+        parameterData['isNamed'] = methodNode.parameters[i].isNamed;
         parameterData['argumentCasting'] = getArgumentCasting(
           type: methodNode.parameters[i].type,
           index: i,
@@ -117,7 +123,6 @@ String generateDart({
       parameterData['argumentCasting'] = getArgumentCasting(
         type: functionNode.parameters[i].type,
         index: i,
-        generatedSymbol: '',
       );
 
       parameters.add(parameterData);
@@ -139,7 +144,6 @@ String generateDart({
 String getArgumentCasting({
   required TypeNode type,
   required int index,
-  String generatedSymbol = '\$',
 }) {
   final String dartName = dartTypeNameConversion(type.dartName);
 
@@ -180,7 +184,8 @@ String getTrueTypeName(TypeNode type) {
   final String dartName = dartTypeNameConversion(type.dartName);
 
   final String nullability = type.nullable ? '?' : '';
-  if (dartName == 'Map') return 'Map$nullability';
+  // TODO: Consequences?
+  // if (dartName == 'Map') return 'Map$nullability';
 
   final Iterable<String> typeArguments = type.typeArguments.map<String>(
     (TypeNode type) => getTrueTypeName(type),

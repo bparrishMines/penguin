@@ -31,11 +31,13 @@ class $$class_name$$ {
 
   final int $$parameter_name$$;
 
-  static Future<double> $$staticMethod_name$$(String $$parameter_name$$) {
+  static Future<double> $$staticMethod_name$$({
+    required String $$parameter_name$$,
+  }) {
     return _channel.$__staticMethod_name__($$parameter_name$$);
   }
 
-  Future<String> $$method_name$$(String $$parameter_name$$) {
+  Future<String> $$method_name$$({required String $$parameter_name$$}) {
     return _channel.$__method_name__(this, $$parameter_name$$);
   }
 }

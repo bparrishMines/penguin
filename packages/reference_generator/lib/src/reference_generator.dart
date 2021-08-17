@@ -97,29 +97,34 @@ class ReferenceAstBuilder extends Builder {
     //   ...classes,
     //   ...functions
     // };
+
     final Set<String> dartImports = <String>{
       libraryElement.source.uri.toString(),
     };
     final Set<String> platformImports = <String>{};
+
+    final List<ClassNode> classNodes = classes
+        .map<ClassNode>(
+          (ClassElement classElement) => _toClassNode(
+            classElement: classElement,
+            dartImports: dartImports,
+            platformImports: platformImports,
+          ),
+        )
+        .toList();
+    final List<FunctionNode> functionNodes = functions
+        .map<FunctionNode>(
+          (TypeAliasElement typeAliasElement) => _toFunctionNode(
+            typeAliasElement: typeAliasElement,
+            dartImports: dartImports,
+            platformImports: platformImports,
+          ),
+        )
+        .toList();
+
     return LibraryNode(
-      classes: classes
-          .map<ClassNode>(
-            (ClassElement classElement) => _toClassNode(
-              classElement: classElement,
-              dartImports: dartImports,
-              platformImports: platformImports,
-            ),
-          )
-          .toList(),
-      functions: functions
-          .map<FunctionNode>(
-            (TypeAliasElement typeAliasElement) => _toFunctionNode(
-              typeAliasElement: typeAliasElement,
-              dartImports: dartImports,
-              platformImports: platformImports,
-            ),
-          )
-          .toList(),
+      classes: classNodes,
+      functions: functionNodes,
       dartImports: dartImports.toList(),
       platformImports: platformImports.toList(),
     );
@@ -134,6 +139,8 @@ class ReferenceAstBuilder extends Builder {
     // current library.
     final ClassReference reference =
         _tryGetClassReference(classElement.thisType)!;
+
+    platformImports.add(reference.platformImport);
     return ClassNode(
       dartName: classElement.name,
       platformName: reference.platformImport,
@@ -264,7 +271,7 @@ class ReferenceAstBuilder extends Builder {
       name: typeAliasElement.name,
       channelName: _getFunctionReferenceFromTypeAlias(typeAliasElement).channel,
       returnType: _toTypeNode(
-        type: functionType,
+        type: functionType.returnType,
         dartImports: dartImports,
         platformImports: platformImports,
       ),
@@ -338,6 +345,9 @@ class ReferenceAstBuilder extends Builder {
       // Has source because it has a type reference.
       dartImports.add(nonFutureType.element!.source!.uri.toString());
       platformImports.add(classReference.platformImport);
+    } else {
+      final String? import = nonFutureType.element?.source?.uri.toString();
+      if (import != null) dartImports.add(import);
     }
 
     return TypeNode(

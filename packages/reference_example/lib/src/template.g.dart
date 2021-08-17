@@ -121,7 +121,8 @@ class $$$class_name$$Channel extends TypeChannel<$$class_name$$> {
 
   /*iterate staticMethods staticMethod*/
   /*if returnsFuture*/
-  Future<double> $__staticMethod_name__(
+  Future< /*replace staticMethod_returnType*/ double /**/ >
+      $__staticMethod_name__(
     /*iterate parameters parameter*/ /*replace parameter_type*/ String
         /**/ $$parameter_name$$,
     /**/
@@ -138,7 +139,7 @@ class $$$class_name$$Channel extends TypeChannel<$$class_name$$> {
 
   /*iterate methods method*/
   /*if returnsFuture*/
-  Future<String> $__method_name__(
+  Future< /*replace method_returnType*/ String /**/ > $__method_name__(
     $$class_name$$ $instance,
     /*iterate parameters parameter*/ /*replace parameter_type*/ String
         /**/ $$parameter_name$$,
@@ -184,7 +185,9 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$class_name$$> {
     /**/
   ) {
     return $$class_name$$.$$staticMethod_name$$(
-      /*iterate parameters parameter*/ $$parameter_name$$, /**/
+      /*iterate parameters parameter*/
+      /*if isNamed*/ $$parameter_name$$: /**/ $$parameter_name$$,
+      /**/
     ) as /*replace staticMethod_returnType*/ double /**/;
   }
   /**/
@@ -199,7 +202,9 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$class_name$$> {
     /**/
   ) {
     return $instance.$$method_name$$(
-      /*iterate parameters parameter*/ $$parameter_name$$, /**/
+      /*iterate parameters parameter*/
+      /*if isNamed*/ $$parameter_name$$: /**/ $$parameter_name$$,
+      /**/
     ) as /*replace method_returnType*/ String /**/;
   }
   /**/
