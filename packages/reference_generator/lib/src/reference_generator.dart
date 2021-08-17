@@ -347,8 +347,9 @@ class ReferenceAstBuilder extends Builder {
       dartImports.add(nonFutureType.element!.source!.uri.toString());
       platformImports.add(classReference.platformImport);
     } else {
-      final String? import = nonFutureType.element?.source?.uri.toString();
-      if (import != null && nonFutureType.element!.source!.isInSystemLibrary) {
+      // TODO: improve logic?
+      final String? import = nonFutureType.element?.source?.shortName.toString();
+      if (import != null && !nonFutureType.element!.source!.isInSystemLibrary) {
         dartImports.add(import);
       }
     }

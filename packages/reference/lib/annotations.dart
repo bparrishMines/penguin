@@ -51,18 +51,4 @@ class ReferenceParameter {
 
   /// Ignore this parameter.
   final bool ignore;
-}
 
-// /// Annotation used with reference_generator to generate Java code.
-// class JavaReference {
-//   /// Documentation
-//   const JavaReference({
-//     required this.channel,
-//     required this.import,
-//     required this.className,
-//   });
-//
-//   final String channel;
-//   final String import;
-//   final String className;
-// }
