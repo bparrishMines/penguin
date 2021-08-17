@@ -39,7 +39,7 @@ String generateDart({
         parameterData['isNamed'] = constructorNode.parameters[i].isNamed;
         parameterData['argumentCasting'] = getArgumentCasting(
           type: constructorNode.parameters[i].type,
-          index: i + 1,
+          input: 'arguments[${i + 1}]',
         );
 
         parameters.add(parameterData);
@@ -66,7 +66,7 @@ String generateDart({
         parameterData['isNamed'] = methodNode.parameters[i].isNamed;
         parameterData['argumentCasting'] = getArgumentCasting(
           type: methodNode.parameters[i].type,
-          index: i,
+          input: 'arguments[$i]',
         );
 
         parameters.add(parameterData);
@@ -93,7 +93,7 @@ String generateDart({
         parameterData['isNamed'] = methodNode.parameters[i].isNamed;
         parameterData['argumentCasting'] = getArgumentCasting(
           type: methodNode.parameters[i].type,
-          index: i,
+          input: 'arguments[$i]',
         );
 
         parameters.add(parameterData);
@@ -122,7 +122,7 @@ String generateDart({
       parameterData['index'] = '$i';
       parameterData['argumentCasting'] = getArgumentCasting(
         type: functionNode.parameters[i].type,
-        index: i,
+        input: 'arguments[$i]',
       );
 
       parameters.add(parameterData);
@@ -143,41 +143,88 @@ String generateDart({
 
 String getArgumentCasting({
   required TypeNode type,
-  required int index,
+  required String input,
 }) {
   final String dartName = dartTypeNameConversion(type.dartName);
 
-  if ((dartName != 'List' && dartName != 'Map') || type.typeArguments.isEmpty) {
+  // if ((dartName != 'List' && dartName != 'Map') || type.typeArguments.isEmpty) {
+  //   final String typeName = getTrueTypeName(type);
+  //   return '$input as $typeName';
+  // }
+
+  if (dartName == 'List' && type.typeArguments.isNotEmpty) {
+    return _getListArgumentCasting(type: type, input: input);
+    //return '($input as List<dynamic>).map((_) => $typeCast).toList()';
+  } else if (dartName == 'Map' && type.typeArguments.isNotEmpty) {
+    return _getMapArgumentCasting(type: type, input: input);
+    //return '($input as Map<dynamic, dynamic>).map((_, _a) => MapEntry(_ as $type, _a as int))';
+  } else {
     final String typeName = getTrueTypeName(type);
-    return 'arguments[$index] as $typeName,';
+    return '$input as $typeName';
   }
 
-  if (dartName == 'List') {
-    final String typeCast = _getListArgumentCasting(type.typeArguments.first);
-    return '(arguments[$index] as List<dynamic>).map((_) => $typeCast).toList(),';
-  } else if (dartName == 'Map') {
-    return 'arguments[$index] as Map,';
-  }
-
-  throw UnimplementedError();
+  //throw UnimplementedError();
 }
 
-String _getListArgumentCasting(TypeNode type) {
-  final String dartName = dartTypeNameConversion(type.dartName);
+String _getListArgumentCasting({
+  required TypeNode type,
+  required String input,
+}) {
+  //final String dartName = dartTypeNameConversion(type.dartName);
 
-  if ((dartName != 'List' && dartName != 'Map') || type.typeArguments.isEmpty) {
-    final String typeName = getTrueTypeName(type);
-    return '_ as $typeName';
-  }
+  // if ((dartName != 'List' && dartName != 'Map') || type.typeArguments.isEmpty) {
+  //   final String typeName = getTrueTypeName(type);
+  //   return '_ as $typeName';
+  // }
 
-  if (dartName == 'List') {
-    final String typeCast = _getListArgumentCasting(
-      type.typeArguments.first,
-    );
-    return '(_ as List<dynamic>).map((_) => $typeCast).toList()';
-  }
+  final String typeCast =
+      getArgumentCasting(type: type.typeArguments.first, input: '_');
+  // if (dartName == 'List') {
+  //   typeCast = _getListArgumentCasting(type.typeArguments.first);
+  // } else if (dartName == 'Map') {
+  //   typeCast = _getMapArgumentCasting(
+  //     type.typeArguments.first,
+  //     type.typeArguments[1],
+  //   );
+  // }
 
-  throw UnimplementedError();
+  return '($input as List<dynamic>).map((_) => $typeCast).toList()';
+}
+
+String _getMapArgumentCasting({
+  required TypeNode type,
+  required String input,
+}) {
+  // final String keyDartName = dartTypeNameConversion(keyType.dartName);
+  // final String valueDartName = dartTypeNameConversion(valueType.dartName);
+  //
+  // String keyTypeCast = '_ as ${getTrueTypeName(keyType)}';
+  // String valueTypeCast = '__ as ${getTrueTypeName(valueType)}';
+
+  // if ((dartName != 'List' && dartName != 'Map') || type.typeArguments.isEmpty) {
+  //   final String typeName = getTrueTypeName(type);
+  //   return '_ as $typeName';
+  // }
+
+  // if (keyDartName == 'List') {
+  //   final String typeCast = _getListArgumentCasting(
+  //     type.typeArguments.first,
+  //   );
+  //   return '(_ as List<dynamic>).map((_) => $typeCast).toList()';
+  // }
+
+  final String keyTypeCast = getArgumentCasting(
+    type: type.typeArguments.first,
+    input: '_',
+  );
+  final String valueTypeCast = getArgumentCasting(
+    type: type.typeArguments[1],
+    input: '__',
+  );
+
+  return '($input as Map<dynamic, dynamic>).map((_, __) => MapEntry($keyTypeCast, $valueTypeCast))';
+
+  //throw UnimplementedError();
 }
 
 String getTrueTypeName(TypeNode type) {

@@ -77,8 +77,8 @@ class $$$function_name$$Handler implements TypeChannelHandler<Object> {
     final Function function = () => instance(
           /*iterate parameters parameter*/
           /*replace parameter_argumentCasting*/
-          arguments[0] as String,
-          /**/
+          arguments[0] as String
+          /**/,
           /**/
         );
     return function();
@@ -224,8 +224,8 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$class_name$$> {
           messenger,
           /*iterate parameters parameter*/
           /*replace parameter_argumentCasting*/
-          arguments[0] as String,
-          /**/
+          arguments[0] as String
+          /**/,
           /**/
         );
       /**/
@@ -252,8 +252,8 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$class_name$$> {
           messenger,
           /*iterate parameters parameter*/
           /*replace parameter_argumentCasting*/
-          arguments[1] as int,
-          /**/
+          arguments[1] as int
+          /**/,
           /**/
         );
       /**/
@@ -281,8 +281,8 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$class_name$$> {
           instance,
           /*iterate parameters parameter*/
           /*replace parameter_argumentCasting*/
-          arguments[0] as String,
-          /**/
+          arguments[0] as String
+          /**/,
           /**/
         );
       /**/

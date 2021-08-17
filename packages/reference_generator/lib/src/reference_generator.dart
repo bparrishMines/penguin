@@ -348,11 +348,10 @@ class ReferenceAstBuilder extends Builder {
       platformImports.add(classReference.platformImport);
     } else {
       // TODO: improve logic?
-      final String? import =
-          nonFutureType.element?.source?.shortName.toString();
-      if (import != null && !nonFutureType.element!.source!.isInSystemLibrary) {
-        dartImports.add(import);
-      }
+      String? import =
+          nonFutureType.element?.library?.source.shortName.toString();
+      import ??= nonFutureType.element?.source?.toString();
+      if (import != null) dartImports.add(import);
     }
 
     return TypeNode(
