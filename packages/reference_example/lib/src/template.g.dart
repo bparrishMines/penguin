@@ -227,7 +227,8 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$class_name$$> {
       /*iterate staticMethods staticMethod*/
       /*if! returnsFuture*/
       case r'__staticMethod_name__':
-        return $__staticMethod_name__(
+        /*if! returnsVoid*/
+        return /**/ $__staticMethod_name__(
           messenger,
           /*iterate parameters parameter*/
           /*replace parameter_argumentCasting*/
@@ -235,6 +236,8 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$class_name$$> {
           /**/,
           /**/
         );
+        /*if returnsVoid*/ return null;
+      /**/
       /**/
       /**/
     }
@@ -284,7 +287,9 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$class_name$$> {
       /*iterate methods method*/
       /*if! returnsFuture*/
       case r'__method_name__':
-        return $__method_name__(
+        /*if! returnsVoid*/
+        return /**/
+            $__method_name__(
           instance,
           /*iterate parameters parameter*/
           /*replace parameter_argumentCasting*/
@@ -292,6 +297,8 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$class_name$$> {
           /**/,
           /**/
         );
+        /*if returnsVoid*/ return null;
+      /**/
       /**/
       /**/
     }
