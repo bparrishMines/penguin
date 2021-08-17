@@ -51,4 +51,4 @@ class ReferenceParameter {
 
   /// Ignore this parameter.
   final bool ignore;
-
+}

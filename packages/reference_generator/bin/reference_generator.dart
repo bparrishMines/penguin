@@ -100,6 +100,21 @@ void main(List<String> arguments) async {
     jsonDecode(astInputFile.readAsStringSync()),
   );
 
+  final Set<String> channelNames = <String>{};
+  final Set<String> classNames = <String>{};
+  for (ClassNode classNode in libraryNode.classes) {
+    if (channelNames.contains(classNode.channelName)) {
+      print('WARNING: Repeated channel name of: ${classNode.channelName}');
+    }
+
+    if (classNames.contains(classNode.platformName)) {
+      print('WARNING: Repeated class name of: ${classNode.platformName}');
+    }
+
+    channelNames.add(classNode.channelName);
+    classNames.add(classNode.platformName);
+  }
+
   if (options.dartOut != null) {
     final HttpClientRequest request = await HttpClient().getUrl(
       Uri.parse(

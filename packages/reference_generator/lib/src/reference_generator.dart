@@ -143,7 +143,7 @@ class ReferenceAstBuilder extends Builder {
     platformImports.add(reference.platformImport);
     return ClassNode(
       dartName: classElement.name,
-      platformName: reference.platformImport,
+      platformName: reference.platformClassName,
       channelName: reference.channel,
       constructors: classElement.constructors
           .where((ConstructorElement element) => !element.isPrivate)
@@ -343,12 +343,13 @@ class ReferenceAstBuilder extends Builder {
     final ClassReference? classReference = _tryGetClassReference(nonFutureType);
     final bool isReference = classReference != null;
     if (isReference) {
-      // Has source because it has a type reference.
+      // Has source because it has a class reference.
       dartImports.add(nonFutureType.element!.source!.uri.toString());
       platformImports.add(classReference.platformImport);
     } else {
       // TODO: improve logic?
-      final String? import = nonFutureType.element?.source?.shortName.toString();
+      final String? import =
+          nonFutureType.element?.source?.shortName.toString();
       if (import != null && !nonFutureType.element!.source!.isInSystemLibrary) {
         dartImports.add(import);
       }
