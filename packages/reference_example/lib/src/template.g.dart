@@ -184,11 +184,13 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$class_name$$> {
     /*replace parameter_type*/ String /**/ $$parameter_name$$,
     /**/
   ) {
-    return $$class_name$$.$$staticMethod_name$$(
+    /*if! returnsVoid*/
+    return /**/
+        $$class_name$$.$$staticMethod_name$$(
       /*iterate parameters parameter*/
       /*if isNamed*/ $$parameter_name$$: /**/ $$parameter_name$$,
       /**/
-    ) as /*replace staticMethod_returnType*/ double /**/;
+    ) /*if! returnsVoid*/ as /*replace staticMethod_returnType*/ double /**/ /**/;
   }
   /**/
   /**/
@@ -201,11 +203,16 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$class_name$$> {
     /*replace parameter_type*/ String /**/ $$parameter_name$$,
     /**/
   ) {
-    return $instance.$$method_name$$(
+    /*if! returnsVoid*/
+    return
+        /**/
+        $instance.$$method_name$$(
       /*iterate parameters parameter*/
       /*if isNamed*/ $$parameter_name$$: /**/ $$parameter_name$$,
       /**/
-    ) as /*replace method_returnType*/ String /**/;
+    ) /*if! returnsVoid*/
+            as /*replace method_returnType*/ String /**/
+        /**/;
   }
   /**/
   /**/
