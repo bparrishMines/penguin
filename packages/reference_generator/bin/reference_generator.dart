@@ -121,7 +121,6 @@ void main(List<String> arguments) async {
       generateDart(
         template: dartTemplate,
         libraryNode: libraryNode,
-        imports: options.dartImports ?? <String>[],
       ),
     );
   }

@@ -12,7 +12,7 @@ import /*replace :from='template.dart' value*/ 'template.dart' /**/;
 /*iterate functions function*/
 class $$$function_name$$Channel extends TypeChannel<Object> {
   $$$function_name$$Channel(TypeChannelMessenger messenger)
-      : super(messenger, '__function_channel__');
+      : super(messenger, r'__function_channel__');
 
   Future<PairedInstance?> $create(
     $$function_name$$ $instance, {
@@ -98,7 +98,7 @@ class $$$function_name$$Handler implements TypeChannelHandler<Object> {
 /*iterate classes class*/
 class $$$class_name$$Channel extends TypeChannel<$$class_name$$> {
   $$$class_name$$Channel(TypeChannelMessenger messenger)
-      : super(messenger, '__class_channel__');
+      : super(messenger, r'__class_channel__');
 
   /*iterate constructors constructor*/
   Future<PairedInstance?> $create$__constructor_name__(
@@ -111,7 +111,7 @@ class $$$class_name$$Channel extends TypeChannel<$$class_name$$> {
     return createNewInstancePair(
       $instance,
       <Object?>[
-        '__constructor_name__',
+        r'__constructor_name__',
         /*iterate parameters parameter*/ $$parameter_name$$, /**/
       ],
       owner: $owner,
@@ -128,7 +128,7 @@ class $$$class_name$$Channel extends TypeChannel<$$class_name$$> {
     /**/
   ) async {
     return await sendInvokeStaticMethod(
-      '__staticMethod_name__',
+      r'__staticMethod_name__',
       <Object?>[
         /*iterate parameters parameter*/ $$parameter_name$$, /**/
       ],
@@ -147,7 +147,7 @@ class $$$class_name$$Channel extends TypeChannel<$$class_name$$> {
   ) async {
     return await sendInvokeMethod(
       $instance,
-      '__method_name__',
+      r'__method_name__',
       <Object?>[
         /*iterate parameters parameter*/ $$parameter_name$$, /**/
       ],
@@ -219,7 +219,7 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$class_name$$> {
     switch (methodName) {
       /*iterate staticMethods staticMethod*/
       /*if! returnsFuture*/
-      case '__staticMethod_name__':
+      case r'__staticMethod_name__':
         return $__staticMethod_name__(
           messenger,
           /*iterate parameters parameter*/
@@ -247,7 +247,7 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$class_name$$> {
     final String constructorName = arguments[0] as String;
     switch (constructorName) {
       /*iterate constructors constructor*/
-      case '__constructor_name__':
+      case r'__constructor_name__':
         return $create$__constructor_name__(
           messenger,
           /*iterate parameters parameter*/
@@ -276,7 +276,7 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$class_name$$> {
     switch (methodName) {
       /*iterate methods method*/
       /*if! returnsFuture*/
-      case '__method_name__':
+      case r'__method_name__':
         return $__method_name__(
           instance,
           /*iterate parameters parameter*/

@@ -227,6 +227,7 @@ class ReferenceAstBuilder extends Builder {
     return ConstructorNode(
       name: constructorElement.name,
       parameters: parameters.toList(),
+      isNamed: constructorElement.name != '',
     );
   }
 
@@ -347,7 +348,9 @@ class ReferenceAstBuilder extends Builder {
       platformImports.add(classReference.platformImport);
     } else {
       final String? import = nonFutureType.element?.source?.uri.toString();
-      if (import != null) dartImports.add(import);
+      if (import != null && nonFutureType.element!.source!.isInSystemLibrary) {
+        dartImports.add(import);
+      }
     }
 
     return TypeNode(

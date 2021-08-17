@@ -8,12 +8,11 @@ import 'generator.dart';
 String generateDart({
   required String template,
   required LibraryNode libraryNode,
-  required List<String> imports,
 }) {
   final Map<String, Object> data = <String, Object>{};
 
   final List<Map<String, Object>> importData = <Map<String, Object>>[];
-  for (String import in imports) {
+  for (String import in libraryNode.dartImports) {
     importData.add(<String, Object>{'value': import});
   }
   data['imports'] = importData;
@@ -28,6 +27,7 @@ String generateDart({
     for (ConstructorNode constructorNode in classNode.constructors) {
       final Map<String, Object> constructorData = <String, Object>{};
       constructorData['name'] = constructorNode.name;
+      constructorData['isNamed'] = constructorNode.isNamed;
 
       final List<Map<String, Object>> parameters = <Map<String, Object>>[];
       for (int i = 0; i < constructorNode.parameters.length; i++) {

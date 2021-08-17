@@ -156,13 +156,18 @@ class FunctionNode {
 
 @JsonSerializable()
 class ConstructorNode {
-  ConstructorNode({required this.name, required this.parameters});
+  ConstructorNode({
+    required this.name,
+    required this.parameters,
+    required this.isNamed,
+  });
 
   factory ConstructorNode.fromJson(Map<String, dynamic> json) =>
       _$ConstructorNodeFromJson(json);
 
   final String name;
   final List<ParameterNode> parameters;
+  final bool isNamed;
 
   Map<String, dynamic> toJson() => _$ConstructorNodeToJson(this);
 

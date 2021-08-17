@@ -135,6 +135,7 @@ ConstructorNode _$ConstructorNodeFromJson(Map<String, dynamic> json) {
     parameters: (json['parameters'] as List<dynamic>)
         .map((e) => ParameterNode.fromJson(e as Map<String, dynamic>))
         .toList(),
+    isNamed: json['isNamed'] as bool,
   );
 }
 
@@ -142,4 +143,5 @@ Map<String, dynamic> _$ConstructorNodeToJson(ConstructorNode instance) =>
     <String, dynamic>{
       'name': instance.name,
       'parameters': instance.parameters,
+      'isNamed': instance.isNamed,
     };
