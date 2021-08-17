@@ -58,6 +58,7 @@ String generateDart({
       methodData['returnType'] = getTrueTypeName(methodNode.returnType);
       methodData['returnsVoid'] = methodNode.returnType.dartName == 'void';
       methodData['casting'] = (String input) {
+        if (methodNode.returnType.dartName == 'void') return input;
         return getArgumentCasting(type: methodNode.returnType, input: input);
       };
 
@@ -89,6 +90,7 @@ String generateDart({
       methodData['returnType'] = getTrueTypeName(methodNode.returnType);
       methodData['returnsVoid'] = methodNode.returnType.dartName == 'void';
       methodData['casting'] = (String input) {
+        if (methodNode.returnType.dartName == 'void') return input;
         return getArgumentCasting(type: methodNode.returnType, input: input);
       };
 
