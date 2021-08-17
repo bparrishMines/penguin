@@ -4,25 +4,15 @@ import 'package:reference/annotations.dart';
 
 import 'template.g.dart';
 
-@Reference(r'github.penguin/template/template/$$function_name$$')
+@FunctionReference(r'github.penguin/template/template/$$function_name$$')
 typedef $$function_name$$ = void Function(String value);
 
-@JavaReference(
-  channel: r'github.penguin/template/template/$$class_name$$',
-  import: 'com.example.reference_example.__class_name__Proxy',
-  className: '__class_name__Proxy',
+@ClassReference(
+  channel: r'__channel_name__',
+  platformImport: 'com.example.reference_example.__class_name__Proxy',
+  platformClassName: '__class_name__Proxy',
 )
 class $$class_name$$ {
-  $$class_name$$({required this.$$parameter_name$$, bool create = true}) {
-    if (create) {
-      _channel.$create(
-        this,
-        $owner: true,
-        $$parameter_name$$: $$parameter_name$$,
-      );
-    }
-  }
-
   $$class_name$$.$$constructor_name$$({
     required this.$$parameter_name$$,
     bool create = true,

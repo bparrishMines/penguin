@@ -2,10 +2,8 @@
 
 import 'package:reference/reference.dart';
 /*iterate imports import*/
-import /*replace :from='dart:core' value*/ 'dart:core' /**/;
+import /*replace :from='template.dart' value*/ 'template.dart' /**/;
 /**/
-
-import 'template.dart';
 
 // **************************************************************************
 // ReferenceGenerator
@@ -103,25 +101,6 @@ class $$$class_name$$Channel extends TypeChannel<$$class_name$$> {
       : super(messenger, '__class_channel__');
 
   /*iterate constructors constructor*/
-  Future<PairedInstance?> $create(
-    $$class_name$$ $instance, {
-    required bool $owner,
-    /*iterate parameters parameter*/
-    required /*replace parameter_type*/ int /**/ $$parameter_name$$,
-    /**/
-  }) {
-    return createNewInstancePair(
-      $instance,
-      <Object?>[
-        '',
-        /*iterate parameters parameter*/ $$parameter_name$$, /**/
-      ],
-      owner: $owner,
-    );
-  }
-  /**/
-
-  /*iterate constructors constructor*/
   Future<PairedInstance?> $create$__constructor_name__(
     $$class_name$$ $instance, {
     required bool $owner,
@@ -181,28 +160,16 @@ class $$$class_name$$Channel extends TypeChannel<$$class_name$$> {
 /*iterate classes class*/
 class $$$class_name$$Handler implements TypeChannelHandler<$$class_name$$> {
   /*iterate constructors constructor*/
-  $$class_name$$ $create(
-    TypeChannelMessenger messenger,
-    /*iterate parameters parameter*/
-    /*replace parameter_type*/ int /**/ $$parameter_name$$,
-    /**/
-  ) {
-    return $$class_name$$(
-      $$parameter_name$$: $$parameter_name$$,
-      create: false,
-    );
-  }
-  /**/
-
-  /*iterate constructors constructor*/
   $$class_name$$ $create$__constructor_name__(
     TypeChannelMessenger messenger,
     /*iterate parameters parameter*/
     /*replace parameter_type*/ int /**/ $$parameter_name$$,
     /**/
   ) {
-    return $$class_name$$.$$constructor_name$$(
-      $$parameter_name$$: $$parameter_name$$,
+    return $$class_name$$ /*if isNamed*/ . /**/ $$constructor_name$$(
+      /*iterate parameters parameter*/
+      /*if isNamed*/ $$parameter_name$$: /**/ $$parameter_name$$,
+      /**/
       create: false,
     );
   }
@@ -210,20 +177,22 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$class_name$$> {
 
   /*iterate staticMethods staticMethod*/
   /*if! returnsFuture*/
-  double $__staticMethod_name__(
+  /*replace staticMethod_returnType*/ double /**/ $__staticMethod_name__(
     TypeChannelMessenger messenger,
     /*iterate parameters parameter*/
     /*replace parameter_type*/ String /**/ $$parameter_name$$,
     /**/
   ) {
-    return $$class_name$$.$$staticMethod_name$$($$parameter_name$$) as double;
+    return $$class_name$$.$$staticMethod_name$$(
+      /*iterate parameters parameter*/ $$parameter_name$$, /**/
+    ) as /*replace staticMethod_returnType*/ double /**/;
   }
   /**/
   /**/
 
   /*iterate methods method*/
   /*if! returnsFuture*/
-  String $__method_name__(
+  /*replace method_returnType*/ String /**/ $__method_name__(
     $$class_name$$ $instance,
     /*iterate parameters parameter*/
     /*replace parameter_type*/ String /**/ $$parameter_name$$,
@@ -231,7 +200,7 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$class_name$$> {
   ) {
     return $instance.$$method_name$$(
       /*iterate parameters parameter*/ $$parameter_name$$, /**/
-    ) as String;
+    ) as /*replace method_returnType*/ String /**/;
   }
   /**/
   /**/
@@ -272,17 +241,6 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$class_name$$> {
   ) {
     final String constructorName = arguments[0] as String;
     switch (constructorName) {
-      /*iterate constructors constructor*/
-      case '':
-        return $create(
-          messenger,
-          /*iterate parameters parameter*/
-          /*replace parameter_argumentCasting*/
-          arguments[1] as int,
-          /**/
-          /**/
-        );
-      /**/
       /*iterate constructors constructor*/
       case '__constructor_name__':
         return $create$__constructor_name__(

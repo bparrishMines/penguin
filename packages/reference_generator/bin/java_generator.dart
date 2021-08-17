@@ -25,8 +25,8 @@ String generateJava({
   final List<Map<String, Object>> classes = <Map<String, Object>>[];
   for (ClassNode classNode in libraryNode.classes) {
     final Map<String, Object> classData = <String, Object>{};
-    classData['name'] = classNode.name;
-    classData['channel'] = classNode.channelName!;
+    classData['name'] = classNode.platformName;
+    classData['channel'] = classNode.channelName;
 
     final List<Map<String, Object>> constructors = <Map<String, Object>>[];
     for (ConstructorNode constructorNode in classNode.constructors) {
@@ -55,7 +55,7 @@ String generateJava({
     for (MethodNode methodNode in classNode.staticMethods) {
       final Map<String, Object> methodData = <String, Object>{};
       methodData['name'] = methodNode.name;
-      methodData['returnsFuture'] = methodNode.returnType.name == 'Future';
+      methodData['returnsFuture'] = methodNode.returnType.platformName == 'Future';
 
       final List<Map<String, Object>> parameters = <Map<String, Object>>[];
       for (int i = 0; i < methodNode.parameters.length; i++) {
@@ -79,7 +79,7 @@ String generateJava({
     for (MethodNode methodNode in classNode.methods) {
       final Map<String, Object> methodData = <String, Object>{};
       methodData['name'] = methodNode.name;
-      methodData['returnsFuture'] = methodNode.returnType.name == 'Future';
+      methodData['returnsFuture'] = methodNode.returnType.platformName == 'Future';
 
       final List<Map<String, Object>> parameters = <Map<String, Object>>[];
       for (int i = 0; i < methodNode.parameters.length; i++) {
@@ -108,7 +108,7 @@ String generateJava({
     final Map<String, Object> functionData = <String, Object>{};
     functionData['name'] = functionNode.name;
     functionData['channel'] = functionNode.channelName;
-    functionData['returnsFuture'] = functionNode.returnType.name == 'Future';
+    functionData['returnsFuture'] = functionNode.returnType.platformName == 'Future';
 
     final List<Map<String, Object>> parameters = <Map<String, Object>>[];
     for (int i = 0; i < functionNode.parameters.length; i++) {
@@ -136,23 +136,19 @@ String generateJava({
   return runGenerator(templateQueue, Queue<Token>(), StringBuffer(), data);
 }
 
-String getTrueTypeName(ReferenceType type, Map<String, String> typeAliases) {
+String getTrueTypeName(TypeNode type, Map<String, String> typeAliases) {
   final String javaName;
-  if (typeAliases.containsKey(type.name)) {
-    javaName = typeAliases[type.name]!;
+  if (typeAliases.containsKey(type.platformName)) {
+    javaName = typeAliases[type.platformName]!;
   } else {
-    javaName = javaTypeNameConversion(type.name);
+    javaName = javaTypeNameConversion(type.platformName);
   }
 
   final Iterable<String> typeArguments = type.typeArguments.map<String>(
-    (ReferenceType type) => getTrueTypeName(type, typeAliases),
+    (TypeNode type) => getTrueTypeName(type, typeAliases),
   );
 
-  if (type.codeGeneratedType && typeArguments.isEmpty) {
-    return '\$$javaName';
-  } else if (type.codeGeneratedType && typeArguments.isNotEmpty) {
-    return '\$$javaName<${typeArguments.join(',')}>';
-  } else if (!type.codeGeneratedType && typeArguments.isNotEmpty) {
+  if (typeArguments.isNotEmpty) {
     return '$javaName<${typeArguments.join(',')}>';
   }
 

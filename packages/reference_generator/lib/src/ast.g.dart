@@ -14,6 +14,11 @@ LibraryNode _$LibraryNodeFromJson(Map<String, dynamic> json) {
     functions: (json['functions'] as List<dynamic>)
         .map((e) => FunctionNode.fromJson(e as Map<String, dynamic>))
         .toList(),
+    dartImports:
+        (json['dartImports'] as List<dynamic>).map((e) => e as String).toList(),
+    platformImports: (json['platformImports'] as List<dynamic>)
+        .map((e) => e as String)
+        .toList(),
   );
 }
 
@@ -21,12 +26,15 @@ Map<String, dynamic> _$LibraryNodeToJson(LibraryNode instance) =>
     <String, dynamic>{
       'classes': instance.classes,
       'functions': instance.functions,
+      'dartImports': instance.dartImports,
+      'platformImports': instance.platformImports,
     };
 
 ClassNode _$ClassNodeFromJson(Map<String, dynamic> json) {
   return ClassNode(
-    name: json['name'] as String,
-    channelName: json['channelName'] as String?,
+    dartName: json['dartName'] as String,
+    platformName: json['platformName'] as String,
+    channelName: json['channelName'] as String,
     methods: (json['methods'] as List<dynamic>)
         .map((e) => MethodNode.fromJson(e as Map<String, dynamic>))
         .toList(),
@@ -40,7 +48,8 @@ ClassNode _$ClassNodeFromJson(Map<String, dynamic> json) {
 }
 
 Map<String, dynamic> _$ClassNodeToJson(ClassNode instance) => <String, dynamic>{
-      'name': instance.name,
+      'dartName': instance.dartName,
+      'platformName': instance.platformName,
       'channelName': instance.channelName,
       'methods': instance.methods,
       'staticMethods': instance.staticMethods,
@@ -50,8 +59,7 @@ Map<String, dynamic> _$ClassNodeToJson(ClassNode instance) => <String, dynamic>{
 MethodNode _$MethodNodeFromJson(Map<String, dynamic> json) {
   return MethodNode(
     name: json['name'] as String,
-    returnType:
-        ReferenceType.fromJson(json['returnType'] as Map<String, dynamic>),
+    returnType: TypeNode.fromJson(json['returnType'] as Map<String, dynamic>),
     parameters: (json['parameters'] as List<dynamic>)
         .map((e) => ParameterNode.fromJson(e as Map<String, dynamic>))
         .toList(),
@@ -68,7 +76,8 @@ Map<String, dynamic> _$MethodNodeToJson(MethodNode instance) =>
 ParameterNode _$ParameterNodeFromJson(Map<String, dynamic> json) {
   return ParameterNode(
     name: json['name'] as String,
-    type: ReferenceType.fromJson(json['type'] as Map<String, dynamic>),
+    type: TypeNode.fromJson(json['type'] as Map<String, dynamic>),
+    isNamed: json['isNamed'] as bool,
   );
 }
 
@@ -76,34 +85,35 @@ Map<String, dynamic> _$ParameterNodeToJson(ParameterNode instance) =>
     <String, dynamic>{
       'name': instance.name,
       'type': instance.type,
+      'isNamed': instance.isNamed,
     };
 
-ReferenceType _$ReferenceTypeFromJson(Map<String, dynamic> json) {
-  return ReferenceType(
-    name: json['name'] as String,
+TypeNode _$TypeNodeFromJson(Map<String, dynamic> json) {
+  return TypeNode(
+    dartName: json['dartName'] as String,
+    platformName: json['platformName'] as String,
     nullable: json['nullable'] as bool,
-    codeGeneratedType: json['codeGeneratedType'] as bool,
     typeArguments: (json['typeArguments'] as List<dynamic>)
-        .map((e) => ReferenceType.fromJson(e as Map<String, dynamic>))
+        .map((e) => TypeNode.fromJson(e as Map<String, dynamic>))
         .toList(),
     functionType: json['functionType'] as bool,
+    isFuture: json['isFuture'] as bool,
   );
 }
 
-Map<String, dynamic> _$ReferenceTypeToJson(ReferenceType instance) =>
-    <String, dynamic>{
-      'name': instance.name,
+Map<String, dynamic> _$TypeNodeToJson(TypeNode instance) => <String, dynamic>{
+      'dartName': instance.dartName,
+      'platformName': instance.platformName,
       'nullable': instance.nullable,
-      'codeGeneratedType': instance.codeGeneratedType,
       'functionType': instance.functionType,
+      'isFuture': instance.isFuture,
       'typeArguments': instance.typeArguments,
     };
 
 FunctionNode _$FunctionNodeFromJson(Map<String, dynamic> json) {
   return FunctionNode(
     name: json['name'] as String,
-    returnType:
-        ReferenceType.fromJson(json['returnType'] as Map<String, dynamic>),
+    returnType: TypeNode.fromJson(json['returnType'] as Map<String, dynamic>),
     parameters: (json['parameters'] as List<dynamic>)
         .map((e) => ParameterNode.fromJson(e as Map<String, dynamic>))
         .toList(),

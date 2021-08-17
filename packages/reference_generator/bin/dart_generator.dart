@@ -20,8 +20,8 @@ String generateDart({
   final List<Map<String, Object>> classes = <Map<String, Object>>[];
   for (ClassNode classNode in libraryNode.classes) {
     final Map<String, Object> classData = <String, Object>{};
-    classData['name'] = classNode.name;
-    classData['channel'] = classNode.channelName!;
+    classData['name'] = classNode.dartName;
+    classData['channel'] = classNode.channelName;
 
     final List<Map<String, Object>> constructors = <Map<String, Object>>[];
     for (ConstructorNode constructorNode in classNode.constructors) {
@@ -52,7 +52,7 @@ String generateDart({
     for (MethodNode methodNode in classNode.staticMethods) {
       final Map<String, Object> methodData = <String, Object>{};
       methodData['name'] = methodNode.name;
-      methodData['returnsFuture'] = methodNode.returnType.name == 'Future';
+      methodData['returnsFuture'] = methodNode.returnType.dartName == 'Future';
 
       final List<Map<String, Object>> parameters = <Map<String, Object>>[];
       for (int i = 0; i < methodNode.parameters.length; i++) {
@@ -77,7 +77,7 @@ String generateDart({
     for (MethodNode methodNode in classNode.methods) {
       final Map<String, Object> methodData = <String, Object>{};
       methodData['name'] = methodNode.name;
-      methodData['returnsFuture'] = methodNode.returnType.name == 'Future';
+      methodData['returnsFuture'] = methodNode.returnType.dartName == 'Future';
 
       final List<Map<String, Object>> parameters = <Map<String, Object>>[];
       for (int i = 0; i < methodNode.parameters.length; i++) {
@@ -112,10 +112,7 @@ String generateDart({
     for (int i = 0; i < functionNode.parameters.length; i++) {
       final Map<String, Object> parameterData = <String, Object>{};
       parameterData['name'] = functionNode.parameters[i].name;
-      parameterData['type'] = getTrueTypeName(
-        functionNode.parameters[i].type,
-        generatedSymbol: '',
-      );
+      parameterData['type'] = getTrueTypeName(functionNode.parameters[i].type);
       parameterData['index'] = '$i';
       parameterData['argumentCasting'] = getArgumentCasting(
         type: functionNode.parameters[i].type,
@@ -140,25 +137,19 @@ String generateDart({
 }
 
 String getArgumentCasting({
-  required ReferenceType type,
+  required TypeNode type,
   required int index,
   String generatedSymbol = '\$',
 }) {
-  final String dartName = dartTypeNameConversion(type.name);
+  final String dartName = dartTypeNameConversion(type.dartName);
 
   if ((dartName != 'List' && dartName != 'Map') || type.typeArguments.isEmpty) {
-    final String typeName = getTrueTypeName(
-      type,
-      generatedSymbol: generatedSymbol,
-    );
+    final String typeName = getTrueTypeName(type);
     return 'arguments[$index] as $typeName,';
   }
 
   if (dartName == 'List') {
-    final String typeCast = _getListArgumentCasting(
-      type: type.typeArguments.first,
-      generatedSymbol: generatedSymbol,
-    );
+    final String typeCast = _getListArgumentCasting(type.typeArguments.first);
     return '(arguments[$index] as List<dynamic>).map((_) => $typeCast).toList(),';
   } else if (dartName == 'Map') {
     return 'arguments[$index] as Map,';
@@ -167,24 +158,17 @@ String getArgumentCasting({
   throw UnimplementedError();
 }
 
-String _getListArgumentCasting({
-  required ReferenceType type,
-  String generatedSymbol = '\$',
-}) {
-  final String dartName = dartTypeNameConversion(type.name);
+String _getListArgumentCasting(TypeNode type) {
+  final String dartName = dartTypeNameConversion(type.dartName);
 
   if ((dartName != 'List' && dartName != 'Map') || type.typeArguments.isEmpty) {
-    final String typeName = getTrueTypeName(
-      type,
-      generatedSymbol: generatedSymbol,
-    );
+    final String typeName = getTrueTypeName(type);
     return '_ as $typeName';
   }
 
   if (dartName == 'List') {
     final String typeCast = _getListArgumentCasting(
-      type: type.typeArguments.first,
-      generatedSymbol: generatedSymbol,
+      type.typeArguments.first,
     );
     return '(_ as List<dynamic>).map((_) => $typeCast).toList()';
   }
@@ -192,28 +176,21 @@ String _getListArgumentCasting({
   throw UnimplementedError();
 }
 
-String getTrueTypeName(ReferenceType type, {String generatedSymbol = '\$'}) {
-  final String dartName = dartTypeNameConversion(type.name);
+String getTrueTypeName(TypeNode type) {
+  final String dartName = dartTypeNameConversion(type.dartName);
 
   final String nullability = type.nullable ? '?' : '';
   if (dartName == 'Map') return 'Map$nullability';
 
   final Iterable<String> typeArguments = type.typeArguments.map<String>(
-    (ReferenceType type) => getTrueTypeName(
-      type,
-      generatedSymbol: generatedSymbol,
-    ),
+    (TypeNode type) => getTrueTypeName(type),
   );
 
-  if (type.codeGeneratedType && typeArguments.isEmpty) {
-    return '$generatedSymbol$dartName$nullability';
-  } else if (type.codeGeneratedType && typeArguments.isNotEmpty) {
-    return '$generatedSymbol$dartName<${typeArguments.join(',')}>$nullability';
-  } else if (!type.codeGeneratedType && typeArguments.isNotEmpty) {
+  if (typeArguments.isEmpty) {
+    return '$dartName$nullability';
+  } else {
     return '$dartName<${typeArguments.join(',')}>$nullability';
   }
-
-  return '$dartName$nullability';
 }
 
 String dartTypeNameConversion(String type) {

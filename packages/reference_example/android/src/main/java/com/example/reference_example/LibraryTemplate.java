@@ -24,7 +24,7 @@ import github.penguin.reference.reference.TypeChannelMessenger;
 
 public class /*replace libraryName*/LibraryTemplate/**/ {
   /*iterate functions function*/
-  public static abstract class $__function_name__ {
+  public interface $__function_name__ {
     public abstract Completable<Void> invoke(/*iterate :join=',' parameters parameter*//*replace parameter_type*/String/**/ __parameter_name__/**/)/*if returnsFuture*/throws Exception/**/;
   }
   /**/

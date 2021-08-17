@@ -4,11 +4,20 @@ part 'ast.g.dart';
 
 @JsonSerializable()
 class LibraryNode {
-  LibraryNode({required this.classes, required this.functions});
+  LibraryNode({
+    required this.classes,
+    required this.functions,
+    required this.dartImports,
+    required this.platformImports,
+  });
 
   final List<ClassNode> classes;
 
   final List<FunctionNode> functions;
+
+  final List<String> dartImports;
+
+  final List<String> platformImports;
 
   factory LibraryNode.fromJson(Map<String, dynamic> json) =>
       _$LibraryNodeFromJson(json);
@@ -22,16 +31,19 @@ class LibraryNode {
 @JsonSerializable()
 class ClassNode {
   ClassNode({
-    required this.name,
+    required this.dartName,
+    required this.platformName,
     required this.channelName,
     required this.methods,
     required this.staticMethods,
     required this.constructors,
   });
 
-  final String name;
+  final String dartName;
 
-  final String? channelName;
+  final String platformName;
+
+  final String channelName;
 
   final List<MethodNode> methods;
 
@@ -50,11 +62,14 @@ class ClassNode {
 
 @JsonSerializable()
 class MethodNode {
-  MethodNode(
-      {required this.name, required this.returnType, required this.parameters});
+  MethodNode({
+    required this.name,
+    required this.returnType,
+    required this.parameters,
+  });
 
   final String name;
-  final ReferenceType returnType;
+  final TypeNode returnType;
   final List<ParameterNode> parameters;
 
   factory MethodNode.fromJson(Map<String, dynamic> json) =>
@@ -68,10 +83,15 @@ class MethodNode {
 
 @JsonSerializable()
 class ParameterNode {
-  ParameterNode({required this.name, required this.type});
+  ParameterNode({
+    required this.name,
+    required this.type,
+    required this.isNamed,
+  });
 
   final String name;
-  final ReferenceType type;
+  final TypeNode type;
+  final bool isNamed;
 
   factory ParameterNode.fromJson(Map<String, dynamic> json) =>
       _$ParameterNodeFromJson(json);
@@ -83,25 +103,29 @@ class ParameterNode {
 }
 
 @JsonSerializable()
-class ReferenceType {
-  ReferenceType({
-    required this.name,
+class TypeNode {
+  TypeNode({
+    required this.dartName,
+    required this.platformName,
     required this.nullable,
-    required this.codeGeneratedType,
     required this.typeArguments,
     required this.functionType,
+    //required this.codeGeneratedType,
+    required this.isFuture,
   });
 
-  final String name;
+  final String dartName;
+  final String platformName;
   final bool nullable;
-  final bool codeGeneratedType;
+  //final bool codeGeneratedType;
   final bool functionType;
-  final List<ReferenceType> typeArguments;
+  final bool isFuture;
+  final List<TypeNode> typeArguments;
 
-  factory ReferenceType.fromJson(Map<String, dynamic> json) =>
-      _$ReferenceTypeFromJson(json);
+  factory TypeNode.fromJson(Map<String, dynamic> json) =>
+      _$TypeNodeFromJson(json);
 
-  Map<String, dynamic> toJson() => _$ReferenceTypeToJson(this);
+  Map<String, dynamic> toJson() => _$TypeNodeToJson(this);
 
   @override
   String toString() => '$runtimeType(${toJson().toString()})';
@@ -118,7 +142,7 @@ class FunctionNode {
 
   final String name;
   final String channelName;
-  final ReferenceType returnType;
+  final TypeNode returnType;
   final List<ParameterNode> parameters;
 
   factory FunctionNode.fromJson(Map<String, dynamic> json) =>

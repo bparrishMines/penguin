@@ -93,6 +93,9 @@ void main(List<String> arguments) async {
     throw StateError(message);
   }
 
+  print('ASTFile: ');
+  print(astInputFile.readAsStringSync());
+
   final libraryNode = LibraryNode.fromJson(
     jsonDecode(astInputFile.readAsStringSync()),
   );

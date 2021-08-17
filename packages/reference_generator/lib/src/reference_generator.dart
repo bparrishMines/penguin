@@ -56,7 +56,7 @@ class ReferenceAstBuilder extends Builder {
     final LibraryReader reader = LibraryReader(await buildStep.inputLibrary);
 
     final Iterable<ClassElement> classes = reader
-        .annotatedWith(const TypeChecker.fromRuntime(Reference))
+        .annotatedWith(const TypeChecker.fromRuntime(ClassReference))
         .where(
           (AnnotatedElement annotatedElement) =>
               annotatedElement.element is ClassElement,
@@ -67,7 +67,7 @@ class ReferenceAstBuilder extends Builder {
         );
 
     final Iterable<TypeAliasElement> functions = reader
-        .annotatedWith(const TypeChecker.fromRuntime(Reference))
+        .annotatedWith(const TypeChecker.fromRuntime(FunctionReference))
         .where(
           (AnnotatedElement annotatedElement) =>
               annotatedElement.element is TypeAliasElement,
@@ -79,47 +79,65 @@ class ReferenceAstBuilder extends Builder {
 
     if (classes.isEmpty && functions.isEmpty) return;
 
-    final LibraryNode ast = _toLibraryNode(reader.element, classes, functions);
+    final LibraryNode ast = _toLibraryNode(
+      libraryElement: reader.element,
+      classes: classes,
+      functions: functions,
+    );
 
     await buildStep.writeAsString(newFile, jsonEncode(ast));
   }
 
-  LibraryNode _toLibraryNode(
-    LibraryElement libraryElement,
-    Iterable<ClassElement> classes,
-    Iterable<TypeAliasElement> functions,
-  ) {
-    final Set<Element> allGeneratedElements = <Element>{
-      ...classes,
-      ...functions
+  LibraryNode _toLibraryNode({
+    required LibraryElement libraryElement,
+    required Iterable<ClassElement> classes,
+    required Iterable<TypeAliasElement> functions,
+  }) {
+    // final Set<Element> allGeneratedElements = <Element>{
+    //   ...classes,
+    //   ...functions
+    // };
+    final Set<String> dartImports = <String>{
+      libraryElement.source.uri.toString(),
     };
+    final Set<String> platformImports = <String>{};
     return LibraryNode(
       classes: classes
           .map<ClassNode>(
             (ClassElement classElement) => _toClassNode(
-              classElement,
-              allGeneratedElements,
+              classElement: classElement,
+              dartImports: dartImports,
+              platformImports: platformImports,
             ),
           )
           .toList(),
       functions: functions
           .map<FunctionNode>(
             (TypeAliasElement typeAliasElement) => _toFunctionNode(
-              typeAliasElement,
-              allGeneratedElements,
+              typeAliasElement: typeAliasElement,
+              dartImports: dartImports,
+              platformImports: platformImports,
             ),
           )
           .toList(),
+      dartImports: dartImports.toList(),
+      platformImports: platformImports.toList(),
     );
   }
 
-  ClassNode _toClassNode(
-    ClassElement classElement,
-    Set<Element> allGeneratedElements,
-  ) {
+  ClassNode _toClassNode({
+    required ClassElement classElement,
+    required Set<String> dartImports,
+    required Set<String> platformImports,
+  }) {
+    // This is always non-null because these are filtered classes from the
+    // current library.
+    final ClassReference reference =
+        _tryGetClassReference(classElement.thisType)!;
     return ClassNode(
-      name: classElement.name,
-      channelName: _getChannel(classElement.thisType),
+      dartName: classElement.name,
+      platformName: reference.platformImport,
+      channelName: reference.channel,
       constructors: classElement.constructors
           .where((ConstructorElement element) => !element.isPrivate)
           .where(
@@ -131,7 +149,11 @@ class ReferenceAstBuilder extends Builder {
         },
       ).map<ConstructorNode>(
         (ConstructorElement constructorElement) {
-          return _toConstructorNode(constructorElement, allGeneratedElements);
+          return _toConstructorNode(
+            constructorElement: constructorElement,
+            dartImports: dartImports,
+            platformImports: platformImports,
+          );
         },
       ).toList(),
       methods: classElement.methods
@@ -144,8 +166,11 @@ class ReferenceAstBuilder extends Builder {
             return !referenceMethod.ignore;
           })
           .map<MethodNode>(
-            (MethodElement methodElement) =>
-                _toMethodNode(methodElement, allGeneratedElements),
+            (MethodElement methodElement) => _toMethodNode(
+              methodElement: methodElement,
+              dartImports: dartImports,
+              platformImports: platformImports,
+            ),
           )
           .toList(),
       staticMethods: classElement.methods
@@ -158,43 +183,57 @@ class ReferenceAstBuilder extends Builder {
             return !referenceMethod.ignore;
           })
           .map<MethodNode>(
-            (MethodElement methodElement) =>
-                _toMethodNode(methodElement, allGeneratedElements),
+            (MethodElement methodElement) => _toMethodNode(
+              methodElement: methodElement,
+              dartImports: dartImports,
+              platformImports: platformImports,
+            ),
           )
           .toList(),
     );
   }
 
-  ConstructorNode _toConstructorNode(
-    ConstructorElement constructorElement,
-    Set<Element> allGeneratedElements,
-  ) {
+  ConstructorNode _toConstructorNode({
+    required ConstructorElement constructorElement,
+    required Set<String> dartImports,
+    required Set<String> platformImports,
+  }) {
+    Iterable<ParameterNode> parameters =
+        constructorElement.parameters.where((ParameterElement element) {
+      final ReferenceParameter? referenceParameter =
+          tryReadParameterAnnotation(element);
+      if (referenceParameter == null) return true;
+      return !referenceParameter.ignore;
+    }).map<ParameterNode>(
+      (ParameterElement parameterElement) => _toParameterNode(
+        parameterElement: parameterElement,
+        dartImports: dartImports,
+        platformImports: platformImports,
+      ),
+    );
+
+    if (parameters.last.name == 'create' &&
+        parameters.last.type.dartName == 'bool') {
+      parameters = parameters.take(parameters.length - 1);
+    }
+
     return ConstructorNode(
       name: constructorElement.name,
-      parameters: constructorElement.parameters
-          .where((ParameterElement element) {
-            final ReferenceParameter? referenceParameter =
-                tryReadParameterAnnotation(element);
-            if (referenceParameter == null) return true;
-            return !referenceParameter.ignore;
-          })
-          .map<ParameterNode>(
-            (ParameterElement parameterElement) =>
-                _toParameterNode(parameterElement, allGeneratedElements),
-          )
-          .toList(),
+      parameters: parameters.toList(),
     );
   }
 
-  MethodNode _toMethodNode(
-    MethodElement methodElement,
-    Set<Element> allGeneratedElements,
-  ) {
+  MethodNode _toMethodNode({
+    required MethodElement methodElement,
+    required Set<String> dartImports,
+    required Set<String> platformImports,
+  }) {
     return MethodNode(
       name: methodElement.name,
-      returnType: _toReferenceType(
-        methodElement.returnType,
-        allGeneratedElements,
+      returnType: _toTypeNode(
+        type: methodElement.returnType,
+        dartImports: dartImports,
+        platformImports: platformImports,
       ),
       parameters: methodElement.parameters
           .where((ParameterElement element) {
@@ -204,25 +243,30 @@ class ReferenceAstBuilder extends Builder {
             return !referenceParameter.ignore;
           })
           .map<ParameterNode>(
-            (ParameterElement parameterElement) =>
-                _toParameterNode(parameterElement, allGeneratedElements),
+            (ParameterElement parameterElement) => _toParameterNode(
+              parameterElement: parameterElement,
+              dartImports: dartImports,
+              platformImports: platformImports,
+            ),
           )
           .toList(),
     );
   }
 
-  FunctionNode _toFunctionNode(
-    TypeAliasElement typeAliasElement,
-    Set<Element> allGeneratedElements,
-  ) {
+  FunctionNode _toFunctionNode({
+    required TypeAliasElement typeAliasElement,
+    required Set<String> dartImports,
+    required Set<String> platformImports,
+  }) {
     final FunctionType functionType =
         typeAliasElement.aliasedType as FunctionType;
     return FunctionNode(
       name: typeAliasElement.name,
-      channelName: _getChannelFromTypeAlias(typeAliasElement),
-      returnType: _toReferenceType(
-        functionType,
-        allGeneratedElements,
+      channelName: _getFunctionReferenceFromTypeAlias(typeAliasElement).channel,
+      returnType: _toTypeNode(
+        type: functionType,
+        dartImports: dartImports,
+        platformImports: platformImports,
       ),
       parameters: functionType.parameters
           .where((ParameterElement element) {
@@ -232,62 +276,103 @@ class ReferenceAstBuilder extends Builder {
             return !referenceParameter.ignore;
           })
           .map<ParameterNode>(
-            (ParameterElement parameterElement) =>
-                _toParameterNode(parameterElement, allGeneratedElements),
+            (ParameterElement parameterElement) => _toParameterNode(
+              parameterElement: parameterElement,
+              dartImports: dartImports,
+              platformImports: platformImports,
+            ),
           )
           .toList(),
     );
   }
 
-  ParameterNode _toParameterNode(
-    ParameterElement parameterElement,
-    Set<Element> allGeneratedElements,
-  ) {
+  ParameterNode _toParameterNode({
+    required ParameterElement parameterElement,
+    required Set<String> dartImports,
+    required Set<String> platformImports,
+  }) {
     return ParameterNode(
       name: parameterElement.name,
-      type: _toReferenceType(parameterElement.type, allGeneratedElements),
+      type: _toTypeNode(
+        type: parameterElement.type,
+        dartImports: dartImports,
+        platformImports: platformImports,
+      ),
+      isNamed: parameterElement.isNamed,
     );
   }
 
-  ReferenceType _toReferenceType(
-    DartType type,
-    Set<Element> allGeneratedElements,
-  ) {
-    final String displayName = type.getDisplayString(withNullability: false);
-    final TypeAliasElement? aliasElement = type.aliasElement;
+  TypeNode _toTypeNode({
+    required DartType type,
+    required Set<String> dartImports,
+    required Set<String> platformImports,
+  }) {
+    DartType nonFutureType = type;
+    if (type.isDartAsyncFuture || type.isDartAsyncFutureOr) {
+      nonFutureType = (type as ParameterizedType).typeArguments.first;
+
+      if (nonFutureType.isDartAsyncFuture ||
+          nonFutureType.isDartAsyncFutureOr) {
+        throw StateError('Why are you nesting Futures?');
+      }
+    }
+
+    final String displayName =
+        nonFutureType.getDisplayString(withNullability: false);
+    final TypeAliasElement? aliasElement = nonFutureType.aliasElement;
     if (aliasElement != null) {
-      return ReferenceType(
-        name: aliasElement.name,
-        nullable: type.nullabilitySuffix == NullabilitySuffix.question,
-        codeGeneratedType: allGeneratedElements.contains(aliasElement),
-        typeArguments: <ReferenceType>[],
+      return TypeNode(
+        dartName: aliasElement.name,
+        platformName: aliasElement.name,
+        nullable: nonFutureType.nullabilitySuffix == NullabilitySuffix.question,
+        //codeGeneratedType: allGeneratedElements.contains(aliasElement),
+        typeArguments: <TypeNode>[],
         functionType: true,
+        isFuture: type.isDartAsyncFuture || type.isDartAsyncFutureOr,
       );
     }
-    return ReferenceType(
-      name: displayName.split(RegExp('[<]')).first,
-      nullable: type.nullabilitySuffix == NullabilitySuffix.question,
-      codeGeneratedType: allGeneratedElements.contains(type.element),
+
+    final ClassReference? classReference = _tryGetClassReference(nonFutureType);
+    final bool isReference = classReference != null;
+    if (isReference) {
+      // Has source because it has a type reference.
+      dartImports.add(nonFutureType.element!.source!.uri.toString());
+      platformImports.add(classReference.platformImport);
+    }
+
+    return TypeNode(
+      dartName: displayName.split(RegExp('[<]')).first,
+      platformName: isReference
+          ? classReference.platformClassName
+          : displayName.split(RegExp('[<]')).first,
+      nullable: nonFutureType.nullabilitySuffix == NullabilitySuffix.question,
+      //codeGeneratedType: allGeneratedElements.contains(type.element),
       functionType: false,
-      typeArguments: type is! ParameterizedType
-          ? <ReferenceType>[]
-          : type.typeArguments
-              .map<ReferenceType>(
-                (DartType type) => _toReferenceType(type, allGeneratedElements),
+      typeArguments: nonFutureType is! ParameterizedType
+          ? <TypeNode>[]
+          : nonFutureType.typeArguments
+              .map<TypeNode>(
+                (DartType type) => _toTypeNode(
+                  type: type,
+                  dartImports: dartImports,
+                  platformImports: platformImports,
+                ),
               )
               .toList(),
+      isFuture: type.isDartAsyncFuture || type.isDartAsyncFutureOr,
     );
   }
 
-  String _getChannelFromTypeAlias(TypeAliasElement element) {
-    final TypeChecker typeChecker = TypeChecker.fromRuntime(Reference);
+  FunctionReference _getFunctionReferenceFromTypeAlias(
+      TypeAliasElement element) {
+    final TypeChecker typeChecker = TypeChecker.fromRuntime(FunctionReference);
     final ConstantReader constantReader =
         ConstantReader(typeChecker.firstAnnotationOf(element));
-    return constantReader.read('channel').stringValue;
+    return FunctionReference(constantReader.read('channel').stringValue);
   }
 
-  String? _getChannel(DartType type) {
-    final TypeChecker typeChecker = TypeChecker.fromRuntime(Reference);
+  ClassReference? _tryGetClassReference(DartType type) {
+    final TypeChecker typeChecker = TypeChecker.fromRuntime(ClassReference);
     final Element? element = type.element;
 
     if (element == null) {
@@ -298,8 +383,27 @@ class ReferenceAstBuilder extends Builder {
 
     final ConstantReader constantReader =
         ConstantReader(typeChecker.firstAnnotationOf(element));
-    return constantReader.read('channel').stringValue;
+    return ClassReference(
+      channel: constantReader.read('channel').stringValue,
+      platformImport: constantReader.read('platformImport').stringValue,
+      platformClassName: constantReader.read('platformClassName').stringValue,
+    );
   }
+
+  // FunctionReference? _tryGetFunctionReference(DartType type) {
+  //   final TypeChecker typeChecker = TypeChecker.fromRuntime(FunctionReference);
+  //   final Element? element = type.element;
+  //
+  //   if (element == null) {
+  //     return null;
+  //   } else if (type.isVoid || !typeChecker.hasAnnotationOf(element)) {
+  //     return null;
+  //   }
+  //
+  //   final ConstantReader constantReader =
+  //       ConstantReader(typeChecker.firstAnnotationOf(element));
+  //   return FunctionReference(constantReader.read('channel').stringValue);
+  // }
 
   @override
   Map<String, List<String>> get buildExtensions => <String, List<String>>{

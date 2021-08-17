@@ -23,8 +23,8 @@ String generateObjcHeader({
   final List<Map<String, Object>> classes = <Map<String, Object>>[];
   for (ClassNode classNode in libraryNode.classes) {
     final Map<String, Object> classData = <String, Object>{};
-    classData['name'] = classNode.name;
-    classData['channel'] = classNode.channelName!;
+    classData['name'] = classNode.platformName;
+    classData['channel'] = classNode.channelName;
 
     final List<Map<String, Object>> constructors = <Map<String, Object>>[];
     for (ConstructorNode constructorNode in classNode.constructors) {
@@ -55,7 +55,8 @@ String generateObjcHeader({
       final Map<String, Object> methodData = <String, Object>{};
       methodData['name'] = methodNode.name;
       methodData['hasParameters'] = methodNode.parameters.isNotEmpty;
-      methodData['returnsFuture'] = methodNode.returnType.name == 'Future';
+      // TODO: fix?
+      methodData['returnsFuture'] = methodNode.returnType.dartName == 'Future';
 
       final List<Map<String, Object>> parameters = <Map<String, Object>>[];
       for (int i = 0; i < methodNode.parameters.length; i++) {
@@ -80,7 +81,7 @@ String generateObjcHeader({
     for (MethodNode methodNode in classNode.methods) {
       final Map<String, Object> methodData = <String, Object>{};
       methodData['name'] = methodNode.name;
-      methodData['returnsFuture'] = methodNode.returnType.name == 'Future';
+      methodData['returnsFuture'] = methodNode.returnType.platformName == 'Future';
 
       final List<Map<String, Object>> parameters = <Map<String, Object>>[];
       for (int i = 0; i < methodNode.parameters.length; i++) {
@@ -139,34 +140,35 @@ String generateObjcHeader({
 }
 
 String getTrueTypeName({
-  required ReferenceType type,
+  required TypeNode type,
   required String prefix,
   required Map<String, String> typeAliases,
 }) {
   final String objcName;
-  if (typeAliases.containsKey(type.name)) {
-    objcName = typeAliases[type.name]!;
+  if (typeAliases.containsKey(type.platformName)) {
+    objcName = typeAliases[type.platformName]!;
   } else {
-    objcName = objcTypeNameConversion(type.name);
+    objcName = objcTypeNameConversion(type.platformName);
   }
 
   final Iterable<String> typeArguments = type.typeArguments.map<String>(
-    (ReferenceType type) => getTrueTypeName(
+    (TypeNode type) => getTrueTypeName(
       type: type,
       prefix: prefix,
       typeAliases: typeAliases,
     ),
   );
 
-  if (type.codeGeneratedType && type.functionType) {
-    return '$prefix$objcName';
-  } else if (type.codeGeneratedType && typeArguments.isEmpty) {
-    return 'NSObject<$prefix$objcName> *';
-  } else if (type.codeGeneratedType && typeArguments.isNotEmpty) {
-    return 'NSObject<$prefix$objcName<${typeArguments.join(', ')}>> *';
-  } else if (!type.codeGeneratedType && typeArguments.isNotEmpty) {
-    return '$objcName<${typeArguments.join(', ')}> *';
-  }
+  //TODO: fix
+  // if (type.functionType) {
+  //   return '$objcName';
+  // } else if (typeArguments.isEmpty) {
+  //   return '$objcName *';
+  // } else if (type.codeGeneratedType && typeArguments.isNotEmpty) {
+  //   return 'NSObject<$prefix$objcName<${typeArguments.join(', ')}>> *';
+  // } else if (!type.codeGeneratedType && typeArguments.isNotEmpty) {
+  //   return '$objcName<${typeArguments.join(', ')}> *';
+  // }
 
   return '$objcName';
 }
