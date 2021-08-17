@@ -127,12 +127,14 @@ class $$$class_name$$Channel extends TypeChannel<$$class_name$$> {
         /**/ $$parameter_name$$,
     /**/
   ) async {
-    return await sendInvokeStaticMethod(
+    /*if! returnsVoid*/
+    return /**/ /*function casting*/
+        await sendInvokeStaticMethod(
       r'__staticMethod_name__',
       <Object?>[
         /*iterate parameters parameter*/ $$parameter_name$$, /**/
       ],
-    ) as double;
+    ) /**/ /*erase*/ as double /**/;
   }
   /**/
   /**/
@@ -145,13 +147,14 @@ class $$$class_name$$Channel extends TypeChannel<$$class_name$$> {
         /**/ $$parameter_name$$,
     /**/
   ) async {
-    return await sendInvokeMethod(
+    /*if! returnsVoid*/
+    return /**/ /*function casting*/ await sendInvokeMethod(
       $instance,
       r'__method_name__',
       <Object?>[
         /*iterate parameters parameter*/ $$parameter_name$$, /**/
       ],
-    ) as String;
+    ) /**/ /*erase*/ as String /**/;
   }
   /**/
   /**/
@@ -190,7 +193,7 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$class_name$$> {
       /*iterate parameters parameter*/
       /*if isNamed*/ $$parameter_name$$: /**/ $$parameter_name$$,
       /**/
-    ) /*if! returnsVoid*/ as /*replace staticMethod_returnType*/ double /**/ /**/;
+    ) /*erase*/ as double /**/;
   }
   /**/
   /**/
@@ -210,9 +213,7 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$class_name$$> {
       /*iterate parameters parameter*/
       /*if isNamed*/ $$parameter_name$$: /**/ $$parameter_name$$,
       /**/
-    ) /*if! returnsVoid*/
-            as /*replace method_returnType*/ String /**/
-        /**/;
+    ) /*erase*/ as String /**/;
   }
   /**/
   /**/

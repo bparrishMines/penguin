@@ -57,6 +57,9 @@ String generateDart({
       methodData['returnsFuture'] = methodNode.returnType.isFuture;
       methodData['returnType'] = getTrueTypeName(methodNode.returnType);
       methodData['returnsVoid'] = methodNode.returnType.dartName == 'void';
+      methodData['casting'] = (String input) {
+        return getArgumentCasting(type: methodNode.returnType, input: input);
+      };
 
       final List<Map<String, Object>> parameters = <Map<String, Object>>[];
       for (int i = 0; i < methodNode.parameters.length; i++) {
@@ -85,6 +88,9 @@ String generateDart({
       methodData['returnsFuture'] = methodNode.returnType.isFuture;
       methodData['returnType'] = getTrueTypeName(methodNode.returnType);
       methodData['returnsVoid'] = methodNode.returnType.dartName == 'void';
+      methodData['casting'] = (String input) {
+        return getArgumentCasting(type: methodNode.returnType, input: input);
+      };
 
       final List<Map<String, Object>> parameters = <Map<String, Object>>[];
       for (int i = 0; i < methodNode.parameters.length; i++) {

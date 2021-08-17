@@ -21,7 +21,17 @@ String runGenerator(
         resultBuffer,
         data,
       );
+    } else if (newToken is EraseToken) {
+      flush(templateQueue);
     } else if (newToken is ReplaceToken) {
+      tokens.addFirst(newToken);
+      resultBuffer.write(runGenerator(
+        templateQueue,
+        tokens,
+        StringBuffer(),
+        data,
+      ));
+    } else if (newToken is FunctionToken) {
       tokens.addFirst(newToken);
       resultBuffer.write(runGenerator(
         templateQueue,
@@ -71,6 +81,11 @@ String runGenerator(
               data[currentToken.replacement] as String,
             );
       }
+    } else if (newToken is EndToken && tokens.first is FunctionToken) {
+      final FunctionToken currentToken = tokens.removeFirst() as FunctionToken;
+      final String Function(String) function =
+          data[currentToken.identifier] as String Function(String);
+      return function(resultBuffer.toString());
     } else if (newToken is EndToken && tokens.first is IterateToken) {
       final IterateToken currentToken = tokens.first as IterateToken;
 
@@ -200,9 +215,17 @@ Token? tryParseToken(Queue<String> templateQueue) {
       identifier: identifier,
       inverse: tokenType == '/*if!',
     );
+  } else if (tokenType.startsWith('/*function')) {
+    final String replacement =
+        RegExp(r'(?<=\s)[^\s]+(?=\*/)', multiLine: true, dotAll: true)
+            .stringMatch(tokenString)!;
+
+    return FunctionToken(identifier: replacement);
+  } else if (tokenType.startsWith('/*erase')) {
+    return EraseToken();
   }
 
-  throw StateError('Failed to parse token');
+  throw StateError('Failed to parse token: $tokenType');
 }
 
 abstract class Token {}
@@ -236,5 +259,13 @@ class ConditionalToken extends Token {
   final String identifier;
   final bool inverse;
 }
+
+class FunctionToken extends Token {
+  FunctionToken({required this.identifier});
+
+  final String identifier;
+}
+
+class EraseToken extends Token {}
 
 class EndToken extends Token {}
