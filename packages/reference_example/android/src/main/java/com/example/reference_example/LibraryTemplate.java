@@ -214,10 +214,14 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
 
     public $LibraryImplementations(TypeChannelMessenger messenger) {
       this.messenger = messenger;
+      /*iterate classes class*/
       this.channel__class_name__ = new $__class_name__Channel(messenger);
       this.handler__class_name__ = new $__class_name__Handler(this);
+      /**/
+      /*iterate functions function*/
       this.channel__function_name__ = new $__function_name__Channel(messenger);
       this.handler__function_name__ = new $__function_name__Handler(this);
+      /**/
     }
   }
 

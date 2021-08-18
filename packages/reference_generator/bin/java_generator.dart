@@ -53,9 +53,17 @@ String generateJava({
     for (MethodNode methodNode in classNode.staticMethods) {
       final Map<String, Object> methodData = <String, Object>{};
       methodData['name'] = methodNode.name;
-      methodData['returnsFuture'] = methodNode.returnType.isFuture;
-      methodData['returnType'] = getTrueTypeName(methodNode.returnType);
-      methodData['returnsVoid'] = methodNode.returnType.platformName == 'void';
+
+      final bool returnsVoid = methodNode.returnType.platformName == 'void';
+      final bool returnsFuture = methodNode.returnType.isFuture;
+
+      methodData['returnsVoid'] = returnsVoid;
+      methodData['returnsFuture'] = returnsFuture;
+      if (returnsVoid && !returnsFuture) {
+        methodData['returnType'] = 'Void';
+      } else {
+        methodData['returnType'] = getTrueTypeName(methodNode.returnType);
+      }
 
       final List<Map<String, Object>> parameters = <Map<String, Object>>[];
       for (int i = 0; i < methodNode.parameters.length; i++) {
@@ -76,9 +84,17 @@ String generateJava({
     for (MethodNode methodNode in classNode.methods) {
       final Map<String, Object> methodData = <String, Object>{};
       methodData['name'] = methodNode.name;
-      methodData['returnsFuture'] = methodNode.returnType.isFuture;
-      methodData['returnType'] = getTrueTypeName(methodNode.returnType);
-      methodData['returnsVoid'] = methodNode.returnType.platformName == 'void';
+
+      final bool returnsVoid = methodNode.returnType.platformName == 'void';
+      final bool returnsFuture = methodNode.returnType.isFuture;
+
+      methodData['returnsVoid'] = returnsVoid;
+      methodData['returnsFuture'] = returnsFuture;
+      if (returnsVoid && !returnsFuture) {
+        methodData['returnType'] = 'Void';
+      } else {
+        methodData['returnType'] = getTrueTypeName(methodNode.returnType);
+      }
 
       final List<Map<String, Object>> parameters = <Map<String, Object>>[];
       for (int i = 0; i < methodNode.parameters.length; i++) {
