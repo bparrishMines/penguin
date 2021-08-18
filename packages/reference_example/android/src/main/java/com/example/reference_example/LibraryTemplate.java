@@ -24,7 +24,7 @@ import github.penguin.reference.reference.TypeChannelMessenger;
 public class /*replace libraryName*/LibraryTemplate/**/ {
   /*iterate functions function*/
   public interface $__function_name__ {
-    public abstract Completable<Void> invoke(/*iterate :join=',' parameters parameter*//*replace parameter_type*/String/**/ __parameter_name__/**/)/*if returnsFuture*/throws Exception/**/;
+    Completable<Void> invoke(/*iterate :join=',' parameters parameter*//*replace parameter_type*/String/**/ __parameter_name__/**/)/*if returnsFuture*/throws Exception/**/;
   }
   /**/
 
@@ -124,7 +124,7 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
     /*if returnsFuture*/
     public /*replace staticMethod_returnType*/Double/**/ $__staticMethod_name__(/*iterate :join=',' parameters parameter*//*replace parameter_type*/String/**/ __parameter_name__/**/)
         throws Exception {
-      return __class_name__Proxy.staticMethodTemplate(implementations, __parameter_name__);
+      /*if! returnsVoid*/return/**/ __class_name__Proxy.staticMethodTemplate(implementations, __parameter_name__);
     }
     /**/
     /**/
@@ -132,7 +132,7 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
     /*iterate methods method*/
     /*if returnsFuture*/
     public /*replace method_returnType*/String/**/ $__method_name__(__class_name__Proxy $instance/*iterate parameters parameter*/,/*replace parameter_type*/String/**/ __parameter_name__/**/) throws Exception {
-      return $instance.__method_name__(/*iterate :join=',' parameters parameter*/ __parameter_name__ /**/);
+      /*if! returnsVoid*/return/**/ $instance.__method_name__(/*iterate :join=',' parameters parameter*/ __parameter_name__ /**/);
     }
     /**/
     /**/
@@ -145,7 +145,11 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
         /*iterate staticMethods staticMethod*/
         /*if returnsFuture*/
         case "__staticMethod_name__":
-          return $__staticMethod_name__(/*iterate :join=',' parameters parameter*/(/*replace parameter_type*/String/**/) arguments.get(/*replace parameter_index*/0/**/)/**/);
+          /*if! returnsVoid*/
+          return /**/$__staticMethod_name__(/*iterate :join=',' parameters parameter*/(/*replace parameter_type*/String/**/) arguments.get(/*replace parameter_index*/0/**/)/**/);
+          /*if returnsVoid*/
+          /*erase*////**/return null;
+          /**/
         /**/
         /**/
       }
@@ -180,7 +184,11 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
         /*iterate methods method*/
         /*if returnsFuture*/
         case "__method_name__":
-          return $__method_name__(instance/*iterate parameters parameter*/,(/*replace parameter_type*/String/**/) arguments.get(/*replace parameter_index*/0/**/)/**/);
+          /*if! returnsVoid*/
+          return /**/ $__method_name__(instance/*iterate parameters parameter*/,(/*replace parameter_type*/String/**/) arguments.get(/*replace parameter_index*/0/**/)/**/);
+          /*if returnsVoid*/
+          /*erase*////**/return null;
+          /**/
         /**/
         /**/
       }

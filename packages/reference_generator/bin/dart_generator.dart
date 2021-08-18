@@ -196,11 +196,11 @@ String getTrueTypeName(TypeNode type) {
     (TypeNode type) => getTrueTypeName(type),
   );
 
-  if (typeArguments.isEmpty) {
-    return '$dartName$nullability';
-  } else {
+  if (typeArguments.isNotEmpty) {
     return '$dartName<${typeArguments.join(',')}>$nullability';
   }
+
+  return '$dartName$nullability';
 }
 
 String dartTypeNameConversion(String type) {

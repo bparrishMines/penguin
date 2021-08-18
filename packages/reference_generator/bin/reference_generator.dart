@@ -164,8 +164,8 @@ void main(List<String> arguments) async {
         libraryNode: libraryNode,
         libraryName: path.basenameWithoutExtension(options.javaOut!.path),
         package: options.javaPackage!,
-        imports: options.javaImports ?? <String>[],
-        typeAliases: options.javaTypeAliases,
+        //imports: options.javaImports ?? <String>[],
+        //typeAliases: options.javaTypeAliases,
       ),
     );
   }
