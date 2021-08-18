@@ -29,11 +29,11 @@ public class TypeChannel<T> {
     return messenger.createNewInstancePair(name, instance, arguments, owner);
   }
 
-  public Completable<Object> invokeStaticMethod(String methodName, List<Object> arguments) {
+  public <S> Completable<S> invokeStaticMethod(String methodName, List<Object> arguments) {
     return messenger.sendInvokeStaticMethod(name, methodName, arguments);
   }
 
-  public Completable<Object> invokeMethod(T instance, String methodName, List<Object> arguments) {
+  public <S> Completable<S> invokeMethod(T instance, String methodName, List<Object> arguments) {
     return messenger.sendInvokeMethod(name, instance, methodName, arguments);
   }
 

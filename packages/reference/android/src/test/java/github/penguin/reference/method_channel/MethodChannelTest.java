@@ -128,8 +128,8 @@ public class MethodChannelTest {
 
   @Test
   public void methodChannelMessenger_sendInvokeStaticMethod() {
-    final TestListener<Object> testListener = new TestListener<>();
-    testChannel.invokeStaticMethod("aStaticMethod", Collections.emptyList()).setOnCompleteListener(testListener);
+    final TestListener<String> testListener = new TestListener<>();
+    testChannel.<String>invokeStaticMethod("aStaticMethod", Collections.emptyList()).setOnCompleteListener(testListener);
 
     assertEquals("return_value", testListener.result);
 
@@ -148,8 +148,8 @@ public class MethodChannelTest {
     testChannel.createNewInstancePair(testClass, Collections.emptyList(),true);
     testMessenger.testMessenger.methodCalls.clear();
 
-    final TestListener<Object> testListener = new TestListener<>();
-    testChannel.invokeMethod(testClass, "aMethod", Collections.emptyList()).setOnCompleteListener(testListener);
+    final TestListener<String> testListener = new TestListener<>();
+    testChannel.<String>invokeMethod(testClass, "aMethod", Collections.emptyList()).setOnCompleteListener(testListener);
 
     assertEquals("return_value", testListener.result);
 

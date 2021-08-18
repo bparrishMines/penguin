@@ -96,8 +96,8 @@ public abstract class TypeChannelMessenger {
     return instanceCompleter.completable;
   }
 
-  public Completable<Object> sendInvokeStaticMethod(String channelName, String methodName, List<Object> arguments) {
-    final Completer<Object> returnCompleter = new Completer<>();
+  public <T> Completable<T> sendInvokeStaticMethod(String channelName, String methodName, List<Object> arguments) {
+    final Completer<T> returnCompleter = new Completer<>();
 
     getMessageDispatcher()
         .sendInvokeStaticMethod(
@@ -109,7 +109,7 @@ public abstract class TypeChannelMessenger {
               @Override
               public void onComplete(Object result) {
                 try {
-                  returnCompleter.complete(getConverter().convertPairedInstances(getInstanceManager(), result));
+                  returnCompleter.complete((T) getConverter().convertPairedInstances(getInstanceManager(), result));
                 } catch (Exception exception) {
                   onError(exception);
                 }
@@ -124,10 +124,10 @@ public abstract class TypeChannelMessenger {
     return returnCompleter.completable;
   }
 
-  public Completable<Object> sendInvokeMethod(String channelName, Object instance, String methodName, List<Object> arguments) {
+  public <T> Completable<T> sendInvokeMethod(String channelName, Object instance, String methodName, List<Object> arguments) {
     if (!isPaired(instance)) throw new AssertionError();
 
-    final Completer<Object> returnCompleter = new Completer<>();
+    final Completer<T> returnCompleter = new Completer<>();
 
     getMessageDispatcher()
         .sendInvokeMethod(
@@ -140,7 +140,7 @@ public abstract class TypeChannelMessenger {
               @Override
               public void onComplete(Object result) {
                 try {
-                  returnCompleter.complete(getConverter().convertPairedInstances(getInstanceManager(), result));
+                  returnCompleter.complete((T) getConverter().convertPairedInstances(getInstanceManager(), result));
                 } catch (Exception exception) {
                   onError(exception);
                 }

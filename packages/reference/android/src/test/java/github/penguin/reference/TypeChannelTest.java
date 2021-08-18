@@ -44,8 +44,8 @@ public class TypeChannelTest {
 
   @Test
   public void invokeStaticMethod() {
-    final TestListener<Object> testListener = new TestListener<>();
-    testChannel.invokeStaticMethod("aStaticMethod", Collections.emptyList()).setOnCompleteListener(testListener);
+    final TestListener<String> testListener = new TestListener<>();
+    testChannel.<String>invokeStaticMethod("aStaticMethod", Collections.emptyList()).setOnCompleteListener(testListener);
     assertEquals("return_value", testListener.result);
   }
 
@@ -54,9 +54,9 @@ public class TypeChannelTest {
     final TestClass testClass = new TestClass();
     testChannel.createNewInstancePair(testClass, Collections.emptyList(),true);
 
-    final TestListener<Object> testListener = new TestListener<>();
+    final TestListener<String> testListener = new TestListener<>();
 
-    testChannel.invokeMethod(testClass, "aMethod", Collections.emptyList()).setOnCompleteListener(testListener);
+    testChannel.<String>invokeMethod(testClass, "aMethod", Collections.emptyList()).setOnCompleteListener(testListener);
     assertEquals("return_value", testListener.result);
   }
 

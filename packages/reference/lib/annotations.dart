@@ -13,7 +13,10 @@ class ClassReference {
   /// Name of the channel used to generate a `TypeChannel`.
   final String channel;
 
+  /// Import of the platform class [platformClassName].
   final String platformImport;
+
+  /// Name of the platorm implementation of a class.
   final String platformClassName;
 }
 
