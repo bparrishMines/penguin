@@ -17,14 +17,18 @@ Future<void> main() async {
           $$class_name$$.$$constructor_name$$($$parameter_name$$: 44);
 
       expect(
-        classTemplate.$$method_name$$('Hello,'),
+        classTemplate.$$method_name$$(
+          $$parameter_name$$: 'Hello,',
+        ),
         completion('Hello, World!'),
       );
     });
 
     test('staticMethodTemplate', () {
       expect(
-        $$class_name$$.$$staticMethod_name$$('howmanycharacters'),
+        $$class_name$$.$$staticMethod_name$$(
+          $$parameter_name$$: 'howmanycharacters',
+        ),
         completion(17),
       );
     });

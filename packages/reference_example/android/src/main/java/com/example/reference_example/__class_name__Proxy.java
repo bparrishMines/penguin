@@ -10,15 +10,15 @@ public class __class_name__Proxy {
     return ClassTemplate.staticMethodTemplate(parameterTemplate);
   }
 
-  public __class_name__Proxy(LibraryTemplate.$LibraryImplementations implementations, Integer __parameter_name__) {
-    this(implementations, false, new ClassTemplate(__parameter_name__));
+  public __class_name__Proxy(LibraryTemplate.$LibraryImplementations implementations, boolean create, Integer __parameter_name__) {
+    this(implementations, create, new ClassTemplate(__parameter_name__));
   }
 
   public __class_name__Proxy(LibraryTemplate.$LibraryImplementations implementations, boolean create, ClassTemplate classTemplate) {
     this.implementations = implementations;
     this.classTemplate = classTemplate;
     if (create) {
-      implementations.channel__class_name__.$create(this, false, classTemplate.fieldTemplate);
+      implementations.channel__class_name__.$create$__constructor_name__(this, false, classTemplate.fieldTemplate);
     }
   }
 

@@ -12,7 +12,6 @@ import androidx.annotation.NonNull;
 
 import java.util.*;
 import github.penguin.reference.async.Completable;
-import github.penguin.reference.async.Completer;
 import github.penguin.reference.reference.PairedInstance;
 import github.penguin.reference.reference.TypeChannel;
 import github.penguin.reference.reference.TypeChannelHandler;
@@ -35,25 +34,13 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
       super(messenger, "__function_channel__");
     }
 
-    public Completable<PairedInstance> $$create($__function_name__ $instance, boolean $owner) {
+    public Completable<PairedInstance> $create($__function_name__ $instance, boolean $owner) {
       return createNewInstancePair($instance, Collections.emptyList(), $owner);
     }
 
     private Completable<Void> invoke($__function_name__ $instance
         /*iterate parameters parameter*/, /*replace parameter_type*/String/**/ __parameter_name__/**/) {
-      final Completer<Void> completer = new Completer<>();
-      invokeMethod($instance, "", Arrays.<Object>asList(/*iterate :join=',' parameters parameter*/__parameter_name__/**/)).setOnCompleteListener(new Completable.OnCompleteListener<Object>() {
-        @Override
-        public void onComplete(Object result) {
-          completer.complete((Void) result);
-        }
-
-        @Override
-        public void onError(Throwable throwable) {
-          completer.completeWithError(throwable);
-        }
-      });
-      return completer.completable;
+      return invokeMethod($instance, "", Arrays.<Object>asList(/*iterate :join=',' parameters parameter*/__parameter_name__/**/));
     }
   }
   /**/
@@ -95,12 +82,6 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
     }
 
     /*iterate constructors constructor*/
-    public Completable<PairedInstance> $create(__class_name__Proxy $instance, boolean $owner/*iterate parameters parameter*/,/*replace parameter_type*/Integer/**/ __parameter_name__/**/) {
-      return createNewInstancePair($instance, Arrays.<Object>asList("__constructor_name__"/*iterate parameters parameter*/, __parameter_name__/**/), $owner);
-    }
-    /**/
-
-    /*iterate constructors constructor*/
     public Completable<PairedInstance> $create$__constructor_name__(__class_name__Proxy $instance, boolean $owner/*iterate parameters parameter*/,/*replace parameter_type*/Integer/**/ __parameter_name__/**/) {
       return createNewInstancePair($instance, Arrays.<Object>asList("__constructor_name__"/*iterate parameters parameter*/, __parameter_name__/**/), $owner);
     }
@@ -108,7 +89,7 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
 
     /*iterate staticMethods staticMethod*/
     /*if! returnsFuture*/
-    public Completable<Object> $__staticMethod_name__(/*iterate :join=',' parameters parameter*//*replace parameter_type*/String/**/ __parameter_name__/**/) {
+    public Completable</*replace staticMethod_returnType*/Double/**/> $__staticMethod_name__(/*iterate :join=',' parameters parameter*//*replace parameter_type*/String/**/ __parameter_name__/**/) {
       return invokeStaticMethod("__staticMethod_name__", Arrays.<Object>asList(/*iterate :join=',' parameters parameter*/__parameter_name__/**/));
     }
     /**/
@@ -116,7 +97,7 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
 
     /*iterate methods method*/
     /*if! returnsFuture*/
-    public Completable<Object> $__method_name__(__class_name__Proxy $instance/*iterate parameters parameter*/,/*replace parameter_type*/String/**/ __parameter_name__/**/) {
+    public Completable</*replace method_returnType*/String/**/> $__method_name__(__class_name__Proxy $instance/*iterate parameters parameter*/,/*replace parameter_type*/String/**/ __parameter_name__/**/) {
       return invokeMethod($instance, "__method_name__", Arrays.<Object>asList(/*iterate :join=',' parameters parameter*/__parameter_name__/**/));
     }
     /**/
@@ -133,22 +114,15 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
     }
 
     /*iterate constructors constructor*/
-    public __class_name__Proxy $create(/*replace parameter_type*/Integer/**/ __parameter_name__/**/)
+    public __class_name__Proxy $create$__constructor_name__(/*iterate :join=',' parameters parameter*//*replace parameter_type*/Integer/**/ __parameter_name__/**/)
         throws Exception {
-      return new __class_name__Proxy(implementations, __parameter_name__);
-    }
-    /**/
-
-    /*iterate constructors constructor*/
-    public __class_name__Proxy $create$__constructor_name__(/*replace parameter_type*/Integer/**/ __parameter_name__/**/)
-        throws Exception {
-      return new __class_name__Proxy(implementations, __parameter_name__);
+      return new __class_name__Proxy(implementations, false/*iterate parameters parameter*/, __parameter_name__/**/);
     }
     /**/
 
     /*iterate staticMethods staticMethod*/
     /*if returnsFuture*/
-    public Double $__staticMethod_name__(/*replace parameter_type*/String/**/ __parameter_name__/**/)
+    public /*replace staticMethod_returnType*/Double/**/ $__staticMethod_name__(/*iterate :join=',' parameters parameter*//*replace parameter_type*/String/**/ __parameter_name__/**/)
         throws Exception {
       return __class_name__Proxy.staticMethodTemplate(implementations, __parameter_name__);
     }
@@ -157,7 +131,7 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
 
     /*iterate methods method*/
     /*if returnsFuture*/
-    public String $__method_name__(__class_name__Proxy $instance/*iterate parameters parameter*/,/*replace parameter_type*/String/**/ __parameter_name__/**/) throws Exception {
+    public /*replace method_returnType*/String/**/ $__method_name__(__class_name__Proxy $instance/*iterate parameters parameter*/,/*replace parameter_type*/String/**/ __parameter_name__/**/) throws Exception {
       return $instance.__method_name__(/*iterate :join=',' parameters parameter*/ __parameter_name__ /**/);
     }
     /**/
@@ -185,11 +159,6 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
         throws Exception {
       final String constructorName = (String) arguments.get(0);
       switch(constructorName) {
-        /*iterate constructors constructor*/
-        case "":
-          return $create(/*iterate :join=',' parameters parameter*/(/*replace parameter_type*/Integer/**/) arguments.get(/*replace parameter_index*/1/**/)/**/);
-        /**/
-
         /*iterate constructors constructor*/
         case "__constructor_name__":
           return $create$__constructor_name__(/*iterate :join=',' parameters parameter*/(/*replace parameter_type*/Integer/**/) arguments.get(/*replace parameter_index*/1/**/)/**/);

@@ -25,7 +25,7 @@ class $$$function_name$$Channel extends TypeChannel<Object> {
     );
   }
 
-  Future<Object?> _invoke(
+  Future<void> _invoke(
     $$function_name$$ $instance,
     /*iterate parameters parameter*/ /*replace parameter_type*/ String
         /**/ $$parameter_name$$,
