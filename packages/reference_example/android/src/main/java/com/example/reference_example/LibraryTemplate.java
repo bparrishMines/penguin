@@ -76,13 +76,13 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
   /**/
 
   /*iterate classes class*/
-  public static class $__class_name__Channel extends TypeChannel<__class_name__Proxy> {
+  public static class $__class_name__Channel extends TypeChannel<__class_name__> {
     public $__class_name__Channel(@NonNull TypeChannelMessenger messenger) {
       super(messenger, "__class_channel__");
     }
 
     /*iterate constructors constructor*/
-    public Completable<PairedInstance> $create$__constructor_name__(__class_name__Proxy $instance, boolean $owner/*iterate parameters parameter*/,/*replace parameter_type*/Integer/**/ __parameter_name__/**/) {
+    public Completable<PairedInstance> $create$__constructor_name__(__class_name__ $instance, boolean $owner/*iterate parameters parameter*/,/*replace parameter_type*/Integer/**/ __parameter_name__/**/) {
       return createNewInstancePair($instance, Arrays.<Object>asList("__constructor_name__"/*iterate parameters parameter*/, __parameter_name__/**/), $owner);
     }
     /**/
@@ -97,7 +97,7 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
 
     /*iterate methods method*/
     /*if! returnsFuture*/
-    public Completable</*replace method_returnType*/String/**/> $__method_name__(__class_name__Proxy $instance/*iterate parameters parameter*/,/*replace parameter_type*/String/**/ __parameter_name__/**/) {
+    public Completable</*replace method_returnType*/String/**/> $__method_name__(__class_name__ $instance/*iterate parameters parameter*/,/*replace parameter_type*/String/**/ __parameter_name__/**/) {
       return invokeMethod($instance, "__method_name__", Arrays.<Object>asList(/*iterate :join=',' parameters parameter*/__parameter_name__/**/));
     }
     /**/
@@ -106,7 +106,7 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
   /**/
 
   /*iterate classes class*/
-  public static class $__class_name__Handler implements TypeChannelHandler<__class_name__Proxy> {
+  public static class $__class_name__Handler implements TypeChannelHandler<__class_name__> {
     public final $LibraryImplementations implementations;
 
     public $__class_name__Handler($LibraryImplementations implementations) {
@@ -114,9 +114,9 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
     }
 
     /*iterate constructors constructor*/
-    public __class_name__Proxy $create$__constructor_name__(/*iterate :join=',' parameters parameter*//*replace parameter_type*/Integer/**/ __parameter_name__/**/)
+    public __class_name__ $create$__constructor_name__(/*iterate :join=',' parameters parameter*//*replace parameter_type*/Integer/**/ __parameter_name__/**/)
         throws Exception {
-      return new __class_name__Proxy(implementations, false/*iterate parameters parameter*/, __parameter_name__/**/);
+      return new __class_name__(implementations, false/*iterate parameters parameter*/, __parameter_name__/**/);
     }
     /**/
 
@@ -124,14 +124,14 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
     /*if returnsFuture*/
     public /*replace staticMethod_returnType*/Double/**/ $__staticMethod_name__(/*iterate :join=',' parameters parameter*//*replace parameter_type*/String/**/ __parameter_name__/**/)
         throws Exception {
-      /*if! returnsVoid*/return/**/ __class_name__Proxy.staticMethodTemplate(implementations, __parameter_name__);
+      /*if! returnsVoid*/return/**/ __class_name__.staticMethodTemplate(implementations, __parameter_name__);
     }
     /**/
     /**/
 
     /*iterate methods method*/
     /*if returnsFuture*/
-    public /*replace method_returnType*/String/**/ $__method_name__(__class_name__Proxy $instance/*iterate parameters parameter*/,/*replace parameter_type*/String/**/ __parameter_name__/**/) throws Exception {
+    public /*replace method_returnType*/String/**/ $__method_name__(__class_name__ $instance/*iterate parameters parameter*/,/*replace parameter_type*/String/**/ __parameter_name__/**/) throws Exception {
       /*if! returnsVoid*/return/**/ $instance.__method_name__(/*iterate :join=',' parameters parameter*/ __parameter_name__ /**/);
     }
     /**/
@@ -159,7 +159,7 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
     }
 
     @Override
-    public __class_name__Proxy createInstance(TypeChannelMessenger messenger, List<Object> arguments)
+    public __class_name__ createInstance(TypeChannelMessenger messenger, List<Object> arguments)
         throws Exception {
       final String constructorName = (String) arguments.get(0);
       switch(constructorName) {
@@ -176,7 +176,7 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
     @Override
     public Object invokeMethod(
         TypeChannelMessenger messenger,
-        __class_name__Proxy instance,
+        __class_name__ instance,
         String methodName,
         List<Object> arguments)
         throws Exception {

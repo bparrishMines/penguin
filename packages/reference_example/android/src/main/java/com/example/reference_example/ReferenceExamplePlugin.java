@@ -25,7 +25,7 @@ public class ReferenceExamplePlugin implements FlutterPlugin {
     // For testing the anonymous function.
     channelRegistrar.implementations.handler__class_name__ = new LibraryTemplate.$__class_name__Handler(channelRegistrar.implementations) {
       @Override
-      public Object invokeMethod(TypeChannelMessenger messenger, __class_name__Proxy instance, String methodName, List<Object> arguments) throws Exception {
+      public Object invokeMethod(TypeChannelMessenger messenger, __class_name__ instance, String methodName, List<Object> arguments) throws Exception {
         if (methodName.equals("callbackTest")) {
           final LibraryTemplate.$__function_name__ callback = (LibraryTemplate.$__function_name__) arguments.get(0);
           callback.invoke("Eureka!");
