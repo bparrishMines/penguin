@@ -1,3 +1,3 @@
 export 'package:reference/reference.dart';
 
-export 'src/camera_channels.dart';
+export 'src/camera.g.dart';

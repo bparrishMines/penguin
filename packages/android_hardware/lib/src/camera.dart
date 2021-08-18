@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:reference/annotations.dart';
 
 import 'camera.g.dart';
-import 'camera_channels.dart';
 
 /// Callback for camera error notification.
 ///
@@ -12,7 +11,7 @@ import 'camera_channels.dart';
 ///   [Camera.errorUnknown]
 ///   [Camera.errorServerDied]
 ///   [Camera.errorEvicted]
-@Reference('android_hardware/camera/ErrorCallback')
+@FunctionReference('android_hardware/camera/ErrorCallback')
 typedef ErrorCallback = void Function(int error);
 
 /// Callback used to notify on completion of camera auto focus.
@@ -32,7 +31,7 @@ typedef ErrorCallback = void Function(int error);
 /// `success`: whether the auto-focus was successful.
 ///
 /// See: [Camera.autoFocus].
-@Reference('android_hardware/camera/AutoFocusCallback')
+@FunctionReference('android_hardware/camera/AutoFocusCallback')
 typedef AutoFocusCallback = void Function(bool success);
 
 /// Callback used to signal the moment of actual image capture.
@@ -44,11 +43,11 @@ typedef AutoFocusCallback = void Function(bool success);
 /// but some time before the actual data is available.
 ///
 /// See: [Camera.takePicture].
-@Reference('android_hardware/camera/ShutterCallback')
+@FunctionReference('android_hardware/camera/ShutterCallback')
 typedef ShutterCallback = void Function();
 
 /// Callback when receiving an image or preview byte array.
-@Reference('android_hardware/camera/DataCallback')
+@FunctionReference('android_hardware/camera/DataCallback')
 typedef DataCallback = void Function(Uint8List? data);
 
 /// Callback for zoom changes during a smooth zoom operation.
@@ -58,7 +57,7 @@ typedef DataCallback = void Function(Uint8List? data);
 ///
 /// `stopped`: whether smooth zoom is stopped. If the value is true, this is the
 /// last zoom update for the application.
-@Reference('android_hardware/camera/OnZoomChangeListener')
+@FunctionReference('android_hardware/camera/OnZoomChangeListener')
 typedef OnZoomChangeListener = void Function(int zoomValue, bool stopped);
 
 /// Callback used to notify on auto focus start and stop.
@@ -67,7 +66,7 @@ typedef OnZoomChangeListener = void Function(int zoomValue, bool stopped);
 /// [CameraParameters.focusModeContinuousVideo] and
 /// [CameraParameters.focusModeContinuousPicture]. Applications can show
 /// autofocus animation based on this.
-@Reference('android_hardware/camera/AutoFocusMoveCallback')
+@FunctionReference('android_hardware/camera/AutoFocusMoveCallback')
 typedef AutoFocusMoveCallback = void Function(bool start);
 
 /// Callback used to supply image data from a photo capture.
@@ -78,31 +77,25 @@ typedef AutoFocusMoveCallback = void Function(bool start);
 /// [CameraParameters] settings.
 ///
 /// See: [Camera.takePicture].
-@Reference('android_hardware/camera/PictureCallback')
-class PictureCallback implements $PictureCallback {
+@ClassReference(
+  channel: 'android_hardware/camera/PictureCallback',
+  platformImport: 'dev.penguin.android_hardware.PictureCallbackProxy',
+  platformClassName: 'PictureCallbackProxy',
+)
+class PictureCallback {
   /// Construct a [PictureCallback].
-  PictureCallback(this.onPictureTaken) {
-    ChannelRegistrar.instance.implementations.channelDataCallback.$$create(
+  PictureCallback(this.onPictureTaken, {bool create = true}) {
+    $ChannelRegistrar.instance.implementations.channelDataCallback.$create(
       onPictureTaken,
       $owner: false,
     );
-    _channel.$create$(this, $owner: true, onPictureTaken: onPictureTaken);
-  }
-
-  /// Construct a [PictureCallback] without creating the paired Java object.
-  ///
-  /// This should only be used when creating a custom type channel
-  /// implementation of this class.
-  @ReferenceConstructor(ignore: true)
-  PictureCallback.withoutCreate(this.onPictureTaken) {
-    ChannelRegistrar.instance.implementations.channelDataCallback.$$create(
-      onPictureTaken,
-      $owner: false,
-    );
+    if (create) {
+      _channel.$create$(this, $owner: true, onPictureTaken: onPictureTaken);
+    }
   }
 
   static $PictureCallbackChannel get _channel =>
-      ChannelRegistrar.instance.implementations.channelPictureCallback;
+      $ChannelRegistrar.instance.implementations.channelPictureCallback;
 
   /// Callback used to supply image data from a photo capture.
   ///
@@ -116,31 +109,25 @@ class PictureCallback implements $PictureCallback {
 }
 
 /// Callback used to deliver copies of preview frames as they are displayed.
-@Reference('android_hardware/camera/PreviewCallback')
-class PreviewCallback implements $PreviewCallback {
+@ClassReference(
+  channel: 'android_hardware/camera/PreviewCallback',
+  platformImport: 'dev.penguin.android_hardware.PreviewCallbackProxy',
+  platformClassName: 'PreviewCallbackProxy',
+)
+class PreviewCallback {
   /// Construct a [PreviewCallback].
-  PreviewCallback(this.onPreviewFrame) {
-    ChannelRegistrar.instance.implementations.channelDataCallback.$$create(
+  PreviewCallback(this.onPreviewFrame, {bool create = true}) {
+    $ChannelRegistrar.instance.implementations.channelDataCallback.$create(
       onPreviewFrame,
       $owner: false,
     );
-    _channel.$create$(this, $owner: true, onPreviewFrame: onPreviewFrame);
-  }
-
-  /// Construct a [PreviewCallback] without creating the paired Java object.
-  ///
-  /// This should only be used when creating a custom type channel
-  /// implementation of this class.
-  @ReferenceConstructor(ignore: true)
-  PreviewCallback.withoutCreate(this.onPreviewFrame) {
-    ChannelRegistrar.instance.implementations.channelDataCallback.$$create(
-      onPreviewFrame,
-      $owner: false,
-    );
+    if (create) {
+      _channel.$create$(this, $owner: true, onPreviewFrame: onPreviewFrame);
+    }
   }
 
   static $PreviewCallbackChannel get _channel =>
-      ChannelRegistrar.instance.implementations.channelPreviewCallback;
+      $ChannelRegistrar.instance.implementations.channelPreviewCallback;
 
   /// Called as preview frames are displayed.
   ///
@@ -211,17 +198,21 @@ class PreviewCallback implements $PreviewCallback {
 /// specifications, such as megapixel ratings and auto-focus capabilities. In
 /// order for your application to be compatible with more devices, you should
 /// not make assumptions about the device camera specifications.
-@Reference('android_hardware/camera/Camera')
-class Camera with $Camera {
+@ClassReference(
+  channel: 'android_hardware/camera/Camera',
+  platformImport: 'dev.penguin.android_hardware.CameraProxy',
+  platformClassName: 'CameraProxy',
+)
+class Camera {
   /// Construct a [Camera].
   ///
   /// This should only be used for testing or when creating a custom type
   /// channel implementation of this class. Otherwise, an instance should be
   /// provided from [open].
-  Camera();
+  Camera({bool create = true});
 
   static $CameraChannel get _channel =>
-      ChannelRegistrar.instance.implementations.channelCamera;
+      $ChannelRegistrar.instance.implementations.channelCamera;
 
   /// Unspecified camera error.
   static const int errorUnknown = 0x00000001;
@@ -241,10 +232,8 @@ class Camera with $Camera {
   ///
   /// Throws [PlatformException] if there is an error retrieving the information
   /// (generally due to a hardware or other low-level failure).
-  static Future<List<CameraInfo>> getAllCameraInfo() async {
-    final List<Object?> allInfo =
-        await _channel.$getAllCameraInfo() as List<Object?>;
-    return allInfo.cast<CameraInfo>();
+  static Future<List<CameraInfo>> getAllCameraInfo() {
+    return _channel.$getAllCameraInfo();
   }
 
   // TODO: Best practice is to call this method on a worker thread in Java.
@@ -263,9 +252,7 @@ class Camera with $Camera {
   /// disabled the camera).
   ///
   /// See: [getAllCameraInfo]
-  static Future<Camera> open(int cameraId) async {
-    return await _channel.$open(cameraId) as Camera;
-  }
+  static Future<Camera> open(int cameraId) => _channel.$open(cameraId);
 
   /// Disconnects and releases the [Camera] object resources.
   ///
@@ -304,8 +291,7 @@ class Camera with $Camera {
   /// be because of a hardware or other low-level error, or because [release]
   /// has been called on this Camera instance.
   Future<int> attachPreviewTexture() async {
-    return _currentTexture ??=
-        await _channel.$attachPreviewTexture(this) as int;
+    return _currentTexture ??= await _channel.$attachPreviewTexture(this);
   }
 
   /// Release the Flutter [Texture] receiving preview frames.
@@ -438,7 +424,7 @@ class Camera with $Camera {
     PictureCallback? jpeg,
   }) {
     if (shutter != null) {
-      ChannelRegistrar.instance.implementations.channelShutterCallback.$$create(
+      $ChannelRegistrar.instance.implementations.channelShutterCallback.$create(
         shutter,
         $owner: false,
       );
@@ -486,7 +472,7 @@ class Camera with $Camera {
   /// be because of a hardware or other low-level error, or because [release]
   /// has been called on this [Camera] instance.
   Future<void> autoFocus(AutoFocusCallback callback) {
-    ChannelRegistrar.instance.implementations.channelAutoFocusCallback.$$create(
+    $ChannelRegistrar.instance.implementations.channelAutoFocusCallback.$create(
       callback,
       $owner: false,
     );
@@ -570,7 +556,7 @@ class Camera with $Camera {
 
   /// Registers a callback to be invoked when an error occurs.
   Future<void> setErrorCallback(ErrorCallback callback) {
-    ChannelRegistrar.instance.implementations.channelErrorCallback.$$create(
+    $ChannelRegistrar.instance.implementations.channelErrorCallback.$create(
       callback,
       $owner: false,
     );
@@ -613,9 +599,7 @@ class Camera with $Camera {
   /// Throws [PlatformException] if reading parameters fails; usually this would
   /// be because of a hardware or other low-level error, or because [release]
   /// has been called on this [Camera] instance.
-  Future<CameraParameters> getParameters() async {
-    return await _channel.$getParameters(this) as CameraParameters;
-  }
+  Future<CameraParameters> getParameters() => _channel.$getParameters(this);
 
   /// Changes the settings for this Camera service.
   ///
@@ -629,8 +613,8 @@ class Camera with $Camera {
 
   /// Registers a listener to be notified when the zoom value is updated by the camera driver during smooth zoom.
   Future<void> setZoomChangeListener(OnZoomChangeListener listener) {
-    ChannelRegistrar.instance.implementations.channelOnZoomChangeListener
-        .$$create(
+    $ChannelRegistrar.instance.implementations.channelOnZoomChangeListener
+        .$create(
       listener,
       $owner: false,
     );
@@ -643,8 +627,8 @@ class Camera with $Camera {
   /// usually this would be because of a hardware or other low-level error, or
   /// because [release] has been called on this [Camera] instance.
   Future<void> setAutoFocusMoveCallback(AutoFocusMoveCallback callback) {
-    ChannelRegistrar.instance.implementations.channelAutoFocusMoveCallback
-        .$$create(
+    $ChannelRegistrar.instance.implementations.channelAutoFocusMoveCallback
+        .$create(
       callback,
       $owner: false,
     );
@@ -688,8 +672,8 @@ class Camera with $Camera {
   /// This is only supported on Android
   /// versions >= `Build.VERSION_CODES.JELLY_BEAN_MR1`. A [PlatformException]
   /// will be thrown if the android version is below this.
-  Future<bool> enableShutterSound({required bool enabled}) async {
-    return await _channel.$enableShutterSound(this, enabled) as bool;
+  Future<bool> enableShutterSound({required bool enabled}) {
+    return _channel.$enableShutterSound(this, enabled);
   }
 }
 
@@ -707,15 +691,19 @@ class Camera with $Camera {
 /// [CameraParameters.getSupportedColorEffects] before calling
 /// [CameraParameters.setColorEffect]. If the camera does not support color
 /// effects, [CameraParameters.getSupportedColorEffects] will return `null`.
-@Reference('android_hardware/camera/CameraParameters')
-class CameraParameters with $CameraParameters {
+@ClassReference(
+  channel: 'android_hardware/camera/CameraParameters',
+  platformImport: 'dev.penguin.android_hardware.CameraParametersProxy',
+  platformClassName: 'CameraParametersProxy',
+)
+class CameraParameters {
   /// Construct a [CameraParameters].
   ///
   /// This should only be used for testing or when creating a custom type
   /// channel implementation of this class. Otherwise, use
   /// [Camera.getParameters].
   @ReferenceConstructor(ignore: true)
-  CameraParameters();
+  CameraParameters({bool create = true});
 
   /// Flash will be fired automatically when required.
   ///
@@ -942,14 +930,14 @@ class CameraParameters with $CameraParameters {
   static const String whiteBalanceShade = 'shade';
 
   static $CameraParametersChannel get _channel =>
-      ChannelRegistrar.instance.implementations.channelCameraParameters;
+      $ChannelRegistrar.instance.implementations.channelCameraParameters;
 
   /// Gets the state of the auto-exposure lock.
   ///
   /// Applications should check [isAutoExposureLockSupported] before using this
   /// method. See [setAutoExposureLock] for details about the lock.
-  Future<bool> getAutoExposureLock() async {
-    return await _channel.$getAutoExposureLock(this) as bool;
+  Future<bool> getAutoExposureLock() {
+    return _channel.$getAutoExposureLock(this);
   }
 
   /// Gets the current focus areas.
@@ -993,7 +981,7 @@ class CameraParameters with $CameraParameters {
     final List<Object?>? focusAreas =
         await _channel.$getFocusAreas(this) as List<Object?>?;
     return focusAreas?.cast<CameraArea>();
-  }
+  } fix generator to allow nullable maps and lists
 
   // TODO: This can return Float.POSITIVE_INFINITY?
   /// Gets the distances from the camera to where an object appears to be in focus.
@@ -2024,27 +2012,26 @@ class CameraParameters with $CameraParameters {
 /// weight as a smaller area will have more effect in the metering result.
 /// Metering areas can overlap and the driver will add the weights in the
 /// overlap region.
-@Reference('android_hardware/camera/CameraArea')
-class CameraArea with $CameraArea {
+@ClassReference(
+  channel: 'android_hardware/camera/CameraArea',
+  platformImport: 'dev.penguin.android_hardware.CameraAreaProxy',
+  platformClassName: 'CameraAreaProxy',
+)
+class CameraArea {
   /// Default constructor for [CameraArea].
-  CameraArea(this.rect, this.weight) {
-    _channel.$create$(
-      this,
-      $owner: true,
-      rect: rect,
-      weight: weight,
-    );
+  CameraArea(this.rect, this.weight, {bool create = true}) {
+    if (create) {
+      _channel.$create$(
+        this,
+        $owner: true,
+        rect: rect,
+        weight: weight,
+      );
+    }
   }
 
-  /// Construct a [CameraArea] without creating the paired Java object.
-  ///
-  /// This should only be used when creating a custom type channel
-  /// implementation of this class.
-  @ReferenceConstructor(ignore: true)
-  CameraArea.withoutCreate(this.rect, this.weight);
-
   static $CameraAreaChannel get _channel =>
-      ChannelRegistrar.instance.implementations.channelCameraArea;
+      $ChannelRegistrar.instance.implementations.channelCameraArea;
 
   /// Bounds of the area.
   ///
@@ -2074,41 +2061,35 @@ class CameraArea with $CameraArea {
 ///
 /// The rectangle is represented by the coordinates of its 4 edges
 /// (left, top, right bottom).
-@Reference('android_hardware/camera/CameraRect')
-class CameraRect with $CameraRect {
+@ClassReference(
+  channel: 'android_hardware/camera/CameraRect',
+  platformImport: 'dev.penguin.android_hardware.CameraRectProxy',
+  platformClassName: 'CameraRectProxy',
+)
+class CameraRect {
   /// Default constructor for [CameraRect].
   ///
   /// left <= right and top <= bottom
-  CameraRect({
-    required this.top,
-    required this.bottom,
-    required this.right,
-    required this.left,
-  }) {
-    _channel.$create$(
-      this,
-      $owner: true,
-      top: top,
-      bottom: bottom,
-      right: right,
-      left: left,
-    );
+  CameraRect(
+      {required this.top,
+      required this.bottom,
+      required this.right,
+      required this.left,
+      bool create = true}) {
+    if (create) {
+      _channel.$create$(
+        this,
+        $owner: true,
+        top: top,
+        bottom: bottom,
+        right: right,
+        left: left,
+      );
+    }
   }
 
-  /// Construct a [CameraArea] without creating the paired Java object.
-  ///
-  /// This should only be used when creating a custom type channel
-  /// implementation of this class.
-  @ReferenceConstructor(ignore: true)
-  CameraRect.withoutCreate({
-    required this.top,
-    required this.bottom,
-    required this.right,
-    required this.left,
-  });
-
   static $CameraRectChannel get _channel =>
-      ChannelRegistrar.instance.implementations.channelCameraRect;
+      $ChannelRegistrar.instance.implementations.channelCameraRect;
 
   /// The offset of the top edge of this rectangle from the y axis.
   final int top;
@@ -2130,10 +2111,14 @@ class CameraRect with $CameraRect {
 }
 
 /// Image size (width and height dimensions).
-@Reference('android_hardware/camera/CameraSize')
-class CameraSize with $CameraSize {
+@ClassReference(
+  channel: 'android_hardware/camera/CameraSize',
+  platformImport: 'dev.penguin.android_hardware.CameraSizeProxy',
+  platformClassName: 'CameraSizeProxy',
+)
+class CameraSize {
   /// Default constructor for [CameraSize].
-  CameraSize(this.width, this.height);
+  CameraSize(this.width, this.height, {bool create = true});
 
   /// Height of a picture.
   final int width;
@@ -2151,14 +2136,19 @@ class CameraSize with $CameraSize {
 /// Information about a camera.
 ///
 /// Retrieve by calling [Camera.getAllCameraInfo].
-@Reference('android_hardware/camera/CameraInfo')
-class CameraInfo implements $CameraInfo {
+@ClassReference(
+  channel: 'android_hardware/camera/CameraInfo',
+  platformImport: 'dev.penguin.android_hardware.CameraInfoProxy',
+  platformClassName: 'CameraInfoProxy',
+)
+class CameraInfo {
   /// Default constructor for [CameraInfo].
   CameraInfo({
     required this.cameraId,
     required this.facing,
     required this.orientation,
     required this.canDisableShutterSound,
+    bool create = true,
   }) : assert(facing == cameraFacingBack || facing == cameraFacingFront);
 
   /// The facing of the camera is opposite to that of the screen.
@@ -2210,12 +2200,16 @@ class CameraInfo implements $CameraInfo {
 }
 
 /// Image format constants.
-@Reference('android_hardware/camera/ImageFormat')
+@ClassReference(
+  channel: 'android_hardware/camera/ImageFormat',
+  platformImport: 'dev.penguin.android_hardware.ImageFormatProxy',
+  platformClassName: 'ImageFormatProxy',
+)
 abstract class ImageFormat {
   ImageFormat._();
 
   static $ImageFormatChannel get _channel =>
-      ChannelRegistrar.instance.implementations.channelImageFormat;
+      $ChannelRegistrar.instance.implementations.channelImageFormat;
 
   /// Android dense depth image format.
   ///
