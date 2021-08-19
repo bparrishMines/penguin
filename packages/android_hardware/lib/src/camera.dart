@@ -166,7 +166,7 @@ class PreviewCallback {
 /// ```
 ///
 /// To take pictures with this class, use the following steps:
-///   1. Obtain an instance of Camera from [open].
+///   1. Obtain an instance of Camera from [open](0).
 ///   2. Get existing (default) settings with [getParameters].
 ///   3. If necessary, modify the returned [CameraParameters] object and call
 ///      [setParameters].
@@ -1713,7 +1713,7 @@ class CameraParameters {
     return _channel.$isVideoStabilizationSupported(this);
   }
 
-  // TODO: Document
+  // Android Library doesn't include any documentation.
   // ignore: public_member_api_docs
   Future<void> remove(String key) {
     return _channel.$remove(this, key);
@@ -2289,7 +2289,7 @@ abstract class ImageFormat {
   ///
   /// Returns the number of bits per pixel of the given format or -1 if the
   /// format doesn't exist or is not supported.
-  static Future<int> getBitsPerPixel(int format) async {
-    return await _channel.$getBitsPerPixel(format) as int;
+  static Future<int> getBitsPerPixel(int format) {
+    return _channel.$getBitsPerPixel(format);
   }
 }
