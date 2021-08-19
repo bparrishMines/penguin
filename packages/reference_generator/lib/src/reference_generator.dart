@@ -26,14 +26,29 @@ class ReferenceAstBuilder extends Builder {
     return ReferenceMethod(ignore: reader.read('ignore').boolValue);
   }
 
-  static ReferenceParameter? tryReadParameterAnnotation(
-    ParameterElement element,
-  ) {
+  static ReferenceParameter? tryReadParameterAnnotation(Element element) {
+    if (element is! ParameterElement && element is! MethodElement) {
+      throw ArgumentError();
+    }
+
     if (!parameterAnnotation.hasAnnotationOfExact(element)) return null;
     final ConstantReader reader = ConstantReader(
       parameterAnnotation.firstAnnotationOfExact(element),
     );
-    return ReferenceParameter(ignore: reader.read('ignore').boolValue);
+
+    final ConstantReader platformTypeImportReader =
+        reader.read('platformTypeImport');
+    final ConstantReader platformTypeNameReader =
+        reader.read('platformTypeName');
+    return ReferenceParameter(
+      ignore: reader.read('ignore').boolValue,
+      platformTypeImport: platformTypeImportReader.isNull
+          ? null
+          : platformTypeImportReader.stringValue,
+      platformTypeName: platformTypeNameReader.isNull
+          ? null
+          : platformTypeNameReader.stringValue,
+    );
   }
 
   static ReferenceConstructor? tryReadConstructorAnnotation(
@@ -93,11 +108,6 @@ class ReferenceAstBuilder extends Builder {
     required Iterable<ClassElement> classes,
     required Iterable<TypeAliasElement> functions,
   }) {
-    // final Set<Element> allGeneratedElements = <Element>{
-    //   ...classes,
-    //   ...functions
-    // };
-
     final Set<String> dartImports = <String>{
       libraryElement.source.uri.toString(),
     };
@@ -237,12 +247,22 @@ class ReferenceAstBuilder extends Builder {
     required Set<String> dartImports,
     required Set<String> platformImports,
   }) {
+    final ReferenceParameter? referenceParameter =
+        tryReadParameterAnnotation(methodElement);
+
+    final String? platformReturnTypeImport =
+        referenceParameter?.platformTypeImport;
+    if (referenceParameter != null && platformReturnTypeImport != null) {
+      platformImports.add(platformReturnTypeImport);
+    }
+
     return MethodNode(
       name: methodElement.name,
       returnType: _toTypeNode(
         type: methodElement.returnType,
         dartImports: dartImports,
         platformImports: platformImports,
+        platformTypeNameOverride: referenceParameter?.platformTypeName,
       ),
       parameters: methodElement.parameters
           .where((ParameterElement element) {
@@ -300,12 +320,21 @@ class ReferenceAstBuilder extends Builder {
     required Set<String> dartImports,
     required Set<String> platformImports,
   }) {
+    final ReferenceParameter? referenceParameter =
+        tryReadParameterAnnotation(parameterElement);
+
+    final String? platformTypeImport = referenceParameter?.platformTypeImport;
+    if (referenceParameter != null && platformTypeImport != null) {
+      platformImports.add(platformTypeImport);
+    }
+
     return ParameterNode(
       name: parameterElement.name,
       type: _toTypeNode(
         type: parameterElement.type,
         dartImports: dartImports,
         platformImports: platformImports,
+        platformTypeNameOverride: referenceParameter?.platformTypeName,
       ),
       isNamed: parameterElement.isNamed,
     );
@@ -315,6 +344,7 @@ class ReferenceAstBuilder extends Builder {
     required DartType type,
     required Set<String> dartImports,
     required Set<String> platformImports,
+    String? platformTypeNameOverride,
   }) {
     DartType nonFutureType = type;
     if (type.isDartAsyncFuture || type.isDartAsyncFutureOr) {
@@ -334,7 +364,6 @@ class ReferenceAstBuilder extends Builder {
         dartName: aliasElement.name,
         platformName: aliasElement.name,
         nullable: nonFutureType.nullabilitySuffix == NullabilitySuffix.question,
-        //codeGeneratedType: allGeneratedElements.contains(aliasElement),
         typeArguments: <TypeNode>[],
         functionType: true,
         isFuture: type.isDartAsyncFuture || type.isDartAsyncFutureOr,
@@ -359,11 +388,11 @@ class ReferenceAstBuilder extends Builder {
       dartName: displayName.split(RegExp('[<]')).first,
       platformName: isReference
           ? classReference.platformClassName
-          : displayName.split(RegExp('[<]')).first,
+          : platformTypeNameOverride ?? displayName.split(RegExp('[<]')).first,
       nullable: nonFutureType.nullabilitySuffix == NullabilitySuffix.question,
-      //codeGeneratedType: allGeneratedElements.contains(type.element),
       functionType: false,
-      typeArguments: nonFutureType is! ParameterizedType
+      typeArguments: nonFutureType is! ParameterizedType ||
+              platformTypeNameOverride != null
           ? <TypeNode>[]
           : nonFutureType.typeArguments
               .map<TypeNode>(
@@ -404,21 +433,6 @@ class ReferenceAstBuilder extends Builder {
       platformClassName: constantReader.read('platformClassName').stringValue,
     );
   }
-
-  // FunctionReference? _tryGetFunctionReference(DartType type) {
-  //   final TypeChecker typeChecker = TypeChecker.fromRuntime(FunctionReference);
-  //   final Element? element = type.element;
-  //
-  //   if (element == null) {
-  //     return null;
-  //   } else if (type.isVoid || !typeChecker.hasAnnotationOf(element)) {
-  //     return null;
-  //   }
-  //
-  //   final ConstantReader constantReader =
-  //       ConstantReader(typeChecker.firstAnnotationOf(element));
-  //   return FunctionReference(constantReader.read('channel').stringValue);
-  // }
 
   @override
   Map<String, List<String>> get buildExtensions => <String, List<String>>{
