@@ -124,7 +124,7 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
     /*if returnsFuture*/
     public /*replace staticMethod_returnType*/Double/**/ $__staticMethod_name__(/*iterate :join=',' parameters parameter*//*replace parameter_type*/String/**/ __parameter_name__/**/)
         throws Exception {
-      /*if! returnsVoid*/return/**/ __class_name__.__staticMethod_name__(implementations, __parameter_name__);
+      /*if! returnsVoid*/return/**/ __class_name__.__staticMethod_name__(implementations/*iterate parameters parameter*/,__parameter_name__/**/);
     }
     /**/
     /**/
