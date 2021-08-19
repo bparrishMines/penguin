@@ -21,8 +21,8 @@ public class PreviewCallbackTest {
 
   @Test
   public void createPictureCallback() {
-    final ChannelRegistrar.LibraryImplementations implementations =
-        new ChannelRegistrar.LibraryImplementations(mockTypeChannelMessenger, mock(TextureRegistry.class));
+    final LibraryImplementations.LibraryImplementations implementations =
+        new LibraryImplementations.LibraryImplementations(mockTypeChannelMessenger, mock(TextureRegistry.class));
 
     final CameraChannelLibrary.$DataCallback mockDataCallback = mock(CameraChannelLibrary.$DataCallback.class);
 

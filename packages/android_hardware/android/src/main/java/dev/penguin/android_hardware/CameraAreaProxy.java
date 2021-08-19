@@ -5,40 +5,42 @@ import android.hardware.Camera;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CameraAreaProxy implements CameraChannelLibrary.$CameraArea {
+public class CameraAreaProxy {
+  public final LibraryImplementations implementations;
   public final Camera.Area area;
-  public final CameraRectProxy rect;
 
-  public static List<CameraAreaProxy> fromList(List<Camera.Area> areas, ChannelRegistrar.LibraryImplementations implementations) {
+  public CameraAreaProxy(
+      CameraChannelLibrary.$LibraryImplementations implementations,
+      boolean create,
+      CameraRectProxy rect,
+      Integer weight) {
+    this((LibraryImplementations) implementations, create, new Camera.Area(rect.rect, weight));
+  }
+
+  public CameraAreaProxy(LibraryImplementations implementations, boolean create, Camera.Area area) {
+    this.implementations = implementations;
+    this.area = area;
+    if (create) {
+      implementations.channelCameraAreaProxy.$create$(
+          this, false, new CameraRectProxy(implementations, true, area.rect), area.weight);
+    }
+  }
+
+  public static List<CameraAreaProxy> fromList(
+      LibraryImplementations implementations, List<Camera.Area> areas) {
     final List<CameraAreaProxy> proxyList = new ArrayList<>();
     if (areas == null) return proxyList;
     for (Camera.Area area : areas) {
-      proxyList.add(new CameraAreaProxy(area, implementations, true));
+      proxyList.add(new CameraAreaProxy(implementations, true, area));
     }
     return proxyList;
   }
 
-  public static List<Camera.Area> toAreaList(List<? extends CameraChannelLibrary.$CameraArea> proxies) {
+  public static List<Camera.Area> toAreaList(List<CameraAreaProxy> proxies) {
     final List<Camera.Area> areaList = new ArrayList<>();
-    for (CameraChannelLibrary.$CameraArea proxy : proxies) {
-      areaList.add(((CameraAreaProxy)proxy).area);
+    for (CameraAreaProxy proxy : proxies) {
+      areaList.add(proxy.area);
     }
     return areaList;
-  }
-
-  public CameraAreaProxy(CameraRectProxy rect, Integer weight, ChannelRegistrar.LibraryImplementations implementations, boolean create) {
-    this(new Camera.Area(rect.rect, weight), rect, implementations, create);
-  }
-
-  public CameraAreaProxy(Camera.Area area, ChannelRegistrar.LibraryImplementations implementations, boolean create) {
-    this(area, new CameraRectProxy(area.rect, implementations), implementations, create);
-  }
-
-  public CameraAreaProxy(Camera.Area area, CameraRectProxy rect, ChannelRegistrar.LibraryImplementations implementations, boolean create) {
-    this.area = area;
-    this.rect = rect;
-    if (create) {
-      implementations.getChannelCameraArea().$create$(this, false, rect, area.weight);
-    }
   }
 }

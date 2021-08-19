@@ -16,7 +16,7 @@ public class AndroidHardwarePlugin implements FlutterPlugin {
     final TypeChannelMessenger messenger = ReferencePlugin.getMessengerInstance(binaryMessenger);
 
     final TextureRegistry textureRegistry = flutterPluginBinding.getTextureRegistry();
-    final ChannelRegistrar channelRegistrar = new ChannelRegistrar(new ChannelRegistrar.LibraryImplementations(messenger, textureRegistry));
+    final LibraryImplementations channelRegistrar = new LibraryImplementations(new LibraryImplementations.LibraryImplementations(messenger, textureRegistry));
     channelRegistrar.registerHandlers();
   }
 

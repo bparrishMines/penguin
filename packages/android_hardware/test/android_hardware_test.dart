@@ -19,13 +19,13 @@ void main() {
 
   group('$Camera', () {
     setUp(() {
-      ChannelRegistrar.instance =
-          ChannelRegistrar(TestLibraryImplementations());
+      $ChannelRegistrar.instance =
+          $ChannelRegistrar(TestLibraryImplementations());
     });
 
     test('attachPreviewTexture', () async {
       final Camera camera = Camera();
-      ChannelRegistrar
+      $ChannelRegistrar
           .instance.implementations.channelCamera.messenger.instanceManager
           .addStrongReference(
         instance: camera,
@@ -41,7 +41,7 @@ void main() {
   });
 }
 
-class TestLibraryImplementations extends LibraryImplementations {
+class TestLibraryImplementations extends $LibraryImplementations {
   TestLibraryImplementations() : super(TestMessenger());
 }
 

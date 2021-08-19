@@ -1283,8 +1283,8 @@ class $CameraParametersChannel extends TypeChannel<CameraParameters> {
       $instance,
       r'getMeteringAreas',
       <Object?>[],
-    ) as List<dynamic>)
-        .map((_) => _ as CameraArea)
+    ) as List<dynamic>?)
+        ?.map((_) => _ as CameraArea)
         .toList();
   }
 
@@ -1347,8 +1347,8 @@ class $CameraParametersChannel extends TypeChannel<CameraParameters> {
       $instance,
       r'getSupportedAntibanding',
       <Object?>[],
-    ) as List<dynamic>)
-        .map((_) => _ as String)
+    ) as List<dynamic>?)
+        ?.map((_) => _ as String)
         .toList();
   }
 
@@ -1359,8 +1359,8 @@ class $CameraParametersChannel extends TypeChannel<CameraParameters> {
       $instance,
       r'getSupportedColorEffects',
       <Object?>[],
-    ) as List<dynamic>)
-        .map((_) => _ as String)
+    ) as List<dynamic>?)
+        ?.map((_) => _ as String)
         .toList();
   }
 
@@ -1417,8 +1417,8 @@ class $CameraParametersChannel extends TypeChannel<CameraParameters> {
       $instance,
       r'getSupportedSceneModes',
       <Object?>[],
-    ) as List<dynamic>)
-        .map((_) => _ as String)
+    ) as List<dynamic>?)
+        ?.map((_) => _ as String)
         .toList();
   }
 
@@ -1429,8 +1429,8 @@ class $CameraParametersChannel extends TypeChannel<CameraParameters> {
       $instance,
       r'getSupportedVideoSizes',
       <Object?>[],
-    ) as List<dynamic>)
-        .map((_) => _ as CameraSize)
+    ) as List<dynamic>?)
+        ?.map((_) => _ as CameraSize)
         .toList();
   }
 
@@ -1441,8 +1441,8 @@ class $CameraParametersChannel extends TypeChannel<CameraParameters> {
       $instance,
       r'getSupportedWhiteBalance',
       <Object?>[],
-    ) as List<dynamic>)
-        .map((_) => _ as String)
+    ) as List<dynamic>?)
+        ?.map((_) => _ as String)
         .toList();
   }
 
@@ -2572,7 +2572,7 @@ class $LibraryImplementations {
 class $ChannelRegistrar {
   $ChannelRegistrar(this.implementations);
 
-  static final $ChannelRegistrar instance = $ChannelRegistrar(
+  static $ChannelRegistrar instance = $ChannelRegistrar(
       $LibraryImplementations(MethodChannelMessenger.instance))
     ..registerHandlers();
 

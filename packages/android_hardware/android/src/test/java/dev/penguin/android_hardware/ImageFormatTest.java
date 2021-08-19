@@ -45,8 +45,8 @@ public class ImageFormatTest {
   public void getBitsPerPixel() {
     PowerMockito.mockStatic(ImageFormat.class);
 
-    final ChannelRegistrar.LibraryImplementations libraryImplementations =
-        new ChannelRegistrar.LibraryImplementations(mockTypeChannelMessenger, mockTextureRegistry);
+    final LibraryImplementations.LibraryImplementations libraryImplementations =
+        new LibraryImplementations.LibraryImplementations(mockTypeChannelMessenger, mockTextureRegistry);
     libraryImplementations.getHandlerImageFormat().$getBitsPerPixel(mockTypeChannelMessenger, 23);
 
     verifyStatic();

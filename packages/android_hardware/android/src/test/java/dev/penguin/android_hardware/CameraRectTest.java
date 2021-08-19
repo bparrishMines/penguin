@@ -16,7 +16,7 @@ public class CameraRectTest {
   public MockitoRule mockitoRule = MockitoJUnit.rule();
 
   @Mock
-  ChannelRegistrar.LibraryImplementations mockImplementations;
+  LibraryImplementations.LibraryImplementations mockImplementations;
 
   @Mock
   CameraChannelLibrary.$CameraRectChannel mockCameraRectChannel;

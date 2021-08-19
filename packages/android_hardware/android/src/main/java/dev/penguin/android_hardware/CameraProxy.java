@@ -9,122 +9,92 @@ import java.util.List;
 
 import io.flutter.view.TextureRegistry;
 
-public class CameraProxy implements CameraChannelLibrary.$Camera {
+public class CameraProxy {
+  public final LibraryImplementations implementations;
   public final Camera camera;
-  public final TextureRegistry textureRegistry;
-  public final ChannelRegistrar.LibraryImplementations implementations;
   private TextureRegistry.SurfaceTextureEntry currentTextureEntry;
 
-  public CameraProxy(Camera camera, TextureRegistry textureRegistry, ChannelRegistrar.LibraryImplementations implementations, boolean create) {
-    this.camera = camera;
-    this.textureRegistry = textureRegistry;
+  public CameraProxy(LibraryImplementations implementations, boolean create, Camera camera) {
     this.implementations = implementations;
+    this.camera = camera;
     if (create) {
-      implementations.getChannelCamera().$create$(this, false);
+      implementations.channelCameraProxy.$create$(this, false);
     }
   }
 
-  public static CameraProxy open(ChannelRegistrar.LibraryImplementations implementations, TextureRegistry textureRegistry, int cameraId) {
-    return new CameraProxy(Camera.open(cameraId), textureRegistry, implementations, true);
+  public static CameraProxy open(CameraChannelLibrary.$LibraryImplementations implementations, int cameraId) {
+    return new CameraProxy((LibraryImplementations) implementations, true, Camera.open(cameraId));
   }
 
-  public static List<CameraInfoProxy> getAllCameraInfo(ChannelRegistrar.LibraryImplementations libraryImplementations) {
+  public static List<CameraInfoProxy> getAllCameraInfo(CameraChannelLibrary.$LibraryImplementations implementations) {
     final List<CameraInfoProxy> allCameraInfoProxy = new ArrayList<>();
 
     int numOfCameras = Camera.getNumberOfCameras();
     for (int i = 0; i < numOfCameras; i++) {
       final Camera.CameraInfo info = new Camera.CameraInfo();
       Camera.getCameraInfo(i, info);
-      allCameraInfoProxy.add(new CameraInfoProxy(info, libraryImplementations, i, true));
+      allCameraInfoProxy.add(new CameraInfoProxy((LibraryImplementations) implementations, true, i, info));
     }
 
     return allCameraInfoProxy;
   }
 
-  @Override
-  public Void release() {
+  public void release() {
     camera.release();
-    return null;
   }
 
-  @Override
-  public Void startPreview() {
+  public void startPreview() {
     camera.startPreview();
-    return null;
   }
 
-  @Override
-  public Void stopPreview() {
+  public void stopPreview() {
     camera.stopPreview();
-    return null;
   }
 
-  @Override
-  public Void autoFocus(CameraChannelLibrary.$AutoFocusCallback callback) {
+  public void autoFocus(CameraChannelLibrary.$AutoFocusCallback callback) {
     camera.autoFocus((success, camera) -> callback.invoke(success));
-    return null;
   }
 
-  @Override
-  public Void cancelAutoFocus() {
+  public void cancelAutoFocus() {
     camera.cancelAutoFocus();
-    return null;
   }
 
-  @Override
-  public Void setDisplayOrientation(Integer degrees) {
+  public void setDisplayOrientation(Integer degrees) {
     camera.setDisplayOrientation(degrees);
-    return null;
   }
 
-  @Override
-  public Void setErrorCallback(CameraChannelLibrary.$ErrorCallback callback) {
+  public void setErrorCallback(CameraChannelLibrary.$ErrorCallback callback) {
     camera.setErrorCallback((error, camera) -> callback.invoke(error));
-    return null;
   }
 
-  @Override
-  public Void startSmoothZoom(Integer value) {
+  public void startSmoothZoom(Integer value) {
     camera.startSmoothZoom(value);
-    return null;
   }
 
-  @Override
-  public Void stopSmoothZoom() {
+  public void stopSmoothZoom() {
     camera.stopSmoothZoom();
-    return null;
   }
 
-  @Override
   public CameraParametersProxy getParameters() {
-    return new CameraParametersProxy(camera.getParameters(), implementations, true);
+    return new CameraParametersProxy(implementations, true, camera.getParameters());
   }
 
-  @Override
-  public Void setParameters(CameraChannelLibrary.$CameraParameters parameters) {
-    camera.setParameters(((CameraParametersProxy) parameters).cameraParameters);
-    return null;
+  public void setParameters(CameraParametersProxy parameters) {
+    camera.setParameters(parameters.cameraParameters);
   }
 
-  @Override
-  public Void setZoomChangeListener(CameraChannelLibrary.$OnZoomChangeListener listener) {
+  public void setZoomChangeListener(CameraChannelLibrary.$OnZoomChangeListener listener) {
     camera.setZoomChangeListener((zoomValue, stopped, camera) -> listener.invoke(zoomValue, stopped));
-    return null;
   }
 
-  @Override
-  public Void setAutoFocusMoveCallback(CameraChannelLibrary.$AutoFocusMoveCallback callback) {
+  public void setAutoFocusMoveCallback(CameraChannelLibrary.$AutoFocusMoveCallback callback) {
     camera.setAutoFocusMoveCallback((start, camera) -> callback.invoke(start));
-    return null;
   }
 
-  @Override
-  public Void lock() {
+  public void lock() {
     camera.lock();
-    return null;
   }
 
-  @Override
   public Boolean enableShutterSound(Boolean enabled) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
       //noinspection deprecation
@@ -134,8 +104,7 @@ public class CameraProxy implements CameraChannelLibrary.$Camera {
     }
   }
 
-  @Override
-  public Void takePicture(CameraChannelLibrary.$ShutterCallback shutter,
+  public void takePicture(CameraChannelLibrary.$ShutterCallback shutter,
                             CameraChannelLibrary.$PictureCallback raw,
                             CameraChannelLibrary.$PictureCallback postView,
                             CameraChannelLibrary.$PictureCallback jpeg) {
@@ -148,45 +117,34 @@ public class CameraProxy implements CameraChannelLibrary.$Camera {
     return null;
   }
 
-  @Override
   public Long attachPreviewTexture() throws Exception {
     if (currentTextureEntry != null) return currentTextureEntry.id();
 
-    currentTextureEntry = textureRegistry.createSurfaceTexture();
+    currentTextureEntry = implementations.textureRegistry.createSurfaceTexture();
     camera.setPreviewTexture(currentTextureEntry.surfaceTexture());
     return currentTextureEntry.id();
   }
 
-  @Override
-  public Void releasePreviewTexture() throws Exception {
-    if (currentTextureEntry == null) return null;
+  public void releasePreviewTexture() throws Exception {
+    if (currentTextureEntry == null) return;
     camera.setPreviewTexture(null);
     currentTextureEntry.release();
     currentTextureEntry = null;
-    return null;
   }
 
-  @Override
-  public Void unlock() {
+  public void unlock() {
     camera.unlock();
-    return null;
   }
 
-  @Override
-  public Void setOneShotPreviewCallback(CameraChannelLibrary.$PreviewCallback callback) {
+  public void setOneShotPreviewCallback(CameraChannelLibrary.$PreviewCallback callback) {
     camera.setOneShotPreviewCallback(((PreviewCallbackProxy)callback).previewCallback);
-    return null;
   }
 
-  @Override
-  public Void setPreviewCallback(CameraChannelLibrary.$PreviewCallback callback) {
+  public void setPreviewCallback(CameraChannelLibrary.$PreviewCallback callback) {
     camera.setPreviewCallback(((PreviewCallbackProxy)callback).previewCallback);
-    return null;
   }
 
-  @Override
-  public Void reconnect() throws IOException {
+  public void reconnect() throws IOException {
     camera.reconnect();
-    return null;
   }
 }

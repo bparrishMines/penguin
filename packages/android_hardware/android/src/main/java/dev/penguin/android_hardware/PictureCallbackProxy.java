@@ -2,7 +2,7 @@ package dev.penguin.android_hardware;
 
 import android.hardware.Camera;
 
-public class PictureCallbackProxy implements CameraChannelLibrary.$PictureCallback {
+public class PictureCallbackProxy {
   public final Camera.PictureCallback pictureCallback;
 
   public PictureCallbackProxy(CameraChannelLibrary.$DataCallback onPictureTaken) {

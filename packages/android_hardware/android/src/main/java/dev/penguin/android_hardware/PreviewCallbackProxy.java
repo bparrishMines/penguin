@@ -2,7 +2,7 @@ package dev.penguin.android_hardware;
 
 import android.hardware.Camera;
 
-public class PreviewCallbackProxy implements CameraChannelLibrary.$PreviewCallback {
+public class PreviewCallbackProxy {
   public final Camera.PreviewCallback previewCallback;
 
   public PreviewCallbackProxy(CameraChannelLibrary.$DataCallback onPreviewFrame) {

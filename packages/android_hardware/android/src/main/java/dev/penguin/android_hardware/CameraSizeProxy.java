@@ -5,21 +5,23 @@ import android.hardware.Camera;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CameraSizeProxy implements CameraChannelLibrary.$CameraSize {
+public class CameraSizeProxy {
+  public final LibraryImplementations implementations;
   public final Camera.Size cameraSize;
 
-  public static List<CameraSizeProxy> fromList(List<Camera.Size> sizes, ChannelRegistrar.LibraryImplementations implementations) {
+  public static List<CameraSizeProxy> fromList(LibraryImplementations implementations, List<Camera.Size> sizes) {
     final List<CameraSizeProxy> proxyList = new ArrayList<>();
     for (Camera.Size size : sizes) {
-      proxyList.add(new CameraSizeProxy(size, implementations, true));
+      proxyList.add(new CameraSizeProxy(implementations, true, size));
     }
     return proxyList;
   }
 
-  public CameraSizeProxy(Camera.Size cameraSize, ChannelRegistrar.LibraryImplementations implementations, boolean create) {
+  public CameraSizeProxy(LibraryImplementations implementations, boolean create, Camera.Size cameraSize) {
+    this.implementations = implementations;
     this.cameraSize = cameraSize;
     if (create) {
-      implementations.getChannelCameraSize().$create$(this, false, cameraSize.width, cameraSize.height);
+      implementations.channelCameraSizeProxy.$create$(this, false, cameraSize.width, cameraSize.height);
     }
   }
 }

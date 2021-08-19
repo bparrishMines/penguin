@@ -1,6 +1,5 @@
 package dev.penguin.android_hardware;
 
-import android.graphics.Rect;
 import android.hardware.Camera;
 import org.junit.Before;
 import org.junit.Rule;
@@ -13,7 +12,6 @@ import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyList;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
@@ -25,7 +23,7 @@ public class CameraParametersTest {
   public MockitoRule mockitoRule = MockitoJUnit.rule();
 
   @Mock
-  ChannelRegistrar.LibraryImplementations mockImplementations;
+  LibraryImplementations.LibraryImplementations mockImplementations;
 
   @Mock
   CameraChannelLibrary.$CameraParametersChannel mockCameraParametersChannel;

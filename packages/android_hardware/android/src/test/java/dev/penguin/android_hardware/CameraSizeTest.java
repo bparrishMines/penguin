@@ -18,7 +18,7 @@ public class CameraSizeTest {
   public MockitoRule mockitoRule = MockitoJUnit.rule();
 
   @Mock
-  ChannelRegistrar.LibraryImplementations mockImplementations;
+  LibraryImplementations.LibraryImplementations mockImplementations;
 
   @Mock
   CameraChannelLibrary.$CameraSizeChannel mockCameraSizeChannel;

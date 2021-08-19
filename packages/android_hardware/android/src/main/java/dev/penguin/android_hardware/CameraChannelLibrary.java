@@ -838,11 +838,7 @@ public class CameraChannelLibrary {
         throws Exception {
       return CameraProxy.staticMethodTemplate(implementations, __parameter_name__);
     }
-    
-    
 
-    
-    
     public void $release(CameraProxy $instance) throws Exception {
        $instance.release();
     }

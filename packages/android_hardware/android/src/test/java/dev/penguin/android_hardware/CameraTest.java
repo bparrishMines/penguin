@@ -51,7 +51,7 @@ public class CameraTest {
   TextureRegistry mockTextureRegistry;
 
   @Mock
-  ChannelRegistrar.LibraryImplementations mockImplementations;
+  LibraryImplementations.LibraryImplementations mockImplementations;
 
   @Mock
   CameraChannelLibrary.$CameraChannel mockCameraChannel;
@@ -87,8 +87,8 @@ public class CameraTest {
   public void open() {
     PowerMockito.mockStatic(android.hardware.Camera.class);
 
-    final ChannelRegistrar.LibraryImplementations libraryImplementations =
-        new ChannelRegistrar.LibraryImplementations(mockTypeChannelMessenger, mockTextureRegistry);
+    final LibraryImplementations.LibraryImplementations libraryImplementations =
+        new LibraryImplementations.LibraryImplementations(mockTypeChannelMessenger, mockTextureRegistry);
     libraryImplementations.getHandlerCamera().$open(mockTypeChannelMessenger, 12);
 
     verifyStatic();
@@ -108,8 +108,8 @@ public class CameraTest {
     }).when(android.hardware.Camera.class);
     android.hardware.Camera.getCameraInfo(eq(0), any(android.hardware.Camera.CameraInfo.class));
 
-    final ChannelRegistrar.LibraryImplementations libraryImplementations =
-        new ChannelRegistrar.LibraryImplementations(mockTypeChannelMessenger, mockTextureRegistry);
+    final LibraryImplementations.LibraryImplementations libraryImplementations =
+        new LibraryImplementations.LibraryImplementations(mockTypeChannelMessenger, mockTextureRegistry);
     final List<CameraInfoProxy> allInfo = libraryImplementations.getHandlerCamera().$getAllCameraInfo(mockTypeChannelMessenger);
 
     assertEquals(allInfo.size(), 1);

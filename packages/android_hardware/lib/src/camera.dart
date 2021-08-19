@@ -5,6 +5,7 @@ import 'package:reference/annotations.dart';
 
 import 'camera.g.dart';
 
+make channel registrar not finel
 /// Callback for camera error notification.
 ///
 /// See:
@@ -702,7 +703,6 @@ class CameraParameters {
   /// This should only be used for testing or when creating a custom type
   /// channel implementation of this class. Otherwise, use
   /// [Camera.getParameters].
-  @ReferenceConstructor(ignore: true)
   CameraParameters({bool create = true});
 
   /// Flash will be fired automatically when required.
@@ -977,11 +977,7 @@ class CameraParameters {
   /// Focus area only has effect if the current focus mode is
   /// [focusModeAuto], [focusModeMacro], [focusModeContinuousVideo], or
   /// [focusModeContinuousPicture].
-  Future<List<CameraArea>?> getFocusAreas() async {
-    final List<Object?>? focusAreas =
-        await _channel.$getFocusAreas(this) as List<Object?>?;
-    return focusAreas?.cast<CameraArea>();
-  } fix generator to allow nullable maps and lists
+  Future<List<CameraArea>?> getFocusAreas() => _channel.$getFocusAreas(this);
 
   // TODO: This can return Float.POSITIVE_INFINITY?
   /// Gets the distances from the camera to where an object appears to be in focus.
@@ -1004,54 +1000,48 @@ class CameraParameters {
   /// Far focus distance >= optimal focus distance >= near focus distance. If
   /// the focus distance is infinity, the value will be
   /// Float.POSITIVE_INFINITY (Java).
-  Future<List<double>> getFocusDistances() async {
-    final List<Object?> distances =
-        await _channel.$getFocusDistances(this) as List<Object?>;
-    return distances.cast<double>();
-  }
+  Future<List<double>> getFocusDistances() => _channel.$getFocusDistances(this);
 
   /// Gets the maximum exposure compensation index.
   ///
   /// Maximum exposure compensation index (>=0). If both this method and
   /// [getMinExposureCompensation] return 0, exposure compensation is not
   /// supported.
-  Future<int> getMaxExposureCompensation() async {
-    return await _channel.$getMaxExposureCompensation(this) as int;
+  Future<int> getMaxExposureCompensation() {
+    return _channel.$getMaxExposureCompensation(this);
   }
 
   /// Gets the maximum number of focus areas supported.
   ///
   /// This is the maximum length of the list in [setFocusAreas] and
   /// [getFocusAreas].
-  Future<int> getMaxNumFocusAreas() async {
-    return await _channel.$getMaxNumFocusAreas(this) as int;
+  Future<int> getMaxNumFocusAreas() {
+    return _channel.$getMaxNumFocusAreas(this);
   }
 
   /// Gets the minimum exposure compensation index.
-  Future<int> getMinExposureCompensation() async {
-    return await _channel.$getMinExposureCompensation(this) as int;
+  Future<int> getMinExposureCompensation() {
+    return _channel.$getMinExposureCompensation(this);
   }
 
   /// Gets the supported focus modes.
-  Future<List<String>> getSupportedFocusModes() async {
-    final List<Object?> modes =
-        await _channel.$getSupportedFocusModes(this) as List<Object?>;
-    return modes.cast<String>();
+  Future<List<String>> getSupportedFocusModes() {
+    return _channel.$getSupportedFocusModes(this);
   }
 
   /// Returns `true` if auto-exposure locking is supported.
   ///
   /// Applications should call this before trying to lock auto-exposure.
   /// See [setAutoExposureLock] for details about the lock.
-  Future<bool> isAutoExposureLockSupported() async {
-    return await _channel.$isAutoExposureLockSupported(this) as bool;
+  Future<bool> isAutoExposureLockSupported() {
+    return _channel.$isAutoExposureLockSupported(this);
   }
 
   /// Returns `true` if zoom is supported.
   ///
   /// Applications should call this before using other zoom methods.
-  Future<bool> isZoomSupported() async {
-    return await _channel.$isZoomSupported(this) as bool;
+  Future<bool> isZoomSupported() {
+    return _channel.$isZoomSupported(this);
   }
 
   /// Sets the auto-exposure lock state.
@@ -1116,8 +1106,8 @@ class CameraParameters {
   ///   [flashModeOn]
   ///   [flashModeOff]
   ///   [flashModeTorch]
-  Future<String?> getFlashMode() async {
-    return await _channel.$getFlashMode(this) as String?;
+  Future<String?> getFlashMode() {
+    return _channel.$getFlashMode(this);
   }
 
   /// Gets the maximum zoom value allowed for snapshot.
@@ -1126,60 +1116,54 @@ class CameraParameters {
   /// Applications should call [isZoomSupported] before using this method.
   /// This value may change in different preview size. Applications should call
   /// this again after setting preview size.
-  Future<int> getMaxZoom() async {
-    return await _channel.$getMaxZoom(this) as int;
+  Future<int> getMaxZoom() {
+    return _channel.$getMaxZoom(this);
   }
 
   /// Returns the dimension setting for pictures.
-  Future<CameraSize> getPictureSize() async {
-    return await _channel.$getPictureSize(this) as CameraSize;
+  Future<CameraSize> getPictureSize() {
+    return _channel.$getPictureSize(this);
   }
 
   /// Returns the dimensions setting for preview pictures.
-  Future<CameraSize> getPreviewSize() async {
-    return await _channel.$getPreviewSize(this) as CameraSize;
+  Future<CameraSize> getPreviewSize() {
+    return _channel.$getPreviewSize(this);
   }
 
   /// Gets the supported preview sizes.
   ///
   /// This method will always return a list with at least one element.
-  Future<List<CameraSize>> getSupportedPreviewSizes() async {
-    final List<Object?> sizes =
-        await _channel.$getSupportedPreviewSizes(this) as List<Object?>;
-    return sizes.cast<CameraSize>();
+  Future<List<CameraSize>> getSupportedPreviewSizes() {
+    return _channel.$getSupportedPreviewSizes(this);
   }
 
   /// Gets the supported picture sizes.
   ///
   /// This method will always return a list with at least one element.
-  Future<List<CameraSize>> getSupportedPictureSizes() async {
-    final List<Object?> sizes =
-        await _channel.$getSupportedPictureSizes(this) as List<Object?>;
-    return sizes.cast<CameraSize>();
+  Future<List<CameraSize>> getSupportedPictureSizes() {
+    return _channel.$getSupportedPictureSizes(this);
   }
 
   /// Gets the supported flash modes.
   ///
   /// Empty if flash mode setting is not supported.
-  Future<List<String>> getSupportedFlashModes() async {
-    final List<Object?> modes =
-        await _channel.$getSupportedFlashModes(this) as List<Object?>;
-    return modes.cast<String>();
+  Future<List<String>> getSupportedFlashModes() {
+    return _channel.$getSupportedFlashModes(this);
   }
 
   /// Gets current zoom value.
   ///
   /// This also works when smooth zoom is in progress. Applications should check
   /// [isZoomSupported] before using this method.
-  Future<int> getZoom() async {
-    return _channel.$getZoom(this) as int;
+  Future<int> getZoom() {
+    return _channel.$getZoom(this);
   }
 
   /// Whether smooth zoom is supported.
   ///
   /// Applications should call this before using other smooth zoom methods.
-  Future<bool> isSmoothZoomSupported() async {
-    return await _channel.$isSmoothZoomSupported(this) as bool;
+  Future<bool> isSmoothZoomSupported() {
+    return _channel.$isSmoothZoomSupported(this);
   }
 
   /// Sets the flash mode.
@@ -1316,8 +1300,8 @@ class CameraParameters {
   ///
   /// The range is [getMinExposureCompensation] to [getMaxExposureCompensation].
   /// 0 means exposure is not adjusted.
-  Future<int> getExposureCompensation() async {
-    return await _channel.$getExposureCompensation(this) as int;
+  Future<int> getExposureCompensation() {
+    return _channel.$getExposureCompensation(this);
   }
 
   /// Gets the exposure compensation step.
@@ -1325,8 +1309,8 @@ class CameraParameters {
   /// Applications can get EV by multiplying the exposure compensation index and
   /// step. Ex: if exposure compensation index is -6 and step is 0.333333333, EV
   /// is -2.
-  Future<double> getExposureCompensationStep() async {
-    return await _channel.$getExposureCompensationStep(this) as double;
+  Future<double> getExposureCompensationStep() {
+    return _channel.$getExposureCompensationStep(this);
   }
 
   /// Creates a single string with all the parameters set in this [CameraParameters] object.
@@ -1335,13 +1319,13 @@ class CameraParameters {
   /// semi-colon delimited key-value pairs
   ///
   /// The [unflatten] method does the reverse.
-  Future<String> flatten() async {
-    return await _channel.$flatten(this) as String;
+  Future<String> flatten() {
+    return _channel.$flatten(this);
   }
 
   /// Returns the value of a `String` parameter.
-  Future<String?> get(String key) async {
-    return await _channel.$get(this, key) as String;
+  Future<String?> get(String key) {
+    return _channel.$get(this, key);
   }
 
   /// Gets the current antibanding setting.
@@ -1351,8 +1335,8 @@ class CameraParameters {
   ///   [antibanding50hz]
   ///   [antibanding60hz]
   ///   [antibandingOff]
-  Future<String> getAntibanding() async {
-    return await _channel.$getAntibanding(this) as String;
+  Future<String> getAntibanding() {
+    return _channel.$getAntibanding(this);
   }
 
   /// Gets the state of the auto-white balance lock.
@@ -1362,8 +1346,8 @@ class CameraParameters {
   ///
   /// Returns true if auto-white balance is currently locked, and false
   /// otherwise.
-  Future<bool> getAutoWhiteBalanceLock() async {
-    return await _channel.$getAutoWhiteBalanceLock(this) as bool;
+  Future<bool> getAutoWhiteBalanceLock() {
+    return _channel.$getAutoWhiteBalanceLock(this);
   }
 
   /// Gets the current color effect setting.
@@ -1378,15 +1362,15 @@ class CameraParameters {
   ///   [effectWhiteboard]
   ///   [effectBlackboard]
   ///   [effectAqua]
-  Future<String> getColorEffect() async {
-    return await _channel.$getColorEffect(this) as String;
+  Future<String> getColorEffect() {
+    return _channel.$getColorEffect(this);
   }
 
   /// Gets the focal length (in millimeter) of the camera.
   ///
   /// Returns -1.0 when the device doesn't report focal length information.
-  Future<double> getFocalLength() async {
-    return await _channel.$getFocalLength(this) as double;
+  Future<double> getFocalLength() {
+    return _channel.$getFocalLength(this);
   }
 
   /// Gets the current focus mode setting.
@@ -1399,43 +1383,43 @@ class CameraParameters {
   ///   [focusModeEDOF]
   ///   [focusModeContinuousVideo]
   ///   [focusModeContinuousPicture]
-  Future<String> getFocusMode() async {
-    return await _channel.$getFocusMode(this) as String;
+  Future<String> getFocusMode() {
+    return _channel.$getFocusMode(this);
   }
 
   /// Gets the horizontal angle of view in degrees.
   ///
   /// Returns -1.0 when the device doesn't report view angle information.
-  Future<double> getHorizontalViewAngle() async {
-    return await _channel.$getHorizontalViewAngle(this) as double;
+  Future<double> getHorizontalViewAngle() {
+    return _channel.$getHorizontalViewAngle(this);
   }
 
   /// Returns the value of an integer parameter.
-  Future<int> getInt(String key) async {
-    return await _channel.$getInt(this, key) as int;
+  Future<int> getInt(String key) {
+    return _channel.$getInt(this, key);
   }
 
   /// Returns the quality setting for the JPEG picture.
-  Future<int> getJpegQuality() async {
-    return await _channel.$getJpegQuality(this) as int;
+  Future<int> getJpegQuality() {
+    return _channel.$getJpegQuality(this);
   }
 
   /// Returns the quality setting for the EXIF thumbnail in Jpeg picture.
-  Future<int> getJpegThumbnailQuality() async {
-    return await _channel.$getJpegThumbnailQuality(this) as int;
+  Future<int> getJpegThumbnailQuality() {
+    return _channel.$getJpegThumbnailQuality(this);
   }
 
   /// Returns the dimensions for EXIF thumbnail in Jpeg picture.
-  Future<CameraSize> getJpegThumbnailSize() async {
-    return await _channel.$getJpegThumbnailSize(this) as CameraSize;
+  Future<CameraSize> getJpegThumbnailSize() {
+    return _channel.$getJpegThumbnailSize(this);
   }
 
   /// Gets the maximum number of metering areas supported.
   ///
   /// This is the maximum length of the list in [setMeteringAreas] and
   /// [getMeteringAreas].
-  Future<int> getMaxNumMeteringAreas() async {
-    return await _channel.$getMaxNumMeteringAreas(this) as int;
+  Future<int> getMaxNumMeteringAreas() {
+    return _channel.$getMaxNumMeteringAreas(this);
   }
 
   /// Gets the current metering areas.
@@ -1473,18 +1457,16 @@ class CameraParameters {
   ///
   /// No matter what metering areas are, the final exposure are compensated by
   /// [setExposureCompensation].
-  Future<List<CameraArea>?> getMeteringAreas() async {
-    final List<Object?>? areas =
-        await _channel.$getMeteringAreas(this) as List<Object?>?;
-    return areas?.cast<CameraArea>();
+  Future<List<CameraArea>?> getMeteringAreas() {
+    return _channel.$getMeteringAreas(this);
   }
 
   /// Returns the image format for pictures.
   ///
   /// See:
   ///   [ImageFormat]
-  Future<int> getPictureFormat() async {
-    return await _channel.$getPictureFormat(this) as int;
+  Future<int> getPictureFormat() {
+    return _channel.$getPictureFormat(this);
   }
 
   /// Returns the preferred or recommended preview size (width and height) in pixels for video recording.
@@ -1496,16 +1478,16 @@ class CameraParameters {
   /// that has the same aspect ratio as the resolution of video to be recorded.
   ///
   /// If [getSupportedVideoSizes] returns null; null is returned.
-  Future<CameraSize?> getPreferredPreviewSizeForVideo() async {
-    return await _channel.$getPreferredPreviewSizeForVideo(this) as CameraSize?;
+  Future<CameraSize?> getPreferredPreviewSizeForVideo() {
+    return _channel.$getPreferredPreviewSizeForVideo(this);
   }
 
   /// Returns the image format for preview frames got from [PreviewCallback].
   ///
   /// See:
   ///   [ImageFormat].
-  Future<int> getPreviewFormat() async {
-    return await _channel.$getPreviewFormat(this) as int;
+  Future<int> getPreviewFormat() {
+    return _channel.$getPreviewFormat(this);
   }
 
   /// Returns the current minimum and maximum preview fps.
@@ -1514,10 +1496,8 @@ class CameraParameters {
   /// [getSupportedPreviewFpsRange].
   ///
   /// Returns the range of the minimum and maximum preview fps (scaled by 1000).
-  Future<List<int>> getPreviewFpsRange() async {
-    final List<Object?> areas =
-        await _channel.$getPreviewFpsRange(this) as List<Object?>;
-    return areas.cast<int>();
+  Future<List<int>> getPreviewFpsRange() {
+    return _channel.$getPreviewFpsRange(this);
   }
 
   /// Gets the current scene mode setting.
@@ -1542,17 +1522,15 @@ class CameraParameters {
   ///   [sceneModeCandlelight]
   ///   [sceneModeBarcode]
   ///   [sceneModeHdr]
-  Future<String?> getSceneMode() async {
-    return await _channel.$getSceneMode(this) as String;
+  Future<String?> getSceneMode() {
+    return _channel.$getSceneMode(this);
   }
 
   /// Gets the supported antibanding values.
   ///
   /// Returns `null` if antibanding setting is not supported.
-  Future<List<String>?> getSupportedAntibanding() async {
-    final List<Object?>? areas =
-        await _channel.$getSupportedAntibanding(this) as List<Object?>?;
-    return areas?.cast<String>();
+  Future<List<String>?> getSupportedAntibanding() {
+    return _channel.$getSupportedAntibanding(this);
   }
 
   /// A list of supported color effects.
@@ -1561,37 +1539,31 @@ class CameraParameters {
   ///
   /// See:
   ///   [getColorEffect]
-  Future<List<String>?> getSupportedColorEffects() async {
-    final List<Object?>? effects =
-        await _channel.$getSupportedColorEffects(this) as List<Object?>?;
-    return effects?.cast<String>();
+  Future<List<String>?> getSupportedColorEffects() {
+    return _channel.$getSupportedColorEffects(this);
   }
 
   /// Gets the supported jpeg thumbnail sizes.
   ///
   /// This method will always return a list with at least two elements. Size
   /// 0,0 (no thumbnail) is always supported.
-  Future<CameraSize> getSupportedJpegThumbnailSizes() async {
-    return await _channel.$getSupportedJpegThumbnailSizes(this) as CameraSize;
+  Future<CameraSize> getSupportedJpegThumbnailSizes() {
+    return _channel.$getSupportedJpegThumbnailSizes(this);
   }
 
   /// Gets the supported picture formats.
   ///
   /// This method will always return a list with at least one element.
-  Future<List<int>> getSupportedPictureFormats() async {
-    final List<Object?> formats =
-        await _channel.$getSupportedPictureFormats(this) as List<Object?>;
-    return formats.cast<int>();
+  Future<List<int>> getSupportedPictureFormats() {
+    return _channel.$getSupportedPictureFormats(this);
   }
 
   /// Gets the supported preview formats.
   ///
   /// [ImageFormat.nv21] is always supported. [ImageFormat.yv12] is always
   /// supported.
-  Future<List<int>> getSupportedPreviewFormats() async {
-    final List<Object?> formats =
-        await _channel.$getSupportedPreviewFormats(this) as List<Object?>;
-    return formats.cast<int>();
+  Future<List<int>> getSupportedPreviewFormats() {
+    return _channel.$getSupportedPreviewFormats(this);
   }
 
   /// Gets the supported preview fps (frame-per-second) ranges.
@@ -1610,19 +1582,15 @@ class CameraParameters {
   /// See:
   ///   [previewFpsMinIndex]
   ///   [previewFpsMaxIndex]
-  Future<List<List<int>>> getSupportedPreviewFpsRange() async {
-    final List<Object?> formats =
-        await _channel.$getSupportedPreviewFpsRange(this) as List<Object?>;
-    return formats.cast<List<int>>();
+  Future<List<List<int>>> getSupportedPreviewFpsRange() {
+    return _channel.$getSupportedPreviewFpsRange(this);
   }
 
   /// Gets the supported scene modes.
   ///
   /// Returns null if scene mode setting is not supported.
-  Future<List<String>?> getSupportedSceneModes() async {
-    final List<Object?>? modes =
-        await _channel.$getSupportedSceneModes(this) as List<Object?>?;
-    return modes?.cast<String>();
+  Future<List<String>?> getSupportedSceneModes() {
+    return _channel.$getSupportedSceneModes(this);
   }
 
   /// Gets the supported video frame sizes that can be used by [MediaRecorder](https://pub.dev/documentation/android_media/latest/android_media/MediaRecorder-class.html).
@@ -1648,10 +1616,8 @@ class CameraParameters {
   ///
   /// See:
   ///   [getPreferredPreviewSizeForVideo]
-  Future<List<CameraSize>?> getSupportedVideoSizes() async {
-    final List<Object?>? sizes =
-        await _channel.$getSupportedVideoSizes(this) as List<Object?>?;
-    return sizes?.cast<CameraSize>();
+  Future<List<CameraSize>?> getSupportedVideoSizes() {
+    return _channel.$getSupportedVideoSizes(this);
   }
 
   /// Gets the supported white balance.
@@ -1660,24 +1626,22 @@ class CameraParameters {
   ///
   /// See:
   ///   [getWhiteBalance]
-  Future<List<String>?> getSupportedWhiteBalance() async {
-    final List<Object?>? sizes =
-        await _channel.$getSupportedWhiteBalance(this) as List<Object?>?;
-    return sizes?.cast<String>();
+  Future<List<String>?> getSupportedWhiteBalance() {
+    return _channel.$getSupportedWhiteBalance(this);
   }
 
   /// Gets the vertical angle of view in degrees.
   ///
   /// Returns -1.0 when the device doesn't report view angle information.
-  Future<double> getVerticalViewAngle() async {
-    return await _channel.$getVerticalViewAngle(this) as double;
+  Future<double> getVerticalViewAngle() {
+    return _channel.$getVerticalViewAngle(this);
   }
 
   /// Get the current state of video stabilization.
   ///
   /// Returns `true` if video stabilization is enabled.
-  Future<bool> getVideoStabilization() async {
-    return await _channel.$getVideoStabilization(this) as bool;
+  Future<bool> getVideoStabilization() {
+    return _channel.$getVideoStabilization(this);
   }
 
   /// Gets the current white balance setting.
@@ -1693,8 +1657,8 @@ class CameraParameters {
   ///   [whiteBalanceCloudyDaylight]
   ///   [whiteBalanceTwilight]
   ///   [whiteBalanceShade]
-  Future<String?> getWhiteBalance() async {
-    return await _channel.$getWhiteBalance(this) as String?;
+  Future<String?> getWhiteBalance() {
+    return _channel.$getWhiteBalance(this);
   }
 
   /// Gets the zoom ratios of all zoom values.
@@ -1705,18 +1669,16 @@ class CameraParameters {
   /// returned as 320. The number of elements is [getMaxZoom] + 1. The list is
   /// sorted from small to large. The first element is always 100. The last
   /// element is the zoom ratio of the maximum zoom value.
-  Future<List<int>> getZoomRatios() async {
-    final List<Object?> zoomRatios =
-        await _channel.$getZoomRatios(this) as List<Object?>;
-    return zoomRatios.cast<int>();
+  Future<List<int>> getZoomRatios() {
+    return _channel.$getZoomRatios(this);
   }
 
   /// If auto-white balance locking is supported.
   ///
   /// Applications should call this before trying to lock auto-white balance.
   /// See [setAutoWhiteBalanceLock] for details about the lock.
-  Future<bool> isAutoWhiteBalanceLockSupported() async {
-    return await _channel.$isAutoWhiteBalanceLockSupported(this) as bool;
+  Future<bool> isAutoWhiteBalanceLockSupported() {
+    return _channel.$isAutoWhiteBalanceLockSupported(this);
   }
 
   /// If video snapshot is supported.
@@ -1740,15 +1702,15 @@ class CameraParameters {
   /// than that for regular still captures. If the current picture size is set
   /// higher than can be supported by video snapshot, the picture will be
   /// captured at the maximum supported size instead.
-  Future<bool> isVideoSnapshotSupported() async {
-    return await _channel.$isVideoSnapshotSupported(this) as bool;
+  Future<bool> isVideoSnapshotSupported() {
+    return _channel.$isVideoSnapshotSupported(this);
   }
 
   /// If video stabilization is supported.
   ///
   /// See [setVideoStabilization] for details of video stabilization.
-  Future<bool> isVideoStabilizationSupported() async {
-    return await _channel.$isVideoStabilizationSupported(this) as bool;
+  Future<bool> isVideoStabilizationSupported() {
+    return _channel.$isVideoStabilizationSupported(this);
   }
 
   // TODO: Document

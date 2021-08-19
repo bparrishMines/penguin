@@ -2,21 +2,26 @@ package dev.penguin.android_hardware;
 
 import android.graphics.Rect;
 
-public class CameraRectProxy implements CameraChannelLibrary.$CameraRect {
+public class CameraRectProxy {
+  public final LibraryImplementations implementations;
   public final Rect rect;
 
-  public CameraRectProxy(Integer left, Integer top, Integer right, Integer bottom, ChannelRegistrar.LibraryImplementations implementations) {
-    this(new Rect(left, top, right, bottom), implementations, false);
+  public CameraRectProxy(
+      CameraChannelLibrary.$LibraryImplementations implementations,
+      boolean create,
+      Integer top,
+      Integer bottom,
+      Integer right,
+      Integer left) {
+    this((LibraryImplementations) implementations, create, new Rect(left, top, right, bottom));
   }
 
-  public CameraRectProxy(Rect rect, ChannelRegistrar.LibraryImplementations implementations) {
-    this(rect, implementations, true);
-  }
-
-  public CameraRectProxy(Rect rect, ChannelRegistrar.LibraryImplementations implementations, boolean create) {
+  public CameraRectProxy(LibraryImplementations implementations, boolean create, Rect rect) {
+    this.implementations = implementations;
     this.rect = rect;
     if (create) {
-      implementations.getChannelCameraRect().$create$(this, false, rect.top, rect.bottom, rect.right, rect.left);
+      implementations.channelCameraRectProxy.$create$(
+          this, false, rect.top, rect.bottom, rect.right, rect.left);
     }
   }
 }
