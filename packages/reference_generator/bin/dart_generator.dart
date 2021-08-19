@@ -199,8 +199,6 @@ String getTrueTypeName(TypeNode type) {
   final String dartName = dartTypeNameConversion(type.dartName);
 
   final String nullability = type.nullable ? '?' : '';
-  // TODO: Consequences?
-  // if (dartName == 'Map') return 'Map$nullability';
 
   final Iterable<String> typeArguments = type.typeArguments.map<String>(
     (TypeNode type) => getTrueTypeName(type),
