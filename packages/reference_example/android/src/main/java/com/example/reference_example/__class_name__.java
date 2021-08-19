@@ -6,7 +6,7 @@ public class __class_name__ {
   public final LibraryTemplate.$LibraryImplementations implementations;
   public final ClassTemplate classTemplate;
 
-  public static Double staticMethodTemplate(LibraryTemplate.$LibraryImplementations implementations, String parameterTemplate) {
+  public static Double __staticMethod_name__(LibraryTemplate.$LibraryImplementations implementations, String parameterTemplate) {
     return ClassTemplate.staticMethodTemplate(parameterTemplate);
   }
 

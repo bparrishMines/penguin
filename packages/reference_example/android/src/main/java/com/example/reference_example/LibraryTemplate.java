@@ -23,22 +23,22 @@ import github.penguin.reference.reference.TypeChannelMessenger;
 
 public class /*replace libraryName*/LibraryTemplate/**/ {
   /*iterate functions function*/
-  public interface $__function_name__ {
+  public interface __function_name__ {
     Completable<Void> invoke(/*iterate :join=',' parameters parameter*//*replace parameter_type*/String/**/ __parameter_name__/**/)/*if returnsFuture*/throws Exception/**/;
   }
   /**/
 
   /*iterate functions function*/
-  public static class $__function_name__Channel extends TypeChannel<$__function_name__> {
+  public static class $__function_name__Channel extends TypeChannel<__function_name__> {
     public $__function_name__Channel(@NonNull TypeChannelMessenger messenger) {
       super(messenger, "__function_channel__");
     }
 
-    public Completable<PairedInstance> $create($__function_name__ $instance, boolean $owner) {
+    public Completable<PairedInstance> $create(__function_name__ $instance, boolean $owner) {
       return createNewInstancePair($instance, Collections.emptyList(), $owner);
     }
 
-    private Completable<Void> invoke($__function_name__ $instance
+    private Completable<Void> invoke(__function_name__ $instance
         /*iterate parameters parameter*/, /*replace parameter_type*/String/**/ __parameter_name__/**/) {
       return invokeMethod($instance, "", Arrays.<Object>asList(/*iterate :join=',' parameters parameter*/__parameter_name__/**/));
     }
@@ -46,7 +46,7 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
   /**/
 
   /*iterate functions function*/
-  public static class $__function_name__Handler implements TypeChannelHandler<$__function_name__> {
+  public static class $__function_name__Handler implements TypeChannelHandler<__function_name__> {
     public final $LibraryImplementations implementations;
 
     public $__function_name__Handler($LibraryImplementations implementations) {
@@ -54,8 +54,8 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
     }
 
     @Override
-    public $__function_name__ createInstance(TypeChannelMessenger messenger, List<Object> arguments) {
-      return new $__function_name__() {
+    public __function_name__ createInstance(TypeChannelMessenger messenger, List<Object> arguments) {
+      return new __function_name__() {
         @Override
         public Completable<Void> invoke(/*iterate :join=',' parameters parameter*//*replace parameter_type*/String/**/ __parameter_name__/**/) {
           return implementations.channel__function_name__.invoke(this/*iterate parameters parameter*/,__parameter_name__/**/);
@@ -69,7 +69,7 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
     }
 
     @Override
-    public Object invokeMethod(TypeChannelMessenger messenger, $__function_name__ instance, String methodName, List<Object> arguments) throws Exception {
+    public Object invokeMethod(TypeChannelMessenger messenger, __function_name__ instance, String methodName, List<Object> arguments) throws Exception {
       return instance.invoke(/*iterate :join=',' parameters parameter*/(/*replace parameter_type*/String/**/) arguments.get(/*replace parameter_index*/0/**/)/**/);
     }
   }
@@ -124,7 +124,7 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
     /*if returnsFuture*/
     public /*replace staticMethod_returnType*/Double/**/ $__staticMethod_name__(/*iterate :join=',' parameters parameter*//*replace parameter_type*/String/**/ __parameter_name__/**/)
         throws Exception {
-      /*if! returnsVoid*/return/**/ __class_name__.staticMethodTemplate(implementations, __parameter_name__);
+      /*if! returnsVoid*/return/**/ __class_name__.__staticMethod_name__(implementations, __parameter_name__);
     }
     /**/
     /**/

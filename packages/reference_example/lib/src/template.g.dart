@@ -335,7 +335,7 @@ class $LibraryImplementations {
 class $ChannelRegistrar {
   $ChannelRegistrar(this.implementations);
 
-  static final $ChannelRegistrar instance = $ChannelRegistrar(
+  static $ChannelRegistrar instance = $ChannelRegistrar(
       $LibraryImplementations(MethodChannelMessenger.instance))
     ..registerHandlers();
 

@@ -38,7 +38,9 @@ class _MyAppState extends State<MyApp> {
           onPressed: () async {
             final $$class_name$$ classTemplate =
                 $$class_name$$.$$constructor_name$$($$parameter_name$$: 23);
-            final String result = await classTemplate.$$method_name$$('Hello,');
+            final String result = await classTemplate.$$method_name$$(
+              $$parameter_name$$: 'Hello,',
+            );
             setState(() {
               _text = result;
             });
