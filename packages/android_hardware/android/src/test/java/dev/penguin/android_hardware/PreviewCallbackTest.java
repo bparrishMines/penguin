@@ -20,15 +20,15 @@ public class PreviewCallbackTest {
   TypeChannelMessenger mockTypeChannelMessenger;
 
   @Test
-  public void createPictureCallback() {
-    final LibraryImplementations.LibraryImplementations implementations =
-        new LibraryImplementations.LibraryImplementations(mockTypeChannelMessenger, mock(TextureRegistry.class));
+  public void createPictureCallback() throws Exception {
+    final LibraryImplementations implementations =
+        new LibraryImplementations(mockTypeChannelMessenger, mock(TextureRegistry.class));
 
-    final CameraChannelLibrary.$DataCallback mockDataCallback = mock(CameraChannelLibrary.$DataCallback.class);
+    final CameraChannelLibrary.DataCallback mockDataCallback = mock(CameraChannelLibrary.DataCallback.class);
 
     final PreviewCallbackProxy previewCallbackProxy = implementations
-        .getHandlerPreviewCallback()
-        .$create$(mockTypeChannelMessenger, mockDataCallback);
+        .handlerPreviewCallbackProxy
+        .$create$(mockDataCallback);
 
     assertNotNull(previewCallbackProxy);
   }

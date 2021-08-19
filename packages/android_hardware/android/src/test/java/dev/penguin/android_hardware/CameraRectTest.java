@@ -9,26 +9,25 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 public class CameraRectTest {
   @Rule
   public MockitoRule mockitoRule = MockitoJUnit.rule();
 
   @Mock
-  LibraryImplementations.LibraryImplementations mockImplementations;
+  LibraryImplementations mockImplementations;
 
   @Mock
-  CameraChannelLibrary.$CameraRectChannel mockCameraRectChannel;
+  CameraChannelLibrary.$CameraRectProxyChannel mockCameraRectChannel;
 
   @Before
   public void setup() {
-    when(mockImplementations.getChannelCameraRect()).thenReturn(mockCameraRectChannel);
+    mockImplementations.channelCameraRectProxy = mockCameraRectChannel;
   }
 
   @Test
   public void createCameraRect() {
-    final CameraRectProxy cameraRectProxy = new CameraRectProxy(new Rect(), mockImplementations);
+    final CameraRectProxy cameraRectProxy = new CameraRectProxy(mockImplementations, true, new Rect());
 
     // Rect always returns 0 values for some reason?
     verify(mockCameraRectChannel).$create$(cameraRectProxy, false, 0, 0, 0, 0);

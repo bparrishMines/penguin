@@ -10,7 +10,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.mockito.stubbing.Answer;
@@ -50,14 +49,10 @@ public class CameraTest {
   @Mock
   TextureRegistry mockTextureRegistry;
 
-  @Mock
-  LibraryImplementations.LibraryImplementations mockImplementations;
+  LibraryImplementations testImplementations;
 
   @Mock
-  CameraChannelLibrary.$CameraChannel mockCameraChannel;
-
-  @Mock
-  CameraChannelLibrary.$CameraParametersChannel mockCameraParametersChannel;
+  CameraChannelLibrary.$CameraProxyChannel mockCameraChannel;
 
   @Mock
   android.hardware.Camera mockCamera;
@@ -66,9 +61,9 @@ public class CameraTest {
 
   @Before
   public void setUp() {
-    Mockito.when(mockImplementations.getChannelCamera()).thenReturn(mockCameraChannel);
-    Mockito.when(mockImplementations.getChannelCameraParameters()).thenReturn(mockCameraParametersChannel);
-    testCameraProxy = new CameraProxy(mockCamera, mockTextureRegistry, mockImplementations, true);
+    testImplementations = new LibraryImplementations(mockTypeChannelMessenger, mockTextureRegistry);
+    testImplementations.channelCameraProxy = mockCameraChannel;
+    testCameraProxy = new CameraProxy(this.testImplementations, true, mockCamera);
   }
 
   @Test
@@ -84,19 +79,21 @@ public class CameraTest {
   }
 
   @Test
-  public void open() {
+  public void open() throws Exception {
     PowerMockito.mockStatic(android.hardware.Camera.class);
 
-    final LibraryImplementations.LibraryImplementations libraryImplementations =
-        new LibraryImplementations.LibraryImplementations(mockTypeChannelMessenger, mockTextureRegistry);
-    libraryImplementations.getHandlerCamera().$open(mockTypeChannelMessenger, 12);
+    when(Camera.open(12)).thenReturn(mock(Camera.class));
+
+    final CameraProxy camera = testImplementations.handlerCameraProxy.$open(12);
+    assertNotNull(camera);
+    assertNotNull(camera.camera);
 
     verifyStatic();
-    android.hardware.Camera.open(12);
+    Camera.open(12);
   }
 
   @Test
-  public void getAllCameraInfo() {
+  public void getAllCameraInfo() throws Exception {
     PowerMockito.mockStatic(android.hardware.Camera.class);
 
     when(android.hardware.Camera.getNumberOfCameras()).thenReturn(1);
@@ -108,9 +105,7 @@ public class CameraTest {
     }).when(android.hardware.Camera.class);
     android.hardware.Camera.getCameraInfo(eq(0), any(android.hardware.Camera.CameraInfo.class));
 
-    final LibraryImplementations.LibraryImplementations libraryImplementations =
-        new LibraryImplementations.LibraryImplementations(mockTypeChannelMessenger, mockTextureRegistry);
-    final List<CameraInfoProxy> allInfo = libraryImplementations.getHandlerCamera().$getAllCameraInfo(mockTypeChannelMessenger);
+    final List<CameraInfoProxy> allInfo = testImplementations.handlerCameraProxy.$getAllCameraInfo();
 
     assertEquals(allInfo.size(), 1);
     assertEquals(allInfo.get(0).cameraInfo.facing, 11);
@@ -165,19 +160,9 @@ public class CameraTest {
   // TODO: Test callback is called.
   @Test
   public void takePicture() {
-    final CameraChannelLibrary.$ShutterCallback shutterCallback = new CameraChannelLibrary.$ShutterCallback() {
-      @Override
-      public Object invoke() {
-        return null;
-      }
-    };
+    final CameraChannelLibrary.ShutterCallback shutterCallback = () -> null;
 
-    final PictureCallbackProxy pictureCallbackProxy = new PictureCallbackProxy(new CameraChannelLibrary.$DataCallback() {
-      @Override
-      public Object invoke(byte[] data) {
-        return null;
-      }
-    });
+    final PictureCallbackProxy pictureCallbackProxy = new PictureCallbackProxy(testImplementations, false, data -> null);
 
     testCameraProxy.takePicture(shutterCallback, pictureCallbackProxy, pictureCallbackProxy, pictureCallbackProxy);
     verify(mockCamera).takePicture(
@@ -196,12 +181,7 @@ public class CameraTest {
   // TODO: Test callback is called.
   @Test
   public void autoFocus() {
-    final CameraChannelLibrary.$AutoFocusCallback autoFocusCallback = new CameraChannelLibrary.$AutoFocusCallback() {
-      @Override
-      public Void invoke(Boolean success) {
-        return null;
-      }
-    };
+    final CameraChannelLibrary.AutoFocusCallback autoFocusCallback = success -> null;
     testCameraProxy.autoFocus(autoFocusCallback);
     verify(mockCamera).autoFocus(isA(Camera.AutoFocusCallback.class));
   }
@@ -221,12 +201,7 @@ public class CameraTest {
   // TODO: Test callback is called.
   @Test
   public void setErrorCallback() {
-    final CameraChannelLibrary.$ErrorCallback errorCallback = new CameraChannelLibrary.$ErrorCallback() {
-      @Override
-      public Void invoke(Integer error) {
-        return null;
-      }
-    };
+    final CameraChannelLibrary.ErrorCallback errorCallback = error -> null;
     testCameraProxy.setErrorCallback(errorCallback);
     verify(mockCamera).setErrorCallback(isA(Camera.ErrorCallback.class));
   }
@@ -252,8 +227,8 @@ public class CameraTest {
   
   @Test
   public void setOneShotPreviewCallback() {
-    final CameraChannelLibrary.$DataCallback mockDataCallback = mock(CameraChannelLibrary.$DataCallback.class);
-    final PreviewCallbackProxy previewCallbackProxy = new PreviewCallbackProxy(mockDataCallback);
+    final CameraChannelLibrary.DataCallback mockDataCallback = mock(CameraChannelLibrary.DataCallback.class);
+    final PreviewCallbackProxy previewCallbackProxy = new PreviewCallbackProxy(testImplementations, false, mockDataCallback);
 
     testCameraProxy.setOneShotPreviewCallback(previewCallbackProxy);
 
@@ -266,8 +241,8 @@ public class CameraTest {
   
   @Test
   public void setPreviewCallback() {
-    final CameraChannelLibrary.$DataCallback mockDataCallback = mock(CameraChannelLibrary.$DataCallback.class);
-    final PreviewCallbackProxy previewCallbackProxy = new PreviewCallbackProxy(mockDataCallback);
+    final CameraChannelLibrary.DataCallback mockDataCallback = mock(CameraChannelLibrary.DataCallback.class);
+    final PreviewCallbackProxy previewCallbackProxy = new PreviewCallbackProxy(testImplementations, false, mockDataCallback);
 
     testCameraProxy.setPreviewCallback(previewCallbackProxy);
 
@@ -287,12 +262,7 @@ public class CameraTest {
   // TODO: Test callback is called.
   @Test
   public void setZoomChangeListener() {
-    final CameraChannelLibrary.$OnZoomChangeListener zoomChangeListener = new CameraChannelLibrary.$OnZoomChangeListener() {
-      @Override
-      public Void invoke(Integer zoomValue, Boolean stopped) {
-        return null;
-      }
-    };
+    final CameraChannelLibrary.OnZoomChangeListener zoomChangeListener = (zoomValue, stopped) -> null;
     
     testCameraProxy.setZoomChangeListener(zoomChangeListener);
     verify(mockCamera).setZoomChangeListener(isA(Camera.OnZoomChangeListener.class));
@@ -301,12 +271,7 @@ public class CameraTest {
   // TODO: Test callback is called.
   @Test
   public void setAutoFocusMoveCallback() {
-    final CameraChannelLibrary.$AutoFocusMoveCallback autoFocusMoveCallback = new CameraChannelLibrary.$AutoFocusMoveCallback() {
-      @Override
-      public Void invoke(Boolean start) {
-        return null;
-      }
-    };
+    final CameraChannelLibrary.AutoFocusMoveCallback autoFocusMoveCallback = start -> null;
 
     testCameraProxy.setAutoFocusMoveCallback(autoFocusMoveCallback);
     verify(mockCamera).setAutoFocusMoveCallback(isA(Camera.AutoFocusMoveCallback.class));

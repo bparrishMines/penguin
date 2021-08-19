@@ -23,19 +23,13 @@ public class CameraParametersTest {
   public MockitoRule mockitoRule = MockitoJUnit.rule();
 
   @Mock
-  LibraryImplementations.LibraryImplementations mockImplementations;
+  LibraryImplementations mockImplementations;
 
   @Mock
-  CameraChannelLibrary.$CameraParametersChannel mockCameraParametersChannel;
+  CameraChannelLibrary.$CameraParametersProxyChannel mockCameraParametersChannel;
 
   @Mock
-  CameraChannelLibrary.$CameraAreaChannel mockCameraAreaChannel;
-
-  @Mock
-  CameraChannelLibrary.$CameraRectChannel mockCameraRectChannel;
-
-  @Mock
-  CameraChannelLibrary.$CameraSizeChannel mockCameraSizeChannel;
+  CameraChannelLibrary.$CameraSizeProxyChannel mockCameraSizeChannel;
 
   @Mock
   Camera.Parameters mockParameters;
@@ -44,11 +38,9 @@ public class CameraParametersTest {
 
   @Before
   public void setUp() {
-    when(mockImplementations.getChannelCameraParameters()).thenReturn(mockCameraParametersChannel);
-    when(mockImplementations.getChannelCameraRect()).thenReturn(mockCameraRectChannel);
-    when(mockImplementations.getChannelCameraArea()).thenReturn(mockCameraAreaChannel);
-    when(mockImplementations.getChannelCameraSize()).thenReturn(mockCameraSizeChannel);
-    testCameraParametersProxy = new CameraParametersProxy(mockParameters, mockImplementations, true);
+    mockImplementations.channelCameraParametersProxy = mockCameraParametersChannel;
+    mockImplementations.channelCameraSizeProxy = mockCameraSizeChannel;
+    testCameraParametersProxy = new CameraParametersProxy(mockImplementations, true, mockParameters);
   }
 
   @Test
@@ -164,7 +156,7 @@ public class CameraParametersTest {
       distances[2] = 3;
       return null;
     }).when(mockParameters).getFocusDistances(any(float[].class));
-    assertEquals(testCameraParametersProxy.getFocusDistances(), Arrays.asList(1f, 2f, 3f));
+    assertEquals(testCameraParametersProxy.getFocusDistances(), Arrays.asList(1d, 2d, 3d));
   }
 
   @Test
@@ -332,8 +324,8 @@ public class CameraParametersTest {
 
   @Test
   public void getExposureCompensationStep() {
-    when(mockParameters.getExposureCompensationStep()).thenReturn(11.2F);
-    assertEquals(testCameraParametersProxy.getExposureCompensationStep(), (Float) 11.2F);
+    when(mockParameters.getExposureCompensationStep()).thenReturn(11.0F);
+    assertEquals(testCameraParametersProxy.getExposureCompensationStep(), (Double) 11.0d);
   }
 
   @Test
@@ -369,7 +361,7 @@ public class CameraParametersTest {
   @Test
   public void getFocalLength() {
     when(mockParameters.getFocalLength()).thenReturn(12F);
-    assertEquals(testCameraParametersProxy.getFocalLength(), (Float) 12F);
+    assertEquals(testCameraParametersProxy.getFocalLength(), (Double) 12d);
   }
 
   @Test
@@ -381,7 +373,7 @@ public class CameraParametersTest {
   @Test
   public void getHorizontalViewAngle() {
     when(mockParameters.getHorizontalViewAngle()).thenReturn(12F);
-    assertEquals(testCameraParametersProxy.getHorizontalViewAngle(), (Float) 12F);
+    assertEquals(testCameraParametersProxy.getHorizontalViewAngle(), (Double) 12D);
   }
 
   @Test
@@ -533,7 +525,7 @@ public class CameraParametersTest {
   @Test
   public void getVerticalViewAngle() {
     when(mockParameters.getVerticalViewAngle()).thenReturn(12F);
-    assertEquals(testCameraParametersProxy.getVerticalViewAngle(), (Float) 12F);
+    assertEquals(testCameraParametersProxy.getVerticalViewAngle(), (Double) 12D);
   }
 
   @Test
@@ -658,7 +650,7 @@ public class CameraParametersTest {
 
   @Test
   public void setMeteringAreas() {
-    final CameraAreaProxy cameraAreaProxy = new CameraAreaProxy(new CameraRectProxy(0, 1, 2, 3, mockImplementations), 23, mockImplementations, false);
+    final CameraAreaProxy cameraAreaProxy = new CameraAreaProxy(mockImplementations, false,new CameraRectProxy(mockImplementations, false, 0, 1, 2, 3), 23);
     testCameraParametersProxy.setMeteringAreas(Collections.singletonList(cameraAreaProxy));
     verify(mockParameters).setMeteringAreas(anyListOf(Camera.Area.class));
   }

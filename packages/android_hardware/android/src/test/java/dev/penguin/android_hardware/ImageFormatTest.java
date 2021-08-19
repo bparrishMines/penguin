@@ -15,6 +15,7 @@ import io.flutter.view.TextureRegistry;
 
 import static org.junit.Assert.assertEquals;
 import static org.powermock.api.mockito.PowerMockito.verifyStatic;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("jdk.internal.reflect.*")
@@ -42,12 +43,14 @@ public class ImageFormatTest {
   }
 
   @Test
-  public void getBitsPerPixel() {
+  public void getBitsPerPixel() throws Exception {
     PowerMockito.mockStatic(ImageFormat.class);
 
-    final LibraryImplementations.LibraryImplementations libraryImplementations =
-        new LibraryImplementations.LibraryImplementations(mockTypeChannelMessenger, mockTextureRegistry);
-    libraryImplementations.getHandlerImageFormat().$getBitsPerPixel(mockTypeChannelMessenger, 23);
+    when(ImageFormat.getBitsPerPixel(23)).thenReturn(13);
+    final LibraryImplementations implementations =
+        new LibraryImplementations(mockTypeChannelMessenger, mockTextureRegistry);
+    final int bits = implementations.handlerImageFormatProxy.$getBitsPerPixel(23);
+    assertEquals(bits, 13);
 
     verifyStatic();
     ImageFormat.getBitsPerPixel(23);

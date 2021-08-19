@@ -11,36 +11,37 @@ import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 public class CameraAreaTest {
   @Rule
   public MockitoRule mockitoRule = MockitoJUnit.rule();
 
   @Mock
-  LibraryImplementations.LibraryImplementations mockImplementations;
+  LibraryImplementations mockImplementations;
 
   @Mock
-  CameraChannelLibrary.$CameraRectChannel mockCameraRectChannel;
+  CameraChannelLibrary.$CameraRectProxyChannel mockCameraRectChannel;
 
   @Mock
-  CameraChannelLibrary.$CameraAreaChannel mockCameraAreaChannel;
+  CameraChannelLibrary.$CameraAreaProxyChannel mockCameraAreaChannel;
 
   @Before
   public void setup() {
-    when(mockImplementations.getChannelCameraRect()).thenReturn(mockCameraRectChannel);
-    when(mockImplementations.getChannelCameraArea()).thenReturn(mockCameraAreaChannel);
+    mockImplementations.channelCameraRectProxy = mockCameraRectChannel;
+    mockImplementations.channelCameraAreaProxy = mockCameraAreaChannel;
   }
 
   @Test(expected = NullPointerException.class)
   public void createCameraArea() {
-    final CameraAreaProxy cameraAreaProxy = new CameraAreaProxy(new Camera.Area(new Rect(), 23), mockImplementations, true);
+    final CameraAreaProxy cameraAreaProxy = new CameraAreaProxy(mockImplementations, true,new Camera.Area(new Rect(), 23));
 
     // Rect always returns null and weight always returns 0 for some reason.
     assertEquals(new Camera.Area(new Rect(), 23).weight, 0);
 
     // This always throws NullPointerException since area.rect is always null in tests?
-    verify(mockCameraAreaChannel).$create$(cameraAreaProxy, false, cameraAreaProxy.rect, 0);
+    verify(mockCameraAreaChannel).$create$(eq(cameraAreaProxy), false, any(CameraRectProxy.class), 0);
   }
 }

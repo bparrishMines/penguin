@@ -13,21 +13,20 @@ import org.mockito.junit.MockitoRule;
 import static dev.penguin.android_hardware.Utils.setFinalStatic;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 public class CameraInfoProxyTest {
   @Rule
   public MockitoRule mockitoRule = MockitoJUnit.rule();
 
   @Mock
-  LibraryImplementations.LibraryImplementations mockImplementations;
+  LibraryImplementations mockImplementations;
 
   @Mock
-  CameraChannelLibrary.$CameraInfoChannel mockCameraInfoChannel;
+  CameraChannelLibrary.$CameraInfoProxyChannel mockCameraInfoChannel;
 
   @Before
   public void setup() {
-    when(mockImplementations.getChannelCameraInfo()).thenReturn(mockCameraInfoChannel);
+    mockImplementations.channelCameraInfoProxy = mockCameraInfoChannel;
   }
 
   @Test
@@ -38,7 +37,7 @@ public class CameraInfoProxyTest {
     cameraInfo.facing = 2;
     cameraInfo.orientation = 180;
     cameraInfo.canDisableShutterSound = true;
-    final CameraInfoProxy cameraInfoProxy = new CameraInfoProxy(cameraInfo, mockImplementations, 15, true);
+    final CameraInfoProxy cameraInfoProxy = new CameraInfoProxy(mockImplementations, true, 15, cameraInfo);
 
     verify(mockCameraInfoChannel).$create$(cameraInfoProxy, false, 15, 2, 180, true);
   }

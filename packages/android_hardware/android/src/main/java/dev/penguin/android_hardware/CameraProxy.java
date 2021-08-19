@@ -18,8 +18,8 @@ public class CameraProxy {
     throw new UnsupportedOperationException();
   }
 
-  public CameraProxy(CameraChannelLibrary.$LibraryImplementations implementations, boolean create, Camera camera) {
-    this.implementations = (LibraryImplementations) implementations;
+  public CameraProxy(LibraryImplementations implementations, boolean create, Camera camera) {
+    this.implementations = implementations;
     this.camera = camera;
     if (create) {
       implementations.channelCameraProxy.$create$(this, false);
@@ -27,7 +27,7 @@ public class CameraProxy {
   }
 
   public static CameraProxy open(CameraChannelLibrary.$LibraryImplementations implementations, int cameraId) {
-    return new CameraProxy(implementations, true, Camera.open(cameraId));
+    return new CameraProxy((LibraryImplementations) implementations, true, Camera.open(cameraId));
   }
 
   public static List<CameraInfoProxy> getAllCameraInfo(CameraChannelLibrary.$LibraryImplementations implementations) {

@@ -11,21 +11,20 @@ import org.mockito.junit.MockitoRule;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 public class CameraSizeTest {
   @Rule
   public MockitoRule mockitoRule = MockitoJUnit.rule();
 
   @Mock
-  LibraryImplementations.LibraryImplementations mockImplementations;
+  LibraryImplementations mockImplementations;
 
   @Mock
-  CameraChannelLibrary.$CameraSizeChannel mockCameraSizeChannel;
+  CameraChannelLibrary.$CameraSizeProxyChannel mockCameraSizeChannel;
 
   @Before
   public void setup() {
-    when(mockImplementations.getChannelCameraSize()).thenReturn(mockCameraSizeChannel);
+    mockImplementations.channelCameraSizeProxy = mockCameraSizeChannel;
   }
 
   @Test
@@ -34,7 +33,7 @@ public class CameraSizeTest {
     size.width = 12;
     size.height = 54;
 
-    final CameraSizeProxy cameraSizeProxy = new CameraSizeProxy(size, mockImplementations, true);
+    final CameraSizeProxy cameraSizeProxy = new CameraSizeProxy(mockImplementations, true, size);
     verify(mockCameraSizeChannel).$create$(cameraSizeProxy, false, 12, 54);
   }
 }
