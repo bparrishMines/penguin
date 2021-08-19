@@ -76,8 +76,8 @@ class $$$function_name$$Handler implements TypeChannelHandler<Object> {
   ) {
     final Function function = () => instance(
           /*iterate parameters parameter*/
-          /*replace parameter_argumentCasting*/
-          arguments[0] as String
+          /*function casting*/
+          arguments[/*replace parameter_index*/ 0 /**/] /*erase*/ as String /**/
           /**/,
           /**/
         );
@@ -232,8 +232,8 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$class_name$$> {
         return /**/ $__staticMethod_name__(
           messenger,
           /*iterate parameters parameter*/
-          /*replace parameter_argumentCasting*/
-          arguments[0] as String
+          /*function casting*/
+          arguments[/*replace parameter_index*/ 0 /**/] /*erase*/ as String /**/
           /**/,
           /**/
         );
@@ -262,8 +262,8 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$class_name$$> {
         return $create$__constructor_name__(
           messenger,
           /*iterate parameters parameter*/
-          /*replace parameter_argumentCasting*/
-          arguments[1] as int
+          /*function casting*/
+          arguments[/*replace parameter_index*/ 1 /**/] /*erase*/ as int /**/
           /**/,
           /**/
         );
@@ -293,8 +293,8 @@ class $$$class_name$$Handler implements TypeChannelHandler<$$class_name$$> {
             $__method_name__(
           instance,
           /*iterate parameters parameter*/
-          /*replace parameter_argumentCasting*/
-          arguments[0] as String
+          /*function casting*/
+          arguments[/*replace parameter_index*/ 0 /**/] /*erase*/ as String /**/
           /**/,
           /**/
         );

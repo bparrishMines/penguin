@@ -37,10 +37,12 @@ String generateDart({
             getTrueTypeName(constructorNode.parameters[i].type);
         parameterData['index'] = '${i + 1}';
         parameterData['isNamed'] = constructorNode.parameters[i].isNamed;
-        parameterData['argumentCasting'] = getArgumentCasting(
-          type: constructorNode.parameters[i].type,
-          input: 'arguments[${i + 1}]',
-        );
+        parameterData['casting'] = (String input) {
+          return getArgumentCasting(
+            type: constructorNode.parameters[i].type,
+            input: input,
+          );
+        };
 
         parameters.add(parameterData);
       }
@@ -69,10 +71,12 @@ String generateDart({
         parameterData['type'] = getTrueTypeName(methodNode.parameters[i].type);
         parameterData['index'] = '$i';
         parameterData['isNamed'] = methodNode.parameters[i].isNamed;
-        parameterData['argumentCasting'] = getArgumentCasting(
-          type: methodNode.parameters[i].type,
-          input: 'arguments[$i]',
-        );
+        parameterData['casting'] = (String input) {
+          return getArgumentCasting(
+            type: methodNode.parameters[i].type,
+            input: input,
+          );
+        };
 
         parameters.add(parameterData);
       }
@@ -101,10 +105,12 @@ String generateDart({
         parameterData['type'] = getTrueTypeName(methodNode.parameters[i].type);
         parameterData['index'] = '$i';
         parameterData['isNamed'] = methodNode.parameters[i].isNamed;
-        parameterData['argumentCasting'] = getArgumentCasting(
-          type: methodNode.parameters[i].type,
-          input: 'arguments[$i]',
-        );
+        parameterData['casting'] = (String input) {
+          return getArgumentCasting(
+            type: methodNode.parameters[i].type,
+            input: input,
+          );
+        };
 
         parameters.add(parameterData);
       }
@@ -130,10 +136,12 @@ String generateDart({
       parameterData['name'] = functionNode.parameters[i].name;
       parameterData['type'] = getTrueTypeName(functionNode.parameters[i].type);
       parameterData['index'] = '$i';
-      parameterData['argumentCasting'] = getArgumentCasting(
-        type: functionNode.parameters[i].type,
-        input: 'arguments[$i]',
-      );
+      parameterData['casting'] = (String input) {
+        return getArgumentCasting(
+          type: functionNode.parameters[i].type,
+          input: input,
+        );
+      };
 
       parameters.add(parameterData);
     }
