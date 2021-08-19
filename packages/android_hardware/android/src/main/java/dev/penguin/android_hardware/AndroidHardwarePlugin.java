@@ -7,6 +7,7 @@ import github.penguin.reference.reference.TypeChannelMessenger;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.view.TextureRegistry;
+import dev.penguin.android_hardware.CameraChannelLibrary.$ChannelRegistrar;
 
 /** AndroidHardwarePlugin */
 public class AndroidHardwarePlugin implements FlutterPlugin {
@@ -16,7 +17,7 @@ public class AndroidHardwarePlugin implements FlutterPlugin {
     final TypeChannelMessenger messenger = ReferencePlugin.getMessengerInstance(binaryMessenger);
 
     final TextureRegistry textureRegistry = flutterPluginBinding.getTextureRegistry();
-    final LibraryImplementations channelRegistrar = new LibraryImplementations(new LibraryImplementations.LibraryImplementations(messenger, textureRegistry));
+    final $ChannelRegistrar channelRegistrar = new $ChannelRegistrar(new LibraryImplementations(messenger, textureRegistry));
     channelRegistrar.registerHandlers();
   }
 

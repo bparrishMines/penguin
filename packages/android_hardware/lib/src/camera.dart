@@ -5,7 +5,6 @@ import 'package:reference/annotations.dart';
 
 import 'camera.g.dart';
 
-make channel registrar not finel
 /// Callback for camera error notification.
 ///
 /// See:
@@ -291,6 +290,7 @@ class Camera {
   /// Throws a [PlatformException] if stopping preview fails; usually this would
   /// be because of a hardware or other low-level error, or because [release]
   /// has been called on this Camera instance.
+  @javaLong
   Future<int> attachPreviewTexture() async {
     return _currentTexture ??= await _channel.$attachPreviewTexture(this);
   }
@@ -1547,7 +1547,7 @@ class CameraParameters {
   ///
   /// This method will always return a list with at least two elements. Size
   /// 0,0 (no thumbnail) is always supported.
-  Future<CameraSize> getSupportedJpegThumbnailSizes() {
+  Future<List<CameraSize>> getSupportedJpegThumbnailSizes() {
     return _channel.$getSupportedJpegThumbnailSizes(this);
   }
 

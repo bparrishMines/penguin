@@ -3,13 +3,15 @@ package dev.penguin.android_hardware;
 import android.hardware.Camera;
 
 public class PreviewCallbackProxy {
+  public final LibraryImplementations implementations;
   public final Camera.PreviewCallback previewCallback;
 
-  public PreviewCallbackProxy(CameraChannelLibrary.$DataCallback onPreviewFrame) {
-    this((data, camera) -> onPreviewFrame.invoke(data));
+  public PreviewCallbackProxy(CameraChannelLibrary.$LibraryImplementations implementations, boolean create, CameraChannelLibrary.DataCallback onPreviewFrame) {
+    this((LibraryImplementations) implementations, create, (data, camera) -> onPreviewFrame.invoke(data));
   }
 
-  public PreviewCallbackProxy(Camera.PreviewCallback onPictureTaken) {
+  public PreviewCallbackProxy(LibraryImplementations implementations, boolean create, Camera.PreviewCallback onPictureTaken) {
+    this.implementations = implementations;
     this.previewCallback = onPictureTaken;
   }
 }

@@ -17,6 +17,10 @@ public class CameraSizeProxy {
     return proxyList;
   }
 
+  public CameraSizeProxy(CameraChannelLibrary.$LibraryImplementations implementations, boolean create, Integer width, Integer height) {
+    throw new UnsupportedOperationException();
+  }
+
   public CameraSizeProxy(LibraryImplementations implementations, boolean create, Camera.Size cameraSize) {
     this.implementations = implementations;
     this.cameraSize = cameraSize;

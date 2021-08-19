@@ -14,8 +14,12 @@ public class CameraProxy {
   public final Camera camera;
   private TextureRegistry.SurfaceTextureEntry currentTextureEntry;
 
-  public CameraProxy(LibraryImplementations implementations, boolean create, Camera camera) {
-    this.implementations = implementations;
+  public CameraProxy(CameraChannelLibrary.$LibraryImplementations implementations, boolean create) {
+    throw new UnsupportedOperationException();
+  }
+
+  public CameraProxy(CameraChannelLibrary.$LibraryImplementations implementations, boolean create, Camera camera) {
+    this.implementations = (LibraryImplementations) implementations;
     this.camera = camera;
     if (create) {
       implementations.channelCameraProxy.$create$(this, false);
@@ -23,7 +27,7 @@ public class CameraProxy {
   }
 
   public static CameraProxy open(CameraChannelLibrary.$LibraryImplementations implementations, int cameraId) {
-    return new CameraProxy((LibraryImplementations) implementations, true, Camera.open(cameraId));
+    return new CameraProxy(implementations, true, Camera.open(cameraId));
   }
 
   public static List<CameraInfoProxy> getAllCameraInfo(CameraChannelLibrary.$LibraryImplementations implementations) {
@@ -51,7 +55,7 @@ public class CameraProxy {
     camera.stopPreview();
   }
 
-  public void autoFocus(CameraChannelLibrary.$AutoFocusCallback callback) {
+  public void autoFocus(CameraChannelLibrary.AutoFocusCallback callback) {
     camera.autoFocus((success, camera) -> callback.invoke(success));
   }
 
@@ -63,7 +67,7 @@ public class CameraProxy {
     camera.setDisplayOrientation(degrees);
   }
 
-  public void setErrorCallback(CameraChannelLibrary.$ErrorCallback callback) {
+  public void setErrorCallback(CameraChannelLibrary.ErrorCallback callback) {
     camera.setErrorCallback((error, camera) -> callback.invoke(error));
   }
 
@@ -83,11 +87,11 @@ public class CameraProxy {
     camera.setParameters(parameters.cameraParameters);
   }
 
-  public void setZoomChangeListener(CameraChannelLibrary.$OnZoomChangeListener listener) {
+  public void setZoomChangeListener(CameraChannelLibrary.OnZoomChangeListener listener) {
     camera.setZoomChangeListener((zoomValue, stopped, camera) -> listener.invoke(zoomValue, stopped));
   }
 
-  public void setAutoFocusMoveCallback(CameraChannelLibrary.$AutoFocusMoveCallback callback) {
+  public void setAutoFocusMoveCallback(CameraChannelLibrary.AutoFocusMoveCallback callback) {
     camera.setAutoFocusMoveCallback((start, camera) -> callback.invoke(start));
   }
 
@@ -104,17 +108,16 @@ public class CameraProxy {
     }
   }
 
-  public void takePicture(CameraChannelLibrary.$ShutterCallback shutter,
-                            CameraChannelLibrary.$PictureCallback raw,
-                            CameraChannelLibrary.$PictureCallback postView,
-                            CameraChannelLibrary.$PictureCallback jpeg) {
+  public void takePicture(CameraChannelLibrary.ShutterCallback shutter,
+                            PictureCallbackProxy raw,
+                          PictureCallbackProxy postView,
+                          PictureCallbackProxy jpeg) {
     camera.takePicture(() -> {
       if (shutter != null) shutter.invoke();
     },
-        raw != null ? ((PictureCallbackProxy)raw).pictureCallback : null,
-        postView != null ? ((PictureCallbackProxy)postView).pictureCallback : null,
-        jpeg != null ? ((PictureCallbackProxy)jpeg).pictureCallback : null);
-    return null;
+        raw != null ? raw.pictureCallback : null,
+        postView != null ? postView.pictureCallback : null,
+        jpeg != null ? jpeg.pictureCallback : null);
   }
 
   public Long attachPreviewTexture() throws Exception {
@@ -136,12 +139,12 @@ public class CameraProxy {
     camera.unlock();
   }
 
-  public void setOneShotPreviewCallback(CameraChannelLibrary.$PreviewCallback callback) {
-    camera.setOneShotPreviewCallback(((PreviewCallbackProxy)callback).previewCallback);
+  public void setOneShotPreviewCallback(PreviewCallbackProxy callback) {
+    camera.setOneShotPreviewCallback(callback.previewCallback);
   }
 
-  public void setPreviewCallback(CameraChannelLibrary.$PreviewCallback callback) {
-    camera.setPreviewCallback(((PreviewCallbackProxy)callback).previewCallback);
+  public void setPreviewCallback(PreviewCallbackProxy callback) {
+    camera.setPreviewCallback(callback.previewCallback);
   }
 
   public void reconnect() throws IOException {

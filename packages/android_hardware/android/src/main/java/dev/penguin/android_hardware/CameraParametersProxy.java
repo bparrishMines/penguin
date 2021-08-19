@@ -12,8 +12,7 @@ public class CameraParametersProxy {
   public final LibraryImplementations implementations;
   public final Camera.Parameters cameraParameters;
 
-  public CameraParametersProxy(LibraryImplementations implementations, boolean create) {
-    remove this
+  public CameraParametersProxy(CameraChannelLibrary.$LibraryImplementations implementations, boolean create) {
     throw new UnsupportedOperationException();
   }
 
@@ -33,14 +32,14 @@ public class CameraParametersProxy {
     return CameraAreaProxy.fromList(implementations, cameraParameters.getFocusAreas());
   }
 
-  public List<Float> getFocusDistances() {
+  public List<Double> getFocusDistances() {
     final float[] distances = new float[3];
     cameraParameters.getFocusDistances(distances);
-    final List<Float> floatList = new ArrayList<>(distances.length);
+    final List<Double> doubleList = new ArrayList<>(distances.length);
     for (float distance : distances) {
-      floatList.add(distance);
+      doubleList.add((double) distance);
     }
-    return floatList;
+    return doubleList;
   }
 
   public Integer getMaxExposureCompensation() {
@@ -149,8 +148,8 @@ public class CameraParametersProxy {
     return cameraParameters.getExposureCompensation();
   }
 
-  public Float getExposureCompensationStep() {
-    return cameraParameters.getExposureCompensationStep();
+  public Double getExposureCompensationStep() {
+    return (double) cameraParameters.getExposureCompensationStep();
   }
 
   // TODO: Test starts here to below
@@ -174,16 +173,16 @@ public class CameraParametersProxy {
     return cameraParameters.getColorEffect();
   }
 
-  public Float getFocalLength() {
-    return cameraParameters.getFocalLength();
+  public Double getFocalLength() {
+    return (double) cameraParameters.getFocalLength();
   }
 
   public String getFocusMode() {
     return cameraParameters.getFocusMode();
   }
 
-  public Float getHorizontalViewAngle() {
-    return cameraParameters.getHorizontalViewAngle();
+  public Double getHorizontalViewAngle() {
+    return (double) cameraParameters.getHorizontalViewAngle();
   }
 
   public Integer getInt(String key) {
@@ -285,8 +284,8 @@ public class CameraParametersProxy {
     return cameraParameters.getSupportedWhiteBalance();
   }
 
-  public Float getVerticalViewAngle() {
-    return cameraParameters.getVerticalViewAngle();
+  public Double getVerticalViewAngle() {
+    return (double) cameraParameters.getVerticalViewAngle();
   }
 
   public Boolean getVideoStabilization() {

@@ -794,6 +794,19 @@ class $CameraParametersChannel extends TypeChannel<CameraParameters> {
   $CameraParametersChannel(TypeChannelMessenger messenger)
       : super(messenger, r'android_hardware/camera/CameraParameters');
 
+  Future<PairedInstance?> $create$(
+    CameraParameters $instance, {
+    required bool $owner,
+  }) {
+    return createNewInstancePair(
+      $instance,
+      <Object?>[
+        r'',
+      ],
+      owner: $owner,
+    );
+  }
+
   Future<bool> $getAutoExposureLock(
     CameraParameters $instance,
   ) async {
@@ -1364,14 +1377,16 @@ class $CameraParametersChannel extends TypeChannel<CameraParameters> {
         .toList();
   }
 
-  Future<CameraSize> $getSupportedJpegThumbnailSizes(
+  Future<List<CameraSize>> $getSupportedJpegThumbnailSizes(
     CameraParameters $instance,
   ) async {
-    return await sendInvokeMethod(
+    return (await sendInvokeMethod(
       $instance,
       r'getSupportedJpegThumbnailSizes',
       <Object?>[],
-    ) as CameraSize;
+    ) as List<dynamic>)
+        .map((_) => _ as CameraSize)
+        .toList();
   }
 
   Future<List<int>> $getSupportedPictureFormats(
@@ -2116,6 +2131,14 @@ class $CameraHandler implements TypeChannelHandler<Camera> {
 }
 
 class $CameraParametersHandler implements TypeChannelHandler<CameraParameters> {
+  CameraParameters $create$(
+    TypeChannelMessenger messenger,
+  ) {
+    return CameraParameters(
+      create: false,
+    );
+  }
+
   @override
   Object? invokeStaticMethod(
     TypeChannelMessenger messenger,
@@ -2139,6 +2162,10 @@ class $CameraParametersHandler implements TypeChannelHandler<CameraParameters> {
   ) {
     final String constructorName = arguments[0] as String;
     switch (constructorName) {
+      case r'':
+        return $create$(
+          messenger,
+        );
     }
 
     throw ArgumentError.value(
