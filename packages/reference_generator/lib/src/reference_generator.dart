@@ -219,7 +219,8 @@ class ReferenceAstBuilder extends Builder {
       ),
     );
 
-    if (parameters.last.name == 'create' &&
+    if (parameters.isNotEmpty &&
+        parameters.last.name == 'create' &&
         parameters.last.type.dartName == 'bool') {
       parameters = parameters.take(parameters.length - 1);
     }
