@@ -170,7 +170,8 @@ String _getListArgumentCasting({
 }) {
   final String typeCast =
       getArgumentCasting(type: type.typeArguments.first, input: '_');
-  return '($input as List<dynamic>).map((_) => $typeCast).toList()';
+  final String nullability = type.nullable ? '?' : '';
+  return '($input as List<dynamic>$nullability)$nullability.map((_) => $typeCast).toList()';
 }
 
 String _getMapArgumentCasting({required TypeNode type, required String input}) {
@@ -182,7 +183,8 @@ String _getMapArgumentCasting({required TypeNode type, required String input}) {
     type: type.typeArguments[1],
     input: '__',
   );
-  return '($input as Map<dynamic, dynamic>).map((_, __) => MapEntry($keyTypeCast, $valueTypeCast))';
+  final String nullability = type.nullable ? '?' : '';
+  return '($input as Map<dynamic, dynamic>$nullability)$nullability.map((_, __) => MapEntry($keyTypeCast, $valueTypeCast))';
 }
 
 String getTrueTypeName(TypeNode type) {
