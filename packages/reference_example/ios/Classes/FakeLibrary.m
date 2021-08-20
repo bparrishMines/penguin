@@ -1,9 +1,6 @@
 #import "FakeLibrary.h"
 
-@implementation ClassTemplate {
-  NSInteger _fieldTemplate;
-}
-
+@implementation ClassTemplate
 -(instancetype)initWithFieldTemplate:(NSInteger)fieldTemplate {
   self = [super init];
   if (self) {

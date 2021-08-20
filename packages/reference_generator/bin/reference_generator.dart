@@ -93,12 +93,12 @@ void main(List<String> arguments) async {
     throw StateError(message);
   }
 
-  print('ASTFile: ');
-  print(astInputFile.readAsStringSync());
-
-  final libraryNode = LibraryNode.fromJson(
+  final LibraryNode libraryNode = LibraryNode.fromJson(
     jsonDecode(astInputFile.readAsStringSync()),
   );
+
+  print('ASTFile: ');
+  print(JsonEncoder.withIndent(' ').convert(libraryNode.toJson()));
 
   final Set<String> channelNames = <String>{};
   final Set<String> classNames = <String>{};
