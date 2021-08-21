@@ -10,7 +10,7 @@ String generateObjcImpl({
   required LibraryNode libraryNode,
   required String prefix,
   required String headerFilename,
-  required Map<String, String> typeAliases,
+  // required Map<String, String> typeAliases,
 }) {
   final Map<String, Object> data = <String, Object>{};
   data['prefix'] = prefix;
@@ -34,7 +34,6 @@ String generateObjcImpl({
         parameterData['type'] = getTrueTypeName(
           type: constructorNode.parameters[i].type,
           prefix: prefix,
-          typeAliases: typeAliases,
         );
         parameterData['index'] = '${i + 1}';
 
@@ -60,7 +59,6 @@ String generateObjcImpl({
         parameterData['type'] = getTrueTypeName(
           type: methodNode.parameters[i].type,
           prefix: prefix,
-          typeAliases: typeAliases,
         );
         parameterData['index'] = '$i';
 
@@ -85,7 +83,6 @@ String generateObjcImpl({
         parameterData['type'] = getTrueTypeName(
           type: methodNode.parameters[i].type,
           prefix: prefix,
-          typeAliases: typeAliases,
         );
         parameterData['index'] = '$i';
 
@@ -114,7 +111,6 @@ String generateObjcImpl({
       parameterData['type'] = getTrueTypeName(
         type: functionNode.parameters[i].type,
         prefix: prefix,
-        typeAliases: typeAliases,
       );
       parameterData['index'] = '$i';
 

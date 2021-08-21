@@ -8,14 +8,14 @@ String generateObjcHeader({
   required String template,
   required LibraryNode libraryNode,
   required String prefix,
-  required List<String> imports,
-  required Map<String, String> typeAliases,
+  // required List<String> imports,
+  // required Map<String, String> typeAliases,
 }) {
   final Map<String, Object> data = <String, Object>{};
   data['prefix'] = prefix;
 
   final List<Map<String, Object>> importData = <Map<String, Object>>[];
-  for (String import in imports) {
+  for (String import in libraryNode.platformImports) {
     importData.add(<String, Object>{'value': import});
   }
   data['imports'] = importData;
@@ -38,7 +38,6 @@ String generateObjcHeader({
         parameterData['type'] = getTrueTypeName(
           type: constructorNode.parameters[i].type,
           prefix: prefix,
-          typeAliases: typeAliases,
         );
         parameterData['index'] = '${i + 1}';
 
@@ -55,8 +54,7 @@ String generateObjcHeader({
       final Map<String, Object> methodData = <String, Object>{};
       methodData['name'] = methodNode.name;
       methodData['hasParameters'] = methodNode.parameters.isNotEmpty;
-      // TODO: fix?
-      methodData['returnsFuture'] = methodNode.returnType.dartName == 'Future';
+      methodData['returnsFuture'] = methodNode.returnType.isFuture;
 
       final List<Map<String, Object>> parameters = <Map<String, Object>>[];
       for (int i = 0; i < methodNode.parameters.length; i++) {
@@ -65,7 +63,6 @@ String generateObjcHeader({
         parameterData['type'] = getTrueTypeName(
           type: methodNode.parameters[i].type,
           prefix: prefix,
-          typeAliases: typeAliases,
         );
         parameterData['index'] = '$i';
 
@@ -81,7 +78,8 @@ String generateObjcHeader({
     for (MethodNode methodNode in classNode.methods) {
       final Map<String, Object> methodData = <String, Object>{};
       methodData['name'] = methodNode.name;
-      methodData['returnsFuture'] = methodNode.returnType.platformName == 'Future';
+      methodData['returnsFuture'] =
+          methodNode.returnType.platformName == 'Future';
 
       final List<Map<String, Object>> parameters = <Map<String, Object>>[];
       for (int i = 0; i < methodNode.parameters.length; i++) {
@@ -90,7 +88,6 @@ String generateObjcHeader({
         parameterData['type'] = getTrueTypeName(
           type: methodNode.parameters[i].type,
           prefix: prefix,
-          typeAliases: typeAliases,
         );
         parameterData['index'] = '$i';
 
@@ -119,7 +116,6 @@ String generateObjcHeader({
       parameterData['type'] = getTrueTypeName(
         type: functionNode.parameters[i].type,
         prefix: prefix,
-        typeAliases: typeAliases,
       );
       parameterData['index'] = '$i';
 
@@ -139,38 +135,20 @@ String generateObjcHeader({
   return runGenerator(templateQueue, Queue<Token>(), StringBuffer(), data);
 }
 
-String getTrueTypeName({
-  required TypeNode type,
-  required String prefix,
-  required Map<String, String> typeAliases,
-}) {
-  final String objcName;
-  if (typeAliases.containsKey(type.platformName)) {
-    objcName = typeAliases[type.platformName]!;
-  } else {
-    objcName = objcTypeNameConversion(type.platformName);
-  }
+String getTrueTypeName({required TypeNode type, required String prefix}) {
+  final String objcName = objcTypeNameConversion(type.platformName);
 
   final Iterable<String> typeArguments = type.typeArguments.map<String>(
-    (TypeNode type) => getTrueTypeName(
-      type: type,
-      prefix: prefix,
-      typeAliases: typeAliases,
-    ),
+    (TypeNode type) => getTrueTypeName(type: type, prefix: prefix),
   );
 
-  //TODO: fix
-  // if (type.functionType) {
-  //   return '$objcName';
-  // } else if (typeArguments.isEmpty) {
-  //   return '$objcName *';
-  // } else if (type.codeGeneratedType && typeArguments.isNotEmpty) {
-  //   return 'NSObject<$prefix$objcName<${typeArguments.join(', ')}>> *';
-  // } else if (!type.codeGeneratedType && typeArguments.isNotEmpty) {
-  //   return '$objcName<${typeArguments.join(', ')}> *';
-  // }
+  if (type.functionType) {
+    return '$prefix$objcName';
+  } else if (typeArguments.isNotEmpty) {
+    return '$objcName<${typeArguments.join(', ')}> *';
+  }
 
-  return '$objcName';
+  return '$objcName *';
 }
 
 // TODO: A user could extend a list/map so we want a boolean flag to check.

@@ -71,7 +71,7 @@ class ReferenceAstBuilder extends Builder {
     final LibraryReader reader = LibraryReader(await buildStep.inputLibrary);
 
     final Iterable<ClassElement> classes = reader
-        .annotatedWith(const TypeChecker.fromRuntime(ClassReference))
+        .annotatedWith(const TypeChecker.fromRuntime(Reference))
         .where(
           (AnnotatedElement annotatedElement) =>
               annotatedElement.element is ClassElement,
@@ -82,7 +82,7 @@ class ReferenceAstBuilder extends Builder {
         );
 
     final Iterable<TypeAliasElement> functions = reader
-        .annotatedWith(const TypeChecker.fromRuntime(FunctionReference))
+        .annotatedWith(const TypeChecker.fromRuntime(Reference))
         .where(
           (AnnotatedElement annotatedElement) =>
               annotatedElement.element is TypeAliasElement,
@@ -147,8 +147,8 @@ class ReferenceAstBuilder extends Builder {
   }) {
     // This is always non-null because these are filtered classes from the
     // current library.
-    final ClassReference reference =
-        _tryGetClassReference(classElement.thisType)!;
+    final Reference reference =
+        _tryGetReferenceFromDartType(classElement.thisType)!;
 
     platformImports.add(reference.platformImport);
     return ClassNode(
@@ -289,9 +289,15 @@ class ReferenceAstBuilder extends Builder {
   }) {
     final FunctionType functionType =
         typeAliasElement.aliasedType as FunctionType;
+
+    // This is always non-null because these are filtered classes from the
+    // current library.
+    final Reference reference =
+        _tryGetReferenceFromTypeAlias(typeAliasElement)!;
+    platformImports.add(reference.platformImport);
     return FunctionNode(
       name: typeAliasElement.name,
-      channelName: _getFunctionReferenceFromTypeAlias(typeAliasElement).channel,
+      channelName: reference.channel,
       returnType: _toTypeNode(
         type: functionType.returnType,
         dartImports: dartImports,
@@ -360,6 +366,20 @@ class ReferenceAstBuilder extends Builder {
         nonFutureType.getDisplayString(withNullability: false);
     final TypeAliasElement? aliasElement = nonFutureType.aliasElement;
     if (aliasElement != null) {
+      final Reference? typeAliasReference =
+          _tryGetReferenceFromTypeAlias(aliasElement);
+      final bool isReference = typeAliasReference != null;
+      if (isReference) {
+        // Has source because it has a reference.
+        dartImports.add(nonFutureType.element!.source!.uri.toString());
+        platformImports.add(typeAliasReference.platformImport);
+      } else {
+        // TODO: improve logic?
+        String? import =
+            nonFutureType.element?.library?.source.shortName.toString();
+        import ??= nonFutureType.element?.source?.toString();
+        if (import != null) dartImports.add(import);
+      }
       return TypeNode(
         dartName: aliasElement.name,
         platformName: aliasElement.name,
@@ -370,7 +390,8 @@ class ReferenceAstBuilder extends Builder {
       );
     }
 
-    final ClassReference? classReference = _tryGetClassReference(nonFutureType);
+    final Reference? classReference =
+        _tryGetReferenceFromDartType(nonFutureType);
     final bool isReference = classReference != null;
     if (isReference) {
       // Has source because it has a class reference.
@@ -407,16 +428,8 @@ class ReferenceAstBuilder extends Builder {
     );
   }
 
-  FunctionReference _getFunctionReferenceFromTypeAlias(
-      TypeAliasElement element) {
-    final TypeChecker typeChecker = TypeChecker.fromRuntime(FunctionReference);
-    final ConstantReader constantReader =
-        ConstantReader(typeChecker.firstAnnotationOf(element));
-    return FunctionReference(constantReader.read('channel').stringValue);
-  }
-
-  ClassReference? _tryGetClassReference(DartType type) {
-    final TypeChecker typeChecker = TypeChecker.fromRuntime(ClassReference);
+  Reference? _tryGetReferenceFromDartType(DartType type) {
+    final TypeChecker typeChecker = TypeChecker.fromRuntime(Reference);
     final Element? element = type.element;
 
     if (element == null) {
@@ -427,7 +440,18 @@ class ReferenceAstBuilder extends Builder {
 
     final ConstantReader constantReader =
         ConstantReader(typeChecker.firstAnnotationOf(element));
-    return ClassReference(
+    return Reference(
+      channel: constantReader.read('channel').stringValue,
+      platformImport: constantReader.read('platformImport').stringValue,
+      platformClassName: constantReader.read('platformClassName').stringValue,
+    );
+  }
+
+  Reference? _tryGetReferenceFromTypeAlias(TypeAliasElement element) {
+    final TypeChecker typeChecker = TypeChecker.fromRuntime(Reference);
+    final ConstantReader constantReader =
+        ConstantReader(typeChecker.firstAnnotationOf(element));
+    return Reference(
       channel: constantReader.read('channel').stringValue,
       platformImport: constantReader.read('platformImport').stringValue,
       platformClassName: constantReader.read('platformClassName').stringValue,

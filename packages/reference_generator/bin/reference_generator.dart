@@ -192,8 +192,8 @@ void main(List<String> arguments) async {
         template: objcHeaderTemplate,
         libraryNode: libraryNode,
         prefix: options.objcPrefix!,
-        imports: options.objcHeaderImports ?? <String>[],
-        typeAliases: options.objcTypeAliases,
+        // imports: options.objcHeaderImports ?? <String>[],
+        // typeAliases: options.objcTypeAliases,
       ),
     );
   }
@@ -221,7 +221,7 @@ void main(List<String> arguments) async {
         libraryNode: libraryNode,
         prefix: options.objcPrefix!,
         headerFilename: path.basename(options.objcHeaderOut!.path),
-        typeAliases: options.objcTypeAliases,
+        // typeAliases: options.objcTypeAliases,
       ),
     );
   }

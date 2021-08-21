@@ -4,10 +4,14 @@ import 'package:reference/annotations.dart';
 
 import 'template.g.dart';
 
-@FunctionReference(r'github.penguin/template/template/$$function_name$$')
+@Reference(
+  channel: r'github.penguin/template/template/__function_name__',
+  platformImport: 'com.example.reference_example.__function_name__',
+  platformClassName: '__function_name__',
+)
 typedef $$function_name$$ = void Function(String value);
 
-@ClassReference(
+@Reference(
   channel: r'__channel_name__',
   platformImport: 'com.example.reference_example.__class_name__Proxy',
   platformClassName: '__class_name__Proxy',

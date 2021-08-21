@@ -8,9 +8,9 @@ const javaFloat = ReferenceParameter(platformTypeName: 'Float');
 const javaLong = ReferenceParameter(platformTypeName: 'Long');
 
 /// Annotation used with reference_generator plugin.
-class ClassReference {
+class Reference {
   /// Default constructor for [Reference].
-  const ClassReference({
+  const Reference({
     required this.channel,
     required this.platformImport,
     required this.platformClassName,
@@ -24,15 +24,6 @@ class ClassReference {
 
   /// Name of the platorm implementation of a class.
   final String platformClassName;
-}
-
-/// Annotation used with reference_generator plugin.
-class FunctionReference {
-  /// Default constructor for [Reference].
-  const FunctionReference(this.channel);
-
-  /// Name of the channel used to generate a `TypeChannel`.
-  final String channel;
 }
 
 /// Annotation to customize methods for reference_generator plugin.
