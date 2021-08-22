@@ -22,7 +22,7 @@
         methodName:(NSString *)methodName
          arguments:(NSArray *)arguments {
   if ([@"callbackTest" isEqualToString:methodName]) {
-    __prefix____function_name__ callback = (__prefix____function_name__) arguments[0];
+    __function_name__ callback = (__function_name__) arguments[0];
     callback(@"Eureka!");
     return nil;
   }

@@ -10,18 +10,18 @@
 // **************************************************************************
 
 /*iterate functions function*/
-@implementation __prefix____function_name__Channel
+@implementation __function_name__Channel
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger {
   return self = [super initWithMessenger:messenger name:@"__function_channel__"];
 }
 
-- (void)_create:(__prefix____function_name__)_instance
+- (void)_create:(__function_name__)_instance
           _owner:(BOOL)_owner
       completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion {
   [self createNewInstancePair:_instance arguments:@[] owner:_owner completion:completion];
 }
 
-- (void)invoke:(__prefix____function_name__)_instance
+- (void)invoke:(__function_name__)_instance
 /*iterate parameters parameter*/
       __parameter_name__:(/*replace parameter_type*/NSString */**/ _Nullable)__parameter_name__
 /**/
@@ -35,7 +35,7 @@
 /**/
 
 /*iterate functions function*/
-@implementation __prefix____function_name__Handler
+@implementation __function_name__Handler
 -(instancetype)initWithImplementations:(__prefix__LibraryImplementations *)implementations {
   self = [super init];
   if (self) {
@@ -46,8 +46,8 @@
 
 - (nonnull id)createInstance:(nonnull REFTypeChannelMessenger *)messenger
                    arguments:(nonnull NSArray *)arguments {
-  __block __weak __prefix____function_name__ function;
-  __prefix____function_name__ functionInstance = ^(/*iterate :join=',' parameters parameter*//*replace parameter_type*/NSString */**/ _Nullable __parameter_name__/**/) {
+  __block __weak __function_name__ function;
+  __function_name__ functionInstance = ^(/*iterate :join=',' parameters parameter*//*replace parameter_type*/NSString */**/ _Nullable __parameter_name__/**/) {
     [self->_implementations.channel__function_name__ invoke:function
                                          /*iterate parameters parameter*/
                                          __parameter_name__:__parameter_name__
@@ -62,7 +62,7 @@
                     instance:(nonnull NSObject *)instance
                   methodName:(nonnull NSString *)methodName
                    arguments:(nonnull NSArray *)arguments {
-  __prefix____function_name__ function = (__prefix____function_name__) instance;
+  __function_name__ function = (__function_name__) instance;
   function(/*iterate :join=',' parameters parameter*/arguments[/*replace parameter_index*/0/**/]/**/);
   return nil;
 }
@@ -254,8 +254,8 @@ __parameter_name__:(/*replace parameter_type*/NSString */**/ _Nullable)__paramet
     _handler__class_name__ = [[__class_name__Handler alloc] initWithImplementations:self];
     /**/
     /*iterate functions function*/
-    _channel__function_name__ = [[__prefix____function_name__Channel alloc] initWithMessenger:messenger];
-    _handler__function_name__ = [[__prefix____function_name__Handler alloc] initWithImplementations:self];
+    _channel__function_name__ = [[__function_name__Channel alloc] initWithMessenger:messenger];
+    _handler__function_name__ = [[__function_name__Handler alloc] initWithImplementations:self];
     /**/
   }
   return self;

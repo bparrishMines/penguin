@@ -23,20 +23,20 @@ NS_ASSUME_NONNULL_BEGIN
 @class __prefix__LibraryImplementations;
 
 /*iterate functions function*/
-typedef void (^__prefix____function_name__) (/*iterate :join=',' parameters parameter*//*replace parameter_type*/NSString */**/ _Nullable __parameter_name__/**/);
+typedef void (^__function_name__) (/*iterate :join=',' parameters parameter*//*replace parameter_type*/NSString */**/ _Nullable __parameter_name__/**/);
 /**/
 
 /*iterate functions function*/
-@interface __prefix____function_name__Channel : REFTypeChannel<__prefix____function_name__>
+@interface __function_name__Channel : REFTypeChannel<__function_name__>
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger;
-- (void)_create:(__prefix____function_name__)_instance
+- (void)_create:(__function_name__)_instance
          _owner:(BOOL)_owner
      completion:(void (^)(REFPairedInstance *_Nullable, NSError *_Nullable))completion;
 @end
 /**/
 
 /*iterate functions function*/
-@interface __prefix____function_name__Handler : NSObject<REFTypeChannelHandler>
+@interface __function_name__Handler : NSObject<REFTypeChannelHandler>
 @property (readonly) __prefix__LibraryImplementations *implementations;
 -(instancetype)initWithImplementations:(__prefix__LibraryImplementations *)implementations;
 @end
@@ -120,8 +120,8 @@ __parameter_name__:(/*replace parameter_type*/NSString */**/ _Nullable)__paramet
 @property __class_name__Handler *handler__class_name__;
 /**/
 /*iterate functions function*/
-@property __prefix____function_name__Channel *channel__function_name__;
-@property __prefix____function_name__Handler *handler__function_name__;
+@property __function_name__Channel *channel__function_name__;
+@property __function_name__Handler *handler__function_name__;
 /**/
 -(instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger;
 @end
