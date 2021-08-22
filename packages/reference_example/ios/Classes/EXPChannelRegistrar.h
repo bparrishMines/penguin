@@ -5,6 +5,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef void (^__function_name__) (NSString *_Nullable __parameter_name__);
+
 @interface __class_name__ : NSObject
 @property (readonly) __prefix__LibraryImplementations *implementations;
 @property (readonly) ClassTemplate *classTemplate;
