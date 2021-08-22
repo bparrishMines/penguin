@@ -55,7 +55,7 @@ public class CameraProxy {
     camera.stopPreview();
   }
 
-  public void autoFocus(CameraChannelLibrary.AutoFocusCallback callback) {
+  public void autoFocus(AutoFocusCallback callback) {
     camera.autoFocus((success, camera) -> callback.invoke(success));
   }
 
@@ -67,7 +67,7 @@ public class CameraProxy {
     camera.setDisplayOrientation(degrees);
   }
 
-  public void setErrorCallback(CameraChannelLibrary.ErrorCallback callback) {
+  public void setErrorCallback(ErrorCallback callback) {
     camera.setErrorCallback((error, camera) -> callback.invoke(error));
   }
 
@@ -87,11 +87,11 @@ public class CameraProxy {
     camera.setParameters(parameters.cameraParameters);
   }
 
-  public void setZoomChangeListener(CameraChannelLibrary.OnZoomChangeListener listener) {
+  public void setZoomChangeListener(OnZoomChangeListener listener) {
     camera.setZoomChangeListener((zoomValue, stopped, camera) -> listener.invoke(zoomValue, stopped));
   }
 
-  public void setAutoFocusMoveCallback(CameraChannelLibrary.AutoFocusMoveCallback callback) {
+  public void setAutoFocusMoveCallback(AutoFocusMoveCallback callback) {
     camera.setAutoFocusMoveCallback((start, camera) -> callback.invoke(start));
   }
 
@@ -108,7 +108,7 @@ public class CameraProxy {
     }
   }
 
-  public void takePicture(CameraChannelLibrary.ShutterCallback shutter,
+  public void takePicture(ShutterCallback shutter,
                             PictureCallbackProxy raw,
                           PictureCallbackProxy postView,
                           PictureCallbackProxy jpeg) {

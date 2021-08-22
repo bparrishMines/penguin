@@ -6,7 +6,7 @@ public class PreviewCallbackProxy {
   public final LibraryImplementations implementations;
   public final Camera.PreviewCallback previewCallback;
 
-  public PreviewCallbackProxy(CameraChannelLibrary.$LibraryImplementations implementations, boolean create, CameraChannelLibrary.DataCallback onPreviewFrame) {
+  public PreviewCallbackProxy(CameraChannelLibrary.$LibraryImplementations implementations, boolean create, DataCallback onPreviewFrame) {
     this((LibraryImplementations) implementations, create, (data, camera) -> onPreviewFrame.invoke(data));
   }
 

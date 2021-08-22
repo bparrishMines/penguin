@@ -24,7 +24,7 @@ public class PreviewCallbackTest {
     final LibraryImplementations implementations =
         new LibraryImplementations(mockTypeChannelMessenger, mock(TextureRegistry.class));
 
-    final CameraChannelLibrary.DataCallback mockDataCallback = mock(CameraChannelLibrary.DataCallback.class);
+    final DataCallback mockDataCallback = mock(DataCallback.class);
 
     final PreviewCallbackProxy previewCallbackProxy = implementations
         .handlerPreviewCallbackProxy

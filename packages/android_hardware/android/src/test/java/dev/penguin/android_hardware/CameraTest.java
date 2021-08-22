@@ -160,7 +160,7 @@ public class CameraTest {
   // TODO: Test callback is called.
   @Test
   public void takePicture() {
-    final CameraChannelLibrary.ShutterCallback shutterCallback = () -> null;
+    final ShutterCallback shutterCallback = () -> null;
 
     final PictureCallbackProxy pictureCallbackProxy = new PictureCallbackProxy(testImplementations, false, data -> null);
 
@@ -181,7 +181,7 @@ public class CameraTest {
   // TODO: Test callback is called.
   @Test
   public void autoFocus() {
-    final CameraChannelLibrary.AutoFocusCallback autoFocusCallback = success -> null;
+    final AutoFocusCallback autoFocusCallback = success -> null;
     testCameraProxy.autoFocus(autoFocusCallback);
     verify(mockCamera).autoFocus(isA(Camera.AutoFocusCallback.class));
   }
@@ -201,7 +201,7 @@ public class CameraTest {
   // TODO: Test callback is called.
   @Test
   public void setErrorCallback() {
-    final CameraChannelLibrary.ErrorCallback errorCallback = error -> null;
+    final ErrorCallback errorCallback = error -> null;
     testCameraProxy.setErrorCallback(errorCallback);
     verify(mockCamera).setErrorCallback(isA(Camera.ErrorCallback.class));
   }
@@ -227,7 +227,7 @@ public class CameraTest {
   
   @Test
   public void setOneShotPreviewCallback() {
-    final CameraChannelLibrary.DataCallback mockDataCallback = mock(CameraChannelLibrary.DataCallback.class);
+    final DataCallback mockDataCallback = mock(DataCallback.class);
     final PreviewCallbackProxy previewCallbackProxy = new PreviewCallbackProxy(testImplementations, false, mockDataCallback);
 
     testCameraProxy.setOneShotPreviewCallback(previewCallbackProxy);
@@ -241,7 +241,7 @@ public class CameraTest {
   
   @Test
   public void setPreviewCallback() {
-    final CameraChannelLibrary.DataCallback mockDataCallback = mock(CameraChannelLibrary.DataCallback.class);
+    final DataCallback mockDataCallback = mock(DataCallback.class);
     final PreviewCallbackProxy previewCallbackProxy = new PreviewCallbackProxy(testImplementations, false, mockDataCallback);
 
     testCameraProxy.setPreviewCallback(previewCallbackProxy);
@@ -262,7 +262,7 @@ public class CameraTest {
   // TODO: Test callback is called.
   @Test
   public void setZoomChangeListener() {
-    final CameraChannelLibrary.OnZoomChangeListener zoomChangeListener = (zoomValue, stopped) -> null;
+    final OnZoomChangeListener zoomChangeListener = (zoomValue, stopped) -> null;
     
     testCameraProxy.setZoomChangeListener(zoomChangeListener);
     verify(mockCamera).setZoomChangeListener(isA(Camera.OnZoomChangeListener.class));
@@ -271,7 +271,7 @@ public class CameraTest {
   // TODO: Test callback is called.
   @Test
   public void setAutoFocusMoveCallback() {
-    final CameraChannelLibrary.AutoFocusMoveCallback autoFocusMoveCallback = start -> null;
+    final AutoFocusMoveCallback autoFocusMoveCallback = start -> null;
 
     testCameraProxy.setAutoFocusMoveCallback(autoFocusMoveCallback);
     verify(mockCamera).setAutoFocusMoveCallback(isA(Camera.AutoFocusMoveCallback.class));

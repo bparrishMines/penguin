@@ -6,7 +6,7 @@ public class PictureCallbackProxy {
   public final LibraryImplementations implementations;
   public final Camera.PictureCallback pictureCallback;
 
-  public PictureCallbackProxy(CameraChannelLibrary.$LibraryImplementations implementations, boolean create, CameraChannelLibrary.DataCallback onPictureTaken) {
+  public PictureCallbackProxy(CameraChannelLibrary.$LibraryImplementations implementations, boolean create, DataCallback onPictureTaken) {
     this((LibraryImplementations) implementations, create, (data, camera) -> onPictureTaken.invoke(data));
   }
 

@@ -22,7 +22,7 @@ public class PictureCallbackTest {
     final LibraryImplementations implementations =
         new LibraryImplementations(mockTypeChannelMessenger, mock(TextureRegistry.class));
 
-    final CameraChannelLibrary.DataCallback mockDataCallback = mock(CameraChannelLibrary.DataCallback.class);
+    final DataCallback mockDataCallback = mock(DataCallback.class);
 
     final PictureCallbackProxy pictureCallbackProxy = implementations
         .handlerPictureCallbackProxy

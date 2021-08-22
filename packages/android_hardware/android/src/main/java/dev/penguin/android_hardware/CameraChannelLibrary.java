@@ -7,11 +7,23 @@ package dev.penguin.android_hardware;
 
 import dev.penguin.android_hardware.PictureCallbackProxy;
 
+import dev.penguin.android_hardware.DataCallback;
+
 import dev.penguin.android_hardware.PreviewCallbackProxy;
 
 import dev.penguin.android_hardware.CameraProxy;
 
+import dev.penguin.android_hardware.ShutterCallback;
+
+import dev.penguin.android_hardware.AutoFocusCallback;
+
+import dev.penguin.android_hardware.ErrorCallback;
+
 import dev.penguin.android_hardware.CameraParametersProxy;
+
+import dev.penguin.android_hardware.OnZoomChangeListener;
+
+import dev.penguin.android_hardware.AutoFocusMoveCallback;
 
 import dev.penguin.android_hardware.CameraInfoProxy;
 
@@ -38,6 +50,7 @@ import github.penguin.reference.reference.TypeChannelMessenger;
 // **************************************************************************
 
 public class CameraChannelLibrary {
+  
   public static class $ErrorCallbackChannel extends TypeChannel<ErrorCallback> {
     public $ErrorCallbackChannel(@NonNull TypeChannelMessenger messenger) {
       super(messenger, "android_hardware/camera/ErrorCallback");
