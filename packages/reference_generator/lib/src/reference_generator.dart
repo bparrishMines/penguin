@@ -370,15 +370,11 @@ class ReferenceAstBuilder extends Builder {
           _tryGetReferenceFromTypeAlias(aliasElement);
       final bool isReference = typeAliasReference != null;
       if (isReference) {
-        // Has source because it has a reference.
-        dartImports.add(nonFutureType.element!.source!.uri.toString());
+        dartImports.add(aliasElement.source.uri.toString());
         platformImports.add(typeAliasReference.platformImport);
       } else {
-        // TODO: improve logic?
-        String? import =
-            nonFutureType.element?.library?.source.shortName.toString();
-        import ??= nonFutureType.element?.source?.toString();
-        if (import != null) dartImports.add(import);
+        final String import = aliasElement.library.source.shortName.toString();
+        dartImports.add(import);
       }
       return TypeNode(
         dartName: aliasElement.name,
