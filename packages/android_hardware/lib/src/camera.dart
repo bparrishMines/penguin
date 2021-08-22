@@ -11,7 +11,11 @@ import 'camera.g.dart';
 ///   [Camera.errorUnknown]
 ///   [Camera.errorServerDied]
 ///   [Camera.errorEvicted]
-@FunctionReference('android_hardware/camera/ErrorCallback')
+@Reference(
+  channel: 'android_hardware/camera/ErrorCallback',
+  platformImport: 'dev.penguin.android_hardware.ErrorCallback',
+  platformClassName: 'ErrorCallback',
+)
 typedef ErrorCallback = void Function(int error);
 
 /// Callback used to notify on completion of camera auto focus.
@@ -31,7 +35,11 @@ typedef ErrorCallback = void Function(int error);
 /// `success`: whether the auto-focus was successful.
 ///
 /// See: [Camera.autoFocus].
-@FunctionReference('android_hardware/camera/AutoFocusCallback')
+@Reference(
+  channel: 'android_hardware/camera/AutoFocusCallback',
+  platformImport: 'dev.penguin.android_hardware.AutoFocusCallback',
+  platformClassName: 'AutoFocusCallback',
+)
 typedef AutoFocusCallback = void Function(bool success);
 
 /// Callback used to signal the moment of actual image capture.
@@ -43,11 +51,19 @@ typedef AutoFocusCallback = void Function(bool success);
 /// but some time before the actual data is available.
 ///
 /// See: [Camera.takePicture].
-@FunctionReference('android_hardware/camera/ShutterCallback')
+@Reference(
+  channel: 'android_hardware/camera/ShutterCallback',
+  platformImport: 'dev.penguin.android_hardware.ShutterCallback',
+  platformClassName: 'ShutterCallback',
+)
 typedef ShutterCallback = void Function();
 
 /// Callback when receiving an image or preview byte array.
-@FunctionReference('android_hardware/camera/DataCallback')
+@Reference(
+  channel: 'android_hardware/camera/DataCallback',
+  platformImport: 'dev.penguin.android_hardware.DataCallback',
+  platformClassName: 'DataCallback',
+)
 typedef DataCallback = void Function(Uint8List? data);
 
 /// Callback for zoom changes during a smooth zoom operation.
@@ -57,7 +73,11 @@ typedef DataCallback = void Function(Uint8List? data);
 ///
 /// `stopped`: whether smooth zoom is stopped. If the value is true, this is the
 /// last zoom update for the application.
-@FunctionReference('android_hardware/camera/OnZoomChangeListener')
+@Reference(
+  channel: 'android_hardware/camera/OnZoomChangeListener',
+  platformImport: 'dev.penguin.android_hardware.OnZoomChangeListener',
+  platformClassName: 'OnZoomChangeListener',
+)
 typedef OnZoomChangeListener = void Function(int zoomValue, bool stopped);
 
 /// Callback used to notify on auto focus start and stop.
@@ -66,7 +86,11 @@ typedef OnZoomChangeListener = void Function(int zoomValue, bool stopped);
 /// [CameraParameters.focusModeContinuousVideo] and
 /// [CameraParameters.focusModeContinuousPicture]. Applications can show
 /// autofocus animation based on this.
-@FunctionReference('android_hardware/camera/AutoFocusMoveCallback')
+@Reference(
+  channel: 'android_hardware/camera/AutoFocusMoveCallback',
+  platformImport: 'dev.penguin.android_hardware.AutoFocusMoveCallback',
+  platformClassName: 'AutoFocusMoveCallback',
+)
 typedef AutoFocusMoveCallback = void Function(bool start);
 
 /// Callback used to supply image data from a photo capture.
@@ -77,7 +101,7 @@ typedef AutoFocusMoveCallback = void Function(bool start);
 /// [CameraParameters] settings.
 ///
 /// See: [Camera.takePicture].
-@ClassReference(
+@Reference(
   channel: 'android_hardware/camera/PictureCallback',
   platformImport: 'dev.penguin.android_hardware.PictureCallbackProxy',
   platformClassName: 'PictureCallbackProxy',
@@ -109,7 +133,7 @@ class PictureCallback {
 }
 
 /// Callback used to deliver copies of preview frames as they are displayed.
-@ClassReference(
+@Reference(
   channel: 'android_hardware/camera/PreviewCallback',
   platformImport: 'dev.penguin.android_hardware.PreviewCallbackProxy',
   platformClassName: 'PreviewCallbackProxy',
@@ -198,7 +222,7 @@ class PreviewCallback {
 /// specifications, such as megapixel ratings and auto-focus capabilities. In
 /// order for your application to be compatible with more devices, you should
 /// not make assumptions about the device camera specifications.
-@ClassReference(
+@Reference(
   channel: 'android_hardware/camera/Camera',
   platformImport: 'dev.penguin.android_hardware.CameraProxy',
   platformClassName: 'CameraProxy',
@@ -692,7 +716,7 @@ class Camera {
 /// [CameraParameters.getSupportedColorEffects] before calling
 /// [CameraParameters.setColorEffect]. If the camera does not support color
 /// effects, [CameraParameters.getSupportedColorEffects] will return `null`.
-@ClassReference(
+@Reference(
   channel: 'android_hardware/camera/CameraParameters',
   platformImport: 'dev.penguin.android_hardware.CameraParametersProxy',
   platformClassName: 'CameraParametersProxy',
@@ -1974,7 +1998,7 @@ class CameraParameters {
 /// weight as a smaller area will have more effect in the metering result.
 /// Metering areas can overlap and the driver will add the weights in the
 /// overlap region.
-@ClassReference(
+@Reference(
   channel: 'android_hardware/camera/CameraArea',
   platformImport: 'dev.penguin.android_hardware.CameraAreaProxy',
   platformClassName: 'CameraAreaProxy',
@@ -2023,7 +2047,7 @@ class CameraArea {
 ///
 /// The rectangle is represented by the coordinates of its 4 edges
 /// (left, top, right bottom).
-@ClassReference(
+@Reference(
   channel: 'android_hardware/camera/CameraRect',
   platformImport: 'dev.penguin.android_hardware.CameraRectProxy',
   platformClassName: 'CameraRectProxy',
@@ -2073,7 +2097,7 @@ class CameraRect {
 }
 
 /// Image size (width and height dimensions).
-@ClassReference(
+@Reference(
   channel: 'android_hardware/camera/CameraSize',
   platformImport: 'dev.penguin.android_hardware.CameraSizeProxy',
   platformClassName: 'CameraSizeProxy',
@@ -2098,7 +2122,7 @@ class CameraSize {
 /// Information about a camera.
 ///
 /// Retrieve by calling [Camera.getAllCameraInfo].
-@ClassReference(
+@Reference(
   channel: 'android_hardware/camera/CameraInfo',
   platformImport: 'dev.penguin.android_hardware.CameraInfoProxy',
   platformClassName: 'CameraInfoProxy',
@@ -2162,7 +2186,7 @@ class CameraInfo {
 }
 
 /// Image format constants.
-@ClassReference(
+@Reference(
   channel: 'android_hardware/camera/ImageFormat',
   platformImport: 'dev.penguin.android_hardware.ImageFormatProxy',
   platformClassName: 'ImageFormatProxy',

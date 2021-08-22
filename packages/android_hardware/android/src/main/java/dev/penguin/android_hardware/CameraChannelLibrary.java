@@ -38,33 +38,6 @@ import github.penguin.reference.reference.TypeChannelMessenger;
 // **************************************************************************
 
 public class CameraChannelLibrary {
-  
-  public interface ErrorCallback {
-    Completable<Void> invoke(Integer error);
-  }
-  
-  public interface AutoFocusCallback {
-    Completable<Void> invoke(Boolean success);
-  }
-  
-  public interface ShutterCallback {
-    Completable<Void> invoke();
-  }
-  
-  public interface DataCallback {
-    Completable<Void> invoke(byte[] data);
-  }
-  
-  public interface OnZoomChangeListener {
-    Completable<Void> invoke(Integer zoomValue,Boolean stopped);
-  }
-  
-  public interface AutoFocusMoveCallback {
-    Completable<Void> invoke(Boolean start);
-  }
-  
-
-  
   public static class $ErrorCallbackChannel extends TypeChannel<ErrorCallback> {
     public $ErrorCallbackChannel(@NonNull TypeChannelMessenger messenger) {
       super(messenger, "android_hardware/camera/ErrorCallback");
