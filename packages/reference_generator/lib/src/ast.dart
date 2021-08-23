@@ -134,13 +134,15 @@ class TypeNode {
 @JsonSerializable()
 class FunctionNode {
   FunctionNode({
-    required this.name,
+    required this.dartName,
+    required this.platformName,
     required this.returnType,
     required this.parameters,
     required this.channelName,
   });
 
-  final String name;
+  final String dartName;
+  final String platformName;
   final String channelName;
   final TypeNode returnType;
   final List<ParameterNode> parameters;

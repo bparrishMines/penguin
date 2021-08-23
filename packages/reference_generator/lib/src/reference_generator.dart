@@ -296,7 +296,8 @@ class ReferenceAstBuilder extends Builder {
         _tryGetReferenceFromTypeAlias(typeAliasElement)!;
     platformImports.add(reference.platformImport);
     return FunctionNode(
-      name: typeAliasElement.name,
+      dartName: typeAliasElement.name,
+      platformName: reference.platformClassName,
       channelName: reference.channel,
       returnType: _toTypeNode(
         type: functionType.returnType,

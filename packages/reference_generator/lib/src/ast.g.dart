@@ -112,7 +112,8 @@ Map<String, dynamic> _$TypeNodeToJson(TypeNode instance) => <String, dynamic>{
 
 FunctionNode _$FunctionNodeFromJson(Map<String, dynamic> json) {
   return FunctionNode(
-    name: json['name'] as String,
+    dartName: json['dartName'] as String,
+    platformName: json['platformName'] as String,
     returnType: TypeNode.fromJson(json['returnType'] as Map<String, dynamic>),
     parameters: (json['parameters'] as List<dynamic>)
         .map((e) => ParameterNode.fromJson(e as Map<String, dynamic>))
@@ -123,7 +124,8 @@ FunctionNode _$FunctionNodeFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$FunctionNodeToJson(FunctionNode instance) =>
     <String, dynamic>{
-      'name': instance.name,
+      'dartName': instance.dartName,
+      'platformName': instance.platformName,
       'channelName': instance.channelName,
       'returnType': instance.returnType,
       'parameters': instance.parameters,

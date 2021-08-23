@@ -116,7 +116,7 @@ String generateObjcImpl({
   final List<Map<String, Object>> functions = <Map<String, Object>>[];
   for (FunctionNode functionNode in libraryNode.functions) {
     final Map<String, Object> functionData = <String, Object>{};
-    functionData['name'] = functionNode.name;
+    functionData['name'] = functionNode.platformName;
     functionData['channel'] = functionNode.channelName;
 
     final List<Map<String, Object>> parameters = <Map<String, Object>>[];
