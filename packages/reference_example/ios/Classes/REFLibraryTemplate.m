@@ -165,7 +165,7 @@
   return /**/ [__class_name__ __staticMethod_name__
           /*iterate parameters parameter*/
           /*if! first*//*erase*////**/__parameter_name__/**/
-          :__parameter_name__/**/
+          :__parameter_name__
           /**/
           ];
 }
@@ -182,7 +182,7 @@ __parameter_name__:(/*replace parameter_type*/NSString */**/ _Nullable)__paramet
   return /**/  [_instance __method_name__
           /*iterate parameters parameter*/
           /*if! first*//*erase*////**/__parameter_name__/**/
-          :__parameter_name__/**/
+          :__parameter_name__
           /**/
           ];
 }
