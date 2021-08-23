@@ -194,6 +194,7 @@ __parameter_name__:(/*replace parameter_type*/NSString */**/ _Nullable)__paramet
                          arguments:(nonnull NSArray *)arguments {
   /*iterate :join='else' staticMethods staticMethod*/
   /*if returnsFuture*/
+  /*if! first*//*erase*////**/else/**/
   if ([@"__staticMethod_name__" isEqualToString:methodName]) {
     return [self ___staticMethod_name__
             /*iterate parameters parameter*/
@@ -232,6 +233,7 @@ __parameter_name__:(/*replace parameter_type*/NSString */**/ _Nullable)__paramet
   __class_name__ *value = (__class_name__ *) instance;
   /*iterate :join='else' methods method*/
   /*if returnsFuture*/
+  /*if! first*//*erase*////**/else/**/
   if ([@"__method_name__" isEqualToString:methodName]) {
     return [self ___method_name__:value
                /*iterate parameters parameter*/

@@ -34,7 +34,7 @@ String generateObjcImpl({
         parameterData['type'] =
             getTrueTypeName(constructorNode.parameters[i].type);
         parameterData['index'] = '${i + 1}';
-        parameterData['first'] = i == 1;
+        parameterData['first'] = i == 0;
 
         parameters.add(parameterData);
       }
@@ -49,6 +49,7 @@ String generateObjcImpl({
       final Map<String, Object> methodData = <String, Object>{};
       methodData['name'] = methodNode.name;
       methodData['hasParameters'] = methodNode.parameters.isNotEmpty;
+      methodData['first'] = methodNode == classNode.staticMethods.first;
       final bool returnsVoid = methodNode.returnType.platformName == 'void';
       final bool returnsFuture = methodNode.returnType.isFuture;
 
@@ -59,7 +60,6 @@ String generateObjcImpl({
       } else {
         methodData['returnType'] = getTrueTypeName(methodNode.returnType);
       }
-      methodData['returnType'] = getTrueTypeName(methodNode.returnType);
 
       final List<Map<String, Object>> parameters = <Map<String, Object>>[];
       for (int i = 0; i < methodNode.parameters.length; i++) {
@@ -81,6 +81,7 @@ String generateObjcImpl({
     for (MethodNode methodNode in classNode.methods) {
       final Map<String, Object> methodData = <String, Object>{};
       methodData['name'] = methodNode.name;
+      methodData['first'] = methodNode == classNode.methods.first;
       final bool returnsVoid = methodNode.returnType.platformName == 'void';
       final bool returnsFuture = methodNode.returnType.isFuture;
 
@@ -91,7 +92,6 @@ String generateObjcImpl({
       } else {
         methodData['returnType'] = getTrueTypeName(methodNode.returnType);
       }
-      methodData['returnType'] = getTrueTypeName(methodNode.returnType);
 
       final List<Map<String, Object>> parameters = <Map<String, Object>>[];
       for (int i = 0; i < methodNode.parameters.length; i++) {
@@ -99,6 +99,7 @@ String generateObjcImpl({
         parameterData['name'] = methodNode.parameters[i].name;
         parameterData['type'] = getTrueTypeName(methodNode.parameters[i].type);
         parameterData['index'] = '$i';
+        parameterData['first'] = i == 0;
 
         parameters.add(parameterData);
       }

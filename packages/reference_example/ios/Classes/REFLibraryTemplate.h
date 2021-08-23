@@ -43,7 +43,7 @@ typedef void (^__function_name__) (/*iterate :join=',' parameters parameter*//*r
 /**/
 
 /*iterate classes class*/
-@interface __class_name__Channel : REFTypeChannel
+@interface __class_name__Channel : REFTypeChannel<__class_name__ *>
 - (instancetype)initWithMessenger:(REFTypeChannelMessenger *)messenger;
 /*iterate constructors constructor*/
 - (void)_create___constructor_name__:(__class_name__ *)_instance
@@ -82,7 +82,7 @@ completion:(void (^)(/*replace method_returnType*/NSString */**/_Nullable, NSErr
 
 /*iterate classes class*/
 @interface __class_name__Handler : NSObject<REFTypeChannelHandler>
-@property (readonly, weak) __prefix__LibraryImplementations *implemntations;
+@property (readonly) __prefix__LibraryImplementations *implemntations;
 -(instancetype)initWithImplementations:(__prefix__LibraryImplementations *)implementations;
 /*iterate constructors constructor*/
 - (__class_name__ *)_create___constructor_name__

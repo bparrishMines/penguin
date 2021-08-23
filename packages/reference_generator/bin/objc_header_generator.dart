@@ -38,7 +38,7 @@ String generateObjcHeader({
         parameterData['type'] =
             getTrueTypeName(constructorNode.parameters[i].type);
         parameterData['index'] = '${i + 1}';
-        parameterData['first'] = i == 1;
+        parameterData['first'] = i == 0;
 
         parameters.add(parameterData);
       }
@@ -64,7 +64,6 @@ String generateObjcHeader({
       } else {
         methodData['returnType'] = getTrueTypeName(methodNode.returnType);
       }
-      methodData['returnType'] = getTrueTypeName(methodNode.returnType);
 
       final List<Map<String, Object>> parameters = <Map<String, Object>>[];
       for (int i = 0; i < methodNode.parameters.length; i++) {
@@ -96,7 +95,6 @@ String generateObjcHeader({
       } else {
         methodData['returnType'] = getTrueTypeName(methodNode.returnType);
       }
-      methodData['returnType'] = getTrueTypeName(methodNode.returnType);
 
       final List<Map<String, Object>> parameters = <Map<String, Object>>[];
       for (int i = 0; i < methodNode.parameters.length; i++) {
@@ -104,6 +102,7 @@ String generateObjcHeader({
         parameterData['name'] = methodNode.parameters[i].name;
         parameterData['type'] = getTrueTypeName(methodNode.parameters[i].type);
         parameterData['index'] = '$i';
+        parameterData['first'] = i == 0;
 
         parameters.add(parameterData);
       }
@@ -148,34 +147,33 @@ String generateObjcHeader({
 
 String getTrueTypeName(TypeNode type) {
   final String objcName = objcTypeNameConversion(type.platformName);
+  final String pointer = type.functionType ? '' : '*';
 
   final Iterable<String> typeArguments = type.typeArguments.map<String>(
     (TypeNode type) => getTrueTypeName(type),
   );
 
-  if (type.functionType) {
-    return '$objcName';
-  } else if (typeArguments.isNotEmpty) {
-    return '$objcName<${typeArguments.join(', ')}> *';
+  if (typeArguments.isNotEmpty) {
+    return '$objcName<${typeArguments.join(', ')}> $pointer';
   }
 
-  return '$objcName *';
+  return '$objcName $pointer';
 }
 
 // TODO: A user could extend a list/map so we want a boolean flag to check.
 String objcTypeNameConversion(String type) {
   switch (type) {
     case 'Uint8List':
-      return 'NSData *';
+      return 'NSData';
     case 'int':
     case 'double':
     case 'num':
     case 'bool':
-      return 'NSNumber *';
+      return 'NSNumber';
     case 'String':
-      return 'NSString *';
+      return 'NSString';
     case 'Object':
-      return 'NSObject *';
+      return 'NSObject';
     case 'Set':
     case 'List':
       return 'NSArray';
