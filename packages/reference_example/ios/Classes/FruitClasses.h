@@ -2,7 +2,7 @@
 
 #import "AppleTypeChannels.h"
 
-@class __prefix__LibraryImplementations;
+@class _APLLibraryImplementations;
 
 //@interface __class_name__ : NSObject
 //@property (readonly) __prefix__LibraryImplementations *implementations;
@@ -20,22 +20,22 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface EXPAppleProxy : NSObject
-@property (readonly) __prefix__LibraryImplementations *implementations;
--(instancetype)initWithImplementations:(__prefix__LibraryImplementations *)implementations
+@property (readonly) _APLLibraryImplementations *implementations;
+-(instancetype)initWithImplementations:(_APLLibraryImplementations *)implementations
                                 create:(BOOL)create;
--(instancetype)initWithImplementations:(__prefix__LibraryImplementations *)implementations
+-(instancetype)initWithImplementations:(_APLLibraryImplementations *)implementations
                                 create:(BOOL)create
                                  color:(NSString *)color;
 -(void)takeBite;
--(void)a;
+-(void)a:(NSData *)i;
 @end
 
 @interface EXPFruitBasketProxy : NSObject
-@property (readonly) __prefix__LibraryImplementations *implementations;
--(instancetype)initWithImplementations:(__prefix__LibraryImplementations *)implementations
+@property (readonly) _APLLibraryImplementations *implementations;
+-(instancetype)initWithImplementations:(_APLLibraryImplementations *)implementations
                                 create:(BOOL)create;
--(NSNumber *)addApples:(NSArray<EXPAppleProxy> *)apples;
-- (NSDictionary<NSArray<NSString *> *, NSDictionary<NSString *, NSNumber *> *> *_Nullable)_go:(NSDictionary<NSArray<NSString *> *, NSDictionary<NSString *, NSNumber *> *> * _Nullable)a;
+-(NSNumber *)addApples:(NSArray<EXPAppleProxy *> *)apples;
+- (NSDictionary<NSArray<NSString *> *, NSDictionary<NSString *, NSNumber *> *> *_Nullable)go:(NSDictionary<NSArray<NSString *> *, NSDictionary<NSString *, NSNumber *> *> * _Nullable)a;
 @end
 
 NS_ASSUME_NONNULL_END

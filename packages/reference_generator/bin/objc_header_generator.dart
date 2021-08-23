@@ -147,7 +147,8 @@ String generateObjcHeader({
 
 String getTrueTypeName(TypeNode type) {
   final String objcName = objcTypeNameConversion(type.platformName);
-  final String pointer = type.functionType ? '' : '*';
+  final String pointer =
+      type.functionType || type.platformName == 'void' ? '' : '*';
 
   final Iterable<String> typeArguments = type.typeArguments.map<String>(
     (TypeNode type) => getTrueTypeName(type),

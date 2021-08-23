@@ -192,7 +192,7 @@ __parameter_name__:(/*replace parameter_type*/NSString */**/ _Nullable)__paramet
 - (id _Nullable)invokeStaticMethod:(nonnull REFTypeChannelMessenger *)messenger
                         methodName:(nonnull NSString *)methodName
                          arguments:(nonnull NSArray *)arguments {
-  /*iterate :join='else' staticMethods staticMethod*/
+  /*iterate staticMethods staticMethod*/
   /*if returnsFuture*/
   /*if! first*//*erase*////**/else/**/
   if ([@"__staticMethod_name__" isEqualToString:methodName]) {
@@ -231,7 +231,7 @@ __parameter_name__:(/*replace parameter_type*/NSString */**/ _Nullable)__paramet
                   methodName:(nonnull NSString *)methodName
                    arguments:(nonnull NSArray *)arguments {
   __class_name__ *value = (__class_name__ *) instance;
-  /*iterate :join='else' methods method*/
+  /*iterate methods method*/
   /*if returnsFuture*/
   /*if! first*//*erase*////**/else/**/
   if ([@"__method_name__" isEqualToString:methodName]) {

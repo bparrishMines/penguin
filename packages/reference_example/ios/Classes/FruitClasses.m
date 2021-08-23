@@ -8,11 +8,11 @@
 #import "FruitClasses.h"
 
 @implementation EXPAppleProxy : NSObject
--(instancetype)initWithImplementations:(__prefix__LibraryImplementations *)implementations
+-(instancetype)initWithImplementations:(_APLLibraryImplementations *)implementations
                                 create:(BOOL)create {
   return nil;
 }
--(instancetype)initWithImplementations:(__prefix__LibraryImplementations *)implementations
+-(instancetype)initWithImplementations:(_APLLibraryImplementations *)implementations
                                 create:(BOOL)create
                                  color:(NSString *)color {
   return nil;
@@ -26,7 +26,7 @@
 @end
 
 @implementation EXPFruitBasketProxy : NSObject
--(instancetype)initWithImplementations:(__prefix__LibraryImplementations *)implementations
+-(instancetype)initWithImplementations:(_APLLibraryImplementations *)implementations
                                 create:(BOOL)create {
   return nil;
 }
