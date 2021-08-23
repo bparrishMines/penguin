@@ -196,7 +196,8 @@ __parameter_name__:(/*replace parameter_type*/NSString */**/ _Nullable)__paramet
   /*if returnsFuture*/
   /*if! first*//*erase*////**/else/**/
   if ([@"__staticMethod_name__" isEqualToString:methodName]) {
-    return [self ___staticMethod_name__
+    /*if! returnsVoid*/
+    return /**/ [self ___staticMethod_name__
             /*iterate parameters parameter*/
             /*if! first*//*erase*////**/__parameter_name__/**/
             :arguments[/*replace parameter_index*/0/**/]
@@ -235,7 +236,8 @@ __parameter_name__:(/*replace parameter_type*/NSString */**/ _Nullable)__paramet
   /*if returnsFuture*/
   /*if! first*//*erase*////**/else/**/
   if ([@"__method_name__" isEqualToString:methodName]) {
-    return [self ___method_name__:value
+    /*if! returnsVoid*/
+    return /**/ [self ___method_name__:value
                /*iterate parameters parameter*/
                __parameter_name__:arguments[/*replace parameter_index*/0/**/] /**/];
   }
