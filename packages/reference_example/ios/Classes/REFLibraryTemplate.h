@@ -87,8 +87,7 @@ completion:(void (^)(/*replace method_returnType*/NSString */**/_Nullable, NSErr
 - (__class_name__ *)_create___constructor_name__
 /*iterate parameters parameter*/
 /*if! first*//*erase*////**/__parameter_name__/**/
-:(/*replace parameter_type*/NSNumber */**/_Nullable)__parameter_name__/**/
-/**/;
+:(/*replace parameter_type*/NSNumber */**/_Nullable)__parameter_name__/**/;
 /**/
 
 
