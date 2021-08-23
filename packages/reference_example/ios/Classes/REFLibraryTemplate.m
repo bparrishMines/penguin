@@ -156,12 +156,13 @@
 
 /*iterate staticMethods staticMethod*/
 /*if returnsFuture*/
-- (/*replace staticMethod_returnType*/NSNumber */**/_Nullable)___staticMethod_name__
+- (/*replace staticMethod_returnType*/NSNumber */**//*if! returnsVoid*/_Nullable/**/)___staticMethod_name__
 /*iterate parameters parameter*/
 /*if! first*//*erase*////**/__parameter_name__/**/
 :(/*replace parameter_type*/NSString */**/_Nullable)__parameter_name__/**/
 /**/ {
-  return [__class_name__ __staticMethod_name__
+  /*if! returnsVoid*/
+  return /**/ [__class_name__ __staticMethod_name__
           /*iterate parameters parameter*/
           /*if! first*//*erase*////**/__parameter_name__/**/
           :__parameter_name__/**/
@@ -173,11 +174,12 @@
 
 /*iterate methods method*/
 /*if returnsFuture*/
-- (/*replace method_returnType*/NSString */**/_Nullable)___method_name__:(__class_name__ *)_instance
+- (/*replace method_returnType*/NSString */**//*if! returnsVoid*/_Nullable/**/)___method_name__:(__class_name__ *)_instance
 /*iterate parameters parameter*/
 __parameter_name__:(/*replace parameter_type*/NSString */**/ _Nullable)__parameter_name__
 /**/ {
-  return [_instance __method_name__
+  /*if! returnsVoid*/
+  return /**/  [_instance __method_name__
           /*iterate parameters parameter*/
           /*if! first*//*erase*////**/__parameter_name__/**/
           :__parameter_name__/**/

@@ -35,11 +35,10 @@ String generateObjcHeader({
       for (int i = 0; i < constructorNode.parameters.length; i++) {
         final Map<String, Object> parameterData = <String, Object>{};
         parameterData['name'] = constructorNode.parameters[i].name;
-        parameterData['type'] = getTrueTypeName(
-          type: constructorNode.parameters[i].type,
-          prefix: prefix,
-        );
+        parameterData['type'] =
+            getTrueTypeName(constructorNode.parameters[i].type);
         parameterData['index'] = '${i + 1}';
+        parameterData['first'] = i == 1;
 
         parameters.add(parameterData);
       }
@@ -54,16 +53,24 @@ String generateObjcHeader({
       final Map<String, Object> methodData = <String, Object>{};
       methodData['name'] = methodNode.name;
       methodData['hasParameters'] = methodNode.parameters.isNotEmpty;
-      methodData['returnsFuture'] = methodNode.returnType.isFuture;
+
+      final bool returnsVoid = methodNode.returnType.platformName == 'void';
+      final bool returnsFuture = methodNode.returnType.isFuture;
+
+      methodData['returnsFuture'] = returnsFuture;
+      if (returnsVoid && !returnsFuture) {
+        methodData['returnType'] = 'NSNull *';
+      } else {
+        methodData['returnType'] = getTrueTypeName(methodNode.returnType);
+      }
+      methodData['returnType'] = getTrueTypeName(methodNode.returnType);
 
       final List<Map<String, Object>> parameters = <Map<String, Object>>[];
       for (int i = 0; i < methodNode.parameters.length; i++) {
         final Map<String, Object> parameterData = <String, Object>{};
         parameterData['name'] = methodNode.parameters[i].name;
-        parameterData['type'] = getTrueTypeName(
-          type: methodNode.parameters[i].type,
-          prefix: prefix,
-        );
+        parameterData['type'] = getTrueTypeName(methodNode.parameters[i].type);
+        parameterData['first'] = i == 0;
         parameterData['index'] = '$i';
 
         parameters.add(parameterData);
@@ -78,17 +85,22 @@ String generateObjcHeader({
     for (MethodNode methodNode in classNode.methods) {
       final Map<String, Object> methodData = <String, Object>{};
       methodData['name'] = methodNode.name;
-      methodData['returnsFuture'] =
-          methodNode.returnType.platformName == 'Future';
+      final bool returnsVoid = methodNode.returnType.platformName == 'void';
+      final bool returnsFuture = methodNode.returnType.isFuture;
+
+      methodData['returnsFuture'] = returnsFuture;
+      if (returnsVoid && !returnsFuture) {
+        methodData['returnType'] = 'NSNull *';
+      } else {
+        methodData['returnType'] = getTrueTypeName(methodNode.returnType);
+      }
+      methodData['returnType'] = getTrueTypeName(methodNode.returnType);
 
       final List<Map<String, Object>> parameters = <Map<String, Object>>[];
       for (int i = 0; i < methodNode.parameters.length; i++) {
         final Map<String, Object> parameterData = <String, Object>{};
         parameterData['name'] = methodNode.parameters[i].name;
-        parameterData['type'] = getTrueTypeName(
-          type: methodNode.parameters[i].type,
-          prefix: prefix,
-        );
+        parameterData['type'] = getTrueTypeName(methodNode.parameters[i].type);
         parameterData['index'] = '$i';
 
         parameters.add(parameterData);
@@ -113,10 +125,7 @@ String generateObjcHeader({
     for (int i = 0; i < functionNode.parameters.length; i++) {
       final Map<String, Object> parameterData = <String, Object>{};
       parameterData['name'] = functionNode.parameters[i].name;
-      parameterData['type'] = getTrueTypeName(
-        type: functionNode.parameters[i].type,
-        prefix: prefix,
-      );
+      parameterData['type'] = getTrueTypeName(functionNode.parameters[i].type);
       parameterData['index'] = '$i';
 
       parameters.add(parameterData);
@@ -135,15 +144,15 @@ String generateObjcHeader({
   return runGenerator(templateQueue, Queue<Token>(), StringBuffer(), data);
 }
 
-String getTrueTypeName({required TypeNode type, required String prefix}) {
+String getTrueTypeName(TypeNode type) {
   final String objcName = objcTypeNameConversion(type.platformName);
 
   final Iterable<String> typeArguments = type.typeArguments.map<String>(
-    (TypeNode type) => getTrueTypeName(type: type, prefix: prefix),
+    (TypeNode type) => getTrueTypeName(type),
   );
 
   if (type.functionType) {
-    return '$prefix$objcName';
+    return '$objcName';
   } else if (typeArguments.isNotEmpty) {
     return '$objcName<${typeArguments.join(', ')}> *';
   }

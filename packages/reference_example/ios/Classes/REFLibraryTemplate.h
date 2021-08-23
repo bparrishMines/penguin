@@ -81,7 +81,7 @@ completion:(void (^)(/*replace method_returnType*/NSString */**/_Nullable, NSErr
 
 /*iterate classes class*/
 @interface __class_name__Handler : NSObject<REFTypeChannelHandler>
-@property (readonly) __prefix__LibraryImplementations *implemntations;
+@property (readonly, weak) __prefix__LibraryImplementations *implemntations;
 -(instancetype)initWithImplementations:(__prefix__LibraryImplementations *)implementations;
 /*iterate constructors constructor*/
 - (__class_name__ *)_create___constructor_name__
