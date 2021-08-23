@@ -202,6 +202,7 @@ __parameter_name__:(/*replace parameter_type*/NSString */**/ _Nullable)__paramet
             /*if! first*//*erase*////**/__parameter_name__/**/
             :arguments[/*replace parameter_index*/0/**/]
             /**/];
+    /*if returnsVoid*//*erase*////**/return nil;/**/
   }
   /**/
   /**/
@@ -240,6 +241,7 @@ __parameter_name__:(/*replace parameter_type*/NSString */**/ _Nullable)__paramet
     return /**/ [self ___method_name__:value
                /*iterate parameters parameter*/
                __parameter_name__:arguments[/*replace parameter_index*/0/**/] /**/];
+    /*if returnsVoid*//*erase*////**/return nil;/**/
   }
   /**/
   /**/
