@@ -57,6 +57,7 @@ String generateObjcHeader({
       final bool returnsVoid = methodNode.returnType.platformName == 'void';
       final bool returnsFuture = methodNode.returnType.isFuture;
 
+      methodData['returnsVoid'] = returnsVoid;
       methodData['returnsFuture'] = returnsFuture;
       if (returnsVoid && !returnsFuture) {
         methodData['returnType'] = 'NSNull *';
@@ -88,6 +89,7 @@ String generateObjcHeader({
       final bool returnsVoid = methodNode.returnType.platformName == 'void';
       final bool returnsFuture = methodNode.returnType.isFuture;
 
+      methodData['returnsVoid'] = returnsVoid;
       methodData['returnsFuture'] = returnsFuture;
       if (returnsVoid && !returnsFuture) {
         methodData['returnType'] = 'NSNull *';

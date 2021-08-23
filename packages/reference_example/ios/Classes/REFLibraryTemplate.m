@@ -144,7 +144,7 @@
 - (__class_name__ *)_create___constructor_name__
 /*iterate parameters parameter*/
 /*if! first*//*erase*////**/__parameter_name__/**/
-:(/*replace parameter_type*/NSNumber */**/_Nullable)__parameter_name__/**/
+:(/*replace parameter_type*/NSNumber */**/_Nullable)__parameter_name__
 /**/ {
   return [[__class_name__ alloc] initWithImplementations:_implemntations
                                                   create:NO
@@ -159,7 +159,7 @@
 - (/*replace staticMethod_returnType*/NSNumber */**//*if! returnsVoid*/_Nullable/**/)___staticMethod_name__
 /*iterate parameters parameter*/
 /*if! first*//*erase*////**/__parameter_name__/**/
-:(/*replace parameter_type*/NSString */**/_Nullable)__parameter_name__/**/
+:(/*replace parameter_type*/NSString */**/_Nullable)__parameter_name__
 /**/ {
   /*if! returnsVoid*/
   return /**/ [__class_name__ __staticMethod_name__
