@@ -6,6 +6,7 @@ package com.example.reference_example;
 
 /*iterate imports import*/
 import /*replace value*/ com.example.reference_example.fakelibrary.__class_name__ /**/;
+/*erase*/import com.example.reference_example.fakelibrary.__function_name__;/**/
 /**/
 
 import androidx.annotation.NonNull;
@@ -32,7 +33,7 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
       return createNewInstancePair($instance, Collections.emptyList(), $owner);
     }
 
-    private Completable<Void> invoke(__function_name__ $instance
+    public Completable<Void> $invoke(__function_name__ $instance
         /*iterate parameters parameter*/, /*replace parameter_type*/String/**/ __parameter_name__/**/) {
       return invokeMethod($instance, "", Arrays.<Object>asList(/*iterate :join=',' parameters parameter*/__parameter_name__/**/));
     }
@@ -47,24 +48,24 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
       this.implementations = implementations;
     }
 
-    @Override
-    public __function_name__ createInstance(TypeChannelMessenger messenger, List<Object> arguments) {
-      return new __function_name__() {
-        @Override
-        public Completable<Void> invoke(/*iterate :join=',' parameters parameter*//*replace parameter_type*/String/**/ __parameter_name__/**/) {
-          return implementations.channel__function_name__.invoke(this/*iterate parameters parameter*/,__parameter_name__/**/);
-        }
-      };
-    }
-
-    @Override
-    public Void invokeStaticMethod(TypeChannelMessenger messenger, String methodName, List<Object> arguments) {
+    public void $invoke(__function_name__ $instance/*iterate parameters parameter*/, /*replace parameter_type*/String/**/ __parameter_name__/**/) {
       throw new UnsupportedOperationException();
     }
 
     @Override
-    public Object invokeMethod(TypeChannelMessenger messenger, __function_name__ instance, String methodName, List<Object> arguments) throws Exception {
-      return instance.invoke(/*iterate :join=',' parameters parameter*/(/*replace parameter_type*/String/**/) arguments.get(/*replace parameter_index*/0/**/)/**/);
+    public __function_name__ createInstance(TypeChannelMessenger messenger, List<Object> arguments) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Object invokeStaticMethod(TypeChannelMessenger messenger, String methodName, List<Object> arguments) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Void invokeMethod(TypeChannelMessenger messenger, __function_name__ instance, String methodName, List<Object> arguments) throws Exception {
+      $invoke(instance/*iterate parameters parameter*/,(/*replace parameter_type*/String/**/) arguments.get(/*replace parameter_index*/0/**/)/**/);
+      return null;
     }
   }
   /**/

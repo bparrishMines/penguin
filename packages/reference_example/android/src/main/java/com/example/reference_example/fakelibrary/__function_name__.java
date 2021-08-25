@@ -1,4 +1,4 @@
-package com.example.reference_example;
+package com.example.reference_example.fakelibrary;
 
 import github.penguin.reference.async.Completable;
 
