@@ -13,8 +13,8 @@ typedef $$function_name$$ = void Function(String value);
 
 @Reference(
   channel: r'__channel_name__',
-  platformImport: 'com.example.reference_example.__class_name__Proxy',
-  platformClassName: '__class_name__Proxy',
+  platformImport: 'com.example.reference_example.fakelibrary.__class_name__',
+  platformClassName: '__class_name__',
 )
 class $$class_name$$ {
   $$class_name$$.$$constructor_name$$({

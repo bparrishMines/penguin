@@ -5,7 +5,7 @@ package com.example.reference_example;
 /**/
 
 /*iterate imports import*/
-import /*replace value*/ java.lang.Object /**/;
+import /*replace value*/ com.example.reference_example.fakelibrary.__class_name__ /**/;
 /**/
 
 import androidx.annotation.NonNull;
@@ -110,15 +110,14 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
     /*iterate constructors constructor*/
     public __class_name__ $create$__constructor_name__(/*iterate :join=',' parameters parameter*//*replace parameter_type*/Integer/**/ __parameter_name__/**/)
         throws Exception {
-      return new __class_name__(implementations, false/*iterate parameters parameter*/, __parameter_name__/**/);
+      throw new UnsupportedOperationException();
     }
     /**/
 
     /*iterate staticMethods staticMethod*/
     /*if returnsFuture*/
-    public /*replace staticMethod_returnType*/Double/**/ $__staticMethod_name__(/*iterate :join=',' parameters parameter*//*replace parameter_type*/String/**/ __parameter_name__/**/)
-        throws Exception {
-      /*if! returnsVoid*/return/**/ __class_name__.__staticMethod_name__(implementations/*iterate parameters parameter*/,__parameter_name__/**/);
+    public /*replace staticMethod_returnType*/Double/**/ $__staticMethod_name__(/*iterate :join=',' parameters parameter*//*replace parameter_type*/String/**/ __parameter_name__/**/) throws Exception {
+      throw new UnsupportedOperationException();
     }
     /**/
     /**/
@@ -126,7 +125,7 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
     /*iterate methods method*/
     /*if returnsFuture*/
     public /*replace method_returnType*/String/**/ $__method_name__(__class_name__ $instance/*iterate parameters parameter*/,/*replace parameter_type*/String/**/ __parameter_name__/**/) throws Exception {
-      /*if! returnsVoid*/return/**/ $instance.__method_name__(/*iterate :join=',' parameters parameter*/ __parameter_name__ /**/);
+      throw new UnsupportedOperationException();
     }
     /**/
     /**/

@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.example.reference_example.LibraryTemplate.$ChannelRegistrar;
 import com.example.reference_example.LibraryTemplate.$LibraryImplementations;
+import com.example.reference_example.fakelibrary.__class_name__;
 
 import java.util.List;
 
@@ -22,8 +23,8 @@ public class ReferenceExamplePlugin implements FlutterPlugin {
     final TypeChannelMessenger messenger = ReferencePlugin.getMessengerInstance(flutterPluginBinding.getBinaryMessenger());
     channelRegistrar = new $ChannelRegistrar(new $LibraryImplementations(messenger));
 
-    // For testing the anonymous function.
-    channelRegistrar.implementations.handler__class_name__ = new LibraryTemplate.$__class_name__Handler(channelRegistrar.implementations) {
+    channelRegistrar.implementations.handler__class_name__ = new __class_name__Handler(channelRegistrar.implementations) {
+      // For testing the anonymous function.
       @Override
       public Object invokeMethod(TypeChannelMessenger messenger, __class_name__ instance, String methodName, List<Object> arguments) throws Exception {
         if (methodName.equals("callbackTest")) {
