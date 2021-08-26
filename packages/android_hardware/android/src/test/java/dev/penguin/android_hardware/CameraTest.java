@@ -181,7 +181,7 @@ public class CameraTest {
   // TODO: Test callback is called.
   @Test
   public void autoFocus() {
-    final AutoFocusCallback autoFocusCallback = success -> null;
+    final AutoFocusCallbackHandler autoFocusCallback = success -> null;
     testCameraProxy.autoFocus(autoFocusCallback);
     verify(mockCamera).autoFocus(isA(Camera.AutoFocusCallback.class));
   }
@@ -220,7 +220,7 @@ public class CameraTest {
 
   @Test
   public void getParameters() {
-    final CameraParametersProxy cameraParametersProxy = testCameraProxy.getParameters();
+    final ParametersHandler cameraParametersProxy = testCameraProxy.getParameters();
     verify(mockCamera).getParameters();
     assertNotNull(cameraParametersProxy);
   }

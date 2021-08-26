@@ -18,6 +18,7 @@ import 'camera.g.dart';
 )
 typedef ErrorCallback = void Function(int error);
 
+// TODO: Add Camera parameter
 /// Callback used to notify on completion of camera auto focus.
 ///
 /// Devices that do not support auto-focus will receive a "fake" callback to
@@ -258,7 +259,7 @@ typedef PreviewCallback = void Function(Uint8List data);
 @Reference(
   channel: 'android.hardware.Camera',
   platformImport: 'android.hardware.Camera',
-  platformClassName: 'CameraProxy',
+  platformClassName: 'Camera',
 )
 class Camera {
   /// Construct a [Camera].

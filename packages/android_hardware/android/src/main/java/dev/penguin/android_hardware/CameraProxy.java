@@ -55,7 +55,7 @@ public class CameraProxy {
     camera.stopPreview();
   }
 
-  public void autoFocus(AutoFocusCallback callback) {
+  public void autoFocus(AutoFocusCallbackHandler callback) {
     camera.autoFocus((success, camera) -> callback.invoke(success));
   }
 
@@ -79,11 +79,11 @@ public class CameraProxy {
     camera.stopSmoothZoom();
   }
 
-  public CameraParametersProxy getParameters() {
-    return new CameraParametersProxy(implementations, true, camera.getParameters());
+  public ParametersHandler getParameters() {
+    return new ParametersHandler(implementations, true, camera.getParameters());
   }
 
-  public void setParameters(CameraParametersProxy parameters) {
+  public void setParameters(ParametersHandler parameters) {
     camera.setParameters(parameters.cameraParameters);
   }
 

@@ -34,13 +34,13 @@ public class CameraParametersTest {
   @Mock
   Camera.Parameters mockParameters;
 
-  public CameraParametersProxy testCameraParametersProxy;
+  public ParametersHandler testCameraParametersProxy;
 
   @Before
   public void setUp() {
     mockImplementations.channelCameraParametersProxy = mockCameraParametersChannel;
     mockImplementations.channelCameraSizeProxy = mockCameraSizeChannel;
-    testCameraParametersProxy = new CameraParametersProxy(mockImplementations, true, mockParameters);
+    testCameraParametersProxy = new ParametersHandler(mockImplementations, true, mockParameters);
   }
 
   @Test
@@ -650,7 +650,7 @@ public class CameraParametersTest {
 
   @Test
   public void setMeteringAreas() {
-    final CameraAreaProxy cameraAreaProxy = new CameraAreaProxy(mockImplementations, false,new CameraRectProxy(mockImplementations, false, 0, 1, 2, 3), 23);
+    final AreaHandler cameraAreaProxy = new AreaHandler(mockImplementations, false,new RectHandler(mockImplementations, false, 0, 1, 2, 3), 23);
     testCameraParametersProxy.setMeteringAreas(Collections.singletonList(cameraAreaProxy));
     verify(mockParameters).setMeteringAreas(anyListOf(Camera.Area.class));
   }

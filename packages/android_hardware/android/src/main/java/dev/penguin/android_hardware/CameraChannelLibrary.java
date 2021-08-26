@@ -7,31 +7,45 @@ package dev.penguin.android_hardware;
 
 import android.hardware.Camera;
 
+
 import android.hardware.Camera.PreviewCallback;
+
 
 import android.hardware.Camera.ShutterCallback;
 
+
 import android.hardware.Camera.PictureCallback;
+
 
 import android.hardware.Camera.AutoFocusCallback;
 
+
 import android.hardware.Camera.ErrorCallback;
+
 
 import android.hardware.Camera.Parameters;
 
+
 import android.hardware.Camera.OnZoomChangeListener;
+
 
 import android.hardware.Camera.AutoFocusMoveCallback;
 
+
 import android.hardware.Camera.CameraInfo;
+
 
 import android.hardware.Camera.Area;
 
+
 import android.hardware.Camera.Size;
+
 
 import android.graphics.Rect;
 
+
 import android.graphics.ImageFormat;
+
 
 
 import androidx.annotation.NonNull;
@@ -58,7 +72,7 @@ public class CameraChannelLibrary {
       return createNewInstancePair($instance, Collections.emptyList(), $owner);
     }
 
-    private Completable<Void> invoke(ErrorCallback $instance
+    public Completable<Void> $invoke(ErrorCallback $instance
         , Integer error) {
       return invokeMethod($instance, "", Arrays.<Object>asList(error));
     }
@@ -73,7 +87,7 @@ public class CameraChannelLibrary {
       return createNewInstancePair($instance, Collections.emptyList(), $owner);
     }
 
-    private Completable<Void> invoke(AutoFocusCallback $instance
+    public Completable<Void> $invoke(AutoFocusCallback $instance
         , Boolean success) {
       return invokeMethod($instance, "", Arrays.<Object>asList(success));
     }
@@ -88,7 +102,7 @@ public class CameraChannelLibrary {
       return createNewInstancePair($instance, Collections.emptyList(), $owner);
     }
 
-    private Completable<Void> invoke(ShutterCallback $instance
+    public Completable<Void> $invoke(ShutterCallback $instance
         ) {
       return invokeMethod($instance, "", Arrays.<Object>asList());
     }
@@ -103,7 +117,7 @@ public class CameraChannelLibrary {
       return createNewInstancePair($instance, Collections.emptyList(), $owner);
     }
 
-    private Completable<Void> invoke(OnZoomChangeListener $instance
+    public Completable<Void> $invoke(OnZoomChangeListener $instance
         , Integer zoomValue, Boolean stopped) {
       return invokeMethod($instance, "", Arrays.<Object>asList(zoomValue,stopped));
     }
@@ -118,7 +132,7 @@ public class CameraChannelLibrary {
       return createNewInstancePair($instance, Collections.emptyList(), $owner);
     }
 
-    private Completable<Void> invoke(AutoFocusMoveCallback $instance
+    public Completable<Void> $invoke(AutoFocusMoveCallback $instance
         , Boolean start) {
       return invokeMethod($instance, "", Arrays.<Object>asList(start));
     }
@@ -133,7 +147,7 @@ public class CameraChannelLibrary {
       return createNewInstancePair($instance, Collections.emptyList(), $owner);
     }
 
-    private Completable<Void> invoke(PictureCallback $instance
+    public Completable<Void> $invoke(PictureCallback $instance
         , byte[] data) {
       return invokeMethod($instance, "", Arrays.<Object>asList(data));
     }
@@ -148,7 +162,7 @@ public class CameraChannelLibrary {
       return createNewInstancePair($instance, Collections.emptyList(), $owner);
     }
 
-    private Completable<Void> invoke(PreviewCallback $instance
+    public Completable<Void> $invoke(PreviewCallback $instance
         , byte[] data) {
       return invokeMethod($instance, "", Arrays.<Object>asList(data));
     }
@@ -163,24 +177,24 @@ public class CameraChannelLibrary {
       this.implementations = implementations;
     }
 
-    @Override
-    public ErrorCallback createInstance(TypeChannelMessenger messenger, List<Object> arguments) {
-      return new ErrorCallback() {
-        @Override
-        public Completable<Void> invoke(Integer error) {
-          return implementations.channelErrorCallback.invoke(this,error);
-        }
-      };
-    }
-
-    @Override
-    public Void invokeStaticMethod(TypeChannelMessenger messenger, String methodName, List<Object> arguments) {
+    public void $invoke(ErrorCallback $instance, Integer error) {
       throw new UnsupportedOperationException();
     }
 
     @Override
-    public Object invokeMethod(TypeChannelMessenger messenger, ErrorCallback instance, String methodName, List<Object> arguments) throws Exception {
-      return instance.invoke((Integer) arguments.get(0));
+    public ErrorCallback createInstance(TypeChannelMessenger messenger, List<Object> arguments) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Object invokeStaticMethod(TypeChannelMessenger messenger, String methodName, List<Object> arguments) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Void invokeMethod(TypeChannelMessenger messenger, ErrorCallback instance, String methodName, List<Object> arguments) throws Exception {
+      $invoke(instance,(Integer) arguments.get(0));
+      return null;
     }
   }
   
@@ -191,24 +205,24 @@ public class CameraChannelLibrary {
       this.implementations = implementations;
     }
 
-    @Override
-    public AutoFocusCallback createInstance(TypeChannelMessenger messenger, List<Object> arguments) {
-      return new AutoFocusCallback() {
-        @Override
-        public Completable<Void> invoke(Boolean success) {
-          return implementations.channelAutoFocusCallback.invoke(this,success);
-        }
-      };
-    }
-
-    @Override
-    public Void invokeStaticMethod(TypeChannelMessenger messenger, String methodName, List<Object> arguments) {
+    public void $invoke(AutoFocusCallback $instance, Boolean success) {
       throw new UnsupportedOperationException();
     }
 
     @Override
-    public Object invokeMethod(TypeChannelMessenger messenger, AutoFocusCallback instance, String methodName, List<Object> arguments) throws Exception {
-      return instance.invoke((Boolean) arguments.get(0));
+    public AutoFocusCallback createInstance(TypeChannelMessenger messenger, List<Object> arguments) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Object invokeStaticMethod(TypeChannelMessenger messenger, String methodName, List<Object> arguments) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Void invokeMethod(TypeChannelMessenger messenger, AutoFocusCallback instance, String methodName, List<Object> arguments) throws Exception {
+      $invoke(instance,(Boolean) arguments.get(0));
+      return null;
     }
   }
   
@@ -219,24 +233,24 @@ public class CameraChannelLibrary {
       this.implementations = implementations;
     }
 
-    @Override
-    public ShutterCallback createInstance(TypeChannelMessenger messenger, List<Object> arguments) {
-      return new ShutterCallback() {
-        @Override
-        public Completable<Void> invoke() {
-          return implementations.channelShutterCallback.invoke(this);
-        }
-      };
-    }
-
-    @Override
-    public Void invokeStaticMethod(TypeChannelMessenger messenger, String methodName, List<Object> arguments) {
+    public void $invoke(ShutterCallback $instance) {
       throw new UnsupportedOperationException();
     }
 
     @Override
-    public Object invokeMethod(TypeChannelMessenger messenger, ShutterCallback instance, String methodName, List<Object> arguments) throws Exception {
-      return instance.invoke();
+    public ShutterCallback createInstance(TypeChannelMessenger messenger, List<Object> arguments) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Object invokeStaticMethod(TypeChannelMessenger messenger, String methodName, List<Object> arguments) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Void invokeMethod(TypeChannelMessenger messenger, ShutterCallback instance, String methodName, List<Object> arguments) throws Exception {
+      $invoke(instance);
+      return null;
     }
   }
   
@@ -247,24 +261,24 @@ public class CameraChannelLibrary {
       this.implementations = implementations;
     }
 
-    @Override
-    public OnZoomChangeListener createInstance(TypeChannelMessenger messenger, List<Object> arguments) {
-      return new OnZoomChangeListener() {
-        @Override
-        public Completable<Void> invoke(Integer zoomValue,Boolean stopped) {
-          return implementations.channelOnZoomChangeListener.invoke(this,zoomValue,stopped);
-        }
-      };
-    }
-
-    @Override
-    public Void invokeStaticMethod(TypeChannelMessenger messenger, String methodName, List<Object> arguments) {
+    public void $invoke(OnZoomChangeListener $instance, Integer zoomValue, Boolean stopped) {
       throw new UnsupportedOperationException();
     }
 
     @Override
-    public Object invokeMethod(TypeChannelMessenger messenger, OnZoomChangeListener instance, String methodName, List<Object> arguments) throws Exception {
-      return instance.invoke((Integer) arguments.get(0),(Boolean) arguments.get(1));
+    public OnZoomChangeListener createInstance(TypeChannelMessenger messenger, List<Object> arguments) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Object invokeStaticMethod(TypeChannelMessenger messenger, String methodName, List<Object> arguments) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Void invokeMethod(TypeChannelMessenger messenger, OnZoomChangeListener instance, String methodName, List<Object> arguments) throws Exception {
+      $invoke(instance,(Integer) arguments.get(0),(Boolean) arguments.get(1));
+      return null;
     }
   }
   
@@ -275,24 +289,24 @@ public class CameraChannelLibrary {
       this.implementations = implementations;
     }
 
-    @Override
-    public AutoFocusMoveCallback createInstance(TypeChannelMessenger messenger, List<Object> arguments) {
-      return new AutoFocusMoveCallback() {
-        @Override
-        public Completable<Void> invoke(Boolean start) {
-          return implementations.channelAutoFocusMoveCallback.invoke(this,start);
-        }
-      };
-    }
-
-    @Override
-    public Void invokeStaticMethod(TypeChannelMessenger messenger, String methodName, List<Object> arguments) {
+    public void $invoke(AutoFocusMoveCallback $instance, Boolean start) {
       throw new UnsupportedOperationException();
     }
 
     @Override
-    public Object invokeMethod(TypeChannelMessenger messenger, AutoFocusMoveCallback instance, String methodName, List<Object> arguments) throws Exception {
-      return instance.invoke((Boolean) arguments.get(0));
+    public AutoFocusMoveCallback createInstance(TypeChannelMessenger messenger, List<Object> arguments) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Object invokeStaticMethod(TypeChannelMessenger messenger, String methodName, List<Object> arguments) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Void invokeMethod(TypeChannelMessenger messenger, AutoFocusMoveCallback instance, String methodName, List<Object> arguments) throws Exception {
+      $invoke(instance,(Boolean) arguments.get(0));
+      return null;
     }
   }
   
@@ -303,24 +317,24 @@ public class CameraChannelLibrary {
       this.implementations = implementations;
     }
 
-    @Override
-    public PictureCallback createInstance(TypeChannelMessenger messenger, List<Object> arguments) {
-      return new PictureCallback() {
-        @Override
-        public Completable<Void> invoke(byte[] data) {
-          return implementations.channelPictureCallback.invoke(this,data);
-        }
-      };
-    }
-
-    @Override
-    public Void invokeStaticMethod(TypeChannelMessenger messenger, String methodName, List<Object> arguments) {
+    public void $invoke(PictureCallback $instance, byte[] data) {
       throw new UnsupportedOperationException();
     }
 
     @Override
-    public Object invokeMethod(TypeChannelMessenger messenger, PictureCallback instance, String methodName, List<Object> arguments) throws Exception {
-      return instance.invoke((byte[]) arguments.get(0));
+    public PictureCallback createInstance(TypeChannelMessenger messenger, List<Object> arguments) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Object invokeStaticMethod(TypeChannelMessenger messenger, String methodName, List<Object> arguments) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Void invokeMethod(TypeChannelMessenger messenger, PictureCallback instance, String methodName, List<Object> arguments) throws Exception {
+      $invoke(instance,(byte[]) arguments.get(0));
+      return null;
     }
   }
   
@@ -331,24 +345,24 @@ public class CameraChannelLibrary {
       this.implementations = implementations;
     }
 
-    @Override
-    public PreviewCallback createInstance(TypeChannelMessenger messenger, List<Object> arguments) {
-      return new PreviewCallback() {
-        @Override
-        public Completable<Void> invoke(byte[] data) {
-          return implementations.channelPreviewCallback.invoke(this,data);
-        }
-      };
-    }
-
-    @Override
-    public Void invokeStaticMethod(TypeChannelMessenger messenger, String methodName, List<Object> arguments) {
+    public void $invoke(PreviewCallback $instance, byte[] data) {
       throw new UnsupportedOperationException();
     }
 
     @Override
-    public Object invokeMethod(TypeChannelMessenger messenger, PreviewCallback instance, String methodName, List<Object> arguments) throws Exception {
-      return instance.invoke((byte[]) arguments.get(0));
+    public PreviewCallback createInstance(TypeChannelMessenger messenger, List<Object> arguments) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Object invokeStaticMethod(TypeChannelMessenger messenger, String methodName, List<Object> arguments) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Void invokeMethod(TypeChannelMessenger messenger, PreviewCallback instance, String methodName, List<Object> arguments) throws Exception {
+      $invoke(instance,(byte[]) arguments.get(0));
+      return null;
     }
   }
   

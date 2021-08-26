@@ -1,6 +1,7 @@
 package dev.penguin.android_hardware;
 
-import android.hardware.Camera;
+import android.hardware.Camera.Parameters;
+import android.hardware.Camera.Area;
 
 import androidx.annotation.Nullable;
 
@@ -8,28 +9,25 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class CameraParametersProxy {
-  public final LibraryImplementations implementations;
-  public final Camera.Parameters cameraParameters;
-
-  public CameraParametersProxy(CameraChannelLibrary.$LibraryImplementations implementations, boolean create) {
-    throw new UnsupportedOperationException();
+public class ParametersHandler extends CameraChannelLibrary.$ParametersHandler {
+  public ParametersHandler(CameraChannelLibrary.$LibraryImplementations implementations) {
+    super(implementations);
   }
 
-  public CameraParametersProxy(LibraryImplementations implementations, boolean create, Camera.Parameters cameraParameters) {
-    this.implementations = implementations;
-    this.cameraParameters = cameraParameters;
-    if (create) {
-      implementations.channelCameraParametersProxy.$create$(this, false);
+  @Override
+  public Boolean $getAutoExposureLock(Parameters $instance) {
+    return $instance.getAutoExposureLock();
+  }
+
+  @Override
+  public List<Area> $getFocusAreas(Parameters $instance) {
+    final List<Area> areas = $instance.getFocusAreas();
+    for (Area area : areas) {
+      if (!implementations.messenger.getInstanceManager().containsInstance(area)) {
+        implementations.channelArea.$create$(area, false, area.rect, area.weight);
+      }
     }
-  }
-
-  public Boolean getAutoExposureLock() {
-    return cameraParameters.getAutoExposureLock();
-  }
-
-  public List<CameraAreaProxy> getFocusAreas() {
-    return CameraAreaProxy.fromList(implementations, cameraParameters.getFocusAreas());
+    return AreaHandler.fromList(implementations, cameraParameters.getFocusAreas());
   }
 
   public List<Double> getFocusDistances() {
@@ -74,8 +72,8 @@ public class CameraParametersProxy {
     cameraParameters.setExposureCompensation(value);
   }
 
-  public void setFocusAreas(List<CameraAreaProxy> focusAreas)  {
-    cameraParameters.setFocusAreas(CameraAreaProxy.toAreaList(focusAreas));
+  public void setFocusAreas(List<AreaHandler> focusAreas)  {
+    cameraParameters.setFocusAreas(AreaHandler.toAreaList(focusAreas));
   }
 
   public void setFocusMode(String value)  {
@@ -207,10 +205,10 @@ public class CameraParametersProxy {
     return cameraParameters.getMaxNumMeteringAreas();
   }
 
-  public List<CameraAreaProxy> getMeteringAreas() {
+  public List<AreaHandler> getMeteringAreas() {
     final List<Camera.Area> areas = cameraParameters.getMeteringAreas();
     if (areas == null) return null;
-    return CameraAreaProxy.fromList(implementations, areas);
+    return AreaHandler.fromList(implementations, areas);
   }
 
   public Integer getPictureFormat() {
@@ -374,11 +372,11 @@ public class CameraParametersProxy {
     cameraParameters.setJpegThumbnailSize(width, height);
   }
 
-  public void setMeteringAreas(List<CameraAreaProxy> meteringAreas) {
+  public void setMeteringAreas(List<AreaHandler> meteringAreas) {
     if (meteringAreas == null) {
       cameraParameters.setMeteringAreas(null);
     } else {
-      cameraParameters.setMeteringAreas(CameraAreaProxy.toAreaList(meteringAreas));
+      cameraParameters.setMeteringAreas(AreaHandler.toAreaList(meteringAreas));
     }
   }
 

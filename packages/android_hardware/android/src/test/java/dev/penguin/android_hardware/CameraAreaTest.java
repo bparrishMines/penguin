@@ -36,12 +36,12 @@ public class CameraAreaTest {
 
   @Test(expected = NullPointerException.class)
   public void createCameraArea() {
-    final CameraAreaProxy cameraAreaProxy = new CameraAreaProxy(mockImplementations, true,new Camera.Area(new Rect(), 23));
+    final AreaHandler cameraAreaProxy = new AreaHandler(mockImplementations, true,new Camera.Area(new Rect(), 23));
 
     // Rect always returns null and weight always returns 0 for some reason.
     assertEquals(new Camera.Area(new Rect(), 23).weight, 0);
 
     // This always throws NullPointerException since area.rect is always null in tests?
-    verify(mockCameraAreaChannel).$create$(eq(cameraAreaProxy), false, any(CameraRectProxy.class), 0);
+    verify(mockCameraAreaChannel).$create$(eq(cameraAreaProxy), false, any(RectHandler.class), 0);
   }
 }
