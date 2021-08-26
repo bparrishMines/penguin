@@ -25,8 +25,11 @@ import github.penguin.reference.reference.TypeChannelMessenger;
 public class /*replace libraryName*/LibraryTemplate/**/ {
   /*iterate functions function*/
   public static class $__function_name__Channel extends TypeChannel<__function_name__> {
-    public $__function_name__Channel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "__function_channel__");
+    public final $LibraryImplementations implementations;
+
+    public $__function_name__Channel(@NonNull $LibraryImplementations implementations) {
+      super(implementations.messenger, "__function_channel__");
+      this.implementations = implementations;
     }
 
     public Completable<PairedInstance> $create(__function_name__ $instance, boolean $owner) {
@@ -72,8 +75,11 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
 
   /*iterate classes class*/
   public static class $__class_name__Channel extends TypeChannel<__class_name__> {
-    public $__class_name__Channel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "__class_channel__");
+    public final $LibraryImplementations implementations;
+
+    public $__class_name__Channel(@NonNull $LibraryImplementations implementations) {
+      super(implementations.messenger, "__class_channel__");
+      this.implementations = implementations;
     }
 
     /*iterate constructors constructor*/
@@ -209,11 +215,11 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
     public $LibraryImplementations(TypeChannelMessenger messenger) {
       this.messenger = messenger;
       /*iterate classes class*/
-      this.channel__class_name__ = new $__class_name__Channel(messenger);
+      this.channel__class_name__ = new $__class_name__Channel(this);
       this.handler__class_name__ = new $__class_name__Handler(this);
       /**/
       /*iterate functions function*/
-      this.channel__function_name__ = new $__function_name__Channel(messenger);
+      this.channel__function_name__ = new $__function_name__Channel(this);
       this.handler__function_name__ = new $__function_name__Handler(this);
       /**/
     }
