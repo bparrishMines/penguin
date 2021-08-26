@@ -5,35 +5,33 @@ package dev.penguin.android_hardware;
 
 
 
-import dev.penguin.android_hardware.PictureCallbackProxy;
+import android.hardware.Camera;
 
-import dev.penguin.android_hardware.DataCallback;
+import android.hardware.Camera.PreviewCallback;
 
-import dev.penguin.android_hardware.PreviewCallbackProxy;
+import android.hardware.Camera.ShutterCallback;
 
-import dev.penguin.android_hardware.CameraProxy;
+import android.hardware.Camera.PictureCallback;
 
-import dev.penguin.android_hardware.ShutterCallback;
+import android.hardware.Camera.AutoFocusCallback;
 
-import dev.penguin.android_hardware.AutoFocusCallback;
+import android.hardware.Camera.ErrorCallback;
 
-import dev.penguin.android_hardware.ErrorCallback;
+import android.hardware.Camera.Parameters;
 
-import dev.penguin.android_hardware.CameraParametersProxy;
+import android.hardware.Camera.OnZoomChangeListener;
 
-import dev.penguin.android_hardware.OnZoomChangeListener;
+import android.hardware.Camera.AutoFocusMoveCallback;
 
-import dev.penguin.android_hardware.AutoFocusMoveCallback;
+import android.hardware.Camera.CameraInfo;
 
-import dev.penguin.android_hardware.CameraInfoProxy;
+import android.hardware.Camera.Area;
 
-import dev.penguin.android_hardware.CameraAreaProxy;
+import android.hardware.Camera.Size;
 
-import dev.penguin.android_hardware.CameraSizeProxy;
+import android.hardware.Camera.Rect;
 
-import dev.penguin.android_hardware.CameraRectProxy;
-
-import dev.penguin.android_hardware.ImageFormatProxy;
+import android.graphics.ImageFormat;
 
 
 import androidx.annotation.NonNull;
@@ -53,7 +51,7 @@ public class CameraChannelLibrary {
   
   public static class $ErrorCallbackChannel extends TypeChannel<ErrorCallback> {
     public $ErrorCallbackChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "android_hardware/camera/ErrorCallback");
+      super(messenger, "android.hardware.Camera.ErrorCallback");
     }
 
     public Completable<PairedInstance> $create(ErrorCallback $instance, boolean $owner) {
@@ -68,7 +66,7 @@ public class CameraChannelLibrary {
   
   public static class $AutoFocusCallbackChannel extends TypeChannel<AutoFocusCallback> {
     public $AutoFocusCallbackChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "android_hardware/camera/AutoFocusCallback");
+      super(messenger, "android.hardware.Camera.AutoFocusCallback");
     }
 
     public Completable<PairedInstance> $create(AutoFocusCallback $instance, boolean $owner) {
@@ -83,7 +81,7 @@ public class CameraChannelLibrary {
   
   public static class $ShutterCallbackChannel extends TypeChannel<ShutterCallback> {
     public $ShutterCallbackChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "android_hardware/camera/ShutterCallback");
+      super(messenger, "android.hardware.Camera.ShutterCallback");
     }
 
     public Completable<PairedInstance> $create(ShutterCallback $instance, boolean $owner) {
@@ -96,24 +94,9 @@ public class CameraChannelLibrary {
     }
   }
   
-  public static class $DataCallbackChannel extends TypeChannel<DataCallback> {
-    public $DataCallbackChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "android_hardware/camera/DataCallback");
-    }
-
-    public Completable<PairedInstance> $create(DataCallback $instance, boolean $owner) {
-      return createNewInstancePair($instance, Collections.emptyList(), $owner);
-    }
-
-    private Completable<Void> invoke(DataCallback $instance
-        , byte[] data) {
-      return invokeMethod($instance, "", Arrays.<Object>asList(data));
-    }
-  }
-  
   public static class $OnZoomChangeListenerChannel extends TypeChannel<OnZoomChangeListener> {
     public $OnZoomChangeListenerChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "android_hardware/camera/OnZoomChangeListener");
+      super(messenger, "android.hardware.Camera.OnZoomChangeListener");
     }
 
     public Completable<PairedInstance> $create(OnZoomChangeListener $instance, boolean $owner) {
@@ -128,7 +111,7 @@ public class CameraChannelLibrary {
   
   public static class $AutoFocusMoveCallbackChannel extends TypeChannel<AutoFocusMoveCallback> {
     public $AutoFocusMoveCallbackChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "android_hardware/camera/AutoFocusMoveCallback");
+      super(messenger, "android.hardware.Camera.AutoFocusMoveCallback");
     }
 
     public Completable<PairedInstance> $create(AutoFocusMoveCallback $instance, boolean $owner) {
@@ -138,6 +121,36 @@ public class CameraChannelLibrary {
     private Completable<Void> invoke(AutoFocusMoveCallback $instance
         , Boolean start) {
       return invokeMethod($instance, "", Arrays.<Object>asList(start));
+    }
+  }
+  
+  public static class $PictureCallbackChannel extends TypeChannel<PictureCallback> {
+    public $PictureCallbackChannel(@NonNull TypeChannelMessenger messenger) {
+      super(messenger, "android.hardware.Camera.PictureCallback");
+    }
+
+    public Completable<PairedInstance> $create(PictureCallback $instance, boolean $owner) {
+      return createNewInstancePair($instance, Collections.emptyList(), $owner);
+    }
+
+    private Completable<Void> invoke(PictureCallback $instance
+        , byte[] data) {
+      return invokeMethod($instance, "", Arrays.<Object>asList(data));
+    }
+  }
+  
+  public static class $PreviewCallbackChannel extends TypeChannel<PreviewCallback> {
+    public $PreviewCallbackChannel(@NonNull TypeChannelMessenger messenger) {
+      super(messenger, "android.hardware.Camera.PreviewCallback");
+    }
+
+    public Completable<PairedInstance> $create(PreviewCallback $instance, boolean $owner) {
+      return createNewInstancePair($instance, Collections.emptyList(), $owner);
+    }
+
+    private Completable<Void> invoke(PreviewCallback $instance
+        , byte[] data) {
+      return invokeMethod($instance, "", Arrays.<Object>asList(data));
     }
   }
   
@@ -227,34 +240,6 @@ public class CameraChannelLibrary {
     }
   }
   
-  public static class $DataCallbackHandler implements TypeChannelHandler<DataCallback> {
-    public final $LibraryImplementations implementations;
-
-    public $DataCallbackHandler($LibraryImplementations implementations) {
-      this.implementations = implementations;
-    }
-
-    @Override
-    public DataCallback createInstance(TypeChannelMessenger messenger, List<Object> arguments) {
-      return new DataCallback() {
-        @Override
-        public Completable<Void> invoke(byte[] data) {
-          return implementations.channelDataCallback.invoke(this,data);
-        }
-      };
-    }
-
-    @Override
-    public Void invokeStaticMethod(TypeChannelMessenger messenger, String methodName, List<Object> arguments) {
-      throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Object invokeMethod(TypeChannelMessenger messenger, DataCallback instance, String methodName, List<Object> arguments) throws Exception {
-      return instance.invoke((byte[]) arguments.get(0));
-    }
-  }
-  
   public static class $OnZoomChangeListenerHandler implements TypeChannelHandler<OnZoomChangeListener> {
     public final $LibraryImplementations implementations;
 
@@ -311,43 +296,67 @@ public class CameraChannelLibrary {
     }
   }
   
+  public static class $PictureCallbackHandler implements TypeChannelHandler<PictureCallback> {
+    public final $LibraryImplementations implementations;
 
-  
-  public static class $PictureCallbackProxyChannel extends TypeChannel<PictureCallbackProxy> {
-    public $PictureCallbackProxyChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "android_hardware/camera/PictureCallback");
+    public $PictureCallbackHandler($LibraryImplementations implementations) {
+      this.implementations = implementations;
     }
 
-    
-    public Completable<PairedInstance> $create$(PictureCallbackProxy $instance, boolean $owner,DataCallback onPictureTaken) {
-      return createNewInstancePair($instance, Arrays.<Object>asList("", onPictureTaken), $owner);
+    @Override
+    public PictureCallback createInstance(TypeChannelMessenger messenger, List<Object> arguments) {
+      return new PictureCallback() {
+        @Override
+        public Completable<Void> invoke(byte[] data) {
+          return implementations.channelPictureCallback.invoke(this,data);
+        }
+      };
     }
-    
 
-    
+    @Override
+    public Void invokeStaticMethod(TypeChannelMessenger messenger, String methodName, List<Object> arguments) {
+      throw new UnsupportedOperationException();
+    }
 
-    
+    @Override
+    public Object invokeMethod(TypeChannelMessenger messenger, PictureCallback instance, String methodName, List<Object> arguments) throws Exception {
+      return instance.invoke((byte[]) arguments.get(0));
+    }
   }
   
-  public static class $PreviewCallbackProxyChannel extends TypeChannel<PreviewCallbackProxy> {
-    public $PreviewCallbackProxyChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "android_hardware/camera/PreviewCallback");
+  public static class $PreviewCallbackHandler implements TypeChannelHandler<PreviewCallback> {
+    public final $LibraryImplementations implementations;
+
+    public $PreviewCallbackHandler($LibraryImplementations implementations) {
+      this.implementations = implementations;
     }
 
-    
-    public Completable<PairedInstance> $create$(PreviewCallbackProxy $instance, boolean $owner,DataCallback onPreviewFrame) {
-      return createNewInstancePair($instance, Arrays.<Object>asList("", onPreviewFrame), $owner);
+    @Override
+    public PreviewCallback createInstance(TypeChannelMessenger messenger, List<Object> arguments) {
+      return new PreviewCallback() {
+        @Override
+        public Completable<Void> invoke(byte[] data) {
+          return implementations.channelPreviewCallback.invoke(this,data);
+        }
+      };
     }
-    
 
-    
+    @Override
+    public Void invokeStaticMethod(TypeChannelMessenger messenger, String methodName, List<Object> arguments) {
+      throw new UnsupportedOperationException();
+    }
 
-    
+    @Override
+    public Object invokeMethod(TypeChannelMessenger messenger, PreviewCallback instance, String methodName, List<Object> arguments) throws Exception {
+      return instance.invoke((byte[]) arguments.get(0));
+    }
   }
+  
+
   
   public static class $CameraProxyChannel extends TypeChannel<CameraProxy> {
     public $CameraProxyChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "android_hardware/camera/Camera");
+      super(messenger, "android.hardware.Camera");
     }
 
     
@@ -409,13 +418,13 @@ public class CameraChannelLibrary {
     
   }
   
-  public static class $CameraParametersProxyChannel extends TypeChannel<CameraParametersProxy> {
-    public $CameraParametersProxyChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "android_hardware/camera/CameraParameters");
+  public static class $ParametersChannel extends TypeChannel<Parameters> {
+    public $ParametersChannel(@NonNull TypeChannelMessenger messenger) {
+      super(messenger, "android.hardware.Camera.Parameters");
     }
 
     
-    public Completable<PairedInstance> $create$(CameraParametersProxy $instance, boolean $owner) {
+    public Completable<PairedInstance> $create$(Parameters $instance, boolean $owner) {
       return createNewInstancePair($instance, Arrays.<Object>asList(""), $owner);
     }
     
@@ -599,13 +608,13 @@ public class CameraChannelLibrary {
     
   }
   
-  public static class $CameraAreaProxyChannel extends TypeChannel<CameraAreaProxy> {
-    public $CameraAreaProxyChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "android_hardware/camera/CameraArea");
+  public static class $AreaChannel extends TypeChannel<Area> {
+    public $AreaChannel(@NonNull TypeChannelMessenger messenger) {
+      super(messenger, "android.hardware.Camera.Area");
     }
 
     
-    public Completable<PairedInstance> $create$(CameraAreaProxy $instance, boolean $owner,CameraRectProxy rect,Integer weight) {
+    public Completable<PairedInstance> $create$(Area $instance, boolean $owner,Rect rect,Integer weight) {
       return createNewInstancePair($instance, Arrays.<Object>asList("", rect, weight), $owner);
     }
     
@@ -615,13 +624,13 @@ public class CameraChannelLibrary {
     
   }
   
-  public static class $CameraRectProxyChannel extends TypeChannel<CameraRectProxy> {
-    public $CameraRectProxyChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "android_hardware/camera/CameraRect");
+  public static class $RectChannel extends TypeChannel<Rect> {
+    public $RectChannel(@NonNull TypeChannelMessenger messenger) {
+      super(messenger, "android.hardware.Camera.Rect");
     }
 
     
-    public Completable<PairedInstance> $create$(CameraRectProxy $instance, boolean $owner,Integer top,Integer bottom,Integer right,Integer left) {
+    public Completable<PairedInstance> $create$(Rect $instance, boolean $owner,Integer top,Integer bottom,Integer right,Integer left) {
       return createNewInstancePair($instance, Arrays.<Object>asList("", top, bottom, right, left), $owner);
     }
     
@@ -631,13 +640,13 @@ public class CameraChannelLibrary {
     
   }
   
-  public static class $CameraSizeProxyChannel extends TypeChannel<CameraSizeProxy> {
-    public $CameraSizeProxyChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "android_hardware/camera/CameraSize");
+  public static class $SizeChannel extends TypeChannel<Size> {
+    public $SizeChannel(@NonNull TypeChannelMessenger messenger) {
+      super(messenger, "android.hardware.Camera.Size");
     }
 
     
-    public Completable<PairedInstance> $create$(CameraSizeProxy $instance, boolean $owner,Integer width,Integer height) {
+    public Completable<PairedInstance> $create$(Size $instance, boolean $owner,Integer width,Integer height) {
       return createNewInstancePair($instance, Arrays.<Object>asList("", width, height), $owner);
     }
     
@@ -647,13 +656,13 @@ public class CameraChannelLibrary {
     
   }
   
-  public static class $CameraInfoProxyChannel extends TypeChannel<CameraInfoProxy> {
-    public $CameraInfoProxyChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "android_hardware/camera/CameraInfo");
+  public static class $CameraInfoChannel extends TypeChannel<CameraInfo> {
+    public $CameraInfoChannel(@NonNull TypeChannelMessenger messenger) {
+      super(messenger, "android.hardware.Camera.CameraInfo");
     }
 
     
-    public Completable<PairedInstance> $create$(CameraInfoProxy $instance, boolean $owner,Integer cameraId,Integer facing,Integer orientation,Boolean canDisableShutterSound) {
+    public Completable<PairedInstance> $create$(CameraInfo $instance, boolean $owner,Integer cameraId,Integer facing,Integer orientation,Boolean canDisableShutterSound) {
       return createNewInstancePair($instance, Arrays.<Object>asList("", cameraId, facing, orientation, canDisableShutterSound), $owner);
     }
     
@@ -663,9 +672,9 @@ public class CameraChannelLibrary {
     
   }
   
-  public static class $ImageFormatProxyChannel extends TypeChannel<ImageFormatProxy> {
-    public $ImageFormatProxyChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "android_hardware/camera/ImageFormat");
+  public static class $ImageFormatChannel extends TypeChannel<ImageFormat> {
+    public $ImageFormatChannel(@NonNull TypeChannelMessenger messenger) {
+      super(messenger, "android.graphics.ImageFormat");
     }
 
     
@@ -678,128 +687,6 @@ public class CameraChannelLibrary {
   }
   
 
-  
-  public static class $PictureCallbackProxyHandler implements TypeChannelHandler<PictureCallbackProxy> {
-    public final $LibraryImplementations implementations;
-
-    public $PictureCallbackProxyHandler($LibraryImplementations implementations) {
-      this.implementations = implementations;
-    }
-
-    
-    public PictureCallbackProxy $create$(DataCallback onPictureTaken)
-        throws Exception {
-      return new PictureCallbackProxy(implementations, false, onPictureTaken);
-    }
-    
-
-    
-
-    
-
-    @Override
-    public Object invokeStaticMethod(
-        TypeChannelMessenger messenger, String methodName, List<Object> arguments)
-        throws Exception {
-      switch (methodName) {
-        
-      }
-
-      throw new UnsupportedOperationException(
-          String.format("Unable to invoke static method %s", methodName));
-    }
-
-    @Override
-    public PictureCallbackProxy createInstance(TypeChannelMessenger messenger, List<Object> arguments)
-        throws Exception {
-      final String constructorName = (String) arguments.get(0);
-      switch(constructorName) {
-        
-        case "":
-          return $create$((DataCallback) arguments.get(1));
-        
-      }
-
-      throw new UnsupportedOperationException(
-          String.format("Unable to invoke constructor of %s", constructorName));
-    }
-
-    @Override
-    public Object invokeMethod(
-        TypeChannelMessenger messenger,
-        PictureCallbackProxy instance,
-        String methodName,
-        List<Object> arguments)
-        throws Exception {
-      switch(methodName) {
-        
-      }
-
-      throw new UnsupportedOperationException(
-          String.format("%s.%s not supported.", instance, methodName));
-    }
-  }
-  
-  public static class $PreviewCallbackProxyHandler implements TypeChannelHandler<PreviewCallbackProxy> {
-    public final $LibraryImplementations implementations;
-
-    public $PreviewCallbackProxyHandler($LibraryImplementations implementations) {
-      this.implementations = implementations;
-    }
-
-    
-    public PreviewCallbackProxy $create$(DataCallback onPreviewFrame)
-        throws Exception {
-      return new PreviewCallbackProxy(implementations, false, onPreviewFrame);
-    }
-    
-
-    
-
-    
-
-    @Override
-    public Object invokeStaticMethod(
-        TypeChannelMessenger messenger, String methodName, List<Object> arguments)
-        throws Exception {
-      switch (methodName) {
-        
-      }
-
-      throw new UnsupportedOperationException(
-          String.format("Unable to invoke static method %s", methodName));
-    }
-
-    @Override
-    public PreviewCallbackProxy createInstance(TypeChannelMessenger messenger, List<Object> arguments)
-        throws Exception {
-      final String constructorName = (String) arguments.get(0);
-      switch(constructorName) {
-        
-        case "":
-          return $create$((DataCallback) arguments.get(1));
-        
-      }
-
-      throw new UnsupportedOperationException(
-          String.format("Unable to invoke constructor of %s", constructorName));
-    }
-
-    @Override
-    public Object invokeMethod(
-        TypeChannelMessenger messenger,
-        PreviewCallbackProxy instance,
-        String methodName,
-        List<Object> arguments)
-        throws Exception {
-      switch(methodName) {
-        
-      }
-
-      throw new UnsupportedOperationException(
-          String.format("%s.%s not supported.", instance, methodName));
-    }
-  }
   
   public static class $CameraProxyHandler implements TypeChannelHandler<CameraProxy> {
     public final $LibraryImplementations implementations;
@@ -811,22 +698,20 @@ public class CameraChannelLibrary {
     
     public CameraProxy $create$()
         throws Exception {
-      return new CameraProxy(implementations, false);
+      throw new UnsupportedOperationException();
     }
     
 
     
     
-    public List<CameraInfoProxy> $getAllCameraInfo()
-        throws Exception {
-      return CameraProxy.getAllCameraInfo(implementations);
+    public List<CameraInfo> $getAllCameraInfo() throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public CameraProxy $open(Integer cameraId)
-        throws Exception {
-      return CameraProxy.open(implementations,cameraId);
+    public CameraProxy $open(Integer cameraId) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
@@ -834,133 +719,133 @@ public class CameraChannelLibrary {
     
     
     public void $release(CameraProxy $instance) throws Exception {
-       $instance.release();
+      throw new UnsupportedOperationException();
     }
     
     
     
     public void $startPreview(CameraProxy $instance) throws Exception {
-       $instance.startPreview();
+      throw new UnsupportedOperationException();
     }
     
     
     
     public void $stopPreview(CameraProxy $instance) throws Exception {
-       $instance.stopPreview();
+      throw new UnsupportedOperationException();
     }
     
     
     
     public Long $attachPreviewTexture(CameraProxy $instance) throws Exception {
-      return $instance.attachPreviewTexture();
+      throw new UnsupportedOperationException();
     }
     
     
     
     public void $releasePreviewTexture(CameraProxy $instance) throws Exception {
-       $instance.releasePreviewTexture();
+      throw new UnsupportedOperationException();
     }
     
     
     
     public void $unlock(CameraProxy $instance) throws Exception {
-       $instance.unlock();
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public void $setOneShotPreviewCallback(CameraProxy $instance,PreviewCallbackProxy callback) throws Exception {
-       $instance.setOneShotPreviewCallback( callback );
+    public void $setOneShotPreviewCallback(CameraProxy $instance,PreviewCallback callback) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public void $setPreviewCallback(CameraProxy $instance,PreviewCallbackProxy callback) throws Exception {
-       $instance.setPreviewCallback( callback );
+    public void $setPreviewCallback(CameraProxy $instance,PreviewCallback callback) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
     public void $reconnect(CameraProxy $instance) throws Exception {
-       $instance.reconnect();
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public void $takePicture(CameraProxy $instance,ShutterCallback shutter,PictureCallbackProxy raw,PictureCallbackProxy postView,PictureCallbackProxy jpeg) throws Exception {
-       $instance.takePicture( shutter , raw , postView , jpeg );
+    public void $takePicture(CameraProxy $instance,ShutterCallback shutter,PictureCallback raw,PictureCallback postView,PictureCallback jpeg) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
     public void $autoFocus(CameraProxy $instance,AutoFocusCallback callback) throws Exception {
-       $instance.autoFocus( callback );
+      throw new UnsupportedOperationException();
     }
     
     
     
     public void $cancelAutoFocus(CameraProxy $instance) throws Exception {
-       $instance.cancelAutoFocus();
+      throw new UnsupportedOperationException();
     }
     
     
     
     public void $setDisplayOrientation(CameraProxy $instance,Integer degrees) throws Exception {
-       $instance.setDisplayOrientation( degrees );
+      throw new UnsupportedOperationException();
     }
     
     
     
     public void $setErrorCallback(CameraProxy $instance,ErrorCallback callback) throws Exception {
-       $instance.setErrorCallback( callback );
+      throw new UnsupportedOperationException();
     }
     
     
     
     public void $startSmoothZoom(CameraProxy $instance,Integer value) throws Exception {
-       $instance.startSmoothZoom( value );
+      throw new UnsupportedOperationException();
     }
     
     
     
     public void $stopSmoothZoom(CameraProxy $instance) throws Exception {
-       $instance.stopSmoothZoom();
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public CameraParametersProxy $getParameters(CameraProxy $instance) throws Exception {
-      return $instance.getParameters();
+    public Parameters $getParameters(CameraProxy $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public void $setParameters(CameraProxy $instance,CameraParametersProxy parameters) throws Exception {
-       $instance.setParameters( parameters );
+    public void $setParameters(CameraProxy $instance,Parameters parameters) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
     public void $setZoomChangeListener(CameraProxy $instance,OnZoomChangeListener listener) throws Exception {
-       $instance.setZoomChangeListener( listener );
+      throw new UnsupportedOperationException();
     }
     
     
     
     public void $setAutoFocusMoveCallback(CameraProxy $instance,AutoFocusMoveCallback callback) throws Exception {
-       $instance.setAutoFocusMoveCallback( callback );
+      throw new UnsupportedOperationException();
     }
     
     
     
     public void $lock(CameraProxy $instance) throws Exception {
-       $instance.lock();
+      throw new UnsupportedOperationException();
     }
     
     
     
     public Boolean $enableShutterSound(CameraProxy $instance,Boolean enabled) throws Exception {
-      return $instance.enableShutterSound( enabled );
+      throw new UnsupportedOperationException();
     }
     
     
@@ -1064,7 +949,7 @@ public class CameraChannelLibrary {
         
         
         case "setOneShotPreviewCallback":
-           $setOneShotPreviewCallback(instance,(PreviewCallbackProxy) arguments.get(0));
+           $setOneShotPreviewCallback(instance,(PreviewCallback) arguments.get(0));
           
           return null;
           
@@ -1072,7 +957,7 @@ public class CameraChannelLibrary {
         
         
         case "setPreviewCallback":
-           $setPreviewCallback(instance,(PreviewCallbackProxy) arguments.get(0));
+           $setPreviewCallback(instance,(PreviewCallback) arguments.get(0));
           
           return null;
           
@@ -1088,7 +973,7 @@ public class CameraChannelLibrary {
         
         
         case "takePicture":
-           $takePicture(instance,(ShutterCallback) arguments.get(0),(PictureCallbackProxy) arguments.get(1),(PictureCallbackProxy) arguments.get(2),(PictureCallbackProxy) arguments.get(3));
+           $takePicture(instance,(ShutterCallback) arguments.get(0),(PictureCallback) arguments.get(1),(PictureCallback) arguments.get(2),(PictureCallback) arguments.get(3));
           
           return null;
           
@@ -1151,7 +1036,7 @@ public class CameraChannelLibrary {
         
         
         case "setParameters":
-           $setParameters(instance,(CameraParametersProxy) arguments.get(0));
+           $setParameters(instance,(Parameters) arguments.get(0));
           
           return null;
           
@@ -1195,17 +1080,17 @@ public class CameraChannelLibrary {
     }
   }
   
-  public static class $CameraParametersProxyHandler implements TypeChannelHandler<CameraParametersProxy> {
+  public static class $ParametersHandler implements TypeChannelHandler<Parameters> {
     public final $LibraryImplementations implementations;
 
-    public $CameraParametersProxyHandler($LibraryImplementations implementations) {
+    public $ParametersHandler($LibraryImplementations implementations) {
       this.implementations = implementations;
     }
 
     
-    public CameraParametersProxy $create$()
+    public Parameters $create$()
         throws Exception {
-      return new CameraParametersProxy(implementations, false);
+      throw new UnsupportedOperationException();
     }
     
 
@@ -1213,524 +1098,524 @@ public class CameraChannelLibrary {
 
     
     
-    public Boolean $getAutoExposureLock(CameraParametersProxy $instance) throws Exception {
-      return $instance.getAutoExposureLock();
+    public Boolean $getAutoExposureLock(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public List<CameraAreaProxy> $getFocusAreas(CameraParametersProxy $instance) throws Exception {
-      return $instance.getFocusAreas();
+    public List<Area> $getFocusAreas(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public List<Double> $getFocusDistances(CameraParametersProxy $instance) throws Exception {
-      return $instance.getFocusDistances();
+    public List<Double> $getFocusDistances(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public Integer $getMaxExposureCompensation(CameraParametersProxy $instance) throws Exception {
-      return $instance.getMaxExposureCompensation();
+    public Integer $getMaxExposureCompensation(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public Integer $getMaxNumFocusAreas(CameraParametersProxy $instance) throws Exception {
-      return $instance.getMaxNumFocusAreas();
+    public Integer $getMaxNumFocusAreas(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public Integer $getMinExposureCompensation(CameraParametersProxy $instance) throws Exception {
-      return $instance.getMinExposureCompensation();
+    public Integer $getMinExposureCompensation(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public List<String> $getSupportedFocusModes(CameraParametersProxy $instance) throws Exception {
-      return $instance.getSupportedFocusModes();
+    public List<String> $getSupportedFocusModes(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public Boolean $isAutoExposureLockSupported(CameraParametersProxy $instance) throws Exception {
-      return $instance.isAutoExposureLockSupported();
+    public Boolean $isAutoExposureLockSupported(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public Boolean $isZoomSupported(CameraParametersProxy $instance) throws Exception {
-      return $instance.isZoomSupported();
+    public Boolean $isZoomSupported(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public void $setAutoExposureLock(CameraParametersProxy $instance,Boolean toggle) throws Exception {
-       $instance.setAutoExposureLock( toggle );
+    public void $setAutoExposureLock(Parameters $instance,Boolean toggle) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public void $setExposureCompensation(CameraParametersProxy $instance,Integer value) throws Exception {
-       $instance.setExposureCompensation( value );
+    public void $setExposureCompensation(Parameters $instance,Integer value) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public void $setFocusAreas(CameraParametersProxy $instance,List<CameraAreaProxy> focusAreas) throws Exception {
-       $instance.setFocusAreas( focusAreas );
+    public void $setFocusAreas(Parameters $instance,List<Area> focusAreas) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public void $setFocusMode(CameraParametersProxy $instance,String value) throws Exception {
-       $instance.setFocusMode( value );
+    public void $setFocusMode(Parameters $instance,String value) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public String $getFlashMode(CameraParametersProxy $instance) throws Exception {
-      return $instance.getFlashMode();
+    public String $getFlashMode(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public Integer $getMaxZoom(CameraParametersProxy $instance) throws Exception {
-      return $instance.getMaxZoom();
+    public Integer $getMaxZoom(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public CameraSizeProxy $getPictureSize(CameraParametersProxy $instance) throws Exception {
-      return $instance.getPictureSize();
+    public Size $getPictureSize(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public CameraSizeProxy $getPreviewSize(CameraParametersProxy $instance) throws Exception {
-      return $instance.getPreviewSize();
+    public Size $getPreviewSize(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public List<CameraSizeProxy> $getSupportedPreviewSizes(CameraParametersProxy $instance) throws Exception {
-      return $instance.getSupportedPreviewSizes();
+    public List<Size> $getSupportedPreviewSizes(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public List<CameraSizeProxy> $getSupportedPictureSizes(CameraParametersProxy $instance) throws Exception {
-      return $instance.getSupportedPictureSizes();
+    public List<Size> $getSupportedPictureSizes(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public List<String> $getSupportedFlashModes(CameraParametersProxy $instance) throws Exception {
-      return $instance.getSupportedFlashModes();
+    public List<String> $getSupportedFlashModes(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public Integer $getZoom(CameraParametersProxy $instance) throws Exception {
-      return $instance.getZoom();
+    public Integer $getZoom(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public Boolean $isSmoothZoomSupported(CameraParametersProxy $instance) throws Exception {
-      return $instance.isSmoothZoomSupported();
+    public Boolean $isSmoothZoomSupported(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public void $setFlashMode(CameraParametersProxy $instance,String mode) throws Exception {
-       $instance.setFlashMode( mode );
+    public void $setFlashMode(Parameters $instance,String mode) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public void $setPictureSize(CameraParametersProxy $instance,Integer width,Integer height) throws Exception {
-       $instance.setPictureSize( width , height );
+    public void $setPictureSize(Parameters $instance,Integer width,Integer height) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public void $setRecordingHint(CameraParametersProxy $instance,Boolean hint) throws Exception {
-       $instance.setRecordingHint( hint );
+    public void $setRecordingHint(Parameters $instance,Boolean hint) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public void $setRotation(CameraParametersProxy $instance,Integer rotation) throws Exception {
-       $instance.setRotation( rotation );
+    public void $setRotation(Parameters $instance,Integer rotation) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public void $setZoom(CameraParametersProxy $instance,Integer value) throws Exception {
-       $instance.setZoom( value );
+    public void $setZoom(Parameters $instance,Integer value) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public void $setPreviewSize(CameraParametersProxy $instance,Integer width,Integer height) throws Exception {
-       $instance.setPreviewSize( width , height );
+    public void $setPreviewSize(Parameters $instance,Integer width,Integer height) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public Integer $getExposureCompensation(CameraParametersProxy $instance) throws Exception {
-      return $instance.getExposureCompensation();
+    public Integer $getExposureCompensation(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public Double $getExposureCompensationStep(CameraParametersProxy $instance) throws Exception {
-      return $instance.getExposureCompensationStep();
+    public Double $getExposureCompensationStep(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public String $flatten(CameraParametersProxy $instance) throws Exception {
-      return $instance.flatten();
+    public String $flatten(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public String $get(CameraParametersProxy $instance,String key) throws Exception {
-      return $instance.get( key );
+    public String $get(Parameters $instance,String key) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public String $getAntibanding(CameraParametersProxy $instance) throws Exception {
-      return $instance.getAntibanding();
+    public String $getAntibanding(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public Boolean $getAutoWhiteBalanceLock(CameraParametersProxy $instance) throws Exception {
-      return $instance.getAutoWhiteBalanceLock();
+    public Boolean $getAutoWhiteBalanceLock(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public String $getColorEffect(CameraParametersProxy $instance) throws Exception {
-      return $instance.getColorEffect();
+    public String $getColorEffect(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public Double $getFocalLength(CameraParametersProxy $instance) throws Exception {
-      return $instance.getFocalLength();
+    public Double $getFocalLength(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public String $getFocusMode(CameraParametersProxy $instance) throws Exception {
-      return $instance.getFocusMode();
+    public String $getFocusMode(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public Double $getHorizontalViewAngle(CameraParametersProxy $instance) throws Exception {
-      return $instance.getHorizontalViewAngle();
+    public Double $getHorizontalViewAngle(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public Integer $getInt(CameraParametersProxy $instance,String key) throws Exception {
-      return $instance.getInt( key );
+    public Integer $getInt(Parameters $instance,String key) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public Integer $getJpegQuality(CameraParametersProxy $instance) throws Exception {
-      return $instance.getJpegQuality();
+    public Integer $getJpegQuality(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public Integer $getJpegThumbnailQuality(CameraParametersProxy $instance) throws Exception {
-      return $instance.getJpegThumbnailQuality();
+    public Integer $getJpegThumbnailQuality(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public CameraSizeProxy $getJpegThumbnailSize(CameraParametersProxy $instance) throws Exception {
-      return $instance.getJpegThumbnailSize();
+    public Size $getJpegThumbnailSize(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public Integer $getMaxNumMeteringAreas(CameraParametersProxy $instance) throws Exception {
-      return $instance.getMaxNumMeteringAreas();
+    public Integer $getMaxNumMeteringAreas(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public List<CameraAreaProxy> $getMeteringAreas(CameraParametersProxy $instance) throws Exception {
-      return $instance.getMeteringAreas();
+    public List<Area> $getMeteringAreas(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public Integer $getPictureFormat(CameraParametersProxy $instance) throws Exception {
-      return $instance.getPictureFormat();
+    public Integer $getPictureFormat(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public CameraSizeProxy $getPreferredPreviewSizeForVideo(CameraParametersProxy $instance) throws Exception {
-      return $instance.getPreferredPreviewSizeForVideo();
+    public Size $getPreferredPreviewSizeForVideo(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public Integer $getPreviewFormat(CameraParametersProxy $instance) throws Exception {
-      return $instance.getPreviewFormat();
+    public Integer $getPreviewFormat(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public List<Integer> $getPreviewFpsRange(CameraParametersProxy $instance) throws Exception {
-      return $instance.getPreviewFpsRange();
+    public List<Integer> $getPreviewFpsRange(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public String $getSceneMode(CameraParametersProxy $instance) throws Exception {
-      return $instance.getSceneMode();
+    public String $getSceneMode(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public List<String> $getSupportedAntibanding(CameraParametersProxy $instance) throws Exception {
-      return $instance.getSupportedAntibanding();
+    public List<String> $getSupportedAntibanding(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public List<String> $getSupportedColorEffects(CameraParametersProxy $instance) throws Exception {
-      return $instance.getSupportedColorEffects();
+    public List<String> $getSupportedColorEffects(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public List<CameraSizeProxy> $getSupportedJpegThumbnailSizes(CameraParametersProxy $instance) throws Exception {
-      return $instance.getSupportedJpegThumbnailSizes();
+    public List<Size> $getSupportedJpegThumbnailSizes(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public List<Integer> $getSupportedPictureFormats(CameraParametersProxy $instance) throws Exception {
-      return $instance.getSupportedPictureFormats();
+    public List<Integer> $getSupportedPictureFormats(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public List<Integer> $getSupportedPreviewFormats(CameraParametersProxy $instance) throws Exception {
-      return $instance.getSupportedPreviewFormats();
+    public List<Integer> $getSupportedPreviewFormats(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public List<List<Integer>> $getSupportedPreviewFpsRange(CameraParametersProxy $instance) throws Exception {
-      return $instance.getSupportedPreviewFpsRange();
+    public List<List<Integer>> $getSupportedPreviewFpsRange(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public List<String> $getSupportedSceneModes(CameraParametersProxy $instance) throws Exception {
-      return $instance.getSupportedSceneModes();
+    public List<String> $getSupportedSceneModes(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public List<CameraSizeProxy> $getSupportedVideoSizes(CameraParametersProxy $instance) throws Exception {
-      return $instance.getSupportedVideoSizes();
+    public List<Size> $getSupportedVideoSizes(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public List<String> $getSupportedWhiteBalance(CameraParametersProxy $instance) throws Exception {
-      return $instance.getSupportedWhiteBalance();
+    public List<String> $getSupportedWhiteBalance(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public Double $getVerticalViewAngle(CameraParametersProxy $instance) throws Exception {
-      return $instance.getVerticalViewAngle();
+    public Double $getVerticalViewAngle(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public Boolean $getVideoStabilization(CameraParametersProxy $instance) throws Exception {
-      return $instance.getVideoStabilization();
+    public Boolean $getVideoStabilization(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public String $getWhiteBalance(CameraParametersProxy $instance) throws Exception {
-      return $instance.getWhiteBalance();
+    public String $getWhiteBalance(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public List<Integer> $getZoomRatios(CameraParametersProxy $instance) throws Exception {
-      return $instance.getZoomRatios();
+    public List<Integer> $getZoomRatios(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public Boolean $isAutoWhiteBalanceLockSupported(CameraParametersProxy $instance) throws Exception {
-      return $instance.isAutoWhiteBalanceLockSupported();
+    public Boolean $isAutoWhiteBalanceLockSupported(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public Boolean $isVideoSnapshotSupported(CameraParametersProxy $instance) throws Exception {
-      return $instance.isVideoSnapshotSupported();
+    public Boolean $isVideoSnapshotSupported(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public Boolean $isVideoStabilizationSupported(CameraParametersProxy $instance) throws Exception {
-      return $instance.isVideoStabilizationSupported();
+    public Boolean $isVideoStabilizationSupported(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public void $remove(CameraParametersProxy $instance,String key) throws Exception {
-       $instance.remove( key );
+    public void $remove(Parameters $instance,String key) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public void $removeGpsData(CameraParametersProxy $instance) throws Exception {
-       $instance.removeGpsData();
+    public void $removeGpsData(Parameters $instance) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public void $set(CameraParametersProxy $instance,String key,Object value) throws Exception {
-       $instance.set( key , value );
+    public void $set(Parameters $instance,String key,Object value) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public void $setAntibanding(CameraParametersProxy $instance,String antibanding) throws Exception {
-       $instance.setAntibanding( antibanding );
+    public void $setAntibanding(Parameters $instance,String antibanding) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public void $setAutoWhiteBalanceLock(CameraParametersProxy $instance,Boolean toggle) throws Exception {
-       $instance.setAutoWhiteBalanceLock( toggle );
+    public void $setAutoWhiteBalanceLock(Parameters $instance,Boolean toggle) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public void $setColorEffect(CameraParametersProxy $instance,String effect) throws Exception {
-       $instance.setColorEffect( effect );
+    public void $setColorEffect(Parameters $instance,String effect) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public void $setGpsAltitude(CameraParametersProxy $instance,Double meters) throws Exception {
-       $instance.setGpsAltitude( meters );
+    public void $setGpsAltitude(Parameters $instance,Double meters) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public void $setGpsLatitude(CameraParametersProxy $instance,Double latitude) throws Exception {
-       $instance.setGpsLatitude( latitude );
+    public void $setGpsLatitude(Parameters $instance,Double latitude) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public void $setGpsLongitude(CameraParametersProxy $instance,Double longitude) throws Exception {
-       $instance.setGpsLongitude( longitude );
+    public void $setGpsLongitude(Parameters $instance,Double longitude) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public void $setGpsProcessingMethod(CameraParametersProxy $instance,String processingMethod) throws Exception {
-       $instance.setGpsProcessingMethod( processingMethod );
+    public void $setGpsProcessingMethod(Parameters $instance,String processingMethod) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public void $setGpsTimestamp(CameraParametersProxy $instance,Integer timestamp) throws Exception {
-       $instance.setGpsTimestamp( timestamp );
+    public void $setGpsTimestamp(Parameters $instance,Integer timestamp) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public void $setJpegQuality(CameraParametersProxy $instance,Integer quality) throws Exception {
-       $instance.setJpegQuality( quality );
+    public void $setJpegQuality(Parameters $instance,Integer quality) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public void $setJpegThumbnailQuality(CameraParametersProxy $instance,Integer quality) throws Exception {
-       $instance.setJpegThumbnailQuality( quality );
+    public void $setJpegThumbnailQuality(Parameters $instance,Integer quality) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public void $setJpegThumbnailSize(CameraParametersProxy $instance,Integer width,Integer height) throws Exception {
-       $instance.setJpegThumbnailSize( width , height );
+    public void $setJpegThumbnailSize(Parameters $instance,Integer width,Integer height) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public void $setMeteringAreas(CameraParametersProxy $instance,List<CameraAreaProxy> meteringAreas) throws Exception {
-       $instance.setMeteringAreas( meteringAreas );
+    public void $setMeteringAreas(Parameters $instance,List<Area> meteringAreas) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public void $setPictureFormat(CameraParametersProxy $instance,Integer pixelFormat) throws Exception {
-       $instance.setPictureFormat( pixelFormat );
+    public void $setPictureFormat(Parameters $instance,Integer pixelFormat) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public void $setPreviewFormat(CameraParametersProxy $instance,Integer pixelFormat) throws Exception {
-       $instance.setPreviewFormat( pixelFormat );
+    public void $setPreviewFormat(Parameters $instance,Integer pixelFormat) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public void $setPreviewFpsRange(CameraParametersProxy $instance,Integer min,Integer max) throws Exception {
-       $instance.setPreviewFpsRange( min , max );
+    public void $setPreviewFpsRange(Parameters $instance,Integer min,Integer max) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public void $setSceneMode(CameraParametersProxy $instance,String mode) throws Exception {
-       $instance.setSceneMode( mode );
+    public void $setSceneMode(Parameters $instance,String mode) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public void $setVideoStabilization(CameraParametersProxy $instance,Boolean toggle) throws Exception {
-       $instance.setVideoStabilization( toggle );
+    public void $setVideoStabilization(Parameters $instance,Boolean toggle) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public void $setWhiteBalance(CameraParametersProxy $instance,String value) throws Exception {
-       $instance.setWhiteBalance( value );
+    public void $setWhiteBalance(Parameters $instance,String value) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public void $unflatten(CameraParametersProxy $instance,String flattened) throws Exception {
-       $instance.unflatten( flattened );
+    public void $unflatten(Parameters $instance,String flattened) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
@@ -1748,7 +1633,7 @@ public class CameraChannelLibrary {
     }
 
     @Override
-    public CameraParametersProxy createInstance(TypeChannelMessenger messenger, List<Object> arguments)
+    public Parameters createInstance(TypeChannelMessenger messenger, List<Object> arguments)
         throws Exception {
       final String constructorName = (String) arguments.get(0);
       switch(constructorName) {
@@ -1765,7 +1650,7 @@ public class CameraChannelLibrary {
     @Override
     public Object invokeMethod(
         TypeChannelMessenger messenger,
-        CameraParametersProxy instance,
+        Parameters instance,
         String methodName,
         List<Object> arguments)
         throws Exception {
@@ -1852,7 +1737,7 @@ public class CameraChannelLibrary {
         
         
         case "setFocusAreas":
-           $setFocusAreas(instance,(List<CameraAreaProxy>) arguments.get(0));
+           $setFocusAreas(instance,(List<Area>) arguments.get(0));
           
           return null;
           
@@ -2350,7 +2235,7 @@ public class CameraChannelLibrary {
         
         
         case "setMeteringAreas":
-           $setMeteringAreas(instance,(List<CameraAreaProxy>) arguments.get(0));
+           $setMeteringAreas(instance,(List<Area>) arguments.get(0));
           
           return null;
           
@@ -2419,17 +2304,17 @@ public class CameraChannelLibrary {
     }
   }
   
-  public static class $CameraAreaProxyHandler implements TypeChannelHandler<CameraAreaProxy> {
+  public static class $AreaHandler implements TypeChannelHandler<Area> {
     public final $LibraryImplementations implementations;
 
-    public $CameraAreaProxyHandler($LibraryImplementations implementations) {
+    public $AreaHandler($LibraryImplementations implementations) {
       this.implementations = implementations;
     }
 
     
-    public CameraAreaProxy $create$(CameraRectProxy rect,Integer weight)
+    public Area $create$(Rect rect,Integer weight)
         throws Exception {
-      return new CameraAreaProxy(implementations, false, rect, weight);
+      throw new UnsupportedOperationException();
     }
     
 
@@ -2450,13 +2335,13 @@ public class CameraChannelLibrary {
     }
 
     @Override
-    public CameraAreaProxy createInstance(TypeChannelMessenger messenger, List<Object> arguments)
+    public Area createInstance(TypeChannelMessenger messenger, List<Object> arguments)
         throws Exception {
       final String constructorName = (String) arguments.get(0);
       switch(constructorName) {
         
         case "":
-          return $create$((CameraRectProxy) arguments.get(1),(Integer) arguments.get(2));
+          return $create$((Rect) arguments.get(1),(Integer) arguments.get(2));
         
       }
 
@@ -2467,7 +2352,7 @@ public class CameraChannelLibrary {
     @Override
     public Object invokeMethod(
         TypeChannelMessenger messenger,
-        CameraAreaProxy instance,
+        Area instance,
         String methodName,
         List<Object> arguments)
         throws Exception {
@@ -2480,17 +2365,17 @@ public class CameraChannelLibrary {
     }
   }
   
-  public static class $CameraRectProxyHandler implements TypeChannelHandler<CameraRectProxy> {
+  public static class $RectHandler implements TypeChannelHandler<Rect> {
     public final $LibraryImplementations implementations;
 
-    public $CameraRectProxyHandler($LibraryImplementations implementations) {
+    public $RectHandler($LibraryImplementations implementations) {
       this.implementations = implementations;
     }
 
     
-    public CameraRectProxy $create$(Integer top,Integer bottom,Integer right,Integer left)
+    public Rect $create$(Integer top,Integer bottom,Integer right,Integer left)
         throws Exception {
-      return new CameraRectProxy(implementations, false, top, bottom, right, left);
+      throw new UnsupportedOperationException();
     }
     
 
@@ -2511,7 +2396,7 @@ public class CameraChannelLibrary {
     }
 
     @Override
-    public CameraRectProxy createInstance(TypeChannelMessenger messenger, List<Object> arguments)
+    public Rect createInstance(TypeChannelMessenger messenger, List<Object> arguments)
         throws Exception {
       final String constructorName = (String) arguments.get(0);
       switch(constructorName) {
@@ -2528,7 +2413,7 @@ public class CameraChannelLibrary {
     @Override
     public Object invokeMethod(
         TypeChannelMessenger messenger,
-        CameraRectProxy instance,
+        Rect instance,
         String methodName,
         List<Object> arguments)
         throws Exception {
@@ -2541,17 +2426,17 @@ public class CameraChannelLibrary {
     }
   }
   
-  public static class $CameraSizeProxyHandler implements TypeChannelHandler<CameraSizeProxy> {
+  public static class $SizeHandler implements TypeChannelHandler<Size> {
     public final $LibraryImplementations implementations;
 
-    public $CameraSizeProxyHandler($LibraryImplementations implementations) {
+    public $SizeHandler($LibraryImplementations implementations) {
       this.implementations = implementations;
     }
 
     
-    public CameraSizeProxy $create$(Integer width,Integer height)
+    public Size $create$(Integer width,Integer height)
         throws Exception {
-      return new CameraSizeProxy(implementations, false, width, height);
+      throw new UnsupportedOperationException();
     }
     
 
@@ -2572,7 +2457,7 @@ public class CameraChannelLibrary {
     }
 
     @Override
-    public CameraSizeProxy createInstance(TypeChannelMessenger messenger, List<Object> arguments)
+    public Size createInstance(TypeChannelMessenger messenger, List<Object> arguments)
         throws Exception {
       final String constructorName = (String) arguments.get(0);
       switch(constructorName) {
@@ -2589,7 +2474,7 @@ public class CameraChannelLibrary {
     @Override
     public Object invokeMethod(
         TypeChannelMessenger messenger,
-        CameraSizeProxy instance,
+        Size instance,
         String methodName,
         List<Object> arguments)
         throws Exception {
@@ -2602,17 +2487,17 @@ public class CameraChannelLibrary {
     }
   }
   
-  public static class $CameraInfoProxyHandler implements TypeChannelHandler<CameraInfoProxy> {
+  public static class $CameraInfoHandler implements TypeChannelHandler<CameraInfo> {
     public final $LibraryImplementations implementations;
 
-    public $CameraInfoProxyHandler($LibraryImplementations implementations) {
+    public $CameraInfoHandler($LibraryImplementations implementations) {
       this.implementations = implementations;
     }
 
     
-    public CameraInfoProxy $create$(Integer cameraId,Integer facing,Integer orientation,Boolean canDisableShutterSound)
+    public CameraInfo $create$(Integer cameraId,Integer facing,Integer orientation,Boolean canDisableShutterSound)
         throws Exception {
-      return new CameraInfoProxy(implementations, false, cameraId, facing, orientation, canDisableShutterSound);
+      throw new UnsupportedOperationException();
     }
     
 
@@ -2633,7 +2518,7 @@ public class CameraChannelLibrary {
     }
 
     @Override
-    public CameraInfoProxy createInstance(TypeChannelMessenger messenger, List<Object> arguments)
+    public CameraInfo createInstance(TypeChannelMessenger messenger, List<Object> arguments)
         throws Exception {
       final String constructorName = (String) arguments.get(0);
       switch(constructorName) {
@@ -2650,7 +2535,7 @@ public class CameraChannelLibrary {
     @Override
     public Object invokeMethod(
         TypeChannelMessenger messenger,
-        CameraInfoProxy instance,
+        CameraInfo instance,
         String methodName,
         List<Object> arguments)
         throws Exception {
@@ -2663,10 +2548,10 @@ public class CameraChannelLibrary {
     }
   }
   
-  public static class $ImageFormatProxyHandler implements TypeChannelHandler<ImageFormatProxy> {
+  public static class $ImageFormatHandler implements TypeChannelHandler<ImageFormat> {
     public final $LibraryImplementations implementations;
 
-    public $ImageFormatProxyHandler($LibraryImplementations implementations) {
+    public $ImageFormatHandler($LibraryImplementations implementations) {
       this.implementations = implementations;
     }
 
@@ -2674,9 +2559,8 @@ public class CameraChannelLibrary {
 
     
     
-    public Integer $getBitsPerPixel(Integer format)
-        throws Exception {
-      return ImageFormatProxy.getBitsPerPixel(implementations,format);
+    public Integer $getBitsPerPixel(Integer format) throws Exception {
+      throw new UnsupportedOperationException();
     }
     
     
@@ -2703,7 +2587,7 @@ public class CameraChannelLibrary {
     }
 
     @Override
-    public ImageFormatProxy createInstance(TypeChannelMessenger messenger, List<Object> arguments)
+    public ImageFormat createInstance(TypeChannelMessenger messenger, List<Object> arguments)
         throws Exception {
       final String constructorName = (String) arguments.get(0);
       switch(constructorName) {
@@ -2717,7 +2601,7 @@ public class CameraChannelLibrary {
     @Override
     public Object invokeMethod(
         TypeChannelMessenger messenger,
-        ImageFormatProxy instance,
+        ImageFormat instance,
         String methodName,
         List<Object> arguments)
         throws Exception {
@@ -2735,32 +2619,26 @@ public class CameraChannelLibrary {
     public final TypeChannelMessenger messenger;
 
     
-    public $PictureCallbackProxyChannel channelPictureCallbackProxy;
-    public $PictureCallbackProxyHandler handlerPictureCallbackProxy;
-    
-    public $PreviewCallbackProxyChannel channelPreviewCallbackProxy;
-    public $PreviewCallbackProxyHandler handlerPreviewCallbackProxy;
-    
     public $CameraProxyChannel channelCameraProxy;
     public $CameraProxyHandler handlerCameraProxy;
     
-    public $CameraParametersProxyChannel channelCameraParametersProxy;
-    public $CameraParametersProxyHandler handlerCameraParametersProxy;
+    public $ParametersChannel channelParameters;
+    public $ParametersHandler handlerParameters;
     
-    public $CameraAreaProxyChannel channelCameraAreaProxy;
-    public $CameraAreaProxyHandler handlerCameraAreaProxy;
+    public $AreaChannel channelArea;
+    public $AreaHandler handlerArea;
     
-    public $CameraRectProxyChannel channelCameraRectProxy;
-    public $CameraRectProxyHandler handlerCameraRectProxy;
+    public $RectChannel channelRect;
+    public $RectHandler handlerRect;
     
-    public $CameraSizeProxyChannel channelCameraSizeProxy;
-    public $CameraSizeProxyHandler handlerCameraSizeProxy;
+    public $SizeChannel channelSize;
+    public $SizeHandler handlerSize;
     
-    public $CameraInfoProxyChannel channelCameraInfoProxy;
-    public $CameraInfoProxyHandler handlerCameraInfoProxy;
+    public $CameraInfoChannel channelCameraInfo;
+    public $CameraInfoHandler handlerCameraInfo;
     
-    public $ImageFormatProxyChannel channelImageFormatProxy;
-    public $ImageFormatProxyHandler handlerImageFormatProxy;
+    public $ImageFormatChannel channelImageFormat;
+    public $ImageFormatHandler handlerImageFormat;
     
 
     
@@ -2773,45 +2651,42 @@ public class CameraChannelLibrary {
     public $ShutterCallbackChannel channelShutterCallback;
     public $ShutterCallbackHandler handlerShutterCallback;
     
-    public $DataCallbackChannel channelDataCallback;
-    public $DataCallbackHandler handlerDataCallback;
-    
     public $OnZoomChangeListenerChannel channelOnZoomChangeListener;
     public $OnZoomChangeListenerHandler handlerOnZoomChangeListener;
     
     public $AutoFocusMoveCallbackChannel channelAutoFocusMoveCallback;
     public $AutoFocusMoveCallbackHandler handlerAutoFocusMoveCallback;
     
+    public $PictureCallbackChannel channelPictureCallback;
+    public $PictureCallbackHandler handlerPictureCallback;
+    
+    public $PreviewCallbackChannel channelPreviewCallback;
+    public $PreviewCallbackHandler handlerPreviewCallback;
+    
 
     public $LibraryImplementations(TypeChannelMessenger messenger) {
       this.messenger = messenger;
       
-      this.channelPictureCallbackProxy = new $PictureCallbackProxyChannel(messenger);
-      this.handlerPictureCallbackProxy = new $PictureCallbackProxyHandler(this);
-      
-      this.channelPreviewCallbackProxy = new $PreviewCallbackProxyChannel(messenger);
-      this.handlerPreviewCallbackProxy = new $PreviewCallbackProxyHandler(this);
-      
       this.channelCameraProxy = new $CameraProxyChannel(messenger);
       this.handlerCameraProxy = new $CameraProxyHandler(this);
       
-      this.channelCameraParametersProxy = new $CameraParametersProxyChannel(messenger);
-      this.handlerCameraParametersProxy = new $CameraParametersProxyHandler(this);
+      this.channelParameters = new $ParametersChannel(messenger);
+      this.handlerParameters = new $ParametersHandler(this);
       
-      this.channelCameraAreaProxy = new $CameraAreaProxyChannel(messenger);
-      this.handlerCameraAreaProxy = new $CameraAreaProxyHandler(this);
+      this.channelArea = new $AreaChannel(messenger);
+      this.handlerArea = new $AreaHandler(this);
       
-      this.channelCameraRectProxy = new $CameraRectProxyChannel(messenger);
-      this.handlerCameraRectProxy = new $CameraRectProxyHandler(this);
+      this.channelRect = new $RectChannel(messenger);
+      this.handlerRect = new $RectHandler(this);
       
-      this.channelCameraSizeProxy = new $CameraSizeProxyChannel(messenger);
-      this.handlerCameraSizeProxy = new $CameraSizeProxyHandler(this);
+      this.channelSize = new $SizeChannel(messenger);
+      this.handlerSize = new $SizeHandler(this);
       
-      this.channelCameraInfoProxy = new $CameraInfoProxyChannel(messenger);
-      this.handlerCameraInfoProxy = new $CameraInfoProxyHandler(this);
+      this.channelCameraInfo = new $CameraInfoChannel(messenger);
+      this.handlerCameraInfo = new $CameraInfoHandler(this);
       
-      this.channelImageFormatProxy = new $ImageFormatProxyChannel(messenger);
-      this.handlerImageFormatProxy = new $ImageFormatProxyHandler(this);
+      this.channelImageFormat = new $ImageFormatChannel(messenger);
+      this.handlerImageFormat = new $ImageFormatHandler(this);
       
       
       this.channelErrorCallback = new $ErrorCallbackChannel(messenger);
@@ -2823,14 +2698,17 @@ public class CameraChannelLibrary {
       this.channelShutterCallback = new $ShutterCallbackChannel(messenger);
       this.handlerShutterCallback = new $ShutterCallbackHandler(this);
       
-      this.channelDataCallback = new $DataCallbackChannel(messenger);
-      this.handlerDataCallback = new $DataCallbackHandler(this);
-      
       this.channelOnZoomChangeListener = new $OnZoomChangeListenerChannel(messenger);
       this.handlerOnZoomChangeListener = new $OnZoomChangeListenerHandler(this);
       
       this.channelAutoFocusMoveCallback = new $AutoFocusMoveCallbackChannel(messenger);
       this.handlerAutoFocusMoveCallback = new $AutoFocusMoveCallbackHandler(this);
+      
+      this.channelPictureCallback = new $PictureCallbackChannel(messenger);
+      this.handlerPictureCallback = new $PictureCallbackHandler(this);
+      
+      this.channelPreviewCallback = new $PreviewCallbackChannel(messenger);
+      this.handlerPreviewCallback = new $PreviewCallbackHandler(this);
       
     }
   }
@@ -2844,23 +2722,19 @@ public class CameraChannelLibrary {
 
     public void registerHandlers() {
       
-      implementations.channelPictureCallbackProxy.setHandler(implementations.handlerPictureCallbackProxy);
-      
-      implementations.channelPreviewCallbackProxy.setHandler(implementations.handlerPreviewCallbackProxy);
-      
       implementations.channelCameraProxy.setHandler(implementations.handlerCameraProxy);
       
-      implementations.channelCameraParametersProxy.setHandler(implementations.handlerCameraParametersProxy);
+      implementations.channelParameters.setHandler(implementations.handlerParameters);
       
-      implementations.channelCameraAreaProxy.setHandler(implementations.handlerCameraAreaProxy);
+      implementations.channelArea.setHandler(implementations.handlerArea);
       
-      implementations.channelCameraRectProxy.setHandler(implementations.handlerCameraRectProxy);
+      implementations.channelRect.setHandler(implementations.handlerRect);
       
-      implementations.channelCameraSizeProxy.setHandler(implementations.handlerCameraSizeProxy);
+      implementations.channelSize.setHandler(implementations.handlerSize);
       
-      implementations.channelCameraInfoProxy.setHandler(implementations.handlerCameraInfoProxy);
+      implementations.channelCameraInfo.setHandler(implementations.handlerCameraInfo);
       
-      implementations.channelImageFormatProxy.setHandler(implementations.handlerImageFormatProxy);
+      implementations.channelImageFormat.setHandler(implementations.handlerImageFormat);
       
       
       implementations.channelErrorCallback.setHandler(implementations.handlerErrorCallback);
@@ -2869,33 +2743,31 @@ public class CameraChannelLibrary {
       
       implementations.channelShutterCallback.setHandler(implementations.handlerShutterCallback);
       
-      implementations.channelDataCallback.setHandler(implementations.handlerDataCallback);
-      
       implementations.channelOnZoomChangeListener.setHandler(implementations.handlerOnZoomChangeListener);
       
       implementations.channelAutoFocusMoveCallback.setHandler(implementations.handlerAutoFocusMoveCallback);
+      
+      implementations.channelPictureCallback.setHandler(implementations.handlerPictureCallback);
+      
+      implementations.channelPreviewCallback.setHandler(implementations.handlerPreviewCallback);
       
     }
 
     public void unregisterHandlers() {
       
-      implementations.channelPictureCallbackProxy.removeHandler();
-      
-      implementations.channelPreviewCallbackProxy.removeHandler();
-      
       implementations.channelCameraProxy.removeHandler();
       
-      implementations.channelCameraParametersProxy.removeHandler();
+      implementations.channelParameters.removeHandler();
       
-      implementations.channelCameraAreaProxy.removeHandler();
+      implementations.channelArea.removeHandler();
       
-      implementations.channelCameraRectProxy.removeHandler();
+      implementations.channelRect.removeHandler();
       
-      implementations.channelCameraSizeProxy.removeHandler();
+      implementations.channelSize.removeHandler();
       
-      implementations.channelCameraInfoProxy.removeHandler();
+      implementations.channelCameraInfo.removeHandler();
       
-      implementations.channelImageFormatProxy.removeHandler();
+      implementations.channelImageFormat.removeHandler();
       
       
       implementations.channelErrorCallback.removeHandler();
@@ -2904,11 +2776,13 @@ public class CameraChannelLibrary {
       
       implementations.channelShutterCallback.removeHandler();
       
-      implementations.channelDataCallback.removeHandler();
-      
       implementations.channelOnZoomChangeListener.removeHandler();
       
       implementations.channelAutoFocusMoveCallback.removeHandler();
+      
+      implementations.channelPictureCallback.removeHandler();
+      
+      implementations.channelPreviewCallback.removeHandler();
       
     }
   }
