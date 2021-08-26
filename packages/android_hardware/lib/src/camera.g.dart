@@ -1881,7 +1881,7 @@ class $CameraAreaChannel extends TypeChannel<CameraArea> {
 
 class $CameraRectChannel extends TypeChannel<CameraRect> {
   $CameraRectChannel(TypeChannelMessenger messenger)
-      : super(messenger, r'android.hardware.Camera.Rect');
+      : super(messenger, r'android.graphics.Rect');
 
   Future<PairedInstance?> $create$(
     CameraRect $instance, {

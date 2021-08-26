@@ -29,7 +29,7 @@ import android.hardware.Camera.Area;
 
 import android.hardware.Camera.Size;
 
-import android.hardware.Camera.Rect;
+import android.graphics.Rect;
 
 import android.graphics.ImageFormat;
 
@@ -626,7 +626,7 @@ public class CameraChannelLibrary {
   
   public static class $RectChannel extends TypeChannel<Rect> {
     public $RectChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "android.hardware.Camera.Rect");
+      super(messenger, "android.graphics.Rect");
     }
 
     

@@ -2092,13 +2092,14 @@ class CameraArea {
   }
 }
 
+// TODO: Move class to android_graphics plugin.
 /// Holds four integer coordinates for a rectangle.
 ///
 /// The rectangle is represented by the coordinates of its 4 edges
 /// (left, top, right bottom).
 @Reference(
-  channel: 'android.hardware.Camera.Rect',
-  platformImport: 'android.hardware.Camera.Rect',
+  channel: 'android.graphics.Rect',
+  platformImport: 'android.graphics.Rect',
   platformClassName: 'Rect',
 )
 class CameraRect {
@@ -2234,6 +2235,7 @@ class CameraInfo {
   final bool? canDisableShutterSound;
 }
 
+// TODO: Move to android_graphics plugin.
 /// Image format constants.
 @Reference(
   channel: 'android.graphics.ImageFormat',
