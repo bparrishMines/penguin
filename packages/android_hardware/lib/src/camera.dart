@@ -5,6 +5,7 @@ import 'package:reference/annotations.dart';
 
 import 'camera.g.dart';
 
+// TODO: Add Camera parameter
 /// Callback for camera error notification.
 ///
 /// See:
@@ -59,14 +60,7 @@ typedef AutoFocusCallback = void Function(bool success);
 )
 typedef ShutterCallback = void Function();
 
-// /// Callback when receiving an image or preview byte array.
-// @Reference(
-//   channel: 'android_hardware/camera/DataCallback',
-//   platformImport: 'dev.penguin.android_hardware.DataCallback',
-//   platformClassName: 'DataCallback',
-// )
-// typedef DataCallback = void Function(Uint8List? data);
-
+// TODO: Add Camera parameter
 /// Callback for zoom changes during a smooth zoom operation.
 ///
 /// `zoomValue`: the current zoom value. In smooth zoom mode, camera calls this
@@ -81,6 +75,7 @@ typedef ShutterCallback = void Function();
 )
 typedef OnZoomChangeListener = void Function(int zoomValue, bool stopped);
 
+// TODO: Add Camera parameter
 /// Callback used to notify on auto focus start and stop.
 ///
 /// This is only supported in continuous autofocus modes --
@@ -94,6 +89,7 @@ typedef OnZoomChangeListener = void Function(int zoomValue, bool stopped);
 )
 typedef AutoFocusMoveCallback = void Function(bool start);
 
+// TODO: Add Camera parameter
 /// Callback used to supply image data from a photo capture.
 ///
 /// Called when image data is available after a picture is taken.
@@ -109,6 +105,7 @@ typedef AutoFocusMoveCallback = void Function(bool start);
 )
 typedef PictureCallback = void Function(Uint8List? data);
 
+// TODO: Add Camera parameter
 /// Called as preview frames are displayed.
 ///
 /// If using the [ImageFormat.yv12] format, refer to the equations in
@@ -126,80 +123,6 @@ typedef PictureCallback = void Function(Uint8List? data);
   platformClassName: 'PreviewCallback',
 )
 typedef PreviewCallback = void Function(Uint8List data);
-
-// /// Callback used to supply image data from a photo capture.
-// ///
-// /// Called when image data is available after a picture is taken.
-// ///
-// /// The format of the data depends on the context of the callback and
-// /// [CameraParameters] settings.
-// ///
-// /// See: [Camera.takePicture].
-// @Reference(
-//   channel: 'android.hardware.Camera.PictureCallback',
-//   platformImport: 'android.hardware.Camera.PictureCallback',
-//   platformClassName: 'PictureCallbackProxy',
-// )
-// class PictureCallback {
-//   /// Construct a [PictureCallback].
-//   PictureCallback(this.onPictureTaken, {bool create = true}) {
-//     $ChannelRegistrar.instance.implementations.channelDataCallback.$create(
-//       onPictureTaken,
-//       $owner: false,
-//     );
-//     if (create) {
-//       _channel.$create$(this, $owner: true, onPictureTaken: onPictureTaken);
-//     }
-//   }
-//
-//   static $PictureCallbackChannel get _channel =>
-//       $ChannelRegistrar.instance.implementations.channelPictureCallback;
-//
-//   /// Callback used to supply image data from a photo capture.
-//   ///
-//   /// Called when image data is available after a picture is taken.
-//   ///
-//   /// The format of the data depends on the context of the callback and
-//   /// [CameraParameters] settings.
-//   ///
-//   /// See: [Camera.takePicture].
-//   final DataCallback onPictureTaken;
-// }
-//
-// /// Callback used to deliver copies of preview frames as they are displayed.
-// @Reference(
-//   channel: 'android_hardware/camera/PreviewCallback',
-//   platformImport: 'dev.penguin.android_hardware.PreviewCallbackProxy',
-//   platformClassName: 'PreviewCallbackProxy',
-// )
-// class PreviewCallback {
-//   /// Construct a [PreviewCallback].
-//   PreviewCallback(this.onPreviewFrame, {bool create = true}) {
-//     $ChannelRegistrar.instance.implementations.channelDataCallback.$create(
-//       onPreviewFrame,
-//       $owner: false,
-//     );
-//     if (create) {
-//       _channel.$create$(this, $owner: true, onPreviewFrame: onPreviewFrame);
-//     }
-//   }
-//
-//   static $PreviewCallbackChannel get _channel =>
-//       $ChannelRegistrar.instance.implementations.channelPreviewCallback;
-//
-//   /// Called as preview frames are displayed.
-//   ///
-//   /// If using the [ImageFormat.yv12] format, refer to the equations in
-//   /// [CameraParameters.setPreviewFormat] for the arrangement of the pixel data
-//   /// in the preview callback buffers.
-//   ///
-//   /// `data`: The contents of the preview frame in the format defined by
-//   /// [ImageFormat], which can be queried with
-//   /// [CameraParameters.getPreviewFormat]. If
-//   /// [CameraParameters.setPreviewFormat] is never called, the default will be
-//   /// the YCbCr_420_SP ([ImageFormat.nv21]) format.
-//   final DataCallback onPreviewFrame;
-// }
 
 /// The [Camera] class is used to set image capture settings, start/stop preview, snap pictures, and retrieve frames for encoding for video.
 ///
@@ -257,9 +180,9 @@ typedef PreviewCallback = void Function(Uint8List data);
 /// order for your application to be compatible with more devices, you should
 /// not make assumptions about the device camera specifications.
 @Reference(
-  channel: 'android.hardware.Camera',
-  platformImport: 'android.hardware.Camera',
-  platformClassName: 'Camera',
+  channel: 'dev.penguin.android_hardware.CameraProxyHandler.CameraProxy',
+  platformImport: 'dev.penguin.android_hardware.CameraProxyHandler.CameraProxy',
+  platformClassName: 'CameraProxy',
 )
 class Camera {
   /// Construct a [Camera].
@@ -267,7 +190,9 @@ class Camera {
   /// This should only be used for testing or when creating a custom type
   /// channel implementation of this class. Otherwise, an instance should be
   /// provided from [open].
-  Camera({bool create = true});
+  Camera({bool create = true}) {
+    if (create) _channel.$create$(this, $owner: true);
+  }
 
   static $CameraChannel get _channel =>
       $ChannelRegistrar.instance.implementations.channelCamera;
@@ -2107,12 +2032,13 @@ class CameraRect {
   /// Default constructor for [CameraRect].
   ///
   /// left <= right and top <= bottom
-  CameraRect(
-      {required this.top,
-      required this.bottom,
-      required this.right,
-      required this.left,
-      bool create = true}) {
+  CameraRect({
+    required this.top,
+    required this.bottom,
+    required this.right,
+    required this.left,
+    bool create = true,
+  }) {
     if (create) {
       _channel.$create$(
         this,
@@ -2174,9 +2100,10 @@ class CameraSize {
 ///
 /// Retrieve by calling [Camera.getAllCameraInfo].
 @Reference(
-  channel: 'android.hardware.Camera.CameraInfo',
-  platformImport: 'android.hardware.Camera.CameraInfo',
-  platformClassName: 'CameraInfo',
+  channel: 'dev.penguin.android_hardware.CameraInfoHandler.CameraInfoProxy',
+  platformImport:
+      'dev.penguin.android_hardware.CameraInfoHandler.CameraInfoProxy',
+  platformClassName: 'CameraInfoProxy',
 )
 class CameraInfo {
   /// Default constructor for [CameraInfo].

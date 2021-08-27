@@ -1,7 +1,8 @@
 package dev.penguin.android_hardware;
 
-import android.hardware.Camera.Parameters;
 import android.hardware.Camera.Area;
+import android.hardware.Camera.Parameters;
+import android.hardware.Camera.Size;
 
 import androidx.annotation.Nullable;
 
@@ -23,16 +24,15 @@ public class ParametersHandler extends CameraChannelLibrary.$ParametersHandler {
   public List<Area> $getFocusAreas(Parameters $instance) {
     final List<Area> areas = $instance.getFocusAreas();
     for (Area area : areas) {
-      if (!implementations.messenger.getInstanceManager().containsInstance(area)) {
-        implementations.channelArea.$create$(area, false, area.rect, area.weight);
-      }
+      implementations.channelArea.$create$(area, false, area.rect, area.weight);
     }
-    return AreaHandler.fromList(implementations, cameraParameters.getFocusAreas());
+    return areas;
   }
 
-  public List<Double> getFocusDistances() {
+  @Override
+  public List<Double> $getFocusDistances(Parameters $instance) {
     final float[] distances = new float[3];
-    cameraParameters.getFocusDistances(distances);
+    $instance.getFocusDistances(distances);
     final List<Double> doubleList = new ArrayList<>(distances.length);
     for (float distance : distances) {
       doubleList.add((double) distance);
@@ -40,194 +40,258 @@ public class ParametersHandler extends CameraChannelLibrary.$ParametersHandler {
     return doubleList;
   }
 
-  public Integer getMaxExposureCompensation() {
-    return cameraParameters.getMaxExposureCompensation();
+  @Override
+  public Integer $getMaxExposureCompensation(Parameters $instance) {
+    return $instance.getMaxExposureCompensation();
   }
 
-  public Integer getMaxNumFocusAreas() {
-    return cameraParameters.getMaxNumFocusAreas();
+  @Override
+  public Integer $getMaxNumFocusAreas(Parameters $instance) {
+    return $instance.getMaxNumFocusAreas();
   }
 
-  public Integer getMinExposureCompensation() {
-    return cameraParameters.getMinExposureCompensation();
+  @Override
+  public Integer $getMinExposureCompensation(Parameters $instance) {
+    return $instance.getMinExposureCompensation();
   }
 
-  public List<String> getSupportedFocusModes()  {
-    return cameraParameters.getSupportedFocusModes();
+  @Override
+  public List<String> $getSupportedFocusModes(Parameters $instance) {
+    return $instance.getSupportedFocusModes();
   }
 
-  public Boolean isAutoExposureLockSupported()  {
-    return cameraParameters.isAutoExposureLockSupported();
+  @Override
+  public Boolean $isAutoExposureLockSupported(Parameters $instance) {
+    return $instance.isAutoExposureLockSupported();
   }
 
-  public Boolean isZoomSupported() {
-    return cameraParameters.isZoomSupported();
+  @Override
+  public Boolean $isZoomSupported(Parameters $instance) {
+    return $instance.isZoomSupported();
   }
 
-  public void setAutoExposureLock(Boolean toggle)  {
-    cameraParameters.setAutoExposureLock(toggle);
+  @Override
+  public void $setAutoExposureLock(Parameters $instance, Boolean toggle) {
+    $instance.setAutoExposureLock(toggle);
   }
 
-  public void setExposureCompensation(Integer value)  {
-    cameraParameters.setExposureCompensation(value);
+  @Override
+  public void $setExposureCompensation(Parameters $instance, Integer value) {
+    $instance.setExposureCompensation(value);
   }
 
-  public void setFocusAreas(List<AreaHandler> focusAreas)  {
-    cameraParameters.setFocusAreas(AreaHandler.toAreaList(focusAreas));
+  @Override
+  public void $setFocusAreas(Parameters $instance, List<Area> focusAreas) {
+    $instance.setFocusAreas(focusAreas);
   }
 
-  public void setFocusMode(String value)  {
-    cameraParameters.setFocusMode(value);
+  @Override
+  public void $setFocusMode(Parameters $instance, String value) {
+    $instance.setFocusMode(value);
   }
 
-  public String getFlashMode() {
-    return cameraParameters.getFlashMode();
+  @Override
+  public String $getFlashMode(Parameters $instance) {
+    return $instance.getFlashMode();
   }
 
-  public Integer getMaxZoom() {
-    return cameraParameters.getMaxZoom();
+  @Override
+  public Integer $getMaxZoom(Parameters $instance) {
+    return $instance.getMaxZoom();
   }
 
-  public CameraSizeProxy getPictureSize() {
-    return new CameraSizeProxy(implementations, true, cameraParameters.getPictureSize());
+  @Override
+  public Size $getPictureSize(Parameters $instance) {
+    final Size size = $instance.getPictureSize();
+    implementations.channelSize.$create$(size, false, size.width, size.height);
+    return size;
   }
 
-  public CameraSizeProxy getPreviewSize() {
-    return new CameraSizeProxy(implementations, true, cameraParameters.getPreviewSize());
+  @Override
+  public Size $getPreviewSize(Parameters $instance) {
+    final Size size = $instance.getPreviewSize();
+    implementations.channelSize.$create$(size, false, size.width, size.height);
+    return size;
   }
 
-  public List<CameraSizeProxy> getSupportedPreviewSizes() {
-    return CameraSizeProxy.fromList(implementations, cameraParameters.getSupportedPreviewSizes());
+  @Override
+  public List<Size> $getSupportedPreviewSizes(Parameters $instance) {
+    final List<Size> sizes = $instance.getSupportedPreviewSizes();
+    for (Size size : sizes) {
+      implementations.channelSize.$create$(size, false, size.width, size.height);
+    }
+    return sizes;
   }
 
-  public List<CameraSizeProxy> getSupportedPictureSizes() {
-    return CameraSizeProxy.fromList(implementations, cameraParameters.getSupportedPictureSizes());
+  @Override
+  public List<Size> $getSupportedPictureSizes(Parameters $instance) {
+    final List<Size> sizes = $instance.getSupportedPictureSizes();
+    for (Size size : sizes) {
+      implementations.channelSize.$create$(size, false, size.width, size.height);
+    }
+    return sizes;
   }
 
-  public List<String> getSupportedFlashModes() {
-    final List<String> modes = cameraParameters.getSupportedFlashModes();
+  @Override
+  public List<String> $getSupportedFlashModes(Parameters $instance) {
+    final List<String> modes = $instance.getSupportedFlashModes();
     if (modes != null) return modes;
     return new ArrayList<>();
   }
 
-  public Integer getZoom() {
-    return cameraParameters.getZoom();
+  @Override
+  public Integer $getZoom(Parameters $instance) {
+    return $instance.getZoom();
   }
 
-  public Boolean isSmoothZoomSupported() {
-    return cameraParameters.isSmoothZoomSupported();
+  @Override
+  public Boolean $isSmoothZoomSupported(Parameters $instance) {
+    return $instance.isSmoothZoomSupported();
   }
 
-  public void setFlashMode(String mode) {
-    cameraParameters.setFlashMode(mode);
+  @Override
+  public void $setFlashMode(Parameters $instance, String mode) {
+    $instance.setFlashMode(mode);
   }
 
-  public void setPictureSize(Integer width, Integer height) {
-    cameraParameters.setPictureSize(width, height);
+  @Override
+  public void $setPictureSize(Parameters $instance, Integer width, Integer height) {
+    $instance.setPictureSize(width, height);
   }
 
-  public void setRecordingHint(Boolean hint) {
-    cameraParameters.setRecordingHint(hint);
+  @Override
+  public void $setRecordingHint(Parameters $instance, Boolean hint) {
+    $instance.setRecordingHint(hint);
   }
 
-  public void setRotation(Integer rotation) {
-    cameraParameters.setRotation(rotation);
+  @Override
+  public void $setRotation(Parameters $instance, Integer rotation) {
+    $instance.setRotation(rotation);
   }
 
-  public void setZoom(Integer value) {
-    cameraParameters.setZoom(value);
+  @Override
+  public void $setZoom(Parameters $instance, Integer value) {
+    $instance.setZoom(value);
   }
 
-  public void setPreviewSize(Integer width, Integer height) {
-    cameraParameters.setPreviewSize(width, height);
+  @Override
+  public void $setPreviewSize(Parameters $instance, Integer width, Integer height) {
+    $instance.setPreviewSize(width, height);
   }
 
-  public Integer getExposureCompensation() {
-    return cameraParameters.getExposureCompensation();
+  @Override
+  public Integer $getExposureCompensation(Parameters $instance) {
+    return $instance.getExposureCompensation();
   }
 
-  public Double getExposureCompensationStep() {
-    return (double) cameraParameters.getExposureCompensationStep();
+  @Override
+  public Double $getExposureCompensationStep(Parameters $instance) {
+    return (double) $instance.getExposureCompensationStep();
   }
 
-  // TODO: Test starts here to below
-  public String flatten() {
-    return cameraParameters.flatten();
+  @Override
+  public String $flatten(Parameters $instance) {
+    return $instance.flatten();
   }
 
-  public String get(String key) {
-    return cameraParameters.get(key);
+  @Override
+  public String $get(Parameters $instance, String key) {
+    return $instance.get(key);
   }
 
-  public String getAntibanding() {
-    return cameraParameters.getAntibanding();
+  @Override
+  public String $getAntibanding(Parameters $instance) {
+    return $instance.getAntibanding();
   }
 
-  public Boolean getAutoWhiteBalanceLock() {
-    return cameraParameters.getAutoWhiteBalanceLock();
+  @Override
+  public Boolean $getAutoWhiteBalanceLock(Parameters $instance) {
+    return $instance.getAutoWhiteBalanceLock();
   }
 
-  public String getColorEffect() {
-    return cameraParameters.getColorEffect();
+  @Override
+  public String $getColorEffect(Parameters $instance) {
+    return $instance.getColorEffect();
   }
 
-  public Double getFocalLength() {
-    return (double) cameraParameters.getFocalLength();
+  @Override
+  public Double $getFocalLength(Parameters $instance) {
+    return (double) $instance.getFocalLength();
   }
 
-  public String getFocusMode() {
-    return cameraParameters.getFocusMode();
+  @Override
+  public String $getFocusMode(Parameters $instance) {
+    return $instance.getFocusMode();
   }
 
-  public Double getHorizontalViewAngle() {
-    return (double) cameraParameters.getHorizontalViewAngle();
+  @Override
+  public Double $getHorizontalViewAngle(Parameters $instance) {
+    return (double) $instance.getHorizontalViewAngle();
   }
 
-  public Integer getInt(String key) {
-    return cameraParameters.getInt(key);
+  @Override
+  public Integer $getInt(Parameters $instance, String key) {
+    return $instance.getInt(key);
   }
 
-  public Integer getJpegQuality() {
-    return cameraParameters.getJpegQuality();
+  @Override
+  public Integer $getJpegQuality(Parameters $instance) {
+    return $instance.getJpegQuality();
   }
 
-  public Integer getJpegThumbnailQuality() {
-    return cameraParameters.getJpegThumbnailQuality();
+  @Override
+  public Integer $getJpegThumbnailQuality(Parameters $instance) {
+    return $instance.getJpegThumbnailQuality();
   }
 
-  public CameraSizeProxy getJpegThumbnailSize() {
-    final Camera.Size size = cameraParameters.getJpegThumbnailSize();
-    if (size == null) return null;
-    return new CameraSizeProxy(implementations, true, size);
+  @Override
+  public Size $getJpegThumbnailSize(Parameters $instance) {
+    final Size size = $instance.getJpegThumbnailSize();
+    if (size != null) {
+      implementations.channelSize.$create$(size, false, size.width, size.height);
+    }
+    return size;
   }
 
-  public Integer getMaxNumMeteringAreas() {
-    return cameraParameters.getMaxNumMeteringAreas();
+  @Override
+  public Integer $getMaxNumMeteringAreas(Parameters $instance) {
+    return $instance.getMaxNumMeteringAreas();
   }
 
-  public List<AreaHandler> getMeteringAreas() {
-    final List<Camera.Area> areas = cameraParameters.getMeteringAreas();
-    if (areas == null) return null;
-    return AreaHandler.fromList(implementations, areas);
+  @Override
+  public List<Area> $getMeteringAreas(Parameters $instance) {
+    final List<Area> areas = $instance.getMeteringAreas();
+    if (areas != null) {
+      for (Area area : areas) {
+        implementations.channelArea.$create$(area, false, area.rect, area.weight);
+      }
+    }
+    return areas;
   }
 
-  public Integer getPictureFormat() {
-    return cameraParameters.getPictureFormat();
+  @Override
+  public Integer $getPictureFormat(Parameters $instance) {
+    return $instance.getPictureFormat();
   }
 
-  public CameraSizeProxy getPreferredPreviewSizeForVideo() {
-    final Camera.Size size = cameraParameters.getPreferredPreviewSizeForVideo();
-    if (size == null) return null;
-    return new CameraSizeProxy(implementations, true, size);
+  @Override
+  public Size $getPreferredPreviewSizeForVideo(Parameters $instance) {
+    final Size size = $instance.getPreferredPreviewSizeForVideo();
+    if (size != null) {
+      implementations.channelSize.$create$(size, false, size.width, size.height);
+    }
+    return size;
   }
 
-  public Integer getPreviewFormat() {
-    return cameraParameters.getPreviewFormat();
+  @Override
+  public Integer $getPreviewFormat(Parameters $instance) {
+    return $instance.getPreviewFormat();
   }
 
-  public List<Integer> getPreviewFpsRange() {
+  @Override
+  public List<Integer> $getPreviewFpsRange(Parameters $instance) {
     final int[] range = new int[2];
-    cameraParameters.getPreviewFpsRange(range);
+    $instance.getPreviewFpsRange(range);
     final List<Integer> intList = new ArrayList<>(range.length);
     for (int value : range) {
       intList.add(value);
@@ -235,176 +299,217 @@ public class ParametersHandler extends CameraChannelLibrary.$ParametersHandler {
     return intList;
   }
 
-  public String getSceneMode() {
-    return cameraParameters.getSceneMode();
+  @Override
+  public String $getSceneMode(Parameters $instance) {
+    return $instance.getSceneMode();
   }
 
-  public List<String> getSupportedAntibanding() {
-    return cameraParameters.getSupportedAntibanding();
+  @Override
+  public List<String> $getSupportedAntibanding(Parameters $instance) {
+    return $instance.getSupportedAntibanding();
   }
 
-  public List<String> getSupportedColorEffects() {
-    return cameraParameters.getSupportedColorEffects();
+  @Override
+  public List<String> $getSupportedColorEffects(Parameters $instance) {
+    return $instance.getSupportedColorEffects();
   }
 
-  public List<CameraSizeProxy> getSupportedJpegThumbnailSizes() {
-    return CameraSizeProxy.fromList(implementations, cameraParameters.getSupportedJpegThumbnailSizes());
+  @Override
+  public List<Size> $getSupportedJpegThumbnailSizes(Parameters $instance) {
+    final List<Size> sizes = $instance.getSupportedJpegThumbnailSizes();
+    for (Size size : sizes) {
+      implementations.channelSize.$create$(size, false, size.width, size.height);
+    }
+    return sizes;
   }
 
-  public List<Integer> getSupportedPictureFormats() {
-    return cameraParameters.getSupportedPictureFormats();
+  @Override
+  public List<Integer> $getSupportedPictureFormats(Parameters $instance) {
+    return $instance.getSupportedPictureFormats();
   }
 
-  public List<Integer> getSupportedPreviewFormats() {
-    return cameraParameters.getSupportedPreviewFormats();
+  @Override
+  public List<Integer> $getSupportedPreviewFormats(Parameters $instance) {
+    return $instance.getSupportedPreviewFormats();
   }
 
-  public List<List<Integer>> getSupportedPreviewFpsRange() {
+  @Override
+  public List<List<Integer>> $getSupportedPreviewFpsRange(Parameters $instance) {
     final List<List<Integer>> ranges = new ArrayList<>();
-    for (int[] range : cameraParameters.getSupportedPreviewFpsRange()) {
+    for (int[] range : $instance.getSupportedPreviewFpsRange()) {
       ranges.add(Arrays.asList(range[0], range[1]));
     }
     return ranges;
   }
 
-  public List<String> getSupportedSceneModes() {
-    return cameraParameters.getSupportedSceneModes();
+  @Override
+  public List<String> $getSupportedSceneModes(Parameters $instance) {
+    return $instance.getSupportedSceneModes();
   }
 
+  @Override
   @Nullable
-  public List<CameraSizeProxy> getSupportedVideoSizes() {
-    final List<Camera.Size> sizes = cameraParameters.getSupportedVideoSizes();
-    if (sizes == null) return null;
-    return CameraSizeProxy.fromList(implementations, sizes);
+  public List<Size> $getSupportedVideoSizes(Parameters $instance) {
+    final List<Size> sizes = $instance.getSupportedVideoSizes();
+    for (Size size : sizes) {
+      implementations.channelSize.$create$(size, false, size.width, size.height);
+    }
+    return sizes;
   }
 
-  public List<String> getSupportedWhiteBalance() {
-    return cameraParameters.getSupportedWhiteBalance();
+  @Override
+  public List<String> $getSupportedWhiteBalance(Parameters $instance) {
+    return $instance.getSupportedWhiteBalance();
   }
 
-  public Double getVerticalViewAngle() {
-    return (double) cameraParameters.getVerticalViewAngle();
+  @Override
+  public Double $getVerticalViewAngle(Parameters $instance) {
+    return (double) $instance.getVerticalViewAngle();
   }
 
-  public Boolean getVideoStabilization() {
-    return cameraParameters.getVideoStabilization();
+  @Override
+  public Boolean $getVideoStabilization(Parameters $instance) {
+    return $instance.getVideoStabilization();
   }
 
-  public String getWhiteBalance() {
-    return cameraParameters.getWhiteBalance();
+  @Override
+  public String $getWhiteBalance(Parameters $instance) {
+    return $instance.getWhiteBalance();
   }
 
-  public List<Integer> getZoomRatios() {
-    return cameraParameters.getZoomRatios();
+  @Override
+  public List<Integer> $getZoomRatios(Parameters $instance) {
+    return $instance.getZoomRatios();
   }
 
-  public Boolean isAutoWhiteBalanceLockSupported() {
-    return cameraParameters.isAutoWhiteBalanceLockSupported();
+  @Override
+  public Boolean $isAutoWhiteBalanceLockSupported(Parameters $instance) {
+    return $instance.isAutoWhiteBalanceLockSupported();
   }
 
-  public Boolean isVideoSnapshotSupported() {
-    return cameraParameters.isVideoSnapshotSupported();
+  @Override
+  public Boolean $isVideoSnapshotSupported(Parameters $instance) {
+    return $instance.isVideoSnapshotSupported();
   }
 
-  public Boolean isVideoStabilizationSupported() {
-    return cameraParameters.isVideoStabilizationSupported();
+  @Override
+  public Boolean $isVideoStabilizationSupported(Parameters $instance) {
+    return $instance.isVideoStabilizationSupported();
   }
 
-  public void remove(String key) {
-    cameraParameters.remove(key);
+  @Override
+  public void $remove(Parameters $instance, String key) {
+    $instance.remove(key);
   }
 
-  public void removeGpsData() {
-    cameraParameters.removeGpsData();
+  @Override
+  public void $removeGpsData(Parameters $instance) {
+    $instance.removeGpsData();
   }
 
-  public void set(String key, Object value) {
+  @Override
+  public void $set(Parameters $instance, String key, Object value) {
     if (value instanceof Integer) {
-      cameraParameters.set(key, (Integer) value);
+      $instance.set(key, (Integer) value);
     } else if (value instanceof String) {
-      cameraParameters.set(key, (String) value);
+      $instance.set(key, (String) value);
     } else {
       throw new IllegalArgumentException();
     }
   }
 
-  public void setAntibanding(String antibanding) {
-    cameraParameters.setAntibanding(antibanding);
+  @Override
+  public void $setAntibanding(Parameters $instance, String antibanding) {
+    $instance.setAntibanding(antibanding);
   }
 
-  public void setAutoWhiteBalanceLock(Boolean toggle) {
-    cameraParameters.setAutoWhiteBalanceLock(toggle);
+  @Override
+  public void $setAutoWhiteBalanceLock(Parameters $instance, Boolean toggle) {
+    $instance.setAutoWhiteBalanceLock(toggle);
   }
 
-  public void setColorEffect(String effect) {
-    cameraParameters.setColorEffect(effect);
+  @Override
+  public void $setColorEffect(Parameters $instance, String effect) {
+    $instance.setColorEffect(effect);
   }
 
-  public void setGpsAltitude(Double meters) {
-    cameraParameters.setGpsAltitude(meters);
+  @Override
+  public void $setGpsAltitude(Parameters $instance, Double meters) {
+    $instance.setGpsAltitude(meters);
   }
 
-  public void setGpsLatitude(Double latitude) {
-    cameraParameters.setGpsLatitude(latitude);
+  @Override
+  public void $setGpsLatitude(Parameters $instance, Double latitude) {
+    $instance.setGpsLatitude(latitude);
   }
 
-  public void setGpsLongitude(Double longitude) {
-    cameraParameters.setGpsLongitude(longitude);
+  @Override
+  public void $setGpsLongitude(Parameters $instance, Double longitude) {
+    $instance.setGpsLongitude(longitude);
   }
 
-  public void setGpsProcessingMethod(String processingMethod) {
-    cameraParameters.setGpsProcessingMethod(processingMethod);
+  @Override
+  public void $setGpsProcessingMethod(Parameters $instance, String processingMethod) {
+    $instance.setGpsProcessingMethod(processingMethod);
   }
 
-  public void setGpsTimestamp(Integer timestamp) {
-    cameraParameters.setGpsTimestamp(timestamp);
+  @Override
+  public void $setGpsTimestamp(Parameters $instance, Integer timestamp) {
+    $instance.setGpsTimestamp(timestamp);
   }
 
-  public void setJpegQuality(Integer quality) {
-    cameraParameters.setJpegQuality(quality);
+  @Override
+  public void $setJpegQuality(Parameters $instance, Integer quality) {
+    $instance.setJpegQuality(quality);
   }
 
-  public void setJpegThumbnailQuality(Integer quality) {
-    cameraParameters.setJpegThumbnailQuality(quality);
+  @Override
+  public void $setJpegThumbnailQuality(Parameters $instance, Integer quality) {
+    $instance.setJpegThumbnailQuality(quality);
   }
 
-  public void setJpegThumbnailSize(Integer width, Integer height) {
-    cameraParameters.setJpegThumbnailSize(width, height);
+  @Override
+  public void $setJpegThumbnailSize(Parameters $instance, Integer width, Integer height) {
+    $instance.setJpegThumbnailSize(width, height);
   }
 
-  public void setMeteringAreas(List<AreaHandler> meteringAreas) {
-    if (meteringAreas == null) {
-      cameraParameters.setMeteringAreas(null);
-    } else {
-      cameraParameters.setMeteringAreas(AreaHandler.toAreaList(meteringAreas));
-    }
+  @Override
+  public void $setMeteringAreas(Parameters $instance, List<Area> meteringAreas) {
+    $instance.setMeteringAreas(meteringAreas);
   }
 
-  public void setPictureFormat(Integer pixelFormat) {
-    cameraParameters.setPictureFormat(pixelFormat);
+  @Override
+  public void $setPictureFormat(Parameters $instance, Integer pixelFormat) {
+    $instance.setPictureFormat(pixelFormat);
   }
 
-  public void setPreviewFormat(Integer pixelFormat) {
-    cameraParameters.setPreviewFormat(pixelFormat);
+  @Override
+  public void $setPreviewFormat(Parameters $instance, Integer pixelFormat) {
+    $instance.setPreviewFormat(pixelFormat);
   }
 
-  public void setPreviewFpsRange(Integer min, Integer max) {
-    cameraParameters.setPreviewFpsRange(min, max);
+  @Override
+  public void $setPreviewFpsRange(Parameters $instance, Integer min, Integer max) {
+    $instance.setPreviewFpsRange(min, max);
   }
 
-  public void setSceneMode(String mode) {
-    cameraParameters.setSceneMode(mode);
+  @Override
+  public void $setSceneMode(Parameters $instance, String mode) {
+    $instance.setSceneMode(mode);
   }
 
-  public void setVideoStabilization(Boolean toggle) {
-    cameraParameters.setVideoStabilization(toggle);
+  @Override
+  public void $setVideoStabilization(Parameters $instance, Boolean toggle) {
+    $instance.setVideoStabilization(toggle);
   }
 
-  public void setWhiteBalance(String value) {
-    cameraParameters.setWhiteBalance(value);
+  @Override
+  public void $setWhiteBalance(Parameters $instance, String value) {
+    $instance.setWhiteBalance(value);
   }
 
-  public void unflatten(String flattened) {
-    cameraParameters.unflatten(flattened);
+  @Override
+  public void $unflatten(Parameters $instance, String flattened) {
+    $instance.unflatten(flattened);
   }
 }

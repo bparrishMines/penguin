@@ -24,7 +24,7 @@ public class PictureCallbackTest {
 
     final DataCallback mockDataCallback = mock(DataCallback.class);
 
-    final PictureCallbackProxy pictureCallbackProxy = implementations
+    final PictureCallbackHandler pictureCallbackProxy = implementations
         .handlerPictureCallbackProxy
         .$create$(mockDataCallback);
 

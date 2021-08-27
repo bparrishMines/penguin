@@ -11,18 +11,25 @@ import dev.penguin.android_hardware.CameraChannelLibrary.$ChannelRegistrar;
 
 /** AndroidHardwarePlugin */
 public class AndroidHardwarePlugin implements FlutterPlugin {
+  private $ChannelRegistrar channelRegistrar;
+
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
     final BinaryMessenger binaryMessenger = flutterPluginBinding.getBinaryMessenger();
     final TypeChannelMessenger messenger = ReferencePlugin.getMessengerInstance(binaryMessenger);
 
     final TextureRegistry textureRegistry = flutterPluginBinding.getTextureRegistry();
-    final $ChannelRegistrar channelRegistrar = new $ChannelRegistrar(new LibraryImplementations(messenger, textureRegistry));
+    channelRegistrar = new $ChannelRegistrar(new LibraryImplementations(messenger, textureRegistry));
     channelRegistrar.registerHandlers();
   }
 
   @Override
   public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
-    // Do nothing.
+    channelRegistrar.unregisterHandlers();
+    channelRegistrar = null;
+  }
+
+  public $ChannelRegistrar getChannelRegistrar() {
+    return channelRegistrar;
   }
 }

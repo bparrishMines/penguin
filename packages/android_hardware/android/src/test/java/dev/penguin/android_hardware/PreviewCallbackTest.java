@@ -26,7 +26,7 @@ public class PreviewCallbackTest {
 
     final DataCallback mockDataCallback = mock(DataCallback.class);
 
-    final PreviewCallbackProxy previewCallbackProxy = implementations
+    final PreviewCallbackHandler previewCallbackProxy = implementations
         .handlerPreviewCallbackProxy
         .$create$(mockDataCallback);
 

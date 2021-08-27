@@ -5,7 +5,7 @@ package dev.penguin.android_hardware;
 
 
 
-import android.hardware.Camera;
+import dev.penguin.android_hardware.CameraProxyHandler.CameraProxy;
 
 
 import android.hardware.Camera.PreviewCallback;
@@ -32,7 +32,7 @@ import android.hardware.Camera.OnZoomChangeListener;
 import android.hardware.Camera.AutoFocusMoveCallback;
 
 
-import android.hardware.Camera.CameraInfo;
+import dev.penguin.android_hardware.CameraInfoHandler.CameraInfoProxy;
 
 
 import android.hardware.Camera.Area;
@@ -64,8 +64,11 @@ import github.penguin.reference.reference.TypeChannelMessenger;
 public class CameraChannelLibrary {
   
   public static class $ErrorCallbackChannel extends TypeChannel<ErrorCallback> {
-    public $ErrorCallbackChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "android.hardware.Camera.ErrorCallback");
+    public final $LibraryImplementations implementations;
+
+    public $ErrorCallbackChannel(@NonNull $LibraryImplementations implementations) {
+      super(implementations.messenger, "android.hardware.Camera.ErrorCallback");
+      this.implementations = implementations;
     }
 
     public Completable<PairedInstance> $create(ErrorCallback $instance, boolean $owner) {
@@ -79,8 +82,11 @@ public class CameraChannelLibrary {
   }
   
   public static class $AutoFocusCallbackChannel extends TypeChannel<AutoFocusCallback> {
-    public $AutoFocusCallbackChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "android.hardware.Camera.AutoFocusCallback");
+    public final $LibraryImplementations implementations;
+
+    public $AutoFocusCallbackChannel(@NonNull $LibraryImplementations implementations) {
+      super(implementations.messenger, "android.hardware.Camera.AutoFocusCallback");
+      this.implementations = implementations;
     }
 
     public Completable<PairedInstance> $create(AutoFocusCallback $instance, boolean $owner) {
@@ -94,8 +100,11 @@ public class CameraChannelLibrary {
   }
   
   public static class $ShutterCallbackChannel extends TypeChannel<ShutterCallback> {
-    public $ShutterCallbackChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "android.hardware.Camera.ShutterCallback");
+    public final $LibraryImplementations implementations;
+
+    public $ShutterCallbackChannel(@NonNull $LibraryImplementations implementations) {
+      super(implementations.messenger, "android.hardware.Camera.ShutterCallback");
+      this.implementations = implementations;
     }
 
     public Completable<PairedInstance> $create(ShutterCallback $instance, boolean $owner) {
@@ -109,8 +118,11 @@ public class CameraChannelLibrary {
   }
   
   public static class $OnZoomChangeListenerChannel extends TypeChannel<OnZoomChangeListener> {
-    public $OnZoomChangeListenerChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "android.hardware.Camera.OnZoomChangeListener");
+    public final $LibraryImplementations implementations;
+
+    public $OnZoomChangeListenerChannel(@NonNull $LibraryImplementations implementations) {
+      super(implementations.messenger, "android.hardware.Camera.OnZoomChangeListener");
+      this.implementations = implementations;
     }
 
     public Completable<PairedInstance> $create(OnZoomChangeListener $instance, boolean $owner) {
@@ -124,8 +136,11 @@ public class CameraChannelLibrary {
   }
   
   public static class $AutoFocusMoveCallbackChannel extends TypeChannel<AutoFocusMoveCallback> {
-    public $AutoFocusMoveCallbackChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "android.hardware.Camera.AutoFocusMoveCallback");
+    public final $LibraryImplementations implementations;
+
+    public $AutoFocusMoveCallbackChannel(@NonNull $LibraryImplementations implementations) {
+      super(implementations.messenger, "android.hardware.Camera.AutoFocusMoveCallback");
+      this.implementations = implementations;
     }
 
     public Completable<PairedInstance> $create(AutoFocusMoveCallback $instance, boolean $owner) {
@@ -139,8 +154,11 @@ public class CameraChannelLibrary {
   }
   
   public static class $PictureCallbackChannel extends TypeChannel<PictureCallback> {
-    public $PictureCallbackChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "android.hardware.Camera.PictureCallback");
+    public final $LibraryImplementations implementations;
+
+    public $PictureCallbackChannel(@NonNull $LibraryImplementations implementations) {
+      super(implementations.messenger, "android.hardware.Camera.PictureCallback");
+      this.implementations = implementations;
     }
 
     public Completable<PairedInstance> $create(PictureCallback $instance, boolean $owner) {
@@ -154,8 +172,11 @@ public class CameraChannelLibrary {
   }
   
   public static class $PreviewCallbackChannel extends TypeChannel<PreviewCallback> {
-    public $PreviewCallbackChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "android.hardware.Camera.PreviewCallback");
+    public final $LibraryImplementations implementations;
+
+    public $PreviewCallbackChannel(@NonNull $LibraryImplementations implementations) {
+      super(implementations.messenger, "android.hardware.Camera.PreviewCallback");
+      this.implementations = implementations;
     }
 
     public Completable<PairedInstance> $create(PreviewCallback $instance, boolean $owner) {
@@ -369,8 +390,11 @@ public class CameraChannelLibrary {
 
   
   public static class $CameraProxyChannel extends TypeChannel<CameraProxy> {
-    public $CameraProxyChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "android.hardware.Camera");
+    public final $LibraryImplementations implementations;
+
+    public $CameraProxyChannel(@NonNull $LibraryImplementations implementations) {
+      super(implementations.messenger, "dev.penguin.android_hardware.CameraHandler.CameraProxy");
+      this.implementations = implementations;
     }
 
     
@@ -433,8 +457,11 @@ public class CameraChannelLibrary {
   }
   
   public static class $ParametersChannel extends TypeChannel<Parameters> {
-    public $ParametersChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "android.hardware.Camera.Parameters");
+    public final $LibraryImplementations implementations;
+
+    public $ParametersChannel(@NonNull $LibraryImplementations implementations) {
+      super(implementations.messenger, "android.hardware.Camera.Parameters");
+      this.implementations = implementations;
     }
 
     
@@ -623,8 +650,11 @@ public class CameraChannelLibrary {
   }
   
   public static class $AreaChannel extends TypeChannel<Area> {
-    public $AreaChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "android.hardware.Camera.Area");
+    public final $LibraryImplementations implementations;
+
+    public $AreaChannel(@NonNull $LibraryImplementations implementations) {
+      super(implementations.messenger, "android.hardware.Camera.Area");
+      this.implementations = implementations;
     }
 
     
@@ -639,8 +669,11 @@ public class CameraChannelLibrary {
   }
   
   public static class $RectChannel extends TypeChannel<Rect> {
-    public $RectChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "android.graphics.Rect");
+    public final $LibraryImplementations implementations;
+
+    public $RectChannel(@NonNull $LibraryImplementations implementations) {
+      super(implementations.messenger, "android.graphics.Rect");
+      this.implementations = implementations;
     }
 
     
@@ -655,8 +688,11 @@ public class CameraChannelLibrary {
   }
   
   public static class $SizeChannel extends TypeChannel<Size> {
-    public $SizeChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "android.hardware.Camera.Size");
+    public final $LibraryImplementations implementations;
+
+    public $SizeChannel(@NonNull $LibraryImplementations implementations) {
+      super(implementations.messenger, "android.hardware.Camera.Size");
+      this.implementations = implementations;
     }
 
     
@@ -670,13 +706,16 @@ public class CameraChannelLibrary {
     
   }
   
-  public static class $CameraInfoChannel extends TypeChannel<CameraInfo> {
-    public $CameraInfoChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "android.hardware.Camera.CameraInfo");
+  public static class $CameraInfoProxyChannel extends TypeChannel<CameraInfoProxy> {
+    public final $LibraryImplementations implementations;
+
+    public $CameraInfoProxyChannel(@NonNull $LibraryImplementations implementations) {
+      super(implementations.messenger, "dev.penguin.android_hardware.CameraInfoHandler.CameraInfoProxy");
+      this.implementations = implementations;
     }
 
     
-    public Completable<PairedInstance> $create$(CameraInfo $instance, boolean $owner,Integer cameraId,Integer facing,Integer orientation,Boolean canDisableShutterSound) {
+    public Completable<PairedInstance> $create$(CameraInfoProxy $instance, boolean $owner,Integer cameraId,Integer facing,Integer orientation,Boolean canDisableShutterSound) {
       return createNewInstancePair($instance, Arrays.<Object>asList("", cameraId, facing, orientation, canDisableShutterSound), $owner);
     }
     
@@ -687,8 +726,11 @@ public class CameraChannelLibrary {
   }
   
   public static class $ImageFormatChannel extends TypeChannel<ImageFormat> {
-    public $ImageFormatChannel(@NonNull TypeChannelMessenger messenger) {
-      super(messenger, "android.graphics.ImageFormat");
+    public final $LibraryImplementations implementations;
+
+    public $ImageFormatChannel(@NonNull $LibraryImplementations implementations) {
+      super(implementations.messenger, "android.graphics.ImageFormat");
+      this.implementations = implementations;
     }
 
     
@@ -718,7 +760,7 @@ public class CameraChannelLibrary {
 
     
     
-    public List<CameraInfo> $getAllCameraInfo() throws Exception {
+    public List<CameraInfoProxy> $getAllCameraInfo() throws Exception {
       throw new UnsupportedOperationException();
     }
     
@@ -2501,15 +2543,15 @@ public class CameraChannelLibrary {
     }
   }
   
-  public static class $CameraInfoHandler implements TypeChannelHandler<CameraInfo> {
+  public static class $CameraInfoProxyHandler implements TypeChannelHandler<CameraInfoProxy> {
     public final $LibraryImplementations implementations;
 
-    public $CameraInfoHandler($LibraryImplementations implementations) {
+    public $CameraInfoProxyHandler($LibraryImplementations implementations) {
       this.implementations = implementations;
     }
 
     
-    public CameraInfo $create$(Integer cameraId,Integer facing,Integer orientation,Boolean canDisableShutterSound)
+    public CameraInfoProxy $create$(Integer cameraId,Integer facing,Integer orientation,Boolean canDisableShutterSound)
         throws Exception {
       throw new UnsupportedOperationException();
     }
@@ -2532,7 +2574,7 @@ public class CameraChannelLibrary {
     }
 
     @Override
-    public CameraInfo createInstance(TypeChannelMessenger messenger, List<Object> arguments)
+    public CameraInfoProxy createInstance(TypeChannelMessenger messenger, List<Object> arguments)
         throws Exception {
       final String constructorName = (String) arguments.get(0);
       switch(constructorName) {
@@ -2549,7 +2591,7 @@ public class CameraChannelLibrary {
     @Override
     public Object invokeMethod(
         TypeChannelMessenger messenger,
-        CameraInfo instance,
+        CameraInfoProxy instance,
         String methodName,
         List<Object> arguments)
         throws Exception {
@@ -2648,8 +2690,8 @@ public class CameraChannelLibrary {
     public $SizeChannel channelSize;
     public $SizeHandler handlerSize;
     
-    public $CameraInfoChannel channelCameraInfo;
-    public $CameraInfoHandler handlerCameraInfo;
+    public $CameraInfoProxyChannel channelCameraInfoProxy;
+    public $CameraInfoProxyHandler handlerCameraInfoProxy;
     
     public $ImageFormatChannel channelImageFormat;
     public $ImageFormatHandler handlerImageFormat;
@@ -2681,47 +2723,47 @@ public class CameraChannelLibrary {
     public $LibraryImplementations(TypeChannelMessenger messenger) {
       this.messenger = messenger;
       
-      this.channelCameraProxy = new $CameraProxyChannel(messenger);
+      this.channelCameraProxy = new $CameraProxyChannel(this);
       this.handlerCameraProxy = new $CameraProxyHandler(this);
       
-      this.channelParameters = new $ParametersChannel(messenger);
+      this.channelParameters = new $ParametersChannel(this);
       this.handlerParameters = new $ParametersHandler(this);
       
-      this.channelArea = new $AreaChannel(messenger);
+      this.channelArea = new $AreaChannel(this);
       this.handlerArea = new $AreaHandler(this);
       
-      this.channelRect = new $RectChannel(messenger);
+      this.channelRect = new $RectChannel(this);
       this.handlerRect = new $RectHandler(this);
       
-      this.channelSize = new $SizeChannel(messenger);
+      this.channelSize = new $SizeChannel(this);
       this.handlerSize = new $SizeHandler(this);
       
-      this.channelCameraInfo = new $CameraInfoChannel(messenger);
-      this.handlerCameraInfo = new $CameraInfoHandler(this);
+      this.channelCameraInfoProxy = new $CameraInfoProxyChannel(this);
+      this.handlerCameraInfoProxy = new $CameraInfoProxyHandler(this);
       
-      this.channelImageFormat = new $ImageFormatChannel(messenger);
+      this.channelImageFormat = new $ImageFormatChannel(this);
       this.handlerImageFormat = new $ImageFormatHandler(this);
       
       
-      this.channelErrorCallback = new $ErrorCallbackChannel(messenger);
+      this.channelErrorCallback = new $ErrorCallbackChannel(this);
       this.handlerErrorCallback = new $ErrorCallbackHandler(this);
       
-      this.channelAutoFocusCallback = new $AutoFocusCallbackChannel(messenger);
+      this.channelAutoFocusCallback = new $AutoFocusCallbackChannel(this);
       this.handlerAutoFocusCallback = new $AutoFocusCallbackHandler(this);
       
-      this.channelShutterCallback = new $ShutterCallbackChannel(messenger);
+      this.channelShutterCallback = new $ShutterCallbackChannel(this);
       this.handlerShutterCallback = new $ShutterCallbackHandler(this);
       
-      this.channelOnZoomChangeListener = new $OnZoomChangeListenerChannel(messenger);
+      this.channelOnZoomChangeListener = new $OnZoomChangeListenerChannel(this);
       this.handlerOnZoomChangeListener = new $OnZoomChangeListenerHandler(this);
       
-      this.channelAutoFocusMoveCallback = new $AutoFocusMoveCallbackChannel(messenger);
+      this.channelAutoFocusMoveCallback = new $AutoFocusMoveCallbackChannel(this);
       this.handlerAutoFocusMoveCallback = new $AutoFocusMoveCallbackHandler(this);
       
-      this.channelPictureCallback = new $PictureCallbackChannel(messenger);
+      this.channelPictureCallback = new $PictureCallbackChannel(this);
       this.handlerPictureCallback = new $PictureCallbackHandler(this);
       
-      this.channelPreviewCallback = new $PreviewCallbackChannel(messenger);
+      this.channelPreviewCallback = new $PreviewCallbackChannel(this);
       this.handlerPreviewCallback = new $PreviewCallbackHandler(this);
       
     }
@@ -2746,7 +2788,7 @@ public class CameraChannelLibrary {
       
       implementations.channelSize.setHandler(implementations.handlerSize);
       
-      implementations.channelCameraInfo.setHandler(implementations.handlerCameraInfo);
+      implementations.channelCameraInfoProxy.setHandler(implementations.handlerCameraInfoProxy);
       
       implementations.channelImageFormat.setHandler(implementations.handlerImageFormat);
       
@@ -2779,7 +2821,7 @@ public class CameraChannelLibrary {
       
       implementations.channelSize.removeHandler();
       
-      implementations.channelCameraInfo.removeHandler();
+      implementations.channelCameraInfoProxy.removeHandler();
       
       implementations.channelImageFormat.removeHandler();
       

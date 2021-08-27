@@ -529,7 +529,8 @@ class $PreviewCallbackHandler implements TypeChannelHandler<Object> {
 
 class $CameraChannel extends TypeChannel<Camera> {
   $CameraChannel(TypeChannelMessenger messenger)
-      : super(messenger, r'android.hardware.Camera');
+      : super(messenger,
+            r'dev.penguin.android_hardware.CameraHandler.CameraProxy');
 
   Future<PairedInstance?> $create$(
     Camera $instance, {
@@ -1929,7 +1930,8 @@ class $CameraSizeChannel extends TypeChannel<CameraSize> {
 
 class $CameraInfoChannel extends TypeChannel<CameraInfo> {
   $CameraInfoChannel(TypeChannelMessenger messenger)
-      : super(messenger, r'android.hardware.Camera.CameraInfo');
+      : super(messenger,
+            r'dev.penguin.android_hardware.CameraInfoHandler.CameraInfoProxy');
 
   Future<PairedInstance?> $create$(
     CameraInfo $instance, {
