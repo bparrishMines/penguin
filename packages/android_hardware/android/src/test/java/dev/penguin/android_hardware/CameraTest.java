@@ -105,7 +105,7 @@ public class CameraTest {
     }).when(android.hardware.Camera.class);
     android.hardware.Camera.getCameraInfo(eq(0), any(android.hardware.Camera.CameraInfo.class));
 
-    final List<CameraInfoHandler> allInfo = testImplementations.handlerCameraProxy.$getAllCameraInfo();
+    final List<CameraInfoProxyHandler> allInfo = testImplementations.handlerCameraProxy.$getAllCameraInfo();
 
     assertEquals(allInfo.size(), 1);
     assertEquals(allInfo.get(0).cameraInfo.facing, 11);

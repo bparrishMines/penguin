@@ -13,7 +13,7 @@ import android.os.Build;
 
 import androidx.annotation.Nullable;
 
-import dev.penguin.android_hardware.CameraInfoHandler.CameraInfoProxy;
+import dev.penguin.android_hardware.CameraInfoProxyHandler.CameraInfoProxy;
 
 import java.io.IOException;
 import java.util.ArrayList;

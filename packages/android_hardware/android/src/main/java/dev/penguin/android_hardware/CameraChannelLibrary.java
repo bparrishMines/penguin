@@ -32,7 +32,7 @@ import android.hardware.Camera.OnZoomChangeListener;
 import android.hardware.Camera.AutoFocusMoveCallback;
 
 
-import dev.penguin.android_hardware.CameraInfoHandler.CameraInfoProxy;
+import dev.penguin.android_hardware.CameraInfoProxyHandler.CameraInfoProxy;
 
 
 import android.hardware.Camera.Area;

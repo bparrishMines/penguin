@@ -3,13 +3,13 @@ package dev.penguin.android_hardware;
 import android.hardware.Camera.CameraInfo;
 import android.os.Build;
 
-public class CameraInfoHandler extends CameraChannelLibrary.$CameraInfoProxyHandler {
+public class CameraInfoProxyHandler extends CameraChannelLibrary.$CameraInfoProxyHandler {
   @SuppressWarnings("deprecation")
   public static class CameraInfoProxy extends CameraInfo {
     public int cameraId;
   }
 
-  public CameraInfoHandler(CameraChannelLibrary.$LibraryImplementations implementations) {
+  public CameraInfoProxyHandler(CameraChannelLibrary.$LibraryImplementations implementations) {
     super(implementations);
   }
 
