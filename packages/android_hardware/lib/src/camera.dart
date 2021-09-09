@@ -1084,7 +1084,7 @@ class CameraParameters {
   /// Sets focus areas.
   ///
   /// See [getFocusAreas] for documentation.
-  Future<void> setFocusAreas(covariant List<CameraArea>? focusAreas) {
+  Future<void> setFocusAreas(List<CameraArea>? focusAreas) {
     return _channel.$setFocusAreas(this, focusAreas);
   }
 

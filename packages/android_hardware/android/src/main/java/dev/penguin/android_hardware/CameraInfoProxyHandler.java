@@ -9,7 +9,7 @@ public class CameraInfoProxyHandler extends CameraChannelLibrary.$CameraInfoProx
     public int cameraId;
   }
 
-  public CameraInfoProxyHandler(CameraChannelLibrary.$LibraryImplementations implementations) {
+  public CameraInfoProxyHandler(LibraryImplementations implementations) {
     super(implementations);
   }
 

@@ -1,5 +1,6 @@
 package dev.penguin.android_hardware;
 
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -9,25 +10,37 @@ import github.penguin.reference.reference.TypeChannelMessenger;
 import io.flutter.view.TextureRegistry;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+
+import android.hardware.Camera;
 
 public class PictureCallbackTest {
-  @Rule
-  public MockitoRule mockitoRule = MockitoJUnit.rule();
-
+  @Rule public MockitoRule mockitoRule = MockitoJUnit.rule();
+  @Mock TypeChannelMessenger mockTypeChannelMessenger;
+  @Mock TextureRegistry mockTextureRegistry;
+  LibraryImplementations testImplementations;
   @Mock
-  TypeChannelMessenger mockTypeChannelMessenger;
+  CameraChannelLibrary.$PictureCallbackChannel mockPictureCallbackChannel;
+
+  @Before
+  public void setUp() {
+    testImplementations = new LibraryImplementations(mockTypeChannelMessenger, mockTextureRegistry);
+    testImplementations.channelPictureCallback = mockPictureCallbackChannel;
+  }
 
   @Test
-  public void createPictureCallback() throws Exception {
-    final LibraryImplementations implementations =
-        new LibraryImplementations(mockTypeChannelMessenger, mock(TextureRegistry.class));
+  public void createPictureCallback() {
+    final Camera.PictureCallback pictureCallback = testImplementations.handlerPictureCallback.createInstance(null, null);
+    assertNotNull(pictureCallback);
+  }
 
-    final DataCallback mockDataCallback = mock(DataCallback.class);
+  @Test
+  public void invoke() {
+    final Camera.PictureCallback pictureCallback = testImplementations.handlerPictureCallback.createInstance(null, null);
 
-    final PictureCallbackHandler pictureCallbackProxy = implementations
-        .handlerPictureCallbackProxy
-        .$create$(mockDataCallback);
-
-    assertNotNull(pictureCallbackProxy);
+    final byte[] data = new byte[0];
+    final Camera mockCamera = mock(Camera.class);
+    pictureCallback.onPictureTaken(data, mockCamera);
+    verify(mockPictureCallbackChannel).$invoke(pictureCallback, data);
   }
 }

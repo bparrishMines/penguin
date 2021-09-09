@@ -8,7 +8,7 @@ import java.util.List;
 import github.penguin.reference.reference.TypeChannelMessenger;
 
 public class AutoFocusMoveCallbackHandler extends CameraChannelLibrary.$AutoFocusMoveCallbackHandler {
-  public AutoFocusMoveCallbackHandler(CameraChannelLibrary.$LibraryImplementations implementations) {
+  public AutoFocusMoveCallbackHandler(LibraryImplementations implementations) {
     super(implementations);
   }
 

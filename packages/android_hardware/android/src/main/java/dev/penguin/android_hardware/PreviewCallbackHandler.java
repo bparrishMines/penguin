@@ -8,7 +8,7 @@ import java.util.List;
 import github.penguin.reference.reference.TypeChannelMessenger;
 
 public class PreviewCallbackHandler extends CameraChannelLibrary.$PreviewCallbackHandler {
-  public PreviewCallbackHandler(CameraChannelLibrary.$LibraryImplementations implementations) {
+  public PreviewCallbackHandler(LibraryImplementations implementations) {
     super(implementations);
   }
 

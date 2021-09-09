@@ -8,7 +8,7 @@ import java.util.List;
 import github.penguin.reference.reference.TypeChannelMessenger;
 
 public class PictureCallbackHandler extends CameraChannelLibrary.$PictureCallbackHandler {
-  public PictureCallbackHandler(CameraChannelLibrary.$LibraryImplementations implementations) {
+  public PictureCallbackHandler(LibraryImplementations implementations) {
     super(implementations);
   }
 

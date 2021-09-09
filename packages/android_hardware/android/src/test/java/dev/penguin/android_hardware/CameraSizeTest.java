@@ -13,27 +13,27 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 public class CameraSizeTest {
-  @Rule
-  public MockitoRule mockitoRule = MockitoJUnit.rule();
-
-  @Mock
-  LibraryImplementations mockImplementations;
-
-  @Mock
-  CameraChannelLibrary.$CameraSizeProxyChannel mockCameraSizeChannel;
-
-  @Before
-  public void setup() {
-    mockImplementations.channelCameraSizeProxy = mockCameraSizeChannel;
-  }
-
-  @Test
-  public void createCameraRect() {
-    final Camera.Size size = mock(Camera.Size.class);
-    size.width = 12;
-    size.height = 54;
-
-    final SizeHandler cameraSizeProxy = new SizeHandler(mockImplementations, true, size);
-    verify(mockCameraSizeChannel).$create$(cameraSizeProxy, false, 12, 54);
-  }
+//  @Rule
+//  public MockitoRule mockitoRule = MockitoJUnit.rule();
+//
+//  @Mock
+//  LibraryImplementations mockImplementations;
+//
+//  @Mock
+//  CameraChannelLibrary.$CameraSizeProxyChannel mockCameraSizeChannel;
+//
+//  @Before
+//  public void setup() {
+//    mockImplementations.channelCameraSizeProxy = mockCameraSizeChannel;
+//  }
+//
+//  @Test
+//  public void createCameraRect() {
+//    final Camera.Size size = mock(Camera.Size.class);
+//    size.width = 12;
+//    size.height = 54;
+//
+//    final SizeHandler cameraSizeProxy = new SizeHandler(mockImplementations, true, size);
+//    verify(mockCameraSizeChannel).$create$(cameraSizeProxy, false, 12, 54);
+//  }
 }

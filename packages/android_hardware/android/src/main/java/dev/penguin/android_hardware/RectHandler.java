@@ -3,7 +3,7 @@ package dev.penguin.android_hardware;
 import android.graphics.Rect;
 
 public class RectHandler extends CameraChannelLibrary.$RectHandler {
-  public RectHandler(CameraChannelLibrary.$LibraryImplementations implementations) {
+  public RectHandler(LibraryImplementations implementations) {
     super(implementations);
   }
 

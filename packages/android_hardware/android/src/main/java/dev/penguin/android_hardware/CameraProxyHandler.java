@@ -63,7 +63,7 @@ public class CameraProxyHandler extends CameraChannelLibrary.$CameraProxyHandler
     }
   }
 
-  public CameraProxyHandler(CameraChannelLibrary.$LibraryImplementations implementations) {
+  public CameraProxyHandler(LibraryImplementations implementations) {
     super(implementations);
   }
 
@@ -157,6 +157,7 @@ public class CameraProxyHandler extends CameraChannelLibrary.$CameraProxyHandler
   public void $lock(CameraProxy $instance) {
     $instance.camera.lock();
   }
+
   @Override
   public Boolean $enableShutterSound(CameraProxy $instance, Boolean enabled) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {

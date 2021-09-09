@@ -4,12 +4,12 @@ import android.graphics.Rect;
 import android.hardware.Camera.Area;
 
 public class AreaHandler extends CameraChannelLibrary.$AreaHandler {
-  public AreaHandler(CameraChannelLibrary.$LibraryImplementations implementations) {
+  public AreaHandler(LibraryImplementations implementations) {
     super(implementations);
   }
 
   @Override
-  public Area $create$(Rect rect, Integer weight) throws Exception {
+  public Area $create$(Rect rect, Integer weight) {
     return new Area(rect, weight);
   }
 }

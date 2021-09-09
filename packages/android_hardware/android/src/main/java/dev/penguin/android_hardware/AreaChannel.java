@@ -7,7 +7,7 @@ import github.penguin.reference.async.Completable;
 import github.penguin.reference.reference.PairedInstance;
 
 public class AreaChannel extends CameraChannelLibrary.$AreaChannel {
-  public AreaChannel(@NonNull CameraChannelLibrary.$LibraryImplementations implementations) {
+  public AreaChannel(@NonNull LibraryImplementations implementations) {
     super(implementations);
   }
 

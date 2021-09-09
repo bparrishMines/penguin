@@ -8,7 +8,7 @@ import java.util.List;
 import github.penguin.reference.reference.TypeChannelMessenger;
 
 public class OnZoomChangeListenerHandler extends CameraChannelLibrary.$OnZoomChangeListenerHandler {
-  public OnZoomChangeListenerHandler(CameraChannelLibrary.$LibraryImplementations implementations) {
+  public OnZoomChangeListenerHandler(LibraryImplementations implementations) {
     super(implementations);
   }
 

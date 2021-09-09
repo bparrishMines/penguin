@@ -7,7 +7,7 @@ import java.util.List;
 import github.penguin.reference.reference.TypeChannelMessenger;
 
 public class ShutterCallbackHandler extends CameraChannelLibrary.$ShutterCallbackHandler {
-  public ShutterCallbackHandler(CameraChannelLibrary.$LibraryImplementations implementations) {
+  public ShutterCallbackHandler(LibraryImplementations implementations) {
     super(implementations);
   }
 

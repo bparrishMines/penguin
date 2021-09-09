@@ -2,9 +2,13 @@ package dev.penguin.android_hardware;
 
 import android.graphics.ImageFormat;
 
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -21,11 +25,16 @@ import static org.powermock.api.mockito.PowerMockito.when;
 @PowerMockIgnore("jdk.internal.reflect.*")
 @PrepareForTest({ImageFormat.class})
 public class ImageFormatTest {
-  @Mock
-  TypeChannelMessenger mockTypeChannelMessenger;
+  @Rule
+  public MockitoRule mockitoRule = MockitoJUnit.rule();
+  @Mock TypeChannelMessenger mockTypeChannelMessenger;
+  @Mock TextureRegistry mockTextureRegistry;
+  LibraryImplementations testImplementations;
 
-  @Mock
-  TextureRegistry mockTextureRegistry;
+  @Before
+  public void setUp() {
+    testImplementations = new LibraryImplementations(mockTypeChannelMessenger, mockTextureRegistry);
+  }
 
   @Test
   public void imageFormats() {
@@ -47,9 +56,7 @@ public class ImageFormatTest {
     PowerMockito.mockStatic(ImageFormat.class);
 
     when(ImageFormat.getBitsPerPixel(23)).thenReturn(13);
-    final LibraryImplementations implementations =
-        new LibraryImplementations(mockTypeChannelMessenger, mockTextureRegistry);
-    final int bits = implementations.handlerImageFormatProxy.$getBitsPerPixel(23);
+    final int bits = testImplementations.handlerImageFormat.$getBitsPerPixel(23);
     assertEquals(bits, 13);
 
     verifyStatic();

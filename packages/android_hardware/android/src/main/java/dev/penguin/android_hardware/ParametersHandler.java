@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ParametersHandler extends CameraChannelLibrary.$ParametersHandler {
-  public ParametersHandler(CameraChannelLibrary.$LibraryImplementations implementations) {
+  public ParametersHandler(LibraryImplementations implementations) {
     super(implementations);
   }
 

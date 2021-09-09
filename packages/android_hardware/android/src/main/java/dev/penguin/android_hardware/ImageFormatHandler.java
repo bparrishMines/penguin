@@ -3,7 +3,7 @@ package dev.penguin.android_hardware;
 import android.graphics.ImageFormat;
 
 public class ImageFormatHandler extends CameraChannelLibrary.$ImageFormatHandler {
-  public ImageFormatHandler(CameraChannelLibrary.$LibraryImplementations implementations) {
+  public ImageFormatHandler(LibraryImplementations implementations) {
     super(implementations);
   }
 

@@ -8,7 +8,7 @@ import java.util.List;
 import github.penguin.reference.reference.TypeChannelMessenger;
 
 public class ErrorCallbackHandler extends CameraChannelLibrary.$ErrorCallbackHandler {
-  public ErrorCallbackHandler(CameraChannelLibrary.$LibraryImplementations implementations) {
+  public ErrorCallbackHandler(LibraryImplementations implementations) {
     super(implementations);
   }
 
