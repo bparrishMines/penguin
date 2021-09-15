@@ -29,19 +29,31 @@ class Reference {
 /// Annotation to customize methods for reference_generator plugin.
 class ReferenceMethod {
   /// Default constructor for [ReferenceMethod].
-  const ReferenceMethod({this.ignore = false});
+  const ReferenceMethod({
+    this.ignore = false,
+    this.platformThrowsAsDefault = false,
+  });
 
   /// Ignore this method.
   final bool ignore;
+
+  /// Whether the default implmenentation of the platform `TypeChannelHandler` method is to throw an exception.
+  final bool platformThrowsAsDefault;
 }
 
 /// Annotation to customize constructors for reference_generator plugin.
 class ReferenceConstructor {
   /// Default constructor for [ReferenceConstructor].
-  const ReferenceConstructor({this.ignore = false});
+  const ReferenceConstructor({
+    this.ignore = false,
+    this.platformThrowsAsDefault = false,
+  });
 
   /// Ignore this constructor.
   final bool ignore;
+
+  /// Whether the default implmenentation of the platform `TypeChannelHandler` method is to throw an exception.
+  final bool platformThrowsAsDefault;
 }
 
 /// Annotation to customize parameters for reference_generator plugin.

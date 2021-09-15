@@ -52,12 +52,17 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
     }
 
     public void $invoke(__function_name__ $instance/*iterate parameters parameter*/, /*replace parameter_type*/String/**/ __parameter_name__/**/) {
-      throw new UnsupportedOperationException();
+      $instance.invoke(/*iterate :join=',' parameters parameter*/__parameter_name__/**/);
     }
 
     @Override
     public __function_name__ createInstance(TypeChannelMessenger messenger, List<Object> arguments) {
-      throw new UnsupportedOperationException();
+      return new __function_name__() {
+        @Override
+        public Completable<Void> invoke(/*iterate :join=',' parameters parameter*//*replace parameter_type*/String/**/ __parameter_name__/**/) {
+          return implementations.channel__function_name__.$invoke(this/*iterate parameters parameter*/,__parameter_name__/**/);
+        }
+      };
     }
 
     @Override
@@ -117,14 +122,34 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
     /*iterate constructors constructor*/
     public __class_name__ $create$__constructor_name__(/*iterate :join=',' parameters parameter*//*replace parameter_type*/Integer/**/ __parameter_name__/**/)
         throws Exception {
-      throw new UnsupportedOperationException();
+      /*if! platformThrowsAsDefault*/
+      return new __class_name__(__parameter_name__) {
+        /*iterate callbackMethods callbackMethod*/
+        /*if returnsFuture*/
+        @Override
+        public void __callbackMethod_name__(/*iterate :join=',' parameters parameter*//*replace parameter_type*/String/**/ __parameter_name__/**/) {
+          /*erase*/
+          // To have the method name in the return statement
+          final __function_name__ __callbackMethod_name__ = __parameter_name__1 -> null;
+          /**/
+          __callbackMethod_name__.invoke(/*iterate :join=',' parameters parameter*/__parameter_name__/**/);
+        }
+        /**/
+        /**/
+      };
+      /**/
+      /*if platformThrowsAsDefault*//*erase*/////throw new UnsupportedOperationException();/**/
     }
     /**/
 
     /*iterate staticMethods staticMethod*/
     /*if returnsFuture*/
     public /*replace staticMethod_returnType*/Double/**/ $__staticMethod_name__(/*iterate :join=',' parameters parameter*//*replace parameter_type*/String/**/ __parameter_name__/**/) throws Exception {
-      throw new UnsupportedOperationException();
+      /*if! platformThrowsAsDefault*/
+      /*if! returnsVoid*/
+      return /**/__class_name__.__staticMethod_name__(/*iterate :join=',' parameters parameter*/__parameter_name__/**/);
+      /**/
+      /*if platformThrowsAsDefault*//*erase*/////throw new UnsupportedOperationException();/**/
     }
     /**/
     /**/
@@ -132,7 +157,11 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
     /*iterate methods method*/
     /*if returnsFuture*/
     public /*replace method_returnType*/String/**/ $__method_name__(__class_name__ $instance/*iterate parameters parameter*/,/*replace parameter_type*/String/**/ __parameter_name__/**/) throws Exception {
-      throw new UnsupportedOperationException();
+      /*if! platformThrowsAsDefault*/
+      /*if! returnsVoid*/
+      return /**/$instance.__method_name__(/*iterate :join=',' parameters parameter*/__parameter_name__/**/);
+      /**/
+      /*if platformThrowsAsDefault*//*erase*/////throw new UnsupportedOperationException();/**/
     }
     /**/
     /**/
