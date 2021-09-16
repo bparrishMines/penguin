@@ -5,7 +5,6 @@ import 'package:reference/annotations.dart';
 
 import 'camera.g.dart';
 
-// TODO: Add Camera parameter
 /// Callback for camera error notification.
 ///
 /// See:
@@ -13,13 +12,34 @@ import 'camera.g.dart';
 ///   [Camera.errorServerDied]
 ///   [Camera.errorEvicted]
 @Reference(
+  channel: 'dev.penguin.android_hardware.OnErrorCallback',
+  platformImport: 'dev.penguin.android_hardware.OnErrorCallback',
+  platformClassName: 'OnErrorCallback',
+)
+typedef OnErrorCallback = void Function(int error, Camera camera);
+
+@Reference(
   channel: 'android.hardware.Camera.ErrorCallback',
   platformImport: 'android.hardware.Camera.ErrorCallback',
   platformClassName: 'ErrorCallback',
 )
-typedef ErrorCallback = void Function(int error);
+class ErrorCallback {
+  ErrorCallback(this.onError, {bool create = true}) {
+    $ChannelRegistrar.instance.implementations.channelOnErrorCallback.$create(
+      onError,
+      $owner: false,
+    );
+    if (create) {
+      _channel.$create$(this, $owner: true, onError: onError);
+    }
+  }
 
-// TODO: Add Camera parameter
+  static $ErrorCallbackChannel get _channel =>
+      $ChannelRegistrar.instance.implementations.channelErrorCallback;
+
+  final OnErrorCallback onError;
+}
+
 /// Callback used to notify on completion of camera auto focus.
 ///
 /// Devices that do not support auto-focus will receive a "fake" callback to
@@ -38,11 +58,34 @@ typedef ErrorCallback = void Function(int error);
 ///
 /// See: [Camera.autoFocus].
 @Reference(
+  channel: 'dev.penguin.android_hardware.OnAutoFocusCallback',
+  platformImport: 'dev.penguin.android_hardware.OnAutoFocusCallback',
+  platformClassName: 'OnAutoFocusCallback',
+)
+typedef OnAutoFocusCallback = void Function(bool success, Camera camera);
+
+@Reference(
   channel: 'android.hardware.Camera.AutoFocusCallback',
   platformImport: 'android.hardware.Camera.AutoFocusCallback',
   platformClassName: 'AutoFocusCallback',
 )
-typedef AutoFocusCallback = void Function(bool success);
+class AutoFocusCallback {
+  AutoFocusCallback(this.onAutoFocus, {bool create = true}) {
+    $ChannelRegistrar.instance.implementations.channelOnAutoFocusCallback
+        .$create(
+      onAutoFocus,
+      $owner: false,
+    );
+    if (create) {
+      _channel.$create$(this, $owner: true, onAutoFocus: onAutoFocus);
+    }
+  }
+
+  static $AutoFocusCallbackChannel get _channel =>
+      $ChannelRegistrar.instance.implementations.channelAutoFocusCallback;
+
+  final OnAutoFocusCallback onAutoFocus;
+}
 
 /// Callback used to signal the moment of actual image capture.
 ///
@@ -54,13 +97,34 @@ typedef AutoFocusCallback = void Function(bool success);
 ///
 /// See: [Camera.takePicture].
 @Reference(
+  channel: 'dev.penguin.android_hardware.OnShutterCallback',
+  platformImport: 'dev.penguin.android_hardware.OnShutterCallback',
+  platformClassName: 'OnShutterCallback',
+)
+typedef OnShutterCallback = void Function();
+
+@Reference(
   channel: 'android.hardware.Camera.ShutterCallback',
   platformImport: 'android.hardware.Camera.ShutterCallback',
   platformClassName: 'ShutterCallback',
 )
-typedef ShutterCallback = void Function();
+class ShutterCallback {
+  ShutterCallback(this.onShutter, {bool create = true}) {
+    $ChannelRegistrar.instance.implementations.channelOnShutterCallback.$create(
+      onShutter,
+      $owner: false,
+    );
+    if (create) {
+      _channel.$create$(this, $owner: true, onShutter: onShutter);
+    }
+  }
 
-// TODO: Add Camera parameter
+  static $ShutterCallbackChannel get _channel =>
+      $ChannelRegistrar.instance.implementations.channelShutterCallback;
+
+  final OnShutterCallback onShutter;
+}
+
 /// Callback for zoom changes during a smooth zoom operation.
 ///
 /// `zoomValue`: the current zoom value. In smooth zoom mode, camera calls this
@@ -69,13 +133,39 @@ typedef ShutterCallback = void Function();
 /// `stopped`: whether smooth zoom is stopped. If the value is true, this is the
 /// last zoom update for the application.
 @Reference(
+  channel: 'dev.penguin.android_hardware.OnZoomChangeCallback',
+  platformImport: 'dev.penguin.android_hardware.OnZoomChangeCallback',
+  platformClassName: 'OnZoomChangeCallback',
+)
+typedef OnZoomChangeCallback = void Function(
+  int zoomValue,
+  bool stopped,
+  Camera camera,
+);
+
+@Reference(
   channel: 'android.hardware.Camera.OnZoomChangeListener',
   platformImport: 'android.hardware.Camera.OnZoomChangeListener',
   platformClassName: 'OnZoomChangeListener',
 )
-typedef OnZoomChangeListener = void Function(int zoomValue, bool stopped);
+class OnZoomChangeListener {
+  OnZoomChangeListener(this.onZoomChange, {bool create = true}) {
+    $ChannelRegistrar.instance.implementations.channelOnZoomChangeCallback
+        .$create(
+      onZoomChange,
+      $owner: false,
+    );
+    if (create) {
+      _channel.$create$(this, $owner: true, onZoomChange: onZoomChange);
+    }
+  }
 
-// TODO: Add Camera parameter
+  static $OnZoomChangeListenerChannel get _channel =>
+      $ChannelRegistrar.instance.implementations.channelOnZoomChangeListener;
+
+  final OnZoomChangeCallback onZoomChange;
+}
+
 /// Callback used to notify on auto focus start and stop.
 ///
 /// This is only supported in continuous autofocus modes --
@@ -83,13 +173,36 @@ typedef OnZoomChangeListener = void Function(int zoomValue, bool stopped);
 /// [CameraParameters.focusModeContinuousPicture]. Applications can show
 /// autofocus animation based on this.
 @Reference(
+  channel: 'dev.penguin.android_hardware.OnAutoFocusMovingCallback',
+  platformImport: 'dev.penguin.android_hardware.OnAutoFocusMovingCallback',
+  platformClassName: 'OnAutoFocusMovingCallback',
+)
+typedef OnAutoFocusMovingCallback = void Function(bool start, Camera camera);
+
+@Reference(
   channel: 'android.hardware.Camera.AutoFocusMoveCallback',
   platformImport: 'android.hardware.Camera.AutoFocusMoveCallback',
   platformClassName: 'AutoFocusMoveCallback',
 )
-typedef AutoFocusMoveCallback = void Function(bool start);
+class AutoFocusMoveCallback {
+  AutoFocusMoveCallback(this.onAutoFocusMoving, {bool create = true}) {
+    $ChannelRegistrar.instance.implementations.channelOnAutoFocusMovingCallback
+        .$create(
+      onAutoFocusMoving,
+      $owner: false,
+    );
+    if (create) {
+      _channel.$create$(this,
+          $owner: true, onAutoFocusMoving: onAutoFocusMoving);
+    }
+  }
 
-// TODO: Add Camera parameter
+  static $AutoFocusMoveCallbackChannel get _channel =>
+      $ChannelRegistrar.instance.implementations.channelAutoFocusMoveCallback;
+
+  final OnAutoFocusMovingCallback onAutoFocusMoving;
+}
+
 /// Callback used to supply image data from a photo capture.
 ///
 /// Called when image data is available after a picture is taken.
@@ -99,13 +212,35 @@ typedef AutoFocusMoveCallback = void Function(bool start);
 ///
 /// See: [Camera.takePicture].
 @Reference(
+  channel: 'dev.penguin.android_hardware.OnPictureTakenCallback',
+  platformImport: 'dev.penguin.android_hardware.OnPictureTakenCallback',
+  platformClassName: 'OnPictureTakenCallback',
+)
+typedef OnPictureTakenCallback = void Function(Uint8List? data, Camera camera);
+
+@Reference(
   channel: 'android.hardware.Camera.PictureCallback',
   platformImport: 'android.hardware.Camera.PictureCallback',
   platformClassName: 'PictureCallback',
 )
-typedef PictureCallback = void Function(Uint8List? data);
+class PictureCallback {
+  PictureCallback(this.onPictureTaken, {bool create = true}) {
+    $ChannelRegistrar.instance.implementations.channelOnPictureTakenCallback
+        .$create(
+      onPictureTaken,
+      $owner: false,
+    );
+    if (create) {
+      _channel.$create$(this, $owner: true, onPictureTaken: onPictureTaken);
+    }
+  }
 
-// TODO: Add Camera parameter
+  static $PictureCallbackChannel get _channel =>
+      $ChannelRegistrar.instance.implementations.channelPictureCallback;
+
+  final OnPictureTakenCallback onPictureTaken;
+}
+
 /// Called as preview frames are displayed.
 ///
 /// If using the [ImageFormat.yv12] format, refer to the equations in
@@ -118,11 +253,34 @@ typedef PictureCallback = void Function(Uint8List? data);
 /// [CameraParameters.setPreviewFormat] is never called, the default will be
 /// the YCbCr_420_SP ([ImageFormat.nv21]) format.
 @Reference(
+  channel: 'dev.penguin.android_hardware.OnPreviewFrameCallback',
+  platformImport: 'dev.penguin.android_hardware.OnPreviewFrameCallback',
+  platformClassName: 'OnPreviewFrameCallback',
+)
+typedef OnPreviewFrameCallback = void Function(Uint8List data, Camera camera);
+
+@Reference(
   channel: 'android.hardware.Camera.PreviewCallback',
   platformImport: 'android.hardware.Camera.PreviewCallback',
   platformClassName: 'PreviewCallback',
 )
-typedef PreviewCallback = void Function(Uint8List data);
+class PreviewCallback {
+  PreviewCallback(this.onPreviewFrame, {bool create = true}) {
+    $ChannelRegistrar.instance.implementations.channelOnPreviewFrameCallback
+        .$create(
+      onPreviewFrame,
+      $owner: false,
+    );
+    if (create) {
+      _channel.$create$(this, $owner: true, onPreviewFrame: onPreviewFrame);
+    }
+  }
+
+  static $PreviewCallbackChannel get _channel =>
+      $ChannelRegistrar.instance.implementations.channelPreviewCallback;
+
+  final OnPreviewFrameCallback onPreviewFrame;
+}
 
 /// The [Camera] class is used to set image capture settings, start/stop preview, snap pictures, and retrieve frames for encoding for video.
 ///
@@ -180,9 +338,9 @@ typedef PreviewCallback = void Function(Uint8List data);
 /// order for your application to be compatible with more devices, you should
 /// not make assumptions about the device camera specifications.
 @Reference(
-  channel: 'dev.penguin.android_hardware.CameraProxyHandler.CameraProxy',
-  platformImport: 'dev.penguin.android_hardware.CameraProxyHandler.CameraProxy',
-  platformClassName: 'CameraProxy',
+  channel: 'android.hardware.Camera',
+  platformImport: 'android.hardware.Camera',
+  platformClassName: 'Camera',
 )
 class Camera {
   /// Construct a [Camera].
@@ -318,10 +476,6 @@ class Camera {
   /// Throws [PlatformException] if [release] has been called on this Camera
   /// instance.
   Future<void> setOneShotPreviewCallback(PreviewCallback callback) {
-    $ChannelRegistrar.instance.implementations.channelPreviewCallback.$create(
-      callback,
-      $owner: false,
-    );
     return _channel.$setOneShotPreviewCallback(this, callback);
   }
 
@@ -341,12 +495,6 @@ class Camera {
   /// Throws [PlatformException] if [release] has been called on this Camera
   /// instance.
   Future<void> setPreviewCallback(PreviewCallback? callback) {
-    if (callback != null) {
-      $ChannelRegistrar.instance.implementations.channelPreviewCallback.$create(
-        callback,
-        $owner: false,
-      );
-    }
     return _channel.$setPreviewCallback(this, callback);
   }
 
@@ -405,37 +553,7 @@ class Camera {
     PictureCallback? postView,
     PictureCallback? jpeg,
   }) {
-    if (shutter != null) {
-      $ChannelRegistrar.instance.implementations.channelShutterCallback.$create(
-        shutter,
-        $owner: false,
-      );
-    }
-    if (raw != null) {
-      $ChannelRegistrar.instance.implementations.channelPictureCallback.$create(
-        raw,
-        $owner: false,
-      );
-    }
-    if (postView != null) {
-      $ChannelRegistrar.instance.implementations.channelPictureCallback.$create(
-        postView,
-        $owner: false,
-      );
-    }
-    if (jpeg != null) {
-      $ChannelRegistrar.instance.implementations.channelPictureCallback.$create(
-        jpeg,
-        $owner: false,
-      );
-    }
-    return _channel.$takePicture(
-      this,
-      shutter,
-      raw,
-      postView,
-      jpeg,
-    );
+    return _channel.$takePicture(this, shutter, raw, postView, jpeg);
   }
 
   /// Starts camera auto-focus and registers a callback function to run when the camera is focused.
@@ -472,10 +590,6 @@ class Camera {
   /// be because of a hardware or other low-level error, or because [release]
   /// has been called on this [Camera] instance.
   Future<void> autoFocus(AutoFocusCallback callback) {
-    $ChannelRegistrar.instance.implementations.channelAutoFocusCallback.$create(
-      callback,
-      $owner: false,
-    );
     return _channel.$autoFocus(this, callback);
   }
 
@@ -556,10 +670,6 @@ class Camera {
 
   /// Registers a callback to be invoked when an error occurs.
   Future<void> setErrorCallback(ErrorCallback callback) {
-    $ChannelRegistrar.instance.implementations.channelErrorCallback.$create(
-      callback,
-      $owner: false,
-    );
     return _channel.$setErrorCallback(this, callback);
   }
 
@@ -613,11 +723,6 @@ class Camera {
 
   /// Registers a listener to be notified when the zoom value is updated by the camera driver during smooth zoom.
   Future<void> setZoomChangeListener(OnZoomChangeListener listener) {
-    $ChannelRegistrar.instance.implementations.channelOnZoomChangeListener
-        .$create(
-      listener,
-      $owner: false,
-    );
     return _channel.$setZoomChangeListener(this, listener);
   }
 
@@ -627,11 +732,6 @@ class Camera {
   /// usually this would be because of a hardware or other low-level error, or
   /// because [release] has been called on this [Camera] instance.
   Future<void> setAutoFocusMoveCallback(AutoFocusMoveCallback callback) {
-    $ChannelRegistrar.instance.implementations.channelAutoFocusMoveCallback
-        .$create(
-      callback,
-      $owner: false,
-    );
     return _channel.$setAutoFocusMoveCallback(this, callback);
   }
 
