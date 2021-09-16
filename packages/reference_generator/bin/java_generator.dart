@@ -31,6 +31,8 @@ String generateJava({
     for (ConstructorNode constructorNode in classNode.constructors) {
       final Map<String, Object> constructorData = <String, Object>{};
       constructorData['name'] = constructorNode.name;
+      constructorData['platformThrowsAsDefault'] =
+          constructorNode.platformThrowsAsDefault;
 
       final List<Map<String, Object>> parameters = <Map<String, Object>>[];
       for (int i = 0; i < constructorNode.parameters.length; i++) {
@@ -45,6 +47,31 @@ String generateJava({
       }
       constructorData['parameters'] = parameters;
 
+      final List<Map<String, Object>> callbackMethods = <Map<String, Object>>[];
+      final Iterable<ParameterNode> callbackMethodNodes =
+          constructorNode.parameters.where(
+        (ParameterNode parameterNode) => parameterNode.type.functionType,
+      );
+      for (ParameterNode callbackMethodNode in callbackMethodNodes) {
+        final Map<String, Object> methodData = <String, Object>{};
+        methodData['name'] = callbackMethodNode.name;
+        methodData['returnsFuture'] = callbackMethodNode.type.isFuture;
+
+        final List<Map<String, Object>> parameters = <Map<String, Object>>[];
+        for (ParameterNode parameterNode
+            in callbackMethodNode.type.function!.parameters) {
+          final Map<String, Object> parameterData = <String, Object>{};
+          parameterData['name'] = parameterNode.name;
+          parameterData['type'] = getTrueTypeName(parameterNode.type);
+
+          parameters.add(parameterData);
+        }
+        methodData['parameters'] = parameters;
+
+        callbackMethods.add(methodData);
+      }
+      classData['callbackMethods'] = callbackMethods;
+
       constructors.add(constructorData);
     }
     classData['constructors'] = constructors;
@@ -53,6 +80,8 @@ String generateJava({
     for (MethodNode methodNode in classNode.staticMethods) {
       final Map<String, Object> methodData = <String, Object>{};
       methodData['name'] = methodNode.name;
+      methodData['platformThrowsAsDefault'] =
+          methodNode.platformThrowsAsDefault;
 
       final bool returnsVoid = methodNode.returnType.platformName == 'void';
       final bool returnsFuture = methodNode.returnType.isFuture;
@@ -84,6 +113,8 @@ String generateJava({
     for (MethodNode methodNode in classNode.methods) {
       final Map<String, Object> methodData = <String, Object>{};
       methodData['name'] = methodNode.name;
+      methodData['platformThrowsAsDefault'] =
+          methodNode.platformThrowsAsDefault;
 
       final bool returnsVoid = methodNode.returnType.platformName == 'void';
       final bool returnsFuture = methodNode.returnType.isFuture;

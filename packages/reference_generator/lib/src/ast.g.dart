@@ -63,6 +63,7 @@ MethodNode _$MethodNodeFromJson(Map<String, dynamic> json) {
     parameters: (json['parameters'] as List<dynamic>)
         .map((e) => ParameterNode.fromJson(e as Map<String, dynamic>))
         .toList(),
+    platformThrowsAsDefault: json['platformThrowsAsDefault'] as bool,
   );
 }
 
@@ -71,6 +72,7 @@ Map<String, dynamic> _$MethodNodeToJson(MethodNode instance) =>
       'name': instance.name,
       'returnType': instance.returnType,
       'parameters': instance.parameters,
+      'platformThrowsAsDefault': instance.platformThrowsAsDefault,
     };
 
 ParameterNode _$ParameterNodeFromJson(Map<String, dynamic> json) {
@@ -98,6 +100,9 @@ TypeNode _$TypeNodeFromJson(Map<String, dynamic> json) {
         .toList(),
     functionType: json['functionType'] as bool,
     isFuture: json['isFuture'] as bool,
+    function: json['function'] == null
+        ? null
+        : FunctionNode.fromJson(json['function'] as Map<String, dynamic>),
   );
 }
 
@@ -108,6 +113,7 @@ Map<String, dynamic> _$TypeNodeToJson(TypeNode instance) => <String, dynamic>{
       'functionType': instance.functionType,
       'isFuture': instance.isFuture,
       'typeArguments': instance.typeArguments,
+      'function': instance.function,
     };
 
 FunctionNode _$FunctionNodeFromJson(Map<String, dynamic> json) {
@@ -138,6 +144,7 @@ ConstructorNode _$ConstructorNodeFromJson(Map<String, dynamic> json) {
         .map((e) => ParameterNode.fromJson(e as Map<String, dynamic>))
         .toList(),
     isNamed: json['isNamed'] as bool,
+    platformThrowsAsDefault: json['platformThrowsAsDefault'] as bool,
   );
 }
 
@@ -146,4 +153,5 @@ Map<String, dynamic> _$ConstructorNodeToJson(ConstructorNode instance) =>
       'name': instance.name,
       'parameters': instance.parameters,
       'isNamed': instance.isNamed,
+      'platformThrowsAsDefault': instance.platformThrowsAsDefault,
     };

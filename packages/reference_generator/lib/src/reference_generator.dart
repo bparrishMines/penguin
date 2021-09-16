@@ -23,7 +23,10 @@ class ReferenceAstBuilder extends Builder {
     final ConstantReader reader = ConstantReader(
       methodAnnotation.firstAnnotationOfExact(element),
     );
-    return ReferenceMethod(ignore: reader.read('ignore').boolValue);
+    return ReferenceMethod(
+      ignore: reader.read('ignore').boolValue,
+      platformThrowsAsDefault: reader.read('platformThrowsAsDefault').boolValue,
+    );
   }
 
   static ReferenceParameter? tryReadParameterAnnotation(Element element) {
@@ -58,7 +61,10 @@ class ReferenceAstBuilder extends Builder {
     final ConstantReader reader = ConstantReader(
       constructorAnnotation.firstAnnotationOfExact(element),
     );
-    return ReferenceConstructor(ignore: reader.read('ignore').boolValue);
+    return ReferenceConstructor(
+      ignore: reader.read('ignore').boolValue,
+      platformThrowsAsDefault: reader.read('platformThrowsAsDefault').boolValue,
+    );
   }
 
   @override
@@ -235,10 +241,16 @@ class ReferenceAstBuilder extends Builder {
       parameters = parameters.take(parameters.length - 1);
     }
 
+    final ReferenceConstructor? referenceConstructor =
+        tryReadConstructorAnnotation(constructorElement);
+
     return ConstructorNode(
       name: constructorElement.name,
       parameters: parameters.toList(),
       isNamed: constructorElement.name != '',
+      platformThrowsAsDefault: referenceConstructor != null
+          ? referenceConstructor.platformThrowsAsDefault
+          : false,
     );
   }
 
@@ -256,8 +268,14 @@ class ReferenceAstBuilder extends Builder {
       platformImports.add(platformReturnTypeImport);
     }
 
+    final ReferenceMethod? referenceMethod =
+        tryReadMethodAnnotation(methodElement);
+
     return MethodNode(
       name: methodElement.name,
+      platformThrowsAsDefault: referenceMethod != null
+          ? referenceMethod.platformThrowsAsDefault
+          : false,
       returnType: _toTypeNode(
         type: methodElement.returnType,
         dartImports: dartImports,
@@ -384,6 +402,11 @@ class ReferenceAstBuilder extends Builder {
         typeArguments: <TypeNode>[],
         functionType: true,
         isFuture: type.isDartAsyncFuture || type.isDartAsyncFutureOr,
+        function: _toFunctionNode(
+          typeAliasElement: aliasElement,
+          dartImports: dartImports,
+          platformImports: platformImports,
+        ),
       );
     }
 
@@ -422,6 +445,7 @@ class ReferenceAstBuilder extends Builder {
               )
               .toList(),
       isFuture: type.isDartAsyncFuture || type.isDartAsyncFutureOr,
+      function: null,
     );
   }
 

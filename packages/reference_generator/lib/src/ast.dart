@@ -66,11 +66,13 @@ class MethodNode {
     required this.name,
     required this.returnType,
     required this.parameters,
+    required this.platformThrowsAsDefault,
   });
 
   final String name;
   final TypeNode returnType;
   final List<ParameterNode> parameters;
+  final bool platformThrowsAsDefault;
 
   factory MethodNode.fromJson(Map<String, dynamic> json) =>
       _$MethodNodeFromJson(json);
@@ -112,7 +114,11 @@ class TypeNode {
     required this.functionType,
     //required this.codeGeneratedType,
     required this.isFuture,
-  });
+    required this.function,
+  }) {
+    if (!functionType && function != null) throw ArgumentError();
+    if (functionType && function == null) throw ArgumentError();
+  }
 
   final String dartName;
   final String platformName;
@@ -121,6 +127,7 @@ class TypeNode {
   final bool functionType;
   final bool isFuture;
   final List<TypeNode> typeArguments;
+  final FunctionNode? function;
 
   factory TypeNode.fromJson(Map<String, dynamic> json) =>
       _$TypeNodeFromJson(json);
@@ -162,6 +169,7 @@ class ConstructorNode {
     required this.name,
     required this.parameters,
     required this.isNamed,
+    required this.platformThrowsAsDefault,
   });
 
   factory ConstructorNode.fromJson(Map<String, dynamic> json) =>
@@ -170,6 +178,7 @@ class ConstructorNode {
   final String name;
   final List<ParameterNode> parameters;
   final bool isNamed;
+  final bool platformThrowsAsDefault;
 
   Map<String, dynamic> toJson() => _$ConstructorNodeToJson(this);
 
