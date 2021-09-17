@@ -16,7 +16,7 @@ class $$$function_name$$Channel extends TypeChannel<Object> {
 
   final $LibraryImplementations implementations;
 
-  Future<PairedInstance?> $create(
+  Future<PairedInstance?> $create$(
     $$function_name$$ $instance, {
     required bool $owner,
   }) {

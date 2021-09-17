@@ -32,7 +32,7 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
       this.implementations = implementations;
     }
 
-    public Completable<PairedInstance> $create(__function_name__ $instance, boolean $owner) {
+    public Completable<PairedInstance> $create$(__function_name__ $instance, boolean $owner) {
       return createNewInstancePair($instance, Collections.emptyList(), $owner);
     }
 

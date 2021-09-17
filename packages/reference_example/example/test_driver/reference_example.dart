@@ -39,7 +39,7 @@ Future<void> main() async {
         returnValue = value;
       };
       $ChannelRegistrar.instance.implementations.channel__function_name__
-          .$create(
+          .$create$(
         callback,
         $owner: false,
       );
