@@ -38,6 +38,11 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
 
     public Completable<Void> $invoke(__function_name__ $instance
         /*iterate parameters parameter*/, /*replace parameter_type*/String/**/ __parameter_name__/**/) {
+      /*iterate parameters parameter*/
+      /*if isReference*/
+      /*erase*////**/implementations.channel__parameter_type__.$create$(__parameter_name__, false);
+      /**/
+      /**/
       return invokeMethod($instance, "", Arrays.<Object>asList(/*iterate :join=',' parameters parameter*/__parameter_name__/**/));
     }
   }
@@ -52,11 +57,6 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
     }
 
     public void $invoke(__function_name__ $instance/*iterate parameters parameter*/, /*replace parameter_type*/String/**/ __parameter_name__/**/) {
-      /*iterate parameters parameter*/
-      /*if isReference*/
-      /*erase*////**/implementations.channel__parameter_type__.$create$(__parameter_name__, false);
-      /**/
-      /**/
       $instance.invoke(/*iterate :join=',' parameters parameter*/__parameter_name__/**/);
     }
 

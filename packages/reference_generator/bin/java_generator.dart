@@ -65,6 +65,7 @@ String generateJava({
           final Map<String, Object> parameterData = <String, Object>{};
           parameterData['name'] = parameterNode.name;
           parameterData['type'] = getTrueTypeName(parameterNode.type);
+          parameterData['isReference'] = parameterNode.type.isReference;
 
           parameters.add(parameterData);
         }

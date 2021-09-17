@@ -43,6 +43,8 @@ String generateDart({
             input: input,
           );
         };
+        parameterData['isReference'] =
+            constructorNode.parameters[i].type.isReference;
 
         parameters.add(parameterData);
       }
@@ -142,6 +144,8 @@ String generateDart({
           input: input,
         );
       };
+      parameterData['isReference'] =
+          functionNode.parameters[i].type.isReference;
 
       parameters.add(parameterData);
     }
