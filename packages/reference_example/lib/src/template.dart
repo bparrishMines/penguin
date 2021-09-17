@@ -22,11 +22,7 @@ class $$class_name$$ {
     bool create = true,
   }) {
     if (create) {
-      _channel.$create$__constructor_name__(
-        this,
-        $owner: true,
-        $$parameter_name$$: $$parameter_name$$,
-      );
+      _channel.$create$__constructor_name__(this, $owner: true);
     }
   }
 

@@ -52,6 +52,11 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
     }
 
     public void $invoke(__function_name__ $instance/*iterate parameters parameter*/, /*replace parameter_type*/String/**/ __parameter_name__/**/) {
+      /*iterate parameters parameter*/
+      /*if isReference*/
+      /*erase*////**/implementations.channel__parameter_type__.$create$(__parameter_name__, false);
+      /**/
+      /**/
       $instance.invoke(/*iterate :join=',' parameters parameter*/__parameter_name__/**/);
     }
 
@@ -88,8 +93,13 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
     }
 
     /*iterate constructors constructor*/
-    public Completable<PairedInstance> $create$__constructor_name__(__class_name__ $instance, boolean $owner/*iterate parameters parameter*/,/*replace parameter_type*/Integer/**/ __parameter_name__/**/) {
-      return createNewInstancePair($instance, Arrays.<Object>asList("__constructor_name__"/*iterate parameters parameter*/, __parameter_name__/**/), $owner);
+    public Completable<PairedInstance> $create$__constructor_name__(__class_name__ $instance, boolean $owner) {
+      /*iterate parameters parameter*/
+      /*if isReference*/
+      /*erase*////**/implementations.channel__parameter_type__.$create$($instance.__parameter_name__, false);
+      /**/
+      /**/
+      return createNewInstancePair($instance, Arrays.<Object>asList("__constructor_name__"/*iterate parameters parameter*/, $instance.__parameter_name__/**/), $owner);
     }
     /**/
 

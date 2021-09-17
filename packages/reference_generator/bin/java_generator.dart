@@ -42,6 +42,8 @@ String generateJava({
           constructorNode.parameters[i].type,
         );
         parameterData['index'] = '${i + 1}';
+        parameterData['isReference'] =
+            constructorNode.parameters[i].type.isReference;
 
         parameters.add(parameterData);
       }
@@ -159,6 +161,8 @@ String generateJava({
       parameterData['name'] = functionNode.parameters[i].name;
       parameterData['type'] = getTrueTypeName(functionNode.parameters[i].type);
       parameterData['index'] = '$i';
+      parameterData['isReference'] =
+          functionNode.parameters[i].type.isReference;
 
       parameters.add(parameterData);
     }
@@ -177,12 +181,13 @@ String generateJava({
 }
 
 String getTrueTypeName(TypeNode type) {
-  final String javaName = javaTypeNameConversion(type.platformName);
+  // final String javaName = javaTypeNameConversion(type.platformName);
   // if (typeAliases.containsKey(type.platformName)) {
   //   javaName = typeAliases[type.platformName]!;
   // } else {
   //   javaName = javaTypeNameConversion(type.platformName);
   // }
+  final String javaName = type.platformName;
 
   final Iterable<String> typeArguments = type.typeArguments.map<String>(
     (TypeNode type) => getTrueTypeName(type),
@@ -194,24 +199,24 @@ String getTrueTypeName(TypeNode type) {
 
   return javaName;
 }
-
-String javaTypeNameConversion(String type) {
-  switch (type) {
-    case 'Uint8List':
-      return 'byte[]';
-    case 'int':
-      return 'Integer';
-    case 'double':
-      return 'Double';
-    case 'bool':
-      return 'Boolean';
-    case 'num':
-      return 'Number';
-    case 'String':
-      return 'String';
-    case 'Set':
-      return 'List';
-  }
-
-  return type;
-}
+//
+// String javaTypeNameConversion(String type) {
+//   switch (type) {
+//     case 'Uint8List':
+//       return 'byte[]';
+//     case 'int':
+//       return 'Integer';
+//     case 'double':
+//       return 'Double';
+//     case 'bool':
+//       return 'Boolean';
+//     case 'num':
+//       return 'Number';
+//     case 'String':
+//       return 'String';
+//     case 'Set':
+//       return 'List';
+//   }
+//
+//   return type;
+// }

@@ -407,6 +407,7 @@ class ReferenceAstBuilder extends Builder {
           dartImports: dartImports,
           platformImports: platformImports,
         ),
+        isReference: isReference,
       );
     }
 
@@ -446,6 +447,7 @@ class ReferenceAstBuilder extends Builder {
               .toList(),
       isFuture: type.isDartAsyncFuture || type.isDartAsyncFutureOr,
       function: null,
+      isReference: isReference,
     );
   }
 

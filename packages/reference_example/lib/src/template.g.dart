@@ -11,8 +11,10 @@ import /*replace :from='template.dart' value*/ 'template.dart' /**/;
 
 /*iterate functions function*/
 class $$$function_name$$Channel extends TypeChannel<Object> {
-  $$$function_name$$Channel(TypeChannelMessenger messenger)
-      : super(messenger, r'__function_channel__');
+  $$$function_name$$Channel(this.implementations)
+      : super(implementations.messenger, r'__function_channel__');
+
+  final $LibraryImplementations implementations;
 
   Future<PairedInstance?> $create(
     $$function_name$$ $instance, {
@@ -31,6 +33,11 @@ class $$$function_name$$Channel extends TypeChannel<Object> {
         /**/ $$parameter_name$$,
     /**/
   ) {
+    /*iterate parameters parameter*/
+    /*if isReference*/
+    /*erase*/ ///**/implementations.channel__parameter_type__.$create$(__parameter_name__, $owner: false);
+    /**/
+    /**/
     return sendInvokeMethod(
       $instance,
       '',
@@ -97,22 +104,26 @@ class $$$function_name$$Handler implements TypeChannelHandler<Object> {
 
 /*iterate classes class*/
 class $$$class_name$$Channel extends TypeChannel<$$class_name$$> {
-  $$$class_name$$Channel(TypeChannelMessenger messenger)
-      : super(messenger, r'__class_channel__');
+  $$$class_name$$Channel(this.implementations)
+      : super(implementations.messenger, r'__class_channel__');
+
+  final $LibraryImplementations implementations;
 
   /*iterate constructors constructor*/
   Future<PairedInstance?> $create$__constructor_name__(
     $$class_name$$ $instance, {
     required bool $owner,
-    /*iterate parameters parameter*/
-    required /*replace parameter_type*/ int /**/ $$parameter_name$$,
-    /**/
   }) {
+    /*iterate parameters parameter*/
+    /*if isReference*/
+    /*erase*/ ///**/implementations.channel__parameter_type__.$create$($instance.__parameter_name__, $owner: false);
+    /**/
+    /**/
     return createNewInstancePair(
       $instance,
       <Object?>[
         r'__constructor_name__',
-        /*iterate parameters parameter*/ $$parameter_name$$, /**/
+        /*iterate parameters parameter*/ $instance.$$parameter_name$$, /**/
       ],
       owner: $owner,
     );
@@ -320,13 +331,13 @@ class $LibraryImplementations {
 
   /*iterate classes class*/
   late $$$class_name$$Channel channel__class_name__ =
-      $$$class_name$$Channel(messenger);
+      $$$class_name$$Channel(this);
   $$$class_name$$Handler handler__class_name__ = $$$class_name$$Handler();
   /**/
 
   /*iterate functions function*/
   late $$$function_name$$Channel channel__function_name__ =
-      $$$function_name$$Channel(messenger);
+      $$$function_name$$Channel(this);
   late $$$function_name$$Handler handler__function_name__ =
       $$$function_name$$Handler(this);
   /**/

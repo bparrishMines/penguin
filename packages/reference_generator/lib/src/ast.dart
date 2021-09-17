@@ -112,7 +112,7 @@ class TypeNode {
     required this.nullable,
     required this.typeArguments,
     required this.functionType,
-    //required this.codeGeneratedType,
+    required this.isReference,
     required this.isFuture,
     required this.function,
   }) {
@@ -123,7 +123,7 @@ class TypeNode {
   final String dartName;
   final String platformName;
   final bool nullable;
-  //final bool codeGeneratedType;
+  final bool isReference;
   final bool functionType;
   final bool isFuture;
   final List<TypeNode> typeArguments;

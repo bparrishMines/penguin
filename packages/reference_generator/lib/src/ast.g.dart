@@ -99,6 +99,7 @@ TypeNode _$TypeNodeFromJson(Map<String, dynamic> json) {
         .map((e) => TypeNode.fromJson(e as Map<String, dynamic>))
         .toList(),
     functionType: json['functionType'] as bool,
+    isReference: json['isReference'] as bool,
     isFuture: json['isFuture'] as bool,
     function: json['function'] == null
         ? null
@@ -110,6 +111,7 @@ Map<String, dynamic> _$TypeNodeToJson(TypeNode instance) => <String, dynamic>{
       'dartName': instance.dartName,
       'platformName': instance.platformName,
       'nullable': instance.nullable,
+      'isReference': instance.isReference,
       'functionType': instance.functionType,
       'isFuture': instance.isFuture,
       'typeArguments': instance.typeArguments,
