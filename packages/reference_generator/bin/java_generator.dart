@@ -73,7 +73,7 @@ String generateJava({
 
         callbackMethods.add(methodData);
       }
-      classData['callbackMethods'] = callbackMethods;
+      constructorData['callbackMethods'] = callbackMethods;
 
       constructors.add(constructorData);
     }
