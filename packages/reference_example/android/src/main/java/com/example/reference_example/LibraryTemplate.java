@@ -148,7 +148,7 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
         /**/
       };
       /**/
-      /*if platformThrowsAsDefault*//*erase*/////throw new UnsupportedOperationException();/**/
+      /*if platformThrowsAsDefault*//*erase*////**/throw new UnsupportedOperationException();/**/
     }
     /**/
 
@@ -159,7 +159,7 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
       /*if! returnsVoid*/
       return /**/__class_name__.__staticMethod_name__(/*iterate :join=',' parameters parameter*/__parameter_name__/**/);
       /**/
-      /*if platformThrowsAsDefault*//*erase*/////throw new UnsupportedOperationException();/**/
+      /*if platformThrowsAsDefault*//*erase*////**/throw new UnsupportedOperationException();/**/
     }
     /**/
     /**/
@@ -171,7 +171,7 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
       /*if! returnsVoid*/
       return /**/$instance.__method_name__(/*iterate :join=',' parameters parameter*/__parameter_name__/**/);
       /**/
-      /*if platformThrowsAsDefault*//*erase*/////throw new UnsupportedOperationException();/**/
+      /*if platformThrowsAsDefault*//*erase*////**/throw new UnsupportedOperationException();/**/
     }
     /**/
     /**/
