@@ -25,13 +25,7 @@ typedef OnErrorCallback = void Function(int error, Camera camera);
 )
 class ErrorCallback {
   ErrorCallback(this.onError, {bool create = true}) {
-    $ChannelRegistrar.instance.implementations.channelOnErrorCallback.$create(
-      onError,
-      $owner: false,
-    );
-    if (create) {
-      _channel.$create$(this, $owner: true, onError: onError);
-    }
+    if (create) _channel.$create$(this, $owner: true);
   }
 
   static $ErrorCallbackChannel get _channel =>
@@ -71,14 +65,7 @@ typedef OnAutoFocusCallback = void Function(bool success, Camera camera);
 )
 class AutoFocusCallback {
   AutoFocusCallback(this.onAutoFocus, {bool create = true}) {
-    $ChannelRegistrar.instance.implementations.channelOnAutoFocusCallback
-        .$create(
-      onAutoFocus,
-      $owner: false,
-    );
-    if (create) {
-      _channel.$create$(this, $owner: true, onAutoFocus: onAutoFocus);
-    }
+    if (create) _channel.$create$(this, $owner: true);
   }
 
   static $AutoFocusCallbackChannel get _channel =>
@@ -110,13 +97,7 @@ typedef OnShutterCallback = void Function();
 )
 class ShutterCallback {
   ShutterCallback(this.onShutter, {bool create = true}) {
-    $ChannelRegistrar.instance.implementations.channelOnShutterCallback.$create(
-      onShutter,
-      $owner: false,
-    );
-    if (create) {
-      _channel.$create$(this, $owner: true, onShutter: onShutter);
-    }
+    if (create) _channel.$create$(this, $owner: true);
   }
 
   static $ShutterCallbackChannel get _channel =>
@@ -150,14 +131,7 @@ typedef OnZoomChangeCallback = void Function(
 )
 class OnZoomChangeListener {
   OnZoomChangeListener(this.onZoomChange, {bool create = true}) {
-    $ChannelRegistrar.instance.implementations.channelOnZoomChangeCallback
-        .$create(
-      onZoomChange,
-      $owner: false,
-    );
-    if (create) {
-      _channel.$create$(this, $owner: true, onZoomChange: onZoomChange);
-    }
+    if (create) _channel.$create$(this, $owner: true);
   }
 
   static $OnZoomChangeListenerChannel get _channel =>
@@ -186,15 +160,7 @@ typedef OnAutoFocusMovingCallback = void Function(bool start, Camera camera);
 )
 class AutoFocusMoveCallback {
   AutoFocusMoveCallback(this.onAutoFocusMoving, {bool create = true}) {
-    $ChannelRegistrar.instance.implementations.channelOnAutoFocusMovingCallback
-        .$create(
-      onAutoFocusMoving,
-      $owner: false,
-    );
-    if (create) {
-      _channel.$create$(this,
-          $owner: true, onAutoFocusMoving: onAutoFocusMoving);
-    }
+    if (create) _channel.$create$(this, $owner: true);
   }
 
   static $AutoFocusMoveCallbackChannel get _channel =>
@@ -225,14 +191,7 @@ typedef OnPictureTakenCallback = void Function(Uint8List? data, Camera camera);
 )
 class PictureCallback {
   PictureCallback(this.onPictureTaken, {bool create = true}) {
-    $ChannelRegistrar.instance.implementations.channelOnPictureTakenCallback
-        .$create(
-      onPictureTaken,
-      $owner: false,
-    );
-    if (create) {
-      _channel.$create$(this, $owner: true, onPictureTaken: onPictureTaken);
-    }
+    if (create) _channel.$create$(this, $owner: true);
   }
 
   static $PictureCallbackChannel get _channel =>
@@ -266,14 +225,7 @@ typedef OnPreviewFrameCallback = void Function(Uint8List data, Camera camera);
 )
 class PreviewCallback {
   PreviewCallback(this.onPreviewFrame, {bool create = true}) {
-    $ChannelRegistrar.instance.implementations.channelOnPreviewFrameCallback
-        .$create(
-      onPreviewFrame,
-      $owner: false,
-    );
-    if (create) {
-      _channel.$create$(this, $owner: true, onPreviewFrame: onPreviewFrame);
-    }
+    if (create) _channel.$create$(this, $owner: true);
   }
 
   static $PreviewCallbackChannel get _channel =>
@@ -2081,14 +2033,7 @@ class CameraParameters {
 class CameraArea {
   /// Default constructor for [CameraArea].
   CameraArea(this.rect, this.weight, {bool create = true}) {
-    if (create) {
-      _channel.$create$(
-        this,
-        $owner: true,
-        rect: rect,
-        weight: weight,
-      );
-    }
+    if (create) _channel.$create$(this, $owner: true);
   }
 
   static $CameraAreaChannel get _channel =>
@@ -2139,16 +2084,7 @@ class CameraRect {
     required this.left,
     bool create = true,
   }) {
-    if (create) {
-      _channel.$create$(
-        this,
-        $owner: true,
-        top: top,
-        bottom: bottom,
-        right: right,
-        left: left,
-      );
-    }
+    if (create) _channel.$create$(this, $owner: true);
   }
 
   static $CameraRectChannel get _channel =>
