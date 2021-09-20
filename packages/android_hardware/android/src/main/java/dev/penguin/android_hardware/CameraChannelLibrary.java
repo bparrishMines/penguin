@@ -254,7 +254,9 @@ public class CameraChannelLibrary {
       return invokeMethod($instance, "", Arrays.<Object>asList(data,camera));
     }
   }
+  
 
+  
   public static class $OnErrorCallbackHandler implements TypeChannelHandler<OnErrorCallback> {
     public final $LibraryImplementations implementations;
 
@@ -485,7 +487,9 @@ public class CameraChannelLibrary {
       return null;
     }
   }
+  
 
+  
   public static class $ErrorCallbackChannel extends TypeChannel<ErrorCallback> {
     public final $LibraryImplementations implementations;
 
@@ -1038,7 +1042,9 @@ public class CameraChannelLibrary {
 
     
   }
+  
 
+  
   public static class $ErrorCallbackHandler implements TypeChannelHandler<ErrorCallback> {
     public final $LibraryImplementations implementations;
 
@@ -1050,7 +1056,7 @@ public class CameraChannelLibrary {
     public ErrorCallback $create$(OnErrorCallback onError)
         throws Exception {
       
-      return new ErrorCallback(__parameter_name__) {
+      return new ErrorCallback(onError) {
         
         
         
@@ -1118,7 +1124,7 @@ public class CameraChannelLibrary {
     public AutoFocusCallback $create$(OnAutoFocusCallback onAutoFocus)
         throws Exception {
       
-      return new AutoFocusCallback(__parameter_name__) {
+      return new AutoFocusCallback(onAutoFocus) {
         
         
         
@@ -1186,7 +1192,7 @@ public class CameraChannelLibrary {
     public ShutterCallback $create$(OnShutterCallback onShutter)
         throws Exception {
       
-      return new ShutterCallback(__parameter_name__) {
+      return new ShutterCallback(onShutter) {
         
         
         
@@ -1254,7 +1260,7 @@ public class CameraChannelLibrary {
     public OnZoomChangeListener $create$(OnZoomChangeCallback onZoomChange)
         throws Exception {
       
-      return new OnZoomChangeListener(__parameter_name__) {
+      return new OnZoomChangeListener(onZoomChange) {
         
         
         
@@ -1322,7 +1328,7 @@ public class CameraChannelLibrary {
     public AutoFocusMoveCallback $create$(OnAutoFocusMovingCallback onAutoFocusMoving)
         throws Exception {
       
-      return new AutoFocusMoveCallback(__parameter_name__) {
+      return new AutoFocusMoveCallback(onAutoFocusMoving) {
         
         
         
@@ -1390,7 +1396,7 @@ public class CameraChannelLibrary {
     public PictureCallback $create$(OnPictureTakenCallback onPictureTaken)
         throws Exception {
       
-      return new PictureCallback(__parameter_name__) {
+      return new PictureCallback(onPictureTaken) {
         
         
         
@@ -1458,7 +1464,7 @@ public class CameraChannelLibrary {
     public PreviewCallback $create$(OnPreviewFrameCallback onPreviewFrame)
         throws Exception {
       
-      return new PreviewCallback(__parameter_name__) {
+      return new PreviewCallback(onPreviewFrame) {
         
         
         
@@ -1526,7 +1532,7 @@ public class CameraChannelLibrary {
     public Camera $create$()
         throws Exception {
       
-      return new Camera(__parameter_name__) {
+      return new Camera() {
         
       };
       
@@ -1538,10 +1544,7 @@ public class CameraChannelLibrary {
     
     public List<CameraInfoProxy> $getAllCameraInfo() throws Exception {
       
-      
-      return Camera.getAllCameraInfo();
-      
-      
+      throw new UnsupportedOperationException();
     }
     
     
@@ -1705,10 +1708,7 @@ public class CameraChannelLibrary {
     
     public Parameters $getParameters(Camera $instance) throws Exception {
       
-      
-      return $instance.getParameters();
-      
-      
+      throw new UnsupportedOperationException();
     }
     
     
@@ -1749,7 +1749,7 @@ public class CameraChannelLibrary {
     
     
     
-    public bool $enableShutterSound(Camera $instance,bool enabled) throws Exception {
+    public bool $enableShutterSound(Camera $instance,boolean enabled) throws Exception {
       
       
       return $instance.enableShutterSound(enabled);
@@ -1978,7 +1978,7 @@ public class CameraChannelLibrary {
         
         case "enableShutterSound":
           
-          return  $enableShutterSound(instance,(bool) arguments.get(0));
+          return  $enableShutterSound(instance,(boolean) arguments.get(0));
           
         
         
@@ -2000,7 +2000,7 @@ public class CameraChannelLibrary {
     public Parameters $create$()
         throws Exception {
       
-      return new Parameters(__parameter_name__) {
+      return new Parameters() {
         
       };
       
@@ -2034,10 +2034,7 @@ public class CameraChannelLibrary {
     
     public List<double> $getFocusDistances(Parameters $instance) throws Exception {
       
-      
-      return $instance.getFocusDistances();
-      
-      
+      throw new UnsupportedOperationException();
     }
     
     
@@ -2102,7 +2099,7 @@ public class CameraChannelLibrary {
     
     
     
-    public void $setAutoExposureLock(Parameters $instance,bool toggle) throws Exception {
+    public void $setAutoExposureLock(Parameters $instance,boolean toggle) throws Exception {
       
       $instance.setAutoExposureLock(toggle);
       
@@ -2688,7 +2685,7 @@ public class CameraChannelLibrary {
     
     
     
-    public void $setAutoWhiteBalanceLock(Parameters $instance,bool toggle) throws Exception {
+    public void $setAutoWhiteBalanceLock(Parameters $instance,boolean toggle) throws Exception {
       
       $instance.setAutoWhiteBalanceLock(toggle);
       
@@ -2823,7 +2820,7 @@ public class CameraChannelLibrary {
     
     
     
-    public void $setVideoStabilization(Parameters $instance,bool toggle) throws Exception {
+    public void $setVideoStabilization(Parameters $instance,boolean toggle) throws Exception {
       
       $instance.setVideoStabilization(toggle);
       
@@ -2951,7 +2948,7 @@ public class CameraChannelLibrary {
         
         
         case "setAutoExposureLock":
-           $setAutoExposureLock(instance,(bool) arguments.get(0));
+           $setAutoExposureLock(instance,(boolean) arguments.get(0));
           
           return null;
           
@@ -3385,7 +3382,7 @@ public class CameraChannelLibrary {
         
         
         case "setAutoWhiteBalanceLock":
-           $setAutoWhiteBalanceLock(instance,(bool) arguments.get(0));
+           $setAutoWhiteBalanceLock(instance,(boolean) arguments.get(0));
           
           return null;
           
@@ -3505,7 +3502,7 @@ public class CameraChannelLibrary {
         
         
         case "setVideoStabilization":
-           $setVideoStabilization(instance,(bool) arguments.get(0));
+           $setVideoStabilization(instance,(boolean) arguments.get(0));
           
           return null;
           
@@ -3545,7 +3542,7 @@ public class CameraChannelLibrary {
     public Area $create$(Rect rect,int weight)
         throws Exception {
       
-      return new Area(__parameter_name__) {
+      return new Area(rect,weight) {
         
       };
       
@@ -3611,7 +3608,7 @@ public class CameraChannelLibrary {
     public Rect $create$(int top,int bottom,int right,int left)
         throws Exception {
       
-      return new Rect(__parameter_name__) {
+      return new Rect(top,bottom,right,left) {
         
       };
       
@@ -3677,7 +3674,7 @@ public class CameraChannelLibrary {
     public Size $create$(int width,int height)
         throws Exception {
       
-      return new Size(__parameter_name__) {
+      return new Size(width,height) {
         
       };
       
@@ -3743,7 +3740,7 @@ public class CameraChannelLibrary {
     public CameraInfoProxy $create$(int cameraId,int facing,int orientation,bool canDisableShutterSound)
         throws Exception {
       
-      return new CameraInfoProxy(__parameter_name__) {
+      return new CameraInfoProxy(cameraId,facing,orientation,canDisableShutterSound) {
         
       };
       
@@ -3867,6 +3864,7 @@ public class CameraChannelLibrary {
           String.format("%s.%s not supported.", instance, methodName));
     }
   }
+  
 
   public static class $LibraryImplementations {
     public final TypeChannelMessenger messenger;

@@ -5,6 +5,10 @@ import 'package:reference/annotations.dart';
 
 import 'camera.g.dart';
 
+const ReferenceParameter javaBoolean = ReferenceParameter(platformTypeName: 'Boolean');
+const ReferenceParameter javaByteArray = ReferenceParameter(platformTypeName: 'byte[]');
+const ReferenceMethod noDefault = ReferenceMethod(platformThrowsAsDefault: true);
+
 /// Callback for camera error notification.
 ///
 /// See:
@@ -56,7 +60,7 @@ class ErrorCallback {
   platformImport: 'dev.penguin.android_hardware.OnAutoFocusCallback',
   platformClassName: 'OnAutoFocusCallback',
 )
-typedef OnAutoFocusCallback = void Function(bool success, Camera camera);
+typedef OnAutoFocusCallback = void Function(@javaBoolean bool success, Camera camera);
 
 @Reference(
   channel: 'android.hardware.Camera.AutoFocusCallback',
@@ -120,7 +124,7 @@ class ShutterCallback {
 )
 typedef OnZoomChangeCallback = void Function(
   int zoomValue,
-  bool stopped,
+    @javaBoolean bool stopped,
   Camera camera,
 );
 
@@ -151,7 +155,7 @@ class OnZoomChangeListener {
   platformImport: 'dev.penguin.android_hardware.OnAutoFocusMovingCallback',
   platformClassName: 'OnAutoFocusMovingCallback',
 )
-typedef OnAutoFocusMovingCallback = void Function(bool start, Camera camera);
+typedef OnAutoFocusMovingCallback = void Function(@javaBoolean bool start, Camera camera);
 
 @Reference(
   channel: 'android.hardware.Camera.AutoFocusMoveCallback',
@@ -182,7 +186,7 @@ class AutoFocusMoveCallback {
   platformImport: 'dev.penguin.android_hardware.OnPictureTakenCallback',
   platformClassName: 'OnPictureTakenCallback',
 )
-typedef OnPictureTakenCallback = void Function(Uint8List? data, Camera camera);
+typedef OnPictureTakenCallback = void Function(@javaByteArray Uint8List? data, Camera camera);
 
 @Reference(
   channel: 'android.hardware.Camera.PictureCallback',
@@ -216,7 +220,7 @@ class PictureCallback {
   platformImport: 'dev.penguin.android_hardware.OnPreviewFrameCallback',
   platformClassName: 'OnPreviewFrameCallback',
 )
-typedef OnPreviewFrameCallback = void Function(Uint8List data, Camera camera);
+typedef OnPreviewFrameCallback = void Function(@javaByteArray Uint8List data, Camera camera);
 
 @Reference(
   channel: 'android.hardware.Camera.PreviewCallback',
@@ -325,6 +329,7 @@ class Camera {
   ///
   /// Throws [PlatformException] if there is an error retrieving the information
   /// (generally due to a hardware or other low-level failure).
+  @noDefault
   static Future<List<CameraInfo>> getAllCameraInfo() {
     return _channel.$getAllCameraInfo();
   }
@@ -653,6 +658,7 @@ class Camera {
     return _channel.$stopSmoothZoom(this);
   }
 
+
   /// Returns the current settings for this Camera service.
   ///
   /// If modifications are made to the returned Parameters, they must be passed
@@ -661,6 +667,7 @@ class Camera {
   /// Throws [PlatformException] if reading parameters fails; usually this would
   /// be because of a hardware or other low-level error, or because [release]
   /// has been called on this [Camera] instance.
+  @noDefault
   Future<CameraParameters> getParameters() => _channel.$getParameters(this);
 
   /// Changes the settings for this Camera service.
@@ -724,7 +731,7 @@ class Camera {
   /// This is only supported on Android
   /// versions >= `Build.VERSION_CODES.JELLY_BEAN_MR1`. A [PlatformException]
   /// will be thrown if the android version is below this.
-  Future<bool> enableShutterSound({required bool enabled}) {
+  Future<bool> enableShutterSound({@javaBoolean required bool enabled}) {
     return _channel.$enableShutterSound(this, enabled);
   }
 }
@@ -1051,6 +1058,7 @@ class CameraParameters {
   /// Far focus distance >= optimal focus distance >= near focus distance. If
   /// the focus distance is infinity, the value will be
   /// Float.POSITIVE_INFINITY (Java).
+  @noDefault
   Future<List<double>> getFocusDistances() => _channel.$getFocusDistances(this);
 
   /// Gets the maximum exposure compensation index.
@@ -1118,7 +1126,7 @@ class CameraParameters {
   /// [Camera.open] but before the first call to [Camera.startPreview] will not
   /// allow the auto-exposure routine to run at all, and may result in severely
   /// over- or under-exposed images.
-  Future<void> setAutoExposureLock({required bool toggle}) {
+  Future<void> setAutoExposureLock({@javaBoolean required bool toggle}) {
     return _channel.$setAutoExposureLock(this, toggle);
   }
 
@@ -1814,7 +1822,7 @@ class CameraParameters {
   /// but before the first call to [Camera.startPreview] will not allow the
   /// auto-white balance routine to run at all, and may result in severely
   /// incorrect color in captured images.
-  Future<void> setAutoWhiteBalanceLock({required bool toggle}) {
+  Future<void> setAutoWhiteBalanceLock({@javaBoolean required bool toggle}) {
     return _channel.$setAutoWhiteBalanceLock(this, toggle);
   }
 
@@ -1978,7 +1986,7 @@ class CameraParameters {
   ///
   /// See:
   ///   [getVideoStabilization]
-  Future<void> setVideoStabilization({required bool toggle}) {
+  Future<void> setVideoStabilization({@javaBoolean required bool toggle}) {
     return _channel.$setVideoStabilization(this, toggle);
   }
 
