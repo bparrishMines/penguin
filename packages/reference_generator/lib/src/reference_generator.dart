@@ -221,19 +221,22 @@ class ReferenceAstBuilder extends Builder {
     required Set<String> dartImports,
     required Set<String> platformImports,
   }) {
-    Iterable<ParameterNode> parameters =
-        constructorElement.parameters.where((ParameterElement element) {
-      final ReferenceParameter? referenceParameter =
-          tryReadParameterAnnotation(element);
-      if (referenceParameter == null) return true;
-      return !referenceParameter.ignore;
-    }).map<ParameterNode>(
-      (ParameterElement parameterElement) => _toParameterNode(
-        parameterElement: parameterElement,
-        dartImports: dartImports,
-        platformImports: platformImports,
-      ),
-    );
+    Iterable<ParameterNode> parameters = constructorElement.parameters
+        .where((ParameterElement element) {
+          final ReferenceParameter? referenceParameter =
+              tryReadParameterAnnotation(element);
+          if (referenceParameter == null) return true;
+          return !referenceParameter.ignore;
+        })
+        .map<ParameterNode>(
+          (ParameterElement parameterElement) => _toParameterNode(
+            parameterElement: parameterElement,
+            dartImports: dartImports,
+            platformImports: platformImports,
+          ),
+        )
+        .where(
+            (ParameterNode parameterNode) => !parameterNode.type.functionType);
 
     if (parameters.isNotEmpty &&
         parameters.last.name == 'create' &&
@@ -397,7 +400,7 @@ class ReferenceAstBuilder extends Builder {
       }
       return TypeNode(
         dartName: aliasElement.name,
-        platformName: aliasElement.name,
+        platformName: platformTypeNameOverride ?? aliasElement.name,
         nullable: nonFutureType.nullabilitySuffix == NullabilitySuffix.question,
         typeArguments: <TypeNode>[],
         functionType: true,
