@@ -53,7 +53,7 @@ import dev.penguin.android_hardware.OnPreviewFrameCallback;
 import android.hardware.Camera.Parameters;
 
 
-import dev.penguin.android_hardware.CameraInfoHandler.CameraInfoProxy;
+import dev.penguin.android_hardware.CameraInfoProxy;
 
 
 import android.hardware.Camera.Area;
@@ -92,7 +92,7 @@ public class CameraChannelLibrary {
       this.implementations = implementations;
     }
 
-    public Completable<PairedInstance> $create(OnErrorCallback $instance, boolean $owner) {
+    public Completable<PairedInstance> $create$(OnErrorCallback $instance, boolean $owner) {
       return createNewInstancePair($instance, Collections.emptyList(), $owner);
     }
 
@@ -117,7 +117,7 @@ public class CameraChannelLibrary {
       this.implementations = implementations;
     }
 
-    public Completable<PairedInstance> $create(OnAutoFocusCallback $instance, boolean $owner) {
+    public Completable<PairedInstance> $create$(OnAutoFocusCallback $instance, boolean $owner) {
       return createNewInstancePair($instance, Collections.emptyList(), $owner);
     }
 
@@ -142,7 +142,7 @@ public class CameraChannelLibrary {
       this.implementations = implementations;
     }
 
-    public Completable<PairedInstance> $create(OnShutterCallback $instance, boolean $owner) {
+    public Completable<PairedInstance> $create$(OnShutterCallback $instance, boolean $owner) {
       return createNewInstancePair($instance, Collections.emptyList(), $owner);
     }
 
@@ -161,7 +161,7 @@ public class CameraChannelLibrary {
       this.implementations = implementations;
     }
 
-    public Completable<PairedInstance> $create(OnZoomChangeCallback $instance, boolean $owner) {
+    public Completable<PairedInstance> $create$(OnZoomChangeCallback $instance, boolean $owner) {
       return createNewInstancePair($instance, Collections.emptyList(), $owner);
     }
 
@@ -188,7 +188,7 @@ public class CameraChannelLibrary {
       this.implementations = implementations;
     }
 
-    public Completable<PairedInstance> $create(OnAutoFocusMovingCallback $instance, boolean $owner) {
+    public Completable<PairedInstance> $create$(OnAutoFocusMovingCallback $instance, boolean $owner) {
       return createNewInstancePair($instance, Collections.emptyList(), $owner);
     }
 
@@ -213,7 +213,7 @@ public class CameraChannelLibrary {
       this.implementations = implementations;
     }
 
-    public Completable<PairedInstance> $create(OnPictureTakenCallback $instance, boolean $owner) {
+    public Completable<PairedInstance> $create$(OnPictureTakenCallback $instance, boolean $owner) {
       return createNewInstancePair($instance, Collections.emptyList(), $owner);
     }
 
@@ -238,7 +238,7 @@ public class CameraChannelLibrary {
       this.implementations = implementations;
     }
 
-    public Completable<PairedInstance> $create(OnPreviewFrameCallback $instance, boolean $owner) {
+    public Completable<PairedInstance> $create$(OnPreviewFrameCallback $instance, boolean $owner) {
       return createNewInstancePair($instance, Collections.emptyList(), $owner);
     }
 
@@ -254,9 +254,7 @@ public class CameraChannelLibrary {
       return invokeMethod($instance, "", Arrays.<Object>asList(data,camera));
     }
   }
-  
 
-  
   public static class $OnErrorCallbackHandler implements TypeChannelHandler<OnErrorCallback> {
     public final $LibraryImplementations implementations;
 
@@ -487,9 +485,7 @@ public class CameraChannelLibrary {
       return null;
     }
   }
-  
 
-  
   public static class $ErrorCallbackChannel extends TypeChannel<ErrorCallback> {
     public final $LibraryImplementations implementations;
 
@@ -1042,9 +1038,7 @@ public class CameraChannelLibrary {
 
     
   }
-  
 
-  
   public static class $ErrorCallbackHandler implements TypeChannelHandler<ErrorCallback> {
     public final $LibraryImplementations implementations;
 
@@ -3873,7 +3867,6 @@ public class CameraChannelLibrary {
           String.format("%s.%s not supported.", instance, methodName));
     }
   }
-  
 
   public static class $LibraryImplementations {
     public final TypeChannelMessenger messenger;

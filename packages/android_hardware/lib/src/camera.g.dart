@@ -19,7 +19,7 @@ class $OnErrorCallbackChannel extends TypeChannel<Object> {
 
   final $LibraryImplementations implementations;
 
-  Future<PairedInstance?> $create(
+  Future<PairedInstance?> $create$(
     OnErrorCallback $instance, {
     required bool $owner,
   }) {
@@ -55,7 +55,7 @@ class $OnAutoFocusCallbackChannel extends TypeChannel<Object> {
 
   final $LibraryImplementations implementations;
 
-  Future<PairedInstance?> $create(
+  Future<PairedInstance?> $create$(
     OnAutoFocusCallback $instance, {
     required bool $owner,
   }) {
@@ -91,7 +91,7 @@ class $OnShutterCallbackChannel extends TypeChannel<Object> {
 
   final $LibraryImplementations implementations;
 
-  Future<PairedInstance?> $create(
+  Future<PairedInstance?> $create$(
     OnShutterCallback $instance, {
     required bool $owner,
   }) {
@@ -120,7 +120,7 @@ class $OnZoomChangeCallbackChannel extends TypeChannel<Object> {
 
   final $LibraryImplementations implementations;
 
-  Future<PairedInstance?> $create(
+  Future<PairedInstance?> $create$(
     OnZoomChangeCallback $instance, {
     required bool $owner,
   }) {
@@ -158,7 +158,7 @@ class $OnAutoFocusMovingCallbackChannel extends TypeChannel<Object> {
 
   final $LibraryImplementations implementations;
 
-  Future<PairedInstance?> $create(
+  Future<PairedInstance?> $create$(
     OnAutoFocusMovingCallback $instance, {
     required bool $owner,
   }) {
@@ -194,7 +194,7 @@ class $OnPictureTakenCallbackChannel extends TypeChannel<Object> {
 
   final $LibraryImplementations implementations;
 
-  Future<PairedInstance?> $create(
+  Future<PairedInstance?> $create$(
     OnPictureTakenCallback $instance, {
     required bool $owner,
   }) {
@@ -230,7 +230,7 @@ class $OnPreviewFrameCallbackChannel extends TypeChannel<Object> {
 
   final $LibraryImplementations implementations;
 
-  Future<PairedInstance?> $create(
+  Future<PairedInstance?> $create$(
     OnPreviewFrameCallback $instance, {
     required bool $owner,
   }) {
@@ -602,7 +602,7 @@ class $ErrorCallbackChannel extends TypeChannel<ErrorCallback> {
     required bool $owner,
   }) {
     implementations.channelOnErrorCallback
-        .$create($instance.onError, $owner: false);
+        .$create$($instance.onError, $owner: false);
 
     return createNewInstancePair(
       $instance,
@@ -652,7 +652,7 @@ class $ShutterCallbackChannel extends TypeChannel<ShutterCallback> {
     required bool $owner,
   }) {
     implementations.channelOnShutterCallback
-        .$create($instance.onShutter, $owner: false);
+        .$create$($instance.onShutter, $owner: false);
 
     return createNewInstancePair(
       $instance,

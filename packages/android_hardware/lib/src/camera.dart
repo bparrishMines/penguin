@@ -2138,7 +2138,7 @@ class CameraSize {
 @Reference(
   channel: 'dev.penguin.android_hardware.CameraInfoHandler.CameraInfoProxy',
   platformImport:
-      'dev.penguin.android_hardware.CameraInfoHandler.CameraInfoProxy',
+      'dev.penguin.android_hardware.CameraInfoProxy',
   platformClassName: 'CameraInfoProxy',
 )
 class CameraInfo {
