@@ -685,15 +685,11 @@ class $ErrorCallbackChannel extends TypeChannel<ErrorCallback> {
     required bool $owner,
   }) {
     
-    
-    implementations.channelOnErrorCallback.$create$($instance.onError, $owner: false);
-    
-    
     return createNewInstancePair(
       $instance,
       <Object?>[
         r'',
-         $instance.onError, 
+        
       ],
       owner: $owner,
     );
@@ -717,15 +713,11 @@ class $AutoFocusCallbackChannel extends TypeChannel<AutoFocusCallback> {
     required bool $owner,
   }) {
     
-    
-    implementations.channelOnAutoFocusCallback.$create$($instance.onAutoFocus, $owner: false);
-    
-    
     return createNewInstancePair(
       $instance,
       <Object?>[
         r'',
-         $instance.onAutoFocus, 
+        
       ],
       owner: $owner,
     );
@@ -749,15 +741,11 @@ class $ShutterCallbackChannel extends TypeChannel<ShutterCallback> {
     required bool $owner,
   }) {
     
-    
-    implementations.channelOnShutterCallback.$create$($instance.onShutter, $owner: false);
-    
-    
     return createNewInstancePair(
       $instance,
       <Object?>[
         r'',
-         $instance.onShutter, 
+        
       ],
       owner: $owner,
     );
@@ -781,15 +769,11 @@ class $OnZoomChangeListenerChannel extends TypeChannel<OnZoomChangeListener> {
     required bool $owner,
   }) {
     
-    
-    implementations.channelOnZoomChangeCallback.$create$($instance.onZoomChange, $owner: false);
-    
-    
     return createNewInstancePair(
       $instance,
       <Object?>[
         r'',
-         $instance.onZoomChange, 
+        
       ],
       owner: $owner,
     );
@@ -813,15 +797,11 @@ class $AutoFocusMoveCallbackChannel extends TypeChannel<AutoFocusMoveCallback> {
     required bool $owner,
   }) {
     
-    
-    implementations.channelOnAutoFocusMovingCallback.$create$($instance.onAutoFocusMoving, $owner: false);
-    
-    
     return createNewInstancePair(
       $instance,
       <Object?>[
         r'',
-         $instance.onAutoFocusMoving, 
+        
       ],
       owner: $owner,
     );
@@ -845,15 +825,11 @@ class $PictureCallbackChannel extends TypeChannel<PictureCallback> {
     required bool $owner,
   }) {
     
-    
-    implementations.channelOnPictureTakenCallback.$create$($instance.onPictureTaken, $owner: false);
-    
-    
     return createNewInstancePair(
       $instance,
       <Object?>[
         r'',
-         $instance.onPictureTaken, 
+        
       ],
       owner: $owner,
     );
@@ -877,15 +853,11 @@ class $PreviewCallbackChannel extends TypeChannel<PreviewCallback> {
     required bool $owner,
   }) {
     
-    
-    implementations.channelOnPreviewFrameCallback.$create$($instance.onPreviewFrame, $owner: false);
-    
-    
     return createNewInstancePair(
       $instance,
       <Object?>[
         r'',
-         $instance.onPreviewFrame, 
+        
       ],
       owner: $owner,
     );
@@ -2906,12 +2878,8 @@ class $ErrorCallbackHandler implements TypeChannelHandler<ErrorCallback> {
   ErrorCallback $create$(
     TypeChannelMessenger messenger,
     
-    OnErrorCallback onError,
-    
   ) {
     return ErrorCallback  (
-      
-       onError,
       
       create: false,
     );
@@ -2951,10 +2919,6 @@ class $ErrorCallbackHandler implements TypeChannelHandler<ErrorCallback> {
         return $create$(
           messenger,
           
-          
-          arguments[1] 
-           as OnErrorCallback,
-          
         );
       
     }
@@ -2990,12 +2954,8 @@ class $AutoFocusCallbackHandler implements TypeChannelHandler<AutoFocusCallback>
   AutoFocusCallback $create$(
     TypeChannelMessenger messenger,
     
-    OnAutoFocusCallback onAutoFocus,
-    
   ) {
     return AutoFocusCallback  (
-      
-       onAutoFocus,
       
       create: false,
     );
@@ -3035,10 +2995,6 @@ class $AutoFocusCallbackHandler implements TypeChannelHandler<AutoFocusCallback>
         return $create$(
           messenger,
           
-          
-          arguments[1] 
-           as OnAutoFocusCallback,
-          
         );
       
     }
@@ -3074,12 +3030,8 @@ class $ShutterCallbackHandler implements TypeChannelHandler<ShutterCallback> {
   ShutterCallback $create$(
     TypeChannelMessenger messenger,
     
-    OnShutterCallback onShutter,
-    
   ) {
     return ShutterCallback  (
-      
-       onShutter,
       
       create: false,
     );
@@ -3119,10 +3071,6 @@ class $ShutterCallbackHandler implements TypeChannelHandler<ShutterCallback> {
         return $create$(
           messenger,
           
-          
-          arguments[1] 
-           as OnShutterCallback,
-          
         );
       
     }
@@ -3158,12 +3106,8 @@ class $OnZoomChangeListenerHandler implements TypeChannelHandler<OnZoomChangeLis
   OnZoomChangeListener $create$(
     TypeChannelMessenger messenger,
     
-    OnZoomChangeCallback onZoomChange,
-    
   ) {
     return OnZoomChangeListener  (
-      
-       onZoomChange,
       
       create: false,
     );
@@ -3203,10 +3147,6 @@ class $OnZoomChangeListenerHandler implements TypeChannelHandler<OnZoomChangeLis
         return $create$(
           messenger,
           
-          
-          arguments[1] 
-           as OnZoomChangeCallback,
-          
         );
       
     }
@@ -3242,12 +3182,8 @@ class $AutoFocusMoveCallbackHandler implements TypeChannelHandler<AutoFocusMoveC
   AutoFocusMoveCallback $create$(
     TypeChannelMessenger messenger,
     
-    OnAutoFocusMovingCallback onAutoFocusMoving,
-    
   ) {
     return AutoFocusMoveCallback  (
-      
-       onAutoFocusMoving,
       
       create: false,
     );
@@ -3287,10 +3223,6 @@ class $AutoFocusMoveCallbackHandler implements TypeChannelHandler<AutoFocusMoveC
         return $create$(
           messenger,
           
-          
-          arguments[1] 
-           as OnAutoFocusMovingCallback,
-          
         );
       
     }
@@ -3326,12 +3258,8 @@ class $PictureCallbackHandler implements TypeChannelHandler<PictureCallback> {
   PictureCallback $create$(
     TypeChannelMessenger messenger,
     
-    OnPictureTakenCallback onPictureTaken,
-    
   ) {
     return PictureCallback  (
-      
-       onPictureTaken,
       
       create: false,
     );
@@ -3371,10 +3299,6 @@ class $PictureCallbackHandler implements TypeChannelHandler<PictureCallback> {
         return $create$(
           messenger,
           
-          
-          arguments[1] 
-           as OnPictureTakenCallback,
-          
         );
       
     }
@@ -3410,12 +3334,8 @@ class $PreviewCallbackHandler implements TypeChannelHandler<PreviewCallback> {
   PreviewCallback $create$(
     TypeChannelMessenger messenger,
     
-    OnPreviewFrameCallback onPreviewFrame,
-    
   ) {
     return PreviewCallback  (
-      
-       onPreviewFrame,
       
       create: false,
     );
@@ -3454,10 +3374,6 @@ class $PreviewCallbackHandler implements TypeChannelHandler<PreviewCallback> {
       case r'':
         return $create$(
           messenger,
-          
-          
-          arguments[1] 
-           as OnPreviewFrameCallback,
           
         );
       

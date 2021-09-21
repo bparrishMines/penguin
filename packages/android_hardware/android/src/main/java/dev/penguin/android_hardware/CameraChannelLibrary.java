@@ -501,11 +501,7 @@ public class CameraChannelLibrary {
     
     public Completable<PairedInstance> $create$(ErrorCallback $instance, boolean $owner) {
       
-      
-      implementations.channelOnErrorCallback.$create$($instance.onError, false);
-      
-      
-      return createNewInstancePair($instance, Arrays.<Object>asList("", $instance.onError), $owner);
+      return createNewInstancePair($instance, Arrays.<Object>asList(""), $owner);
     }
     
 
@@ -525,11 +521,7 @@ public class CameraChannelLibrary {
     
     public Completable<PairedInstance> $create$(AutoFocusCallback $instance, boolean $owner) {
       
-      
-      implementations.channelOnAutoFocusCallback.$create$($instance.onAutoFocus, false);
-      
-      
-      return createNewInstancePair($instance, Arrays.<Object>asList("", $instance.onAutoFocus), $owner);
+      return createNewInstancePair($instance, Arrays.<Object>asList(""), $owner);
     }
     
 
@@ -549,11 +541,7 @@ public class CameraChannelLibrary {
     
     public Completable<PairedInstance> $create$(ShutterCallback $instance, boolean $owner) {
       
-      
-      implementations.channelOnShutterCallback.$create$($instance.onShutter, false);
-      
-      
-      return createNewInstancePair($instance, Arrays.<Object>asList("", $instance.onShutter), $owner);
+      return createNewInstancePair($instance, Arrays.<Object>asList(""), $owner);
     }
     
 
@@ -573,11 +561,7 @@ public class CameraChannelLibrary {
     
     public Completable<PairedInstance> $create$(OnZoomChangeListener $instance, boolean $owner) {
       
-      
-      implementations.channelOnZoomChangeCallback.$create$($instance.onZoomChange, false);
-      
-      
-      return createNewInstancePair($instance, Arrays.<Object>asList("", $instance.onZoomChange), $owner);
+      return createNewInstancePair($instance, Arrays.<Object>asList(""), $owner);
     }
     
 
@@ -597,11 +581,7 @@ public class CameraChannelLibrary {
     
     public Completable<PairedInstance> $create$(AutoFocusMoveCallback $instance, boolean $owner) {
       
-      
-      implementations.channelOnAutoFocusMovingCallback.$create$($instance.onAutoFocusMoving, false);
-      
-      
-      return createNewInstancePair($instance, Arrays.<Object>asList("", $instance.onAutoFocusMoving), $owner);
+      return createNewInstancePair($instance, Arrays.<Object>asList(""), $owner);
     }
     
 
@@ -621,11 +601,7 @@ public class CameraChannelLibrary {
     
     public Completable<PairedInstance> $create$(PictureCallback $instance, boolean $owner) {
       
-      
-      implementations.channelOnPictureTakenCallback.$create$($instance.onPictureTaken, false);
-      
-      
-      return createNewInstancePair($instance, Arrays.<Object>asList("", $instance.onPictureTaken), $owner);
+      return createNewInstancePair($instance, Arrays.<Object>asList(""), $owner);
     }
     
 
@@ -645,11 +621,7 @@ public class CameraChannelLibrary {
     
     public Completable<PairedInstance> $create$(PreviewCallback $instance, boolean $owner) {
       
-      
-      implementations.channelOnPreviewFrameCallback.$create$($instance.onPreviewFrame, false);
-      
-      
-      return createNewInstancePair($instance, Arrays.<Object>asList("", $instance.onPreviewFrame), $owner);
+      return createNewInstancePair($instance, Arrays.<Object>asList(""), $owner);
     }
     
 
@@ -1053,12 +1025,10 @@ public class CameraChannelLibrary {
     }
 
     
-    public ErrorCallback $create$(OnErrorCallback onError)
+    public ErrorCallback $create$()
         throws Exception {
       
-      return new ErrorCallback(onError) {
-        
-        
+      return new ErrorCallback() {
         
       };
       
@@ -1089,7 +1059,7 @@ public class CameraChannelLibrary {
       switch(constructorName) {
         
         case "":
-          return $create$((OnErrorCallback) arguments.get(1));
+          return $create$();
         
       }
 
@@ -1121,12 +1091,10 @@ public class CameraChannelLibrary {
     }
 
     
-    public AutoFocusCallback $create$(OnAutoFocusCallback onAutoFocus)
+    public AutoFocusCallback $create$()
         throws Exception {
       
-      return new AutoFocusCallback(onAutoFocus) {
-        
-        
+      return new AutoFocusCallback() {
         
       };
       
@@ -1157,7 +1125,7 @@ public class CameraChannelLibrary {
       switch(constructorName) {
         
         case "":
-          return $create$((OnAutoFocusCallback) arguments.get(1));
+          return $create$();
         
       }
 
@@ -1189,12 +1157,10 @@ public class CameraChannelLibrary {
     }
 
     
-    public ShutterCallback $create$(OnShutterCallback onShutter)
+    public ShutterCallback $create$()
         throws Exception {
       
-      return new ShutterCallback(onShutter) {
-        
-        
+      return new ShutterCallback() {
         
       };
       
@@ -1225,7 +1191,7 @@ public class CameraChannelLibrary {
       switch(constructorName) {
         
         case "":
-          return $create$((OnShutterCallback) arguments.get(1));
+          return $create$();
         
       }
 
@@ -1257,12 +1223,10 @@ public class CameraChannelLibrary {
     }
 
     
-    public OnZoomChangeListener $create$(OnZoomChangeCallback onZoomChange)
+    public OnZoomChangeListener $create$()
         throws Exception {
       
-      return new OnZoomChangeListener(onZoomChange) {
-        
-        
+      return new OnZoomChangeListener() {
         
       };
       
@@ -1293,7 +1257,7 @@ public class CameraChannelLibrary {
       switch(constructorName) {
         
         case "":
-          return $create$((OnZoomChangeCallback) arguments.get(1));
+          return $create$();
         
       }
 
@@ -1325,12 +1289,10 @@ public class CameraChannelLibrary {
     }
 
     
-    public AutoFocusMoveCallback $create$(OnAutoFocusMovingCallback onAutoFocusMoving)
+    public AutoFocusMoveCallback $create$()
         throws Exception {
       
-      return new AutoFocusMoveCallback(onAutoFocusMoving) {
-        
-        
+      return new AutoFocusMoveCallback() {
         
       };
       
@@ -1361,7 +1323,7 @@ public class CameraChannelLibrary {
       switch(constructorName) {
         
         case "":
-          return $create$((OnAutoFocusMovingCallback) arguments.get(1));
+          return $create$();
         
       }
 
@@ -1393,12 +1355,10 @@ public class CameraChannelLibrary {
     }
 
     
-    public PictureCallback $create$(OnPictureTakenCallback onPictureTaken)
+    public PictureCallback $create$()
         throws Exception {
       
-      return new PictureCallback(onPictureTaken) {
-        
-        
+      return new PictureCallback() {
         
       };
       
@@ -1429,7 +1389,7 @@ public class CameraChannelLibrary {
       switch(constructorName) {
         
         case "":
-          return $create$((OnPictureTakenCallback) arguments.get(1));
+          return $create$();
         
       }
 
@@ -1461,13 +1421,15 @@ public class CameraChannelLibrary {
     }
 
     
-    public PreviewCallback $create$(OnPreviewFrameCallback onPreviewFrame)
+    public PreviewCallback $create$()
         throws Exception {
       
-      return new PreviewCallback(onPreviewFrame) {
-        
-        
-        
+      return new PreviewCallback() {
+
+        @Override
+        public void onPreviewFrame(byte[] data, Camera camera) {
+
+        }
       };
       
       
@@ -1497,7 +1459,7 @@ public class CameraChannelLibrary {
       switch(constructorName) {
         
         case "":
-          return $create$((OnPreviewFrameCallback) arguments.get(1));
+          return $create$();
         
       }
 
@@ -1749,7 +1711,7 @@ public class CameraChannelLibrary {
     
     
     
-    public bool $enableShutterSound(Camera $instance,boolean enabled) throws Exception {
+    public bool $enableShutterSound(Camera $instance,Boolean enabled) throws Exception {
       
       
       return $instance.enableShutterSound(enabled);
@@ -1978,7 +1940,7 @@ public class CameraChannelLibrary {
         
         case "enableShutterSound":
           
-          return  $enableShutterSound(instance,(boolean) arguments.get(0));
+          return  $enableShutterSound(instance,(Boolean) arguments.get(0));
           
         
         
@@ -2099,7 +2061,7 @@ public class CameraChannelLibrary {
     
     
     
-    public void $setAutoExposureLock(Parameters $instance,boolean toggle) throws Exception {
+    public void $setAutoExposureLock(Parameters $instance,Boolean toggle) throws Exception {
       
       $instance.setAutoExposureLock(toggle);
       
@@ -2685,7 +2647,7 @@ public class CameraChannelLibrary {
     
     
     
-    public void $setAutoWhiteBalanceLock(Parameters $instance,boolean toggle) throws Exception {
+    public void $setAutoWhiteBalanceLock(Parameters $instance,Boolean toggle) throws Exception {
       
       $instance.setAutoWhiteBalanceLock(toggle);
       
@@ -2820,7 +2782,7 @@ public class CameraChannelLibrary {
     
     
     
-    public void $setVideoStabilization(Parameters $instance,boolean toggle) throws Exception {
+    public void $setVideoStabilization(Parameters $instance,Boolean toggle) throws Exception {
       
       $instance.setVideoStabilization(toggle);
       
@@ -2948,7 +2910,7 @@ public class CameraChannelLibrary {
         
         
         case "setAutoExposureLock":
-           $setAutoExposureLock(instance,(boolean) arguments.get(0));
+           $setAutoExposureLock(instance,(Boolean) arguments.get(0));
           
           return null;
           
@@ -3382,7 +3344,7 @@ public class CameraChannelLibrary {
         
         
         case "setAutoWhiteBalanceLock":
-           $setAutoWhiteBalanceLock(instance,(boolean) arguments.get(0));
+           $setAutoWhiteBalanceLock(instance,(Boolean) arguments.get(0));
           
           return null;
           
@@ -3502,7 +3464,7 @@ public class CameraChannelLibrary {
         
         
         case "setVideoStabilization":
-           $setVideoStabilization(instance,(boolean) arguments.get(0));
+           $setVideoStabilization(instance,(Boolean) arguments.get(0));
           
           return null;
           
