@@ -55,14 +55,17 @@ String runGenerator(
         throw StateError('Failed to find data!');
       }
 
+      final String? ifIdentifier = currentToken.ifIdentifier;
       final int end = min(currentToken.end ?? dataList.length, dataList.length);
       for (int i = currentToken.start; i < end; i++) {
-        outputs.add(runGenerator(
-          Queue<String>.from(templateQueue),
-          tokens,
-          StringBuffer(),
-          dataList[i],
-        ));
+        if (ifIdentifier == null || dataList[i][ifIdentifier] as bool) {
+          outputs.add(runGenerator(
+            Queue<String>.from(templateQueue),
+            tokens,
+            StringBuffer(),
+            dataList[i],
+          ));
+        }
       }
       flush(templateQueue);
       tokens.removeFirst();
@@ -186,6 +189,9 @@ Token? tryParseToken(Queue<String> templateQueue) {
     final String? endModifier =
         RegExp(r'(?<=:end=)\w+(?=\s)', multiLine: true, dotAll: true)
             .stringMatch(tokenString);
+    final String? ifModifier =
+        RegExp(r'(?<=:if=)\w+(?=\s)', multiLine: true, dotAll: true)
+            .stringMatch(tokenString);
 
     return IterateToken(
       listName: listName,
@@ -193,6 +199,7 @@ Token? tryParseToken(Queue<String> templateQueue) {
       join: joinModifier ?? '',
       start: startModifier == null ? 0 : int.parse(startModifier),
       end: endModifier == null ? null : int.parse(endModifier),
+      ifIdentifier: ifModifier,
     );
   } else if (tokenType == '/*replace') {
     final String? fromModifier =
@@ -237,6 +244,7 @@ class IterateToken extends Token {
     required this.join,
     required this.start,
     this.end,
+    this.ifIdentifier,
   });
 
   final String listName;
@@ -244,6 +252,7 @@ class IterateToken extends Token {
   final String join;
   final int start;
   final int? end;
+  final String? ifIdentifier;
 }
 
 class ReplaceToken extends Token {

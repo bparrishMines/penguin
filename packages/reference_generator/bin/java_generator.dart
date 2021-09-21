@@ -44,6 +44,8 @@ String generateJava({
         parameterData['index'] = '${i + 1}';
         parameterData['isReference'] =
             constructorNode.parameters[i].type.isReference;
+        parameterData['isNotCallbackParameter'] =
+            !constructorNode.parameters[i].type.functionType;
 
         parameters.add(parameterData);
       }

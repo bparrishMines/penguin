@@ -234,9 +234,7 @@ class ReferenceAstBuilder extends Builder {
             dartImports: dartImports,
             platformImports: platformImports,
           ),
-        )
-        .where(
-            (ParameterNode parameterNode) => !parameterNode.type.functionType);
+        );
 
     if (parameters.isNotEmpty &&
         parameters.last.name == 'create' &&
