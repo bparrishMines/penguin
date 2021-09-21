@@ -1,11 +1,13 @@
 /// A [ReferenceParameter] with the ignore flag set to true.
 const ignoreParam = ReferenceParameter(ignore: true);
 
+const ignoreMethod = ReferenceMethod(ignore: true);
+
 /// A [ReferenceParameter] for `java.lang.Long`.
-const javaFloat = ReferenceParameter(platformTypeName: 'Float');
+const javaFloat = ReferenceType(platformClassName: 'Float');
 
 /// A [ReferenceParameter] for `java.lang.Float`.
-const javaLong = ReferenceParameter(platformTypeName: 'Long');
+const javaLong = ReferenceType(platformClassName: 'Long');
 
 /// Annotation used with reference_generator plugin.
 class Reference {
@@ -59,18 +61,24 @@ class ReferenceConstructor {
 /// Annotation to customize parameters for reference_generator plugin.
 class ReferenceParameter {
   /// Default constructor for [ReferenceParameter].
-  const ReferenceParameter({
-    this.ignore = false,
-    this.platformTypeImport,
-    this.platformTypeName,
-  });
+  const ReferenceParameter({this.ignore = false});
 
   /// Ignore this parameter.
   final bool ignore;
+}
 
-  /// Import of the platform type.
-  final String? platformTypeImport;
+class ReferenceType {
+  const ReferenceType({
+    this.platformImport,
+    this.platformClassName,
+    this.typeArguments,
+  });
 
-  /// Name of the platorm type.
-  final String? platformTypeName;
+  /// Import of the platform class [platformClassName].
+  final String? platformImport;
+
+  /// Name of the platorm implementation of a class.
+  final String? platformClassName;
+
+  final List<ReferenceType>? typeArguments;
 }
