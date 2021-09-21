@@ -10,7 +10,10 @@ environment:
 
 dependencies:
   reference:
-    path: ../reference
+    git:
+      url: https://github.com/bparrishMines/penguin.git
+      ref: gen_update
+      path: packages/reference
   flutter:
     sdk: flutter
 
