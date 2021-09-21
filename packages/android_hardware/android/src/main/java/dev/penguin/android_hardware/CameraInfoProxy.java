@@ -6,7 +6,7 @@ import android.os.Build;
 public class CameraInfoProxy extends Camera.CameraInfo {
   public final int cameraId;
 
-  CameraInfoProxy(int cameraId,int facing,int orientation, boolean canDisableShutterSound) {
+  CameraInfoProxy(int cameraId, int facing, int orientation, boolean canDisableShutterSound) {
     this.cameraId = cameraId;
     this.facing = facing;
     this.orientation = orientation;

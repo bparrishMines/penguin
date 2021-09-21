@@ -501,7 +501,10 @@ public class CameraChannelLibrary {
     
     public Completable<PairedInstance> $create$(ErrorCallback $instance, boolean $owner) {
       
+      
       return createNewInstancePair($instance, Arrays.<Object>asList(""), $owner);
+      
+      
     }
     
 
@@ -521,7 +524,10 @@ public class CameraChannelLibrary {
     
     public Completable<PairedInstance> $create$(AutoFocusCallback $instance, boolean $owner) {
       
+      
       return createNewInstancePair($instance, Arrays.<Object>asList(""), $owner);
+      
+      
     }
     
 
@@ -541,7 +547,10 @@ public class CameraChannelLibrary {
     
     public Completable<PairedInstance> $create$(ShutterCallback $instance, boolean $owner) {
       
+      
       return createNewInstancePair($instance, Arrays.<Object>asList(""), $owner);
+      
+      
     }
     
 
@@ -561,7 +570,10 @@ public class CameraChannelLibrary {
     
     public Completable<PairedInstance> $create$(OnZoomChangeListener $instance, boolean $owner) {
       
+      
       return createNewInstancePair($instance, Arrays.<Object>asList(""), $owner);
+      
+      
     }
     
 
@@ -581,7 +593,10 @@ public class CameraChannelLibrary {
     
     public Completable<PairedInstance> $create$(AutoFocusMoveCallback $instance, boolean $owner) {
       
+      
       return createNewInstancePair($instance, Arrays.<Object>asList(""), $owner);
+      
+      
     }
     
 
@@ -601,7 +616,10 @@ public class CameraChannelLibrary {
     
     public Completable<PairedInstance> $create$(PictureCallback $instance, boolean $owner) {
       
+      
       return createNewInstancePair($instance, Arrays.<Object>asList(""), $owner);
+      
+      
     }
     
 
@@ -621,7 +639,10 @@ public class CameraChannelLibrary {
     
     public Completable<PairedInstance> $create$(PreviewCallback $instance, boolean $owner) {
       
+      
       return createNewInstancePair($instance, Arrays.<Object>asList(""), $owner);
+      
+      
     }
     
 
@@ -641,7 +662,10 @@ public class CameraChannelLibrary {
     
     public Completable<PairedInstance> $create$(Camera $instance, boolean $owner) {
       
+      
       return createNewInstancePair($instance, Arrays.<Object>asList(""), $owner);
+      
+      
     }
     
 
@@ -709,7 +733,10 @@ public class CameraChannelLibrary {
     
     public Completable<PairedInstance> $create$(Parameters $instance, boolean $owner) {
       
+      
       return createNewInstancePair($instance, Arrays.<Object>asList(""), $owner);
+      
+      
     }
     
 
@@ -904,12 +931,15 @@ public class CameraChannelLibrary {
     public Completable<PairedInstance> $create$(Area $instance, boolean $owner) {
       
       
+      
       implementations.channelRect.$create$($instance.rect, false);
       
       
       
       
       return createNewInstancePair($instance, Arrays.<Object>asList("", $instance.rect, $instance.weight), $owner);
+      
+      
     }
     
 
@@ -937,7 +967,10 @@ public class CameraChannelLibrary {
       
       
       
+      
       return createNewInstancePair($instance, Arrays.<Object>asList("", $instance.top, $instance.bottom, $instance.right, $instance.left), $owner);
+      
+      
     }
     
 
@@ -961,7 +994,10 @@ public class CameraChannelLibrary {
       
       
       
+      
       return createNewInstancePair($instance, Arrays.<Object>asList("", $instance.width, $instance.height), $owner);
+      
+      
     }
     
 
@@ -981,15 +1017,7 @@ public class CameraChannelLibrary {
     
     public Completable<PairedInstance> $create$(CameraInfoProxy $instance, boolean $owner) {
       
-      
-      
-      
-      
-      
-      
-      
-      
-      return createNewInstancePair($instance, Arrays.<Object>asList("", $instance.cameraId, $instance.facing, $instance.orientation, $instance.canDisableShutterSound), $owner);
+      throw new UnsupportedOperationException();
     }
     
 
@@ -1553,10 +1581,7 @@ public class CameraChannelLibrary {
     public Camera $create$()
         throws Exception {
       
-      return new Camera()
-        ;
-      
-      
+      throw new UnsupportedOperationException();
     }
     
 
@@ -1571,10 +1596,7 @@ public class CameraChannelLibrary {
     
     public Camera $open(int cameraId) throws Exception {
       
-      
-      return Camera.open(cameraId);
-      
-      
+      throw new UnsupportedOperationException();
     }
     
     
@@ -2012,10 +2034,7 @@ public class CameraChannelLibrary {
     public Parameters $create$()
         throws Exception {
       
-      return new Parameters()
-        ;
-      
-      
+      throw new UnsupportedOperationException();
     }
     
 
@@ -2035,15 +2054,12 @@ public class CameraChannelLibrary {
     
     public List<Area> $getFocusAreas(Parameters $instance) throws Exception {
       
-      
-      return $instance.getFocusAreas();
-      
-      
+      throw new UnsupportedOperationException();
     }
     
     
     
-    public List<double> $getFocusDistances(Parameters $instance) throws Exception {
+    public List<Double> $getFocusDistances(Parameters $instance) throws Exception {
       
       throw new UnsupportedOperationException();
     }
@@ -2168,40 +2184,28 @@ public class CameraChannelLibrary {
     
     public Size $getPictureSize(Parameters $instance) throws Exception {
       
-      
-      return $instance.getPictureSize();
-      
-      
+      throw new UnsupportedOperationException();
     }
     
     
     
     public Size $getPreviewSize(Parameters $instance) throws Exception {
       
-      
-      return $instance.getPreviewSize();
-      
-      
+      throw new UnsupportedOperationException();
     }
     
     
     
     public List<Size> $getSupportedPreviewSizes(Parameters $instance) throws Exception {
       
-      
-      return $instance.getSupportedPreviewSizes();
-      
-      
+      throw new UnsupportedOperationException();
     }
     
     
     
     public List<Size> $getSupportedPictureSizes(Parameters $instance) throws Exception {
       
-      
-      return $instance.getSupportedPictureSizes();
-      
-      
+      throw new UnsupportedOperationException();
     }
     
     
@@ -2422,10 +2426,7 @@ public class CameraChannelLibrary {
     
     public Size $getJpegThumbnailSize(Parameters $instance) throws Exception {
       
-      
-      return $instance.getJpegThumbnailSize();
-      
-      
+      throw new UnsupportedOperationException();
     }
     
     
@@ -2442,10 +2443,7 @@ public class CameraChannelLibrary {
     
     public List<Area> $getMeteringAreas(Parameters $instance) throws Exception {
       
-      
-      return $instance.getMeteringAreas();
-      
-      
+      throw new UnsupportedOperationException();
     }
     
     
@@ -2462,10 +2460,7 @@ public class CameraChannelLibrary {
     
     public Size $getPreferredPreviewSizeForVideo(Parameters $instance) throws Exception {
       
-      
-      return $instance.getPreferredPreviewSizeForVideo();
-      
-      
+      throw new UnsupportedOperationException();
     }
     
     
@@ -2519,10 +2514,7 @@ public class CameraChannelLibrary {
     
     public List<Size> $getSupportedJpegThumbnailSizes(Parameters $instance) throws Exception {
       
-      
-      return $instance.getSupportedJpegThumbnailSizes();
-      
-      
+      throw new UnsupportedOperationException();
     }
     
     
@@ -2566,10 +2558,7 @@ public class CameraChannelLibrary {
     
     public List<Size> $getSupportedVideoSizes(Parameters $instance) throws Exception {
       
-      
-      return $instance.getSupportedVideoSizes();
-      
-      
+      throw new UnsupportedOperationException();
     }
     
     
@@ -3674,9 +3663,8 @@ public class CameraChannelLibrary {
     
     public Size $create$(int width,int height)
         throws Exception {
-
       
-      
+      throw new UnsupportedOperationException();
     }
     
 
@@ -3738,10 +3726,7 @@ public class CameraChannelLibrary {
     public CameraInfoProxy $create$(int cameraId,int facing,int orientation,Boolean canDisableShutterSound)
         throws Exception {
       
-      return new CameraInfoProxy(cameraId,facing,orientation,canDisableShutterSound)
-        ;
-      
-      
+      throw new UnsupportedOperationException();
     }
     
 

@@ -5,14 +5,14 @@ import 'package:reference/annotations.dart';
 
 import 'camera.g.dart';
 
-const ReferenceParameter javaBoolean =
-    ReferenceParameter(platformTypeName: 'Boolean');
-const ReferenceParameter javaBooleanPrimitive =
-ReferenceParameter(platformTypeName: 'boolean');
-const ReferenceParameter javaByteArray =
-    ReferenceParameter(platformTypeName: 'byte[]');
-const ReferenceMethod noDefault =
-    ReferenceMethod(platformThrowsAsDefault: true);
+const ReferenceType javaBoolean = ReferenceType(platformClassName: 'Boolean');
+const ReferenceType javaBooleanPrimitive =
+    ReferenceType(platformClassName: 'boolean');
+const ReferenceType javaByteArray = ReferenceType(platformClassName: 'byte[]');
+const ReferenceMethod noDefaultMethod =
+    ReferenceMethod(handlerImplThrows: true);
+const ReferenceConstructor noDefaultConstructor =
+    ReferenceConstructor(handlerImplThrows: true);
 
 /// Callback for camera error notification.
 ///
@@ -317,7 +317,7 @@ class Camera {
   /// This should only be used for testing or when creating a custom type
   /// channel implementation of this class. Otherwise, an instance should be
   /// provided from [open].
-  @noDefault
+  @noDefaultConstructor
   Camera({bool create = true}) {
     if (create) _channel.$create$(this, $owner: true);
   }
@@ -343,7 +343,7 @@ class Camera {
   ///
   /// Throws [PlatformException] if there is an error retrieving the information
   /// (generally due to a hardware or other low-level failure).
-  @noDefault
+  @noDefaultMethod
   static Future<List<CameraInfo>> getAllCameraInfo() {
     return _channel.$getAllCameraInfo();
   }
@@ -364,6 +364,7 @@ class Camera {
   /// disabled the camera).
   ///
   /// See: [getAllCameraInfo]
+  @noDefaultMethod
   static Future<Camera> open(int cameraId) => _channel.$open(cameraId);
 
   /// Disconnects and releases the [Camera] object resources.
@@ -403,7 +404,7 @@ class Camera {
   /// be because of a hardware or other low-level error, or because [release]
   /// has been called on this Camera instance.
   @javaLong
-  @noDefault
+  @noDefaultMethod
   Future<int> attachPreviewTexture() async {
     return _currentTexture ??= await _channel.$attachPreviewTexture(this);
   }
@@ -412,7 +413,7 @@ class Camera {
   ///
   /// This does nothing if [attachPreviewTexture] is not called or the texture
   /// has already been released.
-  @noDefault
+  @noDefaultMethod
   Future<void> releasePreviewTexture() async {
     _currentTexture = null;
     await _channel.$releasePreviewTexture(this);
@@ -682,7 +683,7 @@ class Camera {
   /// Throws [PlatformException] if reading parameters fails; usually this would
   /// be because of a hardware or other low-level error, or because [release]
   /// has been called on this [Camera] instance.
-  @noDefault
+  @noDefaultMethod
   Future<CameraParameters> getParameters() => _channel.$getParameters(this);
 
   /// Changes the settings for this Camera service.
@@ -747,7 +748,7 @@ class Camera {
   /// versions >= `Build.VERSION_CODES.JELLY_BEAN_MR1`. A [PlatformException]
   /// will be thrown if the android version is below this.
   @javaBoolean
-  @noDefault
+  @noDefaultMethod
   Future<bool> enableShutterSound({@javaBoolean required bool enabled}) {
     return _channel.$enableShutterSound(this, enabled);
   }
@@ -778,8 +779,10 @@ class CameraParameters {
   /// This should only be used for testing or when creating a custom type
   /// channel implementation of this class. Otherwise, use
   /// [Camera.getParameters].
-  @noDefault
-  CameraParameters({bool create = true});
+  @noDefaultConstructor
+  CameraParameters({bool create = true}) {
+    if (create) _channel.$create$(this, $owner: true);
+  }
 
   /// Flash will be fired automatically when required.
   ///
@@ -1054,6 +1057,7 @@ class CameraParameters {
   /// Focus area only has effect if the current focus mode is
   /// [focusModeAuto], [focusModeMacro], [focusModeContinuousVideo], or
   /// [focusModeContinuousPicture].
+  @noDefaultMethod
   Future<List<CameraArea>?> getFocusAreas() => _channel.$getFocusAreas(this);
 
   // TODO: This can return Float.POSITIVE_INFINITY?
@@ -1077,7 +1081,10 @@ class CameraParameters {
   /// Far focus distance >= optimal focus distance >= near focus distance. If
   /// the focus distance is infinity, the value will be
   /// Float.POSITIVE_INFINITY (Java).
-  @noDefault
+  @ReferenceType(platformClassName: 'List', typeArguments: <ReferenceType>[
+    ReferenceType(platformClassName: 'Double')
+  ])
+  @noDefaultMethod
   Future<List<double>> getFocusDistances() => _channel.$getFocusDistances(this);
 
   /// Gets the maximum exposure compensation index.
@@ -1201,11 +1208,13 @@ class CameraParameters {
   }
 
   /// Returns the dimension setting for pictures.
+  @noDefaultMethod
   Future<CameraSize> getPictureSize() {
     return _channel.$getPictureSize(this);
   }
 
   /// Returns the dimensions setting for preview pictures.
+  @noDefaultMethod
   Future<CameraSize> getPreviewSize() {
     return _channel.$getPreviewSize(this);
   }
@@ -1213,6 +1222,7 @@ class CameraParameters {
   /// Gets the supported preview sizes.
   ///
   /// This method will always return a list with at least one element.
+  @noDefaultMethod
   Future<List<CameraSize>> getSupportedPreviewSizes() {
     return _channel.$getSupportedPreviewSizes(this);
   }
@@ -1220,6 +1230,7 @@ class CameraParameters {
   /// Gets the supported picture sizes.
   ///
   /// This method will always return a list with at least one element.
+  @noDefaultMethod
   Future<List<CameraSize>> getSupportedPictureSizes() {
     return _channel.$getSupportedPictureSizes(this);
   }
@@ -1492,6 +1503,7 @@ class CameraParameters {
   }
 
   /// Returns the dimensions for EXIF thumbnail in Jpeg picture.
+  @noDefaultMethod
   Future<CameraSize> getJpegThumbnailSize() {
     return _channel.$getJpegThumbnailSize(this);
   }
@@ -1539,6 +1551,7 @@ class CameraParameters {
   ///
   /// No matter what metering areas are, the final exposure are compensated by
   /// [setExposureCompensation].
+  @noDefaultMethod
   Future<List<CameraArea>?> getMeteringAreas() {
     return _channel.$getMeteringAreas(this);
   }
@@ -1559,7 +1572,8 @@ class CameraParameters {
   /// preferred preview size. In addition, we recommend to choose a preview size
   /// that has the same aspect ratio as the resolution of video to be recorded.
   ///
-  /// If [getSupportedVideoSizes] returns null; null is returned.
+  /// If [getSupportedVideoSizes] returns null; null is returned
+  @noDefaultMethod
   Future<CameraSize?> getPreferredPreviewSizeForVideo() {
     return _channel.$getPreferredPreviewSizeForVideo(this);
   }
@@ -1572,15 +1586,16 @@ class CameraParameters {
     return _channel.$getPreviewFormat(this);
   }
 
-  // TODO: ReferenceParameter should be ReferenceType + type arguments
   /// Returns the current minimum and maximum preview fps.
   ///
   /// The values are one of the elements returned by
   /// [getSupportedPreviewFpsRange].
   ///
   /// Returns the range of the minimum and maximum preview fps (scaled by 1000).
-  @ReferenceParameter(platformTypeName: 'List<Integer>')
-  @noDefault
+  @ReferenceType(platformClassName: 'List', typeArguments: <ReferenceType>[
+    ReferenceType(platformClassName: 'Integer')
+  ])
+  @noDefaultMethod
   Future<List<int>> getPreviewFpsRange() {
     return _channel.$getPreviewFpsRange(this);
   }
@@ -1632,6 +1647,7 @@ class CameraParameters {
   ///
   /// This method will always return a list with at least two elements. Size
   /// 0,0 (no thumbnail) is always supported.
+  @noDefaultMethod
   Future<List<CameraSize>> getSupportedJpegThumbnailSizes() {
     return _channel.$getSupportedJpegThumbnailSizes(this);
   }
@@ -1639,7 +1655,9 @@ class CameraParameters {
   /// Gets the supported picture formats.
   ///
   /// This method will always return a list with at least one element.
-  @ReferenceParameter(platformTypeName: 'List<Integer>')
+  @ReferenceType(platformClassName: 'List', typeArguments: <ReferenceType>[
+    ReferenceType(platformClassName: 'Integer')
+  ])
   Future<List<int>> getSupportedPictureFormats() {
     return _channel.$getSupportedPictureFormats(this);
   }
@@ -1648,7 +1666,9 @@ class CameraParameters {
   ///
   /// [ImageFormat.nv21] is always supported. [ImageFormat.yv12] is always
   /// supported.
-  @ReferenceParameter(platformTypeName: 'List<Integer>')
+  @ReferenceType(platformClassName: 'List', typeArguments: <ReferenceType>[
+    ReferenceType(platformClassName: 'Integer')
+  ])
   Future<List<int>> getSupportedPreviewFormats() {
     return _channel.$getSupportedPreviewFormats(this);
   }
@@ -1669,8 +1689,12 @@ class CameraParameters {
   /// See:
   ///   [previewFpsMinIndex]
   ///   [previewFpsMaxIndex]
-  @ReferenceParameter(platformTypeName: 'List<List<Integer>>')
-  @noDefault
+  @ReferenceType(platformClassName: 'List', typeArguments: <ReferenceType>[
+    ReferenceType(platformClassName: 'List', typeArguments: <ReferenceType>[
+      ReferenceType(platformClassName: 'Integer')
+    ])
+  ])
+  @noDefaultMethod
   Future<List<List<int>>> getSupportedPreviewFpsRange() {
     return _channel.$getSupportedPreviewFpsRange(this);
   }
@@ -1705,6 +1729,7 @@ class CameraParameters {
   ///
   /// See:
   ///   [getPreferredPreviewSizeForVideo]
+  @noDefaultMethod
   Future<List<CameraSize>?> getSupportedVideoSizes() {
     return _channel.$getSupportedVideoSizes(this);
   }
@@ -1759,7 +1784,9 @@ class CameraParameters {
   /// returned as 320. The number of elements is [getMaxZoom] + 1. The list is
   /// sorted from small to large. The first element is always 100. The last
   /// element is the zoom ratio of the maximum zoom value.
-  @ReferenceParameter(platformTypeName: 'List<Integer>')
+  @ReferenceType(platformClassName: 'List', typeArguments: <ReferenceType>[
+    ReferenceType(platformClassName: 'Integer')
+  ])
   Future<List<int>> getZoomRatios() {
     return _channel.$getZoomRatios(this);
   }
@@ -1821,7 +1848,7 @@ class CameraParameters {
   /// Sets a String parameter.
   ///
   /// [value] should be either a [String] or [int].
-  @noDefault
+  @noDefaultMethod
   Future<void> set(String key, Object value) {
     assert(value is String || value is int);
     return _channel.$set(this, key, value);
@@ -2146,7 +2173,7 @@ class CameraRect {
   /// The offset of the left edge of this rectangle from the x axis.
   final int left;
 
-  @ReferenceMethod(ignore: true)
+  @ignoreMethod
   @override
   String toString() {
     return 'CameraRect($top, $bottom, $right, $left)';
@@ -2161,8 +2188,13 @@ class CameraRect {
 )
 class CameraSize {
   /// Default constructor for [CameraSize].
-  @noDefault
-  CameraSize(this.width, this.height, {bool create = true});
+  @noDefaultConstructor
+  CameraSize(this.width, this.height, {bool create = true}) {
+    if (create) _channel.$create$(this, $owner: true);
+  }
+
+  static $CameraSizeChannel get _channel =>
+      $ChannelRegistrar.instance.implementations.channelCameraSize;
 
   /// Height of a picture.
   final int width;
@@ -2170,7 +2202,7 @@ class CameraSize {
   /// Width of a picture.
   final int height;
 
-  @ReferenceMethod(ignore: true)
+  @ignoreMethod
   @override
   String toString() {
     return 'CameraSize($width, $height)';
@@ -2187,20 +2219,25 @@ class CameraSize {
 )
 class CameraInfo {
   /// Default constructor for [CameraInfo].
-  @noDefault
+  @ReferenceConstructor(handlerImplThrows: true, channelImplThrows: true)
   CameraInfo({
     required this.cameraId,
     required this.facing,
     required this.orientation,
     @javaBoolean required this.canDisableShutterSound,
     bool create = true,
-  }) : assert(facing == cameraFacingBack || facing == cameraFacingFront);
+  }) : assert(facing == cameraFacingBack || facing == cameraFacingFront) {
+    if (create) _channel.$create$(this, $owner: true);
+  }
 
   /// The facing of the camera is opposite to that of the screen.
   static const int cameraFacingBack = 0;
 
   /// The facing of the camera is the same as that of the screen.
   static const int cameraFacingFront = 1;
+
+  static $CameraInfoChannel get _channel =>
+      $ChannelRegistrar.instance.implementations.channelCameraInfo;
 
   /// The identifier for this camera device.
   ///

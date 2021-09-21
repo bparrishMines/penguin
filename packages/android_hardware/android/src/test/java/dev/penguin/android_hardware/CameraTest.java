@@ -38,7 +38,7 @@ import io.flutter.view.TextureRegistry;
 @PrepareForTest({android.hardware.Camera.class})
 public class CameraTest {
   @Rule public MockitoRule mockitoRule = MockitoJUnit.rule();
-  public CameraProxyHandler.CameraProxy testCameraProxy;
+  public CameraHandler.CameraProxy testCameraProxy;
   @Mock TypeChannelMessenger mockTypeChannelMessenger;
   @Mock TextureRegistry mockTextureRegistry;
   LibraryImplementations testImplementations;
@@ -51,7 +51,7 @@ public class CameraTest {
     testImplementations = new LibraryImplementations(mockTypeChannelMessenger, mockTextureRegistry);
     testImplementations.channelCameraProxy = mockCameraChannel;
     testImplementations.channelParameters = mockParametersChannel;
-    testCameraProxy = new CameraProxyHandler.CameraProxy(this.testImplementations, mockCamera);
+    testCameraProxy = new CameraHandler.CameraProxy(this.testImplementations, mockCamera);
   }
 
   @Test
@@ -67,7 +67,7 @@ public class CameraTest {
 
     when(Camera.open(12)).thenReturn(mock(Camera.class));
 
-    final CameraProxyHandler.CameraProxy cameraProxy =
+    final CameraHandler.CameraProxy cameraProxy =
         testImplementations.handlerCameraProxy.$open(12);
     assertNotNull(cameraProxy);
     assertNotNull(cameraProxy.camera);

@@ -9,19 +9,7 @@ public class LibraryImplementations extends CameraChannelLibrary.$LibraryImpleme
   public LibraryImplementations(TypeChannelMessenger messenger, TextureRegistry textureRegistry) {
     super(messenger);
     this.textureRegistry = textureRegistry;
-    this.channelArea = new AreaChannel(this);
-    this.handlerArea = new AreaHandler(this);
-    this.handlerAutoFocusCallback = new AutoFocusCallbackHandler(this);
-    this.handlerAutoFocusMoveCallback = new AutoFocusMoveCallbackHandler(this);
-    this.handlerCameraInfoProxy = new CameraInfoProxyHandler(this);
-    this.handlerCameraProxy = new CameraProxyHandler(this);
-    this.handlerErrorCallback = new OnErrorCallback(this);
-    this.handlerImageFormat = new ImageFormatHandler(this);
-    this.handlerOnZoomChangeListener = new OnZoomChangeListenerHandler(this);
+    this.handlerCamera = new CameraHandler(this);
     this.handlerParameters = new ParametersHandler(this);
-    this.handlerPictureCallback = new PictureCallback(this);
-    this.handlerPreviewCallback = new OnPreviewFrameCallback(this);
-    this.handlerRect = new RectHandler(this);
-    this.handlerShutterCallback = new OnShutterCallback(this);
   }
 }
