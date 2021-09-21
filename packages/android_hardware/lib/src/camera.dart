@@ -5,9 +5,14 @@ import 'package:reference/annotations.dart';
 
 import 'camera.g.dart';
 
-const ReferenceParameter javaBoolean = ReferenceParameter(platformTypeName: 'Boolean');
-const ReferenceParameter javaByteArray = ReferenceParameter(platformTypeName: 'byte[]');
-const ReferenceMethod noDefault = ReferenceMethod(platformThrowsAsDefault: true);
+const ReferenceParameter javaBoolean =
+    ReferenceParameter(platformTypeName: 'Boolean');
+const ReferenceParameter javaBooleanPrimitive =
+ReferenceParameter(platformTypeName: 'boolean');
+const ReferenceParameter javaByteArray =
+    ReferenceParameter(platformTypeName: 'byte[]');
+const ReferenceMethod noDefault =
+    ReferenceMethod(platformThrowsAsDefault: true);
 
 /// Callback for camera error notification.
 ///
@@ -60,7 +65,8 @@ class ErrorCallback {
   platformImport: 'dev.penguin.android_hardware.OnAutoFocusCallback',
   platformClassName: 'OnAutoFocusCallback',
 )
-typedef OnAutoFocusCallback = void Function(@javaBoolean bool success, Camera camera);
+typedef OnAutoFocusCallback = void Function(
+    @javaBooleanPrimitive bool success, Camera camera);
 
 @Reference(
   channel: 'android.hardware.Camera.AutoFocusCallback',
@@ -124,7 +130,7 @@ class ShutterCallback {
 )
 typedef OnZoomChangeCallback = void Function(
   int zoomValue,
-    @javaBoolean bool stopped,
+  @javaBooleanPrimitive bool stopped,
   Camera camera,
 );
 
@@ -155,7 +161,8 @@ class OnZoomChangeListener {
   platformImport: 'dev.penguin.android_hardware.OnAutoFocusMovingCallback',
   platformClassName: 'OnAutoFocusMovingCallback',
 )
-typedef OnAutoFocusMovingCallback = void Function(@javaBoolean bool start, Camera camera);
+typedef OnAutoFocusMovingCallback = void Function(
+    @javaBooleanPrimitive bool start, Camera camera);
 
 @Reference(
   channel: 'android.hardware.Camera.AutoFocusMoveCallback',
@@ -186,7 +193,10 @@ class AutoFocusMoveCallback {
   platformImport: 'dev.penguin.android_hardware.OnPictureTakenCallback',
   platformClassName: 'OnPictureTakenCallback',
 )
-typedef OnPictureTakenCallback = void Function(@javaByteArray Uint8List? data, Camera camera);
+typedef OnPictureTakenCallback = void Function(
+  @javaByteArray Uint8List? data,
+  Camera camera,
+);
 
 @Reference(
   channel: 'android.hardware.Camera.PictureCallback',
@@ -220,7 +230,10 @@ class PictureCallback {
   platformImport: 'dev.penguin.android_hardware.OnPreviewFrameCallback',
   platformClassName: 'OnPreviewFrameCallback',
 )
-typedef OnPreviewFrameCallback = void Function(@javaByteArray Uint8List data, Camera camera);
+typedef OnPreviewFrameCallback = void Function(
+  @javaByteArray Uint8List data,
+  Camera camera,
+);
 
 @Reference(
   channel: 'android.hardware.Camera.PreviewCallback',
@@ -304,6 +317,7 @@ class Camera {
   /// This should only be used for testing or when creating a custom type
   /// channel implementation of this class. Otherwise, an instance should be
   /// provided from [open].
+  @noDefault
   Camera({bool create = true}) {
     if (create) _channel.$create$(this, $owner: true);
   }
@@ -389,6 +403,7 @@ class Camera {
   /// be because of a hardware or other low-level error, or because [release]
   /// has been called on this Camera instance.
   @javaLong
+  @noDefault
   Future<int> attachPreviewTexture() async {
     return _currentTexture ??= await _channel.$attachPreviewTexture(this);
   }
@@ -397,6 +412,7 @@ class Camera {
   ///
   /// This does nothing if [attachPreviewTexture] is not called or the texture
   /// has already been released.
+  @noDefault
   Future<void> releasePreviewTexture() async {
     _currentTexture = null;
     await _channel.$releasePreviewTexture(this);
@@ -658,7 +674,6 @@ class Camera {
     return _channel.$stopSmoothZoom(this);
   }
 
-
   /// Returns the current settings for this Camera service.
   ///
   /// If modifications are made to the returned Parameters, they must be passed
@@ -731,6 +746,8 @@ class Camera {
   /// This is only supported on Android
   /// versions >= `Build.VERSION_CODES.JELLY_BEAN_MR1`. A [PlatformException]
   /// will be thrown if the android version is below this.
+  @javaBoolean
+  @noDefault
   Future<bool> enableShutterSound({@javaBoolean required bool enabled}) {
     return _channel.$enableShutterSound(this, enabled);
   }
@@ -761,6 +778,7 @@ class CameraParameters {
   /// This should only be used for testing or when creating a custom type
   /// channel implementation of this class. Otherwise, use
   /// [Camera.getParameters].
+  @noDefault
   CameraParameters({bool create = true});
 
   /// Flash will be fired automatically when required.
@@ -994,6 +1012,7 @@ class CameraParameters {
   ///
   /// Applications should check [isAutoExposureLockSupported] before using this
   /// method. See [setAutoExposureLock] for details about the lock.
+  @javaBoolean
   Future<bool> getAutoExposureLock() {
     return _channel.$getAutoExposureLock(this);
   }
@@ -1092,6 +1111,7 @@ class CameraParameters {
   ///
   /// Applications should call this before trying to lock auto-exposure.
   /// See [setAutoExposureLock] for details about the lock.
+  @javaBoolean
   Future<bool> isAutoExposureLockSupported() {
     return _channel.$isAutoExposureLockSupported(this);
   }
@@ -1099,6 +1119,7 @@ class CameraParameters {
   /// Returns `true` if zoom is supported.
   ///
   /// Applications should call this before using other zoom methods.
+  @javaBoolean
   Future<bool> isZoomSupported() {
     return _channel.$isZoomSupported(this);
   }
@@ -1221,6 +1242,7 @@ class CameraParameters {
   /// Whether smooth zoom is supported.
   ///
   /// Applications should call this before using other smooth zoom methods.
+  @javaBoolean
   Future<bool> isSmoothZoomSupported() {
     return _channel.$isSmoothZoomSupported(this);
   }
@@ -1256,7 +1278,7 @@ class CameraParameters {
   /// preview is active. The default value is false. The app can still call
   /// [Camera.takePicture] when the hint is true or call [MediaRecorder.start]
   /// when the hint is false. But the performance may be worse.
-  Future<void> setRecordingHint({required bool hint}) {
+  Future<void> setRecordingHint({@javaBoolean required bool hint}) {
     return _channel.$setRecordingHint(this, hint);
   }
 
@@ -1405,6 +1427,7 @@ class CameraParameters {
   ///
   /// Returns true if auto-white balance is currently locked, and false
   /// otherwise.
+  @javaBoolean
   Future<bool> getAutoWhiteBalanceLock() {
     return _channel.$getAutoWhiteBalanceLock(this);
   }
@@ -1549,12 +1572,15 @@ class CameraParameters {
     return _channel.$getPreviewFormat(this);
   }
 
+  // TODO: ReferenceParameter should be ReferenceType + type arguments
   /// Returns the current minimum and maximum preview fps.
   ///
   /// The values are one of the elements returned by
   /// [getSupportedPreviewFpsRange].
   ///
   /// Returns the range of the minimum and maximum preview fps (scaled by 1000).
+  @ReferenceParameter(platformTypeName: 'List<Integer>')
+  @noDefault
   Future<List<int>> getPreviewFpsRange() {
     return _channel.$getPreviewFpsRange(this);
   }
@@ -1613,6 +1639,7 @@ class CameraParameters {
   /// Gets the supported picture formats.
   ///
   /// This method will always return a list with at least one element.
+  @ReferenceParameter(platformTypeName: 'List<Integer>')
   Future<List<int>> getSupportedPictureFormats() {
     return _channel.$getSupportedPictureFormats(this);
   }
@@ -1621,6 +1648,7 @@ class CameraParameters {
   ///
   /// [ImageFormat.nv21] is always supported. [ImageFormat.yv12] is always
   /// supported.
+  @ReferenceParameter(platformTypeName: 'List<Integer>')
   Future<List<int>> getSupportedPreviewFormats() {
     return _channel.$getSupportedPreviewFormats(this);
   }
@@ -1641,6 +1669,8 @@ class CameraParameters {
   /// See:
   ///   [previewFpsMinIndex]
   ///   [previewFpsMaxIndex]
+  @ReferenceParameter(platformTypeName: 'List<List<Integer>>')
+  @noDefault
   Future<List<List<int>>> getSupportedPreviewFpsRange() {
     return _channel.$getSupportedPreviewFpsRange(this);
   }
@@ -1699,6 +1729,7 @@ class CameraParameters {
   /// Get the current state of video stabilization.
   ///
   /// Returns `true` if video stabilization is enabled.
+  @javaBoolean
   Future<bool> getVideoStabilization() {
     return _channel.$getVideoStabilization(this);
   }
@@ -1728,6 +1759,7 @@ class CameraParameters {
   /// returned as 320. The number of elements is [getMaxZoom] + 1. The list is
   /// sorted from small to large. The first element is always 100. The last
   /// element is the zoom ratio of the maximum zoom value.
+  @ReferenceParameter(platformTypeName: 'List<Integer>')
   Future<List<int>> getZoomRatios() {
     return _channel.$getZoomRatios(this);
   }
@@ -1736,6 +1768,7 @@ class CameraParameters {
   ///
   /// Applications should call this before trying to lock auto-white balance.
   /// See [setAutoWhiteBalanceLock] for details about the lock.
+  @javaBoolean
   Future<bool> isAutoWhiteBalanceLockSupported() {
     return _channel.$isAutoWhiteBalanceLockSupported(this);
   }
@@ -1761,6 +1794,7 @@ class CameraParameters {
   /// than that for regular still captures. If the current picture size is set
   /// higher than can be supported by video snapshot, the picture will be
   /// captured at the maximum supported size instead.
+  @javaBoolean
   Future<bool> isVideoSnapshotSupported() {
     return _channel.$isVideoSnapshotSupported(this);
   }
@@ -1768,6 +1802,7 @@ class CameraParameters {
   /// If video stabilization is supported.
   ///
   /// See [setVideoStabilization] for details of video stabilization.
+  @javaBoolean
   Future<bool> isVideoStabilizationSupported() {
     return _channel.$isVideoStabilizationSupported(this);
   }
@@ -1786,6 +1821,7 @@ class CameraParameters {
   /// Sets a String parameter.
   ///
   /// [value] should be either a [String] or [int].
+  @noDefault
   Future<void> set(String key, Object value) {
     assert(value is String || value is int);
     return _channel.$set(this, key, value);
@@ -2125,6 +2161,7 @@ class CameraRect {
 )
 class CameraSize {
   /// Default constructor for [CameraSize].
+  @noDefault
   CameraSize(this.width, this.height, {bool create = true});
 
   /// Height of a picture.
@@ -2145,17 +2182,17 @@ class CameraSize {
 /// Retrieve by calling [Camera.getAllCameraInfo].
 @Reference(
   channel: 'dev.penguin.android_hardware.CameraInfoHandler.CameraInfoProxy',
-  platformImport:
-      'dev.penguin.android_hardware.CameraInfoProxy',
+  platformImport: 'dev.penguin.android_hardware.CameraInfoProxy',
   platformClassName: 'CameraInfoProxy',
 )
 class CameraInfo {
   /// Default constructor for [CameraInfo].
+  @noDefault
   CameraInfo({
     required this.cameraId,
     required this.facing,
     required this.orientation,
-    required this.canDisableShutterSound,
+    @javaBoolean required this.canDisableShutterSound,
     bool create = true,
   }) : assert(facing == cameraFacingBack || facing == cameraFacingFront);
 

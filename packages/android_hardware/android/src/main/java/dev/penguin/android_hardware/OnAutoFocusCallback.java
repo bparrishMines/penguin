@@ -9,5 +9,5 @@ import github.penguin.reference.async.Completable;
 import github.penguin.reference.reference.TypeChannelMessenger;
 
 public interface OnAutoFocusCallback {
-  Completable<Void> invoke(Boolean success, Camera camera);
+  Completable<Void> invoke(boolean success, Camera camera);
 }
