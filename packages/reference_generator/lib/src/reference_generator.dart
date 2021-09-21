@@ -479,7 +479,7 @@ class ReferenceAstBuilder extends Builder {
       functionType: false,
       typeArguments: nonFutureType is! ParameterizedType
           ? <TypeNode>[]
-          : Iterable<int>.generate(10)
+          : Iterable<int>.generate(nonFutureType.typeArguments.length)
               .map<TypeNode>(
                 (int index) => _toTypeNode(
                   type:
