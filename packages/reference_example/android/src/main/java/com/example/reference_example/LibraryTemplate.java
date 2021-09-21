@@ -94,12 +94,12 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
 
     /*iterate constructors constructor*/
     public Completable<PairedInstance> $create$__constructor_name__(__class_name__ $instance, boolean $owner) {
-      /*iterate parameters parameter*/
+      /*iterate :if=isNotCallbackParameter parameters parameter*/
       /*if isReference*/
       /*erase*////**/implementations.channel__parameter_type__.$create$($instance.__parameter_name__, false);
       /**/
       /**/
-      return createNewInstancePair($instance, Arrays.<Object>asList("__constructor_name__"/*iterate parameters parameter*/, $instance.__parameter_name__/**/), $owner);
+      return createNewInstancePair($instance, Arrays.<Object>asList("__constructor_name__"/*iterate :if=isNotCallbackParameter parameters parameter*/, $instance.__parameter_name__/**/), $owner);
     }
     /**/
 
