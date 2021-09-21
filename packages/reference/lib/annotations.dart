@@ -71,7 +71,7 @@ class ReferenceType {
   const ReferenceType({
     this.platformImport,
     this.platformClassName,
-    this.typeArguments,
+    this.typeArguments = const <ReferenceType>[],
   });
 
   /// Import of the platform class [platformClassName].
@@ -80,5 +80,5 @@ class ReferenceType {
   /// Name of the platorm implementation of a class.
   final String? platformClassName;
 
-  final List<ReferenceType>? typeArguments;
+  final List<ReferenceType> typeArguments;
 }

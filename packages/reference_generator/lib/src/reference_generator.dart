@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:analyzer/dart/element/element.dart';
+import 'package:analyzer/dart/constant/value.dart';
 import 'package:analyzer/dart/element/nullability_suffix.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
@@ -17,6 +18,8 @@ class ReferenceAstBuilder extends Builder {
       TypeChecker.fromRuntime(ReferenceParameter);
   static const TypeChecker constructorAnnotation =
       TypeChecker.fromRuntime(ReferenceConstructor);
+  static const TypeChecker typeAnnotation =
+      TypeChecker.fromRuntime(ReferenceType);
 
   static ReferenceMethod? tryReadMethodAnnotation(MethodElement element) {
     if (!methodAnnotation.hasAnnotationOfExact(element)) return null;
@@ -29,29 +32,14 @@ class ReferenceAstBuilder extends Builder {
     );
   }
 
-  static ReferenceParameter? tryReadParameterAnnotation(Element element) {
-    if (element is! ParameterElement && element is! MethodElement) {
-      throw ArgumentError();
-    }
-
+  static ReferenceParameter? tryReadParameterAnnotation(
+      ParameterElement element) {
     if (!parameterAnnotation.hasAnnotationOfExact(element)) return null;
     final ConstantReader reader = ConstantReader(
       parameterAnnotation.firstAnnotationOfExact(element),
     );
 
-    final ConstantReader platformTypeImportReader =
-        reader.read('platformTypeImport');
-    final ConstantReader platformTypeNameReader =
-        reader.read('platformTypeName');
-    return ReferenceParameter(
-      ignore: reader.read('ignore').boolValue,
-      platformTypeImport: platformTypeImportReader.isNull
-          ? null
-          : platformTypeImportReader.stringValue,
-      platformTypeName: platformTypeNameReader.isNull
-          ? null
-          : platformTypeNameReader.stringValue,
-    );
+    return ReferenceParameter(ignore: reader.read('ignore').boolValue);
   }
 
   static ReferenceConstructor? tryReadConstructorAnnotation(
@@ -65,6 +53,43 @@ class ReferenceAstBuilder extends Builder {
       ignore: reader.read('ignore').boolValue,
       platformThrowsAsDefault: reader.read('platformThrowsAsDefault').boolValue,
     );
+  }
+
+  static ReferenceType? tryReadTypeAnnotationFromMethodElement(
+    Element element,
+  ) {
+    if (element is! ParameterElement && element is! MethodElement) {
+      throw ArgumentError();
+    }
+
+    if (!typeAnnotation.hasAnnotationOfExact(element)) return null;
+    final ConstantReader reader = ConstantReader(
+      typeAnnotation.firstAnnotationOfExact(element),
+    );
+
+    final ConstantReader platformImportReader = reader.read('platformImport');
+    final ConstantReader platformClassNameNameReader =
+        reader.read('platformClassName');
+    final ConstantReader typeArgumentsNameNameReader =
+        reader.read('typeArguments');
+    return ReferenceType(
+      platformImport:
+          platformImportReader.isNull ? null : platformImportReader.stringValue,
+      platformClassName: platformClassNameNameReader.isNull
+          ? null
+          : platformClassNameNameReader.stringValue,
+      typeArguments: typeArgumentsNameNameReader.isNull
+          ? null
+          : typeArgumentsNameNameReader.listValue.map<ReferenceType>(
+              (DartObject dartObject) {
+
+              },
+            ).toList(),
+    );
+  }
+
+  static ReferenceType parseReferenceType(DartObject dartObject) {
+    dartObject.
   }
 
   @override
@@ -221,20 +246,19 @@ class ReferenceAstBuilder extends Builder {
     required Set<String> dartImports,
     required Set<String> platformImports,
   }) {
-    Iterable<ParameterNode> parameters = constructorElement.parameters
-        .where((ParameterElement element) {
-          final ReferenceParameter? referenceParameter =
-              tryReadParameterAnnotation(element);
-          if (referenceParameter == null) return true;
-          return !referenceParameter.ignore;
-        })
-        .map<ParameterNode>(
-          (ParameterElement parameterElement) => _toParameterNode(
-            parameterElement: parameterElement,
-            dartImports: dartImports,
-            platformImports: platformImports,
-          ),
-        );
+    Iterable<ParameterNode> parameters =
+        constructorElement.parameters.where((ParameterElement element) {
+      final ReferenceParameter? referenceParameter =
+          tryReadParameterAnnotation(element);
+      if (referenceParameter == null) return true;
+      return !referenceParameter.ignore;
+    }).map<ParameterNode>(
+      (ParameterElement parameterElement) => _toParameterNode(
+        parameterElement: parameterElement,
+        dartImports: dartImports,
+        platformImports: platformImports,
+      ),
+    );
 
     if (parameters.isNotEmpty &&
         parameters.last.name == 'create' &&
@@ -324,21 +348,23 @@ class ReferenceAstBuilder extends Builder {
         dartImports: dartImports,
         platformImports: platformImports,
       ),
-      parameters: (typeAliasElement.aliasedElement as GenericFunctionTypeElement).parameters
-          .where((ParameterElement element) {
-            final ReferenceParameter? referenceParameter =
-                tryReadParameterAnnotation(element);
-            if (referenceParameter == null) return true;
-            return !referenceParameter.ignore;
-          })
-          .map<ParameterNode>(
-            (ParameterElement parameterElement) => _toParameterNode(
-              parameterElement: parameterElement,
-              dartImports: dartImports,
-              platformImports: platformImports,
-            ),
-          )
-          .toList(),
+      parameters:
+          (typeAliasElement.aliasedElement as GenericFunctionTypeElement)
+              .parameters
+              .where((ParameterElement element) {
+                final ReferenceParameter? referenceParameter =
+                    tryReadParameterAnnotation(element);
+                if (referenceParameter == null) return true;
+                return !referenceParameter.ignore;
+              })
+              .map<ParameterNode>(
+                (ParameterElement parameterElement) => _toParameterNode(
+                  parameterElement: parameterElement,
+                  dartImports: dartImports,
+                  platformImports: platformImports,
+                ),
+              )
+              .toList(),
     );
   }
 
