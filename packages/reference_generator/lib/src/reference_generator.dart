@@ -55,9 +55,7 @@ class ReferenceAstBuilder extends Builder {
     );
   }
 
-  static ReferenceType? tryReadTypeAnnotationFromMethodElement(
-    Element element,
-  ) {
+  static ReferenceType? tryReadTypeAnnotation(Element element) {
     if (element is! ParameterElement && element is! MethodElement) {
       throw ArgumentError();
     }
@@ -68,28 +66,40 @@ class ReferenceAstBuilder extends Builder {
     );
 
     final ConstantReader platformImportReader = reader.read('platformImport');
-    final ConstantReader platformClassNameNameReader =
+    final ConstantReader platformClassNameReader =
         reader.read('platformClassName');
-    final ConstantReader typeArgumentsNameNameReader =
-        reader.read('typeArguments');
     return ReferenceType(
       platformImport:
           platformImportReader.isNull ? null : platformImportReader.stringValue,
-      platformClassName: platformClassNameNameReader.isNull
+      platformClassName: platformClassNameReader.isNull
           ? null
-          : platformClassNameNameReader.stringValue,
-      typeArguments: typeArgumentsNameNameReader.isNull
-          ? null
-          : typeArgumentsNameNameReader.listValue.map<ReferenceType>(
-              (DartObject dartObject) {
-
-              },
-            ).toList(),
+          : platformClassNameReader.stringValue,
+      typeArguments: reader
+          .read('typeArguments')
+          .listValue
+          .map<ReferenceType>(referenceTypeFromDartObject)
+          .toList(),
     );
   }
 
-  static ReferenceType parseReferenceType(DartObject dartObject) {
-    dartObject.
+  static ReferenceType referenceTypeFromDartObject(DartObject dartObject) {
+    final DartObject? platformImportObject =
+        dartObject.getField('platformImport');
+    final DartObject? platformClassNameObject =
+        dartObject.getField('platformClassName');
+    return ReferenceType(
+      platformImport: platformImportObject == null
+          ? null
+          : platformImportObject.toStringValue(),
+      platformClassName: platformClassNameObject == null
+          ? null
+          : platformClassNameObject.toStringValue(),
+      typeArguments: dartObject
+          .getField('typeArguments')!
+          .toListValue()!
+          .map<ReferenceType>(referenceTypeFromDartObject)
+          .toList(),
+    );
   }
 
   @override
@@ -284,12 +294,10 @@ class ReferenceAstBuilder extends Builder {
     required Set<String> dartImports,
     required Set<String> platformImports,
   }) {
-    final ReferenceParameter? referenceParameter =
-        tryReadParameterAnnotation(methodElement);
+    final ReferenceType? referenceType = tryReadTypeAnnotation(methodElement);
 
-    final String? platformReturnTypeImport =
-        referenceParameter?.platformTypeImport;
-    if (referenceParameter != null && platformReturnTypeImport != null) {
+    final String? platformReturnTypeImport = referenceType?.platformImport;
+    if (referenceType != null && platformReturnTypeImport != null) {
       platformImports.add(platformReturnTypeImport);
     }
 
@@ -305,7 +313,7 @@ class ReferenceAstBuilder extends Builder {
         type: methodElement.returnType,
         dartImports: dartImports,
         platformImports: platformImports,
-        platformTypeNameOverride: referenceParameter?.platformTypeName,
+        referenceTypeOverride: referenceType,
       ),
       parameters: methodElement.parameters
           .where((ParameterElement element) {
@@ -373,11 +381,11 @@ class ReferenceAstBuilder extends Builder {
     required Set<String> dartImports,
     required Set<String> platformImports,
   }) {
-    final ReferenceParameter? referenceParameter =
-        tryReadParameterAnnotation(parameterElement);
+    final ReferenceType? referenceType =
+        tryReadTypeAnnotation(parameterElement);
 
-    final String? platformTypeImport = referenceParameter?.platformTypeImport;
-    if (referenceParameter != null && platformTypeImport != null) {
+    final String? platformTypeImport = referenceType?.platformImport;
+    if (referenceType != null && platformTypeImport != null) {
       platformImports.add(platformTypeImport);
     }
 
@@ -387,7 +395,7 @@ class ReferenceAstBuilder extends Builder {
         type: parameterElement.type,
         dartImports: dartImports,
         platformImports: platformImports,
-        platformTypeNameOverride: referenceParameter?.platformTypeName,
+        referenceTypeOverride: referenceType,
       ),
       isNamed: parameterElement.isNamed,
     );
@@ -397,7 +405,7 @@ class ReferenceAstBuilder extends Builder {
     required DartType type,
     required Set<String> dartImports,
     required Set<String> platformImports,
-    String? platformTypeNameOverride,
+    ReferenceType? referenceTypeOverride,
   }) {
     DartType nonFutureType = type;
     if (type.isDartAsyncFuture || type.isDartAsyncFutureOr) {
@@ -425,7 +433,8 @@ class ReferenceAstBuilder extends Builder {
       }
       return TypeNode(
         dartName: aliasElement.name,
-        platformName: platformTypeNameOverride ?? aliasElement.name,
+        platformName:
+            referenceTypeOverride?.platformClassName ?? aliasElement.name,
         nullable: nonFutureType.nullabilitySuffix == NullabilitySuffix.question,
         typeArguments: <TypeNode>[],
         functionType: true,
@@ -458,18 +467,23 @@ class ReferenceAstBuilder extends Builder {
       dartName: displayName.split(RegExp('[<]')).first,
       platformName: isReference
           ? classReference.platformClassName
-          : platformTypeNameOverride ?? displayName.split(RegExp('[<]')).first,
+          : referenceTypeOverride?.platformClassName ??
+              displayName.split(RegExp('[<]')).first,
       nullable: nonFutureType.nullabilitySuffix == NullabilitySuffix.question,
       functionType: false,
-      typeArguments: nonFutureType is! ParameterizedType ||
-              platformTypeNameOverride != null
+      typeArguments: nonFutureType is! ParameterizedType
           ? <TypeNode>[]
-          : nonFutureType.typeArguments
+          : Iterable<int>.generate(10)
               .map<TypeNode>(
-                (DartType type) => _toTypeNode(
-                  type: type,
+                (int index) => _toTypeNode(
+                  type:
+                      (nonFutureType as ParameterizedType).typeArguments[index],
                   dartImports: dartImports,
                   platformImports: platformImports,
+                  referenceTypeOverride: referenceTypeOverride == null ||
+                          index >= referenceTypeOverride.typeArguments.length
+                      ? null
+                      : referenceTypeOverride.typeArguments[index],
                 ),
               )
               .toList(),
