@@ -31,8 +31,8 @@ String generateJava({
     for (ConstructorNode constructorNode in classNode.constructors) {
       final Map<String, Object> constructorData = <String, Object>{};
       constructorData['name'] = constructorNode.name;
-      constructorData['platformThrowsAsDefault'] =
-          constructorNode.platformThrowsAsDefault;
+      constructorData['handlerImplThrows'] = constructorNode.handlerImplThrows;
+      constructorData['channelImplThrows'] = constructorNode.channelImplThrows;
       constructorData['hasCallbackMethods'] = constructorNode.parameters.any(
         (ParameterNode parameterNode) => parameterNode.type.functionType,
       );
@@ -88,8 +88,8 @@ String generateJava({
     for (MethodNode methodNode in classNode.staticMethods) {
       final Map<String, Object> methodData = <String, Object>{};
       methodData['name'] = methodNode.name;
-      methodData['platformThrowsAsDefault'] =
-          methodNode.platformThrowsAsDefault;
+      methodData['handlerImplThrows'] = methodNode.handlerImplThrows;
+      methodData['channelImplThrows'] = methodNode.channelImplThrows;
 
       final bool returnsVoid = methodNode.returnType.platformName == 'void';
       final bool returnsFuture = methodNode.returnType.isFuture;
@@ -121,8 +121,8 @@ String generateJava({
     for (MethodNode methodNode in classNode.methods) {
       final Map<String, Object> methodData = <String, Object>{};
       methodData['name'] = methodNode.name;
-      methodData['platformThrowsAsDefault'] =
-          methodNode.platformThrowsAsDefault;
+      methodData['handlerImplThrows'] = methodNode.handlerImplThrows;
+      methodData['channelImplThrows'] = methodNode.channelImplThrows;
 
       final bool returnsVoid = methodNode.returnType.platformName == 'void';
       final bool returnsFuture = methodNode.returnType.isFuture;

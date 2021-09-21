@@ -28,7 +28,8 @@ class ReferenceAstBuilder extends Builder {
     );
     return ReferenceMethod(
       ignore: reader.read('ignore').boolValue,
-      platformThrowsAsDefault: reader.read('platformThrowsAsDefault').boolValue,
+      handlerImplThrows: reader.read('handlerImplThrows').boolValue,
+      channelImplThrows: reader.read('channelImplThrows').boolValue,
     );
   }
 
@@ -51,7 +52,8 @@ class ReferenceAstBuilder extends Builder {
     );
     return ReferenceConstructor(
       ignore: reader.read('ignore').boolValue,
-      platformThrowsAsDefault: reader.read('platformThrowsAsDefault').boolValue,
+      handlerImplThrows: reader.read('handlerImplThrows').boolValue,
+      channelImplThrows: reader.read('channelImplThrows').boolValue,
     );
   }
 
@@ -283,8 +285,11 @@ class ReferenceAstBuilder extends Builder {
       name: constructorElement.name,
       parameters: parameters.toList(),
       isNamed: constructorElement.name != '',
-      platformThrowsAsDefault: referenceConstructor != null
-          ? referenceConstructor.platformThrowsAsDefault
+      handlerImplThrows: referenceConstructor != null
+          ? referenceConstructor.handlerImplThrows
+          : false,
+      channelImplThrows: referenceConstructor != null
+          ? referenceConstructor.channelImplThrows
           : false,
     );
   }
@@ -306,9 +311,10 @@ class ReferenceAstBuilder extends Builder {
 
     return MethodNode(
       name: methodElement.name,
-      platformThrowsAsDefault: referenceMethod != null
-          ? referenceMethod.platformThrowsAsDefault
-          : false,
+      handlerImplThrows:
+          referenceMethod != null ? referenceMethod.handlerImplThrows : false,
+      channelImplThrows:
+          referenceMethod != null ? referenceMethod.channelImplThrows : false,
       returnType: _toTypeNode(
         type: methodElement.returnType,
         dartImports: dartImports,

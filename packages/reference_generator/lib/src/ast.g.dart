@@ -63,7 +63,8 @@ MethodNode _$MethodNodeFromJson(Map<String, dynamic> json) {
     parameters: (json['parameters'] as List<dynamic>)
         .map((e) => ParameterNode.fromJson(e as Map<String, dynamic>))
         .toList(),
-    platformThrowsAsDefault: json['platformThrowsAsDefault'] as bool,
+    handlerImplThrows: json['handlerImplThrows'] as bool,
+    channelImplThrows: json['channelImplThrows'] as bool,
   );
 }
 
@@ -72,7 +73,8 @@ Map<String, dynamic> _$MethodNodeToJson(MethodNode instance) =>
       'name': instance.name,
       'returnType': instance.returnType,
       'parameters': instance.parameters,
-      'platformThrowsAsDefault': instance.platformThrowsAsDefault,
+      'handlerImplThrows': instance.handlerImplThrows,
+      'channelImplThrows': instance.channelImplThrows,
     };
 
 ParameterNode _$ParameterNodeFromJson(Map<String, dynamic> json) {
@@ -146,7 +148,8 @@ ConstructorNode _$ConstructorNodeFromJson(Map<String, dynamic> json) {
         .map((e) => ParameterNode.fromJson(e as Map<String, dynamic>))
         .toList(),
     isNamed: json['isNamed'] as bool,
-    platformThrowsAsDefault: json['platformThrowsAsDefault'] as bool,
+    handlerImplThrows: json['handlerImplThrows'] as bool,
+    channelImplThrows: json['channelImplThrows'] as bool,
   );
 }
 
@@ -155,5 +158,6 @@ Map<String, dynamic> _$ConstructorNodeToJson(ConstructorNode instance) =>
       'name': instance.name,
       'parameters': instance.parameters,
       'isNamed': instance.isNamed,
-      'platformThrowsAsDefault': instance.platformThrowsAsDefault,
+      'handlerImplThrows': instance.handlerImplThrows,
+      'channelImplThrows': instance.channelImplThrows,
     };

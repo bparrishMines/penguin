@@ -66,13 +66,15 @@ class MethodNode {
     required this.name,
     required this.returnType,
     required this.parameters,
-    required this.platformThrowsAsDefault,
+    required this.handlerImplThrows,
+    required this.channelImplThrows,
   });
 
   final String name;
   final TypeNode returnType;
   final List<ParameterNode> parameters;
-  final bool platformThrowsAsDefault;
+  final bool handlerImplThrows;
+  final bool channelImplThrows;
 
   factory MethodNode.fromJson(Map<String, dynamic> json) =>
       _$MethodNodeFromJson(json);
@@ -169,7 +171,8 @@ class ConstructorNode {
     required this.name,
     required this.parameters,
     required this.isNamed,
-    required this.platformThrowsAsDefault,
+    required this.handlerImplThrows,
+    required this.channelImplThrows,
   });
 
   factory ConstructorNode.fromJson(Map<String, dynamic> json) =>
@@ -178,7 +181,8 @@ class ConstructorNode {
   final String name;
   final List<ParameterNode> parameters;
   final bool isNamed;
-  final bool platformThrowsAsDefault;
+  final bool handlerImplThrows;
+  final bool channelImplThrows;
 
   Map<String, dynamic> toJson() => _$ConstructorNodeToJson(this);
 
