@@ -9,7 +9,8 @@ import 'template.g.dart';
   platformImport: 'com.example.reference_example.__function_name__',
   platformClassName: '__function_name__',
 )
-typedef $$function_name$$ = void Function(String value);
+typedef $$function_name$$ = void Function(
+    @ReferenceParameter(platformTypeName: 'Boolean') String value);
 
 @Reference(
   channel: r'__channel_name__',

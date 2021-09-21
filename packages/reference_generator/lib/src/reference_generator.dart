@@ -308,6 +308,7 @@ class ReferenceAstBuilder extends Builder {
   }) {
     final FunctionType functionType =
         typeAliasElement.aliasedType as FunctionType;
+    print(typeAliasElement.aliasedElement as GenericFunctionTypeElement);
 
     // This is always non-null because these are filtered classes from the
     // current library.
@@ -323,7 +324,7 @@ class ReferenceAstBuilder extends Builder {
         dartImports: dartImports,
         platformImports: platformImports,
       ),
-      parameters: functionType.parameters
+      parameters: (typeAliasElement.aliasedElement as GenericFunctionTypeElement).parameters
           .where((ParameterElement element) {
             final ReferenceParameter? referenceParameter =
                 tryReadParameterAnnotation(element);
