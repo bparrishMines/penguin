@@ -133,9 +133,10 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
     public __class_name__ $create$__constructor_name__(/*iterate :join=',' parameters parameter*//*replace parameter_type*/Integer/**/ __parameter_name__/**/)
         throws Exception {
       /*if! platformThrowsAsDefault*/
-      return new __class_name__(/*iterate :join=',' :if=isNotCallbackParameter parameters parameter*/__parameter_name__/**/) {
+      return new __class_name__(/*iterate :join=',' :if=isNotCallbackParameter parameters parameter*/__parameter_name__/**/)
+        /*if hasCallbackMethods*/
+      {
         /*iterate callbackMethods callbackMethod*/
-        /*if returnsFuture*/
         @Override
         public void __callbackMethod_name__(/*iterate :join=',' parameters parameter*//*replace parameter_type*/String/**/ __parameter_name__/**/) {
           /*erase*/
@@ -145,8 +146,8 @@ public class /*replace libraryName*/LibraryTemplate/**/ {
           __callbackMethod_name__.invoke(/*iterate :join=',' parameters parameter*/__parameter_name__/**/);
         }
         /**/
-        /**/
-      };
+      }
+      /**/;
       /**/
       /*if platformThrowsAsDefault*//*erase*////**/throw new UnsupportedOperationException();/**/
     }

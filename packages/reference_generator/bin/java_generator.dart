@@ -33,6 +33,9 @@ String generateJava({
       constructorData['name'] = constructorNode.name;
       constructorData['platformThrowsAsDefault'] =
           constructorNode.platformThrowsAsDefault;
+      constructorData['hasCallbackMethods'] = constructorNode.parameters.any(
+        (ParameterNode parameterNode) => parameterNode.type.functionType,
+      );
 
       final List<Map<String, Object>> parameters = <Map<String, Object>>[];
       for (int i = 0; i < constructorNode.parameters.length; i++) {
