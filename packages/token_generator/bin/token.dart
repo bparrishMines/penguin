@@ -73,7 +73,7 @@ Token? tryParseToken(
   }
 
   final String tokenString = tokenStringBuffer.toString();
-  if (tokenString == '$tokenOpener$tokenCloser') {
+  if (tokenString.isEmpty) {
     return EndToken();
   }
 
@@ -111,7 +111,7 @@ Token? tryParseToken(
         RegExp(r"(?<=:from=')[^']*(?=')", multiLine: true, dotAll: true)
             .stringMatch(tokenString);
     final String replacement =
-        RegExp(r'(?<=\s)[^\s]+(?=\*/)', multiLine: true, dotAll: true)
+        RegExp(r'(?<=\s)[^\s]+(?=$)', multiLine: true, dotAll: true)
             .stringMatch(tokenString)!;
 
     return ReplaceToken(

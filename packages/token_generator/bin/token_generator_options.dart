@@ -43,18 +43,6 @@ class TokenGeneratorOptions {
     );
   }
 
-  final FileSystem fileSystem;
-
-  final File? outputFile;
-
-  final String template;
-
-  final String tokenOpener;
-
-  final String tokenCloser;
-
-  final Map<String, Object> jsonData;
-
   static String _parseTokenOpener(String tokenOpener) {
     if (tokenOpener.isEmpty) {
       throw ArgumentError('Token opener cannot be an empty string.');
@@ -94,7 +82,7 @@ class TokenGeneratorOptions {
   }) {
     if (dataFileString == null && data == null) {
       throw ArgumentError(
-        'Please provide json data or a file with json data with option `--$dataFileOption` or `--$dataOption`',
+        'Please provide json data or a file with json data with options `--$dataFileOption` or `--$dataOption`.',
       );
     } else if (dataFileString != null && data != null) {
       throw ArgumentError(
@@ -103,10 +91,10 @@ class TokenGeneratorOptions {
     } else if (dataFileString != null) {
       final File dataFile =
           fileSystem.currentDirectory.childFile(dataFileString);
-      return jsonDecode(dataFile.readAsStringSync());
+      return jsonDecode(dataFile.readAsStringSync()).cast<String, Object>();
     }
 
-    return jsonDecode(data!);
+    return jsonDecode(data!).cast<String, Object>();
   }
 
   static String _parseTemplate({
@@ -116,7 +104,7 @@ class TokenGeneratorOptions {
   }) {
     if (templateFileString == null && template == null) {
       throw ArgumentError(
-        'Please provide a template or a template file with `--$templateFileOption` or `--$templateOption`',
+        'Please provide a template or a template file with options `--$templateFileOption` or `--$templateOption`.',
       );
     } else if (templateFileString != null && template != null) {
       throw ArgumentError(
@@ -131,6 +119,18 @@ class TokenGeneratorOptions {
 
     return template!;
   }
+
+  final FileSystem fileSystem;
+
+  final File? outputFile;
+
+  final String template;
+
+  final String tokenOpener;
+
+  final String tokenCloser;
+
+  final Map<String, dynamic> jsonData;
 
   @override
   String toString() {

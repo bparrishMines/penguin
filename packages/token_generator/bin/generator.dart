@@ -7,7 +7,7 @@ import 'token_generator_options.dart';
 
 String runGenerator({
   required String input,
-  required Map<String, Object> data,
+  required Map<String, dynamic> data,
   required TokenGeneratorOptions options,
 }) {
   return _runGenerator(
@@ -23,7 +23,7 @@ String _runGenerator({
   required Queue<String> templateQueue,
   required Queue<Token> tokens,
   required StringBuffer resultBuffer,
-  required Map<String, Object> data,
+  required Map<String, dynamic> data,
   required TokenGeneratorOptions options,
 }) {
   while (templateQueue.isNotEmpty) {
@@ -115,7 +115,7 @@ String _runGenerator({
       } else {
         return resultBuffer.toString().replaceAll(
               currentToken.from ?? resultBuffer.toString(),
-              data[currentToken.replacement] as String,
+              data[currentToken.replacement].toString(),
             );
       }
     } else if (newToken is EndToken && tokens.first is FunctionToken) {
@@ -131,11 +131,11 @@ String _runGenerator({
         if (data[key] is String) {
           result = result.replaceAll(
             '\$\$${currentToken.identifier}_$key\$\$',
-            data[key] as String,
+            data[key].toString(),
           );
           result = result.replaceAll(
             '__${currentToken.identifier}_${key}__',
-            data[key] as String,
+            data[key].toString(),
           );
         }
       }
@@ -154,7 +154,7 @@ void handleConditionalToken({
   required Queue<String> templateQueue,
   required Queue<Token> tokens,
   required StringBuffer resultBuffer,
-  required Map<String, Object> data,
+  required Map<String, dynamic> data,
   required TokenGeneratorOptions options,
 }) {
   bool condition = data[token.identifier] as bool;
