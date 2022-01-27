@@ -83,10 +83,10 @@ Token? tryParseToken(
         RegExp(r"(?<=:join=')[^']*(?=')", multiLine: true, dotAll: true)
             .stringMatch(tokenString);
     final String identifier =
-        RegExp(r'(?<=\s)[^\s]+(?=\*/)', multiLine: true, dotAll: true)
+        RegExp(r'(?<=\s)[^\s]+(?=$)', multiLine: true, dotAll: true)
             .stringMatch(tokenString)!;
     final String listName =
-        RegExp(r'(?<=\s)[^\s]+(?=\s+[^\s]+\*/)', multiLine: true, dotAll: true)
+        RegExp(r'(?<=\s)[^\s]+(?=\s+[^\s]+$)', multiLine: true, dotAll: true)
             .stringMatch(tokenString)!;
     final String? startModifier =
         RegExp(r'(?<=:start=)\w+(?=\s)', multiLine: true, dotAll: true)
@@ -120,7 +120,7 @@ Token? tryParseToken(
     );
   } else if (tokenType.startsWith('if')) {
     final String identifier =
-        RegExp(r'(?<=\s)[^\s]+(?=\*/)', multiLine: true, dotAll: true)
+        RegExp(r'(?<=\s)[^\s]+(?=$)', multiLine: true, dotAll: true)
             .stringMatch(tokenString)!;
 
     return ConditionalToken(
@@ -129,7 +129,7 @@ Token? tryParseToken(
     );
   } else if (tokenType.startsWith('function')) {
     final String replacement =
-        RegExp(r'(?<=\s)[^\s]+(?=\*/)', multiLine: true, dotAll: true)
+        RegExp(r'(?<=\s)[^\s]+(?=$)', multiLine: true, dotAll: true)
             .stringMatch(tokenString)!;
 
     return FunctionToken(identifier: replacement);

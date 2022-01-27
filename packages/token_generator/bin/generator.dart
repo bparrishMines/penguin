@@ -5,16 +5,12 @@ import 'dart:math';
 import 'token.dart';
 import 'token_generator_options.dart';
 
-String runGenerator({
-  required String input,
-  required Map<String, dynamic> data,
-  required TokenGeneratorOptions options,
-}) {
+String runGenerator(TokenGeneratorOptions options) {
   return _runGenerator(
-    templateQueue: Queue<String>.from(input.split('')),
+    templateQueue: Queue<String>.from(options.template.split('')),
     tokens: Queue<Token>(),
     resultBuffer: StringBuffer(),
-    data: data,
+    data: options.jsonData,
     options: options,
   );
 }
@@ -73,8 +69,8 @@ String _runGenerator({
 
       final IterateToken currentToken = newToken;
 
-      final List<Map<String, Object>>? dataList =
-          data[currentToken.listName] as List<Map<String, Object>>?;
+      final List<Map<dynamic, dynamic>>? dataList =
+          data[currentToken.listName] as List<Map<dynamic, dynamic>>?;
       final List<String> outputs = <String>[];
 
       if (dataList == null) {
@@ -92,7 +88,7 @@ String _runGenerator({
             templateQueue: Queue<String>.from(templateQueue),
             tokens: tokens,
             resultBuffer: StringBuffer(),
-            data: dataList[i],
+            data: dataList[i].cast<String, dynamic>(),
             options: options,
           ));
         }

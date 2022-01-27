@@ -12,8 +12,7 @@ const String dataFileOption = 'data-file';
 const String dataOption = 'data';
 
 class TokenGeneratorOptions {
-  TokenGeneratorOptions._({
-    required this.fileSystem,
+  TokenGeneratorOptions({
     required this.template,
     required this.tokenOpener,
     required this.tokenCloser,
@@ -25,8 +24,7 @@ class TokenGeneratorOptions {
     FileSystem fileSystem,
     ArgResults results,
   ) {
-    return TokenGeneratorOptions._(
-      fileSystem: fileSystem,
+    return TokenGeneratorOptions(
       tokenOpener: _parseTokenOpener(results[tokenOpenerOption]),
       tokenCloser: _parseTokenCloser(results[tokenCloserOption]),
       outputFile: _parseOutputFile(results.rest, fileSystem: fileSystem),
@@ -120,8 +118,6 @@ class TokenGeneratorOptions {
     return template!;
   }
 
-  final FileSystem fileSystem;
-
   final File? outputFile;
 
   final String template;
@@ -134,8 +130,8 @@ class TokenGeneratorOptions {
 
   @override
   String toString() {
-    return 'TokenGeneratorOptions(fileSystem:$fileSystem, '
-        'template:$template, tokenOpener:\'$tokenOpener\', '
-        'tokenCloser:\'$tokenCloser\', outputFile:$outputFile, data:$jsonData)';
+    return 'TokenGeneratorOptions(template:$template, '
+        'tokenOpener:\'$tokenOpener\', tokenCloser:\'$tokenCloser\', '
+        'outputFile:$outputFile, data:$jsonData)';
   }
 }

@@ -55,12 +55,7 @@ void main(List<String> arguments) {
     io.exit(64);
   }
 
-  final String output = runGenerator(
-    input: options.template,
-    data: options.jsonData,
-    options: options,
-  );
-
+  final String output = runGenerator(options);
   if (options.outputFile == null) {
     print(output);
   } else {
