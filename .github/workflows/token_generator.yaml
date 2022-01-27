@@ -1,0 +1,41 @@
+name: Token Generator Tests
+
+on:
+  pull_request:
+    paths:
+      - packages/token_generator/**
+      - .github/workflows/token_generator.yaml
+  push:
+    branches:
+      - master
+
+env:
+  PACKAGE_DIR: packages/token_generator
+
+jobs:
+  verify_dart:
+    name: Dart Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.9.0
+        with:
+          access_token: ${{ github.token }}
+      - uses: actions/checkout@v2
+      - uses: dart-lang/setup-dart@v1
+      - name: Install dependencies
+        run: |
+          cd $PACKAGE_DIR 
+          dart pub get
+      - name: Dart Unit Tests
+        run: |
+          cd $PACKAGE_DIR 
+          dart test
+      - name: Dart Analyze
+        run: |
+          cd $PACKAGE_DIR 
+          flutter analyze
+      #- name: Publish Check
+      #  run: |
+      #    cd $PLUGIN_DIR
+      #    flutter pub publish --dry-run

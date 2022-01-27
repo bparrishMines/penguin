@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:file/file.dart';
 import 'package:mockito/annotations.dart';
 import 'package:test/test.dart';
