@@ -23,6 +23,8 @@ jobs:
           access_token: ${{ github.token }}
       - uses: actions/checkout@v2
       - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: dev
       - name: Install dependencies
         run: |
           cd $PACKAGE_DIR 
@@ -34,7 +36,7 @@ jobs:
       - name: Dart Analyze
         run: |
           cd $PACKAGE_DIR 
-          flutter analyze
+          dart analyze
       #- name: Publish Check
       #  run: |
       #    cd $PLUGIN_DIR
