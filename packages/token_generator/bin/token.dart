@@ -62,10 +62,10 @@ class IterateToken extends StartToken {
     required TokenGeneratorOptions options,
     required RunGeneratorCallback onRunGenerator,
   }) {
-    final List<Map<dynamic, dynamic>>? dataList = retrieveValueForIdentifier(
+    final List<dynamic>? dataList = retrieveValueForIdentifier(
         tokens: tokens,
         identifier: identifier,
-        data: data) as List<Map<dynamic, dynamic>>?;
+        data: data) as List<dynamic>?;
     final List<String> outputs = <String>[];
 
     if (dataList == null) {
@@ -76,7 +76,7 @@ class IterateToken extends StartToken {
     }
 
     dataQueue = Queue<Map<dynamic, dynamic>>.of(
-      dataList.sublist(start, end ?? dataList.length),
+      dataList.sublist(start, end ?? dataList.length).cast(),
     );
 
     while (dataQueue.isNotEmpty) {

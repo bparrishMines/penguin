@@ -7,17 +7,10 @@ import 'package:test/test.dart';
 import '../bin/generator.dart';
 import '../bin/token.dart';
 import '../bin/token_generator_options.dart';
-import 'token_generator_test.mocks.dart';
 
 @GenerateMocks(<Type>[FileSystem])
 void main() {
   group('token_generator', () {
-    // late MockFileSystem mockFileSystem;
-    //
-    // setUp(() {
-    //   mockFileSystem = MockFileSystem();
-    // });
-
     group('runGenerator', () {
       test('$EraseToken', () {
         final TokenGeneratorOptions options = TokenGeneratorOptions(
