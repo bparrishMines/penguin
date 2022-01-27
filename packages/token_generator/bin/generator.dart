@@ -2,32 +2,71 @@ import 'dart:collection';
 
 import 'dart:math';
 
-String runGenerator(
-  Queue<String> templateQueue,
-  Queue<Token> tokens,
-  StringBuffer resultBuffer,
-  Map<String, Object> data,
-) {
+import 'token.dart';
+import 'token_generator_options.dart';
+
+String runGenerator({
+  required String input,
+  required Map<String, Object> data,
+  required TokenGeneratorOptions options,
+}) {
+  return _runGenerator(
+    templateQueue: Queue<String>.from(input.split('')),
+    tokens: Queue<Token>(),
+    resultBuffer: StringBuffer(),
+    data: data,
+    options: options,
+  );
+}
+
+String _runGenerator({
+  required Queue<String> templateQueue,
+  required Queue<Token> tokens,
+  required StringBuffer resultBuffer,
+  required Map<String, Object> data,
+  required TokenGeneratorOptions options,
+}) {
   while (templateQueue.isNotEmpty) {
-    final Token? newToken = tryParseToken(templateQueue);
+    final Token? newToken = tryParseToken(
+      templateQueue,
+      tokenOpener: options.tokenOpener,
+      tokenCloser: options.tokenCloser,
+    );
 
     if (newToken == null) {
       resultBuffer.write(templateQueue.removeFirst());
     } else if (newToken is ConditionalToken) {
       handleConditionalToken(
-        newToken,
+        token: newToken,
+        templateQueue: templateQueue,
+        tokens: tokens,
+        resultBuffer: resultBuffer,
+        data: data,
+        options: options,
+      );
+    } else if (newToken is EraseToken) {
+      _flush(
         templateQueue,
-        tokens,
-        resultBuffer,
-        data,
+        tokenOpener: options.tokenOpener,
+        tokenCloser: options.tokenCloser,
       );
     } else if (newToken is ReplaceToken) {
       tokens.addFirst(newToken);
-      resultBuffer.write(runGenerator(
-        templateQueue,
-        tokens,
-        StringBuffer(),
-        data,
+      resultBuffer.write(_runGenerator(
+        templateQueue: templateQueue,
+        tokens: tokens,
+        resultBuffer: StringBuffer(),
+        data: data,
+        options: options,
+      ));
+    } else if (newToken is FunctionToken) {
+      tokens.addFirst(newToken);
+      resultBuffer.write(_runGenerator(
+        templateQueue: templateQueue,
+        tokens: tokens,
+        resultBuffer: StringBuffer(),
+        data: data,
+        options: options,
       ));
     } else if (newToken is IterateToken) {
       tokens.addFirst(newToken);
@@ -45,16 +84,24 @@ String runGenerator(
         throw StateError('Failed to find data!');
       }
 
+      final String? ifIdentifier = currentToken.ifIdentifier;
       final int end = min(currentToken.end ?? dataList.length, dataList.length);
       for (int i = currentToken.start; i < end; i++) {
-        outputs.add(runGenerator(
-          Queue<String>.from(templateQueue),
-          tokens,
-          StringBuffer(),
-          dataList[i],
-        ));
+        if (ifIdentifier == null || dataList[i][ifIdentifier] as bool) {
+          outputs.add(_runGenerator(
+            templateQueue: Queue<String>.from(templateQueue),
+            tokens: tokens,
+            resultBuffer: StringBuffer(),
+            data: dataList[i],
+            options: options,
+          ));
+        }
       }
-      flush(templateQueue);
+      _flush(
+        templateQueue,
+        tokenOpener: options.tokenOpener,
+        tokenCloser: options.tokenCloser,
+      );
       tokens.removeFirst();
       resultBuffer.write(outputs.join(currentToken.join));
     } else if (newToken is EndToken && tokens.first is ReplaceToken) {
@@ -71,6 +118,11 @@ String runGenerator(
               data[currentToken.replacement] as String,
             );
       }
+    } else if (newToken is EndToken && tokens.first is FunctionToken) {
+      final FunctionToken currentToken = tokens.removeFirst() as FunctionToken;
+      final String Function(String) function =
+          data[currentToken.identifier] as String Function(String);
+      return function(resultBuffer.toString());
     } else if (newToken is EndToken && tokens.first is IterateToken) {
       final IterateToken currentToken = tokens.first as IterateToken;
 
@@ -97,32 +149,46 @@ String runGenerator(
   return resultBuffer.toString();
 }
 
-void handleConditionalToken(
-  ConditionalToken token,
-  Queue<String> templateQueue,
-  Queue<Token> tokens,
-  StringBuffer resultBuffer,
-  Map<String, Object> data,
-) {
+void handleConditionalToken({
+  required ConditionalToken token,
+  required Queue<String> templateQueue,
+  required Queue<Token> tokens,
+  required StringBuffer resultBuffer,
+  required Map<String, Object> data,
+  required TokenGeneratorOptions options,
+}) {
   bool condition = data[token.identifier] as bool;
   if (token.inverse) condition = !condition;
   if (condition) {
     tokens.addFirst(token);
-    resultBuffer.write(runGenerator(
-      templateQueue,
-      tokens,
-      StringBuffer(),
-      data,
+    resultBuffer.write(_runGenerator(
+      templateQueue: templateQueue,
+      tokens: tokens,
+      resultBuffer: StringBuffer(),
+      data: data,
+      options: options,
     ));
   } else {
-    flush(templateQueue);
+    _flush(
+      templateQueue,
+      tokenOpener: options.tokenOpener,
+      tokenCloser: options.tokenCloser,
+    );
   }
 }
 
-void flush(Queue<String> templateQueue) {
+void _flush(
+  Queue<String> templateQueue, {
+  required String tokenOpener,
+  required String tokenCloser,
+}) {
   int tokenCount = 1;
   while (tokenCount != 0) {
-    final Token? newToken = tryParseToken(templateQueue);
+    final Token? newToken = tryParseToken(
+      templateQueue,
+      tokenOpener: tokenOpener,
+      tokenCloser: tokenCloser,
+    );
 
     if (newToken == null) {
       templateQueue.removeFirst();
@@ -133,108 +199,3 @@ void flush(Queue<String> templateQueue) {
     }
   }
 }
-
-Token? tryParseToken(Queue<String> templateQueue) {
-  if (templateQueue.isEmpty ||
-      templateQueue.first != '/' ||
-      templateQueue.elementAt(1) != '*') {
-    return null;
-  }
-
-  final StringBuffer tokenStringBuffer = StringBuffer();
-  String lastChar = templateQueue.removeFirst();
-  tokenStringBuffer.write(lastChar);
-  while (true) {
-    final String currentChar = templateQueue.removeFirst();
-    tokenStringBuffer.write(currentChar);
-    if (lastChar == '*' && currentChar == '/') break;
-    lastChar = currentChar;
-  }
-
-  final String tokenString = tokenStringBuffer.toString();
-  if (tokenString == '/**/') return EndToken();
-
-  final String tokenType = tokenString.split(' ').first;
-  if (tokenType == '/*iterate') {
-    final String? joinModifier =
-        RegExp(r"(?<=:join=')[^']*(?=')", multiLine: true, dotAll: true)
-            .stringMatch(tokenString);
-    final String identifier =
-        RegExp(r'(?<=\s)[^\s]+(?=\*/)', multiLine: true, dotAll: true)
-            .stringMatch(tokenString)!;
-    final String listName =
-        RegExp(r'(?<=\s)[^\s]+(?=\s+[^\s]+\*/)', multiLine: true, dotAll: true)
-            .stringMatch(tokenString)!;
-    final String? startModifier =
-        RegExp(r'(?<=:start=)\w+(?=\s)', multiLine: true, dotAll: true)
-            .stringMatch(tokenString);
-    final String? endModifier =
-        RegExp(r'(?<=:end=)\w+(?=\s)', multiLine: true, dotAll: true)
-            .stringMatch(tokenString);
-
-    return IterateToken(
-      listName: listName,
-      identifier: identifier,
-      join: joinModifier ?? '',
-      start: startModifier == null ? 0 : int.parse(startModifier),
-      end: endModifier == null ? null : int.parse(endModifier),
-    );
-  } else if (tokenType == '/*replace') {
-    final String? fromModifier =
-        RegExp(r"(?<=:from=')[^']*(?=')", multiLine: true, dotAll: true)
-            .stringMatch(tokenString);
-    final String replacement =
-        RegExp(r'(?<=\s)[^\s]+(?=\*/)', multiLine: true, dotAll: true)
-            .stringMatch(tokenString)!;
-
-    return ReplaceToken(
-      from: fromModifier,
-      replacement: replacement,
-    );
-  } else if (tokenType.startsWith('/*if')) {
-    final String identifier =
-        RegExp(r'(?<=\s)[^\s]+(?=\*/)', multiLine: true, dotAll: true)
-            .stringMatch(tokenString)!;
-
-    return ConditionalToken(
-      identifier: identifier,
-      inverse: tokenType == '/*if!',
-    );
-  }
-
-  throw StateError('Failed to parse token');
-}
-
-abstract class Token {}
-
-class IterateToken extends Token {
-  IterateToken({
-    required this.listName,
-    required this.identifier,
-    required this.join,
-    required this.start,
-    this.end,
-  });
-
-  final String listName;
-  final String identifier;
-  final String join;
-  final int start;
-  final int? end;
-}
-
-class ReplaceToken extends Token {
-  ReplaceToken({this.from, required this.replacement});
-
-  final String? from;
-  final String replacement;
-}
-
-class ConditionalToken extends Token {
-  ConditionalToken({required this.identifier, required this.inverse});
-
-  final String identifier;
-  final bool inverse;
-}
-
-class EndToken extends Token {}

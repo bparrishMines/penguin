@@ -1,14 +1,39 @@
 import 'dart:io' as io;
 
 import 'package:args/args.dart';
-import 'package:file/file.dart';
+import 'package:colorize/colorize.dart';
 import 'package:file/local.dart';
 
-const String helpFlag = 'help';
-const String inputOption = 'input';
+import 'generator.dart';
+import 'token_generator_options.dart';
 
 final ArgParser parser = ArgParser()
-  ..addFlag('help', abbr: 'h', help: 'Prints usage.');
+  ..addFlag(helpFlag, abbr: 'h', help: 'Prints usage.')
+  ..addOption(
+    tokenOpenerOption,
+    help: 'Unique indicator of the beginning of a token.',
+    defaultsTo: '/*',
+  )
+  ..addOption(
+    tokenCloserOption,
+    help: 'Unique indicator of an end of a token. '
+        'Can be equivalent to --$tokenOpenerOption.',
+    defaultsTo: '*/',
+  )
+  ..addOption(
+    outputOption,
+    help: 'Output file. If not provided, prints to console.',
+  )
+  ..addOption(
+    dataFileOption,
+    help: 'File containing JSON data to populate the output file. Cannot be '
+        'supplied with `--$dataOption`.',
+  )
+  ..addOption(
+    dataOption,
+    help: 'JSON data to populate the output file. Cannot be supplied with '
+        '`--$dataFileOption`.',
+  );
 
 void main(List<String> arguments) {
   final ArgResults results = parser.parse(arguments);
@@ -21,35 +46,10 @@ void main(List<String> arguments) {
   try {
     options = TokenGeneratorOptions.parse(const LocalFileSystem(), results);
   } on ArgumentError catch (error) {
-    print(error.message);
+    print(Colorize(error.message).red());
     print(parser.usage);
     io.exit(64);
   }
-}
 
-class TokenGeneratorOptions {
-  TokenGeneratorOptions._({required this.inputFile});
-
-  factory TokenGeneratorOptions.parse(
-    FileSystem fileSystem,
-    ArgResults results,
-  ) {
-    if (results.rest.isEmpty || results.rest.length > 1) {
-      throw ArgumentError('Please provide only a single input file.');
-    }
-
-    final File inputFile =
-        fileSystem.currentDirectory.childFile(results.rest.first);
-    if (!inputFile.existsSync()) {
-      throw ArgumentError('Please provide an existing input file.');
-    }
-
-    final TokenGeneratorOptions options = TokenGeneratorOptions._(
-      inputFile: inputFile,
-    );
-
-    return options;
-  }
-
-  final File inputFile;
+  final String output = runGenerator(input: options.inputFile.readAsStringSync(), data: options.jsonData, options: options);
 }
