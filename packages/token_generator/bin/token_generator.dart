@@ -21,9 +21,13 @@ final ArgParser parser = ArgParser()
     defaultsTo: '*/',
   )
   ..addOption(
-    outputOption,
-    help: 'Output file. If not provided, prints to console.',
+    templateFileOption,
+    help:
+        'File containing a template to populate with data. Cannot be supplied with `--$templateOption`.',
   )
+  ..addOption(templateOption,
+      help:
+          'Template to populate with data. Cannot be supplied with `--$templateFileOption`.')
   ..addOption(
     dataFileOption,
     help: 'File containing JSON data to populate the output file. Cannot be '
@@ -51,5 +55,15 @@ void main(List<String> arguments) {
     io.exit(64);
   }
 
-  final String output = runGenerator(input: options.inputFile.readAsStringSync(), data: options.jsonData, options: options);
+  final String output = runGenerator(
+    input: options.template,
+    data: options.jsonData,
+    options: options,
+  );
+
+  if (options.outputFile == null) {
+    print(output);
+  } else {
+    options.outputFile!.writeAsStringSync(output);
+  }
 }

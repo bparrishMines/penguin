@@ -6,49 +6,92 @@ import 'package:file/file.dart';
 const String helpFlag = 'help';
 const String tokenOpenerOption = 'token-opener';
 const String tokenCloserOption = 'token-closer';
-const String outputOption = 'output';
+const String templateFileOption = 'template-file';
+const String templateOption = 'template';
 const String dataFileOption = 'data-file';
 const String dataOption = 'data';
 
 class TokenGeneratorOptions {
   TokenGeneratorOptions._({
     required this.fileSystem,
-    required this.inputFile,
+    required this.template,
     required this.tokenOpener,
     required this.tokenCloser,
-    required this.outputFile,
     required this.jsonData,
+    required this.outputFile,
   });
 
   factory TokenGeneratorOptions.parse(
     FileSystem fileSystem,
     ArgResults results,
   ) {
-    if (results.rest.isEmpty || results.rest.length > 1) {
-      throw ArgumentError('Please provide only a single input file.');
-    }
+    return TokenGeneratorOptions._(
+      fileSystem: fileSystem,
+      tokenOpener: _parseTokenOpener(results[tokenOpenerOption]),
+      tokenCloser: _parseTokenCloser(results[tokenCloserOption]),
+      outputFile: _parseOutputFile(results.rest, fileSystem: fileSystem),
+      jsonData: _parseJsonData(
+        dataFileString: results[dataFileOption],
+        data: results[dataOption],
+        fileSystem: fileSystem,
+      ),
+      template: _parseTemplate(
+        templateFileString: results[templateFileOption],
+        template: results[templateOption],
+        fileSystem: fileSystem,
+      ),
+    );
+  }
 
-    final File inputFile =
-        fileSystem.currentDirectory.childFile(results.rest.first);
-    if (!inputFile.existsSync()) {
-      throw ArgumentError('Please provide an existing input file.');
-    }
+  final FileSystem fileSystem;
 
-    final String tokenOpener = results[tokenOpenerOption];
+  final File? outputFile;
+
+  final String template;
+
+  final String tokenOpener;
+
+  final String tokenCloser;
+
+  final Map<String, Object> jsonData;
+
+  static String _parseTokenOpener(String tokenOpener) {
     if (tokenOpener.isEmpty) {
       throw ArgumentError('Token opener cannot be an empty string.');
     }
+    return tokenOpener;
+  }
 
-    final String tokenCloser = results[tokenCloserOption];
+  static String _parseTokenCloser(String tokenCloser) {
     if (tokenCloserOption.isEmpty) {
       throw ArgumentError('Token closer cannot be an empty string.');
     }
+    return tokenCloser;
+  }
 
-    final String? outputFileString = results[outputOption];
+  static File? _parseOutputFile(
+    List<String> rest, {
+    required FileSystem fileSystem,
+  }) {
+    if (rest.isEmpty) {
+      return null;
+    } else if (rest.length > 1) {
+      throw ArgumentError('Please provide only a single output file.');
+    }
 
-    final Map<String, Object> inputJsonData;
-    final String? dataFileString = results[dataFileOption];
-    final String? data = results[dataOption];
+    final String outputFileString = rest.first;
+
+    if (outputFileString.trim().isEmpty) {
+      throw ArgumentError('Output file cannot be an empty string.');
+    }
+    return fileSystem.currentDirectory.childFile(outputFileString.trim());
+  }
+
+  static Map<String, Object> _parseJsonData({
+    required String? dataFileString,
+    required String? data,
+    required FileSystem fileSystem,
+  }) {
     if (dataFileString == null && data == null) {
       throw ArgumentError(
         'Please provide json data or a file with json data with option `--$dataFileOption` or `--$dataOption`',
@@ -60,41 +103,39 @@ class TokenGeneratorOptions {
     } else if (dataFileString != null) {
       final File dataFile =
           fileSystem.currentDirectory.childFile(dataFileString);
-      inputJsonData = jsonDecode(dataFile.readAsStringSync());
-    } else {
-      inputJsonData = jsonDecode(data!);
+      return jsonDecode(dataFile.readAsStringSync());
     }
 
-    final TokenGeneratorOptions options = TokenGeneratorOptions._(
-      fileSystem: fileSystem,
-      inputFile: inputFile,
-      tokenOpener: tokenOpener,
-      tokenCloser: tokenCloser,
-      outputFile: outputFileString != null
-          ? fileSystem.currentDirectory.childFile(outputFileString)
-          : null,
-      jsonData: inputJsonData,
-    );
-
-    return options;
+    return jsonDecode(data!);
   }
 
-  final FileSystem fileSystem;
+  static String _parseTemplate({
+    required String? templateFileString,
+    required String? template,
+    required FileSystem fileSystem,
+  }) {
+    if (templateFileString == null && template == null) {
+      throw ArgumentError(
+        'Please provide a template or a template file with `--$templateFileOption` or `--$templateOption`',
+      );
+    } else if (templateFileString != null && template != null) {
+      throw ArgumentError(
+        'A template can only be provided with only one of `--$templateFileOption` or '
+        '`--$templateOption`. Both options were provided.',
+      );
+    } else if (templateFileString != null) {
+      final File templateFile =
+          fileSystem.currentDirectory.childFile(templateFileString);
+      return templateFile.readAsStringSync();
+    }
 
-  final File inputFile;
-
-  final String tokenOpener;
-
-  final String tokenCloser;
-
-  final File? outputFile;
-
-  final Map<String, Object> jsonData;
+    return template!;
+  }
 
   @override
   String toString() {
     return 'TokenGeneratorOptions(fileSystem:$fileSystem, '
-        'inputFile:${inputFile.absolute}, tokenOpener:\'$tokenOpener\', '
+        'template:$template, tokenOpener:\'$tokenOpener\', '
         'tokenCloser:\'$tokenCloser\', outputFile:$outputFile, data:$jsonData)';
   }
 }
