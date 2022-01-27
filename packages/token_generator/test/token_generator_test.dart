@@ -72,6 +72,57 @@ void main() {
           expect(runGenerator(options), 'redgreenblue');
         });
 
+        test('join', () {
+          final TokenGeneratorOptions options = TokenGeneratorOptions(
+            tokenOpener: '/*',
+            tokenCloser: '*/',
+            template: "[/*iterate :join=', ' color colors*/__color_name__/**/]",
+            jsonData: <String, dynamic>{
+              'colors': <Map<dynamic, dynamic>>[
+                {'name': 'red'},
+                {'name': 'green'},
+                {'name': 'blue'},
+              ],
+            },
+            outputFile: null,
+          );
+          expect(runGenerator(options), '[red, green, blue]');
+        });
+
+        test('start', () {
+          final TokenGeneratorOptions options = TokenGeneratorOptions(
+            tokenOpener: '/*',
+            tokenCloser: '*/',
+            template: "/*iterate :start=1 color colors*/__color_name__/**/",
+            jsonData: <String, dynamic>{
+              'colors': <Map<dynamic, dynamic>>[
+                {'name': 'red'},
+                {'name': 'green'},
+                {'name': 'blue'},
+              ],
+            },
+            outputFile: null,
+          );
+          expect(runGenerator(options), 'greenblue');
+        });
+
+        test('end', () {
+          final TokenGeneratorOptions options = TokenGeneratorOptions(
+            tokenOpener: '/*',
+            tokenCloser: '*/',
+            template: "/*iterate :end=2 color colors*/__color_name__/**/",
+            jsonData: <String, dynamic>{
+              'colors': <Map<dynamic, dynamic>>[
+                {'name': 'red'},
+                {'name': 'green'},
+                {'name': 'blue'},
+              ],
+            },
+            outputFile: null,
+          );
+          expect(runGenerator(options), 'redgreen');
+        });
+
         test('iterate with nested replace', () {
           final TokenGeneratorOptions options = TokenGeneratorOptions(
             tokenOpener: '/*',
@@ -106,6 +157,48 @@ void main() {
             outputFile: null,
           );
           expect(runGenerator(options), 'redblue');
+        });
+
+        test('iterate with nested erase', () {
+          final TokenGeneratorOptions options = TokenGeneratorOptions(
+            tokenOpener: '/*',
+            tokenCloser: '*/',
+            template:
+                '/*iterate color colors*/Hello, /*erase*/some stuff to erase/**/World!/**/',
+            jsonData: <String, dynamic>{
+              'colors': <Map<dynamic, dynamic>>[
+                {'name': 'red'},
+              ],
+            },
+            outputFile: null,
+          );
+          expect(runGenerator(options), 'Hello, World!');
+        });
+
+        test('iterate with nested iterate', () {
+          final TokenGeneratorOptions options = TokenGeneratorOptions(
+            tokenOpener: '/*',
+            tokenCloser: '*/',
+            template:
+                '/*iterate color colors*//*iterate object redObjects*/__name__ is __color_name__. /**//**/',
+            jsonData: <String, dynamic>{
+              'colors': <Map<dynamic, dynamic>>[
+                {
+                  'name': 'red',
+                  'redObjects': <Map<dynamic, dynamic>>[
+                    <dynamic, dynamic>{'name': 'Fire Truck'},
+                    <dynamic, dynamic>{'name': 'Apple'},
+                    <dynamic, dynamic>{'name': 'Fire Hydrant'},
+                  ]
+                },
+              ],
+            },
+            outputFile: null,
+          );
+          expect(
+            runGenerator(options),
+            'Fire Truck is red. Apple is red. Fire Hydrant is red. ',
+          );
         });
       });
 

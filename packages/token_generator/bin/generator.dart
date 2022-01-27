@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+import 'generator_utils.dart';
 import 'token.dart';
 import 'token_generator_options.dart';
 
