@@ -42,11 +42,11 @@ void main() {
           expect(runGenerator(options), '23');
         });
 
-        test('replace from', () {
+        test('replace what', () {
           final TokenGeneratorOptions options = TokenGeneratorOptions(
             tokenOpener: '/*',
             tokenCloser: '*/',
-            template: "/*replace :from='Friend' place*/Hello, Friend!/**/",
+            template: "/*replace :what='Friend' place*/Hello, Friend!/**/",
             jsonData: <String, dynamic>{'place': 'World'},
             outputFile: null,
           );
@@ -59,7 +59,7 @@ void main() {
           final TokenGeneratorOptions options = TokenGeneratorOptions(
             tokenOpener: '/*',
             tokenCloser: '*/',
-            template: '/*iterate colors color*/__color_name__/**/',
+            template: '/*iterate color colors*/__color_name__/**/',
             jsonData: <String, dynamic>{
               'colors': <Map<dynamic, dynamic>>[
                 {'name': 'red'},
@@ -77,7 +77,7 @@ void main() {
             tokenOpener: '/*',
             tokenCloser: '*/',
             template:
-                '/*iterate colors color*//*replace color_name*/name/**//**/',
+                '/*iterate color colors*//*replace color_name*/name/**//**/',
             jsonData: <String, dynamic>{
               'colors': <Map<dynamic, dynamic>>[
                 {'name': 'red'},
@@ -90,23 +90,23 @@ void main() {
           expect(runGenerator(options), 'redgreenblue');
         });
 
-        // test('iterate with nested if', () {
-        //   final TokenGeneratorOptions options = TokenGeneratorOptions(
-        //     tokenOpener: '/*',
-        //     tokenCloser: '*/',
-        //     template:
-        //         '/*iterate colors color*//*if color_hasName*/__color_name__/**//**/',
-        //     jsonData: <String, dynamic>{
-        //       'colors': <Map<dynamic, dynamic>>[
-        //         {'hasName': true, 'name': 'red'},
-        //         {'hasName': false, 'name': 'green'},
-        //         {'hasName': true, 'name': 'blue'},
-        //       ],
-        //     },
-        //     outputFile: null,
-        //   );
-        //   expect(runGenerator(options), 'redblue');
-        // });
+        test('iterate with nested if', () {
+          final TokenGeneratorOptions options = TokenGeneratorOptions(
+            tokenOpener: '/*',
+            tokenCloser: '*/',
+            template:
+                '/*iterate color colors*//*if color_hasName*/__color_name__/**//**/',
+            jsonData: <String, dynamic>{
+              'colors': <Map<dynamic, dynamic>>[
+                {'hasName': true, 'name': 'red'},
+                {'hasName': false, 'name': 'green'},
+                {'hasName': true, 'name': 'blue'},
+              ],
+            },
+            outputFile: null,
+          );
+          expect(runGenerator(options), 'redblue');
+        });
       });
 
       group('$ConditionalToken', () {

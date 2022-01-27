@@ -47,15 +47,17 @@ void main(List<String> arguments) {
   }
 
   late final TokenGeneratorOptions options;
+  late final String output;
   try {
     options = TokenGeneratorOptions.parse(const LocalFileSystem(), results);
+    output = runGenerator(options);
   } on ArgumentError catch (error) {
     print(Colorize(error.message).red());
     print(parser.usage);
+
     io.exit(64);
   }
 
-  final String output = runGenerator(options);
   if (options.outputFile == null) {
     print(output);
   } else {
