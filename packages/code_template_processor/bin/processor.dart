@@ -1,25 +1,25 @@
 import 'dart:collection';
 
-import 'generator_utils.dart';
+import 'processor_utils.dart';
 import 'token.dart';
-import 'token_generator_options.dart';
+import 'code_template_processor_options.dart';
 
-String runGenerator(TokenGeneratorOptions options) {
-  return _runGenerator(
+String runProcessor(TemplateProcessorOptions options) {
+  return _runProcessor(
     templateQueue: Queue<String>.from(options.template.split('')),
-    tokens: Queue<StartToken>(),
+    tokenStack: Queue<StartToken>(),
     resultBuffer: StringBuffer(),
     data: options.jsonData,
     options: options,
   );
 }
 
-String _runGenerator({
+String _runProcessor({
   required Queue<String> templateQueue,
-  required Queue<StartToken> tokens,
+  required Queue<StartToken> tokenStack,
   required StringBuffer resultBuffer,
   required Map<String, dynamic> data,
-  required TokenGeneratorOptions options,
+  required TemplateProcessorOptions options,
 }) {
   while (templateQueue.isNotEmpty) {
     final Token? newToken = tryParseToken(
@@ -29,23 +29,23 @@ String _runGenerator({
     );
 
     if (newToken is StartToken) {
-      tokens.addFirst(newToken);
+      tokenStack.addLast(newToken);
       newToken.onTokenStart(
         templateQueue: templateQueue,
-        tokens: tokens,
+        tokenStack: tokenStack,
         resultBuffer: resultBuffer,
         data: data,
         options: options,
-        onRunGenerator: _runGenerator,
+        onRunProcessor: _runProcessor,
       );
     } else if (newToken is EndToken) {
-      return tokens.removeFirst().onTokenEnd(
+      return tokenStack.removeLast().onTokenEnd(
             templateQueue: templateQueue,
-            tokens: tokens,
+            tokenStack: tokenStack,
             resultBuffer: resultBuffer,
             data: data,
             options: options,
-            onRunGenerator: _runGenerator,
+            onRunGenerator: _runProcessor,
           );
     } else if (queueStartsWith(templateQueue, '__') ||
         queueStartsWith(templateQueue, r'$$')) {
@@ -57,7 +57,7 @@ String _runGenerator({
       }
 
       final String value = retrieveValueForIdentifier(
-        tokens: tokens,
+        tokenStack: tokenStack,
         identifier: identifier.replaceAll('__', '').replaceAll(r'$$', ''),
         data: data,
       ).toString();

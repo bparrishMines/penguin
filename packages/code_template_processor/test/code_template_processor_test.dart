@@ -2,52 +2,52 @@ import 'package:file/file.dart';
 import 'package:mockito/annotations.dart';
 import 'package:test/test.dart';
 
-import '../bin/generator.dart';
+import '../bin/processor.dart';
 import '../bin/token.dart';
-import '../bin/token_generator_options.dart';
+import '../bin/code_template_processor_options.dart';
 
 @GenerateMocks(<Type>[FileSystem])
 void main() {
-  group('token_generator', () {
-    group('runGenerator', () {
+  group('code_template_processor', () {
+    group('runProcessor', () {
       test('$EraseToken', () {
-        final TokenGeneratorOptions options = TokenGeneratorOptions(
+        final TemplateProcessorOptions options = TemplateProcessorOptions(
           tokenOpener: '/*',
           tokenCloser: '*/',
           template: 'Hello,/*erase*/__hello__/**/ World!',
           jsonData: <String, dynamic>{'hello': 23},
           outputFile: null,
         );
-        expect(runGenerator(options), 'Hello, World!');
+        expect(runProcessor(options), 'Hello, World!');
       });
 
-      group('$ReplaceToken', () {
+      group('ReplaceToken', () {
         test('replace', () {
-          final TokenGeneratorOptions options = TokenGeneratorOptions(
+          final TemplateProcessorOptions options = TemplateProcessorOptions(
             tokenOpener: '/*',
             tokenCloser: '*/',
             template: '/*replace hello*/__hello__/**/',
             jsonData: <String, dynamic>{'hello': 23},
             outputFile: null,
           );
-          expect(runGenerator(options), '23');
+          expect(runProcessor(options), '23');
         });
 
         test('replace what', () {
-          final TokenGeneratorOptions options = TokenGeneratorOptions(
+          final TemplateProcessorOptions options = TemplateProcessorOptions(
             tokenOpener: '/*',
             tokenCloser: '*/',
             template: "/*replace :what='Friend' place*/Hello, Friend!/**/",
             jsonData: <String, dynamic>{'place': 'World'},
             outputFile: null,
           );
-          expect(runGenerator(options), 'Hello, World!');
+          expect(runProcessor(options), 'Hello, World!');
         });
       });
 
-      group('$IterateToken', () {
+      group('IterateToken', () {
         test('iterate', () {
-          final TokenGeneratorOptions options = TokenGeneratorOptions(
+          final TemplateProcessorOptions options = TemplateProcessorOptions(
             tokenOpener: '/*',
             tokenCloser: '*/',
             template: '/*iterate color colors*/__color_name__/**/',
@@ -60,11 +60,11 @@ void main() {
             },
             outputFile: null,
           );
-          expect(runGenerator(options), 'redgreenblue');
+          expect(runProcessor(options), 'redgreenblue');
         });
 
         test('join', () {
-          final TokenGeneratorOptions options = TokenGeneratorOptions(
+          final TemplateProcessorOptions options = TemplateProcessorOptions(
             tokenOpener: '/*',
             tokenCloser: '*/',
             template: "[/*iterate :join=', ' color colors*/__color_name__/**/]",
@@ -77,11 +77,11 @@ void main() {
             },
             outputFile: null,
           );
-          expect(runGenerator(options), '[red, green, blue]');
+          expect(runProcessor(options), '[red, green, blue]');
         });
 
         test('start', () {
-          final TokenGeneratorOptions options = TokenGeneratorOptions(
+          final TemplateProcessorOptions options = TemplateProcessorOptions(
             tokenOpener: '/*',
             tokenCloser: '*/',
             template: "/*iterate :start=1 color colors*/__color_name__/**/",
@@ -94,11 +94,11 @@ void main() {
             },
             outputFile: null,
           );
-          expect(runGenerator(options), 'greenblue');
+          expect(runProcessor(options), 'greenblue');
         });
 
         test('end', () {
-          final TokenGeneratorOptions options = TokenGeneratorOptions(
+          final TemplateProcessorOptions options = TemplateProcessorOptions(
             tokenOpener: '/*',
             tokenCloser: '*/',
             template: "/*iterate :end=2 color colors*/__color_name__/**/",
@@ -111,11 +111,11 @@ void main() {
             },
             outputFile: null,
           );
-          expect(runGenerator(options), 'redgreen');
+          expect(runProcessor(options), 'redgreen');
         });
 
         test('iterate with nested replace', () {
-          final TokenGeneratorOptions options = TokenGeneratorOptions(
+          final TemplateProcessorOptions options = TemplateProcessorOptions(
             tokenOpener: '/*',
             tokenCloser: '*/',
             template:
@@ -129,11 +129,11 @@ void main() {
             },
             outputFile: null,
           );
-          expect(runGenerator(options), 'redgreenblue');
+          expect(runProcessor(options), 'redgreenblue');
         });
 
         test('iterate with nested if', () {
-          final TokenGeneratorOptions options = TokenGeneratorOptions(
+          final TemplateProcessorOptions options = TemplateProcessorOptions(
             tokenOpener: '/*',
             tokenCloser: '*/',
             template:
@@ -147,11 +147,11 @@ void main() {
             },
             outputFile: null,
           );
-          expect(runGenerator(options), 'redblue');
+          expect(runProcessor(options), 'redblue');
         });
 
         test('iterate with nested erase', () {
-          final TokenGeneratorOptions options = TokenGeneratorOptions(
+          final TemplateProcessorOptions options = TemplateProcessorOptions(
             tokenOpener: '/*',
             tokenCloser: '*/',
             template:
@@ -163,11 +163,11 @@ void main() {
             },
             outputFile: null,
           );
-          expect(runGenerator(options), 'Hello, World!');
+          expect(runProcessor(options), 'Hello, World!');
         });
 
         test('iterate with nested iterate', () {
-          final TokenGeneratorOptions options = TokenGeneratorOptions(
+          final TemplateProcessorOptions options = TemplateProcessorOptions(
             tokenOpener: '/*',
             tokenCloser: '*/',
             template:
@@ -187,77 +187,77 @@ void main() {
             outputFile: null,
           );
           expect(
-            runGenerator(options),
+            runProcessor(options),
             'Fire Truck is red. Apple is red. Fire Hydrant is red. ',
           );
         });
       });
 
-      group('$ConditionalToken', () {
+      group('ConditionalToken', () {
         test('if true', () {
-          final TokenGeneratorOptions options = TokenGeneratorOptions(
+          final TemplateProcessorOptions options = TemplateProcessorOptions(
             tokenOpener: '/*',
             tokenCloser: '*/',
             template: '/*if imCool*/ice cold/**/',
             jsonData: <String, dynamic>{'imCool': true},
             outputFile: null,
           );
-          expect(runGenerator(options), 'ice cold');
+          expect(runProcessor(options), 'ice cold');
         });
 
         test('if false', () {
-          final TokenGeneratorOptions options = TokenGeneratorOptions(
+          final TemplateProcessorOptions options = TemplateProcessorOptions(
             tokenOpener: '/*',
             tokenCloser: '*/',
             template: '/*if imCool*/ice cold/**/',
             jsonData: <String, dynamic>{'imCool': false},
             outputFile: null,
           );
-          expect(runGenerator(options), '');
+          expect(runProcessor(options), '');
         });
 
         test('if true', () {
-          final TokenGeneratorOptions options = TokenGeneratorOptions(
+          final TemplateProcessorOptions options = TemplateProcessorOptions(
             tokenOpener: '/*',
             tokenCloser: '*/',
             template: '/*if imCool*/ice cold/**/',
             jsonData: <String, dynamic>{'imCool': true},
             outputFile: null,
           );
-          expect(runGenerator(options), 'ice cold');
+          expect(runProcessor(options), 'ice cold');
         });
 
         test('if false', () {
-          final TokenGeneratorOptions options = TokenGeneratorOptions(
+          final TemplateProcessorOptions options = TemplateProcessorOptions(
             tokenOpener: '/*',
             tokenCloser: '*/',
             template: '/*if imCool*/ice cold/**/',
             jsonData: <String, dynamic>{'imCool': false},
             outputFile: null,
           );
-          expect(runGenerator(options), '');
+          expect(runProcessor(options), '');
         });
 
         test('if! true', () {
-          final TokenGeneratorOptions options = TokenGeneratorOptions(
+          final TemplateProcessorOptions options = TemplateProcessorOptions(
             tokenOpener: '/*',
             tokenCloser: '*/',
             template: '/*if! imCool*/ice cold/**/',
             jsonData: <String, dynamic>{'imCool': false},
             outputFile: null,
           );
-          expect(runGenerator(options), 'ice cold');
+          expect(runProcessor(options), 'ice cold');
         });
 
         test('if! false', () {
-          final TokenGeneratorOptions options = TokenGeneratorOptions(
+          final TemplateProcessorOptions options = TemplateProcessorOptions(
             tokenOpener: '/*',
             tokenCloser: '*/',
             template: '/*if! imCool*/ice cold/**/',
             jsonData: <String, dynamic>{'imCool': true},
             outputFile: null,
           );
-          expect(runGenerator(options), '');
+          expect(runProcessor(options), '');
         });
       });
     });

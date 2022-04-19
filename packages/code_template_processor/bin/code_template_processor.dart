@@ -4,8 +4,8 @@ import 'package:args/args.dart';
 import 'package:colorize/colorize.dart';
 import 'package:file/local.dart';
 
-import 'generator.dart';
-import 'token_generator_options.dart';
+import 'processor.dart';
+import 'code_template_processor_options.dart';
 
 final ArgParser parser = ArgParser()
   ..addFlag(helpFlag, abbr: 'h', help: 'Prints usage.')
@@ -23,19 +23,19 @@ final ArgParser parser = ArgParser()
   ..addOption(
     templateFileOption,
     help:
-        'File containing a template to populate with data. Cannot be supplied with `--$templateOption`.',
+        'File containing a template to populate with data. Cannot be given with `--$templateOption`.',
   )
   ..addOption(templateOption,
       help:
-          'Template to populate with data. Cannot be supplied with `--$templateFileOption`.')
+          'Template to populate with data. Cannot be given with `--$templateFileOption`.')
   ..addOption(
     dataFileOption,
     help: 'File containing JSON data to populate the output file. Cannot be '
-        'supplied with `--$dataOption`.',
+        'given with `--$dataOption`.',
   )
   ..addOption(
     dataOption,
-    help: 'JSON data to populate the output file. Cannot be supplied with '
+    help: 'JSON data to populate the output file. Cannot be given with '
         '`--$dataFileOption`.',
   );
 
@@ -46,11 +46,11 @@ void main(List<String> arguments) {
     io.exit(0);
   }
 
-  late final TokenGeneratorOptions options;
+  late final TemplateProcessorOptions options;
   late final String output;
   try {
-    options = TokenGeneratorOptions.parse(const LocalFileSystem(), results);
-    output = runGenerator(options);
+    options = TemplateProcessorOptions.parse(const LocalFileSystem(), results);
+    output = runProcessor(options);
   } on ArgumentError catch (error) {
     print(Colorize(error.message).red());
     print(parser.usage);
