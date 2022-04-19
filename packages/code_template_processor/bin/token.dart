@@ -1,14 +1,14 @@
 import 'dart:collection';
 
-import 'generator_utils.dart';
-import 'token_generator_options.dart';
+import 'processor_utils.dart';
+import 'code_template_processor_options.dart';
 
-typedef RunGeneratorCallback = String Function({
+typedef RunProcessorCallback = String Function({
   required Queue<String> templateQueue,
   required Queue<StartToken> tokens,
   required StringBuffer resultBuffer,
   required Map<String, dynamic> data,
-  required TokenGeneratorOptions options,
+  required TemplateProcessorOptions options,
 });
 
 abstract class Token {}
@@ -19,8 +19,8 @@ abstract class StartToken extends Token {
     required Queue<StartToken> tokens,
     required StringBuffer resultBuffer,
     required Map<String, dynamic> data,
-    required TokenGeneratorOptions options,
-    required RunGeneratorCallback onRunGenerator,
+    required TemplateProcessorOptions options,
+    required RunProcessorCallback onRunGenerator,
   }) {
     throw UnimplementedError();
   }
@@ -30,8 +30,8 @@ abstract class StartToken extends Token {
     required Queue<StartToken> tokens,
     required StringBuffer resultBuffer,
     required Map<String, dynamic> data,
-    required TokenGeneratorOptions options,
-    required RunGeneratorCallback onRunGenerator,
+    required TemplateProcessorOptions options,
+    required RunProcessorCallback onRunGenerator,
   }) {
     throw UnimplementedError();
   }
@@ -59,8 +59,8 @@ class IterateToken extends StartToken {
     required Queue<StartToken> tokens,
     required StringBuffer resultBuffer,
     required Map<String, dynamic> data,
-    required TokenGeneratorOptions options,
-    required RunGeneratorCallback onRunGenerator,
+    required TemplateProcessorOptions options,
+    required RunProcessorCallback onRunGenerator,
   }) {
     final List<dynamic>? dataList = retrieveValueForIdentifier(
         tokens: tokens,
@@ -104,8 +104,8 @@ class IterateToken extends StartToken {
       required Queue<StartToken> tokens,
       required StringBuffer resultBuffer,
       required Map<String, dynamic> data,
-      required TokenGeneratorOptions options,
-      required RunGeneratorCallback onRunGenerator}) {
+      required TemplateProcessorOptions options,
+      required RunProcessorCallback onRunGenerator}) {
     return resultBuffer.toString();
   }
 }
@@ -122,8 +122,8 @@ class ReplaceToken extends StartToken {
     required Queue<StartToken> tokens,
     required StringBuffer resultBuffer,
     required Map<String, dynamic> data,
-    required TokenGeneratorOptions options,
-    required RunGeneratorCallback onRunGenerator,
+    required TemplateProcessorOptions options,
+    required RunProcessorCallback onRunGenerator,
   }) {
     resultBuffer.write(onRunGenerator(
       templateQueue: templateQueue,
@@ -140,8 +140,8 @@ class ReplaceToken extends StartToken {
     required Queue<StartToken> tokens,
     required StringBuffer resultBuffer,
     required Map<String, dynamic> data,
-    required TokenGeneratorOptions options,
-    required RunGeneratorCallback onRunGenerator,
+    required TemplateProcessorOptions options,
+    required RunProcessorCallback onRunGenerator,
   }) {
     final String replacement = retrieveValueForIdentifier(
       tokens: tokens,
@@ -169,8 +169,8 @@ class ConditionalToken extends StartToken {
     required Queue<StartToken> tokens,
     required StringBuffer resultBuffer,
     required Map<String, dynamic> data,
-    required TokenGeneratorOptions options,
-    required RunGeneratorCallback onRunGenerator,
+    required TemplateProcessorOptions options,
+    required RunProcessorCallback onRunGenerator,
   }) {
     bool condition = retrieveValueForIdentifier(
       tokens: tokens,
@@ -202,8 +202,8 @@ class ConditionalToken extends StartToken {
     required Queue<Token> tokens,
     required StringBuffer resultBuffer,
     required Map<String, dynamic> data,
-    required TokenGeneratorOptions options,
-    required RunGeneratorCallback onRunGenerator,
+    required TemplateProcessorOptions options,
+    required RunProcessorCallback onRunGenerator,
   }) {
     return resultBuffer.toString();
   }
@@ -222,8 +222,8 @@ class EraseToken extends StartToken {
     required Queue<Token> tokens,
     required StringBuffer resultBuffer,
     required Map<String, dynamic> data,
-    required TokenGeneratorOptions options,
-    required RunGeneratorCallback onRunGenerator,
+    required TemplateProcessorOptions options,
+    required RunProcessorCallback onRunGenerator,
   }) {
     tokens.removeFirst();
     _flush(

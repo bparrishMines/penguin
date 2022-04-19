@@ -11,8 +11,8 @@ const String templateOption = 'template';
 const String dataFileOption = 'data-file';
 const String dataOption = 'data';
 
-class TokenGeneratorOptions {
-  TokenGeneratorOptions({
+class TemplateProcessorOptions {
+  TemplateProcessorOptions({
     required this.template,
     required this.tokenOpener,
     required this.tokenCloser,
@@ -20,11 +20,11 @@ class TokenGeneratorOptions {
     required this.outputFile,
   });
 
-  factory TokenGeneratorOptions.parse(
+  factory TemplateProcessorOptions.parse(
     FileSystem fileSystem,
     ArgResults results,
   ) {
-    return TokenGeneratorOptions(
+    return TemplateProcessorOptions(
       tokenOpener: _parseTokenOpener(results[tokenOpenerOption]),
       tokenCloser: _parseTokenCloser(results[tokenCloserOption]),
       outputFile: _parseOutputFile(results.rest, fileSystem: fileSystem),

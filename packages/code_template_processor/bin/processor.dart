@@ -1,11 +1,11 @@
 import 'dart:collection';
 
-import 'generator_utils.dart';
+import 'processor_utils.dart';
 import 'token.dart';
-import 'token_generator_options.dart';
+import 'code_template_processor_options.dart';
 
-String runGenerator(TokenGeneratorOptions options) {
-  return _runGenerator(
+String runProcessor(TemplateProcessorOptions options) {
+  return _runProcessor(
     templateQueue: Queue<String>.from(options.template.split('')),
     tokens: Queue<StartToken>(),
     resultBuffer: StringBuffer(),
@@ -14,12 +14,12 @@ String runGenerator(TokenGeneratorOptions options) {
   );
 }
 
-String _runGenerator({
+String _runProcessor({
   required Queue<String> templateQueue,
   required Queue<StartToken> tokens,
   required StringBuffer resultBuffer,
   required Map<String, dynamic> data,
-  required TokenGeneratorOptions options,
+  required TemplateProcessorOptions options,
 }) {
   while (templateQueue.isNotEmpty) {
     final Token? newToken = tryParseToken(
@@ -36,7 +36,7 @@ String _runGenerator({
         resultBuffer: resultBuffer,
         data: data,
         options: options,
-        onRunGenerator: _runGenerator,
+        onRunGenerator: _runProcessor,
       );
     } else if (newToken is EndToken) {
       return tokens.removeFirst().onTokenEnd(
@@ -45,7 +45,7 @@ String _runGenerator({
             resultBuffer: resultBuffer,
             data: data,
             options: options,
-            onRunGenerator: _runGenerator,
+            onRunGenerator: _runProcessor,
           );
     } else if (queueStartsWith(templateQueue, '__') ||
         queueStartsWith(templateQueue, r'$$')) {
