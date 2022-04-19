@@ -7,7 +7,7 @@ import 'code_template_processor_options.dart';
 String runProcessor(TemplateProcessorOptions options) {
   return _runProcessor(
     templateQueue: Queue<String>.from(options.template.split('')),
-    tokens: Queue<StartToken>(),
+    tokenStack: Queue<StartToken>(),
     resultBuffer: StringBuffer(),
     data: options.jsonData,
     options: options,
@@ -16,7 +16,7 @@ String runProcessor(TemplateProcessorOptions options) {
 
 String _runProcessor({
   required Queue<String> templateQueue,
-  required Queue<StartToken> tokens,
+  required Queue<StartToken> tokenStack,
   required StringBuffer resultBuffer,
   required Map<String, dynamic> data,
   required TemplateProcessorOptions options,
@@ -29,19 +29,19 @@ String _runProcessor({
     );
 
     if (newToken is StartToken) {
-      tokens.addFirst(newToken);
+      tokenStack.addLast(newToken);
       newToken.onTokenStart(
         templateQueue: templateQueue,
-        tokens: tokens,
+        tokenStack: tokenStack,
         resultBuffer: resultBuffer,
         data: data,
         options: options,
-        onRunGenerator: _runProcessor,
+        onRunProcessor: _runProcessor,
       );
     } else if (newToken is EndToken) {
-      return tokens.removeFirst().onTokenEnd(
+      return tokenStack.removeLast().onTokenEnd(
             templateQueue: templateQueue,
-            tokens: tokens,
+            tokenStack: tokenStack,
             resultBuffer: resultBuffer,
             data: data,
             options: options,
@@ -57,7 +57,7 @@ String _runProcessor({
       }
 
       final String value = retrieveValueForIdentifier(
-        tokens: tokens,
+        tokens: tokenStack,
         identifier: identifier.replaceAll('__', '').replaceAll(r'$$', ''),
         data: data,
       ).toString();

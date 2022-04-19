@@ -28,7 +28,7 @@ Object retrieveValueForIdentifier({
 
   final String dataName = identifierParts.first;
   final String valueIdentifier = identifierParts[1];
-  for (Token token in tokens) {
+  for (Token token in tokens.toList().reversed) {
     if (token is IterateToken && token.dataInstanceName == dataName) {
       return token.dataQueue.first[valueIdentifier];
     }

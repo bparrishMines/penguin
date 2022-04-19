@@ -1,16 +1,16 @@
-name: Token Generator Tests
+name: Code Template Processor Tests
 
 on:
   pull_request:
     paths:
       - packages/token_generator/**
-      - .github/workflows/token_generator.yaml
+      - .github/workflows/code_template_processor.yaml
   push:
     branches:
       - master
 
 env:
-  PACKAGE_DIR: packages/token_generator
+  PACKAGE_DIR: packages/code_template_processor
 
 jobs:
   verify_dart:
