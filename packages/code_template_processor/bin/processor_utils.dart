@@ -13,7 +13,7 @@ bool queueStartsWith(Queue<String> templateQueue, String tokenEdge) {
 }
 
 Object retrieveValueForIdentifier({
-  required Queue<Token> tokens,
+  required Queue<Token> tokenStack,
   required String identifier,
   required Map<String, dynamic> data,
 }) {
@@ -28,7 +28,7 @@ Object retrieveValueForIdentifier({
 
   final String dataName = identifierParts.first;
   final String valueIdentifier = identifierParts[1];
-  for (Token token in tokens.toList().reversed) {
+  for (Token token in tokenStack.toList().reversed) {
     if (token is IterateToken && token.dataInstanceName == dataName) {
       return token.dataQueue.first[valueIdentifier];
     }

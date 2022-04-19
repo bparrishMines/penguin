@@ -63,7 +63,7 @@ class IterateToken extends StartToken {
     required RunProcessorCallback onRunProcessor,
   }) {
     final List<dynamic>? dataList = retrieveValueForIdentifier(
-        tokens: tokenStack,
+        tokenStack: tokenStack,
         identifier: identifier,
         data: data) as List<dynamic>?;
     final List<String> outputs = <String>[];
@@ -145,7 +145,7 @@ class ReplaceToken extends StartToken {
     required RunProcessorCallback onRunGenerator,
   }) {
     final String replacement = retrieveValueForIdentifier(
-      tokens: tokenStack,
+      tokenStack: tokenStack,
       identifier: identifier,
       data: data,
     ).toString();
@@ -174,7 +174,7 @@ class ConditionalToken extends StartToken {
     required RunProcessorCallback onRunProcessor,
   }) {
     bool condition = retrieveValueForIdentifier(
-      tokens: tokenStack,
+      tokenStack: tokenStack,
       identifier: identifier,
       data: data,
     ) as bool;
