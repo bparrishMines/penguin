@@ -238,6 +238,9 @@ class SimpleAstBuilder extends Builder {
         nullable: type.nullabilitySuffix == NullabilitySuffix.question,
         typeArguments: alias.typeArguments.map<SimpleType>(_toType).toList(),
         typeCategory: SimpleTypeCategory.aFunction,
+        functionParameters: type is FunctionType
+            ? type.parameters.map<SimpleParameter>(_toParameter).toList()
+            : <SimpleParameter>[],
       );
     }
 
@@ -250,6 +253,9 @@ class SimpleAstBuilder extends Builder {
               .map<SimpleType>((DartType type) => _toType(type))
               .toList(),
       typeCategory: _getTypeCategory(type),
+      functionParameters: type is FunctionType
+          ? type.parameters.map<SimpleParameter>(_toParameter).toList()
+          : <SimpleParameter>[],
     );
   }
 

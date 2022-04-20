@@ -2,7 +2,14 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'simple_ast.g.dart';
 
-enum SimpleTypeCategory { isVoid, aClass, aFunction, anEnum, aSimpleClass, unknown }
+enum SimpleTypeCategory {
+  isVoid,
+  aClass,
+  aFunction,
+  anEnum,
+  aSimpleClass,
+  unknown
+}
 
 @JsonSerializable()
 class SimpleLibrary {
@@ -132,12 +139,14 @@ class SimpleType {
     required this.nullable,
     required this.typeArguments,
     required this.typeCategory,
+    required this.functionParameters,
   });
 
   final String name;
   final bool nullable;
   final List<SimpleType> typeArguments;
   final SimpleTypeCategory typeCategory;
+  final List<SimpleParameter> functionParameters;
 
   factory SimpleType.fromJson(Map<String, dynamic> json) =>
       _$SimpleTypeFromJson(json);

@@ -108,6 +108,9 @@ SimpleType _$SimpleTypeFromJson(Map<String, dynamic> json) => SimpleType(
           .toList(),
       typeCategory:
           $enumDecode(_$SimpleTypeCategoryEnumMap, json['typeCategory']),
+      functionParameters: (json['functionParameters'] as List<dynamic>)
+          .map((e) => SimpleParameter.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$SimpleTypeToJson(SimpleType instance) =>
@@ -116,6 +119,7 @@ Map<String, dynamic> _$SimpleTypeToJson(SimpleType instance) =>
       'nullable': instance.nullable,
       'typeArguments': instance.typeArguments,
       'typeCategory': _$SimpleTypeCategoryEnumMap[instance.typeCategory],
+      'functionParameters': instance.functionParameters,
     };
 
 const _$SimpleTypeCategoryEnumMap = {
