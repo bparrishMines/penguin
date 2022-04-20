@@ -82,9 +82,29 @@ class SimpleAstBuilder extends Builder {
               annotatedElement.element as TypeAliasElement,
         );
 
-    if (classes.isEmpty && functions.isEmpty) return;
+    final Iterable<ClassElement> enums = reader
+        .annotatedWith(const TypeChecker.fromRuntime(SimpleEnumAnnotation))
+        .where(
+      (AnnotatedElement annotatedElement) {
+        if (annotatedElement.element is! ClassElement) return false;
+        return (annotatedElement.element as ClassElement).isEnum;
+      },
+    ).map<ClassElement>(
+      (AnnotatedElement annotatedElement) =>
+          annotatedElement.element as ClassElement,
+    );
+    if (enums.isNotEmpty) {
+      print(enums.first.runtimeType);
+    }
 
-    final SimpleLibrary ast = _toLibrary(reader.element, classes, functions);
+    if (classes.isEmpty && functions.isEmpty && enums.isEmpty) return;
+
+    final SimpleLibrary ast = _toLibrary(
+      reader.element,
+      classes,
+      functions,
+      enums,
+    );
 
     await buildStep.writeAsString(newFile, jsonEncoder.convert(ast.toJson()));
   }
@@ -93,19 +113,20 @@ class SimpleAstBuilder extends Builder {
     LibraryElement libraryElement,
     Iterable<ClassElement> classes,
     Iterable<TypeAliasElement> functions,
+    Iterable<ClassElement> enums,
   ) {
     return SimpleLibrary(
-      classes: classes
-          .map<SimpleClass>(
-            (ClassElement classElement) => _toClass(classElement),
-          )
-          .toList(),
-      functions: functions
-          .map<SimpleFunction>(
-            (TypeAliasElement typeAliasElement) => _toFunction(
-              typeAliasElement,
-            ),
-          )
+      classes: classes.map<SimpleClass>(_toClass).toList(),
+      functions: functions.map<SimpleFunction>(_toFunction).toList(),
+      enums: enums.map<SimpleEnum>(_toEnum).toList(),
+    );
+  }
+
+  SimpleEnum _toEnum(ClassElement element) {
+    return SimpleEnum(
+      name: element.name,
+      values: element.fields
+          .map<String>((FieldElement fieldElement) => fieldElement.name)
           .toList(),
     );
   }
@@ -219,6 +240,7 @@ class SimpleAstBuilder extends Builder {
         name: alias.element.name.split(RegExp('[<]')).first,
         nullable: type.nullabilitySuffix == NullabilitySuffix.question,
         typeArguments: alias.typeArguments.map<SimpleType>(_toType).toList(),
+        typeCategory: SimpleTypeCategory.aFunction,
       );
     }
 
@@ -230,7 +252,33 @@ class SimpleAstBuilder extends Builder {
           : type.typeArguments
               .map<SimpleType>((DartType type) => _toType(type))
               .toList(),
+      typeCategory: _getTypeCategory(type),
     );
+  }
+
+  SimpleTypeCategory _getTypeCategory(DartType type) {
+    if (type.isVoid) {
+      return SimpleTypeCategory.isVoid;
+    }
+
+    final Element? element = type.element;
+    if (element == null) {
+      return SimpleTypeCategory.unknown;
+    } else if (element is ClassElement) {
+      final TypeChecker typeChecker =
+          TypeChecker.fromRuntime(SimpleClassAnnotation);
+      if (typeChecker.hasAnnotationOf(element)) {
+        return SimpleTypeCategory.aSimpleClass;
+      } else if (element.isEnum) {
+        return SimpleTypeCategory.anEnum;
+      }
+
+      return SimpleTypeCategory.aClass;
+    } else if (type.isDartCoreFunction) {
+      return SimpleTypeCategory.aFunction;
+    }
+
+    return SimpleTypeCategory.unknown;
   }
 
   String _getNameWithoutTypeArguments(DartType type) {
