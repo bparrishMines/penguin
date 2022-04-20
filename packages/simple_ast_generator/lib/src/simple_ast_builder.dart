@@ -213,17 +213,17 @@ class SimpleAstBuilder extends Builder {
   }
 
   SimpleType _toType(DartType type) {
-    final String displayName = type.getDisplayString(withNullability: false);
     final InstantiatedTypeAliasElement? alias = type.alias;
     if (alias != null) {
       return SimpleType(
-        name: alias.element.name,
+        name: alias.element.name.split(RegExp('[<]')).first,
         nullable: type.nullabilitySuffix == NullabilitySuffix.question,
         typeArguments: alias.typeArguments.map<SimpleType>(_toType).toList(),
       );
     }
+
     return SimpleType(
-      name: displayName.split(RegExp('[<]')).first,
+      name: _getNameWithoutTypeArguments(type),
       nullable: type.nullabilitySuffix == NullabilitySuffix.question,
       typeArguments: type is! ParameterizedType
           ? <SimpleType>[]
@@ -231,6 +231,20 @@ class SimpleAstBuilder extends Builder {
               .map<SimpleType>((DartType type) => _toType(type))
               .toList(),
     );
+  }
+
+  String _getNameWithoutTypeArguments(DartType type) {
+    if (type is! ParameterizedType) {
+      return type.getDisplayString(withNullability: false);
+    }
+
+    final String displayName = type.getDisplayString(withNullability: false);
+    if (type.isDartCoreFunction) {
+      return RegExp(r'.*Function.*(?=\()', multiLine: true)
+          .stringMatch(displayName)!;
+    }
+
+    return displayName.split(RegExp('[<]')).first;
   }
 
   @override
