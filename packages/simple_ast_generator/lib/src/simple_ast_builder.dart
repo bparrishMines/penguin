@@ -93,9 +93,6 @@ class SimpleAstBuilder extends Builder {
       (AnnotatedElement annotatedElement) =>
           annotatedElement.element as ClassElement,
     );
-    if (enums.isNotEmpty) {
-      print(enums.first.runtimeType);
-    }
 
     if (classes.isEmpty && functions.isEmpty && enums.isEmpty) return;
 
@@ -259,6 +256,8 @@ class SimpleAstBuilder extends Builder {
   SimpleTypeCategory _getTypeCategory(DartType type) {
     if (type.isVoid) {
       return SimpleTypeCategory.isVoid;
+    } else if (type is FunctionType) {
+      return SimpleTypeCategory.aFunction;
     }
 
     final Element? element = type.element;
@@ -274,8 +273,6 @@ class SimpleAstBuilder extends Builder {
       }
 
       return SimpleTypeCategory.aClass;
-    } else if (type.isDartCoreFunction) {
-      return SimpleTypeCategory.aFunction;
     }
 
     return SimpleTypeCategory.unknown;
@@ -287,7 +284,7 @@ class SimpleAstBuilder extends Builder {
     }
 
     final String displayName = type.getDisplayString(withNullability: false);
-    if (type.isDartCoreFunction) {
+    if (type is FunctionType) {
       return RegExp(r'.*Function.*(?=\()', multiLine: true)
           .stringMatch(displayName)!;
     }
