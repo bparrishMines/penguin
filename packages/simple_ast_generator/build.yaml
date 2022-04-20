@@ -1,0 +1,9 @@
+builders:
+  simpleAstBuilder:
+    import: 'package:simple_ast_generator/builder.dart'
+    builder_factories: ['simpleAstBuilder']
+    build_extensions:
+      .dart:
+        - .simple_ast.json
+    build_to: source
+    auto_apply: dependents

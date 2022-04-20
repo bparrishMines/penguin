@@ -52,10 +52,12 @@ class SimpleMethod {
     required this.name,
     required this.returnType,
     required this.parameters,
+    required this.static,
   });
 
   final String name;
   final SimpleType returnType;
+  final bool static;
   final List<SimpleParameter> parameters;
 
   factory SimpleMethod.fromJson(Map<String, dynamic> json) =>
@@ -126,11 +128,9 @@ class SimpleFunction {
     required this.name,
     required this.returnType,
     required this.parameters,
-    required this.channelName,
   });
 
   final String name;
-  final String channelName;
   final SimpleType returnType;
   final List<SimpleParameter> parameters;
 

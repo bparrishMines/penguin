@@ -1,6 +1,12 @@
 const ignoreParam = SimpleParameterAnnotation(ignore: true);
 
-class SimpleClassAnnotation {}
+class SimpleClassAnnotation {
+  const SimpleClassAnnotation();
+}
+
+class SimpleFunctionAnnotation {
+  const SimpleFunctionAnnotation();
+}
 
 class SimpleMethodAnnotation {
   const SimpleMethodAnnotation({this.ignore = false});

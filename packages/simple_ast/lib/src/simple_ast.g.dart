@@ -50,12 +50,14 @@ SimpleMethod _$SimpleMethodFromJson(Map<String, dynamic> json) => SimpleMethod(
       parameters: (json['parameters'] as List<dynamic>)
           .map((e) => SimpleParameter.fromJson(e as Map<String, dynamic>))
           .toList(),
+      static: json['static'] as bool,
     );
 
 Map<String, dynamic> _$SimpleMethodToJson(SimpleMethod instance) =>
     <String, dynamic>{
       'name': instance.name,
       'returnType': instance.returnType,
+      'static': instance.static,
       'parameters': instance.parameters,
     };
 
@@ -105,13 +107,11 @@ SimpleFunction _$SimpleFunctionFromJson(Map<String, dynamic> json) =>
       parameters: (json['parameters'] as List<dynamic>)
           .map((e) => SimpleParameter.fromJson(e as Map<String, dynamic>))
           .toList(),
-      channelName: json['channelName'] as String,
     );
 
 Map<String, dynamic> _$SimpleFunctionToJson(SimpleFunction instance) =>
     <String, dynamic>{
       'name': instance.name,
-      'channelName': instance.channelName,
       'returnType': instance.returnType,
       'parameters': instance.parameters,
     };
