@@ -3,14 +3,13 @@ import 'package:mockito/annotations.dart';
 import 'package:test/test.dart';
 
 import '../bin/processor.dart';
-import '../bin/token.dart';
 import '../bin/code_template_processor_options.dart';
 
 @GenerateMocks(<Type>[FileSystem])
 void main() {
   group('code_template_processor', () {
     group('runProcessor', () {
-      test('$EraseToken', () {
+      test('EraseToken', () {
         final TemplateProcessorOptions options = TemplateProcessorOptions(
           tokenOpener: '/*',
           tokenCloser: '*/',
@@ -190,6 +189,23 @@ void main() {
             runProcessor(options),
             'Fire Truck is red. Apple is red. Fire Hydrant is red. ',
           );
+        });
+
+        test('iterate with nested identifier values', () {
+          final TemplateProcessorOptions options = TemplateProcessorOptions(
+            tokenOpener: '/*',
+            tokenCloser: '*/',
+            template: '/*iterate person people*/__person_name_first__/**/',
+            jsonData: <String, dynamic>{
+              'people': <Map<dynamic, dynamic>>[
+                {
+                  'name': <dynamic, dynamic>{'first': 'Johnny'},
+                },
+              ],
+            },
+            outputFile: null,
+          );
+          expect(runProcessor(options), 'Johnny');
         });
       });
 
