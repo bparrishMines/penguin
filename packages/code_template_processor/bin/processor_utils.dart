@@ -22,17 +22,31 @@ Object retrieveValueForIdentifier({
     final Object? value = data[identifierParts.single];
     if (value != null) return value;
     throw ArgumentError('Could not find data for identifier: $identifier');
-  } else if (identifierParts.length > 2) {
-    throw ArgumentError('An identifier had too many parts: $identifier.');
   }
 
   final String dataName = identifierParts.first;
-  final String valueIdentifier = identifierParts[1];
   for (Token token in tokenStack.toList().reversed) {
     if (token is IterateToken && token.dataInstanceName == dataName) {
-      return token.dataQueue.first[valueIdentifier];
+      Map<dynamic, dynamic> currentMap = token.dataQueue.first;
+      for (int i = 1; i < identifierParts.length; i++) {
+        if (i == identifierParts.length - 1) {
+          final Object? result = currentMap[identifierParts[i]];
+          if (result != null) {
+            return result;
+          }
+        } else {
+          final Map<dynamic, dynamic>? nextMap = currentMap[identifierParts[i]];
+          if (nextMap != null) {
+            currentMap = nextMap;
+          } else {
+            break;
+          }
+        }
+      }
     }
   }
 
-  throw ArgumentError('Could not find data for identifier: $identifier.');
+  throw ArgumentError(
+    'Could not find data for identifier parts: $identifierParts.',
+  );
 }
