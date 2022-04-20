@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/nullability_suffix.dart';
@@ -7,6 +8,8 @@ import 'package:build/build.dart';
 import 'package:simple_ast/annotations.dart';
 import 'package:simple_ast/simple_ast.dart';
 import 'package:source_gen/source_gen.dart';
+
+const JsonEncoder jsonEncoder = JsonEncoder.withIndent('  ');
 
 const TypeChecker classAnnotation =
     TypeChecker.fromRuntime(SimpleClassAnnotation);
@@ -83,7 +86,7 @@ class SimpleAstBuilder extends Builder {
 
     final SimpleLibrary ast = _toLibrary(reader.element, classes, functions);
 
-    await buildStep.writeAsString(newFile, ast.toJson().toString());
+    await buildStep.writeAsString(newFile, jsonEncoder.convert(ast.toJson()));
   }
 
   SimpleLibrary _toLibrary(
