@@ -14,12 +14,28 @@ SimpleLibrary _$SimpleLibraryFromJson(Map<String, dynamic> json) =>
       functions: (json['functions'] as List<dynamic>)
           .map((e) => SimpleFunction.fromJson(e as Map<String, dynamic>))
           .toList(),
+      enums: (json['enums'] as List<dynamic>)
+          .map((e) => SimpleEnum.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$SimpleLibraryToJson(SimpleLibrary instance) =>
     <String, dynamic>{
       'classes': instance.classes,
       'functions': instance.functions,
+      'enums': instance.enums,
+    };
+
+SimpleEnum _$SimpleEnumFromJson(Map<String, dynamic> json) => SimpleEnum(
+      name: json['name'] as String,
+      values:
+          (json['values'] as List<dynamic>).map((e) => e as String).toList(),
+    );
+
+Map<String, dynamic> _$SimpleEnumToJson(SimpleEnum instance) =>
+    <String, dynamic>{
+      'name': instance.name,
+      'values': instance.values,
     };
 
 SimpleClass _$SimpleClassFromJson(Map<String, dynamic> json) => SimpleClass(
@@ -90,6 +106,11 @@ SimpleType _$SimpleTypeFromJson(Map<String, dynamic> json) => SimpleType(
       typeArguments: (json['typeArguments'] as List<dynamic>)
           .map((e) => SimpleType.fromJson(e as Map<String, dynamic>))
           .toList(),
+      typeCategory:
+          $enumDecode(_$SimpleTypeCategoryEnumMap, json['typeCategory']),
+      functionParameters: (json['functionParameters'] as List<dynamic>)
+          .map((e) => SimpleParameter.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$SimpleTypeToJson(SimpleType instance) =>
@@ -97,7 +118,18 @@ Map<String, dynamic> _$SimpleTypeToJson(SimpleType instance) =>
       'name': instance.name,
       'nullable': instance.nullable,
       'typeArguments': instance.typeArguments,
+      'typeCategory': _$SimpleTypeCategoryEnumMap[instance.typeCategory],
+      'functionParameters': instance.functionParameters,
     };
+
+const _$SimpleTypeCategoryEnumMap = {
+  SimpleTypeCategory.isVoid: 'isVoid',
+  SimpleTypeCategory.aClass: 'aClass',
+  SimpleTypeCategory.aFunction: 'aFunction',
+  SimpleTypeCategory.anEnum: 'anEnum',
+  SimpleTypeCategory.aSimpleClass: 'aSimpleClass',
+  SimpleTypeCategory.unknown: 'unknown',
+};
 
 SimpleFunction _$SimpleFunctionFromJson(Map<String, dynamic> json) =>
     SimpleFunction(

@@ -2,13 +2,28 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'simple_ast.g.dart';
 
+enum SimpleTypeCategory {
+  isVoid,
+  aClass,
+  aFunction,
+  anEnum,
+  aSimpleClass,
+  unknown
+}
+
 @JsonSerializable()
 class SimpleLibrary {
-  SimpleLibrary({required this.classes, required this.functions});
+  const SimpleLibrary({
+    required this.classes,
+    required this.functions,
+    required this.enums,
+  });
 
   final List<SimpleClass> classes;
 
   final List<SimpleFunction> functions;
+
+  final List<SimpleEnum> enums;
 
   factory SimpleLibrary.fromJson(Map<String, dynamic> json) =>
       _$SimpleLibraryFromJson(json);
@@ -21,8 +36,24 @@ class SimpleLibrary {
 }
 
 @JsonSerializable()
+class SimpleEnum {
+  const SimpleEnum({required this.name, required this.values});
+
+  final String name;
+  final List<String> values;
+
+  factory SimpleEnum.fromJson(Map<String, dynamic> json) =>
+      _$SimpleEnumFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SimpleEnumToJson(this);
+
+  @override
+  String toString() => '$runtimeType(${toJson().toString()})';
+}
+
+@JsonSerializable()
 class SimpleClass {
-  SimpleClass({
+  const SimpleClass({
     required this.name,
     required this.methods,
     required this.constructors,
@@ -48,7 +79,7 @@ class SimpleClass {
 
 @JsonSerializable()
 class SimpleMethod {
-  SimpleMethod({
+  const SimpleMethod({
     required this.name,
     required this.returnType,
     required this.parameters,
@@ -71,7 +102,7 @@ class SimpleMethod {
 
 @JsonSerializable()
 class SimpleField {
-  SimpleField({required this.name, required this.type});
+  const SimpleField({required this.name, required this.type});
 
   final String name;
   final SimpleType type;
@@ -87,7 +118,7 @@ class SimpleField {
 
 @JsonSerializable()
 class SimpleParameter {
-  SimpleParameter({required this.name, required this.type});
+  const SimpleParameter({required this.name, required this.type});
 
   final String name;
   final SimpleType type;
@@ -103,15 +134,19 @@ class SimpleParameter {
 
 @JsonSerializable()
 class SimpleType {
-  SimpleType({
+  const SimpleType({
     required this.name,
     required this.nullable,
     required this.typeArguments,
+    required this.typeCategory,
+    required this.functionParameters,
   });
 
   final String name;
   final bool nullable;
   final List<SimpleType> typeArguments;
+  final SimpleTypeCategory typeCategory;
+  final List<SimpleParameter> functionParameters;
 
   factory SimpleType.fromJson(Map<String, dynamic> json) =>
       _$SimpleTypeFromJson(json);
@@ -124,7 +159,7 @@ class SimpleType {
 
 @JsonSerializable()
 class SimpleFunction {
-  SimpleFunction({
+  const SimpleFunction({
     required this.name,
     required this.returnType,
     required this.parameters,
@@ -145,7 +180,7 @@ class SimpleFunction {
 
 @JsonSerializable()
 class SimpleConstructor {
-  SimpleConstructor({required this.name, required this.parameters});
+  const SimpleConstructor({required this.name, required this.parameters});
 
   factory SimpleConstructor.fromJson(Map<String, dynamic> json) =>
       _$SimpleConstructorFromJson(json);

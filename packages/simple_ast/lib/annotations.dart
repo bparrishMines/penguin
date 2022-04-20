@@ -8,6 +8,10 @@ class SimpleFunctionAnnotation {
   const SimpleFunctionAnnotation();
 }
 
+class SimpleEnumAnnotation {
+  const SimpleEnumAnnotation();
+}
+
 class SimpleMethodAnnotation {
   const SimpleMethodAnnotation({this.ignore = false});
 
