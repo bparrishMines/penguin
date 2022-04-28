@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:math';
 
 import 'processor_utils.dart';
 import 'code_template_processor_options.dart';
@@ -44,7 +45,11 @@ class IterateToken extends StartToken {
     required this.join,
     this.start = 0,
     this.end,
-  });
+  }) {
+    if (end != null && end! < start) {
+      throw ArgumentError('Start must be less than or equal to end.');
+    }
+  }
 
   final String dataInstanceName;
   final String identifier;
@@ -75,8 +80,15 @@ class IterateToken extends StartToken {
       throw StateError('Failed to find data!');
     }
 
+    // If start is greater than length, change start = length.
+    // If end is greater than length, change end = length.
     dataQueue = Queue<Map<dynamic, dynamic>>.of(
-      dataList.sublist(start, end ?? dataList.length).cast(),
+      dataList
+          .sublist(
+            min(start, dataList.length),
+            end != null ? min(end!, dataList.length) : dataList.length,
+          )
+          .cast(),
     );
 
     while (dataQueue.isNotEmpty) {

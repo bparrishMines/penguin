@@ -53,6 +53,9 @@ void main(List<String> arguments) {
     output = runProcessor(options);
   } on ArgumentError catch (error) {
     print(Colorize(error.message).red());
+    if (error.stackTrace != null) {
+      print(Colorize(error.stackTrace!.toString()).red());
+    }
     print(parser.usage);
 
     io.exit(64);

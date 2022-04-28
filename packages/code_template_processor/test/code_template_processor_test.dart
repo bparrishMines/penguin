@@ -96,6 +96,23 @@ void main() {
           expect(runProcessor(options), 'greenblue');
         });
 
+        test('start has max value equal to data list length - 1', () {
+          final TemplateProcessorOptions options = TemplateProcessorOptions(
+            tokenOpener: '/*',
+            tokenCloser: '*/',
+            template: "/*iterate :start=5 color colors*/__color_name__/**/",
+            jsonData: <String, dynamic>{
+              'colors': <Map<dynamic, dynamic>>[
+                {'name': 'red'},
+                {'name': 'green'},
+                {'name': 'blue'},
+              ],
+            },
+            outputFile: null,
+          );
+          expect(runProcessor(options), '');
+        });
+
         test('end', () {
           final TemplateProcessorOptions options = TemplateProcessorOptions(
             tokenOpener: '/*',
@@ -111,6 +128,23 @@ void main() {
             outputFile: null,
           );
           expect(runProcessor(options), 'redgreen');
+        });
+
+        test('end has max value of data list length', () {
+          final TemplateProcessorOptions options = TemplateProcessorOptions(
+            tokenOpener: '/*',
+            tokenCloser: '*/',
+            template: "/*iterate :end=18 color colors*/__color_name__/**/",
+            jsonData: <String, dynamic>{
+              'colors': <Map<dynamic, dynamic>>[
+                {'name': 'red'},
+                {'name': 'green'},
+                {'name': 'blue'},
+              ],
+            },
+            outputFile: null,
+          );
+          expect(runProcessor(options), 'redgreenblue');
         });
 
         test('iterate with nested replace', () {
