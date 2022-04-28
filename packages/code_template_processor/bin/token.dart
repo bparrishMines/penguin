@@ -287,10 +287,10 @@ Token? tryParseToken(
     final String? joinModifier =
         RegExp(r"(?<=:join=')[^']*(?=')", multiLine: true, dotAll: true)
             .stringMatch(tokenString);
-    final String identifier =
+    final String name =
         RegExp(r'(?<=\s)[^\s]+(?=$)', multiLine: true, dotAll: true)
             .stringMatch(tokenString)!;
-    final String name =
+    final String identifier =
         RegExp(r'(?<=\s)[^\s]+(?=\s+[^\s]+$)', multiLine: true, dotAll: true)
             .stringMatch(tokenString)!;
     final String? startModifier =

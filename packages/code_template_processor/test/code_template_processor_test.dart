@@ -49,7 +49,7 @@ void main() {
           final TemplateProcessorOptions options = TemplateProcessorOptions(
             tokenOpener: '/*',
             tokenCloser: '*/',
-            template: '/*iterate color colors*/__color_name__/**/',
+            template: '/*iterate colors color*/__color_name__/**/',
             jsonData: <String, dynamic>{
               'colors': <Map<dynamic, dynamic>>[
                 {'name': 'red'},
@@ -66,7 +66,7 @@ void main() {
           final TemplateProcessorOptions options = TemplateProcessorOptions(
             tokenOpener: '/*',
             tokenCloser: '*/',
-            template: "[/*iterate :join=', ' color colors*/__color_name__/**/]",
+            template: "[/*iterate :join=', ' colors color*/__color_name__/**/]",
             jsonData: <String, dynamic>{
               'colors': <Map<dynamic, dynamic>>[
                 {'name': 'red'},
@@ -83,7 +83,7 @@ void main() {
           final TemplateProcessorOptions options = TemplateProcessorOptions(
             tokenOpener: '/*',
             tokenCloser: '*/',
-            template: "/*iterate :start=1 color colors*/__color_name__/**/",
+            template: "/*iterate :start=1 colors color*/__color_name__/**/",
             jsonData: <String, dynamic>{
               'colors': <Map<dynamic, dynamic>>[
                 {'name': 'red'},
@@ -100,7 +100,7 @@ void main() {
           final TemplateProcessorOptions options = TemplateProcessorOptions(
             tokenOpener: '/*',
             tokenCloser: '*/',
-            template: "/*iterate :start=5 color colors*/__color_name__/**/",
+            template: "/*iterate :start=5 colors color*/__color_name__/**/",
             jsonData: <String, dynamic>{
               'colors': <Map<dynamic, dynamic>>[
                 {'name': 'red'},
@@ -117,7 +117,7 @@ void main() {
           final TemplateProcessorOptions options = TemplateProcessorOptions(
             tokenOpener: '/*',
             tokenCloser: '*/',
-            template: "/*iterate :end=2 color colors*/__color_name__/**/",
+            template: "/*iterate :end=2 colors color*/__color_name__/**/",
             jsonData: <String, dynamic>{
               'colors': <Map<dynamic, dynamic>>[
                 {'name': 'red'},
@@ -134,7 +134,7 @@ void main() {
           final TemplateProcessorOptions options = TemplateProcessorOptions(
             tokenOpener: '/*',
             tokenCloser: '*/',
-            template: "/*iterate :end=18 color colors*/__color_name__/**/",
+            template: "/*iterate :end=18 colors color*/__color_name__/**/",
             jsonData: <String, dynamic>{
               'colors': <Map<dynamic, dynamic>>[
                 {'name': 'red'},
@@ -152,7 +152,7 @@ void main() {
             tokenOpener: '/*',
             tokenCloser: '*/',
             template:
-                '/*iterate color colors*//*replace color_name*/name/**//**/',
+                '/*iterate colors color*//*replace color_name*/name/**//**/',
             jsonData: <String, dynamic>{
               'colors': <Map<dynamic, dynamic>>[
                 {'name': 'red'},
@@ -170,7 +170,7 @@ void main() {
             tokenOpener: '/*',
             tokenCloser: '*/',
             template:
-                '/*iterate color colors*//*if color_hasName*/__color_name__/**//**/',
+                '/*iterate colors color*//*if color_hasName*/__color_name__/**//**/',
             jsonData: <String, dynamic>{
               'colors': <Map<dynamic, dynamic>>[
                 {'hasName': true, 'name': 'red'},
@@ -188,7 +188,7 @@ void main() {
             tokenOpener: '/*',
             tokenCloser: '*/',
             template:
-                '/*iterate color colors*/Hello, /*erase*/some stuff to erase/**/World!/**/',
+                '/*iterate colors color*/Hello, /*erase*/some stuff to erase/**/World!/**/',
             jsonData: <String, dynamic>{
               'colors': <Map<dynamic, dynamic>>[
                 {'name': 'red'},
@@ -204,7 +204,7 @@ void main() {
             tokenOpener: '/*',
             tokenCloser: '*/',
             template:
-                '/*iterate color colors*//*iterate object redObjects*/__name__ is __color_name__. /**//**/',
+                '/*iterate colors color*//*iterate redObjects object*/__name__ is __color_name__. /**//**/',
             jsonData: <String, dynamic>{
               'colors': <Map<dynamic, dynamic>>[
                 {
@@ -229,7 +229,7 @@ void main() {
           final TemplateProcessorOptions options = TemplateProcessorOptions(
             tokenOpener: '/*',
             tokenCloser: '*/',
-            template: '/*iterate person people*/__person_name_first__/**/',
+            template: '/*iterate people person*/__person_name_first__/**/',
             jsonData: <String, dynamic>{
               'people': <Map<dynamic, dynamic>>[
                 {
