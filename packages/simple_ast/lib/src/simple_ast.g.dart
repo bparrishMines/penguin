@@ -106,8 +106,12 @@ SimpleType _$SimpleTypeFromJson(Map<String, dynamic> json) => SimpleType(
       typeArguments: (json['typeArguments'] as List<dynamic>)
           .map((e) => SimpleType.fromJson(e as Map<String, dynamic>))
           .toList(),
-      typeCategory:
-          $enumDecode(_$SimpleTypeCategoryEnumMap, json['typeCategory']),
+      isVoid: json['isVoid'] as bool,
+      isClass: json['isClass'] as bool,
+      isFunction: json['isFunction'] as bool,
+      isEnum: json['isEnum'] as bool,
+      isSimpleClass: json['isSimpleClass'] as bool,
+      isUnknownOrUnsupportedType: json['isUnknownOrUnsupportedType'] as bool,
       functionParameters: (json['functionParameters'] as List<dynamic>)
           .map((e) => SimpleParameter.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -118,18 +122,14 @@ Map<String, dynamic> _$SimpleTypeToJson(SimpleType instance) =>
       'name': instance.name,
       'nullable': instance.nullable,
       'typeArguments': instance.typeArguments,
-      'typeCategory': _$SimpleTypeCategoryEnumMap[instance.typeCategory],
       'functionParameters': instance.functionParameters,
+      'isVoid': instance.isVoid,
+      'isClass': instance.isClass,
+      'isFunction': instance.isFunction,
+      'isEnum': instance.isEnum,
+      'isSimpleClass': instance.isSimpleClass,
+      'isUnknownOrUnsupportedType': instance.isUnknownOrUnsupportedType,
     };
-
-const _$SimpleTypeCategoryEnumMap = {
-  SimpleTypeCategory.isVoid: 'isVoid',
-  SimpleTypeCategory.aClass: 'aClass',
-  SimpleTypeCategory.aFunction: 'aFunction',
-  SimpleTypeCategory.anEnum: 'anEnum',
-  SimpleTypeCategory.aSimpleClass: 'aSimpleClass',
-  SimpleTypeCategory.unknown: 'unknown',
-};
 
 SimpleFunction _$SimpleFunctionFromJson(Map<String, dynamic> json) =>
     SimpleFunction(

@@ -1,7 +1,9 @@
 const ignoreParam = SimpleParameterAnnotation(ignore: true);
 
 class SimpleClassAnnotation {
-  const SimpleClassAnnotation();
+  const SimpleClassAnnotation({this.ignore = false});
+
+  final bool ignore;
 }
 
 class SimpleFunctionAnnotation {
