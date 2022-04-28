@@ -277,11 +277,6 @@ Token? tryParseToken(
     templateQueue.removeFirst();
   }
 
-  // Removes newlines that follow a token.
-  if (templateQueue.isNotEmpty && templateQueue.first == '\n'){
-    templateQueue.removeFirst();
-  }
-
   final String tokenString = tokenStringBuffer.toString();
   if (tokenString.isEmpty) {
     return EndToken();

@@ -9,31 +9,6 @@ import '../bin/code_template_processor_options.dart';
 void main() {
   group('code_template_processor', () {
     group('runProcessor', () {
-      test('Remove newlines following tokens', () {
-        final TemplateProcessorOptions options = TemplateProcessorOptions(
-          tokenOpener: '/*',
-          tokenCloser: '*/',
-          template: '''
-A
-B
-/*replace :what='nextLetter' nextLetter*/
-nextLetter
-/**/
-D''',
-          jsonData: <String, dynamic>{'nextLetter': 'C'},
-          outputFile: null,
-        );
-
-        expect(
-          runProcessor(options),
-          '''
-A
-B
-C
-D''',
-        );
-      });
-
       test('EraseToken', () {
         final TemplateProcessorOptions options = TemplateProcessorOptions(
           tokenOpener: '/*',
