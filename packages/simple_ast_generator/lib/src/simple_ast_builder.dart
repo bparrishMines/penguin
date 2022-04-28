@@ -11,6 +11,15 @@ import 'package:source_gen/source_gen.dart';
 
 const JsonEncoder jsonEncoder = JsonEncoder.withIndent('  ');
 
+enum SimpleTypeCategory {
+  isVoid,
+  aClass,
+  aFunction,
+  anEnum,
+  aSimpleClass,
+  unknown
+}
+
 const TypeChecker classAnnotation =
     TypeChecker.fromRuntime(SimpleClassAnnotation);
 const TypeChecker methodAnnotation =
@@ -48,6 +57,16 @@ class SimpleAstBuilder extends Builder {
       constructorAnnotation.firstAnnotationOfExact(element),
     );
     return SimpleConstructorAnnotation(ignore: reader.read('ignore').boolValue);
+  }
+
+  static SimpleClassAnnotation? tryReadClassAnnotation(
+    ClassElement element,
+  ) {
+    if (!classAnnotation.hasAnnotationOfExact(element)) return null;
+    final ConstantReader reader = ConstantReader(
+      classAnnotation.firstAnnotationOfExact(element),
+    );
+    return SimpleClassAnnotation(ignore: reader.read('ignore').boolValue);
   }
 
   @override
@@ -113,7 +132,17 @@ class SimpleAstBuilder extends Builder {
     Iterable<ClassElement> enums,
   ) {
     return SimpleLibrary(
-      classes: classes.map<SimpleClass>(_toClass).toList(),
+      classes: classes
+          .where(
+            (ClassElement element) {
+              final SimpleClassAnnotation? classAnnotation =
+                  tryReadClassAnnotation(element);
+              if (classAnnotation == null) return true;
+              return !classAnnotation.ignore;
+            },
+          )
+          .map<SimpleClass>(_toClass)
+          .toList(),
       functions: functions.map<SimpleFunction>(_toFunction).toList(),
       enums: enums.map<SimpleEnum>(_toEnum).toList(),
     );
@@ -237,13 +266,19 @@ class SimpleAstBuilder extends Builder {
         name: alias.element.name.split(RegExp('[<]')).first,
         nullable: type.nullabilitySuffix == NullabilitySuffix.question,
         typeArguments: alias.typeArguments.map<SimpleType>(_toType).toList(),
-        typeCategory: SimpleTypeCategory.aFunction,
+        isVoid: false,
+        isFunction: true,
+        isClass: false,
+        isSimpleClass: false,
+        isEnum: false,
+        isUnknownOrUnsupportedType: false,
         functionParameters: type is FunctionType
             ? type.parameters.map<SimpleParameter>(_toParameter).toList()
             : <SimpleParameter>[],
       );
     }
 
+    final SimpleTypeCategory typeCategory = _getTypeCategory(type);
     return SimpleType(
       name: _getNameWithoutTypeArguments(type),
       nullable: type.nullabilitySuffix == NullabilitySuffix.question,
@@ -252,7 +287,13 @@ class SimpleAstBuilder extends Builder {
           : type.typeArguments
               .map<SimpleType>((DartType type) => _toType(type))
               .toList(),
-      typeCategory: _getTypeCategory(type),
+      isVoid: typeCategory == SimpleTypeCategory.isVoid,
+      isFunction: typeCategory == SimpleTypeCategory.aFunction,
+      isClass: typeCategory == SimpleTypeCategory.aClass ||
+          typeCategory == SimpleTypeCategory.aSimpleClass,
+      isSimpleClass: typeCategory == SimpleTypeCategory.aSimpleClass,
+      isEnum: typeCategory == SimpleTypeCategory.anEnum,
+      isUnknownOrUnsupportedType: typeCategory == SimpleTypeCategory.unknown,
       functionParameters: type is FunctionType
           ? type.parameters.map<SimpleParameter>(_toParameter).toList()
           : <SimpleParameter>[],

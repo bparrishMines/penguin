@@ -39,10 +39,17 @@ final ArgParser parser = ArgParser()
         '`--$dataFileOption`.',
   );
 
+const String supportedTokens = '''Supported tokens:
+Iterate: `/*iterate :start=1 :end=4 :join=',' mapKey valueName*/`
+Replace: `/*replace :what='strToReplace' mapKey*/`
+If: `/*if mapKey*/` or `/*if! mapKey*/`
+Erase: `/*erase*/`
+''';
+
 void main(List<String> arguments) {
   final ArgResults results = parser.parse(arguments);
   if (results[helpFlag]) {
-    print(parser.usage);
+    print('${parser.usage}\n\n$supportedTokens');
     io.exit(0);
   }
 
@@ -53,7 +60,10 @@ void main(List<String> arguments) {
     output = runProcessor(options);
   } on ArgumentError catch (error) {
     print(Colorize(error.message).red());
-    print(parser.usage);
+    if (error.stackTrace != null) {
+      print(Colorize(error.stackTrace!.toString()).red());
+    }
+    print('${parser.usage}\n\n$supportedTokens');
 
     io.exit(64);
   }
