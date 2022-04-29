@@ -21,7 +21,7 @@ class Apple { }
 '''
         },
         outputs: {
-          'reference_generator|src/some_file.simple_ast.json':
+          'reference_generator|src/some_file.reference_ast':
               jsonEncode(LibraryNode(<ClassNode>[ClassNode('Apple')])),
         },
         reader: reader);
