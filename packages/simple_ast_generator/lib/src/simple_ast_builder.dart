@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:analyzer/dart/constant/value.dart';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/nullability_suffix.dart';
 import 'package:analyzer/dart/element/type.dart';
@@ -66,7 +67,41 @@ class SimpleAstBuilder extends Builder {
     final ConstantReader reader = ConstantReader(
       classAnnotation.firstAnnotationOfExact(element),
     );
-    return SimpleClassAnnotation(ignore: reader.read('ignore').boolValue);
+    return SimpleClassAnnotation(
+      ignore: reader.read('ignore').boolValue,
+      customValues: readCustomValues(reader),
+    );
+  }
+
+  static Map<String, Object?> readCustomValues(ConstantReader reader) {
+    return reader.read('customValues').mapValue.map<String, Object?>(
+      (DartObject? key, DartObject? value) {
+        final ArgumentError argumentError = ArgumentError(
+            'Custom value is not supported: ${value?.type?.getDisplayString(withNullability: true)}');
+
+        final Object? mapValue;
+        if (value == null || value.isNull) {
+          mapValue = null;
+        } else if (!value.hasKnownValue || value.type == null) {
+          throw argumentError;
+        } else if (value.type!.isDartCoreString) {
+          mapValue = value.toStringValue()!;
+        } else if (value.type!.isDartCoreBool) {
+          mapValue = value.toBoolValue()!;
+        } else if (value.type!.isDartCoreInt) {
+          mapValue = value.toIntValue()!;
+        } else if (value.type!.isDartCoreDouble) {
+          mapValue = value.toDoubleValue()!;
+        } else {
+          throw argumentError;
+        }
+
+        return MapEntry<String, Object?>(
+          key!.toStringValue()!,
+          mapValue,
+        );
+      },
+    );
   }
 
   @override
@@ -188,6 +223,8 @@ class SimpleAstBuilder extends Builder {
           })
           .map<SimpleMethod>(_toMethod)
           .toList(),
+      customValues: tryReadClassAnnotation(classElement)?.customValues ??
+          <String, Object?>{},
     );
   }
 
