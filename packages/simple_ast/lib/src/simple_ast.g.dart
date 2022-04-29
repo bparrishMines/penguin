@@ -49,6 +49,7 @@ SimpleClass _$SimpleClassFromJson(Map<String, dynamic> json) => SimpleClass(
       fields: (json['fields'] as List<dynamic>)
           .map((e) => SimpleField.fromJson(e as Map<String, dynamic>))
           .toList(),
+      customValues: json['customValues'] as Map<String, dynamic>,
     );
 
 Map<String, dynamic> _$SimpleClassToJson(SimpleClass instance) =>
@@ -57,6 +58,7 @@ Map<String, dynamic> _$SimpleClassToJson(SimpleClass instance) =>
       'methods': instance.methods,
       'constructors': instance.constructors,
       'fields': instance.fields,
+      'customValues': instance.customValues,
     };
 
 SimpleMethod _$SimpleMethodFromJson(Map<String, dynamic> json) => SimpleMethod(

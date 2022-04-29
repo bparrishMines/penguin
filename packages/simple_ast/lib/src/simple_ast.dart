@@ -49,6 +49,7 @@ class SimpleClass {
     required this.methods,
     required this.constructors,
     required this.fields,
+    required this.customValues,
   });
 
   final String name;
@@ -58,6 +59,8 @@ class SimpleClass {
   final List<SimpleConstructor> constructors;
 
   final List<SimpleField> fields;
+
+  final Map<String, Object?> customValues;
 
   factory SimpleClass.fromJson(Map<String, dynamic> json) =>
       _$SimpleClassFromJson(json);
