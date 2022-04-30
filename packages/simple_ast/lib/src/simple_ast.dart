@@ -78,12 +78,14 @@ class SimpleMethod {
     required this.returnType,
     required this.parameters,
     required this.static,
+    required this.customValues,
   });
 
   final String name;
   final SimpleType returnType;
   final bool static;
   final List<SimpleParameter> parameters;
+  final Map<String, Object?> customValues;
 
   factory SimpleMethod.fromJson(Map<String, dynamic> json) =>
       _$SimpleMethodFromJson(json);
@@ -139,6 +141,7 @@ class SimpleType {
     required this.isSimpleClass,
     required this.isUnknownOrUnsupportedType,
     required this.functionParameters,
+    required this.customValues,
   });
 
   final String name;
@@ -152,6 +155,8 @@ class SimpleType {
   final bool isEnum;
   final bool isSimpleClass;
   final bool isUnknownOrUnsupportedType;
+
+  final Map<String, Object?> customValues;
 
   factory SimpleType.fromJson(Map<String, dynamic> json) =>
       _$SimpleTypeFromJson(json);

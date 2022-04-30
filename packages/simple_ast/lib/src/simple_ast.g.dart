@@ -69,6 +69,7 @@ SimpleMethod _$SimpleMethodFromJson(Map<String, dynamic> json) => SimpleMethod(
           .map((e) => SimpleParameter.fromJson(e as Map<String, dynamic>))
           .toList(),
       static: json['static'] as bool,
+      customValues: json['customValues'] as Map<String, dynamic>,
     );
 
 Map<String, dynamic> _$SimpleMethodToJson(SimpleMethod instance) =>
@@ -77,6 +78,7 @@ Map<String, dynamic> _$SimpleMethodToJson(SimpleMethod instance) =>
       'returnType': instance.returnType,
       'static': instance.static,
       'parameters': instance.parameters,
+      'customValues': instance.customValues,
     };
 
 SimpleField _$SimpleFieldFromJson(Map<String, dynamic> json) => SimpleField(
@@ -117,6 +119,7 @@ SimpleType _$SimpleTypeFromJson(Map<String, dynamic> json) => SimpleType(
       functionParameters: (json['functionParameters'] as List<dynamic>)
           .map((e) => SimpleParameter.fromJson(e as Map<String, dynamic>))
           .toList(),
+      customValues: json['customValues'] as Map<String, dynamic>,
     );
 
 Map<String, dynamic> _$SimpleTypeToJson(SimpleType instance) =>
@@ -131,6 +134,7 @@ Map<String, dynamic> _$SimpleTypeToJson(SimpleType instance) =>
       'isEnum': instance.isEnum,
       'isSimpleClass': instance.isSimpleClass,
       'isUnknownOrUnsupportedType': instance.isUnknownOrUnsupportedType,
+      'customValues': instance.customValues,
     };
 
 SimpleFunction _$SimpleFunctionFromJson(Map<String, dynamic> json) =>
