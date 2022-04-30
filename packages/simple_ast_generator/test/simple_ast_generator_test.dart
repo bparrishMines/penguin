@@ -10,7 +10,8 @@ void main() {
     group('SimpleClassAnnotation', () {
       test('simple class', () async {
         var reader = await PackageAssetReader.currentIsolate(
-            rootPackage: 'simple_ast_generator');
+          rootPackage: 'simple_ast_generator',
+        );
 
         const JsonEncoder jsonEncoder = JsonEncoder.withIndent('  ');
         const SimpleLibrary expectedOutputAst = SimpleLibrary(
@@ -47,9 +48,10 @@ class Apple { }
         );
       });
 
-      test('SimpleClassAnnotation.customValues', () async {
+      test('customValues', () async {
         var reader = await PackageAssetReader.currentIsolate(
-            rootPackage: 'simple_ast_generator');
+          rootPackage: 'simple_ast_generator',
+        );
 
         const JsonEncoder jsonEncoder = JsonEncoder.withIndent('  ');
         const SimpleLibrary expectedOutputAst = SimpleLibrary(
@@ -88,9 +90,10 @@ class Apple { }
     });
 
     group('SimpleMethodAnnotation', () {
-      test('SimpleMethodAnnotation.customValues', () async {
+      test('customValues', () async {
         var reader = await PackageAssetReader.currentIsolate(
-            rootPackage: 'simple_ast_generator');
+          rootPackage: 'simple_ast_generator',
+        );
 
         const JsonEncoder jsonEncoder = JsonEncoder.withIndent('  ');
         const SimpleLibrary expectedOutputAst = SimpleLibrary(
@@ -154,7 +157,8 @@ class Apple {
     group('SimpleTypeAnnotation', () {
       test('method type annotaitons', () async {
         var reader = await PackageAssetReader.currentIsolate(
-            rootPackage: 'simple_ast_generator');
+          rootPackage: 'simple_ast_generator',
+        );
 
         const JsonEncoder jsonEncoder = JsonEncoder.withIndent('  ');
         const SimpleLibrary expectedOutputAst = SimpleLibrary(
@@ -193,6 +197,7 @@ class Apple {
                         functionParameters: <SimpleParameter>[],
                         customValues: <String, Object?>{'a': 'value'},
                       ),
+                      customValues: <String, Object?>{},
                     )
                   ],
                   static: false,
@@ -222,6 +227,91 @@ class Apple {
   @SimpleTypeAnnotation(customValues: <String, Object?>{'a': 'value'})
   void aMethod(
     @SimpleTypeAnnotation(customValues: <String, Object?>{'a': 'value'}) String aParameter,
+  ) { }
+}
+'''
+          },
+          outputs: {
+            'simple_ast_generator|src/some_file.simple_ast.json':
+                jsonEncoder.convert(expectedOutputAst.toJson()),
+          },
+          reader: reader,
+        );
+      });
+    });
+
+    group('SimpleParameterAnnotation', () {
+      test('customValues', () async {
+        var reader = await PackageAssetReader.currentIsolate(
+          rootPackage: 'simple_ast_generator',
+        );
+
+        const JsonEncoder jsonEncoder = JsonEncoder.withIndent('  ');
+        const SimpleLibrary expectedOutputAst = SimpleLibrary(
+          classes: <SimpleClass>[
+            SimpleClass(
+              name: 'Apple',
+              methods: <SimpleMethod>[
+                SimpleMethod(
+                  name: 'aMethod',
+                  returnType: SimpleType(
+                    name: 'void',
+                    nullable: false,
+                    typeArguments: <SimpleType>[],
+                    isVoid: true,
+                    isClass: false,
+                    isFunction: false,
+                    isEnum: false,
+                    isSimpleClass: false,
+                    isUnknownOrUnsupportedType: false,
+                    functionParameters: <SimpleParameter>[],
+                    customValues: <String, Object?>{},
+                  ),
+                  parameters: <SimpleParameter>[
+                    SimpleParameter(
+                      name: 'aParameter',
+                      type: SimpleType(
+                        name: 'String',
+                        nullable: false,
+                        typeArguments: <SimpleType>[],
+                        isVoid: false,
+                        isClass: true,
+                        isFunction: false,
+                        isEnum: false,
+                        isSimpleClass: false,
+                        isUnknownOrUnsupportedType: false,
+                        functionParameters: <SimpleParameter>[],
+                        customValues: <String, Object?>{},
+                      ),
+                      customValues: <String, Object?>{'a': 'value'},
+                    )
+                  ],
+                  static: false,
+                  customValues: <String, Object?>{},
+                ),
+              ],
+              constructors: <SimpleConstructor>[
+                SimpleConstructor(name: '', parameters: <SimpleParameter>[]),
+              ],
+              fields: <SimpleField>[],
+              customValues: <String, Object?>{},
+            )
+          ],
+          functions: <SimpleFunction>[],
+          enums: <SimpleEnum>[],
+        );
+
+        await testBuilder(
+          SimpleAstBuilder(),
+          {
+            'simple_ast_generator|src/some_file.dart': '''
+import 'package:simple_ast/annotations.dart';
+
+@SimpleClassAnnotation()
+class Apple {
+  @SimpleMethodAnnotation()
+  void aMethod(
+    @SimpleParameterAnnotation(customValues: <String, Object?>{'a': 'value'}) String aParameter,
   ) { }
 }
 '''

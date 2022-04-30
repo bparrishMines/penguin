@@ -114,10 +114,15 @@ class SimpleField {
 
 @JsonSerializable()
 class SimpleParameter {
-  const SimpleParameter({required this.name, required this.type});
+  const SimpleParameter({
+    required this.name,
+    required this.type,
+    required this.customValues,
+  });
 
   final String name;
   final SimpleType type;
+  final Map<String, Object?> customValues;
 
   factory SimpleParameter.fromJson(Map<String, dynamic> json) =>
       _$SimpleParameterFromJson(json);

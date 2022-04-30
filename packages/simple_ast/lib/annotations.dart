@@ -35,9 +35,13 @@ class SimpleConstructorAnnotation {
 }
 
 class SimpleParameterAnnotation {
-  const SimpleParameterAnnotation({this.ignore = false});
+  const SimpleParameterAnnotation({
+    this.ignore = false,
+    this.customValues = const <String, Object?>{},
+  });
 
   final bool ignore;
+  final Map<String, Object?> customValues;
 }
 
 class SimpleTypeAnnotation {

@@ -52,7 +52,10 @@ class SimpleAstBuilder extends Builder {
     final ConstantReader reader = ConstantReader(
       parameterAnnotation.firstAnnotationOfExact(element),
     );
-    return SimpleParameterAnnotation(ignore: reader.read('ignore').boolValue);
+    return SimpleParameterAnnotation(
+      ignore: reader.read('ignore').boolValue,
+      customValues: readCustomValues(reader),
+    );
   }
 
   static SimpleTypeAnnotation? tryReadTypeAnnotation(Element element) {
@@ -314,6 +317,8 @@ class SimpleAstBuilder extends Builder {
         parameterElement.type,
         typeAnnotation: tryReadTypeAnnotation(parameterElement),
       ),
+      customValues: tryReadParameterAnnotation(parameterElement)?.customValues ??
+          <String, Object?>{},
     );
   }
 

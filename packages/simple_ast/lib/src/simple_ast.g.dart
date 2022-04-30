@@ -96,12 +96,14 @@ SimpleParameter _$SimpleParameterFromJson(Map<String, dynamic> json) =>
     SimpleParameter(
       name: json['name'] as String,
       type: SimpleType.fromJson(json['type'] as Map<String, dynamic>),
+      customValues: json['customValues'] as Map<String, dynamic>,
     );
 
 Map<String, dynamic> _$SimpleParameterToJson(SimpleParameter instance) =>
     <String, dynamic>{
       'name': instance.name,
       'type': instance.type,
+      'customValues': instance.customValues,
     };
 
 SimpleType _$SimpleTypeFromJson(Map<String, dynamic> json) => SimpleType(
