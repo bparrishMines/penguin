@@ -18,35 +18,52 @@ Object retrieveValueForIdentifier({
   required Map<String, dynamic> data,
 }) {
   final List<String> identifierParts = identifier.split('_');
+
   if (identifierParts.length == 1) {
     final Object? value = data[identifierParts.single];
     if (value != null) return value;
     throw ArgumentError('Could not find data for identifier: $identifier');
+  } else {
+    final Object? value = _tryFindInMap(
+      identifierParts: identifierParts,
+      data: data,
+    );
+    if (value != null) return value;
   }
 
   final String dataName = identifierParts.first;
   for (Token token in tokenStack.toList().reversed) {
     if (token is IterateToken && token.dataInstanceName == dataName) {
-      Map<dynamic, dynamic> currentMap = token.dataQueue.first;
-      for (int i = 1; i < identifierParts.length; i++) {
-        if (i == identifierParts.length - 1) {
-          final Object? result = currentMap[identifierParts[i]];
-          if (result != null) {
-            return result;
-          }
-        } else {
-          final Map<dynamic, dynamic>? nextMap = currentMap[identifierParts[i]];
-          if (nextMap != null) {
-            currentMap = nextMap;
-          } else {
-            break;
-          }
-        }
-      }
+      final Object? value = _tryFindInMap(
+        identifierParts: identifierParts.sublist(1),
+        data: token.dataQueue.first,
+      );
+      if (value != null) return value;
     }
   }
 
   throw ArgumentError(
     'Could not find data for identifier parts: $identifierParts.',
   );
+}
+
+Object? _tryFindInMap({
+  required List<String> identifierParts,
+  required Map<dynamic, dynamic> data,
+}) {
+  if (identifierParts.isEmpty) {
+    return null;
+  } else if (identifierParts.length == 1) {
+    return data[identifierParts.first];
+  }
+
+  final Map<dynamic, dynamic>? nextMap = data[identifierParts.first];
+  if (nextMap != null) {
+    return _tryFindInMap(
+      identifierParts: identifierParts.sublist(1),
+      data: nextMap,
+    );
+  }
+
+  return null;
 }
