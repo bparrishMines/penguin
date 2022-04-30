@@ -42,6 +42,38 @@ void main() {
           );
           expect(runProcessor(options), 'Hello, World!');
         });
+
+        test('replace case', () {
+          // pascal case
+          final TemplateProcessorOptions pascalOptions = TemplateProcessorOptions(
+            tokenOpener: '/*',
+            tokenCloser: '*/',
+            template: "/*replace :case=pascal key*/replaceMe/**/",
+            jsonData: <String, dynamic>{'key': 'pascalCase'},
+            outputFile: null,
+          );
+          expect(runProcessor(pascalOptions), 'PascalCase');
+
+          // camel case
+          final TemplateProcessorOptions camelOptions = TemplateProcessorOptions(
+            tokenOpener: '/*',
+            tokenCloser: '*/',
+            template: "/*replace :case=camel key*/ReplaceMe/**/",
+            jsonData: <String, dynamic>{'key': 'CamelCase'},
+            outputFile: null,
+          );
+          expect(runProcessor(camelOptions), 'camelCase');
+
+          // constant case
+          final TemplateProcessorOptions options = TemplateProcessorOptions(
+            tokenOpener: '/*',
+            tokenCloser: '*/',
+            template: "/*replace :case=constant key*/replaceMe/**/",
+            jsonData: <String, dynamic>{'key': 'constantCase'},
+            outputFile: null,
+          );
+          expect(runProcessor(options), 'CONSTANT_CASE');
+        });
       });
 
       group('IterateToken', () {
