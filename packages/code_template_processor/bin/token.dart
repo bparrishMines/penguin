@@ -1,6 +1,8 @@
 import 'dart:collection';
 import 'dart:math';
 
+import 'package:recase/recase.dart';
+
 import 'processor_utils.dart';
 import 'code_template_processor_options.dart';
 
@@ -124,9 +126,23 @@ class IterateToken extends StartToken {
 }
 
 class ReplaceToken extends StartToken {
-  ReplaceToken({this.what, required this.identifier});
+  ReplaceToken({this.what, required this.casing, required this.identifier}) {
+    if (casing != null && !_validCasings.contains(casing)) {
+      throw ArgumentError(_casingErrorMessage);
+    }
+  }
+
+  static const Set<String> _validCasings = <String>{
+    'pascal',
+    'camel',
+    'constant',
+  };
+
+  static final String _casingErrorMessage =
+      'Casing must be one of `$_validCasings`.';
 
   final String? what;
+  final String? casing;
   final String identifier;
 
   @override
@@ -156,11 +172,28 @@ class ReplaceToken extends StartToken {
     required TemplateProcessorOptions options,
     required RunProcessorCallback onRunGenerator,
   }) {
-    final String replacement = retrieveValueForIdentifier(
+    String replacement = retrieveValueForIdentifier(
       tokenStack: tokenStack,
       identifier: identifier,
       data: data,
     ).toString();
+
+    if (casing != null) {
+      final ReCase reCase = ReCase(replacement);
+      switch (casing) {
+        case 'pascal':
+          replacement = reCase.pascalCase;
+          break;
+        case 'camel':
+          replacement = reCase.camelCase;
+          break;
+        case 'constant':
+          replacement = reCase.constantCase;
+          break;
+        default:
+          throw ArgumentError(_casingErrorMessage);
+      }
+    }
 
     if (what == null) {
       return replacement;
@@ -249,6 +282,7 @@ class EraseToken extends StartToken {
 
 class EndToken extends Token {}
 
+// TODO: Give each token there own `tryParse` that takes a list of parts from this method
 Token? tryParseToken(
   Queue<String> templateQueue, {
   required String tokenOpener,
@@ -311,12 +345,16 @@ Token? tryParseToken(
     final String? whatModifier =
         RegExp(r"(?<=:what=')[^']*(?=')", multiLine: true, dotAll: true)
             .stringMatch(tokenString);
+    final String? casingModifier =
+        RegExp(r'(?<=:case=)\w+(?=\s)', multiLine: true, dotAll: true)
+            .stringMatch(tokenString);
     final String replacement =
         RegExp(r'(?<=\s)[^\s]+(?=$)', multiLine: true, dotAll: true)
             .stringMatch(tokenString)!;
 
     return ReplaceToken(
       what: whatModifier,
+      casing: casingModifier,
       identifier: replacement,
     );
   } else if (tokenType.startsWith('if')) {

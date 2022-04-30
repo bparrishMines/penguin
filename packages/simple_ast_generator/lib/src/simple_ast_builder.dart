@@ -29,6 +29,8 @@ const TypeChecker parameterAnnotation =
     TypeChecker.fromRuntime(SimpleParameterAnnotation);
 const TypeChecker constructorAnnotation =
     TypeChecker.fromRuntime(SimpleConstructorAnnotation);
+const TypeChecker typeAnnotation =
+    TypeChecker.fromRuntime(SimpleTypeAnnotation);
 
 class SimpleAstBuilder extends Builder {
   static SimpleMethodAnnotation? tryReadMethodAnnotation(
@@ -37,7 +39,10 @@ class SimpleAstBuilder extends Builder {
     final ConstantReader reader = ConstantReader(
       methodAnnotation.firstAnnotationOfExact(element),
     );
-    return SimpleMethodAnnotation(ignore: reader.read('ignore').boolValue);
+    return SimpleMethodAnnotation(
+      ignore: reader.read('ignore').boolValue,
+      customValues: readCustomValues(reader),
+    );
   }
 
   static SimpleParameterAnnotation? tryReadParameterAnnotation(
@@ -48,6 +53,14 @@ class SimpleAstBuilder extends Builder {
       parameterAnnotation.firstAnnotationOfExact(element),
     );
     return SimpleParameterAnnotation(ignore: reader.read('ignore').boolValue);
+  }
+
+  static SimpleTypeAnnotation? tryReadTypeAnnotation(Element element) {
+    if (!typeAnnotation.hasAnnotationOfExact(element)) return null;
+    final ConstantReader reader = ConstantReader(
+      typeAnnotation.firstAnnotationOfExact(element),
+    );
+    return SimpleTypeAnnotation(customValues: readCustomValues(reader));
   }
 
   static SimpleConstructorAnnotation? tryReadConstructorAnnotation(
@@ -255,7 +268,10 @@ class SimpleAstBuilder extends Builder {
   SimpleMethod _toMethod(MethodElement methodElement) {
     return SimpleMethod(
       name: methodElement.name,
-      returnType: _toType(methodElement.returnType),
+      returnType: _toType(
+        methodElement.returnType,
+        typeAnnotation: tryReadTypeAnnotation(methodElement),
+      ),
       static: methodElement.isStatic,
       parameters: methodElement.parameters.where((ParameterElement element) {
         final SimpleParameterAnnotation? parameterAnnotation =
@@ -267,6 +283,8 @@ class SimpleAstBuilder extends Builder {
           return _toParameter(parameterElement);
         },
       ).toList(),
+      customValues: tryReadMethodAnnotation(methodElement)?.customValues ??
+          <String, Object?>{},
     );
   }
 
@@ -292,11 +310,17 @@ class SimpleAstBuilder extends Builder {
   SimpleParameter _toParameter(ParameterElement parameterElement) {
     return SimpleParameter(
       name: parameterElement.name,
-      type: _toType(parameterElement.type),
+      type: _toType(
+        parameterElement.type,
+        typeAnnotation: tryReadTypeAnnotation(parameterElement),
+      ),
     );
   }
 
-  SimpleType _toType(DartType type) {
+  SimpleType _toType(
+    DartType type, {
+    SimpleTypeAnnotation? typeAnnotation,
+  }) {
     final InstantiatedTypeAliasElement? alias = type.alias;
     if (alias != null) {
       return SimpleType(
@@ -312,6 +336,7 @@ class SimpleAstBuilder extends Builder {
         functionParameters: type is FunctionType
             ? type.parameters.map<SimpleParameter>(_toParameter).toList()
             : <SimpleParameter>[],
+        customValues: typeAnnotation?.customValues ?? <String, Object?>{},
       );
     }
 
@@ -334,6 +359,7 @@ class SimpleAstBuilder extends Builder {
       functionParameters: type is FunctionType
           ? type.parameters.map<SimpleParameter>(_toParameter).toList()
           : <SimpleParameter>[],
+      customValues: typeAnnotation?.customValues ?? <String, Object?>{},
     );
   }
 
