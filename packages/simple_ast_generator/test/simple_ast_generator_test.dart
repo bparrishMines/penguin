@@ -116,6 +116,7 @@ class Apple { }
                     functionParameters: <SimpleParameter>[],
                     customValues: <String, Object?>{},
                   ),
+                  returnVoid: true,
                   parameters: <SimpleParameter>[],
                   static: false,
                   customValues: <String, Object?>{'a': 'value'},
@@ -168,6 +169,7 @@ class Apple {
               methods: <SimpleMethod>[
                 SimpleMethod(
                   name: 'aMethod',
+                  returnVoid: true,
                   returnType: SimpleType(
                     name: 'void',
                     nullable: false,
@@ -254,6 +256,7 @@ class Apple {
               methods: <SimpleMethod>[
                 SimpleMethod(
                   name: 'aMethod',
+                  returnVoid: true,
                   returnType: SimpleType(
                     name: 'void',
                     nullable: false,

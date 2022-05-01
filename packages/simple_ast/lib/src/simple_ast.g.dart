@@ -65,6 +65,7 @@ SimpleMethod _$SimpleMethodFromJson(Map<String, dynamic> json) => SimpleMethod(
       name: json['name'] as String,
       returnType:
           SimpleType.fromJson(json['returnType'] as Map<String, dynamic>),
+      returnVoid: json['returnVoid'] as bool,
       parameters: (json['parameters'] as List<dynamic>)
           .map((e) => SimpleParameter.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -76,6 +77,7 @@ Map<String, dynamic> _$SimpleMethodToJson(SimpleMethod instance) =>
     <String, dynamic>{
       'name': instance.name,
       'returnType': instance.returnType,
+      'returnVoid': instance.returnVoid,
       'static': instance.static,
       'parameters': instance.parameters,
       'customValues': instance.customValues,

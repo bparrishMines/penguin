@@ -275,6 +275,7 @@ class SimpleAstBuilder extends Builder {
         methodElement.returnType,
         typeAnnotation: tryReadTypeAnnotation(methodElement),
       ),
+      returnVoid: methodElement.returnType.isVoid,
       static: methodElement.isStatic,
       parameters: methodElement.parameters.where((ParameterElement element) {
         final SimpleParameterAnnotation? parameterAnnotation =
@@ -317,8 +318,9 @@ class SimpleAstBuilder extends Builder {
         parameterElement.type,
         typeAnnotation: tryReadTypeAnnotation(parameterElement),
       ),
-      customValues: tryReadParameterAnnotation(parameterElement)?.customValues ??
-          <String, Object?>{},
+      customValues:
+          tryReadParameterAnnotation(parameterElement)?.customValues ??
+              <String, Object?>{},
     );
   }
 
