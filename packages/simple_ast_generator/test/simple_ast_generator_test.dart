@@ -116,7 +116,7 @@ class Apple { }
                     functionParameters: <SimpleParameter>[],
                     customValues: <String, Object?>{},
                   ),
-                  returnVoid: true,
+                  returnsVoid: true,
                   parameters: <SimpleParameter>[],
                   static: false,
                   customValues: <String, Object?>{'a': 'value'},
@@ -169,7 +169,7 @@ class Apple {
               methods: <SimpleMethod>[
                 SimpleMethod(
                   name: 'aMethod',
-                  returnVoid: true,
+                  returnsVoid: true,
                   returnType: SimpleType(
                     name: 'void',
                     nullable: false,
@@ -256,7 +256,7 @@ class Apple {
               methods: <SimpleMethod>[
                 SimpleMethod(
                   name: 'aMethod',
-                  returnVoid: true,
+                  returnsVoid: true,
                   returnType: SimpleType(
                     name: 'void',
                     nullable: false,
@@ -317,6 +317,57 @@ class Apple {
     @SimpleParameterAnnotation(customValues: <String, Object?>{'a': 'value'}) String aParameter,
   ) { }
 }
+'''
+          },
+          outputs: {
+            'simple_ast_generator|src/some_file.simple_ast.json':
+                jsonEncoder.convert(expectedOutputAst.toJson()),
+          },
+          reader: reader,
+        );
+      });
+    });
+
+    group('SimpleEnumAnnotation', () {
+      test('simple enum', () async {
+        var reader = await PackageAssetReader.currentIsolate(
+          rootPackage: 'simple_ast_generator',
+        );
+
+        const JsonEncoder jsonEncoder = JsonEncoder.withIndent('  ');
+        const SimpleLibrary expectedOutputAst = SimpleLibrary(
+          classes: <SimpleClass>[],
+          functions: <SimpleFunction>[],
+          enums: <SimpleEnum>[
+            SimpleEnum(name: 'MyEnum', values: <SimpleField>[
+              SimpleField(
+                name: 'a',
+                type: SimpleType(
+                  name: 'MyEnum',
+                  nullable: false,
+                  typeArguments: <SimpleType>[],
+                  isVoid: false,
+                  isClass: false,
+                  isFunction: false,
+                  isEnum: true,
+                  isSimpleClass: false,
+                  isUnknownOrUnsupportedType: false,
+                  functionParameters: <SimpleParameter>[],
+                  customValues: <String, Object?>{},
+                ),
+              ),
+            ])
+          ],
+        );
+
+        await testBuilder(
+          SimpleAstBuilder(),
+          {
+            'simple_ast_generator|src/some_file.dart': '''
+import 'package:simple_ast/annotations.dart';
+
+@SimpleEnumAnnotation()
+enum MyEnum { a }
 '''
           },
           outputs: {

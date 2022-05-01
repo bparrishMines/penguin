@@ -28,8 +28,9 @@ Map<String, dynamic> _$SimpleLibraryToJson(SimpleLibrary instance) =>
 
 SimpleEnum _$SimpleEnumFromJson(Map<String, dynamic> json) => SimpleEnum(
       name: json['name'] as String,
-      values:
-          (json['values'] as List<dynamic>).map((e) => e as String).toList(),
+      values: (json['values'] as List<dynamic>)
+          .map((e) => SimpleField.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$SimpleEnumToJson(SimpleEnum instance) =>
@@ -65,7 +66,7 @@ SimpleMethod _$SimpleMethodFromJson(Map<String, dynamic> json) => SimpleMethod(
       name: json['name'] as String,
       returnType:
           SimpleType.fromJson(json['returnType'] as Map<String, dynamic>),
-      returnVoid: json['returnVoid'] as bool,
+      returnsVoid: json['returnsVoid'] as bool,
       parameters: (json['parameters'] as List<dynamic>)
           .map((e) => SimpleParameter.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -77,7 +78,7 @@ Map<String, dynamic> _$SimpleMethodToJson(SimpleMethod instance) =>
     <String, dynamic>{
       'name': instance.name,
       'returnType': instance.returnType,
-      'returnVoid': instance.returnVoid,
+      'returnsVoid': instance.returnsVoid,
       'static': instance.static,
       'parameters': instance.parameters,
       'customValues': instance.customValues,

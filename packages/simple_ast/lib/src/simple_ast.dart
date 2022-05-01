@@ -31,7 +31,7 @@ class SimpleEnum {
   const SimpleEnum({required this.name, required this.values});
 
   final String name;
-  final List<String> values;
+  final List<SimpleField> values;
 
   factory SimpleEnum.fromJson(Map<String, dynamic> json) =>
       _$SimpleEnumFromJson(json);
@@ -76,7 +76,7 @@ class SimpleMethod {
   const SimpleMethod({
     required this.name,
     required this.returnType,
-    required this.returnVoid,
+    required this.returnsVoid,
     required this.parameters,
     required this.static,
     required this.customValues,
@@ -84,7 +84,7 @@ class SimpleMethod {
 
   final String name;
   final SimpleType returnType;
-  final bool returnVoid;
+  final bool returnsVoid;
   final bool static;
   final List<SimpleParameter> parameters;
   final Map<String, Object?> customValues;

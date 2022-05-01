@@ -19,17 +19,11 @@ Object retrieveValueForIdentifier({
 }) {
   final List<String> identifierParts = identifier.split('_');
 
-  if (identifierParts.length == 1) {
-    final Object? value = data[identifierParts.single];
-    if (value != null) return value;
-    throw ArgumentError('Could not find data for identifier: $identifier');
-  } else {
-    final Object? value = _tryFindInMap(
-      identifierParts: identifierParts,
-      data: data,
-    );
-    if (value != null) return value;
-  }
+  final Object? value = _tryFindInMap(
+    identifierParts: identifierParts,
+    data: data,
+  );
+  if (value != null) return value;
 
   final String dataName = identifierParts.first;
   for (Token token in tokenStack.toList().reversed) {
@@ -43,7 +37,7 @@ Object retrieveValueForIdentifier({
   }
 
   throw ArgumentError(
-    'Could not find data for identifier parts: $identifierParts.',
+    'Could not find data for identifier parts ($identifierParts) in data:$data.',
   );
 }
 

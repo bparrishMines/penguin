@@ -203,7 +203,10 @@ class SimpleAstBuilder extends Builder {
     return SimpleEnum(
       name: element.name,
       values: element.fields
-          .map<String>((FieldElement fieldElement) => fieldElement.name)
+          .where((FieldElement element) {
+            return element.name != 'index' && element.name != 'values';
+          })
+          .map<SimpleField>(_toField)
           .toList(),
     );
   }
@@ -275,7 +278,7 @@ class SimpleAstBuilder extends Builder {
         methodElement.returnType,
         typeAnnotation: tryReadTypeAnnotation(methodElement),
       ),
-      returnVoid: methodElement.returnType.isVoid,
+      returnsVoid: methodElement.returnType.isVoid,
       static: methodElement.isStatic,
       parameters: methodElement.parameters.where((ParameterElement element) {
         final SimpleParameterAnnotation? parameterAnnotation =
