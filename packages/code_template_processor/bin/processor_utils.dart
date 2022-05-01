@@ -12,10 +12,11 @@ bool queueStartsWith(Queue<String> templateQueue, String tokenEdge) {
   return true;
 }
 
-Object retrieveValueForIdentifier({
+Object? retrieveValueForIdentifier({
   required Queue<Token> tokenStack,
   required String identifier,
   required Map<String, dynamic> data,
+  bool throwOnMissing = true,
 }) {
   final List<String> identifierParts = identifier.split('_');
 
@@ -36,9 +37,13 @@ Object retrieveValueForIdentifier({
     }
   }
 
-  throw ArgumentError(
-    'Could not find data for identifier parts ($identifierParts) in data:$data.',
-  );
+  if (throwOnMissing) {
+    throw ArgumentError(
+      'Could not find data for identifier parts ($identifierParts) in data:$data.',
+    );
+  }
+
+  return null;
 }
 
 Object? _tryFindInMap({

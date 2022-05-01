@@ -334,23 +334,23 @@ void main() {
           expect(runProcessor(options), '');
         });
 
-        test('if true', () {
+        test('if when value is not null', () {
           final TemplateProcessorOptions options = TemplateProcessorOptions(
             tokenOpener: '/*',
             tokenCloser: '*/',
             template: '/*if imCool*/ice cold/**/',
-            jsonData: <String, dynamic>{'imCool': true},
+            jsonData: <String, dynamic>{'imCool': 'fwoi'},
             outputFile: null,
           );
           expect(runProcessor(options), 'ice cold');
         });
 
-        test('if false', () {
+        test('if when value is null', () {
           final TemplateProcessorOptions options = TemplateProcessorOptions(
             tokenOpener: '/*',
             tokenCloser: '*/',
             template: '/*if imCool*/ice cold/**/',
-            jsonData: <String, dynamic>{'imCool': false},
+            jsonData: <String, dynamic>{},
             outputFile: null,
           );
           expect(runProcessor(options), '');
@@ -376,6 +376,28 @@ void main() {
             outputFile: null,
           );
           expect(runProcessor(options), '');
+        });
+
+        test('if! when value is not null', () {
+          final TemplateProcessorOptions options = TemplateProcessorOptions(
+            tokenOpener: '/*',
+            tokenCloser: '*/',
+            template: '/*if! imCool*/ice cold/**/',
+            jsonData: <String, dynamic>{'imCool': 'fwoi'},
+            outputFile: null,
+          );
+          expect(runProcessor(options), '');
+        });
+
+        test('if! when value is null', () {
+          final TemplateProcessorOptions options = TemplateProcessorOptions(
+            tokenOpener: '/*',
+            tokenCloser: '*/',
+            template: '/*if! imCool*/ice cold/**/',
+            jsonData: <String, dynamic>{},
+            outputFile: null,
+          );
+          expect(runProcessor(options), 'ice cold');
         });
       });
     });
