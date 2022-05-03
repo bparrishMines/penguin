@@ -28,13 +28,16 @@ Map<String, dynamic> _$SimpleLibraryToJson(SimpleLibrary instance) =>
 
 SimpleEnum _$SimpleEnumFromJson(Map<String, dynamic> json) => SimpleEnum(
       name: json['name'] as String,
-      values:
-          (json['values'] as List<dynamic>).map((e) => e as String).toList(),
+      private: json['private'] as bool,
+      values: (json['values'] as List<dynamic>)
+          .map((e) => SimpleField.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$SimpleEnumToJson(SimpleEnum instance) =>
     <String, dynamic>{
       'name': instance.name,
+      'private': instance.private,
       'values': instance.values,
     };
 
@@ -43,6 +46,7 @@ SimpleClass _$SimpleClassFromJson(Map<String, dynamic> json) => SimpleClass(
       methods: (json['methods'] as List<dynamic>)
           .map((e) => SimpleMethod.fromJson(e as Map<String, dynamic>))
           .toList(),
+      private: json['private'] as bool,
       constructors: (json['constructors'] as List<dynamic>)
           .map((e) => SimpleConstructor.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -55,6 +59,7 @@ SimpleClass _$SimpleClassFromJson(Map<String, dynamic> json) => SimpleClass(
 Map<String, dynamic> _$SimpleClassToJson(SimpleClass instance) =>
     <String, dynamic>{
       'name': instance.name,
+      'private': instance.private,
       'methods': instance.methods,
       'constructors': instance.constructors,
       'fields': instance.fields,
@@ -65,9 +70,11 @@ SimpleMethod _$SimpleMethodFromJson(Map<String, dynamic> json) => SimpleMethod(
       name: json['name'] as String,
       returnType:
           SimpleType.fromJson(json['returnType'] as Map<String, dynamic>),
+      returnsVoid: json['returnsVoid'] as bool,
       parameters: (json['parameters'] as List<dynamic>)
           .map((e) => SimpleParameter.fromJson(e as Map<String, dynamic>))
           .toList(),
+      private: json['private'] as bool,
       static: json['static'] as bool,
       customValues: json['customValues'] as Map<String, dynamic>,
     );
@@ -76,6 +83,8 @@ Map<String, dynamic> _$SimpleMethodToJson(SimpleMethod instance) =>
     <String, dynamic>{
       'name': instance.name,
       'returnType': instance.returnType,
+      'returnsVoid': instance.returnsVoid,
+      'private': instance.private,
       'static': instance.static,
       'parameters': instance.parameters,
       'customValues': instance.customValues,
@@ -83,12 +92,16 @@ Map<String, dynamic> _$SimpleMethodToJson(SimpleMethod instance) =>
 
 SimpleField _$SimpleFieldFromJson(Map<String, dynamic> json) => SimpleField(
       name: json['name'] as String,
+      private: json['private'] as bool,
+      static: json['static'] as bool,
       type: SimpleType.fromJson(json['type'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$SimpleFieldToJson(SimpleField instance) =>
     <String, dynamic>{
       'name': instance.name,
+      'private': instance.private,
+      'static': instance.static,
       'type': instance.type,
     };
 
@@ -96,12 +109,14 @@ SimpleParameter _$SimpleParameterFromJson(Map<String, dynamic> json) =>
     SimpleParameter(
       name: json['name'] as String,
       type: SimpleType.fromJson(json['type'] as Map<String, dynamic>),
+      customValues: json['customValues'] as Map<String, dynamic>,
     );
 
 Map<String, dynamic> _$SimpleParameterToJson(SimpleParameter instance) =>
     <String, dynamic>{
       'name': instance.name,
       'type': instance.type,
+      'customValues': instance.customValues,
     };
 
 SimpleType _$SimpleTypeFromJson(Map<String, dynamic> json) => SimpleType(
@@ -145,11 +160,13 @@ SimpleFunction _$SimpleFunctionFromJson(Map<String, dynamic> json) =>
       parameters: (json['parameters'] as List<dynamic>)
           .map((e) => SimpleParameter.fromJson(e as Map<String, dynamic>))
           .toList(),
+      private: json['private'] as bool,
     );
 
 Map<String, dynamic> _$SimpleFunctionToJson(SimpleFunction instance) =>
     <String, dynamic>{
       'name': instance.name,
+      'private': instance.private,
       'returnType': instance.returnType,
       'parameters': instance.parameters,
     };
@@ -157,6 +174,7 @@ Map<String, dynamic> _$SimpleFunctionToJson(SimpleFunction instance) =>
 SimpleConstructor _$SimpleConstructorFromJson(Map<String, dynamic> json) =>
     SimpleConstructor(
       name: json['name'] as String,
+      private: json['private'] as bool,
       parameters: (json['parameters'] as List<dynamic>)
           .map((e) => SimpleParameter.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -165,5 +183,6 @@ SimpleConstructor _$SimpleConstructorFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$SimpleConstructorToJson(SimpleConstructor instance) =>
     <String, dynamic>{
       'name': instance.name,
+      'private': instance.private,
       'parameters': instance.parameters,
     };

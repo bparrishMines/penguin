@@ -1,14 +1,48 @@
+import 'dart:collection';
+
 import 'package:file/file.dart';
 import 'package:mockito/annotations.dart';
 import 'package:test/test.dart';
 
 import '../bin/processor.dart';
 import '../bin/code_template_processor_options.dart';
+import '../bin/processor_utils.dart';
+import '../bin/token.dart';
 
 @GenerateMocks(<Type>[FileSystem])
 void main() {
   group('code_template_processor', () {
+    group('retrieveValueForIdentifier', () {
+      test('retrieve values for in map', () {
+        expect(
+          retrieveValueForIdentifier(
+            tokenStack: Queue<Token>(),
+            identifier: 'find_me_please',
+            data: <String, Object>{
+              'find': <Object, Object>{
+                'me': <String, Object>{'please': 23}
+              },
+            },
+          ),
+          23,
+        );
+      });
+    });
+
     group('runProcessor', () {
+      group('TemplateProcessorOptions', () {
+        test('can change token opener and closer', () {
+          final TemplateProcessorOptions options = TemplateProcessorOptions(
+            tokenOpener: '/*-',
+            tokenCloser: '-*/',
+            template: 'Hello,/*-erase-*/__hello__/*--*/ World!',
+            jsonData: <String, dynamic>{'hello': 23},
+            outputFile: null,
+          );
+          expect(runProcessor(options), 'Hello, World!');
+        });
+      });
+
       test('EraseToken', () {
         final TemplateProcessorOptions options = TemplateProcessorOptions(
           tokenOpener: '/*',
@@ -45,7 +79,8 @@ void main() {
 
         test('replace case', () {
           // pascal case
-          final TemplateProcessorOptions pascalOptions = TemplateProcessorOptions(
+          final TemplateProcessorOptions pascalOptions =
+              TemplateProcessorOptions(
             tokenOpener: '/*',
             tokenCloser: '*/',
             template: "/*replace :case=pascal key*/replaceMe/**/",
@@ -55,7 +90,8 @@ void main() {
           expect(runProcessor(pascalOptions), 'PascalCase');
 
           // camel case
-          final TemplateProcessorOptions camelOptions = TemplateProcessorOptions(
+          final TemplateProcessorOptions camelOptions =
+              TemplateProcessorOptions(
             tokenOpener: '/*',
             tokenCloser: '*/',
             template: "/*replace :case=camel key*/ReplaceMe/**/",
@@ -298,23 +334,23 @@ void main() {
           expect(runProcessor(options), '');
         });
 
-        test('if true', () {
+        test('if when value is not null', () {
           final TemplateProcessorOptions options = TemplateProcessorOptions(
             tokenOpener: '/*',
             tokenCloser: '*/',
             template: '/*if imCool*/ice cold/**/',
-            jsonData: <String, dynamic>{'imCool': true},
+            jsonData: <String, dynamic>{'imCool': 'fwoi'},
             outputFile: null,
           );
           expect(runProcessor(options), 'ice cold');
         });
 
-        test('if false', () {
+        test('if when value is null', () {
           final TemplateProcessorOptions options = TemplateProcessorOptions(
             tokenOpener: '/*',
             tokenCloser: '*/',
             template: '/*if imCool*/ice cold/**/',
-            jsonData: <String, dynamic>{'imCool': false},
+            jsonData: <String, dynamic>{},
             outputFile: null,
           );
           expect(runProcessor(options), '');
@@ -340,6 +376,28 @@ void main() {
             outputFile: null,
           );
           expect(runProcessor(options), '');
+        });
+
+        test('if! when value is not null', () {
+          final TemplateProcessorOptions options = TemplateProcessorOptions(
+            tokenOpener: '/*',
+            tokenCloser: '*/',
+            template: '/*if! imCool*/ice cold/**/',
+            jsonData: <String, dynamic>{'imCool': 'fwoi'},
+            outputFile: null,
+          );
+          expect(runProcessor(options), '');
+        });
+
+        test('if! when value is null', () {
+          final TemplateProcessorOptions options = TemplateProcessorOptions(
+            tokenOpener: '/*',
+            tokenCloser: '*/',
+            template: '/*if! imCool*/ice cold/**/',
+            jsonData: <String, dynamic>{},
+            outputFile: null,
+          );
+          expect(runProcessor(options), 'ice cold');
         });
       });
     });

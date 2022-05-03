@@ -28,10 +28,15 @@ class SimpleLibrary {
 
 @JsonSerializable()
 class SimpleEnum {
-  const SimpleEnum({required this.name, required this.values});
+  const SimpleEnum({
+    required this.name,
+    required this.private,
+    required this.values,
+  });
 
   final String name;
-  final List<String> values;
+  final bool private;
+  final List<SimpleField> values;
 
   factory SimpleEnum.fromJson(Map<String, dynamic> json) =>
       _$SimpleEnumFromJson(json);
@@ -47,12 +52,15 @@ class SimpleClass {
   const SimpleClass({
     required this.name,
     required this.methods,
+    required this.private,
     required this.constructors,
     required this.fields,
     required this.customValues,
   });
 
   final String name;
+
+  final bool private;
 
   final List<SimpleMethod> methods;
 
@@ -76,13 +84,21 @@ class SimpleMethod {
   const SimpleMethod({
     required this.name,
     required this.returnType,
+    required this.returnsVoid,
     required this.parameters,
+    required this.private,
     required this.static,
     required this.customValues,
   });
 
   final String name;
   final SimpleType returnType;
+
+  /// Whether this method returns void.
+  ///
+  /// This also includes methods that return Future<void> in Dart.
+  final bool returnsVoid;
+  final bool private;
   final bool static;
   final List<SimpleParameter> parameters;
   final Map<String, Object?> customValues;
@@ -98,9 +114,15 @@ class SimpleMethod {
 
 @JsonSerializable()
 class SimpleField {
-  const SimpleField({required this.name, required this.type});
+  const SimpleField(
+      {required this.name,
+      required this.private,
+      required this.static,
+      required this.type});
 
   final String name;
+  final bool private;
+  final bool static;
   final SimpleType type;
 
   factory SimpleField.fromJson(Map<String, dynamic> json) =>
@@ -114,10 +136,15 @@ class SimpleField {
 
 @JsonSerializable()
 class SimpleParameter {
-  const SimpleParameter({required this.name, required this.type});
+  const SimpleParameter({
+    required this.name,
+    required this.type,
+    required this.customValues,
+  });
 
   final String name;
   final SimpleType type;
+  final Map<String, Object?> customValues;
 
   factory SimpleParameter.fromJson(Map<String, dynamic> json) =>
       _$SimpleParameterFromJson(json);
@@ -173,9 +200,11 @@ class SimpleFunction {
     required this.name,
     required this.returnType,
     required this.parameters,
+    required this.private,
   });
 
   final String name;
+  final bool private;
   final SimpleType returnType;
   final List<SimpleParameter> parameters;
 
@@ -190,12 +219,17 @@ class SimpleFunction {
 
 @JsonSerializable()
 class SimpleConstructor {
-  const SimpleConstructor({required this.name, required this.parameters});
+  const SimpleConstructor({
+    required this.name,
+    required this.private,
+    required this.parameters,
+  });
 
   factory SimpleConstructor.fromJson(Map<String, dynamic> json) =>
       _$SimpleConstructorFromJson(json);
 
   final String name;
+  final bool private;
   final List<SimpleParameter> parameters;
 
   Map<String, dynamic> toJson() => _$SimpleConstructorToJson(this);

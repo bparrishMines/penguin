@@ -218,11 +218,21 @@ class ConditionalToken extends StartToken {
     required TemplateProcessorOptions options,
     required RunProcessorCallback onRunProcessor,
   }) {
-    bool condition = retrieveValueForIdentifier(
+    final Object? value = retrieveValueForIdentifier(
       tokenStack: tokenStack,
       identifier: identifier,
       data: data,
-    ) as bool;
+      throwOnMissing: false,
+    );
+
+    late bool condition;
+    if (value == null) {
+      condition = false;
+    } else if (value is bool) {
+      condition = value;
+    } else {
+      condition = true;
+    }
     if (inverse) condition = !condition;
     if (condition) {
       resultBuffer.write(onRunProcessor(
