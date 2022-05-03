@@ -277,7 +277,12 @@ class SimpleAstBuilder extends Builder {
         methodElement.returnType,
         typeAnnotation: tryReadTypeAnnotation(methodElement),
       ),
-      returnsVoid: methodElement.returnType.isVoid,
+      returnsVoid: methodElement.returnType.isVoid ||
+          (methodElement.returnType.isDartAsyncFuture &&
+              (methodElement.returnType as ParameterizedType)
+                  .typeArguments
+                  .single
+                  .isVoid),
       static: methodElement.isStatic,
       parameters: methodElement.parameters.where((ParameterElement element) {
         final SimpleParameterAnnotation? parameterAnnotation =

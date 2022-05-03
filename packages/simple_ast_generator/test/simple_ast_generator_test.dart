@@ -169,6 +169,89 @@ class Apple {
           reader: reader,
         );
       });
+
+      test('returning Future<void> sets returnVoid to true', () async {
+        var reader = await PackageAssetReader.currentIsolate(
+          rootPackage: 'simple_ast_generator',
+        );
+
+        const JsonEncoder jsonEncoder = JsonEncoder.withIndent('  ');
+        const SimpleLibrary expectedOutputAst = SimpleLibrary(
+          classes: <SimpleClass>[
+            SimpleClass(
+              name: 'Apple',
+              private: false,
+              methods: <SimpleMethod>[
+                SimpleMethod(
+                  name: 'aMethod',
+                  private: false,
+                  returnType: SimpleType(
+                    name: 'Future',
+                    nullable: false,
+                    typeArguments: <SimpleType>[
+                      SimpleType(
+                        name: 'void',
+                        nullable: false,
+                        typeArguments: <SimpleType>[],
+                        isVoid: true,
+                        isClass: false,
+                        isFunction: false,
+                        isEnum: false,
+                        isSimpleClass: false,
+                        isUnknownOrUnsupportedType: false,
+                        functionParameters: <SimpleParameter>[],
+                        customValues: <String, Object?>{},
+                      ),
+                    ],
+                    isVoid: false,
+                    isClass: true,
+                    isFunction: false,
+                    isEnum: false,
+                    isSimpleClass: false,
+                    isUnknownOrUnsupportedType: false,
+                    functionParameters: <SimpleParameter>[],
+                    customValues: <String, Object?>{},
+                  ),
+                  returnsVoid: true,
+                  parameters: <SimpleParameter>[],
+                  static: false,
+                  customValues: <String, Object?>{},
+                ),
+              ],
+              constructors: <SimpleConstructor>[
+                SimpleConstructor(
+                  name: '',
+                  parameters: <SimpleParameter>[],
+                  private: false,
+                ),
+              ],
+              fields: <SimpleField>[],
+              customValues: <String, Object?>{},
+            )
+          ],
+          functions: <SimpleFunction>[],
+          enums: <SimpleEnum>[],
+        );
+
+        await testBuilder(
+          SimpleAstBuilder(),
+          {
+            'simple_ast_generator|src/some_file.dart': '''
+import 'package:simple_ast/annotations.dart';
+
+@SimpleClassAnnotation()
+class Apple {
+  Future<void> aMethod() async { }
+}
+'''
+          },
+          outputs: {
+            'simple_ast_generator|src/some_file.simple_ast.json':
+                jsonEncoder.convert(expectedOutputAst.toJson()),
+          },
+          reader: reader,
+        );
+      });
     });
 
     group('SimpleTypeAnnotation', () {
