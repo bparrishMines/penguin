@@ -199,10 +199,11 @@ class SimpleAstBuilder extends Builder {
     );
   }
 
-  SimpleEnum _toEnum(ClassElement element) {
+  SimpleEnum _toEnum(ClassElement classElement) {
     return SimpleEnum(
-      name: element.name,
-      values: element.fields
+      name: classElement.name,
+      private: classElement.isPrivate,
+      values: classElement.fields
           .where((FieldElement element) {
             return element.name != 'index' && element.name != 'values';
           })
@@ -214,10 +215,8 @@ class SimpleAstBuilder extends Builder {
   SimpleClass _toClass(ClassElement classElement) {
     return SimpleClass(
       name: classElement.name,
+      private: classElement.isPrivate,
       constructors: classElement.constructors
-          .where((ConstructorElement constructorElement) {
-            return !constructorElement.isPrivate;
-          })
           .where(
             (ConstructorElement element) {
               final SimpleConstructorAnnotation? constructorAnnotation =
@@ -228,12 +227,8 @@ class SimpleAstBuilder extends Builder {
           )
           .map<SimpleConstructor>(_toConstructor)
           .toList(),
-      fields: classElement.fields
-          .where((FieldElement fieldElement) => !fieldElement.isPrivate)
-          .map<SimpleField>(_toField)
-          .toList(),
+      fields: classElement.fields.map<SimpleField>(_toField).toList(),
       methods: classElement.methods
-          .where((MethodElement element) => !element.isPrivate)
           .where((MethodElement element) {
             final SimpleMethodAnnotation? methodAnnotation =
                 tryReadMethodAnnotation(element);
@@ -250,6 +245,8 @@ class SimpleAstBuilder extends Builder {
   SimpleField _toField(FieldElement fieldElement) {
     return SimpleField(
       name: fieldElement.name,
+      private: fieldElement.isPrivate,
+      static: fieldElement.isStatic,
       type: _toType(fieldElement.type),
     );
   }
@@ -257,6 +254,7 @@ class SimpleAstBuilder extends Builder {
   SimpleConstructor _toConstructor(ConstructorElement constructorElement) {
     return SimpleConstructor(
       name: constructorElement.name,
+      private: constructorElement.isPrivate,
       parameters:
           constructorElement.parameters.where((ParameterElement element) {
         final SimpleParameterAnnotation? parameterAnnotation =
@@ -274,6 +272,7 @@ class SimpleAstBuilder extends Builder {
   SimpleMethod _toMethod(MethodElement methodElement) {
     return SimpleMethod(
       name: methodElement.name,
+      private: methodElement.isPrivate,
       returnType: _toType(
         methodElement.returnType,
         typeAnnotation: tryReadTypeAnnotation(methodElement),
@@ -301,6 +300,7 @@ class SimpleAstBuilder extends Builder {
     return SimpleFunction(
       name: typeAliasElement.name,
       returnType: _toType(functionType.returnType),
+      private: typeAliasElement.isPrivate,
       parameters: functionType.parameters.where((ParameterElement element) {
         final SimpleParameterAnnotation? parameterAnnotation =
             tryReadParameterAnnotation(element);

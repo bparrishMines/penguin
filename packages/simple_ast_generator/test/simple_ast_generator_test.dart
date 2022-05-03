@@ -19,8 +19,13 @@ void main() {
             SimpleClass(
               name: 'Apple',
               methods: <SimpleMethod>[],
+              private: false,
               constructors: <SimpleConstructor>[
-                SimpleConstructor(name: '', parameters: <SimpleParameter>[]),
+                SimpleConstructor(
+                  name: '',
+                  parameters: <SimpleParameter>[],
+                  private: false,
+                ),
               ],
               fields: <SimpleField>[],
               customValues: <String, Object?>{},
@@ -59,8 +64,13 @@ class Apple { }
             SimpleClass(
               name: 'Apple',
               methods: <SimpleMethod>[],
+              private: false,
               constructors: <SimpleConstructor>[
-                SimpleConstructor(name: '', parameters: <SimpleParameter>[]),
+                SimpleConstructor(
+                  name: '',
+                  parameters: <SimpleParameter>[],
+                  private: false,
+                ),
               ],
               fields: <SimpleField>[],
               customValues: <String, Object?>{'a': 'value'},
@@ -100,9 +110,11 @@ class Apple { }
           classes: <SimpleClass>[
             SimpleClass(
               name: 'Apple',
+              private: false,
               methods: <SimpleMethod>[
                 SimpleMethod(
                   name: 'aMethod',
+                  private: false,
                   returnType: SimpleType(
                     name: 'void',
                     nullable: false,
@@ -123,7 +135,11 @@ class Apple { }
                 ),
               ],
               constructors: <SimpleConstructor>[
-                SimpleConstructor(name: '', parameters: <SimpleParameter>[]),
+                SimpleConstructor(
+                  name: '',
+                  parameters: <SimpleParameter>[],
+                  private: false,
+                ),
               ],
               fields: <SimpleField>[],
               customValues: <String, Object?>{},
@@ -156,7 +172,7 @@ class Apple {
     });
 
     group('SimpleTypeAnnotation', () {
-      test('method type annotaitons', () async {
+      test('method type annotations', () async {
         var reader = await PackageAssetReader.currentIsolate(
           rootPackage: 'simple_ast_generator',
         );
@@ -166,9 +182,11 @@ class Apple {
           classes: <SimpleClass>[
             SimpleClass(
               name: 'Apple',
+              private: false,
               methods: <SimpleMethod>[
                 SimpleMethod(
                   name: 'aMethod',
+                  private: false,
                   returnsVoid: true,
                   returnType: SimpleType(
                     name: 'void',
@@ -207,7 +225,11 @@ class Apple {
                 ),
               ],
               constructors: <SimpleConstructor>[
-                SimpleConstructor(name: '', parameters: <SimpleParameter>[]),
+                SimpleConstructor(
+                  name: '',
+                  parameters: <SimpleParameter>[],
+                  private: false,
+                ),
               ],
               fields: <SimpleField>[],
               customValues: <String, Object?>{},
@@ -253,9 +275,11 @@ class Apple {
           classes: <SimpleClass>[
             SimpleClass(
               name: 'Apple',
+              private: false,
               methods: <SimpleMethod>[
                 SimpleMethod(
                   name: 'aMethod',
+                  private: false,
                   returnsVoid: true,
                   returnType: SimpleType(
                     name: 'void',
@@ -294,7 +318,11 @@ class Apple {
                 ),
               ],
               constructors: <SimpleConstructor>[
-                SimpleConstructor(name: '', parameters: <SimpleParameter>[]),
+                SimpleConstructor(
+                  name: '',
+                  parameters: <SimpleParameter>[],
+                  private: false,
+                ),
               ],
               fields: <SimpleField>[],
               customValues: <String, Object?>{},
@@ -339,9 +367,11 @@ class Apple {
           classes: <SimpleClass>[],
           functions: <SimpleFunction>[],
           enums: <SimpleEnum>[
-            SimpleEnum(name: 'MyEnum', values: <SimpleField>[
+            SimpleEnum(name: 'MyEnum', private: false, values: <SimpleField>[
               SimpleField(
                 name: 'a',
+                private: false,
+                static: true,
                 type: SimpleType(
                   name: 'MyEnum',
                   nullable: false,
