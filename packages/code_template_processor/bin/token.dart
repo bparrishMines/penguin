@@ -204,10 +204,15 @@ class ReplaceToken extends StartToken {
 }
 
 class ConditionalToken extends StartToken {
-  ConditionalToken({required this.identifier, required this.inverse});
+  ConditionalToken({
+    required this.identifier,
+    required this.inverse,
+    required this.equalTo,
+  });
 
   final String identifier;
   final bool inverse;
+  final String? equalTo;
 
   @override
   void onTokenStart({
@@ -228,6 +233,14 @@ class ConditionalToken extends StartToken {
     late bool condition;
     if (value == null) {
       condition = false;
+    } else if (equalTo != null) {
+      if (value is String) {
+        condition = value == equalTo;
+      } else {
+        throw ArgumentError(
+          'Cannot use `equalTo` with a conditional token that provides a `${value.runtimeType}` value with identifier.',
+        );
+      }
     } else if (value is bool) {
       condition = value;
     } else {
@@ -371,10 +384,14 @@ Token? tryParseToken(
     final String identifier =
         RegExp(r'(?<=\s)[^\s]+(?=$)', multiLine: true, dotAll: true)
             .stringMatch(tokenString)!;
+    final String? equalToModifier =
+        RegExp(r"(?<=:equalTo=')[^']*(?=')", multiLine: true, dotAll: true)
+            .stringMatch(tokenString);
 
     return ConditionalToken(
       identifier: identifier,
       inverse: tokenType == 'if!',
+      equalTo: equalToModifier,
     );
   } else if (tokenType.startsWith('function')) {
     final String replacement =

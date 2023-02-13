@@ -42,7 +42,7 @@ final ArgParser parser = ArgParser()
 const String supportedTokens = '''Supported tokens:
 Iterate: `/*iterate :start=1 :end=4 :join=',' mapKey valueName*/`
 Replace: `/*replace :case=pascal :what='strToReplace' mapKey*/`
-If: `/*if mapKey*/` or `/*if! mapKey*/`
+If: `/*if :equalTo='someValue' mapKey*/` or `/*if! :equalTo='someValue' mapKey*/`
 Erase: `/*erase*/`
 ''';
 

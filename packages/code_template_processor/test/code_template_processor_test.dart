@@ -399,6 +399,28 @@ void main() {
           );
           expect(runProcessor(options), 'ice cold');
         });
+
+        test('if value is equal to `equalTo` value', () {
+          final TemplateProcessorOptions options = TemplateProcessorOptions(
+            tokenOpener: '/*',
+            tokenCloser: '*/',
+            template: "/*if :equalTo='red' color*/ice cold/**/",
+            jsonData: <String, dynamic>{'color': 'red'},
+            outputFile: null,
+          );
+          expect(runProcessor(options), 'ice cold');
+        });
+
+        test('if value is not equal to `equalTo` value', () {
+          final TemplateProcessorOptions options = TemplateProcessorOptions(
+            tokenOpener: '/*',
+            tokenCloser: '*/',
+            template: "/*if :equalTo='red' color*/ice cold/**/",
+            jsonData: <String, dynamic>{'color': 'blue'},
+            outputFile: null,
+          );
+          expect(runProcessor(options), '');
+        });
       });
     });
   });
