@@ -152,16 +152,15 @@ class SimpleAstBuilder extends Builder {
               annotatedElement.element as TypeAliasElement,
         );
 
-    final Iterable<ClassElement> enums = reader
+    final Iterable<EnumElement> enums = reader
         .annotatedWith(const TypeChecker.fromRuntime(SimpleEnumAnnotation))
         .where(
       (AnnotatedElement annotatedElement) {
-        if (annotatedElement.element is! ClassElement) return false;
-        return (annotatedElement.element as ClassElement).isEnum;
+        return annotatedElement.element is EnumElement;
       },
-    ).map<ClassElement>(
+    ).map<EnumElement>(
       (AnnotatedElement annotatedElement) =>
-          annotatedElement.element as ClassElement,
+          annotatedElement.element as EnumElement,
     );
 
     if (classes.isEmpty && functions.isEmpty && enums.isEmpty) return;
@@ -180,7 +179,7 @@ class SimpleAstBuilder extends Builder {
     LibraryElement libraryElement,
     Iterable<ClassElement> classes,
     Iterable<TypeAliasElement> functions,
-    Iterable<ClassElement> enums,
+    Iterable<EnumElement> enums,
   ) {
     return SimpleLibrary(
       classes: classes
@@ -199,11 +198,11 @@ class SimpleAstBuilder extends Builder {
     );
   }
 
-  SimpleEnum _toEnum(ClassElement classElement) {
+  SimpleEnum _toEnum(EnumElement enumElement) {
     return SimpleEnum(
-      name: classElement.name,
-      private: classElement.isPrivate,
-      values: classElement.fields
+      name: enumElement.name,
+      private: enumElement.isPrivate,
+      values: enumElement.fields
           .where((FieldElement element) {
             return element.name != 'index' && element.name != 'values';
           })
@@ -393,11 +392,11 @@ class SimpleAstBuilder extends Builder {
           TypeChecker.fromRuntime(SimpleClassAnnotation);
       if (typeChecker.hasAnnotationOf(element)) {
         return SimpleTypeCategory.aSimpleClass;
-      } else if (element.isEnum) {
-        return SimpleTypeCategory.anEnum;
       }
 
       return SimpleTypeCategory.aClass;
+    } else if (element is EnumElement) {
+      return SimpleTypeCategory.anEnum;
     }
 
     return SimpleTypeCategory.unknown;
