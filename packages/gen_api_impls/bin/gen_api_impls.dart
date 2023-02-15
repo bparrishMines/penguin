@@ -59,9 +59,16 @@ void main() {
 
     genDartApiImplementations(
       library,
-      outputFile: path.setExtension(file.path, 'gen_api_impls.dart'),
+      outputFile: path.setExtension(
+        path.withoutExtension(file.path),
+        '.gen_api_impls.dart',
+      ),
     );
   }
+
+  // for (File file in simpleAstJsonFiles) {
+  //   file.deleteSync();
+  // }
 }
 
 ProcessResult run(String executable, List<String> arguments) {
