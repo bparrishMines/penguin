@@ -4,9 +4,25 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:simple_ast/simple_ast.dart';
+import 'package:path/path.dart' as path;
 
 void main() {
-  print('Running in `${Directory.current.path}`');
+  final Directory currentDirectory = Directory.current;
+
+  print('Running in `${currentDirectory.path}`');
+
+  final Iterable<File> allFiles = currentDirectory
+      .listSync(
+        recursive: true,
+        followLinks: false,
+      )
+      .whereType<File>();
+
+  if (!allFiles
+      .any((File file) => path.basename(file.path) == 'pubspec.yaml')) {
+    print('No `pubspec.yaml` found. This should be ran inside of a plugin.');
+    exit(1);
+  }
 
   // run('flutter', <String>[
   //   'pub',
@@ -16,12 +32,8 @@ void main() {
   //   '--delete-conflicting-outputs',
   // ]);
 
-  final Directory directory = Directory.current;
-  directory.listSync(recursive: true).whereType<File>();
-
   // Filter the list of files to only include files that have a name ending in `.simple_ast.json`.
-  final List<File> simpleAstJsonFiles = directory
-      .listSync(recursive: true, followLinks: false)
+  final List<File> simpleAstJsonFiles = allFiles
       .whereType<File>()
       .where((File file) => file.path.endsWith('.simple_ast.json'))
       .toList();
@@ -31,12 +43,19 @@ void main() {
     exit(0);
   }
 
+  final Iterable<File> allDartLibFiles =
+      Directory(path.join(currentDirectory.path, 'lib'))
+          .listSync(recursive: true, followLinks: false)
+          .whereType<File>();
+
   for (final File file in simpleAstJsonFiles) {
     final Map<String, dynamic> astJson =
         jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
 
-    SimpleLibrary library = SimpleLibrary.fromJson(astJson);
-    library = updateLibrary(library);
+    final SimpleLibrary library = updateLibrary(
+      SimpleLibrary.fromJson(astJson),
+      baseObjectClassName: findBaseObjectClassName(allDartLibFiles),
+    );
 
     genDartApiImplementations(library);
   }
@@ -74,7 +93,10 @@ void genDartApiImplementations(SimpleLibrary library) {
 /// 2. Removes parameters from constructors and methods that have type 'BinaryMessenger' or 'InstanceManager'.
 /// 3. Uses [updateType] and [updateParameter] on all types and parameters.
 /// 4. Remove functions from non 'detached' constructor parameters.
-SimpleLibrary updateLibrary(SimpleLibrary library) {
+SimpleLibrary updateLibrary(
+  SimpleLibrary library, {
+  required String baseObjectClassName,
+}) {
   return SimpleLibrary(
     classes: library.classes.map<SimpleClass>((SimpleClass simpleClass) {
       // Parameters in the constructor named detached.
@@ -155,6 +177,7 @@ SimpleLibrary updateLibrary(SimpleLibrary library) {
           ...simpleClass.customValues,
           'detachedParameters': detachedParameters,
           'attachedFields': attachedFields,
+          'baseObjectClassName': baseObjectClassName,
         },
       );
     }).toList(),
@@ -168,6 +191,26 @@ SimpleLibrary updateLibrary(SimpleLibrary library) {
     }).toList(),
     enums: library.enums,
   );
+}
+
+String findBaseObjectClassName(Iterable<File> files) {
+  for (File file in files) {
+    String? currentClass;
+    for (String line in file.readAsLinesSync()) {
+      currentClass =
+          RegExp(r'(?<=class\s)\w+(?=\s)').stringMatch(line) ?? currentClass;
+
+      if (currentClass != null &&
+          line.contains('InstanceManager get globalInstanceManager')) {
+        return currentClass;
+      }
+    }
+  }
+
+  print(
+    'Could not find a class that contains `InstanceManager get globalInstanceManager`.',
+  );
+  exit(1);
 }
 
 /// 1. Adds if type is a class supported by the codec: `isCodecClass`
