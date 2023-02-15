@@ -221,7 +221,8 @@ SimpleType updateType(SimpleType simpleType) {
     isUnknownOrUnsupportedType: simpleType.isUnknownOrUnsupportedType,
     functionParameters:
         simpleType.functionParameters.map(updateParameter).toList(),
-    functionReturnType: functionReturnType,
+    functionReturnType:
+        functionReturnType == null ? null : updateType(functionReturnType),
     customValues: <String, Object?>{
       ...simpleType.customValues,
       'isCodecClass': isCodecClass,
