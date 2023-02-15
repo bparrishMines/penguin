@@ -109,6 +109,7 @@ SimpleParameter _$SimpleParameterFromJson(Map<String, dynamic> json) =>
     SimpleParameter(
       name: json['name'] as String,
       type: SimpleType.fromJson(json['type'] as Map<String, dynamic>),
+      isNamed: json['isNamed'] as bool,
       customValues: json['customValues'] as Map<String, dynamic>,
     );
 
@@ -116,6 +117,7 @@ Map<String, dynamic> _$SimpleParameterToJson(SimpleParameter instance) =>
     <String, dynamic>{
       'name': instance.name,
       'type': instance.type,
+      'isNamed': instance.isNamed,
       'customValues': instance.customValues,
     };
 
@@ -135,6 +137,8 @@ SimpleType _$SimpleTypeFromJson(Map<String, dynamic> json) => SimpleType(
           .map((e) => SimpleParameter.fromJson(e as Map<String, dynamic>))
           .toList(),
       customValues: json['customValues'] as Map<String, dynamic>,
+      functionReturnType: SimpleType.fromJson(
+          json['functionReturnType'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$SimpleTypeToJson(SimpleType instance) =>
@@ -143,6 +147,7 @@ Map<String, dynamic> _$SimpleTypeToJson(SimpleType instance) =>
       'nullable': instance.nullable,
       'typeArguments': instance.typeArguments,
       'functionParameters': instance.functionParameters,
+      'functionReturnType': instance.functionReturnType,
       'isVoid': instance.isVoid,
       'isClass': instance.isClass,
       'isFunction': instance.isFunction,

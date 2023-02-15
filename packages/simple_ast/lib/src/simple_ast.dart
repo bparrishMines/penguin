@@ -139,11 +139,13 @@ class SimpleParameter {
   const SimpleParameter({
     required this.name,
     required this.type,
+    required this.isNamed,
     required this.customValues,
   });
 
   final String name;
   final SimpleType type;
+  final bool isNamed;
   final Map<String, Object?> customValues;
 
   factory SimpleParameter.fromJson(Map<String, dynamic> json) =>
@@ -169,12 +171,14 @@ class SimpleType {
     required this.isUnknownOrUnsupportedType,
     required this.functionParameters,
     required this.customValues,
+    required this.functionReturnType,
   });
 
   final String name;
   final bool nullable;
   final List<SimpleType> typeArguments;
   final List<SimpleParameter> functionParameters;
+  final SimpleType functionReturnType;
 
   final bool isVoid;
   final bool isClass;
