@@ -171,6 +171,7 @@ SimpleLibrary updateLibrary(SimpleLibrary library) {
 /// 1. Adds if type is a class supported by the codec: `isCodecClass`
 /// 2. Adds `javaName` to use for java code.
 /// 3. Adds `dartName` with the nullable token on the type name.
+/// 4. Removes Futures from function return types For example, Future<String> -> String.
 SimpleType updateType(SimpleType simpleType) {
   final String typeName = simpleType.name;
   late final bool isCodecClass;
@@ -204,6 +205,10 @@ SimpleType updateType(SimpleType simpleType) {
       isCodecClass = false;
       javaName = simpleType.name;
   }
+  final SimpleType? functionReturnType =
+      simpleType.functionReturnType?.name != 'Future'
+          ? simpleType.functionReturnType
+          : simpleType.functionReturnType!.typeArguments[0];
   return SimpleType(
     name: simpleType.name,
     nullable: simpleType.nullable,
@@ -216,11 +221,14 @@ SimpleType updateType(SimpleType simpleType) {
     isUnknownOrUnsupportedType: simpleType.isUnknownOrUnsupportedType,
     functionParameters:
         simpleType.functionParameters.map(updateParameter).toList(),
+    functionReturnType: functionReturnType,
     customValues: <String, Object?>{
       ...simpleType.customValues,
       'isCodecClass': isCodecClass,
       'javaName': javaName,
-      'dartName': '${simpleType.name}${simpleType.nullable ? '?' : ''}'
+      'dartName': '${simpleType.name}${simpleType.nullable ? '?' : ''}',
+      if (simpleType.functionReturnType != null)
+        'isFuture': simpleType.functionReturnType!.name == 'Future'
     },
   );
 }
@@ -230,6 +238,7 @@ SimpleParameter updateParameter(SimpleParameter simpleParameter) {
   return SimpleParameter(
     name: simpleParameter.name,
     type: updateType(simpleParameter.type),
+    isNamed: simpleParameter.isNamed,
     customValues: simpleParameter.customValues,
   );
 }
