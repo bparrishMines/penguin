@@ -57,7 +57,10 @@ void main() {
       baseObjectClassName: findBaseObjectClassName(allDartLibFiles),
     );
 
-    genDartApiImplementations(library);
+    genDartApiImplementations(
+      library,
+      outputFile: path.setExtension(file.path, 'gen_api_impls.dart'),
+    );
   }
 }
 
@@ -74,7 +77,10 @@ ProcessResult run(String executable, List<String> arguments) {
   }
 }
 
-void genDartApiImplementations(SimpleLibrary library) {
+void genDartApiImplementations(
+  SimpleLibrary library, {
+  required String outputFile,
+}) {
   run('flutter', <String>[
     'pub',
     'run',
@@ -84,8 +90,7 @@ void genDartApiImplementations(SimpleLibrary library) {
     'lib/src/my_class.template.dart',
     '--data',
     const JsonEncoder().convert(library.toJson()),
-    // TODO(bparrishMines): import path to handle this
-    'lib/src/my_class.output.dart',
+    outputFile,
   ]);
 }
 
