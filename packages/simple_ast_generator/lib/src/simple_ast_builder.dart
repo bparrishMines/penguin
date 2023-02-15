@@ -325,6 +325,7 @@ class SimpleAstBuilder extends Builder {
         parameterElement.type,
         typeAnnotation: tryReadTypeAnnotation(parameterElement),
       ),
+      isNamed: parameterElement.isNamed,
       customValues:
           tryReadParameterAnnotation(parameterElement)?.customValues ??
               <String, Object?>{},
@@ -350,6 +351,8 @@ class SimpleAstBuilder extends Builder {
         functionParameters: type is FunctionType
             ? type.parameters.map<SimpleParameter>(_toParameter).toList()
             : <SimpleParameter>[],
+        functionReturnType:
+            type is FunctionType ? _toType(type.returnType) : null,
         customValues: typeAnnotation?.customValues ?? <String, Object?>{},
       );
     }
@@ -373,6 +376,8 @@ class SimpleAstBuilder extends Builder {
       functionParameters: type is FunctionType
           ? type.parameters.map<SimpleParameter>(_toParameter).toList()
           : <SimpleParameter>[],
+      functionReturnType:
+          type is FunctionType ? _toType(type.returnType) : null,
       customValues: typeAnnotation?.customValues ?? <String, Object?>{},
     );
   }
