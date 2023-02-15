@@ -6,6 +6,8 @@ import 'dart:io';
 import 'package:simple_ast/simple_ast.dart';
 
 void main() {
+  print('Running in `${Directory.current.path}`');
+
   // run('flutter', <String>[
   //   'pub',
   //   'run',
@@ -25,7 +27,7 @@ void main() {
       .toList();
 
   if (simpleAstJsonFiles.isEmpty) {
-    print('Not `.simple_ast.json` files found');
+    print('No `.simple_ast.json` files found');
     exit(0);
   }
 
