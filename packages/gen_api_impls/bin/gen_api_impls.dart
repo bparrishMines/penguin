@@ -49,15 +49,14 @@ void main() {
           .whereType<File>();
 
   final Directory iosDirectory = Directory(
-    path.join(
-      currentDirectory.path,
-      'ios',
-    ),
+    path.join(currentDirectory.path, 'ios'),
   );
   final bool isObjc = iosDirectory.existsSync() &&
       iosDirectory
           .listSync(recursive: true, followLinks: false)
           .any((FileSystemEntity entity) => entity.path.endsWith('.m'));
+
+  final StringBuffer pigeonOutputBuffer = StringBuffer();
 
   for (final File file in simpleAstJsonFiles) {
     final Map<String, dynamic> astJson =
@@ -76,6 +75,28 @@ void main() {
         '.gen_api_impls.dart',
       ),
     );
+
+    pigeonOutputBuffer.writeln(genPigeonOutput(library));
+    pigeonOutputBuffer.writeln();
+  }
+
+  final Directory pigeonDirectory = Directory(
+    path.join(currentDirectory.path, 'pigeons'),
+  );
+
+  if (pigeonDirectory.existsSync()) {
+    final File pigeonFile = File(
+      path.join(
+        pigeonDirectory.path,
+        'aggregated_pigeons.gen_api_impls.dart',
+      ),
+    );
+    if (!pigeonFile.existsSync()) {
+      pigeonFile.createSync();
+    }
+    pigeonFile.writeAsStringSync(pigeonOutputBuffer.toString());
+  } else {
+    print('No `pigeons` directory found!');
   }
 
   // for (File file in simpleAstJsonFiles) {
@@ -111,6 +132,19 @@ void genDartApiImplementations(
     const JsonEncoder().convert(library.toJson()),
     outputFile,
   ]);
+}
+
+String genPigeonOutput(SimpleLibrary library) {
+  return run('flutter', <String>[
+    'pub',
+    'run',
+    'code_template_processor',
+    '--template-file',
+    // TODO(bparrishMines): download template file
+    'pigeons/example_library.template.dart',
+    '--data',
+    const JsonEncoder().convert(library.toJson()),
+  ]).stdout;
 }
 
 /// 1. Removes Futures from method return types For example, Future<String> -> String.
