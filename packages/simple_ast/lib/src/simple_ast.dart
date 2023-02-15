@@ -172,13 +172,14 @@ class SimpleType {
     required this.functionParameters,
     required this.customValues,
     required this.functionReturnType,
-  });
+  }) : assert((functionReturnType != null && isFunction) ||
+            (functionReturnType == null && !isFunction));
 
   final String name;
   final bool nullable;
   final List<SimpleType> typeArguments;
   final List<SimpleParameter> functionParameters;
-  final SimpleType functionReturnType;
+  final SimpleType? functionReturnType;
 
   final bool isVoid;
   final bool isClass;

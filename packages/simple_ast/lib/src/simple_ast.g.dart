@@ -137,8 +137,10 @@ SimpleType _$SimpleTypeFromJson(Map<String, dynamic> json) => SimpleType(
           .map((e) => SimpleParameter.fromJson(e as Map<String, dynamic>))
           .toList(),
       customValues: json['customValues'] as Map<String, dynamic>,
-      functionReturnType: SimpleType.fromJson(
-          json['functionReturnType'] as Map<String, dynamic>),
+      functionReturnType: json['functionReturnType'] == null
+          ? null
+          : SimpleType.fromJson(
+              json['functionReturnType'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$SimpleTypeToJson(SimpleType instance) =>
