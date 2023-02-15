@@ -48,6 +48,17 @@ void main() {
           .listSync(recursive: true, followLinks: false)
           .whereType<File>();
 
+  final Directory iosDirectory = Directory(
+    path.join(
+      currentDirectory.path,
+      'ios',
+    ),
+  );
+  final bool isObjc = iosDirectory.existsSync() &&
+      iosDirectory
+          .listSync(recursive: true, followLinks: false)
+          .any((FileSystemEntity entity) => entity.path.endsWith('.m'));
+
   for (final File file in simpleAstJsonFiles) {
     final Map<String, dynamic> astJson =
         jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
@@ -55,6 +66,7 @@ void main() {
     final SimpleLibrary library = updateLibrary(
       SimpleLibrary.fromJson(astJson),
       baseObjectClassName: findBaseObjectClassName(allDartLibFiles),
+      isObjc: isObjc,
     );
 
     genDartApiImplementations(
@@ -108,6 +120,7 @@ void genDartApiImplementations(
 SimpleLibrary updateLibrary(
   SimpleLibrary library, {
   required String baseObjectClassName,
+  required bool isObjc,
 }) {
   return SimpleLibrary(
     classes: library.classes.map<SimpleClass>((SimpleClass simpleClass) {
@@ -190,6 +203,7 @@ SimpleLibrary updateLibrary(
           'detachedParameters': detachedParameters,
           'attachedFields': attachedFields,
           'baseObjectClassName': baseObjectClassName,
+          'isObjc': isObjc,
         },
       );
     }).toList(),
