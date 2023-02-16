@@ -201,7 +201,15 @@ SimpleLibrary updateLibrary(
                 .toList(),
             private: simpleMethod.private,
             static: simpleMethod.static,
-            customValues: simpleMethod.customValues,
+            customValues: <String, Object?>{
+              ...simpleMethod.customValues,
+              'hasParameters': simpleMethod.parameters.where(
+                (SimpleParameter simpleParameter) {
+                  return simpleParameter.type.name != 'BinaryMessenger' &&
+                      simpleParameter.type.name != 'InstanceManager';
+                },
+              ).isNotEmpty,
+            },
           );
         }).toList(),
         private: simpleClass.private,
