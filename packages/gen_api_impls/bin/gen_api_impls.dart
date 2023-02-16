@@ -91,7 +91,7 @@ void main() {
           testDirectory.path,
           path.setExtension(
             path.withoutExtension(path.basename(file.path)),
-            '.gen_api_impls.dart',
+            '_test.gen_api_impls.dart',
           ),
         ),
       );
@@ -323,29 +323,36 @@ String findBaseObjectClassName(Iterable<File> files) {
 /// 2. Adds `javaName` to use for java code.
 /// 3. Adds `dartName` with the nullable token on the type name.
 /// 4. Removes Futures from function return types For example, Future<String> -> String.
+/// 5. Adds a `dartTestValue` when testing codec values in tests;
 SimpleType updateType(SimpleType simpleType) {
   final String typeName = simpleType.name;
   late final bool isCodecClass;
   late final String javaName;
+  Object? dartTestValue;
   switch (typeName) {
     case 'int':
       isCodecClass = true;
+      dartTestValue = '0';
       javaName = 'Long';
       break;
     case 'bool':
       isCodecClass = true;
+      dartTestValue = 'true';
       javaName = 'Boolean';
       break;
     case 'String':
       isCodecClass = true;
+      dartTestValue = "'testString'";
       javaName = 'String';
       break;
     case 'Uint8List':
       isCodecClass = true;
+      dartTestValue = 'Uint8List(0)';
       javaName = 'byte[]';
       break;
     case 'double':
       isCodecClass = true;
+      dartTestValue = '1.0';
       javaName = 'Double';
       break;
     case 'void':
@@ -380,17 +387,24 @@ SimpleType updateType(SimpleType simpleType) {
       'javaName': javaName,
       'dartName': '${simpleType.name}${simpleType.nullable ? '?' : ''}',
       if (simpleType.functionReturnType != null)
-        'isFuture': simpleType.functionReturnType!.name == 'Future'
+        'isFuture': simpleType.functionReturnType!.name == 'Future',
+      'dartTestValue': dartTestValue,
     },
   );
 }
 
+int testIdentifier = 0;
+
 /// 1. Uses [updateType] on type.
+/// 2. Adds an incrementing test identifier.
 SimpleParameter updateParameter(SimpleParameter simpleParameter) {
   return SimpleParameter(
     name: simpleParameter.name,
     type: updateType(simpleParameter.type),
     isNamed: simpleParameter.isNamed,
-    customValues: simpleParameter.customValues,
+    customValues: <String, Object?>{
+      ...simpleParameter.customValues,
+      'testIdentifier': testIdentifier++,
+    },
   );
 }
