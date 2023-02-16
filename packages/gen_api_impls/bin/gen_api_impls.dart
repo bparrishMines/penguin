@@ -58,6 +58,14 @@ void main() {
 
   final StringBuffer pigeonOutputBuffer = StringBuffer();
 
+  final Directory testDirectory = Directory(
+    path.join(currentDirectory.path, 'test'),
+  );
+  final bool testDirectoryExists = testDirectory.existsSync();
+  if (!testDirectoryExists) {
+    print('No `test` directory found!');
+  }
+
   for (final File file in simpleAstJsonFiles) {
     final Map<String, dynamic> astJson =
         jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
@@ -75,6 +83,19 @@ void main() {
         '.gen_api_impls.dart',
       ),
     );
+
+    if (testDirectoryExists) {
+      genDartApiImplementationsTests(
+        library,
+        outputFile: path.join(
+          testDirectory.path,
+          path.setExtension(
+            path.withoutExtension(path.basename(file.path)),
+            '.gen_api_impls.dart',
+          ),
+        ),
+      );
+    }
 
     pigeonOutputBuffer.writeln(genPigeonOutput(library));
     pigeonOutputBuffer.writeln();
@@ -145,6 +166,23 @@ String genPigeonOutput(SimpleLibrary library) {
     '--data',
     const JsonEncoder().convert(library.toJson()),
   ]).stdout;
+}
+
+void genDartApiImplementationsTests(
+  SimpleLibrary library, {
+  required String outputFile,
+}) {
+  run('flutter', <String>[
+    'pub',
+    'run',
+    'code_template_processor',
+    '--template-file',
+    // TODO(bparrishMines): download template file
+    'test/my_class_test.template.dart',
+    '--data',
+    const JsonEncoder().convert(library.toJson()),
+    outputFile,
+  ]);
 }
 
 /// 1. Removes Futures from method return types For example, Future<String> -> String.
