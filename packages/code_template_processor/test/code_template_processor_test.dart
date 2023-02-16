@@ -77,6 +77,17 @@ void main() {
           expect(runProcessor(options), 'Hello, World!');
         });
 
+        test('replace what can use double quotations', () {
+          final TemplateProcessorOptions options = TemplateProcessorOptions(
+            tokenOpener: '/*',
+            tokenCloser: '*/',
+            template: '/*replace :what="Friend" place*/Hello, Friend!/**/',
+            jsonData: <String, dynamic>{'place': 'World'},
+            outputFile: null,
+          );
+          expect(runProcessor(options), 'Hello, World!');
+        });
+
         test('replace case', () {
           // pascal case
           final TemplateProcessorOptions pascalOptions =

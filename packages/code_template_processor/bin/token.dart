@@ -341,21 +341,26 @@ Token? tryParseToken(
 
   final String tokenType = tokenString.split(' ').first;
   if (tokenType == 'iterate') {
-    final String? joinModifier =
-        RegExp(r"(?<=:join=')[^']*(?=')", multiLine: true, dotAll: true)
-            .stringMatch(tokenString);
-    final String name =
-        RegExp(r'(?<=\s)[^\s]+(?=$)', multiLine: true, dotAll: true)
-            .stringMatch(tokenString)!;
-    final String identifier =
-        RegExp(r'(?<=\s)[^\s]+(?=\s+[^\s]+$)', multiLine: true, dotAll: true)
-            .stringMatch(tokenString)!;
-    final String? startModifier =
-        RegExp(r'(?<=:start=)\w+(?=\s)', multiLine: true, dotAll: true)
-            .stringMatch(tokenString);
-    final String? endModifier =
-        RegExp(r'(?<=:end=)\w+(?=\s)', multiLine: true, dotAll: true)
-            .stringMatch(tokenString);
+    final String? joinModifier = _tryStringMatch(
+      pattern: r"(?<=:join=')[^']*(?=')",
+      input: tokenString,
+    );
+    final String name = _tryStringMatch(
+      pattern: r'(?<=\s)[^\s]+(?=$)',
+      input: tokenString,
+    )!;
+    final String identifier = _tryStringMatch(
+      pattern: r'(?<=\s)[^\s]+(?=\s+[^\s]+$)',
+      input: tokenString,
+    )!;
+    final String? startModifier = _tryStringMatch(
+      pattern: r'(?<=:start=)\w+(?=\s)',
+      input: tokenString,
+    );
+    final String? endModifier = _tryStringMatch(
+      pattern: r'(?<=:end=)\w+(?=\s)',
+      input: tokenString,
+    );
 
     return IterateToken(
       dataInstanceName: name,
@@ -365,15 +370,18 @@ Token? tryParseToken(
       end: endModifier == null ? null : int.parse(endModifier),
     );
   } else if (tokenType == 'replace') {
-    final String? whatModifier =
-        RegExp(r"(?<=:what=')[^']*(?=')", multiLine: true, dotAll: true)
-            .stringMatch(tokenString);
-    final String? casingModifier =
-        RegExp(r'(?<=:case=)\w+(?=\s)', multiLine: true, dotAll: true)
-            .stringMatch(tokenString);
-    final String replacement =
-        RegExp(r'(?<=\s)[^\s]+(?=$)', multiLine: true, dotAll: true)
-            .stringMatch(tokenString)!;
+    final String? whatModifier = _tryStringMatch(
+      pattern: r"(?<=:what=')[^']*(?=')",
+      input: tokenString,
+    );
+    final String? casingModifier = _tryStringMatch(
+      pattern: r'(?<=:case=)\w+(?=\s)',
+      input: tokenString,
+    );
+    final String replacement = _tryStringMatch(
+      pattern: r'(?<=\s)[^\s]+(?=$)',
+      input: tokenString,
+    )!;
 
     return ReplaceToken(
       what: whatModifier,
@@ -381,12 +389,14 @@ Token? tryParseToken(
       identifier: replacement,
     );
   } else if (tokenType.startsWith('if')) {
-    final String identifier =
-        RegExp(r'(?<=\s)[^\s]+(?=$)', multiLine: true, dotAll: true)
-            .stringMatch(tokenString)!;
-    final String? equalToModifier =
-        RegExp(r"(?<=:equalTo=')[^']*(?=')", multiLine: true, dotAll: true)
-            .stringMatch(tokenString);
+    final String identifier = _tryStringMatch(
+      pattern: r'(?<=\s)[^\s]+(?=$)',
+      input: tokenString,
+    )!;
+    final String? equalToModifier = _tryStringMatch(
+      pattern: r"(?<=:equalTo=')[^']*(?=')",
+      input: tokenString,
+    );
 
     return ConditionalToken(
       identifier: identifier,
@@ -394,9 +404,10 @@ Token? tryParseToken(
       equalTo: equalToModifier,
     );
   } else if (tokenType.startsWith('function')) {
-    final String replacement =
-        RegExp(r'(?<=\s)[^\s]+(?=$)', multiLine: true, dotAll: true)
-            .stringMatch(tokenString)!;
+    final String replacement = _tryStringMatch(
+      pattern: r'(?<=\s)[^\s]+(?=$)',
+      input: tokenString,
+    )!;
 
     return FunctionToken(identifier: replacement);
   } else if (tokenType.startsWith('erase')) {
@@ -429,4 +440,29 @@ void _flush(
       throw StateError('Unknown token found: $newToken.');
     }
   }
+}
+
+// Also tries pattern that looks for string to try with '' and ""
+String? _tryStringMatch({required String pattern, required String input}) {
+  String? result = RegExp(
+    pattern,
+    multiLine: true,
+    dotAll: true,
+  ).stringMatch(input);
+
+  if (pattern.contains("'")) {
+    result ??= RegExp(
+      pattern.replaceAll("'", '"'),
+      multiLine: true,
+      dotAll: true,
+    ).stringMatch(input);
+  } else if (pattern.contains('"')) {
+    result ??= RegExp(
+      pattern.replaceAll('"', "'"),
+      multiLine: true,
+      dotAll: true,
+    ).stringMatch(input);
+  }
+
+  return result;
 }
