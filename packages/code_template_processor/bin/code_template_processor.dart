@@ -60,7 +60,6 @@ void main(List<String> arguments) {
   try {
     options = TemplateProcessorOptions.parse(const LocalFileSystem(), results);
     output = runProcessor(options);
-    print(options.tokenOpener);
   } on ArgumentError catch (error) {
     print(Colorize(error.message).red());
     if (error.stackTrace != null) {

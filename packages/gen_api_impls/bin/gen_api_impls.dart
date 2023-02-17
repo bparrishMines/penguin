@@ -254,8 +254,7 @@ void genJavaHostApiImplementation(
     'pub',
     'run',
     'code_template_processor',
-    //'--token-opener="/*"',
-    //'--token-closer="*/"',
+    '--token-opener=/*-',
     '--template-file',
     // TODO(bparrishMines): download template file
     'android/src/main/java/com/example/wrapper_example/TemplateMyClassHostApiImpl.java',
@@ -273,8 +272,7 @@ void genJavaFlutterApiImplementation(
     'pub',
     'run',
     'code_template_processor',
-    '--token-opener="/*-"',
-    '--token-closer="*/"',
+    '--token-opener=/*-',
     '--template-file',
     // TODO(bparrishMines): download template file
     'android/src/main/java/com/example/wrapper_example/TemplateMyClassFlutterApiImpl.java',
