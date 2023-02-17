@@ -5,14 +5,25 @@ import 'token.dart';
 import 'code_template_processor_options.dart';
 
 String runProcessor(TemplateProcessorOptions options) {
-  return _runProcessor(
-    templateQueue: Queue<String>.from(options.template.split('')),
-    tokenStack: Queue<StartToken>(),
-    resultBuffer: StringBuffer(),
-    data: options.jsonData,
-    options: options,
-    copies: <String, String>{},
+  final Queue<String> templateQueue = Queue<String>.from(
+    options.template.split(''),
   );
+
+  try {
+    return _runProcessor(
+      templateQueue: templateQueue,
+      tokenStack: Queue<StartToken>(),
+      resultBuffer: StringBuffer(),
+      data: options.jsonData,
+      options: options,
+      copies: <String, String>{},
+    );
+  } catch (_) {
+    final int totalNewlines = '\n'.allMatches(options.template).length;
+    final int remainingNewlines = '\n'.allMatches(templateQueue.join()).length;
+    print('Error may come from line: ${totalNewlines - remainingNewlines + 1}');
+    rethrow;
+  }
 }
 
 String _runProcessor({
