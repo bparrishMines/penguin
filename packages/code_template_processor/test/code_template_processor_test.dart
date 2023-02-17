@@ -461,6 +461,17 @@ void main() {
           );
           expect(runProcessor(options), 'Hello, World!');
         });
+
+        test('works inside of an erase', () {
+          final TemplateProcessorOptions options = TemplateProcessorOptions(
+            tokenOpener: '/*',
+            tokenCloser: '*/',
+            template: '/*erase*//*copy hello*/Hello,/**//**//*paste hello*//**/ World!',
+            jsonData: <String, dynamic>{},
+            outputFile: null,
+          );
+          expect(runProcessor(options), 'Hello, World!');
+        });
       });
 
       group('PasteToken', () {
@@ -468,11 +479,11 @@ void main() {
           final TemplateProcessorOptions options = TemplateProcessorOptions(
             tokenOpener: '/*',
             tokenCloser: '*/',
-            template: '/*copy letters*/abc/**//*paste letters*//**/',
+            template: '/*copy letters*/abc/**//*paste letters*//**/ defdef',
             jsonData: <String, dynamic>{},
             outputFile: null,
           );
-          expect(runProcessor(options), 'abcabc');
+          expect(runProcessor(options), 'abcabc defdef');
         });
 
         test('copy and paste tokens', () {
@@ -480,11 +491,11 @@ void main() {
             tokenOpener: '/*',
             tokenCloser: '*/',
             template:
-                '/*copy letters*//*replace hello*/abc/**//**//*paste letters*//**/',
+                '/*copy letters*//*replace hello*/abc/**//**//*paste letters*//**/ ghi',
             jsonData: <String, dynamic>{'hello': 'def'},
             outputFile: null,
           );
-          expect(runProcessor(options), 'defdef');
+          expect(runProcessor(options), 'defdef ghi');
         });
       });
     });

@@ -112,6 +112,7 @@ class IterateToken extends StartToken {
       templateQueue,
       tokenOpener: options.tokenOpener,
       tokenCloser: options.tokenCloser,
+      copies: copies,
     );
     tokenStack.removeLast();
     resultBuffer.write(outputs.join(join));
@@ -272,6 +273,7 @@ class ConditionalToken extends StartToken {
         templateQueue,
         tokenOpener: options.tokenOpener,
         tokenCloser: options.tokenCloser,
+        copies: copies,
       );
     }
   }
@@ -310,6 +312,7 @@ class CopyToken extends StartToken {
       copyQueue,
       tokenOpener: options.tokenOpener,
       tokenCloser: options.tokenCloser,
+      copies: copies,
     );
 
     final StringBuffer copyBuffer = StringBuffer();
@@ -367,6 +370,14 @@ class PasteToken extends EraseToken {
       throw ArgumentError('Could not find copy of name: `$name`.');
     }
 
+    tokenStack.removeLast();
+    _flush(
+      templateQueue,
+      tokenOpener: options.tokenOpener,
+      tokenCloser: options.tokenCloser,
+      copies: copies,
+    );
+
     resultBuffer.write(onRunProcessor(
       templateQueue: Queue<String>.from(copy.split('')),
       tokenStack: tokenStack,
@@ -375,19 +386,6 @@ class PasteToken extends EraseToken {
       options: options,
       copies: copies,
     ));
-  }
-
-  @override
-  String onTokenEnd({
-    required Queue<String> templateQueue,
-    required Queue<StartToken> tokenStack,
-    required StringBuffer resultBuffer,
-    required Map<String, dynamic> data,
-    required TemplateProcessorOptions options,
-    required Map<String, String> copies,
-    required RunProcessorCallback onRunGenerator,
-  }) {
-    return resultBuffer.toString();
   }
 }
 
@@ -407,6 +405,7 @@ class EraseToken extends StartToken {
       templateQueue,
       tokenOpener: options.tokenOpener,
       tokenCloser: options.tokenCloser,
+      copies: copies,
     );
   }
 }
@@ -536,6 +535,7 @@ void _flush(
   Queue<String> templateQueue, {
   required String tokenOpener,
   required String tokenCloser,
+  required Map<String, String> copies,
 }) {
   int tokenCount = 1;
   while (tokenCount != 0) {
@@ -544,6 +544,25 @@ void _flush(
       tokenOpener: tokenOpener,
       tokenCloser: tokenCloser,
     );
+
+    if (newToken is CopyToken) {
+      final Queue<String> copyQueue = Queue<String>.from(templateQueue);
+      _flush(
+        copyQueue,
+        tokenOpener: tokenOpener,
+        tokenCloser: tokenCloser,
+        copies: copies,
+      );
+
+      final StringBuffer copyBuffer = StringBuffer();
+      final int copyLength = (templateQueue.length - copyQueue.length) -
+          (tokenOpener.length + tokenCloser.length);
+      for (int i = 0; i < copyLength; i++) {
+        copyBuffer.write(templateQueue.elementAt(i));
+      }
+
+      copies[newToken.name] = copyBuffer.toString();
+    }
 
     if (newToken == null) {
       templateQueue.removeFirst();
