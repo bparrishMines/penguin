@@ -195,6 +195,7 @@ class SimpleAstBuilder extends Builder {
           .toList(),
       functions: functions.map<SimpleFunction>(_toFunction).toList(),
       enums: enums.map<SimpleEnum>(_toEnum).toList(),
+      customValues: <String, Object?>{},
     );
   }
 

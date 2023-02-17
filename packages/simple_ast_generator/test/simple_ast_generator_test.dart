@@ -33,6 +33,7 @@ void main() {
           ],
           functions: <SimpleFunction>[],
           enums: <SimpleEnum>[],
+          customValues: <String, Object?>{},
         );
 
         await testBuilder(
@@ -78,6 +79,7 @@ class Apple { }
           ],
           functions: <SimpleFunction>[],
           enums: <SimpleEnum>[],
+          customValues: <String, Object?>{},
         );
 
         await testBuilder(
@@ -148,6 +150,7 @@ class Apple { }
           ],
           functions: <SimpleFunction>[],
           enums: <SimpleEnum>[],
+          customValues: <String, Object?>{},
         );
 
         await testBuilder(
@@ -234,6 +237,7 @@ class Apple {
           ],
           functions: <SimpleFunction>[],
           enums: <SimpleEnum>[],
+          customValues: <String, Object?>{},
         );
 
         await testBuilder(
@@ -326,6 +330,7 @@ class Apple {
           ],
           functions: <SimpleFunction>[],
           enums: <SimpleEnum>[],
+          customValues: <String, Object?>{},
         );
 
         await testBuilder(
@@ -422,6 +427,7 @@ class Apple {
           ],
           functions: <SimpleFunction>[],
           enums: <SimpleEnum>[],
+          customValues: <String, Object?>{},
         );
 
         await testBuilder(
@@ -481,6 +487,7 @@ class Apple {
               ),
             ])
           ],
+          customValues: <String, Object?>{},
         );
 
         await testBuilder(
