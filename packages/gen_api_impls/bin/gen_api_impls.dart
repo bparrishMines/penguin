@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:recase/recase.dart';
 import 'package:simple_ast/simple_ast.dart';
 import 'package:path/path.dart' as path;
 
@@ -66,18 +67,35 @@ void main() {
     print('No `test` directory found!');
   }
 
+  final Directory androidMainDirectory = Directory(
+    path.join(currentDirectory.path, 'android', 'src', 'main'),
+  );
+  Directory? androidJavaDirectory;
+  if (androidMainDirectory.existsSync()) {
+    final File firstJavaFile = androidMainDirectory
+        .listSync(recursive: true)
+        .whereType<File>()
+        .firstWhere((File file) {
+      return path.extension(file.path) == '.java';
+    });
+    androidJavaDirectory = Directory(path.dirname(firstJavaFile.path));
+  }
+
   for (final File file in simpleAstJsonFiles) {
     final Map<String, dynamic> astJson =
         jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
+
+    final String classFileWithoutExtension =
+        path.basename(file.path).split('.').first;
 
     final SimpleLibrary library = updateLibrary(
       SimpleLibrary.fromJson(astJson),
       baseObjectClassName: findBaseObjectClassName(allDartLibFiles),
       isObjc: isObjc,
-      dartApiFilename: path.basename(path.setExtension(
-        path.withoutExtension(file.path),
+      dartApiFilename: path.setExtension(
+        classFileWithoutExtension,
         '.dart',
-      )),
+      ),
     );
 
     genDartApiImplementations(
@@ -97,6 +115,24 @@ void main() {
             path.withoutExtension(path.basename(file.path)),
             '_test.gen_api_impls.dart',
           ),
+        ),
+      );
+    }
+
+    if (androidJavaDirectory != null && androidJavaDirectory.existsSync()) {
+      genJavaHostApiImplementation(
+        library,
+        outputFile: path.join(
+          androidJavaDirectory.path,
+          'GenApiImpls${classFileWithoutExtension.pascalCase}HostApi.java',
+        ),
+      );
+
+      genJavaFlutterApiImplementation(
+        library,
+        outputFile: path.join(
+          androidJavaDirectory.path,
+          'GenApiImpls${classFileWithoutExtension.pascalCase}FlutterApi.java',
         ),
       );
     }
@@ -124,13 +160,34 @@ void main() {
     print('No `pigeons` directory found!');
   }
 
+  final Directory androidTestDirectory = Directory(
+    path.join(currentDirectory.path, 'android', 'src', 'test'),
+  );
+  Directory? androidJavaTestsDirectory;
+  if (androidTestDirectory.existsSync()) {
+    final File firstJavaFile = androidTestDirectory
+        .listSync(recursive: true)
+        .whereType<File>()
+        .firstWhere((File file) {
+      return path.extension(file.path) == '.java';
+    });
+    androidJavaTestsDirectory = Directory(path.dirname(firstJavaFile.path));
+  }
+
   // for (File file in simpleAstJsonFiles) {
   //   file.deleteSync();
   // }
 }
 
 ProcessResult run(String executable, List<String> arguments) {
-  print('Running `$executable ${arguments.join(' ')}`');
+  final String printableArguments = arguments.map((String argument) {
+    if (argument.length >= 40) {
+      return '${argument.substring(0, 15)}...${argument.substring(argument.length - 25)}';
+    }
+    return argument;
+  }).join(' ');
+  print('Running `$executable $printableArguments`');
+
   final ProcessResult result = Process.runSync(executable, arguments);
   if (result.exitCode == 0) {
     return result;
@@ -187,6 +244,42 @@ void genDartApiImplementationsTests(
     const JsonEncoder().convert(library.toJson()),
     outputFile,
   ]);
+}
+
+void genJavaHostApiImplementation(
+  SimpleLibrary library, {
+  required String outputFile,
+}) {
+  print(outputFile);
+  // run('flutter', <String>[
+  //   'pub',
+  //   'run',
+  //   'code_template_processor',
+  //   '--template-file',
+  //   // TODO(bparrishMines): download template file
+  //   'lib/src/my_class.template.dart',
+  //   '--data',
+  //   const JsonEncoder().convert(library.toJson()),
+  //   outputFile,
+  // ]);
+}
+
+void genJavaFlutterApiImplementation(
+  SimpleLibrary library, {
+  required String outputFile,
+}) {
+  print(outputFile);
+  // run('flutter', <String>[
+  //   'pub',
+  //   'run',
+  //   'code_template_processor',
+  //   '--template-file',
+  //   // TODO(bparrishMines): download template file
+  //   'lib/src/my_class.template.dart',
+  //   '--data',
+  //   const JsonEncoder().convert(library.toJson()),
+  //   outputFile,
+  // ]);
 }
 
 /// 1. Removes Futures from method return types For example, Future<String> -> String.
