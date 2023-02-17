@@ -12,6 +12,7 @@ typedef RunProcessorCallback = String Function({
   required StringBuffer resultBuffer,
   required Map<String, dynamic> data,
   required TemplateProcessorOptions options,
+  required Map<String, String> copies,
 });
 
 abstract class Token {}
@@ -23,6 +24,7 @@ abstract class StartToken extends Token {
     required StringBuffer resultBuffer,
     required Map<String, dynamic> data,
     required TemplateProcessorOptions options,
+    required Map<String, String> copies,
     required RunProcessorCallback onRunProcessor,
   }) {
     throw UnimplementedError();
@@ -34,6 +36,7 @@ abstract class StartToken extends Token {
     required StringBuffer resultBuffer,
     required Map<String, dynamic> data,
     required TemplateProcessorOptions options,
+    required Map<String, String> copies,
     required RunProcessorCallback onRunGenerator,
   }) {
     throw UnimplementedError();
@@ -67,6 +70,7 @@ class IterateToken extends StartToken {
     required StringBuffer resultBuffer,
     required Map<String, dynamic> data,
     required TemplateProcessorOptions options,
+    required Map<String, String> copies,
     required RunProcessorCallback onRunProcessor,
   }) {
     final List<dynamic>? dataList = retrieveValueForIdentifier(
@@ -100,6 +104,7 @@ class IterateToken extends StartToken {
         resultBuffer: StringBuffer(),
         data: dataQueue.first.cast<String, dynamic>(),
         options: options,
+        copies: copies,
       ));
       dataQueue.removeFirst();
     }
@@ -119,6 +124,7 @@ class IterateToken extends StartToken {
     required StringBuffer resultBuffer,
     required Map<String, dynamic> data,
     required TemplateProcessorOptions options,
+    required Map<String, String> copies,
     required RunProcessorCallback onRunGenerator,
   }) {
     return resultBuffer.toString();
@@ -152,6 +158,7 @@ class ReplaceToken extends StartToken {
     required StringBuffer resultBuffer,
     required Map<String, dynamic> data,
     required TemplateProcessorOptions options,
+    required Map<String, String> copies,
     required RunProcessorCallback onRunProcessor,
   }) {
     resultBuffer.write(onRunProcessor(
@@ -160,6 +167,7 @@ class ReplaceToken extends StartToken {
       resultBuffer: StringBuffer(),
       data: data,
       options: options,
+      copies: copies,
     ));
   }
 
@@ -170,6 +178,7 @@ class ReplaceToken extends StartToken {
     required StringBuffer resultBuffer,
     required Map<String, dynamic> data,
     required TemplateProcessorOptions options,
+    required Map<String, String> copies,
     required RunProcessorCallback onRunGenerator,
   }) {
     String replacement = retrieveValueForIdentifier(
@@ -221,6 +230,7 @@ class ConditionalToken extends StartToken {
     required StringBuffer resultBuffer,
     required Map<String, dynamic> data,
     required TemplateProcessorOptions options,
+    required Map<String, String> copies,
     required RunProcessorCallback onRunProcessor,
   }) {
     final Object? value = retrieveValueForIdentifier(
@@ -254,6 +264,7 @@ class ConditionalToken extends StartToken {
         resultBuffer: StringBuffer(),
         data: data,
         options: options,
+        copies: copies,
       ));
     } else {
       tokenStack.removeLast();
@@ -268,30 +279,127 @@ class ConditionalToken extends StartToken {
   @override
   String onTokenEnd({
     required Queue<String> templateQueue,
-    required Queue<Token> tokenStack,
+    required Queue<StartToken> tokenStack,
     required StringBuffer resultBuffer,
     required Map<String, dynamic> data,
     required TemplateProcessorOptions options,
+    required Map<String, String> copies,
     required RunProcessorCallback onRunGenerator,
   }) {
     return resultBuffer.toString();
   }
 }
 
-class FunctionToken extends Token {
-  FunctionToken({required this.identifier});
+class CopyToken extends StartToken {
+  CopyToken({required this.name});
 
-  final String identifier;
+  final String name;
+
+  @override
+  void onTokenStart({
+    required Queue<String> templateQueue,
+    required Queue<StartToken> tokenStack,
+    required StringBuffer resultBuffer,
+    required Map<String, dynamic> data,
+    required TemplateProcessorOptions options,
+    required Map<String, String> copies,
+    required RunProcessorCallback onRunProcessor,
+  }) {
+    final Queue<String> copyQueue = Queue<String>.from(templateQueue);
+    _flush(
+      copyQueue,
+      tokenOpener: options.tokenOpener,
+      tokenCloser: options.tokenCloser,
+    );
+
+    final StringBuffer copyBuffer = StringBuffer();
+    final int copyLength = (templateQueue.length - copyQueue.length) -
+        (options.tokenOpener.length + options.tokenCloser.length);
+    for (int i = 0; i < copyLength; i++) {
+      copyBuffer.write(templateQueue.elementAt(i));
+    }
+
+    copies[name] = copyBuffer.toString();
+
+    resultBuffer.write(onRunProcessor(
+      templateQueue: templateQueue,
+      tokenStack: tokenStack,
+      resultBuffer: StringBuffer(),
+      data: data,
+      options: options,
+      copies: copies,
+    ));
+  }
+
+  @override
+  String onTokenEnd({
+    required Queue<String> templateQueue,
+    required Queue<StartToken> tokenStack,
+    required StringBuffer resultBuffer,
+    required Map<String, dynamic> data,
+    required TemplateProcessorOptions options,
+    required Map<String, String> copies,
+    required RunProcessorCallback onRunGenerator,
+  }) {
+    return resultBuffer.toString();
+  }
+}
+
+class PasteToken extends EraseToken {
+  PasteToken({required this.name});
+
+  final String name;
+
+  late final String paste;
+
+  @override
+  void onTokenStart({
+    required Queue<String> templateQueue,
+    required Queue<StartToken> tokenStack,
+    required StringBuffer resultBuffer,
+    required Map<String, dynamic> data,
+    required TemplateProcessorOptions options,
+    required Map<String, String> copies,
+    required RunProcessorCallback onRunProcessor,
+  }) {
+    final String? copy = copies[name];
+    if (copy == null) {
+      throw ArgumentError('Could not find copy of name: `$name`.');
+    }
+
+    resultBuffer.write(onRunProcessor(
+      templateQueue: Queue<String>.from(copy.split('')),
+      tokenStack: tokenStack,
+      resultBuffer: StringBuffer(),
+      data: data,
+      options: options,
+      copies: copies,
+    ));
+  }
+
+  @override
+  String onTokenEnd({
+    required Queue<String> templateQueue,
+    required Queue<StartToken> tokenStack,
+    required StringBuffer resultBuffer,
+    required Map<String, dynamic> data,
+    required TemplateProcessorOptions options,
+    required Map<String, String> copies,
+    required RunProcessorCallback onRunGenerator,
+  }) {
+    return resultBuffer.toString();
+  }
 }
 
 class EraseToken extends StartToken {
   @override
   void onTokenStart({
     required Queue<String> templateQueue,
-    required Queue<Token> tokenStack,
+    required Queue<StartToken> tokenStack,
     required StringBuffer resultBuffer,
     required Map<String, dynamic> data,
     required TemplateProcessorOptions options,
+    required Map<String, String> copies,
     required RunProcessorCallback onRunProcessor,
   }) {
     tokenStack.removeLast();
@@ -403,13 +511,20 @@ Token? tryParseToken(
       inverse: tokenType == 'if!',
       equalTo: equalToModifier,
     );
-  } else if (tokenType.startsWith('function')) {
-    final String replacement = _tryStringMatch(
+  } else if (tokenType.startsWith('copy')) {
+    final String name = _tryStringMatch(
       pattern: r'(?<=\s)[^\s]+(?=$)',
       input: tokenString,
     )!;
 
-    return FunctionToken(identifier: replacement);
+    return CopyToken(name: name);
+  } else if (tokenType.startsWith('paste')) {
+    final String name = _tryStringMatch(
+      pattern: r'(?<=\s)[^\s]+(?=$)',
+      input: tokenString,
+    )!;
+
+    return PasteToken(name: name);
   } else if (tokenType.startsWith('erase')) {
     return EraseToken();
   }

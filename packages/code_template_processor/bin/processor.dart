@@ -11,6 +11,7 @@ String runProcessor(TemplateProcessorOptions options) {
     resultBuffer: StringBuffer(),
     data: options.jsonData,
     options: options,
+    copies: <String, String>{},
   );
 }
 
@@ -20,6 +21,7 @@ String _runProcessor({
   required StringBuffer resultBuffer,
   required Map<String, dynamic> data,
   required TemplateProcessorOptions options,
+  required Map<String, String> copies,
 }) {
   while (templateQueue.isNotEmpty) {
     final Token? newToken = tryParseToken(
@@ -36,6 +38,7 @@ String _runProcessor({
         resultBuffer: resultBuffer,
         data: data,
         options: options,
+        copies: copies,
         onRunProcessor: _runProcessor,
       );
     } else if (newToken is EndToken) {
@@ -45,6 +48,7 @@ String _runProcessor({
             resultBuffer: resultBuffer,
             data: data,
             options: options,
+            copies: copies,
             onRunGenerator: _runProcessor,
           );
     } else if (queueStartsWith(templateQueue, '__') ||

@@ -393,7 +393,7 @@ SimpleType updateType(SimpleType simpleType) {
   );
 }
 
-int testIdentifier = 0;
+int testIdentifier = 1;
 
 /// 1. Uses [updateType] on type.
 /// 2. Adds an incrementing test identifier.

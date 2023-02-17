@@ -433,6 +433,55 @@ void main() {
           expect(runProcessor(options), '');
         });
       });
+
+      group('CopyToken', () {
+        test('does not remove text', () {
+          final TemplateProcessorOptions options = TemplateProcessorOptions(
+            tokenOpener: '/*',
+            tokenCloser: '*/',
+            template: '/*copy hello*/Hello,/**/ World!',
+            jsonData: <String, dynamic>{},
+            outputFile: null,
+          );
+          expect(runProcessor(options), 'Hello, World!');
+        });
+
+        test('does not remove tokens', () {
+          final TemplateProcessorOptions options = TemplateProcessorOptions(
+            tokenOpener: '/*',
+            tokenCloser: '*/',
+            template: '/*copy hello*//*replace hello*/__hello__/**//**/ World!',
+            jsonData: <String, dynamic>{'hello': 'Hello,'},
+            outputFile: null,
+          );
+          expect(runProcessor(options), 'Hello, World!');
+        });
+      });
+
+      group('PasteToken', () {
+        test('copy and paste text', () {
+          final TemplateProcessorOptions options = TemplateProcessorOptions(
+            tokenOpener: '/*',
+            tokenCloser: '*/',
+            template: '/*copy letters*/abc/**//*paste letters*//**/',
+            jsonData: <String, dynamic>{},
+            outputFile: null,
+          );
+          expect(runProcessor(options), 'abcabc');
+        });
+
+        test('copy and paste tokens', () {
+          final TemplateProcessorOptions options = TemplateProcessorOptions(
+            tokenOpener: '/*',
+            tokenCloser: '*/',
+            template:
+                '/*copy letters*//*replace hello*/abc/**//**//*paste letters*//**/',
+            jsonData: <String, dynamic>{'hello': 'def'},
+            outputFile: null,
+          );
+          expect(runProcessor(options), 'defdef');
+        });
+      });
     });
   });
 }
