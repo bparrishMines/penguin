@@ -73,7 +73,7 @@ void main() {
   Directory? androidJavaDirectory;
   if (androidMainDirectory.existsSync()) {
     final File firstJavaFile = androidMainDirectory
-        .listSync(recursive: true)
+        .listSync(recursive: true, followLinks: false)
         .whereType<File>()
         .firstWhere((File file) {
       return path.extension(file.path) == '.java';
@@ -124,7 +124,7 @@ void main() {
         library,
         outputFile: path.join(
           androidJavaDirectory.path,
-          'GenApiImpls${classFileWithoutExtension.pascalCase}HostApi.java',
+          'GenApiImpls${classFileWithoutExtension.pascalCase}HostApiImpl.java',
         ),
       );
 
@@ -132,7 +132,7 @@ void main() {
         library,
         outputFile: path.join(
           androidJavaDirectory.path,
-          'GenApiImpls${classFileWithoutExtension.pascalCase}FlutterApi.java',
+          'GenApiImpls${classFileWithoutExtension.pascalCase}FlutterApiImpl.java',
         ),
       );
     }
@@ -250,36 +250,42 @@ void genJavaHostApiImplementation(
   SimpleLibrary library, {
   required String outputFile,
 }) {
-  print(outputFile);
-  // run('flutter', <String>[
-  //   'pub',
-  //   'run',
-  //   'code_template_processor',
-  //   '--template-file',
-  //   // TODO(bparrishMines): download template file
-  //   'lib/src/my_class.template.dart',
-  //   '--data',
-  //   const JsonEncoder().convert(library.toJson()),
-  //   outputFile,
-  // ]);
+  run('flutter', <String>[
+    'pub',
+    'run',
+    'code_template_processor',
+    '--token-opener',
+    '/*-',
+    '--token-closer',
+    '-*/',
+    '--template-file',
+    // TODO(bparrishMines): download template file
+    'android/src/main/java/com/example/wrapper_example/TemplateMyClassHostApiImpl.java',
+    '--data',
+    const JsonEncoder().convert(library.toJson()),
+    outputFile,
+  ]);
 }
 
 void genJavaFlutterApiImplementation(
   SimpleLibrary library, {
   required String outputFile,
 }) {
-  print(outputFile);
-  // run('flutter', <String>[
-  //   'pub',
-  //   'run',
-  //   'code_template_processor',
-  //   '--template-file',
-  //   // TODO(bparrishMines): download template file
-  //   'lib/src/my_class.template.dart',
-  //   '--data',
-  //   const JsonEncoder().convert(library.toJson()),
-  //   outputFile,
-  // ]);
+  run('flutter', <String>[
+    'pub',
+    'run',
+    'code_template_processor',
+    '--token-opener',
+    '/*-',
+    '--token-closer',
+    '-*/',
+    '--template-file',
+    // TODO(bparrishMines): download template file
+    'android/src/main/java/com/example/wrapper_example/TemplateMyClassFlutterApiImpl.java',
+    '--data',
+    const JsonEncoder().convert(library.toJson()),
+    outputFile,
+  ]);
 }
 
 /// 1. Removes Futures from method return types For example, Future<String> -> String.
