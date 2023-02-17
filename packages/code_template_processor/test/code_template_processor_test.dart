@@ -33,13 +33,18 @@ void main() {
       group('TemplateProcessorOptions', () {
         test('can change token opener and closer', () {
           final TemplateProcessorOptions options = TemplateProcessorOptions(
-            tokenOpener: '/*-',
+            tokenOpener: 'abc',
             tokenCloser: '-*/',
-            template: 'Hello,/*-erase-*/__hello__/*--*/ World!',
-            jsonData: <String, dynamic>{'hello': 23},
+            template: 'Hello,abciterate is i-*/__a__abc-*/ World!',
+            jsonData: <String, dynamic>{
+              'hello': 23,
+              'is': <Map<String, dynamic>>[
+                <String, dynamic>{'a': 'b'}
+              ]
+            },
             outputFile: null,
           );
-          expect(runProcessor(options), 'Hello, World!');
+          expect(runProcessor(options), 'Hello,b World!');
         });
       });
 

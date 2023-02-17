@@ -496,7 +496,7 @@ Token? tryParseToken(
       casing: casingModifier,
       identifier: replacement,
     );
-  } else if (tokenType.startsWith('if')) {
+  } else if (tokenType == 'if' || tokenType == 'if!') {
     final String identifier = _tryStringMatch(
       pattern: r'(?<=\s)[^\s]+(?=$)',
       input: tokenString,
@@ -511,25 +511,25 @@ Token? tryParseToken(
       inverse: tokenType == 'if!',
       equalTo: equalToModifier,
     );
-  } else if (tokenType.startsWith('copy')) {
+  } else if (tokenType == 'copy') {
     final String name = _tryStringMatch(
       pattern: r'(?<=\s)[^\s]+(?=$)',
       input: tokenString,
     )!;
 
     return CopyToken(name: name);
-  } else if (tokenType.startsWith('paste')) {
+  } else if (tokenType == 'paste') {
     final String name = _tryStringMatch(
       pattern: r'(?<=\s)[^\s]+(?=$)',
       input: tokenString,
     )!;
 
     return PasteToken(name: name);
-  } else if (tokenType.startsWith('erase')) {
+  } else if (tokenType == 'erase') {
     return EraseToken();
   }
 
-  throw ArgumentError('Failed to parse token: $tokenType');
+  throw ArgumentError('Failed to parse token: $tokenString');
 }
 
 void _flush(

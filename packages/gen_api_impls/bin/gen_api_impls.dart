@@ -192,7 +192,7 @@ ProcessResult run(String executable, List<String> arguments) {
   if (result.exitCode == 0) {
     return result;
   } else {
-    print('Failed to run `$executable ${arguments.join(' ')}`');
+    print('Failed to run `$executable $printableArguments`');
     print(result.stdout);
     print(result.stderr);
     exit(1);
@@ -254,10 +254,8 @@ void genJavaHostApiImplementation(
     'pub',
     'run',
     'code_template_processor',
-    '--token-opener',
-    '/*-',
-    '--token-closer',
-    '-*/',
+    //'--token-opener="/*"',
+    //'--token-closer="*/"',
     '--template-file',
     // TODO(bparrishMines): download template file
     'android/src/main/java/com/example/wrapper_example/TemplateMyClassHostApiImpl.java',
@@ -275,10 +273,8 @@ void genJavaFlutterApiImplementation(
     'pub',
     'run',
     'code_template_processor',
-    '--token-opener',
-    '/*-',
-    '--token-closer',
-    '-*/',
+    '--token-opener="/*-"',
+    '--token-closer="*/"',
     '--template-file',
     // TODO(bparrishMines): download template file
     'android/src/main/java/com/example/wrapper_example/TemplateMyClassFlutterApiImpl.java',
@@ -356,7 +352,11 @@ SimpleLibrary updateLibrary(
           );
         }).toList(),
         private: simpleClass.private,
-        constructors: simpleClass.constructors.map(
+        constructors: simpleClass.constructors.where(
+          (SimpleConstructor simpleConstructor) {
+            return simpleConstructor.parameters.isNotEmpty;
+          },
+        ).map(
           (SimpleConstructor simpleConstructor) {
             return SimpleConstructor(
               name: simpleConstructor.name,
@@ -389,6 +389,23 @@ SimpleLibrary updateLibrary(
           'attachedFields': attachedFields,
           'baseObjectClassName': baseObjectClassName,
           'isObjc': isObjc,
+          'needsProxy': simpleClass.methods.any(
+                (SimpleMethod simpleMethod) {
+                  return simpleMethod.static;
+                },
+              ) ||
+              simpleClass.constructors.where(
+                (SimpleConstructor simpleConstructor) {
+                  return simpleConstructor.parameters.isNotEmpty;
+                },
+              ).any(
+                (SimpleConstructor simpleConstructor) {
+                  return simpleConstructor.name != 'detached';
+                },
+              ),
+          'hasCallbacks': simpleClass.fields.any(
+            (SimpleField simpleField) => simpleField.type.isFunction,
+          ),
         },
       );
     }).toList(),
