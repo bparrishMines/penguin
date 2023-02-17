@@ -74,6 +74,10 @@ void main() {
       SimpleLibrary.fromJson(astJson),
       baseObjectClassName: findBaseObjectClassName(allDartLibFiles),
       isObjc: isObjc,
+      dartApiFilename: path.basename(path.setExtension(
+        path.withoutExtension(file.path),
+        '.dart',
+      )),
     );
 
     genDartApiImplementations(
@@ -193,6 +197,8 @@ SimpleLibrary updateLibrary(
   SimpleLibrary library, {
   required String baseObjectClassName,
   required bool isObjc,
+  // Only the basename
+  required String dartApiFilename,
 }) {
   return SimpleLibrary(
     classes: library.classes.map<SimpleClass>((SimpleClass simpleClass) {
@@ -296,6 +302,10 @@ SimpleLibrary updateLibrary(
       );
     }).toList(),
     enums: library.enums,
+    customValues: <String, Object?>{
+      ...library.customValues,
+      'dartApiFilename': dartApiFilename,
+    },
   );
 }
 
