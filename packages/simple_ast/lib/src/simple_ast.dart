@@ -8,6 +8,7 @@ class SimpleLibrary {
     required this.classes,
     required this.functions,
     required this.enums,
+    required this.customValues,
   });
 
   final List<SimpleClass> classes;
@@ -15,6 +16,8 @@ class SimpleLibrary {
   final List<SimpleFunction> functions;
 
   final List<SimpleEnum> enums;
+
+  final Map<String, Object?> customValues;
 
   factory SimpleLibrary.fromJson(Map<String, dynamic> json) =>
       _$SimpleLibraryFromJson(json);

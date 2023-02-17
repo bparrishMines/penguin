@@ -17,6 +17,7 @@ SimpleLibrary _$SimpleLibraryFromJson(Map<String, dynamic> json) =>
       enums: (json['enums'] as List<dynamic>)
           .map((e) => SimpleEnum.fromJson(e as Map<String, dynamic>))
           .toList(),
+      customValues: json['customValues'] as Map<String, dynamic>,
     );
 
 Map<String, dynamic> _$SimpleLibraryToJson(SimpleLibrary instance) =>
@@ -24,6 +25,7 @@ Map<String, dynamic> _$SimpleLibraryToJson(SimpleLibrary instance) =>
       'classes': instance.classes,
       'functions': instance.functions,
       'enums': instance.enums,
+      'customValues': instance.customValues,
     };
 
 SimpleEnum _$SimpleEnumFromJson(Map<String, dynamic> json) => SimpleEnum(
