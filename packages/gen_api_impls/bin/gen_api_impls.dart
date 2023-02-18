@@ -81,6 +81,20 @@ void main() {
     androidJavaDirectory = Directory(path.dirname(firstJavaFile.path));
   }
 
+  final Directory androidTestDirectory = Directory(
+    path.join(currentDirectory.path, 'android', 'src', 'test'),
+  );
+  Directory? androidJavaTestsDirectory;
+  if (androidTestDirectory.existsSync()) {
+    final File firstJavaFile = androidTestDirectory
+        .listSync(recursive: true, followLinks: false)
+        .whereType<File>()
+        .firstWhere((File file) {
+      return path.extension(file.path) == '.java';
+    });
+    androidJavaTestsDirectory = Directory(path.dirname(firstJavaFile.path));
+  }
+
   for (final File file in simpleAstJsonFiles) {
     final Map<String, dynamic> astJson =
         jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
@@ -137,6 +151,16 @@ void main() {
       );
     }
 
+    if (androidJavaTestsDirectory != null) {
+      genJavaTest(
+        library,
+        outputFile: path.join(
+          androidJavaTestsDirectory.path,
+          'GenApiImpls${classFileWithoutExtension.pascalCase}Tests.java',
+        ),
+      );
+    }
+
     pigeonOutputBuffer.writeln(genPigeonOutput(library));
     pigeonOutputBuffer.writeln();
   }
@@ -158,20 +182,6 @@ void main() {
     pigeonFile.writeAsStringSync(pigeonOutputBuffer.toString());
   } else {
     print('No `pigeons` directory found!');
-  }
-
-  final Directory androidTestDirectory = Directory(
-    path.join(currentDirectory.path, 'android', 'src', 'test'),
-  );
-  Directory? androidJavaTestsDirectory;
-  if (androidTestDirectory.existsSync()) {
-    final File firstJavaFile = androidTestDirectory
-        .listSync(recursive: true)
-        .whereType<File>()
-        .firstWhere((File file) {
-      return path.extension(file.path) == '.java';
-    });
-    androidJavaTestsDirectory = Directory(path.dirname(firstJavaFile.path));
   }
 
   // for (File file in simpleAstJsonFiles) {
@@ -276,6 +286,24 @@ void genJavaFlutterApiImplementation(
     '--template-file',
     // TODO(bparrishMines): download template file
     'android/src/main/java/com/example/wrapper_example/TemplateMyClassFlutterApiImpl.java',
+    '--data',
+    const JsonEncoder().convert(library.toJson()),
+    outputFile,
+  ]);
+}
+
+void genJavaTest(
+  SimpleLibrary library, {
+  required String outputFile,
+}) {
+  run('flutter', <String>[
+    'pub',
+    'run',
+    'code_template_processor',
+    '--token-opener=/*-',
+    '--template-file',
+    // TODO(bparrishMines): download template file
+    'android/src/test/java/com/example/wrapper_example/TemplateMyClassTest.java',
     '--data',
     const JsonEncoder().convert(library.toJson()),
     outputFile,
