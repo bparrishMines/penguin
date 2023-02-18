@@ -481,31 +481,37 @@ SimpleType updateType(SimpleType simpleType) {
   late final bool isCodecClass;
   late final String javaName;
   Object? dartTestValue;
+  Object? javaTestValue;
   switch (typeName) {
     case 'int':
       isCodecClass = true;
       dartTestValue = '0';
       javaName = 'Long';
+      javaTestValue = '0';
       break;
     case 'bool':
       isCodecClass = true;
       dartTestValue = 'true';
       javaName = 'Boolean';
+      javaTestValue = 'true';
       break;
     case 'String':
       isCodecClass = true;
       dartTestValue = "'testString'";
       javaName = 'String';
+      javaTestValue = '"testString"';
       break;
     case 'Uint8List':
       isCodecClass = true;
       dartTestValue = 'Uint8List(0)';
       javaName = 'byte[]';
+      javaTestValue = 'new byte[0]';
       break;
     case 'double':
       isCodecClass = true;
       dartTestValue = '1.0';
       javaName = 'Double';
+      javaTestValue = '1.0';
       break;
     case 'void':
       isCodecClass = true;
@@ -541,6 +547,7 @@ SimpleType updateType(SimpleType simpleType) {
       if (simpleType.functionReturnType != null)
         'isFuture': simpleType.functionReturnType!.name == 'Future',
       'dartTestValue': dartTestValue,
+      'javaTestValue': javaTestValue,
     },
   );
 }
