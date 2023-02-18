@@ -112,6 +112,10 @@ void main() {
       ),
     );
 
+    if (library.classes.isEmpty || library.classes.length > 1) {
+      print('Warning: You should only have one class per file.');
+    }
+
     genDartApiImplementations(
       library,
       outputFile: path.setExtension(
@@ -156,7 +160,7 @@ void main() {
         library,
         outputFile: path.join(
           androidJavaTestsDirectory.path,
-          'GenApiImpls${classFileWithoutExtension.pascalCase}Tests.java',
+          'GenApiImpls${classFileWithoutExtension.pascalCase}Test.java',
         ),
       );
     }
@@ -300,7 +304,6 @@ void genJavaTest(
     'pub',
     'run',
     'code_template_processor',
-    '--token-opener=/*-',
     '--template-file',
     // TODO(bparrishMines): download template file
     'android/src/test/java/com/example/wrapper_example/TemplateMyClassTest.java',
