@@ -343,9 +343,11 @@ SimpleLibrary updateLibrary(
 
       final List<SimpleField> attachedFields =
           simpleClass.fields.where((SimpleField simpleField) {
-        return !detachedParameters.any((SimpleParameter simpleParameter) {
-          return simpleField.name == simpleParameter.name;
-        });
+        return !(updateType(simpleField.type).customValues['isCodecClass']!
+                as bool) &&
+            !detachedParameters.any((SimpleParameter simpleParameter) {
+              return simpleField.name == simpleParameter.name;
+            });
       }).toList();
 
       return SimpleClass(
@@ -555,7 +557,7 @@ SimpleType updateType(SimpleType simpleType) {
   );
 }
 
-int testIdentifier = 1;
+int testIdentifier = 2;
 
 /// 1. Uses [updateType] on type.
 /// 2. Adds an incrementing test identifier.
