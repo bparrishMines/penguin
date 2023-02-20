@@ -341,6 +341,19 @@ SimpleLibrary updateLibrary(
           .map(updateParameter)
           .toList();
 
+      // Constructor needed for native callback tests.
+      final SimpleConstructor testConstructor = updateConstructor(simpleClass
+          .constructors
+          .firstWhere((SimpleConstructor simpleConstructor) {
+        return simpleConstructor.name == '';
+      }, orElse: () {
+        return simpleClass.constructors.firstWhere(
+          (SimpleConstructor simpleConstructor) {
+            return simpleConstructor.name != 'detached';
+          },
+        );
+      }));
+
       final List<SimpleField> attachedFields =
           simpleClass.fields.where((SimpleField simpleField) {
         return !(updateType(simpleField.type).customValues['isCodecClass']!
@@ -383,29 +396,14 @@ SimpleLibrary updateLibrary(
           );
         }).toList(),
         private: simpleClass.private,
-        constructors: simpleClass.constructors.where(
-          (SimpleConstructor simpleConstructor) {
-            return simpleConstructor.parameters.isNotEmpty;
-          },
-        ).map(
-          (SimpleConstructor simpleConstructor) {
-            return SimpleConstructor(
-              name: simpleConstructor.name,
-              private: simpleConstructor.private,
-              parameters: simpleConstructor.parameters
-                  .where(
-                    (SimpleParameter simpleParameter) {
-                      return simpleParameter.type.name != 'BinaryMessenger' &&
-                          simpleParameter.type.name != 'InstanceManager' &&
-                          (simpleConstructor.name == 'detached' ||
-                              !simpleParameter.type.isFunction);
-                    },
-                  )
-                  .map(updateParameter)
-                  .toList(),
-            );
-          },
-        ).toList(),
+        constructors: simpleClass.constructors
+            .where(
+              (SimpleConstructor simpleConstructor) {
+                return simpleConstructor.parameters.isNotEmpty;
+              },
+            )
+            .map(updateConstructor)
+            .toList(),
         fields: simpleClass.fields.map((SimpleField simpleField) {
           return SimpleField(
             name: simpleField.name,
@@ -416,6 +414,7 @@ SimpleLibrary updateLibrary(
         }).toList(),
         customValues: <String, Object?>{
           ...simpleClass.customValues,
+          'testConstructor': testConstructor,
           'detachedParameters': detachedParameters,
           'attachedFields': attachedFields,
           'baseObjectClassName': baseObjectClassName,
@@ -570,5 +569,23 @@ SimpleParameter updateParameter(SimpleParameter simpleParameter) {
       ...simpleParameter.customValues,
       'testIdentifier': testIdentifier++,
     },
+  );
+}
+
+SimpleConstructor updateConstructor(SimpleConstructor simpleConstructor) {
+  return SimpleConstructor(
+    name: simpleConstructor.name,
+    private: simpleConstructor.private,
+    parameters: simpleConstructor.parameters
+        .where(
+          (SimpleParameter simpleParameter) {
+            return simpleParameter.type.name != 'BinaryMessenger' &&
+                simpleParameter.type.name != 'InstanceManager' &&
+                (simpleConstructor.name == 'detached' ||
+                    !simpleParameter.type.isFunction);
+          },
+        )
+        .map(updateParameter)
+        .toList(),
   );
 }
