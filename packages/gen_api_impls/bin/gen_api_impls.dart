@@ -44,10 +44,12 @@ void main() {
     exit(0);
   }
 
-  final Iterable<File> allDartLibFiles =
-      Directory(path.join(currentDirectory.path, 'lib'))
-          .listSync(recursive: true, followLinks: false)
-          .whereType<File>();
+  final Directory dartLibDir =
+      Directory(path.join(currentDirectory.path, 'lib'));
+
+  final Iterable<File> allDartLibFiles = dartLibDir
+      .listSync(recursive: true, followLinks: false)
+      .whereType<File>();
 
   final Directory iosDirectory = Directory(
     path.join(currentDirectory.path, 'ios'),
@@ -106,10 +108,9 @@ void main() {
       SimpleLibrary.fromJson(astJson),
       baseObjectClassName: findBaseObjectClassName(allDartLibFiles),
       isObjc: isObjc,
-      dartApiFilename: path.setExtension(
-        classFileWithoutExtension,
-        '.dart',
-      ),
+      dartClassFilenameWithoutExtension: classFileWithoutExtension,
+      dartInstanceManagerPath: findDartInstanceManagerPathFromLib(dartLibDir),
+      packageName: findPackageName(currentDirectory),
     );
 
     if (library.classes.isEmpty || library.classes.length > 1) {
@@ -322,7 +323,9 @@ SimpleLibrary updateLibrary(
   required String baseObjectClassName,
   required bool isObjc,
   // Only the basename
-  required String dartApiFilename,
+  required String dartClassFilenameWithoutExtension,
+  required String dartInstanceManagerPath,
+  required String packageName,
 }) {
   return SimpleLibrary(
     classes: library.classes.map<SimpleClass>((SimpleClass simpleClass) {
@@ -450,7 +453,8 @@ SimpleLibrary updateLibrary(
     enums: library.enums,
     customValues: <String, Object?>{
       ...library.customValues,
-      'dartApiFilename': dartApiFilename,
+      'dartClassFilenameWithoutExtension': dartClassFilenameWithoutExtension,
+      'dartInstanceManagerPath': '$packageName/$dartInstanceManagerPath',
     },
   );
 }
@@ -473,6 +477,33 @@ String findBaseObjectClassName(Iterable<File> files) {
     'Could not find a class that contains `InstanceManager get globalInstanceManager`.',
   );
   exit(1);
+}
+
+String findDartInstanceManagerPathFromLib(Directory dartLibDirectory) {
+  final Iterable<File> dartLibFiles = dartLibDirectory
+      .listSync(recursive: true, followLinks: false)
+      .whereType<File>()
+      .where((File file) => file.path.endsWith('.dart'));
+  for (File file in dartLibFiles) {
+    for (String line in file.readAsLinesSync()) {
+      if (line.startsWith('class InstanceManager ')) {
+        return path.relative(file.path, from: 'lib');
+      }
+    }
+  }
+
+  print('Could not find a dart file with the InstanceManager class.');
+  exit(1);
+}
+
+String findPackageName(Directory packageDir) {
+  final File pubpsec = File(path.join(packageDir.path, 'pubspec.yaml'));
+  if (!pubpsec.existsSync()) {
+    print('The following file does not exist: ${pubpsec.path}');
+    exit(1);
+  }
+
+  return RegExp(r'(?<=^name: )\w+').stringMatch(pubpsec.readAsStringSync())!;
 }
 
 /// 1. Adds if type is a class supported by the codec: `isCodecClass`
