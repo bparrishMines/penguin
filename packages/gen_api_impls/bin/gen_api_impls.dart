@@ -111,6 +111,14 @@ void main() {
       dartClassFilenameWithoutExtension: classFileWithoutExtension,
       dartInstanceManagerPath: findDartInstanceManagerPathFromLib(dartLibDir),
       packageName: findPackageName(currentDirectory),
+      javaPackage: androidJavaDirectory != null
+          ? path
+              .split(path.relative(
+                androidJavaDirectory.path,
+                from: path.join(androidMainDirectory.path, 'java'),
+              ))
+              .join('.')
+          : null,
     );
 
     if (library.classes.isEmpty || library.classes.length > 1) {
@@ -326,6 +334,7 @@ SimpleLibrary updateLibrary(
   required String dartClassFilenameWithoutExtension,
   required String dartInstanceManagerPath,
   required String packageName,
+  required String? javaPackage,
 }) {
   return SimpleLibrary(
     classes: library.classes.map<SimpleClass>((SimpleClass simpleClass) {
@@ -455,6 +464,7 @@ SimpleLibrary updateLibrary(
       ...library.customValues,
       'dartClassFilenameWithoutExtension': dartClassFilenameWithoutExtension,
       'dartInstanceManagerPath': '$packageName/$dartInstanceManagerPath',
+      'javaPackage': javaPackage,
     },
   );
 }
