@@ -611,6 +611,12 @@ SimpleType updateType(SimpleType simpleType) {
       javaName = 'Map';
       javaTestValue = 'new HashMap<Object>()';
       break;
+    case 'Color':
+      isCodecClass = true;
+      dartTestValue = 'Colors.red';
+      javaName = 'Long';
+      javaTestValue = 'Color.RED';
+      break;
     case 'List':
       isCodecClass = true;
       dartTestValue = '<dynamic>[]';
