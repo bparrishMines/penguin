@@ -187,6 +187,7 @@ SimpleConstructor _$SimpleConstructorFromJson(Map<String, dynamic> json) =>
       parameters: (json['parameters'] as List<dynamic>)
           .map((e) => SimpleParameter.fromJson(e as Map<String, dynamic>))
           .toList(),
+      customValues: json['customValues'] as Map<String, dynamic>,
     );
 
 Map<String, dynamic> _$SimpleConstructorToJson(SimpleConstructor instance) =>
@@ -194,4 +195,5 @@ Map<String, dynamic> _$SimpleConstructorToJson(SimpleConstructor instance) =>
       'name': instance.name,
       'private': instance.private,
       'parameters': instance.parameters,
+      'customValues': instance.customValues,
     };

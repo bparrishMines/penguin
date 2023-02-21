@@ -231,6 +231,7 @@ class SimpleConstructor {
     required this.name,
     required this.private,
     required this.parameters,
+    required this.customValues,
   });
 
   factory SimpleConstructor.fromJson(Map<String, dynamic> json) =>
@@ -239,6 +240,7 @@ class SimpleConstructor {
   final String name;
   final bool private;
   final List<SimpleParameter> parameters;
+  final Map<String, Object?> customValues;
 
   Map<String, dynamic> toJson() => _$SimpleConstructorToJson(this);
 
