@@ -7,7 +7,7 @@ import 'package:recase/recase.dart';
 import 'package:simple_ast/simple_ast.dart';
 import 'package:path/path.dart' as path;
 
-void main() {
+void main() async {
   final Directory currentDirectory = Directory.current;
 
   print('Running in `${currentDirectory.path}`');
@@ -24,6 +24,33 @@ void main() {
     print('No `pubspec.yaml` found. This should be ran inside of a plugin.');
     exit(1);
   }
+
+  final Directory tempDir = Directory.systemTemp;
+
+  final File dartApiImplsTemplate = await getTempFileOrDownload(
+    tempDir,
+    'lib/src/my_class.template.dart',
+  );
+  final File pigeonsTemplate = await getTempFileOrDownload(
+    tempDir,
+    'pigeons/example_library.template.dart',
+  );
+  final File dartApiImplTestsTemplate = await getTempFileOrDownload(
+    tempDir,
+    'test/my_class_test.template.dart',
+  );
+  final File javaHostApiTemplate = await getTempFileOrDownload(
+    tempDir,
+    'android/src/main/java/com/example/wrapper_example/TemplateMyClassHostApiImpl.java',
+  );
+  final File javaFlutterApiTemplate = await getTempFileOrDownload(
+    tempDir,
+    'android/src/main/java/com/example/wrapper_example/TemplateMyClassFlutterApiImpl.java',
+  );
+  final File javaApiTestsTemplate = await getTempFileOrDownload(
+    tempDir,
+    'android/src/test/java/com/example/wrapper_example/TemplateMyClassTest.java',
+  );
 
   // run('flutter', <String>[
   //   'pub',
@@ -131,6 +158,7 @@ void main() {
         path.withoutExtension(file.path),
         '.gen_api_impls.dart',
       ),
+      templateFile: dartApiImplsTemplate,
     );
 
     if (testDirectoryExists) {
@@ -143,6 +171,7 @@ void main() {
             '_test.gen_api_impls.dart',
           ),
         ),
+        templateFile: dartApiImplTestsTemplate,
       );
     }
 
@@ -153,6 +182,7 @@ void main() {
           androidJavaDirectory.path,
           'GenApiImpls${classFileWithoutExtension.pascalCase}HostApiImpl.java',
         ),
+        templateFile: javaHostApiTemplate,
       );
 
       genJavaFlutterApiImplementation(
@@ -161,6 +191,7 @@ void main() {
           androidJavaDirectory.path,
           'GenApiImpls${classFileWithoutExtension.pascalCase}FlutterApiImpl.java',
         ),
+        templateFile: javaFlutterApiTemplate,
       );
     }
 
@@ -171,10 +202,11 @@ void main() {
           androidJavaTestsDirectory.path,
           'GenApiImpls${classFileWithoutExtension.pascalCase}Test.java',
         ),
+        templateFile: javaApiTestsTemplate,
       );
     }
 
-    pigeonOutputBuffer.writeln(genPigeonOutput(library));
+    pigeonOutputBuffer.writeln(genPigeonOutput(library, pigeonsTemplate));
     pigeonOutputBuffer.writeln();
   }
 
@@ -225,28 +257,27 @@ ProcessResult run(String executable, List<String> arguments) {
 void genDartApiImplementations(
   SimpleLibrary library, {
   required String outputFile,
+  required File templateFile,
 }) {
   run('flutter', <String>[
     'pub',
     'run',
     'code_template_processor',
     '--template-file',
-    // TODO(bparrishMines): download template file
-    'lib/src/my_class.template.dart',
+    templateFile.path,
     '--data',
     const JsonEncoder().convert(library.toJson()),
     outputFile,
   ]);
 }
 
-String genPigeonOutput(SimpleLibrary library) {
+String genPigeonOutput(SimpleLibrary library, File templateFile) {
   return run('flutter', <String>[
     'pub',
     'run',
     'code_template_processor',
     '--template-file',
-    // TODO(bparrishMines): download template file
-    'pigeons/example_library.template.dart',
+    templateFile.path,
     '--data',
     const JsonEncoder().convert(library.toJson()),
   ]).stdout;
@@ -255,14 +286,14 @@ String genPigeonOutput(SimpleLibrary library) {
 void genDartApiImplementationsTests(
   SimpleLibrary library, {
   required String outputFile,
+  required File templateFile,
 }) {
   run('flutter', <String>[
     'pub',
     'run',
     'code_template_processor',
     '--template-file',
-    // TODO(bparrishMines): download template file
-    'test/my_class_test.template.dart',
+    templateFile.path,
     '--data',
     const JsonEncoder().convert(library.toJson()),
     outputFile,
@@ -272,6 +303,7 @@ void genDartApiImplementationsTests(
 void genJavaHostApiImplementation(
   SimpleLibrary library, {
   required String outputFile,
+  required File templateFile,
 }) {
   run('flutter', <String>[
     'pub',
@@ -279,8 +311,7 @@ void genJavaHostApiImplementation(
     'code_template_processor',
     '--token-opener=/*-',
     '--template-file',
-    // TODO(bparrishMines): download template file
-    'android/src/main/java/com/example/wrapper_example/TemplateMyClassHostApiImpl.java',
+    templateFile.path,
     '--data',
     const JsonEncoder().convert(library.toJson()),
     outputFile,
@@ -290,6 +321,7 @@ void genJavaHostApiImplementation(
 void genJavaFlutterApiImplementation(
   SimpleLibrary library, {
   required String outputFile,
+  required File templateFile,
 }) {
   run('flutter', <String>[
     'pub',
@@ -297,8 +329,7 @@ void genJavaFlutterApiImplementation(
     'code_template_processor',
     '--token-opener=/*-',
     '--template-file',
-    // TODO(bparrishMines): download template file
-    'android/src/main/java/com/example/wrapper_example/TemplateMyClassFlutterApiImpl.java',
+    templateFile.path,
     '--data',
     const JsonEncoder().convert(library.toJson()),
     outputFile,
@@ -308,14 +339,14 @@ void genJavaFlutterApiImplementation(
 void genJavaTest(
   SimpleLibrary library, {
   required String outputFile,
+  required File templateFile,
 }) {
   run('flutter', <String>[
     'pub',
     'run',
     'code_template_processor',
     '--template-file',
-    // TODO(bparrishMines): download template file
-    'android/src/test/java/com/example/wrapper_example/TemplateMyClassTest.java',
+    templateFile.path,
     '--data',
     const JsonEncoder().convert(library.toJson()),
     outputFile,
@@ -629,4 +660,44 @@ SimpleConstructor updateConstructor(SimpleConstructor simpleConstructor) {
         .map(updateParameter)
         .toList(),
   );
+}
+
+Future<String> downloadTemplate(String templatePath) async {
+  final String templateUrl =
+      'https://raw.githubusercontent.com/bparrishMines/plugins/wrapper_example/packages/wrapper_example/$templatePath';
+
+  print('Attempting to download template: $templateUrl');
+
+  final HttpClientRequest request = await HttpClient().getUrl(
+    Uri.parse(templateUrl),
+  );
+  final HttpClientResponse response = await request.close();
+
+  final StringBuffer buffer = StringBuffer()
+    ..writeAll(await response.transform(utf8.decoder).toList());
+
+  final String template = buffer.toString();
+
+  if (template == '404: Not Found') {
+    print('Failed to retrieve template at: $templateUrl');
+    exit(1);
+  }
+
+  return template;
+}
+
+Future<File> getTempFileOrDownload(
+    Directory tempDir, String templatePath) async {
+  final File tempFile = File(path.join(tempDir.path, templatePath));
+
+  if (tempFile.existsSync()) {
+    return tempFile;
+  }
+
+  final String template = await downloadTemplate(templatePath);
+
+  tempFile.createSync(recursive: true);
+  tempFile.writeAsStringSync(template);
+
+  return tempFile;
 }
