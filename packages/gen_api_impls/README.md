@@ -53,13 +53,19 @@ class MyClass {
 }
 ```
 
-6. In a terminal, run gen_api_impls in the root of the package directory:
+6. In a terminal, run `build_runner` in the root of the plugin directory to generate `.simple_ast.json` files:
+
+```
+flutter pub run build_runner build --delete-conflicting-outputs
+```
+
+7. In a terminal, run `gen_api_impls` in the root of the plugin directory:
 
 ```
 flutter pub run gen_api_impls
 ```
 
-7. You should then probably run the formatter because will come out unreadable.
+8. You should then probably run the formatter because will come out unreadable.
 
 Limitations:
 * Lists and Maps (the generator will run, it just wont be good code)

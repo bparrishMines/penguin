@@ -59,19 +59,6 @@ void main(List<String> args) async {
     reDownload: reDownload,
   );
 
-  run('flutter', <String>[
-    'pub',
-    'run',
-    'build_runner',
-    'build',
-    '--delete-conflicting-outputs',
-  ]);
-
-  print(
-    'Waiting for build_runner files to show up. Not sure why I have to do this tbh.',
-  );
-  await Future<void>.delayed(Duration(seconds: 5));
-
   // Filter the list of files to only include files that have a name ending in `.simple_ast.json`.
   final List<File> simpleAstJsonFiles = allFiles
       .whereType<File>()
@@ -239,10 +226,6 @@ void main(List<String> args) async {
     pigeonFile.writeAsStringSync(pigeonOutputBuffer.toString());
   } else {
     print('No `pigeons` directory found!');
-  }
-
-  for (File file in simpleAstJsonFiles) {
-    file.deleteSync();
   }
 }
 
