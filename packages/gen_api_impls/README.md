@@ -59,6 +59,8 @@ class MyClass {
 flutter pub run gen_api_impls
 ```
 
+7. You should then probably run the formatter because will come out unreadable.
+
 Limitations:
 * Lists and Maps (the generator will run, it just wont be good code)
 * Pigeon methods that need to be marked with `@async`
