@@ -698,6 +698,15 @@ SimpleConstructor updateConstructor(SimpleConstructor simpleConstructor) {
         )
         .map(updateParameter)
         .toList(),
+    customValues: <String, Object?>{
+      ...simpleConstructor.customValues,
+      'hasParameters': simpleConstructor.parameters.where(
+        (SimpleParameter simpleParameter) {
+          return simpleParameter.type.name != 'BinaryMessenger' &&
+              simpleParameter.type.name != 'InstanceManager';
+        },
+      ).isNotEmpty,
+    },
   );
 }
 
