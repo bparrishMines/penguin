@@ -266,6 +266,7 @@ class SimpleAstBuilder extends Builder {
           return _toParameter(parameterElement);
         },
       ).toList(),
+      customValues: <String, Object?>{},
     );
   }
 
