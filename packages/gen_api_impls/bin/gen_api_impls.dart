@@ -7,7 +7,7 @@ import 'package:recase/recase.dart';
 import 'package:simple_ast/simple_ast.dart';
 import 'package:path/path.dart' as path;
 
-void main() async {
+void main(List<String> args) async {
   final Directory currentDirectory = Directory.current;
 
   print('Running in `${currentDirectory.path}`');
@@ -26,30 +26,37 @@ void main() async {
   }
 
   final Directory tempDir = Directory.systemTemp;
+  final bool reDownload = args.contains('--download-templates');
 
   final File dartApiImplsTemplate = await getTempFileOrDownload(
     tempDir,
     'lib/src/my_class.template.dart',
+    reDownload: reDownload,
   );
   final File pigeonsTemplate = await getTempFileOrDownload(
     tempDir,
     'pigeons/example_library.template.dart',
+    reDownload: reDownload,
   );
   final File dartApiImplTestsTemplate = await getTempFileOrDownload(
     tempDir,
     'test/my_class_test.template.dart',
+    reDownload: reDownload,
   );
   final File javaHostApiTemplate = await getTempFileOrDownload(
     tempDir,
     'android/src/main/java/com/example/wrapper_example/TemplateMyClassHostApiImpl.java',
+    reDownload: reDownload,
   );
   final File javaFlutterApiTemplate = await getTempFileOrDownload(
     tempDir,
     'android/src/main/java/com/example/wrapper_example/TemplateMyClassFlutterApiImpl.java',
+    reDownload: reDownload,
   );
   final File javaApiTestsTemplate = await getTempFileOrDownload(
     tempDir,
     'android/src/test/java/com/example/wrapper_example/TemplateMyClassTest.java',
+    reDownload: reDownload,
   );
 
   run('flutter', <String>[
@@ -696,16 +703,21 @@ Future<String> downloadTemplate(String templatePath) async {
 }
 
 Future<File> getTempFileOrDownload(
-    Directory tempDir, String templatePath) async {
+  Directory tempDir,
+  String templatePath, {
+  bool reDownload = false,
+}) async {
   final File tempFile = File(path.join(tempDir.path, templatePath));
 
-  if (tempFile.existsSync()) {
+  if (tempFile.existsSync() && !reDownload) {
     return tempFile;
   }
 
   final String template = await downloadTemplate(templatePath);
 
-  tempFile.createSync(recursive: true);
+  if (!reDownload) {
+    tempFile.createSync(recursive: true);
+  }
   tempFile.writeAsStringSync(template);
 
   return tempFile;
