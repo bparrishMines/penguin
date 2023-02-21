@@ -594,8 +594,17 @@ SimpleType updateType(SimpleType simpleType) {
       javaName = 'void';
       break;
     default:
-      isCodecClass = false;
-      javaName = simpleType.name;
+      {
+        if (simpleType.isEnum) {
+          isCodecClass = true;
+          dartTestValue = '$typeName.someEnumValue';
+          javaTestValue = '$typeName.SOME_ENUM_VALUE';
+        } else {
+          isCodecClass = false;
+        }
+
+        javaName = simpleType.name;
+      }
   }
   final SimpleType? functionReturnType =
       simpleType.functionReturnType?.name != 'Future'
