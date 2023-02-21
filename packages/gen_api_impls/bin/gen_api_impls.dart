@@ -424,10 +424,11 @@ SimpleLibrary updateLibrary(
             static: simpleMethod.static,
             customValues: <String, Object?>{
               ...simpleMethod.customValues,
-              'hasParameters': simpleMethod.parameters.where(
+              'hasNonFunctionParameters': simpleMethod.parameters.where(
                 (SimpleParameter simpleParameter) {
                   return simpleParameter.type.name != 'BinaryMessenger' &&
-                      simpleParameter.type.name != 'InstanceManager';
+                      simpleParameter.type.name != 'InstanceManager' &&
+                      !simpleParameter.type.isFunction;
                 },
               ).isNotEmpty,
             },
