@@ -67,6 +67,11 @@ void main(List<String> args) async {
     '--delete-conflicting-outputs',
   ]);
 
+  print(
+    'Waiting for build_runner files to show up. Not sure why I have to do this tbh.',
+  );
+  await Future<void>.delayed(Duration(seconds: 5));
+
   // Filter the list of files to only include files that have a name ending in `.simple_ast.json`.
   final List<File> simpleAstJsonFiles = allFiles
       .whereType<File>()
@@ -599,6 +604,18 @@ SimpleType updateType(SimpleType simpleType) {
     case 'void':
       isCodecClass = true;
       javaName = 'void';
+      break;
+    case 'Map':
+      isCodecClass = true;
+      dartTestValue = '<dynamic, dynamic>{}';
+      javaName = 'Map';
+      javaTestValue = 'new HashMap<Object>()';
+      break;
+    case 'List':
+      isCodecClass = true;
+      dartTestValue = '<dynamic>[]';
+      javaName = 'List';
+      javaTestValue = 'new ArrayList<Object>()';
       break;
     default:
       {
