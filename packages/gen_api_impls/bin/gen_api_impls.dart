@@ -52,13 +52,13 @@ void main() async {
     'android/src/test/java/com/example/wrapper_example/TemplateMyClassTest.java',
   );
 
-  // run('flutter', <String>[
-  //   'pub',
-  //   'run',
-  //   'build_runner',
-  //   'build',
-  //   '--delete-conflicting-outputs',
-  // ]);
+  run('flutter', <String>[
+    'pub',
+    'run',
+    'build_runner',
+    'build',
+    '--delete-conflicting-outputs',
+  ]);
 
   // Filter the list of files to only include files that have a name ending in `.simple_ast.json`.
   final List<File> simpleAstJsonFiles = allFiles
@@ -229,9 +229,9 @@ void main() async {
     print('No `pigeons` directory found!');
   }
 
-  // for (File file in simpleAstJsonFiles) {
-  //   file.deleteSync();
-  // }
+  for (File file in simpleAstJsonFiles) {
+    file.deleteSync();
+  }
 }
 
 ProcessResult run(String executable, List<String> arguments) {

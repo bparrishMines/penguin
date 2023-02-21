@@ -1,2 +1,67 @@
-A sample command-line application with an entrypoint in `bin/`, library code
-in `lib/`, and example unit test in `test/`.
+# How to use generator
+
+1. Add `simple_ast` to dependencies:
+
+```yaml
+dependencies:
+  ...
+  simple_ast:
+    git:
+      url: git@github.com:bparrishMines/penguin.git
+      path: packages/simple_ast
+```
+
+2. Add `code_template_processor`, `gen_api_impls`, and `simple_ast_generator` to dev_dependencies.
+The packages `build_runner`, `pigeon`, and `mockito` should already be added.
+
+```yaml
+dev_dependencies:
+  build_runner: ^2.2.0
+  code_template_processor:
+    git:
+      url: git@github.com:bparrishMines/penguin.git
+      path: packages/code_template_processor
+  flutter_test:
+    sdk: flutter
+  gen_api_impls:
+    git:
+      url: git@github.com:bparrishMines/penguin.git
+      path: packages/gen_api_impls
+  mockito: ^5.3.0
+  pedantic: ^1.10.0
+  pigeon: ^9.0.0
+  simple_ast_generator:
+    git:
+      url: git@github.com:bparrishMines/penguin.git
+      path: packages/simple_ast_generator
+```
+
+3. This generator assumes a specific design of a class. See `MyClass` at https://github.com/bparrishMines/plugins/blob/wrapper_example/packages/wrapper_example/lib/src/my_class.dart#L155.
+
+4. In the file of the class to generation api implementations for, add the import:
+
+```dart
+import 'package:simple_ast/annotations.dart';
+```
+
+5. For the class to generate api implementations, add the `@SimpleClassAnnotation()` annotation:
+
+```dart
+@SimpleClassAnnotation()
+class MyClass {
+  
+}
+```
+
+6. In a terminal, run gen_api_impls in the root of the package directory:
+
+```
+flutter pub run gen_api_impls
+```
+
+Limitations:
+* Lists and Maps (the generator will run, it just wont be good code)
+* Pigeon methods that need to be marked with `@async`
+* Objective-C
+* Callback methods that need to return a method back to native.
+* Enums
