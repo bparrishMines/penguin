@@ -366,9 +366,17 @@ SimpleLibrary updateLibrary(
     classes: library.classes.map<SimpleClass>((SimpleClass simpleClass) {
       // Parameters in the constructor named detached.
       final List<SimpleParameter> detachedParameters = simpleClass.constructors
-          .firstWhere((SimpleConstructor simpleConstructor) {
-            return simpleConstructor.name == 'detached';
-          })
+          .firstWhere(
+            (SimpleConstructor simpleConstructor) {
+              return simpleConstructor.name == 'detached';
+            },
+            orElse: () {
+              print(
+                'The class ${simpleClass.name} does not have a constructor named `deatched`.',
+              );
+              exit(1);
+            },
+          )
           .parameters
           .where(
             (SimpleParameter simpleParameter) {
@@ -388,6 +396,9 @@ SimpleLibrary updateLibrary(
         return simpleClass.constructors.firstWhere(
           (SimpleConstructor simpleConstructor) {
             return simpleConstructor.name != 'detached';
+          },
+          orElse: () {
+            return simpleClass.constructors.single;
           },
         );
       }));
