@@ -437,11 +437,10 @@ SimpleLibrary updateLibrary(
             static: simpleMethod.static,
             customValues: <String, Object?>{
               ...simpleMethod.customValues,
-              'hasNonFunctionParameters': simpleMethod.parameters.where(
+              'hasParameters': simpleMethod.parameters.where(
                 (SimpleParameter simpleParameter) {
                   return simpleParameter.type.name != 'BinaryMessenger' &&
-                      simpleParameter.type.name != 'InstanceManager' &&
-                      !simpleParameter.type.isFunction;
+                      simpleParameter.type.name != 'InstanceManager';
                 },
               ).isNotEmpty,
             },
@@ -701,6 +700,13 @@ SimpleConstructor updateConstructor(SimpleConstructor simpleConstructor) {
         (SimpleParameter simpleParameter) {
           return simpleParameter.type.name != 'BinaryMessenger' &&
               simpleParameter.type.name != 'InstanceManager';
+        },
+      ).isNotEmpty,
+      'hasNonFunctionParameters': simpleConstructor.parameters.where(
+        (SimpleParameter simpleParameter) {
+          return simpleParameter.type.name != 'BinaryMessenger' &&
+              simpleParameter.type.name != 'InstanceManager' &&
+              !simpleParameter.type.isFunction;
         },
       ).isNotEmpty,
     },
