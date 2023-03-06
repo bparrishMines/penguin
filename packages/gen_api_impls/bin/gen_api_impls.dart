@@ -7,6 +7,8 @@ import 'package:recase/recase.dart';
 import 'package:simple_ast/simple_ast.dart';
 import 'package:path/path.dart' as path;
 
+const String expectedTemplateVersion = '1';
+
 void main(List<String> args) async {
   final Directory currentDirectory = Directory.current;
 
@@ -707,7 +709,7 @@ SimpleConstructor updateConstructor(SimpleConstructor simpleConstructor) {
 
 Future<String> downloadTemplate(String templatePath) async {
   final String templateUrl =
-      'https://raw.githubusercontent.com/bparrishMines/plugins/wrapper_example/packages/wrapper_example/$templatePath';
+      'https://raw.githubusercontent.com/bparrishMines/packages/wrapper_example/packages/wrapper_example/$templatePath';
 
   print('Attempting to download template: $templateUrl');
 
@@ -736,7 +738,10 @@ Future<File> getTempFileOrDownload(
 }) async {
   final File tempFile = File(path.join(tempDir.path, templatePath));
 
-  if (tempFile.existsSync() && !reDownload) {
+  if (tempFile.existsSync() &&
+      !reDownload &&
+      expectedTemplateVersion ==
+          tryGetTemplateVersion(tempFile.readAsStringSync())) {
     return tempFile;
   }
 
@@ -748,4 +753,8 @@ Future<File> getTempFileOrDownload(
   tempFile.writeAsStringSync(template);
 
   return tempFile;
+}
+
+String? tryGetTemplateVersion(String template) {
+  return RegExp(r'(?<=GENAPIIMPLSTemplateVersion: )\w+').stringMatch(template);
 }
