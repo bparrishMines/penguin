@@ -670,6 +670,7 @@ int testIdentifier = 2;
 SimpleParameter updateParameter(SimpleParameter simpleParameter) {
   return SimpleParameter(
     name: simpleParameter.name,
+    index: simpleParameter.index,
     type: updateType(simpleParameter.type),
     isNamed: simpleParameter.isNamed,
     customValues: <String, Object?>{
