@@ -143,12 +143,14 @@ class SimpleParameter {
     required this.name,
     required this.type,
     required this.isNamed,
+    required this.index,
     required this.customValues,
   });
 
   final String name;
   final SimpleType type;
   final bool isNamed;
+  final int index;
   final Map<String, Object?> customValues;
 
   factory SimpleParameter.fromJson(Map<String, dynamic> json) =>

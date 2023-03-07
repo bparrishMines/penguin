@@ -299,6 +299,7 @@ class Apple {
                   parameters: <SimpleParameter>[
                     SimpleParameter(
                       name: 'aParameter',
+                      index: 0,
                       type: SimpleType(
                         name: 'String',
                         nullable: false,
@@ -397,6 +398,7 @@ class Apple {
                   parameters: <SimpleParameter>[
                     SimpleParameter(
                       name: 'aParameter',
+                      index: 0,
                       type: SimpleType(
                         name: 'String',
                         nullable: false,

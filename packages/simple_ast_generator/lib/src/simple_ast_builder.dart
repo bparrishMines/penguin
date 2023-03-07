@@ -6,6 +6,7 @@ import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/nullability_suffix.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
+import 'package:collection/collection.dart';
 import 'package:simple_ast/annotations.dart';
 import 'package:simple_ast/simple_ast.dart';
 import 'package:source_gen/source_gen.dart';
@@ -261,9 +262,9 @@ class SimpleAstBuilder extends Builder {
             tryReadParameterAnnotation(element);
         if (parameterAnnotation == null) return true;
         return !parameterAnnotation.ignore;
-      }).map<SimpleParameter>(
-        (ParameterElement parameterElement) {
-          return _toParameter(parameterElement);
+      }).mapIndexed<SimpleParameter>(
+        (int index, ParameterElement parameterElement) {
+          return _toParameter(parameterElement, index);
         },
       ).toList(),
       customValues: <String, Object?>{},
@@ -290,9 +291,9 @@ class SimpleAstBuilder extends Builder {
             tryReadParameterAnnotation(element);
         if (parameterAnnotation == null) return true;
         return !parameterAnnotation.ignore;
-      }).map<SimpleParameter>(
-        (ParameterElement parameterElement) {
-          return _toParameter(parameterElement);
+      }).mapIndexed<SimpleParameter>(
+        (int index, ParameterElement parameterElement) {
+          return _toParameter(parameterElement, index);
         },
       ).toList(),
       customValues: tryReadMethodAnnotation(methodElement)?.customValues ??
@@ -312,15 +313,15 @@ class SimpleAstBuilder extends Builder {
             tryReadParameterAnnotation(element);
         if (parameterAnnotation == null) return true;
         return !parameterAnnotation.ignore;
-      }).map<SimpleParameter>(
-        (ParameterElement parameterElement) {
-          return _toParameter(parameterElement);
+      }).mapIndexed<SimpleParameter>(
+        (int index, ParameterElement parameterElement) {
+          return _toParameter(parameterElement, index);
         },
       ).toList(),
     );
   }
 
-  SimpleParameter _toParameter(ParameterElement parameterElement) {
+  SimpleParameter _toParameter(ParameterElement parameterElement, int index) {
     return SimpleParameter(
       name: parameterElement.name,
       type: _toType(
@@ -328,6 +329,7 @@ class SimpleAstBuilder extends Builder {
         typeAnnotation: tryReadTypeAnnotation(parameterElement),
       ),
       isNamed: parameterElement.isNamed,
+      index: index,
       customValues:
           tryReadParameterAnnotation(parameterElement)?.customValues ??
               <String, Object?>{},
@@ -351,7 +353,10 @@ class SimpleAstBuilder extends Builder {
         isEnum: false,
         isUnknownOrUnsupportedType: false,
         functionParameters: type is FunctionType
-            ? type.parameters.map<SimpleParameter>(_toParameter).toList()
+            ? type.parameters.mapIndexed<SimpleParameter>(
+                (int index, ParameterElement parameterElement) {
+                return _toParameter(parameterElement, index);
+              }).toList()
             : <SimpleParameter>[],
         functionReturnType:
             type is FunctionType ? _toType(type.returnType) : null,
@@ -376,7 +381,10 @@ class SimpleAstBuilder extends Builder {
       isEnum: typeCategory == SimpleTypeCategory.anEnum,
       isUnknownOrUnsupportedType: typeCategory == SimpleTypeCategory.unknown,
       functionParameters: type is FunctionType
-          ? type.parameters.map<SimpleParameter>(_toParameter).toList()
+          ? type.parameters.mapIndexed<SimpleParameter>(
+              (int index, ParameterElement parameterElement) {
+              return _toParameter(parameterElement, index);
+            }).toList()
           : <SimpleParameter>[],
       functionReturnType:
           type is FunctionType ? _toType(type.returnType) : null,
