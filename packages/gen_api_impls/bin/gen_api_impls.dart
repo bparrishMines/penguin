@@ -7,7 +7,7 @@ import 'package:recase/recase.dart';
 import 'package:simple_ast/simple_ast.dart';
 import 'package:path/path.dart' as path;
 
-const String expectedTemplateVersion = '1';
+const String expectedTemplateVersion = '2';
 
 void main(List<String> args) async {
   final Directory currentDirectory = Directory.current;
