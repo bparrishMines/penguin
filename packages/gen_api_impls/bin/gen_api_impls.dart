@@ -516,7 +516,9 @@ String findBaseObjectClassName(Iterable<File> files) {
           RegExp(r'(?<=class\s)\w+(?=\s)').stringMatch(line) ?? currentClass;
 
       if (currentClass != null &&
-          line.contains('InstanceManager get globalInstanceManager')) {
+          (line.contains('InstanceManager get globalInstanceManager') ||
+              line.contains(
+                  'static final InstanceManager globalInstanceManager'))) {
         return currentClass;
       }
     }
