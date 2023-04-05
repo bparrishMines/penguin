@@ -374,7 +374,7 @@ SimpleLibrary updateLibrary(
             },
             orElse: () {
               print(
-                'The class ${simpleClass.name} does not have a constructor named `deatched`.',
+                'The class ${simpleClass.name} does not have a constructor named `detached`.',
               );
               exit(1);
             },

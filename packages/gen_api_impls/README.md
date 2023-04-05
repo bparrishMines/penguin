@@ -36,7 +36,7 @@ dev_dependencies:
       path: packages/simple_ast_generator
 ```
 
-3. This generator assumes a specific design of a class. See `MyClass` at https://github.com/bparrishMines/plugins/blob/wrapper_example/packages/wrapper_example/lib/src/my_class.dart#L155.
+3. This generator assumes a specific design of a class. See `MyClass` at https://github.com/bparrishMines/packages/blob/wrapper_example/packages/wrapper_example/lib/src/my_class.dart#L155.
 
 4. In the file of the class to generation api implementations for, add the import:
 
@@ -56,13 +56,13 @@ class MyClass {
 6. In a terminal, run `build_runner` in the root of the plugin directory to generate `.simple_ast.json` files:
 
 ```
-flutter pub run build_runner build --delete-conflicting-outputs
+dart run build_runner build --delete-conflicting-outputs
 ```
 
 7. In a terminal, run `gen_api_impls` in the root of the plugin directory:
 
 ```
-flutter pub run gen_api_impls
+dart run gen_api_impls
 ```
 
 8. You should then probably run the formatter because will come out unreadable.
