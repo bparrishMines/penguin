@@ -125,6 +125,31 @@ void main(List<String> args) async {
     androidJavaTestsDirectory = Directory(path.dirname(firstJavaFile.path));
   }
 
+  final Directory pigeonDirectory = Directory(
+    path.join(currentDirectory.path, 'pigeons'),
+  );
+
+  String? javaGeneratedClassName;
+  if (pigeonDirectory.existsSync()) {
+    final List<String> generatedClassNames = <String>[];
+    for (File file in pigeonDirectory.listSync().whereType<File>()) {
+      final String? generatedClassName = tryFindJavaGeneratedClassName(file);
+      if (generatedClassName != null) {
+        generatedClassNames.add(generatedClassName);
+      }
+    }
+
+    if (generatedClassNames.length != 1) {
+      print(
+        'Could not find singular Java generated class name: $generatedClassNames',
+      );
+    }
+
+    if (generatedClassNames.isNotEmpty) {
+      javaGeneratedClassName = generatedClassNames.first;
+    }
+  }
+
   for (final File file in simpleAstJsonFiles) {
     final Map<String, dynamic> astJson =
         jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
@@ -147,6 +172,7 @@ void main(List<String> args) async {
               ))
               .join('.')
           : null,
+      javaGeneratedClassName: javaGeneratedClassName,
     );
 
     if (library.classes.isEmpty || library.classes.length > 1) {
@@ -210,10 +236,6 @@ void main(List<String> args) async {
     pigeonOutputBuffer.writeln(genPigeonOutput(library, pigeonsTemplate));
     pigeonOutputBuffer.writeln();
   }
-
-  final Directory pigeonDirectory = Directory(
-    path.join(currentDirectory.path, 'pigeons'),
-  );
 
   if (pigeonDirectory.existsSync()) {
     final File pigeonFile = File(
@@ -363,6 +385,7 @@ SimpleLibrary updateLibrary(
   required String dartInstanceManagerPath,
   required String packageName,
   required String? javaPackage,
+  required String? javaGeneratedClassName,
 }) {
   return SimpleLibrary(
     classes: library.classes.map<SimpleClass>((SimpleClass simpleClass) {
@@ -504,8 +527,17 @@ SimpleLibrary updateLibrary(
       'dartClassFilenameWithoutExtension': dartClassFilenameWithoutExtension,
       'dartInstanceManagerPath': '$packageName/$dartInstanceManagerPath',
       'javaPackage': javaPackage,
+      'javaGeneratedClassName': javaGeneratedClassName,
     },
   );
+}
+
+String? tryFindJavaGeneratedClassName(File pigeonFile) {
+  return RegExp(
+    r"(?<=@ConfigurePigeon.+JavaOptions\(.+className:.*')\w+(?=')",
+    multiLine: true,
+    dotAll: true,
+  ).stringMatch(pigeonFile.readAsStringSync());
 }
 
 String findBaseObjectClassName(Iterable<File> files) {
