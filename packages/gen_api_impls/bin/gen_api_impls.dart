@@ -510,6 +510,9 @@ SimpleLibrary updateLibrary(
           'hasCallbacks': simpleClass.fields.any(
             (SimpleField simpleField) => simpleField.type.isFunction,
           ),
+          // TODO: REMOVE
+          'javaPackage': javaPackage,
+          'javaGeneratedClassName': javaGeneratedClassName,
         },
       );
     }).toList(),
@@ -788,7 +791,7 @@ Future<File> getTempFileOrDownload(
 
   final String template = await downloadTemplate(templatePath);
 
-  if (!reDownload) {
+  if (!tempFile.existsSync()) {
     tempFile.createSync(recursive: true);
   }
   tempFile.writeAsStringSync(template);
