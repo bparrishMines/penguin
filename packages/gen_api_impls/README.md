@@ -16,20 +16,19 @@ The packages `build_runner`, `pigeon`, and `mockito` should already be added.
 
 ```yaml
 dev_dependencies:
+  flutter_test:
+    sdk: flutter
   build_runner: ^2.2.0
+  mockito: ^5.3.0
+  pigeon: ^9.0.0
   code_template_processor:
     git:
       url: git@github.com:bparrishMines/penguin.git
       path: packages/code_template_processor
-  flutter_test:
-    sdk: flutter
   gen_api_impls:
     git:
       url: git@github.com:bparrishMines/penguin.git
       path: packages/gen_api_impls
-  mockito: ^5.3.0
-  pedantic: ^1.10.0
-  pigeon: ^9.0.0
   simple_ast_generator:
     git:
       url: git@github.com:bparrishMines/penguin.git
