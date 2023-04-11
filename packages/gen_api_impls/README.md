@@ -61,7 +61,7 @@ dart run build_runner build --delete-conflicting-outputs
 7. In a terminal, run `gen_api_impls` in the root of the plugin directory:
 
 ```
-dart run gen_api_impls
+dart run gen_api_impls --download-templates
 ```
 
 8. You should then probably run the formatter because will come out unreadable.
